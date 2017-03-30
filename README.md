@@ -20,8 +20,7 @@ If you're interested in finding out what's changed between each version you take
 
 # Building Wavebox
 
-To build Wavebox from source, you'll need to make sure you have the following dependencies installed:
+To build Wavebox from source, you'll need to make sure you have the following installed:
 
 * Nodejs version 6 [download](https://nodejs.org/en/)
-* Webpack via npm `npm install webpack -g`
 * Wavebox custom build configuration [available here](https://docs.google.com/forms/d/e/1FAIpQLSeEihtO7sesPrRmoRfxRzBbeSYerxcCuKQ1TiV-R3UUq_aikw/viewform?usp=sf_link)
