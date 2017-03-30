@@ -4,6 +4,9 @@ const shallowCompare = require('react-addons-shallow-compare')
 const { mailboxStore } = require('stores/mailbox')
 const { Mailbox: { MailboxAvatar } } = require('Components')
 const { userActions } = require('stores/user')
+const Colors = require('material-ui/styles/colors')
+const { remote: {shell} } = window.nativeRequire('electron')
+const { PRIVACY_URL, TERMS_URL } = require('shared/constants')
 
 const styles = {
   // Layout
@@ -82,6 +85,22 @@ module.exports = React.createClass({
     }, 500)
   },
 
+  /**
+  * Shows privacy policy
+  */
+  handleShowPrivacyPolicy (evt) {
+    evt.preventDefault()
+    shell.openExternal(PRIVACY_URL)
+  },
+
+  /**
+  * Shows terms of use
+  */
+  handleShowTermsOfUse (evt) {
+    evt.preventDefault()
+    shell.openExternal(TERMS_URL)
+  },
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -151,6 +170,17 @@ module.exports = React.createClass({
         <div style={styles.container}>
           <div style={styles.infoContainer}>
             {this.renderMessage(mode)}
+            <p style={{color: Colors.grey700, fontSize: '85%'}}>
+              <span>By continuing you agree to our </span>
+              <a style={{color: Colors.blue700}} onClick={this.handleShowTermsOfUse} href='#'>
+                terms of use
+              </a>
+              <span> and </span>
+              <a style={{color: Colors.blue700}} onClick={this.handleShowPrivacyPolicy} href='#'>
+                privacy policy
+              </a>
+            </p>
+            <br />
             <RaisedButton
               label='Cancel'
               onClick={this.handleClose} />

@@ -48,6 +48,7 @@ module.exports = Object.freeze({
   GITHUB_URL: 'https://github.com/wavebox/waveboxapp/',
   GITHUB_ISSUE_URL: 'https://github.com/wavebox/waveboxapp/issues/',
   PRIVACY_URL: 'https://wavebox.io/privacy/',
+  TERMS_URL: 'https://wavebox.io/terms/',
   USER_SCRIPTS_WEB_URL: 'https://github.com/Thomas101/wmail-user-scripts',
 
   // Update
