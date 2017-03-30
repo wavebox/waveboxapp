@@ -66,7 +66,7 @@ class Analytics {
       cid: userState.analyticsId,
       cd: window.location.hash,
       cd1: mailboxState.mailboxCount(),
-      cd2: userState.user.plan,
+      cd3: userState.user.plan,
       t: 'screenview',
       vp: `${window.outerWidth}x${window.outerHeight}`,
       ul: window.navigator.language,
