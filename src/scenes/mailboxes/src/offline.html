@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Wavebox</title>
+    <link rel="stylesheet" type="text/css" href="../../fonts/roboto/roboto-fontface.css">
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: #f7f7f7;
+        color: rgb(167, 171, 169);
+        font-family: 'Roboto', sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+      }
+
+      #container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+      }
+
+      #image {
+        display: block;
+        width: auto;
+        height: auto;
+        max-width: 256px;
+        max-height: 256px;
+        transition: transform 1.0s ease-out;
+      }
+      #image:active {
+        transform: rotateZ(180deg);
+      }
+
+      #message {
+        display: block;
+        max-width: 50%;
+        width: 400px;
+        padding-left: 30px;
+        user-select: none;
+      }
+
+      h1 {
+        font-weight: 300;
+        font-size: 2.6em;
+        line-height: 1.25em;
+        margin-bottom: 45px;
+      }
+      p {
+        font-size: 1.1em;
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+      p.error-code {
+        font-size: 0.85em;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        font-weight: 300;
+      }
+      a {
+        color: rgb(75, 191, 235);
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <img id="image" src="data:image/png;base64,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" />
+      <div id="message">
+        <h1>Whoops!</h1>
+        <p>There seems to be no internet connection.</p>
+        <p>Try checking things out</p>
+        <p class="error-code" data-enhance="error"></p>
+        <br />
+        <p>
+          <a data-enhance="reload">Reload</a>
+        </p>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      const querystring = require('querystring')
+      const query = querystring.parse(window.location.search.substr(1))
+      const onlineArgs = Object.assign({}, query, { error: undefined })
+
+      Array.from(document.querySelectorAll('[data-enhance="error"]')).forEach((el) => {
+        el.textContent = query.error
+      })
+      Array.from(document.querySelectorAll('[data-enhance="reload"]')).forEach((el) => {
+        el.setAttribute('href', `mailboxes.html?${querystring.stringify(onlineArgs)}`)
+      })
+      window.addEventListener('online', () => {
+        window.location.href = `mailboxes.html?${querystring.stringify(onlineArgs)}`
+      }, false)
+    </script>
+  </body>
+</html>

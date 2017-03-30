@@ -1,0 +1,21 @@
+.ReactComponent-EULADialog-Body {
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+
+  &:before {
+    content: "";
+    margin-bottom: 100%;
+    display: inline-block;
+  }
+
+  .ReactComponent-EULADialog-IntroGroup {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+
+    &.ReactComponent-Group-In { opacity: 1; }
+    &.ReactComponent-Group-1 { transition-delay: 0.25s; }
+    &.ReactComponent-Group-2 { transition-delay: 0.75s; }
+    &.ReactComponent-Group-3 { transition-delay: 1.25s; }
+  }
+}

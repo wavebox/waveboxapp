@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Wavebox</title>
+    <link rel="stylesheet" type="text/css" href="../../fonts/roboto/roboto-fontface.css">
+    <link rel="stylesheet" type="text/css" href="../../fonts/materialdesign/material-icons.css">
+    <link rel="stylesheet" type="text/css" href="../../fonts/fontawesome/font-awesome.min.css">
+    <style>
+      /** Core styles **/
+      html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: 'Roboto', sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+       }
+
+      /** Mock loading UI **/
+      #loading {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #f2f2f2;
+      }
+      #loading .sidebar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 70px;
+        background-color: rgb(38, 50, 56);
+        -webkit-app-region: drag;
+      }
+
+      /** Circular Progress **/
+      .circular-progress {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        left: 50%;
+        top: 50%;
+        margin-left: -50px;
+        margin-top: -50px;
+      }
+      .circular-progress .circular {
+        animation: rotate 2s linear infinite;
+        height: 100px;
+        width: 100px;
+        position: relative;
+      }
+      .circular-progress .circular .path {
+        stroke-dasharray: 2, 400;
+        stroke-dashoffset: 0;
+        animation: dash 2.5s ease-in-out infinite;
+        stroke-linecap: round;
+        stroke: #4dbcd6;
+      }
+
+      @keyframes rotate{
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes dash {
+        0% { stroke-dasharray: 2, 400; stroke-dashoffset: 0; }
+        50% { stroke-dasharray: 178, 400; stroke-dashoffset: -70; }
+        100% { stroke-dasharray: 178, 400; stroke-dashoffset: -248; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading">
+      <div class="sidebar"></div>
+      <div class="circular-progress">
+        <svg class="circular">
+          <circle class="path" cx="50" cy="50" r="40" fill="none" stroke-width="4" stroke-miterlimit="20" />
+        </svg>
+      </div>
+    </div>
+    <div id="ReactComponent-AppScene"></div>
+
+    <script type="text/javascript">
+      ;(function () {
+        const electron = require('electron')
+        const querystring = require('querystring')
+        const query = querystring.parse(window.location.search.substr(1))
+        const start = new Date().getTime()
+        window.bootstrap = { clientId: query.clientId, clientToken: query.clientToken }
+
+        const injectScript = function (url) {
+          return new Promise((resolve, reject) => {
+            const element = document.createElement('script')
+            element.type = 'text/javascript'
+            element.onload = function () { resolve() }
+            element.onerror = function (err) { reject(err) }
+            element.src = url
+            document.head.appendChild(element)
+          })
+        }
+
+        // Kick everything off
+        Promise.resolve()
+          .then(() => injectScript(`https://wavebox.io/client/${window.bootstrap.clientId}/init.js?token=${window.bootstrap.clientToken}&_=${new Date().getTime()}`))
+          .then(
+            () => {
+              // Check for errors
+              if (window.config.error_code) {
+                const offlineArgs = Object.assign({}, query, { error: window.config.error })
+                window.location.href = `offline.html?${querystring.stringify(offlineArgs)}`
+                return Promise.reject(new Error(window.config.error))
+              }
+
+              // Handle success
+              if (window.config.client_token) { // Persist the token if its been provided
+                electron.ipcRenderer.sendSync(`storageBucket:user:setItem`, {
+                  key: 'CLIENT_TOKEN',
+                  value: JSON.stringify(window.config.client_token),
+                  sync: true
+                })
+              }
+              return Promise.resolve()
+            },
+            (e) => { // Connectivity issues -> Probably offline
+              const offlineArgs = Object.assign({}, query, { error: 'CONNECTION_FAILURE'})
+              window.location.href = `offline.html?${querystring.stringify(offlineArgs)}`
+              return Promise.reject()
+            }
+          )
+          .then(() => injectScript('../platform/nativeRequire.js'))
+          .then(() => injectScript('mailboxes.js'))
+          .then(
+            () => console.log('Bootstrap complete', new Date().getTime() - start),
+            (err) => console.error('Bootstrap failed', err)
+          )
+      })()
+    </script>
+  </body>
+</html>

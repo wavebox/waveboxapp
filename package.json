@@ -1,0 +1,67 @@
+{
+  "name": "wavebox",
+  "version": "3.1.0",
+  "description": "Wavebox",
+  "scripts": {
+    "prestart": "webpack",
+    "start": "electron bin/app/index.js",
+    "test": "standard",
+    "install:all": "echo ':wavebox' && npm install && cd src/app && echo ':wavebox-app' && npm install && cd ../../src/scenes/mailboxes && echo ':wavebox-scenes-mailboxes' && npm install && cd ../content && echo ':wavebox-scenes-content' && npm install",
+    "outdated:all": "echo ':wavebox' && npm outdated && cd src/app && echo ':wavebox-app' && npm outdated && cd ../../src/scenes/mailboxes && echo ':wavebox-scenes-mailboxes' && npm outdated && cd ../content && echo ':wavebox-scenes-content' && npm outdated",
+    "prune:all": "echo ':wavebox' && npm prune && cd src/app && echo ':wavebox-app' && npm prune && cd ../../src/scenes/mailboxes && echo ':wavebox-scenes-mailboxes' && npm prune && cd ../content && echo ':wavebox-scenes-content' && npm prune",
+    "dev:platform": "webpack --env.task=platform && electron bin/app/index.js",
+    "dev:app": "webpack --env.task=app && electron bin/app/index.js",
+    "dev:mailboxes": "webpack --env.task=mailboxes && electron bin/app/index.js",
+    "dev:content": "webpack --env.task=content && electron bin/app/index.js",
+    "dev:assets": "webpack --env.task=assets && electron bin/app/index.js",
+    "dev:run": "electron bin/app/index.js",
+    "webpack": "webpack"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Wavebox",
+    "company": "Wavebox",
+    "email": "opensource@wavebox.io",
+    "url": "https://wavebox.io"
+  },
+  "homepage": "https://wavebox.io",
+  "license": "MPL-2.0",
+  "repository": "https://github.com/wavebox/waveboxapp",
+  "main": "bin/app/index.js",
+  "optionalDependencies": {
+    "appdmg": "0.4.5"
+  },
+  "dependencies": {
+    "babel": "6.23.0",
+    "babel-core": "6.24.0",
+    "babel-loader": "6.4.1",
+    "babel-preset-es2015": "6.24.0",
+    "babel-preset-react": "6.23.0",
+    "babel-preset-stage-0": "6.22.0",
+    "clean-webpack-plugin": "0.1.16",
+    "copy-webpack-plugin": "4.0.1",
+    "css-loader": "0.27.3",
+    "electron": "1.6.4",
+    "extract-text-webpack-plugin": "2.1.0",
+    "file-loader": "0.10.1",
+    "json-loader": "0.5.4",
+    "jsx-loader": "0.13.2",
+    "less": "2.7.2",
+    "less-loader": "4.0.2",
+    "style-loader": "0.16.1",
+    "uglify-js": "git+https://github.com/mishoo/UglifyJS2.git#harmony",
+    "url-loader": "0.5.8",
+    "uuid": "3.0.1",
+    "webpack": "2.3.2",
+    "webpack-target-electron-renderer": "0.4.0",
+    "yargs": "7.0.2"
+  },
+  "devDependencies": {
+    "standard": "9.0.2"
+  },
+  "standard": {
+    "ignore": [
+      "src/app/lib/"
+    ]
+  }
+}

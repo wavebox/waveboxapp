@@ -1,0 +1,11 @@
+node_modules
+bin
+dist
+Wavebox-darwin-x64
+Wavebox-linux-ia32/
+Wavebox-linux-x64/
+Wavebox-win32-ia32/
+Wavebox-win32-x64/
+Wavebox-win32-ia32-Installer/
+*.log
+credentials.js
