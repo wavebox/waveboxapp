@@ -1,6 +1,6 @@
 {
   "name": "wavebox",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Wavebox",
   "scripts": {
     "prestart": "webpack",
