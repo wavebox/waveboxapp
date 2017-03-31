@@ -11,6 +11,7 @@ const {
   AuthWavebox
 } = require('../AuthProviders')
 const querystring = require('querystring')
+const electron = require('electron')
 
 const MAILBOXES_DIR = path.resolve(path.join(__dirname, '/../../../scenes/mailboxes'))
 const ALLOWED_URLS = [
@@ -52,10 +53,13 @@ class MailboxesWindow extends WMailWindow {
   * @param hidden=false: true to start the window hidden
   */
   start (hidden = false) {
+    const screenSize = electron.screen.getPrimaryDisplay().workAreaSize
     super.start(this.generateWindowUrl(), {
       show: !hidden,
       minWidth: 770,
       minHeight: 300,
+      width: Math.min(Math.max(screenSize.width, 770), 1200),
+      height: Math.min(Math.max(screenSize.height, 300), 1000),
       fullscreenable: true,
       titleBarStyle: settingStore.ui.showTitlebar ? 'default' : 'hidden',
       title: 'Wavebox',
