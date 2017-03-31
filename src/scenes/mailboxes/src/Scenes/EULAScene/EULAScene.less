@@ -19,3 +19,11 @@
     &.ReactComponent-Group-3 { transition-delay: 1.25s; }
   }
 }
+
+// This handles a bug on MBP models in fullscreen where material-ui
+// would place the modal 100px from the top of the screen with the
+// buttons at the bottom not accessible. Better to have it floating
+// at the top and usable, than not-at-all
+.ReactComponent-EULADialog {
+  padding-top: 16px !important;
+}

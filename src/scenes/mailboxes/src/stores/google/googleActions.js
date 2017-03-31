@@ -85,7 +85,8 @@ class GoogleActions {
   mailHistoryIdChangedFromWatch (data) {
     // You get the history id which you'd think to pass along however the sync system has
     // an escape hatch by checking if any of the deltas indicate a change so it's important
-    // to requery for this
+    // to requery for this.
+    // Sometimes the server doesn't send historyId - for example on re-connect
     return { email: data.emailAddress }
   }
 }

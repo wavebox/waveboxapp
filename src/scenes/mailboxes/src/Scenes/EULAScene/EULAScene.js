@@ -146,6 +146,7 @@ module.exports = React.createClass({
         modal
         bodyClassName='ReactComponent-EULADialog-Body'
         style={{ zIndex: 2000 }}
+        className='ReactComponent-EULADialog'
         overlayStyle={{ backgroundColor: 'rgb(33,33,33)' }}
         contentStyle={{ width: '90%', maxWidth: 900 }}
         open={!hasAgreedToEULA}>

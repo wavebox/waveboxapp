@@ -891,7 +891,6 @@ class MailboxStore {
 
     if (mailbox.type === GoogleMailbox.type) {
       googleActions.syncMailboxProfile.defer(id)
-      googleActions.mailHistoryIdChanged.defer(id, true)
       googleActions.connectMailbox.defer(id)
       googleActions.registerMailboxWatch.defer(id)
       this.preventDefault() // No change in this store
