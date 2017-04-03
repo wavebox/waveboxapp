@@ -1,3 +1,4 @@
 module.exports = {
-  Analytics: require('./Analytics')
+  Analytics: require('./Analytics'),
+  ServerVent: require('./ServerVent')
 }

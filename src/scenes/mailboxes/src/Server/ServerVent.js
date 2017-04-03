@@ -1,9 +1,9 @@
 const { Socket, LongPoll } = require('phoenixjs')
 const { EventEmitter } = require('events')
-const { SYNC_SOCKET_URL } = require('shared/constants')
+const { SYNC_SOCKET_URL, SYNC_SOCKET_UPGRADE_INTERVAL } = require('shared/constants')
 
-const userActions = require('./user/userActions')
-const googleActions = require('./google/googleActions')
+const userActions = require('stores/user/userActions')
+const googleActions = require('stores/google/googleActions')
 
 class ServerVent extends EventEmitter {
   /* ****************************************************************************/
@@ -14,6 +14,7 @@ class ServerVent extends EventEmitter {
     super()
 
     this._socket = null
+    this._websocketUpgrade = null
     this._clientId = null
     this._clientToken = null
     this._pushChannels = new Map()
@@ -42,18 +43,29 @@ class ServerVent extends EventEmitter {
       }
     })
     this._socket.onError(() => {
-      console.warn('Error connecting to sync socket')
+      console.warn('[SYNCS] Error connecting')
       if (window.navigator.onLine !== false) {
         if (this._socket.transport === window.WebSocket) {
-          console.warn('Error connecting to sync socket using WebSocket - next retry is with LongPoll')
+          console.warn('[SYNCS][WebSocket] Next retry LongPoll')
           this._socket.transport = LongPoll
+          clearTimeout(this._websocketUpgrade)
+          this._websocketUpgrade = setTimeout(() => {
+            this._upgradeToWebsocket()
+          }, SYNC_SOCKET_UPGRADE_INTERVAL)
         } else if (this._socket.transport === LongPoll) {
-          console.warn('Error connecting to sync socket using LongPoll - next retry is with WebSocket')
+          console.warn('[SYNCS][LongPoll] Next retry WebSocket')
           this._socket.transport = window.WebSocket
+          clearTimeout(this._websocketUpgrade)
         }
       }
     })
-    this._socket.onOpen(() => { console.log('Sync socket opened') })
+    this._socket.onOpen(() => {
+      if (this._socket.transport === window.WebSocket) {
+        console.log('[SYNCS][WebSocket] Socket opened')
+      } else if (this._socket.transport === LongPoll) {
+        console.log('[SYNCS][LongPoll] Socket opened')
+      }
+    })
     this._socket.connect()
     this._setupVents()
 
@@ -69,9 +81,22 @@ class ServerVent extends EventEmitter {
 
     this._socket.disconnect()
     this._socket = null
+    clearTimeout(this._websocketUpgrade)
     this._pushChannels.clear()
 
     return this
+  }
+
+  /**
+  * Upgrades the connection to a websocket if possible
+  */
+  _upgradeToWebsocket () {
+    if (this._socket && this._socket.transport !== window.WebSocket) {
+      console.log('[SYNCS] Upgrading to WebSocket')
+      this._socket.disconnect()
+      this._socket.transport = window.WebSocket
+      this._socket.connect()
+    }
   }
 
   /* ****************************************************************************/
@@ -89,7 +114,7 @@ class ServerVent extends EventEmitter {
         clientChannel.push('init', {})
       })
       .receive('error', (err) => {
-        console.error('Failed to join client channel', err)
+        console.error('[SYNCS] Failed to join client channel', err)
       })
     clientChannel.on('userDetails', userActions.remoteChangeAccount)
 
@@ -118,7 +143,7 @@ class ServerVent extends EventEmitter {
     })
     channel.join()
       .receive('error', (err) => {
-        console.error('Failed to join push channel', err)
+        console.error('[SYNCS] Failed to join push channel', err)
         channel.leave()
         this._pushChannels.delete(mailboxId)
       })

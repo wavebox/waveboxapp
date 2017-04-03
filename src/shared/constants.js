@@ -28,6 +28,7 @@ module.exports = Object.freeze({
 
   // Sync
   SYNC_SOCKET_URL: 'wss://wavebox.io/socket',
+  SYNC_SOCKET_UPGRADE_INTERVAL: 1000 * 60 * 5, // 5 minutes
 
   // Notifications
   NOTIFICATION_MAX_AGE: 1000 * 60 * 60, // 1 hour

@@ -10,7 +10,7 @@ const {
 } = require('../mailbox')
 const { GoogleMailbox, GoogleDefaultService } = require('shared/Models/Accounts/Google')
 const uuid = require('uuid')
-const serverVent = require('../serverVent')
+const ServerVent = require('Server/ServerVent')
 
 const REQUEST_TYPES = {
   PROFILE: 'PROFILE',
@@ -219,12 +219,12 @@ class GoogleStore {
 
   handleConnectMailbox ({ mailboxId }) {
     const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    serverVent.startListeningForGooglePushUpdates(mailboxId, mailbox.authEmail, mailbox.authPushToken)
+    ServerVent.startListeningForGooglePushUpdates(mailboxId, mailbox.authEmail, mailbox.authPushToken)
     this.preventDefault()
   }
 
   handleDisconnectMailbox ({ mailboxId }) {
-    serverVent.stopListeningForGooglePushUpdates(mailboxId)
+    ServerVent.stopListeningForGooglePushUpdates(mailboxId)
     this.preventDefault()
   }
 

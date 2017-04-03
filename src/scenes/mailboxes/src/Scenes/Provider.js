@@ -13,8 +13,7 @@ const { slackActions } = require('stores/slack')
 const { microsoftActions } = require('stores/microsoft')
 const { mailboxActions } = require('stores/mailbox')
 const { updaterActions } = require('stores/updater')
-const serverVent = require('stores/serverVent')
-const { Analytics } = require('Server')
+const { Analytics, ServerVent } = require('Server')
 const { NotificationService } = require('Notifications')
 const Bootstrap = require('R/Bootstrap')
 const AccountMessageDispatcher = require('./AccountMessageDispatcher')
@@ -44,7 +43,7 @@ module.exports = React.createClass({
 
     // STEP 1. App services
     Analytics.startAutoreporting()
-    serverVent.start(Bootstrap.clientId, Bootstrap.clientToken)
+    ServerVent.start(Bootstrap.clientId, Bootstrap.clientToken)
     NotificationService.start()
     updaterActions.load()
     updaterActions.checkForUpdates()
@@ -66,7 +65,7 @@ module.exports = React.createClass({
   componentWillUnmount () {
     // STEP 1. App services
     Analytics.stopAutoreporting()
-    serverVent.stop()
+    ServerVent.stop()
     NotificationService.stop()
     updaterActions.unload()
     ipcRenderer.removeListener('download-completed', this.downloadCompleted)
