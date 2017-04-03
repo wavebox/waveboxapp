@@ -105,39 +105,71 @@
           })
         }
 
+        const rejectBounce = function (errorStr) {
+          const offlineArgs = Object.assign({}, query, { error: errorStr })
+          const error = new Error(errorStr)
+          error.bounce = `offline.html?${querystring.stringify(offlineArgs)}`
+          return Promise.reject(error)
+        }
+        const offlineBounce = function () { return rejectBounce('CONNECTION_FAILURE') }
+        const uauthorizedBounce = function (errorStr) { return rejectBounce(errorStr || 'UNAUTHORIZED') }
+
         // Kick everything off
         Promise.resolve()
-          .then(() => injectScript(`https://wavebox.io/client/${window.bootstrap.clientId}/init.js?token=${window.bootstrap.clientToken}&_=${new Date().getTime()}`))
+          .then(() => fetch(`https://wavebox.io/client/${window.bootstrap.clientId}/init.json?token=${window.bootstrap.clientToken}&_=${new Date().getTime()}`))
+          .then((res) => {
+            return res.text().then((text) => {
+              let jsonContent
+              try {
+                jsonContent = JSON.parse(text)
+              } catch (_ex) { }
+              return Promise.resolve({ res: res, jsonContent: jsonContent })
+            })
+          })
           .then(
-            () => {
-              // Check for errors
-              if (window.config.error_code) {
-                const offlineArgs = Object.assign({}, query, { error: window.config.error })
-                window.location.href = `offline.html?${querystring.stringify(offlineArgs)}`
-                return Promise.reject(new Error(window.config.error))
+            ({res, jsonContent}) => {
+              if (res.status === 403 || res.status === 401) {
+                return uauthorizedBounce(jsonContent ? jsonContent.error : undefined)
+              } else if (res.ok && jsonContent) {
+                window.localStorage['cached_init'] = JSON.stringify(jsonContent)
+                return Promise.resolve(jsonContent)
+              } else {
+                if (window.localStorage['cached_init']) {
+                  try {
+                    const cached = JSON.parse(window.localStorage['cached_init'])
+                    return Promise.resolve(cached)
+                  } catch (_ex) { }
+                }
+                return offlineBounce()
               }
-
-              // Handle success
-              if (window.config.client_token) { // Persist the token if its been provided
-                electron.ipcRenderer.sendSync(`storageBucket:user:setItem`, {
-                  key: 'CLIENT_TOKEN',
-                  value: JSON.stringify(window.config.client_token),
-                  sync: true
-                })
-              }
-              return Promise.resolve()
             },
-            (e) => { // Connectivity issues -> Probably offline
-              const offlineArgs = Object.assign({}, query, { error: 'CONNECTION_FAILURE'})
-              window.location.href = `offline.html?${querystring.stringify(offlineArgs)}`
-              return Promise.reject()
-            }
+            (err) => offlineBounce()
           )
+          .then((config) => {
+             // Persist the token if its been provided
+            if (config.client_token) {
+              electron.ipcRenderer.sendSync(`storageBucket:user:setItem`, {
+                key: 'CLIENT_TOKEN',
+                value: JSON.stringify(config.client_token),
+                sync: true
+              })
+            }
+            // Write into window for bootstrap to pickup
+            window.config = config
+            return Promise.resolve()
+          })
           .then(() => injectScript('../platform/nativeRequire.js'))
           .then(() => injectScript('mailboxes.js'))
           .then(
             () => console.log('Bootstrap complete', new Date().getTime() - start),
-            (err) => console.error('Bootstrap failed', err)
+            (err) => {
+              console.error('Bootstrap failed', err)
+              if (err.bounce) {
+                setTimeout(() => {
+                  window.location.href = err.bounce
+                }, 1000)
+              }
+            }
           )
       })()
     </script>

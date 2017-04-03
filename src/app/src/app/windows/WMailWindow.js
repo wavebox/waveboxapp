@@ -106,6 +106,7 @@ class WMailWindow extends EventEmitter {
   saveWindowScreenLocation () {
     clearTimeout(this.windowScreenLocationSaver)
     this.windowScreenLocationSaver = setTimeout(() => {
+      if (!this.window) { return }
       if (this.window.isMinimized()) { return }
       const position = this.window.getPosition()
       const size = this.window.getSize()
