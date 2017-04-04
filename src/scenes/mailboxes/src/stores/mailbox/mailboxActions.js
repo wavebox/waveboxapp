@@ -332,7 +332,7 @@ class MailboxActions {
   * @param service: the type of service to search for
   */
   startSearchingMailbox (id, service) {
-    return {id: id, service: service}
+    return { id: id, service: service }
   }
 
   /**
@@ -341,7 +341,7 @@ class MailboxActions {
   * @param service: the type of service to stop search for
   */
   stopSearchingMailbox (id, service) {
-    return {id: id, service: service}
+    return { id: id, service: service }
   }
 
   /* **************************************************************************/
@@ -408,7 +408,7 @@ ipcRenderer.on('find-start', () => actions.startSearchingMailbox())
 // Switching
 ipcRenderer.on('switch-mailbox', (evt, req) => {
   if (req.mailboxId) {
-    actions.changeActive(req.mailboxId)
+    actions.changeActive(req.mailboxId, req.serviceType)
   } else if (req.prev) {
     actions.changeActiveToPrev()
   } else if (req.next) {

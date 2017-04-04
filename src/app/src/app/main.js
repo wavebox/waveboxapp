@@ -25,8 +25,13 @@
   const WindowManager = require('./windows/WindowManager')
   const storage = require('./storage')
   const settingStore = require('./stores/settingStore')
+  const mailboxStore = require('./stores/mailboxStore')
+  const userStore = require('./stores/userStore')
 
   Object.keys(storage).forEach((k) => storage[k].checkAwake())
+  mailboxStore.checkAwake()
+  settingStore.checkAwake()
+  userStore.checkAwake()
 
   /* ****************************************************************************/
   // Commandline switches & launch args
@@ -116,7 +121,11 @@
   /* ****************************************************************************/
 
   app.on('ready', () => {
-    appMenu.updateApplicationMenu()
+    appMenu.updateApplicationMenu(
+      mailboxStore.orderedMailboxes(),
+      mailboxStore.getActiveMailbox(),
+      mailboxStore.getActiveServiceType()
+    )
     windowManager.mailboxesWindow.start(openHidden)
     AppUpdater.register(windowManager)
   })

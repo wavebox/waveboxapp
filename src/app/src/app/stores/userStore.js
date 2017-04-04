@@ -28,6 +28,8 @@ class UserStore extends EventEmitter {
       this.createdTime = persistence.getJSONItem(CREATED_TIME)
     })
   }
+
+  checkAwake () { return true }
 }
 
 module.exports = new UserStore()

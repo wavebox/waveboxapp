@@ -53,8 +53,8 @@ class AppPrimaryMenu {
       zoomIn: () => { windowManager.mailboxesWindow.mailboxZoomIn() },
       zoomOut: () => { windowManager.mailboxesWindow.mailboxZoomOut() },
       zoomReset: () => { windowManager.mailboxesWindow.mailboxZoomReset() },
-      changeMailbox: (mailboxId) => {
-        windowManager.mailboxesWindow.show().focus().switchMailbox(mailboxId)
+      changeMailbox: (mailboxId, serviceType = undefined) => {
+        windowManager.mailboxesWindow.show().focus().switchMailbox(mailboxId, serviceType)
       },
       prevMailbox: () => {
         windowManager.mailboxesWindow.show().focus().switchPrevMailbox()
@@ -98,6 +98,8 @@ class AppPrimaryMenu {
   constructor (selectors) {
     this._selectors = selectors
     this._lastMailboxes = null
+    this._lastActiveMailbox = null
+    this._lastActiveServiceType = null
 
     mailboxStore.on('changed', () => {
       this.handleMailboxesChanged()
@@ -111,9 +113,11 @@ class AppPrimaryMenu {
   /**
   * Builds the menu
   * @param mailboxes: the list of mailboxes
+  * @param activeMailbox: the active mailbox
+  * @param activeServiceType: the type of the active service
   * @return the new menu
   */
-  build (mailboxes) {
+  build (mailboxes, activeMailbox, activeServiceType) {
     return Menu.buildFromTemplate([
       {
         label: 'Application',
@@ -178,16 +182,29 @@ class AppPrimaryMenu {
         .concat(mailboxes.length <= 1 ? [] : [
           { type: 'separator' },
           { label: 'Previous Mailbox', accelerator: 'CmdOrCtrl+<', click: this._selectors.prevMailbox },
-          { label: 'Next Mailbox', accelerator: 'CmdOrCtrl+>', click: this._selectors.nextMailbox },
-          { type: 'separator' }
+          { label: 'Next Mailbox', accelerator: 'CmdOrCtrl+>', click: this._selectors.nextMailbox }
         ])
+        .concat(mailboxes.length <= 1 ? [] : [{ type: 'separator' }])
         .concat(mailboxes.length <= 1 ? [] : mailboxes.map((mailbox, index) => {
           return {
             label: mailbox.displayName || 'Untitled',
-            accelerator: 'CmdOrCtrl+' + (index + 1),
+            type: 'radio',
+            checked: mailbox.id === (activeMailbox || {}).id,
+            accelerator: index < 9 ? ('CmdOrCtrl+' + (index + 1)) : undefined,
             click: () => { this._selectors.changeMailbox(mailbox.id) }
           }
         }))
+        .concat(activeMailbox && activeMailbox.hasAdditionalServices ? [{ type: 'separator' }] : [])
+        .concat(activeMailbox && activeMailbox.hasAdditionalServices ? activeMailbox.enabledServices.map((service, index) => {
+          const accelerator = process.platform === 'darwin' ? 'Command+alt+' + (index + 1) : 'Ctrl+Shift+' + (index + 1)
+          return {
+            label: service.humanizedType,
+            type: 'radio',
+            checked: service.type === activeServiceType,
+            accelerator: index < 9 ? accelerator : undefined,
+            click: () => { this._selectors.changeMailbox(activeMailbox.id, service.type) }
+          }
+        }) : [])
       },
       {
         label: 'Help',
@@ -204,11 +221,15 @@ class AppPrimaryMenu {
 
   /**
   * Builds and applies the mailboxes menu
-  * @param mailboxes=autoget: the current list of mailboxes
+  * @param mailboxes: the current list of mailboxes
+  * @param activeMailbox: the active mailbox
+  * @param activeServiceType: the type of active service
   */
-  updateApplicationMenu (mailboxes = mailboxStore.orderedMailboxes()) {
+  updateApplicationMenu (mailboxes, activeMailbox, activeServiceType) {
+    this._lastActiveMailbox = activeMailbox
+    this._lastActiveServiceType = activeServiceType
     this._lastMailboxes = mailboxes
-    Menu.setApplicationMenu(this.build(mailboxes))
+    Menu.setApplicationMenu(this.build(mailboxes, activeMailbox, activeServiceType))
   }
 
   /* ****************************************************************************/
@@ -219,16 +240,24 @@ class AppPrimaryMenu {
   * Handles the mailboxes changing
   */
   handleMailboxesChanged () {
-    if (this._lastMailboxes === null) {
-      this.updateApplicationMenu()
-    } else {
-      // Real lazy compare tbh
-      const nextMailboxes = mailboxStore.orderedMailboxes()
-      const lastIdent = this._lastMailboxes.map((m) => m.email).join('|')
-      const nextIdent = nextMailboxes.map((m) => m.email).join('|')
-      if (lastIdent !== nextIdent) {
-        this.updateApplicationMenu(nextMailboxes)
-      }
+    const activeMailbox = mailboxStore.getActiveMailbox()
+    const activeServiceType = mailboxStore.getActiveServiceType()
+    const mailboxes = mailboxStore.orderedMailboxes()
+
+    // Munge our states for easier comparison
+    const props = [
+      [(this._lastActiveMailbox || {}).id, (activeMailbox || {}).id],
+      [this._lastActiveServiceType, activeServiceType],
+      [
+        (this._lastMailboxes || []).map((m) => m.displayName + ';' + m.enabledServiceTypes.join(';')).join('|'),
+        mailboxes.map((m) => m.displayName + ';' + m.enabledServiceTypes.join(';')).join('|')
+      ]
+    ]
+
+    // Check for change
+    const changed = props.findIndex(([prev, next]) => prev !== next) !== -1
+    if (changed) {
+      this.updateApplicationMenu(mailboxes, activeMailbox, activeServiceType)
     }
   }
 }

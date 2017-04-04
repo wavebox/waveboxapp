@@ -53,6 +53,8 @@ class SettingStore extends EventEmitter {
       this.emit('changed:ui', { prev: prev, next: this.ui })
     })
   }
+
+  checkAwake () { return true }
 }
 
 module.exports = new SettingStore()

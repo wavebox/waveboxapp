@@ -202,11 +202,15 @@ class MailboxesWindow extends WMailWindow {
   /**
   * Switches mailbox
   * @param mailboxId: the id of the mailbox to switch to
+  * @param serviceType=undefined: the type of service to also switch to if desired
   * @return this
   */
-  switchMailbox (mailboxId) {
+  switchMailbox (mailboxId, serviceType = undefined) {
     this.show().focus()
-    this.window.webContents.send('switch-mailbox', { mailboxId: mailboxId })
+    this.window.webContents.send('switch-mailbox', {
+      mailboxId: mailboxId,
+      serviceType: serviceType
+    })
     return this
   }
 

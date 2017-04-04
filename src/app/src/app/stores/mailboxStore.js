@@ -2,6 +2,7 @@ const persistence = require('../storage/mailboxStorage')
 const { EventEmitter } = require('events')
 const MailboxFactory = require('../../shared/Models/Accounts/MailboxFactory')
 const { PERSISTENCE_INDEX_KEY } = require('../../shared/constants')
+const { ipcMain } = require('electron')
 
 class MailboxStore extends EventEmitter {
   /* ****************************************************************************/
@@ -14,6 +15,8 @@ class MailboxStore extends EventEmitter {
     // Build the current data
     this.index = []
     this.mailboxes = new Map()
+    this.activeMailboxId = null
+    this.activeServiceType = null
 
     const allRawItems = persistence.allJSONItems()
     Object.keys(allRawItems).forEach((id) => {
@@ -38,7 +41,15 @@ class MailboxStore extends EventEmitter {
       }
       this.emit('changed', {})
     })
+
+    ipcMain.on('mailbox-storage-change-active', (evt, data) => {
+      this.activeMailboxId = data.mailboxId
+      this.activeServiceType = data.serviceType
+      this.emit('changed', {})
+    })
   }
+
+  checkAwake () { return true }
 
   /* ****************************************************************************/
   // Getters
@@ -57,9 +68,22 @@ class MailboxStore extends EventEmitter {
   * @param id: the id of the mailbox
   * @return the mailbox record
   */
-  getMailbox (id) {
-    return this.mailboxes.get(id)
-  }
+  getMailbox (id) { return this.mailboxes.get(id) }
+
+  /**
+  * @return the id of the active mailbox
+  */
+  getActiveMailboxId () { return this.activeMailboxId || this.index[0] }
+
+  /**
+  * @return the active mailbox
+  */
+  getActiveMailbox () { return this.getMailbox(this.getActiveMailboxId()) }
+
+  /**
+  * @return the type active service
+  */
+  getActiveServiceType () { return this.activeServiceType }
 }
 
 module.exports = new MailboxStore()

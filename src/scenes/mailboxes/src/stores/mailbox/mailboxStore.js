@@ -371,6 +371,7 @@ class MailboxStore {
       }
     })
     this.active = this.index[0] || null
+    this.sendActiveStateToMainThread()
 
     // Avatars
     Object.keys(allAvatars).forEach((id) => {
@@ -821,6 +822,8 @@ class MailboxStore {
     } else {
       this.active = id || this.index[0]
       this.activeService = service
+      window.location.hash = '/'
+      this.sendActiveStateToMainThread()
     }
   }
 
@@ -835,6 +838,8 @@ class MailboxStore {
     } else {
       this.active = nextId
       this.activeService = CoreMailbox.SERVICE_TYPES.DEFAULT
+      window.location.hash = '/'
+      this.sendActiveStateToMainThread()
     }
   }
 
@@ -849,7 +854,19 @@ class MailboxStore {
     } else {
       this.active = nextId
       this.activeService = CoreMailbox.SERVICE_TYPES.DEFAULT
+      window.location.hash = '/'
+      this.sendActiveStateToMainThread()
     }
+  }
+
+  /**
+  * Sends the current active state to the main thread
+  */
+  sendActiveStateToMainThread () {
+    ipcRenderer.send('mailbox-storage-change-active', {
+      mailboxId: this.activeMailboxId(),
+      serviceType: this.activeMailboxService()
+    })
   }
 
   /* **************************************************************************/
