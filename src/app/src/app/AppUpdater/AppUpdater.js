@@ -1,6 +1,7 @@
 const { autoUpdater } = require('electron')
 const path = require('path')
 const ChildProcess = require('child_process')
+const Win32Registry = require('./Win32Registry')
 
 class AppUpdater {
   /* ****************************************************************************/
@@ -134,11 +135,19 @@ class AppUpdater {
       case '--squirrel-install':
       case '--squirrel-updated':
         AppUpdater._spawnWin32Update(['--createShortcut', path.basename(process.execPath)])
-        setTimeout(app.quit, 1000)
+        Win32Registry.addManifestEntries(path.join(process.execPath, '../../Wavebox.exe'))
+          .catch(() => Promise.resolve())
+          .then(() => {
+            setTimeout(app.quit, 1000)
+          })
         return true
       case '--squirrel-uninstall':
         AppUpdater._spawnWin32Update(['--removeShortcut', path.basename(process.execPath)])
-        setTimeout(app.quit, 1000)
+        Win32Registry.removeManifestEntries(path.join(process.execPath, '../../Wavebox.exe'))
+          .catch(() => Promise.resolve())
+          .then(() => {
+            setTimeout(app.quit, 1000)
+          })
         return true
       case '--squirrel-obsolete':
         app.quit()
