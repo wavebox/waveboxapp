@@ -1,11 +1,8 @@
 ;(function () {
-  // Squirrel startup calls
-  if (require('electron-squirrel-startup')) { return }
-
   const { ipcMain, app } = require('electron')
   const AppUpdater = require('./AppUpdater')
 
-  // Squirrel install handles
+  // Squirrel startup calls
   if (AppUpdater.handleWin32SquirrelSwitches(app)) { return }
 
   // Single app instance
