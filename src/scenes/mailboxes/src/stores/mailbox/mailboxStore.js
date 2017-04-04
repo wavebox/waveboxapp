@@ -822,7 +822,6 @@ class MailboxStore {
     } else {
       this.active = id || this.index[0]
       this.activeService = service
-      window.location.hash = '/'
       this.sendActiveStateToMainThread()
     }
   }
@@ -838,7 +837,6 @@ class MailboxStore {
     } else {
       this.active = nextId
       this.activeService = CoreMailbox.SERVICE_TYPES.DEFAULT
-      window.location.hash = '/'
       this.sendActiveStateToMainThread()
     }
   }
@@ -854,7 +852,6 @@ class MailboxStore {
     } else {
       this.active = nextId
       this.activeService = CoreMailbox.SERVICE_TYPES.DEFAULT
-      window.location.hash = '/'
       this.sendActiveStateToMainThread()
     }
   }
