@@ -9,3 +9,4 @@ Wavebox-win32-x64/
 Wavebox-win32-ia32-Installer/
 *.log
 credentials.js
+.DS_Store
