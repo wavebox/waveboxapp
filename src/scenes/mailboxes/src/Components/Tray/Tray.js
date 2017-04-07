@@ -79,7 +79,7 @@ module.exports = React.createClass({
     const mailboxMenuItems = mailboxState.allMailboxes().map((mailbox) => {
       const trayMessages = mailbox.trayMessages
       const messageItemsSignature = trayMessages.map((message) => message.id).join(':')
-      var messageItems = trayMessages.map((message) => {
+      let messageItems = trayMessages.map((message) => {
         return {
           id: message.id,
           label: message.text,
