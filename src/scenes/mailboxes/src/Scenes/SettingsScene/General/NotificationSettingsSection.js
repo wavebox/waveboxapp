@@ -31,7 +31,7 @@ module.exports = React.createClass({
         <Toggle
           toggled={os.notificationsEnabled}
           labelPosition='right'
-          label='Show new mail notifications'
+          label='Show new mail/message notifications'
           onToggle={(evt, toggled) => settingsActions.setNotificationsEnabled(toggled)} />
         <Toggle
           toggled={!os.notificationsSilent}

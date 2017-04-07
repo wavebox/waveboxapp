@@ -78,11 +78,15 @@ class NotificationService extends EventEmitter {
   * @param mailboxState: the current mailbox state
   */
   processNewNotifications (mailboxState) {
+    const settingsState = settingsStore.getState()
+    if (!settingsState.os.notificationsEnabled) { return }
+
     const now = new Date().getTime()
     const pendingNotifications = []
 
     // Look for notifications to send
     mailboxState.allMailboxes().forEach((mailbox) => {
+      if (!mailbox.showNotifications) { return }
       mailbox.notifications.forEach((notification) => {
         const id = `${mailbox.id}:${notification.id}`
         if (this.__state__.sent.has(id)) { return }
@@ -145,7 +149,10 @@ class NotificationService extends EventEmitter {
   * @return the notification objects
   */
   showNotifications (notifications) {
-    const silent = settingsStore.getState().os.notificationsSilent
+    const settingsState = settingsStore.getState()
+    if (!settingsState.os.notificationsEnabled) { return }
+
+    const silent = settingsState.os.notificationsSilent
     return notifications.map((notification) => {
       const title = this.formatText(notification.title, notification.titleFormat)
       const body = notification.body.map(({ content, format }) => {

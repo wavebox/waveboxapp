@@ -177,6 +177,7 @@ class SlackStore {
           }
         })
         rtm.on('message:desktop_notification', (data) => {
+          if (!mailbox.showNotifications) { return }
           NotificationService.showNotification({
             title: `${data.title} ${data.subtitle}`,
             body: [{ content: data.content }],
