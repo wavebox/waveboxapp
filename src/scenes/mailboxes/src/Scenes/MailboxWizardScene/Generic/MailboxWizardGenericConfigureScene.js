@@ -1,5 +1,5 @@
 const React = require('react')
-const { RaisedButton, Dialog, TextField } = require('material-ui')
+const { RaisedButton, FlatButton, Dialog, TextField } = require('material-ui')
 const shallowCompare = require('react-addons-shallow-compare')
 const GenericDefaultService = require('shared/Models/Accounts/Generic/GenericDefaultService')
 const { mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } = require('stores/mailbox')
@@ -57,6 +57,22 @@ module.exports = React.createClass({
   /* **************************************************************************/
 
   /**
+  * Handles the user pressing cancel
+  */
+  handleCancel (evt) {
+    // The mailbox has actually already been created at this point, so remove it.
+    // Ideally this shouldn't happen but because this is handled under a configuration
+    // step rather than an external creation step the mailbox is created early on in
+    // its lifecycle
+    mailboxActions.remove(this.props.params.mailboxId)
+
+    this.setState({ open: false })
+    setTimeout(() => {
+      window.location.hash = '/'
+    }, 250)
+  },
+
+  /**
   * Handles the user pressing next
   */
   handleNext (evt) {
@@ -107,13 +123,20 @@ module.exports = React.createClass({
   render () {
     const { open, displayName, displayNameError, serviceUrl, serviceUrlError } = this.state
 
+    const actions = (
+      <div>
+        <FlatButton label='Cancel' onClick={this.handleCancel} />
+        <RaisedButton label='Next' primary onClick={this.handleNext} />
+      </div>
+    )
+
     return (
       <Dialog
         open={open}
         contentStyle={{ width: '90%', maxWidth: 900 }}
         bodyClassName='ReactComponent-MaterialUI-Dialog-Body-Scrollbars'
         modal
-        actions={(<RaisedButton label='Next' primary onClick={this.handleNext} />)}
+        actions={actions}
         autoScrollBodyContent>
         <div style={styles.introduction}>
           Enter the web address and the name of the website you want
