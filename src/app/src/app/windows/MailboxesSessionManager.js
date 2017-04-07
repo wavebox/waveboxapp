@@ -98,15 +98,15 @@ class MailboxesSessionManager {
   * Handles a request for a permission from the client
   * @param webContents: the webcontents the request came from
   * @param permission: the permission name
-  * @param callback: execute with response
+  * @param fn: execute with response
   */
-  handlePermissionRequest (webContents, permission, callback) {
+  handlePermissionRequest (webContents, permission, fn) {
     if (permission === 'notifications') {
       const purl = url.parse(webContents.getURL())
       const disallowed = DISALLOWED_HTML5_NOTIFICATION_HOSTS.find((dis) => purl.host.indexOf(dis) !== -1)
-      disallowed ? callback(false) : callback(true)
+      disallowed ? fn(false) : fn(true)
     } else {
-      callback(true)
+      fn(true)
     }
   }
 
