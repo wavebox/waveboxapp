@@ -199,6 +199,8 @@ module.exports = React.createClass({
 
   goFoward () { return this.getWebviewNode().goFoward() },
 
+  getURL () { return this.getWebviewNode().getURL() },
+
   /* **************************************************************************/
   // IPC Utils
   /* **************************************************************************/

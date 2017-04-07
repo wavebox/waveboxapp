@@ -44,6 +44,7 @@ module.exports = React.createClass({
     mailboxDispatch.on('refocus', this.handleRefocus)
     mailboxDispatch.on('reload', this.handleReload)
     mailboxDispatch.respond('fetch-process-memory-info', this.handleFetchProcessMemoryInfo)
+    mailboxDispatch.addGetter('current-url', this.handleGetCurrentUrl)
     ipcRenderer.on('find-start', this.handleIPCSearchStart)
     ipcRenderer.on('find-next', this.handleIPCSearchNext)
     ipcRenderer.on('mailbox-window-navigate-back', this.handleIPCNavigateBack)
@@ -65,6 +66,7 @@ module.exports = React.createClass({
     mailboxDispatch.removeListener('refocus', this.handleRefocus)
     mailboxDispatch.removeListener('reload', this.handleReload)
     mailboxDispatch.unrespond('fetch-process-memory-info', this.handleFetchProcessMemoryInfo)
+    mailboxDispatch.removeGetter('current-url', this.handleGetCurrentUrl)
     ipcRenderer.removeListener('find-start', this.handleIPCSearchStart)
     ipcRenderer.removeListener('find-next', this.handleIPCSearchNext)
     ipcRenderer.removeListener('mailbox-window-navigate-back', this.handleIPCNavigateBack)
@@ -256,6 +258,20 @@ module.exports = React.createClass({
         memoryInfo: memoryInfo
       })
     })
+  },
+
+  /**
+  * Handles getting the current url
+  * @param mailboxId: the id of the mailbox
+  * @param serviceType: the type of service
+  * @return the current url or null if not applicable for use
+  */
+  handleGetCurrentUrl ({ mailboxId, serviceType }) {
+    if (mailboxId === this.props.mailboxId && serviceType === this.props.serviceType) {
+      return this.refs[BROWSER_REF].getURL()
+    } else {
+      return null
+    }
   },
 
   /* **************************************************************************/

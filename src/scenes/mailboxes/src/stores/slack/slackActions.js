@@ -48,6 +48,22 @@ class SlackActions {
   updateUnreadCounts (mailboxId, allowMultiple = false) {
     return { mailboxId: mailboxId, allowMultiple: allowMultiple }
   }
+
+  /* **************************************************************************/
+  // Notification
+  /* **************************************************************************/
+
+  /**
+  * Sends a slack notification on behalf of a mailbox
+  * @param mailboxId: the id of the mailbox
+  * @param message: the message that came off slack
+  */
+  scheduleNotification (mailboxId, message) {
+    return {
+      mailboxId: mailboxId,
+      message: message
+    }
+  }
 }
 
 module.exports = alt.createActions(SlackActions)

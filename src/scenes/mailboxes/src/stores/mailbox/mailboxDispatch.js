@@ -8,6 +8,7 @@ class MailboxDispatch extends EventEmitter {
   constructor () {
     super()
     this.__responders__ = {}
+    this.__getters__ = {}
   }
 
   /* **************************************************************************/
@@ -73,6 +74,76 @@ class MailboxDispatch extends EventEmitter {
   */
   fetchProcessMemoryInfo () {
     return this.request('fetch-process-memory-info')
+  }
+
+  /* **************************************************************************/
+  // Getters
+  /* **************************************************************************/
+
+  /**
+  * Adds a getter that will respond to an event
+  * @param name: the name of the getter
+  * @param fn: the function that acts as the getter
+  */
+  addGetter (name, fn) {
+    if (this.__getters__[name]) {
+      this.__getters__[name].push(fn)
+    } else {
+      this.__getters__[name] = [fn]
+    }
+  }
+
+  /**
+  * Removes a getter
+  * @param name: the name of the getter
+  * @param fn: the function to remove
+  */
+  removeGetter (name, fn) {
+    if (this.__getters__[name]) {
+      this.__getters__[name] = this.__getters__[name].filter((f) => f !== fn)
+    }
+  }
+
+  /**
+  * Makes a request on a getter
+  * @param mailboxId: the id of the mailbox
+  * @param name: the name of the getter
+  * @return the response or undefined if no getter is available
+  */
+  requestGetter (name, args = undefined, multiple = false) {
+    const getters = this.__getters__[name] || []
+    if (multiple) {
+      return getters.reduce((acc, fn) => {
+        const res = fn(args)
+        if (res !== null) { acc.push(res) }
+        return acc
+      }, [])
+    } else {
+      let returnValue = null
+      getters.find((fn) => {
+        const res = fn(args)
+        if (res === null) {
+          return false
+        } else {
+          returnValue = res
+          return true
+        }
+      })
+      return returnValue
+    }
+  }
+
+  /* **************************************************************************/
+  // Getters : Higher level
+  /* **************************************************************************/
+
+  /**
+  * Gets the current url for a mailbox
+  * @param mailboxId: the id of the mailbox
+  * @return promise with the current url
+  */
+  getCurrentUrl (mailboxId, serviceType) {
+    return this.requestGetter('current-url', { mailboxId: mailboxId, serviceType: serviceType })
   }
 
   /* **************************************************************************/

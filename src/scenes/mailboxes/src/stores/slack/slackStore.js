@@ -3,6 +3,7 @@ const actions = require('./slackActions')
 const {
   mailboxStore,
   mailboxActions,
+  mailboxDispatch,
   SlackMailboxReducer,
   SlackDefaultServiceReducer
 } = require('../mailbox')
@@ -82,7 +83,9 @@ class SlackStore {
       handleDisconnectAllMailboxes: actions.DISCONNECT_ALL_MAILBOXES,
       handleDisconnectMailbox: actions.DISCONNECT_MAILBOX,
 
-      handleUpdateUnreadCounts: actions.UPDATE_UNREAD_COUNTS
+      handleUpdateUnreadCounts: actions.UPDATE_UNREAD_COUNTS,
+
+      handleScheduleNotification: actions.SCHEDULE_NOTIFICATION
     })
   }
 
@@ -177,17 +180,9 @@ class SlackStore {
           }
         })
         rtm.on('message:desktop_notification', (data) => {
-          if (!mailbox.showNotifications) { return }
-          NotificationService.showNotification({
-            title: `${data.title} ${data.subtitle}`,
-            body: [{ content: data.content }],
-            data: {
-              mailboxId: mailboxId,
-              serviceType: SlackDefaultService.type,
-              channelId: data.channel
-            }
-          })
+          actions.scheduleNotification(mailboxId, data)
         })
+
         // These events are in-frequent and lazily acted upon. They require the counts to be re-synced
         rtm.on('message:bot_added', (data) => actions.updateUnreadCounts.defer(mailboxId))
         rtm.on('message:channel_archive', (data) => actions.updateUnreadCounts.defer(mailboxId))
@@ -315,6 +310,29 @@ class SlackStore {
         this.emitChange()
         console.error(err)
       })
+  }
+
+  handleScheduleNotification ({ mailboxId, message }) {
+    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
+    if (!mailbox) { return }
+    if (!mailbox.showNotifications) { return }
+
+    // Check to see if we're in the channel
+    const currentUrl = mailboxDispatch.getCurrentUrl(mailboxId, SlackDefaultService.type) || ''
+    if (currentUrl.indexOf(message.channel) !== -1) { return }
+    if (message.channel.indexOf('D') === 0) { // Handle DMs differently
+      if (currentUrl.indexOf('@' + message.subtitle.toLowerCase()) !== -1) { return }
+    }
+
+    NotificationService.showNotification({
+      title: `${message.title} ${message.subtitle}`,
+      body: [{ content: message.content }],
+      data: {
+        mailboxId: mailboxId,
+        serviceType: SlackDefaultService.type,
+        channelId: message.channel
+      }
+    })
   }
 }
 
