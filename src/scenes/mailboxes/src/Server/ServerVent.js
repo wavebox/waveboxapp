@@ -1,6 +1,7 @@
-const { Socket, LongPoll } = require('phoenixjs')
+const { Socket, LongPoll } = require('phoenix')
 const { EventEmitter } = require('events')
 const { SYNC_SOCKET_URL, SYNC_SOCKET_UPGRADE_INTERVAL } = require('shared/constants')
+const pkg = window.appPackage()
 
 const userActions = require('stores/user/userActions')
 const googleActions = require('stores/google/googleActions')
@@ -39,7 +40,9 @@ class ServerVent extends EventEmitter {
     this._socket = new Socket(SYNC_SOCKET_URL, {
       params: {
         clientId: clientId,
-        clientToken: clientToken
+        clientToken: clientToken,
+        version: pkg.version,
+        ident: pkg.name
       }
     })
     this._socket.onError(() => {
