@@ -79,7 +79,7 @@ module.exports = React.createClass({
     const mailboxMenuItems = mailboxState.allMailboxes().map((mailbox) => {
       const trayMessages = mailbox.trayMessages
       const messageItemsSignature = trayMessages.map((message) => message.id).join(':')
-      const messageItems = trayMessages.map((message) => {
+      var   messageItems = trayMessages.map((message) => {
         return {
           id: message.id,
           label: message.text,
@@ -91,13 +91,25 @@ module.exports = React.createClass({
         }
       })
 
+      messageItems.unshift(
+        {
+          label: "Open Account",
+          click: (e) => {
+            ipcRenderer.send('focus-app', { })
+            mailboxActions.changeActive(mailbox.__id__)
+          }
+        },
+
+        { type: 'separator' }
+      )
+
       return {
         signature: messageItemsSignature,
         label: [
           mailbox.unreadCount && mailbox.showUnreadBadge ? `(${mailbox.unreadCount})` : undefined,
           mailbox.displayName || 'Untitled'
         ].filter((item) => !!item).join(' '),
-        submenu: messageItems.length === 0 ? [
+        submenu: messageItems.length === 2 ? [...messageItems, 
           { label: 'No messages', enabled: false }
         ] : messageItems
       }
