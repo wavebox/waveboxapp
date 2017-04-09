@@ -22,7 +22,26 @@ If you're interested in finding out what's changed between each version you take
 
 # Building Wavebox
 
-To build Wavebox from source, you'll need to make sure you have the following installed:
+Here's how to build Wavebox from source.
+
+### Prerequisites
+Before you get started you'll need the following
 
 * Nodejs version 6 [download](https://nodejs.org/en/)
-* Wavebox custom build configuration [available here](https://docs.google.com/forms/d/e/1FAIpQLSeEihtO7sesPrRmoRfxRzBbeSYerxcCuKQ1TiV-R3UUq_aikw/viewform?usp=sf_link)
+* Wavebox API Key
+ * Download & install Wavebox for free
+ * Go to Settings and then the Wavebox Pro Tab
+ * In the top right if you see login, login for free otherwise continue to the next step
+ * In the top right click your email address and choose Developers
+ * Under the API Key section you can get your API Key
+
+### Build Configuration
+Once you've cloned the repository you will need to add your Wavebox API Key to the repository. This key will ensure that the client can talk to Google, Microsoft etc without needing to configure each one individually. Create a file in `src/shared/credentials.js` and in it place
+
+```js
+module.exports = { API_KEY: 'your_api_key' }
+```
+
+### Dependencies & Running
+* To install all Wavebox npm dependencies: npm run install:all 
+* To run compile and run the app npm start

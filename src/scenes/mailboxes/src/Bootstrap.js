@@ -10,7 +10,7 @@ class Bootstrap {
       clientId: window.bootstrap.clientId,
       clientToken: window.config.client_token || window.bootstrap.clientToken,
       accountJS: Object.assign({}, window.config.account_js || {}),
-      credentials: packagedCredentials.SERVER ? Object.assign({}, window.config.credentials) : packagedCredentials
+      credentials: packagedCredentials.API_KEY ? Object.assign({}, window.config.credentials) : packagedCredentials
     }
     delete window.config
     delete window.bootstrap

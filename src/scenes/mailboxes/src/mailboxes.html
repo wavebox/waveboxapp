@@ -92,6 +92,8 @@
         const querystring = require('querystring')
         const query = querystring.parse(window.location.search.substr(1))
         const start = new Date().getTime()
+        const pkg = require('../../app/package.json')
+        const credentials = require('../../app/shared/credentials')
         window.bootstrap = { clientId: query.clientId, clientToken: query.clientToken }
 
         const injectScript = function (url) {
@@ -114,9 +116,29 @@
         const offlineBounce = function () { return rejectBounce('CONNECTION_FAILURE') }
         const uauthorizedBounce = function (errorStr) { return rejectBounce(errorStr || 'UNAUTHORIZED') }
 
+        // Check for older clients
+        if (!credentials.API_KEY) {
+          console.warn([
+            'Deprication Warning: Missing API Key',
+            '',
+            'Rather than a credentials file, Wavebox now uses a uniform API Key. When support is added for additional services you wont need to enable them individually rather just git pull as usual.',
+            'Updated build instructions & how to get your API Key are on the project homepage https://github.com/wavebox/waveboxapp'
+          ].join('\n'))
+        }
+
         // Kick everything off
         Promise.resolve()
-          .then(() => fetch(`https://wavebox.io/client/${window.bootstrap.clientId}/init.json?token=${window.bootstrap.clientToken}&_=${new Date().getTime()}`))
+          .then(() => {
+            const query = querystring.stringify({
+              token: window.bootstrap.clientToken,
+              version: pkg.version,
+              ident: pkg.name,
+              api_key: credentials.API_KEY,
+              protocol: credentials.API_KEY ? 2 : 1,
+              '_': new Date().getTime()
+            })
+            return fetch(`https://wavebox.io/client/${window.bootstrap.clientId}/init.json?${query}`)
+          })
           .then((res) => {
             return res.text().then((text) => {
               let jsonContent
