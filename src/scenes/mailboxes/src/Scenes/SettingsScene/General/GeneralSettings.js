@@ -60,11 +60,8 @@ module.exports = React.createClass({
   * @param store=platformStore: the store to use
   */
   generatePlatformState (store = platformStore.getState()) {
-    const loginPref = store.loginPrefAssumed()
     return {
       openAtLoginSupported: store.loginPrefSupported(),
-      openAtLogin: loginPref.openAtLogin,
-      openAsHiddenAtLogin: loginPref.openAsHidden,
       mailtoLinkHandlerSupported: store.mailtoLinkHandlerSupported(),
       isMailtoLinkHandler: store.isMailtoLinkHandler()
     }
@@ -97,8 +94,6 @@ module.exports = React.createClass({
       language,
       tray,
       openAtLoginSupported,
-      openAtLogin,
-      openAsHiddenAtLogin,
       mailtoLinkHandlerSupported,
       isMailtoLinkHandler
     } = this.state
@@ -118,9 +113,7 @@ module.exports = React.createClass({
               <PlatformSettingsSection
                 mailtoLinkHandlerSupported={mailtoLinkHandlerSupported}
                 isMailtoLinkHandler={isMailtoLinkHandler}
-                openAtLoginSupported={openAtLoginSupported}
-                openAtLogin={openAtLogin}
-                openAsHiddenAtLogin={openAsHiddenAtLogin} />
+                openAtLoginSupported={openAtLoginSupported} />
               <TraySettingsSection tray={tray} />
               <InfoSettingsSection />
             </Col>

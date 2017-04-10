@@ -2,10 +2,20 @@ const alt = require('../alt')
 const actions = require('./platformActions')
 const { remote } = window.nativeRequire('electron')
 const WinRegistry = process.platform === 'win32' ? window.appNodeModulesRequire('winreg') : null
+const AutoLaunch = process.platform === 'darwin' ? window.appNodeModulesRequire('auto-launch') : null
 const path = require('path')
+const pkg = window.appPackage()
 
-const WIN32_LOGIN_PREF_MAX_AGE = 1000 * 30 // 30 secs
 const WIN32_REG_PATH = '\\Software\\Microsoft\\Windows\\CurrentVersion\\Run'
+const darwinLaunchPath = process.platform === 'darwin' ? (() => {
+  const execComponents = process.execPath.split(path.sep)
+  const launchIndex = execComponents.findIndex((token) => token.indexOf('.app') !== -1)
+  const launchPath = execComponents.slice(0, launchIndex + 1).join(path.sep)
+  return launchPath
+})() : null
+const win32LaunchPath = process.platform === 'win32' ? (() => {
+  return `${path.join(process.execPath, '../../Wavebox.exe')}`
+})() : null
 
 class PlatformStore {
   /* **************************************************************************/
@@ -13,12 +23,6 @@ class PlatformStore {
   /* **************************************************************************/
 
   constructor () {
-    this.win32LoginPrefs = {
-      lastSynced: 0,
-      openAtLogin: false,
-      openAsHidden: false
-    }
-
     /* ****************************************/
     // Open at login
     /* ****************************************/
@@ -27,35 +31,6 @@ class PlatformStore {
     * @return true if login preferences are supported on this platform
     */
     this.loginPrefSupported = () => { return process.platform === 'darwin' || process.platform === 'win32' }
-
-    /**
-    * @return { openAtLogin, openAsHidden } or null if not supported / unknown
-    */
-    this.loginPref = () => {
-      if (process.platform === 'darwin') {
-        const settings = remote.app.getLoginItemSettings()
-        return {
-          openAtLogin: settings.openAtLogin,
-          openAsHidden: settings.openAsHidden
-        }
-      } else if (process.platform === 'win32') {
-        this.resyncWindowsLoginPref()
-        return {
-          openAtLogin: this.win32LoginPrefs.openAtLogin,
-          openAsHidden: this.win32LoginPrefs.openAsHidden
-        }
-      } else {
-        return null
-      }
-    }
-
-    /**
-    * @return { openAtLogin, openAsHidden }. If state is unknown assumes false for both
-    */
-    this.loginPrefAssumed = () => {
-      const pref = this.loginPref()
-      return pref === null ? { openAtLogin: false, openAsHidden: false } : pref
-    }
 
     /* ****************************************/
     // Default Mail handler
@@ -87,63 +62,38 @@ class PlatformStore {
   }
 
   /* **************************************************************************/
-  // Login utils
-  /* **************************************************************************/
-
-  /**
-  * Resyncs the windows login pref if enough time has elapsed
-  */
-  resyncWindowsLoginPref () {
-    const now = new Date().getTime()
-    if (now - this.win32LoginPrefs.lastSynced < WIN32_LOGIN_PREF_MAX_AGE) { return }
-
-    this.win32LoginPrefs.lastSynced = now
-    const key = new WinRegistry({ hive: WinRegistry.HKCU, key: WIN32_REG_PATH })
-    key.get('Wavebox', (err, item) => {
-      if (err) {
-        this.win32LoginPrefs.openAtLogin = false
-        this.win32LoginPrefs.openAsHidden = false
-      } else {
-        this.win32LoginPrefs.openAtLogin = true
-        this.win32LoginPrefs.openAsHidden = item.value.indexOf('--hidden') !== -1
-      }
-      this.emitChange()
-    })
-  }
-
-  /* **************************************************************************/
   // Handlers: Login
   /* **************************************************************************/
 
   handleChangeLoginPref ({ openAtLogin, openAsHidden }) {
     if (process.platform === 'darwin') {
-      remote.app.setLoginItemSettings({
-        openAtLogin: openAtLogin,
-        openAsHidden: openAsHidden
+      const autoLaunch = new AutoLaunch({
+        name: pkg.name,
+        path: darwinLaunchPath,
+        isHidden: openAsHidden
       })
+      if (openAtLogin) {
+        autoLaunch.enable().catch((err) => {
+          console.error('Failed to configure autoLaunch', err)
+        })
+      } else {
+        autoLaunch.disable().catch((err) => {
+          console.error('Failed to configure autoLaunch', err)
+        })
+      }
     } else if (process.platform === 'win32') {
       const key = new WinRegistry({ hive: WinRegistry.HKCU, key: WIN32_REG_PATH })
       if (openAtLogin) {
         const value = [
-          `"${path.join(process.execPath, '../../Wavebox.exe')}"`,
+          win32LaunchPath,
           openAsHidden ? '--hidden' : ''
         ].filter((c) => !!c).join(' ')
         key.set('Wavebox', WinRegistry.REG_SZ, value, (err) => {
-          if (!err) {
-            this.win32LoginPrefs.lastSynced = new Date().getTime()
-            this.win32LoginPrefs.openAtLogin = true
-            this.win32LoginPrefs.openAsHidden = openAsHidden
-            this.emitChange()
-          }
+          console.error('Failed to configure autoLaunch', err)
         })
       } else {
         key.remove('Wavebox', (err) => {
-          if (!err) {
-            this.win32LoginPrefs.lastSynced = new Date().getTime()
-            this.win32LoginPrefs.openAtLogin = false
-            this.win32LoginPrefs.openAsHidden = false
-            this.emitChange()
-          }
+          console.error('Failed to configure autoLaunch', err)
         })
       }
     }

@@ -8,6 +8,7 @@
   "dependencies": {
     "addressparser": "1.0.1",
     "appdirectory": "0.1.0",
+    "auto-launch": "5.0.1",
     "dictionary-en-us": "1.2.0",
     "escape-html": "1.0.3",
     "fs-extra": "2.1.2",
