@@ -63,6 +63,17 @@ class MailboxReducer {
     })
   }
 
+  /**
+  * Sets if services are displayed in the sidebar when the account is not the active one
+  * @param mailbox: the mailbox to update
+  * @param collapse: true to collapse, false otherwise
+  */
+  static setCollapseSidebarServices (mailbox, collapse) {
+    return mailbox.changeData({
+      collapseSidebarServices: collapse
+    })
+  }
+
   /* **************************************************************************/
   // Lifecycle & Ordering
   /* **************************************************************************/

@@ -60,7 +60,7 @@ module.exports = React.createClass({
         <Toggle
           disabled={!userHasSleepable}
           toggled={service.sleepable}
-          label='Allow service to sleep tab when not in use'
+          label='Sleep tab when not in use'
           labelPosition='right'
           onToggle={(evt, toggled) => {
             mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setSleepable, toggled)

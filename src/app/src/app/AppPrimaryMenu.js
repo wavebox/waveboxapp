@@ -196,7 +196,7 @@ class AppPrimaryMenu {
         }))
         .concat(activeMailbox && activeMailbox.hasAdditionalServices ? [{ type: 'separator' }] : [])
         .concat(activeMailbox && activeMailbox.hasAdditionalServices ? activeMailbox.enabledServices.map((service, index) => {
-          const accelerator = process.platform === 'darwin' ? 'Command+alt+' + (index + 1) : 'Ctrl+Shift+' + (index + 1)
+          const accelerator = process.platform === 'darwin' ? 'Command+Alt+' + (index + 1) : 'Ctrl+Alt+' + (index + 1)
           return {
             label: service.humanizedType,
             type: 'radio',

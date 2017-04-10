@@ -173,6 +173,7 @@ class CoreMailbox extends Model {
   get customAvatarId () { return this.__data__.customAvatar }
   get color () { return this.__data__.color }
   get serviceDisplayMode () { return this._value_('serviceDisplayMode', SERVICE_DISPLAY_MODES.SIDEBAR) }
+  get collapseSidebarServices () { return this._value_('collapseSidebarServices', false) }
 
   /* **************************************************************************/
   // Properties : Behaviour

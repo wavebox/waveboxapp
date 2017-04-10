@@ -104,7 +104,12 @@ module.exports = {
   * Mailbox Item: Services
   */
   mailboxServiceIcons: {
-
+    transition: 'max-height 0.5s ease-in-out',
+    maxHeight: 500, // just an arbitrarily big number for the animation
+    overflow: 'hidden'
+  },
+  mailboxServiceIconsCollapsed: {
+    maxHeight: 0
   },
   mailboxServiceIconImage: {
     display: 'block',
