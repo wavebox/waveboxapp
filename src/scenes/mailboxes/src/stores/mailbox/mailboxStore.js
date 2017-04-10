@@ -914,6 +914,7 @@ class MailboxStore {
       this.preventDefault() // No change in this store
     } else if (mailbox.type === SlackMailbox.type) {
       slackActions.connectMailbox.defer(id)
+      slackActions.updateUnreadCounts.defer(id)
       this.preventDefault() // No change in this store
     } else if (mailbox.type === MicrosoftMailbox.type) {
       microsoftActions.syncMailboxProfile.defer(id)

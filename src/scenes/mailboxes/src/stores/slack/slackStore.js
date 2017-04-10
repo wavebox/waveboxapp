@@ -228,7 +228,7 @@ class SlackStore {
           response.team,
           response.self
         )
-        actions.updateUnreadCounts.defer(mailboxId, true)
+        actions.updateUnreadCounts.defer(mailboxId)
 
         this.emitChange()
       })
