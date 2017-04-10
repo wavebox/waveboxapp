@@ -8,6 +8,7 @@ const composeActions = require('stores/compose/composeActions')
 const updaterActions = require('stores/updater/updaterActions')
 const userActions = require('stores/user/userActions')
 const { ipcRenderer } = window.nativeRequire('electron')
+const Debug = require('Debug')
 
 // Load what we have in the db
 userActions.load()
@@ -15,6 +16,7 @@ mailboxActions.load()
 settingsActions.load()
 composeActions.load()
 updaterActions.load()
+Debug.load()
 
 // Remove loading
 ;(() => {

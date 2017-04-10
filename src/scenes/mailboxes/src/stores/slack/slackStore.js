@@ -13,6 +13,7 @@ const SlackHTTP = require('./SlackHTTP')
 const uuid = require('uuid')
 const NotificationService = require('../../Notifications/NotificationService')
 const { SLACK_FULL_COUNT_SYNC_INTERVAL } = require('shared/constants')
+const Debug = require('Debug')
 
 const REQUEST_TYPES = {
   UNREAD: 'UNREAD'
@@ -280,6 +281,7 @@ class SlackStore {
   * @param allowMultiple: set to true to relax the limit of concurrent request
   */
   handleUpdateUnreadCounts ({ mailboxId, allowMultiple }) {
+    Debug.flagLog('slackLogUnreadCounts', `[SLACK:UNREAD] call ${mailboxId}`)
     if (allowMultiple !== true && this.hasOpenRequest(REQUEST_TYPES.UNREAD, mailboxId)) {
       this.preventDefault()
       return
@@ -291,6 +293,7 @@ class SlackStore {
       this.preventDefault()
       return
     }
+    Debug.flagLog('slackLogUnreadCounts', `[SLACK:UNREAD] start ${mailboxId}`)
 
     const requestId = this.trackOpenRequest(REQUEST_TYPES.UNREAD, mailboxId)
     Promise.resolve()
@@ -304,11 +307,36 @@ class SlackStore {
         )
         this.trackCloseRequest(REQUEST_TYPES.UNREAD, mailboxId, requestId)
         this.emitChange()
+        if (Debug.flags.slackLogUnreadCounts) {
+          console.log(`[SLACK:UNREAD] success: ${mailboxId}`, JSON.stringify({
+            channels: response.channels.map((c) => {
+              return {
+                name: c.name,
+                mention_count: c.mention_count_display,
+                unread_count: c.unread_count_display
+              }
+            }),
+            groups: response.groups.map((g) => {
+              return {
+                name: g.name,
+                mention_count: g.mention_count_display,
+                unread_count: g.unread_count_display
+              }
+            }),
+            ims: response.ims.map((i) => {
+              return {
+                name: i.name,
+                dm_count: i.dm_count
+              }
+            })
+          }, null, 2))
+        }
       })
       .catch((err) => {
         this.trackCloseRequest(REQUEST_TYPES.UNREAD, mailboxId, requestId)
         this.emitChange()
         console.error(err)
+        Debug.flagLog('slackLogUnreadCounts', [`[SLACK:UNREAD] error: ${mailboxId}`, err])
       })
   }
 

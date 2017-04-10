@@ -62,7 +62,8 @@ module.exports = function (env) {
         Notifications: path.resolve(path.join(__dirname, 'src/Notifications')),
         Scenes: path.resolve(path.join(__dirname, 'src/Scenes')),
         Server: path.resolve(path.join(__dirname, 'src/Server')),
-        stores: path.resolve(path.join(__dirname, 'src/stores'))
+        stores: path.resolve(path.join(__dirname, 'src/stores')),
+        Debug: path.resolve(path.join(__dirname, 'src/Debug'))
       },
       modules: [
         path.join(__dirname, 'node_modules'),
