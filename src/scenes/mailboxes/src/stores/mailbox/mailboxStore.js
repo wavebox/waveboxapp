@@ -16,6 +16,7 @@ const SlackHTTP = require('../slack/SlackHTTP')
 const trelloActions = require('../trello/trelloActions')
 const MicrosoftHTTP = require('../microsoft/MicrosoftHTTP')
 const microsoftActions = require('../microsoft/microsoftActions')
+const mailboxDispatch = require('./mailboxDispatch')
 const { credentials } = require('R/Bootstrap')
 const {
   Google: { GoogleMailbox, GoogleDefaultService },
@@ -537,6 +538,7 @@ class MailboxStore {
           }, auth)
           actions.fullSyncMailbox.defer(provisionalId)
           actions.connectMailbox.defer(provisionalId)
+          setTimeout(() => { mailboxDispatch.reload(provisionalId) }, 500)
           window.location.hash = '/'
         } else {
           actions.create.defer(provisionalId, Object.assign(provisional, {
