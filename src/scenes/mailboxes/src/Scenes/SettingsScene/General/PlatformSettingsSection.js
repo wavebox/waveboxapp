@@ -1,14 +1,9 @@
 const React = require('react')
-const { Toggle, Paper, SelectField, MenuItem } = require('material-ui')
+const { Toggle, Paper, RaisedButton, Popover, Menu, MenuItem, FontIcon } = require('material-ui')
 const platformActions = require('stores/platform/platformActions')
 const styles = require('../SettingStyles')
 const shallowCompare = require('react-addons-shallow-compare')
-
-const LOGIN_OPEN_MODES = {
-  OFF: 'false|false',
-  ON: 'true|false',
-  ON_BACKGROUND: 'true|true'
-}
+const Colors = require('material-ui/styles/colors')
 
 module.exports = React.createClass({
   /* **************************************************************************/
@@ -19,9 +14,31 @@ module.exports = React.createClass({
   propTypes: {
     mailtoLinkHandlerSupported: React.PropTypes.bool.isRequired,
     isMailtoLinkHandler: React.PropTypes.bool.isRequired,
-    openAtLoginSupported: React.PropTypes.bool.isRequired,
-    openAtLogin: React.PropTypes.bool.isRequired,
-    openAsHiddenAtLogin: React.PropTypes.bool.isRequired
+    openAtLoginSupported: React.PropTypes.bool.isRequired
+  },
+
+  /* **************************************************************************/
+  // Component lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    this.openLoginHasBeenSetTO = null
+  },
+
+  componentWillUnmount () {
+    clearTimeout(this.openLoginHasBeenSetTO)
+  },
+
+  /* **************************************************************************/
+  // Data lifecycle
+  /* **************************************************************************/
+
+  getInitialState () {
+    return {
+      openLoginPopoverOpen: false,
+      openLoginPopoverAnchor: null,
+      openLoginHasBeenSet: false
+    }
   },
 
   /* **************************************************************************/
@@ -30,19 +47,22 @@ module.exports = React.createClass({
 
   /**
   * Handles the open at login state chaning
+  * @param evt: the event that fired
+  * @param openAtLogin: true to open at login
+  * @param openAsHidden: true to open as hidden
   */
-  handleOpenAtLoginChanged (evt, index, value) {
-    switch (value) {
-      case LOGIN_OPEN_MODES.removeListener:
-        platformActions.changeLoginPref(false, false)
-        break
-      case LOGIN_OPEN_MODES.ON:
-        platformActions.changeLoginPref(true, false)
-        break
-      case LOGIN_OPEN_MODES.ON_BACKGROUND:
-        platformActions.changeLoginPref(true, true)
-        break
-    }
+  handleOpenAtLoginChanged (evt, openAtLogin, openAsHidden) {
+    platformActions.changeLoginPref(openAtLogin, openAsHidden)
+    this.setState({ openLoginPopoverOpen: false })
+
+    clearTimeout(this.openLoginHasBeenSetTO)
+    this.openLoginHasBeenSetTO = setTimeout(() => {
+      this.setState({ openLoginHasBeenSet: true })
+      clearTimeout(this.openLoginHasBeenSetTO)
+      this.openLoginHasBeenSetTO = setTimeout(() => {
+        this.setState({ openLoginHasBeenSet: false })
+      }, 1500)
+    }, 100)
   },
 
   /* **************************************************************************/
@@ -62,6 +82,11 @@ module.exports = React.createClass({
       openAsHiddenAtLogin,
       ...passProps
     } = this.props
+    const {
+      openLoginPopoverOpen,
+      openLoginPopoverAnchor,
+      openLoginHasBeenSet
+    } = this.state
 
     if (!mailtoLinkHandlerSupported && !openAtLoginSupported) { return null }
 
@@ -76,15 +101,30 @@ module.exports = React.createClass({
             onToggle={(evt, toggled) => platformActions.changeMailtoLinkHandler(toggled)} />
         ) : undefined}
         {openAtLoginSupported ? (
-          <SelectField
-            fullWidth
-            floatingLabelText='Open at Login'
-            onChange={this.handleOpenAtLoginChanged}
-            value={`${openAtLogin}|${openAsHiddenAtLogin}`}>
-            <MenuItem value={LOGIN_OPEN_MODES.OFF} primaryText={'Don\'t open at login'} />
-            <MenuItem value={LOGIN_OPEN_MODES.ON} primaryText='Open at login' />
-            <MenuItem value={LOGIN_OPEN_MODES.ON_BACKGROUND} primaryText='Open at login (in background)' />
-          </SelectField>
+          <div style={{ marginTop: 8, marginBottom: 8 }}>
+            <RaisedButton
+              onTouchTap={(evt) => this.setState({ openLoginPopoverOpen: true, openLoginPopoverAnchor: evt.target })}
+              icon={openLoginHasBeenSet ? (<FontIcon className='material-icons' color={Colors.green600}>check</FontIcon>) : undefined}
+              label={openLoginHasBeenSet ? 'All Set' : 'System Startup Settings'} />
+            <Popover
+              open={openLoginPopoverOpen}
+              anchorEl={openLoginPopoverAnchor}
+              anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+              targetOrigin={{ horizontal: 'left', vertical: 'top' }}
+              onRequestClose={() => this.setState({ openLoginPopoverOpen: false })}>
+              <Menu>
+                <MenuItem
+                  onTouchTap={(evt) => this.handleOpenAtLoginChanged(evt, false, false)}
+                  primaryText={`Don't open at System Startup`} />
+                <MenuItem
+                  onTouchTap={(evt) => this.handleOpenAtLoginChanged(evt, true, false)}
+                  primaryText={'Open at System Startup'} />
+                <MenuItem
+                  onTouchTap={(evt) => this.handleOpenAtLoginChanged(evt, true, true)}
+                  primaryText={'Open hidden at System Startup'} />
+              </Menu>
+            </Popover>
+          </div>
         ) : undefined}
       </Paper>
     )
