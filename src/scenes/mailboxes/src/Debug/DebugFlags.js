@@ -23,6 +23,12 @@ class DebugFlags {
   get slackLogUnreadCounts () { return this.getValue('slackLogUnreadCounts', false) }
 
   /* **************************************************************************/
+  // Properties : Trello
+  /* **************************************************************************/
+
+  get trelloLogUnreadCounts () { return this.getValue('trelloLogUnreadCounts', false) }
+
+  /* **************************************************************************/
   // Properties : Google
   /* **************************************************************************/
 

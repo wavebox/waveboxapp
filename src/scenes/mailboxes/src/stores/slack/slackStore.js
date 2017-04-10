@@ -293,8 +293,8 @@ class SlackStore {
       this.preventDefault()
       return
     }
-    Debug.flagLog('slackLogUnreadCounts', `[SLACK:UNREAD] start ${mailboxId}`)
 
+    Debug.flagLog('slackLogUnreadCounts', `[SLACK:UNREAD] start ${mailboxId}`)
     const requestId = this.trackOpenRequest(REQUEST_TYPES.UNREAD, mailboxId)
     Promise.resolve()
       .then(() => SlackHTTP.fetchUnreadInfo(mailbox.authToken))
