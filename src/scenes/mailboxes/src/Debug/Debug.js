@@ -1,4 +1,5 @@
 const DebugFlags = require('./DebugFlags')
+const DebugTests = require('./DebugTests')
 
 class Debug {
   /* **************************************************************************/
@@ -7,6 +8,7 @@ class Debug {
 
   constructor () {
     this.flags = new DebugFlags()
+    this.tests = new DebugTests()
   }
 
   /**
@@ -14,7 +16,8 @@ class Debug {
   */
   load () {
     window.waveboxDebug = {
-      flags: {}
+      flags: {},
+      tests: this.tests
     }
   }
 

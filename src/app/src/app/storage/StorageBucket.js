@@ -33,6 +33,8 @@ class StorageBucket extends EventEmitter {
     ipcMain.on(`storageBucket:${bucketName}:getItem`, this._handleIPCGetItem.bind(this))
     ipcMain.on(`storageBucket:${bucketName}:allKeys`, this._handleIPCAllKeys.bind(this))
     ipcMain.on(`storageBucket:${bucketName}:allItems`, this._handleIPCAllItems.bind(this))
+    ipcMain.on(`storageBucket:${bucketName}:getStats`, this._handleIPCGetStats.bind(this))
+    ipcMain.on(`storageBucket:${bucketName}:measurePerformance`, this._handleIPCMeasurePerformance.bind(this))
   }
 
   checkAwake () { return true }
@@ -128,6 +130,86 @@ class StorageBucket extends EventEmitter {
       acc[key] = this.getJSONItem(key)
       return acc
     }, {})
+  }
+
+  /**
+  * @return the size of the file
+  */
+  getFileSize () {
+    const stats = fs.statSync(this.__path__, 'utf8')
+    return stats.size
+  }
+
+  /**
+  * @return the length of each key
+  */
+  getKeyLengths () {
+    return this.allKeys().reduce((acc, key) => {
+      const item = this.getItem(key)
+      if (item) {
+        acc[key] = item.length
+      }
+      return acc
+    }, {})
+  }
+
+  /**
+  * @return a set of stats for this bucket
+  */
+  getStats () {
+    return {
+      filesize: this.getFileSize(),
+      keyLengths: this.getKeyLengths(),
+      dataSize: JSON.stringify(this.__data__).length
+    }
+  }
+
+  /**
+  * @param runs=20: the amount of times to run each test
+  * @return some performance measures for this bucket
+  */
+  measurePerformance (runs = 20) {
+    const serialize = (() => {
+      const results = []
+      for (let i = 0; i < runs; i++) {
+        const start = new Date().getTime()
+        JSON.stringify(this.__data__)
+        const finish = new Date().getTime()
+        results.push(finish - start)
+      }
+      return results
+    })()
+
+    const flush = (() => {
+      const results = []
+      for (let i = 0; i < runs; i++) {
+        const data = JSON.stringify(this.__data__)
+        const testPath = `${this.__path__}.measure`
+        const start = new Date().getTime()
+        writeFileAtomic.sync(testPath, JSON.stringify(data))
+        const finish = new Date().getTime()
+        results.push(finish - start)
+      }
+      return results
+    })()
+
+    const both = (() => {
+      const results = []
+      for (let i = 0; i < runs; i++) {
+        const testPath = `${this.__path__}.measure`
+        const start = new Date().getTime()
+        writeFileAtomic.sync(testPath, JSON.stringify(this.__data__))
+        const finish = new Date().getTime()
+        results.push(finish - start)
+      }
+      return results
+    })()
+
+    return {
+      serialize: serialize,
+      flush: flush,
+      both: both
+    }
   }
 
   /* ****************************************************************************/
@@ -226,6 +308,28 @@ class StorageBucket extends EventEmitter {
     this._sendIPCResponse(evt, {
       id: body.id,
       response: this.allItems()
+    }, body.sync)
+  }
+
+  /**
+  * Gets stats for the database
+  * @param body: request body
+  */
+  _handleIPCGetStats (evt, body) {
+    this._sendIPCResponse(evt, {
+      id: body.id,
+      response: this.getStats()
+    }, body.sync)
+  }
+
+  /**
+  * Measures the buckets performance
+  * @param body: request body
+  */
+  _handleIPCMeasurePerformance (evt, body) {
+    this._sendIPCResponse(evt, {
+      id: body.id,
+      response: this.measurePerformance(body.runs)
     }, body.sync)
   }
 }
