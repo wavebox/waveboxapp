@@ -17,10 +17,16 @@ class DebugFlags {
   }
 
   /* **************************************************************************/
-  // Properties
+  // Properties : Slack
   /* **************************************************************************/
 
   get slackLogUnreadCounts () { return this.getValue('slackLogUnreadCounts', false) }
+
+  /* **************************************************************************/
+  // Properties : Google
+  /* **************************************************************************/
+
+  get googleLogServerPings () { return this.getValue('googleLogServerPings', false) }
 }
 
 module.exports = DebugFlags
