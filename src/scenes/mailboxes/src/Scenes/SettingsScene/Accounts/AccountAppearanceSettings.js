@@ -1,5 +1,5 @@
 const React = require('react')
-const { Paper, RaisedButton, FontIcon, SelectField, MenuItem } = require('material-ui')
+const { Paper, RaisedButton, FontIcon, SelectField, MenuItem, Toggle } = require('material-ui')
 const { ColorPickerButton } = require('Components')
 const { mailboxActions, MailboxReducer } = require('stores/mailbox')
 const styles = require('../SettingStyles')
@@ -100,6 +100,16 @@ module.exports = React.createClass({
             <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR} primaryText='Left Sidebar' />
             <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR} primaryText='Top Toolbar' />
           </SelectField>
+        ) : undefined}
+        {mailbox.supportsAdditionalServiceTypes ? (
+          <Toggle
+            toggled={mailbox.collapseSidebarServices}
+            disabled={mailbox.serviceDisplayMode !== CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR}
+            label='Collapse sidebar services when mailbox is inactive'
+            labelPosition='right'
+            onToggle={(evt, toggled) => {
+              mailboxActions.reduce(mailbox.id, MailboxReducer.setCollapseSidebarServices, toggled)
+            }} />
         ) : undefined}
       </Paper>
     )

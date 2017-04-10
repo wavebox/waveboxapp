@@ -8,7 +8,11 @@ class TrelloDefaultServiceReducer extends ServiceReducer {
   * @param notifications: the updated notifications
   */
   static setUnreadNotifications (mailbox, service, notifications) {
-    return service.changeData({ unreadNotifications: notifications })
+    return service.changeData({
+      unreadNotifications: notifications.filter((notif) => {
+        return notif.unread === true || notif.unread === undefined
+      })
+    })
   }
 }
 

@@ -38,6 +38,10 @@ const {
   AccountAuthenticatingScene,
   AccountStandaloneScene
 } = require('./AccountScene')
+const {
+  WmailImportCompleteScene,
+  WmailImportStartScene
+} = require('./WmailImportScene')
 
 module.exports = React.createClass({
 
@@ -91,6 +95,10 @@ module.exports = React.createClass({
               <Route path='auth(/:mode)' component={AccountAuthScene} />
               <Route path='authenticating' component={AccountAuthenticatingScene} />
               <Route path='view(?url=:url)' component={AccountStandaloneScene} />
+            </Route>
+            <Route path='wmailimport'>
+              <Route path='start' component={WmailImportStartScene} />
+              <Route path='complete' component={WmailImportCompleteScene} />
             </Route>
           </Route>
           <Redirect from='*' to='/' />

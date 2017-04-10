@@ -10,7 +10,7 @@
     "bootstrap-grid": "2.0.1",
     "color": "1.0.3",
     "fbjs": "0.8.12",
-    "material-ui": "0.17.1",
+    "material-ui": "0.17.2",
     "phoenix": "1.2.1",
     "qs": "6.4.0",
     "querystring": "0.2.0",
@@ -27,6 +27,6 @@
     "valid-url": "1.0.9"
   },
   "devDependencies": {
-    "standard": "9.0.2"
+    "standard": "10.0.1"
   }
 }

@@ -3,6 +3,7 @@ const { FontIcon, IconButton, FlatButton } = require('material-ui')
 const Colors = require('material-ui/styles/colors')
 const { mailboxActions } = require('stores/mailbox')
 const { userStore } = require('stores/user')
+const { wmailStore } = require('stores/wmail')
 
 const MicrosoftMailbox = require('shared/Models/Accounts/Microsoft/MicrosoftMailbox')
 const TrelloMailbox = require('shared/Models/Accounts/Trello/TrelloMailbox')
@@ -130,7 +131,8 @@ module.exports = React.createClass({
 
   getInitialState () {
     return {
-      user: userStore.getState().user
+      user: userStore.getState().user,
+      canImportWmail: wmailStore.getState().canImport()
     }
   },
 
@@ -148,6 +150,10 @@ module.exports = React.createClass({
 
   handleOpenAccount () {
     window.location.hash = '/settings/pro'
+  },
+
+  handleWmailImport () {
+    window.location.hash = '/wmailimport/start'
   },
 
   /* **************************************************************************/
@@ -170,6 +176,7 @@ module.exports = React.createClass({
   },
 
   render () {
+    const { canImportWmail } = this.state
     return (
       <div style={styles.container}>
         <div style={styles.welcomeContainer}>
@@ -210,6 +217,15 @@ module.exports = React.createClass({
               labelStyle={styles.actionLoginLabel}
               onClick={this.handleOpenAccount}
               primary />
+            {canImportWmail ? (
+              <FlatButton
+                label='Import everything from WMail'
+                labelPosition='before'
+                labelStyle={styles.actionLoginLabel}
+                onClick={this.handleWmailImport}
+                icon={<img style={{ height: 24 }} src='../../images/wmail_icon.svg' />}
+                primary />
+            ) : undefined}
           </div>
         </div>
       </div>

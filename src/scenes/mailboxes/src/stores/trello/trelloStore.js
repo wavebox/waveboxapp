@@ -10,6 +10,7 @@ const {
 const { TrelloMailbox } = require('shared/Models/Accounts/Trello')
 const TrelloHTTP = require('./TrelloHTTP')
 const uuid = require('uuid')
+const Debug = require('Debug')
 
 const REQUEST_TYPES = {
   PROFILE: 'PROFILE',
@@ -189,6 +190,7 @@ class TrelloStore {
   }
 
   handleSyncMailboxNotifications ({ mailboxId }) {
+    Debug.flagLog('trelloLogUnreadCounts', `[TRELLO:UNREAD] call ${mailboxId}`)
     if (this.hasOpenRequest(REQUEST_TYPES.NOTIFICATION, mailboxId)) {
       this.preventDefault()
       return
@@ -199,6 +201,7 @@ class TrelloStore {
       return
     }
 
+    Debug.flagLog('trelloLogUnreadCounts', `[TRELLO:UNREAD] start ${mailboxId}`)
     const requestId = this.trackOpenRequest(REQUEST_TYPES.NOTIFICATION, mailboxId)
     TrelloHTTP.fetchUnreadNotifications(mailbox.authAppKey, mailbox.authToken)
       .then((notifications) => {
@@ -210,11 +213,15 @@ class TrelloStore {
           notifications || []
         )
         this.emitChange()
+        if (Debug.flags.trelloLogUnreadCounts) {
+          console.log(`[TRELLO:UNREAD] success: ${mailboxId}`, JSON.stringify(notifications, null, 2))
+        }
       })
       .catch((err) => {
         this.trackCloseRequest(REQUEST_TYPES.NOTIFICATION, mailboxId, requestId)
         console.error(err)
         this.emitChange()
+        Debug.flagLog('trelloLogUnreadCounts', [`[TRELLO:UNREAD] error: ${mailboxId}`, err])
       })
   }
 

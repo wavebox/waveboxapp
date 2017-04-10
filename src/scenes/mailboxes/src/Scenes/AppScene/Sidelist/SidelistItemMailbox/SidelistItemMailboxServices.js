@@ -26,11 +26,22 @@ module.exports = React.createClass({
   },
 
   render () {
-    const { mailbox, isActiveMailbox, activeService, onOpenService, onContextMenuService } = this.props
+    const {
+      mailbox,
+      isActiveMailbox,
+      activeService,
+      onOpenService,
+      onContextMenuService
+    } = this.props
     if (!mailbox.hasAdditionalServices) { return null }
 
+    const style = Object.assign({},
+      styles.mailboxServiceIcons,
+      mailbox.collapseSidebarServices && !isActiveMailbox ? styles.mailboxServiceIconsCollapsed : undefined
+    )
+
     return (
-      <div style={styles.mailboxServiceIcons}>
+      <div style={style}>
         {mailbox.additionalServiceTypes.map((serviceType) => {
           return (
             <SidelistItemMailboxService

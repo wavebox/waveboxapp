@@ -162,6 +162,35 @@ class StorageBucket {
     }, {})
   }
 
+  /**
+  * @return promise with the stats
+  */
+  getStats () {
+    return new Promise((resolve) => {
+      const id = this._nextCallId()
+      this.__responseHandlers__.set(id, (body) => {
+        resolve(body.response)
+      })
+
+      ipcRenderer.send(`storageBucket:${this.__bucketName__}:getStats`, { id: id })
+    })
+  }
+
+  /**
+  * @param runs=20: the test runs to perform
+  * @return promise with the performance measures
+  */
+  measurePerformance (runs = 20) {
+    return new Promise((resolve) => {
+      const id = this._nextCallId()
+      this.__responseHandlers__.set(id, (body) => {
+        resolve(body.response)
+      })
+
+      ipcRenderer.send(`storageBucket:${this.__bucketName__}:measurePerformance`, { id: id, runs: runs })
+    })
+  }
+
   /* ****************************************************************************/
   // Modifiers
   /* ****************************************************************************/

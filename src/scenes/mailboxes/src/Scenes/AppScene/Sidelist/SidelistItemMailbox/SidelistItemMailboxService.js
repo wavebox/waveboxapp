@@ -45,7 +45,15 @@ module.exports = React.createClass({
   },
 
   render () {
-    const { mailbox, isActiveMailbox, isActiveService, serviceType, onOpenService, ...passProps } = this.props
+    const {
+      mailbox,
+      isActiveMailbox,
+      isActiveService,
+      serviceType,
+      onOpenService,
+      style,
+      ...passProps
+    } = this.props
     const { isHovering } = this.state
     const isActive = isActiveMailbox && isActiveService
 
@@ -61,7 +69,7 @@ module.exports = React.createClass({
         backgroundColor='white'
         draggable={false}
         onClick={(evt) => onOpenService(evt, serviceType)}
-        style={Object.assign({ borderColor: borderColor }, baseStyle)} />
+        style={Object.assign({}, style, { borderColor: borderColor }, baseStyle)} />
     )
   }
 })

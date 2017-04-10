@@ -64,6 +64,14 @@ module.exports = React.createClass({
   },
 
   /**
+  * Re-syncs the mailbox
+  */
+  handleResync () {
+    mailboxActions.fullSyncMailbox(this.props.mailbox.id)
+    this.handleClosePopover()
+  },
+
+  /**
   * Moves this item up
   */
   handleMoveUp () {
@@ -98,6 +106,9 @@ module.exports = React.createClass({
     })
   },
 
+  /**
+  * Handles reauthenticting the mailbox
+  */
   handleReauthenticate () {
     mailboxActions.reauthenticateMailbox(this.props.mailbox.id)
     this.handleClosePopover()
@@ -180,6 +191,11 @@ module.exports = React.createClass({
         primaryText='Reload'
         onClick={this.handleReload}
         leftIcon={<FontIcon className='material-icons'>refresh</FontIcon>} />),
+      (<MenuItem
+        key='sync'
+        primaryText='Resync'
+        onClick={this.handleResync}
+        leftIcon={<FontIcon className='material-icons'>sync</FontIcon>} />),
       (<MenuItem
         key='inspect'
         primaryText='Inspect'

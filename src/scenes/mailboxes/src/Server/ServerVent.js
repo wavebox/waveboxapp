@@ -2,6 +2,7 @@ const { Socket, LongPoll } = require('phoenix')
 const { EventEmitter } = require('events')
 const { SYNC_SOCKET_URL, SYNC_SOCKET_UPGRADE_INTERVAL } = require('shared/constants')
 const pkg = window.appPackage()
+const Debug = require('Debug')
 
 const userActions = require('stores/user/userActions')
 const googleActions = require('stores/google/googleActions')
@@ -150,7 +151,10 @@ class ServerVent extends EventEmitter {
         channel.leave()
         this._pushChannels.delete(mailboxId)
       })
-    channel.on('historyChanged', googleActions.mailHistoryIdChangedFromWatch)
+    channel.on('historyChanged', (data) => {
+      googleActions.mailHistoryIdChangedFromWatch(data)
+      Debug.flagLog('googleLogServerPings', `[GOOGLE:PING] unread ${data.emailAddress}`)
+    })
     this._pushChannels.set(mailboxId, channel)
     return this
   }
