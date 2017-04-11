@@ -26,11 +26,17 @@ module.exports = React.createClass({
   */
   handleOpenNewWindow (url) {
     const purl = URI(url)
-    if (purl.hostname() === 'hangouts.google.com' && purl.pathname().indexOf('/CONVERSATION/') !== -1) {
-      MailboxLinker.openContentWindow(url, this.props.mailboxId)
-    } else {
-      MailboxLinker.openExternalWindow(url)
+    if (purl.hostname() === 'hangouts.google.com') {
+      const pathname = purl.pathname()
+      if (pathname.indexOf('/CONVERSATION/') !== -1) {
+        MailboxLinker.openContentWindow(url, this.props.mailboxId)
+        return
+      } else if (pathname.indexOf('/hangouts/_/meet') !== -1) {
+        MailboxLinker.openContentWindow(url, this.props.mailboxId)
+        return
+      }
     }
+    MailboxLinker.openExternalWindow(url)
   },
 
   /* **************************************************************************/
