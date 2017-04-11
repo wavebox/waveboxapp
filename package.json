@@ -28,9 +28,6 @@
   "license": "MPL-2.0",
   "repository": "https://github.com/wavebox/waveboxapp",
   "main": "bin/app/index.js",
-  "optionalDependencies": {
-    "appdmg": "0.4.5"
-  },
   "dependencies": {
     "babel": "6.23.0",
     "babel-core": "6.24.1",
