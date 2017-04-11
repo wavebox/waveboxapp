@@ -317,14 +317,14 @@ class SettingsActions {
   * @param val: the mouse clicks that will trigger the action
   */
   setMouseTrigger (val) {
-    return this.update(SEGMENTS.TRAY, 'mouseTrigger', parseInt(val))
+    return this.update(SEGMENTS.TRAY, 'mouseTrigger', val)
   }
 
   /**
   * @param val: the action to take when the mouse is triggered
   */
   setMouseTriggerAction (val) {
-    return this.update(SEGMENTS.TRAY, 'mouseTriggerAction', parseInt(val))
+    return this.update(SEGMENTS.TRAY, 'mouseTriggerAction', val)
   }
 }
 

@@ -78,8 +78,6 @@ module.exports = React.createClass({
       mailtoLinkHandlerSupported,
       isMailtoLinkHandler,
       openAtLoginSupported,
-      openAtLogin,
-      openAsHiddenAtLogin,
       ...passProps
     } = this.props
     const {

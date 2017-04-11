@@ -7,7 +7,9 @@ const { mailboxStore, mailboxActions, mailboxDispatch } = require('stores/mailbo
 const { BLANK_PNG } = require('shared/b64Assets')
 const TrayRenderer = require('./TrayRenderer')
 const uuid = require('uuid')
-const constants = require('../../../../../shared/constants')
+const {
+  TraySettings: { MOUSE_TRIGGERS, MOUSE_TRIGGER_ACTIONS }
+} = require('shared/Models/Settings')
 
 module.exports = React.createClass({
   /* **************************************************************************/
@@ -19,14 +21,6 @@ module.exports = React.createClass({
     unreadCount: React.PropTypes.number.isRequired,
     traySettings: React.PropTypes.object.isRequired
   },
-  statics: {
-    platformSupportsDpiMultiplier: () => {
-      return process.platform === 'darwin' || process.platform === 'linux'
-    },
-    platformSupportsDoubleClick: () => {
-      return process.platform === 'win32' || process.platform === 'darwin'
-    }
-  },
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -37,13 +31,13 @@ module.exports = React.createClass({
     this.appTray = new Tray(nativeImage.createFromDataURL(BLANK_PNG))
     if (process.platform === 'win32') {
       this.appTray.on('double-click', () => {
-        if (traySettings.mouseTrigger === constants.MOUSE_TRIGGERS.DOUBLE) {
-          ipcRenderer.send(traySettings.mouseTriggerAction === constants.MOUSE_TRIGGER_ACTIONS.TOGGLE ? 'toggle-mailbox-visibility-from-tray' : 'show-mailbox-from-tray')
+        if (traySettings.mouseTrigger === MOUSE_TRIGGERS.DOUBLE) {
+          ipcRenderer.send(traySettings.mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? 'toggle-mailbox-visibility-from-tray' : 'show-mailbox-from-tray')
         }
       })
       this.appTray.on('click', () => {
-        if (traySettings.mouseTrigger === constants.MOUSE_TRIGGERS.SINGLE) {
-          ipcRenderer.send(traySettings.mouseTriggerAction === constants.MOUSE_TRIGGER_ACTIONS.TOGGLE ? 'toggle-mailbox-visibility-from-tray' : 'show-mailbox-from-tray')
+        if (traySettings.mouseTrigger === MOUSE_TRIGGERS.SINGLE) {
+          ipcRenderer.send(traySettings.mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? 'toggle-mailbox-visibility-from-tray' : 'show-mailbox-from-tray')
         }
       })
     } else if (process.platform === 'linux') {

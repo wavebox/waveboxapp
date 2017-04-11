@@ -1,7 +1,25 @@
 const Model = require('../Model')
-const constants = require('../../../shared/constants')
+
+const MOUSE_TRIGGERS = Object.assign({
+  SINGLE: 'SINGLE',
+  DOUBLE: 'DOUBLE'
+})
+
+const MOUSE_TRIGGER_ACTIONS = Object.assign({
+  TOGGLE: 'TOGGLE',
+  SHOW: 'SHOW'
+})
 
 class TraySettings extends Model {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get MOUSE_TRIGGERS () { return MOUSE_TRIGGERS }
+  static get MOUSE_TRIGGER_ACTIONS () { return MOUSE_TRIGGER_ACTIONS }
+  static get SUPPORTS_MOUSE_TRIGGERS () { return process.platform === 'win32' }
+  static get SUPPORTS_TRAY_MINIMIZE () { return process.platform === 'win32' }
+
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
@@ -21,8 +39,8 @@ class TraySettings extends Model {
 
   get show () { return this._value_('show', true) }
   get showUnreadCount () { return this._value_('showUnreadCount', true) }
-  get mouseTrigger () { return this._value_('mouseTrigger', constants.MOUSE_TRIGGERS.SINGLE) }
-  get mouseTriggerAction () { return this._value_('mouseTriggerAction', constants.MOUSE_TRIGGER_ACTIONS.TOGGLE) }
+  get mouseTrigger () { return this._value_('mouseTrigger', MOUSE_TRIGGERS.SINGLE) }
+  get mouseTriggerAction () { return this._value_('mouseTriggerAction', MOUSE_TRIGGER_ACTIONS.TOGGLE) }
   get hideWhenMinimized () { return this._value_('hideWhenMinimized', false) }
   get hideWhenClosed () { return this._value_('hideWhenClosed', true) }
   get readColor () { return this._value_('readColor', this.__themedDefaults__.readColor) }

@@ -1,5 +1,8 @@
 const {app} = require('electron')
 const settingStore = require('../stores/settingStore')
+const {
+  TraySettings: { SUPPORTS_TRAY_MINIMIZE }
+} = require('../../shared/Models/Settings')
 
 class WindowManager {
   /* ****************************************************************************/
@@ -31,7 +34,18 @@ class WindowManager {
   handleClose (evt) {
     if (!this.forceQuit) {
       this.contentWindows.forEach((w) => w.close())
-      if (process.platform === 'darwin' || (settingStore.tray.show && settingStore.tray.hideWhenClosed)) {
+
+      let hide = false
+      if (SUPPORTS_TRAY_MINIMIZE) {
+        if (settingStore.tray.show && settingStore.tray.hideWhenClosed) {
+          hide = true
+        }
+      }
+      if (process.platform === 'darwin') {
+        hide = true
+      }
+
+      if (hide) {
         this.mailboxesWindow.hide()
         evt.preventDefault()
         this.forceQuit = false

@@ -3,6 +3,9 @@ const EventEmitter = require('events')
 const settingStore = require('../stores/settingStore')
 const appStorage = require('../storage/appStorage')
 const path = require('path')
+const {
+  TraySettings: { SUPPORTS_TRAY_MINIMIZE }
+} = require('../../shared/Models/Settings')
 
 class WMailWindow extends EventEmitter {
   /* ****************************************************************************/
@@ -76,10 +79,11 @@ class WMailWindow extends EventEmitter {
     }
 
     this.window.on('minimize', (evt) => {
-      if (settingStore.tray.hideWhenMinimized) {
-        this.window.hide()
-
-        evt.preventDefault()
+      if (SUPPORTS_TRAY_MINIMIZE) {
+        if (settingStore.tray.show && settingStore.tray.hideWhenMinimized) {
+          evt.preventDefault()
+          this.window.hide()
+        }
       }
     })
 

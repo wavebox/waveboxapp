@@ -1,10 +1,17 @@
 const React = require('react')
 const { Toggle, Paper, SelectField, MenuItem } = require('material-ui')
-const { Tray: { Tray, TrayIconEditor } } = require('Components')
+const { Tray: { TrayIconEditor } } = require('Components')
 const settingsActions = require('stores/settings/settingsActions')
 const styles = require('../SettingStyles')
 const shallowCompare = require('react-addons-shallow-compare')
-const constants = require('../../../../../../shared/constants')
+const {
+  TraySettings: {
+    MOUSE_TRIGGERS,
+    MOUSE_TRIGGER_ACTIONS,
+    SUPPORTS_MOUSE_TRIGGERS,
+    SUPPORTS_TRAY_MINIMIZE
+  }
+} = require('shared/Models/Settings')
 
 module.exports = React.createClass({
   /* **************************************************************************/
@@ -42,53 +49,55 @@ module.exports = React.createClass({
             labelPosition='right'
             disabled={!tray.show}
             onToggle={(evt, toggled) => settingsActions.setShowTrayUnreadCount(toggled)} />
-          <Toggle
-            toggled={tray.hideWhenClosed}
-            disabled={!tray.show}
-            label='Hide main window when closed'
-            labelPosition='right'
-            onToggle={(evt, toggled) => { settingsActions.setHideWhenClosed(toggled) }} />
-          <Toggle
-            toggled={tray.hideWhenMinimized}
-            disabled={!tray.show}
-            label='Hide main window when minimized'
-            labelPosition='right'
-            onToggle={(evt, toggled) => { settingsActions.setHideWhenMinimized(toggled) }} />
-          {Tray.platformSupportsDoubleClick() ? (
+          {SUPPORTS_TRAY_MINIMIZE ? (
+            <Toggle
+              toggled={tray.hideWhenClosed}
+              disabled={!tray.show}
+              label='Hide main window to tray on closed'
+              labelPosition='right'
+              onToggle={(evt, toggled) => { settingsActions.setHideWhenClosed(toggled) }} />
+          ) : undefined}
+          {SUPPORTS_TRAY_MINIMIZE ? (
+            <Toggle
+              toggled={tray.hideWhenMinimized}
+              disabled={!tray.show}
+              label='Hide main window to tray on minimize'
+              labelPosition='right'
+              onToggle={(evt, toggled) => { settingsActions.setHideWhenMinimized(toggled) }} />
+          ) : undefined}
+          {SUPPORTS_MOUSE_TRIGGERS ? (
             <SelectField
               fullWidth
               floatingLabelText='Mouse trigger'
               disabled={!tray.show}
               onChange={(evt, index, value) => settingsActions.setMouseTrigger(value)}
               value={tray.mouseTrigger}>
-              <MenuItem value={constants.MOUSE_TRIGGERS.SINGLE} primaryText='Single click' />
-              <MenuItem value={constants.MOUSE_TRIGGERS.DOUBLE} primaryText='Double click' />
+              <MenuItem value={MOUSE_TRIGGERS.SINGLE} primaryText='Single click' />
+              <MenuItem value={MOUSE_TRIGGERS.DOUBLE} primaryText='Double click' />
             </SelectField>
           ) : undefined }
-          {Tray.platformSupportsDoubleClick() ? (
+          {SUPPORTS_MOUSE_TRIGGERS ? (
             <SelectField
               fullWidth
-              floatingLabelText='Mouse action'
+              floatingLabelText='Mouse trigger action'
               disabled={!tray.show}
               onChange={(evt, index, value) => settingsActions.setMouseTriggerAction(value)}
               value={tray.mouseTriggerAction}>
-              <MenuItem value={constants.MOUSE_TRIGGER_ACTIONS.TOGGLE} primaryText='Toggle window visibility' />
-              <MenuItem value={constants.MOUSE_TRIGGER_ACTIONS.SHOW} primaryText='Show window' />
+              <MenuItem value={MOUSE_TRIGGER_ACTIONS.TOGGLE} primaryText='Toggle window visibility' />
+              <MenuItem value={MOUSE_TRIGGER_ACTIONS.SHOW} primaryText='Show window' />
             </SelectField>
           ) : undefined }
-          {Tray.platformSupportsDpiMultiplier() ? (
-            <SelectField
-              floatingLabelText='DPI Multiplier'
-              disabled={!tray.show}
-              value={tray.dpiMultiplier}
-              onChange={(evt, index, value) => settingsActions.setDpiMultiplier(value)}>
-              <MenuItem value={1} primaryText='1x' />
-              <MenuItem value={2} primaryText='2x' />
-              <MenuItem value={3} primaryText='3x' />
-              <MenuItem value={4} primaryText='4x' />
-              <MenuItem value={5} primaryText='5x' />
-            </SelectField>
-          ) : undefined }
+          <SelectField
+            floatingLabelText='DPI Multiplier'
+            disabled={!tray.show}
+            value={tray.dpiMultiplier}
+            onChange={(evt, index, value) => settingsActions.setDpiMultiplier(value)}>
+            <MenuItem value={1} primaryText='1x' />
+            <MenuItem value={2} primaryText='2x' />
+            <MenuItem value={3} primaryText='3x' />
+            <MenuItem value={4} primaryText='4x' />
+            <MenuItem value={5} primaryText='5x' />
+          </SelectField>
         </div>
         <br />
         <TrayIconEditor tray={tray} />
