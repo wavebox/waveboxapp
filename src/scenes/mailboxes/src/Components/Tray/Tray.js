@@ -127,7 +127,7 @@ module.exports = React.createClass({
   */
   handleMouseTriggerClick () {
     const { mouseTrigger, mouseTriggerAction } = this.props.traySettings
-    if (mouseTrigger === MOUSE_TRIGGERS.DOUBLE) {
+    if (mouseTrigger === MOUSE_TRIGGERS.SINGLE) {
       ipcRenderer.send(mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? 'toggle-mailbox-visibility-from-tray' : 'show-mailbox-from-tray')
     }
   },
@@ -137,7 +137,7 @@ module.exports = React.createClass({
   */
   handleMouseTriggerDoubleClick () {
     const { mouseTrigger, mouseTriggerAction } = this.props.traySettings
-    if (mouseTrigger === MOUSE_TRIGGERS.SINGLE) {
+    if (mouseTrigger === MOUSE_TRIGGERS.DOUBLE) {
       ipcRenderer.send(mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? 'toggle-mailbox-visibility-from-tray' : 'show-mailbox-from-tray')
     }
   },
