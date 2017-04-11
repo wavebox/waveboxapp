@@ -78,6 +78,10 @@
     windowManager.toggleMailboxWindowVisibilityFromTray()
   })
 
+  ipcMain.on('show-mailbox-from-tray', (evt, body) => {
+    windowManager.showMailboxWindowFromTray()
+  })
+
   ipcMain.on('quit-app', (evt, body) => {
     windowManager.quit()
   })

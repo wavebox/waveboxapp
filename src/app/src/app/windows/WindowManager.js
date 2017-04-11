@@ -31,7 +31,7 @@ class WindowManager {
   handleClose (evt) {
     if (!this.forceQuit) {
       this.contentWindows.forEach((w) => w.close())
-      if (process.platform === 'darwin' || settingStore.tray.show) {
+      if (process.platform === 'darwin' || (settingStore.tray.show && settingStore.tray.hideWhenClosed)) {
         this.mailboxesWindow.hide()
         evt.preventDefault()
         this.forceQuit = false
@@ -123,6 +123,14 @@ class WindowManager {
         this.mailboxesWindow.focus()
       }
     }
+  }
+
+  /**
+  * Shows and focuses the mailboxes window
+  */
+  showMailboxWindowFromTray () {
+    this.mailboxesWindow.show()
+    this.mailboxesWindow.focus()
   }
 
   /* ****************************************************************************/

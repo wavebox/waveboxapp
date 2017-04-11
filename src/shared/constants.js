@@ -57,5 +57,15 @@ module.exports = Object.freeze({
   UPDATE_FEED_WIN32_IA32: 'https://wavebox.io/squirrel/win32_ia32/updates/latest/',
   UPDATE_FEED_WIN32_X64: 'https://wavebox.io/squirrel/win32_x86_64/updates/latest/',
   UPDATE_FEED_MANUAL: 'https://wavebox.io/updates/latest/',
-  UPDATE_CHECK_INTERVAL: 1000 * 60 * 60 * 12 // 12 hours
+  UPDATE_CHECK_INTERVAL: 1000 * 60 * 60 * 12, // 12 hours
+
+  MOUSE_TRIGGERS: {
+    SINGLE: 0,
+    DOUBLE: 1
+  },
+
+  MOUSE_TRIGGER_ACTIONS: {
+    TOGGLE: 0,
+    SHOW: 1
+  }
 })
