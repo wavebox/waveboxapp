@@ -27,27 +27,16 @@ module.exports = React.createClass({
   /* **************************************************************************/
 
   componentWillMount () {
-    const { traySettings } = this.props
     this.appTray = new Tray(nativeImage.createFromDataURL(BLANK_PNG))
     if (process.platform === 'win32') {
-      this.appTray.on('double-click', () => {
-        if (traySettings.mouseTrigger === MOUSE_TRIGGERS.DOUBLE) {
-          ipcRenderer.send(traySettings.mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? 'toggle-mailbox-visibility-from-tray' : 'show-mailbox-from-tray')
-        }
-      })
-      this.appTray.on('click', () => {
-        if (traySettings.mouseTrigger === MOUSE_TRIGGERS.SINGLE) {
-          ipcRenderer.send(traySettings.mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? 'toggle-mailbox-visibility-from-tray' : 'show-mailbox-from-tray')
-        }
-      })
+      this.appTray.on('double-click', this.handleMouseTriggerDoubleClick)
+      this.appTray.on('click', this.handleMouseTriggerClick)
     } else if (process.platform === 'linux') {
       // On platforms that have app indicator support - i.e. ubuntu clicking on the
       // icon will launch the context menu. On other linux platforms the context
       // menu is opened on right click. For app indicator platforms click event
       // is ignored
-      this.appTray.on('click', () => {
-        ipcRenderer.send('toggle-mailbox-visibility-from-tray')
-      })
+      this.appTray.on('click', this.handleToggleVisibility)
     }
   },
 
@@ -127,6 +116,37 @@ module.exports = React.createClass({
       mailboxOverviews: mailboxMenuItems,
       mailboxOverviewsSig: mailboxMenuItems.map((m) => m.signature).join('|')
     }
+  },
+
+  /* **************************************************************************/
+  // Action handlers
+  /* **************************************************************************/
+
+  /**
+  * Handles a mouse trigger click
+  */
+  handleMouseTriggerClick () {
+    const { mouseTrigger, mouseTriggerAction } = this.props.traySettings
+    if (mouseTrigger === MOUSE_TRIGGERS.DOUBLE) {
+      ipcRenderer.send(mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? 'toggle-mailbox-visibility-from-tray' : 'show-mailbox-from-tray')
+    }
+  },
+
+  /**
+  * Handles a mouse trigger double click
+  */
+  handleMouseTriggerDoubleClick () {
+    const { mouseTrigger, mouseTriggerAction } = this.props.traySettings
+    if (mouseTrigger === MOUSE_TRIGGERS.SINGLE) {
+      ipcRenderer.send(mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? 'toggle-mailbox-visibility-from-tray' : 'show-mailbox-from-tray')
+    }
+  },
+
+  /**
+  * Toggles the apps visibility
+  */
+  handleToggleVisibility () {
+    ipcRenderer.send('toggle-mailbox-visibility-from-tray')
   },
 
   /* **************************************************************************/
