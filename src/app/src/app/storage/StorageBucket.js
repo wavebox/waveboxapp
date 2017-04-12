@@ -4,12 +4,15 @@ const AppDirectory = require('appdirectory')
 const pkg = require('../../package.json')
 const mkdirp = require('mkdirp')
 const path = require('path')
-const fs = require('fs')
+const fs = require('fs-extra')
 const writeFileAtomic = require('write-file-atomic')
 const { DB_WRITE_DELAY_MS } = require('../../shared/constants')
 
 // Setup
-const appDirectory = new AppDirectory(pkg.name)
+const appDirectory = new AppDirectory({
+  appName: pkg.name,
+  useRoaming: true
+})
 const dbPath = appDirectory.userData()
 mkdirp.sync(dbPath)
 
@@ -26,6 +29,7 @@ class StorageBucket extends EventEmitter {
     this.__data__ = undefined
     this.__ipcReplyChannel__ = `storageBucket:${bucketName}:reply`
 
+    this._migrateFrom3v1v3(bucketName)
     this._loadFromDiskSync()
 
     ipcMain.on(`storageBucket:${bucketName}:setItem`, this._handleIPCSetItem.bind(this))
@@ -38,6 +42,32 @@ class StorageBucket extends EventEmitter {
   }
 
   checkAwake () { return true }
+
+  /* ****************************************************************************/
+  // Migration
+  /* ****************************************************************************/
+
+  /**
+  * Performs a migration from 3.1.3
+  * @param bucketName: the name of the bucket
+  */
+  _migrateFrom3v1v3 (bucketName) {
+    try {
+      if (parseInt(pkg.version.split('.')[0]) >= 4) {
+        console.warn('Deprication Warning. Remove _migrateFrom3v1v3')
+      }
+      if (process.platform !== 'win32') { return }
+      if (fs.existsSync(this.__path__) === false) {
+        const oldDbPath = new AppDirectory(pkg.name).userData()
+        const oldPath = path.join(oldDbPath, bucketName + '_db.json')
+        if (fs.existsSync(oldPath)) {
+          fs.moveSync(oldPath, this.__path__)
+        }
+      }
+    } catch (ex) {
+      console.warn('3.1.3 Migration failed', ex)
+    }
+  }
 
   /* ****************************************************************************/
   // Persistence

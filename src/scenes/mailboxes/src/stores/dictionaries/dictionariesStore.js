@@ -3,13 +3,34 @@ const actions = require('./dictionariesActions')
 const dictionaries = require('shared/dictionaries.js')
 const LanguageSettings = require('shared/Models/Settings/LanguageSettings')
 
-const fs = require('fs')
+const fs = window.appNodeModulesRequire('fs-extra')
 const path = require('path')
 const pkg = window.appPackage()
 const AppDirectory = window.appNodeModulesRequire('appdirectory')
 const mkdirp = window.appNodeModulesRequire('mkdirp')
-const appDirectory = new AppDirectory(pkg.name).userData()
+const appDirectory = new AppDirectory({ appName: pkg.name, useRoaming: true }).userData()
 const userDictionariesPath = LanguageSettings.userDictionariesPath(appDirectory)
+
+/**
+* Performs a migration from 3.1.3
+*/
+;(function () {
+  try {
+    if (parseInt(pkg.version.split('.')[0]) >= 4) {
+      console.warn('Deprication Warning. Remove _migrateFrom3v1v3')
+    }
+    if (process.platform !== 'win32') { return }
+    if (fs.existsSync(userDictionariesPath) === false) {
+      const oldAppDirectory = new AppDirectory({ appName: pkg.name, useRoaming: true }).userData()
+      const oldUserDictionariesPath = LanguageSettings.userDictionariesPath(oldAppDirectory)
+      if (fs.existsSync(oldUserDictionariesPath)) {
+        fs.moveSync(oldUserDictionariesPath, userDictionariesPath)
+      }
+    }
+  } catch (ex) {
+    console.warn('3.1.3 Migration failed', ex)
+  }
+})()
 
 class DictionariesStore {
   /* **************************************************************************/
