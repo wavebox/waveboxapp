@@ -170,7 +170,7 @@ class AppUpdater {
   * @from 3.1.3-
   * @to 3.1.4+
   */
-  migrateWin32DatabaseLocation () {
+  static migrateWin32DatabaseLocation () {
     if (process.platform !== 'win32') { return }
     try {
       const prevPath = new AppDirectory(pkg.name).userData()
