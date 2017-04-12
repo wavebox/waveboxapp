@@ -2,6 +2,9 @@ const { autoUpdater } = require('electron')
 const path = require('path')
 const ChildProcess = require('child_process')
 const Win32Registry = require('./Win32Registry')
+const pkg = require('../../package.json')
+const fs = require('fs-extra')
+const AppDirectory = require('appdirectory')
 
 class AppUpdater {
   /* ****************************************************************************/
@@ -140,6 +143,7 @@ class AppUpdater {
           .then(() => {
             setTimeout(app.quit, 1000)
           })
+        AppUpdater.migrateWin32DatabaseLocation()
         return true
       case '--squirrel-uninstall':
         AppUpdater._spawnWin32Update(['--removeShortcut', path.basename(process.execPath)])
@@ -154,6 +158,28 @@ class AppUpdater {
         return true
       default:
         return false
+    }
+  }
+
+  /* ****************************************************************************/
+  // Migration
+  /* ****************************************************************************/
+
+  /**
+  * Moves the databases on win32 from /local/ to /roaming/
+  * @from 3.1.3-
+  * @to 3.1.4+
+  */
+  migrateWin32DatabaseLocation () {
+    try {
+      const prevPath = new AppDirectory(pkg.name).userData()
+      const nextPath = new AppDirectory({ appName: pkg.name, useRoaming: true }).userData()
+
+      if (fs.existsSync(prevPath) && !fs.existsSync(nextPath)) {
+        fs.moveSync(prevPath, nextPath)
+      }
+    } catch (ex) {
+      console.warn('Failed to migrate Win32DatabaseLocation', ex)
     }
   }
 }

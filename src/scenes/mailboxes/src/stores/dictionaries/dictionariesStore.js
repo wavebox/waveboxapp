@@ -11,27 +11,6 @@ const mkdirp = window.appNodeModulesRequire('mkdirp')
 const appDirectory = new AppDirectory({ appName: pkg.name, useRoaming: true }).userData()
 const userDictionariesPath = LanguageSettings.userDictionariesPath(appDirectory)
 
-/**
-* Performs a migration from 3.1.3
-*/
-;(function () {
-  try {
-    if (parseInt(pkg.version.split('.')[0]) >= 4) {
-      console.warn('Deprication Warning. Remove _migrateFrom3v1v3')
-    }
-    if (process.platform !== 'win32') { return }
-    if (fs.existsSync(userDictionariesPath) === false) {
-      const oldAppDirectory = new AppDirectory({ appName: pkg.name, useRoaming: true }).userData()
-      const oldUserDictionariesPath = LanguageSettings.userDictionariesPath(oldAppDirectory)
-      if (fs.existsSync(oldUserDictionariesPath)) {
-        fs.moveSync(oldUserDictionariesPath, userDictionariesPath)
-      }
-    }
-  } catch (ex) {
-    console.warn('3.1.3 Migration failed', ex)
-  }
-})()
-
 class DictionariesStore {
   /* **************************************************************************/
   // Lifecycle
