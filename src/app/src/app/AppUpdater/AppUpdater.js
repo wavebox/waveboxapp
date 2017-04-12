@@ -162,7 +162,7 @@ class AppUpdater {
   }
 
   /* ****************************************************************************/
-  // Migration
+  // Migration: win32
   /* ****************************************************************************/
 
   /**
@@ -171,6 +171,7 @@ class AppUpdater {
   * @to 3.1.4+
   */
   migrateWin32DatabaseLocation () {
+    if (process.platform !== 'win32') { return }
     try {
       const prevPath = new AppDirectory(pkg.name).userData()
       const nextPath = new AppDirectory({ appName: pkg.name, useRoaming: true }).userData()
