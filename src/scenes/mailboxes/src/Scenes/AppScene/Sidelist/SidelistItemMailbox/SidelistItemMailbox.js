@@ -145,12 +145,10 @@ module.exports = React.createClass({
     } else if (mailbox.isAuthenticationInvalid) {
       badgeContent = (<FontIcon className='fa fa-exclamation' style={styles.mailboxBadgeFAIcon} />)
     } else {
-      if (mailbox.showUnreadBadge) {
-        if (mailbox.unreadCount) {
-          badgeContent = mailbox.unreadCount >= 1000 ? Math.floor(mailbox.unreadCount / 1000) + 'K+' : mailbox.unreadCount
-        } else if (mailbox.hasOtherUnread) {
-          badgeContent = '●'
-        }
+      if (mailbox.showUnreadBadge && mailbox.unreadCount) {
+        badgeContent = mailbox.unreadCount >= 1000 ? Math.floor(mailbox.unreadCount / 1000) + 'K+' : mailbox.unreadCount
+      } else if (mailbox.showUnreadActivityBadge && mailbox.hasUnreadActivity) {
+        badgeContent = '●'
       }
     }
 
@@ -216,7 +214,7 @@ module.exports = React.createClass({
       if (mailbox.unreadCount > 0) {
         unreadText = `${mailbox.unreadCount} unread ${mailbox.humanizedUnreadItemType}${mailbox.unreadCount === 1 ? '' : 's'}`
       } else {
-        if (mailbox.hasOtherUnread) {
+        if (mailbox.hasUnreadActivity) {
           unreadText = `New unseen ${mailbox.humanizedUnreadItemType}s`
         } else {
           unreadText = `No unread ${mailbox.humanizedUnreadItemType}s`

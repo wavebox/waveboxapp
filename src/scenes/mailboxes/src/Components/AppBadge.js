@@ -12,7 +12,7 @@ const AppBadge = React.createClass({
   displayName: 'AppBadge',
   propTypes: {
     unreadCount: React.PropTypes.number.isRequired,
-    hasOtherUnreadIndicator: React.PropTypes.bool.isRequired
+    hasUnreadActivity: React.PropTypes.bool.isRequired
   },
   statics: {
     /**
@@ -60,14 +60,14 @@ const AppBadge = React.createClass({
   },
 
   render () {
-    const { unreadCount, hasOtherUnreadIndicator } = this.props
+    const { unreadCount, hasUnreadActivity } = this.props
 
     if (AppBadge.supportsAppBadge()) {
       if (process.platform === 'darwin') {
         if (unreadCount > 0) {
           app.setBadgeCount(unreadCount)
           app.dock.setBadge(String(unreadCount))
-        } else if (hasOtherUnreadIndicator) {
+        } else if (hasUnreadActivity) {
           app.setBadgeCount(0)
           app.dock.setBadge('•')
         } else {

@@ -22,6 +22,7 @@ class SlackMailbox extends CoreMailbox {
   static get humanizedVectorLogo () { return 'images/slack/logo_vector.svg' }
   static get humanizedType () { return 'Slack' }
   static get humanizedUnreadItemType () { return 'notification' }
+  static get supportsUnreadActivity () { return true }
 
   /* **************************************************************************/
   // Lifecycle
@@ -78,7 +79,7 @@ class SlackMailbox extends CoreMailbox {
   }
   get avatarURL () { return ((this.teamOverview || {}).icon || {}).image_230 }
   get unreadCount () { return this.serviceForType(SlackDefaultService.type).unreadCount }
-  get hasOtherUnread () { return this.serviceForType(SlackDefaultService.type).hasOtherUnread }
+  get hasUnreadActivity () { return this.serviceForType(SlackDefaultService.type).hasUnreadActivity }
   get trayMessages () { return this.serviceForType(SlackDefaultService.type).trayMessages }
 }
 

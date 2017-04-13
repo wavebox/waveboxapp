@@ -201,6 +201,11 @@ class SlackStore {
         rtm.on('message:im_close', (data) => actions.updateUnreadCounts.defer(mailboxId))
         rtm.on('message:im_created', (data) => actions.updateUnreadCounts.defer(mailboxId))
         rtm.on('message:im_open', (data) => actions.updateUnreadCounts.defer(mailboxId))
+        rtm.on('message:pref_change', (data) => {
+          if (data.name === 'muted_channels') {
+            actions.updateUnreadCounts.defer(mailboxId)
+          }
+        })
 
         rtm.on('message:channel_marked', (data) => {
           mailboxActions.reduceService(mailboxId, SlackDefaultService.type, SlackDefaultServiceReducer.rtmChannelMarked, data)
@@ -312,6 +317,9 @@ class SlackStore {
             channels: response.channels.map((c) => {
               return {
                 name: c.name,
+                is_archived: c.is_archived,
+                is_muted: c.is_muted,
+                is_member: c.is_member,
                 mention_count: c.mention_count_display,
                 unread_count: c.unread_count_display
               }
@@ -319,6 +327,8 @@ class SlackStore {
             groups: response.groups.map((g) => {
               return {
                 name: g.name,
+                is_archived: g.is_archived,
+                is_muted: g.is_muted,
                 mention_count: g.mention_count_display,
                 unread_count: g.unread_count_display
               }

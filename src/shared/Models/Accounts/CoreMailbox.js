@@ -23,6 +23,7 @@ class CoreMailbox extends Model {
   static get defaultServiceTypes () { return [SERVICE_TYPES.DEFAULT] }
   static get supportsAdditionalServiceTypes () { return this.supportedServiceTypes.length > 1 }
   static get userAgentChanges () { return [] }
+  static get supportsUnreadActivity () { return false }
 
   /* **************************************************************************/
   // Class : Humanized
@@ -121,6 +122,7 @@ class CoreMailbox extends Model {
   get type () { return this.constructor.type }
   get partition () { return this.id }
   get artificiallyPersistCookies () { return this._value_('artificiallyPersistCookies', false) }
+  get supportsUnreadActivity () { return this.constructor.supportsUnreadActivity }
 
   /* **************************************************************************/
   // Properties: Wavebox
@@ -181,6 +183,8 @@ class CoreMailbox extends Model {
 
   get showUnreadBadge () { return this._value_('showUnreadBadge', true) }
   get unreadCountsTowardsAppUnread () { return this._value_('unreadCountsTowardsAppUnread', true) }
+  get showUnreadActivityBadge () { return this._value_('showUnreadActivityBadge', true) }
+  get unreadActivityCountsTowardsAppUnread () { return this._value_('unreadActivityCountsTowardsAppUnread', true) }
   get showNotifications () { return this._value_('showNotifications', true) }
 
   /* **************************************************************************/
@@ -195,7 +199,7 @@ class CoreMailbox extends Model {
 
   get displayName () { return this.id }
   get unreadCount () { return 0 }
-  get hasOtherUnread () { return false }
+  get hasUnreadActivity () { return false }
   get trayMessages () { return [] }
   get notifications () { return [] }
 }

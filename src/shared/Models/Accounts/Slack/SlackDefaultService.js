@@ -33,26 +33,63 @@ class SlackDefaultService extends CoreService {
   get slackUnreadIMInfo () { return this._value_('slackUnreadIMInfo', {}) }
 
   /* **************************************************************************/
+  // Content utils
+  /* **************************************************************************/
+
+  /**
+  * @param channel: the channel to test
+  * @return true if this channel is applicable for this user (i.e. not muted, archived etc)
+  */
+  _isChannelAlive (channel) {
+    if (channel.is_archived === true) { return false }
+    if (channel.is_muted === true) { return false }
+    if (channel.is_member === false) { return false }
+    return true
+  }
+
+  /**
+  * @param group: the group to test
+  * @return true if this group is applicable for this user (i.e. not muted, archived etc)
+  */
+  _isGroupAlive (group) {
+    if (group.is_archived === true) { return false }
+    if (group.is_muted === false) { return false }
+    return true
+  }
+
+  /**
+  * @param im: the im to test
+  * @return true if this IM is applicable for this user (i.e. not muted, archived etc)
+  */
+  _isImAlive (im) {
+    return true
+  }
+
+  /* **************************************************************************/
   // Properties : Provider Details & counts etc
   /* **************************************************************************/
 
   get unreadCount () {
     const channelCount = Object.keys(this.slackUnreadChannelInfo).reduce((acc, channelId) => {
-      return acc + this.slackUnreadChannelInfo[channelId].mention_count
+      const chan = this.slackUnreadChannelInfo[channelId]
+      return this._isChannelAlive(chan) ? acc + chan.mention_count : acc
     }, 0)
     const groupCount = Object.keys(this.slackUnreadGroupInfo).reduce((acc, groupId) => {
-      return acc + this.slackUnreadGroupInfo[groupId].unread_count
+      const grp = this.slackUnreadGroupInfo[groupId]
+      return this._isGroupAlive(grp) ? acc + grp.unread_count : acc
     }, 0)
     const imCount = Object.keys(this.slackUnreadIMInfo).reduce((acc, imId) => {
-      return acc + this.slackUnreadIMInfo[imId].dm_count
+      const dm = this.slackUnreadIMInfo[imId]
+      return this._isImAlive(dm) ? acc + dm.dm_count : acc
     }, 0)
 
     return channelCount + groupCount + imCount
   }
 
-  get hasOtherUnread () {
+  get hasUnreadActivity () {
     const channelId = Object.keys(this.slackUnreadChannelInfo).find((channelId) => {
-      return this.slackUnreadChannelInfo[channelId].unread_count !== 0
+      const chan = this.slackUnreadChannelInfo[channelId]
+      return this._isChannelAlive(chan) ? chan.unread_count !== 0 : false
     })
     if (channelId) { return true }
     return false
@@ -60,11 +97,11 @@ class SlackDefaultService extends CoreService {
 
   get trayMessages () {
     const channels = Object.keys(this.slackUnreadChannelInfo).reduce((acc, channelId) => {
-      const channel = this.slackUnreadChannelInfo[channelId]
-      if (channel.mention_count) {
+      const chan = this.slackUnreadChannelInfo[channelId]
+      if (this._isChannelAlive(chan) && chan.mention_count) {
         acc.push({
           id: channelId,
-          text: `${channel.name} (${channel.mention_count})`,
+          text: `${chan.name} (${chan.mention_count})`,
           date: 0,
           data: {
             channelId: channelId,
@@ -77,7 +114,7 @@ class SlackDefaultService extends CoreService {
     }, [])
     const ims = Object.keys(this.slackUnreadIMInfo).reduce((acc, imId) => {
       const im = this.slackUnreadIMInfo[imId]
-      if (im.dm_count) {
+      if (this._isImAlive(im) && im.dm_count) {
         acc.push({
           id: imId,
           text: `@${im.name} (${im.dm_count})`,
@@ -93,7 +130,7 @@ class SlackDefaultService extends CoreService {
     }, [])
     const groups = Object.keys(this.slackUnreadGroupInfo).reduce((acc, groupId) => {
       const group = this.slackUnreadGroupInfo[groupId]
-      if (group.unread_count) {
+      if (this._isGroupAlive(group) && group.unread_count) {
         const formattedMembers = group.name.substring(5, group.name.length - 2).split('--').join(' @')
         acc.push({
           id: groupId,

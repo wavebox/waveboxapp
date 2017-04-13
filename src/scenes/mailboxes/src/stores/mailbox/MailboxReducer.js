@@ -15,18 +15,34 @@ class MailboxReducer {
 
   /**
   * @param mailbox: the mailbox to update
-  * @param show: sets whether to show notifications or not
-  */
-  static setShowNotifications (mailbox, show) {
-    return mailbox.changeData({ showNotifications: show })
-  }
-
-  /**
-  * @param mailbox: the mailbox to update
   * @param doesCount: sets whther the unread counts do count towards the app unread badge
   */
   static setUnreadCountsTowardsAppUnread (mailbox, doesCount) {
     return mailbox.changeData({ unreadCountsTowardsAppUnread: doesCount })
+  }
+
+  /**
+  * @oaram mailbox: the mailbox to update
+  * @param show: sets whether to show the activity badge
+  */
+  static setShowUnreadActivityBadge (mailbox, show) {
+    return mailbox.changeData({ showUnreadActivityBadge: show })
+  }
+
+  /**
+  * @param mailbox: the mailbox to update
+  * @param doesCount: sets whther the unread indicator does count towards the app unread badge
+  */
+  static setUnreadActivityCountsTowardsAppUnread (mailbox, doesCount) {
+    return mailbox.changeData({ unreadActivityCountsTowardsAppUnread: doesCount })
+  }
+
+  /**
+  * @param mailbox: the mailbox to update
+  * @param show: sets whether to show notifications or not
+  */
+  static setShowNotifications (mailbox, show) {
+    return mailbox.changeData({ showNotifications: show })
   }
 
   /**

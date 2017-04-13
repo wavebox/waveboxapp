@@ -93,7 +93,7 @@ module.exports = React.createClass({
     const mailboxState = mailboxStore.getState()
     return {
       messagesUnreadCount: mailboxState.totalUnreadCountForAppBadge(),
-      otherUnreadIndicator: mailboxState.hasOtherUnreadForAppBadge(),
+      hasUnreadActivity: mailboxState.hasUnreadActivityForAppBadge(),
       uiSettings: settingsState.ui,
       traySettings: settingsState.tray
     }
@@ -102,7 +102,7 @@ module.exports = React.createClass({
   mailboxesChanged (mailboxState) {
     this.setState({
       messagesUnreadCount: mailboxState.totalUnreadCountForAppBadge(),
-      otherUnreadIndicator: mailboxState.hasOtherUnreadForAppBadge()
+      hasUnreadActivity: mailboxState.hasUnreadActivityForAppBadge()
     })
   },
 
@@ -178,7 +178,7 @@ module.exports = React.createClass({
   },
 
   render () {
-    const { traySettings, uiSettings, messagesUnreadCount, otherUnreadIndicator } = this.state
+    const { traySettings, uiSettings, messagesUnreadCount, hasUnreadActivity } = this.state
 
     // Update the app title
     if (uiSettings.showTitlebarCount) {
@@ -205,7 +205,7 @@ module.exports = React.createClass({
         {!uiSettings.showAppBadge ? undefined : (
           <AppBadge
             unreadCount={messagesUnreadCount}
-            hasOtherUnreadIndicator={otherUnreadIndicator} />
+            hasUnreadActivity={hasUnreadActivity} />
         )}
       </div>
     )

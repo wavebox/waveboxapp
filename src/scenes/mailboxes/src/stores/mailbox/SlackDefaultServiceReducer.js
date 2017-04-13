@@ -17,6 +17,9 @@ class SlackDefaultServiceReducer extends ServiceReducer {
         acc[channel.id] = {
           id: channel.id,
           name: channel.name,
+          is_archived: channel.is_archived,
+          is_muted: channel.is_muted,
+          is_member: channel.is_member,
           mention_count: channel.mention_count_display,
           unread_count: channel.unread_count_display
         }
@@ -26,6 +29,8 @@ class SlackDefaultServiceReducer extends ServiceReducer {
         acc[group.id] = {
           id: group.id,
           name: group.name,
+          is_archived: group.is_archived,
+          is_muted: group.is_muted,
           mention_count: group.mention_count_display,
           unread_count: group.unread_count_display
         }

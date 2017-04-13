@@ -273,9 +273,9 @@ class MailboxStore {
     /**
     * @return true if any mailboxes have another unread info status, taking settings into account
     */
-    this.hasOtherUnreadForAppBadge = () => {
+    this.hasUnreadActivityForAppBadge = () => {
       return !!this.allMailboxes().find((mailbox) => {
-        return mailbox && mailbox.unreadCountsTowardsAppUnread && mailbox.hasOtherUnread
+        return mailbox && mailbox.unreadActivityCountsTowardsAppUnread && mailbox.hasUnreadActivity
       })
     }
 

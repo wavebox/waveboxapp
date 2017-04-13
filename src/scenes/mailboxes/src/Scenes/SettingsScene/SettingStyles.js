@@ -105,5 +105,19 @@ module.exports = {
     color: Colors.blue700,
     fontSize: '85%',
     marginBottom: 10
+  },
+
+  mockUnreadActivityIndicator: {
+    backgroundColor: Colors.red400,
+    color: 'white',
+    display: 'inline-block',
+    borderRadius: '50%',
+    width: 15,
+    height: 15,
+    lineHeight: '14px',
+    verticalAlign: 'middle',
+    textAlign: 'center',
+    fontSize: '10px',
+    paddingRight: 1
   }
 }
