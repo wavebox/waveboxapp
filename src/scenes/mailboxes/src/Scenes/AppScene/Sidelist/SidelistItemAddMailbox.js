@@ -32,7 +32,7 @@ module.exports = React.createClass({
   render () {
     const { style, ...passProps } = this.props
     const { showTooltip, generatedId } = this.state
-
+console.log(Object.assign({}, styles.itemContainer, style), styles.itemContainer, style)
     return (
       <div
         {...passProps}
@@ -43,7 +43,7 @@ module.exports = React.createClass({
         <IconButton
           iconClassName='material-icons'
           onClick={() => { window.location.hash = '/mailbox_wizard/add' }}
-          iconStyle={{ color: Colors.blueGrey400 }}>
+          iconStyle={{ color: Colors.blueGrey400, WebkitAppRegion: 'no-drag' }}>
           add_circle
         </IconButton>
         <ReactPortalTooltip

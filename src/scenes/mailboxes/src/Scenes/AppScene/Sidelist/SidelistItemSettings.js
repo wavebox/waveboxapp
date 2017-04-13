@@ -46,7 +46,7 @@ module.exports = React.createClass({
         <IconButton
           iconClassName='material-icons'
           onClick={() => { window.location.hash = '/settings' }}
-          iconStyle={{ color: Colors.blueGrey400 }}>
+          iconStyle={{ color: Colors.blueGrey400, WebkitAppRegion: 'no-drag' }}>
           settings
         </IconButton>
         <ReactPortalTooltip

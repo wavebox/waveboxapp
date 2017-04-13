@@ -38,7 +38,10 @@ module.exports = React.createClass({
         {...passProps}
         mailbox={mailbox}
         size={42}
-        style={Object.assign({ boxShadow: `0 0 0 4px ${borderColor}` }, styles.mailboxAvatar)} />
+        style={Object.assign({
+          boxShadow: `0 0 0 4px ${borderColor}`,
+          margin: 4
+        }, styles.mailboxAvatar)} />
     )
   }
 })

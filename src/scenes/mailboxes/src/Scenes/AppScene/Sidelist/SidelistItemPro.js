@@ -46,7 +46,7 @@ module.exports = React.createClass({
         <IconButton
           iconClassName='fa fa-fw fa-diamond'
           onClick={() => { window.location.hash = '/pro' }}
-          iconStyle={{ color: Colors.lightGreen200, fontSize: '24px', marginLeft: -4 }} />
+          iconStyle={{ color: Colors.lightGreen200, fontSize: '24px', marginLeft: -4, WebkitAppRegion: 'no-drag' }} />
         <ReactPortalTooltip
           active={showTooltip}
           tooltipTimeout={0}

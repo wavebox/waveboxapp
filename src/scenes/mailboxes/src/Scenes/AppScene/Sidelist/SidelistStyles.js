@@ -58,7 +58,8 @@ module.exports = {
     filter: 'grayscale(100%)'
   },
   mailboxAvatar: {
-    cursor: 'pointer'
+    cursor: 'pointer',
+    WebkitAppRegion: 'no-drag'
   },
   mailboxBadge: {
     backgroundColor: 'rgba(238, 54, 55, 0.95)',
@@ -70,7 +71,8 @@ module.exports = {
     paddingRight: 4,
     borderRadius: 12,
     WebkitUserSelect: 'none',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    WebkitAppRegion: 'no-drag'
   },
   mailboxBadgeFAIcon: {
     color: 'white',
@@ -80,7 +82,8 @@ module.exports = {
     position: 'absolute',
     top: -3,
     right: 3,
-    cursor: 'pointer'
+    cursor: 'pointer',
+    WebkitAppRegion: 'no-drag'
   },
   mailboxActiveIndicator: {
     position: 'absolute',
@@ -88,9 +91,10 @@ module.exports = {
     top: 25,
     width: 6,
     height: 6,
-    marginTop: -7,
+    marginTop: -3,
     borderRadius: '50%',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    WebkitAppRegion: 'no-drag'
   },
   mailboxTooltipRule: {
     height: 1,
@@ -115,6 +119,7 @@ module.exports = {
     borderWidth: 3,
     borderStyle: 'solid',
     cursor: 'pointer',
+    WebkitAppRegion: 'no-drag',
     opacity: 0.8
   },
   mailboxServiceIconImageActive: {
@@ -122,6 +127,7 @@ module.exports = {
     margin: '4px auto',
     borderWidth: 3,
     borderStyle: 'solid',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    WebkitAppRegion: 'no-drag'
   }
 }
