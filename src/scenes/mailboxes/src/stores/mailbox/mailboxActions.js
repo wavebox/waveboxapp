@@ -256,6 +256,13 @@ class MailboxActions {
   */
   setCustomAvatar (id, b64Image) { return { id: id, b64Image: b64Image } }
 
+  /**
+  * Sets a service avatar locally for services that don't support grabbing it off the web
+  * @param id: the id of the mailbox
+  * @param b64Image: the image to set
+  */
+  setServiceLocalAvatar (id, b64Image) { return { id: id, b64Image: b64Image } }
+
   /* **************************************************************************/
   // Services
   /* **************************************************************************/

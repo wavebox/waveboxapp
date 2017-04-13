@@ -52,6 +52,9 @@ module.exports = React.createClass({
       return { url: mailboxState.getAvatar(mailbox.customAvatarId) }
     } else if (mailbox.avatarURL) {
       return { url: mailbox.avatarURL }
+    } else if (mailbox.hasServiceLocalAvatar) {
+      const mailboxState = mailboxStore.getState()
+      return { url: mailboxState.getAvatar(mailbox.serviceLocalAvatarId) }
     } else if (!mailbox.avatarCharacterDisplay) {
       if (mailbox.humanizedLogo) {
         return { url: '../../' + mailbox.humanizedLogo }

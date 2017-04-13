@@ -18,6 +18,7 @@ const MicrosoftHTTP = require('../microsoft/MicrosoftHTTP')
 const microsoftActions = require('../microsoft/microsoftActions')
 const mailboxDispatch = require('./mailboxDispatch')
 const { credentials } = require('R/Bootstrap')
+const { SERVICE_LOCAL_AVATAR_PREFIX } = require('shared/constants')
 const {
   Google: { GoogleMailbox, GoogleDefaultService },
   Slack: { SlackMailbox },
@@ -325,6 +326,7 @@ class MailboxStore {
 
       // Avatar
       handleSetCustomAvatar: actions.SET_CUSTOM_AVATAR,
+      handleSetServiceLocalAvatar: actions.SET_SERVICE_LOCAL_AVATAR,
 
       // Snapshots
       handleSetServiceSnapshot: actions.SET_SERVICE_SNAPSHOT,
@@ -769,6 +771,24 @@ class MailboxStore {
         avatarPersistence.removeItem(data.customAvatar)
         this.avatars.delete(data.customAvatar)
         delete data.customAvatar
+      }
+    }
+    this.saveMailbox(id, data)
+  }
+
+  handleSetServiceLocalAvatar ({ id, b64Image }) {
+    const mailbox = this.mailboxes.get(id)
+    const data = mailbox.cloneData()
+    if (b64Image) {
+      const imageId = SERVICE_LOCAL_AVATAR_PREFIX + uuid.v4()
+      data.serviceLocalAvatar = imageId
+      avatarPersistence.setItem(imageId, b64Image)
+      this.avatars.set(imageId, b64Image)
+    } else {
+      if (data.serviceLocalAvatar) {
+        avatarPersistence.removeItem(data.serviceLocalAvatar)
+        this.avatars.delete(data.serviceLocalAvatar)
+        delete data.serviceLocalAvatarr
       }
     }
     this.saveMailbox(id, data)

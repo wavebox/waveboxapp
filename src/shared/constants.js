@@ -10,6 +10,7 @@ module.exports = Object.freeze({
   // Mailboxes
   MAILBOX_SLEEP_WAIT: 1000 * 60 * 5, // 5 minutes
   REFOCUS_MAILBOX_INTERVAL_MS: 300,
+  SERVICE_LOCAL_AVATAR_PREFIX: 'SERVICE_LOCAL:',
 
   // Google
   GOOGLE_PROFILE_SYNC_INTERVAL: 1000 * 60 * 60 * 6, // 6 hours

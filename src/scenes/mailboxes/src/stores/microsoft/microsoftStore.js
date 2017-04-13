@@ -227,10 +227,7 @@ class MicrosoftStore {
           return Promise.resolve()
             .then(() => MicrosoftHTTP.fetchOffice365Avatar(accessToken))
             .then((b64Image) => {
-              // This has to be stored as a custom avatar because it can
-              // quite potentially be quite large and we don't want it to
-              // have a negative impact on performance
-              mailboxActions.setCustomAvatar.defer(mailbox.id, b64Image)
+              mailboxActions.setServiceLocalAvatar.defer(mailbox.id, b64Image)
               return accessToken
             })
         } else {
