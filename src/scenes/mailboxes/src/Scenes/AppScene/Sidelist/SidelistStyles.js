@@ -58,8 +58,6 @@ module.exports = {
     filter: 'grayscale(100%)'
   },
   mailboxAvatar: {
-    borderWidth: 4,
-    borderStyle: 'solid',
     cursor: 'pointer'
   },
   mailboxBadge: {
@@ -90,7 +88,7 @@ module.exports = {
     top: 25,
     width: 6,
     height: 6,
-    marginTop: -3,
+    marginTop: -7,
     borderRadius: '50%',
     cursor: 'pointer'
   },

@@ -32,14 +32,13 @@ module.exports = React.createClass({
     const { isActive, isHovering, mailbox, ...passProps } = this.props
     delete passProps.index
 
+    const borderColor = isActive || isHovering ? mailbox.color : Color(mailbox.color).lighten(0.4).rgb().string()
     return (
       <MailboxAvatar
         {...passProps}
         mailbox={mailbox}
-        size={50}
-        style={Object.assign({
-          borderColor: isActive || isHovering ? mailbox.color : Color(mailbox.color).lighten(0.4).rgb().string()
-        }, styles.mailboxAvatar)} />
+        size={42}
+        style={Object.assign({ boxShadow: `0 0 0 4px ${borderColor}` }, styles.mailboxAvatar)} />
     )
   }
 })
