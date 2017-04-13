@@ -25,7 +25,17 @@ module.exports = {
   /* **************************************************************************/
   // General
   /* **************************************************************************/
-
+  heading: {
+    marginTop: 30,
+    color: Colors.grey900,
+    fontWeight: 'normal',
+    marginBottom: 10
+  },
+  headingInfo: {
+    marginTop: -10,
+    marginBottom: 10,
+    color: Colors.grey700
+  },
   paper: {
     padding: 15,
     marginBottom: 5,
@@ -34,9 +44,15 @@ module.exports = {
   subheading: {
     marginTop: 0,
     marginBottom: 10,
-    color: 'black',
+    color: Colors.grey900,
     fontWeight: 'normal',
     fontSize: 16
+  },
+  subheadingInfo: {
+    fontSize: '85%',
+    marginTop: -10,
+    marginBottom: 10,
+    color: Colors.grey500
   },
   fileInputButton: {
     marginRight: 15,

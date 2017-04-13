@@ -47,10 +47,13 @@ module.exports = React.createClass({
         <Toolbar {...passProps}>
           <ToolbarGroup>
             <Avatar
-              size={40}
+              size={36}
               src={'../../' + service.humanizedLogo}
               backgroundColor='white'
-              style={{ marginRight: 8, border: '2px solid rgb(139, 139, 139)' }} />
+              style={{
+                margin: '2px 10px 2px 2px',
+                boxShadow: '0 0 0 2px rgb(139, 139, 139)'
+              }} />
             <ToolbarTitle text={service.humanizedType} />
           </ToolbarGroup>
           {!isSingleService && !isDefaultService ? (

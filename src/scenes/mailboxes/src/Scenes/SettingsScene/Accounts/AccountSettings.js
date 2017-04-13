@@ -245,6 +245,14 @@ module.exports = React.createClass({
           <RestrictedAccountSettings mailboxId={mailboxId} />
         ) : (
           <div>
+            <Row>
+              <Col md={12}>
+                <h1 style={styles.heading}>Account</h1>
+                <p style={styles.headingInfo}>
+                  <strong>{selected.humanizedType}</strong> {selected.displayName}
+                </p>
+              </Col>
+            </Row>
             {this.renderMailboxSettings(selected, showRestart)}
             <CustomCodeEditingDialog
               title={codeEditorTitle}

@@ -1,10 +1,9 @@
 const React = require('react')
-const { Paper, RaisedButton, FontIcon, SelectField, MenuItem, Toggle } = require('material-ui')
+const { Paper, RaisedButton, FontIcon } = require('material-ui')
 const { ColorPickerButton } = require('Components')
 const { mailboxActions, MailboxReducer } = require('stores/mailbox')
 const styles = require('../SettingStyles')
 const shallowCompare = require('react-addons-shallow-compare')
-const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
 
 module.exports = React.createClass({
   /* **************************************************************************/
@@ -89,28 +88,6 @@ module.exports = React.createClass({
             onClick={() => mailboxActions.setCustomAvatar(mailbox.id, undefined)}
             label='Reset Account Icon' />
         </div>
-        {mailbox.supportsAdditionalServiceTypes ? (
-          <SelectField
-            fullWidth
-            floatingLabelText='Service Display Mode'
-            value={mailbox.serviceDisplayMode}
-            onChange={(evt, index, mode) => {
-              mailboxActions.reduce(mailbox.id, MailboxReducer.setServiceDisplayMode, mode)
-            }}>
-            <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR} primaryText='Left Sidebar' />
-            <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR} primaryText='Top Toolbar' />
-          </SelectField>
-        ) : undefined}
-        {mailbox.supportsAdditionalServiceTypes ? (
-          <Toggle
-            toggled={mailbox.collapseSidebarServices}
-            disabled={mailbox.serviceDisplayMode !== CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR}
-            label='Collapse sidebar services when mailbox is inactive'
-            labelPosition='right'
-            onToggle={(evt, toggled) => {
-              mailboxActions.reduce(mailbox.id, MailboxReducer.setCollapseSidebarServices, toggled)
-            }} />
-        ) : undefined}
       </Paper>
     )
   }

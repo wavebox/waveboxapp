@@ -4,6 +4,8 @@ const { Grid: { Row, Col } } = require('Components')
 const AccountAppearanceSettings = require('../AccountAppearanceSettings')
 const AccountAdvancedSettings = require('../AccountAdvancedSettings')
 const AccountNotificationBadgeSettings = require('../AccountNotificationBadgeSettings')
+const AccountServicesHeading = require('../AccountServicesHeading')
+const AccountServicesSettings = require('../AccountServicesSettings')
 const CoreService = require('shared/Models/Accounts/CoreService')
 const ServiceFactory = require('shared/Models/Accounts/ServiceFactory')
 const { userStore } = require('stores/user')
@@ -119,6 +121,12 @@ module.exports = React.createClass({
           </Col>
           <Col md={6}>
             <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
+            <AccountServicesSettings mailbox={mailbox} />
+          </Col>
+        </Row>
+        <Row>
+          <Col md={12}>
+            <AccountServicesHeading mailbox={mailbox} />
           </Col>
         </Row>
         {userHasServices ? (
