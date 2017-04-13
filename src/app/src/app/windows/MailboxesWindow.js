@@ -215,6 +215,20 @@ class MailboxesWindow extends WMailWindow {
   }
 
   /**
+  * Switches to a service at the given index. This call will fail silently if there is no
+  * service at the given index
+  * @param index: the index you want to switch to
+  * @return this
+  */
+  switchToServiceAtIndex (index) {
+    this.show().focus()
+    this.window.webContents.send('switch-service-index', {
+      index: index
+    })
+    return this
+  }
+
+  /**
   * Switches to the previous mailbox
   * @return this
   */

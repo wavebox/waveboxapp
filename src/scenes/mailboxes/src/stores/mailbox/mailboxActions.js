@@ -313,6 +313,14 @@ class MailboxActions {
   }
 
   /**
+  * Changes the active service to the one at the supplied index. If there
+  * is no service this will just fail silently
+  */
+  changeActiveServiceIndex (index) {
+    return { index: index }
+  }
+
+  /**
   * Changes the active mailbox to the previous in the list
   */
   changeActiveToPrev () { return {} }
@@ -415,5 +423,6 @@ ipcRenderer.on('switch-mailbox', (evt, req) => {
     actions.changeActiveToNext()
   }
 })
+ipcRenderer.on('switch-service-index', (evt, req) => actions.changeActiveServiceIndex(req.index))
 
 module.exports = actions

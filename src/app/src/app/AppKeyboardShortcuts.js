@@ -19,15 +19,34 @@ class AppKeyboardShortcuts {
   /* ****************************************************************************/
 
   /**
+  * Generates the shortcut set
+  * @param selector: the selectors to use
+  * @return a map of shortcuts
+  */
+  generateShortcuts (selectors) {
+    return new Map([
+      // Mailboxes
+      ['CmdOrCtrl+{', selectors.prevMailbox],
+      ['CmdOrCtrl+}', selectors.nextMailbox],
+
+      ['Alt+Shift+1', () => selectors.changeMailboxServiceToIndex(0)],
+      ['Alt+Shift+2', () => selectors.changeMailboxServiceToIndex(1)],
+      ['Alt+Shift+3', () => selectors.changeMailboxServiceToIndex(2)],
+      ['Alt+Shift+4', () => selectors.changeMailboxServiceToIndex(3)],
+      ['Alt+Shift+5', () => selectors.changeMailboxServiceToIndex(4)],
+      ['Alt+Shift+6', () => selectors.changeMailboxServiceToIndex(5)],
+      ['Alt+Shift+7', () => selectors.changeMailboxServiceToIndex(6)],
+      ['Alt+Shift+8', () => selectors.changeMailboxServiceToIndex(7)],
+      ['Alt+Shift+9', () => selectors.changeMailboxServiceToIndex(8)]
+    ])
+  }
+
+  /**
    * Registers global keyboard shortcuts.
    */
   register () {
-    let shortcuts = new Map([
-      ['CmdOrCtrl+{', this._selectors.prevMailbox],
-      ['CmdOrCtrl+}', this._selectors.nextMailbox]
-    ])
     this.unregister()
-    shortcuts.forEach((callback, accelerator) => {
+    this.generateShortcuts(this._selectors).forEach((callback, accelerator) => {
       globalShortcut.register(accelerator, callback)
       this._shortcuts.push(accelerator)
     })

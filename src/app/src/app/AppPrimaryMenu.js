@@ -56,6 +56,9 @@ class AppPrimaryMenu {
       changeMailbox: (mailboxId, serviceType = undefined) => {
         windowManager.mailboxesWindow.show().focus().switchMailbox(mailboxId, serviceType)
       },
+      changeMailboxServiceToIndex: (index) => {
+        windowManager.mailboxesWindow.show().focus().switchToServiceAtIndex(index)
+      },
       prevMailbox: () => {
         windowManager.mailboxesWindow.show().focus().switchPrevMailbox()
       },

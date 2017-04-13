@@ -334,6 +334,7 @@ class MailboxStore {
 
       // Active
       handleChangeActive: actions.CHANGE_ACTIVE,
+      handleChangeActiveServiceIndex: actions.CHANGE_ACTIVE_SERVICE_INDEX,
       handleChangeActivePrev: actions.CHANGE_ACTIVE_TO_PREV,
       handleChangeActiveNext: actions.CHANGE_ACTIVE_TO_NEXT,
 
@@ -825,6 +826,22 @@ class MailboxStore {
       this.active = id || this.index[0]
       this.activeService = service
       this.sendActiveStateToMainThread()
+    }
+  }
+
+  /**
+  * Handles changing the active service to the one at the service
+  * @param index: the index of the service
+  */
+  handleChangeActiveServiceIndex ({ index }) {
+    if (this.isMailboxRestricted(this.active, userStore.getState().user)) {
+      window.location.hash = '/pro'
+    } else {
+      const mailbox = this.getMailbox(this.active)
+      if (mailbox.enabledServiceTypes[index]) {
+        this.activeService = mailbox.enabledServiceTypes[index]
+        this.sendActiveStateToMainThread()
+      }
     }
   }
 
