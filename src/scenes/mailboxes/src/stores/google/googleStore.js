@@ -353,7 +353,7 @@ class GoogleStore {
       case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT:
         return 'label:inbox label:unread is:important'
       case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL:
-        return 'label:inbox label:unread category:important'
+        return 'label:inbox label:unread category:primary'
       case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED:
         return 'label:inbox label:unread -has:userlabels -category:promotions -category:forums -category:social' // Removed: -category:updates
       default:
