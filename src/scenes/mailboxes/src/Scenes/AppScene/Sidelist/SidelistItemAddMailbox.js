@@ -54,7 +54,7 @@ module.exports = React.createClass({
           arrow='left'
           group={generatedId}
           parent={`#ReactComponent-Sidelist-Item-Add-Mailbox-${generatedId}`}>
-          Add Mailbox
+          Add Account
         </ReactPortalTooltip>
       </div>
     )
