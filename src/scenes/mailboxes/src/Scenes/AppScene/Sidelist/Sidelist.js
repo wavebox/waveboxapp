@@ -113,7 +113,7 @@ module.exports = React.createClass({
       <div
         {...passProps}
         style={Object.assign({}, styles.container, style)}>
-        {process.platform !== 'darwin' ? (
+        {!showTitlebar && process.platform !== 'darwin' ? (
           <div style={styles.windowControls}>
             <IconButton
               onTouchTap={() => remote.getCurrentWindow().close()}

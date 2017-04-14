@@ -42,7 +42,7 @@ module.exports = React.createClass({
             label={process.platform === 'darwin' ? (
               'Show titlebar (Requires Restart)'
             ) : (
-              'Show titlebar (Experimental)(Requires Restart)'
+              <span>Show titlebar (Requires Restart) <span style={{ color: '#CCC', fontSize: '85%' }}>(Experimental)</span></span>
             )}
             onToggle={(evt, toggled) => {
               showRestart()
