@@ -73,13 +73,11 @@ module.exports = React.createClass({
 
   componentDidMount () {
     mailboxStore.listen(this.mailboxUpdated)
-    settingsStore.listen(this.settingsUpdated)
     userStore.listen(this.userUpdated)
   },
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxUpdated)
-    settingsStore.listen(this.settingsUpdated)
     userStore.listen(this.userUpdated)
   },
 
@@ -100,7 +98,7 @@ module.exports = React.createClass({
     const mailbox = mailboxState.getMailbox(props.mailboxId)
     return {
       isMailboxActive: mailboxState.activeMailboxId() === props.mailboxId,
-      appHasTitlebar: settingsState.ui.showTitlebar,
+      appHasTitlebar: settingsState.ui.showTitlebar, // Purposely don't update this because changes aren't reflected until restart
       userHasServices: userState.user.hasServices,
       serviceDisplayMode: mailbox.serviceDisplayMode,
       serviceTypes: mailbox.enabledServiceTypes,
@@ -116,12 +114,6 @@ module.exports = React.createClass({
       serviceDisplayMode: mailbox.serviceDisplayMode,
       serviceTypes: mailbox.enabledServiceTypes,
       mailboxType: mailbox.type
-    })
-  },
-
-  settingsUpdated (settingsState) {
-    this.setState({
-      appHasTitlebar: settingsState.ui.showTitlebar
     })
   },
 

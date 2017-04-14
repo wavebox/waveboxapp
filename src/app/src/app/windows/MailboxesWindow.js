@@ -61,7 +61,8 @@ class MailboxesWindow extends WMailWindow {
       width: Math.min(Math.max(screenSize.width, 770), 1200),
       height: Math.min(Math.max(screenSize.height, 300), 1000),
       fullscreenable: true,
-      titleBarStyle: settingStore.ui.showTitlebar ? 'default' : 'hidden',
+      titleBarStyle: process.platform === 'darwin' && settingStore.ui.showTitlebar === false ? 'hidden' : 'default',
+      frame: settingStore.ui.showTitlebar,
       title: 'Wavebox',
       backgroundColor: '#f2f2f2',
       webPreferences: {

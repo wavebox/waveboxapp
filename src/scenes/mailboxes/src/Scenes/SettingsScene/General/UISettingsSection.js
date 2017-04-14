@@ -36,23 +36,25 @@ module.exports = React.createClass({
       <div {...passProps}>
         <Paper zDepth={1} style={styles.paper}>
           <h1 style={styles.subheading}>User Interface</h1>
-          {process.platform !== 'darwin' ? undefined : (
-            <Toggle
-              labelPosition='right'
-              toggled={ui.showTitlebar}
-              label='Show titlebar (Requires Restart)'
-              onToggle={(evt, toggled) => {
-                showRestart()
-                settingsActions.setShowTitlebar(toggled)
-              }} />
+          <Toggle
+            labelPosition='right'
+            toggled={ui.showTitlebar}
+            label={process.platform === 'darwin' ? (
+              'Show titlebar (Requires Restart)'
+            ) : (
+              'Show titlebar (Experimental)(Requires Restart)'
             )}
-          {process.platform === 'darwin' ? undefined : (
+            onToggle={(evt, toggled) => {
+              showRestart()
+              settingsActions.setShowTitlebar(toggled)
+            }} />
+          {process.platform !== 'darwin' ? (
             <Toggle
               labelPosition='right'
               toggled={ui.showAppMenu}
-              label='Show App Menu (Ctrl+\)'
+              label='Show titlebar Menu (Ctrl+\)'
               onToggle={(evt, toggled) => settingsActions.setShowAppMenu(toggled)} />
-          )}
+          ) : undefined}
           <Toggle
             toggled={ui.sidebarEnabled}
             label={`Show Sidebar (${process.platform === 'darwin' ? 'Ctrl+cmd+S' : 'Ctrl+alt+S'})`}

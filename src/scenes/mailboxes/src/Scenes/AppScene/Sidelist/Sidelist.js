@@ -1,4 +1,5 @@
 const React = require('react')
+const { FontIcon, IconButton } = require('material-ui')
 const SidelistMailboxes = require('./SidelistMailboxes')
 const SidelistItemAddMailbox = require('./SidelistItemAddMailbox')
 const SidelistItemSettings = require('./SidelistItemSettings')
@@ -8,6 +9,8 @@ const { settingsStore } = require('stores/settings')
 const { userStore } = require('stores/user')
 const styles = require('./SidelistStyles')
 const shallowCompare = require('react-addons-shallow-compare')
+const Colors = require('material-ui/styles/colors')
+const { remote } = window.nativeRequire('electron')
 
 module.exports = React.createClass({
 
@@ -24,11 +27,19 @@ module.exports = React.createClass({
   componentDidMount () {
     settingsStore.listen(this.settingsUpdated)
     userStore.listen(this.userUpdated)
+    if (process.platform !== 'darwin') {
+      remote.getCurrentWindow().on('maximize', this.handleWindowMaximize)
+      remote.getCurrentWindow().on('unmaximize', this.handleWindowUnmaximize)
+    }
   },
 
   componentWillUnmount () {
     settingsStore.unlisten(this.settingsUpdated)
     userStore.unlisten(this.userUpdated)
+    if (process.platform !== 'darwin') {
+      remote.getCurrentWindow().removeEventListener('maximize', this.handleWindowMaximize)
+      remote.getCurrentWindow().removeEventListener('unmaximize', this.handleWindowUnmaximize)
+    }
   },
 
   /* **************************************************************************/
@@ -41,7 +52,8 @@ module.exports = React.createClass({
     return {
       showTitlebar: settingsState.ui.showTitlebar, // purposely don't update this, because effects are only seen after restart
       showWizard: !settingsState.app.hasSeenAppWizard,
-      showPlansInSidebar: userState.user.showPlansInSidebar
+      showPlansInSidebar: userState.user.showPlansInSidebar,
+      isWindowMaximized: process.platform !== 'darwin' ? remote.getCurrentWindow().isMaximized() : undefined
     }
   },
 
@@ -58,6 +70,18 @@ module.exports = React.createClass({
   },
 
   /* **************************************************************************/
+  // Window Events
+  /* **************************************************************************/
+
+  handleWindowMaximize () {
+    this.setState({ isWindowMaximized: true })
+  },
+
+  handleWindowUnmaximize () {
+    this.setState({ isWindowMaximized: false })
+  },
+
+  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
@@ -66,8 +90,7 @@ module.exports = React.createClass({
   },
 
   render () {
-    const { showTitlebar, showWizard, showPlansInSidebar } = this.state
-    const isDarwin = process.platform === 'darwin'
+    const { showTitlebar, showWizard, showPlansInSidebar, isWindowMaximized } = this.state
     const { style, ...passProps } = this.props
 
     let extraItems = 0
@@ -78,7 +101,7 @@ module.exports = React.createClass({
       styles.scroller,
       extraItems === 1 ? styles.scroller3Icons : undefined,
       extraItems === 2 ? styles.scroller4Icons : undefined,
-      { top: isDarwin && !showTitlebar ? 25 : 0 }
+      { top: showTitlebar ? 0 : 25 }
     )
     const footerStyle = Object.assign({},
       styles.footer,
@@ -90,6 +113,41 @@ module.exports = React.createClass({
       <div
         {...passProps}
         style={Object.assign({}, styles.container, style)}>
+        {process.platform !== 'darwin' ? (
+          <div style={styles.windowControls}>
+            <IconButton
+              onTouchTap={() => remote.getCurrentWindow().close()}
+              style={styles.windowControlButton}
+              hoveredStyle={styles.windowControlButtonHovered}
+              iconStyle={styles.windowControlIcon}>
+              <FontIcon className='fa fa-fw fa-window-close' color={Colors.blueGrey50} />
+            </IconButton>
+            {isWindowMaximized ? (
+              <IconButton
+                onTouchTap={() => remote.getCurrentWindow().unmaximize()}
+                style={styles.windowControlButton}
+                hoveredStyle={styles.windowControlButtonHovered}
+                iconStyle={styles.windowControlIcon}>
+                <FontIcon className='fa fa-fw fa-window-restore' color={Colors.blueGrey50} />
+              </IconButton>
+            ) : (
+              <IconButton
+                onTouchTap={() => remote.getCurrentWindow().maximize()}
+                style={styles.windowControlButton}
+                hoveredStyle={styles.windowControlButtonHovered}
+                iconStyle={styles.windowControlIcon}>
+                <FontIcon className='fa fa-fw fa-window-maximize' color={Colors.blueGrey50} />
+              </IconButton>
+            )}
+            <IconButton
+              onTouchTap={() => remote.getCurrentWindow().minimize()}
+              style={styles.windowControlButton}
+              hoveredStyle={styles.windowControlButtonHovered}
+              iconStyle={styles.windowControlIcon}>
+              <FontIcon className='fa fa-fw fa-window-minimize' color={Colors.blueGrey50} />
+            </IconButton>
+          </div>
+        ) : undefined}
         <div
           style={scrollerStyle}
           className='ReactComponent-Sidelist-Scroller'>

@@ -47,6 +47,35 @@ module.exports = {
   },
 
   /**
+  * Window controls
+  */
+  windowControls: {
+    height: 25,
+    width: 70,
+    paddingTop: 3,
+    paddingBottom: 2,
+    paddingLeft: 5,
+    paddingRight: 5,
+    overflow: 'hidden',
+    cursor: 'pointer',
+    WebkitAppRegion: 'no-drag'
+  },
+  windowControlButton: {
+    width: 20,
+    height: 20,
+    padding: 0,
+    cursor: 'pointer',
+    WebkitAppRegion: 'no-drag',
+    borderRadius: 2
+  },
+  windowControlButtonHovered: {
+    backgroundColor: Colors.blueGrey700
+  },
+  windowControlIcon: {
+    fontSize: 14
+  },
+
+  /**
   * Mailbox Item
   */
   mailboxItemContainer: {
