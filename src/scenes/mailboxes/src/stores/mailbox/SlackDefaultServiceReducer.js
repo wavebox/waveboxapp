@@ -125,6 +125,12 @@ class SlackDefaultServiceReducer extends ServiceReducer {
   * @param rtmEvent: the event that came through from the rtm
   */
   static rtmMessage (mailbox, service, rtmEvent) {
+    if (mailbox.hasSelfOverview) {
+      if (mailbox.selfOverview.id === rtmEvent.user) {
+        return undefined // We created the message, nothing to do
+      }
+    }
+
     switch (rtmEvent.channel[0]) {
       case 'C': return SlackDefaultServiceReducer.rtmChannelMessage(mailbox, service, rtmEvent)
       case 'G': return SlackDefaultServiceReducer.rtmGroupMessage(mailbox, service, rtmEvent)
