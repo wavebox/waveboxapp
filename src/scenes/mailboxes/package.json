@@ -18,7 +18,7 @@
     "react-addons-shallow-compare": "15.4.2",
     "react-color": "2.11.4",
     "react-dom": "15.4.2",
-    "react-portal-tooltip": "^1.1.5",
+    "react-portal-tooltip": "1.1.5",
     "react-router": "3.0.2",
     "react-tap-event-plugin": "2.0.1",
     "react-timer-mixin": "0.13.3",
