@@ -18,7 +18,7 @@ class TraySettings extends Model {
   static get MOUSE_TRIGGERS () { return MOUSE_TRIGGERS }
   static get MOUSE_TRIGGER_ACTIONS () { return MOUSE_TRIGGER_ACTIONS }
   static get SUPPORTS_MOUSE_TRIGGERS () { return process.platform === 'win32' }
-  static get SUPPORTS_TRAY_MINIMIZE () { return process.platform === 'win32' }
+  static get SUPPORTS_TRAY_MINIMIZE_CONFIG () { return process.platform === 'win32' }
 
   /* **************************************************************************/
   // Lifecycle

@@ -9,7 +9,7 @@ const {
     MOUSE_TRIGGERS,
     MOUSE_TRIGGER_ACTIONS,
     SUPPORTS_MOUSE_TRIGGERS,
-    SUPPORTS_TRAY_MINIMIZE
+    SUPPORTS_TRAY_MINIMIZE_CONFIG
   }
 } = require('shared/Models/Settings')
 
@@ -49,7 +49,7 @@ module.exports = React.createClass({
             labelPosition='right'
             disabled={!tray.show}
             onToggle={(evt, toggled) => settingsActions.setShowTrayUnreadCount(toggled)} />
-          {SUPPORTS_TRAY_MINIMIZE ? (
+          {SUPPORTS_TRAY_MINIMIZE_CONFIG ? (
             <Toggle
               toggled={tray.hideWhenClosed}
               disabled={!tray.show}
@@ -57,7 +57,7 @@ module.exports = React.createClass({
               labelPosition='right'
               onToggle={(evt, toggled) => { settingsActions.setHideWhenClosed(toggled) }} />
           ) : undefined}
-          {SUPPORTS_TRAY_MINIMIZE ? (
+          {SUPPORTS_TRAY_MINIMIZE_CONFIG ? (
             <Toggle
               toggled={tray.hideWhenMinimized}
               disabled={!tray.show}
