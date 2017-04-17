@@ -64,7 +64,7 @@ class MailboxReducer {
   */
   static setColor (mailbox, col) {
     return mailbox.changeData({
-      color: typeof (col) === 'object' ? col.hex : col
+      color: typeof (col) === 'object' ? col.rgbaStr : col
     })
   }
 
