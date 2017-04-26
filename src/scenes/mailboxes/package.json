@@ -28,6 +28,10 @@
     "valid-url": "1.0.9"
   },
   "devDependencies": {
-    "standard": "10.0.2"
+    "standard": "10.0.2",
+    "babel-eslint": "^7.2.3"
+  },
+  "standard": {
+    "parser": "babel-eslint"
   }
 }

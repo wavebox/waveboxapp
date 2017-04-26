@@ -32,6 +32,7 @@
     "babel-cli": "6.24.1",
     "babel-core": "6.24.1",
     "babel-loader": "7.0.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-es2015": "6.24.1",
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
@@ -54,11 +55,13 @@
     "yargs": "7.1.0"
   },
   "devDependencies": {
-    "standard": "10.0.2"
+    "standard": "10.0.2",
+    "babel-eslint": "^7.2.3"
   },
   "standard": {
     "ignore": [
       "src/app/lib/"
-    ]
+    ],
+    "parser": "babel-eslint"
   }
 }
