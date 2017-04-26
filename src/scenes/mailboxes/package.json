@@ -10,14 +10,15 @@
     "bootstrap-grid": "2.0.1",
     "color": "1.0.3",
     "fbjs": "0.8.12",
-    "material-ui": "0.17.3",
+    "material-ui": "0.17.4",
     "phoenix": "1.2.1",
     "qs": "6.4.0",
     "querystring": "0.2.0",
-    "react": "15.4.2",
-    "react-addons-shallow-compare": "15.4.2",
+    "react": "15.5.4",
+    "react-addons-shallow-compare": "15.5.2",
     "react-color": "2.11.4",
-    "react-dom": "15.4.2",
+    "react-dom": "15.5.4",
+    "prop-types": "15.5.8",
     "react-portal-tooltip": "1.1.5",
     "react-router": "3.0.2",
     "react-tap-event-plugin": "2.0.1",
@@ -27,6 +28,6 @@
     "valid-url": "1.0.9"
   },
   "devDependencies": {
-    "standard": "10.0.1"
+    "standard": "10.0.2"
   }
 }

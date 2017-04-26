@@ -1,5 +1,5 @@
 {
-  "name": "wavebox",
+  "name": "waveboxdev",
   "version": "3.1.5",
   "description": "Wavebox",
   "scripts": {
@@ -31,14 +31,14 @@
   "dependencies": {
     "babel-cli": "6.24.1",
     "babel-core": "6.24.1",
-    "babel-loader": "6.4.1",
+    "babel-loader": "7.0.0",
     "babel-preset-es2015": "6.24.1",
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
     "clean-webpack-plugin": "0.1.16",
     "copy-webpack-plugin": "4.0.1",
     "css-loader": "0.28.0",
-    "electron": "1.6.6",
+    "electron": "1.6.7",
     "extract-text-webpack-plugin": "2.1.0",
     "file-loader": "0.11.1",
     "json-loader": "0.5.4",
@@ -49,12 +49,12 @@
     "uglify-js": "git+https://github.com/mishoo/UglifyJS2.git#harmony",
     "url-loader": "0.5.8",
     "uuid": "3.0.1",
-    "webpack": "2.3.3",
+    "webpack": "2.4.1",
     "webpack-target-electron-renderer": "0.4.0",
     "yargs": "7.1.0"
   },
   "devDependencies": {
-    "standard": "10.0.1"
+    "standard": "10.0.2"
   },
   "standard": {
     "ignore": [
