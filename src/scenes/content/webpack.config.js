@@ -72,7 +72,8 @@ module.exports = function (env) {
               loader: 'babel-loader',
               options: {
                 cacheDirectory: true,
-                presets: ['react', 'stage-0', 'es2015']
+                presets: ['react', 'stage-0', 'es2015'],
+                plugins: ['transform-class-properties']
               }
             }
           ],
