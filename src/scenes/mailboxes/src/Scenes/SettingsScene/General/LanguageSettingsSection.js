@@ -122,7 +122,7 @@ export default class LanguageSettingsSection extends React.Component {
                     value={info.lang}
                     primaryText={info.name}
                     disabled />)
-              }),
+              })
             )
           }
         </SelectField>
