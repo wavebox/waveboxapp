@@ -1,9 +1,9 @@
-const { Spacing, zIndex } = require('material-ui/styles')
-const Colors = require('material-ui/styles/colors')
-const colorManipulator = require('material-ui/utils/colorManipulator')
-const getMuiTheme = require('material-ui/styles/getMuiTheme').default
+import { Spacing, zIndex } from 'material-ui/styles'
+import * as Colors from 'material-ui/styles/colors'
+import * as ColorManipulator from 'material-ui/utils/colorManipulator'
+import getMuiTheme from 'material-ui/styles/getMuiTheme'
 
-module.exports = getMuiTheme({
+export default getMuiTheme({
   spacing: Spacing,
   zIndex: zIndex,
   fontFamily: 'Roboto, sans-serif',
@@ -18,7 +18,7 @@ module.exports = getMuiTheme({
     alternateTextColor: Colors.white,
     canvasColor: Colors.white,
     borderColor: Colors.grey300,
-    disabledColor: colorManipulator.fade(Colors.darkBlack, 0.3),
+    disabledColor: ColorManipulator.fade(Colors.darkBlack, 0.3),
     pickerHeaderColor: Colors.cyan500
   }
 })

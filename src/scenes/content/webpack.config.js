@@ -81,7 +81,8 @@ module.exports = function (env) {
           exclude: /node_modules/,
           include: [
             __dirname,
-            path.resolve(path.join(__dirname, '../../shared'))
+            path.resolve(path.join(__dirname, '../../shared')),
+            path.resolve(path.join(__dirname, '../sharedui'))
           ]
         },
         {

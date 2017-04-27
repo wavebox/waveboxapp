@@ -1,5 +1,6 @@
-const React = require('react')
-const ReactDOM = require('react-dom')
+import PropTypes from 'prop-types'
+import React from 'react'
+import ReactDOM from 'react-dom'
 const camelCase = function (name) {
   return name.split('-').map((token, index) => {
     return index === 0 ? token : (token.charAt(0).toUpperCase() + token.slice(1))
@@ -37,35 +38,36 @@ const WEBVIEW_EVENTS = [
   'will-navigate'
 ]
 const REACT_WEBVIEW_EVENTS = WEBVIEW_EVENTS.map((n) => camelCase(n))
+const REACT_WEBVIEW_EVENT_PROPS = REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
+  acc[name] = PropTypes.func
+  return acc
+}, {})
 
 const WEBVIEW_PROPS = {
-  autosize: React.PropTypes.bool,
-  blinkfeatures: React.PropTypes.string,
-  disableblinkfeatures: React.PropTypes.string,
-  disablewebsecurity: React.PropTypes.bool,
-  httpreferrer: React.PropTypes.string,
-  nodeintegration: React.PropTypes.bool,
-  partition: React.PropTypes.string,
-  plugins: React.PropTypes.bool,
-  preload: React.PropTypes.string,
-  src: React.PropTypes.string
+  autosize: PropTypes.bool,
+  blinkfeatures: PropTypes.string,
+  disableblinkfeatures: PropTypes.string,
+  disablewebsecurity: PropTypes.bool,
+  httpreferrer: PropTypes.string,
+  nodeintegration: PropTypes.bool,
+  partition: PropTypes.string,
+  plugins: PropTypes.bool,
+  preload: PropTypes.string,
+  src: PropTypes.string
 }
 const WEBVIEW_ATTRS = Object.keys(WEBVIEW_PROPS)
 
-module.exports = React.createClass({
+export default class WebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
-  displayName: 'BrowserView',
-  propTypes: Object.assign({
-    className: React.PropTypes.string
-  }, WEBVIEW_PROPS, REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
-    acc[name] = React.PropTypes.func
-    return acc
-  }, {})),
-  statics: {
-    REACT_WEBVIEW_EVENTS: REACT_WEBVIEW_EVENTS
-  },
+  static propTypes = {
+    className: PropTypes.string,
+    ...WEBVIEW_PROPS,
+    ...REACT_WEBVIEW_EVENT_PROPS
+  }
+
+  static get REACT_WEBVIEW_EVENTS () { return REACT_WEBVIEW_EVENTS }
 
   /* **************************************************************************/
   // Lifecycle
@@ -80,7 +82,7 @@ module.exports = React.createClass({
         this.dispatchWebViewEvent(name, evt)
       })
     })
-  },
+  }
 
   componentWillReceiveProps (nextProps) {
     const changed = WEBVIEW_ATTRS.filter((name) => this.props[name] !== nextProps[name])
@@ -90,11 +92,11 @@ module.exports = React.createClass({
         node.setAttribute(name, nextProps[name] || '')
       })
     }
-  },
+  }
 
   shouldComponentUpdate () {
     return false // we never want to re-render. We will handle this manually
-  },
+  }
 
   /* **************************************************************************/
   // Events
@@ -114,7 +116,7 @@ module.exports = React.createClass({
 
       this.props[camelCase(name)](evt)
     }
-  },
+  }
 
   /**
   * Siphons IPC messages
@@ -138,7 +140,7 @@ module.exports = React.createClass({
     } else {
       return false
     }
-  },
+  }
 
   /* **************************************************************************/
   // Webview calls
@@ -149,57 +151,57 @@ module.exports = React.createClass({
     if (document.activeElement !== node) {
       this.getWebviewNode().focus()
     }
-  },
+  }
 
-  blur () { this.getWebviewNode().blur() },
+  blur = () => { this.getWebviewNode().blur() }
 
-  openDevTools () { this.getWebviewNode().openDevTools() },
+  openDevTools = () => { this.getWebviewNode().openDevTools() }
 
-  send (name, obj) { this.getWebviewNode().send(name, obj) },
+  send = (name, obj) => { this.getWebviewNode().send(name, obj) }
 
-  findInPage (text, options) { return this.getWebviewNode().findInPage(text, options) },
+  findInPage = (text, options) => { return this.getWebviewNode().findInPage(text, options) }
 
-  stopFindInPage (action) { this.getWebviewNode().stopFindInPage(action) },
+  stopFindInPage = (action) => { this.getWebviewNode().stopFindInPage(action) }
 
-  navigateBack () { this.getWebviewNode().goBack() },
+  navigateBack = () => { this.getWebviewNode().goBack() }
 
-  navigateForward () { this.getWebviewNode().goForward() },
+  navigateForward = () => { this.getWebviewNode().goForward() }
 
-  undo () { this.getWebviewNode().undo() },
+  undo = () => { this.getWebviewNode().undo() }
 
-  redo () { this.getWebviewNode().redo() },
+  redo = () => { this.getWebviewNode().redo() }
 
-  cut () { this.getWebviewNode().cut() },
+  cut = () => { this.getWebviewNode().cut() }
 
-  copy () { this.getWebviewNode().copy() },
+  copy = () => { this.getWebviewNode().copy() }
 
-  paste () { this.getWebviewNode().paste() },
+  paste = () => { this.getWebviewNode().paste() }
 
-  pasteAndMatchStyle () { this.getWebviewNode().pasteAndMatchStyle() },
+  pasteAndMatchStyle = () => { this.getWebviewNode().pasteAndMatchStyle() }
 
-  selectAll () { this.getWebviewNode().selectAll() },
+  selectAll = () => { this.getWebviewNode().selectAll() }
 
-  setZoomLevel (level) { this.getWebviewNode().setZoomFactor(level) },
+  setZoomLevel = (level) => { this.getWebviewNode().setZoomFactor(level) }
 
-  reload () { this.getWebviewNode().reload() },
+  reload = () => { this.getWebviewNode().reload() }
 
-  reloadIgnoringCache () { this.getWebviewNode().reloadIgnoringCache() },
+  reloadIgnoringCache = () => { this.getWebviewNode().reloadIgnoringCache() }
 
-  stop () { this.getWebviewNode().stop() },
+  stop = () => { this.getWebviewNode().stop() }
 
-  loadURL (url) { this.getWebviewNode().loadURL(url) },
+  loadURL = (url) => { this.getWebviewNode().loadURL(url) }
 
-  getWebContents () { return this.getWebviewNode().getWebContents() },
+  getWebContents = () => { return this.getWebviewNode().getWebContents() }
 
-  canGoBack () { return this.getWebviewNode().canGoBack() },
+  canGoBack = () => { return this.getWebviewNode().canGoBack() }
 
-  canGoForward () { return this.getWebviewNode().canGoForward() },
+  canGoForward = () => { return this.getWebviewNode().canGoForward() }
 
-  goBack () { return this.getWebviewNode().goBack() },
+  goBack = () => { return this.getWebviewNode().goBack() }
 
-  goFoward () { return this.getWebviewNode().goFoward() },
+  goFoward = () => { return this.getWebviewNode().goFoward() }
 
-  getURL () { return this.getWebviewNode().getURL() },
+  getURL = () => { return this.getWebviewNode().getURL() }
 
   /* **************************************************************************/
   // IPC Utils
@@ -211,7 +213,7 @@ module.exports = React.createClass({
   */
   getProcessMemoryInfo () {
     return this.sendWithResponse('get-process-memory-info')
-  },
+  }
 
   /**
   * Calls into the webview to get some data
@@ -231,7 +233,7 @@ module.exports = React.createClass({
       this.ipcPromises[respondName] = { resolve: resolve, timeout: rejectTimeout }
       this.getWebviewNode().send(sendName, Object.assign({}, obj, { __respond__: respondName }))
     })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -240,9 +242,9 @@ module.exports = React.createClass({
   /**
   * @return the webview node
   */
-  getWebviewNode () {
+  getWebviewNode = () => {
     return ReactDOM.findDOMNode(this).getElementsByTagName('webview')[0]
-  },
+  }
 
   render () {
     const attrs = WEBVIEW_ATTRS
@@ -259,4 +261,4 @@ module.exports = React.createClass({
         dangerouslySetInnerHTML={{__html: `<webview ${attrs}></webview>`}} />
     )
   }
-})
+}
