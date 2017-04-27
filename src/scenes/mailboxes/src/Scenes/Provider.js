@@ -18,7 +18,7 @@ import AccountMessageDispatcher from './AccountMessageDispatcher'
 import { Tray } from 'Components/Tray'
 import { AppBadge } from 'Components'
 const {
-  ipcRenderer, remote: {shell}
+  ipcRenderer, remote
 } = window.nativeRequire('electron')
 
 export default class Provider extends React.Component {
@@ -27,8 +27,10 @@ export default class Provider extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
+    // STEP 0. Maintaining focus
     this.refocusTO = null
     this.forceFocusTO = null
+    remote.getCurrentWindow().on('focus', this.handleWindowFocused)
 
     // STEP 1. App services
     Analytics.startAutoreporting()
@@ -54,6 +56,7 @@ export default class Provider extends React.Component {
   componentWillUnmount () {
     clearTimeout(this.refocusTO)
     clearInterval(this.forceFocusTO)
+    remote.getCurrentWindow().removeListener('focus', this.handleWindowFocused)
 
     // STEP 1. App services
     Analytics.stopAutoreporting()
@@ -119,7 +122,7 @@ export default class Provider extends React.Component {
       body: req.filename
     })
     notification.onclick = function () {
-      shell.openItem(req.path) || shell.showItemInFolder(req.path)
+      remote.shell.openItem(req.path) || remote.shell.showItemInFolder(req.path)
     }
   }
 
@@ -160,6 +163,13 @@ export default class Provider extends React.Component {
         }, constants.REFOCUS_MAILBOX_INTERVAL_MS)
       }
     }, constants.REFOCUS_MAILBOX_INTERVAL_MS)
+  }
+
+  /**
+  * Handles the window refocusing by pointing the focus back onto the active mailbox
+  */
+  handleWindowFocused = () => {
+    mailboxDispatch.refocus()
   }
 
   /* **************************************************************************/

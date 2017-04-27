@@ -231,7 +231,9 @@ export default class MailboxWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleRefocus = (evt) => {
-    if (!evt.mailboxId || !evt.service || (evt.mailboxId === this.props.mailboxId && evt.service === this.props.serviceType)) {
+    if ((!evt.mailboxId || !evt.service) && this.state.isActive) {
+      setTimeout(() => { this.refs[BROWSER_REF].focus() })
+    } else if (evt.mailboxId === this.props.mailboxId && evt.service === this.props.serviceType) {
       setTimeout(() => { this.refs[BROWSER_REF].focus() })
     }
   }

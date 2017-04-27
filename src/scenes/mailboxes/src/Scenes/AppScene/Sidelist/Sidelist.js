@@ -31,8 +31,8 @@ export default class Sidelist extends React.Component {
     settingsStore.unlisten(this.settingsUpdated)
     userStore.unlisten(this.userUpdated)
     if (process.platform !== 'darwin') {
-      remote.getCurrentWindow().removeEventListener('maximize', this.handleWindowMaximize)
-      remote.getCurrentWindow().removeEventListener('unmaximize', this.handleWindowUnmaximize)
+      remote.getCurrentWindow().removeListener('maximize', this.handleWindowMaximize)
+      remote.getCurrentWindow().removeListener('unmaximize', this.handleWindowUnmaximize)
     }
   }
 
