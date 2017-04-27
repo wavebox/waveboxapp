@@ -88,6 +88,18 @@ class ContextMenu {
       menuTemplate.push({ type: 'separator' })
     }
 
+    // Lookup & search
+    if (params.selectionText) {
+      const displayText = params.selectionText.length >= 50 ? (
+        params.selectionText.substr(0, 47) + '…'
+      ) : params.selectionText
+      menuTemplate.push({
+        label: `Search Google for “${displayText}”`,
+        click: () => { shell.openExternal(`https://google.com/search?q=${encodeURIComponent(params.selectionText)}`) }
+      })
+      menuTemplate.push({ type: 'separator' })
+    }
+
     // Editing
     const {
       canUndo,
@@ -118,7 +130,7 @@ class ContextMenu {
       menuTemplate.push({ type: 'separator' })
     }
 
-    // WMail
+    // Wavebox
     menuTemplate.push({
       label: 'Wavebox Settings',
       click: () => { ipcRenderer.sendToHost({ type: 'open-settings' }) }
