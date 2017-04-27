@@ -53,6 +53,7 @@ module.exports = function (env) {
       extensions: ['.js', '.jsx', '.less', '.css'],
       alias: {
         shared: path.resolve(path.join(__dirname, '../../shared')),
+        sharedui: path.resolve(path.join(__dirname, '../sharedui')),
         R: path.resolve(path.join(__dirname, 'src')),
         stores: path.resolve(path.join(__dirname, 'src/stores')),
         Scenes: path.resolve(path.join(__dirname, 'src/Scenes'))

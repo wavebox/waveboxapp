@@ -129,6 +129,11 @@
     )
     windowManager.mailboxesWindow.start(openHidden)
     AppUpdater.register(windowManager)
+
+    //TEST
+    const window = new ContentWindow()
+    windowManager.addContentWindow(window)
+    window.start('https://locly.com', 'test', windowManager.mailboxesWindow.window)
   })
 
   app.on('window-all-closed', () => {

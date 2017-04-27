@@ -1,42 +1,36 @@
-const React = require('react')
-const { Paper } = require('material-ui')
-const { browserStore } = require('stores/browser')
+import React from 'react'
+import { Paper } from 'material-ui'
+import { browserStore } from 'stores/browser'
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'BrowserTargetUrl',
-
+export default class BrowserTargetUrl extends React.Component {
   /* **************************************************************************/
   // Component lifecylce
   /* **************************************************************************/
 
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
-  },
+  }
 
   componentWillUnmount () {
     browserStore.unlisten(this.browserUpdated)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecylce
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     const browserState = browserStore.getState()
     return {
       url: browserState.targetUrl
     }
-  },
+  })()
 
-  browserUpdated (browserState) {
+  browserUpdated = (browserState) => {
     this.setState({
       url: browserState.targetUrl
     })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -58,4 +52,4 @@ module.exports = React.createClass({
       </Paper>
     )
   }
-})
+}

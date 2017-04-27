@@ -1,24 +1,24 @@
-const React = require('react')
-const {
+import PropTypes from 'prop-types'
+import React from 'react'
+import { browserStore, browserActions } from 'stores/browser'
+import shallowCompare from 'react-addons-shallow-compare'
+import {
   Paper, IconButton, FontIcon, CircularProgress,
   Toolbar, ToolbarGroup, ToolbarTitle
-} = require('material-ui')
-const { browserStore, browserActions } = require('stores/browser')
-const shallowCompare = require('react-addons-shallow-compare')
+} from 'material-ui'
 const { remote: { shell } } = window.nativeRequire('electron')
 
-module.exports = React.createClass({
+export default class BrowserToolbar extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'BrowserToolbar',
-  propTypes: {
-    handleGoBack: React.PropTypes.func.isRequired,
-    handleGoForward: React.PropTypes.func.isRequired,
-    handleStop: React.PropTypes.func.isRequired,
-    handleReload: React.PropTypes.func.isRequired
-  },
+  static propTypes = {
+    handleGoBack: PropTypes.func.isRequired,
+    handleGoForward: PropTypes.func.isRequired,
+    handleStop: PropTypes.func.isRequired,
+    handleReload: PropTypes.func.isRequired
+  }
 
   /* **************************************************************************/
   // Component lifecylce
@@ -26,17 +26,17 @@ module.exports = React.createClass({
 
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
-  },
+  }
 
   componentWillUnmount () {
     browserStore.unlisten(this.browserUpdated)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecylce
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     const browserState = browserStore.getState()
     return {
       isLoading: browserState.isLoading,
@@ -44,16 +44,16 @@ module.exports = React.createClass({
       canGoBack: browserState.canGoBack,
       canGoForward: browserState.canGoForward
     }
-  },
+  })()
 
-  browserUpdated (browserState) {
+  browserUpdated = (browserState) => {
     this.setState({
       isLoading: browserState.isLoading,
       currentUrl: browserState.currentUrl,
       canGoBack: browserState.canGoBack,
       canGoForward: browserState.canGoForward
     })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -61,7 +61,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { className, handleGoBack, handleGoForward, handleStop, handleReload, ...passProps } = this.props
@@ -114,4 +114,4 @@ module.exports = React.createClass({
       </Paper>
     )
   }
-})
+}

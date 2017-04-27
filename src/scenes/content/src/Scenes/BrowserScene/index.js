@@ -1,1 +1,2 @@
-module.exports = require('./BrowserScene')
+import BrowserScene from './BrowserScene'
+export default BrowserScene

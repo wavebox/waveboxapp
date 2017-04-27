@@ -1,28 +1,27 @@
+import PropTypes from 'prop-types'
 import './BrowserScene.less'
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import WebView from 'sharedui/Components/WebView'
+import BrowserTargetUrl from './BrowserTargetUrl'
+import BrowserSearch from './BrowserSearch'
+import BrowserToolbar from './BrowserToolbar'
+import { browserActions, browserStore } from 'stores/browser'
 
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const WebView = require('shared/Components/WebView')
-const BrowserTargetUrl = require('./BrowserTargetUrl')
-const BrowserSearch = require('./BrowserSearch')
-const BrowserToolbar = require('./BrowserToolbar')
-const { browserActions, browserStore } = require('stores/browser')
 const { ipcRenderer, remote: { shell } } = window.nativeRequire('electron')
 
 const SEARCH_REF = 'search'
 const BROWSER_REF = 'browser'
 
-module.exports = React.createClass({
-
+export default class BrowserScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'BrowserScene',
-  propTypes: {
-    url: React.PropTypes.string.isRequired,
-    partition: React.PropTypes.string.isRequired
-  },
+  static propTypes = {
+    url: PropTypes.string.isRequired,
+    partition: PropTypes.string.isRequired
+  }
 
   /* **************************************************************************/
   // Lifecycle
@@ -31,41 +30,41 @@ module.exports = React.createClass({
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
     ipcRenderer.on('reload-webview', this.handleIPCReload)
-  },
+  }
 
   componentWillUnmount () {
     browserStore.unlisten(this.browserUpdated)
     ipcRenderer.removeListener('reload-webview', this.handleIPCReload)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     const browserState = browserStore.getState()
     return {
       isSearching: browserState.isSearching,
       searchTerm: browserState.searchTerm,
       searchNextHash: browserState.searchNextHash
     }
-  },
+  })()
 
-  browserUpdated (browserState) {
+  browserUpdated = (browserState) => {
     this.setState({
       isSearching: browserState.isSearching,
       searchTerm: browserState.searchTerm,
       searchNextHash: browserState.searchNextHash
     })
-  },
+  }
 
   /* **************************************************************************/
   // IPC Events
   /* **************************************************************************/
 
-  handleIPCReload () {
+  handleIPCReload = () => {
     this.refs[BROWSER_REF].reload()
-  },
+  }
 
   /* **************************************************************************/
   // UI Events
@@ -75,7 +74,7 @@ module.exports = React.createClass({
   * Handles the navigation state changing
   * @param evt: an event which includes a url prop
   */
-  navigationStateDidChange (evt) {
+  navigationStateDidChange = (evt) => {
     if (evt.url) {
       browserActions.setCurrentUrl(evt.url)
     }
@@ -83,7 +82,7 @@ module.exports = React.createClass({
       this.refs[BROWSER_REF].canGoBack(),
       this.refs[BROWSER_REF].canGoForward()
     )
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -91,7 +90,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   componentDidUpdate (prevProps, prevState) {
     // Push the search events down into the webview by diffing the state
@@ -117,7 +116,7 @@ module.exports = React.createClass({
         this.refs[BROWSER_REF].stopFindInPage('clearSelection')
       }
     }
-  },
+  }
 
   render () {
     const { url, partition } = this.props
@@ -152,4 +151,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

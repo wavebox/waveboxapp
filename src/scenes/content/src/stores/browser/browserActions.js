@@ -1,4 +1,4 @@
-const alt = require('../alt')
+import alt from '../alt'
 const { ipcRenderer } = window.nativeRequire('electron')
 
 class BrowserActions {
@@ -86,4 +86,4 @@ class BrowserActions {
 const actions = alt.createActions(BrowserActions)
 ipcRenderer.on('find-start', (evt) => actions.startSearch())
 ipcRenderer.on('find-next', (evt) => actions.searchNext())
-module.exports = actions
+export default actions

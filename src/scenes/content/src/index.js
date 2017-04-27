@@ -1,12 +1,9 @@
-const React = require('react')
-const ReactDOM = require('react-dom')
-const Provider = require('Scenes/Provider')
-
-const browserActions = require('stores/browser/browserActions')
+import React from 'react'
+import ReactDOM from 'react-dom'
+import Provider from 'Scenes/Provider'
+import browserActions from 'stores/browser/browserActions'
+import injectTapEventPlugin from 'react-tap-event-plugin'
 
 browserActions.load()
-
-const injectTapEventPlugin = require('react-tap-event-plugin')
 injectTapEventPlugin()
-
 ReactDOM.render(<Provider />, document.getElementById('ReactComponent-AppScene'))

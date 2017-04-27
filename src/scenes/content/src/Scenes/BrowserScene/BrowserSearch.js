@@ -1,47 +1,41 @@
-const React = require('react')
-const { Paper, TextField, IconButton } = require('material-ui')
-const Colors = require('material-ui/styles/colors')
-const { browserActions, browserStore } = require('stores/browser')
+import React from 'react'
+import { Paper, TextField, IconButton } from 'material-ui'
+import * as Colors from 'material-ui/styles/colors'
+import { browserActions, browserStore } from 'stores/browser'
 
 const INPUT_REF = 'textField'
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'BrowserSearch',
-
+export default class BrowserSearch extends React.Component {
   /* **************************************************************************/
   // Component lifecylce
   /* **************************************************************************/
 
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
-  },
+  }
 
   componentWillUnmount () {
     browserStore.unlisten(this.browserUpdated)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecylce
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     const browserState = browserStore.getState()
     return {
       isSearching: browserState.isSearching,
       searchTerm: browserState.searchTerm
     }
-  },
+  })()
 
-  browserUpdated (browserState) {
+  browserUpdated = (browserState) => {
     this.setState({
       isSearching: browserState.isSearching,
       searchTerm: browserState.searchTerm
     })
-  },
+  }
 
   /* **************************************************************************/
   // Actions
@@ -50,7 +44,7 @@ module.exports = React.createClass({
   /**
   * Focuses the textfield
   */
-  focus () { this.refs[INPUT_REF].focus() },
+  focus = () => { this.refs[INPUT_REF].focus() }
 
   /* **************************************************************************/
   // Events
@@ -60,29 +54,29 @@ module.exports = React.createClass({
   * Handles the input string changing
   * @param evt: the event that fired
   */
-  handleChange (evt) {
+  handleChange = (evt) => {
     browserActions.setSearch(evt.target.value)
-  },
+  }
 
   /**
   * Handles the find next command
   */
-  handleFindNext () {
+  handleFindNext = () => {
     browserActions.searchNext()
-  },
+  }
 
   /**
   * Handles the search stopping
   */
-  handleStopSearch () {
+  handleStopSearch = () => {
     browserActions.stopSearch()
-  },
+  }
 
   /**
   * Handles a key being pressed
   * @param evt: the event that fired
   */
-  handleKeyPress (evt) {
+  handleKeyPress = (evt) => {
     if (evt.keyCode === 13) {
       evt.preventDefault()
       browserActions.searchNext()
@@ -90,7 +84,7 @@ module.exports = React.createClass({
       evt.preventDefault()
       browserActions.stopSearch()
     }
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -133,4 +127,4 @@ module.exports = React.createClass({
       </Paper>
     )
   }
-})
+}

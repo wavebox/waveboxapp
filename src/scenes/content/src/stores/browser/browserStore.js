@@ -1,6 +1,6 @@
-const alt = require('../alt')
-const actions = require('./browserActions')
-const querystring = require('querystring')
+import alt from '../alt'
+import actions from './browserActions'
+import querystring from 'querystring'
 
 class BrowserStore {
   /* **************************************************************************/
@@ -102,4 +102,4 @@ class BrowserStore {
   }
 }
 
-module.exports = alt.createStore(BrowserStore, 'BrowserStore')
+export default alt.createStore(BrowserStore, 'BrowserStore')
