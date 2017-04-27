@@ -1,5 +1,5 @@
 const React = require('react')
-const WebView = require('shared/Components/WebView')
+const WebView = require('sharedui/Components/WebView')
 const { remote: {shell} } = window.nativeRequire('electron')
 const URI = require('urijs')
 
