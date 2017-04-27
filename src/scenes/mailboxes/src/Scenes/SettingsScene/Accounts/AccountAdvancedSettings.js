@@ -1,22 +1,20 @@
-const React = require('react')
-const { Paper, Toggle, FlatButton, FontIcon } = require('material-ui')
-const { mailboxActions, MailboxReducer } = require('stores/mailbox')
-const styles = require('../SettingStyles')
-const shallowCompare = require('react-addons-shallow-compare')
-const Colors = require('material-ui/styles/colors')
-const TimerMixin = require('react-timer-mixin')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Paper, Toggle, FlatButton, FontIcon } from 'material-ui'
+import { mailboxActions, MailboxReducer } from 'stores/mailbox'
+import styles from '../SettingStyles'
+import shallowCompare from 'react-addons-shallow-compare'
+import * as Colors from 'material-ui/styles/colors'
 
-module.exports = React.createClass({
+export default class AccountAdvancedSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'AccountAdvancedSettings',
-  propTypes: {
-    mailbox: React.PropTypes.object.isRequired,
-    showRestart: React.PropTypes.func.isRequired
-  },
-  mixins: [TimerMixin],
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired,
+    showRestart: PropTypes.func.isRequired
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -24,24 +22,28 @@ module.exports = React.createClass({
 
   componentWillMount () {
     this.confirmingDeleteTO = null
-  },
+  }
+
+  componentWillUnmount () {
+    clearTimeout(this.confirmingDeleteTO)
+  }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailbox.id !== nextProps.mailbox.id) {
       this.setState({ confirmingDelete: false })
-      this.clearTimeout(this.confirmingDeleteTO)
+      clearTimeout(this.confirmingDeleteTO)
     }
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       confirmingDelete: false
     }
-  },
+  })()
 
   /* **************************************************************************/
   // UI Events
@@ -50,17 +52,18 @@ module.exports = React.createClass({
   /**
   * Handles the delete button being tapped
   */
-  handleDeleteTapped (evt) {
+  handleDeleteTapped = (evt) => {
     if (this.state.confirmingDelete) {
       this.setState({ confirmingDelete: false })
       mailboxActions.remove(this.props.mailbox.id)
     } else {
       this.setState({ confirmingDelete: true })
-      this.confirmingDeleteTO = this.setTimeout(() => {
+      clearTimeout(this.confirmingDeleteTO)
+      this.confirmingDeleteTO = setTimeout(() => {
         this.setState({ confirmingDelete: false })
       }, 4000)
     }
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -68,7 +71,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { mailbox, showRestart, ...passProps } = this.props
@@ -112,4 +115,4 @@ module.exports = React.createClass({
       </Paper>
     )
   }
-})
+}

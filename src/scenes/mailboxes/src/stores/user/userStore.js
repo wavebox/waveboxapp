@@ -1,10 +1,10 @@
-const alt = require('../alt')
-const actions = require('./userActions')
-const { ANALYTICS_ID, CREATED_TIME } = require('shared/Models/DeviceKeys')
-const User = require('shared/Models/User')
-const persistence = require('./userPersistence')
-const Bootstrap = require('../../Bootstrap')
-const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
+import alt from '../alt'
+import actions from './userActions'
+import { ANALYTICS_ID, CREATED_TIME } from 'shared/Models/DeviceKeys'
+import User from 'shared/Models/User'
+import persistence from './userPersistence'
+import Bootstrap from '../../Bootstrap'
+import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 const { ipcRenderer } = window.nativeRequire('electron')
 
 class UserStore {
@@ -115,4 +115,4 @@ class UserStore {
   }
 }
 
-module.exports = alt.createStore(UserStore, 'UserStore')
+export default alt.createStore(UserStore, 'UserStore')

@@ -1,18 +1,18 @@
-const React = require('react')
-const TrayRenderer = require('./TrayRenderer')
-const shallowCompare = require('react-addons-shallow-compare')
+import PropTypes from 'prop-types'
+import React from 'react'
+import TrayRenderer from './TrayRenderer'
+import shallowCompare from 'react-addons-shallow-compare'
 
-module.exports = React.createClass({
+export default class TrayPreview extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'TrayPreview',
-  propTypes: {
-    tray: React.PropTypes.object.isRequired,
-    size: React.PropTypes.number.isRequired,
-    unreadCount: React.PropTypes.number
-  },
+  static propTypes = {
+    tray: PropTypes.object.isRequired,
+    size: PropTypes.number.isRequired,
+    unreadCount: PropTypes.number
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -22,22 +22,22 @@ module.exports = React.createClass({
     const { size, tray, unreadCount } = this.props
     TrayRenderer.renderPNGDataImage(size, tray, unreadCount)
       .then((png) => this.setState({ image: png }))
-  },
+  }
 
   componentWillReceiveProps (nextProps) {
     if (shallowCompare(this, nextProps, this.state)) {
       TrayRenderer.renderPNGDataImage(nextProps.size, nextProps.tray, nextProps.unreadCount)
         .then((png) => this.setState({ image: png }))
     }
-  },
+  }
 
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return { image: null }
-  },
+  })()
 
   /* **************************************************************************/
   // Rendering
@@ -68,4 +68,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

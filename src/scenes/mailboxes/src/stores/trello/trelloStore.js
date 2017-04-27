@@ -1,16 +1,16 @@
-const alt = require('../alt')
-const actions = require('./trelloActions')
-const { TRELLO_PROFILE_SYNC_INTERVAL, TRELLO_NOTIFICATION_SYNC_INTERVAL } = require('shared/constants')
-const {
+import alt from '../alt'
+import actions from './trelloActions'
+import { TRELLO_PROFILE_SYNC_INTERVAL, TRELLO_NOTIFICATION_SYNC_INTERVAL } from 'shared/constants'
+import { TrelloMailbox } from 'shared/Models/Accounts/Trello'
+import TrelloHTTP from './TrelloHTTP'
+import uuid from 'uuid'
+import Debug from 'Debug'
+import {
   mailboxStore,
   mailboxActions,
   TrelloMailboxReducer,
   TrelloDefaultServiceReducer
-} = require('../mailbox')
-const { TrelloMailbox } = require('shared/Models/Accounts/Trello')
-const TrelloHTTP = require('./TrelloHTTP')
-const uuid = require('uuid')
-const Debug = require('Debug')
+} from '../mailbox'
 
 const REQUEST_TYPES = {
   PROFILE: 'PROFILE',
@@ -233,4 +233,4 @@ class TrelloStore {
   }
 }
 
-module.exports = alt.createStore(TrelloStore, 'TrelloStore')
+export default alt.createStore(TrelloStore, 'TrelloStore')

@@ -1,20 +1,20 @@
-const React = require('react')
-const MailboxWebViewHibernator = require('../MailboxWebViewHibernator')
-const CoreService = require('shared/Models/Accounts/CoreService')
-const { mailboxDispatch, MailboxLinker } = require('stores/mailbox')
-const { microsoftActions } = require('stores/microsoft')
+import PropTypes from 'prop-types'
+import React from 'react'
+import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
+import CoreService from 'shared/Models/Accounts/CoreService'
+import { mailboxDispatch, MailboxLinker } from 'stores/mailbox'
+import { microsoftActions } from 'stores/microsoft'
 
 const REF = 'mailbox_tab'
 
-module.exports = React.createClass({
+export default class MicrosoftMailboxMailWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'MicrosoftMailboxMailbWebView',
-  propTypes: {
-    mailboxId: React.PropTypes.string.isRequired
-  },
+  static propTypes = {
+    mailboxId: PropTypes.string.isRequired
+  }
 
   /* **************************************************************************/
   // Component lifecylce
@@ -23,12 +23,12 @@ module.exports = React.createClass({
   componentDidMount () {
     // Handle dispatch events
     mailboxDispatch.on('openItem', this.handleOpenItem)
-  },
+  }
 
   componentWillUnmount () {
     // Handle dispatch events
     mailboxDispatch.removeListener('openItem', this.handleOpenItem)
-  },
+  }
 
   /* **************************************************************************/
   // Dispatcher Events
@@ -47,7 +47,7 @@ module.exports = React.createClass({
         microsoftActions.syncMailboxMailAfter.defer(this.props.mailboxId, 1000 * 5)
       }
     }
-  },
+  }
 
   /* **************************************************************************/
   // Browser Events
@@ -59,7 +59,7 @@ module.exports = React.createClass({
   */
   handleOpenNewWindow (url) {
     MailboxLinker.openExternalWindow(url)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -77,4 +77,4 @@ module.exports = React.createClass({
         newWindow={(evt) => { this.handleOpenNewWindow(evt.url) }} />
     )
   }
-})
+}

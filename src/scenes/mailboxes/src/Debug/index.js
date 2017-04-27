@@ -1,1 +1,2 @@
-module.exports = require('./Debug')
+import Debug from './Debug'
+export default Debug

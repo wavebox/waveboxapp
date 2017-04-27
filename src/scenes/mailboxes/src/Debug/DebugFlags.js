@@ -35,4 +35,4 @@ class DebugFlags {
   get googleLogServerPings () { return this.getValue('googleLogServerPings', false) }
 }
 
-module.exports = DebugFlags
+export default DebugFlags

@@ -1,5 +1,5 @@
-const googleActions = require('../google/googleActions')
-const ServiceReducer = require('./ServiceReducer')
+import googleActions from '../google/googleActions'
+import ServiceReducer from './ServiceReducer'
 
 class GoogleDefaultServiceReducer extends ServiceReducer {
   /**
@@ -44,4 +44,4 @@ class GoogleDefaultServiceReducer extends ServiceReducer {
   }
 }
 
-module.exports = GoogleDefaultServiceReducer
+export default GoogleDefaultServiceReducer

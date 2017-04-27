@@ -1,47 +1,40 @@
 import './AccountMessageScene.less'
+import React from 'react'
+import { Dialog, RaisedButton } from 'material-ui'
+import shallowCompare from 'react-addons-shallow-compare'
+import { WaveboxWebView } from 'Components'
+import { userStore } from 'stores/user'
+import { settingsActions } from 'stores/settings'
 
-const React = require('react')
-const { Dialog, RaisedButton } = require('material-ui')
-const shallowCompare = require('react-addons-shallow-compare')
-const { WaveboxWebView } = require('Components')
-const { userStore } = require('stores/user')
-const { settingsActions } = require('stores/settings')
-
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'AccountMessageScene',
-
+export default class AccountMessageScene extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
     userStore.listen(this.userUpdated)
-  },
+  }
 
   componentWillUnmount () {
     userStore.unlisten(this.userUpdated)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       open: true,
       url: userStore.getState().user.accountMessageUrl
     }
-  },
+  })()
 
-  userUpdated (userState) {
+  userUpdated = (userState) => {
     this.setState({
       url: userState.user.accountMessageUrl
     })
-  },
+  }
 
   /* **************************************************************************/
   // User Interaction
@@ -50,13 +43,13 @@ module.exports = React.createClass({
   /**
   * Closes the modal
   */
-  handleClose () {
+  handleClose = () => {
     settingsActions.setSeenAccountMessageUrl(this.state.url)
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/'
     }, 500)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -64,7 +57,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { open, url } = this.state
@@ -82,4 +75,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

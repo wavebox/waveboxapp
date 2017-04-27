@@ -1,1 +1,2 @@
-module.exports = require('./ProSettings')
+import ProSettings from './ProSettings'
+export default ProSettings

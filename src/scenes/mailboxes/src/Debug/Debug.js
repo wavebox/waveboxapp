@@ -1,5 +1,5 @@
-const DebugFlags = require('./DebugFlags')
-const DebugTests = require('./DebugTests')
+import DebugFlags from './DebugFlags'
+import DebugTests from './DebugTests'
 
 class Debug {
   /* **************************************************************************/
@@ -39,4 +39,4 @@ class Debug {
   }
 }
 
-module.exports = new Debug()
+export default new Debug()

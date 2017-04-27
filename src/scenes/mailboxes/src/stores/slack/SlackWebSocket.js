@@ -1,4 +1,4 @@
-const { EventEmitter } = require('events')
+import { EventEmitter } from 'events'
 const HEARTBEAT_ID = 'heartbeat'
 const HEARTBEAT_SEND_INTERVAL = 1000 * 5
 const HEARTBEAT_FAILED_INTERVAL = 1000 * 10
@@ -169,4 +169,4 @@ class SlackSocket extends EventEmitter {
   }
 }
 
-module.exports = SlackSocket
+export default SlackSocket

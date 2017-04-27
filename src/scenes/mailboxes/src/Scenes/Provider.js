@@ -1,44 +1,33 @@
-const React = require('react')
-const Router = require('./Router')
-const TimerMixin = require('react-timer-mixin')
-const constants = require('shared/constants')
-const shallowCompare = require('react-addons-shallow-compare')
-const Theme = require('sharedui/Components/Theme')
-const MuiThemeProvider = require('material-ui/styles/MuiThemeProvider').default
-const { mailboxStore, mailboxDispatch } = require('stores/mailbox')
-const { settingsStore } = require('stores/settings')
-const { googleActions } = require('stores/google')
-const { trelloActions } = require('stores/trello')
-const { slackActions } = require('stores/slack')
-const { microsoftActions } = require('stores/microsoft')
-const { mailboxActions } = require('stores/mailbox')
-const { updaterActions } = require('stores/updater')
-const { Analytics, ServerVent } = require('Server')
-const { NotificationService } = require('Notifications')
-const Bootstrap = require('R/Bootstrap')
-const AccountMessageDispatcher = require('./AccountMessageDispatcher')
+import React from 'react'
+import WaveboxRouter from './WaveboxRouter'
+import constants from 'shared/constants'
+import shallowCompare from 'react-addons-shallow-compare'
+import Theme from 'sharedui/Components/Theme'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import { mailboxStore, mailboxDispatch, mailboxActions } from 'stores/mailbox'
+import { settingsStore } from 'stores/settings'
+import { googleActions } from 'stores/google'
+import { trelloActions } from 'stores/trello'
+import { slackActions } from 'stores/slack'
+import { microsoftActions } from 'stores/microsoft'
+import { updaterActions } from 'stores/updater'
+import { Analytics, ServerVent } from 'Server'
+import { NotificationService } from 'Notifications'
+import Bootstrap from 'R/Bootstrap'
+import AccountMessageDispatcher from './AccountMessageDispatcher'
+import { Tray } from 'Components/Tray'
+import { AppBadge } from 'Components'
 const {
   ipcRenderer, remote: {shell}
 } = window.nativeRequire('electron')
-const {
-  Tray: { Tray },
-  AppBadge
-} = require('Components')
 
-module.exports = React.createClass({
-
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'AppProvider',
-  mixins: [TimerMixin],
-
+export default class Provider extends React.Component {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
+    this.refocusTO = null
     this.forceFocusTO = null
 
     // STEP 1. App services
@@ -60,9 +49,12 @@ module.exports = React.createClass({
     mailboxStore.listen(this.mailboxesChanged)
     settingsStore.listen(this.settingsChanged)
     mailboxDispatch.on('blurred', this.mailboxBlurred)
-  },
+  }
 
   componentWillUnmount () {
+    clearTimeout(this.refocusTO)
+    clearInterval(this.forceFocusTO)
+
     // STEP 1. App services
     Analytics.stopAutoreporting()
     ServerVent.stop()
@@ -82,13 +74,13 @@ module.exports = React.createClass({
     mailboxStore.unlisten(this.mailboxesChanged)
     settingsStore.unlisten(this.settingsChanged)
     mailboxDispatch.removeListener('blurred', this.mailboxBlurred)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     const settingsState = settingsStore.getState()
     const mailboxState = mailboxStore.getState()
     return {
@@ -97,21 +89,21 @@ module.exports = React.createClass({
       uiSettings: settingsState.ui,
       traySettings: settingsState.tray
     }
-  },
+  })()
 
-  mailboxesChanged (mailboxState) {
+  mailboxesChanged = (mailboxState) => {
     this.setState({
       messagesUnreadCount: mailboxState.totalUnreadCountForAppBadge(),
       hasUnreadActivity: mailboxState.hasUnreadActivityForAppBadge()
     })
-  },
+  }
 
-  settingsChanged (settingsStore) {
+  settingsChanged = (settingsStore) => {
     this.setState({
       uiSettings: settingsStore.ui,
       traySettings: settingsStore.tray
     })
-  },
+  }
 
   /* **************************************************************************/
   // IPC Events
@@ -129,14 +121,14 @@ module.exports = React.createClass({
     notification.onclick = function () {
       shell.openItem(req.path) || shell.showItemInFolder(req.path)
     }
-  },
+  }
 
   /**
   * Launches the settings over the IPC channel
   */
   ipcLaunchSettings () {
     window.location.hash = '/settings'
-  },
+  }
 
   /* **************************************************************************/
   // Rendering Events
@@ -146,28 +138,29 @@ module.exports = React.createClass({
   * Handles a mailbox bluring by trying to refocus the mailbox
   * @param evt: the event that fired
   */
-  mailboxBlurred (evt) {
+  mailboxBlurred = (evt) => {
     // Requeue the event to run on the end of the render cycle
-    this.setTimeout(() => {
+    clearTimeout(this.refocusTO)
+    this.refocusTO = setTimeout(() => {
       const active = document.activeElement
       if (active.tagName === 'WEBVIEW') {
         // Nothing to do, already focused on mailbox
-        this.clearInterval(this.forceFocusTO)
+        clearInterval(this.forceFocusTO)
       } else if (active.tagName === 'BODY') {
         // Focused on body, just dip focus onto the webview
-        this.clearInterval(this.forceFocusTO)
+        clearInterval(this.forceFocusTO)
         mailboxDispatch.refocus()
       } else {
         // focused on some element in the ui, poll until we move back to body
-        this.forceFocusTO = this.setInterval(() => {
+        this.forceFocusTO = setInterval(() => {
           if (document.activeElement.tagName === 'BODY') {
-            this.clearInterval(this.forceFocusTO)
+            clearInterval(this.forceFocusTO)
             mailboxDispatch.refocus()
           }
         }, constants.REFOCUS_MAILBOX_INTERVAL_MS)
       }
     }, constants.REFOCUS_MAILBOX_INTERVAL_MS)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -175,7 +168,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { traySettings, uiSettings, messagesUnreadCount, hasUnreadActivity } = this.state
@@ -194,7 +187,7 @@ module.exports = React.createClass({
     return (
       <div>
         <MuiThemeProvider muiTheme={Theme}>
-          <Router />
+          <WaveboxRouter />
         </MuiThemeProvider>
         <AccountMessageDispatcher />
         {!traySettings.show ? undefined : (
@@ -210,4 +203,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

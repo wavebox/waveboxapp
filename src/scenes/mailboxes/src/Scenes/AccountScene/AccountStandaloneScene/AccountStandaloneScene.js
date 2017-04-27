@@ -1,23 +1,25 @@
+import PropTypes from 'prop-types'
 import './AccountStandaloneScene.less'
+import React from 'react'
+import { Dialog, RaisedButton } from 'material-ui'
+import shallowCompare from 'react-addons-shallow-compare'
+import { WaveboxWebView } from 'Components'
+import { userStore } from 'stores/user'
+import querystring from 'querystring'
 
-const React = require('react')
-const { Dialog, RaisedButton } = require('material-ui')
-const shallowCompare = require('react-addons-shallow-compare')
-const { WaveboxWebView } = require('Components')
-const { userStore } = require('stores/user')
-
-module.exports = React.createClass({
+export default class AccountStandaloneScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'AccountStandaloneScene',
-  contextTypes: {
-    router: React.PropTypes.object.isRequired
-  },
-  propTypes: {
-    location: React.PropTypes.object.isRequired
-  },
+  static contextTypes = {
+    router: PropTypes.object.isRequired
+  }
+  static propTypes = {
+    location: PropTypes.shape({
+      search: PropTypes.string
+    })
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -25,25 +27,25 @@ module.exports = React.createClass({
 
   componentDidMount () {
     userStore.listen(this.userUpdated)
-  },
+  }
 
   componentWillUnmount () {
     userStore.unlisten(this.userUpdated)
-  },
+  }
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       open: true,
       billingUrl: userStore.getState().user.billingUrl
     }
-  },
+  })()
 
-  userUpdated (userState) {
+  userUpdated = (userState) => {
     this.setState({ billingUrl: userState.user.billingUrl })
-  },
+  }
 
   /* **************************************************************************/
   // User Interaction
@@ -52,12 +54,12 @@ module.exports = React.createClass({
   /**
   * Closes the modal
   */
-  handleClose () {
+  handleClose = () => {
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/'
     }, 500)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -65,11 +67,12 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { open, billingUrl } = this.state
-    const url = this.props.location.query.url || billingUrl
+    const { location } = this.props
+    const url = querystring.parse(location.search.substr(1)).url || billingUrl
 
     return (
       <Dialog
@@ -84,4 +87,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

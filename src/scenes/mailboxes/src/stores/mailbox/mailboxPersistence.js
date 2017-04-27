@@ -1,2 +1,2 @@
-const StorageBucket = require('../StorageBucket')
-module.exports = new StorageBucket('mailboxes')
+import StorageBucket from '../StorageBucket'
+export default new StorageBucket('mailboxes')

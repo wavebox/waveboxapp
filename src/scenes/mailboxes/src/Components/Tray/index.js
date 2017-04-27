@@ -1,6 +1,11 @@
-module.exports = {
-  Tray: require('./Tray'),
-  TrayIconEditor: require('./TrayIconEditor'),
-  TrayPreview: require('./TrayPreview'),
-  TrayRenderer: require('./TrayRenderer')
+import Tray from './Tray'
+import TrayIconEditor from './TrayIconEditor'
+import TrayPreview from './TrayPreview'
+import TrayRenderer from './TrayRenderer'
+
+export {
+  Tray,
+  TrayIconEditor,
+  TrayPreview,
+  TrayRenderer
 }

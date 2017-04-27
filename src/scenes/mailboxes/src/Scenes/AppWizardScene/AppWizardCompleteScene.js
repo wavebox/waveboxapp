@@ -1,9 +1,9 @@
-const React = require('react')
-const { mailboxStore } = require('stores/mailbox')
-const { settingsActions } = require('stores/settings')
-const shallowCompare = require('react-addons-shallow-compare')
-const { Dialog, RaisedButton, FontIcon } = require('material-ui')
-const Colors = require('material-ui/styles/colors')
+import React from 'react'
+import { mailboxStore } from 'stores/mailbox'
+import { settingsActions } from 'stores/settings'
+import shallowCompare from 'react-addons-shallow-compare'
+import { Dialog, RaisedButton, FontIcon } from 'material-ui'
+import * as Colors from 'material-ui/styles/colors'
 
 const styles = {
   container: {
@@ -15,56 +15,50 @@ const styles = {
   }
 }
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'AppWizardComplete',
-
+export default class AppWizardCompleteScene extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
     mailboxStore.listen(this.mailboxesUpdated)
-  },
+  }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxesUpdated)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       mailboxCount: mailboxStore.getState().mailboxCount(),
       open: true
     }
-  },
+  })()
 
-  mailboxesUpdated (mailboxState) {
+  mailboxesUpdated = (mailboxState) => {
     this.setState({
       mailboxCount: mailboxState.mailboxCount()
     })
-  },
+  }
 
   /* **************************************************************************/
   // UI Events
   /* **************************************************************************/
 
-  handleNext () {
+  handleNext = () => {
     this.setState({ open: false })
     setTimeout(() => { window.location.hash = '/mailbox_wizard/add' }, 750)
-  },
+  }
 
-  handleFinish () {
+  handleFinish = () => {
     settingsActions.setHasSeenAppWizard(true)
     this.setState({ open: false })
     setTimeout(() => { window.location.hash = '/' }, 500)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -72,7 +66,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { mailboxCount, open } = this.state
@@ -113,4 +107,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

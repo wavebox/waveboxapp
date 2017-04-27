@@ -1,11 +1,11 @@
-const React = require('react')
-const {
+import React from 'react'
+import dictionariesStore from 'stores/dictionaries/dictionariesStore'
+import dictionariesActions from 'stores/dictionaries/dictionariesActions'
+import {
   Stepper, Step, StepLabel, StepContent,
   RaisedButton, FlatButton, LinearProgress,
   SelectField, MenuItem
-} = require('material-ui')
-const dictionariesStore = require('stores/dictionaries/dictionariesStore')
-const dictionariesActions = require('stores/dictionaries/dictionariesActions')
+} from 'material-ui'
 const {
   remote: {shell}
 } = window.nativeRequire('electron')
@@ -17,30 +17,31 @@ const STEPS = {
   FINISH: 3
 }
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'DictionaryInstallStepper',
-
+export default class DictionaryInstallStepper extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
     dictionariesStore.listen(this.dictionariesChanged)
-  },
+  }
 
   componentWillUnmount () {
     dictionariesStore.unlisten(this.dictionariesChanged)
-  },
+  }
 
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = this.generateInitialState(this.props)
+
+  /**
+  * Generates the state for the given props
+  * @param props: the props to generate state for
+  * @return state object
+  */
+  generateInitialState (props) {
     const store = dictionariesStore.getState()
     return {
       stepIndex: STEPS.PICK,
@@ -50,11 +51,11 @@ module.exports = React.createClass({
       installInflight: store.installInflight(),
       uninstallDictionaries: store.sortedUninstalledDictionaryInfos()
     }
-  },
+  }
 
-  dictionariesChanged (store) {
+  dictionariesChanged = (store) => {
     if (store.installId() !== this.state.installId) {
-      this.setState(this.getInitialState())
+      this.setState(this.generateInitialState(this.props))
     } else {
       if (!this.state.installLanguage && store.installLanguage()) {
         this.setState({
@@ -74,7 +75,7 @@ module.exports = React.createClass({
         })
       }
     }
-  },
+  }
 
   /* **************************************************************************/
   // UI Events
@@ -83,32 +84,32 @@ module.exports = React.createClass({
   /**
   * Progress the user when they pick their language
   */
-  handlePickLanguage (evt, index, value) {
+  handlePickLanguage = (evt, index, value) => {
     if (value !== null) {
       dictionariesActions.pickDictionaryInstallLanguage(this.state.installId, value)
     }
-  },
+  }
 
   /**
   * Handles the user agreeing to the license
   */
-  handleAgreeLicense () {
+  handleAgreeLicense = () => {
     dictionariesActions.installDictionary(this.state.installId)
-  },
+  }
 
   /**
   * Handles cancelling the install
   */
-  handleCancel () {
+  handleCancel = () => {
     dictionariesActions.stopDictionaryInstall()
-  },
+  }
 
   /**
   * Handles completing the install
   */
-  handleComplete () {
+  handleComplete = () => {
     dictionariesActions.completeDictionaryInstall()
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -189,4 +190,4 @@ module.exports = React.createClass({
       </Stepper>
     )
   }
-})
+}

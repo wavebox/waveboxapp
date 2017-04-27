@@ -1,11 +1,10 @@
-const { Socket, LongPoll } = require('phoenix')
-const { EventEmitter } = require('events')
-const { SYNC_SOCKET_URL, SYNC_SOCKET_UPGRADE_INTERVAL } = require('shared/constants')
+import { Socket, LongPoll } from 'phoenix'
+import { EventEmitter } from 'events'
+import { SYNC_SOCKET_URL, SYNC_SOCKET_UPGRADE_INTERVAL } from 'shared/constants'
+import Debug from 'Debug'
+import userActions from 'stores/user/userActions'
+import googleActions from 'stores/google/googleActions'
 const pkg = window.appPackage()
-const Debug = require('Debug')
-
-const userActions = require('stores/user/userActions')
-const googleActions = require('stores/google/googleActions')
 
 class ServerVent extends EventEmitter {
   /* ****************************************************************************/
@@ -175,4 +174,4 @@ class ServerVent extends EventEmitter {
   }
 }
 
-module.exports = new ServerVent()
+export default new ServerVent()

@@ -1,25 +1,25 @@
-const React = require('react')
-const { Paper, RaisedButton, FontIcon } = require('material-ui')
-const { ColorPickerButton } = require('Components')
-const { mailboxActions, MailboxReducer } = require('stores/mailbox')
-const styles = require('../SettingStyles')
-const shallowCompare = require('react-addons-shallow-compare')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Paper, RaisedButton, FontIcon } from 'material-ui'
+import { ColorPickerButton } from 'Components'
+import { mailboxActions, MailboxReducer } from 'stores/mailbox'
+import styles from '../SettingStyles'
+import shallowCompare from 'react-addons-shallow-compare'
 
-module.exports = React.createClass({
+export default class AccountAppearanceSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'AccountAppearanceSettings',
-  propTypes: {
-    mailbox: React.PropTypes.object.isRequired
-  },
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired
+  }
 
   /* **************************************************************************/
   // User Interaction
   /* **************************************************************************/
 
-  handleCustomAvatarChange (evt) {
+  handleCustomAvatarChange = (evt) => {
     if (!evt.target.files[0]) { return }
 
     // Load the image
@@ -46,7 +46,7 @@ module.exports = React.createClass({
       image.src = reader.result
     }, false)
     reader.readAsDataURL(evt.target.files[0])
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -54,7 +54,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { mailbox, ...passProps } = this.props
@@ -91,4 +91,4 @@ module.exports = React.createClass({
       </Paper>
     )
   }
-})
+}

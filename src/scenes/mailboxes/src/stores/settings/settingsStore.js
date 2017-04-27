@@ -1,20 +1,18 @@
-const alt = require('../alt')
-const actions = require('./settingsActions')
-const persistence = require('./settingsPersistence')
-const dictionaries = require('shared/dictionaries.js')
-const {
-  Settings: {
-    AppSettings,
-    LanguageSettings,
-    OSSettings,
-    TraySettings,
-    UISettings,
-    SettingsIdent
-  }
-} = require('shared/Models')
+import alt from '../alt'
+import actions from './settingsActions'
+import persistence from './settingsPersistence'
+import dictionaries from 'shared/dictionaries.js'
+import fs from 'fs'
+import {
+  AppSettings,
+  LanguageSettings,
+  OSSettings,
+  TraySettings,
+  UISettings,
+  SettingsIdent
+} from 'shared/Models/Settings'
 const homeDir = window.appNodeModulesRequire('home-dir') // pull this from main thread
 const { systemPreferences } = window.nativeRequire('electron').remote
-const fs = require('fs')
 
 class SettingsStore {
   /* **************************************************************************/
@@ -237,4 +235,4 @@ class SettingsStore {
   }
 }
 
-module.exports = alt.createStore(SettingsStore, 'SettingsStore')
+export default alt.createStore(SettingsStore, 'SettingsStore')

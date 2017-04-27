@@ -1,4 +1,4 @@
-const ServiceReducer = require('./ServiceReducer')
+import ServiceReducer from './ServiceReducer'
 
 class MicrosoftStorageServiceReducer extends ServiceReducer {
   /**
@@ -12,4 +12,4 @@ class MicrosoftStorageServiceReducer extends ServiceReducer {
   }
 }
 
-module.exports = MicrosoftStorageServiceReducer
+export default MicrosoftStorageServiceReducer

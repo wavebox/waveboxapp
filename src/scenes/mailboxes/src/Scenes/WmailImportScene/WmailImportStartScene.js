@@ -1,21 +1,15 @@
-const React = require('react')
-const { Dialog, RaisedButton, FlatButton } = require('material-ui')
-const { wmailActions } = require('stores/wmail')
+import React from 'react'
+import { Dialog, RaisedButton, FlatButton } from 'material-ui'
+import { wmailActions } from 'stores/wmail'
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'WmailImportStartScene',
-
+export default class WmailImportStartScene extends React.Component {
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return { open: true }
-  },
+  })()
 
   /* **************************************************************************/
   // UI Events
@@ -24,19 +18,19 @@ module.exports = React.createClass({
   /**
   * Closes the modal
   */
-  handleClose () {
+  handleClose = () => {
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/'
     }, 500)
-  },
+  }
 
   /**
   * Imports the settings from wmail
   */
-  handleImport () {
+  handleImport = () => {
     wmailActions.importWmailSettings()
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -71,4 +65,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

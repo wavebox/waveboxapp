@@ -1,4 +1,7 @@
-module.exports = {
-  userActions: require('./userActions'),
-  userStore: require('./userStore')
+import userActions from './userActions'
+import userStore from './userStore'
+
+export {
+  userActions,
+  userStore
 }

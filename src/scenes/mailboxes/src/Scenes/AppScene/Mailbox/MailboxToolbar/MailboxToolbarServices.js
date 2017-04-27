@@ -1,6 +1,7 @@
-const React = require('react')
-const { mailboxStore } = require('stores/mailbox')
-const MailboxToolbarService = require('./MailboxToolbarService')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { mailboxStore } from 'stores/mailbox'
+import MailboxToolbarService from './MailboxToolbarService'
 
 const styles = {
   tabs: {
@@ -11,16 +12,15 @@ const styles = {
   }
 }
 
-module.exports = React.createClass({
+export default class MailboxToolbarServices extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'MailboxToolbar',
-  propTypes: { // sticky, check shouldComponentUpdate
-    mailboxId: React.PropTypes.string.isRequired,
-    toolbarHeight: React.PropTypes.number.isRequired
-  },
+  static propTypes = {
+    mailboxId: PropTypes.string.isRequired,
+    toolbarHeight: PropTypes.number.isRequired
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -28,35 +28,42 @@ module.exports = React.createClass({
 
   componentDidMount () {
     mailboxStore.listen(this.mailboxChanged)
-  },
+  }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxChanged)
-  },
+  }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId) {
-      this.replaceState(this.getInitialState(nextProps))
+      this.setState(this.generateState(nextProps))
     }
-  },
+  }
 
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState (props = this.props) {
+  state = this.generateState(this.props)
+
+  /**
+  * Generates the state from the given props
+  * @param props: the props to use
+  * @return state object
+  */
+  generateState (props) {
     const mailbox = mailboxStore.getState().getMailbox(props.mailboxId)
     return {
       serviceTypes: mailbox.enabledServiceTypes
     }
-  },
+  }
 
-  mailboxChanged (mailboxState) {
+  mailboxChanged = (mailboxState) => {
     const mailbox = mailboxState.getMailbox(this.props.mailboxId)
     this.setState({
       serviceTypes: mailbox.enabledServiceTypes
     })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -68,7 +75,7 @@ module.exports = React.createClass({
     if (JSON.stringify(this.state.serviceTypes) !== JSON.stringify(nextState.serviceTypes)) { return true }
 
     return false
-  },
+  }
 
   render () {
     const { mailboxId, toolbarHeight, style, ...passProps } = this.props
@@ -89,4 +96,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

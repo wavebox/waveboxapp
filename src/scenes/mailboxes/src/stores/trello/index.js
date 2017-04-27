@@ -1,6 +1,9 @@
-module.exports = {
-  trelloActions: require('./trelloActions'),
-  trelloStore: require('./trelloStore'),
+import trelloActions from './trelloActions'
+import trelloStore from './trelloStore'
+import TrelloHTTP from './TrelloHTTP'
 
-  TrelloHTTP: require('./TrelloHTTP')
+export {
+  trelloActions,
+  trelloStore,
+  TrelloHTTP
 }

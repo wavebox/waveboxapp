@@ -1,20 +1,20 @@
-const React = require('react')
-const MailboxWebViewHibernator = require('../MailboxWebViewHibernator')
-const CoreService = require('shared/Models/Accounts/CoreService')
-const { MailboxLinker, mailboxStore } = require('stores/mailbox')
-const shallowCompare = require('react-addons-shallow-compare')
+import PropTypes from 'prop-types'
+import React from 'react'
+import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
+import CoreService from 'shared/Models/Accounts/CoreService'
+import { MailboxLinker, mailboxStore } from 'stores/mailbox'
+import shallowCompare from 'react-addons-shallow-compare'
 
 const REF = 'mailbox_tab'
 
-module.exports = React.createClass({
+export default class GenericMailboxDefaultServiceWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'GenericMailboxDefaultServiceWebView',
-  propTypes: {
-    mailboxId: React.PropTypes.string.isRequired
-  },
+  static propTypes = {
+    mailboxId: PropTypes.string.isRequired
+  }
 
   /* **************************************************************************/
   // Component lifecycle
@@ -22,37 +22,44 @@ module.exports = React.createClass({
 
   componentDidMount () {
     mailboxStore.listen(this.mailboxChanged)
-  },
+  }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxChanged)
-  },
+  }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId) {
-      this.replaceState(this.getInitialState(nextProps))
+      this.setState(this.generateState(nextProps))
     }
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState (props = this.props) {
+  state = this.generateState(this.props)
+
+  /**
+  * Generates the state from the given props
+  * @param props: the props to use
+  * @return state object
+  */
+  generateState (props) {
     const mailbox = mailboxStore.getState().getMailbox(props.mailboxId)
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     return {
       url: service ? service.url : undefined
     }
-  },
+  }
 
-  mailboxChanged (mailboxState) {
+  mailboxChanged = (mailboxState) => {
     const mailbox = mailboxState.getMailbox(this.props.mailboxId)
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     this.setState({
       url: service ? service.url : undefined
     })
-  },
+  }
 
   /* **************************************************************************/
   // Browser Events
@@ -64,7 +71,7 @@ module.exports = React.createClass({
   */
   handleOpenNewWindow (url) {
     MailboxLinker.openExternalWindow(url)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -72,7 +79,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { mailboxId } = this.props
@@ -88,4 +95,4 @@ module.exports = React.createClass({
         newWindow={(evt) => { this.handleOpenNewWindow(evt.url) }} />
     )
   }
-})
+}

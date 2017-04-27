@@ -1,4 +1,4 @@
-const MailboxReducer = require('./MailboxReducer')
+import MailboxReducer from './MailboxReducer'
 
 class MicrosoftMailboxReducer extends MailboxReducer {
   /**
@@ -26,4 +26,4 @@ class MicrosoftMailboxReducer extends MailboxReducer {
   }
 }
 
-module.exports = MicrosoftMailboxReducer
+export default MicrosoftMailboxReducer

@@ -1,4 +1,7 @@
-module.exports = {
-  wmailActions: require('./wmailActions'),
-  wmailStore: require('./wmailStore')
+import wmailActions from './wmailActions'
+import wmailStore from './wmailStore'
+
+export {
+  wmailActions,
+  wmailStore
 }

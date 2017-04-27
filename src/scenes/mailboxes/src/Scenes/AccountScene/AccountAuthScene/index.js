@@ -1,1 +1,2 @@
-module.exports = require('./AccountAuthScene')
+import AccountAuthScene from './AccountAuthScene'
+export default AccountAuthScene

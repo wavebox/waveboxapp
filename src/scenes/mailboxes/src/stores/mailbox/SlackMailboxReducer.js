@@ -1,4 +1,4 @@
-const MailboxReducer = require('./MailboxReducer')
+import MailboxReducer from './MailboxReducer'
 
 class SlackMailboxReducer extends MailboxReducer {
   /**
@@ -15,4 +15,4 @@ class SlackMailboxReducer extends MailboxReducer {
   }
 }
 
-module.exports = SlackMailboxReducer
+export default SlackMailboxReducer

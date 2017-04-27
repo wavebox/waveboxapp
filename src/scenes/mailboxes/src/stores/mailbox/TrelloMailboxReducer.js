@@ -1,4 +1,4 @@
-const MailboxReducer = require('./MailboxReducer')
+import MailboxReducer from './MailboxReducer'
 
 class TrelloMailboxReducer extends MailboxReducer {
   /**
@@ -21,4 +21,4 @@ class TrelloMailboxReducer extends MailboxReducer {
   }
 }
 
-module.exports = TrelloMailboxReducer
+export default TrelloMailboxReducer

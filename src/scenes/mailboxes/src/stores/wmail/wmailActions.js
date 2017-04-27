@@ -1,4 +1,4 @@
-const alt = require('../alt')
+import alt from '../alt'
 
 class WmailActions {
   /* **************************************************************************/
@@ -11,4 +11,4 @@ class WmailActions {
   importWmailSettings () { return {} }
 }
 
-module.exports = alt.createActions(WmailActions)
+export default alt.createActions(WmailActions)

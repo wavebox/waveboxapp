@@ -1,42 +1,40 @@
-const React = require('react')
-const { RaisedButton, Popover } = require('material-ui')
-const { ChromePicker } = require('react-color')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { RaisedButton, Popover } from 'material-ui'
+import { ChromePicker } from 'react-color'
 
-module.exports = React.createClass({
+export default class ColorPickerButton extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'ColorPickerButton',
-  propTypes: {
-    value: React.PropTypes.string,
-    label: React.PropTypes.string.isRequired,
-    disabled: React.PropTypes.bool.isRequired,
-    anchorOrigin: React.PropTypes.object.isRequired,
-    targetOrigin: React.PropTypes.object.isRequired,
-    icon: React.PropTypes.node,
-    onChange: React.PropTypes.func
-  },
+  static propTypes = {
+    value: PropTypes.string,
+    label: PropTypes.string.isRequired,
+    disabled: PropTypes.bool.isRequired,
+    anchorOrigin: PropTypes.object.isRequired,
+    targetOrigin: PropTypes.object.isRequired,
+    icon: PropTypes.node,
+    onChange: PropTypes.func
+  }
+
+  static defaultProps = {
+    label: 'Pick Colour',
+    disabled: false,
+    anchorOrigin: {horizontal: 'left', vertical: 'bottom'},
+    targetOrigin: {horizontal: 'left', vertical: 'top'}
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       open: false,
       anchor: null
     }
-  },
-
-  getDefaultProps () {
-    return {
-      label: 'Pick Colour',
-      disabled: false,
-      anchorOrigin: {horizontal: 'left', vertical: 'bottom'},
-      targetOrigin: {horizontal: 'left', vertical: 'top'}
-    }
-  },
+  })()
 
   /* **************************************************************************/
   // Rendering
@@ -70,4 +68,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

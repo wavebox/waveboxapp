@@ -1,4 +1,4 @@
-const alt = require('../alt')
+import alt from '../alt'
 
 class TrelloActions {
   /* **************************************************************************/
@@ -59,4 +59,4 @@ class TrelloActions {
   }
 }
 
-module.exports = alt.createActions(TrelloActions)
+export default alt.createActions(TrelloActions)

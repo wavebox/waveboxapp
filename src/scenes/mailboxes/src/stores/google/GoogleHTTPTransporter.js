@@ -1,5 +1,5 @@
-const qs = require('qs')
-const querystring = require('querystring')
+import qs from 'qs'
+import querystring from 'querystring'
 
 class GoogleHTTPTransporter {
   /* **************************************************************************/
@@ -112,4 +112,4 @@ class GoogleHTTPTransporter {
   }
 }
 
-module.exports = GoogleHTTPTransporter
+export default GoogleHTTPTransporter

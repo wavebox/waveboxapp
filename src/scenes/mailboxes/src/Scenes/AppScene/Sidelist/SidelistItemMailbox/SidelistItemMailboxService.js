@@ -1,30 +1,30 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const { Avatar } = require('material-ui')
-const styles = require('../SidelistStyles')
-const ServiceFactory = require('shared/Models/Accounts/ServiceFactory')
+import PropTypes from 'prop-types'
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import { Avatar } from 'material-ui'
+import styles from '../SidelistStyles'
+import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
 
-module.exports = React.createClass({
+export default class SidelistItemMailboxService extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'SidelistItemMailboxServices',
-  propTypes: {
-    mailbox: React.PropTypes.object.isRequired,
-    isActiveMailbox: React.PropTypes.bool.isRequired,
-    isActiveService: React.PropTypes.bool.isRequired,
-    onOpenService: React.PropTypes.func.isRequired,
-    serviceType: React.PropTypes.string.isRequired
-  },
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired,
+    isActiveMailbox: PropTypes.bool.isRequired,
+    isActiveService: PropTypes.bool.isRequired,
+    onOpenService: PropTypes.func.isRequired,
+    serviceType: PropTypes.string.isRequired
+  }
 
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return { isHovering: false }
-  },
+  })()
 
   /* **************************************************************************/
   // Rendering
@@ -32,7 +32,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   /**
   * @param mailboxType: the type of mailbox
@@ -42,7 +42,7 @@ module.exports = React.createClass({
   getServiceIconUrl (mailboxType, serviceType) {
     const ServiceClass = ServiceFactory.getClass(mailboxType, serviceType)
     return ServiceClass ? '../../' + ServiceClass.humanizedLogo : ''
-  },
+  }
 
   render () {
     const {
@@ -72,4 +72,4 @@ module.exports = React.createClass({
         style={Object.assign({}, style, { borderColor: borderColor }, baseStyle)} />
     )
   }
-})
+}

@@ -1,20 +1,14 @@
-const React = require('react')
-const { Dialog, RaisedButton } = require('material-ui')
+import React from 'react'
+import { Dialog, RaisedButton } from 'material-ui'
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'WmailImportCompleteScene',
-
+export default class WmailImportCompleteScene extends React.Component {
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return { open: true }
-  },
+  })()
 
   /* **************************************************************************/
   // UI Events
@@ -23,12 +17,12 @@ module.exports = React.createClass({
   /**
   * Closes the modal
   */
-  handleClose () {
+  handleClose = () => {
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/'
     }, 500)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -78,4 +72,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

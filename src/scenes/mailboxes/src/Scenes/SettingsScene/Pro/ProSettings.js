@@ -1,17 +1,17 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const { WaveboxWebView } = require('Components')
-const { userStore } = require('stores/user')
+import PropTypes from 'prop-types'
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import { WaveboxWebView } from 'Components'
+import { userStore } from 'stores/user'
 
-module.exports = React.createClass({
+export default class ProSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'ProSettings',
-  propTypes: {
-    showRestart: React.PropTypes.func.isRequired
-  },
+  static propTypes = {
+    showRestart: PropTypes.func.isRequired
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -19,25 +19,25 @@ module.exports = React.createClass({
 
   componentDidMount () {
     userStore.listen(this.userUpdated)
-  },
+  }
 
   componentWillUnmount () {
     userStore.unlisten(this.userUpdated)
-  },
+  }
 
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       url: userStore.getState().user.billingUrl
     }
-  },
+  })()
 
-  userUpdated (userState) {
+  userUpdated = (userState) => {
     this.setState({ url: userState.user.billingUrl })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -45,7 +45,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const {style, ...passProps} = this.props
@@ -66,4 +66,4 @@ module.exports = React.createClass({
         }, style)} />
     )
   }
-})
+}

@@ -1,43 +1,43 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const { Paper, TextField } = require('material-ui')
-const { Grid: { Row, Col } } = require('Components')
-const AccountAppearanceSettings = require('../AccountAppearanceSettings')
-const AccountAdvancedSettings = require('../AccountAdvancedSettings')
-const styles = require('../../SettingStyles')
-const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
-const AccountCustomCodeSettings = require('../AccountCustomCodeSettings')
-const AccountSleepableSettings = require('../AccountSleepableSettings')
-const { mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } = require('stores/mailbox')
-const validUrl = require('valid-url')
+import PropTypes from 'prop-types'
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import { Paper, TextField } from 'material-ui'
+import { Row, Col } from 'Components/Grid'
+import AccountAppearanceSettings from '../AccountAppearanceSettings'
+import AccountAdvancedSettings from '../AccountAdvancedSettings'
+import styles from '../../SettingStyles'
+import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
+import AccountSleepableSettings from '../AccountSleepableSettings'
+import { mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
+import validUrl from 'valid-url'
 
-module.exports = React.createClass({
+export default class GenericAccountSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'GenericAccountSettings',
-  propTypes: {
-    mailbox: React.PropTypes.object.isRequired,
-    showRestart: React.PropTypes.func.isRequired
-  },
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired,
+    showRestart: PropTypes.func.isRequired
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       displayNameError: null,
       serviceUrlError: null
     }
-  },
+  })()
 
   /* **************************************************************************/
   // UI Events
   /* **************************************************************************/
 
-  handleNameChange (evt) {
+  handleNameChange = (evt) => {
     const value = evt.target.value
     if (!value) {
       this.setState({ displayNameError: 'Display name is required' })
@@ -45,9 +45,9 @@ module.exports = React.createClass({
       this.setState({ displayNameError: null })
       mailboxActions.reduce(this.props.mailbox.id, GenericMailboxReducer.setDisplayName, value)
     }
-  },
+  }
 
-  handleUrlChange (evt) {
+  handleUrlChange = (evt) => {
     const value = evt.target.value
     if (!value) {
       this.setState({ serviceUrlError: 'Service url is required' })
@@ -62,7 +62,7 @@ module.exports = React.createClass({
         value
       )
     }
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -70,7 +70,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { displayNameError, serviceUrlError } = this.state
@@ -119,4 +119,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

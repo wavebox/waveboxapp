@@ -1,4 +1,7 @@
-module.exports = {
-  Analytics: require('./Analytics'),
-  ServerVent: require('./ServerVent')
+import Analytics from './Analytics'
+import ServerVent from './ServerVent'
+
+export {
+  Analytics,
+  ServerVent
 }

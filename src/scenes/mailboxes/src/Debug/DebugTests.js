@@ -87,4 +87,4 @@ class DebugTests {
   }
 }
 
-module.exports = DebugTests
+export default DebugTests

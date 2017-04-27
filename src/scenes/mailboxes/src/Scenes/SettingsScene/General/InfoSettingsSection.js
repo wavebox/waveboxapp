@@ -1,19 +1,13 @@
-const React = require('react')
-const {Paper} = require('material-ui')
-const styles = require('../SettingStyles')
-const shallowCompare = require('react-addons-shallow-compare')
-const Colors = require('material-ui/styles/colors')
+import React from 'react'
+import {Paper} from 'material-ui'
+import styles from '../SettingStyles'
+import shallowCompare from 'react-addons-shallow-compare'
+import * as Colors from 'material-ui/styles/colors'
+import { mailboxStore, mailboxDispatch } from 'stores/mailbox'
 const { remote } = window.nativeRequire('electron')
-const { mailboxStore, mailboxDispatch } = require('stores/mailbox')
 const pkg = window.appPackage()
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'InfoSettingsSection',
-
+export default class InfoSettingsSection extends React.Component {
   /* **************************************************************************/
   // UI Event
   /* **************************************************************************/
@@ -21,7 +15,7 @@ module.exports = React.createClass({
   /**
   * Shows a snapshot of the current memory consumed
   */
-  handleShowMemoryInfo (evt) {
+  handleShowMemoryInfo = (evt) => {
     evt.preventDefault()
 
     const sizeToMb = (size) => { return Math.round(size / 1024) }
@@ -48,7 +42,7 @@ module.exports = React.createClass({
         ''
       ].concat(memoryInfo).join('\n'))
     })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -56,7 +50,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     return (
@@ -76,4 +70,4 @@ module.exports = React.createClass({
       </Paper>
     )
   }
-})
+}

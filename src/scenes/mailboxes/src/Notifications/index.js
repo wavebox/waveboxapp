@@ -1,3 +1,5 @@
-module.exports = {
-  NotificationService: require('./NotificationService')
+import NotificationService from './NotificationService'
+
+export {
+  NotificationService
 }

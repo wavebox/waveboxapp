@@ -1,9 +1,9 @@
+import mailboxStore from './mailboxStore'
+import settingsStore from '../settings/settingsStore'
 const {
   ipcRenderer,
   remote: { shell }
 } = window.nativeRequire('electron')
-const mailboxStore = require('./mailboxStore')
-const settingsStore = require('../settings/settingsStore')
 
 class MailboxLinker {
   /**
@@ -42,4 +42,4 @@ class MailboxLinker {
   }
 }
 
-module.exports = MailboxLinker
+export default MailboxLinker

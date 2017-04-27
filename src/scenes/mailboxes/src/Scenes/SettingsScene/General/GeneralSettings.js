@@ -1,28 +1,25 @@
-const React = require('react')
-const {
-  Grid: { Container, Row, Col }
-} = require('Components')
-const settingsStore = require('stores/settings/settingsStore')
-const platformStore = require('stores/platform/platformStore')
+import PropTypes from 'prop-types'
+import React from 'react'
+import settingsStore from 'stores/settings/settingsStore'
+import platformStore from 'stores/platform/platformStore'
+import DownloadSettingsSection from './DownloadSettingsSection'
+import LanguageSettingsSection from './LanguageSettingsSection'
+import NotificationSettingsSection from './NotificationSettingsSection'
+import TraySettingsSection from './TraySettingsSection'
+import UISettingsSection from './UISettingsSection'
+import InfoSettingsSection from './InfoSettingsSection'
+import PlatformSettingsSection from './PlatformSettingsSection'
+import shallowCompare from 'react-addons-shallow-compare'
+import { Container, Row, Col } from 'Components/Grid'
 
-const DownloadSettingsSection = require('./DownloadSettingsSection')
-const LanguageSettingsSection = require('./LanguageSettingsSection')
-const NotificationSettingsSection = require('./NotificationSettingsSection')
-const TraySettingsSection = require('./TraySettingsSection')
-const UISettingsSection = require('./UISettingsSection')
-const InfoSettingsSection = require('./InfoSettingsSection')
-const PlatformSettingsSection = require('./PlatformSettingsSection')
-const shallowCompare = require('react-addons-shallow-compare')
-
-module.exports = React.createClass({
+export default class GeneralSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'GeneralSettings',
-  propTypes: {
-    showRestart: React.PropTypes.func.isRequired
-  },
+  static propTypes = {
+    showRestart: PropTypes.func.isRequired
+  }
 
   /* **************************************************************************/
   // Lifecycle
@@ -31,12 +28,12 @@ module.exports = React.createClass({
   componentDidMount () {
     settingsStore.listen(this.settingsChanged)
     platformStore.listen(this.platformChanged)
-  },
+  }
 
   componentWillUnmount () {
     settingsStore.unlisten(this.settingsChanged)
     platformStore.unlisten(this.platformChanged)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
@@ -53,7 +50,7 @@ module.exports = React.createClass({
       language: store.language,
       tray: store.tray
     }
-  },
+  }
 
   /**
   * Generates the platform state from the settings
@@ -65,19 +62,19 @@ module.exports = React.createClass({
       mailtoLinkHandlerSupported: store.mailtoLinkHandlerSupported(),
       isMailtoLinkHandler: store.isMailtoLinkHandler()
     }
-  },
+  }
 
-  getInitialState () {
+  state = (() => {
     return Object.assign({}, this.generateSettingsState(), this.generatePlatformState())
-  },
+  })()
 
-  settingsChanged (store) {
+  settingsChanged = (store) => {
     this.setState(this.generateSettingsState(store))
-  },
+  }
 
-  platformChanged (store) {
+  platformChanged = (store) => {
     this.setState(this.generatePlatformState(store))
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -85,7 +82,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const {
@@ -122,4 +119,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

@@ -1,26 +1,26 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const { Paper } = require('material-ui')
-const { Grid: { Row, Col } } = require('Components')
-const AccountAppearanceSettings = require('../AccountAppearanceSettings')
-const AccountAdvancedSettings = require('../AccountAdvancedSettings')
-const AccountNotificationBadgeSettings = require('../AccountNotificationBadgeSettings')
-const styles = require('../../SettingStyles')
-const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
-const AccountCustomCodeSettings = require('../AccountCustomCodeSettings')
-const AccountSleepableSettings = require('../AccountSleepableSettings')
+import PropTypes from 'prop-types'
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import { Paper } from 'material-ui'
+import { Row, Col } from 'Components/Grid'
+import AccountAppearanceSettings from '../AccountAppearanceSettings'
+import AccountAdvancedSettings from '../AccountAdvancedSettings'
+import AccountNotificationBadgeSettings from '../AccountNotificationBadgeSettings'
+import styles from '../../SettingStyles'
+import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
+import AccountSleepableSettings from '../AccountSleepableSettings'
 
-module.exports = React.createClass({
+export default class SlackAccountSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'SlackAccountSettings',
-  propTypes: {
-    mailbox: React.PropTypes.object.isRequired,
-    showRestart: React.PropTypes.func.isRequired,
-    onRequestEditCustomCode: React.PropTypes.func.isRequired
-  },
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired,
+    showRestart: PropTypes.func.isRequired,
+    onRequestEditCustomCode: PropTypes.func.isRequired
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -28,7 +28,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { mailbox, showRestart, onRequestEditCustomCode, ...passProps } = this.props
@@ -56,4 +56,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

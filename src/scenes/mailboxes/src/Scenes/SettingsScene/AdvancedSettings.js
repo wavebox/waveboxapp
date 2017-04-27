@@ -1,18 +1,18 @@
-const React = require('react')
-const { Toggle, Paper } = require('material-ui')
-const { settingsStore, settingsActions } = require('stores/settings')
-const styles = require('./SettingStyles')
-const shallowCompare = require('react-addons-shallow-compare')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Toggle, Paper } from 'material-ui'
+import { settingsStore, settingsActions } from 'stores/settings'
+import styles from './SettingStyles'
+import shallowCompare from 'react-addons-shallow-compare'
 
-module.exports = React.createClass({
+export default class AdvancedSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'AdvancedSettings',
-  propTypes: {
-    showRestart: React.PropTypes.func.isRequired
-  },
+  static propTypes = {
+    showRestart: PropTypes.func.isRequired
+  }
 
   /* **************************************************************************/
   // Lifecycle
@@ -20,11 +20,11 @@ module.exports = React.createClass({
 
   componentDidMount () {
     settingsStore.listen(this.settingsChanged)
-  },
+  }
 
   componentWillUnmount () {
     settingsStore.unlisten(this.settingsChanged)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
@@ -38,15 +38,15 @@ module.exports = React.createClass({
     return {
       app: settingsState.app
     }
-  },
+  }
 
-  getInitialState () {
+  state = (() => {
     return this.generateState()
-  },
+  })()
 
-  settingsChanged (store) {
+  settingsChanged = (store) => {
     this.setState(this.generateState(store))
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -54,7 +54,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { app } = this.state
@@ -99,4 +99,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

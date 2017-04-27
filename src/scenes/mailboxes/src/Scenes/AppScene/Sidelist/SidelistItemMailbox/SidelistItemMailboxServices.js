@@ -1,21 +1,21 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const styles = require('../SidelistStyles')
-const SidelistItemMailboxService = require('./SidelistItemMailboxService')
+import PropTypes from 'prop-types'
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import styles from '../SidelistStyles'
+import SidelistItemMailboxService from './SidelistItemMailboxService'
 
-module.exports = React.createClass({
+export default class SidelistItemMailboxServices extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'SidelistItemMailboxServices',
-  propTypes: {
-    mailbox: React.PropTypes.object.isRequired,
-    isActiveMailbox: React.PropTypes.bool.isRequired,
-    activeService: React.PropTypes.string.isRequired,
-    onOpenService: React.PropTypes.func.isRequired,
-    onContextMenuService: React.PropTypes.func.isRequired
-  },
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired,
+    isActiveMailbox: PropTypes.bool.isRequired,
+    activeService: PropTypes.string.isRequired,
+    onOpenService: PropTypes.func.isRequired,
+    onContextMenuService: PropTypes.func.isRequired
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -23,7 +23,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const {
@@ -57,4 +57,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

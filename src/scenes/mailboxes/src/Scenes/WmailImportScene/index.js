@@ -1,4 +1,7 @@
-module.exports = {
-  WmailImportStartScene: require('./WmailImportStartScene'),
-  WmailImportCompleteScene: require('./WmailImportCompleteScene')
+import WmailImportStartScene from './WmailImportStartScene'
+import WmailImportCompleteScene from './WmailImportCompleteScene'
+
+export {
+  WmailImportStartScene,
+  WmailImportCompleteScene
 }

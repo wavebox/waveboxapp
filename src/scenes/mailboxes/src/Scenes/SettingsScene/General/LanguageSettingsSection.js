@@ -1,20 +1,20 @@
-const React = require('react')
-const { Toggle, Paper, SelectField, MenuItem, RaisedButton, FontIcon } = require('material-ui')
-const { settingsActions } = require('stores/settings')
-const { dictionariesStore, dictionariesActions } = require('stores/dictionaries')
-const styles = require('../SettingStyles')
-const shallowCompare = require('react-addons-shallow-compare')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Toggle, Paper, SelectField, MenuItem, RaisedButton, FontIcon } from 'material-ui'
+import { settingsActions } from 'stores/settings'
+import { dictionariesStore, dictionariesActions } from 'stores/dictionaries'
+import styles from '../SettingStyles'
+import shallowCompare from 'react-addons-shallow-compare'
 
-module.exports = React.createClass({
+export default class LanguageSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'LanguageSettingsSection',
-  propTypes: {
-    language: React.PropTypes.object.isRequired,
-    showRestart: React.PropTypes.func.isRequired
-  },
+  static propTypes = {
+    language: PropTypes.object.isRequired,
+    showRestart: PropTypes.func.isRequired
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -22,27 +22,27 @@ module.exports = React.createClass({
 
   componentDidMount () {
     dictionariesStore.listen(this.dictionariesChanged)
-  },
+  }
 
   componentWillUnmount () {
     dictionariesStore.unlisten(this.dictionariesChanged)
-  },
+  }
 
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       installedDictionaries: dictionariesStore.getState().sortedInstalledDictionaryInfos()
     }
-  },
+  })()
 
-  dictionariesChanged (dictionariesState) {
+  dictionariesChanged = (dictionariesState) => {
     this.setState({
       installedDictionaries: dictionariesState.sortedInstalledDictionaryInfos()
     })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -50,7 +50,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const {language, showRestart, ...passProps} = this.props
@@ -101,4 +101,4 @@ module.exports = React.createClass({
       </Paper>
     )
   }
-})
+}

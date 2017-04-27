@@ -1,16 +1,16 @@
-const alt = require('../alt')
-const actions = require('./googleActions')
-const GoogleHTTP = require('./GoogleHTTP')
-const { GOOGLE_PROFILE_SYNC_INTERVAL, GOOGLE_MAILBOX_WATCH_INTERVAL } = require('shared/constants')
-const {
+import alt from '../alt'
+import actions from './googleActions'
+import GoogleHTTP from './GoogleHTTP'
+import { GOOGLE_PROFILE_SYNC_INTERVAL, GOOGLE_MAILBOX_WATCH_INTERVAL } from 'shared/constants'
+import { GoogleMailbox, GoogleDefaultService } from 'shared/Models/Accounts/Google'
+import uuid from 'uuid'
+import ServerVent from 'Server/ServerVent'
+import {
   mailboxStore,
   mailboxActions,
   GoogleMailboxReducer,
   GoogleDefaultServiceReducer
-} = require('../mailbox')
-const { GoogleMailbox, GoogleDefaultService } = require('shared/Models/Accounts/Google')
-const uuid = require('uuid')
-const ServerVent = require('Server/ServerVent')
+} from '../mailbox'
 
 const REQUEST_TYPES = {
   PROFILE: 'PROFILE',
@@ -473,4 +473,4 @@ class GoogleStore {
   }
 }
 
-module.exports = alt.createStore(GoogleStore, 'GoogleStore')
+export default alt.createStore(GoogleStore, 'GoogleStore')

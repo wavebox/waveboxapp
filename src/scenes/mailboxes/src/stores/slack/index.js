@@ -1,6 +1,9 @@
-module.exports = {
-  slackActions: require('./slackActions'),
-  slackStore: require('./slackStore'),
+import slackActions from './slackActions'
+import slackStore from './slackStore'
+import SlackHTTP from './SlackHTTP'
 
-  SlackHTTP: require('./SlackHTTP')
+export {
+  slackActions,
+  slackStore,
+  SlackHTTP
 }

@@ -1,40 +1,45 @@
+import PropTypes from 'prop-types'
 import './SettingsScene.less'
+import React from 'react'
+import { Dialog, RaisedButton, FlatButton, Tabs, Tab } from 'material-ui'
+import GeneralSettings from './General'
+import AccountSettings from './Accounts/AccountSettings'
+import ProSettings from './Pro'
+import AdvancedSettings from './AdvancedSettings'
+import * as Colors from 'material-ui/styles/colors'
+import styles from './SettingStyles'
+import shallowCompare from 'react-addons-shallow-compare'
+import SettingsSceneTabTemplate from './SettingsSceneTabTemplate'
 
-const React = require('react')
-const { Dialog, RaisedButton, FlatButton, Tabs, Tab } = require('material-ui')
-const GeneralSettings = require('./General')
-const AccountSettings = require('./Accounts/AccountSettings')
-const ProSettings = require('./Pro')
-const AdvancedSettings = require('./AdvancedSettings')
-const Colors = require('material-ui/styles/colors')
-const styles = require('./SettingStyles')
 const { ipcRenderer } = window.nativeRequire('electron')
-const shallowCompare = require('react-addons-shallow-compare')
-const SettingsSceneTabTemplate = require('./SettingsSceneTabTemplate')
 
-module.exports = React.createClass({
+export default class SettingsScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'SettingsScene',
-  contextTypes: {
-    router: React.PropTypes.object.isRequired
-  },
-  propTypes: {
-    params: React.PropTypes.object.isRequired
-  },
+  static contextTypes = {
+    router: PropTypes.object.isRequired
+  }
+  static propTypes = {
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        tab: PropTypes.string,
+        tabArg: PropTypes.string
+      })
+    })
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       open: true,
       showRestart: false
     }
-  },
+  })()
 
   /* **************************************************************************/
   // User Interaction
@@ -43,28 +48,28 @@ module.exports = React.createClass({
   /**
   * Changes the tab
   */
-  handleTabChange (value) {
+  handleTabChange = (value) => {
     if (typeof (value) === 'string') {
       window.location.hash = `/settings/${value}`
     }
-  },
+  }
 
   /**
   * Shows the option to restart
   */
-  handleShowRestart () {
+  handleShowRestart = () => {
     this.setState({ showRestart: true })
-  },
+  }
 
   /**
   * Closes the modal
   */
-  handleClose () {
+  handleClose = () => {
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/'
     }, 500)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -72,11 +77,11 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { showRestart, open } = this.state
-    const { params } = this.props
+    const { match } = this.props
 
     const buttons = showRestart ? (
       <div style={{ textAlign: 'right' }}>
@@ -89,7 +94,7 @@ module.exports = React.createClass({
       </div>
     )
 
-    const currentTab = params.tab || 'general'
+    const currentTab = match.params.tab || 'general'
     const tabHeadings = [
       ['General', 'general'],
       ['Accounts', 'accounts'],
@@ -142,7 +147,7 @@ module.exports = React.createClass({
             <GeneralSettings showRestart={this.handleShowRestart} />
           </Tab>
           <Tab label='Accounts' value='accounts'>
-            <AccountSettings showRestart={this.handleShowRestart} mailboxId={params.tabArg} />
+            <AccountSettings showRestart={this.handleShowRestart} mailboxId={match.params.tabArg} />
           </Tab>
           <Tab label='Wavebox Pro' value='pro'>
             <ProSettings showRestart={this.handleShowRestart} />
@@ -154,4 +159,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

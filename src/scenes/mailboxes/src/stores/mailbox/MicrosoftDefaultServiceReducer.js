@@ -1,4 +1,4 @@
-const ServiceReducer = require('./ServiceReducer')
+import ServiceReducer from './ServiceReducer'
 
 class MicrosoftDefaultServiceReducer extends ServiceReducer {
   /**
@@ -15,4 +15,4 @@ class MicrosoftDefaultServiceReducer extends ServiceReducer {
   }
 }
 
-module.exports = MicrosoftDefaultServiceReducer
+export default MicrosoftDefaultServiceReducer

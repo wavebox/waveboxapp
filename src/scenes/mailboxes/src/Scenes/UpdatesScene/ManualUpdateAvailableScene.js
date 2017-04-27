@@ -1,23 +1,17 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const { Dialog, RaisedButton, FlatButton } = require('material-ui')
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import { Dialog, RaisedButton, FlatButton } from 'material-ui'
+import { updaterActions, updaterStore } from 'stores/updater'
 const { remote: {shell} } = window.nativeRequire('electron')
-const { updaterActions, updaterStore } = require('stores/updater')
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'ManualUpdateAvailableScene',
-
+export default class ManualUpdateAvailableScene extends React.Component {
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return { open: true }
-  },
+  })()
 
   /* **************************************************************************/
   // UI Events
@@ -29,33 +23,33 @@ module.exports = React.createClass({
   handleClose () {
     this.setState({ open: false })
     setTimeout(() => { window.location.hash = '/' }, 500)
-  },
+  }
 
   /**
   * Doesn't re-prompt the user until after they restart the app
   */
-  handleAfterRestart () {
+  handleAfterRestart = () => {
     this.handleClose()
-  },
+  }
 
   /**
   * Reprompts the user later on
   */
-  handleLater () {
+  handleLater = () => {
     this.handleClose()
     updaterActions.scheduleNextUpdateCheck()
-  },
+  }
 
   /**
   * Takes the user to the download page
   */
-  handleDownload () {
+  handleDownload = () => {
     this.handleClose()
     const url = updaterStore.getState().lastManualDownloadUrl
     if (url) {
       shell.openExternal(url)
     }
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -63,7 +57,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { open } = this.state
@@ -90,4 +84,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

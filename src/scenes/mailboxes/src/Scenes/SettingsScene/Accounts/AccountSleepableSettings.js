@@ -1,19 +1,19 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const { Toggle, TextField, RaisedButton, FontIcon } = require('material-ui')
-const { mailboxActions, ServiceReducer } = require('stores/mailbox')
-const { userStore } = require('stores/user')
+import PropTypes from 'prop-types'
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import { Toggle, TextField, RaisedButton, FontIcon } from 'material-ui'
+import { mailboxActions, ServiceReducer } from 'stores/mailbox'
+import { userStore } from 'stores/user'
 
-module.exports = React.createClass({
+export default class AccountSleepableSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'AccountSleepableSettings',
-  propTypes: {
-    mailbox: React.PropTypes.object.isRequired,
-    service: React.PropTypes.object.isRequired
-  },
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired,
+    service: PropTypes.object.isRequired
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -21,27 +21,27 @@ module.exports = React.createClass({
 
   componentDidMount () {
     userStore.listen(this.userUpdated)
-  },
+  }
 
   componentWillUnmount () {
     userStore.unlisten(this.userUpdated)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       userHasSleepable: userStore.getState().user.hasSleepable
     }
-  },
+  })()
 
-  userUpdated (userState) {
+  userUpdated = (userState) => {
     this.setState({
       userHasSleepable: userState.user.hasSleepable
     })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -49,7 +49,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { mailbox, service, ...passProps } = this.props
@@ -99,4 +99,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

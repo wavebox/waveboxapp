@@ -1,25 +1,25 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const ServiceFactory = require('shared/Models/Accounts/ServiceFactory')
-const CoreService = require('shared/Models/Accounts/CoreService')
-const {
+import PropTypes from 'prop-types'
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
+import CoreService from 'shared/Models/Accounts/CoreService'
+import { mailboxActions, MailboxReducer } from 'stores/mailbox'
+import styles from '../SettingStyles'
+import * as Colors from 'material-ui/styles/colors'
+import {
   Toolbar, ToolbarGroup, ToolbarTitle,
   Avatar, FontIcon, IconButton, Paper
-} = require('material-ui')
-const { mailboxActions, MailboxReducer } = require('stores/mailbox')
-const styles = require('../SettingStyles')
-const Colors = require('material-ui/styles/colors')
+} from 'material-ui'
 
-module.exports = React.createClass({
+export default class AccountServiceItem extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'AccountServiceItem',
-  propTypes: {
-    mailbox: React.PropTypes.object.isRequired,
-    serviceType: React.PropTypes.string.isRequired
-  },
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired,
+    serviceType: PropTypes.string.isRequired
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -27,7 +27,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   /**
   * Renders the enabled service
@@ -85,7 +85,7 @@ module.exports = React.createClass({
         </div>
       </Paper>
     )
-  },
+  }
 
   /**
   * Renders the disabled service
@@ -116,7 +116,7 @@ module.exports = React.createClass({
         </Toolbar>
       </Paper>
     )
-  },
+  }
 
   render () {
     const { mailbox, serviceType } = this.props
@@ -127,4 +127,4 @@ module.exports = React.createClass({
       return this.renderDisabled()
     }
   }
-})
+}

@@ -1,4 +1,4 @@
-const ServiceReducer = require('./ServiceReducer')
+import ServiceReducer from './ServiceReducer'
 
 class GenericDefaultServiceReducer extends ServiceReducer {
   /**
@@ -12,4 +12,4 @@ class GenericDefaultServiceReducer extends ServiceReducer {
   }
 }
 
-module.exports = GenericDefaultServiceReducer
+export default GenericDefaultServiceReducer

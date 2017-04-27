@@ -1,46 +1,39 @@
 import './ProScene.less'
+import React from 'react'
+import { Dialog, RaisedButton } from 'material-ui'
+import shallowCompare from 'react-addons-shallow-compare'
+import { WaveboxWebView } from 'Components'
+import { userStore } from 'stores/user'
 
-const React = require('react')
-const { Dialog, RaisedButton } = require('material-ui')
-const shallowCompare = require('react-addons-shallow-compare')
-const { WaveboxWebView } = require('Components')
-const { userStore } = require('stores/user')
-
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'ProScene',
-
+export default class ProScene extends React.Component {
   /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
     userStore.listen(this.userChanged)
-  },
+  }
 
   componentWillUnmount () {
     userStore.unlisten(this.userChanged)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       open: true,
       url: userStore.getState().user.proUrl
     }
-  },
+  })()
 
-  userChanged (userState) {
+  userChanged = (userState) => {
     this.setState({
       url: userState.user.proUrl
     })
-  },
+  }
 
   /* **************************************************************************/
   // User Interaction
@@ -49,12 +42,12 @@ module.exports = React.createClass({
   /**
   * Closes the modal
   */
-  handleClose () {
+  handleClose = () => {
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/'
     }, 500)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -62,7 +55,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { open, url } = this.state
@@ -81,4 +74,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

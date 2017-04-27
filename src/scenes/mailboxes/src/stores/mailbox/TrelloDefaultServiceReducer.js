@@ -1,4 +1,4 @@
-const ServiceReducer = require('./ServiceReducer')
+import ServiceReducer from './ServiceReducer'
 
 class TrelloDefaultServiceReducer extends ServiceReducer {
   /**
@@ -16,4 +16,4 @@ class TrelloDefaultServiceReducer extends ServiceReducer {
   }
 }
 
-module.exports = TrelloDefaultServiceReducer
+export default TrelloDefaultServiceReducer

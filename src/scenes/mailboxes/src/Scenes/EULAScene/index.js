@@ -1,1 +1,2 @@
-module.exports = require('./EULAScene')
+import EULAScene from './EULAScene'
+export default EULAScene

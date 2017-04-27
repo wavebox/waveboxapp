@@ -1,27 +1,25 @@
-const React = require('react')
-const { Toggle, Paper, SelectField, MenuItem } = require('material-ui')
-const { Tray: { TrayIconEditor } } = require('Components')
-const settingsActions = require('stores/settings/settingsActions')
-const styles = require('../SettingStyles')
-const shallowCompare = require('react-addons-shallow-compare')
-const {
-  TraySettings: {
-    MOUSE_TRIGGERS,
-    MOUSE_TRIGGER_ACTIONS,
-    SUPPORTS_MOUSE_TRIGGERS,
-    SUPPORTS_TRAY_MINIMIZE_CONFIG
-  }
-} = require('shared/Models/Settings')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Toggle, Paper, SelectField, MenuItem } from 'material-ui'
+import { TrayIconEditor } from 'Components/Tray'
+import settingsActions from 'stores/settings/settingsActions'
+import styles from '../SettingStyles'
+import shallowCompare from 'react-addons-shallow-compare'
+import {
+  MOUSE_TRIGGERS,
+  MOUSE_TRIGGER_ACTIONS,
+  SUPPORTS_MOUSE_TRIGGERS,
+  SUPPORTS_TRAY_MINIMIZE_CONFIG
+} from 'shared/Models/Settings/TraySettings'
 
-module.exports = React.createClass({
+export default class TraySettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'TraySettingsSection',
-  propTypes: {
-    tray: React.PropTypes.object.isRequired
-  },
+  static propTypes = {
+    tray: PropTypes.object.isRequired
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -29,7 +27,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const {tray, ...passProps} = this.props
@@ -104,4 +102,4 @@ module.exports = React.createClass({
       </Paper>
     )
   }
-})
+}

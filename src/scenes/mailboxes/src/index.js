@@ -1,14 +1,15 @@
 import './ReactComponents.less'
-const React = require('react')
-const ReactDOM = require('react-dom')
-const Provider = require('Scenes/Provider')
-const mailboxActions = require('stores/mailbox/mailboxActions')
-const settingsActions = require('stores/settings/settingsActions')
-const composeActions = require('stores/compose/composeActions')
-const updaterActions = require('stores/updater/updaterActions')
-const userActions = require('stores/user/userActions')
+import React from 'react'
+import ReactDOM from 'react-dom'
+import Provider from 'Scenes/Provider'
+import mailboxActions from 'stores/mailbox/mailboxActions'
+import settingsActions from 'stores/settings/settingsActions'
+import composeActions from 'stores/compose/composeActions'
+import updaterActions from 'stores/updater/updaterActions'
+import userActions from 'stores/user/userActions'
+import Debug from 'Debug'
+import injectTapEventPlugin from 'react-tap-event-plugin'
 const { ipcRenderer } = window.nativeRequire('electron')
-const Debug = require('Debug')
 
 // Load what we have in the db
 userActions.load()
@@ -24,7 +25,6 @@ Debug.load()
   loading.parentElement.removeChild(loading)
 })()
 
-const injectTapEventPlugin = require('react-tap-event-plugin')
 injectTapEventPlugin()
 
 // Render and prepare for unrender

@@ -1,14 +1,20 @@
+import PropTypes from 'prop-types'
 import 'bootstrap-grid'
+import React from 'react'
 
-const React = require('react')
+export default class Row extends React.Component {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
 
-module.exports = React.createClass({
-  displayName: 'GridRow',
+  static propTypes = {
+    className: PropTypes.string,
+    children: PropTypes.node
+  }
 
-  propTypes: {
-    className: React.PropTypes.string,
-    children: React.PropTypes.node
-  },
+  /* **************************************************************************/
+  // Rendering
+  /* **************************************************************************/
 
   render () {
     return (
@@ -19,4 +25,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

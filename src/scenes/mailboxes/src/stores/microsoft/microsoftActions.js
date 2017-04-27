@@ -1,4 +1,4 @@
-const alt = require('../alt')
+import alt from '../alt'
 
 class MicrosoftActions {
   /* **************************************************************************/
@@ -59,4 +59,4 @@ class MicrosoftActions {
   }
 }
 
-module.exports = alt.createActions(MicrosoftActions)
+export default alt.createActions(MicrosoftActions)

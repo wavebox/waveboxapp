@@ -268,4 +268,4 @@ class TrayRenderer {
   }
 }
 
-module.exports = TrayRenderer
+export default TrayRenderer

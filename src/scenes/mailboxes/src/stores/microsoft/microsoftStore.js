@@ -1,20 +1,20 @@
-const alt = require('../alt')
-const actions = require('./microsoftActions')
-const MicrosoftHTTP = require('./MicrosoftHTTP')
-const { MICROSOFT_PROFILE_SYNC_INTERVAL, MICROSOFT_UNREAD_SYNC_INTERVAL } = require('shared/constants')
-const {
+import alt from '../alt'
+import actions from './microsoftActions'
+import MicrosoftHTTP from './MicrosoftHTTP'
+import { MICROSOFT_PROFILE_SYNC_INTERVAL, MICROSOFT_UNREAD_SYNC_INTERVAL } from 'shared/constants'
+import uuid from 'uuid'
+import {
   mailboxStore,
   mailboxActions,
   MicrosoftMailboxReducer,
   MicrosoftDefaultServiceReducer,
   MicrosoftStorageServiceReducer
-} = require('../mailbox')
-const {
+} from '../mailbox'
+import {
   MicrosoftMailbox,
   MicrosoftDefaultService,
   MicrosoftStorageService
-} = require('shared/Models/Accounts/Microsoft')
-const uuid = require('uuid')
+} from 'shared/Models/Accounts/Microsoft'
 
 const REQUEST_TYPES = {
   PROFILE: 'PROFILE',
@@ -296,4 +296,4 @@ class MicrosoftStore {
   }
 }
 
-module.exports = alt.createStore(MicrosoftStore, 'MicrosoftStore')
+export default alt.createStore(MicrosoftStore, 'MicrosoftStore')

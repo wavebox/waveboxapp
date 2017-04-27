@@ -1,21 +1,21 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const AccountServiceItem = require('../AccountServiceItem')
-const { Grid: { Row, Col } } = require('Components')
-const AccountCustomCodeSettings = require('../AccountCustomCodeSettings')
-const AccountSleepableSettings = require('../AccountSleepableSettings')
+import PropTypes from 'prop-types'
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import AccountServiceItem from '../AccountServiceItem'
+import { Row, Col } from 'Components/Grid'
+import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
+import AccountSleepableSettings from '../AccountSleepableSettings'
 
-module.exports = React.createClass({
+export default class MicrosoftServiceSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'MicrosoftServiceSettings',
-  propTypes: {
-    mailbox: React.PropTypes.object.isRequired,
-    serviceType: React.PropTypes.string.isRequired,
-    onRequestEditCustomCode: React.PropTypes.func.isRequired
-  },
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired,
+    serviceType: PropTypes.string.isRequired,
+    onRequestEditCustomCode: PropTypes.func.isRequired
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -23,7 +23,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { mailbox, serviceType, onRequestEditCustomCode, ...passProps } = this.props
@@ -46,4 +46,4 @@ module.exports = React.createClass({
       </AccountServiceItem>
     )
   }
-})
+}

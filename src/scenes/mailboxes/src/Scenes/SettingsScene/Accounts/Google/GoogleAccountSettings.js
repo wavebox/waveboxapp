@@ -1,18 +1,18 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const { Grid: { Row, Col } } = require('Components')
-const AccountAppearanceSettings = require('../AccountAppearanceSettings')
-const AccountAdvancedSettings = require('../AccountAdvancedSettings')
-const AccountNotificationBadgeSettings = require('../AccountNotificationBadgeSettings')
-const AccountServicesHeading = require('../AccountServicesHeading')
-const AccountServicesSettings = require('../AccountServicesSettings')
-const CoreService = require('shared/Models/Accounts/CoreService')
-const ServiceFactory = require('shared/Models/Accounts/ServiceFactory')
-const { userStore } = require('stores/user')
-const { RaisedButton, Avatar, FontIcon } = require('material-ui')
-
-const GoogleDefaultServiceSettings = require('./GoogleDefaultServiceSettings')
-const GoogleServiceSettings = require('./GoogleServiceSettings')
+import PropTypes from 'prop-types'
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import { Row, Col } from 'Components/Grid'
+import AccountAppearanceSettings from '../AccountAppearanceSettings'
+import AccountAdvancedSettings from '../AccountAdvancedSettings'
+import AccountNotificationBadgeSettings from '../AccountNotificationBadgeSettings'
+import AccountServicesHeading from '../AccountServicesHeading'
+import AccountServicesSettings from '../AccountServicesSettings'
+import CoreService from 'shared/Models/Accounts/CoreService'
+import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
+import { userStore } from 'stores/user'
+import { RaisedButton, Avatar, FontIcon } from 'material-ui'
+import GoogleDefaultServiceSettings from './GoogleDefaultServiceSettings'
+import GoogleServiceSettings from './GoogleServiceSettings'
 
 const styles = {
   proServices: {
@@ -24,17 +24,16 @@ const styles = {
   }
 }
 
-module.exports = React.createClass({
+export default class GoogleAccountSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'GoogleAccountSettings',
-  propTypes: {
-    mailbox: React.PropTypes.object.isRequired,
-    showRestart: React.PropTypes.func.isRequired,
-    onRequestEditCustomCode: React.PropTypes.func.isRequired
-  },
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired,
+    showRestart: PropTypes.func.isRequired,
+    onRequestEditCustomCode: PropTypes.func.isRequired
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -42,27 +41,27 @@ module.exports = React.createClass({
 
   componentDidMount () {
     userStore.listen(this.userUpdated)
-  },
+  }
 
   componentWillUnmount () {
     userStore.unlisten(this.userUpdated)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       userHasServices: userStore.getState().user.hasServices
     }
-  },
+  })()
 
-  userUpdated (userState) {
+  userUpdated = (userState) => {
     this.setState({
       userHasServices: userState.user.hasServices
     })
-  },
+  }
 
   /* **************************************************************************/
   // UI Events
@@ -71,9 +70,9 @@ module.exports = React.createClass({
   /**
   * Opens wavebox pro
   */
-  openWaveboxPro () {
+  openWaveboxPro = () => {
     window.location.hash = '/pro'
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -81,7 +80,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   /**
   * Renders the service type
@@ -106,7 +105,7 @@ module.exports = React.createClass({
             serviceType={serviceType}
             onRequestEditCustomCode={onRequestEditCustomCode} />)
     }
-  },
+  }
 
   render () {
     const { mailbox, showRestart, onRequestEditCustomCode, ...passProps } = this.props
@@ -167,4 +166,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

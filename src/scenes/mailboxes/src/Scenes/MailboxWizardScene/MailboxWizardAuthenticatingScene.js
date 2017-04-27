@@ -1,13 +1,7 @@
-const React = require('react')
-const { Dialog, CircularProgress } = require('material-ui')
+import React from 'react'
+import { Dialog, CircularProgress } from 'material-ui'
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'MailboxWizardAuthenticatingScene',
-
+export default class MailboxWizardAuthenticatingScene extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -30,4 +24,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

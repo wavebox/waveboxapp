@@ -1,20 +1,22 @@
-const React = require('react')
-const MailboxWizardServicesScene = require('../MailboxWizardServicesScene')
+import PropTypes from 'prop-types'
+import React from 'react'
+import MailboxWizardServicesScene from '../MailboxWizardServicesScene'
 
-module.exports = React.createClass({
+export default class MailboxWizardMicrosoftServicesScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'MailboxWizardMicrosoftServicesScene',
-  propTypes: {
-    params: React.PropTypes.shape({
-      mailboxId: React.PropTypes.string.isRequired
+  static propTypes = {
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        mailboxId: PropTypes.string.isRequired
+      })
     })
-  },
-  contextTypes: {
-    router: React.PropTypes.object.isRequired
-  },
+  }
+  static contextTypes = {
+    router: PropTypes.object.isRequired
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -22,7 +24,7 @@ module.exports = React.createClass({
 
   render () {
     return (
-      <MailboxWizardServicesScene nextUrl='/mailbox_wizard/complete' mailboxId={this.props.params.mailboxId} />
+      <MailboxWizardServicesScene nextUrl='/mailbox_wizard/complete' mailboxId={this.props.match.params.mailboxId} />
     )
   }
-})
+}

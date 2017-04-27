@@ -1,7 +1,7 @@
-const alt = require('../alt')
+import alt from '../alt'
+import URI from 'urijs'
+import addressparser from 'addressparser'
 const { ipcRenderer } = window.nativeRequire('electron')
-const URI = require('urijs')
-const addressparser = require('addressparser')
 
 class ComposeActions {
   /* **************************************************************************/
@@ -60,4 +60,4 @@ class ComposeActions {
 
 const actions = alt.createActions(ComposeActions)
 ipcRenderer.on('open-mailto-link', (evt, req) => actions.processMailtoLink(req.mailtoLink))
-module.exports = actions
+export default actions

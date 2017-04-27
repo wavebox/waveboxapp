@@ -1,16 +1,16 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const styles = require('../SettingStyles')
+import PropTypes from 'prop-types'
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import styles from '../SettingStyles'
 
-module.exports = React.createClass({
+export default class AccountHeading extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'AccountHeading',
-  propTypes: {
-    mailbox: React.PropTypes.object.isRequired
-  },
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -18,7 +18,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { mailbox, ...passProps } = this.props
@@ -32,4 +32,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

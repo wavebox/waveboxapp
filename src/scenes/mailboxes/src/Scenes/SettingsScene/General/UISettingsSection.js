@@ -1,20 +1,20 @@
-const React = require('react')
-const { Toggle, Paper } = require('material-ui')
-const settingsActions = require('stores/settings/settingsActions')
-const styles = require('../SettingStyles')
-const shallowCompare = require('react-addons-shallow-compare')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Toggle, Paper } from 'material-ui'
+import settingsActions from 'stores/settings/settingsActions'
+import styles from '../SettingStyles'
+import shallowCompare from 'react-addons-shallow-compare'
 
-module.exports = React.createClass({
+export default class UISettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'UISettingsSection',
-  propTypes: {
-    ui: React.PropTypes.object.isRequired,
-    os: React.PropTypes.object.isRequired,
-    showRestart: React.PropTypes.func.isRequired
-  },
+  static propTypes = {
+    ui: PropTypes.object.isRequired,
+    os: PropTypes.object.isRequired,
+    showRestart: PropTypes.func.isRequired
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -22,7 +22,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const {
@@ -86,4 +86,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

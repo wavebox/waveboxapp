@@ -1,4 +1,4 @@
-const MailboxReducer = require('./MailboxReducer')
+import MailboxReducer from './MailboxReducer'
 
 class GoogleMailboxReducer extends MailboxReducer {
   /**
@@ -43,4 +43,4 @@ class GoogleMailboxReducer extends MailboxReducer {
   }
 }
 
-module.exports = GoogleMailboxReducer
+export default GoogleMailboxReducer

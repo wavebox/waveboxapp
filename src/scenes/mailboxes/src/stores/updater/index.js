@@ -1,4 +1,7 @@
-module.exports = {
-  updaterActions: require('./updaterActions'),
-  updaterStore: require('./updaterStore')
+import updaterActions from './updaterActions'
+import updaterStore from './updaterStore'
+
+export {
+  updaterActions,
+  updaterStore
 }

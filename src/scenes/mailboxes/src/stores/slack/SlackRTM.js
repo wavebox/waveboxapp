@@ -1,6 +1,6 @@
-const { EventEmitter } = require('events')
-const SlackWebSocket = require('./SlackWebSocket')
-const uuid = require('uuid')
+import { EventEmitter } from 'events'
+import SlackWebSocket from './SlackWebSocket'
+import uuid from 'uuid'
 
 class SlackRTM extends EventEmitter {
   /* **************************************************************************/
@@ -112,4 +112,4 @@ class SlackRTM extends EventEmitter {
   }
 }
 
-module.exports = SlackRTM
+export default SlackRTM

@@ -1,15 +1,16 @@
-const alt = require('../alt')
-const actions = require('./updaterActions')
-const settingsStore = require('../settings/settingsStore')
-const { ipcRenderer } = window.nativeRequire('electron')
-const pkg = window.appPackage()
-const {
+import alt from '../alt'
+import actions from './updaterActions'
+import settingsStore from '../settings/settingsStore'
+import {
   UPDATE_CHECK_INTERVAL,
   UPDATE_FEED_MANUAL,
   UPDATE_FEED_DARWIN,
   UPDATE_FEED_WIN32_IA32,
   UPDATE_FEED_WIN32_X64
-} = require('shared/constants')
+} from 'shared/constants'
+
+const { ipcRenderer } = window.nativeRequire('electron')
+const pkg = window.appPackage()
 
 class UpdaterStore {
   /* **************************************************************************/
@@ -166,4 +167,4 @@ class UpdaterStore {
   }
 }
 
-module.exports = alt.createStore(UpdaterStore, 'UpdaterStore')
+export default alt.createStore(UpdaterStore, 'UpdaterStore')

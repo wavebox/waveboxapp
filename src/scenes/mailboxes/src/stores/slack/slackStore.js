@@ -1,19 +1,19 @@
-const alt = require('../alt')
-const actions = require('./slackActions')
-const {
+import alt from '../alt'
+import actions from './slackActions'
+import SlackMailbox from 'shared/Models/Accounts/Slack/SlackMailbox'
+import SlackDefaultService from 'shared/Models/Accounts/Slack/SlackDefaultService'
+import SlackHTTP from './SlackHTTP'
+import uuid from 'uuid'
+import NotificationService from '../../Notifications/NotificationService'
+import { SLACK_FULL_COUNT_SYNC_INTERVAL } from 'shared/constants'
+import Debug from 'Debug'
+import {
   mailboxStore,
   mailboxActions,
   mailboxDispatch,
   SlackMailboxReducer,
   SlackDefaultServiceReducer
-} = require('../mailbox')
-const SlackMailbox = require('shared/Models/Accounts/Slack/SlackMailbox')
-const SlackDefaultService = require('shared/Models/Accounts/Slack/SlackDefaultService')
-const SlackHTTP = require('./SlackHTTP')
-const uuid = require('uuid')
-const NotificationService = require('../../Notifications/NotificationService')
-const { SLACK_FULL_COUNT_SYNC_INTERVAL } = require('shared/constants')
-const Debug = require('Debug')
+} from '../mailbox'
 
 const REQUEST_TYPES = {
   UNREAD: 'UNREAD'
@@ -374,4 +374,4 @@ class SlackStore {
   }
 }
 
-module.exports = alt.createStore(SlackStore, 'SlackStore')
+export default alt.createStore(SlackStore, 'SlackStore')

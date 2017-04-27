@@ -1,18 +1,18 @@
-const React = require('react')
-const { Paper, Toggle } = require('material-ui')
-const { mailboxActions, MailboxReducer } = require('stores/mailbox')
-const styles = require('../SettingStyles')
-const shallowCompare = require('react-addons-shallow-compare')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Paper, Toggle } from 'material-ui'
+import { mailboxActions, MailboxReducer } from 'stores/mailbox'
+import styles from '../SettingStyles'
+import shallowCompare from 'react-addons-shallow-compare'
 
-module.exports = React.createClass({
+export default class AccountNotificationBadgeSettings extends React.Component {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
 
-  displayName: 'AccountNotificationBadgeSettings',
-  propTypes: {
-    mailbox: React.PropTypes.object.isRequired
-  },
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -20,7 +20,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { mailbox, ...passProps } = this.props
@@ -80,4 +80,4 @@ module.exports = React.createClass({
       </Paper>
     )
   }
-})
+}

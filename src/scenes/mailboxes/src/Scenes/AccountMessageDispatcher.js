@@ -1,16 +1,9 @@
-const React = require('react')
-const { userStore } = require('stores/user')
-const { settingsStore } = require('stores/settings')
-const shallowCompare = require('react-addons-shallow-compare')
+import React from 'react'
+import { userStore } from 'stores/user'
+import { settingsStore } from 'stores/settings'
+import shallowCompare from 'react-addons-shallow-compare'
 
-module.exports = React.createClass({
-
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'AccountMessageDispatcher',
-
+export default class AccountMessageDispatcher extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
@@ -18,37 +11,37 @@ module.exports = React.createClass({
   componentDidMount () {
     userStore.listen(this.userUpdated)
     settingsStore.listen(this.settingsUpdated)
-  },
+  }
 
   componentWillUnmount () {
     userStore.unlisten(this.userUpdated)
     settingsStore.unlisten(this.settingsUpdated)
-  },
+  }
 
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     const userState = userStore.getState()
     const settingsState = settingsStore.getState()
     return {
       accountMessageUrl: userState.user.accountMessageUrl,
       accountMessageUrlSeen: settingsState.app.lastSeenAccountMessageUrl
     }
-  },
+  })()
 
-  userUpdated (userState) {
+  userUpdated = (userState) => {
     this.setState({
       accountMessageUrl: userState.user.accountMessageUrl
     })
-  },
+  }
 
-  settingsUpdated (settingsState) {
+  settingsUpdated = (settingsState) => {
     this.setState({
       accountMessageUrlSeen: settingsState.app.lastSeenAccountMessageUrl
     })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -56,7 +49,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { accountMessageUrl, accountMessageUrlSeen } = this.state
@@ -67,4 +60,4 @@ module.exports = React.createClass({
 
     return false
   }
-})
+}

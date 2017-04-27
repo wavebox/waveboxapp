@@ -1,6 +1,11 @@
-module.exports = {
-  AccountAuthScene: require('./AccountAuthScene'),
-  AccountMessageScene: require('./AccountMessageScene'),
-  AccountAuthenticatingScene: require('./AccountAuthenticatingScene'),
-  AccountStandaloneScene: require('./AccountStandaloneScene')
+import AccountAuthScene from './AccountAuthScene'
+import AccountMessageScene from './AccountMessageScene'
+import AccountAuthenticatingScene from './AccountAuthenticatingScene'
+import AccountStandaloneScene from './AccountStandaloneScene'
+
+export {
+  AccountAuthScene,
+  AccountMessageScene,
+  AccountAuthenticatingScene,
+  AccountStandaloneScene
 }

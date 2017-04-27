@@ -1,9 +1,9 @@
-const alt = require('../alt')
-const actions = require('./platformActions')
+import alt from '../alt'
+import actions from './platformActions'
+import path from 'path'
 const { remote } = window.nativeRequire('electron')
 const WinRegistry = process.platform === 'win32' ? window.appNodeModulesRequire('winreg') : null
 const AutoLaunch = process.platform === 'darwin' ? window.appNodeModulesRequire('auto-launch') : null
-const path = require('path')
 const pkg = window.appPackage()
 
 const WIN32_REG_PATH = '\\Software\\Microsoft\\Windows\\CurrentVersion\\Run'
@@ -112,4 +112,4 @@ class PlatformStore {
   }
 }
 
-module.exports = alt.createStore(PlatformStore, 'PlatformStore')
+export default alt.createStore(PlatformStore, 'PlatformStore')

@@ -1,25 +1,25 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const { Grid: { Row, Col } } = require('Components')
-const AccountAppearanceSettings = require('../AccountAppearanceSettings')
-const AccountAdvancedSettings = require('../AccountAdvancedSettings')
-const AccountNotificationBadgeSettings = require('../AccountNotificationBadgeSettings')
-const AccountServicesHeading = require('../AccountServicesHeading')
-const AccountServicesSettings = require('../AccountServicesSettings')
-const MicrosoftServiceSettings = require('./MicrosoftServiceSettings')
-const { userStore } = require('stores/user')
-const CoreService = require('shared/Models/Accounts/CoreService')
+import PropTypes from 'prop-types'
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import { Row, Col } from 'Components/Grid'
+import AccountAppearanceSettings from '../AccountAppearanceSettings'
+import AccountAdvancedSettings from '../AccountAdvancedSettings'
+import AccountNotificationBadgeSettings from '../AccountNotificationBadgeSettings'
+import AccountServicesHeading from '../AccountServicesHeading'
+import AccountServicesSettings from '../AccountServicesSettings'
+import MicrosoftServiceSettings from './MicrosoftServiceSettings'
+import { userStore } from 'stores/user'
+import CoreService from 'shared/Models/Accounts/CoreService'
 
-module.exports = React.createClass({
+export default class MicrosoftAccountSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'MicrosoftAccountSettings',
-  propTypes: {
-    mailbox: React.PropTypes.object.isRequired,
-    showRestart: React.PropTypes.func.isRequired
-  },
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired,
+    showRestart: PropTypes.func.isRequired
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -27,27 +27,27 @@ module.exports = React.createClass({
 
   componentDidMount () {
     userStore.listen(this.userUpdated)
-  },
+  }
 
   componentWillUnmount () {
     userStore.unlisten(this.userUpdated)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       userHasServices: userStore.getState().user.hasServices
     }
-  },
+  })()
 
-  userUpdated (userState) {
+  userUpdated = (userState) => {
     this.setState({
       userHasServices: userState.user.hasServices
     })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -55,7 +55,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   /**
   * Renders the service type
@@ -71,7 +71,7 @@ module.exports = React.createClass({
         mailbox={mailbox}
         serviceType={serviceType}
         onRequestEditCustomCode={onRequestEditCustomCode} />)
-  },
+  }
 
   render () {
     const { mailbox, showRestart, onRequestEditCustomCode, ...passProps } = this.props
@@ -111,4 +111,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

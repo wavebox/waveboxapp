@@ -1,3 +1,5 @@
-module.exports = {
-  MailboxWizardGenericConfigureScene: require('./MailboxWizardGenericConfigureScene')
+import MailboxWizardGenericConfigureScene from './MailboxWizardGenericConfigureScene'
+
+export {
+  MailboxWizardGenericConfigureScene
 }

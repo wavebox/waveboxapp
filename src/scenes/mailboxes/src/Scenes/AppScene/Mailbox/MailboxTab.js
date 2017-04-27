@@ -1,21 +1,21 @@
-const React = require('react')
-const { mailboxStore } = require('stores/mailbox')
-const { settingsStore } = require('stores/settings')
-const { userStore } = require('stores/user')
-const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
-const CoreService = require('shared/Models/Accounts/CoreService')
-
-const MailboxToolbar = require('./MailboxToolbar')
-const GoogleMailboxMailWebView = require('./MailboxWebView/Google/GoogleMailboxMailWebView')
-const GoogleMailboxServiceWebView = require('./MailboxWebView/Google/GoogleMailboxServiceWebView')
-const GoogleMailboxCommunicationServiceWebView = require('./MailboxWebView/Google/GoogleMailboxCommunicationServiceWebView')
-const TrelloMailboxWebView = require('./MailboxWebView/Trello/TrelloMailboxWebView')
-const SlackMailboxWebView = require('./MailboxWebView/Slack/SlackMailboxWebView')
-const GenericMailboxDefaultServiceWebView = require('./MailboxWebView/Generic/GenericMailboxDefaultServiceWebView')
-const MicrosoftMailboxMailWebView = require('./MailboxWebView/Microsoft/MicrosoftMailboxMailWebView')
-const MicrosoftMailboxServiceWebView = require('./MailboxWebView/Microsoft/MicrosoftMailboxServiceWebView')
-const MicrosoftMailboxStorageServiceWebView = require('./MailboxWebView/Microsoft/MicrosoftMailboxStorageServiceWebView')
-const MailboxWebViewHibernator = require('./MailboxWebView/MailboxWebViewHibernator')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { mailboxStore } from 'stores/mailbox'
+import { settingsStore } from 'stores/settings'
+import { userStore } from 'stores/user'
+import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import CoreService from 'shared/Models/Accounts/CoreService'
+import MailboxToolbar from './MailboxToolbar'
+import GoogleMailboxMailWebView from './MailboxWebView/Google/GoogleMailboxMailWebView'
+import GoogleMailboxServiceWebView from './MailboxWebView/Google/GoogleMailboxServiceWebView'
+import GoogleMailboxCommunicationServiceWebView from './MailboxWebView/Google/GoogleMailboxCommunicationServiceWebView'
+import TrelloMailboxWebView from './MailboxWebView/Trello/TrelloMailboxWebView'
+import SlackMailboxWebView from './MailboxWebView/Slack/SlackMailboxWebView'
+import GenericMailboxDefaultServiceWebView from './MailboxWebView/Generic/GenericMailboxDefaultServiceWebView'
+import MicrosoftMailboxMailWebView from './MailboxWebView/Microsoft/MicrosoftMailboxMailWebView'
+import MicrosoftMailboxServiceWebView from './MailboxWebView/Microsoft/MicrosoftMailboxServiceWebView'
+import MicrosoftMailboxStorageServiceWebView from './MailboxWebView/Microsoft/MicrosoftMailboxStorageServiceWebView'
+import MailboxWebViewHibernator from './MailboxWebView/MailboxWebViewHibernator'
 
 const TOOLBAR_HEIGHT = 40
 const styles = {
@@ -57,15 +57,14 @@ const styles = {
   }
 }
 
-module.exports = React.createClass({
+export default class MailboxTab extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'MailboxTab',
-  propTypes: { // Sticky. See shouldComponentUpdate
-    mailboxId: React.PropTypes.string.isRequired
-  },
+  static propTypes = {
+    mailboxId: PropTypes.string.isRequired
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -74,24 +73,31 @@ module.exports = React.createClass({
   componentDidMount () {
     mailboxStore.listen(this.mailboxUpdated)
     userStore.listen(this.userUpdated)
-  },
+  }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxUpdated)
-    userStore.listen(this.userUpdated)
-  },
+    userStore.unlisten(this.userUpdated)
+  }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId) {
-      this.replaceState(this.getInitialState(nextProps))
+      this.setState(this.generateState(nextProps))
     }
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState (props = this.props) {
+  state = this.generateState(this.props)
+
+  /**
+  * Generates the state from the given props
+  * @param props: the props to use
+  * @return state object
+  */
+  generateState (props) {
     const settingsState = settingsStore.getState()
     const mailboxState = mailboxStore.getState()
     const userState = userStore.getState()
@@ -104,9 +110,9 @@ module.exports = React.createClass({
       serviceTypes: mailbox.enabledServiceTypes,
       mailboxType: mailbox.type
     }
-  },
+  }
 
-  mailboxUpdated (mailboxState) {
+  mailboxUpdated = (mailboxState) => {
     const mailbox = mailboxState.getMailbox(this.props.mailboxId)
     if (!mailbox) { return }
     this.setState({
@@ -115,13 +121,13 @@ module.exports = React.createClass({
       serviceTypes: mailbox.enabledServiceTypes,
       mailboxType: mailbox.type
     })
-  },
+  }
 
-  userUpdated (userState) {
+  userUpdated = (userState) => {
     this.setState({
       userHasServices: userState.user.hasServices
     })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -137,7 +143,7 @@ module.exports = React.createClass({
     if (this.state.userHasServices !== nextState.userHasServices) { return true }
 
     return false
-  },
+  }
 
   /**
   * Renders an individual tab
@@ -175,7 +181,7 @@ module.exports = React.createClass({
     } else {
       return (<MailboxWebViewHibernator mailboxId={mailboxId} serviceType={serviceType} key={key} />)
     }
-  },
+  }
 
   render () {
     const { style, mailboxId, ...passProps } = this.props
@@ -213,4 +219,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

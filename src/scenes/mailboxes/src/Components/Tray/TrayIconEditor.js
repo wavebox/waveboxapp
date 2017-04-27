@@ -1,10 +1,11 @@
-const React = require('react')
-const { FontIcon } = require('material-ui')
-const {Row, Col} = require('../Grid')
-const ColorPickerButton = require('../ColorPickerButton')
-const TrayPreview = require('./TrayPreview')
-const settingsActions = require('stores/settings/settingsActions')
-const shallowCompare = require('react-addons-shallow-compare')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { FontIcon } from 'material-ui'
+import {Row, Col} from '../Grid'
+import ColorPickerButton from '../ColorPickerButton'
+import TrayPreview from './TrayPreview'
+import settingsActions from 'stores/settings/settingsActions'
+import shallowCompare from 'react-addons-shallow-compare'
 
 const styles = {
   subheading: {
@@ -20,16 +21,15 @@ const styles = {
   }
 }
 
-module.exports = React.createClass({
+export default class TrayIconEditor extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'TrayIconEditor',
-  propTypes: {
-    tray: React.PropTypes.object.isRequired,
-    trayPreviewStyles: React.PropTypes.object
-  },
+  static propTypes = {
+    tray: PropTypes.object.isRequired,
+    trayPreviewStyles: PropTypes.object
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -37,7 +37,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const {tray, trayPreviewStyles, ...passProps} = this.props
@@ -97,4 +97,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

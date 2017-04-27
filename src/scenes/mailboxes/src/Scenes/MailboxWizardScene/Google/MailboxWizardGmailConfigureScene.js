@@ -1,9 +1,10 @@
-const React = require('react')
-const { RaisedButton, Paper, Dialog } = require('material-ui')
-const shallowCompare = require('react-addons-shallow-compare')
-const Colors = require('material-ui/styles/colors')
-const GoogleDefaultService = require('shared/Models/Accounts/Google/GoogleDefaultService')
-const { mailboxActions, GoogleDefaultServiceReducer } = require('stores/mailbox')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { RaisedButton, Paper, Dialog } from 'material-ui'
+import shallowCompare from 'react-addons-shallow-compare'
+import * as Colors from 'material-ui/styles/colors'
+import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
+import { mailboxActions, GoogleDefaultServiceReducer } from 'stores/mailbox'
 
 const styles = {
   introduction: {
@@ -45,28 +46,29 @@ const styles = {
   }
 }
 
-module.exports = React.createClass({
+export default class MailboxWizardGmailConfigureScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'MailboxWizardGmailConfigureScene',
-  propTypes: {
-    params: React.PropTypes.shape({
-      mailboxId: React.PropTypes.string.isRequired
+  static propTypes = {
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        mailboxId: PropTypes.string.isRequired
+      })
     })
-  },
-  contextTypes: {
-    router: React.PropTypes.object.isRequired
-  },
+  }
+  static contextTypes = {
+    router: PropTypes.object.isRequired
+  }
 
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return { open: true }
-  },
+  })()
 
   /* **************************************************************************/
   // UI Events
@@ -77,14 +79,14 @@ module.exports = React.createClass({
   * @param unreadMode: the unread mode to set for the user
   */
   handleConfigurationPicked (unreadMode) {
-    const id = this.props.params.mailboxId
+    const id = this.props.match.params.mailboxId
     mailboxActions.reduceService(id, GoogleDefaultService.type, GoogleDefaultServiceReducer.setUnreadMode, unreadMode)
 
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/mailbox_wizard/google/services/' + id
     }, 250)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -92,7 +94,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { open } = this.state
@@ -161,4 +163,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

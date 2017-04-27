@@ -1,39 +1,35 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
+import PropTypes from 'prop-types'
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
 const { remote } = window.nativeRequire('electron')
 const {nativeImage, app} = remote
 
-const AppBadge = React.createClass({
-
+const AppBadge = class AppBadge extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'AppBadge',
-  propTypes: {
-    unreadCount: React.PropTypes.number.isRequired,
-    hasUnreadActivity: React.PropTypes.bool.isRequired
-  },
-  statics: {
-    /**
-    * @return true if the current platform supports app badges
-    */
-    supportsAppBadge () {
-      if (process.platform === 'darwin') {
-        return true
-      } else if (process.platform === 'linux' && app.isUnityRunning()) {
-        return true
-      } else {
-        return false
-      }
-    },
-    /**
-    * @return true if this platform supports overlay icons
-    */
-    supportsAppOverlayIcon () {
-      return process.platform === 'win32'
+  static propTypes = {
+    unreadCount: PropTypes.number.isRequired,
+    hasUnreadActivity: PropTypes.bool.isRequired
+  }
+
+  /**
+  * @return true if the current platform supports app badges
+  */
+  static supportsAppBadge () {
+    if (process.platform === 'darwin') {
+      return true
+    } else if (process.platform === 'linux' && app.isUnityRunning()) {
+      return true
+    } else {
+      return false
     }
-  },
+  }
+
+  static supportsAppOverlayIcon () {
+    return process.platform === 'win32'
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -49,7 +45,7 @@ const AppBadge = React.createClass({
       const win = remote.getCurrentWindow()
       win.setOverlayIcon(null, '')
     }
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -57,7 +53,7 @@ const AppBadge = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { unreadCount, hasUnreadActivity } = this.props
@@ -114,6 +110,6 @@ const AppBadge = React.createClass({
 
     return (<div />)
   }
-})
+}
 
-module.exports = AppBadge
+export default AppBadge

@@ -1,32 +1,29 @@
-const alt = require('../alt')
-const actions = require('./mailboxActions')
-const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
-const MailboxFactory = require('shared/Models/Accounts/MailboxFactory')
-const mailboxPersistence = require('./mailboxPersistence')
-const avatarPersistence = require('./avatarPersistence')
-const userStore = require('../user/userStore')
-const { PERSISTENCE_INDEX_KEY } = require('shared/constants')
-const { BLANK_PNG } = require('shared/b64Assets')
-const { ipcRenderer } = window.nativeRequire('electron')
-const uuid = require('uuid')
-const googleActions = require('../google/googleActions')
-const GoogleHTTP = require('../google/GoogleHTTP')
-const slackActions = require('../slack/slackActions')
-const SlackHTTP = require('../slack/SlackHTTP')
-const trelloActions = require('../trello/trelloActions')
-const MicrosoftHTTP = require('../microsoft/MicrosoftHTTP')
-const microsoftActions = require('../microsoft/microsoftActions')
-const mailboxDispatch = require('./mailboxDispatch')
-const { credentials } = require('R/Bootstrap')
-const { SERVICE_LOCAL_AVATAR_PREFIX } = require('shared/constants')
-const {
-  Google: { GoogleMailbox, GoogleDefaultService },
-  Slack: { SlackMailbox },
-  Trello: { TrelloMailbox },
-  Microsoft: { MicrosoftMailbox },
-  Generic: { GenericMailbox }
-} = require('shared/Models/Accounts')
+import alt from '../alt'
+import actions from './mailboxActions'
+import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import MailboxFactory from 'shared/Models/Accounts/MailboxFactory'
+import mailboxPersistence from './mailboxPersistence'
+import avatarPersistence from './avatarPersistence'
+import userStore from '../user/userStore'
+import { PERSISTENCE_INDEX_KEY, SERVICE_LOCAL_AVATAR_PREFIX } from 'shared/constants'
+import { BLANK_PNG } from 'shared/b64Assets'
+import uuid from 'uuid'
+import googleActions from '../google/googleActions'
+import GoogleHTTP from '../google/GoogleHTTP'
+import slackActions from '../slack/slackActions'
+import SlackHTTP from '../slack/SlackHTTP'
+import trelloActions from '../trello/trelloActions'
+import MicrosoftHTTP from '../microsoft/MicrosoftHTTP'
+import microsoftActions from '../microsoft/microsoftActions'
+import mailboxDispatch from './mailboxDispatch'
+import Bootstrap from 'R/Bootstrap'
+import { GoogleMailbox, GoogleDefaultService } from 'shared/Models/Accounts/Google'
+import { SlackMailbox } from 'shared/Models/Accounts/Slack'
+import { TrelloMailbox } from 'shared/Models/Accounts/Trello'
+import { MicrosoftMailbox } from 'shared/Models/Accounts/Microsoft'
+import { GenericMailbox } from 'shared/Models/Accounts/Generic'
 
+const { ipcRenderer } = window.nativeRequire('electron')
 const AUTH_MODES = {
   CREATE: 'CREATE',
   REAUTHENTICATE: 'REAUTHENTICATE'
@@ -430,7 +427,7 @@ class MailboxStore {
   handleAuthenticateGinboxMailbox ({ provisionalId }) {
     window.location.hash = '/mailbox_wizard/authenticating'
     ipcRenderer.send('auth-google', {
-      credentials: credentials,
+      credentials: Bootstrap.credentials,
       id: provisionalId,
       provisional: GoogleMailbox.createJS(provisionalId, GoogleDefaultService.ACCESS_MODES.GINBOX)
     })
@@ -439,7 +436,7 @@ class MailboxStore {
   handleAuthenticateGmailMailbox ({ provisionalId }) {
     window.location.hash = '/mailbox_wizard/authenticating'
     ipcRenderer.send('auth-google', {
-      credentials: credentials,
+      credentials: Bootstrap.credentials,
       id: provisionalId,
       provisional: GoogleMailbox.createJS(provisionalId, GoogleDefaultService.ACCESS_MODES.GMAIL)
     })
@@ -456,7 +453,7 @@ class MailboxStore {
   handleAuthenticateTrelloMailbox ({ provisionalId }) {
     window.location.hash = '/mailbox_wizard/authenticating'
     ipcRenderer.send('auth-trello', {
-      credentials: credentials,
+      credentials: Bootstrap.credentials,
       id: provisionalId,
       provisional: TrelloMailbox.createJS(provisionalId)
     })
@@ -465,7 +462,7 @@ class MailboxStore {
   handleAuthenticateOutlookMailbox ({ provisionalId }) {
     window.location.hash = '/mailbox_wizard/authenticating'
     ipcRenderer.send('auth-microsoft', {
-      credentials: credentials,
+      credentials: Bootstrap.credentials,
       id: provisionalId,
       provisional: MicrosoftMailbox.createJS(provisionalId, MicrosoftMailbox.ACCESS_MODES.OUTLOOK)
     })
@@ -474,7 +471,7 @@ class MailboxStore {
   handleAuthenticateOffice365Mailbox ({ provisionalId }) {
     window.location.hash = '/mailbox_wizard/authenticating'
     ipcRenderer.send('auth-microsoft', {
-      credentials: credentials,
+      credentials: Bootstrap.credentials,
       id: provisionalId,
       provisional: MicrosoftMailbox.createJS(provisionalId, MicrosoftMailbox.ACCESS_MODES.OFFICE365)
     })
@@ -511,7 +508,7 @@ class MailboxStore {
 
     window.location.hash = '/mailbox_wizard/authenticating'
     ipcRenderer.send('auth-google', {
-      credentials: credentials,
+      credentials: Bootstrap.credentials,
       id: mailboxId,
       authMode: AUTH_MODES.REAUTHENTICATE,
       provisional: null
@@ -963,4 +960,4 @@ class MailboxStore {
   }
 }
 
-module.exports = alt.createStore(MailboxStore, 'MailboxStore')
+export default alt.createStore(MailboxStore, 'MailboxStore')

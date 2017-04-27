@@ -1,17 +1,11 @@
-const React = require('react')
-const WebView = require('sharedui/Components/WebView')
+import React from 'react'
+import WebView from 'sharedui/Components/WebView'
+import URI from 'urijs'
 const { remote: {shell} } = window.nativeRequire('electron')
-const URI = require('urijs')
 
 const REF = 'webview'
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'WaveboxWebView',
-
+export default class WaveboxWebView extends React.Component {
   /* **************************************************************************/
   // Routing
   /* **************************************************************************/
@@ -50,7 +44,7 @@ module.exports = React.createClass({
       }
     }
     return false
-  },
+  }
 
   /* **************************************************************************/
   // User Interaction
@@ -60,18 +54,18 @@ module.exports = React.createClass({
   * Opens a new window in the browser
   * @param evt: the event that fired
   */
-  handleOpenNewWindow (evt) {
+  handleOpenNewWindow = (evt) => {
     const didRoute = this.routeUrl(evt.url)
     if (!didRoute) {
       shell.openExternal(evt.url)
     }
-  },
+  }
 
   /**
   * Handles the dom being ready by updating it with anything
   * @param evt: the event that fired
   */
-  handleDomReady (evt) {
+  handleDomReady = (evt) => {
     this.refs[REF].getWebviewNode().insertCSS(`
       body::-webkit-scrollbar {
         -webkit-appearance: none;
@@ -83,7 +77,7 @@ module.exports = React.createClass({
         -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
       }
     `)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -99,4 +93,4 @@ module.exports = React.createClass({
         {...this.props} />
     )
   }
-})
+}

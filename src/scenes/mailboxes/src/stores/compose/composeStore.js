@@ -1,9 +1,9 @@
-const alt = require('../alt')
-const actions = require('./composeActions')
-const CoreService = require('shared/Models/Accounts/CoreService')
-const mailboxStore = require('../mailbox/mailboxStore')
-const mailboxDispatch = require('../mailbox/mailboxDispatch')
-const mailboxActions = require('../mailbox/mailboxActions')
+import alt from '../alt'
+import actions from './composeActions'
+import CoreService from 'shared/Models/Accounts/CoreService'
+import mailboxStore from '../mailbox/mailboxStore'
+import mailboxDispatch from '../mailbox/mailboxDispatch'
+import mailboxActions from '../mailbox/mailboxActions'
 
 class ComposeStore {
   /* **************************************************************************/
@@ -98,4 +98,4 @@ class ComposeStore {
   }
 }
 
-module.exports = alt.createStore(ComposeStore, 'ComposeStore')
+export default alt.createStore(ComposeStore, 'ComposeStore')

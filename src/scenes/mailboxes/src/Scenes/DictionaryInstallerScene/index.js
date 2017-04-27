@@ -1,1 +1,2 @@
-module.exports = require('./DictionaryInstallerScene')
+import DictionaryInstallerScene from './DictionaryInstallerScene'
+export default DictionaryInstallerScene

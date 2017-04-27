@@ -1,6 +1,11 @@
-module.exports = {
-  Container: require('./Container'),
-  Col: require('./Col'),
-  Row: require('./Row'),
-  Visible: require('./Visible')
+import Container from './Container'
+import Col from './Col'
+import Row from './Row'
+import Visible from './Visible'
+
+export {
+  Container,
+  Col,
+  Row,
+  Visible
 }

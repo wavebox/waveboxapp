@@ -1,4 +1,4 @@
-const alt = require('../alt')
+import alt from '../alt'
 const { ipcRenderer } = window.nativeRequire('electron')
 
 class UpdaterActions {
@@ -81,4 +81,4 @@ ipcRenderer.on('squirrel-update-error', () => actions.squirrelUpdateError())
 ipcRenderer.on('squirrel-update-available', () => actions.squirrelUpdateAvailable())
 ipcRenderer.on('squirrel-update-not-available', () => actions.squirrelUpdateNotAvailable())
 ipcRenderer.on('squirrel-update-check-start', () => actions.squirrelUpdateCheckStart())
-module.exports = actions
+export default actions

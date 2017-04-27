@@ -1,6 +1,7 @@
-const React = require('react')
-const Colors = require('material-ui/styles/colors')
-const MailboxToolbarServices = require('./MailboxToolbarServices')
+import PropTypes from 'prop-types'
+import React from 'react'
+import * as Colors from 'material-ui/styles/colors'
+import MailboxToolbarServices from './MailboxToolbarServices'
 
 const styles = {
   toolbar: {
@@ -17,16 +18,15 @@ const styles = {
   }
 }
 
-module.exports = React.createClass({
+export default class MailboxToolbar extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'MailboxToolbar',
-  propTypes: {
-    mailboxId: React.PropTypes.string.isRequired,
-    toolbarHeight: React.PropTypes.number.isRequired
-  },
+  static propTypes = {
+    mailboxId: PropTypes.string.isRequired,
+    toolbarHeight: PropTypes.number.isRequired
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -42,4 +42,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

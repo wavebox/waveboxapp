@@ -1,17 +1,10 @@
-const React = require('react')
-const { mailboxStore } = require('stores/mailbox')
-const { userStore } = require('stores/user')
-const Welcome = require('../Welcome/Welcome')
-const MailboxTab = require('./MailboxTab')
+import React from 'react'
+import { mailboxStore } from 'stores/mailbox'
+import { userStore } from 'stores/user'
+import Welcome from '../Welcome/Welcome'
+import MailboxTab from './MailboxTab'
 
-module.exports = React.createClass({
-
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'MailboxTabManager',
-
+export default class MailboxTabManager extends React.Component {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
@@ -19,38 +12,38 @@ module.exports = React.createClass({
   componentDidMount () {
     mailboxStore.listen(this.mailboxesChanged)
     userStore.listen(this.userChanged)
-  },
+  }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxesChanged)
     userStore.unlisten(this.userChanged)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     const mailboxState = mailboxStore.getState()
     const userState = userStore.getState()
     return {
       mailboxIds: mailboxState.unrestrictedMailboxIds(userState.user)
     }
-  },
+  })()
 
-  mailboxesChanged (mailboxState) {
+  mailboxesChanged = (mailboxState) => {
     const userState = userStore.getState()
     this.setState({
       mailboxIds: mailboxState.unrestrictedMailboxIds(userState.user)
     })
-  },
+  }
 
-  userChanged (userState) {
+  userChanged = (userState) => {
     const mailboxState = mailboxStore.getState()
     this.setState({
       mailboxIds: mailboxState.unrestrictedMailboxIds(userState.user)
     })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -60,7 +53,7 @@ module.exports = React.createClass({
     if (JSON.stringify(this.state.mailboxIds) !== JSON.stringify(nextState.mailboxIds)) { return true }
 
     return false
-  },
+  }
 
   render () {
     const { mailboxIds } = this.state
@@ -81,4 +74,4 @@ module.exports = React.createClass({
       )
     }
   }
-})
+}

@@ -1,1 +1,2 @@
-module.exports = require('./AccountMessageScene')
+import AccountMessageScene from './AccountMessageScene'
+export default AccountMessageScene

@@ -1,4 +1,4 @@
-const { EventEmitter } = require('events')
+import { EventEmitter } from 'events'
 
 class MailboxDispatch extends EventEmitter {
   /* **************************************************************************/
@@ -236,4 +236,4 @@ class MailboxDispatch extends EventEmitter {
   }
 }
 
-module.exports = new MailboxDispatch()
+export default new MailboxDispatch()

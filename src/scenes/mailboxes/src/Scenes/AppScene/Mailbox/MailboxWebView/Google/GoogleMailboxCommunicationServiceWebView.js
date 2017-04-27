@@ -1,20 +1,20 @@
-const React = require('react')
-const MailboxWebViewHibernator = require('../MailboxWebViewHibernator')
-const CoreService = require('shared/Models/Accounts/CoreService')
-const URI = require('urijs')
-const { MailboxLinker } = require('stores/mailbox')
+import PropTypes from 'prop-types'
+import React from 'react'
+import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
+import CoreService from 'shared/Models/Accounts/CoreService'
+import URI from 'urijs'
+import { MailboxLinker } from 'stores/mailbox'
 
 const REF = 'mailbox_tab'
 
-module.exports = React.createClass({
+export default class GoogleMailboxCommunicationServiceWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'GoogleMailboxCommunicationServiceWebView',
-  propTypes: {
-    mailboxId: React.PropTypes.string.isRequired
-  },
+  static propTypes = {
+    mailboxId: PropTypes.string.isRequired
+  }
 
   /* **************************************************************************/
   // Browser Events
@@ -37,7 +37,7 @@ module.exports = React.createClass({
       }
     }
     MailboxLinker.openExternalWindow(url)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -55,4 +55,4 @@ module.exports = React.createClass({
         newWindow={(evt) => { this.handleOpenNewWindow(evt.url) }} />
     )
   }
-})
+}

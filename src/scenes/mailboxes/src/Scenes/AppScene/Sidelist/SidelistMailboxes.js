@@ -1,40 +1,33 @@
-const React = require('react')
-const { mailboxStore } = require('stores/mailbox')
-const SidelistItemMailbox = require('./SidelistItemMailbox')
+import React from 'react'
+import { mailboxStore } from 'stores/mailbox'
+import SidelistItemMailbox from './SidelistItemMailbox'
 
-module.exports = React.createClass({
-
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'SidelistMailboxes',
-
+export default class SidelistMailboxes extends React.Component {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
     mailboxStore.listen(this.mailboxesChanged)
-  },
+  }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxesChanged)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       mailboxIds: mailboxStore.getState().mailboxIds()
     }
-  },
+  })()
 
-  mailboxesChanged (store) {
+  mailboxesChanged = (store) => {
     this.setState({ mailboxIds: store.mailboxIds() })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -43,7 +36,7 @@ module.exports = React.createClass({
   shouldComponentUpdate (nextProps, nextState) {
     if (JSON.stringify(this.state.mailboxIds) !== JSON.stringify(nextState.mailboxIds)) { return true }
     return false
-  },
+  }
 
   render () {
     const { styles, ...passProps } = this.props
@@ -62,4 +55,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

@@ -1,4 +1,4 @@
-const alt = require('../alt')
+import alt from '../alt'
 
 class GoogleActions {
   /* **************************************************************************/
@@ -91,4 +91,4 @@ class GoogleActions {
   }
 }
 
-module.exports = alt.createActions(GoogleActions)
+export default alt.createActions(GoogleActions)

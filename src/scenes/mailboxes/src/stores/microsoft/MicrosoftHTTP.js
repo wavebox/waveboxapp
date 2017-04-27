@@ -1,5 +1,7 @@
-const { MICROSOFT_CLIENT_ID, MICROSOFT_CLIENT_SECRET } = require('R/Bootstrap').credentials
-const querystring = require('querystring')
+import Boostrap from 'R/Bootstrap'
+import querystring from 'querystring'
+
+const { MICROSOFT_CLIENT_ID, MICROSOFT_CLIENT_SECRET } = Boostrap.credentials
 
 class MicrosoftHTTP {
   /* **************************************************************************/
@@ -229,4 +231,4 @@ class MicrosoftHTTP {
   }
 }
 
-module.exports = MicrosoftHTTP
+export default MicrosoftHTTP

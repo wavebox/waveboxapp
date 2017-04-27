@@ -1,1 +1,2 @@
-module.exports = require('./GeneralSettings')
+import GeneralSettings from './GeneralSettings'
+export default GeneralSettings

@@ -1,12 +1,13 @@
-const React = require('react')
-const { Dialog, RaisedButton, List, ListItem, FontIcon, Avatar } = require('material-ui')
-const shallowCompare = require('react-addons-shallow-compare')
-const { mailboxStore } = require('stores/mailbox')
-const { Mailbox: { MailboxAvatar } } = require('Components')
-const { userActions } = require('stores/user')
-const Colors = require('material-ui/styles/colors')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Dialog, RaisedButton, List, ListItem, FontIcon, Avatar } from 'material-ui'
+import shallowCompare from 'react-addons-shallow-compare'
+import { mailboxStore } from 'stores/mailbox'
+import { MailboxAvatar } from 'Components/Mailbox'
+import { userActions } from 'stores/user'
+import * as Colors from 'material-ui/styles/colors'
+import { PRIVACY_URL, TERMS_URL } from 'shared/constants'
 const { remote: {shell} } = window.nativeRequire('electron')
-const { PRIVACY_URL, TERMS_URL } = require('shared/constants')
 
 const styles = {
   // Layout
@@ -29,18 +30,21 @@ const styles = {
   }
 }
 
-module.exports = React.createClass({
+export default class AccountAuthScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'AccountAuthScene',
-  contextTypes: {
-    router: React.PropTypes.object.isRequired
-  },
-  propTypes: {
-    params: React.PropTypes.object.isRequired
-  },
+  static contextTypes: {
+    router: PropTypes.object.isRequired
+  }
+  static propTypes = {
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        mode: PropTypes.string
+      })
+    })
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -48,28 +52,28 @@ module.exports = React.createClass({
 
   componentDidMount () {
     mailboxStore.listen(this.mailboxChanged)
-  },
+  }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxChanged)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       open: true,
       mailboxes: mailboxStore.getState().getMailboxesSupportingWaveboxAuth()
     }
-  },
+  })()
 
-  mailboxChanged (mailboxState) {
+  mailboxChanged = (mailboxState) => {
     this.setState({
       mailboxes: mailboxState.getMailboxesSupportingWaveboxAuth()
     })
-  },
+  }
 
   /* **************************************************************************/
   // User Interaction
@@ -78,28 +82,28 @@ module.exports = React.createClass({
   /**
   * Closes the modal
   */
-  handleClose () {
+  handleClose = () => {
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/'
     }, 500)
-  },
+  }
 
   /**
   * Shows privacy policy
   */
-  handleShowPrivacyPolicy (evt) {
+  handleShowPrivacyPolicy = (evt) => {
     evt.preventDefault()
     shell.openExternal(PRIVACY_URL)
-  },
+  }
 
   /**
   * Shows terms of use
   */
-  handleShowTermsOfUse (evt) {
+  handleShowTermsOfUse = (evt) => {
     evt.preventDefault()
     shell.openExternal(TERMS_URL)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -107,7 +111,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   /**
   * Renders the message for the given mode with a default catch all
@@ -153,12 +157,11 @@ module.exports = React.createClass({
         </div>
       )
     }
-  },
+  }
 
   render () {
     const { open, mailboxes } = this.state
-    const { params } = this.props
-    const { mode } = params
+    const { match: { params: { mode } } } = this.props
 
     return (
       <Dialog
@@ -216,4 +219,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

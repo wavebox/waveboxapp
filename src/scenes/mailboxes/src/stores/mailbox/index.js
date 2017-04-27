@@ -1,20 +1,37 @@
-module.exports = {
-  mailboxActions: require('./mailboxActions'),
-  mailboxStore: require('./mailboxStore'),
-  mailboxDispatch: require('./mailboxDispatch'),
-  MailboxLinker: require('./MailboxLinker'),
+import mailboxActions from './mailboxActions'
+import mailboxStore from './mailboxStore'
+import mailboxDispatch from './mailboxDispatch'
+import MailboxLinker from './MailboxLinker'
+import MailboxReducer from './MailboxReducer'
+import ServiceReducer from './ServiceReducer'
+import GenericMailboxReducer from './GenericMailboxReducer'
+import GenericDefaultServiceReducer from './GenericDefaultServiceReducer'
+import GoogleMailboxReducer from './GoogleMailboxReducer'
+import GoogleDefaultServiceReducer from './GoogleDefaultServiceReducer'
+import SlackMailboxReducer from './SlackMailboxReducer'
+import SlackDefaultServiceReducer from './SlackDefaultServiceReducer'
+import TrelloMailboxReducer from './TrelloMailboxReducer'
+import TrelloDefaultServiceReducer from './TrelloDefaultServiceReducer'
+import MicrosoftMailboxReducer from './MicrosoftMailboxReducer'
+import MicrosoftDefaultServiceReducer from './MicrosoftDefaultServiceReducer'
+import MicrosoftStorageServiceReducer from './MicrosoftStorageServiceReducer'
 
-  MailboxReducer: require('./MailboxReducer'),
-  ServiceReducer: require('./ServiceReducer'),
-  GenericMailboxReducer: require('./GenericMailboxReducer'),
-  GenericDefaultServiceReducer: require('./GenericDefaultServiceReducer'),
-  GoogleMailboxReducer: require('./GoogleMailboxReducer'),
-  GoogleDefaultServiceReducer: require('./GoogleDefaultServiceReducer'),
-  SlackMailboxReducer: require('./SlackMailboxReducer'),
-  SlackDefaultServiceReducer: require('./SlackDefaultServiceReducer'),
-  TrelloMailboxReducer: require('./TrelloMailboxReducer'),
-  TrelloDefaultServiceReducer: require('./TrelloDefaultServiceReducer'),
-  MicrosoftMailboxReducer: require('./MicrosoftMailboxReducer'),
-  MicrosoftDefaultServiceReducer: require('./MicrosoftDefaultServiceReducer'),
-  MicrosoftStorageServiceReducer: require('./MicrosoftStorageServiceReducer')
+export {
+  mailboxActions,
+  mailboxStore,
+  mailboxDispatch,
+  MailboxLinker,
+  MailboxReducer,
+  ServiceReducer,
+  GenericMailboxReducer,
+  GenericDefaultServiceReducer,
+  GoogleMailboxReducer,
+  GoogleDefaultServiceReducer,
+  SlackMailboxReducer,
+  SlackDefaultServiceReducer,
+  TrelloMailboxReducer,
+  TrelloDefaultServiceReducer,
+  MicrosoftMailboxReducer,
+  MicrosoftDefaultServiceReducer,
+  MicrosoftStorageServiceReducer
 }

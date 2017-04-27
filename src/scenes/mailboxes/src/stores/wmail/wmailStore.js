@@ -1,13 +1,13 @@
-const alt = require('../alt')
-const actions = require('./wmailActions')
+import alt from '../alt'
+import actions from './wmailActions'
+import path from 'path'
+import fs from 'fs'
+import { settingsActions } from 'stores/settings'
+import { mailboxActions } from 'stores/mailbox'
+import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
+import GoogleMailbox from 'shared/Models/Accounts/Google/GoogleMailbox'
+import CoreService from 'shared/Models/Accounts/CoreService'
 const AppDirectory = window.appNodeModulesRequire('appdirectory')
-const path = require('path')
-const fs = require('fs')
-const { settingsActions } = require('stores/settings')
-const { mailboxActions } = require('stores/mailbox')
-const GoogleDefaultService = require('shared/Models/Accounts/Google/GoogleDefaultService')
-const GoogleMailbox = require('shared/Models/Accounts/Google/GoogleMailbox')
-const CoreService = require('shared/Models/Accounts/CoreService')
 
 const appDirectory = new AppDirectory('wmail')
 const dbPaths = {
@@ -202,4 +202,4 @@ class WmailStore {
   }
 }
 
-module.exports = alt.createStore(WmailStore, 'WmailStore')
+export default alt.createStore(WmailStore, 'WmailStore')

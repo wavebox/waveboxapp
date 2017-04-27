@@ -1,27 +1,27 @@
-const React = require('react')
-const { Popover, Menu, MenuItem, Divider, FontIcon } = require('material-ui')
-const { mailboxActions, mailboxDispatch } = require('stores/mailbox')
-const shallowCompare = require('react-addons-shallow-compare')
-const Colors = require('material-ui/styles/colors')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Popover, Menu, MenuItem, Divider, FontIcon } from 'material-ui'
+import { mailboxActions, mailboxDispatch } from 'stores/mailbox'
+import shallowCompare from 'react-addons-shallow-compare'
+import * as Colors from 'material-ui/styles/colors'
 
-module.exports = React.createClass({
+export default class SidelistItemMailboxPopover extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'SidelistItemMailboxPopover',
-  propTypes: {
-    mailbox: React.PropTypes.object.isRequired,
-    serviceType: React.PropTypes.string,
-    isFirst: React.PropTypes.bool.isRequired,
-    isLast: React.PropTypes.bool.isRequired,
-    isOpen: React.PropTypes.bool.isRequired,
-    anchor: React.PropTypes.any,
-    onRequestClose: React.PropTypes.func.isRequired
-  },
-  contextTypes: {
-    router: React.PropTypes.object.isRequired
-  },
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired,
+    serviceType: PropTypes.string,
+    isFirst: PropTypes.bool.isRequired,
+    isLast: PropTypes.bool.isRequired,
+    isOpen: PropTypes.bool.isRequired,
+    anchor: PropTypes.any,
+    onRequestClose: PropTypes.func.isRequired
+  }
+  static contextTypes = {
+    router: PropTypes.object.isRequired
+  }
 
   /* **************************************************************************/
   // User Interaction
@@ -31,88 +31,88 @@ module.exports = React.createClass({
   * Closes the popover
   * @param evtOrFn: the fired event or a function to call on closed
   */
-  handleClosePopover (evtOrFn) {
+  handleClosePopover = (evtOrFn) => {
     this.props.onRequestClose()
     if (typeof (evtOrFn) === 'function') {
       setTimeout(() => { evtOrFn() }, 200)
     }
-  },
+  }
 
   /**
   * Deletes this mailbox
   */
-  handleDelete () {
+  handleDelete = () => {
     this.handleClosePopover(() => {
       mailboxActions.remove(this.props.mailbox.id)
     })
-  },
+  }
 
   /**
   * Opens the inspector window for this mailbox
   */
-  handleInspect () {
+  handleInspect = () => {
     mailboxDispatch.openDevTools(this.props.mailbox.id, this.props.serviceType)
     this.handleClosePopover()
-  },
+  }
 
   /**
   * Reloads this mailbox
   */
-  handleReload () {
+  handleReload = () => {
     mailboxDispatch.reload(this.props.mailbox.id, this.props.serviceType)
     this.handleClosePopover()
-  },
+  }
 
   /**
   * Re-syncs the mailbox
   */
-  handleResync () {
+  handleResync = () => {
     mailboxActions.fullSyncMailbox(this.props.mailbox.id)
     this.handleClosePopover()
-  },
+  }
 
   /**
   * Moves this item up
   */
-  handleMoveUp () {
+  handleMoveUp = () => {
     this.handleClosePopover(() => {
       mailboxActions.moveUp(this.props.mailbox.id)
     })
-  },
+  }
 
   /**
   * Moves this item down
   */
-  handleMoveDown () {
+  handleMoveDown = () => {
     this.handleClosePopover(() => {
       mailboxActions.moveDown(this.props.mailbox.id)
     })
-  },
+  }
 
   /**
   * Handles the user requesting an account reauthentication
   */
-  handeReauthenticateBrowserSession () {
+  handeReauthenticateBrowserSession = () => {
     mailboxActions.reauthenticateBrowserSession(this.props.mailbox.id, this.props.mailbox.partition)
     this.handleClosePopover()
-  },
+  }
 
   /**
   * Handles opening the account settings
   */
-  handleAccountSettings () {
+  handleAccountSettings = () => {
     this.handleClosePopover(() => {
       window.location.hash = `settings/accounts/${this.props.mailbox.id}`
     })
-  },
+  }
 
   /**
   * Handles reauthenticting the mailbox
   */
-  handleReauthenticate () {
+  handleReauthenticate = () => {
     mailboxActions.reauthenticateMailbox(this.props.mailbox.id)
     this.handleClosePopover()
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -120,7 +120,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   /**
   * Renders the menu items
@@ -204,7 +204,7 @@ module.exports = React.createClass({
     ].filter((item) => !!item)
 
     return menuItems
-  },
+  }
 
   render () {
     const { mailbox, isFirst, isLast, isOpen, anchor } = this.props
@@ -222,4 +222,4 @@ module.exports = React.createClass({
       </Popover>
     )
   }
-})
+}

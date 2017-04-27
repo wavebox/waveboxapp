@@ -1,4 +1,4 @@
-const alt = require('../alt')
+import alt from '../alt'
 const { ipcRenderer } = window.nativeRequire('electron')
 
 class UserActions {
@@ -81,4 +81,4 @@ const actions = alt.createActions(UserActions)
 ipcRenderer.on('auth-wavebox-complete', actions.authenticationSuccess)
 ipcRenderer.on('auth-wavebox-error', actions.authenticationFailure)
 
-module.exports = actions
+export default actions

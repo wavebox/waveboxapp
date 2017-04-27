@@ -1,22 +1,27 @@
+import PropTypes from 'prop-types'
 import 'bootstrap-grid'
+import React from 'react'
 
-const React = require('react')
-
-module.exports = React.createClass({
-  displayName: 'GridVisible',
-
-  propTypes: {
-    hidden: React.PropTypes.oneOfType([
-      React.PropTypes.arrayOf(React.PropTypes.string),
-      React.PropTypes.string
+export default class Visible extends React.Component {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+  static propTypes = {
+    hidden: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.string),
+      PropTypes.string
     ]),
-    visible: React.PropTypes.oneOfType([
-      React.PropTypes.arrayOf(React.PropTypes.string),
-      React.PropTypes.string
+    visible: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.string),
+      PropTypes.string
     ]),
-    className: React.PropTypes.string,
-    children: React.PropTypes.node
-  },
+    className: PropTypes.string,
+    children: PropTypes.node
+  }
+
+  /* **************************************************************************/
+  // Utils
+  /* **************************************************************************/
 
   propTypeToArray (prop) {
     if (Array.isArray(prop)) {
@@ -26,7 +31,11 @@ module.exports = React.createClass({
     } else {
       return []
     }
-  },
+  }
+
+  /* **************************************************************************/
+  // Rendering
+  /* **************************************************************************/
 
   render () {
     const { hidden, visible, className, children, ...passProps } = this.props
@@ -43,4 +52,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

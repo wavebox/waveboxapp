@@ -1,4 +1,4 @@
-const { MAILBOX_SLEEP_WAIT } = require('shared/constants')
+import { MAILBOX_SLEEP_WAIT } from 'shared/constants'
 
 class ServiceReducer {
   /* **************************************************************************/
@@ -91,4 +91,4 @@ class ServiceReducer {
   }
 }
 
-module.exports = ServiceReducer
+export default ServiceReducer

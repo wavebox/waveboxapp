@@ -1,15 +1,15 @@
-const React = require('react')
-const { Paper } = require('material-ui')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Paper } from 'material-ui'
 
-module.exports = React.createClass({
+export default class MailboxTargetUrl extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'MailboxTargetUrl',
-  propTypes: {
-    url: React.PropTypes.string
-  },
+  static propTypes = {
+    url: PropTypes.string
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -28,4 +28,4 @@ module.exports = React.createClass({
       </Paper>
     )
   }
-})
+}

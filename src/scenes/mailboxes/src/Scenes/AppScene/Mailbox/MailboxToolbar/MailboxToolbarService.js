@@ -1,9 +1,10 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const { mailboxStore, mailboxActions } = require('stores/mailbox')
-const ReactPortalTooltip = require('react-portal-tooltip')
-const { basicPopoverStyles } = require('./ToolbarPopoverStyles')
-const uuid = require('uuid')
+import PropTypes from 'prop-types'
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import { mailboxStore, mailboxActions } from 'stores/mailbox'
+import ReactPortalTooltip from 'react-portal-tooltip'
+import { basicPopoverStyles } from './ToolbarPopoverStyles'
+import uuid from 'uuid'
 
 const styles = {
   tab: {
@@ -26,17 +27,16 @@ const styles = {
   }
 }
 
-module.exports = React.createClass({
+export default class MailboxToolbarService extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'MailboxToolbarService',
-  propTypes: {
-    mailboxId: React.PropTypes.string.isRequired,
-    serviceType: React.PropTypes.string.isRequired,
-    toolbarHeight: React.PropTypes.number.isRequired
-  },
+  static propTypes = {
+    mailboxId: PropTypes.string.isRequired,
+    serviceType: PropTypes.string.isRequired,
+    toolbarHeight: PropTypes.number.isRequired
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -44,35 +44,35 @@ module.exports = React.createClass({
 
   componentDidMount () {
     mailboxStore.listen(this.mailboxChanged)
-  },
+  }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxChanged)
-  },
+  }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceType !== nextProps.serviceType) {
       const { mailboxId, serviceType } = nextProps
       this.setState(this.generateStateFromMailbox(mailboxStore.getState(), mailboxId, serviceType))
     }
-  },
+  }
 
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     const { mailboxId, serviceType } = this.props
     return Object.assign({
       isHovering: false,
       generatedId: uuid.v4()
     }, this.generateStateFromMailbox(mailboxStore.getState(), mailboxId, serviceType))
-  },
+  })()
 
-  mailboxChanged (mailboxState) {
+  mailboxChanged = (mailboxState) => {
     const { mailboxId, serviceType } = this.props
     this.setState(this.generateStateFromMailbox(mailboxState, mailboxId, serviceType))
-  },
+  }
 
   /**
   * Generates the state from a mailbox
@@ -93,7 +93,7 @@ module.exports = React.createClass({
         mailboxAvailable: false
       }
     }
-  },
+  }
 
   /* **************************************************************************/
   // UI Events
@@ -102,10 +102,10 @@ module.exports = React.createClass({
   /**
   * Handles the service being clicked
   */
-  handleServiceClicked (evt) {
+  handleServiceClicked = (evt) => {
     evt.preventDefault()
     mailboxActions.changeActive(this.props.mailboxId, this.props.serviceType)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -113,7 +113,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { toolbarHeight, ...passProps } = this.props
@@ -153,4 +153,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

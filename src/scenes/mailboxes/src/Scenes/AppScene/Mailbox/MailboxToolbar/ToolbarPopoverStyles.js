@@ -12,7 +12,7 @@ const arrow = {
   borderColor: false
 }
 
-module.exports = {
+export default {
   basicPopoverStyles: {
     style: popover,
     arrowStyle: arrow

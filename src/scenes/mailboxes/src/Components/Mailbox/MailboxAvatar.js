@@ -1,26 +1,26 @@
-const React = require('react')
-const { Avatar } = require('material-ui')
-const { mailboxStore } = require('stores/mailbox')
-const shallowCompare = require('react-addons-shallow-compare')
-const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
+import React from 'react'
+import PropTypes from 'prop-types'
+import { Avatar } from 'material-ui'
+import { mailboxStore } from 'stores/mailbox'
+import shallowCompare from 'react-addons-shallow-compare'
+import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 
-module.exports = React.createClass({
+export default class MailboxAvatar extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'MailboxAvatar',
-  propTypes: Object.assign({
-    mailbox: React.PropTypes.object.isRequired,
-    useBorderHack: React.PropTypes.bool.isRequired
-  }, Avatar.propTypes),
-  getDefaultProps () {
-    return {
-      size: Avatar.defaultProps.size,
-      color: 'white',
-      useBorderHack: true
-    }
-  },
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired,
+    useBorderHack: PropTypes.bool.isRequired,
+    ...Avatar.propTypes
+  }
+
+  static defaultProps = {
+    size: Avatar.defaultProps.size,
+    color: 'white',
+    useBorderHack: true
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -28,23 +28,30 @@ module.exports = React.createClass({
 
   componentDidMount () {
     mailboxStore.listen(this.mailboxUpdated)
-  },
+  }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxUpdated)
-  },
+  }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailbox !== nextProps.mailbox) {
-      this.replaceState(this.getInitialState(nextProps))
+      this.setState(this.generateInitialState(nextProps))
     }
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState (props = this.props) {
+  state = this.generateInitialState(this.props)
+
+  /**
+  * Generates the state for the given props
+  * @param props: the props to generate state for
+  * @return state object
+  */
+  generateInitialState (props) {
     const { mailbox } = props
 
     if (mailbox.hasCustomAvatar) {
@@ -64,11 +71,11 @@ module.exports = React.createClass({
     }
 
     return { url: undefined }
-  },
+  }
 
-  mailboxUpdated (mailboxState) {
-    this.setState(this.getInitialState())
-  },
+  mailboxUpdated = (mailboxState) => {
+    this.setState(this.generateInitialState(this.props))
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -76,7 +83,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { url } = this.state
@@ -115,4 +122,4 @@ module.exports = React.createClass({
       return (<Avatar {...passProps} />)
     }
   }
-})
+}

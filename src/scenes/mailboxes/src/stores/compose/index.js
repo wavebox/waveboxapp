@@ -1,4 +1,7 @@
-module.exports = {
-  composeActions: require('./composeActions'),
-  composeStore: require('./composeStore')
+import composeActions from './composeActions'
+import composeStore from './composeStore'
+
+export {
+  composeActions,
+  composeStore
 }

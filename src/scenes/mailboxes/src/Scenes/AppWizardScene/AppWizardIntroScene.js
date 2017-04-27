@@ -1,42 +1,36 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const { Dialog, RaisedButton, FontIcon, Avatar } = require('material-ui')
-const Colors = require('material-ui/styles/colors')
-const { settingsActions } = require('stores/settings')
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import { Dialog, RaisedButton, FontIcon, Avatar } from 'material-ui'
+import * as Colors from 'material-ui/styles/colors'
+import { settingsActions } from 'stores/settings'
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'AppWizardIntroScene',
-
+export default class AppWizardIntroScene extends React.Component {
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return { open: true }
-  },
+  })()
 
   /* **************************************************************************/
   // UI Events
   /* **************************************************************************/
 
-  handleCancel () {
+  handleCancel = () => {
     this.setState({ open: false })
     setTimeout(() => { window.location.hash = '/' }, 500)
-  },
+  }
 
-  handleNext () {
+  handleNext = () => {
     this.setState({ open: false })
     setTimeout(() => { window.location.hash = '/app_wizard/tray' }, 250)
-  },
+  }
 
-  handleNever () {
+  handleNever = () => {
     settingsActions.setHasSeenAppWizard(true)
     this.handleCancel()
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -44,7 +38,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { open } = this.state
@@ -89,4 +83,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

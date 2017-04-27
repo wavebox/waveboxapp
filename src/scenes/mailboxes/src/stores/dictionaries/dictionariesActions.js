@@ -1,5 +1,5 @@
-const alt = require('../alt')
-const uuid = require('uuid')
+import alt from '../alt'
+import uuid from 'uuid'
 
 class DictionariesActions {
   /* **************************************************************************/
@@ -46,4 +46,4 @@ class DictionariesActions {
   }
 }
 
-module.exports = alt.createActions(DictionariesActions)
+export default alt.createActions(DictionariesActions)

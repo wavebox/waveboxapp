@@ -1,21 +1,21 @@
-const React = require('react')
-const MailboxWebViewHibernator = require('../MailboxWebViewHibernator')
-const CoreService = require('shared/Models/Accounts/CoreService')
-const { mailboxStore, mailboxDispatch, MailboxLinker } = require('stores/mailbox')
-const { settingsStore } = require('stores/settings')
-const URI = require('urijs')
+import PropTypes from 'prop-types'
+import React from 'react'
+import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
+import CoreService from 'shared/Models/Accounts/CoreService'
+import { mailboxStore, mailboxDispatch, MailboxLinker } from 'stores/mailbox'
+import { settingsStore } from 'stores/settings'
+import URI from 'urijs'
 
 const REF = 'mailbox_tab'
 
-module.exports = React.createClass({
+export default class GoogleMailboxMailWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'GoogleMailboxMailWebView',
-  propTypes: {
-    mailboxId: React.PropTypes.string.isRequired
-  },
+  static propTypes = {
+    mailboxId: PropTypes.string.isRequired
+  }
 
   /* **************************************************************************/
   // Component lifecylce
@@ -29,7 +29,7 @@ module.exports = React.createClass({
     // Handle dispatch events
     mailboxDispatch.on('openItem', this.handleOpenItem)
     mailboxDispatch.on('composeItem', this.handleComposeMessage)
-  },
+  }
 
   componentWillUnmount () {
     // Stores
@@ -39,34 +39,41 @@ module.exports = React.createClass({
     // Handle dispatch events
     mailboxDispatch.removeListener('openItem', this.handleOpenItem)
     mailboxDispatch.removeListener('composeItem', this.handleComposeMessage)
-  },
+  }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId) {
-      this.replaceState(this.getInitialState(nextProps))
+      this.setState(this.generateState(nextProps))
     }
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecylce
   /* **************************************************************************/
 
-  getInitialState (props = this.props) {
+  state = this.generateState(this.props)
+
+  /**
+  * Generates the state from the given props
+  * @param props: the props to use
+  * @return state object
+  */
+  generateState (props) {
     const settingsState = settingsStore.getState()
     const mailboxState = mailboxStore.getState()
     return {
       mailbox: mailboxState.getMailbox(props.mailboxId),
       ui: settingsState.ui
     }
-  },
+  }
 
-  mailboxChanged (mailboxState) {
+  mailboxChanged = (mailboxState) => {
     this.setState({
       mailbox: mailboxState.getMailbox(this.props.mailboxId)
     })
-  },
+  }
 
-  settingsChanged (settingsState) {
+  settingsChanged = (settingsState) => {
     this.setState((prevState) => {
       const update = { ui: settingsState.ui }
 
@@ -85,7 +92,7 @@ module.exports = React.createClass({
 
       return update
     })
-  },
+  }
 
   /* **************************************************************************/
   // Dispatcher Events
@@ -95,19 +102,19 @@ module.exports = React.createClass({
   * Handles opening a new message
   * @param evt: the event that fired
   */
-  handleOpenItem (evt) {
+  handleOpenItem = (evt) => {
     if (evt.mailboxId === this.props.mailboxId && evt.service === CoreService.SERVICE_TYPES.DEFAULT) {
       this.refs[REF].send('open-message', {
         messageId: evt.data.messageId, threadId: evt.data.threadId
       })
     }
-  },
+  }
 
   /**
   * Handles composing a new message
   * @param evt: the event that fired
   */
-  handleComposeMessage (evt) {
+  handleComposeMessage = (evt) => {
     if (evt.mailboxId === this.props.mailboxId && evt.service === CoreService.SERVICE_TYPES.DEFAULT) {
       this.refs[REF].send('compose-message', {
         recipient: evt.data.recipient,
@@ -115,7 +122,7 @@ module.exports = React.createClass({
         body: evt.data.body
       })
     }
-  },
+  }
 
   /* **************************************************************************/
   // Browser Events
@@ -125,23 +132,23 @@ module.exports = React.createClass({
   * Dispatches browser IPC messages to the correct call
   * @param evt: the event that fired
   */
-  dispatchBrowserIPCMessage (evt) {
+  dispatchBrowserIPCMessage = (evt) => {
     switch (evt.channel.type) {
       case 'js-new-window': this.handleOpenNewWindow(evt.channel.url); break
       default: break
     }
-  },
+  }
 
   /**
   * Handles the Browser DOM becoming ready
   */
-  handleBrowserDomReady () {
+  handleBrowserDomReady = () => {
     // UI Fixes
     const ui = this.state.ui
     this.refs[REF].send('window-icons-in-screen', {
       inscreen: !ui.sidebarEnabled && !ui.showTitlebar && process.platform === 'darwin'
     })
-  },
+  }
 
   /**
   * Opens a new url in the correct way
@@ -163,7 +170,7 @@ module.exports = React.createClass({
     } else {
       MailboxLinker.openExternalWindow(url)
     }
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -182,4 +189,4 @@ module.exports = React.createClass({
         ipcMessage={this.dispatchBrowserIPCMessage} />
     )
   }
-})
+}

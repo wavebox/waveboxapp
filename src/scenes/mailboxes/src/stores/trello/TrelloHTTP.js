@@ -1,4 +1,4 @@
-const querystring = require('querystring')
+import querystring from 'querystring'
 
 class TrelloHTTP {
   /* **************************************************************************/
@@ -65,4 +65,4 @@ class TrelloHTTP {
   }
 }
 
-module.exports = TrelloHTTP
+export default TrelloHTTP

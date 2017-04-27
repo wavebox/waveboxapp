@@ -1,6 +1,6 @@
-const Colors = require('material-ui/styles/colors')
+import * as Colors from 'material-ui/styles/colors'
 
-module.exports = {
+export default {
   /* **************************************************************************/
   // Modal
   /* **************************************************************************/

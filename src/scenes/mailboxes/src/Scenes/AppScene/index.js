@@ -1,1 +1,2 @@
-module.exports = require('./AppScene')
+import AppScene from './AppScene'
+export default AppScene

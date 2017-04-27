@@ -1,4 +1,7 @@
-module.exports = {
-  ManualUpdateAvailableScene: require('./ManualUpdateAvailableScene'),
-  SquirrelUpdateDownloadedScene: require('./SquirrelUpdateDownloadedScene')
+import ManualUpdateAvailableScene from './ManualUpdateAvailableScene'
+import SquirrelUpdateDownloadedScene from './SquirrelUpdateDownloadedScene'
+
+export {
+  ManualUpdateAvailableScene,
+  SquirrelUpdateDownloadedScene
 }

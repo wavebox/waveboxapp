@@ -1,5 +1,9 @@
-module.exports = {
-  googleActions: require('./googleActions'),
-  googleStore: require('./googleStore'),
-  GoogleHTTP: require('./GoogleHTTP')
+import googleActions from './googleActions'
+import googleStore from './googleStore'
+import GoogleHTTP from './GoogleHTTP'
+
+export {
+  googleActions,
+  googleStore,
+  GoogleHTTP
 }

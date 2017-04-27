@@ -1,9 +1,9 @@
-const alt = require('../alt')
+import alt from '../alt'
+import mailboxDispatch from './mailboxDispatch'
+import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import ServiceReducer from './ServiceReducer'
 const { ipcRenderer, remote } = window.nativeRequire('electron')
 const { session } = remote
-const mailboxDispatch = require('./mailboxDispatch')
-const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
-const ServiceReducer = require('./ServiceReducer')
 
 class MailboxActions {
   /* **************************************************************************/
@@ -432,4 +432,4 @@ ipcRenderer.on('switch-mailbox', (evt, req) => {
 })
 ipcRenderer.on('switch-service-index', (evt, req) => actions.changeActiveServiceIndex(req.index))
 
-module.exports = actions
+export default actions

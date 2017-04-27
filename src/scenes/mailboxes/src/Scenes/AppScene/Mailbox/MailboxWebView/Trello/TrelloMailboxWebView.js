@@ -1,20 +1,20 @@
-const React = require('react')
-const MailboxWebViewHibernator = require('../MailboxWebViewHibernator')
-const CoreService = require('shared/Models/Accounts/CoreService')
-const { mailboxDispatch, MailboxLinker } = require('stores/mailbox')
-const { trelloActions } = require('stores/trello')
+import PropTypes from 'prop-types'
+import React from 'react'
+import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
+import CoreService from 'shared/Models/Accounts/CoreService'
+import { mailboxDispatch, MailboxLinker } from 'stores/mailbox'
+import { trelloActions } from 'stores/trello'
 
 const REF = 'mailbox_tab'
 
-module.exports = React.createClass({
+export default class TrelloMailboxWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'TrelloMailboxWebView',
-  propTypes: {
-    mailboxId: React.PropTypes.string.isRequired
-  },
+  static propTypes = {
+    mailboxId: PropTypes.string.isRequired
+  }
 
   /* **************************************************************************/
   // Component lifecylce
@@ -23,12 +23,12 @@ module.exports = React.createClass({
   componentDidMount () {
     // Handle dispatch events
     mailboxDispatch.on('openItem', this.handleOpenItem)
-  },
+  }
 
   componentWillUnmount () {
     // Handle dispatch events
     mailboxDispatch.removeListener('openItem', this.handleOpenItem)
-  },
+  }
 
   /* **************************************************************************/
   // Dispatcher Events
@@ -38,7 +38,7 @@ module.exports = React.createClass({
   * Handles opening a new message
   * @param evt: the event that fired
   */
-  handleOpenItem (evt) {
+  handleOpenItem = (evt) => {
     if (evt.mailboxId === this.props.mailboxId && evt.service === CoreService.SERVICE_TYPES.DEFAULT) {
       if (evt.data.boardId && evt.data.cardId) {
         this.refs[REF].loadURL(`https://trello.com/card/board/a/${evt.data.boardId}/${evt.data.cardId}`)
@@ -52,7 +52,7 @@ module.exports = React.createClass({
       // after a few seconds to re-evaluate our state
       trelloActions.syncMailboxNotificationsAfter.defer(this.props.mailboxId, 1000 * 5)
     }
-  },
+  }
 
   /* **************************************************************************/
   // Browser Events
@@ -64,7 +64,7 @@ module.exports = React.createClass({
   */
   handleOpenNewWindow (url) {
     MailboxLinker.openExternalWindow(url)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -82,4 +82,4 @@ module.exports = React.createClass({
         newWindow={(evt) => { this.handleOpenNewWindow(evt.url) }} />
     )
   }
-})
+}

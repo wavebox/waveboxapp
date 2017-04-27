@@ -1,1 +1,2 @@
-module.exports = require('./SidelistItemMailbox')
+import SidelistItemMailbox from './SidelistItemMailbox'
+export default SidelistItemMailbox

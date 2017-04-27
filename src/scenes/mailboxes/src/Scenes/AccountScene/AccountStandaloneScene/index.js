@@ -1,1 +1,2 @@
-module.exports = require('./AccountStandaloneScene')
+import AccountStandaloneScene from './AccountStandaloneScene'
+export default AccountStandaloneScene

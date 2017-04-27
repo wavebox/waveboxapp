@@ -1,22 +1,16 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const { Dialog, RaisedButton, FlatButton } = require('material-ui')
-const { updaterActions } = require('stores/updater')
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import { Dialog, RaisedButton, FlatButton } from 'material-ui'
+import { updaterActions } from 'stores/updater'
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'SquirrelUpdateDownloadedScene',
-
+export default class SquirrelUpdateDownloadedScene extends React.Component {
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return { open: true }
-  },
+  })()
 
   /* **************************************************************************/
   // UI Events
@@ -28,22 +22,22 @@ module.exports = React.createClass({
   handleClose () {
     this.setState({ open: false })
     setTimeout(() => { window.location.hash = '/' }, 500)
-  },
+  }
 
   /**
   * Doesn't re-prompt the user until after they restart the app
   */
-  handleAfterRestart () {
+  handleAfterRestart = () => {
     this.handleClose()
-  },
+  }
 
   /**
   * Installs the new update
   */
-  handleInstall () {
+  handleInstall = () => {
     this.handleClose()
     updaterActions.squirrelInstallUpdate()
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -51,7 +45,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { open } = this.state
@@ -74,4 +68,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

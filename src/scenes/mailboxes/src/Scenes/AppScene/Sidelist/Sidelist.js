@@ -1,25 +1,19 @@
-const React = require('react')
-const { FontIcon, IconButton } = require('material-ui')
-const SidelistMailboxes = require('./SidelistMailboxes')
-const SidelistItemAddMailbox = require('./SidelistItemAddMailbox')
-const SidelistItemSettings = require('./SidelistItemSettings')
-const SidelistItemWizard = require('./SidelistItemWizard')
-const SidelistItemPro = require('./SidelistItemPro')
-const { settingsStore } = require('stores/settings')
-const { userStore } = require('stores/user')
-const styles = require('./SidelistStyles')
-const shallowCompare = require('react-addons-shallow-compare')
-const Colors = require('material-ui/styles/colors')
+import React from 'react'
+import { FontIcon, IconButton } from 'material-ui'
+import SidelistMailboxes from './SidelistMailboxes'
+import SidelistItemAddMailbox from './SidelistItemAddMailbox'
+import SidelistItemSettings from './SidelistItemSettings'
+import SidelistItemWizard from './SidelistItemWizard'
+import SidelistItemPro from './SidelistItemPro'
+import { settingsStore } from 'stores/settings'
+import { userStore } from 'stores/user'
+import styles from './SidelistStyles'
+import shallowCompare from 'react-addons-shallow-compare'
+import * as Colors from 'material-ui/styles/colors'
+
 const { remote } = window.nativeRequire('electron')
 
-module.exports = React.createClass({
-
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'Sidelist',
-
+export default class Sidelist extends React.Component {
   /* **************************************************************************/
   // Component lifecyle
   /* **************************************************************************/
@@ -31,7 +25,7 @@ module.exports = React.createClass({
       remote.getCurrentWindow().on('maximize', this.handleWindowMaximize)
       remote.getCurrentWindow().on('unmaximize', this.handleWindowUnmaximize)
     }
-  },
+  }
 
   componentWillUnmount () {
     settingsStore.unlisten(this.settingsUpdated)
@@ -40,13 +34,13 @@ module.exports = React.createClass({
       remote.getCurrentWindow().removeEventListener('maximize', this.handleWindowMaximize)
       remote.getCurrentWindow().removeEventListener('unmaximize', this.handleWindowUnmaximize)
     }
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecyle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     const settingsState = settingsStore.getState()
     const userState = userStore.getState()
     return {
@@ -55,19 +49,19 @@ module.exports = React.createClass({
       showPlansInSidebar: userState.user.showPlansInSidebar,
       isWindowMaximized: process.platform !== 'darwin' ? remote.getCurrentWindow().isMaximized() : undefined
     }
-  },
+  })()
 
-  settingsUpdated (settingsState) {
+  settingsUpdated = (settingsState) => {
     this.setState({
       showWizard: !settingsState.app.hasSeenAppWizard
     })
-  },
+  }
 
-  userUpdated (userState) {
+  userUpdated = (userState) => {
     this.setState({
       showPlansInSidebar: userState.user.showPlansInSidebar
     })
-  },
+  }
 
   /* **************************************************************************/
   // Window Events
@@ -75,11 +69,11 @@ module.exports = React.createClass({
 
   handleWindowMaximize () {
     this.setState({ isWindowMaximized: true })
-  },
+  }
 
   handleWindowUnmaximize () {
     this.setState({ isWindowMaximized: false })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -87,7 +81,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { showTitlebar, showWizard, showPlansInSidebar, isWindowMaximized } = this.state
@@ -162,4 +156,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

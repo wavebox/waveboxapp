@@ -1,19 +1,19 @@
-const React = require('react')
-const { Paper, SelectField, MenuItem, Toggle } = require('material-ui')
-const { mailboxActions, MailboxReducer } = require('stores/mailbox')
-const styles = require('../SettingStyles')
-const shallowCompare = require('react-addons-shallow-compare')
-const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Paper, SelectField, MenuItem, Toggle } from 'material-ui'
+import { mailboxActions, MailboxReducer } from 'stores/mailbox'
+import styles from '../SettingStyles'
+import shallowCompare from 'react-addons-shallow-compare'
+import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 
-module.exports = React.createClass({
+export default class AccountServicesSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'AccountServicesSettings',
-  propTypes: {
-    mailbox: React.PropTypes.object.isRequired
-  },
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -21,7 +21,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { mailbox, ...passProps } = this.props
@@ -55,4 +55,4 @@ module.exports = React.createClass({
       </Paper>
     )
   }
-})
+}

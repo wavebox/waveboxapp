@@ -1,1 +1,2 @@
-module.exports = require('./SettingsScene')
+import SettingsScene from './SettingsScene'
+export default SettingsScene

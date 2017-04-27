@@ -1,4 +1,7 @@
-module.exports = {
-  platformActions: require('./platformActions'),
-  platformStore: require('./platformStore')
+import platformActions from './platformActions'
+import platformStore from './platformStore'
+
+export {
+  platformActions,
+  platformStore
 }

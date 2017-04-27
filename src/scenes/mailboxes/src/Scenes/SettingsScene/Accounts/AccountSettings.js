@@ -1,34 +1,30 @@
-const React = require('react')
-const {SelectField, MenuItem, RaisedButton} = require('material-ui')
-const {
-  Grid: { Row, Col },
-  Mailbox: { MailboxAvatar }
-} = require('Components')
-const mailboxStore = require('stores/mailbox/mailboxStore')
-const userStore = require('stores/user/userStore')
-const Colors = require('material-ui/styles/colors')
-const styles = require('../SettingStyles')
-const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
-const CustomCodeEditingDialog = require('./CustomCodeEditingDialog')
-const RestrictedAccountSettings = require('./RestrictedAccountSettings')
+import PropTypes from 'prop-types'
+import React from 'react'
+import {SelectField, MenuItem, RaisedButton} from 'material-ui'
+import mailboxStore from 'stores/mailbox/mailboxStore'
+import userStore from 'stores/user/userStore'
+import * as Colors from 'material-ui/styles/colors'
+import styles from '../SettingStyles'
+import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import CustomCodeEditingDialog from './CustomCodeEditingDialog'
+import RestrictedAccountSettings from './RestrictedAccountSettings'
+import GoogleAccountSettings from './Google/GoogleAccountSettings'
+import SlackAccountSettings from './Slack/SlackAccountSettings'
+import TrelloAccountSettings from './Trello/TrelloAccountSettings'
+import GenericAccountSettings from './Generic/GenericAccountSettings'
+import MicrosoftAccountSettings from './Microsoft/MicrosoftAccountSettings'
+import { Row, Col } from 'Components/Grid'
+import { MailboxAvatar } from 'Components/Mailbox'
 
-const GoogleAccountSettings = require('./Google/GoogleAccountSettings')
-const SlackAccountSettings = require('./Slack/SlackAccountSettings')
-const TrelloAccountSettings = require('./Trello/TrelloAccountSettings')
-const GenericAccountSettings = require('./Generic/GenericAccountSettings')
-const MicrosoftAccountSettings = require('./Microsoft/MicrosoftAccountSettings')
-
-module.exports = React.createClass({
-
+export default class AccountSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'AccountSettings',
-  propTypes: {
-    showRestart: React.PropTypes.func.isRequired,
-    mailboxId: React.PropTypes.string
-  },
+  static propTypes = {
+    showRestart: PropTypes.func.isRequired,
+    mailboxId: PropTypes.string
+  }
 
   /* **************************************************************************/
   // Lifecycle
@@ -36,11 +32,11 @@ module.exports = React.createClass({
 
   componentDidMount () {
     mailboxStore.listen(this.mailboxesChanged)
-  },
+  }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxesChanged)
-  },
+  }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId) {
@@ -51,13 +47,13 @@ module.exports = React.createClass({
         codeEditorSaveFn: undefined
       })
     }
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     const mailboxState = mailboxStore.getState()
     return {
       mailboxes: mailboxState.allMailboxes(),
@@ -66,12 +62,12 @@ module.exports = React.createClass({
       codeEditorCode: '',
       codeEditorSaveFn: undefined
     }
-  },
+  })()
 
-  mailboxesChanged (mailboxState) {
+  mailboxesChanged = (mailboxState) => {
     const all = mailboxState.allMailboxes()
     this.setState({ mailboxes: all })
-  },
+  }
 
   /* **************************************************************************/
   // User Interaction
@@ -83,16 +79,16 @@ module.exports = React.createClass({
   * @param index: the index of the first option
   * @param mailboxId: the id of the mailbox
   */
-  handleAccountChange (evt, index, mailboxId) {
+  handleAccountChange = (evt, index, mailboxId) => {
     window.location.hash = `/settings/accounts/${mailboxId}`
-  },
+  }
 
   /**
   * Opens the add account dialog
   */
-  handleAddAccount () {
+  handleAddAccount = () => {
     window.location.hash = `/mailbox_wizard/add`
-  },
+  }
 
   /**
   * Starts editing the custom code
@@ -100,39 +96,39 @@ module.exports = React.createClass({
   * @param code: the code for the dialog
   * @param save: the save function
   */
-  handleEditCustomCode (title, code, save) {
+  handleEditCustomCode = (title, code, save) => {
     this.setState({
       codeEditorOpen: true,
       codeEditorTitle: title,
       codeEditorCode: code || '',
       codeEditorSaveFn: save
     })
-  },
+  }
 
   /**
   * Handles saving the custom code
   * @param evt: the event that fired
   * @param code: the code to save
   */
-  handleSaveCustomCode (evt, code) {
+  handleSaveCustomCode = (evt, code) => {
     if (this.state.codeEditorSaveFn) {
       this.state.codeEditorSaveFn(code)
     }
     this.handleCancelCustomCode(evt)
-  },
+  }
 
   /**
   * Handles cancelling the custom code
   * @param evt: the event that fired
   */
-  handleCancelCustomCode (evt) {
+  handleCancelCustomCode = (evt) => {
     this.setState({
       codeEditorOpen: false,
       codeEditorTitle: undefined,
       codeEditorCode: '',
       codeEditorSaveFn: undefined
     })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -157,7 +153,7 @@ module.exports = React.createClass({
         </div>
       </div>
     )
-  },
+  }
 
   /**
   * Renders the settings for the type of mailbox
@@ -199,7 +195,7 @@ module.exports = React.createClass({
             onRequestEditCustomCode={this.handleEditCustomCode} />)
       default: return undefined
     }
-  },
+  }
 
   /**
   * Renders the mailbox picker and the settings
@@ -264,7 +260,7 @@ module.exports = React.createClass({
         )}
       </div>
     )
-  },
+  }
 
   render () {
     if (this.state.mailboxes.length) {
@@ -273,4 +269,4 @@ module.exports = React.createClass({
       return this.renderNoMailboxes()
     }
   }
-})
+}

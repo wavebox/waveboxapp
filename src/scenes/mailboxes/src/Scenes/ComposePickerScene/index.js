@@ -1,1 +1,2 @@
-module.exports = require('./ComposePickerScene')
+import ComposePickerScene from './ComposePickerScene'
+export default ComposePickerScene

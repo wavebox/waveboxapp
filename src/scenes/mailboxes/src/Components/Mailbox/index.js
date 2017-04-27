@@ -1,3 +1,5 @@
-module.exports = {
-  MailboxAvatar: require('./MailboxAvatar')
+import MailboxAvatar from './MailboxAvatar'
+
+export {
+  MailboxAvatar
 }

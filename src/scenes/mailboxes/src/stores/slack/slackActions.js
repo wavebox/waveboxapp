@@ -1,4 +1,4 @@
-const alt = require('../alt')
+import alt from '../alt'
 
 class SlackActions {
   /* **************************************************************************/
@@ -66,4 +66,4 @@ class SlackActions {
   }
 }
 
-module.exports = alt.createActions(SlackActions)
+export default alt.createActions(SlackActions)

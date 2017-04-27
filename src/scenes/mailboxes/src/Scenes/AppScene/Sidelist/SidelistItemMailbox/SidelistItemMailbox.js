@@ -1,30 +1,30 @@
-const React = require('react')
-const { Badge, FontIcon } = require('material-ui')
-const { mailboxStore, mailboxActions } = require('stores/mailbox')
-const { userStore } = require('stores/user')
-const shallowCompare = require('react-addons-shallow-compare')
-const styles = require('../SidelistStyles')
-const { mailboxPopoverStyles } = require('../SidelistPopoverStyles')
-const ReactPortalTooltip = require('react-portal-tooltip')
-const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
-const uuid = require('uuid')
-const SidelistItemMailboxPopover = require('./SidelistItemMailboxPopover')
-const SidelistItemMailboxAvatar = require('./SidelistItemMailboxAvatar')
-const SidelistItemMailboxServices = require('./SidelistItemMailboxServices')
-const Colors = require('material-ui/styles/colors')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Badge, FontIcon } from 'material-ui'
+import { mailboxStore, mailboxActions } from 'stores/mailbox'
+import { userStore } from 'stores/user'
+import shallowCompare from 'react-addons-shallow-compare'
+import styles from '../SidelistStyles'
+import { mailboxPopoverStyles } from '../SidelistPopoverStyles'
+import ReactPortalTooltip from 'react-portal-tooltip'
+import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import uuid from 'uuid'
+import SidelistItemMailboxPopover from './SidelistItemMailboxPopover'
+import SidelistItemMailboxAvatar from './SidelistItemMailboxAvatar'
+import SidelistItemMailboxServices from './SidelistItemMailboxServices'
+import * as Colors from 'material-ui/styles/colors'
 
-module.exports = React.createClass({
+export default class SidelistItemMailbox extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'SidelistItemMailbox',
-  propTypes: {
-    mailboxId: React.PropTypes.string.isRequired,
-    index: React.PropTypes.number.isRequired,
-    isFirst: React.PropTypes.bool.isRequired,
-    isLast: React.PropTypes.bool.isRequired
-  },
+  static propTypes = {
+    mailboxId: PropTypes.string.isRequired,
+    index: PropTypes.number.isRequired,
+    isFirst: PropTypes.bool.isRequired,
+    isLast: PropTypes.bool.isRequired
+  }
 
   /* **************************************************************************/
   // Lifecycle
@@ -33,18 +33,18 @@ module.exports = React.createClass({
   componentDidMount () {
     mailboxStore.listen(this.mailboxesChanged)
     userStore.listen(this.userChanged)
-  },
+  }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxesChanged)
     userStore.unlisten(this.userChanged)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     const { mailboxId } = this.props
     const userState = userStore.getState()
     const mailboxState = mailboxStore.getState()
@@ -61,9 +61,9 @@ module.exports = React.createClass({
       userHasServices: userState.user.hasServices,
       isRestricted: mailboxState.isMailboxRestricted(mailboxId, userState.user)
     }
-  },
+  })()
 
-  mailboxesChanged (mailboxState) {
+  mailboxesChanged = (mailboxState) => {
     const { mailboxId } = this.props
     const mailbox = mailboxState.getMailbox(mailboxId)
     const userState = userStore.getState()
@@ -73,15 +73,15 @@ module.exports = React.createClass({
       activeService: mailboxState.activeMailboxService(),
       isRestricted: mailboxState.isMailboxRestricted(mailboxId, userState.user)
     })
-  },
+  }
 
-  userChanged (userState) {
+  userChanged = (userState) => {
     const mailboxState = mailboxStore.getState()
     this.setState({
       userHasServices: userState.user.hasServices,
       isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId, userState.user)
     })
-  },
+  }
 
   /* **************************************************************************/
   // User Interaction
@@ -91,24 +91,24 @@ module.exports = React.createClass({
   * Handles the item being clicked on
   * @param evt: the event that fired
   */
-  handleClick (evt) {
+  handleClick = (evt) => {
     evt.preventDefault()
     if (evt.metaKey) {
       window.location.hash = `/settings/accounts/${this.props.mailbox.id}`
     } else {
       mailboxActions.changeActive(this.props.mailboxId)
     }
-  },
+  }
 
   /**
   * Handles opening a service
   * @param evt: the event that fired
   * @param service: the service to open
   */
-  handleOpenService (evt, service) {
+  handleOpenService = (evt, service) => {
     evt.preventDefault()
     mailboxActions.changeActive(this.props.mailboxId, service)
-  },
+  }
 
   /**
   * Opens the popover
@@ -122,7 +122,7 @@ module.exports = React.createClass({
       popoverAnchor: evt.currentTarget,
       popoverServiceType: serviceType
     })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -130,7 +130,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   /**
   * Renders the badge element
@@ -164,7 +164,7 @@ module.exports = React.createClass({
     } else {
       return undefined
     }
-  },
+  }
 
   /**
   * Renders the active indicator
@@ -182,7 +182,7 @@ module.exports = React.createClass({
     } else {
       return undefined
     }
-  },
+  }
 
   /**
   * Renders the tooltip
@@ -236,7 +236,7 @@ module.exports = React.createClass({
         <div>{unreadText}</div>
       </ReactPortalTooltip>
     )
-  },
+  }
 
   render () {
     if (!this.state.mailbox) { return false }
@@ -303,4 +303,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

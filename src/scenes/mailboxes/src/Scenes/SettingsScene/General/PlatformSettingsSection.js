@@ -1,21 +1,21 @@
-const React = require('react')
-const { Toggle, Paper, RaisedButton, Popover, Menu, MenuItem, FontIcon } = require('material-ui')
-const platformActions = require('stores/platform/platformActions')
-const styles = require('../SettingStyles')
-const shallowCompare = require('react-addons-shallow-compare')
-const Colors = require('material-ui/styles/colors')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Toggle, Paper, RaisedButton, Popover, Menu, MenuItem, FontIcon } from 'material-ui'
+import platformActions from 'stores/platform/platformActions'
+import styles from '../SettingStyles'
+import shallowCompare from 'react-addons-shallow-compare'
+import * as Colors from 'material-ui/styles/colors'
 
-module.exports = React.createClass({
+export default class PlatformSettingsSection extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
-  displayName: 'PlatformSettingsSection',
-  propTypes: {
-    mailtoLinkHandlerSupported: React.PropTypes.bool.isRequired,
-    isMailtoLinkHandler: React.PropTypes.bool.isRequired,
-    openAtLoginSupported: React.PropTypes.bool.isRequired
-  },
+  static propTypes = {
+    mailtoLinkHandlerSupported: PropTypes.bool.isRequired,
+    isMailtoLinkHandler: PropTypes.bool.isRequired,
+    openAtLoginSupported: PropTypes.bool.isRequired
+  }
 
   /* **************************************************************************/
   // Component lifecycle
@@ -23,23 +23,23 @@ module.exports = React.createClass({
 
   componentDidMount () {
     this.openLoginHasBeenSetTO = null
-  },
+  }
 
   componentWillUnmount () {
     clearTimeout(this.openLoginHasBeenSetTO)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       openLoginPopoverOpen: false,
       openLoginPopoverAnchor: null,
       openLoginHasBeenSet: false
     }
-  },
+  })()
 
   /* **************************************************************************/
   // UI Events
@@ -63,7 +63,7 @@ module.exports = React.createClass({
         this.setState({ openLoginHasBeenSet: false })
       }, 1500)
     }, 100)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -71,7 +71,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const {
@@ -127,4 +127,4 @@ module.exports = React.createClass({
       </Paper>
     )
   }
-})
+}

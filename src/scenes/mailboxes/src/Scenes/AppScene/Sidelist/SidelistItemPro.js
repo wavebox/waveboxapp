@@ -1,29 +1,22 @@
-const React = require('react')
-const { IconButton } = require('material-ui')
-const Colors = require('material-ui/styles/colors')
-const styles = require('./SidelistStyles')
-const { basicPopoverStyles } = require('./SidelistPopoverStyles')
-const ReactPortalTooltip = require('react-portal-tooltip')
-const uuid = require('uuid')
+import React from 'react'
+import { IconButton } from 'material-ui'
+import * as Colors from 'material-ui/styles/colors'
+import styles from './SidelistStyles'
+import { basicPopoverStyles } from './SidelistPopoverStyles'
+import ReactPortalTooltip from 'react-portal-tooltip'
+import uuid from 'uuid'
 
-module.exports = React.createClass({
-
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'SidelistItemPro',
-
+export default class SidelistItemPro extends React.Component {
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       generatedId: uuid.v4(),
       showTooltip: false
     }
-  },
+  })()
 
   /* **************************************************************************/
   // Rendering
@@ -60,4 +53,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

@@ -1,3 +1,5 @@
-module.exports = {
-  MailboxWizardMicrosoftServicesScene: require('./MailboxWizardMicrosoftServicesScene')
+import MailboxWizardMicrosoftServicesScene from './MailboxWizardMicrosoftServicesScene'
+
+export {
+  MailboxWizardMicrosoftServicesScene
 }

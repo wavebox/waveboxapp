@@ -1,15 +1,14 @@
-const React = require('react')
-const { FontIcon, IconButton, FlatButton } = require('material-ui')
-const Colors = require('material-ui/styles/colors')
-const { mailboxActions } = require('stores/mailbox')
-const { userStore } = require('stores/user')
-const { wmailStore } = require('stores/wmail')
-
-const MicrosoftMailbox = require('shared/Models/Accounts/Microsoft/MicrosoftMailbox')
-const TrelloMailbox = require('shared/Models/Accounts/Trello/TrelloMailbox')
-const SlackMailbox = require('shared/Models/Accounts/Slack/SlackMailbox')
-const GenericMailbox = require('shared/Models/Accounts/Generic/GenericMailbox')
-const GoogleMailbox = require('shared/Models/Accounts/Google/GoogleMailbox')
+import React from 'react'
+import { FontIcon, IconButton, FlatButton } from 'material-ui'
+import * as Colors from 'material-ui/styles/colors'
+import { mailboxActions } from 'stores/mailbox'
+import { userStore } from 'stores/user'
+import { wmailStore } from 'stores/wmail'
+import MicrosoftMailbox from 'shared/Models/Accounts/Microsoft/MicrosoftMailbox'
+import TrelloMailbox from 'shared/Models/Accounts/Trello/TrelloMailbox'
+import SlackMailbox from 'shared/Models/Accounts/Slack/SlackMailbox'
+import GenericMailbox from 'shared/Models/Accounts/Generic/GenericMailbox'
+import GoogleMailbox from 'shared/Models/Accounts/Google/GoogleMailbox'
 
 const styles = {
   // Layout
@@ -105,56 +104,49 @@ const styles = {
   }
 }
 
-module.exports = React.createClass({
-
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'Welcome',
-
+export default class Welcome extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
     userStore.listen(this.userChanged)
-  },
+  }
 
   componentWillUnmount () {
     userStore.unlisten(this.userChanged)
-  },
+  }
 
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       user: userStore.getState().user,
       canImportWmail: wmailStore.getState().canImport()
     }
-  },
+  })()
 
-  userChanged (userState) {
+  userChanged = (userState) => {
     this.setState({ user: userState.user })
-  },
+  }
 
   /* **************************************************************************/
   // UI Events
   /* **************************************************************************/
 
-  handleOpenAddWizard () {
+  handleOpenAddWizard = () => {
     window.location.hash = '/mailbox_wizard/add'
-  },
+  }
 
-  handleOpenAccount () {
+  handleOpenAccount = () => {
     window.location.hash = '/settings/pro'
-  },
+  }
 
-  handleWmailImport () {
+  handleWmailImport = () => {
     window.location.hash = '/wmailimport/start'
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -173,7 +165,7 @@ module.exports = React.createClass({
         src={'../../' + logo}
         onClick={() => this.state.user.hasAccountsOfType(type) ? action() : this.handleOpenAddWizard()}
         style={styles.actionProviderIcon} />)
-  },
+  }
 
   render () {
     const { canImportWmail } = this.state
@@ -231,4 +223,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

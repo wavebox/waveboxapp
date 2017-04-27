@@ -1,23 +1,23 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const { SelectField, MenuItem } = require('material-ui')
-const AccountServiceItem = require('../AccountServiceItem')
-const GoogleDefaultService = require('shared/Models/Accounts/Google/GoogleDefaultService')
-const { mailboxActions, GoogleDefaultServiceReducer } = require('stores/mailbox')
-const { Grid: { Row, Col } } = require('Components')
-const AccountCustomCodeSettings = require('../AccountCustomCodeSettings')
-const AccountSleepableSettings = require('../AccountSleepableSettings')
+import PropTypes from 'prop-types'
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import { SelectField, MenuItem } from 'material-ui'
+import AccountServiceItem from '../AccountServiceItem'
+import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
+import { mailboxActions, GoogleDefaultServiceReducer } from 'stores/mailbox'
+import { Row, Col } from 'Components/Grid'
+import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
+import AccountSleepableSettings from '../AccountSleepableSettings'
 
-module.exports = React.createClass({
+export default class GoogleDefaultServiceSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'GoogleDefaultServiceSettings',
-  propTypes: {
-    mailbox: React.PropTypes.object.isRequired,
-    onRequestEditCustomCode: React.PropTypes.func.isRequired
-  },
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired,
+    onRequestEditCustomCode: PropTypes.func.isRequired
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -25,7 +25,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   /**
   * Turns an unread mode into a friendlier string
@@ -45,7 +45,7 @@ module.exports = React.createClass({
       case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED:
         return 'Unread Unbundled Messages'
     }
-  },
+  }
 
   render () {
     const { mailbox, onRequestEditCustomCode, ...passProps } = this.props
@@ -84,4 +84,4 @@ module.exports = React.createClass({
       </AccountServiceItem>
     )
   }
-})
+}

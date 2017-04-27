@@ -1,20 +1,20 @@
-const React = require('react')
-const MailboxWebViewHibernator = require('../MailboxWebViewHibernator')
-const { MailboxLinker, mailboxStore } = require('stores/mailbox')
-const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
-const URI = require('urijs')
+import PropTypes from 'prop-types'
+import React from 'react'
+import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
+import { MailboxLinker, mailboxStore } from 'stores/mailbox'
+import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import URI from 'urijs'
 
 const REF = 'mailbox_tab'
 
-module.exports = React.createClass({
+export default class MicrosoftMailboxStorageServiceWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'MicrosoftMailboxStorageServiceWebView',
-  propTypes: {
-    mailboxId: React.PropTypes.string.isRequired
-  },
+  static propTypes = {
+    mailboxId: PropTypes.string.isRequired
+  }
 
   /* **************************************************************************/
   // Component lifecylce
@@ -22,38 +22,45 @@ module.exports = React.createClass({
 
   componentDidMount () {
     mailboxStore.listen(this.mailboxChanged)
-  },
+  }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxChanged)
-  },
+  }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId) {
-      this.replaceState(this.getInitialState(nextProps))
+      this.setState(this.generateState(nextProps))
     }
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecylce
   /* **************************************************************************/
 
-  getInitialState (props = this.props) {
+  state = this.generateState(this.props)
+
+  /**
+  * Generates the state from the given props
+  * @param props: the props to use
+  * @return state object
+  */
+  generateState (props) {
     const mailboxState = mailboxStore.getState()
     const mailbox = mailboxState.getMailbox(props.mailboxId)
     return {
       mailbox: mailbox,
       service: mailbox ? mailbox.serviceForType(CoreMailbox.SERVICE_TYPES.STORAGE) : null
     }
-  },
+  }
 
-  mailboxChanged (mailboxState) {
+  mailboxChanged = (mailboxState) => {
     const mailbox = mailboxState.getMailbox(this.props.mailboxId)
     this.setState({
       mailbox: mailbox,
       service: mailbox ? mailbox.serviceForType(CoreMailbox.SERVICE_TYPES.STORAGE) : null
     })
-  },
+  }
 
   /* **************************************************************************/
   // Browser Events
@@ -65,13 +72,13 @@ module.exports = React.createClass({
   */
   handleOpenNewWindow (url) {
     MailboxLinker.openExternalWindow(url)
-  },
+  }
 
   /**
   * Re-captures the navigate urls to open them the correct way if required
   * @param evt: the event that fired
   */
-  handleWillNavigate (evt) {
+  handleWillNavigate = (evt) => {
     const purl = URI(evt.url)
     let contentWindow = false
 
@@ -97,7 +104,7 @@ module.exports = React.createClass({
       webviewDOM.stop()
       webviewDOM.loadURL(this.state.service.url)
     }
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -116,4 +123,4 @@ module.exports = React.createClass({
         newWindow={(evt) => { this.handleOpenNewWindow(evt.url) }} />
     )
   }
-})
+}

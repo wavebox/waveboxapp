@@ -1,15 +1,21 @@
+import PropTypes from 'prop-types'
 import 'bootstrap-grid'
+import React from 'react'
 
-const React = require('react')
+export default class Container extends React.Component {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
 
-module.exports = React.createClass({
-  displayName: 'GridContainer',
+  static propTypes = {
+    className: PropTypes.string,
+    children: PropTypes.node,
+    fluid: PropTypes.bool
+  }
 
-  propTypes: {
-    className: React.PropTypes.string,
-    children: React.PropTypes.node,
-    fluid: React.PropTypes.bool
-  },
+  /* **************************************************************************/
+  // Rendering
+  /* **************************************************************************/
 
   render () {
     const {fluid, className, ...passProps} = this.props
@@ -25,4 +31,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

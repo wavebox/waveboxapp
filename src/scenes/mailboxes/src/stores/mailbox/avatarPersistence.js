@@ -1,2 +1,2 @@
-const StorageBucket = require('../StorageBucket')
-module.exports = new StorageBucket('avatar')
+import StorageBucket from '../StorageBucket'
+export default new StorageBucket('avatar')

@@ -12,13 +12,13 @@ const arrow = {
   borderColor: false
 }
 
-module.exports = {
-  basicPopoverStyles: {
-    style: popover,
-    arrowStyle: arrow
-  },
-  mailboxPopoverStyles: {
-    style: Object.assign({}, popover, { transform: 'translateX(10px)' }),
-    arrowStyle: arrow
-  }
+const basicPopoverStyles = {
+  style: popover,
+  arrowStyle: arrow
 }
+const mailboxPopoverStyles = {
+  style: Object.assign({}, popover, { transform: 'translateX(10px)' }),
+  arrowStyle: arrow
+}
+
+export { basicPopoverStyles, mailboxPopoverStyles }

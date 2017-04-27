@@ -1,33 +1,32 @@
+import PropTypes from 'prop-types'
+import React from 'react'
+import { composeActions } from 'stores/compose'
+import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
+import { BLANK_PNG } from 'shared/b64Assets'
+import TrayRenderer from './TrayRenderer'
+import uuid from 'uuid'
+import { MOUSE_TRIGGERS, MOUSE_TRIGGER_ACTIONS } from 'shared/Models/Settings/TraySettings'
+
 const electron = window.nativeRequire('electron')
 const { ipcRenderer, remote } = electron
-const { Tray, Menu, nativeImage } = remote
-const React = require('react')
-const { composeActions } = require('stores/compose')
-const { mailboxStore, mailboxActions, mailboxDispatch } = require('stores/mailbox')
-const { BLANK_PNG } = require('shared/b64Assets')
-const TrayRenderer = require('./TrayRenderer')
-const uuid = require('uuid')
-const {
-  TraySettings: { MOUSE_TRIGGERS, MOUSE_TRIGGER_ACTIONS }
-} = require('shared/Models/Settings')
+const { Menu, nativeImage } = remote
 
-module.exports = React.createClass({
+export default class Tray extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'Tray',
-  propTypes: { // Pretty strict on updating. If you're changing these, change shouldComponentUpdate :)
-    unreadCount: React.PropTypes.number.isRequired,
-    traySettings: React.PropTypes.object.isRequired
-  },
+  static propTypes = {
+    unreadCount: PropTypes.number.isRequired,
+    traySettings: PropTypes.object.isRequired
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
 
   componentWillMount () {
-    this.appTray = new Tray(nativeImage.createFromDataURL(BLANK_PNG))
+    this.appTray = new remote.Tray(nativeImage.createFromDataURL(BLANK_PNG))
     if (process.platform === 'win32') {
       this.appTray.on('double-click', this.handleMouseTriggerDoubleClick)
       this.appTray.on('click', this.handleMouseTriggerClick)
@@ -38,11 +37,11 @@ module.exports = React.createClass({
       // is ignored
       this.appTray.on('click', this.handleToggleVisibility)
     }
-  },
+  }
 
   componentDidMount () {
     mailboxStore.listen(this.mailboxesChanged)
-  },
+  }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxesChanged)
@@ -51,19 +50,19 @@ module.exports = React.createClass({
       this.appTray.destroy()
       this.appTray = null
     }
-  },
+  }
 
   /* **************************************************************************/
   // Data Lifecyle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return Object.assign({}, this.generateMenuUnreadMessages())
-  },
+  })()
 
-  mailboxesChanged (mailboxState) {
+  mailboxesChanged = (mailboxState) => {
     this.setState(this.generateMenuUnreadMessages(mailboxState))
-  },
+  }
 
   /**
   * Generates the unread messages from the mailboxes store
@@ -116,7 +115,7 @@ module.exports = React.createClass({
       mailboxOverviews: mailboxMenuItems,
       mailboxOverviewsSig: mailboxMenuItems.map((m) => m.signature).join('|')
     }
-  },
+  }
 
   /* **************************************************************************/
   // Action handlers
@@ -130,7 +129,7 @@ module.exports = React.createClass({
     if (mouseTrigger === MOUSE_TRIGGERS.SINGLE) {
       ipcRenderer.send(mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? 'toggle-mailbox-visibility-from-tray' : 'show-mailbox-from-tray')
     }
-  },
+  }
 
   /**
   * Handles a mouse trigger double click
@@ -140,14 +139,14 @@ module.exports = React.createClass({
     if (mouseTrigger === MOUSE_TRIGGERS.DOUBLE) {
       ipcRenderer.send(mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? 'toggle-mailbox-visibility-from-tray' : 'show-mailbox-from-tray')
     }
-  },
+  }
 
   /**
   * Toggles the apps visibility
   */
   handleToggleVisibility () {
     ipcRenderer.send('toggle-mailbox-visibility-from-tray')
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -174,14 +173,14 @@ module.exports = React.createClass({
     if (this.state.mailboxOverviewsSig !== nextState.mailboxOverviewsSig) { return true }
 
     return false
-  },
+  }
 
   /**
   * @return the tooltip string for the tray icon
   */
   renderTooltip () {
     return this.props.unreadCount ? this.props.unreadCount + ' unread mail' : 'No unread mail'
-  },
+  }
 
   /**
   * @return the context menu for the tray icon
@@ -231,7 +230,7 @@ module.exports = React.createClass({
     ).filter((item) => !!item)
 
     return Menu.buildFromTemplate(template)
-  },
+  }
 
   /**
   * @return the tray icon size
@@ -243,7 +242,7 @@ module.exports = React.createClass({
       case 'linux': return 32
       default: return 32
     }
-  },
+  }
 
   render () {
     const { unreadCount, traySettings } = this.props
@@ -263,4 +262,4 @@ module.exports = React.createClass({
 
     return (<div />)
   }
-})
+}

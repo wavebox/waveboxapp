@@ -1,1 +1,2 @@
-module.exports = require('./ProScene')
+import ProScene from './ProScene'
+export default ProScene

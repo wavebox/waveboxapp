@@ -1,10 +1,11 @@
+import Bootstrap from 'R/Bootstrap'
+import GoogleHTTPTransporter from './GoogleHTTPTransporter'
+import querystring from 'querystring'
 const google = window.appNodeModulesRequire('googleapis')
 const gPlus = google.plus('v1')
 const gmail = google.gmail('v1')
 const OAuth2 = google.auth.OAuth2
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = require('R/Bootstrap').credentials
-const GoogleHTTPTransporter = require('./GoogleHTTPTransporter')
-const querystring = require('querystring')
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = Bootstrap.credentials
 
 class GoogleHTTP {
   /* **************************************************************************/
@@ -253,4 +254,4 @@ class GoogleHTTP {
   }
 }
 
-module.exports = GoogleHTTP
+export default GoogleHTTP

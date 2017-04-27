@@ -1,17 +1,11 @@
-const React = require('react')
-const { Dialog, RaisedButton, List, ListItem } = require('material-ui')
-const { composeStore, composeActions } = require('stores/compose')
-const { mailboxStore } = require('stores/mailbox')
-const shallowCompare = require('react-addons-shallow-compare')
-const { Mailbox: { MailboxAvatar } } = require('Components')
+import React from 'react'
+import { Dialog, RaisedButton, List, ListItem } from 'material-ui'
+import { composeStore, composeActions } from 'stores/compose'
+import { mailboxStore } from 'stores/mailbox'
+import shallowCompare from 'react-addons-shallow-compare'
+import { MailboxAvatar } from 'Components/Mailbox'
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'ComposePickerScene',
-
+export default class ComposePickerScene extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
@@ -19,22 +13,22 @@ module.exports = React.createClass({
   componentDidMount () {
     composeStore.listen(this.composeChanged)
     mailboxStore.listen(this.mailboxChanged)
-  },
+  }
 
   componentWillUnmount () {
     composeStore.unlisten(this.composeChanged)
     mailboxStore.unlisten(this.mailboxChanged)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return Object.assign({
       open: true
     }, this.generateComposeData())
-  },
+  })()
 
   /**
   * Generates the compose state from the two stores
@@ -48,15 +42,15 @@ module.exports = React.createClass({
       mailboxes: mailboxState.allMailboxesIndexed(),
       composeServices: composeState.composeProtocol ? mailboxState.getServicesSupportingProtocol(composeState.composeProtocol) : mailboxState.getServicesSupportingCompose()
     }
-  },
+  }
 
-  composeChanged (composeState) {
+  composeChanged = (composeState) => {
     this.setState(this.generateComposeData(undefined, composeState))
-  },
+  }
 
-  mailboxChanged (mailboxState) {
+  mailboxChanged = (mailboxState) => {
     this.setState(this.generateComposeData(mailboxState, undefined))
-  },
+  }
 
   /* **************************************************************************/
   // UI Events
@@ -66,10 +60,10 @@ module.exports = React.createClass({
   * Dismisses the compose actions
   * @param evt: the event that fired
   */
-  handleCancel (evt) {
+  handleCancel = (evt) => {
     this.setState({ open: false })
     setTimeout(() => { composeActions.cancelCompose() }, 500)
-  },
+  }
 
   /**
   * Handles selecting the service
@@ -79,7 +73,7 @@ module.exports = React.createClass({
   handleSelectService (evt, service) {
     this.setState({ open: false })
     setTimeout(() => { composeActions.composeMessageInMailbox(service.parentId, service.type) }, 250)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -87,7 +81,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { composeServices, open, mailboxes } = this.state
@@ -122,4 +116,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

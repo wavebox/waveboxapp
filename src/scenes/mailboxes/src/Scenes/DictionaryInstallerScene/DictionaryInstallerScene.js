@@ -1,20 +1,17 @@
-const React = require('react')
-const { Dialog } = require('material-ui')
-const dictionariesStore = require('stores/dictionaries/dictionariesStore')
-const DictionaryInstallStepper = require('./DictionaryInstallStepper')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Dialog } from 'material-ui'
+import dictionariesStore from 'stores/dictionaries/dictionariesStore'
+import DictionaryInstallStepper from './DictionaryInstallStepper'
 
-module.exports = React.createClass({
+export default class DictionaryInstallerScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'DictionaryInstallerScene',
-  propTypes: {
-    params: React.PropTypes.object.isRequired
-  },
-  contextTypes: {
-    router: React.PropTypes.object.isRequired
-  },
+  static contextTypes = {
+    router: PropTypes.object.isRequired
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -22,28 +19,28 @@ module.exports = React.createClass({
 
   componentWillMount () {
     dictionariesStore.listen(this.dictionariesChanged)
-  },
+  }
 
   componentWillUnmount () {
     dictionariesStore.unlisten(this.dictionariesChanged)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     const store = dictionariesStore.getState()
     return {
       installId: store.installId()
     }
-  },
+  })()
 
-  dictionariesChanged (store) {
+  dictionariesChanged = (store) => {
     this.setState({
       installId: store.installId()
     })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -62,4 +59,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

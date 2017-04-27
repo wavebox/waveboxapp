@@ -1,4 +1,4 @@
-const ServiceFactory = require('shared/Models/Accounts/ServiceFactory')
+import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
 
 class MailboxReducer {
   /* **************************************************************************/
@@ -153,4 +153,4 @@ class MailboxReducer {
   }
 }
 
-module.exports = MailboxReducer
+export default MailboxReducer

@@ -1,17 +1,18 @@
-const React = require('react')
-const MailboxWebView = require('./MailboxWebView')
-const { mailboxStore, mailboxActions } = require('stores/mailbox')
-const { userStore } = require('stores/user')
+import React from 'react'
+import MailboxWebView from './MailboxWebView'
+import { mailboxStore, mailboxActions } from 'stores/mailbox'
+import { userStore } from 'stores/user'
 
 const REF = 'MailboxWebView'
 
-module.exports = React.createClass({
+export default class MailboxWebViewHibernator extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'MailboxWebViewHibernator',
-  propTypes: Object.assign({}, MailboxWebView.propTypes),
+  static propTypes = {
+    ...MailboxWebView.propTypes
+  }
 
   /* **************************************************************************/
   // Component lifecylce
@@ -22,27 +23,34 @@ module.exports = React.createClass({
 
     mailboxStore.listen(this.mailboxUpdated)
     userStore.listen(this.userUpdated)
-  },
+  }
 
   componentWillUnmount () {
     clearTimeout(this.sleepWait)
 
     mailboxStore.unlisten(this.mailboxUpdated)
     userStore.unlisten(this.userUpdated)
-  },
+  }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceType !== nextProps.serviceType) {
       clearTimeout(this.sleepWait)
-      this.setState(this.getInitialState(nextProps))
+      this.setState(this.generateState(nextProps))
     }
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecylce
   /* **************************************************************************/
 
-  getInitialState (props = this.props) {
+  state = this.generateState(this.props)
+
+  /**
+  * Generates the state from the given props
+  * @param props: the props to use
+  * @return state object
+  */
+  generateState (props) {
     const mailboxState = mailboxStore.getState()
     const isActive = mailboxState.isActive(props.mailboxId, props.serviceType)
     const mailbox = mailboxState.getMailbox(props.mailboxId)
@@ -53,9 +61,9 @@ module.exports = React.createClass({
       allowsSleeping: service ? service.sleepable : true,
       userHasSleepable: userStore.getState().user.hasSleepable
     }
-  },
+  }
 
-  mailboxUpdated (mailboxState) {
+  mailboxUpdated = (mailboxState) => {
     this.setState((prevState) => {
       const mailbox = mailboxState.getMailbox(this.props.mailboxId)
       const service = mailbox ? mailbox.serviceForType(this.props.serviceType) : undefined
@@ -77,19 +85,19 @@ module.exports = React.createClass({
       }
       return update
     })
-  },
+  }
 
-  userUpdated (userState) {
+  userUpdated = (userState) => {
     this.setState({
       userHasSleepable: userState.user.hasSleepable
     })
-  },
+  }
 
   /**
   * Puts the mailbox to sleep. If the mailbox is active this method
   * will return silently
   */
-  sleepMailbox () {
+  sleepMailbox = () => {
     const isActive = mailboxStore.getState().isActive(this.props.mailboxId, this.props.serviceType)
     if (isActive) { return }
 
@@ -110,51 +118,50 @@ module.exports = React.createClass({
     } else {
       this.setState({ isSleeping: true })
     }
-  },
+  }
 
   /* **************************************************************************/
   // Webview pass throughs
   /* **************************************************************************/
 
-  send () {
+  send = (name, obj) => {
     if (this.refs[REF]) {
-      return this.refs[REF].send.apply(this.refs[REF], Array.from(arguments))
+      return this.refs[REF].send(name, obj)
     } else {
       throw new Error('MailboxTab is sleeping')
     }
-  },
-  sendWithResponse () {
+  }
+  sendWithResponse = (sendName, obj, timeout) => {
     if (this.refs[REF]) {
-      return this.refs[REF].sendWithResponse.apply(this.refs[REF], Array.from(arguments))
+      return this.refs[REF].sendWithResponse(sendName, obj, timeout)
     } else {
       throw new Error('MailboxTab is sleeping')
     }
-  },
-  loadURL () {
+  }
+  loadURL = (url) => {
     if (this.refs[REF]) {
-      return this.refs[REF].loadURL.apply(this.refs[REF], Array.from(arguments))
+      return this.refs[REF].loadURL(url)
     } else {
-      const args = Array.from(arguments)
       clearTimeout(this.sleepWait)
       this.setState({ isSleeping: false }, () => {
-        this.refs[REF].loadURL.apply(this.refs[REF], args)
+        this.refs[REF].loadURL(url)
       })
       return undefined
     }
-  },
+  }
 
   /**
   * Gets the underlying dom webview node
   * @throws error if sleeping
   * @return the webview node
   */
-  getWebviewNode () {
+  getWebviewNode = () => {
     if (this.refs[REF]) {
       return this.refs[REF].getWebviewNode()
     } else {
       throw new Error('MailboxTab is sleeping')
     }
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -169,4 +176,4 @@ module.exports = React.createClass({
       return (<MailboxWebView ref={REF} {...this.props} />)
     }
   }
-})
+}

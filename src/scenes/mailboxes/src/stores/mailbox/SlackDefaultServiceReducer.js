@@ -1,4 +1,4 @@
-const ServiceReducer = require('./ServiceReducer')
+import ServiceReducer from './ServiceReducer'
 
 class SlackDefaultServiceReducer extends ServiceReducer {
   /* **************************************************************************/
@@ -206,4 +206,4 @@ class SlackDefaultServiceReducer extends ServiceReducer {
   }
 }
 
-module.exports = SlackDefaultServiceReducer
+export default SlackDefaultServiceReducer

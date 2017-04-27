@@ -1,9 +1,10 @@
-const React = require('react')
-const { RaisedButton, FlatButton, Dialog, TextField } = require('material-ui')
-const shallowCompare = require('react-addons-shallow-compare')
-const GenericDefaultService = require('shared/Models/Accounts/Generic/GenericDefaultService')
-const { mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } = require('stores/mailbox')
-const validUrl = require('valid-url')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { RaisedButton, FlatButton, Dialog, TextField } from 'material-ui'
+import shallowCompare from 'react-addons-shallow-compare'
+import GenericDefaultService from 'shared/Models/Accounts/Generic/GenericDefaultService'
+import { mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
+import validUrl from 'valid-url'
 
 const styles = {
   introduction: {
@@ -17,32 +18,40 @@ const styles = {
 const NAME_REF = 'name'
 const URL_REF = 'url'
 
-module.exports = React.createClass({
+export default class MailboxWizardGenericConfigureScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'MailboxWizardGenericConfigureScene',
-  propTypes: {
-    params: React.PropTypes.shape({
-      mailboxId: React.PropTypes.string.isRequired
+  static propTypes = {
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        mailboxId: PropTypes.string.isRequired
+      })
     })
-  },
-  contextTypes: {
-    router: React.PropTypes.object.isRequired
-  },
+  }
+  static contextTypes = {
+    router: PropTypes.object.isRequired
+  }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.params.mailboxId !== nextProps.params.mailboxId) {
-      this.replaceState(this.getInitialState(nextProps))
+    if (this.props.match.params.mailboxId !== nextProps.match.params.mailboxId) {
+      this.setState(this.generateState(nextProps))
     }
-  },
+  }
 
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState (props = this.props) {
+  state = this.generateState(this.props)
+
+  /**
+  * Generates the state from the given props
+  * @param props: the props to use
+  * @return state object
+  */
+  generateState (props) {
     return {
       open: true,
       displayNameError: null,
@@ -50,7 +59,7 @@ module.exports = React.createClass({
       displayName: '',
       serviceUrl: ''
     }
-  },
+  }
 
   /* **************************************************************************/
   // UI Events
@@ -59,23 +68,23 @@ module.exports = React.createClass({
   /**
   * Handles the user pressing cancel
   */
-  handleCancel (evt) {
+  handleCancel = (evt) => {
     // The mailbox has actually already been created at this point, so remove it.
     // Ideally this shouldn't happen but because this is handled under a configuration
     // step rather than an external creation step the mailbox is created early on in
     // its lifecycle
-    mailboxActions.remove(this.props.params.mailboxId)
+    mailboxActions.remove(this.props.match.params.mailboxId)
 
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/'
     }, 250)
-  },
+  }
 
   /**
   * Handles the user pressing next
   */
-  handleNext (evt) {
+  handleNext = (evt) => {
     const { displayName, serviceUrl } = this.state
     let hasError = false
     const stateUpdate = {}
@@ -99,7 +108,7 @@ module.exports = React.createClass({
 
     // Update Mailbox
     if (!hasError) {
-      const mailboxId = this.props.params.mailboxId
+      const mailboxId = this.props.match.params.mailboxId
       mailboxActions.reduce(mailboxId, GenericMailboxReducer.setDisplayName, displayName)
       mailboxActions.reduceService(mailboxId, GenericDefaultService.type, GenericDefaultServiceReducer.setUrl, serviceUrl)
 
@@ -110,7 +119,7 @@ module.exports = React.createClass({
       }, 250)
     }
     this.setState(stateUpdate)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -118,7 +127,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { open, displayName, displayNameError, serviceUrl, serviceUrlError } = this.state
@@ -176,4 +185,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

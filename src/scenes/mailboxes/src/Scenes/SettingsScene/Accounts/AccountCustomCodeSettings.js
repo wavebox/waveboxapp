@@ -1,22 +1,22 @@
-const React = require('react')
-const shallowCompare = require('react-addons-shallow-compare')
-const { RaisedButton, FontIcon } = require('material-ui')
-const styles = require('../SettingStyles')
-const { mailboxActions, ServiceReducer, mailboxDispatch } = require('stores/mailbox')
-const { USER_SCRIPTS_WEB_URL } = require('shared/constants')
+import PropTypes from 'prop-types'
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import { RaisedButton, FontIcon } from 'material-ui'
+import styles from '../SettingStyles'
+import { mailboxActions, ServiceReducer, mailboxDispatch } from 'stores/mailbox'
+import { USER_SCRIPTS_WEB_URL } from 'shared/constants'
 const { remote: { shell } } = window.nativeRequire('electron')
 
-module.exports = React.createClass({
+export default class AccountCustomCodeSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'AccountCustomCodeSettings',
-  propTypes: {
-    mailbox: React.PropTypes.object.isRequired,
-    service: React.PropTypes.object.isRequired,
-    onRequestEditCustomCode: React.PropTypes.func.isRequired
-  },
+  static propTypes = {
+    mailbox: PropTypes.object.isRequired,
+    service: PropTypes.object.isRequired,
+    onRequestEditCustomCode: PropTypes.func.isRequired
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -24,7 +24,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { mailbox, service, onRequestEditCustomCode, ...passProps } = this.props
@@ -62,4 +62,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

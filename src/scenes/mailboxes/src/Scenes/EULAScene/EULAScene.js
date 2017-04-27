@@ -1,9 +1,8 @@
 import './EULAScene.less'
-
-const React = require('react')
-const { Dialog, RaisedButton, FontIcon } = require('material-ui')
-const shallowCompare = require('react-addons-shallow-compare')
-const { settingsStore, settingsActions } = require('stores/settings')
+import React from 'react'
+import { Dialog, RaisedButton, FontIcon } from 'material-ui'
+import shallowCompare from 'react-addons-shallow-compare'
+import { settingsStore, settingsActions } from 'stores/settings'
 
 const styles = {
   // Layout
@@ -75,13 +74,7 @@ const styles = {
   }
 }
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'EULAScene',
-
+export default class EULAScene extends React.Component {
   /* **************************************************************************/
   // Component Lifecyle
   /* **************************************************************************/
@@ -89,26 +82,26 @@ module.exports = React.createClass({
   componentDidMount () {
     settingsStore.listen(this.settingsUpdated)
     setTimeout(() => { this.setState({ fadeClass: true }) })
-  },
+  }
 
   componentWillUnmount () {
     settingsStore.unlisten(this.settingsUpdated)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     const hasAgreed = settingsStore.getState().app.hasAgreedToEULA
     return {
       hasAgreedToEULA: hasAgreed,
       render: !hasAgreed,
       fadeClass: false
     }
-  },
+  })()
 
-  settingsUpdated (settingsState) {
+  settingsUpdated = (settingsState) => {
     this.setState((prevState) => {
       const hasAgreed = settingsState.app.hasAgreedToEULA
       if (prevState.hasAgreedToEULA !== hasAgreed && hasAgreed) {
@@ -118,7 +111,7 @@ module.exports = React.createClass({
         return { hasAgreedToEULA: hasAgreed }
       }
     })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -126,7 +119,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { render, hasAgreedToEULA, fadeClass } = this.state
@@ -180,4 +173,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

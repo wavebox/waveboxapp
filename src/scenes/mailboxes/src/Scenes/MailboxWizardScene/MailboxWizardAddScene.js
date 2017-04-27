@@ -1,16 +1,14 @@
-const React = require('react')
-const { Dialog, RaisedButton } = require('material-ui')
-const { mailboxActions } = require('stores/mailbox')
-const { userStore } = require('stores/user')
-const { mailboxStore } = require('stores/mailbox')
-const shallowCompare = require('react-addons-shallow-compare')
-const { Grid: { Row, Col, Visible } } = require('Components')
-
-const MicrosoftMailbox = require('shared/Models/Accounts/Microsoft/MicrosoftMailbox')
-const TrelloMailbox = require('shared/Models/Accounts/Trello/TrelloMailbox')
-const SlackMailbox = require('shared/Models/Accounts/Slack/SlackMailbox')
-const GenericMailbox = require('shared/Models/Accounts/Generic/GenericMailbox')
-const GoogleMailbox = require('shared/Models/Accounts/Google/GoogleMailbox')
+import React from 'react'
+import { Dialog, RaisedButton } from 'material-ui'
+import { mailboxActions, mailboxStore } from 'stores/mailbox'
+import { userStore } from 'stores/user'
+import shallowCompare from 'react-addons-shallow-compare'
+import { Row, Col, Visible } from 'Components/Grid'
+import MicrosoftMailbox from 'shared/Models/Accounts/Microsoft/MicrosoftMailbox'
+import TrelloMailbox from 'shared/Models/Accounts/Trello/TrelloMailbox'
+import SlackMailbox from 'shared/Models/Accounts/Slack/SlackMailbox'
+import GenericMailbox from 'shared/Models/Accounts/Generic/GenericMailbox'
+import GoogleMailbox from 'shared/Models/Accounts/Google/GoogleMailbox'
 
 const styles = {
   mailboxCell: {
@@ -43,13 +41,7 @@ const styles = {
   }
 }
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'MailboxWizardAddScene',
-
+export default class MailboxWizardAddScene extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
@@ -57,18 +49,18 @@ module.exports = React.createClass({
   componentDidMount () {
     userStore.listen(this.userUpdated)
     mailboxStore.listen(this.mailboxUpdated)
-  },
+  }
 
   componentWillUnmount () {
     userStore.unlisten(this.userUpdated)
     mailboxStore.unlisten(this.mailboxUpdated)
-  },
+  }
 
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     const userState = userStore.getState()
     const mailboxState = mailboxStore.getState()
     return {
@@ -76,22 +68,22 @@ module.exports = React.createClass({
       user: userState.user,
       canAddMailbox: mailboxState.canAddUnrestrictedMailbox(userState.user)
     }
-  },
+  })()
 
-  userUpdated (userState) {
+  userUpdated = (userState) => {
     const mailboxState = mailboxStore.getState()
     this.setState({
       user: userState.user,
       canAddMailbox: mailboxState.canAddUnrestrictedMailbox(userState.user)
     })
-  },
+  }
 
-  mailboxUpdated (mailboxState) {
+  mailboxUpdated = (mailboxState) => {
     const userState = userStore.getState()
     this.setState({
       canAddMailbox: mailboxState.canAddUnrestrictedMailbox(userState.user)
     })
-  },
+  }
 
   /* **************************************************************************/
   // UI Events
@@ -100,12 +92,12 @@ module.exports = React.createClass({
   /**
   * Closes the modal
   */
-  handleClose () {
+  handleClose = () => {
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/'
     }, 500)
-  },
+  }
 
   /**
   * Closes the modal and takes the user to the pro scene
@@ -115,7 +107,7 @@ module.exports = React.createClass({
     setTimeout(() => {
       window.location.hash = '/pro'
     }, 250)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -123,7 +115,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   /**
   * Renders the standard mailbox type
@@ -158,7 +150,7 @@ module.exports = React.createClass({
           onClick={hasAccountsOfType && canAddMailbox ? onClick : this.handleShowPro} />
       </div>
     )
-  },
+  }
 
   /**
   * Renders the gmail option
@@ -168,7 +160,7 @@ module.exports = React.createClass({
     return this.renderMailboxType(GoogleMailbox.type, '../../' + GoogleMailbox.humanizedGmailVectorLogo, 'Add Gmail', () => {
       mailboxActions.authenticateGmailMailbox()
     })
-  },
+  }
 
   /**
   * Renders the google inbox option
@@ -178,7 +170,7 @@ module.exports = React.createClass({
     return this.renderMailboxType(GoogleMailbox.type, '../../' + GoogleMailbox.humanizedGinboxVectorLogo, 'Add Google Inbox', () => {
       mailboxActions.authenticateGinboxMailbox()
     })
-  },
+  }
 
   /**
   * Renders the slack option
@@ -188,7 +180,7 @@ module.exports = React.createClass({
     return this.renderMailboxType(SlackMailbox.type, '../../' + SlackMailbox.humanizedVectorLogo, 'Add Slack Team', () => {
       mailboxActions.authenticateSlackMailbox()
     })
-  },
+  }
 
   /**
   * Renders the trello option
@@ -198,7 +190,7 @@ module.exports = React.createClass({
     return this.renderMailboxType(TrelloMailbox.type, '../../' + TrelloMailbox.humanizedVectorLogo, 'Add Trello', () => {
       mailboxActions.authenticateTrelloMailbox()
     })
-  },
+  }
 
   /**
   * Renders the outlook option
@@ -208,7 +200,7 @@ module.exports = React.createClass({
     return this.renderMailboxType(MicrosoftMailbox.type, '../../' + MicrosoftMailbox.humanizedOutlookVectorLogo, 'Add Outlook', () => {
       mailboxActions.authenticateOutlookMailbox()
     })
-  },
+  }
 
   /**
   * Renders the office365 option
@@ -218,7 +210,7 @@ module.exports = React.createClass({
     return this.renderMailboxType(MicrosoftMailbox.type, '../../' + MicrosoftMailbox.humanizedOffice365Logo, 'Add Office 365', () => {
       mailboxActions.authenticateOffice365Mailbox()
     })
-  },
+  }
 
   /**
   * Renders the generic option
@@ -228,7 +220,7 @@ module.exports = React.createClass({
     return this.renderMailboxType(GenericMailbox.type, '../../' + GenericMailbox.humanizedVectorLogo, 'Add any website', () => {
       mailboxActions.authenticateGenericMailbox()
     })
-  },
+  }
 
   render () {
     const { open } = this.state
@@ -284,4 +276,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

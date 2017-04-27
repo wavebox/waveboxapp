@@ -1,10 +1,10 @@
-const alt = require('../alt')
-const actions = require('./dictionariesActions')
-const dictionaries = require('shared/dictionaries.js')
-const LanguageSettings = require('shared/Models/Settings/LanguageSettings')
+import alt from '../alt'
+import actions from './dictionariesActions'
+import dictionaries from 'shared/dictionaries.js'
+import LanguageSettings from 'shared/Models/Settings/LanguageSettings'
+import path from 'path'
 
 const fs = window.appNodeModulesRequire('fs-extra')
-const path = require('path')
 const pkg = window.appPackage()
 const AppDirectory = window.appNodeModulesRequire('appdirectory')
 const mkdirp = window.appNodeModulesRequire('mkdirp')
@@ -226,4 +226,4 @@ class DictionariesStore {
   }
 }
 
-module.exports = alt.createStore(DictionariesStore, 'DictionariesStore')
+export default alt.createStore(DictionariesStore, 'DictionariesStore')

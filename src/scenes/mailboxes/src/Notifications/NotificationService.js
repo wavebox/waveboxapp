@@ -1,7 +1,7 @@
-const { EventEmitter } = require('events')
-const { NOTIFICATION_MAX_AGE, NOTIFICATION_FIRST_RUN_GRACE_MS } = require('shared/constants')
-const { mailboxStore, mailboxActions, mailboxDispatch } = require('stores/mailbox')
-const { settingsStore } = require('stores/settings')
+import { EventEmitter } from 'events'
+import { NOTIFICATION_MAX_AGE, NOTIFICATION_FIRST_RUN_GRACE_MS } from 'shared/constants'
+import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
+import { settingsStore } from 'stores/settings'
 const { ipcRenderer } = window.nativeRequire('electron')
 
 class NotificationService extends EventEmitter {
@@ -182,4 +182,4 @@ class NotificationService extends EventEmitter {
   }
 }
 
-module.exports = new NotificationService()
+export default new NotificationService()

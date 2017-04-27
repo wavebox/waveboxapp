@@ -1,56 +1,50 @@
-const React = require('react')
-const { settingsStore } = require('stores/settings')
-const shallowCompare = require('react-addons-shallow-compare')
-const { Dialog, RaisedButton } = require('material-ui')
-const { Tray: { TrayIconEditor } } = require('Components')
+import React from 'react'
+import { settingsStore } from 'stores/settings'
+import shallowCompare from 'react-addons-shallow-compare'
+import { Dialog, RaisedButton } from 'material-ui'
+import { TrayIconEditor } from 'Components/Tray'
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'AppWizardTrayScene',
-
+export default class AppWizardTrayScene extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
     settingsStore.listen(this.settingsUpdated)
-  },
+  }
 
   componentWillUnmount () {
     settingsStore.unlisten(this.settingsUpdated)
-  },
+  }
 
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       tray: settingsStore.getState().tray,
       open: true
     }
-  },
+  })()
 
-  settingsUpdated (settingsState) {
+  settingsUpdated = (settingsState) => {
     this.setState({ tray: settingsState.tray })
-  },
+  }
 
   /* **************************************************************************/
   // UI Events
   /* **************************************************************************/
 
-  handleCancel () {
+  handleCancel = () => {
     this.setState({ open: false })
     setTimeout(() => { window.location.hash = '/' }, 500)
-  },
+  }
 
-  handleNext () {
+  handleNext = () => {
     this.setState({ open: false })
     setTimeout(() => { window.location.hash = '/app_wizard/mailto' }, 250)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -58,7 +52,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { tray, open } = this.state
@@ -96,4 +90,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

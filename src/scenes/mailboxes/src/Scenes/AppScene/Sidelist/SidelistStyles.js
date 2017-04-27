@@ -1,8 +1,8 @@
 import './SidelistStyles.less'
-const Colors = require('material-ui/styles/colors')
+import * as Colors from 'material-ui/styles/colors'
 const FOOTER_ITEM_HEIGHT = 50
 
-module.exports = {
+export default {
   /**
   * Layout
   */

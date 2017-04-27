@@ -1,9 +1,9 @@
-const { GOOGLE_ANALYTICS_ID } = require('R/Bootstrap').credentials
-const { ANALYTICS_HEARTBEAT_INTERVAL } = require('shared/constants')
-const { userStore } = require('stores/user')
-const { mailboxStore } = require('stores/mailbox')
+import Bootstrap from 'R/Bootstrap'
+import { ANALYTICS_HEARTBEAT_INTERVAL } from 'shared/constants'
+import { userStore } from 'stores/user'
+import { mailboxStore } from 'stores/mailbox'
+import querystring from 'querystring'
 const pkg = window.appPackage()
-const querystring = require('querystring')
 
 class Analytics {
   /* ****************************************************************************/
@@ -55,14 +55,14 @@ class Analytics {
   * @return promise
   */
   send (args) {
-    if (!GOOGLE_ANALYTICS_ID) { return Promise.resolve() }
+    if (!Bootstrap.credentials.GOOGLE_ANALYTICS_ID) { return Promise.resolve() }
 
     const userState = userStore.getState()
     const mailboxState = mailboxStore.getState()
 
     const fullArgs = Object.assign({
       v: 1,
-      tid: GOOGLE_ANALYTICS_ID,
+      tid: Bootstrap.credentials.GOOGLE_ANALYTICS_ID,
       cid: userState.analyticsId,
       cd: window.location.hash,
       cd1: mailboxState.mailboxCount(),
@@ -102,4 +102,4 @@ class Analytics {
   }
 }
 
-module.exports = new Analytics()
+export default new Analytics()

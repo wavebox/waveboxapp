@@ -1,4 +1,4 @@
-const alt = require('../alt')
+import alt from '../alt'
 
 class PlatformActions {
   /* **************************************************************************/
@@ -26,4 +26,4 @@ class PlatformActions {
   }
 }
 
-module.exports = alt.createActions(PlatformActions)
+export default alt.createActions(PlatformActions)

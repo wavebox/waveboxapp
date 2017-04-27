@@ -1,12 +1,12 @@
-const React = require('react')
+import PropTypes from 'prop-types'
+import React from 'react'
 
-module.exports = React.createClass({
-  displayName: 'SettingsSceneTabTemplate',
-  propTypes: {
-    children: React.PropTypes.node,
-    selected: React.PropTypes.bool,
-    style: React.PropTypes.object
-  },
+export default class SettingsSceneTabTemplate extends React.Component {
+  static propTypes = {
+    children: PropTypes.node,
+    selected: PropTypes.bool,
+    style: PropTypes.object
+  }
 
   render () {
     const { selected, ...passProps } = this.props
@@ -15,4 +15,4 @@ module.exports = React.createClass({
       <div {...passProps} />
     ) : false
   }
-})
+}

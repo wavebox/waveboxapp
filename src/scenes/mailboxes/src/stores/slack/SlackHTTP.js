@@ -1,5 +1,5 @@
-const querystring = require('querystring')
-const SlackRTM = require('./SlackRTM')
+import querystring from 'querystring'
+import SlackRTM from './SlackRTM'
 
 class SlackHTTP {
   /* **************************************************************************/
@@ -84,4 +84,4 @@ class SlackHTTP {
   }
 }
 
-module.exports = SlackHTTP
+export default SlackHTTP

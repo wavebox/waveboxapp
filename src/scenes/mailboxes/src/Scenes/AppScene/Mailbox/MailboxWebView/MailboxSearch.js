@@ -1,29 +1,29 @@
-const React = require('react')
-const { Paper, TextField, IconButton } = require('material-ui')
-const Colors = require('material-ui/styles/colors')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { Paper, TextField, IconButton } from 'material-ui'
+import * as Colors from 'material-ui/styles/colors'
 
-module.exports = React.createClass({
+export default class MailboxSearch extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'MailboxSearch',
-  propTypes: {
-    isSearching: React.PropTypes.bool.isRequired,
-    onSearchChange: React.PropTypes.func,
-    onSearchNext: React.PropTypes.func,
-    onSearchCancel: React.PropTypes.func
-  },
+  static propTypes = {
+    isSearching: PropTypes.bool.isRequired,
+    onSearchChange: PropTypes.func,
+    onSearchNext: PropTypes.func,
+    onSearchCancel: PropTypes.func
+  }
 
   /* **************************************************************************/
   // Data lifecylce
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       searchQuery: ''
     }
-  },
+  })()
 
   /* **************************************************************************/
   // Actions
@@ -32,12 +32,12 @@ module.exports = React.createClass({
   /**
   * Focuses the textfield
   */
-  focus () { this.refs.textField.focus() },
+  focus = () => { this.refs.textField.focus() }
 
   /**
   * @return the current search query
   */
-  searchQuery () { return this.state.searchQuery },
+  searchQuery = () => { return this.state.searchQuery }
 
   /* **************************************************************************/
   // Events
@@ -46,37 +46,37 @@ module.exports = React.createClass({
   /**
   * Handles the input string changing
   */
-  handleChange (evt) {
+  handleChange = (evt) => {
     this.setState({searchQuery: evt.target.value})
     if (this.props.onSearchChange) {
       this.props.onSearchChange(evt.target.value)
     }
-  },
+  }
 
   /**
   * Handles the find next command
   */
-  handleFindNext () {
+  handleFindNext = () => {
     if (this.props.onSearchNext) {
       this.props.onSearchNext(this.state.searchQuery)
     }
-  },
+  }
 
   /**
   * Handles the search stopping
   */
-  handleStopSearch () {
+  handleStopSearch = () => {
     this.setState({searchQuery: ''})
     if (this.props.onSearchCancel) {
       this.props.onSearchCancel()
     }
-  },
+  }
 
   /**
   * Handles a key being pressed
   * @param evt: the event that fired
   */
-  handleKeyPress (evt) {
+  handleKeyPress = (evt) => {
     if (evt.keyCode === 13) {
       evt.preventDefault()
       this.handleFindNext()
@@ -84,7 +84,7 @@ module.exports = React.createClass({
       evt.preventDefault()
       this.handleStopSearch()
     }
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -129,4 +129,4 @@ module.exports = React.createClass({
       </Paper>
     )
   }
-})
+}

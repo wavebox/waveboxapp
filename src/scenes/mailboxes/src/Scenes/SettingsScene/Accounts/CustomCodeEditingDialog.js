@@ -1,23 +1,23 @@
-const React = require('react')
-const { RaisedButton, FlatButton, Dialog, TextField } = require('material-ui')
-const shallowCompare = require('react-addons-shallow-compare')
-const uuid = require('uuid')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { RaisedButton, FlatButton, Dialog, TextField } from 'material-ui'
+import shallowCompare from 'react-addons-shallow-compare'
+import uuid from 'uuid'
 
 const REF = 'editor'
 
-module.exports = React.createClass({
+export default class CustomCodeEditingDialog extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'CustomCodeEditingDialog',
-  propTypes: {
-    title: React.PropTypes.string,
-    open: React.PropTypes.bool.isRequired,
-    code: React.PropTypes.string,
-    onCancel: React.PropTypes.func.isRequired,
-    onSave: React.PropTypes.func.isRequired
-  },
+  static propTypes = {
+    title: PropTypes.string,
+    open: PropTypes.bool.isRequired,
+    code: PropTypes.string,
+    onCancel: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -27,17 +27,17 @@ module.exports = React.createClass({
     if (this.props.open !== nextProps.open) {
       this.setState({ editingKey: uuid.v4() })
     }
-  },
+  }
 
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       editingKey: uuid.v4()
     }
-  },
+  })()
 
   /* **************************************************************************/
   // Rendering
@@ -45,7 +45,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { onCancel, onSave, title, open, code } = this.props
@@ -91,4 +91,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

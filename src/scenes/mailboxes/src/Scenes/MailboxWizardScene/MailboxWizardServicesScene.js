@@ -1,11 +1,12 @@
-const React = require('react')
-const { RaisedButton, Dialog, List, ListItem, Toggle, Avatar, SelectField, MenuItem } = require('material-ui')
-const shallowCompare = require('react-addons-shallow-compare')
-const CoreService = require('shared/Models/Accounts/CoreService')
-const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
-const ServiceFactory = require('shared/Models/Accounts/ServiceFactory')
-const { mailboxActions, mailboxStore, MailboxReducer } = require('stores/mailbox')
-const { userStore } = require('stores/user')
+import PropTypes from 'prop-types'
+import React from 'react'
+import { RaisedButton, Dialog, List, ListItem, Toggle, Avatar, SelectField, MenuItem } from 'material-ui'
+import shallowCompare from 'react-addons-shallow-compare'
+import CoreService from 'shared/Models/Accounts/CoreService'
+import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
+import { mailboxActions, mailboxStore, MailboxReducer } from 'stores/mailbox'
+import { userStore } from 'stores/user'
 
 const styles = {
   modalBody: {
@@ -56,23 +57,20 @@ const styles = {
   }
 }
 
-module.exports = React.createClass({
+export default class MailboxWizardServicesScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'MailboxWizardServicesScene',
-  propTypes: {
-    nextUrl: React.PropTypes.string.isRequired,
-    mailboxId: React.PropTypes.string.isRequired,
-    title: React.PropTypes.string.isRequired
-  },
+  static propTypes = {
+    nextUrl: PropTypes.string.isRequired,
+    mailboxId: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired
+  }
 
-  getDefaultProps () {
-    return {
-      title: 'Wavebox also gives you access to the other services you use. Pick which services you would like to enable for this account'
-    }
-  },
+  static defaultProps = {
+    title: 'Wavebox also gives you access to the other services you use. Pick which services you would like to enable for this account'
+  }
 
   /* **************************************************************************/
   // Component Lifecycle
@@ -81,12 +79,12 @@ module.exports = React.createClass({
   componentDidMount () {
     mailboxStore.listen(this.mailboxUpdated)
     userStore.listen(this.userUpdated)
-  },
+  }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxUpdated)
     userStore.unlisten(this.userUpdated)
-  },
+  }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId) {
@@ -94,31 +92,31 @@ module.exports = React.createClass({
         mailbox: mailboxStore.getState().getMailbox(nextProps.mailboxId)
       })
     }
-  },
+  }
 
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       open: true,
       mailbox: mailboxStore.getState().getMailbox(this.props.mailboxId),
       userHasServices: userStore.getState().user.hasServices
     }
-  },
+  })()
 
-  mailboxUpdated (mailboxState) {
+  mailboxUpdated = (mailboxState) => {
     this.setState({
       mailbox: mailboxState.getMailbox(this.props.mailboxId)
     })
-  },
+  }
 
-  userUpdated (userState) {
+  userUpdated = (userState) => {
     this.setState({
       userHasServices: userState.user.hasServices
     })
-  },
+  }
 
   /* **************************************************************************/
   // UI Events
@@ -127,22 +125,22 @@ module.exports = React.createClass({
   /**
   * Progresses the user to the next step
   */
-  handleNext () {
+  handleNext = () => {
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = this.props.nextUrl
     }, 250)
-  },
+  }
 
   /**
   * Opens the pro modal
   */
-  handleOpenPro () {
+  handleOpenPro = () => {
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/pro'
     }, 250)
-  },
+  }
 
   /**
   * Toggles a service on or off
@@ -154,7 +152,7 @@ module.exports = React.createClass({
     const id = this.props.mailboxId
     const reducer = toggled ? MailboxReducer.addService : MailboxReducer.removeService
     mailboxActions.reduce(id, reducer, serviceType)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -162,7 +160,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { title } = this.props
@@ -254,4 +252,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

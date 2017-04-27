@@ -1,4 +1,4 @@
-const packagedCredentials = require('shared/credentials')
+import packagedCredentials from 'shared/credentials'
 
 class Bootstrap {
   /* **************************************************************************/
@@ -26,4 +26,4 @@ class Bootstrap {
   get credentials () { return this.__data__.credentials }
 }
 
-module.exports = new Bootstrap()
+export default new Bootstrap()

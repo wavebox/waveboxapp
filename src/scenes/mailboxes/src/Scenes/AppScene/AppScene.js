@@ -1,9 +1,10 @@
 import './AppScene.less'
-const React = require('react')
-const MailboxTabManager = require('./Mailbox/MailboxTabManager')
-const Sidelist = require('./Sidelist')
-const shallowCompare = require('react-addons-shallow-compare')
-const { settingsStore } = require('stores/settings')
+import React from 'react'
+import PropTypes from 'prop-types'
+import MailboxTabManager from './Mailbox/MailboxTabManager'
+import Sidelist from './Sidelist'
+import shallowCompare from 'react-addons-shallow-compare'
+import { settingsStore } from 'stores/settings'
 
 const SIDEBAR_WIDTH = 70
 const styles = {
@@ -26,16 +27,14 @@ const styles = {
   }
 }
 
-module.exports = React.createClass({
-
+export default class AppScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  displayName: 'AppScene',
-  contextTypes: {
-    router: React.PropTypes.object.isRequired
-  },
+  static contextTypes = {
+    router: PropTypes.object.isRequired
+  }
 
   /* **************************************************************************/
   // Lifecycle
@@ -43,28 +42,28 @@ module.exports = React.createClass({
 
   componentDidMount () {
     settingsStore.listen(this.settingsDidUpdate)
-  },
+  }
 
   componentWillUnmount () {
     settingsStore.unlisten(this.settingsDidUpdate)
-  },
+  }
 
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     const settingsState = settingsStore.getState()
     return {
       sidebar: settingsState.ui.sidebarEnabled
     }
-  },
+  })()
 
-  settingsDidUpdate (settingsState) {
+  settingsDidUpdate = (settingsState) => {
     this.setState({
       sidebar: settingsState.ui.sidebarEnabled
     })
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -72,7 +71,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { sidebar } = this.state
@@ -91,4 +90,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

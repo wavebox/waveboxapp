@@ -1,41 +1,35 @@
-const React = require('react')
-const { platformActions } = require('stores/platform')
-const shallowCompare = require('react-addons-shallow-compare')
-const { Dialog, RaisedButton } = require('material-ui')
+import React from 'react'
+import { platformActions } from 'stores/platform'
+import shallowCompare from 'react-addons-shallow-compare'
+import { Dialog, RaisedButton } from 'material-ui'
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'AppWizardMailtoScene',
-
+export default class AppWizardMailtoScene extends React.Component {
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return { open: true }
-  },
+  })()
 
   /* **************************************************************************/
   // UI Events
   /* **************************************************************************/
 
-  handleCancel () {
+  handleCancel = () => {
     this.setState({ open: false })
     setTimeout(() => { window.location.hash = '/' }, 500)
-  },
+  }
 
-  handleNext () {
+  handleNext = () => {
     this.setState({ open: false })
     setTimeout(() => { window.location.hash = '/app_wizard/complete' }, 250)
-  },
+  }
 
-  handleMakeDefaultClient () {
+  handleMakeDefaultClient = () => {
     platformActions.changeMailtoLinkHandler(true)
     this.handleNext()
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -43,7 +37,7 @@ module.exports = React.createClass({
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  },
+  }
 
   render () {
     const { open } = this.state
@@ -82,4 +76,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

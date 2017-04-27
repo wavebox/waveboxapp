@@ -1,19 +1,25 @@
+import PropTypes from 'prop-types'
 import 'bootstrap-grid'
+import React from 'react'
 
-const React = require('react')
+export default class Col extends React.Component {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
 
-module.exports = React.createClass({
-  displayName: 'GridCol',
+  static propTypes = {
+    xs: PropTypes.number,
+    sm: PropTypes.number,
+    md: PropTypes.number,
+    lg: PropTypes.number,
+    offset: PropTypes.number,
+    className: PropTypes.string,
+    children: PropTypes.node
+  }
 
-  propTypes: {
-    xs: React.PropTypes.number,
-    sm: React.PropTypes.number,
-    md: React.PropTypes.number,
-    lg: React.PropTypes.number,
-    offset: React.PropTypes.number,
-    className: React.PropTypes.string,
-    children: React.PropTypes.node
-  },
+  /* **************************************************************************/
+  // Renderng
+  /* **************************************************************************/
 
   render () {
     const {xs, sm, md, lg, offset, className, children, ...passProps} = this.props
@@ -46,4 +52,4 @@ module.exports = React.createClass({
       </div>
     )
   }
-})
+}

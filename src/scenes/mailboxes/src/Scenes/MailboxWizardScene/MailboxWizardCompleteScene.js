@@ -1,7 +1,7 @@
-const React = require('react')
-const { FontIcon, Dialog, RaisedButton } = require('material-ui')
-const Colors = require('material-ui/styles/colors')
-const { settingsStore } = require('stores/settings')
+import React from 'react'
+import { FontIcon, Dialog, RaisedButton } from 'material-ui'
+import * as Colors from 'material-ui/styles/colors'
+import { settingsStore } from 'stores/settings'
 
 const styles = {
   container: {
@@ -16,52 +16,46 @@ const styles = {
   }
 }
 
-module.exports = React.createClass({
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  displayName: 'ConfigureCompleteWizardDialog',
-
+export default class MailboxWizardCompleteScene extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
     settingsStore.listen(this.settingsChanged)
-  },
+  }
 
   componentWillUnmount () {
     settingsStore.unlisten(this.settingsChanged)
-  },
+  }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  getInitialState () {
+  state = (() => {
     return {
       hasSeenAppWizard: settingsStore.getState().app.hasSeenAppWizard,
       open: true
     }
-  },
+  })()
 
-  settingsChanged (settingsState) {
+  settingsChanged = (settingsState) => {
     this.setState({ hasSeenAppWizard: settingsStore.getState().app.hasSeenAppWizard })
-  },
+  }
 
   /* **************************************************************************/
   // UI Events
   /* **************************************************************************/
 
-  handleDone () {
+  handleDone = () => {
     const { hasSeenAppWizard } = this.state
 
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = hasSeenAppWizard ? '/' : '/app_wizard'
     }, 500)
-  },
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -93,4 +87,4 @@ module.exports = React.createClass({
       </Dialog>
     )
   }
-})
+}

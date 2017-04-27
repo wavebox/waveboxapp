@@ -1,1 +1,2 @@
-module.exports = require('./AccountSettings')
+import AccountSettings from './AccountSettings'
+export default AccountSettings

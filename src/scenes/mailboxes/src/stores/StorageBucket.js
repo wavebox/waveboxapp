@@ -260,4 +260,4 @@ class StorageBucket {
   }
 }
 
-module.exports = StorageBucket
+export default StorageBucket
