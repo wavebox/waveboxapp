@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Toggle, Paper, SelectField, MenuItem, RaisedButton, FontIcon } from 'material-ui'
+import { Toggle, Paper, SelectField, MenuItem, RaisedButton, FontIcon, Divider } from 'material-ui'
 import { settingsActions } from 'stores/settings'
 import { dictionariesStore, dictionariesActions } from 'stores/dictionaries'
 import styles from '../SettingStyles'
@@ -58,6 +58,15 @@ export default class LanguageSettingsSection extends React.Component {
     const dictionaryState = dictionariesStore.getState()
     const primaryDictionaryInfo = dictionaryState.getDictionaryInfo(language.spellcheckerLanguage)
 
+    const { availableSecondary, unavailbleSecondary } = installedDictionaries.reduce((acc, info) => {
+      if (primaryDictionaryInfo.charset === info.charset) {
+        acc.availableSecondary.push(info)
+      } else {
+        acc.unavailbleSecondary.push(info)
+      }
+      return acc
+    }, { availableSecondary: [], unavailbleSecondary: [] })
+
     return (
       <Paper zDepth={1} style={styles.paper} {...passProps}>
         <h1 style={styles.subheading}>Language</h1>
@@ -85,14 +94,37 @@ export default class LanguageSettingsSection extends React.Component {
           onChange={(evt, index, value) => {
             settingsActions.setSecondarySpellcheckerLanguage(value !== '__none__' ? value : null)
           }}>
-          {[undefined].concat(installedDictionaries).map((info) => {
-            if (info === undefined) {
-              return (<MenuItem key='__none__' value='__none__' primaryText='None' />)
-            } else {
-              const disabled = primaryDictionaryInfo.charset !== info.charset
-              return (<MenuItem key={info.lang} value={info.lang} primaryText={info.name} disabled={disabled} />)
-            }
-          })}
+          {
+            [].concat(
+              [<MenuItem key='__none__' value='__none__' primaryText='None' />],
+              availableSecondary.map((info) => {
+                return (<MenuItem key={info.lang} value={info.lang} primaryText={info.name} />)
+              }),
+              unavailbleSecondary.length === 0 ? [] : [
+                (<Divider key='__unavailable__' />),
+                (<MenuItem
+                  key='__unavailableTitle__'
+                  value='__none__'
+                  style={{
+                    whiteSpace: 'normal',
+                    fontWeight: 'bold',
+                    lineHeight: '1.2em',
+                    paddingTop: 5,
+                    paddingBottom: 5
+                  }}
+                  primaryText='These languages are not compatible with the primary language as they use a different character set'
+                  disabled />)
+              ],
+              unavailbleSecondary.map((info) => {
+                return (
+                  <MenuItem
+                    key={info.lang}
+                    value={info.lang}
+                    primaryText={info.name}
+                    disabled />)
+              }),
+            )
+          }
         </SelectField>
         <RaisedButton
           label='Install more Dictionaries'
