@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "standard": "10.0.2",
-    "babel-eslint": "^7.2.3"
+    "babel-eslint": "7.2.3"
   },
   "standard": {
     "ignore": [
