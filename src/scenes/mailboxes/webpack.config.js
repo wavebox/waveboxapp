@@ -67,6 +67,7 @@ module.exports = function (env) {
         Debug: path.resolve(path.join(__dirname, 'src/Debug'))
       },
       modules: [
+        'node_modules',
         path.join(__dirname, 'node_modules'),
         __dirname,
         path.resolve(path.join(__dirname, 'src'))

@@ -59,6 +59,7 @@ module.exports = function (env) {
         Scenes: path.resolve(path.join(__dirname, 'src/Scenes'))
       },
       modules: [
+        'node_modules',
         path.join(__dirname, 'node_modules'),
         __dirname,
         path.resolve(path.join(__dirname, 'src'))
