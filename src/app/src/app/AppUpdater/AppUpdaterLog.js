@@ -48,4 +48,4 @@ class AppUpdaterLog {
   }
 }
 
-module.export = AppUpdaterLog
+module.exports = AppUpdaterLog
