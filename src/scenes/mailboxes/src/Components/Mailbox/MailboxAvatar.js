@@ -85,6 +85,45 @@ export default class MailboxAvatar extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
+  /**
+  * Renders the styles
+  * @param mailbox: the mailbox to render for
+  * @param size: the size of the avatar
+  * @param componentStyles: the current style set provided to this component
+  * @param useBorderHack: true if we're using the border hack
+  * @return { size, styles }
+  */
+  renderStyles (mailbox, size, componentStyles, useBorderHack) {
+    let adjustedSize
+    const style = { }
+
+    if (useBorderHack) {
+      // Use a box shadow hack rather than border to fix a phantom white line
+      // https://stackoverflow.com/questions/31805296/why-do-i-get-a-faint-border-around-css-circles-in-internet-explorer
+      // This has the side effect of now overflowing the element, so try to be a bit intelligent about
+      // reducing the size depending on the passed props
+      if (componentStyles.boxShadow) {
+        adjustedSize = size
+      } else {
+        const borderSize = Math.round(size * 0.08)
+        adjustedSize = size - (2 * borderSize)
+        style.boxShadow = `0 0 0 ${borderSize}px ${mailbox.color}`
+      }
+    } else {
+      adjustedSize = size
+      style.border = `${size * 0.08}px solid ${mailbox.color}`
+    }
+
+    // Overwrite the values from above rather than conditionally setting them so that the on-screen size
+    // of the avatar remains consistent for further styling
+    if (mailbox.showAvatarColorRing === false) {
+      style.boxShadow = 'none'
+      style.border = 'none'
+    }
+
+    return { size: adjustedSize, style: style }
+  }
+
   render () {
     const { url } = this.state
     const { style, mailbox, size, useBorderHack, ...otherProps } = this.props
@@ -94,29 +133,9 @@ export default class MailboxAvatar extends React.Component {
       backgroundColor: mailbox.hasCustomAvatar || mailbox.avatarURL ? 'white' : mailbox.color
     }, otherProps)
 
-    // Update the styles for the border
-    if (mailbox.showAvatarColorRing) {
-      if (useBorderHack) {
-        // Use a box shadow hack rather than border to fix a phantom white line
-        // https://stackoverflow.com/questions/31805296/why-do-i-get-a-faint-border-around-css-circles-in-internet-explorer
-        // This has the side effect of now overflowing the element, so try to be a bit intelligent about
-        // reducing the size depending on the passed props
-        if (style.boxShadow) {
-          passProps.size = size
-        } else {
-          const borderSize = Math.round(size * 0.08)
-          passProps.style.boxShadow = `0 0 0 ${borderSize}px ${mailbox.color}`
-          passProps.size = size - (2 * borderSize)
-        }
-      } else {
-        passProps.size = size
-        passProps.style.border = `${size * 0.08}px solid ${mailbox.color}`
-      }
-    } else {
-      passProps.style.boxShadow = 'none'
-      passProps.style.border = 'none'
-      passProps.size = size
-    }
+    const sizeAndBorder = this.renderStyles(mailbox, size, style, useBorderHack)
+    passProps.size = sizeAndBorder.size
+    passProps.style = Object.assign(passProps.style, sizeAndBorder.style)
 
     if (url) {
       return (<Avatar {...passProps} src={url} />)
