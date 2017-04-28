@@ -2,9 +2,10 @@ import './MailboxWebView.less'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { CircularProgress } from 'material-ui'
-import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
+import { mailboxStore, mailboxDispatch } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
 import WebView from 'sharedui/Components/WebView'
+import BrowserView from 'sharedui/Components/BrowserView'
 import MailboxSearch from './MailboxSearch'
 import MailboxTargetUrl from './MailboxTargetUrl'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -12,7 +13,6 @@ import URI from 'urijs'
 const { ipcRenderer } = window.nativeRequire('electron')
 
 const BROWSER_REF = 'browser'
-const SEARCH_REF = 'search'
 
 export default class MailboxWebView extends React.Component {
   /* **************************************************************************/
@@ -44,15 +44,8 @@ export default class MailboxWebView extends React.Component {
     mailboxDispatch.on('reload', this.handleReload)
     mailboxDispatch.respond('fetch-process-memory-info', this.handleFetchProcessMemoryInfo)
     mailboxDispatch.addGetter('current-url', this.handleGetCurrentUrl)
-    ipcRenderer.on('find-start', this.handleIPCSearchStart)
-    ipcRenderer.on('find-next', this.handleIPCSearchNext)
     ipcRenderer.on('mailbox-window-navigate-back', this.handleIPCNavigateBack)
     ipcRenderer.on('mailbox-window-navigate-forward', this.handleIPCNavigateForward)
-
-    // Autofocus on the first run
-    if (this.state.isActive) {
-      setTimeout(() => { this.refs[BROWSER_REF].focus() })
-    }
   }
 
   componentWillUnmount () {
@@ -66,8 +59,6 @@ export default class MailboxWebView extends React.Component {
     mailboxDispatch.removeListener('reload', this.handleReload)
     mailboxDispatch.unrespond('fetch-process-memory-info', this.handleFetchProcessMemoryInfo)
     mailboxDispatch.removeGetter('current-url', this.handleGetCurrentUrl)
-    ipcRenderer.removeListener('find-start', this.handleIPCSearchStart)
-    ipcRenderer.removeListener('find-next', this.handleIPCSearchNext)
     ipcRenderer.removeListener('mailbox-window-navigate-back', this.handleIPCNavigateBack)
     ipcRenderer.removeListener('mailbox-window-navigate-forward', this.handleIPCNavigateForward)
   }
@@ -109,10 +100,12 @@ export default class MailboxWebView extends React.Component {
       url: props.url || service.url,
       browserDOMReady: false,
       isActive: isActive,
-      isSearching: mailboxState.isSearchingMailbox(props.mailboxId, props.serviceType),
       language: settingState.language,
       focusedUrl: null,
-      snapshot: mailboxState.getSnapshot(props.mailboxId, props.serviceType)
+      snapshot: mailboxState.getSnapshot(props.mailboxId, props.serviceType),
+      isSearching: mailboxState.isSearchingMailbox(props.mailboxId, props.serviceType),
+      searchTerm: mailboxState.mailboxSearchTerm(props.mailboxId, props.serviceType),
+      searchId: mailboxState.mailboxSearchHash(props.mailboxId, props.serviceType)
     }
   }
 
@@ -122,19 +115,14 @@ export default class MailboxWebView extends React.Component {
     const service = mailbox ? mailbox.serviceForType(serviceType) : null
 
     if (mailbox && service) {
-      this.setState((prevState) => {
-        // Push down zoom state
-        if (prevState.service.zoomFactor !== service.zoomFactor) {
-          this.refs[BROWSER_REF].setZoomLevel(service.zoomFactor)
-        }
-
-        return {
-          mailbox: mailbox,
-          service: service,
-          isActive: mailboxState.isActive(mailboxId, serviceType),
-          isSearching: mailboxState.isSearchingMailbox(mailboxId, serviceType),
-          snapshot: mailboxState.getSnapshot(mailboxId, serviceType)
-        }
+      this.setState({
+        mailbox: mailbox,
+        service: service,
+        isActive: mailboxState.isActive(mailboxId, serviceType),
+        snapshot: mailboxState.getSnapshot(mailboxId, serviceType),
+        isSearching: mailboxState.isSearchingMailbox(mailboxId, serviceType),
+        searchTerm: mailboxState.mailboxSearchTerm(mailboxId, serviceType),
+        searchId: mailboxState.mailboxSearchHash(mailboxId, serviceType)
       })
     } else {
       this.setState({ mailbox: null, service: null })
@@ -324,9 +312,6 @@ export default class MailboxWebView extends React.Component {
   handleBrowserDomReady = () => {
     const { service, language } = this.state
 
-    // Push the settings across
-    this.refs[BROWSER_REF].setZoomLevel(service.zoomFactor)
-
     // Language
     if (language.spellcheckerEnabled) {
       this.refs[BROWSER_REF].send('start-spellcheck', {
@@ -344,14 +329,6 @@ export default class MailboxWebView extends React.Component {
     }
 
     this.setState({ browserDOMReady: true })
-  }
-
-  /**
-  * Until https://github.com/electron/electron/issues/6958 is fixed we need to
-  * be really agressive about setting zoom levels
-  */
-  handleZoomFixEvent = () => {
-    this.refs[BROWSER_REF].setZoomLevel(this.state.service.zoomFactor)
   }
 
   /**
@@ -401,63 +378,8 @@ export default class MailboxWebView extends React.Component {
   }
 
   /* **************************************************************************/
-  // UI Events : Search
-  /* **************************************************************************/
-
-  /**
-  * Handles the search text changing
-  * @param str: the search string
-  */
-  handleSearchChanged = (str) => {
-    if (str.length) {
-      this.refs[BROWSER_REF].findInPage(str)
-    } else {
-      this.refs[BROWSER_REF].stopFindInPage('clearSelection')
-    }
-  }
-
-  /**
-  * Handles searching for the next occurance
-  */
-  handleSearchNext = (str) => {
-    if (str.length) {
-      this.refs[BROWSER_REF].findInPage(str, { findNext: true })
-    }
-  }
-
-  /**
-  * Handles cancelling searching
-  */
-  handleSearchCancel = () => {
-    mailboxActions.stopSearchingMailbox(this.props.mailboxId, this.props.serviceType)
-    this.refs[BROWSER_REF].stopFindInPage('clearSelection')
-  }
-
-  /* **************************************************************************/
   // IPC Events
   /* **************************************************************************/
-
-  /**
-  * Handles an ipc search start event coming in
-  */
-  handleIPCSearchStart = () => {
-    if (this.state.isActive) {
-      setTimeout(() => {
-        if (this.refs[SEARCH_REF]) {
-          this.refs[SEARCH_REF].focus()
-        }
-      })
-    }
-  }
-
-  /**
-  * Handles an ipc search next event coming in
-  */
-  handleIPCSearchNext = () => {
-    if (this.state.isActive) {
-      this.handleSearchNext(this.refs[SEARCH_REF].searchQuery())
-    }
-  }
 
   /**
   * Handles navigating the mailbox back
@@ -485,12 +407,29 @@ export default class MailboxWebView extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
-  /**
-  * Renders the app
-  */
+  componentDidUpdate (prevProps, prevState) {
+    if (prevState.isActive !== this.state.isActive) {
+      if (this.state.isActive) {
+        this.refs[BROWSER_REF].focus()
+      }
+    }
+  }
+
   render () {
     // Extract our props and pass props
-    const { mailbox, service, isActive, focusedUrl, isSearching, url, browserDOMReady, snapshot } = this.state
+    const {
+      mailbox,
+      service,
+      isActive,
+      focusedUrl,
+      isSearching,
+      searchTerm,
+      searchId,
+      url,
+      browserDOMReady,
+      snapshot
+    } = this.state
+
     if (!mailbox || !service) { return false }
     const { className, preload, ...passProps } = this.props
     delete passProps.serviceType
@@ -507,37 +446,31 @@ export default class MailboxWebView extends React.Component {
       'ReactComponent-MailboxWebView',
       isActive ? 'active' : ''
     ].join(' ')
-    const zoomFixFn = service.zoomFactor === 1 ? undefined : this.handleZoomFixEvent
-
-    if (isActive) {
-      setTimeout(() => {
-        if (this.refs[BROWSER_REF]) {
-          this.refs[BROWSER_REF].focus()
-        }
-      })
-    }
 
     return (
       <div className={saltedClassName}>
-        <WebView
+        <BrowserView
           ref={BROWSER_REF}
           preload={preload}
           partition={'persist:' + mailbox.partition}
           src={url}
+          zoomFactor={service.zoomFactor}
+          searchId={searchId}
+          searchTerm={isSearching ? searchTerm : ''}
 
           {...webviewEventProps}
 
           loadCommit={(evt) => {
-            this.multiCallBrowserEvent([zoomFixFn, webviewEventProps.loadCommit], [evt])
+            this.multiCallBrowserEvent([webviewEventProps.loadCommit], [evt])
           }}
           didGetResponseDetails={(evt) => {
-            this.multiCallBrowserEvent([zoomFixFn, webviewEventProps.didGetResponseDetails], [evt])
+            this.multiCallBrowserEvent([webviewEventProps.didGetResponseDetails], [evt])
           }}
           didNavigate={(evt) => {
-            this.multiCallBrowserEvent([zoomFixFn, webviewEventProps.didNavigate], [evt])
+            this.multiCallBrowserEvent([webviewEventProps.didNavigate], [evt])
           }}
           didNavigateInPage={(evt) => {
-            this.multiCallBrowserEvent([zoomFixFn, webviewEventProps.didNavigateInPage], [evt])
+            this.multiCallBrowserEvent([webviewEventProps.didNavigateInPage], [evt])
           }}
 
           domReady={(evt) => {
@@ -547,7 +480,7 @@ export default class MailboxWebView extends React.Component {
             this.multiCallBrowserEvent([this.dispatchBrowserIPCMessage, webviewEventProps.ipcMessage], [evt])
           }}
           willNavigate={(evt) => {
-            this.multiCallBrowserEvent([zoomFixFn, this.handleBrowserWillNavigate, webviewEventProps.willNavigate], [evt])
+            this.multiCallBrowserEvent([this.handleBrowserWillNavigate, webviewEventProps.willNavigate], [evt])
           }}
           focus={(evt) => {
             this.multiCallBrowserEvent([this.handleBrowserFocused, webviewEventProps.focus], [evt])
@@ -567,12 +500,7 @@ export default class MailboxWebView extends React.Component {
           </div>
         )}
         <MailboxTargetUrl url={focusedUrl} />
-        <MailboxSearch
-          ref={SEARCH_REF}
-          isSearching={isSearching}
-          onSearchChange={this.handleSearchChanged}
-          onSearchNext={this.handleSearchNext}
-          onSearchCancel={this.handleSearchCancel} />
+        <MailboxSearch mailboxId={mailbox.id} serviceType={service.type} />
       </div>
     )
   }

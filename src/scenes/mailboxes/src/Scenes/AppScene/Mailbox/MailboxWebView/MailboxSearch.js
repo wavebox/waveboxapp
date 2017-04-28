@@ -2,6 +2,12 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Paper, TextField, IconButton } from 'material-ui'
 import * as Colors from 'material-ui/styles/colors'
+import { mailboxStore, mailboxActions } from 'stores/mailbox'
+import shallowCompare from 'react-addons-shallow-compare'
+
+const { ipcRenderer } = window.nativeRequire('electron')
+
+const TEXT_FIELD_REF = 'textfield'
 
 export default class MailboxSearch extends React.Component {
   /* **************************************************************************/
@@ -9,35 +15,58 @@ export default class MailboxSearch extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    isSearching: PropTypes.bool.isRequired,
-    onSearchChange: PropTypes.func,
-    onSearchNext: PropTypes.func,
-    onSearchCancel: PropTypes.func
+    mailboxId: PropTypes.string.isRequired,
+    serviceType: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
-  // Data lifecylce
+  // Lifecycle
   /* **************************************************************************/
 
-  state = (() => {
-    return {
-      searchQuery: ''
+  componentDidMount () {
+    mailboxStore.listen(this.mailboxesChanged)
+    ipcRenderer.on('find-start', this.handleIPCSearchStart)
+  }
+
+  componentWillUnmount () {
+    mailboxStore.unlisten(this.mailboxesChanged)
+    ipcRenderer.removeListener('find-start', this.handleIPCSearchStart)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceType !== nextProps.serviceType) {
+      this.setState(this.generateState(nextProps))
     }
-  })()
+  }
 
   /* **************************************************************************/
-  // Actions
+  // Data lifecycle
   /* **************************************************************************/
 
-  /**
-  * Focuses the textfield
-  */
-  focus = () => { this.refs.textField.focus() }
+  state = this.generateState(this.props)
 
   /**
-  * @return the current search query
+  * Generates the state from the given props
+  * @param props: the props to use
+  * @return state object
   */
-  searchQuery = () => { return this.state.searchQuery }
+  generateState ({ mailboxId, serviceType }) {
+    const mailboxState = mailboxStore.getState()
+    return {
+      isActive: mailboxState.isActive(mailboxId, serviceType),
+      isSearching: mailboxState.isSearchingMailbox(mailboxId, serviceType),
+      searchTerm: mailboxState.mailboxSearchTerm(mailboxId, serviceType)
+    }
+  }
+
+  mailboxesChanged = (mailboxState) => {
+    const { mailboxId, serviceType } = this.props
+    this.setState({
+      isActive: mailboxState.isActive(mailboxId, serviceType),
+      isSearching: mailboxState.isSearchingMailbox(mailboxId, serviceType),
+      searchTerm: mailboxState.mailboxSearchTerm(mailboxId, serviceType)
+    })
+  }
 
   /* **************************************************************************/
   // Events
@@ -47,29 +76,21 @@ export default class MailboxSearch extends React.Component {
   * Handles the input string changing
   */
   handleChange = (evt) => {
-    this.setState({searchQuery: evt.target.value})
-    if (this.props.onSearchChange) {
-      this.props.onSearchChange(evt.target.value)
-    }
+    mailboxActions.setSearchTerm(this.props.mailboxId, this.props.serviceType, evt.target.value)
   }
 
   /**
   * Handles the find next command
   */
   handleFindNext = () => {
-    if (this.props.onSearchNext) {
-      this.props.onSearchNext(this.state.searchQuery)
-    }
+    mailboxActions.searchNextTerm(this.props.mailboxId, this.props.serviceType)
   }
 
   /**
   * Handles the search stopping
   */
   handleStopSearch = () => {
-    this.setState({searchQuery: ''})
-    if (this.props.onSearchCancel) {
-      this.props.onSearchCancel()
-    }
+    mailboxActions.stopSearchingMailbox(this.props.mailboxId, this.props.serviceType)
   }
 
   /**
@@ -87,29 +108,52 @@ export default class MailboxSearch extends React.Component {
   }
 
   /* **************************************************************************/
+  // IPC Events
+  /* **************************************************************************/
+
+  handleIPCSearchStart = () => {
+    if (this.state.isActive) {
+      this.refs[TEXT_FIELD_REF].focus()
+    }
+  }
+
+  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
-  render () {
-    const passProps = Object.assign({}, this.props)
-    delete passProps.onSearchCancel
-    delete passProps.onSearchChange
-    delete passProps.onSearchNext
-    delete passProps.isSearching
+  shouldComponentUpdate (nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState)
+  }
 
-    const className = [
+  componentDidUpdate (prevProps, prevState) {
+    if (this.state.isActive) {
+      if (this.state.isSearching !== prevState.isSearching) {
+        if (this.state.isSearching) {
+          this.refs[TEXT_FIELD_REF].focus()
+        }
+      }
+    }
+  }
+
+  render () {
+    const { className, ...passProps } = this.props
+    delete passProps.mailboxId
+    delete passProps.serviceType
+    const { isSearching, searchTerm } = this.state
+
+    const composedClassName = [
       'ReactComponent-MailboxSearch',
-      this.props.isSearching ? 'active' : undefined
-    ].concat(this.props.className).filter((c) => !!c).join(' ')
+      isSearching ? 'active' : undefined
+    ].concat(className).filter((c) => !!c).join(' ')
 
     return (
-      <Paper {...passProps} className={className}>
+      <Paper {...passProps} className={composedClassName}>
         <TextField
-          ref='textField'
+          ref={TEXT_FIELD_REF}
           hintText='Search'
           style={{ marginLeft: 15 }}
           inputStyle={{ width: 200 }}
-          value={this.state.searchQuery}
+          value={searchTerm}
           onChange={this.handleChange}
           onKeyDown={this.handleKeyPress} />
         <IconButton

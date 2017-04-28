@@ -343,8 +343,8 @@ class MailboxActions {
 
   /**
   * Starts searching the mailbox
-  * @param id: the mailbox id
-  * @param service: the type of service to search for
+  * @param id=optional: the mailbox id
+  * @param service=optional: the type of service to search for
   */
   startSearchingMailbox (id, service) {
     return { id: id, service: service }
@@ -352,10 +352,29 @@ class MailboxActions {
 
   /**
   * Stops searching the mailbox
-  * @param id: the mailbox id
-  * @param service: the type of service to stop search for
+  * @param id=optional: the mailbox id
+  * @param service=optional: the type of service to stop search for
   */
   stopSearchingMailbox (id, service) {
+    return { id: id, service: service }
+  }
+
+  /**
+  * Sets the search term
+  * @param id=optional: the mailbox id
+  * @param service=optional: the type of service to search for
+  * @param str: the search string
+  */
+  setSearchTerm (id, service, str) {
+    return { id: id, service: service, str: str }
+  }
+
+  /**
+  * Searches for the next occurance of the search term
+  * @param id=optional: the mailbox id
+  * @param service=optional: the type of service to search for
+  */
+  searchNextTerm (id, service) {
     return { id: id, service: service }
   }
 
@@ -419,6 +438,7 @@ ipcRenderer.on('zoom-in', () => actions.reduceService(undefined, undefined, Serv
 ipcRenderer.on('zoom-out', () => actions.reduceService(undefined, undefined, ServiceReducer.decreaseZoom))
 ipcRenderer.on('zoom-reset', () => actions.reduceService(undefined, undefined, ServiceReducer.resetZoom))
 ipcRenderer.on('find-start', () => actions.startSearchingMailbox())
+ipcRenderer.on('find-next', () => actions.searchNextTerm())
 
 // Switching
 ipcRenderer.on('switch-mailbox', (evt, req) => {

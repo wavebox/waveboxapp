@@ -237,7 +237,25 @@ class MailboxStore {
     * @return true if the mailbox is searching, false otherwise
     */
     this.isSearchingMailbox = (mailboxId, service) => {
-      return this.search.get(`${mailboxId}:${service}`) === true
+      return this.search.has(`${mailboxId}:${service}`)
+    }
+
+    /**
+    * @param mailboxId: the id of the mailbox
+    * @param service: the service of the mailbox
+    * @return the search term for the mailbox
+    */
+    this.mailboxSearchTerm = (mailboxId, service) => {
+      return (this.search.get(`${mailboxId}:${service}`) || {}).term || ''
+    }
+
+    /**
+    * @param mailboxId: the id of the mailbox
+    * @param service: the service of the mailbox
+    * @return the search has for the mailbox
+    */
+    this.mailboxSearchHash = (mailboxId, service) => {
+      return (this.search.get(`${mailboxId}:${service}`) || {}).hash || ''
     }
 
     /* ****************************************/
@@ -340,6 +358,8 @@ class MailboxStore {
       // Search
       handleStartSearchingMailbox: actions.START_SEARCHING_MAILBOX,
       handleStopSearchingMailbox: actions.STOP_SEARCHING_MAILBOX,
+      handleSetSearchTerm: actions.SET_SEARCH_TERM,
+      handleSearchNextTerm: actions.SEARCH_NEXT_TERM,
 
       // Sync
       handleFullSyncMailbox: actions.FULL_SYNC_MAILBOX
@@ -910,21 +930,35 @@ class MailboxStore {
   * Indicates the mailbox is searching
   */
   handleStartSearchingMailbox ({ id, service }) {
-    if (id && service) {
-      this.search.set(`${id}:${service}`, true)
-    } else {
-      this.search.set(`${this.active}:${this.activeService}`, true)
-    }
+    const key = `${id || this.active}:${service || this.activeService}`
+    this.search.set(key, { term: '', hash: `${Math.random()}` })
   }
 
   /**
   * Indicates the mailbox is no longer searching
   */
   handleStopSearchingMailbox ({id, service}) {
-    if (id && service) {
-      this.search.delete(`${id}:${service}`)
+    const key = `${id || this.active}:${service || this.activeService}`
+    this.search.delete(key)
+  }
+
+  /**
+  * Sets the search term for a mailbox
+  */
+  handleSetSearchTerm ({ id, service, str }) {
+    const key = `${id || this.active}:${service || this.activeService}`
+    this.search.set(key, { term: str, hash: `${Math.random()}` })
+  }
+
+  /**
+  * Indicates the user wants to search next
+  */
+  handleSearchNextTerm ({ id, service }) {
+    const key = `${id || this.active}:${service || this.activeService}`
+    if (this.search.has(key)) {
+      this.search.set(key, Object.assign({}, this.search.get(key), { hash: `${Math.random()}` }))
     } else {
-      this.search.delete(`${this.active}:${this.activeService}`)
+      this.search.set(key, { term: '', hash: `${Math.random()}` })
     }
   }
 
