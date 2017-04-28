@@ -41,7 +41,7 @@ class AppUpdaterLog {
   * @return this
   */
   flush () {
-    const logStr = this.items.join('\n')
+    const logStr = '\r\n' + this.items.join('\r\n')
     fs.appendFileSync(this.logPath, logStr, 'utf8')
     this.items = []
     return this
