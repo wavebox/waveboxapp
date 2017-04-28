@@ -165,18 +165,24 @@ class MailboxesSessionManager {
       this.updateDownloadProgress(id, item.getReceivedBytes(), totalBytes)
     })
     item.on('done', (e, state) => {
+      // Event will get destroyed before move callback completes. If
+      // you need any info from it grab it before calling fs.move
       if (state === 'completed') {
-        // Download item will get destroyed before move callback completes. If
-        // you need any info from it grab it before calling fs.move
-        fs.move(downloadPath, savePath, () => {
-          this.downloadFinished(id)
-          const saveName = path.basename(savePath)
-          this.mailboxWindow.downloadCompleted(savePath, saveName)
-        })
+        setTimeout(() => { // Introduce a short wait incase the buffer is still flushing out
+          fs.move(downloadPath, savePath, (err) => {
+            this.downloadFinished(id)
+            if (!err) { // This should never happen
+              const saveName = path.basename(savePath)
+              this.mailboxWindow.downloadCompleted(savePath, saveName)
+            }
+          })
+        }, 500)
       } else {
-        // Tidy-up on failure
-        try { fs.removeSync(downloadPath) } catch (ex) { /* no-op */ }
-        this.downloadFinished(id)
+        setTimeout(() => {  // Introduce a short wait incase the buffer is still flushing out
+          // Tidy-up on failure
+          try { fs.removeSync(downloadPath) } catch (ex) { /* no-op */ }
+          this.downloadFinished(id)
+        }, 500)
       }
     })
   }
