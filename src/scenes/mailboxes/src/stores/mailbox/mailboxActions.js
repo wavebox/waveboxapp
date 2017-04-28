@@ -415,9 +415,9 @@ ipcRenderer.on('auth-microsoft-complete', actions.authMicrosoftMailboxSuccess)
 ipcRenderer.on('auth-microsoft-error', actions.authMicrosoftMailboxFailure)
 
 // Mailbox modifiers
-ipcRenderer.on('mailbox-zoom-in', () => actions.reduceService(undefined, undefined, ServiceReducer.increaseZoom))
-ipcRenderer.on('mailbox-zoom-out', () => actions.reduceService(undefined, undefined, ServiceReducer.decreaseZoom))
-ipcRenderer.on('mailbox-zoom-reset', () => actions.reduceService(undefined, undefined, ServiceReducer.resetZoom))
+ipcRenderer.on('zoom-in', () => actions.reduceService(undefined, undefined, ServiceReducer.increaseZoom))
+ipcRenderer.on('zoom-out', () => actions.reduceService(undefined, undefined, ServiceReducer.decreaseZoom))
+ipcRenderer.on('zoom-reset', () => actions.reduceService(undefined, undefined, ServiceReducer.resetZoom))
 ipcRenderer.on('find-start', () => actions.startSearchingMailbox())
 
 // Switching

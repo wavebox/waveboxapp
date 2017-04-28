@@ -7,14 +7,14 @@ const {
   TraySettings: { SUPPORTS_TRAY_MINIMIZE_CONFIG }
 } = require('../../shared/Models/Settings')
 
-class WMailWindow extends EventEmitter {
+class WaveboxWindow extends EventEmitter {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
   /**
   * @param options: object containing the following
-  *                   @param screenLocationNS: the namespace to save the window state under. If not set, will not persist
+  * @param screenLocationNS: the namespace to save the window state under. If not set, will not persist
   */
   constructor (options) {
     super()
@@ -292,6 +292,37 @@ class WMailWindow extends EventEmitter {
   }
 
   /* ****************************************************************************/
+  // Actions: Zoom
+  /* ****************************************************************************/
+
+  /**
+  * Zooms the current window in
+  * @return this
+  */
+  zoomIn () {
+    this.window.webContents.send('zoom-in', { })
+    return this
+  }
+
+  /**
+  * Zooms the current window out
+  * @return this
+  */
+  zoomOut () {
+    this.window.webContents.send('zoom-out', { })
+    return this
+  }
+
+  /**
+  * Resets the zoom on the current window
+  * @return this
+  */
+  zoomReset () {
+    this.window.webContents.send('zoom-reset', { })
+    return this
+  }
+
+  /* ****************************************************************************/
   // Query
   /* ****************************************************************************/
 
@@ -310,4 +341,4 @@ class WMailWindow extends EventEmitter {
   }
 }
 
-module.exports = WMailWindow
+module.exports = WaveboxWindow

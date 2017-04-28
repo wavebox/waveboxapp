@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import './BrowserScene.less'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import WebView from 'sharedui/Components/WebView'
+import BrowserView from 'sharedui/Components/BrowserView'
 import BrowserTargetUrl from './BrowserTargetUrl'
 import BrowserSearch from './BrowserSearch'
 import BrowserToolbar from './BrowserToolbar'
@@ -46,7 +46,8 @@ export default class BrowserScene extends React.Component {
     return {
       isSearching: browserState.isSearching,
       searchTerm: browserState.searchTerm,
-      searchNextHash: browserState.searchNextHash
+      searchNextHash: browserState.searchNextHash,
+      zoomFactor: browserState.zoomFactor
     }
   })()
 
@@ -54,7 +55,8 @@ export default class BrowserScene extends React.Component {
     this.setState({
       isSearching: browserState.isSearching,
       searchTerm: browserState.searchTerm,
-      searchNextHash: browserState.searchNextHash
+      searchNextHash: browserState.searchNextHash,
+      zoomFactor: browserState.zoomFactor
     })
   }
 
@@ -92,34 +94,9 @@ export default class BrowserScene extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
-  componentDidUpdate (prevProps, prevState) {
-    // Push the search events down into the webview by diffing the state
-    // change
-    const { isSearching, searchTerm, searchNextHash } = this.state
-
-    if (isSearching) {
-      if (isSearching !== prevState.isSearching) { this.refs[SEARCH_REF].focus() }
-      if (searchTerm !== prevState.searchTerm) {
-        if (searchTerm && searchTerm.length) {
-          this.refs[BROWSER_REF].findInPage(searchTerm)
-        } else {
-          this.refs[BROWSER_REF].stopFindInPage('clearSelection')
-        }
-      }
-      if (searchNextHash !== prevState.searchNextHash) {
-        if (searchTerm && searchTerm.length) {
-          this.refs[BROWSER_REF].findInPage(searchTerm, { findNext: true })
-        }
-      }
-    } else {
-      if (isSearching !== prevState.isSearching) {
-        this.refs[BROWSER_REF].stopFindInPage('clearSelection')
-      }
-    }
-  }
-
   render () {
     const { url, partition } = this.props
+    const { zoomFactor, isSearching, searchTerm, searchNextHash } = this.state
 
     return (
       <div className='ReactComponent-BrowserScene'>
@@ -129,12 +106,15 @@ export default class BrowserScene extends React.Component {
           handleStop={() => this.refs[BROWSER_REF].stop()}
           handleReload={() => this.refs[BROWSER_REF].reload()} />
         <div className='ReactComponent-BrowserSceneWebViewContainer'>
-          <WebView
+          <BrowserView
             ref={BROWSER_REF}
             src={url}
             className='ReactComponent-BrowserSceneWebView'
             preload='../platform/webviewInjection/contentTooling'
             partition={partition}
+            zoomFactor={zoomFactor}
+            searchTerm={isSearching ? searchTerm : undefined}
+            searchId={searchNextHash}
             updateTargetUrl={(evt) => browserActions.setTargetUrl(evt.url)}
             pageTitleUpdated={(evt) => browserActions.setPageTitle(evt.title)}
             didStartLoading={(evt) => browserActions.startLoading()}

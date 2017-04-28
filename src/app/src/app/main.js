@@ -129,6 +129,11 @@
     )
     windowManager.mailboxesWindow.start(openHidden)
     AppUpdater.register(windowManager)
+
+    //TODO
+    const window = new ContentWindow()
+    windowManager.addContentWindow(window)
+    window.start('https://wavebox.io', '', windowManager.mailboxesWindow.window)
   })
 
   app.on('window-all-closed', () => {

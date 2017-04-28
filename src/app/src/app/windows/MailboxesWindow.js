@@ -1,4 +1,4 @@
-const WMailWindow = require('./WMailWindow')
+const WaveboxWindow = require('./WaveboxWindow')
 const path = require('path')
 const MailboxesSessionManager = require('./MailboxesSessionManager')
 const settingStore = require('../stores/settingStore')
@@ -19,7 +19,7 @@ const ALLOWED_URLS = [
   'file://' + path.join(MAILBOXES_DIR, 'offline.html')
 ]
 
-class MailboxesWindow extends WMailWindow {
+class MailboxesWindow extends WaveboxWindow {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
@@ -162,37 +162,6 @@ class MailboxesWindow extends WMailWindow {
   */
   openMailtoLink (mailtoLink) {
     this.window.webContents.send('open-mailto-link', { mailtoLink: mailtoLink })
-    return this
-  }
-
-  /* ****************************************************************************/
-  // Mailbox Actions : Zoom
-  /* ****************************************************************************/
-
-  /**
-  * Zooms the current mailbox in
-  * @return this
-  */
-  mailboxZoomIn () {
-    this.window.webContents.send('mailbox-zoom-in', { })
-    return this
-  }
-
-  /**
-  * Zooms the current mailbox out
-  * @return this
-  */
-  mailboxZoomOut () {
-    this.window.webContents.send('mailbox-zoom-out', { })
-    return this
-  }
-
-  /**
-  * Resets the zoom on the current mailbox
-  * @return this
-  */
-  mailboxZoomReset () {
-    this.window.webContents.send('mailbox-zoom-reset', { })
     return this
   }
 

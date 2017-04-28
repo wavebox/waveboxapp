@@ -3,6 +3,8 @@ import { Paper, TextField, IconButton } from 'material-ui'
 import * as Colors from 'material-ui/styles/colors'
 import { browserActions, browserStore } from 'stores/browser'
 
+const { ipcRenderer } = window.nativeRequire('electron')
+
 const INPUT_REF = 'textField'
 
 export default class BrowserSearch extends React.Component {
@@ -12,10 +14,12 @@ export default class BrowserSearch extends React.Component {
 
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
+    ipcRenderer.on('find-start', this.focus)
   }
 
   componentWillUnmount () {
     browserStore.unlisten(this.browserUpdated)
+    ipcRenderer.removeListener('find-start', this.focus)
   }
 
   /* **************************************************************************/
@@ -89,6 +93,14 @@ export default class BrowserSearch extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
+
+  componentDidUpdate (prevProps, prevState) {
+    if (this.state.isSearching !== prevState.isSearching) {
+      if (this.state.isSearching) {
+        this.focus()
+      }
+    }
+  }
 
   render () {
     const { className, ...passProps } = this.props

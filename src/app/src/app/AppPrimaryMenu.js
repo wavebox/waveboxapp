@@ -50,9 +50,18 @@ class AppPrimaryMenu {
       learnMore: () => { shell.openExternal(WEB_URL) },
       privacy: () => { shell.openExternal(PRIVACY_URL) },
       bugReport: () => { shell.openExternal(GITHUB_ISSUE_URL) },
-      zoomIn: () => { windowManager.mailboxesWindow.mailboxZoomIn() },
-      zoomOut: () => { windowManager.mailboxesWindow.mailboxZoomOut() },
-      zoomReset: () => { windowManager.mailboxesWindow.mailboxZoomReset() },
+      zoomIn: () => {
+        const focused = windowManager.focused()
+        if (focused) { focused.zoomIn() }
+      },
+      zoomOut: () => {
+        const focused = windowManager.focused()
+        if (focused) { focused.zoomOut() }
+      },
+      zoomReset: () => {
+        const focused = windowManager.focused()
+        if (focused) { focused.zoomReset() }
+      },
       changeMailbox: (mailboxId, serviceType = undefined) => {
         windowManager.mailboxesWindow.show().focus().switchMailbox(mailboxId, serviceType)
       },
@@ -167,9 +176,9 @@ class AppPrimaryMenu {
           { label: 'Navigate Back', accelerator: 'CmdOrCtrl+Left', click: this._selectors.mailboxNavBack },
           { label: 'Navigate Forward', accelerator: 'CmdOrCtrl+]', click: this._selectors.mailboxNavForward },
           { type: 'separator' },
-          { label: 'Zoom Mailbox In', accelerator: 'CmdOrCtrl+Plus', click: this._selectors.zoomIn },
-          { label: 'Zoom Mailbox Out', accelerator: 'CmdOrCtrl+-', click: this._selectors.zoomOut },
-          { label: 'Reset Mailbox Zoom', accelerator: 'CmdOrCtrl+0', click: this._selectors.zoomReset },
+          { label: 'Zoom In', accelerator: 'CmdOrCtrl+Plus', click: this._selectors.zoomIn },
+          { label: 'Zoom Out', accelerator: 'CmdOrCtrl+-', click: this._selectors.zoomOut },
+          { label: 'Reset Zoom', accelerator: 'CmdOrCtrl+0', click: this._selectors.zoomReset },
           { type: 'separator' },
           { label: 'Reload', accelerator: 'CmdOrCtrl+R', click: this._selectors.reload },
           { label: 'Developer Tools', accelerator: process.platform === 'darwin' ? 'Command+Alt+J' : 'Ctrl+Shift+J', click: this._selectors.devTools }

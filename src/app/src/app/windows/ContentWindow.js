@@ -1,11 +1,11 @@
-const WMailWindow = require('./WMailWindow')
+const WaveboxWindow = require('./WaveboxWindow')
 const { shell } = require('electron')
 const querystring = require('querystring')
 const path = require('path')
 
 const CONTENT_DIR = path.resolve(path.join(__dirname, '/../../../scenes/content'))
 
-class ContentWindow extends WMailWindow {
+class ContentWindow extends WaveboxWindow {
   /* ****************************************************************************/
   // Creation
   /* ****************************************************************************/

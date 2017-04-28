@@ -81,9 +81,31 @@ class BrowserActions {
   * Searches for the next occurance
   */
   searchNext () { return {} }
+
+  /* **************************************************************************/
+  // Zoom
+  /* **************************************************************************/
+
+  /**
+  * Increases the zoom level
+  */
+  increaseZoom () { return {} }
+
+  /**
+  * Decreases the zoom level
+  */
+  decreaseZoom () { return {} }
+
+  /**
+  * Resets the zoom level
+  */
+  resetZoom () { return {} }
 }
 
 const actions = alt.createActions(BrowserActions)
 ipcRenderer.on('find-start', (evt) => actions.startSearch())
 ipcRenderer.on('find-next', (evt) => actions.searchNext())
+ipcRenderer.on('zoom-in', () => actions.increaseZoom())
+ipcRenderer.on('zoom-out', () => actions.decreaseZoom())
+ipcRenderer.on('zoom-reset', () => actions.resetZoom())
 export default actions

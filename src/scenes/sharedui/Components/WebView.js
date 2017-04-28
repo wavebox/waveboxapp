@@ -94,10 +94,6 @@ export default class WebView extends React.Component {
     }
   }
 
-  shouldComponentUpdate () {
-    return false // we never want to re-render. We will handle this manually
-  }
-
   /* **************************************************************************/
   // Events
   /* **************************************************************************/
@@ -146,7 +142,7 @@ export default class WebView extends React.Component {
   // Webview calls
   /* **************************************************************************/
 
-  focus () {
+  focus = () => {
     const node = this.getWebviewNode()
     if (document.activeElement !== node) {
       this.getWebviewNode().focus()
@@ -211,7 +207,7 @@ export default class WebView extends React.Component {
   * Calls into the webview to get process memory info
   * @return promise
   */
-  getProcessMemoryInfo () {
+  getProcessMemoryInfo = () => {
     return this.sendWithResponse('get-process-memory-info')
   }
 
@@ -222,7 +218,7 @@ export default class WebView extends React.Component {
   * @param timeout=5000: the timeout before rejection
   * @return promise
   */
-  sendWithResponse (sendName, obj = {}, timeout = 5000) {
+  sendWithResponse = (sendName, obj = {}, timeout = 5000) => {
     return new Promise((resolve, reject) => {
       const id = Math.random().toString()
       const respondName = SEND_RESPOND_PREFIX + ':' + sendName + ':' + id
@@ -244,6 +240,10 @@ export default class WebView extends React.Component {
   */
   getWebviewNode = () => {
     return ReactDOM.findDOMNode(this).getElementsByTagName('webview')[0]
+  }
+
+  shouldComponentUpdate () {
+    return false // we never want to re-render. We will handle this manually
   }
 
   render () {
