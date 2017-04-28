@@ -124,7 +124,7 @@ export default class Tray extends React.Component {
   /**
   * Handles a mouse trigger click
   */
-  handleMouseTriggerClick () {
+  handleMouseTriggerClick = () => {
     const { mouseTrigger, mouseTriggerAction } = this.props.traySettings
     if (mouseTrigger === MOUSE_TRIGGERS.SINGLE) {
       ipcRenderer.send(mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? 'toggle-mailbox-visibility-from-tray' : 'show-mailbox-from-tray')
@@ -134,7 +134,7 @@ export default class Tray extends React.Component {
   /**
   * Handles a mouse trigger double click
   */
-  handleMouseTriggerDoubleClick () {
+  handleMouseTriggerDoubleClick = () => {
     const { mouseTrigger, mouseTriggerAction } = this.props.traySettings
     if (mouseTrigger === MOUSE_TRIGGERS.DOUBLE) {
       ipcRenderer.send(mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? 'toggle-mailbox-visibility-from-tray' : 'show-mailbox-from-tray')
@@ -144,7 +144,7 @@ export default class Tray extends React.Component {
   /**
   * Toggles the apps visibility
   */
-  handleToggleVisibility () {
+  handleToggleVisibility = () => {
     ipcRenderer.send('toggle-mailbox-visibility-from-tray')
   }
 

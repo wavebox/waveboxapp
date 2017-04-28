@@ -113,7 +113,7 @@ const AppBadge = class AppBadge extends React.Component {
   * @return true if rendered, false otherwise
   */
   renderAppOverlayIcon (unreadCount, hasUnreadActivity) {
-    if (AppBadge.supportsAppOverlayIcon()) { return false }
+    if (!AppBadge.supportsAppOverlayIcon()) { return false }
 
     const win = remote.getCurrentWindow()
     if (unreadCount === 0) {
