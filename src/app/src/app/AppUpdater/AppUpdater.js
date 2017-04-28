@@ -192,11 +192,12 @@ class AppUpdater {
   static migrateWin32DatabaseLocation (logger) {
     if (process.platform !== 'win32') { return }
     try {
-      logger.log('Migrating database from 3.1.3 to 3.1.4')
+      logger.log('Checking database migration from 3.1.3 to 3.1.4')
       const prevPath = new AppDirectory(pkg.name).userData()
       const nextPath = new AppDirectory({ appName: pkg.name, useRoaming: true }).userData()
 
       if (fs.existsSync(prevPath) && !fs.existsSync(nextPath)) {
+        logger.log('Migrating database from 3.1.3 to 3.1.4')
         fs.moveSync(prevPath, nextPath)
       }
     } catch (ex) {
