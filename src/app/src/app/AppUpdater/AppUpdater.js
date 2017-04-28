@@ -5,6 +5,12 @@ const Win32Registry = require('./Win32Registry')
 const pkg = require('../../package.json')
 const fs = require('fs-extra')
 const AppDirectory = require('appdirectory')
+const AppUpdaterLog = require('./AppUpdaterLog')
+
+const SQUIRREL_INSTALL_SWITCH = '--squirrel-install'
+const SQUIRREL_UPDATE_SWITCH = '--squirrel-updated'
+const SQUIRREL_UNINSTALL_SWITCH = '--squirrel-uninstall'
+const SQUIRREL_OBSOLETE_SWITCH = '--squirrel-obsolete'
 
 class AppUpdater {
   /* ****************************************************************************/
@@ -134,30 +140,42 @@ class AppUpdater {
     if (process.platform !== 'win32') { return false }
     if (process.argv.length === 1) { return false }
 
-    switch (process.argv[1]) {
-      case '--squirrel-install':
-      case '--squirrel-updated':
+    const installSwitch = process.argv[1]
+    const logger = new AppUpdaterLog()
+    logger
+      .log('--------------------')
+      .log(`New Install Started. Switch: ${installSwitch}`)
+
+    if (installSwitch === SQUIRREL_INSTALL_SWITCH || installSwitch === SQUIRREL_UPDATE_SWITCH) {
+      if (installSwitch === SQUIRREL_INSTALL_SWITCH) {
+        logger.log(`Create shortcuts`)
         AppUpdater._spawnWin32Update(['--createShortcut', path.basename(process.execPath)])
-        Win32Registry.addManifestEntries(path.join(process.execPath, '../../Wavebox.exe'))
-          .catch(() => Promise.resolve())
-          .then(() => {
-            setTimeout(app.quit, 1000)
-          })
-        AppUpdater.migrateWin32DatabaseLocation()
-        return true
-      case '--squirrel-uninstall':
-        AppUpdater._spawnWin32Update(['--removeShortcut', path.basename(process.execPath)])
-        Win32Registry.removeManifestEntries(path.join(process.execPath, '../../Wavebox.exe'))
-          .catch(() => Promise.resolve())
-          .then(() => {
-            setTimeout(app.quit, 1000)
-          })
-        return true
-      case '--squirrel-obsolete':
-        app.quit()
-        return true
-      default:
-        return false
+      }
+      AppUpdater.migrateWin32DatabaseLocation(logger)
+      Win32Registry.addManifestEntries(path.join(process.execPath, '../../Wavebox.exe'))
+        .then(() => logger.promiseLog(`Added Registry Entries`),
+        (err) => logger.promiseLog(`Failed to add Registry Entries ${err}`))
+        .then(() => {
+          logger.flush()
+          setTimeout(app.quit, 1000)
+        })
+      return true
+    } else if (installSwitch === SQUIRREL_UNINSTALL_SWITCH) {
+      logger.log(`Remove shortcuts`)
+      AppUpdater._spawnWin32Update(['--removeShortcut', path.basename(process.execPath)])
+      Win32Registry.removeManifestEntries(path.join(process.execPath, '../../Wavebox.exe'))
+        .then(() => logger.promiseLog(`Removed Registry Entries`),
+        (err) => logger.promiseLog(`Failed to remove Registry Entries ${err}`))
+        .then(() => {
+          logger.flush()
+          setTimeout(app.quit, 1000)
+        })
+      return true
+    } else if (installSwitch === SQUIRREL_OBSOLETE_SWITCH) {
+      app.quit()
+      return true
+    } else {
+      return false
     }
   }
 
@@ -167,12 +185,14 @@ class AppUpdater {
 
   /**
   * Moves the databases on win32 from /local/ to /roaming/
+  * @param logger: the logger instance
   * @from 3.1.3-
   * @to 3.1.4+
   */
-  static migrateWin32DatabaseLocation () {
+  static migrateWin32DatabaseLocation (logger) {
     if (process.platform !== 'win32') { return }
     try {
+      logger.log('Migrating database from 3.1.3 to 3.1.4')
       const prevPath = new AppDirectory(pkg.name).userData()
       const nextPath = new AppDirectory({ appName: pkg.name, useRoaming: true }).userData()
 
@@ -180,6 +200,7 @@ class AppUpdater {
         fs.moveSync(prevPath, nextPath)
       }
     } catch (ex) {
+      logger.log(`Migration failed ${ex}`)
       console.warn('Failed to migrate Win32DatabaseLocation', ex)
     }
   }
