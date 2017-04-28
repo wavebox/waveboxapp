@@ -69,6 +69,16 @@ class MailboxReducer {
   }
 
   /**
+  * @param mailbox: the mailbox to update
+  * @param show: true to show the coloured ring around the mailbox avatars
+  */
+  static setShowAvatarColorRing (mailbox, show) {
+    return mailbox.changeData({
+      showAvatarColorRing: show
+    })
+  }
+
+  /**
   * Sets the way the services are displayed
   * @param mailbox: the mailbox to update
   * @param displayMode: the new display mode

@@ -87,31 +87,35 @@ export default class MailboxAvatar extends React.Component {
 
   render () {
     const { url } = this.state
-    const { style, backgroundColor, mailbox, size, useBorderHack, ...passProps } = this.props
+    const { style, mailbox, size, useBorderHack, ...otherProps } = this.props
+    const passProps = Object.assign({
+      draggable: false,
+      style: Object.assign({}, style),
+      backgroundColor: mailbox.hasCustomAvatar || mailbox.avatarURL ? 'white' : mailbox.color
+    }, otherProps)
 
-    passProps.draggable = false
-    passProps.style = Object.assign({}, style)
-    if (backgroundColor) {
-      passProps.backgroundColor = backgroundColor
-    } else {
-      passProps.backgroundColor = mailbox.hasCustomAvatar || mailbox.avatarURL ? 'white' : mailbox.color
-    }
-
-    if (useBorderHack) {
-      // Use a box shadow hack rather than border to fix a phantom white line
-      // https://stackoverflow.com/questions/31805296/why-do-i-get-a-faint-border-around-css-circles-in-internet-explorer
-      // This has the side effect of now overflowing the element, so try to be a bit intelligent about
-      // reducing the size depending on the passed props
-      if (style.boxShadow) {
-        passProps.size = size
+    // Update the styles for the border
+    if (mailbox.showAvatarColorRing) {
+      if (useBorderHack) {
+        // Use a box shadow hack rather than border to fix a phantom white line
+        // https://stackoverflow.com/questions/31805296/why-do-i-get-a-faint-border-around-css-circles-in-internet-explorer
+        // This has the side effect of now overflowing the element, so try to be a bit intelligent about
+        // reducing the size depending on the passed props
+        if (style.boxShadow) {
+          passProps.size = size
+        } else {
+          const borderSize = Math.round(size * 0.08)
+          passProps.style.boxShadow = `0 0 0 ${borderSize}px ${mailbox.color}`
+          passProps.size = size - (2 * borderSize)
+        }
       } else {
-        const borderSize = Math.round(size * 0.08)
-        passProps.style.boxShadow = `0 0 0 ${borderSize}px ${mailbox.color}`
-        passProps.size = size - (2 * borderSize)
+        passProps.size = size
+        passProps.style.border = `${size * 0.08}px solid ${mailbox.color}`
       }
     } else {
+      passProps.style.boxShadow = 'none'
+      passProps.style.border = 'none'
       passProps.size = size
-      passProps.style.border = `${size * 0.08}px solid ${mailbox.color}`
     }
 
     if (url) {

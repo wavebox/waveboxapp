@@ -57,7 +57,9 @@ export default class SidelistItemMailboxService extends React.Component {
     const { isHovering } = this.state
     const isActive = isActiveMailbox && isActiveService
 
-    const borderColor = isActive || isHovering ? mailbox.color : 'white'
+    const borderColor = mailbox.showAvatarColorRing ? (
+      isActive || isHovering ? mailbox.color : 'white'
+    ) : 'transparent'
     const baseStyle = isActive || isHovering ? styles.mailboxServiceIconImageActive : styles.mailboxServiceIconImage
     return (
       <Avatar

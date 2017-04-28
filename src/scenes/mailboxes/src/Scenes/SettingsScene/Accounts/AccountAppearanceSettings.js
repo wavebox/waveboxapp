@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper, RaisedButton, FontIcon } from 'material-ui'
+import { Paper, RaisedButton, FontIcon, Toggle } from 'material-ui'
 import { ColorPickerButton } from 'Components'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
 import styles from '../SettingStyles'
@@ -88,6 +88,11 @@ export default class AccountAppearanceSettings extends React.Component {
             onClick={() => mailboxActions.setCustomAvatar(mailbox.id, undefined)}
             label='Reset Account Icon' />
         </div>
+        <Toggle
+          toggled={mailbox.showAvatarColorRing}
+          label='Show Account Colour around Icon'
+          labelPosition='right'
+          onToggle={(evt, toggled) => mailboxActions.reduce(mailbox.id, MailboxReducer.setShowAvatarColorRing, toggled)} />
       </Paper>
     )
   }
