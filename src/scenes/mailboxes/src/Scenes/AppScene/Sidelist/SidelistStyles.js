@@ -93,7 +93,7 @@ export default {
   mailboxBadge: {
     backgroundColor: 'rgba(238, 54, 55, 0.95)',
     color: Colors.red50,
-    fontWeight: '100',
+    fontWeight: process.platform === 'linux' ? 'normal' : '100',
     width: 'auto',
     minWidth: 24,
     paddingLeft: 4,
