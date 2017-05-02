@@ -2,6 +2,9 @@ const persistence = require('../storage/settingStorage')
 const { EventEmitter } = require('events')
 const {
   Settings: {
+    SettingsIdent: { SEGMENTS },
+
+    AcceleratorSettings,
     AppSettings,
     LanguageSettings,
     OSSettings,
@@ -15,42 +18,49 @@ class SettingStore extends EventEmitter {
     super()
 
     // Build the current data
-    this.app = new AppSettings(persistence.getJSONItem('app', {}))
-    this.language = new LanguageSettings(persistence.getJSONItem('language', {}))
-    this.os = new OSSettings(persistence.getJSONItem('os', {}))
-    this.tray = new TraySettings(persistence.getJSONItem('tray', {}))
-    this.ui = new UISettings(persistence.getJSONItem('ui', {}))
+    this.accelerators = new AcceleratorSettings(persistence.getJSONItem(SEGMENTS.ACCELERATORS, {}))
+    this.app = new AppSettings(persistence.getJSONItem(SEGMENTS.APP, {}))
+    this.language = new LanguageSettings(persistence.getJSONItem(SEGMENTS.LANGUAGE, {}))
+    this.os = new OSSettings(persistence.getJSONItem(SEGMENTS.OS, {}))
+    this.tray = new TraySettings(persistence.getJSONItem(SEGMENTS.TRAY, {}))
+    this.ui = new UISettings(persistence.getJSONItem(SEGMENTS.UI, {}))
 
     // Listen for changes
-    persistence.on('changed:app', () => {
-      const prev = this.language
-      this.app = new AppSettings(persistence.getJSONItem('app', {}))
+    persistence.on('changed:' + SEGMENTS.ACCELERATORS, () => {
+      const prev = this.accelerators
+      this.app = new AcceleratorSettings(persistence.getJSONItem(SEGMENTS.ACCELERATORS, {}))
       this.emit('changed', { })
-      this.emit('changed:app', { prev: prev, next: this.app })
+      this.emit('changed:' + SEGMENTS.ACCELERATORS, { prev: prev, next: this.accelerators })
     })
-    persistence.on('changed:language', () => {
+    persistence.on('changed:' + SEGMENTS.APP, () => {
       const prev = this.language
-      this.language = new LanguageSettings(persistence.getJSONItem('language', {}))
+      this.app = new AppSettings(persistence.getJSONItem(SEGMENTS.APP, {}))
       this.emit('changed', { })
-      this.emit('changed:language', { prev: prev, next: this.language })
+      this.emit('changed:' + SEGMENTS.APP, { prev: prev, next: this.app })
     })
-    persistence.on('changed:os', () => {
+    persistence.on('changed:' + SEGMENTS.LANGUAGE, () => {
+      const prev = this.language
+      this.language = new LanguageSettings(persistence.getJSONItem(SEGMENTS.LANGUAGE, {}))
+      this.emit('changed', { })
+      this.emit('changed:' + SEGMENTS.LANGUAGE, { prev: prev, next: this.language })
+    })
+    persistence.on('changed:' + SEGMENTS.OS, () => {
       const prev = this.os
-      this.os = new OSSettings(persistence.getJSONItem('os', {}))
+      this.os = new OSSettings(persistence.getJSONItem(SEGMENTS.OS, {}))
       this.emit('changed', { })
-      this.emit('changed:os', { prev: prev, next: this.os })
+      this.emit('changed:' + SEGMENTS.OS, { prev: prev, next: this.os })
     })
-    persistence.on('changed:tray', () => {
+    persistence.on('changed:' + SEGMENTS.TRAY, () => {
       const prev = this.tray
-      this.tray = new TraySettings(persistence.getJSONItem('tray', {}))
+      this.tray = new TraySettings(persistence.getJSONItem(SEGMENTS.TRAY, {}))
       this.emit('changed', { })
-      this.emit('changed:tray', { prev: prev, next: this.tray })
+      this.emit('changed:' + SEGMENTS.TRAY, { prev: prev, next: this.tray })
     })
-    persistence.on('changed:ui', () => {
+    persistence.on('changed:' + SEGMENTS.UI, () => {
       const prev = this.ui
-      this.ui = new UISettings(persistence.getJSONItem('ui', {}))
+      this.ui = new UISettings(persistence.getJSONItem(SEGMENTS.UI, {}))
       this.emit('changed', { })
-      this.emit('changed:ui', { prev: prev, next: this.ui })
+      this.emit('changed:' + SEGMENTS.UI, { prev: prev, next: this.ui })
     })
   }
 

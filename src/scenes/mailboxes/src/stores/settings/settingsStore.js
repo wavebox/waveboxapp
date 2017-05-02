@@ -4,6 +4,7 @@ import persistence from './settingsPersistence'
 import dictionaries from 'shared/dictionaries.js'
 import fs from 'fs'
 import {
+  AcceleratorSettings,
   AppSettings,
   LanguageSettings,
   OSSettings,
@@ -75,6 +76,7 @@ class SettingsStore {
   /* **************************************************************************/
 
   constructor () {
+    this.accelerators = null
     this.app = null
     this.language = null
     this.os = null
@@ -100,30 +102,17 @@ class SettingsStore {
     this.trayDefaults = SettingsStore.generateTrayThemedDefaults()
 
     // Load everything
-    this.app = new AppSettings(persistence.getJSONItemSync('app', {}))
-    this.language = new LanguageSettings(persistence.getJSONItemSync('language', {}))
-    this.os = new OSSettings(persistence.getJSONItemSync('os', {}))
-    this.tray = new TraySettings(persistence.getJSONItemSync('tray', {}), this.trayDefaults)
-    this.ui = new UISettings(persistence.getJSONItemSync('ui', {}))
+    this.accelerators = new AcceleratorSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.ACCELERATORS, {}))
+    this.app = new AppSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.APP, {}))
+    this.language = new LanguageSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.LANGUAGE, {}))
+    this.os = new OSSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.OS, {}))
+    this.tray = new TraySettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.TRAY, {}), this.trayDefaults)
+    this.ui = new UISettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.UI, {}))
   }
 
   /* **************************************************************************/
-  // Changing
+  // Class Mapping
   /* **************************************************************************/
-
-  /**
-  * @param segment: the segement string
-  * @return the store object for this segment
-  */
-  storeKeyFromSegment (segment) {
-    switch (segment) {
-      case SettingsIdent.SEGMENTS.APP: return 'app'
-      case SettingsIdent.SEGMENTS.LANGUAGE: return 'language'
-      case SettingsIdent.SEGMENTS.OS: return 'os'
-      case SettingsIdent.SEGMENTS.TRAY: return 'tray'
-      case SettingsIdent.SEGMENTS.UI: return 'ui'
-    }
-  }
 
   /**
   * @param segment: the segment string
@@ -131,6 +120,7 @@ class SettingsStore {
   */
   storeClassFromSegment (segment) {
     switch (segment) {
+      case SettingsIdent.SEGMENTS.ACCELERATORS: return AcceleratorSettings
       case SettingsIdent.SEGMENTS.APP: return AppSettings
       case SettingsIdent.SEGMENTS.LANGUAGE: return LanguageSettings
       case SettingsIdent.SEGMENTS.OS: return OSSettings
@@ -139,19 +129,9 @@ class SettingsStore {
     }
   }
 
-  /**
-  * @param segment: the segement string
-  * @return the key for the persistence store
-  */
-  persistenceKeyFromSegment (segment) {
-    switch (segment) {
-      case SettingsIdent.SEGMENTS.APP: return 'app'
-      case SettingsIdent.SEGMENTS.LANGUAGE: return 'language'
-      case SettingsIdent.SEGMENTS.OS: return 'os'
-      case SettingsIdent.SEGMENTS.TRAY: return 'tray'
-      case SettingsIdent.SEGMENTS.UI: return 'ui'
-    }
-  }
+  /* **************************************************************************/
+  // Changing
+  /* **************************************************************************/
 
   /**
   * Updates a segment
@@ -159,16 +139,14 @@ class SettingsStore {
   * @param updates: k-> of update to apply
   */
   handleUpdate ({ segment, updates }) {
-    const storeKey = this.storeKeyFromSegment(segment)
     const StoreClass = this.storeClassFromSegment(segment)
-    const persistenceKey = this.persistenceKeyFromSegment(segment)
 
-    const js = this[storeKey].changeData(updates)
-    persistence.setJSONItem(persistenceKey, js)
+    const js = this[segment].changeData(updates)
+    persistence.setJSONItem(segment, js)
     if (segment === SettingsIdent.SEGMENTS.TRAY) {
-      this[storeKey] = new StoreClass(js, this.trayDefaults)
+      this[segment] = new StoreClass(js, this.trayDefaults)
     } else {
-      this[storeKey] = new StoreClass(js)
+      this[segment] = new StoreClass(js)
     }
   }
 
@@ -178,17 +156,15 @@ class SettingsStore {
   * @param key: the name of the key to toggle
   */
   handleToggleBool ({ segment, key }) {
-    const storeKey = this.storeKeyFromSegment(segment)
     const StoreClass = this.storeClassFromSegment(segment)
-    const persistenceKey = this.persistenceKeyFromSegment(segment)
 
-    const js = this[storeKey].cloneData()
+    const js = this[segment].cloneData()
     js[key] = !js[key]
-    persistence.setJSONItem(persistenceKey, js)
+    persistence.setJSONItem(segment, js)
     if (segment === SettingsIdent.SEGMENTS.TRAY) {
-      this[storeKey] = new StoreClass(js, this.trayDefaults)
+      this[segment] = new StoreClass(js, this.trayDefaults)
     } else {
-      this[storeKey] = new StoreClass(js)
+      this[segment] = new StoreClass(js)
     }
   }
 

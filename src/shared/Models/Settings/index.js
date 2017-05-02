@@ -1,4 +1,5 @@
 module.exports = {
+  AcceleratorSettings: require('./AcceleratorSettings'),
   AppSettings: require('./AppSettings'),
   LanguageSettings: require('./LanguageSettings'),
   OSSettings: require('./OSSettings'),
