@@ -28,7 +28,7 @@ class SettingStore extends EventEmitter {
     // Listen for changes
     persistence.on('changed:' + SEGMENTS.ACCELERATORS, () => {
       const prev = this.accelerators
-      this.app = new AcceleratorSettings(persistence.getJSONItem(SEGMENTS.ACCELERATORS, {}))
+      this.accelerators = new AcceleratorSettings(persistence.getJSONItem(SEGMENTS.ACCELERATORS, {}))
       this.emit('changed', { })
       this.emit('changed:' + SEGMENTS.ACCELERATORS, { prev: prev, next: this.accelerators })
     })

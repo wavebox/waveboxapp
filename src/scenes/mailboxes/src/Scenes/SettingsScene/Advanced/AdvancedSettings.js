@@ -2,8 +2,9 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Toggle, Paper } from 'material-ui'
 import { settingsStore, settingsActions } from 'stores/settings'
-import styles from './SettingStyles'
+import styles from '../SettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
+import AcceleratorSettings from './AcceleratorSettings'
 
 export default class AdvancedSettings extends React.Component {
   /* **************************************************************************/
@@ -36,7 +37,8 @@ export default class AdvancedSettings extends React.Component {
   */
   generateState (settingsState = settingsStore.getState()) {
     return {
-      app: settingsState.app
+      app: settingsState.app,
+      accelerators: settingsState.accelerators
     }
   }
 
@@ -57,7 +59,7 @@ export default class AdvancedSettings extends React.Component {
   }
 
   render () {
-    const { app } = this.state
+    const { app, accelerators } = this.state
     const { showRestart, ...passProps } = this.props
 
     return (
@@ -96,6 +98,7 @@ export default class AdvancedSettings extends React.Component {
               settingsActions.checkForUpdates(toggled)
             }} />
         </Paper>
+        <AcceleratorSettings accelerators={accelerators} />
       </div>
     )
   }

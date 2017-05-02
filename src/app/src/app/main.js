@@ -123,6 +123,7 @@
 
   app.on('ready', () => {
     appMenu.updateApplicationMenu(
+      settingStore.accelerators,
       mailboxStore.orderedMailboxes(),
       mailboxStore.getActiveMailbox(),
       mailboxStore.getActiveServiceType()

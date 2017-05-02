@@ -1,5 +1,6 @@
 const { Menu, shell, dialog } = require('electron')
 const mailboxStore = require('./stores/mailboxStore')
+const settingStore = require('./stores/settingStore')
 const { GITHUB_URL, GITHUB_ISSUE_URL, WEB_URL, PRIVACY_URL } = require('../shared/constants')
 const pkg = require('../package.json')
 
@@ -109,12 +110,16 @@ class AppPrimaryMenu {
 
   constructor (selectors) {
     this._selectors = selectors
+    this._lastAccelerators = null
     this._lastMailboxes = null
     this._lastActiveMailbox = null
     this._lastActiveServiceType = null
 
     mailboxStore.on('changed', () => {
       this.handleMailboxesChanged()
+    })
+    settingStore.on('changed:accelerators', (evt) => {
+      this.handleAcceleratorsChanged(evt)
     })
   }
 
@@ -124,77 +129,199 @@ class AppPrimaryMenu {
 
   /**
   * Builds the menu
+  * @param accelerators: the accelerators to use
   * @param mailboxes: the list of mailboxes
   * @param activeMailbox: the active mailbox
   * @param activeServiceType: the type of the active service
   * @return the new menu
   */
-  build (mailboxes, activeMailbox, activeServiceType) {
+  build (accelerators, mailboxes, activeMailbox, activeServiceType) {
     return Menu.buildFromTemplate([
       {
         label: 'Application',
         submenu: [
-          { label: 'About', click: this._selectors.aboutDialog },
+          {
+            label: 'About',
+            click: this._selectors.aboutDialog
+          },
           { type: 'separator' },
-          { label: 'Preferences', click: this._selectors.preferences, accelerator: 'CmdOrCtrl+,' },
+          {
+            label: 'Preferences',
+            click: this._selectors.preferences,
+            accelerator: accelerators.preferences
+          },
           { type: 'separator' },
           process.platform === 'darwin' ? { label: 'Services', role: 'services', submenu: [] } : undefined,
           process.platform === 'darwin' ? { type: 'separator' } : undefined,
-          { label: 'Show Window', accelerator: 'CmdOrCtrl+N', click: this._selectors.showWindow },
-          { label: 'Hide Window', accelerator: 'CmdOrCtrl+W', click: this._selectors.closeWindow },
-          { label: 'Hide', accelerator: 'CmdOrCtrl+H', role: 'hide' },
-          { label: 'Hide Others', accelerator: process.platform === 'darwin' ? 'Command+Alt+H' : 'Ctrl+Shift+H', role: 'hideothers' },
-          { label: 'Show All', role: 'unhide' },
+          {
+            label: 'Show Window',
+            click: this._selectors.showWindow,
+            accelerator: accelerators.showWindow
+          },
+          {
+            label: 'Hide Window',
+            click: this._selectors.closeWindow,
+            accelerator: accelerators.hideWindow
+          },
+          {
+            label: 'Hide',
+            role: 'hide',
+            accelerator: accelerators.hide
+          },
+          {
+            label: 'Hide Others',
+            role: 'hideothers',
+            accelerator: accelerators.hideOthers
+          },
+          {
+            label: 'Show All',
+            role: 'unhide'
+          },
           { type: 'separator' },
-          { label: 'Quit', accelerator: 'CmdOrCtrl+Q', click: this._selectors.fullQuit }
+          {
+            label: 'Quit',
+            click: this._selectors.fullQuit,
+            accelerator: accelerators.quit
+          }
         ].filter((item) => item !== undefined)
       },
       {
         label: 'Edit',
         submenu: [
-          { label: 'Undo', accelerator: 'CmdOrCtrl+Z', role: 'undo' },
-          { label: 'Redo', accelerator: 'Shift+CmdOrCtrl+Z', role: 'redo' },
+          {
+            label: 'Undo',
+            role: 'undo',
+            accelerator: accelerators.undo
+          },
+          {
+            label: 'Redo',
+            role: 'redo',
+            accelerator: accelerators.redo
+          },
           { type: 'separator' },
-          { label: 'Cut', accelerator: 'CmdOrCtrl+X', role: 'cut' },
-          { label: 'Copy', accelerator: 'CmdOrCtrl+C', role: 'copy' },
-          { label: 'Paste', accelerator: 'CmdOrCtrl+V', role: 'paste' },
-          { label: 'Paste and match style', accelerator: 'CmdOrCtrl+Shift+V', role: 'pasteandmatchstyle' },
-          { label: 'Select All', accelerator: 'CmdOrCtrl+A', role: 'selectall' },
+          {
+            label: 'Cut',
+            role: 'cut',
+            accelerator: accelerators.cut
+          },
+          {
+            label: 'Copy',
+            role: 'copy',
+            accelerator: accelerators.copy
+          },
+          {
+            label: 'Paste',
+            role: 'paste',
+            accelerator: accelerators.paste
+          },
+          {
+            label: 'Paste and match style',
+            role: 'pasteandmatchstyle',
+            accelerator: accelerators.pasteAndMatchStyle
+          },
+          {
+            label: 'Select All',
+            role: 'selectall',
+            accelerator: accelerators.selectAll
+          },
           { type: 'separator' },
-          { label: 'Find', accelerator: 'CmdOrCtrl+F', click: this._selectors.find },
-          { label: 'Find Next', accelerator: 'CmdOrCtrl+G', click: this._selectors.findNext }
+          {
+            label: 'Find',
+            click: this._selectors.find,
+            accelerator: accelerators.find
+          },
+          {
+            label: 'Find Next',
+            click: this._selectors.findNext,
+            accelerator: accelerators.findNext
+          }
         ]
       },
       {
         label: 'View',
         submenu: [
-          { label: 'Toggle Full Screen', accelerator: process.platform === 'darwin' ? 'Ctrl+Command+F' : 'F11', click: this._selectors.fullscreenToggle },
-          { label: 'Toggle Sidebar', accelerator: (process.platform === 'darwin' ? 'Command+alt+S' : 'Ctrl+Shift+S'), click: this._selectors.sidebarToggle },
-          process.platform === 'darwin' ? undefined : { label: 'Toggle Menu', accelerator: 'CmdOrCtrl+\\', click: this._selectors.menuToggle },
+          {
+            label: 'Toggle Full Screen',
+            click: this._selectors.fullscreenToggle,
+            accelerator: accelerators.toggleFullscreen
+          },
+          {
+            label: 'Toggle Sidebar',
+            click: this._selectors.sidebarToggle,
+            accelerator: accelerators.toggleSidebar
+          },
+          process.platform === 'darwin' ? undefined : {
+            label: 'Toggle Menu',
+            click: this._selectors.menuToggle,
+            accelerator: accelerators.toggleMenu
+          },
           { type: 'separator' },
-          { label: 'Navigate Back', accelerator: 'CmdOrCtrl+[', click: this._selectors.mailboxNavBack },
-          { label: 'Navigate Back', accelerator: 'CmdOrCtrl+Left', click: this._selectors.mailboxNavBack },
-          { label: 'Navigate Forward', accelerator: 'CmdOrCtrl+]', click: this._selectors.mailboxNavForward },
+          {
+            label: 'Navigate Back',
+            click: this._selectors.mailboxNavBack,
+            accelerator: accelerators.navigateBack
+          },
+          {
+            label: 'Navigate Forward',
+            click: this._selectors.mailboxNavForward,
+            accelerator: accelerators.navigateForward
+          },
           { type: 'separator' },
-          { label: 'Zoom In', accelerator: 'CmdOrCtrl+Plus', click: this._selectors.zoomIn },
-          { label: 'Zoom Out', accelerator: 'CmdOrCtrl+-', click: this._selectors.zoomOut },
-          { label: 'Reset Zoom', accelerator: 'CmdOrCtrl+0', click: this._selectors.zoomReset },
+          {
+            label: 'Zoom In',
+            click: this._selectors.zoomIn,
+            accelerator: accelerators.zoomIn
+          },
+          {
+            label: 'Zoom Out',
+            click: this._selectors.zoomOut,
+            accelerator: accelerators.zoomOut
+          },
+          {
+            label: 'Reset Zoom',
+            click: this._selectors.zoomReset,
+            accelerator: accelerators.zoomReset
+          },
           { type: 'separator' },
-          { label: 'Reload', accelerator: 'CmdOrCtrl+R', click: this._selectors.reload },
-          { label: 'Developer Tools', accelerator: process.platform === 'darwin' ? 'Command+Alt+J' : 'Ctrl+Shift+J', click: this._selectors.devTools }
+          {
+            label: 'Reload',
+            click: this._selectors.reload,
+            accelerator: accelerators.reload
+          },
+          {
+            label: 'Developer Tools',
+            click: this._selectors.devTools,
+            accelerator: accelerators.developerTools
+          }
         ].filter((item) => item !== undefined)
       },
       {
         label: 'Window',
         role: 'window',
         submenu: [
-          { label: 'Minimize', accelerator: 'CmdOrCtrl+M', role: 'minimize' },
-          { label: 'Cycle Windows', accelerator: 'CmdOrCtrl+`', click: this._selectors.cycleWindows }
+          {
+            label: 'Minimize',
+            role: 'minimize',
+            accelerator: accelerators.minimize
+          },
+          {
+            label: 'Cycle Windows',
+            click: this._selectors.cycleWindows,
+            accelerator: accelerators.cycleWindows
+          }
         ]
         .concat(mailboxes.length <= 1 ? [] : [
           { type: 'separator' },
-          { label: 'Previous Mailbox', accelerator: 'CmdOrCtrl+<', click: this._selectors.prevMailbox },
-          { label: 'Next Mailbox', accelerator: 'CmdOrCtrl+>', click: this._selectors.nextMailbox }
+          {
+            label: 'Previous Mailbox',
+            click: this._selectors.prevMailbox,
+            accelerator: accelerators.previousMailbox
+          },
+          {
+            label: 'Next Mailbox',
+            click: this._selectors.nextMailbox,
+            accelerator: accelerators.nextMailbox
+          }
         ])
         .concat(mailboxes.length <= 1 ? [] : [{ type: 'separator' }])
         .concat(mailboxes.length <= 1 ? [] : mailboxes.map((mailbox, index) => {
@@ -202,19 +329,18 @@ class AppPrimaryMenu {
             label: mailbox.displayName || 'Untitled',
             type: 'radio',
             checked: mailbox.id === (activeMailbox || {}).id,
-            accelerator: index < 9 ? ('CmdOrCtrl+' + (index + 1)) : undefined,
-            click: () => { this._selectors.changeMailbox(mailbox.id) }
+            click: () => { this._selectors.changeMailbox(mailbox.id) },
+            accelerator: this.buildAcceleratorStringForIndex(accelerators.mailboxIndex, index)
           }
         }))
         .concat(activeMailbox && activeMailbox.hasAdditionalServices ? [{ type: 'separator' }] : [])
         .concat(activeMailbox && activeMailbox.hasAdditionalServices ? activeMailbox.enabledServices.map((service, index) => {
-          const accelerator = process.platform === 'darwin' ? 'Command+Alt+' + (index + 1) : 'Ctrl+Alt+' + (index + 1)
           return {
             label: service.humanizedType,
             type: 'radio',
             checked: service.type === activeServiceType,
-            accelerator: index < 9 ? accelerator : undefined,
-            click: () => { this._selectors.changeMailbox(activeMailbox.id, service.type) }
+            click: () => { this._selectors.changeMailbox(activeMailbox.id, service.type) },
+            accelerator: this.buildAcceleratorStringForIndex(accelerators.serviceIndex, index)
           }
         }) : [])
       },
@@ -232,16 +358,32 @@ class AppPrimaryMenu {
   }
 
   /**
+  * Builds an accelerator string from a descriptor but with a rolling index value
+  * @param accelerator: the accelerator descriptor to use
+  * @param index: the index of the item to use in an array. This will be +1'ed and top & tailed
+  * @return a string that can be used with electron
+  */
+  buildAcceleratorStringForIndex (accelerator, index) {
+    if (index < 0 || index > 9) {
+      return undefined
+    } else {
+      return (accelerator || '').replace('Number', index + 1)
+    }
+  }
+
+  /**
   * Builds and applies the mailboxes menu
+  * @param accelerators: the accelerators to use
   * @param mailboxes: the current list of mailboxes
   * @param activeMailbox: the active mailbox
   * @param activeServiceType: the type of active service
   */
-  updateApplicationMenu (mailboxes, activeMailbox, activeServiceType) {
+  updateApplicationMenu (accelerators, mailboxes, activeMailbox, activeServiceType) {
+    this._lastAccelerators = accelerators
     this._lastActiveMailbox = activeMailbox
     this._lastActiveServiceType = activeServiceType
     this._lastMailboxes = mailboxes
-    Menu.setApplicationMenu(this.build(mailboxes, activeMailbox, activeServiceType))
+    Menu.setApplicationMenu(this.build(accelerators, mailboxes, activeMailbox, activeServiceType))
   }
 
   /* ****************************************************************************/
@@ -269,8 +411,16 @@ class AppPrimaryMenu {
     // Check for change
     const changed = props.findIndex(([prev, next]) => prev !== next) !== -1
     if (changed) {
-      this.updateApplicationMenu(mailboxes, activeMailbox, activeServiceType)
+      this.updateApplicationMenu(this._lastAccelerators, mailboxes, activeMailbox, activeServiceType)
     }
+  }
+
+  /**
+  * Handles the accelerators changing. If these change it will definately have a reflection in the
+  * menu, so just update immediately
+  */
+  handleAcceleratorsChanged ({ next }) {
+    this.updateApplicationMenu(next, this._lastMailboxes, this._lastActiveMailbox, this._lastActiveServiceType)
   }
 }
 

@@ -55,22 +55,6 @@ class SettingsActions {
   }
 
   /**
-  * Disables an accelerator
-  * @param name: the name of the accelerator
-  */
-  disableAccelerator (name) {
-    return this.update(SEGMENTS.ACCELERATORS, name, null)
-  }
-
-  /**
-  * Enables an accelerator
-  * @param name: the name of the accelerator
-  */
-  enableAccelerator (name) {
-    return this.update(SEGMENTS.ACCELERATORS, name, [undefined, undefined, undefined])
-  }
-
-  /**
   * Restores an accelerator to its default value
   * @param name: the name of the accelerator
   */
