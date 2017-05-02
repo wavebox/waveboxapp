@@ -165,6 +165,31 @@ class GoogleHTTP {
   }
 
   /* **************************************************************************/
+  // Gmail: Labels
+  /* **************************************************************************/
+
+  /**
+  * Syncs the label for a mailbox. The label is a cheap call which can be used
+  * to decide if the mailbox has changed
+  * @param auth: the auth to access google with
+  * @param labelId: the id of the label to sync
+  * @return promise
+  */
+  static fetchGmailLabel (auth, labelId) {
+    if (!auth) { return this._rejectWithNoAuth() }
+
+    return new Promise((resolve, reject) => {
+      gmail.users.labels.get({
+        userId: 'me',
+        id: labelId,
+        auth: auth
+      }, (err, response) => {
+        err ? reject(err) : resolve(response)
+      })
+    })
+  }
+
+  /* **************************************************************************/
   // Gmail: Threads
   /* **************************************************************************/
 

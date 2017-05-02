@@ -341,6 +341,45 @@ class GoogleStore {
   }
 
   /**
+  * Gets the label id that can be used in a label query for unread count
+  * @param service: the service we're running the query on
+  * @return the label id or undefined
+  */
+  mailLabelForLabelQuery (service) {
+    switch (service.unreadMode) {
+      case GoogleDefaultService.UNREAD_MODES.INBOX_ALL:
+      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD:
+        return 'INBOX'
+      default:
+        return undefined
+    }
+  }
+
+  /**
+  * Gets the field in the label response that indicates unread
+  * @param service: the service we're running the query on
+  * @return the name of the field the unread count will be stored within
+  */
+  mailLabelUnreadCountField (service) {
+    switch (service.unreadMode) {
+      case GoogleDefaultService.UNREAD_MODES.INBOX_ALL:
+        return 'threadsTotal'
+      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD:
+        return 'threadsUnread'
+      default:
+        return undefined
+    }
+  }
+
+  /**
+  * @param service: the service we're running a query on
+  * @return true if this service can be queried just with the label. False otherwise
+  */
+  canFetchUnreadCountFromLabel (service) {
+    return !!this.mailLabelForLabelQuery(service)
+  }
+
+  /**
   * @param service: the service we're runninga query on
   * @return the query to run on the google servers for the unread counts
   */
@@ -378,6 +417,11 @@ class GoogleStore {
     const auth = this.getAPIAuth(mailbox)
     const labelIds = this.mailLabelIdsForService(service)
     const queryString = this.mailQueryForService(service)
+
+    const singleLabelId = this.mailLabelForLabelQuery(service)
+    const canFetchUnreadFromLabel = this.canFetchUnreadCountFromLabel(service)
+    const unreadFieldInLabel = this.mailLabelUnreadCountField(service)
+
     Promise.resolve()
       .then(() => {
         // STEP 1 [HISTORY]: Get the history changes
@@ -400,7 +444,7 @@ class GoogleStore {
         }
       })
       .then((data) => {
-        // STEP 2 [UNREAD]: Re-query gmail for the latest unread messages
+        // STEP 2.1 [UNREAD]: Re-query gmail for the latest unread messages
         if (!data.hasContentChanged) { return data }
 
         return Promise.resolve()
@@ -424,6 +468,21 @@ class GoogleStore {
                   unreadThreads: fullThreads
                 })
               })
+          })
+      })
+      .then((data) => {
+        // STEP 2.2 [UNREAD/2]: Some unread counts are more accurate when using the count in the label. If we can use this
+        if (!data.hasContentChanged) { return data }
+        if (!canFetchUnreadFromLabel) { return data }
+
+        return Promise.resolve()
+          .then(() => GoogleHTTP.fetchGmailLabel(auth, singleLabelId))
+          .then((response) => {
+            if (response[unreadFieldInLabel] !== undefined) {
+              return Object.assign({}, data, { unreadCount: response[unreadFieldInLabel] })
+            } else {
+              return data
+            }
           })
       })
       .then((data) => {
