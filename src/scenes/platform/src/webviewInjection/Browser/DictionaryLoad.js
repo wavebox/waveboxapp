@@ -5,7 +5,7 @@ const enUS = require('../../../../app/node_modules/dictionary-en-us')
 const pkg = require('../../../../app/package.json')
 const AppDirectory = require('../../../../app/node_modules/appdirectory')
 
-const appDirectory = new AppDirectory(pkg.name).userData()
+const appDirectory = new AppDirectory({ appName: pkg.name, useRoaming: true }).userData()
 const userDictionariesPath = LanguageSettings.userDictionariesPath(appDirectory)
 
 class DictionaryLoad {
