@@ -11,7 +11,7 @@
     "auto-launch": "5.0.1",
     "dictionary-en-us": "1.2.1",
     "escape-html": "1.0.3",
-    "fs-extra": "2.1.2",
+    "fs-extra": "3.0.0",
     "gmail-js": "0.6.10",
     "googleapis": "19.0.0",
     "home-dir": "1.0.0",
