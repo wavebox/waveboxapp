@@ -13,6 +13,7 @@ export default class UISettingsSection extends React.Component {
   static propTypes = {
     ui: PropTypes.object.isRequired,
     os: PropTypes.object.isRequired,
+    accelerators: PropTypes.object.isRequired,
     showRestart: PropTypes.func.isRequired
   }
 
@@ -28,6 +29,7 @@ export default class UISettingsSection extends React.Component {
     const {
       ui,
       os,
+      accelerators,
       showRestart,
       ...passProps
     } = this.props
@@ -52,12 +54,26 @@ export default class UISettingsSection extends React.Component {
             <Toggle
               labelPosition='right'
               toggled={ui.showAppMenu}
-              label='Show titlebar Menu (Ctrl+\)'
+              label={(
+                <span>
+                  <span>Show titlebar Menu </span>
+                  {(accelerators.toggleMenu || '').split('+').map((i) => {
+                    return i ? (<kbd key={i} style={styles.kbd}>{i}</kbd>) : undefined
+                  })}
+                </span>
+              )}
               onToggle={(evt, toggled) => settingsActions.setShowAppMenu(toggled)} />
           ) : undefined}
           <Toggle
             toggled={ui.sidebarEnabled}
-            label={`Show Sidebar (${process.platform === 'darwin' ? 'Ctrl+cmd+S' : 'Ctrl+alt+S'})`}
+            label={(
+              <span>
+                <span>Show Sidebar </span>
+                {(accelerators.toggleSidebar || '').split('+').map((i) => {
+                  return i ? (<kbd key={i} style={styles.kbd}>{i}</kbd>) : undefined
+                })}
+              </span>
+            )}
             labelPosition='right'
             onToggle={(evt, toggled) => settingsActions.setEnableSidebar(toggled)} />
           <Toggle
