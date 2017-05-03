@@ -37,6 +37,7 @@ class MailboxStore {
   constructor () {
     this.index = []
     this.mailboxes = new Map()
+    this.sleepingQueue = new Map()
     this.avatars = new Map()
     this.snapshots = new Map()
     this.active = null
@@ -225,6 +226,35 @@ class MailboxStore {
     */
     this.isActive = (mailboxId, service) => {
       return this.activeMailboxId() === mailboxId && this.activeMailboxService() === service
+    }
+
+    /* ****************************************/
+    // Sleeping
+    /* ****************************************/
+
+    /**
+    * @param mailboxId: the id of the mailbox
+    * @param serviceType: the type of service
+    * @return true if the mailbox is sleeping
+    */
+    this.isSleeping = (mailboxId, serviceType) => {
+      if (!userStore.getState().user.hasSleepable) { return false }
+
+      // Check we support sleeping
+      const mailbox = this.getMailbox(mailboxId)
+      const service = mailbox ? mailbox.serviceForType(serviceType) : undefined
+      if (!service || !service.sleepable) { return false }
+
+      // Check if we are active
+      if (this.isActive(mailboxId, serviceType)) { return false }
+
+      // Check if we are queued for sleeping sleeping
+      const key = `${mailboxId}:${serviceType}`
+      if (this.sleepingQueue.has(key)) {
+        return this.sleepingQueue.get(key).sleeping === true
+      } else {
+        return true
+      }
     }
 
     /* ****************************************/
@@ -858,10 +888,23 @@ class MailboxStore {
   */
   handleChangeActive ({id, service}) {
     if (this.isMailboxRestricted(id, userStore.getState().user)) {
+      this.preventDefault()
       window.location.hash = '/pro'
     } else {
-      this.active = id || this.index[0]
-      this.activeService = service
+      const nextMailbox = id || this.index[0]
+      const nextService = service || CoreMailbox.SERVICE_TYPES.DEFAULT
+
+      // Check we actually did change
+      if (nextMailbox === this.active && nextService === this.activeService) {
+        this.preventDefault()
+        return
+      }
+
+      // Make the change
+      this.scheduleSleep(this.active, this.activeService)
+      this.clearSleep(nextMailbox, nextService)
+      this.active = nextMailbox
+      this.activeService = nextService
       this.sendActiveStateToMainThread()
     }
   }
@@ -876,8 +919,7 @@ class MailboxStore {
     } else {
       const mailbox = this.getMailbox(this.active)
       if (mailbox.enabledServiceTypes[index]) {
-        this.activeService = mailbox.enabledServiceTypes[index]
-        this.sendActiveStateToMainThread()
+        actions.changeActive.defer(mailbox.id, mailbox.enabledServiceTypes[index])
       }
     }
   }
@@ -888,13 +930,7 @@ class MailboxStore {
   handleChangeActivePrev () {
     const activeIndex = this.index.findIndex((id) => id === this.active)
     const nextId = this.index[Math.max(0, activeIndex - 1)] || null
-    if (this.isMailboxRestricted(nextId, userStore.getState().user)) {
-      window.location.hash = '/pro'
-    } else {
-      this.active = nextId
-      this.activeService = CoreMailbox.SERVICE_TYPES.DEFAULT
-      this.sendActiveStateToMainThread()
-    }
+    actions.changeActive.defer(nextId)
   }
 
   /**
@@ -903,13 +939,7 @@ class MailboxStore {
   handleChangeActiveNext () {
     const activeIndex = this.index.findIndex((id) => id === this.active)
     const nextId = this.index[Math.min(this.index.length - 1, activeIndex + 1)] || null
-    if (this.isMailboxRestricted(nextId, userStore.getState().user)) {
-      window.location.hash = '/pro'
-    } else {
-      this.active = nextId
-      this.activeService = CoreMailbox.SERVICE_TYPES.DEFAULT
-      this.sendActiveStateToMainThread()
-    }
+    actions.changeActive.defer(nextId)
   }
 
   /**
@@ -920,6 +950,49 @@ class MailboxStore {
       mailboxId: this.activeMailboxId(),
       serviceType: this.activeMailboxService()
     })
+  }
+
+  /* **************************************************************************/
+  // Handlers : Sleep
+  /* **************************************************************************/
+
+  /**
+  * Clears sleep for a mailbox and service
+  * @param mailboxId: the id of the mailbox
+  * @param serviceType: the type of service
+  */
+  clearSleep (mailboxId, serviceType) {
+    const key = `${mailboxId}:${serviceType}`
+    if (this.sleepingQueue.has(key)) {
+      clearTimeout(this.sleepingQueue.get(key).timer)
+      this.sleepingQueue.delete(key)
+    }
+  }
+
+  /**
+  * Schedules a new sleep for a mailbox/service
+  * @param mailboxId: the id of the mailbox
+  * @param serviceType: the type of service
+  */
+  scheduleSleep (mailboxId, serviceType) {
+    this.clearSleep(mailboxId, serviceType)
+
+    const mailbox = this.getMailbox(mailboxId)
+    const service = mailbox ? mailbox.serviceForType(serviceType) : undefined
+    const wait = service ? service.sleepableTimeout : 0
+
+    const key = `${mailboxId}:${serviceType}`
+    if (wait <= 0) {
+      this.sleepingQueue.set(key, { sleeping: true, timer: null })
+    } else {
+      this.sleepingQueue.set(key, {
+        sleeping: false,
+        timer: setTimeout(() => {
+          this.sleepingQueue.set(key, { sleeping: true, timer: null })
+          this.emitChange()
+        }, wait)
+      })
+    }
   }
 
   /* **************************************************************************/

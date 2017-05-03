@@ -73,7 +73,7 @@ export default class AccountSleepableSettings extends React.Component {
           disabled={!service.sleepable || !userHasSleepable}
           defaultValue={service.sleepableTimeout / 1000}
           type='number'
-          min='1'
+          min='0'
           step='1'
           max='6000'
           onBlur={(evt) => {

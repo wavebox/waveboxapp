@@ -1,9 +1,36 @@
 import React from 'react'
 import MailboxWebView from './MailboxWebView'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
-import { userStore } from 'stores/user'
 
 const REF = 'MailboxWebView'
+const PASSTHROUGH_METHODS = [
+  'focus',
+  'blur',
+  'openDevTools',
+  'send',
+  'navigateBack',
+  'navigateForward',
+  'undo',
+  'redo',
+  'cut',
+  'copy',
+  'paste',
+  'pasteAndMatchStyle',
+  'selectAll',
+  'reload',
+  'reloadIgnoringCache',
+  'stop',
+  'loadURL',
+  'getWebContents',
+  'canGoBack',
+  'canGoForward',
+  'goBack',
+  'goFoward',
+  'getURL',
+  'getProcessMemoryInfo',
+  'sendWithResponse',
+  'getWebviewNode'
+]
 
 export default class MailboxWebViewHibernator extends React.Component {
   /* **************************************************************************/
@@ -15,26 +42,40 @@ export default class MailboxWebViewHibernator extends React.Component {
   }
 
   /* **************************************************************************/
+  // Class Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    // Expose the pass-through methods
+    PASSTHROUGH_METHODS.forEach((m) => {
+      const self = this
+      self[m] = function () {
+        if (self.refs[REF]) {
+          return self.refs[REF][m].apply(self.refs[REF], Array.from(arguments))
+        } else {
+          throw new Error(`MailboxWebViewHibernator has slept MailboxWebView. Cannot call ${m}`)
+        }
+      }
+    })
+  }
+
+  /* **************************************************************************/
   // Component lifecylce
   /* **************************************************************************/
 
   componentDidMount () {
-    this.sleepWait = null
-
+    this.captureRef = 0
     mailboxStore.listen(this.mailboxUpdated)
-    userStore.listen(this.userUpdated)
   }
 
   componentWillUnmount () {
-    clearTimeout(this.sleepWait)
-
     mailboxStore.unlisten(this.mailboxUpdated)
-    userStore.unlisten(this.userUpdated)
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceType !== nextProps.serviceType) {
-      clearTimeout(this.sleepWait)
       this.setState(this.generateState(nextProps))
     }
   }
@@ -52,128 +93,60 @@ export default class MailboxWebViewHibernator extends React.Component {
   */
   generateState (props) {
     const mailboxState = mailboxStore.getState()
-    const isActive = mailboxState.isActive(props.mailboxId, props.serviceType)
-    const mailbox = mailboxState.getMailbox(props.mailboxId)
-    const service = mailbox.serviceForType(props.serviceType)
     return {
-      isActive: isActive,
-      isSleeping: !isActive,
-      allowsSleeping: service ? service.sleepable : true,
-      userHasSleepable: userStore.getState().user.hasSleepable
+      isSleeping: mailboxState.isSleeping(props.mailboxId, props.serviceType),
+      isCapturing: false
     }
   }
 
   mailboxUpdated = (mailboxState) => {
+    const { mailboxId, serviceType } = this.props
     this.setState((prevState) => {
-      const mailbox = mailboxState.getMailbox(this.props.mailboxId)
-      const service = mailbox ? mailbox.serviceForType(this.props.serviceType) : undefined
-      if (!mailbox || !service) { return undefined }
-
-      const update = {
-        isActive: mailboxState.isActive(this.props.mailboxId, this.props.serviceType),
-        allowsSleeping: service ? service.sleepable : true
-      }
-      if (prevState.isActive !== update.isActive) {
-        clearTimeout(this.sleepWait)
-        if (prevState.isActive && !update.isActive) {
-          this.sleepWait = setTimeout(() => {
-            this.sleepMailbox()
-          }, service.sleepableTimeout)
+      const isSleeping = mailboxState.isSleeping(mailboxId, serviceType)
+      if (prevState.isSleeping !== isSleeping) {
+        if (isSleeping) {
+          this.captureSnapshot()
+          return { isSleeping: true, isCapturing: true }
         } else {
-          update.isSleeping = false
+          return { isSleeping: false, isCapturing: false }
         }
+      } else {
+        return undefined
       }
-      return update
     })
-  }
-
-  userUpdated = (userState) => {
-    this.setState({
-      userHasSleepable: userState.user.hasSleepable
-    })
-  }
-
-  /**
-  * Puts the mailbox to sleep. If the mailbox is active this method
-  * will return silently
-  */
-  sleepMailbox = () => {
-    const isActive = mailboxStore.getState().isActive(this.props.mailboxId, this.props.serviceType)
-    if (isActive) { return }
-
-    if (this.refs[REF]) {
-      Promise.resolve()
-        .then(() => this.refs[REF].captureSnapshot())
-        .then((nativeImage) => {
-          mailboxActions.setServiceSnapshot(this.props.mailboxId, this.props.serviceType, nativeImage.toDataURL())
-          return Promise.resolve()
-        })
-        .catch((e) => Promise.resolve())
-        .then(() => {
-          const isActive = mailboxStore.getState().isActive(this.props.mailboxId, this.props.serviceType)
-          if (!isActive) {
-            this.setState({ isSleeping: true })
-          }
-        })
-    } else {
-      this.setState({ isSleeping: true })
-    }
-  }
-
-  /* **************************************************************************/
-  // Webview pass throughs
-  /* **************************************************************************/
-
-  send = (name, obj) => {
-    if (this.refs[REF]) {
-      return this.refs[REF].send(name, obj)
-    } else {
-      throw new Error('MailboxTab is sleeping')
-    }
-  }
-  sendWithResponse = (sendName, obj, timeout) => {
-    if (this.refs[REF]) {
-      return this.refs[REF].sendWithResponse(sendName, obj, timeout)
-    } else {
-      throw new Error('MailboxTab is sleeping')
-    }
-  }
-  loadURL = (url) => {
-    if (this.refs[REF]) {
-      return this.refs[REF].loadURL(url)
-    } else {
-      clearTimeout(this.sleepWait)
-      this.setState({ isSleeping: false }, () => {
-        this.refs[REF].loadURL(url)
-      })
-      return undefined
-    }
-  }
-
-  /**
-  * Gets the underlying dom webview node
-  * @throws error if sleeping
-  * @return the webview node
-  */
-  getWebviewNode = () => {
-    if (this.refs[REF]) {
-      return this.refs[REF].getWebviewNode()
-    } else {
-      throw new Error('MailboxTab is sleeping')
-    }
   }
 
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
-  render () {
-    const { allowsSleeping, isSleeping, userHasSleepable } = this.state
+  /**
+  * Captures a snapshot of the webview and pushes it to sleep on completion
+  */
+  captureSnapshot () {
+    const { mailboxId, serviceType } = this.props
+    const captureRef = Math.random()
+    this.captureRef = captureRef
+    Promise.resolve()
+      .then(() => this.refs[REF].captureSnapshot())
+      .then((nativeImage) => {
+        mailboxActions.setServiceSnapshot(mailboxId, serviceType, nativeImage.toDataURL())
+        return Promise.resolve()
+      })
+      .catch((e) => Promise.resolve())
+      .then(() => {
+        if (this.captureRef !== captureRef) { return } // Check nobody else has sneaked in before completion
+        this.setState({ isCapturing: false })
+      })
+  }
 
-    if (allowsSleeping && userHasSleepable && isSleeping) {
-      return false
-    } else {
+  render () {
+    const { isSleeping, isCapturing } = this.state
+
+    if (!isSleeping || isCapturing) {
       return (<MailboxWebView ref={REF} {...this.props} />)
+    } else {
+      return false
     }
   }
 }
