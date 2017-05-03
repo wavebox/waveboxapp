@@ -70,6 +70,16 @@ class MailboxReducer {
 
   /**
   * @param mailbox: the mailbox to update
+  * @param col: the color as either a hex string or object that contains hex key
+  */
+  static setUnreadBadgeColor (mailbox, col) {
+    return mailbox.changeData({
+      unreadBadgeColor: typeof (col) === 'object' ? col.rgbaStr : col
+    })
+  }
+
+  /**
+  * @param mailbox: the mailbox to update
   * @param show: true to show the coloured ring around the mailbox avatars
   */
   static setShowAvatarColorRing (mailbox, show) {

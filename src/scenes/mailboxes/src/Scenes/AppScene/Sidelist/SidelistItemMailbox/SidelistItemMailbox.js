@@ -13,6 +13,7 @@ import SidelistItemMailboxPopover from './SidelistItemMailboxPopover'
 import SidelistItemMailboxAvatar from './SidelistItemMailboxAvatar'
 import SidelistItemMailboxServices from './SidelistItemMailboxServices'
 import * as Colors from 'material-ui/styles/colors'
+import Color from 'color'
 
 export default class SidelistItemMailbox extends React.Component {
   /* **************************************************************************/
@@ -153,12 +154,18 @@ export default class SidelistItemMailbox extends React.Component {
     }
 
     if (badgeContent !== undefined) {
+      const badgeStyle = {
+        ...styles.mailboxBadge,
+        backgroundColor: mailbox.unreadBadgeColor,
+        color: Color(mailbox.unreadBadgeColor).light() ? 'black' : 'white'
+      }
+
       return (
         <Badge
           onContextMenu={(evt) => this.handleOpenPopover(evt, CoreMailbox.SERVICE_TYPES.DEFAULT)}
           onClick={this.handleClick}
           badgeContent={badgeContent}
-          badgeStyle={styles.mailboxBadge}
+          badgeStyle={badgeStyle}
           style={styles.mailboxBadgeContainer} />
       )
     } else {
