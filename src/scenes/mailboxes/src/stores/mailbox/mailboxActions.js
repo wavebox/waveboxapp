@@ -61,21 +61,6 @@ class MailboxActions {
   */
   authenticateGenericMailbox () { return { provisionalId: CoreMailbox.provisionId() } }
 
-  /**
-  * Launches an authentication window on the generic mailbox
-  * @param mailboxId: the id of the mailbox
-  * @param url: the url to go to
-  * @param options=undefined: the browser window options
-  */
-  launchGenericMailboxAuthenticationWindow (mailboxId, url, options = undefined) {
-    return {
-      mailboxId: mailboxId,
-      url: url,
-      guestInstanceId: ((options || {}).webPreferences || {}).guestInstanceId,
-      openerId: ((options || {}).webPreferences || {}).openerId
-    }
-  }
-
   /* **************************************************************************/
   // Mailbox Re-auth
   /* **************************************************************************/

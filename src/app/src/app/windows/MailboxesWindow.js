@@ -4,7 +4,6 @@ const MailboxesSessionManager = require('./MailboxesSessionManager')
 const settingStore = require('../stores/settingStore')
 const userStore = require('../stores/userStore')
 const {
-  AuthGeneric,
   AuthGoogle,
   AuthMicrosoft,
   AuthSlack,
@@ -29,7 +28,6 @@ class MailboxesWindow extends WaveboxWindow {
     super({
       screenLocationNS: 'mailbox_window_state'
     })
-    this.authGeneric = new AuthGeneric()
     this.authGoogle = new AuthGoogle()
     this.authTrello = new AuthTrello()
     this.authSlack = new AuthSlack()
