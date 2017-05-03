@@ -67,7 +67,7 @@
   ipcMain.on('new-window', (evt, body) => {
     const window = new ContentWindow()
     windowManager.addContentWindow(window)
-    window.start(body.url, body.partition, windowManager.mailboxesWindow.window)
+    window.start(windowManager.mailboxesWindow.window, body.url, body.windowPreferences, body.webPreferences)
   })
 
   ipcMain.on('focus-app', (evt, body) => {

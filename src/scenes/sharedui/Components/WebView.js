@@ -44,16 +44,21 @@ const REACT_WEBVIEW_EVENT_PROPS = REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
 }, {})
 
 const WEBVIEW_PROPS = {
+  allowPopups: PropTypes.bool,
   autosize: PropTypes.bool,
   blinkfeatures: PropTypes.string,
   disableblinkfeatures: PropTypes.string,
+  disableguestresize: PropTypes.bool,
   disablewebsecurity: PropTypes.bool,
+  guestinstance: PropTypes.number,
   httpreferrer: PropTypes.string,
   nodeintegration: PropTypes.bool,
   partition: PropTypes.string,
   plugins: PropTypes.bool,
   preload: PropTypes.string,
-  src: PropTypes.string
+  src: PropTypes.string,
+  userAgent: PropTypes.string,
+  webpreferences: PropTypes.object
 }
 const WEBVIEW_ATTRS = Object.keys(WEBVIEW_PROPS)
 
@@ -249,7 +254,16 @@ export default class WebView extends React.Component {
   render () {
     const attrs = WEBVIEW_ATTRS
       .filter((k) => this.props[k] !== undefined)
-      .map((k) => `${k}="${this.props[k]}"`)
+      .map((k) => {
+        if (k === 'webpreferences') {
+          const str = Object.keys(this.props[k]).map((kk) => {
+            return this.props[k][kk] === undefined ? undefined : `${kk}=${this.props[k][kk]}`
+          }).filter((item) => item).join(', ')
+          return `${k}="${str}"`
+        } else {
+          return `${k}="${this.props[k]}"`
+        }
+      })
       .concat([
         'style="position:absolute; top:0; bottom:0; right:0; left:0;"'
       ])

@@ -74,7 +74,7 @@ export default class BrowserToolbar extends React.Component {
 
     return (
       <Paper {...passProps} className={fullClassName}>
-        <Toolbar>
+        <Toolbar style={{ height: 40 }}>
           <ToolbarGroup firstChild>
             <IconButton
               disabled={!canGoBack}
@@ -95,7 +95,7 @@ export default class BrowserToolbar extends React.Component {
               style={{ transition: 'opacity 1s', margin: 10, opacity: isLoading ? 1 : 0 }} />
           </ToolbarGroup>
           <ToolbarGroup style={{ minWidth: 0 }}>
-            <ToolbarTitle text={currentUrl} />
+            <ToolbarTitle text={currentUrl} style={{ fontSize: '14px' }} />
           </ToolbarGroup>
           <ToolbarGroup lastChild>
             <IconButton

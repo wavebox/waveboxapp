@@ -22,14 +22,14 @@ export default class GoogleMailboxServiceWebView extends React.Component {
 
   /**
   * Opens a new url in the correct way
-  * @param url: the url to open
+  * @param evt: the event that fired
   */
-  handleOpenNewWindow (url) {
-    const purl = URI(url)
+  handleOpenNewWindow = (evt) => {
+    const purl = URI(evt.url)
     if (purl.hostname() === 'docs.google.com') {
-      MailboxLinker.openContentWindow(url, this.props.mailboxId)
+      MailboxLinker.openContentWindow(this.props.mailboxId, evt.url, evt.options)
     } else {
-      MailboxLinker.openExternalWindow(url)
+      MailboxLinker.openExternalWindow(evt.url)
     }
   }
 
@@ -39,14 +39,13 @@ export default class GoogleMailboxServiceWebView extends React.Component {
 
   render () {
     const { mailboxId, serviceType } = this.props
-
     return (
       <MailboxWebViewHibernator
         ref={REF}
         preload='../platform/webviewInjection/googleServiceTooling'
         mailboxId={mailboxId}
         serviceType={serviceType}
-        newWindow={(evt) => { this.handleOpenNewWindow(evt.url) }} />
+        newWindow={this.handleOpenNewWindow} />
     )
   }
 }

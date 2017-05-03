@@ -4,6 +4,23 @@ const querystring = require('querystring')
 const path = require('path')
 
 const CONTENT_DIR = path.resolve(path.join(__dirname, '/../../../scenes/content'))
+const SAFE_CONFIG_KEYS = [
+  'width',
+  'height',
+  'x',
+  'y',
+  'minWidth',
+  'minHeight',
+  'maxWidth',
+  'maxHeight',
+  'resizable',
+  'title'
+]
+const COPY_WEB_PREFERENCES_KEYS = [
+  'guestInstanceId',
+  'openerId',
+  'partition'
+]
 
 class ContentWindow extends WaveboxWindow {
   /* ****************************************************************************/
@@ -13,26 +30,29 @@ class ContentWindow extends WaveboxWindow {
   /**
   * Generates the url for the window
   * @param url: the url to load
-  * @param partition: the partition to load in
   * @return a fully qualified url to give to the window object
   */
-  generateWindowUrl (url, partition) {
+  generateWindowUrl (url) {
     const params = querystring.stringify({
-      url: url,
-      partition: partition
+      url: url
     })
     return `file://${path.join(CONTENT_DIR, 'content.html')}?${params}`
   }
 
   /**
   * Starts the window
-  * @param url: the start url
-  * @param partition: the window partition
   * @param parentWindow: the parent window this spawned from
+  * @param url: the start url
+  * @param windowPreferences={}: the configuration for the window
+  * @param webPreferences={}: the web preferences for the hosted child
   */
-  start (url, partition, parentWindow) {
+  start (parentWindow, url, windowPreferences = {}, webPreferences = {}) {
+    // Store some local vars
+    this.guestWebPreferences = Object.assign({}, webPreferences)
+
+    // Grab the position from the parent window
     const copyPosition = !parentWindow.isFullScreen() && !parentWindow.isMaximized()
-    const parentSize = copyPosition ? (() => {
+    const parentSizing = copyPosition ? (() => {
       const position = parentWindow.getPosition()
       const size = parentWindow.getSize()
       return {
@@ -43,16 +63,29 @@ class ContentWindow extends WaveboxWindow {
       }
     })() : undefined
 
-    super.start(this.generateWindowUrl(url, partition), Object.assign({
-      minWidth: 770,
-      minHeight: 300,
-      fullscreenable: true,
-      title: 'Wavebox',
-      backgroundColor: '#f2f2f2',
-      webPreferences: {
-        nodeIntegration: true
-      }
-    }, parentSize))
+    // Generate the full windowPreferences
+    const fullWindowPreferences = Object.assign(
+      {
+        minWidth: 300,
+        minHeight: 300,
+        fullscreenable: true,
+        title: 'Wavebox',
+        backgroundColor: '#f2f2f2',
+        webPreferences: {
+          nodeIntegration: true
+        }
+      },
+      parentSizing,
+      SAFE_CONFIG_KEYS.reduce((acc, k) => { // These keys can come from a hosted page, so don't copy anything like webPreferences
+        if (windowPreferences[k] !== undefined) {
+          acc[k] = windowPreferences[k]
+        }
+        return acc
+      }, {})
+    )
+
+    // Start the browser window
+    super.start(this.generateWindowUrl(url), fullWindowPreferences)
   }
 
   /**
@@ -64,6 +97,12 @@ class ContentWindow extends WaveboxWindow {
     this.window.webContents.on('new-window', (evt, url) => {
       evt.preventDefault()
       shell.openExternal(url)
+    })
+
+    this.window.webContents.on('will-attach-webview', (evt, webPreferences, properties) => {
+      COPY_WEB_PREFERENCES_KEYS.forEach((k) => {
+        webPreferences[k] = this.guestWebPreferences[k]
+      })
     })
   }
 

@@ -49,6 +49,7 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     const mailbox = mailboxStore.getState().getMailbox(props.mailboxId)
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     return {
+      openWindowsExternally: service ? service.openWindowsExternally : false,
       url: service ? service.url : undefined
     }
   }
@@ -57,6 +58,7 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     const mailbox = mailboxState.getMailbox(this.props.mailboxId)
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     this.setState({
+      openWindowsExternally: service ? service.openWindowsExternally : false,
       url: service ? service.url : undefined
     })
   }
@@ -67,10 +69,14 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
 
   /**
   * Opens a new url in the correct way
-  * @param url: the url to open
+  * @param evt: the event that fired
   */
-  handleOpenNewWindow (url) {
-    MailboxLinker.openExternalWindow(url)
+  handleOpenNewWindow = (evt) => {
+    if (this.state.openWindowsExternally) {
+      MailboxLinker.openExternalWindow(evt.url)
+    } else {
+      MailboxLinker.openContentWindow(this.props.mailboxId, evt.url, evt.options)
+    }
   }
 
   /* **************************************************************************/
@@ -92,7 +98,7 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
         mailboxId={mailboxId}
         url={url}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
-        newWindow={(evt) => { this.handleOpenNewWindow(evt.url) }} />
+        newWindow={this.handleOpenNewWindow} />
     )
   }
 }

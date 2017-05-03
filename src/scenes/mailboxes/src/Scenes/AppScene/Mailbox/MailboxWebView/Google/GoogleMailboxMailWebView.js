@@ -152,23 +152,23 @@ export default class GoogleMailboxMailWebView extends React.Component {
 
   /**
   * Opens a new url in the correct way
-  * @param url: the url to open
+  * @param evt: the event that fired
   */
-  handleOpenNewWindow (url) {
-    const purl = URI(url)
+  handleOpenNewWindow = (evt) => {
+    const purl = URI(evt.url)
     if (purl.hostname() === 'inbox.google.com') {
-      this.setState({ url: url })
+      this.setState({ url: evt.url })
     } else if (purl.hostname() === 'mail.google.com') {
       const query = purl.search(true)
       if (query.ui === '2' || query.view === 'om') {
-        MailboxLinker.openContentWindow(url, this.state.mailbox)
+        MailboxLinker.openContentWindow(this.props.mailboxId, evt.url, evt.options)
       } else {
-        this.setState({ url: url })
+        this.setState({ url: evt.url })
       }
     } else if (purl.hostname() === 'drive.google.com') {
-      MailboxLinker.openContentWindow(url, this.state.mailbox)
+      MailboxLinker.openContentWindow(this.props.mailboxId, evt.url, evt.options)
     } else {
-      MailboxLinker.openExternalWindow(url)
+      MailboxLinker.openExternalWindow(evt.url)
     }
   }
 
@@ -184,7 +184,7 @@ export default class GoogleMailboxMailWebView extends React.Component {
         preload='../platform/webviewInjection/googleMailTooling'
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
-        newWindow={(evt) => { this.handleOpenNewWindow(evt.url) }}
+        newWindow={this.handleOpenNewWindow}
         domReady={this.handleBrowserDomReady}
         ipcMessage={this.dispatchBrowserIPCMessage} />
     )

@@ -19,8 +19,7 @@ export default class BrowserScene extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    url: PropTypes.string.isRequired,
-    partition: PropTypes.string.isRequired
+    url: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -95,7 +94,7 @@ export default class BrowserScene extends React.Component {
   }
 
   render () {
-    const { url, partition } = this.props
+    const { url } = this.props
     const { zoomFactor, isSearching, searchTerm, searchNextHash } = this.state
 
     return (
@@ -111,7 +110,6 @@ export default class BrowserScene extends React.Component {
             src={url}
             className='ReactComponent-BrowserSceneWebView'
             preload='../platform/webviewInjection/contentTooling'
-            partition={partition}
             zoomFactor={zoomFactor}
             searchTerm={isSearching ? searchTerm : undefined}
             searchId={searchNextHash}

@@ -41,7 +41,7 @@ export default class MicrosoftMailboxMailWebView extends React.Component {
   handleOpenItem (evt) {
     if (evt.mailboxId === this.props.mailboxId && evt.service === CoreService.SERVICE_TYPES.DEFAULT) {
       if (evt.data.webLink) {
-        MailboxLinker.openContentWindow(evt.data.webLink, this.props.mailboxId)
+        MailboxLinker.openContentWindow(this.props.mailboxId, evt.data.webLink)
         // Normally being able to handle this also indicates that something changed, so lets do a sync
         // after a few seconds to re-evaluate our state
         microsoftActions.syncMailboxMailAfter.defer(this.props.mailboxId, 1000 * 5)

@@ -342,6 +342,7 @@ class MailboxStore {
       handleAuthenticateOutlookMailbox: actions.AUTHENTICATE_OUTLOOK_MAILBOX,
       handleAuthenticateOffice365Mailbox: actions.AUTHENTICATE_OFFICE365MAILBOX,
       handleAuthenticateGenericMailbox: actions.AUTHENTICATE_GENERIC_MAILBOX,
+      handleLaunchGenericMailboxAuthenticationWindow: actions.LAUNCH_GENERIC_MAILBOX_AUTHENTICATION_WINDOW,
 
       handleReauthenticateMailbox: actions.REAUTHENTICATE_MAILBOX,
       handleReauthenticateGoogleMailbox: actions.REAUTHENTICATE_GOOGLE_MAILBOX,
@@ -475,6 +476,7 @@ class MailboxStore {
   /* **************************************************************************/
 
   handleAuthenticateGinboxMailbox ({ provisionalId }) {
+    this.preventDefault()
     window.location.hash = '/mailbox_wizard/authenticating'
     ipcRenderer.send('auth-google', {
       credentials: Bootstrap.credentials,
@@ -484,6 +486,7 @@ class MailboxStore {
   }
 
   handleAuthenticateGmailMailbox ({ provisionalId }) {
+    this.preventDefault()
     window.location.hash = '/mailbox_wizard/authenticating'
     ipcRenderer.send('auth-google', {
       credentials: Bootstrap.credentials,
@@ -493,6 +496,7 @@ class MailboxStore {
   }
 
   handleAuthenticateSlackMailbox ({ provisionalId }) {
+    this.preventDefault()
     window.location.hash = '/mailbox_wizard/authenticating'
     ipcRenderer.send('auth-slack', {
       id: provisionalId,
@@ -501,6 +505,7 @@ class MailboxStore {
   }
 
   handleAuthenticateTrelloMailbox ({ provisionalId }) {
+    this.preventDefault()
     window.location.hash = '/mailbox_wizard/authenticating'
     ipcRenderer.send('auth-trello', {
       credentials: Bootstrap.credentials,
@@ -510,6 +515,7 @@ class MailboxStore {
   }
 
   handleAuthenticateOutlookMailbox ({ provisionalId }) {
+    this.preventDefault()
     window.location.hash = '/mailbox_wizard/authenticating'
     ipcRenderer.send('auth-microsoft', {
       credentials: Bootstrap.credentials,
@@ -519,6 +525,7 @@ class MailboxStore {
   }
 
   handleAuthenticateOffice365Mailbox ({ provisionalId }) {
+    this.preventDefault()
     window.location.hash = '/mailbox_wizard/authenticating'
     ipcRenderer.send('auth-microsoft', {
       credentials: Bootstrap.credentials,
@@ -528,8 +535,19 @@ class MailboxStore {
   }
 
   handleAuthenticateGenericMailbox ({ provisionalId }) {
+    this.preventDefault()
     actions.create.defer(provisionalId, GenericMailbox.createJS(provisionalId))
     window.location.hash = '/mailbox_wizard/generic/configure/' + provisionalId
+  }
+
+  handleLaunchGenericMailboxAuthenticationWindow ({ mailboxId, url, guestInstanceId, openerId }) {
+    this.preventDefault()
+    ipcRenderer.send('auth-generic-3rdparty', {
+      id: mailboxId,
+      url: url,
+      guestInstanceId: guestInstanceId,
+      openerId: openerId
+    })
   }
 
   /* **************************************************************************/

@@ -1,11 +1,19 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import Theme from 'sharedui/Components/Theme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import BrowserScene from './BrowserScene'
-import querystring from 'querystring'
 
 export default class Provider extends React.Component {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static propTypes = {
+    url: PropTypes.string.isRequired
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -15,11 +23,11 @@ export default class Provider extends React.Component {
   }
 
   render () {
-    const { url, partition } = querystring.parse(window.location.search.slice(1))
+    const { url } = this.props
 
     return (
       <MuiThemeProvider muiTheme={Theme}>
-        <BrowserScene url={url} partition={partition} />
+        <BrowserScene url={url} />
       </MuiThemeProvider>
     )
   }

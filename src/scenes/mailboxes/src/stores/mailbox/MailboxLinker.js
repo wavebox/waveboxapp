@@ -19,8 +19,11 @@ class MailboxLinker {
   /**
   * Opens a content window for a mailbox
   * @param mailboxOrMailboxId: the id of the mailbox or the actual mailbox
+  * @param url: the url to open
+  * @param options={}: the window event options
   */
-  static openContentWindow (url, mailboxOrMailboxId) {
+  static openContentWindow (mailboxOrMailboxId, url, options = {}) {
+    // Generate the partition
     let partition = mailboxOrMailboxId
     if (typeof (mailboxOrMailboxId) === 'object') {
       partition = mailboxOrMailboxId.partition
@@ -33,10 +36,22 @@ class MailboxLinker {
       }
     }
 
+    // Check what format options has come through in
+    if (Array.isArray(options)) {
+      options = {}
+    }
+
     if (partition) {
       ipcRenderer.send('new-window', {
-        partition: 'persist:' + partition,
-        url: url
+        url: url,
+        windowPreferences: {
+          ...options,
+          webPreferences: undefined
+        },
+        webPreferences: {
+          ...options.webPreferences,
+          partition: 'persist:' + partition
+        }
       })
     }
   }

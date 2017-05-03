@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Paper, TextField } from 'material-ui'
+import { Paper, TextField, Toggle } from 'material-ui'
 import { Row, Col } from 'Components/Grid'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
@@ -101,6 +101,11 @@ export default class GenericAccountSettings extends React.Component {
                 defaultValue={service.url}
                 errorText={serviceUrlError}
                 onBlur={this.handleUrlChange} />
+              <Toggle
+                toggled={service.openWindowsExternally}
+                label='Open new windows in default browser'
+                labelPosition='right'
+                onToggle={(evt, toggled) => mailboxActions.reduceService(mailbox.id, service.Type, GenericDefaultServiceReducer.setOpenWindowsExternally, toggled)} />
             </Paper>
             <AccountAppearanceSettings mailbox={mailbox} />
           </Col>

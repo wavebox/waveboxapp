@@ -99,7 +99,7 @@ export default class MicrosoftMailboxStorageServiceWebView extends React.Compone
     }
 
     if (contentWindow) {
-      MailboxLinker.openContentWindow(evt.url, this.props.mailboxId)
+      MailboxLinker.openContentWindow(this.props.mailboxId, evt.url)
       const webviewDOM = this.refs[REF].getWebviewNode()
       webviewDOM.stop()
       webviewDOM.loadURL(this.state.service.url)

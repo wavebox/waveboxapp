@@ -22,21 +22,21 @@ export default class GoogleMailboxCommunicationServiceWebView extends React.Comp
 
   /**
   * Opens a new url in the correct way
-  * @param url: the url to open
+  * @param evt: the event that fired
   */
-  handleOpenNewWindow (url) {
-    const purl = URI(url)
+  handleOpenNewWindow = (evt) => {
+    const purl = URI(evt.url)
     if (purl.hostname() === 'hangouts.google.com') {
       const pathname = purl.pathname()
       if (pathname.indexOf('/CONVERSATION/') !== -1) {
-        MailboxLinker.openContentWindow(url, this.props.mailboxId)
+        MailboxLinker.openContentWindow(this.props.mailboxId, evt.url, evt.options)
         return
       } else if (pathname.indexOf('/hangouts/_/meet') !== -1) {
-        MailboxLinker.openContentWindow(url, this.props.mailboxId)
+        MailboxLinker.openContentWindow(this.props.mailboxId, evt.url, evt.options)
         return
       }
     }
-    MailboxLinker.openExternalWindow(url)
+    MailboxLinker.openExternalWindow(evt.url)
   }
 
   /* **************************************************************************/
@@ -52,7 +52,7 @@ export default class GoogleMailboxCommunicationServiceWebView extends React.Comp
         preload='../platform/webviewInjection/googleServiceTooling'
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.COMMUNICATION}
-        newWindow={(evt) => { this.handleOpenNewWindow(evt.url) }} />
+        newWindow={this.handleOpenNewWindow} />
     )
   }
 }

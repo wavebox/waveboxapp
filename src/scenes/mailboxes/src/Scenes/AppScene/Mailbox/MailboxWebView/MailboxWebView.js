@@ -90,7 +90,7 @@ export default class MailboxWebView extends React.Component {
   generateState (props) {
     const mailboxState = mailboxStore.getState()
     const mailbox = mailboxState.getMailbox(props.mailboxId)
-    const service = mailbox.serviceForType(props.serviceType)
+    const service = mailbox ? mailbox.serviceForType(props.serviceType) : null
     const settingState = settingsStore.getState()
 
     const isActive = mailboxState.isActive(props.mailboxId, props.serviceType)
