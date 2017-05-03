@@ -9,7 +9,10 @@ import updaterActions from 'stores/updater/updaterActions'
 import userActions from 'stores/user/userActions'
 import Debug from 'Debug'
 import injectTapEventPlugin from 'react-tap-event-plugin'
-const { ipcRenderer } = window.nativeRequire('electron')
+const { ipcRenderer, webFrame } = window.nativeRequire('electron')
+
+// Prevent zooming
+webFrame.setZoomLevelLimits(1, 1)
 
 // Load what we have in the db
 userActions.load()
@@ -25,9 +28,8 @@ Debug.load()
   loading.parentElement.removeChild(loading)
 })()
 
-injectTapEventPlugin()
-
 // Render and prepare for unrender
+injectTapEventPlugin()
 ReactDOM.render(<Provider />, document.getElementById('ReactComponent-AppScene'))
 ipcRenderer.on('prepare-reload', () => {
   ReactDOM.unmountComponentAtNode(document.getElementById('ReactComponent-AppScene'))
