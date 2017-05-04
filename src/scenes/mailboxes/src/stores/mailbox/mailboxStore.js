@@ -387,6 +387,7 @@ class MailboxStore {
 
       // Search
       handleStartSearchingMailbox: actions.START_SEARCHING_MAILBOX,
+      handleUntrackSearchingMailbox: actions.UNTRACK_SEARCHING_MAILBOX,
       handleStopSearchingMailbox: actions.STOP_SEARCHING_MAILBOX,
       handleSetSearchTerm: actions.SET_SEARCH_TERM,
       handleSearchNextTerm: actions.SEARCH_NEXT_TERM,
@@ -1012,6 +1013,14 @@ class MailboxStore {
   handleStartSearchingMailbox ({ id, service }) {
     const key = `${id || this.active}:${service || this.activeService}`
     this.search.set(key, { term: '', hash: `${Math.random()}` })
+  }
+
+  /**
+  * Indicates the mailbox is no longer tracking search (i.e. handled by another provider)
+  */
+  handleUntrackSearchingMailbox ({ id, service }) {
+    const key = `${id || this.active}:${service || this.activeService}`
+    this.search.delete(key)
   }
 
   /**

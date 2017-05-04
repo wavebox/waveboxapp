@@ -4,7 +4,6 @@ import React from 'react'
 import { CircularProgress } from 'material-ui'
 import { mailboxStore, mailboxDispatch } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
-import WebView from 'sharedui/Components/WebView'
 import BrowserView from 'sharedui/Components/BrowserView'
 import MailboxSearch from './MailboxSearch'
 import MailboxTargetUrl from './MailboxTargetUrl'
@@ -23,14 +22,36 @@ export default class MailboxWebView extends React.Component {
     mailboxId: PropTypes.string.isRequired,
     serviceType: PropTypes.string.isRequired,
     preload: PropTypes.string,
-    url: PropTypes.string
-  }, WebView.REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
+    url: PropTypes.string,
+    hasSearch: PropTypes.bool.isRequired
+  }, BrowserView.REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
     acc[name] = PropTypes.func
     return acc
   }, {}))
+  static defaultProps = {
+    hasSearch: true
+  }
+  static WEBVIEW_METHODS = BrowserView.WEBVIEW_METHODS
+  static REACT_WEBVIEW_EVENTS = BrowserView.REACT_WEBVIEW_EVENTS
 
   /* **************************************************************************/
-  // Lifecycle
+  // Object Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    const self = this
+    this.constructor.WEBVIEW_METHODS.forEach((m) => {
+      if (self[m] !== undefined) { return } // Allow overwriting
+      self[m] = function () {
+        return self.refs[BROWSER_REF][m].apply(self.refs[BROWSER_REF], Array.from(arguments))
+      }
+    })
+  }
+
+  /* **************************************************************************/
+  // Component Lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
@@ -93,20 +114,29 @@ export default class MailboxWebView extends React.Component {
     const service = mailbox ? mailbox.serviceForType(props.serviceType) : null
     const settingState = settingsStore.getState()
 
-    const isActive = mailboxState.isActive(props.mailboxId, props.serviceType)
-    return {
-      mailbox: mailbox,
-      service: service,
-      url: props.url || service.url,
-      browserDOMReady: false,
-      isActive: isActive,
-      language: settingState.language,
-      focusedUrl: null,
-      snapshot: mailboxState.getSnapshot(props.mailboxId, props.serviceType),
-      isSearching: mailboxState.isSearchingMailbox(props.mailboxId, props.serviceType),
-      searchTerm: mailboxState.mailboxSearchTerm(props.mailboxId, props.serviceType),
-      searchId: mailboxState.mailboxSearchHash(props.mailboxId, props.serviceType)
-    }
+    return Object.assign(
+      {},
+      !mailbox || !service ? {
+        mailbox: null,
+        service: null,
+        url: props.url || 'about:blank',
+        isActive: false
+      } : {
+        mailbox: mailbox,
+        service: service,
+        url: props.url || service.url,
+        isActive: false
+      },
+      {
+        browserDOMReady: false,
+        language: settingState.language,
+        focusedUrl: null,
+        snapshot: mailboxState.getSnapshot(props.mailboxId, props.serviceType),
+        isSearching: mailboxState.isSearchingMailbox(props.mailboxId, props.serviceType),
+        searchTerm: mailboxState.mailboxSearchTerm(props.mailboxId, props.serviceType),
+        searchId: mailboxState.mailboxSearchHash(props.mailboxId, props.serviceType)
+      }
+    )
   }
 
   mailboxesChanged = (mailboxState) => {
@@ -152,41 +182,15 @@ export default class MailboxWebView extends React.Component {
   }
 
   /* **************************************************************************/
-  // Public utils
+  // WebView overwrites
   /* **************************************************************************/
 
   /**
-  * @access: public
-  * Pass through to webview.send()
-  */
-  send = (name, obj) => { return this.refs[BROWSER_REF].send(name, obj) }
-
-  /**
-  * @access: public
-  * Pass through to webview.sendWithResponse()
-  */
-  sendWithResponse (sendName, obj, timeout) { return this.refs[BROWSER_REF].sendWithResponse(sendName, obj, timeout) }
-
-  /**
-  * @access: public
   * @Pass through to webview.loadURL()
   */
   loadURL = (url) => {
     this.setState({ browserDOMReady: false })
     return this.refs[BROWSER_REF].loadURL(url)
-  }
-
-  /**
-  * @access public
-  * Snapshots a webview
-  * @return promise with the nativeImage provided
-  */
-  captureSnapshot = () => {
-    return new Promise((resolve) => {
-      this.refs[BROWSER_REF].getWebContents().capturePage((nativeImage) => {
-        resolve(nativeImage)
-      })
-    })
   }
 
   /**
@@ -431,10 +435,10 @@ export default class MailboxWebView extends React.Component {
     } = this.state
 
     if (!mailbox || !service) { return false }
-    const { className, preload, ...passProps } = this.props
+    const { className, preload, hasSearch, ...passProps } = this.props
     delete passProps.serviceType
     delete passProps.mailboxId
-    const webviewEventProps = WebView.REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
+    const webviewEventProps = BrowserView.REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
       acc[name] = this.props[name]
       delete passProps[name]
       return acc
@@ -500,7 +504,9 @@ export default class MailboxWebView extends React.Component {
           </div>
         )}
         <MailboxTargetUrl url={focusedUrl} />
-        <MailboxSearch mailboxId={mailbox.id} serviceType={service.type} />
+        {hasSearch ? (
+          <MailboxSearch mailboxId={mailbox.id} serviceType={service.type} />
+        ) : undefined}
       </div>
     )
   }

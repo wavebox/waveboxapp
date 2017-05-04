@@ -3,34 +3,6 @@ import MailboxWebView from './MailboxWebView'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
 
 const REF = 'MailboxWebView'
-const PASSTHROUGH_METHODS = [
-  'focus',
-  'blur',
-  'openDevTools',
-  'send',
-  'navigateBack',
-  'navigateForward',
-  'undo',
-  'redo',
-  'cut',
-  'copy',
-  'paste',
-  'pasteAndMatchStyle',
-  'selectAll',
-  'reload',
-  'reloadIgnoringCache',
-  'stop',
-  'loadURL',
-  'getWebContents',
-  'canGoBack',
-  'canGoForward',
-  'goBack',
-  'goFoward',
-  'getURL',
-  'getProcessMemoryInfo',
-  'sendWithResponse',
-  'getWebviewNode'
-]
 
 export default class MailboxWebViewHibernator extends React.Component {
   /* **************************************************************************/
@@ -40,6 +12,8 @@ export default class MailboxWebViewHibernator extends React.Component {
   static propTypes = {
     ...MailboxWebView.propTypes
   }
+  static WEBVIEW_METHODS = MailboxWebView.WEBVIEW_METHODS
+  static REACT_WEBVIEW_EVENTS = MailboxWebView.REACT_WEBVIEW_EVENTS
 
   /* **************************************************************************/
   // Class Lifecycle
@@ -49,8 +23,9 @@ export default class MailboxWebViewHibernator extends React.Component {
     super(props)
 
     // Expose the pass-through methods
-    PASSTHROUGH_METHODS.forEach((m) => {
-      const self = this
+    const self = this
+    this.constructor.WEBVIEW_METHODS.forEach((m) => {
+      if (self[m] !== undefined) { return } // Allow overwriting
       self[m] = function () {
         if (self.refs[REF]) {
           return self.refs[REF][m].apply(self.refs[REF], Array.from(arguments))

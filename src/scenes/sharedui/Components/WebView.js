@@ -62,6 +62,65 @@ const WEBVIEW_PROPS = {
 }
 const WEBVIEW_ATTRS = Object.keys(WEBVIEW_PROPS)
 
+const WEBVIEW_METHODS = [
+  'blur',
+  'canGoBack',
+  'canGoForward',
+  'canGoToOffset',
+  'capturePage',
+  'clearHistory',
+  'copy',
+  'cut',
+  'delete',
+  'executeJavaScript',
+  'focus',
+  'findInPage',
+  'getURL',
+  'getTitle',
+  'getWebContents',
+  'getUserAgent',
+  'goBack',
+  'goFoward',
+  'goToIndex',
+  'goToOffset',
+  'insertCSS',
+  'inspectElement',
+  'insertText',
+  'inspectServiceWorker',
+  'isAudioMuted',
+  'isCrashed',
+  'isDevToolsOpened',
+  'isDevToolsFocused',
+  'isLoading',
+  'isWaitingForResponse',
+  'loadURL',
+  'navigateBack',
+  'navigateForward',
+  'openDevTools',
+  'closeDevTools',
+  'paste',
+  'pasteAndMatchStyle',
+  'redo',
+  'reload',
+  'reloadIgnoringCache',
+  'replace',
+  'replaceMisspelling',
+  'print',
+  'printToPDF',
+  'selectAll',
+  'send',
+  'sendInputEvent',
+  'setAudioMuted',
+  'setUserAgent',
+  'setZoomFactor',
+  'setZoomLevel',
+  'showDefinitionForSelection',
+  'stop',
+  'stopFindInPage',
+  'undo',
+  'unselect'
+]
+
 export default class WebView extends React.Component {
   /* **************************************************************************/
   // Class
@@ -72,10 +131,28 @@ export default class WebView extends React.Component {
     ...REACT_WEBVIEW_EVENT_PROPS
   }
 
-  static get REACT_WEBVIEW_EVENTS () { return REACT_WEBVIEW_EVENTS }
+  static REACT_WEBVIEW_EVENTS = REACT_WEBVIEW_EVENTS
+  static WEBVIEW_METHODS = WEBVIEW_METHODS
 
   /* **************************************************************************/
-  // Lifecycle
+  // Object lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    const self = this
+    WEBVIEW_METHODS.forEach((m) => {
+      if (self[m] !== undefined) { return } // Allow overwriting
+      this[m] = function () {
+        const node = self.getWebviewNode()
+        return node[m].apply(node, Array.from(arguments))
+      }
+    })
+  }
+
+  /* **************************************************************************/
+  // Component Lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
@@ -147,62 +224,31 @@ export default class WebView extends React.Component {
   // Webview calls
   /* **************************************************************************/
 
+  /**
+  * Focuses the webview, only if not in focus already
+  * @return true if focused, false otherwise
+  */
   focus = () => {
     const node = this.getWebviewNode()
     if (document.activeElement !== node) {
       this.getWebviewNode().focus()
+      return true
+    } else {
+      return false
     }
   }
 
-  blur = () => { this.getWebviewNode().blur() }
-
-  openDevTools = () => { this.getWebviewNode().openDevTools() }
-
-  send = (name, obj) => { this.getWebviewNode().send(name, obj) }
-
-  findInPage = (text, options) => { return this.getWebviewNode().findInPage(text, options) }
-
-  stopFindInPage = (action) => { this.getWebviewNode().stopFindInPage(action) }
-
-  navigateBack = () => { this.getWebviewNode().goBack() }
-
-  navigateForward = () => { this.getWebviewNode().goForward() }
-
-  undo = () => { this.getWebviewNode().undo() }
-
-  redo = () => { this.getWebviewNode().redo() }
-
-  cut = () => { this.getWebviewNode().cut() }
-
-  copy = () => { this.getWebviewNode().copy() }
-
-  paste = () => { this.getWebviewNode().paste() }
-
-  pasteAndMatchStyle = () => { this.getWebviewNode().pasteAndMatchStyle() }
-
-  selectAll = () => { this.getWebviewNode().selectAll() }
-
-  setZoomLevel = (level) => { this.getWebviewNode().setZoomFactor(level) }
-
-  reload = () => { this.getWebviewNode().reload() }
-
-  reloadIgnoringCache = () => { this.getWebviewNode().reloadIgnoringCache() }
-
-  stop = () => { this.getWebviewNode().stop() }
-
-  loadURL = (url) => { this.getWebviewNode().loadURL(url) }
-
-  getWebContents = () => { return this.getWebviewNode().getWebContents() }
-
-  canGoBack = () => { return this.getWebviewNode().canGoBack() }
-
-  canGoForward = () => { return this.getWebviewNode().canGoForward() }
-
-  goBack = () => { return this.getWebviewNode().goBack() }
-
-  goFoward = () => { return this.getWebviewNode().goFoward() }
-
-  getURL = () => { return this.getWebviewNode().getURL() }
+  /**
+  * Snapshots a webview
+  * @return promise with the nativeImage provided
+  */
+  captureSnapshot = () => {
+    return new Promise((resolve) => {
+      this.getWebviewNode().getWebContents().capturePage((nativeImage) => {
+        resolve(nativeImage)
+      })
+    })
+  }
 
   /* **************************************************************************/
   // IPC Utils
@@ -248,7 +294,7 @@ export default class WebView extends React.Component {
   }
 
   shouldComponentUpdate () {
-    return false // we never want to re-render. We will handle this manually
+    return false // we never want to re-render. We will handle this manually in componentWillReceiveProps
   }
 
   render () {

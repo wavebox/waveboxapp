@@ -4,34 +4,6 @@ import WebView from './WebView'
 import shallowCompare from 'react-addons-shallow-compare'
 
 const WEBVIEW_REF = 'webview'
-const PASSTHROUGH_METHODS = [
-  'focus',
-  'blur',
-  'openDevTools',
-  'send',
-  'navigateBack',
-  'navigateForward',
-  'undo',
-  'redo',
-  'cut',
-  'copy',
-  'paste',
-  'pasteAndMatchStyle',
-  'selectAll',
-  'reload',
-  'reloadIgnoringCache',
-  'stop',
-  'loadURL',
-  'getWebContents',
-  'canGoBack',
-  'canGoForward',
-  'goBack',
-  'goFoward',
-  'getURL',
-  'getProcessMemoryInfo',
-  'sendWithResponse',
-  'getWebviewNode'
-]
 
 export default class BrowserView extends React.Component {
   /* **************************************************************************/
@@ -48,6 +20,8 @@ export default class BrowserView extends React.Component {
     zoomFactor: 1.0,
     searchId: `${Math.random()}`
   }
+  static REACT_WEBVIEW_EVENTS = WebView.REACT_WEBVIEW_EVENTS
+  static WEBVIEW_METHODS = [].concat(WebView.WEBVIEW_METHODS, ['getProcessMemoryInfo', 'sendWithResponse', 'getWebviewNode'])
 
   /* **************************************************************************/
   // Class Lifecycle
@@ -57,8 +31,9 @@ export default class BrowserView extends React.Component {
     super(props)
 
     // Expose the pass-through methods
-    PASSTHROUGH_METHODS.forEach((m) => {
-      const self = this
+    const self = this
+    this.constructor.WEBVIEW_METHODS.forEach((m) => {
+      if (self[m] !== undefined) { return } // Allow overwriting
       self[m] = function () {
         return self.refs[WEBVIEW_REF][m].apply(self.refs[WEBVIEW_REF], Array.from(arguments))
       }

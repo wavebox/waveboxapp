@@ -351,6 +351,14 @@ class MailboxActions {
   }
 
   /**
+  * Stops searching the mailbox but in a way that simply stops tracking the search process
+  * Best to use this if search is not handled by us to unmount the track
+  */
+  untrackSearchingMailbox (id, service) {
+    return { id: id, service: service }
+  }
+
+  /**
   * Stops searching the mailbox
   * @param id=optional: the mailbox id
   * @param service=optional: the type of service to stop search for
