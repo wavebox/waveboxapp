@@ -44,13 +44,14 @@ class MailboxLinker {
     if (partition) {
       ipcRenderer.send('new-window', {
         url: url,
+        partition: `persist:${partition}`,
         windowPreferences: {
           ...options,
           webPreferences: undefined
         },
         webPreferences: {
           ...options.webPreferences,
-          partition: 'persist:' + partition
+          partition: `persist:${partition}`
         }
       })
     }

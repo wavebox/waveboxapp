@@ -15,11 +15,12 @@ browserActions.load()
 
 // Parse our settings
 const {
-  url
+  url,
+  partition
 } = querystring.parse(window.location.search.slice(1))
 
 // Render
 injectTapEventPlugin()
 ReactDOM.render((
-  <Provider url={url} />
+  <Provider url={url} partition={partition} />
 ), document.getElementById('ReactComponent-AppScene'))

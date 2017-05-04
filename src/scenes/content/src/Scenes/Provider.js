@@ -11,7 +11,8 @@ export default class Provider extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    url: PropTypes.string.isRequired
+    url: PropTypes.string.isRequired,
+    partition: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -23,11 +24,11 @@ export default class Provider extends React.Component {
   }
 
   render () {
-    const { url } = this.props
+    const { url, partition } = this.props
 
     return (
       <MuiThemeProvider muiTheme={Theme}>
-        <BrowserScene url={url} />
+        <BrowserScene url={url} partition={partition} />
       </MuiThemeProvider>
     )
   }

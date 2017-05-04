@@ -96,10 +96,15 @@ export default class SlackMailboxWebView extends React.Component {
 
   /**
   * Opens a new url in the correct way
-  * @param url: the url to open
+  * @param evt: the event that fired
   */
-  handleOpenNewWindow (url) {
-    MailboxLinker.openExternalWindow(url)
+  handleOpenNewWindow = (evt) => {
+    const url = URI(evt.url)
+    if (url.hostname() === 'files.slack.com') {
+      this.refs[REF].getWebContents().downloadURL(evt.url)
+    } else {
+      MailboxLinker.openExternalWindow(evt.url)
+    }
   }
 
   /* **************************************************************************/
@@ -129,7 +134,7 @@ export default class SlackMailboxWebView extends React.Component {
         mailboxId={mailboxId}
         hasSearch={false}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
-        newWindow={(evt) => { this.handleOpenNewWindow(evt.url) }} />
+        newWindow={this.handleOpenNewWindow} />
     )
   }
 }

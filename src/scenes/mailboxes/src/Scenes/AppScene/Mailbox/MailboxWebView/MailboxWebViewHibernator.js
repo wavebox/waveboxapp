@@ -12,6 +12,9 @@ export default class MailboxWebViewHibernator extends React.Component {
   static propTypes = {
     ...MailboxWebView.propTypes
   }
+  static defaultProps = {
+    ...MailboxWebView.defaultProps
+  }
   static WEBVIEW_METHODS = MailboxWebView.WEBVIEW_METHODS
   static REACT_WEBVIEW_EVENTS = MailboxWebView.REACT_WEBVIEW_EVENTS
 

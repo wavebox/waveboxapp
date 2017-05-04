@@ -19,7 +19,8 @@ export default class BrowserScene extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    url: PropTypes.string.isRequired
+    url: PropTypes.string.isRequired,
+    partition: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -94,9 +95,11 @@ export default class BrowserScene extends React.Component {
   }
 
   render () {
-    const { url } = this.props
+    const { url, partition } = this.props
     const { zoomFactor, isSearching, searchTerm, searchNextHash } = this.state
 
+    // The partition should be set on the will-attach-webview in the main thread
+    // but this doesn't have the desired effect. Set it here for good-stead
     return (
       <div className='ReactComponent-BrowserScene'>
         <BrowserToolbar
@@ -108,6 +111,7 @@ export default class BrowserScene extends React.Component {
           <BrowserView
             ref={BROWSER_REF}
             src={url}
+            partition={partition}
             className='ReactComponent-BrowserSceneWebView'
             preload='../platform/webviewInjection/contentTooling'
             zoomFactor={zoomFactor}

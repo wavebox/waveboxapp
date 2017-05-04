@@ -119,19 +119,18 @@ export default class MailboxWebView extends React.Component {
       !mailbox || !service ? {
         mailbox: null,
         service: null,
-        url: props.url || 'about:blank',
-        isActive: false
+        url: props.url || 'about:blank'
       } : {
         mailbox: mailbox,
         service: service,
-        url: props.url || service.url,
-        isActive: false
+        url: props.url || service.url
       },
       {
         browserDOMReady: false,
         language: settingState.language,
         focusedUrl: null,
         snapshot: mailboxState.getSnapshot(props.mailboxId, props.serviceType),
+        isActive: mailboxState.isActive(props.mailboxId, props.serviceType),
         isSearching: mailboxState.isSearchingMailbox(props.mailboxId, props.serviceType),
         searchTerm: mailboxState.mailboxSearchTerm(props.mailboxId, props.serviceType),
         searchId: mailboxState.mailboxSearchHash(props.mailboxId, props.serviceType)

@@ -16,9 +16,12 @@ const SAFE_CONFIG_KEYS = [
   'resizable',
   'title'
 ]
-const COPY_WEB_PREFERENCES_KEYS = [
+const COPY_WEBVIEW_WEB_PREFERENCES_KEYS = [
   'guestInstanceId',
   'openerId',
+  'partition'
+]
+const COPY_WEBVIEW_PROP_KEYS = [
   'partition'
 ]
 
@@ -30,11 +33,13 @@ class ContentWindow extends WaveboxWindow {
   /**
   * Generates the url for the window
   * @param url: the url to load
+  * @param partition: the partition for the webview
   * @return a fully qualified url to give to the window object
   */
-  generateWindowUrl (url) {
+  generateWindowUrl (url, partition) {
     const params = querystring.stringify({
-      url: url
+      url: url,
+      partition: partition
     })
     return `file://${path.join(CONTENT_DIR, 'content.html')}?${params}`
   }
@@ -43,12 +48,13 @@ class ContentWindow extends WaveboxWindow {
   * Starts the window
   * @param parentWindow: the parent window this spawned from
   * @param url: the start url
+  * @param partition: the partition to supply to the webview
   * @param windowPreferences={}: the configuration for the window
   * @param webPreferences={}: the web preferences for the hosted child
   */
-  start (parentWindow, url, windowPreferences = {}, webPreferences = {}) {
+  start (parentWindow, url, partition, windowPreferences = {}, webPreferences = {}) {
     // Store some local vars
-    this.guestWebPreferences = Object.assign({}, webPreferences)
+    this.guestWebPreferences = Object.assign({}, webPreferences, { partition: partition })
 
     // Grab the position from the parent window
     const copyPosition = !parentWindow.isFullScreen() && !parentWindow.isMaximized()
@@ -85,7 +91,7 @@ class ContentWindow extends WaveboxWindow {
     )
 
     // Start the browser window
-    super.start(this.generateWindowUrl(url), fullWindowPreferences)
+    super.start(this.generateWindowUrl(url, partition), fullWindowPreferences)
   }
 
   /**
@@ -100,8 +106,15 @@ class ContentWindow extends WaveboxWindow {
     })
 
     this.window.webContents.on('will-attach-webview', (evt, webPreferences, properties) => {
-      COPY_WEB_PREFERENCES_KEYS.forEach((k) => {
-        webPreferences[k] = this.guestWebPreferences[k]
+      COPY_WEBVIEW_WEB_PREFERENCES_KEYS.forEach((k) => {
+        if (this.guestWebPreferences[k] !== undefined) {
+          webPreferences[k] = this.guestWebPreferences[k]
+        }
+      })
+      COPY_WEBVIEW_PROP_KEYS.forEach((k) => {
+        if (this.guestWebPreferences[k] !== undefined) {
+          properties[k] = this.guestWebPreferences[k]
+        }
       })
     })
   }
