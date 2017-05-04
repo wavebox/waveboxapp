@@ -102,6 +102,9 @@ export default class SlackMailboxWebView extends React.Component {
     const url = URI(evt.url)
     if (url.hostname() === 'files.slack.com') {
       this.refs[REF].getWebContents().downloadURL(evt.url)
+    } else if (url.hostname().endsWith('.slack.com') && url.pathname().startsWith('/call/')) {
+      // Don't put the webPreferences across. It stops it from working. Probably cross frame comms
+      MailboxLinker.openContentWindow(this.props.mailboxId, evt.url, { ...evt.options, webPreferences: undefined })
     } else {
       MailboxLinker.openExternalWindow(evt.url)
     }
