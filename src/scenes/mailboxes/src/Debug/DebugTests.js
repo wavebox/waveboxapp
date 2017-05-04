@@ -57,7 +57,7 @@ class DebugTests {
 
     mailboxes.reduce((acc, mailbox) => {
       let auth = null
-      acc
+      return acc
         .then(() => GoogleHTTP.generateAuth(mailbox.accessToken, mailbox.refreshToken, mailbox.authExpiryTime))
         .then((fetchedAuth) => {
           auth = fetchedAuth
@@ -82,6 +82,79 @@ class DebugTests {
           })
           const infoStrings = info.map((i) => i.labels.join(',') + ': ' + i.snippet)
           console.log(`${sig} ${mailbox.displayName} unread messages:\n`, infoStrings.join('\n\n'))
+        })
+    }, Promise.resolve())
+  }
+
+  /* **************************************************************************/
+  // Slack
+  /* **************************************************************************/
+
+  /**
+  * Clears localStorage and disables localStorage for any open slack clients
+  */
+  clearAndDisableLocalStorage () {
+    // Always late require to prevent cyclic references
+    const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
+    const { mailboxStore } = require('stores/mailbox')
+
+    const sig = '[TEST:SLACK_LOCALSTORAGE]'
+    console.log(`${sig} start`)
+    const mailboxState = mailboxStore.getState()
+    const mailboxes = mailboxState.getMailboxesOfType(CoreMailbox.MAILBOX_TYPES.SLACK)
+    console.log(`${sig} found ${mailboxes.length} Slack Mailboxes`)
+
+    const mailboxElements = mailboxes
+      .map((mailbox) => {
+        const element = document.querySelector(`webview[partition="persist:${mailbox.partition}"]`)
+        if (element) {
+          return { element: element, mailbox: mailbox }
+        } else {
+          return undefined
+        }
+      })
+      .filter((e) => !!e)
+    console.log(`${sig} found ${mailboxes.length} Active Slack Mailboxes`)
+
+    mailboxElements.reduce((acc, {element, mailbox}) => {
+      return acc
+        .then(() => {
+          return new Promise((resolve, reject) => {
+            element.executeJavaScript(`
+              (function () {
+                if (window.localStorage) {
+                  let length = 0
+                  let keyLength = 0
+                  for (let k in window.localStorage) {
+                    keyLength++
+                    length += window.localStorage[k].length
+                  }
+                  return { keyLength: keyLength, length: length }
+                } else {
+                  return { keyLength: 0, length: 0 }
+                }
+              })()
+            `, false, (res) => {
+              console.log(`${sig} ${mailbox.displayName} keyLength:${res.keyLength} length:${res.length}`)
+              resolve()
+            })
+          })
+        })
+        .then(() => {
+          return new Promise((resolve, reject) => {
+            element.executeJavaScript(`
+              (function () {
+                if (window.localStorage) {
+                  window.localStorage.clear()
+                  delete window.localStorage
+                }
+                return true
+              })()
+            `, false, (res) => {
+              console.log(`${sig} ${mailbox.displayName} localStorage temporarily disabled`)
+              resolve()
+            })
+          })
         })
     }, Promise.resolve())
   }
