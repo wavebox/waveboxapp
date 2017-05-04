@@ -91,9 +91,11 @@ class DebugTests {
   /* **************************************************************************/
 
   /**
-  * Clears localStorage and disables localStorage for any open slack clients
+  * Clears localStorage for slack mailboxes and disables localStorage for them
+  * Only works whilst webview is in window. Sleep-cycle restores localStorage
+  * functionality
   */
-  clearAndDisableLocalStorage () {
+  clearAndDisableSlackLocalStorage () {
     // Always late require to prevent cyclic references
     const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
     const { mailboxStore } = require('stores/mailbox')
@@ -155,6 +157,43 @@ class DebugTests {
               resolve()
             })
           })
+        })
+    }, Promise.resolve())
+  }
+
+  /* **************************************************************************/
+  // Microsoft
+  /* **************************************************************************/
+
+  /**
+  * Fetches a set of unread messages so they can be compared against the ones that
+  * are being searched for
+  */
+  fetchMicrosoftUnreadMessageList () {
+    // Always late require to prevent cyclic references
+    const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
+    const { mailboxStore } = require('stores/mailbox')
+    const { MicrosoftHTTP } = require('stores/microsoft')
+
+    const sig = '[TEST:MICROSOFT_MESSAGES]'
+    console.log(`${sig} start`)
+    const mailboxState = mailboxStore.getState()
+    const mailboxes = mailboxState.getMailboxesOfType(CoreMailbox.MAILBOX_TYPES.MICROSOFT)
+    console.log(`${sig} found ${mailboxes.length} Microsoft Mailboxes`)
+
+    mailboxes.reduce((acc, mailbox) => {
+      let auth = null
+      return acc
+        .then(() => MicrosoftHTTP.refreshAuthToken(mailbox.refreshToken))
+        .then((fetchedAuth) => {
+          auth = fetchedAuth.access_token
+          return Promise.resolve()
+        })
+        .then(() => MicrosoftHTTP.fetchUnreadMessages(auth))
+        .then((response) => {
+          console.log(`${sig} ${mailbox.displayName} unread count:${response.value.length}`)
+          console.log(`${sig} ${mailbox.displayName} unread messages:\n`, response.value.map((m) => m.subject + ':' + m.bodyPreview + ':' + m.receivedDateTime).join('\n'))
+          return Promise.resolve()
         })
     }, Promise.resolve())
   }
