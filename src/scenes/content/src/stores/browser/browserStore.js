@@ -19,7 +19,7 @@ class BrowserStore {
     this.searchTerm = ''
     this.searchNextHash = 0
 
-    this.zoomFactor = 1.0
+    this.zoomFactor = 0.0
 
     /* ****************************************/
     // Listeners

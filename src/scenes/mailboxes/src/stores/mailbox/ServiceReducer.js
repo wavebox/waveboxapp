@@ -63,7 +63,7 @@ class ServiceReducer {
   * @param service: the service to update
   */
   static resetZoom (mailbox, service) {
-    return service.changeData({ zoomFactor: 1.0 })
+    return service.changeData({ zoomFactor: 0.0 })
   }
 
   /* **************************************************************************/
