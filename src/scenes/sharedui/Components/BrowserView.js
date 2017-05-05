@@ -17,7 +17,7 @@ export default class BrowserView extends React.Component {
     searchTerm: PropTypes.string
   }
   static defaultProps = {
-    zoomFactor: 0.0,
+    zoomFactor: 1.0,
     searchId: `${Math.random()}`
   }
   static REACT_WEBVIEW_EVENTS = WebView.REACT_WEBVIEW_EVENTS
@@ -49,8 +49,8 @@ export default class BrowserView extends React.Component {
   * be really agressive about setting zoom levels
   */
   handleZoomFixEvent = () => {
-    if (this.props.zoomFactor !== 0.0) {
-      this.refs[WEBVIEW_REF].setZoomLevel(this.props.zoomFactor)
+    if (this.props.zoomFactor !== 1.0) {
+      this.refs[WEBVIEW_REF].setZoomFactor(this.props.zoomFactor)
     }
   }
 
@@ -68,7 +68,7 @@ export default class BrowserView extends React.Component {
 
     // Zoom
     if (prevProps.zoomFactor !== zoomFactor) {
-      this.refs[WEBVIEW_REF].setZoomLevel(zoomFactor)
+      this.refs[WEBVIEW_REF].setZoomFactor(zoomFactor)
     }
 
     // Search

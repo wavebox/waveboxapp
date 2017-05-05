@@ -19,7 +19,7 @@ class BrowserStore {
     this.searchTerm = ''
     this.searchNextHash = 0
 
-    this.zoomFactor = 0.0
+    this.zoomFactor = 1.0
 
     /* ****************************************/
     // Listeners
@@ -116,7 +116,7 @@ class BrowserStore {
   }
 
   handleDecreaseZoom () {
-    this.zoomFactor = Math.max(-1.5, this.zoomFactor - 0.1)
+    this.zoomFactor = Math.max(0.5, this.zoomFactor - 0.1)
   }
 
   handleResetZoom () {

@@ -53,7 +53,7 @@ class ServiceReducer {
   */
   static decreaseZoom (mailbox, service) {
     return service.changeData({
-      zoomFactor: Math.max(-1.5, service.zoomFactor - 0.1)
+      zoomFactor: Math.max(0.5, service.zoomFactor - 0.1)
     })
   }
 
@@ -63,7 +63,7 @@ class ServiceReducer {
   * @param service: the service to update
   */
   static resetZoom (mailbox, service) {
-    return service.changeData({ zoomFactor: 0.0 })
+    return service.changeData({ zoomFactor: 1.0 })
   }
 
   /* **************************************************************************/
