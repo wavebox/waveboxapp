@@ -18,7 +18,7 @@ Find out more about Wavebox at [wavebox.io](https://wavebox.io)
 
 Wavebox is available to download for macOS, Windows & Linux (tar & deb). Precompiled downloads are available from our downloads page [https://wavebox.io/download](https://wavebox.io/download).
 
-If you're interested in finding out what's changed between each version you take a look at the [changelog](https://github.com/wavebox/waveboxapp/blob/master/CHANGELOG.md)
+If you're interested in finding out what's changed between each version you can take a look at the [changelog](https://github.com/wavebox/waveboxapp/releases)
 
 # Building Wavebox
 
