@@ -39,7 +39,7 @@
     "clean-webpack-plugin": "0.1.16",
     "copy-webpack-plugin": "4.0.1",
     "css-loader": "0.28.1",
-    "electron": "1.6.8",
+    "electron": "1.6.9",
     "extract-text-webpack-plugin": "2.1.0",
     "file-loader": "0.11.1",
     "json-loader": "0.5.4",
@@ -50,9 +50,9 @@
     "uglify-js": "git+https://github.com/mishoo/UglifyJS2.git#harmony",
     "url-loader": "0.5.8",
     "uuid": "3.0.1",
-    "webpack": "2.4.1",
+    "webpack": "2.5.1",
     "webpack-target-electron-renderer": "0.4.0",
-    "yargs": "7.1.0"
+    "yargs": "8.0.1"
   },
   "devDependencies": {
     "standard": "10.0.2",

@@ -11,7 +11,7 @@
     "react": "15.5.4",
     "react-addons-shallow-compare": "15.5.2",
     "react-dom": "15.5.4",
-    "prop-types": "15.5.8",
+    "prop-types": "15.5.9",
     "react-portal-tooltip": "1.1.5",
     "react-tap-event-plugin": "2.0.1",
     "react-timer-mixin": "0.13.3",

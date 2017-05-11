@@ -11,7 +11,7 @@
     "auto-launch": "5.0.1",
     "dictionary-en-us": "1.2.1",
     "escape-html": "1.0.3",
-    "fs-extra": "3.0.0",
+    "fs-extra": "3.0.1",
     "gmail-js": "0.6.10",
     "googleapis": "19.0.0",
     "home-dir": "1.0.0",
@@ -21,8 +21,7 @@
     "uuid": "3.0.1",
     "winreg": "1.2.3",
     "wmail-spellchecker": "Thomas101/wmail-spellchecker#1.0.5",
-    "write-file-atomic": "2.0.0",
-    "yargs": "7.1.0"
+    "yargs": "8.0.1"
   },
   "devDependencies": {
     "standard": "10.0.2"

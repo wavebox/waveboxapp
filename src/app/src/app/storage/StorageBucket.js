@@ -5,8 +5,8 @@ const pkg = require('../../package.json')
 const mkdirp = require('mkdirp')
 const path = require('path')
 const fs = require('fs-extra')
-const writeFileAtomic = require('write-file-atomic')
 const { DB_WRITE_DELAY_MS } = require('../../shared/constants')
+const uuid = require('uuid')
 
 // Setup
 const appDirectory = new AppDirectory({
@@ -73,9 +73,24 @@ class StorageBucket extends EventEmitter {
         this._writeToDisk()
       } else {
         this.__writeLock__ = true
-        writeFileAtomic(this.__path__, JSON.stringify(this.__data__), () => {
-          this.__writeLock__ = false
-        })
+
+        const flushPath = `${this.__path__}.${uuid.v4().replace(/-/g, '')}`
+        const data = JSON.stringify(this.__data__)
+
+        Promise.resolve()
+          .then(() => fs.open(flushPath, 'w'))
+          .then((ref) => {
+            return Promise.resolve()
+              .then(() => fs.write(ref, data, 0, data))
+              .then(() => fs.fsync(ref))
+              .then(() => fs.close(ref))
+          })
+          .then(() => fs.rename(flushPath, this.__path__))
+          .then(() => {
+            this.__writeLock__ = false
+          }, () => {
+            this.__writeLock__ = false
+          })
       }
     }, DB_WRITE_DELAY_MS)
   }
@@ -189,7 +204,7 @@ class StorageBucket extends EventEmitter {
         const data = JSON.stringify(this.__data__)
         const testPath = `${this.__path__}.measure`
         const start = new Date().getTime()
-        writeFileAtomic.sync(testPath, JSON.stringify(data))
+        fs.writeFileSync(testPath, data)
         const finish = new Date().getTime()
         results.push(finish - start)
       }
@@ -201,7 +216,7 @@ class StorageBucket extends EventEmitter {
       for (let i = 0; i < runs; i++) {
         const testPath = `${this.__path__}.measure`
         const start = new Date().getTime()
-        writeFileAtomic.sync(testPath, JSON.stringify(this.__data__))
+        fs.writeFileSync(testPath, JSON.stringify(this.__data__))
         const finish = new Date().getTime()
         results.push(finish - start)
       }
