@@ -69,11 +69,17 @@ class MailboxDispatch extends EventEmitter {
   /* **************************************************************************/
 
   /**
-  * Fetches the process memory info for all webviews
-  * @return promise with the array of infos
+  * Asks the mailbox to submit its resource usage
+  * @param mailboxId: the id of the mailbox
+  * @param serviceType: the type of service
+  * @param description: the description that should be returned in the pong
   */
-  fetchProcessMemoryInfo () {
-    return this.request('fetch-process-memory-info')
+  pingResourceUsage (mailboxId, serviceType, description) {
+    return this.emit('ping-resource-usage', {
+      mailboxId: mailboxId,
+      serviceType: serviceType,
+      description: description
+    })
   }
 
   /* **************************************************************************/

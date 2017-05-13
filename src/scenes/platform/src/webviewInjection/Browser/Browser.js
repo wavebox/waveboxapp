@@ -13,10 +13,17 @@ class Browser {
     this.spellchecker = new Spellchecker()
     this.contextMenu = new ContextMenu(this.spellchecker)
 
-    ipcRenderer.on('get-process-memory-info', (evt, data) => {
+    ipcRenderer.on('ping-resource-usage', (evt, data) => {
       ipcRenderer.sendToHost({
-        data: process.getProcessMemoryInfo(),
-        type: data.__respond__
+        type: 'pong-resource-usage',
+        data: Object.assign({},
+          process.getCPUUsage(),
+          process.getProcessMemoryInfo(),
+          {
+            pid: process.pid,
+            description: data.description
+          }
+        )
       })
     })
   }

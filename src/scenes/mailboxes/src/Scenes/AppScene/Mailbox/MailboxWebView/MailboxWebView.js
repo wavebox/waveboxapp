@@ -63,7 +63,7 @@ export default class MailboxWebView extends React.Component {
     mailboxDispatch.on('devtools', this.handleOpenDevTools)
     mailboxDispatch.on('refocus', this.handleRefocus)
     mailboxDispatch.on('reload', this.handleReload)
-    mailboxDispatch.respond('fetch-process-memory-info', this.handleFetchProcessMemoryInfo)
+    mailboxDispatch.on('ping-resource-usage', this.pingResourceUsage)
     mailboxDispatch.addGetter('current-url', this.handleGetCurrentUrl)
     ipcRenderer.on('mailbox-window-navigate-back', this.handleIPCNavigateBack)
     ipcRenderer.on('mailbox-window-navigate-forward', this.handleIPCNavigateForward)
@@ -78,7 +78,7 @@ export default class MailboxWebView extends React.Component {
     mailboxDispatch.removeListener('devtools', this.handleOpenDevTools)
     mailboxDispatch.removeListener('refocus', this.handleRefocus)
     mailboxDispatch.removeListener('reload', this.handleReload)
-    mailboxDispatch.unrespond('fetch-process-memory-info', this.handleFetchProcessMemoryInfo)
+    mailboxDispatch.removeListener('ping-resource-usage', this.pingResourceUsage)
     mailboxDispatch.removeGetter('current-url', this.handleGetCurrentUrl)
     ipcRenderer.removeListener('mailbox-window-navigate-back', this.handleIPCNavigateBack)
     ipcRenderer.removeListener('mailbox-window-navigate-forward', this.handleIPCNavigateForward)
@@ -246,17 +246,15 @@ export default class MailboxWebView extends React.Component {
   }
 
   /**
-  * Fetches the webviews process memory info
-  * @return promise
+  * Pings the webview for the current resource usage
+  * @param mailboxId: the id of the mailbox
+  * @param serviceType: the type of service
+  * @param description: the description that can be passed around for the ping
   */
-  handleFetchProcessMemoryInfo = () => {
-    return this.refs[BROWSER_REF].getProcessMemoryInfo().then((memoryInfo) => {
-      return Promise.resolve({
-        mailboxId: this.props.mailboxId,
-        serviceType: this.props.serviceType,
-        memoryInfo: memoryInfo
-      })
-    })
+  pingResourceUsage = ({ mailboxId, serviceType, description }) => {
+    if (mailboxId === this.props.mailboxId && serviceType === this.props.serviceType) {
+      this.refs[BROWSER_REF].send('ping-resource-usage', { description: description })
+    }
   }
 
   /**
@@ -301,6 +299,7 @@ export default class MailboxWebView extends React.Component {
   dispatchBrowserIPCMessage (evt) {
     switch (evt.channel.type) {
       case 'open-settings': window.location.hash = '/settings'; break
+      case 'pong-resource-usage': ipcRenderer.send('pong-resource-usage', evt.channel.data); break
       default: break
     }
   }

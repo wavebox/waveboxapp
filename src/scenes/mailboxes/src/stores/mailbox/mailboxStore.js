@@ -393,7 +393,10 @@ class MailboxStore {
       handleSearchNextTerm: actions.SEARCH_NEXT_TERM,
 
       // Sync
-      handleFullSyncMailbox: actions.FULL_SYNC_MAILBOX
+      handleFullSyncMailbox: actions.FULL_SYNC_MAILBOX,
+
+      // Misc
+      handlePingResourceUsage: actions.PING_RESOURCE_USAGE
     })
   }
 
@@ -1081,6 +1084,20 @@ class MailboxStore {
       microsoftActions.syncMailboxMail.defer(id)
       this.preventDefault() // No change in this store
     }
+  }
+
+  /* **************************************************************************/
+  // Handlers : Misc
+  /* **************************************************************************/
+
+  handlePingResourceUsage () {
+    this.preventDefault()
+    this.allMailboxes().forEach((mailbox) => {
+      mailbox.enabledServices.forEach((service) => {
+        const description = `Mailbox WebView: ${mailbox.displayName}:${service.humanizedType}`
+        mailboxDispatch.pingResourceUsage(mailbox.id, service.type, description)
+      })
+    })
   }
 }
 

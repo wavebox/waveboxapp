@@ -91,7 +91,7 @@ class ContentWindow extends WaveboxWindow {
     )
 
     // Start the browser window
-    super.start(this.generateWindowUrl(url, partition), fullWindowPreferences)
+    return super.start(this.generateWindowUrl(url, partition), fullWindowPreferences)
   }
 
   /**

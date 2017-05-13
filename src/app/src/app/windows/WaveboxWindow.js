@@ -30,9 +30,11 @@ class WaveboxWindow extends EventEmitter {
   * Starts the app
   * @param url: the start url
   * @param windowPreferences=undefined: additional window preferences to supply
+  * @return this
   */
   start (url, windowPreferences = undefined) {
     this.createWindow(this.defaultWindowPreferences(windowPreferences), url)
+    return this
   }
 
   /* ****************************************************************************/
@@ -230,6 +232,15 @@ class WaveboxWindow extends EventEmitter {
   */
   openDevTools () {
     this.window.webContents.openDevTools()
+    return this
+  }
+
+  /**
+  * Requests that the window returns resource usage
+  * @return this
+  */
+  pingResourceUsage () {
+    this.window.webContents.send('ping-resource-usage', { })
     return this
   }
 

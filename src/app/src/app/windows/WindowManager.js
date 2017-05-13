@@ -3,6 +3,7 @@ const settingStore = require('../stores/settingStore')
 const {
   TraySettings: { SUPPORTS_TRAY_MINIMIZE_CONFIG }
 } = require('../../shared/Models/Settings')
+const MonitorWindow = require('./MonitorWindow')
 
 class WindowManager {
   /* ****************************************************************************/
@@ -15,6 +16,7 @@ class WindowManager {
   constructor (mailboxesWindow) {
     this.contentWindows = []
     this.mailboxesWindow = mailboxesWindow
+    this.monitor = { window: null, ping: null, active: false }
     this.forceQuit = false
     this.mailboxesWindow.on('close', (e) => this.handleClose(e))
     this.mailboxesWindow.on('closed', () => {
@@ -61,12 +63,52 @@ class WindowManager {
   /**
   * Adds a content window
   * @param window: the window to add
+  * @return this
   */
   addContentWindow (window) {
     this.contentWindows.push(window)
     window.on('closed', () => {
       this.contentWindows = this.contentWindows.filter((w) => w !== window)
     })
+    return this
+  }
+
+  /* ****************************************************************************/
+  // Monitor Window
+  /* ****************************************************************************/
+
+  /**
+  * Opens a monitor window, or if one already open does nothing
+  * @return this
+  */
+  openMonitorWindow () {
+    if (this.monitor.active) { return }
+
+    this.monitor.window = new MonitorWindow()
+    this.monitor.window.start()
+    this.monitor.ping = setInterval(() => {
+      this.contentWindows.forEach((w) => w.pingResourceUsage())
+      this.mailboxesWindow.pingResourceUsage()
+    }, 2000)
+
+    this.monitor.window.on('closed', () => {
+      clearInterval(this.monitor.ping)
+      this.monitor.window = null
+      this.monitor.active = false
+    })
+
+    this.monitor.active = true
+
+    return this
+  }
+
+  /**
+  * Sends resource info to the monitoring window
+  */
+  submitProcessResourceUsage (info) {
+    if (this.monitor.active && this.monitor.window) {
+      this.monitor.window.submitProcessResourceUsage(info)
+    }
   }
 
   /* ****************************************************************************/

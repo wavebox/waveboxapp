@@ -255,14 +255,6 @@ export default class WebView extends React.Component {
   /* **************************************************************************/
 
   /**
-  * Calls into the webview to get process memory info
-  * @return promise
-  */
-  getProcessMemoryInfo = () => {
-    return this.sendWithResponse('get-process-memory-info')
-  }
-
-  /**
   * Calls into the webview to get some data
   * @param sendName: the name to send to the webview
   * @param obj={}: the object to send into the webview. Note __respond__ is reserved

@@ -37,3 +37,13 @@ ipcRenderer.on('prepare-reload', () => {
 })
 
 ipcRenderer.send('mailboxes-js-loaded', {})
+
+// Resource usage monitoring
+ipcRenderer.on('ping-resource-usage', () => {
+  ipcRenderer.send('pong-resource-usage', {
+    ...process.getCPUUsage(),
+    ...process.getProcessMemoryInfo(),
+    pid: process.pid,
+    description: `Mailboxes Window`
+  })
+})

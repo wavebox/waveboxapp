@@ -1,0 +1,24 @@
+{
+  "name": "wavebox-scenes-monitor",
+  "author": "opensource@wavebox.io",
+  "license": "MPL-2.0",
+  "repository": "https://github.com/wavebox/waveboxapp",
+  "description": "Monitor UI for Wavebox",
+  "dependencies": {
+    "alt": "0.18.6",
+    "fbjs": "0.8.12",
+    "material-ui": "0.18.0",
+    "react": "15.5.4",
+    "react-addons-shallow-compare": "15.5.2",
+    "react-dom": "15.5.4",
+    "prop-types": "15.5.9",
+    "react-tap-event-plugin": "2.0.1"
+  },
+  "devDependencies": {
+    "standard": "10.0.2",
+    "babel-eslint": "7.2.3"
+  },
+  "standard": {
+    "parser": "babel-eslint"
+  }
+}

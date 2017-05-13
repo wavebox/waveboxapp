@@ -427,6 +427,15 @@ class MailboxActions {
 
     return { promise: promise }
   }
+
+  /* **************************************************************************/
+  // Misc
+  /* **************************************************************************/
+
+  /**
+  * Pings all the mailboxes to submit their resource usage
+  */
+  pingResourceUsage () { return {} }
 }
 
 const actions = alt.createActions(MailboxActions)
@@ -459,5 +468,8 @@ ipcRenderer.on('switch-mailbox', (evt, req) => {
   }
 })
 ipcRenderer.on('switch-service-index', (evt, req) => actions.changeActiveServiceIndex(req.index))
+
+// Misc
+ipcRenderer.on('ping-resource-usage', actions.pingResourceUsage)
 
 export default actions

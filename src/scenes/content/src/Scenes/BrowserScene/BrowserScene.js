@@ -86,6 +86,17 @@ export default class BrowserScene extends React.Component {
     )
   }
 
+  /**
+  * Handles IPC Messages from the browser
+  * @param evt: the event that fired
+  */
+  handleBrowserIPCMessage = (evt) => {
+    switch (evt.channel.type) {
+      case 'pong-resource-usage': ipcRenderer.send('pong-resource-usage', evt.channel.data); break
+      default: break
+    }
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -122,6 +133,7 @@ export default class BrowserScene extends React.Component {
             didStartLoading={(evt) => browserActions.startLoading()}
             didStopLoading={(evt) => browserActions.stopLoading()}
             newWindow={(evt) => shell.openExternal(evt.url, { })}
+            ipcMessage={this.handleBrowserIPCMessage}
             willNavigate={this.navigationStateDidChange}
             didNavigate={this.navigationStateDidChange}
             didNavigateInPage={(evt) => {

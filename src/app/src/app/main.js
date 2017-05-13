@@ -70,6 +70,14 @@
     window.start(windowManager.mailboxesWindow.window, body.url, body.partition, body.windowPreferences, body.webPreferences)
   })
 
+  ipcMain.on('monitor-window', (evt, body) => {
+    windowManager.openMonitorWindow()
+  })
+
+  ipcMain.on('pong-resource-usage', (evt, body) => {
+    windowManager.submitProcessResourceUsage(body)
+  })
+
   ipcMain.on('focus-app', (evt, body) => {
     windowManager.focusMailboxesWindow()
   })
