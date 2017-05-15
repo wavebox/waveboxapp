@@ -70,9 +70,7 @@ class UpdaterStore {
       // Checking
       handleScheduleNextUpdateCheck: actions.SCHEDULE_NEXT_UPDATE_CHECK,
       handleCheckForUpdates: actions.CHECK_FOR_UPDATES,
-      handleUserCheckForUpdates: actions.USER_CHECK_FOR_UPDATES,
-      handleCheckForSquirrelUpdates: actions.CHECK_FOR_SQUIRREL_UPDATES,
-      handleCheckForManualUpdates: actions.CHECK_FOR_MANUAL_UPDATES
+      handleUserCheckForUpdates: actions.USER_CHECK_FOR_UPDATES
     })
   }
 
@@ -221,9 +219,9 @@ class UpdaterStore {
     this.userActionedUpdate = false
 
     if (this.squirrelEnabled) {
-      actions.checkForSquirrelUpdates.defer()
+      this.checkForSquirrelUpdates()
     } else {
-      actions.checkForManualUpdates.defer()
+      this.checkForManualUpdates()
     }
   }
 
@@ -234,14 +232,21 @@ class UpdaterStore {
       this.showUserPrompt()
     } else {
       if (this.squirrelEnabled) {
-        actions.checkForSquirrelUpdates.defer()
+        this.checkForSquirrelUpdates()
       } else {
-        actions.checkForManualUpdates.defer()
+        this.checkForManualUpdates()
       }
     }
   }
 
-  handleCheckForSquirrelUpdates () {
+  /* **************************************************************************/
+  // Update Actioners
+  /* **************************************************************************/
+
+  /**
+  * Checks for updates using squirrel
+  */
+  checkForSquirrelUpdates () {
     if (!this.userActionedUpdate && !settingsStore.getState().app.checkForUpdates) {
       this.preventDefault()
       return
@@ -282,7 +287,10 @@ class UpdaterStore {
     }
   }
 
-  handleCheckForManualUpdates () {
+  /**
+  * Checks for updates using the manual endpoint
+  */
+  checkForManualUpdates () {
     if (!this.userActionedUpdate && !settingsStore.getState().app.checkForUpdates) {
       this.preventDefault()
       return

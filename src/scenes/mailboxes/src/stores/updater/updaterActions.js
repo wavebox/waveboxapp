@@ -73,16 +73,6 @@ class UpdaterActions {
   * Checks for updates and notifies the user of progress
   */
   userCheckForUpdates () { return { } }
-
-  /**
-  * Checks for squirrel updates (if supported by platform)
-  */
-  checkForSquirrelUpdates () { return { } }
-
-  /**
-  * Checks for manual download updates
-  */
-  checkForManualUpdates () { return { } }
 }
 
 const actions = alt.createActions(UpdaterActions)
