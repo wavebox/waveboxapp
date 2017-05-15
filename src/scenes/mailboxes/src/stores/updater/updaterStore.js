@@ -199,6 +199,8 @@ class UpdaterStore {
   handleSquirrelUpdateDisabled () {
     console.log('[Squirrel] Disabled')
     if (this.squirrelEnabled) {
+      this.updateState = UPDATE_STATES.ERROR
+      this.updateFailedCount = 0
       this.squirrelEnabled = false
       actions.checkForUpdates.defer()
     }
@@ -221,7 +223,9 @@ class UpdaterStore {
       return
     }
 
-    if (!this.isWorking()) {
+    if (this.isWorking()) {
+      actions.scheduleNextUpdateCheck.defer()
+    } else {
       this.userActionedUpdate = false
       if (this.squirrelEnabled) {
         this.checkForSquirrelUpdates()
