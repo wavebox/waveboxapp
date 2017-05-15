@@ -91,6 +91,9 @@ class AppPrimaryMenu {
           }
         })
       },
+      checkForUpdate: () => {
+        windowManager.mailboxesWindow.show().focus().userCheckForUpdate()
+      },
       find: () => {
         const focused = windowManager.focused()
         if (focused) { focused.findStart() }
@@ -143,6 +146,10 @@ class AppPrimaryMenu {
           {
             label: 'About',
             click: this._selectors.aboutDialog
+          },
+          {
+            label: 'Check for Update',
+            click: this._selectors.checkForUpdate
           },
           { type: 'separator' },
           {

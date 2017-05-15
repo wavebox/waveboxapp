@@ -239,6 +239,17 @@ class MailboxesWindow extends WaveboxWindow {
   }
 
   /* ****************************************************************************/
+  // Mailbox Actions: Update
+  /* ****************************************************************************/
+
+  /**
+  * Checks for updates and keeps the UI up to date with progress
+  */
+  userCheckForUpdate () {
+    this.window.webContents.send('user-check-for-updates', {})
+  }
+
+  /* ****************************************************************************/
   // Mailbox Actions: Squirrel
   /* ****************************************************************************/
 
@@ -275,6 +286,13 @@ class MailboxesWindow extends WaveboxWindow {
   */
   squirrelCheckingForUpdate () {
     this.window.webContents.send('squirrel-update-check-start', { })
+  }
+
+  /**
+  * Indicates that squirrel updates have been disabled
+  */
+  squirrelUpdateDisabled () {
+    this.window.webContents.send('squirrel-update-disabled', { })
   }
 }
 

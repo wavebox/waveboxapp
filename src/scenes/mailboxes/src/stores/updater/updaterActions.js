@@ -21,14 +21,9 @@ class UpdaterActions {
   /* **************************************************************************/
 
   /**
-  * Indicates that a squirrel update has been downloaded
+  * Indicates that squirrel started checking for updates
   */
-  squirrelUpdateDownloaded () { return {} }
-
-  /**
-  * Indicates that a squirrely update failed
-  */
-  squirrelUpdateError () { return {} }
+  squirrelUpdateCheckStart () { return { } }
 
   /**
   * Indicates that a squirrel update is available
@@ -41,14 +36,24 @@ class UpdaterActions {
   squirrelUpdateNotAvailable () { return {} }
 
   /**
+  * Indicates that a squirrel update has been downloaded
+  */
+  squirrelUpdateDownloaded () { return {} }
+
+  /**
+  * Indicates that a squirrely update failed
+  */
+  squirrelUpdateError () { return {} }
+
+  /**
   * Installs the queued squirrel update
   */
   squirrelInstallUpdate () { return {} }
 
   /**
-  * Indicates that squirrel started checking for updates
+  * Indicates squirrel updates are disabled
   */
-  squirrelUpdateCheckStart () { return { } }
+  squirrelUpdateDisabled () { return {} }
 
   /* **************************************************************************/
   // Update checking
@@ -63,6 +68,11 @@ class UpdaterActions {
   * Checks for updates
   */
   checkForUpdates () { return { } }
+
+  /**
+  * Checks for updates and notifies the user of progress
+  */
+  userCheckForUpdates () { return { } }
 
   /**
   * Checks for squirrel updates (if supported by platform)
@@ -81,4 +91,6 @@ ipcRenderer.on('squirrel-update-error', () => actions.squirrelUpdateError())
 ipcRenderer.on('squirrel-update-available', () => actions.squirrelUpdateAvailable())
 ipcRenderer.on('squirrel-update-not-available', () => actions.squirrelUpdateNotAvailable())
 ipcRenderer.on('squirrel-update-check-start', () => actions.squirrelUpdateCheckStart())
+ipcRenderer.on('squirrel-update-disabled', () => actions.squirrelUpdateDisabled())
+ipcRenderer.on('user-check-for-updates', () => actions.userCheckForUpdates())
 export default actions

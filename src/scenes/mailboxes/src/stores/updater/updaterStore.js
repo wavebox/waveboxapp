@@ -12,14 +12,43 @@ import {
 const { ipcRenderer } = window.nativeRequire('electron')
 const pkg = window.appPackage()
 
+const UPDATE_STATES = Object.freeze({
+  CHECKING: 'CHECKING',
+  DOWNLOADING: 'DOWNLOADING',
+  DOWNLOADED: 'DOWNLOADED',
+  NONE: 'NONE',
+  ERROR: 'ERROR'
+})
+
 class UpdaterStore {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get UPDATE_STATES () { return UPDATE_STATES }
+
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
 
   constructor () {
+    this.squirrelEnabled = process.platform === 'darwin' || process.platform === 'win32'
     this.nextCheckTO = null
     this.lastManualDownloadUrl = null
+    this.updateFailedCount = 0
+    this.updateState = UPDATE_STATES.NONE
+    this.userActionedUpdate = false
+
+    /* **************************************/
+    // Update state
+    /* **************************************/
+
+    this.isWorking = () => this.updateState === UPDATE_STATES.CHECKING || this.updateState === UPDATE_STATES.DOWNLOADING
+    this.isCheckingUpdate = () => this.updateState === UPDATE_STATES.CHECKING
+    this.isDownloadingUpdate = () => this.updateState === UPDATE_STATES.DOWNLOADING
+    this.isDownloadedUpdate = () => this.updateState === UPDATE_STATES.DOWNLOADED
+    this.isNoUpdate = () => this.updateState === UPDATE_STATES.NONE
+    this.isErrorUpdate = () => this.updateState === UPDATE_STATES.ERROR
 
     /* **************************************/
     // Listeners
@@ -30,19 +59,69 @@ class UpdaterStore {
       handleUnload: actions.UNLOAD,
 
       // Squirrel
-      handleSquirrelUpdateDownloaded: actions.SQUIRREL_UPDATE_DOWNLOADED,
-      handleSquirrelUpdateError: actions.SQUIRREL_UPDATE_ERROR,
+      handleSquirrelUpdateCheckStart: actions.SQUIRREL_UPDATE_CHECK_START,
       handleSquirrelUpdateAvailable: actions.SQUIRREL_UPDATE_AVAILABLE,
       handleSquirrelUpdateNotAvailable: actions.SQUIRREL_UPDATE_NOT_AVAILABLE,
+      handleSquirrelUpdateDownloaded: actions.SQUIRREL_UPDATE_DOWNLOADED,
+      handleSquirrelUpdateError: actions.SQUIRREL_UPDATE_ERROR,
       handleSquirrelInstallUpdate: actions.SQUIRREL_INSTALL_UPDATE,
-      handleSquirrelUpdateCheckStart: actions.SQUIRREL_UPDATE_CHECK_START,
+      handleSquirrelUpdateDisabled: actions.SQUIRREL_UPDATE_DISABLED,
 
       // Checking
       handleScheduleNextUpdateCheck: actions.SCHEDULE_NEXT_UPDATE_CHECK,
       handleCheckForUpdates: actions.CHECK_FOR_UPDATES,
+      handleUserCheckForUpdates: actions.USER_CHECK_FOR_UPDATES,
       handleCheckForSquirrelUpdates: actions.CHECK_FOR_SQUIRREL_UPDATES,
       handleCheckForManualUpdates: actions.CHECK_FOR_MANUAL_UPDATES
     })
+  }
+
+  /* **************************************************************************/
+  // Utils
+  /* **************************************************************************/
+
+  /**
+  * Shows the user prompt for the correct state etc
+  * @param userActionedUpdate=autoget: true if the user actioned the update
+  * @param updateState=autoget: the current update state
+  * @return true if the user was prompted
+  */
+  showUserPrompt () {
+    if (this.updateState === UPDATE_STATES.CHECKING || this.updateState === UPDATE_STATES.DOWNLOADING) {
+      if (this.userActionedUpdate) {
+        if (this.squirrelEnabled) {
+          window.location.hash = `/updates/checking/squirrel`
+        } else {
+          window.location.hash = `/updates/checking/manual`
+        }
+        return true
+      }
+    } else if (this.updateState === UPDATE_STATES.DOWNLOADED) {
+      window.location.hash = this.squirrelEnabled ? `/updates/install/squirrel` : `/updates/available/manual`
+      return true
+    } else if (this.updateState === UPDATE_STATES.NONE) {
+      if (this.userActionedUpdate) {
+        if (this.squirrelEnabled) {
+          window.location.hash = `/updates/none/squirrel`
+        } else {
+          window.location.hash = `/updates/none/manual`
+        }
+        return true
+      }
+    } else if (this.updateState === UPDATE_STATES.ERROR) {
+      if (this.userActionedUpdate || this.updateFailedCount > 5) {
+        if (this.squirrelEnabled) {
+          window.location.hash = `/updates/error/squirrel`
+        } else {
+          window.location.hash = `/updates/error/manual`
+        }
+        if (this.updateFailedCount > 5) {
+          this.updateFailedCount = 0 // Reset to prevent bugging the user
+        }
+        return true
+      }
+    }
+    return false
   }
 
   /* **************************************************************************/
@@ -52,6 +131,7 @@ class UpdaterStore {
   handleLoad () {
     clearTimeout(this.nextCheckTO)
     this.lastManualDownloadUrl = null
+    actions.checkForUpdates.defer()
   }
 
   handleUnload () {
@@ -63,29 +143,67 @@ class UpdaterStore {
   // Handlers: Squirrel
   /* **************************************************************************/
 
-  handleSquirrelUpdateDownloaded () {
-    window.location.hash = '/updates/squirrel/install'
-  }
+  handleSquirrelUpdateCheckStart () {
+    console.log('[Squirrel] checking for updates')
 
-  handleSquirrelUpdateError () {
-    console.log('[Squirrel] update error')
-    actions.checkForManualUpdates.defer()
+    this.updateState = UPDATE_STATES.CHECKING
+    if (this.userActionedUpdate) {
+      this.showUserPrompt()
+    }
   }
 
   handleSquirrelUpdateAvailable () {
     console.log('[Squirrel] Update Available')
+    this.updateState = UPDATE_STATES.DOWNLOADING
   }
 
   handleSquirrelUpdateNotAvailable () {
-    console.log('[Squirrel] no updates available')
+    console.log('[Squirrel] No updates available')
+
+    this.updateState = UPDATE_STATES.NONE
+    this.updateFailedCount = 0
+    if (this.userActionedUpdate) {
+      this.userActionedUpdate = false
+      this.showUserPrompt()
+    }
+
+    // Check for the next update
+    actions.scheduleNextUpdateCheck.defer()
+  }
+
+  handleSquirrelUpdateDownloaded () {
+    console.log('[Squirrel] Update downloaded')
+
+    this.updateState = UPDATE_STATES.DOWNLOADED
+    this.updateFailedCount = 0
+    this.showUserPrompt()
+
+    // Reset for next run
+    this.userActionedUpdate = false
+  }
+
+  handleSquirrelUpdateError () {
+    console.log('[Squirrel] Update error')
+
+    this.updateState = UPDATE_STATES.ERROR
+    this.updateFailedCount = this.updateFailedCount + 1
+    this.showUserPrompt()
+
+    // Reset for next run
+    this.userActionedUpdate = false
+    actions.scheduleNextUpdateCheck.defer()
   }
 
   handleSquirrelInstallUpdate () {
     ipcRenderer.send('squirrel-apply-update', {})
   }
 
-  handleSquirrelUpdateCheckStart () {
-    console.log('[Squirrel] checking for updates')
+  handleSquirrelUpdateDisabled () {
+    console.log('[Squirrel] Disabled')
+    if (this.squirrelEnabled) {
+      this.squirrelEnabled = false
+      actions.checkForUpdates.defer()
+    }
   }
 
   /* **************************************************************************/
@@ -100,26 +218,44 @@ class UpdaterStore {
   }
 
   handleCheckForUpdates () {
-    this.preventDefault()
+    this.userActionedUpdate = false
 
-    if (process.platform === 'darwin' || process.platform === 'win32') {
+    if (this.squirrelEnabled) {
       actions.checkForSquirrelUpdates.defer()
     } else {
       actions.checkForManualUpdates.defer()
     }
   }
 
+  handleUserCheckForUpdates () {
+    this.userActionedUpdate = true
+
+    if (this.isWorking()) {
+      this.showUserPrompt()
+    } else {
+      if (this.squirrelEnabled) {
+        actions.checkForSquirrelUpdates.defer()
+      } else {
+        actions.checkForManualUpdates.defer()
+      }
+    }
+  }
+
   handleCheckForSquirrelUpdates () {
-    this.preventDefault() // No change to store
-    if (!settingsStore.getState().app.checkForUpdates) { return }
+    if (!this.userActionedUpdate && !settingsStore.getState().app.checkForUpdates) {
+      this.preventDefault()
+      return
+    }
 
     if (process.platform === 'darwin') {
       // Squirrel does the donkey work for us on osx and checks the server for the update path
+      this.updateState = UPDATE_STATES.CHECKING
       ipcRenderer.send('squirrel-update-check', {
         url: `${UPDATE_FEED_DARWIN}?v=${pkg.version}`
       })
     } else if (process.platform === 'win32') {
       // Squirrel win32 needs a url it can resolve two files, so find out from wavebox where that is!
+      this.updateState = UPDATE_STATES.CHECKING
       Promise.resolve()
         .then(() => {
           if (process.arch === 'x64') {
@@ -133,20 +269,27 @@ class UpdaterStore {
         .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
         .then((res) => res.json())
         .then((res) => {
-          if (res.status !== 204) {
+          if (res.status === 204) {
             ipcRenderer.send('squirrel-update-check', { url: res.url })
+            this.updateState = UPDATE_STATES.DOWNLOADING
+          } else {
+            actions.squirrelUpdateNotAvailable.defer()
           }
         })
         .catch(() => {
-          // If we fail then make sure we do at least try again in the future!
-          actions.scheduleNextUpdateCheck.defer()
+          actions.squirrelUpdateError.defer()
         })
     }
   }
 
   handleCheckForManualUpdates () {
-    this.preventDefault() // No change to this store
-    if (!settingsStore.getState().app.checkForUpdates) { return }
+    if (!this.userActionedUpdate && !settingsStore.getState().app.checkForUpdates) {
+      this.preventDefault()
+      return
+    }
+
+    this.updateState = UPDATE_STATES.CHECKING
+    this.showUserPrompt()
 
     Promise.resolve()
       .then(() => window.fetch(`${UPDATE_FEED_MANUAL}?v=${pkg.version}`))
@@ -155,14 +298,28 @@ class UpdaterStore {
       .then((res) => {
         if (res.available) {
           this.lastManualDownloadUrl = res.url
-          window.location.hash = '/updates/manual/available'
+          this.updateState = UPDATE_STATES.DOWNLOADED
+          this.showUserPrompt()
         } else {
           this.lastManualDownloadUrl = null
+          this.updateState = UPDATE_STATES.NONE
+          this.showUserPrompt()
         }
+
+        // Reset for next run
+        this.userActionedUpdate = false
+        this.emitChange()
       })
       .catch(() => {
-        // If we fail then make sure we do at least try again in the future!
+        this.updateState = UPDATE_STATES.ERROR
+        this.updateFailedCount = this.updateFailedCount + 1
+
+        this.showUserPrompt()
+
+        // Reset for next run
+        this.userActionedUpdate = false
         actions.scheduleNextUpdateCheck.defer()
+        this.emitChange()
       })
   }
 }

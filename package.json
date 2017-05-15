@@ -16,6 +16,7 @@
     "dev:monitor": "webpack --env.task=monitor && electron bin/app/index.js",
     "dev:assets": "webpack --env.task=assets && electron bin/app/index.js",
     "dev:run": "electron bin/app/index.js",
+    "dev:start": "webpack --env.fast && electron bin/app/index.js",
     "webpack": "webpack"
   },
   "keywords": [],

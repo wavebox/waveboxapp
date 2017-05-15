@@ -3,6 +3,7 @@ import {Paper} from 'material-ui'
 import styles from '../SettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import * as Colors from 'material-ui/styles/colors'
+import { updaterActions } from 'stores/updater'
 const { ipcRenderer } = window.nativeRequire('electron')
 const pkg = window.appPackage()
 
@@ -17,6 +18,14 @@ export default class InfoSettingsSection extends React.Component {
   handleShowMemoryInfo = (evt) => {
     evt.preventDefault()
     ipcRenderer.send('monitor-window', {})
+  }
+
+  /**
+  * Starts the check for update flow
+  */
+  handleCheckForUpdate = (evt) => {
+    evt.preventDefault()
+    updaterActions.userCheckForUpdates()
   }
 
   /* **************************************************************************/
@@ -36,12 +45,18 @@ export default class InfoSettingsSection extends React.Component {
           href='#'>
           Task Monitor
         </a>
+        <a
+          style={{color: Colors.blue700, fontSize: '85%', marginBottom: 10, display: 'block'}}
+          onClick={this.handleCheckForUpdate}
+          href='#'>
+          Check for Update
+        </a>
         <div style={{ fontSize: '85%' }}>
           <p>
             {`Wavebox ${pkg.version}`}
-          </p>
-          <p style={{color: Colors.grey400}}>
-            {`Electron/${process.versions.electron} Chromium/${process.versions.chrome}`}
+            <span style={{color: Colors.grey400}}>
+              {` Electron/${process.versions.electron} Chromium/${process.versions.chrome}`}
+            </span>
           </p>
         </div>
       </Paper>

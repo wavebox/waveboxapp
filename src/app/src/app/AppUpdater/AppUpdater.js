@@ -70,6 +70,7 @@ class AppUpdater {
         autoUpdater.on('error', (evt) => {
           if (this.isSigningFailureException(evt)) {
             console.log('Autoupdater disabled:', evt.message)
+            windowManager.mailboxesWindow.squirrelUpdateDisabled()
           } else {
             windowManager.mailboxesWindow.squirrelUpdateError()
           }
@@ -88,6 +89,7 @@ class AppUpdater {
       } catch (ex) {
         if (this.isSigningFailureException(ex)) {
           console.log('Autoupdater disabled:', ex.message)
+          windowManager.mailboxesWindow.squirrelUpdateDisabled()
         } else {
           throw ex
         }

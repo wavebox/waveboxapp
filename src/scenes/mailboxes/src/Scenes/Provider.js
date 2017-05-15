@@ -37,7 +37,6 @@ export default class Provider extends React.Component {
     ServerVent.start(Bootstrap.clientId, Bootstrap.clientToken)
     NotificationService.start()
     updaterActions.load()
-    updaterActions.checkForUpdates()
     ipcRenderer.on('download-completed', this.downloadCompleted)
     ipcRenderer.on('launch-settings', this.ipcLaunchSettings)
 

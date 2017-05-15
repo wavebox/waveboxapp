@@ -29,8 +29,10 @@ import {
   AppWizardCompleteScene
 } from './AppWizardScene'
 import {
-  ManualUpdateAvailableScene,
-  SquirrelUpdateDownloadedScene
+  CheckingUpdatesScene,
+  UpdateAvailableScene,
+  UpdateErrorScene,
+  UpdateNoneScene
 } from './UpdatesScene'
 import {
   AccountMessageScene,
@@ -76,8 +78,11 @@ export default class WaveboxRouter extends React.Component {
 
           <Route path='/incoming/compose' component={ComposePickerScene} />
 
-          <Route path='/updates/squirrel/install' component={SquirrelUpdateDownloadedScene} />
-          <Route path='/updates/manual/available' component={ManualUpdateAvailableScene} />
+          <Route path='/updates/checking/:provider' component={CheckingUpdatesScene} />
+          <Route path='/updates/none/:provider' component={UpdateNoneScene} />
+          <Route path='/updates/error/:provider' component={UpdateErrorScene} />
+          <Route path='/updates/install/:provider' component={UpdateAvailableScene} />
+          <Route path='/updates/available/:provider' component={UpdateAvailableScene} />
 
           <Route path='/pro' component={ProScene} />
 

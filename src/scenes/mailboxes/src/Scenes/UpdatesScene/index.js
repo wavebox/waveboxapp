@@ -1,7 +1,11 @@
-import ManualUpdateAvailableScene from './ManualUpdateAvailableScene'
-import SquirrelUpdateDownloadedScene from './SquirrelUpdateDownloadedScene'
+import CheckingUpdatesScene from './CheckingUpdatesScene'
+import UpdateAvailableScene from './UpdateAvailableScene'
+import UpdateErrorScene from './UpdateErrorScene'
+import UpdateNoneScene from './UpdateNoneScene'
 
 export {
-  ManualUpdateAvailableScene,
-  SquirrelUpdateDownloadedScene
+  CheckingUpdatesScene,
+  UpdateAvailableScene,
+  UpdateErrorScene,
+  UpdateNoneScene
 }
