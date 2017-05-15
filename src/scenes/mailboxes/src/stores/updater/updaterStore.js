@@ -216,12 +216,18 @@ class UpdaterStore {
   }
 
   handleCheckForUpdates () {
-    this.userActionedUpdate = false
+    if (!settingsStore.getState().app.checkForUpdates) {
+      this.preventDefault()
+      return
+    }
 
-    if (this.squirrelEnabled) {
-      this.checkForSquirrelUpdates()
-    } else {
-      this.checkForManualUpdates()
+    if (!this.isWorking()) {
+      this.userActionedUpdate = false
+      if (this.squirrelEnabled) {
+        this.checkForSquirrelUpdates()
+      } else {
+        this.checkForManualUpdates()
+      }
     }
   }
 
@@ -247,11 +253,6 @@ class UpdaterStore {
   * Checks for updates using squirrel
   */
   checkForSquirrelUpdates () {
-    if (!this.userActionedUpdate && !settingsStore.getState().app.checkForUpdates) {
-      this.preventDefault()
-      return
-    }
-
     if (process.platform === 'darwin') {
       // Squirrel does the donkey work for us on osx and checks the server for the update path
       this.updateState = UPDATE_STATES.CHECKING
@@ -295,11 +296,6 @@ class UpdaterStore {
   * Checks for updates using the manual endpoint
   */
   checkForManualUpdates () {
-    if (!this.userActionedUpdate && !settingsStore.getState().app.checkForUpdates) {
-      this.preventDefault()
-      return
-    }
-
     this.updateState = UPDATE_STATES.CHECKING
     this.showUserPrompt()
 
