@@ -272,13 +272,17 @@ class UpdaterStore {
           }
         })
         .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
-        .then((res) => res.json())
         .then((res) => {
           if (res.status === 204) {
-            ipcRenderer.send('squirrel-update-check', { url: res.url })
-            this.updateState = UPDATE_STATES.DOWNLOADING
-          } else {
             actions.squirrelUpdateNotAvailable.defer()
+          } else {
+            return Promise.resolve()
+              .then(() => res.json())
+              .then((res) => {
+                ipcRenderer.send('squirrel-update-check', { url: res.url })
+                this.updateState = UPDATE_STATES.DOWNLOADING
+                this.emitChange()
+              })
           }
         })
         .catch(() => {
