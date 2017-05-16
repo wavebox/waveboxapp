@@ -6,6 +6,8 @@ const fs = require('fs')
 const GinboxApi = require('./GinboxApi')
 const GmailApiExtras = require('./GmailApiExtras')
 const GoogleService = require('./GoogleService')
+const GmailChangeEmitter = require('./GmailChangeEmitter')
+const GinboxChangeEmitter = require('./GinboxChangeEmitter')
 
 class GoogleMail extends GoogleService {
   /* **************************************************************************/
@@ -15,6 +17,7 @@ class GoogleMail extends GoogleService {
   constructor () {
     super()
     this.googleWindowOpen = new GoogleWindowOpen()
+    this.changeEmitter = null
 
     this.sidebarStylesheet = document.createElement('style')
     this.sidebarStylesheet.innerHTML = `
@@ -78,6 +81,7 @@ class GoogleMail extends GoogleService {
       unloadedApi.observe.on('load', () => {
         this.gmailApi = unloadedApi
         this.googleWindowOpen.gmailApi = unloadedApi
+        this.changeEmitter = new GmailChangeEmitter(unloadedApi)
       })
     })
   }
@@ -85,7 +89,9 @@ class GoogleMail extends GoogleService {
   /**
   * Loads the inbox API
   */
-  loadInboxAPI () { }
+  loadInboxAPI () {
+    this.changeEmitter = new GinboxChangeEmitter()
+  }
 
   /* **************************************************************************/
   // Event handlers

@@ -66,6 +66,8 @@ class GoogleStore {
       handleRegisterMailboxWatch: actions.REGISTER_MAILBOX_WATCH,
 
       handleMailHistoryIdChanged: actions.MAIL_HISTORY_ID_CHANGED,
+      handleMailCountChanged: actions.MAIL_COUNT_CHANGED,
+      handleSyncMailboxMessages: actions.SYNC_MAILBOX_MESSAGES,
       handleMailHistoryIdChangedFromWatch: actions.MAIL_HISTORY_ID_CHANGED_FROM_WATCH
     })
   }
@@ -258,7 +260,7 @@ class GoogleStore {
   }
 
   /* **************************************************************************/
-  // Handlers: Mail
+  // Handlers: Mail Sync
   /* **************************************************************************/
 
   /**
@@ -400,12 +402,14 @@ class GoogleStore {
     }
   }
 
-  handleMailHistoryIdChanged ({ mailboxId, forceSync }) {
+  handleSyncMailboxMessages ({ mailboxId, forceSync }) {
+    // Check we're not already open
     if (this.hasOpenRequest(REQUEST_TYPES.MAIL, mailboxId)) {
       this.preventDefault()
       return
     }
 
+    // Get the mailbox and check we have everything
     const mailbox = mailboxStore.getState().getMailbox(mailboxId)
     const service = mailbox ? mailbox.serviceForType(GoogleDefaultService.type) : null
     if (!mailbox || !service) {
@@ -413,6 +417,7 @@ class GoogleStore {
       return
     }
 
+    // Start chatting to Google
     const requestId = this.trackOpenRequest(REQUEST_TYPES.MAIL, mailboxId)
     const auth = this.getAPIAuth(mailbox)
     const labelIds = this.mailLabelIdsForService(service)
@@ -429,7 +434,7 @@ class GoogleStore {
           return GoogleHTTP.fetchGmailHistoryList(auth, service.historyId)
             .then(({ historyId, history }) => {
               return {
-                historyId: historyId,
+                historyId: isNaN(parseInt(historyId)) ? undefined : parseInt(historyId),
                 hasContentChanged: forceSync || this.hasMailUnreadChangedFromHistory(labelIds, history || [])
               }
             })
@@ -437,7 +442,7 @@ class GoogleStore {
           return GoogleHTTP.fetchGmailProfile(auth)
             .then(({ historyId }) => {
               return {
-                historyId: historyId,
+                historyId: isNaN(parseInt(historyId)) ? undefined : parseInt(historyId),
                 hasContentChanged: true
               }
             })
@@ -446,7 +451,6 @@ class GoogleStore {
       .then((data) => {
         // STEP 2.1 [UNREAD]: Re-query gmail for the latest unread messages
         if (!data.hasContentChanged) { return data }
-
         return Promise.resolve()
           .then(() => {
             switch (service.accessMode) {
@@ -522,13 +526,49 @@ class GoogleStore {
       })
   }
 
-  handleMailHistoryIdChangedFromWatch ({ email }) {
+  /* **************************************************************************/
+  // Handlers: Mail change indicators
+  /* **************************************************************************/
+
+  handleMailCountChanged ({ mailboxId, count }) {
+    this.preventDefault() // Change is represented in re-fired action
+
+    // Get the mailbox and check we have everything
+    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
+    const service = mailbox ? mailbox.serviceForType(GoogleDefaultService.type) : null
+    if (!mailbox || !service) { return }
+
+    // Check to see if we have a change
+    if (count === service.unreadCount) { return }
+
+    // Fire off a sync call
+    actions.syncMailboxMessages.defer(mailboxId)
+  }
+
+  handleMailHistoryIdChanged ({ mailboxId, historyId }) {
+    this.preventDefault() // Change is represented in re-fired action
+
+    // Get the mailbox and check we have everything
+    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
+    const service = mailbox ? mailbox.serviceForType(GoogleDefaultService.type) : null
+    if (!mailbox || !service) { return }
+
+    // Check the historyId if we have one
+    if (historyId !== undefined && service.historyId !== undefined) {
+      if (historyId <= service.historyId) { return }
+    }
+
+    // Fire off a sync call
+    actions.syncMailboxMessages.defer(mailboxId)
+  }
+
+  handleMailHistoryIdChangedFromWatch ({ email, historyId }) {
+    this.preventDefault() // Change is represented in re-fired action
     mailboxStore.getState().getMailboxesOfType(GoogleMailbox.type).forEach((mailbox) => {
       if (mailbox.authEmail === email) {
-        actions.mailHistoryIdChanged.defer(mailbox.id)
+        actions.mailHistoryIdChanged.defer(mailbox.id, historyId)
       }
     })
-    this.preventDefault()
   }
 }
 

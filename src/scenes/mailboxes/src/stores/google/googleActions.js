@@ -72,9 +72,27 @@ class GoogleActions {
   /**
   * Indicates that the mail history id has changed for a mailbox causing a resync
   * @param mailboxId: the id of the mailbox
-  * @param forceSync=false: set to true to force the sync event if the client believes there are no changes
+  * @param historyId=undefined: the new history id
   */
-  mailHistoryIdChanged (mailboxId, forceSync = false) {
+  mailHistoryIdChanged (mailboxId, historyId = undefined) {
+    return { mailboxId: mailboxId, historyId: historyId }
+  }
+
+  /**
+  * Indicates that the mail count has changed for the mailbox so a resyn should be done
+  * @param mailboxId: the id of the mailbox
+  * @param count=undefined: the new count
+  */
+  mailCountChanged (mailboxId, count = undefined) {
+    return { mailboxId: mailboxId, count: count }
+  }
+
+  /**
+  * Syncs the mailbox messages
+  * @param mailboxId: the id of the mailbox
+  * @param forceSync=false: set to true to force the sync event even if the server reports no changes
+  */
+  syncMailboxMessages (mailboxId, forceSync = false) {
     return { mailboxId: mailboxId, forceSync: forceSync }
   }
 
@@ -83,11 +101,8 @@ class GoogleActions {
   * @param data: the data that came down the vent
   */
   mailHistoryIdChangedFromWatch (data) {
-    // You get the history id which you'd think to pass along however the sync system has
-    // an escape hatch by checking if any of the deltas indicate a change so it's important
-    // to requery for this.
-    // Sometimes the server doesn't send historyId - for example on re-connect
-    return { email: data.emailAddress }
+    // P.S. Sometimes the server doesn't send historyId - for example on re-connect
+    return { email: data.emailAddress, historyId: data.historyId }
   }
 }
 

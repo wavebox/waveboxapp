@@ -1069,7 +1069,7 @@ class MailboxStore {
       googleActions.syncMailboxProfile.defer(id)
       googleActions.connectMailbox.defer(id)
       googleActions.registerMailboxWatch.defer(id)
-      googleActions.mailHistoryIdChanged.defer(id, true)
+      googleActions.syncMailboxMessages.defer(id, true)
       this.preventDefault() // No change in this store
     } else if (mailbox.type === TrelloMailbox.type) {
       trelloActions.syncMailboxProfile.defer(id)

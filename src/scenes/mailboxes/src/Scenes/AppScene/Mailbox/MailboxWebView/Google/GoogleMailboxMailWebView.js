@@ -2,9 +2,12 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
+import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
 import { mailboxStore, mailboxDispatch, MailboxLinker } from 'stores/mailbox'
+import { googleActions } from 'stores/google'
 import { settingsStore } from 'stores/settings'
 import URI from 'urijs'
+import shallowCompare from 'react-addons-shallow-compare'
 
 const REF = 'mailbox_tab'
 
@@ -63,13 +66,16 @@ export default class GoogleMailboxMailWebView extends React.Component {
     const mailboxState = mailboxStore.getState()
     return {
       mailbox: mailboxState.getMailbox(props.mailboxId),
+      isActive: mailboxState.isActive(props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT),
       ui: settingsState.ui
     }
   }
 
   mailboxChanged = (mailboxState) => {
+    const { mailboxId } = this.props
     this.setState({
-      mailbox: mailboxState.getMailbox(this.props.mailboxId)
+      mailbox: mailboxState.getMailbox(mailboxId),
+      isActive: mailboxState.isActive(mailboxId, CoreService.SERVICE_TYPES.DEFAULT)
     })
   }
 
@@ -135,6 +141,8 @@ export default class GoogleMailboxMailWebView extends React.Component {
   dispatchBrowserIPCMessage = (evt) => {
     switch (evt.channel.type) {
       case 'js-new-window': this.handleOpenNewWindow({ url: evt.channel.url }); break
+      case 'unread-count-changed': this.handleIPCUnreadCountChanged(evt.channel.data); break
+      case 'top-message-changed': this.handleIPCTopMessageChanged(evt.channel.data); break
       default: break
     }
   }
@@ -172,9 +180,47 @@ export default class GoogleMailboxMailWebView extends React.Component {
     }
   }
 
+  /**
+  * Handles the unread count changing as per the ipc event
+  */
+  handleIPCUnreadCountChanged = (evt) => {
+    googleActions.mailCountChanged(this.props.mailboxId, evt.next)
+  }
+
+  /**
+  * Handles the top message changing as per the ipc event
+  */
+  handleIPCTopMessageChanged = (evt) => {
+    googleActions.syncMailboxMessages(this.props.mailboxId)
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
+
+  shouldComponentUpdate (nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState)
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    if (prevState.isActive !== this.state.isActive) {
+      if (this.state.isActive) {
+        const service = this.state.mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT)
+        if (service) {
+          // Try to get the UI to reload to show when we make this item active
+          if (service.accessMode === GoogleDefaultService.ACCESS_MODES.GMAIL) {
+            this.refs[REF].executeJavaScript(`
+              document.querySelector('[href*="mail.google"][href*="' + window.location.hash + '"]').click()
+            `, true)
+          } else if (service.accessMode === GoogleDefaultService.ACCESS_MODES.INBOX) {
+            this.refs[REF].executeJavaScript(`
+              document.querySelector('[jsaction="global.navigate"][tabIndex="0"]').click()
+            `, true)
+          }
+        }
+      }
+    }
+  }
 
   render () {
     const { mailboxId } = this.props

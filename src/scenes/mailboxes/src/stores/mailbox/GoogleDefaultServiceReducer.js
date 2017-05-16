@@ -12,7 +12,7 @@ class GoogleDefaultServiceReducer extends ServiceReducer {
   */
   static updateUnreadInfo (mailbox, service, historyId, unreadCount, unreadThreads) {
     return service.changeData({
-      historyId: historyId,
+      historyId: isNaN(parseInt(historyId)) ? undefined : parseInt(historyId),
       unreadCount: unreadCount,
       unreadThreads: unreadThreads
     })
@@ -25,6 +25,7 @@ class GoogleDefaultServiceReducer extends ServiceReducer {
   * @param historyId: the new history id
   */
   static setHistoryId (mailbox, service, historyId) {
+    historyId = isNaN(parseInt(historyId)) ? undefined : parseInt(historyId)
     if (service.historyId !== historyId) {
       return service.changeData({ historyId: historyId })
     }
@@ -38,7 +39,7 @@ class GoogleDefaultServiceReducer extends ServiceReducer {
   */
   static setUnreadMode (mailbox, service, unreadMode) {
     if (mailbox.unreadMode !== unreadMode) {
-      googleActions.mailHistoryIdChanged.defer(mailbox.id, true)
+      googleActions.syncMailboxMessages.defer(mailbox.id, true)
       return service.changeData({ unreadMode: unreadMode })
     }
   }
