@@ -5,14 +5,27 @@ const dictInfo = require('../../../../app/shared/dictionaries.js')
 
 class ContextMenu {
   /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get defaultConfig () {
+    return {
+      copyCurrentPageUrlOption: false,
+      openCurrentPageInBrowserOption: false
+    }
+  }
+
+  /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
 
   /**
   * @param spellchecker=undefined: the spellchecker to use for suggestions
+  * @param config={}: the config that can be used to customized the menu. See static.defaultConfig for keys
   */
-  constructor (spellchecker = undefined) {
+  constructor (spellchecker = undefined, config = {}) {
     this.spellchecker = spellchecker
+    this.config = Object.assign({}, ContextMenu.defaultConfig, config)
 
     webContents.removeAllListeners('context-menu') // Failure to do this will cause an error on reload
     webContents.on('context-menu', this.launchMenu.bind(this))
@@ -127,6 +140,26 @@ class ContextMenu {
     ].filter((item) => item !== null)
     if (textEditingMenu.length) {
       textEditingMenu.forEach((item) => menuTemplate.push(item))
+      menuTemplate.push({ type: 'separator' })
+    }
+
+    // Current Page
+    let currentPageHasOption = false
+    if (this.config.copyCurrentPageUrlOption) {
+      currentPageHasOption = true
+      menuTemplate.push({
+        label: 'Copy current URL',
+        click: () => { clipboard.writeText(window.location.href) }
+      })
+    }
+    if (this.config.openCurrentPageInBrowserOption) {
+      currentPageHasOption = true
+      menuTemplate.push({
+        label: 'Open page in Browser',
+        click: () => { shell.openExternal(window.location.href) }
+      })
+    }
+    if (currentPageHasOption) {
       menuTemplate.push({ type: 'separator' })
     }
 

@@ -8,10 +8,14 @@ class Browser {
   // Lifecycle
   /* **************************************************************************/
 
-  constructor () {
+  /**
+  * @param config={}: configuration for the different elements. Keys can include:
+  *                     contextMenu
+  */
+  constructor (config = {}) {
     this.keyboardNavigator = new KeyboardNavigator()
     this.spellchecker = new Spellchecker()
-    this.contextMenu = new ContextMenu(this.spellchecker)
+    this.contextMenu = new ContextMenu(this.spellchecker, config.contextMenu)
 
     ipcRenderer.on('ping-resource-usage', (evt, data) => {
       ipcRenderer.sendToHost({

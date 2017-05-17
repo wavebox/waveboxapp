@@ -10,7 +10,12 @@ class Content {
   /* **************************************************************************/
 
   constructor () {
-    this.browser = new Browser()
+    this.browser = new Browser({
+      contextMenu: {
+        copyCurrentPageUrlOption: true,
+        openCurrentPageInBrowserOption: true
+      }
+    })
     this.wmail = new WMail()
 
     injector.injectClientModule(path.join(__dirname, './client/ChromePatches.js'))

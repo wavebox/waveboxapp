@@ -94,7 +94,7 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload='../platform/webviewInjection/serviceTooling'
+        preload='../platform/webviewInjection/genericDefaultServiceTooling'
         mailboxId={mailboxId}
         url={url}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}

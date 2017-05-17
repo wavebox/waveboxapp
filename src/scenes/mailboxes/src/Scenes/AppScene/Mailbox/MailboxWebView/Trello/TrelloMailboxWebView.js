@@ -76,7 +76,7 @@ export default class TrelloMailboxWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload='../platform/webviewInjection/serviceTooling'
+        preload='../platform/webviewInjection/trelloDefaultServiceTooling'
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
         newWindow={this.handleOpenNewWindow} />
