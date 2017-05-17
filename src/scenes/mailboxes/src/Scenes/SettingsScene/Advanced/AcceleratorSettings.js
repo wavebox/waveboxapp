@@ -11,6 +11,7 @@ import {
 const ACCELERATOR_NAMES = {
   // Application
   preferences: 'Preferences',
+  composeMail: 'Compose Mail',
   showWindow: 'Show Window',
   hideWindow: 'Hide Window',
   hide: 'Hide',
@@ -50,6 +51,7 @@ const ACCELERATOR_NAMES = {
 }
 const APPLICATION_SECTION = [
   'preferences',
+  'composeMail',
   'showWindow',
   'hideWindow',
   'hide',

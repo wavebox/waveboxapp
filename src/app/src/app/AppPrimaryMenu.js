@@ -37,7 +37,10 @@ class AppPrimaryMenu {
         windowManager.mailboxesWindow.toggleAppMenu()
       },
       preferences: () => {
-        windowManager.mailboxesWindow.launchPreferences()
+        windowManager.mailboxesWindow.show().focus().launchPreferences()
+      },
+      composeMail: () => {
+        windowManager.mailboxesWindow.show().focus().openMailtoLink('mailto://')
       },
       reload: () => {
         const focused = windowManager.focused()
@@ -156,6 +159,12 @@ class AppPrimaryMenu {
             label: 'Preferences',
             click: this._selectors.preferences,
             accelerator: accelerators.preferences
+          },
+          { type: 'separator' },
+          {
+            label: 'Compose Mail',
+            click: this._selectors.composeMail,
+            accelerator: accelerators.composeMail
           },
           { type: 'separator' },
           process.platform === 'darwin' ? { label: 'Services', role: 'services', submenu: [] } : undefined,
