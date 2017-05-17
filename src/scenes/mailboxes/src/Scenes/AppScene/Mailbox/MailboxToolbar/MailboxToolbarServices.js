@@ -54,18 +54,29 @@ export default class MailboxToolbarServices extends React.Component {
   */
   generateState (props) {
     const mailbox = mailboxStore.getState().getMailbox(props.mailboxId)
-    return {
-      serviceTypes: mailbox.enabledServiceTypes,
-      layoutMode: mailbox.serviceToolbarIconLayout
+    if (!mailbox) {
+      return { }
+    } else {
+      return {
+        serviceTypes: mailbox.enabledServiceTypes,
+        layoutMode: mailbox.serviceToolbarIconLayout
+      }
     }
   }
 
   mailboxChanged = (mailboxState) => {
     const mailbox = mailboxState.getMailbox(this.props.mailboxId)
-    this.setState({
-      serviceTypes: mailbox.enabledServiceTypes,
-      layoutMode: mailbox.serviceToolbarIconLayout
-    })
+    if (!mailbox) {
+      this.setState({
+        serviceTypes: undefined,
+        layoutMode: undefined
+      })
+    } else {
+      this.setState({
+        serviceTypes: mailbox.enabledServiceTypes,
+        layoutMode: mailbox.serviceToolbarIconLayout
+      })
+    }
   }
 
   /* **************************************************************************/
@@ -97,6 +108,8 @@ export default class MailboxToolbarServices extends React.Component {
   render () {
     const { mailboxId, toolbarHeight, style, ...passProps } = this.props
     const { serviceTypes, layoutMode } = this.state
+    if (!serviceTypes) { return false }
+
     const saltedStyle = Object.assign({
       height: toolbarHeight,
       alignSelf: this.renderAlignSelfStyle(layoutMode)
