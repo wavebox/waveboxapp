@@ -35,8 +35,6 @@ class WindowManager {
   */
   handleClose (evt) {
     if (!this.forceQuit) {
-      this.contentWindows.forEach((w) => w.close())
-
       let hide = false
       if (SUPPORTS_TRAY_MINIMIZE_CONFIG) {
         if (settingStore.tray.show && settingStore.tray.hideWhenClosed) {
