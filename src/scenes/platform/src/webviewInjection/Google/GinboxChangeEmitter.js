@@ -11,7 +11,7 @@ class GinboxChangeEmitter {
       messageHash: this.currentMessageHash,
       messageHashTime: new Date().getTime()
     }
-    this.latestMessageInterval = setInterval(this.recheckMessageHash.bind(this), 2000)
+    this.latestMessageInterval = setInterval(this.recheckMessageHash.bind(this), 1000)
   }
 
   /* **************************************************************************/

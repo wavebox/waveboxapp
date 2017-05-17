@@ -1,15 +1,34 @@
 const escapeHTML = require('../../../../app/node_modules/escape-html')
 
-class GmailApiExtras {
+class GmailApi {
+  /**
+  * Gets the unread count
+  * @return the count or zero if not found
+  */
+  static getUnreadCount () {
+    const element = document.querySelector('div[role=navigation] [href*="#inbox"]')
+    if (element && element.textContent.indexOf('(') !== -1) {
+      return parseInt(element.textContent.split(':')[0].replace(/[^0-9]/g, ''))
+    }
+    return 0
+  }
+
   /**
   * Handles opening the compose ui and prefills relevant items
-  * @param gmailApi: the gmail api
   * @param data: the data that was sent with the event
   */
-  static composeMessage (gmailApi, data) {
-    if (!gmailApi) { return }
+  static composeMessage (data) {
+    // Open the compose window
+    const composeButton = document.querySelector('.T-I.J-J5-Ji.T-I-KE.L3')
+    if (!composeButton) { return }
 
-    gmailApi.compose.start_compose()
+    const downEvent = document.createEvent('MouseEvents')
+    downEvent.initEvent('mousedown', true, false)
+    composeButton.dispatchEvent(downEvent)
+
+    const upEvent = document.createEvent('MouseEvents')
+    upEvent.initEvent('mouseup', true, false)
+    composeButton.dispatchEvent(upEvent)
 
     if (data.recipient || data.subject || data.body) {
       setTimeout(() => {
@@ -48,4 +67,4 @@ class GmailApiExtras {
   }
 }
 
-module.exports = GmailApiExtras
+module.exports = GmailApi

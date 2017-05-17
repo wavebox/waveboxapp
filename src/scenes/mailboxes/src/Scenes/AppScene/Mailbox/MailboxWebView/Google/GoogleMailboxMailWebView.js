@@ -140,7 +140,6 @@ export default class GoogleMailboxMailWebView extends React.Component {
   */
   dispatchBrowserIPCMessage = (evt) => {
     switch (evt.channel.type) {
-      case 'js-new-window': this.handleOpenNewWindow({ url: evt.channel.url }); break
       case 'unread-count-changed': this.handleIPCUnreadCountChanged(evt.channel.data); break
       case 'top-message-changed': this.handleIPCTopMessageChanged(evt.channel.data); break
       default: break

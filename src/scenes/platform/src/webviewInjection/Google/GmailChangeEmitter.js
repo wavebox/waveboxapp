@@ -1,20 +1,16 @@
 const { ipcRenderer } = require('electron')
+const GmailApi = require('./GmailApi')
 
 class GmailChangeEmitter {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
 
-  /**
-  * @param gmailApi: the gmail api instance
-  */
-  constructor (gmailApi) {
-    this.gmailApi = gmailApi
+  constructor () {
     this.state = {
-      count: this.gmailApi.get.unread_inbox_emails()
+      count: GmailApi.getUnreadCount()
     }
-
-    this.gmailApi.observe.on('http_event', this.handleHTTPEvent.bind(this))
+    this.countInterval = setInterval(this.recheckCount.bind(this), 1000)
   }
 
   /* **************************************************************************/
@@ -25,8 +21,8 @@ class GmailChangeEmitter {
   * Handles gmail firing a http event by checking if the unread count has changed
   * and passing this event up across the bridge
   */
-  handleHTTPEvent () {
-    const nextCount = this.gmailApi.get.unread_inbox_emails()
+  recheckCount () {
+    const nextCount = GmailApi.getUnreadCount()
     if (this.state.count !== nextCount) {
       ipcRenderer.sendToHost({
         type: 'unread-count-changed',

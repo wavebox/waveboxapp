@@ -35,6 +35,7 @@ class AuthSlack {
         height: 750,
         webPreferences: {
           nodeIntegration: false,
+          contextIsolation: true,
           partition: partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
         }
       })

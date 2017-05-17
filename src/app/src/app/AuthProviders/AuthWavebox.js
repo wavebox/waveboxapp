@@ -78,6 +78,7 @@ class AuthWavebox {
         height: 750,
         webPreferences: {
           nodeIntegration: false,
+          contextIsolation: true,
           partition: partitionId
         }
       })

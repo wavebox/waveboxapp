@@ -1,5 +1,5 @@
 import React from 'react'
-import WebView from 'sharedui/Components/WebView'
+import BrowserView from 'sharedui/Components/BrowserView'
 import URI from 'urijs'
 const { remote: {shell} } = window.nativeRequire('electron')
 
@@ -86,8 +86,9 @@ export default class WaveboxWebView extends React.Component {
   render () {
     // Set ...props after our props in case we want to overwrite in the future...
     return (
-      <WebView
+      <BrowserView
         ref={REF}
+        webpreferences='contextIsolation=yes'
         newWindow={this.handleOpenNewWindow}
         domReady={this.handleDomReady}
         {...this.props} />

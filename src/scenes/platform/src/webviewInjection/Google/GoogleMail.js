@@ -1,10 +1,8 @@
 const injector = require('../injector')
 const {ipcRenderer} = require('electron')
-const GoogleWindowOpen = require('./GoogleWindowOpen')
 const path = require('path')
-const fs = require('fs')
 const GinboxApi = require('./GinboxApi')
-const GmailApiExtras = require('./GmailApiExtras')
+const GmailApi = require('./GmailApi')
 const GoogleService = require('./GoogleService')
 const GmailChangeEmitter = require('./GmailChangeEmitter')
 const GinboxChangeEmitter = require('./GinboxChangeEmitter')
@@ -16,7 +14,6 @@ class GoogleMail extends GoogleService {
 
   constructor () {
     super()
-    this.googleWindowOpen = new GoogleWindowOpen()
     this.changeEmitter = null
 
     this.sidebarStylesheet = document.createElement('style')
@@ -70,20 +67,8 @@ class GoogleMail extends GoogleService {
   * Loads the GMail API
   */
   loadGmailAPI () {
-    this.gmailApi = undefined
-
-    const jqueryPath = path.join(__dirname, '../../../../app/node_modules/jquery/dist/jquery.min.js')
-    const apiPath = path.join(__dirname, '../../../../app/node_modules/gmail-js/src/gmail.js')
-
-    injector.injectJavaScript(fs.readFileSync(jqueryPath, 'utf8'))
-    injector.injectJavaScript(fs.readFileSync(apiPath, 'utf8'), () => {
-      const unloadedApi = new window.Gmail()
-      unloadedApi.observe.on('load', () => {
-        this.gmailApi = unloadedApi
-        this.googleWindowOpen.gmailApi = unloadedApi
-        this.changeEmitter = new GmailChangeEmitter(unloadedApi)
-      })
-    })
+    this.changeEmitter = new GmailChangeEmitter()
+    injector.injectClientModule(path.join(__dirname, './client/GmailWindowOpen.js'))
   }
 
   /**
@@ -131,7 +116,7 @@ class GoogleMail extends GoogleService {
   * @param data: the data that was sent with the event
   */
   handleComposeMessageGmail (evt, data) {
-    GmailApiExtras.composeMessage(this.gmailApi, data)
+    GmailApi.composeMessage(data)
   }
 
   /**

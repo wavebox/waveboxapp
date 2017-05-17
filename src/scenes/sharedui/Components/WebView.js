@@ -58,7 +58,7 @@ const WEBVIEW_PROPS = {
   preload: PropTypes.string,
   src: PropTypes.string,
   userAgent: PropTypes.string,
-  webpreferences: PropTypes.object
+  webpreferences: PropTypes.string
 }
 const WEBVIEW_ATTRS = Object.keys(WEBVIEW_PROPS)
 
@@ -293,14 +293,7 @@ export default class WebView extends React.Component {
     const attrs = WEBVIEW_ATTRS
       .filter((k) => this.props[k] !== undefined)
       .map((k) => {
-        if (k === 'webpreferences') {
-          const str = Object.keys(this.props[k]).map((kk) => {
-            return this.props[k][kk] === undefined ? undefined : `${kk}=${this.props[k][kk]}`
-          }).filter((item) => item).join(', ')
-          return `${k}="${str}"`
-        } else {
-          return `${k}="${this.props[k]}"`
-        }
+        return `${k}="${this.props[k]}"`
       })
       .concat([
         'style="position:absolute; top:0; bottom:0; right:0; left:0;"'

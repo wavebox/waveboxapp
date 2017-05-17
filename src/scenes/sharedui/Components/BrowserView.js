@@ -54,6 +54,13 @@ export default class BrowserView extends React.Component {
     }
   }
 
+  /**
+  * Handles the dom being ready
+  */
+  handleDomReady () {
+    this.refs[WEBVIEW_REF].setZoomFactor(this.props.zoomFactor)
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -101,7 +108,7 @@ export default class BrowserView extends React.Component {
         {...passProps}
         ref={WEBVIEW_REF}
         domReady={(evt) => {
-          this.handleZoomFixEvent()
+          this.handleDomReady()
           if (domReady) { domReady(evt) }
         }}
         loadCommit={(evt) => {

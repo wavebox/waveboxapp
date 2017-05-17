@@ -8,7 +8,8 @@ import BrowserSearch from './BrowserSearch'
 import BrowserToolbar from './BrowserToolbar'
 import { browserActions, browserStore } from 'stores/browser'
 
-const { ipcRenderer, remote: { shell } } = window.nativeRequire('electron')
+const { ipcRenderer, remote } = window.nativeRequire('electron')
+const { shell } = remote
 
 const SEARCH_REF = 'search'
 const BROWSER_REF = 'browser'
@@ -93,8 +94,17 @@ export default class BrowserScene extends React.Component {
   handleBrowserIPCMessage = (evt) => {
     switch (evt.channel.type) {
       case 'pong-resource-usage': ipcRenderer.send('pong-resource-usage', evt.channel.data); break
+      case 'guest-window-close': this.handleIPCGuestWindowClose(evt.channel.data); break
       default: break
     }
+  }
+
+  /**
+  * Handles closing the guest requesting the ipc window closure
+  * @param evt: the event that fired
+  */
+  handleIPCGuestWindowClose = (evt) => {
+    remote.getCurrentWindow().close()
   }
 
   /* **************************************************************************/
@@ -124,6 +134,7 @@ export default class BrowserScene extends React.Component {
             src={url}
             partition={partition}
             className='ReactComponent-BrowserSceneWebView'
+            webpreferences='contextIsolation=yes'
             preload='../platform/webviewInjection/contentTooling'
             zoomFactor={zoomFactor}
             searchTerm={isSearching ? searchTerm : undefined}

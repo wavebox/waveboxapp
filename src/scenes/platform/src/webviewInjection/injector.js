@@ -1,3 +1,5 @@
+const fs = require('fs')
+
 class Injector {
   /* **************************************************************************/
   // Lifecycle
@@ -60,6 +62,18 @@ class Injector {
     const el = document.createElement('style')
     el.innerHTML = css
     this.injectScriptElement(el, callback)
+  }
+
+  /**
+  * Injects a client module
+  * @param path: the path (ideally fully resolved)
+  * @param callback=undefined: executed when injected
+  */
+  injectClientModule (path, callback) {
+    fs.readFile(path, 'utf8', (err, js) => {
+      if (err) { throw new Error(`Module ${path} not loaded`) }
+      this.injectJavaScript(js, callback)
+    })
   }
 
   /* **************************************************************************/

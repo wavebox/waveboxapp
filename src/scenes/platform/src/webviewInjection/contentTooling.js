@@ -1,13 +1,9 @@
 const elconsole = require('./elconsole')
 try {
-  const Browser = require('./Browser/Browser')
-  const WMail = require('./WMail/WMail')
+  const Content = require('./Content/Content')
   /*eslint-disable */
-  const browser = new Browser()
-  const wmail = new WMail()
+  const content = new Content()
   /*eslint-enable */
-
-  window.chrome = {}
 } catch (ex) {
   elconsole.error('Error', ex)
 }

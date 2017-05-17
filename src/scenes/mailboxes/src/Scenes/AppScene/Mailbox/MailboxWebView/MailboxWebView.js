@@ -459,6 +459,7 @@ export default class MailboxWebView extends React.Component {
           zoomFactor={service.zoomFactor}
           searchId={searchId}
           searchTerm={isSearching ? searchTerm : ''}
+          webpreferences='contextIsolation=yes'
 
           {...webviewEventProps}
 
