@@ -68,10 +68,10 @@ export default class MicrosoftMailboxStorageServiceWebView extends React.Compone
 
   /**
   * Opens a new url in the correct way
-  * @param url: the url to open
+  * @param evt: the event that fired
   */
-  handleOpenNewWindow (url) {
-    MailboxLinker.openExternalWindow(url)
+  handleOpenNewWindow = (evt) => {
+    MailboxLinker.openExternalWindow(evt.url)
   }
 
   /**
@@ -120,7 +120,7 @@ export default class MicrosoftMailboxStorageServiceWebView extends React.Compone
         mailboxId={mailboxId}
         serviceType={CoreMailbox.SERVICE_TYPES.STORAGE}
         willNavigate={this.handleWillNavigate}
-        newWindow={(evt) => { this.handleOpenNewWindow(evt.url) }} />
+        newWindow={this.handleOpenNewWindow} />
     )
   }
 }

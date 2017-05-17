@@ -7,7 +7,7 @@ import { MailboxLinker } from 'stores/mailbox'
 
 const REF = 'mailbox_tab'
 
-export default class GoogleMailboxCommunicationServiceWebView extends React.Component {
+export default class GoogleMailboxServiceWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -26,15 +26,8 @@ export default class GoogleMailboxCommunicationServiceWebView extends React.Comp
   */
   handleOpenNewWindow = (evt) => {
     const purl = URI(evt.url)
-    if (purl.hostname() === 'hangouts.google.com') {
-      const pathname = purl.pathname()
-      if (pathname.indexOf('/CONVERSATION/') !== -1) {
-        MailboxLinker.openContentWindow(this.props.mailboxId, evt.url, evt.options)
-        return
-      } else if (pathname.indexOf('/hangouts/_/meet') !== -1) {
-        MailboxLinker.openContentWindow(this.props.mailboxId, evt.url, evt.options)
-        return
-      }
+    if (purl.hostname() === 'mail.google.com' && purl.search(true).to !== undefined) {
+      return // This is normally followed by a call with mailto://, so just kill it
     }
 
     MailboxLinker.openExternalWindow(evt.url)
@@ -46,13 +39,12 @@ export default class GoogleMailboxCommunicationServiceWebView extends React.Comp
 
   render () {
     const { mailboxId } = this.props
-
     return (
       <MailboxWebViewHibernator
         ref={REF}
         preload='../platform/webviewInjection/googleServiceTooling'
         mailboxId={mailboxId}
-        serviceType={CoreService.SERVICE_TYPES.COMMUNICATION}
+        serviceType={CoreService.SERVICE_TYPES.CONTACTS}
         newWindow={this.handleOpenNewWindow} />
     )
   }

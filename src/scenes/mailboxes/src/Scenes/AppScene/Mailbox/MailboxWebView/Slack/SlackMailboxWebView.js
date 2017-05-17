@@ -100,6 +100,7 @@ export default class SlackMailboxWebView extends React.Component {
   */
   handleOpenNewWindow = (evt) => {
     const url = URI(evt.url)
+
     if (url.hostname() === 'files.slack.com') {
       this.refs[REF].getWebContents().downloadURL(evt.url)
     } else if (url.hostname().endsWith('.slack.com') && url.pathname().startsWith('/call/')) {

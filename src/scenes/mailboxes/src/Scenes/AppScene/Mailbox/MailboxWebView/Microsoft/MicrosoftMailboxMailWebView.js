@@ -55,10 +55,10 @@ export default class MicrosoftMailboxMailWebView extends React.Component {
 
   /**
   * Opens a new url in the correct way
-  * @param url: the url to open
+  * @param evt: the event that fired
   */
-  handleOpenNewWindow (url) {
-    MailboxLinker.openExternalWindow(url)
+  handleOpenNewWindow = (evt) => {
+    MailboxLinker.openExternalWindow(evt.url)
   }
 
   /* **************************************************************************/
@@ -74,7 +74,7 @@ export default class MicrosoftMailboxMailWebView extends React.Component {
         preload='../platform/webviewInjection/serviceTooling'
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
-        newWindow={(evt) => { this.handleOpenNewWindow(evt.url) }} />
+        newWindow={this.handleOpenNewWindow} />
     )
   }
 }

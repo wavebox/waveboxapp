@@ -39,8 +39,10 @@ class ComposeActions {
   /**
   * Opens a mailto link
   * @param mailtoLink='': the link to try to open
+  * @param preferredMailboxId=undefined: if specified and valid will open the link in the given mailbox id
+  * @param preferredServiceType=undefined: if specified and valid will open the link in the given service type
   */
-  processMailtoLink (mailtoLink = '') {
+  processMailtoLink (mailtoLink = '', preferredMailboxId = undefined, preferredServiceType = undefined) {
     if (mailtoLink.indexOf('mailto:') === 0) {
       ipcRenderer.send('focus-app', { })
       const uri = URI(mailtoLink || '')
@@ -50,7 +52,9 @@ class ComposeActions {
         valid: true,
         recipient: recipients.join(','),
         subject: qs.subject || qs.Subject,
-        body: qs.body || qs.Body
+        body: qs.body || qs.Body,
+        preferredMailboxId: preferredMailboxId,
+        preferredServiceType: preferredServiceType
       }
     } else {
       return { valid: false }

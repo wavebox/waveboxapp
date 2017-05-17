@@ -68,32 +68,61 @@ class ComposeStore {
   // Mailto
   /* **************************************************************************/
 
-  handleProcessMailtoLink ({ valid, recipient, subject, body }) {
+  handleProcessMailtoLink ({ valid, recipient, subject, body, preferredMailboxId, preferredServiceType }) {
     if (!valid) { this.preventDefault(); return }
 
+    const protocol = CoreService.PROTOCOL_TYPES.MAILTO
     const mailboxState = mailboxStore.getState()
-    const supportingServices = mailboxState.getServicesSupportingProtocol(CoreService.PROTOCOL_TYPES.MAILTO)
-    if (supportingServices.length === 0) {
-      this.composeProtocol = null
-      this.composeData = null
-    } else {
-      const composeData = {
-        recipient: recipient,
-        subject: subject,
-        body: body
+    const supportingServices = mailboxState.getServicesSupportingProtocol(protocol)
+    const composeData = {
+      recipient: recipient,
+      subject: subject,
+      body: body
+    }
+
+    // If we're given a preferred service and or mailbox check the validity and see if we can dispatch
+    if (preferredMailboxId) {
+      const mailbox = mailboxState.getMailbox(preferredMailboxId)
+      let service
+      if (mailbox) {
+        if (preferredServiceType) {
+          const preferredService = mailbox.serviceForType(preferredServiceType)
+          if (preferredService && preferredService.supportedProtocols.has(protocol)) {
+            service = preferredService
+          }
+        } else {
+          const availableServices = mailbox.enabledServices.filter((service) => service.supportedProtocols.has(protocol))
+          if (availableServices.length === 1) {
+            service = availableServices[0]
+          }
+        }
       }
-      if (supportingServices.length === 1) {
+
+      if (mailbox && service) {
         this.composeProtocol = null
         this.composeData = null
         window.location.hash = '/'
-        const service = supportingServices[0]
         mailboxActions.changeActive.defer(service.parentId, service.type)
         mailboxDispatch.composeItem(service.parentId, service.type, composeData)
-      } else {
-        this.composeProtocol = CoreService.PROTOCOL_TYPES.MAILTO
-        this.composeData = composeData
-        window.location.hash = 'incoming/compose'
+        return
       }
+    }
+
+    // No preferred/invalid preferred ask the user
+    if (supportingServices.length === 0) {
+      this.composeProtocol = null
+      this.composeData = null
+    } else if (supportingServices.length === 1) {
+      this.composeProtocol = null
+      this.composeData = null
+      window.location.hash = '/'
+      const service = supportingServices[0]
+      mailboxActions.changeActive.defer(service.parentId, service.type)
+      mailboxDispatch.composeItem(service.parentId, service.type, composeData)
+    } else {
+      this.composeProtocol = CoreService.PROTOCOL_TYPES.MAILTO
+      this.composeData = composeData
+      window.location.hash = 'incoming/compose'
     }
   }
 }
