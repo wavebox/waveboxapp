@@ -8,6 +8,11 @@ const SERVICE_DISPLAY_MODES = Object.freeze({
   SIDEBAR: 'SIDEBAR',
   TOOLBAR: 'TOOLBAR'
 })
+const SERVICE_TOOLBAR_ICON_LAYOUTS = Object.freeze({
+  LEFT_ALIGN: 'LEFT_ALIGN',
+  RIGHT_ALIGN: 'RIGHT_ALIGN'
+})
+
 const LOGO_NAME_RE = new RegExp(/^(.*?)([0-9]+)(px)(.*)$/)
 
 class CoreMailbox extends Model {
@@ -18,6 +23,7 @@ class CoreMailbox extends Model {
   static get MAILBOX_TYPES () { return MAILBOX_TYPES }
   static get SERVICE_TYPES () { return SERVICE_TYPES }
   static get SERVICE_DISPLAY_MODES () { return SERVICE_DISPLAY_MODES }
+  static get SERVICE_TOOLBAR_ICON_LAYOUTS () { return SERVICE_TOOLBAR_ICON_LAYOUTS }
   static get type () { return MAILBOX_TYPES.UNKNOWN }
   static get supportedServiceTypes () { return [SERVICE_TYPES.DEFAULT] }
   static get defaultServiceTypes () { return [SERVICE_TYPES.DEFAULT] }
@@ -179,6 +185,7 @@ class CoreMailbox extends Model {
   get unreadBadgeColor () { return this._value_('unreadBadgeColor', 'rgba(238, 54, 55, 0.95)') }
   get showAvatarColorRing () { return this._value_('showAvatarColorRing', true) }
   get serviceDisplayMode () { return this._value_('serviceDisplayMode', SERVICE_DISPLAY_MODES.SIDEBAR) }
+  get serviceToolbarIconLayout () { return this._value_('serviceToolbarIconLayout', SERVICE_TOOLBAR_ICON_LAYOUTS.RIGHT_ALIGN) }
   get collapseSidebarServices () { return this._value_('collapseSidebarServices', false) }
 
   /* **************************************************************************/

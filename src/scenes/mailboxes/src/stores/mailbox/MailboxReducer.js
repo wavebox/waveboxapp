@@ -100,6 +100,17 @@ class MailboxReducer {
   }
 
   /**
+  * Changes the layout mode for the service icons in the toolbar
+  * @param mailbox: them mailbox to update
+  * @param layout: the new layout mode
+  */
+  static setServiceToolbarIconLayout (mailbox, layout) {
+    return mailbox.changeData({
+      serviceToolbarIconLayout: layout
+    })
+  }
+
+  /**
   * Sets if services are displayed in the sidebar when the account is not the active one
   * @param mailbox: the mailbox to update
   * @param collapse: true to collapse, false otherwise

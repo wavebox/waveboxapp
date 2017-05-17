@@ -44,14 +44,32 @@ export default class AccountServicesSettings extends React.Component {
           <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR} primaryText='Left Sidebar' />
           <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR} primaryText='Top Toolbar' />
         </SelectField>
-        <Toggle
-          toggled={mailbox.collapseSidebarServices}
-          disabled={mailbox.serviceDisplayMode !== CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR}
-          label='Collapse sidebar services when mailbox is inactive'
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
-            mailboxActions.reduce(mailbox.id, MailboxReducer.setCollapseSidebarServices, toggled)
-          }} />
+        {mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR ? (
+          <div>
+            <Toggle
+              toggled={mailbox.collapseSidebarServices}
+              disabled={mailbox.serviceDisplayMode !== CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR}
+              label='Collapse sidebar services when mailbox is inactive'
+              labelPosition='right'
+              onToggle={(evt, toggled) => {
+                mailboxActions.reduce(mailbox.id, MailboxReducer.setCollapseSidebarServices, toggled)
+              }} />
+          </div>
+        ) : undefined}
+        {mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR ? (
+          <div>
+            <SelectField
+              fullWidth
+              floatingLabelText='Icon positioning'
+              value={mailbox.serviceToolbarIconLayout}
+              onChange={(evt, index, mode) => {
+                mailboxActions.reduce(mailbox.id, MailboxReducer.setServiceToolbarIconLayout, mode)
+              }}>
+              <MenuItem value={CoreMailbox.SERVICE_TOOLBAR_ICON_LAYOUTS.LEFT_ALIGN} primaryText='Left Align' />
+              <MenuItem value={CoreMailbox.SERVICE_TOOLBAR_ICON_LAYOUTS.RIGHT_ALIGN} primaryText='Right Align' />
+            </SelectField>
+          </div>
+        ) : undefined}
       </Paper>
     )
   }
