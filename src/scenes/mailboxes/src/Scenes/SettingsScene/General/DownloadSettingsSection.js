@@ -41,13 +41,11 @@ export default class DownloadSettingsSection extends React.Component {
     return (
       <Paper zDepth={1} style={styles.paper} {...passProps}>
         <h1 style={styles.subheading}>Downloads</h1>
-        <div>
-          <Toggle
-            toggled={os.alwaysAskDownloadLocation}
-            label='Always ask download location'
-            labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.setAlwaysAskDownloadLocation(toggled)} />
-        </div>
+        <Toggle
+          toggled={os.alwaysAskDownloadLocation}
+          label='Always ask download location'
+          labelPosition='right'
+          onToggle={(evt, toggled) => settingsActions.setAlwaysAskDownloadLocation(toggled)} />
         <div style={Object.assign({}, styles.button, { display: 'flex', alignItems: 'center' })}>
           <RaisedButton
             label='Select location'
@@ -64,6 +62,17 @@ export default class DownloadSettingsSection extends React.Component {
           </RaisedButton>
           {os.alwaysAskDownloadLocation ? undefined : <small>{os.defaultDownloadLocation}</small>}
         </div>
+        <Toggle
+          toggled={os.downloadNotificationEnabled}
+          label='Show notification when download completes'
+          labelPosition='right'
+          onToggle={(evt, toggled) => settingsActions.setDownloadNotificationEnabled(toggled)} />
+        <Toggle
+          toggled={os.downloadNotificationSoundEnabled}
+          disabled={!os.downloadNotificationEnabled}
+          label='Play sound when download completes'
+          labelPosition='right'
+          onToggle={(evt, toggled) => settingsActions.setDownloadNotificationSoundEnabled(toggled)} />
       </Paper>
     )
   }

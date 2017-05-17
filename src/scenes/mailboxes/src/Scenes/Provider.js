@@ -89,7 +89,8 @@ export default class Provider extends React.Component {
       messagesUnreadCount: mailboxState.totalUnreadCountForAppBadge(),
       hasUnreadActivity: mailboxState.hasUnreadActivityForAppBadge(),
       uiSettings: settingsState.ui,
-      traySettings: settingsState.tray
+      traySettings: settingsState.tray,
+      osSettings: settingsState.os
     }
   })()
 
@@ -100,10 +101,11 @@ export default class Provider extends React.Component {
     })
   }
 
-  settingsChanged = (settingsStore) => {
+  settingsChanged = (settingsState) => {
     this.setState({
-      uiSettings: settingsStore.ui,
-      traySettings: settingsStore.tray
+      uiSettings: settingsState.ui,
+      traySettings: settingsState.tray,
+      osSettings: settingsState.os
     })
   }
 
@@ -116,9 +118,13 @@ export default class Provider extends React.Component {
   * @param evt: the event that fired
   * @param req: the request that came through
   */
-  downloadCompleted (evt, req) {
+  downloadCompleted = (evt, req) => {
+    const { downloadNotificationEnabled, downloadNotificationSoundEnabled } = this.state.osSettings
+    if (!downloadNotificationEnabled) { return }
+
     const notification = new window.Notification('Download Completed', {
-      body: req.filename
+      body: req.filename,
+      silent: !downloadNotificationSoundEnabled
     })
     notification.onclick = function () {
       remote.shell.openItem(req.path) || remote.shell.showItemInFolder(req.path)
@@ -128,7 +134,7 @@ export default class Provider extends React.Component {
   /**
   * Launches the settings over the IPC channel
   */
-  ipcLaunchSettings () {
+  ipcLaunchSettings = () => {
     window.location.hash = '/settings'
   }
 

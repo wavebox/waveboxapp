@@ -102,6 +102,20 @@ class SettingsActions {
   }
 
   /**
+  * @param enabled: true to enable download complete notifications
+  */
+  setDownloadNotificationEnabled (enabled) {
+    return this.update(SEGMENTS.OS, 'downloadNotificationEnabled', enabled)
+  }
+
+  /**
+  * @param enabled: true to enable sound on download complete notifications
+  */
+  setDownloadNotificationSoundEnabled (enabled) {
+    return this.update(SEGMENTS.OS, 'downloadNotificationSoundEnabled', enabled)
+  }
+
+  /**
   * @param enabled: true to enable notifications, false otherwise
   */
   setNotificationsEnabled (enabled) {
