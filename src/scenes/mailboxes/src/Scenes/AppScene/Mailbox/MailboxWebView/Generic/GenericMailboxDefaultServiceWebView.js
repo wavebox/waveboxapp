@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
-import { MailboxLinker, mailboxStore } from 'stores/mailbox'
+import { MailboxLinker, mailboxStore, mailboxActions, GenericMailboxReducer } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
 
 const REF = 'mailbox_tab'
@@ -79,6 +79,30 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     }
   }
 
+  /**
+  * Handles the theme color changing
+  * @param evt: the event that fired
+  */
+  handleThemeColorChanged = (evt) => {
+    mailboxActions.reduce(this.props.mailboxId, GenericMailboxReducer.setPageThemeColor, evt.themeColor)
+  }
+
+  /**
+  * Handles the page favicon updating
+  * @param evt: the event that fired
+  */
+  handlePageTitleUpdated = (evt) => {
+    mailboxActions.reduce(this.props.mailboxId, GenericMailboxReducer.setPageTitle, evt.title)
+  }
+
+  /**
+  * Handles the page favicon updating
+  * @param evt: the event that fired
+  */
+  handlePageFaviconUpdated = (evt) => {
+    mailboxActions.reduce(this.props.mailboxId, GenericMailboxReducer.setPageFavicon, evt.favicons)
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -98,7 +122,10 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
         mailboxId={mailboxId}
         url={url}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
-        newWindow={this.handleOpenNewWindow} />
+        newWindow={this.handleOpenNewWindow}
+        didChangeThemeColor={this.handleThemeColorChanged}
+        pageTitleUpdated={this.handlePageTitleUpdated}
+        pageFaviconUpdated={this.handlePageFaviconUpdated} />
     )
   }
 }

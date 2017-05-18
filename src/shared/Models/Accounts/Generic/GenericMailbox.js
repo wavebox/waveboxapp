@@ -25,13 +25,29 @@ class GenericMailbox extends CoreMailbox {
   // Properties : Display
   /* **************************************************************************/
 
-  get color () { return super.color || MailboxColors.GENERIC }
+  get color () {
+    if (this.usePageThemeAsColor && this.pageThemeColor) {
+      return this.pageThemeColor
+    } else {
+      return super.color || MailboxColors.GENERIC
+    }
+  }
+  get usePageThemeAsColor () { return this._value_('usePageThemeAsColor', false) }
+  get pageThemeColor () { return this._value_('pageThemeColor', undefined) }
 
   /* **************************************************************************/
   // Properties : Provider Details & counts etc
   /* **************************************************************************/
 
-  get displayName () { return this.__data__.displayName || super.displayName }
+  get displayName () {
+    if (this.usePageTitleAsDisplayName && this.pageTitle) {
+      return this.pageTitle
+    } else {
+      return this._value_('displayName', super.displayName)
+    }
+  }
+  get usePageTitleAsDisplayName () { return this._value_('usePageTitleAsDisplayName', false) }
+  get pageTitle () { return this._value_('pageTitle') }
 
   /* **************************************************************************/
   // Properties : Setup

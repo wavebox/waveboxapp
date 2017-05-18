@@ -133,6 +133,16 @@ export default class GenericAccountSettings extends React.Component {
                 label='Open new windows in default browser'
                 labelPosition='right'
                 onToggle={(evt, toggled) => mailboxActions.reduceService(mailbox.id, service.Type, GenericDefaultServiceReducer.setOpenWindowsExternally, toggled)} />
+              <Toggle
+                toggled={mailbox.usePageTitleAsDisplayName}
+                label='Use Page title as Display Name'
+                labelPosition='right'
+                onToggle={(evt, toggled) => mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageTitleAsDisplayName, toggled)} />
+              <Toggle
+                toggled={mailbox.usePageThemeAsColor}
+                label='Use Page theme as Account Color'
+                labelPosition='right'
+                onToggle={(evt, toggled) => mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageThemeAsColor, toggled)} />
             </Paper>
             <AccountAppearanceSettings mailbox={mailbox} />
           </Col>

@@ -35,7 +35,8 @@ const WEBVIEW_EVENTS = [
   'focus',
   'blur',
   'update-target-url',
-  'will-navigate'
+  'will-navigate',
+  'did-change-theme-color'
 ]
 const REACT_WEBVIEW_EVENTS = WEBVIEW_EVENTS.map((n) => camelCase(n))
 const REACT_WEBVIEW_EVENT_PROPS = REACT_WEBVIEW_EVENTS.reduce((acc, name) => {

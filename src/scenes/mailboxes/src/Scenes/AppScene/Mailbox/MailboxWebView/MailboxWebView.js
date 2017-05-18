@@ -388,7 +388,7 @@ export default class MailboxWebView extends React.Component {
   */
   handleIPCNavigateBack = () => {
     if (this.state.isActive) {
-      this.refs[BROWSER_REF].navigateBack()
+      this.refs[BROWSER_REF].goBack()
     }
   }
 
@@ -397,7 +397,7 @@ export default class MailboxWebView extends React.Component {
   */
   handleIPCNavigateForward = () => {
     if (this.state.isActive) {
-      this.refs[BROWSER_REF].navigateForward()
+      this.refs[BROWSER_REF].goForward()
     }
   }
 

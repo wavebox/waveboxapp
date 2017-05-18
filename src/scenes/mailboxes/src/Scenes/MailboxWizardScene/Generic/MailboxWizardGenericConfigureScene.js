@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { RaisedButton, FlatButton, Dialog, TextField } from 'material-ui'
+import { RaisedButton, FlatButton, Dialog, TextField, Toggle } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import GenericDefaultService from 'shared/Models/Accounts/Generic/GenericDefaultService'
 import { mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
@@ -54,6 +54,7 @@ export default class MailboxWizardGenericConfigureScene extends React.Component 
   generateState (props) {
     return {
       open: true,
+      configureDisplayFromPage: true,
       displayNameError: null,
       serviceUrlError: null,
       displayName: '',
@@ -85,7 +86,7 @@ export default class MailboxWizardGenericConfigureScene extends React.Component 
   * Handles the user pressing next
   */
   handleNext = (evt) => {
-    const { displayName, serviceUrl } = this.state
+    const { displayName, serviceUrl, configureDisplayFromPage } = this.state
     let hasError = false
     const stateUpdate = {}
 
@@ -111,6 +112,8 @@ export default class MailboxWizardGenericConfigureScene extends React.Component 
       const mailboxId = this.props.match.params.mailboxId
       mailboxActions.reduce(mailboxId, GenericMailboxReducer.setDisplayName, displayName)
       mailboxActions.reduceService(mailboxId, GenericDefaultService.type, GenericDefaultServiceReducer.setUrl, serviceUrl)
+      mailboxActions.reduce(mailboxId, GenericMailboxReducer.setUsePageTitleAsDisplayName, configureDisplayFromPage)
+      mailboxActions.reduce(mailboxId, GenericMailboxReducer.setUsePageThemeAsColor, configureDisplayFromPage)
 
       // Progress wizard
       stateUpdate.open = false
@@ -130,7 +133,14 @@ export default class MailboxWizardGenericConfigureScene extends React.Component 
   }
 
   render () {
-    const { open, displayName, displayNameError, serviceUrl, serviceUrlError } = this.state
+    const {
+      open,
+      configureDisplayFromPage,
+      displayName,
+      displayNameError,
+      serviceUrl,
+      serviceUrlError
+    } = this.state
 
     const actions = (
       <div>
@@ -182,6 +192,12 @@ export default class MailboxWizardGenericConfigureScene extends React.Component 
               }
             }} />
         </div>
+        <br />
+        <Toggle
+          toggled={configureDisplayFromPage}
+          label='Use Page Title & Theme to customise icon appearance'
+          labelPosition='right'
+          onToggle={(evt, toggled) => this.setState({ configureDisplayFromPage: toggled })} />
       </Dialog>
     )
   }
