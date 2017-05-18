@@ -32,6 +32,13 @@ class GenericMailbox extends CoreMailbox {
   /* **************************************************************************/
 
   get displayName () { return this.__data__.displayName || super.displayName }
+
+  /* **************************************************************************/
+  // Properties : Setup
+  /* **************************************************************************/
+
+  get useCustomUserAgent () { return this._value_('useCustomUserAgent', false) }
+  get customUserAgentString () { return this._value_('customUserAgentString', '') }
 }
 
 module.exports = GenericMailbox

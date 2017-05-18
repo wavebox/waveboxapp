@@ -74,7 +74,7 @@ export default class AccountAdvancedSettings extends React.Component {
   }
 
   render () {
-    const { mailbox, showRestart, ...passProps } = this.props
+    const { mailbox, children, showRestart, ...passProps } = this.props
 
     return (
       <Paper zDepth={1} style={styles.paper} {...passProps}>
@@ -107,6 +107,7 @@ export default class AccountAdvancedSettings extends React.Component {
           </small>
         </div>
         <br />
+        {children}
         <FlatButton
           label={this.state.confirmingDelete ? 'Click again to confirm' : 'Delete this Account'}
           icon={<FontIcon color={Colors.red600} className='material-icons'>delete</FontIcon>}

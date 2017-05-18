@@ -13,6 +13,7 @@ const {
   DISALLOWED_HTML5_NOTIFICATION_HOSTS
 } = require('../../shared/constants')
 const MailboxFactory = require('../../shared/Models/Accounts/MailboxFactory')
+const CoreMailbox = require('../../shared/Models/Accounts/CoreMailbox')
 
 class MailboxesSessionManager {
   /* ****************************************************************************/
@@ -59,7 +60,7 @@ class MailboxesSessionManager {
     ses.on('will-download', (evt, item) => this.handleDownload(evt, item))
     ses.setPermissionRequestHandler(this.handlePermissionRequest)
     ses.webRequest.onCompleted((evt) => this.handleRequestCompleted(evt, ses, partition))
-    this.setupUserAgent(ses, mailboxType)
+    this.setupUserAgent(ses, partition, mailboxType)
     this.__managed__.add(partition)
   }
 
@@ -70,24 +71,37 @@ class MailboxesSessionManager {
   /**
   * Sets up the user agent for each mailbox type
   * @param ses: the session object to update
+  * @param partition: the partition the useragent is for
   * @param mailboxType: the type of mailbox this is
   */
-  setupUserAgent (ses, mailboxType) {
+  setupUserAgent (ses, partition, mailboxType) {
     const defaultUA = ses.getUserAgent()
       .replace( // Replace electron with our version of Wavebox
         `Electron/${process.versions.electron}`,
         `${pkg.name.charAt(0).toUpperCase()}${pkg.name.slice(1)}/${pkg.version}`
       )
 
+    // Handle accounts that have custom settings
+    if (mailboxType === CoreMailbox.MAILBOX_TYPES.GENERIC) {
+      const mailbox = this.getMailboxFromPartition(partition)
+      if (mailbox && mailbox.useCustomUserAgent && mailbox.customUserAgentString) {
+        ses.setUserAgent(mailbox.customUserAgentString)
+        return
+      }
+    }
+
+    // Handle account types that have built in changes
     const mailboxClass = MailboxFactory.getClass(mailboxType)
     if (mailboxClass && mailboxClass.userAgentChanges.length) {
       const ua = mailboxClass.userAgentChanges.reduce((acc, change) => {
         return acc.replace(change[0], change[1])
       }, defaultUA)
       ses.setUserAgent(ua)
-    } else {
-      ses.setUserAgent(defaultUA)
+      return
     }
+
+    // Use the default UA
+    ses.setUserAgent(defaultUA)
   }
 
   /* ****************************************************************************/

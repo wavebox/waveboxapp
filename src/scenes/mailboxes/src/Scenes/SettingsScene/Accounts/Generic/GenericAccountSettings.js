@@ -37,6 +37,10 @@ export default class GenericAccountSettings extends React.Component {
   // UI Events
   /* **************************************************************************/
 
+  /**
+  * Handles the name changing
+  * @param evt: the event that fired
+  */
   handleNameChange = (evt) => {
     const value = evt.target.value
     if (!value) {
@@ -47,6 +51,10 @@ export default class GenericAccountSettings extends React.Component {
     }
   }
 
+  /**
+  * Handles the url changing
+  * @param evt: the event that fired
+  */
   handleUrlChange = (evt) => {
     const value = evt.target.value
     if (!value) {
@@ -62,6 +70,25 @@ export default class GenericAccountSettings extends React.Component {
         value
       )
     }
+  }
+
+  /**
+  * Handles toggling using the custom agent
+  * @param evt: the event that fired
+  * @param toggled: the toggled state
+  */
+  handleChangeUseCustomUserAgent = (evt, toggled) => {
+    mailboxActions.reduce(this.props.mailbox.id, GenericMailboxReducer.setUseCustomUserAgent, toggled)
+    this.props.showRestart()
+  }
+
+  /**
+  * Handles the custom user agent changing
+  * @param evt: the event that fired
+  */
+  handleChangeCustomUserAgent = (evt) => {
+    mailboxActions.reduce(this.props.mailbox.id, GenericMailboxReducer.setCustomUserAgentString, evt.target.value)
+    this.props.showRestart()
   }
 
   /* **************************************************************************/
@@ -118,7 +145,21 @@ export default class GenericAccountSettings extends React.Component {
                 service={service}
                 onRequestEditCustomCode={onRequestEditCustomCode} />
             </Paper>
-            <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
+            <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart}>
+              <Toggle
+                toggled={mailbox.useCustomUserAgent}
+                label='Use custom UserAgent'
+                labelPosition='right'
+                onToggle={this.handleChangeUseCustomUserAgent} />
+              <TextField
+                key={service.url}
+                disabled={!mailbox.useCustomUserAgent}
+                fullWidth
+                floatingLabelFixed
+                floatingLabelText='Custom UserAgent String'
+                defaultValue={mailbox.customUserAgentString}
+                onBlur={this.handleChangeCustomUserAgent} />
+            </AccountAdvancedSettings>
           </Col>
         </Row>
       </div>
