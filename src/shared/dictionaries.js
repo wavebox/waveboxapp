@@ -205,303 +205,317 @@ static const LocaleScript localeScriptList[] = {
 
 module.exports = {
   'bg_BG': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/bg_BG/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/bg_BG/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/bg_BG/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/bg_BG/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/bg_BG/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/bg_BG/index.dic',
     name: 'Български - Bulgarian',
     charset: 'USCRIPT_CYRILLIC'
   },
   'ca_ES-valencia': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/ca_ES-valencia/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/ca_ES-valencia/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/ca_ES-valencia/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/ca_ES-valencia/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/ca_ES-valencia/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/ca_ES-valencia/index.dic',
     name: 'Català (València) - Catalan (Valencia)',
     charset: 'USCRIPT_LATIN'
   },
   'ca_ES': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/ca_ES/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/ca_ES/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/ca_ES/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/ca_ES/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/ca_ES/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/ca_ES/index.dic',
     name: 'Català - Catalan',
     charset: 'USCRIPT_LATIN'
   },
   'cs_CZ': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/cs_CZ/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/cs_CZ/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/cs_CZ/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/cs_CZ/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/cs_CZ/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/cs_CZ/index.dic',
     name: 'Česky - Czech',
     charset: 'USCRIPT_LATIN'
   },
+  'cy_GB': {
+    license: 'https://wavebox.io/dl/dictionaries/cy_GB/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/cy_GB/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/cy_GB/index.dic',
+    name: 'Cymraeg - Welsh',
+    charset: 'USCRIPT_LATIN'
+  },
   'da_DK': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/da_DK/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/da_DK/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/da_DK/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/da_DK/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/da_DK/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/da_DK/index.dic',
     name: 'Dansk - Danish',
     charset: 'USCRIPT_LATIN'
   },
   'de_AT': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/de_AT/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/de_AT/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/de_AT/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/de_AT/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/de_AT/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/de_AT/index.dic',
     name: 'Deutsch (Österreich) - German (Austria)',
     charset: 'USCRIPT_LATIN'
   },
   'de_CH': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/de_CH/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/de_CH/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/de_CH/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/de_CH/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/de_CH/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/de_CH/index.dic',
     name: 'Deutsch (Schweiz) - German (Switzerland)',
     charset: 'USCRIPT_LATIN'
   },
   'de_DE': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/de_DE/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/de_DE/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/de_DE/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/de_DE/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/de_DE/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/de_DE/index.dic',
     name: 'Deutsch - German',
     charset: 'USCRIPT_LATIN'
   },
   'el_GR': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/el_GR/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/el_GR/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/el_GR/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/el_GR/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/el_GR/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/el_GR/index.dic',
     name: 'Ελληνικά - Greek',
     charset: 'USCRIPT_GREEK'
   },
   'en_AU': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/en_AU/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/en_AU/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/en_AU/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/en_AU/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/en_AU/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/en_AU/index.dic',
     name: 'English (Australia) - English (Australia)',
     charset: 'USCRIPT_LATIN'
   },
   'en_CA': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/en_CA/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/en_CA/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/en_CA/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/en_CA/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/en_CA/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/en_CA/index.dic',
     name: 'English (Canada) - English (Canada)',
     charset: 'USCRIPT_LATIN'
   },
   'en_GB': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/en_GB/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/en_GB/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/en_GB/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/en_GB/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/en_GB/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/en_GB/index.dic',
     name: 'English (UK) - English (UK)',
     charset: 'USCRIPT_LATIN'
   },
   'en_US': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/en_US/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/en_US/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/en_US/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/en_US/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/en_US/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/en_US/index.dic',
     name: 'English (US) - English (US)',
     charset: 'USCRIPT_LATIN'
   },
   'en_ZA': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/en_ZA/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/en_ZA/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/en_ZA/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/en_ZA/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/en_ZA/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/en_ZA/index.dic',
     name: 'English (South Africa) - English (South Africa)',
     charset: 'USCRIPT_LATIN'
   },
   'es_ES': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/es_ES/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/es_ES/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/es_ES/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/es_ES/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_ES/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_ES/index.dic',
     name: 'Español - Spanish',
     charset: 'USCRIPT_LATIN'
   },
   'et_EE': {
-    license: 'https://raw.githubusercontent.com/Thomas101/Dictionaries-1/master/Estonian.txt',
-    aff: 'https://raw.githubusercontent.com/Thomas101/Dictionaries-1/master/Estonian.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/Dictionaries-1/master/Estonian.dic',
+    license: 'https://wavebox.io/dl/dictionaries/et_EE/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/et_EE/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/et_EE/index.dic',
     name: 'Eesti - Estonian',
     charset: 'USCRIPT_LATIN'
   },
   'eu_ES': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/eu_ES/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/eu_ES/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/eu_ES/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/eu_ES/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/eu_ES/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/eu_ES/index.dic',
     name: 'Euskara - Basque',
     charset: 'USCRIPT_LATIN'
   },
   'fr_FR': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/fr_FR/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/fr_FR/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/fr_FR/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/fr_FR/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/fr_FR/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/fr_FR/index.dic',
     name: 'Français - French',
     charset: 'USCRIPT_LATIN'
   },
   'gl_ES': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/gl_ES/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/gl_ES/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/gl_ES/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/gl_ES/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/gl_ES/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/gl_ES/index.dic',
     name: 'Galego - Galician',
     charset: 'USCRIPT_LATIN'
   },
+  'he_IL': {
+    license: 'https://wavebox.io/dl/dictionaries/he_IL/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/he_IL/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/he_IL/index.dic',
+    name: 'עברית - Hebrew',
+    charset: 'USCRIPT_HEBREW'
+  },
   'hr_HR': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/hr_HR/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/hr_HR/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/hr_HR/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/hr_HR/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/hr_HR/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/hr_HR/index.dic',
     name: 'Hrvatski - Croatian',
     charset: 'USCRIPT_LATIN'
   },
   'hu_HU': {
-    license: 'https://raw.githubusercontent.com/Thomas101/Dictionaries-1/master/Hungarian.txt',
-    aff: 'https://raw.githubusercontent.com/Thomas101/Dictionaries-1/master/Hungarian.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/Dictionaries-1/master/Hungarian.dic',
+    license: 'https://wavebox.io/dl/dictionaries/hu_HU/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/hu_HU/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/hu_HU/index.dic',
     name: 'Magyar - Hungarian',
     charset: 'USCRIPT_LATIN'
   },
   'it_IT': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/it_IT/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/it_IT/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/it_IT/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/it_IT/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/it_IT/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/it_IT/index.dic',
     name: 'Italiano - Italian',
     charset: 'USCRIPT_LATIN'
   },
   'lb_LU': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/lb_LU/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/lb_LU/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/lb_LU/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/lb_LU/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/lb_LU/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/lb_LU/index.dic',
     name: 'Lëtzebuergesch - Luxembourgish',
     charset: 'USCRIPT_LATIN'
   },
   'lt_LT': {
-    license: 'https://raw.githubusercontent.com/Thomas101/Dictionaries-1/master/Lithuanian.txt',
-    aff: 'https://raw.githubusercontent.com/Thomas101/Dictionaries-1/master/Lithuanian.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/Dictionaries-1/master/Lithuanian.dic',
+    license: 'https://wavebox.io/dl/dictionaries/lt_LT/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/lt_LT/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/lt_LT/index.dic',
     name: 'Lietuvos - Lithuanian',
     charset: 'USCRIPT_LATIN'
   },
   'lv_LV': {
-    license: 'https://raw.githubusercontent.com/Thomas101/Dictionaries-1/master/Latvian.txt',
-    aff: 'https://raw.githubusercontent.com/Thomas101/Dictionaries-1/master/Latvian.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/Dictionaries-1/master/Latvian.dic',
+    license: 'https://wavebox.io/dl/dictionaries/lv_LV/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/lv_LV/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/lv_LV/index.dic',
     name: 'Latvijas - Latvian',
     charset: 'USCRIPT_LATIN'
   },
   'mn_MN': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/mn_MN/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/mn_MN/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/mn_MN/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/mn_MN/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/mn_MN/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/mn_MN/index.dic',
     name: 'Монгол - Mongolian',
     charset: 'USCRIPT_CYRILLIC'
   },
   'ms_MY': {
-    license: 'https://raw.githubusercontent.com/Thomas101/Dictionaries-1/master/Malays.txt',
-    aff: 'https://raw.githubusercontent.com/Thomas101/Dictionaries-1/master/Malays.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/Dictionaries-1/master/Malays.dic',
+    license: 'https://wavebox.io/dl/dictionaries/ms_MY/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/ms_MY/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/ms_MY/index.dic',
     name: 'Melayu - Malay',
     charset: 'USCRIPT_LATIN'
   },
   'nb_NO': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/nb_NO/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/nb_NO/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/nb_NO/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/nb_NO/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/nb_NO/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/nb_NO/index.dic',
     name: 'Norsk (bokmål) - Norwegian',
     charset: 'USCRIPT_LATIN'
   },
   'nl_NL': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/nl_NL/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/nl_NL/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/nl_NL/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/nl_NL/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/nl_NL/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/nl_NL/index.dic',
     name: 'Nederlands - Dutch',
     charset: 'USCRIPT_LATIN'
   },
   'nn_NO': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/nn_NO/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/nn_NO/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/nn_NO/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/nn_NO/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/nn_NO/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/nn_NO/index.dic',
     name: 'Norsk (nynorsk) - Norwegian Nynorsk',
     charset: 'USCRIPT_LATIN'
   },
   'pl_PL': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/pl_PL/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/pl_PL/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/pl_PL/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/pl_PL/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/pl_PL/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/pl_PL/index.dic',
     name: 'Polski - Polish',
     charset: 'USCRIPT_LATIN'
   },
   'pt_BR': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/pt_BR/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/pt_BR/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/pt_BR/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/pt_BR/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/pt_BR/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/pt_BR/index.dic',
     name: 'Português (Brasil) - Portuguese (Brazil)',
     charset: 'USCRIPT_LATIN'
   },
   'pt_PT': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/pt_PT/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/pt_PT/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/pt_PT/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/pt_PT/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/pt_PT/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/pt_PT/index.dic',
     name: 'Português (Portugal) - Portuguese (Portugal)',
     charset: 'USCRIPT_LATIN'
   },
   'ro_RO': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/ro_RO/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/ro_RO/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/ro_RO/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/ro_RO/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/ro_RO/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/ro_RO/index.dic',
     name: 'Română - Romanian',
     charset: 'USCRIPT_LATIN'
   },
   'ru_RU': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/ru_RU/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/ru_RU/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/ru_RU/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/ru_RU/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/ru_RU/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/ru_RU/index.dic',
     name: 'Русский - Russian',
     charset: 'USCRIPT_CYRILLIC'
   },
   'sk_SK': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/sk_SK/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/sk_SK/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/sk_SK/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/sk_SK/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/sk_SK/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/sk_SK/index.dic',
     name: 'Slovenčina - Slovak',
     charset: 'USCRIPT_LATIN'
   },
   'sl_SI': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/sl_SI/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/sl_SI/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/sl_SI/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/sl_SI/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/sl_SI/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/sl_SI/index.dic',
     name: 'Slovenščina - Slovenian',
     charset: 'USCRIPT_LATIN'
   },
   'sr_RS-Latn': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/sr_RS-Latn/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/sr_RS-Latn/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/sr_RS-Latn/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/sr_RS-Latn/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/sr_RS-Latn/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/sr_RS-Latn/index.dic',
     name: 'Српски (латински) - Serbian (Latin)',
     charset: 'USCRIPT_LATIN'
   },
   'sr_RS': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/sr_RS/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/sr_RS/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/sr_RS/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/sr_RS/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/sr_RS/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/sr_RS/index.dic',
     name: 'Српски - Serbian',
     charset: 'USCRIPT_CYRILLIC'
   },
   'sv_SE': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/sv_SE/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/sv_SE/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/sv_SE/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/sv_SE/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/sv_SE/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/sv_SE/index.dic',
     name: 'Svenska - Swedish',
     charset: 'USCRIPT_LATIN'
   },
   'tr_TR': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/tr-TR/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/tr-TR/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/tr-TR/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/tr-TR/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/tr-TR/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/tr-TR/index.dic',
     name: 'Türkçe - Turkish',
     charset: 'USCRIPT_LATIN'
   },
   'uk_UA': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/uk_UA/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/uk_UA/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/uk_UA/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/uk_UA/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/uk_UA/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/uk_UA/index.dic',
     name: 'Українська - Ukrainian',
     charset: 'USCRIPT_CYRILLIC'
   },
   'vi_VN': {
-    license: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/vi_VN/LICENSE',
-    aff: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/vi_VN/index.aff',
-    dic: 'https://raw.githubusercontent.com/Thomas101/dictionaries/master/dictionaries/vi_VN/index.dic',
+    license: 'https://wavebox.io/dl/dictionaries/vi_VN/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/vi_VN/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/vi_VN/index.dic',
     name: 'Tiếng Việt - Vietnamese',
     charset: 'USCRIPT_LATIN'
   }

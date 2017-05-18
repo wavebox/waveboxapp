@@ -104,7 +104,7 @@ export default class LanguageSettingsSection extends React.Component {
                 (<Divider key='__unavailable__' />),
                 (<MenuItem
                   key='__unavailableTitle__'
-                  value='__none__'
+                  value='__unavailableTitle__'
                   style={{
                     whiteSpace: 'normal',
                     fontWeight: 'bold',
