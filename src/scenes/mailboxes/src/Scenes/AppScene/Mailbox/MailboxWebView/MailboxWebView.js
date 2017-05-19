@@ -69,7 +69,9 @@ export default class MailboxWebView extends React.Component {
     ipcRenderer.on('mailbox-window-navigate-forward', this.handleIPCNavigateForward)
 
     if (!this.state.isActive) {
-      this.refs[BROWSER_REF].send('lifecycle-sleep', {})
+      if (this.refs[BROWSER_REF]) {
+        this.refs[BROWSER_REF].send('lifecycle-sleep', {})
+      }
     }
   }
 
@@ -424,10 +426,14 @@ export default class MailboxWebView extends React.Component {
   componentDidUpdate (prevProps, prevState) {
     if (prevState.isActive !== this.state.isActive) {
       if (this.state.isActive) {
-        this.refs[BROWSER_REF].focus()
-        this.refs[BROWSER_REF].send('lifecycle-awaken', {})
+        if (this.refs[BROWSER_REF]) {
+          this.refs[BROWSER_REF].focus()
+          this.refs[BROWSER_REF].send('lifecycle-awaken', {})
+        }
       } else {
-        this.refs[BROWSER_REF].send('lifecycle-sleep', {})
+        if (this.refs[BROWSER_REF]) {
+          this.refs[BROWSER_REF].send('lifecycle-sleep', {})
+        }
       }
     }
   }
