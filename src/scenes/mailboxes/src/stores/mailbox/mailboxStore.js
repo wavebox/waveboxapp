@@ -177,6 +177,30 @@ class MailboxStore {
     */
     this.getAvatar = (id) => { return this.avatars.get(id) || BLANK_PNG }
 
+    /**
+    * Gets the mailbox avatar using the order of precidence
+    * @param id: the id of the mailbox
+    * @return the url/base64 avatar url or undefiend if none
+    */
+    this.getResolvedAvatar = (id) => {
+      const mailbox = this.getMailbox(id)
+      if (!mailbox) { return }
+
+      if (mailbox.hasCustomAvatar) {
+        return this.getAvatar(mailbox.customAvatarId)
+      } else if (mailbox.avatarURL) {
+        return mailbox.avatarURL
+      } else if (mailbox.hasServiceLocalAvatar) {
+        return this.getAvatar(mailbox.serviceLocalAvatarId)
+      } else if (!mailbox.avatarCharacterDisplay) {
+        if (mailbox.humanizedLogo) {
+          return '../../' + mailbox.humanizedLogo
+        } else if (mailbox.serviceForType(CoreMailbox.SERVICE_TYPES.DEFAULT).humanizedLogo) {
+          return '../../' + mailbox.serviceForType(CoreMailbox.SERVICE_TYPES.DEFAULT).humanizedLogo
+        }
+      }
+    }
+
     /* ****************************************/
     // Snapshots
     /* ****************************************/

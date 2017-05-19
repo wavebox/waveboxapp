@@ -351,7 +351,8 @@ class SlackStore {
   }
 
   handleScheduleNotification ({ mailboxId, message }) {
-    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
+    const mailboxState = mailboxStore.getState()
+    const mailbox = mailboxState.getMailbox(mailboxId)
     if (!mailbox) { return }
     if (!mailbox.showNotifications) { return }
 
@@ -365,6 +366,7 @@ class SlackStore {
     NotificationService.showNotification({
       title: `${message.title} ${message.subtitle}`,
       body: [{ content: message.content }],
+      icon: mailboxState.getResolvedAvatar(mailboxId),
       data: {
         mailboxId: mailboxId,
         serviceType: SlackDefaultService.type,

@@ -96,7 +96,10 @@ class NotificationService extends EventEmitter {
           return
         }
 
-        pendingNotifications.push(notification)
+        pendingNotifications.push({
+          ...notification,
+          icon: mailboxState.getResolvedAvatar(mailbox.id)
+        })
         this.__state__.sent.set(id, now)
       })
     })
@@ -161,7 +164,8 @@ class NotificationService extends EventEmitter {
       const windowNotification = new window.Notification(title, {
         body: body,
         silent: silent,
-        data: notification.data
+        data: notification.data,
+        icon: notification.icon
       })
       windowNotification.onclick = this.handleNotificationClicked
       return windowNotification

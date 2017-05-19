@@ -62,13 +62,18 @@ class GenericMailboxReducer extends MailboxReducer {
   * @param favicons: the list of favicons provided by the page
   */
   static setPageFavicon (mailbox, favicons) {
-    if (favicons === undefined) {
+    if (favicons === undefined || favicons.length === 0) {
       return mailbox.changeData({ avatar: undefined })
     } else {
-      favicons = favicons.map((f) => f.endsWith('/') ? f.substr(0, f.length - 1) : f) // Electron sometimes gives a trailing slash :-/
-      return mailbox.changeData({
-        avatar: favicons.find((f) => f.endsWith('.ico')) || favicons[favicons.length - 1]
-      })
+      const validFavicons = favicons
+        .map((f) => f.endsWith('/') ? f.substr(0, f.length - 1) : f) // Electron sometimes gives a trailing slash :-/
+        .filter((f) => f.endsWith('.png') || f.endsWith('.ico') || f.endsWith('.jpg') || f.endsWith('.gif')) // some websites send junk
+      if (validFavicons.length) {
+        const bestFavicon = validFavicons.find((f) => f.endsWith('.ico')) || favicons[favicons.length - 1]
+        return mailbox.changeData({ avatar: bestFavicon })
+      } else {
+        return mailbox.changeData({ avatar: undefined })
+      }
     }
   }
 

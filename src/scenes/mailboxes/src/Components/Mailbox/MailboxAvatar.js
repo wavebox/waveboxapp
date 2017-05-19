@@ -53,24 +53,7 @@ export default class MailboxAvatar extends React.Component {
   */
   generateInitialState (props) {
     const { mailbox } = props
-
-    if (mailbox.hasCustomAvatar) {
-      const mailboxState = mailboxStore.getState()
-      return { url: mailboxState.getAvatar(mailbox.customAvatarId) }
-    } else if (mailbox.avatarURL) {
-      return { url: mailbox.avatarURL }
-    } else if (mailbox.hasServiceLocalAvatar) {
-      const mailboxState = mailboxStore.getState()
-      return { url: mailboxState.getAvatar(mailbox.serviceLocalAvatarId) }
-    } else if (!mailbox.avatarCharacterDisplay) {
-      if (mailbox.humanizedLogo) {
-        return { url: '../../' + mailbox.humanizedLogo }
-      } else if (mailbox.serviceForType(CoreMailbox.SERVICE_TYPES.DEFAULT).humanizedLogo) {
-        return { url: '../../' + mailbox.serviceForType(CoreMailbox.SERVICE_TYPES.DEFAULT).humanizedLogo }
-      }
-    }
-
-    return { url: undefined }
+    return { url: mailboxStore.getState().getResolvedAvatar(mailbox.id) }
   }
 
   mailboxUpdated = (mailboxState) => {
