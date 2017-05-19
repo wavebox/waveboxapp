@@ -319,6 +319,14 @@ class SettingsActions {
   }
 
   /**
+  * @param val: the icon size in pixels
+  */
+  setTrayIconSize (val) {
+    val = parseInt(val)
+    return this.update(SEGMENTS.TRAY, 'iconSize', isNaN(val) ? undefined : val)
+  }
+
+  /**
   * @param enabled: true to hide the window when minimized, false otherwise
   */
   setHideWhenMinimized (enabled) {

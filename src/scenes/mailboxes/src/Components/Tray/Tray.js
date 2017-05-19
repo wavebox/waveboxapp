@@ -165,7 +165,8 @@ export default class Tray extends React.Component {
       'readColor',
       'readBackgroundColor',
       'showUnreadCount',
-      'dpiMultiplier'
+      'dpiMultiplier',
+      'iconSize'
     ].findIndex((k) => {
       return this.props.traySettings[k] !== nextProps.traySettings[k]
     }) !== -1
@@ -232,18 +233,6 @@ export default class Tray extends React.Component {
     return Menu.buildFromTemplate(template)
   }
 
-  /**
-  * @return the tray icon size
-  */
-  trayIconSize () {
-    switch (process.platform) {
-      case 'darwin': return 22
-      case 'win32': return 16
-      case 'linux': return 32
-      default: return 32
-    }
-  }
-
   render () {
     const { unreadCount, traySettings } = this.props
 
@@ -252,7 +241,7 @@ export default class Tray extends React.Component {
     const renderId = uuid.v4()
     this.renderId = renderId
 
-    TrayRenderer.renderNativeImage(this.trayIconSize(), traySettings, unreadCount)
+    TrayRenderer.renderNativeImage(traySettings.iconSize, traySettings, unreadCount)
       .then((image) => {
         if (this.renderId !== renderId) { return } // Someone got in before us
         this.appTray.setImage(image)

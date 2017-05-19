@@ -57,6 +57,20 @@ class TraySettings extends Model {
     } catch (ex) { }
     return this._value_('dpiMultiplier', defaultValue)
   }
+
+  get iconSize () {
+    const iconSize = this._value_('iconSize', undefined)
+    if (iconSize) {
+      return iconSize
+    } else {
+      switch (process.platform) {
+        case 'darwin': return 22
+        case 'win32': return 16
+        case 'linux': return 32
+        default: return 32
+      }
+    }
+  }
 }
 
 module.exports = TraySettings
