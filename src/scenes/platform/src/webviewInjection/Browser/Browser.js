@@ -1,6 +1,7 @@
 const KeyboardNavigator = require('./KeyboardNavigator')
 const Spellchecker = require('./Spellchecker')
 const ContextMenu = require('./ContextMenu')
+const Lifecycle = require('./Lifecycle')
 const injector = require('../injector')
 const path = require('path')
 const { ipcRenderer } = require('electron')
@@ -18,6 +19,7 @@ class Browser {
     this.keyboardNavigator = new KeyboardNavigator()
     this.spellchecker = new Spellchecker()
     this.contextMenu = new ContextMenu(this.spellchecker, config.contextMenu)
+    this.lifecycle = new Lifecycle()
 
     injector.injectClientModule(path.join(__dirname, './client/Notification.js'))
 

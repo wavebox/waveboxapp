@@ -7,6 +7,7 @@ class Injector {
 
   constructor () {
     this.scripts = { pending: [], interval: null }
+    this.headFunctions = { pending: [], interval: null }
     this.bodyEvents = { pending: [], interval: null }
   }
 
@@ -101,6 +102,34 @@ class Injector {
             this.bodyEvents.pending = []
           }
         }, 100)
+      }
+    }
+  }
+
+  /* **************************************************************************/
+  // Function injection
+  /* **************************************************************************/
+
+  /**
+  * Runs a function after the head has become available
+  * @param fn: the function to call
+  */
+  injectHeadFunction (fn) {
+    if (document.head) {
+      document.head.appendChild(fn)
+    } else {
+      this.headFunctions.pending.push(fn)
+      if (this.headFunctions.interval === null) {
+        this.headFunctions.interval = setInterval(() => {
+          if (document.head) {
+            clearInterval(this.headFunctions.interval)
+            this.headFunctions.interval = null
+            this.headFunctions.pending.forEach((fn) => {
+              fn()
+            })
+            this.headFunctions.pending = []
+          }
+        }, 10)
       }
     }
   }
