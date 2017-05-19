@@ -1,4 +1,5 @@
 const {ipcRenderer} = require('electron')
+const GinboxApi = require('./GinboxApi')
 const MAX_MESSAGE_HASH_TIME = 1000 * 60 * 10 // 10 mins
 
 class GinboxChangeEmitter {
@@ -24,9 +25,10 @@ class GinboxChangeEmitter {
   }
 
   get currentMessageHash () {
+    const estimatedCount = GinboxApi.getVisibleUnreadCount()
     const topItem = document.querySelector('[data-item-id]')
     const topHash = topItem ? topItem.getAttribute('data-item-id') : '_'
-    return topHash
+    return `${estimatedCount}:${topHash}`
   }
 
   /* **************************************************************************/
