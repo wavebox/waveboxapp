@@ -4,6 +4,7 @@ import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import { mailboxDispatch, MailboxLinker } from 'stores/mailbox'
 import { microsoftActions } from 'stores/microsoft'
+import URI from 'urijs'
 
 const REF = 'mailbox_tab'
 
@@ -58,7 +59,12 @@ export default class MicrosoftMailboxMailWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleOpenNewWindow = (evt) => {
-    MailboxLinker.openExternalWindow(evt.url)
+    const url = URI(evt.url)
+    if (url.hostname() === 'attachment.outlook.office.net' && url.pathname().endsWith('GetFileAttachment')) {
+      this.refs[REF].getWebContents().downloadURL(evt.url)
+    } else {
+      MailboxLinker.openExternalWindow(evt.url)
+    }
   }
 
   /* **************************************************************************/
