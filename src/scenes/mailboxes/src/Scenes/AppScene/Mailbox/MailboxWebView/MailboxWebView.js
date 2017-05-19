@@ -2,7 +2,7 @@ import './MailboxWebView.less'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { CircularProgress } from 'material-ui'
-import { mailboxStore, mailboxDispatch } from 'stores/mailbox'
+import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
 import BrowserView from 'sharedui/Components/BrowserView'
 import MailboxSearch from './MailboxSearch'
@@ -300,6 +300,7 @@ export default class MailboxWebView extends React.Component {
     switch (evt.channel.type) {
       case 'open-settings': window.location.hash = '/settings'; break
       case 'pong-resource-usage': ipcRenderer.send('pong-resource-usage', evt.channel.data); break
+      case 'browser-notification-click': mailboxActions.changeActive(this.props.mailboxId, this.props.serviceType); break
       default: break
     }
   }
