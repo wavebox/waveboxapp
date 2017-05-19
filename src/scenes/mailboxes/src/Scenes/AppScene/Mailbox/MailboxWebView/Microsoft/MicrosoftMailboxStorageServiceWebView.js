@@ -79,6 +79,7 @@ export default class MicrosoftMailboxStorageServiceWebView extends React.Compone
   * @param evt: the event that fired
   */
   handleWillNavigate = (evt) => {
+    console.log(evt.url)
     const purl = URI(evt.url)
     let contentWindow = false
 
@@ -86,6 +87,8 @@ export default class MicrosoftMailboxStorageServiceWebView extends React.Compone
     if (purl.hostname() === 'onedrive.live.com') {
       if (purl.pathname() === '/edit.aspx') {
         contentWindow = true
+      } else if (purl.pathname() === '/download.aspx') {
+        contentWindow = true // Opening PDFs in browser
       }
     } else if (purl.hostname().endsWith('.files.1drv.com')) {
       contentWindow = true

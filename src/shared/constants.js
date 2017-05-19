@@ -45,6 +45,9 @@ module.exports = Object.freeze({
   ARTIFICIAL_COOKIE_PERSIST_WAIT: 1000 * 30, // 30 secs
   ARTIFICIAL_COOKIE_PERSIST_PERIOD: 30 * 24 * 60 * 60 * 1000, // 30 days
 
+  // Chrome
+  CHROME_PDF_URL: 'chrome://pdf-viewer/index.html',
+
   // URLs
   WEB_URL: 'https://wavebox.io',
   GITHUB_URL: 'https://github.com/wavebox/waveboxapp/',

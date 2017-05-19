@@ -6,6 +6,8 @@ import {
   Paper, IconButton, FontIcon, CircularProgress,
   Toolbar, ToolbarGroup, ToolbarTitle
 } from 'material-ui'
+import { CHROME_PDF_URL } from 'shared/constants'
+import URI from 'urijs'
 const { remote: { shell } } = window.nativeRequire('electron')
 
 export default class BrowserToolbar extends React.Component {
@@ -55,6 +57,30 @@ export default class BrowserToolbar extends React.Component {
     })
   }
 
+  /**
+  * Converts a url to a url that can be shown and used externally
+  * @param url: the true url
+  * @return the url to load in external browsers and show to the user
+  */
+  externalUrl (url) {
+    if (url.startsWith(CHROME_PDF_URL)) {
+      return URI(url).search(true).src
+    } else {
+      return url
+    }
+  }
+
+  /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  /**
+  * Opens the current page in the default browser
+  */
+  handleOpenInBrowser = (evt) => {
+    shell.openExternal(this.externalUrl(this.state.currentUrl), { })
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -95,7 +121,7 @@ export default class BrowserToolbar extends React.Component {
               style={{ transition: 'opacity 1s', margin: 10, opacity: isLoading ? 1 : 0 }} />
           </ToolbarGroup>
           <ToolbarGroup style={{ minWidth: 0 }}>
-            <ToolbarTitle text={currentUrl} style={{ fontSize: '14px' }} />
+            <ToolbarTitle text={this.externalUrl(currentUrl)} style={{ fontSize: '14px' }} />
           </ToolbarGroup>
           <ToolbarGroup lastChild>
             <IconButton
@@ -106,7 +132,7 @@ export default class BrowserToolbar extends React.Component {
             <IconButton
               tooltip='Open in Browser'
               tooltipPosition='bottom-left'
-              onClick={() => shell.openExternal(currentUrl, { })}>
+              onClick={this.handleOpenInBrowser}>
               <FontIcon className='material-icons'>open_in_browser</FontIcon>
             </IconButton>
           </ToolbarGroup>
