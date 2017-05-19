@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { Avatar } from 'material-ui'
 import { mailboxStore } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 
 export default class MailboxAvatar extends React.Component {
   /* **************************************************************************/
