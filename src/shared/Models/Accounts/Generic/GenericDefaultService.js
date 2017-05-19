@@ -23,6 +23,12 @@ class GenericDefaultService extends CoreService {
   get url () { return this.__data__.url || 'about:blank' }
   get sleepable () { return this._value_('sleepable', false) }
   get openWindowsExternally () { return this._value_('openWindowsExternally', false) }
+
+  /* **************************************************************************/
+  // Properties : Provider Details & counts etc
+  /* **************************************************************************/
+
+  get hasUnreadActivity () { return !!this._value_('lastUnseenNotificationTime', undefined) }
 }
 
 module.exports = GenericDefaultService

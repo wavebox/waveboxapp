@@ -9,6 +9,7 @@ import styles from '../../SettingStyles'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
 import AccountSleepableSettings from '../AccountSleepableSettings'
+import AccountNotificationBadgeSettings from '../AccountNotificationBadgeSettings'
 import { mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
 import validUrl from 'valid-url'
 
@@ -145,6 +146,7 @@ export default class GenericAccountSettings extends React.Component {
                 onToggle={(evt, toggled) => mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageThemeAsColor, toggled)} />
             </Paper>
             <AccountAppearanceSettings mailbox={mailbox} />
+            <AccountNotificationBadgeSettings mailbox={mailbox} />
           </Col>
           <Col md={6}>
             <Paper zDepth={1} style={styles.paper}>

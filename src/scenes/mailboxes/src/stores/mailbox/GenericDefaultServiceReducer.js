@@ -1,6 +1,10 @@
 import ServiceReducer from './ServiceReducer'
 
 class GenericDefaultServiceReducer extends ServiceReducer {
+  /* **************************************************************************/
+  // Settings
+  /* **************************************************************************/
+
   /**
   * Updates the url for the service
   * @param mailbox: the mailbox that contains the service
@@ -19,6 +23,28 @@ class GenericDefaultServiceReducer extends ServiceReducer {
   */
   static setOpenWindowsExternally (mailbox, service, openExternal) {
     return service.changeData({ openWindowsExternally: openExternal })
+  }
+
+  /* **************************************************************************/
+  // Notifications
+  /* **************************************************************************/
+
+  /**
+  * Sets that a notification was presented
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  */
+  static notificationPresented (mailbox, service) {
+    return service.changeData({ lastUnseenNotificationTime: new Date().getTime() })
+  }
+
+  /**
+  * Clears the unseen notifications
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  */
+  static clearUnseenNotifications (mailbox, service) {
+    return service.changeData({ lastUnseenNotificationTime: null })
   }
 }
 

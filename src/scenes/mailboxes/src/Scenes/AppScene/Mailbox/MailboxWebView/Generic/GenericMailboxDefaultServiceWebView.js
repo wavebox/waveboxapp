@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
-import { MailboxLinker, mailboxStore, mailboxActions, GenericMailboxReducer } from 'stores/mailbox'
+import { MailboxLinker, mailboxStore, mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
 
 const REF = 'mailbox_tab'
@@ -22,6 +22,13 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
 
   componentDidMount () {
     mailboxStore.listen(this.mailboxChanged)
+    if (this.state.isActive) {
+      mailboxActions.reduceService.defer(
+        this.props.mailboxId,
+        CoreService.SERVICE_TYPES.DEFAULT,
+        GenericDefaultServiceReducer.clearUnseenNotifications
+      )
+    }
   }
 
   componentWillUnmount () {
@@ -46,11 +53,13 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
   * @return state object
   */
   generateState (props) {
-    const mailbox = mailboxStore.getState().getMailbox(props.mailboxId)
+    const mailboxState = mailboxStore.getState()
+    const mailbox = mailboxState.getMailbox(props.mailboxId)
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     return {
       openWindowsExternally: service ? service.openWindowsExternally : false,
-      url: service ? service.url : undefined
+      url: service ? service.url : undefined,
+      isActive: mailboxState.isActive(props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT)
     }
   }
 
@@ -59,7 +68,8 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     this.setState({
       openWindowsExternally: service ? service.openWindowsExternally : false,
-      url: service ? service.url : undefined
+      url: service ? service.url : undefined,
+      isActive: mailboxState.isActive(this.props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT)
     })
   }
 
@@ -104,11 +114,50 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
   }
 
   /* **************************************************************************/
+  // Browser Events : Dispatcher
+  /* **************************************************************************/
+
+  /**
+  * Dispatches browser IPC messages to the correct call
+  * @param evt: the event that fired
+  */
+  handleIPCMessage = (evt) => {
+    switch (evt.channel.type) {
+      case 'browser-notification-present': this.handleBrowserNotificationPresented(); break
+      default: break
+    }
+  }
+
+  /**
+  * Handles the browser presenting a notification
+  */
+  handleBrowserNotificationPresented = () => {
+    if (!this.state.isActive) {
+      mailboxActions.reduceService(
+        this.props.mailboxId,
+        CoreService.SERVICE_TYPES.DEFAULT,
+        GenericDefaultServiceReducer.notificationPresented
+      )
+    }
+  }
+
+  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    if (this.state.isActive && !prevState.isActive) {
+      // Not great that we've put this here, but component lifecycle is kinda handled here :-/
+      mailboxActions.reduceService.defer(
+        this.props.mailboxId,
+        CoreService.SERVICE_TYPES.DEFAULT,
+        GenericDefaultServiceReducer.clearUnseenNotifications
+      )
+    }
   }
 
   render () {
@@ -125,7 +174,8 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
         newWindow={this.handleOpenNewWindow}
         didChangeThemeColor={this.handleThemeColorChanged}
         pageTitleUpdated={this.handlePageTitleUpdated}
-        pageFaviconUpdated={this.handlePageFaviconUpdated} />
+        pageFaviconUpdated={this.handlePageFaviconUpdated}
+        ipcMessage={this.handleIPCMessage} />
     )
   }
 }

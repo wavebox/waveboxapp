@@ -30,6 +30,8 @@ class CoreMailbox extends Model {
   static get supportsAdditionalServiceTypes () { return this.supportedServiceTypes.length > 1 }
   static get userAgentChanges () { return [] }
   static get supportsUnreadActivity () { return false }
+  static get supportsUnreadCount () { return true }
+  static get supportsNativeNotifications () { return true }
 
   /* **************************************************************************/
   // Class : Humanized
@@ -129,6 +131,8 @@ class CoreMailbox extends Model {
   get partition () { return this.id }
   get artificiallyPersistCookies () { return this._value_('artificiallyPersistCookies', false) }
   get supportsUnreadActivity () { return this.constructor.supportsUnreadActivity }
+  get supportsUnreadCount () { return this.constructor.supportsUnreadCount }
+  get supportsNativeNotifications () { return this.constructor.supportsNativeNotifications }
 
   /* **************************************************************************/
   // Properties: Wavebox

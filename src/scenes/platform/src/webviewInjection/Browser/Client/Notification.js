@@ -27,6 +27,7 @@
         }
       })
       notificationProxy.onclick = undefined
+      window.postMessage(JSON.stringify({ wavebox: true, type: 'wavebox-notification-present' }), '*')
       return notificationProxy
     },
     get: function (Target, k) {

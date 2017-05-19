@@ -28,13 +28,15 @@ export default class AccountNotificationBadgeSettings extends React.Component {
     return (
       <Paper zDepth={1} style={styles.paper} {...passProps}>
         <h1 style={styles.subheading}>Badges &amp; Notifications</h1>
-        <Toggle
-          defaultToggled={mailbox.showUnreadBadge}
-          label='Show unread badge in sidebar'
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
-            mailboxActions.reduce(mailbox.id, MailboxReducer.setShowUnreadBadge, toggled)
-          }} />
+        {mailbox.supportsUnreadCount ? (
+          <Toggle
+            defaultToggled={mailbox.showUnreadBadge}
+            label='Show unread badge in sidebar'
+            labelPosition='right'
+            onToggle={(evt, toggled) => {
+              mailboxActions.reduce(mailbox.id, MailboxReducer.setShowUnreadBadge, toggled)
+            }} />
+        ) : undefined}
         {mailbox.supportsUnreadActivity ? (
           <Toggle
             defaultToggled={mailbox.showUnreadActivityBadge}
@@ -49,13 +51,15 @@ export default class AccountNotificationBadgeSettings extends React.Component {
               mailboxActions.reduce(mailbox.id, MailboxReducer.setShowUnreadActivityBadge, toggled)
             }} />
         ) : undefined}
-        <Toggle
-          defaultToggled={mailbox.unreadCountsTowardsAppUnread}
-          label='Show unread in Menu Bar & App Badge'
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
-            mailboxActions.reduce(mailbox.id, MailboxReducer.setUnreadCountsTowardsAppUnread, toggled)
-          }} />
+        {mailbox.supportsUnreadCount ? (
+          <Toggle
+            defaultToggled={mailbox.unreadCountsTowardsAppUnread}
+            label='Show unread in Menu Bar & App Badge'
+            labelPosition='right'
+            onToggle={(evt, toggled) => {
+              mailboxActions.reduce(mailbox.id, MailboxReducer.setUnreadCountsTowardsAppUnread, toggled)
+            }} />
+        ) : undefined}
         {mailbox.supportsUnreadActivity ? (
           <Toggle
             defaultToggled={mailbox.unreadActivityCountsTowardsAppUnread}
@@ -70,13 +74,15 @@ export default class AccountNotificationBadgeSettings extends React.Component {
               mailboxActions.reduce(mailbox.id, MailboxReducer.setUnreadActivityCountsTowardsAppUnread, toggled)
             }} />
         ) : undefined}
-        <Toggle
-          defaultToggled={mailbox.showNotifications}
-          label='Show notifications'
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
-            mailboxActions.reduce(mailbox.id, MailboxReducer.setShowNotifications, toggled)
-          }} />
+        {mailbox.supportsNativeNotifications ? (
+          <Toggle
+            defaultToggled={mailbox.showNotifications}
+            label='Show notifications'
+            labelPosition='right'
+            onToggle={(evt, toggled) => {
+              mailboxActions.reduce(mailbox.id, MailboxReducer.setShowNotifications, toggled)
+            }} />
+        ) : undefined}
       </Paper>
     )
   }

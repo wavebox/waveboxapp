@@ -31,6 +31,8 @@ class Browser {
 
         if (data.type === 'wavebox-notification-click') {
           ipcRenderer.sendToHost({ type: 'browser-notification-click' })
+        } else if (data.type === 'wavebox-notification-present') {
+          ipcRenderer.sendToHost({ type: 'browser-notification-present' })
         }
       }
     })
