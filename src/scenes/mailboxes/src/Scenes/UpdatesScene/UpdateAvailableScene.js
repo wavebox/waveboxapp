@@ -166,7 +166,15 @@ export default class UpdateAvailableScene extends React.Component {
               <span style={{ fontWeight: 'normal' }}> you can use the following...</span>
             </h4>
             <code style={styles.managerCode}>
-              sudo snap refresh wavebox
+              {`sudo snap refresh ${process.arch === 'x64' ? 'wavebox' : 'wavebox_ia32'}`}
+            </code>
+            <br />
+            <h4>
+              If you installed using apt
+              <span style={{ fontWeight: 'normal' }}> you can use the following...</span>
+            </h4>
+            <code style={styles.managerCode}>
+              sudo apt update; sudo apt install wavebox
             </code>
           </div>
         )
