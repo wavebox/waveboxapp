@@ -15,10 +15,10 @@
     "googleapis": "19.0.0",
     "home-dir": "1.0.0",
     "mkdirp": "0.5.1",
+    "nodehun": "2.0.11",
     "unused-filename": "1.0.0",
     "uuid": "3.0.1",
     "winreg": "1.2.4",
-    "wmail-spellchecker": "Thomas101/wmail-spellchecker#1.0.5",
     "yargs": "8.0.1"
   },
   "devDependencies": {
