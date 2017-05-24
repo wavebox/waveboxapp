@@ -5,8 +5,12 @@ const pkg = require('../../package.json')
 const mkdirp = require('mkdirp')
 const path = require('path')
 const fs = require('fs-extra')
-const { DB_WRITE_DELAY_MS } = require('../../shared/constants')
 const uuid = require('uuid')
+const {
+  DB_WRITE_DELAY_MS,
+  DB_BACKUP_INTERVAL,
+  DB_MAX_BACKUPS
+} = require('../../shared/constants')
 
 // Setup
 const appDirectory = new AppDirectory({
@@ -27,6 +31,7 @@ class StorageBucket extends EventEmitter {
     this.__writeHold__ = null
     this.__writeLock__ = false
     this.__data__ = undefined
+    this.__lastBackup__ = 0
     this.__ipcReplyChannel__ = `storageBucket:${bucketName}:reply`
 
     this._loadFromDiskSync()
@@ -78,6 +83,32 @@ class StorageBucket extends EventEmitter {
         const data = JSON.stringify(this.__data__)
 
         Promise.resolve()
+          .then(() => {
+            const now = new Date().getTime()
+            if (now - this.__lastBackup__ < DB_BACKUP_INTERVAL) {
+              return Promise.resolve()
+            }
+
+            // Run a backup first
+            const backupPath = `${this.__path__}.${now}.backup`
+            return Promise.resolve()
+              .then(() => fs.copy(this.__path__, backupPath))
+              .then(() => fs.readdir(dbPath))
+              .then((files) => {
+                const redundantBackups = files
+                  .filter((f) => f.startsWith(path.basename(this.__path__)) && f.endsWith('.backup'))
+                  .map((f) => parseInt(f.replace(`${path.basename(this.__path__)}.`, '').replace('.backup', '')))
+                  .sort((a, b) => b - a)
+                  .slice(DB_MAX_BACKUPS)
+                  .map((ts) => `${this.__path__}.${ts}.backup`)
+                return Promise.all(redundantBackups.map((path) => fs.remove(path)))
+              })
+              .catch(() => Promise.resolve()) // Will also end up here when this.__path__ does not exist
+              .then(() => {
+                this.__lastBackup__ = now
+                return Promise.resolve()
+              })
+          })
           .then(() => fs.open(flushPath, 'w'))
           .then((ref) => {
             return Promise.resolve()
@@ -85,10 +116,12 @@ class StorageBucket extends EventEmitter {
               .then(() => fs.fsync(ref))
               .then(() => fs.close(ref))
           })
+          .then(() => fs.readFile(flushPath, 'utf8'))
+          .then((readData) => readData === data ? Promise.resolve() : Promise.reject(new Error('Integrity failure')))
           .then(() => fs.rename(flushPath, this.__path__))
           .then(() => {
             this.__writeLock__ = false
-          }, () => {
+          }, (e) => {
             this.__writeLock__ = false
           })
       }

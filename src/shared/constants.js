@@ -6,6 +6,8 @@ module.exports = Object.freeze({
   // Database
   PERSISTENCE_INDEX_KEY: '__index__',
   DB_WRITE_DELAY_MS: 500, // 0.5secs
+  DB_BACKUP_INTERVAL: 1000 * 60 * 15, // 15 minutes
+  DB_MAX_BACKUPS: 10,
 
   // Mailboxes
   MAILBOX_SLEEP_WAIT: 1000 * 60 * 5, // 5 minutes
