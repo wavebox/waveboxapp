@@ -161,8 +161,8 @@ class UpdaterStore {
     this.updateState = UPDATE_STATES.NONE
     this.updateFailedCount = 0
     if (this.userActionedUpdate) {
-      this.userActionedUpdate = false
       this.showUserPrompt()
+      this.userActionedUpdate = false
     }
 
     // Check for the next update
@@ -175,8 +175,6 @@ class UpdaterStore {
     this.updateState = UPDATE_STATES.DOWNLOADED
     this.updateFailedCount = 0
     this.showUserPrompt()
-
-    // Reset for next run
     this.userActionedUpdate = false
   }
 
@@ -186,8 +184,6 @@ class UpdaterStore {
     this.updateState = UPDATE_STATES.ERROR
     this.updateFailedCount = this.updateFailedCount + 1
     this.showUserPrompt()
-
-    // Reset for next run
     this.userActionedUpdate = false
     actions.scheduleNextUpdateCheck.defer()
   }
@@ -260,12 +256,14 @@ class UpdaterStore {
     if (process.platform === 'darwin') {
       // Squirrel does the donkey work for us on osx and checks the server for the update path
       this.updateState = UPDATE_STATES.CHECKING
+      this.showUserPrompt()
       ipcRenderer.send('squirrel-update-check', {
         url: `${UPDATE_FEED_DARWIN}?v=${pkg.version}`
       })
     } else if (process.platform === 'win32') {
       // Squirrel win32 needs a url it can resolve two files, so find out from wavebox where that is!
       this.updateState = UPDATE_STATES.CHECKING
+      this.showUserPrompt()
       Promise.resolve()
         .then(() => {
           if (process.arch === 'x64') {
@@ -286,6 +284,7 @@ class UpdaterStore {
               .then((res) => {
                 ipcRenderer.send('squirrel-update-check', { url: res.url })
                 this.updateState = UPDATE_STATES.DOWNLOADING
+                this.showUserPrompt()
                 this.emitChange()
               })
           }
