@@ -3,7 +3,7 @@
   "version": "3.1.8",
   "description": "Wavebox",
   "scripts": {
-    "electron-rebuild": "electron-rebuild -m src/app -v 1.7.1",
+    "rebuild:electron": "electron-rebuild -f -m src/app -v 1.7.1",
     "prestart": "webpack",
     "start": "electron bin/app/index.js",
     "test": "standard",
