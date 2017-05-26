@@ -221,6 +221,8 @@ class UpdaterStore {
 
     if (this.isWorking()) {
       actions.scheduleNextUpdateCheck.defer()
+    } else if (this.isDownloadedUpdate()) {
+      this.showUserPrompt()
     } else {
       this.userActionedUpdate = false
       if (this.squirrelEnabled) {
@@ -234,7 +236,7 @@ class UpdaterStore {
   handleUserCheckForUpdates () {
     this.userActionedUpdate = true
 
-    if (this.isWorking()) {
+    if (this.isWorking() || this.isDownloadedUpdate()) {
       this.showUserPrompt()
     } else {
       if (this.squirrelEnabled) {
