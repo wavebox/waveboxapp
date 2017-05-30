@@ -2,6 +2,7 @@ const WaveboxWindow = require('./WaveboxWindow')
 const { shell } = require('electron')
 const querystring = require('querystring')
 const path = require('path')
+const mouseFB = process.platform === 'linux' ? require('mouse-forward-back') : undefined
 
 const CONTENT_DIR = path.resolve(path.join(__dirname, '/../../../scenes/content'))
 const SAFE_CONFIG_KEYS = [
@@ -129,6 +130,13 @@ class ContentWindow extends WaveboxWindow {
           case 'browser-forward': this.navigateForward(); break
         }
       })
+    } else if (process.platform === 'linux') {
+      mouseFB.register((btn) => {
+        switch (btn) {
+          case 'back': this.navigateMailboxBack(); break
+          case 'forward': this.navigateMailboxForward(); break
+        }
+      }, this.window.getNativeWindowHandle())
     }
   }
 

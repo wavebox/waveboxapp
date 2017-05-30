@@ -12,6 +12,7 @@ const {
 } = require('../AuthProviders')
 const querystring = require('querystring')
 const electron = require('electron')
+const mouseFB = process.platform === 'linux' ? require('mouse-forward-back') : undefined
 
 const MAILBOXES_DIR = path.resolve(path.join(__dirname, '/../../../scenes/mailboxes'))
 const ALLOWED_URLS = [
@@ -102,6 +103,13 @@ class MailboxesWindow extends WaveboxWindow {
           case 'browser-forward': this.navigateMailboxForward(); break
         }
       })
+    } else if (process.platform === 'linux') {
+      mouseFB.register((btn) => {
+        switch (btn) {
+          case 'back': this.navigateMailboxBack(); break
+          case 'forward': this.navigateMailboxForward(); break
+        }
+      }, this.window.getNativeWindowHandle())
     }
   }
 

@@ -21,6 +21,9 @@
     "winreg": "1.2.4",
     "yargs": "8.0.1"
   },
+  "optionalDependencies": {
+    "mouse-forward-back": "1.0.1"
+  },
   "devDependencies": {
     "standard": "10.0.2"
   }
