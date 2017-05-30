@@ -93,6 +93,16 @@ class MailboxesWindow extends WaveboxWindow {
     this.window.webContents.on('devtools-reload-page', (evt) => {
       this.window.loadURL(this.generateWindowUrl())
     })
+
+    // Mouse navigation
+    if (process.platform === 'win32') {
+      this.window.on('app-command', (evt, cmd) => {
+        switch (cmd) {
+          case 'browser-backward': this.navigateMailboxBack(); break
+          case 'browser-forward': this.navigateMailboxForward(); break
+        }
+      })
+    }
   }
 
   destroyWindow (evt) {

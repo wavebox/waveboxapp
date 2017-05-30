@@ -31,11 +31,15 @@ export default class BrowserScene extends React.Component {
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
     ipcRenderer.on('reload-webview', this.handleIPCReload)
+    ipcRenderer.on('navigate-webview-back', this.handleIPCNavigateBack)
+    ipcRenderer.on('navigate-webview-forward', this.handleIPCNavigateForward)
   }
 
   componentWillUnmount () {
     browserStore.unlisten(this.browserUpdated)
     ipcRenderer.removeListener('reload-webview', this.handleIPCReload)
+    ipcRenderer.removeListener('navigate-webview-back', this.handleIPCNavigateBack)
+    ipcRenderer.removeListener('navigate-webview-forward', this.handleIPCNavigateForward)
   }
 
   /* **************************************************************************/
@@ -67,6 +71,15 @@ export default class BrowserScene extends React.Component {
 
   handleIPCReload = () => {
     this.refs[BROWSER_REF].reload()
+  }
+
+
+  handleIPCNavigateBack = () => {
+    this.refs[BROWSER_REF].goBack()
+  }
+
+  handleIPCNavigateForward = () => {
+    this.refs[BROWSER_REF].goForward()
   }
 
   /* **************************************************************************/

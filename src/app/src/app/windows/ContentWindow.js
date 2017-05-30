@@ -100,11 +100,14 @@ class ContentWindow extends WaveboxWindow {
   */
   createWindow () {
     super.createWindow.apply(this, Array.from(arguments))
+
+    // New window handling
     this.window.webContents.on('new-window', (evt, url) => {
       evt.preventDefault()
       shell.openExternal(url)
     })
 
+    // Patch through options into webview
     this.window.webContents.on('will-attach-webview', (evt, webPreferences, properties) => {
       COPY_WEBVIEW_WEB_PREFERENCES_KEYS.forEach((k) => {
         if (this.guestWebPreferences[k] !== undefined) {
@@ -117,6 +120,16 @@ class ContentWindow extends WaveboxWindow {
         }
       })
     })
+
+    // Mouse navigation
+    if (process.platform === 'win32') {
+      this.window.on('app-command', (evt, cmd) => {
+        switch (cmd) {
+          case 'browser-backward': this.navigateBack(); break
+          case 'browser-forward': this.navigateForward(); break
+        }
+      })
+    }
   }
 
   /* ****************************************************************************/
@@ -129,6 +142,24 @@ class ContentWindow extends WaveboxWindow {
   */
   reload () {
     this.window.webContents.send('reload-webview', {})
+    return this
+  }
+
+  /**
+  * Navigates the content window backwards
+  * @return this
+  */
+  navigateBack () {
+    this.window.webContents.send('navigate-webview-back', {})
+    return this
+  }
+
+  /**
+  * Navigates the content window forwards
+  * @return this
+  */
+  navigateForward () {
+    this.window.webContents.send('navigate-webview-forward', {})
     return this
   }
 }

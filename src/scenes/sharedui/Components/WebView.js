@@ -81,7 +81,7 @@ const WEBVIEW_METHODS = [
   'getWebContents',
   'getUserAgent',
   'goBack',
-  'goFoward',
+  'goForward',
   'goToIndex',
   'goToOffset',
   'insertCSS',
