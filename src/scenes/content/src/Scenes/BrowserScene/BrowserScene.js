@@ -73,7 +73,6 @@ export default class BrowserScene extends React.Component {
     this.refs[BROWSER_REF].reload()
   }
 
-
   handleIPCNavigateBack = () => {
     this.refs[BROWSER_REF].goBack()
   }
