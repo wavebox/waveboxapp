@@ -99,15 +99,15 @@ class MailboxesWindow extends WaveboxWindow {
     if (process.platform === 'win32') {
       this.window.on('app-command', (evt, cmd) => {
         switch (cmd) {
-          case 'browser-backward': this.navigateMailboxBack(); break
-          case 'browser-forward': this.navigateMailboxForward(); break
+          case 'browser-backward': this.navigateBack(); break
+          case 'browser-forward': this.navigateForward(); break
         }
       })
     } else if (process.platform === 'linux') {
       mouseFB.register((btn) => {
         switch (btn) {
-          case 'back': this.navigateMailboxBack(); break
-          case 'forward': this.navigateMailboxForward(); break
+          case 'back': this.navigateBack(); break
+          case 'forward': this.navigateForward(); break
         }
       }, this.window.getNativeWindowHandle())
     }
@@ -241,8 +241,7 @@ class MailboxesWindow extends WaveboxWindow {
   * Tells the active mailbox to navigate back
   * @return this
   */
-  navigateMailboxBack () {
-    this.show().focus()
+  navigateBack () {
     this.window.webContents.send('mailbox-window-navigate-back', { })
     return this
   }
@@ -251,8 +250,7 @@ class MailboxesWindow extends WaveboxWindow {
   * Tells the active mailbox to navigate back
   * @return this
   */
-  navigateMailboxForward () {
-    this.show().focus()
+  navigateForward () {
     this.window.webContents.send('mailbox-window-navigate-forward', { })
     return this
   }

@@ -133,8 +133,8 @@ class ContentWindow extends WaveboxWindow {
     } else if (process.platform === 'linux') {
       mouseFB.register((btn) => {
         switch (btn) {
-          case 'back': this.navigateMailboxBack(); break
-          case 'forward': this.navigateMailboxForward(); break
+          case 'back': this.navigateBack(); break
+          case 'forward': this.navigateForward(); break
         }
       }, this.window.getNativeWindowHandle())
     }

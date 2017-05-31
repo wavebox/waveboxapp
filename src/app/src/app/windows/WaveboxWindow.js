@@ -187,6 +187,24 @@ class WaveboxWindow extends EventEmitter {
     return this
   }
 
+  /**
+  * Navigates the content window backwards
+  * @return this
+  */
+  navigateBack () {
+    this.window.webContents.goBack()
+    return this
+  }
+
+  /**
+  * Navigates the content window forwards
+  * @return this
+  */
+  navigateForward () {
+    this.window.webContents.goForward()
+    return this
+  }
+
   /* ****************************************************************************/
   // Actions: Visibility
   /* ****************************************************************************/

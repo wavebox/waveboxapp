@@ -31,10 +31,10 @@ class AppPrimaryMenu {
         if (focused) { focused.toggleFullscreen() }
       },
       sidebarToggle: () => {
-        windowManager.mailboxesWindow.toggleSidebar()
+        windowManager.mailboxesWindow.show().focus().toggleSidebar()
       },
       menuToggle: () => {
-        windowManager.mailboxesWindow.toggleAppMenu()
+        windowManager.mailboxesWindow.show().focus().toggleAppMenu()
       },
       preferences: () => {
         windowManager.mailboxesWindow.show().focus().launchPreferences()
@@ -105,8 +105,14 @@ class AppPrimaryMenu {
         const focused = windowManager.focused()
         if (focused) { focused.findNext() }
       },
-      mailboxNavBack: () => { windowManager.mailboxesWindow.navigateMailboxBack() },
-      mailboxNavForward: () => { windowManager.mailboxesWindow.navigateMailboxForward() }
+      mailboxNavBack: () => {
+        const focused = windowManager.focused()
+        if (focused) { focused.navigateBack() }
+      },
+      mailboxNavForward: () => {
+        const focused = windowManager.focused()
+        if (focused) { focused.navigateForward() }
+      }
     }
   }
 
