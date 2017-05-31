@@ -1,4 +1,72 @@
 (function () {
+  const notifications = []
+
+  class Notification {
+    /* **************************************************************************/
+    // Class
+    /* **************************************************************************/
+
+    static get permission () {
+      //TODO use: DISALLOWED_HTML5_NOTIFICATION_HOSTS
+      return 'granted'
+    }
+
+    static requestPermission () {
+      //TODO use: DISALLOWED_HTML5_NOTIFICATION_HOSTS
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve('granted')
+        }, 1000)
+      })
+    }
+
+    /* **************************************************************************/
+    // Lifecycle
+    /* **************************************************************************/
+
+    constructor (title, options = {}) {
+      this.__title__ = title
+      this.__options__ = Object.freeze(Object.assign({}, options))
+      this.__onclick__ = null
+      this.__onerror__ = null
+    }
+
+    /* **************************************************************************/
+    // Properties
+    /* **************************************************************************/
+
+    get actions () { return this.__options__.actions }
+    get badge () { return this.__options__.badge }
+    get body () { return this.__options__.body } //1
+    get data () { return this.__options__.data } //1
+    get dir () { return this.__options__.dir }
+    get lang () { return this.__options__.lang }
+    get tag () { return this.__options__.tag }
+    get icon () { return this.__options__.icon } //1
+    get image () { return this.__options__.image }
+    get requireInteraction () { return this.__options__.requireInteraction } //1
+    get silent () { return this.__options__.silent } //1
+    get timestamp () { return this.__options__.timestamp } //1
+    get title () { return this.__options__.title } //1
+    get vibrate () { return this.__options__.vibrate }
+
+    get onclick () { return this.__onclick__ } //1
+    set onclick (v) { this.__onclick__ = v } //1
+    get onerror () { return this.__onerror__ }
+    set onerror (v) { this.__onerror__ = v }
+
+    /* **************************************************************************/
+    // Methods
+    /* **************************************************************************/
+
+    close () {
+
+    }
+  }
+
+  window.Notification = Notification
+})()
+/*(function () {
   const BrowserNotification = window.Notification
   window.Notification = new Proxy(BrowserNotification, {
     construct: function (Target, argumentsList, newTarget) {
@@ -37,4 +105,4 @@
       Target[k] = v
     }
   })
-})()
+})()*/

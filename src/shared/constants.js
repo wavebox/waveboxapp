@@ -34,7 +34,7 @@ module.exports = Object.freeze({
   SYNC_SOCKET_UPGRADE_INTERVAL: 1000 * 60 * 5, // 5 minutes
 
   // Notifications
-  NOTIFICATION_MAX_AGE: 1000 * 60 * 60, // 1 hour
+  NOTIFICATION_MAX_AGE: 1000 * 60 * 10, // 10 minutes
   NOTIFICATION_FIRST_RUN_GRACE_MS: 1000 * 30, // 30 seconds
   DISALLOWED_HTML5_NOTIFICATION_HOSTS: [
     'mail.google.com',

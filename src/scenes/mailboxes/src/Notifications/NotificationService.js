@@ -2,6 +2,8 @@ import { EventEmitter } from 'events'
 import { NOTIFICATION_MAX_AGE, NOTIFICATION_FIRST_RUN_GRACE_MS } from 'shared/constants'
 import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
+import NotificationRenderer from './NotificationRenderer'
+
 const { ipcRenderer } = window.nativeRequire('electron')
 
 class NotificationService extends EventEmitter {
@@ -87,19 +89,21 @@ class NotificationService extends EventEmitter {
     // Look for notifications to send
     mailboxState.allMailboxes().forEach((mailbox) => {
       if (!mailbox.showNotifications) { return }
+
       mailbox.notifications.forEach((notification) => {
         const id = `${mailbox.id}:${notification.id}`
         if (this.__state__.sent.has(id)) { return }
         if (now - notification.timestamp > NOTIFICATION_MAX_AGE) { return }
-        if (this.suppressForGrace) {
+        if (false&&this.suppressForGrace) {
           this.__state__.sent.set(id, now)
           return
         }
 
         pendingNotifications.push({
-          ...notification,
-          icon: mailboxState.getResolvedAvatar(mailbox.id)
+          mailboxId: mailbox.id,
+          notification: notification
         })
+
         this.__state__.sent.set(id, now)
       })
     })
@@ -113,7 +117,23 @@ class NotificationService extends EventEmitter {
 
     // Send the notifications we found
     if (pendingNotifications.length) {
-      this.showNotifications(pendingNotifications)
+      pendingNotifications.forEach(({ mailboxId, notification }) => {
+        NotificationRenderer.presentMailboxNotification(
+          mailboxId,
+          notification,
+          this.handleNotificationClicked,
+          mailboxState,
+          settingsState
+        )
+      })
+    }
+  }
+
+  handleNotificationClicked (data) {
+    if (data) {
+      ipcRenderer.send('focus-app', { })
+      mailboxActions.changeActive(data.mailboxId, data.serviceType)
+      mailboxDispatch.openItem(data.mailboxId, data.serviceType, data)
     }
   }
 
@@ -127,7 +147,7 @@ class NotificationService extends EventEmitter {
   * @param format: the format to convert the text into
   * @return plaintext that can be used in the notifications
   */
-  formatText (text, format) {
+  formatText (text, format) { //TODO depricated
     if (format === 'html') {
       const decoder = document.createElement('div')
       decoder.innerHTML = text
@@ -142,7 +162,7 @@ class NotificationService extends EventEmitter {
   * @param notification: the notification to show
   * @return the notification object
   */
-  showNotification (notification) {
+  showNotification (notification) { //TODO depricated
     return this.showNotifications([notification])[0]
   }
 
@@ -151,7 +171,7 @@ class NotificationService extends EventEmitter {
   * @param notifications: the notifications to show
   * @return the notification objects
   */
-  showNotifications (notifications) {
+  showNotifications (notifications) { //TODO depricated
     const settingsState = settingsStore.getState()
     if (!settingsState.os.notificationsEnabled) { return }
 
@@ -167,7 +187,7 @@ class NotificationService extends EventEmitter {
         data: notification.data,
         icon: notification.icon
       })
-      windowNotification.onclick = this.handleNotificationClicked
+      windowNotification.onclick = this._handleNotificationClicked
       return windowNotification
     })
   }
@@ -176,7 +196,7 @@ class NotificationService extends EventEmitter {
   * Handles a notification being clicked on
   * @param evt: the event that fired
   */
-  handleNotificationClicked (evt) {
+  _handleNotificationClicked (evt) { //TODO depricated
     if (evt.target && evt.target.data) {
       const data = evt.target.data
       ipcRenderer.send('focus-app', { })

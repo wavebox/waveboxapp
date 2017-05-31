@@ -1,6 +1,6 @@
 const injector = require('../injector')
 const Browser = require('../Browser/Browser')
-const WMail = require('../WMail/WMail')
+const Wavebox = require('../Wavebox/Wavebox')
 
 class GoogleService {
   /* **************************************************************************/
@@ -9,7 +9,7 @@ class GoogleService {
 
   constructor () {
     this.browser = new Browser()
-    this.wmail = new WMail()
+    this.wavebox = new Wavebox()
 
     injector.injectStyle(`
       a[href*="/SignOutOptions"] {

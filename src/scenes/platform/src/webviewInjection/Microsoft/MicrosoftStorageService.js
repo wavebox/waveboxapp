@@ -1,5 +1,5 @@
 const Browser = require('../Browser/Browser')
-const WMail = require('../WMail/WMail')
+const Wavebox = require('../Wavebox/Wavebox')
 const injector = require('../injector')
 const path = require('path')
 
@@ -10,7 +10,7 @@ class MicrosoftStorageService {
 
   constructor () {
     this.browser = new Browser()
-    this.wmail = new WMail()
+    this.wavebox = new Wavebox()
 
     injector.injectClientModule(path.join(__dirname, './client/OnedriveWindowOpen.js'))
   }

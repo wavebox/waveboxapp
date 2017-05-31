@@ -1,10 +1,10 @@
 const elconsole = require('./elconsole')
 try {
   const Browser = require('./Browser/Browser')
-  const WMail = require('./WMail/WMail')
+  const Wavebox = require('./Wavebox/Wavebox')
   /*eslint-disable */
   const browser = new Browser()
-  const wmail = new WMail()
+  const wavebox = new Wavebox()
   /*eslint-enable */
 } catch (ex) {
   elconsole.error('Error', ex)

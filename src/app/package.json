@@ -22,6 +22,7 @@
     "yargs": "8.0.1"
   },
   "optionalDependencies": {
+    "node-mac-notifier": "0.0.13",
     "mouse-forward-back": "1.0.1"
   },
   "devDependencies": {

@@ -1,9 +1,9 @@
 const CustomCode = require('./CustomCode')
 
-class WMail {
+class Wavebox {
   constructor () {
     this.customCode = new CustomCode()
   }
 }
 
-module.exports = WMail
+module.exports = Wavebox

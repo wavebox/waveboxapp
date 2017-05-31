@@ -193,14 +193,20 @@ class CoreMailbox extends Model {
   get collapseSidebarServices () { return this._value_('collapseSidebarServices', false) }
 
   /* **************************************************************************/
-  // Properties : Behaviour
+  // Properties : Badges
   /* **************************************************************************/
 
   get showUnreadBadge () { return this._value_('showUnreadBadge', true) }
   get unreadCountsTowardsAppUnread () { return this._value_('unreadCountsTowardsAppUnread', true) }
   get showUnreadActivityBadge () { return this._value_('showUnreadActivityBadge', true) }
   get unreadActivityCountsTowardsAppUnread () { return this._value_('unreadActivityCountsTowardsAppUnread', true) }
+
+  /* **************************************************************************/
+  // Properties : Notifications
+  /* **************************************************************************/
+
   get showNotifications () { return this._value_('showNotifications', true) }
+  get showAvatarInNotifications () { return this._value_('showAvatarInNotifications', true) }
 
   /* **************************************************************************/
   // Properties : Authentication

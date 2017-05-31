@@ -1,5 +1,5 @@
 const Browser = require('../Browser/Browser')
-const WMail = require('../WMail/WMail')
+const Wavebox = require('../Wavebox/Wavebox')
 
 class GenericDefaultService {
   /* **************************************************************************/
@@ -13,7 +13,7 @@ class GenericDefaultService {
         openCurrentPageInBrowserOption: true
       }
     })
-    this.wmail = new WMail()
+    this.wavebox = new Wavebox()
   }
 }
 

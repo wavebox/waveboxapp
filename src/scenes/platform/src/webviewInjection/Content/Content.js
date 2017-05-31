@@ -1,6 +1,6 @@
 const injector = require('../injector')
 const Browser = require('../Browser/Browser')
-const WMail = require('../WMail/WMail')
+const Wavebox = require('../Wavebox/Wavebox')
 const path = require('path')
 const { ipcRenderer } = require('electron')
 
@@ -16,7 +16,7 @@ class Content {
         openCurrentPageInBrowserOption: true
       }
     })
-    this.wmail = new WMail()
+    this.wavebox = new Wavebox()
 
     injector.injectClientModule(path.join(__dirname, './client/ChromePatches.js'))
     injector.injectClientModule(path.join(__dirname, './client/WindowPatches.js'))
