@@ -104,13 +104,24 @@ class MailboxesWindow extends WaveboxWindow {
         }
       })
     } else if (process.platform === 'linux') {
-      mouseFB.register((btn) => {
-        switch (btn) {
-          case 'back': this.navigateBack(); break
-          case 'forward': this.navigateForward(); break
-        }
-      }, this.window.getNativeWindowHandle())
+      // Re-register the event on focus as newly focused windows will overwrite this
+      this.registerLinuxMouseNavigation()
+      this.window.on('focus', () => {
+        this.registerLinuxMouseNavigation()
+      })
     }
+  }
+
+  /**
+  * Binds the listeners for mouse navigation on linux
+  */
+  registerLinuxMouseNavigation () {
+    mouseFB.register((btn) => {
+      switch (btn) {
+        case 'back': this.navigateBack(); break
+        case 'forward': this.navigateForward(); break
+      }
+    }, this.window.getNativeWindowHandle())
   }
 
   destroyWindow (evt) {
