@@ -44,7 +44,7 @@ module.exports = function (env) {
       new CopyWebpackPlugin([
         { from: path.join(__dirname, 'src/mailboxes.html'), to: 'mailboxes.html', force: true },
         { from: path.join(__dirname, 'src/offline.html'), to: 'offline.html', force: true },
-        { from: path.join(__dirname, 'src/notification.html'), to: 'notification.html', force: true },
+        { from: path.join(__dirname, 'src/notification_linux.html'), to: 'notification_linux.html', force: true },
         { from: path.join(__dirname, 'src/eula.html'), to: 'eula.html', force: true }
       ], {
         ignore: [ '.DS_Store' ]

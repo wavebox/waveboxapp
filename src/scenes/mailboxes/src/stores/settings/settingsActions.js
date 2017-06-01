@@ -130,6 +130,13 @@ class SettingsActions {
   }
 
   /**
+  * @param provider: the new provider to use
+  */
+  setNotificationsProvider (provider) {
+    return this.update(SEGMENTS.OS, 'notificationsProvider', provider)
+  }
+
+  /**
   * @param background: true to open links in the background
   */
   setOpenLinksInBackground (background) {

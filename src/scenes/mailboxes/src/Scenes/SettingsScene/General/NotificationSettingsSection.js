@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Toggle, Paper } from 'material-ui'
+import { Toggle, Paper, SelectField, MenuItem } from 'material-ui'
 import settingsActions from 'stores/settings/settingsActions'
 import styles from '../SettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
+import OSSettings from 'shared/Models/Settings/OSSettings'
+import { NotificationPlatformSupport } from 'Notifications'
 
 export default class NotificationSettingsSection extends React.Component {
   /* **************************************************************************/
@@ -22,12 +24,58 @@ export default class NotificationSettingsSection extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
+  /**
+  * @param provider: the provider type
+  * @return a humanized version of the provider
+  */
+  humanizeProvider (provider) {
+    switch (provider) {
+      case OSSettings.NOTIFICATION_PROVIDERS.ELECTRON: return 'Electron'
+      case OSSettings.NOTIFICATION_PROVIDERS.ENHANCED: return 'Enhanced'
+      default: return provider
+    }
+  }
+
+  /**
+  * @param provider: the provider type
+  * @return some help text about the provider
+  */
+  providerHelpText (provider) {
+    switch (provider) {
+      case OSSettings.NOTIFICATION_PROVIDERS.ELECTRON:
+        return 'Best for cross platform support'
+      case OSSettings.NOTIFICATION_PROVIDERS.ENHANCED:
+        return 'Best for features'
+      default: return undefined
+    }
+  }
+
   render () {
     const { os, ...passProps } = this.props
+
+    const validProviders = Object.keys(OSSettings.NOTIFICATION_PROVIDERS)
+      .filter((provider) => NotificationPlatformSupport.supportsProvider(provider))
 
     return (
       <Paper zDepth={1} style={styles.paper} {...passProps}>
         <h1 style={styles.subheading}>Notifications</h1>
+        {validProviders.length > 1 ? (
+          <SelectField
+            floatingLabelText='Notification Provider'
+            value={os.notificationsProvider}
+            fullWidth
+            onChange={(evt, index, value) => { settingsActions.setNotificationsProvider(value) }}>
+            {validProviders.map((provider) => {
+              return (
+                <MenuItem
+                  key={provider}
+                  value={provider}
+                  label={this.humanizeProvider(provider)}
+                  primaryText={`${this.humanizeProvider(provider)}: ${this.providerHelpText(provider)}`} />
+                )
+            })}
+          </SelectField>
+        ) : undefined}
         <Toggle
           toggled={os.notificationsEnabled}
           labelPosition='right'
