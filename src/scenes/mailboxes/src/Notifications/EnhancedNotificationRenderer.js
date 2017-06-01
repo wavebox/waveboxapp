@@ -69,7 +69,7 @@ class EnhancedNotificationRenderer {
           appId: pkg.name,
           template: [
             /*eslint-disable */
-            '<toast>',
+            '<toast launch="launchApp">',
               '<visual>',
                 '<binding template="ToastGeneric">',
                   '<text id="1" hint-maxLines="1">%s</text>',
