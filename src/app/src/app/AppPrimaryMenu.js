@@ -150,7 +150,7 @@ class AppPrimaryMenu {
   build (accelerators, mailboxes, activeMailbox, activeServiceType) {
     return Menu.buildFromTemplate([
       {
-        label: 'Application',
+        label: process.platform === 'darwin' ? 'Application' : 'File',
         submenu: [
           {
             label: 'About',
