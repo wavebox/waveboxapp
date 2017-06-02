@@ -95,7 +95,7 @@ export default class UISettingsSection extends React.Component {
             ) : undefined}
           <Toggle
             toggled={ui.openHidden}
-            label='Always Start minimized'
+            label='Always start minimized'
             labelPosition='right'
             onToggle={(evt, toggled) => settingsActions.setOpenHidden(toggled)} />
         </Paper>

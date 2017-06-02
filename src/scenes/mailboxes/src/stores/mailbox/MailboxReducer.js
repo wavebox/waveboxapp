@@ -46,6 +46,22 @@ class MailboxReducer {
   }
 
   /**
+  * @param mailbox: the mailbox to update
+  * @param sound: the sound name to play on notifications
+  */
+  static setNotificationsSound (mailbox, sound) {
+    return mailbox.changeData({ notificationsSound: sound })
+  }
+
+  /**
+  * @param mailbox: the mailbox to update
+  * @param show: true to show the avatar, false otherwise
+  */
+  static setShowAvatarInNotifications (mailbox, show) {
+    return mailbox.changeData({ showAvatarInNotifications: show })
+  }
+
+  /**
   * Artificially persist the cookies for this mailbox
   * @param mailbox: the mailbox to update
   * @param persist: whether to persist the cookies

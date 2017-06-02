@@ -1,4 +1,6 @@
 import stringHash from 'string-hash'
+import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import { NOTIFICATION_TEST_MAILBOX_ID } from 'shared/Notifications'
 
 const os = window.nativeRequire('os')
 const path = window.nativeRequire('path')
@@ -19,6 +21,13 @@ class NotificationRendererUtils {
   static checkConfigAndFetchMailbox (mailboxId, mailboxState, settingsState) {
     if (!settingsState.os.notificationsEnabled) {
       return { mailbox: undefined, enabled: false }
+    }
+
+    if (mailboxId === NOTIFICATION_TEST_MAILBOX_ID) {
+      return {
+        mailbox: new CoreMailbox(mailboxId, CoreMailbox.createJS(mailboxId)),
+        enabled: true
+      }
     }
 
     const mailbox = mailboxState.getMailbox(mailboxId)
@@ -70,7 +79,34 @@ class NotificationRendererUtils {
   }
 
   /* **************************************************************************/
-  // Icons
+  // Sound
+  /* **************************************************************************/
+
+  /**
+  * Gets the sound file for the mailbox taking into account settings
+  * @param mailbox: the mailbox to get the sound for
+  * @param settingsState: the current settings state
+  * @return the mailbox sound, or undefined to indicate silence
+  */
+  static preparedMailboxSound (mailbox, settingsState) {
+    if (settingsState.os.notificationsSilent) { return undefined }
+
+    return mailbox.notificationsSound || this.preparedSound(settingsState)
+  }
+
+  /**
+  * Gets the sound file taking into account settings
+  * @param settingsState: the current settings state
+  * @return the mailbox sound, or undefined to indicate silence
+  */
+  static preparedSound (settingsState) {
+    if (settingsState.os.notificationsSilent) { return undefined }
+
+    return settingsState.os.notificationsSound
+  }
+
+  /* **************************************************************************/
+  // Icons: Mailbox
   /* **************************************************************************/
 
   /**
@@ -79,7 +115,7 @@ class NotificationRendererUtils {
   * @param mailboxState: the current mailbox state
   * @return the icon if available and should be shown or undefined
   */
-  static preparedIcon (mailbox, mailboxState) {
+  static preparedMailboxIcon (mailbox, mailboxState) {
     if (mailbox.showAvatarInNotifications) {
       return mailboxState.getResolvedAvatar(mailbox.id)
     } else {
@@ -93,8 +129,24 @@ class NotificationRendererUtils {
   * @param mailboxState: the current mailboxState
   * @return an always resolved promise with the local file url of the icon or undefined on failure etc
   */
-  static preparedIconWin32 (mailbox, mailboxState) {
-    const icon = this.preparedIcon(mailbox, mailboxState)
+  static preparedMailboxIconWin32 (mailbox, mailboxState) {
+    return this.preparedIconWin32(
+      this.preparedIcon(mailbox, mailboxState),
+      mailbox.id.replace(/-/g, '')
+    )
+  }
+
+  /* **************************************************************************/
+  // Icons: Mailbox
+  /* **************************************************************************/
+
+  /**
+  * Gets the icon depending on mailbox settings etc and stores it locally on disk
+  * @param icon: the icon as http or base64 format
+  * @param hashPrefix="auto": a prefix to prepend to the hash to reduce collisions. Needs to be file safe
+  * @return an always resolved promise with the local file url of the icon or undefined on failure etc
+  */
+  static preparedIconWin32 (icon, hashPrefix = 'auto') {
     if (!icon) {
       return Promise.resolve(undefined)
     } else {
@@ -111,10 +163,10 @@ class NotificationRendererUtils {
               reader.readAsDataURL(blob)
             })
           })
-          .then((b64Icon) => this.resolveOrWriteTempBase64Icon(mailbox.id, b64Icon))
+          .then((b64Icon) => this.resolveOrWriteTempBase64Icon(b64Icon))
           .catch(() => Promise.resolve(undefined))
       } else if (icon.startsWith('data:image/')) {
-        return this.resolveOrWriteTempBase64Icon(mailbox.id, icon)
+        return this.resolveOrWriteTempBase64Icon(icon)
       } else {
         return Promise.resolve(undefined)
       }
@@ -123,11 +175,11 @@ class NotificationRendererUtils {
 
   /**
   * Checks to see if a base64 icon exists on disk or not and if not writes it to disk
-  * @param mailboxId: the id of the mailbox
   * @param icon: the base64 icon
+  * @param hashPrefix="auto": a prefix to prepend to the hash to reduce collisions. Needs to be file safe
   * @return promise, always resolved, with path as the argument or undefined on failure
   */
-  static resolveOrWriteTempBase64Icon (mailboxId, icon) {
+  static resolveOrWriteTempBase64Icon (icon, hashPrefix = 'auto') {
     return new Promise((resolve, reject) => {
       const match = icon.match(/^data:image\/(\w+);base64,([\s\S]+)/)
       const matchMapping = {
@@ -141,7 +193,7 @@ class NotificationRendererUtils {
 
       const ext = matchMapping[match[1]] || match[1]
       const data = match[2]
-      const imageHash = `wavebox_${mailboxId.replace(/-/g, '')}_${stringHash(icon)}.${ext}`
+      const imageHash = `wavebox_${hashPrefix}_${stringHash(icon)}.${ext}`
       const outputPath = path.join(os.tmpdir(), imageHash)
 
       Promise.resolve()

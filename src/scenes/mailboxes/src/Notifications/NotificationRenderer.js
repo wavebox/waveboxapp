@@ -11,7 +11,43 @@ class NotificationRenderer {
   /* **************************************************************************/
 
   /**
-  * Presents a notification
+  * Presents a notification on osx
+  * @param title: the title of the notification
+  * @param html5Options = {}: the notification info to present in html5 format
+  * @param clickHandler=undefined: the handler to call on click or undefined
+  * @param clickData={}: the data to provide to the click handler
+  */
+  static presentNotification (title, html5Options = {}, clickHandler = undefined, clickData = {}) {
+    const settingsState = settingsStore.getState()
+    const provider = NotificationPlatformSupport.supportsProvider(settingsState.os.notificationsProvider) ? settingsState.os.notificationsProvider : OSSettings.DEFAULT_NOTIFICATION_PROVIDER
+
+    if (provider === OSSettings.NOTIFICATION_PROVIDERS.ELECTRON) {
+      ElectronNotificationRenderer.presentNotification(
+        title, html5Options, clickHandler, clickData
+      )
+    } else if (provider === OSSettings.NOTIFICATION_PROVIDERS.ENHANCED) {
+      switch (process.platform) {
+        case 'darwin':
+          EnhancedNotificationRenderer.presentNotificationDarwin(
+            title, html5Options, clickHandler, clickData
+          )
+          break
+        case 'win32':
+          EnhancedNotificationRenderer.presentNotificationWin32(
+            title, html5Options, clickHandler, clickData
+          )
+          break
+        case 'linux':
+          EnhancedNotificationRenderer.presentNotificationLinux(
+            title, html5Options, clickHandler, clickData
+          )
+          break
+      }
+    }
+  }
+
+  /**
+  * Presents a mailbox notification
   * @param mailboxId: the id of the mailbox the notification is for
   * @param notification: the notification info to present
   * @param clickHandler: the handler to call on click
@@ -22,18 +58,25 @@ class NotificationRenderer {
     const provider = NotificationPlatformSupport.supportsProvider(settingsState.os.notificationsProvider) ? settingsState.os.notificationsProvider : OSSettings.DEFAULT_NOTIFICATION_PROVIDER
 
     if (provider === OSSettings.NOTIFICATION_PROVIDERS.ELECTRON) {
-      ElectronNotificationRenderer.presentMailboxNotification(mailboxId, notification, clickHandler, mailboxState, settingsState)
+      ElectronNotificationRenderer.presentMailboxNotification(
+        mailboxId, notification, clickHandler, mailboxState, settingsState
+      )
     } else if (provider === OSSettings.NOTIFICATION_PROVIDERS.ENHANCED) {
       switch (process.platform) {
         case 'darwin':
-          //EnhancedNotificationRenderer.presentMailboxNotificationDarwin(mailboxId, notification, clickHandler, mailboxState, settingsState)
-          EnhancedNotificationRenderer.presentMailboxNotificationLinux(mailboxId, notification, clickHandler, mailboxState, settingsState)
+          EnhancedNotificationRenderer.presentMailboxNotificationDarwin(
+            mailboxId, notification, clickHandler, mailboxState, settingsState
+          )
           break
         case 'win32':
-          EnhancedNotificationRenderer.presentMailboxNotificationWin32(mailboxId, notification, clickHandler, mailboxState, settingsState)
+          EnhancedNotificationRenderer.presentMailboxNotificationWin32(
+            mailboxId, notification, clickHandler, mailboxState, settingsState
+          )
           break
         case 'linux':
-          EnhancedNotificationRenderer.presentMailboxNotificationLinux(mailboxId, notification, clickHandler, mailboxState, settingsState)
+          EnhancedNotificationRenderer.presentMailboxNotificationLinux(
+            mailboxId, notification, clickHandler, mailboxState, settingsState
+          )
           break
       }
     }
@@ -41,21 +84,3 @@ class NotificationRenderer {
 }
 
 module.exports = NotificationRenderer
-
-window.test = function () {
-  NotificationRenderer.presentMailboxNotification(
-    mailboxStore.getState().index[0],
-    {
-      id: ''+Math.random(),
-      title: 'Test_Title',
-      titleFormat: 'text',
-      body: [
-        { content: 'Test_body_1', format: 'text' },
-        { content: 'Test_body_2', format: 'text' },
-      ],
-      timestamp: new Date().getTime(),
-      data: { }
-    },
-    function () { console.log('click handler called') }
-  )
-}

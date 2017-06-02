@@ -5,7 +5,8 @@ import { Paper } from 'material-ui'
 import { Row, Col } from 'Components/Grid'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
-import AccountNotificationBadgeSettings from '../AccountNotificationBadgeSettings'
+import AccountBadgeSettings from '../AccountBadgeSettings'
+import AccountNotificationSettings from '../AccountNotificationSettings'
 import styles from '../../SettingStyles'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
@@ -39,7 +40,8 @@ export default class SlackAccountSettings extends React.Component {
         <Row>
           <Col md={6}>
             <AccountAppearanceSettings mailbox={mailbox} />
-            <AccountNotificationBadgeSettings mailbox={mailbox} />
+            <AccountBadgeSettings mailbox={mailbox} />
+            <AccountNotificationSettings mailbox={mailbox} />
           </Col>
           <Col md={6}>
             <Paper zDepth={1} style={styles.paper}>

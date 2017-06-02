@@ -4,7 +4,7 @@ import SlackMailbox from 'shared/Models/Accounts/Slack/SlackMailbox'
 import SlackDefaultService from 'shared/Models/Accounts/Slack/SlackDefaultService'
 import SlackHTTP from './SlackHTTP'
 import uuid from 'uuid'
-import NotificationService from '../../Notifications/NotificationService'
+import { NotificationService } from 'Notifications'
 import { SLACK_FULL_COUNT_SYNC_INTERVAL } from 'shared/constants'
 import Debug from 'Debug'
 import {
@@ -363,10 +363,9 @@ class SlackStore {
       if (currentUrl.indexOf('@' + message.subtitle.toLowerCase()) !== -1) { return }
     }
 
-    NotificationService.showNotification({
+    NotificationService.processPushedMailboxNotification(mailboxId, {
       title: `${message.title} ${message.subtitle}`,
       body: [{ content: message.content }],
-      icon: mailboxState.getResolvedAvatar(mailboxId),
       data: {
         mailboxId: mailboxId,
         serviceType: SlackDefaultService.type,

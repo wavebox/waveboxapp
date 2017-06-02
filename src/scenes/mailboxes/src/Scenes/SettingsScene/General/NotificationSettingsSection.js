@@ -1,11 +1,15 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Toggle, Paper, SelectField, MenuItem } from 'material-ui'
+import { Toggle, Paper, SelectField, MenuItem, FlatButton, FontIcon } from 'material-ui'
 import settingsActions from 'stores/settings/settingsActions'
 import styles from '../SettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
-import OSSettings from 'shared/Models/Settings/OSSettings'
-import { NotificationPlatformSupport } from 'Notifications'
+import { NotificationPlatformSupport, NotificationService } from 'Notifications'
+import {
+  NOTIFICATION_PROVIDERS,
+  NOTIFICATION_SOUNDS,
+  NOTIFICATION_TEST_MAILBOX_ID
+} from 'shared/Notifications'
 
 export default class NotificationSettingsSection extends React.Component {
   /* **************************************************************************/
@@ -14,6 +18,24 @@ export default class NotificationSettingsSection extends React.Component {
 
   static propTypes = {
     os: PropTypes.object.isRequired
+  }
+
+  /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  /**
+  * Sends a test notification
+  */
+  sendTestNotification = () => {
+    const now = new Date()
+    NotificationService.processPushedMailboxNotification(NOTIFICATION_TEST_MAILBOX_ID, {
+      title: `Testing Notifications`,
+      body: [
+        { content: 'Testing Testing 123' },
+        { content: `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}` }
+      ]
+    })
   }
 
   /* **************************************************************************/
@@ -30,8 +52,8 @@ export default class NotificationSettingsSection extends React.Component {
   */
   humanizeProvider (provider) {
     switch (provider) {
-      case OSSettings.NOTIFICATION_PROVIDERS.ELECTRON: return 'Electron'
-      case OSSettings.NOTIFICATION_PROVIDERS.ENHANCED: return 'Enhanced'
+      case NOTIFICATION_PROVIDERS.ELECTRON: return 'Electron'
+      case NOTIFICATION_PROVIDERS.ENHANCED: return 'Enhanced'
       default: return provider
     }
   }
@@ -42,18 +64,49 @@ export default class NotificationSettingsSection extends React.Component {
   */
   providerHelpText (provider) {
     switch (provider) {
-      case OSSettings.NOTIFICATION_PROVIDERS.ELECTRON:
+      case NOTIFICATION_PROVIDERS.ELECTRON:
         return 'Best for cross platform support'
-      case OSSettings.NOTIFICATION_PROVIDERS.ENHANCED:
+      case NOTIFICATION_PROVIDERS.ENHANCED:
         return 'Best for features'
       default: return undefined
     }
   }
 
+  /**
+  * Renders the enhanced provider section
+  * @param os: the os settings
+  * @return jsx or undefined
+  */
+  renderEnhanced (os) {
+    if (os.notificationsProvider !== NOTIFICATION_PROVIDERS.ENHANCED) { return undefined }
+
+    return (
+      <div>
+        {Object.keys(NOTIFICATION_SOUNDS).length ? (
+          <SelectField
+            floatingLabelText='Notification Sound'
+            value={os.notificationsSound}
+            disabled={os.notificationsSilent || !os.notificationsEnabled}
+            fullWidth
+            onChange={(evt, index, value) => { settingsActions.setNotificationsSound(value) }}>
+            {Object.keys(NOTIFICATION_SOUNDS).map((value) => {
+              return (
+                <MenuItem
+                  key={value}
+                  value={value}
+                  primaryText={NOTIFICATION_SOUNDS[value]} />
+              )
+            })}
+          </SelectField>
+        ) : undefined}
+      </div>
+    )
+  }
+
   render () {
     const { os, ...passProps } = this.props
 
-    const validProviders = Object.keys(OSSettings.NOTIFICATION_PROVIDERS)
+    const validProviders = Object.keys(NOTIFICATION_PROVIDERS)
       .filter((provider) => NotificationPlatformSupport.supportsProvider(provider))
 
     return (
@@ -72,7 +125,7 @@ export default class NotificationSettingsSection extends React.Component {
                   value={provider}
                   label={this.humanizeProvider(provider)}
                   primaryText={`${this.humanizeProvider(provider)}: ${this.providerHelpText(provider)}`} />
-                )
+              )
             })}
           </SelectField>
         ) : undefined}
@@ -87,6 +140,15 @@ export default class NotificationSettingsSection extends React.Component {
           labelPosition='right'
           disabled={!os.notificationsEnabled}
           onToggle={(evt, toggled) => settingsActions.setNotificationsSilent(!toggled)} />
+        {this.renderEnhanced(os)}
+        <div>
+          <FlatButton
+            disabled={!os.notificationsEnabled}
+            onClick={this.sendTestNotification}
+            label='Test Notification'
+            icon={<FontIcon style={{ marginLeft: 0 }} className='material-icons'>play_arrow</FontIcon>}
+          />
+        </div>
       </Paper>
     )
   }

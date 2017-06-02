@@ -68,7 +68,7 @@ class NotificationService extends EventEmitter {
   }
 
   mailboxChanged (mailboxState = mailboxStore.getState()) {
-    this.processNewNotifications(mailboxState)
+    this.processNewMailboxNotifications(mailboxState)
   }
 
   /* **************************************************************************/
@@ -76,10 +76,23 @@ class NotificationService extends EventEmitter {
   /* **************************************************************************/
 
   /**
+  * Processes a new mailbox notification thats been pushed from a server source
+  * @param mailboxId: the id of the mailbox the notification is for
+  * @param notification: the notification to push
+  */
+  processPushedMailboxNotification (mailboxId, notification) {
+    NotificationRenderer.presentMailboxNotification(
+      mailboxId,
+      notification,
+      this.handleMailboxNotificationClicked
+    )
+  }
+
+  /**
   * Processes new notifications and prepares them for firing
   * @param mailboxState: the current mailbox state
   */
-  processNewNotifications (mailboxState) {
+  processNewMailboxNotifications (mailboxState) {
     const settingsState = settingsStore.getState()
     if (!settingsState.os.notificationsEnabled) { return }
 
@@ -94,7 +107,7 @@ class NotificationService extends EventEmitter {
         const id = `${mailbox.id}:${notification.id}`
         if (this.__state__.sent.has(id)) { return }
         if (now - notification.timestamp > NOTIFICATION_MAX_AGE) { return }
-        if (false&&this.suppressForGrace) {
+        if (this.suppressForGrace) {
           this.__state__.sent.set(id, now)
           return
         }
@@ -121,7 +134,7 @@ class NotificationService extends EventEmitter {
         NotificationRenderer.presentMailboxNotification(
           mailboxId,
           notification,
-          this.handleNotificationClicked,
+          this.handleMailboxNotificationClicked,
           mailboxState,
           settingsState
         )
@@ -129,76 +142,12 @@ class NotificationService extends EventEmitter {
     }
   }
 
-  handleNotificationClicked (data) {
+  /**
+  * Handles the notification being clicked
+  * @param data: the data for the notification
+  */
+  handleMailboxNotificationClicked (data) {
     if (data) {
-      ipcRenderer.send('focus-app', { })
-      mailboxActions.changeActive(data.mailboxId, data.serviceType)
-      mailboxDispatch.openItem(data.mailboxId, data.serviceType, data)
-    }
-  }
-
-  /* **************************************************************************/
-  // Notification Rendering
-  /* **************************************************************************/
-
-  /**
-  * Formats text into a plaintext format
-  * @param text: the text to format
-  * @param format: the format to convert the text into
-  * @return plaintext that can be used in the notifications
-  */
-  formatText (text, format) { //TODO depricated
-    if (format === 'html') {
-      const decoder = document.createElement('div')
-      decoder.innerHTML = text
-      return decoder.textContent
-    } else {
-      return text
-    }
-  }
-
-  /**
-  * Shows a single notification
-  * @param notification: the notification to show
-  * @return the notification object
-  */
-  showNotification (notification) { //TODO depricated
-    return this.showNotifications([notification])[0]
-  }
-
-  /**
-  * Shows a set of notifications
-  * @param notifications: the notifications to show
-  * @return the notification objects
-  */
-  showNotifications (notifications) { //TODO depricated
-    const settingsState = settingsStore.getState()
-    if (!settingsState.os.notificationsEnabled) { return }
-
-    const silent = settingsState.os.notificationsSilent
-    return notifications.map((notification) => {
-      const title = this.formatText(notification.title, notification.titleFormat)
-      const body = notification.body.map(({ content, format }) => {
-        return this.formatText(content, format)
-      }).join('\n')
-      const windowNotification = new window.Notification(title, {
-        body: body,
-        silent: silent,
-        data: notification.data,
-        icon: notification.icon
-      })
-      windowNotification.onclick = this._handleNotificationClicked
-      return windowNotification
-    })
-  }
-
-  /**
-  * Handles a notification being clicked on
-  * @param evt: the event that fired
-  */
-  _handleNotificationClicked (evt) { //TODO depricated
-    if (evt.target && evt.target.data) {
-      const data = evt.target.data
       ipcRenderer.send('focus-app', { })
       mailboxActions.changeActive(data.mailboxId, data.serviceType)
       mailboxDispatch.openItem(data.mailboxId, data.serviceType, data)

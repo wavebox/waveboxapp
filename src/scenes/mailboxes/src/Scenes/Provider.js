@@ -12,7 +12,7 @@ import { slackActions } from 'stores/slack'
 import { microsoftActions } from 'stores/microsoft'
 import { updaterActions } from 'stores/updater'
 import { Analytics, ServerVent } from 'Server'
-import { NotificationService } from 'Notifications'
+import { NotificationService, NotificationRenderer } from 'Notifications'
 import Bootstrap from 'R/Bootstrap'
 import AccountMessageDispatcher from './AccountMessageDispatcher'
 import { Tray } from 'Components/Tray'
@@ -122,13 +122,12 @@ export default class Provider extends React.Component {
     const { downloadNotificationEnabled, downloadNotificationSoundEnabled } = this.state.osSettings
     if (!downloadNotificationEnabled) { return }
 
-    const notification = new window.Notification('Download Completed', {
+    NotificationRenderer.presentNotification('Download Complete', {
       body: req.filename,
       silent: !downloadNotificationSoundEnabled
-    })
-    notification.onclick = function () {
+    }, (req) => {
       remote.shell.openItem(req.path) || remote.shell.showItemInFolder(req.path)
-    }
+    }, req)
   }
 
   /**

@@ -3,5 +3,6 @@ module.exports = {
   credentials: require('./credentials'),
   constants: require('./constants'),
   Models: require('./Models'),
-  dictionaries: require('./dictionaries')
+  dictionaries: require('./dictionaries'),
+  Notifications: require('./Notifications')
 }

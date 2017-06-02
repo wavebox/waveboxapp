@@ -1,16 +1,16 @@
 const Model = require('../Model')
-
-const NOTIFICATION_PROVIDERS = Object.freeze({
-  ELECTRON: 'ELECTRON',
-  ENHANCED: 'ENHANCED'
-})
+const {
+  NOTIFICATION_PROVIDERS,
+  DEFAULT_NOTIFICATION_PROVIDER,
+  DEFAULT_NOTIFICATION_SOUND
+} = require('../../Notifications')
 
 class OSSettings extends Model {
   /* ****************************************************************************/
   // Class
   /* ****************************************************************************/
 
-  static get DEFAULT_NOTIFICATION_PROVIDER () { return NOTIFICATION_PROVIDERS.ELECTRON }
+  static get DEFAULT_NOTIFICATION_PROVIDER () { return DEFAULT_NOTIFICATION_PROVIDER }
   static get NOTIFICATION_PROVIDERS () { return NOTIFICATION_PROVIDERS }
 
   /* ****************************************************************************/
@@ -29,6 +29,7 @@ class OSSettings extends Model {
   get notificationsEnabled () { return this._value_('notificationsEnabled', true) }
   get notificationsSilent () { return this._value_('notificationsSilent', false) }
   get notificationsProvider () { return this._value_('notificationsProvider', NOTIFICATION_PROVIDERS.ENHANCED) }
+  get notificationsSound () { return this._value_('notificationsSound', DEFAULT_NOTIFICATION_SOUND) }
 
   /* ****************************************************************************/
   // Misc

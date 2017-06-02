@@ -144,6 +144,8 @@ class EnhancedNotificationWindowLinux {
 }
 //TODO audio
 
-if (true||process.platform === 'linux') {
+if (process.platform === 'linux') {
   module.exports = new EnhancedNotificationWindowLinux()
+} else {
+  module.exports = undefined
 }

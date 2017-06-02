@@ -4,7 +4,8 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { Row, Col } from 'Components/Grid'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
-import AccountNotificationBadgeSettings from '../AccountNotificationBadgeSettings'
+import AccountBadgeSettings from '../AccountBadgeSettings'
+import AccountNotificationSettings from '../AccountNotificationSettings'
 import AccountServicesHeading from '../AccountServicesHeading'
 import AccountServicesSettings from '../AccountServicesSettings'
 import MicrosoftServiceSettings from './MicrosoftServiceSettings'
@@ -82,7 +83,8 @@ export default class MicrosoftAccountSettings extends React.Component {
         <Row>
           <Col md={6}>
             <AccountAppearanceSettings mailbox={mailbox} />
-            <AccountNotificationBadgeSettings mailbox={mailbox} />
+            <AccountBadgeSettings mailbox={mailbox} />
+            <AccountNotificationSettings mailbox={mailbox} />
           </Col>
           <Col md={6}>
             <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />

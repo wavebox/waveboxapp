@@ -81,7 +81,8 @@ class CoreMailbox extends Model {
       type: this.type,
       changedTime: new Date().getTime(),
       services: this.defaultServiceTypes.map((serviceType) => {
-        return ServiceFactory.getClass(this.type, serviceType).createJS()
+        const ServiceClass = ServiceFactory.getClass(this.type, serviceType)
+        return ServiceClass ? ServiceClass.createJS() : {}
       })
     }
   }
@@ -207,6 +208,7 @@ class CoreMailbox extends Model {
 
   get showNotifications () { return this._value_('showNotifications', true) }
   get showAvatarInNotifications () { return this._value_('showAvatarInNotifications', true) }
+  get notificationsSound () { return this._value_('notificationsSound', undefined) }
 
   /* **************************************************************************/
   // Properties : Authentication

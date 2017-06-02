@@ -137,6 +137,13 @@ class SettingsActions {
   }
 
   /**
+  * @param sound: the new sound to use
+  */
+  setNotificationsSound (sound) {
+    return this.update(SEGMENTS.OS, 'notificationsSound', sound)
+  }
+
+  /**
   * @param background: true to open links in the background
   */
   setOpenLinksInBackground (background) {
