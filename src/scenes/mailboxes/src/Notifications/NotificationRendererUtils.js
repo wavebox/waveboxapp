@@ -131,7 +131,7 @@ class NotificationRendererUtils {
   */
   static preparedMailboxIconWin32 (mailbox, mailboxState) {
     return this.preparedIconWin32(
-      this.preparedIcon(mailbox, mailboxState),
+      this.preparedMailboxIcon(mailbox, mailboxState),
       mailbox.id.replace(/-/g, '')
     )
   }

@@ -88,18 +88,17 @@ class EnhancedNotificationRenderer {
                 '<binding template="ToastGeneric">',
                   '<text id="1" hint-maxLines="1">%s</text>',
                   '<text id="2">%s</text>',
-                  '<image placement="AppLogoOverride" id="3" src="%s" />',
+                  icon ? '<image placement="AppLogoOverride" id="3" src="%s" />' : undefined,
                 '</binding>',
               '</visual>',
               `<audio src="ms-winsoundevent:Notification.Default" silent="${html5Options.silent ? 'true' : 'false'}" />`,
             '</toast>'
             /*eslint-enable */
-          ].join(''),
+          ].filter((l) => !!l).join(''),
           strings: [
             title,
-            html5Options.body,
-            icon
-          ]
+            html5Options.body
+          ].concat(icon ? [icon] : [])
         })
         notif.on('activated', () => {
           if (clickHandler) {
@@ -134,18 +133,17 @@ class EnhancedNotificationRenderer {
                 '<binding template="ToastGeneric">',
                   '<text id="1" hint-maxLines="1">%s</text>',
                   '<text id="2">%s</text>',
-                  '<image placement="AppLogoOverride" hint-crop="circle" id="3" src="%s" />',
+                  icon ? '<image placement="AppLogoOverride" hint-crop="circle" id="3" src="%s" />' : undefined,
                 '</binding>',
               '</visual>',
               `<audio src="${sound || 'ms-winsoundevent:Notification.Default'}" silent="${sound === undefined ? 'true' : 'false'}" />`,
             '</toast>'
             /*eslint-enable */
-          ].join(''),
+          ].filter((l) => !!l).join(''),
           strings: [
             NotificationRendererUtils.formattedTitle(notification),
-            NotificationRendererUtils.formattedBody(notification),
-            icon
-          ]
+            NotificationRendererUtils.formattedBody(notification)
+          ].concat(icon ? [icon] : [])
         })
         notif.on('activated', () => {
           if (clickHandler) {
