@@ -11,6 +11,7 @@ class EnhancedNotificationWindowLinux {
 
   constructor () {
     this.openNotifications = new Map()
+    this.openNotificationExpirer = null
     this.audio = new window.Audio()
     this.currentPath = path.dirname(window.location.href.replace('file://', ''))
     this.window = new BrowserWindow({
@@ -91,8 +92,7 @@ class EnhancedNotificationWindowLinux {
       }
     } else {
       if (title.startsWith('wbaction:close') || title.startsWith('wbaction:click')) {
-        this.openNotifications.clear()
-        this.renderCurrentNotification()
+        this.closeAllNotifications()
       }
     }
   }
@@ -148,14 +148,18 @@ class EnhancedNotificationWindowLinux {
       this.audio.play()
     }
 
+    // Setup to clear down
+    clearTimeout(this.openNotificationExpirer)
+    this.openNotificationExpirer = setTimeout(() => {
+      this.closeAllNotifications()
+    }, 3000)
+
+    // Push the notification on the stack
     this.openNotifications.set(id, {
       id: id,
       options: options,
       clickHandler: clickHandler,
-      clickData: clickData,
-      expirer: setTimeout(() => {
-        this.closeNotification(id)
-      }, 3000)
+      clickData: clickData
     })
 
     this.renderCurrentNotification()
@@ -168,10 +172,17 @@ class EnhancedNotificationWindowLinux {
   */
   closeNotification (id) {
     if (this.openNotifications.has(id)) {
-      clearTimeout(this.openNotifications.get(id).expirer)
       this.openNotifications.delete(id)
       this.renderCurrentNotification()
     }
+  }
+
+  /**
+  * Closes all notifications
+  */
+  closeAllNotifications () {
+    this.openNotifications.clear()
+    this.renderCurrentNotification()
   }
 }
 
