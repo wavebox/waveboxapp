@@ -11,10 +11,9 @@ const arrow = {
   color: 'rgba(34, 34, 34, 0.9)',
   borderColor: false
 }
-
-export default {
-  basicPopoverStyles: {
-    style: popover,
-    arrowStyle: arrow
-  }
+const basicPopoverStyles = {
+  style: popover,
+  arrowStyle: arrow
 }
+
+export { basicPopoverStyles }
