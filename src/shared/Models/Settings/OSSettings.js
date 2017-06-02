@@ -28,7 +28,7 @@ class OSSettings extends Model {
 
   get notificationsEnabled () { return this._value_('notificationsEnabled', true) }
   get notificationsSilent () { return this._value_('notificationsSilent', false) }
-  get notificationsProvider () { return this._value_('notificationsProvider', NOTIFICATION_PROVIDERS.ENHANCED) }
+  get notificationsProvider () { return this._value_('notificationsProvider', NOTIFICATION_PROVIDERS.ELECTRON) }
   get notificationsSound () { return this._value_('notificationsSound', DEFAULT_NOTIFICATION_SOUND) }
 
   /* ****************************************************************************/
