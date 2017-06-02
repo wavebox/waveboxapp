@@ -1,6 +1,7 @@
 import uuid from 'uuid'
 
-const { BrowserWindow } = window.nativeRequire('electron').remote
+const { ipcRenderer, remote } = window.nativeRequire('electron')
+const { BrowserWindow } = remote
 const path = window.nativeRequire('path')
 
 class EnhancedNotificationWindowLinux {
@@ -10,6 +11,8 @@ class EnhancedNotificationWindowLinux {
 
   constructor () {
     this.openNotifications = new Map()
+    this.audio = new window.Audio()
+    this.currentPath = path.dirname(window.location.href.replace('file://', ''))
     this.window = new BrowserWindow({
       x: 0,
       y: 0,
@@ -27,11 +30,31 @@ class EnhancedNotificationWindowLinux {
       }
     })
 
-    const currentPath = path.dirname(window.location.href.replace('file://', ''))
-    this.window.loadURL(`file://${path.join(currentPath, 'notification_linux.html')}`)
+    this.window.loadURL(`file://${path.join(this.currentPath, 'notification_linux.html')}`)
 
     this.window.on('page-title-updated', this.handleNotificationEvent)
     this.window.once('ready-to-show', this.handleWindowReady)
+    ipcRenderer.on('ping-resource-usage', this.handlePingResourceUsage)
+    window.addEventListener('beforeunload', () => {
+      this.window.close()
+    })
+  }
+
+  /* **************************************************************************/
+  // App Event Handlers
+  /* **************************************************************************/
+
+  handlePingResourceUsage = () => {
+    const js = `
+      Object.assign({},
+        process.getCPUUsage(),
+        process.getProcessMemoryInfo(),
+        { pid: process.pid, description: 'Notification Service' }
+      )
+    `
+    this.window.webContents.executeJavaScript(js, (res) => {
+      ipcRenderer.send('pong-resource-usage', res)
+    })
   }
 
   /* **************************************************************************/
@@ -108,7 +131,7 @@ class EnhancedNotificationWindowLinux {
   /**
   * Does the heavy lifting of presenting a notification on linux
   * @param options: the options to populate the notification with.
-  *                   { title, body, icon }
+  *                   { title, body, icon, sound }
   * @param body: the body string
   * @param icon: the icon url
   * @param clickHandler: the click handler
@@ -117,6 +140,14 @@ class EnhancedNotificationWindowLinux {
   */
   showNotification (options, clickHandler, clickData) {
     const id = uuid.v4()
+
+    // Play the audio here rather than on each render, but only if there are no open notifications
+    if (options.sound && this.openNotifications.size === 0) {
+      this.audio.src = `file://${path.join(this.currentPath, '../../audio/', options.sound)}`
+      this.audio.currentTime = 0
+      this.audio.play()
+    }
+
     this.openNotifications.set(id, {
       id: id,
       options: options,
@@ -126,6 +157,7 @@ class EnhancedNotificationWindowLinux {
         this.closeNotification(id)
       }, 3000)
     })
+
     this.renderCurrentNotification()
     return id
   }
@@ -142,7 +174,6 @@ class EnhancedNotificationWindowLinux {
     }
   }
 }
-//TODO audio
 
 if (process.platform === 'linux') {
   module.exports = new EnhancedNotificationWindowLinux()

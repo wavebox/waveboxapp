@@ -32,8 +32,10 @@ Debug.load()
 injectTapEventPlugin()
 ReactDOM.render(<Provider />, document.getElementById('ReactComponent-AppScene'))
 ipcRenderer.on('prepare-reload', () => {
-  ReactDOM.unmountComponentAtNode(document.getElementById('ReactComponent-AppScene'))
   window.location.hash = '/'
+})
+window.addEventListener('beforeunload', () => {
+  ReactDOM.unmountComponentAtNode(document.getElementById('ReactComponent-AppScene'))
 })
 
 ipcRenderer.send('mailboxes-js-loaded', {})

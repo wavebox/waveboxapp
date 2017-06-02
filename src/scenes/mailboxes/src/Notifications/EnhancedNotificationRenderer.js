@@ -1,5 +1,6 @@
 import NotificationRendererUtils from './NotificationRendererUtils'
 import EnhancedNotificationWindowLinux from './EnhancedNotificationWindowLinux'
+import { DEFAULT_NOTIFICATION_SOUND } from 'shared/Notifications'
 
 const pkg = window.appPackage()
 const MacNotification = process.platform === 'darwin' ? window.appNodeModulesRequire('node-mac-notifier') : null
@@ -21,7 +22,7 @@ class EnhancedNotificationRenderer {
     const notif = new MacNotification(title, {
       body: html5Options.body,
       icon: html5Options.icon,
-      soundName: html5Options.silent ? undefined : 'default'
+      soundName: html5Options.silent ? undefined : DEFAULT_NOTIFICATION_SOUND
     })
     notif.addEventListener('click', () => {
       if (clickHandler) {
@@ -91,7 +92,7 @@ class EnhancedNotificationRenderer {
                   icon ? '<image placement="AppLogoOverride" id="3" src="%s" />' : undefined,
                 '</binding>',
               '</visual>',
-              `<audio src="ms-winsoundevent:Notification.Default" silent="${html5Options.silent ? 'true' : 'false'}" />`,
+              `<audio src="${DEFAULT_NOTIFICATION_SOUND}" silent="${html5Options.silent ? 'true' : 'false'}" />`,
             '</toast>'
             /*eslint-enable */
           ].filter((l) => !!l).join(''),
@@ -136,7 +137,7 @@ class EnhancedNotificationRenderer {
                   icon ? '<image placement="AppLogoOverride" hint-crop="circle" id="3" src="%s" />' : undefined,
                 '</binding>',
               '</visual>',
-              `<audio src="${sound || 'ms-winsoundevent:Notification.Default'}" silent="${sound === undefined ? 'true' : 'false'}" />`,
+              `<audio src="${sound || DEFAULT_NOTIFICATION_SOUND}" silent="${sound === undefined ? 'true' : 'false'}" />`,
             '</toast>'
             /*eslint-enable */
           ].filter((l) => !!l).join(''),
@@ -170,7 +171,7 @@ class EnhancedNotificationRenderer {
       title: title,
       body: html5Options.body,
       icon: html5Options.icon,
-      silent: html5Options.silent //TODO not implemented
+      sound: html5Options.silent ? undefined : DEFAULT_NOTIFICATION_SOUND
     }, clickHandler, clickData)
   }
 
@@ -189,7 +190,8 @@ class EnhancedNotificationRenderer {
     EnhancedNotificationWindowLinux.showNotification({
       title: NotificationRendererUtils.formattedTitle(notification),
       body: NotificationRendererUtils.formattedBody(notification),
-      icon: NotificationRendererUtils.preparedMailboxIcon(mailbox, mailboxState)
+      icon: NotificationRendererUtils.preparedMailboxIcon(mailbox, mailboxState),
+      sound: NotificationRendererUtils.preparedMailboxSound(mailbox, settingsState)
     }, clickHandler, notification.data)
   }
 }

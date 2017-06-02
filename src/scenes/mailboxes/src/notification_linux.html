@@ -110,9 +110,9 @@
     <div id="close-button">×</div>
 
     <script type="text/javascript">
-      const remote = require('electron').remote
-      const screenSize = remote.screen.getPrimaryDisplay().workAreaSize
-      const browserWindow = remote.getCurrentWindow()
+      const electron = require('electron')
+      const screenSize = electron.remote.screen.getPrimaryDisplay().workAreaSize
+      const browserWindow = electron.remote.getCurrentWindow()
       const width = 325
       const height = 65
       browserWindow.setSize(width, height)

@@ -1,5 +1,6 @@
 (function () {
-  const notifications = []
+  const openNotifications = []
+  let idAccumulator = 0
 
   class Notification {
     /* **************************************************************************/
@@ -25,10 +26,23 @@
     /* **************************************************************************/
 
     constructor (title, options = {}) {
+      idAccumulator += 1
+      this.__id__ = idAccumulator
       this.__title__ = title
       this.__options__ = Object.freeze(Object.assign({}, options))
       this.__onclick__ = null
       this.__onerror__ = null
+
+      window.postMessage(JSON.stringify({
+        wavebox: true,
+        type: 'wavebox-notification-present',
+        notification: {
+          id: this.__id__,
+          title: title,
+          options: options
+        }
+      }), '*')
+      openNotifications.push(this)
     }
 
     /* **************************************************************************/

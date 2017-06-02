@@ -20,6 +20,7 @@ module.exports = function (env) {
         dry: false
       }),
       new CopyWebpackPlugin([
+        { from: path.join(__dirname, 'audio'), to: 'audio', force: true },
         { from: path.join(__dirname, 'fonts'), to: 'fonts', force: true },
         { from: path.join(__dirname, 'icons'), to: 'icons', force: true },
         { from: path.join(__dirname, 'images'), to: 'images', force: true }
