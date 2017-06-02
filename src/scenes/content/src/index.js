@@ -10,6 +10,20 @@ const { webFrame, ipcRenderer } = window.nativeRequire('electron')
 // Prevent zooming
 webFrame.setZoomLevelLimits(1, 1)
 
+// Prevent drag/drop
+document.addEventListener('drop', (evt) => {
+  if (evt.target.tagName !== 'INPUT' && evt.target.type !== 'file') {
+    evt.preventDefault()
+    evt.stopPropagation()
+  }
+})
+document.addEventListener('dragover', (evt) => {
+  if (evt.target.tagName !== 'INPUT' && evt.target.type !== 'file') {
+    evt.preventDefault()
+    evt.stopPropagation()
+  }
+})
+
 // Load what we have in the db
 browserActions.load()
 
