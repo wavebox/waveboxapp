@@ -57,7 +57,8 @@ class EnhancedNotificationRenderer {
       subtitle: subtitle,
       body: body,
       icon: NotificationRendererUtils.preparedMailboxIcon(mailbox, mailboxState),
-      soundName: NotificationRendererUtils.preparedMailboxSound(mailbox, settingsState)
+      soundName: NotificationRendererUtils.preparedMailboxSound(mailbox, settingsState),
+      bundleId: pkg.appConfig.osxAppBundleId
     })
     notif.addEventListener('click', () => {
       if (clickHandler) {

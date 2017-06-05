@@ -67,5 +67,8 @@
       "src/app/lib/"
     ],
     "parser": "babel-eslint"
+  },
+  "appConfig": {
+    "osxAppBundleId": "io.wavebox.wavebox"
   }
 }
