@@ -4,7 +4,7 @@ import { NOTIFICATION_TEST_MAILBOX_ID } from 'shared/Notifications'
 
 const os = window.nativeRequire('os')
 const path = window.nativeRequire('path')
-const fs = window.nativeRequire('fs-extra')
+const fs = window.appNodeModulesRequire('fs-extra')
 
 class NotificationRendererUtils {
   /* **************************************************************************/
