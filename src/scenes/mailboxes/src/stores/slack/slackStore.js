@@ -356,11 +356,13 @@ class SlackStore {
     if (!mailbox) { return }
     if (!mailbox.showNotifications) { return }
 
-    // Check to see if we're in the channel
-    const currentUrl = mailboxDispatch.getCurrentUrl(mailboxId, SlackDefaultService.type) || ''
-    if (currentUrl.indexOf(message.channel) !== -1) { return }
-    if (message.channel.indexOf('D') === 0) { // Handle DMs differently
-      if (currentUrl.indexOf('@' + message.subtitle.toLowerCase()) !== -1) { return }
+    // Check to see if we're active and in the channel
+    if (mailboxState.activeMailboxId() !== mailboxId) {
+      const currentUrl = mailboxDispatch.getCurrentUrl(mailboxId, SlackDefaultService.type) || ''
+      if (currentUrl.indexOf(message.channel) !== -1) { return }
+      if (message.channel.indexOf('D') === 0) { // Handle DMs differently
+        if (currentUrl.indexOf('@' + message.subtitle.toLowerCase()) !== -1) { return }
+      }
     }
 
     NotificationService.processPushedMailboxNotification(mailboxId, {
