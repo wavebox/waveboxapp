@@ -12,7 +12,7 @@ class MicrosoftStorageService {
     this.browser = new Browser()
     this.wavebox = new Wavebox()
 
-    injector.injectClientModule(path.join(__dirname, './client/OnedriveWindowOpen.js'))
+    injector.injectClientModule(path.join(__dirname, './Client/OnedriveWindowOpen.js'))
   }
 }
 

@@ -68,7 +68,7 @@ class GoogleMail extends GoogleService {
   */
   loadGmailAPI () {
     this.changeEmitter = new GmailChangeEmitter()
-    injector.injectClientModule(path.join(__dirname, './client/GmailWindowOpen.js'))
+    injector.injectClientModule(path.join(__dirname, './Client/GmailWindowOpen.js'))
   }
 
   /**

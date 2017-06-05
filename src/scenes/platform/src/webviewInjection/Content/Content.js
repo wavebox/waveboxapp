@@ -18,8 +18,8 @@ class Content {
     })
     this.wavebox = new Wavebox()
 
-    injector.injectClientModule(path.join(__dirname, './client/ChromePatches.js'))
-    injector.injectClientModule(path.join(__dirname, './client/WindowPatches.js'))
+    injector.injectClientModule(path.join(__dirname, './Client/ChromePatches.js'))
+    injector.injectClientModule(path.join(__dirname, './Client/WindowPatches.js'))
 
     window.addEventListener('message', (evt) => {
       if (evt.origin === window.location.origin && evt.isTrusted) {

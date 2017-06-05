@@ -21,7 +21,7 @@ class Browser {
     this.contextMenu = new ContextMenu(this.spellchecker, config.contextMenu)
     this.lifecycle = new Lifecycle()
 
-    injector.injectClientModule(path.join(__dirname, './client/Notification.js'))
+    injector.injectClientModule(path.join(__dirname, './Client/Notification.js'))
 
     window.addEventListener('message', (evt) => {
       if (evt.origin === window.location.origin && evt.isTrusted) {
