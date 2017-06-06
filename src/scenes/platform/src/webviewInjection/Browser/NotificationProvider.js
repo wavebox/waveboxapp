@@ -62,16 +62,28 @@ class NotificationProvider {
   }
 
   /**
+  * @return true if this domain is always disablled, false otherwise
+  */
+  _isCurrentDomainAlwaysDisallowed () {
+    const domain = this._getCurrentDomain()
+    return !!DISALLOWED_HTML5_NOTIFICATION_HOSTS.find((dis) => domain.indexOf(dis) !== -1)
+  }
+
+  /**
   * Checks if the current domain is allowed
   * @return promise with the html5 permission option
   */
   currentDomainPermission () {
-    return Promise.resolve()
-      .then(() => fs.readFile(permissionRecordsPath, 'utf8'))
-      .then(
-        (data) => Promise.resolve(this._getDomainPermissionFromData(data)),
-        (_err) => Promise.resolve(this._getDomainPermissionFromData(''))
-      )
+    if (this._isCurrentDomainAlwaysDisallowed()) {
+      return Promise.resolve('denied')
+    } else {
+      return Promise.resolve()
+        .then(() => fs.readFile(permissionRecordsPath, 'utf8'))
+        .then(
+          (data) => Promise.resolve(this._getDomainPermissionFromData(data)),
+          (_err) => Promise.resolve(this._getDomainPermissionFromData(''))
+        )
+    }
   }
 
   /**
@@ -79,11 +91,15 @@ class NotificationProvider {
   * @return the html5 permission option
   */
   currentDomainPermissionSync () {
-    let data = ''
-    try {
-      data = fs.readFileSync(permissionRecordsPath, 'utf8')
-    } catch (ex) { /* no-op */ }
-    return this._getDomainPermissionFromData(data)
+    if (this._isCurrentDomainAlwaysDisallowed()) {
+      return 'denied'
+    } else {
+      let data = ''
+      try {
+        data = fs.readFileSync(permissionRecordsPath, 'utf8')
+      } catch (ex) { /* no-op */ }
+      return this._getDomainPermissionFromData(data)
+    }
   }
 
   /**
@@ -97,15 +113,13 @@ class NotificationProvider {
         if (permission !== 'default') { return Promise.resolve(permission) }
         const domain = this._getCurrentDomain()
 
-        const isDisallowed = !!DISALLOWED_HTML5_NOTIFICATION_HOSTS.find((dis) => domain.indexOf(dis) !== -1)
-        const nextPermission = isDisallowed ? 'denied' : 'granted'
-        const permissionData = '\n' + JSON.stringify({ domain: domain, permission: nextPermission, time: new Date().getTime() })
+        const permissionData = '\n' + JSON.stringify({ domain: domain, permission: 'granted', time: new Date().getTime() })
 
         return Promise.resolve()
           .then(() => fs.appendFile(permissionRecordsPath, permissionData))
           .then(
-            () => nextPermission,
-            () => 'default'
+            () => Promise.resolve('granted'),
+            () => Promise.resolve('default')
           )
       })
   }
