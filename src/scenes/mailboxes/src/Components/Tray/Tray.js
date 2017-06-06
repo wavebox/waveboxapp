@@ -27,6 +27,8 @@ export default class Tray extends React.Component {
 
   componentWillMount () {
     this.appTray = new remote.Tray(nativeImage.createFromDataURL(BLANK_PNG))
+    window.addEventListener('beforeunload', this.handleDestroyTray) // Be super pushy about this to avoid dangling tray references
+
     if (process.platform === 'win32') {
       this.appTray.on('double-click', this.handleMouseTriggerDoubleClick)
       this.appTray.on('click', this.handleMouseTriggerClick)
@@ -45,7 +47,14 @@ export default class Tray extends React.Component {
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxesChanged)
+    this.handleDestroyTray()
+    window.removeEventListener('beforeunload', this.handleDestroyTray)
+  }
 
+  /**
+  * Destroys the tray icon
+  */
+  handleDestroyTray = () => {
     if (this.appTray) {
       this.appTray.destroy()
       this.appTray = null
