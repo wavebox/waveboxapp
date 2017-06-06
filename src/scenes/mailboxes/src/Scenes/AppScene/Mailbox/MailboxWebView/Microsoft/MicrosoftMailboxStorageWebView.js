@@ -7,7 +7,7 @@ import URI from 'urijs'
 
 const REF = 'mailbox_tab'
 
-export default class MicrosoftMailboxStorageServiceWebView extends React.Component {
+export default class MicrosoftMailboxStorageWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/

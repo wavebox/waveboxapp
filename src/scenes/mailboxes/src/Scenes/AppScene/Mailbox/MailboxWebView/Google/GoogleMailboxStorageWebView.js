@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
-import CoreService from 'shared/Models/Accounts/CoreService'
 import URI from 'urijs'
+import CoreService from 'shared/Models/Accounts/CoreService'
 import { MailboxLinker } from 'stores/mailbox'
 
 const REF = 'mailbox_tab'
 
-export default class GoogleMailboxServiceWebView extends React.Component {
+export default class GoogleMailboxStorageWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -26,11 +26,11 @@ export default class GoogleMailboxServiceWebView extends React.Component {
   */
   handleOpenNewWindow = (evt) => {
     const purl = URI(evt.url)
-    if (purl.hostname() === 'mail.google.com' && purl.search(true).to !== undefined) {
-      return // This is normally followed by a call with mailto://, so just kill it
+    if (purl.hostname() === 'docs.google.com') {
+      MailboxLinker.openContentWindow(this.props.mailboxId, evt.url, evt.options)
+    } else {
+      MailboxLinker.openExternalWindow(evt.url)
     }
-
-    MailboxLinker.openExternalWindow(evt.url)
   }
 
   /* **************************************************************************/
@@ -42,9 +42,9 @@ export default class GoogleMailboxServiceWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload='../platform/webviewInjection/googleServiceTooling'
+        preload='../platform/webviewInjection/googleStorageTooling'
         mailboxId={mailboxId}
-        serviceType={CoreService.SERVICE_TYPES.CONTACTS}
+        serviceType={CoreService.SERVICE_TYPES.STORAGE}
         newWindow={this.handleOpenNewWindow} />
     )
   }

@@ -7,7 +7,7 @@ import { MailboxLinker } from 'stores/mailbox'
 
 const REF = 'mailbox_tab'
 
-export default class GoogleMailboxCommunicationServiceWebView extends React.Component {
+export default class GoogleMailboxCommunicationWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/

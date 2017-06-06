@@ -8,14 +8,15 @@ import CoreService from 'shared/Models/Accounts/CoreService'
 import MailboxToolbar from './MailboxToolbar'
 import GoogleMailboxMailWebView from './MailboxWebView/Google/GoogleMailboxMailWebView'
 import GoogleMailboxServiceWebView from './MailboxWebView/Google/GoogleMailboxServiceWebView'
-import GoogleMailboxCommunicationServiceWebView from './MailboxWebView/Google/GoogleMailboxCommunicationServiceWebView'
-import GoogleMailboxContactsServiceWebView from './MailboxWebView/Google/GoogleMailboxContactsServiceWebView'
+import GoogleMailboxCommunicationWebView from './MailboxWebView/Google/GoogleMailboxCommunicationWebView'
+import GoogleMailboxContactsWebView from './MailboxWebView/Google/GoogleMailboxContactsWebView'
+import GoogleMailboxStorageWebView from './MailboxWebView/Google/GoogleMailboxStorageWebView'
 import TrelloMailboxWebView from './MailboxWebView/Trello/TrelloMailboxWebView'
 import SlackMailboxWebView from './MailboxWebView/Slack/SlackMailboxWebView'
 import GenericMailboxDefaultServiceWebView from './MailboxWebView/Generic/GenericMailboxDefaultServiceWebView'
 import MicrosoftMailboxMailWebView from './MailboxWebView/Microsoft/MicrosoftMailboxMailWebView'
 import MicrosoftMailboxServiceWebView from './MailboxWebView/Microsoft/MicrosoftMailboxServiceWebView'
-import MicrosoftMailboxStorageServiceWebView from './MailboxWebView/Microsoft/MicrosoftMailboxStorageServiceWebView'
+import MicrosoftMailboxStorageWebView from './MailboxWebView/Microsoft/MicrosoftMailboxStorageWebView'
 import MailboxWebViewHibernator from './MailboxWebView/MailboxWebViewHibernator'
 
 const TOOLBAR_HEIGHT = 40
@@ -160,9 +161,11 @@ export default class MailboxTab extends React.Component {
         case CoreService.SERVICE_TYPES.DEFAULT:
           return (<GoogleMailboxMailWebView mailboxId={mailboxId} key={key} />)
         case CoreService.SERVICE_TYPES.COMMUNICATION:
-          return (<GoogleMailboxCommunicationServiceWebView mailboxId={mailboxId} key={key} />)
+          return (<GoogleMailboxCommunicationWebView mailboxId={mailboxId} key={key} />)
+        case CoreService.SERVICE_TYPES.STORAGE:
+          return (<GoogleMailboxStorageWebView mailboxId={mailboxId} key={key} />)
         case CoreService.SERVICE_TYPES.CONTACTS:
-          return (<GoogleMailboxContactsServiceWebView mailboxId={mailboxId} key={key} />)
+          return (<GoogleMailboxContactsWebView mailboxId={mailboxId} key={key} />)
         default:
           return (<GoogleMailboxServiceWebView mailboxId={mailboxId} serviceType={serviceType} key={key} />)
       }
@@ -175,7 +178,7 @@ export default class MailboxTab extends React.Component {
         case CoreService.SERVICE_TYPES.DEFAULT:
           return (<MicrosoftMailboxMailWebView mailboxId={mailboxId} key={key} />)
         case CoreService.SERVICE_TYPES.STORAGE:
-          return (<MicrosoftMailboxStorageServiceWebView mailboxId={mailboxId} key={key} />)
+          return (<MicrosoftMailboxStorageWebView mailboxId={mailboxId} key={key} />)
         default:
           return (<MicrosoftMailboxServiceWebView mailboxId={mailboxId} serviceType={serviceType} key={key} />)
       }
