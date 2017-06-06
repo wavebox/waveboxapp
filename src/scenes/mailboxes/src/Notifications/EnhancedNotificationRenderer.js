@@ -22,7 +22,8 @@ class EnhancedNotificationRenderer {
     const notif = new MacNotification(title, {
       body: html5Options.body,
       icon: html5Options.icon,
-      soundName: html5Options.silent ? undefined : DEFAULT_NOTIFICATION_SOUND
+      soundName: html5Options.silent ? undefined : DEFAULT_NOTIFICATION_SOUND,
+      bundleId: pkg.appConfig.osxAppBundleId
     })
     notif.addEventListener('click', () => {
       if (clickHandler) {
@@ -44,13 +45,13 @@ class EnhancedNotificationRenderer {
     if (!enabled) { return }
 
     let subtitle, body
-    if (notification.body.length <= 1) {
-      body = NotificationRendererUtils.formattedBody(notification)
-    } else {
+    if (Array.isArray(notification.body) && notification.body.length >= 2) {
       subtitle = NotificationRendererUtils.formatText(notification.body[0].content, notification.body[0].format)
       body = notification.body.slice(1).map(({ content, format }) => {
         return NotificationRendererUtils.formatText(content, format)
       }).join('\n')
+    } else {
+      body = NotificationRendererUtils.formattedBody(notification)
     }
 
     const notif = new MacNotification(NotificationRendererUtils.formattedTitle(notification), {

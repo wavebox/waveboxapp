@@ -5,12 +5,10 @@ const path = require('path')
 const settingStore = require('../stores/settingStore')
 const mailboxStore = require('../stores/mailboxStore')
 const unusedFilename = require('unused-filename')
-const url = require('url')
 const pkg = require('../../package.json')
 const {
   ARTIFICIAL_COOKIE_PERSIST_WAIT,
-  ARTIFICIAL_COOKIE_PERSIST_PERIOD,
-  DISALLOWED_HTML5_NOTIFICATION_HOSTS
+  ARTIFICIAL_COOKIE_PERSIST_PERIOD
 } = require('../../shared/constants')
 const MailboxFactory = require('../../shared/Models/Accounts/MailboxFactory')
 const CoreMailbox = require('../../shared/Models/Accounts/CoreMailbox')
@@ -116,9 +114,7 @@ class MailboxesSessionManager {
   */
   handlePermissionRequest (webContents, permission, fn) {
     if (permission === 'notifications') {
-      const purl = url.parse(webContents.getURL())
-      const disallowed = DISALLOWED_HTML5_NOTIFICATION_HOSTS.find((dis) => purl.host.indexOf(dis) !== -1)
-      disallowed ? fn(false) : fn(true)
+      fn(false) // These are now handled by injected javascript
     } else {
       fn(true)
     }

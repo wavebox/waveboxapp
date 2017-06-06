@@ -84,8 +84,45 @@ class NotificationService extends EventEmitter {
     NotificationRenderer.presentMailboxNotification(
       mailboxId,
       notification,
-      this.handleMailboxNotificationClicked
+      (data) => {
+        ipcRenderer.send('focus-app', { })
+        if (data) {
+          mailboxActions.changeActive(data.mailboxId, data.serviceType)
+          mailboxDispatch.openItem(data.mailboxId, data.serviceType, data)
+        }
+      }
     )
+  }
+
+  /**
+  * Processes a new html5 notification thats been pushed from a mailbox
+  * @param mailboxId: the id of the mailbox
+  * @param serviceType: the type of service this is for
+  * @param notificationId: the id of the notification to pass back to the webview
+  * @param notification: the notification info to push split into { title, options }
+  * @param clickHandler=undefined: the handler to call on click
+  */
+  processHTML5MailboxNotification (mailboxId, serviceType, notificationId, notification, clickHandler = undefined) {
+    NotificationRenderer.presentNotification(
+      notification.title,
+      {
+        body: (notification.options || {}).body,
+        silent: (notification.options || {}).silent,
+        icon: (notification.options || {}).icon
+      },
+      (data) => {
+        ipcRenderer.send('focus-app', { })
+        mailboxActions.changeActive(mailboxId, serviceType)
+        if (data.clickHandler) {
+          data.clickHandler(notificationId)
+        }
+      },
+      {
+        notificationId: notificationId,
+        mailboxId: mailboxId,
+        serviceType: serviceType,
+        clickHandler: clickHandler
+      })
   }
 
   /**
@@ -134,23 +171,17 @@ class NotificationService extends EventEmitter {
         NotificationRenderer.presentMailboxNotification(
           mailboxId,
           notification,
-          this.handleMailboxNotificationClicked,
+          (data) => {
+            ipcRenderer.send('focus-app', { })
+            if (data) {
+              mailboxActions.changeActive(data.mailboxId, data.serviceType)
+              mailboxDispatch.openItem(data.mailboxId, data.serviceType, data)
+            }
+          },
           mailboxState,
           settingsState
         )
       })
-    }
-  }
-
-  /**
-  * Handles the notification being clicked
-  * @param data: the data for the notification
-  */
-  handleMailboxNotificationClicked (data) {
-    if (data) {
-      ipcRenderer.send('focus-app', { })
-      mailboxActions.changeActive(data.mailboxId, data.serviceType)
-      mailboxDispatch.openItem(data.mailboxId, data.serviceType, data)
     }
   }
 }

@@ -68,12 +68,17 @@ class Injector {
   /**
   * Injects a client module
   * @param path: the path (ideally fully resolved)
+  * @param config=undefined: any configuration to pass into the client module. Must be json serializable
   * @param callback=undefined: executed when injected
   */
-  injectClientModule (path, callback) {
+  injectClientModule (path, config = undefined, callback = undefined) {
     fs.readFile(path, 'utf8', (err, js) => {
       if (err) { throw new Error(`Module ${path} not loaded`) }
-      this.injectJavaScript(js, callback)
+      this.injectJavaScript(`
+        ;(function (WAVEBOX_CONFIG) {
+          ${js}
+        })(${config ? JSON.stringify(config) : 'undefined'});
+      `, callback)
     })
   }
 

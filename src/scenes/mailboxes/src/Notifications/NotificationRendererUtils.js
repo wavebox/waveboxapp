@@ -45,10 +45,10 @@ class NotificationRendererUtils {
   /**
   * Formats text into a plaintext format
   * @param text: the text to format
-  * @param format: the format to convert the text into
+  * @param format = undefined: the format to convert the text into
   * @return plaintext that can be used in the notifications
   */
-  static formatText (text, format) {
+  static formatText (text, format = undefined) {
     if (format === 'html') {
       const decoder = document.createElement('div')
       decoder.innerHTML = text
@@ -73,9 +73,13 @@ class NotificationRendererUtils {
   * @return the body text as a plain string new line seperated
   */
   static formattedBody (notification) {
-    return notification.body.map(({ content, format }) => {
-      return this.formatText(content, format)
-    }).join('\n')
+    if (Array.isArray(notification.body)) {
+      return notification.body.map(({ content, format }) => {
+        return this.formatText(content, format)
+      }).join('\n')
+    } else {
+      return this.formatText(notification.body)
+    }
   }
 
   /* **************************************************************************/
