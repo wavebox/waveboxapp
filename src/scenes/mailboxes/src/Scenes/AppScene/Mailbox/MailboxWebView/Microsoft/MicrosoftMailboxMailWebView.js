@@ -60,11 +60,24 @@ export default class MicrosoftMailboxMailWebView extends React.Component {
   */
   handleOpenNewWindow = (evt) => {
     const url = URI(evt.url)
-    if (url.hostname() === 'attachment.outlook.office.net' && url.pathname().endsWith('GetFileAttachment')) {
-      this.refs[REF].getWebContents().downloadURL(evt.url)
-    } else {
-      MailboxLinker.openExternalWindow(evt.url)
+
+    // Download Attachments
+    if (url.hostname() === 'attachment.outlook.office.net' || url.hostname() === 'outlook.office365.com') {
+      if (url.pathname().endsWith('GetFileAttachment')) {
+        this.refs[REF].getWebContents().downloadURL(evt.url)
+        return
+      }
     }
+
+    // Download all attachments
+    if (url.hostname() === 'outlook.live.com' || url.hostname() === 'outlook.office365.com') {
+      if (url.pathname() === '/owa/service.svc/s/GetAllAttachmentsAsZip') {
+        this.refs[REF].getWebContents().downloadURL(evt.url)
+        return
+      }
+    }
+
+    MailboxLinker.openExternalWindow(evt.url)
   }
 
   /* **************************************************************************/
