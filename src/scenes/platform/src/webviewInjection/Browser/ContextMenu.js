@@ -103,6 +103,13 @@ class ContextMenu {
 
     // Lookup & search
     if (params.selectionText) {
+      if (params.isEditable && params.misspelledWord && this.spellchecker && this.spellchecker.hasSpellchecker) {
+        menuTemplate.push({
+          label: `Add “${params.misspelledWord}” to Dictionary`,
+          click: () => { this.spellchecker.addCustomWord(params.misspelledWord) }
+        })
+      }
+
       const displayText = params.selectionText.length >= 50 ? (
         params.selectionText.substr(0, 47) + '…'
       ) : params.selectionText

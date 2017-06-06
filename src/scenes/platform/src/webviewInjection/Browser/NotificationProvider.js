@@ -69,8 +69,8 @@ class NotificationProvider {
     return Promise.resolve()
       .then(() => fs.readFile(permissionRecordsPath, 'utf8'))
       .then(
-        (data) => this._getDomainPermissionFromData(data),
-        (_err) => this._getDomainPermissionFromData('')
+        (data) => Promise.resolve(this._getDomainPermissionFromData(data)),
+        (_err) => Promise.resolve(this._getDomainPermissionFromData(''))
       )
   }
 
