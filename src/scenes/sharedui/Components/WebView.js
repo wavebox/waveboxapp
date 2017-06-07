@@ -45,7 +45,7 @@ const REACT_WEBVIEW_EVENT_PROPS = REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
 }, {})
 
 const WEBVIEW_PROPS = {
-  allowPopups: PropTypes.bool,
+  allowpopups: PropTypes.bool,
   autosize: PropTypes.bool,
   blinkfeatures: PropTypes.string,
   disableblinkfeatures: PropTypes.string,
@@ -58,7 +58,7 @@ const WEBVIEW_PROPS = {
   plugins: PropTypes.bool,
   preload: PropTypes.string,
   src: PropTypes.string,
-  userAgent: PropTypes.string,
+  useragent: PropTypes.string,
   webpreferences: PropTypes.string
 }
 const WEBVIEW_ATTRS = Object.keys(WEBVIEW_PROPS)
