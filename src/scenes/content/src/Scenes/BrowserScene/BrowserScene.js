@@ -145,6 +145,7 @@ export default class BrowserScene extends React.Component {
             ref={BROWSER_REF}
             src={url}
             partition={partition}
+            plugins
             className='ReactComponent-BrowserSceneWebView'
             webpreferences='contextIsolation=yes'
             preload='../platform/webviewInjection/contentTooling'

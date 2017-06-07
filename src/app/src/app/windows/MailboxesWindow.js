@@ -68,7 +68,8 @@ class MailboxesWindow extends WaveboxWindow {
       backgroundColor: '#f2f2f2',
       webPreferences: {
         nodeIntegration: true,
-        backgroundThrottling: false
+        backgroundThrottling: false,
+        plugins: true
       }
     })
   }

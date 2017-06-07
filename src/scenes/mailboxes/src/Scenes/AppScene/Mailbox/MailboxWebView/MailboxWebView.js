@@ -493,6 +493,7 @@ export default class MailboxWebView extends React.Component {
           searchId={searchId}
           searchTerm={isSearching ? searchTerm : ''}
           webpreferences='contextIsolation=yes'
+          plugins
 
           {...webviewEventProps}
 
