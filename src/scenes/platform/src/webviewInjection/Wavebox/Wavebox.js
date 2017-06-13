@@ -1,8 +1,12 @@
+const { remote } = require('electron')
 const CustomCode = require('./CustomCode')
+const environment = remote.getCurrentWebContents().getType()
 
 class Wavebox {
   constructor () {
-    this.customCode = new CustomCode()
+    if (environment === 'webview') {
+      this.customCode = new CustomCode()
+    }
   }
 }
 

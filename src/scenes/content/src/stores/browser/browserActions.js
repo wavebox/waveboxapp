@@ -1,4 +1,11 @@
 import alt from '../alt'
+import {
+  WB_WINDOW_FIND_START,
+  WB_WINDOW_FIND_NEXT,
+  WB_WINDOW_ZOOM_IN,
+  WB_WINDOW_ZOOM_OUT,
+  WB_WINDOW_ZOOM_RESET
+} from 'shared/ipcEvents'
 const { ipcRenderer } = window.nativeRequire('electron')
 
 class BrowserActions {
@@ -103,9 +110,9 @@ class BrowserActions {
 }
 
 const actions = alt.createActions(BrowserActions)
-ipcRenderer.on('find-start', (evt) => actions.startSearch())
-ipcRenderer.on('find-next', (evt) => actions.searchNext())
-ipcRenderer.on('zoom-in', () => actions.increaseZoom())
-ipcRenderer.on('zoom-out', () => actions.decreaseZoom())
-ipcRenderer.on('zoom-reset', () => actions.resetZoom())
+ipcRenderer.on(WB_WINDOW_FIND_START, (evt) => actions.startSearch())
+ipcRenderer.on(WB_WINDOW_FIND_NEXT, (evt) => actions.searchNext())
+ipcRenderer.on(WB_WINDOW_ZOOM_IN, () => actions.increaseZoom())
+ipcRenderer.on(WB_WINDOW_ZOOM_OUT, () => actions.decreaseZoom())
+ipcRenderer.on(WB_WINDOW_ZOOM_RESET, () => actions.resetZoom())
 export default actions

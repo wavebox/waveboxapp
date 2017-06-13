@@ -3,6 +3,7 @@ import { NOTIFICATION_MAX_AGE, NOTIFICATION_FIRST_RUN_GRACE_MS } from 'shared/co
 import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
 import NotificationRenderer from './NotificationRenderer'
+import { WB_FOCUS_APP } from 'shared/ipcEvents'
 
 const { ipcRenderer } = window.nativeRequire('electron')
 
@@ -85,7 +86,7 @@ class NotificationService extends EventEmitter {
       mailboxId,
       notification,
       (data) => {
-        ipcRenderer.send('focus-app', { })
+        ipcRenderer.send(WB_FOCUS_APP, { })
         if (data) {
           mailboxActions.changeActive(data.mailboxId, data.serviceType)
           mailboxDispatch.openItem(data.mailboxId, data.serviceType, data)
@@ -111,7 +112,7 @@ class NotificationService extends EventEmitter {
         icon: (notification.options || {}).icon
       },
       (data) => {
-        ipcRenderer.send('focus-app', { })
+        ipcRenderer.send(WB_FOCUS_APP, { })
         mailboxActions.changeActive(mailboxId, serviceType)
         if (data.clickHandler) {
           data.clickHandler(notificationId)
@@ -172,7 +173,7 @@ class NotificationService extends EventEmitter {
           mailboxId,
           notification,
           (data) => {
-            ipcRenderer.send('focus-app', { })
+            ipcRenderer.send(WB_FOCUS_APP, { })
             if (data) {
               mailboxActions.changeActive(data.mailboxId, data.serviceType)
               mailboxDispatch.openItem(data.mailboxId, data.serviceType, data)

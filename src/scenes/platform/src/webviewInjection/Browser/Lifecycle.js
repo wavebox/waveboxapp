@@ -1,5 +1,9 @@
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, remote } = require('electron')
 const injector = require('../injector')
+const {
+  WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP,
+  WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN
+} = remote.require('./shared/ipcEvents')
 
 class Lifecycle {
   /* **************************************************************************/
@@ -10,8 +14,8 @@ class Lifecycle {
     this.sleeping = false
     this.sleepStyleElement = null
 
-    ipcRenderer.on('lifecycle-sleep', this.sleep.bind(this))
-    ipcRenderer.on('lifecycle-awaken', this.awaken.bind(this))
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP, this.sleep.bind(this))
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN, this.awaken.bind(this))
     injector.injectHeadFunction(this.updateState.bind(this))
   }
 

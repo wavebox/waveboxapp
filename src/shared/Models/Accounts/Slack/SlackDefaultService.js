@@ -148,6 +148,31 @@ class SlackDefaultService extends CoreService {
 
     return [].concat(ims, groups, channels)
   }
+
+  /* **************************************************************************/
+  // Behaviour
+  /* **************************************************************************/
+
+  /**
+  * Gets the window open mode for a given url
+  * @param url: the url to open with
+  * @param parsedUrl: the url object parsed by nodejs url
+  * @param disposition: the open mode disposition
+  * @return the window open mode
+  */
+  getWindowOpenModeForUrl (url, parsedUrl, disposition) {
+    const superMode = super.getWindowOpenModeForUrl(url, parsedUrl, disposition)
+    if (superMode !== this.constructor.WINDOW_OPEN_MODES.DEFAULT) { return superMode }
+
+    if (parsedUrl.hostname === 'files.slack.com') {
+      // You would think download but this doesn't work
+      return this.constructor.WINDOW_OPEN_MODES.CONTENT
+    } else if (parsedUrl.hostname.endsWith('.slack.com') && parsedUrl.pathname.startsWith('/call/')) {
+      return this.constructor.WINDOW_OPEN_MODES.CONTENT
+    } else {
+      return this.constructor.WINDOW_OPEN_MODES.EXTERNAL
+    }
+  }
 }
 
 module.exports = SlackDefaultService

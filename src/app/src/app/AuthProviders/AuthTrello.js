@@ -1,4 +1,5 @@
 const {ipcMain, BrowserWindow} = require('electron')
+const { WB_AUTH_TRELLO, WB_AUTH_TRELLO_COMPLETE, WB_AUTH_TRELLO_ERROR } = require('../../shared/ipcEvents')
 const url = require('url')
 const querystring = require('querystring')
 
@@ -10,7 +11,7 @@ class AuthTrello {
   /* ****************************************************************************/
 
   constructor () {
-    ipcMain.on('auth-trello', (evt, body) => {
+    ipcMain.on(WB_AUTH_TRELLO, (evt, body) => {
       this.handleAuthTrello(evt, body)
     })
   }
@@ -124,14 +125,14 @@ class AuthTrello {
     Promise.resolve()
       .then(() => this.promptUserToGetAuthorizationCode(body.credentials, body.id))
       .then(({ appKey, token }) => {
-        evt.sender.send('auth-trello-complete', {
+        evt.sender.send(WB_AUTH_TRELLO_COMPLETE, {
           id: body.id,
           provisional: body.provisional,
           appKey: appKey,
           token: token
         })
       }, (err) => {
-        evt.sender.send('auth-trello-error', {
+        evt.sender.send(WB_AUTH_TRELLO_ERROR, {
           id: body.id,
           provisional: body.provisional,
           error: err,

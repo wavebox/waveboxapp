@@ -1,6 +1,7 @@
 import alt from '../alt'
 import URI from 'urijs'
 import addressparser from 'addressparser'
+import { WB_MAILBOXES_WINDOW_OPEN_MAILTO_LINK, WB_FOCUS_APP } from 'shared/ipcEvents'
 const { ipcRenderer } = window.nativeRequire('electron')
 
 class ComposeActions {
@@ -44,7 +45,7 @@ class ComposeActions {
   */
   processMailtoLink (mailtoLink = '', preferredMailboxId = undefined, preferredServiceType = undefined) {
     if (mailtoLink.indexOf('mailto:') === 0) {
-      ipcRenderer.send('focus-app', { })
+      ipcRenderer.send(WB_FOCUS_APP, { })
       const uri = URI(mailtoLink || '')
       const recipients = addressparser(decodeURIComponent(uri.pathname())).map((r) => r.address)
       const qs = uri.search(true)
@@ -63,5 +64,5 @@ class ComposeActions {
 }
 
 const actions = alt.createActions(ComposeActions)
-ipcRenderer.on('open-mailto-link', (evt, req) => actions.processMailtoLink(req.mailtoLink))
+ipcRenderer.on(WB_MAILBOXES_WINDOW_OPEN_MAILTO_LINK, (evt, req) => actions.processMailtoLink(req.mailtoLink))
 export default actions

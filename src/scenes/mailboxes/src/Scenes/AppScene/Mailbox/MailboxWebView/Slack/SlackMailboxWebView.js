@@ -3,6 +3,7 @@ import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import { mailboxDispatch, mailboxStore, mailboxActions, MailboxLinker } from 'stores/mailbox'
+import { settingsStore } from 'stores/settings'
 import URI from 'urijs'
 
 const REF = 'mailbox_tab'
@@ -105,7 +106,7 @@ export default class SlackMailboxWebView extends React.Component {
       this.refs[REF].getWebContents().downloadURL(evt.url)
     } else if (url.hostname().endsWith('.slack.com') && url.pathname().startsWith('/call/')) {
       // Don't put the webPreferences across. It stops it from working. Probably cross frame comms
-      MailboxLinker.openContentWindow(this.props.mailboxId, evt.url, { ...evt.options, webPreferences: undefined })
+      MailboxLinker.openContentWindow(this.props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT, evt.url, { ...evt.options, webPreferences: undefined })
     } else {
       MailboxLinker.openExternalWindow(evt.url)
     }
@@ -138,7 +139,7 @@ export default class SlackMailboxWebView extends React.Component {
         mailboxId={mailboxId}
         hasSearch={false}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
-        newWindow={this.handleOpenNewWindow} />
+        newWindow={settingsStore.getState().launched.app.useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow} />
     )
   }
 }

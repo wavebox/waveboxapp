@@ -83,6 +83,15 @@ class SettingsStore {
     this.tray = null
     this.ui = null
 
+    this.launched = {
+      accelerators: null,
+      app: null,
+      language: null,
+      os: null,
+      tray: null,
+      ui: null
+    }
+
     this.bindListeners({
       handleLoad: actions.LOAD,
       handleUpdate: actions.UPDATE,
@@ -108,6 +117,15 @@ class SettingsStore {
     this.os = new OSSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.OS, {}))
     this.tray = new TraySettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.TRAY, {}), this.trayDefaults)
     this.ui = new UISettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.UI, {}))
+
+    this.launched = {
+      accelerators: this.accelerators,
+      app: this.app,
+      language: this.language,
+      os: this.os,
+      tray: this.tray,
+      ui: this.ui
+    }
   }
 
   /* **************************************************************************/

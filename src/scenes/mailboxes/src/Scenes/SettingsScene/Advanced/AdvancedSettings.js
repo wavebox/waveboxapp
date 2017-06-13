@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Toggle, Paper } from 'material-ui'
 import { settingsStore, settingsActions } from 'stores/settings'
+import { SEGMENTS } from 'shared/Models/Settings/SettingsIdent'
 import styles from '../SettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import AcceleratorSettings from './AcceleratorSettings'
@@ -96,6 +97,14 @@ export default class AdvancedSettings extends React.Component {
             onToggle={(evt, toggled) => {
               showRestart()
               settingsActions.checkForUpdates(toggled)
+            }} />
+          <Toggle
+            toggled={app.useExperimentalWindowOpener}
+            label='Use experimental window opener (Requires Restart)'
+            labelPosition='right'
+            onToggle={(evt, toggled) => {
+              showRestart()
+              settingsActions.update(SEGMENTS.APP, '3_1_8_useExperimentalWindowOpener', toggled)
             }} />
         </Paper>
         <AcceleratorSettings accelerators={accelerators} />

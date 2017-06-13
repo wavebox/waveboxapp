@@ -3,6 +3,11 @@ const { shell } = require('electron')
 const querystring = require('querystring')
 const path = require('path')
 const mouseFB = process.platform === 'linux' ? require('mouse-forward-back') : undefined
+const {
+  WB_WINDOW_RELOAD_WEBVIEW,
+  WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
+  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
+} = require('../../shared/ipcEvents')
 
 const CONTENT_DIR = path.resolve(path.join(__dirname, '/../../../scenes/content'))
 const SAFE_CONFIG_KEYS = [
@@ -22,13 +27,10 @@ const COPY_WEBVIEW_WEB_PREFERENCES_KEYS = [
   'openerId',
   'partition'
 ]
-const COPY_WEBVIEW_PROP_KEYS = [
-  'partition'
-]
 
 class ContentWindow extends WaveboxWindow {
   /* ****************************************************************************/
-  // Creation
+  // Window lifecycle
   /* ****************************************************************************/
 
   /**
@@ -46,62 +48,64 @@ class ContentWindow extends WaveboxWindow {
   }
 
   /**
+  * Generates the window positioning based on the parent window
+  * @param parentWindow: the parent browser window
+  * @return positioning info or undefined
+  */
+  generateWindowPosition (parentWindow) {
+    if (!parentWindow) { return undefined }
+    if (parentWindow.isFullScreen() || parentWindow.isMaximized()) { return undefined }
+
+    const [x, y] = parentWindow.getPosition()
+    const [width, height] = parentWindow.getSize()
+
+    return {
+      x: x + 20,
+      y: y + 20,
+      width: width,
+      height: height
+    }
+  }
+
+  /**
+  * Generates a safe sanitized list of browser window preferences, as these may have
+  * come from a host page so they can't be trusted. e.g. don't copy anything like webPreferences
+  * @param unsafe: the unsafe browser window preferences
+  * @return a copy of the preferences from a predefined list of safe keys
+  */
+  safeBrowserWindowPreferences (unsafe) {
+    return SAFE_CONFIG_KEYS.reduce((acc, k) => {
+      if (unsafe[k] !== undefined) {
+        acc[k] = unsafe[k]
+      }
+      return acc
+    }, {})
+  }
+
+  /**
   * Starts the window
   * @param parentWindow: the parent window this spawned from
   * @param url: the start url
   * @param partition: the partition to supply to the webview
-  * @param windowPreferences={}: the configuration for the window
+  * @param browserWindowPreferences={}: the configuration for the window
   * @param webPreferences={}: the web preferences for the hosted child
   */
-  start (parentWindow, url, partition, windowPreferences = {}, webPreferences = {}) {
-    // Store some local vars
-    this.guestWebPreferences = Object.assign({}, webPreferences, { partition: partition })
-
-    // Grab the position from the parent window
-    const copyPosition = !parentWindow.isFullScreen() && !parentWindow.isMaximized()
-    const parentSizing = copyPosition ? (() => {
-      const position = parentWindow.getPosition()
-      const size = parentWindow.getSize()
-      return {
-        x: position[0] + 20,
-        y: position[1] + 20,
-        width: size[0],
-        height: size[1]
-      }
-    })() : undefined
-
-    // Generate the full windowPreferences
-    const fullWindowPreferences = Object.assign(
+  create (parentWindow, url, partition, browserWindowPreferences = {}, webPreferences = {}) {
+    super.create(this.generateWindowUrl(url, partition), Object.assign(
       {
         minWidth: 300,
         minHeight: 300,
         fullscreenable: true,
         title: 'Wavebox',
-        backgroundColor: '#f2f2f2',
+        backgroundColor: '#FFFFFF',
         webPreferences: {
           nodeIntegration: true,
           plugins: true
         }
       },
-      parentSizing,
-      SAFE_CONFIG_KEYS.reduce((acc, k) => { // These keys can come from a hosted page, so don't copy anything like webPreferences
-        if (windowPreferences[k] !== undefined) {
-          acc[k] = windowPreferences[k]
-        }
-        return acc
-      }, {})
-    )
-
-    // Start the browser window
-    return super.start(this.generateWindowUrl(url, partition), fullWindowPreferences)
-  }
-
-  /**
-  * Creates and launches the window
-  * @arguments: passed through to super()
-  */
-  createWindow () {
-    super.createWindow.apply(this, Array.from(arguments))
+      this.generateWindowPosition(parentWindow),
+      this.safeBrowserWindowPreferences(browserWindowPreferences)
+    ))
 
     // New window handling
     this.window.webContents.on('new-window', (evt, url) => {
@@ -110,17 +114,14 @@ class ContentWindow extends WaveboxWindow {
     })
 
     // Patch through options into webview
-    this.window.webContents.on('will-attach-webview', (evt, webPreferences, properties) => {
+    this.window.webContents.on('will-attach-webview', (evt, webViewWebPreferences, webViewProperties) => {
       COPY_WEBVIEW_WEB_PREFERENCES_KEYS.forEach((k) => {
-        if (this.guestWebPreferences[k] !== undefined) {
-          webPreferences[k] = this.guestWebPreferences[k]
+        webViewWebPreferences.partition = partition
+        if (webPreferences[k] !== undefined) {
+          webViewWebPreferences[k] = webPreferences[k]
         }
       })
-      COPY_WEBVIEW_PROP_KEYS.forEach((k) => {
-        if (this.guestWebPreferences[k] !== undefined) {
-          properties[k] = this.guestWebPreferences[k]
-        }
-      })
+      webViewProperties.partition = partition
     })
 
     // Mouse navigation
@@ -138,7 +139,13 @@ class ContentWindow extends WaveboxWindow {
         this.registerLinuxMouseNavigation()
       })
     }
+
+    return this
   }
+
+  /* ****************************************************************************/
+  // Registering
+  /* ****************************************************************************/
 
   /**
   * Binds the listeners for mouse navigation on linux
@@ -161,7 +168,7 @@ class ContentWindow extends WaveboxWindow {
   * @return this
   */
   reload () {
-    this.window.webContents.send('reload-webview', {})
+    this.window.webContents.send(WB_WINDOW_RELOAD_WEBVIEW, {})
     return this
   }
 
@@ -170,7 +177,7 @@ class ContentWindow extends WaveboxWindow {
   * @return this
   */
   navigateBack () {
-    this.window.webContents.send('navigate-webview-back', {})
+    this.window.webContents.send(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, {})
     return this
   }
 
@@ -179,7 +186,7 @@ class ContentWindow extends WaveboxWindow {
   * @return this
   */
   navigateForward () {
-    this.window.webContents.send('navigate-webview-forward', {})
+    this.window.webContents.send(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, {})
     return this
   }
 }

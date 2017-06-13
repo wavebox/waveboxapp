@@ -1,7 +1,8 @@
 const { remote, ipcRenderer } = require('electron')
 const { shell, clipboard, Menu } = remote
 const webContents = remote.getCurrentWebContents()
-const dictInfo = require('../../../../app/shared/dictionaries.js')
+const environment = remote.getCurrentWebContents().getType()
+const dictInfo = remote.require('./shared/dictionaries.js')
 
 class ContextMenu {
   /* **************************************************************************/
@@ -171,10 +172,12 @@ class ContextMenu {
     }
 
     // Wavebox
-    menuTemplate.push({
-      label: 'Wavebox Settings',
-      click: () => { ipcRenderer.sendToHost({ type: 'open-settings' }) }
-    })
+    if (environment === 'webview') {
+      menuTemplate.push({
+        label: 'Wavebox Settings',
+        click: () => { ipcRenderer.sendToHost({ type: 'open-settings' }) }
+      })
+    }
     menuTemplate.push({
       label: 'Inspect',
       click: () => { webContents.inspectElement(params.x, params.y) }

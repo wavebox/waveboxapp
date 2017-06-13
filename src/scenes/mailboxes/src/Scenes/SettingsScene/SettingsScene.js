@@ -10,6 +10,7 @@ import * as Colors from 'material-ui/styles/colors'
 import styles from './SettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsSceneTabTemplate from './SettingsSceneTabTemplate'
+import { WB_RELAUNCH_APP } from 'shared/ipcEvents'
 
 const { ipcRenderer } = window.nativeRequire('electron')
 
@@ -86,7 +87,7 @@ export default class SettingsScene extends React.Component {
     const buttons = showRestart ? (
       <div style={{ textAlign: 'right' }}>
         <RaisedButton label='Close' style={{ marginRight: 16 }} onClick={this.handleClose} />
-        <RaisedButton label='Restart' primary onClick={() => ipcRenderer.send('relaunch-app', { })} />
+        <RaisedButton label='Restart' primary onClick={() => ipcRenderer.send(WB_RELAUNCH_APP, { })} />
       </div>
     ) : (
       <div style={{ textAlign: 'right' }}>

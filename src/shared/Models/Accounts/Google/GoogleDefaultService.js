@@ -1,4 +1,4 @@
-const CoreService = require('../CoreService')
+const GoogleService = require('./GoogleService')
 const addressparser = require('addressparser')
 
 const ACCESS_MODES = Object.freeze({
@@ -13,12 +13,12 @@ const UNREAD_MODES = Object.freeze({
   INBOX_UNREAD_UNBUNDLED: 'INBOX_UNREAD_UNBUNDLED'
 })
 
-class GoogleDefaultService extends CoreService {
+class GoogleDefaultService extends GoogleService {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  static get type () { return CoreService.SERVICE_TYPES.DEFAULT }
+  static get type () { return GoogleService.SERVICE_TYPES.DEFAULT }
   static get ACCESS_MODES () { return ACCESS_MODES }
   static get UNREAD_MODES () { return UNREAD_MODES }
 
@@ -90,7 +90,7 @@ class GoogleDefaultService extends CoreService {
   // Properties: Protocols & actions
   /* **************************************************************************/
 
-  get supportedProtocols () { return new Set([CoreService.PROTOCOL_TYPES.MAILTO]) }
+  get supportedProtocols () { return new Set([GoogleService.PROTOCOL_TYPES.MAILTO]) }
   get supportsCompose () { return true }
 
   /* **************************************************************************/
@@ -148,6 +148,37 @@ class GoogleDefaultService extends CoreService {
         }
       }
     })
+  }
+
+  /* **************************************************************************/
+  // Behaviour
+  /* **************************************************************************/
+
+  /**
+  * Gets the window open mode for a given url
+  * @param url: the url to open with
+  * @param parsedUrl: the url object parsed by nodejs url
+  * @param disposition: the open mode disposition
+  * @return the window open mode
+  */
+  getWindowOpenModeForUrl (url, parsedUrl, disposition) {
+    const superMode = super.getWindowOpenModeForUrl(url, parsedUrl, disposition)
+    if (superMode !== this.constructor.WINDOW_OPEN_MODES.DEFAULT) { return superMode }
+
+    if (parsedUrl.hostname === 'mail.google.com') {
+      if (parsedUrl.query.ui === '2') {
+        switch (parsedUrl.query.view) {
+          case 'pt': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Print message
+          case 'btop': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Open google drive doc
+        }
+      }
+
+      if (parsedUrl.query.view === 'om') { // View original. (Also from inbox.google.com)
+        return this.constructor.WINDOW_OPEN_MODES.CONTENT
+      }
+    }
+
+    return this.constructor.WINDOW_OPEN_MODES.DEFAULT
   }
 }
 

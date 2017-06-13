@@ -1,10 +1,14 @@
+const { ipcRenderer, remote } = require('electron')
 const injector = require('../injector')
 const path = require('path')
-const fs = require('../../../../app/node_modules/fs-extra')
-const pkg = require('../../../../app/package.json')
-const AppDirectory = require('../../../../app/node_modules/appdirectory')
-const { ipcRenderer } = require('electron')
-const {DISALLOWED_HTML5_NOTIFICATION_HOSTS} = require('../../../../app/shared/constants.js')
+const fs = remote.require('fs-extra')
+const pkg = remote.require('./package.json')
+const AppDirectory = remote.require('appdirectory')
+const {DISALLOWED_HTML5_NOTIFICATION_HOSTS} = remote.require('./shared/constants.js')
+const {
+  WB_BROWSER_NOTIFICATION_CLICK,
+  WB_BROWSER_NOTIFICATION_PRESENT
+} = remote.require('./shared/ipcEvents')
 
 const appDirectory = new AppDirectory({ appName: pkg.name, useRoaming: true }).userData()
 const permissionRecordsPath = path.join(appDirectory, 'notification_permissions.records')
@@ -20,7 +24,7 @@ class NotificationProvider {
     injector.injectClientModule(clientModulePath, {
       permission: this.currentDomainPermissionSync()
     })
-    ipcRenderer.on('browser-notification-click', (evt, data) => {
+    ipcRenderer.on(WB_BROWSER_NOTIFICATION_CLICK, (evt, data) => {
       window.postMessage(JSON.stringify({
         type: 'wavebox-notification-clicked',
         wavebox: true,
@@ -144,7 +148,7 @@ class NotificationProvider {
         this.currentDomainPermission().then((permission) => {
           if (permission === 'granted') {
             ipcRenderer.sendToHost({
-              type: 'browser-notification-present',
+              type: WB_BROWSER_NOTIFICATION_PRESENT,
               notificationId: data.notificationId,
               notification: data.notification
             })

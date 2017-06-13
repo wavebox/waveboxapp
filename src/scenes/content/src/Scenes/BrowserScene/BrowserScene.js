@@ -7,6 +7,13 @@ import BrowserTargetUrl from './BrowserTargetUrl'
 import BrowserSearch from './BrowserSearch'
 import BrowserToolbar from './BrowserToolbar'
 import { browserActions, browserStore } from 'stores/browser'
+import {
+  WB_WINDOW_RELOAD_WEBVIEW,
+  WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
+  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD,
+  WB_BROWSER_GUEST_WINDOW_CLOSE,
+  WB_PONG_RESOURCE_USAGE
+} from 'shared/ipcEvents'
 
 const { ipcRenderer, remote } = window.nativeRequire('electron')
 const { shell } = remote
@@ -30,16 +37,16 @@ export default class BrowserScene extends React.Component {
 
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
-    ipcRenderer.on('reload-webview', this.handleIPCReload)
-    ipcRenderer.on('navigate-webview-back', this.handleIPCNavigateBack)
-    ipcRenderer.on('navigate-webview-forward', this.handleIPCNavigateForward)
+    ipcRenderer.on(WB_WINDOW_RELOAD_WEBVIEW, this.handleIPCReload)
+    ipcRenderer.on(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, this.handleIPCNavigateBack)
+    ipcRenderer.on(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, this.handleIPCNavigateForward)
   }
 
   componentWillUnmount () {
     browserStore.unlisten(this.browserUpdated)
-    ipcRenderer.removeListener('reload-webview', this.handleIPCReload)
-    ipcRenderer.removeListener('navigate-webview-back', this.handleIPCNavigateBack)
-    ipcRenderer.removeListener('navigate-webview-forward', this.handleIPCNavigateForward)
+    ipcRenderer.removeListener(WB_WINDOW_RELOAD_WEBVIEW, this.handleIPCReload)
+    ipcRenderer.removeListener(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, this.handleIPCNavigateBack)
+    ipcRenderer.removeListener(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, this.handleIPCNavigateForward)
   }
 
   /* **************************************************************************/
@@ -105,8 +112,8 @@ export default class BrowserScene extends React.Component {
   */
   handleBrowserIPCMessage = (evt) => {
     switch (evt.channel.type) {
-      case 'pong-resource-usage': ipcRenderer.send('pong-resource-usage', evt.channel.data); break
-      case 'guest-window-close': this.handleIPCGuestWindowClose(evt.channel.data); break
+      case WB_PONG_RESOURCE_USAGE: ipcRenderer.send(WB_PONG_RESOURCE_USAGE, evt.channel.data); break
+      case WB_BROWSER_GUEST_WINDOW_CLOSE: this.handleIPCGuestWindowClose(evt.channel.data); break
       default: break
     }
   }
@@ -147,7 +154,7 @@ export default class BrowserScene extends React.Component {
             partition={partition}
             plugins
             className='ReactComponent-BrowserSceneWebView'
-            webpreferences='contextIsolation=yes'
+            webpreferences='contextIsolation=yes, nativeWindowOpen=yes'
             preload='../platform/webviewInjection/contentTooling'
             zoomFactor={zoomFactor}
             searchTerm={isSearching ? searchTerm : undefined}

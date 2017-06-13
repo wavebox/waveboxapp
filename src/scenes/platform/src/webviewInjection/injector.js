@@ -121,7 +121,7 @@ class Injector {
   */
   injectHeadFunction (fn) {
     if (document.head) {
-      document.head.appendChild(fn)
+      fn()
     } else {
       this.headFunctions.pending.push(fn)
       if (this.headFunctions.interval === null) {

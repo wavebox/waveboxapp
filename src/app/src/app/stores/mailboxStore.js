@@ -2,6 +2,7 @@ const persistence = require('../storage/mailboxStorage')
 const { EventEmitter } = require('events')
 const MailboxFactory = require('../../shared/Models/Accounts/MailboxFactory')
 const { PERSISTENCE_INDEX_KEY } = require('../../shared/constants')
+const { WB_MAILBOX_STORAGE_CHANGE_ACTIVE } = require('../../shared/ipcEvents')
 const { ipcMain } = require('electron')
 
 class MailboxStore extends EventEmitter {
@@ -42,7 +43,7 @@ class MailboxStore extends EventEmitter {
       this.emit('changed', {})
     })
 
-    ipcMain.on('mailbox-storage-change-active', (evt, data) => {
+    ipcMain.on(WB_MAILBOX_STORAGE_CHANGE_ACTIVE, (evt, data) => {
       this.activeMailboxId = data.mailboxId
       this.activeServiceType = data.serviceType
       this.emit('changed', {})
@@ -84,6 +85,20 @@ class MailboxStore extends EventEmitter {
   * @return the type active service
   */
   getActiveServiceType () { return this.activeServiceType }
+
+  /**
+  * @param mailboxId: the id of the mailbox
+  * @param serviceType: the type of service
+  * @return the service for the mailbox or undefined if not available
+  */
+  getService (mailboxId, serviceType) {
+    const mailbox = this.getMailbox(mailboxId)
+    if (mailbox) {
+      return mailbox.serviceForType(serviceType)
+    } else {
+      return undefined
+    }
+  }
 }
 
 module.exports = new MailboxStore()

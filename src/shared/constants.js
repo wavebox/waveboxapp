@@ -11,6 +11,7 @@ module.exports = Object.freeze({
 
   // Mailboxes
   MAILBOX_SLEEP_WAIT: 1000 * 60 * 5, // 5 minutes
+  MAILBOX_SLEEP_EXTEND: 1000 * 30, // 30 secs
   REFOCUS_MAILBOX_INTERVAL_MS: 300,
   SERVICE_LOCAL_AVATAR_PREFIX: 'SERVICE_LOCAL:',
 
@@ -64,5 +65,16 @@ module.exports = Object.freeze({
   UPDATE_FEED_WIN32_X64: 'https://wavebox.io/squirrel/win32_x86_64/updates/latest/',
   UPDATE_FEED_MANUAL: 'https://wavebox.io/updates/latest/',
   UPDATE_CHECK_INTERVAL: 1000 * 60 * 60 * 12, // 12 hours
-  UPDATE_USER_MANUAL_DOWNLOAD: 'https://wavebox.io/download'
+  UPDATE_USER_MANUAL_DOWNLOAD: 'https://wavebox.io/download',
+
+  WAVEBOX_CAPTURE_URL_PREFIX: '/app/redirect/',
+  WAVEBOX_CAPTURE_URLS: {
+    SETTINGS: '/app/redirect/settings',
+    SETTINGS_PRO: '/app/redirect/settings/pro',
+    HOME: '/app/redirect/home',
+    WAVEBOX_AUTH: '/app/redirect/waveboxauth',
+    WAVEBOX_AUTH_PAYMENT: '/app/redirect/waveboxauth/payment',
+    WAVEBOX_AUTH_AFFILIATE: '/app/redirect/waveboxauth/affiliate',
+    WAVEBOX_PRO_BUY: '/app/redirect/pro/buy'
+  }
 })

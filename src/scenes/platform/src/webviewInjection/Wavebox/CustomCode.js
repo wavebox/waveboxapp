@@ -1,9 +1,10 @@
-const ipcRenderer = require('electron').ipcRenderer
+const { ipcRenderer, remote } = require('electron')
 const injector = require('../injector')
+const { WB_BROWSER_INJECT_CUSTOM_CONTENT } = remote.require('./shared/ipcEvents')
 
 class CustomCode {
   constructor () {
-    ipcRenderer.on('inject-custom-content', this._handleInject_.bind(this))
+    ipcRenderer.on(WB_BROWSER_INJECT_CUSTOM_CONTENT, this._handleInject_.bind(this))
   }
 
   _handleInject_ (evt, data) {

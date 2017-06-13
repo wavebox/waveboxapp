@@ -17,6 +17,10 @@ import Bootstrap from 'R/Bootstrap'
 import AccountMessageDispatcher from './AccountMessageDispatcher'
 import { Tray } from 'Components/Tray'
 import { AppBadge } from 'Components'
+import {
+  WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE,
+  WB_MAILBOXES_WINDOW_SHOW_SETTINGS
+} from 'shared/ipcEvents'
 const {
   ipcRenderer, remote
 } = window.nativeRequire('electron')
@@ -37,8 +41,8 @@ export default class Provider extends React.Component {
     ServerVent.start(Bootstrap.clientId, Bootstrap.clientToken)
     NotificationService.start()
     updaterActions.load()
-    ipcRenderer.on('download-completed', this.downloadCompleted)
-    ipcRenderer.on('launch-settings', this.ipcLaunchSettings)
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE, this.downloadCompleted)
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_SETTINGS, this.ipcLaunchSettings)
 
     // STEP 2. Mailbox connections
     mailboxActions.connectAllMailboxes()
@@ -62,8 +66,8 @@ export default class Provider extends React.Component {
     ServerVent.stop()
     NotificationService.stop()
     updaterActions.unload()
-    ipcRenderer.removeListener('download-completed', this.downloadCompleted)
-    ipcRenderer.removeListener('launch-settings', this.ipcLaunchSettings)
+    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE, this.downloadCompleted)
+    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_SETTINGS, this.ipcLaunchSettings)
 
     // STEP 2. Mailbox connections
     mailboxActions.disconnectAllMailboxes()

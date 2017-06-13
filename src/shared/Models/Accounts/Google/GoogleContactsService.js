@@ -1,11 +1,11 @@
-const CoreService = require('../CoreService')
+const GoogleService = require('./GoogleService')
 
-class GoogleContactsService extends CoreService {
+class GoogleContactsService extends GoogleService {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  static get type () { return CoreService.SERVICE_TYPES.CONTACTS }
+  static get type () { return GoogleService.SERVICE_TYPES.CONTACTS }
   static get humanizedType () { return 'Google Contacts' }
   static get humanizedLogos () {
     return [
@@ -21,6 +21,25 @@ class GoogleContactsService extends CoreService {
   /* **************************************************************************/
 
   get url () { return 'https://contacts.google.com' }
+
+  /* **************************************************************************/
+  // Behaviour
+  /* **************************************************************************/
+
+  /**
+  * Gets the window open mode for a given url
+  * @param url: the url to open with
+  * @param parsedUrl: the url object parsed by nodejs url
+  * @param disposition: the open mode disposition
+  * @return the window open mode
+  */
+  getWindowOpenModeForUrl (url, parsedUrl, disposition) {
+    if (parsedUrl.hostname === 'mail.google.com' && parsedUrl.query.to !== undefined) { // Click email link
+      return this.constructor.WINDOW_OPEN_MODES.SUPPRESS
+    }
+
+    return super.getWindowOpenModeForUrl(url, parsedUrl, disposition)
+  }
 }
 
 module.exports = GoogleContactsService

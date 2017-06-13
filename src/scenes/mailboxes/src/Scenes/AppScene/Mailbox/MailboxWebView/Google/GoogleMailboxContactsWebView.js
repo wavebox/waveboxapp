@@ -4,6 +4,7 @@ import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import URI from 'urijs'
 import { MailboxLinker } from 'stores/mailbox'
+import { settingsStore } from 'stores/settings'
 
 const REF = 'mailbox_tab'
 
@@ -45,7 +46,7 @@ export default class GoogleMailboxContactsWebView extends React.Component {
         preload='../platform/webviewInjection/googleServiceTooling'
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.CONTACTS}
-        newWindow={this.handleOpenNewWindow} />
+        newWindow={settingsStore.getState().launched.app.useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow} />
     )
   }
 }

@@ -1,4 +1,5 @@
 const { ipcMain, BrowserWindow } = require('electron')
+const { WB_AUTH_WAVEBOX, WB_AUTH_WAVEBOX_COMPLETE, WB_AUTH_WAVEBOX_ERROR } = require('../../shared/ipcEvents')
 const userStore = require('../stores/userStore')
 const querystring = require('querystring')
 const url = require('url')
@@ -10,7 +11,7 @@ class AuthWavebox {
   /* ****************************************************************************/
 
   constructor () {
-    ipcMain.on('auth-wavebox', (evt, body) => {
+    ipcMain.on(WB_AUTH_WAVEBOX, (evt, body) => {
       this.handleAuthWavebox(evt, body)
     })
   }
@@ -122,13 +123,13 @@ class AuthWavebox {
     Promise.resolve()
       .then(() => this.promptUserToAuthorizeWavebox(body.clientSecret, body.type, body.serverArgs, body.id))
       .then(({ next }) => {
-        evt.sender.send('auth-wavebox-complete', {
+        evt.sender.send(WB_AUTH_WAVEBOX_COMPLETE, {
           id: body.id,
           type: body.type,
           next: next
         })
       }, (err) => {
-        evt.sender.send('auth-wavebox-error', {
+        evt.sender.send(WB_AUTH_WAVEBOX_ERROR, {
           id: body.id,
           type: body.type,
           error: err,

@@ -1,6 +1,10 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import {
+  WB_BROWSER_ELEVATED_LOG,
+  WB_BROWSER_ELEVATED_ERROR
+} from 'shared/ipcEvents'
 const camelCase = function (name) {
   return name.split('-').map((token, index) => {
     return index === 0 ? token : (token.charAt(0).toUpperCase() + token.slice(1))
@@ -45,7 +49,7 @@ const REACT_WEBVIEW_EVENT_PROPS = REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
 }, {})
 
 const WEBVIEW_PROPS = {
-  allowPopups: PropTypes.bool,
+  allowpopups: PropTypes.bool,
   autosize: PropTypes.bool,
   blinkfeatures: PropTypes.string,
   disableblinkfeatures: PropTypes.string,
@@ -58,7 +62,7 @@ const WEBVIEW_PROPS = {
   plugins: PropTypes.bool,
   preload: PropTypes.string,
   src: PropTypes.string,
-  userAgent: PropTypes.string,
+  useragent: PropTypes.string,
   webpreferences: PropTypes.string
 }
 const WEBVIEW_ATTRS = Object.keys(WEBVIEW_PROPS)
@@ -128,6 +132,7 @@ export default class WebView extends React.Component {
   /* **************************************************************************/
   static propTypes = {
     className: PropTypes.string,
+    onWebContentsAttached: PropTypes.func,
     ...WEBVIEW_PROPS,
     ...REACT_WEBVIEW_EVENT_PROPS
   }
@@ -164,6 +169,13 @@ export default class WebView extends React.Component {
       node.addEventListener(name, (evt) => {
         this.dispatchWebViewEvent(name, evt)
       })
+    })
+
+    // Wait for the DOM to pain before running this
+    setTimeout(() => {
+      if (this.props.onWebContentsAttached) {
+        this.props.onWebContentsAttached(node.getWebContents())
+      }
     })
   }
 
@@ -210,10 +222,10 @@ export default class WebView extends React.Component {
         delete this.ipcPromises[evt.channel.type]
       }
       return true
-    } else if (evt.channel.type === 'elevated-log') {
+    } else if (evt.channel.type === WB_BROWSER_ELEVATED_LOG) {
       console.log.apply(this, ['[ELEVATED LOG]', this.getWebviewNode()].concat(evt.channel.messages))
       return true
-    } else if (evt.channel.type === 'elevated-error') {
+    } else if (evt.channel.type === WB_BROWSER_ELEVATED_ERROR) {
       console.error.apply(this, ['[ELEVATED ERROR]', this.getWebviewNode()].concat(evt.channel.messages))
       return true
     } else {
@@ -237,18 +249,6 @@ export default class WebView extends React.Component {
     } else {
       return false
     }
-  }
-
-  /**
-  * Snapshots a webview
-  * @return promise with the nativeImage provided
-  */
-  captureSnapshot = () => {
-    return new Promise((resolve) => {
-      this.getWebviewNode().getWebContents().capturePage((nativeImage) => {
-        resolve(nativeImage)
-      })
-    })
   }
 
   /* **************************************************************************/
@@ -292,7 +292,7 @@ export default class WebView extends React.Component {
 
   render () {
     const attrs = WEBVIEW_ATTRS
-      .filter((k) => this.props[k] !== undefined)
+      .filter((k) => this.props[k] !== undefined && this.props[k] !== false)
       .map((k) => {
         return `${k}="${this.props[k]}"`
       })

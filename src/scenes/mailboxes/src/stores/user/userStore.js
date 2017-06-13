@@ -5,6 +5,7 @@ import User from 'shared/Models/User'
 import persistence from './userPersistence'
 import Bootstrap from '../../Bootstrap'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import { WB_AUTH_WAVEBOX } from 'shared/ipcEvents'
 const { ipcRenderer } = window.nativeRequire('electron')
 
 class UserStore {
@@ -64,7 +65,7 @@ class UserStore {
   /* **************************************************************************/
 
   handleAuthenticateWithMailbox ({ id, type, serverArgs }) {
-    ipcRenderer.send('auth-wavebox', {
+    ipcRenderer.send(WB_AUTH_WAVEBOX, {
       id: id,
       type: type,
       clientSecret: this.user.clientSecret,
@@ -74,7 +75,7 @@ class UserStore {
   }
 
   handleAuthenticateWithGoogle ({ serverArgs }) {
-    ipcRenderer.send('auth-wavebox', {
+    ipcRenderer.send(WB_AUTH_WAVEBOX, {
       id: null,
       type: CoreMailbox.MAILBOX_TYPES.GOOGLE,
       clientSecret: this.user.clientSecret,
@@ -84,7 +85,7 @@ class UserStore {
   }
 
   handleAuthenticateWithMicrosoft ({ serverArgs }) {
-    ipcRenderer.send('auth-wavebox', {
+    ipcRenderer.send(WB_AUTH_WAVEBOX, {
       id: null,
       type: CoreMailbox.MAILBOX_TYPES.MICROSOFT,
       clientSecret: this.user.clientSecret,

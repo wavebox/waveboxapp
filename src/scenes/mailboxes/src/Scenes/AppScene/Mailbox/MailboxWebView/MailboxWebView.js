@@ -1,7 +1,7 @@
 import './MailboxWebView.less'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { CircularProgress } from 'material-ui'
+import { CircularProgress, RaisedButton, FontIcon } from 'material-ui'
 import { mailboxStore, mailboxDispatch } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
 import BrowserView from 'sharedui/Components/BrowserView'
@@ -10,6 +10,19 @@ import MailboxTargetUrl from './MailboxTargetUrl'
 import shallowCompare from 'react-addons-shallow-compare'
 import URI from 'urijs'
 import { NotificationService } from 'Notifications'
+import {
+  WB_MAILBOXES_WINDOW_NAVIGATE_BACK,
+  WB_MAILBOXES_WINDOW_NAVIGATE_FORWARD,
+  WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP,
+  WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN,
+  WB_BROWSER_NOTIFICATION_CLICK,
+  WB_BROWSER_NOTIFICATION_PRESENT,
+  WB_BROWSER_START_SPELLCHECK,
+  WB_BROWSER_INJECT_CUSTOM_CONTENT,
+  WB_PING_RESOURCE_USAGE,
+  WB_PONG_RESOURCE_USAGE,
+  WB_MAILBOXES_WINDOW_WEBVIEW_ATTACHED
+} from 'shared/ipcEvents'
 
 const { ipcRenderer } = window.nativeRequire('electron')
 
@@ -65,14 +78,14 @@ export default class MailboxWebView extends React.Component {
     mailboxDispatch.on('devtools', this.handleOpenDevTools)
     mailboxDispatch.on('refocus', this.handleRefocus)
     mailboxDispatch.on('reload', this.handleReload)
-    mailboxDispatch.on('ping-resource-usage', this.pingResourceUsage)
+    mailboxDispatch.on(WB_PING_RESOURCE_USAGE, this.pingResourceUsage)
     mailboxDispatch.addGetter('current-url', this.handleGetCurrentUrl)
-    ipcRenderer.on('mailbox-window-navigate-back', this.handleIPCNavigateBack)
-    ipcRenderer.on('mailbox-window-navigate-forward', this.handleIPCNavigateForward)
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_NAVIGATE_BACK, this.handleIPCNavigateBack)
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_NAVIGATE_FORWARD, this.handleIPCNavigateForward)
 
     if (!this.state.isActive) {
       if (this.refs[BROWSER_REF]) {
-        this.refs[BROWSER_REF].send('lifecycle-sleep', {})
+        this.refs[BROWSER_REF].send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP, {})
       }
     }
   }
@@ -86,10 +99,10 @@ export default class MailboxWebView extends React.Component {
     mailboxDispatch.removeListener('devtools', this.handleOpenDevTools)
     mailboxDispatch.removeListener('refocus', this.handleRefocus)
     mailboxDispatch.removeListener('reload', this.handleReload)
-    mailboxDispatch.removeListener('ping-resource-usage', this.pingResourceUsage)
+    mailboxDispatch.removeListener(WB_PING_RESOURCE_USAGE, this.pingResourceUsage)
     mailboxDispatch.removeGetter('current-url', this.handleGetCurrentUrl)
-    ipcRenderer.removeListener('mailbox-window-navigate-back', this.handleIPCNavigateBack)
-    ipcRenderer.removeListener('mailbox-window-navigate-forward', this.handleIPCNavigateForward)
+    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_NAVIGATE_BACK, this.handleIPCNavigateBack)
+    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_NAVIGATE_FORWARD, this.handleIPCNavigateForward)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -99,6 +112,7 @@ export default class MailboxWebView extends React.Component {
       this.setState((prevState) => {
         return {
           url: nextProps.url || (prevState.service || {}).url,
+          isCrashed: false,
           browserDOMReady: false
         }
       })
@@ -135,7 +149,9 @@ export default class MailboxWebView extends React.Component {
       },
       {
         browserDOMReady: false,
+        isCrashed: false,
         language: settingState.language,
+        launchedApp: settingState.launched.app,
         focusedUrl: null,
         snapshot: mailboxState.getSnapshot(props.mailboxId, props.serviceType),
         isActive: mailboxState.isActive(props.mailboxId, props.serviceType),
@@ -169,7 +185,8 @@ export default class MailboxWebView extends React.Component {
   settingsChanged = (settingsState) => {
     this.setState((prevState) => {
       const update = {
-        language: settingsState.language
+        language: settingsState.language,
+        launchedApp: settingsState.launched.app
       }
 
       // Siphon setting changes down to the webview
@@ -177,7 +194,7 @@ export default class MailboxWebView extends React.Component {
         const prevLanguage = prevState.language
         const nextLanguage = update.language
         if (prevLanguage.spellcheckerLanguage !== nextLanguage.spellcheckerLanguage || prevLanguage.secondarySpellcheckerLanguage !== nextLanguage.secondarySpellcheckerLanguage) {
-          this.refs[BROWSER_REF].send('start-spellcheck', {
+          this.refs[BROWSER_REF].send(WB_BROWSER_START_SPELLCHECK, {
             language: nextLanguage.spellcheckerLanguage,
             secondaryLanguage: nextLanguage.secondarySpellcheckerLanguage
           })
@@ -196,7 +213,10 @@ export default class MailboxWebView extends React.Component {
   * @Pass through to webview.loadURL()
   */
   loadURL = (url) => {
-    this.setState({ browserDOMReady: false })
+    this.setState({
+      browserDOMReady: false,
+      isCrashed: false
+    })
     return this.refs[BROWSER_REF].loadURL(url)
   }
 
@@ -250,6 +270,10 @@ export default class MailboxWebView extends React.Component {
       } else if (evt.service === this.props.serviceType) {
         this.refs[BROWSER_REF].reloadIgnoringCache()
       }
+      this.setState({
+        isCrashed: false,
+        browserDOMReady: false
+      })
     }
   }
 
@@ -261,7 +285,7 @@ export default class MailboxWebView extends React.Component {
   */
   pingResourceUsage = ({ mailboxId, serviceType, description }) => {
     if (mailboxId === this.props.mailboxId && serviceType === this.props.serviceType) {
-      this.refs[BROWSER_REF].send('ping-resource-usage', { description: description })
+      this.refs[BROWSER_REF].send(WB_PING_RESOURCE_USAGE, { description: description })
     }
   }
 
@@ -307,15 +331,15 @@ export default class MailboxWebView extends React.Component {
   dispatchBrowserIPCMessage (evt) {
     switch (evt.channel.type) {
       case 'open-settings': window.location.hash = '/settings'; break
-      case 'pong-resource-usage': ipcRenderer.send('pong-resource-usage', evt.channel.data); break
-      case 'browser-notification-present':
+      case WB_PONG_RESOURCE_USAGE: ipcRenderer.send(WB_PONG_RESOURCE_USAGE, evt.channel.data); break
+      case WB_BROWSER_NOTIFICATION_PRESENT:
         NotificationService.processHTML5MailboxNotification(
           this.props.mailboxId,
           this.props.serviceType,
           evt.channel.notificationId,
           evt.channel.notification,
           (notificationId) => {
-            this.refs[BROWSER_REF].send('browser-notification-click', { notificationId: notificationId })
+            this.refs[BROWSER_REF].send(WB_BROWSER_NOTIFICATION_CLICK, { notificationId: notificationId })
           }
         )
         break
@@ -335,7 +359,7 @@ export default class MailboxWebView extends React.Component {
 
     // Language
     if (language.spellcheckerEnabled) {
-      this.refs[BROWSER_REF].send('start-spellcheck', {
+      this.refs[BROWSER_REF].send(WB_BROWSER_START_SPELLCHECK, {
         language: language.spellcheckerLanguage,
         secondaryLanguage: language.secondarySpellcheckerLanguage
       })
@@ -343,7 +367,7 @@ export default class MailboxWebView extends React.Component {
 
     // Push the custom user content
     if (service.hasCustomCSS || service.hasCustomJS) {
-      this.refs[BROWSER_REF].send('inject-custom-content', {
+      this.refs[BROWSER_REF].send(WB_BROWSER_INJECT_CUSTOM_CONTENT, {
         css: service.customCSS,
         js: service.customJS
       })
@@ -351,20 +375,44 @@ export default class MailboxWebView extends React.Component {
 
     // Wake or sleep the browser
     if (isActive) {
-      this.refs[BROWSER_REF].send('lifecycle-awaken', {})
+      this.refs[BROWSER_REF].send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN, {})
     } else {
-      this.refs[BROWSER_REF].send('lifecycle-sleep', {})
+      this.refs[BROWSER_REF].send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP, {})
     }
 
-    this.setState({ browserDOMReady: true })
+    this.setState({
+      browserDOMReady: true,
+      isCrashed: false
+    })
   }
 
   /**
   * Updates the target url that the user is hovering over
   * @param evt: the event that fired
   */
-  handleBrowserUpdateTargetUrl (evt) {
+  handleBrowserUpdateTargetUrl = (evt) => {
     this.setState({ focusedUrl: evt.url !== '' ? evt.url : null })
+  }
+
+  /**
+  * Handles the webcontents being attached
+  * @param webContents: the webcontents that were attached
+  */
+  handleWebContentsAttached = (webContents) => {
+    ipcRenderer.send(WB_MAILBOXES_WINDOW_WEBVIEW_ATTACHED, {
+      webContentsId: webContents.id,
+      mailboxId: this.props.mailboxId,
+      serviceType: this.props.serviceType
+    })
+  }
+
+  /**
+  * Handles the webview crashing
+  * @param evt: the event that fired
+  */
+  handleCrashed = (evt) => {
+    console.log(`WebView Crashed ${this.props.mailboxId}:${this.props.serviceType}`, evt)
+    this.setState({ isCrashed: true })
   }
 
   /* **************************************************************************/
@@ -440,11 +488,11 @@ export default class MailboxWebView extends React.Component {
       if (this.state.isActive) {
         if (this.refs[BROWSER_REF]) {
           this.refs[BROWSER_REF].focus()
-          this.refs[BROWSER_REF].send('lifecycle-awaken', {})
+          this.refs[BROWSER_REF].send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN, {})
         }
       } else {
         if (this.refs[BROWSER_REF]) {
-          this.refs[BROWSER_REF].send('lifecycle-sleep', {})
+          this.refs[BROWSER_REF].send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP, {})
         }
       }
     }
@@ -462,7 +510,9 @@ export default class MailboxWebView extends React.Component {
       searchId,
       url,
       browserDOMReady,
-      snapshot
+      isCrashed,
+      snapshot,
+      launchedApp
     } = this.state
 
     if (!mailbox || !service) { return false }
@@ -492,11 +542,16 @@ export default class MailboxWebView extends React.Component {
           zoomFactor={service.zoomFactor}
           searchId={searchId}
           searchTerm={isSearching ? searchTerm : ''}
-          webpreferences='contextIsolation=yes'
+          webpreferences={launchedApp.useExperimentalWindowOpener ? 'contextIsolation=yes, nativeWindowOpen=yes' : 'contextIsolation=yes'}
+          allowpopups={launchedApp.useExperimentalWindowOpener}
           plugins
+          onWebContentsAttached={this.handleWebContentsAttached}
 
           {...webviewEventProps}
 
+          crashed={(evt) => {
+            this.multiCallBrowserEvent([this.handleCrashed, webviewEventProps.crashed], [evt])
+          }}
           loadCommit={(evt) => {
             this.multiCallBrowserEvent([webviewEventProps.loadCommit], [evt])
           }}
@@ -539,6 +594,19 @@ export default class MailboxWebView extends React.Component {
         <MailboxTargetUrl url={focusedUrl} />
         {hasSearch ? (
           <MailboxSearch mailboxId={mailbox.id} serviceType={service.type} />
+        ) : undefined}
+        {isCrashed ? (
+          <div className='ReactComponent-MailboxCrashed'>
+            <h1>Whoops!</h1>
+            <p>Something went wrong with this mailbox and it crashed</p>
+            <RaisedButton
+              label='Reload'
+              icon={<FontIcon className='material-icons'>refresh</FontIcon>}
+              onTouchTap={() => {
+                this.refs[BROWSER_REF].reloadIgnoringCache()
+                this.setState({ isCrashed: false, browserDOMReady: false })
+              }} />
+          </div>
         ) : undefined}
       </div>
     )

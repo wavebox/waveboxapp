@@ -1,4 +1,5 @@
 const { ipcMain, BrowserWindow } = require('electron')
+const { WB_AUTH_SLACK, WB_AUTH_SLACK_COMPLETE, WB_AUTH_SLACK_ERROR } = require('../../shared/ipcEvents')
 const url = require('url')
 
 class AuthSlack {
@@ -7,7 +8,7 @@ class AuthSlack {
   /* ****************************************************************************/
 
   constructor () {
-    ipcMain.on('auth-slack', (evt, body) => {
+    ipcMain.on(WB_AUTH_SLACK, (evt, body) => {
       this.handleAuthSlack(evt, body)
     })
   }
@@ -78,14 +79,14 @@ class AuthSlack {
     Promise.resolve()
       .then(() => this.promptUserToGetAuthorizationCode(body.id))
       .then(({ teamUrl, token }) => {
-        evt.sender.send('auth-slack-complete', {
+        evt.sender.send(WB_AUTH_SLACK_COMPLETE, {
           id: body.id,
           provisional: body.provisional,
           teamUrl: teamUrl,
           token: token
         })
       }, (err) => {
-        evt.sender.send('auth-slack-error', {
+        evt.sender.send(WB_AUTH_SLACK_ERROR, {
           id: body.id,
           provisional: body.provisional,
           error: err,

@@ -1,11 +1,11 @@
-const CoreService = require('../CoreService')
+const GoogleService = require('./GoogleService')
 
-class GoogleCalendarService extends CoreService {
+class GoogleCalendarService extends GoogleService {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  static get type () { return CoreService.SERVICE_TYPES.CALENDAR }
+  static get type () { return GoogleService.SERVICE_TYPES.CALENDAR }
   static get humanizedType () { return 'Google Calendar' }
   static get humanizedLogos () {
     return [

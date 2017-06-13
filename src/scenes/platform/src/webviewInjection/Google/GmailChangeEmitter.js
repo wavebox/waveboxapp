@@ -1,5 +1,6 @@
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, remote } = require('electron')
 const GmailApi = require('./GmailApi')
+const { WB_BROWSER_GOOGLE_GMAIL_UNREAD_COUNT_CHANGED } = remote.require('./shared/ipcEvents')
 
 class GmailChangeEmitter {
   /* **************************************************************************/
@@ -25,7 +26,7 @@ class GmailChangeEmitter {
     const nextCount = GmailApi.getUnreadCount()
     if (this.state.count !== nextCount) {
       ipcRenderer.sendToHost({
-        type: 'unread-count-changed',
+        type: WB_BROWSER_GOOGLE_GMAIL_UNREAD_COUNT_CHANGED,
         data: {
           trigger: 'http-event',
           prev: this.state.count,

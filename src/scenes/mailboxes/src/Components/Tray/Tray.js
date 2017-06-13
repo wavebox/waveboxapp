@@ -5,7 +5,16 @@ import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
 import { BLANK_PNG } from 'shared/b64Assets'
 import TrayRenderer from './TrayRenderer'
 import uuid from 'uuid'
-import { MOUSE_TRIGGERS, MOUSE_TRIGGER_ACTIONS } from 'shared/Models/Settings/TraySettings'
+import {
+  MOUSE_TRIGGERS,
+  MOUSE_TRIGGER_ACTIONS
+} from 'shared/Models/Settings/TraySettings'
+import {
+  WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY,
+  WB_SHOW_MAILBOX_WINDOW_FROM_TRAY,
+  WB_FOCUS_APP,
+  WB_QUIT_APP
+} from 'shared/ipcEvents'
 
 const electron = window.nativeRequire('electron')
 const { ipcRenderer, remote } = electron
@@ -89,7 +98,7 @@ export default class Tray extends React.Component {
           id: message.id,
           label: message.text,
           click: (e) => {
-            ipcRenderer.send('focus-app', { })
+            ipcRenderer.send(WB_FOCUS_APP, { })
             mailboxActions.changeActive(message.data.mailboxId, message.data.serviceType)
             mailboxDispatch.openItem(message.data.mailboxId, message.data.serviceType, message.data)
           }
@@ -100,7 +109,7 @@ export default class Tray extends React.Component {
         {
           label: 'Open Account',
           click: (e) => {
-            ipcRenderer.send('focus-app', { })
+            ipcRenderer.send(WB_FOCUS_APP, { })
             mailboxActions.changeActive(mailbox.__id__)
           }
         },
@@ -136,7 +145,7 @@ export default class Tray extends React.Component {
   handleMouseTriggerClick = () => {
     const { mouseTrigger, mouseTriggerAction } = this.props.traySettings
     if (mouseTrigger === MOUSE_TRIGGERS.SINGLE) {
-      ipcRenderer.send(mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? 'toggle-mailbox-visibility-from-tray' : 'show-mailbox-from-tray')
+      ipcRenderer.send(mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY : WB_SHOW_MAILBOX_WINDOW_FROM_TRAY)
     }
   }
 
@@ -146,7 +155,7 @@ export default class Tray extends React.Component {
   handleMouseTriggerDoubleClick = () => {
     const { mouseTrigger, mouseTriggerAction } = this.props.traySettings
     if (mouseTrigger === MOUSE_TRIGGERS.DOUBLE) {
-      ipcRenderer.send(mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? 'toggle-mailbox-visibility-from-tray' : 'show-mailbox-from-tray')
+      ipcRenderer.send(mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY : WB_SHOW_MAILBOX_WINDOW_FROM_TRAY)
     }
   }
 
@@ -154,7 +163,7 @@ export default class Tray extends React.Component {
   * Toggles the apps visibility
   */
   handleToggleVisibility = () => {
-    ipcRenderer.send('toggle-mailbox-visibility-from-tray')
+    ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY)
   }
 
   /* **************************************************************************/
@@ -216,14 +225,14 @@ export default class Tray extends React.Component {
         {
           label: 'Compose New Message',
           click: (e) => {
-            ipcRenderer.send('focus-app')
+            ipcRenderer.send(WB_FOCUS_APP)
             composeActions.composeNewMessage()
           }
         },
         {
           label: 'Show / Hide',
           click: (e) => {
-            ipcRenderer.send('toggle-mailbox-visibility-from-tray')
+            ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY)
           }
         },
         { type: 'separator' }
@@ -233,7 +242,7 @@ export default class Tray extends React.Component {
         {
           label: 'Quit',
           click: (e) => {
-            ipcRenderer.send('quit-app')
+            ipcRenderer.send(WB_QUIT_APP)
           }
         }
       ]

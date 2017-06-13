@@ -4,6 +4,7 @@ import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import { mailboxDispatch, MailboxLinker } from 'stores/mailbox'
 import { trelloActions } from 'stores/trello'
+import { settingsStore } from 'stores/settings'
 
 const REF = 'mailbox_tab'
 
@@ -79,7 +80,7 @@ export default class TrelloMailboxWebView extends React.Component {
         preload='../platform/webviewInjection/trelloDefaultServiceTooling'
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
-        newWindow={this.handleOpenNewWindow} />
+        newWindow={settingsStore.getState().launched.app.useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow} />
     )
   }
 }

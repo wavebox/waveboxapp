@@ -3,11 +3,18 @@ import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
-import { mailboxStore, mailboxDispatch, MailboxLinker } from 'stores/mailbox'
+import { MailboxLinker, mailboxStore, mailboxDispatch } from 'stores/mailbox'
 import { googleActions } from 'stores/google'
 import { settingsStore } from 'stores/settings'
-import URI from 'urijs'
 import shallowCompare from 'react-addons-shallow-compare'
+import {
+  WB_BROWSER_WINDOW_ICONS_IN_SCREEN,
+  WB_BROWSER_OPEN_MESSAGE,
+  WB_BROWSER_COMPOSE_MESSAGE,
+  WB_BROWSER_GOOGLE_INBOX_TOP_MESSAGE_CHANGED,
+  WB_BROWSER_GOOGLE_GMAIL_UNREAD_COUNT_CHANGED
+} from 'shared/ipcEvents'
+import URI from 'urijs'
 
 const REF = 'mailbox_tab'
 
@@ -89,7 +96,7 @@ export default class GoogleMailboxMailWebView extends React.Component {
         const nextIconsInscreen = !settingsState.ui.sidebarEnabled && !settingsState.ui.showTitlebar
         if (prevIconsInscreen !== nextIconsInscreen) {
           try {
-            this.refs[REF].send('window-icons-in-screen', { inscreen: nextIconsInscreen })
+            this.refs[REF].send(WB_BROWSER_WINDOW_ICONS_IN_SCREEN, { inscreen: nextIconsInscreen })
           } catch (ex) {
             console.warn(ex)
           }
@@ -110,7 +117,7 @@ export default class GoogleMailboxMailWebView extends React.Component {
   */
   handleOpenItem = (evt) => {
     if (evt.mailboxId === this.props.mailboxId && evt.service === CoreService.SERVICE_TYPES.DEFAULT) {
-      this.refs[REF].send('open-message', {
+      this.refs[REF].send(WB_BROWSER_OPEN_MESSAGE, {
         messageId: evt.data.messageId, threadId: evt.data.threadId
       })
     }
@@ -122,7 +129,7 @@ export default class GoogleMailboxMailWebView extends React.Component {
   */
   handleComposeMessage = (evt) => {
     if (evt.mailboxId === this.props.mailboxId && evt.service === CoreService.SERVICE_TYPES.DEFAULT) {
-      this.refs[REF].send('compose-message', {
+      this.refs[REF].send(WB_BROWSER_COMPOSE_MESSAGE, {
         recipient: evt.data.recipient,
         subject: evt.data.subject,
         body: evt.data.body
@@ -140,8 +147,8 @@ export default class GoogleMailboxMailWebView extends React.Component {
   */
   dispatchBrowserIPCMessage = (evt) => {
     switch (evt.channel.type) {
-      case 'unread-count-changed': this.handleIPCUnreadCountChanged(evt.channel.data); break
-      case 'top-message-changed': this.handleIPCTopMessageChanged(evt.channel.data); break
+      case WB_BROWSER_GOOGLE_GMAIL_UNREAD_COUNT_CHANGED: this.handleIPCUnreadCountChanged(evt.channel.data); break
+      case WB_BROWSER_GOOGLE_INBOX_TOP_MESSAGE_CHANGED: this.handleIPCTopMessageChanged(evt.channel.data); break
       default: break
     }
   }
@@ -152,7 +159,7 @@ export default class GoogleMailboxMailWebView extends React.Component {
   handleBrowserDomReady = () => {
     // UI Fixes
     const ui = this.state.ui
-    this.refs[REF].send('window-icons-in-screen', {
+    this.refs[REF].send(WB_BROWSER_WINDOW_ICONS_IN_SCREEN, {
       inscreen: !ui.sidebarEnabled && !ui.showTitlebar && process.platform === 'darwin'
     })
   }
@@ -168,12 +175,12 @@ export default class GoogleMailboxMailWebView extends React.Component {
     } else if (purl.hostname() === 'mail.google.com') {
       const query = purl.search(true)
       if (query.ui === '2' || query.view === 'om') {
-        MailboxLinker.openContentWindow(this.props.mailboxId, evt.url, evt.options)
+        MailboxLinker.openContentWindow(this.props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT, evt.url, evt.options)
       } else {
         this.setState({ url: evt.url })
       }
     } else if (purl.hostname() === 'drive.google.com') {
-      MailboxLinker.openContentWindow(this.props.mailboxId, evt.url, evt.options)
+      MailboxLinker.openContentWindow(this.props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT, evt.url, evt.options)
     } else {
       MailboxLinker.openExternalWindow(evt.url)
     }
@@ -203,7 +210,7 @@ export default class GoogleMailboxMailWebView extends React.Component {
 
   componentDidUpdate (prevProps, prevState) {
     if (prevState.isActive !== this.state.isActive) {
-      if (this.state.isActive) {
+      if (this.state.isActive && this.state.mailbox) {
         const service = this.state.mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT)
         if (service) {
           // Try to get the UI to reload to show when we make this item active
@@ -223,13 +230,14 @@ export default class GoogleMailboxMailWebView extends React.Component {
 
   render () {
     const { mailboxId } = this.props
+    const useExperimentalWindowOpener = settingsStore.getState().launched.app.useExperimentalWindowOpener
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload='../platform/webviewInjection/googleMailTooling'
+        preload={useExperimentalWindowOpener ? '../platform/webviewInjection/googleMailTooling' : '../platform/webviewInjection/googleMailNonExperimentalWindowTooling'}
         mailboxId={mailboxId}
+        newWindow={useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
-        newWindow={this.handleOpenNewWindow}
         domReady={this.handleBrowserDomReady}
         ipcMessage={this.dispatchBrowserIPCMessage} />
     )
