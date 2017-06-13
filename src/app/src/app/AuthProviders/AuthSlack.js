@@ -8,7 +8,7 @@ class AuthSlack {
 
   constructor () {
     ipcMain.on('auth-slack', (evt, body) => {
-      this.handleAuthTrello(evt, body)
+      this.handleAuthSlack(evt, body)
     })
   }
 
@@ -74,7 +74,7 @@ class AuthSlack {
   * @param evt: the incoming event
   * @param body: the body sent to us
   */
-  handleAuthTrello (evt, body) {
+  handleAuthSlack (evt, body) {
     Promise.resolve()
       .then(() => this.promptUserToGetAuthorizationCode(body.id))
       .then(({ teamUrl, token }) => {
