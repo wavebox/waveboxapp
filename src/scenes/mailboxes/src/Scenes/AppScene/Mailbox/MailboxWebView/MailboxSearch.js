@@ -4,6 +4,9 @@ import { Paper, TextField, IconButton } from 'material-ui'
 import * as Colors from 'material-ui/styles/colors'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
+import {
+  WB_WINDOW_FIND_START
+} from 'shared/ipcEvents'
 
 const { ipcRenderer } = window.nativeRequire('electron')
 
@@ -25,12 +28,12 @@ export default class MailboxSearch extends React.Component {
 
   componentDidMount () {
     mailboxStore.listen(this.mailboxesChanged)
-    ipcRenderer.on('find-start', this.handleIPCSearchStart)
+    ipcRenderer.on(WB_WINDOW_FIND_START, this.handleIPCSearchStart)
   }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxesChanged)
-    ipcRenderer.removeListener('find-start', this.handleIPCSearchStart)
+    ipcRenderer.removeListener(WB_WINDOW_FIND_START, this.handleIPCSearchStart)
   }
 
   componentWillReceiveProps (nextProps) {

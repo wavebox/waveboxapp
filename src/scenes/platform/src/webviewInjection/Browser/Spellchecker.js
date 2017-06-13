@@ -1,19 +1,16 @@
 const { webFrame, ipcRenderer, remote } = require('electron')
 const DictionaryLoad = require('./DictionaryLoad')
-const dictionaryExcludes = require('../../../../app/shared/dictionaryExcludes')
+const dictionaryExcludes = remote.require('./shared/dictionaryExcludes')
 const elconsole = require('../elconsole')
 const path = require('path')
-const fs = require('../../../../app/node_modules/fs-extra')
-const pkg = require('../../../../app/package.json')
-const AppDirectory = require('../../../../app/node_modules/appdirectory')
-
-let Nodehun
-try {
-  Nodehun = require('../../../../app/node_modules/nodehun')
-} catch (ex) {
-  elconsole.error('Failed to initialize spellchecker', ex)
-  throw ex
-}
+const fs = remote.require('fs-extra')
+const pkg = remote.require('./package.json')
+const AppDirectory = remote.require('appdirectory')
+const {
+  WB_BROWSER_START_SPELLCHECK,
+  WB_BROWSER_SPELLCHECK_ADD_WORD
+} = remote.require('./shared/ipcEvents')
+const Nodehun = remote.getGlobal('Nodehun')
 
 const appDirectory = new AppDirectory({ appName: pkg.name, useRoaming: true }).userData()
 const customWordsPath = path.join(appDirectory, 'user_dictionary_words.records')
@@ -29,10 +26,10 @@ class Spellchecker {
       secondary: { nodehun: null, language: null }
     }
 
-    ipcRenderer.on('start-spellcheck', (evt, data) => {
+    ipcRenderer.on(WB_BROWSER_START_SPELLCHECK, (evt, data) => {
       this._updateSpellchecker(data.language, data.secondaryLanguage)
     })
-    ipcRenderer.on('dictionary-user-added-word', (evt, data) => {
+    ipcRenderer.on(WB_BROWSER_SPELLCHECK_ADD_WORD, (evt, data) => {
       if (this._spellcheckers_.primary.nodehun) {
         this._addUserWordIntoSpellchecker(this._spellcheckers_.primary.nodehun, data.word)
       }
@@ -135,7 +132,7 @@ class Spellchecker {
         const currentWebContents = remote.getCurrentWebContents()
         remote.webContents.getAllWebContents().forEach((wc) => {
           if (wc !== currentWebContents) {
-            wc.send('dictionary-user-added-word', { word: word })
+            wc.send(WB_BROWSER_SPELLCHECK_ADD_WORD, { word: word })
           }
         })
         return Promise.resolve()

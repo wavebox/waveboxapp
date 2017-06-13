@@ -1,9 +1,14 @@
+const { ipcRenderer, remote } = require('electron')
 const KeyboardNavigator = require('./KeyboardNavigator')
 const Spellchecker = require('./Spellchecker')
 const ContextMenu = require('./ContextMenu')
 const Lifecycle = require('./Lifecycle')
 const NotificationProvider = require('./NotificationProvider')
-const { ipcRenderer } = require('electron')
+const environment = remote.getCurrentWebContents().getType()
+const {
+  WB_PING_RESOURCE_USAGE,
+  WB_PONG_RESOURCE_USAGE
+} = remote.require('./shared/ipcEvents')
 
 class Browser {
   /* **************************************************************************/
@@ -19,21 +24,25 @@ class Browser {
     this.spellchecker = new Spellchecker()
     this.contextMenu = new ContextMenu(this.spellchecker, config.contextMenu)
     this.notificationProvider = new NotificationProvider()
-    this.lifecycle = new Lifecycle()
 
-    ipcRenderer.on('ping-resource-usage', (evt, data) => {
-      ipcRenderer.sendToHost({
-        type: 'pong-resource-usage',
-        data: Object.assign({},
-          process.getCPUUsage(),
-          process.getProcessMemoryInfo(),
-          {
-            pid: process.pid,
-            description: data.description
-          }
-        )
+    // Some tools are only exposed in nested webviews
+    if (environment === 'webview') {
+      this.lifecycle = new Lifecycle()
+
+      ipcRenderer.on(WB_PING_RESOURCE_USAGE, (evt, data) => {
+        ipcRenderer.sendToHost({
+          type: WB_PONG_RESOURCE_USAGE,
+          data: Object.assign({},
+            process.getCPUUsage(),
+            process.getProcessMemoryInfo(),
+            {
+              pid: process.pid,
+              description: data.description
+            }
+          )
+        })
       })
-    })
+    }
   }
 }
 

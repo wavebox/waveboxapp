@@ -1,4 +1,5 @@
-const escapeHTML = require('../../../../app/node_modules/escape-html')
+const { remote } = require('electron')
+const escapeHTML = remote.require('escape-html')
 
 class GinboxApi {
   /**

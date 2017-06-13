@@ -1,5 +1,6 @@
 import mailboxStore from './mailboxStore'
 import settingsStore from '../settings/settingsStore'
+import { WB_NEW_WINDOW } from 'shared/ipcEvents'
 const {
   ipcRenderer,
   remote: { shell }
@@ -18,22 +19,19 @@ class MailboxLinker {
 
   /**
   * Opens a content window for a mailbox
-  * @param mailboxOrMailboxId: the id of the mailbox or the actual mailbox
+  * @param mailboxId: the id of the mailbox
+  * @param serviceType: the type of service
   * @param url: the url to open
   * @param options={}: the window event options
   */
-  static openContentWindow (mailboxOrMailboxId, url, options = {}) {
+  static openContentWindow (mailboxId, serviceType, url, options = {}) {
     // Generate the partition
-    let partition = mailboxOrMailboxId
-    if (typeof (mailboxOrMailboxId) === 'object') {
-      partition = mailboxOrMailboxId.partition
-    } else if (typeof (mailboxOrMailboxId) === 'string') {
-      const mailbox = mailboxStore.getState().getMailbox(mailboxOrMailboxId)
-      if (mailbox) {
-        partition = mailbox.partition
-      } else {
-        partition = mailboxOrMailboxId
-      }
+    let partition = mailboxId
+    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
+    if (mailbox) {
+      partition = mailbox.partition
+    } else {
+      partition = mailboxId
     }
 
     // Check what format options has come through in
@@ -42,7 +40,9 @@ class MailboxLinker {
     }
 
     if (partition) {
-      ipcRenderer.send('new-window', {
+      ipcRenderer.send(WB_NEW_WINDOW, {
+        mailboxId: mailboxId,
+        serviceType: serviceType,
         url: url,
         partition: `persist:${partition}`,
         windowPreferences: {

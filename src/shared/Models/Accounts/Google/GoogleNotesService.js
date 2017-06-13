@@ -1,11 +1,11 @@
-const CoreService = require('../CoreService')
+const GoogleService = require('./GoogleService')
 
-class GoogleNotesService extends CoreService {
+class GoogleNotesService extends GoogleService {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  static get type () { return CoreService.SERVICE_TYPES.NOTES }
+  static get type () { return GoogleService.SERVICE_TYPES.NOTES }
   static get humanizedType () { return 'Google Keep' }
   static get humanizedLogos () {
     return [

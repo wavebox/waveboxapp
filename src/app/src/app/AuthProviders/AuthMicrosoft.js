@@ -1,4 +1,5 @@
 const { ipcMain, BrowserWindow } = require('electron')
+const { WB_AUTH_MICROSOFT, WB_AUTH_MICROSOFT_COMPLETE, WB_AUTH_MICROSOFT_ERROR } = require('../../shared/ipcEvents')
 const url = require('url')
 const querystring = require('querystring')
 
@@ -8,7 +9,7 @@ class AuthMicrosoft {
   /* ****************************************************************************/
 
   constructor () {
-    ipcMain.on('auth-microsoft', (evt, body) => {
+    ipcMain.on(WB_AUTH_MICROSOFT, (evt, body) => {
       this.handleAuthMicrosoft(evt, body)
     })
   }
@@ -109,7 +110,7 @@ class AuthMicrosoft {
     Promise.resolve()
       .then(() => this.promptUserToGetAuthorizationCode(body.credentials, body.id))
       .then((temporaryCode) => {
-        evt.sender.send('auth-microsoft-complete', {
+        evt.sender.send(WB_AUTH_MICROSOFT_COMPLETE, {
           id: body.id,
           authMode: body.authMode,
           provisional: body.provisional,
@@ -117,7 +118,7 @@ class AuthMicrosoft {
           codeRedirectUri: body.credentials.MICROSOFT_AUTH_RETURN_URL
         })
       }, (err) => {
-        evt.sender.send('auth-microsoft-error', {
+        evt.sender.send(WB_AUTH_MICROSOFT_ERROR, {
           id: body.id,
           authMode: body.authMode,
           provisional: body.provisional,

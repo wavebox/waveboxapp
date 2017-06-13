@@ -1,11 +1,15 @@
 const injector = require('../injector')
-const {ipcRenderer} = require('electron')
-const path = require('path')
+const {ipcRenderer, remote} = require('electron')
 const GinboxApi = require('./GinboxApi')
 const GmailApi = require('./GmailApi')
 const GoogleService = require('./GoogleService')
 const GmailChangeEmitter = require('./GmailChangeEmitter')
 const GinboxChangeEmitter = require('./GinboxChangeEmitter')
+const {
+  WB_BROWSER_WINDOW_ICONS_IN_SCREEN,
+  WB_BROWSER_OPEN_MESSAGE,
+  WB_BROWSER_COMPOSE_MESSAGE
+} = remote.require('./shared/ipcEvents')
 
 class GoogleMail extends GoogleService {
   /* **************************************************************************/
@@ -39,16 +43,16 @@ class GoogleMail extends GoogleService {
     `)
 
     // Bind our listeners
-    ipcRenderer.on('window-icons-in-screen', this.handleWindowIconsInScreenChange.bind(this))
-    ipcRenderer.on('open-message', this.handleOpenMesage.bind(this))
+    ipcRenderer.on(WB_BROWSER_WINDOW_ICONS_IN_SCREEN, this.handleWindowIconsInScreenChange.bind(this))
+    ipcRenderer.on(WB_BROWSER_OPEN_MESSAGE, this.handleOpenMesage.bind(this))
 
     if (this.isGmail) {
       this.loadGmailAPI()
-      ipcRenderer.on('compose-message', this.handleComposeMessageGmail.bind(this))
+      ipcRenderer.on(WB_BROWSER_COMPOSE_MESSAGE, this.handleComposeMessageGmail.bind(this))
     }
     if (this.isGinbox) {
       this.loadInboxAPI()
-      ipcRenderer.on('compose-message', this.handleComposeMessageGinbox.bind(this))
+      ipcRenderer.on(WB_BROWSER_COMPOSE_MESSAGE, this.handleComposeMessageGinbox.bind(this))
     }
   }
 
@@ -68,7 +72,6 @@ class GoogleMail extends GoogleService {
   */
   loadGmailAPI () {
     this.changeEmitter = new GmailChangeEmitter()
-    injector.injectClientModule(path.join(__dirname, './Client/GmailWindowOpen.js'))
   }
 
   /**

@@ -1,5 +1,6 @@
-const {ipcRenderer} = require('electron')
+const {ipcRenderer, remote} = require('electron')
 const GinboxApi = require('./GinboxApi')
+const { WB_BROWSER_GOOGLE_INBOX_TOP_MESSAGE_CHANGED } = remote.require('./shared/ipcEvents')
 const MAX_MESSAGE_HASH_TIME = 1000 * 60 * 10 // 10 mins
 
 class GinboxChangeEmitter {
@@ -47,7 +48,7 @@ class GinboxChangeEmitter {
       this.state.messageHash = nextMessageHash
       this.state.messageHashTime = now
       ipcRenderer.sendToHost({
-        type: 'top-message-changed',
+        type: WB_BROWSER_GOOGLE_INBOX_TOP_MESSAGE_CHANGED,
         data: { trigger: 'periodic-diff' }
       })
     }

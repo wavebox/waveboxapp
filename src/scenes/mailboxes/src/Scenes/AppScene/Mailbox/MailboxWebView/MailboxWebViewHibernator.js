@@ -105,8 +105,13 @@ export default class MailboxWebViewHibernator extends React.Component {
     const { mailboxId, serviceType } = this.props
     const captureRef = Math.random()
     this.captureRef = captureRef
+
     Promise.resolve()
-      .then(() => this.refs[REF].captureSnapshot())
+      .then(() => {
+        return new Promise((resolve) => {
+          this.refs[REF].capturePage((nativeImage) => resolve(nativeImage))
+        })
+      })
       .then((nativeImage) => {
         mailboxActions.setServiceSnapshot(mailboxId, serviceType, nativeImage.toDataURL())
         return Promise.resolve()

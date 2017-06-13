@@ -10,7 +10,7 @@
     "bootstrap-grid": "2.0.1",
     "color": "1.0.3",
     "fbjs": "0.8.12",
-    "material-ui": "0.18.1",
+    "material-ui": "0.18.3",
     "phoenix": "1.2.1",
     "prop-types": "15.5.10",
     "qs": "6.4.0",

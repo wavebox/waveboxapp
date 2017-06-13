@@ -1,11 +1,19 @@
 const {BrowserWindow} = require('electron')
 const EventEmitter = require('events')
 const settingStore = require('../stores/settingStore')
-const appStorage = require('../storage/appStorage')
 const path = require('path')
+const WaveboxWindowLocationSaver = require('./WaveboxWindowLocationSaver')
 const {
   TraySettings: { SUPPORTS_TRAY_MINIMIZE_CONFIG }
 } = require('../../shared/Models/Settings')
+const {
+  WB_WINDOW_FIND_START,
+  WB_WINDOW_FIND_NEXT,
+  WB_WINDOW_ZOOM_IN,
+  WB_WINDOW_ZOOM_OUT,
+  WB_WINDOW_ZOOM_RESET,
+  WB_PING_RESOURCE_USAGE
+} = require('../../shared/ipcEvents')
 
 class WaveboxWindow extends EventEmitter {
   /* ****************************************************************************/
@@ -13,40 +21,23 @@ class WaveboxWindow extends EventEmitter {
   /* ****************************************************************************/
 
   /**
-  * @param options: object containing the following
-  * @param screenLocationNS: the namespace to save the window state under. If not set, will not persist
+  * @param windowId = undefined: the id of the window
   */
-  constructor (options) {
+  constructor (windowId = undefined) {
     super()
+    this.windowId = windowId
+    this.ownerId = null
     this.window = null
-    this.windowScreenLocationSaver = null
-    this.options = Object.freeze(Object.assign({}, options))
-    this._boundFunctions = {
-      settingStoreChanged: this.updateWindowMenubar.bind(this)
-    }
-  }
+    this.locationSaver = new WaveboxWindowLocationSaver(windowId)
 
-  /**
-  * Starts the app
-  * @param url: the start url
-  * @param windowPreferences=undefined: additional window preferences to supply
-  * @return this
-  */
-  start (url, windowPreferences = undefined) {
-    this.createWindow(this.defaultWindowPreferences(windowPreferences), url)
-    return this
+    this.boundUpdateWindowMenubar = this.updateWindowMenubar.bind(this)
   }
-
-  /* ****************************************************************************/
-  // Creation & Closing
-  /* ****************************************************************************/
 
   /**
   * The default window preferences
-  * @param extraPreferences = undefined: extra preferences to merge into the prefs
   * @return the settings
   */
-  defaultWindowPreferences (extraPreferences = undefined) {
+  defaultBrowserWindowPreferences () {
     let icon
     if (process.platform === 'win32') {
       icon = path.join(__dirname, '/../../../icons/app.ico')
@@ -54,32 +45,40 @@ class WaveboxWindow extends EventEmitter {
       icon = path.join(__dirname, '/../../../icons/app.png')
     }
 
-    return Object.assign({
+    return {
       title: 'Wavebox',
       icon: icon
-    }, extraPreferences)
+    }
   }
 
-  /**
-  * Creates and launches the window
-  * @param settings: the settings to salt the window with
-  * @param url: the start url
-  */
-  createWindow (settings, url) {
-    const screenLocation = this.loadWindowScreenLocation()
+  /* ****************************************************************************/
+  // Window lifecycle
+  /* ****************************************************************************/
 
-    // Load up the window location & last state
-    this.window = new BrowserWindow(Object.assign(settings, screenLocation))
-    if (screenLocation.maximized && settings.show !== false) {
+  /**
+  * Starts the app
+  * @param url: the start url
+  * @param browserWindowPreferences = {}: preferences to pass to the browser window
+  * @return this
+  */
+  create (url, browserWindowPreferences = {}) {
+    const savedLocation = this.locationSaver.getSavedScreenLocation()
+    const fullBrowserWindowPreferences = Object.assign({},
+      this.defaultBrowserWindowPreferences(),
+      savedLocation,
+      browserWindowPreferences
+    )
+
+    // Create the window
+    this.window = new BrowserWindow(fullBrowserWindowPreferences)
+    if (savedLocation.maximized && browserWindowPreferences.show !== false) {
       this.window.maximize()
     }
-    if (this.options.screenLocationNS) {
-      this.window.on('resize', (evt) => { this.saveWindowScreenLocation() })
-      this.window.on('move', (evt) => { this.saveWindowScreenLocation() })
-      this.window.on('maximize', (evt) => { this.saveWindowScreenLocation() })
-      this.window.on('unmaximize', (evt) => { this.saveWindowScreenLocation() })
-    }
+    this[settingStore.ui.showAppMenu ? 'showAppMenu' : 'hideAppMenu']()
 
+    // Bind window event listeners
+    this.window.on('close', (evt) => { this.emit('close', evt) })
+    this.window.on('closed', (evt) => this.destroy(evt))
     this.window.on('minimize', (evt) => {
       if (SUPPORTS_TRAY_MINIMIZE_CONFIG) {
         if (settingStore.tray.show && settingStore.tray.hideWhenMinimized) {
@@ -89,65 +88,38 @@ class WaveboxWindow extends EventEmitter {
       }
     })
 
-    this[settingStore.ui.showAppMenu ? 'showAppMenu' : 'hideAppMenu']()
+    // Register state savers
+    this.locationSaver.register(this.window)
 
-    // Bind to change events
-    this.window.on('close', (evt) => { this.emit('close', evt) })
-    settingStore.on('changed', this._boundFunctions.settingStoreChanged)
-    this.window.on('closed', (evt) => this.destroyWindow(evt))
+    // Bind other change listeners
+    settingStore.on('changed', this.boundUpdateWindowMenubar)
 
-    // Fire the whole thing off
+    // Load the start url
     this.window.loadURL(url)
+
+    return this
   }
 
   /**
   * Destroys the window
   * @param evt: the event that caused destroy
   */
-  destroyWindow (evt) {
-    settingStore.removeListener('changed', this._boundFunctions.settingStoreChanged)
-
-    this.window = null
+  destroy (evt) {
+    settingStore.removeListener('changed', this.boundUpdateWindowMenubar)
+    if (this.window) {
+      this.locationSaver.unregister(this.window)
+      if (!this.window.isDestroyed()) {
+        this.window.close()
+        this.window.destroy()
+      }
+      this.window = null
+    }
     this.emit('closed', evt)
   }
 
   /* ****************************************************************************/
-  // Window state
+  // State lifecycle
   /* ****************************************************************************/
-
-  /**
-  * Saves the window state to disk
-  */
-  saveWindowScreenLocation () {
-    clearTimeout(this.windowScreenLocationSaver)
-    this.windowScreenLocationSaver = setTimeout(() => {
-      if (!this.window) { return }
-      if (this.window.isMinimized()) { return }
-      const position = this.window.getPosition()
-      const size = this.window.getSize()
-
-      appStorage.setJSONItem(this.options.screenLocationNS, {
-        fullscreen: this.window.isFullScreen(),
-        maximized: this.window.isMaximized(),
-        x: position[0],
-        y: position[1],
-        width: size[0],
-        height: size[1]
-      })
-    }, 2000)
-  }
-
-  /**
-  * Loads the window state
-  * @return the state
-  */
-  loadWindowScreenLocation () {
-    if (this.options.screenLocationNS) {
-      return appStorage.getJSONItem(this.options.screenLocationNS, {})
-    }
-
-    return {}
-  }
 
   /**
   * Updates the menubar
@@ -258,7 +230,7 @@ class WaveboxWindow extends EventEmitter {
   * @return this
   */
   pingResourceUsage () {
-    this.window.webContents.send('ping-resource-usage', { })
+    this.window.webContents.send(WB_PING_RESOURCE_USAGE, { })
     return this
   }
 
@@ -307,7 +279,7 @@ class WaveboxWindow extends EventEmitter {
   * @return this
   */
   findStart () {
-    this.window.webContents.send('find-start', { })
+    this.window.webContents.send(WB_WINDOW_FIND_START, { })
     return this
   }
 
@@ -316,7 +288,7 @@ class WaveboxWindow extends EventEmitter {
   * @return this
   */
   findNext () {
-    this.window.webContents.send('find-next', { })
+    this.window.webContents.send(WB_WINDOW_FIND_NEXT, { })
     return this
   }
 
@@ -329,7 +301,7 @@ class WaveboxWindow extends EventEmitter {
   * @return this
   */
   zoomIn () {
-    this.window.webContents.send('zoom-in', { })
+    this.window.webContents.send(WB_WINDOW_ZOOM_IN, { })
     return this
   }
 
@@ -338,7 +310,7 @@ class WaveboxWindow extends EventEmitter {
   * @return this
   */
   zoomOut () {
-    this.window.webContents.send('zoom-out', { })
+    this.window.webContents.send(WB_WINDOW_ZOOM_OUT, { })
     return this
   }
 
@@ -347,7 +319,7 @@ class WaveboxWindow extends EventEmitter {
   * @return this
   */
   zoomReset () {
-    this.window.webContents.send('zoom-reset', { })
+    this.window.webContents.send(WB_WINDOW_ZOOM_RESET, { })
     return this
   }
 

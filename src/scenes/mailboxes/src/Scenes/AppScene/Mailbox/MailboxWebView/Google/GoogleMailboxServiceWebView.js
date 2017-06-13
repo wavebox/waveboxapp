@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
-import URI from 'urijs'
+import { settingsStore } from 'stores/settings'
 import { MailboxLinker } from 'stores/mailbox'
+import URI from 'urijs'
 
 const REF = 'mailbox_tab'
 
@@ -27,7 +28,7 @@ export default class GoogleMailboxServiceWebView extends React.Component {
   handleOpenNewWindow = (evt) => {
     const purl = URI(evt.url)
     if (purl.hostname() === 'docs.google.com') {
-      MailboxLinker.openContentWindow(this.props.mailboxId, evt.url, evt.options)
+      MailboxLinker.openContentWindow(this.props.mailboxId, this.props.serviceType, evt.url, evt.options)
     } else {
       MailboxLinker.openExternalWindow(evt.url)
     }
@@ -44,8 +45,8 @@ export default class GoogleMailboxServiceWebView extends React.Component {
         ref={REF}
         preload='../platform/webviewInjection/googleServiceTooling'
         mailboxId={mailboxId}
-        serviceType={serviceType}
-        newWindow={this.handleOpenNewWindow} />
+        newWindow={settingsStore.getState().launched.app.useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow}
+        serviceType={serviceType} />
     )
   }
 }

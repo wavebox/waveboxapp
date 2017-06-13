@@ -1,4 +1,5 @@
 const { ipcMain, BrowserWindow } = require('electron')
+const { WB_AUTH_GOOGLE, WB_AUTH_GOOGLE_COMPLETE, WB_AUTH_GOOGLE_ERROR } = require('../../shared/ipcEvents')
 const googleapis = require('googleapis')
 const userStore = require('../stores/userStore')
 const url = require('url')
@@ -9,7 +10,7 @@ class AuthGoogle {
   /* ****************************************************************************/
 
   constructor () {
-    ipcMain.on('auth-google', (evt, body) => {
+    ipcMain.on(WB_AUTH_GOOGLE, (evt, body) => {
       this.handleAuthGoogle(evt, body)
     })
   }
@@ -132,7 +133,7 @@ class AuthGoogle {
     Promise.resolve()
       .then(() => this.promptUserToGetAuthorizationCode(body.credentials, body.id))
       .then(({ push, google }) => {
-        evt.sender.send('auth-google-complete', {
+        evt.sender.send(WB_AUTH_GOOGLE_COMPLETE, {
           id: body.id,
           authMode: body.authMode,
           provisional: body.provisional,
@@ -141,7 +142,7 @@ class AuthGoogle {
           codeRedirectUri: body.credentials.GOOGLE_AUTH_RETURN_URL
         })
       }, (err) => {
-        evt.sender.send('auth-google-error', {
+        evt.sender.send(WB_AUTH_GOOGLE_ERROR, {
           id: body.id,
           authMode: body.authMode,
           provisional: body.provisional,

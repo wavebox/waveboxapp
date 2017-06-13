@@ -25,6 +25,15 @@ class SettingStore extends EventEmitter {
     this.tray = new TraySettings(persistence.getJSONItem(SEGMENTS.TRAY, {}))
     this.ui = new UISettings(persistence.getJSONItem(SEGMENTS.UI, {}))
 
+    this.launched = {
+      accelerators: this.accelerators,
+      app: this.app,
+      language: this.language,
+      os: this.os,
+      tray: this.tray,
+      ui: this.ui
+    }
+
     // Listen for changes
     persistence.on('changed:' + SEGMENTS.ACCELERATORS, () => {
       const prev = this.accelerators

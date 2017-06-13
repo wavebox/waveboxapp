@@ -1,4 +1,5 @@
 import alt from '../alt'
+import { WB_SUBMIT_PROCESS_RESOURCE_USAGE } from 'shared/ipcEvents'
 const { ipcRenderer } = window.nativeRequire('electron')
 
 class MonitorActions {
@@ -28,5 +29,5 @@ class MonitorActions {
 }
 
 const actions = alt.createActions(MonitorActions)
-ipcRenderer.on('submit-process-resource-usage', (evt, body) => actions.submitProcessResourceUsage(body))
+ipcRenderer.on(WB_SUBMIT_PROCESS_RESOURCE_USAGE, (evt, body) => actions.submitProcessResourceUsage(body))
 export default actions

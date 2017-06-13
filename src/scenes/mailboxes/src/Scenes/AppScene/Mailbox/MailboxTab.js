@@ -162,10 +162,10 @@ export default class MailboxTab extends React.Component {
           return (<GoogleMailboxMailWebView mailboxId={mailboxId} key={key} />)
         case CoreService.SERVICE_TYPES.COMMUNICATION:
           return (<GoogleMailboxCommunicationWebView mailboxId={mailboxId} key={key} />)
-        case CoreService.SERVICE_TYPES.STORAGE:
-          return (<GoogleMailboxStorageWebView mailboxId={mailboxId} key={key} />)
         case CoreService.SERVICE_TYPES.CONTACTS:
           return (<GoogleMailboxContactsWebView mailboxId={mailboxId} key={key} />)
+        case CoreService.SERVICE_TYPES.STORAGE:
+          return (<GoogleMailboxStorageWebView mailboxId={mailboxId} key={key} />)
         default:
           return (<GoogleMailboxServiceWebView mailboxId={mailboxId} serviceType={serviceType} key={key} />)
       }

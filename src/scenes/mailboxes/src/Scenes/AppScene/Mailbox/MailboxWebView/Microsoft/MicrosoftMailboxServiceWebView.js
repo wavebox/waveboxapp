@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
+import { settingsStore } from 'stores/settings'
 import { MailboxLinker } from 'stores/mailbox'
 
 const REF = 'mailbox_tab'
@@ -40,7 +41,7 @@ export default class MicrosoftMailboxServiceWebView extends React.Component {
         preload='../platform/webviewInjection/serviceTooling'
         mailboxId={mailboxId}
         serviceType={serviceType}
-        newWindow={this.handleOpenNewWindow} />
+        newWindow={settingsStore.getState().launched.app.useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow} />
     )
   }
 }

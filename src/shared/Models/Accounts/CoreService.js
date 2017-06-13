@@ -3,11 +3,21 @@ const SERVICE_TYPES = require('./ServiceTypes')
 const PROTOCOL_TYPES = require('./ProtocolTypes')
 const { MAILBOX_SLEEP_WAIT } = require('../../constants')
 
+const WINDOW_OPEN_MODES = Object.freeze({
+  CONTENT: 'CONTENT',
+  POPUP_CONTENT: 'POPUP_CONTENT',
+  EXTERNAL: 'EXTERNAL',
+  DEFAULT: 'DEFAULT',
+  DOWNLOAD: 'DOWNLOAD',
+  SUPPRESS: 'SUPPRESS'
+})
+
 class CoreService extends Model {
   /* **************************************************************************/
   // Class: Config & Types
   /* **************************************************************************/
 
+  static get WINDOW_OPEN_MODES () { return WINDOW_OPEN_MODES }
   static get SERVICE_TYPES () { return SERVICE_TYPES }
   static get PROTOCOL_TYPES () { return PROTOCOL_TYPES }
   static get type () { return SERVICE_TYPES.UNKNOWN }
@@ -86,6 +96,27 @@ class CoreService extends Model {
   get hasCustomCSS () { return !!this.customCSS }
   get customJS () { return this.__data__.customJS }
   get hasCustomJS () { return !!this.customJS }
+
+  /* **************************************************************************/
+  // Behaviour
+  /* **************************************************************************/
+
+  /**
+  * Gets the window open mode for a given url
+  * @param url: the url to open with
+  * @param parsedUrl: the url object parsed by nodejs url
+  * @param disposition: the open mode disposition
+  * @return the window open mode
+  */
+  getWindowOpenModeForUrl (url, parsedUrl, disposition) {
+    if (disposition === 'new-window' || url === 'about:blank') {
+      return WINDOW_OPEN_MODES.POPUP_CONTENT
+    } else if (disposition === 'save-to-disk') {
+      return WINDOW_OPEN_MODES.DOWNLOAD
+    } else {
+      return WINDOW_OPEN_MODES.DEFAULT
+    }
+  }
 }
 
 module.exports = CoreService

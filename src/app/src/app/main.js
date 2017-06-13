@@ -6,24 +6,30 @@
   if (AppUpdater.handleWin32SquirrelSwitches(app)) { return }
 
   // Single app instance
-  let windowManager
   const singleAppQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
     const AppSingleInstance = require('./AppSingleInstance')
-    AppSingleInstance.processSingleInstanceArgs(windowManager, commandLine, workingDirectory)
+    AppSingleInstance.processSingleInstanceArgs(commandLine, workingDirectory)
     return true
   })
   if (singleAppQuit) { app.quit(); return }
 
-  const argv = require('yargs').parse(process.argv)
+  // Global objects
+  global.Nodehun = require('nodehun')
+
+  // Setup the window manager
+  const appWindowManager = require('./appWindowManager')
   const MailboxesWindow = require('./windows/MailboxesWindow')
-  const ContentWindow = require('./windows/ContentWindow')
+  appWindowManager.attachMailboxesWindow(new MailboxesWindow())
+
+  // Startup
+  const argv = require('yargs').parse(process.argv)
   const AppPrimaryMenu = require('./AppPrimaryMenu')
   const AppKeyboardShortcuts = require('./AppKeyboardShortcuts')
-  const WindowManager = require('./windows/WindowManager')
   const storage = require('./storage')
   const settingStore = require('./stores/settingStore')
   const mailboxStore = require('./stores/mailboxStore')
   const userStore = require('./stores/userStore')
+  const ipcEvents = require('../shared/ipcEvents')
 
   Object.keys(storage).forEach((k) => storage[k].checkAwake())
   mailboxStore.checkAwake()
@@ -54,9 +60,7 @@
   // Global objects
   /* ****************************************************************************/
 
-  const mailboxesWindow = new MailboxesWindow()
-  windowManager = new WindowManager(mailboxesWindow)
-  const shortcutSelectors = AppPrimaryMenu.buildSelectors(windowManager)
+  const shortcutSelectors = AppPrimaryMenu.buildSelectors(appWindowManager)
   const appMenu = new AppPrimaryMenu(shortcutSelectors)
   const appKeyboardShortcuts = new AppKeyboardShortcuts(shortcutSelectors)
 
@@ -64,62 +68,56 @@
   // IPC Events
   /* ****************************************************************************/
 
-  ipcMain.on('new-window', (evt, body) => {
-    const window = new ContentWindow()
-    windowManager.addContentWindow(window)
-    window.start(windowManager.mailboxesWindow.window, body.url, body.partition, body.windowPreferences, body.webPreferences)
+  ipcMain.on(ipcEvents.WB_OPEN_MONITOR_WINDOW, (evt, body) => {
+    appWindowManager.openMonitorWindow()
   })
 
-  ipcMain.on('monitor-window', (evt, body) => {
-    windowManager.openMonitorWindow()
+  ipcMain.on(ipcEvents.WB_PONG_RESOURCE_USAGE, (evt, body) => {
+    appWindowManager.submitProcessResourceUsage(body)
   })
 
-  ipcMain.on('pong-resource-usage', (evt, body) => {
-    windowManager.submitProcessResourceUsage(body)
+  ipcMain.on(ipcEvents.WB_FOCUS_APP, (evt, body) => {
+    appWindowManager.focusMailboxesWindow()
   })
 
-  ipcMain.on('focus-app', (evt, body) => {
-    windowManager.focusMailboxesWindow()
+  ipcMain.on(ipcEvents.WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY, (evt, body) => {
+    appWindowManager.toggleMailboxWindowVisibilityFromTray()
   })
 
-  ipcMain.on('toggle-mailbox-visibility-from-tray', (evt, body) => {
-    windowManager.toggleMailboxWindowVisibilityFromTray()
+  ipcMain.on(ipcEvents.WB_SHOW_MAILBOX_WINDOW_FROM_TRAY, (evt, body) => {
+    appWindowManager.showMailboxWindowFromTray()
   })
 
-  ipcMain.on('show-mailbox-from-tray', (evt, body) => {
-    windowManager.showMailboxWindowFromTray()
+  ipcMain.on(ipcEvents.WB_QUIT_APP, (evt, body) => {
+    appWindowManager.quit()
   })
 
-  ipcMain.on('quit-app', (evt, body) => {
-    windowManager.quit()
-  })
-
-  ipcMain.on('relaunch-app', (evt, body) => {
+  ipcMain.on(ipcEvents.WB_RELAUNCH_APP, (evt, body) => {
     app.relaunch()
-    windowManager.quit()
+    appWindowManager.quit()
   })
 
-  ipcMain.on('squirrel-update-check', (evt, data) => {
+  ipcMain.on(ipcEvents.WB_SQUIRREL_UPDATE_CHECK, (evt, data) => {
     AppUpdater.updateCheck(data.url)
   })
 
-  ipcMain.on('squirrel-apply-update', (evt, body) => {
-    AppUpdater.applySquirrelUpdate(windowManager)
+  ipcMain.on(ipcEvents.WB_SQUIRREL_APPLY_UPDATE, (evt, body) => {
+    AppUpdater.applySquirrelUpdate(appWindowManager)
   })
 
-  ipcMain.on('prepare-webview-session', (evt, data) => {
-    mailboxesWindow.sessionManager.startManagingSession(data.partition, data.mailboxType)
+  ipcMain.on(ipcEvents.WB_PREPARE_WEBVIEW_SESSION, (evt, data) => {
+    appWindowManager.mailboxesWindow.sessionManager.startManagingSession(data.partition, data.mailboxType)
     evt.returnValue = true
   })
 
-  ipcMain.on('mailboxes-js-loaded', (evt, data) => {
+  ipcMain.on(ipcEvents.WB_MAILBOXES_WINDOW_JS_LOADED, (evt, data) => {
     if (argv.mailto) {
-      windowManager.mailboxesWindow.openMailtoLink(argv.mailto)
+      appWindowManager.mailboxesWindow.openMailtoLink(argv.mailto)
       delete argv.mailto
     } else {
       const index = argv._.findIndex((a) => a.indexOf('mailto') === 0)
       if (index !== -1) {
-        windowManager.mailboxesWindow.openMailtoLink(argv._[index])
+        appWindowManager.mailboxesWindow.openMailtoLink(argv._[index])
         argv._.splice(1)
       }
     }
@@ -136,8 +134,8 @@
       mailboxStore.getActiveMailbox(),
       mailboxStore.getActiveServiceType()
     )
-    windowManager.mailboxesWindow.start(openHidden)
-    AppUpdater.register(windowManager)
+    appWindowManager.mailboxesWindow.create(openHidden)
+    AppUpdater.register(appWindowManager)
   })
 
   app.on('window-all-closed', () => {
@@ -145,17 +143,17 @@
   })
 
   app.on('activate', () => {
-    windowManager.mailboxesWindow.show()
+    appWindowManager.mailboxesWindow.show()
   })
 
   app.on('before-quit', () => {
     appKeyboardShortcuts.unregister()
-    windowManager.forceQuit = true
+    appWindowManager.forceQuit = true
   })
 
   app.on('open-url', (evt, url) => { // osx only
     evt.preventDefault()
-    windowManager.mailboxesWindow.openMailtoLink(url)
+    appWindowManager.mailboxesWindow.openMailtoLink(url)
   })
 
   app.on('browser-window-focus', () => {

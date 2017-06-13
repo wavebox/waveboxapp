@@ -1,11 +1,11 @@
-const CoreService = require('../CoreService')
+const GoogleService = require('./GoogleService')
 
-class GooglePhotosService extends CoreService {
+class GooglePhotosService extends GoogleService {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  static get type () { return CoreService.SERVICE_TYPES.PHOTOS }
+  static get type () { return GoogleService.SERVICE_TYPES.PHOTOS }
   static get humanizedType () { return 'Google Photos' }
   static get humanizedLogos () {
     return [

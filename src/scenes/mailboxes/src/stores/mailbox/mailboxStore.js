@@ -5,7 +5,7 @@ import MailboxFactory from 'shared/Models/Accounts/MailboxFactory'
 import mailboxPersistence from './mailboxPersistence'
 import avatarPersistence from './avatarPersistence'
 import userStore from '../user/userStore'
-import { PERSISTENCE_INDEX_KEY, SERVICE_LOCAL_AVATAR_PREFIX } from 'shared/constants'
+import { PERSISTENCE_INDEX_KEY, SERVICE_LOCAL_AVATAR_PREFIX, MAILBOX_SLEEP_EXTEND } from 'shared/constants'
 import { BLANK_PNG } from 'shared/b64Assets'
 import uuid from 'uuid'
 import googleActions from '../google/googleActions'
@@ -22,6 +22,15 @@ import { SlackMailbox } from 'shared/Models/Accounts/Slack'
 import { TrelloMailbox } from 'shared/Models/Accounts/Trello'
 import { MicrosoftMailbox } from 'shared/Models/Accounts/Microsoft'
 import { GenericMailbox } from 'shared/Models/Accounts/Generic'
+import {
+  WB_AUTH_GOOGLE,
+  WB_AUTH_MICROSOFT,
+  WB_AUTH_SLACK,
+  WB_AUTH_TRELLO,
+  WB_MAILBOX_STORAGE_CHANGE_ACTIVE,
+  WB_PREPARE_WEBVIEW_SESSION,
+  WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT
+} from 'shared/ipcEvents'
 
 const { ipcRenderer } = window.nativeRequire('electron')
 const AUTH_MODES = {
@@ -443,7 +452,7 @@ class MailboxStore {
       } else {
         const mailboxModel = MailboxFactory.modelize(id, allMailboxes[id])
         this.mailboxes.set(id, mailboxModel)
-        ipcRenderer.sendSync('prepare-webview-session', { // Sync us across bridge so everything is setup before webview created
+        ipcRenderer.sendSync(WB_PREPARE_WEBVIEW_SESSION, { // Sync us across bridge so everything is setup before webview created
           partition: 'persist:' + mailboxModel.partition,
           mailboxType: mailboxModel.type
         })
@@ -505,7 +514,7 @@ class MailboxStore {
   handleAuthenticateGinboxMailbox ({ provisionalId }) {
     this.preventDefault()
     window.location.hash = '/mailbox_wizard/authenticating'
-    ipcRenderer.send('auth-google', {
+    ipcRenderer.send(WB_AUTH_GOOGLE, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
       provisional: GoogleMailbox.createJS(provisionalId, GoogleDefaultService.ACCESS_MODES.GINBOX)
@@ -515,7 +524,7 @@ class MailboxStore {
   handleAuthenticateGmailMailbox ({ provisionalId }) {
     this.preventDefault()
     window.location.hash = '/mailbox_wizard/authenticating'
-    ipcRenderer.send('auth-google', {
+    ipcRenderer.send(WB_AUTH_GOOGLE, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
       provisional: GoogleMailbox.createJS(provisionalId, GoogleDefaultService.ACCESS_MODES.GMAIL)
@@ -525,7 +534,7 @@ class MailboxStore {
   handleAuthenticateSlackMailbox ({ provisionalId }) {
     this.preventDefault()
     window.location.hash = '/mailbox_wizard/authenticating'
-    ipcRenderer.send('auth-slack', {
+    ipcRenderer.send(WB_AUTH_SLACK, {
       id: provisionalId,
       provisional: SlackMailbox.createJS(provisionalId)
     })
@@ -534,7 +543,7 @@ class MailboxStore {
   handleAuthenticateTrelloMailbox ({ provisionalId }) {
     this.preventDefault()
     window.location.hash = '/mailbox_wizard/authenticating'
-    ipcRenderer.send('auth-trello', {
+    ipcRenderer.send(WB_AUTH_TRELLO, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
       provisional: TrelloMailbox.createJS(provisionalId)
@@ -544,7 +553,7 @@ class MailboxStore {
   handleAuthenticateOutlookMailbox ({ provisionalId }) {
     this.preventDefault()
     window.location.hash = '/mailbox_wizard/authenticating'
-    ipcRenderer.send('auth-microsoft', {
+    ipcRenderer.send(WB_AUTH_MICROSOFT, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
       provisional: MicrosoftMailbox.createJS(provisionalId, MicrosoftMailbox.ACCESS_MODES.OUTLOOK)
@@ -554,7 +563,7 @@ class MailboxStore {
   handleAuthenticateOffice365Mailbox ({ provisionalId }) {
     this.preventDefault()
     window.location.hash = '/mailbox_wizard/authenticating'
-    ipcRenderer.send('auth-microsoft', {
+    ipcRenderer.send(WB_AUTH_MICROSOFT, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
       provisional: MicrosoftMailbox.createJS(provisionalId, MicrosoftMailbox.ACCESS_MODES.OFFICE365)
@@ -592,7 +601,7 @@ class MailboxStore {
     }
 
     window.location.hash = '/mailbox_wizard/authenticating'
-    ipcRenderer.send('auth-google', {
+    ipcRenderer.send(WB_AUTH_GOOGLE, {
       credentials: Bootstrap.credentials,
       id: mailboxId,
       authMode: AUTH_MODES.REAUTHENTICATE,
@@ -775,7 +784,7 @@ class MailboxStore {
   handleCreate ({ id, data }) {
     const mailboxModel = this.saveMailbox(id, data)
     this.saveIndex(this.index.concat(id))
-    ipcRenderer.sendSync('prepare-webview-session', { // Sync us across bridge so everything is setup before webview created
+    ipcRenderer.sendSync(WB_PREPARE_WEBVIEW_SESSION, { // Sync us across bridge so everything is setup before webview created
       partition: 'persist:' + mailboxModel.partition,
       mailboxType: mailboxModel.type
     })
@@ -981,7 +990,7 @@ class MailboxStore {
   * Sends the current active state to the main thread
   */
   sendActiveStateToMainThread () {
-    ipcRenderer.send('mailbox-storage-change-active', {
+    ipcRenderer.send(WB_MAILBOX_STORAGE_CHANGE_ACTIVE, {
       mailboxId: this.activeMailboxId(),
       serviceType: this.activeMailboxService()
     })
@@ -1016,18 +1025,51 @@ class MailboxStore {
     const service = mailbox ? mailbox.serviceForType(serviceType) : undefined
     const wait = service ? service.sleepableTimeout : 0
 
-    const key = `${mailboxId}:${serviceType}`
     if (wait <= 0) {
-      this.sleepingQueue.set(key, { sleeping: true, timer: null })
+      this._sendMailboxToSleep(mailboxId, serviceType)
     } else {
+      const key = `${mailboxId}:${serviceType}`
       this.sleepingQueue.set(key, {
         sleeping: false,
         timer: setTimeout(() => {
-          this.sleepingQueue.set(key, { sleeping: true, timer: null })
-          this.emitChange()
+          this._sendMailboxToSleep(mailboxId, serviceType)
         }, wait)
       })
     }
+  }
+
+  /**
+  * Runs the process of sending a webview to sleep whilst also checking if it owns any other windows
+  * @param mailboxId: the id of the mailbox
+  * @param serviceType: the type of service
+  */
+  _sendMailboxToSleep (mailboxId, serviceType) {
+    const key = `${mailboxId}:${serviceType}`
+    const responseId = uuid.v4()
+    const responder = (evt, { count }) => {
+      if (this.isSleeping(mailboxId, serviceType)) { return }
+
+      if (count === 0) {
+        this.clearSleep(mailboxId, serviceType)
+        this.sleepingQueue.set(key, { sleeping: true, timer: null })
+        this.emitChange()
+      } else {
+        this.clearSleep(mailboxId, serviceType)
+        this.sleepingQueue.set(key, {
+          sleeping: false,
+          timer: setTimeout(() => {
+            this._sendMailboxToSleep(mailboxId, serviceType)
+          }, MAILBOX_SLEEP_EXTEND)
+        })
+      }
+    }
+
+    ipcRenderer.once(responseId, responder)
+    ipcRenderer.send(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, {
+      mailboxId: mailboxId,
+      serviceType: serviceType,
+      response: responseId
+    })
   }
 
   /* **************************************************************************/

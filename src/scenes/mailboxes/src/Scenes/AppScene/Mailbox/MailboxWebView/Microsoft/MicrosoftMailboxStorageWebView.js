@@ -4,6 +4,7 @@ import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import { MailboxLinker, mailboxStore } from 'stores/mailbox'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import URI from 'urijs'
+import { settingsStore } from 'stores/settings'
 
 const REF = 'mailbox_tab'
 
@@ -79,7 +80,6 @@ export default class MicrosoftMailboxStorageWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleWillNavigate = (evt) => {
-    console.log(evt.url)
     const purl = URI(evt.url)
     let contentWindow = false
 
@@ -102,7 +102,7 @@ export default class MicrosoftMailboxStorageWebView extends React.Component {
     }
 
     if (contentWindow) {
-      MailboxLinker.openContentWindow(this.props.mailboxId, evt.url)
+      MailboxLinker.openContentWindow(this.props.mailboxId, CoreMailbox.SERVICE_TYPES.STORAGE, evt.url)
       const webviewDOM = this.refs[REF].getWebviewNode()
       webviewDOM.stop()
       webviewDOM.loadURL(this.state.service.url)
@@ -123,7 +123,7 @@ export default class MicrosoftMailboxStorageWebView extends React.Component {
         mailboxId={mailboxId}
         serviceType={CoreMailbox.SERVICE_TYPES.STORAGE}
         willNavigate={this.handleWillNavigate}
-        newWindow={this.handleOpenNewWindow} />
+        newWindow={settingsStore.getState().launched.app.useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow} />
     )
   }
 }

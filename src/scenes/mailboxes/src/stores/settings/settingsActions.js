@@ -1,5 +1,10 @@
 import alt from '../alt'
 import { SEGMENTS } from 'shared/Models/Settings/SettingsIdent'
+import {
+  WB_MAILBOXES_WINDOW_TOGGLE_SIDEBAR,
+  WB_MAILBOXES_WINDOW_TOGGLE_APP_MENU,
+  WB_QUIT_APP
+} from 'shared/ipcEvents'
 const {ipcRenderer} = window.nativeRequire('electron')
 
 class SettingsActions {
@@ -267,7 +272,7 @@ class SettingsActions {
   * Declines the EULA and quits the app
   */
   declineEULA () {
-    ipcRenderer.send('quit-app', {})
+    ipcRenderer.send(WB_QUIT_APP, {})
     return {}
   }
 
@@ -384,7 +389,7 @@ class SettingsActions {
 }
 
 const actions = alt.createActions(SettingsActions)
-ipcRenderer.on('toggle-sidebar', actions.toggleSidebar)
-ipcRenderer.on('toggle-app-menu', actions.toggleAppMenu)
+ipcRenderer.on(WB_MAILBOXES_WINDOW_TOGGLE_SIDEBAR, actions.toggleSidebar)
+ipcRenderer.on(WB_MAILBOXES_WINDOW_TOGGLE_APP_MENU, actions.toggleAppMenu)
 
 export default actions

@@ -1,11 +1,11 @@
-const CoreService = require('../CoreService')
+const GoogleService = require('./GoogleService')
 
-class GoogleCommunicationService extends CoreService {
+class GoogleCommunicationService extends GoogleService {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  static get type () { return CoreService.SERVICE_TYPES.COMMUNICATION }
+  static get type () { return GoogleService.SERVICE_TYPES.COMMUNICATION }
   static get humanizedType () { return 'Google Hangouts' }
   static get humanizedLogos () {
     return [
@@ -21,6 +21,30 @@ class GoogleCommunicationService extends CoreService {
   /* **************************************************************************/
 
   get url () { return 'https://hangouts.google.com' }
+
+  /* **************************************************************************/
+  // Behaviour
+  /* **************************************************************************/
+
+  /**
+  * Gets the window open mode for a given url
+  * @param url: the url to open with
+  * @param parsedUrl: the url object parsed by nodejs url
+  * @param disposition: the open mode disposition
+  * @return the window open mode
+  */
+  getWindowOpenModeForUrl (url, parsedUrl, disposition) {
+    const superMode = super.getWindowOpenModeForUrl(url, parsedUrl, disposition)
+    if (superMode !== this.constructor.WINDOW_OPEN_MODES.DEFAULT) { return superMode }
+
+    if (parsedUrl.hostname === 'hangouts.google.com') {
+      if (parsedUrl.pathname.indexOf('/CONVERSATION/') !== -1 || parsedUrl.pathname.indexOf('/hangouts/_/meet') !== -1) {
+        return this.constructor.WINDOW_OPEN_MODES.CONTENT
+      }
+    }
+
+    return this.constructor.WINDOW_OPEN_MODES.DEFAULT
+  }
 }
 
 module.exports = GoogleCommunicationService

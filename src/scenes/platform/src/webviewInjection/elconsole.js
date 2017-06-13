@@ -1,4 +1,8 @@
-const ipcRenderer = require('electron').ipcRenderer
+const { ipcRenderer, remote } = require('electron')
+const {
+  WB_BROWSER_ELEVATED_LOG,
+  WB_BROWSER_ELEVATED_ERROR
+} = remote.require('./shared/ipcEvents')
 
 class ELConsole {
   /**
@@ -6,7 +10,7 @@ class ELConsole {
   */
   log () {
     ipcRenderer.sendToHost({
-      type: 'elevated-log',
+      type: WB_BROWSER_ELEVATED_LOG,
       messages: Array.from(arguments)
     })
     console.log.apply(this, Array.from(arguments))
@@ -17,7 +21,7 @@ class ELConsole {
   */
   error () {
     ipcRenderer.sendToHost({
-      type: 'elevated-error',
+      type: WB_BROWSER_ELEVATED_ERROR,
       messages: Array.from(arguments)
     })
     console.error.apply(this, Array.from(arguments))

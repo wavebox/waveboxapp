@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import { WB_PING_RESOURCE_USAGE } from 'shared/ipcEvents'
 
 class MailboxDispatch extends EventEmitter {
   /* **************************************************************************/
@@ -75,7 +76,7 @@ class MailboxDispatch extends EventEmitter {
   * @param description: the description that should be returned in the pong
   */
   pingResourceUsage (mailboxId, serviceType, description) {
-    return this.emit('ping-resource-usage', {
+    return this.emit(WB_PING_RESOURCE_USAGE, {
       mailboxId: mailboxId,
       serviceType: serviceType,
       description: description

@@ -8,6 +8,10 @@ import {
   UPDATE_FEED_WIN32_IA32,
   UPDATE_FEED_WIN32_X64
 } from 'shared/constants'
+import {
+  WB_SQUIRREL_UPDATE_CHECK,
+  WB_SQUIRREL_APPLY_UPDATE
+} from 'shared/ipcEvents'
 
 const { ipcRenderer } = window.nativeRequire('electron')
 const pkg = window.appPackage()
@@ -189,7 +193,7 @@ class UpdaterStore {
   }
 
   handleSquirrelInstallUpdate () {
-    ipcRenderer.send('squirrel-apply-update', {})
+    ipcRenderer.send(WB_SQUIRREL_APPLY_UPDATE, {})
   }
 
   handleSquirrelUpdateDisabled () {
@@ -259,7 +263,7 @@ class UpdaterStore {
       // Squirrel does the donkey work for us on osx and checks the server for the update path
       this.updateState = UPDATE_STATES.CHECKING
       this.showUserPrompt()
-      ipcRenderer.send('squirrel-update-check', {
+      ipcRenderer.send(WB_SQUIRREL_UPDATE_CHECK, {
         url: `${UPDATE_FEED_DARWIN}?v=${pkg.version}`
       })
     } else if (process.platform === 'win32') {
@@ -284,7 +288,7 @@ class UpdaterStore {
             return Promise.resolve()
               .then(() => res.json())
               .then((res) => {
-                ipcRenderer.send('squirrel-update-check', { url: res.url })
+                ipcRenderer.send(WB_SQUIRREL_UPDATE_CHECK, { url: res.url })
                 this.updateState = UPDATE_STATES.DOWNLOADING
                 this.showUserPrompt()
                 this.emitChange()

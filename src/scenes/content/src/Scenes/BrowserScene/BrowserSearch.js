@@ -2,6 +2,9 @@ import React from 'react'
 import { Paper, TextField, IconButton } from 'material-ui'
 import * as Colors from 'material-ui/styles/colors'
 import { browserActions, browserStore } from 'stores/browser'
+import {
+  WB_WINDOW_FIND_START
+} from 'shared/ipcEvents'
 
 const { ipcRenderer } = window.nativeRequire('electron')
 
@@ -14,12 +17,12 @@ export default class BrowserSearch extends React.Component {
 
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
-    ipcRenderer.on('find-start', this.focus)
+    ipcRenderer.on(WB_WINDOW_FIND_START, this.focus)
   }
 
   componentWillUnmount () {
     browserStore.unlisten(this.browserUpdated)
-    ipcRenderer.removeListener('find-start', this.focus)
+    ipcRenderer.removeListener(WB_WINDOW_FIND_START, this.focus)
   }
 
   /* **************************************************************************/

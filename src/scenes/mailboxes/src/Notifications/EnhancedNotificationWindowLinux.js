@@ -1,4 +1,5 @@
 import uuid from 'uuid'
+import { WB_PING_RESOURCE_USAGE, WB_PONG_RESOURCE_USAGE } from 'shared/ipcEvents'
 
 const { ipcRenderer, remote } = window.nativeRequire('electron')
 const { BrowserWindow } = remote
@@ -35,7 +36,7 @@ class EnhancedNotificationWindowLinux {
 
     this.window.on('page-title-updated', this.handleNotificationEvent)
     this.window.once('ready-to-show', this.handleWindowReady)
-    ipcRenderer.on('ping-resource-usage', this.handlePingResourceUsage)
+    ipcRenderer.on(WB_PING_RESOURCE_USAGE, this.handlePingResourceUsage)
     window.addEventListener('beforeunload', () => {
       this.window.close()
     })
@@ -54,7 +55,7 @@ class EnhancedNotificationWindowLinux {
       )
     `
     this.window.webContents.executeJavaScript(js, (res) => {
-      ipcRenderer.send('pong-resource-usage', res)
+      ipcRenderer.send(WB_PONG_RESOURCE_USAGE, res)
     })
   }
 

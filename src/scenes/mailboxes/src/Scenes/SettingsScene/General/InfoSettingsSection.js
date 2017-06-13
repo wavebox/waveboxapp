@@ -4,6 +4,7 @@ import styles from '../SettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import * as Colors from 'material-ui/styles/colors'
 import { updaterActions } from 'stores/updater'
+import { WB_OPEN_MONITOR_WINDOW } from 'shared/ipcEvents'
 const { ipcRenderer } = window.nativeRequire('electron')
 const pkg = window.appPackage()
 
@@ -17,7 +18,7 @@ export default class InfoSettingsSection extends React.Component {
   */
   handleShowMemoryInfo = (evt) => {
     evt.preventDefault()
-    ipcRenderer.send('monitor-window', {})
+    ipcRenderer.send(WB_OPEN_MONITOR_WINDOW, {})
   }
 
   /**

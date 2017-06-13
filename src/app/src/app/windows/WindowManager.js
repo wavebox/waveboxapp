@@ -1,4 +1,4 @@
-const {app} = require('electron')
+const { app } = require('electron')
 const settingStore = require('../stores/settingStore')
 const {
   TraySettings: { SUPPORTS_TRAY_MINIMIZE_CONFIG }
@@ -15,9 +15,20 @@ class WindowManager {
   */
   constructor (mailboxesWindow) {
     this.contentWindows = []
-    this.mailboxesWindow = mailboxesWindow
+    this.mailboxesWindow = null
     this.monitor = { window: null, ping: null, active: false }
     this.forceQuit = false
+  }
+
+  /**
+  * Attaches a mailboxes window
+  * @param mailboxesWindow: the window to attach
+  */
+  attachMailboxesWindow (mailboxesWindow) {
+    if (this.mailboxesWindow) {
+      throw new Error('Mailboxes window already attached')
+    }
+    this.mailboxesWindow = mailboxesWindow
     this.mailboxesWindow.on('close', (e) => this.handleClose(e))
     this.mailboxesWindow.on('closed', () => {
       this.mailboxesWindow = null
@@ -83,7 +94,7 @@ class WindowManager {
     if (this.monitor.active) { return }
 
     this.monitor.window = new MonitorWindow()
-    this.monitor.window.start()
+    this.monitor.window.create()
     this.monitor.ping = setInterval(() => {
       this.contentWindows.forEach((w) => w.pingResourceUsage())
       this.mailboxesWindow.pingResourceUsage()
@@ -201,6 +212,15 @@ class WindowManager {
     } else {
       return this.contentWindows.find((w) => w.isFocused())
     }
+  }
+
+  /**
+  * Gets the content windows with the given ownerId
+  * @param ownerId: the id to get
+  * @return a list of content windows with the specified owner id
+  */
+  getContentWindowsWithOwnerId (ownerId) {
+    return this.contentWindows.filter((w) => w.ownerId === ownerId)
   }
 }
 

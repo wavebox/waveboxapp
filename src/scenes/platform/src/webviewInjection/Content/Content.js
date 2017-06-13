@@ -2,7 +2,8 @@ const injector = require('../injector')
 const Browser = require('../Browser/Browser')
 const Wavebox = require('../Wavebox/Wavebox')
 const path = require('path')
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, remote } = require('electron')
+const { WB_BROWSER_GUEST_WINDOW_CLOSE } = remote.require('./shared/ipcEvents')
 
 class Content {
   /* **************************************************************************/
@@ -29,8 +30,8 @@ class Content {
         } catch (ex) { return }
         if (!data.wavebox) { return }
 
-        if (data.type === 'guest-window-close') {
-          ipcRenderer.sendToHost({ type: 'guest-window-close' })
+        if (data.type === WB_BROWSER_GUEST_WINDOW_CLOSE) {
+          ipcRenderer.sendToHost({ type: WB_BROWSER_GUEST_WINDOW_CLOSE })
         }
       }
     })

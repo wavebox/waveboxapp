@@ -1,4 +1,5 @@
 import alt from '../alt'
+import { WB_AUTH_WAVEBOX_COMPLETE, WB_AUTH_WAVEBOX_ERROR } from 'shared/ipcEvents'
 const { ipcRenderer } = window.nativeRequire('electron')
 
 class UserActions {
@@ -78,7 +79,7 @@ class UserActions {
 const actions = alt.createActions(UserActions)
 
 // Auth
-ipcRenderer.on('auth-wavebox-complete', actions.authenticationSuccess)
-ipcRenderer.on('auth-wavebox-error', actions.authenticationFailure)
+ipcRenderer.on(WB_AUTH_WAVEBOX_COMPLETE, actions.authenticationSuccess)
+ipcRenderer.on(WB_AUTH_WAVEBOX_ERROR, actions.authenticationFailure)
 
 export default actions

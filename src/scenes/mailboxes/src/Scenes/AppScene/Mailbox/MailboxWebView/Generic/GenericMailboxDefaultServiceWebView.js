@@ -3,7 +3,11 @@ import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import { MailboxLinker, mailboxStore, mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
+import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
+import {
+  WB_BROWSER_NOTIFICATION_PRESENT
+} from 'shared/ipcEvents'
 
 const REF = 'mailbox_tab'
 
@@ -85,7 +89,7 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     if (this.state.openWindowsExternally) {
       MailboxLinker.openExternalWindow(evt.url)
     } else {
-      MailboxLinker.openContentWindow(this.props.mailboxId, evt.url, evt.options)
+      MailboxLinker.openContentWindow(this.props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT, evt.url, evt.options)
     }
   }
 
@@ -123,7 +127,7 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
   */
   handleIPCMessage = (evt) => {
     switch (evt.channel.type) {
-      case 'browser-notification-present': this.handleBrowserNotificationPresented(); break
+      case WB_BROWSER_NOTIFICATION_PRESENT: this.handleBrowserNotificationPresented(); break
       default: break
     }
   }
@@ -170,8 +174,8 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
         preload='../platform/webviewInjection/genericDefaultServiceTooling'
         mailboxId={mailboxId}
         url={url}
+        newWindow={settingsStore.getState().launched.app.useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
-        newWindow={this.handleOpenNewWindow}
         didChangeThemeColor={this.handleThemeColorChanged}
         pageTitleUpdated={this.handlePageTitleUpdated}
         pageFaviconUpdated={this.handlePageFaviconUpdated}

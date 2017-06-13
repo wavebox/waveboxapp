@@ -2,6 +2,28 @@ import alt from '../alt'
 import mailboxDispatch from './mailboxDispatch'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import ServiceReducer from './ServiceReducer'
+import {
+  WB_AUTH_GOOGLE_COMPLETE,
+  WB_AUTH_GOOGLE_ERROR,
+  WB_AUTH_MICROSOFT_COMPLETE,
+  WB_AUTH_MICROSOFT_ERROR,
+  WB_AUTH_SLACK_COMPLETE,
+  WB_AUTH_SLACK_ERROR,
+  WB_AUTH_TRELLO_COMPLETE,
+  WB_AUTH_TRELLO_ERROR,
+
+  WB_WINDOW_FIND_START,
+  WB_WINDOW_FIND_NEXT,
+  WB_WINDOW_ZOOM_IN,
+  WB_WINDOW_ZOOM_OUT,
+  WB_WINDOW_ZOOM_RESET,
+
+  WB_MAILBOXES_WINDOW_SWITCH_MAILBOX,
+  WB_MAILBOXES_WINDOW_SWITCH_SERVICE_INDEX,
+
+  WB_PING_RESOURCE_USAGE
+} from 'shared/ipcEvents'
+
 const { ipcRenderer, remote } = window.nativeRequire('electron')
 const { session } = remote
 
@@ -441,24 +463,24 @@ class MailboxActions {
 const actions = alt.createActions(MailboxActions)
 
 // Auth
-ipcRenderer.on('auth-google-complete', actions.authGoogleMailboxSuccess)
-ipcRenderer.on('auth-google-error', actions.authGoogleMailboxFailure)
-ipcRenderer.on('auth-slack-complete', actions.authSlackMailboxSuccess)
-ipcRenderer.on('auth-slack-error', actions.authSlackMailboxFailure)
-ipcRenderer.on('auth-trello-complete', actions.authTrelloMailboxSuccess)
-ipcRenderer.on('auth-trello-error', actions.authTrelloMailboxFailure)
-ipcRenderer.on('auth-microsoft-complete', actions.authMicrosoftMailboxSuccess)
-ipcRenderer.on('auth-microsoft-error', actions.authMicrosoftMailboxFailure)
+ipcRenderer.on(WB_AUTH_GOOGLE_COMPLETE, actions.authGoogleMailboxSuccess)
+ipcRenderer.on(WB_AUTH_GOOGLE_ERROR, actions.authGoogleMailboxFailure)
+ipcRenderer.on(WB_AUTH_SLACK_COMPLETE, actions.authSlackMailboxSuccess)
+ipcRenderer.on(WB_AUTH_SLACK_ERROR, actions.authSlackMailboxFailure)
+ipcRenderer.on(WB_AUTH_TRELLO_COMPLETE, actions.authTrelloMailboxSuccess)
+ipcRenderer.on(WB_AUTH_TRELLO_ERROR, actions.authTrelloMailboxFailure)
+ipcRenderer.on(WB_AUTH_MICROSOFT_COMPLETE, actions.authMicrosoftMailboxSuccess)
+ipcRenderer.on(WB_AUTH_MICROSOFT_ERROR, actions.authMicrosoftMailboxFailure)
 
 // Mailbox modifiers
-ipcRenderer.on('zoom-in', () => actions.reduceService(undefined, undefined, ServiceReducer.increaseZoom))
-ipcRenderer.on('zoom-out', () => actions.reduceService(undefined, undefined, ServiceReducer.decreaseZoom))
-ipcRenderer.on('zoom-reset', () => actions.reduceService(undefined, undefined, ServiceReducer.resetZoom))
-ipcRenderer.on('find-start', () => actions.startSearchingMailbox())
-ipcRenderer.on('find-next', () => actions.searchNextTerm())
+ipcRenderer.on(WB_WINDOW_ZOOM_IN, () => actions.reduceService(undefined, undefined, ServiceReducer.increaseZoom))
+ipcRenderer.on(WB_WINDOW_ZOOM_OUT, () => actions.reduceService(undefined, undefined, ServiceReducer.decreaseZoom))
+ipcRenderer.on(WB_WINDOW_ZOOM_RESET, () => actions.reduceService(undefined, undefined, ServiceReducer.resetZoom))
+ipcRenderer.on(WB_WINDOW_FIND_START, () => actions.startSearchingMailbox())
+ipcRenderer.on(WB_WINDOW_FIND_NEXT, () => actions.searchNextTerm())
 
 // Switching
-ipcRenderer.on('switch-mailbox', (evt, req) => {
+ipcRenderer.on(WB_MAILBOXES_WINDOW_SWITCH_MAILBOX, (evt, req) => {
   if (req.mailboxId) {
     actions.changeActive(req.mailboxId, req.serviceType)
   } else if (req.prev) {
@@ -467,9 +489,9 @@ ipcRenderer.on('switch-mailbox', (evt, req) => {
     actions.changeActiveToNext()
   }
 })
-ipcRenderer.on('switch-service-index', (evt, req) => actions.changeActiveServiceIndex(req.index))
+ipcRenderer.on(WB_MAILBOXES_WINDOW_SWITCH_SERVICE_INDEX, (evt, req) => actions.changeActiveServiceIndex(req.index))
 
 // Misc
-ipcRenderer.on('ping-resource-usage', actions.pingResourceUsage)
+ipcRenderer.on(WB_PING_RESOURCE_USAGE, actions.pingResourceUsage)
 
 export default actions

@@ -1,6 +1,7 @@
 import React from 'react'
 import BrowserView from 'sharedui/Components/BrowserView'
 import URI from 'urijs'
+import { WAVEBOX_CAPTURE_URLS } from 'shared/constants'
 const { remote: {shell} } = window.nativeRequire('electron')
 
 const REF = 'webview'
@@ -19,25 +20,25 @@ export default class WaveboxWebView extends React.Component {
     const purl = URI(url)
     if (purl.hostname() === 'wavebox.io') {
       switch (purl.pathname()) {
-        case '/app/redirect/settings':
+        case WAVEBOX_CAPTURE_URLS.SETTINGS:
           window.location.hash = '/settings'
           return true
-        case '/app/redirect/settings/pro':
+        case WAVEBOX_CAPTURE_URLS.SETTINGS_PRO:
           window.location.hash = '/settings/pro'
           return true
-        case '/app/redirect/home':
+        case WAVEBOX_CAPTURE_URLS.HOME:
           window.location.hash = '/'
           return true
-        case '/app/redirect/waveboxauth':
+        case WAVEBOX_CAPTURE_URLS.WAVEBOX_AUTH:
           window.location.hash = '/account/auth'
           return true
-        case '/app/redirect/waveboxauth/payment':
+        case WAVEBOX_CAPTURE_URLS.WAVEBOX_AUTH_PAYMENT:
           window.location.hash = '/account/auth/payment'
           return true
-        case '/app/redirect/waveboxauth/affiliate':
+        case WAVEBOX_CAPTURE_URLS.WAVEBOX_AUTH_AFFILIATE:
           window.location.hash = '/account/auth/affiliate'
           return true
-        case '/app/redirect/pro/buy':
+        case WAVEBOX_CAPTURE_URLS.WAVEBOX_PRO_BUY:
           window.location.hash = '/'
           shell.openExternal(purl.search(true).url)
           return true
