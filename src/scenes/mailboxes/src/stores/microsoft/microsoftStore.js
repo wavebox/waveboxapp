@@ -282,7 +282,7 @@ class MicrosoftStore {
         this.emitChange()
       })
       .catch((err) => {
-        this.trackCloseRequest(REQUEST_TYPES.NOTIFICATION, mailboxId, requestId)
+        this.trackCloseRequest(REQUEST_TYPES.MAIL, mailboxId, requestId)
         console.error(err)
         this.emitChange()
       })

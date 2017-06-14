@@ -15,6 +15,7 @@ class ServerVent extends EventEmitter {
     super()
 
     this._socket = null
+    this._reconnectTO = null
     this._websocketUpgrade = null
     this._clientId = null
     this._clientToken = null
@@ -46,21 +47,7 @@ class ServerVent extends EventEmitter {
       }
     })
     this._socket.onError(() => {
-      console.warn('[SYNCS] Error connecting')
-      if (window.navigator.onLine !== false) {
-        if (this._socket.transport === window.WebSocket) {
-          console.warn('[SYNCS][WebSocket] Next retry LongPoll')
-          this._socket.transport = LongPoll
-          clearTimeout(this._websocketUpgrade)
-          this._websocketUpgrade = setTimeout(() => {
-            this._upgradeToWebsocket()
-          }, SYNC_SOCKET_UPGRADE_INTERVAL)
-        } else if (this._socket.transport === LongPoll) {
-          console.warn('[SYNCS][LongPoll] Next retry WebSocket')
-          this._socket.transport = window.WebSocket
-          clearTimeout(this._websocketUpgrade)
-        }
-      }
+      this._handleSocketError()
     })
     this._socket.onOpen(() => {
       if (this._socket.transport === window.WebSocket) {
@@ -85,9 +72,53 @@ class ServerVent extends EventEmitter {
     this._socket.disconnect()
     this._socket = null
     clearTimeout(this._websocketUpgrade)
+    clearTimeout(this._reconnectTO)
     this._pushChannels.clear()
 
     return this
+  }
+
+  /* ****************************************************************************/
+  // Reconnection lifecycle
+  /* ****************************************************************************/
+
+  /**
+  * Handles the socket coming down in an error
+  */
+  _handleSocketError () {
+    console.warn('[SYNCS] Error connecting')
+    if (window.navigator.onLine !== false) {
+      this._socket.disconnect()
+      const reconnectWait = Math.floor(Math.random() * 4500) + 500
+
+      if (this._socket.transport === window.WebSocket) {
+        console.warn(`[SYNCS][WebSocket] Next retry LongPoll in ${reconnectWait}ms`)
+        this._socket.transport = LongPoll
+      } else if (this._socket.transport === LongPoll) {
+        console.warn(`[SYNCS][LongPoll] Next retry WebSocket in ${reconnectWait}ms`)
+        this._socket.transport = window.WebSocket
+      }
+
+      clearTimeout(this._reconnectTO)
+      this._reconnectTO = setTimeout(() => {
+        this._socket.connect()
+        if (this._socket.transport === LongPoll) {
+          this._scheduleWebsocketUpgrade()
+        } else if (this._socket.transport === window.WebSocket) {
+          clearTimeout(this._websocketUpgrade)
+        }
+      }, reconnectWait)
+    }
+  }
+
+  /**
+  * Schedules an upgrade to websocket
+  */
+  _scheduleWebsocketUpgrade () {
+    clearTimeout(this._websocketUpgrade)
+    this._websocketUpgrade = setTimeout(() => {
+      this._upgradeToWebsocket()
+    }, SYNC_SOCKET_UPGRADE_INTERVAL)
   }
 
   /**
@@ -118,6 +149,11 @@ class ServerVent extends EventEmitter {
       })
       .receive('error', (err) => {
         console.error('[SYNCS] Failed to join client channel', err)
+      })
+      .receive('timeout', () => {
+        console.warn('[SYNCS] Warning timeout on client channel. Will retry')
+        clientChannel.leave()
+        this._setupVents()
       })
     clientChannel.on('userDetails', userActions.remoteChangeAccount)
 
@@ -150,11 +186,18 @@ class ServerVent extends EventEmitter {
         channel.leave()
         this._pushChannels.delete(mailboxId)
       })
+      .receive('timeout', () => {
+        console.warn('[SYNCS] Warning timeout on push channel. Will retry')
+        channel.leave()
+        this._pushChannels.delete(mailboxId)
+        this.startListeningForGooglePushUpdates(mailboxId, email, pushToken)
+      })
     channel.on('historyChanged', (data) => {
       googleActions.mailHistoryIdChangedFromWatch(data)
       Debug.flagLog('googleLogServerPings', `[GOOGLE:PING] unread ${data.emailAddress}`)
     })
     this._pushChannels.set(mailboxId, channel)
+
     return this
   }
 
