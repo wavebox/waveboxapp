@@ -69,12 +69,14 @@ class SlackHTTP {
   /**
   * Gets the unread info from the server
   * @param auth: the auth token
+  * @param simpleUnreads = true: true to return the simple unread counts
   */
-  static fetchUnreadInfo (auth) {
+  static fetchUnreadInfo (auth, simpleUnreads = true) {
     if (!auth) { return this._rejectWithNoAuth() }
 
     const query = querystring.stringify({
-      token: auth
+      token: auth,
+      simple_unreads: simpleUnreads
     })
     return Promise.resolve()
       .then(() => window.fetch('https://slack.com/api/users.counts?' + query))

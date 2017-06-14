@@ -53,12 +53,10 @@ export default class InfoSettingsSection extends React.Component {
           Check for Update
         </a>
         <div style={{ fontSize: '85%' }}>
-          <p>
-            {`Wavebox ${pkg.version}`}
-            <span style={{color: Colors.grey400}}>
-              {` Electron/${process.versions.electron} Chromium/${process.versions.chrome}`}
-            </span>
-          </p>
+          <p>{`Wavebox ${pkg.version}`}</p>
+          {pkg.earlyBuildId ? (
+            <p>{`Early Build Reference: ${pkg.earlyBuildId}`}</p>
+          ) : undefined}
         </div>
       </Paper>
     )

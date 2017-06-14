@@ -72,7 +72,7 @@ class Analytics {
       ul: window.navigator.language,
       an: pkg.name,
       ua: window.navigator.userAgent,
-      av: process.platform + '-' + pkg.version
+      av: `${process.platform}-${pkg.version}${pkg.earlyBuildId ? '-' + pkg.earlyBuildId : ''}`
     }, args)
     const qs = querystring.stringify(fullArgs)
 

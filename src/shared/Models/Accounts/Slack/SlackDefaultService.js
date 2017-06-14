@@ -53,7 +53,7 @@ class SlackDefaultService extends CoreService {
   */
   _isGroupAlive (group) {
     if (group.is_archived === true) { return false }
-    if (group.is_muted === false) { return false }
+    if (group.is_muted === true) { return false }
     return true
   }
 
@@ -89,7 +89,7 @@ class SlackDefaultService extends CoreService {
   get hasUnreadActivity () {
     const channelId = Object.keys(this.slackUnreadChannelInfo).find((channelId) => {
       const chan = this.slackUnreadChannelInfo[channelId]
-      return this._isChannelAlive(chan) ? chan.unread_count !== 0 : false
+      return this._isChannelAlive(chan) && chan.has_unreads
     })
     if (channelId) { return true }
     return false

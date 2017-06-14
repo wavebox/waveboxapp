@@ -301,6 +301,7 @@ class SlackStore {
 
     Debug.flagLog('slackLogUnreadCounts', `[SLACK:UNREAD] start ${mailboxId}`)
     const requestId = this.trackOpenRequest(REQUEST_TYPES.UNREAD, mailboxId)
+
     Promise.resolve()
       .then(() => SlackHTTP.fetchUnreadInfo(mailbox.authToken))
       .then((response) => {
@@ -321,7 +322,7 @@ class SlackStore {
                 is_muted: c.is_muted,
                 is_member: c.is_member,
                 mention_count: c.mention_count_display,
-                unread_count: c.unread_count_display
+                has_unreads: c.has_unreads
               }
             }),
             groups: response.groups.map((g) => {
@@ -330,7 +331,7 @@ class SlackStore {
                 is_archived: g.is_archived,
                 is_muted: g.is_muted,
                 mention_count: g.mention_count_display,
-                unread_count: g.unread_count_display
+                has_unreads: g.unread_count_display
               }
             }),
             ims: response.ims.map((i) => {

@@ -172,11 +172,25 @@ export default class WebView extends React.Component {
     })
 
     // Wait for the DOM to pain before running this
-    setTimeout(() => {
-      if (this.props.onWebContentsAttached) {
-        this.props.onWebContentsAttached(node.getWebContents())
+    let webContentsAttachedAttempts = 0
+    this.webContentsAttachedInterval = setInterval(() => {
+      webContentsAttachedAttempts++
+      const webContents = node.getWebContents()
+      if (webContents) {
+        clearInterval(this.webContentsAttachedInterval)
+        if (this.props.onWebContentsAttached) {
+          this.props.onWebContentsAttached(webContents)
+        }
       }
-    })
+
+      if (webContentsAttachedAttempts > 2000) {
+        clearInterval(this.webContentsAttachedInterval)
+      }
+    }, 1)
+  }
+
+  componentWillUnmount () {
+    clearInterval(this.webContentsAttachedInterval)
   }
 
   componentWillReceiveProps (nextProps) {

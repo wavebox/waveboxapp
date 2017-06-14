@@ -132,6 +132,7 @@
             const query = querystring.stringify({
               token: window.bootstrap.clientToken,
               version: pkg.version,
+              bid: pkg.earlyBuildId || 'release',
               ident: pkg.name,
               api_key: credentials.API_KEY,
               protocol: credentials.API_KEY ? 2 : 1,

@@ -21,7 +21,7 @@ class SlackDefaultServiceReducer extends ServiceReducer {
           is_muted: channel.is_muted,
           is_member: channel.is_member,
           mention_count: channel.mention_count_display,
-          unread_count: channel.unread_count_display
+          has_unreads: channel.has_unreads
         }
         return acc
       }, {}),
@@ -64,7 +64,7 @@ class SlackDefaultServiceReducer extends ServiceReducer {
         slackUnreadChannelInfo: {
           [rtmEvent.channel]: {
             mention_count: rtmEvent.mention_count_display,
-            unread_count: rtmEvent.unread_count_display
+            has_unreads: rtmEvent.unread_count_display !== 0
           }
         }
       })
@@ -128,6 +128,8 @@ class SlackDefaultServiceReducer extends ServiceReducer {
     if (mailbox.hasSelfOverview) {
       if (mailbox.selfOverview.id === rtmEvent.user) {
         return undefined // We created the message, nothing to do
+      } else if (mailbox.selfOverview.id === ((rtmEvent.message || {}).edited || {}).user) {
+        return undefined // We edited the message, nothing to do
       }
     }
 
@@ -152,7 +154,7 @@ class SlackDefaultServiceReducer extends ServiceReducer {
         slackUnreadChannelInfo: {
           [rtmEvent.channel]: {
             mention_count: channelInfo.mention_count + (userMentioned ? 1 : 0),
-            unread_count: channelInfo.unread_count + 1
+            has_unreads: true
           }
         }
       })

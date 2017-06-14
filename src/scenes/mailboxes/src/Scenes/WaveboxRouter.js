@@ -6,6 +6,7 @@ import DictionaryInstallerScene from './DictionaryInstallerScene'
 import ComposePickerScene from './ComposePickerScene'
 import ProScene from './ProScene'
 import EULAScene from './EULAScene'
+import EarlyBuildToast from './EarlyBuildToast'
 import {
   MailboxWizardAddScene,
   MailboxWizardCompleteScene,
@@ -57,6 +58,7 @@ export default class WaveboxRouter extends React.Component {
       <HashRouter>
         <div>
           <AppScene />
+          <EarlyBuildToast />
 
           <Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
 

@@ -264,7 +264,7 @@ class UpdaterStore {
       this.updateState = UPDATE_STATES.CHECKING
       this.showUserPrompt()
       ipcRenderer.send(WB_SQUIRREL_UPDATE_CHECK, {
-        url: `${UPDATE_FEED_DARWIN}?v=${pkg.version}`
+        url: `${UPDATE_FEED_DARWIN}?v=${pkg.version}&bid=${pkg.earlyBuildId || 'release'}`
       })
     } else if (process.platform === 'win32') {
       // Squirrel win32 needs a url it can resolve two files, so find out from wavebox where that is!
@@ -273,9 +273,9 @@ class UpdaterStore {
       Promise.resolve()
         .then(() => {
           if (process.arch === 'x64') {
-            return window.fetch(`${UPDATE_FEED_WIN32_X64}?v=${pkg.version}`)
+            return window.fetch(`${UPDATE_FEED_WIN32_X64}?v=${pkg.version}&bid=${pkg.earlyBuildId || 'release'}`)
           } else if (process.arch === 'ia32') {
-            return window.fetch(`${UPDATE_FEED_WIN32_IA32}?v=${pkg.version}`)
+            return window.fetch(`${UPDATE_FEED_WIN32_IA32}?v=${pkg.version}&bid=${pkg.earlyBuildId || 'release'}`)
           } else {
             return Promise.reject(new Error('Unsupported Platform'))
           }
@@ -309,7 +309,7 @@ class UpdaterStore {
     this.showUserPrompt()
 
     Promise.resolve()
-      .then(() => window.fetch(`${UPDATE_FEED_MANUAL}?v=${pkg.version}`))
+      .then(() => window.fetch(`${UPDATE_FEED_MANUAL}?v=${pkg.version}&bid=${pkg.earlyBuildId || 'release'}`))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
       .then((res) => {

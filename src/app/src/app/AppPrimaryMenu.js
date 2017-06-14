@@ -84,9 +84,10 @@ class AppPrimaryMenu {
           title: pkg.name,
           message: pkg.name,
           detail: [
-            'Version: ' + pkg.version,
+            `Version: ${pkg.version}`,
+            pkg.earlyBuildId ? `Early Build Reference: ${pkg.earlyBuildId}` : undefined,
             'Made with ♥ at wavebox.io'
-          ].join('\n'),
+          ].filter((l) => !!l).join('\n'),
           buttons: [ 'Done', 'Website' ]
         }, (index) => {
           if (index === 1) {
