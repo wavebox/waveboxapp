@@ -1,5 +1,5 @@
 import React from 'react'
-import { IconButton } from 'material-ui'
+import { IconButton, FontIcon } from 'material-ui'
 import * as Colors from 'material-ui/styles/colors'
 import styles from './SidelistStyles'
 import { basicPopoverStyles } from './SidelistPopoverStyles'
@@ -37,10 +37,15 @@ export default class SidelistItemSettings extends React.Component {
         onMouseLeave={() => this.setState({ showTooltip: false })}
         id={`ReactComponent-Sidelist-Item-Settings-${generatedId}`}>
         <IconButton
-          iconClassName='material-icons'
-          onClick={() => { window.location.hash = '/settings' }}
-          iconStyle={{ color: Colors.blueGrey400, WebkitAppRegion: 'no-drag' }}>
-          settings
+          iconStyle={{ WebkitAppRegion: 'no-drag' }}
+          onClick={() => { window.location.hash = '/settings' }}>
+          <FontIcon
+            className='material-icons'
+            style={{ WebkitAppRegion: 'no-drag' }}
+            color={Colors.blueGrey400}
+            hoverColor={Colors.blueGrey200}>
+            settings
+          </FontIcon>
         </IconButton>
         <ReactPortalTooltip
           active={showTooltip}

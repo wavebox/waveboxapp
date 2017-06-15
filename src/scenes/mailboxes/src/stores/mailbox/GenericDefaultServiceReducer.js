@@ -25,6 +25,16 @@ class GenericDefaultServiceReducer extends ServiceReducer {
     return service.changeData({ openWindowsExternally: openExternal })
   }
 
+  /**
+  * Updates the setting to show the navigation toolbar
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param has: true to if it has the toolbar
+  */
+  static setHasNavigationToolbar (mailbox, service, has) {
+    return service.changeData({ hasNavigationToolbar: has })
+  }
+
   /* **************************************************************************/
   // Notifications
   /* **************************************************************************/

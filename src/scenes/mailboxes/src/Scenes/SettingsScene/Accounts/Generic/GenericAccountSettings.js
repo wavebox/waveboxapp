@@ -134,17 +134,30 @@ export default class GenericAccountSettings extends React.Component {
                 toggled={service.openWindowsExternally}
                 label='Open new windows in default browser'
                 labelPosition='right'
-                onToggle={(evt, toggled) => mailboxActions.reduceService(mailbox.id, service.Type, GenericDefaultServiceReducer.setOpenWindowsExternally, toggled)} />
+                onToggle={(evt, toggled) => {
+                  mailboxActions.reduceService(mailbox.id, service.type, GenericDefaultServiceReducer.setOpenWindowsExternally, toggled)
+                }} />
+              <Toggle
+                toggled={service.hasNavigationToolbar}
+                label='Show navigation toolbar'
+                labelPosition='right'
+                onToggle={(evt, toggled) => {
+                  mailboxActions.reduceService(mailbox.id, service.type, GenericDefaultServiceReducer.setHasNavigationToolbar, toggled)
+                }} />
               <Toggle
                 toggled={mailbox.usePageTitleAsDisplayName}
                 label='Use Page title as Display Name'
                 labelPosition='right'
-                onToggle={(evt, toggled) => mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageTitleAsDisplayName, toggled)} />
+                onToggle={(evt, toggled) => {
+                  mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageTitleAsDisplayName, toggled)
+                }} />
               <Toggle
                 toggled={mailbox.usePageThemeAsColor}
                 label='Use Page theme as Account Color'
                 labelPosition='right'
-                onToggle={(evt, toggled) => mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageThemeAsColor, toggled)} />
+                onToggle={(evt, toggled) => {
+                  mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageThemeAsColor, toggled)
+                }} />
             </Paper>
             <AccountAppearanceSettings mailbox={mailbox} />
             <AccountBadgeSettings mailbox={mailbox} />

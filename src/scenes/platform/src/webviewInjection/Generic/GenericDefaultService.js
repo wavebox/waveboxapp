@@ -10,7 +10,12 @@ class GenericDefaultService {
     this.browser = new Browser({
       contextMenu: {
         copyCurrentPageUrlOption: true,
-        openCurrentPageInBrowserOption: true
+        openCurrentPageInBrowserOption: true,
+
+        navigateBackOption: true,
+        navigateForwardOption: true,
+        navigateHomeOption: true,
+        navigateReloadOption: true
       }
     })
     this.wavebox = new Wavebox()

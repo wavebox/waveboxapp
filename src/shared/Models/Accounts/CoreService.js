@@ -66,6 +66,7 @@ class CoreService extends Model {
   get url () { return undefined }
   get sleepable () { return this._value_('sleepable', true) }
   get sleepableTimeout () { return this._value_('sleepableTimeout', MAILBOX_SLEEP_WAIT) }
+  get hasNavigationToolbar () { return false }
 
   /* **************************************************************************/
   // Properties: Protocols & actions

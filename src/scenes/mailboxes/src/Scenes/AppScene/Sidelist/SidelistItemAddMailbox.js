@@ -1,5 +1,5 @@
 import React from 'react'
-import { IconButton } from 'material-ui'
+import { IconButton, FontIcon } from 'material-ui'
 import * as Colors from 'material-ui/styles/colors'
 import styles from './SidelistStyles'
 import { basicPopoverStyles } from './SidelistPopoverStyles'
@@ -34,10 +34,14 @@ export default class SidelistItemAddMailbox extends React.Component {
         style={Object.assign({}, styles.itemContainer, style)}
         id={`ReactComponent-Sidelist-Item-Add-Mailbox-${generatedId}`}>
         <IconButton
-          iconClassName='material-icons'
-          onClick={() => { window.location.hash = '/mailbox_wizard/add' }}
-          iconStyle={{ color: Colors.blueGrey400, WebkitAppRegion: 'no-drag' }}>
-          add_circle
+          iconStyle={{ WebkitAppRegion: 'no-drag' }}
+          onClick={() => { window.location.hash = '/mailbox_wizard/add' }}>
+          <FontIcon
+            className='material-icons'
+            color={Colors.blueGrey400}
+            hoverColor={Colors.blueGrey200}>
+            add_circle
+          </FontIcon>
         </IconButton>
         <ReactPortalTooltip
           active={showTooltip}

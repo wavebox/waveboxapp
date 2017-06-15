@@ -3,6 +3,7 @@ import actions from './dictionariesActions'
 import dictionaries from 'shared/dictionaries.js'
 import LanguageSettings from 'shared/Models/Settings/LanguageSettings'
 import path from 'path'
+import { PREINSTALLED_DICTIONARIES } from 'shared/constants'
 
 const fs = window.appNodeModulesRequire('fs-extra')
 const pkg = window.appPackage()
@@ -18,7 +19,7 @@ class DictionariesStore {
 
   constructor () {
     this.installedCustomDictionaries = null
-    this.preinstalledDictionaries = ['en_US']
+    this.preinstalledDictionaries = PREINSTALLED_DICTIONARIES
     this.install = {
       id: null,
       lang: null,

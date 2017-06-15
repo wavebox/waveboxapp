@@ -55,6 +55,8 @@ export default class MailboxWizardGenericConfigureScene extends React.Component 
     return {
       open: true,
       configureDisplayFromPage: true,
+      openWindowsExternally: false,
+      hasNavigationToolbar: true,
       displayNameError: null,
       serviceUrlError: null,
       displayName: '',
@@ -86,7 +88,14 @@ export default class MailboxWizardGenericConfigureScene extends React.Component 
   * Handles the user pressing next
   */
   handleNext = (evt) => {
-    const { displayName, serviceUrl, configureDisplayFromPage } = this.state
+    const {
+      displayName,
+      serviceUrl,
+      configureDisplayFromPage,
+      openWindowsExternally,
+      hasNavigationToolbar
+    } = this.state
+
     let hasError = false
     const stateUpdate = {}
 
@@ -111,9 +120,11 @@ export default class MailboxWizardGenericConfigureScene extends React.Component 
     if (!hasError) {
       const mailboxId = this.props.match.params.mailboxId
       mailboxActions.reduce(mailboxId, GenericMailboxReducer.setDisplayName, displayName)
-      mailboxActions.reduceService(mailboxId, GenericDefaultService.type, GenericDefaultServiceReducer.setUrl, serviceUrl)
       mailboxActions.reduce(mailboxId, GenericMailboxReducer.setUsePageTitleAsDisplayName, configureDisplayFromPage)
       mailboxActions.reduce(mailboxId, GenericMailboxReducer.setUsePageThemeAsColor, configureDisplayFromPage)
+      mailboxActions.reduceService(mailboxId, GenericDefaultService.type, GenericDefaultServiceReducer.setUrl, serviceUrl)
+      mailboxActions.reduceService(mailboxId, GenericDefaultService.type, GenericDefaultServiceReducer.setOpenWindowsExternally, openWindowsExternally)
+      mailboxActions.reduceService(mailboxId, GenericDefaultService.type, GenericDefaultServiceReducer.setHasNavigationToolbar, hasNavigationToolbar)
 
       // Progress wizard
       stateUpdate.open = false
@@ -136,6 +147,8 @@ export default class MailboxWizardGenericConfigureScene extends React.Component 
     const {
       open,
       configureDisplayFromPage,
+      openWindowsExternally,
+      hasNavigationToolbar,
       displayName,
       displayNameError,
       serviceUrl,
@@ -198,6 +211,16 @@ export default class MailboxWizardGenericConfigureScene extends React.Component 
           label='Use Page Title & Theme to customise icon appearance'
           labelPosition='right'
           onToggle={(evt, toggled) => this.setState({ configureDisplayFromPage: toggled })} />
+        <Toggle
+          toggled={openWindowsExternally}
+          label='Open new windows in default browser'
+          labelPosition='right'
+          onToggle={(evt, toggled) => this.setState({ openWindowsExternally: toggled })} />
+        <Toggle
+          toggled={hasNavigationToolbar}
+          label='Show navigation toolbar'
+          labelPosition='right'
+          onToggle={(evt, toggled) => this.setState({ hasNavigationToolbar: toggled })} />
       </Dialog>
     )
   }

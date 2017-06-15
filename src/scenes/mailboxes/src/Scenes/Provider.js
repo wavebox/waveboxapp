@@ -19,7 +19,8 @@ import { Tray } from 'Components/Tray'
 import { AppBadge } from 'Components'
 import {
   WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE,
-  WB_MAILBOXES_WINDOW_SHOW_SETTINGS
+  WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
+  WB_MAILBOXES_WINDOW_ADD_ACCOUNT
 } from 'shared/ipcEvents'
 const {
   ipcRenderer, remote
@@ -43,6 +44,7 @@ export default class Provider extends React.Component {
     updaterActions.load()
     ipcRenderer.on(WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE, this.downloadCompleted)
     ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_SETTINGS, this.ipcLaunchSettings)
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
 
     // STEP 2. Mailbox connections
     mailboxActions.connectAllMailboxes()
@@ -68,6 +70,7 @@ export default class Provider extends React.Component {
     updaterActions.unload()
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE, this.downloadCompleted)
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_SETTINGS, this.ipcLaunchSettings)
+    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
 
     // STEP 2. Mailbox connections
     mailboxActions.disconnectAllMailboxes()
@@ -139,6 +142,13 @@ export default class Provider extends React.Component {
   */
   ipcLaunchSettings = () => {
     window.location.hash = '/settings'
+  }
+
+  /**
+  * Launches the add account modal over the IPC channel
+  */
+  ipcAddAccount = () => {
+    window.location.hash = '/mailbox_wizard/add'
   }
 
   /* **************************************************************************/

@@ -46,6 +46,8 @@ class Spellchecker {
   get hasPrimarySpellchecker () { return this._spellcheckers_.primary.nodehun !== null }
   get hasSecondarySpellchecker () { return this._spellcheckers_.secondary.nodehun !== null }
   get hasSpellchecker () { return this.hasPrimarySpellchecker || this.hasSecondarySpellchecker }
+  get primarySpellcheckerLanguage () { return this.hasPrimarySpellchecker ? this._spellcheckers_.primary.language : null }
+  get secondarySpellcheckerLanguage () { return this.hasSecondarySpellchecker ? this._spellcheckers_.secondary.language : null }
 
   /* **************************************************************************/
   // Checking & Suggestions

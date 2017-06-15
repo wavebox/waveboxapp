@@ -5,11 +5,20 @@ const LanguageSettings = remote.require('./shared/Models/Settings/LanguageSettin
 const enUS = remote.require('dictionary-en-us')
 const pkg = remote.require('./package.json')
 const AppDirectory = remote.require('appdirectory')
+const {PREINSTALLED_DICTIONARIES} = remote.require('./shared/constants.js')
 
 const appDirectory = new AppDirectory({ appName: pkg.name, useRoaming: true }).userData()
 const userDictionariesPath = LanguageSettings.userDictionariesPath(appDirectory)
 
 class DictionaryLoad {
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  constructor () {
+    this._installedDictionaries = null
+  }
+
   /* **************************************************************************/
   // Loader Utils
   /* **************************************************************************/
@@ -19,7 +28,7 @@ class DictionaryLoad {
   * @param language: the language to load
   * @return promise
   */
-  static _loadCustomDictionary_ (language) {
+  _loadCustomDictionary_ (language) {
     return new Promise((resolve, reject) => {
       const tasks = [
         { path: path.join(userDictionariesPath, language + '.aff'), type: 'aff' },
@@ -50,7 +59,7 @@ class DictionaryLoad {
   * @param language: the language to load
   * @return promise
   */
-  static _loadInbuiltDictionary_ (language) {
+  _loadInbuiltDictionary_ (language) {
     if (language === 'en_US') {
       return new Promise((resolve, reject) => {
         enUS((err, load) => {
@@ -75,12 +84,12 @@ class DictionaryLoad {
   * @param language: the language to load
   * @return promise
   */
-  static load (language) {
+  load (language) {
     return new Promise((resolve, reject) => {
-      DictionaryLoad._loadInbuiltDictionary_(language).then(
+      this._loadInbuiltDictionary_(language).then(
         (dic) => resolve(dic),
         (_err) => {
-          DictionaryLoad._loadCustomDictionary_(language).then(
+          this._loadCustomDictionary_(language).then(
             (dic) => resolve(dic),
             (_err) => reject(new Error('Unknown Dictionary'))
           )
@@ -88,6 +97,38 @@ class DictionaryLoad {
       )
     })
   }
+
+  /* **************************************************************************/
+  // Installed
+  /* **************************************************************************/
+
+  /**
+  * Gets the installed dictionaries
+  * @return a list of dictionary codes
+  */
+  getInstalledDictionaries () {
+    if (!this._installedDictionaries) {
+      let files
+      try {
+        files = fs.readdirSync(userDictionariesPath)
+      } catch (ex) {
+        files = []
+      }
+
+      const dictionaries = files.reduce((acc, filename) => {
+        const ext = path.extname(filename).replace('.', '')
+        const lang = path.basename(filename, '.' + ext)
+        acc[lang] = acc[lang] || {}
+        acc[lang][ext] = true
+        return acc
+      }, {})
+      this._installedDictionaries = Object.keys(dictionaries)
+        .filter((lang) => dictionaries[lang].aff && dictionaries[lang].dic)
+        .concat(PREINSTALLED_DICTIONARIES)
+    }
+
+    return this._installedDictionaries
+  }
 }
 
-module.exports = DictionaryLoad
+module.exports = new DictionaryLoad()

@@ -39,6 +39,9 @@ class AppPrimaryMenu {
       preferences: () => {
         windowManager.mailboxesWindow.show().focus().launchPreferences()
       },
+      addAccount: () => {
+        windowManager.mailboxesWindow.show().focus().addAccount()
+      },
       composeMail: () => {
         windowManager.mailboxesWindow.show().focus().openMailtoLink('mailto://')
       },
@@ -162,6 +165,10 @@ class AppPrimaryMenu {
             click: this._selectors.checkForUpdate
           },
           { type: 'separator' },
+          {
+            label: 'Add Account',
+            click: this._selectors.addAccount
+          },
           {
             label: 'Preferences',
             click: this._selectors.preferences,

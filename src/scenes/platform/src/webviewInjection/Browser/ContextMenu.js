@@ -3,6 +3,12 @@ const { shell, clipboard, Menu } = remote
 const webContents = remote.getCurrentWebContents()
 const environment = remote.getCurrentWebContents().getType()
 const dictInfo = remote.require('./shared/dictionaries.js')
+const DictionaryLoad = require('./DictionaryLoad')
+const {
+  WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
+  WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG,
+  WB_MAILBOXES_WEBVIEW_NAVIGATE_HOME
+} = remote.require('./shared/ipcEvents')
 
 class ContextMenu {
   /* **************************************************************************/
@@ -11,8 +17,15 @@ class ContextMenu {
 
   static get defaultConfig () {
     return {
+      // External linking
       copyCurrentPageUrlOption: false,
-      openCurrentPageInBrowserOption: false
+      openCurrentPageInBrowserOption: false,
+
+      // Navigation options
+      navigateBackOption: false,
+      navigateForwardOption: false,
+      navigateHomeOption: false,
+      navigateReloadOption: false
     }
   }
 
@@ -151,23 +164,45 @@ class ContextMenu {
       menuTemplate.push({ type: 'separator' })
     }
 
+    // In page navigation
+    const inPageNavigation = [
+      this.config.navigateHomeOption && environment === 'webview' ? {
+        label: 'Home',
+        click: () => { ipcRenderer.sendToHost({ type: WB_MAILBOXES_WEBVIEW_NAVIGATE_HOME }) }
+      } : undefined,
+      this.config.navigateBackOption ? {
+        label: 'Go Back',
+        enabled: webContents.canGoBack(),
+        click: () => webContents.goBack()
+      } : undefined,
+      this.config.navigateForwardOption ? {
+        label: 'Go Forward',
+        enabled: webContents.canGoForward(),
+        click: () => webContents.goForward()
+      } : undefined,
+      this.config.navigateReloadOption ? {
+        label: 'Reload',
+        click: () => webContents.reload()
+      } : undefined
+    ].filter((item) => !!item)
+    if (inPageNavigation.length) {
+      menuTemplate.splice(Infinity, 0, ...inPageNavigation)
+      menuTemplate.push({ type: 'separator' })
+    }
+
     // Current Page
-    let currentPageHasOption = false
-    if (this.config.copyCurrentPageUrlOption) {
-      currentPageHasOption = true
-      menuTemplate.push({
+    const currentPageOptions = [
+      this.config.copyCurrentPageUrlOption ? {
         label: 'Copy current URL',
         click: () => { clipboard.writeText(window.location.href) }
-      })
-    }
-    if (this.config.openCurrentPageInBrowserOption) {
-      currentPageHasOption = true
-      menuTemplate.push({
+      } : undefined,
+      this.config.openCurrentPageInBrowserOption ? {
         label: 'Open page in Browser',
         click: () => { shell.openExternal(window.location.href) }
-      })
-    }
-    if (currentPageHasOption) {
+      } : undefined
+    ].filter((item) => !!item)
+    if (currentPageOptions.length) {
+      menuTemplate.splice(Infinity, 0, ...currentPageOptions)
       menuTemplate.push({ type: 'separator' })
     }
 
@@ -175,8 +210,23 @@ class ContextMenu {
     if (environment === 'webview') {
       menuTemplate.push({
         label: 'Wavebox Settings',
-        click: () => { ipcRenderer.sendToHost({ type: 'open-settings' }) }
+        click: () => ipcRenderer.sendToHost({ type: WB_MAILBOXES_WINDOW_SHOW_SETTINGS })
       })
+      const dictionaries = DictionaryLoad.getInstalledDictionaries()
+      if (dictionaries.length > 1) {
+        const currentLanguage = this.spellchecker ? this.spellchecker.primarySpellcheckerLanguage : null
+        menuTemplate.push({
+          label: 'Change Dictionary',
+          submenu: dictionaries.map((lang) => {
+            return {
+              label: (dictInfo[lang] || {}).name || lang,
+              type: 'radio',
+              checked: lang === currentLanguage,
+              click: () => ipcRenderer.sendToHost({ type: WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG, data: { lang: lang } })
+            }
+          })
+        })
+      }
     }
     menuTemplate.push({
       label: 'Inspect',

@@ -31,6 +31,7 @@ const {
   WB_MAILBOXES_WINDOW_NAVIGATE_BACK,
   WB_MAILBOXES_WINDOW_NAVIGATE_FORWARD,
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
+  WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
   WB_MAILBOXES_WINDOW_WEBVIEW_ATTACHED,
   WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT,
   WB_NEW_WINDOW,
@@ -324,6 +325,15 @@ class MailboxesWindow extends WaveboxWindow {
   */
   launchPreferences () {
     this.window.webContents.send(WB_MAILBOXES_WINDOW_SHOW_SETTINGS, { })
+    return this
+  }
+
+  /**
+  * Starts the account process
+  * @return this
+  */
+  addAccount () {
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, { })
     return this
   }
 

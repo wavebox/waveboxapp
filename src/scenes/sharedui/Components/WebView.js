@@ -229,6 +229,8 @@ export default class WebView extends React.Component {
   * @return true if the event was handled in the siphon
   */
   siphonIPCMessage (evt) {
+    if (typeof (evt.channel.type) !== 'string') { return false }
+
     if (evt.channel.type.indexOf(SEND_RESPOND_PREFIX) === 0) {
       if (this.ipcPromises[evt.channel.type]) {
         clearTimeout(this.ipcPromises[evt.channel.type].timeout)
