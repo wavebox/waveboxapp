@@ -84,7 +84,7 @@
       } else if (query.port === 80) {
         document.getElementById('requestor').textContent = `http://${query.realm}`
       } else {
-        document.getElementById('requestor').textContent = query.realm
+        document.getElementById('requestor').textContent = `${query.realm}:${query.port}`
       }
 
       document.querySelector('[data-action="cancel"]').addEventListener('click', (evt) => {
