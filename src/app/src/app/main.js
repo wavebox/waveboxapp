@@ -30,6 +30,8 @@
   const mailboxStore = require('./stores/mailboxStore')
   const userStore = require('./stores/userStore')
   const ipcEvents = require('../shared/ipcEvents')
+  const BasicHTTPAuthHandler = require('./BasicHTTPAuthHandler')
+  const { BrowserWindow } = require('electron')
 
   Object.keys(storage).forEach((k) => storage[k].checkAwake())
   mailboxStore.checkAwake()
@@ -162,6 +164,13 @@
 
   app.on('browser-window-blur', () => {
     appKeyboardShortcuts.unregister()
+  })
+
+  app.on('login', (evt, webContents, request, authInfo, callback) => {
+    evt.preventDefault()
+    const handler = new BasicHTTPAuthHandler()
+    const parentWindow = BrowserWindow.fromWebContents(webContents.hostWebContents ? webContents.hostWebContents : webContents)
+    handler.start(parentWindow, request, authInfo, callback)
   })
 
   /* ****************************************************************************/

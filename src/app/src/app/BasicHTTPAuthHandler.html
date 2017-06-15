@@ -2,10 +2,11 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Wavebox Authentication Required</title>
+    <title>Authentication Required</title>
     <style>
       * {
         box-sizing: border-box;
+        user-select: none;
       }
       body {
         padding: 20px;
@@ -55,30 +56,11 @@
         text-align: right;
       }
     </style>
-
-    <script type="text/javascript">
-    const { ipcRenderer } = require('electron')
-    ipcRenderer.on('requestor', (event, message) => {
-      document.getElementById('requestor').textContent = message
-    })
-
-    function cancel () {
-      ipcRenderer.send('cancel', {})
-    }
-
-    function login () {
-      const username = document.querySelector('[name="username"]').value
-      const password = document.querySelector('[name="password"]').value
-      if (username && password) {
-        ipcRenderer.send('login', { username: username, password: password })
-      }
-    }
-  </script>
   </head>
   <body>
-    <h1>Wavebox Authentication Required</h1>
+    <h1>Authentication Required</h1>
     <h2>
-      <span id="requestor"></span> requires a username and password
+      <strong id="requestor"></strong> requires a username and password
     </h2>
     <form>
       <div class="form-group">
@@ -90,9 +72,29 @@
         <input type="password" name="password">
       </div>
       <div class="submit-group">
-        <button type="button" onclick="cancel()">Cancel</button>
-        <button type="button" onclick="login()" class="primary">Log In</button>
+        <button type="button" data-action="cancel">Cancel</button>
+        <button type="button" data-action="login" class="primary">Log In</button>
       </div>
     </form>
+    <script type="text/javascript">
+      const querystring = require('querystring')
+      const query = querystring.parse(window.location.search.substr(1))
+      if (query.port === 443) {
+        document.getElementById('requestor').textContent = `https://${query.realm}`
+      } else if (query.port === 80) {
+        document.getElementById('requestor').textContent = `http://${query.realm}`
+      } else {
+        document.getElementById('requestor').textContent = query.realm
+      }
+
+      document.querySelector('[data-action="cancel"]').addEventListener('click', (evt) => {
+        evt.preventDefault()
+        document.title = 'wbaction:cancel'
+      }, false)
+      document.querySelector('[data-action="login"]').addEventListener('click', (evt) => {
+        evt.preventDefault()
+        document.title = 'wbaction:login'
+      }, false)
+    </script>
   </body>
 </html>
