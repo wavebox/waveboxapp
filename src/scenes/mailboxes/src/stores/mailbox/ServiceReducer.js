@@ -31,16 +31,6 @@ class ServiceReducer {
     return service.changeData({ sleepableTimeout: value })
   }
 
-  /**
-  * Sets the show sleepable indicator
-  * @param mailbox: the mailbox that contains the service
-  * @param service: the service to update
-  * @param show: whether to show or not
-  */
-  static setShowSleepableIndicator (mailbox, service, show) {
-    return service.changeData({ showSleepableIndicator: show })
-  }
-
   /* **************************************************************************/
   // Zoom
   /* **************************************************************************/

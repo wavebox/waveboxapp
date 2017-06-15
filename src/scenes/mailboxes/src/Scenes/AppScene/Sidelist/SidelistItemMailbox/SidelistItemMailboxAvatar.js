@@ -108,7 +108,7 @@ export default class SidelistItemMailboxAvatar extends React.Component {
       isSleeping = false
     }
 
-    const showSleeping = isSleeping && service.showSleepableIndicator && globalShowSleepableServiceIndicator
+    const showSleeping = isSleeping && mailbox.showSleepableServiceIndicator && globalShowSleepableServiceIndicator
     return (
       <MailboxAvatar
         {...passProps}

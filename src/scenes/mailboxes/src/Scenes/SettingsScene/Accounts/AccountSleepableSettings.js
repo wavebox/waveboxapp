@@ -4,7 +4,6 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { Toggle, TextField, RaisedButton, FontIcon } from 'material-ui'
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
-import { settingsStore } from 'stores/settings'
 
 export default class AccountSleepableSettings extends React.Component {
   /* **************************************************************************/
@@ -22,12 +21,10 @@ export default class AccountSleepableSettings extends React.Component {
 
   componentDidMount () {
     userStore.listen(this.userUpdated)
-    settingsStore.listen(this.settingsChanged)
   }
 
   componentWillUnmount () {
     userStore.unlisten(this.userUpdated)
-    settingsStore.unlisten(this.settingsChanged)
   }
 
   /* **************************************************************************/
@@ -36,8 +33,7 @@ export default class AccountSleepableSettings extends React.Component {
 
   state = (() => {
     return {
-      userHasSleepable: userStore.getState().user.hasSleepable,
-      ui: settingsStore.getState().ui
+      userHasSleepable: userStore.getState().user.hasSleepable
     }
   })()
 
@@ -45,10 +41,6 @@ export default class AccountSleepableSettings extends React.Component {
     this.setState({
       userHasSleepable: userState.user.hasSleepable
     })
-  }
-
-  settingsChanged = (settingsState) => {
-    this.setState({ ui: settingsState.ui })
   }
 
   /* **************************************************************************/
@@ -61,7 +53,7 @@ export default class AccountSleepableSettings extends React.Component {
 
   render () {
     const { mailbox, service, ...passProps } = this.props
-    const { userHasSleepable, ui } = this.state
+    const { userHasSleepable } = this.state
 
     return (
       <div {...passProps}>
@@ -72,14 +64,6 @@ export default class AccountSleepableSettings extends React.Component {
           labelPosition='right'
           onToggle={(evt, toggled) => {
             mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setSleepable, toggled)
-          }} />
-        <Toggle
-          disabled={!userHasSleepable || !ui.showSleepableServiceIndicator}
-          toggled={service.showSleepableIndicator}
-          label='Indicate when this service is sleeping'
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
-            mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setShowSleepableIndicator, toggled)
           }} />
         <TextField
           key={`${mailbox.id}:${service.type}:${service.sleepableTimeout}`}

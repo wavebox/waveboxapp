@@ -112,7 +112,7 @@ export default class SidelistItemMailboxService extends React.Component {
     ) : 'transparent'
 
     const baseStyle = isActive || isHovering ? styles.mailboxServiceIconImageActive : styles.mailboxServiceIconImage
-    const showSleeping = isSleeping && service.showSleepableIndicator && globalShowSleepableServiceIndicator
+    const showSleeping = isSleeping && mailbox.showSleepableServiceIndicator && globalShowSleepableServiceIndicator
     return (
       <Avatar
         {...passProps}

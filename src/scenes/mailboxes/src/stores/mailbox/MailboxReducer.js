@@ -137,6 +137,17 @@ class MailboxReducer {
     })
   }
 
+  /**
+  * Sets if services should show when they are sleeping
+  * @param mailbox: the mailbox to update
+  * @param show: true to show, false otherwise
+  */
+  static setShowSleepableServiceIndicator (mailbox, show) {
+    return mailbox.changeData({
+      showSleepableServiceIndicator: show
+    })
+  }
+
   /* **************************************************************************/
   // Lifecycle & Ordering
   /* **************************************************************************/

@@ -192,6 +192,7 @@ class CoreMailbox extends Model {
   get serviceDisplayMode () { return this._value_('serviceDisplayMode', SERVICE_DISPLAY_MODES.SIDEBAR) }
   get serviceToolbarIconLayout () { return this._value_('serviceToolbarIconLayout', SERVICE_TOOLBAR_ICON_LAYOUTS.RIGHT_ALIGN) }
   get collapseSidebarServices () { return this._value_('collapseSidebarServices', false) }
+  get showSleepableServiceIndicator () { return this._value_('showSleepableServiceIndicator', true) }
 
   /* **************************************************************************/
   // Properties : Badges

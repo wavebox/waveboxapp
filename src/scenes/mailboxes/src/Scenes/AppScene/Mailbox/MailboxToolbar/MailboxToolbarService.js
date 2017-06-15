@@ -139,7 +139,7 @@ export default class MailboxToolbarService extends React.Component {
 
     if (!mailbox || !service) { return false }
 
-    const showSleeping = globalShowSleepableServiceIndicator && service.showSleepableIndicator && isSleeping
+    const showSleeping = globalShowSleepableServiceIndicator && mailbox.showSleepableServiceIndicator && isSleeping
     const elementId = `ReactComponent-Toolbar-Item-${generatedId}`
     return (
       <div
