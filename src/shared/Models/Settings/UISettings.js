@@ -7,6 +7,7 @@ class UISettings extends Model {
   get showAppMenu () { return this._value_('showAppMenu', process.platform !== 'win32') }
   get sidebarEnabled () { return this._value_('sidebarEnabled', true) }
   get openHidden () { return this._value_('openHidden', false) }
+  get showSleepableServiceIndicator () { return this._value_('showSleepableServiceIndicator', false) }
 }
 
 module.exports = UISettings

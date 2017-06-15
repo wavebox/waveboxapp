@@ -329,6 +329,28 @@ class MailboxActions {
   }
 
   /* **************************************************************************/
+  // Sleeping
+  /* **************************************************************************/
+
+  /**
+  * Sleeps a service
+  * @param id: the id of the mailbox
+  * @param service: the service to awaken
+  */
+  sleepService (id, service) {
+    return { id: id, service: service }
+  }
+
+  /**
+  * Wakes up a service from sleep
+  * @param id: the id of the mailbox
+  * @param service: the service to awaken
+  */
+  awakenService (id, service) {
+    return { id: id, service: service }
+  }
+
+  /* **************************************************************************/
   // Active
   /* **************************************************************************/
 

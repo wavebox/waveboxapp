@@ -148,8 +148,7 @@ export default {
     borderWidth: 3,
     borderStyle: 'solid',
     cursor: 'pointer',
-    WebkitAppRegion: 'no-drag',
-    opacity: 0.8
+    WebkitAppRegion: 'no-drag'
   },
   mailboxServiceIconImageActive: {
     display: 'block',

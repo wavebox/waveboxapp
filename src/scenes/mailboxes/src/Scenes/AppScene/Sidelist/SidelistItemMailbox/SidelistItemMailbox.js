@@ -9,7 +9,7 @@ import { mailboxPopoverStyles } from '../SidelistPopoverStyles'
 import ReactPortalTooltip from 'react-portal-tooltip'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import uuid from 'uuid'
-import SidelistItemMailboxPopover from './SidelistItemMailboxPopover'
+import MailboxServicePopover from '../../MailboxServicePopover'
 import SidelistItemMailboxAvatar from './SidelistItemMailboxAvatar'
 import SidelistItemMailboxServices from './SidelistItemMailboxServices'
 import * as Colors from 'material-ui/styles/colors'
@@ -21,10 +21,7 @@ export default class SidelistItemMailbox extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired,
-    index: PropTypes.number.isRequired,
-    isFirst: PropTypes.bool.isRequired,
-    isLast: PropTypes.bool.isRequired
+    mailboxId: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -53,7 +50,6 @@ export default class SidelistItemMailbox extends React.Component {
     return {
       mailbox: mailbox,
       isActive: mailboxState.activeMailboxId() === mailboxId,
-      activeService: mailboxState.activeMailboxService(),
       popover: false,
       popoverAnchor: null,
       popoverServiceType: undefined,
@@ -71,7 +67,6 @@ export default class SidelistItemMailbox extends React.Component {
     this.setState({
       mailbox: mailbox,
       isActive: mailboxState.activeMailboxId() === mailboxId,
-      activeService: mailboxState.activeMailboxService(),
       isRestricted: mailboxState.isMailboxRestricted(mailboxId, userState.user)
     })
   }
@@ -250,7 +245,6 @@ export default class SidelistItemMailbox extends React.Component {
     const {
       mailbox,
       isActive,
-      activeService,
       popover,
       popoverAnchor,
       popoverServiceType,
@@ -259,8 +253,7 @@ export default class SidelistItemMailbox extends React.Component {
       userHasServices,
       isRestricted
     } = this.state
-    const { index, isFirst, isLast, style, ...passProps } = this.props
-    delete passProps.mailboxId
+    const { style, mailboxId, ...passProps } = this.props
 
     const containerStyle = Object.assign(
       {},
@@ -269,10 +262,6 @@ export default class SidelistItemMailbox extends React.Component {
       isRestricted ? styles.mailboxItemContainerRestricted : undefined,
       style
     )
-
-    const isAvatarActive = (mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR)
-      ? isActive && activeService === CoreMailbox.SERVICE_TYPES.DEFAULT
-      : isActive
 
     return (
       <div
@@ -284,26 +273,20 @@ export default class SidelistItemMailbox extends React.Component {
         <SidelistItemMailboxAvatar
           id={`ReactComponent-Sidelist-Item-Mailbox-${generatedId}-Main-Avatar`}
           onContextMenu={(evt) => this.handleOpenPopover(evt, CoreMailbox.SERVICE_TYPES.DEFAULT)}
-          isActive={isAvatarActive}
           isHovering={hovering}
-          mailbox={mailbox}
-          index={index}
+          mailboxId={mailboxId}
           onClick={this.handleClick} />
         {userHasServices && mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR ? (
           <SidelistItemMailboxServices
+            mailboxId={mailboxId}
             onContextMenuService={(evt, serviceType) => this.handleOpenPopover(evt, serviceType)}
-            mailbox={mailbox}
-            isActiveMailbox={isActive}
-            activeService={activeService}
             onOpenService={this.handleOpenService} />
         ) : undefined}
         {this.renderBadge(mailbox, isRestricted)}
         {this.renderActiveIndicator(mailbox, isActive)}
-        <SidelistItemMailboxPopover
-          mailbox={mailbox}
+        <MailboxServicePopover
+          mailboxId={mailboxId}
           serviceType={popoverServiceType}
-          isFirst={isFirst}
-          isLast={isLast}
           isOpen={popover}
           anchor={popoverAnchor}
           onRequestClose={() => this.setState({ popover: false })} />

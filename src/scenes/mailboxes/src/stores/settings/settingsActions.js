@@ -222,6 +222,13 @@ class SettingsActions {
     return this.update(SEGMENTS.UI, 'openHidden', toggled)
   }
 
+  /**
+  * @param show: true to show sleepable service indicators
+  */
+  setShowSleepableServiceIndicator (show) {
+    return this.update(SEGMENTS.UI, 'showSleepableServiceIndicator', show)
+  }
+
   /* **************************************************************************/
   // App
   /* **************************************************************************/

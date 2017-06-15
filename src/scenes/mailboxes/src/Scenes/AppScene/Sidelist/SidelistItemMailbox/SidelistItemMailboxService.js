@@ -4,6 +4,8 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { Avatar } from 'material-ui'
 import styles from '../SidelistStyles'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
+import { mailboxStore } from 'stores/mailbox'
+import { settingsStore } from 'stores/settings'
 
 export default class SidelistItemMailboxService extends React.Component {
   /* **************************************************************************/
@@ -11,20 +13,69 @@ export default class SidelistItemMailboxService extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    mailbox: PropTypes.object.isRequired,
-    isActiveMailbox: PropTypes.bool.isRequired,
-    isActiveService: PropTypes.bool.isRequired,
-    onOpenService: PropTypes.func.isRequired,
-    serviceType: PropTypes.string.isRequired
+    mailboxId: PropTypes.string.isRequired,
+    serviceType: PropTypes.string.isRequired,
+    onOpenService: PropTypes.func.isRequired
   }
 
   /* **************************************************************************/
-  // Data Lifecycle
+  // Lifecycle
   /* **************************************************************************/
 
-  state = (() => {
-    return { isHovering: false }
-  })()
+  componentDidMount () {
+    mailboxStore.listen(this.mailboxesChanged)
+    settingsStore.listen(this.settingsChanged)
+  }
+
+  componentWillUnmount () {
+    mailboxStore.unlisten(this.mailboxesChanged)
+    settingsStore.unlisten(this.settingsChanged)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.mailboxId !== nextProps.mailboxId) {
+      this.setState(this.generateState(nextProps))
+    }
+  }
+
+  /* **************************************************************************/
+  // Component Lifecycle
+  /* **************************************************************************/
+
+  state = {
+    ...this.generateState(),
+    isHovering: false,
+    globalShowSleepableServiceIndicator: settingsStore.getState().ui.showSleepableServiceIndicator
+  }
+
+  generateState (props = this.props) {
+    const { mailboxId, serviceType } = props
+    const mailboxState = mailboxStore.getState()
+    const mailbox = mailboxState.getMailbox(mailboxId)
+    return {
+      mailbox: mailbox,
+      service: mailbox ? mailbox.serviceForType(serviceType) : null,
+      isActive: mailboxState.isActive(mailboxId, serviceType),
+      isSleeping: mailboxState.isSleeping(mailboxId, serviceType)
+    }
+  }
+
+  mailboxesChanged = (mailboxState) => {
+    const { mailboxId, serviceType } = this.props
+    const mailbox = mailboxState.getMailbox(mailboxId)
+    this.setState({
+      mailbox: mailbox,
+      service: mailbox ? mailbox.serviceForType(serviceType) : null,
+      isActive: mailboxState.isActive(mailboxId, serviceType),
+      isSleeping: mailboxState.isSleeping(mailboxId, serviceType)
+    })
+  }
+
+  settingsChanged = (settingsState) => {
+    this.setState({
+      globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator
+    })
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -45,22 +96,23 @@ export default class SidelistItemMailboxService extends React.Component {
   }
 
   render () {
+    const { mailboxId, serviceType, onOpenService, style, ...passProps } = this.props
     const {
+      isHovering,
+      isActive,
+      isSleeping,
       mailbox,
-      isActiveMailbox,
-      isActiveService,
-      serviceType,
-      onOpenService,
-      style,
-      ...passProps
-    } = this.props
-    const { isHovering } = this.state
-    const isActive = isActiveMailbox && isActiveService
+      service,
+      globalShowSleepableServiceIndicator
+    } = this.state
+    if (!mailbox || !service) { return false }
 
     const borderColor = mailbox.showAvatarColorRing ? (
       isActive || isHovering ? mailbox.color : 'white'
     ) : 'transparent'
+
     const baseStyle = isActive || isHovering ? styles.mailboxServiceIconImageActive : styles.mailboxServiceIconImage
+    const showSleeping = isSleeping && service.showSleepableIndicator && globalShowSleepableServiceIndicator
     return (
       <Avatar
         {...passProps}
@@ -71,7 +123,12 @@ export default class SidelistItemMailboxService extends React.Component {
         backgroundColor='white'
         draggable={false}
         onClick={(evt) => onOpenService(evt, serviceType)}
-        style={Object.assign({}, style, { borderColor: borderColor }, baseStyle)} />
+        style={{
+          ...style,
+          borderColor: borderColor,
+          ...baseStyle,
+          filter: showSleeping ? 'grayscale(100%)' : 'none'
+        }} />
     )
   }
 }

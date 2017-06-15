@@ -3,6 +3,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import styles from '../SidelistStyles'
 import SidelistItemMailboxService from './SidelistItemMailboxService'
+import { mailboxStore } from 'stores/mailbox'
 
 export default class SidelistItemMailboxServices extends React.Component {
   /* **************************************************************************/
@@ -10,11 +11,50 @@ export default class SidelistItemMailboxServices extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    mailbox: PropTypes.object.isRequired,
-    isActiveMailbox: PropTypes.bool.isRequired,
-    activeService: PropTypes.string.isRequired,
+    mailboxId: PropTypes.string.isRequired,
     onOpenService: PropTypes.func.isRequired,
     onContextMenuService: PropTypes.func.isRequired
+  }
+
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    mailboxStore.listen(this.mailboxesChanged)
+  }
+
+  componentWillUnmount () {
+    mailboxStore.unlisten(this.mailboxesChanged)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.mailboxId !== nextProps.mailboxId) {
+      this.setState(this.generateState(nextProps))
+    }
+  }
+
+  /* **************************************************************************/
+  // Component Lifecycle
+  /* **************************************************************************/
+
+  state = this.generateState()
+
+  generateState (props = this.props) {
+    const { mailboxId } = props
+    const mailboxState = mailboxStore.getState()
+    return {
+      mailbox: mailboxState.getMailbox(mailboxId),
+      isActiveMailbox: mailboxState.activeMailboxId() === mailboxId
+    }
+  }
+
+  mailboxesChanged = (mailboxState) => {
+    const { mailboxId } = this.props
+    this.setState({
+      mailbox: mailboxState.getMailbox(mailboxId),
+      isActiveMailbox: mailboxState.activeMailboxId() === mailboxId
+    })
   }
 
   /* **************************************************************************/
@@ -27,12 +67,10 @@ export default class SidelistItemMailboxServices extends React.Component {
 
   render () {
     const {
-      mailbox,
-      isActiveMailbox,
-      activeService,
       onOpenService,
       onContextMenuService
     } = this.props
+    const { mailbox, isActiveMailbox } = this.state
     if (!mailbox.hasAdditionalServices) { return null }
 
     const style = Object.assign({},
@@ -46,12 +84,10 @@ export default class SidelistItemMailboxServices extends React.Component {
           return (
             <SidelistItemMailboxService
               key={serviceType}
-              onContextMenu={(evt) => onContextMenuService(evt, serviceType)}
-              mailbox={mailbox}
-              isActiveMailbox={isActiveMailbox}
-              isActiveService={activeService === serviceType}
+              mailboxId={mailbox.id}
+              serviceType={serviceType}
               onOpenService={onOpenService}
-              serviceType={serviceType} />
+              onContextMenu={(evt) => onContextMenuService(evt, serviceType)} />
           )
         })}
       </div>

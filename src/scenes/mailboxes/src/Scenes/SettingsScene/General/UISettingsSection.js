@@ -98,6 +98,11 @@ export default class UISettingsSection extends React.Component {
             label='Always start minimized'
             labelPosition='right'
             onToggle={(evt, toggled) => settingsActions.setOpenHidden(toggled)} />
+          <Toggle
+            toggled={ui.showSleepableServiceIndicator}
+            label='Allow services to indicate when sleeping'
+            labelPosition='right'
+            onToggle={(evt, toggled) => settingsActions.setShowSleepableServiceIndicator(toggled)} />
         </Paper>
       </div>
     )

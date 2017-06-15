@@ -43,15 +43,7 @@ export default class SidelistMailboxes extends React.Component {
     const { mailboxIds } = this.state
     return (
       <div style={Object.assign({}, styles)} {...passProps}>
-        {mailboxIds.map((mailboxId, index, arr) => {
-          return (
-            <SidelistItemMailbox
-              key={mailboxId}
-              mailboxId={mailboxId}
-              index={index}
-              isFirst={index === 0}
-              isLast={index === arr.length - 1} />)
-        })}
+        {mailboxIds.map((mailboxId) => (<SidelistItemMailbox key={mailboxId} mailboxId={mailboxId} />))}
       </div>
     )
   }

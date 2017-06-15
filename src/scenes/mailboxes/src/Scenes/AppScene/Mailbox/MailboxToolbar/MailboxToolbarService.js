@@ -2,9 +2,11 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
+import { settingsStore } from 'stores/settings'
 import ReactPortalTooltip from 'react-portal-tooltip'
 import { basicPopoverStyles } from './ToolbarPopoverStyles'
 import uuid from 'uuid'
+import MailboxServicePopover from '../../MailboxServicePopover'
 
 const styles = {
   tab: {
@@ -44,10 +46,12 @@ export default class MailboxToolbarService extends React.Component {
 
   componentDidMount () {
     mailboxStore.listen(this.mailboxChanged)
+    settingsStore.listen(this.settingsChanged)
   }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxChanged)
+    settingsStore.unlisten(this.settingsChanged)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -65,13 +69,22 @@ export default class MailboxToolbarService extends React.Component {
     const { mailboxId, serviceType } = this.props
     return Object.assign({
       isHovering: false,
-      generatedId: uuid.v4()
+      popover: false,
+      popoverAnchor: null,
+      generatedId: uuid.v4(),
+      globalShowSleepableServiceIndicator: settingsStore.getState().ui.showSleepableServiceIndicator
     }, this.generateStateFromMailbox(mailboxStore.getState(), mailboxId, serviceType))
   })()
 
   mailboxChanged = (mailboxState) => {
     const { mailboxId, serviceType } = this.props
     this.setState(this.generateStateFromMailbox(mailboxState, mailboxId, serviceType))
+  }
+
+  settingsChanged = (settingsState) => {
+    this.setState({
+      globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator
+    })
   }
 
   /**
@@ -82,16 +95,11 @@ export default class MailboxToolbarService extends React.Component {
   */
   generateStateFromMailbox (mailboxState, mailboxId, serviceType) {
     const mailbox = mailboxState.getMailbox(mailboxId)
-    if (mailbox) {
-      return {
-        mailboxAvailable: true,
-        isActive: mailboxState.isActive(mailboxId, serviceType),
-        service: mailbox.serviceForType(serviceType)
-      }
-    } else {
-      return {
-        mailboxAvailable: false
-      }
+    return {
+      mailbox: mailboxState.getMailbox(mailboxId),
+      service: mailbox ? mailbox.serviceForType(serviceType) : null,
+      isSleeping: mailboxState.isSleeping(mailboxId, serviceType),
+      isActive: mailboxState.isActive(mailboxId, serviceType)
     }
   }
 
@@ -116,28 +124,43 @@ export default class MailboxToolbarService extends React.Component {
   }
 
   render () {
-    const { toolbarHeight, ...passProps } = this.props
-    delete passProps.mailboxId
-    delete passProps.serviceType
-    const { isHovering, isActive, service, generatedId, mailboxAvailable } = this.state
+    const { toolbarHeight, mailboxId, serviceType, ...passProps } = this.props
+    const {
+      isHovering,
+      isActive,
+      isSleeping,
+      service,
+      mailbox,
+      generatedId,
+      popover,
+      popoverAnchor,
+      globalShowSleepableServiceIndicator
+    } = this.state
 
-    if (!mailboxAvailable) { return false }
+    if (!mailbox || !service) { return false }
 
+    const showSleeping = globalShowSleepableServiceIndicator && service.showSleepableIndicator && isSleeping
     const elementId = `ReactComponent-Toolbar-Item-${generatedId}`
     return (
       <div
-        style={Object.assign({
+        {...passProps}
+        style={{
           borderBottomColor: isActive || isHovering ? 'white' : 'transparent',
           backgroundColor: isActive ? 'rgba(0, 0, 0, 0.3)' : 'transparent',
           height: toolbarHeight,
-          width: toolbarHeight
-        }, styles.tab)}
+          width: toolbarHeight,
+          filter: showSleeping ? 'grayscale(100%)' : 'none',
+          ...styles.tab
+        }}
         id={elementId}
         onMouseEnter={() => this.setState({ isHovering: true })}
         onMouseLeave={() => this.setState({ isHovering: false })}
-        onClick={this.handleServiceClicked}>
-        <div
-          style={Object.assign({ backgroundImage: `url("../../${service.humanizedLogo}")` }, styles.avatar)} />
+        onClick={this.handleServiceClicked}
+        onContextMenu={(evt) => this.setState({ popover: true, popoverAnchor: evt.target })}>
+        <div style={{
+          backgroundImage: `url("../../${service.humanizedLogo}")`,
+          ...styles.avatar
+        }} />
         <ReactPortalTooltip
           active={isHovering}
           tooltipTimeout={0}
@@ -150,6 +173,12 @@ export default class MailboxToolbarService extends React.Component {
             {service.humanizedType}
           </span>
         </ReactPortalTooltip>
+        <MailboxServicePopover
+          mailboxId={mailboxId}
+          serviceType={serviceType}
+          isOpen={popover}
+          anchor={popoverAnchor}
+          onRequestClose={() => this.setState({ popover: false })} />
       </div>
     )
   }

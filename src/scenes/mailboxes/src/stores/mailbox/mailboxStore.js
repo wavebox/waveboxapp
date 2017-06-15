@@ -102,6 +102,22 @@ class MailboxStore {
       return this.allMailboxes().filter((mailbox) => mailbox.supportsWaveboxAuth)
     }
 
+    /**
+    * @param mailboxId: the id of the mailbox
+    * @return true if this is the first mailbox
+    */
+    this.mailboxIsAtFirstIndex = (mailboxId) => {
+      return this.index[0] === mailboxId
+    }
+
+    /**
+    * @param mailboxId: the id of the mailbox
+    * @return true if this is the last mailbox
+    */
+    this.mailboxIsAtLastIndex = (mailboxId) => {
+      return this.index[this.index.length - 1] === mailboxId
+    }
+
     /* ****************************************/
     // Mailbox Restrictions
     /* ****************************************/
@@ -417,6 +433,10 @@ class MailboxStore {
       handleChangeActiveServiceIndex: actions.CHANGE_ACTIVE_SERVICE_INDEX,
       handleChangeActivePrev: actions.CHANGE_ACTIVE_TO_PREV,
       handleChangeActiveNext: actions.CHANGE_ACTIVE_TO_NEXT,
+
+      // Sleeping
+      handleAwakenService: actions.AWAKEN_SERVICE,
+      handleSleepService: actions.SLEEP_SERVICE,
 
       // Search
       handleStartSearchingMailbox: actions.START_SEARCHING_MAILBOX,
@@ -999,6 +1019,16 @@ class MailboxStore {
   /* **************************************************************************/
   // Handlers : Sleep
   /* **************************************************************************/
+
+  handleAwakenService ({ id, service }) {
+    this.clearSleep(id, service)
+    const key = `${id}:${service}`
+    this.sleepingQueue.set(key, { sleeping: false, timer: null })
+  }
+
+  handleSleepService ({ id, service }) {
+    this._sendMailboxToSleep(id, service)
+  }
 
   /**
   * Clears sleep for a mailbox and service
