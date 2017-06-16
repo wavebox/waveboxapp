@@ -135,7 +135,7 @@ export default class SlackMailboxWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload='../platform/webviewInjection/slackDefaultServiceTooling'
+        preload='../guest/guestInterface/slackDefaultServiceTooling'
         mailboxId={mailboxId}
         hasSearch={false}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}

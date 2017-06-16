@@ -173,7 +173,7 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload='../platform/webviewInjection/genericDefaultServiceTooling'
+        preload='../guest/guestInterface/genericDefaultServiceTooling'
         mailboxId={mailboxId}
         url={url}
         newWindow={settingsStore.getState().launched.app.useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow}

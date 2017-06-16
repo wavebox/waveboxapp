@@ -1,9 +1,9 @@
 const injector = require('../injector')
 const Browser = require('../Browser/Browser')
 const Wavebox = require('../Wavebox/Wavebox')
-const path = require('path')
 const { ipcRenderer, remote } = require('electron')
 const { WB_BROWSER_GUEST_WINDOW_CLOSE } = remote.require('./shared/ipcEvents')
+const { WAVEBOX_GUEST_APIS } = remote.require('./shared/guestApis')
 
 class Content {
   /* **************************************************************************/
@@ -19,8 +19,7 @@ class Content {
     })
     this.wavebox = new Wavebox()
 
-    injector.injectClientModule(path.join(__dirname, './Client/ChromePatches.js'))
-    injector.injectClientModule(path.join(__dirname, './Client/WindowPatches.js'))
+    injector.injectWaveboxApi(WAVEBOX_GUEST_APIS.CONTENT_WINDOW)
 
     window.addEventListener('message', (evt) => {
       if (evt.origin === window.location.origin && evt.isTrusted) {

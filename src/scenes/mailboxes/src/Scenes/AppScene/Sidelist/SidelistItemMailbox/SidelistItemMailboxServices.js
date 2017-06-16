@@ -71,7 +71,7 @@ export default class SidelistItemMailboxServices extends React.Component {
       onContextMenuService
     } = this.props
     const { mailbox, isActiveMailbox } = this.state
-    if (!mailbox.hasAdditionalServices) { return null }
+    if (!mailbox || !mailbox.hasAdditionalServices) { return false }
 
     const style = Object.assign({},
       styles.mailboxServiceIcons,

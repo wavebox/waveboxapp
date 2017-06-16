@@ -3,8 +3,9 @@ const TASKS = {
   app: require('./src/app/webpack.config.js'),
   content: require('./src/scenes/content/webpack.config.js'),
   mailboxes: require('./src/scenes/mailboxes/webpack.config.js'),
+  bridge: require('./src/scenes/bridge/webpack.config.js'),
   monitor: require('./src/scenes/monitor/webpack.config.js'),
-  platform: require('./src/scenes/platform/webpack.config.js')
+  guest: require('./src/scenes/guest/webpack.config.js')
 }
 
 module.exports = function (env = {}) {

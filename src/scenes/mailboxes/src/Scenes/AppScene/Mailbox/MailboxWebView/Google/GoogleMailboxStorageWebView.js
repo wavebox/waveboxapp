@@ -43,7 +43,7 @@ export default class GoogleMailboxStorageWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload='../platform/webviewInjection/googleStorageTooling'
+        preload='../guest/guestInterface/googleStorageTooling'
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.STORAGE}
         newWindow={settingsStore.getState().launched.app.useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow} />

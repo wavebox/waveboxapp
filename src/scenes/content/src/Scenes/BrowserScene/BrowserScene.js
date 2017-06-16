@@ -155,7 +155,7 @@ export default class BrowserScene extends React.Component {
             plugins
             className='ReactComponent-BrowserSceneWebView'
             webpreferences='contextIsolation=yes, nativeWindowOpen=yes'
-            preload='../platform/webviewInjection/contentTooling'
+            preload='../guest/guestInterface/contentTooling'
             zoomFactor={zoomFactor}
             searchTerm={isSearching ? searchTerm : undefined}
             searchId={searchNextHash}

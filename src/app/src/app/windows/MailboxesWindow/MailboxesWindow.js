@@ -1,22 +1,22 @@
 const { app, ipcMain, shell } = require('electron')
-const appWindowManager = require('../appWindowManager')
-const WaveboxWindow = require('./WaveboxWindow')
-const ContentWindow = require('./ContentWindow')
-const ContentPopupWindow = require('./ContentPopupWindow')
+const appWindowManager = require('../../appWindowManager')
+const WaveboxWindow = require('../WaveboxWindow')
+const ContentWindow = require('../ContentWindow')
+const ContentPopupWindow = require('../ContentPopupWindow')
 const path = require('path')
 const url = require('url')
 const MailboxesSessionManager = require('./MailboxesSessionManager')
-const settingStore = require('../stores/settingStore')
-const userStore = require('../stores/userStore')
-const mailboxStore = require('../stores/mailboxStore')
-const CoreService = require('../../shared/Models/Accounts/CoreService')
+const settingStore = require('../../stores/settingStore')
+const userStore = require('../../stores/userStore')
+const mailboxStore = require('../../stores/mailboxStore')
+const CoreService = require('../../../shared/Models/Accounts/CoreService')
 const {
   AuthGoogle,
   AuthMicrosoft,
   AuthSlack,
   AuthTrello,
   AuthWavebox
-} = require('../AuthProviders')
+} = require('../../AuthProviders')
 const querystring = require('querystring')
 const electron = require('electron')
 const mouseFB = process.platform === 'linux' ? require('mouse-forward-back') : undefined
@@ -43,12 +43,12 @@ const {
   WB_SQUIRREL_UPDATE_NOT_AVAILABLE,
   WB_SQUIRREL_UPDATE_CHECK_START,
   WB_SQUIRREL_UPDATE_DISABLED
-} = require('../../shared/ipcEvents')
+} = require('../../../shared/ipcEvents')
 const {
   WAVEBOX_CAPTURE_URL_PREFIX
-} = require('../../shared/constants')
+} = require('../../../shared/constants')
 
-const MAILBOXES_DIR = path.resolve(path.join(__dirname, '/../../../scenes/mailboxes'))
+const MAILBOXES_DIR = path.resolve(path.join(__dirname, '/../../../../scenes/mailboxes'))
 const ALLOWED_URLS = [
   'file://' + path.join(MAILBOXES_DIR, 'mailboxes.html'),
   'file://' + path.join(MAILBOXES_DIR, 'offline.html')

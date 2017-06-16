@@ -119,7 +119,7 @@ export default class MicrosoftMailboxStorageWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload='../platform/webviewInjection/microsoftStorageServiceTooling'
+        preload='../guest/guestInterface/microsoftStorageServiceTooling'
         mailboxId={mailboxId}
         serviceType={CoreMailbox.SERVICE_TYPES.STORAGE}
         willNavigate={this.handleWillNavigate}

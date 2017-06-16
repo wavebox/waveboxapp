@@ -1,7 +1,8 @@
+const { remote } = require('electron')
 const Browser = require('../Browser/Browser')
 const Wavebox = require('../Wavebox/Wavebox')
 const injector = require('../injector')
-const path = require('path')
+const { WAVEBOX_GUEST_APIS } = remote.require('./shared/guestApis')
 
 class MicrosoftStorageService {
   /* **************************************************************************/
@@ -12,7 +13,7 @@ class MicrosoftStorageService {
     this.browser = new Browser()
     this.wavebox = new Wavebox()
 
-    injector.injectClientModule(path.join(__dirname, './Client/OnedriveWindowOpen.js'))
+    injector.injectWaveboxApi(WAVEBOX_GUEST_APIS.ONEDRIVE_WINDOW_OPEN)
   }
 }
 

@@ -5,10 +5,14 @@ const ContextMenu = require('./ContextMenu')
 const Lifecycle = require('./Lifecycle')
 const NotificationProvider = require('./NotificationProvider')
 const environment = remote.getCurrentWebContents().getType()
+const injector = require('../injector')
 const {
   WB_PING_RESOURCE_USAGE,
   WB_PONG_RESOURCE_USAGE
 } = remote.require('./shared/ipcEvents')
+const {
+  WAVEBOX_GUEST_APIS
+} = remote.require('./shared/guestApis')
 
 class Browser {
   /* **************************************************************************/
@@ -20,6 +24,7 @@ class Browser {
   *                     contextMenu
   */
   constructor (config = {}) {
+    injector.injectWaveboxApi(WAVEBOX_GUEST_APIS.CHROME)
     this.keyboardNavigator = new KeyboardNavigator()
     this.spellchecker = new Spellchecker()
     this.contextMenu = new ContextMenu(this.spellchecker, config.contextMenu)

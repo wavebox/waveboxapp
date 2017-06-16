@@ -181,7 +181,7 @@
             window.config = config
             return Promise.resolve()
           })
-          .then(() => injectScript('../platform/nativeRequire.js'))
+          .then(() => injectScript('../bridge/nativeRequire.js'))
           .then(() => injectScript('mailboxes.js'))
           .then(
             () => console.log('Bootstrap complete', new Date().getTime() - start),

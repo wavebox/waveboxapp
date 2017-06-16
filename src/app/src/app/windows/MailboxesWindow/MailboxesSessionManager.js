@@ -2,16 +2,20 @@ const {session, dialog, app} = require('electron')
 const uuid = require('uuid')
 const fs = require('fs-extra')
 const path = require('path')
-const settingStore = require('../stores/settingStore')
-const mailboxStore = require('../stores/mailboxStore')
+const settingStore = require('../../stores/settingStore')
+const mailboxStore = require('../../stores/mailboxStore')
 const unusedFilename = require('unused-filename')
-const pkg = require('../../package.json')
+const pkg = require('../../../package.json')
 const {
   ARTIFICIAL_COOKIE_PERSIST_WAIT,
   ARTIFICIAL_COOKIE_PERSIST_PERIOD
-} = require('../../shared/constants')
-const MailboxFactory = require('../../shared/Models/Accounts/MailboxFactory')
-const CoreMailbox = require('../../shared/Models/Accounts/CoreMailbox')
+} = require('../../../shared/constants')
+const {
+  WAVEBOX_GUEST_APIS_PROTOCOL
+} = require('../../../shared/guestApis')
+const MailboxFactory = require('../../../shared/Models/Accounts/MailboxFactory')
+const CoreMailbox = require('../../../shared/Models/Accounts/CoreMailbox')
+const MailboxesProtocolProvider = require('./MailboxesProtocolProvider')
 
 class MailboxesSessionManager {
   /* ****************************************************************************/
@@ -23,6 +27,7 @@ class MailboxesSessionManager {
   */
   constructor (mailboxWindow) {
     this.mailboxWindow = mailboxWindow
+    this.protocolProvider = new MailboxesProtocolProvider()
     this.downloadsInProgress = { }
     this.persistCookieThrottle = { }
 
@@ -55,9 +60,10 @@ class MailboxesSessionManager {
 
     const ses = session.fromPartition(partition)
     ses.setDownloadPath(app.getPath('downloads'))
-    ses.on('will-download', (evt, item) => this.handleDownload(evt, item))
+    ses.on('will-download', this.handleDownload.bind(this))
     ses.setPermissionRequestHandler(this.handlePermissionRequest)
     ses.webRequest.onCompleted((evt) => this.handleRequestCompleted(evt, ses, partition))
+    ses.protocol.registerStringProtocol(WAVEBOX_GUEST_APIS_PROTOCOL, this.protocolProvider.handleWaveboxUrl.bind(this.protocolProvider))
     this.setupUserAgent(ses, partition, mailboxType)
     this.__managed__.add(partition)
   }
@@ -114,7 +120,7 @@ class MailboxesSessionManager {
   */
   handlePermissionRequest (webContents, permission, fn) {
     if (permission === 'notifications') {
-      fn(false) // These are now handled by injected javascript
+      fn(false)
     } else {
       fn(true)
     }

@@ -4,7 +4,21 @@
   const openNotifications = []
   const permissionRequests = new Map()
   let idAcc = 0
-  let domainPermission = WAVEBOX_CONFIG.permission
+  let domainPermission = (() => {
+    const host = window.location.host.startsWith('www.') ? window.location.host.replace('www.', '') : window.location.host
+    const domain = `${window.location.protocol}//${host}`
+
+    const alwaysDisallowed = !!WAVEBOX_CONFIG.disallowedHosts.find((dis) => domain.indexOf(dis) !== -1)
+    if (alwaysDisallowed) {
+      return 'denied'
+    } else {
+      if (WAVEBOX_CONFIG.permissions[domain]) {
+        return WAVEBOX_CONFIG.permissions[domain].permission || 'default'
+      } else {
+        return 'default'
+      }
+    }
+  })()
 
   window.addEventListener('message', function (evt) {
     if (evt.origin === window.location.origin && evt.isTrusted) {
@@ -69,7 +83,7 @@
       return new Promise((resolve, reject) => {
         const responseId = `${new Date().getTime()}:${Math.random()}`
         permissionRequests.set(responseId, resolve)
-        window.postMessage(JSON.stringify({
+        window.top.postMessage(JSON.stringify({
           wavebox: true,
           type: 'wavebox-notification-permission-request',
           responseId: responseId
@@ -90,7 +104,7 @@
       this.__onclick__ = null
       this.__onerror__ = null
 
-      window.postMessage(JSON.stringify({
+      window.top.postMessage(JSON.stringify({
         wavebox: true,
         type: 'wavebox-notification-present',
         notificationId: this.__id__,
@@ -132,7 +146,7 @@
     /* **************************************************************************/
 
     close () {
-      window.postMessage(JSON.stringify({
+      window.top.postMessage(JSON.stringify({
         wavebox: true,
         type: 'browser-notification-close',
         notificationId: this.__id__
