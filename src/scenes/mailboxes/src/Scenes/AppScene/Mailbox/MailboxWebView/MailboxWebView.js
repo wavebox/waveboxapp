@@ -5,6 +5,7 @@ import { CircularProgress, RaisedButton, FontIcon } from 'material-ui'
 import { mailboxStore, mailboxDispatch } from 'stores/mailbox'
 import { settingsStore, settingsActions } from 'stores/settings'
 import BrowserView from 'sharedui/Components/BrowserView'
+import CoreService from 'shared/Models/Accounts/CoreService'
 import MailboxSearch from './MailboxSearch'
 import MailboxTargetUrl from './MailboxTargetUrl'
 import MailboxNavigationToolbar from './MailboxNavigationToolbar'
@@ -266,18 +267,35 @@ export default class MailboxWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleReload = (evt) => {
-    if (evt.mailboxId === this.props.mailboxId) {
+    const { serviceType, mailboxId } = this.props
+    const { service, isActive } = this.state
+
+    if (evt.mailboxId === mailboxId) {
+      let shouldReload = false
+
       if (evt.allServices) {
-        this.refs[BROWSER_REF].reloadIgnoringCache()
-      } else if (!evt.service && this.state.isActive) {
-        this.refs[BROWSER_REF].reloadIgnoringCache()
-      } else if (evt.service === this.props.serviceType) {
-        this.refs[BROWSER_REF].reloadIgnoringCache()
+        shouldReload = true
+      } else if (!evt.service && isActive) {
+        shouldReload = true
+      } else if (evt.service === serviceType) {
+        shouldReload = true
       }
-      this.setState({
-        isCrashed: false,
-        browserDOMReady: false
-      })
+
+      if (shouldReload) {
+        if (service) {
+          if (service.reloadBehaviour === CoreService.RELOAD_BEHAVIOURS.RELOAD) {
+            this.reload()
+          } else if (service.reloadBehaviour === CoreService.RELOAD_BEHAVIOURS.RESET_URL) {
+            this.loadURL(service.url)
+          }
+        } else {
+          this.reload()
+        }
+        this.setState({
+          isCrashed: false,
+          browserDOMReady: false
+        })
+      }
     }
   }
 
@@ -607,11 +625,11 @@ export default class MailboxWebView extends React.Component {
         {service.hasNavigationToolbar ? (
           <MailboxNavigationToolbar
             ref={TOOLBAR_REF}
-            handleGoHome={() => this.refs[BROWSER_REF].loadURL(url)}
-            handleGoBack={() => this.refs[BROWSER_REF].goBack()}
-            handleGoForward={() => this.refs[BROWSER_REF].goForward()}
-            handleStop={() => this.refs[BROWSER_REF].stop()}
-            handleReload={() => this.refs[BROWSER_REF].reload()} />
+            handleGoHome={() => this.loadURL(url)}
+            handleGoBack={() => this.goBack()}
+            handleGoForward={() => this.goForward()}
+            handleStop={() => this.stop()}
+            handleReload={() => this.reload()} />
         ) : undefined}
         <div className={browserViewContainerClassName}>
           <BrowserView
@@ -690,7 +708,7 @@ export default class MailboxWebView extends React.Component {
               label='Reload'
               icon={<FontIcon className='material-icons'>refresh</FontIcon>}
               onTouchTap={() => {
-                this.refs[BROWSER_REF].reloadIgnoringCache()
+                this.reloadIgnoringCache()
                 this.setState({ isCrashed: false, browserDOMReady: false })
               }} />
           </div>

@@ -12,6 +12,11 @@ const WINDOW_OPEN_MODES = Object.freeze({
   SUPPRESS: 'SUPPRESS'
 })
 
+const RELOAD_BEHAVIOURS = Object.freeze({
+  RELOAD: 'RELOAD',
+  RESET_URL: 'RESET_URL'
+})
+
 class CoreService extends Model {
   /* **************************************************************************/
   // Class: Config & Types
@@ -20,6 +25,7 @@ class CoreService extends Model {
   static get WINDOW_OPEN_MODES () { return WINDOW_OPEN_MODES }
   static get SERVICE_TYPES () { return SERVICE_TYPES }
   static get PROTOCOL_TYPES () { return PROTOCOL_TYPES }
+  static get RELOAD_BEHAVIOURS () { return RELOAD_BEHAVIOURS }
   static get type () { return SERVICE_TYPES.UNKNOWN }
 
   /* **************************************************************************/
@@ -67,6 +73,7 @@ class CoreService extends Model {
   get sleepable () { return this._value_('sleepable', true) }
   get sleepableTimeout () { return this._value_('sleepableTimeout', MAILBOX_SLEEP_WAIT) }
   get hasNavigationToolbar () { return false }
+  get reloadBehaviour () { return RELOAD_BEHAVIOURS.RELOAD }
 
   /* **************************************************************************/
   // Properties: Protocols & actions

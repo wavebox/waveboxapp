@@ -71,8 +71,11 @@ export default class GoogleMailboxMailWebView extends React.Component {
   generateState (props) {
     const settingsState = settingsStore.getState()
     const mailboxState = mailboxStore.getState()
+    const mailbox = mailboxState.getMailbox(props.mailboxId)
+    const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     return {
-      mailbox: mailboxState.getMailbox(props.mailboxId),
+      mailbox: mailbox,
+      accessMode: service ? service.accessMode : null,
       isActive: mailboxState.isActive(props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT),
       ui: settingsState.ui
     }
@@ -80,8 +83,11 @@ export default class GoogleMailboxMailWebView extends React.Component {
 
   mailboxChanged = (mailboxState) => {
     const { mailboxId } = this.props
+    const mailbox = mailboxState.getMailbox(mailboxId)
+    const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     this.setState({
-      mailbox: mailboxState.getMailbox(mailboxId),
+      mailbox: mailbox,
+      accessMode: service ? service.accessMode : null,
       isActive: mailboxState.isActive(mailboxId, CoreService.SERVICE_TYPES.DEFAULT)
     })
   }
@@ -211,18 +217,15 @@ export default class GoogleMailboxMailWebView extends React.Component {
   componentDidUpdate (prevProps, prevState) {
     if (prevState.isActive !== this.state.isActive) {
       if (this.state.isActive && this.state.mailbox) {
-        const service = this.state.mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT)
-        if (service) {
-          // Try to get the UI to reload to show when we make this item active
-          if (service.accessMode === GoogleDefaultService.ACCESS_MODES.GMAIL) {
-            this.refs[REF].executeJavaScript(`
-              document.querySelector('[href*="mail.google"][href*="' + window.location.hash + '"]').click()
-            `, true)
-          } else if (service.accessMode === GoogleDefaultService.ACCESS_MODES.INBOX) {
-            this.refs[REF].executeJavaScript(`
-              document.querySelector('[jsaction="global.navigate"][tabIndex="0"]').click()
-            `, true)
-          }
+        // Try to get the UI to reload to show when we make this item active
+        if (this.state.accessMode === GoogleDefaultService.ACCESS_MODES.GMAIL) {
+          this.refs[REF].executeJavaScript(`
+            document.querySelector('[href*="mail.google"][href*="' + window.location.hash + '"]').click()
+          `, true)
+        } else if (this.state.accessMode === GoogleDefaultService.ACCESS_MODES.INBOX) {
+          this.refs[REF].executeJavaScript(`
+            document.querySelector('[jsaction="global.navigate"][tabIndex="0"]').click()
+          `, true)
         }
       }
     }

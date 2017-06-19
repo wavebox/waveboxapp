@@ -57,6 +57,12 @@ class GoogleDefaultService extends GoogleService {
     }
   }
   get sleepable () { return this._value_('sleepable', false) }
+  get reloadBehaviour () {
+    switch (this.accessMode) {
+      case ACCESS_MODES.GMAIL: return this.constructor.RELOAD_BEHAVIOURS.RESET_URL
+      case ACCESS_MODES.GINBOX: return this.constructor.RELOAD_BEHAVIOURS.RELOAD
+    }
+  }
 
   /* **************************************************************************/
   // Properties: Humanized
