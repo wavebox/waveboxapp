@@ -1,7 +1,8 @@
 const { remote, webFrame } = require('electron')
+const req = require('../req')
 const CustomCode = require('./CustomCode')
 const environment = remote.getCurrentWebContents().getType()
-const { WAVEBOX_GUEST_APIS_PROTOCOL } = remote.require('./shared/guestApis')
+const { WAVEBOX_GUEST_APIS_PROTOCOL } = req.shared('guestApis')
 
 class Wavebox {
   constructor () {

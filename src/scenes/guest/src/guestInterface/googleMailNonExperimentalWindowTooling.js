@@ -1,7 +1,7 @@
-const { remote } = require('electron')
+const req = require('./req')
 const elconsole = require('./elconsole')
 const injector = require('./injector')
-const { WAVEBOX_GUEST_APIS } = remote.require('./shared/guestApis')
+const { WAVEBOX_GUEST_APIS } = req.shared('guestApis')
 
 try {
   const GoogleMail = require('./Google/GoogleMail')

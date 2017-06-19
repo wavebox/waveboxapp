@@ -1,5 +1,6 @@
 const injector = require('../injector')
-const {ipcRenderer, remote} = require('electron')
+const {ipcRenderer} = require('electron')
+const req = require('../req')
 const GinboxApi = require('./GinboxApi')
 const GmailApi = require('./GmailApi')
 const GoogleService = require('./GoogleService')
@@ -9,7 +10,7 @@ const {
   WB_BROWSER_WINDOW_ICONS_IN_SCREEN,
   WB_BROWSER_OPEN_MESSAGE,
   WB_BROWSER_COMPOSE_MESSAGE
-} = remote.require('./shared/ipcEvents')
+} = req.shared('ipcEvents')
 
 class GoogleMail extends GoogleService {
   /* **************************************************************************/

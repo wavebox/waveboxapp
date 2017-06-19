@@ -1,9 +1,10 @@
 const injector = require('../injector')
 const Browser = require('../Browser/Browser')
 const Wavebox = require('../Wavebox/Wavebox')
-const { ipcRenderer, remote } = require('electron')
-const { WB_BROWSER_GUEST_WINDOW_CLOSE } = remote.require('./shared/ipcEvents')
-const { WAVEBOX_GUEST_APIS } = remote.require('./shared/guestApis')
+const req = require('../req')
+const { ipcRenderer } = require('electron')
+const { WB_BROWSER_GUEST_WINDOW_CLOSE } = req.shared('ipcEvents')
+const { WAVEBOX_GUEST_APIS } = req.shared('guestApis')
 
 class Content {
   /* **************************************************************************/

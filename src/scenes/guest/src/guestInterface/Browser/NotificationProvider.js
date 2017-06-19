@@ -1,13 +1,14 @@
-const { ipcRenderer, remote } = require('electron')
+const { ipcRenderer } = require('electron')
 const injector = require('../injector')
+const req = require('../req')
 const {
   WB_BROWSER_NOTIFICATION_CLICK,
   WB_BROWSER_NOTIFICATION_PRESENT
-} = remote.require('./shared/ipcEvents')
+} = req.shared('ipcEvents')
 const {
   WAVEBOX_GUEST_APIS
-} = remote.require('./shared/guestApis')
-const NotificationPermissionManager = remote.require('./app/MProcManagers/NotificationPermissionManager')
+} = req.shared('guestApis')
+const NotificationPermissionManager = req.app('MProcManagers/NotificationPermissionManager')
 
 class NotificationProvider {
   /* **************************************************************************/

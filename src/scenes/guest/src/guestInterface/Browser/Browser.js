@@ -1,4 +1,5 @@
 const { ipcRenderer, remote } = require('electron')
+const req = require('../req')
 const KeyboardNavigator = require('./KeyboardNavigator')
 const Spellchecker = require('./Spellchecker')
 const ContextMenu = require('./ContextMenu')
@@ -9,10 +10,10 @@ const injector = require('../injector')
 const {
   WB_PING_RESOURCE_USAGE,
   WB_PONG_RESOURCE_USAGE
-} = remote.require('./shared/ipcEvents')
+} = req.shared('ipcEvents')
 const {
   WAVEBOX_GUEST_APIS
-} = remote.require('./shared/guestApis')
+} = req.shared('guestApis')
 
 class Browser {
   /* **************************************************************************/

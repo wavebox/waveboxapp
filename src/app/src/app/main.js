@@ -13,9 +13,6 @@
   })
   if (singleAppQuit) { app.quit(); return }
 
-  // Global objects
-  global.Nodehun = require('nodehun')
-
   // Setup the window manager
   const appWindowManager = require('./appWindowManager')
   const MailboxesWindow = require('./windows/MailboxesWindow')

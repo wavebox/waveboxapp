@@ -1,6 +1,7 @@
-const { ipcRenderer, remote } = require('electron')
+const { ipcRenderer } = require('electron')
+const req = require('../req')
 const GmailApi = require('./GmailApi')
-const { WB_BROWSER_GOOGLE_GMAIL_UNREAD_COUNT_CHANGED } = remote.require('./shared/ipcEvents')
+const { WB_BROWSER_GOOGLE_GMAIL_UNREAD_COUNT_CHANGED } = req.shared('ipcEvents')
 
 class GmailChangeEmitter {
   /* **************************************************************************/

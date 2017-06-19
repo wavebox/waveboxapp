@@ -1,9 +1,10 @@
-const { ipcRenderer, remote } = require('electron')
+const { ipcRenderer } = require('electron')
+const req = require('../req')
 const injector = require('../injector')
 const {
   WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP,
   WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN
-} = remote.require('./shared/ipcEvents')
+} = req.shared('ipcEvents')
 
 class Lifecycle {
   /* **************************************************************************/

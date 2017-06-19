@@ -1,6 +1,7 @@
-const { ipcRenderer, remote } = require('electron')
+const { ipcRenderer } = require('electron')
+const req = require('../req')
 const injector = require('../injector')
-const { WB_BROWSER_INJECT_CUSTOM_CONTENT } = remote.require('./shared/ipcEvents')
+const { WB_BROWSER_INJECT_CUSTOM_CONTENT } = req.shared('ipcEvents')
 
 class CustomCode {
   constructor () {

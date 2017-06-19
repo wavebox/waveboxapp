@@ -1,8 +1,9 @@
-const { ipcRenderer, remote } = require('electron')
+const { ipcRenderer } = require('electron')
+const req = require('./req')
 const {
   WB_BROWSER_ELEVATED_LOG,
   WB_BROWSER_ELEVATED_ERROR
-} = remote.require('./shared/ipcEvents')
+} = req.shared('ipcEvents')
 
 class ELConsole {
   /**

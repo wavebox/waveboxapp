@@ -1,5 +1,5 @@
-const { remote } = require('electron')
-const escapeHTML = remote.require('escape-html')
+const req = require('../req')
+const escapeHTML = req.modules('escape-html')
 
 class GmailApi {
   /**

@@ -1,16 +1,23 @@
 const { webFrame, ipcRenderer, remote } = require('electron')
+const req = require('../req')
 const DictionaryLoad = require('./DictionaryLoad')
-const dictionaryExcludes = remote.require('./shared/dictionaryExcludes')
+const dictionaryExcludes = req.shared('dictionaryExcludes')
 const elconsole = require('../elconsole')
 const path = require('path')
-const fs = remote.require('fs-extra')
-const pkg = remote.require('./package.json')
-const AppDirectory = remote.require('appdirectory')
+const fs = req.modules('fs-extra')
+const pkg = req.package()
+const AppDirectory = req.modules('appdirectory')
+let Nodehun
+try {
+  Nodehun = req.modules('Nodehun')
+} catch (ex) {
+  Nodehun = null
+}
+
 const {
   WB_BROWSER_START_SPELLCHECK,
   WB_BROWSER_SPELLCHECK_ADD_WORD
-} = remote.require('./shared/ipcEvents')
-const Nodehun = remote.getGlobal('Nodehun')
+} = req.shared('ipcEvents')
 
 const appDirectory = new AppDirectory({ appName: pkg.name, useRoaming: true }).userData()
 const customWordsPath = path.join(appDirectory, 'user_dictionary_words.records')

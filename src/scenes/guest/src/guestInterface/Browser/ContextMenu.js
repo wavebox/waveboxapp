@@ -1,14 +1,15 @@
 const { remote, ipcRenderer } = require('electron')
+const req = require('../req')
 const { shell, clipboard, Menu } = remote
 const webContents = remote.getCurrentWebContents()
 const environment = remote.getCurrentWebContents().getType()
-const dictInfo = remote.require('./shared/dictionaries.js')
+const dictInfo = req.shared('dictionaries.js')
 const DictionaryLoad = require('./DictionaryLoad')
 const {
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
   WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG,
   WB_MAILBOXES_WEBVIEW_NAVIGATE_HOME
-} = remote.require('./shared/ipcEvents')
+} = req.shared('ipcEvents')
 
 class ContextMenu {
   /* **************************************************************************/

@@ -1,8 +1,8 @@
-const { remote } = require('electron')
+const req = require('../req')
 const Browser = require('../Browser/Browser')
 const Wavebox = require('../Wavebox/Wavebox')
 const injector = require('../injector')
-const { WAVEBOX_GUEST_APIS } = remote.require('./shared/guestApis')
+const { WAVEBOX_GUEST_APIS } = req.shared('guestApis')
 
 class MicrosoftStorageService {
   /* **************************************************************************/
