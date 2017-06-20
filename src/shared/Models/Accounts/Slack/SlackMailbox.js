@@ -38,6 +38,21 @@ class SlackMailbox extends CoreMailbox {
     })
   }
 
+  /**
+  * Modifies raw mailbox json for export
+  * @param id: the id of the mailbox
+  * @param mailboxJS: the js mailbox object
+  * @return the modified data
+  */
+  static prepareForExport (id, mailboxJS) {
+    const prep = super.prepareForExport(id, mailboxJS)
+    const clearKeys = ['auth']
+    clearKeys.forEach((k) => {
+      delete prep[k]
+    })
+    return prep
+  }
+
   /* **************************************************************************/
   // Properties : Display
   /* **************************************************************************/
@@ -49,7 +64,7 @@ class SlackMailbox extends CoreMailbox {
   /* **************************************************************************/
 
   get auth () { return this._value_('auth', {}) }
-  get hasAuth () { return Object.keys(this.auth) !== 0 }
+  get hasAuth () { return Object.keys(this.auth).length !== 0 }
   get authToken () { return this.auth.access_token }
   get authTeamId () { return this.auth.team_id }
   get authTeamName () { return this.auth.team_name }

@@ -138,7 +138,7 @@ export default class SidelistItemMailbox extends React.Component {
     let badgeContent
     if (isRestricted) {
       badgeContent = undefined
-    } else if (mailbox.isAuthenticationInvalid) {
+    } else if (mailbox.isAuthenticationInvalid || !mailbox.hasAuth) {
       badgeContent = (<FontIcon className='fa fa-exclamation' style={styles.mailboxBadgeFAIcon} />)
     } else {
       if (mailbox.showUnreadBadge && mailbox.unreadCount) {

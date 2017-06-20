@@ -15,3 +15,9 @@ window.appNodeModulesRequire = function (name) {
 window.appPackage = function () {
   return require('../../app/package.json')
 }
+
+window.mprocManager = function (name) {
+  const path = require('path')
+  const {remote} = require('electron')
+  return remote.require(path.join(__dirname, '../../app/app/MProcManagers', name))
+}

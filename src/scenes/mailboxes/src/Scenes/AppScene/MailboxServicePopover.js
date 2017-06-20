@@ -357,7 +357,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
     menuItems.push(<Divider key='div-actions' />)
 
     // Errors
-    if (mailbox.isAuthenticationInvalid) {
+    if (mailbox.isAuthenticationInvalid || !mailbox.hasAuth) {
       menuItems.push(
         <MenuItem
           key='reauthenticate'

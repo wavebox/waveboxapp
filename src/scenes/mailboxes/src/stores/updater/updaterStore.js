@@ -1,6 +1,7 @@
 import alt from '../alt'
 import actions from './updaterActions'
 import settingsStore from '../settings/settingsStore'
+import querystring from 'querystring'
 import {
   UPDATE_CHECK_INTERVAL,
   UPDATE_FEED_MANUAL,
@@ -124,6 +125,17 @@ class UpdaterStore {
       }
     }
     return false
+  }
+
+  /**
+  * Generates the querstring to use in the update check
+  */
+  generateUpdateQueryString () {
+    return querystring.stringify({
+      v: pkg.version,
+      bid: pkg.earlyBuildId || 'release',
+      mode: this.userActionedUpdate ? 'manual' : 'auto'
+    })
   }
 
   /* **************************************************************************/
@@ -273,9 +285,9 @@ class UpdaterStore {
       Promise.resolve()
         .then(() => {
           if (process.arch === 'x64') {
-            return window.fetch(`${UPDATE_FEED_WIN32_X64}?v=${pkg.version}&bid=${pkg.earlyBuildId || 'release'}`)
+            return window.fetch(`${UPDATE_FEED_WIN32_X64}?${this.generateUpdateQueryString()}`)
           } else if (process.arch === 'ia32') {
-            return window.fetch(`${UPDATE_FEED_WIN32_IA32}?v=${pkg.version}&bid=${pkg.earlyBuildId || 'release'}`)
+            return window.fetch(`${UPDATE_FEED_WIN32_IA32}?${this.generateUpdateQueryString()}`)
           } else {
             return Promise.reject(new Error('Unsupported Platform'))
           }
@@ -309,7 +321,7 @@ class UpdaterStore {
     this.showUserPrompt()
 
     Promise.resolve()
-      .then(() => window.fetch(`${UPDATE_FEED_MANUAL}?v=${pkg.version}&bid=${pkg.earlyBuildId || 'release'}`))
+      .then(() => window.fetch(`${UPDATE_FEED_MANUAL}?${this.generateUpdateQueryString()}`))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
       .then((res) => {

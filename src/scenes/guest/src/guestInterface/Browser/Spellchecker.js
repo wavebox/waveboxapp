@@ -3,10 +3,7 @@ const req = require('../req')
 const DictionaryLoad = require('./DictionaryLoad')
 const dictionaryExcludes = req.shared('dictionaryExcludes')
 const elconsole = require('../elconsole')
-const path = require('path')
 const fs = req.modules('fs-extra')
-const pkg = req.package()
-const AppDirectory = req.modules('appdirectory')
 let Nodehun
 try {
   Nodehun = req.modules('Nodehun')
@@ -18,9 +15,7 @@ const {
   WB_BROWSER_START_SPELLCHECK,
   WB_BROWSER_SPELLCHECK_ADD_WORD
 } = req.shared('ipcEvents')
-
-const appDirectory = new AppDirectory({ appName: pkg.name, useRoaming: true }).userData()
-const customWordsPath = path.join(appDirectory, 'user_dictionary_words.records')
+const { USER_DICTIONARY_WORDS_PATH } = req.mprocManager('PathManager')
 
 class Spellchecker {
   /* **************************************************************************/
@@ -122,7 +117,7 @@ class Spellchecker {
   addCustomWord (word) {
     word = word.split(/(\s+)/)[0]
     return Promise.resolve()
-      .then(() => fs.appendFile(customWordsPath, `\n${word}`))
+      .then(() => fs.appendFile(USER_DICTIONARY_WORDS_PATH, `\n${word}`))
       .then(() => {
         if (this._spellcheckers_.primary.nodehun) {
           return this._addUserWordIntoSpellchecker(this._spellcheckers_.primary.nodehun, word)
@@ -209,7 +204,7 @@ class Spellchecker {
   */
   _loadUserWordsIntoSpellchecker (spellchecker) {
     return Promise.resolve()
-      .then(() => fs.readFile(customWordsPath, 'utf8'))
+      .then(() => fs.readFile(USER_DICTIONARY_WORDS_PATH, 'utf8'))
       .then((d) => d.split('\n'), () => Promise.resolve([]))
       .then((words) => {
         return Promise.all(

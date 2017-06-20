@@ -127,6 +127,7 @@ class AuthTrello {
       .then(({ appKey, token }) => {
         evt.sender.send(WB_AUTH_TRELLO_COMPLETE, {
           id: body.id,
+          authMode: body.authMode,
           provisional: body.provisional,
           appKey: appKey,
           token: token
@@ -134,6 +135,7 @@ class AuthTrello {
       }, (err) => {
         evt.sender.send(WB_AUTH_TRELLO_ERROR, {
           id: body.id,
+          authMode: body.authMode,
           provisional: body.provisional,
           error: err,
           errorString: (err || {}).toString ? (err || {}).toString() : undefined,

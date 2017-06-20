@@ -1,10 +1,11 @@
 import React from 'react'
-import {Paper} from 'material-ui'
+import { Paper, FlatButton, FontIcon } from 'material-ui'
 import styles from '../SettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
-import * as Colors from 'material-ui/styles/colors'
 import { updaterActions } from 'stores/updater'
+import { takeoutActions } from 'stores/takeout'
 import { WB_OPEN_MONITOR_WINDOW } from 'shared/ipcEvents'
+
 const { ipcRenderer } = window.nativeRequire('electron')
 const pkg = window.appPackage()
 
@@ -14,19 +15,18 @@ export default class InfoSettingsSection extends React.Component {
   /* **************************************************************************/
 
   /**
-  * Shows a snapshot of the current memory consumed
+  * Starts the data import process
   */
-  handleShowMemoryInfo = (evt) => {
-    evt.preventDefault()
-    ipcRenderer.send(WB_OPEN_MONITOR_WINDOW, {})
-  }
+  handleImportData = () => {
+    const shouldImport = window.confirm([
+      'Importing accounts and settings will remove any configuration you have done on this machine.',
+      '',
+      'Are you sure you want to do this?'
+    ].join('\n'))
 
-  /**
-  * Starts the check for update flow
-  */
-  handleCheckForUpdate = (evt) => {
-    evt.preventDefault()
-    updaterActions.userCheckForUpdates()
+    if (shouldImport) {
+      takeoutActions.importDataFromDisk()
+    }
   }
 
   /* **************************************************************************/
@@ -40,24 +40,31 @@ export default class InfoSettingsSection extends React.Component {
   render () {
     return (
       <Paper zDepth={1} style={styles.paper} {...this.props}>
-        <a
-          style={{color: Colors.blue700, fontSize: '85%', marginBottom: 10, display: 'block'}}
-          onClick={this.handleShowMemoryInfo}
-          href='#'>
-          Task Monitor
-        </a>
-        <a
-          style={{color: Colors.blue700, fontSize: '85%', marginBottom: 10, display: 'block'}}
-          onClick={this.handleCheckForUpdate}
-          href='#'>
-          Check for Update
-        </a>
         <div style={{ fontSize: '85%' }}>
           <p>{`Wavebox ${pkg.version}`}</p>
           {pkg.earlyBuildId ? (
             <p>{`Early Build Reference: ${pkg.earlyBuildId}`}</p>
           ) : undefined}
         </div>
+        <FlatButton
+          label='Check for Update'
+          icon={<FontIcon className='material-icons'>system_update_alt</FontIcon>}
+          onTouchTap={() => updaterActions.userCheckForUpdates()} />
+        <br />
+        <FlatButton
+          label='Task Monitor'
+          icon={<FontIcon className='material-icons'>timeline</FontIcon>}
+          onTouchTap={() => ipcRenderer.send(WB_OPEN_MONITOR_WINDOW, {})} />
+        <br />
+        <FlatButton
+          label='Export Data'
+          icon={<FontIcon className='material-icons'>import_export</FontIcon>}
+          onTouchTap={() => takeoutActions.exportDataToDisk()} />
+        <br />
+        <FlatButton
+          label='Import Data'
+          icon={<FontIcon className='material-icons'>import_export</FontIcon>}
+          onTouchTap={this.handleImportData} />
       </Paper>
     )
   }

@@ -2,7 +2,7 @@ import './MailboxWebView.less'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { CircularProgress, RaisedButton, FontIcon } from 'material-ui'
-import { mailboxStore, mailboxDispatch } from 'stores/mailbox'
+import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
 import { settingsStore, settingsActions } from 'stores/settings'
 import BrowserView from 'sharedui/Components/BrowserView'
 import CoreService from 'shared/Models/Accounts/CoreService'
@@ -636,7 +636,7 @@ export default class MailboxWebView extends React.Component {
             ref={BROWSER_REF}
             preload={preload}
             partition={'persist:' + mailbox.partition}
-            src={url}
+            src={url || 'about:blank'}
             zoomFactor={service.zoomFactor}
             searchId={searchId}
             searchTerm={isSearching ? searchTerm : ''}
@@ -704,12 +704,33 @@ export default class MailboxWebView extends React.Component {
           <div className='ReactComponent-MailboxCrashed'>
             <h1>Whoops!</h1>
             <p>Something went wrong with this mailbox and it crashed</p>
+            <br />
             <RaisedButton
               label='Reload'
               icon={<FontIcon className='material-icons'>refresh</FontIcon>}
               onTouchTap={() => {
                 this.reloadIgnoringCache()
                 this.setState({ isCrashed: false, browserDOMReady: false })
+              }} />
+          </div>
+        ) : undefined}
+        {mailbox.isAuthenticationInvalid || !mailbox.hasAuth ? (
+          <div className='ReactComponent-MailboxAuthInvalid'>
+            <FontIcon className='material-icons primary-icon'>error_outline</FontIcon>
+            <h1>Whoops!</h1>
+            <p>There's an authentication problem with this account.</p>
+            {mailbox.isAuthenticationInvalid ? (
+              <p>The authentication information Wavebox has for this account is no longer valid.</p>
+            ) : undefined}
+            {!mailbox.hasAuth ? (
+              <p>Wavebox doesn't have any authentication information for this account.</p>
+            ) : undefined}
+            <br />
+            <RaisedButton
+              label='Reauthenticate'
+              icon={<FontIcon className='material-icons'>error_outline</FontIcon>}
+              onTouchTap={() => {
+                mailboxActions.reauthenticateMailbox(mailbox.id)
               }} />
           </div>
         ) : undefined}

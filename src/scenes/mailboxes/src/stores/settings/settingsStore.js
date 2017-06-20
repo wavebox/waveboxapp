@@ -92,6 +92,22 @@ class SettingsStore {
       ui: null
     }
 
+    /* ****************************************/
+    // Export
+    /* ****************************************/
+
+    /**
+    * Exports the data synchronously
+    * @return the raw data
+    */
+    this.exportDataSync = () => {
+      return persistence.allItemsSync()
+    }
+
+    /* ****************************************/
+    // Listeners
+    /* ****************************************/
+
     this.bindListeners({
       handleLoad: actions.LOAD,
       handleUpdate: actions.UPDATE,

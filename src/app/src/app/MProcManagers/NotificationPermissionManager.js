@@ -1,12 +1,7 @@
 const url = require('url')
 const {DISALLOWED_HTML5_NOTIFICATION_HOSTS} = require('../../shared/constants.js')
-const pkg = require('../../package.json')
-const path = require('path')
 const fs = require('fs-extra')
-const AppDirectory = require('appdirectory')
-
-const appDirectory = new AppDirectory({ appName: pkg.name, useRoaming: true }).userData()
-const permissionRecordsPath = path.join(appDirectory, 'notification_permissions.records')
+const { NOTIFICATION_PERMISSION_PATH } = require('./PathManager')
 
 /**
 * Can be accessed from main and rendering thread
@@ -27,7 +22,7 @@ class NotificationPermissionManager {
       return Promise.resolve('denied')
     } else {
       return Promise.resolve()
-        .then(() => fs.readFile(permissionRecordsPath, 'utf8'))
+        .then(() => fs.readFile(NOTIFICATION_PERMISSION_PATH, 'utf8'))
         .then(
           (data) => Promise.resolve(this._getDomainPermissionFromData(domain, data)),
           (_err) => Promise.resolve(this._getDomainPermissionFromData(domain, ''))
@@ -41,7 +36,7 @@ class NotificationPermissionManager {
   */
   static getAllDomainPermissions () {
     return Promise.resolve()
-      .then(() => fs.readFile(permissionRecordsPath, 'utf8'))
+      .then(() => fs.readFile(NOTIFICATION_PERMISSION_PATH, 'utf8'))
       .then(
         (data) => {
           const parsedData = data.split('\n').reduce((acc, rawInfo) => {
@@ -73,7 +68,7 @@ class NotificationPermissionManager {
         const permissionData = '\n' + JSON.stringify({ domain: domain, permission: 'granted', time: new Date().getTime() })
 
         return Promise.resolve()
-          .then(() => fs.appendFile(permissionRecordsPath, permissionData))
+          .then(() => fs.appendFile(NOTIFICATION_PERMISSION_PATH, permissionData))
           .then(
             () => Promise.resolve('granted'),
             () => Promise.resolve('default')

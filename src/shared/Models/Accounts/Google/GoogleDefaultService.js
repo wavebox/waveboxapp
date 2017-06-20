@@ -170,7 +170,6 @@ class GoogleDefaultService extends GoogleService {
   getWindowOpenModeForUrl (url, parsedUrl, disposition) {
     const superMode = super.getWindowOpenModeForUrl(url, parsedUrl, disposition)
     if (superMode !== this.constructor.WINDOW_OPEN_MODES.DEFAULT) { return superMode }
-
     if (parsedUrl.hostname === 'mail.google.com') {
       if (parsedUrl.query.ui === '2') {
         switch (parsedUrl.query.view) {

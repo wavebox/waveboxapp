@@ -94,6 +94,21 @@ class MicrosoftMailbox extends CoreMailbox {
     return mailboxJS
   }
 
+  /**
+  * Modifies raw mailbox json for export
+  * @param id: the id of the mailbox
+  * @param mailboxJS: the js mailbox object
+  * @return the modified data
+  */
+  static prepareForExport (id, mailboxJS) {
+    const prep = super.prepareForExport(id, mailboxJS)
+    const clearKeys = ['auth']
+    clearKeys.forEach((k) => {
+      delete prep[k]
+    })
+    return prep
+  }
+
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
@@ -148,7 +163,7 @@ class MicrosoftMailbox extends CoreMailbox {
   /* **************************************************************************/
 
   get auth () { return this._value_('auth', {}) }
-  get hasAuth () { return Object.keys(this.auth) !== 0 }
+  get hasAuth () { return Object.keys(this.auth).length !== 0 }
   get authTime () { return this.auth.date }
   get accessToken () { return this.auth.access_token }
   get refreshToken () { return this.auth.refresh_token }

@@ -1,14 +1,9 @@
 const req = require('../req')
 const fs = require('fs')
 const path = require('path')
-const LanguageSettings = req.shared('Models/Settings/LanguageSettings')
 const enUS = req.modules('dictionary-en-us')
-const pkg = req.package()
-const AppDirectory = req.modules('appdirectory')
-const {PREINSTALLED_DICTIONARIES} = req.shared('constants.js')
-
-const appDirectory = new AppDirectory({ appName: pkg.name, useRoaming: true }).userData()
-const userDictionariesPath = LanguageSettings.userDictionariesPath(appDirectory)
+const { PREINSTALLED_DICTIONARIES } = req.shared('constants.js')
+const { USER_DICTIONARIES_PATH } = req.mprocManager('PathManager')
 
 class DictionaryLoad {
   /* **************************************************************************/
@@ -31,8 +26,8 @@ class DictionaryLoad {
   _loadCustomDictionary_ (language) {
     return new Promise((resolve, reject) => {
       const tasks = [
-        { path: path.join(userDictionariesPath, language + '.aff'), type: 'aff' },
-        { path: path.join(userDictionariesPath, language + '.dic'), type: 'dic' }
+        { path: path.join(USER_DICTIONARIES_PATH, language + '.aff'), type: 'aff' },
+        { path: path.join(USER_DICTIONARIES_PATH, language + '.dic'), type: 'dic' }
       ].map((desc) => {
         return new Promise((resolve, reject) => {
           fs.readFile(desc.path, (err, data) => {
@@ -110,7 +105,7 @@ class DictionaryLoad {
     if (!this._installedDictionaries) {
       let files
       try {
-        files = fs.readdirSync(userDictionariesPath)
+        files = fs.readdirSync(USER_DICTIONARIES_PATH)
       } catch (ex) {
         files = []
       }

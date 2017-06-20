@@ -1,3 +1,4 @@
 module.exports = {
-  NotificationPermissionManager: require('./NotificationPermissionManager')
+  NotificationPermissionManager: require('./NotificationPermissionManager'),
+  PathManager: require('./PathManager')
 }

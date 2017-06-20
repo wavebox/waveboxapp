@@ -87,6 +87,16 @@ class CoreMailbox extends Model {
     }
   }
 
+  /**
+  * Modifies raw mailbox json for export
+  * @param id: the id of the mailbox
+  * @param mailboxJS: the js mailbox object
+  * @return the modified data
+  */
+  static prepareForExport (id, mailboxJS) {
+    return JSON.parse(JSON.stringify(mailboxJS))
+  }
+
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/

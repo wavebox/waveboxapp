@@ -1,7 +1,5 @@
 const { EventEmitter } = require('events')
 const { ipcMain } = require('electron')
-const AppDirectory = require('appdirectory')
-const pkg = require('../../package.json')
 const mkdirp = require('mkdirp')
 const path = require('path')
 const fs = require('fs-extra')
@@ -11,14 +9,10 @@ const {
   DB_BACKUP_INTERVAL,
   DB_MAX_BACKUPS
 } = require('../../shared/constants')
+const { DB_DIR_PATH } = require('../MProcManagers/PathManager')
 
 // Setup
-const appDirectory = new AppDirectory({
-  appName: pkg.name,
-  useRoaming: true
-})
-const dbPath = appDirectory.userData()
-mkdirp.sync(dbPath)
+mkdirp.sync(DB_DIR_PATH)
 
 class StorageBucket extends EventEmitter {
   /* ****************************************************************************/
@@ -27,7 +21,7 @@ class StorageBucket extends EventEmitter {
 
   constructor (bucketName) {
     super()
-    this.__path__ = path.join(dbPath, bucketName + '_db.json')
+    this.__path__ = path.join(DB_DIR_PATH, bucketName + '_db.json')
     this.__writeHold__ = null
     this.__writeLock__ = false
     this.__data__ = undefined
@@ -52,9 +46,16 @@ class StorageBucket extends EventEmitter {
   /* ****************************************************************************/
 
   /**
-  * Loads the database from disk
+  * Loads the database from disk. Also checks for import files
   */
   _loadFromDiskSync () {
+    // Look for import data
+    const importPath = `${this.__path__}.import`
+    try {
+      fs.moveSync(importPath, this.__path__, { overwrite: true })
+    } catch (ex) { }
+
+    // Load the data
     let data = '{}'
     try {
       data = fs.readFileSync(this.__path__, 'utf8')
@@ -93,7 +94,7 @@ class StorageBucket extends EventEmitter {
             const backupPath = `${this.__path__}.${now}.backup`
             return Promise.resolve()
               .then(() => fs.copy(this.__path__, backupPath))
-              .then(() => fs.readdir(dbPath))
+              .then(() => fs.readdir(DB_DIR_PATH))
               .then((files) => {
                 const redundantBackups = files
                   .filter((f) => f.startsWith(path.basename(this.__path__)) && f.endsWith('.backup'))

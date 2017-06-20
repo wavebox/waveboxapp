@@ -40,9 +40,7 @@ class MailboxActions {
   /**
   * Handles a remote change by mirroring the changes in our own store
   */
-  remoteChange () {
-    return {}
-  }
+  remoteChange () { return {} }
 
   /* **************************************************************************/
   // Mailbox Auth
@@ -89,13 +87,33 @@ class MailboxActions {
 
   /**
   * Reauthenticates a mailbox
+  * @param mailboxId: the id of the mailbox to reauthetnicate
   */
   reauthenticateMailbox (mailboxId) { return { mailboxId: mailboxId } }
 
   /**
   * Reauthenticates a google mailbox
+  * @param mailboxId: the id of the mailbox to reauthetnicate
   */
   reauthenticateGoogleMailbox (mailboxId) { return { mailboxId: mailboxId } }
+
+  /**
+  * Reauthenticates a microsoft mailbox
+  * @param mailboxId: the id of the mailbox to reauthetnicate
+  */
+  reauthenticateMicrosoftMailbox (mailboxId) { return { mailboxId: mailboxId } }
+
+  /**
+  * Reauthenticates a slack mailbox
+  * @param mailboxId: the id of the mailbox to reauthetnicate
+  */
+  reauthenticateSlackMailbox (mailboxId) { return { mailboxId: mailboxId } }
+
+  /**
+  * Reauthenticates a trello mailbox
+  * @param mailboxId: the id of the mailbox to reauthetnicate
+  */
+  reauthenticateTrelloMailbox (mailboxId) { return { mailboxId: mailboxId } }
 
   /* **************************************************************************/
   // Mailbox Auth callbacks

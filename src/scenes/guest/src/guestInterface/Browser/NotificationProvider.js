@@ -8,7 +8,7 @@ const {
 const {
   WAVEBOX_GUEST_APIS
 } = req.shared('guestApis')
-const NotificationPermissionManager = req.app('MProcManagers/NotificationPermissionManager')
+const NotificationPermissionManager = req.mprocManager('NotificationPermissionManager')
 
 class NotificationProvider {
   /* **************************************************************************/

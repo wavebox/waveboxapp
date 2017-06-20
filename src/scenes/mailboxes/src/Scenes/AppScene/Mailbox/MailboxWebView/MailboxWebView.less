@@ -104,7 +104,7 @@
     }
   }
 
-  .ReactComponent-MailboxCrashed {
+  .ReactComponent-MailboxCrashed, .ReactComponent-MailboxAuthInvalid {
     position: absolute;
     top: 0;
     left: 0;
@@ -120,7 +120,17 @@
     flex-direction: column;
     cursor: default;
 
+    .primary-icon {
+      color: rgb(167, 171, 169) !important;
+      font-size: 75px !important;
+    }
+
     >h1 {
+      font-weight: 300;
+    }
+    >p {
+      margin-bottom: 5px;
+      margin-top: 0px;
       font-weight: 300;
     }
   }
