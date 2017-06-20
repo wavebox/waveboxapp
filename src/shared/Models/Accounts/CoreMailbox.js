@@ -226,6 +226,7 @@ class CoreMailbox extends Model {
   /* **************************************************************************/
 
   get isAuthenticationInvalid () { return false }
+  get hasAuth () { return true }
 
   /* **************************************************************************/
   // Properties : Provider Details & counts etc
