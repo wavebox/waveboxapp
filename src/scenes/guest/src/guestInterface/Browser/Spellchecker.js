@@ -6,7 +6,7 @@ const elconsole = require('../elconsole')
 const fs = req.modules('fs-extra')
 let Nodehun
 try {
-  Nodehun = req.modules('Nodehun')
+  Nodehun = req.modules('nodehun')
 } catch (ex) {
   Nodehun = null
 }
@@ -31,6 +31,7 @@ class Spellchecker {
     ipcRenderer.on(WB_BROWSER_START_SPELLCHECK, (evt, data) => {
       this._updateSpellchecker(data.language, data.secondaryLanguage)
     })
+
     ipcRenderer.on(WB_BROWSER_SPELLCHECK_ADD_WORD, (evt, data) => {
       if (this._spellcheckers_.primary.nodehun) {
         this._addUserWordIntoSpellchecker(this._spellcheckers_.primary.nodehun, data.word)
