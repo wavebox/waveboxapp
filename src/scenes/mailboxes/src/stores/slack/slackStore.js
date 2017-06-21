@@ -183,6 +183,11 @@ class SlackStore {
         rtm.on('message:desktop_notification', (data) => {
           actions.scheduleNotification(mailboxId, data)
         })
+        rtm.on('message', (data) => {
+          if (Debug.flags.slackLogWSMessages) {
+            console.log(`[SLACK:WS_MESSAGE]: ${mailboxId}`, JSON.stringify(data))
+          }
+        })
 
         // These events are in-frequent and lazily acted upon. They require the counts to be re-synced
         rtm.on('message:bot_added', (data) => actions.updateUnreadCounts.defer(mailboxId))

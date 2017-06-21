@@ -21,6 +21,7 @@ class DebugFlags {
   /* **************************************************************************/
 
   get slackLogUnreadCounts () { return this.getValue('slackLogUnreadCounts', false) }
+  get slackLogWSMessages () { return this.getValue('slackLogWSMessages', false) }
 
   /* **************************************************************************/
   // Properties : Trello
