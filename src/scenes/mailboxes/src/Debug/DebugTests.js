@@ -9,7 +9,7 @@ class DebugTests {
   */
   analyzeMailboxesDatabase (runs = 20) {
     // Always late require to prevent cyclic references
-    const mailboxPersistence = require('stores/mailbox/mailboxPersistence')
+    const mailboxPersistence = require('stores/mailbox/mailboxPersistence').default
 
     const sig = '[TEST:MAILBOXES_DB]'
     console.log(`${sig} start`)
@@ -20,6 +20,11 @@ class DebugTests {
         return Promise.resolve()
       })
       .then(() => console.log(`${sig} Wavebox may become unresponsive whilst the following test runs...`))
+      .then(() => {
+        return new Promise((resolve) => {
+          setTimeout(resolve, 500)
+        })
+      })
       .then(() => mailboxPersistence.measurePerformance(runs))
       .then((performance) => {
         const info = Object.keys(performance).reduce((acc, k) => {

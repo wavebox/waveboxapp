@@ -3,6 +3,7 @@ const mailboxStore = require('./stores/mailboxStore')
 const settingStore = require('./stores/settingStore')
 const { GITHUB_URL, GITHUB_ISSUE_URL, WEB_URL, PRIVACY_URL } = require('../shared/constants')
 const pkg = require('../package.json')
+const MenuTool = require('../shared/Electron/MenuTool')
 
 class AppPrimaryMenu {
   /* ****************************************************************************/
@@ -130,6 +131,7 @@ class AppPrimaryMenu {
     this._lastMailboxes = null
     this._lastActiveMailbox = null
     this._lastActiveServiceType = null
+    this._lastMenu = null
 
     mailboxStore.on('changed', () => {
       this.handleMailboxesChanged()
@@ -413,7 +415,14 @@ class AppPrimaryMenu {
     this._lastActiveMailbox = activeMailbox
     this._lastActiveServiceType = activeServiceType
     this._lastMailboxes = mailboxes
-    Menu.setApplicationMenu(this.build(accelerators, mailboxes, activeMailbox, activeServiceType))
+
+    // Prevent Memory leak
+    const lastMenu = this._lastMenu
+    this._lastMenu = this.build(accelerators, mailboxes, activeMailbox, activeServiceType)
+    Menu.setApplicationMenu(this._lastMenu)
+    if (lastMenu) {
+      MenuTool.fullDestroyMenu(lastMenu)
+    }
   }
 
   /* ****************************************************************************/

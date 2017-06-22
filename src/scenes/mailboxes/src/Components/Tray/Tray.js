@@ -5,6 +5,7 @@ import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
 import { BLANK_PNG } from 'shared/b64Assets'
 import TrayRenderer from './TrayRenderer'
 import uuid from 'uuid'
+import MenuTool from 'shared/Electron/MenuTool'
 import {
   MOUSE_TRIGGERS,
   MOUSE_TRIGGER_ACTIONS
@@ -36,6 +37,7 @@ export default class Tray extends React.Component {
 
   componentWillMount () {
     this.appTray = new remote.Tray(nativeImage.createFromDataURL(BLANK_PNG))
+    this.lastContextMenu = null
     window.addEventListener('beforeunload', this.handleDestroyTray) // Be super pushy about this to avoid dangling tray references
 
     if (process.platform === 'win32') {
@@ -264,7 +266,14 @@ export default class Tray extends React.Component {
         if (this.renderId !== renderId) { return } // Someone got in before us
         this.appTray.setImage(image)
         this.appTray.setToolTip(this.renderTooltip())
-        this.appTray.setContextMenu(this.renderContextMenu())
+
+        // Prevent Memory leak
+        const lastContextMenu = this.lastContextMenu
+        this.lastContextMenu = this.renderContextMenu()
+        this.appTray.setContextMenu(this.lastContextMenu)
+        if (lastContextMenu) {
+          MenuTool.fullDestroyMenu(lastContextMenu)
+        }
       })
 
     return (<div />)
