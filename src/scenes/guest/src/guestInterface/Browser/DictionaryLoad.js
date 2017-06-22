@@ -50,6 +50,17 @@ class DictionaryLoad {
   }
 
   /**
+  * Loads a custom dictionary from disk synchronously
+  * @param language: the language to load
+  * @return promise
+  */
+  _loadCustomDictionarySync_ (language) {
+    const aff = fs.readFileSync(path.join(USER_DICTIONARIES_PATH, language + '.aff'))
+    const dic = fs.readFileSync(path.join(USER_DICTIONARIES_PATH, language + '.dic'))
+    return { aff: aff, dic: dic }
+  }
+
+  /**
   * Loads an inbuilt language
   * @param language: the language to load
   * @return promise
@@ -67,6 +78,22 @@ class DictionaryLoad {
       })
     } else {
       return Promise.reject(new Error('Unknown Dictionary'))
+    }
+  }
+
+  /**
+  * Loads an inbuilt language synchronously
+  * @param language: the language to load
+  * @return { aff, dic }
+  */
+  _loadInbuiltDictionarySync_ (language) {
+    if (language === 'en_US') {
+      const basePath = path.dirname(req.modulesResolve('dictionary-en-us'))
+      const aff = fs.readFileSync(path.join(basePath, 'index.aff'))
+      const dic = fs.readFileSync(path.join(basePath, 'index.dic'))
+      return { aff: aff, dic: dic }
+    } else {
+      throw new Error('Unknown Dictionary')
     }
   }
 
@@ -91,6 +118,29 @@ class DictionaryLoad {
         }
       )
     })
+  }
+
+  /**
+  * Loads a dictionary synchronously
+  * @param language: the language to load
+  * @return the dictionary info
+  */
+  loadSync (language) {
+    let dic
+
+    // Try inbuild
+    try {
+      dic = this._loadInbuiltDictionarySync_(language)
+    } catch (ex) { /* no-op */ }
+    if (dic) { return dic }
+
+    // Try custom
+    try {
+      dic = this._loadCustomDictionarySync_(language)
+    } catch (ex) { /* no-op */ }
+    if (dic) { return dic }
+
+    throw new Error('Unknown Dictionary')
   }
 
   /* **************************************************************************/

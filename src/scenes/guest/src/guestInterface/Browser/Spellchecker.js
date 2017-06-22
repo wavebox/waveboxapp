@@ -11,6 +11,7 @@ try {
   Nodehun = null
 }
 
+const { PRELOAD_USE_SYNC_FS } = req.shared('constants')
 const {
   WB_BROWSER_START_SPELLCHECK,
   WB_BROWSER_SPELLCHECK_ADD_WORD
@@ -118,7 +119,18 @@ class Spellchecker {
   addCustomWord (word) {
     word = word.split(/(\s+)/)[0]
     return Promise.resolve()
-      .then(() => fs.appendFile(USER_DICTIONARY_WORDS_PATH, `\n${word}`))
+      .then(() => {
+        if (PRELOAD_USE_SYNC_FS) {
+          try {
+            fs.appendFileSync(USER_DICTIONARY_WORDS_PATH, `\n${word}`)
+            return Promise.resolve()
+          } catch (ex) {
+            return Promise.reject(ex)
+          }
+        } else {
+          return fs.appendFile(USER_DICTIONARY_WORDS_PATH, `\n${word}`)
+        }
+      })
       .then(() => {
         if (this._spellcheckers_.primary.nodehun) {
           return this._addUserWordIntoSpellchecker(this._spellcheckers_.primary.nodehun, word)
@@ -172,11 +184,24 @@ class Spellchecker {
         this._spellcheckers_.primary.nodehun = undefined
       } else {
         this._spellcheckers_.primary.language = primaryLanguage
-        DictionaryLoad.load(primaryLanguage).then((dic) => {
-          this._spellcheckers_.primary.nodehun = new Nodehun(dic.aff, dic.dic)
-          this._updateProvider()
-          this._loadUserWordsIntoSpellchecker(this._spellcheckers_.primary.nodehun)
-        }, (err) => elconsole.error('Failed to load dictionary', err))
+        if (PRELOAD_USE_SYNC_FS) {
+          try {
+            const dic = DictionaryLoad.loadSync(primaryLanguage)
+            this._spellcheckers_.primary.nodehun = new Nodehun(dic.aff, dic.dic)
+            this._updateProvider()
+            this._loadUserWordsIntoSpellcheckerSync(this._spellcheckers_.primary.nodehun)
+          } catch (ex) {
+            elconsole.error('Failed to load dictionary', ex)
+          }
+        } else {
+          DictionaryLoad.load(primaryLanguage)
+            .then((dic) => {
+              this._spellcheckers_.primary.nodehun = new Nodehun(dic.aff, dic.dic)
+              this._updateProvider()
+              this._loadUserWordsIntoSpellchecker(this._spellcheckers_.primary.nodehun)
+            })
+            .catch((err) => elconsole.error('Failed to load dictionary', err))
+        }
       }
     }
 
@@ -186,10 +211,23 @@ class Spellchecker {
         this._spellcheckers_.secondary.nodehun = undefined
       } else {
         this._spellcheckers_.secondary.language = secondaryLanguage
-        DictionaryLoad.load(secondaryLanguage).then((dic) => {
-          this._spellcheckers_.secondary.nodehun = new Nodehun(dic.aff, dic.dic)
-          this._loadUserWordsIntoSpellchecker(this._spellcheckers_.secondary.nodehun)
-        }, (err) => elconsole.error('Failed to load dictionary', err))
+        if (PRELOAD_USE_SYNC_FS) {
+          try {
+            const dic = DictionaryLoad.loadSync(secondaryLanguage)
+            this._spellcheckers_.secondary.nodehun = new Nodehun(dic.aff, dic.dic)
+            this._updateProvider()
+            this._loadUserWordsIntoSpellcheckerSync(this._spellcheckers_.secondary.nodehun)
+          } catch (ex) {
+            elconsole.error('Failed to load dictionary', ex)
+          }
+        } else {
+          DictionaryLoad.load(secondaryLanguage)
+            .then((dic) => {
+              this._spellcheckers_.secondary.nodehun = new Nodehun(dic.aff, dic.dic)
+              this._loadUserWordsIntoSpellchecker(this._spellcheckers_.secondary.nodehun)
+            })
+            .catch((err) => elconsole.error('Failed to load dictionary', err))
+        }
       }
     }
   }
@@ -232,6 +270,32 @@ class Spellchecker {
         }
       })
     })
+  }
+
+  /**
+  * Loads the custom words into the given spellchecker synchronously
+  * @param spellchecker: the spellchecker instance to load into
+  */
+  _loadUserWordsIntoSpellcheckerSync (spellchecker) {
+    let data
+    try {
+      data = fs.readFileSync(USER_DICTIONARY_WORDS_PATH, 'utf8')
+    } catch (ex) {
+      data = ''
+    }
+    data.split('\n').forEach((w) => {
+      if (!w) { return }
+      this._addUserWordIntoSpellcheckerSync(spellchecker, w)
+    })
+  }
+
+  /**
+  * Adds a custom word into the spellchecker synchronously
+  * @param spellchecker: the spellchecker instance
+  * @param word: the word to add
+  */
+  _addUserWordIntoSpellcheckerSync (spellchecker, word) {
+    spellchecker.addWordSync(word)
   }
 }
 

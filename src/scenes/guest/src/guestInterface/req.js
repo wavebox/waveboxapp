@@ -11,6 +11,15 @@ module.exports = {
   },
 
   /**
+  * Calls resolve on a module from node modules
+  * @param n: the name of the module
+  * @return the module
+  */
+  modulesResolve: (n) => {
+    return require.resolve(path.join('../../../app/node_modules/', n))
+  },
+
+  /**
   * Requires the app package
   * @return the app package
   */
