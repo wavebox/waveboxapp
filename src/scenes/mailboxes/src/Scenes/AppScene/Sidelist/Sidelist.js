@@ -67,11 +67,11 @@ export default class Sidelist extends React.Component {
   // Window Events
   /* **************************************************************************/
 
-  handleWindowMaximize () {
+  handleWindowMaximize = () => {
     this.setState({ isWindowMaximized: true })
   }
 
-  handleWindowUnmaximize () {
+  handleWindowUnmaximize = () => {
     this.setState({ isWindowMaximized: false })
   }
 

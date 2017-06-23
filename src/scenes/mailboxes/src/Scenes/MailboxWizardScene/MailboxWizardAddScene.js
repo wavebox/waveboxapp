@@ -102,7 +102,7 @@ export default class MailboxWizardAddScene extends React.Component {
   /**
   * Closes the modal and takes the user to the pro scene
   */
-  handleShowPro () {
+  handleShowPro = () => {
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/pro'

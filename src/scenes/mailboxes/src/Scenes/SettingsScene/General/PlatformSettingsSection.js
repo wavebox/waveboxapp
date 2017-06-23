@@ -51,7 +51,7 @@ export default class PlatformSettingsSection extends React.Component {
   * @param openAtLogin: true to open at login
   * @param openAsHidden: true to open as hidden
   */
-  handleOpenAtLoginChanged (evt, openAtLogin, openAsHidden) {
+  handleOpenAtLoginChanged = (evt, openAtLogin, openAsHidden) => {
     platformActions.changeLoginPref(openAtLogin, openAsHidden)
     this.setState({ openLoginPopoverOpen: false })
 

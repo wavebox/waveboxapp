@@ -70,7 +70,7 @@ export default class ComposePickerScene extends React.Component {
   * @param evt: the event that fired
   * @param servive: the servie that was selected
   */
-  handleSelectService (evt, service) {
+  handleSelectService = (evt, service) => {
     this.setState({ open: false })
     setTimeout(() => { composeActions.composeMessageInMailbox(service.parentId, service.type) }, 250)
   }

@@ -1,6 +1,6 @@
 {
   "name": "wavebox",
-  "version": "3.1.10",
+  "version": "3.1.11",
   "description": "Wavebox",
   "scripts": {
     "rebuild:electron": "electron-rebuild -f -m src/app -v 1.7.3 -t prod,optional",

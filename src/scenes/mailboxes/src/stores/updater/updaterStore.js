@@ -131,10 +131,14 @@ class UpdaterStore {
   * Generates the querstring to use in the update check
   */
   generateUpdateQueryString () {
+    const updateChannel = settingsStore.getState().app.updateChannel
     return querystring.stringify({
       v: pkg.version,
       bid: pkg.earlyBuildId || 'release',
-      mode: this.userActionedUpdate ? 'manual' : 'auto'
+      mode: this.userActionedUpdate ? 'manual' : 'auto',
+      channel: updateChannel,
+      platform: process.platform,
+      arch: process.arch
     })
   }
 
@@ -276,7 +280,7 @@ class UpdaterStore {
       this.updateState = UPDATE_STATES.CHECKING
       this.showUserPrompt()
       ipcRenderer.send(WB_SQUIRREL_UPDATE_CHECK, {
-        url: `${UPDATE_FEED_DARWIN}?v=${pkg.version}&bid=${pkg.earlyBuildId || 'release'}`
+        url: `${UPDATE_FEED_DARWIN}?v${this.generateUpdateQueryString()}`
       })
     } else if (process.platform === 'win32') {
       // Squirrel win32 needs a url it can resolve two files, so find out from wavebox where that is!

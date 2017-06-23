@@ -78,7 +78,7 @@ export default class MailboxWizardGmailConfigureScene extends React.Component {
   * Handles the user picking a configuration
   * @param unreadMode: the unread mode to set for the user
   */
-  handleConfigurationPicked (unreadMode) {
+  handleConfigurationPicked = (unreadMode) => {
     const id = this.props.match.params.mailboxId
     mailboxActions.reduceService(id, GoogleDefaultService.type, GoogleDefaultServiceReducer.setUnreadMode, unreadMode)
 

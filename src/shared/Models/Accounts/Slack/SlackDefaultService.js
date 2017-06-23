@@ -31,6 +31,7 @@ class SlackDefaultService extends CoreService {
 
   get slackUnreadChannelInfo () { return this._value_('slackUnreadChannelInfo', {}) }
   get slackUnreadGroupInfo () { return this._value_('slackUnreadGroupInfo', {}) }
+  get slackUnreadMPIMInfo () { return this._value_('slackUnreadMPIMInfo', {}) }
   get slackUnreadIMInfo () { return this._value_('slackUnreadIMInfo', {}) }
 
   /* **************************************************************************/
@@ -59,6 +60,16 @@ class SlackDefaultService extends CoreService {
   }
 
   /**
+  * @param mpim: the mpim to test
+  * @return true if this mpim is applicable for this user (i.e. not muted, archived etc)
+  */
+  _isMPIMAlive (mpim) {
+    if (mpim.is_archived === true) { return false }
+    if (mpim.is_muted === true) { return false }
+    return true
+  }
+
+  /**
   * @param im: the im to test
   * @return true if this IM is applicable for this user (i.e. not muted, archived etc)
   */
@@ -77,14 +88,18 @@ class SlackDefaultService extends CoreService {
     }, 0)
     const groupCount = Object.keys(this.slackUnreadGroupInfo).reduce((acc, groupId) => {
       const grp = this.slackUnreadGroupInfo[groupId]
-      return this._isGroupAlive(grp) ? acc + grp.unread_count : acc
+      return this._isGroupAlive(grp) ? acc + grp.mention_count : acc
+    }, 0)
+    const mpimCount = Object.keys(this.slackUnreadMPIMInfo).reduce((acc, mpimId) => {
+      const mpim = this.slackUnreadMPIMInfo[mpimId]
+      return this._isMPIMAlive(mpim) ? acc + mpim.unread_count : acc
     }, 0)
     const imCount = Object.keys(this.slackUnreadIMInfo).reduce((acc, imId) => {
       const dm = this.slackUnreadIMInfo[imId]
       return this._isImAlive(dm) ? acc + dm.dm_count : acc
     }, 0)
 
-    return channelCount + groupCount + imCount
+    return channelCount + groupCount + imCount + mpimCount
   }
 
   get hasUnreadActivity () {
@@ -93,6 +108,12 @@ class SlackDefaultService extends CoreService {
       return this._isChannelAlive(chan) && chan.has_unreads
     })
     if (channelId) { return true }
+    const groupId = Object.keys(this.slackUnreadGroupInfo).find((groupId) => {
+      const group = this.slackUnreadGroupInfo[groupId]
+      return this._isGroupAlive(group) && group.has_unreads
+    })
+    if (groupId) { return true }
+
     return false
   }
 
@@ -131,11 +152,10 @@ class SlackDefaultService extends CoreService {
     }, [])
     const groups = Object.keys(this.slackUnreadGroupInfo).reduce((acc, groupId) => {
       const group = this.slackUnreadGroupInfo[groupId]
-      if (this._isGroupAlive(group) && group.unread_count) {
-        const formattedMembers = group.name.substring(5, group.name.length - 2).split('--').join(' @')
+      if (this._isGroupAlive(group) && group.mention_count) {
         acc.push({
           id: groupId,
-          text: `@${formattedMembers} (${group.unread_count})`,
+          text: `@${group.name} (${group.mention_count})`,
           date: 0,
           data: {
             channelId: groupId,
@@ -146,8 +166,25 @@ class SlackDefaultService extends CoreService {
       }
       return acc
     }, [])
+    const mpims = Object.keys(this.slackUnreadMPIMInfo).reduce((acc, mpimId) => {
+      const mpim = this.slackUnreadMPIMInfo[mpimId]
+      if (this._isMPIMAlive(mpim) && mpim.unread_count) {
+        const formattedMembers = mpim.name.substring(5, mpim.name.length - 2).split('--').join(' @')
+        acc.push({
+          id: mpimId,
+          text: `@${formattedMembers} (${mpim.unread_count})`,
+          date: 0,
+          data: {
+            channelId: mpimId,
+            mailboxId: this.parentId,
+            serviceType: this.type
+          }
+        })
+      }
+      return acc
+    }, [])
 
-    return [].concat(ims, groups, channels)
+    return [].concat(ims, mpims, channels, groups)
   }
 
   /* **************************************************************************/

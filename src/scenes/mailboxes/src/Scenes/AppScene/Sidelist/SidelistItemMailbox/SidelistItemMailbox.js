@@ -111,7 +111,7 @@ export default class SidelistItemMailbox extends React.Component {
   * @param evt: the event that fired
   * @param serviceType: the type of service to open in the context of
   */
-  handleOpenPopover (evt, serviceType) {
+  handleOpenPopover = (evt, serviceType) => {
     evt.preventDefault()
     this.setState({
       popover: true,

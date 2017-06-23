@@ -50,7 +50,8 @@ class SlackHTTP {
     if (!auth) { return this._rejectWithNoAuth() }
 
     const query = querystring.stringify({
-      token: auth
+      token: auth,
+      mpim_aware: true
     })
     return Promise.resolve()
       .then(() => window.fetch('https://slack.com/api/rtm.start?' + query))
@@ -76,7 +77,8 @@ class SlackHTTP {
 
     const query = querystring.stringify({
       token: auth,
-      simple_unreads: simpleUnreads
+      simple_unreads: simpleUnreads,
+      mpim_aware: true
     })
     return Promise.resolve()
       .then(() => window.fetch('https://slack.com/api/users.counts?' + query))

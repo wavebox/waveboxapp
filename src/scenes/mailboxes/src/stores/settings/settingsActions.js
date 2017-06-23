@@ -262,6 +262,13 @@ class SettingsActions {
   }
 
   /**
+  * @param channel: the new update channel
+  */
+  setUpdateChannel (channel) {
+    return this.update(SEGMENTS.APP, 'updateChannel', channel)
+  }
+
+  /**
   * @param hasSeen: true if the user has seen the app wizard
   */
   setHasSeenAppWizard (hasSeen) {

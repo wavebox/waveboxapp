@@ -218,6 +218,9 @@ class SlackStore {
         rtm.on('message:group_marked', (data) => {
           mailboxActions.reduceService(mailboxId, SlackDefaultService.type, SlackDefaultServiceReducer.rtmGroupMarked, data)
         })
+        rtm.on('message:mpim_marked', (data) => {
+          mailboxActions.reduceService(mailboxId, SlackDefaultService.type, SlackDefaultServiceReducer.rtmMpimMarked, data)
+        })
         rtm.on('message:im_marked', (data) => {
           mailboxActions.reduceService(mailboxId, SlackDefaultService.type, SlackDefaultServiceReducer.rtmImMarked, data)
         })

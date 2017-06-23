@@ -25,6 +25,17 @@ class SlackDefaultServiceReducer extends ServiceReducer {
         }
         return acc
       }, {}),
+      slackUnreadMPIMInfo: unreadInfo.mpims.reduce((acc, mpim) => {
+        acc[mpim.id] = {
+          id: mpim.id,
+          name: mpim.name,
+          is_archived: mpim.is_archived,
+          is_muted: mpim.is_muted,
+          mention_count: mpim.mention_count_display,
+          unread_count: mpim.unread_count_display
+        }
+        return acc
+      }, {}),
       slackUnreadGroupInfo: unreadInfo.groups.reduce((acc, group) => {
         acc[group.id] = {
           id: group.id,
@@ -32,7 +43,7 @@ class SlackDefaultServiceReducer extends ServiceReducer {
           is_archived: group.is_archived,
           is_muted: group.is_muted,
           mention_count: group.mention_count_display,
-          unread_count: group.unread_count_display
+          has_unreads: group.has_unreads
         }
         return acc
       }, {}),
@@ -83,6 +94,27 @@ class SlackDefaultServiceReducer extends ServiceReducer {
     if (service.slackUnreadGroupInfo[rtmEvent.channel]) {
       return service.changeDataWithChangeset({
         slackUnreadGroupInfo: {
+          [rtmEvent.channel]: {
+            mention_count: rtmEvent.mention_count_display,
+            has_unreads: rtmEvent.unread_count_display !== 0
+          }
+        }
+      })
+    } else {
+      return undefined
+    }
+  }
+
+  /**
+  * Handles the RTM indicating the mpim has been marked by the user
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param rtmEvent: the event that came through from the rtm group
+  */
+  static rtmMpimMarked (mailbox, service, rtmEvent) {
+    if (service.slackUnreadMPIMInfo[rtmEvent.channel]) {
+      return service.changeDataWithChangeset({
+        slackUnreadMPIMInfo: {
           [rtmEvent.channel]: {
             mention_count: rtmEvent.mention_count_display,
             unread_count: rtmEvent.unread_count_display
@@ -170,14 +202,25 @@ class SlackDefaultServiceReducer extends ServiceReducer {
   * @param rtmEvent: the event that came through from the rtm
   */
   static rtmGroupMessage (mailbox, service, rtmEvent) {
-    const groupInfo = service.slackUnreadGroupInfo[rtmEvent.channel]
-    if (groupInfo) {
+    if (service.slackUnreadGroupInfo[rtmEvent.channel]) { // Group
+      const groupInfo = service.slackUnreadGroupInfo[rtmEvent.channel]
       const userMentioned = rtmEvent.text.indexOf(`<@${mailbox.authUserId}>`) !== -1
       return service.changeDataWithChangeset({
         slackUnreadGroupInfo: {
           [rtmEvent.channel]: {
             mention_count: groupInfo.mention_count + (userMentioned ? 1 : 0),
-            unread_count: groupInfo.unread_count + 1
+            has_unreads: true
+          }
+        }
+      })
+    } else if (service.slackUnreadMPIMInfo[rtmEvent.channel]) { // MPIM
+      const mpimInfo = service.slackUnreadMPIMInfo[rtmEvent.channel]
+      const userMentioned = rtmEvent.text.indexOf(`<@${mailbox.authUserId}>`) !== -1
+      return service.changeDataWithChangeset({
+        slackUnreadMPIMInfo: {
+          [rtmEvent.channel]: {
+            mention_count: mpimInfo.mention_count + (userMentioned ? 1 : 0),
+            unread_count: mpimInfo.unread_count + 1
           }
         }
       })

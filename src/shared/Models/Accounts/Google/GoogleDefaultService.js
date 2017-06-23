@@ -121,9 +121,16 @@ class GoogleDefaultService extends GoogleService {
   get trayMessages () {
     return this.unreadThreads.map((thread) => {
       const message = thread.latestMessage
+      let fromName = ''
+      if (message.from) {
+        try {
+          fromName = addressparser(message.from)[0].name
+        } catch (ex) { /* no-op */ }
+      }
+
       return {
         id: `${thread.id}:${thread.historyId}`,
-        text: `${addressparser(message.from)[0].name} : ${message.subject || 'No Subject'}`,
+        text: `${fromName} : ${message.subject || 'No Subject'}`,
         date: parseInt(message.internalDate),
         data: {
           threadId: thread.id,
