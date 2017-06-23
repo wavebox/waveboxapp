@@ -1,4 +1,5 @@
 import OSSettings from 'shared/Models/Settings/OSSettings'
+import Win32Notification from './Win32NotificationLossy'
 const os = window.nativeRequire('os')
 
 class NotificationPlatformSupport {
@@ -9,7 +10,7 @@ class NotificationPlatformSupport {
   get enhancedSupportDarwin () { return process.platform === 'darwin' }
   get enhancedSupportLinux () { return process.platform === 'linux' }
   get enhancedSupportWin32 () {
-    if (process.platform === 'win32') {
+    if (process.platform === 'win32' && Win32Notification) {
       const major = parseInt(os.release().split('.')[0])
       return major >= 10
     }
