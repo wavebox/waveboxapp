@@ -280,7 +280,7 @@ class UpdaterStore {
       this.updateState = UPDATE_STATES.CHECKING
       this.showUserPrompt()
       ipcRenderer.send(WB_SQUIRREL_UPDATE_CHECK, {
-        url: `${UPDATE_FEED_DARWIN}?v${this.generateUpdateQueryString()}`
+        url: `${UPDATE_FEED_DARWIN}?${this.generateUpdateQueryString()}`
       })
     } else if (process.platform === 'win32') {
       // Squirrel win32 needs a url it can resolve two files, so find out from wavebox where that is!
