@@ -115,10 +115,14 @@ export default class BrowserToolbar extends React.Component {
             <IconButton onClick={isLoading ? handleStop : handleReload}>
               <FontIcon className='material-icons'>{isLoading ? 'close' : 'refresh'}</FontIcon>
             </IconButton>
-            <CircularProgress
-              size={18}
-              thickness={2}
-              style={{ transition: 'opacity 1s', margin: 10, opacity: isLoading ? 1 : 0 }} />
+            {isLoading ? (
+              <CircularProgress
+                size={18}
+                thickness={2}
+                style={{ margin: 10 }} />
+            ) : (
+              <div style={{ width: 18, height: 18, margin: 10 }} />
+            )}
           </ToolbarGroup>
           <ToolbarGroup style={{ minWidth: 0 }}>
             <ToolbarTitle text={this.externalUrl(currentUrl)} style={{ fontSize: '14px' }} />

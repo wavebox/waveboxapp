@@ -46,7 +46,8 @@ module.exports = function (env) {
         ignore: [ '.DS_Store' ]
       }),
 
-      // Minify in production
+      // Minify & optimization
+      new webpack.optimize.ModuleConcatenationPlugin(),
       isProduction ? new webpack.optimize.UglifyJsPlugin({}) : undefined
     ].filter((p) => !!p),
     resolve: {

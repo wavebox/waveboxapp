@@ -17,9 +17,9 @@
     "mkdirp": "0.5.1",
     "nodehun": "2.0.11",
     "unused-filename": "1.0.0",
-    "uuid": "3.0.1",
+    "uuid": "3.1.0",
     "winreg": "1.2.4",
-    "yargs": "8.0.1"
+    "yargs": "8.0.2"
   },
   "optionalDependencies": {
     "electron-windows-notifications": "1.1.13",

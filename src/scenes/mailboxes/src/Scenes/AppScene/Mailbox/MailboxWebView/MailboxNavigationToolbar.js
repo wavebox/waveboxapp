@@ -134,11 +134,15 @@ export default class MailboxNavigationToolbar extends React.Component {
               style={{ fontSize: '14px', color: Colors.blueGrey50 }} />
           </ToolbarGroup>
           <ToolbarGroup lastChild>
-            <CircularProgress
-              size={18}
-              thickness={2}
-              color={Colors.cyan200}
-              style={{ transition: 'opacity 1s', margin: 10, opacity: isLoading ? 1 : 0 }} />
+            {isLoading ? (
+              <CircularProgress
+                size={18}
+                thickness={2}
+                color={Colors.cyan200}
+                style={{ margin: 10 }} />
+            ) : (
+              <div style={{ width: 18, height: 18, margin: 10 }} />
+            )}
           </ToolbarGroup>
         </Toolbar>
       </Paper>
