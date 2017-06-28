@@ -1,9 +1,15 @@
 import { Socket, LongPoll } from 'phoenix'
 import { EventEmitter } from 'events'
-import { SYNC_SOCKET_URL, SYNC_SOCKET_UPGRADE_INTERVAL } from 'shared/constants'
 import Debug from 'Debug'
 import userActions from 'stores/user/userActions'
 import googleActions from 'stores/google/googleActions'
+import {
+  SYNC_SOCKET_URL,
+  SYNC_SOCKET_UPGRADE_INTERVAL,
+  SYNC_SOCKET_RECONNECT_MIN,
+  SYNC_SOCKET_RECONNECT_RANGE
+} from 'shared/constants'
+
 const pkg = window.appPackage()
 
 class ServerVent extends EventEmitter {
@@ -17,9 +23,28 @@ class ServerVent extends EventEmitter {
     this._socket = null
     this._reconnectTO = null
     this._websocketUpgrade = null
+    this._socketMaintenanceUntil = 0
+    this._socketMaintenanceReconnectMin = SYNC_SOCKET_RECONNECT_MIN
+    this._socketMaintenanceReconnectRange = SYNC_SOCKET_RECONNECT_RANGE
     this._clientId = null
     this._clientToken = null
     this._pushChannels = new Map()
+  }
+
+  /* ****************************************************************************/
+  // Properties
+  /* ****************************************************************************/
+
+  get isSocketSetup () { return !!this._socket }
+  get isSocketUsingLongPoll () { return this._socket && this._socket.transport === LongPoll }
+  get isSocketUsingWebSocket () { return this._socket && this._socket.transport === window.WebSocket }
+  get isSocketUnderMaintenance () { return new Date().getTime() < this._socketMaintenanceUntil }
+  get socketReconnectTimeout () {
+    if (this.isSocketUnderMaintenance) {
+      return Math.floor(Math.random() * this._socketMaintenanceReconnectRange) + this._socketMaintenanceReconnectMin
+    } else {
+      return Math.floor(Math.random() * SYNC_SOCKET_RECONNECT_RANGE) + SYNC_SOCKET_RECONNECT_MIN
+    }
   }
 
   /* ****************************************************************************/
@@ -33,7 +58,7 @@ class ServerVent extends EventEmitter {
   * @return this
   */
   start (clientId, clientToken) {
-    if (this._socket) { throw new Error('Socket already setup') }
+    if (this.isSocketSetup) { throw new Error('Socket already setup') }
 
     this._clientId = clientId
     this._clientToken = clientToken
@@ -50,9 +75,9 @@ class ServerVent extends EventEmitter {
       this._handleSocketError()
     })
     this._socket.onOpen(() => {
-      if (this._socket.transport === window.WebSocket) {
+      if (this.isSocketUsingWebSocket) {
         console.log('[SYNCS][WebSocket] Socket opened')
-      } else if (this._socket.transport === LongPoll) {
+      } else if (this.isSocketUsingLongPoll) {
         console.log('[SYNCS][LongPoll] Socket opened')
       }
     })
@@ -67,7 +92,7 @@ class ServerVent extends EventEmitter {
   * @return this
   */
   stop () {
-    if (!this._socket) { throw new Error('Socket is not setup') }
+    if (!this.isSocketSetup) { throw new Error('Socket is not setup') }
 
     this._socket.disconnect()
     this._socket = null
@@ -89,20 +114,28 @@ class ServerVent extends EventEmitter {
     console.warn('[SYNCS] Error connecting')
     if (window.navigator.onLine !== false) {
       this._socket.disconnect()
-      const reconnectWait = Math.floor(Math.random() * 4500) + 500
+      const reconnectWait = this.socketReconnectTimeout
 
-      if (this._socket.transport === window.WebSocket) {
-        console.warn(`[SYNCS][WebSocket] Next retry LongPoll in ${reconnectWait}ms`)
-        this._socket.transport = LongPoll
-      } else if (this._socket.transport === LongPoll) {
-        console.warn(`[SYNCS][LongPoll] Next retry WebSocket in ${reconnectWait}ms`)
-        this._socket.transport = window.WebSocket
+      if (this.isSocketUnderMaintenance) {
+        if (this.isSocketUsingWebSocket) {
+          console.warn(`[SYNCS][WebSocket] Next retry in ${reconnectWait}ms (maintenance mode)`)
+        } else if (this.isSocketUsingLongPoll) {
+          console.warn(`[SYNCS][LongPoll] Next retry in ${reconnectWait}ms (maintenance mode)`)
+        }
+      } else {
+        if (this.isSocketUsingWebSocket) {
+          console.warn(`[SYNCS][WebSocket] Next retry LongPoll in ${reconnectWait}ms`)
+          this._socket.transport = LongPoll
+        } else if (this.isSocketUsingLongPoll) {
+          console.warn(`[SYNCS][LongPoll] Next retry WebSocket in ${reconnectWait}ms`)
+          this._socket.transport = window.WebSocket
+        }
       }
 
       clearTimeout(this._reconnectTO)
       this._reconnectTO = setTimeout(() => {
         this._socket.connect()
-        if (this._socket.transport === LongPoll) {
+        if (this.isSocketUsingLongPoll) {
           this._scheduleWebsocketUpgrade()
         } else if (this._socket.transport === window.WebSocket) {
           clearTimeout(this._websocketUpgrade)
@@ -133,6 +166,27 @@ class ServerVent extends EventEmitter {
     }
   }
 
+  /**
+  * Puts the socket into Maintenance mode
+  * @param data: the data passed down the socket
+  */
+  _handleMaintenanceStart = (data) => {
+    if (typeof (data.period) === 'number') {
+      this._socketMaintenanceUntil = new Date().getTime() + data.period
+    } else {
+      this._socketMaintenanceUntil = 0
+    }
+
+    if (typeof (data.waitMin) === 'number' && typeof (data.waitRange) === 'number') {
+      this._socketMaintenanceReconnectMin = data.waitMin
+      this._socketMaintenanceReconnectRange = data.waitRange
+    } else {
+      this._socketMaintenanceReconnectMin = SYNC_SOCKET_RECONNECT_MIN
+      this._socketMaintenanceReconnectRange = SYNC_SOCKET_RECONNECT_RANGE
+    }
+    console.warn(`[SYNCS] Socket is now in maintenance mode until ${new Date(this._socketMaintenanceUntil)}`)
+  }
+
   /* ****************************************************************************/
   // Venting
   /* ****************************************************************************/
@@ -155,7 +209,8 @@ class ServerVent extends EventEmitter {
         clientChannel.leave()
         this._setupVents()
       })
-    clientChannel.on('userDetails', userActions.remoteChangeAccount)
+    clientChannel.on('userDetails', (data) => { userActions.remoteChangeAccount(data) })
+    clientChannel.on('maintenance', this._handleMaintenanceStart)
 
     return this
   }
@@ -172,7 +227,7 @@ class ServerVent extends EventEmitter {
   * @return this
   */
   startListeningForGooglePushUpdates (mailboxId, email, pushToken) {
-    if (!this._socket) { throw new Error('Unable to listen on channel, socket is not setup') }
+    if (!this.isSocketSetup) { throw new Error('Unable to listen on channel, socket is not setup') }
 
     if (this._pushChannels.has(mailboxId)) { return this }
     const channel = this._socket.channel(`googlepush:${email}`, {
@@ -208,7 +263,7 @@ class ServerVent extends EventEmitter {
   */
   stopListeningForGooglePushUpdates (mailboxId) {
     if (!this._pushChannels.has(mailboxId)) { return this }
-    if (!this._socket) { throw new Error('Unable to unlisten on channel, socket is not setup') }
+    if (!this.isSocketSetup) { throw new Error('Unable to unlisten on channel, socket is not setup') }
 
     this._pushChannels.get(mailboxId).leave()
     this._pushChannels.delete(mailboxId)

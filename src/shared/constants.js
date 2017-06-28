@@ -34,6 +34,8 @@ module.exports = Object.freeze({
   // Sync
   SYNC_SOCKET_URL: 'wss://wavebox.io/socket',
   SYNC_SOCKET_UPGRADE_INTERVAL: 1000 * 60 * 5, // 5 minutes
+  SYNC_SOCKET_RECONNECT_MIN: 500, // 0.5 secs
+  SYNC_SOCKET_RECONNECT_RANGE: 4500, // 4.5 secs
 
   // Dictionaries
   PREINSTALLED_DICTIONARIES: ['en_US'],

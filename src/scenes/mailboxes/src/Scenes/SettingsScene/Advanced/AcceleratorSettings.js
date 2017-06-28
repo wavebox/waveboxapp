@@ -9,6 +9,9 @@ import {
 } from 'material-ui'
 
 const ACCELERATOR_NAMES = {
+  // Global
+  globalToggleApp: 'Toggle App',
+
   // Application
   preferences: 'Preferences',
   composeMail: 'Compose Mail',
@@ -49,6 +52,9 @@ const ACCELERATOR_NAMES = {
   mailboxIndex: 'Mailbox at Index',
   serviceIndex: 'Service at Index'
 }
+const GLOBAL_SECTION = [
+  'globalToggleApp'
+]
 const APPLICATION_SECTION = [
   'preferences',
   'composeMail',
@@ -93,7 +99,8 @@ const SECTIONS = [
   { name: 'Application', items: APPLICATION_SECTION },
   { name: 'Edit', items: EDIT_SECTION },
   { name: 'View', items: VIEW_SECTION },
-  { name: 'Window', items: WINDOW_SECTION }
+  { name: 'Window', items: WINDOW_SECTION },
+  { name: 'Global', subtitle: 'These shortcuts will also work when Wavebox is minimized or out of focus', items: GLOBAL_SECTION }
 ]
 
 export default class AcceleratorSettings extends React.Component {
@@ -124,6 +131,7 @@ export default class AcceleratorSettings extends React.Component {
   renderAcceleratorTableRow (accelerators, name, isFirst, isLast) {
     const accelerator = accelerators[name]
     const acceleratorDefault = accelerators[name + 'Default']
+
     // Put the key on the TextField so when the value is changed this will be updated
     return (
       <TableRow key={name}>
@@ -131,16 +139,24 @@ export default class AcceleratorSettings extends React.Component {
         <TableRowColumn style={{ overflow: 'visible', textAlign: 'right' }}>
           <TextField
             key={accelerator}
+            name={`AcceleratorSettings_${name}`}
             style={{ width: 180 }}
             hintText={acceleratorDefault}
             defaultValue={accelerator}
             onBlur={(evt) => settingsActions.setAccelerator(name, evt.target.value)} />
-          <IconButton
-            onClick={() => settingsActions.restoreAcceleratorDefault(name)}
-            tooltipPosition={isLast ? 'top-center' : 'bottom-center'}
-            tooltip={`Restore Default (${acceleratorDefault})`}>
-            <FontIcon className='material-icons'>settings_backup_restore</FontIcon>
-          </IconButton>
+          {acceleratorDefault ? (
+            <IconButton
+              onClick={() => settingsActions.restoreAcceleratorDefault(name)}
+              tooltipPosition={isLast ? 'top-center' : 'bottom-center'}
+              tooltip={`Restore Default (${acceleratorDefault})`}>
+              <FontIcon className='material-icons'>settings_backup_restore</FontIcon>
+            </IconButton>
+          ) : (
+            <IconButton
+              onClick={() => settingsActions.restoreAcceleratorDefault(name)}>
+              <FontIcon className='material-icons'>delete</FontIcon>
+            </IconButton>
+          )}
         </TableRowColumn>
       </TableRow>
     )
@@ -156,6 +172,9 @@ export default class AcceleratorSettings extends React.Component {
     return (
       <Paper key={section.name} zDepth={1} style={styles.paper}>
         <h1 style={styles.subheading}>{`${section.name} Shortcuts`}</h1>
+        {section.subtitle ? (
+          <p style={styles.subheadingInfo}>{section.subtitle}</p>
+        ) : undefined}
         <Table selectable={false}>
           <TableBody displayRowCheckbox={false}>
             {section.items.map((name, index, items) => this.renderAcceleratorTableRow(accelerators, name, index === 0, index === items.length - 1))}

@@ -5,6 +5,9 @@ class AcceleratorSettings extends Model {
   // Defaults
   /* ****************************************************************************/
 
+  // Global
+  get globalToggleAppDefault () { return '' }
+
   // Application
   get preferencesDefault () { return 'CmdOrCtrl+,' }
   get composeMailDefault () { return 'CmdOrCtrl+N' }
@@ -48,6 +51,9 @@ class AcceleratorSettings extends Model {
   /* ****************************************************************************/
   // Config
   /* ****************************************************************************/
+
+  // Global
+  get globalToggleApp () { return this._value_('globalToggleApp', this.globalToggleAppDefault) }
 
   // Application
   get preferences () { return this._value_('preferences', this.preferencesDefault) }

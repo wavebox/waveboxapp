@@ -22,7 +22,7 @@
   // Startup
   const argv = require('yargs').parse(process.argv)
   const AppPrimaryMenu = require('./AppPrimaryMenu')
-  const AppKeyboardShortcuts = require('./AppKeyboardShortcuts')
+  const AppGlobalShortcuts = require('./AppGlobalShortcuts')
   const storage = require('./storage')
   const settingStore = require('./stores/settingStore')
   const mailboxStore = require('./stores/mailboxStore')
@@ -62,7 +62,8 @@
 
   const shortcutSelectors = AppPrimaryMenu.buildSelectors(appWindowManager)
   const appMenu = new AppPrimaryMenu(shortcutSelectors)
-  const appKeyboardShortcuts = new AppKeyboardShortcuts(shortcutSelectors)
+  const appGlobalShortcutSelectors = AppGlobalShortcuts.buildSelectors(appWindowManager)
+  const appGlobalShortcuts = new AppGlobalShortcuts(appGlobalShortcutSelectors)
 
   /* ****************************************************************************/
   // IPC Events
@@ -136,6 +137,7 @@
     )
     appWindowManager.mailboxesWindow.create(openHidden)
     AppUpdater.register(appWindowManager)
+    appGlobalShortcuts.register()
   })
 
   app.on('window-all-closed', () => {
@@ -147,21 +149,13 @@
   })
 
   app.on('before-quit', () => {
-    appKeyboardShortcuts.unregister()
+    appGlobalShortcuts.unregister()
     appWindowManager.forceQuit = true
   })
 
   app.on('open-url', (evt, url) => { // osx only
     evt.preventDefault()
     appWindowManager.mailboxesWindow.openMailtoLink(url)
-  })
-
-  app.on('browser-window-focus', () => {
-    appKeyboardShortcuts.register()
-  })
-
-  app.on('browser-window-blur', () => {
-    appKeyboardShortcuts.unregister()
   })
 
   app.on('login', (evt, webContents, request, authInfo, callback) => {
