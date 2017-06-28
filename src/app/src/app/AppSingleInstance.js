@@ -1,13 +1,13 @@
 const yargs = require('yargs')
-const appWindowManager = require('./appWindowManager')
 
 class AppSingleInstance {
   /**
   * Processes the single instance args by passing them through to the main thread
+  * @param appWindowManager: the app window manager instance if any
   * @param commandLine: the commandline arguments
   * @param workingDirectory: the current working directory
   */
-  static processSingleInstanceArgs (commandLine, workingDirectory) {
+  static processSingleInstanceArgs (appWindowManager, commandLine, workingDirectory) {
     const argv = yargs.parse(commandLine)
     if (appWindowManager && appWindowManager.mailboxesWindow) {
       if (argv.hidden || argv.hide) {

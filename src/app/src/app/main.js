@@ -6,15 +6,16 @@
   if (AppUpdater.handleWin32SquirrelSwitches(app)) { return }
 
   // Single app instance
+  let appWindowManager
   const singleAppQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
     const AppSingleInstance = require('./AppSingleInstance')
-    AppSingleInstance.processSingleInstanceArgs(commandLine, workingDirectory)
+    AppSingleInstance.processSingleInstanceArgs(appWindowManager, commandLine, workingDirectory)
     return true
   })
   if (singleAppQuit) { app.quit(); return }
 
   // Setup the window manager
-  const appWindowManager = require('./appWindowManager')
+  appWindowManager = require('./appWindowManager')
   const MailboxesWindow = require('./windows/MailboxesWindow')
   appWindowManager.attachMailboxesWindow(new MailboxesWindow())
 
