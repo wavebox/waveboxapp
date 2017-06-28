@@ -1,5 +1,6 @@
 import React from 'react'
-import { FontIcon, Dialog, RaisedButton } from 'material-ui'
+import PropTypes from 'prop-types'
+import { FontIcon, Dialog, RaisedButton, FlatButton } from 'material-ui'
 import * as Colors from 'material-ui/styles/colors'
 import { settingsStore } from 'stores/settings'
 
@@ -17,6 +18,17 @@ const styles = {
 }
 
 export default class MailboxWizardCompleteScene extends React.Component {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+  static propTypes = {
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        mailboxId: PropTypes.string.isRequired
+      })
+    })
+  }
+
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
@@ -48,6 +60,19 @@ export default class MailboxWizardCompleteScene extends React.Component {
   // UI Events
   /* **************************************************************************/
 
+  /**
+  * Handles the settings button being pressed
+  */
+  handleSettings = () => {
+    this.setState({ open: false })
+    setTimeout(() => {
+      window.location.hash = `/settings/accounts/${this.props.match.params.mailboxId}`
+    }, 250)
+  }
+
+  /**
+  * Handles the done button being pressed
+  */
   handleDone = () => {
     const { hasSeenAppWizard } = this.state
 
@@ -64,10 +89,10 @@ export default class MailboxWizardCompleteScene extends React.Component {
   render () {
     const { open } = this.state
     const actions = (
-      <RaisedButton
-        label='Finish'
-        primary
-        onClick={this.handleDone} />
+      <div>
+        <FlatButton label='Account Settings' onClick={this.handleSettings} style={{ marginRight: 8 }} />
+        <RaisedButton label='Finish' primary onClick={this.handleDone} />
+      </div>
     )
 
     return (

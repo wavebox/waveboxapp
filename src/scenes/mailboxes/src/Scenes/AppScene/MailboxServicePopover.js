@@ -202,7 +202,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
   */
   handleAccountSettings = () => {
     this.handleClosePopover(() => {
-      window.location.hash = `settings/accounts/${this.props.mailboxId}`
+      window.location.hash = `/settings/accounts/${this.props.mailboxId}`
     })
   }
 

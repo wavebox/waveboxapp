@@ -793,7 +793,7 @@ class MailboxStore {
           actions.create.defer(provisionalId, Object.assign(provisional, {
             auth: auth
           }))
-          window.location.hash = '/mailbox_wizard/complete'
+          window.location.hash = `/mailbox_wizard/complete/${provisionalId}`
         }
       }).catch((err) => {
         console.error('[AUTH ERR]', err)
@@ -823,7 +823,7 @@ class MailboxStore {
         authToken: authToken,
         authAppKey: authAppKey
       }))
-      window.location.hash = '/mailbox_wizard/complete'
+      window.location.hash = `/mailbox_wizard/complete/${provisionalId}`
     }
   }
 

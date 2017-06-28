@@ -24,7 +24,9 @@ export default class MailboxWizardMicrosoftServicesScene extends React.Component
 
   render () {
     return (
-      <MailboxWizardServicesScene nextUrl='/mailbox_wizard/complete' mailboxId={this.props.match.params.mailboxId} />
+      <MailboxWizardServicesScene
+        nextUrl={`/mailbox_wizard/complete/${this.props.match.params.mailboxId}`}
+        mailboxId={this.props.match.params.mailboxId} />
     )
   }
 }

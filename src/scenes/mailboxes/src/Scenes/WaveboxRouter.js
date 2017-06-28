@@ -66,7 +66,7 @@ export default class WaveboxRouter extends React.Component {
 
           <Route path='/mailbox_wizard/add' component={MailboxWizardAddScene} />
           <Route path='/mailbox_wizard/authenticating' component={MailboxWizardAuthenticatingScene} />
-          <Route path='/mailbox_wizard/complete' component={MailboxWizardCompleteScene} />
+          <Route path='/mailbox_wizard/complete/:mailboxId' component={MailboxWizardCompleteScene} />
           <Route path='/mailbox_wizard/google/configuregmail/:mailboxId' component={MailboxWizardGmailConfigureScene} />
           <Route path='/mailbox_wizard/google/configureinbox/:mailboxId' component={MailboxWizardInboxConfigureScene} />
           <Route path='/mailbox_wizard/google/services/:mailboxId' component={MailboxWizardGoogleServicesScene} />

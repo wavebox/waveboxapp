@@ -129,7 +129,7 @@ export default class MailboxWizardGenericConfigureScene extends React.Component 
       // Progress wizard
       stateUpdate.open = false
       setTimeout(() => {
-        window.location.hash = '/mailbox_wizard/complete'
+        window.location.hash = `/mailbox_wizard/complete/${this.props.match.params.mailboxId}`
       }, 250)
     }
     this.setState(stateUpdate)
