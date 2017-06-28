@@ -5,6 +5,7 @@ const webContents = remote.getCurrentWebContents()
 const environment = remote.getCurrentWebContents().getType()
 const dictInfo = req.shared('dictionaries.js')
 const DictionaryLoad = require('./DictionaryLoad')
+const MenuTool = req.shared('Electron/MenuTool')
 const {
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
   WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG,
@@ -235,6 +236,9 @@ class ContextMenu {
     })
     const menu = Menu.buildFromTemplate(menuTemplate)
     menu.popup(remote.getCurrentWindow())
+    setTimeout(() => {
+      MenuTool.fullDestroyMenu(menu)
+    }, 100) // just in case
   }
 }
 

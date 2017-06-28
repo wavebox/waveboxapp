@@ -65,8 +65,8 @@ class WaveboxWindow extends EventEmitter {
     const savedLocation = this.locationSaver.getSavedScreenLocation()
     const fullBrowserWindowPreferences = Object.assign({},
       this.defaultBrowserWindowPreferences(),
-      savedLocation,
-      browserWindowPreferences
+      browserWindowPreferences,
+      savedLocation
     )
 
     // Create the window

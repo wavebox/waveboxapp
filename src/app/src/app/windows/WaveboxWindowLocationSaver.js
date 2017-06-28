@@ -71,7 +71,6 @@ class WaveboxWindowLocationSaver {
       if (this.browserWindow.isMinimized()) { return }
       const [x, y] = this.browserWindow.getPosition()
       const [width, height] = this.browserWindow.getSize()
-
       appStorage.setJSONItem(this.windowId, {
         fullscreen: this.browserWindow.isFullScreen(),
         maximized: this.browserWindow.isMaximized(),

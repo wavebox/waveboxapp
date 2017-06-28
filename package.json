@@ -13,7 +13,7 @@
     "dev:guest": "webpack --env.task=guest && electron bin/app/index.js",
     "dev:bridge": "webpack --env.task=bridge && electron bin/app/index.js",
     "dev:app": "webpack --env.task=app && electron bin/app/index.js",
-    "dev:mailboxes": "webpack --env.task=mailboxes && electron bin/app/index.js",
+    "dev:mailboxes": "webpack --env.task=mailboxes --env.fast && electron bin/app/index.js",
     "dev:content": "webpack --env.task=content && electron bin/app/index.js",
     "dev:monitor": "webpack --env.task=monitor && electron bin/app/index.js",
     "dev:assets": "webpack --env.task=assets && electron bin/app/index.js",
