@@ -27,7 +27,7 @@ Here's how to build Wavebox from source.
 ### Prerequisites
 Before you get started you'll need the following
 
-* Nodejs version 6 [download](https://nodejs.org/en/)
+* Nodejs version 7.9.0 [download](https://nodejs.org/en/)
 * Wavebox API Key
  * Download & install Wavebox for free
  * Go to Settings and then the Wavebox Pro Tab
@@ -43,5 +43,6 @@ module.exports = { API_KEY: 'your_api_key' }
 ```
 
 ### Dependencies & Running
-* To install all Wavebox npm dependencies: npm run install:all 
-* To run compile and run the app npm start
+* To install all Wavebox npm dependencies: `npm run install:all`
+* To recompile native modules: `npm run rebuild:electron`
+* To run compile and run the app: `npm start`
