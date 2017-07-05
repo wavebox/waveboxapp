@@ -32,7 +32,8 @@ const {
   WB_MAILBOXES_WINDOW_NAVIGATE_FORWARD,
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
-  WB_MAILBOXES_WINDOW_WEBVIEW_ATTACHED,
+  WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED,
+  WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED,
   WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT,
   WB_NEW_WINDOW,
 
@@ -47,6 +48,9 @@ const {
 const {
   WAVEBOX_CAPTURE_URL_PREFIX
 } = require('../../../shared/constants')
+const {
+  WAVEBOX_HOSTED_EXTENSION_PROTOCOL
+} = require('../../../shared/extensionApis')
 
 const MAILBOXES_DIR = path.resolve(path.join(__dirname, '/../../../../scenes/mailboxes'))
 const ALLOWED_URLS = [
@@ -68,9 +72,11 @@ class MailboxesWindow extends WaveboxWindow {
     this.authWavebox = new AuthWavebox()
     this.sessionManager = new MailboxesSessionManager(this)
     this.attachedMailboxes = new Map()
+    this.attachedExtensions = new Map()
 
     this.boundHandleAppWebContentsCreated = this.handleAppWebContentsCreated.bind(this)
     this.boundHandleMailboxesWebViewAttached = this.handleMailboxesWebViewAttached.bind(this)
+    this.boundHandleExtensionWebViewAttached = this.handleExtensionWebViewAttached.bind(this)
     this.boundHandleOpenNewWindow = this.handleOpenNewWindow.bind(this)
     this.boundHandleFetchOpenWindowCount = this.handleFetchOpenWindowCount.bind(this)
   }
@@ -117,7 +123,8 @@ class MailboxesWindow extends WaveboxWindow {
     })
 
     app.on('web-contents-created', this.boundHandleAppWebContentsCreated)
-    ipcMain.on(WB_MAILBOXES_WINDOW_WEBVIEW_ATTACHED, this.boundHandleMailboxesWebViewAttached)
+    ipcMain.on(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, this.boundHandleMailboxesWebViewAttached)
+    ipcMain.on(WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED, this.boundHandleExtensionWebViewAttached)
     ipcMain.on(WB_NEW_WINDOW, this.boundHandleOpenNewWindow)
     ipcMain.on(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, this.boundHandleFetchOpenWindowCount)
 
@@ -160,7 +167,8 @@ class MailboxesWindow extends WaveboxWindow {
   */
   destroy (evt) {
     app.removeListener('web-contents-created', this.boundHandleAppWebContentsCreated)
-    ipcMain.removeListener(WB_MAILBOXES_WINDOW_WEBVIEW_ATTACHED, this.boundHandleMailboxesWebViewAttached)
+    ipcMain.removeListener(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, this.boundHandleMailboxesWebViewAttached)
+    ipcMain.removeListener(WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED, this.boundHandleExtensionWebViewAttached)
     ipcMain.removeListener(WB_NEW_WINDOW, this.boundHandleOpenNewWindow)
     ipcMain.removeListener(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, this.boundHandleFetchOpenWindowCount)
     super.destroy(evt)
@@ -177,10 +185,13 @@ class MailboxesWindow extends WaveboxWindow {
   */
   handleAppWebContentsCreated (evt, contents) {
     if (contents.getType() === 'webview' && contents.hostWebContents === this.window.webContents) {
-      contents.on('new-window', (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
-        if (settingStore.launched.app.useExperimentalWindowOpener) {
+      if (settingStore.launched.app.useExperimentalWindowOpener) {
+        contents.on('new-window', (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
           this.handleWebViewNewWindow(contents.id, evt, targetUrl, frameName, disposition, options, additionalFeatures)
-        }
+        })
+      }
+      contents.on('will-navigate', (evt, url) => {
+        this.handleWebViewWillNavigate(contents.id, evt, url)
       })
     }
   }
@@ -193,6 +204,15 @@ class MailboxesWindow extends WaveboxWindow {
   handleMailboxesWebViewAttached (evt, data) {
     if (evt.sender === this.window.webContents) {
       this.attachedMailboxes.set(data.webContentsId, data)
+    }
+  }
+
+  /**
+  * Handles an extension webview being attached
+  */
+  handleExtensionWebViewAttached (evt, data) {
+    if (evt.sender === this.window.webContents) {
+      this.attachedExtensions.set(data.webContentsId, data)
     }
   }
 
@@ -283,6 +303,20 @@ class MailboxesWindow extends WaveboxWindow {
     } else if (openMode === CoreService.WINDOW_OPEN_MODES.DOWNLOAD) {
       if (options.webContents) {
         options.webContents.downloadURL(targetUrl)
+      }
+    }
+  }
+
+  /**
+  * Handles the webview navigating
+  * @param webContentsId: the id of the web contents
+  * @param evt: the event that fired
+  * @param targetUrl: the url we're navigating to
+  */
+  handleWebViewWillNavigate (webContentsId, evt, targetUrl) {
+    if (this.attachedExtensions.has(webContentsId)) {
+      if (url.parse(targetUrl).protocol !== WAVEBOX_HOSTED_EXTENSION_PROTOCOL + ':') {
+        evt.preventDefault()
       }
     }
   }

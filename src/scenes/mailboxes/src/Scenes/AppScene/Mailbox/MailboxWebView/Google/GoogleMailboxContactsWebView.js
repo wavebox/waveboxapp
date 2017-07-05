@@ -43,7 +43,7 @@ export default class GoogleMailboxContactsWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload='../guest/guestInterface/googleServiceTooling'
+        preload={window.guestResolve('googleServiceTooling')}
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.CONTACTS}
         newWindow={settingsStore.getState().launched.app.useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow} />

@@ -1,6 +1,11 @@
 const url = require('url')
-const {DISALLOWED_HTML5_NOTIFICATION_HOSTS} = require('../../shared/constants.js')
 const fs = require('fs-extra')
+const {
+  DISALLOWED_HTML5_NOTIFICATION_HOSTS
+} = require('../../shared/constants.js')
+const {
+  WAVEBOX_HOSTED_EXTENSION_PROTOCOL
+} = require('../../shared/extensionApis.js')
 const { NOTIFICATION_PERMISSION_PATH } = require('./PathManager')
 
 /**
@@ -20,6 +25,8 @@ class NotificationPermissionManager {
     const domain = this._getDomainFromUrl(url)
     if (this._isDomainAlwaysDisallowed(domain)) {
       return Promise.resolve('denied')
+    } else if (this._isProtocolAlwaysAllowed(this._getProtocolFromUrl(url))) {
+      return Promise.resolve('granted')
     } else {
       return Promise.resolve()
         .then(() => fs.readFile(NOTIFICATION_PERMISSION_PATH, 'utf8'))
@@ -92,6 +99,16 @@ class NotificationPermissionManager {
   }
 
   /**
+  * Gets the protocol from the given url
+  * @param u: the url to get the sanitized protocol from
+  * @return a sanitized version of the protocl such as http:
+  */
+  static _getProtocolFromUrl (u) {
+    const purl = url.parse(u)
+    return purl.protocol
+  }
+
+  /**
   * Parses the domain permission
   * @param data: the data from disk
   * @param domain: the domain
@@ -116,6 +133,14 @@ class NotificationPermissionManager {
   */
   static _isDomainAlwaysDisallowed (domain) {
     return !!DISALLOWED_HTML5_NOTIFICATION_HOSTS.find((dis) => domain.indexOf(dis) !== -1)
+  }
+
+  /**
+  * @param protocol: the protocol to query for in the format http:
+  * @return true if this domain is always allowed, false otherwise
+  */
+  static _isProtocolAlwaysAllowed (protocol) {
+    return protocol === WAVEBOX_HOSTED_EXTENSION_PROTOCOL + ':'
   }
 }
 

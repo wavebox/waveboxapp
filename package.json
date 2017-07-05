@@ -3,14 +3,15 @@
   "version": "3.1.12",
   "description": "Wavebox",
   "scripts": {
-    "rebuild:electron": "electron-rebuild -f -m src/app -v 1.7.4 -t prod,optional",
+    "rebuild:electron": "electron-rebuild -f -m src/app -v 1.7.4 -t prod,optional && electron-rebuild -f -m src/guest -v 1.7.4 -t prod,optional",
     "prestart": "webpack",
     "start": "electron bin/app/index.js",
     "test": "standard",
-    "install:all": "echo ':wavebox' && npm install && cd src/app && echo ':wavebox-app' && npm install && cd ../../src/scenes/mailboxes && echo ':wavebox-scenes-mailboxes' && npm install && cd ../content && echo ':wavebox-scenes-content' && npm install && cd ../monitor && echo ':wavebox-scenes-monitor' && npm install",
-    "outdated:all": "echo ':wavebox' && npm outdated || true && cd src/app && echo ':wavebox-app' && npm outdated || true && cd ../../src/scenes/mailboxes && echo ':wavebox-scenes-mailboxes' && npm outdated || true && cd ../content && echo ':wavebox-scenes-content' && npm outdated || true && cd ../monitor && echo ':wavebox-scenes-monitor' && npm outdated || true",
-    "prune:all": "echo ':wavebox' && npm prune && cd src/app && echo ':wavebox-app' && npm prune && cd ../../src/scenes/mailboxes && echo ':wavebox-scenes-mailboxes' && npm prune && cd ../content && echo ':wavebox-scenes-content' && npm prune && cd ../monitor && echo ':wavebox-scenes-monitor' && npm prune",
+    "install:all": "echo ':wavebox' && npm install && cd src/app && echo ':wavebox-app' && npm install && cd ../../src/guest && echo ':wavebox-guest' && npm install && cd ../../src/scenes/mailboxes && echo ':wavebox-scenes-mailboxes' && npm install && cd ../content && echo ':wavebox-scenes-content' && npm install && cd ../monitor && echo ':wavebox-scenes-monitor' && npm install",
+    "outdated:all": "echo ':wavebox' && npm outdated || true && cd src/app && echo ':wavebox-app' && npm outdated || true && cd ../../src/guest && echo ':wavebox-guest' && npm outdated || true && cd ../../src/scenes/mailboxes && echo ':wavebox-scenes-mailboxes' && npm outdated || true && cd ../content && echo ':wavebox-scenes-content' && npm outdated || true && cd ../monitor && echo ':wavebox-scenes-monitor' && npm outdated || true",
+    "prune:all": "echo ':wavebox' && npm prune && cd src/app && echo ':wavebox-app' && npm prune && cd ../../src/guest && echo ':wavebox-guest' && npm prune && cd ../../src/scenes/mailboxes && echo ':wavebox-scenes-mailboxes' && npm prune && cd ../content && echo ':wavebox-scenes-content' && npm prune && cd ../monitor && echo ':wavebox-scenes-monitor' && npm prune",
     "dev:guest": "webpack --env.task=guest && electron bin/app/index.js",
+    "dev:guestApi": "webpack --env.task=guestApi && electron bin/app/index.js",
     "dev:bridge": "webpack --env.task=bridge && electron bin/app/index.js",
     "dev:app": "webpack --env.task=app && electron bin/app/index.js",
     "dev:mailboxes": "webpack --env.task=mailboxes --env.fast && electron bin/app/index.js",
@@ -53,7 +54,7 @@
     "less-loader": "4.0.4",
     "style-loader": "0.18.2",
     "url-loader": "0.5.9",
-    "uglify-es": "3.0.21",
+    "uglify-es": "3.0.23",
     "uuid": "3.1.0",
     "webpack": "3.0.0",
     "webpack-target-electron-renderer": "0.4.0",
@@ -64,9 +65,6 @@
     "babel-eslint": "7.2.3"
   },
   "standard": {
-    "ignore": [
-      "src/app/lib/"
-    ],
     "parser": "babel-eslint"
   },
   "appConfig": {

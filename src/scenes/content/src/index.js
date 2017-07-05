@@ -6,10 +6,11 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 import querystring from 'querystring'
 import {
   WB_PING_RESOURCE_USAGE,
-  WB_PONG_RESOURCE_USAGE
+  WB_PONG_RESOURCE_USAGE,
+  WB_SEND_IPC_TO_CHILD
 } from 'shared/ipcEvents'
 
-const { webFrame, ipcRenderer } = window.nativeRequire('electron')
+const { webFrame, ipcRenderer, remote } = window.nativeRequire('electron')
 
 // Prevent zooming
 webFrame.setZoomLevelLimits(1, 1)
@@ -54,4 +55,9 @@ ipcRenderer.on(WB_PING_RESOURCE_USAGE, () => {
   document.querySelector('webview').send(WB_PING_RESOURCE_USAGE, {
     description: `Content WebView: ${document.title}`
   })
+})
+
+// Message passing
+ipcRenderer.on(WB_SEND_IPC_TO_CHILD, (evt, { id, channel, payload }) => {
+  remote.webContents.fromId(id).send(channel, payload)
 })

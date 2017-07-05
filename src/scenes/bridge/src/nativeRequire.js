@@ -13,3 +13,8 @@ window.appPackage = function () {
 window.mprocManager = function (name) {
   return require('../../app/app/MProcManagers/' + name)
 }
+
+window.guestResolve = function (name) {
+  const path = require('path')
+  return path.join('../../guest/guest/', name)
+}

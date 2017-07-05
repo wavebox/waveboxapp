@@ -10,12 +10,9 @@ const {
   ARTIFICIAL_COOKIE_PERSIST_WAIT,
   ARTIFICIAL_COOKIE_PERSIST_PERIOD
 } = require('../../../shared/constants')
-const {
-  WAVEBOX_GUEST_APIS_PROTOCOL
-} = require('../../../shared/guestApis')
 const MailboxFactory = require('../../../shared/Models/Accounts/MailboxFactory')
 const CoreMailbox = require('../../../shared/Models/Accounts/CoreMailbox')
-const MailboxesProtocolProvider = require('./MailboxesProtocolProvider')
+const ContentExtensions = require('../../Extensions/Content')
 
 class MailboxesSessionManager {
   /* ****************************************************************************/
@@ -27,7 +24,6 @@ class MailboxesSessionManager {
   */
   constructor (mailboxWindow) {
     this.mailboxWindow = mailboxWindow
-    this.protocolProvider = new MailboxesProtocolProvider()
     this.downloadsInProgress = { }
     this.persistCookieThrottle = { }
 
@@ -63,8 +59,10 @@ class MailboxesSessionManager {
     ses.on('will-download', this.handleDownload.bind(this))
     ses.setPermissionRequestHandler(this.handlePermissionRequest)
     ses.webRequest.onCompleted((evt) => this.handleRequestCompleted(evt, ses, partition))
-    ses.protocol.registerStringProtocol(WAVEBOX_GUEST_APIS_PROTOCOL, this.protocolProvider.handleWaveboxUrl.bind(this.protocolProvider))
     this.setupUserAgent(ses, partition, mailboxType)
+    ContentExtensions.supportedProtocols.forEach((protocol) => {
+      ses.protocol.registerStringProtocol(protocol, ContentExtensions.handleStringProtocolRequest.bind(ContentExtensions))
+    })
     this.__managed__.add(partition)
   }
 

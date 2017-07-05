@@ -23,7 +23,7 @@ import {
   WB_BROWSER_INJECT_CUSTOM_CONTENT,
   WB_PING_RESOURCE_USAGE,
   WB_PONG_RESOURCE_USAGE,
-  WB_MAILBOXES_WINDOW_WEBVIEW_ATTACHED,
+  WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED,
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
   WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG
 } from 'shared/ipcEvents'
@@ -427,7 +427,7 @@ export default class MailboxWebView extends React.Component {
   * @param webContents: the webcontents that were attached
   */
   handleWebContentsAttached = (webContents) => {
-    ipcRenderer.send(WB_MAILBOXES_WINDOW_WEBVIEW_ATTACHED, {
+    ipcRenderer.send(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, {
       webContentsId: webContents.id,
       mailboxId: this.props.mailboxId,
       serviceType: this.props.serviceType

@@ -28,7 +28,7 @@ import {
   WB_AUTH_SLACK,
   WB_AUTH_TRELLO,
   WB_MAILBOX_STORAGE_CHANGE_ACTIVE,
-  WB_PREPARE_WEBVIEW_SESSION,
+  WB_PREPARE_MAILBOX_SESSION,
   WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT
 } from 'shared/ipcEvents'
 
@@ -511,7 +511,7 @@ class MailboxStore {
       } else {
         const mailboxModel = MailboxFactory.modelize(id, allMailboxes[id])
         this.mailboxes.set(id, mailboxModel)
-        ipcRenderer.sendSync(WB_PREPARE_WEBVIEW_SESSION, { // Sync us across bridge so everything is setup before webview created
+        ipcRenderer.sendSync(WB_PREPARE_MAILBOX_SESSION, { // Sync us across bridge so everything is setup before webview created
           partition: 'persist:' + mailboxModel.partition,
           mailboxType: mailboxModel.type
         })
@@ -922,7 +922,7 @@ class MailboxStore {
   handleCreate ({ id, data }) {
     const mailboxModel = this.saveMailbox(id, data)
     this.saveIndex(this.index.concat(id))
-    ipcRenderer.sendSync(WB_PREPARE_WEBVIEW_SESSION, { // Sync us across bridge so everything is setup before webview created
+    ipcRenderer.sendSync(WB_PREPARE_MAILBOX_SESSION, { // Sync us across bridge so everything is setup before webview created
       partition: 'persist:' + mailboxModel.partition,
       mailboxType: mailboxModel.type
     })

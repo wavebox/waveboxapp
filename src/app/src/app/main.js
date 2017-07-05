@@ -27,12 +27,15 @@
   const settingStore = require('./stores/settingStore')
   const mailboxStore = require('./stores/mailboxStore')
   const userStore = require('./stores/userStore')
+  const extensionStore = require('./stores/extensionStore')
   const ipcEvents = require('../shared/ipcEvents')
   const BasicHTTPAuthHandler = require('./BasicHTTPAuthHandler')
+  const { ContentExtensions, HostedExtensions } = require('./Extensions')
   const { BrowserWindow } = require('electron')
 
   Object.keys(storage).forEach((k) => storage[k].checkAwake())
   mailboxStore.checkAwake()
+  extensionStore.checkAwake()
   settingStore.checkAwake()
   userStore.checkAwake()
 
@@ -106,8 +109,12 @@
     AppUpdater.applySquirrelUpdate(appWindowManager)
   })
 
-  ipcMain.on(ipcEvents.WB_PREPARE_WEBVIEW_SESSION, (evt, data) => {
+  ipcMain.on(ipcEvents.WB_PREPARE_MAILBOX_SESSION, (evt, data) => {
     appWindowManager.mailboxesWindow.sessionManager.startManagingSession(data.partition, data.mailboxType)
+    evt.returnValue = true
+  })
+  ipcMain.on(ipcEvents.WB_PREPARE_EXTENSION_SESSION, (evt, data) => {
+    HostedExtensions.HostedExtensionSessionManager.startManagingSession(data.partition)
     evt.returnValue = true
   })
 
@@ -120,6 +127,21 @@
       if (index !== -1) {
         appWindowManager.mailboxesWindow.openMailtoLink(argv._[index])
         argv._.splice(1)
+      }
+    }
+  })
+
+  ipcMain.on(ipcEvents.WBE_PROVISION_EXTENSION, (evt, data) => {
+    ContentExtensions.provisionExtension(data.requestUrl, data.loadKey, data.apiKey, data.protocol, data.src, data.data)
+    if (data.reply) {
+      if (evt.sender.hostWebContents) {
+        evt.sender.hostWebContents.send(ipcEvents.WB_SEND_IPC_TO_CHILD, {
+          id: evt.sender.id,
+          channel: data.reply,
+          payload: { ok: true }
+        })
+      } else {
+        evt.sender.send(data.reply, { ok: true })
       }
     }
   })

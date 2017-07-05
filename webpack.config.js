@@ -5,7 +5,8 @@ const TASKS = {
   mailboxes: require('./src/scenes/mailboxes/webpack.config.js'),
   bridge: require('./src/scenes/bridge/webpack.config.js'),
   monitor: require('./src/scenes/monitor/webpack.config.js'),
-  guest: require('./src/scenes/guest/webpack.config.js')
+  guest: require('./src/guest/webpack.config.js'),
+  guestApi: require('./src/guestApi/webpack.config.js')
 }
 
 module.exports = function (env = {}) {

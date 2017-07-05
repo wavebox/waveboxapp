@@ -2,20 +2,22 @@ import './ReactComponents.less'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Provider from 'Scenes/Provider'
-import mailboxActions from 'stores/mailbox/mailboxActions'
-import settingsActions from 'stores/settings/settingsActions'
-import composeActions from 'stores/compose/composeActions'
-import updaterActions from 'stores/updater/updaterActions'
-import userActions from 'stores/user/userActions'
+import {mailboxStore, mailboxActions} from 'stores/mailbox'
+import {settingsStore, settingsActions} from 'stores/settings'
+import {composeStore, composeActions} from 'stores/compose'
+import {updaterStore, updaterActions} from 'stores/updater'
+import {userStore, userActions} from 'stores/user'
+import {extensionStore, extensionActions} from 'stores/extension'
 import Debug from 'Debug'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 import {
   WB_MAILBOXES_WINDOW_JS_LOADED,
   WB_MAILBOXES_WINDOW_PREPARE_RELOAD,
   WB_PING_RESOURCE_USAGE,
-  WB_PONG_RESOURCE_USAGE
+  WB_PONG_RESOURCE_USAGE,
+  WB_SEND_IPC_TO_CHILD
 } from 'shared/ipcEvents'
-const { ipcRenderer, webFrame } = window.nativeRequire('electron')
+const { ipcRenderer, webFrame, remote } = window.nativeRequire('electron')
 
 // Prevent zooming
 webFrame.setZoomLevelLimits(1, 1)
@@ -35,11 +37,18 @@ document.addEventListener('dragover', (evt) => {
 })
 
 // Load what we have in the db
+userStore.getState()
 userActions.load()
+mailboxStore.getState()
 mailboxActions.load()
+settingsStore.getState()
 settingsActions.load()
+composeStore.getState()
 composeActions.load()
+updaterStore.getState()
 updaterActions.load()
+extensionStore.getState()
+extensionActions.load()
 Debug.load()
 
 // Remove loading
@@ -50,12 +59,12 @@ Debug.load()
 
 // Render and prepare for unrender
 injectTapEventPlugin()
-ReactDOM.render(<Provider />, document.getElementById('ReactComponent-AppScene'))
+ReactDOM.render(<Provider />, document.getElementById('ReactComponent-AppSceneRenderNode'))
 ipcRenderer.on(WB_MAILBOXES_WINDOW_PREPARE_RELOAD, () => {
   window.location.hash = '/'
 })
 window.addEventListener('beforeunload', () => {
-  ReactDOM.unmountComponentAtNode(document.getElementById('ReactComponent-AppScene'))
+  ReactDOM.unmountComponentAtNode(document.getElementById('ReactComponent-AppSceneRenderNode'))
 })
 
 ipcRenderer.send(WB_MAILBOXES_WINDOW_JS_LOADED, {})
@@ -68,4 +77,9 @@ ipcRenderer.on(WB_PING_RESOURCE_USAGE, () => {
     pid: process.pid,
     description: `Mailboxes Window`
   })
+})
+
+// Message passing
+ipcRenderer.on(WB_SEND_IPC_TO_CHILD, (evt, { id, channel, payload }) => {
+  remote.webContents.fromId(id).send(channel, payload)
 })

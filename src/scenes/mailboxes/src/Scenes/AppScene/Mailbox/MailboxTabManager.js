@@ -3,6 +3,7 @@ import { mailboxStore } from 'stores/mailbox'
 import { userStore } from 'stores/user'
 import Welcome from '../Welcome/Welcome'
 import MailboxTab from './MailboxTab'
+import shallowCompare from 'react-addons-shallow-compare'
 
 export default class MailboxTabManager extends React.Component {
   /* **************************************************************************/
@@ -51,8 +52,7 @@ export default class MailboxTabManager extends React.Component {
 
   shouldComponentUpdate (nextProps, nextState) {
     if (JSON.stringify(this.state.mailboxIds) !== JSON.stringify(nextState.mailboxIds)) { return true }
-
-    return false
+    return shallowCompare({ state: {}, props: this.props }, nextProps, {})
   }
 
   render () {
@@ -60,7 +60,7 @@ export default class MailboxTabManager extends React.Component {
 
     if (mailboxIds.length) {
       return (
-        <div className='ReactComponent-MailboxTabManager'>
+        <div {...this.props}>
           {mailboxIds.map((mailboxId) => {
             return (<MailboxTab key={mailboxId} mailboxId={mailboxId} />)
           })}
@@ -68,7 +68,7 @@ export default class MailboxTabManager extends React.Component {
       )
     } else {
       return (
-        <div className='ReactComponent-MailboxTabManager'>
+        <div {...this.props}>
           <Welcome />
         </div>
       )

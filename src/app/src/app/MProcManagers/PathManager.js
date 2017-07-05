@@ -16,5 +16,8 @@ module.exports = {
 
   // Dictionaries
   USER_DICTIONARIES_PATH: LanguageSettings.userDictionariesPath(appDirectory.userData()),
-  USER_DICTIONARY_WORDS_PATH: path.join(appDirectory.userData(), 'user_dictionary_words.records')
+  USER_DICTIONARY_WORDS_PATH: path.join(appDirectory.userData(), 'user_dictionary_words.records'),
+
+  // Extensions
+  USER_EXTENSION_INSTALL_PATH: path.join(appDirectory.userData(), 'user_extensions')
 }

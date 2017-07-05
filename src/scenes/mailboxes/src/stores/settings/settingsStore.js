@@ -193,7 +193,7 @@ class SettingsStore {
     const StoreClass = this.storeClassFromSegment(segment)
 
     const js = this[segment].cloneData()
-    js[key] = !js[key]
+    js[key] = !this[segment][key]
     persistence.setJSONItem(segment, js)
     if (segment === SettingsIdent.SEGMENTS.TRAY) {
       this[segment] = new StoreClass(js, this.trayDefaults)
