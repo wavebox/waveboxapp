@@ -19,7 +19,8 @@ const {
 } = require('../../AuthProviders')
 const querystring = require('querystring')
 const electron = require('electron')
-const mouseFB = process.platform === 'linux' ? require('mouse-forward-back') : undefined
+// Issue https://github.com/wavebox/waveboxapp/issues/302
+// const mouseFB = process.platform === 'linux' ? require('mouse-forward-back') : undefined
 const {
   WB_MAILBOXES_WINDOW_PREPARE_RELOAD,
   WB_MAILBOXES_WINDOW_TOGGLE_SIDEBAR,
@@ -153,10 +154,11 @@ class MailboxesWindow extends WaveboxWindow {
       })
     } else if (process.platform === 'linux') {
       // Re-register the event on focus as newly focused windows will overwrite this
-      this.registerLinuxMouseNavigation()
+      // Issue https://github.com/wavebox/waveboxapp/issues/302
+      /* this.registerLinuxMouseNavigation()
       this.window.on('focus', () => {
         this.registerLinuxMouseNavigation()
-      })
+      }) */
     }
 
     return this
@@ -328,14 +330,15 @@ class MailboxesWindow extends WaveboxWindow {
   /**
   * Binds the listeners for mouse navigation on linux
   */
-  registerLinuxMouseNavigation () {
+  // Issue https://github.com/wavebox/waveboxapp/issues/302
+  /* registerLinuxMouseNavigation () {
     mouseFB.register((btn) => {
       switch (btn) {
         case 'back': this.navigateBack(); break
         case 'forward': this.navigateForward(); break
       }
     }, this.window.getNativeWindowHandle())
-  }
+  } */
 
   /* ****************************************************************************/
   // Mailbox Actions
