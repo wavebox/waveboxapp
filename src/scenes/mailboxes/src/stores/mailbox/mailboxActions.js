@@ -391,13 +391,19 @@ class MailboxActions {
 
   /**
   * Changes the active mailbox to the previous in the list
+  * @param allowCycling=false: set to true to allow cycling at end/beginning
   */
-  changeActiveToPrev () { return {} }
+  changeActiveToPrev (allowCycling = false) {
+    return { allowCycling: allowCycling }
+  }
 
   /**
   * Changes the active mailbox to the next in the list
+  * @param allowCycling=false: set to true to allow cycling at end/beginning
   */
-  changeActiveToNext () { return {} }
+  changeActiveToNext (allowCycling = false) {
+    return { allowCycling: allowCycling }
+  }
 
   /* **************************************************************************/
   // Search
@@ -524,9 +530,9 @@ ipcRenderer.on(WB_MAILBOXES_WINDOW_SWITCH_MAILBOX, (evt, req) => {
   if (req.mailboxId) {
     actions.changeActive(req.mailboxId, req.serviceType)
   } else if (req.prev) {
-    actions.changeActiveToPrev()
+    actions.changeActiveToPrev(req.allowCycling)
   } else if (req.next) {
-    actions.changeActiveToNext()
+    actions.changeActiveToNext(req.allowCycling)
   }
 })
 ipcRenderer.on(WB_MAILBOXES_WINDOW_SWITCH_SERVICE_INDEX, (evt, req) => actions.changeActiveServiceIndex(req.index))

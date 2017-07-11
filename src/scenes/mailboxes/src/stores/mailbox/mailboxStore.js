@@ -1108,19 +1108,31 @@ class MailboxStore {
 
   /**
   * Handles the active mailbox changing to the prev in the index
+  * @param allowCycling: if true will cycle back when at end or beginning
   */
-  handleChangeActivePrev () {
+  handleChangeActivePrev ({ allowCycling }) {
     const activeIndex = this.index.findIndex((id) => id === this.active)
-    const nextId = this.index[Math.max(0, activeIndex - 1)] || null
+    let nextId
+    if (allowCycling && activeIndex === 0) {
+      nextId = this.index[this.index.length - 1] || null
+    } else {
+      nextId = this.index[Math.max(0, activeIndex - 1)] || null
+    }
     actions.changeActive.defer(nextId)
   }
 
   /**
   * Handles the active mailbox changing to the next in the index
+  * @param allowCycling: if true will cycle back when at end or beginning
   */
-  handleChangeActiveNext () {
+  handleChangeActiveNext ({ allowCycling }) {
     const activeIndex = this.index.findIndex((id) => id === this.active)
-    const nextId = this.index[Math.min(this.index.length - 1, activeIndex + 1)] || null
+    let nextId
+    if (allowCycling && activeIndex === this.index.length - 1) {
+      nextId = this.index[0] || null
+    } else {
+      nextId = this.index[Math.min(this.index.length - 1, activeIndex + 1)] || null
+    }
     actions.changeActive.defer(nextId)
   }
 

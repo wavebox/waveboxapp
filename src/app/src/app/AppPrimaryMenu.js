@@ -77,10 +77,10 @@ class AppPrimaryMenu {
         windowManager.mailboxesWindow.show().focus().switchToServiceAtIndex(index)
       },
       prevMailbox: () => {
-        windowManager.mailboxesWindow.show().focus().switchPrevMailbox()
+        windowManager.mailboxesWindow.show().focus().switchPrevMailbox(true)
       },
       nextMailbox: () => {
-        windowManager.mailboxesWindow.show().focus().switchNextMailbox()
+        windowManager.mailboxesWindow.show().focus().switchNextMailbox(true)
       },
       cycleWindows: () => { windowManager.focusNextWindow() },
       aboutDialog: () => {

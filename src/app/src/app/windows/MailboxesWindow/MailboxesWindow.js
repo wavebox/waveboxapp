@@ -451,21 +451,23 @@ class MailboxesWindow extends WaveboxWindow {
 
   /**
   * Switches to the previous mailbox
+  * @param allowCycling=false: set to true to allow cycling at end/beginning
   * @return this
   */
-  switchPrevMailbox () {
+  switchPrevMailbox (allowCycling = false) {
     this.show().focus()
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_MAILBOX, { prev: true })
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_MAILBOX, { prev: true, allowCycling: allowCycling })
     return this
   }
 
   /**
   * Switches to the next mailbox
+  * @param allowCycling=false: set to true to allow cycling at end/beginning
   * @return this
   */
-  switchNextMailbox () {
+  switchNextMailbox (allowCycling = false) {
     this.show().focus()
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_MAILBOX, { next: true })
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_MAILBOX, { next: true, allowCycling: allowCycling })
     return this
   }
 
