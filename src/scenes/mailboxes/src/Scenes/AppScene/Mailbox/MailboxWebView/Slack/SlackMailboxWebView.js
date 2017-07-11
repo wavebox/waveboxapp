@@ -82,9 +82,10 @@ export default class SlackMailboxWebView extends React.Component {
   handleOpenItem = (evt) => {
     if (evt.mailboxId === this.props.mailboxId && evt.service === CoreService.SERVICE_TYPES.DEFAULT) {
       const service = this.state.mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT)
-      if (evt.data.channelId) {
-        const url = URI(service.url).pathname('/messages/' + evt.data.channelId).toString()
-        this.refs[REF].loadURL(url)
+      if (evt.data.launchUri) {
+        this.refs[REF].executeJavaScript(`TS.client.handleDeepLink('${evt.data.launchUri}');`)
+      } else if (evt.data.channelId) {
+        this.refs[REF].executeJavaScript(`TS.client.handleDeepLink('slack://channel?id=${evt.data.channelId}&team=${this.state.mailbox.authTeamId}');`)
       } else {
         this.refs[REF].loadURL(service.url)
       }

@@ -380,7 +380,8 @@ class SlackStore {
       data: {
         mailboxId: mailboxId,
         serviceType: SlackDefaultService.type,
-        channelId: message.channel
+        channelId: message.channel,
+        launchUri: message.launchUri
       }
     })
   }

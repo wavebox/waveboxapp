@@ -68,11 +68,7 @@ class SlackSocket extends EventEmitter {
   * @param evt: the event that fired
   */
   _handleError (evt) {
-    this._isConnected = false
-    this._socket = undefined
-    this._heartbeatClear()
-
-    try { this.close() } catch (ex) { }
+    this._handleDisconnectTeardown()
     clearTimeout(this._reconnect)
     this._reconnect = setTimeout(() => {
       try { this.open() } catch (ex) { }
@@ -84,8 +80,18 @@ class SlackSocket extends EventEmitter {
   * @param evt: the event that fired
   */
   _handleClose (evt) {
+    this._handleDisconnectTeardown()
+  }
+
+  /**
+  * Ensures the socket is torn down on disconnect
+  */
+  _handleDisconnectTeardown () {
+    if (this._socket) {
+      this._socket.close()
+      this._socket = undefined
+    }
     this._isConnected = false
-    this._socket = undefined
     this._heartbeatClear()
   }
 
@@ -144,10 +150,7 @@ class SlackSocket extends EventEmitter {
   close () {
     if (!this._socket) { throw new Error('No socket to close') }
 
-    this._isOpen = false
-    this._socket.close()
-    this._socket = undefined
-    this._heartbeatClear()
+    this._handleDisconnectTeardown()
     clearTimeout(this._reconnect)
 
     return this
