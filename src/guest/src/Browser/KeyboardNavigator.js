@@ -20,7 +20,7 @@ class KeyboardNavigator {
       if (evt.target.tagName === 'TEXTAREA') { return }
       if (evt.target.tagName === 'SELECT') { return }
       if (evt.target.tagName === 'OPTION') { return }
-      if (evt.path.findIndex((e) => e.getAttribute && e.getAttribute('contentEditable') === 'true') !== -1) { return }
+      if (evt.path.find((e) => e.isContentEditable)) { return }
 
       window.history.back()
     }
