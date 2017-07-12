@@ -40,7 +40,7 @@
   userStore.checkAwake()
 
   /* ****************************************************************************/
-  // Commandline switches & launch args
+  // Commandline switches
   /* ****************************************************************************/
 
   if (settingStore.app.ignoreGPUBlacklist) {
@@ -52,12 +52,6 @@
   if (!settingStore.app.enableUseZoomForDSF) {
     app.commandLine.appendSwitch('enable-use-zoom-for-dsf', 'false')
   }
-  const openHidden = (function () {
-    if (settingStore.ui.openHidden) { return true }
-    if (process.platform === 'darwin' && app.getLoginItemSettings().wasOpenedAsHidden) { return true }
-    if (argv.hidden || argv.hide) { return true }
-    return false
-  })()
 
   /* ****************************************************************************/
   // Global objects
@@ -151,6 +145,15 @@
   /* ****************************************************************************/
 
   app.on('ready', () => {
+    // Doing this outside of ready has a side effect on high-sierra where you get a _TSGetMainThread error
+    // To resolve this, run it when in ready
+    const openHidden = (function () {
+      if (settingStore.ui.openHidden) { return true }
+      if (process.platform === 'darwin' && app.getLoginItemSettings().wasOpenedAsHidden) { return true }
+      if (argv.hidden || argv.hide) { return true }
+      return false
+    })()
+
     appMenu.updateApplicationMenu(
       settingStore.accelerators,
       mailboxStore.orderedMailboxes(),
