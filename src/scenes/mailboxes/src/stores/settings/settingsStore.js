@@ -14,6 +14,7 @@ import {
 } from 'shared/Models/Settings'
 const homeDir = window.appNodeModulesRequire('home-dir') // pull this from main thread
 const { systemPreferences } = window.nativeRequire('electron').remote
+const pkg = window.appPackage()
 
 class SettingsStore {
   /* **************************************************************************/
@@ -128,7 +129,7 @@ class SettingsStore {
 
     // Load everything
     this.accelerators = new AcceleratorSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.ACCELERATORS, {}))
-    this.app = new AppSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.APP, {}))
+    this.app = new AppSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.APP, {}), pkg)
     this.language = new LanguageSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.LANGUAGE, {}))
     this.os = new OSSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.OS, {}))
     this.tray = new TraySettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.TRAY, {}), this.trayDefaults)
@@ -160,6 +161,24 @@ class SettingsStore {
       case SettingsIdent.SEGMENTS.OS: return OSSettings
       case SettingsIdent.SEGMENTS.TRAY: return TraySettings
       case SettingsIdent.SEGMENTS.UI: return UISettings
+      default: throw new Error('Unknown Settings Segment')
+    }
+  }
+
+  /**
+  * Creates a new store object for the given segment
+  * @param segment: the segment string
+  * @param data: the config data for the store
+  * @return the built model
+  */
+  createStore (segment, data) {
+    const StoreClass = this.storeClassFromSegment(segment)
+    if (segment === SettingsIdent.SEGMENTS.TRAY) {
+      return new StoreClass(data, this.trayDefaults)
+    } else if (segment === SettingsIdent.SEGMENTS.APP) {
+      return new StoreClass(data, pkg)
+    } else {
+      return new StoreClass(data)
     }
   }
 
@@ -173,15 +192,9 @@ class SettingsStore {
   * @param updates: k-> of update to apply
   */
   handleUpdate ({ segment, updates }) {
-    const StoreClass = this.storeClassFromSegment(segment)
-
     const js = this[segment].changeData(updates)
     persistence.setJSONItem(segment, js)
-    if (segment === SettingsIdent.SEGMENTS.TRAY) {
-      this[segment] = new StoreClass(js, this.trayDefaults)
-    } else {
-      this[segment] = new StoreClass(js)
-    }
+    this[segment] = this.createStore(segment, js)
   }
 
   /**
@@ -190,16 +203,10 @@ class SettingsStore {
   * @param key: the name of the key to toggle
   */
   handleToggleBool ({ segment, key }) {
-    const StoreClass = this.storeClassFromSegment(segment)
-
     const js = this[segment].cloneData()
     js[key] = !this[segment][key]
     persistence.setJSONItem(segment, js)
-    if (segment === SettingsIdent.SEGMENTS.TRAY) {
-      this[segment] = new StoreClass(js, this.trayDefaults)
-    } else {
-      this[segment] = new StoreClass(js)
-    }
+    this[segment] = this.createStore(segment, js)
   }
 
   /* **************************************************************************/

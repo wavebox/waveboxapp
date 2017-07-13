@@ -619,6 +619,10 @@ export default class MailboxWebView extends React.Component {
       'ReactComponent-BrowserContainer',
       service.hasNavigationToolbar ? 'hasNavigationToolbar' : undefined
     ].filter((c) => !!c).join(' ')
+    const snapshowViewContainerClass = [
+      'ReactComponent-MailboxSnapshot',
+      service.hasNavigationToolbar ? 'hasNavigationToolbar' : undefined
+    ].filter((c) => !!c).join(' ')
 
     return (
       <div className={saltedClassName}>
@@ -689,7 +693,7 @@ export default class MailboxWebView extends React.Component {
             }} />
         </div>
         {browserDOMReady || !snapshot ? undefined : (
-          <div className='ReactComponent-MailboxSnapshot' style={{ backgroundImage: `url("${snapshot}")` }} />
+          <div className={snapshowViewContainerClass} style={{ backgroundImage: `url("${snapshot}")` }} />
         )}
         {!service.hasNavigationToolbar && !browserDOMReady ? (
           <div className='ReactComponent-MailboxLoader'>

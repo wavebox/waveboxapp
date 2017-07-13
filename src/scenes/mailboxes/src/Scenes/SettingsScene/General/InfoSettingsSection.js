@@ -5,6 +5,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { updaterActions } from 'stores/updater'
 import { takeoutActions } from 'stores/takeout'
 import { WB_OPEN_MONITOR_WINDOW } from 'shared/ipcEvents'
+import Release from 'shared/Release'
 
 const { ipcRenderer } = window.nativeRequire('electron')
 const pkg = window.appPackage()
@@ -41,10 +42,9 @@ export default class InfoSettingsSection extends React.Component {
     return (
       <Paper zDepth={1} style={styles.paper} {...this.props}>
         <div style={{ fontSize: '85%' }}>
-          <p>{`Wavebox ${pkg.version}`}</p>
-          {pkg.earlyBuildId ? (
-            <p>{`Early Build Reference: ${pkg.earlyBuildId}`}</p>
-          ) : undefined}
+          {Release.generateVersionComponents(pkg).map((c) => {
+            return (<p key={c}>{c}</p>)
+          })}
         </div>
         <FlatButton
           label='Check for Update'

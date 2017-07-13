@@ -12,7 +12,7 @@
     "react": "15.6.1",
     "react-addons-shallow-compare": "15.6.0",
     "react-dom": "15.6.1",
-    "react-portal-tooltip": "1.1.5",
+    "react-portal-tooltip": "wavebox/react-portal-tooltip#153053cdf092883947cbea4149cb19e93c10dffb",
     "react-tap-event-plugin": "2.0.1",
     "react-timer-mixin": "0.13.3",
     "urijs": "1.18.10",

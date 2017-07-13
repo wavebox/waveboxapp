@@ -5,6 +5,7 @@ import {
   WB_BROWSER_ELEVATED_LOG,
   WB_BROWSER_ELEVATED_ERROR
 } from 'shared/ipcEvents'
+const electron = window.nativeRequire('electron')
 const camelCase = function (name) {
   return name.split('-').map((token, index) => {
     return index === 0 ? token : (token.charAt(0).toUpperCase() + token.slice(1))
@@ -264,6 +265,32 @@ export default class WebView extends React.Component {
       return true
     } else {
       return false
+    }
+  }
+
+  /**
+  * Captures a screenshot of the webview page. Includes a fix for retina display
+  * not automatically getting the correct size https://github.com/electron/electron/issues/8314
+  * @param [rect]: the area of the page to be captured
+  * @param callback: executed on complete
+  */
+  capturePage = (arg1, arg2) => {
+    const node = this.getWebviewNode()
+    if (typeof (arg1) === 'object' && typeof (arg2) === 'function') {
+      node.capturePage(arg1, arg2)
+    } else {
+      node.executeJavaScript(`(function () {
+        return { height: window.innerHeight, width: window.innerWidth }
+      })()`, (r) => {
+        const scaleFactor = electron.screen.getPrimaryDisplay().scaleFactor
+        const rect = {
+          x: 0,
+          y: 0,
+          width: r.width * scaleFactor,
+          height: r.height * scaleFactor
+        }
+        node.capturePage(rect, arg1)
+      })
     }
   }
 

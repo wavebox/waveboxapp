@@ -3,6 +3,10 @@ module.exports = Object.freeze({
   APP_ID: 'wavebox.io',
   ANALYTICS_HEARTBEAT_INTERVAL: 1000 * 60 * 5, // 5 mins
   PRELOAD_USE_SYNC_FS: true, // Temporary fix for https://github.com/electron/electron/issues/9713
+  RELEASE_CHANNELS: Object.assign({
+    STABLE: 'STABLE',
+    BETA: 'BETA'
+  }),
 
   // Database
   PERSISTENCE_INDEX_KEY: '__index__',

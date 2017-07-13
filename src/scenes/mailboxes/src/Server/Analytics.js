@@ -3,6 +3,7 @@ import { ANALYTICS_HEARTBEAT_INTERVAL } from 'shared/constants'
 import { userStore } from 'stores/user'
 import { mailboxStore } from 'stores/mailbox'
 import querystring from 'querystring'
+import os from 'os'
 const pkg = window.appPackage()
 
 class Analytics {
@@ -12,6 +13,11 @@ class Analytics {
 
   constructor () {
     this.heartbeatTO = null
+    this.platformInfoString = [
+      process.platform,
+      process.arch,
+      os.release()
+    ].join(',')
     this._boundFunctions = {
       appHashChanged: this.appHashChanged.bind(this)
     }
@@ -67,6 +73,8 @@ class Analytics {
       cd: window.location.hash,
       cd1: mailboxState.mailboxCount(),
       cd3: userState.user.plan,
+      cd4: this.platformInfoString,
+      cd5: window.navigator.userAgent,
       t: 'screenview',
       vp: `${window.outerWidth}x${window.outerHeight}`,
       ul: window.navigator.language,

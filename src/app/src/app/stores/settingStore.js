@@ -1,5 +1,6 @@
 const persistence = require('../storage/settingStorage')
 const { EventEmitter } = require('events')
+const pkg = require('../../package.json')
 const {
   Settings: {
     SettingsIdent: { SEGMENTS },
@@ -19,7 +20,7 @@ class SettingStore extends EventEmitter {
 
     // Build the current data
     this.accelerators = new AcceleratorSettings(persistence.getJSONItem(SEGMENTS.ACCELERATORS, {}))
-    this.app = new AppSettings(persistence.getJSONItem(SEGMENTS.APP, {}))
+    this.app = new AppSettings(persistence.getJSONItem(SEGMENTS.APP, {}), pkg)
     this.language = new LanguageSettings(persistence.getJSONItem(SEGMENTS.LANGUAGE, {}))
     this.os = new OSSettings(persistence.getJSONItem(SEGMENTS.OS, {}))
     this.tray = new TraySettings(persistence.getJSONItem(SEGMENTS.TRAY, {}))
@@ -43,7 +44,7 @@ class SettingStore extends EventEmitter {
     })
     persistence.on('changed:' + SEGMENTS.APP, () => {
       const prev = this.language
-      this.app = new AppSettings(persistence.getJSONItem(SEGMENTS.APP, {}))
+      this.app = new AppSettings(persistence.getJSONItem(SEGMENTS.APP, {}), pkg)
       this.emit('changed', { })
       this.emit('changed:' + SEGMENTS.APP, { prev: prev, next: this.app })
     })

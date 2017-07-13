@@ -19,7 +19,7 @@
     "react-addons-shallow-compare": "15.6.0",
     "react-color": "2.13.1",
     "react-dom": "15.6.1",
-    "react-portal-tooltip": "1.1.5",
+    "react-portal-tooltip": "wavebox/react-portal-tooltip#153053cdf092883947cbea4149cb19e93c10dffb",
     "react-router": "4.1.1",
     "react-router-dom": "4.1.1",
     "react-tap-event-plugin": "2.0.1",

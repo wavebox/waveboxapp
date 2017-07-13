@@ -1,6 +1,7 @@
 {
   "name": "wavebox",
   "version": "3.1.14",
+  "releaseChannel": "BETA",
   "description": "Wavebox",
   "scripts": {
     "rebuild:electron": "electron-rebuild -f -m src/app -v 1.7.4 -t prod,optional && electron-rebuild -f -m src/guest -v 1.7.4 -t prod,optional",
@@ -56,7 +57,7 @@
     "url-loader": "0.5.9",
     "uglify-es": "3.0.24",
     "uuid": "3.1.0",
-    "webpack": "3.1.0",
+    "webpack": "3.2.0",
     "webpack-target-electron-renderer": "0.4.0",
     "yargs": "8.0.2"
   },

@@ -2,6 +2,7 @@ const { Menu, shell, dialog } = require('electron')
 const mailboxStore = require('./stores/mailboxStore')
 const settingStore = require('./stores/settingStore')
 const { GITHUB_URL, GITHUB_ISSUE_URL, WEB_URL, PRIVACY_URL } = require('../shared/constants')
+const Release = require('../shared/release')
 const pkg = require('../package.json')
 const MenuTool = require('../shared/Electron/MenuTool')
 
@@ -88,8 +89,7 @@ class AppPrimaryMenu {
           title: pkg.name,
           message: pkg.name,
           detail: [
-            `Version: ${pkg.version}`,
-            pkg.earlyBuildId ? `Early Build Reference: ${pkg.earlyBuildId}` : undefined,
+            Release.generateVersionString(pkg, '\n'),
             'Made with ♥ at wavebox.io'
           ].filter((l) => !!l).join('\n'),
           buttons: [ 'Done', 'Website' ]
