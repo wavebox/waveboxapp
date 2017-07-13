@@ -7,6 +7,7 @@ import BrowserTargetUrl from './BrowserTargetUrl'
 import BrowserSearch from './BrowserSearch'
 import BrowserToolbar from './BrowserToolbar'
 import { browserActions, browserStore } from 'stores/browser'
+import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
 import {
   WB_WINDOW_RELOAD_WEBVIEW,
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
@@ -40,6 +41,10 @@ export default class BrowserScene extends React.Component {
     ipcRenderer.on(WB_WINDOW_RELOAD_WEBVIEW, this.handleIPCReload)
     ipcRenderer.on(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, this.handleIPCNavigateBack)
     ipcRenderer.on(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, this.handleIPCNavigateForward)
+    if (process.platform === 'darwin') {
+      this.mouseNavigator = new MouseNavigationDarwin(this.handleIPCNavigateBack, this.handleIPCNavigateForward)
+      this.mouseNavigator.register()
+    }
   }
 
   componentWillUnmount () {
@@ -47,6 +52,9 @@ export default class BrowserScene extends React.Component {
     ipcRenderer.removeListener(WB_WINDOW_RELOAD_WEBVIEW, this.handleIPCReload)
     ipcRenderer.removeListener(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, this.handleIPCNavigateBack)
     ipcRenderer.removeListener(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, this.handleIPCNavigateForward)
+    if (process.platform === 'darwin') {
+      this.mouseNavigator.unregister()
+    }
   }
 
   /* **************************************************************************/

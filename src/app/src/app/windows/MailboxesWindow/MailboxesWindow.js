@@ -19,8 +19,6 @@ const {
 } = require('../../AuthProviders')
 const querystring = require('querystring')
 const electron = require('electron')
-// Issue https://github.com/wavebox/waveboxapp/issues/302
-// const mouseFB = process.platform === 'linux' ? require('mouse-forward-back') : undefined
 const {
   WB_MAILBOXES_WINDOW_PREPARE_RELOAD,
   WB_MAILBOXES_WINDOW_TOGGLE_SIDEBAR,
@@ -29,8 +27,8 @@ const {
   WB_MAILBOXES_WINDOW_OPEN_MAILTO_LINK,
   WB_MAILBOXES_WINDOW_SWITCH_MAILBOX,
   WB_MAILBOXES_WINDOW_SWITCH_SERVICE_INDEX,
-  WB_MAILBOXES_WINDOW_NAVIGATE_BACK,
-  WB_MAILBOXES_WINDOW_NAVIGATE_FORWARD,
+  WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
+  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD,
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
   WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED,
@@ -143,23 +141,6 @@ class MailboxesWindow extends WaveboxWindow {
     this.window.webContents.on('devtools-reload-page', (evt) => {
       this.window.loadURL(this.generateWindowUrl())
     })
-
-    // Mouse navigation
-    if (process.platform === 'win32') {
-      this.window.on('app-command', (evt, cmd) => {
-        switch (cmd) {
-          case 'browser-backward': this.navigateBack(); break
-          case 'browser-forward': this.navigateForward(); break
-        }
-      })
-    } else if (process.platform === 'linux') {
-      // Re-register the event on focus as newly focused windows will overwrite this
-      // Issue https://github.com/wavebox/waveboxapp/issues/302
-      /* this.registerLinuxMouseNavigation()
-      this.window.on('focus', () => {
-        this.registerLinuxMouseNavigation()
-      }) */
-    }
 
     return this
   }
@@ -324,23 +305,6 @@ class MailboxesWindow extends WaveboxWindow {
   }
 
   /* ****************************************************************************/
-  // Registering events
-  /* ****************************************************************************/
-
-  /**
-  * Binds the listeners for mouse navigation on linux
-  */
-  // Issue https://github.com/wavebox/waveboxapp/issues/302
-  /* registerLinuxMouseNavigation () {
-    mouseFB.register((btn) => {
-      switch (btn) {
-        case 'back': this.navigateBack(); break
-        case 'forward': this.navigateForward(); break
-      }
-    }, this.window.getNativeWindowHandle())
-  } */
-
-  /* ****************************************************************************/
   // Mailbox Actions
   /* ****************************************************************************/
 
@@ -476,7 +440,7 @@ class MailboxesWindow extends WaveboxWindow {
   * @return this
   */
   navigateBack () {
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_NAVIGATE_BACK, { })
+    this.window.webContents.send(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, { })
     return this
   }
 
@@ -485,7 +449,7 @@ class MailboxesWindow extends WaveboxWindow {
   * @return this
   */
   navigateForward () {
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_NAVIGATE_FORWARD, { })
+    this.window.webContents.send(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, { })
     return this
   }
 

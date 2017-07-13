@@ -1,6 +1,4 @@
 const WaveboxWindow = require('./WaveboxWindow')
-// Issue https://github.com/wavebox/waveboxapp/issues/302
-// const mouseFB = process.platform === 'linux' ? require('mouse-forward-back') : undefined
 const settingStore = require('../stores/settingStore')
 const {
   WB_BROWSER_START_SPELLCHECK
@@ -27,23 +25,6 @@ class ContentPopupWindow extends WaveboxWindow {
     settingStore.on('changed:language', this.boundLanguageUpdated)
     this.boundHandleDomReady = this.handleDomReady.bind(this)
     this.window.webContents.on('dom-ready', this.boundHandleDomReady)
-
-    // Mouse navigation
-    if (process.platform === 'win32') {
-      this.window.on('app-command', (evt, cmd) => {
-        switch (cmd) {
-          case 'browser-backward': this.navigateBack(); break
-          case 'browser-forward': this.navigateForward(); break
-        }
-      })
-    } else if (process.platform === 'linux') {
-      // Re-register the event on focus as newly focused windows will overwrite this
-      // Issue https://github.com/wavebox/waveboxapp/issues/302
-      /* this.registerLinuxMouseNavigation()
-      this.window.on('focus', () => {
-        this.registerLinuxMouseNavigation()
-      }) */
-    }
 
     return this
   }
@@ -93,23 +74,6 @@ class ContentPopupWindow extends WaveboxWindow {
       })
     }
   }
-
-  /* ****************************************************************************/
-  // Registering
-  /* ****************************************************************************/
-
-  /**
-  * Binds the listeners for mouse navigation on linux
-  */
-  // Issue https://github.com/wavebox/waveboxapp/issues/302
-  /* registerLinuxMouseNavigation () {
-    mouseFB.register((btn) => {
-      switch (btn) {
-        case 'back': this.navigateBack(); break
-        case 'forward': this.navigateForward(); break
-      }
-    }, this.window.getNativeWindowHandle())
-  } */
 
   /* ****************************************************************************/
   // Unsupported Actions

@@ -188,6 +188,24 @@ class MailboxDispatch extends EventEmitter {
   }
 
   /* **************************************************************************/
+  // Event Fires : Navigating
+  /* **************************************************************************/
+
+  /**
+  * Navigates the active mailbox back
+  */
+  navigateBack () {
+    this.emit('navigateBack', {})
+  }
+
+  /**
+  * Navigates the active mailbox forward
+  */
+  navigateForward () {
+    this.emit('navigateForward', {})
+  }
+
+  /* **************************************************************************/
   // Event Fires : Focus
   /* **************************************************************************/
 

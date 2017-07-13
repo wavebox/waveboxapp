@@ -2,20 +2,23 @@ import './ReactComponents.less'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Provider from 'Scenes/Provider'
-import {mailboxStore, mailboxActions} from 'stores/mailbox'
+import {mailboxStore, mailboxActions, mailboxDispatch} from 'stores/mailbox'
 import {settingsStore, settingsActions} from 'stores/settings'
 import {composeStore, composeActions} from 'stores/compose'
 import {updaterStore, updaterActions} from 'stores/updater'
 import {userStore, userActions} from 'stores/user'
 import {extensionStore, extensionActions} from 'stores/extension'
 import Debug from 'Debug'
+import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 import {
   WB_MAILBOXES_WINDOW_JS_LOADED,
   WB_MAILBOXES_WINDOW_PREPARE_RELOAD,
   WB_PING_RESOURCE_USAGE,
   WB_PONG_RESOURCE_USAGE,
-  WB_SEND_IPC_TO_CHILD
+  WB_SEND_IPC_TO_CHILD,
+  WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
+  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
 } from 'shared/ipcEvents'
 const { ipcRenderer, webFrame, remote } = window.nativeRequire('electron')
 
@@ -35,6 +38,20 @@ document.addEventListener('dragover', (evt) => {
     evt.stopPropagation()
   }
 })
+
+// Navigation
+ipcRenderer.on(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, () => mailboxDispatch.navigateBack())
+ipcRenderer.on(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, () => mailboxDispatch.navigateForward())
+if (process.platform === 'darwin') {
+  const mouseNavigator = new MouseNavigationDarwin(
+    () => mailboxDispatch.navigateBack(),
+    () => mailboxDispatch.navigateForward()
+  )
+  mouseNavigator.register()
+  window.addEventListener('beforeunload', () => {
+    mouseNavigator.unregister()
+  })
+}
 
 // Load what we have in the db
 userStore.getState()

@@ -12,7 +12,9 @@ const {
   WB_WINDOW_ZOOM_IN,
   WB_WINDOW_ZOOM_OUT,
   WB_WINDOW_ZOOM_RESET,
-  WB_PING_RESOURCE_USAGE
+  WB_PING_RESOURCE_USAGE,
+  WB_WINDOW_DARWIN_SCROLL_TOUCH_BEGIN,
+  WB_WINDOW_DARWIN_SCROLL_TOUCH_END
 } = require('../../shared/ipcEvents')
 
 class WaveboxWindow extends EventEmitter {
@@ -87,6 +89,7 @@ class WaveboxWindow extends EventEmitter {
         }
       }
     })
+    this.bindMouseNavigation()
 
     // Register state savers
     this.locationSaver.register(this.window)
@@ -115,6 +118,32 @@ class WaveboxWindow extends EventEmitter {
       this.window = null
     }
     this.emit('closed', evt)
+  }
+
+  /* ****************************************************************************/
+  // Mouse Navigation
+  /* ****************************************************************************/
+
+  /**
+  * Binds the mouse navigation shortcuts
+  * Darwin is handled in the rendering thread
+  */
+  bindMouseNavigation () {
+    if (process.platform === 'darwin') {
+      this.window.on('scroll-touch-begin', () => {
+        this.window.webContents.send(WB_WINDOW_DARWIN_SCROLL_TOUCH_BEGIN, {})
+      })
+      this.window.on('scroll-touch-end', () => {
+        this.window.webContents.send(WB_WINDOW_DARWIN_SCROLL_TOUCH_END, {})
+      })
+    } else if (process.platform === 'win32') {
+      this.window.on('app-command', (evt, cmd) => {
+        switch (cmd) {
+          case 'browser-backward': this.navigateBack(); break
+          case 'browser-forward': this.navigateForward(); break
+        }
+      })
+    }
   }
 
   /* ****************************************************************************/

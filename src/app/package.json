@@ -20,8 +20,7 @@
   },
   "optionalDependencies": {
     "electron-windows-notifications": "1.1.13",
-    "node-mac-notifier": "0.0.13",
-    "mouse-forward-back": "1.0.1"
+    "node-mac-notifier": "0.0.13"
   },
   "devDependencies": {
     "standard": "10.0.2"

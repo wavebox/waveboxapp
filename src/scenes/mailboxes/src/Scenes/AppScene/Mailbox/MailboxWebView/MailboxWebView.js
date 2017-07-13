@@ -13,8 +13,6 @@ import shallowCompare from 'react-addons-shallow-compare'
 import URI from 'urijs'
 import { NotificationService } from 'Notifications'
 import {
-  WB_MAILBOXES_WINDOW_NAVIGATE_BACK,
-  WB_MAILBOXES_WINDOW_NAVIGATE_FORWARD,
   WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP,
   WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN,
   WB_BROWSER_NOTIFICATION_CLICK,
@@ -85,8 +83,8 @@ export default class MailboxWebView extends React.Component {
     mailboxDispatch.on('reload', this.handleReload)
     mailboxDispatch.on(WB_PING_RESOURCE_USAGE, this.pingResourceUsage)
     mailboxDispatch.addGetter('current-url', this.handleGetCurrentUrl)
-    ipcRenderer.on(WB_MAILBOXES_WINDOW_NAVIGATE_BACK, this.handleIPCNavigateBack)
-    ipcRenderer.on(WB_MAILBOXES_WINDOW_NAVIGATE_FORWARD, this.handleIPCNavigateForward)
+    mailboxDispatch.on('navigateBack', this.handleNavigateBack)
+    mailboxDispatch.on('navigateForward', this.handleNavigateForward)
 
     if (!this.state.isActive) {
       if (this.refs[BROWSER_REF]) {
@@ -106,8 +104,8 @@ export default class MailboxWebView extends React.Component {
     mailboxDispatch.removeListener('reload', this.handleReload)
     mailboxDispatch.removeListener(WB_PING_RESOURCE_USAGE, this.pingResourceUsage)
     mailboxDispatch.removeGetter('current-url', this.handleGetCurrentUrl)
-    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_NAVIGATE_BACK, this.handleIPCNavigateBack)
-    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_NAVIGATE_FORWARD, this.handleIPCNavigateForward)
+    mailboxDispatch.removeListener('navigateBack', this.handleNavigateBack)
+    mailboxDispatch.removeListener('navigateForward', this.handleNavigateForward)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -325,6 +323,24 @@ export default class MailboxWebView extends React.Component {
     }
   }
 
+  /**
+  * Handles a navigate back call being made
+  */
+  handleNavigateBack = () => {
+    if (this.state.isActive) {
+      this.refs[BROWSER_REF].goBack()
+    }
+  }
+
+  /**
+  * Handles a navigate forward call being made
+  */
+  handleNavigateForward = () => {
+    if (this.state.isActive) {
+      this.refs[BROWSER_REF].goForward()
+    }
+  }
+
   /* **************************************************************************/
   // Browser Events
   /* **************************************************************************/
@@ -535,28 +551,6 @@ export default class MailboxWebView extends React.Component {
   */
   handleBrowserBlurred () {
     mailboxDispatch.blurred(this.props.mailboxId, this.props.serviceType)
-  }
-
-  /* **************************************************************************/
-  // IPC Events
-  /* **************************************************************************/
-
-  /**
-  * Handles navigating the mailbox back
-  */
-  handleIPCNavigateBack = () => {
-    if (this.state.isActive) {
-      this.refs[BROWSER_REF].goBack()
-    }
-  }
-
-  /**
-  * Handles navigating the mailbox forward
-  */
-  handleIPCNavigateForward = () => {
-    if (this.state.isActive) {
-      this.refs[BROWSER_REF].goForward()
-    }
   }
 
   /* **************************************************************************/
