@@ -2,7 +2,7 @@ const { Menu, shell, dialog } = require('electron')
 const mailboxStore = require('./stores/mailboxStore')
 const settingStore = require('./stores/settingStore')
 const { GITHUB_URL, GITHUB_ISSUE_URL, WEB_URL, PRIVACY_URL } = require('../shared/constants')
-const Release = require('../shared/release')
+const Release = require('../shared/Release')
 const pkg = require('../package.json')
 const MenuTool = require('../shared/Electron/MenuTool')
 

@@ -117,7 +117,9 @@ class CoreService extends Model {
   * @return the window open mode
   */
   getWindowOpenModeForUrl (url, parsedUrl, disposition) {
-    if (disposition === 'new-window' || url === 'about:blank') {
+    if (disposition === 'background-tab') {
+      return WINDOW_OPEN_MODES.EXTERNAL
+    } else if (disposition === 'new-window' || url === 'about:blank') {
       return WINDOW_OPEN_MODES.POPUP_CONTENT
     } else if (disposition === 'save-to-disk') {
       return WINDOW_OPEN_MODES.DOWNLOAD

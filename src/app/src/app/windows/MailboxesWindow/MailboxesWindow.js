@@ -301,9 +301,9 @@ class MailboxesWindow extends WaveboxWindow {
       const contentWindow = new ContentWindow()
       contentWindow.ownerId = ownerId
       appWindowManager.addContentWindow(contentWindow)
-      contentWindow.create(this.window, targetUrl, (options.webPreferences || {}).partition, options)
+      contentWindow.create(this.window, targetUrl, ((options || {}).webPreferences || {}).partition, options)
     } else if (openMode === CoreService.WINDOW_OPEN_MODES.DOWNLOAD) {
-      if (options.webContents) {
+      if ((options || {}).webContents) {
         options.webContents.downloadURL(targetUrl)
       }
     }

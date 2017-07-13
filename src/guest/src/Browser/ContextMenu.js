@@ -140,34 +140,44 @@ class ContextMenu {
       menuTemplate.push({ type: 'separator' })
     }
 
-    // Editing
-    const {
-      canUndo,
-      canRedo,
-      canCut,
-      canCopy,
-      canPaste,
-      canSelectAll
-    } = params.editFlags
-
-    // Undo / redo
-    if (canUndo || canRedo) {
-      menuTemplate.push({ label: 'Undo', role: 'undo', enabled: canUndo })
-      menuTemplate.push({ label: 'Redo', role: 'redo', enabled: canRedo })
+    // Editing: Undo/Redo
+    if (params.editFlags.canUndo || params.editFlags.canRedo) {
+      menuTemplate.push({ label: 'Undo', role: 'undo', enabled: params.editFlags.canUndo })
+      menuTemplate.push({ label: 'Redo', role: 'redo', enabled: params.editFlags.canRedo })
       menuTemplate.push({ type: 'separator' })
     }
 
-    // Text editing
-    const textEditingMenu = [
-      canCut ? { label: 'Cut', role: 'cut' } : null,
-      canCopy ? { label: 'Copy', role: 'copy' } : null,
-      canPaste ? { label: 'Paste', role: 'paste' } : null,
-      canPaste ? { label: 'Paste and match style', role: 'pasteandmatchstyle' } : null,
-      canSelectAll ? { label: 'Select all', role: 'selectall' } : null
-    ].filter((item) => item !== null)
-    if (textEditingMenu.length) {
-      textEditingMenu.forEach((item) => menuTemplate.push(item))
-      menuTemplate.push({ type: 'separator' })
+    if (params.mediaType === 'image') {
+      // Editing: Image
+      const imageEditingMenu = [
+        {
+          label: 'Open Image in Browser',
+          click: () => { shell.openExternal(params.srcURL) }
+        },
+        {
+          label: 'Save Image As…',
+          click: () => { webContents.downloadURL(params.srcURL) }
+        },
+        {
+          label: 'Copy Image Address',
+          click: () => { clipboard.writeText(params.srcURL) }
+        },
+        { type: 'separator' }
+      ]
+      menuTemplate.splice(Infinity, 0, ...imageEditingMenu)
+    } else {
+      // Editing: Text
+      const textEditingMenu = [
+        params.editFlags.canCut ? { label: 'Cut', role: 'cut' } : null,
+        params.editFlags.canCopy ? { label: 'Copy', role: 'copy' } : null,
+        params.editFlags.canPaste ? { label: 'Paste', role: 'paste' } : null,
+        params.editFlags.canPaste ? { label: 'Paste and match style', role: 'pasteandmatchstyle' } : null,
+        params.editFlags.canSelectAll ? { label: 'Select all', role: 'selectall' } : null
+      ].filter((item) => item !== null)
+      if (textEditingMenu.length) {
+        menuTemplate.splice(Infinity, 0, ...textEditingMenu)
+        menuTemplate.push({ type: 'separator' })
+      }
     }
 
     // In page navigation
@@ -200,11 +210,11 @@ class ContextMenu {
     const currentPageOptions = [
       this.config.copyCurrentPageUrlOption ? {
         label: 'Copy current URL',
-        click: () => { clipboard.writeText(window.location.href) }
+        click: () => { clipboard.writeText(params.pageURL) }
       } : undefined,
       this.config.openCurrentPageInBrowserOption ? {
         label: 'Open page in Browser',
-        click: () => { shell.openExternal(window.location.href) }
+        click: () => { shell.openExternal(params.pageURL) }
       } : undefined
     ].filter((item) => !!item)
     if (currentPageOptions.length) {
