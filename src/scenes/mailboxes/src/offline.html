@@ -91,6 +91,7 @@
     </div>
 
     <script type="text/javascript">
+      const electron = require('electron')
       const querystring = require('querystring')
       const query = querystring.parse(window.location.search.substr(1))
       const onlineArgs = Object.assign({}, query, { error: undefined })
@@ -104,6 +105,11 @@
       window.addEventListener('online', () => {
         window.location.href = `mailboxes.html?${querystring.stringify(onlineArgs)}`
       }, false)
+
+      // Make sure the window can't remain hidden in the background
+      const browserWindow = electron.remote.getCurrentWindow()
+      browserWindow.show()
+      browserWindow.focus()
     </script>
   </body>
 </html>
