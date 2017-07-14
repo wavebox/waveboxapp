@@ -81,7 +81,7 @@ class LinuxAppSingleton {
 
     Promise.all(
       otherProcesses.map((proc) => {
-        this._messageRunningProcess(proc.PID[0])
+        this._messageRunningProcess(proc.PID[0]).catch(() => Promise.resolve())
       })
     ).then(
       () => this._quitFn_(),
@@ -107,7 +107,7 @@ class LinuxAppSingleton {
     const otherProcesses = processList.filter((proc) => {
       if (proc.PID[0] === currentProcess.PID[0]) { return false }
       if (proc.PPID[0] === currentProcess.PID[0]) { return false }
-      return proc.UCOMM.join(' ') === currentProcess.UCOMM.join(' ')
+      return (proc.COMMAND || proc.UCOMM).join(' ') === (currentProcess.COMMAND || currentProcess.UCOMM).join(' ')
     })
 
     return otherProcesses
@@ -180,7 +180,7 @@ class LinuxAppSingleton {
         client.destroy()
         if (!resolved) {
           resolved = true
-          reject(new Error('Socket Timeout'))
+         reject(new Error('Socket Timeout'))
         }
       })
     })
