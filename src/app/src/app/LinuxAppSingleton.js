@@ -180,7 +180,7 @@ class LinuxAppSingleton {
         client.destroy()
         if (!resolved) {
           resolved = true
-         reject(new Error('Socket Timeout'))
+          reject(new Error('Socket Timeout'))
         }
       })
     })
