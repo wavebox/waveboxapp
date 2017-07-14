@@ -13,7 +13,8 @@ import {
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
   WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD,
   WB_BROWSER_GUEST_WINDOW_CLOSE,
-  WB_PONG_RESOURCE_USAGE
+  WB_PONG_RESOURCE_USAGE,
+  WB_NEW_WINDOW
 } from 'shared/ipcEvents'
 
 const { ipcRenderer, remote } = window.nativeRequire('electron')
@@ -120,9 +121,15 @@ export default class BrowserScene extends React.Component {
   */
   handleBrowserIPCMessage = (evt) => {
     switch (evt.channel.type) {
-      case WB_PONG_RESOURCE_USAGE: ipcRenderer.send(WB_PONG_RESOURCE_USAGE, evt.channel.data); break
-      case WB_BROWSER_GUEST_WINDOW_CLOSE: this.handleIPCGuestWindowClose(evt.channel.data); break
-      default: break
+      case WB_PONG_RESOURCE_USAGE:
+        ipcRenderer.send(WB_PONG_RESOURCE_USAGE, evt.channel.data)
+        break
+      case WB_BROWSER_GUEST_WINDOW_CLOSE:
+        this.handleIPCGuestWindowClose(evt.channel.data)
+        break
+      case WB_NEW_WINDOW:
+        ipcRenderer.send(WB_NEW_WINDOW, evt.channel.data)
+        break
     }
   }
 

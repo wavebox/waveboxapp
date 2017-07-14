@@ -1,11 +1,13 @@
 const WaveboxWindow = require('./WaveboxWindow')
-const { shell } = require('electron')
+const { shell, ipcMain } = require('electron')
 const querystring = require('querystring')
+const appWindowManager = require('../appWindowManager')
 const path = require('path')
 const {
   WB_WINDOW_RELOAD_WEBVIEW,
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
-  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
+  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD,
+  WB_NEW_WINDOW
 } = require('../../shared/ipcEvents')
 
 const CONTENT_DIR = path.resolve(path.join(__dirname, '/../../../scenes/content'))
@@ -28,6 +30,23 @@ const COPY_WEBVIEW_WEB_PREFERENCES_KEYS = [
 ]
 
 class ContentWindow extends WaveboxWindow {
+  /* ****************************************************************************/
+  // Lifecycle
+  /* ****************************************************************************/
+
+  constructor () {
+    super()
+    this.ownerId = null
+    this.__launchInfo__ = null
+    this.boundHandleOpenNewWindow = this.handleOpenNewWindow.bind(this)
+  }
+
+  /* ****************************************************************************/
+  // Properties
+  /* ****************************************************************************/
+
+  get launchInfo () { return this.__launchInfo__ }
+
   /* ****************************************************************************/
   // Window lifecycle
   /* ****************************************************************************/
@@ -90,6 +109,11 @@ class ContentWindow extends WaveboxWindow {
   * @param webPreferences={}: the web preferences for the hosted child
   */
   create (parentWindow, url, partition, browserWindowPreferences = {}, webPreferences = {}) {
+    this.__launchInfo__ = Object.freeze({
+      partition: partition,
+      browserWindowPreferences: browserWindowPreferences,
+      webPreferences: webPreferences
+    })
     super.create(this.generateWindowUrl(url, partition), Object.assign(
       {
         minWidth: 300,
@@ -107,6 +131,7 @@ class ContentWindow extends WaveboxWindow {
     ))
 
     // New window handling
+    ipcMain.on(WB_NEW_WINDOW, this.boundHandleOpenNewWindow)
     this.window.webContents.on('new-window', (evt, url) => {
       evt.preventDefault()
       shell.openExternal(url)
@@ -124,6 +149,32 @@ class ContentWindow extends WaveboxWindow {
     })
 
     return this
+  }
+
+  /**
+  * Handles destroy being called
+  */
+  destroy (evt) {
+    ipcMain.removeListener(WB_NEW_WINDOW, this.boundHandleOpenNewWindow)
+    super.destroy(evt)
+  }
+
+  /* ****************************************************************************/
+  // App Events
+  /* ****************************************************************************/
+
+  /**
+  * Opens a new content window
+  * @param evt: the event that fired
+  * @param body: the arguments from the body
+  */
+  handleOpenNewWindow (evt, body) {
+    if (evt.sender === this.window.webContents) {
+      const contentWindow = new ContentWindow()
+      contentWindow.ownerId = this.ownerId
+      appWindowManager.addContentWindow(contentWindow)
+      contentWindow.create(this.window, body.url, this.launchInfo.partition, this.launchInfo.windowPreferences, this.launchInfo.webPreferences)
+    }
   }
 
   /* ****************************************************************************/

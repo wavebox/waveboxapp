@@ -99,7 +99,7 @@ export default class SettingsScene extends React.Component {
     const tabHeadings = [
       ['General', 'general'],
       ['Accounts', 'accounts'],
-      ['Wavebox Pro', 'pro'],
+      ['Wavebox', 'pro'],
       ['Advanced', 'advanced']
     ]
 
@@ -150,7 +150,7 @@ export default class SettingsScene extends React.Component {
           <Tab label='Accounts' value='accounts'>
             <AccountSettings showRestart={this.handleShowRestart} mailboxId={match.params.tabArg} />
           </Tab>
-          <Tab label='Wavebox Pro' value='pro'>
+          <Tab label='Wavebox' value='pro'>
             <ProSettings showRestart={this.handleShowRestart} />
           </Tab>
           <Tab label='Advanced' value='advanced'>

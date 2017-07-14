@@ -9,7 +9,8 @@ const MenuTool = req.shared('Electron/MenuTool')
 const {
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
   WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG,
-  WB_MAILBOXES_WEBVIEW_NAVIGATE_HOME
+  WB_MAILBOXES_WEBVIEW_NAVIGATE_HOME,
+  WB_NEW_WINDOW
 } = req.shared('ipcEvents')
 
 class ContextMenu {
@@ -26,6 +27,7 @@ class ContextMenu {
       // External linking
       copyCurrentPageUrlOption: false,
       openCurrentPageInBrowserOption: false,
+      openLinkInWaveboxOption: true,
 
       // Navigation options
       navigateBackOption: false,
@@ -104,21 +106,26 @@ class ContextMenu {
 
     // URLS
     if (params.linkURL) {
-      menuTemplate.push({
-        label: 'Open Link',
-        click: () => { shell.openExternal(params.linkURL) }
-      })
-      if (process.platform === 'darwin') {
-        menuTemplate.push({
+      const linkMenu = [
+        {
+          label: 'Open Link in Browser',
+          click: () => { shell.openExternal(params.linkURL) }
+        },
+        this.config.openLinkInWaveboxOption ? {
+          label: 'Open Link with Wavebox',
+          click: () => { ipcRenderer.sendToHost({ type: WB_NEW_WINDOW, data: { url: params.linkURL } }) }
+        } : undefined,
+        process.platform === 'darwin' ? {
           label: 'Open Link in Background',
           click: () => { shell.openExternal(params.linkURL, { activate: false }) }
-        })
-      }
-      menuTemplate.push({
-        label: 'Copy link Address',
-        click: () => { clipboard.writeText(params.linkURL) }
-      })
-      menuTemplate.push({ type: 'separator' })
+        } : undefined,
+        {
+          label: 'Copy link Address',
+          click: () => { clipboard.writeText(params.linkURL) }
+        },
+        { type: 'separator' }
+      ].filter((i) => !!i)
+      menuTemplate.splice(Infinity, 0, ...linkMenu)
     }
 
     // Lookup & search

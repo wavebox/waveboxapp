@@ -72,13 +72,13 @@ export default class RestrictedAccountSettings extends React.Component {
     return (
       <div {...passProps} style={Object.assign({ textAlign: 'center', marginBottom: 16 }, style)}>
         <p>
-          Use and customize this account with Wavebox Pro
+          Use and customize this account when purchasing Wavebox
         </p>
         <div>
           <RaisedButton
             primary
             icon={(<FontIcon className='fa fa-diamond' />)}
-            label='Wavebox Pro'
+            label='Purchase Wavebox'
             onClick={() => { window.location.hash = '/pro' }} />
         </div>
         <br />

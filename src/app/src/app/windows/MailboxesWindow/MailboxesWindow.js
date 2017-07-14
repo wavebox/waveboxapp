@@ -72,6 +72,7 @@ class MailboxesWindow extends WaveboxWindow {
     this.sessionManager = new MailboxesSessionManager(this)
     this.attachedMailboxes = new Map()
     this.attachedExtensions = new Map()
+    this.provisionalTargetUrls = new Map()
 
     this.boundHandleAppWebContentsCreated = this.handleAppWebContentsCreated.bind(this)
     this.boundHandleMailboxesWebViewAttached = this.handleMailboxesWebViewAttached.bind(this)
@@ -176,6 +177,9 @@ class MailboxesWindow extends WaveboxWindow {
       contents.on('will-navigate', (evt, url) => {
         this.handleWebViewWillNavigate(contents.id, evt, url)
       })
+      contents.on('update-target-url', (evt, url) => {
+        this.handleWebViewUpdateTargetUrl(contents.id, evt, url)
+      })
     }
   }
 
@@ -258,13 +262,21 @@ class MailboxesWindow extends WaveboxWindow {
     // Handle other urls
     let openMode = CoreService.WINDOW_OPEN_MODES.EXTERNAL
     let ownerId = null
+    let provisionalTargetUrl
 
     if (this.attachedMailboxes.has(webContentsId)) {
       const { mailboxId, serviceType } = this.attachedMailboxes.get(webContentsId)
       ownerId = `${mailboxId}:${serviceType}`
       const service = mailboxStore.getService(mailboxId, serviceType)
       if (service) {
-        openMode = service.getWindowOpenModeForUrl(targetUrl, purl, disposition)
+        provisionalTargetUrl = this.provisionalTargetUrls.get(ownerId)
+        openMode = service.getWindowOpenModeForUrl(
+          targetUrl,
+          purl,
+          disposition,
+          provisionalTargetUrl,
+          provisionalTargetUrl ? url.parse(provisionalTargetUrl, true) : undefined
+        )
       }
     }
 
@@ -278,11 +290,15 @@ class MailboxesWindow extends WaveboxWindow {
       shell.openExternal(targetUrl, {
         activate: !settingStore.os.openLinksInBackground
       })
-    } else if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT) {
+    } else if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT || openMode === CoreService.WINDOW_OPEN_MODES.CONTENT_PROVSIONAL) {
       const contentWindow = new ContentWindow()
       contentWindow.ownerId = ownerId
       appWindowManager.addContentWindow(contentWindow)
-      contentWindow.create(this.window, targetUrl, ((options || {}).webPreferences || {}).partition, options)
+      if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT) {
+        contentWindow.create(this.window, targetUrl, ((options || {}).webPreferences || {}).partition, options)
+      } else if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT_PROVSIONAL) {
+        contentWindow.create(this.window, provisionalTargetUrl, ((options || {}).webPreferences || {}).partition, options)
+      }
     } else if (openMode === CoreService.WINDOW_OPEN_MODES.DOWNLOAD) {
       if ((options || {}).webContents) {
         options.webContents.downloadURL(targetUrl)
@@ -301,6 +317,20 @@ class MailboxesWindow extends WaveboxWindow {
       if (url.parse(targetUrl).protocol !== WAVEBOX_HOSTED_EXTENSION_PROTOCOL + ':') {
         evt.preventDefault()
       }
+    }
+  }
+
+  /**
+  * Handles the target url of a webcontents updating
+  * @param webContentsId: the id of the web contents
+  * @param evt: the event that fired
+  * @param targetUrl: the url we're pointing at
+  */
+  handleWebViewUpdateTargetUrl (webContentsId, evt, targetUrl) {
+    if (this.attachedMailboxes.has(webContentsId)) {
+      const { mailboxId, serviceType } = this.attachedMailboxes.get(webContentsId)
+      const ownerId = `${mailboxId}:${serviceType}`
+      this.provisionalTargetUrls.set(ownerId, targetUrl)
     }
   }
 

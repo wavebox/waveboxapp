@@ -69,7 +69,7 @@ export default class GoogleAccountSettings extends React.Component {
   /* **************************************************************************/
 
   /**
-  * Opens wavebox pro
+  * Opens wavebox purchase
   */
   openWaveboxPro = () => {
     window.location.hash = '/pro'
@@ -143,7 +143,7 @@ export default class GoogleAccountSettings extends React.Component {
           <div>
             {this.renderServiceType(mailbox, CoreService.SERVICE_TYPES.DEFAULT, onRequestEditCustomCode)}
             <div style={styles.proServices}>
-              <h3>Enjoy all these extra services with Wavebox Pro...</h3>
+              <h3>Enjoy all these extra services when you purchase Wavebox...</h3>
               <div style={styles.proServiceAvatars}>
                 {mailbox.supportedServiceTypes.map((serviceType) => {
                   if (serviceType === CoreService.SERVICE_TYPES.DEFAULT) { return undefined }
@@ -160,7 +160,7 @@ export default class GoogleAccountSettings extends React.Component {
               <RaisedButton
                 primary
                 icon={(<FontIcon className='fa fa-diamond' />)}
-                label='Wavebox Pro'
+                label='Purchase Wavebox'
                 onClick={this.openWaveboxPro} />
             </div>
           </div>

@@ -85,13 +85,13 @@ export default class AccountSleepableSettings extends React.Component {
           <div>
             <p>
               Services and accounts can sleep when in the background to save memory.
-              Enable service sleeping with Wavebox Pro
+              Enable service sleeping by purchasing Wavebox
             </p>
             <div>
               <RaisedButton
                 primary
                 icon={(<FontIcon className='fa fa-diamond' />)}
-                label='Wavebox Pro'
+                label='Purchase Wavebox'
                 onClick={() => { window.location.hash = '/pro' }} />
             </div>
           </div>

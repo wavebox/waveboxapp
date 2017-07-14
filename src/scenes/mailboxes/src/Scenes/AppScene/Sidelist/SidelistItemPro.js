@@ -52,7 +52,7 @@ export default class SidelistItemPro extends React.Component {
           arrow='left'
           group={generatedId}
           parent={`#ReactComponent-Sidelist-Item-Pro-${generatedId}`}>
-          Wavebox Pro
+          Purchase Wavebox
         </ReactPortalTooltip>
       </div>
     )

@@ -123,7 +123,7 @@ export default class AccountAuthScene extends React.Component {
       return (
         <div>
           <h3>
-            To use Wavebox Pro you'll need to select which account you want to use for billing
+            To purchase Wavebox you will need to select which account you want to use for billing
           </h3>
           <p>
             If you don't want to use one of the accounts you've already added to wavebox,

@@ -10,10 +10,12 @@ class GoogleService extends CoreService {
   * @param url: the url to open with
   * @param parsedUrl: the url object parsed by nodejs url
   * @param disposition: the open mode disposition
+  * @param provisionalTargetUrl: the provisional target url that the user may be hovering over or have highlighted
+  * @param parsedProvisionalTargetUrl: the provisional target parsed by nodejs url
   * @return the window open mode
   */
-  getWindowOpenModeForUrl (url, parsedUrl, disposition) {
-    const superMode = super.getWindowOpenModeForUrl(url, parsedUrl, disposition)
+  getWindowOpenModeForUrl (url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl) {
+    const superMode = super.getWindowOpenModeForUrl(url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl)
     if (superMode !== this.constructor.WINDOW_OPEN_MODES.DEFAULT) { return superMode }
 
     if (parsedUrl.hostname === 'docs.google.com' || parsedUrl.hostname === 'drive.google.com') {

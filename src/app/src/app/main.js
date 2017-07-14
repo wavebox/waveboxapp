@@ -7,12 +7,25 @@
 
   // Single app instance
   let appWindowManager
-  const singleAppQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
-    const AppSingleInstance = require('./AppSingleInstance')
-    AppSingleInstance.processSingleInstanceArgs(appWindowManager, commandLine, workingDirectory)
-    return true
-  })
-  if (singleAppQuit) { app.quit(); return }
+  const LinuxAppSingleton = require('./LinuxAppSingleton')
+  if (process.platform === 'linux') {
+    const singleAppQuit = LinuxAppSingleton.makeSingleInstance(
+      () => {
+        if (appWindowManager && appWindowManager.mailboxesWindow) {
+          appWindowManager.mailboxesWindow.window.focus()
+        }
+      },
+      () => { app.quit() }
+    )
+    if (singleAppQuit) { return }
+  } else {
+    const singleAppQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
+      const AppSingleInstance = require('./AppSingleInstance')
+      AppSingleInstance.processSingleInstanceArgs(appWindowManager, commandLine, workingDirectory)
+      return true
+    })
+    if (singleAppQuit) { app.quit(); return }
+  }
 
   // Setup the window manager
   appWindowManager = require('./appWindowManager')
@@ -176,6 +189,10 @@
   app.on('before-quit', () => {
     appGlobalShortcuts.unregister()
     appWindowManager.forceQuit = true
+
+    if (process.platform === 'linux') {
+      LinuxAppSingleton.teardown()
+    }
   })
 
   app.on('open-url', (evt, url) => { // osx only

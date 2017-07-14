@@ -2,7 +2,7 @@ import './MailboxWebView.less'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { CircularProgress, RaisedButton, FontIcon } from 'material-ui'
-import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
+import { mailboxStore, mailboxActions, mailboxDispatch, MailboxLinker } from 'stores/mailbox'
 import { settingsStore, settingsActions } from 'stores/settings'
 import BrowserView from 'sharedui/Components/BrowserView'
 import CoreService from 'shared/Models/Accounts/CoreService'
@@ -23,7 +23,8 @@ import {
   WB_PONG_RESOURCE_USAGE,
   WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED,
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
-  WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG
+  WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG,
+  WB_NEW_WINDOW
 } from 'shared/ipcEvents'
 
 const { ipcRenderer } = window.nativeRequire('electron')
@@ -376,6 +377,9 @@ export default class MailboxWebView extends React.Component {
         break
       case WB_PONG_RESOURCE_USAGE:
         ipcRenderer.send(WB_PONG_RESOURCE_USAGE, evt.channel.data)
+        break
+      case WB_NEW_WINDOW:
+        MailboxLinker.openContentWindow(this.props.mailboxId, this.props.serviceType, evt.channel.data.url)
         break
       case WB_BROWSER_NOTIFICATION_PRESENT:
         NotificationService.processHTML5MailboxNotification(

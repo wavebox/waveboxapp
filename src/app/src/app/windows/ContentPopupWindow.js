@@ -6,6 +6,17 @@ const {
 
 class ContentPopupWindow extends WaveboxWindow {
   /* ****************************************************************************/
+  // Lifecycle
+  /* ****************************************************************************/
+
+  constructor () {
+    super()
+
+    this.boundLanguageUpdated = this.languageUpdated.bind(this)
+    this.boundHandleDomReady = this.handleDomReady.bind(this)
+  }
+
+  /* ****************************************************************************/
   // Window lifecycle
   /* ****************************************************************************/
 
@@ -21,9 +32,7 @@ class ContentPopupWindow extends WaveboxWindow {
     super.create(url, safeBrowserWindowOptions)
 
     // Bind listeners
-    this.boundLanguageUpdated = this.languageUpdated.bind(this)
     settingStore.on('changed:language', this.boundLanguageUpdated)
-    this.boundHandleDomReady = this.handleDomReady.bind(this)
     this.window.webContents.on('dom-ready', this.boundHandleDomReady)
 
     return this
