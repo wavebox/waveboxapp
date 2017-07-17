@@ -12,6 +12,7 @@
     const singleAppQuit = LinuxAppSingleton.makeSingleInstance(
       () => {
         if (appWindowManager && appWindowManager.mailboxesWindow) {
+          appWindowManager.mailboxesWindow.window.show()
           appWindowManager.mailboxesWindow.window.focus()
         }
       },

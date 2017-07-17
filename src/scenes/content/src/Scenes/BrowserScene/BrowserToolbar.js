@@ -8,7 +8,7 @@ import {
 } from 'material-ui'
 import { CHROME_PDF_URL } from 'shared/constants'
 import URI from 'urijs'
-const { remote: { shell } } = window.nativeRequire('electron')
+const { remote } = window.nativeRequire('electron')
 
 export default class BrowserToolbar extends React.Component {
   /* **************************************************************************/
@@ -70,6 +70,16 @@ export default class BrowserToolbar extends React.Component {
     }
   }
 
+  /**
+  * @param url: the current url
+  * @return true if this url is downloadable
+  */
+  isDownloadableUrl (url) {
+    if (url.startsWith(CHROME_PDF_URL)) { return true }
+
+    return false
+  }
+
   /* **************************************************************************/
   // UI Events
   /* **************************************************************************/
@@ -78,7 +88,14 @@ export default class BrowserToolbar extends React.Component {
   * Opens the current page in the default browser
   */
   handleOpenInBrowser = (evt) => {
-    shell.openExternal(this.externalUrl(this.state.currentUrl), { })
+    remote.shell.openExternal(this.externalUrl(this.state.currentUrl), { })
+  }
+
+  /**
+  * Downloads the current page
+  */
+  handleDownload = (evt) => {
+    remote.getCurrentWebContents().downloadURL(this.externalUrl(this.state.currentUrl))
   }
 
   /* **************************************************************************/
@@ -133,6 +150,13 @@ export default class BrowserToolbar extends React.Component {
               onClick={() => browserActions.toggleSearch()}>
               <FontIcon className='material-icons'>search</FontIcon>
             </IconButton>
+            {this.isDownloadableUrl(currentUrl) ? (
+              <IconButton
+                tooltip='Download'
+                onClick={this.handleDownload}>
+                <FontIcon className='material-icons'>file_download</FontIcon>
+              </IconButton>
+            ) : undefined}
             <IconButton
               tooltip='Open in Browser'
               tooltipPosition='bottom-left'

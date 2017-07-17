@@ -4,6 +4,7 @@ const WAVEBOX_CONTENT_IMPL_ENDPOINTS = {
   CONTENT_WINDOW: 'ContentWindow.js',
 
   GMAIL_WINDOW_OPEN: 'GmailWindowOpen.js',
+  GMAIL_NON_EXPERIMENTAL_WINDOW_OPEN: 'GmailNonExperimentalWindowOpen.js',
   ONEDRIVE_WINDOW_OPEN: 'OnedriveWindowOpen.js'
 }
 const VALID_WAVEBOX_CONTENT_IMPL_ENDPOINTS = new Set(Array.from(Object.keys(WAVEBOX_CONTENT_IMPL_ENDPOINTS).map((k) => WAVEBOX_CONTENT_IMPL_ENDPOINTS[k])))
