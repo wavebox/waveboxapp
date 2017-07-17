@@ -7,6 +7,7 @@ const devRequire = (n) => require(path.join(ROOT_DIR, 'node_modules', n))
 const UglifyJS = devRequire('uglify-es')
 const CleanWebpackPlugin = devRequire('clean-webpack-plugin')
 const CopyWebpackPlugin = devRequire('copy-webpack-plugin')
+const WebpackNotifierPlugin = devRequire('webpack-notifier')
 
 module.exports = function (env) {
   const isProduction = process.env.NODE_ENV === 'production'
@@ -38,7 +39,9 @@ module.exports = function (env) {
         }
       ], {
         ignore: [ '.DS_Store' ]
-      })
+      }),
+
+      process.env.NOTIFICATIONS === 'true' ? new WebpackNotifierPlugin({ title: 'WB Guest API', alwaysNotify: true }) : undefined
     ]
   }
 }

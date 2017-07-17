@@ -26,6 +26,14 @@ module.exports = function (env = {}) {
     console.log('[FULL SOURCEMAPS]')
   }
 
+  if (env.disableNotify) {
+    console.log('[NOTIFICATIONS DISABLED]')
+    process.env.NOTIFICATIONS = 'false'
+  } else {
+    console.log('[NOTIFICATIONS_ENABLED]')
+    process.env.NOTIFICATIONS = 'true'
+  }
+
   // Tasks
   const taskInput = env.task ? env.task : ['all']
   const taskNames = Array.isArray(taskInput) ? taskInput : [taskInput]

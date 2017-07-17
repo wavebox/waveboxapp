@@ -19,7 +19,8 @@ class AppSettings extends Model {
   constructor (data, pkg) {
     super(data)
     this.__defaults__ = {
-      '3_1_8_useExperimentalWindowOpener': pkg.releaseChannel === RELEASE_CHANNELS.BETA
+      '3_1_8_useExperimentalWindowOpener': pkg.releaseChannel === RELEASE_CHANNELS.BETA,
+      updateChannel: pkg.releaseChannel
     }
   }
 
@@ -31,7 +32,7 @@ class AppSettings extends Model {
   get disableSmoothScrolling () { return this._value_('disableSmoothScrolling', false) }
   get enableUseZoomForDSF () { return this._value_('enableUseZoomForDSF', true) }
   get checkForUpdates () { return this._value_('checkForUpdates', true) }
-  get updateChannel () { return this._value_('updateChannel', RELEASE_CHANNELS.STABLE) }
+  get updateChannel () { return this._value_('updateChannel', this.__defaults__.updateChannel) }
   get hasSeenAppWizard () { return this._value_('hasSeenAppWizard', false) }
   get hasAgreedToEULA () { return this._value_('hasAgreedToEULA', false) }
   get lastSeenAccountMessageUrl () { return this._value_('lastSeenAccountMessageUrl', undefined) }

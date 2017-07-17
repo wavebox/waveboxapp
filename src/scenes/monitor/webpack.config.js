@@ -7,6 +7,7 @@ const devRequire = (n) => require(path.join(ROOT_DIR, 'node_modules', n))
 const webpack = devRequire('webpack')
 const CopyWebpackPlugin = devRequire('copy-webpack-plugin')
 const CleanWebpackPlugin = devRequire('clean-webpack-plugin')
+const WebpackNotifierPlugin = devRequire('webpack-notifier')
 
 module.exports = function (env) {
   const isProduction = process.env.NODE_ENV === 'production'
@@ -48,7 +49,9 @@ module.exports = function (env) {
 
       // Minify & optimization
       new webpack.optimize.ModuleConcatenationPlugin(),
-      isProduction ? new webpack.optimize.UglifyJsPlugin({}) : undefined
+      isProduction ? new webpack.optimize.UglifyJsPlugin({}) : undefined,
+
+      process.env.NOTIFICATIONS === 'true' ? new WebpackNotifierPlugin({ title: 'WB Monitor', alwaysNotify: true }) : undefined
     ].filter((p) => !!p),
     resolve: {
       extensions: ['.js', '.jsx', '.less', '.css'],

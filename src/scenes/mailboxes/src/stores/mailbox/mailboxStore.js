@@ -991,10 +991,20 @@ class MailboxStore {
     const mailbox = this.mailboxes.get(id)
     const data = mailbox.cloneData()
     if (b64Image) {
-      const imageId = uuid.v4()
-      data.customAvatar = imageId
-      avatarPersistence.setItem(imageId, b64Image)
-      this.avatars.set(imageId, b64Image)
+      if (data.customAvatar && this.avatars.get(data.customAvatar) === b64Image) {
+        // Setting the same image. Nothing to do
+        this.preventDefault()
+        return
+      } else {
+        if (data.customAvatar) {
+          avatarPersistence.removeItem(data.customAvatar)
+          this.avatars.delete(data.customAvatar)
+        }
+        const imageId = uuid.v4()
+        data.customAvatar = imageId
+        avatarPersistence.setItem(imageId, b64Image)
+        this.avatars.set(imageId, b64Image)
+      }
     } else {
       if (data.customAvatar) {
         avatarPersistence.removeItem(data.customAvatar)
@@ -1009,10 +1019,20 @@ class MailboxStore {
     const mailbox = this.mailboxes.get(id)
     const data = mailbox.cloneData()
     if (b64Image) {
-      const imageId = SERVICE_LOCAL_AVATAR_PREFIX + uuid.v4()
-      data.serviceLocalAvatar = imageId
-      avatarPersistence.setItem(imageId, b64Image)
-      this.avatars.set(imageId, b64Image)
+      if (data.serviceLocalAvatar && this.avatars.get(data.serviceLocalAvatar) === b64Image) {
+        // Setting the same image. Nothing to do
+        this.preventDefault()
+        return
+      } else {
+        if (data.serviceLocalAvatar) {
+          avatarPersistence.removeItem(data.serviceLocalAvatar)
+          this.avatars.delete(data.serviceLocalAvatar)
+        }
+        const imageId = SERVICE_LOCAL_AVATAR_PREFIX + uuid.v4()
+        data.serviceLocalAvatar = imageId
+        avatarPersistence.setItem(imageId, b64Image)
+        this.avatars.set(imageId, b64Image)
+      }
     } else {
       if (data.serviceLocalAvatar) {
         avatarPersistence.removeItem(data.serviceLocalAvatar)
