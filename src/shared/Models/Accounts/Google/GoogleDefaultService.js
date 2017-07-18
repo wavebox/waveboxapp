@@ -56,6 +56,7 @@ class GoogleDefaultService extends GoogleService {
         ])
     }
   }
+
   get sleepable () { return this._value_('sleepable', false) }
   get reloadBehaviour () {
     switch (this.accessMode) {
@@ -63,6 +64,21 @@ class GoogleDefaultService extends GoogleService {
       case ACCESS_MODES.GINBOX: return this.constructor.RELOAD_BEHAVIOURS.RELOAD
     }
   }
+
+  /* **************************************************************************/
+  // Properties: Custom search
+  /* **************************************************************************/
+
+  get customUnreadQuery () { return this._value_('customUnreadQuery', '').trim() }
+  get hasCustomUnreadQuery () { return !!this.customUnreadQuery }
+  get customUnreadLabelWatchString () { return this._value_('customUnreadLabelWatchString', '').trim() }
+  get customUnreadLabelWatchArray () {
+    return this.customUnreadLabelWatchString
+      .split(',')
+      .map((l) => l.trim().toUpperCase())
+      .filter((l) => !!l)
+  }
+  get hasCustomUnreadLabelWatch () { return !!this.customUnreadLabelWatchString }
 
   /* **************************************************************************/
   // Properties: Humanized

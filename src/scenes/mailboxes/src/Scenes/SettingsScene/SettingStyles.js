@@ -78,6 +78,11 @@ export default {
     marginBottom: 5,
     marginRight: 5
   },
+  extraInfo: {
+    fontSize: '85%',
+    marginTop: 2,
+    color: Colors.grey500
+  },
 
   /* **************************************************************************/
   // Account

@@ -16,6 +16,7 @@ const REQUEST_TYPES = {
   PROFILE: 'PROFILE',
   MAIL: 'MAIL'
 }
+const LOG_PFX = '[GSS]'
 
 class GoogleStore {
   /* **************************************************************************/
@@ -327,6 +328,7 @@ class GoogleStore {
   * @return an array of label ids that the service expects to query gmail with
   */
   mailLabelIdsForService (service) {
+    if (service.hasCustomUnreadLabelWatch) { return service.customUnreadLabelWatchArray }
     switch (service.unreadMode) {
       case GoogleDefaultService.UNREAD_MODES.INBOX_ALL:
         return ['INBOX']
@@ -386,6 +388,7 @@ class GoogleStore {
   * @return the query to run on the google servers for the unread counts
   */
   mailQueryForService (service) {
+    if (service.hasCustomUnreadQuery) { return service.customUnreadQuery }
     switch (service.unreadMode) {
       case GoogleDefaultService.UNREAD_MODES.INBOX_ALL:
         return 'label:inbox'
@@ -415,6 +418,15 @@ class GoogleStore {
     if (!mailbox || !service) {
       this.preventDefault()
       return
+    }
+
+    // Log some info if the user is using custom config
+    if (service.hasCustomUnreadQuery || service.hasCustomUnreadLabelWatch) {
+      if (service.hasCustomUnreadQuery && service.hasCustomUnreadLabelWatch) {
+        console.log(`${LOG_PFX} Using custom query parameters: `, service.customUnreadQuery, service.customUnreadLabelWatchArray)
+      } else {
+        console.warn(`${LOG_PFX} Using custom query parameters but not all fields are configured. This is most likely a configuration error`, service.customUnreadQuery, service.customUnreadLabelWatchArray)
+      }
     }
 
     // Start chatting to Google
