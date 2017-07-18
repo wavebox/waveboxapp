@@ -290,6 +290,10 @@ class MailboxesWindow extends WaveboxWindow {
       shell.openExternal(targetUrl, {
         activate: !settingStore.os.openLinksInBackground
       })
+    } else if (openMode === CoreService.WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL) {
+      shell.openExternal(provisionalTargetUrl, {
+        activate: !settingStore.os.openLinksInBackground
+      })
     } else if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT || openMode === CoreService.WINDOW_OPEN_MODES.CONTENT_PROVSIONAL) {
       const contentWindow = new ContentWindow()
       contentWindow.ownerId = ownerId
