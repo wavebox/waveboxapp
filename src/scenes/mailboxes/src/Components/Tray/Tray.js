@@ -49,6 +49,8 @@ export default class Tray extends React.Component {
       // menu is opened on right click. For app indicator platforms click event
       // is ignored
       this.appTray.on('click', this.handleToggleVisibility)
+    } else if (process.platform === 'darwin') {
+      this.appTray.on('right-click', this.handleToggleVisibility)
     }
   }
 

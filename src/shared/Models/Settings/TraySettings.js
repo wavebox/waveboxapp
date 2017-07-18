@@ -19,6 +19,7 @@ class TraySettings extends Model {
   static get MOUSE_TRIGGER_ACTIONS () { return MOUSE_TRIGGER_ACTIONS }
   static get SUPPORTS_MOUSE_TRIGGERS () { return process.platform === 'win32' }
   static get SUPPORTS_TRAY_MINIMIZE_CONFIG () { return process.platform === 'win32' }
+  static get SUPPORTS_DOCK_HIDING () { return process.platform === 'darwin' }
 
   /* **************************************************************************/
   // Lifecycle
@@ -38,6 +39,7 @@ class TraySettings extends Model {
   /* **************************************************************************/
 
   get show () { return this._value_('show', true) }
+  get removeFromDockDarwin () { return this._value_('removeFromDockDarwin', false) }
   get showUnreadCount () { return this._value_('showUnreadCount', true) }
   get mouseTrigger () { return this._value_('mouseTrigger', MOUSE_TRIGGERS.SINGLE) }
   get mouseTriggerAction () { return this._value_('mouseTriggerAction', MOUSE_TRIGGER_ACTIONS.TOGGLE) }

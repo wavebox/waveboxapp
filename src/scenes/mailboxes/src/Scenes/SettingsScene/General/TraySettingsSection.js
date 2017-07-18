@@ -10,7 +10,8 @@ import {
   MOUSE_TRIGGERS,
   MOUSE_TRIGGER_ACTIONS,
   SUPPORTS_MOUSE_TRIGGERS,
-  SUPPORTS_TRAY_MINIMIZE_CONFIG
+  SUPPORTS_TRAY_MINIMIZE_CONFIG,
+  SUPPORTS_DOCK_HIDING
 } from 'shared/Models/Settings/TraySettings'
 
 export default class TraySettingsSection extends React.Component {
@@ -48,6 +49,14 @@ export default class TraySettingsSection extends React.Component {
             labelPosition='right'
             disabled={!tray.show}
             onToggle={(evt, toggled) => settingsActions.setShowTrayUnreadCount(toggled)} />
+          {SUPPORTS_DOCK_HIDING ? (
+            <Toggle
+              toggled={tray.removeFromDockDarwin}
+              label='Remove from dock when all windows are hidden'
+              labelPosition='right'
+              disabled={!tray.show}
+              onToggle={(evt, toggled) => settingsActions.setRemoveFromDockDarwin(toggled)} />
+          ) : undefined}
           {SUPPORTS_TRAY_MINIMIZE_CONFIG ? (
             <Toggle
               toggled={tray.hideWhenClosed}

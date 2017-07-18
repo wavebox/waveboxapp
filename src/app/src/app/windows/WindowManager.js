@@ -1,7 +1,7 @@
-const { app } = require('electron')
+const { app, BrowserWindow } = require('electron')
 const settingStore = require('../stores/settingStore')
 const {
-  TraySettings: { SUPPORTS_TRAY_MINIMIZE_CONFIG }
+  TraySettings: { SUPPORTS_TRAY_MINIMIZE_CONFIG, SUPPORTS_DOCK_HIDING }
 } = require('../../shared/Models/Settings')
 const MonitorWindow = require('./MonitorWindow')
 
@@ -181,6 +181,7 @@ class WindowManager {
       if (this.mailboxesWindow.isVisible()) {
         if (this.focused() === this.mailboxesWindow) {
           if (process.platform === 'darwin') {
+            this.mailboxesWindow.hide()
             app.hide()
           } else {
             this.mailboxesWindow.hide()
@@ -225,6 +226,30 @@ class WindowManager {
   */
   getContentWindowsWithOwnerId (ownerId) {
     return this.contentWindows.filter((w) => w.ownerId === ownerId)
+  }
+
+  /* ****************************************************************************/
+  // Dock
+  /* ****************************************************************************/
+
+  /**
+  * Updates the dock on darwin by ensuring it's visible or hidden
+  */
+  updateDarwinDock () {
+    if (!SUPPORTS_DOCK_HIDING) { return }
+
+    if (settingStore.tray.show && settingStore.tray.removeFromDockDarwin) {
+      const visibleWindow = BrowserWindow.getAllWindows().find((w) => w.isVisible())
+      if (!visibleWindow) {
+        if (app.dock.isVisible()) {
+          app.dock.hide()
+        }
+      } else {
+        if (!app.dock.isVisible()) {
+          app.dock.show()
+        }
+      }
+    }
   }
 }
 

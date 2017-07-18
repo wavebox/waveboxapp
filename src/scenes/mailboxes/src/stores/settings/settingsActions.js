@@ -310,6 +310,13 @@ class SettingsActions {
   }
 
   /**
+  * @param remove: true to remove the app from the dock when no windows are visible
+  */
+  setRemoveFromDockDarwin (remove) {
+    return this.update(SEGMENTS.TRAY, 'removeFromDockDarwin', remove)
+  }
+
+  /**
   * @param show: true to show the unread count in the tray
   */
   setShowTrayUnreadCount (show) {

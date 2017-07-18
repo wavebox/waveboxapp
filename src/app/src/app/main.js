@@ -208,6 +208,18 @@
     handler.start(parentWindow, request, authInfo, callback)
   })
 
+  if (process.platform === 'darwin') {
+    app.on('browser-window-blur', () => {
+      appWindowManager.updateDarwinDock()
+    })
+  }
+
+  if (process.platform === 'darwin') {
+    app.on('browser-window-focus', () => {
+      appWindowManager.updateDarwinDock()
+    })
+  }
+
   /* ****************************************************************************/
   // Exceptions
   /* ****************************************************************************/
