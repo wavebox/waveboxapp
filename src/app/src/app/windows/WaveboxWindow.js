@@ -171,6 +171,15 @@ class WaveboxWindow extends EventEmitter {
   }
 
   /**
+  * Blurs a window
+  * @return this
+  */
+  blur () {
+    this.window.blur()
+    return this
+  }
+
+  /**
   * Focuses a window
   * @return this
   */

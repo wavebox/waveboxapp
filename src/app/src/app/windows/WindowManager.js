@@ -180,7 +180,11 @@ class WindowManager {
     } else {
       if (this.mailboxesWindow.isVisible()) {
         if (this.focused() === this.mailboxesWindow) {
-          this.mailboxesWindow.hide()
+          if (process.platform === 'darwin') {
+            app.hide()
+          } else {
+            this.mailboxesWindow.hide()
+          }
         } else {
           this.mailboxesWindow.focus()
         }
