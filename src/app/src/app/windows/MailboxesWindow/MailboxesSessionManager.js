@@ -23,6 +23,7 @@ class MailboxesSessionManager {
   * @param mailboxWindow: the mailbox window instance we're working for
   */
   constructor (mailboxWindow) {
+    this.lastUsedDownloadPath = null
     this.mailboxWindow = mailboxWindow
     this.downloadsInProgress = { }
     this.persistCookieThrottle = { }
@@ -140,7 +141,7 @@ class MailboxesSessionManager {
     } else {
       let pickedSavePath = dialog.showSaveDialog(this.mailboxWindow.window, {
         title: 'Download',
-        defaultPath: path.join(app.getPath('downloads'), item.getFilename())
+        defaultPath: this.lastUsedDownloadPath || path.join(app.getPath('downloads'), item.getFilename())
       })
 
       // There's a bit of a pickle here. Whilst asking the user where to save
@@ -171,6 +172,7 @@ class MailboxesSessionManager {
     // Set the save - will prevent dialog showing up
     const downloadPath = unusedFilename.sync(savePath + '.waveboxdownload') // just-in-case
     item.setSavePath(downloadPath)
+    this.lastUsedDownloadPath = path.dirname(savePath)
 
     // Report the progress to the window to display it
     const totalBytes = item.getTotalBytes()
