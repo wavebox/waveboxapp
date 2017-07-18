@@ -1,5 +1,10 @@
 const MicrosoftService = require('./MicrosoftService')
 
+const UNREAD_MODES = Object.freeze({
+  INBOX_UNREAD: 'INBOX_UNREAD',
+  INBOX_FOCUSED_UNREAD: 'INBOX_FOCUSED_UNREAD'
+})
+
 class MicrosoftDefaultService extends MicrosoftService {
   /* **************************************************************************/
   // Class
@@ -15,6 +20,7 @@ class MicrosoftDefaultService extends MicrosoftService {
       'images/microsoft/logo_mail_128px.png'
     ]
   }
+  static get UNREAD_MODES () { return UNREAD_MODES }
 
   /* **************************************************************************/
   // Properties
@@ -33,6 +39,7 @@ class MicrosoftDefaultService extends MicrosoftService {
   // Properties : Messages & unread info
   /* **************************************************************************/
 
+  get unreadMode () { return this._value_('unreadMode', UNREAD_MODES.INBOX_UNREAD) }
   get unreadCount () { return this._value_('unreadCount', 0) }
   get unreadMessages () { return this._value_('unreadMessages', []) }
 

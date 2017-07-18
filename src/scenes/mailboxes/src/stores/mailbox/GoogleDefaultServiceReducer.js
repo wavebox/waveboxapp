@@ -38,7 +38,7 @@ class GoogleDefaultServiceReducer extends ServiceReducer {
   * @param unreadMode: the new unread mode
   */
   static setUnreadMode (mailbox, service, unreadMode) {
-    if (mailbox.unreadMode !== unreadMode) {
+    if (service.unreadMode !== unreadMode) {
       googleActions.syncMailboxMessages.defer(mailbox.id, true)
       return service.changeData({ unreadMode: unreadMode })
     }

@@ -9,6 +9,7 @@
     "addressparser": "1.0.1",
     "appdirectory": "0.1.0",
     "auto-launch": "5.0.1",
+    "electron-localshortcut": "2.0.2",
     "fs-extra": "4.0.0",
     "googleapis": "20.1.0",
     "home-dir": "1.0.0",

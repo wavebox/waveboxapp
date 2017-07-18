@@ -1,48 +1,25 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { RaisedButton, Paper, Dialog } from 'material-ui'
+import { RaisedButton, Paper, Dialog, RadioButtonGroup, RadioButton } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
-import * as Colors from 'material-ui/styles/colors'
 import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
 import { mailboxActions, GoogleDefaultServiceReducer } from 'stores/mailbox'
+import { Row, Col } from 'Components/Grid'
 
 const styles = {
-  introduction: {
-    textAlign: 'center',
-    padding: 12,
-    fontSize: '110%',
-    fontWeight: 'bold'
+  radioButton: {
+    marginBottom: 8,
+    marginTop: 8
   },
-  configurations: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center'
+  title: {
+    fontWeight: 'normal',
+    color: 'rgb(33, 33, 33)'
   },
-  configuration: {
-    padding: 8,
-    margin: 8,
-    textAlign: 'center',
-    display: 'flex',
-    flexGrow: 1,
-    flexDirection: 'column',
-    flexBasis: '50%',
-    justifyContent: 'space-between',
-    cursor: 'pointer'
+  modeTitle: {
+    fontWeight: 'normal'
   },
-  configurationButton: {
-    display: 'block',
-    margin: 12
-  },
-  configurationImage: {
-    height: 80,
-    marginTop: 8,
-    backgroundSize: 'contain',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat'
-  },
-  configurationTechInfo: {
-    color: Colors.grey500,
-    fontSize: '85%'
+  previewImage: {
+    maxWidth: '100%'
   }
 }
 
@@ -67,7 +44,11 @@ export default class MailboxWizardGmailConfigureScene extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
-    return { open: true }
+    return {
+      open: true,
+      unreadMode: GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL,
+      hoveredUnreadMode: GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL
+    }
   })()
 
   /* **************************************************************************/
@@ -76,11 +57,10 @@ export default class MailboxWizardGmailConfigureScene extends React.Component {
 
   /**
   * Handles the user picking a configuration
-  * @param unreadMode: the unread mode to set for the user
   */
-  handleConfigurationPicked = (unreadMode) => {
+  handleNext = () => {
     const id = this.props.match.params.mailboxId
-    mailboxActions.reduceService(id, GoogleDefaultService.type, GoogleDefaultServiceReducer.setUnreadMode, unreadMode)
+    mailboxActions.reduceService(id, GoogleDefaultService.type, GoogleDefaultServiceReducer.setUnreadMode, this.state.unreadMode)
 
     this.setState({ open: false })
     setTimeout(() => {
@@ -97,69 +77,99 @@ export default class MailboxWizardGmailConfigureScene extends React.Component {
   }
 
   render () {
-    const { open } = this.state
+    const { open, unreadMode, hoveredUnreadMode } = this.state
+
+    const actions = (
+      <div>
+        <RaisedButton label='Next' primary onClick={this.handleNext} />
+      </div>
+    )
 
     return (
       <Dialog
         open={open}
         contentStyle={{ width: '90%', maxWidth: 1200 }}
+        actions={actions}
         bodyClassName='ReactComponent-MaterialUI-Dialog-Body-Scrollbars'
         modal
         autoScrollBodyContent>
-        <div style={styles.introduction}>
-          Pick the type of inbox that you use in Gmail to configure Wavebox
-          notifications and unread counters
-        </div>
-        <div style={styles.configurations}>
-          <Paper
-            style={styles.configuration}
-            onClick={() => this.handleConfigurationPicked(GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL)}>
-            <div>
-              <RaisedButton primary label='Categories Inbox' style={styles.configurationButton} />
-              <div style={Object.assign({
-                backgroundImage: `url("../../images/gmail_inbox_categories_small.png")`
-              }, styles.configurationImage)} />
-              <p>
-                I'm only interested in unread messages in the primary category
-              </p>
-              <p style={styles.configurationTechInfo}>
-                Unread Messages in Primary Category
-              </p>
-            </div>
-          </Paper>
-          <Paper
-            style={styles.configuration}
-            onClick={() => this.handleConfigurationPicked(GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD)}>
-            <div>
-              <RaisedButton primary label='Unread Inbox' style={styles.configurationButton} />
-              <div style={Object.assign({
-                backgroundImage: `url("../../images/gmail_inbox_unread_small.png")`
-              }, styles.configurationImage)} />
-              <p>
-                I'm interested in all unread messages in my inbox
-              </p>
-              <p style={styles.configurationTechInfo}>
-                All Unread Messages
-              </p>
-            </div>
-          </Paper>
-          <Paper
-            style={styles.configuration}
-            onClick={() => this.handleConfigurationPicked(GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT)}>
-            <div>
-              <RaisedButton primary label='Priority Inbox' style={styles.configurationButton} />
-              <div style={Object.assign({
-                backgroundImage: `url("../../images/gmail_inbox_priority_small.png")`
-              }, styles.configurationImage)} />
-              <p>
-                I'm only interested in unread messages if they are marked as important
-              </p>
-              <p style={styles.configurationTechInfo}>
-                Unread Important Messages
-              </p>
-            </div>
-          </Paper>
-        </div>
+        <Row>
+          <Col xs={6}>
+            <h3 style={styles.title}>Pick which unread mode to use</h3>
+            <p>
+              Gmail supports multiple Inbox types, pick the one below
+              that matches the type you currently use to configure Wavebox
+              to show the correct Notifications and Unread Badges
+            </p>
+            <p>
+              <small>This setting can be changed later in your account settings</small>
+            </p>
+            <RadioButtonGroup
+              name='unreadMode'
+              onChange={(evt, value) => this.setState({ unreadMode: value })}
+              defaultSelected={unreadMode}>
+              <RadioButton
+                style={styles.radioButton}
+                value={GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL}
+                onMouseEnter={() => this.setState({ hoveredUnreadMode: GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL })}
+                label='Categories Inbox' />
+              <RadioButton
+                style={styles.radioButton}
+                value={GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD}
+                onMouseEnter={() => this.setState({ hoveredUnreadMode: GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD })}
+                label='Unread Inbox' />
+              <RadioButton
+                style={styles.radioButton}
+                value={GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT}
+                onMouseEnter={() => this.setState({ hoveredUnreadMode: GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT })}
+                label='Priority Inbox' />
+            </RadioButtonGroup>
+            <p>
+              <small>Hover over each option for more information</small>
+            </p>
+          </Col>
+          <Col xs={6}>
+            {hoveredUnreadMode === GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL ? (
+              <div>
+                <h3 style={styles.modeTitle}>Categories Inbox</h3>
+                <Paper>
+                  <img style={styles.previewImage} src='../../images/gmail_inbox_categories_small.png' />
+                </Paper>
+                <p>
+                  Your new emails are automatically sorted into Categories such as <em>Social</em>
+                  and <em>Promotions</em> when they arrive. Typically you will see a number of
+                  category tabs above your emails
+                </p>
+              </div>
+            ) : undefined}
+            {hoveredUnreadMode === GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD ? (
+              <div>
+                <h3 style={styles.modeTitle}>Unread Inbox</h3>
+                <Paper>
+                  <img style={styles.previewImage} src='../../images/gmail_inbox_unread_small.png' />
+                </Paper>
+                <p>
+                  Your new emails are sent directly to your Inbox and are not automatically sorted
+                  into categories or ranked by priority. Typically the title you see above
+                  your emails is <em>Unread</em>.
+                </p>
+              </div>
+            ) : undefined}
+            {hoveredUnreadMode === GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT ? (
+              <div>
+                <h3 style={styles.modeTitle}>Priority Inbox</h3>
+                <Paper>
+                  <img style={styles.previewImage} src='../../images/gmail_inbox_priority_small.png' />
+                </Paper>
+                <p>
+                  Your new emails are either marked as important or not and the important
+                  emails are split into their own section when they arrive. Typically the title you see above
+                  your emails is <em>Important and unread</em>.
+                </p>
+              </div>
+            ) : undefined}
+          </Col>
+        </Row>
       </Dialog>
     )
   }

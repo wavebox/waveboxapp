@@ -121,7 +121,7 @@ class MicrosoftStore {
       return Promise.resolve(mailbox.accessToken)
     } else {
       return Promise.resolve()
-        .then(() => MicrosoftHTTP.refreshAuthToken(mailbox.refreshToken))
+        .then(() => MicrosoftHTTP.refreshAuthToken(mailbox.refreshToken, mailbox.protocolVersion))
         .then((auth) => {
           mailboxActions.reduce.defer(mailbox.id, MicrosoftMailboxReducer.setAuthInfo, auth)
           return Promise.resolve(auth.access_token)
@@ -262,7 +262,8 @@ class MicrosoftStore {
       return
     }
     const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    if (!mailbox) {
+    const service = mailbox ? mailbox.serviceForType(MicrosoftDefaultService.type) : null
+    if (!mailbox || !service) {
       this.preventDefault()
       return
     }
@@ -270,14 +271,23 @@ class MicrosoftStore {
     const requestId = this.trackOpenRequest(REQUEST_TYPES.MAIL, mailboxId)
     Promise.resolve()
       .then(() => this.getAPIAuth(mailbox))
-      .then((accessToken) => MicrosoftHTTP.fetchUnreadMessages(accessToken))
-      .then((response) => {
+      .then((accessToken) => {
+        switch (service.unreadMode) {
+          case MicrosoftDefaultService.UNREAD_MODES.INBOX_FOCUSED_UNREAD:
+            return MicrosoftHTTP.fetchFocusedUnreadCountAndUnreadMessages(accessToken, 10)
+          case MicrosoftDefaultService.UNREAD_MODES.INBOX_UNREAD:
+          default:
+            return MicrosoftHTTP.fetchInboxUnreadCountAndUnreadMessages(accessToken, 10)
+        }
+      })
+      .then(({ unreadCount, messages }) => {
         this.trackCloseRequest(REQUEST_TYPES.MAIL, mailboxId, requestId)
         mailboxActions.reduceService(
           mailboxId,
           MicrosoftDefaultService.type,
           MicrosoftDefaultServiceReducer.setUnreadInfo,
-          response.value
+          unreadCount,
+          messages
         )
         this.emitChange()
       })

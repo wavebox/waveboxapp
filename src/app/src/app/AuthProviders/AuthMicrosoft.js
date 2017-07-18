@@ -24,13 +24,9 @@ class AuthMicrosoft {
   * @return the url that can be used to authenticate with goog
   */
   generateMicrosoftAuthenticationURL (credentials) {
-    // MICROSOFT_AUTH_RETURN_URL should really be 'urn:ietf:wg:oauth:2.0:oob' but because
-    // of what I think is https://github.com/electron/electron/issues/3471 this doesn't work
-    // however the remote url does. We'll use this but kill the redirect request before it
-    // heads off to the web
     const query = querystring.stringify({
-      client_id: credentials.MICROSOFT_CLIENT_ID,
-      redirect_uri: credentials.MICROSOFT_AUTH_RETURN_URL,
+      client_id: credentials.MICROSOFT_CLIENT_ID_V2,
+      redirect_uri: credentials.MICROSOFT_AUTH_RETURN_URL_V2,
       response_type: 'code',
       scope: [
         'offline_access',
@@ -75,7 +71,7 @@ class AuthMicrosoft {
 
       // Listen for changes
       oauthWin.webContents.on('did-get-redirect-request', (evt, prevUrl, nextUrl) => {
-        if (nextUrl.indexOf(credentials.MICROSOFT_AUTH_RETURN_URL) === 0) {
+        if (nextUrl.indexOf(credentials.MICROSOFT_AUTH_RETURN_URL_V2) === 0) {
           evt.preventDefault()
           const purl = url.parse(nextUrl, true)
           if (purl.query.code) {
@@ -115,7 +111,7 @@ class AuthMicrosoft {
           authMode: body.authMode,
           provisional: body.provisional,
           temporaryCode: temporaryCode,
-          codeRedirectUri: body.credentials.MICROSOFT_AUTH_RETURN_URL
+          codeRedirectUri: body.credentials.MICROSOFT_AUTH_RETURN_URL_V2
         })
       }, (err) => {
         evt.sender.send(WB_AUTH_MICROSOFT_ERROR, {

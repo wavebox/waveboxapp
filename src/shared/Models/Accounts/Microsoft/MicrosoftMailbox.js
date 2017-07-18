@@ -168,6 +168,7 @@ class MicrosoftMailbox extends CoreMailbox {
   get accessToken () { return this.auth.access_token }
   get refreshToken () { return this.auth.refresh_token }
   get authExpiryTime () { return (this.auth.date || 0) + ((this.auth.expires_in || 0) * 999) }
+  get authProtocolVersion () { return this.auth.protocolVersion || 1 }
 
   /* **************************************************************************/
   // Properties : Provider Details & counts etc

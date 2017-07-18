@@ -4,7 +4,7 @@
   "releaseChannel": "BETA",
   "description": "Wavebox",
   "scripts": {
-    "rebuild:electron": "electron-rebuild -f -m src/app -v 1.7.4 -t prod,optional && electron-rebuild -f -m src/guest -v 1.7.4 -t prod,optional",
+    "rebuild:electron": "electron-rebuild -f -m src/app -v 1.7.5 -t prod,optional && electron-rebuild -f -m src/guest -v 1.7.5 -t prod,optional",
     "prestart": "webpack",
     "start": "electron bin/app/index.js",
     "test": "standard",
@@ -45,7 +45,7 @@
     "clean-webpack-plugin": "0.1.16",
     "copy-webpack-plugin": "4.0.1",
     "css-loader": "0.28.4",
-    "electron": "1.7.4",
+    "electron": "1.7.5",
     "electron-rebuild": "1.5.11",
     "extract-text-webpack-plugin": "3.0.0",
     "file-loader": "0.11.2",

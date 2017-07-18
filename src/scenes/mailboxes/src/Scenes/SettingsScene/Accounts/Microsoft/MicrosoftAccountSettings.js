@@ -9,6 +9,7 @@ import AccountNotificationSettings from '../AccountNotificationSettings'
 import AccountServicesHeading from '../AccountServicesHeading'
 import AccountServicesSettings from '../AccountServicesSettings'
 import MicrosoftServiceSettings from './MicrosoftServiceSettings'
+import MicrosoftDefaultServiceSettings from './MicrosoftDefaultServiceSettings'
 import { userStore } from 'stores/user'
 import CoreService from 'shared/Models/Accounts/CoreService'
 
@@ -66,12 +67,21 @@ export default class MicrosoftAccountSettings extends React.Component {
   * @return jsx
   */
   renderServiceType (mailbox, serviceType, onRequestEditCustomCode) {
-    return (
-      <MicrosoftServiceSettings
-        key={serviceType}
-        mailbox={mailbox}
-        serviceType={serviceType}
-        onRequestEditCustomCode={onRequestEditCustomCode} />)
+    switch (serviceType) {
+      case CoreService.SERVICE_TYPES.DEFAULT:
+        return (
+          <MicrosoftDefaultServiceSettings
+            key={serviceType}
+            mailbox={mailbox}
+            onRequestEditCustomCode={onRequestEditCustomCode} />)
+      default:
+        return (
+          <MicrosoftServiceSettings
+            key={serviceType}
+            mailbox={mailbox}
+            serviceType={serviceType}
+            onRequestEditCustomCode={onRequestEditCustomCode} />)
+    }
   }
 
   render () {

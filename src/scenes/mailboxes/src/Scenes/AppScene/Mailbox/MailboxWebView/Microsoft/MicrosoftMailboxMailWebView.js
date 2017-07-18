@@ -40,7 +40,7 @@ export default class MicrosoftMailboxMailWebView extends React.Component {
   * Handles opening a new message
   * @param evt: the event that fired
   */
-  handleOpenItem (evt) {
+  handleOpenItem = (evt) => {
     if (evt.mailboxId === this.props.mailboxId && evt.service === CoreService.SERVICE_TYPES.DEFAULT) {
       if (evt.data.webLink) {
         MailboxLinker.openContentWindow(this.props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT, evt.data.webLink)

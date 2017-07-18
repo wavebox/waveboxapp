@@ -838,18 +838,27 @@ class MailboxStore {
 
   handleAuthMicrosoftMailboxSuccess ({ provisionalId, provisional, temporaryCode, authMode, codeRedirectUri }) {
     Promise.resolve()
-      .then(() => MicrosoftHTTP.upgradeAuthCodeToPermenant(temporaryCode, codeRedirectUri))
+      .then(() => MicrosoftHTTP.upgradeAuthCodeToPermenant(temporaryCode, codeRedirectUri, 2))
       .then((auth) => {
         if (authMode === AUTH_MODES.REAUTHENTICATE) {
           actions.reduce.defer(provisionalId, (mailbox, auth) => {
-            return mailbox.changeData({ auth: auth })
+            return mailbox.changeData({
+              auth: {
+                ...auth,
+                protocolVersion: 2
+              }
+            })
           }, auth)
           this._finalizeReauthentication(provisionalId)
         } else {
-          actions.create.defer(provisionalId, Object.assign(provisional, {
-            auth: auth
-          }))
-          window.location.hash = '/mailbox_wizard/microsoft/services/' + provisionalId
+          actions.create.defer(provisionalId, {
+            ...provisional,
+            auth: {
+              ...auth,
+              protocolVersion: 2
+            }
+          })
+          window.location.hash = '/mailbox_wizard/microsoft/configure/' + provisionalId
         }
       }).catch((err) => {
         console.error('[AUTH ERR]', err)

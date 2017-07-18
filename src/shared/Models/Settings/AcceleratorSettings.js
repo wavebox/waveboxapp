@@ -34,7 +34,7 @@ class AcceleratorSettings extends Model {
   get toggleMenuDefault () { return 'CmdOrCtrl+\\' }
   get navigateBackDefault () { return process.platform === 'darwin' ? 'CmdOrCtrl+Left' : 'Alt+Left' }
   get navigateForwardDefault () { return process.platform === 'darwin' ? 'CmdOrCtrl+Right' : 'Alt+Right' }
-  get zoomInDefault () { return 'CmdOrCtrl+=' }
+  get zoomInDefault () { return 'CmdOrCtrl+Plus' }
   get zoomOutDefault () { return 'CmdOrCtrl+-' }
   get zoomResetDefault () { return 'CmdOrCtrl+0' }
   get reloadDefault () { return 'CmdOrCtrl+R' }

@@ -1,7 +1,11 @@
 import Boostrap from 'R/Bootstrap'
 import querystring from 'querystring'
 
-const { MICROSOFT_CLIENT_ID, MICROSOFT_CLIENT_SECRET } = Boostrap.credentials
+const {
+  MICROSOFT_CLIENT_ID,
+  MICROSOFT_CLIENT_SECRET,
+  MICROSOFT_CLIENT_ID_V2
+} = Boostrap.credentials
 
 class MicrosoftHTTP {
   /* **************************************************************************/
@@ -25,6 +29,7 @@ class MicrosoftHTTP {
   * Upgrades the initial temporary access code to a permenant access code
   * @param authCode: the temporary auth code
   * @param codeRedirectUri: the redirectUri that was used in getting the current code
+  * @param protocolVersion=2: the protocol version to use
   * @return promise
   */
   static upgradeAuthCodeToPermenant (authCode, codeRedirectUri) {
@@ -36,9 +41,8 @@ class MicrosoftHTTP {
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: querystring.stringify({
-          client_id: MICROSOFT_CLIENT_ID,
-          client_secret: MICROSOFT_CLIENT_SECRET,
           code: authCode,
+          client_id: MICROSOFT_CLIENT_ID_V2,
           redirect_uri: codeRedirectUri,
           grant_type: 'authorization_code'
         })
@@ -51,9 +55,29 @@ class MicrosoftHTTP {
   /**
   * Grabs a new auth token
   * @param refreshToken: the refresh token
+  * @param protocolVersion=2: the protocol version to use
   * @return promise
   */
-  static refreshAuthToken (refreshToken) {
+  static refreshAuthToken (refreshToken, protocolVersion = 2) {
+    let body
+    switch (protocolVersion) {
+      case 1:
+        body = {
+          client_id: MICROSOFT_CLIENT_ID,
+          client_secret: MICROSOFT_CLIENT_SECRET,
+          refresh_token: refreshToken,
+          grant_type: 'refresh_token'
+        }
+        break
+      case 2:
+        body = {
+          client_id: MICROSOFT_CLIENT_ID_V2,
+          refresh_token: refreshToken,
+          grant_type: 'refresh_token'
+        }
+        break
+    }
+
     return Promise.resolve()
       .then(() => window.fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
         method: 'post',
@@ -61,12 +85,7 @@ class MicrosoftHTTP {
           'Accept': 'application/json',
           'Content-Type': 'application/x-www-form-urlencoded'
         },
-        body: querystring.stringify({
-          client_id: MICROSOFT_CLIENT_ID,
-          client_secret: MICROSOFT_CLIENT_SECRET,
-          refresh_token: refreshToken,
-          grant_type: 'refresh_token'
-        })
+        body: querystring.stringify(body)
       }))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
@@ -123,6 +142,62 @@ class MicrosoftHTTP {
   /* **************************************************************************/
 
   /**
+  * Fetches the inbox folder unread count and messages from the server
+  * @param auth: the auth to access microsoft
+  * @param limit = 1000: the maximum amount of messages to fetch
+  * @return promise with { unreadCount, messages }
+  */
+  static fetchInboxUnreadCountAndUnreadMessages (auth, limit = 1000) {
+    return Promise.resolve()
+      .then(() => this.fetchMailfolderAndUnreadMessages(auth, 'inbox', limit))
+      .then(({ mailfolder, messages }) => {
+        return Promise.resolve({ unreadCount: mailfolder.unreadItemCount, messages: messages })
+      })
+  }
+
+  /**
+  * Fetches the mail folder and messages from the server
+  * @param auth: the auth to access microsoft
+  * @param folder = 'inbox': the folder to fetch
+  * @param limit = 1000: the maximum amount of messages to fetch
+  * @return promise with { mailfolder, messages }
+  */
+  static fetchMailfolderAndUnreadMessages (auth, folder = 'inbox', limit = 1000) {
+    let mailfolder
+    let messages
+    return Promise.resolve()
+      .then(() => this.fetchMailfolder(auth, folder))
+      .then((res) => { mailfolder = res; return Promise.resolve() })
+      .then(() => this.fetchUnreadMessages(auth, folder, limit))
+      .then((res) => { messages = res; return Promise.resolve() })
+      .then(() => {
+        return Promise.resolve({ mailfolder: mailfolder, messages: messages })
+      })
+  }
+
+  /**
+  * Fetches the mail folder from the server
+  * @param auth: the auth to access microsoft
+  * @param folder = 'inbox': the folder to fetch
+  * @return promise
+  */
+  static fetchMailfolder (auth, folder = 'inbox') {
+    if (!auth) { return this._rejectWithNoAuth() }
+
+    return Promise.resolve()
+      .then(() => window.fetch(`https://graph.microsoft.com/beta/me/mailFolders/${folder}`, {
+        method: 'get',
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'wavebox',
+          'Authorization': `Bearer ${auth}`
+        }
+      }))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.json())
+  }
+
+  /**
   * Fetches the unread messages from the server
   * @param auth: the auth to access microsoft
   * @param folder = 'inbox': the folder to get messages from
@@ -140,7 +215,7 @@ class MicrosoftHTTP {
     })
 
     return Promise.resolve()
-      .then(() => window.fetch(`https://graph.microsoft.com/v1.0/me/mailFolders/${folder}/messages?${query}`, {
+      .then(() => window.fetch(`https://graph.microsoft.com/beta/me/mailFolders/${folder}/messages?${query}`, {
         method: 'get',
         headers: {
           'Accept': 'application/json',
@@ -150,6 +225,85 @@ class MicrosoftHTTP {
       }))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
+      .then((res) => res.value)
+  }
+
+  /**
+  * Fetches the focused mail folder unread count and messages from the server
+  * @param auth: the auth to access microsoft
+  * @param limit = 1000: the maximum amount of messages to fetch
+  * @return promise with { unreadCount, messages }
+  */
+  static fetchFocusedUnreadCountAndUnreadMessages (auth, limit = 1000) {
+    let unreadCount
+    let messages
+    return Promise.resolve()
+      .then(() => this.fetchFocusedUnreadCount(auth))
+      .then((res) => { unreadCount = res.count; return Promise.resolve() })
+      .then(() => this.fetchFocusedUnreadMessages(auth, limit))
+      .then((res) => { messages = res; return Promise.resolve() })
+      .then(() => {
+        return Promise.resolve({ unreadCount: unreadCount, messages: messages })
+      })
+  }
+
+  /**
+  * Fetches focused unread count in a round-about way
+  * @param auth: the auth to access microsoft
+  * @param limit = 1000: the limit of messages to fetch
+  * @return promise
+  */
+  static fetchFocusedUnreadCount (auth, limit = 1000) {
+    const query = querystring.stringify({
+      '$select': 'Id',
+      '$filter': `IsRead eq false and InferenceClassification eq 'focused'`,
+      '$top': limit
+    })
+
+    return Promise.resolve()
+      .then(() => window.fetch(`https://graph.microsoft.com/beta/me/mailFolders/inbox/messages?${query}`, {
+        method: 'get',
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'wavebox',
+          'Authorization': `Bearer ${auth}`
+        }
+      }))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.json())
+      .then((res) => { return { count: res.value.length } })
+  }
+
+  /**
+  * Fetches the focused unread messages in a round-about way
+  * @param auth: the auth to access microsoft
+  * @param limit = 10: the limit of messages to fetch
+  * @return promise
+  */
+  static fetchFocusedUnreadMessages (auth, limit = 10) {
+    const query = querystring.stringify({
+      '$select': 'Id,Subject,BodyPreview,ReceivedDateTime,from,webLink,InferenceClassification',
+      '$filter': 'IsRead eq false',
+      '$orderby': 'ReceivedDateTime DESC',
+      '$top': limit
+    })
+
+    return Promise.resolve()
+      .then(() => window.fetch(`https://graph.microsoft.com/beta/me/mailFolders/inbox/messages?${query}`, {
+        method: 'get',
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'wavebox',
+          'Authorization': `Bearer ${auth}`
+        }
+      }))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.json())
+      .then((res) => {
+        return res.value
+          .filter((m) => m.inferenceClassification === 'focused')
+          .slice(0, limit)
+      })
   }
 
   /* **************************************************************************/

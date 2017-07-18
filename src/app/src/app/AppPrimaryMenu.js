@@ -5,6 +5,7 @@ const { GITHUB_URL, GITHUB_ISSUE_URL, WEB_URL, PRIVACY_URL } = require('../share
 const Release = require('../shared/Release')
 const pkg = require('../package.json')
 const MenuTool = require('../shared/Electron/MenuTool')
+const electronLocalshortcut = require('electron-localshortcut')
 
 class AppPrimaryMenu {
   /* ****************************************************************************/
@@ -416,12 +417,31 @@ class AppPrimaryMenu {
     this._lastActiveServiceType = activeServiceType
     this._lastMailboxes = mailboxes
 
-    // Prevent Memory leak
     const lastMenu = this._lastMenu
     this._lastMenu = this.build(accelerators, mailboxes, activeMailbox, activeServiceType)
     Menu.setApplicationMenu(this._lastMenu)
+    this.updateHiddenShortcuts(accelerators)
+
+    // Prevent Memory leak
     if (lastMenu) {
       MenuTool.fullDestroyMenu(lastMenu)
+    }
+  }
+
+  /**
+  * Updates the hidden shortcuts
+  * @param accelerators: the accelerators to use
+  */
+  updateHiddenShortcuts (accelerators) {
+    const hiddenZoomInShortcut = process.platform === 'darwin' ? 'Cmd+=' : 'Ctrl+='
+    if (accelerators.zoomIn === accelerators.zoomInDefault) {
+      if (!electronLocalshortcut.isRegistered(hiddenZoomInShortcut)) {
+        electronLocalshortcut.register(hiddenZoomInShortcut, this._selectors.zoomIn)
+      }
+    } else {
+      if (electronLocalshortcut.isRegistered(hiddenZoomInShortcut)) {
+        electronLocalshortcut.unregister(hiddenZoomInShortcut)
+      }
     }
   }
 

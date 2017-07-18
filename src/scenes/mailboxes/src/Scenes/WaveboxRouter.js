@@ -18,7 +18,8 @@ import {
   MailboxWizardInboxConfigureScene
 } from './MailboxWizardScene/Google'
 import {
-  MailboxWizardMicrosoftServicesScene
+  MailboxWizardMicrosoftServicesScene,
+  MailboxWizardMicrosoftConfigureScene
 } from './MailboxWizardScene/Microsoft'
 import {
   MailboxWizardGenericConfigureScene
@@ -70,6 +71,7 @@ export default class WaveboxRouter extends React.Component {
           <Route path='/mailbox_wizard/google/configuregmail/:mailboxId' component={MailboxWizardGmailConfigureScene} />
           <Route path='/mailbox_wizard/google/configureinbox/:mailboxId' component={MailboxWizardInboxConfigureScene} />
           <Route path='/mailbox_wizard/google/services/:mailboxId' component={MailboxWizardGoogleServicesScene} />
+          <Route path='/mailbox_wizard/microsoft/configure/:mailboxId' component={MailboxWizardMicrosoftConfigureScene} />
           <Route path='/mailbox_wizard/microsoft/services/:mailboxId' component={MailboxWizardMicrosoftServicesScene} />
           <Route path='/mailbox_wizard/generic/configure/:mailboxId' component={MailboxWizardGenericConfigureScene} />
 
