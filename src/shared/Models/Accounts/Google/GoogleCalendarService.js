@@ -37,7 +37,7 @@ class GoogleCalendarService extends GoogleService {
   */
   getWindowOpenModeForUrl (url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl) {
     if (url === 'about:blank' && provisionalTargetUrl) {
-      if (parsedProvisionalTargetUrl.hostname.endsWith('.google.com')) {
+      if (parsedProvisionalTargetUrl.hostname.endsWith('.google.com') && parsedProvisionalTargetUrl.pathname.startsWith('/url') === false) {
         return this.constructor.WINDOW_OPEN_MODES.CONTENT_PROVSIONAL
       } else {
         return this.constructor.WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL
