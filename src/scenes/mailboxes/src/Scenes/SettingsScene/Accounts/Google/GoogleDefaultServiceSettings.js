@@ -26,12 +26,24 @@ export default class GoogleDefaultServiceSettings extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const service = nextProps.mailbox.serviceForType(GoogleDefaultService.SERVICE_TYPES.DEFAULT)
-    const update = {}
-    if (service.customUnreadQuery !== this.state.customUnreadQuery) {
-      update.customUnreadQuery = service.customUnreadQuery
-    }
-    if (service.customUnreadLabelWatchString !== this.state.customUnreadLabelWatchString) {
-      update.customUnreadLabelWatchString = service.customUnreadLabelWatchString
+
+    if (this.props.mailbox.id !== nextProps.mailbox.id) {
+      this.setState({
+        customUnreadQuery: service.customUnreadQuery,
+        customUnreadLabelWatchString: service.customUnreadLabelWatchString,
+        showCustomUnreadSettings: service.hasCustomUnreadQuery || service.hasCustomUnreadLabelWatch
+      })
+    } else {
+      const update = {}
+      if (service.customUnreadQuery !== this.state.customUnreadQuery) {
+        update.customUnreadQuery = service.customUnreadQuery
+      }
+      if (service.customUnreadLabelWatchString !== this.state.customUnreadLabelWatchString) {
+        update.customUnreadLabelWatchString = service.customUnreadLabelWatchString
+      }
+      if (Object.keys(update).length) {
+        this.setState(update)
+      }
     }
   }
 
@@ -116,6 +128,7 @@ export default class GoogleDefaultServiceSettings extends React.Component {
               <Paper style={styles.paper}>
                 <h1 style={styles.subheading}>Advanced Unread Options</h1>
                 <TextField
+                  key={`customUnreadQuery_${mailbox.id}`}
                   id={`customUnreadQuery_${mailbox.id}`}
                   value={customUnreadQuery}
                   fullWidth
@@ -127,6 +140,7 @@ export default class GoogleDefaultServiceSettings extends React.Component {
                     mailboxActions.reduceService(mailbox.id, serviceType, GoogleDefaultServiceReducer.setCustomUnreadQuery, customUnreadQuery)
                   }} />
                 <TextField
+                  key={`customUnreadWatchLabels_${mailbox.id}`}
                   id={`customUnreadWatchLabels_${mailbox.id}`}
                   value={customUnreadLabelWatchString}
                   fullWidth
