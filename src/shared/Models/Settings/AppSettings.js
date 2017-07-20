@@ -31,6 +31,7 @@ class AppSettings extends Model {
   get ignoreGPUBlacklist () { return this._value_('ignoreGPUBlacklist', true) }
   get disableSmoothScrolling () { return this._value_('disableSmoothScrolling', false) }
   get enableUseZoomForDSF () { return this._value_('enableUseZoomForDSF', true) }
+  get disableHardwareAcceleration () { return this._value_('disableHardwareAcceleration', false) }
   get checkForUpdates () { return this._value_('checkForUpdates', true) }
   get updateChannel () { return this._value_('updateChannel', this.__defaults__.updateChannel) }
   get hasSeenAppWizard () { return this._value_('hasSeenAppWizard', false) }

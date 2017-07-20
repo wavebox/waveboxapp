@@ -255,6 +255,13 @@ class SettingsActions {
   }
 
   /**
+  * @param disable: true to disable hardware acceleration
+  */
+  disableHardwareAcceleration (disable) {
+    return this.update(SEGMENTS.APP, 'disableHardwareAcceleration', disable)
+  }
+
+  /**
   * @param toggled: true to check for updates
   */
   checkForUpdates (toggled) {

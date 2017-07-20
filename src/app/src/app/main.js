@@ -66,6 +66,9 @@
   if (!settingStore.app.enableUseZoomForDSF) {
     app.commandLine.appendSwitch('enable-use-zoom-for-dsf', 'false')
   }
+  if (settingStore.app.disableHardwareAcceleration) {
+    app.disableHardwareAcceleration()
+  }
 
   /* ****************************************************************************/
   // Global objects

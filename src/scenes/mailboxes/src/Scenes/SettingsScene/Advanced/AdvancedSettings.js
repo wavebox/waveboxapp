@@ -80,6 +80,14 @@ export default class AdvancedSettings extends React.Component {
                   settingsActions.ignoreGPUBlacklist(toggled)
                 }} />
               <Toggle
+                toggled={app.disableHardwareAcceleration}
+                label='Disable hardware acceleration (Requires Restart)'
+                labelPosition='right'
+                onToggle={(evt, toggled) => {
+                  showRestart()
+                  settingsActions.disableHardwareAcceleration(toggled)
+                }} />
+              <Toggle
                 toggled={app.enableUseZoomForDSF}
                 label='Use Zoom For DSF (Requires Restart)'
                 labelPosition='right'
