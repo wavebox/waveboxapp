@@ -69,7 +69,7 @@ export default class SettingsScene extends React.Component {
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/'
-    }, 500)
+    }, 250)
   }
 
   /* **************************************************************************/
