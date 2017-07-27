@@ -21,6 +21,7 @@ class TrelloMailbox extends CoreMailbox {
   static get humanizedVectorLogo () { return 'images/trello/logo_vector.svg' }
   static get humanizedType () { return 'Trello' }
   static get humanizedUnreadItemType () { return 'notification' }
+  static get defaultColor () { return MailboxColors.TRELLO }
 
   /**
   * Modifies raw mailbox json for export
@@ -36,12 +37,6 @@ class TrelloMailbox extends CoreMailbox {
     })
     return prep
   }
-
-  /* **************************************************************************/
-  // Properties : Display
-  /* **************************************************************************/
-
-  get color () { return super.color || MailboxColors.TRELLO }
 
   /* **************************************************************************/
   // Properties : Authentication

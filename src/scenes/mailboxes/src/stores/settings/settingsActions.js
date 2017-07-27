@@ -229,6 +229,20 @@ class SettingsActions {
     return this.update(SEGMENTS.UI, 'showSleepableServiceIndicator', show)
   }
 
+  /**
+  * @param show: true to show the support button in the sidebar
+  */
+  setShowSidebarSupport (show) {
+    return this.update(SEGMENTS.UI, 'showSidebarSupport', show)
+  }
+
+  /**
+  * @param show: true to show the newsfeed button in the sidebar
+  */
+  setShowSidebarNewsfeed (show) {
+    return this.update(SEGMENTS.UI, 'showSidebarNewsfeed', show)
+  }
+
   /* **************************************************************************/
   // App
   /* **************************************************************************/
@@ -280,13 +294,6 @@ class SettingsActions {
   */
   setHasSeenAppWizard (hasSeen) {
     return this.update(SEGMENTS.APP, 'hasSeenAppWizard', hasSeen)
-  }
-
-  /**
-  * Marks the EULA as being agreed
-  */
-  acceptEULA () {
-    return this.update(SEGMENTS.APP, 'hasAgreedToEULA', true)
   }
 
   /**

@@ -4,6 +4,7 @@ import GoogleHTTP from './GoogleHTTP'
 import { GOOGLE_PROFILE_SYNC_INTERVAL, GOOGLE_MAILBOX_WATCH_INTERVAL } from 'shared/constants'
 import { GoogleMailbox, GoogleDefaultService } from 'shared/Models/Accounts/Google'
 import uuid from 'uuid'
+import URI from 'urijs'
 import ServerVent from 'Server/ServerVent'
 import {
   mailboxStore,
@@ -188,6 +189,19 @@ class GoogleStore {
     this.preventDefault()
   }
 
+  /**
+  * Gets the avatar from the response image
+  * @param image: the image object provided by google
+  * @return a url for the image
+  */
+  getAvatarFromResponseImage (image) {
+    if (!image.url) { return image.url }
+    const purl = URI(image.url)
+    const qs = purl.search(true)
+    if (!qs.sz) { return image.url }
+    return purl.removeSearch('sz').toString()
+  }
+
   handleSyncMailboxProfile ({ mailboxId }) {
     if (this.hasOpenRequest(REQUEST_TYPES.PROFILE, mailboxId)) {
       this.preventDefault()
@@ -200,7 +214,7 @@ class GoogleStore {
       .then((response) => {
         this.trackCloseRequest(REQUEST_TYPES.PROFILE, mailboxId, requestId)
         const email = (response.emails.find((a) => a.type === 'account') || {}).value
-        const avatar = response.image.url
+        const avatar = this.getAvatarFromResponseImage(response.image)
         mailboxActions.reduce.defer(mailboxId, GoogleMailboxReducer.revalidateAuth)
         mailboxActions.reduce.defer(mailboxId, GoogleMailboxReducer.setProfileInfo, email, avatar)
         this.emitChange()

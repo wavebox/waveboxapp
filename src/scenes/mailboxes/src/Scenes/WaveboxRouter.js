@@ -5,25 +5,10 @@ import SettingsScene from './SettingsScene'
 import DictionaryInstallerScene from './DictionaryInstallerScene'
 import ComposePickerScene from './ComposePickerScene'
 import ProScene from './ProScene'
-import EULAScene from './EULAScene'
 import EarlyBuildToast from './EarlyBuildToast'
-import {
-  MailboxWizardAddScene,
-  MailboxWizardCompleteScene,
-  MailboxWizardAuthenticatingScene
-} from './MailboxWizardScene'
-import {
-  MailboxWizardGmailConfigureScene,
-  MailboxWizardGoogleServicesScene,
-  MailboxWizardInboxConfigureScene
-} from './MailboxWizardScene/Google'
-import {
-  MailboxWizardMicrosoftServicesScene,
-  MailboxWizardMicrosoftConfigureScene
-} from './MailboxWizardScene/Microsoft'
-import {
-  MailboxWizardGenericConfigureScene
-} from './MailboxWizardScene/Generic'
+import MailboxWizardScene from './MailboxWizardScene'
+import MailboxWizardAddScene from './MailboxWizardAddScene'
+import MailboxReauthenticatingScene from './MailboxReauthenticatingScene'
 import {
   AppWizardIntroScene,
   AppWizardTrayScene,
@@ -66,14 +51,8 @@ export default class WaveboxRouter extends React.Component {
           <Route path='/dictionary_installer' component={DictionaryInstallerScene} />
 
           <Route path='/mailbox_wizard/add' component={MailboxWizardAddScene} />
-          <Route path='/mailbox_wizard/authenticating' component={MailboxWizardAuthenticatingScene} />
-          <Route path='/mailbox_wizard/complete/:mailboxId' component={MailboxWizardCompleteScene} />
-          <Route path='/mailbox_wizard/google/configuregmail/:mailboxId' component={MailboxWizardGmailConfigureScene} />
-          <Route path='/mailbox_wizard/google/configureinbox/:mailboxId' component={MailboxWizardInboxConfigureScene} />
-          <Route path='/mailbox_wizard/google/services/:mailboxId' component={MailboxWizardGoogleServicesScene} />
-          <Route path='/mailbox_wizard/microsoft/configure/:mailboxId' component={MailboxWizardMicrosoftConfigureScene} />
-          <Route path='/mailbox_wizard/microsoft/services/:mailboxId' component={MailboxWizardMicrosoftServicesScene} />
-          <Route path='/mailbox_wizard/generic/configure/:mailboxId' component={MailboxWizardGenericConfigureScene} />
+          <Route path='/mailbox_wizard/:mailboxType/:accessMode/:step/:mailboxId?' component={MailboxWizardScene} />
+          <Route path='/mailbox/reauthenticating' component={MailboxReauthenticatingScene} />
 
           <Route path='/app_wizard/tray' component={AppWizardTrayScene} />
           <Route path='/app_wizard/mailto' component={AppWizardMailtoScene} />
@@ -97,8 +76,6 @@ export default class WaveboxRouter extends React.Component {
 
           <Route path='/wmailimport/start' component={WmailImportStartScene} />
           <Route path='/wmailimport/complete' component={WmailImportCompleteScene} />
-
-          <EULAScene />
         </div>
       </HashRouter>
     )

@@ -570,69 +570,69 @@ class MailboxStore {
   // Mailbox Auth
   /* **************************************************************************/
 
-  handleAuthenticateGinboxMailbox ({ provisionalId }) {
+  handleAuthenticateGinboxMailbox ({ provisionalId, provisionalJS }) {
     this.preventDefault()
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = `/mailbox_wizard/${GoogleMailbox.type}/${GoogleDefaultService.ACCESS_MODES.GINBOX}/1/${provisionalId}`
     ipcRenderer.send(WB_AUTH_GOOGLE, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: GoogleMailbox.createJS(provisionalId, GoogleDefaultService.ACCESS_MODES.GINBOX)
+      provisional: provisionalJS
     })
   }
 
-  handleAuthenticateGmailMailbox ({ provisionalId }) {
+  handleAuthenticateGmailMailbox ({ provisionalId, provisionalJS }) {
     this.preventDefault()
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = `/mailbox_wizard/${GoogleMailbox.type}/${GoogleDefaultService.ACCESS_MODES.GMAIL}/1/${provisionalId}`
     ipcRenderer.send(WB_AUTH_GOOGLE, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: GoogleMailbox.createJS(provisionalId, GoogleDefaultService.ACCESS_MODES.GMAIL)
+      provisional: provisionalJS
     })
   }
 
-  handleAuthenticateSlackMailbox ({ provisionalId }) {
+  handleAuthenticateSlackMailbox ({ provisionalId, provisionalJS }) {
     this.preventDefault()
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = `/mailbox_wizard/${SlackMailbox.type}/_/1/${provisionalId}`
     ipcRenderer.send(WB_AUTH_SLACK, {
       id: provisionalId,
-      provisional: SlackMailbox.createJS(provisionalId)
+      provisional: provisionalJS
     })
   }
 
-  handleAuthenticateTrelloMailbox ({ provisionalId }) {
+  handleAuthenticateTrelloMailbox ({ provisionalId, provisionalJS }) {
     this.preventDefault()
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = `/mailbox_wizard/${TrelloMailbox.type}/_/1/${provisionalId}`
     ipcRenderer.send(WB_AUTH_TRELLO, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: TrelloMailbox.createJS(provisionalId)
+      provisional: provisionalJS
     })
   }
 
-  handleAuthenticateOutlookMailbox ({ provisionalId }) {
+  handleAuthenticateOutlookMailbox ({ provisionalId, provisionalJS }) {
     this.preventDefault()
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = `/mailbox_wizard/${MicrosoftMailbox.type}/${MicrosoftMailbox.ACCESS_MODES.OUTLOOK}/1/${provisionalId}`
     ipcRenderer.send(WB_AUTH_MICROSOFT, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: MicrosoftMailbox.createJS(provisionalId, MicrosoftMailbox.ACCESS_MODES.OUTLOOK)
+      provisional: provisionalJS
     })
   }
 
-  handleAuthenticateOffice365Mailbox ({ provisionalId }) {
+  handleAuthenticateOffice365Mailbox ({ provisionalId, provisionalJS }) {
     this.preventDefault()
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = `/mailbox_wizard/${MicrosoftMailbox.type}/${MicrosoftMailbox.ACCESS_MODES.OFFICE365}/1/${provisionalId}`
     ipcRenderer.send(WB_AUTH_MICROSOFT, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: MicrosoftMailbox.createJS(provisionalId, MicrosoftMailbox.ACCESS_MODES.OFFICE365)
+      provisional: provisionalJS
     })
   }
 
-  handleAuthenticateGenericMailbox ({ provisionalId }) {
+  handleAuthenticateGenericMailbox ({ provisionalId, provisionalJS }) {
     this.preventDefault()
-    actions.create.defer(provisionalId, GenericMailbox.createJS(provisionalId))
-    window.location.hash = '/mailbox_wizard/generic/configure/' + provisionalId
+    actions.create.defer(provisionalId, provisionalJS)
+    window.location.hash = `/mailbox_wizard/${GenericMailbox.type}/_/2/${provisionalId}`
   }
 
   /* **************************************************************************/
@@ -666,7 +666,7 @@ class MailboxStore {
     this.preventDefault()
     if (!this.mailboxes.get(mailboxId)) { return }
 
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = '/mailbox/reauthenticating'
     ipcRenderer.send(WB_AUTH_GOOGLE, {
       credentials: Bootstrap.credentials,
       id: mailboxId,
@@ -679,7 +679,7 @@ class MailboxStore {
     this.preventDefault()
     if (!this.mailboxes.get(mailboxId)) { return }
 
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = '/mailbox/reauthenticating'
     ipcRenderer.send(WB_AUTH_MICROSOFT, {
       credentials: Bootstrap.credentials,
       id: mailboxId,
@@ -692,7 +692,7 @@ class MailboxStore {
     this.preventDefault()
     if (!this.mailboxes.get(mailboxId)) { return }
 
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = '/mailbox/reauthenticating'
     ipcRenderer.send(WB_AUTH_SLACK, {
       id: mailboxId,
       provisional: null,
@@ -704,7 +704,7 @@ class MailboxStore {
     this.preventDefault()
     if (!this.mailboxes.get(mailboxId)) { return }
 
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = '/mailbox/reauthenticating'
     ipcRenderer.send(WB_AUTH_TRELLO, {
       credentials: Bootstrap.credentials,
       id: mailboxId,
@@ -751,11 +751,7 @@ class MailboxStore {
             auth: auth
           }))
           const accessMode = ((provisional.services || []).find((service) => service.type === GoogleDefaultService.type) || {}).accessMode
-          if (accessMode === GoogleDefaultService.ACCESS_MODES.GMAIL) {
-            window.location.hash = '/mailbox_wizard/google/configuregmail/' + provisionalId
-          } else {
-            window.location.hash = '/mailbox_wizard/google/configureinbox/' + provisionalId
-          }
+          window.location.hash = `/mailbox_wizard/${GoogleMailbox.type}/${accessMode}/2/${provisionalId}`
         }
       })
       .catch((err) => {
@@ -793,7 +789,7 @@ class MailboxStore {
           actions.create.defer(provisionalId, Object.assign(provisional, {
             auth: auth
           }))
-          window.location.hash = `/mailbox_wizard/complete/${provisionalId}`
+          window.location.hash = `/`
         }
       }).catch((err) => {
         console.error('[AUTH ERR]', err)
@@ -823,7 +819,7 @@ class MailboxStore {
         authToken: authToken,
         authAppKey: authAppKey
       }))
-      window.location.hash = `/mailbox_wizard/complete/${provisionalId}`
+      window.location.hash = `/`
     }
   }
 
@@ -858,7 +854,7 @@ class MailboxStore {
               protocolVersion: 2
             }
           })
-          window.location.hash = '/mailbox_wizard/microsoft/configure/' + provisionalId
+          window.location.hash = `/mailbox_wizard/${MicrosoftMailbox.type}/${provisional.accessMode}/2/${provisionalId}`
         }
       }).catch((err) => {
         console.error('[AUTH ERR]', err)

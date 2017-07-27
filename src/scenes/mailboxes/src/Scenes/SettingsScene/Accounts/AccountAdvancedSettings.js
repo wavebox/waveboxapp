@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Paper, Toggle, FlatButton, FontIcon } from 'material-ui'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
-import styles from '../SettingStyles'
+import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import * as Colors from 'material-ui/styles/colors'
 

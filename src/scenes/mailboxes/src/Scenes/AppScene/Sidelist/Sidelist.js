@@ -1,17 +1,30 @@
 import React from 'react'
-import { FontIcon, IconButton } from 'material-ui'
+import './Sidelist.less'
 import SidelistMailboxes from './SidelistMailboxes'
-import SidelistItemAddMailbox from './SidelistItemAddMailbox'
-import SidelistItemSettings from './SidelistItemSettings'
-import SidelistItemWizard from './SidelistItemWizard'
-import SidelistItemPro from './SidelistItemPro'
 import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
-import styles from './SidelistStyles'
 import shallowCompare from 'react-addons-shallow-compare'
+import SidelistWindowControls from './SidelistWindowControls'
+import SidelistControls from './SidelistControls'
+import SidelistUpgradePlans from './SidelistUpgradePlans'
 import * as Colors from 'material-ui/styles/colors'
 
-const { remote } = window.nativeRequire('electron')
+const styles = {
+  container: {
+    backgroundColor: Colors.blueGrey900,
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  mailboxes: {
+    flexGrow: 10000,
+    overflowY: 'auto'
+  }
+}
 
 export default class Sidelist extends React.Component {
   /* **************************************************************************/
@@ -19,21 +32,11 @@ export default class Sidelist extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    settingsStore.listen(this.settingsUpdated)
     userStore.listen(this.userUpdated)
-    if (process.platform !== 'darwin') {
-      remote.getCurrentWindow().on('maximize', this.handleWindowMaximize)
-      remote.getCurrentWindow().on('unmaximize', this.handleWindowUnmaximize)
-    }
   }
 
   componentWillUnmount () {
-    settingsStore.unlisten(this.settingsUpdated)
     userStore.unlisten(this.userUpdated)
-    if (process.platform !== 'darwin') {
-      remote.getCurrentWindow().removeListener('maximize', this.handleWindowMaximize)
-      remote.getCurrentWindow().removeListener('unmaximize', this.handleWindowUnmaximize)
-    }
   }
 
   /* **************************************************************************/
@@ -44,35 +47,15 @@ export default class Sidelist extends React.Component {
     const settingsState = settingsStore.getState()
     const userState = userStore.getState()
     return {
-      showTitlebar: settingsState.ui.showTitlebar, // purposely don't update this, because effects are only seen after restart
-      showWizard: !settingsState.app.hasSeenAppWizard,
-      showPlansInSidebar: userState.user.showPlansInSidebar,
-      isWindowMaximized: process.platform !== 'darwin' ? remote.getCurrentWindow().isMaximized() : undefined
+      showTitlebar: settingsState.launched.ui.showTitlebar,
+      showPlans: userState.user.showPlansInSidebar
     }
   })()
 
-  settingsUpdated = (settingsState) => {
-    this.setState({
-      showWizard: !settingsState.app.hasSeenAppWizard
-    })
-  }
-
   userUpdated = (userState) => {
     this.setState({
-      showPlansInSidebar: userState.user.showPlansInSidebar
+      showPlans: userState.user.showPlansInSidebar
     })
-  }
-
-  /* **************************************************************************/
-  // Window Events
-  /* **************************************************************************/
-
-  handleWindowMaximize = () => {
-    this.setState({ isWindowMaximized: true })
-  }
-
-  handleWindowUnmaximize = () => {
-    this.setState({ isWindowMaximized: false })
   }
 
   /* **************************************************************************/
@@ -84,75 +67,15 @@ export default class Sidelist extends React.Component {
   }
 
   render () {
-    const { showTitlebar, showWizard, showPlansInSidebar, isWindowMaximized } = this.state
+    const { showTitlebar, showPlans } = this.state
     const { style, ...passProps } = this.props
 
-    let extraItems = 0
-    extraItems += showWizard ? 1 : 0
-    extraItems += showPlansInSidebar ? 1 : 0
-
-    const scrollerStyle = Object.assign({},
-      styles.scroller,
-      extraItems === 1 ? styles.scroller3Icons : undefined,
-      extraItems === 2 ? styles.scroller4Icons : undefined,
-      { top: showTitlebar ? 0 : 25 }
-    )
-    const footerStyle = Object.assign({},
-      styles.footer,
-      extraItems === 1 ? styles.footer3Icons : undefined,
-      extraItems === 2 ? styles.footer4Icons : undefined
-    )
-
     return (
-      <div
-        {...passProps}
-        style={Object.assign({}, styles.container, style)}>
-        {!showTitlebar && process.platform !== 'darwin' ? (
-          <div style={styles.windowControls}>
-            <IconButton
-              onTouchTap={() => remote.getCurrentWindow().close()}
-              style={styles.windowControlButton}
-              hoveredStyle={styles.windowControlButtonHovered}
-              iconStyle={styles.windowControlIcon}>
-              <FontIcon className='fa fa-fw fa-window-close' color={Colors.blueGrey50} />
-            </IconButton>
-            {isWindowMaximized ? (
-              <IconButton
-                onTouchTap={() => remote.getCurrentWindow().unmaximize()}
-                style={styles.windowControlButton}
-                hoveredStyle={styles.windowControlButtonHovered}
-                iconStyle={styles.windowControlIcon}>
-                <FontIcon className='fa fa-fw fa-window-restore' color={Colors.blueGrey50} />
-              </IconButton>
-            ) : (
-              <IconButton
-                onTouchTap={() => remote.getCurrentWindow().maximize()}
-                style={styles.windowControlButton}
-                hoveredStyle={styles.windowControlButtonHovered}
-                iconStyle={styles.windowControlIcon}>
-                <FontIcon className='fa fa-fw fa-window-maximize' color={Colors.blueGrey50} />
-              </IconButton>
-            )}
-            <IconButton
-              onTouchTap={() => remote.getCurrentWindow().minimize()}
-              style={styles.windowControlButton}
-              hoveredStyle={styles.windowControlButtonHovered}
-              iconStyle={styles.windowControlIcon}>
-              <FontIcon className='fa fa-fw fa-window-minimize' color={Colors.blueGrey50} />
-            </IconButton>
-          </div>
-        ) : undefined}
-        <div
-          style={scrollerStyle}
-          className='ReactComponent-Sidelist-Scroller'>
-          <SidelistMailboxes />
-        </div>
-        <div style={footerStyle}>
-          {showWizard ? (<SidelistItemWizard />) : undefined}
-          {showPlansInSidebar ? (<SidelistItemPro />) : undefined}
-          <SidelistItemAddMailbox />
-          <SidelistItemSettings />
-        </div>
+      <div {...passProps} style={{...styles.container, ...style}}>
+        {!showTitlebar ? (<SidelistWindowControls />) : undefined}
+        {showPlans ? (<SidelistUpgradePlans />) : undefined}
+        <SidelistMailboxes style={styles.mailboxes} className='ReactComponent-Sidelist-Mailboxes' />
+        <SidelistControls />
       </div>
     )
   }

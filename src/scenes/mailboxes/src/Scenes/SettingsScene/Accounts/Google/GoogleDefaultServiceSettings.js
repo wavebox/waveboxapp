@@ -8,7 +8,7 @@ import { mailboxActions, GoogleDefaultServiceReducer } from 'stores/mailbox'
 import { Row, Col } from 'Components/Grid'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
 import AccountSleepableSettings from '../AccountSleepableSettings'
-import styles from '../../SettingStyles'
+import styles from '../../CommonSettingStyles'
 
 export default class GoogleDefaultServiceSettings extends React.Component {
   /* **************************************************************************/

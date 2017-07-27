@@ -8,6 +8,8 @@ class UISettings extends Model {
   get sidebarEnabled () { return this._value_('sidebarEnabled', true) }
   get openHidden () { return this._value_('openHidden', false) }
   get showSleepableServiceIndicator () { return this._value_('showSleepableServiceIndicator', false) }
+  get showSidebarSupport () { return this._value_('showSidebarSupport', true) }
+  get showSidebarNewsfeed () { return this._value_('showSidebarNewsfeed', true) }
 }
 
 module.exports = UISettings

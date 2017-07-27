@@ -26,6 +26,8 @@ class GoogleMailbox extends CoreMailbox {
       CoreMailbox.SERVICE_TYPES.STORAGE
     ]
   }
+  static get defaultColorGmail () { return MailboxColors.GMAIL }
+  static get defaultColorGinbox () { return MailboxColors.GINBOX }
 
   /* **************************************************************************/
   // Class: Humanized
@@ -81,13 +83,29 @@ class GoogleMailbox extends CoreMailbox {
   * Creates a blank js object that can used to instantiate this mailbox
   * @param id=autogenerate: the id of the mailbox
   * @param accessMode=GINBOX: the access mode for this mailbox
+  * @param serviceTypes=defaultList: the default services
+  * @param serviceDisplayMode=SIDEBAR: the mode to display the services in
+  * @param color=undefined: the color of the mailbox
   * @return a vanilla js object representing the data for this mailbox
   */
-  static createJS (id = this.provisionId(), accessMode = GoogleDefaultService.ACCESS_MODES.GINBOX) {
-    const mailboxJS = super.createJS(id)
+  static createJS (id = this.provisionId(), accessMode = GoogleDefaultService.ACCESS_MODES.GINBOX, serviceTypes = this.defaultServiceTypes, serviceDisplayMode = this.SERVICE_DISPLAY_MODES.SIDEBAR, color = undefined) {
+    const mailboxJS = super.createJS(id, serviceTypes, serviceDisplayMode, color)
     const defaultService = mailboxJS.services.find((service) => service.type === CoreMailbox.SERVICE_TYPES.DEFAULT)
     defaultService.accessMode = accessMode
     return mailboxJS
+  }
+
+  /**
+  * Sanitizes provisionalJS
+  * @param provisionalJS: the javascript to sanitize
+  * @param accessMode: the access mode to enforce
+  * @return a copy of the javascript, sanitized
+  */
+  static sanitizeProvisionalJS (provisionalJS, accessMode) {
+    const sanitized = super.sanitizeProvisionalJS(provisionalJS)
+    const defaultService = sanitized.services.find((service) => service.type === CoreMailbox.SERVICE_TYPES.DEFAULT)
+    defaultService.accessMode = accessMode
+    return sanitized
   }
 
   /**
@@ -122,9 +140,9 @@ class GoogleMailbox extends CoreMailbox {
       const defaultService = this.serviceForType(CoreMailbox.SERVICE_TYPES.DEFAULT)
       if (defaultService) {
         if (defaultService.accessMode === GoogleDefaultService.ACCESS_MODES.GMAIL) {
-          return MailboxColors.GMAIL
+          return this.constructor.defaultColorGmail
         } else if (defaultService.accessMode === GoogleDefaultService.ACCESS_MODES.GINBOX) {
-          return MailboxColors.GINBOX
+          return this.constructor.defaultColorGinbox
         }
       }
     }

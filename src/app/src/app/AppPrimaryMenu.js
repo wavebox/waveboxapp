@@ -1,11 +1,19 @@
 const { Menu, shell, dialog } = require('electron')
 const mailboxStore = require('./stores/mailboxStore')
 const settingStore = require('./stores/settingStore')
-const { GITHUB_URL, GITHUB_ISSUE_URL, WEB_URL, PRIVACY_URL } = require('../shared/constants')
 const Release = require('../shared/Release')
 const pkg = require('../package.json')
 const MenuTool = require('../shared/Electron/MenuTool')
 const electronLocalshortcut = require('electron-localshortcut')
+const {
+  GITHUB_URL,
+  BLOG_URL,
+  WEB_URL,
+  PRIVACY_URL,
+  KB_URL,
+  EULA_URL,
+  SUPPORT_URL
+} = require('../shared/constants')
 
 class AppPrimaryMenu {
   /* ****************************************************************************/
@@ -56,10 +64,13 @@ class AppPrimaryMenu {
         const focused = windowManager.focused()
         if (focused) { focused.openDevTools() }
       },
-      learnMoreGithub: () => { shell.openExternal(GITHUB_URL) },
-      learnMore: () => { shell.openExternal(WEB_URL) },
+      waveboxGithub: () => { shell.openExternal(GITHUB_URL) },
+      waveboxWebsite: () => { shell.openExternal(WEB_URL) },
+      waveboxBlog: () => { shell.openExternal(BLOG_URL) },
       privacy: () => { shell.openExternal(PRIVACY_URL) },
-      bugReport: () => { shell.openExternal(GITHUB_ISSUE_URL) },
+      eula: () => { shell.openExternal(EULA_URL) },
+      support: () => { shell.openExternal(SUPPORT_URL) },
+      knowledgeBase: () => { shell.openExternal(KB_URL) },
       zoomIn: () => {
         const focused = windowManager.focused()
         if (focused) { focused.zoomIn() }
@@ -381,10 +392,15 @@ class AppPrimaryMenu {
         label: 'Help',
         role: 'help',
         submenu: [
-          { label: 'Wavebox Website', click: this._selectors.learnMore },
+          { label: 'Wavebox Website', click: this._selectors.waveboxWebsite },
+          { label: 'Wavebox Blog', click: this._selectors.waveboxBlog },
+          { label: 'Wavebox on GitHub', click: this._selectors.waveboxGithub },
+          { type: 'separator' },
+          { label: 'Knowledge Base', click: this._selectors.knowledgeBase },
+          { label: 'Support', click: this._selectors.support },
+          { type: 'separator' },
           { label: 'Privacy', click: this._selectors.privacy },
-          { label: 'Wavebox on GitHub', click: this._selectors.learnMoreGithub },
-          { label: 'Report a Bug', click: this._selectors.bugReport }
+          { label: 'EULA', click: this._selectors.eula }
         ]
       }
     ])

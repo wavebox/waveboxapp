@@ -1,7 +1,32 @@
 const Model = require('./Model')
 const MailboxTypes = require('./Accounts/MailboxTypes')
+const MS_IN_DAY = (1000 * 60 * 60 * 24)
+const PLANS = Object.freeze({
+  FREE: 'free',
+  TRIAL: 'trial',
+  PRO: 'pro1'
+})
 
 class User extends Model {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get PLANS () { return PLANS }
+
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  /**
+  * @param data: the user data
+  * @param dataEpoch: the time the data was received from the server
+  */
+  constructor (data, dataEpoch) {
+    super(data)
+    this.__dataEpoch__ = dataEpoch
+  }
+
   /* **************************************************************************/
   // Properties
   /* **************************************************************************/
@@ -12,6 +37,8 @@ class User extends Model {
   get clientSecret () { return this._value_('clientSecret', undefined) }
   get accountMessageUrl () { return this._value_('messageUrl', undefined) }
   get showPlansInSidebar () { return this._value_('showPlansInSidebar', true) }
+  get sidebarPlanExpiryMillis () { return this._value_('sidebarPlanExpiry', 0) }
+  get sidebarPlanExpiryDays () { return Math.round(this.sidebarPlanExpiryMillis / (MS_IN_DAY)) }
 
   /* **************************************************************************/
   // Properties: Permissions: Accounts
@@ -47,6 +74,13 @@ class User extends Model {
 
   get hasServices () { return this._value_('hasServices', false) }
   get hasSleepable () { return this._value_('hasSleepable', false) }
+
+  /* **************************************************************************/
+  // Properties: User
+  /* **************************************************************************/
+
+  get userEmail () { return this._value_('userEmail', null) }
+  get hasUserEmail () { return !!this.userEmail }
 }
 
 module.exports = User

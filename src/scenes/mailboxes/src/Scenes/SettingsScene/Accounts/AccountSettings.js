@@ -4,7 +4,7 @@ import {SelectField, MenuItem, RaisedButton} from 'material-ui'
 import mailboxStore from 'stores/mailbox/mailboxStore'
 import userStore from 'stores/user/userStore'
 import * as Colors from 'material-ui/styles/colors'
-import styles from '../SettingStyles'
+import commonStyles from '../CommonSettingStyles'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import CustomCodeEditingDialog from './CustomCodeEditingDialog'
 import RestrictedAccountSettings from './RestrictedAccountSettings'
@@ -15,6 +15,25 @@ import GenericAccountSettings from './Generic/GenericAccountSettings'
 import MicrosoftAccountSettings from './Microsoft/MicrosoftAccountSettings'
 import { Row, Col } from 'Components/Grid'
 import { MailboxAvatar } from 'Components/Mailbox'
+
+const styles = {
+  accountPicker: {
+    position: 'relative',
+    height: 100,
+    marginTop: -24
+  },
+  accountPickerAvatar: {
+    position: 'absolute',
+    top: 20,
+    left: 20
+  },
+  accountPickerContainer: {
+    position: 'absolute',
+    top: 25,
+    left: 100,
+    right: 15
+  }
+}
 
 export default class AccountSettings extends React.Component {
   /* **************************************************************************/
@@ -243,8 +262,8 @@ export default class AccountSettings extends React.Component {
           <div>
             <Row>
               <Col md={12}>
-                <h1 style={styles.heading}>Account</h1>
-                <p style={styles.headingInfo}>
+                <h1 style={commonStyles.heading}>Account</h1>
+                <p style={commonStyles.headingInfo}>
                   <strong>{selected.humanizedType}</strong> {selected.displayName}
                 </p>
               </Col>

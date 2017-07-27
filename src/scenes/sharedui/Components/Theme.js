@@ -6,7 +6,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 export default getMuiTheme({
   spacing: Spacing,
   zIndex: zIndex,
-  fontFamily: 'Roboto, sans-serif',
+  fontFamily: '"Open Sans", sans-serif',
   palette: {
     primary1Color: Colors.lightBlue600,
     primary2Color: Colors.lightBlue500,
@@ -20,5 +20,8 @@ export default getMuiTheme({
     borderColor: Colors.grey300,
     disabledColor: ColorManipulator.fade(Colors.darkBlack, 0.3),
     pickerHeaderColor: Colors.cyan500
+  },
+  button: {
+    textTransform: 'none'
   }
 })

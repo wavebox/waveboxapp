@@ -4,12 +4,22 @@ import shallowCompare from 'react-addons-shallow-compare'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
-import styles from '../SettingStyles'
 import * as Colors from 'material-ui/styles/colors'
 import {
   Toolbar, ToolbarGroup, ToolbarTitle,
   Avatar, FontIcon, IconButton, Paper
 } from 'material-ui'
+
+const styles = {
+  servicePaper: {
+    padding: 0,
+    marginBottom: 16,
+    marginTop: 16
+  },
+  serviceBody: {
+    padding: 15
+  }
+}
 
 export default class AccountServiceItem extends React.Component {
   /* **************************************************************************/

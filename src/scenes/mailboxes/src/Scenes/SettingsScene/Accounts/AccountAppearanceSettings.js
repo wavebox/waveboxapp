@@ -3,7 +3,7 @@ import React from 'react'
 import { Paper, RaisedButton, FontIcon, Toggle } from 'material-ui'
 import { ColorPickerButton } from 'Components'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
-import styles from '../SettingStyles'
+import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 
 export default class AccountAppearanceSettings extends React.Component {

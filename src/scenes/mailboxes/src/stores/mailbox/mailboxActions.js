@@ -2,6 +2,12 @@ import alt from '../alt'
 import mailboxDispatch from './mailboxDispatch'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import ServiceReducer from './ServiceReducer'
+import { GoogleMailbox, GoogleDefaultService } from 'shared/Models/Accounts/Google'
+import { SlackMailbox } from 'shared/Models/Accounts/Slack'
+import { TrelloMailbox } from 'shared/Models/Accounts/Trello'
+import { MicrosoftMailbox } from 'shared/Models/Accounts/Microsoft'
+import { GenericMailbox } from 'shared/Models/Accounts/Generic'
+import MailboxTypes from 'shared/Models/Accounts/MailboxTypes'
 import {
   WB_AUTH_GOOGLE_COMPLETE,
   WB_AUTH_GOOGLE_ERROR,
@@ -43,43 +49,187 @@ class MailboxActions {
   remoteChange () { return {} }
 
   /* **************************************************************************/
+  // Mailbox Wizards
+  /* **************************************************************************/
+
+  /**
+  * Starts the add mailbox wizard
+  */
+  startAddGinboxWizard () {
+    window.location.hash = `/mailbox_wizard/${GoogleMailbox.type}/${GoogleDefaultService.ACCESS_MODES.GINBOX}/0`
+    return {}
+  }
+
+  /**
+  * Starts the add mailbox wizard
+  */
+  startAddGmailWizard () {
+    window.location.hash = `/mailbox_wizard/${GoogleMailbox.type}/${GoogleDefaultService.ACCESS_MODES.GMAIL}/0`
+    return {}
+  }
+
+  /**
+  * Starts the add mailbox wizard
+  */
+  startAddSlackWizard () {
+    window.location.hash = `/mailbox_wizard/${SlackMailbox.type}/_/0`
+    return {}
+  }
+
+  /**
+  * Starts the add mailbox wizard
+  */
+  startAddTrelloWizard () {
+    window.location.hash = `/mailbox_wizard/${TrelloMailbox.type}/_/0`
+    return {}
+  }
+
+  /**
+  * Starts the add mailbox wizard
+  */
+  startAddOutlookWizard () {
+    window.location.hash = `/mailbox_wizard/${MicrosoftMailbox.type}/${MicrosoftMailbox.ACCESS_MODES.OUTLOOK}/0`
+    return {}
+  }
+
+  /**
+  * Starts the add mailbox wizard
+  */
+  startAddOffice365Wizard () {
+    window.location.hash = `/mailbox_wizard/${MicrosoftMailbox.type}/${MicrosoftMailbox.ACCESS_MODES.OFFICE365}/0`
+    return {}
+  }
+
+  /**
+  * Starts the add mailbox wizard
+  */
+  startAddGenericWizard () {
+    window.location.hash = `/mailbox_wizard/${GenericMailbox.type}/_/0`
+    return {}
+  }
+
+  /* **************************************************************************/
   // Mailbox Auth
   /* **************************************************************************/
 
   /**
-  * Starts the auth process for google inbox
+  * Authenticates a new mailbox
+  * @param MailboxClass: the mailbox class
+  * @param accessMode=undefined: the acessMode if applicable
+  * @param provisionalJS=undefined: the provisional json object to create the mailbox
   */
-  authenticateGinboxMailbox () { return { provisionalId: CoreMailbox.provisionId() } }
+  authenticateMailbox (MailboxClass, accessMode = undefined, provisionalJS = undefined) {
+    if (MailboxClass.type === MailboxTypes.GOOGLE) {
+      if (accessMode === GoogleDefaultService.ACCESS_MODES.GMAIL) {
+        return this.authenticateGmailMailbox(provisionalJS)
+      } else if (accessMode === GoogleDefaultService.ACCESS_MODES.GINBOX) {
+        return this.authenticateGinboxMailbox(provisionalJS)
+      }
+    } else if (MailboxClass.type === MailboxTypes.MICROSOFT) {
+      if (accessMode === MicrosoftMailbox.ACCESS_MODES.OUTLOOK) {
+        return this.authenticateOutlookMailbox(provisionalJS)
+      } else if (accessMode === MicrosoftMailbox.ACCESS_MODES.OFFICE365) {
+        return this.authenticateOffice365Mailbox(provisionalJS)
+      }
+    } else if (MailboxClass.type === MailboxTypes.TRELLO) {
+      return this.authenticateTrelloMailbox(provisionalJS)
+    } else if (MailboxClass.type === MailboxTypes.SLACK) {
+      return this.authenticateSlackMailbox(provisionalJS)
+    } else if (MailboxClass.type === MailboxTypes.GENERIC) {
+      return this.authenticateGenericMailbox(provisionalJS)
+    }
+  }
+
+  /**
+  * Starts the auth process for google inbox
+  * @param provisionalJS=undefined: the provisional json object to create the mailbox
+  */
+  authenticateGinboxMailbox (provisionalJS = undefined) {
+    if (provisionalJS) {
+      provisionalJS = GoogleMailbox.sanitizeProvisionalJS(provisionalJS, GoogleDefaultService.ACCESS_MODES.GINBOX)
+    } else {
+      provisionalJS = GoogleMailbox.createJS(CoreMailbox.provisionId(), GoogleDefaultService.ACCESS_MODES.GINBOX)
+    }
+    return { provisionalJS: provisionalJS, provisionalId: provisionalJS.id }
+  }
 
   /**
   * Starts the auth process for gmail
+  * @param provisionalJS=undefined: the provisional json object to create the mailbox
   */
-  authenticateGmailMailbox () { return { provisionalId: CoreMailbox.provisionId() } }
+  authenticateGmailMailbox (provisionalJS = undefined) {
+    if (provisionalJS) {
+      provisionalJS = GoogleMailbox.sanitizeProvisionalJS(provisionalJS, GoogleDefaultService.ACCESS_MODES.GMAIL)
+    } else {
+      provisionalJS = GoogleMailbox.createJS(CoreMailbox.provisionId(), GoogleDefaultService.ACCESS_MODES.GMAIL)
+    }
+    return { provisionalJS: provisionalJS, provisionalId: provisionalJS.id }
+  }
 
   /**
   * Starts the auth process for slack
+  * @param provisionalJS=undefined: the provisional json object to create the mailbox
   */
-  authenticateSlackMailbox () { return { provisionalId: CoreMailbox.provisionId() } }
+  authenticateSlackMailbox (provisionalJS = undefined) {
+    if (provisionalJS) {
+      provisionalJS = SlackMailbox.sanitizeProvisionalJS(provisionalJS)
+    } else {
+      provisionalJS = SlackMailbox.createJS(CoreMailbox.provisionId())
+    }
+    return { provisionalJS: provisionalJS, provisionalId: provisionalJS.id }
+  }
 
   /**
   * Starts the auth process for trello
+  * @param provisionalJS=undefined: the provisional json object to create the mailbox
   */
-  authenticateTrelloMailbox () { return { provisionalId: CoreMailbox.provisionId() } }
+  authenticateTrelloMailbox (provisionalJS = undefined) {
+    if (provisionalJS) {
+      provisionalJS = TrelloMailbox.sanitizeProvisionalJS(provisionalJS)
+    } else {
+      provisionalJS = TrelloMailbox.createJS(CoreMailbox.provisionId())
+    }
+    return { provisionalJS: provisionalJS, provisionalId: provisionalJS.id }
+  }
 
   /**
   * Starts the auth process for outlook
+  * @param provisionalJS=undefined: the provisional json object to create the mailbox
   */
-  authenticateOutlookMailbox () { return { provisionalId: CoreMailbox.provisionId() } }
+  authenticateOutlookMailbox (provisionalJS = undefined) {
+    if (provisionalJS) {
+      provisionalJS = MicrosoftMailbox.sanitizeProvisionalJS(provisionalJS, MicrosoftMailbox.ACCESS_MODES.OUTLOOK)
+    } else {
+      provisionalJS = MicrosoftMailbox.createJS(CoreMailbox.provisionId(), MicrosoftMailbox.ACCESS_MODES.OUTLOOK)
+    }
+    return { provisionalJS: provisionalJS, provisionalId: provisionalJS.id }
+  }
 
   /**
   * Starts the auth process for office 365
+  * @param provisionalJS=undefined: the provisional json object to create the mailbox
   */
-  authenticateOffice365Mailbox () { return { provisionalId: CoreMailbox.provisionId() } }
+  authenticateOffice365Mailbox (provisionalJS = undefined) {
+    if (provisionalJS) {
+      provisionalJS = MicrosoftMailbox.sanitizeProvisionalJS(provisionalJS, MicrosoftMailbox.ACCESS_MODES.OFFICE365)
+    } else {
+      provisionalJS = MicrosoftMailbox.createJS(CoreMailbox.provisionId(), MicrosoftMailbox.ACCESS_MODES.OFFICE365)
+    }
+    return { provisionalJS: provisionalJS, provisionalId: provisionalJS.id }
+  }
 
   /**
   * Starts the auth process for generic mailbox
+  * @param provisionalJS=undefined: the provisional json object to create the mailbox
   */
-  authenticateGenericMailbox () { return { provisionalId: CoreMailbox.provisionId() } }
+  authenticateGenericMailbox (provisionalJS = undefined) {
+    if (provisionalJS) {
+      provisionalJS = GenericMailbox.sanitizeProvisionalJS(provisionalJS)
+    } else {
+      provisionalJS = GenericMailbox.createJS(CoreMailbox.provisionId())
+    }
+    return { provisionalJS: provisionalJS, provisionalId: provisionalJS.id }
+  }
 
   /* **************************************************************************/
   // Mailbox Re-auth
