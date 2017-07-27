@@ -4,7 +4,6 @@ import shallowCompare from 'react-addons-shallow-compare'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
-import { userStore } from 'stores/user'
 import { List, ListItem, Toggle, SelectField, MenuItem } from 'material-ui'
 
 const styles = {
@@ -41,33 +40,8 @@ export default class WizardServicePicker extends React.Component {
     enabledServices: PropTypes.array.isRequired,
     onServicesChanged: PropTypes.func.isRequired,
     servicesDisplayMode: PropTypes.string.isRequired,
-    onServicesDisplayModeChanged: PropTypes.func.isRequired
-  }
-
-  /* **************************************************************************/
-  // Component Lifecycle
-  /* **************************************************************************/
-
-  componentDidMount () {
-    userStore.listen(this.userUpdated)
-  }
-
-  componentWillUnmount () {
-    userStore.unlisten(this.userUpdated)
-  }
-
-  /* **************************************************************************/
-  // Data lifecycle
-  /* **************************************************************************/
-
-  state = {
-    userHasServices: userStore.getState().user.hasServices
-  }
-
-  userUpdated = (userState) => {
-    this.setState({
-      userHasServices: userState.user.hasServices
-    })
+    onServicesDisplayModeChanged: PropTypes.func.isRequired,
+    userHasServices: PropTypes.bool.isRequired
   }
 
   /* **************************************************************************/
@@ -109,8 +83,7 @@ export default class WizardServicePicker extends React.Component {
   * @return jsx
   */
   renderServiceListItem (serviceType) {
-    const { MailboxClass, enabledServices } = this.props
-    const { userHasServices } = this.state
+    const { MailboxClass, enabledServices, userHasServices } = this.props
     const ServiceClass = ServiceFactory.getClass(MailboxClass.type, serviceType)
     const isEnabled = !!enabledServices.find((s) => s === serviceType)
 
@@ -143,9 +116,9 @@ export default class WizardServicePicker extends React.Component {
       style,
       servicesDisplayMode,
       onServicesDisplayModeChanged,
+      userHasServices,
       ...passProps
     } = this.props
-    const { userHasServices } = this.state
 
     const serviceTypes = MailboxClass.supportedServiceTypes.filter((t) => t !== CoreService.SERVICE_TYPES.DEFAULT)
     const serviceTypeGroups = [

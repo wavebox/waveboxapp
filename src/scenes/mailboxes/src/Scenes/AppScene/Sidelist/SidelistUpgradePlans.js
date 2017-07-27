@@ -172,7 +172,6 @@ export default class SidelistUpgradePlans extends React.Component {
   */
   generatePopupContent (currentPlan, expiryDays) {
     let text
-    //TODO check this text
     if (currentPlan === User.PLANS.FREE) {
       text = ['Enjoy the best of Wavebox. Upgrade now!']
     } else if (currentPlan === User.PLANS.TRIAL) {

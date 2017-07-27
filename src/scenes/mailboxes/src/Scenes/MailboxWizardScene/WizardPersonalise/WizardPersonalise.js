@@ -9,6 +9,8 @@ import WizardColorPicker from './WizardColorPicker'
 import WizardServicePicker from './WizardServicePicker'
 import { FlatButton, RaisedButton } from 'material-ui'
 import { mailboxActions } from 'stores/mailbox'
+import { userStore } from 'stores/user'
+import * as Colors from 'material-ui/styles/colors'
 
 const styles = {
   // Layout
@@ -55,6 +57,13 @@ const styles = {
     display: 'inline-block',
     maxWidth: '100%'
   },
+  servicesPurchaseContainer: {
+    border: `2px solid ${Colors.lightBlue500}`,
+    borderRadius: 4,
+    padding: 16,
+    display: 'inline-block',
+    maxWidth: '100%'
+  },
 
   // Footer
   cancelButton: {
@@ -87,6 +96,14 @@ export default class WizardPersonalise extends React.Component {
     }
   }
 
+  componentDidMount () {
+    userStore.listen(this.userUpdated)
+  }
+
+  componentWillUnmount () {
+    userStore.unlisten(this.userUpdated)
+  }
+
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
@@ -94,7 +111,14 @@ export default class WizardPersonalise extends React.Component {
   state = {
     color: this.getDefaultMailboxColor(this.props.MailboxClass, this.props.accessMode),
     enabledServices: this.props.MailboxClass.defaultServiceTypes,
-    servicesDisplayMode: CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR
+    servicesDisplayMode: CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR,
+    userHasServices: userStore.getState().user.hasServices
+  }
+
+  userUpdated = (userState) => {
+    this.setState({
+      userHasServices: userState.user.hasServices
+    })
   }
 
   /* **************************************************************************/
@@ -109,6 +133,13 @@ export default class WizardPersonalise extends React.Component {
     const { enabledServices, servicesDisplayMode, color } = this.state
     const mailboxJS = this.createJS(MailboxClass, accessMode, enabledServices, servicesDisplayMode, color)
     mailboxActions.authenticateMailbox(MailboxClass, accessMode, mailboxJS)
+  }
+
+  /**
+  * Opens the pro dialog
+  */
+  handleOpenPro = () => {
+    window.location.hash = '/pro'
   }
 
   /* **************************************************************************/
@@ -168,8 +199,7 @@ export default class WizardPersonalise extends React.Component {
 
   render () {
     const { MailboxClass, accessMode, onRequestCancel, style, ...passProps } = this.props
-    const { color, enabledServices, servicesDisplayMode } = this.state
-
+    const { color, enabledServices, servicesDisplayMode, userHasServices } = this.state
     return (
       <div {...passProps} style={{ ...styles.container, ...style }}>
         <div style={styles.body} className='ReactComponent-MaterialUI-Dialog-Body-Scrollbars'>
@@ -184,16 +214,38 @@ export default class WizardPersonalise extends React.Component {
               selectedColor={color}
               onColorPicked={(color) => this.setState({ color: color })} />
           </div>
-          {MailboxClass.supportsAdditionalServiceTypes ? (
+          {MailboxClass.supportsAdditionalServiceTypes && userHasServices ? (
             <div>
               <h2 style={styles.heading}>Choose your services</h2>
               <p style={styles.subHeading}>Pick which other services you'd like to use alongside your account</p>
               <WizardServicePicker
+                userHasServices={userHasServices}
                 MailboxClass={MailboxClass}
                 enabledServices={enabledServices}
                 onServicesChanged={(nextServices) => this.setState({ enabledServices: nextServices })}
                 servicesDisplayMode={servicesDisplayMode}
                 onServicesDisplayModeChanged={(mode) => this.setState({ servicesDisplayMode: mode })} />
+            </div>
+          ) : undefined}
+          {MailboxClass.supportsAdditionalServiceTypes && !userHasServices ? (
+            <div>
+              <h2 style={styles.heading}>Choose your services</h2>
+              <p style={styles.subHeading}>You can use all these services alongside your account when you purchase Wavebox</p>
+              <div style={styles.servicesPurchaseContainer}>
+                <FlatButton
+                  primary
+                  label='Purchase Wavebox'
+                  onClick={this.handleOpenPro} />
+                <br />
+                <br />
+                <WizardServicePicker
+                  userHasServices={userHasServices}
+                  MailboxClass={MailboxClass}
+                  enabledServices={enabledServices}
+                  onServicesChanged={(nextServices) => this.setState({ enabledServices: nextServices })}
+                  servicesDisplayMode={servicesDisplayMode}
+                  onServicesDisplayModeChanged={(mode) => this.setState({ servicesDisplayMode: mode })} />
+              </div>
             </div>
           ) : undefined}
         </div>

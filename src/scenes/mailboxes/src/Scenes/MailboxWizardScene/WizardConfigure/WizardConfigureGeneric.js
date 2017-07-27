@@ -19,6 +19,9 @@ const styles = {
     fontWeight: 300,
     marginTop: -10,
     fontSize: 16
+  },
+  footerButton: {
+    marginRight: 8
   }
 }
 
@@ -174,6 +177,7 @@ export default class WizardConfigureGeneric extends React.Component {
     const buttons = (
       <div>
         <FlatButton
+          style={styles.footerButton}
           disabled={hasErrors}
           onTouchTap={() => {
             const validated = this.handleFinish(mailbox, onRequestCancel)
@@ -183,6 +187,7 @@ export default class WizardConfigureGeneric extends React.Component {
           }}
           label='Account Settings' />
         <FlatButton
+          style={styles.footerButton}
           onTouchTap={() => this.handleCancel(mailbox, onRequestCancel)}
           label='Cancel' />
         <RaisedButton
