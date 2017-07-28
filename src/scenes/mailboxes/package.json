@@ -11,7 +11,7 @@
     "color": "2.0.0",
     "fbjs": "0.8.12",
     "material-ui": "0.18.6",
-    "phoenix": "phoenixframework/phoenix#v1.2.4",
+    "phoenix": "wavebox/phoenix#57d2e1cef1dceaaeb110d040dd5cb2fd208ceed4",
     "prop-types": "15.5.10",
     "qs": "6.5.0",
     "querystring": "0.2.0",
