@@ -10,6 +10,7 @@ class MonitorStore {
   constructor () {
     this.syncInterval = null
     this.processInfo = new Map()
+    this.connectionInfo = new Map()
 
     /**
     * @return the process info as an array
@@ -17,6 +18,19 @@ class MonitorStore {
     this.processInfoArray = () => {
       const arr = []
       this.processInfo.forEach((v) => arr.push(v))
+      return arr
+    }
+
+    /**
+    * @return the connection info as an array
+    */
+    this.connectionInfoArray = () => {
+      const arr = []
+      this.connectionInfo.forEach((connections, pid) => {
+        connections.forEach((connection) => {
+          arr.push({ ...connection, pid: pid })
+        })
+      })
       return arr
     }
 
@@ -75,6 +89,9 @@ class MonitorStore {
 
   handleSubmitProcessResourceUsage ({ info }) {
     this.processInfo.set(info.pid, info)
+    if (info.connections) {
+      this.connectionInfo.set(info.pid, info.connections)
+    }
   }
 }
 

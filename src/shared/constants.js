@@ -50,7 +50,9 @@ module.exports = Object.freeze({
   DISALLOWED_HTML5_NOTIFICATION_HOSTS: [
     'mail.google.com',
     'inbox.google.com',
-    'trello.com',
+    'trello.com'
+  ],
+  ALLOWED_HTML5_NOTIFICATION_HOSTS: [
     '.slack.com'
   ],
 

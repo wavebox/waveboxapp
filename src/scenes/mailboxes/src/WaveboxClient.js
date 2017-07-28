@@ -11,11 +11,10 @@ import {extensionStore, extensionActions} from 'stores/extension'
 import Debug from 'Debug'
 import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
 import injectTapEventPlugin from 'react-tap-event-plugin'
+import ResourceMonitorResponder from './ResourceMonitorResponder'
 import {
   WB_MAILBOXES_WINDOW_JS_LOADED,
   WB_MAILBOXES_WINDOW_PREPARE_RELOAD,
-  WB_PING_RESOURCE_USAGE,
-  WB_PONG_RESOURCE_USAGE,
   WB_SEND_IPC_TO_CHILD,
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
   WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
@@ -87,14 +86,8 @@ window.addEventListener('beforeunload', () => {
 ipcRenderer.send(WB_MAILBOXES_WINDOW_JS_LOADED, {})
 
 // Resource usage monitoring
-ipcRenderer.on(WB_PING_RESOURCE_USAGE, () => {
-  ipcRenderer.send(WB_PONG_RESOURCE_USAGE, {
-    ...process.getCPUUsage(),
-    ...process.getProcessMemoryInfo(),
-    pid: process.pid,
-    description: `Mailboxes Window`
-  })
-})
+const resourceMonitorListener = new ResourceMonitorResponder()
+resourceMonitorListener.listen()
 
 // Message passing
 ipcRenderer.on(WB_SEND_IPC_TO_CHILD, (evt, { id, channel, payload }) => {

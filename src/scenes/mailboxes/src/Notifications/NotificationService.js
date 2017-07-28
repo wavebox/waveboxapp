@@ -96,6 +96,29 @@ class NotificationService extends EventEmitter {
   }
 
   /**
+  * Processes a new mailbox notification that can have most of its handling done elesewhere
+  * @param mailboxId: the id of the mailbox the notification is for
+  * @param notification: the notification to push
+  * @param clickHandler: the click handler to call
+  */
+  processHandledMailboxNotification (mailboxId, notification, clickHandler) {
+    NotificationRenderer.presentMailboxNotification(
+      mailboxId,
+      notification,
+      (data) => {
+        // Switch across to the mailbox if we were provided with enough info
+        ipcRenderer.send(WB_FOCUS_APP, { })
+        if (data && data.mailboxId && data.serviceType) {
+          mailboxActions.changeActive(data.mailboxId, data.serviceType)
+        }
+
+        // Call the click handler back
+        clickHandler(data)
+      }
+    )
+  }
+
+  /**
   * Processes a new html5 notification thats been pushed from a mailbox
   * @param mailboxId: the id of the mailbox
   * @param serviceType: the type of service this is for

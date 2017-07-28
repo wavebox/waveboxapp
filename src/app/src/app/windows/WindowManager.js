@@ -214,6 +214,8 @@ class WindowManager {
   focused () {
     if (this.mailboxesWindow.isFocused()) {
       return this.mailboxesWindow
+    } else if (this.monitor && this.monitor.window && this.monitor.window.isFocused()) {
+      return this.monitor.window
     } else {
       return this.contentWindows.find((w) => w.isFocused())
     }
