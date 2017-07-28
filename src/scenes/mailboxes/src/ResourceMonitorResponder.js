@@ -15,7 +15,6 @@ class ResourceMonitorResponder {
   /* **************************************************************************/
 
   listen () {
-    ipcRenderer.send("WB_OPEN_MONITOR_WINDOW", {})
     ipcRenderer.on(WB_PING_RESOURCE_USAGE, this.handlePingResourceUsage)
   }
 
