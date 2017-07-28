@@ -29,9 +29,12 @@ class ContentPopupWindow extends WaveboxWindow {
   create (url, safeBrowserWindowOptions = {}) {
     // The browser settings don't need to be sanitized as they should be in the same thread
     // and come from the parent webContents
-    super.create(url, safeBrowserWindowOptions)
+    super.create(url, Object.assign({}, safeBrowserWindowOptions, { show: false }))
 
     // Bind listeners
+    this.window.once('ready-to-show', () => {
+      this.window.show()
+    })
     settingStore.on('changed:language', this.boundLanguageUpdated)
     this.window.webContents.on('dom-ready', this.boundHandleDomReady)
 
