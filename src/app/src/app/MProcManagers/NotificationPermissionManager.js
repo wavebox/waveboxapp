@@ -1,7 +1,8 @@
 const url = require('url')
 const fs = require('fs-extra')
 const {
-  DISALLOWED_HTML5_NOTIFICATION_HOSTS
+  DISALLOWED_HTML5_NOTIFICATION_HOSTS,
+  ALLOWED_HTML5_NOTIFICATION_HOSTS
 } = require('../../shared/constants.js')
 const {
   WAVEBOX_HOSTED_EXTENSION_PROTOCOL
@@ -25,6 +26,8 @@ class NotificationPermissionManager {
     const domain = this._getDomainFromUrl(url)
     if (this._isDomainAlwaysDisallowed(domain)) {
       return Promise.resolve('denied')
+    } else if (this._isDomainAlwaysAllowed(domain)) {
+      return Promise.resolve('granted')
     } else if (this._isProtocolAlwaysAllowed(this._getProtocolFromUrl(url))) {
       return Promise.resolve('granted')
     } else {
@@ -133,6 +136,14 @@ class NotificationPermissionManager {
   */
   static _isDomainAlwaysDisallowed (domain) {
     return !!DISALLOWED_HTML5_NOTIFICATION_HOSTS.find((dis) => domain.indexOf(dis) !== -1)
+  }
+
+  /**
+  * @param domain: the domain to query for
+  * @return true if this domain is always allowed, false otherwise
+  */
+  static _isDomainAlwaysAllowed (domain) {
+    return !!ALLOWED_HTML5_NOTIFICATION_HOSTS.find((all) => domain.indexOf(all) !== -1)
   }
 
   /**

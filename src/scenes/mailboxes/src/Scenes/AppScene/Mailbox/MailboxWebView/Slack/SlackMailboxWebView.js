@@ -3,8 +3,13 @@ import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import { mailboxDispatch, mailboxStore, mailboxActions, MailboxLinker } from 'stores/mailbox'
+import { slackActions } from 'stores/slack'
 import { settingsStore } from 'stores/settings'
 import URI from 'urijs'
+import {
+  WB_BROWSER_NOTIFICATION_PRESENT,
+  WB_BROWSER_NOTIFICATION_CLICK
+} from 'shared/ipcEvents'
 
 const REF = 'mailbox_tab'
 
@@ -113,6 +118,25 @@ export default class SlackMailboxWebView extends React.Component {
     }
   }
 
+  /**
+  * Handles any ipc messages
+  * @param evt: the event that fired
+  */
+  handleWebViewIPCMessage = (evt) => {
+    switch (evt.channel.type) {
+      case WB_BROWSER_NOTIFICATION_PRESENT:
+        slackActions.scheduleHTML5Notification(
+          this.props.mailboxId,
+          evt.channel.notificationId,
+          evt.channel.notification,
+          (notificationId) => {
+            this.refs[REF].send(WB_BROWSER_NOTIFICATION_CLICK, { notificationId: notificationId })
+          }
+        )
+        break
+    }
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -140,6 +164,8 @@ export default class SlackMailboxWebView extends React.Component {
         mailboxId={mailboxId}
         hasSearch={false}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
+        plugHTML5Notifications={false}
+        ipcMessage={this.handleWebViewIPCMessage}
         newWindow={settingsStore.getState().launched.app.useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow} />
     )
   }

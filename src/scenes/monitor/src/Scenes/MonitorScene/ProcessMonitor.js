@@ -3,7 +3,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { monitorStore } from 'stores/monitor'
 import { Table, TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowColumn } from 'material-ui'
 
-export default class MonitorScene extends React.Component {
+export default class ProcessMonitor extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/

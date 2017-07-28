@@ -15,6 +15,9 @@ import {
   SlackDefaultServiceReducer
 } from '../mailbox'
 
+const { remote } = window.nativeRequire('electron')
+const MAX_NOTIFICATION_RECORD_AGE = 1000 * 60 * 10 // 10 mins
+const HTML5_NOTIFICATION_DELAY = 1000 * 2 // 2 secs
 const REQUEST_TYPES = {
   UNREAD: 'UNREAD'
 }
@@ -27,6 +30,7 @@ class SlackStore {
   constructor () {
     this.connections = new Map()
     this.openRequests = new Map()
+    this.publishedNotifications = []
 
     /* **************************************/
     // Requests
@@ -73,6 +77,24 @@ class SlackStore {
       return connectionList
     }
 
+    /**
+    * @param mailboxId: the id of the mailbox
+    * @return true if the mailbox is connection is setup, false otherwise
+    */
+    this.isMailboxConnectionSetup = (mailboxId) => {
+      const info = this.connections.get(mailboxId)
+      return !!(info && info.rtm)
+    }
+
+    /**
+    * @param mailboxId: the id of the mailbox
+    * @return true if the mailbox is connected, false otherwise
+    */
+    this.isMailboxConnected = (mailboxId) => {
+      const info = this.connections.get(mailboxId)
+      return !!(info && info.rtm && info.rtm.isConnected)
+    }
+
     /* **************************************/
     // Listeners
     /* **************************************/
@@ -86,7 +108,8 @@ class SlackStore {
 
       handleUpdateUnreadCounts: actions.UPDATE_UNREAD_COUNTS,
 
-      handleScheduleNotification: actions.SCHEDULE_NOTIFICATION
+      handleScheduleNotification: actions.SCHEDULE_NOTIFICATION,
+      handleScheduleHTML5Notification: actions.SCHEDULE_HTML5NOTIFICATION
     })
   }
 
@@ -230,6 +253,7 @@ class SlackStore {
 
         // Save the connection
         this.connections.set(mailboxId, {
+          ...this.connections.get(mailboxId) || {},
           connectionId: connectionId,
           mailboxId: mailboxId,
           rtm: rtm
@@ -359,18 +383,70 @@ class SlackStore {
       })
   }
 
-  handleScheduleNotification ({ mailboxId, message }) {
-    const mailboxState = mailboxStore.getState()
+  /* **************************************************************************/
+  // Notifications
+  /* **************************************************************************/
+
+  /**
+  * Checks to see if the service has published a notification
+  * @param slackNotificationId: the id of the notification
+  * @param clean=true: false to skip array cleaning
+  */
+  _hasPublishedNotification (slackNotificationId, clean = true) {
+    if (clean) {
+      let hasRecord = false
+      const now = new Date().getTime()
+      this.publishedNotifications = this.publishedNotifications.filter(({ id, time }) => {
+        if (slackNotificationId === id) { hasRecord = true }
+        return now - time < MAX_NOTIFICATION_RECORD_AGE
+      })
+      return hasRecord
+    } else {
+      return !!this.publishedNotifications.find(({id}) => id === slackNotificationId)
+    }
+  }
+
+  /**
+  * Marks a notification as being published
+  * @param slackNotificationId: the id of the notification
+  */
+  _markNotificationPublished (slackNotificationId) {
+    this.publishedNotifications.push({ id: slackNotificationId, time: new Date().getTime() })
+  }
+
+  /**
+  * Checks if the mailbox has its notifications enabled
+  * @param mailboxId: the id of the mailbox
+  * @param mailboxState=autoget: the mailbox state
+  * @return true if notifications are enabled, false otherwise
+  */
+  _mailboxHasNotificationsEnabled (mailboxId, mailboxState = mailboxStore.getState()) {
     const mailbox = mailboxState.getMailbox(mailboxId)
-    if (!mailbox) { return }
-    if (!mailbox.showNotifications) { return }
+    if (!mailbox) { return false }
+    if (!mailbox.showNotifications) { return false }
+
+    return true
+  }
+
+  handleScheduleNotification ({ mailboxId, message }) {
+    this.preventDefault() // no change in this store
+
+    const mailboxState = mailboxStore.getState()
+    if (!this._mailboxHasNotificationsEnabled(mailboxId, mailboxState)) { return }
+
+    // Figure out if it's been seen before
+    const slackNotificationId = message.msg || message.event_ts
+    if (this._hasPublishedNotification(slackNotificationId)) { return }
+    this._markNotificationPublished(slackNotificationId)
 
     // Check to see if we're active and in the channel
-    if (mailboxState.activeMailboxId() !== mailboxId) {
-      const currentUrl = mailboxDispatch.getCurrentUrl(mailboxId, SlackDefaultService.type) || ''
-      if (currentUrl.indexOf(message.channel) !== -1) { return }
-      if (message.channel.indexOf('D') === 0) { // Handle DMs differently
-        if (currentUrl.indexOf('@' + message.subtitle.toLowerCase()) !== -1) { return }
+    if (remote.getCurrentWindow().isFocused()) {
+      if (mailboxState.activeMailboxId() === mailboxId) {
+        const currentUrl = mailboxDispatch.getCurrentUrl(mailboxId, SlackDefaultService.type) || ''
+        if (currentUrl.indexOf(message.channel) !== -1) { return }
+        if (message.channel.indexOf('D') === 0) { // Handle DMs differently
+          if (currentUrl.indexOf('@' + message.subtitle.toLowerCase()) !== -1) { return }
+        }
       }
     }
 
@@ -384,6 +460,32 @@ class SlackStore {
         launchUri: message.launchUri
       }
     })
+  }
+
+  handleScheduleHTML5Notification ({ mailboxId, notificationId, notification, clickHandler }) {
+    this.preventDefault() // no change in this store
+    if (!this._mailboxHasNotificationsEnabled(mailboxId)) { return }
+
+    const slackNotificationId = (((notification || {}).options || {}).tag || '').replace('tag_', '')
+    if (this._hasPublishedNotification(slackNotificationId)) { return }
+
+    // We can give much richer information when it comes off the websocket, so hold out to see if that comes
+    setTimeout(() => {
+      if (this._hasPublishedNotification(slackNotificationId, false)) { return }
+      this._markNotificationPublished(slackNotificationId)
+
+      NotificationService.processHandledMailboxNotification(mailboxId, {
+        title: notification.title,
+        body: (notification.options || {}).body,
+        data: {
+          mailboxId: mailboxId,
+          serviceType: SlackDefaultService.type,
+          notificationId: notificationId
+        }
+      }, (data) => {
+        clickHandler(data.notificationId)
+      })
+    }, this.isMailboxConnected(mailboxId) ? HTML5_NOTIFICATION_DELAY : 0)
   }
 }
 

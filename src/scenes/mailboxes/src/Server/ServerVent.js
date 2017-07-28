@@ -38,6 +38,7 @@ class ServerVent extends EventEmitter {
   get isSocketSetup () { return !!this._socket }
   get isSocketUsingLongPoll () { return this._socket && this._socket.transport === LongPoll }
   get isSocketUsingWebSocket () { return this._socket && this._socket.transport === window.WebSocket }
+  get isSocketConnected () { return this._socket && this._socket.isConnected() }
   get isSocketUnderMaintenance () { return new Date().getTime() < this._socketMaintenanceUntil }
   get socketReconnectTimeout () {
     if (this.isSocketUnderMaintenance) {

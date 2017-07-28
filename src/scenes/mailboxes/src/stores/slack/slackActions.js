@@ -64,6 +64,22 @@ class SlackActions {
       message: message
     }
   }
+
+  /**
+  * Schedules a html5 notification
+  * @param mailboxId: the id of the mailbox
+  * @param notificationId: the id of the html5 notification
+  * @param notification: the notification object
+  * @param clickHandler: the click handler provided
+  */
+  scheduleHTML5Notification (mailboxId, notificationId, notification, clickHandler) {
+    return {
+      mailboxId: mailboxId,
+      notificationId: notificationId,
+      notification: notification,
+      clickHandler: clickHandler
+    }
+  }
 }
 
 export default alt.createActions(SlackActions)

@@ -42,13 +42,15 @@ export default class MailboxWebView extends React.Component {
     serviceType: PropTypes.string.isRequired,
     preload: PropTypes.string,
     url: PropTypes.string,
-    hasSearch: PropTypes.bool.isRequired
+    hasSearch: PropTypes.bool.isRequired,
+    plugHTML5Notifications: PropTypes.bool.isRequired
   }, BrowserView.REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
     acc[name] = PropTypes.func
     return acc
   }, {}))
   static defaultProps = {
-    hasSearch: true
+    hasSearch: true,
+    plugHTML5Notifications: true
   }
   static WEBVIEW_METHODS = BrowserView.WEBVIEW_METHODS
   static REACT_WEBVIEW_EVENTS = BrowserView.REACT_WEBVIEW_EVENTS
@@ -367,7 +369,7 @@ export default class MailboxWebView extends React.Component {
   * Dispatches browser IPC messages to the correct call
   * @param evt: the event that fired
   */
-  dispatchBrowserIPCMessage (evt) {
+  dispatchBrowserIPCMessage = (evt) => {
     switch (evt.channel.type) {
       case WB_MAILBOXES_WINDOW_SHOW_SETTINGS:
         window.location.hash = '/settings'
@@ -382,15 +384,17 @@ export default class MailboxWebView extends React.Component {
         MailboxLinker.openContentWindow(this.props.mailboxId, this.props.serviceType, evt.channel.data.url)
         break
       case WB_BROWSER_NOTIFICATION_PRESENT:
-        NotificationService.processHTML5MailboxNotification(
-          this.props.mailboxId,
-          this.props.serviceType,
-          evt.channel.notificationId,
-          evt.channel.notification,
-          (notificationId) => {
-            this.refs[BROWSER_REF].send(WB_BROWSER_NOTIFICATION_CLICK, { notificationId: notificationId })
-          }
-        )
+        if (this.props.plugHTML5Notifications) {
+          NotificationService.processHTML5MailboxNotification(
+            this.props.mailboxId,
+            this.props.serviceType,
+            evt.channel.notificationId,
+            evt.channel.notification,
+            (notificationId) => {
+              this.refs[BROWSER_REF].send(WB_BROWSER_NOTIFICATION_CLICK, { notificationId: notificationId })
+            }
+          )
+        }
         break
     }
   }
