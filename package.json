@@ -1,7 +1,7 @@
 {
   "name": "wavebox",
-  "version": "3.1.16",
-  "releaseChannel": "BETA",
+  "version": "3.2.0",
+  "releaseChannel": "STABLE",
   "description": "Wavebox",
   "scripts": {
     "rebuild:electron": "electron-rebuild -f -m src/app -v 1.7.5 -t prod,optional && electron-rebuild -f -m src/guest -v 1.7.5 -t prod,optional",
