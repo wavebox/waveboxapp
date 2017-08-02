@@ -20,7 +20,13 @@
         if (notificationIndex !== -1) {
           const notification = openNotifications[notificationIndex]
           openNotifications.splice(notificationIndex, 1)
-          if (notification.onclick && typeof (notification.onclick) === 'function') {
+
+          const clickHandlers = notification.__eventHandlers__
+            .filter((handler) => handler.type === 'click')
+            .map((handler) => handler.listener)
+            .concat(notification.onclick ? [notification.onclick] : [])
+
+          if (clickHandlers.length) {
             const event = {
               bubbles: false,
               cancelBubble: false,
@@ -38,7 +44,13 @@
               type: 'click'
             }
             const args = [event]
-            notification.onclick.apply(notification, args)
+            clickHandlers.forEach((handler) => {
+              if (typeof (handler) === 'function') {
+                handler.apply(notification, args)
+              } else if (typeof (handler) === 'object' && typeof (handler.handleEvent) === 'function') {
+                handler.handleEvent.apply(notification, args)
+              }
+            })
           }
         }
       } else if (data.type === 'wavebox-notification-closed') {
@@ -62,14 +74,22 @@
     // Class
     /* **************************************************************************/
 
-    static get permission () {
-      return domainPermission
-    }
+    static get permission () { return domainPermission }
 
-    static requestPermission () {
+    /**
+    * Make sure we also handle the old-style callback
+    * @param depricatedCallback=undefined: callback to exectue. Depricated
+    * @return promise
+    */
+    static requestPermission (depricatedCallback = undefined) {
       return new Promise((resolve, reject) => {
         const responseId = `${new Date().getTime()}:${Math.random()}`
-        permissionRequests.set(responseId, resolve)
+        const responder = (nextPermission) => {
+          if (typeof (depricatedCallback) === 'function') { depricatedCallback(nextPermission) }
+          resolve(nextPermission)
+        }
+
+        permissionRequests.set(responseId, responder)
         window.top.postMessage(JSON.stringify({
           apiKey: WB_API_KEY,
           wavebox: true,
@@ -83,12 +103,17 @@
     // Lifecycle
     /* **************************************************************************/
 
+    /**
+    * @param title: the notification title
+    * @param options={}: options for the notification
+    */
     constructor (title, options = {}) {
       idAcc += 1
       this.__id__ = idAcc
       this.__title__ = title
       this.__options__ = Object.freeze(Object.assign({}, options))
       this.__created__ = new Date().getTime()
+      this.__eventHandlers__ = []
       this.__onclick__ = null
       this.__onerror__ = null
 
@@ -141,6 +166,25 @@
         type: 'browser-notification-close',
         notificationId: this.__id__
       }), '*')
+    }
+
+    /**
+    * Adds an event listener
+    * @param type: the listener type
+    * @param listener: the listener callback or event handler
+    * @param useCapture: ignored
+    */
+    addEventListener (type, listener, useCapture) {
+      this.__eventHandlers__.push({ type: type, listener: listener })
+    }
+
+    /**
+    * Removes an event listener
+    * @param type: the listener type
+    * @param listener: the listener callback or event handler
+    */
+    removeEventListener (type, listener) {
+      this.__eventHandlers__ = this.__eventHandlers__.filter((r) => r.type !== type && r.listener !== listener)
     }
   }
 

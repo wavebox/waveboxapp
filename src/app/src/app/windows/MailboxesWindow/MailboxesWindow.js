@@ -56,6 +56,8 @@ const ALLOWED_URLS = [
   'file://' + path.join(MAILBOXES_DIR, 'mailboxes.html'),
   'file://' + path.join(MAILBOXES_DIR, 'offline.html')
 ]
+const MIN_WINDOW_WIDTH = 400
+const MIN_WINDOW_HEIGHT = 300
 
 class MailboxesWindow extends WaveboxWindow {
   /* ****************************************************************************/
@@ -106,10 +108,10 @@ class MailboxesWindow extends WaveboxWindow {
     const screenSize = electron.screen.getPrimaryDisplay().workAreaSize
     super.create(this.generateWindowUrl(), {
       show: !hidden,
-      minWidth: 770,
-      minHeight: 300,
-      width: Math.min(Math.max(screenSize.width, 770), 1200),
-      height: Math.min(Math.max(screenSize.height, 300), 1000),
+      minWidth: MIN_WINDOW_WIDTH,
+      minHeight: MIN_WINDOW_HEIGHT,
+      width: Math.min(Math.max(screenSize.width, MIN_WINDOW_WIDTH), 1200),
+      height: Math.min(Math.max(screenSize.height, MIN_WINDOW_HEIGHT), 1000),
       fullscreenable: true,
       titleBarStyle: process.platform === 'darwin' && settingStore.ui.showTitlebar === false ? 'hidden' : 'default',
       frame: settingStore.ui.showTitlebar,
