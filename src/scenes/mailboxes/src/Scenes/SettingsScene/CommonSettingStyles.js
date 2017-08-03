@@ -88,5 +88,10 @@ export default {
     fontSize: '85%',
     marginTop: 2,
     color: Colors.grey500
+  },
+  flatButtonHelp: {
+    fontSize: '85%',
+    paddingLeft: 45,
+    color: Colors.grey500
   }
 }

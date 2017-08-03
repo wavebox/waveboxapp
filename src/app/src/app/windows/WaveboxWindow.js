@@ -4,9 +4,6 @@ const settingStore = require('../stores/settingStore')
 const path = require('path')
 const WaveboxWindowLocationSaver = require('./WaveboxWindowLocationSaver')
 const {
-  TraySettings: { SUPPORTS_TRAY_MINIMIZE_CONFIG }
-} = require('../../shared/Models/Settings')
-const {
   WB_WINDOW_FIND_START,
   WB_WINDOW_FIND_NEXT,
   WB_WINDOW_ZOOM_IN,
@@ -81,14 +78,6 @@ class WaveboxWindow extends EventEmitter {
     // Bind window event listeners
     this.window.on('close', (evt) => { this.emit('close', evt) })
     this.window.on('closed', (evt) => this.destroy(evt))
-    this.window.on('minimize', (evt) => {
-      if (SUPPORTS_TRAY_MINIMIZE_CONFIG) {
-        if (settingStore.tray.show && settingStore.tray.hideWhenMinimized) {
-          evt.preventDefault()
-          this.window.hide()
-        }
-      }
-    })
     this.bindMouseNavigation()
 
     // Register state savers

@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Toggle, Paper, SelectField, MenuItem, FlatButton, FontIcon } from 'material-ui'
 import { settingsStore, settingsActions } from 'stores/settings'
+import { mailboxActions } from 'stores/mailbox'
 import { updaterActions } from 'stores/updater'
 import { SEGMENTS } from 'shared/Models/Settings/SettingsIdent'
 import AppSettings from 'shared/Models/Settings/AppSettings'
@@ -9,6 +10,8 @@ import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import AcceleratorSettings from './AcceleratorSettings'
 import { Row, Col } from 'Components/Grid'
+import { ConfirmFlatButton } from 'Components/Buttons'
+import * as Colors from 'material-ui/styles/colors'
 
 export default class AdvancedSettings extends React.Component {
   /* **************************************************************************/
@@ -111,6 +114,20 @@ export default class AdvancedSettings extends React.Component {
                   showRestart()
                   settingsActions.update(SEGMENTS.APP, '3_1_8_useExperimentalWindowOpener', toggled)
                 }} />
+            </Paper>
+            <Paper zDepth={1} style={styles.paper}>
+              <div>
+                <ConfirmFlatButton
+                  label='Clear all browsing data'
+                  confirmLabel='Click again to confirm'
+                  confirmWaitMs={4000}
+                  icon={<FontIcon className='material-icons'>clear</FontIcon>}
+                  confirmIcon={<FontIcon className='material-icons'>help_outline</FontIcon>}
+                  onConfirmedClick={() => mailboxActions.clearAllBrowserSessions()} />
+                <div style={styles.flatButtonHelp}>
+                  You will need to sign back into all accounts after doing this
+                </div>
+              </div>
             </Paper>
           </Col>
           <Col md={6}>

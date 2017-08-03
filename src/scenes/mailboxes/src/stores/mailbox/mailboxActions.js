@@ -367,6 +367,23 @@ class MailboxActions {
   }
 
   /* **************************************************************************/
+  // Mailbox auth teardown
+  /* **************************************************************************/
+
+  /**
+  * Clears the browser session for a mailbox
+  * @param mailboxId: the id of the mailbox to clear
+  */
+  clearMailboxBrowserSession (mailboxId) {
+    return { mailboxId: mailboxId }
+  }
+
+  /**
+  * Clears all the browser sessions
+  */
+  clearAllBrowserSessions () { return {} }
+
+  /* **************************************************************************/
   // Mailbox connection lifecycle
   /* **************************************************************************/
 

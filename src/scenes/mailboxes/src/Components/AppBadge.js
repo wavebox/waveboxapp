@@ -115,11 +115,18 @@ const AppBadge = class AppBadge extends React.Component {
   renderAppOverlayIcon (unreadCount, hasUnreadActivity) {
     if (!AppBadge.supportsAppOverlayIcon()) { return false }
 
-    const win = remote.getCurrentWindow()
-    if (unreadCount === 0) {
-      win.setOverlayIcon(null, '')
+    // Figure out what to show
+    let text
+    if (unreadCount > 0) {
+      text = unreadCount.toString().length > 3 ? '+' : unreadCount.toString()
+    } else if (hasUnreadActivity) {
+      text = '•'
     } else {
-      const text = unreadCount.toString().length > 3 ? '+' : unreadCount.toString()
+      text = undefined
+    }
+
+    // Render
+    if (text && text.length) {
       const canvas = document.createElement('canvas')
       canvas.height = 140
       canvas.width = 140
@@ -145,7 +152,9 @@ const AppBadge = class AppBadge extends React.Component {
 
       const badgeDataURL = canvas.toDataURL()
       const img = nativeImage.createFromDataURL(badgeDataURL)
-      win.setOverlayIcon(img, text)
+      remote.getCurrentWindow().setOverlayIcon(img, text)
+    } else {
+      remote.getCurrentWindow().setOverlayIcon(null, '')
     }
     return true
   }

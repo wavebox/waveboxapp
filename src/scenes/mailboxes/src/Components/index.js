@@ -6,9 +6,11 @@ import Tray from './Tray'
 import WaveboxWebView from './WaveboxWebView'
 import FullscreenModal from './FullscreenModal'
 import AuthenticationInstruction from './AuthenticationInstruction'
+import Buttons from './Buttons'
 
 export {
   AppBadge,
+  Buttons,
   ColorPickerButton,
   FullscreenModal,
   Grid,

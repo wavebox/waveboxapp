@@ -50,6 +50,9 @@ const {
 const {
   WAVEBOX_HOSTED_EXTENSION_PROTOCOL
 } = require('../../../shared/extensionApis')
+const {
+  TraySettings: { SUPPORTS_TRAY_MINIMIZE_CONFIG }
+} = require('../../../shared/Models/Settings')
 
 const MAILBOXES_DIR = path.resolve(path.join(__dirname, '/../../../../scenes/mailboxes'))
 const ALLOWED_URLS = [
@@ -124,6 +127,24 @@ class MailboxesWindow extends WaveboxWindow {
       }
     })
 
+    // Bind window behaviour events
+    if (SUPPORTS_TRAY_MINIMIZE_CONFIG) {
+      // Preventing default on minimize has little effect. The window saver doesn't take note of minimized state
+      // though so we can query this to see what the last state was and re-apply that on restore
+      this.window.on('minimize', (evt) => {
+        if (settingStore.tray.show && settingStore.tray.hideWhenMinimized) {
+          evt.preventDefault()
+          this.window.hide()
+        }
+      })
+      this.window.on('restore', (evt) => {
+        if (settingStore.tray.show && settingStore.tray.hideWhenMinimized && this.locationSaver.getSavedScreenLocation().maximized) {
+          this.window.maximize()
+        }
+      })
+    }
+
+    // Bind event listeners
     app.on('web-contents-created', this.boundHandleAppWebContentsCreated)
     ipcMain.on(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, this.boundHandleMailboxesWebViewAttached)
     ipcMain.on(WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED, this.boundHandleExtensionWebViewAttached)

@@ -32,7 +32,7 @@ import {
   WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT
 } from 'shared/ipcEvents'
 
-const { ipcRenderer } = window.nativeRequire('electron')
+const { ipcRenderer, remote } = window.nativeRequire('electron')
 const AUTH_MODES = {
   CREATE: 'CREATE',
   REAUTHENTICATE: 'REAUTHENTICATE'
@@ -443,6 +443,10 @@ class MailboxStore {
       handleAuthTrelloMailboxFailure: actions.AUTH_TRELLO_MAILBOX_FAILURE,
       handleAuthMicrosoftMailboxSuccess: actions.AUTH_MICROSOFT_MAILBOX_SUCCESS,
       handleAuthMicrosoftMailboxFailure: actions.AUTH_MICROSOFT_MAILBOX_FAILURE,
+
+      // Mailbox auth teardown
+      handleClearMailboxBrowserSession: actions.CLEAR_MAILBOX_BROWSER_SESSION,
+      handleClearAllBrowserSessions: actions.CLEAR_ALL_BROWSER_SESSIONS,
 
       // Mailbox lifecycle
       handleConnectAllMailboxes: actions.CONNECT_ALL_MAILBOXES,
@@ -871,6 +875,36 @@ class MailboxStore {
     } else {
       console.error('[AUTH ERR]', data)
     }
+  }
+
+  /* **************************************************************************/
+  // Handlers: Auth teardown
+  /* **************************************************************************/
+
+  handleClearMailboxBrowserSession ({ mailboxId }) {
+    this.preventDefault()
+
+    const mailbox = this.mailboxes.get(mailboxId)
+    if (!mailbox) { return }
+
+    const ses = remote.session.fromPartition('persist:' + mailbox.partition)
+    Promise.resolve()
+      .then(() => {
+        return new Promise((resolve) => { ses.clearStorageData(resolve) })
+      })
+      .then(() => {
+        return new Promise((resolve) => { ses.clearCache(resolve) })
+      })
+      .then(() => {
+        mailboxDispatch.reloadAllServices(mailboxId)
+      })
+  }
+
+  handleClearAllBrowserSessions () {
+    this.preventDefault()
+    this.mailboxIds().forEach((mailboxId) => {
+      actions.clearMailboxBrowserSession.defer(mailboxId)
+    })
   }
 
   /* **************************************************************************/
