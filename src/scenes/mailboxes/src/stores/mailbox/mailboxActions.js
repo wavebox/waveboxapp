@@ -25,7 +25,7 @@ import {
   WB_WINDOW_ZOOM_RESET,
 
   WB_MAILBOXES_WINDOW_SWITCH_MAILBOX,
-  WB_MAILBOXES_WINDOW_SWITCH_SERVICE_INDEX,
+  WB_MAILBOXES_WINDOW_SWITCH_SERVICE,
 
   WB_PING_RESOURCE_USAGE
 } from 'shared/ipcEvents'
@@ -532,14 +532,6 @@ class MailboxActions {
   }
 
   /**
-  * Changes the active service to the one at the supplied index. If there
-  * is no service this will just fail silently
-  */
-  changeActiveServiceIndex (index) {
-    return { index: index }
-  }
-
-  /**
   * Changes the active mailbox to the previous in the list
   * @param allowCycling=false: set to true to allow cycling at end/beginning
   */
@@ -552,6 +544,30 @@ class MailboxActions {
   * @param allowCycling=false: set to true to allow cycling at end/beginning
   */
   changeActiveToNext (allowCycling = false) {
+    return { allowCycling: allowCycling }
+  }
+
+  /**
+  * Changes the active service to the one at the supplied index. If there
+  * is no service this will just fail silently
+  */
+  changeActiveServiceIndex (index) {
+    return { index: index }
+  }
+
+  /**
+  * Changes the active service to the previous in the list
+  * @param allowCycling=false: set to true to allow cycling at end/beginning
+  */
+  changeActiveServiceToPrev (allowCycling = false) {
+    return { allowCycling: allowCycling }
+  }
+
+  /**
+  * Changes the active service to the next in the list
+  * @param allowCycling=false: set to true to allow cycling at end/beginning
+  */
+  changeActiveServiceToNext (allowCycling = false) {
     return { allowCycling: allowCycling }
   }
 
@@ -685,7 +701,15 @@ ipcRenderer.on(WB_MAILBOXES_WINDOW_SWITCH_MAILBOX, (evt, req) => {
     actions.changeActiveToNext(req.allowCycling)
   }
 })
-ipcRenderer.on(WB_MAILBOXES_WINDOW_SWITCH_SERVICE_INDEX, (evt, req) => actions.changeActiveServiceIndex(req.index))
+ipcRenderer.on(WB_MAILBOXES_WINDOW_SWITCH_SERVICE, (evt, req) => {
+  if (req.index) {
+    actions.changeActiveServiceIndex(req.index)
+  } else if (req.prev) {
+    actions.changeActiveServiceToPrev(req.allowCycling)
+  } else if (req.next) {
+    actions.changeActiveServiceToNext(req.allowCycling)
+  }
+})
 
 // Misc
 ipcRenderer.on(WB_PING_RESOURCE_USAGE, actions.pingResourceUsage)

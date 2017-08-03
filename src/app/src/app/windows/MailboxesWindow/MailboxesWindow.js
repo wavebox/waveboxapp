@@ -26,7 +26,7 @@ const {
   WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE,
   WB_MAILBOXES_WINDOW_OPEN_MAILTO_LINK,
   WB_MAILBOXES_WINDOW_SWITCH_MAILBOX,
-  WB_MAILBOXES_WINDOW_SWITCH_SERVICE_INDEX,
+  WB_MAILBOXES_WINDOW_SWITCH_SERVICE,
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
   WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD,
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
@@ -417,7 +417,7 @@ class MailboxesWindow extends WaveboxWindow {
   }
 
   /* ****************************************************************************/
-  // Mailbox Actions: Switching
+  // Mailbox Actions: Switching Mailbox
   /* ****************************************************************************/
 
   /**
@@ -431,20 +431,6 @@ class MailboxesWindow extends WaveboxWindow {
     this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_MAILBOX, {
       mailboxId: mailboxId,
       serviceType: serviceType
-    })
-    return this
-  }
-
-  /**
-  * Switches to a service at the given index. This call will fail silently if there is no
-  * service at the given index
-  * @param index: the index you want to switch to
-  * @return this
-  */
-  switchToServiceAtIndex (index) {
-    this.show().focus()
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_SERVICE_INDEX, {
-      index: index
     })
     return this
   }
@@ -470,6 +456,48 @@ class MailboxesWindow extends WaveboxWindow {
     this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_MAILBOX, { next: true, allowCycling: allowCycling })
     return this
   }
+
+  /* ****************************************************************************/
+  // Mailbox Actions: Switching Services
+  /* ****************************************************************************/
+
+  /**
+  * Switches to a service at the given index. This call will fail silently if there is no
+  * service at the given index
+  * @param index: the index you want to switch to
+  * @return this
+  */
+  switchToServiceAtIndex (index) {
+    this.show().focus()
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_SERVICE, { index: index })
+    return this
+  }
+
+  /**
+  * Switches to the previous service
+  * @param allowCycling=false: set to true to allow cycling at end/beginning
+  * @return this
+  */
+  switchPrevService (allowCycling = false) {
+    this.show().focus()
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_SERVICE, { prev: true, allowCycling: allowCycling })
+    return this
+  }
+
+  /**
+  * Switches to the next service
+  * @param allowCycling=false: set to true to allow cycling at end/beginning
+  * @return this
+  */
+  switchNextService (allowCycling = false) {
+    this.show().focus()
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_SERVICE, { next: true, allowCycling: allowCycling })
+    return this
+  }
+
+  /* ****************************************************************************/
+  // Mailbox Actions: Navigation
+  /* ****************************************************************************/
 
   /**
   * Tells the active mailbox to navigate back

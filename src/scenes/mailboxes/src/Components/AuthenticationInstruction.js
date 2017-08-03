@@ -80,7 +80,7 @@ export default class AuthenticationInstruction extends React.Component {
 
     return (
       <div {...passProps} style={{...styles.container, ...style}}>
-        <h2 style={styles.title}>Use the popup authentication window to sign in to your account...</h2>
+        <h2 style={styles.title}>When prompted, use the popup authentication window to sign in to your account...</h2>
         <LinearProgress mode='indeterminate' style={styles.progress} />
         <Paper style={styles.window}>
           {process.platform === 'darwin' ? (

@@ -85,7 +85,7 @@ class Analytics {
     const qs = querystring.stringify(fullArgs)
 
     const url = 'https://www.google-analytics.com/collect?' + qs
-    return window.fetch(url, { method: 'post' })
+    return window.fetch(url, { method: 'post' }).catch(() => { })
   }
 
   /**

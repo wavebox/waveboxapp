@@ -30,6 +30,8 @@ module.exports = Object.freeze({
 
   // Slack
   SLACK_FULL_COUNT_SYNC_INTERVAL: 1000 * 60 * 5, // 5 mins
+  SLACK_RECONNECT_SOCKET_INTERVAL: 1000 * 60, // 1 min
+  SLACK_RTM_RETRY_RECONNECT_MS: 1000 * 15, // 15 secs
 
   // Microsoft
   MICROSOFT_PROFILE_SYNC_INTERVAL: 1000 * 60 * 60 * 6, // 6 hours

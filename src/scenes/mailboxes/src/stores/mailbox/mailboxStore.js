@@ -469,9 +469,12 @@ class MailboxStore {
 
       // Active
       handleChangeActive: actions.CHANGE_ACTIVE,
-      handleChangeActiveServiceIndex: actions.CHANGE_ACTIVE_SERVICE_INDEX,
       handleChangeActivePrev: actions.CHANGE_ACTIVE_TO_PREV,
       handleChangeActiveNext: actions.CHANGE_ACTIVE_TO_NEXT,
+
+      handleChangeActiveServiceIndex: actions.CHANGE_ACTIVE_SERVICE_INDEX,
+      handleChangeActiveServicePrev: actions.CHANGE_ACTIVE_SERVICE_TO_PREV,
+      handleChangeActiveServiceNext: actions.CHANGE_ACTIVE_SERVICE_TO_NEXT,
 
       // Sleeping
       handleAwakenService: actions.AWAKEN_SERVICE,
@@ -1117,25 +1120,11 @@ class MailboxStore {
   }
 
   /**
-  * Handles changing the active service to the one at the service
-  * @param index: the index of the service
-  */
-  handleChangeActiveServiceIndex ({ index }) {
-    if (this.isMailboxRestricted(this.active, userStore.getState().user)) {
-      window.location.hash = '/pro'
-    } else {
-      const mailbox = this.getMailbox(this.active)
-      if (mailbox.enabledServiceTypes[index]) {
-        actions.changeActive.defer(mailbox.id, mailbox.enabledServiceTypes[index])
-      }
-    }
-  }
-
-  /**
   * Handles the active mailbox changing to the prev in the index
   * @param allowCycling: if true will cycle back when at end or beginning
   */
   handleChangeActivePrev ({ allowCycling }) {
+    this.preventDefault()
     const activeIndex = this.index.findIndex((id) => id === this.active)
     let nextId
     if (allowCycling && activeIndex === 0) {
@@ -1151,6 +1140,7 @@ class MailboxStore {
   * @param allowCycling: if true will cycle back when at end or beginning
   */
   handleChangeActiveNext ({ allowCycling }) {
+    this.preventDefault()
     const activeIndex = this.index.findIndex((id) => id === this.active)
     let nextId
     if (allowCycling && activeIndex === this.index.length - 1) {
@@ -1159,6 +1149,62 @@ class MailboxStore {
       nextId = this.index[Math.min(this.index.length - 1, activeIndex + 1)] || null
     }
     actions.changeActive.defer(nextId)
+  }
+
+  /**
+  * Handles changing the active service to the one at the service
+  * @param index: the index of the service
+  */
+  handleChangeActiveServiceIndex ({ index }) {
+    this.preventDefault()
+    if (this.isMailboxRestricted(this.active, userStore.getState().user)) {
+      window.location.hash = '/pro'
+    } else {
+      const mailbox = this.getMailbox(this.active)
+      if (mailbox.enabledServiceTypes[index]) {
+        actions.changeActive.defer(mailbox.id, mailbox.enabledServiceTypes[index])
+      }
+    }
+  }
+
+  /**
+  * Handles the active service changing to the previous in the index
+  * @param allowCycling: if true will cycle back when at end or beginning
+  */
+  handleChangeActiveServicePrev ({ allowCycling }) {
+    this.preventDefault()
+    if (this.isMailboxRestricted(this.active, userStore.getState().user)) { return }
+
+    const mailbox = this.getMailbox(this.active)
+    const activeIndex = mailbox.enabledServiceTypes.findIndex((t) => t === this.activeService)
+
+    let nextServiceType
+    if (allowCycling && activeIndex === 0) {
+      nextServiceType = mailbox.enabledServiceTypes[mailbox.enabledServiceTypes.length - 1] || null
+    } else {
+      nextServiceType = mailbox.enabledServiceTypes[Math.max(0, activeIndex - 1)] || null
+    }
+    actions.changeActive.defer(mailbox.id, nextServiceType)
+  }
+
+  /**
+  * Handles the active service changing to the next in the index
+  * @param allowCycling: if true will cycle back when at end or beginning
+  */
+  handleChangeActiveServiceNext ({ allowCycling }) {
+    this.preventDefault()
+    if (this.isMailboxRestricted(this.active, userStore.getState().user)) { return }
+
+    const mailbox = this.getMailbox(this.active)
+    const activeIndex = mailbox.enabledServiceTypes.findIndex((t) => t === this.activeService)
+
+    let nextServiceType
+    if (allowCycling && activeIndex === mailbox.enabledServiceTypes.length - 1) {
+      nextServiceType = mailbox.enabledServiceTypes[0] || null
+    } else {
+      nextServiceType = mailbox.enabledServiceTypes[Math.min(mailbox.enabledServiceTypes.length - 1, activeIndex + 1)] || null
+    }
+    actions.changeActive.defer(mailbox.id, nextServiceType)
   }
 
   /**

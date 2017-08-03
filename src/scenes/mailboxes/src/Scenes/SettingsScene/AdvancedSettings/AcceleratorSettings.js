@@ -47,9 +47,11 @@ const ACCELERATOR_NAMES = {
   // Window
   minimize: 'Minimize',
   cycleWindows: 'Cycle Windows',
-  previousMailbox: 'Previous Mailbox',
-  nextMailbox: 'Next Mailbox',
-  mailboxIndex: 'Mailbox at Index',
+  previousMailbox: 'Previous Account',
+  nextMailbox: 'Next Account',
+  mailboxIndex: 'Account at Index',
+  servicePrevious: 'Previous Service',
+  serviceNext: 'Next Service',
   serviceIndex: 'Service at Index'
 }
 const GLOBAL_SECTION = [
@@ -93,6 +95,8 @@ const WINDOW_SECTION = [
   'previousMailbox',
   'nextMailbox',
   'mailboxIndex',
+  'servicePrevious',
+  'serviceNext',
   'serviceIndex'
 ]
 const SECTIONS = [
