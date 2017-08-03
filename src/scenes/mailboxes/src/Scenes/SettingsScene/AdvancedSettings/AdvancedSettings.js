@@ -11,7 +11,6 @@ import shallowCompare from 'react-addons-shallow-compare'
 import AcceleratorSettings from './AcceleratorSettings'
 import { Row, Col } from 'Components/Grid'
 import { ConfirmFlatButton } from 'Components/Buttons'
-import * as Colors from 'material-ui/styles/colors'
 
 export default class AdvancedSettings extends React.Component {
   /* **************************************************************************/
