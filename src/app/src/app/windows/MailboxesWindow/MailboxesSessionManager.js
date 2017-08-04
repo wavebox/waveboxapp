@@ -141,7 +141,7 @@ class MailboxesSessionManager {
     } else {
       let pickedSavePath = dialog.showSaveDialog(this.mailboxWindow.window, {
         title: 'Download',
-        defaultPath: this.lastUsedDownloadPath || path.join(app.getPath('downloads'), item.getFilename())
+        defaultPath: this.lastUsedDownloadPath ? path.join(this.lastUsedDownloadPath, item.getFilename()) : path.join(app.getPath('downloads'), item.getFilename())
       })
 
       // There's a bit of a pickle here. Whilst asking the user where to save
