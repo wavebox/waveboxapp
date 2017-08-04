@@ -110,7 +110,7 @@ class MailboxesWindow extends WaveboxWindow {
   create (hidden = false) {
     const screenSize = electron.screen.getPrimaryDisplay().workAreaSize
     super.create(this.generateWindowUrl(), {
-      show: !hidden,
+      show: false,
       minWidth: MIN_WINDOW_WIDTH,
       minHeight: MIN_WINDOW_HEIGHT,
       width: Math.min(Math.max(screenSize.width, MIN_WINDOW_WIDTH), 1200),
@@ -125,6 +125,9 @@ class MailboxesWindow extends WaveboxWindow {
         backgroundThrottling: false,
         plugins: true
       }
+    })
+    this.window.once('ready-to-show', () => {
+      if (!hidden) { this.window.show() }
     })
 
     // Bind window behaviour events

@@ -9,11 +9,13 @@ class MonitorWindow extends WaveboxWindow {
   /* ****************************************************************************/
 
   create (url, browserWindowPreferences = {}) {
-    return super.create(`file://${path.join(MONITOR_DIR, 'monitor.html')}`, {
+    super.create(`file://${path.join(MONITOR_DIR, 'monitor.html')}`, {
       title: 'Wavebox Monitor',
       width: 660,
-      height: 500
+      height: 500,
+      show: false
     })
+    this.window.once('ready-to-show', () => { this.window.show() })
   }
 
   /* ****************************************************************************/

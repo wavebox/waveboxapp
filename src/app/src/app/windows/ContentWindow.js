@@ -127,8 +127,10 @@ class ContentWindow extends WaveboxWindow {
         }
       },
       this.generateWindowPosition(parentWindow),
-      this.safeBrowserWindowPreferences(browserWindowPreferences)
+      this.safeBrowserWindowPreferences(browserWindowPreferences),
+      { show: false }
     ))
+    this.window.once('ready-to-show', () => { this.window.show() })
 
     // New window handling
     ipcMain.on(WB_NEW_WINDOW, this.boundHandleOpenNewWindow)

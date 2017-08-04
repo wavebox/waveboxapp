@@ -1,13 +1,13 @@
 {
-  "name": "wavebox-scenes-mailboxes",
+  "name": "wavebox-scenes-content",
   "author": "opensource@wavebox.io",
   "license": "MPL-2.0",
   "repository": "https://github.com/wavebox/waveboxapp",
   "description": "Content UI for Wavebox",
   "dependencies": {
     "alt": "0.18.6",
-    "fbjs": "0.8.12",
-    "material-ui": "0.18.6",
+    "fbjs": "0.8.14",
+    "material-ui": "0.18.7",
     "prop-types": "15.5.10",
     "react": "15.6.1",
     "react-addons-shallow-compare": "15.6.0",

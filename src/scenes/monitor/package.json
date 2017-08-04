@@ -6,8 +6,8 @@
   "description": "Monitor UI for Wavebox",
   "dependencies": {
     "alt": "0.18.6",
-    "fbjs": "0.8.12",
-    "material-ui": "0.18.6",
+    "fbjs": "0.8.14",
+    "material-ui": "0.18.7",
     "react": "15.6.1",
     "react-addons-shallow-compare": "15.6.0",
     "react-dom": "15.6.1",
