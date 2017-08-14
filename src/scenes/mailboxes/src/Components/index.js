@@ -7,6 +7,7 @@ import WaveboxWebView from './WaveboxWebView'
 import FullscreenModal from './FullscreenModal'
 import AuthenticationInstruction from './AuthenticationInstruction'
 import Buttons from './Buttons'
+import WindowTitle from './WindowTitle'
 
 export {
   AppBadge,
@@ -17,5 +18,6 @@ export {
   Mailbox,
   Tray,
   WaveboxWebView,
-  AuthenticationInstruction
+  AuthenticationInstruction,
+  WindowTitle
 }

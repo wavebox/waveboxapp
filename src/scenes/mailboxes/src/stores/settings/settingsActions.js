@@ -174,17 +174,24 @@ class SettingsActions {
   }
 
   /**
-  * @param show: true to show the badge, false otherwise
-  */
-  setShowAppBadge (show) {
-    return this.update(SEGMENTS.UI, 'showAppBadge', show)
-  }
-
-  /**
   * @param show: true to show the unread count in the titlebar
   */
   setShowTitlebarUnreadCount (show) {
     return this.update(SEGMENTS.UI, 'showTitlebarCount', show)
+  }
+
+  /**
+  * @param show: true to show the account info in the titlebar
+  */
+  setShowTitlebarAccount (show) {
+    return this.update(SEGMENTS.UI, 'showTitlebarAccount', show)
+  }
+
+  /**
+  * @param show: true to show the badge, false otherwise
+  */
+  setShowAppBadge (show) {
+    return this.update(SEGMENTS.UI, 'showAppBadge', show)
   }
 
   /**

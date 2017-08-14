@@ -638,6 +638,20 @@ class MailboxActions {
   }
 
   /* **************************************************************************/
+  // Guest
+  /* **************************************************************************/
+
+  /**
+  * Sets the title of the guest page
+  * @param id: the mailbox id of the guest
+  * @param service: the type of service of the guest
+  * @param title: the new title
+  */
+  setGuestTitle (id, service, title) {
+    return { id: id, service: service, title: title }
+  }
+
+  /* **************************************************************************/
   // Sync
   /* **************************************************************************/
 

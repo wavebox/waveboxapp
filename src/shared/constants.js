@@ -83,7 +83,8 @@ module.exports = Object.freeze({
   UPDATE_FEED_WIN32_X64: 'https://wavebox.io/squirrel/win32_x86_64/updates/latest/',
   UPDATE_FEED_MANUAL: 'https://wavebox.io/updates/latest/',
   UPDATE_CHECK_INTERVAL: 1000 * 60 * 60 * 12, // 12 hours
-  UPDATE_USER_MANUAL_DOWNLOAD: 'https://wavebox.io/download',
+  UPDATE_USER_MANUAL_DOWNLOAD_STABLE: 'https://wavebox.io/download',
+  UPDATE_USER_MANUAL_DOWNLOAD_BETA: 'https://github.com/wavebox/waveboxapp/releases',
 
   WAVEBOX_CAPTURE_URL_PREFIX: '/app/redirect/',
   WAVEBOX_CAPTURE_URLS: {

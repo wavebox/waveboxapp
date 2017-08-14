@@ -16,7 +16,7 @@ import { NotificationService, NotificationRenderer } from 'Notifications'
 import Bootstrap from 'R/Bootstrap'
 import AccountMessageDispatcher from './AccountMessageDispatcher'
 import { Tray } from 'Components/Tray'
-import { AppBadge } from 'Components'
+import { AppBadge, WindowTitle } from 'Components'
 import {
   WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE,
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
@@ -201,23 +201,13 @@ export default class Provider extends React.Component {
   render () {
     const { traySettings, uiSettings, messagesUnreadCount, hasUnreadActivity } = this.state
 
-    // Update the app title
-    if (uiSettings.showTitlebarCount) {
-      if (messagesUnreadCount === 0) {
-        document.title = 'Wavebox'
-      } else {
-        document.title = `Wavebox (${messagesUnreadCount})`
-      }
-    } else {
-      document.title = 'Wavebox'
-    }
-
     return (
       <div>
         <MuiThemeProvider muiTheme={Theme}>
           <WaveboxRouter />
         </MuiThemeProvider>
         <AccountMessageDispatcher />
+        <WindowTitle />
         {!traySettings.show ? undefined : (
           <Tray
             unreadCount={messagesUnreadCount}

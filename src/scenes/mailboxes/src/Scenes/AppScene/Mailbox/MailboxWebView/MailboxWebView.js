@@ -4,6 +4,7 @@ import React from 'react'
 import { CircularProgress, RaisedButton, FontIcon } from 'material-ui'
 import { mailboxStore, mailboxActions, mailboxDispatch, MailboxLinker } from 'stores/mailbox'
 import { settingsStore, settingsActions } from 'stores/settings'
+import { guestActions } from 'stores/guest'
 import BrowserView from 'sharedui/Components/BrowserView'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import MailboxSearch from './MailboxSearch'
@@ -439,6 +440,14 @@ export default class MailboxWebView extends React.Component {
   }
 
   /**
+  * Updates the store with the current page title
+  * @param evt: the event that fired
+  */
+  handleBrowserPageTitleUpdated = (evt) => {
+    guestActions.setPageTitle([this.props.mailboxId, this.props.serviceType], evt.title)
+  }
+
+  /**
   * Updates the target url that the user is hovering over
   * @param evt: the event that fired
   */
@@ -674,7 +683,9 @@ export default class MailboxWebView extends React.Component {
             didNavigate={(evt) => {
               this.multiCallBrowserEvent([this.handleBrowserDidNavigate, webviewEventProps.didNavigate], [evt])
             }}
-
+            pageTitleUpdated={(evt) => {
+              this.multiCallBrowserEvent([this.handleBrowserPageTitleUpdated, webviewEventProps.pageTitleUpdated], [evt])
+            }}
             domReady={(evt) => {
               this.multiCallBrowserEvent([this.handleBrowserDomReady, webviewEventProps.domReady], [evt])
             }}

@@ -4,7 +4,6 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { Dialog, RaisedButton, FlatButton } from 'material-ui'
 import { updaterActions, updaterStore } from 'stores/updater'
 import UpdateModalTitle from './UpdateModalTitle'
-import { UPDATE_USER_MANUAL_DOWNLOAD } from 'shared/constants'
 const { remote: {shell} } = window.nativeRequire('electron')
 
 const styles = {
@@ -86,8 +85,8 @@ export default class UpdateAvailableScene extends React.Component {
   */
   handleDownloadManual = () => {
     this.handleClose()
-    const url = updaterStore.getState().lastManualDownloadUrl
-    shell.openExternal(url || UPDATE_USER_MANUAL_DOWNLOAD)
+    const updaterState = updaterStore.getState()
+    shell.openExternal(updaterState.lastManualDownloadUrl || updaterState.getManualUpdateDownloadUrl())
   }
 
   /* **************************************************************************/

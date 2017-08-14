@@ -96,6 +96,11 @@ export default class UISettingsSection extends React.Component {
             label='Show titlebar unread count'
             labelPosition='right'
             onToggle={(evt, toggled) => settingsActions.setShowTitlebarUnreadCount(toggled)} />
+          <Toggle
+            toggled={ui.showTitlebarAccount}
+            label='Show titlebar active account'
+            labelPosition='right'
+            onToggle={(evt, toggled) => settingsActions.setShowTitlebarAccount(toggled)} />
           {process.platform === 'darwin' ? (
             <Toggle
               toggled={os.openLinksInBackground}
