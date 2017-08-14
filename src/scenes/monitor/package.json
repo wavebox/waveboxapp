@@ -15,7 +15,7 @@
     "react-tap-event-plugin": "2.0.1"
   },
   "devDependencies": {
-    "standard": "10.0.2",
+    "standard": "10.0.3",
     "babel-eslint": "7.2.3"
   },
   "standard": {

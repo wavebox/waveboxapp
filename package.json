@@ -45,7 +45,7 @@
     "clean-webpack-plugin": "0.1.16",
     "copy-webpack-plugin": "4.0.1",
     "css-loader": "0.28.4",
-    "electron": "1.7.5",
+    "electron": "1.7.6",
     "electron-rebuild": "1.6.0",
     "extract-text-webpack-plugin": "3.0.0",
     "file-loader": "0.11.2",
@@ -57,13 +57,13 @@
     "uglify-es": "3.0.27",
     "url-loader": "0.5.9",
     "uuid": "3.1.0",
-    "webpack": "3.4.1",
+    "webpack": "3.5.4",
     "webpack-notifier": "1.5.0",
     "webpack-target-electron-renderer": "0.4.0",
     "yargs": "8.0.2"
   },
   "devDependencies": {
-    "standard": "10.0.2",
+    "standard": "10.0.3",
     "babel-eslint": "7.2.3"
   },
   "standard": {
