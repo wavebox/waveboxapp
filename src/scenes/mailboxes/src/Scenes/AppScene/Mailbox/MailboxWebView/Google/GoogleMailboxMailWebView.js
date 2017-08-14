@@ -124,7 +124,9 @@ export default class GoogleMailboxMailWebView extends React.Component {
   handleOpenItem = (evt) => {
     if (evt.mailboxId === this.props.mailboxId && evt.service === CoreService.SERVICE_TYPES.DEFAULT) {
       this.refs[REF].send(WB_BROWSER_OPEN_MESSAGE, {
-        messageId: evt.data.messageId, threadId: evt.data.threadId
+        messageId: evt.data.messageId,
+        threadId: evt.data.threadId,
+        search: evt.data.search
       })
     }
   }

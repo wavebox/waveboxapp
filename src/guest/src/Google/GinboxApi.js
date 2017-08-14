@@ -91,6 +91,21 @@ class GinboxApi {
       }
     })
   }
+
+  /**
+  * Starts a search
+  * @param term: the term to search for
+  */
+  static startSearch (term) {
+    const element = document.querySelector('[role="search"] input')
+    element.value = term
+
+    const evt = new window.Event('input', {
+      bubbles: true,
+      cancelable: true
+    })
+    element.dispatchEvent(evt)
+  }
 }
 
 module.exports = GinboxApi
