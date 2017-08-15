@@ -92,7 +92,7 @@ export default class Provider extends React.Component {
     const titleComponents = [
       'Wavebox',
       showTitlebarCount && unreadCount !== 0 ? `(${unreadCount})` : undefined,
-      showTitlebarAccount && activeMailboxName ? activeMailboxName : undefined,
+      showTitlebarAccount && activeMailboxName ? `| ${activeMailboxName}` : undefined,
       showTitlebarAccount && activeGuestTitle ? `| ${activeGuestTitle}` : undefined
     ]
 
