@@ -12,6 +12,7 @@ import {
   GoogleMailboxReducer,
   GoogleDefaultServiceReducer
 } from '../mailbox'
+import Debug from 'Debug'
 
 const REQUEST_TYPES = {
   PROFILE: 'PROFILE',
@@ -519,6 +520,15 @@ class GoogleStore {
       .then((data) => {
         // STEP 3 [STORE]: Update the mailbox service with the new data
         if (data.hasContentChanged) {
+          if (Debug.flags.googleLogUnreadMessages) {
+            console.log(`[GOOGLE:UNREAD]: ${mailboxId}`, [
+              '',
+              `HistoryId=${data.historyId}`,
+              `UnreadCount=${data.unreadCount}`,
+              `Threads:`
+            ].concat(data.unreadThreads.map((t, i) => `${i}:  ${JSON.stringify(t)}\n`)).join('\n'))
+          }
+
           mailboxActions.reduceService.defer(
             mailbox.id,
             GoogleDefaultService.type,
