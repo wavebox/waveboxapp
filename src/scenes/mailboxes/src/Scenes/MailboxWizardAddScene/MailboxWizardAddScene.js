@@ -1,43 +1,102 @@
 import React from 'react'
-import { Dialog, RaisedButton } from 'material-ui'
+import './MailboxWizardAddScene.less'
+import * as Colors from 'material-ui/styles/colors'
+import { FlatButton, RaisedButton } from 'material-ui'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
+import { FullscreenModal } from 'Components'
 import { userStore } from 'stores/user'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Row, Col, Visible } from 'Components/Grid'
 import MicrosoftMailbox from 'shared/Models/Accounts/Microsoft/MicrosoftMailbox'
 import TrelloMailbox from 'shared/Models/Accounts/Trello/TrelloMailbox'
 import SlackMailbox from 'shared/Models/Accounts/Slack/SlackMailbox'
 import GenericMailbox from 'shared/Models/Accounts/Generic/GenericMailbox'
 import GoogleMailbox from 'shared/Models/Accounts/Google/GoogleMailbox'
+import MailboxWizardAccountButton from './MailboxWizardAccountButton'
 
 const styles = {
-  mailboxCell: {
+  // Modal
+  modalBody: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 52,
+    borderTopLeftRadius: 2,
+    borderTopRightRadius: 2,
+    backgroundColor: 'rgb(242, 242, 242)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 0
+  },
+  modalActions: {
+    position: 'absolute',
+    height: 52,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgb(242, 242, 242)',
+    borderBottomLeftRadius: 2,
+    borderBottomRightRadius: 2
+  },
+  modalActionExtraButton: {
+    marginRight: 8
+  },
+
+  // Title
+  titleContainer: {
+    color: Colors.blueGrey800,
     textAlign: 'center',
-    marginTop: 20,
-    marginBottom: 20,
-    marginLeft: 40,
-    marginRight: 40
+    paddingLeft: 16,
+    paddingRight: 16,
+    paddingTop: 16
   },
-  mailboxAvatar: {
-    cursor: 'pointer',
-    height: 80,
-    width: 80,
-    backgroundSize: 'contain',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center',
-    display: 'block',
-    margin: '10px auto'
+  titleText: {
+    fontWeight: '300'
   },
-  mailboxAvatarProCover: {
-    backgroundSize: 'contain, contain',
-    backgroundRepeat: 'no-repeat, no-repeat',
-    backgroundPosition: 'center, center'
+
+  // Accounts
+  accountContainer: {
+    paddingBottom: 16,
+    textAlign: 'center'
   },
-  introduction: {
+  accountset: {
+    textAlign: 'center'
+  },
+  accountIcon: {
+    margin: '8px 16px'
+  },
+
+  // Account limit
+  accountLimitReachedContainer: {
     textAlign: 'center',
-    padding: 12,
-    fontSize: '110%',
-    fontWeight: 'bold'
+    paddingTop: 8,
+    paddingBottom: 8
+  },
+  accountLimitReachedText: {
+    color: Colors.lightBlue500,
+    fontWeight: '300',
+    marginTop: 0
+  },
+
+  // Account unavailable
+  accountUnavailable: {
+    border: `2px solid ${Colors.lightBlue500}`,
+    borderRadius: 4,
+    padding: 16,
+    margin: 8,
+    maxWidth: '100%',
+    display: 'inline-block'
+  },
+  accountUnavailableInfo: {
+    textAlign: 'center',
+    paddingBottom: 8
+  },
+  accountUnavailableText: {
+    color: Colors.lightBlue500,
+    fontWeight: '300',
+    marginTop: 0
   }
 }
 
@@ -96,7 +155,7 @@ export default class MailboxWizardAddScene extends React.Component {
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/'
-    }, 500)
+    }, 250)
   }
 
   /**
@@ -117,163 +176,174 @@ export default class MailboxWizardAddScene extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
-  /**
-  * Renders the standard mailbox type
-  * @param mailboxType: the type of the mailbox
-  * @param imageSrc: the source of the image
-  * @param label: the label text
-  * @param onClick: function to exec on click
-  * @return jsx
-  */
-  renderMailboxType (mailboxType, imageSrc, label, onClick) {
-    const { user, canAddMailbox } = this.state
-    const hasAccountsOfType = user.hasAccountsOfType(mailboxType)
-    const avatarStyle = Object.assign(
-      {
-        backgroundImage: [
-          !hasAccountsOfType ? 'url("../../images/waveboxpro_banner.svg")' : undefined,
-          `url("${imageSrc}")`
-        ].filter((i) => !!i).join(',')
-      },
-      styles.mailboxAvatar,
-      !hasAccountsOfType ? styles.mailboxAvatarProCover : undefined
-    )
-
-    return (
-      <div style={styles.mailboxCell}>
-        <div
-          onClick={hasAccountsOfType && canAddMailbox ? onClick : this.handleShowPro}
-          style={avatarStyle} />
-        <RaisedButton
-          label={label}
-          primary
-          onClick={hasAccountsOfType && canAddMailbox ? onClick : this.handleShowPro} />
-      </div>
-    )
-  }
-
-  /**
-  * Renders the gmail option
-  * @return jsx
-  */
-  renderGmail () {
-    return this.renderMailboxType(GoogleMailbox.type, '../../' + GoogleMailbox.humanizedGmailVectorLogo, 'Add Gmail', () => {
-      mailboxActions.startAddGmailWizard()
-    })
-  }
-
-  /**
-  * Renders the google inbox option
-  * @return jsx
-  */
-  renderGinbox () {
-    return this.renderMailboxType(GoogleMailbox.type, '../../' + GoogleMailbox.humanizedGinboxVectorLogo, 'Add Google Inbox', () => {
-      mailboxActions.startAddGinboxWizard()
-    })
-  }
-
-  /**
-  * Renders the slack option
-  * @return jsx
-  */
-  renderSlack () {
-    return this.renderMailboxType(SlackMailbox.type, '../../' + SlackMailbox.humanizedVectorLogo, 'Add Slack Team', () => {
-      mailboxActions.startAddSlackWizard()
-    })
-  }
-
-  /**
-  * Renders the trello option
-  * @return jsx
-  */
-  renderTrello () {
-    return this.renderMailboxType(TrelloMailbox.type, '../../' + TrelloMailbox.humanizedVectorLogo, 'Add Trello', () => {
-      mailboxActions.startAddTrelloWizard()
-    })
-  }
-
-  /**
-  * Renders the outlook option
-  * @return jsx
-  */
-  renderOutlook () {
-    return this.renderMailboxType(MicrosoftMailbox.type, '../../' + MicrosoftMailbox.humanizedOutlookVectorLogo, 'Add Outlook', () => {
-      mailboxActions.startAddOutlookWizard()
-    })
-  }
-
-  /**
-  * Renders the office365 option
-  * @return jsx
-  */
-  renderOffice365 () {
-    return this.renderMailboxType(MicrosoftMailbox.type, '../../' + MicrosoftMailbox.humanizedOffice365Logo, 'Add Office 365', () => {
-      mailboxActions.startAddOffice365Wizard()
-    })
-  }
-
-  /**
-  * Renders the generic option
-  * @return jsx
-  */
-  renderGeneric () {
-    return this.renderMailboxType(GenericMailbox.type, '../../' + GenericMailbox.humanizedVectorLogo, 'Add any website', () => {
-      mailboxActions.startAddGenericWizard()
-    })
-  }
-
   render () {
-    const { open } = this.state
+    const {
+      open,
+      user,
+      canAddMailbox
+    } = this.state
+
+    const accounts = [
+      {
+        key: 'gmail',
+        buttonText: 'Gmail',
+        logoPath: `../../${GoogleMailbox.humanizedGmailVectorLogo}`,
+        accountType: GoogleMailbox.type,
+        clickHandler: mailboxActions.startAddGmailWizard
+      },
+      {
+        key: 'googleinbox',
+        buttonText: 'Google Inbox',
+        logoPath: `../../${GoogleMailbox.humanizedGinboxVectorLogo}`,
+        accountType: GoogleMailbox.type,
+        clickHandler: mailboxActions.startAddGinboxWizard
+      },
+      {
+        key: 'outlook',
+        buttonText: 'Outlook',
+        logoPath: `../../${MicrosoftMailbox.humanizedOutlookVectorLogo}`,
+        accountType: MicrosoftMailbox.type,
+        clickHandler: mailboxActions.startAddOutlookWizard
+      },
+      {
+        key: 'office365',
+        buttonText: 'Office 365',
+        logoPath: `../../${MicrosoftMailbox.humanizedOffice365VectorLogo}`,
+        accountType: MicrosoftMailbox.type,
+        clickHandler: mailboxActions.startAddOffice365Wizard
+      },
+      {
+        key: 'trello',
+        buttonText: 'Trello',
+        logoPath: `../../${TrelloMailbox.humanizedVectorLogo}`,
+        accountType: TrelloMailbox.type,
+        clickHandler: mailboxActions.startAddTrelloWizard
+      },
+      {
+        key: 'slack',
+        buttonText: 'Slack',
+        logoPath: `../../${SlackMailbox.humanizedVectorLogo}`,
+        accountType: SlackMailbox.type,
+        clickHandler: mailboxActions.startAddSlackWizard
+      },
+      {
+        key: 'generic',
+        buttonText: 'Any Web Link',
+        logoPath: `../../${GenericMailbox.humanizedVectorLogo}`,
+        accountType: GenericMailbox.type,
+        clickHandler: mailboxActions.startAddGenericWizard
+      }
+    ]
+
+    const { enabledAccounts, disabledAccounts } = accounts.reduce((acc, account) => {
+      if (user.hasAccountsOfType(account.accountType)) {
+        acc.enabledAccounts.push(account)
+      } else {
+        acc.disabledAccounts.push(account)
+      }
+      return acc
+    }, { enabledAccounts: [], disabledAccounts: [] })
+
     const actions = (
       <div>
+        {!canAddMailbox || disabledAccounts.length !== 0 ? (
+          <FlatButton
+            primary
+            label='Purchase Wavebox'
+            style={styles.modalActionExtraButton}
+            onClick={this.handleShowPro} />
+        ) : undefined}
         <RaisedButton label='Cancel' onClick={this.handleClose} />
       </div>
     )
 
     return (
-      <Dialog
+      <FullscreenModal
         modal={false}
+        bodyStyle={styles.modalBody}
+        actionsContainerStyle={styles.modalActions}
         actions={actions}
         open={open}
-        autoScrollBodyContent
-        contentStyle={{ width: '90%', maxWidth: 900 }}
         onRequestClose={this.handleClose}>
-        <div style={styles.introduction}>
-          Pick the type of account you want to add
+        <div style={styles.titleContainer}>
+          <h1 style={styles.titleText}>
+            Add your next account
+          </h1>
+          <h3 style={styles.titleText}>
+            Get even more from Wavebox by adding your next account
+          </h3>
         </div>
-        <Visible hidden='xs,sm'>
-          <Row>
-            <Col xs={4}>{this.renderGmail()}</Col>
-            <Col xs={4}>{this.renderGinbox()}</Col>
-            <Col xs={4}>{this.renderOutlook()}</Col>
-          </Row>
-          <Row>
-            <Col xs={4}>{this.renderOffice365()}</Col>
-            <Col xs={4}>{this.renderTrello()}</Col>
-            <Col xs={4}>{this.renderSlack()}</Col>
-          </Row>
-          <Row>
-            <Col xs={4} offset={4}>{this.renderGeneric()}</Col>
-          </Row>
-        </Visible>
-        <Visible hidden='md,lg'>
-          <Row>
-            <Col xs={6}>{this.renderGmail()}</Col>
-            <Col xs={6}>{this.renderGinbox()}</Col>
-          </Row>
-          <Row>
-            <Col xs={6}>{this.renderOutlook()}</Col>
-            <Col xs={6}>{this.renderOffice365()}</Col>
-          </Row>
-          <Row>
-            <Col xs={6}>{this.renderTrello()}</Col>
-            <Col xs={6}>{this.renderSlack()}</Col>
-          </Row>
-          <Row>
-            <Col xs={6} offset={3}>{this.renderGeneric()}</Col>
-          </Row>
-        </Visible>
-      </Dialog>
+        {canAddMailbox ? (
+          <div style={styles.accountContainer} className='ReactComponent-MailboxWizardAddScene-AutoScroller'>
+            <div style={styles.accountset}>
+              {enabledAccounts.map((account) => {
+                return (
+                  <MailboxWizardAccountButton
+                    key={account.key}
+                    buttonText={account.buttonText}
+                    logoPath={account.logoPath}
+                    onClick={account.clickHandler}
+                    logoSize={60}
+                    style={styles.accountIcon}
+                    disabled={false} />
+                )
+              })}
+            </div>
+            {disabledAccounts.length ? (
+              <div style={styles.accountUnavailable}>
+                <div style={styles.accountUnavailableInfo}>
+                  <h4 style={styles.accountUnavailableText}>
+                    Add all these account types when you purchase Wavebox
+                  </h4>
+                  <RaisedButton
+                    primary
+                    label='Find out more'
+                    onClick={this.handleShowPro} />
+                </div>
+                <div style={styles.accountset}>
+                  {disabledAccounts.map((account) => {
+                    return (
+                      <MailboxWizardAccountButton
+                        key={account.key}
+                        buttonText={account.buttonText}
+                        logoPath={account.logoPath}
+                        onClick={account.clickHandler}
+                        logoSize={60}
+                        style={styles.accountIcon}
+                        disabled />
+                    )
+                  })}
+                </div>
+              </div>
+            ) : undefined}
+          </div>
+        ) : (
+          <div style={styles.accountContainer} className='ReactComponent-MailboxWizardAddScene-AutoScroller'>
+            <div style={styles.accountLimitReachedContainer}>
+              <h4 style={styles.accountLimitReachedText}>
+                Use an unlimited amount of accounts when you purchase Wavebox
+              </h4>
+              <RaisedButton
+                primary
+                label='Find out more'
+                onClick={this.handleShowPro} />
+            </div>
+            <div style={styles.accountset}>
+              {accounts.map((account) => {
+                return (
+                  <MailboxWizardAccountButton
+                    key={account.key}
+                    buttonText={account.buttonText}
+                    logoPath={account.logoPath}
+                    logoSize={60}
+                    style={styles.accountIcon}
+                    disabled />
+                )
+              })}
+            </div>
+          </div>
+        )}
+      </FullscreenModal>
     )
   }
 }

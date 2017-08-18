@@ -5,6 +5,7 @@ import MailboxFactory from 'shared/Models/Accounts/MailboxFactory'
 import mailboxPersistence from './mailboxPersistence'
 import avatarPersistence from './avatarPersistence'
 import userStore from '../user/userStore'
+import settingsActions from '../settings/settingsActions'
 import { PERSISTENCE_INDEX_KEY, SERVICE_LOCAL_AVATAR_PREFIX, MAILBOX_SLEEP_EXTEND } from 'shared/constants'
 import { BLANK_PNG } from 'shared/b64Assets'
 import uuid from 'uuid'
@@ -548,7 +549,6 @@ class MailboxStore {
   * @return the generated model
   */
   saveMailbox (id, mailboxJS) {
-    // @future send mailbox to sever?
     if (mailboxJS === null) {
       mailboxPersistence.removeItem(id)
       this.mailboxes.delete(id)
@@ -616,30 +616,32 @@ class MailboxStore {
     })
   }
 
-  handleAuthenticateOutlookMailbox ({ provisionalId, provisionalJS }) {
+  handleAuthenticateOutlookMailbox ({ provisionalId, provisionalJS, additionalPermissions }) {
     this.preventDefault()
     window.location.hash = `/mailbox_wizard/${MicrosoftMailbox.type}/${MicrosoftMailbox.ACCESS_MODES.OUTLOOK}/1/${provisionalId}`
     ipcRenderer.send(WB_AUTH_MICROSOFT, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: provisionalJS
+      provisional: provisionalJS,
+      additionalPermissions: additionalPermissions
     })
   }
 
-  handleAuthenticateOffice365Mailbox ({ provisionalId, provisionalJS }) {
+  handleAuthenticateOffice365Mailbox ({ provisionalId, provisionalJS, additionalPermissions }) {
     this.preventDefault()
     window.location.hash = `/mailbox_wizard/${MicrosoftMailbox.type}/${MicrosoftMailbox.ACCESS_MODES.OFFICE365}/1/${provisionalId}`
     ipcRenderer.send(WB_AUTH_MICROSOFT, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: provisionalJS
+      provisional: provisionalJS,
+      additionalPermissions: additionalPermissions
     })
   }
 
-  handleAuthenticateGenericMailbox ({ provisionalId, provisionalJS }) {
+  handleAuthenticateGenericMailbox ({ provisionalId, provisionalJS, writePermission }) {
     this.preventDefault()
     actions.create.defer(provisionalId, provisionalJS)
-    window.location.hash = `/mailbox_wizard/${GenericMailbox.type}/_/2/${provisionalId}`
+    this._finalizeCreateAccount(`/mailbox_wizard/${GenericMailbox.type}/_/2/${provisionalId}`)
   }
 
   /* **************************************************************************/
@@ -731,6 +733,15 @@ class MailboxStore {
     window.location.hash = '/'
   }
 
+  /**
+  * Finalizes a new account
+  * @param nextUrl='/': the next url to visit
+  */
+  _finalizeCreateAccount (nextUrl = '/') {
+    window.location.hash = nextUrl
+    settingsActions.tourStart.defer()
+  }
+
   /* **************************************************************************/
   // Mailbox Auth Callbacks
   /* **************************************************************************/
@@ -758,7 +769,7 @@ class MailboxStore {
             auth: auth
           }))
           const accessMode = ((provisional.services || []).find((service) => service.type === GoogleDefaultService.type) || {}).accessMode
-          window.location.hash = `/mailbox_wizard/${GoogleMailbox.type}/${accessMode}/2/${provisionalId}`
+          this._finalizeCreateAccount(`/mailbox_wizard/${GoogleMailbox.type}/${accessMode}/2/${provisionalId}`)
         }
       })
       .catch((err) => {
@@ -796,7 +807,7 @@ class MailboxStore {
           actions.create.defer(provisionalId, Object.assign(provisional, {
             auth: auth
           }))
-          window.location.hash = `/`
+          this._finalizeCreateAccount()
         }
       }).catch((err) => {
         console.error('[AUTH ERR]', err)
@@ -826,7 +837,7 @@ class MailboxStore {
         authToken: authToken,
         authAppKey: authAppKey
       }))
-      window.location.hash = `/`
+      this._finalizeCreateAccount()
     }
   }
 
@@ -861,7 +872,7 @@ class MailboxStore {
               protocolVersion: 2
             }
           })
-          window.location.hash = `/mailbox_wizard/${MicrosoftMailbox.type}/${provisional.accessMode}/2/${provisionalId}`
+          this._finalizeCreateAccount(`/mailbox_wizard/${MicrosoftMailbox.type}/${provisional.accessMode}/2/${provisionalId}`)
         }
       }).catch((err) => {
         console.error('[AUTH ERR]', err)
@@ -1059,6 +1070,11 @@ class MailboxStore {
 
   handleSetServiceLocalAvatar ({ id, b64Image }) {
     const mailbox = this.mailboxes.get(id)
+    if (!mailbox) {
+      this.preventDefault()
+      return
+    }
+
     const data = mailbox.cloneData()
     if (b64Image) {
       if (data.serviceLocalAvatar && this.avatars.get(data.serviceLocalAvatar) === b64Image) {

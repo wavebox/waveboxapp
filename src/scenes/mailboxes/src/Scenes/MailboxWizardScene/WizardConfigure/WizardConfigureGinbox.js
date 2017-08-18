@@ -71,11 +71,18 @@ export default class WizardConfigureGinbox extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { mailbox, onRequestCancel, ...passProps } = this.props
+    const {
+      mailbox,
+      onRequestCancel,
+      ...passProps
+    } = this.props
     const unreadMode = mailbox.defaultService.unreadMode
 
     return (
-      <WizardConfigureDefaultLayout onRequestCancel={onRequestCancel} mailboxId={mailbox.id} {...passProps}>
+      <WizardConfigureDefaultLayout
+        onRequestCancel={onRequestCancel}
+        mailboxId={mailbox.id}
+        {...passProps}>
         <h2 style={styles.heading}>Pick which unread mode to use</h2>
         <p style={styles.subHeading}>
           Google Inbox organizes your emails into bundles. You can configure

@@ -1,34 +1,50 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { platformActions } from 'stores/platform'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Dialog, RaisedButton } from 'material-ui'
+import { RaisedButton } from 'material-ui'
+
+const styles = {
+  container: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    textAlign: 'center'
+  },
+  heading: {
+    fontWeight: 300,
+    marginTop: 20
+  },
+  subHeading: {
+    fontWeight: 300,
+    marginTop: 0,
+    fontSize: 16
+  }
+}
 
 export default class AppWizardMailtoScene extends React.Component {
   /* **************************************************************************/
-  // Data Lifecycle
+  // Class
   /* **************************************************************************/
 
-  state = (() => {
-    return { open: true }
-  })()
+  static PropTypes = {
+    onRequestNext: PropTypes.func.isRequired
+  }
 
   /* **************************************************************************/
   // UI Events
   /* **************************************************************************/
 
-  handleCancel = () => {
-    this.setState({ open: false })
-    setTimeout(() => { window.location.hash = '/' }, 500)
-  }
-
-  handleNext = () => {
-    this.setState({ open: false })
-    setTimeout(() => { window.location.hash = '/app_wizard/complete' }, 250)
-  }
-
   handleMakeDefaultClient = () => {
     platformActions.changeMailtoLinkHandler(true)
-    this.handleNext()
+    this.props.onRequestNext()
   }
 
   /* **************************************************************************/
@@ -40,40 +56,18 @@ export default class AppWizardMailtoScene extends React.Component {
   }
 
   render () {
-    const { open } = this.state
-    const actions = (
-      <div>
+    return (
+      <div style={styles.container}>
+        <h2 style={styles.heading}>Default mail client</h2>
+        <p style={styles.subHeading}>
+          You can make Wavebox your default mail client so that it launches
+          when you start to compose a new e-mail
+        </p>
         <RaisedButton
-          label='Cancel'
-          style={{ float: 'left' }}
-          onClick={this.handleCancel} />
-        <RaisedButton
-          label='Later'
-          onClick={this.handleNext} />
-        <RaisedButton
-          label='Make default mail client'
-          style={{ marginLeft: 8 }}
+          label='Make Wavebox the default mail client'
           primary
           onClick={this.handleMakeDefaultClient} />
       </div>
-    )
-
-    return (
-      <Dialog
-        modal={false}
-        title='Default Mail Client'
-        actions={actions}
-        open={open}
-        autoScrollBodyContent
-        onRequestClose={this.handleCancel}>
-        <div style={{textAlign: 'center'}}>
-          <p>
-            Would you like to make Wavebox your default mail client?
-            <br />
-            <small>You can always change this later</small>
-          </p>
-        </div>
-      </Dialog>
     )
   }
 }

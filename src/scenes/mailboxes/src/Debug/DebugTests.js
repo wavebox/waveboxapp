@@ -202,6 +202,103 @@ class DebugTests {
         })
     }, Promise.resolve())
   }
+
+  /**
+  * Authenticates a new microsoft account and marks all unread emails in the inbox read
+  * @param accessMode: the access mode of whether this is outlook or office 365
+  */
+  markAllMicrosoftInboxEmailsRead (accessMode) {
+    // Always late require to prevent cyclic references
+    const MicrosoftMailbox = require('shared/Models/Accounts/Microsoft/MicrosoftMailbox')
+    const { mailboxStore, mailboxActions, MicrosoftMailboxReducer } = require('stores/mailbox')
+    const { MicrosoftHTTP } = require('stores/microsoft')
+    const uuid = require('uuid')
+    const { WB_AUTH_MICROSOFT_COMPLETE, WB_AUTH_MICROSOFT_ERROR } = require('shared/ipcEvents')
+    const { ipcRenderer } = window.nativeRequire('electron')
+
+    const sig = '[TEST:MICROSOFT_MARK_INBOX_READ]'
+    const mailboxId = `debug_${uuid.v4()}`
+    const provisionalMailboxJS = { id: mailboxId }
+
+    // Validate
+    let authAction
+    if (accessMode === MicrosoftMailbox.ACCESS_MODES.OUTLOOK) {
+      authAction = mailboxActions.authenticateOutlookMailbox
+    } else if (accessMode === MicrosoftMailbox.ACCESS_MODES.OFFICE365) {
+      authAction = mailboxActions.authenticateOffice365Mailbox
+    } else {
+      console.log(`${sig} accessMode of "${accessMode}" is not valid`)
+      return
+    }
+
+    // Create some util methods
+    const refreshHTTPToken = (mailbox) => {
+      if (mailbox.authExpiryTime > new Date().getTime()) {
+        return Promise.resolve(mailbox.accessToken)
+      } else {
+        return Promise.resolve()
+          .then(() => MicrosoftHTTP.refreshAuthToken(mailbox.refreshToken, mailbox.protocolVersion))
+          .then((auth) => {
+            mailboxActions.reduce.defer(mailbox.id, MicrosoftMailboxReducer.setAuthInfo, auth)
+            return Promise.resolve(auth.access_token)
+          })
+      }
+    }
+
+    // Create auth listeners
+    const authSuccessHandler = (evt, data) => {
+      if (data.id !== mailboxId) { return }
+      ipcRenderer.removeListener(WB_AUTH_MICROSOFT_COMPLETE, authSuccessHandler)
+      ipcRenderer.removeListener(WB_AUTH_MICROSOFT_ERROR, authSuccessHandler)
+      console.log(`${sig} authentication success`)
+      setTimeout(() => { // Wait for the store to create the model
+        console.log(`${sig} ...pause end`)
+        const mailbox = mailboxStore.getState().getMailbox(mailboxId)
+        let accessToken
+        Promise.resolve()
+          .then(() => refreshHTTPToken(mailbox))
+          .then((latestAccessToken) => {
+            accessToken = latestAccessToken
+            return Promise.resolve()
+          })
+          .then(() => MicrosoftHTTP.fetchInboxUnreadCountAndUnreadMessages(accessToken, 10))
+          .then(({ unreadCount, messages }) => {
+            console.log(`${sig} found ${unreadCount} unread messages`, messages)
+
+            return messages.reduce((acc, message) => {
+              return acc
+                .then(() => {
+                  console.log(`${sig} marking message read ${message.from.emailAddress.address}:${message.subject}`)
+                  return MicrosoftHTTP.markMessageRead(accessToken, message.id)
+                })
+                .then((data) => {
+                  console.log(`${sig} Success (${message.from.emailAddress.address}:${message.subject})`, data)
+                })
+                .catch((err) => {
+                  console.log(`${sig} Failed (${message.from.emailAddress.address}:${message.subject})`, err)
+                  return Promise.resolve()
+                })
+            }, Promise.resolve())
+          })
+          .then(() => {
+            console.log(`${sig} removing debug mailbox`)
+            mailboxActions.remove(mailboxId)
+            console.log(`${sig} Done!`)
+          })
+      }, 1000)
+    }
+    const authFailureHandler = (evt, data) => {
+      if (data.id !== mailboxId) { return }
+      ipcRenderer.removeListener(WB_AUTH_MICROSOFT_COMPLETE, authSuccessHandler)
+      ipcRenderer.removeListener(WB_AUTH_MICROSOFT_ERROR, authSuccessHandler)
+      console.log(`${sig} authentication failed`, data)
+    }
+
+    console.log(`${sig} use the authentication window to login to your account...`)
+    ipcRenderer.on(WB_AUTH_MICROSOFT_COMPLETE, authSuccessHandler)
+    ipcRenderer.on(WB_AUTH_MICROSOFT_ERROR, authFailureHandler)
+    authAction(provisionalMailboxJS, ['Mail.ReadWrite'])
+  }
 }
 
 export default DebugTests

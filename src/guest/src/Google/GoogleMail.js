@@ -114,6 +114,7 @@ class GoogleMail extends GoogleService {
     } else if (this.isGinbox) {
       if (data.search && data.search.length) {
         GinboxApi.startSearch(data.search)
+        GinboxApi.openFirstSearchItem()
       }
     }
   }

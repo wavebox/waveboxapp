@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Dialog, RaisedButton, List, ListItem, FontIcon, Avatar } from 'material-ui'
+import { Dialog, FlatButton, List, ListItem, FontIcon, Avatar } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import { mailboxStore } from 'stores/mailbox'
 import { MailboxAvatar } from 'Components/Mailbox'
@@ -126,7 +126,7 @@ export default class AccountAuthScene extends React.Component {
             To purchase Wavebox you will need to select which account you want to use for billing
           </h3>
           <p>
-            If you don't want to use one of the accounts you've already added to wavebox,
+            If you don't want to use one of the accounts you've already added to Wavebox,
             you can use with another one
           </p>
         </div>
@@ -139,7 +139,7 @@ export default class AccountAuthScene extends React.Component {
             use as your affiliate & payment account with Wavebox
           </h3>
           <p>
-            If you don't want to use one of the accounts you've already added to wavebox,
+            If you don't want to use one of the accounts you've already added to Wavebox,
             you can use with another one
           </p>
         </div>
@@ -151,7 +151,7 @@ export default class AccountAuthScene extends React.Component {
             You need to pick the account you want to use for billing
           </h3>
           <p>
-            If you don't want to use one of the accounts you've already added to wavebox,
+            If you don't want to use one of the accounts you've already added to Wavebox,
             you can use with another one
           </p>
         </div>
@@ -184,7 +184,7 @@ export default class AccountAuthScene extends React.Component {
               </a>
             </p>
             <br />
-            <RaisedButton
+            <FlatButton
               label='Cancel'
               onClick={this.handleClose} />
           </div>

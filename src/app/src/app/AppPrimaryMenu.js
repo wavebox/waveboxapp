@@ -71,6 +71,12 @@ class AppPrimaryMenu {
       eula: () => { shell.openExternal(EULA_URL) },
       support: () => { shell.openExternal(SUPPORT_URL) },
       knowledgeBase: () => { shell.openExternal(KB_URL) },
+      supportCenter: () => {
+        windowManager.mailboxesWindow.show().focus().launchSupportCenter()
+      },
+      whatsNew: () => {
+        windowManager.mailboxesWindow.show().focus().launchWhatsNew()
+      },
       zoomIn: () => {
         const focused = windowManager.focused()
         if (focused) { focused.zoomIn() }
@@ -415,8 +421,8 @@ class AppPrimaryMenu {
           { label: 'Wavebox Blog', click: this._selectors.waveboxBlog },
           { label: 'Wavebox on GitHub', click: this._selectors.waveboxGithub },
           { type: 'separator' },
-          { label: 'Knowledge Base', click: this._selectors.knowledgeBase },
-          { label: 'Support', click: this._selectors.support },
+          { label: 'Support Center', click: this._selectors.supportCenter },
+          { label: 'What\'s new', click: this._selectors.whatsNew },
           { type: 'separator' },
           { label: 'Privacy', click: this._selectors.privacy },
           { label: 'EULA', click: this._selectors.eula }

@@ -52,7 +52,14 @@ export default class WizardConfigure extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { onRequestCancel, buttons, style, children, mailboxId, ...passProps } = this.props
+    const {
+      onRequestCancel,
+      buttons,
+      style,
+      children,
+      mailboxId,
+      ...passProps
+    } = this.props
 
     return (
       <div {...passProps} style={{...styles.container, ...style}}>

@@ -21,13 +21,28 @@ export default {
     marginBottom: 10,
     color: Colors.grey900,
     fontWeight: 'normal',
-    fontSize: 16
+    fontSize: 18
   },
   subheadingInfo: {
     fontSize: '85%',
     marginTop: -10,
     marginBottom: 10,
     color: Colors.grey500
+  },
+  subsectionheading: {
+    marginTop: 0,
+    marginBottom: 10,
+    color: Colors.grey900,
+    fontWeight: 'normal',
+    fontSize: 16
+  },
+  subsectionRule: {
+    border: 'none',
+    height: 2,
+    backgroundColor: Colors.grey200,
+    marginLeft: -16,
+    marginRight: -16,
+    marginTop: 16
   },
 
   kbd: {

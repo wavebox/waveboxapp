@@ -5,6 +5,7 @@ import SidelistControlWizard from './SidelistControlWizard'
 import SidelistControlSupport from './SidelistControlSupport'
 import SidelistControlAddMailbox from './SidelistControlAddMailbox'
 import SidelistControlSettings from './SidelistControlSettings'
+import shallowCompare from 'react-addons-shallow-compare'
 
 export default class SidelistControls extends React.Component {
   /* **************************************************************************/
@@ -27,7 +28,6 @@ export default class SidelistControls extends React.Component {
     const settingsState = settingsStore.getState()
     return {
       showWizard: !settingsState.app.hasSeenAppWizard,
-      showNewsFeed: false, // settingsState.ui.showSidebarNewsfeed,
       showSupport: settingsState.ui.showSidebarSupport
     }
   })()
@@ -35,7 +35,6 @@ export default class SidelistControls extends React.Component {
   settingsUpdated = (settingsState) => {
     this.setState({
       showWizard: !settingsState.app.hasSeenAppWizard,
-      showNewsFeed: false, // settingsState.ui.showSidebarNewsfeed,
       showSupport: settingsState.ui.showSidebarSupport
     })
   }
@@ -44,13 +43,17 @@ export default class SidelistControls extends React.Component {
   // Rendering
   /* **************************************************************************/
 
+  shouldComponentUpdate (nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState)
+  }
+
   render () {
     const { ...passProps } = this.props
-    const { showWizard, showNewsFeed, showSupport } = this.state
+    const { showWizard, showSupport } = this.state
 
     return (
       <div {...passProps}>
-        {showNewsFeed ? (<SidelistControlWhatsNew />) : undefined}
+        <SidelistControlWhatsNew />
         {showWizard ? (<SidelistControlWizard />) : undefined}
         {showSupport ? (<SidelistControlSupport />) : undefined}
         <SidelistControlAddMailbox />

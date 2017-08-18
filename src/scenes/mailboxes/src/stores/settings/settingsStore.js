@@ -8,10 +8,15 @@ import {
   AppSettings,
   LanguageSettings,
   OSSettings,
+  NewsSettings,
   TraySettings,
   UISettings,
   SettingsIdent
 } from 'shared/Models/Settings'
+import { NEWS_SYNC_PERIOD } from 'shared/constants'
+import { TOUR_STEPS, TOUR_STEPS_ORDER } from './Tour'
+import WaveboxHTTP from 'Server/WaveboxHTTP'
+
 const homeDir = window.appNodeModulesRequire('home-dir') // pull this from main thread
 const { systemPreferences } = window.nativeRequire('electron').remote
 const pkg = window.appPackage()
@@ -80,6 +85,7 @@ class SettingsStore {
     this.accelerators = null
     this.app = null
     this.language = null
+    this.news = null
     this.os = null
     this.tray = null
     this.ui = null
@@ -88,10 +94,14 @@ class SettingsStore {
       accelerators: null,
       app: null,
       language: null,
+      news: null,
       os: null,
       tray: null,
       ui: null
     }
+
+    this.newsSync = null
+    this.tourStep = TOUR_STEPS.NONE
 
     /* ****************************************/
     // Export
@@ -106,14 +116,42 @@ class SettingsStore {
     }
 
     /* ****************************************/
+    // News
+    /* ****************************************/
+
+    /**
+    * @return true if the news is being synced
+    */
+    this.isSyncingNews = () => { return this.newsSync !== null }
+
+    /* ****************************************/
+    // Tour
+    /* ****************************************/
+
+    /**
+    * @return true if the tour is active
+    */
+    this.isTourActive = () => this.tourStep !== TOUR_STEPS.NONE
+
+    /* ****************************************/
     // Listeners
     /* ****************************************/
 
     this.bindListeners({
       handleLoad: actions.LOAD,
+
+      handleStartSyncingNews: actions.START_SYNCING_NEWS,
+      handleStopSyncingNews: actions.STOP_SYNCING_NEWS,
+      handleOpenAndMarkNews: actions.OPEN_AND_MARK_NEWS,
+
+      handleTourStart: actions.TOUR_START,
+      handleTourNext: actions.TOUR_NEXT,
+      handleTourQuit: actions.TOUR_QUIT,
+
       handleUpdate: actions.UPDATE,
       handleToggleBool: actions.TOGGLE,
 
+      handleSetHasSeenAppWizard: actions.SET_HAS_SEEN_APP_WIZARD,
       handleSetSpellcheckerLanguage: actions.SET_SPELLCHECKER_LANGUAGE,
       handleSetSecondarySpellcheckerLanguage: actions.SET_SECONDARY_SPELLCHECKER_LANGUAGE
     })
@@ -131,6 +169,7 @@ class SettingsStore {
     this.accelerators = new AcceleratorSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.ACCELERATORS, {}))
     this.app = new AppSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.APP, {}), pkg)
     this.language = new LanguageSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.LANGUAGE, {}))
+    this.news = new NewsSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.NEWS, {}))
     this.os = new OSSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.OS, {}))
     this.tray = new TraySettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.TRAY, {}), this.trayDefaults)
     this.ui = new UISettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.UI, {}))
@@ -139,10 +178,100 @@ class SettingsStore {
       accelerators: this.accelerators,
       app: this.app,
       language: this.language,
+      news: this.news,
       os: this.os,
       tray: this.tray,
       ui: this.ui
     }
+
+    actions.startSyncingNews.defer()
+  }
+
+  /* **************************************************************************/
+  // News Sync
+  /* **************************************************************************/
+
+  /**
+  * Gets the latest news info from the server and updates the store
+  * with the given response
+  */
+  _syncNews () {
+    WaveboxHTTP.fetchLatestNewsHeading()
+      .then((res) => {
+        actions.update.defer(SettingsIdent.SEGMENTS.NEWS, {
+          latestTimestamp: res.latest.timestamp,
+          latestHeadline: res.latest.headline,
+          latestSummary: res.latest.summary
+        })
+      })
+      .catch(() => { /* no-op */ })
+  }
+
+  handleStartSyncingNews () {
+    if (this.isSyncingNews()) {
+      this.preventDefault()
+      return
+    }
+
+    this.newsSync = setInterval(() => {
+      this._syncNews()
+    }, NEWS_SYNC_PERIOD)
+    this._syncNews()
+  }
+
+  handleStopSyncingNews () {
+    clearTimeout(this.newsSync)
+  }
+
+  handleOpenAndMarkNews () {
+    this.preventDefault()
+    window.location.hash = '/news'
+    if (this.news.hasLatestInfo) {
+      actions.update.defer(SettingsIdent.SEGMENTS.NEWS, {
+        lastSeenTimestamp: this.news.latestTimestamp
+      })
+    }
+  }
+
+  /* **************************************************************************/
+  // Tour
+  /* **************************************************************************/
+
+  handleTourStart () {
+    this.preventDefault()
+    if (this.app.hasSeenAppTour) { return }
+    this.tourStep = TOUR_STEPS.NONE
+    actions.tourNext.defer()
+  }
+
+  handleTourNext () {
+    const currentIndex = TOUR_STEPS_ORDER.findIndex((step) => step === this.tourStep)
+    const nextStep = TOUR_STEPS_ORDER.find((step, index) => {
+      if (index <= currentIndex) { return false }
+
+      if (step === TOUR_STEPS.WHATS_NEW) {
+        if (this.ui.showSidebarNewsfeed) { return true }
+      } else if (step === TOUR_STEPS.APP_WIZARD) {
+        if (!this.app.hasSeenAppWizard) { return true }
+      } else if (step === TOUR_STEPS.SUPPORT_CENTER) {
+        if (this.ui.showSidebarSupport) { return true }
+      } else {
+        return true
+      }
+    })
+
+    if (nextStep) {
+      this.tourStep = nextStep
+    } else {
+      this.tourStep = TOUR_STEPS.NONE
+      actions.setHasSeenTour.defer(true)
+    }
+  }
+
+  handleTourQuit () {
+    this.preventDefault()
+    this.tourStep = TOUR_STEPS.NONE
+    actions.setHasSeenTour.defer(true)
   }
 
   /* **************************************************************************/
@@ -158,6 +287,7 @@ class SettingsStore {
       case SettingsIdent.SEGMENTS.ACCELERATORS: return AcceleratorSettings
       case SettingsIdent.SEGMENTS.APP: return AppSettings
       case SettingsIdent.SEGMENTS.LANGUAGE: return LanguageSettings
+      case SettingsIdent.SEGMENTS.NEWS: return NewsSettings
       case SettingsIdent.SEGMENTS.OS: return OSSettings
       case SettingsIdent.SEGMENTS.TRAY: return TraySettings
       case SettingsIdent.SEGMENTS.UI: return UISettings
@@ -207,6 +337,18 @@ class SettingsStore {
     js[key] = !this[segment][key]
     persistence.setJSONItem(segment, js)
     this[segment] = this.createStore(segment, js)
+  }
+
+  /* **************************************************************************/
+  // Changing : Special cases
+  /* **************************************************************************/
+
+  handleSetHasSeenAppWizard ({ hasSeen }) {
+    this.preventDefault()
+    actions.update.defer(SettingsIdent.SEGMENTS.APP, 'hasSeenAppWizard', hasSeen)
+    if (this.isTourActive()) {
+      actions.tourNext.defer()
+    }
   }
 
   /* **************************************************************************/

@@ -198,7 +198,11 @@ export default class WizardConfigureGeneric extends React.Component {
     )
 
     return (
-      <WizardConfigureDefaultLayout onRequestCancel={onRequestCancel} mailboxId={mailbox.id} buttons={buttons} {...passProps}>
+      <WizardConfigureDefaultLayout
+        onRequestCancel={onRequestCancel}
+        mailboxId={mailbox.id}
+        buttons={buttons}
+        {...passProps}>
         <h2 style={styles.heading}>Configure your Account</h2>
         <div style={styles.subheading}>
           Enter the web address and the name of the website you want

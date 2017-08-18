@@ -9,11 +9,14 @@ import WizardPersonalise from './WizardPersonalise'
 import WizardAuth from './WizardAuth'
 import WizardConfigure from './WizardConfigure'
 
+const MIN_WIDTH = 580
+const BORDER_WIDTH = 25
 const styles = {
   modalBody: {
     borderRadius: 2,
     padding: 0,
-    backgroundColor: 'rgb(242, 242, 242)'
+    backgroundColor: 'rgb(242, 242, 242)',
+    minWidth: MIN_WIDTH
   },
   master: {
     position: 'absolute',
@@ -51,11 +54,30 @@ export default class MailboxWizardScene extends React.Component {
   }
 
   /* **************************************************************************/
+  // Component lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    window.addEventListener('resize', this.windowSizeChanged)
+  }
+
+  componentWillUnmount () {
+    window.removeEventListener('resize', this.windowSizeChanged)
+  }
+
+  /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
   state = {
-    open: true
+    open: true,
+    borderWidth: window.innerWidth <= MIN_WIDTH + (2 * BORDER_WIDTH) ? 0 : BORDER_WIDTH
+  }
+
+  windowSizeChanged = () => {
+    this.setState({
+      borderWidth: window.innerWidth <= MIN_WIDTH + (2 * BORDER_WIDTH) ? 0 : BORDER_WIDTH
+    })
   }
 
   /* **************************************************************************/
@@ -113,12 +135,13 @@ export default class MailboxWizardScene extends React.Component {
   }
 
   render () {
-    const { open } = this.state
+    const { open, borderWidth } = this.state
     const { match } = this.props
     const currentStep = parseInt(match.params.step)
 
     return (
       <FullscreenModal
+        borderWidth={borderWidth}
         modal
         open={open}
         bodyStyle={styles.modalBody}>

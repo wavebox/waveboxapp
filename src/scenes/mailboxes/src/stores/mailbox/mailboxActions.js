@@ -195,27 +195,37 @@ class MailboxActions {
   /**
   * Starts the auth process for outlook
   * @param provisionalJS=undefined: the provisional json object to create the mailbox
+  * @param additionalPermissions=[]: additional permissions to request
   */
-  authenticateOutlookMailbox (provisionalJS = undefined) {
+  authenticateOutlookMailbox (provisionalJS = undefined, additionalPermissions = []) {
     if (provisionalJS) {
       provisionalJS = MicrosoftMailbox.sanitizeProvisionalJS(provisionalJS, MicrosoftMailbox.ACCESS_MODES.OUTLOOK)
     } else {
       provisionalJS = MicrosoftMailbox.createJS(CoreMailbox.provisionId(), MicrosoftMailbox.ACCESS_MODES.OUTLOOK)
     }
-    return { provisionalJS: provisionalJS, provisionalId: provisionalJS.id }
+    return {
+      provisionalJS: provisionalJS,
+      provisionalId: provisionalJS.id,
+      additionalPermissions: additionalPermissions
+    }
   }
 
   /**
   * Starts the auth process for office 365
   * @param provisionalJS=undefined: the provisional json object to create the mailbox
+  * @param additionalPermissions=[]: additional permissions to request
   */
-  authenticateOffice365Mailbox (provisionalJS = undefined) {
+  authenticateOffice365Mailbox (provisionalJS = undefined, additionalPermissions = []) {
     if (provisionalJS) {
       provisionalJS = MicrosoftMailbox.sanitizeProvisionalJS(provisionalJS, MicrosoftMailbox.ACCESS_MODES.OFFICE365)
     } else {
       provisionalJS = MicrosoftMailbox.createJS(CoreMailbox.provisionId(), MicrosoftMailbox.ACCESS_MODES.OFFICE365)
     }
-    return { provisionalJS: provisionalJS, provisionalId: provisionalJS.id }
+    return {
+      provisionalJS: provisionalJS,
+      provisionalId: provisionalJS.id,
+      additionalPermissions: additionalPermissions
+    }
   }
 
   /**

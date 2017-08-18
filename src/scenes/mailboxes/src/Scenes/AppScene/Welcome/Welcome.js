@@ -117,8 +117,8 @@ export default class Welcome extends React.Component {
   /**
   * Opens the account screen in settings
   */
-  handleOpenAccount = () => {
-    window.location.hash = '/settings/pro'
+  handleLoginWavebox = () => {
+    window.location.hash = '/account/auth/'
   }
 
   /**
@@ -180,7 +180,7 @@ export default class Welcome extends React.Component {
               Get started by adding your first account. Tap on an icon below...
             </h3>
             <p style={styles.introTerms}>
-              <span>By continuing you agree to Software </span>
+              <span>By continuing you agree to the Software </span>
               <span style={styles.introTermsLink} onClick={this.handleOpenEULA}>EULA</span>
               <span> and our </span>
               <span style={styles.introTermsLink} onClick={this.handleOpenTerms}>service terms</span>
@@ -197,7 +197,7 @@ export default class Welcome extends React.Component {
           </div>
           <div style={styles.extraActions}>
             <WelcomeRaisedButton
-              onClick={this.handleOpenAccount}
+              onClick={this.handleLoginWavebox}
               style={styles.extraActionButton}
               label='Already a User? Login' />
             {canImportWmail ? (

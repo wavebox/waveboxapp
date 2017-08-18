@@ -128,15 +128,17 @@ class CoreMailbox extends Model {
     super(data)
     this.__id__ = id
 
-    // Inject any default model data to the json
+    // If we don't have default model data, inject it into the json
     if (!this.__data__.services || !this.__data__.services.length) {
-      this.__data__.services = this.constructor.defaultServiceTypes.map((serviceType) => {
+      const sanitizedData = JSON.parse(JSON.stringify(this.__data__))
+      sanitizedData.services = this.constructor.defaultServiceTypes.map((serviceType) => {
         return { type: serviceType }
       })
+      this.__data__ = Object.freeze(sanitizedData)
     }
 
     // Modelize services
-    this.__services__ = data.services.map((service) => {
+    this.__services__ = this.__data__.services.map((service) => {
       return this.modelizeService(service)
     })
   }

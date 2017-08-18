@@ -35,7 +35,7 @@ const styles = {
   }
 }
 
-export default class Welcome extends React.Component {
+export default class WelcomeAccountButton extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/

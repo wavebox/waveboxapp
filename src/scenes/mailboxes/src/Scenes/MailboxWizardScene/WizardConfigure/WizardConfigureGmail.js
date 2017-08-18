@@ -75,7 +75,10 @@ export default class WizardConfigureGmail extends React.Component {
     const unreadMode = mailbox.defaultService.unreadMode
 
     return (
-      <WizardConfigureDefaultLayout onRequestCancel={onRequestCancel} mailboxId={mailbox.id} {...passProps}>
+      <WizardConfigureDefaultLayout
+        onRequestCancel={onRequestCancel}
+        mailboxId={mailbox.id}
+        {...passProps}>
         <h2 style={styles.heading}>Choose your Inbox mode</h2>
         <p style={styles.subHeading}>
           Your Gmail account uses on of the following modes to organise your inbox.

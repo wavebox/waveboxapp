@@ -30,6 +30,8 @@ const {
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
   WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD,
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
+  WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER,
+  WB_MAILBOXES_WINDOW_SHOW_NEWS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
   WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED,
   WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED,
@@ -386,6 +388,24 @@ class MailboxesWindow extends WaveboxWindow {
   */
   launchPreferences () {
     this.window.webContents.send(WB_MAILBOXES_WINDOW_SHOW_SETTINGS, { })
+    return this
+  }
+
+  /**
+  * Launches the support center
+  * @return this
+  */
+  launchSupportCenter () {
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER, {})
+    return this
+  }
+
+  /**
+  * Launches the whats new/news window
+  * @return this
+  */
+  launchWhatsNew () {
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_SHOW_NEWS, {})
     return this
   }
 

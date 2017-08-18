@@ -9,12 +9,8 @@ import EarlyBuildToast from './EarlyBuildToast'
 import MailboxWizardScene from './MailboxWizardScene'
 import MailboxWizardAddScene from './MailboxWizardAddScene'
 import MailboxReauthenticatingScene from './MailboxReauthenticatingScene'
-import {
-  AppWizardIntroScene,
-  AppWizardTrayScene,
-  AppWizardMailtoScene,
-  AppWizardCompleteScene
-} from './AppWizardScene'
+import AppWizardScene from './AppWizardScene'
+import NewsScene from './NewsScene'
 import {
   CheckingUpdatesScene,
   UpdateAvailableScene,
@@ -54,10 +50,7 @@ export default class WaveboxRouter extends React.Component {
           <Route path='/mailbox_wizard/:mailboxType/:accessMode/:step/:mailboxId?' component={MailboxWizardScene} />
           <Route path='/mailbox/reauthenticating' component={MailboxReauthenticatingScene} />
 
-          <Route path='/app_wizard/tray' component={AppWizardTrayScene} />
-          <Route path='/app_wizard/mailto' component={AppWizardMailtoScene} />
-          <Route path='/app_wizard/complete' component={AppWizardCompleteScene} />
-          <Route path='/app_wizard/' component={AppWizardIntroScene} />
+          <Route path='/app_wizard/:step?' component={AppWizardScene} />
 
           <Route path='/incoming/compose' component={ComposePickerScene} />
 
@@ -68,6 +61,7 @@ export default class WaveboxRouter extends React.Component {
           <Route path='/updates/available/:provider' component={UpdateAvailableScene} />
 
           <Route path='/pro' component={ProScene} />
+          <Route path='/news' component={NewsScene} />
 
           <Route path='/account/message' component={AccountMessageScene} />
           <Route path='/account/auth/:mode?' component={AccountAuthScene} />

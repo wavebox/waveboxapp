@@ -66,18 +66,38 @@ export default class WizardConfigure extends React.Component {
     if (mailbox) {
       if (mailbox.type === GoogleMailbox.type) {
         if (mailbox.defaultService.accessMode === GoogleDefaultService.ACCESS_MODES.GMAIL) {
-          return (<WizardConfigureGmail onRequestCancel={onRequestCancel} mailbox={mailbox} {...passProps} />)
+          return (
+            <WizardConfigureGmail
+              onRequestCancel={onRequestCancel}
+              mailbox={mailbox}
+              {...passProps} />)
         } else if (mailbox.defaultService.accessMode === GoogleDefaultService.ACCESS_MODES.GINBOX) {
-          return (<WizardConfigureGinbox onRequestCancel={onRequestCancel} mailbox={mailbox} {...passProps} />)
+          return (
+            <WizardConfigureGinbox
+              onRequestCancel={onRequestCancel}
+              mailbox={mailbox}
+              {...passProps} />)
         }
       } else if (mailbox.type === MicrosoftMailbox.type) {
-        return (<WizardConfigureMicrosoft onRequestCancel={onRequestCancel} mailbox={mailbox} {...passProps} />)
+        return (
+          <WizardConfigureMicrosoft
+            onRequestCancel={onRequestCancel}
+            mailbox={mailbox}
+            {...passProps} />)
       } else if (mailbox.type === GenericMailbox.type) {
-        return (<WizardConfigureGeneric onRequestCancel={onRequestCancel} mailbox={mailbox} {...passProps} />)
+        return (
+          <WizardConfigureGeneric
+            onRequestCancel={onRequestCancel}
+            mailbox={mailbox}
+            {...passProps} />)
       }
     }
 
     // Catch-all we should never really get here
-    return (<WizardConfigureDefaultLayout onRequestCancel={onRequestCancel} mailboxId={mailboxId} {...passProps} />)
+    return (
+      <WizardConfigureDefaultLayout
+        onRequestCancel={onRequestCancel}
+        mailboxId={mailboxId}
+        {...passProps} />)
   }
 }

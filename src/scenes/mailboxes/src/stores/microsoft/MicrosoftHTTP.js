@@ -138,7 +138,7 @@ class MicrosoftHTTP {
   }
 
   /* **************************************************************************/
-  // Unread
+  // Mail
   /* **************************************************************************/
 
   /**
@@ -304,6 +304,30 @@ class MicrosoftHTTP {
           .filter((m) => m.inferenceClassification === 'focused')
           .slice(0, limit)
       })
+  }
+
+  /**
+  * Marks a message as being read
+  * @param auth: the auth to access microsoft
+  * @param messageId: the id of the message to mark
+  * @return promise
+  */
+  static markMessageRead (auth, messageId) {
+    return Promise.resolve()
+    .then(() => window.fetch(`https://graph.microsoft.com/beta/me/messages/${messageId}`, {
+      method: 'PATCH',
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'wavebox',
+        'Authorization': `Bearer ${auth}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        isRead: true
+      })
+    }))
+    .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+    .then((res) => res.json())
   }
 
   /* **************************************************************************/

@@ -353,6 +353,7 @@ class GoogleStore {
       case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL:
         return ['INBOX', 'UNREAD', 'CATEGORY_PERSONAL']
       case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED: // default
+        return ['INBOX', 'UNREAD']
       default:
         return ['INBOX']
     }

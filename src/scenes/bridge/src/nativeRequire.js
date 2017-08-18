@@ -18,3 +18,11 @@ window.guestResolve = function (name) {
   const path = require('path')
   return path.join('../../guest/guest/', name)
 }
+
+window.distributionConfig = function () {
+  try {
+    return require('../../app/distributionConfig.json')
+  } catch (ex) {
+    return {}
+  }
+}

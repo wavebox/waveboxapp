@@ -4,6 +4,8 @@ import { settingsStore } from 'stores/settings'
 import { guestStore } from 'stores/guest'
 import shallowCompare from 'react-addons-shallow-compare'
 
+const TITLE_WRITE_WAIT = 200
+
 export default class Provider extends React.Component {
   /* **************************************************************************/
   // Lifecycle
@@ -13,12 +15,14 @@ export default class Provider extends React.Component {
     mailboxStore.listen(this.mailboxesChanged)
     settingsStore.listen(this.settingsChanged)
     guestStore.listen(this.guestStoreChanged)
+    this.writeTimeout = null
   }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.mailboxesChanged)
     settingsStore.unlisten(this.settingsChanged)
     guestStore.unlisten(this.guestStoreChanged)
+    clearTimeout(this.writeTimeout)
   }
 
   /* **************************************************************************/
@@ -89,17 +93,24 @@ export default class Provider extends React.Component {
       activeMailboxName
     } = this.state
 
+    const activeAcc1 = showTitlebarAccount && activeMailboxName ? activeMailboxName : undefined
+    const activeAcc2 = showTitlebarAccount && activeGuestTitle ? activeGuestTitle : undefined
+
     const titleComponents = [
-      'Wavebox',
-      showTitlebarCount && unreadCount !== 0 ? `(${unreadCount})` : undefined,
-      showTitlebarAccount && activeMailboxName ? `| ${activeMailboxName}` : undefined,
-      showTitlebarAccount && activeGuestTitle ? `| ${activeGuestTitle}` : undefined
+      showTitlebarCount && unreadCount !== 0 ? `Wavebox (${unreadCount})` : 'Wavebox',
+      activeAcc1,
+      activeAcc1 !== activeAcc2 ? activeAcc2 : undefined
     ]
 
-    const title = titleComponents.filter((c) => !!c).join(' ')
-    if (title !== document.title) {
-      document.title = title
-    }
+    const title = titleComponents.filter((c) => !!c).join(' | ')
+
+    // By throttling the writes we can prevent flashing when the page rapidly changes the title
+    clearTimeout(this.writeTimeout)
+    this.writeTimeout = setTimeout(() => {
+      if (title !== document.title) {
+        document.title = title
+      }
+    }, TITLE_WRITE_WAIT)
 
     return null
   }

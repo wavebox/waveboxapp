@@ -18,6 +18,44 @@ class SettingsActions {
   load () { return {} }
 
   /* **************************************************************************/
+  // News Sync
+  /* **************************************************************************/
+
+  /**
+  * Starts syncing the news
+  */
+  startSyncingNews () { return {} }
+
+  /**
+  * Stops syncing the news
+  */
+  stopSyncingNews () { return {} }
+
+  /**
+  * Opens the latest news and marks it as seen
+  */
+  openAndMarkNews () { return {} }
+
+  /* **************************************************************************/
+  // Tour
+  /* **************************************************************************/
+
+  /**
+  * Starts the app tour
+  */
+  tourStart () { return {} }
+
+  /**
+  * Progresses the tour
+  */
+  tourNext () { return {} }
+
+  /**
+  * Quits the tour
+  */
+  tourQuit () { return {} }
+
+  /* **************************************************************************/
   // Updates
   /* **************************************************************************/
 
@@ -244,10 +282,10 @@ class SettingsActions {
   }
 
   /**
-  * @param show: true to show the newsfeed button in the sidebar
+  * @param mode: the mode to show the newsfeed button in the sidebar
   */
-  setShowSidebarNewsfeed (show) {
-    return this.update(SEGMENTS.UI, 'showSidebarNewsfeed', show)
+  setShowSidebarNewsfeed (mode) {
+    return this.update(SEGMENTS.UI, 'showSidebarNewsfeed', mode)
   }
 
   /* **************************************************************************/
@@ -297,10 +335,17 @@ class SettingsActions {
   }
 
   /**
+  * @param hasSeen: true if the user has seen the app tour
+  */
+  setHasSeenTour (hasSeen) {
+    return this.update(SEGMENTS.APP, 'hasSeenAppTour', hasSeen)
+  }
+
+  /**
   * @param hasSeen: true if the user has seen the app wizard
   */
   setHasSeenAppWizard (hasSeen) {
-    return this.update(SEGMENTS.APP, 'hasSeenAppWizard', hasSeen)
+    return { hasSeen: hasSeen }
   }
 
   /**

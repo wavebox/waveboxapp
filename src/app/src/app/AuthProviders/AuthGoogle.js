@@ -3,6 +3,8 @@ const { WB_AUTH_GOOGLE, WB_AUTH_GOOGLE_COMPLETE, WB_AUTH_GOOGLE_ERROR } = requir
 const googleapis = require('googleapis')
 const userStore = require('../stores/userStore')
 const url = require('url')
+const querystring = require('querystring')
+const pkg = require('../../package.json')
 
 class AuthGoogle {
   /* ****************************************************************************/
@@ -48,7 +50,12 @@ class AuthGoogle {
   * @return the url that can be used
   */
   generatePushServiceAuthenticationURL (credentials) {
-    return `${credentials.GOOGLE_PUSH_SERVICE_AUTH_URL}?client_id=${userStore.clientId}`
+    const query = querystring.stringify({
+      client_id: userStore.clientId,
+      client_token: userStore.clientToken,
+      client_version: pkg.version
+    })
+    return `${credentials.GOOGLE_PUSH_SERVICE_AUTH_URL}?${query}`
   }
 
   /**

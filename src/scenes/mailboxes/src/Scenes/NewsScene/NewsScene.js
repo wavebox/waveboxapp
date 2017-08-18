@@ -2,7 +2,7 @@ import React from 'react'
 import { RaisedButton } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import { WaveboxWebView, FullscreenModal } from 'Components'
-import { userStore } from 'stores/user'
+import { NEWS_URL } from 'shared/constants'
 import { settingsActions } from 'stores/settings'
 
 const styles = {
@@ -28,34 +28,21 @@ const styles = {
   }
 }
 
-export default class AccountMessageScene extends React.Component {
+export default class NewsScene extends React.Component {
   /* **************************************************************************/
-  // Component Lifecycle
+  // Component lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
-    userStore.listen(this.userUpdated)
-  }
-
-  componentWillUnmount () {
-    userStore.unlisten(this.userUpdated)
+    settingsActions.openAndMarkNews.defer()
   }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  state = (() => {
-    return {
-      open: true,
-      url: userStore.getState().user.accountMessageUrl
-    }
-  })()
-
-  userUpdated = (userState) => {
-    this.setState({
-      url: userState.user.accountMessageUrl
-    })
+  state = {
+    open: true
   }
 
   /* **************************************************************************/
@@ -66,7 +53,6 @@ export default class AccountMessageScene extends React.Component {
   * Closes the modal
   */
   handleClose = () => {
-    settingsActions.setSeenAccountMessageUrl(this.state.url)
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/'
@@ -82,7 +68,7 @@ export default class AccountMessageScene extends React.Component {
   }
 
   render () {
-    const { open, url } = this.state
+    const { open } = this.state
 
     return (
       <FullscreenModal
@@ -92,7 +78,9 @@ export default class AccountMessageScene extends React.Component {
         actions={(<RaisedButton primary label='Close' onClick={this.handleClose} />)}
         open={open}
         onRequestClose={this.handleClose}>
-        <WaveboxWebView src={url} />
+        <WaveboxWebView
+          src={NEWS_URL}
+          saltClientInfoInUrl={false} />
       </FullscreenModal>
     )
   }

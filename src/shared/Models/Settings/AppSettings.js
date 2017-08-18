@@ -19,7 +19,6 @@ class AppSettings extends Model {
   constructor (data, pkg) {
     super(data)
     this.__defaults__ = {
-      '3_1_8_useExperimentalWindowOpener': pkg.releaseChannel === RELEASE_CHANNELS.BETA,
       updateChannel: pkg.releaseChannel
     }
   }
@@ -35,9 +34,10 @@ class AppSettings extends Model {
   get checkForUpdates () { return this._value_('checkForUpdates', true) }
   get updateChannel () { return this._value_('updateChannel', this.__defaults__.updateChannel) }
   get hasSeenAppWizard () { return this._value_('hasSeenAppWizard', false) }
+  get hasSeenAppTour () { return this._value_('hasSeenAppTour', false) }
   get lastSeenAccountMessageUrl () { return this._value_('lastSeenAccountMessageUrl', undefined) }
 
-  get useExperimentalWindowOpener () { return this._value_('3_1_8_useExperimentalWindowOpener', this.__defaults__['3_1_8_useExperimentalWindowOpener']) }
+  get useExperimentalWindowOpener () { return this._value_('3_1_8_useExperimentalWindowOpener', true) }
 }
 
 module.exports = AppSettings

@@ -76,7 +76,7 @@ const styles = {
   popoverMoreButton: {
     marginLeft: 32,
     alignSelf: 'center',
-    border: '1px solid white',
+    border: '2px solid white',
     padding: '8px 16px',
     borderRadius: 4,
     fontSize: '11px'
