@@ -51,10 +51,9 @@ export default class SidelistControls extends React.Component {
     const { ...passProps } = this.props
     const { showWizard, showSupport } = this.state
 
-    // <SidelistControlWhatsNew />
-
     return (
       <div {...passProps}>
+        <SidelistControlWhatsNew />
         {showWizard ? (<SidelistControlWizard />) : undefined}
         {showSupport ? (<SidelistControlSupport />) : undefined}
         <SidelistControlAddMailbox />
