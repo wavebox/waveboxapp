@@ -121,7 +121,7 @@ class MicrosoftStore {
       return Promise.resolve(mailbox.accessToken)
     } else {
       return Promise.resolve()
-        .then(() => MicrosoftHTTP.refreshAuthToken(mailbox.refreshToken, mailbox.protocolVersion))
+        .then(() => MicrosoftHTTP.refreshAuthToken(mailbox.refreshToken, mailbox.authProtocolVersion))
         .then((auth) => {
           mailboxActions.reduce.defer(mailbox.id, MicrosoftMailboxReducer.setAuthInfo, auth)
           return Promise.resolve(auth.access_token)
