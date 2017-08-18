@@ -1,11 +1,11 @@
 import React from 'react'
 import { settingsStore } from 'stores/settings'
-import SidelistControlWhatsNew from './SidelistControlWhatsNew'
 import SidelistControlWizard from './SidelistControlWizard'
 import SidelistControlSupport from './SidelistControlSupport'
 import SidelistControlAddMailbox from './SidelistControlAddMailbox'
 import SidelistControlSettings from './SidelistControlSettings'
 import shallowCompare from 'react-addons-shallow-compare'
+// import SidelistControlWhatsNew from './SidelistControlWhatsNew'
 
 export default class SidelistControls extends React.Component {
   /* **************************************************************************/
@@ -51,9 +51,10 @@ export default class SidelistControls extends React.Component {
     const { ...passProps } = this.props
     const { showWizard, showSupport } = this.state
 
+    // <SidelistControlWhatsNew />
+
     return (
       <div {...passProps}>
-        <SidelistControlWhatsNew />
         {showWizard ? (<SidelistControlWizard />) : undefined}
         {showSupport ? (<SidelistControlSupport />) : undefined}
         <SidelistControlAddMailbox />

@@ -22,7 +22,12 @@ class MicrosoftMailboxReducer extends MailboxReducer {
   * @param auth: the auth object to set
   */
   static setAuthInfo (mailbox, auth) {
-    return mailbox.changeData({ auth: auth })
+    return mailbox.changeData({
+      auth: {
+        protocolVersion: mailbox.authProtocolVersion,
+        ...auth
+      }
+    })
   }
 }
 
