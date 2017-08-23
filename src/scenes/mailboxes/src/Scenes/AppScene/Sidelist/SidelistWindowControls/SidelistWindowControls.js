@@ -80,19 +80,19 @@ export default class SidelistWindowControls extends React.Component {
         <div {...passProps} style={{ ...styles.container, ...style }}>
           <SidelistWindowControl
             type={SidelistWindowControl.TYPES.CLOSE}
-            onTouchTap={() => remote.getCurrentWindow().close()} />
+            onClick={() => remote.getCurrentWindow().close()} />
           {isWindowMaximized ? (
             <SidelistWindowControl
               type={SidelistWindowControl.TYPES.RESTORE}
-              onTouchTap={() => remote.getCurrentWindow().unmaximize()} />
+              onClick={() => remote.getCurrentWindow().unmaximize()} />
           ) : (
             <SidelistWindowControl
               type={SidelistWindowControl.TYPES.MAXIMIZE}
-              onTouchTap={() => remote.getCurrentWindow().maximize()} />
+              onClick={() => remote.getCurrentWindow().maximize()} />
           )}
           <SidelistWindowControl
             type={SidelistWindowControl.TYPES.MINIMIZE}
-            onTouchTap={() => remote.getCurrentWindow().minimize()} />
+            onClick={() => remote.getCurrentWindow().minimize()} />
         </div>
       )
     } else {

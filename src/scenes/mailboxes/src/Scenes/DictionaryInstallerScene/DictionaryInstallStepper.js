@@ -139,7 +139,7 @@ export default class DictionaryInstallStepper extends React.Component {
               label='Cancel'
               disableTouchRipple
               disableFocusRipple
-              onTouchTap={this.handleCancel} />
+              onClick={this.handleCancel} />
           </StepContent>
         </Step>
         <Step>
@@ -155,13 +155,13 @@ export default class DictionaryInstallStepper extends React.Component {
               disableTouchRipple
               disableFocusRipple
               primary
-              onTouchTap={this.handleAgreeLicense}
+              onClick={this.handleAgreeLicense}
               style={{marginRight: 12}} />
             <FlatButton
               label='Cancel'
               disableTouchRipple
               disableFocusRipple
-              onTouchTap={this.handleCancel} />
+              onClick={this.handleCancel} />
           </StepContent>
         </Step>
         <Step>
@@ -184,7 +184,7 @@ export default class DictionaryInstallStepper extends React.Component {
               disableTouchRipple
               disableFocusRipple
               primary
-              onTouchTap={this.handleComplete} />
+              onClick={this.handleComplete} />
           </StepContent>
         </Step>
       </Stepper>

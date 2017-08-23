@@ -129,7 +129,7 @@ export default class LanguageSettingsSection extends React.Component {
         <RaisedButton
           label='Install more Dictionaries'
           icon={<FontIcon className='material-icons'>language</FontIcon>}
-          onTouchTap={() => { dictionariesActions.startDictionaryInstall() }} />
+          onClick={() => { dictionariesActions.startDictionaryInstall() }} />
       </Paper>
     )
   }

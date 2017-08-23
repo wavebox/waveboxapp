@@ -290,11 +290,11 @@ export default class WizardPersonalise extends React.Component {
           <div style={styles.footerButtons}>
             <FlatButton
               style={styles.footerCancelButton}
-              onTouchTap={onRequestCancel}
+              onClick={onRequestCancel}
               label='Cancel' />
             <RaisedButton
               primary
-              onTouchTap={this.handleNext}
+              onClick={this.handleNext}
               label='Next' />
           </div>
         </div>

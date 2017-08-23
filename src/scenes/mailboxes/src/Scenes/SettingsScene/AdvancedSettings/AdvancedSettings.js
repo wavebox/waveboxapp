@@ -135,7 +135,7 @@ export default class AdvancedSettings extends React.Component {
                 <FlatButton
                   label='Check for update now'
                   icon={<FontIcon className='material-icons'>system_update_alt</FontIcon>}
-                  onTouchTap={() => updaterActions.userCheckForUpdates()} />
+                  onClick={() => updaterActions.userCheckForUpdates()} />
               </div>
               <br />
               <div>

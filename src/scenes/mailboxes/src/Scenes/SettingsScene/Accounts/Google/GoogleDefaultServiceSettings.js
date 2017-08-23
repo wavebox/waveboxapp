@@ -157,7 +157,7 @@ export default class GoogleDefaultServiceSettings extends React.Component {
                 <RaisedButton
                   label='Advanced Unread Options'
                   icon={(<FontIcon className='fa fa-fw fa-wrench' />)}
-                  onTouchTap={() => this.setState({ showCustomUnreadSettings: true })} />
+                  onClick={() => this.setState({ showCustomUnreadSettings: true })} />
                 <p style={styles.extraInfo}>
                   These can be used to configure Wavebox to provide Notifications and Badges for a custom set of messages
                 </p>

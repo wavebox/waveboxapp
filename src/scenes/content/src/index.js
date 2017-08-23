@@ -2,7 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Provider from 'Scenes/Provider'
 import browserActions from 'stores/browser/browserActions'
-import injectTapEventPlugin from 'react-tap-event-plugin'
 import querystring from 'querystring'
 import {
   WB_PING_RESOURCE_USAGE,
@@ -39,7 +38,6 @@ const {
 } = querystring.parse(window.location.search.slice(1))
 
 // Render
-injectTapEventPlugin()
 ReactDOM.render((
   <Provider url={url} partition={partition} />
 ), document.getElementById('ReactComponent-AppScene'))

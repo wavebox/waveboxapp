@@ -71,13 +71,13 @@ export default class WizardConfigure extends React.Component {
             <div>
               <FlatButton
                 style={styles.settingsButton}
-                onTouchTap={() => {
+                onClick={() => {
                   window.location.hash = `/settings/accounts/${mailboxId}`
                 }}
                 label='Account Settings' />
               <RaisedButton
                 primary
-                onTouchTap={onRequestCancel}
+                onClick={onRequestCancel}
                 label='Finish' />
             </div>
           )}

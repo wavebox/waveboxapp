@@ -101,7 +101,7 @@ export default class PlatformSettingsSection extends React.Component {
         {openAtLoginSupported ? (
           <div style={{ marginTop: 8, marginBottom: 8 }}>
             <RaisedButton
-              onTouchTap={(evt) => this.setState({ openLoginPopoverOpen: true, openLoginPopoverAnchor: evt.target })}
+              onClick={(evt) => this.setState({ openLoginPopoverOpen: true, openLoginPopoverAnchor: evt.target })}
               icon={openLoginHasBeenSet ? (<FontIcon className='material-icons' color={Colors.green600}>check</FontIcon>) : undefined}
               label={openLoginHasBeenSet ? 'All Set' : 'System Startup Settings'} />
             <Popover
@@ -112,13 +112,13 @@ export default class PlatformSettingsSection extends React.Component {
               onRequestClose={() => this.setState({ openLoginPopoverOpen: false })}>
               <Menu>
                 <MenuItem
-                  onTouchTap={(evt) => this.handleOpenAtLoginChanged(evt, false, false)}
+                  onClick={(evt) => this.handleOpenAtLoginChanged(evt, false, false)}
                   primaryText={`Don't open at System Startup`} />
                 <MenuItem
-                  onTouchTap={(evt) => this.handleOpenAtLoginChanged(evt, true, false)}
+                  onClick={(evt) => this.handleOpenAtLoginChanged(evt, true, false)}
                   primaryText={'Open at System Startup'} />
                 <MenuItem
-                  onTouchTap={(evt) => this.handleOpenAtLoginChanged(evt, true, true)}
+                  onClick={(evt) => this.handleOpenAtLoginChanged(evt, true, true)}
                   primaryText={'Open hidden at System Startup'} />
               </Menu>
             </Popover>

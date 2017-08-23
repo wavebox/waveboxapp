@@ -45,7 +45,7 @@ export default class AccountCustomCodeSettings extends React.Component {
             style={commonStyles.buttonInline}
             label='Custom CSS'
             icon={<FontIcon className='material-icons'>code</FontIcon>}
-            onTouchTap={() => {
+            onClick={() => {
               onRequestEditCustomCode('Custom CSS', service.customCSS, (code) => {
                 mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setCustomCSS, code)
                 mailboxDispatch.reload(mailbox.id, service.type)
@@ -55,7 +55,7 @@ export default class AccountCustomCodeSettings extends React.Component {
             style={commonStyles.buttonInline}
             label='Custom JS'
             icon={<FontIcon className='material-icons'>code</FontIcon>}
-            onTouchTap={() => {
+            onClick={() => {
               onRequestEditCustomCode('Custom JS', service.customJS, (code) => {
                 mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setCustomJS, code)
                 mailboxDispatch.reload(mailbox.id, service.type)

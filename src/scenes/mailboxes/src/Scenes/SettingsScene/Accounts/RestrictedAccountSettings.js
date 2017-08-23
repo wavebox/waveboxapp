@@ -87,7 +87,7 @@ export default class RestrictedAccountSettings extends React.Component {
             label={this.state.confirmingDelete ? 'Click again to confirm' : 'Delete this Account'}
             icon={<FontIcon color={Colors.red600} className='material-icons'>delete</FontIcon>}
             labelStyle={{color: Colors.red600}}
-            onTouchTap={this.handleDeleteTapped} />
+            onClick={this.handleDeleteTapped} />
         </div>
       </div>
     )

@@ -49,22 +49,22 @@ export default class InfoSettingsSection extends React.Component {
         <FlatButton
           label='Check for Update'
           icon={<FontIcon className='material-icons'>system_update_alt</FontIcon>}
-          onTouchTap={() => updaterActions.userCheckForUpdates()} />
+          onClick={() => updaterActions.userCheckForUpdates()} />
         <br />
         <FlatButton
           label='Task Monitor'
           icon={<FontIcon className='material-icons'>timeline</FontIcon>}
-          onTouchTap={() => ipcRenderer.send(WB_OPEN_MONITOR_WINDOW, {})} />
+          onClick={() => ipcRenderer.send(WB_OPEN_MONITOR_WINDOW, {})} />
         <br />
         <FlatButton
           label='Export Data'
           icon={<FontIcon className='material-icons'>import_export</FontIcon>}
-          onTouchTap={() => takeoutActions.exportDataToDisk()} />
+          onClick={() => takeoutActions.exportDataToDisk()} />
         <br />
         <FlatButton
           label='Import Data'
           icon={<FontIcon className='material-icons'>import_export</FontIcon>}
-          onTouchTap={this.handleImportData} />
+          onClick={this.handleImportData} />
       </Paper>
     )
   }

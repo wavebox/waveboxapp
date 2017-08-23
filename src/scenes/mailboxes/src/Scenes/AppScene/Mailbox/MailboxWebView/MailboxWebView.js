@@ -725,7 +725,7 @@ export default class MailboxWebView extends React.Component {
             <RaisedButton
               label='Reload'
               icon={<FontIcon className='material-icons'>refresh</FontIcon>}
-              onTouchTap={() => {
+              onClick={() => {
                 this.reloadIgnoringCache()
                 this.setState({ isCrashed: false, browserDOMReady: false })
               }} />
@@ -746,7 +746,7 @@ export default class MailboxWebView extends React.Component {
             <RaisedButton
               label='Reauthenticate'
               icon={<FontIcon className='material-icons'>error_outline</FontIcon>}
-              onTouchTap={() => {
+              onClick={() => {
                 mailboxActions.reauthenticateMailbox(mailbox.id)
               }} />
           </div>

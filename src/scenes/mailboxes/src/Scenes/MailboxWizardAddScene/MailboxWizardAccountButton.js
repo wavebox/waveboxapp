@@ -68,7 +68,6 @@ export default class MailboxWizardAccountButton extends React.Component {
       logoPath,
       disabled,
       onClick,
-      onTouchTap,
       style,
       ...passProps
     } = this.props
@@ -86,7 +85,6 @@ export default class MailboxWizardAccountButton extends React.Component {
         {...passProps}>
         <div
           onClick={disabled ? undefined : onClick}
-          onTouchTap={disabled ? undefined : onTouchTap}
           style={{
             width: logoSize,
             height: logoSize,
@@ -117,8 +115,7 @@ export default class MailboxWizardAccountButton extends React.Component {
           label={buttonText}
           primary
           disabled={disabled}
-          onClick={onClick}
-          onTouchTap={onTouchTap} />
+          onClick={onClick} />
       </div>
     )
   }

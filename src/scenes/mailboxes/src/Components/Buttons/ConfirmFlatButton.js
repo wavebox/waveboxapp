@@ -40,7 +40,7 @@ export default class ConfirmFlatButton extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { confirmLabel, confirmWaitMs, onConfirmedClick, onTouchTap, label, confirmIcon, icon, ...passProps } = this.props
+    const { confirmLabel, confirmWaitMs, onConfirmedClick, onClick, label, confirmIcon, icon, ...passProps } = this.props
     const { confirming } = this.state
 
     return (
@@ -48,8 +48,8 @@ export default class ConfirmFlatButton extends React.Component {
         {...passProps}
         label={confirming ? confirmLabel : label}
         icon={confirmIcon && confirming ? confirmIcon : icon}
-        onTouchTap={(evt) => {
-          if (onTouchTap) { onTouchTap(evt) }
+        onClick={(evt) => {
+          if (onClick) { onClick(evt) }
           this.setState((prevState) => {
             if (prevState.confirming) {
               clearTimeout(this.confirmingTO)

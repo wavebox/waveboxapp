@@ -10,7 +10,6 @@ import {userStore, userActions} from 'stores/user'
 import {extensionStore, extensionActions} from 'stores/extension'
 import Debug from 'Debug'
 import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
-import injectTapEventPlugin from 'react-tap-event-plugin'
 import ResourceMonitorResponder from './ResourceMonitorResponder'
 import {
   WB_MAILBOXES_WINDOW_JS_LOADED,
@@ -74,7 +73,6 @@ Debug.load()
 })()
 
 // Render and prepare for unrender
-injectTapEventPlugin()
 ReactDOM.render(<Provider />, document.getElementById('ReactComponent-AppSceneRenderNode'))
 ipcRenderer.on(WB_MAILBOXES_WINDOW_PREPARE_RELOAD, () => {
   window.location.hash = '/'

@@ -96,7 +96,7 @@ export default class SupportSettings extends React.Component {
                 <h2 style={styles.heading}>Blog Tutorials</h2>
                 <p style={styles.subHeading}>Discover what's new and how-to guides on the Wavebox blog</p>
                 <RaisedButton
-                  onTouchTap={() => shell.openExternal(BLOG_URL)}
+                  onClick={() => shell.openExternal(BLOG_URL)}
                   primary
                   label='Blog' />
               </div>
@@ -107,7 +107,7 @@ export default class SupportSettings extends React.Component {
                 <h2 style={styles.heading}>Contact Support</h2>
                 <p style={styles.subHeading}>Send feature requests or get help with an issue you're facing</p>
                 <RaisedButton
-                  onTouchTap={() => shell.openExternal(SUPPORT_URL)}
+                  onClick={() => shell.openExternal(SUPPORT_URL)}
                   primary
                   label='Contact' />
               </div>
@@ -120,7 +120,7 @@ export default class SupportSettings extends React.Component {
                 <h2 style={styles.heading}>Knowledge Base</h2>
                 <p style={styles.subHeading}>Find the answers to the most commonly asked questions</p>
                 <RaisedButton
-                  onTouchTap={() => shell.openExternal(KB_URL)}
+                  onClick={() => shell.openExternal(KB_URL)}
                   primary
                   label='KB' />
               </div>
@@ -131,7 +131,7 @@ export default class SupportSettings extends React.Component {
                 <h2 style={styles.heading}>GitHub</h2>
                 <p style={styles.subHeading}>Join the discussion on our GitHub page</p>
                 <RaisedButton
-                  onTouchTap={() => shell.openExternal(GITHUB_ISSUE_URL)}
+                  onClick={() => shell.openExternal(GITHUB_ISSUE_URL)}
                   primary
                   label='GitHub' />
               </div>

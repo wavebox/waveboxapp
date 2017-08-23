@@ -183,7 +183,7 @@ export default class WizardConfigureGeneric extends React.Component {
         <FlatButton
           style={styles.footerButton}
           disabled={hasErrors}
-          onTouchTap={() => {
+          onClick={() => {
             const validated = this.handleFinish(mailbox, onRequestCancel)
             if (validated) {
               window.location.hash = `/settings/accounts/${mailbox.id}`
@@ -192,10 +192,10 @@ export default class WizardConfigureGeneric extends React.Component {
           label='Account Settings' />
         <FlatButton
           style={styles.footerButton}
-          onTouchTap={() => this.handleCancel(mailbox, onRequestCancel)}
+          onClick={() => this.handleCancel(mailbox, onRequestCancel)}
           label='Cancel' />
         <RaisedButton
-          onTouchTap={() => this.handleFinish(mailbox, onRequestCancel)}
+          onClick={() => this.handleFinish(mailbox, onRequestCancel)}
           label='Finish'
           primary />
       </div>

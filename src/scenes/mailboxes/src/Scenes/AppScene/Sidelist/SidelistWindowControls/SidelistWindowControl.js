@@ -34,7 +34,7 @@ export default class SidelistWindowControl extends React.Component {
 
   static TYPES = TYPES
   static propTypes = {
-    onTouchTap: PropTypes.func.isRequired,
+    onClick: PropTypes.func.isRequired,
     type: PropTypes.oneOf(Object.keys(TYPES)).isRequired
   }
 
@@ -65,12 +65,12 @@ export default class SidelistWindowControl extends React.Component {
   }
 
   render () {
-    const { onTouchTap, type, style, hoveredStyle, iconStyle, ...passProps } = this.props
+    const { onClick, type, style, hoveredStyle, iconStyle, ...passProps } = this.props
 
     return (
       <IconButton
         {...passProps}
-        onTouchTap={onTouchTap}
+        onClick={onClick}
         style={{...styles.button, ...style}}
         hoveredStyle={{...styles.buttonHovered, ...hoveredStyle}}
         iconStyle={{...styles.icon, ...iconStyle}}>
