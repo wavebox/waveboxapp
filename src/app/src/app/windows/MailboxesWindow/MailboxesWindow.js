@@ -289,6 +289,7 @@ class MailboxesWindow extends WaveboxWindow {
 
     // Handle other urls
     let openMode = CoreService.WINDOW_OPEN_MODES.EXTERNAL
+    let defaultOpenMode = CoreService.DEFAULT_WINDOW_OPEN_MODES.BROWSER
     let ownerId = null
     let provisionalTargetUrl
 
@@ -305,32 +306,32 @@ class MailboxesWindow extends WaveboxWindow {
           provisionalTargetUrl,
           provisionalTargetUrl ? url.parse(provisionalTargetUrl, true) : undefined
         )
+        defaultOpenMode = service.defaultWindowOpenMode
       }
     }
 
     if (openMode === CoreService.WINDOW_OPEN_MODES.POPUP_CONTENT) {
-      const contentWindow = new ContentPopupWindow()
-      contentWindow.ownerId = ownerId
-      appWindowManager.addContentWindow(contentWindow)
-      contentWindow.create(targetUrl, options)
-      evt.newGuest = contentWindow.window
-    } else if (openMode === CoreService.WINDOW_OPEN_MODES.EXTERNAL || openMode === CoreService.WINDOW_OPEN_MODES.DEFAULT) {
-      shell.openExternal(targetUrl, {
-        activate: !settingStore.os.openLinksInBackground
-      })
-    } else if (openMode === CoreService.WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL) {
-      shell.openExternal(provisionalTargetUrl, {
-        activate: !settingStore.os.openLinksInBackground
-      })
-    } else if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT || openMode === CoreService.WINDOW_OPEN_MODES.CONTENT_PROVSIONAL) {
-      const contentWindow = new ContentWindow()
-      contentWindow.ownerId = ownerId
-      appWindowManager.addContentWindow(contentWindow)
-      if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT) {
-        contentWindow.create(this.window, targetUrl, ((options || {}).webPreferences || {}).partition, options)
-      } else if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT_PROVSIONAL) {
-        contentWindow.create(this.window, provisionalTargetUrl, ((options || {}).webPreferences || {}).partition, options)
+      evt.newGuest = this.openWindowWaveboxPopupContent(ownerId, targetUrl, options).window
+    } else if (openMode === CoreService.WINDOW_OPEN_MODES.EXTERNAL) {
+      this.openWindowExternal(targetUrl)
+    } else if (openMode === CoreService.WINDOW_OPEN_MODES.DEFAULT) {
+      if (defaultOpenMode === CoreService.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
+        this.openWindowExternal(targetUrl)
+      } else if (defaultOpenMode === CoreService.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
+        this.openWindowWaveboxContent(ownerId, targetUrl, options)
       }
+    } else if (openMode === CoreService.WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL) {
+      this.openWindowExternal(provisionalTargetUrl)
+    } else if (openMode === CoreService.WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL) {
+      if (defaultOpenMode === CoreService.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
+        this.openWindowExternal(provisionalTargetUrl)
+      } else if (defaultOpenMode === CoreService.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
+        this.openWindowWaveboxContent(ownerId, provisionalTargetUrl, options)
+      }
+    } else if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT) {
+      this.openWindowWaveboxContent(ownerId, targetUrl, options)
+    } else if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT_PROVSIONAL) {
+      this.openWindowWaveboxContent(ownerId, provisionalTargetUrl, options)
     } else if (openMode === CoreService.WINDOW_OPEN_MODES.DOWNLOAD) {
       if ((options || {}).webContents) {
         options.webContents.downloadURL(targetUrl)
@@ -364,6 +365,51 @@ class MailboxesWindow extends WaveboxWindow {
       const ownerId = `${mailboxId}:${serviceType}`
       this.provisionalTargetUrls.set(ownerId, targetUrl)
     }
+  }
+
+  /* ****************************************************************************/
+  // Window opening
+  /* ****************************************************************************/
+
+  /**
+  * Opens a wavebox popup content window
+  * @param ownerId: the id of the owning window
+  * @param targetUrl: the url to open
+  * @param options: the config options for the window
+  * @return the new contentwindow instance
+  */
+  openWindowWaveboxPopupContent (ownerId, targetUrl, options) {
+    const contentWindow = new ContentPopupWindow()
+    contentWindow.ownerId = ownerId
+    appWindowManager.addContentWindow(contentWindow)
+    contentWindow.create(targetUrl, options)
+    return contentWindow
+  }
+
+  /**
+  * Opens a wavebox content window
+  * @param ownerId: the id of the owning window
+  * @param targetUrl: the url to open
+  * @param options: the config options for the window
+  * @return the new  contentwindow instance
+  */
+  openWindowWaveboxContent (ownerId, targetUrl, options) {
+    const contentWindow = new ContentWindow()
+    contentWindow.ownerId = ownerId
+    appWindowManager.addContentWindow(contentWindow)
+    contentWindow.create(this.window, targetUrl, ((options || {}).webPreferences || {}).partition, options)
+    return contentWindow
+  }
+
+  /**
+  * Opens links in an external window
+  * @param targetUrl: the url to open
+  * @return true if the window was opened successfully, false otherwise
+  */
+  openWindowExternal (targetUrl) {
+    return shell.openExternal(targetUrl, {
+      activate: !settingStore.os.openLinksInBackground
+    })
   }
 
   /* ****************************************************************************/

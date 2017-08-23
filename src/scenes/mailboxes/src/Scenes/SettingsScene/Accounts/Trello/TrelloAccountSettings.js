@@ -10,7 +10,7 @@ import AccountNotificationSettings from '../AccountNotificationSettings'
 import styles from '../../CommonSettingStyles'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
-import AccountSleepableSettings from '../AccountSleepableSettings'
+import AccountBehaviourSettings from '../AccountBehaviourSettings'
 
 export default class TrelloAccountSettings extends React.Component {
   /* **************************************************************************/
@@ -44,7 +44,7 @@ export default class TrelloAccountSettings extends React.Component {
           </Col>
           <Col md={6}>
             <Paper zDepth={1} style={styles.paper}>
-              <AccountSleepableSettings mailbox={mailbox} service={service} />
+              <AccountBehaviourSettings mailbox={mailbox} service={service} />
               <br />
               <AccountCustomCodeSettings
                 mailbox={mailbox}

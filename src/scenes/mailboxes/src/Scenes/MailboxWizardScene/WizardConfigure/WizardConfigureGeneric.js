@@ -1,12 +1,16 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { RaisedButton, FlatButton, TextField, Toggle } from 'material-ui'
+import { RaisedButton, FlatButton, TextField, Toggle, SelectField, MenuItem } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import GenericDefaultService from 'shared/Models/Accounts/Generic/GenericDefaultService'
 import { mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
 import validUrl from 'valid-url'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
 
+const humanizedOpenModes = {
+  [GenericDefaultService.DEFAULT_WINDOW_OPEN_MODES.BROWSER]: 'Default Browser',
+  [GenericDefaultService.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX]: 'Wavebox Browser'
+}
 const NAME_REF = 'name'
 const URL_REF = 'url'
 const styles = {
@@ -55,7 +59,7 @@ export default class WizardConfigureGeneric extends React.Component {
   generateState (props) {
     return {
       configureDisplayFromPage: true,
-      openWindowsExternally: false,
+      defaultWindowOpenMode: GenericDefaultService.DEFAULT_WINDOW_OPEN_MODES.BROWSER,
       hasNavigationToolbar: true,
       displayNameError: null,
       serviceUrlError: null,
@@ -135,7 +139,7 @@ export default class WizardConfigureGeneric extends React.Component {
         displayName,
         serviceUrl,
         configureDisplayFromPage,
-        openWindowsExternally,
+        defaultWindowOpenMode,
         hasNavigationToolbar
       } = this.state
 
@@ -143,7 +147,7 @@ export default class WizardConfigureGeneric extends React.Component {
       mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageTitleAsDisplayName, configureDisplayFromPage)
       mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageThemeAsColor, configureDisplayFromPage)
       mailboxActions.reduceService(mailbox.id, GenericDefaultService.type, GenericDefaultServiceReducer.setUrl, serviceUrl)
-      mailboxActions.reduceService(mailbox.id, GenericDefaultService.type, GenericDefaultServiceReducer.setOpenWindowsExternally, openWindowsExternally)
+      mailboxActions.reduceService(mailbox.id, GenericDefaultService.type, GenericDefaultServiceReducer.setDefaultWindowOpenMode, defaultWindowOpenMode)
       mailboxActions.reduceService(mailbox.id, GenericDefaultService.type, GenericDefaultServiceReducer.setHasNavigationToolbar, hasNavigationToolbar)
       onRequestCancel()
       return true
@@ -165,7 +169,7 @@ export default class WizardConfigureGeneric extends React.Component {
     const { mailbox, onRequestCancel, ...passProps } = this.props
     const {
       configureDisplayFromPage,
-      openWindowsExternally,
+      defaultWindowOpenMode,
       hasNavigationToolbar,
       displayName,
       displayNameError,
@@ -239,17 +243,24 @@ export default class WizardConfigureGeneric extends React.Component {
               }
             }} />
         </div>
+        <SelectField
+          floatingLabelText='Open new windows in which Browser'
+          value={defaultWindowOpenMode}
+          floatingLabelFixed
+          fullWidth
+          onChange={(evt, index, value) => {
+            this.setState({ defaultWindowOpenMode: value })
+          }}>
+          {Object.keys(GenericDefaultService.DEFAULT_WINDOW_OPEN_MODES).map((mode) => {
+            return (<MenuItem key={mode} value={mode} primaryText={humanizedOpenModes[mode]} />)
+          })}
+        </SelectField>
         <br />
         <Toggle
           toggled={configureDisplayFromPage}
           label='Use Page Title & Theme to customise icon appearance'
           labelPosition='right'
           onToggle={(evt, toggled) => this.setState({ configureDisplayFromPage: toggled })} />
-        <Toggle
-          toggled={openWindowsExternally}
-          label='Open new windows in default browser'
-          labelPosition='right'
-          onToggle={(evt, toggled) => this.setState({ openWindowsExternally: toggled })} />
         <Toggle
           toggled={hasNavigationToolbar}
           label='Show navigation toolbar'

@@ -223,6 +223,7 @@ class GoogleDefaultService extends GoogleService {
           case 'pt': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Print message
           case 'btop': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Open google drive doc
           case 'lg': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Open entire message (after being clipped)
+          case 'att': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Open attachment in external window (also works on inbox)
         }
       }
 

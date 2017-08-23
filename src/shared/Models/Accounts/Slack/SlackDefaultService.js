@@ -210,7 +210,7 @@ class SlackDefaultService extends CoreService {
     } else if (parsedUrl.hostname.endsWith('.slack.com') && parsedUrl.pathname.startsWith('/call/')) {
       return this.constructor.WINDOW_OPEN_MODES.CONTENT
     } else {
-      return this.constructor.WINDOW_OPEN_MODES.EXTERNAL
+      return this.constructor.WINDOW_OPEN_MODES.DEFAULT
     }
   }
 }

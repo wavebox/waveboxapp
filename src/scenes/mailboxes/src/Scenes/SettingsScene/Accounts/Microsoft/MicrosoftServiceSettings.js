@@ -4,7 +4,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import AccountServiceItem from '../AccountServiceItem'
 import { Row, Col } from 'Components/Grid'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
-import AccountSleepableSettings from '../AccountSleepableSettings'
+import AccountBehaviourSettings from '../AccountBehaviourSettings'
 
 export default class MicrosoftServiceSettings extends React.Component {
   /* **************************************************************************/
@@ -34,8 +34,9 @@ export default class MicrosoftServiceSettings extends React.Component {
         {service ? (
           <Row>
             <Col md={6}>
-              <AccountSleepableSettings mailbox={mailbox} service={service} />
-              <br />
+              <AccountBehaviourSettings mailbox={mailbox} service={service} />
+            </Col>
+            <Col md={6}>
               <AccountCustomCodeSettings
                 mailbox={mailbox}
                 service={service}

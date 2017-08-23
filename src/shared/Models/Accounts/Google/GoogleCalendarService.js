@@ -40,7 +40,7 @@ class GoogleCalendarService extends GoogleService {
       if (parsedProvisionalTargetUrl.hostname.endsWith('.google.com') && parsedProvisionalTargetUrl.pathname.startsWith('/url') === false) {
         return this.constructor.WINDOW_OPEN_MODES.CONTENT_PROVSIONAL
       } else {
-        return this.constructor.WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL
+        return this.constructor.WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL
       }
     }
 
