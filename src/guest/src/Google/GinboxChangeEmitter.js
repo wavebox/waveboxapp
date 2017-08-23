@@ -3,6 +3,8 @@ const GinboxApi = require('./GinboxApi')
 const req = require('../req')
 const { WB_BROWSER_GOOGLE_INBOX_TOP_MESSAGE_CHANGED } = req.shared('ipcEvents')
 const MAX_MESSAGE_HASH_TIME = 1000 * 60 * 10 // 10 mins
+const CHANGE_CHECK_INTERVAL = 1000
+const CHANGE_TRANSMIT_WAIT = 750
 
 class GinboxChangeEmitter {
   /* **************************************************************************/
@@ -14,7 +16,7 @@ class GinboxChangeEmitter {
       messageHash: this.currentMessageHash,
       messageHashTime: new Date().getTime()
     }
-    this.latestMessageInterval = setInterval(this.recheckMessageHash.bind(this), 1000)
+    this.latestMessageInterval = setInterval(this.recheckMessageHash.bind(this), CHANGE_CHECK_INTERVAL)
   }
 
   /* **************************************************************************/
@@ -48,10 +50,12 @@ class GinboxChangeEmitter {
     if (now - this.state.messageHashTime > MAX_MESSAGE_HASH_TIME || (this.isInboxTabVisible && this.state.messageHash !== nextMessageHash)) {
       this.state.messageHash = nextMessageHash
       this.state.messageHashTime = now
-      ipcRenderer.sendToHost({
-        type: WB_BROWSER_GOOGLE_INBOX_TOP_MESSAGE_CHANGED,
-        data: { trigger: 'periodic-diff' }
-      })
+      setTimeout(() => {
+        ipcRenderer.sendToHost({
+          type: WB_BROWSER_GOOGLE_INBOX_TOP_MESSAGE_CHANGED,
+          data: { trigger: 'periodic-diff' }
+        })
+      }, CHANGE_TRANSMIT_WAIT)
     }
   }
 }

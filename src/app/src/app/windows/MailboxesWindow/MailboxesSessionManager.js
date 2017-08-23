@@ -155,7 +155,7 @@ class MailboxesSessionManager {
         try { fs.removeSync(pickedSavePath) } catch (ex) { /* no-op */ }
 
         // User didn't add file extension
-        if (!path.extname(pickedSavePath)) {
+        if (path.extname(pickedSavePath) !== path.extname(item.getFilename())) {
           pickedSavePath += path.extname(item.getFilename())
           pickedSavePath = unusedFilename.sync(pickedSavePath)
         }
