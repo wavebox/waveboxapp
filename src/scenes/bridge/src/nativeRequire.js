@@ -26,3 +26,8 @@ window.distributionConfig = function () {
     return {}
   }
 }
+
+window.iconResolve = function (name) {
+  const path = require('path')
+  return path.join(path.dirname(window.location.pathname), '../../icons', name)
+}

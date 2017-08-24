@@ -103,6 +103,7 @@ export default class Provider extends React.Component {
       hasUnreadActivity: mailboxState.hasUnreadActivityForAppBadge(),
       uiSettings: settingsState.ui,
       traySettings: settingsState.tray,
+      launchTraySettings: settingsState.launched.tray,
       osSettings: settingsState.os
     }
   })()
@@ -219,7 +220,13 @@ export default class Provider extends React.Component {
   }
 
   render () {
-    const { traySettings, uiSettings, messagesUnreadCount, hasUnreadActivity } = this.state
+    const {
+      traySettings,
+      launchTraySettings,
+      uiSettings,
+      messagesUnreadCount,
+      hasUnreadActivity
+    } = this.state
 
     return (
       <div>
@@ -231,6 +238,7 @@ export default class Provider extends React.Component {
         {!traySettings.show ? undefined : (
           <Tray
             unreadCount={messagesUnreadCount}
+            launchTraySettings={launchTraySettings}
             traySettings={traySettings} />
         )}
         {!uiSettings.showAppBadge ? undefined : (

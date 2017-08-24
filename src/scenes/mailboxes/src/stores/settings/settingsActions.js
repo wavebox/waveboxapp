@@ -473,6 +473,13 @@ class SettingsActions {
   setMouseTriggerAction (val) {
     return this.update(SEGMENTS.TRAY, 'mouseTriggerAction', val)
   }
+
+  /**
+  * @param val: the new update mode
+  */
+  setTrayGtkUpdateMode (val) {
+    return this.update(SEGMENTS.TRAY, 'gtkUpdateMode', val)
+  }
 }
 
 const actions = alt.createActions(SettingsActions)

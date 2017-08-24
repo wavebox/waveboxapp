@@ -10,6 +10,12 @@ const MOUSE_TRIGGER_ACTIONS = Object.assign({
   SHOW: 'SHOW'
 })
 
+const GTK_UPDATE_MODES = Object.assign({
+  UPDATE: 'UPDATE',
+  RECREATE: 'RECREATE',
+  STATIC: 'STATIC'
+})
+
 class TraySettings extends Model {
   /* **************************************************************************/
   // Class
@@ -17,9 +23,11 @@ class TraySettings extends Model {
 
   static get MOUSE_TRIGGERS () { return MOUSE_TRIGGERS }
   static get MOUSE_TRIGGER_ACTIONS () { return MOUSE_TRIGGER_ACTIONS }
+  static get GTK_UPDATE_MODES () { return GTK_UPDATE_MODES }
   static get SUPPORTS_MOUSE_TRIGGERS () { return process.platform === 'win32' }
   static get SUPPORTS_TRAY_MINIMIZE_CONFIG () { return process.platform === 'win32' }
   static get SUPPORTS_DOCK_HIDING () { return process.platform === 'darwin' }
+  static get IS_GTK_PLATFORM () { return process.platform === 'linux' }
 
   /* **************************************************************************/
   // Lifecycle
@@ -39,17 +47,32 @@ class TraySettings extends Model {
   /* **************************************************************************/
 
   get show () { return this._value_('show', true) }
-  get removeFromDockDarwin () { return this._value_('removeFromDockDarwin', false) }
   get showUnreadCount () { return this._value_('showUnreadCount', true) }
+
+  /* **************************************************************************/
+  // Properties: Behaviour
+  /* **************************************************************************/
+
+  get removeFromDockDarwin () { return this._value_('removeFromDockDarwin', false) }
   get mouseTrigger () { return this._value_('mouseTrigger', MOUSE_TRIGGERS.SINGLE) }
   get mouseTriggerAction () { return this._value_('mouseTriggerAction', MOUSE_TRIGGER_ACTIONS.TOGGLE) }
   get hideWhenMinimized () { return this._value_('hideWhenMinimized', false) }
   get hideWhenClosed () { return this._value_('hideWhenClosed', true) }
+
+  /* **************************************************************************/
+  // Properties: Theming
+  /* **************************************************************************/
+
   get readColor () { return this._value_('readColor', this.__themedDefaults__.readColor) }
   get readBackgroundColor () { return this._value_('readBackgroundColor', this.__themedDefaults__.readBackgroundColor) }
   get unreadColor () { return this._value_('unreadColor', this.__themedDefaults__.unreadColor) }
   get unreadBackgroundColor () { return this._value_('unreadBackgroundColor', this.__themedDefaults__.unreadBackgroundColor) }
 
+  /* **************************************************************************/
+  // Properties: Display Config
+  /* **************************************************************************/
+
+  get gtkUpdateMode () { return this._value_('gtkUpdateMode', GTK_UPDATE_MODES.UPDATE) }
   get dpiMultiplier () {
     let defaultValue = 1
     try {

@@ -9,9 +9,11 @@ import { Row, Col } from 'Components/Grid'
 import {
   MOUSE_TRIGGERS,
   MOUSE_TRIGGER_ACTIONS,
+  GTK_UPDATE_MODES,
   SUPPORTS_MOUSE_TRIGGERS,
   SUPPORTS_TRAY_MINIMIZE_CONFIG,
-  SUPPORTS_DOCK_HIDING
+  SUPPORTS_DOCK_HIDING,
+  IS_GTK_PLATFORM
 } from 'shared/Models/Settings/TraySettings'
 
 export default class TraySettingsSection extends React.Component {
@@ -20,7 +22,8 @@ export default class TraySettingsSection extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    tray: PropTypes.object.isRequired
+    tray: PropTypes.object.isRequired,
+    showRestart: PropTypes.func.isRequired
   }
 
   /* **************************************************************************/
@@ -32,7 +35,7 @@ export default class TraySettingsSection extends React.Component {
   }
 
   render () {
-    const {tray, ...passProps} = this.props
+    const {tray, showRestart, ...passProps} = this.props
 
     return (
       <Paper zDepth={1} style={styles.paper} {...passProps}>
@@ -95,6 +98,30 @@ export default class TraySettingsSection extends React.Component {
               <MenuItem value={MOUSE_TRIGGER_ACTIONS.SHOW} primaryText='Show window' />
             </SelectField>
           ) : undefined }
+          {IS_GTK_PLATFORM ? (
+            <SelectField
+              fullWidth
+              floatingLabelText='GTK icon update mode (Requires Restart)'
+              disabled={!tray.show}
+              onChange={(evt, index, value) => {
+                settingsActions.setTrayGtkUpdateMode(value)
+                showRestart()
+              }}
+              value={tray.gtkUpdateMode}>
+              <MenuItem
+                value={GTK_UPDATE_MODES.UPDATE}
+                label='Update'
+                primaryText='Update: recommended for most installations' />
+              <MenuItem
+                value={GTK_UPDATE_MODES.RECREATE}
+                label='Recreate'
+                primaryText='Recreate: force the icon to recreate itself, useful if you see rendering issues' />
+              <MenuItem
+                value={GTK_UPDATE_MODES.STATIC}
+                label='Static'
+                primaryText={`Static: don't display dynamic information in the icon`} />
+            </SelectField>
+          ) : undefined}
           <Row>
             <Col md={6}>
               <SelectField
@@ -118,9 +145,14 @@ export default class TraySettingsSection extends React.Component {
                 disabled={!tray.show}
                 floatingLabelFixed
                 hintText='32'
-                floatingLabelText='Icon Size (Pixels)'
+                floatingLabelText={`Icon Size (Pixels) ${IS_GTK_PLATFORM && tray.gtkUpdateMode === GTK_UPDATE_MODES.STATIC ? ' (Requires Restart)' : ''}`}
                 defaultValue={tray.iconSize}
-                onBlur={(evt) => settingsActions.setTrayIconSize(evt.target.value)} />
+                onBlur={(evt) => {
+                  settingsActions.setTrayIconSize(evt.target.value)
+                  if (IS_GTK_PLATFORM && tray.gtkUpdateMode === GTK_UPDATE_MODES.STATIC) {
+                    showRestart()
+                  }
+                }} />
             </Col>
           </Row>
         </div>

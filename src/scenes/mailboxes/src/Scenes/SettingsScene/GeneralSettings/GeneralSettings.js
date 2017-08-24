@@ -113,7 +113,7 @@ export default class GeneralSettings extends React.Component {
                 mailtoLinkHandlerSupported={mailtoLinkHandlerSupported}
                 isMailtoLinkHandler={isMailtoLinkHandler}
                 openAtLoginSupported={openAtLoginSupported} />
-              <TraySettingsSection tray={tray} />
+              <TraySettingsSection tray={tray} showRestart={showRestart} />
               <InfoSettingsSection />
             </Col>
           </Row>
