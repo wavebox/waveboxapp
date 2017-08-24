@@ -142,11 +142,11 @@ class MailboxesWindow extends WaveboxWindow {
           this.window.hide()
         }
       })
-      this.window.on('restore', (evt) => {
+      /* this.window.on('restore', (evt) => {
         if (settingStore.tray.show && settingStore.tray.hideWhenMinimized && this.locationSaver.getSavedScreenLocation().maximized) {
           this.window.maximize()
         }
-      })
+      }) */
     }
 
     // Bind event listeners

@@ -115,6 +115,27 @@ class WaveboxWindowLocationSaver {
       return {}
     }
   }
+
+  /**
+  * @return true if there is a saved screen location
+  */
+  hasSavedScreenLocation () {
+    if (!this.windowId) { return false }
+    return Object.keys(this.getSavedScreenLocation()).length > 0
+  }
+
+  /**
+  * Re-applies a screen location
+  * @param location: the location to reapply
+  */
+  reapplySavedScreenLocation (location) {
+    if (!this.windowId) { return }
+    if (!location || Object.keys(location).length === 0) { return }
+    if (!this.browserWindow || this.browserWindow.isDestroyed()) { return }
+
+    this.browserWindow.setBounds(location, false)
+    if (location.maximized) { this.browserWindow.maximize() }
+  }
 }
 
 module.exports = WaveboxWindowLocationSaver

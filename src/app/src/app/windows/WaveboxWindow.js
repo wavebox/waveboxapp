@@ -210,10 +210,15 @@ class WaveboxWindow extends EventEmitter {
 
   /**
   * Shows the window
+  * @param restoreState=true: true to restore the saved window state
   * @return this
   */
-  show () {
+  show (restoreState = true) {
+    const windowRestore = restoreState ? this.locationSaver.getSavedScreenLocation() : undefined
     this.window.show()
+    if (restoreState) {
+      this.locationSaver.reapplySavedScreenLocation(windowRestore)
+    }
     return this
   }
 
