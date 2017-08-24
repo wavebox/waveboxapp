@@ -3,6 +3,7 @@ const EventEmitter = require('events')
 const settingStore = require('../stores/settingStore')
 const path = require('path')
 const WaveboxWindowLocationSaver = require('./WaveboxWindowLocationSaver')
+const ClassTools = require('../ClassTools')
 const {
   WB_WINDOW_FIND_START,
   WB_WINDOW_FIND_NEXT,
@@ -28,8 +29,7 @@ class WaveboxWindow extends EventEmitter {
     this.ownerId = null
     this.window = null
     this.locationSaver = new WaveboxWindowLocationSaver(windowId)
-
-    this.boundUpdateWindowMenubar = this.updateWindowMenubar.bind(this)
+    ClassTools.autobindFunctions(this, ['updateWindowMenubar'])
   }
 
   /**
@@ -84,7 +84,7 @@ class WaveboxWindow extends EventEmitter {
     this.locationSaver.register(this.window)
 
     // Bind other change listeners
-    settingStore.on('changed', this.boundUpdateWindowMenubar)
+    settingStore.on('changed', this.updateWindowMenubar)
 
     // Load the start url
     this.window.loadURL(url)
@@ -97,7 +97,7 @@ class WaveboxWindow extends EventEmitter {
   * @param evt: the event that caused destroy
   */
   destroy (evt) {
-    settingStore.removeListener('changed', this.boundUpdateWindowMenubar)
+    settingStore.removeListener('changed', this.updateWindowMenubar)
     if (this.window) {
       this.locationSaver.unregister(this.window)
       if (!this.window.isDestroyed()) {

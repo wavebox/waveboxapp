@@ -10,6 +10,7 @@ const settingStore = require('../../stores/settingStore')
 const userStore = require('../../stores/userStore')
 const mailboxStore = require('../../stores/mailboxStore')
 const CoreService = require('../../../shared/Models/Accounts/CoreService')
+const ClassTools = require('../../ClassTools')
 const {
   AuthGoogle,
   AuthMicrosoft,
@@ -20,7 +21,8 @@ const {
 const querystring = require('querystring')
 const electron = require('electron')
 const {
-  WB_MAILBOXES_WINDOW_PREPARE_RELOAD,
+  WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD,
+  WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD,
   WB_MAILBOXES_WINDOW_TOGGLE_SIDEBAR,
   WB_MAILBOXES_WINDOW_TOGGLE_APP_MENU,
   WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE,
@@ -81,11 +83,14 @@ class MailboxesWindow extends WaveboxWindow {
     this.attachedExtensions = new Map()
     this.provisionalTargetUrls = new Map()
 
-    this.boundHandleAppWebContentsCreated = this.handleAppWebContentsCreated.bind(this)
-    this.boundHandleMailboxesWebViewAttached = this.handleMailboxesWebViewAttached.bind(this)
-    this.boundHandleExtensionWebViewAttached = this.handleExtensionWebViewAttached.bind(this)
-    this.boundHandleOpenNewWindow = this.handleOpenNewWindow.bind(this)
-    this.boundHandleFetchOpenWindowCount = this.handleFetchOpenWindowCount.bind(this)
+    ClassTools.autobindFunctions(this, [
+      'handleAppWebContentsCreated',
+      'handleMailboxesWebViewAttached',
+      'handleExtensionWebViewAttached',
+      'handleOpenNewWindow',
+      'handleFetchOpenWindowCount',
+      'handleAcceptGracefulReload'
+    ])
   }
 
   /**
@@ -129,7 +134,7 @@ class MailboxesWindow extends WaveboxWindow {
       }
     })
     this.window.once('ready-to-show', () => {
-      if (!hidden) { this.window.show() }
+      if (!hidden) { this.show() }
     })
 
     // Bind window behaviour events
@@ -142,19 +147,15 @@ class MailboxesWindow extends WaveboxWindow {
           this.window.hide()
         }
       })
-      /* this.window.on('restore', (evt) => {
-        if (settingStore.tray.show && settingStore.tray.hideWhenMinimized && this.locationSaver.getSavedScreenLocation().maximized) {
-          this.window.maximize()
-        }
-      }) */
     }
 
     // Bind event listeners
-    app.on('web-contents-created', this.boundHandleAppWebContentsCreated)
-    ipcMain.on(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, this.boundHandleMailboxesWebViewAttached)
-    ipcMain.on(WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED, this.boundHandleExtensionWebViewAttached)
-    ipcMain.on(WB_NEW_WINDOW, this.boundHandleOpenNewWindow)
-    ipcMain.on(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, this.boundHandleFetchOpenWindowCount)
+    app.on('web-contents-created', this.handleAppWebContentsCreated)
+    ipcMain.on(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, this.handleMailboxesWebViewAttached)
+    ipcMain.on(WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED, this.handleExtensionWebViewAttached)
+    ipcMain.on(WB_NEW_WINDOW, this.handleOpenNewWindow)
+    ipcMain.on(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, this.handleFetchOpenWindowCount)
+    ipcMain.on(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)
 
     // We're locking on to our window. This stops file drags redirecting the page
     this.window.webContents.on('will-navigate', (evt, url) => {
@@ -164,12 +165,9 @@ class MailboxesWindow extends WaveboxWindow {
       }
     })
 
-    // We can't prevent the devtools from reloading the page so we can't get the page to teardown
-    // gracefully, but if the clientId or clientToken has changed we can at least issue a redirect
-    // notice to the correct url with the correct credentials :)
-    this.window.webContents.on('devtools-reload-page', (evt) => {
-      this.window.loadURL(this.generateWindowUrl())
-    })
+    // remove built in listener so we can handle this on our own
+    this.window.webContents.removeAllListeners('devtools-reload-page')
+    this.window.webContents.on('devtools-reload-page', () => this.reload())
 
     return this
   }
@@ -178,11 +176,12 @@ class MailboxesWindow extends WaveboxWindow {
   * Handles destroy being called
   */
   destroy (evt) {
-    app.removeListener('web-contents-created', this.boundHandleAppWebContentsCreated)
-    ipcMain.removeListener(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, this.boundHandleMailboxesWebViewAttached)
-    ipcMain.removeListener(WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED, this.boundHandleExtensionWebViewAttached)
-    ipcMain.removeListener(WB_NEW_WINDOW, this.boundHandleOpenNewWindow)
-    ipcMain.removeListener(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, this.boundHandleFetchOpenWindowCount)
+    app.removeListener('web-contents-created', this.handleAppWebContentsCreated)
+    ipcMain.removeListener(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, this.handleMailboxesWebViewAttached)
+    ipcMain.removeListener(WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED, this.handleExtensionWebViewAttached)
+    ipcMain.removeListener(WB_NEW_WINDOW, this.handleOpenNewWindow)
+    ipcMain.removeListener(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, this.handleFetchOpenWindowCount)
+    ipcMain.removeListener(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)
     super.destroy(evt)
   }
 
@@ -242,6 +241,17 @@ class MailboxesWindow extends WaveboxWindow {
       contentWindow.ownerId = `${body.mailboxId}:${body.serviceType}`
       appWindowManager.addContentWindow(contentWindow)
       contentWindow.create(this.window, body.url, body.partition, body.windowPreferences, body.webPreferences)
+    }
+  }
+
+  /**
+  * Handles the webview accepting a graceful reload
+  * @param evt: the event that fired
+  * @param body: the arguments from the body
+  */
+  handleAcceptGracefulReload (evt, body) {
+    if (evt.sender === this.window.webContents) {
+      this.window.loadURL(this.generateWindowUrl())
     }
   }
 
@@ -421,10 +431,7 @@ class MailboxesWindow extends WaveboxWindow {
   * @return this
   */
   reload () {
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_PREPARE_RELOAD, {})
-    setTimeout(() => {
-      this.window.loadURL(this.generateWindowUrl())
-    }, 250)
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD, {})
     return this
   }
 

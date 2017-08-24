@@ -1,4 +1,5 @@
 const appStorage = require('../storage/appStorage')
+const ClassTools = require('../ClassTools')
 
 class WaveboxWindowLocationSaver {
   /* ****************************************************************************/
@@ -14,7 +15,7 @@ class WaveboxWindowLocationSaver {
     this.browserWindow = null
     this.windowId = windowId
     this.cache = undefined
-    this.boundSaveWindowScreenLocation = this.saveWindowScreenLocation.bind(this)
+    ClassTools.autobindFunctions(this, ['saveWindowScreenLocation'])
   }
 
   /* ****************************************************************************/
@@ -29,10 +30,10 @@ class WaveboxWindowLocationSaver {
     this.unregister()
     if (this.windowId) {
       this.browserWindow = browserWindow
-      this.browserWindow.on('resize', this.boundSaveWindowScreenLocation)
-      this.browserWindow.on('move', this.boundSaveWindowScreenLocation)
-      this.browserWindow.on('maximize', this.boundSaveWindowScreenLocation)
-      this.browserWindow.on('unmaximize', this.boundSaveWindowScreenLocation)
+      this.browserWindow.on('resize', this.saveWindowScreenLocation)
+      this.browserWindow.on('move', this.saveWindowScreenLocation)
+      this.browserWindow.on('maximize', this.saveWindowScreenLocation)
+      this.browserWindow.on('unmaximize', this.saveWindowScreenLocation)
     }
     return this
   }
@@ -47,10 +48,10 @@ class WaveboxWindowLocationSaver {
       return this
     }
     if (this.browserWindow) {
-      this.browserWindow.removeListener('resize', this.boundSaveWindowScreenLocation)
-      this.browserWindow.removeListener('move', this.boundSaveWindowScreenLocation)
-      this.browserWindow.removeListener('maximize', this.boundSaveWindowScreenLocation)
-      this.browserWindow.removeListener('unmaximize', this.boundSaveWindowScreenLocation)
+      this.browserWindow.removeListener('resize', this.saveWindowScreenLocation)
+      this.browserWindow.removeListener('move', this.saveWindowScreenLocation)
+      this.browserWindow.removeListener('maximize', this.saveWindowScreenLocation)
+      this.browserWindow.removeListener('unmaximize', this.saveWindowScreenLocation)
 
       clearTimeout(this.saver)
       this.browserWindow = null

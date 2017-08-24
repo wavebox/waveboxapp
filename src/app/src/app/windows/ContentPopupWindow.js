@@ -3,6 +3,7 @@ const settingStore = require('../stores/settingStore')
 const {
   WB_BROWSER_START_SPELLCHECK
 } = require('../../shared/ipcEvents')
+const ClassTools = require('../ClassTools')
 
 class ContentPopupWindow extends WaveboxWindow {
   /* ****************************************************************************/
@@ -11,9 +12,7 @@ class ContentPopupWindow extends WaveboxWindow {
 
   constructor () {
     super()
-
-    this.boundLanguageUpdated = this.languageUpdated.bind(this)
-    this.boundHandleDomReady = this.handleDomReady.bind(this)
+    ClassTools.autobindFunctions(this, ['languageUpdated', 'handleDomReady'])
   }
 
   /* ****************************************************************************/
@@ -33,10 +32,10 @@ class ContentPopupWindow extends WaveboxWindow {
 
     // Bind listeners
     this.window.once('ready-to-show', () => {
-      this.window.show()
+      this.show()
     })
-    settingStore.on('changed:language', this.boundLanguageUpdated)
-    this.window.webContents.on('dom-ready', this.boundHandleDomReady)
+    settingStore.on('changed:language', this.languageUpdated)
+    this.window.webContents.on('dom-ready', this.handleDomReady)
 
     return this
   }
@@ -46,9 +45,9 @@ class ContentPopupWindow extends WaveboxWindow {
   * @param evt: the event that caused destroy
   */
   destroy (evt) {
-    settingStore.removeListener('changed:language', this.boundLanguageUpdated)
+    settingStore.removeListener('changed:language', this.languageUpdated)
     if (this.window && !this.window.isDestroyed() && this.window.webContents) {
-      this.window.webContents.removeListener('dom-ready', this.boundHandleDomReady)
+      this.window.webContents.removeListener('dom-ready', this.handleDomReady)
     }
     super.destroy(evt)
   }

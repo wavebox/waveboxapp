@@ -13,7 +13,8 @@ import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
 import ResourceMonitorResponder from './ResourceMonitorResponder'
 import {
   WB_MAILBOXES_WINDOW_JS_LOADED,
-  WB_MAILBOXES_WINDOW_PREPARE_RELOAD,
+  WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD,
+  WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD,
   WB_SEND_IPC_TO_CHILD,
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
   WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
@@ -74,10 +75,15 @@ Debug.load()
 
 // Render and prepare for unrender
 ReactDOM.render(<Provider />, document.getElementById('ReactComponent-AppSceneRenderNode'))
-ipcRenderer.on(WB_MAILBOXES_WINDOW_PREPARE_RELOAD, () => {
+ipcRenderer.on(WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD, () => {
   window.location.hash = '/'
+  ReactDOM.unmountComponentAtNode(document.getElementById('ReactComponent-AppSceneRenderNode'))
+  setTimeout(() => {
+    ipcRenderer.send(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, {})
+  })
 })
 window.addEventListener('beforeunload', () => {
+  window.location.hash = '/'
   ReactDOM.unmountComponentAtNode(document.getElementById('ReactComponent-AppSceneRenderNode'))
 })
 

@@ -3,6 +3,7 @@ const { shell, ipcMain } = require('electron')
 const querystring = require('querystring')
 const appWindowManager = require('../appWindowManager')
 const path = require('path')
+const ClassTools = require('../ClassTools')
 const {
   WB_WINDOW_RELOAD_WEBVIEW,
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
@@ -38,7 +39,7 @@ class ContentWindow extends WaveboxWindow {
     super()
     this.ownerId = null
     this.__launchInfo__ = null
-    this.boundHandleOpenNewWindow = this.handleOpenNewWindow.bind(this)
+    ClassTools.autobindFunctions(this, ['handleOpenNewWindow'])
   }
 
   /* ****************************************************************************/
@@ -130,10 +131,10 @@ class ContentWindow extends WaveboxWindow {
       this.safeBrowserWindowPreferences(browserWindowPreferences),
       { show: false }
     ))
-    this.window.once('ready-to-show', () => { this.window.show() })
+    this.window.once('ready-to-show', () => { this.show() })
 
     // New window handling
-    ipcMain.on(WB_NEW_WINDOW, this.boundHandleOpenNewWindow)
+    ipcMain.on(WB_NEW_WINDOW, this.handleOpenNewWindow)
     this.window.webContents.on('new-window', (evt, url) => {
       evt.preventDefault()
       shell.openExternal(url)
@@ -157,7 +158,7 @@ class ContentWindow extends WaveboxWindow {
   * Handles destroy being called
   */
   destroy (evt) {
-    ipcMain.removeListener(WB_NEW_WINDOW, this.boundHandleOpenNewWindow)
+    ipcMain.removeListener(WB_NEW_WINDOW, this.handleOpenNewWindow)
     super.destroy(evt)
   }
 
