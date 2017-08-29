@@ -356,9 +356,37 @@ class MailboxesWindow extends WaveboxWindow {
   * @param targetUrl: the url we're navigating to
   */
   handleWebViewWillNavigate (webContentsId, evt, targetUrl) {
+    // Extensions
     if (this.attachedExtensions.has(webContentsId)) {
       if (url.parse(targetUrl).protocol !== WAVEBOX_HOSTED_EXTENSION_PROTOCOL + ':') {
         evt.preventDefault()
+        return
+      }
+    }
+
+    // Navigation modes
+    if (settingStore.launched.app.useExperimentalWindowOpener) {
+      if (this.attachedMailboxes.has(webContentsId)) {
+        const { mailboxId, serviceType } = this.attachedMailboxes.get(webContentsId)
+        let navigateMode = CoreService.NAVIGATE_MODES.DEFAULT
+        const service = mailboxStore.getService(mailboxId, serviceType)
+        if (service) {
+          navigateMode = service.getNavigateModeForUrl(targetUrl, url.parse(targetUrl, true))
+        }
+
+        if (navigateMode === CoreService.NAVIGATE_MODES.SUPPRESS) {
+          evt.preventDefault()
+        } else if (navigateMode === CoreService.NAVIGATE_MODES.OPEN_EXTERNAL) {
+          evt.preventDefault()
+          this.openWindowExternal(targetUrl)
+        } else if (navigateMode === CoreService.NAVIGATE_MODES.OPEN_CONTENT) {
+          evt.preventDefault()
+          this.openWindowWaveboxContent(webContentsId, targetUrl, {
+            webPreferences: {
+              partition: 'persist:' + mailboxId
+            }
+          })
+        }
       }
     }
   }

@@ -115,6 +115,7 @@ export default class MicrosoftMailboxStorageWebView extends React.Component {
 
   render () {
     const { mailboxId } = this.props
+    const useExperimentalWindowOpener = settingsStore.getState().launched.app.useExperimentalWindowOpener
 
     return (
       <MailboxWebViewHibernator
@@ -122,8 +123,9 @@ export default class MicrosoftMailboxStorageWebView extends React.Component {
         preload={window.guestResolve('microsoftStorageServiceTooling')}
         mailboxId={mailboxId}
         serviceType={CoreMailbox.SERVICE_TYPES.STORAGE}
-        willNavigate={this.handleWillNavigate}
-        newWindow={settingsStore.getState().launched.app.useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow} />
+        allowpopups={useExperimentalWindowOpener ? false : undefined}
+        willNavigate={useExperimentalWindowOpener ? undefined : this.handleWillNavigate}
+        newWindow={useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow} />
     )
   }
 }

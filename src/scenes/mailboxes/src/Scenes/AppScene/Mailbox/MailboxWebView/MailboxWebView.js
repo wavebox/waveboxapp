@@ -611,7 +611,7 @@ export default class MailboxWebView extends React.Component {
     } = this.state
 
     if (!mailbox || !service) { return false }
-    const { className, preload, hasSearch, ...passProps } = this.props
+    const { className, preload, hasSearch, allowpopups, ...passProps } = this.props
     delete passProps.serviceType
     delete passProps.mailboxId
     const webviewEventProps = BrowserView.REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
@@ -656,7 +656,7 @@ export default class MailboxWebView extends React.Component {
             searchId={searchId}
             searchTerm={isSearching ? searchTerm : ''}
             webpreferences={launchedApp.useExperimentalWindowOpener ? 'contextIsolation=yes, nativeWindowOpen=yes' : 'contextIsolation=yes'}
-            allowpopups={launchedApp.useExperimentalWindowOpener}
+            allowpopups={allowpopups === undefined ? launchedApp.useExperimentalWindowOpener : allowpopups}
             plugins
             onWebContentsAttached={this.handleWebContentsAttached}
 

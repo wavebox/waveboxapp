@@ -15,6 +15,13 @@ const WINDOW_OPEN_MODES = Object.freeze({
   SUPPRESS: 'SUPPRESS'
 })
 
+const NAVIGATE_MODES = Object.freeze({
+  DEFAULT: 'DEFAULT',
+  SUPPRESS: 'SUPPRESS',
+  OPEN_EXTERNAL: 'OPEN_EXTERNAL',
+  OPEN_CONTENT: 'OPEN_CONTENT'
+})
+
 const RELOAD_BEHAVIOURS = Object.freeze({
   RELOAD: 'RELOAD',
   RESET_URL: 'RESET_URL'
@@ -31,6 +38,7 @@ class CoreService extends Model {
   /* **************************************************************************/
 
   static get WINDOW_OPEN_MODES () { return WINDOW_OPEN_MODES }
+  static get NAVIGATE_MODES () { return NAVIGATE_MODES }
   static get SERVICE_TYPES () { return SERVICE_TYPES }
   static get PROTOCOL_TYPES () { return PROTOCOL_TYPES }
   static get RELOAD_BEHAVIOURS () { return RELOAD_BEHAVIOURS }
@@ -138,6 +146,16 @@ class CoreService extends Model {
     } else {
       return WINDOW_OPEN_MODES.DEFAULT
     }
+  }
+
+  /**
+  * Gets the navigate mode for a url
+  * @param url: the url to open with
+  * @param parsedUrl: the url object parsed by nodejs url
+  * @return the navigate mode
+  */
+  getNavigateModeForUrl (url, parsedUrl) {
+    return NAVIGATE_MODES.DEFAULT
   }
 }
 
