@@ -56,11 +56,11 @@ export default class CustomCodeEditingDialog extends React.Component {
         <FlatButton
           label='Cancel'
           style={{ marginRight: 8 }}
-          onTouchTap={(evt) => onCancel(evt)} />
+          onClick={(evt) => onCancel(evt)} />
         <RaisedButton
           label='Save'
           primary
-          onTouchTap={(evt) => onSave(evt, this.refs[REF].getValue())} />
+          onClick={(evt) => onSave(evt, this.refs[REF].getValue())} />
       </div>
     )
 

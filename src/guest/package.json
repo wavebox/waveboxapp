@@ -6,13 +6,13 @@
   "repository": "https://github.com/wavebox/waveboxapp",
   "description": "Guest code for Wavebox",
   "dependencies": {
-    "dictionary-en-us": "1.2.1",
+    "dictionary-en-us": "2.0.0",
     "escape-html": "1.0.3",
-    "fs-extra": "4.0.0",
+    "fs-extra": "4.0.1",
     "nodehun": "2.0.11",
     "uuid": "3.1.0"
   },
   "devDependencies": {
-    "standard": "10.0.2"
+    "standard": "10.0.3"
   }
 }

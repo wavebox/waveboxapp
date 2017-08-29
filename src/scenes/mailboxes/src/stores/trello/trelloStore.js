@@ -157,9 +157,9 @@ class TrelloStore {
     }
 
     const requestId = this.trackOpenRequest(REQUEST_TYPES.PROFILE, mailboxId)
-    TrelloHTTP.fetchAccountProfile(mailbox.authAppKey, mailbox.authToken)
+    Promise.resolve()
+      .then(() => TrelloHTTP.fetchAccountProfile(mailbox.authAppKey, mailbox.authToken))
       .then((response) => {
-        this.trackCloseRequest(REQUEST_TYPES.PROFILE, mailboxId, requestId)
         mailboxActions.reduce.defer(
           mailboxId,
           TrelloMailboxReducer.setProfileInfo,
@@ -169,6 +169,20 @@ class TrelloStore {
           response.initials,
           { avatarSource: response.avatarSource, avatarHash: response.avatarHash }
         )
+        return Promise.resolve()
+      })
+      .then(() => TrelloHTTP.fetchBoards(mailbox.authAppKey, mailbox.authToken, ['id', 'name', 'shortUrl'], 'open'))
+      .then((response) => {
+        mailboxActions.reduceService.defer(
+          mailboxId,
+          TrelloMailbox.SERVICE_TYPES.DEFAULT,
+          TrelloDefaultServiceReducer.setBoards,
+          response
+        )
+        return Promise.resolve()
+      })
+      .then(() => {
+        this.trackCloseRequest(REQUEST_TYPES.PROFILE, mailboxId, requestId)
         this.emitChange()
       })
       .catch((err) => {

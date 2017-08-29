@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Dialog, RaisedButton, FlatButton } from 'material-ui'
 import { updaterActions, updaterStore } from 'stores/updater'
-import { UPDATE_USER_MANUAL_DOWNLOAD } from 'shared/constants'
 import UpdateModalTitle from './UpdateModalTitle'
 import * as Colors from 'material-ui/styles/colors'
 const { remote: {shell} } = window.nativeRequire('electron')
@@ -80,7 +79,7 @@ export default class UpdateErrorScene extends React.Component {
   */
   handleDownloadManually = () => {
     this.handleClose()
-    shell.openExternal(UPDATE_USER_MANUAL_DOWNLOAD)
+    shell.openExternal(updaterStore.getState().getManualUpdateDownloadUrl())
   }
 
   /**

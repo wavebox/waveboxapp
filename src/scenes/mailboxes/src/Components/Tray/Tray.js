@@ -8,7 +8,9 @@ import uuid from 'uuid'
 import MenuTool from 'shared/Electron/MenuTool'
 import {
   MOUSE_TRIGGERS,
-  MOUSE_TRIGGER_ACTIONS
+  MOUSE_TRIGGER_ACTIONS,
+  IS_GTK_PLATFORM,
+  GTK_UPDATE_MODES
 } from 'shared/Models/Settings/TraySettings'
 import {
   WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY,
@@ -28,7 +30,8 @@ export default class Tray extends React.Component {
 
   static propTypes = {
     unreadCount: PropTypes.number.isRequired,
-    traySettings: PropTypes.object.isRequired
+    traySettings: PropTypes.object.isRequired,
+    launchTraySettings: PropTypes.object.isRequired
   }
 
   /* **************************************************************************/
@@ -36,7 +39,14 @@ export default class Tray extends React.Component {
   /* **************************************************************************/
 
   componentWillMount () {
-    this.appTray = new remote.Tray(nativeImage.createFromDataURL(BLANK_PNG))
+    const { launchTraySettings } = this.props
+    if (IS_GTK_PLATFORM && launchTraySettings.gtkUpdateMode === GTK_UPDATE_MODES.STATIC) {
+      const image = nativeImage.createFromPath(window.iconResolve('app_64.png'))
+      const resizedImage = image.resize({ width: launchTraySettings.iconSize, height: launchTraySettings.iconSize })
+      this.appTray = new remote.Tray(resizedImage)
+    } else {
+      this.appTray = new remote.Tray(nativeImage.createFromDataURL(BLANK_PNG))
+    }
     this.lastContextMenu = null
     window.addEventListener('beforeunload', this.handleDestroyTray) // Be super pushy about this to avoid dangling tray references
 
@@ -256,7 +266,11 @@ export default class Tray extends React.Component {
   }
 
   render () {
-    const { unreadCount, traySettings } = this.props
+    const {
+      unreadCount,
+      traySettings,
+      launchTraySettings
+    } = this.props
 
     // Making subsequent calls to the promise can cause the return order to change
     // Guard against this using the renderId
@@ -266,10 +280,22 @@ export default class Tray extends React.Component {
     TrayRenderer.renderNativeImage(traySettings.iconSize, traySettings, unreadCount)
       .then((image) => {
         if (this.renderId !== renderId) { return } // Someone got in before us
-        this.appTray.setImage(image)
+
+        // Update the icon
+        if (IS_GTK_PLATFORM) {
+          if (launchTraySettings.gtkUpdateMode === GTK_UPDATE_MODES.RECREATE) {
+            this.appTray.destroy()
+            this.appTray = new remote.Tray(image)
+          } else if (launchTraySettings.gtkUpdateMode === GTK_UPDATE_MODES.UPDATE) {
+            this.appTray.setImage(image)
+          }
+          // We don't update the image on static
+        } else {
+          this.appTray.setImage(image)
+        }
         this.appTray.setToolTip(this.renderTooltip())
 
-        // Prevent Memory leak
+        // Prevent Memory leak with menu
         const lastContextMenu = this.lastContextMenu
         this.lastContextMenu = this.renderContextMenu()
         this.appTray.setContextMenu(this.lastContextMenu)

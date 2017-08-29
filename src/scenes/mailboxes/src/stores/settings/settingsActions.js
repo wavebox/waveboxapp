@@ -18,6 +18,44 @@ class SettingsActions {
   load () { return {} }
 
   /* **************************************************************************/
+  // News Sync
+  /* **************************************************************************/
+
+  /**
+  * Starts syncing the news
+  */
+  startSyncingNews () { return {} }
+
+  /**
+  * Stops syncing the news
+  */
+  stopSyncingNews () { return {} }
+
+  /**
+  * Opens the latest news and marks it as seen
+  */
+  openAndMarkNews () { return {} }
+
+  /* **************************************************************************/
+  // Tour
+  /* **************************************************************************/
+
+  /**
+  * Starts the app tour
+  */
+  tourStart () { return {} }
+
+  /**
+  * Progresses the tour
+  */
+  tourNext () { return {} }
+
+  /**
+  * Quits the tour
+  */
+  tourQuit () { return {} }
+
+  /* **************************************************************************/
   // Updates
   /* **************************************************************************/
 
@@ -174,17 +212,24 @@ class SettingsActions {
   }
 
   /**
-  * @param show: true to show the badge, false otherwise
-  */
-  setShowAppBadge (show) {
-    return this.update(SEGMENTS.UI, 'showAppBadge', show)
-  }
-
-  /**
   * @param show: true to show the unread count in the titlebar
   */
   setShowTitlebarUnreadCount (show) {
     return this.update(SEGMENTS.UI, 'showTitlebarCount', show)
+  }
+
+  /**
+  * @param show: true to show the account info in the titlebar
+  */
+  setShowTitlebarAccount (show) {
+    return this.update(SEGMENTS.UI, 'showTitlebarAccount', show)
+  }
+
+  /**
+  * @param show: true to show the badge, false otherwise
+  */
+  setShowAppBadge (show) {
+    return this.update(SEGMENTS.UI, 'showAppBadge', show)
   }
 
   /**
@@ -227,6 +272,20 @@ class SettingsActions {
   */
   setShowSleepableServiceIndicator (show) {
     return this.update(SEGMENTS.UI, 'showSleepableServiceIndicator', show)
+  }
+
+  /**
+  * @param show: true to show the support button in the sidebar
+  */
+  setShowSidebarSupport (show) {
+    return this.update(SEGMENTS.UI, 'showSidebarSupport', show)
+  }
+
+  /**
+  * @param mode: the mode to show the newsfeed button in the sidebar
+  */
+  setShowSidebarNewsfeed (mode) {
+    return this.update(SEGMENTS.UI, 'showSidebarNewsfeed', mode)
   }
 
   /* **************************************************************************/
@@ -276,17 +335,17 @@ class SettingsActions {
   }
 
   /**
-  * @param hasSeen: true if the user has seen the app wizard
+  * @param hasSeen: true if the user has seen the app tour
   */
-  setHasSeenAppWizard (hasSeen) {
-    return this.update(SEGMENTS.APP, 'hasSeenAppWizard', hasSeen)
+  setHasSeenTour (hasSeen) {
+    return this.update(SEGMENTS.APP, 'hasSeenAppTour', hasSeen)
   }
 
   /**
-  * Marks the EULA as being agreed
+  * @param hasSeen: true if the user has seen the app wizard
   */
-  acceptEULA () {
-    return this.update(SEGMENTS.APP, 'hasAgreedToEULA', true)
+  setHasSeenAppWizard (hasSeen) {
+    return { hasSeen: hasSeen }
   }
 
   /**
@@ -413,6 +472,13 @@ class SettingsActions {
   */
   setMouseTriggerAction (val) {
     return this.update(SEGMENTS.TRAY, 'mouseTriggerAction', val)
+  }
+
+  /**
+  * @param val: the new update mode
+  */
+  setTrayGtkUpdateMode (val) {
+    return this.update(SEGMENTS.TRAY, 'gtkUpdateMode', val)
   }
 }
 

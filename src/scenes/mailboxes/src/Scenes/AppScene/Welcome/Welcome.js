@@ -1,5 +1,4 @@
 import React from 'react'
-import { FontIcon, IconButton, FlatButton } from 'material-ui'
 import * as Colors from 'material-ui/styles/colors'
 import { mailboxActions } from 'stores/mailbox'
 import { userStore } from 'stores/user'
@@ -9,6 +8,11 @@ import TrelloMailbox from 'shared/Models/Accounts/Trello/TrelloMailbox'
 import SlackMailbox from 'shared/Models/Accounts/Slack/SlackMailbox'
 import GenericMailbox from 'shared/Models/Accounts/Generic/GenericMailbox'
 import GoogleMailbox from 'shared/Models/Accounts/Google/GoogleMailbox'
+import { TERMS_URL, EULA_URL } from 'shared/constants'
+import WelcomeRaisedButton from './WelcomeRaisedButton'
+import WelcomeAccountButton from './WelcomeAccountButton'
+
+const { remote: { shell } } = window.nativeRequire('electron')
 
 const styles = {
   // Layout
@@ -19,88 +23,55 @@ const styles = {
     right: 0,
     bottom: 0,
     display: 'flex',
-    alignItems: 'stretch'
-  },
-  welcomeContainer: {
-    display: 'flex',
-    backgroundColor: 'rgb(184, 237, 148)',
-    flexDirection: 'column',
-    width: '50%',
-    alignItems: 'center',
     justifyContent: 'center',
-    backgroundImage: 'url("../../images/welcome_background.png")',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center'
-  },
-  actionContainer: {
-    display: 'flex',
-    width: '50%',
+    alignItems: 'center',
     overflowY: 'auto'
-  },
-  actionContainerInner: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 450,
-    height: '100%',
-    width: '100%'
   },
 
   // Intro
-  welcomeIcon: {
-    maxHeight: 250,
-    maxWidth: 250,
-    width: '100%',
-    height: '100%',
-    backgroundSize: 'contain',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    backgroundImage: 'url("../../icons/app_512.png")'
+  intro: {
+    color: Colors.blueGrey800,
+    textAlign: 'center'
   },
-  welcomeIntro: {
-    color: 'rgb(74, 189, 231)',
-    textAlign: 'center',
-    maxWidth: 250,
-    fontSize: 20,
-    lineHeight: '34px'
+  introIcon: {
+    height: 150,
+    width: 150
   },
-
-  // Action
-  actionTitle: {
-    fontWeight: 300,
-    color: 'rgb(167, 171, 169)',
-    margin: 0
+  introTitle: {
+    fontWeight: '300'
   },
-  actionAddIconButton: {
-    width: 100,
-    height: 100,
-    marginTop: 20,
-    marginBottom: 20
+  introSubtitle: {
+    fontWeight: '300'
   },
-  actionAddIconIcon: {
-    fontSize: 80
+  introTerms: {
+    fontSize: '12px'
   },
-  actionAddLabel: {
-    fontSize: 18,
-    fontWeight: 300,
-    textTransform: 'none'
-  },
-  actionProviders: {
-    marginTop: 20,
-    marginBottom: 20,
-    textAlign: 'center',
-    paddingLeft: 16,
-    paddingRight: 16
-  },
-  actionProviderIcon: {
-    height: 32,
-    margin: 10,
+  introTermsLink: {
+    textDecoration: 'underline',
+    color: Colors.lightBlue400,
     cursor: 'pointer'
   },
-  actionLoginLabel: {
-    fontWeight: 300,
-    textTransform: 'none'
+
+  // Accounts
+  accounts: {
+    marginTop: 40,
+    marginBottom: 40,
+    textAlign: 'center'
+  },
+  accountIcon: {
+    display: 'inline-block',
+    marginLeft: 20,
+    marginRight: 20
+  },
+
+  // Extra
+  extraActions: {
+    textAlign: 'center'
+  },
+  extraActionButton: {
+    display: 'inline-block',
+    marginLeft: 16,
+    marginRight: 16
   }
 }
 
@@ -136,16 +107,39 @@ export default class Welcome extends React.Component {
   // UI Events
   /* **************************************************************************/
 
+  /**
+  * Opens the generic add wizard
+  */
   handleOpenAddWizard = () => {
     window.location.hash = '/mailbox_wizard/add'
   }
 
-  handleOpenAccount = () => {
-    window.location.hash = '/settings/pro'
+  /**
+  * Opens the account screen in settings
+  */
+  handleLoginWavebox = () => {
+    window.location.hash = '/account/auth/'
   }
 
+  /**
+  * Opens the WMail import wizard
+  */
   handleWmailImport = () => {
     window.location.hash = '/wmailimport/start'
+  }
+
+  /**
+  * Opens the EULA externally
+  */
+  handleOpenEULA = () => {
+    shell.openExternal(EULA_URL)
+  }
+
+  /**
+  * Opens the terms externally
+  */
+  handleOpenTerms = () => {
+    shell.openExternal(TERMS_URL)
   }
 
   /* **************************************************************************/
@@ -156,67 +150,61 @@ export default class Welcome extends React.Component {
   * Renders an account
   * @param type: the account type
   * @param logo: the account logo
+  * @param name: the account type name
   * @param action: callback to execute on click
   * @return jsx or undefined
   */
-  renderAccount (type, logo, action) {
+  renderMailboxType (type, logo, name, action) {
     return (
-      <img
-        src={'../../' + logo}
+      <WelcomeAccountButton
+        tooltipText={`Add ${name}`}
+        size={60}
+        logoPath={'../../' + logo}
         onClick={() => this.state.user.hasAccountsOfType(type) ? action() : this.handleOpenAddWizard()}
-        style={styles.actionProviderIcon} />)
+        style={styles.accountIcon} />
+    )
   }
 
   render () {
     const { canImportWmail } = this.state
+
     return (
       <div style={styles.container}>
-        <div style={styles.welcomeContainer}>
-          <div style={styles.welcomeIcon} />
-          <p style={styles.welcomeIntro}>
-            the open-source desktop client for all your communication needs
-          </p>
-        </div>
-        <div style={styles.actionContainer}>
-          <div style={styles.actionContainerInner}>
-            <h1 style={styles.actionTitle}>Welcome</h1>
-            <IconButton
-              style={styles.actionAddIconButton}
-              iconStyle={styles.actionAddIconIcon}
-              onClick={this.handleOpenAddWizard}>
-              <FontIcon
-                className='material-icons'
-                color={Colors.lightBlue600}>
-                add_circle_outline
-              </FontIcon>
-            </IconButton>
-            <FlatButton
-              label='add your first account'
-              labelStyle={styles.actionAddLabel}
-              onClick={this.handleOpenAddWizard}
-              primary />
-            <div style={styles.actionProviders}>
-              {this.renderAccount(GoogleMailbox.type, GoogleMailbox.humanizedGmailVectorLogo, mailboxActions.authenticateGmailMailbox)}
-              {this.renderAccount(GoogleMailbox.type, GoogleMailbox.humanizedGinboxVectorLogo, mailboxActions.authenticateGinboxMailbox)}
-              {this.renderAccount(MicrosoftMailbox.type, MicrosoftMailbox.humanizedOutlookVectorLogo, mailboxActions.authenticateOutlookMailbox)}
-              {this.renderAccount(MicrosoftMailbox.type, MicrosoftMailbox.humanizedOffice365VectorLogo, mailboxActions.authenticateOffice365Mailbox)}
-              {this.renderAccount(TrelloMailbox.type, TrelloMailbox.humanizedVectorLogo, mailboxActions.authenticateTrelloMailbox)}
-              {this.renderAccount(SlackMailbox.type, SlackMailbox.humanizedVectorLogo, mailboxActions.authenticateSlackMailbox)}
-              {this.renderAccount(GenericMailbox.type, GenericMailbox.humanizedVectorLogo, mailboxActions.authenticateGenericMailbox)}
-            </div>
-            <FlatButton
-              label='Already have a Wavebox Account?'
-              labelStyle={styles.actionLoginLabel}
-              onClick={this.handleOpenAccount}
-              primary />
+        <div>
+          <div style={styles.intro}>
+            <img style={styles.introIcon} src='../../icons/app.svg' />
+            <h1 style={styles.introTitle}>
+              Add your first account
+            </h1>
+            <h3 style={styles.introSubtitle}>
+              Get started by adding your first account. Tap on an icon below...
+            </h3>
+            <p style={styles.introTerms}>
+              <span>By continuing you agree to the Software </span>
+              <span style={styles.introTermsLink} onClick={this.handleOpenEULA}>EULA</span>
+              <span> and our </span>
+              <span style={styles.introTermsLink} onClick={this.handleOpenTerms}>service terms</span>
+            </p>
+          </div>
+          <div style={styles.accounts}>
+            {this.renderMailboxType(GoogleMailbox.type, GoogleMailbox.humanizedGmailVectorLogo, 'Gmail', mailboxActions.startAddGmailWizard)}
+            {this.renderMailboxType(GoogleMailbox.type, GoogleMailbox.humanizedGinboxVectorLogo, 'Google Inbox', mailboxActions.startAddGinboxWizard)}
+            {this.renderMailboxType(MicrosoftMailbox.type, MicrosoftMailbox.humanizedOutlookVectorLogo, 'Outlook', mailboxActions.startAddOutlookWizard)}
+            {this.renderMailboxType(MicrosoftMailbox.type, MicrosoftMailbox.humanizedOffice365VectorLogo, 'Office 365', mailboxActions.startAddOffice365Wizard)}
+            {this.renderMailboxType(TrelloMailbox.type, TrelloMailbox.humanizedVectorLogo, 'Trello', mailboxActions.startAddTrelloWizard)}
+            {this.renderMailboxType(SlackMailbox.type, SlackMailbox.humanizedVectorLogo, 'Slack', mailboxActions.startAddSlackWizard)}
+            {this.renderMailboxType(GenericMailbox.type, GenericMailbox.humanizedVectorLogo, 'Any Web Link', mailboxActions.startAddGenericWizard)}
+          </div>
+          <div style={styles.extraActions}>
+            <WelcomeRaisedButton
+              onClick={this.handleLoginWavebox}
+              style={styles.extraActionButton}
+              label='Already a User? Login' />
             {canImportWmail ? (
-              <FlatButton
-                label='Import everything from WMail'
-                labelPosition='before'
-                labelStyle={styles.actionLoginLabel}
+              <WelcomeRaisedButton
                 onClick={this.handleWmailImport}
-                icon={<img style={{ height: 24 }} src='../../images/wmail_icon.svg' />}
-                primary />
+                style={styles.extraActionButton}
+                label='Import from WMail' />
             ) : undefined}
           </div>
         </div>

@@ -7,7 +7,7 @@ import MicrosoftDefaultService from 'shared/Models/Accounts/Microsoft/MicrosoftD
 import { mailboxActions, MicrosoftDefaultServiceReducer } from 'stores/mailbox'
 import { Row, Col } from 'Components/Grid'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
-import AccountSleepableSettings from '../AccountSleepableSettings'
+import AccountBehaviourSettings from '../AccountBehaviourSettings'
 
 export default class MicrosoftDefaultServiceSettings extends React.Component {
   /* **************************************************************************/
@@ -66,13 +66,13 @@ export default class MicrosoftDefaultServiceSettings extends React.Component {
                 )
               })}
             </SelectField>
+            <AccountBehaviourSettings mailbox={mailbox} service={service} />
+          </Col>
+          <Col md={6}>
             <AccountCustomCodeSettings
               mailbox={mailbox}
               service={service}
               onRequestEditCustomCode={onRequestEditCustomCode} />
-          </Col>
-          <Col md={6}>
-            <AccountSleepableSettings mailbox={mailbox} service={service} />
           </Col>
         </Row>
       </AccountServiceItem>

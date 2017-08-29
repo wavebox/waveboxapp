@@ -46,6 +46,8 @@ class AcceleratorSettings extends Model {
   get previousMailboxDefault () { return 'CmdOrCtrl+<' }
   get nextMailboxDefault () { return 'CmdOrCtrl+>' }
   get mailboxIndexDefault () { return 'CmdOrCtrl+Number' }
+  get servicePreviousDefault () { return 'CmdOrCtrl+Alt+<' }
+  get serviceNextDefault () { return 'CmdOrCtrl+Alt+>' }
   get serviceIndexDefault () { return 'CmdOrCtrl+Alt+Number' }
 
   /* ****************************************************************************/
@@ -93,6 +95,8 @@ class AcceleratorSettings extends Model {
   get previousMailbox () { return this._value_('previousMailbox', this.previousMailboxDefault) }
   get nextMailbox () { return this._value_('nextMailbox', this.nextMailboxDefault) }
   get mailboxIndex () { return this._value_('mailboxIndex', this.mailboxIndexDefault) }
+  get servicePrevious () { return this._value_('servicePrevious', this.servicePreviousDefault) }
+  get serviceNext () { return this._value_('serviceNext', this.serviceNextDefault) }
   get serviceIndex () { return this._value_('serviceIndex', this.serviceIndexDefault) }
 }
 

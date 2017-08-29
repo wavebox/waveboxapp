@@ -10,6 +10,7 @@ const settingStore = require('../../stores/settingStore')
 const userStore = require('../../stores/userStore')
 const mailboxStore = require('../../stores/mailboxStore')
 const CoreService = require('../../../shared/Models/Accounts/CoreService')
+const ClassTools = require('../../ClassTools')
 const {
   AuthGoogle,
   AuthMicrosoft,
@@ -20,16 +21,19 @@ const {
 const querystring = require('querystring')
 const electron = require('electron')
 const {
-  WB_MAILBOXES_WINDOW_PREPARE_RELOAD,
+  WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD,
+  WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD,
   WB_MAILBOXES_WINDOW_TOGGLE_SIDEBAR,
   WB_MAILBOXES_WINDOW_TOGGLE_APP_MENU,
   WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE,
   WB_MAILBOXES_WINDOW_OPEN_MAILTO_LINK,
   WB_MAILBOXES_WINDOW_SWITCH_MAILBOX,
-  WB_MAILBOXES_WINDOW_SWITCH_SERVICE_INDEX,
+  WB_MAILBOXES_WINDOW_SWITCH_SERVICE,
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
   WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD,
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
+  WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER,
+  WB_MAILBOXES_WINDOW_SHOW_NEWS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
   WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED,
   WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED,
@@ -50,12 +54,17 @@ const {
 const {
   WAVEBOX_HOSTED_EXTENSION_PROTOCOL
 } = require('../../../shared/extensionApis')
+const {
+  TraySettings: { SUPPORTS_TRAY_MINIMIZE_CONFIG }
+} = require('../../../shared/Models/Settings')
 
 const MAILBOXES_DIR = path.resolve(path.join(__dirname, '/../../../../scenes/mailboxes'))
 const ALLOWED_URLS = [
   'file://' + path.join(MAILBOXES_DIR, 'mailboxes.html'),
   'file://' + path.join(MAILBOXES_DIR, 'offline.html')
 ]
+const MIN_WINDOW_WIDTH = 400
+const MIN_WINDOW_HEIGHT = 300
 
 class MailboxesWindow extends WaveboxWindow {
   /* ****************************************************************************/
@@ -74,11 +83,14 @@ class MailboxesWindow extends WaveboxWindow {
     this.attachedExtensions = new Map()
     this.provisionalTargetUrls = new Map()
 
-    this.boundHandleAppWebContentsCreated = this.handleAppWebContentsCreated.bind(this)
-    this.boundHandleMailboxesWebViewAttached = this.handleMailboxesWebViewAttached.bind(this)
-    this.boundHandleExtensionWebViewAttached = this.handleExtensionWebViewAttached.bind(this)
-    this.boundHandleOpenNewWindow = this.handleOpenNewWindow.bind(this)
-    this.boundHandleFetchOpenWindowCount = this.handleFetchOpenWindowCount.bind(this)
+    ClassTools.autobindFunctions(this, [
+      'handleAppWebContentsCreated',
+      'handleMailboxesWebViewAttached',
+      'handleExtensionWebViewAttached',
+      'handleOpenNewWindow',
+      'handleFetchOpenWindowCount',
+      'handleAcceptGracefulReload'
+    ])
   }
 
   /**
@@ -105,11 +117,11 @@ class MailboxesWindow extends WaveboxWindow {
   create (hidden = false) {
     const screenSize = electron.screen.getPrimaryDisplay().workAreaSize
     super.create(this.generateWindowUrl(), {
-      show: !hidden,
-      minWidth: 770,
-      minHeight: 300,
-      width: Math.min(Math.max(screenSize.width, 770), 1200),
-      height: Math.min(Math.max(screenSize.height, 300), 1000),
+      show: false,
+      minWidth: MIN_WINDOW_WIDTH,
+      minHeight: MIN_WINDOW_HEIGHT,
+      width: Math.min(Math.max(screenSize.width, MIN_WINDOW_WIDTH), 1200),
+      height: Math.min(Math.max(screenSize.height, MIN_WINDOW_HEIGHT), 1000),
       fullscreenable: true,
       titleBarStyle: process.platform === 'darwin' && settingStore.ui.showTitlebar === false ? 'hidden' : 'default',
       frame: settingStore.ui.showTitlebar,
@@ -121,12 +133,29 @@ class MailboxesWindow extends WaveboxWindow {
         plugins: true
       }
     })
+    this.window.once('ready-to-show', () => {
+      if (!hidden) { this.show() }
+    })
 
-    app.on('web-contents-created', this.boundHandleAppWebContentsCreated)
-    ipcMain.on(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, this.boundHandleMailboxesWebViewAttached)
-    ipcMain.on(WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED, this.boundHandleExtensionWebViewAttached)
-    ipcMain.on(WB_NEW_WINDOW, this.boundHandleOpenNewWindow)
-    ipcMain.on(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, this.boundHandleFetchOpenWindowCount)
+    // Bind window behaviour events
+    if (SUPPORTS_TRAY_MINIMIZE_CONFIG) {
+      // Preventing default on minimize has little effect. The window saver doesn't take note of minimized state
+      // though so we can query this to see what the last state was and re-apply that on restore
+      this.window.on('minimize', (evt) => {
+        if (settingStore.tray.show && settingStore.tray.hideWhenMinimized) {
+          evt.preventDefault()
+          this.window.hide()
+        }
+      })
+    }
+
+    // Bind event listeners
+    app.on('web-contents-created', this.handleAppWebContentsCreated)
+    ipcMain.on(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, this.handleMailboxesWebViewAttached)
+    ipcMain.on(WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED, this.handleExtensionWebViewAttached)
+    ipcMain.on(WB_NEW_WINDOW, this.handleOpenNewWindow)
+    ipcMain.on(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, this.handleFetchOpenWindowCount)
+    ipcMain.on(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)
 
     // We're locking on to our window. This stops file drags redirecting the page
     this.window.webContents.on('will-navigate', (evt, url) => {
@@ -136,12 +165,9 @@ class MailboxesWindow extends WaveboxWindow {
       }
     })
 
-    // We can't prevent the devtools from reloading the page so we can't get the page to teardown
-    // gracefully, but if the clientId or clientToken has changed we can at least issue a redirect
-    // notice to the correct url with the correct credentials :)
-    this.window.webContents.on('devtools-reload-page', (evt) => {
-      this.window.loadURL(this.generateWindowUrl())
-    })
+    // remove built in listener so we can handle this on our own
+    this.window.webContents.removeAllListeners('devtools-reload-page')
+    this.window.webContents.on('devtools-reload-page', () => this.reload())
 
     return this
   }
@@ -150,11 +176,12 @@ class MailboxesWindow extends WaveboxWindow {
   * Handles destroy being called
   */
   destroy (evt) {
-    app.removeListener('web-contents-created', this.boundHandleAppWebContentsCreated)
-    ipcMain.removeListener(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, this.boundHandleMailboxesWebViewAttached)
-    ipcMain.removeListener(WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED, this.boundHandleExtensionWebViewAttached)
-    ipcMain.removeListener(WB_NEW_WINDOW, this.boundHandleOpenNewWindow)
-    ipcMain.removeListener(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, this.boundHandleFetchOpenWindowCount)
+    app.removeListener('web-contents-created', this.handleAppWebContentsCreated)
+    ipcMain.removeListener(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, this.handleMailboxesWebViewAttached)
+    ipcMain.removeListener(WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED, this.handleExtensionWebViewAttached)
+    ipcMain.removeListener(WB_NEW_WINDOW, this.handleOpenNewWindow)
+    ipcMain.removeListener(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, this.handleFetchOpenWindowCount)
+    ipcMain.removeListener(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)
     super.destroy(evt)
   }
 
@@ -217,6 +244,17 @@ class MailboxesWindow extends WaveboxWindow {
     }
   }
 
+  /**
+  * Handles the webview accepting a graceful reload
+  * @param evt: the event that fired
+  * @param body: the arguments from the body
+  */
+  handleAcceptGracefulReload (evt, body) {
+    if (evt.sender === this.window.webContents) {
+      this.window.loadURL(this.generateWindowUrl())
+    }
+  }
+
   /* ****************************************************************************/
   // Content window getters
   /* ****************************************************************************/
@@ -261,6 +299,7 @@ class MailboxesWindow extends WaveboxWindow {
 
     // Handle other urls
     let openMode = CoreService.WINDOW_OPEN_MODES.EXTERNAL
+    let defaultOpenMode = CoreService.DEFAULT_WINDOW_OPEN_MODES.BROWSER
     let ownerId = null
     let provisionalTargetUrl
 
@@ -277,32 +316,32 @@ class MailboxesWindow extends WaveboxWindow {
           provisionalTargetUrl,
           provisionalTargetUrl ? url.parse(provisionalTargetUrl, true) : undefined
         )
+        defaultOpenMode = service.defaultWindowOpenMode
       }
     }
 
     if (openMode === CoreService.WINDOW_OPEN_MODES.POPUP_CONTENT) {
-      const contentWindow = new ContentPopupWindow()
-      contentWindow.ownerId = ownerId
-      appWindowManager.addContentWindow(contentWindow)
-      contentWindow.create(targetUrl, options)
-      evt.newGuest = contentWindow.window
-    } else if (openMode === CoreService.WINDOW_OPEN_MODES.EXTERNAL || openMode === CoreService.WINDOW_OPEN_MODES.DEFAULT) {
-      shell.openExternal(targetUrl, {
-        activate: !settingStore.os.openLinksInBackground
-      })
-    } else if (openMode === CoreService.WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL) {
-      shell.openExternal(provisionalTargetUrl, {
-        activate: !settingStore.os.openLinksInBackground
-      })
-    } else if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT || openMode === CoreService.WINDOW_OPEN_MODES.CONTENT_PROVSIONAL) {
-      const contentWindow = new ContentWindow()
-      contentWindow.ownerId = ownerId
-      appWindowManager.addContentWindow(contentWindow)
-      if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT) {
-        contentWindow.create(this.window, targetUrl, ((options || {}).webPreferences || {}).partition, options)
-      } else if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT_PROVSIONAL) {
-        contentWindow.create(this.window, provisionalTargetUrl, ((options || {}).webPreferences || {}).partition, options)
+      evt.newGuest = this.openWindowWaveboxPopupContent(ownerId, targetUrl, options).window
+    } else if (openMode === CoreService.WINDOW_OPEN_MODES.EXTERNAL) {
+      this.openWindowExternal(targetUrl)
+    } else if (openMode === CoreService.WINDOW_OPEN_MODES.DEFAULT) {
+      if (defaultOpenMode === CoreService.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
+        this.openWindowExternal(targetUrl)
+      } else if (defaultOpenMode === CoreService.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
+        this.openWindowWaveboxContent(ownerId, targetUrl, options)
       }
+    } else if (openMode === CoreService.WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL) {
+      this.openWindowExternal(provisionalTargetUrl)
+    } else if (openMode === CoreService.WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL) {
+      if (defaultOpenMode === CoreService.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
+        this.openWindowExternal(provisionalTargetUrl)
+      } else if (defaultOpenMode === CoreService.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
+        this.openWindowWaveboxContent(ownerId, provisionalTargetUrl, options)
+      }
+    } else if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT) {
+      this.openWindowWaveboxContent(ownerId, targetUrl, options)
+    } else if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT_PROVSIONAL) {
+      this.openWindowWaveboxContent(ownerId, provisionalTargetUrl, options)
     } else if (openMode === CoreService.WINDOW_OPEN_MODES.DOWNLOAD) {
       if ((options || {}).webContents) {
         options.webContents.downloadURL(targetUrl)
@@ -317,9 +356,37 @@ class MailboxesWindow extends WaveboxWindow {
   * @param targetUrl: the url we're navigating to
   */
   handleWebViewWillNavigate (webContentsId, evt, targetUrl) {
+    // Extensions
     if (this.attachedExtensions.has(webContentsId)) {
       if (url.parse(targetUrl).protocol !== WAVEBOX_HOSTED_EXTENSION_PROTOCOL + ':') {
         evt.preventDefault()
+        return
+      }
+    }
+
+    // Navigation modes
+    if (settingStore.launched.app.useExperimentalWindowOpener) {
+      if (this.attachedMailboxes.has(webContentsId)) {
+        const { mailboxId, serviceType } = this.attachedMailboxes.get(webContentsId)
+        let navigateMode = CoreService.NAVIGATE_MODES.DEFAULT
+        const service = mailboxStore.getService(mailboxId, serviceType)
+        if (service) {
+          navigateMode = service.getNavigateModeForUrl(targetUrl, url.parse(targetUrl, true))
+        }
+
+        if (navigateMode === CoreService.NAVIGATE_MODES.SUPPRESS) {
+          evt.preventDefault()
+        } else if (navigateMode === CoreService.NAVIGATE_MODES.OPEN_EXTERNAL) {
+          evt.preventDefault()
+          this.openWindowExternal(targetUrl)
+        } else if (navigateMode === CoreService.NAVIGATE_MODES.OPEN_CONTENT) {
+          evt.preventDefault()
+          this.openWindowWaveboxContent(webContentsId, targetUrl, {
+            webPreferences: {
+              partition: 'persist:' + mailboxId
+            }
+          })
+        }
       }
     }
   }
@@ -339,6 +406,51 @@ class MailboxesWindow extends WaveboxWindow {
   }
 
   /* ****************************************************************************/
+  // Window opening
+  /* ****************************************************************************/
+
+  /**
+  * Opens a wavebox popup content window
+  * @param ownerId: the id of the owning window
+  * @param targetUrl: the url to open
+  * @param options: the config options for the window
+  * @return the new contentwindow instance
+  */
+  openWindowWaveboxPopupContent (ownerId, targetUrl, options) {
+    const contentWindow = new ContentPopupWindow()
+    contentWindow.ownerId = ownerId
+    appWindowManager.addContentWindow(contentWindow)
+    contentWindow.create(targetUrl, options)
+    return contentWindow
+  }
+
+  /**
+  * Opens a wavebox content window
+  * @param ownerId: the id of the owning window
+  * @param targetUrl: the url to open
+  * @param options: the config options for the window
+  * @return the new  contentwindow instance
+  */
+  openWindowWaveboxContent (ownerId, targetUrl, options) {
+    const contentWindow = new ContentWindow()
+    contentWindow.ownerId = ownerId
+    appWindowManager.addContentWindow(contentWindow)
+    contentWindow.create(this.window, targetUrl, ((options || {}).webPreferences || {}).partition, options)
+    return contentWindow
+  }
+
+  /**
+  * Opens links in an external window
+  * @param targetUrl: the url to open
+  * @return true if the window was opened successfully, false otherwise
+  */
+  openWindowExternal (targetUrl) {
+    return shell.openExternal(targetUrl, {
+      activate: !settingStore.os.openLinksInBackground
+    })
+  }
+
+  /* ****************************************************************************/
   // Mailbox Actions
   /* ****************************************************************************/
 
@@ -347,10 +459,7 @@ class MailboxesWindow extends WaveboxWindow {
   * @return this
   */
   reload () {
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_PREPARE_RELOAD, {})
-    setTimeout(() => {
-      this.window.loadURL(this.generateWindowUrl())
-    }, 250)
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD, {})
     return this
   }
 
@@ -360,6 +469,24 @@ class MailboxesWindow extends WaveboxWindow {
   */
   launchPreferences () {
     this.window.webContents.send(WB_MAILBOXES_WINDOW_SHOW_SETTINGS, { })
+    return this
+  }
+
+  /**
+  * Launches the support center
+  * @return this
+  */
+  launchSupportCenter () {
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER, {})
+    return this
+  }
+
+  /**
+  * Launches the whats new/news window
+  * @return this
+  */
+  launchWhatsNew () {
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_SHOW_NEWS, {})
     return this
   }
 
@@ -415,7 +542,7 @@ class MailboxesWindow extends WaveboxWindow {
   }
 
   /* ****************************************************************************/
-  // Mailbox Actions: Switching
+  // Mailbox Actions: Switching Mailbox
   /* ****************************************************************************/
 
   /**
@@ -429,20 +556,6 @@ class MailboxesWindow extends WaveboxWindow {
     this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_MAILBOX, {
       mailboxId: mailboxId,
       serviceType: serviceType
-    })
-    return this
-  }
-
-  /**
-  * Switches to a service at the given index. This call will fail silently if there is no
-  * service at the given index
-  * @param index: the index you want to switch to
-  * @return this
-  */
-  switchToServiceAtIndex (index) {
-    this.show().focus()
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_SERVICE_INDEX, {
-      index: index
     })
     return this
   }
@@ -468,6 +581,48 @@ class MailboxesWindow extends WaveboxWindow {
     this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_MAILBOX, { next: true, allowCycling: allowCycling })
     return this
   }
+
+  /* ****************************************************************************/
+  // Mailbox Actions: Switching Services
+  /* ****************************************************************************/
+
+  /**
+  * Switches to a service at the given index. This call will fail silently if there is no
+  * service at the given index
+  * @param index: the index you want to switch to
+  * @return this
+  */
+  switchToServiceAtIndex (index) {
+    this.show().focus()
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_SERVICE, { index: index })
+    return this
+  }
+
+  /**
+  * Switches to the previous service
+  * @param allowCycling=false: set to true to allow cycling at end/beginning
+  * @return this
+  */
+  switchPrevService (allowCycling = false) {
+    this.show().focus()
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_SERVICE, { prev: true, allowCycling: allowCycling })
+    return this
+  }
+
+  /**
+  * Switches to the next service
+  * @param allowCycling=false: set to true to allow cycling at end/beginning
+  * @return this
+  */
+  switchNextService (allowCycling = false) {
+    this.show().focus()
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_SERVICE, { next: true, allowCycling: allowCycling })
+    return this
+  }
+
+  /* ****************************************************************************/
+  // Mailbox Actions: Navigation
+  /* ****************************************************************************/
 
   /**
   * Tells the active mailbox to navigate back

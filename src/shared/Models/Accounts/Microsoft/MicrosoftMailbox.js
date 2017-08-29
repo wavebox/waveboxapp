@@ -31,6 +31,8 @@ class MicrosoftMailbox extends CoreMailbox {
       CoreMailbox.SERVICE_TYPES.STORAGE
     ]
   }
+  static get defaultColorOutlook () { return MailboxColors.OUTLOOK }
+  static get defaultColorOffice365 () { return MailboxColors.OFFICE365 }
 
   /* **************************************************************************/
   // Class: Humanized
@@ -86,12 +88,27 @@ class MicrosoftMailbox extends CoreMailbox {
   * Creates a blank js object that can used to instantiate this mailbox
   * @param id=autogenerate: the id of the mailbox
   * @param accessMode=OUTLOOK: the access mode for this mailbox
+  * @param serviceTypes=defaultList: the default services
+  * @param serviceDisplayMode=SIDEBAR: the mode to display the services in
+  * @param color=undefined: the color of the mailbox
   * @return a vanilla js object representing the data for this mailbox
   */
-  static createJS (id = this.provisionId(), accessMode = ACCESS_MODES.OUTLOOK) {
-    const mailboxJS = super.createJS(id)
+  static createJS (id = this.provisionId(), accessMode = ACCESS_MODES.OUTLOOK, serviceTypes = this.defaultServiceTypes, serviceDisplayMode = this.SERVICE_DISPLAY_MODES.SIDEBAR, color = undefined) {
+    const mailboxJS = super.createJS(id, serviceTypes, serviceDisplayMode, color)
     mailboxJS.accessMode = accessMode
     return mailboxJS
+  }
+
+  /**
+  * Sanitizes provisionalJS
+  * @param provisionalJS: the javascript to sanitize
+  * @param accessMode: the access mode to enforce
+  * @return a copy of the javascript, sanitized
+  */
+  static sanitizeProvisionalJS (provisionalJS, accessMode) {
+    const sanitized = super.sanitizeProvisionalJS(provisionalJS)
+    sanitized.accessMode = accessMode
+    return sanitized
   }
 
   /**
@@ -145,8 +162,8 @@ class MicrosoftMailbox extends CoreMailbox {
       return super.color
     } else {
       switch (this.accessMode) {
-        case ACCESS_MODES.OUTLOOK: return MailboxColors.OUTLOOK
-        case ACCESS_MODES.OFFICE365: return MailboxColors.OFFICE365
+        case ACCESS_MODES.OUTLOOK: return this.constructor.defaultColorOutlook
+        case ACCESS_MODES.OFFICE365: return this.constructor.defaultColorOffice365
       }
     }
     return super.color || MailboxColors.MICROSOFT

@@ -49,7 +49,7 @@ class UserStore {
     this.clientToken = Bootstrap.clientToken
     this.analyticsId = allData[ANALYTICS_ID]
     this.createdTime = allData[CREATED_TIME]
-    this.user = new User(Bootstrap.accountJS)
+    this.user = new User(Bootstrap.accountJS, new Date().getTime())
   }
 
   /* **************************************************************************/
@@ -57,7 +57,7 @@ class UserStore {
   /* **************************************************************************/
 
   handleRemoteChangeAccount ({ account }) {
-    this.user = new User(account)
+    this.user = new User(account, new Date().getTime())
   }
 
   /* **************************************************************************/

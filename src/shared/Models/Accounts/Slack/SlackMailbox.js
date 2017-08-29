@@ -23,6 +23,7 @@ class SlackMailbox extends CoreMailbox {
   static get humanizedType () { return 'Slack' }
   static get humanizedUnreadItemType () { return 'notification' }
   static get supportsUnreadActivity () { return true }
+  static get defaultColor () { return MailboxColors.SLACK }
 
   /* **************************************************************************/
   // Lifecycle
@@ -52,12 +53,6 @@ class SlackMailbox extends CoreMailbox {
     })
     return prep
   }
-
-  /* **************************************************************************/
-  // Properties : Display
-  /* **************************************************************************/
-
-  get color () { return super.color || MailboxColors.SLACK }
 
   /* **************************************************************************/
   // Properties : Authentication

@@ -7,12 +7,15 @@ import {
   UPDATE_FEED_MANUAL,
   UPDATE_FEED_DARWIN,
   UPDATE_FEED_WIN32_IA32,
-  UPDATE_FEED_WIN32_X64
+  UPDATE_FEED_WIN32_X64,
+  UPDATE_USER_MANUAL_DOWNLOAD_STABLE,
+  UPDATE_USER_MANUAL_DOWNLOAD_BETA
 } from 'shared/constants'
 import {
   WB_SQUIRREL_UPDATE_CHECK,
   WB_SQUIRREL_APPLY_UPDATE
 } from 'shared/ipcEvents'
+import AppSettings from 'shared/Models/Settings/AppSettings'
 
 const { ipcRenderer } = window.nativeRequire('electron')
 const pkg = window.appPackage()
@@ -54,6 +57,19 @@ class UpdaterStore {
     this.isDownloadedUpdate = () => this.updateState === UPDATE_STATES.DOWNLOADED
     this.isNoUpdate = () => this.updateState === UPDATE_STATES.NONE
     this.isErrorUpdate = () => this.updateState === UPDATE_STATES.ERROR
+
+    /* **************************************/
+    // Urls
+    /* **************************************/
+
+    this.getManualUpdateDownloadUrl = () => {
+      const updateChannel = settingsStore.getState().app.updateChannel
+      if (updateChannel === AppSettings.UPDATE_CHANNELS.BETA) {
+        return UPDATE_USER_MANUAL_DOWNLOAD_BETA
+      } else {
+        return UPDATE_USER_MANUAL_DOWNLOAD_STABLE
+      }
+    }
 
     /* **************************************/
     // Listeners

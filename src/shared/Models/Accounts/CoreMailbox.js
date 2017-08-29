@@ -32,6 +32,7 @@ class CoreMailbox extends Model {
   static get supportsUnreadActivity () { return false }
   static get supportsUnreadCount () { return true }
   static get supportsNativeNotifications () { return true }
+  static get defaultColor () { return undefined }
 
   /* **************************************************************************/
   // Class : Humanized
@@ -73,18 +74,36 @@ class CoreMailbox extends Model {
   /**
   * Creates a blank js object that can used to instantiate this mailbox
   * @param id=autogenerate: the id of the mailbox
+  * @param serviceTypes=defaultList: the default services
+  * @param serviceDisplayMode=SIDEBAR: the mode to display the services in
+  * @param color=undefined: the color of the mailbox
   * @return a vanilla js object representing the data for this mailbox
   */
-  static createJS (id = this.provisionId()) {
+  static createJS (id = this.provisionId(), serviceTypes = this.defaultServiceTypes, serviceDisplayMode = this.SERVICE_DISPLAY_MODES.SIDEBAR, color = undefined) {
     return {
       id: id,
       type: this.type,
       changedTime: new Date().getTime(),
-      services: this.defaultServiceTypes.map((serviceType) => {
+      serviceDisplayMode: serviceDisplayMode,
+      color: color,
+      services: serviceTypes.map((serviceType) => {
         const ServiceClass = ServiceFactory.getClass(this.type, serviceType)
         return ServiceClass ? ServiceClass.createJS() : {}
       })
     }
+  }
+
+  /**
+  * Sanitizes provisionalJS
+  * @param provisionalJS: the javascript to sanitize
+  * @return a copy of the javascript, sanitized
+  */
+  static sanitizeProvisionalJS (provisionalJS) {
+    const sanitized = JSON.parse(JSON.stringify(provisionalJS))
+    sanitized.id = sanitized.id || this.provisionId()
+    sanitized.type = this.type
+    sanitized.changedTime = new Date().getTime()
+    return sanitized
   }
 
   /**
@@ -109,15 +128,17 @@ class CoreMailbox extends Model {
     super(data)
     this.__id__ = id
 
-    // Inject any default model data to the json
+    // If we don't have default model data, inject it into the json
     if (!this.__data__.services || !this.__data__.services.length) {
-      this.__data__.services = this.constructor.defaultServiceTypes.map((serviceType) => {
+      const sanitizedData = JSON.parse(JSON.stringify(this.__data__))
+      sanitizedData.services = this.constructor.defaultServiceTypes.map((serviceType) => {
         return { type: serviceType }
       })
+      this.__data__ = Object.freeze(sanitizedData)
     }
 
     // Modelize services
-    this.__services__ = data.services.map((service) => {
+    this.__services__ = this.__data__.services.map((service) => {
       return this.modelizeService(service)
     })
   }
@@ -177,6 +198,7 @@ class CoreMailbox extends Model {
   get additionalServiceTypes () {
     return this.enabledServiceTypes.filter((serviceType) => serviceType !== SERVICE_TYPES.DEFAULT)
   }
+  get defaultService () { return this.serviceForType(SERVICE_TYPES.DEFAULT) }
 
   /**
   * @param type: the type of service
@@ -196,7 +218,7 @@ class CoreMailbox extends Model {
   get customAvatarId () { return this.__data__.customAvatar }
   get hasServiceLocalAvatar () { return this.__data__.serviceLocalAvatar !== undefined }
   get serviceLocalAvatarId () { return this.__data__.serviceLocalAvatar }
-  get color () { return this.__data__.color }
+  get color () { return this._value_('color', this.constructor.defaultColor) }
   get unreadBadgeColor () { return this._value_('unreadBadgeColor', 'rgba(238, 54, 55, 0.95)') }
   get showAvatarColorRing () { return this._value_('showAvatarColorRing', true) }
   get serviceDisplayMode () { return this._value_('serviceDisplayMode', SERVICE_DISPLAY_MODES.SIDEBAR) }

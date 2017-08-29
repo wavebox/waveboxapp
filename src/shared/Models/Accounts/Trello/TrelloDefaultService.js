@@ -20,7 +20,15 @@ class TrelloDefaultService extends CoreService {
   // Properties
   /* **************************************************************************/
 
-  get url () { return 'https://trello.com' }
+  get reloadBehaviour () { return this.constructor.RELOAD_BEHAVIOURS.RESET_URL }
+  get url () {
+    let url = 'https://trello.com'
+    if (this.homeBoardId !== undefined) {
+      const board = this.boards.find((board) => board.id === this.homeBoardId)
+      if (board) { url = board.shortUrl }
+    }
+    return url
+  }
   get sleepable () { return this._value_('sleepable', false) }
 
   /* **************************************************************************/
@@ -125,6 +133,13 @@ class TrelloDefaultService extends CoreService {
       }
     })
   }
+
+  /* **************************************************************************/
+  // Properties : Boards
+  /* **************************************************************************/
+
+  get homeBoardId () { return this._value_('homeBoardId', undefined) }
+  get boards () { return this._value_('boards', []) }
 }
 
 module.exports = TrelloDefaultService

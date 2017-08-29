@@ -28,7 +28,8 @@ export default class TrayIconEditor extends React.Component {
 
   static propTypes = {
     tray: PropTypes.object.isRequired,
-    trayPreviewStyles: PropTypes.object
+    trayPreviewStyles: PropTypes.object,
+    trayHeadingStyles: PropTypes.object
   }
 
   /* **************************************************************************/
@@ -40,13 +41,18 @@ export default class TrayIconEditor extends React.Component {
   }
 
   render () {
-    const {tray, trayPreviewStyles, ...passProps} = this.props
+    const {
+      tray,
+      trayPreviewStyles,
+      trayHeadingStyles,
+      ...passProps
+    } = this.props
 
     return (
       <div {...passProps}>
         <Row>
           <Col xs={6}>
-            <h1 style={styles.subheading}>All Messages Read</h1>
+            <h1 style={{...styles.subheading, ...trayHeadingStyles}}>All Messages Read</h1>
             <div style={styles.button}>
               <ColorPickerButton
                 label='Border'
@@ -70,7 +76,7 @@ export default class TrayIconEditor extends React.Component {
             <TrayPreview style={trayPreviewStyles} size={100} tray={tray} unreadCount={0} />
           </Col>
           <Col xs={6}>
-            <h1 style={styles.subheading}>Unread Messages</h1>
+            <h1 style={{...styles.subheading, ...trayHeadingStyles}}>Unread Messages</h1>
             <div style={styles.button}>
               <ColorPickerButton
                 label='Border'

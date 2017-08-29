@@ -1,5 +1,6 @@
 const {globalShortcut} = require('electron')
 const settingStore = require('./stores/settingStore')
+const ClassTools = require('./ClassTools')
 
 class AppGlobalShortcuts {
   /* ****************************************************************************/
@@ -27,7 +28,7 @@ class AppGlobalShortcuts {
     this._config = [
       { selector: selectors.toggle, accelerator: '', acceleratorName: 'globalToggleApp' }
     ]
-    this._boundHandleAcceleratorSettingsChanged = this.handleAcceleratorSettingsChanged.bind(this)
+    ClassTools.autobindFunctions(this, ['handleAcceleratorSettingsChanged'])
   }
 
   /**
@@ -35,14 +36,14 @@ class AppGlobalShortcuts {
   */
   register () {
     this.updateGlobalAccelerators(settingStore.accelerators)
-    settingStore.on('changed:accelerators', this._boundHandleAcceleratorSettingsChanged)
+    settingStore.on('changed:accelerators', this.handleAcceleratorSettingsChanged)
   }
 
   /**
   * Removes all bindings
   */
   unregister () {
-    settingStore.removeListener('changed:accelerators', this._boundHandleAcceleratorSettingsChanged)
+    settingStore.removeListener('changed:accelerators', this.handleAcceleratorSettingsChanged)
     this._config.forEach((config) => {
       if (config.accelerator) {
         try {

@@ -2,8 +2,25 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Paper, Toggle } from 'material-ui'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
-import styles from '../SettingStyles'
+import commonStyles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
+import * as Colors from 'material-ui/styles/colors'
+
+const styles = {
+  mockUnreadActivityIndicator: {
+    backgroundColor: Colors.red400,
+    color: 'white',
+    display: 'inline-block',
+    borderRadius: '50%',
+    width: 15,
+    height: 15,
+    lineHeight: '14px',
+    verticalAlign: 'middle',
+    textAlign: 'center',
+    fontSize: '10px',
+    paddingRight: 1
+  }
+}
 
 export default class AccountBadgeSettings extends React.Component {
   /* **************************************************************************/
@@ -32,8 +49,8 @@ export default class AccountBadgeSettings extends React.Component {
     if (!shouldRender) { return false }
 
     return (
-      <Paper zDepth={1} style={styles.paper} {...passProps}>
-        <h1 style={styles.subheading}>Badges</h1>
+      <Paper zDepth={1} style={commonStyles.paper} {...passProps}>
+        <h1 style={commonStyles.subheading}>Badges</h1>
         {mailbox.supportsUnreadCount ? (
           <Toggle
             toggled={mailbox.showUnreadBadge}

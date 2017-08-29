@@ -19,6 +19,18 @@ class SlackActions {
   }
 
   /* **************************************************************************/
+  // Reconnection
+  /* **************************************************************************/
+
+  /**
+  * Reconnects a mailbox by tearing it down and bringing it back up again
+  * @param mailboxId: the id of the mailbox
+  */
+  reconnectMailbox (mailboxId) {
+    return { mailboxId: mailboxId }
+  }
+
+  /* **************************************************************************/
   // Connection Close
   /* **************************************************************************/
 

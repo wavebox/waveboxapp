@@ -10,10 +10,13 @@
   const LinuxAppSingleton = require('./LinuxAppSingleton')
   if (process.platform === 'linux') {
     const singleAppQuit = LinuxAppSingleton.makeSingleInstance(
-      () => {
+      (commandLine, workingDirectory) => {
         if (appWindowManager && appWindowManager.mailboxesWindow) {
           appWindowManager.mailboxesWindow.window.show()
           appWindowManager.mailboxesWindow.window.focus()
+
+          const AppSingleInstance = require('./AppSingleInstance')
+          AppSingleInstance.processSingleInstanceArgs(appWindowManager, commandLine, workingDirectory)
         }
       },
       () => { app.quit() }

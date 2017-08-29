@@ -4,10 +4,10 @@ const pkg = require('../../package.json')
 const {
   Settings: {
     SettingsIdent: { SEGMENTS },
-
     AcceleratorSettings,
     AppSettings,
     LanguageSettings,
+    NewsSettings,
     OSSettings,
     TraySettings,
     UISettings
@@ -22,6 +22,7 @@ class SettingStore extends EventEmitter {
     this.accelerators = new AcceleratorSettings(persistence.getJSONItem(SEGMENTS.ACCELERATORS, {}))
     this.app = new AppSettings(persistence.getJSONItem(SEGMENTS.APP, {}), pkg)
     this.language = new LanguageSettings(persistence.getJSONItem(SEGMENTS.LANGUAGE, {}))
+    this.news = new NewsSettings(persistence.getJSONItem(SEGMENTS.NEWS, {}))
     this.os = new OSSettings(persistence.getJSONItem(SEGMENTS.OS, {}))
     this.tray = new TraySettings(persistence.getJSONItem(SEGMENTS.TRAY, {}))
     this.ui = new UISettings(persistence.getJSONItem(SEGMENTS.UI, {}))
@@ -30,6 +31,7 @@ class SettingStore extends EventEmitter {
       accelerators: this.accelerators,
       app: this.app,
       language: this.language,
+      news: this.news,
       os: this.os,
       tray: this.tray,
       ui: this.ui
@@ -53,6 +55,12 @@ class SettingStore extends EventEmitter {
       this.language = new LanguageSettings(persistence.getJSONItem(SEGMENTS.LANGUAGE, {}))
       this.emit('changed', { })
       this.emit('changed:' + SEGMENTS.LANGUAGE, { prev: prev, next: this.language })
+    })
+    persistence.on('changed:' + SEGMENTS.NEWS, () => {
+      const prev = this.news
+      this.news = new NewsSettings(persistence.getJSONItem(SEGMENTS.NEWS, {}))
+      this.emit('changed', { })
+      this.emit('changed:' + SEGMENTS.NEWS, { prev: prev, next: this.news })
     })
     persistence.on('changed:' + SEGMENTS.OS, () => {
       const prev = this.os

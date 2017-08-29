@@ -5,6 +5,7 @@ import MailboxFactory from 'shared/Models/Accounts/MailboxFactory'
 import mailboxPersistence from './mailboxPersistence'
 import avatarPersistence from './avatarPersistence'
 import userStore from '../user/userStore'
+import settingsActions from '../settings/settingsActions'
 import { PERSISTENCE_INDEX_KEY, SERVICE_LOCAL_AVATAR_PREFIX, MAILBOX_SLEEP_EXTEND } from 'shared/constants'
 import { BLANK_PNG } from 'shared/b64Assets'
 import uuid from 'uuid'
@@ -32,7 +33,7 @@ import {
   WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT
 } from 'shared/ipcEvents'
 
-const { ipcRenderer } = window.nativeRequire('electron')
+const { ipcRenderer, remote } = window.nativeRequire('electron')
 const AUTH_MODES = {
   CREATE: 'CREATE',
   REAUTHENTICATE: 'REAUTHENTICATE'
@@ -444,6 +445,10 @@ class MailboxStore {
       handleAuthMicrosoftMailboxSuccess: actions.AUTH_MICROSOFT_MAILBOX_SUCCESS,
       handleAuthMicrosoftMailboxFailure: actions.AUTH_MICROSOFT_MAILBOX_FAILURE,
 
+      // Mailbox auth teardown
+      handleClearMailboxBrowserSession: actions.CLEAR_MAILBOX_BROWSER_SESSION,
+      handleClearAllBrowserSessions: actions.CLEAR_ALL_BROWSER_SESSIONS,
+
       // Mailbox lifecycle
       handleConnectAllMailboxes: actions.CONNECT_ALL_MAILBOXES,
       handleConnectMailbox: actions.CONNECT_MAILBOX,
@@ -469,9 +474,12 @@ class MailboxStore {
 
       // Active
       handleChangeActive: actions.CHANGE_ACTIVE,
-      handleChangeActiveServiceIndex: actions.CHANGE_ACTIVE_SERVICE_INDEX,
       handleChangeActivePrev: actions.CHANGE_ACTIVE_TO_PREV,
       handleChangeActiveNext: actions.CHANGE_ACTIVE_TO_NEXT,
+
+      handleChangeActiveServiceIndex: actions.CHANGE_ACTIVE_SERVICE_INDEX,
+      handleChangeActiveServicePrev: actions.CHANGE_ACTIVE_SERVICE_TO_PREV,
+      handleChangeActiveServiceNext: actions.CHANGE_ACTIVE_SERVICE_TO_NEXT,
 
       // Sleeping
       handleAwakenService: actions.AWAKEN_SERVICE,
@@ -541,7 +549,6 @@ class MailboxStore {
   * @return the generated model
   */
   saveMailbox (id, mailboxJS) {
-    // @future send mailbox to sever?
     if (mailboxJS === null) {
       mailboxPersistence.removeItem(id)
       this.mailboxes.delete(id)
@@ -570,69 +577,71 @@ class MailboxStore {
   // Mailbox Auth
   /* **************************************************************************/
 
-  handleAuthenticateGinboxMailbox ({ provisionalId }) {
+  handleAuthenticateGinboxMailbox ({ provisionalId, provisionalJS }) {
     this.preventDefault()
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = `/mailbox_wizard/${GoogleMailbox.type}/${GoogleDefaultService.ACCESS_MODES.GINBOX}/1/${provisionalId}`
     ipcRenderer.send(WB_AUTH_GOOGLE, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: GoogleMailbox.createJS(provisionalId, GoogleDefaultService.ACCESS_MODES.GINBOX)
+      provisional: provisionalJS
     })
   }
 
-  handleAuthenticateGmailMailbox ({ provisionalId }) {
+  handleAuthenticateGmailMailbox ({ provisionalId, provisionalJS }) {
     this.preventDefault()
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = `/mailbox_wizard/${GoogleMailbox.type}/${GoogleDefaultService.ACCESS_MODES.GMAIL}/1/${provisionalId}`
     ipcRenderer.send(WB_AUTH_GOOGLE, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: GoogleMailbox.createJS(provisionalId, GoogleDefaultService.ACCESS_MODES.GMAIL)
+      provisional: provisionalJS
     })
   }
 
-  handleAuthenticateSlackMailbox ({ provisionalId }) {
+  handleAuthenticateSlackMailbox ({ provisionalId, provisionalJS }) {
     this.preventDefault()
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = `/mailbox_wizard/${SlackMailbox.type}/_/1/${provisionalId}`
     ipcRenderer.send(WB_AUTH_SLACK, {
       id: provisionalId,
-      provisional: SlackMailbox.createJS(provisionalId)
+      provisional: provisionalJS
     })
   }
 
-  handleAuthenticateTrelloMailbox ({ provisionalId }) {
+  handleAuthenticateTrelloMailbox ({ provisionalId, provisionalJS }) {
     this.preventDefault()
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = `/mailbox_wizard/${TrelloMailbox.type}/_/1/${provisionalId}`
     ipcRenderer.send(WB_AUTH_TRELLO, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: TrelloMailbox.createJS(provisionalId)
+      provisional: provisionalJS
     })
   }
 
-  handleAuthenticateOutlookMailbox ({ provisionalId }) {
+  handleAuthenticateOutlookMailbox ({ provisionalId, provisionalJS, additionalPermissions }) {
     this.preventDefault()
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = `/mailbox_wizard/${MicrosoftMailbox.type}/${MicrosoftMailbox.ACCESS_MODES.OUTLOOK}/1/${provisionalId}`
     ipcRenderer.send(WB_AUTH_MICROSOFT, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: MicrosoftMailbox.createJS(provisionalId, MicrosoftMailbox.ACCESS_MODES.OUTLOOK)
+      provisional: provisionalJS,
+      additionalPermissions: additionalPermissions
     })
   }
 
-  handleAuthenticateOffice365Mailbox ({ provisionalId }) {
+  handleAuthenticateOffice365Mailbox ({ provisionalId, provisionalJS, additionalPermissions }) {
     this.preventDefault()
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = `/mailbox_wizard/${MicrosoftMailbox.type}/${MicrosoftMailbox.ACCESS_MODES.OFFICE365}/1/${provisionalId}`
     ipcRenderer.send(WB_AUTH_MICROSOFT, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: MicrosoftMailbox.createJS(provisionalId, MicrosoftMailbox.ACCESS_MODES.OFFICE365)
+      provisional: provisionalJS,
+      additionalPermissions: additionalPermissions
     })
   }
 
-  handleAuthenticateGenericMailbox ({ provisionalId }) {
+  handleAuthenticateGenericMailbox ({ provisionalId, provisionalJS, writePermission }) {
     this.preventDefault()
-    actions.create.defer(provisionalId, GenericMailbox.createJS(provisionalId))
-    window.location.hash = '/mailbox_wizard/generic/configure/' + provisionalId
+    actions.create.defer(provisionalId, provisionalJS)
+    this._finalizeCreateAccount(`/mailbox_wizard/${GenericMailbox.type}/_/2/${provisionalId}`)
   }
 
   /* **************************************************************************/
@@ -666,7 +675,7 @@ class MailboxStore {
     this.preventDefault()
     if (!this.mailboxes.get(mailboxId)) { return }
 
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = '/mailbox/reauthenticating'
     ipcRenderer.send(WB_AUTH_GOOGLE, {
       credentials: Bootstrap.credentials,
       id: mailboxId,
@@ -679,7 +688,7 @@ class MailboxStore {
     this.preventDefault()
     if (!this.mailboxes.get(mailboxId)) { return }
 
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = '/mailbox/reauthenticating'
     ipcRenderer.send(WB_AUTH_MICROSOFT, {
       credentials: Bootstrap.credentials,
       id: mailboxId,
@@ -692,7 +701,7 @@ class MailboxStore {
     this.preventDefault()
     if (!this.mailboxes.get(mailboxId)) { return }
 
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = '/mailbox/reauthenticating'
     ipcRenderer.send(WB_AUTH_SLACK, {
       id: mailboxId,
       provisional: null,
@@ -704,7 +713,7 @@ class MailboxStore {
     this.preventDefault()
     if (!this.mailboxes.get(mailboxId)) { return }
 
-    window.location.hash = '/mailbox_wizard/authenticating'
+    window.location.hash = '/mailbox/reauthenticating'
     ipcRenderer.send(WB_AUTH_TRELLO, {
       credentials: Bootstrap.credentials,
       id: mailboxId,
@@ -722,6 +731,15 @@ class MailboxStore {
     actions.connectMailbox.defer(mailboxId)
     setTimeout(() => { mailboxDispatch.reload(mailboxId) }, 500)
     window.location.hash = '/'
+  }
+
+  /**
+  * Finalizes a new account
+  * @param nextUrl='/': the next url to visit
+  */
+  _finalizeCreateAccount (nextUrl = '/') {
+    window.location.hash = nextUrl
+    settingsActions.tourStart.defer()
   }
 
   /* **************************************************************************/
@@ -751,11 +769,7 @@ class MailboxStore {
             auth: auth
           }))
           const accessMode = ((provisional.services || []).find((service) => service.type === GoogleDefaultService.type) || {}).accessMode
-          if (accessMode === GoogleDefaultService.ACCESS_MODES.GMAIL) {
-            window.location.hash = '/mailbox_wizard/google/configuregmail/' + provisionalId
-          } else {
-            window.location.hash = '/mailbox_wizard/google/configureinbox/' + provisionalId
-          }
+          this._finalizeCreateAccount(`/mailbox_wizard/${GoogleMailbox.type}/${accessMode}/2/${provisionalId}`)
         }
       })
       .catch((err) => {
@@ -793,7 +807,7 @@ class MailboxStore {
           actions.create.defer(provisionalId, Object.assign(provisional, {
             auth: auth
           }))
-          window.location.hash = `/mailbox_wizard/complete/${provisionalId}`
+          this._finalizeCreateAccount()
         }
       }).catch((err) => {
         console.error('[AUTH ERR]', err)
@@ -823,7 +837,7 @@ class MailboxStore {
         authToken: authToken,
         authAppKey: authAppKey
       }))
-      window.location.hash = `/mailbox_wizard/complete/${provisionalId}`
+      this._finalizeCreateAccount()
     }
   }
 
@@ -858,7 +872,7 @@ class MailboxStore {
               protocolVersion: 2
             }
           })
-          window.location.hash = '/mailbox_wizard/microsoft/configure/' + provisionalId
+          this._finalizeCreateAccount(`/mailbox_wizard/${MicrosoftMailbox.type}/${provisional.accessMode}/2/${provisionalId}`)
         }
       }).catch((err) => {
         console.error('[AUTH ERR]', err)
@@ -872,6 +886,36 @@ class MailboxStore {
     } else {
       console.error('[AUTH ERR]', data)
     }
+  }
+
+  /* **************************************************************************/
+  // Handlers: Auth teardown
+  /* **************************************************************************/
+
+  handleClearMailboxBrowserSession ({ mailboxId }) {
+    this.preventDefault()
+
+    const mailbox = this.mailboxes.get(mailboxId)
+    if (!mailbox) { return }
+
+    const ses = remote.session.fromPartition('persist:' + mailbox.partition)
+    Promise.resolve()
+      .then(() => {
+        return new Promise((resolve) => { ses.clearStorageData(resolve) })
+      })
+      .then(() => {
+        return new Promise((resolve) => { ses.clearCache(resolve) })
+      })
+      .then(() => {
+        mailboxDispatch.reloadAllServices(mailboxId)
+      })
+  }
+
+  handleClearAllBrowserSessions () {
+    this.preventDefault()
+    this.mailboxIds().forEach((mailboxId) => {
+      actions.clearMailboxBrowserSession.defer(mailboxId)
+    })
   }
 
   /* **************************************************************************/
@@ -1026,6 +1070,11 @@ class MailboxStore {
 
   handleSetServiceLocalAvatar ({ id, b64Image }) {
     const mailbox = this.mailboxes.get(id)
+    if (!mailbox) {
+      this.preventDefault()
+      return
+    }
+
     const data = mailbox.cloneData()
     if (b64Image) {
       if (data.serviceLocalAvatar && this.avatars.get(data.serviceLocalAvatar) === b64Image) {
@@ -1121,25 +1170,11 @@ class MailboxStore {
   }
 
   /**
-  * Handles changing the active service to the one at the service
-  * @param index: the index of the service
-  */
-  handleChangeActiveServiceIndex ({ index }) {
-    if (this.isMailboxRestricted(this.active, userStore.getState().user)) {
-      window.location.hash = '/pro'
-    } else {
-      const mailbox = this.getMailbox(this.active)
-      if (mailbox.enabledServiceTypes[index]) {
-        actions.changeActive.defer(mailbox.id, mailbox.enabledServiceTypes[index])
-      }
-    }
-  }
-
-  /**
   * Handles the active mailbox changing to the prev in the index
   * @param allowCycling: if true will cycle back when at end or beginning
   */
   handleChangeActivePrev ({ allowCycling }) {
+    this.preventDefault()
     const activeIndex = this.index.findIndex((id) => id === this.active)
     let nextId
     if (allowCycling && activeIndex === 0) {
@@ -1155,6 +1190,7 @@ class MailboxStore {
   * @param allowCycling: if true will cycle back when at end or beginning
   */
   handleChangeActiveNext ({ allowCycling }) {
+    this.preventDefault()
     const activeIndex = this.index.findIndex((id) => id === this.active)
     let nextId
     if (allowCycling && activeIndex === this.index.length - 1) {
@@ -1163,6 +1199,62 @@ class MailboxStore {
       nextId = this.index[Math.min(this.index.length - 1, activeIndex + 1)] || null
     }
     actions.changeActive.defer(nextId)
+  }
+
+  /**
+  * Handles changing the active service to the one at the service
+  * @param index: the index of the service
+  */
+  handleChangeActiveServiceIndex ({ index }) {
+    this.preventDefault()
+    if (this.isMailboxRestricted(this.active, userStore.getState().user)) {
+      window.location.hash = '/pro'
+    } else {
+      const mailbox = this.getMailbox(this.active)
+      if (mailbox.enabledServiceTypes[index]) {
+        actions.changeActive.defer(mailbox.id, mailbox.enabledServiceTypes[index])
+      }
+    }
+  }
+
+  /**
+  * Handles the active service changing to the previous in the index
+  * @param allowCycling: if true will cycle back when at end or beginning
+  */
+  handleChangeActiveServicePrev ({ allowCycling }) {
+    this.preventDefault()
+    if (this.isMailboxRestricted(this.active, userStore.getState().user)) { return }
+
+    const mailbox = this.getMailbox(this.active)
+    const activeIndex = mailbox.enabledServiceTypes.findIndex((t) => t === this.activeService)
+
+    let nextServiceType
+    if (allowCycling && activeIndex === 0) {
+      nextServiceType = mailbox.enabledServiceTypes[mailbox.enabledServiceTypes.length - 1] || null
+    } else {
+      nextServiceType = mailbox.enabledServiceTypes[Math.max(0, activeIndex - 1)] || null
+    }
+    actions.changeActive.defer(mailbox.id, nextServiceType)
+  }
+
+  /**
+  * Handles the active service changing to the next in the index
+  * @param allowCycling: if true will cycle back when at end or beginning
+  */
+  handleChangeActiveServiceNext ({ allowCycling }) {
+    this.preventDefault()
+    if (this.isMailboxRestricted(this.active, userStore.getState().user)) { return }
+
+    const mailbox = this.getMailbox(this.active)
+    const activeIndex = mailbox.enabledServiceTypes.findIndex((t) => t === this.activeService)
+
+    let nextServiceType
+    if (allowCycling && activeIndex === mailbox.enabledServiceTypes.length - 1) {
+      nextServiceType = mailbox.enabledServiceTypes[0] || null
+    } else {
+      nextServiceType = mailbox.enabledServiceTypes[Math.min(mailbox.enabledServiceTypes.length - 1, activeIndex + 1)] || null
+    }
+    actions.changeActive.defer(mailbox.id, nextServiceType)
   }
 
   /**

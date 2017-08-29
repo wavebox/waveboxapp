@@ -3,9 +3,7 @@ const EventEmitter = require('events')
 const settingStore = require('../stores/settingStore')
 const path = require('path')
 const WaveboxWindowLocationSaver = require('./WaveboxWindowLocationSaver')
-const {
-  TraySettings: { SUPPORTS_TRAY_MINIMIZE_CONFIG }
-} = require('../../shared/Models/Settings')
+const ClassTools = require('../ClassTools')
 const {
   WB_WINDOW_FIND_START,
   WB_WINDOW_FIND_NEXT,
@@ -31,8 +29,7 @@ class WaveboxWindow extends EventEmitter {
     this.ownerId = null
     this.window = null
     this.locationSaver = new WaveboxWindowLocationSaver(windowId)
-
-    this.boundUpdateWindowMenubar = this.updateWindowMenubar.bind(this)
+    ClassTools.autobindFunctions(this, ['updateWindowMenubar'])
   }
 
   /**
@@ -81,21 +78,13 @@ class WaveboxWindow extends EventEmitter {
     // Bind window event listeners
     this.window.on('close', (evt) => { this.emit('close', evt) })
     this.window.on('closed', (evt) => this.destroy(evt))
-    this.window.on('minimize', (evt) => {
-      if (SUPPORTS_TRAY_MINIMIZE_CONFIG) {
-        if (settingStore.tray.show && settingStore.tray.hideWhenMinimized) {
-          evt.preventDefault()
-          this.window.hide()
-        }
-      }
-    })
     this.bindMouseNavigation()
 
     // Register state savers
     this.locationSaver.register(this.window)
 
     // Bind other change listeners
-    settingStore.on('changed', this.boundUpdateWindowMenubar)
+    settingStore.on('changed', this.updateWindowMenubar)
 
     // Load the start url
     this.window.loadURL(url)
@@ -108,7 +97,7 @@ class WaveboxWindow extends EventEmitter {
   * @param evt: the event that caused destroy
   */
   destroy (evt) {
-    settingStore.removeListener('changed', this.boundUpdateWindowMenubar)
+    settingStore.removeListener('changed', this.updateWindowMenubar)
     if (this.window) {
       this.locationSaver.unregister(this.window)
       if (!this.window.isDestroyed()) {
@@ -221,10 +210,15 @@ class WaveboxWindow extends EventEmitter {
 
   /**
   * Shows the window
+  * @param restoreState=true: true to restore the saved window state
   * @return this
   */
-  show () {
+  show (restoreState = true) {
+    const windowRestore = restoreState ? this.locationSaver.getSavedScreenLocation() : undefined
     this.window.show()
+    if (restoreState) {
+      this.locationSaver.reapplySavedScreenLocation(windowRestore)
+    }
     return this
   }
 

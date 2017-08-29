@@ -18,7 +18,7 @@ class GoogleService extends CoreService {
     const superMode = super.getWindowOpenModeForUrl(url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl)
     if (superMode !== this.constructor.WINDOW_OPEN_MODES.DEFAULT) { return superMode }
 
-    if (parsedUrl.hostname === 'docs.google.com' || parsedUrl.hostname === 'drive.google.com') {
+    if (parsedUrl.hostname === 'docs.google.com' || parsedUrl.hostname === 'drive.google.com' || parsedUrl.hostname === 'sites.google.com') {
       return this.constructor.WINDOW_OPEN_MODES.CONTENT
     }
 

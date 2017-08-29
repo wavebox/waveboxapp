@@ -7,8 +7,8 @@ import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultSer
 import { mailboxActions, GoogleDefaultServiceReducer } from 'stores/mailbox'
 import { Row, Col } from 'Components/Grid'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
-import AccountSleepableSettings from '../AccountSleepableSettings'
-import styles from '../../SettingStyles'
+import AccountBehaviourSettings from '../AccountBehaviourSettings'
+import styles from '../../CommonSettingStyles'
 
 export default class GoogleDefaultServiceSettings extends React.Component {
   /* **************************************************************************/
@@ -157,7 +157,7 @@ export default class GoogleDefaultServiceSettings extends React.Component {
                 <RaisedButton
                   label='Advanced Unread Options'
                   icon={(<FontIcon className='fa fa-fw fa-wrench' />)}
-                  onTouchTap={() => this.setState({ showCustomUnreadSettings: true })} />
+                  onClick={() => this.setState({ showCustomUnreadSettings: true })} />
                 <p style={styles.extraInfo}>
                   These can be used to configure Wavebox to provide Notifications and Badges for a custom set of messages
                 </p>
@@ -165,11 +165,11 @@ export default class GoogleDefaultServiceSettings extends React.Component {
             )}
           </Col>
           <Col md={6}>
+            <AccountBehaviourSettings mailbox={mailbox} service={service} />
             <AccountCustomCodeSettings
               mailbox={mailbox}
               service={service}
               onRequestEditCustomCode={onRequestEditCustomCode} />
-            <AccountSleepableSettings mailbox={mailbox} service={service} />
           </Col>
         </Row>
       </AccountServiceItem>

@@ -4,6 +4,7 @@ import React from 'react'
 import { CircularProgress, RaisedButton, FontIcon } from 'material-ui'
 import { mailboxStore, mailboxActions, mailboxDispatch, MailboxLinker } from 'stores/mailbox'
 import { settingsStore, settingsActions } from 'stores/settings'
+import { guestActions } from 'stores/guest'
 import BrowserView from 'sharedui/Components/BrowserView'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import MailboxSearch from './MailboxSearch'
@@ -439,6 +440,14 @@ export default class MailboxWebView extends React.Component {
   }
 
   /**
+  * Updates the store with the current page title
+  * @param evt: the event that fired
+  */
+  handleBrowserPageTitleUpdated = (evt) => {
+    guestActions.setPageTitle([this.props.mailboxId, this.props.serviceType], evt.title)
+  }
+
+  /**
   * Updates the target url that the user is hovering over
   * @param evt: the event that fired
   */
@@ -602,7 +611,7 @@ export default class MailboxWebView extends React.Component {
     } = this.state
 
     if (!mailbox || !service) { return false }
-    const { className, preload, hasSearch, ...passProps } = this.props
+    const { className, preload, hasSearch, allowpopups, ...passProps } = this.props
     delete passProps.serviceType
     delete passProps.mailboxId
     const webviewEventProps = BrowserView.REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
@@ -647,7 +656,7 @@ export default class MailboxWebView extends React.Component {
             searchId={searchId}
             searchTerm={isSearching ? searchTerm : ''}
             webpreferences={launchedApp.useExperimentalWindowOpener ? 'contextIsolation=yes, nativeWindowOpen=yes' : 'contextIsolation=yes'}
-            allowpopups={launchedApp.useExperimentalWindowOpener}
+            allowpopups={allowpopups === undefined ? launchedApp.useExperimentalWindowOpener : allowpopups}
             plugins
             onWebContentsAttached={this.handleWebContentsAttached}
 
@@ -674,7 +683,9 @@ export default class MailboxWebView extends React.Component {
             didNavigate={(evt) => {
               this.multiCallBrowserEvent([this.handleBrowserDidNavigate, webviewEventProps.didNavigate], [evt])
             }}
-
+            pageTitleUpdated={(evt) => {
+              this.multiCallBrowserEvent([this.handleBrowserPageTitleUpdated, webviewEventProps.pageTitleUpdated], [evt])
+            }}
             domReady={(evt) => {
               this.multiCallBrowserEvent([this.handleBrowserDomReady, webviewEventProps.domReady], [evt])
             }}
@@ -714,7 +725,7 @@ export default class MailboxWebView extends React.Component {
             <RaisedButton
               label='Reload'
               icon={<FontIcon className='material-icons'>refresh</FontIcon>}
-              onTouchTap={() => {
+              onClick={() => {
                 this.reloadIgnoringCache()
                 this.setState({ isCrashed: false, browserDOMReady: false })
               }} />
@@ -735,7 +746,7 @@ export default class MailboxWebView extends React.Component {
             <RaisedButton
               label='Reauthenticate'
               icon={<FontIcon className='material-icons'>error_outline</FontIcon>}
-              onTouchTap={() => {
+              onClick={() => {
                 mailboxActions.reauthenticateMailbox(mailbox.id)
               }} />
           </div>

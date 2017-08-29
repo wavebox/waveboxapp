@@ -1,10 +1,32 @@
-import './AccountMessageScene.less'
 import React from 'react'
-import { Dialog, RaisedButton } from 'material-ui'
+import { RaisedButton } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
-import { WaveboxWebView } from 'Components'
+import { WaveboxWebView, FullscreenModal } from 'Components'
 import { userStore } from 'stores/user'
 import { settingsActions } from 'stores/settings'
+
+const styles = {
+  modalActions: {
+    position: 'absolute',
+    height: 52,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'white',
+    borderTop: '1px solid rgb(232, 232, 232)',
+    borderBottomLeftRadius: 2,
+    borderBottomRightRadius: 2
+  },
+  modalBody: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 52,
+    borderTopLeftRadius: 2,
+    borderTopRightRadius: 2
+  }
+}
 
 export default class AccountMessageScene extends React.Component {
   /* **************************************************************************/
@@ -48,7 +70,7 @@ export default class AccountMessageScene extends React.Component {
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/'
-    }, 500)
+    }, 250)
   }
 
   /* **************************************************************************/
@@ -63,16 +85,15 @@ export default class AccountMessageScene extends React.Component {
     const { open, url } = this.state
 
     return (
-      <Dialog
+      <FullscreenModal
         modal={false}
-        contentStyle={{ width: '90%', maxWidth: 1200 }}
+        actionsContainerStyle={styles.modalActions}
+        bodyStyle={styles.modalBody}
         actions={(<RaisedButton primary label='Close' onClick={this.handleClose} />)}
         open={open}
-        bodyClassName='ReactComponent-MessageDialog-Body'
-        autoScrollBodyContent
         onRequestClose={this.handleClose}>
         <WaveboxWebView src={url} />
-      </Dialog>
+      </FullscreenModal>
     )
   }
 }

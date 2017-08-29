@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import styles from '../SettingStyles'
+import styles from '../CommonSettingStyles'
 
 export default class AccountHeading extends React.Component {
   /* **************************************************************************/

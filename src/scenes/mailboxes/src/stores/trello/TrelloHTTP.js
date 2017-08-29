@@ -63,6 +63,34 @@ class TrelloHTTP {
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
   }
+
+  /* **************************************************************************/
+  // Boards
+  /* **************************************************************************/
+
+  /**
+  * Fetches all the boards for this user
+  * @param appKey: the app key to use
+  * @param auth: the auth token to use
+  * @param fields='all': string or array of fields to fetch
+  * @param filter='open': string or array of filters to apply
+  * @param promise
+  */
+  static fetchBoards (appKey, auth, fields = 'all', filter = 'all') {
+    if (!auth || !appKey) { return this._rejectWithNoAuth() }
+
+    const query = querystring.stringify({
+      key: appKey,
+      token: auth,
+      filter: Array.isArray(filter) ? filter.join(',') : filter,
+      fields: Array.isArray(fields) ? fields.join(',') : fields
+    })
+
+    return Promise.resolve()
+      .then(() => window.fetch('https://api.trello.com/1/members/me/boards/?' + query))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.json())
+  }
 }
 
 export default TrelloHTTP

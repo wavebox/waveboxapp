@@ -24,6 +24,7 @@ class GenericMailbox extends CoreMailbox {
   static get supportsUnreadActivity () { return true }
   static get supportsUnreadCount () { return false }
   static get supportsNativeNotifications () { return false }
+  static get defaultColor () { return MailboxColors.GENERIC }
 
   /* **************************************************************************/
   // Properties : Display
@@ -33,7 +34,7 @@ class GenericMailbox extends CoreMailbox {
     if (this.usePageThemeAsColor && this.pageThemeColor) {
       return this.pageThemeColor
     } else {
-      return super.color || MailboxColors.GENERIC
+      return super.color || this.constructor.defaultColor
     }
   }
   get usePageThemeAsColor () { return this._value_('usePageThemeAsColor', false) }
@@ -47,7 +48,7 @@ class GenericMailbox extends CoreMailbox {
     if (this.usePageTitleAsDisplayName && this.pageTitle) {
       return this.pageTitle
     } else {
-      return this._value_('displayName', super.displayName)
+      return this._value_('displayName', this.defaultService.url || super.displayName)
     }
   }
   get usePageTitleAsDisplayName () { return this._value_('usePageTitleAsDisplayName', false) }

@@ -34,6 +34,7 @@ class DebugFlags {
   /* **************************************************************************/
 
   get googleLogServerPings () { return this.getValue('googleLogServerPings', false) }
+  get googleLogUnreadMessages () { return this.getValue('googleLogUnreadMessages', false) }
 }
 
 export default DebugFlags

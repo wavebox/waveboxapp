@@ -141,7 +141,7 @@ class MailboxesSessionManager {
     } else {
       let pickedSavePath = dialog.showSaveDialog(this.mailboxWindow.window, {
         title: 'Download',
-        defaultPath: this.lastUsedDownloadPath || path.join(app.getPath('downloads'), item.getFilename())
+        defaultPath: this.lastUsedDownloadPath ? path.join(this.lastUsedDownloadPath, item.getFilename()) : path.join(app.getPath('downloads'), item.getFilename())
       })
 
       // There's a bit of a pickle here. Whilst asking the user where to save
@@ -155,7 +155,7 @@ class MailboxesSessionManager {
         try { fs.removeSync(pickedSavePath) } catch (ex) { /* no-op */ }
 
         // User didn't add file extension
-        if (!path.extname(pickedSavePath)) {
+        if (path.extname(pickedSavePath) !== path.extname(item.getFilename())) {
           pickedSavePath += path.extname(item.getFilename())
           pickedSavePath = unusedFilename.sync(pickedSavePath)
         }

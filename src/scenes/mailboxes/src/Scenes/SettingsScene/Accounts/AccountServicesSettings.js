@@ -3,7 +3,7 @@ import React from 'react'
 import { Paper, SelectField, MenuItem, Toggle } from 'material-ui'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
-import styles from '../SettingStyles'
+import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 

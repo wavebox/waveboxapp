@@ -1,11 +1,19 @@
 const { Menu, shell, dialog } = require('electron')
 const mailboxStore = require('./stores/mailboxStore')
 const settingStore = require('./stores/settingStore')
-const { GITHUB_URL, GITHUB_ISSUE_URL, WEB_URL, PRIVACY_URL } = require('../shared/constants')
 const Release = require('../shared/Release')
 const pkg = require('../package.json')
 const MenuTool = require('../shared/Electron/MenuTool')
 const electronLocalshortcut = require('electron-localshortcut')
+const {
+  GITHUB_URL,
+  BLOG_URL,
+  WEB_URL,
+  PRIVACY_URL,
+  KB_URL,
+  EULA_URL,
+  SUPPORT_URL
+} = require('../shared/constants')
 
 class AppPrimaryMenu {
   /* ****************************************************************************/
@@ -56,10 +64,19 @@ class AppPrimaryMenu {
         const focused = windowManager.focused()
         if (focused) { focused.openDevTools() }
       },
-      learnMoreGithub: () => { shell.openExternal(GITHUB_URL) },
-      learnMore: () => { shell.openExternal(WEB_URL) },
+      waveboxGithub: () => { shell.openExternal(GITHUB_URL) },
+      waveboxWebsite: () => { shell.openExternal(WEB_URL) },
+      waveboxBlog: () => { shell.openExternal(BLOG_URL) },
       privacy: () => { shell.openExternal(PRIVACY_URL) },
-      bugReport: () => { shell.openExternal(GITHUB_ISSUE_URL) },
+      eula: () => { shell.openExternal(EULA_URL) },
+      support: () => { shell.openExternal(SUPPORT_URL) },
+      knowledgeBase: () => { shell.openExternal(KB_URL) },
+      supportCenter: () => {
+        windowManager.mailboxesWindow.show().focus().launchSupportCenter()
+      },
+      whatsNew: () => {
+        windowManager.mailboxesWindow.show().focus().launchWhatsNew()
+      },
       zoomIn: () => {
         const focused = windowManager.focused()
         if (focused) { focused.zoomIn() }
@@ -83,6 +100,12 @@ class AppPrimaryMenu {
       },
       nextMailbox: () => {
         windowManager.mailboxesWindow.show().focus().switchNextMailbox(true)
+      },
+      prevService: () => {
+        windowManager.mailboxesWindow.show().focus().switchPrevService(true)
+      },
+      nextService: () => {
+        windowManager.mailboxesWindow.show().focus().switchNextService(true)
       },
       cycleWindows: () => { windowManager.focusNextWindow() },
       aboutDialog: () => {
@@ -346,12 +369,12 @@ class AppPrimaryMenu {
         .concat(mailboxes.length <= 1 ? [] : [
           { type: 'separator' },
           {
-            label: 'Previous Mailbox',
+            label: 'Previous Account',
             click: this._selectors.prevMailbox,
             accelerator: accelerators.previousMailbox
           },
           {
-            label: 'Next Mailbox',
+            label: 'Next Account',
             click: this._selectors.nextMailbox,
             accelerator: accelerators.nextMailbox
           }
@@ -366,6 +389,19 @@ class AppPrimaryMenu {
             accelerator: this.buildAcceleratorStringForIndex(accelerators.mailboxIndex, index)
           }
         }))
+        .concat(activeMailbox && activeMailbox.hasAdditionalServices ? [
+          { type: 'separator' },
+          {
+            label: 'Previous Service',
+            click: this._selectors.prevService,
+            accelerator: accelerators.servicePrevious
+          },
+          {
+            label: 'Next Service',
+            click: this._selectors.nextService,
+            accelerator: accelerators.serviceNext
+          }
+        ] : [])
         .concat(activeMailbox && activeMailbox.hasAdditionalServices ? [{ type: 'separator' }] : [])
         .concat(activeMailbox && activeMailbox.hasAdditionalServices ? activeMailbox.enabledServices.map((service, index) => {
           return {
@@ -381,10 +417,15 @@ class AppPrimaryMenu {
         label: 'Help',
         role: 'help',
         submenu: [
-          { label: 'Wavebox Website', click: this._selectors.learnMore },
+          { label: 'Wavebox Website', click: this._selectors.waveboxWebsite },
+          { label: 'Wavebox Blog', click: this._selectors.waveboxBlog },
+          { label: 'Wavebox on GitHub', click: this._selectors.waveboxGithub },
+          { type: 'separator' },
+          { label: 'Support Center', click: this._selectors.supportCenter },
+          { label: 'What\'s new', click: this._selectors.whatsNew },
+          { type: 'separator' },
           { label: 'Privacy', click: this._selectors.privacy },
-          { label: 'Wavebox on GitHub', click: this._selectors.learnMoreGithub },
-          { label: 'Report a Bug', click: this._selectors.bugReport }
+          { label: 'EULA', click: this._selectors.eula }
         ]
       }
     ])

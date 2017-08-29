@@ -134,6 +134,38 @@ class GoogleDefaultService extends GoogleService {
   // Properties : Provider Details & counts etc
   /* **************************************************************************/
 
+  /**
+  * Generates the open data for the message
+  * @param thread: the thread to open
+  * @param message: the message to open
+  */
+  _generateMessageOpenData (thread, message) {
+    const data = {
+      mailboxId: this.parentId,
+      serviceType: this.type,
+      threadId: thread.id,
+      messageId: message.id
+    }
+
+    if (this.accessMode === ACCESS_MODES.GINBOX) {
+      let fromAddress
+      try { fromAddress = addressparser(message.from)[0].address } catch (ex) { /* no-op */ }
+      let toAddress
+      try { toAddress = addressparser(message.to)[0].address } catch (ex) { /* no-op */ }
+      const messageDate = new Date(parseInt(message.internalDate))
+
+      data.search = [
+        fromAddress ? `from:"${fromAddress}"` : undefined,
+        toAddress ? `to:${toAddress}` : undefined,
+        message.subject ? `subject:"${message.subject}"` : undefined,
+        `after:${messageDate.getFullYear()}/${messageDate.getMonth() + 1}/${messageDate.getDate()}`,
+        `before:${messageDate.getFullYear()}/${messageDate.getMonth() + 1}/${messageDate.getDate() + 1}` // doesn't cope with end of months, but goog seems okay with it
+      ].filter((q) => !!q).join(' ')
+    }
+
+    return data
+  }
+
   get trayMessages () {
     return this.unreadThreads.map((thread) => {
       const message = thread.latestMessage
@@ -148,12 +180,7 @@ class GoogleDefaultService extends GoogleService {
         id: `${thread.id}:${thread.historyId}`,
         text: `${fromName} : ${message.subject || 'No Subject'}`,
         date: parseInt(message.internalDate),
-        data: {
-          threadId: thread.id,
-          messageId: message.id,
-          mailboxId: this.parentId,
-          serviceType: this.type
-        }
+        data: this._generateMessageOpenData(thread, message)
       }
     })
   }
@@ -169,12 +196,7 @@ class GoogleDefaultService extends GoogleService {
           { content: message.snippet, format: 'html' }
         ],
         timestamp: parseInt(message.internalDate),
-        data: {
-          threadId: thread.id,
-          messageId: message.id,
-          mailboxId: this.parentId,
-          serviceType: this.type
-        }
+        data: this._generateMessageOpenData(thread, message)
       }
     })
   }
@@ -201,6 +223,7 @@ class GoogleDefaultService extends GoogleService {
           case 'pt': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Print message
           case 'btop': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Open google drive doc
           case 'lg': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Open entire message (after being clipped)
+          case 'att': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Open attachment in external window (also works on inbox)
         }
       }
 

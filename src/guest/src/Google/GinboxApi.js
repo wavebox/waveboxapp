@@ -1,4 +1,5 @@
 const escapeHTML = require('escape-html')
+const { remote } = require('electron')
 
 class GinboxApi {
   /**
@@ -90,6 +91,61 @@ class GinboxApi {
         setTimeout(() => focusableEl.focus(), 500)
       }
     })
+  }
+
+  /**
+  * Starts a search
+  * @param term: the term to search for
+  */
+  static startSearch (term) {
+    const element = document.querySelector('[role="search"] input')
+    element.value = term
+
+    const evt = new window.Event('input', {
+      bubbles: true,
+      cancelable: true
+    })
+    element.dispatchEvent(evt)
+  }
+
+  /**
+  * Opens the first search item
+  * @param timeout=2000: timeout in ms to keep retrying
+  * @param retry=100: time to wait between retries
+  * @param completeFn=undefined: given when the element is clicked. Provided with true click was a success, false otherwise
+  * @return the setInterval timeout. If cancelled cb will not execute
+  */
+  static openFirstSearchItem (timeout = 2000, retry = 100, completeFn = undefined) {
+    const start = new Date().getTime()
+    const interval = setInterval(() => {
+      if (new Date().getTime() > start + timeout) {
+        clearInterval(interval)
+        if (completeFn) { completeFn(false) }
+      } else {
+        const element = document.querySelector('[jsaction*="search.toggle_item"]')
+        if (element) {
+          clearInterval(interval)
+          const rect = element.getBoundingClientRect()
+          const wc = remote.getCurrentWebContents()
+          wc.sendInputEvent({
+            type: 'mouseDown',
+            x: rect.left + 1,
+            y: rect.top + 1,
+            button: 'left',
+            clickCount: 1
+          })
+          wc.sendInputEvent({
+            type: 'mouseUp',
+            x: rect.left + 1,
+            y: rect.top + 1,
+            button: 'left',
+            clickCount: 1
+          })
+          if (completeFn) { completeFn(true) }
+        }
+      }
+    }, retry)
+    return interval
   }
 }
 

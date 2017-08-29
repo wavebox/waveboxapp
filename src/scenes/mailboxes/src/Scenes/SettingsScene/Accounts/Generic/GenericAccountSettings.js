@@ -5,12 +5,12 @@ import { Paper, TextField, Toggle } from 'material-ui'
 import { Row, Col } from 'Components/Grid'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
-import styles from '../../SettingStyles'
+import styles from '../../CommonSettingStyles'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
-import AccountSleepableSettings from '../AccountSleepableSettings'
 import AccountBadgeSettings from '../AccountBadgeSettings'
 import AccountNotificationSettings from '../AccountNotificationSettings'
+import AccountBehaviourSettings from '../AccountBehaviourSettings'
 import { mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
 import validUrl from 'valid-url'
 
@@ -131,13 +131,6 @@ export default class GenericAccountSettings extends React.Component {
                 errorText={serviceUrlError}
                 onBlur={this.handleUrlChange} />
               <Toggle
-                toggled={service.openWindowsExternally}
-                label='Open new windows in default browser'
-                labelPosition='right'
-                onToggle={(evt, toggled) => {
-                  mailboxActions.reduceService(mailbox.id, service.type, GenericDefaultServiceReducer.setOpenWindowsExternally, toggled)
-                }} />
-              <Toggle
                 toggled={service.hasNavigationToolbar}
                 label='Show navigation toolbar'
                 labelPosition='right'
@@ -165,7 +158,7 @@ export default class GenericAccountSettings extends React.Component {
           </Col>
           <Col md={6}>
             <Paper zDepth={1} style={styles.paper}>
-              <AccountSleepableSettings mailbox={mailbox} service={service} />
+              <AccountBehaviourSettings mailbox={mailbox} service={service} />
               <br />
               <AccountCustomCodeSettings
                 mailbox={mailbox}

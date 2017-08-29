@@ -136,7 +136,7 @@ class LinuxAppSingleton {
         }
         if (data.action === 'activate') {
           console.log(`${LOG_PFX} Received activate from ${data.pid}`)
-          this._activateFn_()
+          this._activateFn_(data.commandLine, data.cwd)
         }
         conn.destroy()
       })
@@ -153,7 +153,12 @@ class LinuxAppSingleton {
       let resolved = false
       const client = net.createConnection(this._generateSocketPath(pid), () => {
         console.log(`${LOG_PFX} Activating ${pid}`)
-        client.write(JSON.stringify({ action: 'activate', pid: process.pid }))
+        client.write(JSON.stringify({
+          action: 'activate',
+          pid: process.pid,
+          commandLine: process.argv,
+          cwd: process.cwd()
+        }))
       })
       client.on('end', () => {
         client.destroy()

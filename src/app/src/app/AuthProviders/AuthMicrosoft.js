@@ -2,6 +2,8 @@ const { ipcMain, BrowserWindow } = require('electron')
 const { WB_AUTH_MICROSOFT, WB_AUTH_MICROSOFT_COMPLETE, WB_AUTH_MICROSOFT_ERROR } = require('../../shared/ipcEvents')
 const url = require('url')
 const querystring = require('querystring')
+const userStore = require('../stores/userStore')
+const pkg = require('../../package.json')
 
 class AuthMicrosoft {
   /* ****************************************************************************/
@@ -21,30 +23,49 @@ class AuthMicrosoft {
   /**
   * Generates the authentication url for our secrets, scopes and access type
   * @param credentials: the credentials to use
+  * @param additionalPermissions: additionalPermissions to request
   * @return the url that can be used to authenticate with goog
   */
-  generateMicrosoftAuthenticationURL (credentials) {
+  generateMicrosoftAuthenticationURL (credentials, additionalPermissions) {
+    const scopes = new Set([
+      'offline_access',
+      'User.Read',
+      'Mail.Read',
+      'Files.Read'
+    ].concat(additionalPermissions))
+    const scope = Array.from(scopes).join(' ')
+
     const query = querystring.stringify({
       client_id: credentials.MICROSOFT_CLIENT_ID_V2,
       redirect_uri: credentials.MICROSOFT_AUTH_RETURN_URL_V2,
       response_type: 'code',
-      scope: [
-        'offline_access',
-        'User.Read',
-        'Mail.Read',
-        'Files.Read'
-      ].join(' ')
+      scope: scope
     })
     return `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${query}`
+  }
+
+  /**
+  * Generates the url for authenticating with the push service
+  * @param credentials: the credentials to use
+  * @return the url that can be used
+  */
+  generatePushServiceAuthenticationURL (credentials) {
+    const query = querystring.stringify({
+      client_id: userStore.clientId,
+      client_token: userStore.clientToken,
+      client_version: pkg.version
+    })
+    return `${credentials.MICROSOFT_PUSH_SERVICE_AUTH_URL}?${query}`
   }
 
   /**
   * Gets the authorization code by prompting the user to sign in
   * @param credentials: the credentials to use
   * @param partitionId: the id of the partition
+  * @param additionalPermissions: a list of additional permission to request
   * @return promise
   */
-  promptUserToGetAuthorizationCode (credentials, partitionId) {
+  promptUserToGetAuthorizationCode (credentials, partitionId, additionalPermissions) {
     return new Promise((resolve, reject) => {
       const oauthWin = new BrowserWindow({
         useContentSize: true,
@@ -63,7 +84,7 @@ class AuthMicrosoft {
         }
       })
 
-      oauthWin.loadURL(this.generateMicrosoftAuthenticationURL(credentials))
+      oauthWin.loadURL(this.generatePushServiceAuthenticationURL(credentials))
 
       oauthWin.on('closed', () => {
         reject(new Error('User closed the window'))
@@ -71,7 +92,16 @@ class AuthMicrosoft {
 
       // Listen for changes
       oauthWin.webContents.on('did-get-redirect-request', (evt, prevUrl, nextUrl) => {
-        if (nextUrl.indexOf(credentials.MICROSOFT_AUTH_RETURN_URL_V2) === 0) {
+        if (nextUrl.indexOf(credentials.MICROSOFT_PUSH_SERVICE_SUCCESS_URL) === 0) {
+          evt.preventDefault()
+          oauthWin.loadURL(this.generateMicrosoftAuthenticationURL(credentials, additionalPermissions))
+        } else if (nextUrl.indexOf(credentials.MICROSOFT_PUSH_SERVICE_FAILURE_URL) === 0) {
+          evt.preventDefault()
+          oauthWin.removeAllListeners('closed')
+          oauthWin.close()
+          const purl = url.parse(nextUrl, true)
+          reject(new Error(purl.query.error))
+        } else if (nextUrl.indexOf(credentials.MICROSOFT_AUTH_RETURN_URL_V2) === 0) {
           evt.preventDefault()
           const purl = url.parse(nextUrl, true)
           if (purl.query.code) {
@@ -104,7 +134,7 @@ class AuthMicrosoft {
   */
   handleAuthMicrosoft (evt, body) {
     Promise.resolve()
-      .then(() => this.promptUserToGetAuthorizationCode(body.credentials, body.id))
+      .then(() => this.promptUserToGetAuthorizationCode(body.credentials, body.id, body.additionalPermissions))
       .then((temporaryCode) => {
         evt.sender.send(WB_AUTH_MICROSOFT_COMPLETE, {
           id: body.id,

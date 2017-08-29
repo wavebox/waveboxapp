@@ -1,15 +1,3 @@
-import MailboxWizardAddScene from './MailboxWizardAddScene'
-import MailboxWizardCompleteScene from './MailboxWizardCompleteScene'
-import MailboxWizardAuthenticatingScene from './MailboxWizardAuthenticatingScene'
-import Google from './Google'
-import Microsoft from './Microsoft'
-import Generic from './Generic'
+import MailboxWizardScene from './MailboxWizardScene'
 
-export {
-  MailboxWizardAddScene,
-  MailboxWizardCompleteScene,
-  MailboxWizardAuthenticatingScene,
-  Google,
-  Microsoft,
-  Generic
-}
+export default MailboxWizardScene

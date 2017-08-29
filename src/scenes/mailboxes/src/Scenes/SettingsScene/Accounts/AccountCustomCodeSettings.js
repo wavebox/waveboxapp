@@ -2,10 +2,19 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { RaisedButton, FontIcon } from 'material-ui'
-import styles from '../SettingStyles'
+import commonStyles from '../CommonSettingStyles'
 import { mailboxActions, ServiceReducer, mailboxDispatch } from 'stores/mailbox'
 import { USER_SCRIPTS_WEB_URL } from 'shared/constants'
+import * as Colors from 'material-ui/styles/colors'
+
 const { remote: { shell } } = window.nativeRequire('electron')
+const styles = {
+  userscriptLink: {
+    color: Colors.blue700,
+    fontSize: '85%',
+    marginBottom: 10
+  }
+}
 
 export default class AccountCustomCodeSettings extends React.Component {
   /* **************************************************************************/
@@ -33,27 +42,27 @@ export default class AccountCustomCodeSettings extends React.Component {
       <div {...passProps}>
         <div>
           <RaisedButton
-            style={styles.buttonInline}
+            style={commonStyles.buttonInline}
             label='Custom CSS'
             icon={<FontIcon className='material-icons'>code</FontIcon>}
-            onTouchTap={() => {
+            onClick={() => {
               onRequestEditCustomCode('Custom CSS', service.customCSS, (code) => {
                 mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setCustomCSS, code)
                 mailboxDispatch.reload(mailbox.id, service.type)
               })
             }} />
           <RaisedButton
-            style={styles.buttonInline}
+            style={commonStyles.buttonInline}
             label='Custom JS'
             icon={<FontIcon className='material-icons'>code</FontIcon>}
-            onTouchTap={() => {
+            onClick={() => {
               onRequestEditCustomCode('Custom JS', service.customJS, (code) => {
                 mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setCustomJS, code)
                 mailboxDispatch.reload(mailbox.id, service.type)
               })
             }} />
         </div>
-        <div style={styles.button}>
+        <div style={commonStyles.button}>
           <a
             style={styles.userscriptLink}
             onClick={(evt) => { evt.preventDefault(); shell.openExternal(USER_SCRIPTS_WEB_URL) }}

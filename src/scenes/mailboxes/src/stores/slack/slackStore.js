@@ -5,7 +5,11 @@ import SlackDefaultService from 'shared/Models/Accounts/Slack/SlackDefaultServic
 import SlackHTTP from './SlackHTTP'
 import uuid from 'uuid'
 import { NotificationService } from 'Notifications'
-import { SLACK_FULL_COUNT_SYNC_INTERVAL } from 'shared/constants'
+import {
+  SLACK_FULL_COUNT_SYNC_INTERVAL,
+  SLACK_RECONNECT_SOCKET_INTERVAL,
+  SLACK_RTM_RETRY_RECONNECT_MS
+} from 'shared/constants'
 import Debug from 'Debug'
 import {
   mailboxStore,
@@ -103,6 +107,8 @@ class SlackStore {
       handleConnectAllMailboxes: actions.CONNECT_ALL_MAILBOXES,
       handleConnectMailbox: actions.CONNECT_MAILBOX,
 
+      handleReconnectMailbox: actions.RECONNECT_MAILBOX,
+
       handleDisconnectAllMailboxes: actions.DISCONNECT_ALL_MAILBOXES,
       handleDisconnectMailbox: actions.DISCONNECT_MAILBOX,
 
@@ -177,18 +183,27 @@ class SlackStore {
       return
     }
 
+    const connectionId = uuid.v4()
+
     // Start the periodic poller
     const fullPoller = setInterval(() => {
+      if (!this.isValidConnection(mailboxId, connectionId)) { return }
       actions.updateUnreadCounts.defer(mailboxId, true)
     }, SLACK_FULL_COUNT_SYNC_INTERVAL)
+    const reconnectPoller = setInterval(() => {
+      if (!this.isValidConnection(mailboxId, connectionId)) { return }
+      if (!this.isMailboxConnected(mailboxId)) {
+        actions.reconnectMailbox(mailboxId)
+      }
+    }, SLACK_RECONNECT_SOCKET_INTERVAL)
 
     // Start up the socket
-    const connectionId = uuid.v4()
     this.connections.set(mailboxId, {
       connectionId: connectionId,
       mailboxId: mailboxId,
       rtm: null,
-      fullPoller: fullPoller
+      fullPoller: fullPoller,
+      reconnectPoller: reconnectPoller
     })
 
     SlackHTTP.startRTM(mailbox.authToken)
@@ -199,8 +214,7 @@ class SlackStore {
         rtm.on('message:error', (data) => {
           if ((data.error || {}).code === 1) { // Socket URL has expired
             console.warn('Reconnecting SlackRTM Socket for `' + mailboxId + '`', data)
-            actions.disconnectMailbox.defer(mailboxId)
-            actions.connectMailbox.defer(mailboxId)
+            actions.reconnectMailbox(mailboxId)
           }
         })
         rtm.on('message:desktop_notification', (data) => {
@@ -270,12 +284,29 @@ class SlackStore {
 
         this.emitChange()
       })
-      .catch((err) => {
+      .catch(() => {
         if (!this.isValidConnection(mailboxId, connectionId)) { return }
-        this.connections.delete(mailboxId)
-        this.emitChange()
-        console.error('[RTM Error]', err)
+
+        // Retry connection
+        setTimeout(() => {
+          if (!this.isValidConnection(mailboxId, connectionId)) { return }
+          if (this.isMailboxConnected(mailboxId)) { return }
+          actions.reconnectMailbox(mailboxId)
+        }, SLACK_RTM_RETRY_RECONNECT_MS)
       })
+  }
+
+  /* **************************************************************************/
+  // Handlers: Reconnection
+  /* **************************************************************************/
+
+  /**
+  * Reconnects a mailbox
+  * @param mailboxId: the id of the mailbox
+  */
+  handleReconnectMailbox ({ mailboxId }) {
+    this.handleDisconnectMailbox({ mailboxId: mailboxId })
+    this.handleConnectMailbox({ mailboxId: mailboxId })
   }
 
   /* **************************************************************************/
@@ -289,6 +320,7 @@ class SlackStore {
     this.allConnections().forEach((connection) => {
       if (connection.rtm) { connection.rtm.close() }
       clearInterval(connection.fullPoller)
+      clearInterval(connection.reconnectPoller)
       this.connections.delete(connection.mailboxId)
     })
     const connections = []
@@ -304,6 +336,7 @@ class SlackStore {
     if (connection) {
       if (connection.rtm) { connection.rtm.close() }
       clearInterval(connection.fullPoller)
+      clearInterval(connection.reconnectPoller)
       this.connections.delete(connection.mailboxId)
     }
   }

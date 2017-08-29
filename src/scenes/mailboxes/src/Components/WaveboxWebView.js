@@ -1,14 +1,29 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import BrowserView from 'sharedui/Components/BrowserView'
 import URI from 'urijs'
 import { WAVEBOX_CAPTURE_URLS } from 'shared/constants'
 const { remote: {shell} } = window.nativeRequire('electron')
+const pkg = window.appPackage()
 
 const REF = 'webview'
 
 export default class WaveboxWebView extends React.Component {
   /* **************************************************************************/
-  // Routing
+  // Class
+  /* **************************************************************************/
+
+  static propTypes = {
+    ...BrowserView.PropTypes,
+    saltClientInfoInUrl: PropTypes.bool.isRequired
+  }
+
+  static defaultProps = {
+    saltClientInfoInUrl: true
+  }
+
+  /* **************************************************************************/
+  // Routing & Urls
   /* **************************************************************************/
 
   /**
@@ -45,6 +60,19 @@ export default class WaveboxWebView extends React.Component {
       }
     }
     return false
+  }
+
+  /**
+  * Salts the client info into the given url
+  * @param url: the url to salt into
+  * @return a url with querystring arguments salted
+  */
+  saltUrlWithClientInfo (url) {
+    return URI(url).addSearch({
+      'x-wavebox-version': pkg.version,
+      'x-wavebox-channel': pkg.releaseChannel,
+      'x-wavebox-app': pkg.name
+    }).toString()
   }
 
   /* **************************************************************************/
@@ -85,14 +113,16 @@ export default class WaveboxWebView extends React.Component {
   /* **************************************************************************/
 
   render () {
-    // Set ...props after our props in case we want to overwrite in the future...
+    const { src, saltClientInfoInUrl, ...passProps } = this.props
+
     return (
       <BrowserView
         ref={REF}
+        src={saltClientInfoInUrl ? this.saltUrlWithClientInfo(src) : src}
         webpreferences='contextIsolation=yes'
         newWindow={this.handleOpenNewWindow}
         domReady={this.handleDomReady}
-        {...this.props} />
+        {...passProps} />
     )
   }
 }

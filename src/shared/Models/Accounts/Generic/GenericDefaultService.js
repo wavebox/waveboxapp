@@ -22,8 +22,17 @@ class GenericDefaultService extends CoreService {
 
   get url () { return this.__data__.url || 'about:blank' }
   get sleepable () { return this._value_('sleepable', false) }
-  get openWindowsExternally () { return this._value_('openWindowsExternally', false) }
+  get depricatedOpenWindowsExternally () { return this._value_('openWindowsExternally', false) }
   get hasNavigationToolbar () { return this._value_('hasNavigationToolbar', false) }
+  get defaultWindowOpenMode () {
+    const depricatedValue = this._value_('openWindowsExternally', undefined)
+    const currentValue = this._value_('defaultWindowOpenMode', undefined)
+
+    if (currentValue !== undefined) { return currentValue }
+    if (depricatedValue !== undefined) { return this.constructor.DEFAULT_WINDOW_OPEN_MODES[depricatedValue ? 'BROWSER' : 'WAVEBOX'] }
+
+    return super.defaultWindowOpenMode
+  }
 
   /* **************************************************************************/
   // Properties : Provider Details & counts etc
@@ -45,16 +54,7 @@ class GenericDefaultService extends CoreService {
   * @return the window open mode
   */
   getWindowOpenModeForUrl (url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl) {
-    const superMode = super.getWindowOpenModeForUrl(url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl)
-    if (superMode === this.constructor.WINDOW_OPEN_MODES.DEFAULT) {
-      if (this.openWindowsExternally) {
-        return this.constructor.WINDOW_OPEN_MODES.EXTERNAL
-      } else {
-        return this.constructor.WINDOW_OPEN_MODES.CONTENT
-      }
-    } else {
-      return superMode
-    }
+    return super.getWindowOpenModeForUrl(url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl)
   }
 }
 

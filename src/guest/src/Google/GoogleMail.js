@@ -111,6 +111,11 @@ class GoogleMail extends GoogleService {
   handleOpenMesage (evt, data) {
     if (this.isGmail) {
       window.location.hash = 'inbox/' + data.messageId
+    } else if (this.isGinbox) {
+      if (data.search && data.search.length) {
+        GinboxApi.startSearch(data.search)
+        GinboxApi.openFirstSearchItem()
+      }
     }
   }
 

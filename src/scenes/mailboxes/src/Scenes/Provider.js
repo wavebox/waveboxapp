@@ -16,10 +16,12 @@ import { NotificationService, NotificationRenderer } from 'Notifications'
 import Bootstrap from 'R/Bootstrap'
 import AccountMessageDispatcher from './AccountMessageDispatcher'
 import { Tray } from 'Components/Tray'
-import { AppBadge } from 'Components'
+import { AppBadge, WindowTitle } from 'Components'
 import {
   WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE,
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
+  WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER,
+  WB_MAILBOXES_WINDOW_SHOW_NEWS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT
 } from 'shared/ipcEvents'
 const {
@@ -44,6 +46,8 @@ export default class Provider extends React.Component {
     updaterActions.load()
     ipcRenderer.on(WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE, this.downloadCompleted)
     ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_SETTINGS, this.ipcLaunchSettings)
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER, this.ipcLaunchSupportCenter)
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_NEWS, this.ipcLaunchNews)
     ipcRenderer.on(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
 
     // STEP 2. Mailbox connections
@@ -70,6 +74,8 @@ export default class Provider extends React.Component {
     updaterActions.unload()
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE, this.downloadCompleted)
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_SETTINGS, this.ipcLaunchSettings)
+    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER, this.ipcLaunchSupportCenter)
+    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_NEWS, this.ipcLaunchNews)
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
 
     // STEP 2. Mailbox connections
@@ -97,6 +103,7 @@ export default class Provider extends React.Component {
       hasUnreadActivity: mailboxState.hasUnreadActivityForAppBadge(),
       uiSettings: settingsState.ui,
       traySettings: settingsState.tray,
+      launchTraySettings: settingsState.launched.tray,
       osSettings: settingsState.os
     }
   })()
@@ -142,6 +149,20 @@ export default class Provider extends React.Component {
   */
   ipcLaunchSettings = () => {
     window.location.hash = '/settings'
+  }
+
+  /**
+  * Launches the support center over the ipc channcel
+  */
+  ipcLaunchSupportCenter = () => {
+    window.location.hash = '/settings/support'
+  }
+
+  /**
+  * Launches the news dialog over the ipc channel
+  */
+  ipcLaunchNews = () => {
+    window.location.hash = '/news'
   }
 
   /**
@@ -199,18 +220,13 @@ export default class Provider extends React.Component {
   }
 
   render () {
-    const { traySettings, uiSettings, messagesUnreadCount, hasUnreadActivity } = this.state
-
-    // Update the app title
-    if (uiSettings.showTitlebarCount) {
-      if (messagesUnreadCount === 0) {
-        document.title = 'Wavebox'
-      } else {
-        document.title = `Wavebox (${messagesUnreadCount})`
-      }
-    } else {
-      document.title = 'Wavebox'
-    }
+    const {
+      traySettings,
+      launchTraySettings,
+      uiSettings,
+      messagesUnreadCount,
+      hasUnreadActivity
+    } = this.state
 
     return (
       <div>
@@ -218,9 +234,11 @@ export default class Provider extends React.Component {
           <WaveboxRouter />
         </MuiThemeProvider>
         <AccountMessageDispatcher />
+        <WindowTitle />
         {!traySettings.show ? undefined : (
           <Tray
             unreadCount={messagesUnreadCount}
+            launchTraySettings={launchTraySettings}
             traySettings={traySettings} />
         )}
         {!uiSettings.showAppBadge ? undefined : (

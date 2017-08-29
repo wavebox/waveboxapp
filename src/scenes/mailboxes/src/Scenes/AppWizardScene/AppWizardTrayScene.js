@@ -1,8 +1,41 @@
 import React from 'react'
 import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Dialog, RaisedButton } from 'material-ui'
 import { TrayIconEditor } from 'Components/Tray'
+
+const styles = {
+  container: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+    textAlign: 'center'
+  },
+  heading: {
+    fontWeight: 300,
+    marginTop: 20
+  },
+  subHeading: {
+    fontWeight: 300,
+    marginTop: 0,
+    fontSize: 16
+  },
+  trayHeading: {
+    color: 'black'
+  },
+  trayPreview: {
+    margin: '0px auto'
+  },
+  trayEditor: {
+    textAlign: 'center'
+  }
+}
 
 export default class AppWizardTrayScene extends React.Component {
   /* **************************************************************************/
@@ -23,27 +56,12 @@ export default class AppWizardTrayScene extends React.Component {
 
   state = (() => {
     return {
-      tray: settingsStore.getState().tray,
-      open: true
+      tray: settingsStore.getState().tray
     }
   })()
 
   settingsUpdated = (settingsState) => {
     this.setState({ tray: settingsState.tray })
-  }
-
-  /* **************************************************************************/
-  // UI Events
-  /* **************************************************************************/
-
-  handleCancel = () => {
-    this.setState({ open: false })
-    setTimeout(() => { window.location.hash = '/' }, 500)
-  }
-
-  handleNext = () => {
-    this.setState({ open: false })
-    setTimeout(() => { window.location.hash = '/app_wizard/mailto' }, 250)
   }
 
   /* **************************************************************************/
@@ -55,39 +73,23 @@ export default class AppWizardTrayScene extends React.Component {
   }
 
   render () {
-    const { tray, open } = this.state
-
-    const actions = (
-      <div>
-        <RaisedButton
-          label='Cancel'
-          style={{ float: 'left' }}
-          onClick={this.handleCancel} />
-        <RaisedButton
-          label='Next'
-          primary
-          onClick={this.handleNext} />
-      </div>
-    )
+    const { tray } = this.state
+    const naming = process.platform === 'darwin' ? 'Menu Bar' : 'Tray'
 
     return (
-      <Dialog
-        modal={false}
-        title='Tray Icon'
-        actions={actions}
-        open={open}
-        autoScrollBodyContent
-        onRequestClose={this.handleNext}>
-        <p style={{ textAlign: 'center' }}>
-          Customise the tray icon so that it fits in with the other icons in
-          your taskbar. You can change the way the icon appears when you have unread
-          mail and when you have no unread mail
+      <div style={styles.container}>
+        <h2 style={styles.heading}>{`${naming} Icon`}</h2>
+        <p style={styles.subHeading}>
+          {`The Wavebox ${naming} Icon sits alongside the other apps that
+          are running in your ${naming}. You can change the way the Wavebox
+          ${naming} Icon appears so it fits perfectly with everthing else`}
         </p>
         <TrayIconEditor
           tray={tray}
-          style={{ textAlign: 'center' }}
-          trayPreviewStyles={{ margin: '0px auto' }} />
-      </Dialog>
+          style={styles.trayEditor}
+          trayPreviewStyles={styles.trayPreview}
+          trayHeadingStyles={styles.trayHeading} />
+      </div>
     )
   }
 }
