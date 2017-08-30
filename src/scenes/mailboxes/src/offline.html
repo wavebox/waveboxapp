@@ -71,6 +71,19 @@
       a {
         color: rgb(75, 191, 235);
         text-decoration: none;
+        cursor: pointer;
+      }
+
+      [data-enhance="test-connectivity"] {
+        font-size: 85%;
+        font-weight: 300;
+        color: rgb(167, 171, 169);
+      }
+      [data-enhance="test-connectivity-output"] {
+        font-family: monospace;
+        font-size: 85%;
+        word-break: break-all;
+        user-select: all;
       }
     </style>
   </head>
@@ -86,6 +99,10 @@
         <p>
           <a data-enhance="reload">Retry</a>
         </p>
+        <p>
+          <a data-enhance="test-connectivity">Test Connectivity</a>
+        </p>
+        <div data-enhance="test-connectivity-output"></div>
       </div>
     </div>
 
@@ -95,12 +112,48 @@
       const query = querystring.parse(window.location.search.substr(1))
       const onlineArgs = Object.assign({}, query, { error: undefined })
 
+      const testEndpoint = function (endpoint, logger) {
+        logger(`<strong>Testing</strong> ${endpoint}`)
+        return Promise.resolve()
+          .then(() => {
+            return new Promise((resolve, reject) => {
+              electron.remote.session.defaultSession.resolveProxy('https://wavebox.io', (proxy) => {
+                logger(`-- ${proxy}`)
+                resolve()
+              })
+            })
+          })
+          .then(() => window.fetch(endpoint))
+          .then((res) => {
+            logger(`-- OK:${res.ok} STATUS:${res.status}`)
+            return Promise.resolve()
+          })
+          .catch((err) => {
+            logger(`-- ERR:${err}`)
+            return Promise.resolve()
+          })
+      }
+
       Array.from(document.querySelectorAll('[data-enhance="error"]')).forEach((el) => {
         el.textContent = query.error
       })
       Array.from(document.querySelectorAll('[data-enhance="reload"]')).forEach((el) => {
         el.setAttribute('href', `mailboxes.html?${querystring.stringify(onlineArgs)}`)
       })
+      document.querySelector('[data-enhance="test-connectivity"]').addEventListener('click', (evt) => {
+        const outputEl = document.querySelector('[data-enhance="test-connectivity-output"]')
+        outputEl.innerHTML = [
+          '<div><strong>Testing connectivity...</strong></div>',
+          '<div><strong>Current Status: </strong>' + window.location.search + '</div>'
+        ].join('\n')
+
+        Promise.resolve()
+          .then(() => testEndpoint('https://wavebox.io', (l) => outputEl.innerHTML += `<div>${l}</div>`))
+          .then(() => testEndpoint('https://wavebox.io/connection_test_fail', (l) => outputEl.innerHTML += `<div>${l}</div>`))
+          .then(() => testEndpoint('https://google.com', (l) => outputEl.innerHTML += `<div>${l}</div>`))
+          .then(() => testEndpoint('https://microsoft.com', (l) => outputEl.innerHTML += `<div>${l}</div>`))
+          .then(() => { outputEl.innerHTML += '<div><strong>Done</strong></div>' })
+      }, false)
       window.addEventListener('online', () => {
         window.location.href = `mailboxes.html?${querystring.stringify(onlineArgs)}`
       }, false)

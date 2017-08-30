@@ -32,6 +32,7 @@ class CoreMailbox extends Model {
   static get supportsUnreadActivity () { return false }
   static get supportsUnreadCount () { return true }
   static get supportsNativeNotifications () { return true }
+  static get supportsGuestNotifications () { return false }
   static get defaultColor () { return undefined }
 
   /* **************************************************************************/
@@ -165,6 +166,7 @@ class CoreMailbox extends Model {
   get supportsUnreadActivity () { return this.constructor.supportsUnreadActivity }
   get supportsUnreadCount () { return this.constructor.supportsUnreadCount }
   get supportsNativeNotifications () { return this.constructor.supportsNativeNotifications }
+  get supportsGuestNotifications () { return this.constructor.supportsGuestNotifications }
 
   /* **************************************************************************/
   // Properties: Wavebox

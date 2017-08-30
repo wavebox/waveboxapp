@@ -82,6 +82,13 @@ class NotificationService extends EventEmitter {
   * @param notification: the notification to push
   */
   processPushedMailboxNotification (mailboxId, notification) {
+    // Check we're allowed to display
+    const settingsState = settingsStore.getState()
+    if (!settingsState.os.notificationsEnabled) { return }
+
+    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
+    if (!mailbox || !mailbox.showNotifications) { return }
+
     NotificationRenderer.presentMailboxNotification(
       mailboxId,
       notification,
@@ -127,6 +134,13 @@ class NotificationService extends EventEmitter {
   * @param clickHandler=undefined: the handler to call on click
   */
   processHTML5MailboxNotification (mailboxId, serviceType, notificationId, notification, clickHandler = undefined) {
+    // Check we're allowed to display
+    const settingsState = settingsStore.getState()
+    if (!settingsState.os.notificationsEnabled) { return }
+
+    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
+    if (!mailbox || !mailbox.showNotifications) { return }
+
     NotificationRenderer.presentNotification(
       notification.title,
       {

@@ -118,35 +118,41 @@ export default class AccountNotificationSettings extends React.Component {
     const { mailbox, ...passProps } = this.props
     const { os } = this.state
 
-    if (!mailbox.supportsNativeNotifications) { return false }
+    if (!mailbox.supportsNativeNotifications && !mailbox.supportsGuestNotifications) { return false }
 
     return (
       <Paper zDepth={1} style={styles.paper} {...passProps}>
         <h1 style={styles.subheading}>Notifications</h1>
-        <Toggle
-          toggled={mailbox.showNotifications}
-          label='Show notifications'
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
-            mailboxActions.reduce(mailbox.id, MailboxReducer.setShowNotifications, toggled)
-          }} />
-        <Toggle
-          toggled={mailbox.showAvatarInNotifications}
-          disabled={!mailbox.showNotifications}
-          label='Show account icon in Notifications'
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
-            mailboxActions.reduce(mailbox.id, MailboxReducer.setShowAvatarInNotifications, toggled)
-          }} />
-        {this.renderEnhanced(mailbox, os)}
-        <div>
-          <FlatButton
-            disabled={!mailbox.showNotifications}
-            onClick={this.sendTestNotification}
-            label='Test Notification'
-            icon={<FontIcon style={{ marginLeft: 0 }} className='material-icons'>play_arrow</FontIcon>}
-          />
-        </div>
+        {mailbox.supportsNativeNotifications || mailbox.supportsGuestNotifications ? (
+          <Toggle
+            toggled={mailbox.showNotifications}
+            label='Show notifications'
+            labelPosition='right'
+            onToggle={(evt, toggled) => {
+              mailboxActions.reduce(mailbox.id, MailboxReducer.setShowNotifications, toggled)
+            }} />
+        ) : undefined}
+        {mailbox.supportsNativeNotifications ? (
+          <div>
+            <Toggle
+              toggled={mailbox.showAvatarInNotifications}
+              disabled={!mailbox.showNotifications}
+              label='Show account icon in Notifications'
+              labelPosition='right'
+              onToggle={(evt, toggled) => {
+                mailboxActions.reduce(mailbox.id, MailboxReducer.setShowAvatarInNotifications, toggled)
+              }} />
+            {this.renderEnhanced(mailbox, os)}
+            <div>
+              <FlatButton
+                disabled={!mailbox.showNotifications}
+                onClick={this.sendTestNotification}
+                label='Test Notification'
+                icon={<FontIcon style={{ marginLeft: 0 }} className='material-icons'>play_arrow</FontIcon>}
+              />
+            </div>
+          </div>
+        ) : undefined}
       </Paper>
     )
   }

@@ -21,26 +21,23 @@ class NotificationRenderer {
     const settingsState = settingsStore.getState()
     const provider = NotificationPlatformSupport.supportsProvider(settingsState.os.notificationsProvider) ? settingsState.os.notificationsProvider : OSSettings.DEFAULT_NOTIFICATION_PROVIDER
 
+    const saltedHtml5Options = {
+      ...html5Options,
+      silent: settingsState.os.notificationsSilent ? true : html5Options.silent
+    }
+
     if (provider === OSSettings.NOTIFICATION_PROVIDERS.ELECTRON) {
-      ElectronNotificationRenderer.presentNotification(
-        title, html5Options, clickHandler, clickData
-      )
+      ElectronNotificationRenderer.presentNotification(title, saltedHtml5Options, clickHandler, clickData)
     } else if (provider === OSSettings.NOTIFICATION_PROVIDERS.ENHANCED) {
       switch (process.platform) {
         case 'darwin':
-          EnhancedNotificationRenderer.presentNotificationDarwin(
-            title, html5Options, clickHandler, clickData
-          )
+          EnhancedNotificationRenderer.presentNotificationDarwin(title, saltedHtml5Options, clickHandler, clickData)
           break
         case 'win32':
-          EnhancedNotificationRenderer.presentNotificationWin32(
-            title, html5Options, clickHandler, clickData
-          )
+          EnhancedNotificationRenderer.presentNotificationWin32(title, saltedHtml5Options, clickHandler, clickData)
           break
         case 'linux':
-          EnhancedNotificationRenderer.presentNotificationLinux(
-            title, html5Options, clickHandler, clickData
-          )
+          EnhancedNotificationRenderer.presentNotificationLinux(title, saltedHtml5Options, clickHandler, clickData)
           break
       }
     }
@@ -58,25 +55,17 @@ class NotificationRenderer {
     const provider = NotificationPlatformSupport.supportsProvider(settingsState.os.notificationsProvider) ? settingsState.os.notificationsProvider : OSSettings.DEFAULT_NOTIFICATION_PROVIDER
 
     if (provider === OSSettings.NOTIFICATION_PROVIDERS.ELECTRON) {
-      ElectronNotificationRenderer.presentMailboxNotification(
-        mailboxId, notification, clickHandler, mailboxState, settingsState
-      )
+      ElectronNotificationRenderer.presentMailboxNotification(mailboxId, notification, clickHandler, mailboxState, settingsState)
     } else if (provider === OSSettings.NOTIFICATION_PROVIDERS.ENHANCED) {
       switch (process.platform) {
         case 'darwin':
-          EnhancedNotificationRenderer.presentMailboxNotificationDarwin(
-            mailboxId, notification, clickHandler, mailboxState, settingsState
-          )
+          EnhancedNotificationRenderer.presentMailboxNotificationDarwin(mailboxId, notification, clickHandler, mailboxState, settingsState)
           break
         case 'win32':
-          EnhancedNotificationRenderer.presentMailboxNotificationWin32(
-            mailboxId, notification, clickHandler, mailboxState, settingsState
-          )
+          EnhancedNotificationRenderer.presentMailboxNotificationWin32(mailboxId, notification, clickHandler, mailboxState, settingsState)
           break
         case 'linux':
-          EnhancedNotificationRenderer.presentMailboxNotificationLinux(
-            mailboxId, notification, clickHandler, mailboxState, settingsState
-          )
+          EnhancedNotificationRenderer.presentMailboxNotificationLinux(mailboxId, notification, clickHandler, mailboxState, settingsState)
           break
       }
     }
