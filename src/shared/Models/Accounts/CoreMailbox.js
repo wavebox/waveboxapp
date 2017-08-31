@@ -13,6 +13,11 @@ const SERVICE_TOOLBAR_ICON_LAYOUTS = Object.freeze({
   RIGHT_ALIGN: 'RIGHT_ALIGN'
 })
 
+const DEFAULT_WINDOW_OPEN_MODES = Object.freeze({
+  BROWSER: 'BROWSER',
+  WAVEBOX: 'WAVEBOX'
+})
+
 const LOGO_NAME_RE = new RegExp(/^(.*?)([0-9]+)(px)(.*)$/)
 
 class CoreMailbox extends Model {
@@ -24,6 +29,7 @@ class CoreMailbox extends Model {
   static get SERVICE_TYPES () { return SERVICE_TYPES }
   static get SERVICE_DISPLAY_MODES () { return SERVICE_DISPLAY_MODES }
   static get SERVICE_TOOLBAR_ICON_LAYOUTS () { return SERVICE_TOOLBAR_ICON_LAYOUTS }
+  static get DEFAULT_WINDOW_OPEN_MODES () { return DEFAULT_WINDOW_OPEN_MODES }
   static get type () { return MAILBOX_TYPES.UNKNOWN }
   static get supportedServiceTypes () { return [SERVICE_TYPES.DEFAULT] }
   static get defaultServiceTypes () { return [SERVICE_TYPES.DEFAULT] }
@@ -167,6 +173,12 @@ class CoreMailbox extends Model {
   get supportsUnreadCount () { return this.constructor.supportsUnreadCount }
   get supportsNativeNotifications () { return this.constructor.supportsNativeNotifications }
   get supportsGuestNotifications () { return this.constructor.supportsGuestNotifications }
+
+  /* **************************************************************************/
+  // Properties: Window opening
+  /* **************************************************************************/
+
+  get defaultWindowOpenMode () { return this._value_('defaultWindowOpenMode', DEFAULT_WINDOW_OPEN_MODES.BROWSER) }
 
   /* **************************************************************************/
   // Properties: Wavebox

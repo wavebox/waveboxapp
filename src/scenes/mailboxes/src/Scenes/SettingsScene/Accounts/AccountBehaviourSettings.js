@@ -1,17 +1,12 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { FlatButton, SelectField, MenuItem } from 'material-ui'
+import { FlatButton } from 'material-ui'
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
-import CoreService from 'shared/Models/Accounts/CoreService'
 import { SleepableField } from 'Components/Fields'
 import * as Colors from 'material-ui/styles/colors'
 
-const humanizedOpenModes = {
-  [CoreService.DEFAULT_WINDOW_OPEN_MODES.BROWSER]: 'Default Browser',
-  [CoreService.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX]: 'Wavebox Browser'
-}
 const styles = {
   sleepUnavailable: {
     border: `2px solid ${Colors.lightBlue500}`,
@@ -79,18 +74,6 @@ export default class AccountBehaviourSettings extends React.Component {
 
     return (
       <div {...passProps}>
-        <SelectField
-          floatingLabelText='Open new windows in which Browser'
-          value={service.defaultWindowOpenMode}
-          floatingLabelFixed
-          fullWidth
-          onChange={(evt, index, value) => {
-            mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setDefaultWindowOpenMode, value)
-          }}>
-          {Object.keys(CoreService.DEFAULT_WINDOW_OPEN_MODES).map((mode) => {
-            return (<MenuItem key={mode} value={mode} primaryText={humanizedOpenModes[mode]} />)
-          })}
-        </SelectField>
         {userHasSleepable ? (
           <SleepableField
             key={`${mailbox.id}:${service.type}`}

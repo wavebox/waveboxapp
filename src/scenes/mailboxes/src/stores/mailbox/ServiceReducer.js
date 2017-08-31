@@ -89,20 +89,6 @@ class ServiceReducer {
   static setCustomJS (mailbox, service, js) {
     return service.changeData({ customJS: js })
   }
-
-  /* **************************************************************************/
-  // Behaviour
-  /* **************************************************************************/
-
-  /**
-  * Sets the default window open mode
-  * @param mailbox: the mailbox that contains the service
-  * @param service: the service to update
-  * @param mode: the new mode
-  */
-  static setDefaultWindowOpenMode (mailbox, service, mode) {
-    return service.changeData({ 'defaultWindowOpenMode': mode })
-  }
 }
 
 export default ServiceReducer

@@ -81,6 +81,7 @@ class User extends Model {
 
   get userEmail () { return this._value_('userEmail', null) }
   get hasUserEmail () { return !!this.userEmail }
+  get isLoggedIn () { return this.hasUserEmail }
 }
 
 module.exports = User

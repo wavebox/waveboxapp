@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
+import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import { MailboxLinker, mailboxStore, mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -62,7 +63,7 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     const mailbox = mailboxState.getMailbox(props.mailboxId)
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     return {
-      defaultWindowOpenMode: service ? service.defaultWindowOpenMode : CoreService.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX,
+      defaultWindowOpenMode: mailbox ? mailbox.defaultWindowOpenMode : CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX,
       url: service ? service.url : undefined,
       isActive: mailboxState.isActive(props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT)
     }
@@ -72,7 +73,7 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     const mailbox = mailboxState.getMailbox(this.props.mailboxId)
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     this.setState({
-      defaultWindowOpenMode: service ? service.defaultWindowOpenMode : CoreService.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX,
+      defaultWindowOpenMode: mailbox ? mailbox.defaultWindowOpenMode : CoreService.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX,
       url: service ? service.url : undefined,
       isActive: mailboxState.isActive(this.props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT)
     })
@@ -87,9 +88,9 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
   * @param evt: the event that fired
   */
   handleOpenNewWindow = (evt) => {
-    if (this.state.defaultWindowOpenMode === CoreService.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
+    if (this.state.defaultWindowOpenMode === CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
       MailboxLinker.openExternalWindow(evt.url)
-    } else if (this.state.defaultWindowOpenMode === CoreService.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
+    } else if (this.state.defaultWindowOpenMode === CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
       MailboxLinker.openContentWindow(this.props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT, evt.url, evt.options)
     }
   }
