@@ -188,7 +188,7 @@ class GoogleDefaultService extends GoogleService {
     return this.unreadThreads.map((thread) => {
       const message = thread.latestMessage
       return {
-        id: `${thread.id}:${thread.historyId}`,
+        id: `${thread.id}:${message.internalDate}`,
         title: message.subject || 'No Subject',
         titleFormat: 'text',
         body: [

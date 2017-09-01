@@ -129,6 +129,7 @@ class MailboxStore {
     * @return true if the mailbox is restricted, false otherwise
     */
     this.isMailboxRestricted = (id, user) => {
+      if (this.mailboxCount() === 0) { return false }
       if (user.hasAccountLimit || user.hasAccountTypeRestriction) {
         return !this
           .allMailboxes()
@@ -1147,13 +1148,13 @@ class MailboxStore {
   * @param service: the service type
   */
   handleChangeActive ({id, service}) {
-    if (this.isMailboxRestricted(id, userStore.getState().user)) {
+    const nextMailbox = id || this.index[0]
+    const nextService = service || CoreMailbox.SERVICE_TYPES.DEFAULT
+
+    if (this.isMailboxRestricted(nextMailbox, userStore.getState().user)) {
       this.preventDefault()
       window.location.hash = '/pro'
     } else {
-      const nextMailbox = id || this.index[0]
-      const nextService = service || CoreMailbox.SERVICE_TYPES.DEFAULT
-
       // Check we actually did change
       if (nextMailbox === this.active && nextService === this.activeService) {
         this.preventDefault()
