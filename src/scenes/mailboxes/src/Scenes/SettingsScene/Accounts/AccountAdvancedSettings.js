@@ -1,11 +1,17 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper, Toggle, FontIcon } from 'material-ui'
+import { Paper, Toggle, FontIcon, SelectField, MenuItem } from 'material-ui'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import * as Colors from 'material-ui/styles/colors'
 import { ConfirmFlatButton } from 'Components/Buttons'
+import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+
+const humanizedOpenModes = {
+  [CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER]: 'Default Browser',
+  [CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX]: 'Wavebox Browser'
+}
 
 export default class AccountAdvancedSettings extends React.Component {
   /* **************************************************************************/
@@ -25,12 +31,15 @@ export default class AccountAdvancedSettings extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
-  render () {
-    const { mailbox, children, showRestart, ...passProps } = this.props
-
+  /**
+  * Renders the cookie settings
+  * @param mailbox: the mailbox to render for
+  * @param showRestart: fn to call to show restart
+  * @return jsx
+  */
+  renderCookieSettings (mailbox, showRestart) {
     return (
-      <Paper zDepth={1} style={styles.paper} {...passProps}>
-        <h1 style={styles.subheading}>Advanced</h1>
+      <div>
         <Toggle
           toggled={mailbox.artificiallyPersistCookies}
           label='Artificially Persist Cookies. (Requires Restart)'
@@ -58,8 +67,42 @@ export default class AccountAdvancedSettings extends React.Component {
             </a>
           </small>
         </div>
-        <br />
-        {children}
+      </div>
+    )
+  }
+
+  /**
+  * Renders the window open settings
+  * @param mailbox: the mailbox to render for
+  * @return jsx
+  */
+  renderWindowOpenSettings (mailbox) {
+    return (
+      <div>
+        <SelectField
+          floatingLabelText='Open new windows in which Browser'
+          value={mailbox.defaultWindowOpenMode}
+          floatingLabelFixed
+          fullWidth
+          onChange={(evt, index, value) => {
+            mailboxActions.reduce(mailbox.id, MailboxReducer.setDefaultWindowOpenMode, value)
+          }}>
+          {Object.keys(CoreMailbox.DEFAULT_WINDOW_OPEN_MODES).map((mode) => {
+            return (<MenuItem key={mode} value={mode} primaryText={humanizedOpenModes[mode]} />)
+          })}
+        </SelectField>
+      </div>
+    )
+  }
+
+  /**
+  * Renders the destructive actions
+  * @param mailbox: the mailbox to render for
+  * @return jsx
+  */
+  renderDestructiveActions (mailbox) {
+    return (
+      <div>
         <div>
           <ConfirmFlatButton
             key={mailbox.id}
@@ -81,6 +124,22 @@ export default class AccountAdvancedSettings extends React.Component {
             labelStyle={{color: Colors.red600}}
             onConfirmedClick={() => mailboxActions.remove(mailbox.id)} />
         </div>
+      </div>
+    )
+  }
+
+  render () {
+    const { mailbox, children, showRestart, ...passProps } = this.props
+
+    return (
+      <Paper zDepth={1} style={styles.paper} {...passProps}>
+        <h1 style={styles.subheading}>Advanced</h1>
+        {this.renderCookieSettings(mailbox, showRestart)}
+        <br />
+        {this.renderWindowOpenSettings(mailbox)}
+        <br />
+        {children}
+        {this.renderDestructiveActions(mailbox)}
       </Paper>
     )
   }

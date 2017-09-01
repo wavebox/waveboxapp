@@ -37,7 +37,11 @@ class GoogleContactsService extends GoogleService {
   */
   getWindowOpenModeForUrl (url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl) {
     if (parsedUrl.hostname === 'mail.google.com' && parsedUrl.query.to !== undefined) { // Click email link
-      return this.constructor.WINDOW_OPEN_MODES.SUPPRESS
+      if (parsedProvisionalTargetUrl && provisionalTargetUrl === `mailto:${parsedUrl.query.to}`) {
+        return this.constructor.WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL
+      } else {
+        return this.constructor.WINDOW_OPEN_MODES.EXTERNAL
+      }
     }
 
     return super.getWindowOpenModeForUrl(url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl)

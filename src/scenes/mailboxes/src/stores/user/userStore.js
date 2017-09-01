@@ -100,7 +100,7 @@ class UserStore {
 
   handleAuthenticationSuccess ({ id, type, next }) {
     if (next) {
-      window.location.hash = `/account/view?url=${next}`
+      window.location.hash = `/account/view?url=${encodeURIComponent(next)}`
     } else {
       window.location.hash = '/account/view'
     }

@@ -10,6 +10,7 @@ const settingStore = require('../../stores/settingStore')
 const userStore = require('../../stores/userStore')
 const mailboxStore = require('../../stores/mailboxStore')
 const CoreService = require('../../../shared/Models/Accounts/CoreService')
+const CoreMailbox = require('../../../shared/Models/Accounts/CoreMailbox')
 const ClassTools = require('../../ClassTools')
 const {
   AuthGoogle,
@@ -299,45 +300,40 @@ class MailboxesWindow extends WaveboxWindow {
 
     // Handle other urls
     let openMode = CoreService.WINDOW_OPEN_MODES.EXTERNAL
-    let defaultOpenMode = CoreService.DEFAULT_WINDOW_OPEN_MODES.BROWSER
     let ownerId = null
+    let mailbox = null
+    let service = null
     let provisionalTargetUrl
 
+    // Grab the service and mailbox
     if (this.attachedMailboxes.has(webContentsId)) {
       const { mailboxId, serviceType } = this.attachedMailboxes.get(webContentsId)
       ownerId = `${mailboxId}:${serviceType}`
-      const service = mailboxStore.getService(mailboxId, serviceType)
-      if (service) {
-        provisionalTargetUrl = this.provisionalTargetUrls.get(ownerId)
-        openMode = service.getWindowOpenModeForUrl(
-          targetUrl,
-          purl,
-          disposition,
-          provisionalTargetUrl,
-          provisionalTargetUrl ? url.parse(provisionalTargetUrl, true) : undefined
-        )
-        defaultOpenMode = service.defaultWindowOpenMode
-      }
+      mailbox = mailboxStore.getMailbox(mailboxId)
+      service = mailboxStore.getService(mailboxId, serviceType)
+    }
+
+    if (service) {
+      provisionalTargetUrl = this.provisionalTargetUrls.get(ownerId)
+      openMode = service.getWindowOpenModeForUrl(
+        targetUrl,
+        purl,
+        disposition,
+        provisionalTargetUrl,
+        provisionalTargetUrl ? url.parse(provisionalTargetUrl, true) : undefined
+      )
     }
 
     if (openMode === CoreService.WINDOW_OPEN_MODES.POPUP_CONTENT) {
       evt.newGuest = this.openWindowWaveboxPopupContent(ownerId, targetUrl, options).window
     } else if (openMode === CoreService.WINDOW_OPEN_MODES.EXTERNAL) {
-      this.openWindowExternal(targetUrl)
+      this.openWindowExternal(targetUrl, mailbox)
     } else if (openMode === CoreService.WINDOW_OPEN_MODES.DEFAULT) {
-      if (defaultOpenMode === CoreService.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
-        this.openWindowExternal(targetUrl)
-      } else if (defaultOpenMode === CoreService.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
-        this.openWindowWaveboxContent(ownerId, targetUrl, options)
-      }
+      this.openWindowDefault(ownerId, mailbox, targetUrl, options)
     } else if (openMode === CoreService.WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL) {
-      this.openWindowExternal(provisionalTargetUrl)
+      this.openWindowExternal(provisionalTargetUrl, mailbox)
     } else if (openMode === CoreService.WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL) {
-      if (defaultOpenMode === CoreService.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
-        this.openWindowExternal(provisionalTargetUrl)
-      } else if (defaultOpenMode === CoreService.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
-        this.openWindowWaveboxContent(ownerId, provisionalTargetUrl, options)
-      }
+      this.openWindowDefault(ownerId, mailbox, provisionalTargetUrl, options)
     } else if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT) {
       this.openWindowWaveboxContent(ownerId, targetUrl, options)
     } else if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT_PROVSIONAL) {
@@ -369,6 +365,7 @@ class MailboxesWindow extends WaveboxWindow {
       if (this.attachedMailboxes.has(webContentsId)) {
         const { mailboxId, serviceType } = this.attachedMailboxes.get(webContentsId)
         let navigateMode = CoreService.NAVIGATE_MODES.DEFAULT
+        const mailbox = mailboxStore.getMailbox(mailboxId)
         const service = mailboxStore.getService(mailboxId, serviceType)
         if (service) {
           navigateMode = service.getNavigateModeForUrl(targetUrl, url.parse(targetUrl, true))
@@ -378,7 +375,7 @@ class MailboxesWindow extends WaveboxWindow {
           evt.preventDefault()
         } else if (navigateMode === CoreService.NAVIGATE_MODES.OPEN_EXTERNAL) {
           evt.preventDefault()
-          this.openWindowExternal(targetUrl)
+          this.openWindowExternal(targetUrl, mailbox)
         } else if (navigateMode === CoreService.NAVIGATE_MODES.OPEN_CONTENT) {
           evt.preventDefault()
           this.openWindowWaveboxContent(webContentsId, targetUrl, {
@@ -408,6 +405,25 @@ class MailboxesWindow extends WaveboxWindow {
   /* ****************************************************************************/
   // Window opening
   /* ****************************************************************************/
+
+  /**
+  * Opens a window with the default behaviour
+  * @param ownerId: the id of the owning window
+  * @param mailbox: the mailbox that's attempting to open
+  * @param targetUrl: the url to open
+  * @param options: the config options for the window
+  */
+  openWindowDefault (ownerId, mailbox, targetUrl, options) {
+    if (!mailbox) {
+      this.openWindowExternal(targetUrl, mailbox)
+    } else {
+      if (mailbox.defaultWindowOpenMode === CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
+        this.openWindowExternal(targetUrl, mailbox)
+      } else if (mailbox.defaultWindowOpenMode === CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
+        this.openWindowWaveboxContent(ownerId, targetUrl, options)
+      }
+    }
+  }
 
   /**
   * Opens a wavebox popup content window
@@ -442,10 +458,10 @@ class MailboxesWindow extends WaveboxWindow {
   /**
   * Opens links in an external window
   * @param targetUrl: the url to open
-  * @return true if the window was opened successfully, false otherwise
+  * @param mailbox=undefined: the mailbox to take the settings from if available
   */
-  openWindowExternal (targetUrl) {
-    return shell.openExternal(targetUrl, {
+  openWindowExternal (targetUrl, mailbox = undefined) {
+    shell.openExternal(targetUrl, {
       activate: !settingStore.os.openLinksInBackground
     })
   }

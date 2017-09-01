@@ -24,6 +24,7 @@ class GenericMailbox extends CoreMailbox {
   static get supportsUnreadActivity () { return true }
   static get supportsUnreadCount () { return false }
   static get supportsNativeNotifications () { return false }
+  static get supportsGuestNotifications () { return true }
   static get defaultColor () { return MailboxColors.GENERIC }
 
   /* **************************************************************************/

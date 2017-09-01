@@ -1,7 +1,7 @@
 {
   "name": "wavebox",
-  "version": "3.3.0",
-  "releaseChannel": "STABLE",
+  "version": "3.3.1",
+  "releaseChannel": "BETA",
   "description": "Wavebox",
   "scripts": {
     "rebuild:electron": "electron-rebuild -f -m src/app -v 1.7.5 -t prod,optional && electron-rebuild -f -m src/guest -v 1.7.5 -t prod,optional",
@@ -45,7 +45,7 @@
     "clean-webpack-plugin": "0.1.16",
     "copy-webpack-plugin": "4.0.1",
     "css-loader": "0.28.5",
-    "electron": "1.7.6",
+    "electron": "1.7.7",
     "electron-rebuild": "1.6.0",
     "extract-text-webpack-plugin": "3.0.0",
     "file-loader": "0.11.2",

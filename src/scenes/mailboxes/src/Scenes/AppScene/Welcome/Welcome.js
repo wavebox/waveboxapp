@@ -148,25 +148,26 @@ export default class Welcome extends React.Component {
 
   /**
   * Renders an account
+  * @param user: the user object
   * @param type: the account type
   * @param logo: the account logo
   * @param name: the account type name
   * @param action: callback to execute on click
   * @return jsx or undefined
   */
-  renderMailboxType (type, logo, name, action) {
+  renderMailboxType (user, type, logo, name, action) {
     return (
       <WelcomeAccountButton
         tooltipText={`Add ${name}`}
         size={60}
         logoPath={'../../' + logo}
-        onClick={() => this.state.user.hasAccountsOfType(type) ? action() : this.handleOpenAddWizard()}
+        onClick={() => user.hasAccountsOfType(type) ? action() : this.handleOpenAddWizard()}
         style={styles.accountIcon} />
     )
   }
 
   render () {
-    const { canImportWmail } = this.state
+    const { canImportWmail, user } = this.state
 
     return (
       <div style={styles.container}>
@@ -187,19 +188,21 @@ export default class Welcome extends React.Component {
             </p>
           </div>
           <div style={styles.accounts}>
-            {this.renderMailboxType(GoogleMailbox.type, GoogleMailbox.humanizedGmailVectorLogo, 'Gmail', mailboxActions.startAddGmailWizard)}
-            {this.renderMailboxType(GoogleMailbox.type, GoogleMailbox.humanizedGinboxVectorLogo, 'Google Inbox', mailboxActions.startAddGinboxWizard)}
-            {this.renderMailboxType(MicrosoftMailbox.type, MicrosoftMailbox.humanizedOutlookVectorLogo, 'Outlook', mailboxActions.startAddOutlookWizard)}
-            {this.renderMailboxType(MicrosoftMailbox.type, MicrosoftMailbox.humanizedOffice365VectorLogo, 'Office 365', mailboxActions.startAddOffice365Wizard)}
-            {this.renderMailboxType(TrelloMailbox.type, TrelloMailbox.humanizedVectorLogo, 'Trello', mailboxActions.startAddTrelloWizard)}
-            {this.renderMailboxType(SlackMailbox.type, SlackMailbox.humanizedVectorLogo, 'Slack', mailboxActions.startAddSlackWizard)}
-            {this.renderMailboxType(GenericMailbox.type, GenericMailbox.humanizedVectorLogo, 'Any Web Link', mailboxActions.startAddGenericWizard)}
+            {this.renderMailboxType(user, GoogleMailbox.type, GoogleMailbox.humanizedGmailVectorLogo, 'Gmail', mailboxActions.startAddGmailWizard)}
+            {this.renderMailboxType(user, GoogleMailbox.type, GoogleMailbox.humanizedGinboxVectorLogo, 'Google Inbox', mailboxActions.startAddGinboxWizard)}
+            {this.renderMailboxType(user, MicrosoftMailbox.type, MicrosoftMailbox.humanizedOutlookVectorLogo, 'Outlook', mailboxActions.startAddOutlookWizard)}
+            {this.renderMailboxType(user, MicrosoftMailbox.type, MicrosoftMailbox.humanizedOffice365VectorLogo, 'Office 365', mailboxActions.startAddOffice365Wizard)}
+            {this.renderMailboxType(user, TrelloMailbox.type, TrelloMailbox.humanizedVectorLogo, 'Trello', mailboxActions.startAddTrelloWizard)}
+            {this.renderMailboxType(user, SlackMailbox.type, SlackMailbox.humanizedVectorLogo, 'Slack', mailboxActions.startAddSlackWizard)}
+            {this.renderMailboxType(user, GenericMailbox.type, GenericMailbox.humanizedVectorLogo, 'Any Web Link', mailboxActions.startAddGenericWizard)}
           </div>
           <div style={styles.extraActions}>
-            <WelcomeRaisedButton
-              onClick={this.handleLoginWavebox}
-              style={styles.extraActionButton}
-              label='Already a User? Login' />
+            {!user.isLoggedIn ? (
+              <WelcomeRaisedButton
+                onClick={this.handleLoginWavebox}
+                style={styles.extraActionButton}
+                label='Already a User? Login' />
+            ) : undefined}
             {canImportWmail ? (
               <WelcomeRaisedButton
                 onClick={this.handleWmailImport}

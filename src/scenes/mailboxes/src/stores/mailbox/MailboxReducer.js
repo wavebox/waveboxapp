@@ -209,6 +209,19 @@ class MailboxReducer {
       return undefined
     }
   }
+
+  /* **************************************************************************/
+  // Window behaviour
+  /* **************************************************************************/
+
+  /**
+  * Sets the default window open mode
+  * @param mailbox: the mailbox that contains the service
+  * @param mode: the new mode
+  */
+  static setDefaultWindowOpenMode (mailbox, mode) {
+    return mailbox.changeData({ defaultWindowOpenMode: mode })
+  }
 }
 
 export default MailboxReducer
