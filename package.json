@@ -4,7 +4,7 @@
   "releaseChannel": "BETA",
   "description": "Wavebox",
   "scripts": {
-    "rebuild:electron": "electron-rebuild -f -m src/app -v 1.7.5 -t prod,optional && electron-rebuild -f -m src/guest -v 1.7.5 -t prod,optional",
+    "rebuild:electron": "electron-rebuild -f -m src/app -v 1.7.7 -t prod,optional && electron-rebuild -f -m src/guest -v 1.7.7 -t prod,optional",
     "prestart": "webpack",
     "start": "electron bin/app/index.js",
     "test": "standard",
