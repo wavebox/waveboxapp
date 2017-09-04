@@ -73,7 +73,7 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     const mailbox = mailboxState.getMailbox(this.props.mailboxId)
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     this.setState({
-      defaultWindowOpenMode: mailbox ? mailbox.defaultWindowOpenMode : CoreService.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX,
+      defaultWindowOpenMode: mailbox ? mailbox.defaultWindowOpenMode : CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX,
       url: service ? service.url : undefined,
       isActive: mailboxState.isActive(this.props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT)
     })
