@@ -10,7 +10,7 @@
     "bootstrap-grid": "2.0.1",
     "color": "2.0.0",
     "fbjs": "0.8.14",
-    "material-ui": "0.19.0",
+    "material-ui": "0.19.1",
     "phoenix": "wavebox/phoenix#57d2e1cef1dceaaeb110d040dd5cb2fd208ceed4",
     "prop-types": "15.5.10",
     "qs": "6.5.0",
