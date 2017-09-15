@@ -161,7 +161,6 @@ export default class MailboxWebView extends React.Component {
         browserDOMReady: false,
         isCrashed: false,
         language: settingState.language,
-        launchedApp: settingState.launched.app,
         focusedUrl: null,
         snapshot: mailboxState.getSnapshot(props.mailboxId, props.serviceType),
         isActive: mailboxState.isActive(props.mailboxId, props.serviceType),
@@ -195,8 +194,7 @@ export default class MailboxWebView extends React.Component {
   settingsChanged = (settingsState) => {
     this.setState((prevState) => {
       const update = {
-        language: settingsState.language,
-        launchedApp: settingsState.launched.app
+        language: settingsState.language
       }
 
       // Siphon setting changes down to the webview
@@ -611,8 +609,7 @@ export default class MailboxWebView extends React.Component {
       url,
       browserDOMReady,
       isCrashed,
-      snapshot,
-      launchedApp
+      snapshot
     } = this.state
 
     if (!mailbox || !service) { return false }
@@ -660,8 +657,8 @@ export default class MailboxWebView extends React.Component {
             zoomFactor={service.zoomFactor}
             searchId={searchId}
             searchTerm={isSearching ? searchTerm : ''}
-            webpreferences={launchedApp.useExperimentalWindowOpener ? 'contextIsolation=yes, nativeWindowOpen=yes' : 'contextIsolation=yes'}
-            allowpopups={allowpopups === undefined ? launchedApp.useExperimentalWindowOpener : allowpopups}
+            webpreferences={'contextIsolation=yes, nativeWindowOpen=yes'}
+            allowpopups={allowpopups === undefined ? true : allowpopups}
             plugins
             onWebContentsAttached={this.handleWebContentsAttached}
 

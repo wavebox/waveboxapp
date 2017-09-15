@@ -2,10 +2,8 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
-import { mailboxDispatch, mailboxStore, mailboxActions, MailboxLinker } from 'stores/mailbox'
+import { mailboxDispatch, mailboxStore, mailboxActions } from 'stores/mailbox'
 import { slackActions } from 'stores/slack'
-import { settingsStore } from 'stores/settings'
-import URI from 'urijs'
 import {
   WB_BROWSER_NOTIFICATION_PRESENT,
   WB_BROWSER_NOTIFICATION_CLICK
@@ -102,23 +100,6 @@ export default class SlackMailboxWebView extends React.Component {
   /* **************************************************************************/
 
   /**
-  * Opens a new url in the correct way
-  * @param evt: the event that fired
-  */
-  handleOpenNewWindow = (evt) => {
-    const url = URI(evt.url)
-
-    if (url.hostname() === 'files.slack.com') {
-      this.refs[REF].getWebContents().downloadURL(evt.url)
-    } else if (url.hostname().endsWith('.slack.com') && url.pathname().startsWith('/call/')) {
-      // Don't put the webPreferences across. It stops it from working. Probably cross frame comms
-      MailboxLinker.openContentWindow(this.props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT, evt.url, { ...evt.options, webPreferences: undefined })
-    } else {
-      MailboxLinker.openExternalWindow(evt.url)
-    }
-  }
-
-  /**
   * Handles any ipc messages
   * @param evt: the event that fired
   */
@@ -165,8 +146,7 @@ export default class SlackMailboxWebView extends React.Component {
         hasSearch={false}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
         plugHTML5Notifications={false}
-        ipcMessage={this.handleWebViewIPCMessage}
-        newWindow={settingsStore.getState().launched.app.useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow} />
+        ipcMessage={this.handleWebViewIPCMessage} />
     )
   }
 }

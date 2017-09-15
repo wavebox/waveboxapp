@@ -4,7 +4,6 @@ import { Toggle, Paper, SelectField, MenuItem, FlatButton, FontIcon } from 'mate
 import { settingsStore, settingsActions } from 'stores/settings'
 import { mailboxActions } from 'stores/mailbox'
 import { updaterActions } from 'stores/updater'
-import { SEGMENTS } from 'shared/Models/Settings/SettingsIdent'
 import AppSettings from 'shared/Models/Settings/AppSettings'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -105,14 +104,6 @@ export default class AdvancedSettings extends React.Component {
                 onToggle={(evt, toggled) => {
                   showRestart()
                   settingsActions.disableSmoothScrolling(toggled)
-                }} />
-              <Toggle
-                toggled={app.useExperimentalWindowOpener}
-                label='Use experimental window opener (Requires Restart)'
-                labelPosition='right'
-                onToggle={(evt, toggled) => {
-                  showRestart()
-                  settingsActions.update(SEGMENTS.APP, '3_1_8_useExperimentalWindowOpener', toggled)
                 }} />
               <Toggle
                 toggled={extension.enableChromeExperimental}

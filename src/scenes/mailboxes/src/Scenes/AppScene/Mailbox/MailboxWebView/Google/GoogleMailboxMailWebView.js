@@ -3,7 +3,7 @@ import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
-import { MailboxLinker, mailboxStore, mailboxDispatch } from 'stores/mailbox'
+import { mailboxStore, mailboxDispatch } from 'stores/mailbox'
 import { googleActions } from 'stores/google'
 import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -14,7 +14,6 @@ import {
   WB_BROWSER_GOOGLE_INBOX_TOP_MESSAGE_CHANGED,
   WB_BROWSER_GOOGLE_GMAIL_UNREAD_COUNT_CHANGED
 } from 'shared/ipcEvents'
-import URI from 'urijs'
 
 const REF = 'mailbox_tab'
 
@@ -173,28 +172,6 @@ export default class GoogleMailboxMailWebView extends React.Component {
   }
 
   /**
-  * Opens a new url in the correct way
-  * @param evt: the event that fired
-  */
-  handleOpenNewWindow = (evt) => {
-    const purl = URI(evt.url)
-    if (purl.hostname() === 'inbox.google.com') {
-      this.setState({ url: evt.url })
-    } else if (purl.hostname() === 'mail.google.com') {
-      const query = purl.search(true)
-      if (query.ui === '2' || query.view === 'om') {
-        MailboxLinker.openContentWindow(this.props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT, evt.url, evt.options)
-      } else {
-        this.setState({ url: evt.url })
-      }
-    } else if (purl.hostname() === 'drive.google.com') {
-      MailboxLinker.openContentWindow(this.props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT, evt.url, evt.options)
-    } else {
-      MailboxLinker.openExternalWindow(evt.url)
-    }
-  }
-
-  /**
   * Handles the unread count changing as per the ipc event
   */
   handleIPCUnreadCountChanged = (evt) => {
@@ -235,13 +212,11 @@ export default class GoogleMailboxMailWebView extends React.Component {
 
   render () {
     const { mailboxId } = this.props
-    const useExperimentalWindowOpener = settingsStore.getState().launched.app.useExperimentalWindowOpener
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={useExperimentalWindowOpener ? window.guestResolve('googleMailTooling') : window.guestResolve('googleMailNonExperimentalWindowTooling')}
+        preload={window.guestResolve('googleMailTooling')}
         mailboxId={mailboxId}
-        newWindow={useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
         domReady={this.handleBrowserDomReady}
         ipcMessage={this.dispatchBrowserIPCMessage} />

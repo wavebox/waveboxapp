@@ -51,7 +51,8 @@ const {
   WB_SQUIRREL_UPDATE_DISABLED
 } = require('../../../shared/ipcEvents')
 const {
-  WAVEBOX_CAPTURE_URL_PREFIX
+  WAVEBOX_CAPTURE_URL_PREFIX,
+  WAVEBOX_CAPTURE_URL_HOSTNAME
 } = require('../../../shared/constants')
 const {
   WAVEBOX_HOSTED_EXTENSION_PROTOCOL
@@ -202,11 +203,9 @@ class MailboxesWindow extends WaveboxWindow {
   */
   handleAppWebContentsCreated (evt, contents) {
     if (contents.getType() === 'webview' && contents.hostWebContents === this.window.webContents) {
-      if (settingStore.launched.app.useExperimentalWindowOpener) {
-        contents.on('new-window', (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
-          this.handleWebViewNewWindow(contents.id, evt, targetUrl, frameName, disposition, options, additionalFeatures)
-        })
-      }
+      contents.on('new-window', (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
+        this.handleWebViewNewWindow(contents.id, evt, targetUrl, frameName, disposition, options, additionalFeatures)
+      })
       contents.on('will-navigate', (evt, url) => {
         this.handleWebViewWillNavigate(contents.id, evt, url)
       })
@@ -302,7 +301,7 @@ class MailboxesWindow extends WaveboxWindow {
 
     // Check for some urls to never handle
     const purl = url.parse(targetUrl, true)
-    if (purl.hostname === 'wavebox.io' && purl.pathname.startsWith(WAVEBOX_CAPTURE_URL_PREFIX)) { return }
+    if (purl.hostname === WAVEBOX_CAPTURE_URL_HOSTNAME && purl.pathname.startsWith(WAVEBOX_CAPTURE_URL_PREFIX)) { return }
 
     // Handle other urls
     let openMode = CoreService.WINDOW_OPEN_MODES.EXTERNAL
@@ -367,29 +366,27 @@ class MailboxesWindow extends WaveboxWindow {
     }
 
     // Navigation modes
-    if (settingStore.launched.app.useExperimentalWindowOpener) {
-      if (this.attachedMailboxes.has(webContentsId)) {
-        const { mailboxId, serviceType } = this.attachedMailboxes.get(webContentsId)
-        let navigateMode = CoreService.NAVIGATE_MODES.DEFAULT
-        const mailbox = mailboxStore.getMailbox(mailboxId)
-        const service = mailboxStore.getService(mailboxId, serviceType)
-        if (service) {
-          navigateMode = service.getNavigateModeForUrl(targetUrl, url.parse(targetUrl, true))
-        }
+    if (this.attachedMailboxes.has(webContentsId)) {
+      const { mailboxId, serviceType } = this.attachedMailboxes.get(webContentsId)
+      let navigateMode = CoreService.NAVIGATE_MODES.DEFAULT
+      const mailbox = mailboxStore.getMailbox(mailboxId)
+      const service = mailboxStore.getService(mailboxId, serviceType)
+      if (service) {
+        navigateMode = service.getNavigateModeForUrl(targetUrl, url.parse(targetUrl, true))
+      }
 
-        if (navigateMode === CoreService.NAVIGATE_MODES.SUPPRESS) {
-          evt.preventDefault()
-        } else if (navigateMode === CoreService.NAVIGATE_MODES.OPEN_EXTERNAL) {
-          evt.preventDefault()
-          this.openWindowExternal(targetUrl, mailbox)
-        } else if (navigateMode === CoreService.NAVIGATE_MODES.OPEN_CONTENT) {
-          evt.preventDefault()
-          this.openWindowWaveboxContent(webContentsId, targetUrl, {
-            webPreferences: {
-              partition: 'persist:' + mailboxId
-            }
-          })
-        }
+      if (navigateMode === CoreService.NAVIGATE_MODES.SUPPRESS) {
+        evt.preventDefault()
+      } else if (navigateMode === CoreService.NAVIGATE_MODES.OPEN_EXTERNAL) {
+        evt.preventDefault()
+        this.openWindowExternal(targetUrl, mailbox)
+      } else if (navigateMode === CoreService.NAVIGATE_MODES.OPEN_CONTENT) {
+        evt.preventDefault()
+        this.openWindowWaveboxContent(webContentsId, targetUrl, {
+          webPreferences: {
+            partition: 'persist:' + mailboxId
+          }
+        })
       }
     }
   }

@@ -17,8 +17,7 @@ import {
   WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED
 } from 'shared/ipcEvents'
 const {
-  ipcRenderer,
-  remote: { shell }
+  ipcRenderer
 } = window.nativeRequire('electron')
 
 const BROWSER_REF = 'browser'
@@ -65,7 +64,6 @@ export default class ToolwindowExtension extends React.Component {
     const settingState = settingsStore.getState()
     return {
       extension: extensionStore.getState().getInstalled(this.props.installId),
-      launchedApp: settingState.launched.app,
       language: settingState.language.spellcheckerLanguage,
       secondaryLanguage: settingState.language.secondarySpellcheckerLanguage
     }
@@ -146,14 +144,6 @@ export default class ToolwindowExtension extends React.Component {
   }
 
   /**
-  * Opens a new url in the correct way
-  * @param evt: the event that fired
-  */
-  handleOpenNewWindow = (evt) => {
-    shell.openExternal(evt.url)
-  }
-
-  /**
   * Handles the webcontents being attached
   * @param webContents: the webcontents that were attached
   */
@@ -186,7 +176,7 @@ export default class ToolwindowExtension extends React.Component {
 
   render () {
     const { position, installId, style, ...passProps } = this.props
-    const { extension, launchedApp } = this.state
+    const { extension } = this.state
     if (!extension) { return false }
 
     const { manifest, installTime } = extension
@@ -204,11 +194,10 @@ export default class ToolwindowExtension extends React.Component {
           preload={window.guestResolve('hostedExtensionTooling')}
           src={`${WAVEBOX_HOSTED_EXTENSION_PROTOCOL}://${installId}/${toolwindowIndex}`}
           partition={'persist:' + installId}
-          webpreferences={launchedApp.useExperimentalWindowOpener ? 'contextIsolation=yes, nativeWindowOpen=yes' : 'contextIsolation=yes'}
-          allowpopups={launchedApp.useExperimentalWindowOpener}
+          webpreferences={'contextIsolation=yes, nativeWindowOpen=yes'}
+          allowpopups
           plugins
           onWebContentsAttached={this.handleWebContentsAttached}
-          newWindow={launchedApp.useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow}
           ipcMessage={this.handleIPCMessage}
           domReady={this.handleBrowserDomReady} />
       </div>

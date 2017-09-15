@@ -2,9 +2,8 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
-import { mailboxDispatch, MailboxLinker } from 'stores/mailbox'
+import { mailboxDispatch } from 'stores/mailbox'
 import { trelloActions } from 'stores/trello'
-import { settingsStore } from 'stores/settings'
 
 const REF = 'mailbox_tab'
 
@@ -56,18 +55,6 @@ export default class TrelloMailboxWebView extends React.Component {
   }
 
   /* **************************************************************************/
-  // Browser Events
-  /* **************************************************************************/
-
-  /**
-  * Opens a new url in the correct way
-  * @param evt: the event that fired
-  */
-  handleOpenNewWindow = (evt) => {
-    MailboxLinker.openExternalWindow(evt.url)
-  }
-
-  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
@@ -79,8 +66,7 @@ export default class TrelloMailboxWebView extends React.Component {
         ref={REF}
         preload={window.guestResolve('trelloDefaultServiceTooling')}
         mailboxId={mailboxId}
-        serviceType={CoreService.SERVICE_TYPES.DEFAULT}
-        newWindow={settingsStore.getState().launched.app.useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow} />
+        serviceType={CoreService.SERVICE_TYPES.DEFAULT} />
     )
   }
 }

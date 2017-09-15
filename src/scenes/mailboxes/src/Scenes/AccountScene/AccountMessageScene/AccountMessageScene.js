@@ -35,10 +35,14 @@ export default class AccountMessageScene extends React.Component {
 
   componentDidMount () {
     userStore.listen(this.userUpdated)
+    this.markTO = setTimeout(() => {
+      settingsActions.setSeenAccountMessageUrl(this.state.url)
+    }, 1500)
   }
 
   componentWillUnmount () {
     userStore.unlisten(this.userUpdated)
+    clearTimeout(this.markTO)
   }
 
   /* **************************************************************************/
@@ -66,8 +70,8 @@ export default class AccountMessageScene extends React.Component {
   * Closes the modal
   */
   handleClose = () => {
-    settingsActions.setSeenAccountMessageUrl(this.state.url)
     this.setState({ open: false })
+    settingsActions.setSeenAccountMessageUrl(this.state.url)
     setTimeout(() => {
       window.location.hash = '/'
     }, 250)

@@ -6,8 +6,6 @@ import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import GoogleMailboxMailWebView from './MailboxWebView/Google/GoogleMailboxMailWebView'
 import GoogleMailboxServiceWebView from './MailboxWebView/Google/GoogleMailboxServiceWebView'
-import GoogleMailboxCommunicationWebView from './MailboxWebView/Google/GoogleMailboxCommunicationWebView'
-import GoogleMailboxContactsWebView from './MailboxWebView/Google/GoogleMailboxContactsWebView'
 import GoogleMailboxStorageWebView from './MailboxWebView/Google/GoogleMailboxStorageWebView'
 import TrelloMailboxWebView from './MailboxWebView/Trello/TrelloMailboxWebView'
 import SlackMailboxWebView from './MailboxWebView/Slack/SlackMailboxWebView'
@@ -136,10 +134,6 @@ export default class MailboxTab extends React.Component {
       switch (serviceType) {
         case CoreService.SERVICE_TYPES.DEFAULT:
           return (<GoogleMailboxMailWebView mailboxId={mailboxId} key={key} />)
-        case CoreService.SERVICE_TYPES.COMMUNICATION:
-          return (<GoogleMailboxCommunicationWebView mailboxId={mailboxId} key={key} />)
-        case CoreService.SERVICE_TYPES.CONTACTS:
-          return (<GoogleMailboxContactsWebView mailboxId={mailboxId} key={key} />)
         case CoreService.SERVICE_TYPES.STORAGE:
           return (<GoogleMailboxStorageWebView mailboxId={mailboxId} key={key} />)
         default:

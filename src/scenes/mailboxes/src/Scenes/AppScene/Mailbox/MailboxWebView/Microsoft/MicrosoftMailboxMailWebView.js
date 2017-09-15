@@ -4,8 +4,6 @@ import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import { mailboxDispatch, MailboxLinker } from 'stores/mailbox'
 import { microsoftActions } from 'stores/microsoft'
-import { settingsStore } from 'stores/settings'
-import URI from 'urijs'
 
 const REF = 'mailbox_tab'
 
@@ -52,36 +50,6 @@ export default class MicrosoftMailboxMailWebView extends React.Component {
   }
 
   /* **************************************************************************/
-  // Browser Events
-  /* **************************************************************************/
-
-  /**
-  * Opens a new url in the correct way
-  * @param evt: the event that fired
-  */
-  handleOpenNewWindow = (evt) => {
-    const url = URI(evt.url)
-
-    // Download Attachments
-    if (url.hostname() === 'attachment.outlook.office.net' || url.hostname() === 'outlook.office365.com') {
-      if (url.pathname().endsWith('GetFileAttachment')) {
-        this.refs[REF].getWebContents().downloadURL(evt.url)
-        return
-      }
-    }
-
-    // Download all attachments
-    if (url.hostname() === 'outlook.live.com' || url.hostname() === 'outlook.office365.com') {
-      if (url.pathname() === '/owa/service.svc/s/GetAllAttachmentsAsZip') {
-        this.refs[REF].getWebContents().downloadURL(evt.url)
-        return
-      }
-    }
-
-    MailboxLinker.openExternalWindow(evt.url)
-  }
-
-  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
@@ -93,8 +61,7 @@ export default class MicrosoftMailboxMailWebView extends React.Component {
         ref={REF}
         preload={window.guestResolve('serviceTooling')}
         mailboxId={mailboxId}
-        serviceType={CoreService.SERVICE_TYPES.DEFAULT}
-        newWindow={settingsStore.getState().launched.app.useExperimentalWindowOpener ? undefined : this.handleOpenNewWindow} />
+        serviceType={CoreService.SERVICE_TYPES.DEFAULT} />
     )
   }
 }

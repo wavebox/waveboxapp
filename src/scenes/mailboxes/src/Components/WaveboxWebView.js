@@ -2,7 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import BrowserView from 'sharedui/Components/BrowserView'
 import URI from 'urijs'
-import { WAVEBOX_CAPTURE_URLS } from 'shared/constants'
+import {
+  WAVEBOX_CAPTURE_URLS,
+  WAVEBOX_CAPTURE_URL_HOSTNAME
+} from 'shared/constants'
 const { remote: {shell} } = window.nativeRequire('electron')
 const pkg = window.appPackage()
 
@@ -33,7 +36,7 @@ export default class WaveboxWebView extends React.Component {
   */
   routeUrl (url) {
     const purl = URI(url)
-    if (purl.hostname() === 'wavebox.io') {
+    if (purl.hostname() === WAVEBOX_CAPTURE_URL_HOSTNAME) {
       switch (purl.pathname()) {
         case WAVEBOX_CAPTURE_URLS.SETTINGS:
           window.location.hash = '/settings'
@@ -84,10 +87,8 @@ export default class WaveboxWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleOpenNewWindow = (evt) => {
-    const didRoute = this.routeUrl(evt.url)
-    if (!didRoute) {
-      shell.openExternal(evt.url)
-    }
+    // Unhandled urls will be handled by the main thread
+    this.routeUrl(evt.url)
   }
 
   /**

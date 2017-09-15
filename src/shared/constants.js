@@ -103,6 +103,7 @@ module.exports = Object.freeze({
   UPDATE_USER_MANUAL_DOWNLOAD_STABLE: 'https://wavebox.io/download',
   UPDATE_USER_MANUAL_DOWNLOAD_BETA: 'https://github.com/wavebox/waveboxapp/releases',
 
+  WAVEBOX_CAPTURE_URL_HOSTNAME: 'wavebox.io',
   WAVEBOX_CAPTURE_URL_PREFIX: '/app/redirect/',
   WAVEBOX_CAPTURE_URLS: {
     SETTINGS: '/app/redirect/settings',
