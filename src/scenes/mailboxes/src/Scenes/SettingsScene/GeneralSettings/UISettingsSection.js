@@ -4,12 +4,16 @@ import { Toggle, Paper, SelectField, MenuItem } from 'material-ui'
 import settingsActions from 'stores/settings/settingsActions'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
-import { UISettings } from 'shared/Models/Settings'
+import { UISettings, ExtensionSettings } from 'shared/Models/Settings'
 
 const SIDEBAR_NEWS_MODE_LABELS = {
   [UISettings.SIDEBAR_NEWS_MODES.NEVER]: 'Never',
   [UISettings.SIDEBAR_NEWS_MODES.UNREAD]: `When there's new items`,
   [UISettings.SIDEBAR_NEWS_MODES.ALWAYS]: 'Always'
+}
+const EXTENSION_LAYOUT_MODE_LABELS = {
+  [ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_LEFT]: 'Left',
+  [ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_RIGHT]: 'Right'
 }
 
 export default class UISettingsSection extends React.Component {
@@ -21,6 +25,7 @@ export default class UISettingsSection extends React.Component {
     ui: PropTypes.object.isRequired,
     os: PropTypes.object.isRequired,
     accelerators: PropTypes.object.isRequired,
+    extension: PropTypes.object.isRequired,
     showRestart: PropTypes.func.isRequired
   }
 
@@ -36,6 +41,7 @@ export default class UISettingsSection extends React.Component {
     const {
       ui,
       os,
+      extension,
       accelerators,
       showRestart,
       ...passProps
@@ -140,6 +146,32 @@ export default class UISettingsSection extends React.Component {
             label='Show titlebar active account'
             labelPosition='right'
             onToggle={(evt, toggled) => settingsActions.setShowTitlebarAccount(toggled)} />
+          {extension.enableChromeExperimental ? (
+            <div>
+              <hr style={styles.subsectionRule} />
+              <h1 style={styles.subsectionheading}>Toolbar</h1>
+              <Toggle
+                toggled={extension.showBrowserActionsInToolbar}
+                label='Show extensions in toolbar'
+                labelPosition='right'
+                onToggle={(evt, toggled) => settingsActions.setExtensionShowBrowserActionsInToolbar(toggled)} />
+              <SelectField
+                floatingLabelText='Extension position in toolbar'
+                value={extension.toolbarBrowserActionLayout}
+                disabled={!extension.showBrowserActionsInToolbar}
+                fullWidth
+                onChange={(evt, index, value) => { settingsActions.setExtensionToolbarBrowserActionLayout(value) }}>
+                {Object.keys(ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT).map((value) => {
+                  return (
+                    <MenuItem
+                      key={value}
+                      value={value}
+                      primaryText={EXTENSION_LAYOUT_MODE_LABELS[value]} />
+                  )
+                })}
+              </SelectField>
+            </div>
+          ) : undefined}
         </Paper>
       </div>
     )

@@ -110,6 +110,9 @@ export default class MailboxWebView extends React.Component {
     mailboxDispatch.removeGetter('current-url', this.handleGetCurrentUrl)
     mailboxDispatch.removeListener('navigateBack', this.handleNavigateBack)
     mailboxDispatch.removeListener('navigateForward', this.handleNavigateForward)
+
+    // Update the store
+    mailboxActions.deleteWebcontentTabId.defer(this.props.mailboxId, this.props.serviceType)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -460,11 +463,13 @@ export default class MailboxWebView extends React.Component {
   * @param webContents: the webcontents that were attached
   */
   handleWebContentsAttached = (webContents) => {
+    const { mailboxId, serviceType } = this.props
     ipcRenderer.send(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, {
       webContentsId: webContents.id,
-      mailboxId: this.props.mailboxId,
-      serviceType: this.props.serviceType
+      mailboxId: mailboxId,
+      serviceType: serviceType
     })
+    mailboxActions.setWebcontentTabId(mailboxId, serviceType, webContents.id)
   }
 
   /**

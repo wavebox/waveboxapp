@@ -6,6 +6,7 @@ const {
     SettingsIdent: { SEGMENTS },
     AcceleratorSettings,
     AppSettings,
+    ExtensionSettings,
     LanguageSettings,
     NewsSettings,
     OSSettings,
@@ -21,6 +22,7 @@ class SettingStore extends EventEmitter {
     // Build the current data
     this.accelerators = new AcceleratorSettings(persistence.getJSONItem(SEGMENTS.ACCELERATORS, {}))
     this.app = new AppSettings(persistence.getJSONItem(SEGMENTS.APP, {}), pkg)
+    this.extension = new ExtensionSettings(persistence.getJSONItem(SEGMENTS.EXTENSION, {}))
     this.language = new LanguageSettings(persistence.getJSONItem(SEGMENTS.LANGUAGE, {}))
     this.news = new NewsSettings(persistence.getJSONItem(SEGMENTS.NEWS, {}))
     this.os = new OSSettings(persistence.getJSONItem(SEGMENTS.OS, {}))
@@ -30,6 +32,7 @@ class SettingStore extends EventEmitter {
     this.launched = {
       accelerators: this.accelerators,
       app: this.app,
+      extension: this.extension,
       language: this.language,
       news: this.news,
       os: this.os,
@@ -49,6 +52,12 @@ class SettingStore extends EventEmitter {
       this.app = new AppSettings(persistence.getJSONItem(SEGMENTS.APP, {}), pkg)
       this.emit('changed', { })
       this.emit('changed:' + SEGMENTS.APP, { prev: prev, next: this.app })
+    })
+    persistence.on('changed:' + SEGMENTS.EXTENSION, () => {
+      const prev = this.language
+      this.extension = new ExtensionSettings(persistence.getJSONItem(SEGMENTS.EXTENSION, {}), pkg)
+      this.emit('changed', { })
+      this.emit('changed:' + SEGMENTS.EXTENSION, { prev: prev, next: this.extension })
     })
     persistence.on('changed:' + SEGMENTS.LANGUAGE, () => {
       const prev = this.language

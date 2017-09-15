@@ -1,6 +1,7 @@
 module.exports = {
   AcceleratorSettings: require('./AcceleratorSettings'),
   AppSettings: require('./AppSettings'),
+  ExtensionSettings: require('./ExtensionSettings'),
   LanguageSettings: require('./LanguageSettings'),
   NewsSettings: require('./NewsSettings'),
   OSSettings: require('./OSSettings'),

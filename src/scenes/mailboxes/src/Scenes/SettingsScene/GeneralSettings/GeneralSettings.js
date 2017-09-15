@@ -47,6 +47,7 @@ export default class GeneralSettings extends React.Component {
     return {
       ui: store.ui,
       os: store.os,
+      extension: store.extension,
       language: store.language,
       tray: store.tray,
       accelerators: store.accelerators
@@ -90,6 +91,7 @@ export default class GeneralSettings extends React.Component {
       ui,
       os,
       language,
+      extension,
       tray,
       accelerators,
       openAtLoginSupported,
@@ -103,7 +105,7 @@ export default class GeneralSettings extends React.Component {
         <Container fluid>
           <Row>
             <Col md={6}>
-              <UISettingsSection ui={ui} os={os} accelerators={accelerators} showRestart={showRestart} />
+              <UISettingsSection ui={ui} os={os} accelerators={accelerators} extension={extension} showRestart={showRestart} />
               <NotificationSettingsSection os={os} />
               <DownloadSettingsSection os={os} />
               <LanguageSettingsSection language={language} showRestart={showRestart} />

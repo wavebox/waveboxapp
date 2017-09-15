@@ -12,6 +12,7 @@ const mailboxStore = require('../../stores/mailboxStore')
 const CoreService = require('../../../shared/Models/Accounts/CoreService')
 const CoreMailbox = require('../../../shared/Models/Accounts/CoreMailbox')
 const ClassTools = require('../../ClassTools')
+const CRExtensionUISubscriber = require('../../Extensions/Chrome/CRExtensionUISubscriber')
 const {
   AuthGoogle,
   AuthMicrosoft,
@@ -83,6 +84,7 @@ class MailboxesWindow extends WaveboxWindow {
     this.attachedMailboxes = new Map()
     this.attachedExtensions = new Map()
     this.provisionalTargetUrls = new Map()
+    this.gracefulReloadTimeout = null
 
     ClassTools.autobindFunctions(this, [
       'handleAppWebContentsCreated',
@@ -170,6 +172,8 @@ class MailboxesWindow extends WaveboxWindow {
     this.window.webContents.removeAllListeners('devtools-reload-page')
     this.window.webContents.on('devtools-reload-page', () => this.reload())
 
+    CRExtensionUISubscriber.subscribe(this.window.webContents)
+
     return this
   }
 
@@ -177,6 +181,7 @@ class MailboxesWindow extends WaveboxWindow {
   * Handles destroy being called
   */
   destroy (evt) {
+    clearTimeout(this.gracefulReloadTimeout)
     app.removeListener('web-contents-created', this.handleAppWebContentsCreated)
     ipcMain.removeListener(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, this.handleMailboxesWebViewAttached)
     ipcMain.removeListener(WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED, this.handleExtensionWebViewAttached)
@@ -252,6 +257,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   handleAcceptGracefulReload (evt, body) {
     if (evt.sender === this.window.webContents) {
+      clearTimeout(this.gracefulReloadTimeout)
       this.window.loadURL(this.generateWindowUrl())
     }
   }
@@ -475,7 +481,11 @@ class MailboxesWindow extends WaveboxWindow {
   * @return this
   */
   reload () {
+    clearTimeout(this.gracefulReloadTimeout)
     this.window.webContents.send(WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD, {})
+    this.gracefulReloadTimeout = setTimeout(() => {
+      this.window.loadURL(this.generateWindowUrl())
+    }, 750)
     return this
   }
 

@@ -480,6 +480,31 @@ class SettingsActions {
   setTrayGtkUpdateMode (val) {
     return this.update(SEGMENTS.TRAY, 'gtkUpdateMode', val)
   }
+
+  /* **************************************************************************/
+  // Extensions
+  /* **************************************************************************/
+
+  /**
+  * @param enable: true to enable chrome extension support, false otherwise
+  */
+  setExtensionEnableChromeExperimental (enable) {
+    return this.update(SEGMENTS.EXTENSION, 'enableChromeExperimental', enable)
+  }
+
+  /**
+  * @param show: true to show browser actions in the toolbar
+  */
+  setExtensionShowBrowserActionsInToolbar (show) {
+    return this.update(SEGMENTS.EXTENSION, 'showBrowserActionsInToolbar', show)
+  }
+
+  /**
+  * @param layout: the layout mode for the toolbar
+  */
+  setExtensionToolbarBrowserActionLayout (layout) {
+    return this.update(SEGMENTS.EXTENSION, 'toolbarBrowserActionLayout', layout)
+  }
 }
 
 const actions = alt.createActions(SettingsActions)

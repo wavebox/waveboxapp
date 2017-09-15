@@ -6,6 +6,7 @@ import fs from 'fs'
 import {
   AcceleratorSettings,
   AppSettings,
+  ExtensionSettings,
   LanguageSettings,
   OSSettings,
   NewsSettings,
@@ -84,6 +85,7 @@ class SettingsStore {
   constructor () {
     this.accelerators = null
     this.app = null
+    this.extension = null
     this.language = null
     this.news = null
     this.os = null
@@ -93,6 +95,7 @@ class SettingsStore {
     this.launched = {
       accelerators: null,
       app: null,
+      extension: null,
       language: null,
       news: null,
       os: null,
@@ -168,6 +171,7 @@ class SettingsStore {
     // Load everything
     this.accelerators = new AcceleratorSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.ACCELERATORS, {}))
     this.app = new AppSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.APP, {}), pkg)
+    this.extension = new ExtensionSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.EXTENSION, {}))
     this.language = new LanguageSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.LANGUAGE, {}))
     this.news = new NewsSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.NEWS, {}))
     this.os = new OSSettings(persistence.getJSONItemSync(SettingsIdent.SEGMENTS.OS, {}))
@@ -177,6 +181,7 @@ class SettingsStore {
     this.launched = {
       accelerators: this.accelerators,
       app: this.app,
+      extension: this.extension,
       language: this.language,
       news: this.news,
       os: this.os,
@@ -286,6 +291,7 @@ class SettingsStore {
     switch (segment) {
       case SettingsIdent.SEGMENTS.ACCELERATORS: return AcceleratorSettings
       case SettingsIdent.SEGMENTS.APP: return AppSettings
+      case SettingsIdent.SEGMENTS.EXTENSION: return ExtensionSettings
       case SettingsIdent.SEGMENTS.LANGUAGE: return LanguageSettings
       case SettingsIdent.SEGMENTS.NEWS: return NewsSettings
       case SettingsIdent.SEGMENTS.OS: return OSSettings

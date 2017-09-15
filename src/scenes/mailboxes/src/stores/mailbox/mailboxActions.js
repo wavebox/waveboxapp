@@ -48,6 +48,25 @@ class MailboxActions {
   */
   remoteChange () { return {} }
 
+  /**
+  * Sets the tab id for a mailbox
+  * @param mailboxId: the id of the mailbox
+  * @param serviceType: the type of service
+  * @param tabId: the id of the tab to set
+  */
+  setWebcontentTabId (mailboxId, serviceType, tabId) {
+    return { mailboxId, serviceType, tabId }
+  }
+
+  /**
+  * Deletes the tab id for a mailbox
+  * @param mailboxId: the id of the mailbox
+  * @param serviceType: the type of service
+  */
+  deleteWebcontentTabId (mailboxId, serviceType) {
+    return { mailboxId, serviceType }
+  }
+
   /* **************************************************************************/
   // Mailbox Wizards
   /* **************************************************************************/

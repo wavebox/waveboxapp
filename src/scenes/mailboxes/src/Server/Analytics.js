@@ -136,7 +136,8 @@ class Analytics {
     const settingsState = settingsStore.getState()
     const experimentalString = [
       'windowOpener=' + settingsState.app.useExperimentalWindowOpener,
-      'notifications=' + settingsState.os.notificationsProvider
+      'notifications=' + settingsState.os.notificationsProvider,
+      'crextensions=' + settingsState.extension.enableChromeExperimental
     ].join('&')
 
     return this.sendEvent(reportEventReason, {

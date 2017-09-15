@@ -9,9 +9,17 @@ const {
 const {
   WAVEBOX_CONTENT_IMPL_PROTOCOL,
   WAVEBOX_CONTENT_EXTENSION_PROTOCOL,
-  WAVEBOX_HOSTED_EXTENSION_PROTOCOL
+  WAVEBOX_HOSTED_EXTENSION_PROTOCOL,
+  CR_EXTENSION_PROTOCOL
 } = req.shared('extensionApis')
-const SUPPORTED_PROTOCOLS = new Set(['http:', 'https:', WAVEBOX_HOSTED_EXTENSION_PROTOCOL + ':'])
+const SUPPORTED_PROTOCOLS = new Set([
+  'http:',
+  'https:',
+  `${WAVEBOX_HOSTED_EXTENSION_PROTOCOL}:`
+])
+const SUPPRESSED_PROTOCOLS = new Set([
+  `${CR_EXTENSION_PROTOCOL}:`
+])
 
 class ExtensionLoader {
   /* **************************************************************************/
@@ -87,6 +95,8 @@ class ExtensionLoader {
             })
           })
         })
+    } else if (SUPPRESSED_PROTOCOLS.has(window.location.protocol)) {
+      /* no-op */
     } else {
       return Promise.reject(new Error('Unsupported Guest Protocol'))
     }

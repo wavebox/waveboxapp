@@ -44,6 +44,7 @@ export default class AdvancedSettings extends React.Component {
   generateState (settingsState = settingsStore.getState()) {
     return {
       app: settingsState.app,
+      extension: settingsState.extension,
       accelerators: settingsState.accelerators
     }
   }
@@ -65,7 +66,7 @@ export default class AdvancedSettings extends React.Component {
   }
 
   render () {
-    const { app, accelerators } = this.state
+    const { app, accelerators, extension } = this.state
     const { showRestart, ...passProps } = this.props
 
     return (
@@ -112,6 +113,14 @@ export default class AdvancedSettings extends React.Component {
                 onToggle={(evt, toggled) => {
                   showRestart()
                   settingsActions.update(SEGMENTS.APP, '3_1_8_useExperimentalWindowOpener', toggled)
+                }} />
+              <Toggle
+                toggled={extension.enableChromeExperimental}
+                label='Experimental chrome extension support (Requires Restart)'
+                labelPosition='right'
+                onToggle={(evt, toggled) => {
+                  showRestart()
+                  settingsActions.setExtensionEnableChromeExperimental(toggled)
                 }} />
             </Paper>
             <Paper zDepth={1} style={styles.paper}>

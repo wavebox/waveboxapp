@@ -17,5 +17,19 @@ module.exports = {
 
   // Extensions
   WAVEBOX_CONTENT_EXTENSION_PROTOCOL: 'waveboxce',
-  WAVEBOX_HOSTED_EXTENSION_PROTOCOL: 'waveboxhe'
+  WAVEBOX_HOSTED_EXTENSION_PROTOCOL: 'waveboxhe',
+
+  // Chrome
+  CR_EXTENSION_PROTOCOL: 'chrome-extension',
+  CR_EXTENSION_DOWNLOAD_PARTITION_PREFIX: '__download_chrome_extension:',
+  CR_EXTENSION_BG_PARTITION_PREFIX: 'persist:__chrome_extension:',
+  CR_RUNTIME_ENVIRONMENTS: {
+    CONTENTSCRIPT: 'CONTENTSCRIPT',
+    BACKGROUND: 'BACKGROUND',
+    HOSTED: 'HOSTED'
+  },
+  CR_STORAGE_TYPES: {
+    LOCAL: 'LOCAL',
+    SYNC: 'SYNC'
+  }
 }

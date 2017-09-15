@@ -112,7 +112,7 @@ export default class GenericAccountSettings extends React.Component {
           <Col md={6}>
             <Paper zDepth={1} style={styles.paper}>
               <TextField
-                key={mailbox.displayName}
+                key={`displayName_${mailbox.displayName}`}
                 fullWidth
                 floatingLabelFixed
                 hintText='My Website'
@@ -121,7 +121,7 @@ export default class GenericAccountSettings extends React.Component {
                 errorText={displayNameError}
                 onBlur={this.handleNameChange} />
               <TextField
-                key={service.url}
+                key={`service_${service.url}`}
                 fullWidth
                 type='url'
                 floatingLabelFixed

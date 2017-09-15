@@ -49,6 +49,8 @@
   const BasicHTTPAuthHandler = require('./BasicHTTPAuthHandler')
   const { ContentExtensions, HostedExtensions } = require('./Extensions')
   const { BrowserWindow } = require('electron')
+  const { CRExtensionManager } = require('./Extensions/Chrome')
+  CRExtensionManager.setup()
 
   Object.keys(storage).forEach((k) => storage[k].checkAwake())
   mailboxStore.checkAwake()
@@ -148,15 +150,7 @@
   ipcMain.on(ipcEvents.WBE_PROVISION_EXTENSION, (evt, data) => {
     ContentExtensions.provisionExtension(data.requestUrl, data.loadKey, data.apiKey, data.protocol, data.src, data.data)
     if (data.reply) {
-      if (evt.sender.hostWebContents) {
-        evt.sender.hostWebContents.send(ipcEvents.WB_SEND_IPC_TO_CHILD, {
-          id: evt.sender.id,
-          channel: data.reply,
-          payload: { ok: true }
-        })
-      } else {
-        evt.sender.send(data.reply, { ok: true })
-      }
+      evt.sender.send(data.reply, { ok: true })
     }
   })
 
@@ -165,6 +159,11 @@
   /* ****************************************************************************/
 
   app.on('ready', () => {
+    // Load extensions before any webcontents get created
+    if (settingStore.extension.enableChromeExperimental) {
+      CRExtensionManager.loadExtensionDirectory()
+    }
+
     // Doing this outside of ready has a side effect on high-sierra where you get a _TSGetMainThread error
     // To resolve this, run it when in ready
     const openHidden = (function () {
@@ -174,6 +173,7 @@
       return false
     })()
 
+    // Prep app menu
     appMenu.updateApplicationMenu(
       settingStore.accelerators,
       mailboxStore.orderedMailboxes(),

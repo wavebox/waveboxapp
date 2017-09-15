@@ -1,11 +1,9 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { mailboxStore } from 'stores/mailbox'
-import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import CoreService from 'shared/Models/Accounts/CoreService'
-import MailboxToolbar from './MailboxToolbar'
 import GoogleMailboxMailWebView from './MailboxWebView/Google/GoogleMailboxMailWebView'
 import GoogleMailboxServiceWebView from './MailboxWebView/Google/GoogleMailboxServiceWebView'
 import GoogleMailboxCommunicationWebView from './MailboxWebView/Google/GoogleMailboxCommunicationWebView'
@@ -19,7 +17,6 @@ import MicrosoftMailboxServiceWebView from './MailboxWebView/Microsoft/Microsoft
 import MicrosoftMailboxStorageWebView from './MailboxWebView/Microsoft/MicrosoftMailboxStorageWebView'
 import MailboxWebViewHibernator from './MailboxWebView/MailboxWebViewHibernator'
 
-const TOOLBAR_HEIGHT = 40
 const styles = {
   mailboxTab: {
     position: 'absolute',
@@ -41,22 +38,6 @@ const styles = {
     left: 0,
     right: 0,
     bottom: 0
-  },
-  serviceContainerWithToolbar: {
-    position: 'absolute',
-    top: TOOLBAR_HEIGHT,
-    left: 0,
-    right: 0,
-    bottom: 0
-  },
-  appDragbar: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 16,
-    zIndex: 100,
-    WebkitAppRegion: 'drag'
   }
 }
 
@@ -101,15 +82,12 @@ export default class MailboxTab extends React.Component {
   * @return state object
   */
   generateState (props) {
-    const settingsState = settingsStore.getState()
     const mailboxState = mailboxStore.getState()
     const userState = userStore.getState()
     const mailbox = mailboxState.getMailbox(props.mailboxId)
     return {
       isMailboxActive: mailboxState.activeMailboxId() === props.mailboxId,
-      appHasTitlebar: settingsState.ui.showTitlebar, // Purposely don't update this because changes aren't reflected until restart
       userHasServices: userState.user.hasServices,
-      serviceDisplayMode: mailbox.serviceDisplayMode,
       serviceTypes: mailbox.enabledServiceTypes,
       mailboxType: mailbox.type
     }
@@ -120,7 +98,6 @@ export default class MailboxTab extends React.Component {
     if (!mailbox) { return }
     this.setState({
       isMailboxActive: mailboxState.activeMailboxId() === this.props.mailboxId,
-      serviceDisplayMode: mailbox.serviceDisplayMode,
       serviceTypes: mailbox.enabledServiceTypes,
       mailboxType: mailbox.type
     })
@@ -140,8 +117,6 @@ export default class MailboxTab extends React.Component {
     if (this.state.isMailboxActive !== nextState.isMailboxActive) { return true }
     if (this.props.mailboxId !== nextProps.mailboxId) { return true }
     if (this.state.mailboxType !== nextState.mailboxType) { return true }
-    if (this.state.serviceDisplayMode !== nextState.serviceDisplayMode) { return true }
-    if (this.state.appHasTitlebar !== nextState.appHasTitlebar) { return true }
     if (JSON.stringify(this.state.serviceTypes) !== JSON.stringify(nextState.serviceTypes)) { return true }
     if (this.state.userHasServices !== nextState.userHasServices) { return true }
 
@@ -194,31 +169,21 @@ export default class MailboxTab extends React.Component {
     const { style, mailboxId, ...passProps } = this.props
     const {
       mailboxType,
-      appHasTitlebar,
       serviceTypes,
-      serviceDisplayMode,
-      isMailboxActive,
-      userHasServices
+      userHasServices,
+      isMailboxActive
     } = this.state
 
-    const saltedStyle = Object.assign({},
-      styles.mailboxTab,
-      isMailboxActive ? styles.mailboxTabActive : {},
-      style
-    )
-
     const allowedServiceTypes = userHasServices ? serviceTypes : [CoreMailbox.SERVICE_TYPES.DEFAULT]
-    const hasToolbar = allowedServiceTypes.length > 1 && serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR
-
     return (
-      <div {...passProps} style={saltedStyle}>
-        {hasToolbar ? (
-          <MailboxToolbar mailboxId={mailboxId} toolbarHeight={TOOLBAR_HEIGHT} />
-        ) : undefined}
-        {!hasToolbar && !appHasTitlebar ? (
-          <div style={styles.appDragbar} />
-        ) : undefined}
-        <div style={hasToolbar ? styles.serviceContainerWithToolbar : styles.serviceContainer}>
+      <div
+        {...passProps}
+        style={{
+          ...styles.mailboxTab,
+          ...(isMailboxActive ? styles.mailboxTabActive : undefined),
+          ...style
+        }}>
+        <div style={styles.serviceContainer}>
           {allowedServiceTypes.map((serviceType) => {
             return this.renderWebView(serviceType, mailboxType, mailboxId, serviceType)
           })}

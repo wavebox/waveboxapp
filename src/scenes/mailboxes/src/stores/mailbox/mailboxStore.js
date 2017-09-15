@@ -47,6 +47,7 @@ class MailboxStore {
   constructor () {
     this.index = []
     this.mailboxes = new Map()
+    this.webcontentTabIds = new Map()
     this.sleepingQueue = new Map()
     this.avatars = new Map()
     this.snapshots = new Map()
@@ -412,6 +413,26 @@ class MailboxStore {
     }
 
     /* ****************************************/
+    // Tabs
+    /* ****************************************/
+
+    /**
+    * @param mailboxId: the id of the mailbox
+    * @param serviceType: the type of service
+    * @return the tabId for a mailbox and service
+    */
+    this.getWebcontentTabId = (mailboxId, serviceType) => {
+      return this.webcontentTabIds.get(`${mailboxId}:${serviceType}`)
+    }
+
+    /**
+    * @return the tab id for the active mailbox and service
+    */
+    this.getActiveWebcontentTabId = () => {
+      return this.getWebcontentTabId(this.activeMailboxId(), this.activeMailboxService())
+    }
+
+    /* ****************************************/
     // Listeners
     /* ****************************************/
 
@@ -419,6 +440,8 @@ class MailboxStore {
       // Store lifecycle
       handleLoad: actions.LOAD,
       handleRemoteChange: actions.REMOTE_CHANGE,
+      handleSetWebcontentTabId: actions.SET_WEBCONTENT_TAB_ID,
+      handleDeleteWebcontentTabId: actions.DELETE_WEBCONTENT_TAB_ID,
 
       // Mailbox auth
       handleAuthenticateGinboxMailbox: actions.AUTHENTICATE_GINBOX_MAILBOX,
@@ -537,6 +560,14 @@ class MailboxStore {
 
   handleRemoteChange () {
     /* no-op */
+  }
+
+  handleSetWebcontentTabId ({ mailboxId, serviceType, tabId }) {
+    this.webcontentTabIds.set(`${mailboxId}:${serviceType}`, tabId)
+  }
+
+  handleDeleteWebcontentTabId ({ mailboxId, serviceType }) {
+    this.webcontentTabIds.delete(`${mailboxId}:${serviceType}`)
   }
 
   /* **************************************************************************/

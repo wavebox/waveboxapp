@@ -1,3 +1,7 @@
+const fs = require('fs')
+const gracefulFs = require('graceful-fs')
+gracefulFs.gracefulify(fs)
+
 const TASKS = {
   assets: require('./assets/webpack.config.js'),
   app: require('./src/app/webpack.config.js'),

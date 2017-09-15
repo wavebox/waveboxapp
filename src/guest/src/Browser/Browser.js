@@ -7,6 +7,7 @@ const Lifecycle = require('./Lifecycle')
 const NotificationProvider = require('./NotificationProvider')
 const environment = remote.getCurrentWebContents().getType()
 const extensionLoader = require('../Extensions/extensionLoader')
+const { CRExtensionLoader } = require('../Extensions/Chrome')
 const {
   WB_PING_RESOURCE_USAGE,
   WB_PONG_RESOURCE_USAGE
@@ -26,6 +27,7 @@ class Browser {
   */
   constructor (config = {}) {
     extensionLoader.loadWaveboxGuestApi(WAVEBOX_CONTENT_IMPL_ENDPOINTS.CHROME)
+    CRExtensionLoader.load()
     this.keyboardNavigator = new KeyboardNavigator()
     this.spellchecker = new Spellchecker()
     this.contextMenu = new ContextMenu(this.spellchecker, config.contextMenu)

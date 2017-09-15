@@ -8,6 +8,7 @@ import {composeStore, composeActions} from 'stores/compose'
 import {updaterStore, updaterActions} from 'stores/updater'
 import {userStore, userActions} from 'stores/user'
 import {extensionStore, extensionActions} from 'stores/extension'
+import {crextensionStore, crextensionActions} from 'stores/crextension'
 import Debug from 'Debug'
 import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
 import ResourceMonitorResponder from './ResourceMonitorResponder'
@@ -15,11 +16,10 @@ import {
   WB_MAILBOXES_WINDOW_JS_LOADED,
   WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD,
   WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD,
-  WB_SEND_IPC_TO_CHILD,
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
   WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
 } from 'shared/ipcEvents'
-const { ipcRenderer, webFrame, remote } = window.nativeRequire('electron')
+const { ipcRenderer, webFrame } = window.nativeRequire('electron')
 
 // Prevent zooming
 webFrame.setZoomLevelLimits(1, 1)
@@ -65,6 +65,8 @@ updaterStore.getState()
 updaterActions.load()
 extensionStore.getState()
 extensionActions.load()
+crextensionStore.getState()
+crextensionActions.load()
 Debug.load()
 
 // Remove loading
@@ -92,8 +94,3 @@ ipcRenderer.send(WB_MAILBOXES_WINDOW_JS_LOADED, {})
 // Resource usage monitoring
 const resourceMonitorListener = new ResourceMonitorResponder()
 resourceMonitorListener.listen()
-
-// Message passing
-ipcRenderer.on(WB_SEND_IPC_TO_CHILD, (evt, { id, channel, payload }) => {
-  remote.webContents.fromId(id).send(channel, payload)
-})

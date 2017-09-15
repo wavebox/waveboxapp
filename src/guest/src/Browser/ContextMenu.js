@@ -10,8 +10,11 @@ const {
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
   WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG,
   WB_MAILBOXES_WEBVIEW_NAVIGATE_HOME,
-  WB_NEW_WINDOW
+  WB_NEW_WINDOW,
+  WBECRX_GET_EXTENSION_RUNTIME_CONTEXT_MENU_DATA,
+  WBECRX_CONTEXT_MENU_ITEM_CLICKED_
 } = req.shared('ipcEvents')
+const CRExtensionRTContextMenu = req.shared('Models/CRExtensionRT/CRExtensionRTContextMenu')
 
 class ContextMenu {
   /* **************************************************************************/
@@ -54,7 +57,7 @@ class ContextMenu {
   }
 
   /* **************************************************************************/
-  // Menu
+  // Rendering
   /* **************************************************************************/
 
   /**
@@ -78,60 +81,76 @@ class ContextMenu {
   }
 
   /**
-  * Launches the context menu
+  * Renders the spelling section
   * @param evt: the event that fired
   * @param params: the parameters passed alongisde the event
+  * @return the template section or undefined
   */
-  launchMenu (evt, params) {
-    const menuTemplate = []
-
-    // Spelling suggestions
+  _renderSpellingSection_ (evt, params) {
+    const template = []
     if (params.isEditable && params.misspelledWord && this.spellchecker && this.spellchecker.hasSpellchecker) {
       const suggestions = this.spellchecker.suggestions(params.misspelledWord)
       if (suggestions.primary && suggestions.secondary) {
-        menuTemplate.push({
+        template.push({
           label: (dictInfo[suggestions.primary.language] || {}).name || suggestions.primary.language,
           submenu: this._renderSuggestionMenuItems_(suggestions.primary.suggestions)
         })
-        menuTemplate.push({
+        template.push({
           label: (dictInfo[suggestions.secondary.language] || {}).name || suggestions.secondary.language,
           submenu: this._renderSuggestionMenuItems_(suggestions.secondary.suggestions)
         })
       } else {
         const suggList = (suggestions.primary.suggestions || suggestions.secondary.suggestions || [])
-        this._renderSuggestionMenuItems_(suggList).forEach((item) => menuTemplate.push(item))
+        this._renderSuggestionMenuItems_(suggList).forEach((item) => template.push(item))
       }
-      menuTemplate.push({ type: 'separator' })
     }
+    return template
+  }
 
-    // URLS
+  /**
+  * Renders the url section
+  * @param evt: the event that fired
+  * @param params: the parameters passed alongisde the event
+  * @return the template section or undefined
+  */
+  _renderURLSection_ (evt, params) {
+    const template = []
     if (params.linkURL) {
-      const linkMenu = [
-        {
-          label: 'Open Link in Browser',
-          click: () => { shell.openExternal(params.linkURL) }
-        },
-        this.config.openLinkInWaveboxOption ? {
+      template.push({
+        label: 'Open Link in Browser',
+        click: () => { shell.openExternal(params.linkURL) }
+      })
+      if (this.config.openLinkInWaveboxOption) {
+        template.push({
           label: 'Open Link with Wavebox',
           click: () => { ipcRenderer.sendToHost({ type: WB_NEW_WINDOW, data: { url: params.linkURL } }) }
-        } : undefined,
-        process.platform === 'darwin' ? {
+        })
+      }
+      if (process.platform === 'darwin') {
+        template.push({
           label: 'Open Link in Background',
           click: () => { shell.openExternal(params.linkURL, { activate: false }) }
-        } : undefined,
-        {
-          label: 'Copy link Address',
-          click: () => { clipboard.writeText(params.linkURL) }
-        },
-        { type: 'separator' }
-      ].filter((i) => !!i)
-      menuTemplate.splice(Infinity, 0, ...linkMenu)
+        })
+      }
+      template.push({
+        label: 'Copy link Address',
+        click: () => { clipboard.writeText(params.linkURL) }
+      })
     }
+    return template
+  }
 
-    // Lookup & search
+  /**
+  * Renders the lookup and search section
+  * @param evt: the event that fired
+  * @param params: the parameters passed alongisde the event
+  * @return the template section or undefined
+  */
+  _renderLookupAndSearchSection_ (evt, params) {
+    const template = []
     if (params.selectionText) {
       if (params.isEditable && params.misspelledWord && this.spellchecker && this.spellchecker.hasSpellchecker) {
-        menuTemplate.push({
+        template.push({
           label: `Add “${params.misspelledWord}” to Dictionary`,
           click: () => { this.spellchecker.addCustomWord(params.misspelledWord) }
         })
@@ -140,23 +159,38 @@ class ContextMenu {
       const displayText = params.selectionText.length >= 50 ? (
         params.selectionText.substr(0, 47) + '…'
       ) : params.selectionText
-      menuTemplate.push({
+      template.push({
         label: `Search Google for “${displayText}”`,
         click: () => { shell.openExternal(`https://google.com/search?q=${encodeURIComponent(params.selectionText)}`) }
       })
-      menuTemplate.push({ type: 'separator' })
     }
+    return template
+  }
 
-    // Editing: Undo/Redo
+  /**
+  * Renders the undo/redo section
+  * @param evt: the event that fired
+  * @param params: the parameters passed alongisde the event
+  * @return the template section or undefined
+  */
+  _renderRewindSection_ (evt, params) {
+    const template = []
     if (params.editFlags.canUndo || params.editFlags.canRedo) {
-      menuTemplate.push({ label: 'Undo', role: 'undo', enabled: params.editFlags.canUndo })
-      menuTemplate.push({ label: 'Redo', role: 'redo', enabled: params.editFlags.canRedo })
-      menuTemplate.push({ type: 'separator' })
+      template.push({ label: 'Undo', role: 'undo', enabled: params.editFlags.canUndo })
+      template.push({ label: 'Redo', role: 'redo', enabled: params.editFlags.canRedo })
     }
+    return template
+  }
 
-    if (params.mediaType === 'image') {
-      // Editing: Image
-      const imageEditingMenu = [
+  /**
+  * Renders the editing section
+  * @param evt: the event that fired
+  * @param params: the parameters passed alongisde the event
+  * @return the template section or undefined
+  */
+  _renderEditingSection_ (evt, params) {
+    if (params.mediaType === 'image') { // Image
+      return [
         {
           label: 'Open Image in Browser',
           click: () => { shell.openExternal(params.srcURL) }
@@ -168,80 +202,102 @@ class ContextMenu {
         {
           label: 'Copy Image Address',
           click: () => { clipboard.writeText(params.srcURL) }
-        },
-        { type: 'separator' }
+        }
       ]
-      menuTemplate.splice(Infinity, 0, ...imageEditingMenu)
-    } else {
-      // Editing: Text
-      const textEditingMenu = [
-        params.editFlags.canCut ? { label: 'Cut', role: 'cut' } : null,
-        params.editFlags.canCopy ? { label: 'Copy', role: 'copy' } : null,
-        params.editFlags.canPaste ? { label: 'Paste', role: 'paste' } : null,
-        params.editFlags.canPaste ? { label: 'Paste and match style', role: 'pasteandmatchstyle' } : null,
-        params.editFlags.canSelectAll ? { label: 'Select all', role: 'selectall' } : null
-      ].filter((item) => item !== null)
-      if (textEditingMenu.length) {
-        menuTemplate.splice(Infinity, 0, ...textEditingMenu)
-        menuTemplate.push({ type: 'separator' })
-      }
+    } else { // Text
+      const template = []
+      if (params.editFlags.canCut) { template.push({ label: 'Cut', role: 'cut' }) }
+      if (params.editFlags.canCopy) { template.push({ label: 'Copy', role: 'copy' }) }
+      if (params.editFlags.canPaste) { template.push({ label: 'Paste', role: 'paste' }) }
+      if (params.editFlags.canPaste) { template.push({ label: 'Paste and match style', role: 'pasteandmatchstyle' }) }
+      if (params.editFlags.canSelectAll) { template.push({ label: 'Select all', role: 'selectall' }) }
+      return template
     }
+  }
 
-    // In page navigation
-    const inPageNavigation = [
-      this.config.navigateHomeOption && environment === 'webview' ? {
+  /**
+  * Renders the inpage navigation section
+  * @param evt: the event that fired
+  * @param params: the parameters passed alongisde the event
+  * @return the template section or undefined
+  */
+  _renderPageNavigationSection_ (evt, params) {
+    const template = []
+
+    if (this.config.navigateHomeOption && environment === 'webview') {
+      template.push({
         label: 'Home',
         click: () => { ipcRenderer.sendToHost({ type: WB_MAILBOXES_WEBVIEW_NAVIGATE_HOME }) }
-      } : undefined,
-      this.config.navigateBackOption ? {
+      })
+    }
+    if (this.config.navigateBackOption) {
+      template.push({
         label: 'Go Back',
         enabled: webContents.canGoBack(),
         click: () => webContents.goBack()
-      } : undefined,
-      this.config.navigateForwardOption ? {
+      })
+    }
+    if (this.config.navigateForwardOption) {
+      template.push({
         label: 'Go Forward',
         enabled: webContents.canGoForward(),
         click: () => webContents.goForward()
-      } : undefined,
-      this.config.navigateReloadOption ? {
+      })
+    }
+    if (this.config.navigateReloadOption) {
+      template.push({
         label: 'Reload',
         click: () => webContents.reload()
-      } : undefined
-    ].filter((item) => !!item)
-    if (inPageNavigation.length) {
-      menuTemplate.splice(Infinity, 0, ...inPageNavigation)
-      menuTemplate.push({ type: 'separator' })
+      })
     }
 
-    // Current Page
-    const currentPageOptions = [
-      this.config.copyCurrentPageUrlOption ? {
+    return template
+  }
+
+  /**
+  * Renders the inpage external open options
+  * @param evt: the event that fired
+  * @param params: the parameters passed alongisde the event
+  * @return the template section or undefined
+  */
+  _renderPageExternalSection_ (evt, params) {
+    const template = []
+    if (this.config.copyCurrentPageUrlOption) {
+      template.push({
         label: 'Copy current URL',
         click: () => { clipboard.writeText(params.pageURL) }
-      } : undefined,
-      this.config.openCurrentPageInBrowserOption ? {
+      })
+    }
+    if (this.config.openCurrentPageInBrowserOption) {
+      template.push({
         label: 'Open page in Browser',
         click: () => { shell.openExternal(params.pageURL) }
-      } : undefined
-    ].filter((item) => !!item)
-    if (currentPageOptions.length) {
-      menuTemplate.splice(Infinity, 0, ...currentPageOptions)
-      menuTemplate.push({ type: 'separator' })
+      })
     }
+    return template
+  }
 
-    // Wavebox
+  /**
+  * Renders the wavebox section
+  * @param evt: the event that fired
+  * @param params: the parameters passed alongisde the event
+  * @return the template section or undefined
+  */
+  _renderWaveboxSection_ (evt, params) {
+    const template = []
     if (environment === 'webview') {
       if (this.config.hasSettingsOption) {
-        menuTemplate.push({
+        template.push({
           label: 'Wavebox Settings',
           click: () => ipcRenderer.sendToHost({ type: WB_MAILBOXES_WINDOW_SHOW_SETTINGS })
         })
       }
+
       if (this.config.hasChangeDictionaryOption) {
         const dictionaries = DictionaryLoad.getInstalledDictionaries()
         if (dictionaries.length > 1) {
           const currentLanguage = this.spellchecker ? this.spellchecker.primarySpellcheckerLanguage : null
-          menuTemplate.push({
+          template.push({
             label: 'Change Dictionary',
             submenu: dictionaries.map((lang) => {
               return {
@@ -255,15 +311,173 @@ class ContextMenu {
         }
       }
     }
-    menuTemplate.push({
+
+    template.push({
       label: 'Inspect',
       click: () => { webContents.inspectElement(params.x, params.y) }
     })
-    const menu = Menu.buildFromTemplate(menuTemplate)
+    return template
+  }
+
+  /**
+  * Renders an extension menu item
+  * @param params: the original context menu params
+  * @param extensionId: the id of the extension
+  * @param menuItem: the runtime context menu to render
+  * @return an object that can be passed into the electron templating engine
+  */
+  _renderExtensionMenuItem_ (params, extensionId, menuItem) {
+    if (menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.NORMAL) {
+      return {
+        label: menuItem.title,
+        enabled: menuItem.enabled,
+        click: () => this._handleExtensionOptionClick_(extensionId, menuItem, params)
+      }
+    } else if (menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.CHECKBOX) {
+      return {
+        label: menuItem.title,
+        type: 'checkbox',
+        checked: menuItem.checked,
+        click: () => this._handleExtensionOptionClick_(extensionId, menuItem, params)
+      }
+    } else if (menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.RADIO) {
+      return {
+        label: menuItem.title,
+        type: 'radio',
+        checked: menuItem.checked,
+        click: () => this._handleExtensionOptionClick_(extensionId, menuItem, params)
+      }
+    } else if (menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.SEPERATOR) {
+      return { type: 'separator' }
+    } else {
+      return undefined
+    }
+  }
+
+  /**
+  * Renders the wavebox section
+  * @param evt: the event that fired
+  * @param params: the parameters passed alongisde the event
+  * @param extensionContextMenus: the data for the context menus
+  * @return the template section or undefined
+  */
+  _renderExtensionSection_ (evt, params, extensionContextMenus) {
+    const template = []
+
+    Object.keys(extensionContextMenus).forEach((extensionId) => {
+      const { name, icons, contextMenus } = extensionContextMenus[extensionId]
+      const validContextMenus = contextMenus
+        .filter((menu) => {
+          const contexts = new Set(menu.contexts)
+          if (contexts.has(CRExtensionRTContextMenu.CONTEXT_TYPES.ALL || CRExtensionRTContextMenu.CONTEXT_TYPES.PAGE)) {
+            return true
+          } else if (params.isEditable && contexts.has(CRExtensionRTContextMenu.CONTEXT_TYPES.EDITABLE)) {
+            return true
+          }
+        })
+
+      if (validContextMenus.length === 1) {
+        template.push(Object.assign({
+          icon: remote.nativeImage.createFromPath(icons['16'])
+        }, this._renderExtensionMenuItem_(params, extensionId, validContextMenus[0])))
+      } else if (validContextMenus.length > 1) {
+        template.push({
+          label: name,
+          icon: remote.nativeImage.createFromPath(icons['16']),
+          submenu: validContextMenus.map((menuItem) => this._renderExtensionMenuItem_(params, extensionId, menuItem))
+        })
+      }
+    })
+
+    return template
+  }
+
+  /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  /**
+  * Handles an extension option being clicked by triggering the call upstream
+  * @param extensionId: the id of the extension
+  * @param menuItem: the menu item that was clicked
+  * @param params: the original context menu params
+  */
+  _handleExtensionOptionClick_ (extensionId, menuItem, params) {
+    const upstreamParams = Object.assign({
+      menuItemId: menuItem.id,
+      parentMenuItemId: menuItem.parentId,
+      mediaType: params.mediaType === 'none' ? undefined : params.mediaType,
+      linkUrl: params.linkURL,
+      srcUrl: params.srcURL,
+      pageUrl: params.pageURL,
+      frameUrl: params.frameURL,
+      selectionText: params.selectionText,
+      editable: params.editable
+    },
+    menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.CHECKBOX || menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.RADIO ? {
+      wasChecked: menuItem.checked,
+      checked: !menuItem.checked
+    } : {})
+
+    const tabId = remote.getCurrentWebContents().id
+    ipcRenderer.send(`${WBECRX_CONTEXT_MENU_ITEM_CLICKED_}${extensionId}`, tabId, upstreamParams)
+  }
+
+  /* **************************************************************************/
+  // Extensions
+  /* **************************************************************************/
+
+  /**
+  * Makes a sync all up to the main thread for the current context menus for the extensions
+  * @return the context menus for each extension
+  */
+  _getExtensionContextMenus_ () {
+    const data = ipcRenderer.sendSync(WBECRX_GET_EXTENSION_RUNTIME_CONTEXT_MENU_DATA)
+    Object.keys(data).forEach((extensionId) => {
+      data[extensionId].contextMenus = data[extensionId].contextMenus.map(([menuId, menuData]) => {
+        return new CRExtensionRTContextMenu(extensionId, menuId, menuData)
+      })
+    })
+    return data
+  }
+
+  /* **************************************************************************/
+  // Display
+  /* **************************************************************************/
+
+  /**
+  * Launches the context menu
+  * @param evt: the event that fired
+  * @param params: the parameters passed alongisde the event
+  */
+  launchMenu (evt, params) {
+    const extensionContextMenus = this._getExtensionContextMenus_()
+    const sections = [
+      this._renderSpellingSection_(evt, params),
+      this._renderURLSection_(evt, params),
+      this._renderLookupAndSearchSection_(evt, params),
+      this._renderRewindSection_(evt, params),
+      this._renderEditingSection_(evt, params),
+      this._renderPageNavigationSection_(evt, params),
+      this._renderPageExternalSection_(evt, params),
+      this._renderExtensionSection_(evt, params, extensionContextMenus),
+      this._renderWaveboxSection_(evt, params)
+    ]
+    const template = sections
+      .reduce((acc, section) => {
+        if (section && section.length) {
+          return acc.concat(section, [{ type: 'separator' }])
+        } else {
+          return acc
+        }
+      }, [])
+      .slice(0, -1)
+
+    const menu = Menu.buildFromTemplate(template)
     menu.popup(remote.getCurrentWindow())
     setTimeout(() => {
       MenuTool.fullDestroyMenu(menu)
-    }, 100) // just in case
+    }, 100) // Wait a little just in case
   }
 }
 

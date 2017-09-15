@@ -372,6 +372,13 @@ class WaveboxWindow extends EventEmitter {
   isVisible () {
     return this.window.isVisible()
   }
+
+  /**
+  * @return true if this window is destroyed
+  */
+  isDestroyed () {
+    return this.window.isDestroyed()
+  }
 }
 
 module.exports = WaveboxWindow

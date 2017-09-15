@@ -5,7 +5,9 @@ const popover = {
   paddingLeft: 16,
   paddingRight: 16,
   fontSize: '13px',
-  color: 'white'
+  color: 'white',
+  maxWidth: 200,
+  textAlign: 'center'
 }
 const arrow = {
   color: 'rgba(34, 34, 34, 0.9)',

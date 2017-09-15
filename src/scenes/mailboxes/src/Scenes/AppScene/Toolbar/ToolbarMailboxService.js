@@ -4,9 +4,9 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
 import ReactPortalTooltip from 'react-portal-tooltip'
-import { basicPopoverStyles } from './ToolbarPopoverStyles'
+import { basicPopoverStyles } from 'sharedui/Components/Toolbar/ToolbarPopoverStyles'
 import uuid from 'uuid'
-import MailboxServicePopover from '../../MailboxServicePopover'
+import MailboxServicePopover from '../MailboxServicePopover'
 
 const styles = {
   tab: {
@@ -29,7 +29,7 @@ const styles = {
   }
 }
 
-export default class MailboxToolbarService extends React.Component {
+export default class ToolbarMailboxService extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/

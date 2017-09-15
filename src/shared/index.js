@@ -5,5 +5,6 @@ module.exports = {
   constants: require('./constants'),
   Models: require('./Models'),
   dictionaries: require('./dictionaries'),
-  Notifications: require('./Notifications')
+  Notifications: require('./Notifications'),
+  AltStores: require('./AltStores')
 }

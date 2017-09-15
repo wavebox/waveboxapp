@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types'
+import './SettingsScene.less'
 import React from 'react'
 import { RaisedButton, FlatButton, Tabs, Tab } from 'material-ui'
 import GeneralSettings from './GeneralSettings'
+import ExtensionSettings from './ExtensionSettings'
 import AccountSettings from './Accounts/AccountSettings'
 import ProSettings from './ProSettings'
 import AdvancedSettings from './AdvancedSettings'
@@ -11,6 +13,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import SettingsSceneTabTemplate from './SettingsSceneTabTemplate'
 import { WB_RELAUNCH_APP } from 'shared/ipcEvents'
 import { FullscreenModal } from 'Components'
+import { settingsStore } from 'stores/settings'
 
 const { ipcRenderer } = window.nativeRequire('electron')
 
@@ -37,7 +40,8 @@ const styles = {
     height: 50,
     display: 'flex',
     flexDirection: 'row',
-    alignContent: 'stretch'
+    alignContent: 'stretch',
+    overflowX: 'auto'
   },
   tabToggle: {
     height: 50,
@@ -75,15 +79,35 @@ export default class SettingsScene extends React.Component {
   }
 
   /* **************************************************************************/
+  // Component lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    settingsStore.listen(this.settingsChanged)
+  }
+
+  componentWillUnmount () {
+    settingsStore.unlisten(this.settingsChanged)
+  }
+
+  /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
   state = (() => {
+    const settingsState = settingsStore.getState()
     return {
       open: true,
-      showRestart: false
+      showRestart: false,
+      showExtensions: settingsState.extension.enableChromeExperimental
     }
   })()
+
+  settingsChanged = (settingsState) => {
+    this.setState({
+      showExtensions: settingsState.extension.enableChromeExperimental
+    })
+  }
 
   /* **************************************************************************/
   // User Interaction
@@ -124,7 +148,7 @@ export default class SettingsScene extends React.Component {
   }
 
   render () {
-    const { showRestart, open } = this.state
+    const { showRestart, open, showExtensions } = this.state
     const { match } = this.props
 
     const buttons = showRestart ? (
@@ -141,11 +165,12 @@ export default class SettingsScene extends React.Component {
     const currentTab = match.params.tab || 'general'
     const tabHeadings = [
       ['General', 'general'],
+      showExtensions ? ['Extensions', 'extensions'] : undefined,
       ['Accounts', 'accounts'],
       ['Wavebox', 'pro'],
       ['Advanced', 'advanced'],
       ['Support', 'support']
-    ]
+    ].filter((tab) => !!tab)
 
     return (
       <FullscreenModal
@@ -155,7 +180,7 @@ export default class SettingsScene extends React.Component {
         bodyStyle={styles.modalBody}
         actionsContainerStyle={styles.modalActions}
         onRequestClose={this.handleClose}>
-        <div style={styles.tabToggles}>
+        <div style={styles.tabToggles} className='ReactComponent-SettingsScene-Tabs'>
           {tabHeadings.map(([label, value]) => {
             return (
               <FlatButton
@@ -185,6 +210,11 @@ export default class SettingsScene extends React.Component {
             <Tab label='General' value='general'>
               <GeneralSettings showRestart={this.handleShowRestart} />
             </Tab>
+            {showExtensions ? (
+              <Tab label='Extensions' value='extensions'>
+                <ExtensionSettings showRestart={this.handleShowRestart} />
+              </Tab>
+            ) : undefined}
             <Tab label='Accounts' value='accounts'>
               <AccountSettings showRestart={this.handleShowRestart} mailboxId={match.params.tabArg} />
             </Tab>
