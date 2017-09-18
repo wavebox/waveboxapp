@@ -25,16 +25,12 @@ export default class WaveboxWebView extends React.Component {
     saltClientInfoInUrl: true
   }
 
-  /* **************************************************************************/
-  // Routing & Urls
-  /* **************************************************************************/
-
   /**
   * Routes a url for specified actions
   * @param url: the url to route
   * @return true if the url was routed, false otherwise
   */
-  routeUrl (url) {
+  static routeWaveboxUrl (url) {
     const purl = URI(url)
     if (purl.hostname() === WAVEBOX_CAPTURE_URL_HOSTNAME) {
       switch (purl.pathname()) {
@@ -65,6 +61,10 @@ export default class WaveboxWebView extends React.Component {
     return false
   }
 
+  /* **************************************************************************/
+  // Routing & Urls
+  /* **************************************************************************/
+
   /**
   * Salts the client info into the given url
   * @param url: the url to salt into
@@ -88,7 +88,7 @@ export default class WaveboxWebView extends React.Component {
   */
   handleOpenNewWindow = (evt) => {
     // Unhandled urls will be handled by the main thread
-    this.routeUrl(evt.url)
+    WaveboxWebView.routeWaveboxUrl(evt.url)
   }
 
   /**

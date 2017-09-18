@@ -35,14 +35,10 @@ export default class AccountMessageScene extends React.Component {
 
   componentDidMount () {
     userStore.listen(this.userUpdated)
-    this.markTO = setTimeout(() => {
-      settingsActions.setSeenAccountMessageUrl(this.state.url)
-    }, 1500)
   }
 
   componentWillUnmount () {
     userStore.unlisten(this.userUpdated)
-    clearTimeout(this.markTO)
   }
 
   /* **************************************************************************/
@@ -77,6 +73,14 @@ export default class AccountMessageScene extends React.Component {
     }, 250)
   }
 
+  handleOpenNewWindow = (evt) => {
+    // Unhandled urls will be handled by the main thread
+    const didRoute = WaveboxWebView.routeWaveboxUrl(evt.url)
+    if (didRoute) {
+      settingsActions.setSeenAccountMessageUrl(this.state.url)
+    }
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -96,7 +100,9 @@ export default class AccountMessageScene extends React.Component {
         actions={(<RaisedButton primary label='Close' onClick={this.handleClose} />)}
         open={open}
         onRequestClose={this.handleClose}>
-        <WaveboxWebView src={url} />
+        <WaveboxWebView
+          src={url}
+          newWindow={this.handleOpenNewWindow} />
       </FullscreenModal>
     )
   }

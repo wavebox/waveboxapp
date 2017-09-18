@@ -154,7 +154,7 @@ export default class MailboxSearch extends React.Component {
       <Paper {...passProps} className={composedClassName}>
         <TextField
           ref={TEXT_FIELD_REF}
-          tabIndex='-1'
+          tabIndex={-1}
           hintText='Search'
           style={{ marginLeft: 15 }}
           inputStyle={{ width: 200 }}
@@ -162,7 +162,7 @@ export default class MailboxSearch extends React.Component {
           onChange={this.handleChange}
           onKeyDown={this.handleKeyPress} />
         <IconButton
-          tabIndex='-1'
+          tabIndex={-1}
           iconClassName='material-icons'
           style={{ bottom: -7 }}
           iconStyle={{ color: Colors.grey600 }}
@@ -170,7 +170,7 @@ export default class MailboxSearch extends React.Component {
           search
         </IconButton>
         <IconButton
-          tabIndex='-1'
+          tabIndex={-1}
           iconClassName='material-icons'
           style={{ bottom: -7, zIndex: 1 }}
           iconStyle={{ color: Colors.grey600 }}
