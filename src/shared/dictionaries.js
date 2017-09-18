@@ -204,12 +204,61 @@ static const LocaleScript localeScriptList[] = {
 */
 
 module.exports = {
+  'af_ZA': {
+    license: 'https://wavebox.io/dl/dictionaries/af_ZA/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/af_ZA/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/af_ZA/index.dic',
+    name: 'Afrikaans - Afrikaans',
+    charset: 'USCRIPT_LATIN'
+  },
+  'ak_GH': {
+    license: 'https://wavebox.io/dl/dictionaries/ak_GH/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/ak_GH/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/ak_GH/index.dic',
+    name: 'Akana - Akan',
+    charset: 'USCRIPT_LATIN'
+  },
+  'am_ET': {
+    license: 'https://wavebox.io/dl/dictionaries/am_ET/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/am_ET/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/am_ET/index.dic',
+    name: 'አማርኛ - Amharic',
+    charset: 'USCRIPT_ETHIOPIC'
+  },
+  'an_ES': {
+    license: 'https://wavebox.io/dl/dictionaries/an_ES/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/an_ES/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/an_ES/index.dic',
+    name: 'Aragonés - Aragonese',
+    charset: 'USCRIPT_LATIN'
+  },
+  'az_AZ-latin': {
+    license: 'https://wavebox.io/dl/dictionaries/az_AZ-latin/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/az_AZ-latin/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/az_AZ-latin/index.dic',
+    name: 'Azərbaycanca / آذربايجان - Azerbaijani',
+    charset: 'USCRIPT_LATIN'
+  },
+  'be_BY': {
+    license: 'https://wavebox.io/dl/dictionaries/be_BY/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/be_BY/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/be_BY/index.dic',
+    name: 'Беларуская : Belarusian',
+    charset: 'USCRIPT_CYRILLIC'
+  },
   'bg_BG': {
     license: 'https://wavebox.io/dl/dictionaries/bg_BG/LICENSE.txt',
     aff: 'https://wavebox.io/dl/dictionaries/bg_BG/index.aff',
     dic: 'https://wavebox.io/dl/dictionaries/bg_BG/index.dic',
     name: 'Български - Bulgarian',
     charset: 'USCRIPT_CYRILLIC'
+  },
+  'br_FR': {
+    license: 'https://wavebox.io/dl/dictionaries/br_FR/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/br_FR/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/br_FR/index.dic',
+    name: 'Brezhoneg : Breton',
+    charset: 'USCRIPT_LATIN'
   },
   'ca_ES-valencia': {
     license: 'https://wavebox.io/dl/dictionaries/ca_ES-valencia/LICENSE.txt',
@@ -309,11 +358,144 @@ module.exports = {
     name: 'English (South Africa) - English (South Africa)',
     charset: 'USCRIPT_LATIN'
   },
+  'es_AR': {
+    license: 'https://wavebox.io/dl/dictionaries/es_AR/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_AR/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_AR/index.dic',
+    name: 'Español (Argentina) - Spanish (Argentina)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_BO': {
+    license: 'https://wavebox.io/dl/dictionaries/es_BO/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_BO/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_BO/index.dic',
+    name: 'Español (Bolivia) - Spanish (Bolivia)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_CL': {
+    license: 'https://wavebox.io/dl/dictionaries/es_CL/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_CL/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_CL/index.dic',
+    name: 'Español (Chile) - Spanish (Chile)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_CO': {
+    license: 'https://wavebox.io/dl/dictionaries/es_CO/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_CO/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_CO/index.dic',
+    name: 'Español (Colombia) - Spanish (Colombia)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_CR': {
+    license: 'https://wavebox.io/dl/dictionaries/es_CR/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_CR/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_CR/index.dic',
+    name: 'Español (Costa Rica) - Spanish (Costa Rica)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_CU': {
+    license: 'https://wavebox.io/dl/dictionaries/es_CU/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_CU/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_CU/index.dic',
+    name: 'Español (Cuba) - Spanish (Cuba)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_DO': {
+    license: 'https://wavebox.io/dl/dictionaries/es_DO/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_DO/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_DO/index.dic',
+    name: 'Español (República Dominicana) - Spanish (Dominican Republic)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_EC': {
+    license: 'https://wavebox.io/dl/dictionaries/es_EC/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_EC/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_EC/index.dic',
+    name: 'Español (Ecuador) - Spanish (Ecuador)',
+    charset: 'USCRIPT_LATIN'
+  },
   'es_ES': {
     license: 'https://wavebox.io/dl/dictionaries/es_ES/LICENSE.txt',
     aff: 'https://wavebox.io/dl/dictionaries/es_ES/index.aff',
     dic: 'https://wavebox.io/dl/dictionaries/es_ES/index.dic',
-    name: 'Español - Spanish',
+    name: 'Español (España) - Spanish (Spain)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_GT': {
+    license: 'https://wavebox.io/dl/dictionaries/es_GT/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_GT/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_GT/index.dic',
+    name: 'Español (Guatemala) - Spanish (Guatemala)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_HN': {
+    license: 'https://wavebox.io/dl/dictionaries/es_HN/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_HN/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_HN/index.dic',
+    name: 'Español (Honduras) - Spanish (Honduras)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_MX': {
+    license: 'https://wavebox.io/dl/dictionaries/es_MX/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_MX/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_MX/index.dic',
+    name: 'Español (Méjico) - Spanish (Mexico)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_NI': {
+    license: 'https://wavebox.io/dl/dictionaries/es_NI/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_NI/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_NI/index.dic',
+    name: 'Español (Nicaragua) - Spanish (Nicaragua)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_PA': {
+    license: 'https://wavebox.io/dl/dictionaries/es_PA/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_PA/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_PA/index.dic',
+    name: 'Español (Panamá) - Spanish (Panama)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_PE': {
+    license: 'https://wavebox.io/dl/dictionaries/es_PE/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_PE/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_PE/index.dic',
+    name: 'Español (Perú) - Spanish (Peru)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_PR': {
+    license: 'https://wavebox.io/dl/dictionaries/es_PR/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_PR/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_PR/index.dic',
+    name: 'Español (Puerto Rico) - Spanish (Puerto Rico)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_PY': {
+    license: 'https://wavebox.io/dl/dictionaries/es_PY/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_PY/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_PY/index.dic',
+    name: 'Español (Paraguay) - Spanish (Paraguay)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_SV': {
+    license: 'https://wavebox.io/dl/dictionaries/es_SV/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_SV/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_SV/index.dic',
+    name: 'Español (El Salvador) - Spanish (El Salvador)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_UY': {
+    license: 'https://wavebox.io/dl/dictionaries/es_UY/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_UY/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_UY/index.dic',
+    name: 'Español (Uruguay) - Spanish (Uruguay)',
+    charset: 'USCRIPT_LATIN'
+  },
+  'es_VE': {
+    license: 'https://wavebox.io/dl/dictionaries/es_VE/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/es_VE/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/es_VE/index.dic',
+    name: 'Español (Venezuela) - Spanish (Venezuela)',
     charset: 'USCRIPT_LATIN'
   },
   'et_EE': {
@@ -337,6 +519,20 @@ module.exports = {
     name: 'Français - French',
     charset: 'USCRIPT_LATIN'
   },
+  'ga_IE': {
+    license: 'https://wavebox.io/dl/dictionaries/ga_IE/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/ga_IE/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/ga_IE/index.dic',
+    name: 'Gaeilge - Irish',
+    charset: 'USCRIPT_LATIN'
+  },
+  'gd_GB': {
+    license: 'https://wavebox.io/dl/dictionaries/gd_GB/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/gd_GB/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/gd_GB/index.dic',
+    name: 'Gàidhlig - Scottish Gaelic',
+    charset: 'USCRIPT_LATIN'
+  },
   'gl_ES': {
     license: 'https://wavebox.io/dl/dictionaries/gl_ES/LICENSE.txt',
     aff: 'https://wavebox.io/dl/dictionaries/gl_ES/index.aff',
@@ -344,12 +540,26 @@ module.exports = {
     name: 'Galego - Galician',
     charset: 'USCRIPT_LATIN'
   },
+  'gu_IN': {
+    license: 'https://wavebox.io/dl/dictionaries/gu_IN/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/gu_IN/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/gu_IN/index.dic',
+    name: 'ગુજરાતી - Gujarati',
+    charset: 'USCRIPT_GUJARATI'
+  },
   'he_IL': {
     license: 'https://wavebox.io/dl/dictionaries/he_IL/LICENSE.txt',
     aff: 'https://wavebox.io/dl/dictionaries/he_IL/index.aff',
     dic: 'https://wavebox.io/dl/dictionaries/he_IL/index.dic',
     name: 'עברית - Hebrew',
     charset: 'USCRIPT_HEBREW'
+  },
+  'hi_IN': {
+    license: 'https://wavebox.io/dl/dictionaries/hi_IN/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/hi_IN/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/hi_IN/index.dic',
+    name: 'हिन्दी - Hindi',
+    charset: 'USCRIPT_DEVANAGARI'
   },
   'hr_HR': {
     license: 'https://wavebox.io/dl/dictionaries/hr_HR/LICENSE.txt',
@@ -365,6 +575,27 @@ module.exports = {
     name: 'Magyar - Hungarian',
     charset: 'USCRIPT_LATIN'
   },
+  'hy_AM': {
+    license: 'https://wavebox.io/dl/dictionaries/hy_AM/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/hy_AM/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/hy_AM/index.dic',
+    name: 'Հայերեն - Armenian',
+    charset: 'USCRIPT_ARMENIAN'
+  },
+  'id_ID': {
+    license: 'https://wavebox.io/dl/dictionaries/id_ID/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/id_ID/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/id_ID/index.dic',
+    name: 'Bahasa Indonesia - Indonesian',
+    charset: 'USCRIPT_LATIN'
+  },
+  'is': {
+    license: 'https://wavebox.io/dl/dictionaries/is/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/is/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/is/index.dic',
+    name: 'Íslenska - Icelandic',
+    charset: 'USCRIPT_LATIN'
+  },
   'it_IT': {
     license: 'https://wavebox.io/dl/dictionaries/it_IT/LICENSE.txt',
     aff: 'https://wavebox.io/dl/dictionaries/it_IT/index.aff',
@@ -372,11 +603,46 @@ module.exports = {
     name: 'Italiano - Italian',
     charset: 'USCRIPT_LATIN'
   },
+  'kk': {
+    license: 'https://wavebox.io/dl/dictionaries/kk/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/kk/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/kk/index.dic',
+    name: 'Қазақша - Kazakh',
+    charset: 'USCRIPT_CYRILLIC'
+  },
+  'kn_ID': {
+    license: 'https://wavebox.io/dl/dictionaries/kn_ID/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/kn_ID/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/kn_ID/index.dic',
+    name: 'ಕನ್ನಡ - Kannada',
+    charset: 'USCRIPT_KANNADA'
+  },
+  'ko': {
+    license: 'https://wavebox.io/dl/dictionaries/ko/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/ko/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/ko/index.dic',
+    name: '한국어 - Korean',
+    charset: 'USCRIPT_HANGUL'
+  },
+  'ku_TR': {
+    license: 'https://wavebox.io/dl/dictionaries/ku_TR/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/ku_TR/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/ku_TR/index.dic',
+    name: 'Kurdî / كوردی - Kurdish',
+    charset: 'USCRIPT_ARABIC'
+  },
   'lb_LU': {
     license: 'https://wavebox.io/dl/dictionaries/lb_LU/LICENSE.txt',
     aff: 'https://wavebox.io/dl/dictionaries/lb_LU/index.aff',
     dic: 'https://wavebox.io/dl/dictionaries/lb_LU/index.dic',
     name: 'Lëtzebuergesch - Luxembourgish',
+    charset: 'USCRIPT_LATIN'
+  },
+  'ln_CD': {
+    license: 'https://wavebox.io/dl/dictionaries/ln_CD/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/ln_CD/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/ln_CD/index.dic',
+    name: 'Lingála - Lingala',
     charset: 'USCRIPT_LATIN'
   },
   'lt_LT': {
@@ -400,6 +666,13 @@ module.exports = {
     name: 'Монгол - Mongolian',
     charset: 'USCRIPT_CYRILLIC'
   },
+  'mr_IN': {
+    license: 'https://wavebox.io/dl/dictionaries/mr_IN/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/mr_IN/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/mr_IN/index.dic',
+    name: 'मराठी - Marathi',
+    charset: 'USCRIPT_DEVANAGARI'
+  },
   'ms_MY': {
     license: 'https://wavebox.io/dl/dictionaries/ms_MY/LICENSE.txt',
     aff: 'https://wavebox.io/dl/dictionaries/ms_MY/index.aff',
@@ -414,6 +687,13 @@ module.exports = {
     name: 'Norsk (bokmål) - Norwegian',
     charset: 'USCRIPT_LATIN'
   },
+  'ne_NP': {
+    license: 'https://wavebox.io/dl/dictionaries/ne_NP/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/ne_NP/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/ne_NP/index.dic',
+    name: 'नेपाली - Nepali',
+    charset: 'USCRIPT_DEVANAGARI'
+  },
   'nl_NL': {
     license: 'https://wavebox.io/dl/dictionaries/nl_NL/LICENSE.txt',
     aff: 'https://wavebox.io/dl/dictionaries/nl_NL/index.aff',
@@ -427,6 +707,27 @@ module.exports = {
     dic: 'https://wavebox.io/dl/dictionaries/nn_NO/index.dic',
     name: 'Norsk (nynorsk) - Norwegian Nynorsk',
     charset: 'USCRIPT_LATIN'
+  },
+  'oc_FR': {
+    license: 'https://wavebox.io/dl/dictionaries/oc_FR/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/oc_FR/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/oc_FR/index.dic',
+    name: 'Occitan - Occitan',
+    charset: 'USCRIPT_LATIN'
+  },
+  'or_IN': {
+    license: 'https://wavebox.io/dl/dictionaries/or_IN/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/or_IN/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/or_IN/index.dic',
+    name: 'ଓଡ଼ିଆ - Oriya',
+    charset: 'USCRIPT_ORIYA'
+  },
+  'pa_IN': {
+    license: 'https://wavebox.io/dl/dictionaries/pa_IN/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/pa_IN/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/pa_IN/index.dic',
+    name: 'ਪੰਜਾਬੀ / पंजाबी / پنجابي - Panjabi / Punjabi',
+    charset: 'USCRIPT_GURMUKHI'
   },
   'pl_PL': {
     license: 'https://wavebox.io/dl/dictionaries/pl_PL/LICENSE.txt',
@@ -463,6 +764,13 @@ module.exports = {
     name: 'Русский - Russian',
     charset: 'USCRIPT_CYRILLIC'
   },
+  'sa_IN': {
+    license: 'https://wavebox.io/dl/dictionaries/sa_IN/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/sa_IN/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/sa_IN/index.dic',
+    name: 'संस्कृतम् : Sanskrit',
+    charset: 'USCRIPT_DEVANAGARI'
+  },
   'sk_SK': {
     license: 'https://wavebox.io/dl/dictionaries/sk_SK/LICENSE.txt',
     aff: 'https://wavebox.io/dl/dictionaries/sk_SK/index.aff',
@@ -475,6 +783,13 @@ module.exports = {
     aff: 'https://wavebox.io/dl/dictionaries/sl_SI/index.aff',
     dic: 'https://wavebox.io/dl/dictionaries/sl_SI/index.dic',
     name: 'Slovenščina - Slovenian',
+    charset: 'USCRIPT_LATIN'
+  },
+  'sq_AL': {
+    license: 'https://wavebox.io/dl/dictionaries/sq_AL/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/sq_AL/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/sq_AL/index.dic',
+    name: 'Shqip : Albanian',
     charset: 'USCRIPT_LATIN'
   },
   'sr_RS-Latn': {
@@ -498,6 +813,20 @@ module.exports = {
     name: 'Svenska - Swedish',
     charset: 'USCRIPT_LATIN'
   },
+  'te_IN': {
+    license: 'https://wavebox.io/dl/dictionaries/te_IN/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/te_IN/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/te_IN/index.dic',
+    name: 'తెలుగు : Telugu',
+    charset: 'USCRIPT_TELUGU'
+  },
+  'tg': {
+    license: 'https://wavebox.io/dl/dictionaries/tg/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/tg/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/tg/index.dic',
+    name: 'Тоҷикӣ : Tajik',
+    charset: 'USCRIPT_CYRILLIC'
+  },
   'tr_TR': {
     license: 'https://wavebox.io/dl/dictionaries/tr-TR/LICENSE.txt',
     aff: 'https://wavebox.io/dl/dictionaries/tr-TR/index.aff',
@@ -517,6 +846,13 @@ module.exports = {
     aff: 'https://wavebox.io/dl/dictionaries/vi_VN/index.aff',
     dic: 'https://wavebox.io/dl/dictionaries/vi_VN/index.dic',
     name: 'Tiếng Việt - Vietnamese',
+    charset: 'USCRIPT_LATIN'
+  },
+  'zu_ZA': {
+    license: 'https://wavebox.io/dl/dictionaries/zu_ZA/LICENSE.txt',
+    aff: 'https://wavebox.io/dl/dictionaries/zu_ZA/index.aff',
+    dic: 'https://wavebox.io/dl/dictionaries/zu_ZA/index.dic',
+    name: 'isiZulu : Zulu',
     charset: 'USCRIPT_LATIN'
   }
 }
