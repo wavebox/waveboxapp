@@ -14,6 +14,65 @@ class GmailApi {
   }
 
   /**
+  * Gets the compose elements out the dom from the newest compose window
+  * @return { subject, dialog, body, recipient } or undefined if not available
+  */
+  static getNewestComposeElements () {
+    const subjectEl = Array.from(document.querySelectorAll('[name="subjectbox"]')).slice(-1)[0]
+    if (!subjectEl) { return undefined }
+
+    const dialogEl = subjectEl.closest('[role="dialog"]')
+    if (!dialogEl) { return undefined }
+
+    const bodyEl = dialogEl.querySelector('[g_editable="true"][role="textbox"]')
+    const recipientEl = dialogEl.querySelector('[name="to"]')
+
+    return {
+      subject: subjectEl,
+      dialog: dialogEl,
+      body: bodyEl,
+      recipient: recipientEl
+    }
+  }
+
+  /**
+  * Populates the compose window
+  * @param recipient: the recipient to place in the input element
+  * @param subject: the subject to place in the input element
+  * @param body: the body to place in the input element
+  * @return true if population was successful, false otherwise
+  */
+  static populateNewestComposeWindow (recipient, subject, body) {
+    const elements = this.getNewestComposeElements()
+    if (!elements) { return false }
+
+    let focusOn
+
+    // Recipient
+    if (recipient && elements.recipient) {
+      elements.recipient.value = escapeHTML(recipient)
+      focusOn = elements.subject
+    }
+
+    // Subject
+    if (subject && elements.subject) {
+      elements.subject.value = escapeHTML(subject)
+      focusOn = elements.body
+    }
+
+    // Body
+    if (body && elements.body) {
+      elements.body.innerHTML = escapeHTML(body) + elements.body.innerHTML
+      focusOn = elements.body
+    }
+
+    if (focusOn) {
+      setTimeout(() => focusOn.focus(), 500)
+    }
+    return true
+  }
+
+  /**
   * Handles opening the compose ui and prefills relevant items
   * @param data: the data that was sent with the event
   */
@@ -31,38 +90,18 @@ class GmailApi {
     composeButton.dispatchEvent(upEvent)
 
     if (data.recipient || data.subject || data.body) {
+      // The dom can take a little time to update, so make sure we give it time to render the window
       setTimeout(() => {
-        // Grab elements
-        const subjectEl = Array.from(document.querySelectorAll('[name="subjectbox"]')).slice(-1)[0]
-        if (!subjectEl) { return }
-        const dialogEl = subjectEl.closest('[role="dialog"]')
-        if (!dialogEl) { return }
-        const bodyEl = dialogEl.querySelector('[g_editable="true"][role="textbox"]')
-        const recipientEl = dialogEl.querySelector('[name="to"]')
-        let focusableEl
-
-        // Recipient
-        if (data.recipient && recipientEl) {
-          recipientEl.value = escapeHTML(data.recipient)
-          focusableEl = subjectEl
+        const didPopulate = this.populateNewestComposeWindow(data.recipient, data.subject, data.body)
+        if (!didPopulate) {
+          let retries = 0
+          const retry = setInterval(() => {
+            retries++
+            const didPopulate = this.populateNewestComposeWindow(data.recipient, data.subject, data.body)
+            if (didPopulate || retries > 20) { clearInterval(retry) }
+          }, 50)
         }
-
-        // Subject
-        if (data.subject && subjectEl) {
-          subjectEl.value = escapeHTML(data.subject)
-          focusableEl = bodyEl
-        }
-
-        // Body
-        if (data.body && bodyEl) {
-          bodyEl.innerHTML = escapeHTML(data.body) + bodyEl.innerHTML
-          focusableEl = bodyEl
-        }
-
-        if (focusableEl) {
-          setTimeout(() => focusableEl.focus(), 500)
-        }
-      })
+      }, 1)
     }
   }
 }

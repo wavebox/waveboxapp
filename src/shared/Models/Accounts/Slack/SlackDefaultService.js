@@ -205,8 +205,7 @@ class SlackDefaultService extends CoreService {
     if (superMode !== this.constructor.WINDOW_OPEN_MODES.DEFAULT) { return superMode }
 
     if (parsedUrl.hostname === 'files.slack.com') {
-      // You would think download but this doesn't work
-      return this.constructor.WINDOW_OPEN_MODES.CONTENT
+      return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // You would think download but this doesn't work
     } else if (parsedUrl.hostname.endsWith('.slack.com') && parsedUrl.pathname.startsWith('/call/')) {
       return this.constructor.WINDOW_OPEN_MODES.CONTENT
     } else {
