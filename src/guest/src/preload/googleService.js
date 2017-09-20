@@ -1,6 +1,6 @@
-const elconsole = require('./elconsole')
+const elconsole = require('../elconsole')
 try {
-  const GoogleService = require('./Google/GoogleService')
+  const GoogleService = require('../Google/GoogleService')
   /*eslint-disable */
   const googleService = new GoogleService()
   /*eslint-enable */

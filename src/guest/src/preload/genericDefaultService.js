@@ -1,6 +1,6 @@
-const elconsole = require('./elconsole')
+const elconsole = require('../elconsole')
 try {
-  const GenericDefaultService = require('./Generic/GenericDefaultService')
+  const GenericDefaultService = require('../Generic/GenericDefaultService')
   /*eslint-disable */
   const genericDefaultService = new GenericDefaultService()
   /*eslint-enable */

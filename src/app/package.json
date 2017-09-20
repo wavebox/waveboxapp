@@ -20,7 +20,7 @@
     "unused-filename": "1.0.0",
     "uuid": "3.1.0",
     "winreg": "1.2.4",
-    "yargs": "8.0.2"
+    "yargs": "9.0.1"
   },
   "optionalDependencies": {
     "electron-windows-notifications": "1.1.14",

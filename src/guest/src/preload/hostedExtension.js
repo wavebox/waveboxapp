@@ -1,6 +1,6 @@
-const elconsole = require('./elconsole')
+const elconsole = require('../elconsole')
 try {
-  const HostedExtension = require('./HostedExtension/HostedExtension')
+  const HostedExtension = require('../HostedExtension/HostedExtension')
   /*eslint-disable */
   const hostedExtension = new HostedExtension()
   /*eslint-enable */

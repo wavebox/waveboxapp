@@ -1,6 +1,6 @@
-const elconsole = require('./elconsole')
+const elconsole = require('../elconsole')
 try {
-  const MicrosoftStorageService = require('./Microsoft/MicrosoftStorageService')
+  const MicrosoftStorageService = require('../Microsoft/MicrosoftStorageService')
   /*eslint-disable */
   const microsoftService = new MicrosoftStorageService()
   /*eslint-enable */

@@ -6,6 +6,8 @@ const GmailApi = require('./GmailApi')
 const GoogleService = require('./GoogleService')
 const GmailChangeEmitter = require('./GmailChangeEmitter')
 const GinboxChangeEmitter = require('./GinboxChangeEmitter')
+const extensionLoader = require('../Extensions/extensionLoader')
+const { WAVEBOX_CONTENT_IMPL_ENDPOINTS } = req.shared('extensionApis')
 const {
   WB_BROWSER_WINDOW_ICONS_IN_SCREEN,
   WB_BROWSER_OPEN_MESSAGE,
@@ -50,6 +52,7 @@ class GoogleMail extends GoogleService {
     if (this.isGmail) {
       this.loadGmailAPI()
       ipcRenderer.on(WB_BROWSER_COMPOSE_MESSAGE, this.handleComposeMessageGmail.bind(this))
+      extensionLoader.loadWaveboxGuestApi(WAVEBOX_CONTENT_IMPL_ENDPOINTS.GMAIL_WINDOW_OPEN)
     }
     if (this.isGinbox) {
       this.loadInboxAPI()

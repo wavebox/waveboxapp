@@ -1,6 +1,6 @@
-const elconsole = require('./elconsole')
+const elconsole = require('../elconsole')
 try {
-  const GoogleStorage = require('./Google/GoogleStorage')
+  const GoogleStorage = require('../Google/GoogleStorage')
   /*eslint-disable */
   const googleStorage = new GoogleStorage()
   /*eslint-enable */

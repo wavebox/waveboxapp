@@ -1,6 +1,6 @@
-const elconsole = require('./elconsole')
+const elconsole = require('../elconsole')
 try {
-  const TrelloDefaultService = require('./Trello/TrelloDefaultService')
+  const TrelloDefaultService = require('../Trello/TrelloDefaultService')
   /*eslint-disable */
   const trelloDefaultService = new TrelloDefaultService()
   /*eslint-enable */

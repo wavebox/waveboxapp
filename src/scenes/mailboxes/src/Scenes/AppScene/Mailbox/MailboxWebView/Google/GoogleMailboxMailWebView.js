@@ -215,7 +215,7 @@ export default class GoogleMailboxMailWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={window.guestResolve('googleMailTooling')}
+        preload={window.guestResolve('preload/googleMail')}
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
         domReady={this.handleBrowserDomReady}

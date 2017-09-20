@@ -7,7 +7,7 @@ const {
 const ExtensionOptionsWindow = require('../../../windows/ExtensionOptionsWindow')
 const appWindowManager = require('../../../appWindowManager')
 
-const PRELOAD_PATH = path.join(__dirname, '../../../../../guest/guest/crextensionOptionsTooling.js')
+const PRELOAD_PATH = path.join(__dirname, '../../../../../guest/guest/preload/crextensionOptionsTooling.js')
 
 class CRExtensionOptionsPage {
   /* ****************************************************************************/

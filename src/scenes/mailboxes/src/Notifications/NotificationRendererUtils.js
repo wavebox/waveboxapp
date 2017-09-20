@@ -19,15 +19,15 @@ class NotificationRendererUtils {
   * @return { mailbox, enabled }
   */
   static checkConfigAndFetchMailbox (mailboxId, mailboxState, settingsState) {
-    if (!settingsState.os.notificationsEnabled) {
-      return { mailbox: undefined, enabled: false }
-    }
-
     if (mailboxId === NOTIFICATION_TEST_MAILBOX_ID) {
       return {
         mailbox: new CoreMailbox(mailboxId, CoreMailbox.createJS(mailboxId)),
         enabled: true
       }
+    }
+
+    if (!settingsState.os.notificationsEnabled) {
+      return { mailbox: undefined, enabled: false }
     }
 
     const mailbox = mailboxState.getMailbox(mailboxId)

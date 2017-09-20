@@ -30,8 +30,8 @@ class Chrome {
     this.browserAction = new BrowserAction(extensionId)
     this.tabs = new Tabs(extensionId, runtimeEnvironment)
     this.app = new App(extensionId, extensionDatasource)
+    this.i18n = new I18n(extensionId, extensionDatasource)
     if (runtimeEnvironment !== CR_RUNTIME_ENVIRONMENTS.CONTENTSCRIPT) {
-      this.i18n = new I18n(extensionId, extensionDatasource)
       this.storage = new Storage(extensionId, runtimeEnvironment, this.runtime)
     }
     Object.freeze(this)

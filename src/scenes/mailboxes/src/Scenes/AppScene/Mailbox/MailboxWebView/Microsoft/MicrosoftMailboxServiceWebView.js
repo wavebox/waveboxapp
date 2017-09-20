@@ -24,7 +24,7 @@ export default class MicrosoftMailboxServiceWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={window.guestResolve('serviceTooling')}
+        preload={window.guestResolve('preload/mailboxService')}
         mailboxId={mailboxId}
         serviceType={serviceType} />
     )

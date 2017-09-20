@@ -24,7 +24,7 @@ export default class MicrosoftMailboxStorageWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={window.guestResolve('microsoftStorageServiceTooling')}
+        preload={window.guestResolve('preload/microsoftStorage')}
         mailboxId={mailboxId}
         serviceType={CoreMailbox.SERVICE_TYPES.STORAGE}
         allowpopups={false} />

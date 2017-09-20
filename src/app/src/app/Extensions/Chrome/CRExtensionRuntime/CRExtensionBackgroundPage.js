@@ -7,7 +7,7 @@ const {
   CR_EXTENSION_BG_PARTITION_PREFIX
 } = require('../../../../shared/extensionApis')
 
-const PRELOAD_PATH = path.join(__dirname, '../../../../../guest/guest/crextensionBackgroundPage')
+const PRELOAD_PATH = path.join(__dirname, '../../../../../guest/guest/preload/crextensionBackgroundPage')
 
 class CRExtensionBackgroundPage {
   /* ****************************************************************************/

@@ -1,6 +1,6 @@
-const elconsole = require('./elconsole')
+const elconsole = require('../elconsole')
 try {
-  const CRExtensionOptions = require('./Extensions/Chrome/CRExtensionOptions')
+  const CRExtensionOptions = require('../Extensions/Chrome/CRExtensionOptions')
   /*eslint-disable */
   const crextensionOptions = new CRExtensionOptions()
   /*eslint-enable */

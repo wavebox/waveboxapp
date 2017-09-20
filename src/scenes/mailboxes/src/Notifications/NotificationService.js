@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events'
 import { NOTIFICATION_MAX_AGE, NOTIFICATION_FIRST_RUN_GRACE_MS } from 'shared/constants'
+import { NOTIFICATION_TEST_MAILBOX_ID } from 'shared/Notifications'
 import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
 import NotificationRenderer from './NotificationRenderer'
@@ -82,24 +83,33 @@ class NotificationService extends EventEmitter {
   * @param notification: the notification to push
   */
   processPushedMailboxNotification (mailboxId, notification) {
-    // Check we're allowed to display
-    const settingsState = settingsStore.getState()
-    if (!settingsState.os.notificationsEnabled) { return }
+    if (mailboxId === NOTIFICATION_TEST_MAILBOX_ID) {
+      // For test notifications, skip a few of the normal checks
+      NotificationRenderer.presentMailboxNotification(
+        mailboxId,
+        notification,
+        (data) => { ipcRenderer.send(WB_FOCUS_APP, { }) }
+      )
+    } else {
+      // Check we're allowed to display
+      const settingsState = settingsStore.getState()
+      if (!settingsState.os.notificationsEnabled) { return }
 
-    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    if (!mailbox || !mailbox.showNotifications) { return }
+      const mailbox = mailboxStore.getState().getMailbox(mailboxId)
+      if ((!mailbox || !mailbox.showNotifications)) { return }
 
-    NotificationRenderer.presentMailboxNotification(
-      mailboxId,
-      notification,
-      (data) => {
-        ipcRenderer.send(WB_FOCUS_APP, { })
-        if (data) {
-          mailboxActions.changeActive(data.mailboxId, data.serviceType)
-          mailboxDispatch.openItem(data.mailboxId, data.serviceType, data)
+      NotificationRenderer.presentMailboxNotification(
+        mailboxId,
+        notification,
+        (data) => {
+          ipcRenderer.send(WB_FOCUS_APP, { })
+          if (data) {
+            mailboxActions.changeActive(data.mailboxId, data.serviceType)
+            mailboxDispatch.openItem(data.mailboxId, data.serviceType, data)
+          }
         }
-      }
-    )
+      )
+    }
   }
 
   /**

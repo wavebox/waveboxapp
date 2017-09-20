@@ -1,6 +1,6 @@
-const elconsole = require('./elconsole')
+const elconsole = require('../elconsole')
 try {
-  const Content = require('./Content/Content')
+  const Content = require('../Content/Content')
   /*eslint-disable */
   const content = new Content()
   /*eslint-enable */
