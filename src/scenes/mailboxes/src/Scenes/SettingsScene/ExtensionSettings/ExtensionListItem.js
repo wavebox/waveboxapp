@@ -187,14 +187,14 @@ export default class ExtensionListItem extends React.Component {
   * Opens the website
   */
   handleOpenWebsite = () => {
-    shell.openExternal(this.props.websiteUrl)
+    shell.openExternal(this.state.websiteUrl)
   }
 
   /**
   * Opens the license
   */
   handleOpenLicense = () => {
-    shell.openExternal(this.props.licenseUrl)
+    shell.openExternal(this.state.licenseUrl)
   }
 
   /**
