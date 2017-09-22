@@ -5,6 +5,7 @@ const OUT_DIR = path.join(BIN_DIR, 'scenes/monitor')
 const devRequire = (n) => require(path.join(ROOT_DIR, 'node_modules', n))
 
 const webpack = devRequire('webpack')
+const MinifyPlugin = devRequire('babel-minify-webpack-plugin')
 const CopyWebpackPlugin = devRequire('copy-webpack-plugin')
 const CleanWebpackPlugin = devRequire('clean-webpack-plugin')
 const WebpackNotifierPlugin = devRequire('webpack-notifier')
@@ -46,7 +47,7 @@ module.exports = function (env) {
 
       // Minify & optimization
       new webpack.optimize.ModuleConcatenationPlugin(),
-      isProduction ? new webpack.optimize.UglifyJsPlugin({}) : undefined,
+      isProduction ? new MinifyPlugin({ simplify: false }, { sourceMap: false }) : undefined,
 
       process.env.NOTIFICATIONS === 'true' ? new WebpackNotifierPlugin({ title: 'WB Monitor', alwaysNotify: true }) : undefined
     ].filter((p) => !!p),
