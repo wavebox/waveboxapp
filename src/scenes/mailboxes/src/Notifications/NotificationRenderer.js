@@ -5,7 +5,7 @@ import NotificationPlatformSupport from './NotificationPlatformSupport'
 import ElectronNotificationRenderer from './ElectronNotificationRenderer'
 import EnhancedNotificationRenderer from './EnhancedNotificationRenderer'
 
-class NotificationRenderer {
+export default class NotificationRenderer {
   /* **************************************************************************/
   // Presentation
   /* **************************************************************************/
@@ -71,5 +71,3 @@ class NotificationRenderer {
     }
   }
 }
-
-module.exports = NotificationRenderer

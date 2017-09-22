@@ -1,10 +1,11 @@
 import alt from '../alt'
 import actions from './platformActions'
 import path from 'path'
-const { remote } = window.nativeRequire('electron')
+import { remote } from 'electron'
+import pkg from 'package.json'
+
 const WinRegistry = process.platform === 'win32' ? window.appNodeModulesRequire('winreg') : null
 const AutoLaunch = process.platform === 'darwin' ? window.appNodeModulesRequire('auto-launch') : null
-const pkg = window.appPackage()
 
 const WIN32_REG_PATH = '\\Software\\Microsoft\\Windows\\CurrentVersion\\Run'
 const darwinLaunchPath = process.platform === 'darwin' ? (() => {

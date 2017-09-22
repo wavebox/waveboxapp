@@ -16,9 +16,7 @@ import {
   WB_BROWSER_NOTIFICATION_CLICK,
   WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED
 } from 'shared/ipcEvents'
-const {
-  ipcRenderer
-} = window.nativeRequire('electron')
+import { ipcRenderer } from 'electron'
 
 const BROWSER_REF = 'browser'
 

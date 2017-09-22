@@ -1,3 +1,5 @@
+import { ipcRenderer } from 'electron'
+
 class DebugTests {
   /* **************************************************************************/
   // Database
@@ -214,7 +216,6 @@ class DebugTests {
     const { MicrosoftHTTP } = require('stores/microsoft')
     const uuid = require('uuid')
     const { WB_AUTH_MICROSOFT_COMPLETE, WB_AUTH_MICROSOFT_ERROR } = require('shared/ipcEvents')
-    const { ipcRenderer } = window.nativeRequire('electron')
 
     const sig = '[TEST:MICROSOFT_MARK_INBOX_READ]'
     const mailboxId = `debug_${uuid.v4()}`

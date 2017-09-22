@@ -1,6 +1,6 @@
 import OSSettings from 'shared/Models/Settings/OSSettings'
 import Win32Notification from './Win32NotificationLossy'
-const os = window.nativeRequire('os')
+import os from 'os'
 
 class NotificationPlatformSupport {
   /* **************************************************************************/
@@ -43,4 +43,4 @@ class NotificationPlatformSupport {
   }
 }
 
-module.exports = new NotificationPlatformSupport()
+export default new NotificationPlatformSupport()

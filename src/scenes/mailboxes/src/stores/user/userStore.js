@@ -7,9 +7,8 @@ import Bootstrap from '../../Bootstrap'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import { WB_AUTH_WAVEBOX } from 'shared/ipcEvents'
 import semver from 'semver'
-
-const { ipcRenderer } = window.nativeRequire('electron')
-const pkg = window.appPackage()
+import { ipcRenderer } from 'electron'
+import pkg from 'package.json'
 
 class UserStore {
   /* **************************************************************************/

@@ -1,10 +1,7 @@
 import mailboxStore from './mailboxStore'
 import settingsStore from '../settings/settingsStore'
 import { WB_NEW_WINDOW } from 'shared/ipcEvents'
-const {
-  ipcRenderer,
-  remote: { shell }
-} = window.nativeRequire('electron')
+import { ipcRenderer, remote } from 'electron'
 
 class MailboxLinker {
   /**
@@ -12,7 +9,7 @@ class MailboxLinker {
   * @param url: the url to open
   */
   static openExternalWindow (url) {
-    shell.openExternal(url, {
+    remote.shell.openExternal(url, {
       activate: !settingsStore.getState().os.openLinksInBackground
     })
   }

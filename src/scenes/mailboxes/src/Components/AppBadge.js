@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-const { remote } = window.nativeRequire('electron')
+import { remote } from 'electron'
 const {nativeImage, app} = remote
 
 const AppBadge = class AppBadge extends React.Component {

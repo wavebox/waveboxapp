@@ -6,8 +6,7 @@ import {
   ToolbarExtensionAction,
   ToolbarExtensionActionContextMenu
 } from 'sharedui/Components/Toolbar'
-
-const electron = window.nativeRequire('electron')
+import electron from 'electron'
 
 export default class ToolbarExtension extends React.Component {
   /* **************************************************************************/

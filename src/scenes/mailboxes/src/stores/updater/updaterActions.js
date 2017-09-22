@@ -8,7 +8,7 @@ import {
   WB_SQUIRREL_UPDATE_CHECK_START,
   WB_SQUIRREL_UPDATE_DISABLED
 } from 'shared/ipcEvents'
-const { ipcRenderer } = window.nativeRequire('electron')
+import { ipcRenderer } from 'electron'
 
 class UpdaterActions {
   /* **************************************************************************/

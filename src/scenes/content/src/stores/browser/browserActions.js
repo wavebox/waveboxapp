@@ -6,7 +6,7 @@ import {
   WB_WINDOW_ZOOM_OUT,
   WB_WINDOW_ZOOM_RESET
 } from 'shared/ipcEvents'
-const { ipcRenderer } = window.nativeRequire('electron')
+import { ipcRenderer } from 'electron'
 
 class BrowserActions {
   /* **************************************************************************/

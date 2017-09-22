@@ -6,8 +6,8 @@ import {
   WAVEBOX_CAPTURE_URLS,
   WAVEBOX_CAPTURE_URL_HOSTNAME
 } from 'shared/constants'
-const { remote: {shell} } = window.nativeRequire('electron')
-const pkg = window.appPackage()
+import electron from 'electron'
+import pkg from 'package.json'
 
 const REF = 'webview'
 
@@ -54,7 +54,7 @@ export default class WaveboxWebView extends React.Component {
           return true
         case WAVEBOX_CAPTURE_URLS.WAVEBOX_PRO_BUY:
           window.location.hash = '/'
-          shell.openExternal(purl.search(true).url)
+          electron.remote.shell.openExternal(purl.search(true).url)
           return true
       }
     }

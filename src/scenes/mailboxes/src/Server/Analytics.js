@@ -6,7 +6,8 @@ import settingsStore from 'stores/settings/settingsStore'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import querystring from 'querystring'
 import os from 'os'
-const pkg = window.appPackage()
+import pkg from 'package.json'
+
 const distributionConfig = window.distributionConfig()
 
 class Analytics {

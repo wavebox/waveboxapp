@@ -37,9 +37,6 @@ module.exports = function (env) {
         dry: false
       }),
 
-      // Ignore electron modules and other modules we don't want to compile in
-      new webpack.IgnorePlugin(new RegExp('^(electron)$')),
-
       // Copy our static assets
       new CopyWebpackPlugin([
         { from: path.join(__dirname, 'src/content.html'), to: 'content.html', force: true }
@@ -60,7 +57,8 @@ module.exports = function (env) {
         sharedui: path.resolve(path.join(__dirname, '../sharedui')),
         R: path.resolve(path.join(__dirname, 'src')),
         stores: path.resolve(path.join(__dirname, 'src/stores')),
-        Scenes: path.resolve(path.join(__dirname, 'src/Scenes'))
+        Scenes: path.resolve(path.join(__dirname, 'src/Scenes')),
+        'package.json': path.resolve(ROOT_DIR, 'package.json')
       },
       modules: [
         'node_modules',
@@ -78,12 +76,22 @@ module.exports = function (env) {
               loader: 'babel-loader',
               options: {
                 cacheDirectory: true,
-                presets: ['react', 'stage-0', 'es2015'],
+                presets: [
+                  [
+                    'env', {
+                      targets: { chrome: process.env.CHROME_TARGET },
+                      modules: false,
+                      loose: true
+                    }
+                  ],
+                  'react',
+                  'stage-0'
+                ],
                 plugins: ['transform-class-properties']
               }
             }
           ],
-          exclude: /node_modules/,
+          exclude: /node_modules\/(?!(alt)\/).*/, // use (alt|lib2|lib3) for more libs
           include: [
             __dirname,
             path.resolve(path.join(__dirname, '../../shared')),

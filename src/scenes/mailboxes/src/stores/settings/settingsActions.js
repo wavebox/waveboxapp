@@ -5,7 +5,7 @@ import {
   WB_MAILBOXES_WINDOW_TOGGLE_APP_MENU,
   WB_QUIT_APP
 } from 'shared/ipcEvents'
-const {ipcRenderer} = window.nativeRequire('electron')
+import { ipcRenderer } from 'electron'
 
 class SettingsActions {
   /* **************************************************************************/

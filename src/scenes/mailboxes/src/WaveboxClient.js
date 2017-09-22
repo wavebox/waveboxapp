@@ -19,7 +19,7 @@ import {
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
   WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
 } from 'shared/ipcEvents'
-const { ipcRenderer, webFrame } = window.nativeRequire('electron')
+import { ipcRenderer, webFrame } from 'electron'
 
 // Prevent zooming
 webFrame.setZoomLevelLimits(1, 1)

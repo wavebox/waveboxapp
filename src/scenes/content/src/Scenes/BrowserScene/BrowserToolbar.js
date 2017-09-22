@@ -8,7 +8,7 @@ import {
 } from 'material-ui'
 import { CHROME_PDF_URL } from 'shared/constants'
 import URI from 'urijs'
-const { remote } = window.nativeRequire('electron')
+import { remote } from 'electron'
 
 export default class BrowserToolbar extends React.Component {
   /* **************************************************************************/

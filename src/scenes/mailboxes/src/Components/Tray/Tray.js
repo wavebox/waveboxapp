@@ -18,8 +18,7 @@ import {
   WB_FOCUS_APP,
   WB_QUIT_APP
 } from 'shared/ipcEvents'
-
-const electron = window.nativeRequire('electron')
+import electron from 'electron'
 const { ipcRenderer, remote } = electron
 const { Menu, nativeImage } = remote
 

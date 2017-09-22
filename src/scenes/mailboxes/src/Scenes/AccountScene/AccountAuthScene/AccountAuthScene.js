@@ -7,7 +7,7 @@ import { MailboxAvatar } from 'Components/Mailbox'
 import { userActions } from 'stores/user'
 import * as Colors from 'material-ui/styles/colors'
 import { PRIVACY_URL, TERMS_URL } from 'shared/constants'
-const { remote: {shell} } = window.nativeRequire('electron')
+import electron from 'electron'
 
 const styles = {
   // Layout
@@ -94,7 +94,7 @@ export default class AccountAuthScene extends React.Component {
   */
   handleShowPrivacyPolicy = (evt) => {
     evt.preventDefault()
-    shell.openExternal(PRIVACY_URL)
+    electron.remote.shell.openExternal(PRIVACY_URL)
   }
 
   /**
@@ -102,7 +102,7 @@ export default class AccountAuthScene extends React.Component {
   */
   handleShowTermsOfUse = (evt) => {
     evt.preventDefault()
-    shell.openExternal(TERMS_URL)
+    electron.remote.shell.openExternal(TERMS_URL)
   }
 
   /* **************************************************************************/

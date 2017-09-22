@@ -12,8 +12,7 @@ import { mailboxActions } from 'stores/mailbox'
 import { userStore } from 'stores/user'
 import * as Colors from 'material-ui/styles/colors'
 import { TERMS_URL, EULA_URL } from 'shared/constants'
-
-const { remote: { shell } } = window.nativeRequire('electron')
+import electron from 'electron'
 
 const styles = {
   // Layout
@@ -163,14 +162,14 @@ export default class WizardPersonalise extends React.Component {
   * Opens the EULA externally
   */
   handleOpenEULA = () => {
-    shell.openExternal(EULA_URL)
+    electron.remote.shell.openExternal(EULA_URL)
   }
 
   /**
   * Opens the terms externally
   */
   handleOpenTerms = () => {
-    shell.openExternal(TERMS_URL)
+    electron.remote.shell.openExternal(TERMS_URL)
   }
 
   /* **************************************************************************/

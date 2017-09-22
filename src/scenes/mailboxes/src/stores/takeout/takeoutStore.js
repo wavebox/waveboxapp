@@ -5,10 +5,10 @@ import path from 'path'
 import settingsStore from 'stores/settings/settingsStore'
 import mailboxStore from 'stores/mailbox/mailboxStore'
 import { WB_RELAUNCH_APP } from 'shared/ipcEvents'
+import { remote, ipcRenderer } from 'electron'
+import pkg from 'package.json'
 
-const { remote, ipcRenderer } = window.nativeRequire('electron')
 const { dialog } = remote
-const pkg = window.appPackage()
 const { DB_DIR_PATH } = window.mprocManager('PathManager')
 
 class TakeoutStore {

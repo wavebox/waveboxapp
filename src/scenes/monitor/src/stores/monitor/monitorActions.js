@@ -1,6 +1,6 @@
 import alt from '../alt'
 import { WB_SUBMIT_PROCESS_RESOURCE_USAGE } from 'shared/ipcEvents'
-const { ipcRenderer } = window.nativeRequire('electron')
+import { ipcRenderer } from 'electron'
 
 class MonitorActions {
   /* **************************************************************************/

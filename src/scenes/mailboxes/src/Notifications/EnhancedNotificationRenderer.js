@@ -2,8 +2,8 @@ import NotificationRendererUtils from './NotificationRendererUtils'
 import EnhancedNotificationWindowLinux from './EnhancedNotificationWindowLinux'
 import { DEFAULT_NOTIFICATION_SOUND } from 'shared/Notifications'
 import Win32Notification from './Win32NotificationLossy'
+import pkg from 'package.json'
 
-const pkg = window.appPackage()
 const MacNotification = process.platform === 'darwin' ? window.appNodeModulesRequire('node-mac-notifier') : null
 
 class EnhancedNotificationRenderer {
@@ -198,4 +198,4 @@ class EnhancedNotificationRenderer {
   }
 }
 
-module.exports = new EnhancedNotificationRenderer()
+export default new EnhancedNotificationRenderer()

@@ -29,8 +29,8 @@ import {
 
   WB_PING_RESOURCE_USAGE
 } from 'shared/ipcEvents'
+import { ipcRenderer, remote } from 'electron'
 
-const { ipcRenderer, remote } = window.nativeRequire('electron')
 const { session } = remote
 
 class MailboxActions {

@@ -1,6 +1,6 @@
 import alt from '../alt'
 import actions from './monitorActions'
-const { remote } = window.nativeRequire('electron')
+import { remote } from 'electron'
 
 class MonitorStore {
   /* **************************************************************************/

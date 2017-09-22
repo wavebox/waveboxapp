@@ -6,9 +6,7 @@ import {
   RaisedButton, FlatButton, LinearProgress,
   SelectField, MenuItem
 } from 'material-ui'
-const {
-  remote: {shell}
-} = window.nativeRequire('electron')
+import electron from 'electron'
 
 const STEPS = {
   PICK: 0,
@@ -147,7 +145,7 @@ export default class DictionaryInstallStepper extends React.Component {
           <StepContent>
             <p>
               <span>Check you're happy with the </span>
-              <a href={(installLanguageInfo || {}).license} onClick={(evt) => { evt.preventDefault(); shell.openExternal(installLanguageInfo.license) }}>license</a>
+              <a href={(installLanguageInfo || {}).license} onClick={(evt) => { evt.preventDefault(); electron.remote.shell.openExternal(installLanguageInfo.license) }}>license</a>
               <span> of the <strong>{(installLanguageInfo || {}).name}</strong> dictionary</span>
             </p>
             <RaisedButton

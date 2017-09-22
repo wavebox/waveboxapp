@@ -14,6 +14,9 @@ const TASKS = {
 }
 
 module.exports = function (env = {}) {
+  // Config
+  process.env.CHROME_TARGET = 58
+
   // Production
   if (env.p || env.production) {
     console.log('[PRODUCTION BUILD]')

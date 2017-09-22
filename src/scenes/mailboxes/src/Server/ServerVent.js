@@ -9,8 +9,7 @@ import {
   SYNC_SOCKET_RECONNECT_MIN,
   SYNC_SOCKET_RECONNECT_RANGE
 } from 'shared/constants'
-
-const pkg = window.appPackage()
+import pkg from 'package.json'
 
 class ServerVent extends EventEmitter {
   /* ****************************************************************************/

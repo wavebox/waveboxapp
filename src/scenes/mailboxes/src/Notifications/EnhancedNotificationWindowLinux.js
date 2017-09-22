@@ -1,9 +1,9 @@
 import uuid from 'uuid'
 import { WB_PING_RESOURCE_USAGE, WB_PONG_RESOURCE_USAGE } from 'shared/ipcEvents'
+import { ipcRenderer, remote } from 'electron'
+import path from 'path'
 
-const { ipcRenderer, remote } = window.nativeRequire('electron')
 const { BrowserWindow } = remote
-const path = window.nativeRequire('path')
 
 class EnhancedNotificationWindowLinux {
   /* **************************************************************************/
@@ -187,8 +187,5 @@ class EnhancedNotificationWindowLinux {
   }
 }
 
-if (process.platform === 'linux') {
-  module.exports = new EnhancedNotificationWindowLinux()
-} else {
-  module.exports = undefined
-}
+const enhancedNotificationWindowLinux = process.platform === 'linux' ? new EnhancedNotificationWindowLinux() : undefined
+export default enhancedNotificationWindowLinux

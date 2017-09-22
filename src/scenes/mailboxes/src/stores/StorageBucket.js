@@ -1,4 +1,4 @@
-const {ipcRenderer} = window.nativeRequire('electron')
+import { ipcRenderer } from 'electron'
 
 class StorageBucket {
   /* ****************************************************************************/

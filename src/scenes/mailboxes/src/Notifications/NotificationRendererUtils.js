@@ -1,12 +1,12 @@
 import stringHash from 'string-hash'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import { NOTIFICATION_TEST_MAILBOX_ID } from 'shared/Notifications'
+import os from 'os'
+import path from 'path'
 
-const os = window.nativeRequire('os')
-const path = window.nativeRequire('path')
 const fs = window.appNodeModulesRequire('fs-extra')
 
-class NotificationRendererUtils {
+export default class NotificationRendererUtils {
   /* **************************************************************************/
   // Config utils
   /* **************************************************************************/
@@ -226,5 +226,3 @@ class NotificationRendererUtils {
     })
   }
 }
-
-module.exports = NotificationRendererUtils

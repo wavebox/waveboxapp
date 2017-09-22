@@ -16,9 +16,8 @@ import {
   WB_SQUIRREL_APPLY_UPDATE
 } from 'shared/ipcEvents'
 import AppSettings from 'shared/Models/Settings/AppSettings'
-
-const { ipcRenderer } = window.nativeRequire('electron')
-const pkg = window.appPackage()
+import { ipcRenderer } from 'electron'
+import pkg from 'package.json'
 
 const UPDATE_STATES = Object.freeze({
   CHECKING: 'CHECKING',

@@ -1,8 +1,7 @@
 import React from 'react'
 import { Snackbar } from 'material-ui'
 import * as Colors from 'material-ui/styles/colors'
-
-const pkg = window.appPackage()
+import pkg from 'package.json'
 
 const styles = {
   body: {

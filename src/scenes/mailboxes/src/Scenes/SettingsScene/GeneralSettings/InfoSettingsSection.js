@@ -6,9 +6,8 @@ import { updaterActions } from 'stores/updater'
 import { takeoutActions } from 'stores/takeout'
 import { WB_OPEN_MONITOR_WINDOW } from 'shared/ipcEvents'
 import Release from 'shared/Release'
-
-const { ipcRenderer } = window.nativeRequire('electron')
-const pkg = window.appPackage()
+import { ipcRenderer } from 'electron'
+import pkg from 'package.json'
 
 export default class InfoSettingsSection extends React.Component {
   /* **************************************************************************/

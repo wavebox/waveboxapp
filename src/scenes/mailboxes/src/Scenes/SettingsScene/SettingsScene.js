@@ -14,8 +14,7 @@ import SettingsSceneTabTemplate from './SettingsSceneTabTemplate'
 import { WB_RELAUNCH_APP } from 'shared/ipcEvents'
 import { FullscreenModal } from 'Components'
 import { settingsStore } from 'stores/settings'
-
-const { ipcRenderer } = window.nativeRequire('electron')
+import { ipcRenderer } from 'electron'
 
 const styles = {
   modalBody: {

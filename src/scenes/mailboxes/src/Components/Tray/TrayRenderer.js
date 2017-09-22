@@ -1,4 +1,4 @@
-const { nativeImage } = window.nativeRequire('electron').remote
+import electron from 'electron'
 const B64_SVG_PREFIX = 'data:image/svg+xml;base64,'
 const TICK_SVG = window.atob(require('shared/b64Assets').TICK_SVG.replace(B64_SVG_PREFIX, ''))
 
@@ -262,8 +262,8 @@ class TrayRenderer {
     return Promise.resolve()
       .then(() => TrayRenderer.renderCanvas(size, tray, unreadCount))
       .then((canvas) => {
-        const pngData = nativeImage.createFromDataURL(canvas.toDataURL('image/png')).toPng()
-        return Promise.resolve(nativeImage.createFromBuffer(pngData, tray.dpiMultiplier))
+        const pngData = electron.remote.nativeImage.createFromDataURL(canvas.toDataURL('image/png')).toPng()
+        return Promise.resolve(electron.remote.nativeImage.createFromBuffer(pngData, tray.dpiMultiplier))
       })
   }
 }

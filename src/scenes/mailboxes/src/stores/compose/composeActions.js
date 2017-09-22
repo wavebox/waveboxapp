@@ -2,7 +2,7 @@ import alt from '../alt'
 import URI from 'urijs'
 import addressparser from 'addressparser'
 import { WB_MAILBOXES_WINDOW_OPEN_MAILTO_LINK, WB_FOCUS_APP } from 'shared/ipcEvents'
-const { ipcRenderer } = window.nativeRequire('electron')
+import { ipcRenderer } from 'electron'
 
 class ComposeActions {
   /* **************************************************************************/

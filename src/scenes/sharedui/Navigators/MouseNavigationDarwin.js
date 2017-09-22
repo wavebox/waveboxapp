@@ -2,7 +2,8 @@ import {
   WB_WINDOW_DARWIN_SCROLL_TOUCH_BEGIN,
   WB_WINDOW_DARWIN_SCROLL_TOUCH_END
 } from 'shared/ipcEvents'
-const { ipcRenderer } = window.nativeRequire('electron')
+import { ipcRenderer } from 'electron'
+
 const REQUIRED_VELOCITY = 100
 
 class MouseNavigationDarwin {

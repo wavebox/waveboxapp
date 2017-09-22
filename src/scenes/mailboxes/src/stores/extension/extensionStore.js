@@ -5,9 +5,9 @@ import { CoreExtension, CoreExtensionManifest } from 'shared/Models/Extensions'
 import {
   WB_PREPARE_EXTENSION_SESSION
 } from 'shared/ipcEvents'
+import { ipcRenderer } from 'electron'
+import path from 'path'
 
-const { ipcRenderer } = window.nativeRequire('electron')
-const path = window.nativeRequire('path')
 const fs = window.appNodeModulesRequire('fs-extra')
 const { USER_EXTENSION_INSTALL_PATH } = window.mprocManager('PathManager')
 const LOG_PREFIX = '[WB_EXTN]'

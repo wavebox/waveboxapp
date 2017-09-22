@@ -2,8 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Provider from 'Scenes/Provider'
 import monitorActions from 'stores/monitor/monitorActions'
-
-const { webFrame } = window.nativeRequire('electron')
+import { webFrame } from 'electron'
 
 // Prevent zooming
 webFrame.setZoomLevelLimits(1, 1)

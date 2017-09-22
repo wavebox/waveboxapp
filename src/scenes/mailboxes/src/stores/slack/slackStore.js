@@ -18,8 +18,8 @@ import {
   SlackMailboxReducer,
   SlackDefaultServiceReducer
 } from '../mailbox'
+import { remote } from 'electron'
 
-const { remote } = window.nativeRequire('electron')
 const MAX_NOTIFICATION_RECORD_AGE = 1000 * 60 * 10 // 10 mins
 const HTML5_NOTIFICATION_DELAY = 1000 * 2 // 2 secs
 const REQUEST_TYPES = {

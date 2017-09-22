@@ -5,8 +5,7 @@ import { Paper, RaisedButton, FlatButton, CircularProgress } from 'material-ui'
 import * as Colors from 'material-ui/styles/colors'
 import { crextensionStore, crextensionActions } from 'stores/crextension'
 import { userStore } from 'stores/user'
-
-const { remote: {shell} } = window.nativeRequire('electron')
+import electron from 'electron'
 
 const styles = {
   // Layout
@@ -187,14 +186,14 @@ export default class ExtensionListItem extends React.Component {
   * Opens the website
   */
   handleOpenWebsite = () => {
-    shell.openExternal(this.state.websiteUrl)
+    electron.remote.shell.openExternal(this.state.websiteUrl)
   }
 
   /**
   * Opens the license
   */
   handleOpenLicense = () => {
-    shell.openExternal(this.state.licenseUrl)
+    electron.remote.shell.openExternal(this.state.licenseUrl)
   }
 
   /**

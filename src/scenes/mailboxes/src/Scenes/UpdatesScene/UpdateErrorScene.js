@@ -5,8 +5,8 @@ import { Dialog, RaisedButton, FlatButton } from 'material-ui'
 import { updaterActions, updaterStore } from 'stores/updater'
 import UpdateModalTitle from './UpdateModalTitle'
 import * as Colors from 'material-ui/styles/colors'
-const { remote: {shell} } = window.nativeRequire('electron')
-const pkg = window.appPackage()
+import electron from 'electron'
+import pkg from 'package.json'
 
 export default class UpdateErrorScene extends React.Component {
   /* **************************************************************************/
@@ -79,7 +79,7 @@ export default class UpdateErrorScene extends React.Component {
   */
   handleDownloadManually = () => {
     this.handleClose()
-    shell.openExternal(updaterStore.getState().getManualUpdateDownloadUrl())
+    electron.remote.shell.openExternal(updaterStore.getState().getManualUpdateDownloadUrl())
   }
 
   /**

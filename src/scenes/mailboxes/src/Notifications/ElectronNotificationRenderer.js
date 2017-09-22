@@ -47,4 +47,4 @@ class ElectronNotificationRenderer {
   }
 }
 
-module.exports = new ElectronNotificationRenderer()
+export default new ElectronNotificationRenderer()

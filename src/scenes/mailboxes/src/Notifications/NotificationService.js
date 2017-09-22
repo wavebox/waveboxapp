@@ -5,8 +5,7 @@ import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
 import NotificationRenderer from './NotificationRenderer'
 import { WB_FOCUS_APP } from 'shared/ipcEvents'
-
-const { ipcRenderer } = window.nativeRequire('electron')
+import { ipcRenderer } from 'electron'
 
 class NotificationService extends EventEmitter {
   /* **************************************************************************/

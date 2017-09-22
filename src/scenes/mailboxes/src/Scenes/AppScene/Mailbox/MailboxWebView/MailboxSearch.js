@@ -7,8 +7,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import {
   WB_WINDOW_FIND_START
 } from 'shared/ipcEvents'
-
-const { ipcRenderer } = window.nativeRequire('electron')
+import { ipcRenderer } from 'electron'
 
 const TEXT_FIELD_REF = 'textfield'
 

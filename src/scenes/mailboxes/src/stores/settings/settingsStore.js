@@ -17,10 +17,11 @@ import {
 import { NEWS_SYNC_PERIOD } from 'shared/constants'
 import { TOUR_STEPS, TOUR_STEPS_ORDER } from './Tour'
 import WaveboxHTTP from 'Server/WaveboxHTTP'
+import { remote } from 'electron'
+import pkg from 'package.json'
 
 const homeDir = window.appNodeModulesRequire('home-dir') // pull this from main thread
-const { systemPreferences } = window.nativeRequire('electron').remote
-const pkg = window.appPackage()
+const { systemPreferences } = remote
 
 class SettingsStore {
   /* **************************************************************************/

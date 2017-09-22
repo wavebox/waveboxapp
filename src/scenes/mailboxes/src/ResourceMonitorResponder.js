@@ -6,10 +6,9 @@ import {
   WB_PING_RESOURCE_USAGE,
   WB_PONG_RESOURCE_USAGE
 } from 'shared/ipcEvents'
+import { ipcRenderer } from 'electron'
 
-const { ipcRenderer } = window.nativeRequire('electron')
-
-class ResourceMonitorResponder {
+export default class ResourceMonitorResponder {
   /* **************************************************************************/
   // Listening Lifecycle
   /* **************************************************************************/
@@ -58,5 +57,3 @@ class ResourceMonitorResponder {
     })
   }
 }
-
-module.exports = ResourceMonitorResponder

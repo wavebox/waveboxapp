@@ -5,7 +5,8 @@ import {
   WB_BROWSER_ELEVATED_LOG,
   WB_BROWSER_ELEVATED_ERROR
 } from 'shared/ipcEvents'
-const electron = window.nativeRequire('electron')
+import electron from 'electron'
+
 const camelCase = function (name) {
   return name.split('-').map((token, index) => {
     return index === 0 ? token : (token.charAt(0).toUpperCase() + token.slice(1))

@@ -1,6 +1,6 @@
 import alt from '../alt'
 import { WB_AUTH_WAVEBOX_COMPLETE, WB_AUTH_WAVEBOX_ERROR } from 'shared/ipcEvents'
-const { ipcRenderer } = window.nativeRequire('electron')
+import { ipcRenderer } from 'electron'
 
 class UserActions {
   /* **************************************************************************/

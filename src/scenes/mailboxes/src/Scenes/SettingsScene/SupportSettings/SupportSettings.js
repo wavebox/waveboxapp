@@ -2,8 +2,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { RaisedButton, Paper } from 'material-ui'
 import { SUPPORT_URL, BLOG_URL, KB_URL, GITHUB_ISSUE_URL } from 'shared/constants'
-
-const { remote: { shell } } = window.nativeRequire('electron')
+import electron from 'electron'
 
 const styles = {
   // Layout
@@ -96,7 +95,7 @@ export default class SupportSettings extends React.Component {
                 <h2 style={styles.heading}>Blog Tutorials</h2>
                 <p style={styles.subHeading}>Discover what's new and how-to guides on the Wavebox blog</p>
                 <RaisedButton
-                  onClick={() => shell.openExternal(BLOG_URL)}
+                  onClick={() => electron.remote.shell.openExternal(BLOG_URL)}
                   primary
                   label='Blog' />
               </div>
@@ -107,7 +106,7 @@ export default class SupportSettings extends React.Component {
                 <h2 style={styles.heading}>Contact Support</h2>
                 <p style={styles.subHeading}>Send feature requests or get help with an issue you're facing</p>
                 <RaisedButton
-                  onClick={() => shell.openExternal(SUPPORT_URL)}
+                  onClick={() => electron.remote.shell.openExternal(SUPPORT_URL)}
                   primary
                   label='Contact' />
               </div>
@@ -120,7 +119,7 @@ export default class SupportSettings extends React.Component {
                 <h2 style={styles.heading}>Knowledge Base</h2>
                 <p style={styles.subHeading}>Find the answers to the most commonly asked questions</p>
                 <RaisedButton
-                  onClick={() => shell.openExternal(KB_URL)}
+                  onClick={() => electron.remote.shell.openExternal(KB_URL)}
                   primary
                   label='KB' />
               </div>
@@ -131,7 +130,7 @@ export default class SupportSettings extends React.Component {
                 <h2 style={styles.heading}>GitHub</h2>
                 <p style={styles.subHeading}>Join the discussion on our GitHub page</p>
                 <RaisedButton
-                  onClick={() => shell.openExternal(GITHUB_ISSUE_URL)}
+                  onClick={() => electron.remote.shell.openExternal(GITHUB_ISSUE_URL)}
                   primary
                   label='GitHub' />
               </div>

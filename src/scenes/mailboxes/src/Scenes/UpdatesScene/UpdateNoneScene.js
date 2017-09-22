@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Dialog, RaisedButton } from 'material-ui'
 import UpdateModalTitle from './UpdateModalTitle'
-const pkg = window.appPackage()
+import pkg from 'package.json'
 
 export default class UpdateNoneScene extends React.Component {
   /* **************************************************************************/

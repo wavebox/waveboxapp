@@ -1,9 +1,9 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import SidelistWindowControl from './SidelistWindowControl'
+import { remote } from 'electron'
 
 const HAS_WINDOW_CONTROLS = process.platform !== 'darwin'
-const { remote } = window.nativeRequire('electron')
 const styles = {
   placeholder: {
     height: 25,

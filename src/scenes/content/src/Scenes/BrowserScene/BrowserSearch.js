@@ -5,8 +5,7 @@ import { browserActions, browserStore } from 'stores/browser'
 import {
   WB_WINDOW_FIND_START
 } from 'shared/ipcEvents'
-
-const { ipcRenderer } = window.nativeRequire('electron')
+import { ipcRenderer } from 'electron'
 
 const INPUT_REF = 'textField'
 

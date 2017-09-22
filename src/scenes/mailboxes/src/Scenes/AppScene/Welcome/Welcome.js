@@ -11,8 +11,7 @@ import GoogleMailbox from 'shared/Models/Accounts/Google/GoogleMailbox'
 import { TERMS_URL, EULA_URL } from 'shared/constants'
 import WelcomeRaisedButton from './WelcomeRaisedButton'
 import WelcomeAccountButton from './WelcomeAccountButton'
-
-const { remote: { shell } } = window.nativeRequire('electron')
+import electron from 'electron'
 
 const styles = {
   // Layout
@@ -132,14 +131,14 @@ export default class Welcome extends React.Component {
   * Opens the EULA externally
   */
   handleOpenEULA = () => {
-    shell.openExternal(EULA_URL)
+    electron.remote.shell.openExternal(EULA_URL)
   }
 
   /**
   * Opens the terms externally
   */
   handleOpenTerms = () => {
-    shell.openExternal(TERMS_URL)
+    electron.remote.shell.openExternal(TERMS_URL)
   }
 
   /* **************************************************************************/

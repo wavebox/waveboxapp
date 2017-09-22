@@ -6,8 +6,8 @@ import commonStyles from '../CommonSettingStyles'
 import { mailboxActions, ServiceReducer, mailboxDispatch } from 'stores/mailbox'
 import { USER_SCRIPTS_WEB_URL } from 'shared/constants'
 import * as Colors from 'material-ui/styles/colors'
+import electron from 'electron'
 
-const { remote: { shell } } = window.nativeRequire('electron')
 const styles = {
   userscriptLink: {
     color: Colors.blue700,
@@ -65,7 +65,7 @@ export default class AccountCustomCodeSettings extends React.Component {
         <div style={commonStyles.button}>
           <a
             style={styles.userscriptLink}
-            onClick={(evt) => { evt.preventDefault(); shell.openExternal(USER_SCRIPTS_WEB_URL) }}
+            onClick={(evt) => { evt.preventDefault(); electron.remote.shell.openExternal(USER_SCRIPTS_WEB_URL) }}
             href={USER_SCRIPTS_WEB_URL}>Find custom userscripts</a>
         </div>
       </div>

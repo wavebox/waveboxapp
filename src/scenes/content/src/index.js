@@ -8,8 +8,7 @@ import {
   WB_PONG_RESOURCE_USAGE,
   WB_SEND_IPC_TO_CHILD
 } from 'shared/ipcEvents'
-
-const { webFrame, ipcRenderer, remote } = window.nativeRequire('electron')
+import { ipcRenderer, webFrame, remote } from 'electron'
 
 // Prevent zooming
 webFrame.setZoomLevelLimits(1, 1)

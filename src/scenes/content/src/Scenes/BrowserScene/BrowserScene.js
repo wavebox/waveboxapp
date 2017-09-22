@@ -16,8 +16,8 @@ import {
   WB_PONG_RESOURCE_USAGE,
   WB_NEW_WINDOW
 } from 'shared/ipcEvents'
+import { ipcRenderer, remote } from 'electron'
 
-const { ipcRenderer, remote } = window.nativeRequire('electron')
 const { shell } = remote
 
 const SEARCH_REF = 'search'

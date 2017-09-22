@@ -32,8 +32,8 @@ import {
   WB_PREPARE_MAILBOX_SESSION,
   WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT
 } from 'shared/ipcEvents'
+import { ipcRenderer, remote } from 'electron'
 
-const { ipcRenderer, remote } = window.nativeRequire('electron')
 const AUTH_MODES = {
   CREATE: 'CREATE',
   REAUTHENTICATE: 'REAUTHENTICATE'

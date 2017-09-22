@@ -27,8 +27,7 @@ import {
   WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG,
   WB_NEW_WINDOW
 } from 'shared/ipcEvents'
-
-const { ipcRenderer } = window.nativeRequire('electron')
+import { ipcRenderer } from 'electron'
 
 const BROWSER_REF = 'browser'
 const TOOLBAR_REF = 'toolbar'

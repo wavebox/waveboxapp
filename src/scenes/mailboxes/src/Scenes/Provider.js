@@ -24,9 +24,7 @@ import {
   WB_MAILBOXES_WINDOW_SHOW_NEWS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT
 } from 'shared/ipcEvents'
-const {
-  ipcRenderer, remote
-} = window.nativeRequire('electron')
+import { ipcRenderer, remote } from 'electron'
 
 export default class Provider extends React.Component {
   /* **************************************************************************/

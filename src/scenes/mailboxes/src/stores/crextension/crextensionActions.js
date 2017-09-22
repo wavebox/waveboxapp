@@ -3,7 +3,7 @@ import {
   CRExtensionRTActions,
   bindIPCListeners
 } from 'shared/AltStores/CRExtensionRT/CRExtensionRTActions'
-const { ipcRenderer } = window.nativeRequire('electron')
+import { ipcRenderer } from 'electron'
 
 const actions = alt.createActions(CRExtensionRTActions)
 bindIPCListeners(ipcRenderer, actions)
