@@ -76,6 +76,22 @@ class User extends Model {
   get hasSleepable () { return this._value_('hasSleepable', false) }
 
   /* **************************************************************************/
+  // Properties: Permissions: Extensions
+  /* **************************************************************************/
+
+  get extensionLevels () { return this._value_('extensionLevels', []) }
+
+  /**
+  * @param levels: the extension levels
+  * @return true if the user is allowed the extension
+  */
+  hasExtensionWithLevel (levels) {
+    if (levels === null) { return true }
+    const allowed = new Set(this.extensionLevels)
+    return levels.findIndex((l) => allowed.has(l)) !== -1
+  }
+
+  /* **************************************************************************/
   // Properties: User
   /* **************************************************************************/
 

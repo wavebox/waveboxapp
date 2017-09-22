@@ -36,9 +36,9 @@ class CRExtensionRTActions {
   /**
   * Installs an extension
   * @param extensionId: the id of the extension
-  * @param url: the url of the binary file
+  * @param installInfo: the info about the install
   */
-  installExtension (extensionId, url) { return { extensionId, url } }
+  installExtension (extensionId, installInfo) { return { extensionId, installInfo } }
 
   /* **************************************************************************/
   // Browser Action

@@ -4,6 +4,7 @@ const CRExtensionManifestBackground = require('./CRExtensionManifestBackground')
 const CRExtensionManifestContentScript = require('./CRExtensionManifestContentScript')
 const CRExtensionManifestBrowserAction = require('./CRExtensionManifestBrowserAction')
 const CRExtensionI18n = require('./CRExtensionI18n')
+const CRExtensionMatchPatterns = require('./CRExtensionMatchPatterns')
 
 class CRExtensionManifest extends Model {
   /* **************************************************************************/
@@ -64,6 +65,12 @@ class CRExtensionManifest extends Model {
   }
 
   /* **************************************************************************/
+  // Properties: Permissions
+  /* **************************************************************************/
+
+  get permissions () { return new Set(this._value_('permissions', [])) }
+
+  /* **************************************************************************/
   // Properties: Background
   /* **************************************************************************/
 
@@ -113,6 +120,39 @@ class CRExtensionManifest extends Model {
   generateTranslatedClone (messages) {
     const data = CRExtensionI18n.translatedManifest(messages, this.__data__)
     return new CRExtensionManifest(data)
+  }
+
+  /* **************************************************************************/
+  // Wavebox
+  /* **************************************************************************/
+
+  get popoutWindowWhitelist () {
+    return this._value_('wavebox_popout_window_whitelist', [])
+  }
+
+  /**
+  * Checks to see if a window should open as a popout
+  * @param url: the url to open with
+  * @param parsedUrl: the parsed url
+  * @param disposition: the open mode disposition
+  * @return true if the window should open as popout
+  */
+  shouldOpenWindowAsPopout (url, parsedUrl, disposition) {
+    const match = this.popoutWindowWhitelist.find((item) => {
+      if (!item.pattern) { return false }
+
+      // Check the disposition
+      if (Array.isArray(item.disposition) && item.disposition.length) {
+        if (item.disposition.findIndex((d) => d === disposition) === -1) { return false }
+      } else if (typeof (item.disposition === 'string') && item.disposition.length) {
+        if (item.disposition !== disposition) { return false }
+      }
+
+      // Pattern match the url
+      return CRExtensionMatchPatterns.match(parsedUrl.protocol, parsedUrl.hostname, parsedUrl.pathname, item.pattern)
+    })
+
+    return !!match
   }
 }
 

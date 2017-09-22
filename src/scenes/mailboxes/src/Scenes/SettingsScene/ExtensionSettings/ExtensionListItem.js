@@ -4,6 +4,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { Paper, RaisedButton, FlatButton, CircularProgress } from 'material-ui'
 import * as Colors from 'material-ui/styles/colors'
 import { crextensionStore, crextensionActions } from 'stores/crextension'
+import { userStore } from 'stores/user'
 
 const { remote: {shell} } = window.nativeRequire('electron')
 
@@ -43,6 +44,15 @@ const styles = {
     marginTop: 0,
     marginBottom: 0
   },
+  tryOnBeta: {
+    border: `2px solid ${Colors.lightBlue500}`,
+    borderRadius: 4,
+    padding: 4,
+    marginTop: 4,
+    marginBottom: 4,
+    color: Colors.lightBlue500,
+    fontSize: '14px'
+  },
   unknownSource: {
     fontSize: '13px',
     color: Colors.red400
@@ -62,9 +72,6 @@ const styles = {
   actions: {
     marginTop: 8
   },
-  actionsDeveloperRow: {
-    marginBottom: 8
-  },
   actionAfterRestart: {
     fontSize: '12px',
     color: Colors.grey600
@@ -73,7 +80,18 @@ const styles = {
     display: 'inline-block',
     fontSize: '12px',
     marginLeft: 8,
-    marginTop: -8
+    lineHeight: '20px'
+  },
+  actionSpinner: {
+    display: 'inline-block',
+    verticalAlign: 'middle'
+  },
+  action: {
+    marginRight: 8
+  },
+  developerAction: {
+    color: Colors.grey600,
+    textDecoration: 'underline'
   }
 }
 
@@ -85,13 +103,7 @@ export default class ExtensionListItem extends React.Component {
   static propTypes = {
     showRestart: PropTypes.func.isRequired,
     extensionId: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    iconUrl: PropTypes.string,
-    websiteUrl: PropTypes.string,
-    licenseUrl: PropTypes.string,
-    remoteUrl: PropTypes.string,
-    unknownSource: PropTypes.bool.isRequired
+    showBetaTrial: PropTypes.bool.isRequired
   }
 
   /* **************************************************************************/
@@ -100,10 +112,12 @@ export default class ExtensionListItem extends React.Component {
 
   componentDidMount () {
     crextensionStore.listen(this.extensionUpdated)
+    userStore.listen(this.userUpdated)
   }
 
   componentWillUnmount () {
     crextensionStore.unlisten(this.extensionUpdated)
+    userStore.unlisten(this.userUpdated)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -120,9 +134,28 @@ export default class ExtensionListItem extends React.Component {
   * Generates the extension state
   * @param props: the props to to generate from
   * @param crextensionState=autoget: the store state
+  * @param userState=autoget: the store state
+  * @return a state update
   */
-  generateState (props, crextensionState = crextensionStore.getState()) {
+  generateState (props, crextensionState = crextensionStore.getState(), userState = userStore.getState()) {
+    const manifest = crextensionState.getManifest(props.extensionId)
+    const storeRec = userState.getExtension(props.extensionId)
+
     return {
+      unknownSource: true,
+      availableToUser: true,
+      ...(manifest ? {
+        name: manifest.name,
+        description: manifest.description,
+        websiteUrl: manifest.homepageUrl,
+        unknownSource: true,
+        availableToUser: true
+      } : undefined),
+      ...(storeRec ? {
+        ...storeRec,
+        unknownSource: false,
+        availableToUser: userState.user.hasExtensionWithLevel(storeRec.availableTo)
+      } : undefined),
       isWaitingInstall: crextensionState.isWaitingInstall(props.extensionId),
       isWaitingUninstall: crextensionState.isWaitingUninstall(props.extensionId),
       isInstalled: crextensionState.isInstalled(props.extensionId),
@@ -134,12 +167,16 @@ export default class ExtensionListItem extends React.Component {
 
   state = (() => {
     return {
-      ...this.generateState(this.props, undefined)
+      ...this.generateState(this.props, undefined, undefined)
     }
   })()
 
   extensionUpdated = (crextensionState) => {
-    this.setState(this.generateState(this.props, crextensionState))
+    this.setState(this.generateState(this.props, crextensionState, undefined))
+  }
+
+  userUpdated = (userState) => {
+    this.setState(this.generateState(this.props, undefined, userState))
   }
 
   /* **************************************************************************/
@@ -164,7 +201,7 @@ export default class ExtensionListItem extends React.Component {
   * Installs the extension
   */
   handleInstall = () => {
-    crextensionActions.installExtension(this.props.extensionId, this.props.remoteUrl)
+    crextensionActions.installExtension(this.props.extensionId, this.state.install)
     this.props.showRestart()
   }
 
@@ -200,15 +237,20 @@ export default class ExtensionListItem extends React.Component {
 
   /**
   * Renders the actions
-  * @param isWaitingInstall: true if it's waiting for an install
-  * @param isWaitingUninstall: true if it's waiting for an uninstall
-  * @param isInstalled: true if it's installed
-  * @param isDownloading: true if this is downloading
-  * @param hasBackgroundPage: true if this extension has a background page
-  * @param hasOptionsPage: true if this extension has an options page
+  * @param state: the state to use to render
   * @return jsx
   */
-  renderActions (isWaitingInstall, isWaitingUninstall, isDownloading, isInstalled, hasBackgroundPage, hasOptionsPage) {
+  renderActions (state) {
+    const {
+      isWaitingInstall,
+      isWaitingUninstall,
+      isDownloading,
+      isInstalled,
+      hasBackgroundPage,
+      hasOptionsPage,
+      availableToUser
+    } = state
+
     if (isWaitingInstall) {
       return (
         <div style={styles.actions}>
@@ -224,35 +266,49 @@ export default class ExtensionListItem extends React.Component {
     } else if (isDownloading) {
       return (
         <div style={styles.actions}>
-          <CircularProgress size={20} thickness={3} />
+          <CircularProgress size={20} thickness={3} style={styles.actionSpinner} />
           <span style={styles.actionDownload}>Downloading...</span>
         </div>
       )
     } else if (isInstalled) {
-      return (
-        <div style={styles.actions}>
-          <div style={styles.actionsDeveloperRow}>
+      if (availableToUser) {
+        return (
+          <div style={styles.actions}>
+            <RaisedButton
+              onClick={this.handleUninstall}
+              style={styles.action}
+              label='Uninstall' />
             {hasOptionsPage ? (
-              <FlatButton
+              <RaisedButton
                 onClick={this.handleOpenOptionsPage}
+                style={styles.action}
                 label='Options' />
             ) : undefined}
             {hasBackgroundPage ? (
               <FlatButton
                 onClick={this.handleInspectBackgroundPage}
+                style={styles.action}
+                labelStyle={styles.developerAction}
                 label='Inspect background page' />
             ) : undefined}
           </div>
-          <RaisedButton
-            onClick={this.handleUninstall}
-            label='Uninstall' />
-        </div>
-      )
-    } else {
+        )
+      } else {
+        return (
+          <div style={styles.actions}>
+            <RaisedButton
+              onClick={this.handleUninstall}
+              style={styles.action}
+              label='Uninstall' />
+          </div>
+        )
+      }
+    } else if (availableToUser) {
       return (
         <div style={styles.actions}>
           <RaisedButton
             label='Install'
+            primary
             onClick={this.handleInstall} />
         </div>
       )
@@ -263,24 +319,21 @@ export default class ExtensionListItem extends React.Component {
     const {
       showRestart,
       extensionId,
+      showBetaTrial,
+      style,
+      ...passProps
+    } = this.props
+    const {
       name,
       description,
       iconUrl,
       websiteUrl,
       licenseUrl,
-      remoteUrl,
-      unknownSource,
-      style,
-      ...passProps
-    } = this.props
-    const {
-      isWaitingInstall,
-      isWaitingUninstall,
-      isInstalled,
-      isDownloading,
-      hasBackgroundPage,
-      hasOptionsPage
+      availableTo,
+      unknownSource
     } = this.state
+
+    const onProLevel = (availableTo || []).findIndex((l) => l === 'pro') !== -1
 
     return (
       <Paper {...passProps} style={{...styles.paperContainer, ...style}}>
@@ -293,6 +346,11 @@ export default class ExtensionListItem extends React.Component {
               {unknownSource ? (
                 <div style={styles.unknownSource}>Installed from an unknown source</div>
               ) : undefined}
+              {showBetaTrial && onProLevel ? (
+                <div style={styles.tryOnBeta}>
+                  This extension is free to try with basic accounts on the beta channel until the end of November 2017. Thereafter it will be available with Wavebox Pro
+                </div>
+              ) : undefined}
               <div>
                 {websiteUrl ? (
                   <span style={styles.link} onClick={this.handleOpenWebsite}>Website</span>
@@ -303,7 +361,7 @@ export default class ExtensionListItem extends React.Component {
                 ) : undefined}
               </div>
             </div>
-            {this.renderActions(isWaitingInstall, isWaitingUninstall, isDownloading, isInstalled, hasBackgroundPage, hasOptionsPage)}
+            {this.renderActions(this.state)}
           </div>
         </div>
       </Paper>

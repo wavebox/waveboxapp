@@ -1,3 +1,4 @@
+const { webContents } = require('electron')
 const fs = require('fs-extra')
 const path = require('path')
 const pkg = require('../../../../package.json')
@@ -9,7 +10,8 @@ const {
   CRX_STORAGE_GET_,
   CRX_STORAGE_SET_,
   CRX_STORAGE_REMOVE_,
-  CRX_STORAGE_CLEAR_
+  CRX_STORAGE_CLEAR_,
+  CRX_STORAGE_CHANGED_
 } = require('../../../../shared/crExtensionIpcEvents')
 const {
   CR_STORAGE_TYPES
@@ -146,9 +148,20 @@ class CRExtensionStorage {
   _handleSet (evt, [storageType, items], responseCallback) {
     Promise.resolve()
       .then(() => this._loadData(storageType))
-      .then((data) => this._writeData(storageType, Object.assign({}, data, items)))
-      .then(() => {
+      .then((data) => {
+        return Promise.resolve()
+          .then(() => this._writeData(storageType, Object.assign({}, data, items)))
+          .then(() => { return { originalData: data, items: items } })
+      })
+      .then(({originalData, items}) => {
         responseCallback(null)
+
+        // Send the changeset after callback
+        const changeset = Object.keys(items).reduce((acc, k) => {
+          acc[k] = { oldValue: originalData[k], newValue: items[k] }
+          return acc
+        }, {})
+        this._handleSendChangeset(changeset, storageType)
       })
       .catch((err) => {
         responseCallback(err)
@@ -170,10 +183,19 @@ class CRExtensionStorage {
           delete acc[key]
           return acc
         }, Object.assign({}, data))
-        return this._writeData(storageType, nextData)
+        return Promise.resolve()
+          .then(() => this._writeData(storageType, nextData))
+          .then(() => { return { originalData: data, keys: keys } })
       })
-      .then(() => {
+      .then(({ originalData, keys }) => {
         responseCallback(null)
+
+        // Send the changeset after callback
+        const changeset = keys.reduce((acc, k) => {
+          acc[k] = { oldValue: originalData[k], newValue: undefined }
+          return acc
+        }, {})
+        this._handleSendChangeset(changeset, storageType)
       })
       .catch((err) => {
         responseCallback(err)
@@ -188,13 +210,36 @@ class CRExtensionStorage {
   */
   _handleClear (evt, [storageType], responseCallback) {
     Promise.resolve()
-      .then((data) => this._writeData(storageType, {}))
-      .then(() => {
+      .then(() => this._loadData(storageType))
+      .then((data) => {
+        return Promise.resolve()
+          .then(() => this._writeData(storageType, {}))
+          .then(() => { return { originalData: data } })
+      })
+      .then(({ originalData }) => {
         responseCallback(null)
+
+        // Send the changeset after callback
+        const changeset = Object.keys(originalData).reduce((acc, k) => {
+          acc[k] = { oldValue: originalData[k], newValue: undefined }
+          return acc
+        }, {})
+        this._handleSendChangeset(changeset, storageType)
       })
       .catch((err) => {
         responseCallback(err)
       })
+  }
+
+  /**
+  * Sends a changeset to listening extensions
+  * @param changeset: the changes in the format { key: { oldValue, newValue }}
+  * @param storageType: the storage type that had the changes
+  */
+  _handleSendChangeset (changeset, storageType) {
+    webContents.getAllWebContents().forEach((targetWebcontents) => {
+      targetWebcontents.sendToAll(`${CRX_STORAGE_CHANGED_}${this.extension.id}`, changeset, storageType)
+    })
   }
 }
 

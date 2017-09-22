@@ -1,12 +1,15 @@
 import alt from '../alt'
 import actions from './userActions'
-import { ANALYTICS_ID, CREATED_TIME } from 'shared/Models/DeviceKeys'
+import { ANALYTICS_ID, CREATED_TIME, USER, USER_EPOCH, EXTENSIONS } from 'shared/Models/DeviceKeys'
 import User from 'shared/Models/User'
 import persistence from './userPersistence'
 import Bootstrap from '../../Bootstrap'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import { WB_AUTH_WAVEBOX } from 'shared/ipcEvents'
+import semver from 'semver'
+
 const { ipcRenderer } = window.nativeRequire('electron')
+const pkg = window.appPackage()
 
 class UserStore {
   /* **************************************************************************/
@@ -19,6 +22,47 @@ class UserStore {
     this.analyticsId = null
     this.createdTime = null
     this.account = null
+    this.extensions = null
+
+    /* ****************************************/
+    // Extensions
+    /* ****************************************/
+
+    /**
+    * @return all the extensions
+    */
+    this.extensionList = () => { return this.extensions || [] }
+
+    /**
+    * @return all the extensions supported in this version
+    */
+    this.supportedExtensionList = () => {
+      return this.extensionList().filter((ext) => {
+        try {
+          return semver.gte(pkg.version, ext.minVersion)
+        } catch (ex) {
+          return false
+        }
+      })
+    }
+
+    /**
+    * @return all the extensions supported in this version, indexed by id
+    */
+    this.supportedExtensionsIndex = () => {
+      return this.supportedExtensionList().reduce((acc, ext) => {
+        acc[ext.id] = ext
+        return acc
+      }, {})
+    }
+
+    /**
+    * @param extensionId: the id of the extension
+    * @return the extension
+    */
+    this.getExtension = (extensionId) => {
+      return this.extensionList().find((ext) => ext.id === extensionId)
+    }
 
     /* ****************************************/
     // Listeners
@@ -27,6 +71,7 @@ class UserStore {
     this.bindListeners({
       // Store lifecycle
       handleLoad: actions.LOAD,
+      handleLoadExtensions: actions.LOAD_EXTENSIONS,
 
       handleRemoteChangeAccount: actions.REMOTE_CHANGE_ACCOUNT,
 
@@ -45,11 +90,30 @@ class UserStore {
 
   handleLoad () {
     const allData = persistence.allJSONItemsSync()
+
+    // Instance
     this.clientId = Bootstrap.clientToken
     this.clientToken = Bootstrap.clientToken
     this.analyticsId = allData[ANALYTICS_ID]
     this.createdTime = allData[CREATED_TIME]
-    this.user = new User(Bootstrap.accountJS, new Date().getTime())
+
+    // User
+    const now = new Date().getTime()
+    persistence.setJSONItem(USER_EPOCH, now)
+    persistence.setJSONItem(USER, Bootstrap.accountJS)
+    this.user = new User(Bootstrap.accountJS, now)
+  }
+
+  handleLoadExtensions () {
+    Promise.resolve()
+      .then(() => window.fetch(`https://wavebox.io/client/${this.clientId}/extensions.json`))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.json())
+      .then((res) => {
+        this.extensions = res
+        persistence.setJSONItem(EXTENSIONS, res)
+        this.emitChange()
+      })
   }
 
   /* **************************************************************************/
@@ -57,7 +121,10 @@ class UserStore {
   /* **************************************************************************/
 
   handleRemoteChangeAccount ({ account }) {
-    this.user = new User(account, new Date().getTime())
+    const now = new Date().getTime()
+    persistence.setJSONItem(USER_EPOCH, now)
+    persistence.setJSONItem(USER, account)
+    this.user = new User(account, now)
   }
 
   /* **************************************************************************/

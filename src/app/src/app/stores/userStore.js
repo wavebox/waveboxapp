@@ -1,6 +1,15 @@
 const persistence = require('../storage/userStorage')
 const { EventEmitter } = require('events')
-const { CLIENT_ID, ANALYTICS_ID, CREATED_TIME, CLIENT_TOKEN } = require('../../shared/Models/DeviceKeys')
+const {
+  CLIENT_ID,
+  ANALYTICS_ID,
+  CREATED_TIME,
+  CLIENT_TOKEN,
+  USER,
+  USER_EPOCH,
+  EXTENSIONS
+} = require('../../shared/Models/DeviceKeys')
+const User = require('../../shared/Models/User')
 
 class UserStore extends EventEmitter {
   /* ****************************************************************************/
@@ -14,6 +23,12 @@ class UserStore extends EventEmitter {
     this.clientToken = persistence.getJSONItem(CLIENT_TOKEN)
     this.analyticsId = persistence.getJSONItem(ANALYTICS_ID)
     this.createdTime = persistence.getJSONItem(CREATED_TIME)
+    this.extensions = persistence.getJSONItem(EXTENSIONS)
+    this._user = {
+      cached: null,
+      dirty: true,
+      placeholder: new User({}, new Date().getTime())
+    }
 
     persistence.on(`changed:${CLIENT_ID}`, () => {
       this.clientId = persistence.getJSONItem(CLIENT_ID)
@@ -27,9 +42,47 @@ class UserStore extends EventEmitter {
     persistence.on(`changed:${CREATED_TIME}`, () => {
       this.createdTime = persistence.getJSONItem(CREATED_TIME)
     })
+    persistence.on(`changed:${USER}`, () => {
+      this._user.dirty = true
+    })
+    persistence.on(`changed:${USER_EPOCH}`, () => {
+      this._user.dirty = true
+    })
+    persistence.on(`changed:${EXTENSIONS}`, () => {
+      this.extensions = persistence.getJSONItem(EXTENSIONS)
+    })
   }
 
   checkAwake () { return true }
+
+  /* ****************************************************************************/
+  // Properties: User
+  /* ****************************************************************************/
+
+  get user () {
+    if (this._user.dirty) {
+      this._user.cached = new User(persistence.getJSONItem(USER), persistence.getJSONItem(USER_EPOCH))
+      this._user.dirty = false
+    }
+    return this._user.cached
+  }
+  get hasUser () { return !!this.user }
+  get userOrDefault () { return this.hasUser ? this.user : this._user.placeholder }
+
+  /* ****************************************************************************/
+  // Properties: Extensions
+  /* ****************************************************************************/
+
+  /**
+  * Generates a set of disabled extension ids
+  * @return a set of known disabled extension ids
+  */
+  generateDisabledExtensionIds () {
+    const ids = (this.extensions || [])
+      .filter((ext) => !this.userOrDefault.hasExtensionWithLevel(ext.availableTo))
+      .map((ext) => ext.id)
+    return new Set(ids)
+  }
 }
 
 module.exports = new UserStore()

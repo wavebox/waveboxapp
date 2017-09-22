@@ -1,10 +1,7 @@
 const { app, ipcMain, webContents } = require('electron')
-const fs = require('fs-extra')
-const decompress = require('decompress')
-const path = require('path')
 const CRExtensionRuntimeHandler = require('./CRExtensionRuntimeHandler')
 const CRExtensionFS = require('./CRExtensionFS')
-const uuid = require('uuid')
+const CRExtensionDownloader = require('./CRExtensionDownloader')
 const {
   CRExtension,
   CRExtensionManifest
@@ -15,13 +12,7 @@ const {
   WBECRX_UNINSTALL_EXTENSION,
   WBECRX_INSTALL_EXTENSION
 } = require('../../../shared/ipcEvents')
-const {
-  CR_EXTENSION_DOWNLOAD_PARTITION_PREFIX
-} = require('../../../shared/extensionApis')
-const {
-  CHROME_EXTENSION_DOWNLOAD_PATH,
-  CHROME_EXTENSION_INSTALL_PATH
-} = require('../../MProcManagers/PathManager')
+const userStore = require('../../stores/userStore')
 
 class CRExtensionManager {
   /* ****************************************************************************/
@@ -31,7 +22,7 @@ class CRExtensionManager {
   constructor () {
     this.runtimeHandler = new CRExtensionRuntimeHandler()
     this.extensions = new Map()
-    this.downloads = new Map()
+    this.downloader = new CRExtensionDownloader()
     this.installQueue = new Set()
     this.uninstallQueue = new Set()
     this._isSetup_ = false
@@ -42,8 +33,8 @@ class CRExtensionManager {
     ipcMain.on(WBECRX_UNINSTALL_EXTENSION, (evt, extensionId) => {
       this.uninstallExtension(extensionId)
     })
-    ipcMain.on(WBECRX_INSTALL_EXTENSION, (evt, extensionId, url) => {
-      this.installExtension(extensionId, url)
+    ipcMain.on(WBECRX_INSTALL_EXTENSION, (evt, extensionId, installInfo) => {
+      this.installExtension(extensionId, installInfo)
     })
   }
 
@@ -83,54 +74,34 @@ class CRExtensionManager {
   /**
   * Installs an extension
   * @param extensionId: the id of the extension
-  * @param downloadUrl: the url to download
+  * @param installInfo: the info about the install
   */
-  installExtension (extensionId, downloadUrl) {
-    if (this.downloads.has(extensionId)) { return }
+  installExtension (extensionId, installInfo) {
+    if (this.downloader.hasInProgressDownload(extensionId)) { return }
 
-    const installId = uuid.v4()
-    const downloader = webContents.create({
-      partition: `${CR_EXTENSION_DOWNLOAD_PARTITION_PREFIX}${installId}`,
-      isBackgroundPage: true,
-      commandLineSwitches: '--background-page'
-    })
-    downloader.session.on('will-download', (evt, item, webContents) => {
-      const downloadPath = path.join(CHROME_EXTENSION_DOWNLOAD_PATH, `${installId}.zip`)
-      const extractPath = path.join(CHROME_EXTENSION_INSTALL_PATH, extensionId)
-      fs.ensureDirSync(CHROME_EXTENSION_DOWNLOAD_PATH)
-      item.setSavePath(downloadPath)
-
-      item.on('done', (e, state) => {
-        if (state === 'completed') {
-          downloader.destroy()
-          fs.ensureDirSync(extractPath)
-          decompress(downloadPath, extractPath)
-            .then((files) => {
-              try { fs.removeSync(downloadPath) } catch (ex) { }
-              this.downloads.delete(extensionId)
-              this.installQueue.add(extensionId)
-              this._handleSendInstallMetadata()
-            })
-            .catch((e) => {
-              try { fs.removeSync(downloadPath) } catch (ex) { }
-              this.downloads.delete(extensionId)
-              this._handleSendInstallMetadata()
-            })
-        } else {
-          downloader.destroy()
-          this.downloads.delete(extensionId)
-          this._handleSendInstallMetadata()
-        }
-      })
-    })
-
-    this.downloads.set(extensionId, {
-      webContents: downloader,
-      installId: installId,
-      extensionId: extensionId
-    })
-    downloader.downloadURL(downloadUrl)
-    this._handleSendInstallMetadata()
+    if (installInfo.remoteUrl) {
+      this.downloader.downloadHostedExtension(extensionId, installInfo.remoteUrl)
+        .then(
+          () => {
+            this.installQueue.add(extensionId)
+            this._handleSendInstallMetadata()
+          },
+          (_err) => { this._handleSendInstallMetadata() }
+        )
+      this._handleSendInstallMetadata()
+    } else if (installInfo.cwsUrl && installInfo.waveboxUrl) {
+      this.downloader.downloadCWSExtension(extensionId, installInfo.cwsUrl, installInfo.waveboxUrl)
+        .then(
+          () => {
+            this.installQueue.add(extensionId)
+            this._handleSendInstallMetadata()
+          },
+          (_err) => {
+            this._handleSendInstallMetadata()
+          }
+        )
+      this._handleSendInstallMetadata()
+    }
   }
 
   /* ****************************************************************************/
@@ -141,9 +112,11 @@ class CRExtensionManager {
   * Loads all the extensions in the extension directory
   */
   loadExtensionDirectory () {
+    const disabledIds = userStore.generateDisabledExtensionIds()
     const extensions = CRExtensionFS.listInstalledExtensionIds()
       .map((extensionId) => CRExtensionFS.updateEntry(extensionId))
       .filter((info) => !!info)
+      .filter((info) => !disabledIds.has(info.extensionId))
 
     extensions.forEach((info) => {
       try {
@@ -189,7 +162,7 @@ class CRExtensionManager {
   */
   _generateInstallMetadata () {
     const allExtensionIds = [].concat(
-      Array.from(this.downloads.keys()),
+      this.downloader.downloadingExtensionIds,
       Array.from(this.extensions.keys()),
       Array.from(this.installQueue),
       Array.from(this.uninstallQueue)
@@ -198,7 +171,7 @@ class CRExtensionManager {
     const keyset = new Set(allExtensionIds)
     return Array.from(keyset).reduce((acc, extensionId) => {
       acc[extensionId] = {
-        downloading: this.downloads.has(extensionId),
+        downloading: this.downloader.hasInProgressDownload(extensionId),
         installed: this.extensions.has(extensionId),
         willInstall: this.installQueue.has(extensionId),
         willUninstall: this.uninstallQueue.has(extensionId),

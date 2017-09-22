@@ -12,6 +12,11 @@ class UserActions {
   */
   load () { return {} }
 
+  /**
+  * Indicates for the store to load extensions
+  */
+  loadExtensions () { return {} }
+
   /* **************************************************************************/
   // Account
   /* **************************************************************************/

@@ -51,7 +51,7 @@ class CRExtensionBackgroundPage {
       this._html = fs.readFileSync(path.join(this.extension.srcPath, this.extension.manifest.background.htmlPage))
     } else {
       this._name = '_generated_background_page.html'
-      this._html = Buffer.from(this.extension.manifest.generateHtmlPageForScriptset())
+      this._html = Buffer.from(this.extension.manifest.background.generateHtmlPageForScriptset())
     }
 
     this._webContents = webContents.create({

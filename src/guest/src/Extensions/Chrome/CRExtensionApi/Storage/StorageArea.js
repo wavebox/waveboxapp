@@ -8,6 +8,7 @@ const {
 const {
   CR_STORAGE_TYPES
 } = req.shared('extensionApis')
+const ArgParser = require('../Core/ArgParser')
 
 const DispatchManager = require('../Core/DispatchManager')
 const ProtectedRuntimeSymbols = require('../Runtime/ProtectedRuntimeSymbols')
@@ -55,19 +56,14 @@ class StorageArea {
   // Getters
   /* **************************************************************************/
 
-  get (keyOrKeys, callback) {
-    let keys
-    let defaultValues
-    if (keyOrKeys === null) {
-      keys = null
-    } else if (Array.isArray(keyOrKeys)) {
-      keys = keyOrKeys
-    } else if (typeof (keyOrKeys) === 'string') {
-      keys = [keyOrKeys]
-    } else if (typeof (keyOrKeys) === 'object') {
-      keys = Object.keys(keyOrKeys)
-      defaultValues = keyOrKeys
-    }
+  get (...args) {
+    const [keys, defaultValues, callback] = ArgParser.match(args, [
+      { pattern: ['function'], out: [null, undefined, ArgParser.MATCH_ARG_0] },
+      { pattern: ['null', 'function'], out: [null, undefined, ArgParser.MATCH_ARG_1] },
+      { pattern: ['array', 'function'], out: [ArgParser.MATCH_ARG_0, undefined, ArgParser.MATCH_ARG_1] },
+      { pattern: ['object', 'function'], transform: ([keyset, cb]) => [Object.keys(keyset), keyset, cb] },
+      { pattern: ['string', 'function'], transform: ([key, cb]) => [[key], undefined, cb] }
+    ])
 
     DispatchManager.request(
       `${CRX_STORAGE_GET_}${this[privExtensionId]}`,
@@ -80,7 +76,7 @@ class StorageArea {
           }
         } else {
           if (defaultValues) {
-            const responseWithDefault = (keyOrKeys || []).reduce((acc, key) => {
+            const responseWithDefault = (keys || []).reduce((acc, key) => {
               acc[key] = response[key] !== undefined ? response[key] : defaultValues[key]
               return acc
             }, {})

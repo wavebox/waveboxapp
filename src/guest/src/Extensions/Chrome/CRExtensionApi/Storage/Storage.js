@@ -1,9 +1,13 @@
+const { ipcRenderer } = require('electron')
 const req = require('../../../../req')
 const {
-  CR_RUNTIME_ENVIRONMENTS,
   CR_STORAGE_TYPES
 } = req.shared('extensionApis')
+const {
+  CRX_STORAGE_CHANGED_
+} = req.shared('crExtensionIpcEvents')
 const StorageArea = require('./StorageArea')
+const Event = require('../Core/Event')
 
 const privSync = Symbol('privSync')
 const privLocal = Symbol('privLocal')
@@ -25,6 +29,12 @@ class Storage {
     this[privLocal] = new StorageArea(extensionId, CR_STORAGE_TYPES.LOCAL, runtime)
     this[privRuntimeEnvironment] = runtimeEnvironment
 
+    this.onChanged = new Event()
+
+    ipcRenderer.on(`${CRX_STORAGE_CHANGED_}${extensionId}`, (evt, changeset, storageArea) => {
+      this.onChanged.emit(changeset, storageArea.toLowerCase())
+    })
+
     Object.freeze(this)
   }
 
@@ -32,19 +42,8 @@ class Storage {
   // Properties
   /* **************************************************************************/
 
-  get sync () {
-    if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.CONTENTSCRIPT) {
-      throw new Error('chrome.storage.sync is not available in content scripts')
-    }
-    return this[privSync]
-  }
-
-  get local () {
-    if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.CONTENTSCRIPT) {
-      throw new Error('chrome.storage.sync is not available in content scripts')
-    }
-    return this[privLocal]
-  }
+  get sync () { return this[privSync] }
+  get local () { return this[privLocal] }
 }
 
 module.exports = Storage

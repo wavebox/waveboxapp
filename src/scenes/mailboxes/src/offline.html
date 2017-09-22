@@ -148,10 +148,10 @@
         ].join('\n')
 
         Promise.resolve()
-          .then(() => testEndpoint('https://wavebox.io', (l) => outputEl.innerHTML += `<div>${l}</div>`))
-          .then(() => testEndpoint('https://wavebox.io/connection_test_fail', (l) => outputEl.innerHTML += `<div>${l}</div>`))
-          .then(() => testEndpoint('https://google.com', (l) => outputEl.innerHTML += `<div>${l}</div>`))
-          .then(() => testEndpoint('https://microsoft.com', (l) => outputEl.innerHTML += `<div>${l}</div>`))
+          .then(() => testEndpoint('https://wavebox.io', (l) => { outputEl.innerHTML += `<div>${l}</div>` }))
+          .then(() => testEndpoint('https://wavebox.io/connection_test_fail', (l) => { outputEl.innerHTML += `<div>${l}</div>` }))
+          .then(() => testEndpoint('https://google.com', (l) => { outputEl.innerHTML += `<div>${l}</div>` }))
+          .then(() => testEndpoint('https://microsoft.com', (l) => { outputEl.innerHTML += `<div>${l}</div>` }))
           .then(() => { outputEl.innerHTML += '<div><strong>Done</strong></div>' })
       }, false)
       window.addEventListener('online', () => {

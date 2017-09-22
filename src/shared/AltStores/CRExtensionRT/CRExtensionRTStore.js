@@ -64,6 +64,14 @@ class CRExtensionRTStore {
         .filter((manifest) => !!manifest)
     }
 
+    /**
+    * @param id: the id of the extension
+    * @return true if the extension is installed
+    */
+    this.hasExtensionInstalled = (id) => {
+      return this.manifests.has(id)
+    }
+
     /* ****************************************/
     // Install metadata
     /* ****************************************/
@@ -247,9 +255,9 @@ class CRExtensionRTStore {
     this[privIpcRenderer].send(WBECRX_UNINSTALL_EXTENSION, extensionId)
   }
 
-  handleInstallExtension ({ extensionId, url }) {
+  handleInstallExtension ({ extensionId, installInfo }) {
     this.preventDefault()
-    this[privIpcRenderer].send(WBECRX_INSTALL_EXTENSION, extensionId, url)
+    this[privIpcRenderer].send(WBECRX_INSTALL_EXTENSION, extensionId, installInfo)
   }
 
   /* **************************************************************************/

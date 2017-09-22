@@ -5,6 +5,7 @@ const {
   CR_EXTENSION_PROTOCOL,
   CR_RUNTIME_ENVIRONMENTS
 } = req.shared('extensionApis.js')
+const { CRExtensionMatchPatterns } = req.shared('Models/CRExtension')
 
 class CRExtensionLoader {
   /* **************************************************************************/
@@ -70,7 +71,10 @@ class CRExtensionLoader {
   * @param script: the info about the script to inject
   */
   _injectContentScript (extensionId, script) {
-    if (!script.matches.some(this._matchesPattern)) { return }
+    const match = script.matches.find((pattern) => {
+      return CRExtensionMatchPatterns.match(window.location.protocol, window.location.host, window.location.pathname, pattern)
+    })
+    if (!match) { return }
 
     script.js.forEach(({url, code}) => {
       const execute = this._executeContentScript.bind(window, extensionId, url, code)

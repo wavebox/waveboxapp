@@ -216,6 +216,24 @@ class CRExtensionRuntimeHandler {
     if (!runtime) { return }
     runtime.backgroundPage.openDevTools()
   }
+
+  /* ****************************************************************************/
+  // Window open
+  /* ****************************************************************************/
+
+  /**
+  * Checks to see if a window should open as a popout
+  * @param webContentsId: the id of the webcontents
+  * @param url: the url to open with
+  * @param parsedUrl: the parsed url
+  * @param disposition: the open mode disposition
+  * @return true if the window should open as popout
+  */
+  shouldOpenWindowAsPopout (webContentsId, url, parsedUrl, disposition) {
+    return !!Array.from(this.runtimes.values()).find((runtime) => {
+      return runtime.shouldOpenWindowAsPopout(webContentsId, url, parsedUrl, disposition)
+    })
+  }
 }
 
 module.exports = CRExtensionRuntimeHandler

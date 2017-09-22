@@ -126,8 +126,6 @@ export default class WizardServicePicker extends React.Component {
       serviceTypes.slice(Math.ceil(serviceTypes.length / 2))
     ]
 
-    // TODO some text about pro
-
     return (
       <div {...passProps} style={style}>
         <div style={styles.servicesContainer}>

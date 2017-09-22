@@ -167,7 +167,7 @@
                 protocol: credentials.API_KEY ? 2 : 1,
                 '_': new Date().getTime()
               })
-              return fetch(`https://wavebox.io/client/${window.bootstrap.clientId}/init.json?${query}`)
+              return window.fetch(`https://wavebox.io/client/${window.bootstrap.clientId}/init.json?${query}`)
             })
             .then((res) => {
               return res.text().then((text) => {
@@ -195,7 +195,7 @@
                   return offlineBounce()
                 }
               },
-              (err) => offlineBounce()
+              (_err) => offlineBounce()
             )
             .then((config) => {
                // Persist the token if its been provided

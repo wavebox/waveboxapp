@@ -1,16 +1,19 @@
+const { ipcRenderer } = require('electron')
 const url = require('url')
 const req = require('../../../../req')
 const {
   CRX_RUNTIME_SENDMESSAGE,
-  CRX_RUNTIME_ONMESSAGE_
+  CRX_RUNTIME_ONMESSAGE_,
+  CRX_RUNTIME_CONTENTSCRIPT_CONNECT_
 } = req.shared('crExtensionIpcEvents.js')
 const {
   CR_EXTENSION_PROTOCOL,
   CR_RUNTIME_ENVIRONMENTS
 } = req.shared('extensionApis.js')
 
-const CBArgs = require('../Core/CBArgs')
+const ArgParser = require('../Core/ArgParser')
 const Event = require('../Core/Event')
+const EventUnsupported = require('../Core/EventUnsupported')
 const DispatchManager = require('../Core/DispatchManager')
 const MessageSender = require('./MessageSender')
 const {
@@ -51,11 +54,17 @@ class Runtime {
 
     // Functions
     this.onMessage = new Event()
+    this.onInstalled = new EventUnsupported('chrome.runtime.onInstalled')
 
     Object.freeze(this)
 
     // Handlers
     DispatchManager.registerHandler(`${CRX_RUNTIME_ONMESSAGE_}${extensionId}`, this._handleRuntimeOnMessage.bind(this))
+
+    // Connection
+    if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.CONTENTSCRIPT) {
+      ipcRenderer.send(`${CRX_RUNTIME_CONTENTSCRIPT_CONNECT_}${this[privExtensionId]}`)
+    }
   }
 
   /* **************************************************************************/
@@ -63,12 +72,7 @@ class Runtime {
   /* **************************************************************************/
 
   get id () { return this[privExtensionId] }
-  get lastError () {
-    if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.CONTENTSCRIPT) {
-      throw new Error('chrome.runtime.lastError is not supported in content script pages')
-    }
-    return this[privErrors][0]
-  }
+  get lastError () { return this[privErrors][0] }
   get ctrlEventsInError () {
     let last
     try { last = this.lastError } catch (ex) { last = ex }
@@ -87,10 +91,6 @@ class Runtime {
   /* **************************************************************************/
 
   getURL (path) {
-    if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.CONTENTSCRIPT) {
-      throw new Error('chrome.runtime.getURL is not supported in content script pages')
-    }
-
     return url.format({
       protocol: CR_EXTENSION_PROTOCOL,
       slashes: true,
@@ -104,6 +104,20 @@ class Runtime {
   }
 
   /* **************************************************************************/
+  // Setters
+  /* **************************************************************************/
+
+  get setUninstallURL () {
+    if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.CONTENTSCRIPT) {
+      return undefined
+    } else {
+      return () => {
+        console.warn('chrome.runtime.setUninstallURL is not supported by Wavebox at this time')
+      }
+    }
+  }
+
+  /* **************************************************************************/
   // Connection lifecycle
   /* **************************************************************************/
 
@@ -112,21 +126,13 @@ class Runtime {
       throw new Error('chrome.runtime.sendMessage is not supported in background page')
     }
 
-    const { callback, args } = CBArgs(fullArgs)
-    let targetExtensionId = this[privExtensionId]
-    let message
-    let options
-    if (args.length === 1) {
-      [message] = args
-    } else if (args.length === 2) {
-      if (typeof (args[0]) === 'string') {
-        [targetExtensionId, message] = args
-      } else {
-        [message, options] = args
-      }
-    } else if (args.length === 3) {
-      [targetExtensionId, message, options] = args
-    }
+    const { callback, args } = ArgParser.callback(fullArgs)
+    const [targetExtensionId, message, options] = ArgParser.match(args, [
+      { pattern: ['string', 'any', 'object'], out: [ArgParser.MATCH_ARG_0, ArgParser.MATCH_ARG_1, ArgParser.MATCH_ARG_2] },
+      { pattern: ['string', 'any'], out: [ArgParser.MATCH_ARG_0, ArgParser.MATCH_ARG_1, undefined] },
+      { pattern: ['any', 'object'], out: [this[privExtensionId], ArgParser.MATCH_ARG_0, ArgParser.MATCH_ARG_1] },
+      { pattern: ['any'], out: [this[privExtensionId], ArgParser.MATCH_ARG_0, undefined] }
+    ])
 
     if (options) {
       console.error('chrome.runtime.sendMessage does not support options')

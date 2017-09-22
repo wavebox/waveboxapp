@@ -13,6 +13,7 @@ const CoreService = require('../../../shared/Models/Accounts/CoreService')
 const CoreMailbox = require('../../../shared/Models/Accounts/CoreMailbox')
 const ClassTools = require('../../ClassTools')
 const CRExtensionUISubscriber = require('../../Extensions/Chrome/CRExtensionUISubscriber')
+const CRExtensionManager = require('../../Extensions/Chrome/CRExtensionManager')
 const {
   AuthGoogle,
   AuthMicrosoft,
@@ -327,6 +328,11 @@ class MailboxesWindow extends WaveboxWindow {
         provisionalTargetUrl,
         provisionalTargetUrl ? url.parse(provisionalTargetUrl, true) : undefined
       )
+    }
+
+    // Check installed extensions to see if they overwrite the behaviour
+    if (CRExtensionManager.runtimeHandler.shouldOpenWindowAsPopout(webContentsId, targetUrl, purl, disposition)) {
+      openMode = CoreService.WINDOW_OPEN_MODES.POPUP_CONTENT
     }
 
     if (openMode === CoreService.WINDOW_OPEN_MODES.POPUP_CONTENT) {

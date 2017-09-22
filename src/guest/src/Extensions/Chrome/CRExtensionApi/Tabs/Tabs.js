@@ -6,11 +6,12 @@ const {
   CR_RUNTIME_ENVIRONMENTS
 } = req.shared('extensionApis.js')
 
-const CBArgs = require('../Core/CBArgs')
+const ArgParser = require('../Core/ArgParser')
 const DispatchManager = require('../Core/DispatchManager')
 
 const privExtensionId = Symbol('privExtensionId')
 const privRuntimeEnvironment = Symbol('privRuntimeEnvironment')
+const privHasPermission = Symbol('privHasPermission')
 
 class Tabs {
   /* **************************************************************************/
@@ -21,10 +22,13 @@ class Tabs {
   * https://developer.chrome.com/apps/tabs
   * @param extensionId: the id of the extension
   * @param runtimeEnvironment: the current runtime environment
+  * @param hasPermission: true if the extension has the tabs permission
   */
-  constructor (extensionId, runtimeEnvironment) {
+  constructor (extensionId, runtimeEnvironment, hasPermission) {
     this[privExtensionId] = extensionId
     this[privRuntimeEnvironment] = runtimeEnvironment
+    this[privHasPermission] = hasPermission
+
     Object.freeze(this)
   }
 
@@ -41,20 +45,14 @@ class Tabs {
   /* **************************************************************************/
 
   sendMessage (...fullArgs) {
-    const { callback, args } = CBArgs(fullArgs)
-    let tabId
-    let message
-    let options
-    if (args.length === 2) {
-      [tabId, message] = args
-    } else if (args.length === 3) {
-      [tabId, message, options] = args
-    } else {
-      throw new Error('Invalid arguments')
-    }
+    const { callback, args } = ArgParser.callback(fullArgs)
+    const [tabId, message, options] = ArgParser.match(args, [
+      { pattern: ['number', 'any', 'object'], out: [ArgParser.MATCH_ARG_0, ArgParser.MATCH_ARG_1, ArgParser.MATCH_ARG_2] },
+      { pattern: ['number', 'any'], out: [ArgParser.MATCH_ARG_0, ArgParser.MATCH_ARG_1, undefined] }
+    ])
 
     if (options) {
-      console.error('chrome.tabs.sendMessage does not support options')
+      console.warn('chrome.tabs.sendMessage does not yet support options', options)
     }
 
     DispatchManager.request(
