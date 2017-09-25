@@ -1,5 +1,5 @@
 {
-  "name": "waveboxdev",
+  "name": "wavebox",
   "version": "3.3.3",
   "releaseChannel": "BETA",
   "description": "Wavebox",
@@ -22,7 +22,8 @@
     "dev:run": "electron bin/app/index.js",
     "dev:start": "webpack --env.fast && electron bin/app/index.js",
     "webpack": "webpack",
-    "clean": "rm -rf ./bin"
+    "clean": "rm -rf ./bin",
+    "clean:node_modules": "rm -rf ./src/app/node_modules/* && rm -rf ./src/guest/node_modules/* && rm -rf ./src/scenes/content/node_modules/* && rm -rf ./src/scenes/mailboxes/node_modules/* && rm -rf ./src/scenes/monitor/node_modules/*"
   },
   "keywords": [],
   "author": {
