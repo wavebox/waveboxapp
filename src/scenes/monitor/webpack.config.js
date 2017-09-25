@@ -15,6 +15,10 @@ module.exports = function (env) {
   return {
     target: 'electron-renderer',
     devtool: isProduction ? undefined : (process.env.WEBPACK_DEVTOOL || 'source-map'),
+    node: {
+      __dirname: false,
+      __filename: false
+    },
     entry: {
       monitor: [
         path.join(__dirname, 'src')
@@ -46,7 +50,7 @@ module.exports = function (env) {
 
       // Minify & optimization
       new webpack.optimize.ModuleConcatenationPlugin(),
-      isProduction ? new MinifyPlugin({ simplify: false }, { sourceMap: false }) : undefined,
+      isProduction ? new MinifyPlugin({ simplify: false }, { sourceMap: false, comments: false }) : undefined,
 
       process.env.NOTIFICATIONS === 'true' ? new WebpackNotifierPlugin({ title: 'WB Monitor', alwaysNotify: true }) : undefined
     ].filter((p) => !!p),

@@ -2,7 +2,7 @@ const path = require('path')
 const pkg = require('../package.json')
 const AppDirectory = require('appdirectory')
 const RuntimePaths = require('../shared/Runtime/RuntimePaths')
-const NotificationPermissionManager = require('../shared/RUntime/NotificationPermissionManager')
+const NotificationPermissionManager = require('../shared/Runtime/NotificationPermissionManager')
 
 const runtimePaths = RuntimePaths(pkg, path, AppDirectory)
 const notificationPermissionManager = new NotificationPermissionManager(runtimePaths.NOTIFICATION_PERMISSION_PATH)
@@ -30,5 +30,8 @@ module.exports = {
   */
   runtimePaths: () => { return runtimePaths },
 
+  /**
+  * @return the runtime permission manager
+  */
   notificationPermissionManager: () => { return notificationPermissionManager }
 }

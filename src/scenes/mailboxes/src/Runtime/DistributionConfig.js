@@ -1,4 +1,5 @@
 import fs from 'fs-extra'
+import path from 'path'
 
 class DistributionConfig {
   /* ****************************************************************************/
@@ -16,7 +17,7 @@ class DistributionConfig {
   load () {
     if (this.cache === undefined) {
       try {
-        this.cache = fs.readJsonSync('../../app/distributionConfig.json')
+        this.cache = fs.readJsonSync(path.join(__dirname, '../../app/distributionConfig.json'))
       } catch (ex) {
         this.cache = {}
       }

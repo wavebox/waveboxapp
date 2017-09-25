@@ -16,6 +16,10 @@ module.exports = function (env) {
   return {
     target: 'electron-renderer',
     devtool: isProduction ? undefined : (process.env.WEBPACK_DEVTOOL || 'source-map'),
+    node: {
+      __dirname: false,
+      __filename: false
+    },
     entry: {
       mailboxes: [
         path.join(__dirname, 'src')
@@ -51,7 +55,7 @@ module.exports = function (env) {
 
       // Minify & optimization
       new webpack.optimize.ModuleConcatenationPlugin(),
-      isProduction ? new MinifyPlugin({ simplify: false }, { sourceMap: false }) : undefined,
+      isProduction ? new MinifyPlugin({ simplify: false }, { sourceMap: false, comments: false }) : undefined,
 
       // Dev tools
       process.env.NOTIFICATIONS === 'true' ? new WebpackNotifierPlugin({ title: 'WB Mailboxes', alwaysNotify: true }) : undefined

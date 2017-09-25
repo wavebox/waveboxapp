@@ -71,7 +71,7 @@ class Analytics {
     return {
       ...this.lifecycleDefaultArgs,
       cid: userState.analyticsId,
-      vp: `${window.outerWidth}x${window.outerHeight}`,
+      vp: `${window.innerWidth}x${window.innerHeight}`,
       cd1: mailboxState.mailboxCount(),
       cd3: userState.user.plan
     }

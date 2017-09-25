@@ -20,6 +20,10 @@ module.exports = function (env) {
         path.join(__dirname, 'src')
       ]
     },
+    node: {
+      __dirname: false,
+      __filename: false
+    },
     output: {
       path: OUT_DIR,
       filename: 'content.js'
@@ -46,7 +50,7 @@ module.exports = function (env) {
 
       // Minify & optimization
       new webpack.optimize.ModuleConcatenationPlugin(),
-      isProduction ? new MinifyPlugin({ simplify: false }, { sourceMap: false }) : undefined,
+      isProduction ? new MinifyPlugin({ simplify: false }, { sourceMap: false, comments: false }) : undefined,
 
       process.env.NOTIFICATIONS === 'true' ? new WebpackNotifierPlugin({ title: 'WB Content', alwaysNotify: true }) : undefined
     ].filter((p) => !!p),
