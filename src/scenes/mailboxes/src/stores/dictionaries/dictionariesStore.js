@@ -3,10 +3,9 @@ import actions from './dictionariesActions'
 import dictionaries from 'shared/dictionaries.js'
 import path from 'path'
 import { PREINSTALLED_DICTIONARIES } from 'shared/constants'
-
-const fs = window.appNodeModulesRequire('fs-extra')
-const mkdirp = window.appNodeModulesRequire('mkdirp')
-const { USER_DICTIONARIES_PATH } = window.mprocManager('PathManager')
+import RuntimePaths from 'Runtime/RuntimePaths'
+import fs from 'fs-extra'
+import mkdirp from 'mkdirp'
 
 class DictionariesStore {
   /* **************************************************************************/
@@ -131,7 +130,7 @@ class DictionariesStore {
   crawlCustomDictionariesDirectory () {
     let files
     try {
-      files = fs.readdirSync(USER_DICTIONARIES_PATH)
+      files = fs.readdirSync(RuntimePaths.USER_DICTIONARIES_PATH)
     } catch (ex) {
       files = []
     }
@@ -204,10 +203,10 @@ class DictionariesStore {
     ])
     .then((responses) => {
       const data = responses.reduce((acc, res) => Object.assign(acc, res))
-      const affPath = path.join(USER_DICTIONARIES_PATH, this.install.lang + '.aff')
-      const dicPath = path.join(USER_DICTIONARIES_PATH, this.install.lang + '.dic')
+      const affPath = path.join(RuntimePaths.USER_DICTIONARIES_PATH, this.install.lang + '.aff')
+      const dicPath = path.join(RuntimePaths.USER_DICTIONARIES_PATH, this.install.lang + '.dic')
 
-      mkdirp.sync(USER_DICTIONARIES_PATH)
+      mkdirp.sync(RuntimePaths.USER_DICTIONARIES_PATH)
       fs.writeFileSync(affPath, data.aff)
       fs.writeFileSync(dicPath, data.dic)
 

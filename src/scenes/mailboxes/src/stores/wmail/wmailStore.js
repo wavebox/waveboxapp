@@ -7,7 +7,7 @@ import { mailboxActions } from 'stores/mailbox'
 import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
 import GoogleMailbox from 'shared/Models/Accounts/Google/GoogleMailbox'
 import CoreService from 'shared/Models/Accounts/CoreService'
-const AppDirectory = window.appNodeModulesRequire('appdirectory')
+import AppDirectory from 'appdirectory'
 
 const appDirectory = new AppDirectory('wmail')
 const dbPaths = {

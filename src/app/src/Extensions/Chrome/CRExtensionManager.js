@@ -1,0 +1,195 @@
+import { app, ipcMain, webContents } from 'electron'
+import CRExtensionRuntimeHandler from './CRExtensionRuntimeHandler'
+import CRExtensionFS from './CRExtensionFS'
+import CRExtensionDownloader from './CRExtensionDownloader'
+import {
+  CRExtension,
+  CRExtensionManifest
+} from 'shared/Models/CRExtension'
+import {
+  WBECRX_GET_EXTENSION_INSTALL_META,
+  WBECRX_EXTENSION_INSTALL_META_CHANGED,
+  WBECRX_UNINSTALL_EXTENSION,
+  WBECRX_INSTALL_EXTENSION
+} from 'shared/ipcEvents'
+import userStore from 'stores/userStore'
+
+class CRExtensionManager {
+  /* ****************************************************************************/
+  // Lifecycle
+  /* ****************************************************************************/
+
+  constructor () {
+    this.runtimeHandler = new CRExtensionRuntimeHandler()
+    this.extensions = new Map()
+    this.downloader = new CRExtensionDownloader()
+    this.installQueue = new Set()
+    this.uninstallQueue = new Set()
+    this._isSetup_ = false
+
+    ipcMain.on(WBECRX_GET_EXTENSION_INSTALL_META, (evt) => {
+      evt.returnValue = this._generateInstallMetadata()
+    })
+    ipcMain.on(WBECRX_UNINSTALL_EXTENSION, (evt, extensionId) => {
+      this.uninstallExtension(extensionId)
+    })
+    ipcMain.on(WBECRX_INSTALL_EXTENSION, (evt, extensionId, installInfo) => {
+      this.installExtension(extensionId, installInfo)
+    })
+  }
+
+  /* ****************************************************************************/
+  // Integration
+  /* ****************************************************************************/
+
+  /**
+  * Sets up support
+  */
+  setup () {
+    if (this._isSetup_) { return }
+    this._isSetup_ = true
+    app.on('session-created', (ses) => {
+      this.runtimeHandler.registerForSessionLoadRequests(ses.protocol)
+    })
+  }
+
+  /* ****************************************************************************/
+  // Install / Deletion
+  /* ****************************************************************************/
+
+  /**
+  * Uninstalls an extension
+  * @param extensionId: the id of the extension
+  */
+  uninstallExtension (extensionId) {
+    if (!this.extensions.has(extensionId)) { throw new Error(`Extension with id "${extensionId}" not installed`) }
+    if (this.uninstallQueue.has(extensionId)) { throw new Error(`Extension with id "${extensionId}" already set for uninstall on relaunch`) }
+
+    CRExtensionFS.setForRemoval(extensionId)
+    this.uninstallQueue.add(extensionId)
+
+    this._handleSendInstallMetadata()
+  }
+
+  /**
+  * Installs an extension
+  * @param extensionId: the id of the extension
+  * @param installInfo: the info about the install
+  */
+  installExtension (extensionId, installInfo) {
+    if (this.downloader.hasInProgressDownload(extensionId)) { return }
+
+    if (installInfo.remoteUrl) {
+      this.downloader.downloadHostedExtension(extensionId, installInfo.remoteUrl)
+        .then(
+          () => {
+            this.installQueue.add(extensionId)
+            this._handleSendInstallMetadata()
+          },
+          (_err) => { this._handleSendInstallMetadata() }
+        )
+      this._handleSendInstallMetadata()
+    } else if (installInfo.cwsUrl && installInfo.waveboxUrl) {
+      this.downloader.downloadCWSExtension(extensionId, installInfo.cwsUrl, installInfo.waveboxUrl)
+        .then(
+          () => {
+            this.installQueue.add(extensionId)
+            this._handleSendInstallMetadata()
+          },
+          (_err) => {
+            this._handleSendInstallMetadata()
+          }
+        )
+      this._handleSendInstallMetadata()
+    }
+  }
+
+  /* ****************************************************************************/
+  // Loading
+  /* ****************************************************************************/
+
+  /**
+  * Loads all the extensions in the extension directory
+  */
+  loadExtensionDirectory () {
+    const disabledIds = userStore.generateDisabledExtensionIds()
+    const extensions = CRExtensionFS.listInstalledExtensionIds()
+      .map((extensionId) => CRExtensionFS.updateEntry(extensionId))
+      .filter((info) => !!info)
+      .filter((info) => !disabledIds.has(info.extensionId))
+
+    extensions.forEach((info) => {
+      try {
+        this.loadExtensionVersion(info.extensionId, info.versionString)
+      } catch (ex) {
+        console.error('Failed to load extension', ex)
+      }
+    })
+  }
+
+  /**
+  * Adds an extension
+  * @param extensionId: the id of the extension
+  * @param versionString: the version string
+  * @return the extension object
+  */
+  loadExtensionVersion (extensionId, versionString) {
+    const locale = app.getLocale().replace(/-.*$/, '').toLowerCase()
+    const manifest = CRExtensionFS.loadTranslatedManifest(extensionId, versionString, locale)
+    const srcPath = CRExtensionFS.resolvePath(extensionId, versionString)
+    const extension = new CRExtension(srcPath, manifest)
+    if (!CRExtensionManifest.isValidManifestData(manifest)) {
+      throw new Error('Extension is not valid')
+    }
+    if (this.extensions.has(extension.id)) {
+      throw new Error('Extension already installed')
+    }
+
+    this.extensions.set(extension.id, extension)
+    this.runtimeHandler.startExtension(extension)
+
+    this._handleSendInstallMetadata()
+    return extension
+  }
+
+  /* ****************************************************************************/
+  // Metadata
+  /* ****************************************************************************/
+
+  /**
+  * Generates the full install metadata
+  * @return install metadata for each known extension
+  */
+  _generateInstallMetadata () {
+    const allExtensionIds = [].concat(
+      this.downloader.downloadingExtensionIds,
+      Array.from(this.extensions.keys()),
+      Array.from(this.installQueue),
+      Array.from(this.uninstallQueue)
+    )
+
+    const keyset = new Set(allExtensionIds)
+    return Array.from(keyset).reduce((acc, extensionId) => {
+      acc[extensionId] = {
+        downloading: this.downloader.hasInProgressDownload(extensionId),
+        installed: this.extensions.has(extensionId),
+        willInstall: this.installQueue.has(extensionId),
+        willUninstall: this.uninstallQueue.has(extensionId),
+        willUpdate: false
+      }
+      return acc
+    }, {})
+  }
+
+  /**
+  * Sends the install metadata to all listeners
+  */
+  _handleSendInstallMetadata () {
+    const metadata = this._generateInstallMetadata()
+    webContents.getAllWebContents().forEach((wc) => {
+      wc.send(WBECRX_EXTENSION_INSTALL_META_CHANGED, metadata)
+    })
+  }
+}
+
+export default new CRExtensionManager()

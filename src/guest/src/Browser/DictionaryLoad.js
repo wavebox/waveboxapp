@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const enUS = require('dictionary-en-us')
 const { PREINSTALLED_DICTIONARIES } = req.shared('constants.js')
-const { USER_DICTIONARIES_PATH } = req.mprocManager('PathManager')
+const { USER_DICTIONARIES_PATH } = req.runtimePaths()
 
 class DictionaryLoad {
   /* **************************************************************************/

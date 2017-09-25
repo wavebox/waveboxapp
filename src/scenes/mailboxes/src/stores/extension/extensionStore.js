@@ -7,9 +7,9 @@ import {
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
 import path from 'path'
+import RuntimePaths from 'Runtime/RuntimePaths'
+import fs from 'fs-extra'
 
-const fs = window.appNodeModulesRequire('fs-extra')
-const { USER_EXTENSION_INSTALL_PATH } = window.mprocManager('PathManager')
 const LOG_PREFIX = '[WB_EXTN]'
 
 class ExtensionStore {
@@ -110,7 +110,7 @@ class ExtensionStore {
   * @return the root path of the extension
   */
   _extensionRootPath (extension) {
-    return path.join(USER_EXTENSION_INSTALL_PATH, extension.installId)
+    return path.join(RuntimePaths.USER_EXTENSION_INSTALL_PATH, extension.installId)
   }
 
   /* **************************************************************************/

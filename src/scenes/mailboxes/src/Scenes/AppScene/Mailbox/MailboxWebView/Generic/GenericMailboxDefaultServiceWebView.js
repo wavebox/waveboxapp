@@ -9,6 +9,7 @@ import {
   WB_BROWSER_NOTIFICATION_PRESENT,
   WB_MAILBOXES_WEBVIEW_NAVIGATE_HOME
 } from 'shared/ipcEvents'
+import Resolver from 'Runtime/Resolver'
 
 const REF = 'mailbox_tab'
 
@@ -161,7 +162,7 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={window.guestResolve('preload/genericDefaultService')}
+        preload={Resolver.guestPreload('genericDefaultService')}
         mailboxId={mailboxId}
         url={url}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}

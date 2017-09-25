@@ -1,5 +1,5 @@
 {
-  "name": "wavebox",
+  "name": "waveboxdev",
   "version": "3.3.3",
   "releaseChannel": "BETA",
   "description": "Wavebox",
@@ -9,11 +9,11 @@
     "start": "electron bin/app/index.js",
     "test": "standard",
     "install:all": "echo ':wavebox' && npm install && cd src/app && echo ':wavebox-app' && npm install && cd ../../src/guest && echo ':wavebox-guest' && npm install && cd ../../src/scenes/mailboxes && echo ':wavebox-scenes-mailboxes' && npm install && cd ../content && echo ':wavebox-scenes-content' && npm install && cd ../monitor && echo ':wavebox-scenes-monitor' && npm install",
+    "optimize:all": "modclean -p src/app -r && modclean -p src/guest -r",
     "outdated:all": "echo ':wavebox' && npm outdated || true && cd src/app && echo ':wavebox-app' && npm outdated || true && cd ../../src/guest && echo ':wavebox-guest' && npm outdated || true && cd ../../src/scenes/mailboxes && echo ':wavebox-scenes-mailboxes' && npm outdated || true && cd ../content && echo ':wavebox-scenes-content' && npm outdated || true && cd ../monitor && echo ':wavebox-scenes-monitor' && npm outdated || true",
     "prune:all": "echo ':wavebox' && npm prune && cd src/app && echo ':wavebox-app' && npm prune && cd ../../src/guest && echo ':wavebox-guest' && npm prune && cd ../../src/scenes/mailboxes && echo ':wavebox-scenes-mailboxes' && npm prune && cd ../content && echo ':wavebox-scenes-content' && npm prune && cd ../monitor && echo ':wavebox-scenes-monitor' && npm prune",
     "dev:guest": "webpack --env.task=guest && electron bin/app/index.js",
     "dev:guestApi": "webpack --env.task=guestApi && electron bin/app/index.js",
-    "dev:bridge": "webpack --env.task=bridge && electron bin/app/index.js",
     "dev:app": "webpack --env.task=app && electron bin/app/index.js",
     "dev:mailboxes": "webpack --env.task=mailboxes --env.fast && electron bin/app/index.js",
     "dev:content": "webpack --env.task=content && electron bin/app/index.js",
@@ -21,7 +21,8 @@
     "dev:assets": "webpack --env.task=assets && electron bin/app/index.js",
     "dev:run": "electron bin/app/index.js",
     "dev:start": "webpack --env.fast && electron bin/app/index.js",
-    "webpack": "webpack"
+    "webpack": "webpack",
+    "clean": "rm -rf ./bin"
   },
   "keywords": [],
   "author": {
@@ -55,6 +56,7 @@
     "jsx-loader": "0.13.2",
     "less": "2.7.2",
     "less-loader": "4.0.5",
+    "modclean": "2.1.0",
     "style-loader": "0.18.2",
     "uglify-es": "3.1.1",
     "url-loader": "0.5.9",

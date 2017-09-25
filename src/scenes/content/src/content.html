@@ -24,7 +24,12 @@
   </head>
   <body>
     <div id="ReactComponent-AppScene"></div>
-    <script type="text/javascript" src="../bridge/nativeRequire.js"></script>
+    <script type="text/javascript">
+      window.guestResolve = function (name) {
+        const path = require('path')
+        return path.join('../../guest/guest/', name)
+      }
+    </script>
     <script type="text/javascript" src="content.js"></script>
   </body>
 </html>

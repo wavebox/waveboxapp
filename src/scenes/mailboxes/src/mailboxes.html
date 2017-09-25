@@ -18,7 +18,6 @@
       }
       * {
         box-sizing: border-box;
-        //backface-visibility: hidden;
        }
 
       /** Mock loading UI **/
@@ -86,6 +85,11 @@
     <div id="ReactComponent-AppSceneRenderNode"></div>
 
     <script type="text/javascript">
+      window.appNodeModulesRequire = function (name) {
+        return require('../../app/node_modules/' + name)
+      }
+    </script>
+    <script type="text/javascript">
       ;(function () {
         const timing = {
           init: new Date().getTime(),
@@ -96,8 +100,8 @@
         const electron = require('electron')
         const querystring = require('querystring')
         const query = querystring.parse(window.location.search.substr(1))
-        const pkg = require('../../app/package.json')
-        const credentials = require('../../app/shared/credentials')
+        const pkg = require('./package.json')
+        const credentials = require('./credentials.js')
         window.bootstrap = { clientId: query.clientId, clientToken: query.clientToken }
 
         /**
@@ -214,7 +218,6 @@
 
         // Kick everything off
         Promise.all([
-          injectScript('../bridge/nativeRequire.js'),
           injectScript('mailboxes.js'),
           fetchBootstrap()
         ]).then((r) => {

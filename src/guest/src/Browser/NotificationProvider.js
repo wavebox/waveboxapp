@@ -8,7 +8,7 @@ const {
 const {
   WAVEBOX_CONTENT_IMPL_ENDPOINTS
 } = req.shared('extensionApis')
-const NotificationPermissionManager = req.mprocManager('NotificationPermissionManager')
+const NotificationPermissionManager = req.notificationPermissionManager()
 const extensionLoader = require('../Extensions/extensionLoader')
 
 class NotificationProvider {

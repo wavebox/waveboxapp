@@ -7,8 +7,7 @@ import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import querystring from 'querystring'
 import os from 'os'
 import pkg from 'package.json'
-
-const distributionConfig = window.distributionConfig()
+import DistributionConfig from 'Runtime/DistributionConfig'
 
 class Analytics {
   /* ****************************************************************************/
@@ -28,7 +27,7 @@ class Analytics {
       cd6: process.platform,
       cd7: process.arch,
       cd8: os.release(),
-      cd9: distributionConfig.installMethod || 'unknown',
+      cd9: DistributionConfig.installMethod,
       cd10: pkg.releaseChannel
     })
   }

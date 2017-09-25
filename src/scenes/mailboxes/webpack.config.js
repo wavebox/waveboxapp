@@ -27,9 +27,8 @@ module.exports = function (env) {
     },
     plugins: [
       !isProduction ? undefined : new webpack.DefinePlugin({
-        'process.env': {
-          'NODE_ENV': JSON.stringify('production')
-        }
+        __DEV__: false,
+        'process.env.NODE_ENV': JSON.stringify('production')
       }),
 
       // Clean out our bin dir
@@ -43,7 +42,9 @@ module.exports = function (env) {
       new CopyWebpackPlugin([
         { from: path.join(__dirname, 'src/mailboxes.html'), to: 'mailboxes.html', force: true },
         { from: path.join(__dirname, 'src/offline.html'), to: 'offline.html', force: true },
-        { from: path.join(__dirname, 'src/notification_linux.html'), to: 'notification_linux.html', force: true }
+        { from: path.join(__dirname, 'src/notification_linux.html'), to: 'notification_linux.html', force: true },
+        { from: path.join(__dirname, '../../../package.json'), to: 'package.json', force: true },
+        { from: path.join(__dirname, '../../shared/credentials.js'), to: 'credentials.js', force: true }
       ], {
         ignore: [ '.DS_Store' ]
       }),
@@ -67,6 +68,7 @@ module.exports = function (env) {
         Server: path.resolve(path.join(__dirname, 'src/Server')),
         stores: path.resolve(path.join(__dirname, 'src/stores')),
         Debug: path.resolve(path.join(__dirname, 'src/Debug')),
+        Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
         'package.json': path.resolve(ROOT_DIR, 'package.json')
       },
       modules: [

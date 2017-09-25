@@ -26,9 +26,8 @@ module.exports = function (env) {
     },
     plugins: [
       !isProduction ? undefined : new webpack.DefinePlugin({
-        'process.env': {
-          'NODE_ENV': JSON.stringify('production')
-        }
+        __DEV__: false,
+        'process.env.NODE_ENV': JSON.stringify('production')
       }),
 
       // Clean out our bin dir

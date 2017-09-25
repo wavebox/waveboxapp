@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
+import Resolver from 'Runtime/Resolver'
 
 const REF = 'mailbox_tab'
 
@@ -23,7 +24,7 @@ export default class GoogleMailboxStorageWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={window.guestResolve('preload/googleStorage')}
+        preload={Resolver.guestPreload('googleStorage')}
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.STORAGE} />
     )

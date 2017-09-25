@@ -8,6 +8,7 @@ import {
   WB_BROWSER_NOTIFICATION_PRESENT,
   WB_BROWSER_NOTIFICATION_CLICK
 } from 'shared/ipcEvents'
+import Resolver from 'Runtime/Resolver'
 
 const REF = 'mailbox_tab'
 
@@ -141,7 +142,7 @@ export default class SlackMailboxWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={window.guestResolve('preload/slack')}
+        preload={Resolver.guestPreload('slack')}
         mailboxId={mailboxId}
         hasSearch={false}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}

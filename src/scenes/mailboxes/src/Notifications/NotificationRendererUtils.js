@@ -3,8 +3,7 @@ import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import { NOTIFICATION_TEST_MAILBOX_ID } from 'shared/Notifications'
 import os from 'os'
 import path from 'path'
-
-const fs = window.appNodeModulesRequire('fs-extra')
+import fs from 'fs-extra'
 
 export default class NotificationRendererUtils {
   /* **************************************************************************/

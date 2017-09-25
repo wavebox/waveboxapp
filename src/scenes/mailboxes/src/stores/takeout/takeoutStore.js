@@ -7,9 +7,9 @@ import mailboxStore from 'stores/mailbox/mailboxStore'
 import { WB_RELAUNCH_APP } from 'shared/ipcEvents'
 import { remote, ipcRenderer } from 'electron'
 import pkg from 'package.json'
+import RuntimePaths from 'Runtime/RuntimePaths'
 
 const { dialog } = remote
-const { DB_DIR_PATH } = window.mprocManager('PathManager')
 
 class TakeoutStore {
   /* **************************************************************************/
@@ -85,7 +85,7 @@ class TakeoutStore {
         Object.keys(data.stores).forEach((name) => {
           // Skip filenames with \ or / in the name
           if (name.indexOf('/') !== -1 || name.indexOf('\\') !== -1) { return }
-          const writePath = path.join(DB_DIR_PATH, `${name}.import`)
+          const writePath = path.join(RuntimePaths.DB_DIR_PATH, `${name}.import`)
           const writeData = JSON.stringify(data.stores[name])
           fs.writeFileSync(writePath, writeData)
         })

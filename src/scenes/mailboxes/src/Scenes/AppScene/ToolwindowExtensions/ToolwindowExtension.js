@@ -17,6 +17,7 @@ import {
   WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
+import Resolver from 'Runtime/Resolver'
 
 const BROWSER_REF = 'browser'
 
@@ -189,7 +190,7 @@ export default class ToolwindowExtension extends React.Component {
         <WebView
           ref={BROWSER_REF}
           key={installTime}
-          preload={window.guestResolve('preload/hostedExtension')}
+          preload={Resolver.guestPreload('hostedExtension')}
           src={`${WAVEBOX_HOSTED_EXTENSION_PROTOCOL}://${installId}/${toolwindowIndex}`}
           partition={'persist:' + installId}
           webpreferences={'contextIsolation=yes, nativeWindowOpen=yes'}

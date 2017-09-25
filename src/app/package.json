@@ -29,6 +29,10 @@
     "node-mac-notifier": "0.0.13"
   },
   "devDependencies": {
-    "standard": "10.0.3"
+    "standard": "10.0.3",
+    "babel-eslint": "8.0.0"
+  },
+  "standard": {
+    "parser": "babel-eslint"
   }
 }

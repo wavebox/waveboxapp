@@ -16,7 +16,7 @@ const {
   WB_BROWSER_START_SPELLCHECK,
   WB_BROWSER_SPELLCHECK_ADD_WORD
 } = req.shared('ipcEvents')
-const { USER_DICTIONARY_WORDS_PATH } = req.mprocManager('PathManager')
+const { USER_DICTIONARY_WORDS_PATH } = req.runtimePaths()
 
 class Spellchecker {
   /* **************************************************************************/
