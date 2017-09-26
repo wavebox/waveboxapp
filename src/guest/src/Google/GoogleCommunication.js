@@ -39,7 +39,7 @@ class GoogleCommunication {
     if (this.state.count === undefined) {
       this.state.count = count
     } else {
-      if (count > this.state.count) {
+      if (count !== this.state.count) {
         ipcRenderer.sendToHost({
           type: WB_BROWSER_GOOGLE_COMMUNICATION_UNREAD_COUNT_CHANGED,
           data: {
@@ -60,7 +60,7 @@ class GoogleCommunication {
   * @return the unread info. { count }
   */
   getUnreadInfo () {
-    const info = { count: 0 }
+    const info = { count: undefined }
 
     try {
       const chatFrame = document.querySelector('#hangout-landing-chat iframe').contentWindow.document.body

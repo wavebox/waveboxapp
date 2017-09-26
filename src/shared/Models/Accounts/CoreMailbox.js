@@ -256,8 +256,14 @@ class CoreMailbox extends Model {
   // Properties : Badge
   /* **************************************************************************/
 
-  get showCumulativeSidebarUnreadBadge () { return this._value_('showCumulativeSidebarUnreadBadge', true) }
-  get cumulativeSidebarUnreadBadgeColor () { return this._value_('cumulativeSidebarUnreadBadgeColor', 'rgba(238, 54, 55, 0.95)') }
+  get showCumulativeSidebarUnreadBadge () {
+    // Migrate from old settings
+    return this._value_('showCumulativeSidebarUnreadBadge', this._value_('showUnreadBadge', true))
+  }
+  get cumulativeSidebarUnreadBadgeColor () {
+    // Migrate from old settings
+    return this._value_('cumulativeSidebarUnreadBadgeColor', this._value_('unreadBadgeColor', 'rgba(238, 54, 55, 0.95)'))
+  }
 
   /* **************************************************************************/
   // Properties : Authentication
@@ -336,7 +342,7 @@ class CoreMailbox extends Model {
   getTrayMessages (defaultServiceOnly = false) {
     const services = defaultServiceOnly ? [this.defaultService] : this.enabledServices
     return services.reduce((acc, service) => {
-      if (service.supportsTrayMessages && service.showUnreadActivityBadge) {
+      if (service.supportsTrayMessages) {
         return acc.concat(service.trayMessages)
       } else {
         return acc

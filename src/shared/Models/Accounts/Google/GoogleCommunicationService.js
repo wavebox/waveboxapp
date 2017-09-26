@@ -13,6 +13,7 @@ class GoogleCommunicationService extends GoogleService {
 
   static get humanizedType () { return 'Google Hangouts' }
   static get humanizedTypeShort () { return 'Hangouts' }
+  static get humanizedUnreadItemType () { return 'message' }
   static get humanizedLogos () {
     return [
       'images/google/logo_hangouts_32px.png',
@@ -28,6 +29,7 @@ class GoogleCommunicationService extends GoogleService {
 
   static get supportsUnreadCount () { return true }
   static get supportsNativeNotifications () { return true }
+  static get supportsTrayMessages () { return true }
 
   /* **************************************************************************/
   // Properties
@@ -65,7 +67,19 @@ class GoogleCommunicationService extends GoogleService {
   // Properties : Provider Details & counts etc
   /* **************************************************************************/
 
-  get unreadCount () { return 2 }
+  get unreadCount () { return this._value_('unreadCount', 0) }
+  get unreadCountUpdateTime () { return this._value_('unreadCountUpdateTime', 0) }
+  get trayMessages () {
+    const count = this.unreadCount
+    return count === 0 ? [] : [
+      {
+        id: `auto_${count}`,
+        text: `${count} unseen ${this.humanizedTypeShort} ${this.humanizedUnreadItemType}${count > 1 ? 's' : ''}`,
+        date: this.unreadCountUpdateTime,
+        data: {}
+      }
+    ]
+  }
 }
 
 module.exports = GoogleCommunicationService
