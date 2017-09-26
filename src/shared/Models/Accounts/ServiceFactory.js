@@ -1,6 +1,7 @@
 const MAILBOX_TYPES = require('./MailboxTypes')
 const SERVICE_TYPES = require('./ServiceTypes')
 
+const CoreService = require('./CoreService')
 const TrelloDefaultService = require('./Trello/TrelloDefaultService')
 const SlackDefaultService = require('./Slack/SlackDefaultService')
 const GoogleDefaultService = require('./Google/GoogleDefaultService')
@@ -50,6 +51,8 @@ class ServiceFactory {
 
       // Generic
       case MAILBOX_TYPES.GENERIC + ':' + SERVICE_TYPES.DEFAULT: return GenericDefaultService
+
+      default: return CoreService
     }
   }
 
@@ -59,12 +62,13 @@ class ServiceFactory {
   * @param mailboxType: the type of mailbox
   * @param data: the data for the mailbox
   * @param metadata={}: the metadata for this service
+  * @param mailboxMigrationData={}: mailbox migration data for this service
   * @return the service or undefined
   */
-  static modelize (mailboxId, mailboxType, data, metadata = {}) {
+  static modelize (mailboxId, mailboxType, data, metadata = {}, mailboxMigrationData = {}) {
     const ModelClass = this.getClass(mailboxType, data.type)
     if (ModelClass) {
-      return new ModelClass(mailboxId, data, metadata)
+      return new ModelClass(mailboxId, data, metadata, mailboxMigrationData)
     } else {
       return undefined
     }

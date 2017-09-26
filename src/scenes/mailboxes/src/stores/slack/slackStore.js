@@ -456,7 +456,9 @@ class SlackStore {
   _mailboxHasNotificationsEnabled (mailboxId, mailboxState = mailboxStore.getState()) {
     const mailbox = mailboxState.getMailbox(mailboxId)
     if (!mailbox) { return false }
-    if (!mailbox.showNotifications) { return false }
+    const service = mailbox.defaultService
+    if (!service) { return false }
+    if (!service.showNotifications) { return false }
 
     return true
   }
@@ -483,7 +485,7 @@ class SlackStore {
       }
     }
 
-    NotificationService.processPushedMailboxNotification(mailboxId, {
+    NotificationService.processPushedMailboxNotification(mailboxId, SlackDefaultService.type, {
       title: `${message.title} ${message.subtitle}`,
       body: [{ content: message.content }],
       data: {
@@ -507,7 +509,7 @@ class SlackStore {
       if (this._hasPublishedNotification(slackNotificationId, false)) { return }
       this._markNotificationPublished(slackNotificationId)
 
-      NotificationService.processHandledMailboxNotification(mailboxId, {
+      NotificationService.processHandledMailboxNotification(mailboxId, SlackDefaultService.type, {
         title: notification.title,
         body: (notification.options || {}).body,
         data: {

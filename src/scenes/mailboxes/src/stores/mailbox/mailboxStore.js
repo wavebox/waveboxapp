@@ -361,10 +361,11 @@ class MailboxStore {
     */
     this.totalUnreadCountForAppBadge = () => {
       return this.allMailboxes().reduce((acc, mailbox) => {
-        if (mailbox && mailbox.unreadCountsTowardsAppUnread) {
-          acc += mailbox.unreadCount
+        if (mailbox) {
+          return acc + mailbox.unreadCountForAppBadge
+        } else {
+          return acc
         }
-        return acc
       }, 0)
     }
 
@@ -373,7 +374,7 @@ class MailboxStore {
     */
     this.hasUnreadActivityForAppBadge = () => {
       return !!this.allMailboxes().find((mailbox) => {
-        return mailbox && mailbox.unreadActivityCountsTowardsAppUnread && mailbox.hasUnreadActivity
+        return mailbox && mailbox.unreadActivityForAppBadge
       })
     }
 

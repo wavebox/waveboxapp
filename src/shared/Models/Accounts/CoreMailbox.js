@@ -35,10 +35,6 @@ class CoreMailbox extends Model {
   static get defaultServiceTypes () { return [SERVICE_TYPES.DEFAULT] }
   static get supportsAdditionalServiceTypes () { return this.supportedServiceTypes.length > 1 }
   static get userAgentChanges () { return [] }
-  static get supportsUnreadActivity () { return false }
-  static get supportsUnreadCount () { return true }
-  static get supportsNativeNotifications () { return true }
-  static get supportsGuestNotifications () { return false }
   static get defaultColor () { return undefined }
 
   /* **************************************************************************/
@@ -95,7 +91,7 @@ class CoreMailbox extends Model {
       color: color,
       services: serviceTypes.map((serviceType) => {
         const ServiceClass = ServiceFactory.getClass(this.type, serviceType)
-        return ServiceClass ? ServiceClass.createJS() : {}
+        return ServiceClass ? ServiceClass.createJS() : { type: serviceType }
       })
     }
   }
@@ -156,7 +152,28 @@ class CoreMailbox extends Model {
   * @return a modelled version of the service
   */
   modelizeService (serviceData) {
-    return ServiceFactory.modelize(this.id, this.type, serviceData)
+    return ServiceFactory.modelize(this.id, this.type, serviceData, undefined, this.buildMailboxToServiceMigrationData(serviceData.type))
+  }
+
+  /**
+  * Makes an object of settings that can be pushed down into the service.
+  * These are predominantly settings that were stored on the mailbox and are
+  * now part of the settings
+  * @param targetServiceType: the type of service it's being built for
+  * @return a metadata object that the service can use
+  */
+  buildMailboxToServiceMigrationData (targetServiceType) {
+    return Object.assign({
+      unreadBadgeColor: this.__data__.unreadBadgeColor,
+      showAvatarInNotifications: this.__data__.showAvatarInNotifications,
+      notificationsSound: this.__data__.notificationsSound
+    }, targetServiceType === SERVICE_TYPES.DEFAULT ? {
+      showUnreadBadge: this.__data__.showUnreadBadge,
+      unreadCountsTowardsAppUnread: this.__data__.unreadCountsTowardsAppUnread,
+      showUnreadActivityBadge: this.__data__.showUnreadActivityBadge,
+      unreadActivityCountsTowardsAppUnread: this.__data__.unreadActivityCountsTowardsAppUnread,
+      showNotifications: this.__data__.showNotifications
+    } : undefined)
   }
 
   /* **************************************************************************/
@@ -169,10 +186,6 @@ class CoreMailbox extends Model {
   get type () { return this.constructor.type }
   get partition () { return this.id }
   get artificiallyPersistCookies () { return this._value_('artificiallyPersistCookies', false) }
-  get supportsUnreadActivity () { return this.constructor.supportsUnreadActivity }
-  get supportsUnreadCount () { return this.constructor.supportsUnreadCount }
-  get supportsNativeNotifications () { return this.constructor.supportsNativeNotifications }
-  get supportsGuestNotifications () { return this.constructor.supportsGuestNotifications }
 
   /* **************************************************************************/
   // Properties: Window opening
@@ -233,29 +246,11 @@ class CoreMailbox extends Model {
   get hasServiceLocalAvatar () { return this.__data__.serviceLocalAvatar !== undefined }
   get serviceLocalAvatarId () { return this.__data__.serviceLocalAvatar }
   get color () { return this._value_('color', this.constructor.defaultColor) }
-  get unreadBadgeColor () { return this._value_('unreadBadgeColor', 'rgba(238, 54, 55, 0.95)') }
   get showAvatarColorRing () { return this._value_('showAvatarColorRing', true) }
   get serviceDisplayMode () { return this._value_('serviceDisplayMode', SERVICE_DISPLAY_MODES.SIDEBAR) }
   get serviceToolbarIconLayout () { return this._value_('serviceToolbarIconLayout', SERVICE_TOOLBAR_ICON_LAYOUTS.RIGHT_ALIGN) }
   get collapseSidebarServices () { return this._value_('collapseSidebarServices', false) }
   get showSleepableServiceIndicator () { return this._value_('showSleepableServiceIndicator', true) }
-
-  /* **************************************************************************/
-  // Properties : Badges
-  /* **************************************************************************/
-
-  get showUnreadBadge () { return this._value_('showUnreadBadge', true) }
-  get unreadCountsTowardsAppUnread () { return this._value_('unreadCountsTowardsAppUnread', true) }
-  get showUnreadActivityBadge () { return this._value_('showUnreadActivityBadge', true) }
-  get unreadActivityCountsTowardsAppUnread () { return this._value_('unreadActivityCountsTowardsAppUnread', true) }
-
-  /* **************************************************************************/
-  // Properties : Notifications
-  /* **************************************************************************/
-
-  get showNotifications () { return this._value_('showNotifications', true) }
-  get showAvatarInNotifications () { return this._value_('showAvatarInNotifications', true) }
-  get notificationsSound () { return this._value_('notificationsSound', undefined) }
 
   /* **************************************************************************/
   // Properties : Authentication
@@ -269,10 +264,43 @@ class CoreMailbox extends Model {
   /* **************************************************************************/
 
   get displayName () { return this.id }
-  get unreadCount () { return 0 }
-  get hasUnreadActivity () { return false }
-  get trayMessages () { return [] }
-  get notifications () { return [] }
+  get unreadCount () {
+    return this.enabledServices.reduce((acc, service) => {
+      if (service.supportsUnreadCount && service.showUnreadBadge) {
+        return acc + service.unreadCount
+      } else {
+        return acc
+      }
+    }, 0)
+  }
+  get unreadCountForAppBadge () {
+    return this.enabledServices.reduce((acc, service) => {
+      if (service.supportsUnreadCount && service.unreadCountsTowardsAppUnread) {
+        return acc + service.unreadCount
+      } else {
+        return acc
+      }
+    }, 0)
+  }
+  get hasUnreadActivity () {
+    return !!this.enabledServices.find((service) => {
+      return service.supportsUnreadCount && service.showUnreadActivityBadge && service.hasUnreadActivity
+    })
+  }
+  get unreadActivityForAppBadge () {
+    return !!this.enabledServices.find((service) => {
+      return service.supportsUnreadCount && service.unreadActivityCountsTowardsAppUnread && service.hasUnreadActivity
+    })
+  }
+  get trayMessages () {
+    return this.enabledServices.reduce((acc, service) => {
+      if (service.supportsTrayMessages && service.showUnreadActivityBadge) {
+        return acc.concat(service.trayMessages)
+      } else {
+        return acc
+      }
+    }, [])
+  }
 }
 
 module.exports = CoreMailbox

@@ -153,18 +153,15 @@ export default class GenericAccountSettings extends React.Component {
                 }} />
             </Paper>
             <AccountAppearanceSettings mailbox={mailbox} />
-            <AccountBadgeSettings mailbox={mailbox} />
-            <AccountNotificationSettings mailbox={mailbox} />
+            <AccountBadgeSettings mailbox={mailbox} service={service} />
+            <AccountNotificationSettings mailbox={mailbox} service={service} />
+            <AccountBehaviourSettings mailbox={mailbox} service={service} />
           </Col>
           <Col md={6}>
-            <Paper zDepth={1} style={styles.paper}>
-              <AccountBehaviourSettings mailbox={mailbox} service={service} />
-              <br />
-              <AccountCustomCodeSettings
-                mailbox={mailbox}
-                service={service}
-                onRequestEditCustomCode={onRequestEditCustomCode} />
-            </Paper>
+            <AccountCustomCodeSettings
+              mailbox={mailbox}
+              service={service}
+              onRequestEditCustomCode={onRequestEditCustomCode} />
             <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart}>
               <Toggle
                 toggled={mailbox.useCustomUserAgent}

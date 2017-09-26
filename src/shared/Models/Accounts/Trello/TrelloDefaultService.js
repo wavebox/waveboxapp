@@ -6,6 +6,11 @@ class TrelloDefaultService extends CoreService {
   /* **************************************************************************/
 
   static get type () { return CoreService.SERVICE_TYPES.DEFAULT }
+
+  /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
   static get humanizedType () { return 'Trello' }
   static get humanizedLogos () {
     return [
@@ -15,6 +20,17 @@ class TrelloDefaultService extends CoreService {
       'images/trello/logo_128px.png'
     ]
   }
+  static get humanizedUnreadItemType () { return 'notification' }
+
+  /* **************************************************************************/
+  // Class: Support
+  /* **************************************************************************/
+
+  static get supportsUnreadCount () { return true }
+  static get supportsTrayMessages () { return true }
+  static get supportsSyncedDiffNotifications () { return true }
+  static get supportsNativeNotifications () { return true }
+  static get supportsSyncWhenSleeping () { return true }
 
   /* **************************************************************************/
   // Properties

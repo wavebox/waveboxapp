@@ -103,6 +103,7 @@ export default class MailboxAvatar extends React.Component {
       style.border = 'none'
     }
 
+    style.lineHeight = `${adjustedSize}px`
     return { size: adjustedSize, style: style }
   }
 
@@ -111,13 +112,13 @@ export default class MailboxAvatar extends React.Component {
     const { style, mailbox, size, useBorderHack, ...otherProps } = this.props
     const passProps = Object.assign({
       draggable: false,
-      style: Object.assign({}, style),
+      style: {...style},
       backgroundColor: mailbox.hasCustomAvatar || mailbox.avatarURL ? 'white' : mailbox.color
     }, otherProps)
 
     const sizeAndBorder = this.renderStyles(mailbox, size, style, useBorderHack)
     passProps.size = sizeAndBorder.size
-    passProps.style = Object.assign(passProps.style, sizeAndBorder.style)
+    passProps.style = {...passProps.style, ...sizeAndBorder.style}
 
     if (url) {
       return (<Avatar {...passProps} src={url} />)

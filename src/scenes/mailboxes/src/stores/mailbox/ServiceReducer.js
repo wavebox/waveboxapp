@@ -32,6 +32,84 @@ class ServiceReducer {
   }
 
   /* **************************************************************************/
+  // Behaviour
+  /* **************************************************************************/
+
+  /**
+  * @param mailbox: the mailbox to update
+  * @param service: the service to update
+  * @param show: sets whether to show the unread badge or not
+  */
+  static setShowUnreadBadge (mailbox, service, show) {
+    return service.changeData({ showUnreadBadge: show })
+  }
+
+  /**
+  * @param mailbox: the mailbox to update
+  * @param service: the service to update
+  * @param doesCount: sets whther the unread counts do count towards the app unread badge
+  */
+  static setUnreadCountsTowardsAppUnread (mailbox, service, doesCount) {
+    return service.changeData({ unreadCountsTowardsAppUnread: doesCount })
+  }
+
+  /**
+  * @oaram mailbox: the mailbox to update
+  * @param service: the service to update
+  * @param show: sets whether to show the activity badge
+  */
+  static setShowUnreadActivityBadge (mailbox, service, show) {
+    return service.changeData({ showUnreadActivityBadge: show })
+  }
+
+  /**
+  * @param mailbox: the mailbox to update
+  * @param service: the service to update
+  * @param doesCount: sets whther the unread indicator does count towards the app unread badge
+  */
+  static setUnreadActivityCountsTowardsAppUnread (mailbox, service, doesCount) {
+    return service.changeData({ unreadActivityCountsTowardsAppUnread: doesCount })
+  }
+
+  /**
+  * @param mailbox: the mailbox to update
+  * @param service: the service to update
+  * @param show: sets whether to show notifications or not
+  */
+  static setShowNotifications (mailbox, service, show) {
+    return service.changeData({ showNotifications: show })
+  }
+
+  /**
+  * @param mailbox: the mailbox to update
+  * @param service: the service to update
+  * @param sound: the sound name to play on notifications
+  */
+  static setNotificationsSound (mailbox, service, sound) {
+    return service.changeData({ notificationsSound: sound })
+  }
+
+  /**
+  * @param mailbox: the mailbox to update
+  * @param service: the service to update
+  * @param show: true to show the avatar, false otherwise
+  */
+  static setShowAvatarInNotifications (mailbox, service, show) {
+    return service.changeData({ showAvatarInNotifications: show })
+  }
+
+  /**
+  * @param mailbox: the mailbox to update
+  * @param service: the service to update
+  * @param col: the color as either a hex string or object that contains hex key
+  */
+  static setUnreadBadgeColor (mailbox, service, col) {
+    return service.changeData({
+      unreadBadgeColor: typeof (col) === 'object' ? col.rgbaStr : col
+    })
+  }
+
+  /* **************************************************************************/
   // Zoom
   /* **************************************************************************/
 

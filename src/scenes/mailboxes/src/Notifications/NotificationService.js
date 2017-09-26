@@ -1,6 +1,5 @@
 import { EventEmitter } from 'events'
 import { NOTIFICATION_MAX_AGE, NOTIFICATION_FIRST_RUN_GRACE_MS } from 'shared/constants'
-import { NOTIFICATION_TEST_MAILBOX_ID } from 'shared/Notifications'
 import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
 import NotificationRenderer from './NotificationRenderer'
@@ -79,47 +78,45 @@ class NotificationService extends EventEmitter {
   /**
   * Processes a new mailbox notification thats been pushed from a server source
   * @param mailboxId: the id of the mailbox the notification is for
+  * @param serviceType: the type of service the notification is for
   * @param notification: the notification to push
   */
-  processPushedMailboxNotification (mailboxId, notification) {
-    if (mailboxId === NOTIFICATION_TEST_MAILBOX_ID) {
-      // For test notifications, skip a few of the normal checks
-      NotificationRenderer.presentMailboxNotification(
-        mailboxId,
-        notification,
-        (data) => { ipcRenderer.send(WB_FOCUS_APP, { }) }
-      )
-    } else {
-      // Check we're allowed to display
-      const settingsState = settingsStore.getState()
-      if (!settingsState.os.notificationsEnabled) { return }
+  processPushedMailboxNotification (mailboxId, serviceType, notification) {
+    // Check we're allowed to display
+    const settingsState = settingsStore.getState()
+    if (!settingsState.os.notificationsEnabled) { return }
 
-      const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-      if ((!mailbox || !mailbox.showNotifications)) { return }
+    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
+    if (!mailbox) { return }
+    const service = mailbox.serviceForType(serviceType)
+    if (!service) { return }
+    if (!service.showNotifications) { return }
 
-      NotificationRenderer.presentMailboxNotification(
-        mailboxId,
-        notification,
-        (data) => {
-          ipcRenderer.send(WB_FOCUS_APP, { })
-          if (data) {
-            mailboxActions.changeActive(data.mailboxId, data.serviceType)
-            mailboxDispatch.openItem(data.mailboxId, data.serviceType, data)
-          }
+    NotificationRenderer.presentMailboxNotification(
+      mailboxId,
+      serviceType,
+      notification,
+      (data) => {
+        ipcRenderer.send(WB_FOCUS_APP, { })
+        if (data) {
+          mailboxActions.changeActive(data.mailboxId, data.serviceType)
+          mailboxDispatch.openItem(data.mailboxId, data.serviceType, data)
         }
-      )
-    }
+      }
+    )
   }
 
   /**
   * Processes a new mailbox notification that can have most of its handling done elesewhere
   * @param mailboxId: the id of the mailbox the notification is for
+  * @param serviceType: the type of service the notification is for
   * @param notification: the notification to push
   * @param clickHandler: the click handler to call
   */
-  processHandledMailboxNotification (mailboxId, notification, clickHandler) {
+  processHandledMailboxNotification (mailboxId, serviceType, notification, clickHandler) {
     NotificationRenderer.presentMailboxNotification(
       mailboxId,
+      serviceType,
       notification,
       (data) => {
         // Switch across to the mailbox if we were provided with enough info
@@ -148,7 +145,10 @@ class NotificationService extends EventEmitter {
     if (!settingsState.os.notificationsEnabled) { return }
 
     const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    if (!mailbox || !mailbox.showNotifications) { return }
+    if (!mailbox) { return }
+    const service = mailbox.serviceForType(serviceType)
+    if (!service) { return }
+    if (!service.showNotifications) { return }
 
     NotificationRenderer.presentNotification(
       notification.title,
@@ -170,6 +170,19 @@ class NotificationService extends EventEmitter {
         serviceType: serviceType,
         clickHandler: clickHandler
       })
+  }
+
+  /**
+  * Processes a test notification
+  * @param title: the title to show
+  * @param body: the body to show
+  */
+  processTestNotification (title, body) {
+    NotificationRenderer.presentNotification(
+      title,
+      { body: body, silent: false },
+      (data) => { ipcRenderer.send(WB_FOCUS_APP, { }) },
+      {})
   }
 
   /**
@@ -211,23 +224,27 @@ class NotificationService extends EventEmitter {
 
     // Look for notifications to send
     mailboxState.allMailboxes().forEach((mailbox) => {
-      if (!mailbox.showNotifications) { return }
+      mailbox.enabledServices.forEach((service) => {
+        if (!service.supportsSyncedDiffNotifications) { return }
+        if (!service.showNotifications) { return }
 
-      mailbox.notifications.forEach((notification) => {
-        const id = `${mailbox.id}:${notification.id}`
-        if (this.__state__.sent.has(id)) { return }
-        if (now - notification.timestamp > NOTIFICATION_MAX_AGE) { return }
-        if (this.suppressForGrace) {
+        service.notifications.forEach((notification) => {
+          const id = `${mailbox.id}:${service.type}:${notification.id}`
+          if (this.__state__.sent.has(id)) { return }
+          if (now - notification.timestamp > NOTIFICATION_MAX_AGE) { return }
+          if (this.suppressForGrace) {
+            this.__state__.sent.set(id, now)
+            return
+          }
+
+          pendingNotifications.push({
+            mailboxId: mailbox.id,
+            serviceType: service.type,
+            notification: notification
+          })
+
           this.__state__.sent.set(id, now)
-          return
-        }
-
-        pendingNotifications.push({
-          mailboxId: mailbox.id,
-          notification: notification
         })
-
-        this.__state__.sent.set(id, now)
       })
     })
 
@@ -240,9 +257,10 @@ class NotificationService extends EventEmitter {
 
     // Send the notifications we found
     if (pendingNotifications.length) {
-      pendingNotifications.forEach(({ mailboxId, notification }) => {
+      pendingNotifications.forEach(({ mailboxId, serviceType, notification }) => {
         NotificationRenderer.presentMailboxNotification(
           mailboxId,
+          serviceType,
           notification,
           (data) => {
             ipcRenderer.send(WB_FOCUS_APP, { })

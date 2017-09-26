@@ -3,6 +3,7 @@ import EnhancedNotificationWindowLinux from './EnhancedNotificationWindowLinux'
 import { DEFAULT_NOTIFICATION_SOUND } from 'shared/Notifications'
 import Win32Notification from './Win32NotificationLossy'
 import pkg from 'package.json'
+import { settingsStore } from 'stores/settings'
 
 const MacNotification = process.platform === 'darwin' ? window.appNodeModulesRequire('node-mac-notifier') : null
 
@@ -22,7 +23,7 @@ class EnhancedNotificationRenderer {
     const notif = new MacNotification(title, {
       body: html5Options.body,
       icon: html5Options.icon,
-      soundName: html5Options.silent ? undefined : DEFAULT_NOTIFICATION_SOUND,
+      soundName: html5Options.silent ? undefined : (settingsStore.getState().os.notificationsSound || DEFAULT_NOTIFICATION_SOUND),
       bundleId: pkg.appConfig.osxAppBundleId
     })
     notif.addEventListener('click', () => {
@@ -35,13 +36,14 @@ class EnhancedNotificationRenderer {
   /**
   * Presents a mailbox notification on osx
   * @param mailboxId: the id of the mailbox the notification is for
+  * @param serviceType: the type of service the notification is for
   * @param notification: the notification info to present
   * @param clickHandler: the handler to call on click
   * @param mailboxState: the current mailbox state
   * @param settingsState: the current settings state
   */
-  presentMailboxNotificationDarwin (mailboxId, notification, clickHandler, mailboxState, settingsState) {
-    const { mailbox, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, mailboxState, settingsState)
+  presentMailboxNotificationDarwin (mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState) {
+    const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceType, mailboxState, settingsState)
     if (!enabled) { return }
 
     let subtitle, body
@@ -57,8 +59,8 @@ class EnhancedNotificationRenderer {
     const notif = new MacNotification(NotificationRendererUtils.formattedTitle(notification), {
       subtitle: subtitle,
       body: body,
-      icon: NotificationRendererUtils.preparedMailboxIcon(mailbox, mailboxState),
-      soundName: NotificationRendererUtils.preparedMailboxSound(mailbox, settingsState),
+      icon: NotificationRendererUtils.preparedServiceIcon(mailbox, service, mailboxState),
+      soundName: NotificationRendererUtils.preparedServiceSound(mailbox, service, settingsState),
       bundleId: pkg.appConfig.osxAppBundleId
     })
     notif.addEventListener('click', () => {
@@ -80,6 +82,7 @@ class EnhancedNotificationRenderer {
   * @param clickData={}: the data to provide to the click handler
   */
   presentNotificationWin32 (title, html5Options = {}, clickHandler = undefined, clickData = {}) {
+    const sound = settingsStore.getState().os.notificationsSound || DEFAULT_NOTIFICATION_SOUND
     NotificationRendererUtils.preparedIconWin32(html5Options.icon)
       .then((icon) => {
         const notif = new Win32Notification.ToastNotification({
@@ -94,7 +97,7 @@ class EnhancedNotificationRenderer {
                   icon ? '<image placement="AppLogoOverride" id="3" src="%s" />' : undefined,
                 '</binding>',
               '</visual>',
-              `<audio src="${DEFAULT_NOTIFICATION_SOUND}" silent="${html5Options.silent ? 'true' : 'false'}" />`,
+              `<audio src="${sound}" silent="${html5Options.silent ? 'true' : 'false'}" />`,
             '</toast>'
             /*eslint-enable */
           ].filter((l) => !!l).join(''),
@@ -115,18 +118,19 @@ class EnhancedNotificationRenderer {
   /**
   * Presents a mailbox notification on win32
   * @param mailboxId: the id of the mailbox the notification is for
+  * @param serviceType: the type of service the notification is for
   * @param notification: the notification info to present
   * @param clickHandler: the handler to call on click
   * @param mailboxState: the current mailbox state
   * @param settingsState: the current settings state
   */
-  presentMailboxNotificationWin32 (mailboxId, notification, clickHandler, mailboxState, settingsState) {
-    const { mailbox, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, mailboxState, settingsState)
+  presentMailboxNotificationWin32 (mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState) {
+    const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceType, mailboxState, settingsState)
     if (!enabled) { return }
 
-    NotificationRendererUtils.preparedMailboxIconWin32(mailbox, mailboxState)
+    NotificationRendererUtils.preparedServiceIconWin32(mailbox, service, mailboxState)
       .then((icon) => {
-        const sound = NotificationRendererUtils.preparedMailboxSound(mailbox, settingsState)
+        const sound = NotificationRendererUtils.preparedServiceSound(mailbox, service, settingsState)
         const notif = new Win32Notification.ToastNotification({
           appId: pkg.name,
           template: [
@@ -169,31 +173,33 @@ class EnhancedNotificationRenderer {
   * @param clickData={}: the data to provide to the click handler
   */
   presentNotificationLinux (title, html5Options = {}, clickHandler = undefined, clickData = {}) {
+    const sound = settingsStore.getState().os.notificationsSound || DEFAULT_NOTIFICATION_SOUND
     EnhancedNotificationWindowLinux.showNotification({
       title: title,
       body: html5Options.body,
       icon: html5Options.icon,
-      sound: html5Options.silent ? undefined : DEFAULT_NOTIFICATION_SOUND
+      sound: html5Options.silent ? undefined : sound
     }, clickHandler, clickData)
   }
 
   /**
   * Presents a notification on win32
   * @param mailboxId: the id of the mailbox the notification is for
+  * @param serviceType: the type of service the notification is for
   * @param notification: the notification info to present
   * @param clickHandler: the handler to call on click
   * @param mailboxState: the current mailbox state
   * @param settingsState: the current settings state
   */
-  presentMailboxNotificationLinux (mailboxId, notification, clickHandler, mailboxState, settingsState) {
-    const { mailbox, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, mailboxState, settingsState)
+  presentMailboxNotificationLinux (mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState) {
+    const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceType, mailboxState, settingsState)
     if (!enabled) { return }
 
     EnhancedNotificationWindowLinux.showNotification({
       title: NotificationRendererUtils.formattedTitle(notification),
       body: NotificationRendererUtils.formattedBody(notification),
-      icon: NotificationRendererUtils.preparedMailboxIcon(mailbox, mailboxState),
-      sound: NotificationRendererUtils.preparedMailboxSound(mailbox, settingsState)
+      icon: NotificationRendererUtils.preparedServiceIcon(mailbox, service, mailboxState),
+      sound: NotificationRendererUtils.preparedServiceSound(mailbox, service, settingsState)
     }, clickHandler, notification.data)
   }
 }

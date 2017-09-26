@@ -13,7 +13,7 @@
     "decompress": "4.2.0",
     "electron-localshortcut": "2.0.2",
     "fs-extra": "4.0.2",
-    "googleapis": "21.3.0",
+    "googleapis": "22.2.0",
     "home-dir": "1.0.0",
     "mkdirp": "0.5.1",
     "semver": "5.4.1",

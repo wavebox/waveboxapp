@@ -2,7 +2,14 @@ const CoreService = require('../CoreService')
 
 class GenericDefaultService extends CoreService {
   /* **************************************************************************/
-  // Class
+  // Class: Support
+  /* **************************************************************************/
+
+  static get supportsUnreadActivity () { return true }
+  static get supportsGuestNotifications () { return true }
+
+  /* **************************************************************************/
+  // Class: Humanized
   /* **************************************************************************/
 
   static get type () { return CoreService.SERVICE_TYPES.DEFAULT }
@@ -15,6 +22,7 @@ class GenericDefaultService extends CoreService {
       'images/generic/logo_128px.png'
     ]
   }
+  static get humanizedUnreadItemType () { return 'notification' }
 
   /* **************************************************************************/
   // Properties

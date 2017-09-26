@@ -23,10 +23,6 @@ import {
   AccountAuthenticatingScene,
   AccountStandaloneScene
 } from './AccountScene'
-import {
-  WmailImportCompleteScene,
-  WmailImportStartScene
-} from './WmailImportScene'
 
 export default class WaveboxRouter extends React.Component {
   /* **************************************************************************/
@@ -67,9 +63,6 @@ export default class WaveboxRouter extends React.Component {
           <Route path='/account/auth/:mode?' component={AccountAuthScene} />
           <Route path='/account/authenticating' component={AccountAuthenticatingScene} />
           <Route path='/account/view' component={AccountStandaloneScene} />
-
-          <Route path='/wmailimport/start' component={WmailImportStartScene} />
-          <Route path='/wmailimport/complete' component={WmailImportCompleteScene} />
         </div>
       </HashRouter>
     )

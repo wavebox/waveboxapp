@@ -279,7 +279,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
         menuItems.push(
           <MenuItem
             key='moveup_service'
-            primaryText={`Move ${service.humanizedType} ${vertLayout ? 'Up' : 'Left'}`}
+            primaryText={`Move ${service.humanizedTypeShort} ${vertLayout ? 'Up' : 'Left'}`}
             onClick={() => this.handleMoveServiceUp()}
             leftIcon={(
               <FontIcon className='material-icons'>{vertLayout ? 'arrow_upward' : 'arrow_back'}</FontIcon>
@@ -290,7 +290,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
         menuItems.push(
           <MenuItem
             key='movedown_service'
-            primaryText={`Move ${service.humanizedType} ${vertLayout ? 'Down' : 'Right'}`}
+            primaryText={`Move ${service.humanizedTypeShort} ${vertLayout ? 'Down' : 'Right'}`}
             onClick={() => this.handleMoveServiceDown()}
             leftIcon={(
               <FontIcon className='material-icons'>{vertLayout ? 'arrow_downward' : 'arrow_forward'}</FontIcon>
@@ -315,7 +315,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
       menuItems.push(
         <MenuItem
           key='info'
-          primaryText={mailbox.displayName}
+          primaryText={`${service.humanizedTypeShort} : ${mailbox.displayName}`}
           disabled />
       )
     }

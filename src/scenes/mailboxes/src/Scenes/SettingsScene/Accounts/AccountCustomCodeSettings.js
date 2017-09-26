@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { RaisedButton, FontIcon } from 'material-ui'
+import { RaisedButton, FontIcon, Paper } from 'material-ui'
 import commonStyles from '../CommonSettingStyles'
 import { mailboxActions, ServiceReducer, mailboxDispatch } from 'stores/mailbox'
 import { USER_SCRIPTS_WEB_URL } from 'shared/constants'
@@ -39,7 +39,8 @@ export default class AccountCustomCodeSettings extends React.Component {
     const { mailbox, service, onRequestEditCustomCode, ...passProps } = this.props
 
     return (
-      <div {...passProps}>
+      <Paper zDepth={1} style={commonStyles.paper} {...passProps}>
+        <h1 style={commonStyles.subheading}>Custom Code & Userscripts</h1>
         <div>
           <RaisedButton
             style={commonStyles.buttonInline}
@@ -51,6 +52,8 @@ export default class AccountCustomCodeSettings extends React.Component {
                 mailboxDispatch.reload(mailbox.id, service.type)
               })
             }} />
+        </div>
+        <div>
           <RaisedButton
             style={commonStyles.buttonInline}
             label='Custom JS'
@@ -68,7 +71,7 @@ export default class AccountCustomCodeSettings extends React.Component {
             onClick={(evt) => { evt.preventDefault(); electron.remote.shell.openExternal(USER_SCRIPTS_WEB_URL) }}
             href={USER_SCRIPTS_WEB_URL}>Find custom userscripts</a>
         </div>
-      </div>
+      </Paper>
     )
   }
 }

@@ -1,66 +1,6 @@
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
 
 class MailboxReducer {
-  /* **************************************************************************/
-  // Behaviour
-  /* **************************************************************************/
-
-  /**
-  * @param mailbox: the mailbox to update
-  * @param show: sets whether to show the unread badge or not
-  */
-  static setShowUnreadBadge (mailbox, show) {
-    return mailbox.changeData({ showUnreadBadge: show })
-  }
-
-  /**
-  * @param mailbox: the mailbox to update
-  * @param doesCount: sets whther the unread counts do count towards the app unread badge
-  */
-  static setUnreadCountsTowardsAppUnread (mailbox, doesCount) {
-    return mailbox.changeData({ unreadCountsTowardsAppUnread: doesCount })
-  }
-
-  /**
-  * @oaram mailbox: the mailbox to update
-  * @param show: sets whether to show the activity badge
-  */
-  static setShowUnreadActivityBadge (mailbox, show) {
-    return mailbox.changeData({ showUnreadActivityBadge: show })
-  }
-
-  /**
-  * @param mailbox: the mailbox to update
-  * @param doesCount: sets whther the unread indicator does count towards the app unread badge
-  */
-  static setUnreadActivityCountsTowardsAppUnread (mailbox, doesCount) {
-    return mailbox.changeData({ unreadActivityCountsTowardsAppUnread: doesCount })
-  }
-
-  /**
-  * @param mailbox: the mailbox to update
-  * @param show: sets whether to show notifications or not
-  */
-  static setShowNotifications (mailbox, show) {
-    return mailbox.changeData({ showNotifications: show })
-  }
-
-  /**
-  * @param mailbox: the mailbox to update
-  * @param sound: the sound name to play on notifications
-  */
-  static setNotificationsSound (mailbox, sound) {
-    return mailbox.changeData({ notificationsSound: sound })
-  }
-
-  /**
-  * @param mailbox: the mailbox to update
-  * @param show: true to show the avatar, false otherwise
-  */
-  static setShowAvatarInNotifications (mailbox, show) {
-    return mailbox.changeData({ showAvatarInNotifications: show })
-  }
-
   /**
   * Artificially persist the cookies for this mailbox
   * @param mailbox: the mailbox to update
@@ -81,16 +21,6 @@ class MailboxReducer {
   static setColor (mailbox, col) {
     return mailbox.changeData({
       color: typeof (col) === 'object' ? col.rgbaStr : col
-    })
-  }
-
-  /**
-  * @param mailbox: the mailbox to update
-  * @param col: the color as either a hex string or object that contains hex key
-  */
-  static setUnreadBadgeColor (mailbox, col) {
-    return mailbox.changeData({
-      unreadBadgeColor: typeof (col) === 'object' ? col.rgbaStr : col
     })
   }
 

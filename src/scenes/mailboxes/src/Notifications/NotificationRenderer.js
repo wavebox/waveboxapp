@@ -46,26 +46,27 @@ export default class NotificationRenderer {
   /**
   * Presents a mailbox notification
   * @param mailboxId: the id of the mailbox the notification is for
+  * @param serviceType: the type of service this is for
   * @param notification: the notification info to present
   * @param clickHandler: the handler to call on click
   * @param mailboxState=autoget: the current mailbox state if available
   * @param settingsState=autoget: the current settings state if available
   */
-  static presentMailboxNotification (mailboxId, notification, clickHandler, mailboxState = mailboxStore.getState(), settingsState = settingsStore.getState()) {
+  static presentMailboxNotification (mailboxId, serviceType, notification, clickHandler, mailboxState = mailboxStore.getState(), settingsState = settingsStore.getState()) {
     const provider = NotificationPlatformSupport.supportsProvider(settingsState.os.notificationsProvider) ? settingsState.os.notificationsProvider : OSSettings.DEFAULT_NOTIFICATION_PROVIDER
 
     if (provider === OSSettings.NOTIFICATION_PROVIDERS.ELECTRON) {
-      ElectronNotificationRenderer.presentMailboxNotification(mailboxId, notification, clickHandler, mailboxState, settingsState)
+      ElectronNotificationRenderer.presentMailboxNotification(mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState)
     } else if (provider === OSSettings.NOTIFICATION_PROVIDERS.ENHANCED) {
       switch (process.platform) {
         case 'darwin':
-          EnhancedNotificationRenderer.presentMailboxNotificationDarwin(mailboxId, notification, clickHandler, mailboxState, settingsState)
+          EnhancedNotificationRenderer.presentMailboxNotificationDarwin(mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState)
           break
         case 'win32':
-          EnhancedNotificationRenderer.presentMailboxNotificationWin32(mailboxId, notification, clickHandler, mailboxState, settingsState)
+          EnhancedNotificationRenderer.presentMailboxNotificationWin32(mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState)
           break
         case 'linux':
-          EnhancedNotificationRenderer.presentMailboxNotificationLinux(mailboxId, notification, clickHandler, mailboxState, settingsState)
+          EnhancedNotificationRenderer.presentMailboxNotificationLinux(mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState)
           break
       }
     }

@@ -7,6 +7,7 @@ class GoogleNotesService extends GoogleService {
 
   static get type () { return GoogleService.SERVICE_TYPES.NOTES }
   static get humanizedType () { return 'Google Keep' }
+  static get humanizedTypeShort () { return 'Keep' }
   static get humanizedLogos () {
     return [
       'images/google/logo_keep_32px.png',

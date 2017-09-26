@@ -40,10 +40,8 @@ export default class TrelloAccountSettings extends React.Component {
         <Row>
           <Col md={6}>
             <AccountAppearanceSettings mailbox={mailbox} />
-            <AccountBadgeSettings mailbox={mailbox} />
-            <AccountNotificationSettings mailbox={mailbox} />
-          </Col>
-          <Col md={6}>
+            <AccountBadgeSettings mailbox={mailbox} service={service} />
+            <AccountNotificationSettings mailbox={mailbox} service={service} />
             <Paper zDepth={1} style={styles.paper}>
               <SelectField
                 fullWidth
@@ -64,12 +62,14 @@ export default class TrelloAccountSettings extends React.Component {
                   )
                 })}
               </SelectField>
-              <AccountBehaviourSettings mailbox={mailbox} service={service} />
-              <AccountCustomCodeSettings
-                mailbox={mailbox}
-                service={service}
-                onRequestEditCustomCode={onRequestEditCustomCode} />
             </Paper>
+            <AccountBehaviourSettings mailbox={mailbox} service={service} />
+          </Col>
+          <Col md={6}>
+            <AccountCustomCodeSettings
+              mailbox={mailbox}
+              service={service}
+              onRequestEditCustomCode={onRequestEditCustomCode} />
             <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
           </Col>
         </Row>

@@ -1,6 +1,5 @@
 const CoreMailbox = require('../CoreMailbox')
 const ServiceFactory = require('../ServiceFactory')
-const SlackDefaultService = require('./SlackDefaultService')
 const MailboxColors = require('../MailboxColors')
 
 class SlackMailbox extends CoreMailbox {
@@ -21,8 +20,6 @@ class SlackMailbox extends CoreMailbox {
   }
   static get humanizedVectorLogo () { return 'images/slack/logo_vector.svg' }
   static get humanizedType () { return 'Slack' }
-  static get humanizedUnreadItemType () { return 'notification' }
-  static get supportsUnreadActivity () { return true }
   static get defaultColor () { return MailboxColors.SLACK }
 
   /* **************************************************************************/
@@ -33,10 +30,12 @@ class SlackMailbox extends CoreMailbox {
   * @override
   */
   modelizeService (serviceData) {
-    return ServiceFactory.modelize(this.id, this.type, serviceData, {
-      authUrl: this.authUrl,
-      teamName: this.authTeamName
-    })
+    return ServiceFactory.modelize(
+      this.id,
+      this.type,
+      serviceData,
+      { authUrl: this.authUrl, teamName: this.authTeamName },
+      this.buildMailboxToServiceMigrationData(serviceData.type))
   }
 
   /**
@@ -88,9 +87,6 @@ class SlackMailbox extends CoreMailbox {
     }
   }
   get avatarURL () { return ((this.teamOverview || {}).icon || {}).image_230 }
-  get unreadCount () { return this.serviceForType(SlackDefaultService.type).unreadCount }
-  get hasUnreadActivity () { return this.serviceForType(SlackDefaultService.type).hasUnreadActivity }
-  get trayMessages () { return this.serviceForType(SlackDefaultService.type).trayMessages }
 }
 
 module.exports = SlackMailbox

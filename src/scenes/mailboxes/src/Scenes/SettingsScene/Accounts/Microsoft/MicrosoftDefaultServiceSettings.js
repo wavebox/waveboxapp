@@ -8,6 +8,8 @@ import { mailboxActions, MicrosoftDefaultServiceReducer } from 'stores/mailbox'
 import { Row, Col } from 'Components/Grid'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
 import AccountBehaviourSettings from '../AccountBehaviourSettings'
+import AccountBadgeSettings from '../AccountBadgeSettings'
+import AccountNotificationSettings from '../AccountNotificationSettings'
 
 export default class MicrosoftDefaultServiceSettings extends React.Component {
   /* **************************************************************************/
@@ -66,9 +68,11 @@ export default class MicrosoftDefaultServiceSettings extends React.Component {
                 )
               })}
             </SelectField>
-            <AccountBehaviourSettings mailbox={mailbox} service={service} />
+            <AccountBadgeSettings mailbox={mailbox} service={service} />
+            <AccountNotificationSettings mailbox={mailbox} service={service} />
           </Col>
           <Col md={6}>
+            <AccountBehaviourSettings mailbox={mailbox} service={service} />
             <AccountCustomCodeSettings
               mailbox={mailbox}
               service={service}

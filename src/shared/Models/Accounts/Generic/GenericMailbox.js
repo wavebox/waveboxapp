@@ -1,6 +1,5 @@
 const CoreMailbox = require('../CoreMailbox')
 const MailboxColors = require('../MailboxColors')
-const GenericDefaultService = require('./GenericDefaultService')
 
 class GenericMailbox extends CoreMailbox {
   /* **************************************************************************/
@@ -20,11 +19,6 @@ class GenericMailbox extends CoreMailbox {
   }
   static get humanizedVectorLogo () { return 'images/generic/logo_vector.svg' }
   static get humanizedType () { return 'Generic' }
-  static get humanizedUnreadItemType () { return 'notification' }
-  static get supportsUnreadActivity () { return true }
-  static get supportsUnreadCount () { return false }
-  static get supportsNativeNotifications () { return false }
-  static get supportsGuestNotifications () { return true }
   static get defaultColor () { return MailboxColors.GENERIC }
 
   /* **************************************************************************/
@@ -54,7 +48,6 @@ class GenericMailbox extends CoreMailbox {
   }
   get usePageTitleAsDisplayName () { return this._value_('usePageTitleAsDisplayName', false) }
   get pageTitle () { return this._value_('pageTitle') }
-  get hasUnreadActivity () { return this.serviceForType(GenericDefaultService.type).hasUnreadActivity }
 
   /* **************************************************************************/
   // Properties : Setup

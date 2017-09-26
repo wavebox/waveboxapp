@@ -9,6 +9,8 @@ import { Row, Col } from 'Components/Grid'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
 import AccountBehaviourSettings from '../AccountBehaviourSettings'
 import styles from '../../CommonSettingStyles'
+import AccountBadgeSettings from '../AccountBadgeSettings'
+import AccountNotificationSettings from '../AccountNotificationSettings'
 
 export default class GoogleDefaultServiceSettings extends React.Component {
   /* **************************************************************************/
@@ -108,61 +110,66 @@ export default class GoogleDefaultServiceSettings extends React.Component {
       <AccountServiceItem {...passProps} mailbox={mailbox} serviceType={serviceType}>
         <Row>
           <Col md={6}>
-            <SelectField
-              fullWidth
-              floatingLabelText='Unread Mode'
-              value={service.unreadMode}
-              onChange={(evt, index, unreadMode) => {
-                mailboxActions.reduceService(mailbox.id, serviceType, GoogleDefaultServiceReducer.setUnreadMode, unreadMode)
-              }}>
-              {Array.from(service.supportedUnreadModes).map((mode) => {
-                return (
-                  <MenuItem
-                    key={mode}
-                    value={mode}
-                    primaryText={this.humanizeUnreadMode(mode)} />
-                )
-              })}
-            </SelectField>
-            {showCustomUnreadSettings ? (
-              <Paper style={styles.paper}>
-                <h1 style={styles.subheading}>Advanced Unread Options</h1>
-                <TextField
-                  key={`customUnreadQuery_${mailbox.id}`}
-                  id={`customUnreadQuery_${mailbox.id}`}
-                  value={customUnreadQuery}
-                  fullWidth
-                  floatingLabelText='Custom Unread Query'
-                  hintText='label:inbox label:unread'
-                  errorText={hasCustomConfiguration && !customUnreadQuery ? 'This must be configured. Failing to do so may have unexpected side effects' : undefined}
-                  onChange={(evt) => this.setState({ customUnreadQuery: evt.target.value })}
-                  onBlur={(evt) => {
-                    mailboxActions.reduceService(mailbox.id, serviceType, GoogleDefaultServiceReducer.setCustomUnreadQuery, customUnreadQuery)
-                  }} />
-                <TextField
-                  key={`customUnreadWatchLabels_${mailbox.id}`}
-                  id={`customUnreadWatchLabels_${mailbox.id}`}
-                  value={customUnreadLabelWatchString}
-                  fullWidth
-                  floatingLabelText='Custom Unread Watch Labels (Comma seperated)'
-                  hintText='INBOX, UNREAD'
-                  errorText={hasCustomConfiguration && !customUnreadLabelWatchString ? 'This must be configured. Failing to do so may have unexpected side effects' : undefined}
-                  onChange={(evt) => this.setState({ customUnreadLabelWatchString: evt.target.value })}
-                  onBlur={(evt) => {
-                    mailboxActions.reduceService(mailbox.id, serviceType, GoogleDefaultServiceReducer.setCustomUnreadLabelWatchString, customUnreadLabelWatchString)
-                  }} />
-              </Paper>
-            ) : (
-              <div>
-                <RaisedButton
-                  label='Advanced Unread Options'
-                  icon={(<FontIcon className='fa fa-fw fa-wrench' />)}
-                  onClick={() => this.setState({ showCustomUnreadSettings: true })} />
-                <p style={styles.extraInfo}>
-                  These can be used to configure Wavebox to provide Notifications and Badges for a custom set of messages
-                </p>
-              </div>
-            )}
+            <Paper zDepth={1} style={styles.paper}>
+              <h1 style={styles.subheading}>Unread & Sync</h1>
+              <SelectField
+                fullWidth
+                floatingLabelText='Unread Mode'
+                value={service.unreadMode}
+                onChange={(evt, index, unreadMode) => {
+                  mailboxActions.reduceService(mailbox.id, serviceType, GoogleDefaultServiceReducer.setUnreadMode, unreadMode)
+                }}>
+                {Array.from(service.supportedUnreadModes).map((mode) => {
+                  return (
+                    <MenuItem
+                      key={mode}
+                      value={mode}
+                      primaryText={this.humanizeUnreadMode(mode)} />
+                  )
+                })}
+              </SelectField>
+              {showCustomUnreadSettings ? (
+                <Paper style={styles.paper}>
+                  <h1 style={styles.subheading}>Advanced Unread Options</h1>
+                  <TextField
+                    key={`customUnreadQuery_${mailbox.id}`}
+                    id={`customUnreadQuery_${mailbox.id}`}
+                    value={customUnreadQuery}
+                    fullWidth
+                    floatingLabelText='Custom Unread Query'
+                    hintText='label:inbox label:unread'
+                    errorText={hasCustomConfiguration && !customUnreadQuery ? 'This must be configured. Failing to do so may have unexpected side effects' : undefined}
+                    onChange={(evt) => this.setState({ customUnreadQuery: evt.target.value })}
+                    onBlur={(evt) => {
+                      mailboxActions.reduceService(mailbox.id, serviceType, GoogleDefaultServiceReducer.setCustomUnreadQuery, customUnreadQuery)
+                    }} />
+                  <TextField
+                    key={`customUnreadWatchLabels_${mailbox.id}`}
+                    id={`customUnreadWatchLabels_${mailbox.id}`}
+                    value={customUnreadLabelWatchString}
+                    fullWidth
+                    floatingLabelText='Custom Unread Watch Labels (Comma seperated)'
+                    hintText='INBOX, UNREAD'
+                    errorText={hasCustomConfiguration && !customUnreadLabelWatchString ? 'This must be configured. Failing to do so may have unexpected side effects' : undefined}
+                    onChange={(evt) => this.setState({ customUnreadLabelWatchString: evt.target.value })}
+                    onBlur={(evt) => {
+                      mailboxActions.reduceService(mailbox.id, serviceType, GoogleDefaultServiceReducer.setCustomUnreadLabelWatchString, customUnreadLabelWatchString)
+                    }} />
+                </Paper>
+              ) : (
+                <div>
+                  <RaisedButton
+                    label='Advanced Unread Options'
+                    icon={(<FontIcon className='fa fa-fw fa-wrench' />)}
+                    onClick={() => this.setState({ showCustomUnreadSettings: true })} />
+                  <p style={styles.extraInfo}>
+                    These can be used to configure Wavebox to provide Notifications and Badges for a custom set of messages
+                  </p>
+                </div>
+              )}
+            </Paper>
+            <AccountBadgeSettings mailbox={mailbox} service={service} />
+            <AccountNotificationSettings mailbox={mailbox} service={service} />
           </Col>
           <Col md={6}>
             <AccountBehaviourSettings mailbox={mailbox} service={service} />

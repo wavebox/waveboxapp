@@ -4,8 +4,6 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { Row, Col } from 'Components/Grid'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
-import AccountBadgeSettings from '../AccountBadgeSettings'
-import AccountNotificationSettings from '../AccountNotificationSettings'
 import AccountServicesHeading from '../AccountServicesHeading'
 import AccountServicesSettings from '../AccountServicesSettings'
 import CoreService from 'shared/Models/Accounts/CoreService'
@@ -117,12 +115,10 @@ export default class GoogleAccountSettings extends React.Component {
         <Row>
           <Col md={6}>
             <AccountAppearanceSettings mailbox={mailbox} />
-            <AccountBadgeSettings mailbox={mailbox} />
-            <AccountNotificationSettings mailbox={mailbox} />
+            <AccountServicesSettings mailbox={mailbox} />
           </Col>
           <Col md={6}>
             <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
-            <AccountServicesSettings mailbox={mailbox} />
           </Col>
         </Row>
         <Row>

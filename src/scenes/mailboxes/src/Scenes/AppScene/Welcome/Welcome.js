@@ -2,7 +2,6 @@ import React from 'react'
 import * as Colors from 'material-ui/styles/colors'
 import { mailboxActions } from 'stores/mailbox'
 import { userStore } from 'stores/user'
-import { wmailStore } from 'stores/wmail'
 import MicrosoftMailbox from 'shared/Models/Accounts/Microsoft/MicrosoftMailbox'
 import TrelloMailbox from 'shared/Models/Accounts/Trello/TrelloMailbox'
 import SlackMailbox from 'shared/Models/Accounts/Slack/SlackMailbox'
@@ -93,8 +92,7 @@ export default class Welcome extends React.Component {
 
   state = (() => {
     return {
-      user: userStore.getState().user,
-      canImportWmail: wmailStore.getState().canImport()
+      user: userStore.getState().user
     }
   })()
 
@@ -118,13 +116,6 @@ export default class Welcome extends React.Component {
   */
   handleLoginWavebox = () => {
     window.location.hash = '/account/auth/'
-  }
-
-  /**
-  * Opens the WMail import wizard
-  */
-  handleWmailImport = () => {
-    window.location.hash = '/wmailimport/start'
   }
 
   /**
@@ -166,7 +157,7 @@ export default class Welcome extends React.Component {
   }
 
   render () {
-    const { canImportWmail, user } = this.state
+    const { user } = this.state
 
     return (
       <div style={styles.container}>
@@ -201,12 +192,6 @@ export default class Welcome extends React.Component {
                 onClick={this.handleLoginWavebox}
                 style={styles.extraActionButton}
                 label='Already a User? Login' />
-            ) : undefined}
-            {canImportWmail ? (
-              <WelcomeRaisedButton
-                onClick={this.handleWmailImport}
-                style={styles.extraActionButton}
-                label='Import from WMail' />
             ) : undefined}
           </div>
         </div>

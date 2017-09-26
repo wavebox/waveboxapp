@@ -44,6 +44,17 @@ export default {
     marginRight: -16,
     marginTop: 16
   },
+  warningText: {
+    color: Colors.amber700,
+    fontSize: 14,
+    fontWeight: 300
+  },
+  warningTextIcon: {
+    color: Colors.amber700,
+    fontSize: 18,
+    marginRight: 4,
+    verticalAlign: 'top'
+  },
 
   kbd: {
     display: 'inline-block',

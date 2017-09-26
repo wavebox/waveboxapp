@@ -17,5 +17,12 @@ const basicPopoverStyles = {
   style: popover,
   arrowStyle: arrow
 }
+const basicPopoverStyles400w = {
+  style: {...popover, maxWidth: 400},
+  arrowStyle: arrow
+}
 
-export { basicPopoverStyles }
+export {
+  basicPopoverStyles,
+  basicPopoverStyles400w
+}

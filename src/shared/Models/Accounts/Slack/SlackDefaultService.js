@@ -6,6 +6,11 @@ class SlackDefaultService extends CoreService {
   /* **************************************************************************/
 
   static get type () { return CoreService.SERVICE_TYPES.DEFAULT }
+
+  /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
   static get humanizedType () { return 'Slack' }
   static get humanizedLogos () {
     return [
@@ -15,6 +20,17 @@ class SlackDefaultService extends CoreService {
       'images/slack/logo_128px.png'
     ]
   }
+  static get humanizedUnreadItemType () { return 'notification' }
+
+  /* **************************************************************************/
+  // Properties: Support
+  /* **************************************************************************/
+
+  static get supportsUnreadActivity () { return true }
+  static get supportsUnreadCount () { return true }
+  static get supportsTrayMessages () { return true }
+  static get supportsNativeNotifications () { return true }
+  static get supportsSyncWhenSleeping () { return true }
 
   /* **************************************************************************/
   // Properties

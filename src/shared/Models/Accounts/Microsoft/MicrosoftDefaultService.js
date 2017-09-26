@@ -11,6 +11,12 @@ class MicrosoftDefaultService extends MicrosoftService {
   /* **************************************************************************/
 
   static get type () { return MicrosoftService.SERVICE_TYPES.DEFAULT }
+  static get UNREAD_MODES () { return UNREAD_MODES }
+
+  /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
   static get humanizedType () { return 'Mail' }
   static get humanizedLogos () {
     return [
@@ -20,7 +26,16 @@ class MicrosoftDefaultService extends MicrosoftService {
       'images/microsoft/logo_mail_128px.png'
     ]
   }
-  static get UNREAD_MODES () { return UNREAD_MODES }
+
+  /* **************************************************************************/
+  // Class: Support
+  /* **************************************************************************/
+
+  static get supportsUnreadCount () { return true }
+  static get supportsTrayMessages () { return true }
+  static get supportsSyncedDiffNotifications () { return true }
+  static get supportsNativeNotifications () { return true }
+  static get supportsSyncWhenSleeping () { return true }
 
   /* **************************************************************************/
   // Properties

@@ -1,13 +1,11 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Paper } from 'material-ui'
 import { Row, Col } from 'Components/Grid'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
 import AccountBadgeSettings from '../AccountBadgeSettings'
 import AccountNotificationSettings from '../AccountNotificationSettings'
-import styles from '../../CommonSettingStyles'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
 import AccountBehaviourSettings from '../AccountBehaviourSettings'
@@ -40,18 +38,15 @@ export default class SlackAccountSettings extends React.Component {
         <Row>
           <Col md={6}>
             <AccountAppearanceSettings mailbox={mailbox} />
-            <AccountBadgeSettings mailbox={mailbox} />
-            <AccountNotificationSettings mailbox={mailbox} />
+            <AccountBadgeSettings mailbox={mailbox} service={service} />
+            <AccountNotificationSettings mailbox={mailbox} service={service} />
+            <AccountBehaviourSettings mailbox={mailbox} service={service} />
           </Col>
           <Col md={6}>
-            <Paper zDepth={1} style={styles.paper}>
-              <AccountBehaviourSettings mailbox={mailbox} service={service} />
-              <br />
-              <AccountCustomCodeSettings
-                mailbox={mailbox}
-                service={service}
-                onRequestEditCustomCode={onRequestEditCustomCode} />
-            </Paper>
+            <AccountCustomCodeSettings
+              mailbox={mailbox}
+              service={service}
+              onRequestEditCustomCode={onRequestEditCustomCode} />
             <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
           </Col>
         </Row>

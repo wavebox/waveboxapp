@@ -1,6 +1,4 @@
 import stringHash from 'string-hash'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
-import { NOTIFICATION_TEST_MAILBOX_ID } from 'shared/Notifications'
 import os from 'os'
 import path from 'path'
 import fs from 'fs-extra'
@@ -13,28 +11,20 @@ export default class NotificationRendererUtils {
   /**
   * Checks the config to see if notifications are enabled and gets the mailbox
   * @param mailboxId: the id of the mailbox
+  * @param serviceType: the type of service
   * @param mailboxState: the current mailbox state
   * @param settingsState: the current settings state
-  * @return { mailbox, enabled }
+  * @return { mailbox, service, enabled }
   */
-  static checkConfigAndFetchMailbox (mailboxId, mailboxState, settingsState) {
-    if (mailboxId === NOTIFICATION_TEST_MAILBOX_ID) {
-      return {
-        mailbox: new CoreMailbox(mailboxId, CoreMailbox.createJS(mailboxId)),
-        enabled: true
-      }
-    }
-
+  static checkConfigAndFetchMailbox (mailboxId, serviceType, mailboxState, settingsState) {
     if (!settingsState.os.notificationsEnabled) {
-      return { mailbox: undefined, enabled: false }
+      return { mailbox: undefined, service: undefined, enabled: false }
     }
 
     const mailbox = mailboxState.getMailbox(mailboxId)
-    if (!mailbox || !mailbox.showNotifications) {
-      return { mailbox: undefined, enabled: false }
-    }
-
-    return { mailbox: mailbox, enabled: true }
+    const service = mailbox ? mailbox.serviceForType(serviceType) : undefined
+    const showNotifications = service ? service.showNotifications : false
+    return { mailbox: mailbox, service: service, enabled: showNotifications }
   }
 
   /* **************************************************************************/
@@ -88,13 +78,14 @@ export default class NotificationRendererUtils {
   /**
   * Gets the sound file for the mailbox taking into account settings
   * @param mailbox: the mailbox to get the sound for
+  * @param service: the service to get the sound for
   * @param settingsState: the current settings state
   * @return the mailbox sound, or undefined to indicate silence
   */
-  static preparedMailboxSound (mailbox, settingsState) {
+  static preparedServiceSound (mailbox, service, settingsState) {
     if (settingsState.os.notificationsSilent) { return undefined }
 
-    return mailbox.notificationsSound || this.preparedSound(settingsState)
+    return service.notificationsSound || this.preparedSound(settingsState)
   }
 
   /**
@@ -115,11 +106,12 @@ export default class NotificationRendererUtils {
   /**
   * Gets the icon depending on mailbox settings etc
   * @param mailbox: the mailbox
+  * @param service: the service
   * @param mailboxState: the current mailbox state
   * @return the icon if available and should be shown or undefined
   */
-  static preparedMailboxIcon (mailbox, mailboxState) {
-    if (mailbox.showAvatarInNotifications) {
+  static preparedServiceIcon (mailbox, service, mailboxState) {
+    if (service.showAvatarInNotifications) {
       return mailboxState.getResolvedAvatar(mailbox.id)
     } else {
       return undefined
@@ -129,12 +121,13 @@ export default class NotificationRendererUtils {
   /**
   * Gets the icon depending on mailbox settings etc and stores it locally on disk
   * @param mailbox: the mailbox
+  * @param service: the service
   * @param mailboxState: the current mailboxState
   * @return an always resolved promise with the local file url of the icon or undefined on failure etc
   */
-  static preparedMailboxIconWin32 (mailbox, mailboxState) {
+  static preparedServiceIconWin32 (mailbox, service, mailboxState) {
     return this.preparedIconWin32(
-      this.preparedMailboxIcon(mailbox, mailboxState),
+      this.preparedServiceIcon(mailbox, service, mailboxState),
       mailbox.id.replace(/-/g, '')
     )
   }

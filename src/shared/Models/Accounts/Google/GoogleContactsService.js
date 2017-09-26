@@ -7,6 +7,7 @@ class GoogleContactsService extends GoogleService {
 
   static get type () { return GoogleService.SERVICE_TYPES.CONTACTS }
   static get humanizedType () { return 'Google Contacts' }
+  static get humanizedTypeShort () { return 'Contacts' }
   static get humanizedLogos () {
     return [
       'images/google/logo_contacts_32px.png',

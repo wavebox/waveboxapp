@@ -6,7 +6,13 @@ class GoogleCommunicationService extends GoogleService {
   /* **************************************************************************/
 
   static get type () { return GoogleService.SERVICE_TYPES.COMMUNICATION }
+
+  /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
   static get humanizedType () { return 'Google Hangouts' }
+  static get humanizedTypeShort () { return 'Hangouts' }
   static get humanizedLogos () {
     return [
       'images/google/logo_hangouts_32px.png',
@@ -15,6 +21,13 @@ class GoogleCommunicationService extends GoogleService {
       'images/google/logo_hangouts_128px.png'
     ]
   }
+
+  /* **************************************************************************/
+  // Class: Support
+  /* **************************************************************************/
+
+  static get supportsUnreadCount () { return true }
+  static get supportsNativeNotifications () { return true }
 
   /* **************************************************************************/
   // Properties
@@ -47,6 +60,12 @@ class GoogleCommunicationService extends GoogleService {
 
     return this.constructor.WINDOW_OPEN_MODES.DEFAULT
   }
+
+  /* **************************************************************************/
+  // Properties : Provider Details & counts etc
+  /* **************************************************************************/
+
+  get unreadCount () { return 0 }
 }
 
 module.exports = GoogleCommunicationService

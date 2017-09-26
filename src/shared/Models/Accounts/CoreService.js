@@ -40,12 +40,34 @@ class CoreService extends Model {
   static get type () { return SERVICE_TYPES.UNKNOWN }
 
   /* **************************************************************************/
+  // Class: Support
+  /* **************************************************************************/
+
+  static get supportsUnreadActivity () { return false }
+  static get supportsUnreadCount () { return false }
+  static get supportsTrayMessages () { return false }
+  static get supportsSyncedDiffNotifications () { return false }
+  static get supportsNativeNotifications () { return false }
+  static get supportsGuestNotifications () { return false }
+  static get supportsSyncWhenSleeping () { return false }
+  static get supportsSync () {
+    return [
+      this.supportsUnreadActivity,
+      this.supportsUnreadCount,
+      this.supportsNativeNotifications,
+      this.supportsGuestNotifications
+    ].find((s) => s) || false
+  }
+
+  /* **************************************************************************/
   // Class: Humanized
   /* **************************************************************************/
 
   static get humanizedType () { return undefined }
+  static get humanizedTypeShort () { return this.humanizedType }
   static get humanizedLogos () { return [] }
   static get humanizedLogo () { return this.humanizedLogos[this.humanizedLogos.length - 1] }
+  static get humanizedUnreadItemType () { return 'message' }
 
   /* **************************************************************************/
   // Class: Creation
@@ -67,11 +89,13 @@ class CoreService extends Model {
   * @param parentId: the id of the mailbox
   * @param data: the data of the service
   * @param metadata={}: metadata for this service to use
+  * @param mailboxMigrationData={}: data that's been migrated from the mailbox
   */
-  constructor (parentId, data, metadata = {}) {
+  constructor (parentId, data, metadata = {}, mailboxMigrationData = {}) {
     super(data)
     this.__parentId__ = parentId
     this.__metadata__ = metadata
+    this.__mailboxMigrationData__ = mailboxMigrationData
   }
 
   /* **************************************************************************/
@@ -87,6 +111,19 @@ class CoreService extends Model {
   get reloadBehaviour () { return RELOAD_BEHAVIOURS.RELOAD }
 
   /* **************************************************************************/
+  // Properties: Support
+  /* **************************************************************************/
+
+  get supportsUnreadActivity () { return this.constructor.supportsUnreadActivity }
+  get supportsUnreadCount () { return this.constructor.supportsUnreadCount }
+  get supportsTrayMessages () { return this.constructor.supportsTrayMessages }
+  get supportsSyncedDiffNotifications () { return this.constructor.supportsSyncedDiffNotifications }
+  get supportsNativeNotifications () { return this.constructor.supportsNativeNotifications }
+  get supportsGuestNotifications () { return this.constructor.supportsGuestNotifications }
+  get supportsSyncWhenSleeping () { return this.constructor.supportsSyncWhenSleeping }
+  get supportsSync () { return this.constructor.supportsSync }
+
+  /* **************************************************************************/
   // Properties: Protocols & actions
   /* **************************************************************************/
 
@@ -98,14 +135,43 @@ class CoreService extends Model {
   /* **************************************************************************/
 
   get humanizedType () { return this.constructor.humanizedType }
+  get humanizedTypeShort () { return this.constructor.humanizedTypeShort }
   get humanizedLogos () { return this.constructor.humanizedLogos }
   get humanizedLogo () { return this.constructor.humanizedLogo }
+  get humanizedUnreadItemType () { return this.constructor.humanizedUnreadItemType }
 
   /* **************************************************************************/
   // Properties: Display
   /* **************************************************************************/
 
   get zoomFactor () { return this._value_('zoomFactor', 1.0) }
+  get unreadBadgeColor () { return this._migrationValue_('unreadBadgeColor', 'rgba(238, 54, 55, 0.95)') }
+
+  /* **************************************************************************/
+  // Properties : Badges
+  /* **************************************************************************/
+
+  get showUnreadBadge () { return this._migrationValue_('showUnreadBadge', true) }
+  get unreadCountsTowardsAppUnread () { return this._migrationValue_('unreadCountsTowardsAppUnread', true) }
+  get showUnreadActivityBadge () { return this._migrationValue_('showUnreadActivityBadge', true) }
+  get unreadActivityCountsTowardsAppUnread () { return this._migrationValue_('unreadActivityCountsTowardsAppUnread', true) }
+
+  /* **************************************************************************/
+  // Properties : Notifications
+  /* **************************************************************************/
+
+  get showNotifications () { return this._migrationValue_('showNotifications', true) }
+  get showAvatarInNotifications () { return this._migrationValue_('showAvatarInNotifications', true) }
+  get notificationsSound () { return this._migrationValue_('notificationsSound', undefined) }
+
+  /* **************************************************************************/
+  // Properties : Provider Details & counts etc
+  /* **************************************************************************/
+
+  get unreadCount () { return 0 }
+  get hasUnreadActivity () { return false }
+  get trayMessages () { return [] }
+  get notifications () { return [] }
 
   /* **************************************************************************/
   // Properties : Custom injectables
@@ -149,6 +215,22 @@ class CoreService extends Model {
   */
   getNavigateModeForUrl (url, parsedUrl) {
     return NAVIGATE_MODES.DEFAULT
+  }
+
+  /* **************************************************************************/
+  // Utils
+  /* **************************************************************************/
+
+  /**
+  * Gets the value from the data, but also checks the metadata for a fallback value before returning the default value
+  * @param key: the key to get
+  * @param defaultValue: the value to return if undefined
+  * @return the value or defaultValue
+  */
+  _migrationValue_ (key, defaultValue) {
+    if (this.__data__[key] !== undefined) { return this.__data__[key] }
+    if (this.__mailboxMigrationData__[key] !== undefined) { return this.__mailboxMigrationData__[key] }
+    return defaultValue
   }
 }
 

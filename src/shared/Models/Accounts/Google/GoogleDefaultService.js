@@ -23,6 +23,16 @@ class GoogleDefaultService extends GoogleService {
   static get UNREAD_MODES () { return UNREAD_MODES }
 
   /* **************************************************************************/
+  // Class: Support
+  /* **************************************************************************/
+
+  static get supportsUnreadCount () { return true }
+  static get supportsTrayMessages () { return true }
+  static get supportsSyncedDiffNotifications () { return true }
+  static get supportsNativeNotifications () { return true }
+  static get supportsSyncWhenSleeping () { return true }
+
+  /* **************************************************************************/
   // Properties
   /* **************************************************************************/
 
@@ -88,6 +98,12 @@ class GoogleDefaultService extends GoogleService {
     switch (this.accessMode) {
       case ACCESS_MODES.GMAIL: return 'Gmail'
       case ACCESS_MODES.GINBOX: return 'Google Inbox'
+    }
+  }
+  get humanizedTypeShort () {
+    switch (this.accessMode) {
+      case ACCESS_MODES.GMAIL: return 'Gmail'
+      case ACCESS_MODES.GINBOX: return 'Inbox'
     }
   }
   get humanizedLogos () {
@@ -172,8 +188,10 @@ class GoogleDefaultService extends GoogleService {
       let fromName = ''
       if (message.from) {
         try {
-          fromName = addressparser(message.from)[0].name
-        } catch (ex) { /* no-op */ }
+          fromName = addressparser(message.from)[0].name || message.from
+        } catch (ex) {
+          fromName = message.from
+        }
       }
 
       return {

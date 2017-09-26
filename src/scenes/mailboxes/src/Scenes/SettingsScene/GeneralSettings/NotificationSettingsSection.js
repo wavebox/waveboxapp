@@ -7,8 +7,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { NotificationPlatformSupport, NotificationService } from 'Notifications'
 import {
   NOTIFICATION_PROVIDERS,
-  NOTIFICATION_SOUNDS,
-  NOTIFICATION_TEST_MAILBOX_ID
+  NOTIFICATION_SOUNDS
 } from 'shared/Notifications'
 
 export default class NotificationSettingsSection extends React.Component {
@@ -29,13 +28,13 @@ export default class NotificationSettingsSection extends React.Component {
   */
   sendTestNotification = () => {
     const now = new Date()
-    NotificationService.processPushedMailboxNotification(NOTIFICATION_TEST_MAILBOX_ID, {
-      title: `Testing Notifications`,
-      body: [
-        { content: 'Testing Testing 123' },
-        { content: `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}` }
-      ]
-    })
+    NotificationService.processTestNotification(
+      `Testing Notifications`,
+      [
+        'Testing Testing 123',
+        `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
+      ].join('\n')
+    )
   }
 
   /* **************************************************************************/

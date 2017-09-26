@@ -101,7 +101,15 @@ export default class AccountServicesSettings extends React.Component {
         <Toggle
           disabled={!ui.showSleepableServiceIndicator}
           toggled={mailbox.showSleepableServiceIndicator}
-          label='Indicate when services are sleeping'
+          label={ui.showSleepableServiceIndicator ? (
+            'Indicate when services are sleeping'
+          ) : (
+            <span>
+              <span>Indicate when services are sleeping</span>
+              <br />
+              <small>Enable "Allow services to indicate when Sleeping" in the main UI settings first</small>
+            </span>
+          )}
           labelPosition='right'
           onToggle={(evt, toggled) => {
             mailboxActions.reduce(mailbox.id, MailboxReducer.setShowSleepableServiceIndicator, toggled)

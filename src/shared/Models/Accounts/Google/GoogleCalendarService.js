@@ -7,6 +7,7 @@ class GoogleCalendarService extends GoogleService {
 
   static get type () { return GoogleService.SERVICE_TYPES.CALENDAR }
   static get humanizedType () { return 'Google Calendar' }
+  static get humanizedTypeShort () { return 'Calendar' }
   static get humanizedLogos () {
     return [
       'images/google/logo_calendar_32px.png',

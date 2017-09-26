@@ -7,6 +7,7 @@ class GooglePhotosService extends GoogleService {
 
   static get type () { return GoogleService.SERVICE_TYPES.PHOTOS }
   static get humanizedType () { return 'Google Photos' }
+  static get humanizedTypeShort () { return 'Photos' }
   static get humanizedLogos () {
     return [
       'images/google/logo_photos_32px.png',

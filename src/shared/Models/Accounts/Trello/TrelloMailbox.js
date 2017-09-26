@@ -1,5 +1,4 @@
 const CoreMailbox = require('../CoreMailbox')
-const TrelloDefaultService = require('./TrelloDefaultService')
 const MailboxColors = require('../MailboxColors')
 
 class TrelloMailbox extends CoreMailbox {
@@ -20,7 +19,6 @@ class TrelloMailbox extends CoreMailbox {
   }
   static get humanizedVectorLogo () { return 'images/trello/logo_vector.svg' }
   static get humanizedType () { return 'Trello' }
-  static get humanizedUnreadItemType () { return 'notification' }
   static get defaultColor () { return MailboxColors.TRELLO }
 
   /**
@@ -75,9 +73,6 @@ class TrelloMailbox extends CoreMailbox {
       return super.displayName
     }
   }
-  get unreadCount () { return this.serviceForType(TrelloDefaultService.type).unreadCount }
-  get trayMessages () { return this.serviceForType(TrelloDefaultService.type).trayMessages }
-  get notifications () { return this.serviceForType(TrelloDefaultService.type).notifications }
 }
 
 module.exports = TrelloMailbox

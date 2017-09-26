@@ -70,13 +70,6 @@ export default class AccountAppearanceSettings extends React.Component {
             onChange={(col) => mailboxActions.reduce(mailbox.id, MailboxReducer.setColor, col)} />
         </div>
         <div style={styles.button}>
-          <ColorPickerButton
-            label='Account Badge Colour'
-            icon={<FontIcon className='material-icons'>brightness_1</FontIcon>}
-            value={mailbox.unreadBadgeColor}
-            onChange={(col) => mailboxActions.reduce(mailbox.id, MailboxReducer.setUnreadBadgeColor, col)} />
-        </div>
-        <div style={styles.button}>
           <RaisedButton
             label='Change Account Icon'
             containerElement='label'

@@ -2,6 +2,7 @@ import AppBadge from './AppBadge'
 import ColorPickerButton from './ColorPickerButton'
 import Grid from './Grid'
 import Mailbox from './Mailbox'
+import Service from './Service'
 import Tray from './Tray'
 import WaveboxWebView from './WaveboxWebView'
 import FullscreenModal from './FullscreenModal'
@@ -18,6 +19,7 @@ export {
   FullscreenModal,
   Grid,
   Mailbox,
+  Service,
   Tray,
   WaveboxWebView,
   AuthenticationInstruction,

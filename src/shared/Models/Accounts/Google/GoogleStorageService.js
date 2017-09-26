@@ -7,6 +7,7 @@ class GoogleStorageService extends GoogleService {
 
   static get type () { return GoogleService.SERVICE_TYPES.STORAGE }
   static get humanizedType () { return 'Google Drive' }
+  static get humanizedTypeShort () { return 'Drive' }
   static get humanizedLogos () {
     return [
       'images/google/logo_drive_32px.png',

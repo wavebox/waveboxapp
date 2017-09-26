@@ -1,6 +1,5 @@
 const CoreMailbox = require('../CoreMailbox')
 const MailboxColors = require('../MailboxColors')
-const MicrosoftDefaultService = require('./MicrosoftDefaultService')
 const ServiceFactory = require('../ServiceFactory')
 
 const ACCESS_MODES = Object.freeze({
@@ -134,10 +133,12 @@ class MicrosoftMailbox extends CoreMailbox {
   * @override
   */
   modelizeService (serviceData) {
-    return ServiceFactory.modelize(this.id, this.type, serviceData, {
-      accessMode: this.accessMode,
-      ACCESS_MODES: ACCESS_MODES
-    })
+    return ServiceFactory.modelize(
+      this.id,
+      this.type,
+      serviceData,
+      { accessMode: this.accessMode, ACCESS_MODES: ACCESS_MODES },
+      this.buildMailboxToServiceMigrationData(serviceData.type))
   }
 
   /* **************************************************************************/
@@ -195,10 +196,6 @@ class MicrosoftMailbox extends CoreMailbox {
   get userFullName () { return this.__data__.userFullName }
   get userId () { return this.__data__.userId }
   get displayName () { return this.email || this.userFullName }
-
-  get unreadCount () { return this.serviceForType(MicrosoftDefaultService.type).unreadCount }
-  get trayMessages () { return this.serviceForType(MicrosoftDefaultService.type).trayMessages }
-  get notifications () { return this.serviceForType(MicrosoftDefaultService.type).notifications }
 }
 
 module.exports = MicrosoftMailbox

@@ -169,9 +169,6 @@ class GoogleMailbox extends CoreMailbox {
 
   get email () { return this.__data__.email }
   get displayName () { return this.email }
-  get unreadCount () { return this.serviceForType(GoogleDefaultService.type).unreadCount }
-  get trayMessages () { return this.serviceForType(GoogleDefaultService.type).trayMessages }
-  get notifications () { return this.serviceForType(GoogleDefaultService.type).notifications }
 }
 
 module.exports = GoogleMailbox
