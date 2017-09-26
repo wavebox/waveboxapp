@@ -79,6 +79,32 @@ class MailboxReducer {
   }
 
   /* **************************************************************************/
+  // Badge
+  /* **************************************************************************/
+
+  /**
+  * Sets if the cumulative sidebar badge should be shown
+  * @param mailbox: the mailbox to update
+  * @param show: true to show, false otherwise
+  */
+  static setShowCumulativeSidebarUnreadBadge (mailbox, show) {
+    return mailbox.changeData({
+      showCumulativeSidebarUnreadBadge: show
+    })
+  }
+
+  /**
+  * Sets the cumulative sidebar badge color
+  * @param mailbox: the mailbox to update
+  * @param col: the color to set
+  */
+  static setCumulativeSidebarUnreadBadgeColor (mailbox, col) {
+    return mailbox.changeData({
+      cumulativeSidebarUnreadBadgeColor: typeof (col) === 'object' ? col.rgbaStr : col
+    })
+  }
+
+  /* **************************************************************************/
   // Lifecycle & Ordering
   /* **************************************************************************/
 

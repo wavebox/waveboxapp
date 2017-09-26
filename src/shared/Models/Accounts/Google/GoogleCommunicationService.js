@@ -65,7 +65,7 @@ class GoogleCommunicationService extends GoogleService {
   // Properties : Provider Details & counts etc
   /* **************************************************************************/
 
-  get unreadCount () { return 0 }
+  get unreadCount () { return 2 }
 }
 
 module.exports = GoogleCommunicationService

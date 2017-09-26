@@ -345,24 +345,28 @@ class MailboxStore {
     /* ****************************************/
 
     /**
+    * @param user=autoget: the user object
     * @return the total amount of unread items
     */
-    this.totalUnreadCount = () => {
+    this.totalUnreadCountForUser = (user = userStore.getState().user) => {
+      const hasServices = user.hasServices
       return this.allMailboxes().reduce((acc, mailbox) => {
         if (mailbox) {
-          acc += mailbox.unreadCount
+          acc += mailbox.getUnreadCount(!hasServices)
         }
         return acc
       }, 0)
     }
 
     /**
+    * @param user=autoget: the user object
     * @return the total amount of unread items taking mailbox settings into account
     */
-    this.totalUnreadCountForAppBadge = () => {
+    this.totalUnreadCountForAppBadgeForUser = (user = userStore.getState().user) => {
+      const hasServices = user.hasServices
       return this.allMailboxes().reduce((acc, mailbox) => {
         if (mailbox) {
-          return acc + mailbox.unreadCountForAppBadge
+          return acc + mailbox.getUnreadCountForAppBadge(!hasServices)
         } else {
           return acc
         }
@@ -370,12 +374,49 @@ class MailboxStore {
     }
 
     /**
+    * @param user=autoget: the user object
     * @return true if any mailboxes have another unread info status, taking settings into account
     */
-    this.hasUnreadActivityForAppBadge = () => {
+    this.hasUnreadActivityForAppBadgeForUser = (user = userStore.getState().user) => {
+      const hasServices = user.hasServices
       return !!this.allMailboxes().find((mailbox) => {
-        return mailbox && mailbox.unreadActivityForAppBadge
+        return mailbox && mailbox.getUnreadActivityForAppbadge(!hasServices)
       })
+    }
+
+    /**
+    * Gets the unread count taking into account the current user state
+    * @param id: the id of the mailbox
+    * @param user=autoget: the user object
+    * @return the unread count
+    */
+    this.mailboxUnreadCountForUser = (id, user = userStore.getState().user) => {
+      const mailbox = this.getMailbox(id)
+      if (!mailbox) { return 0 }
+      return mailbox.getUnreadCount(!user.hasServices)
+    }
+
+    /**
+    * Gets the unread activity taking into account the current user state
+    * @param id: the id of the mailbox
+    * @param user=autoget: the user object
+    * @return true if there is unread activity for the account
+    */
+    this.mailboxHasUnreadActivityForUser = (id, user = userStore.getState().user) => {
+      const mailbox = this.getMailbox(id)
+      if (!mailbox) { return false }
+      return mailbox.getHasUnreadActivity(!user.hasServices)
+    }
+
+    /**
+    * @param id: the id of the mailbox
+    * @param user=autoget: the user object
+    * @return the array of tray messages
+    */
+    this.mailboxTrayMessagesForUser = (id, user = userStore.getState().user) => {
+      const mailbox = this.getMailbox(id)
+      if (!mailbox) { return [] }
+      return mailbox.getTrayMessages(!user.hasServices)
     }
 
     /* ****************************************/

@@ -106,7 +106,7 @@ export default class Tray extends React.Component {
   */
   generateMenuUnreadMessages (mailboxState = mailboxStore.getState()) {
     const mailboxMenuItems = mailboxState.allMailboxes().map((mailbox) => {
-      const trayMessages = mailbox.trayMessages
+      const trayMessages = mailboxState.mailboxTrayMessagesForUser(mailbox.id)
       const messageItemsSignature = trayMessages.map((message) => message.id).join(':')
       let messageItems = trayMessages.map((message) => {
         return {
@@ -132,10 +132,11 @@ export default class Tray extends React.Component {
         { type: 'separator' }
       )
 
+      const unreadCount = mailboxState.mailboxUnreadCountForUser(mailbox.id)
       return {
         signature: messageItemsSignature,
         label: [
-          mailbox.unreadCount ? `(${mailbox.unreadCount})` : undefined,
+          unreadCount ? `(${unreadCount})` : undefined,
           mailbox.displayName || 'Untitled'
         ].filter((item) => !!item).join(' '),
         submenu: messageItems.length === 2 ? [...messageItems,

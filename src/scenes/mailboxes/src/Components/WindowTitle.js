@@ -32,7 +32,7 @@ export default class Provider extends React.Component {
   mailboxesChanged = (mailboxState) => {
     const activeMailbox = mailboxState.activeMailbox()
     this.setState({
-      unreadCount: mailboxState.totalUnreadCountForAppBadge(),
+      unreadCount: mailboxState.totalUnreadCountForAppBadgeForUser(),
       activeMailboxName: activeMailbox ? activeMailbox.displayName : undefined,
       activeGuestTitle: this._getGuestPageTitle(mailboxState, undefined)
     })
@@ -70,7 +70,7 @@ export default class Provider extends React.Component {
     return {
       showTitlebarCount: settingsState.ui.showTitlebarCount,
       showTitlebarAccount: settingsState.ui.showTitlebarAccount,
-      unreadCount: mailboxState.totalUnreadCountForAppBadge(),
+      unreadCount: mailboxState.totalUnreadCountForAppBadgeForUser(),
       activeGuestTitle: this._getGuestPageTitle(mailboxState, guestState),
       activeMailboxName: activeMailbox ? activeMailbox.displayName : undefined
     }

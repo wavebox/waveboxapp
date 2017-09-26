@@ -5,7 +5,7 @@ import { MailboxAvatar } from 'Components/Mailbox'
 import { mailboxStore } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
-import { ServiceBadge, ServiceTooltip } from 'Components/Service'
+import { DefaultServiceBadge, ServiceTooltip } from 'Components/Service'
 import * as Colors from 'material-ui/styles/colors'
 import uuid from 'uuid'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
@@ -188,26 +188,24 @@ export default class SidelistItemMalboxAvatar extends React.Component {
 
     let borderColor
     let showSleeping
+    let displayMailboxOverview
     if (mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR) {
       borderColor = isDefaultServiceActive || isHovering ? mailbox.color : Color(mailbox.color).lighten(0.4).rgb().string()
       showSleeping = isDefaultServiceSleeping && mailbox.showSleepableServiceIndicator && globalShowSleepableServiceIndicator
+      displayMailboxOverview = mailbox.collapseSidebarServices && !isMailboxActive && mailbox.hasAdditionalServices
     } else {
       borderColor = isMailboxActive || isHovering ? mailbox.color : Color(mailbox.color).lighten(0.4).rgb().string()
       showSleeping = false
+      displayMailboxOverview = mailbox.hasAdditionalServices
     }
 
     return (
-      <ServiceBadge
+      <DefaultServiceBadge
         {...passProps}
         id={`ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`}
         isAuthInvalid={mailbox.isAuthenticationInvalid || !mailbox.hasAuth}
-        supportsUnreadCount={service.supportsUnreadCount}
-        showUnreadBadge={service.showUnreadBadge}
-        unreadCount={service.unreadCount}
-        supportsUnreadActivity={service.supportsUnreadActivity}
-        showUnreadActivityBadge={service.showUnreadActivityBadge}
-        hasUnreadActivity={service.hasUnreadActivity}
-        color={service.unreadBadgeColor}
+        mailboxId={mailbox.id}
+        displayMailboxOverview={displayMailboxOverview}
         badgeStyle={styles.badge}
         style={styles.badgeContainer}
         iconStyle={styles.badgeFAIcon}
@@ -236,7 +234,7 @@ export default class SidelistItemMalboxAvatar extends React.Component {
           arrow='left'
           group={this.instanceId}
           parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />
-      </ServiceBadge>
+      </DefaultServiceBadge>
     )
   }
 }

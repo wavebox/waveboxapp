@@ -5,6 +5,7 @@ import { ColorPickerButton } from 'Components'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
+import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 
 export default class AccountAppearanceSettings extends React.Component {
   /* **************************************************************************/
@@ -59,6 +60,15 @@ export default class AccountAppearanceSettings extends React.Component {
   render () {
     const { mailbox, ...passProps } = this.props
 
+    const hasCumulativeBadge = (
+        mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR &&
+        mailbox.hasAdditionalServices
+      ) || (
+        mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR &&
+        mailbox.collapseSidebarServices &&
+        mailbox.hasAdditionalServices
+      )
+
     return (
       <Paper zDepth={1} style={styles.paper} {...passProps}>
         <h1 style={styles.subheading}>Appearance</h1>
@@ -93,6 +103,32 @@ export default class AccountAppearanceSettings extends React.Component {
           label='Show Account Colour around Icon'
           labelPosition='right'
           onToggle={(evt, toggled) => mailboxActions.reduce(mailbox.id, MailboxReducer.setShowAvatarColorRing, toggled)} />
+        {hasCumulativeBadge ? (
+          <div>
+            <hr style={styles.subsectionRule} />
+            <h1 style={styles.subsectionheading}>Sidebar Badge</h1>
+            <p style={styles.subheadingInfo}>
+              When you have multiple services you can show the total unread count for those
+              services in the sidebar, so at a glance you know what's new
+            </p>
+            <Toggle
+              toggled={mailbox.showCumulativeSidebarUnreadBadge}
+              label='Show total unread count from all services'
+              labelPosition='right'
+              onToggle={(evt, toggled) => {
+                mailboxActions.reduce(mailbox.id, MailboxReducer.setShowCumulativeSidebarUnreadBadge, toggled)
+              }} />
+            <div style={styles.button}>
+              <ColorPickerButton
+                label='Badge Colour'
+                icon={<FontIcon className='material-icons'>sms</FontIcon>}
+                value={mailbox.cumulativeSidebarUnreadBadgeColor}
+                onChange={(col) => {
+                  mailboxActions.reduce(mailbox.id, MailboxReducer.setCumulativeSidebarUnreadBadgeColor, col)
+                }} />
+            </div>
+          </div>
+        ) : undefined}
       </Paper>
     )
   }

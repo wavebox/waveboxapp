@@ -253,6 +253,13 @@ class CoreMailbox extends Model {
   get showSleepableServiceIndicator () { return this._value_('showSleepableServiceIndicator', true) }
 
   /* **************************************************************************/
+  // Properties : Badge
+  /* **************************************************************************/
+
+  get showCumulativeSidebarUnreadBadge () { return this._value_('showCumulativeSidebarUnreadBadge', true) }
+  get cumulativeSidebarUnreadBadgeColor () { return this._value_('cumulativeSidebarUnreadBadgeColor', 'rgba(238, 54, 55, 0.95)') }
+
+  /* **************************************************************************/
   // Properties : Authentication
   /* **************************************************************************/
 
@@ -264,8 +271,15 @@ class CoreMailbox extends Model {
   /* **************************************************************************/
 
   get displayName () { return this.id }
-  get unreadCount () {
-    return this.enabledServices.reduce((acc, service) => {
+
+  /**
+  * Gets the unread count
+  * @param defaultServiceOnly=false: set to true to only return for the default service
+  * @return the total unread count
+  */
+  getUnreadCount (defaultServiceOnly = false) {
+    const services = defaultServiceOnly ? [this.defaultService] : this.enabledServices
+    return services.reduce((acc, service) => {
       if (service.supportsUnreadCount && service.showUnreadBadge) {
         return acc + service.unreadCount
       } else {
@@ -273,8 +287,15 @@ class CoreMailbox extends Model {
       }
     }, 0)
   }
-  get unreadCountForAppBadge () {
-    return this.enabledServices.reduce((acc, service) => {
+
+  /**
+  * Gets the unread count for the app badge
+  * @param defaultServiceOnly=false: set to true to only return for the default service
+  * @return the total unread count for the app badge
+  */
+  getUnreadCountForAppBadge (defaultServiceOnly = false) {
+    const services = defaultServiceOnly ? [this.defaultService] : this.enabledServices
+    return services.reduce((acc, service) => {
       if (service.supportsUnreadCount && service.unreadCountsTowardsAppUnread) {
         return acc + service.unreadCount
       } else {
@@ -282,18 +303,39 @@ class CoreMailbox extends Model {
       }
     }, 0)
   }
-  get hasUnreadActivity () {
-    return !!this.enabledServices.find((service) => {
+
+  /**
+  * Gets the unread activity
+  * @param defaultServiceOnly=false: set to true to only return for the default service
+  * @return true if there is any unread activity
+  */
+  getHasUnreadActivity (defaultServiceOnly = false) {
+    const services = defaultServiceOnly ? [this.defaultService] : this.enabledServices
+    return !!services.find((service) => {
       return service.supportsUnreadCount && service.showUnreadActivityBadge && service.hasUnreadActivity
     })
   }
-  get unreadActivityForAppBadge () {
-    return !!this.enabledServices.find((service) => {
+
+  /**
+  * Gets the unread activity
+  * @param defaultServiceOnly=false: set to true to only return for the default service
+  * @return the total unread actibity for the app badge
+  */
+  getUnreadActivityForAppbadge (defaultServiceOnly = false) {
+    const services = defaultServiceOnly ? [this.defaultService] : this.enabledServices
+    return !!services.find((service) => {
       return service.supportsUnreadCount && service.unreadActivityCountsTowardsAppUnread && service.hasUnreadActivity
     })
   }
-  get trayMessages () {
-    return this.enabledServices.reduce((acc, service) => {
+
+  /**
+  * Gets the tray messages
+  * @param defaultServiceOnly=false: set to true to only return for the default service
+  * @return all the tray messages as an array
+  */
+  getTrayMessages (defaultServiceOnly = false) {
+    const services = defaultServiceOnly ? [this.defaultService] : this.enabledServices
+    return services.reduce((acc, service) => {
       if (service.supportsTrayMessages && service.showUnreadActivityBadge) {
         return acc.concat(service.trayMessages)
       } else {

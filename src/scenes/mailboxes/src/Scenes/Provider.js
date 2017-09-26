@@ -97,8 +97,8 @@ export default class Provider extends React.Component {
     const settingsState = settingsStore.getState()
     const mailboxState = mailboxStore.getState()
     return {
-      messagesUnreadCount: mailboxState.totalUnreadCountForAppBadge(),
-      hasUnreadActivity: mailboxState.hasUnreadActivityForAppBadge(),
+      messagesUnreadCount: mailboxState.totalUnreadCountForAppBadgeForUser(),
+      hasUnreadActivity: mailboxState.hasUnreadActivityForAppBadgeForUser(),
       uiSettings: settingsState.ui,
       traySettings: settingsState.tray,
       launchTraySettings: settingsState.launched.tray,
@@ -108,8 +108,8 @@ export default class Provider extends React.Component {
 
   mailboxesChanged = (mailboxState) => {
     this.setState({
-      messagesUnreadCount: mailboxState.totalUnreadCountForAppBadge(),
-      hasUnreadActivity: mailboxState.hasUnreadActivityForAppBadge()
+      messagesUnreadCount: mailboxState.totalUnreadCountForAppBadgeForUser(),
+      hasUnreadActivity: mailboxState.hasUnreadActivityForAppBadgeForUser()
     })
   }
 
