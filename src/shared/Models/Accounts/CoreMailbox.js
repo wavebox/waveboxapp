@@ -82,12 +82,13 @@ class CoreMailbox extends Model {
   * @param color=undefined: the color of the mailbox
   * @return a vanilla js object representing the data for this mailbox
   */
-  static createJS (id = this.provisionId(), serviceTypes = this.defaultServiceTypes, serviceDisplayMode = this.SERVICE_DISPLAY_MODES.SIDEBAR, color = undefined) {
+  static createJS (id = this.provisionId(), serviceTypes = this.defaultServiceTypes, serviceDisplayMode = this.SERVICE_DISPLAY_MODES.TOOLBAR, color = undefined) {
     return {
       id: id,
       type: this.type,
       changedTime: new Date().getTime(),
       serviceDisplayMode: serviceDisplayMode,
+      serviceToolbarIconLayout: SERVICE_TOOLBAR_ICON_LAYOUTS.LEFT_ALIGN, // Make this the default for new accounts
       color: color,
       services: serviceTypes.map((serviceType) => {
         const ServiceClass = ServiceFactory.getClass(this.type, serviceType)
@@ -247,8 +248,8 @@ class CoreMailbox extends Model {
   get serviceLocalAvatarId () { return this.__data__.serviceLocalAvatar }
   get color () { return this._value_('color', this.constructor.defaultColor) }
   get showAvatarColorRing () { return this._value_('showAvatarColorRing', true) }
-  get serviceDisplayMode () { return this._value_('serviceDisplayMode', SERVICE_DISPLAY_MODES.TOOLBAR) }
-  get serviceToolbarIconLayout () { return this._value_('serviceToolbarIconLayout', SERVICE_TOOLBAR_ICON_LAYOUTS.LEFT_ALIGN) }
+  get serviceDisplayMode () { return this._value_('serviceDisplayMode', SERVICE_DISPLAY_MODES.SIDEBAR) }
+  get serviceToolbarIconLayout () { return this._value_('serviceToolbarIconLayout', SERVICE_TOOLBAR_ICON_LAYOUTS.RIGHT_ALIGN) }
   get collapseSidebarServices () { return this._value_('collapseSidebarServices', false) }
   get showSleepableServiceIndicator () { return this._value_('showSleepableServiceIndicator', true) }
 
