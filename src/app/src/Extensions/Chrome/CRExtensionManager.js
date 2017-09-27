@@ -12,6 +12,9 @@ import {
   WBECRX_UNINSTALL_EXTENSION,
   WBECRX_INSTALL_EXTENSION
 } from 'shared/ipcEvents'
+import {
+  CR_EXTENSION_PROTOCOL
+} from 'shared/extensionApis'
 import userStore from 'stores/userStore'
 
 class CRExtensionManager {
@@ -37,6 +40,12 @@ class CRExtensionManager {
       this.installExtension(extensionId, installInfo)
     })
   }
+
+  /* ****************************************************************************/
+  // Properties
+  /* ****************************************************************************/
+
+  get supportedProtocols () { return [CR_EXTENSION_PROTOCOL] }
 
   /* ****************************************************************************/
   // Integration

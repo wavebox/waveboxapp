@@ -47,16 +47,25 @@
   const extensionStore = require('stores/extensionStore').default
   const ipcEvents = require('shared/ipcEvents')
   const BasicHTTPAuthHandler = require('./BasicHTTPAuthHandler').default
-  const { ContentExtensions, HostedExtensions } = require('Extensions')
-  const { BrowserWindow } = require('electron')
+  const ContentExtensionProvider = require('Extensions/Content').default
+  const { HostedExtensionProvider, HostedExtensionSessionManager } = require('Extensions/Hosted')
+  const { BrowserWindow, protocol } = require('electron')
   const { CRExtensionManager } = require('Extensions/Chrome')
-  CRExtensionManager.setup()
 
   Object.keys(storage).forEach((k) => storage[k].checkAwake())
   mailboxStore.checkAwake()
   extensionStore.checkAwake()
   settingStore.checkAwake()
   userStore.checkAwake()
+
+  /* ****************************************************************************/
+  // Extensions
+  /* ****************************************************************************/
+  CRExtensionManager.setup()
+  protocol.registerStandardSchemes([].concat(
+    HostedExtensionProvider.supportedProtocols,
+    CRExtensionManager.supportedProtocols
+  ), { secure: true })
 
   /* ****************************************************************************/
   // Commandline switches
@@ -130,7 +139,7 @@
     evt.returnValue = true
   })
   ipcMain.on(ipcEvents.WB_PREPARE_EXTENSION_SESSION, (evt, data) => {
-    HostedExtensions.HostedExtensionSessionManager.startManagingSession(data.partition)
+    HostedExtensionSessionManager.startManagingSession(data.partition)
     evt.returnValue = true
   })
 
@@ -148,7 +157,7 @@
   })
 
   ipcMain.on(ipcEvents.WBE_PROVISION_EXTENSION, (evt, data) => {
-    ContentExtensions.provisionExtension(data.requestUrl, data.loadKey, data.apiKey, data.protocol, data.src, data.data)
+    ContentExtensionProvider.provisionExtension(data.requestUrl, data.loadKey, data.apiKey, data.protocol, data.src, data.data)
     if (data.reply) {
       evt.sender.send(data.reply, { ok: true })
     }
@@ -161,7 +170,11 @@
   app.on('ready', () => {
     // Load extensions before any webcontents get created
     if (settingStore.extension.enableChromeExperimental) {
-      CRExtensionManager.loadExtensionDirectory()
+      try {
+        CRExtensionManager.loadExtensionDirectory()
+      } catch (ex) {
+        console.error(`Failed to load extensions. Continuing...`, ex)
+      }
     }
 
     // Doing this outside of ready has a side effect on high-sierra where you get a _TSGetMainThread error

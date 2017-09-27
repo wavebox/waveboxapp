@@ -109,7 +109,7 @@ class CoreService extends Model {
   get sleepable () { return this._value_('sleepable', true) }
   get sleepableTimeout () { return this._value_('sleepableTimeout', MAILBOX_SLEEP_WAIT) }
   get hasNavigationToolbar () { return false }
-  get reloadBehaviour () { return RELOAD_BEHAVIOURS.RELOAD }
+  get reloadBehaviour () { return RELOAD_BEHAVIOURS.RESET_URL }
 
   /* **************************************************************************/
   // Properties: Support

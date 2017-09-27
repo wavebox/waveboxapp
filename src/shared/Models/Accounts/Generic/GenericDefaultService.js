@@ -6,6 +6,7 @@ class GenericDefaultService extends CoreService {
   /* **************************************************************************/
 
   static get type () { return CoreService.SERVICE_TYPES.DEFAULT }
+  get reloadBehaviour () { return this.RELOAD_BEHAVIOURS.RELOAD }
 
   /* **************************************************************************/
   // Class: Support

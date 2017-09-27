@@ -1,4 +1,4 @@
-import { session, protocol } from 'electron'
+import { session } from 'electron'
 import HostedExtensionProvider from './HostedExtensionProvider'
 import ContentExtensions from '../Content'
 
@@ -9,7 +9,6 @@ class HostedExtensionSessionManager {
 
   constructor () {
     this.__managed__ = new Set()
-    protocol.registerStandardSchemes(HostedExtensionProvider.supportedProtocols, { secure: true })
   }
 
   /* ****************************************************************************/

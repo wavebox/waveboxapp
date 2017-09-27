@@ -36,7 +36,6 @@ class TrelloDefaultService extends CoreService {
   // Properties
   /* **************************************************************************/
 
-  get reloadBehaviour () { return this.constructor.RELOAD_BEHAVIOURS.RESET_URL }
   get url () {
     let url = 'https://trello.com'
     if (this.homeBoardId !== undefined) {

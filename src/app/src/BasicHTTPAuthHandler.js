@@ -6,7 +6,7 @@ class BasicHTTPAuthHandler {
   // Lifecycle
   /* ****************************************************************************/
 
-  constructor (request, authInfo, callback) {
+  constructor () {
     this.window = null
     this.callback = null
   }
