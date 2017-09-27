@@ -39,6 +39,8 @@ import {
   WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED,
   WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT,
   WB_NEW_WINDOW,
+  WB_WINDOW_RELOAD_WEBVIEW,
+  WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
 
   WB_USER_CHECK_FOR_UPDATE,
   WB_SQUIRREL_UPDATE_DOWNLOADED,
@@ -470,10 +472,18 @@ class MailboxesWindow extends WaveboxWindow {
   /* ****************************************************************************/
 
   /**
-  * Reloads the webview
+  * Reloads the current account
   * @return this
   */
   reload () {
+    this.window.webContents.send(WB_WINDOW_RELOAD_WEBVIEW, {})
+  }
+
+  /**
+  * Reloads the webview
+  * @return this
+  */
+  reloadWaveboxWindow () {
     clearTimeout(this.gracefulReloadTimeout)
     this.window.webContents.send(WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD, {})
     this.gracefulReloadTimeout = setTimeout(() => {
@@ -716,6 +726,18 @@ class MailboxesWindow extends WaveboxWindow {
   */
   squirrelUpdateDisabled () {
     this.window.webContents.send(WB_SQUIRREL_UPDATE_DISABLED, { })
+  }
+
+  /* ****************************************************************************/
+  // Actions: Dev
+  /* ****************************************************************************/
+
+  /**
+  * Opens the dev tools for the webview
+  * @return this
+  */
+  openDevTools () {
+    this.window.webContents.send(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, {})
   }
 }
 

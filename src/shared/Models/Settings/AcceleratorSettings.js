@@ -38,7 +38,9 @@ class AcceleratorSettings extends Model {
   get zoomOutDefault () { return 'CmdOrCtrl+-' }
   get zoomResetDefault () { return 'CmdOrCtrl+0' }
   get reloadDefault () { return 'CmdOrCtrl+R' }
-  get developerToolsDefault () { return process.platform === 'darwin' ? 'Command+Alt+J' : 'Ctrl+Shift+J' }
+  get reloadWaveboxDefault () { return 'cmdOrCtrl+Shift+R' }
+  get developerToolsDefault () { return process.platform === 'darwin' ? 'Command+Alt+I' : 'Ctrl+Shift+I' }
+  get developerToolsWaveboxDefault () { return process.platform === 'darwin' ? 'Command+Alt+J' : 'Ctrl+Shift+J' }
 
   // Window
   get minimizeDefault () { return 'CmdOrCtrl+M' }
@@ -87,7 +89,9 @@ class AcceleratorSettings extends Model {
   get zoomOut () { return this._value_('zoomOut', this.zoomOutDefault) }
   get zoomReset () { return this._value_('zoomReset', this.zoomResetDefault) }
   get reload () { return this._value_('reload', this.reloadDefault) }
+  get reloadWavebox () { return this._value_('reloadWavebox', this.reloadWaveboxDefault) }
   get developerTools () { return this._value_('developerTools', this.developerToolsDefault) }
+  get developerToolsWavebox () { return this._value_('developerToolsWavebox', this.developerToolsWaveboxDefault) }
 
   // Window
   get minimize () { return this._value_('minimize', this.minimizeDefault) }

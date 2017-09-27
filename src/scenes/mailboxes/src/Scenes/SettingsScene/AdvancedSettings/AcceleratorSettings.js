@@ -42,7 +42,9 @@ const ACCELERATOR_NAMES = {
   zoomOut: 'Zoom Out',
   zoomReset: 'Zoom Reset',
   reload: 'Reload',
+  reloadWavebox: 'Reload Wavebox Window',
   developerTools: 'Developer Tools',
+  developerToolsWavebox: 'Wavebox Developer Tools',
 
   // Window
   minimize: 'Minimize',
@@ -87,7 +89,9 @@ const VIEW_SECTION = [
   'zoomOut',
   'zoomReset',
   'reload',
-  'developerTools'
+  'reloadWavebox',
+  'developerTools',
+  'developerToolsWavebox'
 ]
 const WINDOW_SECTION = [
   'minimize',

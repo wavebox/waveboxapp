@@ -10,6 +10,7 @@ import { browserActions, browserStore } from 'stores/browser'
 import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
 import {
   WB_WINDOW_RELOAD_WEBVIEW,
+  WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
   WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD,
   WB_BROWSER_GUEST_WINDOW_CLOSE,
@@ -40,6 +41,7 @@ export default class BrowserScene extends React.Component {
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
     ipcRenderer.on(WB_WINDOW_RELOAD_WEBVIEW, this.handleIPCReload)
+    ipcRenderer.on(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, this.handleIPCOpenDevTools)
     ipcRenderer.on(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, this.handleIPCNavigateBack)
     ipcRenderer.on(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, this.handleIPCNavigateForward)
     if (process.platform === 'darwin') {
@@ -51,6 +53,7 @@ export default class BrowserScene extends React.Component {
   componentWillUnmount () {
     browserStore.unlisten(this.browserUpdated)
     ipcRenderer.removeListener(WB_WINDOW_RELOAD_WEBVIEW, this.handleIPCReload)
+    ipcRenderer.removeListener(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, this.handleIPCOpenDevTools)
     ipcRenderer.removeListener(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, this.handleIPCNavigateBack)
     ipcRenderer.removeListener(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, this.handleIPCNavigateForward)
     if (process.platform === 'darwin') {
@@ -95,6 +98,10 @@ export default class BrowserScene extends React.Component {
 
   handleIPCNavigateForward = () => {
     this.refs[BROWSER_REF].goForward()
+  }
+
+  handleIPCOpenDevTools = () => {
+    this.refs[BROWSER_REF].openDevTools()
   }
 
   /* **************************************************************************/

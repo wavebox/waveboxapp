@@ -565,7 +565,9 @@ class MailboxStore {
       handleFullSyncMailbox: actions.FULL_SYNC_MAILBOX,
 
       // Misc
-      handlePingResourceUsage: actions.PING_RESOURCE_USAGE
+      handlePingResourceUsage: actions.PING_RESOURCE_USAGE,
+      handleReloadActiveMailbox: actions.RELOAD_ACTIVE_MAILBOX,
+      handleOpenDevToolsActiveMailbox: actions.OPEN_DEV_TOOLS_ACTIVE_MAILBOX
     })
   }
 
@@ -1541,6 +1543,16 @@ class MailboxStore {
         mailboxDispatch.pingResourceUsage(mailbox.id, service.type, description)
       })
     })
+  }
+
+  handleReloadActiveMailbox () {
+    this.preventDefault()
+    mailboxDispatch.reload(this.activeMailboxId(), this.activeMailboxService())
+  }
+
+  handleOpenDevToolsActiveMailbox () {
+    this.preventDefault()
+    mailboxDispatch.openDevTools(this.activeMailboxId(), this.activeMailboxService())
   }
 }
 

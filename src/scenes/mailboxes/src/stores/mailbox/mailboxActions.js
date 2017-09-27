@@ -23,6 +23,8 @@ import {
   WB_WINDOW_ZOOM_IN,
   WB_WINDOW_ZOOM_OUT,
   WB_WINDOW_ZOOM_RESET,
+  WB_WINDOW_RELOAD_WEBVIEW,
+  WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
 
   WB_MAILBOXES_WINDOW_SWITCH_MAILBOX,
   WB_MAILBOXES_WINDOW_SWITCH_SERVICE,
@@ -752,6 +754,16 @@ class MailboxActions {
   * Pings all the mailboxes to submit their resource usage
   */
   pingResourceUsage () { return {} }
+
+  /**
+  * Reloads the active mailbox
+  */
+  reloadActiveMailbox () { return {} }
+
+  /**
+  * Opens the dev tools on the active mailbox
+  */
+  openDevToolsActiveMailbox () { return {} }
 }
 
 const actions = alt.createActions(MailboxActions)
@@ -795,5 +807,7 @@ ipcRenderer.on(WB_MAILBOXES_WINDOW_SWITCH_SERVICE, (evt, req) => {
 
 // Misc
 ipcRenderer.on(WB_PING_RESOURCE_USAGE, actions.pingResourceUsage)
+ipcRenderer.on(WB_WINDOW_RELOAD_WEBVIEW, actions.reloadActiveMailbox)
+ipcRenderer.on(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, actions.openDevToolsActiveMailbox)
 
 export default actions

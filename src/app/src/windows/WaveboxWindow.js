@@ -190,6 +190,15 @@ class WaveboxWindow extends EventEmitter {
   }
 
   /**
+  * Reloads the wavebox window
+  * @return this
+  */
+  reloadWaveboxWindow () {
+    this.window.webContents.reload()
+    return this
+  }
+
+  /**
   * Navigates the content window backwards
   * @return this
   */
@@ -256,6 +265,15 @@ class WaveboxWindow extends EventEmitter {
   * @return this
   */
   openDevTools () {
+    this.window.webContents.openDevTools()
+    return this
+  }
+
+  /**
+  * Opens the wavebox dev tools for this window
+  * @return this
+  */
+  openWaveboxDevTools () {
     this.window.webContents.openDevTools()
     return this
   }

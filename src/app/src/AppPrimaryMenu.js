@@ -60,9 +60,17 @@ class AppPrimaryMenu {
         const focused = windowManager.focused()
         if (focused) { focused.reload() }
       },
+      reloadWavebox: () => {
+        const focused = windowManager.focused()
+        if (focused) { focused.reloadWaveboxWindow() }
+      },
       devTools: () => {
         const focused = windowManager.focused()
         if (focused) { focused.openDevTools() }
+      },
+      devToolsWavebox: () => {
+        const focused = windowManager.focused()
+        if (focused) { focused.openWaveboxDevTools() }
       },
       waveboxGithub: () => { shell.openExternal(GITHUB_URL) },
       waveboxWebsite: () => { shell.openExternal(WEB_URL) },
@@ -345,9 +353,25 @@ class AppPrimaryMenu {
             accelerator: accelerators.reload
           },
           {
-            label: 'Developer Tools',
-            click: this._selectors.devTools,
-            accelerator: accelerators.developerTools
+            label: 'Developer',
+            submenu: [
+              {
+                label: 'Developer Tools',
+                click: this._selectors.devTools,
+                accelerator: accelerators.developerTools
+              },
+              { type: 'separator' },
+              {
+                label: 'Reload Wavebox Window',
+                click: this._selectors.reloadWavebox,
+                accelerator: accelerators.reloadWavebox
+              },
+              {
+                label: 'Wavebox Developer Tools',
+                click: this._selectors.devToolsWavebox,
+                accelerator: accelerators.developerToolsWavebox
+              }
+            ]
           }
         ].filter((item) => item !== undefined)
       },

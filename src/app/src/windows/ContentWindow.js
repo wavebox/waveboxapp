@@ -4,6 +4,7 @@ import querystring from 'querystring'
 import appWindowManager from 'R/appWindowManager'
 import {
   WB_WINDOW_RELOAD_WEBVIEW,
+  WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
   WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD,
   WB_NEW_WINDOW
@@ -206,6 +207,18 @@ class ContentWindow extends WaveboxWindow {
   navigateForward () {
     this.window.webContents.send(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, {})
     return this
+  }
+
+  /* ****************************************************************************/
+  // Actions: Dev
+  /* ****************************************************************************/
+
+  /**
+  * Opens the dev tools for the webview
+  * @return this
+  */
+  openDevTools () {
+    this.window.webContents.send(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, {})
   }
 }
 
