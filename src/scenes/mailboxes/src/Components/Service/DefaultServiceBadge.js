@@ -81,6 +81,7 @@ export default class DefaultServiceBadge extends React.Component {
       mailboxUnreadCount,
       mailboxHasUnreadActivity
     } = this.state
+    if (!mailbox || !service) { return false }
 
     if (displayMailboxOverview && mailbox.hasAdditionalServices) {
       return (

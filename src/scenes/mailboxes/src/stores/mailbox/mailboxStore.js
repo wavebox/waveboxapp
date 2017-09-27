@@ -17,6 +17,7 @@ import trelloActions from '../trello/trelloActions'
 import MicrosoftHTTP from '../microsoft/MicrosoftHTTP'
 import microsoftActions from '../microsoft/microsoftActions'
 import mailboxDispatch from './mailboxDispatch'
+import ServiceReducer from './ServiceReducer'
 import Bootstrap from 'R/Bootstrap'
 import { GoogleMailbox, GoogleDefaultService } from 'shared/Models/Accounts/Google'
 import { SlackMailbox } from 'shared/Models/Accounts/Slack'
@@ -537,6 +538,8 @@ class MailboxStore {
 
       // Services
       handleReduceService: actions.REDUCE_SERVICE,
+      handleReduceServiceIfActive: actions.REDUCE_SERVICE_IF_ACTIVE,
+      handleReduceServiceIfInactive: actions.REDUCE_SERVICE_IF_INACTIVE,
 
       // Active
       handleChangeActive: actions.CHANGE_ACTIVE,
@@ -1211,6 +1214,20 @@ class MailboxStore {
     this.preventDefault()
   }
 
+  handleReduceServiceIfActive ({ id = this.activeMailboxId(), serviceType = this.activeMailboxService(), reducer, reducerArgs }) {
+    this.preventDefault()
+    if (this.isActive(id, serviceType)) {
+      actions.reduceService.defer(...[id, serviceType, reducer, ...reducerArgs])
+    }
+  }
+
+  handleReduceServiceIfInactive ({ id = this.activeMailboxId(), serviceType = this.activeMailboxService(), reducer, reducerArgs }) {
+    this.preventDefault()
+    if (!this.isActive(id, serviceType)) {
+      actions.reduceService.defer(...[id, serviceType, reducer, ...reducerArgs])
+    }
+  }
+
   /* **************************************************************************/
   // Handlers : Active
   /* **************************************************************************/
@@ -1234,11 +1251,16 @@ class MailboxStore {
         return
       }
 
-      // Make the change
+      // Clear sleep
       this.scheduleSleep(this.active, this.activeService)
       this.clearSleep(nextMailbox, nextService)
+
+      // Change active & update model
       this.active = nextMailbox
       this.activeService = nextService
+      actions.reduceService.defer(nextMailbox, nextService, ServiceReducer.mergeChangesetOnActive)
+
+      // Update to main thread
       this.sendActiveStateToMainThread()
     }
   }

@@ -68,7 +68,8 @@ module.exports = Object.freeze({
     'trello.com'
   ],
   ALLOWED_HTML5_NOTIFICATION_HOSTS: [
-    '.slack.com'
+    '.slack.com',
+    'calendar.google.com'
   ],
 
   // Cookies

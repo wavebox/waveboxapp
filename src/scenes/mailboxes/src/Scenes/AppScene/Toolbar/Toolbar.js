@@ -51,6 +51,7 @@ export default class Toolbar extends React.Component {
     const mailbox = mailboxState.activeMailbox()
     if (!mailbox) { return false }
     if (mailbox.serviceDisplayMode !== CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR) { return false }
+    if (!mailbox.hasAdditionalServices) { return false }
     if (!userState.user.hasServices) { return false }
     if (mailbox.enabledServiceTypes <= 1) { return false }
     return true

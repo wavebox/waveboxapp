@@ -2,17 +2,25 @@ const CoreService = require('../CoreService')
 
 class GenericDefaultService extends CoreService {
   /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get type () { return CoreService.SERVICE_TYPES.DEFAULT }
+
+  /* **************************************************************************/
   // Class: Support
   /* **************************************************************************/
 
   static get supportsUnreadActivity () { return true }
   static get supportsGuestNotifications () { return true }
+  static get mergeChangesetOnActive () {
+    return { lastUnseenNotificationTime: null }
+  }
 
   /* **************************************************************************/
   // Class: Humanized
   /* **************************************************************************/
 
-  static get type () { return CoreService.SERVICE_TYPES.DEFAULT }
   static get humanizedType () { return 'Generic' }
   static get humanizedLogos () {
     return [

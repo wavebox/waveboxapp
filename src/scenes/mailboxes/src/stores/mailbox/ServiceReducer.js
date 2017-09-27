@@ -167,6 +167,23 @@ class ServiceReducer {
   static setCustomJS (mailbox, service, js) {
     return service.changeData({ customJS: js })
   }
+
+  /* **************************************************************************/
+  // Utils
+  /* **************************************************************************/
+
+  /**
+  * Runs the mergeChangesetOnActive merge on the service
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  */
+  static mergeChangesetOnActive (mailbox, service) {
+    if (service.mergeChangesetOnActive) {
+      return service.changeData(service.mergeChangesetOnActive)
+    } else {
+      return undefined
+    }
+  }
 }
 
 export default ServiceReducer

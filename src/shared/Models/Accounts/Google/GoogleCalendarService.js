@@ -6,6 +6,11 @@ class GoogleCalendarService extends GoogleService {
   /* **************************************************************************/
 
   static get type () { return GoogleService.SERVICE_TYPES.CALENDAR }
+
+  /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
   static get humanizedType () { return 'Google Calendar' }
   static get humanizedTypeShort () { return 'Calendar' }
   static get humanizedLogos () {
@@ -18,10 +23,26 @@ class GoogleCalendarService extends GoogleService {
   }
 
   /* **************************************************************************/
+  // Class: Support
+  /* **************************************************************************/
+
+  static get supportsUnreadActivity () { return true }
+  static get supportsGuestNotifications () { return true }
+  static get mergeChangesetOnActive () {
+    return { lastUnseenNotificationTime: null }
+  }
+
+  /* **************************************************************************/
   // Properties
   /* **************************************************************************/
 
   get url () { return 'https://calendar.google.com' }
+
+  /* **************************************************************************/
+  // Properties : Provider Details & counts etc
+  /* **************************************************************************/
+
+  get hasUnreadActivity () { return this._value_('lastUnseenNotificationTime', null) !== null }
 
   /* **************************************************************************/
   // Behaviour

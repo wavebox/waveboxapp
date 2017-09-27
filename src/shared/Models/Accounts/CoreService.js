@@ -58,6 +58,7 @@ class CoreService extends Model {
       this.supportsGuestNotifications
     ].find((s) => s) || false
   }
+  static get mergeChangesetOnActive () { return undefined }
 
   /* **************************************************************************/
   // Class: Humanized
@@ -122,6 +123,7 @@ class CoreService extends Model {
   get supportsGuestNotifications () { return this.constructor.supportsGuestNotifications }
   get supportsSyncWhenSleeping () { return this.constructor.supportsSyncWhenSleeping }
   get supportsSync () { return this.constructor.supportsSync }
+  get mergeChangesetOnActive () { return this.constructor.mergeChangesetOnActive }
 
   /* **************************************************************************/
   // Properties: Protocols & actions

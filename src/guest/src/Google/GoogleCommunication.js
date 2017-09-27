@@ -1,30 +1,21 @@
-const injector = require('../injector')
-const Browser = require('../Browser/Browser')
-const Wavebox = require('../Wavebox/Wavebox')
+const GoogleService = require('./GoogleService')
 const {ipcRenderer} = require('electron')
 const req = require('../req')
 const { WB_BROWSER_GOOGLE_COMMUNICATION_UNREAD_COUNT_CHANGED } = req.shared('ipcEvents')
 const NOTIFICATION_CHANGE_CHECK_INTERVAL = 1500
 
-class GoogleCommunication {
+class GoogleCommunication extends GoogleService {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
 
   constructor () {
-    this.browser = new Browser()
-    this.wavebox = new Wavebox()
+    super()
 
     this.state = {
       count: undefined
     }
     this.notificationInterval = setInterval(this.checkNewNotifications.bind(this), NOTIFICATION_CHANGE_CHECK_INTERVAL)
-
-    injector.injectStyle(`
-      a[href*="/SignOutOptions"] {
-        visibility: hidden !important;
-      }
-    `)
   }
 
   /* **************************************************************************/

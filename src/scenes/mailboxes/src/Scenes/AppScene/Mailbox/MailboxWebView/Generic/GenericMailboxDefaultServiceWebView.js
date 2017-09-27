@@ -28,13 +28,6 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
 
   componentDidMount () {
     mailboxStore.listen(this.mailboxChanged)
-    if (this.state.isActive) {
-      mailboxActions.reduceService.defer(
-        this.props.mailboxId,
-        CoreService.SERVICE_TYPES.DEFAULT,
-        GenericDefaultServiceReducer.clearUnseenNotifications
-      )
-    }
   }
 
   componentWillUnmount () {
@@ -64,8 +57,7 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     return {
       defaultWindowOpenMode: mailbox ? mailbox.defaultWindowOpenMode : CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX,
-      url: service ? service.url : undefined,
-      isActive: mailboxState.isActive(props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT)
+      url: service ? service.url : undefined
     }
   }
 
@@ -74,8 +66,7 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     this.setState({
       defaultWindowOpenMode: mailbox ? mailbox.defaultWindowOpenMode : CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX,
-      url: service ? service.url : undefined,
-      isActive: mailboxState.isActive(this.props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT)
+      url: service ? service.url : undefined
     })
   }
 
@@ -127,13 +118,11 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
   * Handles the browser presenting a notification
   */
   handleBrowserNotificationPresented = () => {
-    if (!this.state.isActive) {
-      mailboxActions.reduceService(
-        this.props.mailboxId,
-        CoreService.SERVICE_TYPES.DEFAULT,
-        GenericDefaultServiceReducer.notificationPresented
-      )
-    }
+    mailboxActions.reduceServiceIfInactive(
+      this.props.mailboxId,
+      CoreService.SERVICE_TYPES.DEFAULT,
+      GenericDefaultServiceReducer.notificationPresented
+    )
   }
 
   /* **************************************************************************/
@@ -142,17 +131,6 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  }
-
-  componentDidUpdate (prevProps, prevState) {
-    if (this.state.isActive && !prevState.isActive) {
-      // Not great that we've put this here, but component lifecycle is kinda handled here :-/
-      mailboxActions.reduceService.defer(
-        this.props.mailboxId,
-        CoreService.SERVICE_TYPES.DEFAULT,
-        GenericDefaultServiceReducer.clearUnseenNotifications
-      )
-    }
   }
 
   render () {

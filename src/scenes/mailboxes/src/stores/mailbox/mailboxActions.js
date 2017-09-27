@@ -514,6 +514,28 @@ class MailboxActions {
     return { id: id, serviceType: serviceType, reducer: reducer, reducerArgs: reducerArgs }
   }
 
+  /**
+  * Updates and modifies a mailbox service only if it's active
+  * @param id: the id of the mailbox to change
+  * @param serviceType: the type of service to work on
+  * @param reducer: the reducer to run on the mailbox
+  * @param ...reducerArgs: the arguments to supply to the reducer
+  */
+  reduceServiceIfActive (id, serviceType, reducer, ...reducerArgs) {
+    return { id: id, serviceType: serviceType, reducer: reducer, reducerArgs: reducerArgs }
+  }
+
+  /**
+  * Updates and modifies a mailbox service only if it's inactive
+  * @param id: the id of the mailbox to change
+  * @param serviceType: the type of service to work on
+  * @param reducer: the reducer to run on the mailbox
+  * @param ...reducerArgs: the arguments to supply to the reducer
+  */
+  reduceServiceIfInactive (id, serviceType, reducer, ...reducerArgs) {
+    return { id: id, serviceType: serviceType, reducer: reducer, reducerArgs: reducerArgs }
+  }
+
   /* **************************************************************************/
   // Avatar
   /* **************************************************************************/

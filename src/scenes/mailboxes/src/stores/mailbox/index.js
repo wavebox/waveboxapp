@@ -9,6 +9,7 @@ import GenericDefaultServiceReducer from './GenericDefaultServiceReducer'
 import GoogleMailboxReducer from './GoogleMailboxReducer'
 import GoogleDefaultServiceReducer from './GoogleDefaultServiceReducer'
 import GoogleCommunicationServiceReducer from './GoogleCommunicationServiceReducer'
+import GoogleCalendarServiceReducer from './GoogleCalendarServiceReducer'
 import SlackMailboxReducer from './SlackMailboxReducer'
 import SlackDefaultServiceReducer from './SlackDefaultServiceReducer'
 import TrelloMailboxReducer from './TrelloMailboxReducer'
@@ -29,6 +30,7 @@ export {
   GoogleMailboxReducer,
   GoogleDefaultServiceReducer,
   GoogleCommunicationServiceReducer,
+  GoogleCalendarServiceReducer,
   SlackMailboxReducer,
   SlackDefaultServiceReducer,
   TrelloMailboxReducer,

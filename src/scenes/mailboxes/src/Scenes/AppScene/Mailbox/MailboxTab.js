@@ -8,6 +8,7 @@ import GoogleMailboxMailWebView from './MailboxWebView/Google/GoogleMailboxMailW
 import GoogleMailboxServiceWebView from './MailboxWebView/Google/GoogleMailboxServiceWebView'
 import GoogleMailboxStorageWebView from './MailboxWebView/Google/GoogleMailboxStorageWebView'
 import GoogleMailboxCommunicationWebView from './MailboxWebView/Google/GoogleMailboxCommunicationWebView'
+import GoogleMailboxCalendarWebView from './MailboxWebView/Google/GoogleMailboxCalendarWebView'
 import TrelloMailboxWebView from './MailboxWebView/Trello/TrelloMailboxWebView'
 import SlackMailboxWebView from './MailboxWebView/Slack/SlackMailboxWebView'
 import GenericMailboxDefaultServiceWebView from './MailboxWebView/Generic/GenericMailboxDefaultServiceWebView'
@@ -139,6 +140,8 @@ export default class MailboxTab extends React.Component {
           return (<GoogleMailboxStorageWebView mailboxId={mailboxId} key={key} />)
         case CoreService.SERVICE_TYPES.COMMUNICATION:
           return (<GoogleMailboxCommunicationWebView mailboxId={mailboxId} key={key} />)
+        case CoreService.SERVICE_TYPES.CALENDAR:
+          return (<GoogleMailboxCalendarWebView mailboxId={mailboxId} key={key} />)
         default:
           return (<GoogleMailboxServiceWebView mailboxId={mailboxId} serviceType={serviceType} key={key} />)
       }
