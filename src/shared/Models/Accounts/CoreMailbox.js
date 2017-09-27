@@ -318,7 +318,7 @@ class CoreMailbox extends Model {
   getHasUnreadActivity (defaultServiceOnly = false) {
     const services = defaultServiceOnly ? [this.defaultService] : this.enabledServices
     return !!services.find((service) => {
-      return service.supportsUnreadCount && service.showUnreadActivityBadge && service.hasUnreadActivity
+      return service.supportsUnreadActivity && service.showUnreadActivityBadge && service.hasUnreadActivity
     })
   }
 
