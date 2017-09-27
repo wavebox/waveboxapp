@@ -29,7 +29,7 @@ class WindowManager {
       throw new Error('Mailboxes window already attached')
     }
     this.mailboxesWindow = mailboxesWindow
-    this.mailboxesWindow.on('close', (e) => this.handleClose(e))
+    this.mailboxesWindow.on('close', (evt) => this.handleMailboxesClose(evt))
     this.mailboxesWindow.on('closed', () => {
       this.mailboxesWindow = null
       app.quit()
@@ -44,7 +44,7 @@ class WindowManager {
   * Handles the close event by trying to persist the mailbox window
   * @param evt: the event that occured
   */
-  handleClose (evt) {
+  handleMailboxesClose (evt) {
     if (!this.forceQuit) {
       let hide = false
       if (SUPPORTS_TRAY_MINIMIZE_CONFIG) {
@@ -54,6 +54,13 @@ class WindowManager {
       } else {
         if (process.platform === 'darwin' || settingStore.tray.show) {
           hide = true
+        }
+      }
+
+      // Tailor the behaviour slightly on darwin
+      if (process.platform === 'darwin') {
+        if (this.mailboxesWindow && this.mailboxesWindow.isFullScreen()) {
+          hide = false
         }
       }
 

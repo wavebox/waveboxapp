@@ -370,6 +370,13 @@ class WaveboxWindow extends EventEmitter {
   }
 
   /**
+  * @return true if the window is fullscreen
+  */
+  isFullScreen () {
+    return this.window.isFullScreen()
+  }
+
+  /**
   * @return true if the window is visible
   */
   isVisible () {
