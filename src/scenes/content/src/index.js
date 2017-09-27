@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Provider from 'Scenes/Provider'
 import browserActions from 'stores/browser/browserActions'
+import settingsActions from 'stores/settings/settingsActions'
 import querystring from 'querystring'
 import {
   WB_PING_RESOURCE_USAGE,
@@ -29,6 +30,7 @@ document.addEventListener('dragover', (evt) => {
 
 // Load what we have in the db
 browserActions.load()
+settingsActions.load()
 
 // Parse our settings
 const {
