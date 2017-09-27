@@ -107,7 +107,7 @@ export default class WizardPersonalise extends React.Component {
       this.setState({
         color: this.getDefaultMailboxColor(nextProps.MailboxClass, nextProps.accessMode),
         enabledServices: nextProps.MailboxClass.defaultServiceTypes,
-        servicesDisplayMode: CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR
+        servicesDisplayMode: CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR
       })
     }
   }
@@ -127,7 +127,7 @@ export default class WizardPersonalise extends React.Component {
   state = {
     color: this.getDefaultMailboxColor(this.props.MailboxClass, this.props.accessMode),
     enabledServices: this.props.MailboxClass.defaultServiceTypes,
-    servicesDisplayMode: CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR,
+    servicesDisplayMode: CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR,
     userHasServices: userStore.getState().user.hasServices
   }
 
@@ -230,6 +230,7 @@ export default class WizardPersonalise extends React.Component {
   render () {
     const { MailboxClass, accessMode, onRequestCancel, style, ...passProps } = this.props
     const { color, enabledServices, servicesDisplayMode, userHasServices } = this.state
+
     return (
       <div {...passProps} style={{ ...styles.container, ...style }}>
         <div style={styles.body} className='ReactComponent-MaterialUI-Dialog-Body-Scrollbars'>

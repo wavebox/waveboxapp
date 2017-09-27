@@ -32,6 +32,20 @@ class GoogleCommunicationService extends GoogleService {
   static get supportsTrayMessages () { return true }
 
   /* **************************************************************************/
+  // Class: Creation
+  /* **************************************************************************/
+
+  /**
+  * Creates a blank js object that can used to instantiate this service
+  * @return a vanilla js object representing the data for this service
+  */
+  static createJS () {
+    return Object.assign({}, super.createJS(), {
+      sleepable: false
+    })
+  }
+
+  /* **************************************************************************/
   // Properties
   /* **************************************************************************/
 

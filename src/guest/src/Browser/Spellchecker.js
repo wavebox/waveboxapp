@@ -9,6 +9,7 @@ try {
   Nodehun = require('nodehun')
 } catch (ex) {
   Nodehun = null
+  elconsole.error('Failed to load spellchecker', ex)
 }
 
 const { PRELOAD_USE_SYNC_FS } = req.shared('constants')

@@ -247,8 +247,8 @@ class CoreMailbox extends Model {
   get serviceLocalAvatarId () { return this.__data__.serviceLocalAvatar }
   get color () { return this._value_('color', this.constructor.defaultColor) }
   get showAvatarColorRing () { return this._value_('showAvatarColorRing', true) }
-  get serviceDisplayMode () { return this._value_('serviceDisplayMode', SERVICE_DISPLAY_MODES.SIDEBAR) }
-  get serviceToolbarIconLayout () { return this._value_('serviceToolbarIconLayout', SERVICE_TOOLBAR_ICON_LAYOUTS.RIGHT_ALIGN) }
+  get serviceDisplayMode () { return this._value_('serviceDisplayMode', SERVICE_DISPLAY_MODES.TOOLBAR) }
+  get serviceToolbarIconLayout () { return this._value_('serviceToolbarIconLayout', SERVICE_TOOLBAR_ICON_LAYOUTS.LEFT_ALIGN) }
   get collapseSidebarServices () { return this._value_('collapseSidebarServices', false) }
   get showSleepableServiceIndicator () { return this._value_('showSleepableServiceIndicator', true) }
 

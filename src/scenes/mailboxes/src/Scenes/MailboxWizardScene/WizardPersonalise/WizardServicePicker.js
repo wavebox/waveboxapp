@@ -128,15 +128,6 @@ export default class WizardServicePicker extends React.Component {
 
     return (
       <div {...passProps} style={style}>
-        <div style={styles.servicesContainer}>
-          {serviceTypeGroups.map((serviceGroup, index) => {
-            return (
-              <List key={'groups_' + index} style={styles.list}>
-                {serviceGroup.map((serviceType) => this.renderServiceListItem(serviceType))}
-              </List>
-            )
-          })}
-        </div>
         <div>
           <SelectField
             style={styles.displayModePicker}
@@ -147,6 +138,15 @@ export default class WizardServicePicker extends React.Component {
             <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR} primaryText='In the sidebar' />
             <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR} primaryText='In a top toolbar' />
           </SelectField>
+        </div>
+        <div style={styles.servicesContainer}>
+          {serviceTypeGroups.map((serviceGroup, index) => {
+            return (
+              <List key={'groups_' + index} style={styles.list}>
+                {serviceGroup.map((serviceType) => this.renderServiceListItem(serviceType))}
+              </List>
+            )
+          })}
         </div>
       </div>
     )

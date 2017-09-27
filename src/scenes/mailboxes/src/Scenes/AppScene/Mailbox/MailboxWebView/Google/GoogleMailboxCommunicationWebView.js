@@ -43,7 +43,6 @@ export default class GoogleMailboxCommunicationWebView extends React.Component {
   * @param next: the next count
   */
   handleUnreadCountChange (prev, next) {
-    console.log(prev, next)
     if (prev !== undefined && next !== undefined) {
       if (next > prev) {
         const diff = next - prev
