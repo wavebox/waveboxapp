@@ -69,7 +69,8 @@ module.exports = Object.freeze({
   ],
   ALLOWED_HTML5_NOTIFICATION_HOSTS: [
     '.slack.com',
-    'calendar.google.com'
+    'calendar.google.com',
+    'allo.google.com'
   ],
 
   // Cookies

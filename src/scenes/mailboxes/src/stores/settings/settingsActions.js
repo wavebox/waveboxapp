@@ -364,6 +364,14 @@ class SettingsActions {
     return this.update(SEGMENTS.APP, 'lastSeenAccountMessageUrl', url)
   }
 
+  /**
+  * Sets whether the user has seen the snap update message
+  * @param seen: true if seen
+  */
+  setHasSeenSnapSetupMessage (seen) {
+    return this.update(SEGMENTS.APP, 'hasSeenSnapSetupMessage', seen)
+  }
+
   /* **************************************************************************/
   // Tray
   /* **************************************************************************/

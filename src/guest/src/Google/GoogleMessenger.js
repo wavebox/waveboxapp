@@ -1,7 +1,7 @@
 const GoogleService = require('./GoogleService')
 const {ipcRenderer} = require('electron')
 const req = require('../req')
-const { WB_BROWSER_GOOGLE_COMMUNICATION_UNREAD_COUNT_CHANGED } = req.shared('ipcEvents')
+const { WB_BROWSER_GOOGLE_MESSENGER_UNREAD_COUNT_CHANGED } = req.shared('ipcEvents')
 const NOTIFICATION_CHANGE_CHECK_INTERVAL = 1500
 
 class GoogleCommunication extends GoogleService {
@@ -11,11 +11,10 @@ class GoogleCommunication extends GoogleService {
 
   constructor () {
     super()
-
     this.state = {
       count: undefined
     }
-    this.notificationInterval = setInterval(this.checkNewNotifications.bind(this), NOTIFICATION_CHANGE_CHECK_INTERVAL)
+    this.notificationInterval = setInterval(this.checkUnreadCountChanged.bind(this), NOTIFICATION_CHANGE_CHECK_INTERVAL)
   }
 
   /* **************************************************************************/
@@ -23,13 +22,13 @@ class GoogleCommunication extends GoogleService {
   /* **************************************************************************/
 
   /**
-  * Checks for new notifications
+  * Checks to see if the unread count has changed
   */
-  checkNewNotifications () {
-    const { count } = this.getUnreadInfo()
+  checkUnreadCountChanged () {
+    const count = this.getUnreadCount()
     if (count !== this.state.count) {
       ipcRenderer.sendToHost({
-        type: WB_BROWSER_GOOGLE_COMMUNICATION_UNREAD_COUNT_CHANGED,
+        type: WB_BROWSER_GOOGLE_MESSENGER_UNREAD_COUNT_CHANGED,
         data: {
           prev: this.state.count,
           next: count
@@ -44,20 +43,20 @@ class GoogleCommunication extends GoogleService {
   /* **************************************************************************/
 
   /**
-  * @return the unread info. { count }
+  * @return the unread count
   */
-  getUnreadInfo () {
-    const info = { count: undefined }
-
-    try {
-      const chatFrame = document.querySelector('#hangout-landing-chat iframe').contentWindow.document.body
-
-      try {
-        info.count = chatFrame.querySelectorAll('.ee').length
-      } catch (ex) { }
-    } catch (ex) {}
-
-    return info
+  getUnreadCount () {
+    const elements = document.querySelectorAll('#conversationsView .conversation_item.hasUnread')
+    return Array.from(elements).reduce((acc, el) => {
+      const countEl = el.querySelector('.unreadCount')
+      if (countEl) {
+        const messageCount = parseInt(countEl.textContent)
+        if (!isNaN(messageCount)) {
+          return acc + messageCount
+        }
+      }
+      return acc + 1
+    }, 0)
   }
 }
 

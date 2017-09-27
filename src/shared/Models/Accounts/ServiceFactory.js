@@ -11,6 +11,13 @@ const GoogleContactsService = require('./Google/GoogleContactsService')
 const GoogleNotesService = require('./Google/GoogleNotesService')
 const GooglePhotosService = require('./Google/GooglePhotosService')
 const GoogleStorageService = require('./Google/GoogleStorageService')
+const GoogleDocsService = require('./Google/GoogleDocsService')
+const GoogleSheetsService = require('./Google/GoogleSheetsService')
+const GoogleSlidesService = require('./Google/GoogleSlidesService')
+const GoogleAnalyticsService = require('./Google/GoogleAnalyticsService')
+const GoogleVideoService = require('./Google/GoogleVideoService')
+const GoogleSocialService = require('./Google/GoogleSocialService')
+const GoogleMessengerService = require('./Google/GoogleMessengerService')
 const MicrosoftDefaultService = require('./Microsoft/MicrosoftDefaultService')
 const MicrosoftCalendarService = require('./Microsoft/MicrosoftCalendarService')
 const MicrosoftContactsService = require('./Microsoft/MicrosoftContactsService')
@@ -41,6 +48,13 @@ class ServiceFactory {
       case MAILBOX_TYPES.GOOGLE + ':' + SERVICE_TYPES.NOTES: return GoogleNotesService
       case MAILBOX_TYPES.GOOGLE + ':' + SERVICE_TYPES.PHOTOS: return GooglePhotosService
       case MAILBOX_TYPES.GOOGLE + ':' + SERVICE_TYPES.STORAGE: return GoogleStorageService
+      case MAILBOX_TYPES.GOOGLE + ':' + SERVICE_TYPES.DOCS: return GoogleDocsService
+      case MAILBOX_TYPES.GOOGLE + ':' + SERVICE_TYPES.SHEETS: return GoogleSheetsService
+      case MAILBOX_TYPES.GOOGLE + ':' + SERVICE_TYPES.SLIDES: return GoogleSlidesService
+      case MAILBOX_TYPES.GOOGLE + ':' + SERVICE_TYPES.ANALYTICS: return GoogleAnalyticsService
+      case MAILBOX_TYPES.GOOGLE + ':' + SERVICE_TYPES.VIDEO: return GoogleVideoService
+      case MAILBOX_TYPES.GOOGLE + ':' + SERVICE_TYPES.SOCIAL: return GoogleSocialService
+      case MAILBOX_TYPES.GOOGLE + ':' + SERVICE_TYPES.MESSENGER: return GoogleMessengerService
 
       // Microsoft
       case MAILBOX_TYPES.MICROSOFT + ':' + SERVICE_TYPES.DEFAULT: return MicrosoftDefaultService

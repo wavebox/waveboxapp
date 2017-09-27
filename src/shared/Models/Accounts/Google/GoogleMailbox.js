@@ -16,7 +16,14 @@ class GoogleMailbox extends CoreMailbox {
       CoreMailbox.SERVICE_TYPES.CONTACTS,
       CoreMailbox.SERVICE_TYPES.NOTES,
       CoreMailbox.SERVICE_TYPES.PHOTOS,
-      CoreMailbox.SERVICE_TYPES.STORAGE
+      CoreMailbox.SERVICE_TYPES.STORAGE,
+      CoreMailbox.SERVICE_TYPES.DOCS,
+      CoreMailbox.SERVICE_TYPES.SHEETS,
+      CoreMailbox.SERVICE_TYPES.SLIDES,
+      CoreMailbox.SERVICE_TYPES.ANALYTICS,
+      CoreMailbox.SERVICE_TYPES.VIDEO,
+      CoreMailbox.SERVICE_TYPES.SOCIAL,
+      CoreMailbox.SERVICE_TYPES.MESSENGER
     ]
   }
   static get defaultServiceTypes () {

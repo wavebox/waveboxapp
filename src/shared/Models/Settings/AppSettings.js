@@ -36,6 +36,7 @@ class AppSettings extends Model {
   get hasSeenAppWizard () { return this._value_('hasSeenAppWizard', false) }
   get hasSeenAppTour () { return this._value_('hasSeenAppTour', false) }
   get lastSeenAccountMessageUrl () { return this._value_('lastSeenAccountMessageUrl', undefined) }
+  get hasSeenSnapSetupMessage () { return this._value_('hasSeenSnapSetupMessage', false) }
 }
 
 module.exports = AppSettings

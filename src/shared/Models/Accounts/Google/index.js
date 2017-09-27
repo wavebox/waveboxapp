@@ -6,5 +6,12 @@ module.exports = {
   GoogleNotesService: require('./GoogleNotesService'),
   GoogleMailbox: require('./GoogleMailbox'),
   GooglePhotosService: require('./GooglePhotosService'),
-  GoogleStorageService: require('./GoogleStorageService')
+  GoogleStorageService: require('./GoogleStorageService'),
+  GoogleAnalyticsService: require('./GoogleAnalyticsService'),
+  GoogleDocsService: require('./GoogleDocsService'),
+  GoogleMessengerService: require('./GoogleMessengerService'),
+  GoogleSheetsService: require('./GoogleSheetsService'),
+  GoogleSlidesService: require('./GoogleSlidesService'),
+  GoogleSocialService: require('./GoogleSocialService'),
+  GoogleVideoService: require('./GoogleVideoService')
 }
