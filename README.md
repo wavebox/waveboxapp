@@ -1,23 +1,5 @@
 # Wavebox
 
-# DNS Issue
-Our domain name provider (Hover) is experiencing an outage that is affecting many domain names, including ours.
-
-As a temporary work-around when installing or using Wavebox, you can add the following to the hosts file on your machine:
-
-`
-88.99.194.99	wavebox.io
-`
-
-Details on how to update your local hosts file is available [here](https://support.rackspace.com/how-to/modify-your-hosts-file/).
-
-
-
-This should be resolved by Hover shortly and we're adding in-client DNS resilience in the next release of Wavebox.
-
--------
-
-
 ![Screenshot](https://wavebox.io/images/intro_gallery_preview.png "Screenshot")
 
 **Wavebox is an open-source web communication tool built for the modern web. It's built using [Electron](https://github.com/atom/electron), [React](https://facebook.github.io/react/) and [Flux](https://facebook.github.io/flux/). It supports Gmail, Google Inbox, Outlook, Office 365, Slack, Trello & more.**
