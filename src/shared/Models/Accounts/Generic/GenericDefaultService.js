@@ -22,7 +22,7 @@ class GenericDefaultService extends CoreService {
   // Class: Humanized
   /* **************************************************************************/
 
-  static get humanizedType () { return 'Generic' }
+  static get humanizedType () { return 'Weblink' }
   static get humanizedLogos () {
     return [
       'images/generic/logo_32px.png',

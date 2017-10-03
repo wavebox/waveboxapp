@@ -14,7 +14,8 @@ try {
 
 const { PRELOAD_USE_SYNC_FS } = req.shared('constants')
 const {
-  WB_BROWSER_START_SPELLCHECK,
+  WB_BROWSER_CONNECT_SPELLCHECK,
+  WB_BROWSER_CONFIGURE_SPELLCHECK,
   WB_BROWSER_SPELLCHECK_ADD_WORD
 } = req.shared('ipcEvents')
 const { USER_DICTIONARY_WORDS_PATH } = req.runtimePaths()
@@ -30,7 +31,7 @@ class Spellchecker {
       secondary: { nodehun: null, language: null }
     }
 
-    ipcRenderer.on(WB_BROWSER_START_SPELLCHECK, (evt, data) => {
+    ipcRenderer.on(WB_BROWSER_CONFIGURE_SPELLCHECK, (evt, data) => {
       this._updateSpellchecker(data.language, data.secondaryLanguage)
     })
 
@@ -41,6 +42,10 @@ class Spellchecker {
       if (this._spellcheckers_.secondary.nodehun) {
         this._addUserWordIntoSpellchecker(this._spellcheckers_.secondary.nodehun, data.word)
       }
+    })
+
+    setTimeout(() => { // Requeue to ensure the bridge is initialized
+      ipcRenderer.send(WB_BROWSER_CONNECT_SPELLCHECK, {})
     })
   }
 

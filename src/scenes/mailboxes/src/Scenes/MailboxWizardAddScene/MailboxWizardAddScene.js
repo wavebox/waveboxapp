@@ -228,7 +228,7 @@ export default class MailboxWizardAddScene extends React.Component {
       },
       {
         key: 'generic',
-        buttonText: 'Any Web Link',
+        buttonText: 'Weblink',
         logoPath: `../../${GenericMailbox.humanizedVectorLogo}`,
         accountType: GenericMailbox.type,
         clickHandler: mailboxActions.startAddGenericWizard

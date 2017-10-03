@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { CircularProgress, RaisedButton, FontIcon } from 'material-ui'
 import { mailboxStore, mailboxActions, mailboxDispatch, MailboxLinker } from 'stores/mailbox'
-import { settingsStore, settingsActions } from 'stores/settings'
+import { settingsActions } from 'stores/settings'
 import { guestActions } from 'stores/guest'
 import BrowserView from 'sharedui/Components/BrowserView'
 import CoreService from 'shared/Models/Accounts/CoreService'
@@ -18,7 +18,6 @@ import {
   WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN,
   WB_BROWSER_NOTIFICATION_CLICK,
   WB_BROWSER_NOTIFICATION_PRESENT,
-  WB_BROWSER_START_SPELLCHECK,
   WB_BROWSER_INJECT_CUSTOM_CONTENT,
   WB_PING_RESOURCE_USAGE,
   WB_PONG_RESOURCE_USAGE,
@@ -78,7 +77,6 @@ export default class MailboxWebView extends React.Component {
   componentDidMount () {
     // Stores
     mailboxStore.listen(this.mailboxesChanged)
-    settingsStore.listen(this.settingsChanged)
 
     // Handle dispatch events
     mailboxDispatch.on('devtools', this.handleOpenDevTools)
@@ -99,7 +97,6 @@ export default class MailboxWebView extends React.Component {
   componentWillUnmount () {
     // Stores
     mailboxStore.unlisten(this.mailboxesChanged)
-    settingsStore.unlisten(this.settingsChanged)
 
     // Handle dispatch events
     mailboxDispatch.removeListener('devtools', this.handleOpenDevTools)
@@ -143,7 +140,6 @@ export default class MailboxWebView extends React.Component {
     const mailboxState = mailboxStore.getState()
     const mailbox = mailboxState.getMailbox(props.mailboxId)
     const service = mailbox ? mailbox.serviceForType(props.serviceType) : null
-    const settingState = settingsStore.getState()
 
     return Object.assign(
       {},
@@ -159,7 +155,6 @@ export default class MailboxWebView extends React.Component {
       {
         browserDOMReady: false,
         isCrashed: false,
-        language: settingState.language,
         focusedUrl: null,
         snapshot: mailboxState.getSnapshot(props.mailboxId, props.serviceType),
         isActive: mailboxState.isActive(props.mailboxId, props.serviceType),
@@ -188,28 +183,6 @@ export default class MailboxWebView extends React.Component {
     } else {
       this.setState({ mailbox: null, service: null })
     }
-  }
-
-  settingsChanged = (settingsState) => {
-    this.setState((prevState) => {
-      const update = {
-        language: settingsState.language
-      }
-
-      // Siphon setting changes down to the webview
-      if (settingsState.language !== prevState.language) {
-        const prevLanguage = prevState.language
-        const nextLanguage = update.language
-        if (prevLanguage.spellcheckerLanguage !== nextLanguage.spellcheckerLanguage || prevLanguage.secondarySpellcheckerLanguage !== nextLanguage.secondarySpellcheckerLanguage) {
-          this.refs[BROWSER_REF].send(WB_BROWSER_START_SPELLCHECK, {
-            language: nextLanguage.spellcheckerLanguage,
-            secondaryLanguage: nextLanguage.secondarySpellcheckerLanguage
-          })
-        }
-      }
-
-      return update
-    })
   }
 
   /* **************************************************************************/
@@ -408,15 +381,7 @@ export default class MailboxWebView extends React.Component {
   * Handles the Browser DOM becoming ready
   */
   handleBrowserDomReady = () => {
-    const { service, language, isActive } = this.state
-
-    // Language
-    if (language.spellcheckerEnabled) {
-      this.refs[BROWSER_REF].send(WB_BROWSER_START_SPELLCHECK, {
-        language: language.spellcheckerLanguage,
-        secondaryLanguage: language.secondarySpellcheckerLanguage
-      })
-    }
+    const { service, isActive } = this.state
 
     // Push the custom user content
     if (service.hasCustomCSS || service.hasCustomJS) {

@@ -184,7 +184,7 @@ export default class Welcome extends React.Component {
             {this.renderMailboxType(user, MicrosoftMailbox.type, MicrosoftMailbox.humanizedOffice365VectorLogo, 'Office 365', mailboxActions.startAddOffice365Wizard)}
             {this.renderMailboxType(user, TrelloMailbox.type, TrelloMailbox.humanizedVectorLogo, 'Trello', mailboxActions.startAddTrelloWizard)}
             {this.renderMailboxType(user, SlackMailbox.type, SlackMailbox.humanizedVectorLogo, 'Slack', mailboxActions.startAddSlackWizard)}
-            {this.renderMailboxType(user, GenericMailbox.type, GenericMailbox.humanizedVectorLogo, 'Any Web Link', mailboxActions.startAddGenericWizard)}
+            {this.renderMailboxType(user, GenericMailbox.type, GenericMailbox.humanizedVectorLogo, 'Weblink', mailboxActions.startAddGenericWizard)}
           </div>
           <div style={styles.extraActions}>
             {!user.isLoggedIn ? (

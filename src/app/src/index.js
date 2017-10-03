@@ -51,21 +51,17 @@
   const { HostedExtensionProvider, HostedExtensionSessionManager } = require('Extensions/Hosted')
   const { BrowserWindow, protocol } = require('electron')
   const { CRExtensionManager } = require('Extensions/Chrome')
+  const { SpellcheckService } = require('./Services')
+
+  /* ****************************************************************************/
+  // Stores
+  /* ****************************************************************************/
 
   Object.keys(storage).forEach((k) => storage[k].checkAwake())
   mailboxStore.checkAwake()
   extensionStore.checkAwake()
   settingStore.checkAwake()
   userStore.checkAwake()
-
-  /* ****************************************************************************/
-  // Extensions
-  /* ****************************************************************************/
-  CRExtensionManager.setup()
-  protocol.registerStandardSchemes([].concat(
-    HostedExtensionProvider.supportedProtocols,
-    CRExtensionManager.supportedProtocols
-  ), { secure: true })
 
   /* ****************************************************************************/
   // Commandline switches
@@ -92,6 +88,17 @@
   const appMenu = new AppPrimaryMenu(shortcutSelectors)
   const appGlobalShortcutSelectors = AppGlobalShortcuts.buildSelectors(appWindowManager)
   const appGlobalShortcuts = new AppGlobalShortcuts(appGlobalShortcutSelectors)
+  const spellcheckService = new SpellcheckService()
+  spellcheckService.load()
+
+  /* ****************************************************************************/
+  // Extensions
+  /* ****************************************************************************/
+  CRExtensionManager.setup()
+  protocol.registerStandardSchemes([].concat(
+    HostedExtensionProvider.supportedProtocols,
+    CRExtensionManager.supportedProtocols
+  ), { secure: true })
 
   /* ****************************************************************************/
   // IPC Events

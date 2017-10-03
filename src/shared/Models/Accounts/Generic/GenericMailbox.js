@@ -18,7 +18,7 @@ class GenericMailbox extends CoreMailbox {
     ]
   }
   static get humanizedVectorLogo () { return 'images/generic/logo_vector.svg' }
-  static get humanizedType () { return 'Generic' }
+  static get humanizedType () { return 'Weblink' }
   static get defaultColor () { return MailboxColors.GENERIC }
 
   /* **************************************************************************/

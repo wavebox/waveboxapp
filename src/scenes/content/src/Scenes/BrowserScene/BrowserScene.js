@@ -7,7 +7,6 @@ import BrowserTargetUrl from './BrowserTargetUrl'
 import BrowserSearch from './BrowserSearch'
 import BrowserToolbar from './BrowserToolbar'
 import { browserActions, browserStore } from 'stores/browser'
-import { settingsStore } from 'stores/settings'
 import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
 import {
   WB_WINDOW_RELOAD_WEBVIEW,
@@ -16,8 +15,7 @@ import {
   WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD,
   WB_BROWSER_GUEST_WINDOW_CLOSE,
   WB_PONG_RESOURCE_USAGE,
-  WB_NEW_WINDOW,
-  WB_BROWSER_START_SPELLCHECK
+  WB_NEW_WINDOW
 } from 'shared/ipcEvents'
 import { ipcRenderer, remote } from 'electron'
 
@@ -42,7 +40,6 @@ export default class BrowserScene extends React.Component {
 
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
-    settingsStore.listen(this.settingsUpdated)
     ipcRenderer.on(WB_WINDOW_RELOAD_WEBVIEW, this.handleIPCReload)
     ipcRenderer.on(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, this.handleIPCOpenDevTools)
     ipcRenderer.on(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, this.handleIPCNavigateBack)
@@ -55,7 +52,6 @@ export default class BrowserScene extends React.Component {
 
   componentWillUnmount () {
     browserStore.unlisten(this.browserUpdated)
-    settingsStore.unlisten(this.settingsUpdated)
     ipcRenderer.removeListener(WB_WINDOW_RELOAD_WEBVIEW, this.handleIPCReload)
     ipcRenderer.removeListener(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, this.handleIPCOpenDevTools)
     ipcRenderer.removeListener(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, this.handleIPCNavigateBack)
@@ -71,13 +67,11 @@ export default class BrowserScene extends React.Component {
 
   state = (() => {
     const browserState = browserStore.getState()
-    const settingsState = settingsStore.getState()
     return {
       isSearching: browserState.isSearching,
       searchTerm: browserState.searchTerm,
       searchNextHash: browserState.searchNextHash,
-      zoomFactor: browserState.zoomFactor,
-      language: settingsState.language
+      zoomFactor: browserState.zoomFactor
     }
   })()
 
@@ -87,27 +81,6 @@ export default class BrowserScene extends React.Component {
       searchTerm: browserState.searchTerm,
       searchNextHash: browserState.searchNextHash,
       zoomFactor: browserState.zoomFactor
-    })
-  }
-
-  settingsUpdated = (settingsState) => {
-    this.setState((prevState) => {
-      const update = {
-        language: settingsState.language
-      }
-
-      if (settingsState.language !== prevState.language) {
-        const prevLanguage = prevState.language
-        const nextLanguage = update.language
-        if (prevLanguage.spellcheckerLanguage !== nextLanguage.spellcheckerLanguage || prevLanguage.secondarySpellcheckerLanguage !== nextLanguage.secondarySpellcheckerLanguage) {
-          this.refs[BROWSER_REF].send(WB_BROWSER_START_SPELLCHECK, {
-            language: nextLanguage.spellcheckerLanguage,
-            secondaryLanguage: nextLanguage.secondarySpellcheckerLanguage
-          })
-        }
-      }
-
-      return update
     })
   }
 
@@ -175,21 +148,6 @@ export default class BrowserScene extends React.Component {
     remote.getCurrentWindow().close()
   }
 
-  /**
-  * Handles the Browser DOM becoming ready
-  */
-  handleBrowserDomReady = () => {
-    const { language } = this.state
-
-    // Language
-    if (language.spellcheckerEnabled) {
-      this.refs[BROWSER_REF].send(WB_BROWSER_START_SPELLCHECK, {
-        language: language.spellcheckerLanguage,
-        secondaryLanguage: language.secondarySpellcheckerLanguage
-      })
-    }
-  }
-
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -229,7 +187,6 @@ export default class BrowserScene extends React.Component {
             didStopLoading={(evt) => browserActions.stopLoading()}
             newWindow={(evt) => shell.openExternal(evt.url, { })}
             ipcMessage={this.handleBrowserIPCMessage}
-            domReady={this.handleBrowserDomReady}
             willNavigate={this.navigationStateDidChange}
             didNavigate={this.navigationStateDidChange}
             didNavigateInPage={(evt) => {
