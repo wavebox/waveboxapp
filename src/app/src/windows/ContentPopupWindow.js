@@ -1,8 +1,4 @@
 import WaveboxWindow from './WaveboxWindow'
-import settingStore from 'stores/settingStore'
-import {
-  WB_BROWSER_START_SPELLCHECK
-} from 'shared/ipcEvents'
 
 class ContentPopupWindow extends WaveboxWindow {
   /* ****************************************************************************/
@@ -24,8 +20,6 @@ class ContentPopupWindow extends WaveboxWindow {
     this.window.once('ready-to-show', () => {
       this.show()
     })
-    settingStore.on('changed:language', this.languageUpdated)
-    this.window.webContents.on('dom-ready', this.handleDomReady)
 
     return this
   }
@@ -35,45 +29,7 @@ class ContentPopupWindow extends WaveboxWindow {
   * @param evt: the event that caused destroy
   */
   destroy (evt) {
-    settingStore.removeListener('changed:language', this.languageUpdated)
-    if (this.window && !this.window.isDestroyed() && this.window.webContents) {
-      this.window.webContents.removeListener('dom-ready', this.handleDomReady)
-    }
     super.destroy(evt)
-  }
-
-  /* ****************************************************************************/
-  // Window events
-  /* ****************************************************************************/
-
-  /**
-  * Handles the dom being ready
-  */
-  handleDomReady = () => {
-    this.languageUpdated({ prev: undefined, next: settingStore.language })
-  }
-
-  /* ****************************************************************************/
-  // Data lifecycle
-  /* ****************************************************************************/
-
-  /**
-  * Handles the language changing
-  * @param prev: the previous language value. also accepts undefined
-  * @param next: the new language value
-  */
-  languageUpdated = ({ prev, next }) => {
-    const prevLang = (prev || {}).spellcheckerLanguage
-    const prevSecLang = (prev || {}).secondarySpellcheckerLanguage
-    const nextLang = (next || {}).spellcheckerLanguage
-    const nextSecLang = (next || {}).secondarySpellcheckerLanguage
-
-    if (prevLang !== nextLang || prevSecLang !== nextSecLang) {
-      this.window.webContents.send(WB_BROWSER_START_SPELLCHECK, {
-        language: nextLang,
-        secondaryLanguage: nextSecLang
-      })
-    }
   }
 
   /* ****************************************************************************/
