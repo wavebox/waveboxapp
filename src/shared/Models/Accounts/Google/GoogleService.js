@@ -30,6 +30,10 @@ class GoogleService extends CoreService {
       }
     }
 
+    if (parsedUrl.hostname.endsWith('.googleusercontent.com') && parsedUrl.pathname.startsWith('/viewer/secure/pdf')) {
+      return this.constructor.WINDOW_OPEN_MODES.CONTENT
+    }
+
     return this.constructor.WINDOW_OPEN_MODES.DEFAULT
   }
 }
