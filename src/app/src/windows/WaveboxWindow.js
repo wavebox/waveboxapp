@@ -10,7 +10,9 @@ import {
   WB_WINDOW_ZOOM_RESET,
   WB_PING_RESOURCE_USAGE,
   WB_WINDOW_DARWIN_SCROLL_TOUCH_BEGIN,
-  WB_WINDOW_DARWIN_SCROLL_TOUCH_END
+  WB_WINDOW_DARWIN_SCROLL_TOUCH_END,
+  WB_WINDOW_FOCUS,
+  WB_WINDOW_BLUR
 } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
 
@@ -81,6 +83,8 @@ class WaveboxWindow extends EventEmitter {
     // Bind window event listeners
     this.window.on('close', (evt) => { this.emit('close', evt) })
     this.window.on('closed', (evt) => this.destroy(evt))
+    this.window.on('focus', (evt) => this.window.webContents.send(WB_WINDOW_FOCUS))
+    this.window.on('blur', (evt) => this.window.webContents.send(WB_WINDOW_BLUR))
     this.bindMouseNavigation()
 
     // Register state savers

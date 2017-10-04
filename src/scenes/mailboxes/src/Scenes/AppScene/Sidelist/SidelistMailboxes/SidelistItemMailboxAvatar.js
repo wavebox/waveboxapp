@@ -231,7 +231,7 @@ export default class SidelistItemMalboxAvatar extends React.Component {
           active={isHovering}
           tooltipTimeout={0}
           position='right'
-          arrow='left'
+          arrow='center'
           group={this.instanceId}
           parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />
       </DefaultServiceBadge>

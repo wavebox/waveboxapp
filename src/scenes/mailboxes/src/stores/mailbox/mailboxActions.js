@@ -25,6 +25,7 @@ import {
   WB_WINDOW_ZOOM_RESET,
   WB_WINDOW_RELOAD_WEBVIEW,
   WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
+  WB_WINDOW_FOCUS,
 
   WB_MAILBOXES_WINDOW_SWITCH_MAILBOX,
   WB_MAILBOXES_WINDOW_SWITCH_SERVICE,
@@ -764,6 +765,11 @@ class MailboxActions {
   * Opens the dev tools on the active mailbox
   */
   openDevToolsActiveMailbox () { return {} }
+
+  /**
+  * Indicates the main window focused
+  */
+  windowDidFocus () { return {} }
 }
 
 const actions = alt.createActions(MailboxActions)
@@ -809,5 +815,6 @@ ipcRenderer.on(WB_MAILBOXES_WINDOW_SWITCH_SERVICE, (evt, req) => {
 ipcRenderer.on(WB_PING_RESOURCE_USAGE, actions.pingResourceUsage)
 ipcRenderer.on(WB_WINDOW_RELOAD_WEBVIEW, actions.reloadActiveMailbox)
 ipcRenderer.on(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, actions.openDevToolsActiveMailbox)
+ipcRenderer.on(WB_WINDOW_FOCUS, actions.windowDidFocus)
 
 export default actions

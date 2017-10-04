@@ -5,7 +5,7 @@ import CoreService from 'shared/Models/Accounts/CoreService'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
 import { List, ListItem, Toggle, SelectField, MenuItem } from 'material-ui'
-import { Row, Col } from 'Components/Grid'
+import { Row, Col, Container } from 'Components/Grid'
 
 const SERVICE_GROUPS = {
   common: [
@@ -41,7 +41,8 @@ const SERVICE_ORDERING = [
 
 const styles = {
   list: {
-    width: 280,
+    marginLeft: -15,
+    marginRight: -15,
     paddingTop: 0,
     paddingBottom: 0,
     display: 'inline-block'
@@ -219,27 +220,29 @@ export default class WizardServicePicker extends React.Component {
             <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR} primaryText='In a top toolbar' />
           </SelectField>
         </div>
-        <Row>
-          <Col md={8}>
-            <Row>
-              <Col sm={6}>
-                <List style={styles.list}>
-                  {serviceTypeGroups[0].map((serviceType) => this.renderServiceListItem(serviceType))}
-                </List>
-              </Col>
-              <Col sm={6}>
-                <List style={styles.list}>
-                  {serviceTypeGroups[1].map((serviceType) => this.renderServiceListItem(serviceType))}
-                </List>
-              </Col>
-            </Row>
-          </Col>
-          <Col md={4}>
-            <List style={styles.list}>
-              {serviceTypeGroups[2].map((serviceType) => this.renderServiceListItem(serviceType))}
-            </List>
-          </Col>
-        </Row>
+        <Container>
+          <Row>
+            <Col md={8}>
+              <Row>
+                <Col sm={6}>
+                  <List style={styles.list}>
+                    {serviceTypeGroups[0].map((serviceType) => this.renderServiceListItem(serviceType))}
+                  </List>
+                </Col>
+                <Col sm={6}>
+                  <List style={styles.list}>
+                    {serviceTypeGroups[1].map((serviceType) => this.renderServiceListItem(serviceType))}
+                  </List>
+                </Col>
+              </Row>
+            </Col>
+            <Col md={4}>
+              <List style={styles.list}>
+                {serviceTypeGroups[2].map((serviceType) => this.renderServiceListItem(serviceType))}
+              </List>
+            </Col>
+          </Row>
+        </Container>
       </div>
     )
   }

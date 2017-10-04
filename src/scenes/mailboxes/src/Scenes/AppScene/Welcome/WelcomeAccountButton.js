@@ -96,7 +96,7 @@ export default class WelcomeAccountButton extends React.Component {
           tooltipTimeout={0}
           style={styles.popover}
           position='top'
-          arrow='bottom'
+          arrow='center'
           group={generatedId}
           parent={`#ReactComponent-WelcomeAccountButton-${generatedId}`}>
           {tooltipText}

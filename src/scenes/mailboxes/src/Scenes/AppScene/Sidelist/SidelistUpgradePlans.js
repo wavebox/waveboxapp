@@ -259,7 +259,7 @@ export default class SidelistUpgradePlans extends React.Component {
           position='right'
           onMouseEnter={() => this.setState({ tooltipHover: true })}
           onMouseLeave={() => this.setState({ tooltipHover: false })}
-          arrow='left'
+          arrow='center'
           group={generatedId}
           parent={`#ReactComponent-Sidelist-Item-${generatedId}`}>
           {this.generatePopupContent(currentPlan, expiresInDays)}

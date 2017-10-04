@@ -9,10 +9,10 @@
     "fbjs": "0.8.16",
     "material-ui": "0.19.3",
     "prop-types": "15.6.0",
-    "react": "15.6.2",
+    "react": "16.0.0",
     "react-addons-shallow-compare": "15.6.2",
-    "react-dom": "15.6.2",
-    "react-portal-tooltip": "1.2.0",
+    "react-dom": "16.0.0",
+    "react-portal-tooltip": "2.1.0",
     "react-timer-mixin": "0.13.3",
     "urijs": "1.19.0",
     "uuid": "3.1.0"

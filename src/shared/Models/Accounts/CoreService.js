@@ -38,6 +38,7 @@ class CoreService extends Model {
   static get PROTOCOL_TYPES () { return PROTOCOL_TYPES }
   static get RELOAD_BEHAVIOURS () { return RELOAD_BEHAVIOURS }
   static get type () { return SERVICE_TYPES.UNKNOWN }
+  static get reloadBehaviour () { return RELOAD_BEHAVIOURS.RESET_URL }
 
   /* **************************************************************************/
   // Class: Support
@@ -109,7 +110,7 @@ class CoreService extends Model {
   get sleepable () { return this._value_('sleepable', true) }
   get sleepableTimeout () { return this._value_('sleepableTimeout', MAILBOX_SLEEP_WAIT) }
   get hasNavigationToolbar () { return false }
-  get reloadBehaviour () { return RELOAD_BEHAVIOURS.RESET_URL }
+  get reloadBehaviour () { return this.constructor.reloadBehaviour }
 
   /* **************************************************************************/
   // Properties: Support

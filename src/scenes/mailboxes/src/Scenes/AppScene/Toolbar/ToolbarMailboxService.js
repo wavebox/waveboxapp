@@ -243,7 +243,7 @@ export default class ToolbarMailboxService extends React.Component {
           active={isHovering}
           tooltipTimeout={0}
           position='bottom'
-          arrow='top'
+          arrow='center'
           group={this.instanceId}
           parent={`#ReactComponent-Toolbar-Mailbox-Service-${this.instanceId}`} />
         <MailboxServicePopover

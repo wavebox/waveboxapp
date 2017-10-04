@@ -66,8 +66,7 @@ const styles = {
     border: `2px solid ${Colors.lightBlue500}`,
     borderRadius: 4,
     padding: 16,
-    display: 'inline-block',
-    maxWidth: '100%'
+    display: 'block'
   },
 
   // Footer

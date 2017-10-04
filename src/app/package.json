@@ -25,7 +25,7 @@
     "yargs": "9.0.1"
   },
   "optionalDependencies": {
-    "electron-windows-notifications": "1.1.14",
+    "electron-windows-notifications": "1.1.15",
     "node-mac-notifier": "0.0.13"
   },
   "devDependencies": {

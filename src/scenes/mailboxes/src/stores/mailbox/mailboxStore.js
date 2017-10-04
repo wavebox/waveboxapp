@@ -567,7 +567,8 @@ class MailboxStore {
       // Misc
       handlePingResourceUsage: actions.PING_RESOURCE_USAGE,
       handleReloadActiveMailbox: actions.RELOAD_ACTIVE_MAILBOX,
-      handleOpenDevToolsActiveMailbox: actions.OPEN_DEV_TOOLS_ACTIVE_MAILBOX
+      handleOpenDevToolsActiveMailbox: actions.OPEN_DEV_TOOLS_ACTIVE_MAILBOX,
+      handleWindowDidFocus: actions.WINDOW_DID_FOCUS
     })
   }
 
@@ -1225,7 +1226,7 @@ class MailboxStore {
 
   handleReduceServiceIfInactive ({ id = this.activeMailboxId(), serviceType = this.activeMailboxService(), reducer, reducerArgs }) {
     this.preventDefault()
-    if (!this.isActive(id, serviceType)) {
+    if (!this.isActive(id, serviceType) || !remote.getCurrentWindow().isFocused()) {
       actions.reduceService.defer(...[id, serviceType, reducer, ...reducerArgs])
     }
   }
@@ -1553,6 +1554,11 @@ class MailboxStore {
   handleOpenDevToolsActiveMailbox () {
     this.preventDefault()
     mailboxDispatch.openDevTools(this.activeMailboxId(), this.activeMailboxService())
+  }
+
+  handleWindowDidFocus () {
+    this.preventDefault()
+    actions.reduceService.defer(this.active, this.activeService, ServiceReducer.mergeChangesetOnActive)
   }
 }
 

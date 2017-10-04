@@ -103,7 +103,7 @@ export default class WizardConfigureUnreadModeOption extends React.Component {
           tooltipTimeout={0}
           style={styles.popover}
           position='bottom'
-          arrow='top'
+          arrow='center'
           group={generatedId}
           parent={`#ReactComponent-WizardConfigureUnreadModeOption-${generatedId}`}>
           {popoverContent}

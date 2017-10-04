@@ -230,7 +230,7 @@ export default class SidelistControl extends React.Component {
           tooltipTimeout={0}
           style={styles.popover}
           position='right'
-          arrow='left'
+          arrow='center'
           group={generatedId}
           parent={`#ReactComponent-Sidelist-Control-${generatedId}`}>
           {tooltip}
@@ -244,7 +244,7 @@ export default class SidelistControl extends React.Component {
               arrowStyle: { ...styles.tourPopover.arrowStyle, ...tourTooltipStyles.arrowStyle }
             } : styles.tourPopover}
             position='right'
-            arrow='left'
+            arrow='center'
             group={generatedId}
             parent={`#ReactComponent-Sidelist-Control-${generatedId}`}>
             {this.renderTourTooltipContent(tourTooltip)}

@@ -135,7 +135,7 @@ export default class ToolbarExtensionAction extends React.Component {
             tooltipTimeout={0}
             style={basicPopoverStyles}
             position='bottom'
-            arrow='top'
+            arrow='center'
             group={elementId}
             parent={`#${elementId}`}>
             <span style={styles.tooltipContent}>
