@@ -5,15 +5,43 @@ import CoreService from 'shared/Models/Accounts/CoreService'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
 import { List, ListItem, Toggle, SelectField, MenuItem } from 'material-ui'
+import { Row, Col } from 'Components/Grid'
+
+const SERVICE_GROUPS = {
+  common: [
+    CoreMailbox.SERVICE_TYPES.CALENDAR,
+    CoreMailbox.SERVICE_TYPES.COMMUNICATION,
+    CoreMailbox.SERVICE_TYPES.CONTACTS,
+    CoreMailbox.SERVICE_TYPES.NOTES,
+    CoreMailbox.SERVICE_TYPES.PHOTOS
+  ],
+  office: [
+    CoreMailbox.SERVICE_TYPES.STORAGE,
+    CoreMailbox.SERVICE_TYPES.DOCS,
+    CoreMailbox.SERVICE_TYPES.SHEETS,
+    CoreMailbox.SERVICE_TYPES.SLIDES
+  ]
+}
+const SERVICE_ORDERING = [
+  CoreMailbox.SERVICE_TYPES.DEFAULT,
+  CoreMailbox.SERVICE_TYPES.CALENDAR,
+  CoreMailbox.SERVICE_TYPES.COMMUNICATION,
+  CoreMailbox.SERVICE_TYPES.CONTACTS,
+  CoreMailbox.SERVICE_TYPES.NOTES,
+  CoreMailbox.SERVICE_TYPES.PHOTOS,
+  CoreMailbox.SERVICE_TYPES.STORAGE,
+  CoreMailbox.SERVICE_TYPES.DOCS,
+  CoreMailbox.SERVICE_TYPES.SHEETS,
+  CoreMailbox.SERVICE_TYPES.SLIDES,
+  CoreMailbox.SERVICE_TYPES.ANALYTICS,
+  CoreMailbox.SERVICE_TYPES.VIDEO,
+  CoreMailbox.SERVICE_TYPES.SOCIAL,
+  CoreMailbox.SERVICE_TYPES.MESSENGER
+]
 
 const styles = {
-  servicesContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-start'
-  },
   list: {
-    maxWidth: 320,
+    width: 280,
     paddingTop: 0,
     paddingBottom: 0,
     display: 'inline-block'
@@ -108,6 +136,62 @@ export default class WizardServicePicker extends React.Component {
     )
   }
 
+  /**
+  * Splits the services into known groups
+  * @param serviceTypes: the service types
+  * @return { common, office, misc }
+  */
+  splitServicesIntoKnownGroups (serviceTypes) {
+    const services = new Set(serviceTypes)
+    const common = SERVICE_GROUPS.common.reduce((acc, type) => {
+      if (services.has(type)) {
+        services.delete(type)
+        return acc.concat(type)
+      } else {
+        return acc
+      }
+    }, [])
+    const office = SERVICE_GROUPS.office.reduce((acc, type) => {
+      if (services.has(type)) {
+        services.delete(type)
+        return acc.concat(type)
+      } else {
+        return acc
+      }
+    }, [])
+    const misc = Array.from(services)
+
+    return { common, office, misc }
+  }
+
+  /**
+  * Renders the service group lists
+  * @param MailboxClass: the class of mailbox to get the supported services from
+  * @return an array with up to 3 service groups
+  */
+  createServiceGroupLists (MailboxClass) {
+    const serviceTypes = MailboxClass.supportedServiceTypes.filter((t) => t !== CoreService.SERVICE_TYPES.DEFAULT)
+    const { common, office, misc } = this.splitServicesIntoKnownGroups(serviceTypes)
+    if (common.length <= 1 || office.length <= 1) {
+      const services = new Set(serviceTypes)
+      const orderedServices = SERVICE_ORDERING.reduce((acc, type) => {
+        if (services.has(type)) {
+          return acc.concat(type)
+        } else {
+          return acc
+        }
+      }, [])
+      const third = Math.ceil(orderedServices.length / 3)
+      return [
+        orderedServices.slice(0, third * 1),
+        orderedServices.slice(third * 1, third * 2),
+        orderedServices.slice(third * 2)
+      ]
+    } else {
+      return [ common, office, misc ]
+    }
+  }
+
   render () {
     const {
       MailboxClass,
@@ -120,11 +204,7 @@ export default class WizardServicePicker extends React.Component {
       ...passProps
     } = this.props
 
-    const serviceTypes = MailboxClass.supportedServiceTypes.filter((t) => t !== CoreService.SERVICE_TYPES.DEFAULT)
-    const serviceTypeGroups = [
-      serviceTypes.slice(0, Math.ceil(serviceTypes.length / 2)),
-      serviceTypes.slice(Math.ceil(serviceTypes.length / 2))
-    ]
+    const serviceTypeGroups = this.createServiceGroupLists(MailboxClass)
 
     return (
       <div {...passProps} style={style}>
@@ -139,15 +219,27 @@ export default class WizardServicePicker extends React.Component {
             <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR} primaryText='In a top toolbar' />
           </SelectField>
         </div>
-        <div style={styles.servicesContainer}>
-          {serviceTypeGroups.map((serviceGroup, index) => {
-            return (
-              <List key={'groups_' + index} style={styles.list}>
-                {serviceGroup.map((serviceType) => this.renderServiceListItem(serviceType))}
-              </List>
-            )
-          })}
-        </div>
+        <Row>
+          <Col md={8}>
+            <Row>
+              <Col sm={6}>
+                <List style={styles.list}>
+                  {serviceTypeGroups[0].map((serviceType) => this.renderServiceListItem(serviceType))}
+                </List>
+              </Col>
+              <Col sm={6}>
+                <List style={styles.list}>
+                  {serviceTypeGroups[1].map((serviceType) => this.renderServiceListItem(serviceType))}
+                </List>
+              </Col>
+            </Row>
+          </Col>
+          <Col md={4}>
+            <List style={styles.list}>
+              {serviceTypeGroups[2].map((serviceType) => this.renderServiceListItem(serviceType))}
+            </List>
+          </Col>
+        </Row>
       </div>
     )
   }

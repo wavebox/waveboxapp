@@ -27,6 +27,8 @@ class MicrosoftMailbox extends CoreMailbox {
     return [
       CoreMailbox.SERVICE_TYPES.DEFAULT,
       CoreMailbox.SERVICE_TYPES.CALENDAR,
+      CoreMailbox.SERVICE_TYPES.CONTACTS,
+      CoreMailbox.SERVICE_TYPES.NOTES,
       CoreMailbox.SERVICE_TYPES.STORAGE
     ]
   }
