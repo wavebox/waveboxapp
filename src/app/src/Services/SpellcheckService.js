@@ -25,6 +25,25 @@ class SpellcheckService {
   /* ****************************************************************************/
 
   /**
+  * Builds the payload for the spellcheck engine
+  * @param language: the language object to build from
+  * @return a payload that can be sent to the guest view
+  */
+  _buildPayload (language) {
+    if (language.spellcheckerEnabled) {
+      return {
+        language: language.spellcheckerLanguage,
+        secondaryLanguage: language.secondarySpellcheckerLanguage
+      }
+    } else {
+      return {
+        language: null,
+        secondaryLanguage: null
+      }
+    }
+  }
+
+  /**
   * Handles a spellchecker connecting
   * @param evt: the event that fired
   */
@@ -34,15 +53,9 @@ class SpellcheckService {
 
     wc.on('destroyed', () => { this.connected.delete(id) })
     wc.on('dom-ready', () => { // Content popup windows seem to be more reliable with this
-      wc.sendToAll(WB_BROWSER_CONFIGURE_SPELLCHECK, {
-        language: settingStore.language.spellcheckerLanguage,
-        secondaryLanguage: settingStore.language.secondarySpellcheckerLanguage
-      })
+      wc.sendToAll(WB_BROWSER_CONFIGURE_SPELLCHECK, this._buildPayload(settingStore.language))
     })
-    wc.sendToAll(WB_BROWSER_CONFIGURE_SPELLCHECK, {
-      language: settingStore.language.spellcheckerLanguage,
-      secondaryLanguage: settingStore.language.secondarySpellcheckerLanguage
-    })
+    wc.sendToAll(WB_BROWSER_CONFIGURE_SPELLCHECK, this._buildPayload(settingStore.language))
 
     this.connected.add(id)
   }
@@ -53,12 +66,16 @@ class SpellcheckService {
   * @param next: the next language
   */
   _handleLanguageSettingsChanged = ({ prev, next }) => {
-    if (prev.spellcheckerLanguage !== next.spellcheckerLanguage || prev.secondarySpellcheckerLanguage !== next.secondarySpellcheckerLanguage) {
+    const changed = [
+      'spellcheckerEnabled',
+      'spellcheckerLanguage',
+      'secondarySpellcheckerLanguage'
+    ].find((k) => prev[k] !== next[k])
+
+    if (changed) {
+      const payload = this._buildPayload(next)
       Array.from(this.connected).forEach((id) => {
-        webContents.fromId(id).send(WB_BROWSER_CONFIGURE_SPELLCHECK, {
-          language: next.spellcheckerLanguage,
-          secondaryLanguage: next.secondarySpellcheckerLanguage
-        })
+        webContents.fromId(id).send(WB_BROWSER_CONFIGURE_SPELLCHECK, payload)
       })
     }
   }

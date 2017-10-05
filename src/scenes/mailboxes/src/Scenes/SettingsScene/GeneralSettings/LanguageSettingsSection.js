@@ -73,11 +73,8 @@ export default class LanguageSettingsSection extends React.Component {
         <Toggle
           toggled={language.spellcheckerEnabled}
           labelPosition='right'
-          label='Spell-checker (Requires Restart)'
-          onToggle={(evt, toggled) => {
-            showRestart()
-            settingsActions.setEnableSpellchecker(toggled)
-          }} />
+          label='Spell-checker'
+          onToggle={(evt, toggled) => settingsActions.setEnableSpellchecker(toggled)} />
         <SelectField
           floatingLabelText='Spell-checker language'
           value={language.spellcheckerLanguage}
