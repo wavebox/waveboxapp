@@ -56,11 +56,20 @@ class MailboxesSessionManager {
     if (this.__managed__.has(partition)) { return }
 
     const ses = session.fromPartition(partition)
+    const mailbox = this.getMailboxFromPartition(partition)
+
+    // Downloads
     ses.setDownloadPath(app.getPath('downloads'))
     ses.on('will-download', this.handleDownload.bind(this))
+
+    // Permissions & env
     ses.setPermissionRequestHandler(this.handlePermissionRequest)
-    ses.webRequest.onCompleted((evt) => this.handleRequestCompleted(evt, ses, partition))
     this.setupUserAgent(ses, partition, mailboxType)
+    if (mailbox && mailbox.artificiallyPersistCookies) {
+      ses.webRequest.onCompleted((evt) => this.artificiallyPersistCookies(partition))
+    }
+
+    // Extensions
     ContentExtensions.supportedProtocols.forEach((protocol) => {
       ses.protocol.registerStringProtocol(protocol, ContentExtensions.handleStringProtocolRequest.bind(ContentExtensions))
     })
@@ -247,42 +256,26 @@ class MailboxesSessionManager {
   }
 
   /* ****************************************************************************/
-  // Requests
-  /* ****************************************************************************/
-
-  /**
-  * Handles a request completing
-  * @param evt: the event that fired
-  * @param session: the session this request was for
-  * @param partition: the partition string for this session
-  */
-  handleRequestCompleted (evt, session, partition) {
-    this.artificiallyPersistCookies(session, partition)
-  }
-
-  /* ****************************************************************************/
   // Cookies
   /* ****************************************************************************/
 
   /**
   * Forces the cookies to persist artifically. This helps users using saml signin
-  * @param session: the session this request was for
   * @param partition: the partition string for this session
   */
-  artificiallyPersistCookies (session, partition) {
+  artificiallyPersistCookies (partition) {
     if (this.persistCookieThrottle[partition] !== undefined) { return }
-    const mailbox = this.getMailboxFromPartition(partition)
-    if (!mailbox || !mailbox.artificiallyPersistCookies) { return }
 
     this.persistCookieThrottle[partition] = setTimeout(() => {
-      session.cookies.get({ session: true }, (error, cookies) => {
+      const ses = session.fromPartition(partition)
+      ses.cookies.get({ session: true }, (error, cookies) => {
         if (error || !cookies.length) {
           delete this.persistCookieThrottle[partition]
           return
         }
         cookies.forEach((cookie) => {
           const url = (cookie.secure ? 'https://' : 'http://') + cookie.domain + cookie.path
-          session.cookies.remove(url, cookie.name, (error) => {
+          ses.cookies.remove(url, cookie.name, (error) => {
             if (error) { return }
             const expire = new Date().getTime() + ARTIFICIAL_COOKIE_PERSIST_PERIOD
             const persistentCookie = {
@@ -295,7 +288,7 @@ class MailboxesSessionManager {
               httpOnly: cookie.httpOnly,
               expirationDate: expire
             }
-            session.cookies.set(persistentCookie, (_) => { })
+            ses.cookies.set(persistentCookie, (_) => { })
           })
         })
         delete this.persistCookieThrottle[partition]
