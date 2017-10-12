@@ -239,7 +239,7 @@ class GoogleDefaultService extends GoogleService {
       if (parsedUrl.query.ui === '2') {
         switch (parsedUrl.query.view) {
           case 'pt': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Print message
-          case 'btop': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Open google drive doc
+          case 'btop': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Open google drive doc. This doesn't work with default_important. Context is lost
           case 'lg': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Open entire message (after being clipped)
           case 'att': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Open attachment in external window (also works on inbox)
         }

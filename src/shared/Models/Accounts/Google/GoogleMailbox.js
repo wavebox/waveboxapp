@@ -1,6 +1,7 @@
 const CoreMailbox = require('../CoreMailbox')
 const GoogleDefaultService = require('./GoogleDefaultService')
 const MailboxColors = require('../MailboxColors')
+const ServiceFactory = require('../ServiceFactory')
 
 class GoogleMailbox extends CoreMailbox {
   /* **************************************************************************/
@@ -138,10 +139,32 @@ class GoogleMailbox extends CoreMailbox {
   }
 
   /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  /**
+  * @override
+  */
+  modelizeService (serviceData) {
+    return ServiceFactory.modelize(
+      this.id,
+      this.type,
+      serviceData,
+      { openDriveLinksWithDefaultOpener: this.openDriveLinksWithDefaultOpener },
+      this.buildMailboxToServiceMigrationData(serviceData.type))
+  }
+
+  /* **************************************************************************/
   // Properties: Wavebox
   /* **************************************************************************/
 
   get supportsWaveboxAuth () { return true }
+
+  /* **************************************************************************/
+  // Properties: Window opening
+  /* **************************************************************************/
+
+  get openDriveLinksWithDefaultOpener () { return this._value_('openDriveLinksWithDefaultOpener', false) }
 
   /* **************************************************************************/
   // Properties : Display

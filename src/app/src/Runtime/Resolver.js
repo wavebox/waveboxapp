@@ -10,6 +10,14 @@ class Resolver {
   }
 
   /**
+  * @param name: the name of the file in the content scene
+  * @return the full path to the file
+  */
+  static printScene (name) {
+    return path.resolve(path.join(__dirname, '../scenes/print/', name))
+  }
+
+  /**
   * @param name: the name of the file in the mailboxes scene
   * @return the full path to the file
   */

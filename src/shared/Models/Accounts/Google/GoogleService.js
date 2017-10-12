@@ -2,6 +2,12 @@ const CoreService = require('../CoreService')
 
 class GoogleService extends CoreService {
   /* **************************************************************************/
+  // Properties
+  /* **************************************************************************/
+
+  get openDriveLinksWithDefaultOpener () { return this.__metadata__.openDriveLinksWithDefaultOpener }
+
+  /* **************************************************************************/
   // Behaviour
   /* **************************************************************************/
 
@@ -18,14 +24,26 @@ class GoogleService extends CoreService {
     const superMode = super.getWindowOpenModeForUrl(url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl)
     if (superMode !== this.constructor.WINDOW_OPEN_MODES.DEFAULT) { return superMode }
 
-    if (parsedUrl.hostname === 'docs.google.com' || parsedUrl.hostname === 'drive.google.com' || parsedUrl.hostname === 'sites.google.com') {
+    if (parsedUrl.hostname === 'docs.google.com' || parsedUrl.hostname === 'drive.google.com') {
+      if (this.openDriveLinksWithDefaultOpener) {
+        return this.constructor.WINDOW_OPEN_MODES.DEFAULT_IMPORTANT
+      } else {
+        return this.constructor.WINDOW_OPEN_MODES.CONTENT
+      }
+    }
+
+    if (parsedUrl.hostname === 'sites.google.com') {
       return this.constructor.WINDOW_OPEN_MODES.CONTENT
     }
 
     if (parsedUrl.hostname.endsWith('google.com') && (parsedUrl.pathname === '/url' || parsedUrl.pathname === '/url/')) {
       if (parsedUrl.query.q) {
         if (parsedUrl.query.q.startsWith('https://drive.google.com/')) { // Embedded google drive url
-          return this.constructor.WINDOW_OPEN_MODES.CONTENT
+          if (this.openDriveLinksWithDefaultOpener) {
+            return this.constructor.WINDOW_OPEN_MODES.DEFAULT_IMPORTANT
+          } else {
+            return this.constructor.WINDOW_OPEN_MODES.CONTENT
+          }
         }
       }
     }

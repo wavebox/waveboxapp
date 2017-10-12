@@ -71,9 +71,7 @@ class CRExtensionLoader {
   * @param script: the info about the script to inject
   */
   _injectContentScript (extensionId, script) {
-    const match = script.matches.find((pattern) => {
-      return CRExtensionMatchPatterns.match(window.location.protocol, window.location.host, window.location.pathname, pattern)
-    })
+    const match = CRExtensionMatchPatterns.matchUrls(window.location.protocol, window.location.host, window.location.pathname, script.matches)
     if (!match) { return }
 
     script.js.forEach(({url, code}) => {

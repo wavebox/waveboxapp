@@ -64,6 +64,7 @@ import Resolver from 'Runtime/Resolver'
 
 const { app, ipcMain, shell } = electron
 
+const WINDOW_OPEN_MODES = CoreService.WINDOW_OPEN_MODES
 const ALLOWED_URLS = [
   'file://' + Resolver.mailboxesScene('mailboxes.html'),
   'file://' + Resolver.mailboxesScene('offline.html')
@@ -83,7 +84,7 @@ class MailboxesWindow extends WaveboxWindow {
     this.authSlack = new AuthSlack()
     this.authMicrosoft = new AuthMicrosoft()
     this.authWavebox = new AuthWavebox()
-    this.sessionManager = new MailboxesSessionManager(this)
+    this.sessionManager = new MailboxesSessionManager()
     this.attachedMailboxes = new Map()
     this.attachedExtensions = new Map()
     this.provisionalTargetUrls = new Map()
@@ -297,7 +298,7 @@ class MailboxesWindow extends WaveboxWindow {
     if (purl.hostname === WAVEBOX_CAPTURE_URL_HOSTNAME && purl.pathname.startsWith(WAVEBOX_CAPTURE_URL_PREFIX)) { return }
 
     // Handle other urls
-    let openMode = CoreService.WINDOW_OPEN_MODES.EXTERNAL
+    let openMode = WINDOW_OPEN_MODES.EXTERNAL
     let ownerId = null
     let mailbox = null
     let service = null
@@ -324,24 +325,24 @@ class MailboxesWindow extends WaveboxWindow {
 
     // Check installed extensions to see if they overwrite the behaviour
     if (CRExtensionManager.runtimeHandler.shouldOpenWindowAsPopout(webContentsId, targetUrl, purl, disposition)) {
-      openMode = CoreService.WINDOW_OPEN_MODES.POPUP_CONTENT
+      openMode = WINDOW_OPEN_MODES.POPUP_CONTENT
     }
 
-    if (openMode === CoreService.WINDOW_OPEN_MODES.POPUP_CONTENT) {
+    if (openMode === WINDOW_OPEN_MODES.POPUP_CONTENT) {
       evt.newGuest = this.openWindowWaveboxPopupContent(ownerId, targetUrl, options).window
-    } else if (openMode === CoreService.WINDOW_OPEN_MODES.EXTERNAL) {
+    } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL) {
       this.openWindowExternal(targetUrl, mailbox)
-    } else if (openMode === CoreService.WINDOW_OPEN_MODES.DEFAULT) {
+    } else if (openMode === WINDOW_OPEN_MODES.DEFAULT || openMode === WINDOW_OPEN_MODES.DEFAULT_IMPORTANT) {
       this.openWindowDefault(ownerId, mailbox, targetUrl, options)
-    } else if (openMode === CoreService.WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL) {
+    } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL) {
       this.openWindowExternal(provisionalTargetUrl, mailbox)
-    } else if (openMode === CoreService.WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL) {
+    } else if (openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL || openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT) {
       this.openWindowDefault(ownerId, mailbox, provisionalTargetUrl, options)
-    } else if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT) {
+    } else if (openMode === WINDOW_OPEN_MODES.CONTENT) {
       this.openWindowWaveboxContent(ownerId, targetUrl, options)
-    } else if (openMode === CoreService.WINDOW_OPEN_MODES.CONTENT_PROVSIONAL) {
+    } else if (openMode === WINDOW_OPEN_MODES.CONTENT_PROVSIONAL) {
       this.openWindowWaveboxContent(ownerId, provisionalTargetUrl, options)
-    } else if (openMode === CoreService.WINDOW_OPEN_MODES.DOWNLOAD) {
+    } else if (openMode === WINDOW_OPEN_MODES.DOWNLOAD) {
       if ((options || {}).webContents) {
         options.webContents.downloadURL(targetUrl)
       }

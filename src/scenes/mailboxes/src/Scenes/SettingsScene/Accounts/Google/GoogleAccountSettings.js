@@ -9,9 +9,10 @@ import AccountServicesSettings from '../AccountServicesSettings'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
 import { userStore } from 'stores/user'
-import { RaisedButton, Avatar, FontIcon } from 'material-ui'
+import { RaisedButton, Avatar, FontIcon, Toggle } from 'material-ui'
 import GoogleDefaultServiceSettings from './GoogleDefaultServiceSettings'
 import GoogleServiceSettings from './GoogleServiceSettings'
+import { mailboxActions, GoogleMailboxReducer } from 'stores/mailbox'
 
 const styles = {
   proServices: {
@@ -118,7 +119,19 @@ export default class GoogleAccountSettings extends React.Component {
             <AccountServicesSettings mailbox={mailbox} />
           </Col>
           <Col md={6}>
-            <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
+            <AccountAdvancedSettings
+              mailbox={mailbox}
+              showRestart={showRestart}
+              windowOpenAfter={(
+                <Toggle
+                  toggled={mailbox.openDriveLinksWithDefaultOpener}
+                  label='Open Google Drive links with browser'
+                  labelPosition='right'
+                  onToggle={(evt, toggled) => {
+                    mailboxActions.reduce(mailbox.id, GoogleMailboxReducer.setOpenDriveLinksWithDefaultOpener, toggled)
+                  }} />
+              )}
+            />
           </Col>
         </Row>
         <Row>

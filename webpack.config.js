@@ -7,6 +7,7 @@ const TASKS = {
   app: require('./src/app/webpack.config.js'),
   content: require('./src/scenes/content/webpack.config.js'),
   mailboxes: require('./src/scenes/mailboxes/webpack.config.js'),
+  print: require('./src/scenes/print/webpack.config.js'),
   monitor: require('./src/scenes/monitor/webpack.config.js'),
   guest: require('./src/guest/webpack.config.js'),
   guestApi: require('./src/guestApi/webpack.config.js')
@@ -14,8 +15,8 @@ const TASKS = {
 
 module.exports = function (env = {}) {
   // Config
-  process.env.CHROME_TARGET = 59
-  process.env.NODE_TARGET = '8.2.1'
+  process.env.CHROME_TARGET = 58
+  process.env.NODE_TARGET = '7.9.0'
 
   // Production
   if (env.p || env.production) {

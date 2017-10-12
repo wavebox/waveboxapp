@@ -20,7 +20,9 @@ export default class AccountAdvancedSettings extends React.Component {
 
   static propTypes = {
     mailbox: PropTypes.object.isRequired,
-    showRestart: PropTypes.func.isRequired
+    showRestart: PropTypes.func.isRequired,
+    windowOpenBefore: PropTypes.node,
+    windowOpenAfter: PropTypes.node
   }
 
   /* **************************************************************************/
@@ -74,11 +76,14 @@ export default class AccountAdvancedSettings extends React.Component {
   /**
   * Renders the window open settings
   * @param mailbox: the mailbox to render for
+  * @param windowOpenBefore: elements to add before the settings
+  * @param windowOpenAfter: elements to add after the settings
   * @return jsx
   */
-  renderWindowOpenSettings (mailbox) {
+  renderWindowOpenSettings (mailbox, windowOpenBefore, windowOpenAfter) {
     return (
       <div>
+        {windowOpenBefore}
         <SelectField
           floatingLabelText='Open new windows in which Browser'
           value={mailbox.defaultWindowOpenMode}
@@ -91,6 +96,7 @@ export default class AccountAdvancedSettings extends React.Component {
             return (<MenuItem key={mode} value={mode} primaryText={humanizedOpenModes[mode]} />)
           })}
         </SelectField>
+        {windowOpenAfter}
       </div>
     )
   }
@@ -129,14 +135,21 @@ export default class AccountAdvancedSettings extends React.Component {
   }
 
   render () {
-    const { mailbox, children, showRestart, ...passProps } = this.props
+    const {
+      mailbox,
+      children,
+      showRestart,
+      windowOpenBefore,
+      windowOpenAfter,
+      ...passProps
+    } = this.props
 
     return (
       <Paper zDepth={1} style={styles.paper} {...passProps}>
         <h1 style={styles.subheading}>Advanced</h1>
         {this.renderCookieSettings(mailbox, showRestart)}
         <br />
-        {this.renderWindowOpenSettings(mailbox)}
+        {this.renderWindowOpenSettings(mailbox, windowOpenBefore, windowOpenAfter)}
         <br />
         {children}
         {this.renderDestructiveActions(mailbox)}

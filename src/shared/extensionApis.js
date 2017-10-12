@@ -3,7 +3,7 @@ const WAVEBOX_CONTENT_IMPL_ENDPOINTS = {
   CHROME: 'Chrome.js',
   CONTENT_WINDOW: 'ContentWindow.js',
 
-  GMAIL_WINDOW_OPEN: 'GmailWindowOpen.js',
+  GOOGLE_MAIL_WINDOW_OPEN: 'GoogleMailWindowOpen.js',
   GOOGLE_CALENDAR_ALERT: 'GoogleCalendarAlert.js',
   ONEDRIVE_WINDOW_OPEN: 'OnedriveWindowOpen.js'
 }

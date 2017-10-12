@@ -78,6 +78,7 @@ module.exports = Object.freeze({
   ARTIFICIAL_COOKIE_PERSIST_PERIOD: days(30),
 
   // Chrome
+  CHROME_PROTOCOL: 'chrome',
   CHROME_PDF_URL: 'chrome://pdf-viewer/index.html',
 
   // News

@@ -4,6 +4,7 @@ import path from 'path'
 import url from 'url'
 import CRDispatchManager from './CRDispatchManager'
 import CRExtensionRuntime from './CRExtensionRuntime'
+import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
 import {
   CR_EXTENSION_PROTOCOL
 } from 'shared/extensionApis'
@@ -18,6 +19,7 @@ import {
   WBECRX_LAUNCH_OPTIONS,
   WBECRX_INSPECT_BACKGROUND
 } from 'shared/ipcEvents'
+import { CSPParser, CSPBuilder } from './CSP'
 
 class CRExtensionRuntimeHandler {
   /* ****************************************************************************/
@@ -222,6 +224,55 @@ class CRExtensionRuntimeHandler {
     return !!Array.from(this.runtimes.values()).find((runtime) => {
       return runtime.shouldOpenWindowAsPopout(webContentsId, url, parsedUrl, disposition)
     })
+  }
+
+  /* ****************************************************************************/
+  // CSP
+  /* ****************************************************************************/
+
+  /**
+  * Updates the CSP headers for the given request url
+  * @param requestUrl: the url the request was made on
+  * @param responseHeaders: the original response headers created by the server
+  * @return undefined or the updated response headers
+  */
+  updateContentSecurityPolicy (requestUrl, responseHeaders) {
+    if (!responseHeaders['content-security-policy']) { return undefined }
+
+    // Look to see if any extensions wnat to modify this
+    const purl = url.parse(requestUrl)
+    const matchingRuntimes = Array.from(this.runtimes.values()).filter((runtime) => {
+      const manifest = runtime.extension.manifest
+      if (!manifest.hasWaveboxContentSecurityPolicy) { return false }
+
+      const matches = CRExtensionMatchPatterns.matchUrls(
+        purl.protocol,
+        purl.hostname,
+        purl.pathname,
+        manifest.waveboxContentSecurityPolicy.matches
+      )
+      if (!matches) { return false }
+
+      return true
+    })
+    if (!matchingRuntimes.length) { return undefined }
+
+    // Parse and update the incoming headers
+    const responseCSPs = responseHeaders['content-security-policy'].map((csp) => CSPParser(csp))
+    matchingRuntimes.forEach((runtime) => {
+      const directives = runtime.extension.manifest.waveboxContentSecurityPolicy.directives
+      responseCSPs.forEach((responseCSP) => {
+        Object.keys(directives).forEach((k) => {
+          responseCSP[k] = (responseCSP[k] || []).concat(directives[k])
+        })
+      })
+    })
+
+    // Write back
+    responseHeaders['content-security-policy'] = responseCSPs.map((csp) => {
+      return CSPBuilder({ directives: csp })
+    })
+    return responseHeaders
   }
 }
 

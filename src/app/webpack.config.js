@@ -67,6 +67,7 @@ module.exports = function (env) {
         shared: path.resolve(path.join(__dirname, '../shared')),
         AppUpdater: path.resolve(path.join(__dirname, 'src/AppUpdater')),
         AuthProviders: path.resolve(path.join(__dirname, 'src/AuthProviders')),
+        DownloadManager: path.resolve(path.join(__dirname), 'src/DownloadManager'),
         Extensions: path.resolve(path.join(__dirname, 'src/Extensions')),
         Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
         storage: path.resolve(path.join(__dirname, 'src/storage')),

@@ -12,13 +12,18 @@ const {
   WAVEBOX_HOSTED_EXTENSION_PROTOCOL,
   CR_EXTENSION_PROTOCOL
 } = req.shared('extensionApis')
+const {
+  CHROME_PROTOCOL
+} = req.shared('constants')
 const SUPPORTED_PROTOCOLS = new Set([
   'http:',
   'https:',
   `${WAVEBOX_HOSTED_EXTENSION_PROTOCOL}:`
 ])
 const SUPPRESSED_PROTOCOLS = new Set([
-  `${CR_EXTENSION_PROTOCOL}:`
+  `${CR_EXTENSION_PROTOCOL}:`,
+  `${CHROME_PROTOCOL}:`,
+  'about:'
 ])
 
 class ExtensionLoader {

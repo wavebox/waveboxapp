@@ -51,7 +51,7 @@
   const { HostedExtensionProvider, HostedExtensionSessionManager } = require('Extensions/Hosted')
   const { BrowserWindow, protocol } = require('electron')
   const { CRExtensionManager } = require('Extensions/Chrome')
-  const { SpellcheckService } = require('./Services')
+  const { SpellcheckService, PDFRenderService } = require('./Services')
 
   /* ****************************************************************************/
   // Stores
@@ -90,6 +90,8 @@
   const appGlobalShortcuts = new AppGlobalShortcuts(appGlobalShortcutSelectors)
   const spellcheckService = new SpellcheckService()
   spellcheckService.load()
+  const pdfRenderService = new PDFRenderService()
+  pdfRenderService.load()
 
   /* ****************************************************************************/
   // Extensions

@@ -41,6 +41,17 @@ class GoogleMailboxReducer extends MailboxReducer {
       })
     }
   }
+
+  /**
+  * Sets whether drive links should always be opened with default opener
+  * @param mailbox: the mailbox to update
+  * @param open: true to always open, false otherwise
+  */
+  static setOpenDriveLinksWithDefaultOpener (mailbox, open) {
+    return mailbox.changeDataWithChangeset({
+      openDriveLinksWithDefaultOpener: open
+    })
+  }
 }
 
 export default GoogleMailboxReducer

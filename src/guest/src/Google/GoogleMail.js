@@ -48,11 +48,11 @@ class GoogleMail extends GoogleService {
     // Bind our listeners
     ipcRenderer.on(WB_BROWSER_WINDOW_ICONS_IN_SCREEN, this.handleWindowIconsInScreenChange.bind(this))
     ipcRenderer.on(WB_BROWSER_OPEN_MESSAGE, this.handleOpenMesage.bind(this))
+    extensionLoader.loadWaveboxGuestApi(WAVEBOX_CONTENT_IMPL_ENDPOINTS.GOOGLE_MAIL_WINDOW_OPEN)
 
     if (this.isGmail) {
       this.loadGmailAPI()
       ipcRenderer.on(WB_BROWSER_COMPOSE_MESSAGE, this.handleComposeMessageGmail.bind(this))
-      extensionLoader.loadWaveboxGuestApi(WAVEBOX_CONTENT_IMPL_ENDPOINTS.GMAIL_WINDOW_OPEN)
     }
     if (this.isGinbox) {
       this.loadInboxAPI()

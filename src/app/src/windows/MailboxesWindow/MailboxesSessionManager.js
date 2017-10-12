@@ -1,10 +1,5 @@
-import {session, dialog, app} from 'electron'
-import uuid from 'uuid'
-import fs from 'fs-extra'
-import path from 'path'
-import settingStore from 'stores/settingStore'
+import {session} from 'electron'
 import mailboxStore from 'stores/mailboxStore'
-import unusedFilename from 'unused-filename'
 import pkg from 'package.json'
 import {
   ARTIFICIAL_COOKIE_PERSIST_WAIT,
@@ -13,6 +8,8 @@ import {
 import MailboxFactory from 'shared/Models/Accounts/MailboxFactory'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import ContentExtensions from 'Extensions/Content'
+import { CRExtensionManager } from 'Extensions/Chrome'
+import { DownloadManager } from 'Download'
 
 class MailboxesSessionManager {
   /* ****************************************************************************/
@@ -22,9 +19,8 @@ class MailboxesSessionManager {
   /**
   * @param mailboxWindow: the mailbox window instance we're working for
   */
-  constructor (mailboxWindow) {
+  constructor () {
     this.lastUsedDownloadPath = null
-    this.mailboxWindow = mailboxWindow
     this.downloadsInProgress = { }
     this.persistCookieThrottle = { }
 
@@ -59,19 +55,37 @@ class MailboxesSessionManager {
     const mailbox = this.getMailboxFromPartition(partition)
 
     // Downloads
-    ses.setDownloadPath(app.getPath('downloads'))
-    ses.on('will-download', this.handleDownload.bind(this))
+    DownloadManager.setupUserDownloadHandlerForPartition(partition)
 
     // Permissions & env
     ses.setPermissionRequestHandler(this.handlePermissionRequest)
     this.setupUserAgent(ses, partition, mailboxType)
     if (mailbox && mailbox.artificiallyPersistCookies) {
-      ses.webRequest.onCompleted((evt) => this.artificiallyPersistCookies(partition))
+      ses.webRequest.onCompleted((evt) => {
+        this.artificiallyPersistCookies(partition)
+      })
     }
 
     // Extensions
     ContentExtensions.supportedProtocols.forEach((protocol) => {
       ses.protocol.registerStringProtocol(protocol, ContentExtensions.handleStringProtocolRequest.bind(ContentExtensions))
+    })
+    ses.webRequest.onHeadersReceived((details, responder) => {
+      try {
+        const updatedHeaders = CRExtensionManager.runtimeHandler.updateContentSecurityPolicy(details.url, details.responseHeaders)
+        if (updatedHeaders) {
+          responder({ responseHeaders: updatedHeaders })
+        } else {
+          responder({})
+        }
+      } catch (ex) {
+        console.warn([
+          'session.webRequest.onHeadersReceived threw an unknown exception.',
+          'This was caught and execution continues, but the side-effect will be unknown',
+          ''
+        ].join('\n'), ex)
+        responder({})
+      }
     })
     this.__managed__.add(partition)
   }
@@ -132,127 +146,6 @@ class MailboxesSessionManager {
     } else {
       fn(true)
     }
-  }
-
-  /* ****************************************************************************/
-  // Downloads
-  /* ****************************************************************************/
-
-  handleDownload (evt, item) {
-    // Find out where to save the file
-    let savePath
-    if (!settingStore.os.alwaysAskDownloadLocation && settingStore.os.defaultDownloadLocation) {
-      const folderLocation = settingStore.os.defaultDownloadLocation
-
-      // Check the containing folder exists
-      fs.ensureDirSync(folderLocation)
-      savePath = unusedFilename.sync(path.join(folderLocation, item.getFilename()))
-    } else {
-      let pickedSavePath = dialog.showSaveDialog(this.mailboxWindow.window, {
-        title: 'Download',
-        defaultPath: this.lastUsedDownloadPath ? path.join(this.lastUsedDownloadPath, item.getFilename()) : path.join(app.getPath('downloads'), item.getFilename())
-      })
-
-      // There's a bit of a pickle here. Whilst asking the user where to save
-      // they may have omitted the file extension. At the same time they may chosen
-      // a filename that is already taken. We don't have any in-built ui to handle
-      // this so the least destructive way is to find a filename that is not
-      // in use and just save to there. In any case if the user picks a path and
-      // that file does already exist we should remove it
-      if (pickedSavePath) {
-        // Remove existing file - save dialog prompts before allowing user to choose pre-existing name
-        try { fs.removeSync(pickedSavePath) } catch (ex) { /* no-op */ }
-
-        // User didn't add file extension
-        if (path.extname(pickedSavePath) !== path.extname(item.getFilename())) {
-          pickedSavePath += path.extname(item.getFilename())
-          pickedSavePath = unusedFilename.sync(pickedSavePath)
-        }
-        savePath = pickedSavePath
-      }
-    }
-
-    // Check we still want to save
-    if (!savePath) {
-      item.cancel()
-      return
-    }
-
-    // Set the save - will prevent dialog showing up
-    const downloadPath = unusedFilename.sync(savePath + '.waveboxdownload') // just-in-case
-    item.setSavePath(downloadPath)
-    this.lastUsedDownloadPath = path.dirname(savePath)
-
-    // Report the progress to the window to display it
-    const totalBytes = item.getTotalBytes()
-    const id = uuid.v4()
-    item.on('updated', () => {
-      this.updateDownloadProgress(id, item.getReceivedBytes(), totalBytes)
-    })
-    item.on('done', (e, state) => {
-      // Event will get destroyed before move callback completes. If
-      // you need any info from it grab it before calling fs.move
-      if (state === 'completed') {
-        setTimeout(() => { // Introduce a short wait incase the buffer is still flushing out
-          fs.move(downloadPath, savePath, (err) => {
-            this.downloadFinished(id)
-            if (!err) { // This should never happen
-              const saveName = path.basename(savePath)
-              this.mailboxWindow.downloadCompleted(savePath, saveName)
-            }
-          })
-        }, 500)
-      } else {
-        setTimeout(() => {  // Introduce a short wait incase the buffer is still flushing out
-          // Tidy-up on failure
-          try { fs.removeSync(downloadPath) } catch (ex) { /* no-op */ }
-          this.downloadFinished(id)
-        }, 500)
-      }
-    })
-  }
-
-  /* ****************************************************************************/
-  // Download Progress
-  /* ****************************************************************************/
-
-  /**
-  * Updates the progress bar in the dock
-  */
-  updateWindowProgressBar () {
-    const all = Object.keys(this.downloadsInProgress).reduce((acc, id) => {
-      acc.received += this.downloadsInProgress[id].received
-      acc.total += this.downloadsInProgress[id].total
-      return acc
-    }, { received: 0, total: 0 })
-
-    if (all.received === 0 && all.total === 0) {
-      this.mailboxWindow.setProgressBar(-1)
-    } else {
-      this.mailboxWindow.setProgressBar(all.received / all.total)
-    }
-  }
-
-  /**
-  * Updates the progress on a download
-  * @param id: the download id
-  * @param received: the bytes received
-  * @param total: the total bytes to download
-  */
-  updateDownloadProgress (id, received, total) {
-    this.downloadsInProgress[id] = this.downloadsInProgress[id] || {}
-    this.downloadsInProgress[id].received = received
-    this.downloadsInProgress[id].total = total
-    this.updateWindowProgressBar()
-  }
-
-  /**
-  * Indicates that a download has finished
-  * @param id: the download id
-  */
-  downloadFinished (id) {
-    delete this.downloadsInProgress[id]
-    this.updateWindowProgressBar()
   }
 
   /* ****************************************************************************/

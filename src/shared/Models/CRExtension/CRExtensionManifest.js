@@ -50,6 +50,7 @@ class CRExtensionManifest extends Model {
   get homepageUrl () { return this._value_('homepage_url') }
   get hasHomepageUrl () { return !!this.homepageUrl }
   get icons () { return this._sanitizePathValuesInObject_(this._value_('icons', {})) }
+  get manifestVersion () { return this._value_('manifest_version', 1) }
 
   /**
   * Return the icons relative to the given root path
@@ -69,6 +70,9 @@ class CRExtensionManifest extends Model {
   /* **************************************************************************/
 
   get permissions () { return new Set(this._value_('permissions', [])) }
+  get contentSecurityPolicy () {
+    return this._value_('content_security_policy', this.manifestVersion === 2 ? `script-src 'self'; object-src 'self'` : undefined)
+  }
 
   /* **************************************************************************/
   // Properties: Background
@@ -89,7 +93,7 @@ class CRExtensionManifest extends Model {
   /* **************************************************************************/
 
   get browserAction () { return this.__browserAction__ }
-  get hasBrowserAction () { return !!this.browserAction }
+  get hasBrowserAction () { return this.waveboxSupportsBrowserAction && !!this.browserAction }
 
   /* **************************************************************************/
   // Properties: Options
@@ -149,11 +153,21 @@ class CRExtensionManifest extends Model {
       }
 
       // Pattern match the url
-      return CRExtensionMatchPatterns.match(parsedUrl.protocol, parsedUrl.hostname, parsedUrl.pathname, item.pattern)
+      return CRExtensionMatchPatterns.matchUrl(parsedUrl.protocol, parsedUrl.hostname, parsedUrl.pathname, item.pattern)
     })
 
     return !!match
   }
+
+  get hasWaveboxContentSecurityPolicy () {
+    const csp = this.waveboxContentSecurityPolicy
+    return csp && Array.isArray(csp.matches) && csp.matches.length && typeof (csp.directives) === 'object'
+  }
+  get waveboxContentSecurityPolicy () {
+    return this._value_('wavebox_content_security_policy')
+  }
+
+  get waveboxSupportsBrowserAction () { return this._value_('wavebox_support_browser_action') }
 }
 
 module.exports = CRExtensionManifest
