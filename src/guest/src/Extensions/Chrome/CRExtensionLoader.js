@@ -1,4 +1,5 @@
 const req = require('../../req')
+const electron = require('electron')
 const { runInThisContext } = require('vm')
 const CRExtensionApi = require('./CRExtensionApi')
 const {
@@ -6,6 +7,7 @@ const {
   CR_RUNTIME_ENVIRONMENTS
 } = req.shared('extensionApis.js')
 const { CRExtensionMatchPatterns } = req.shared('Models/CRExtension')
+const GuestHost = require('../../GuestHost')
 
 class CRExtensionLoader {
   /* **************************************************************************/
@@ -24,6 +26,10 @@ class CRExtensionLoader {
     return process.argv.findIndex((arg) => arg === '--background-page') !== -1
   }
 
+  get isContextlessDocument () {
+    return window.location.href === 'about:blank'
+  }
+
   /* **************************************************************************/
   // Loading
   /* **************************************************************************/
@@ -33,20 +39,22 @@ class CRExtensionLoader {
   */
   load () {
     if (this._hasLoaded) { return }
+    this._hasLoaded = true
 
-    if (window.location.protocol === `${CR_EXTENSION_PROTOCOL}:`) {
+    const hostUrl = GuestHost.parsedUrl
+    if (hostUrl.protocol === `${CR_EXTENSION_PROTOCOL}:`) {
       if (this.isBackgroundPage) {
-        window.chrome = new CRExtensionApi(window.location.hostname, CR_RUNTIME_ENVIRONMENTS.BACKGROUND)
+        window.chrome = new CRExtensionApi(hostUrl.hostname, CR_RUNTIME_ENVIRONMENTS.BACKGROUND)
       } else {
-        window.chrome = new CRExtensionApi(window.location.hostname, CR_RUNTIME_ENVIRONMENTS.HOSTED)
+        window.chrome = new CRExtensionApi(hostUrl.hostname, CR_RUNTIME_ENVIRONMENTS.HOSTED)
       }
-    } else if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+    } else if (hostUrl.protocol === 'http:' || hostUrl.protocol === 'https:') {
       const preferences = process.getRenderProcessPreferences()
       if (preferences) {
         for (const pref of preferences) {
           if (pref.crExtensionContentScripts) {
             for (const script of pref.crExtensionContentScripts) {
-              this._injectContentScript(pref.extensionId, script)
+              this._injectContentScript(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, script)
             }
           }
         }
@@ -55,33 +63,37 @@ class CRExtensionLoader {
   }
 
   /**
-  * Checks if a url pattern matches the current url
-  * More info https://developer.chrome.com/extensions/match_patterns
-  */
-  _matchesPattern (pattern) {
-    if (pattern === '<all_urls>') { return true }
-    const regexp = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$')
-    const url = `${window.location.protocol}//${window.location.host}${window.location.pathname}`
-    return url.match(regexp)
-  }
-
-  /**
   * Injects a content script into the UI
+  * @param protocl: the host protocl
+  * @param hostname: the host hostname
+  * @param pathname: the host pathname
   * @param extensionId: the id of the extension to inject
   * @param script: the info about the script to inject
   */
-  _injectContentScript (extensionId, script) {
-    const match = CRExtensionMatchPatterns.matchUrls(window.location.protocol, window.location.host, window.location.pathname, script.matches)
+  _injectContentScript (protocol, hostname, pathname, extensionId, script) {
+    const match = CRExtensionMatchPatterns.matchUrls(protocol, hostname, pathname, script.matches)
     if (!match) { return }
 
     script.js.forEach(({url, code}) => {
       const execute = this._executeContentScript.bind(window, extensionId, url, code)
       if (script.runAt === 'document_start') {
-        process.once('document-start', execute)
+        if (this.isContextlessDocument) {
+          setTimeout(execute)
+        } else {
+          process.once('document-start', execute)
+        }
       } else if (script.runAt === 'document_end') {
-        process.once('document-end', execute)
+        if (this.isContextlessDocument) {
+          electron.remote.getCurrentWebContents().once('dom-ready', execute)
+        } else {
+          process.once('document-end', execute)
+        }
       } else if (script.runAt === 'document_idle') {
-        document.addEventListener('DOMContentLoaded', execute)
+        if (this.isContextlessDocument) {
+          electron.remote.getCurrentWebContents().once('dom-ready', execute)
+        } else {
+          document.addEventListener('DOMContentLoaded', execute)
+        }
       }
     })
   }

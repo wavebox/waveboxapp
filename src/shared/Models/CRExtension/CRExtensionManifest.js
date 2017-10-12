@@ -167,7 +167,7 @@ class CRExtensionManifest extends Model {
     return this._value_('wavebox_content_security_policy')
   }
 
-  get waveboxSupportsBrowserAction () { return this._value_('wavebox_support_browser_action') }
+  get waveboxSupportsBrowserAction () { return this._value_('wavebox_support_browser_action', true) }
 }
 
 module.exports = CRExtensionManifest

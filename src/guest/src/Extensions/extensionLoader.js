@@ -2,6 +2,7 @@ const { ipcRenderer, webFrame } = require('electron')
 const req = require('../req')
 const injector = require('../injector')
 const uuid = require('uuid')
+const GuestHost = require('../GuestHost')
 const {
   WBE_PROVISION_EXTENSION,
   WBE_PROVISION_EXTENSION_REPLY_PFX
@@ -73,7 +74,7 @@ class ExtensionLoader {
       setTimeout(() => { // Fixes a timing issue on-load
         ipcRenderer.send(WBE_PROVISION_EXTENSION, {
           reply: replyId,
-          requestUrl: window.location.href,
+          requestUrl: GuestHost.url,
           loadKey: loadKey,
           apiKey: apiKey,
           protocol: protocol,
@@ -90,7 +91,8 @@ class ExtensionLoader {
   * @return promise
   */
   loadWaveboxGuestApi (apiName, apiKey = '') {
-    if (SUPPORTED_PROTOCOLS.has(window.location.protocol)) {
+    const hostUrl = GuestHost.parsedUrl
+    if (SUPPORTED_PROTOCOLS.has(hostUrl.protocol)) {
       return Promise.resolve()
         .then(() => this._provisionExtension(apiKey, WAVEBOX_CONTENT_IMPL_PROTOCOL, apiName))
         .then((loadUrl) => {
@@ -100,7 +102,7 @@ class ExtensionLoader {
             })
           })
         })
-    } else if (SUPPRESSED_PROTOCOLS.has(window.location.protocol)) {
+    } else if (SUPPRESSED_PROTOCOLS.has(hostUrl.protocol)) {
       /* no-op */
     } else {
       return Promise.reject(new Error('Unsupported Guest Protocol'))
