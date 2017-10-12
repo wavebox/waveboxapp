@@ -172,6 +172,10 @@ class DownloadManager {
     if (savePath) {
       const saveName = path.basename(savePath)
       appWindowManager.mailboxesWindow.downloadCompleted(savePath, saveName)
+
+      if (process.platform === 'darwin') {
+        app.dock.downloadFinished(savePath)
+      }
     }
   }
 
