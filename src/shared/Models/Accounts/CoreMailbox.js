@@ -331,7 +331,7 @@ class CoreMailbox extends Model {
   getUnreadActivityForAppbadge (defaultServiceOnly = false) {
     const services = defaultServiceOnly ? [this.defaultService] : this.enabledServices
     return !!services.find((service) => {
-      return service.supportsUnreadCount && service.unreadActivityCountsTowardsAppUnread && service.hasUnreadActivity
+      return service.supportsUnreadActivity && service.unreadActivityCountsTowardsAppUnread && service.hasUnreadActivity
     })
   }
 
