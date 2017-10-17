@@ -141,20 +141,11 @@ class PDFRenderService {
       const x = parentX + ((parentWidth - width) / 2)
       const y = parentY
 
-      if (process.platform === 'win32') {
-        return {
-          ...standard,
-          x: x,
-          y: y,
-          modal: false
-        }
-      } else {
-        return {
-          ...standard,
-          x: x,
-          y: y,
-          parent: parentWindow
-        }
+      return {
+        ...standard,
+        x: x,
+        y: y,
+        parent: parentWindow
       }
     } else {
       return {
@@ -188,15 +179,22 @@ class PDFRenderService {
       let tmpDownloadPath
 
       const window = new BrowserWindow(this._pdfPrintWindowProperties(sourceWebContents))
+      window.webContents.openDevTools()
       window.once('ready-to-show', () => { window.show() })
       window.on('closed', () => { reject(new Error('User closed window')) })
       window.on('page-title-updated', (evt, title) => {
         if (title.startsWith('wbaction:')) {
           evt.preventDefault()
 
-          if (title === 'wbaction:complete') {
-            this._pdfPrintCleanup(tmpDownloadPath, window)
-            resolve()
+          if (title === 'wbaction:print') {
+            window.webContents.print({ silent: false, printBackground: false, deviceName: '' }, (success) => {
+              this._pdfPrintCleanup(tmpDownloadPath, window)
+              if (success) {
+                resolve()
+              } else {
+                reject(new Error('Printing Error'))
+              }
+            })
           } else if (title === 'wbaction:error') {
             this._pdfPrintCleanup(tmpDownloadPath, window)
             reject(new Error('Printing Error'))
