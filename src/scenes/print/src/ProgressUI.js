@@ -14,8 +14,13 @@ class ProgressUI {
       barContainer: this.rootElement.querySelector('.bar-container'),
       bar: this.rootElement.querySelector('.bar-container>.bar'),
       percentage: this.rootElement.querySelector('.percentage'),
-      status: this.rootElement.querySelector('.status')
+      status: this.rootElement.querySelector('.status'),
+      cancelButton: this.rootElement.querySelector('.action-cancel')
     }
+    this.elements.cancelButton.addEventListener('click', (evt) => {
+      evt.preventDefault()
+      document.title = 'wbaction:cancel'
+    })
   }
 
   /* **************************************************************************/
@@ -44,6 +49,9 @@ class ProgressUI {
 
   get status () { return this.elements.status.textContent || '' }
   set status (v) { this.elements.status.textContent = v }
+
+  get showCancel () { return !this.elements.cancelButton.classList.contains('hidden') }
+  set showCancel (v) { this.elements.cancelButton.classList[v ? 'remove' : 'add']('hidden') }
 }
 
 export default ProgressUI

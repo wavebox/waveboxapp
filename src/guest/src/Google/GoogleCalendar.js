@@ -1,5 +1,5 @@
 const GoogleService = require('./GoogleService')
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, remote } = require('electron')
 const req = require('../req')
 const extensionLoader = require('../Extensions/extensionLoader')
 const { WAVEBOX_CONTENT_IMPL_ENDPOINTS } = req.shared('extensionApis')
@@ -36,6 +36,11 @@ class GoogleCalendar extends GoogleService {
       if (data.apiKey !== this.apiKey) { return }
 
       if (data.type === 'wavebox-alert-present') {
+        const browserWindow = remote.getCurrentWindow()
+        remote.dialog.showMessageBox(browserWindow, {
+          type: 'none',
+          message: data.message
+        })
         ipcRenderer.sendToHost({
           type: WB_BROWSER_GOOGLE_CALENDAR_ALERT_PRESENTED,
           data: { message: data.message }

@@ -65,4 +65,22 @@
   .status {
     text-align: left;
   }
+
+  .actions {
+    margin-top: 16px;
+
+    .action-cancel {
+      font-size: 14px;
+      background-color: rgb(247,247,247);
+      border: 1px solid rgba(0,0,0,0.4);
+      padding-left: 8px;
+      padding-right: 8px;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      cursor: pointer;
+
+      &:active { opacity: 0.6; }
+      &.hidden { display: none; }
+    }
+  }
 }

@@ -2,7 +2,6 @@
 
 (function () {
   const polyfillAlert = function (window) {
-    const original = window.alert
     window.alert = function () {
       window.top.postMessage(JSON.stringify({
         apiKey: WB_API_KEY,
@@ -10,7 +9,7 @@
         type: 'wavebox-alert-present',
         message: arguments[0]
       }), '*')
-      return original.apply(this, Array.from(arguments))
+      return undefined
     }
   }
 

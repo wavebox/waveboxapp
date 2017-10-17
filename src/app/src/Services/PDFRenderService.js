@@ -43,7 +43,11 @@ class PDFRenderService {
     if (url.parse(pdfUrl, true).query.print === 'true') {
       Promise.resolve()
         .then(() => this._printPdf(evt.sender, pdfUrl))
-        .catch(() => dialog.showErrorBox('Printing error', 'Failed to print'))
+        .catch((err) => {
+          if (err.message.toString().toLowerCase().indexOf('user') === -1) {
+            dialog.showErrorBox('Printing error', 'Failed to print')
+          }
+        })
     }
   }
 
@@ -69,7 +73,11 @@ class PDFRenderService {
       const pdfUrl = url.parse(evt.sender.getURL(), true).query.src
       Promise.resolve()
         .then(() => this._printPdf(evt.sender, pdfUrl))
-        .catch(() => dialog.showErrorBox('Printing error', 'Failed to print'))
+        .catch((err) => {
+          if (err.message.toString().toLowerCase().indexOf('user') === -1) {
+            dialog.showErrorBox('Printing error', 'Failed to print')
+          }
+        })
     }
   }
 
@@ -110,7 +118,7 @@ class PDFRenderService {
   * @param height=200: the height of the modal window
   * @return { ... } properties for the browser window that's being created
   */
-  _generatePdfPrintWindowProperties (sourceWebContents, width = 400, height = 200) {
+  _pdfPrintWindowProperties (sourceWebContents, width = 400, height = 200) {
     const parentWindow = BrowserWindow.fromWebContents(sourceWebContents.hostWebContents ? sourceWebContents.hostWebContents : sourceWebContents)
 
     const standard = {
@@ -130,18 +138,42 @@ class PDFRenderService {
     if (parentWindow) {
       const [parentWidth] = parentWindow.getSize()
       const [parentX, parentY] = parentWindow.getPosition()
+      const x = parentX + ((parentWidth - width) / 2)
+      const y = parentY
 
-      return {
-        ...standard,
-        x: parentX + ((parentWidth - width) / 2),
-        y: parentY,
-        parent: parentWindow
+      if (process.platform === 'win32') {
+        return {
+          ...standard,
+          x: x,
+          y: y,
+          modal: false
+        }
+      } else {
+        return {
+          ...standard,
+          x: x,
+          y: y,
+          parent: parentWindow
+        }
       }
     } else {
       return {
         ...standard,
         alwaysOnTop: true
       }
+    }
+  }
+
+  /**
+  * Cleans up the pdf print
+  * @param downloadPath: the download path of the file
+  * @param window: the print window
+  */
+  _pdfPrintCleanup (downloadPath, window) {
+    window.removeAllListeners('closed')
+    window.destroy()
+    if (downloadPath) {
+      try { fs.removeSync(downloadPath) } catch (ex) { }
     }
   }
 
@@ -154,25 +186,23 @@ class PDFRenderService {
   _printPdf (sourceWebContents, url) {
     return new Promise((resolve, reject) => {
       let tmpDownloadPath
-      const window = new BrowserWindow(this._generatePdfPrintWindowProperties(sourceWebContents))
+
+      const window = new BrowserWindow(this._pdfPrintWindowProperties(sourceWebContents))
       window.once('ready-to-show', () => { window.show() })
-      window.on('closed', () => { reject(new Error('Window closed unexpectedly, maybe by user')) })
+      window.on('closed', () => { reject(new Error('User closed window')) })
       window.on('page-title-updated', (evt, title) => {
         if (title.startsWith('wbaction:')) {
           evt.preventDefault()
 
-          if (title === 'wbaction:complete' || title === 'wbaction:error') {
-            window.removeAllListeners('closed')
-            window.close()
-            if (tmpDownloadPath) {
-              try { fs.removeSync(tmpDownloadPath) } catch (ex) { }
-            }
-
-            if (title === 'wbaction:complete') {
-              resolve()
-            } else if (title === 'wbaction:error') {
-              reject(new Error('Printing Error'))
-            }
+          if (title === 'wbaction:complete') {
+            this._pdfPrintCleanup(tmpDownloadPath, window)
+            resolve()
+          } else if (title === 'wbaction:error') {
+            this._pdfPrintCleanup(tmpDownloadPath, window)
+            reject(new Error('Printing Error'))
+          } else if (title === 'wbaction:cancel') {
+            this._pdfPrintCleanup(tmpDownloadPath, window)
+            reject(new Error('User cancelled'))
           }
         }
       })
@@ -185,7 +215,7 @@ class PDFRenderService {
           })
           .catch((err) => {
             window.removeAllListeners('closed')
-            window.close()
+            window.destroy()
             reject(err)
           })
       })
