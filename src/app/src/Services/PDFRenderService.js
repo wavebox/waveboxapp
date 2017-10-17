@@ -179,7 +179,6 @@ class PDFRenderService {
       let tmpDownloadPath
 
       const window = new BrowserWindow(this._pdfPrintWindowProperties(sourceWebContents))
-      window.webContents.openDevTools()
       window.once('ready-to-show', () => { window.show() })
       window.on('closed', () => { reject(new Error('User closed window')) })
       window.on('page-title-updated', (evt, title) => {
