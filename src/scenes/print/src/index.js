@@ -7,6 +7,10 @@ const progressUI = new ProgressUI(document.getElementById('progress'))
 progressUI.isIndeterminate = true
 progressUI.status = 'Downloading...'
 
+window.printPDFEncoded = function (encodedLocalPath) {
+  window.printPDF(decodeURIComponent(encodedLocalPath))
+}
+
 window.printPDF = function (localPath) {
   Promise.resolve()
     .then(() => PDFDatasource.loadPDF(localPath))

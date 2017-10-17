@@ -104,6 +104,48 @@ class PDFRenderService {
   /* ****************************************************************************/
 
   /**
+  * Gets the parent window config for the print dialog
+  * @param sourceWebContents: the web contents that's trying to download
+  * @param width=400: the width of the modal window
+  * @param height=200: the height of the modal window
+  * @return { ... } properties for the browser window that's being created
+  */
+  _generatePdfPrintWindowProperties (sourceWebContents, width = 400, height = 200) {
+    const parentWindow = BrowserWindow.fromWebContents(sourceWebContents.hostWebContents ? sourceWebContents.hostWebContents : sourceWebContents)
+
+    const standard = {
+      width: width,
+      height: height,
+      resizable: false,
+      movable: false,
+      minimizable: false,
+      maximizable: false,
+      modal: true,
+      show: false,
+      webPreferences: {
+        nodeIntegration: true
+      }
+    }
+
+    if (parentWindow) {
+      const [parentWidth] = parentWindow.getSize()
+      const [parentX, parentY] = parentWindow.getPosition()
+
+      return {
+        ...standard,
+        x: parentX + ((parentWidth - width) / 2),
+        y: parentY,
+        parent: parentWindow
+      }
+    } else {
+      return {
+        ...standard,
+        alwaysOnTop: true
+      }
+    }
+  }
+
+  /**
   * Prints a with the UI to go with it
   * @param sourceWebContents: the web contents that's trying to download
   * @param url: the url of the pdf
@@ -112,29 +154,15 @@ class PDFRenderService {
   _printPdf (sourceWebContents, url) {
     return new Promise((resolve, reject) => {
       let tmpDownloadPath
-      const parentWindow = BrowserWindow.fromWebContents(sourceWebContents.hostWebContents ? sourceWebContents.hostWebContents : sourceWebContents)
-      const window = new BrowserWindow({
-        width: 400,
-        height: 200,
-        resizable: false,
-        movable: false,
-        minimizable: false,
-        maximizable: false,
-        closable: false,
-        parent: parentWindow,
-        modal: true,
-        show: false,
-        webPreferences: {
-          nodeIntegration: true
-        }
-      })
-
+      const window = new BrowserWindow(this._generatePdfPrintWindowProperties(sourceWebContents))
       window.once('ready-to-show', () => { window.show() })
+      window.on('closed', () => { reject(new Error('Window closed unexpectedly, maybe by user')) })
       window.on('page-title-updated', (evt, title) => {
         if (title.startsWith('wbaction:')) {
           evt.preventDefault()
 
           if (title === 'wbaction:complete' || title === 'wbaction:error') {
+            window.removeAllListeners('closed')
             window.close()
             if (tmpDownloadPath) {
               try { fs.removeSync(tmpDownloadPath) } catch (ex) { }
@@ -153,9 +181,10 @@ class PDFRenderService {
         DownloadManager.startPlatformDownloadToTemp(sourceWebContents, url)
           .then((localPath) => {
             tmpDownloadPath = localPath
-            window.webContents.executeJavaScript(`window.printPDF("${localPath}")`)
+            window.webContents.executeJavaScript(`window.printPDFEncoded("${encodeURIComponent(localPath)}")`)
           })
           .catch((err) => {
+            window.removeAllListeners('closed')
             window.close()
             reject(err)
           })
