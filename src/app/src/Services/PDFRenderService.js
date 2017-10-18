@@ -131,7 +131,8 @@ class PDFRenderService {
       modal: true,
       show: false,
       webPreferences: {
-        nodeIntegration: true
+        nodeIntegration: true,
+        backgroundThrottling: false
       }
     }
 
@@ -179,6 +180,7 @@ class PDFRenderService {
       let tmpDownloadPath
 
       const window = new BrowserWindow(this._pdfPrintWindowProperties(sourceWebContents))
+      window.setMenuBarVisibility(false)
       window.once('ready-to-show', () => { window.show() })
       window.on('closed', () => { reject(new Error('User closed window')) })
       window.on('page-title-updated', (evt, title) => {
