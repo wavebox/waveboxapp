@@ -6,7 +6,7 @@ const cmds = PACKAGE_DIRS.map((dir) => {
   return {
     cmd: 'npm',
     args: ['outdated'],
-    opts: { stdio: 'inherit' },
+    opts: { stdio: 'inherit', cwd: dir },
     prelog: `${Colors.inverse('npm outdated:')} ${dir}`,
     ignoreErrors: true
   }
