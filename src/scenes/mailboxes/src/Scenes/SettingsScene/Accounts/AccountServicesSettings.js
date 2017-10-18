@@ -77,7 +77,7 @@ export default class AccountServicesSettings extends React.Component {
             <Toggle
               toggled={mailbox.collapseSidebarServices}
               disabled={mailbox.serviceDisplayMode !== CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR}
-              label='Collapse sidebar services when mailbox is inactive'
+              label='Collapse sidebar services when account is inactive'
               labelPosition='right'
               onToggle={(evt, toggled) => {
                 mailboxActions.reduce(mailbox.id, MailboxReducer.setCollapseSidebarServices, toggled)
