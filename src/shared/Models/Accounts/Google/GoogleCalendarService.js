@@ -50,7 +50,7 @@ class GoogleCalendarService extends GoogleService {
   // Properties
   /* **************************************************************************/
 
-  get url () { return 'https://calendar.google.com' }
+  get url () { return 'https://calendar.google.com/calendar/render?new_calendar_optin=true' }
 
   /* **************************************************************************/
   // Properties : Provider Details & counts etc
