@@ -3,7 +3,6 @@ const req = require('../req')
 const uuid = require('uuid')
 const { ipcRenderer } = require('electron')
 const { WB_BROWSER_GUEST_WINDOW_CLOSE } = req.shared('ipcEvents')
-const { WAVEBOX_CONTENT_IMPL_ENDPOINTS } = req.shared('extensionApis')
 
 class ChildWindowProvider {
   /* **************************************************************************/
@@ -13,7 +12,7 @@ class ChildWindowProvider {
   constructor () {
     this.apiKey = uuid.v4()
 
-    extensionLoader.loadWaveboxGuestApi(WAVEBOX_CONTENT_IMPL_ENDPOINTS.CONTENT_WINDOW, this.apiKey)
+    extensionLoader.loadWaveboxGuestApi(extensionLoader.ENDPOINTS.CONTENT_WINDOW, this.apiKey)
 
     window.addEventListener('message', (evt) => {
       if (evt.origin === window.location.origin && evt.isTrusted) {

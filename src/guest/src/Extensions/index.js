@@ -1,3 +1,4 @@
 module.exports = {
-  extensionLoader: require('./extensionLoader')
+  extensionLoader: require('./extensionLoader'),
+  CRExtensionLoader: require('./CRExtensionLoader')
 }

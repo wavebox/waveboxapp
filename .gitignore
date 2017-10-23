@@ -11,3 +11,4 @@ Wavebox-win32-ia32-Installer/
 credentials.js
 .DS_Store
 package-lock.json
+scripts/env.local.js

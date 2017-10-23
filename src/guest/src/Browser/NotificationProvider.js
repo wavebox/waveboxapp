@@ -5,11 +5,9 @@ const {
   WB_BROWSER_NOTIFICATION_CLICK,
   WB_BROWSER_NOTIFICATION_PRESENT
 } = req.shared('ipcEvents')
-const {
-  WAVEBOX_CONTENT_IMPL_ENDPOINTS
-} = req.shared('extensionApis')
-const NotificationPermissionManager = req.notificationPermissionManager()
+const NotificationPermissionManager = require('./notificationPermissionManager')
 const extensionLoader = require('../Extensions/extensionLoader')
+const GuestHost = require('../GuestHost')
 
 class NotificationProvider {
   /* **************************************************************************/
@@ -18,8 +16,11 @@ class NotificationProvider {
 
   constructor () {
     this.apiKey = uuid.v4()
+    this.permissionManager = new NotificationPermissionManager(req.runtimePaths.NOTIFICATION_PERMISSION_PATH)
 
-    extensionLoader.loadWaveboxGuestApi(WAVEBOX_CONTENT_IMPL_ENDPOINTS.NOTIFICATION, this.apiKey)
+    extensionLoader.loadWaveboxGuestApi(extensionLoader.ENDPOINTS.NOTIFICATION, this.apiKey, {
+      permission: this.permissionManager.getDomainPermissionSync(GuestHost.url)
+    })
     window.addEventListener('message', this.handleWindowMessage.bind(this))
     ipcRenderer.on(WB_BROWSER_NOTIFICATION_CLICK, (evt, data) => {
       window.postMessage(JSON.stringify({
@@ -48,7 +49,7 @@ class NotificationProvider {
       if (data.apiKey !== this.apiKey) { return }
 
       if (data.type === 'wavebox-notification-present') {
-        NotificationPermissionManager.getDomainPermission(window.location.href)
+        this.permissionManager.getDomainPermission(window.location.href)
           .then((permission) => {
             if (permission === 'granted') {
               ipcRenderer.sendToHost({
@@ -59,7 +60,7 @@ class NotificationProvider {
             }
           })
       } else if (data.type === 'wavebox-notification-permission-request') {
-        NotificationPermissionManager.processPermissionRequest(window.location.href)
+        this.permissionManager.processPermissionRequest(window.location.href)
           .then((permission) => {
             setTimeout(() => {
               window.postMessage(JSON.stringify({

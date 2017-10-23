@@ -1,5 +1,6 @@
 import {session} from 'electron'
 import mailboxStore from 'stores/mailboxStore'
+import settingStore from 'stores/settingStore'
 import pkg from 'package.json'
 import {
   ARTIFICIAL_COOKIE_PERSIST_WAIT,
@@ -7,7 +8,6 @@ import {
 } from 'shared/constants'
 import MailboxFactory from 'shared/Models/Accounts/MailboxFactory'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
-import ContentExtensions from 'Extensions/Content'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { DownloadManager } from 'Download'
 
@@ -67,9 +67,6 @@ class MailboxesSessionManager {
     }
 
     // Extensions
-    ContentExtensions.supportedProtocols.forEach((protocol) => {
-      ses.protocol.registerStringProtocol(protocol, ContentExtensions.handleStringProtocolRequest.bind(ContentExtensions))
-    })
     ses.webRequest.onHeadersReceived((details, responder) => {
       try {
         const updatedHeaders = CRExtensionManager.runtimeHandler.updateContentSecurityPolicy(details.url, details.responseHeaders)
@@ -143,6 +140,8 @@ class MailboxesSessionManager {
   handlePermissionRequest (webContents, permission, fn) {
     if (permission === 'notifications') {
       fn(false)
+    } else if (permission === 'geolocation') {
+      fn(settingStore.app.enableGeolocationApi)
     } else {
       fn(true)
     }

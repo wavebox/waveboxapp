@@ -51,7 +51,7 @@ class CRExtensionOptionsPage {
       title: this.extension.manifest.name,
       webPreferences: {
         nodeIntegration: false,
-        preload: Resolver.guestPreload('crextensionOptionsTooling.js'),
+        preload: Resolver.crExtensionApi(),
         partition: `${CR_EXTENSION_BG_PARTITION_PREFIX}${this.extension.id}`
       }
     }

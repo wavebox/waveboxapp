@@ -1,6 +1,5 @@
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, remote } = require('electron')
 const req = require('../req')
-const injector = require('../injector')
 const {
   WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP,
   WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN
@@ -17,7 +16,7 @@ class Lifecycle {
 
     ipcRenderer.on(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP, this.sleep.bind(this))
     ipcRenderer.on(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN, this.awaken.bind(this))
-    injector.injectHeadFunction(this.updateState.bind(this))
+    remote.getCurrentWebContents().once('dom-ready', this.updateState.bind(this))
   }
 
   /* **************************************************************************/

@@ -38,6 +38,7 @@
 
   // Startup
   const argv = require('yargs').parse(process.argv)
+  const credentials = require('shared/credentials')
   const AppPrimaryMenu = require('./AppPrimaryMenu').default
   const AppGlobalShortcuts = require('./AppGlobalShortcuts').default
   const storage = require('storage')
@@ -47,7 +48,6 @@
   const extensionStore = require('stores/extensionStore').default
   const ipcEvents = require('shared/ipcEvents')
   const BasicHTTPAuthHandler = require('./BasicHTTPAuthHandler').default
-  const ContentExtensionProvider = require('Extensions/Content').default
   const { HostedExtensionProvider, HostedExtensionSessionManager } = require('Extensions/Hosted')
   const { BrowserWindow, protocol } = require('electron')
   const { CRExtensionManager } = require('Extensions/Chrome')
@@ -64,7 +64,7 @@
   userStore.checkAwake()
 
   /* ****************************************************************************/
-  // Commandline switches
+  // Commandline switches & Environment
   /* ****************************************************************************/
 
   if (settingStore.app.ignoreGPUBlacklist) {
@@ -79,6 +79,8 @@
   if (settingStore.app.disableHardwareAcceleration) {
     app.disableHardwareAcceleration()
   }
+
+  process.env.GOOGLE_API_KEY = credentials.GOOGLE_API_KEY
 
   /* ****************************************************************************/
   // Global objects
@@ -162,13 +164,6 @@
         appWindowManager.mailboxesWindow.openMailtoLink(argv._[index])
         argv._.splice(1)
       }
-    }
-  })
-
-  ipcMain.on(ipcEvents.WBE_PROVISION_EXTENSION, (evt, data) => {
-    ContentExtensionProvider.provisionExtension(data.requestUrl, data.loadKey, data.apiKey, data.protocol, data.src, data.data)
-    if (data.reply) {
-      evt.sender.send(data.reply, { ok: true })
     }
   })
 

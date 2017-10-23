@@ -7,14 +7,11 @@ const Lifecycle = require('./Lifecycle')
 const NotificationProvider = require('./NotificationProvider')
 const environment = remote.getCurrentWebContents().getType()
 const extensionLoader = require('../Extensions/extensionLoader')
-const { CRExtensionLoader } = require('../Extensions/Chrome')
+const { CRExtensionLoader } = require('../Extensions')
 const {
   WB_PING_RESOURCE_USAGE,
   WB_PONG_RESOURCE_USAGE
 } = req.shared('ipcEvents')
-const {
-  WAVEBOX_CONTENT_IMPL_ENDPOINTS
-} = req.shared('extensionApis')
 
 class Browser {
   /* **************************************************************************/
@@ -26,7 +23,7 @@ class Browser {
   *                     contextMenu
   */
   constructor (config = {}) {
-    extensionLoader.loadWaveboxGuestApi(WAVEBOX_CONTENT_IMPL_ENDPOINTS.CHROME)
+    extensionLoader.loadWaveboxGuestApi(extensionLoader.ENDPOINTS.CHROME)
     CRExtensionLoader.load()
     this.keyboardNavigator = new KeyboardNavigator()
     this.spellchecker = new Spellchecker()

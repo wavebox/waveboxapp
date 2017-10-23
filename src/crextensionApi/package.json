@@ -1,0 +1,14 @@
+{
+  "name": "wavebox-crextension",
+  "keywords": [],
+  "author": "opensource@wavebox.io",
+  "license": "MPL-2.0",
+  "repository": "https://github.com/wavebox/waveboxapp",
+  "description": "CRExtension api for Wavebox",
+  "dependencies": {
+    "uuid": "3.1.0"
+  },
+  "devDependencies": {
+    "standard": "10.0.3"
+  }
+}

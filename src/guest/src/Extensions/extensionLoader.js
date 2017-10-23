@@ -1,17 +1,11 @@
-const { ipcRenderer, webFrame } = require('electron')
+const { webFrame } = require('electron')
 const req = require('../req')
-const injector = require('../injector')
-const uuid = require('uuid')
 const GuestHost = require('../GuestHost')
 const {
-  WBE_PROVISION_EXTENSION,
-  WBE_PROVISION_EXTENSION_REPLY_PFX
-} = req.shared('ipcEvents')
-const {
-  WAVEBOX_CONTENT_IMPL_PROTOCOL,
-  WAVEBOX_CONTENT_EXTENSION_PROTOCOL,
   WAVEBOX_HOSTED_EXTENSION_PROTOCOL,
-  CR_EXTENSION_PROTOCOL
+  CR_EXTENSION_PROTOCOL,
+  WAVEBOX_CONTENT_IMPL_ENDPOINTS,
+  VALID_WAVEBOX_CONTENT_IMPL_ENDPOINTS
 } = req.shared('extensionApis')
 const {
   CHROME_PROTOCOL
@@ -28,85 +22,35 @@ const SUPPRESSED_PROTOCOLS = new Set([
 ])
 
 class ExtensionLoader {
-  /* **************************************************************************/
-  // Lifecycle
-  /* **************************************************************************/
-
-  constructor () {
-    webFrame.registerURLSchemeAsPrivileged(WAVEBOX_CONTENT_IMPL_PROTOCOL)
-    webFrame.registerURLSchemeAsPrivileged(WAVEBOX_CONTENT_EXTENSION_PROTOCOL)
-  }
-
-  /* **************************************************************************/
-  // Load Keys
-  /* **************************************************************************/
-
-  /**
-  * Generates a unique load key
-  * @param ext=undefined: an file type extension if required
-  * @return a key that can be used to load an extension
-  */
-  _generateLoadKey (ext) {
-    ext = ext && ext.startsWith('.') ? ext : (ext ? `.${ext}` : '')
-    return `${uuid.v4().replace(/-/g, '')}${ext}`
-  }
-
-  /* **************************************************************************/
-  // Loading
-  /* **************************************************************************/
-
-  /**
-  * Provisions an extension to be loaded
-  * @param apiKey: the api key that can be used to talk back across isolation
-  * @param protocol: the protocol of the api
-  * @param src: the name of the api to load
-  * @return promise
-  */
-  _provisionExtension (apiKey, protocol, src) {
-    return new Promise((resolve, reject) => {
-      const loadKey = this._generateLoadKey('js')
-      const replyId = `${WBE_PROVISION_EXTENSION_REPLY_PFX}:${loadKey}`
-
-      ipcRenderer.once(replyId, () => {
-        resolve(`${protocol}://${loadKey}`)
-      })
-
-      setTimeout(() => { // Fixes a timing issue on-load
-        ipcRenderer.send(WBE_PROVISION_EXTENSION, {
-          reply: replyId,
-          requestUrl: GuestHost.url,
-          loadKey: loadKey,
-          apiKey: apiKey,
-          protocol: protocol,
-          src: src
-        })
-      })
-    })
-  }
+  get ENDPOINTS () { return WAVEBOX_CONTENT_IMPL_ENDPOINTS }
 
   /**
   * Loads a wavebox guest api
   * @param apiName: the name of the api to load
   * @param apiKey='': the api key that can be used to talk back across isolation
+  * @param config={}: jsonable object to pass to the api
   * @return promise
   */
-  loadWaveboxGuestApi (apiName, apiKey = '') {
+  loadWaveboxGuestApi (apiName, apiKey = '', config = {}) {
+    if (!VALID_WAVEBOX_CONTENT_IMPL_ENDPOINTS.has(apiName)) {
+      return Promise.reject(new Error(`Unsupported Api ${apiName}`))
+    }
+
     const hostUrl = GuestHost.parsedUrl
-    if (SUPPORTED_PROTOCOLS.has(hostUrl.protocol)) {
-      return Promise.resolve()
-        .then(() => this._provisionExtension(apiKey, WAVEBOX_CONTENT_IMPL_PROTOCOL, apiName))
-        .then((loadUrl) => {
-          return new Promise((resolve, reject) => {
-            injector.injectJavaScriptUrl(loadUrl, () => {
-              resolve()
-            })
-          })
-        })
-    } else if (SUPPRESSED_PROTOCOLS.has(hostUrl.protocol)) {
-      /* no-op */
-    } else {
+    if (SUPPRESSED_PROTOCOLS.has(hostUrl.protocol)) {
+      return Promise.resolve() /* no-op */
+    }
+    if (!SUPPORTED_PROTOCOLS.has(hostUrl.protocol)) {
       return Promise.reject(new Error('Unsupported Guest Protocol'))
     }
+
+    const wrapper = `
+      ;(function (WB_API_KEY, WB_CONFIG) {
+        ${req.guestApi(apiName)}
+      })('${apiKey}', ${JSON.stringify(config)})
+    `
+    webFrame.executeJavaScript(wrapper)
+    return Promise.resolve()
   }
 }
 

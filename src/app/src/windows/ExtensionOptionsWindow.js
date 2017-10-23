@@ -1,9 +1,5 @@
 import { shell } from 'electron'
 import WaveboxWindow from './WaveboxWindow'
-import settingStore from 'stores/settingStore'
-import {
-  WB_BROWSER_START_SPELLCHECK
-} from 'shared/ipcEvents'
 
 class ExtensionOptionsWindow extends WaveboxWindow {
   /* ****************************************************************************/
@@ -24,8 +20,6 @@ class ExtensionOptionsWindow extends WaveboxWindow {
     this.window.once('ready-to-show', () => {
       this.show()
     })
-    settingStore.on('changed:language', this.languageUpdated)
-    this.window.webContents.on('dom-ready', this.handleDomReady)
     this.window.webContents.on('new-window', this.handleNewWindow)
 
     return this
@@ -36,9 +30,7 @@ class ExtensionOptionsWindow extends WaveboxWindow {
   * @param evt: the event that caused destroy
   */
   destroy (evt) {
-    settingStore.removeListener('changed:language', this.languageUpdated)
     if (this.window && !this.window.isDestroyed() && this.window.webContents) {
-      this.window.webContents.removeListener('dom-ready', this.handleDomReady)
       this.window.webContents.removeListener('new-window', this.handleNewWindow)
     }
     super.destroy(evt)
@@ -49,13 +41,6 @@ class ExtensionOptionsWindow extends WaveboxWindow {
   /* ****************************************************************************/
 
   /**
-  * Handles the dom being ready
-  */
-  handleDomReady = () => {
-    this.languageUpdated({ prev: undefined, next: settingStore.language })
-  }
-
-  /**
   * Handles a new window
   * @param evt: the event that fired
   * @param targetUrl: the url to open
@@ -63,29 +48,6 @@ class ExtensionOptionsWindow extends WaveboxWindow {
   handleNewWindow = (evt, targetUrl) => {
     evt.preventDefault()
     shell.openExternal(targetUrl)
-  }
-
-  /* ****************************************************************************/
-  // Data lifecycle
-  /* ****************************************************************************/
-
-  /**
-  * Handles the language changing
-  * @param prev: the previous language value. also accepts undefined
-  * @param next: the new language value
-  */
-  languageUpdated = ({ prev, next }) => {
-    const prevLang = (prev || {}).spellcheckerLanguage
-    const prevSecLang = (prev || {}).secondarySpellcheckerLanguage
-    const nextLang = (next || {}).spellcheckerLanguage
-    const nextSecLang = (next || {}).secondarySpellcheckerLanguage
-
-    if (prevLang !== nextLang || prevSecLang !== nextSecLang) {
-      this.window.webContents.send(WB_BROWSER_START_SPELLCHECK, {
-        language: nextLang,
-        secondaryLanguage: nextSecLang
-      })
-    }
   }
 
   /* ****************************************************************************/

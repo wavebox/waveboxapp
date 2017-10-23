@@ -56,7 +56,7 @@ class CRExtensionBackgroundPage {
     this._webContents = webContents.create({
       partition: `${CR_EXTENSION_BG_PARTITION_PREFIX}${this.extension.id}`,
       isBackgroundPage: true,
-      preload: Resolver.guestPreload('crextensionBackgroundPage.js'),
+      preload: Resolver.crExtensionApi(),
       commandLineSwitches: [
         '--background-page',
         '--nodeIntegration=false'
@@ -68,6 +68,8 @@ class CRExtensionBackgroundPage {
       hostname: this.extension.id,
       pathname: this._name
     }))
+
+    this._webContents.openDevTools()
   }
 
   /**

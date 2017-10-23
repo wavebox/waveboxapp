@@ -2,7 +2,6 @@ const GoogleService = require('./GoogleService')
 const { ipcRenderer, remote } = require('electron')
 const req = require('../req')
 const extensionLoader = require('../Extensions/extensionLoader')
-const { WAVEBOX_CONTENT_IMPL_ENDPOINTS } = req.shared('extensionApis')
 const { WB_BROWSER_GOOGLE_CALENDAR_ALERT_PRESENTED } = req.shared('ipcEvents')
 const uuid = require('uuid')
 
@@ -15,7 +14,7 @@ class GoogleCalendar extends GoogleService {
     super()
     this.apiKey = uuid.v4()
     window.addEventListener('message', this.handleWindowMessage.bind(this))
-    extensionLoader.loadWaveboxGuestApi(WAVEBOX_CONTENT_IMPL_ENDPOINTS.GOOGLE_CALENDAR_ALERT, this.apiKey)
+    extensionLoader.loadWaveboxGuestApi(extensionLoader.ENDPOINTS.GOOGLE_CALENDAR_ALERT, this.apiKey)
   }
 
   /* **************************************************************************/

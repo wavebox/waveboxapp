@@ -1,6 +1,5 @@
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, webFrame } = require('electron')
 const req = require('../req')
-const injector = require('../injector')
 const { WB_BROWSER_INJECT_CUSTOM_CONTENT } = req.shared('ipcEvents')
 
 class CustomCode {
@@ -10,10 +9,10 @@ class CustomCode {
 
   _handleInject_ (evt, data) {
     if (data.js) {
-      injector.injectJavaScript(data.js)
+      webFrame.executeJavaScript(data.js)
     }
     if (data.css) {
-      injector.injectStyle(data.css)
+      webFrame.insertCSS(data.css)
     }
   }
 }

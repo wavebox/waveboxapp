@@ -372,6 +372,14 @@ class SettingsActions {
     return this.update(SEGMENTS.APP, 'hasSeenSnapSetupMessage', seen)
   }
 
+  /**
+  * Sets whether geolocation api requests are granted or not
+  * @param enabled: true to enable, false to disable
+  */
+  setEnableGeolocationApi (enabled) {
+    return this.update(SEGMENTS.APP, 'enableGeolocationApi', enabled)
+  }
+
   /* **************************************************************************/
   // Tray
   /* **************************************************************************/

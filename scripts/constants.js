@@ -14,6 +14,7 @@ module.exports = {
     ROOT_DIR,
     path.join(SRC_DIR, 'app'),
     path.join(SRC_DIR, 'guest'),
+    path.join(SRC_DIR, 'crextensionApi'),
     path.join(SRC_DIR, 'scenes/mailboxes'),
     path.join(SRC_DIR, 'scenes/content'),
     path.join(SRC_DIR, 'scenes/monitor'),

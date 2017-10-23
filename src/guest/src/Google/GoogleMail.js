@@ -1,5 +1,4 @@
-const injector = require('../injector')
-const {ipcRenderer} = require('electron')
+const {ipcRenderer, webFrame} = require('electron')
 const req = require('../req')
 const GinboxApi = require('./GinboxApi')
 const GmailApi = require('./GmailApi')
@@ -7,7 +6,6 @@ const GoogleService = require('./GoogleService')
 const GmailChangeEmitter = require('./GmailChangeEmitter')
 const GinboxChangeEmitter = require('./GinboxChangeEmitter')
 const extensionLoader = require('../Extensions/extensionLoader')
-const { WAVEBOX_CONTENT_IMPL_ENDPOINTS } = req.shared('extensionApis')
 const {
   WB_BROWSER_WINDOW_ICONS_IN_SCREEN,
   WB_BROWSER_OPEN_MESSAGE,
@@ -39,7 +37,7 @@ class GoogleMail extends GoogleService {
     `
 
     // Inject some styles
-    injector.injectStyle(`
+    webFrame.insertCSS(`
       a[href*="/SignOutOptions"] {
         visibility: hidden !important;
       }
@@ -48,7 +46,7 @@ class GoogleMail extends GoogleService {
     // Bind our listeners
     ipcRenderer.on(WB_BROWSER_WINDOW_ICONS_IN_SCREEN, this.handleWindowIconsInScreenChange.bind(this))
     ipcRenderer.on(WB_BROWSER_OPEN_MESSAGE, this.handleOpenMesage.bind(this))
-    extensionLoader.loadWaveboxGuestApi(WAVEBOX_CONTENT_IMPL_ENDPOINTS.GOOGLE_MAIL_WINDOW_OPEN)
+    extensionLoader.loadWaveboxGuestApi(extensionLoader.ENDPOINTS.GOOGLE_MAIL_WINDOW_OPEN)
 
     if (this.isGmail) {
       this.loadGmailAPI()

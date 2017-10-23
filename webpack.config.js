@@ -10,7 +10,8 @@ const TASKS = {
   print: require('./src/scenes/print/webpack.config.js'),
   monitor: require('./src/scenes/monitor/webpack.config.js'),
   guest: require('./src/guest/webpack.config.js'),
-  guestApi: require('./src/guestApi/webpack.config.js')
+  guestApi: require('./src/guestApi/webpack.config.js'),
+  crextensionApi: require('./src/crextensionApi/webpack.config.js')
 }
 
 module.exports = function (env = {}) {

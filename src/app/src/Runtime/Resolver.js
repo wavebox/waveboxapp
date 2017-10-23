@@ -42,6 +42,13 @@ class Resolver {
   }
 
   /**
+  * @return the full path to the crextension api
+  */
+  static crExtensionApi () {
+    return path.resolve(path.join(__dirname, '../crextensionApi/crextensionApi.js'))
+  }
+
+  /**
   * @param name: the name of the file in the guest api repo
   * @return the full path to the file
   */

@@ -82,12 +82,12 @@ export default class AdvancedSettings extends React.Component {
                   settingsActions.ignoreGPUBlacklist(toggled)
                 }} />
               <Toggle
-                toggled={app.disableHardwareAcceleration}
-                label='Disable hardware acceleration (Requires Restart)'
+                toggled={!app.disableHardwareAcceleration}
+                label='Hardware acceleration (Requires Restart)'
                 labelPosition='right'
                 onToggle={(evt, toggled) => {
                   showRestart()
-                  settingsActions.disableHardwareAcceleration(toggled)
+                  settingsActions.disableHardwareAcceleration(!toggled)
                 }} />
               <Toggle
                 toggled={app.enableUseZoomForDSF}
@@ -98,13 +98,18 @@ export default class AdvancedSettings extends React.Component {
                   settingsActions.enableUseZoomForDSF(toggled)
                 }} />
               <Toggle
-                toggled={app.disableSmoothScrolling}
-                label='Disable Smooth Scrolling (Requires Restart)'
+                toggled={!app.disableSmoothScrolling}
+                label='Smooth Scrolling (Requires Restart)'
                 labelPosition='right'
                 onToggle={(evt, toggled) => {
                   showRestart()
-                  settingsActions.disableSmoothScrolling(toggled)
+                  settingsActions.disableSmoothScrolling(!toggled)
                 }} />
+              <Toggle
+                toggled={app.enableGeolocationApi}
+                label='Geolocation API'
+                labelPosition='right'
+                onToggle={(evt, toggled) => { settingsActions.setEnableGeolocationApi(toggled) }} />
               <Toggle
                 toggled={extension.enableChromeExperimental}
                 label='Experimental chrome extension support (Requires Restart)'

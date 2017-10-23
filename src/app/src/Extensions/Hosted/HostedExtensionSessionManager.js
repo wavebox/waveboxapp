@@ -1,6 +1,5 @@
 import { session } from 'electron'
 import HostedExtensionProvider from './HostedExtensionProvider'
-import ContentExtensions from '../Content'
 
 class HostedExtensionSessionManager {
   /* ****************************************************************************/
@@ -27,9 +26,6 @@ class HostedExtensionSessionManager {
       ses.protocol.registerFileProtocol(protocol, (request, responder) => {
         HostedExtensionProvider.handleFileProtocolRequest(partition, request, responder)
       })
-    })
-    ContentExtensions.supportedProtocols.forEach((protocol) => {
-      ses.protocol.registerStringProtocol(protocol, ContentExtensions.handleStringProtocolRequest.bind(ContentExtensions))
     })
 
     this.__managed__.add(partition)

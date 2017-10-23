@@ -96,7 +96,7 @@ class DownloadManager {
     }
 
     // Set the save - will prevent dialog showing up
-    const downloadPath = unusedFilename.sync(savePath + '.waveboxdownload') // just-in-case
+    const downloadPath = unusedFilename.sync(savePath) // just-in-case
     item.setSavePath(downloadPath)
     this.user.lastPath = path.dirname(savePath)
 
@@ -110,17 +110,11 @@ class DownloadManager {
       // Event will get destroyed before move callback completes. If
       // you need any info from it grab it before calling fs.move
       if (state === 'completed') {
-        setTimeout(() => { // Introduce a short wait incase the buffer is still flushing out
-          fs.move(downloadPath, savePath, (err) => {
-            this._userDownloadFinished(id, err ? undefined : savePath)
-          })
-        }, 500)
+        this._userDownloadFinished(id, downloadPath)
       } else {
-        setTimeout(() => {  // Introduce a short wait incase the buffer is still flushing out
-          // Tidy-up on failure
-          try { fs.removeSync(downloadPath) } catch (ex) { /* no-op */ }
-          this._userDownloadFinished(id, undefined)
-        }, 500)
+        // Tidy-up on failure
+        try { fs.removeSync(downloadPath) } catch (ex) { /* no-op */ }
+        this._userDownloadFinished(id, undefined)
       }
     })
   }

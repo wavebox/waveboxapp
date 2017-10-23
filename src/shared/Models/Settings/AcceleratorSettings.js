@@ -50,7 +50,7 @@ class AcceleratorSettings extends Model {
   get mailboxIndexDefault () { return 'CmdOrCtrl+Number' }
   get servicePreviousDefault () { return 'CmdOrCtrl+Alt+<' }
   get serviceNextDefault () { return 'CmdOrCtrl+Alt+>' }
-  get serviceIndexDefault () { return 'CmdOrCtrl+Alt+Number' }
+  get serviceIndexDefault () { return process.platform === 'darwin' ? 'Command+Alt+Number' : 'Ctrl+Shift+Number' }
 
   /* ****************************************************************************/
   // Config

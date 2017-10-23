@@ -37,6 +37,7 @@ class AppSettings extends Model {
   get hasSeenAppTour () { return this._value_('hasSeenAppTour', false) }
   get lastSeenAccountMessageUrl () { return this._value_('lastSeenAccountMessageUrl', undefined) }
   get hasSeenSnapSetupMessage () { return this._value_('hasSeenSnapSetupMessage', false) }
+  get enableGeolocationApi () { return this._value_('enableGeolocationApi', true) }
 }
 
 module.exports = AppSettings

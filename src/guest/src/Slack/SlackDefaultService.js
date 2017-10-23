@@ -1,6 +1,6 @@
+const { webFrame } = require('electron')
 const Browser = require('../Browser/Browser')
 const Wavebox = require('../Wavebox/Wavebox')
-const injector = require('../injector')
 
 class TrelloDefaultService {
   /* **************************************************************************/
@@ -11,7 +11,7 @@ class TrelloDefaultService {
     this.browser = new Browser()
     this.wavebox = new Wavebox()
 
-    injector.injectStyle(`
+    webFrame.insertCSS(`
       #macssb1_banner { display:none; }
     `)
   }
