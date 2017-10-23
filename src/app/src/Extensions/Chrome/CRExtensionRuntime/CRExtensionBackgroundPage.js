@@ -68,8 +68,6 @@ class CRExtensionBackgroundPage {
       hostname: this.extension.id,
       pathname: this._name
     }))
-
-    this._webContents.openDevTools()
   }
 
   /**

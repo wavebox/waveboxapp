@@ -197,7 +197,6 @@ class MailboxesWindow extends WaveboxWindow {
   */
   handleAppWebContentsCreated = (evt, contents) => {
     if (contents.getType() === 'webview' && contents.hostWebContents === this.window.webContents) {
-      contents.openDevTools()
       contents.on('new-window', (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
         this.handleWebViewNewWindow(contents.id, evt, targetUrl, frameName, disposition, options, additionalFeatures)
       })
