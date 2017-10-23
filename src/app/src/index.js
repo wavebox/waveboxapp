@@ -52,6 +52,14 @@
   const { BrowserWindow, protocol } = require('electron')
   const { CRExtensionManager } = require('Extensions/Chrome')
   const { SpellcheckService, PDFRenderService } = require('./Services')
+  const { SessionManager, MailboxesSessionManager } = require('./SessionManager')
+
+  /* ****************************************************************************/
+  // Managers
+  /* ****************************************************************************/
+
+  SessionManager.start()
+  MailboxesSessionManager.start()
 
   /* ****************************************************************************/
   // Stores
@@ -98,6 +106,7 @@
   /* ****************************************************************************/
   // Extensions
   /* ****************************************************************************/
+
   CRExtensionManager.setup()
   protocol.registerStandardSchemes([].concat(
     HostedExtensionProvider.supportedProtocols,
@@ -145,10 +154,6 @@
     AppUpdater.applySquirrelUpdate(appWindowManager)
   })
 
-  ipcMain.on(ipcEvents.WB_PREPARE_MAILBOX_SESSION, (evt, data) => {
-    appWindowManager.mailboxesWindow.sessionManager.startManagingSession(data.partition, data.mailboxType)
-    evt.returnValue = true
-  })
   ipcMain.on(ipcEvents.WB_PREPARE_EXTENSION_SESSION, (evt, data) => {
     HostedExtensionSessionManager.startManagingSession(data.partition)
     evt.returnValue = true

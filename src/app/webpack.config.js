@@ -70,6 +70,7 @@ module.exports = function (env) {
         DownloadManager: path.resolve(path.join(__dirname), 'src/DownloadManager'),
         Extensions: path.resolve(path.join(__dirname, 'src/Extensions')),
         Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
+        SessionManager: path.resolve(path.join(__dirname, 'src/SessionManager')),
         storage: path.resolve(path.join(__dirname, 'src/storage')),
         stores: path.resolve(path.join(__dirname, 'src/stores')),
         windows: path.resolve(path.join(__dirname, 'src/windows')),

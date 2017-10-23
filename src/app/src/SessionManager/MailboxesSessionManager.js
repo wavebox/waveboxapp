@@ -1,4 +1,5 @@
-import {session} from 'electron'
+import {session, ipcMain} from 'electron'
+import {EventEmitter} from 'events'
 import mailboxStore from 'stores/mailboxStore'
 import settingStore from 'stores/settingStore'
 import pkg from 'package.json'
@@ -6,12 +7,16 @@ import {
   ARTIFICIAL_COOKIE_PERSIST_WAIT,
   ARTIFICIAL_COOKIE_PERSIST_PERIOD
 } from 'shared/constants'
+import {
+  WB_PREPARE_MAILBOX_SESSION
+} from 'shared/ipcEvents'
 import MailboxFactory from 'shared/Models/Accounts/MailboxFactory'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { DownloadManager } from 'Download'
+import SessionManager from './SessionManager'
 
-class MailboxesSessionManager {
+class MailboxesSessionManager extends EventEmitter {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
@@ -20,11 +25,42 @@ class MailboxesSessionManager {
   * @param mailboxWindow: the mailbox window instance we're working for
   */
   constructor () {
+    super()
+    this._setup = false
     this.lastUsedDownloadPath = null
     this.downloadsInProgress = { }
     this.persistCookieThrottle = { }
 
     this.__managed__ = new Set()
+  }
+
+  /**
+  * Binds the listeners and starts responding to requests
+  */
+  start () {
+    if (this._setup) { return }
+    this._setup = true
+
+    ipcMain.on(WB_PREPARE_MAILBOX_SESSION, (evt, data) => {
+      const nowManaging = this._startManagingSession(data.partition, data.mailboxType)
+      if (nowManaging) {
+        this.emit('session-managed', session.fromPartition(data.partition))
+      }
+      evt.returnValue = nowManaging
+    })
+  }
+
+  /* ****************************************************************************/
+  // Getters
+  /* ****************************************************************************/
+
+  /**
+  * @return all currently managed sessions
+  */
+  getAllSessions () {
+    return Array.from(this.__managed__).map((partition) => {
+      return session.fromPartition(partition)
+    })
   }
 
   /* ****************************************************************************/
@@ -35,7 +71,7 @@ class MailboxesSessionManager {
   * @param partition: the partition id
   * @return the mailbox model for the partition
   */
-  getMailboxFromPartition (partition) {
+  _getMailboxFromPartition (partition) {
     return mailboxStore.getMailbox(partition.replace('persist:', ''))
   }
 
@@ -47,27 +83,28 @@ class MailboxesSessionManager {
   * Starts managing a session
   * @param parition the name of the partion to manage
   * @param mailboxType: the type of mailbox we're managing for
+  * @return true if this is a new session and its now being managed, false otherwise
   */
-  startManagingSession (partition, mailboxType) {
-    if (this.__managed__.has(partition)) { return }
+  _startManagingSession (partition, mailboxType) {
+    if (this.__managed__.has(partition)) { return false }
 
     const ses = session.fromPartition(partition)
-    const mailbox = this.getMailboxFromPartition(partition)
+    const mailbox = this._getMailboxFromPartition(partition)
 
     // Downloads
     DownloadManager.setupUserDownloadHandlerForPartition(partition)
 
     // Permissions & env
-    ses.setPermissionRequestHandler(this.handlePermissionRequest)
-    this.setupUserAgent(ses, partition, mailboxType)
+    ses.setPermissionRequestHandler(this._handlePermissionRequest)
+    this._setupUserAgent(ses, partition, mailboxType)
     if (mailbox && mailbox.artificiallyPersistCookies) {
-      ses.webRequest.onCompleted((evt) => {
-        this.artificiallyPersistCookies(partition)
+      SessionManager.webRequestEmitterFromSession(ses).completed.on(undefined, (evt) => {
+        this._artificiallyPersistCookies(partition)
       })
     }
 
     // Extensions
-    ses.webRequest.onHeadersReceived((details, responder) => {
+    SessionManager.webRequestEmitterFromSession(ses).headersReceived.onBlocking(undefined, (details, responder) => {
       try {
         const updatedHeaders = CRExtensionManager.runtimeHandler.updateContentSecurityPolicy(details.url, details.responseHeaders)
         if (updatedHeaders) {
@@ -85,6 +122,8 @@ class MailboxesSessionManager {
       }
     })
     this.__managed__.add(partition)
+
+    return true
   }
 
   /* ****************************************************************************/
@@ -97,7 +136,7 @@ class MailboxesSessionManager {
   * @param partition: the partition the useragent is for
   * @param mailboxType: the type of mailbox this is
   */
-  setupUserAgent (ses, partition, mailboxType) {
+  _setupUserAgent (ses, partition, mailboxType) {
     const defaultUA = ses.getUserAgent()
       .replace( // Replace electron with our version of Wavebox
         `Electron/${process.versions.electron}`,
@@ -106,7 +145,7 @@ class MailboxesSessionManager {
 
     // Handle accounts that have custom settings
     if (mailboxType === CoreMailbox.MAILBOX_TYPES.GENERIC) {
-      const mailbox = this.getMailboxFromPartition(partition)
+      const mailbox = this._getMailboxFromPartition(partition)
       if (mailbox && mailbox.useCustomUserAgent && mailbox.customUserAgentString) {
         ses.setUserAgent(mailbox.customUserAgentString)
         return
@@ -137,7 +176,7 @@ class MailboxesSessionManager {
   * @param permission: the permission name
   * @param fn: execute with response
   */
-  handlePermissionRequest (webContents, permission, fn) {
+  _handlePermissionRequest (webContents, permission, fn) {
     if (permission === 'notifications') {
       fn(false)
     } else if (permission === 'geolocation') {
@@ -155,7 +194,7 @@ class MailboxesSessionManager {
   * Forces the cookies to persist artifically. This helps users using saml signin
   * @param partition: the partition string for this session
   */
-  artificiallyPersistCookies (partition) {
+  _artificiallyPersistCookies (partition) {
     if (this.persistCookieThrottle[partition] !== undefined) { return }
 
     this.persistCookieThrottle[partition] = setTimeout(() => {
@@ -189,4 +228,4 @@ class MailboxesSessionManager {
   }
 }
 
-export default MailboxesSessionManager
+export default new MailboxesSessionManager()

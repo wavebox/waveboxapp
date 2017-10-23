@@ -1,10 +1,9 @@
 import electron from 'electron'
 import appWindowManager from 'R/appWindowManager'
-import WaveboxWindow from '../WaveboxWindow'
-import ContentWindow from '../ContentWindow'
-import ContentPopupWindow from '../ContentPopupWindow'
+import WaveboxWindow from './WaveboxWindow'
+import ContentWindow from './ContentWindow'
+import ContentPopupWindow from './ContentPopupWindow'
 import url from 'url'
-import MailboxesSessionManager from './MailboxesSessionManager'
 import settingStore from 'stores/settingStore'
 import userStore from 'stores/userStore'
 import mailboxStore from 'stores/mailboxStore'
@@ -84,7 +83,6 @@ class MailboxesWindow extends WaveboxWindow {
     this.authSlack = new AuthSlack()
     this.authMicrosoft = new AuthMicrosoft()
     this.authWavebox = new AuthWavebox()
-    this.sessionManager = new MailboxesSessionManager()
     this.attachedMailboxes = new Map()
     this.attachedExtensions = new Map()
     this.provisionalTargetUrls = new Map()
