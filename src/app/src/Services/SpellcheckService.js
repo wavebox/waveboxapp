@@ -53,9 +53,9 @@ class SpellcheckService {
 
     wc.on('destroyed', () => { this.connected.delete(id) })
     wc.on('dom-ready', () => { // Content popup windows seem to be more reliable with this
-      wc.sendToAll(WB_BROWSER_CONFIGURE_SPELLCHECK, this._buildPayload(settingStore.language))
+      wc.send(WB_BROWSER_CONFIGURE_SPELLCHECK, this._buildPayload(settingStore.language))
     })
-    wc.sendToAll(WB_BROWSER_CONFIGURE_SPELLCHECK, this._buildPayload(settingStore.language))
+    wc.send(WB_BROWSER_CONFIGURE_SPELLCHECK, this._buildPayload(settingStore.language))
 
     this.connected.add(id)
   }

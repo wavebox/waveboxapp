@@ -76,7 +76,9 @@
     if (evt.target.tagName === 'IFRAME') {
       patchIframeWindowOpen(evt.target)
     } else {
-      patchAllIframeWindowOpen()
+      if (document.body) {
+        patchAllIframeWindowOpen()
+      }
     }
   })
 })()

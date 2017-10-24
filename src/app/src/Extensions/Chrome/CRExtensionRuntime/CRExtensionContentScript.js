@@ -33,11 +33,18 @@ class CRExtensionContentScript {
 
     const entry = {
       extensionId: this.extension.id,
+      popoutWindowPostmessageCapture: this.extension.manifest.popoutWindowPostmessageCapture,
       crExtensionContentScripts: this.extension.manifest.contentScripts.map((cs) => {
         return {
           matches: cs.matches,
           runAt: cs.runAt,
           js: cs.js.map((scriptPath) => {
+            return {
+              url: `${CR_EXTENSION_PROTOCOL}://${this.extension.id}/${scriptPath}`,
+              code: String(fs.readFileSync(path.join(this.extension.srcPath, scriptPath)))
+            }
+          }),
+          css: cs.css.map((scriptPath) => {
             return {
               url: `${CR_EXTENSION_PROTOCOL}://${this.extension.id}/${scriptPath}`,
               code: String(fs.readFileSync(path.join(this.extension.srcPath, scriptPath)))

@@ -41,6 +41,15 @@ class Extension {
       return undefined
     }
   }
+
+  /* **************************************************************************/
+  // Methods
+  /* **************************************************************************/
+
+  isAllowedIncognitoAccess (callback) {
+    const res = false
+    setTimeout(() => callback(res))
+  }
 }
 
 export default Extension

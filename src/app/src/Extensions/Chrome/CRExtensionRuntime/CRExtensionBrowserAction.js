@@ -272,7 +272,7 @@ class CRExtensionBrowserAction {
   */
   handleClick = (evt, tabId) => {
     webContents.getAllWebContents().forEach((targetWebcontents) => {
-      targetWebcontents.sendToAll(`${CRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, tabId)
+      targetWebcontents.send(`${CRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, tabId)
     })
   }
 }

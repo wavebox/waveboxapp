@@ -99,12 +99,8 @@ class StorageArea {
       `${CRX_STORAGE_SET_}${this[privExtensionId]}`,
       [this[privStorageType], items],
       (evt, err, response) => {
-        if (err) {
-          this[privRuntime][protectedHandleError](err)
-          callback()
-        } else {
-          callback()
-        }
+        if (err) { this[privRuntime][protectedHandleError](err) }
+        if (callback) { callback() }
       })
   }
 
@@ -118,12 +114,8 @@ class StorageArea {
       `${CRX_STORAGE_REMOVE_}${this[privExtensionId]}`,
       [this[privStorageType], keys],
       (evt, err, response) => {
-        if (err) {
-          this[privRuntime][protectedHandleError](err)
-          callback()
-        } else {
-          callback()
-        }
+        if (err) { this[privRuntime][protectedHandleError](err) }
+        if (callback) { callback() }
       })
   }
 
@@ -132,12 +124,8 @@ class StorageArea {
       `${CRX_STORAGE_CLEAR_}${this[privExtensionId]}`,
       [this[privStorageType]],
       (evt, err, response) => {
-        if (err) {
-          this[privRuntime][protectedHandleError](err)
-          callback()
-        } else {
-          callback()
-        }
+        if (err) { this[privRuntime][protectedHandleError](err) }
+        if (callback) { callback() }
       })
   }
 }

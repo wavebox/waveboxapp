@@ -6,6 +6,11 @@ const CRExtensionManifestBrowserAction = require('./CRExtensionManifestBrowserAc
 const CRExtensionI18n = require('./CRExtensionI18n')
 const CRExtensionMatchPatterns = require('./CRExtensionMatchPatterns')
 
+const POPOUT_WINDOW_MODES = Object.freeze({
+  CONTENT: 'CONTENT',
+  POPOUT: 'POPOUT'
+})
+
 class CRExtensionManifest extends Model {
   /* **************************************************************************/
   // Class
@@ -29,6 +34,12 @@ class CRExtensionManifest extends Model {
   }
 
   /* **************************************************************************/
+  // Class: Properties: Types
+  /* **************************************************************************/
+
+  static get POPOUT_WINDOW_MODES () { return POPOUT_WINDOW_MODES }
+
+  /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
 
@@ -38,6 +49,12 @@ class CRExtensionManifest extends Model {
     this.__contentScripts__ = data.content_scripts ? data.content_scripts.map((def) => new CRExtensionManifestContentScript(def)) : []
     this.__browserAction__ = data.browser_action ? new CRExtensionManifestBrowserAction(data.browser_action) : undefined
   }
+
+  /* **************************************************************************/
+  // Properties: Types
+  /* **************************************************************************/
+
+  get POPOUT_WINDOW_MODES () { return POPOUT_WINDOW_MODES }
 
   /* **************************************************************************/
   // Properties
@@ -130,16 +147,15 @@ class CRExtensionManifest extends Model {
   // Wavebox
   /* **************************************************************************/
 
-  get popoutWindowWhitelist () {
-    return this._value_('wavebox_popout_window_whitelist', [])
-  }
+  get popoutWindowWhitelist () { return this._value_('wavebox_popout_window_whitelist', []) }
+  get popoutWindowPostmessageCapture () { return this._value_('wavebox_popout_postmessage_capture', []) }
 
   /**
   * Checks to see if a window should open as a popout
   * @param url: the url to open with
   * @param parsedUrl: the parsed url
   * @param disposition: the open mode disposition
-  * @return true if the window should open as popout
+  * @return the mode the window should use from POPOUT_WINDOW_MODES or false if nothing is matches
   */
   shouldOpenWindowAsPopout (url, parsedUrl, disposition) {
     const match = this.popoutWindowWhitelist.find((item) => {
@@ -152,11 +168,26 @@ class CRExtensionManifest extends Model {
         if (item.disposition !== disposition) { return false }
       }
 
+      // Check the search args
+      if (Array.isArray(item.searchArgs) && item.searchArgs.length) {
+        if (item.searchArgs.findIndex((a) => parsedUrl.query[a] === undefined) !== -1) { return false }
+      } else if (typeof (item.searchArgs) === 'string' && item.searchArgs.length) {
+        if (parsedUrl.query[item.searchArgs] === undefined) { return false }
+      }
+
       // Pattern match the url
       return CRExtensionMatchPatterns.matchUrl(parsedUrl.protocol, parsedUrl.hostname, parsedUrl.pathname, item.pattern)
     })
 
-    return !!match
+    if (match) {
+      if (typeof (match.mode) === 'string') {
+        const mode = POPOUT_WINDOW_MODES[match.mode.toUpperCase()]
+        if (mode) { return mode }
+      }
+      return POPOUT_WINDOW_MODES.POPOUT
+    } else {
+      return false
+    }
   }
 
   get hasWaveboxContentSecurityPolicy () {

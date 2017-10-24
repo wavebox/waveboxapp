@@ -230,7 +230,7 @@ class CRExtensionStorage {
   */
   _handleSendChangeset (changeset, storageType) {
     webContents.getAllWebContents().forEach((targetWebcontents) => {
-      targetWebcontents.sendToAll(`${CRX_STORAGE_CHANGED_}${this.extension.id}`, changeset, storageType)
+      targetWebcontents.send(`${CRX_STORAGE_CHANGED_}${this.extension.id}`, changeset, storageType)
     })
   }
 }

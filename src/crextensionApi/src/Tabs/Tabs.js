@@ -1,11 +1,8 @@
-import {
-  CRX_TABS_SENDMESSAGE
-} from 'shared/crExtensionIpcEvents'
-import {
-  CR_RUNTIME_ENVIRONMENTS
-} from 'shared/extensionApis'
+import { CRX_TABS_SENDMESSAGE } from 'shared/crExtensionIpcEvents'
+import { CR_RUNTIME_ENVIRONMENTS } from 'shared/extensionApis'
 import ArgParser from '../Core/ArgParser'
 import DispatchManager from '../Core/DispatchManager'
+import EventUnsupported from '../Core/EventUnsupported'
 
 const privExtensionId = Symbol('privExtensionId')
 const privRuntimeEnvironment = Symbol('privRuntimeEnvironment')
@@ -27,6 +24,10 @@ class Tabs {
     this[privRuntimeEnvironment] = runtimeEnvironment
     this[privHasPermission] = hasPermission
 
+    this.onCreated = new EventUnsupported('chrome.tabs.onCreated')
+    this.onActivated = new EventUnsupported('chrome.tabs.onActivated')
+    this.onUpdated = new EventUnsupported('chrome.tabs.onUpdated')
+
     Object.freeze(this)
   }
 
@@ -34,8 +35,20 @@ class Tabs {
   // Creation
   /* **************************************************************************/
 
-  create () {
-    console.warn('chrome.tabs.create is not yet implemented', Array.from(arguments))
+  create (options, callback) {
+    console.warn('chrome.tabs.create is not yet implemented')
+    if (callback) {
+      const res = []
+      setTimeout(() => callback(res))
+    }
+  }
+
+  query (options, callback) {
+    console.warn('chrome.tabs.query is not yet implemented')
+    if (callback) {
+      const res = []
+      setTimeout(() => callback(res))
+    }
   }
 
   /* **************************************************************************/

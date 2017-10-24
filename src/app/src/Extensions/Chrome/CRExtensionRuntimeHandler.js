@@ -11,7 +11,11 @@ import {
 import {
   CRX_RUNTIME_SENDMESSAGE,
   CRX_TABS_SENDMESSAGE,
-  CRX_RUNTIME_ONMESSAGE_
+  CRX_RUNTIME_ONMESSAGE_,
+  CRX_RUNTIME_HAS_RESPONDER,
+  CRX_PORT_CONNECT_SYNC,
+  CRX_PORT_CONNECTED_,
+  CRX_PORT_DISCONNECTED_
 } from 'shared/crExtensionIpcEvents'
 import {
   WBECRX_GET_EXTENSION_RUNTIME_DATA,
@@ -28,6 +32,7 @@ class CRExtensionRuntimeHandler {
 
   constructor () {
     this.runtimes = new Map()
+    this.nextPortId = 0
 
     CRDispatchManager.registerHandler(CRX_RUNTIME_SENDMESSAGE, this._handleRuntimeSendmessage)
     CRDispatchManager.registerHandler(CRX_TABS_SENDMESSAGE, this._handleTabsSendmessage)
@@ -35,6 +40,8 @@ class CRExtensionRuntimeHandler {
     ipcMain.on(WBECRX_GET_EXTENSION_RUNTIME_CONTEXT_MENU_DATA, this._handleGetRuntimeContextMenuData)
     ipcMain.on(WBECRX_LAUNCH_OPTIONS, this._handleOpenOptionsPage)
     ipcMain.on(WBECRX_INSPECT_BACKGROUND, this._handleInspectBackground)
+    ipcMain.on(CRX_RUNTIME_HAS_RESPONDER, this._handleHasRuntimeResponder)
+    ipcMain.on(CRX_PORT_CONNECT_SYNC, this._handlePortConnect)
   }
 
   /* ****************************************************************************/
@@ -152,6 +159,49 @@ class CRExtensionRuntimeHandler {
     )
   }
 
+  /**
+  * Checks to see if there is a runtime responder
+  * @param evt: the event that fired
+  * @param extensionId: the id of the extension
+  */
+  _handleHasRuntimeResponder = (evt, extensionId) => {
+    evt.returnValue = this.runtimes.has(extensionId)
+  }
+
+  /**
+  * Sets up a port connection
+  * @Param evt: the event that fired
+  * @Param
+  */
+  _handlePortConnect = (evt, extensionId, connectInfo) => {
+    const runtime = this.runtimes.get(extensionId)
+    if (!runtime) {
+      evt.returnValue = null
+      return
+    }
+
+    if (!runtime.backgroundPage || !runtime.backgroundPage.isRunning) {
+      evt.returnValue = null
+      return
+    }
+    const backgroundContents = runtime.backgroundPage.webContents
+
+    const portId = this.nextPortId++
+    evt.returnValue = {
+      portId: portId,
+      tabId: backgroundContents.id
+    }
+
+    // Prepare for teardown
+    evt.sender.once('render-view-deleted', () => {
+      if (backgroundContents.isDestroyed()) { return }
+      backgroundContents.sendToAll(`${CRX_PORT_DISCONNECTED_}${portId}`)
+    })
+
+    // Emit the connect event
+    backgroundContents.sendToAll(`${CRX_PORT_CONNECTED_}${extensionId}`, evt.sender.id, portId, connectInfo)
+  }
+
   /* ****************************************************************************/
   // Data getters
   /* ****************************************************************************/
@@ -218,12 +268,15 @@ class CRExtensionRuntimeHandler {
   * @param url: the url to open with
   * @param parsedUrl: the parsed url
   * @param disposition: the open mode disposition
-  * @return true if the window should open as popout
+  * @return the mode to open in, or false if nothing matched
   */
   shouldOpenWindowAsPopout (webContentsId, url, parsedUrl, disposition) {
-    return !!Array.from(this.runtimes.values()).find((runtime) => {
-      return runtime.shouldOpenWindowAsPopout(webContentsId, url, parsedUrl, disposition)
-    })
+    const runtimes = Array.from(this.runtimes.values())
+    for (let i = 0; i < runtimes.length; i++) {
+      const mode = runtimes[i].shouldOpenWindowAsPopout(webContentsId, url, parsedUrl, disposition)
+      if (mode !== false) { return mode }
+    }
+    return false
   }
 
   /* ****************************************************************************/

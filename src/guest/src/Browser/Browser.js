@@ -25,6 +25,7 @@ class Browser {
   constructor (config = {}) {
     extensionLoader.loadWaveboxGuestApi(extensionLoader.ENDPOINTS.CHROME)
     CRExtensionLoader.load()
+
     this.keyboardNavigator = new KeyboardNavigator()
     this.spellchecker = new Spellchecker()
     this.contextMenu = new ContextMenu(this.spellchecker, config.contextMenu)

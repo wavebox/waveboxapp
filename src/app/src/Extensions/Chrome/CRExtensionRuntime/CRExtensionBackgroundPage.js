@@ -32,6 +32,7 @@ class CRExtensionBackgroundPage {
 
   get isRunning () { return this._webContents && !this._webContents.isDestroyed() }
   get webContents () { return this._webContents }
+  get webContentsId () { return this._webContents.id }
   get html () { return this._html }
   get name () { return this._name }
 

@@ -1,8 +1,11 @@
 import fs from 'fs-extra'
 import path from 'path'
-import semver from 'semver'
 import RuntimePaths from 'Runtime/RuntimePaths'
-import { CRExtension, CRExtensionI18n } from 'shared/Models/CRExtension'
+import {
+  CRExtension,
+  CRExtensionI18n,
+  CRExtensionVersionParser
+} from 'shared/Models/CRExtension'
 
 const UNINSTALL_FLAG = '__uninstall__'
 
@@ -54,7 +57,7 @@ class CRExtensionFS {
     const versionInfo = versionStrings
       .map((versionStr) => {
         const components = versionStr.split('_')
-        const version = semver.valid(components[0])
+        const version = CRExtensionVersionParser.valid(components[0])
         if (version === null) { return undefined }
 
         const revision = components.slice(1).join('_')
@@ -142,7 +145,7 @@ class CRExtensionFS {
 
     // Run an update
     if (versions.length > 1) {
-      const sortedVersions = Array.from(versions).sort((a, b) => semver.gt(a.version, b.version) ? -1 : 1)
+      const sortedVersions = Array.from(versions).sort((a, b) => CRExtensionVersionParser.gt(a.version, b.version) ? -1 : 1)
       const latest = sortedVersions[0]
       const remove = sortedVersions.slice(1)
       remove.forEach((info) => {

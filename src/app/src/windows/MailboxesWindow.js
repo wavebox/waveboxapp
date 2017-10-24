@@ -11,6 +11,7 @@ import CoreService from 'shared/Models/Accounts/CoreService'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import CRExtensionUISubscriber from 'Extensions/Chrome/CRExtensionUISubscriber'
 import CRExtensionManager from 'Extensions/Chrome/CRExtensionManager'
+import CRExtensionManifest from 'shared/Models/CRExtension/CRExtensionManifest'
 import {
   AuthGoogle,
   AuthMicrosoft,
@@ -47,7 +48,9 @@ import {
   WB_SQUIRREL_UPDATE_AVAILABLE,
   WB_SQUIRREL_UPDATE_NOT_AVAILABLE,
   WB_SQUIRREL_UPDATE_CHECK_START,
-  WB_SQUIRREL_UPDATE_DISABLED
+  WB_SQUIRREL_UPDATE_DISABLED,
+
+  WBECRX_RELOAD_OWNER
 } from 'shared/ipcEvents'
 import {
   WAVEBOX_CAPTURE_URL_PREFIX,
@@ -152,6 +155,7 @@ class MailboxesWindow extends WaveboxWindow {
     ipcMain.on(WB_NEW_WINDOW, this.handleOpenNewWindow)
     ipcMain.on(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, this.handleFetchOpenWindowCount)
     ipcMain.on(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)
+    ipcMain.on(WBECRX_RELOAD_OWNER, this.handleCRXReloadOwner)
 
     // We're locking on to our window. This stops file drags redirecting the page
     this.window.webContents.on('will-navigate', (evt, url) => {
@@ -181,6 +185,7 @@ class MailboxesWindow extends WaveboxWindow {
     ipcMain.removeListener(WB_NEW_WINDOW, this.handleOpenNewWindow)
     ipcMain.removeListener(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, this.handleFetchOpenWindowCount)
     ipcMain.removeListener(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)
+    ipcMain.removeListener(WBECRX_RELOAD_OWNER, this.handleCRXReloadOwner)
     super.destroy(evt)
   }
 
@@ -253,6 +258,14 @@ class MailboxesWindow extends WaveboxWindow {
     }
   }
 
+  /**
+  * Handles an extension requesting the owner is reloaded
+  * @param evt: the event that fired
+  */
+  handleCRXReloadOwner = (evt) => {
+    this.reload()
+  }
+
   /* ****************************************************************************/
   // Content window getters
   /* ****************************************************************************/
@@ -322,8 +335,13 @@ class MailboxesWindow extends WaveboxWindow {
     }
 
     // Check installed extensions to see if they overwrite the behaviour
-    if (CRExtensionManager.runtimeHandler.shouldOpenWindowAsPopout(webContentsId, targetUrl, purl, disposition)) {
-      openMode = WINDOW_OPEN_MODES.POPUP_CONTENT
+    const extensionPopoutMode = CRExtensionManager.runtimeHandler.shouldOpenWindowAsPopout(webContentsId, targetUrl, purl, disposition)
+    if (extensionPopoutMode !== false) {
+      if (extensionPopoutMode === CRExtensionManifest.POPOUT_WINDOW_MODES.POPOUT) {
+        openMode = WINDOW_OPEN_MODES.POPUP_CONTENT
+      } else if (extensionPopoutMode === CRExtensionManifest.POPOUT_WINDOW_MODES.CONTENT) {
+        openMode = WINDOW_OPEN_MODES.CONTENT
+      }
     }
 
     if (openMode === WINDOW_OPEN_MODES.POPUP_CONTENT) {

@@ -11,6 +11,11 @@ class CRExtensionManifestContentScript extends Model {
       .map((value) => value ? this._sanitizePathValue_(value) : undefined)
       .filter((value) => !!value)
   }
+  get css () {
+    return this._value_('css', [])
+      .map((value) => value ? this._sanitizePathValue_(value) : undefined)
+      .filter((value) => !!value)
+  }
   get runAt () { return this._value_('run_at', 'document_idle') }
 }
 

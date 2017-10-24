@@ -3,7 +3,9 @@ import url from 'url'
 import {
   CRX_RUNTIME_SENDMESSAGE,
   CRX_RUNTIME_ONMESSAGE_,
-  CRX_RUNTIME_CONTENTSCRIPT_CONNECT_
+  CRX_RUNTIME_CONTENTSCRIPT_CONNECT_,
+  CRX_PORT_CONNECT_SYNC,
+  CRX_PORT_CONNECTED_
 } from 'shared/crExtensionIpcEvents'
 import {
   CR_EXTENSION_PROTOCOL,
@@ -15,6 +17,7 @@ import Event from '../Core/Event'
 import EventUnsupported from '../Core/EventUnsupported'
 import DispatchManager from '../Core/DispatchManager'
 import MessageSender from './MessageSender'
+import Port from './Port'
 import {
   protectedHandleError,
   protectedCtrlEvt1,
@@ -53,6 +56,7 @@ class Runtime {
 
     // Functions
     this.onMessage = new Event()
+    this.onConnect = new Event()
     this.onInstalled = new EventUnsupported('chrome.runtime.onInstalled')
     this.onStartup = new EventUnsupported('chrome.runtime.onStartup')
     this.onUpdateAvailable = new EventUnsupported('chrome.runtime.onUpdateAvailable')
@@ -62,6 +66,10 @@ class Runtime {
 
     // Handlers
     DispatchManager.registerHandler(`${CRX_RUNTIME_ONMESSAGE_}${extensionId}`, this._handleRuntimeOnMessage.bind(this))
+    ipcRenderer.on(`${CRX_PORT_CONNECTED_}${this[privExtensionId]}`, (evt, tabId, portId, connectInfo) => {
+      const port = new Port(this[privExtensionId], portId, tabId, connectInfo.name)
+      this.onConnect.emit(port)
+    })
 
     // Connection
     if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.CONTENTSCRIPT) {
@@ -145,6 +153,21 @@ class Runtime {
         callback(response)
       }
     })
+  }
+
+  connect (...fullArgs) {
+    if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.BACKGROUND) {
+      throw new Error('chrome.runtime.connect is not supported in background page')
+    }
+
+    const [targetExtensionId, connectInfo] = ArgParser.match(fullArgs, [
+      { pattern: ['string', 'object'], out: [ArgParser.MATCH_ARG_0, ArgParser.MATCH_ARG_1] },
+      { pattern: ['string'], out: [ArgParser.MATCH_ARG_0, {}] },
+      { pattern: ['object'], out: [this[privExtensionId], ArgParser.MATCH_ARG_0] },
+      { pattern: [], out: [this[privExtensionId], {}] }
+    ])
+    const {tabId, portId} = ipcRenderer.sendSync(CRX_PORT_CONNECT_SYNC, targetExtensionId, connectInfo)
+    return new Port(this[privExtensionId], portId, tabId, connectInfo.name)
   }
 
   /* **************************************************************************/

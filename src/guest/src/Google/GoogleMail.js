@@ -19,6 +19,7 @@ class GoogleMail extends GoogleService {
 
   constructor () {
     super()
+
     this.changeEmitter = null
 
     this.sidebarStylesheet = document.createElement('style')

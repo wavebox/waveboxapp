@@ -14,7 +14,7 @@ class CRExtensionMatchPatterns {
   */
   static matchUrl (protocol, host, pathname, pattern) {
     if (pattern === ALL_URLS_PATTERN) { return true }
-    const regexp = new RegExp('^' + pattern.replace(/\*/g, '.*') + '$')
+    const regexp = new RegExp('^' + pattern.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$')
     const url = `${protocol}//${host}${pathname}`
     return url.match(regexp) !== null
   }

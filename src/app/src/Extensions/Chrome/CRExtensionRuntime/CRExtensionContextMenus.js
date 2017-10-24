@@ -87,7 +87,7 @@ class CRExtensionContextMenus {
   */
   handleClick = (evt, tabId, params) => {
     webContents.getAllWebContents().forEach((targetWebcontents) => {
-      targetWebcontents.sendToAll(`${CRX_CONTEXT_MENU_CLICKED_}${this.extension.id}`, tabId, params)
+      targetWebcontents.send(`${CRX_CONTEXT_MENU_CLICKED_}${this.extension.id}`, tabId, params)
     })
   }
 }

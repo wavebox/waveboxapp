@@ -4,11 +4,13 @@ import decompress from 'decompress'
 import crxunzip from 'unzip-crx'
 import path from 'path'
 import uuid from 'uuid'
-import semver from 'semver'
 import appendQS from 'append-query'
 import {
   CR_EXTENSION_DOWNLOAD_PARTITION_PREFIX
 } from 'shared/extensionApis'
+import {
+  CRExtensionVersionParser
+} from 'shared/Models/CRExtension'
 import RuntimePaths from 'Runtime/RuntimePaths'
 
 class CRExtensionDownloader {
@@ -128,7 +130,7 @@ class CRExtensionDownloader {
           .then(() => fs.readJson(path.join(patchDir, 'manifest.json')))
           .then((data) => {
             manifest = data
-            extensionVersion = semver.valid(manifest.version)
+            extensionVersion = CRExtensionVersionParser.valid(manifest.version)
             if (extensionVersion === null) {
               return Promise.reject(new Error(`Invalid version string "${manifest.version}"`))
             } else {
