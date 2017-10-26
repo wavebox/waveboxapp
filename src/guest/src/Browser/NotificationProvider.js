@@ -5,7 +5,7 @@ const {
   WB_BROWSER_NOTIFICATION_CLICK,
   WB_BROWSER_NOTIFICATION_PRESENT
 } = req.shared('ipcEvents')
-const NotificationPermissionManager = require('./notificationPermissionManager')
+const NotificationPermissionManager = require('./NotificationPermissionManager')
 const extensionLoader = require('../Extensions/extensionLoader')
 const GuestHost = require('../GuestHost')
 
