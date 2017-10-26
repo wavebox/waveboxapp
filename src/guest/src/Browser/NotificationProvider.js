@@ -16,7 +16,7 @@ class NotificationProvider {
 
   constructor () {
     this.apiKey = uuid.v4()
-    this.permissionManager = new NotificationPermissionManager(req.runtimePaths.NOTIFICATION_PERMISSION_PATH)
+    this.permissionManager = new NotificationPermissionManager(req.runtimePaths().NOTIFICATION_PERMISSION_PATH)
 
     extensionLoader.loadWaveboxGuestApi(extensionLoader.ENDPOINTS.NOTIFICATION, this.apiKey, {
       permission: this.permissionManager.getDomainPermissionSync(GuestHost.url)
