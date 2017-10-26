@@ -1,7 +1,7 @@
 import {
   CR_EXTENSION_PROTOCOL
 } from 'shared/extensionApis'
-import Tab from '../Tabs/Tab'
+import Tab from 'Tabs/Tab'
 
 class MessageSender {
   /* **************************************************************************/

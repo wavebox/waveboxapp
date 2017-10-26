@@ -72,7 +72,8 @@ class CRExtensionLoader {
       const contextId = webFrame.createContext(extensionId, JSON.stringify({
         preload: req.crextensionApiPath(),
         crExtensionCSAutoInit: true,
-        crExtensionCSExtensionId: extensionId
+        crExtensionCSExtensionId: extensionId,
+        crExtensionCSGuestHost: GuestHost.url
       }))
 
       matchedContentScripts.forEach(({js, css, runAt}) => {
@@ -98,7 +99,11 @@ class CRExtensionLoader {
       const execute = this._executeContentJavaScript.bind(window, contextId, extensionId, url, code)
 
       if (runAt === 'document_start') {
-        setTimeout(execute)
+        if (this.isContextlessDocument) {
+          setTimeout(execute)
+        } else {
+          process.once('document-start', execute)
+        }
       } else if (runAt === 'document_end') {
         if (this.isContextlessDocument) {
           remote.getCurrentWebContents().once('dom-ready', execute)

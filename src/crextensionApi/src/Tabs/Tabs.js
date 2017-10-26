@@ -1,8 +1,8 @@
 import { CRX_TABS_SENDMESSAGE } from 'shared/crExtensionIpcEvents'
 import { CR_RUNTIME_ENVIRONMENTS } from 'shared/extensionApis'
-import ArgParser from '../Core/ArgParser'
-import DispatchManager from '../Core/DispatchManager'
-import EventUnsupported from '../Core/EventUnsupported'
+import ArgParser from 'Core/ArgParser'
+import DispatchManager from 'Core/DispatchManager'
+import EventUnsupported from 'Core/EventUnsupported'
 
 const privExtensionId = Symbol('privExtensionId')
 const privRuntimeEnvironment = Symbol('privRuntimeEnvironment')

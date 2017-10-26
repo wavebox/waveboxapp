@@ -1,4 +1,4 @@
-import { ipcRenderer } from 'electron'
+import { ipcRenderer } from 'electronCrx'
 import {
   CRX_GET_MANIFEST_,
   CRX_GET_MESSAGES_

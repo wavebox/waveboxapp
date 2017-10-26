@@ -1,5 +1,5 @@
-import { ipcRenderer } from 'electron'
-import Event from '../Core/Event'
+import { ipcRenderer } from 'electronCrx'
+import Event from 'Core/Event'
 import MessageSender from './MessageSender'
 import {
   CRX_PORT_DISCONNECT_,

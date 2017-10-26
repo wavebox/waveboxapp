@@ -51,11 +51,18 @@ class CRExtensionPopoutPostMessageListener {
         if (data.hasOriginal) { return }
 
         const config = this.configs.find((config) => {
-          if (config.postMessageTarget && config.postMessageTarget.length) {
-            if (config.postMessageTarget !== data.arguments[1]) { return false }
+          if (typeof (config.postMessageTarget) === 'string') {
+            if (config.postMessageTarget.length && config.postMessageTarget === data.arguments[1]) {
+              return true
+            }
+          } else if (Array.isArray(config.postMessageTarget)) {
+            if (config.postMessageTarget.length) {
+              const match = config.postMessageTarget.find((t) => t.length && t === data.arguments[1])
+              if (match) { return true }
+            }
           }
 
-          return true
+          return false
         })
 
         if (config) {

@@ -1,4 +1,4 @@
-import { ipcRenderer } from 'electron'
+import { ipcRenderer } from 'electronCrx'
 import uuid from 'uuid'
 
 const privFriendlyEventName = Symbol('privFriendlyEventName')

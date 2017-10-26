@@ -1,4 +1,4 @@
-import { ipcRenderer } from 'electron'
+import { ipcRenderer } from 'electronCrx'
 import url from 'url'
 import {
   CRX_RUNTIME_SENDMESSAGE,
@@ -12,10 +12,10 @@ import {
   CR_RUNTIME_ENVIRONMENTS
 } from 'shared/extensionApis'
 
-import ArgParser from '../Core/ArgParser'
-import Event from '../Core/Event'
-import EventUnsupported from '../Core/EventUnsupported'
-import DispatchManager from '../Core/DispatchManager'
+import ArgParser from 'Core/ArgParser'
+import Event from 'Core/Event'
+import EventUnsupported from 'Core/EventUnsupported'
+import DispatchManager from 'Core/DispatchManager'
 import MessageSender from './MessageSender'
 import Port from './Port'
 import {

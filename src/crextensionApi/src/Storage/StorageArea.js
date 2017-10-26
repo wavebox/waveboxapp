@@ -7,13 +7,13 @@ import {
 import {
   CR_STORAGE_TYPES
 } from 'shared/extensionApis'
-import ArgParser from '../Core/ArgParser'
+import ArgParser from 'Core/ArgParser'
 
-import DispatchManager from '../Core/DispatchManager'
+import DispatchManager from 'Core/DispatchManager'
 import {
   protectedCtrlEvt1,
   protectedHandleError
-} from '../Runtime/ProtectedRuntimeSymbols'
+} from 'Runtime/ProtectedRuntimeSymbols'
 
 const privExtensionId = Symbol('privExtensionId')
 const privStorageType = Symbol('privStorageType')

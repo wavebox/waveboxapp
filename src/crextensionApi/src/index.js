@@ -1,6 +1,6 @@
 import Chrome from './Chrome'
 import url from 'url'
-import electron from 'electron'
+import { ipcRenderer } from 'electronCrx'
 import { CRX_RUNTIME_HAS_RESPONDER } from 'shared/crExtensionIpcEvents'
 import {
   CR_RUNTIME_ENVIRONMENTS,
@@ -20,41 +20,24 @@ class Loader {
     return process.context_args !== undefined && process.context_args.crExtensionCSAutoInit === true
   }
 
-  static get guestHostUrl () {
-    if (window.location.href === 'about:blank') {
-      if (window.opener && window.opener.location.href) {
-        const webPreferences = electron.remote.getCurrentWebContents().getWebPreferences()
-        if (webPreferences.openerId !== undefined) {
-          const openerWebContents = electron.remote.webContents.fromId(webPreferences.openerId)
-          if (openerWebContents) {
-            if (openerWebContents.getURL() === window.opener.location.href) {
-              return url.parse(window.opener.location.href)
-            }
-          }
-        }
-      }
-    }
-    return url.parse(window.location.href)
-  }
-
   /* **************************************************************************/
   // Startup
   /* **************************************************************************/
 
   static init () {
-    const hostUrl = this.guestHostUrl
-    if (hostUrl.protocol === `${CR_EXTENSION_PROTOCOL}:`) {
-      const hasResponder = electron.ipcRenderer.sendSync(CRX_RUNTIME_HAS_RESPONDER, hostUrl.hostname)
+    const parsedUrl = url.parse(window.location.href)
+    if (parsedUrl.protocol === `${CR_EXTENSION_PROTOCOL}:`) {
+      const hasResponder = ipcRenderer.sendSync(CRX_RUNTIME_HAS_RESPONDER, parsedUrl.hostname)
       if (hasResponder) {
         if (this.isBackgroundPage) {
-          window.chrome = new Chrome(hostUrl.hostname, CR_RUNTIME_ENVIRONMENTS.BACKGROUND)
+          window.chrome = new Chrome(parsedUrl.hostname, CR_RUNTIME_ENVIRONMENTS.BACKGROUND)
         } else {
-          window.chrome = new Chrome(hostUrl.hostname, CR_RUNTIME_ENVIRONMENTS.HOSTED)
+          window.chrome = new Chrome(parsedUrl.hostname, CR_RUNTIME_ENVIRONMENTS.HOSTED)
         }
       }
     } else {
       if (this.isContentScript) {
-        const hasResponder = electron.ipcRenderer.sendSync(CRX_RUNTIME_HAS_RESPONDER, process.context_args.crExtensionCSExtensionId)
+        const hasResponder = ipcRenderer.sendSync(CRX_RUNTIME_HAS_RESPONDER, process.context_args.crExtensionCSExtensionId)
         if (hasResponder) {
           window.chrome = new Chrome(process.context_args.crExtensionCSExtensionId, CR_RUNTIME_ENVIRONMENTS.CONTENTSCRIPT)
         }

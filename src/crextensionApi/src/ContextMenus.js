@@ -1,13 +1,13 @@
-import { ipcRenderer } from 'electron'
-import Event from './Core/Event'
+import { ipcRenderer } from 'electronCrx'
+import Event from 'Core/Event'
 import uuid from 'uuid'
 import {
   CRX_CONTEXT_MENU_CREATE_,
   CRX_CONTEXT_MENU_CLICKED_
 } from 'shared/crExtensionIpcEvents'
-import DispatchManager from './Core/DispatchManager'
-import Tab from './Tabs/Tab'
-import { protectedHandleError } from './Runtime/ProtectedRuntimeSymbols'
+import DispatchManager from 'Core/DispatchManager'
+import Tab from 'Tabs/Tab'
+import { protectedHandleError } from 'Runtime/ProtectedRuntimeSymbols'
 
 const privExtensionId = Symbol('privExtensionId')
 const privRuntime = Symbol('privRuntime')

@@ -1,10 +1,10 @@
-import { ipcRenderer } from 'electron'
+import { ipcRenderer } from 'electronCrx'
 import { CR_STORAGE_TYPES } from 'shared/extensionApis'
 import {
   CRX_STORAGE_CHANGED_
 } from 'shared/crExtensionIpcEvents'
 import StorageArea from './StorageArea'
-import Event from '../Core/Event'
+import Event from 'Core/Event'
 
 const privSync = Symbol('privSync')
 const privLocal = Symbol('privLocal')

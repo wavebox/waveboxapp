@@ -1,4 +1,4 @@
-import ArgParser from './Core/ArgParser'
+import ArgParser from 'Core/ArgParser'
 
 const privExtensionId = Symbol('privExtensionId')
 

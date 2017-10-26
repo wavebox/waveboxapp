@@ -59,7 +59,13 @@ module.exports = function (env) {
     resolve: {
       extensions: ['.js', '.jsx', '.less', '.css'],
       alias: {
+        Core: path.resolve(path.join(__dirname, 'src/Core')),
+        Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
+        Storage: path.resolve(path.join(__dirname, 'src/Storage')),
+        Tabs: path.resolve(path.join(__dirname, 'src/Tabs')),
+        WebRequest: path.resolve(path.join(__dirname, 'src/WebRequest')),
         shared: path.resolve(path.join(__dirname, '../shared')),
+        electronCrx: path.resolve(path.join(__dirname, 'src/electronCrx')),
         R: path.resolve(path.join(__dirname, 'src')),
         'package.json': path.resolve(ROOT_DIR, 'package.json')
       },

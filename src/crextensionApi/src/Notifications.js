@@ -1,5 +1,5 @@
-import EventUnsupported from './Core/EventUnsupported'
-import ArgParser from './Core/ArgParser'
+import EventUnsupported from 'Core/EventUnsupported'
+import ArgParser from 'Core/ArgParser'
 import uuid from 'uuid'
 
 class Notifications {

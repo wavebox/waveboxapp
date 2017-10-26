@@ -1,4 +1,4 @@
-import { ipcRenderer } from 'electron'
+import { ipcRenderer } from 'electronCrx'
 import {
   CRX_BROWSER_ACTION_SET_TITLE_,
   CRX_BROWSER_ACTION_FETCH_TITLE_,
@@ -13,9 +13,9 @@ import {
   CRX_BROWSER_ACTION_DISABLE_,
   CRX_BROWSER_ACTION_CLICKED_
 } from 'shared/crExtensionIpcEvents'
-import DispatchManager from './Core/DispatchManager'
-import Event from './Core/Event'
-import Tab from './Tabs/Tab'
+import DispatchManager from 'Core/DispatchManager'
+import Event from 'Core/Event'
+import Tab from 'Tabs/Tab'
 
 const privExtensionId = Symbol('privExtensionId')
 

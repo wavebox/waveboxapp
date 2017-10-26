@@ -1,4 +1,4 @@
-import EventUnsupported from './Core/EventUnsupported'
+import EventUnsupported from 'Core/EventUnsupported'
 
 class Omnibox {
   /* **************************************************************************/
