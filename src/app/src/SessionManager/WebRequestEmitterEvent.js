@@ -121,6 +121,11 @@ class WebRequestEmitterEvent {
                   }
                 })
               } catch (ex) {
+                console.warn([
+                  'blocking session.webRequest threw an unknown exception.',
+                  'This was caught and execution continues, but the side-effect will be unknown',
+                  ''
+                ].join('\n'), ex)
                 resolve(prevResponse)
               }
             })

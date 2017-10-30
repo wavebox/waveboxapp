@@ -46,6 +46,7 @@ class Analytics {
       this.appHeartbeat()
     }, ANALYTICS_HEARTBEAT_INTERVAL)
     this.appOpened()
+    window.addEventListener('hashchange', this.handleHashChanged, false)
   }
 
   /**
@@ -54,6 +55,15 @@ class Analytics {
   */
   stopAutoreporting () {
     clearTimeout(this.heartbeatTO)
+    window.removeEventListener('hashchange', this.handleHashChanged)
+  }
+
+  /**
+  * Handles the window hash changing
+  * @param evt: the event that fired
+  */
+  handleHashChanged = (evt) => {
+    this.sendHashChangeEvent('hashchange')
   }
 
   /* ****************************************************************************/
@@ -82,15 +92,17 @@ class Analytics {
   * @param reportEventReason: the type of report we're sending
   * @param args={}: the items to append
   * @param autocatch=true: true to automatically swallow errors
+  * @param sendGa=true: true to send to ga
+  * @param sendWb=true: true to send to wb
   * @return promise
   */
-  sendScreenView (reportEventReason, args = {}, autocatch = true) {
+  sendScreenView (reportEventReason, args = {}, autocatch = true, sendGa = true, sendWb = true) {
     return this.send({
       ...this.buildDefaultArguments(),
       cd2: reportEventReason,
       t: 'screenview',
       ...args
-    }, autocatch)
+    }, autocatch, sendGa, sendWb)
   }
 
   /**
@@ -98,14 +110,16 @@ class Analytics {
   * @param reportEventReason: the type of report we're sending
   * @param args={}: items to append
   * @param autocatch=true: true to automatically swallow errors
+  * @param sendGa=true: true to send to ga
+  * @param sendWb=true: true to send to wb
   */
-  sendEvent (reportEventReason, args = {}, autocatch = true) {
+  sendEvent (reportEventReason, args = {}, autocatch = true, sendGa = false, sendWb = true) {
     return this.send({
       ...this.buildDefaultArguments(),
       cd2: reportEventReason,
       t: 'event',
       ...args
-    }, autocatch)
+    }, autocatch, sendGa, sendWb)
   }
 
   /**
@@ -147,24 +161,75 @@ class Analytics {
   }
 
   /**
+  * Sends the info about the current window hash
+  * @param reportEventReason: the type of report we're sending
+  * @param autocatch=true: true to automatically swallow errors
+  */
+  sendHashChangeEvent (reportEventReason, autocatch = true) {
+    return this.sendEvent(reportEventReason, {
+      ni: 0,
+      ec: 'hashchange',
+      ea: window.location.hash
+    }, autocatch)
+  }
+
+  /**
   * Sends the message down the pipe
   * https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
   * https://ga-dev-tools.appspot.com/hit-builder/
   * @param args: the full arguments
-  * @param autocatch=true: true to automatically swallow errors
+  * @param autocatch: true to automatically swallow errors
+  * @param sendGa: true to send to ga
+  * @param sendWb: true to send to wb
   * @return promise
   */
-  send (args, autocatch = true) {
+  send (args, autocatch, sendGa, sendWb) {
     if (!Bootstrap.credentials.GOOGLE_ANALYTICS_ID) {
       const error = new Error('No Anayltics ID specified')
       return autocatch ? Promise.resolve({ sent: false, error: error }) : Promise.reject(error)
     }
     const qs = querystring.stringify(args)
-    const url = 'https://www.google-analytics.com/collect?' + qs
+    const gaUrl = 'https://www.google-analytics.com/collect?' + qs
+    const wbUrl = 'https://stats.wavebox.io/app/collect?' + qs
+
+    let gaOk = true
+    let wbOk = true
     return Promise.resolve()
-      .then(() => window.fetch(url, { method: 'POST' }))
-      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
-      .catch((err) => autocatch ? Promise.resolve({ sent: false, error: err }) : Promise.reject(err))
+      .then(() => {
+        if (sendGa) {
+          return Promise.resolve()
+            .then(() => window.fetch(gaUrl, { method: 'POST' }))
+            .then((res) => {
+              gaOk = res.ok
+              return Promise.resolve()
+            })
+        } else {
+          return Promise.resolve()
+        }
+      })
+      .then(() => {
+        if (sendWb) {
+          return Promise.resolve()
+            .then(() => window.fetch(wbUrl, { method: 'POST' }))
+            .then((res) => {
+              wbOk = res.ok
+              return Promise.resolve()
+            })
+        } else {
+          return Promise.resolve()
+        }
+      })
+      .then(() => {
+        if (!gaOk || !wbOk) {
+          if (autocatch) {
+            return Promise.resolve({ sent: false })
+          } else {
+            return Promise.reject(new Error('Collect failed'))
+          }
+        } else {
+          return Promise.resolve()
+        }
+      })
   }
 
   /* ****************************************************************************/

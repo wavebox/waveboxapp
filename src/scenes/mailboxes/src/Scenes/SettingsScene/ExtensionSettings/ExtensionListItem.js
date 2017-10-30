@@ -37,6 +37,11 @@ const styles = {
     fontWeight: 500,
     marginBottom: 0
   },
+  version: {
+    fontSize: '13px',
+    color: Colors.grey600,
+    fontWeight: 300
+  },
   description: {
     fontSize: '13px',
     color: Colors.grey400,
@@ -46,6 +51,7 @@ const styles = {
   tryOnBeta: {
     border: `2px solid ${Colors.lightBlue500}`,
     borderRadius: 4,
+    display: 'inline-block',
     padding: 4,
     marginTop: 4,
     marginBottom: 4,
@@ -139,7 +145,6 @@ export default class ExtensionListItem extends React.Component {
   generateState (props, crextensionState = crextensionStore.getState(), userState = userStore.getState()) {
     const manifest = crextensionState.getManifest(props.extensionId)
     const storeRec = userState.getExtension(props.extensionId)
-
     return {
       unknownSource: true,
       availableToUser: true,
@@ -147,6 +152,7 @@ export default class ExtensionListItem extends React.Component {
         name: manifest.name,
         description: manifest.description,
         websiteUrl: manifest.homepageUrl,
+        version: manifest.version,
         unknownSource: true,
         availableToUser: true
       } : undefined),
@@ -325,6 +331,7 @@ export default class ExtensionListItem extends React.Component {
     const {
       name,
       description,
+      version,
       iconUrl,
       websiteUrl,
       licenseUrl,
@@ -340,14 +347,17 @@ export default class ExtensionListItem extends React.Component {
           <div style={{ ...styles.leftColumn, backgroundImage: `url("${iconUrl}")` }} />
           <div style={styles.rightColumn}>
             <div style={styles.info}>
-              <h2 style={styles.name}>{name}</h2>
+              <h2 style={styles.name}>
+                {name}
+                {version ? (<span style={styles.version}> {version}</span>) : undefined}
+              </h2>
               <p style={styles.description}>{description}</p>
               {unknownSource ? (
                 <div style={styles.unknownSource}>Installed from an unknown source</div>
               ) : undefined}
               {showBetaTrial && onProLevel ? (
                 <div style={styles.tryOnBeta}>
-                  This extension is free to try with basic accounts on the beta channel until the end of November 2017. Thereafter it will be available with Wavebox Pro
+                  Free to try with Wavebox basic until the end of November 2017
                 </div>
               ) : undefined}
               <div>

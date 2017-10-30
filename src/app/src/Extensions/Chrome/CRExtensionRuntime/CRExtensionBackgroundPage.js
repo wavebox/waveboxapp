@@ -7,6 +7,7 @@ import {
   CR_EXTENSION_BG_PARTITION_PREFIX
 } from 'shared/extensionApis'
 import Resolver from 'Runtime/Resolver'
+import { SessionManager } from 'SessionManager'
 
 class CRExtensionBackgroundPage {
   /* ****************************************************************************/
@@ -54,8 +55,9 @@ class CRExtensionBackgroundPage {
       this._html = Buffer.from(this.extension.manifest.background.generateHtmlPageForScriptset())
     }
 
+    const partitionId = `${CR_EXTENSION_BG_PARTITION_PREFIX}${this.extension.id}`
     this._webContents = webContents.create({
-      partition: `${CR_EXTENSION_BG_PARTITION_PREFIX}${this.extension.id}`,
+      partition: partitionId,
       isBackgroundPage: true,
       preload: Resolver.crExtensionApi(),
       commandLineSwitches: [
@@ -69,6 +71,14 @@ class CRExtensionBackgroundPage {
       hostname: this.extension.id,
       pathname: this._name
     }))
+
+    // Relax cors for extensions that request it
+    if (this.extension.manifest.permissions.has('<all_urls>')) {
+      SessionManager
+        .webRequestEmitterFromPartitionId(partitionId)
+        .headersReceived
+        .onBlocking(undefined, this._handleAllUrlHeadersReceived)
+    }
   }
 
   /**
@@ -82,6 +92,35 @@ class CRExtensionBackgroundPage {
     this._webContents = undefined
     this._html = undefined
     this._name = undefined
+  }
+
+  /* ****************************************************************************/
+  // Web Request
+  /* ****************************************************************************/
+
+  /**
+  * Handles the headers being received and updates them if required
+  * @param details: the details of the request
+  * @param responder: function to call with updated headers
+  */
+  _handleAllUrlHeadersReceived = (details, responder) => {
+    if (details.resourceType === 'xhr') {
+      const headers = details.responseHeaders
+      const updatedHeaders = {
+        ...headers,
+        'access-control-allow-credentials': headers['access-control-allow-credentials'] || ['true'],
+        'access-control-allow-origin': (headers['access-control-allow-origin'] || []).concat([
+          url.format({
+            protocol: CR_EXTENSION_PROTOCOL,
+            slashes: true,
+            hostname: this.extension.id
+          })
+        ])
+      }
+      responder({ responseHeaders: updatedHeaders })
+    } else {
+      responder({})
+    }
   }
 
   /* ****************************************************************************/

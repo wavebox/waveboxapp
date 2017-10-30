@@ -105,19 +105,10 @@ class MailboxesSessionManager extends EventEmitter {
 
     // Extensions
     SessionManager.webRequestEmitterFromSession(ses).headersReceived.onBlocking(undefined, (details, responder) => {
-      try {
-        const updatedHeaders = CRExtensionManager.runtimeHandler.updateContentSecurityPolicy(details.url, details.responseHeaders)
-        if (updatedHeaders) {
-          responder({ responseHeaders: updatedHeaders })
-        } else {
-          responder({})
-        }
-      } catch (ex) {
-        console.warn([
-          'session.webRequest.onHeadersReceived threw an unknown exception.',
-          'This was caught and execution continues, but the side-effect will be unknown',
-          ''
-        ].join('\n'), ex)
+      const updatedHeaders = CRExtensionManager.runtimeHandler.updateContentSecurityPolicy(details.url, details.responseHeaders)
+      if (updatedHeaders) {
+        responder({ responseHeaders: updatedHeaders })
+      } else {
         responder({})
       }
     })

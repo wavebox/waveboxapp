@@ -14,6 +14,18 @@ class Cookies {
 
     Object.freeze(this)
   }
+
+  /* **************************************************************************/
+  // Methods
+  /* **************************************************************************/
+
+  getAll (details, callback) {
+    console.warn('chrome.cookies.getAll is not supported by Wavebox at this time', details)
+    setTimeout(() => {
+      const res = []
+      callback(res)
+    })
+  }
 }
 
 export default Cookies

@@ -68,6 +68,7 @@ class CRExtensionManifest extends Model {
   get hasHomepageUrl () { return !!this.homepageUrl }
   get icons () { return this._sanitizePathValuesInObject_(this._value_('icons', {})) }
   get manifestVersion () { return this._value_('manifest_version', 1) }
+  get version () { return this._value_('version') }
 
   /**
   * Return the icons relative to the given root path

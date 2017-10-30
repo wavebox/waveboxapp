@@ -12,6 +12,7 @@ class Windows {
   */
   constructor (extensionId, hasTabsPermission) {
     this.onFocused = new EventUnsupported('chrome.windows.onFocused')
+    this.onFocusChanged = new EventUnsupported('chrome.windows.onFocusChanged')
 
     Object.freeze(this)
   }

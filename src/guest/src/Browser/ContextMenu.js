@@ -28,7 +28,7 @@ class ContextMenu {
       hasChangeDictionaryOption: true,
 
       // External linking
-      copyCurrentPageUrlOption: false,
+      copyCurrentPageUrlOption: true,
       openCurrentPageInBrowserOption: false,
       openLinkInWaveboxOption: true,
 

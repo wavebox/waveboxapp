@@ -1,7 +1,7 @@
 import React from 'react'
 import './MailboxWizardAddScene.less'
 import * as Colors from 'material-ui/styles/colors'
-import { FlatButton, RaisedButton } from 'material-ui'
+import { FlatButton, RaisedButton, FontIcon } from 'material-ui'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import { FullscreenModal } from 'Components'
 import { userStore } from 'stores/user'
@@ -12,6 +12,8 @@ import SlackMailbox from 'shared/Models/Accounts/Slack/SlackMailbox'
 import GenericMailbox from 'shared/Models/Accounts/Generic/GenericMailbox'
 import GoogleMailbox from 'shared/Models/Accounts/Google/GoogleMailbox'
 import MailboxWizardAccountButton from './MailboxWizardAccountButton'
+import MailboxWizardRaisedButton from './MailboxWizardRaisedButton'
+import electron from 'electron'
 
 const styles = {
   // Modal
@@ -97,6 +99,17 @@ const styles = {
     color: Colors.lightBlue500,
     fontWeight: '300',
     marginTop: 0
+  },
+
+  // Extra
+  extraActions: {
+    textAlign: 'center',
+    marginTop: 32
+  },
+  extraActionButton: {
+    display: 'inline-block',
+    marginLeft: 16,
+    marginRight: 16
   }
 }
 
@@ -315,7 +328,48 @@ export default class MailboxWizardAddScene extends React.Component {
                   })}
                 </div>
               </div>
-            ) : undefined}
+            ) : (
+              <div style={styles.extraActions}>
+                <MailboxWizardRaisedButton
+                  onClick={() => {
+                    const tweets = [
+                      'Enjoying having my daily web apps all in one place! Give it a try: #Waveboxio',
+                      'Just setup #Waveboxio to access all my web apps from one UI!  Free to download.',
+                      'Just effortlessly centralised my web apps with one desktop client! Give it a try: #Waveboxio.',
+                      'Switching between multiple web apps just got easier! #Waveboxio. Download for free.',
+                      'Working with multiple web apps everyday just got easier! Give it a try: #Waveboxio',
+                      'Keep up to date with all your web apps without draining your machine! #Waveboxio',
+                      'Using #Waveboxio to keep up to date with all my daily web apps, without a browser! Try for free.'
+                    ]
+                    const tweet = tweets[Math.floor(Math.random() * tweets.length)]
+                    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweet)}`
+                    electron.remote.shell.openExternal(url)
+                  }}
+                  style={styles.extraActionButton}
+                  label={(
+                    <span>
+                      <FontIcon
+                        style={{ fontSize: 18 }}
+                        color='#0084b4'
+                        className='fa fa-fw fa-twitter' />
+                      <span>Tweet us some ♥</span>
+                    </span>
+                  )} />
+                <MailboxWizardRaisedButton
+                  onClick={() => { window.location.hash = '/settings/support' }}
+                  style={styles.extraActionButton}
+                  label={(
+                    <span>
+                      <FontIcon
+                        style={{ fontSize: 18 }}
+                        color={Colors.teal600}
+                        className='fa fa-fw fa-question-circle-o' />
+                      <span>Get some help</span>
+                    </span>
+                  )}
+                />
+              </div>
+            )}
           </div>
         ) : (
           <div style={styles.accountContainer} className='ReactComponent-MailboxWizardAddScene-AutoScroller'>

@@ -38,7 +38,7 @@ class AcceleratorSettings extends Model {
   get zoomOutDefault () { return 'CmdOrCtrl+-' }
   get zoomResetDefault () { return 'CmdOrCtrl+0' }
   get reloadDefault () { return 'CmdOrCtrl+R' }
-  get reloadWaveboxDefault () { return 'cmdOrCtrl+Shift+R' }
+  get reloadWaveboxDefault () { return 'CmdOrCtrl+Shift+R' }
   get developerToolsDefault () { return process.platform === 'darwin' ? 'Command+Alt+I' : 'Ctrl+Shift+I' }
   get developerToolsWaveboxDefault () { return process.platform === 'darwin' ? 'Command+Alt+J' : 'Ctrl+Shift+J' }
 

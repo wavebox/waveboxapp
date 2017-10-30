@@ -16,7 +16,7 @@ class ExtensionSettings extends Model {
   // Properties
   /* **************************************************************************/
 
-  get enableChromeExperimental () { return this._value_('enableChromeExperimental', false) }
+  get enableChromeExperimental () { return this._value_('enableChromeExperimental', true) }
   get showBrowserActionsInToolbar () { return this._value_('showBrowserActionsInToolbar', true) }
   get toolbarBrowserActionLayout () { return this._value_('toolbarBrowserActionLayout', TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_RIGHT) }
 }

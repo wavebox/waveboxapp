@@ -3,14 +3,27 @@ import React from 'react'
 import { settingsStore, settingsActions } from 'stores/settings'
 import { Toggle, Paper, SelectField, MenuItem } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
-import styles from '../CommonSettingStyles'
+import commonStyles from '../CommonSettingStyles'
 import { Container, Row, Col } from 'Components/Grid'
 import { ExtensionSettings } from 'shared/Models/Settings'
 import ExtensionList from './ExtensionList'
+import * as Colors from 'material-ui/styles/colors'
 
 const EXTENSION_LAYOUT_MODE_LABELS = {
   [ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_LEFT]: 'Left',
   [ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_RIGHT]: 'Right'
+}
+
+const styles = {
+  tryOnBeta: {
+    border: `2px solid ${Colors.lightBlue500}`,
+    borderRadius: 4,
+    padding: 4,
+    marginTop: 4,
+    marginBottom: 4,
+    color: Colors.lightBlue500,
+    fontSize: '14px'
+  }
 }
 
 export default class ExtensionSettingsTab extends React.Component {
@@ -70,7 +83,15 @@ export default class ExtensionSettingsTab extends React.Component {
         <Container fluid>
           <Row>
             <Col md={6}>
-              <Paper zDepth={1} style={styles.paper}>
+              <div style={styles.tryOnBeta}>
+                <h3>Extension Support</h3>
+                Extensions support is currently experimental and all extensions are free to try until
+                the end of November 2017. Thereafter those marked as free to try will be available
+                with Wavebox Pro
+              </div>
+            </Col>
+            <Col md={6}>
+              <Paper zDepth={1} style={commonStyles.paper}>
                 <Toggle
                   toggled={extension.showBrowserActionsInToolbar}
                   label='Show extensions in toolbar'

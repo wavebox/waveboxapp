@@ -1,7 +1,7 @@
 import React from 'react'
 import { RaisedButton } from 'material-ui'
 
-export default class MailboxWizardRaisedButton extends React.Component {
+export default class WelcomeRaisedButton extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
