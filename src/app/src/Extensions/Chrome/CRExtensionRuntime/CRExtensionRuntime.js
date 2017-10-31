@@ -11,6 +11,7 @@ import CRExtensionOptionsPage from './CRExtensionOptionsPage'
 import CRExtensionStorage from './CRExtensionStorage'
 import CRExtensionContextMenus from './CRExtensionContextMenus'
 import CRExtensionWebRequest from './CRExtensionWebRequest'
+import CRExtensionCookies from './CRExtensionCookies'
 import { CRExtensionI18n } from 'shared/Models/CRExtension'
 
 class CRExtensionRuntime {
@@ -28,6 +29,7 @@ class CRExtensionRuntime {
     this.contextMenus = new CRExtensionContextMenus(extension)
     this.storage = new CRExtensionStorage(extension)
     this.webRequest = new CRExtensionWebRequest(extension)
+    this.cookies = new CRExtensionCookies(extension)
 
     // Pages second
     this.backgroundPage = new CRExtensionBackgroundPage(extension)
@@ -50,6 +52,7 @@ class CRExtensionRuntime {
     this.contextMenus.destroy()
     this.storage.destroy()
     this.webRequest.destroy()
+    this.cookies.destroy()
 
     // Runtime API
     ipcMain.removeListener(`${CRX_RUNTIME_CONTENTSCRIPT_CONNECT_}${this.extension.id}`, this.handleContentScriptRuntimeConnect)

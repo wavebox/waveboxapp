@@ -11,6 +11,18 @@ import { SessionManager } from 'SessionManager'
 
 class CRExtensionBackgroundPage {
   /* ****************************************************************************/
+  // Class: utils
+  /* ****************************************************************************/
+
+  /**
+  * @param extensionId: the id of the extension
+  * @return the partition that will be used for the background page
+  */
+  static partitionIdForExtension (extensionId) {
+    return `${CR_EXTENSION_BG_PARTITION_PREFIX}${extensionId}`
+  }
+
+  /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
@@ -55,7 +67,7 @@ class CRExtensionBackgroundPage {
       this._html = Buffer.from(this.extension.manifest.background.generateHtmlPageForScriptset())
     }
 
-    const partitionId = `${CR_EXTENSION_BG_PARTITION_PREFIX}${this.extension.id}`
+    const partitionId = this.constructor.partitionIdForExtension(this.extension.id)
     this._webContents = webContents.create({
       partition: partitionId,
       isBackgroundPage: true,
@@ -71,6 +83,12 @@ class CRExtensionBackgroundPage {
       hostname: this.extension.id,
       pathname: this._name
     }))
+
+    // Update cors via the extension config
+    SessionManager
+      .webRequestEmitterFromPartitionId(partitionId)
+      .beforeSendHeaders
+      .onBlocking(undefined, this._handleBeforeSendHeaders)
 
     // Relax cors for extensions that request it
     if (this.extension.manifest.permissions.has('<all_urls>')) {
@@ -97,6 +115,24 @@ class CRExtensionBackgroundPage {
   /* ****************************************************************************/
   // Web Request
   /* ****************************************************************************/
+
+  /**
+  * Handles the before send headers event
+  * @param details: the details of the request
+  * @param responder: function to call with updated headers
+  */
+  _handleBeforeSendHeaders (details, responder) {
+    if (details.resourceType === 'xhr') {
+      responder({
+        requestHeaders: {
+          ...details.requestHeaders,
+          'Origin': ['null']
+        }
+      })
+    } else {
+      responder({})
+    }
+  }
 
   /**
   * Handles the headers being received and updates them if required

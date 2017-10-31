@@ -72,6 +72,17 @@ class MailboxStore extends EventEmitter {
   getMailbox (id) { return this.mailboxes.get(id) }
 
   /**
+  * @param id: the id of the mailbox
+  * @return true if there is a mailbox with the given id
+  */
+  hasMailbox (id) { return this.mailboxes.has(id) }
+
+  /**
+  * @return the mailbox ids
+  */
+  getMailboxIds () { return Array.from(this.index) }
+
+  /**
   * @return the id of the active mailbox
   */
   getActiveMailboxId () { return this.activeMailboxId || this.index[0] }
