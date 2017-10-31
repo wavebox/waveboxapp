@@ -50,6 +50,19 @@ class CRExtensionBackgroundPage {
   get name () { return this._name }
 
   /* ****************************************************************************/
+  // WebContents pass-through
+  /* ****************************************************************************/
+
+  /**
+  * Provides a function call that will send events to the webcontents
+  * @param ...args: the arguments to send
+  */
+  sendToWebContents = (...args) => {
+    if (!this._webContents) { return }
+    this._webContents.send(...args)
+  }
+
+  /* ****************************************************************************/
   // Script lifecycle
   /* ****************************************************************************/
 

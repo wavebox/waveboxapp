@@ -65,6 +65,7 @@ module.exports = function (env) {
       alias: {
         R: path.resolve(path.join(__dirname, 'src')),
         shared: path.resolve(path.join(__dirname, '../shared')),
+        AppEvents: path.resolve(path.join(__dirname, 'src/AppEvents')),
         AppUpdater: path.resolve(path.join(__dirname, 'src/AppUpdater')),
         AuthProviders: path.resolve(path.join(__dirname, 'src/AuthProviders')),
         DownloadManager: path.resolve(path.join(__dirname), 'src/DownloadManager'),

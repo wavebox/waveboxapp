@@ -1,17 +1,9 @@
 import electron from 'electron'
-import appWindowManager from 'R/appWindowManager'
 import WaveboxWindow from './WaveboxWindow'
-import ContentWindow from './ContentWindow'
-import ContentPopupWindow from './ContentPopupWindow'
-import url from 'url'
 import settingStore from 'stores/settingStore'
 import userStore from 'stores/userStore'
-import mailboxStore from 'stores/mailboxStore'
-import CoreService from 'shared/Models/Accounts/CoreService'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import CRExtensionUISubscriber from 'Extensions/Chrome/CRExtensionUISubscriber'
-import CRExtensionManager from 'Extensions/Chrome/CRExtensionManager'
-import CRExtensionManifest from 'shared/Models/CRExtension/CRExtensionManifest'
+import { MailboxesTabManager } from 'SessionManager'
 import {
   AuthGoogle,
   AuthMicrosoft,
@@ -35,10 +27,6 @@ import {
   WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER,
   WB_MAILBOXES_WINDOW_SHOW_NEWS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
-  WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED,
-  WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED,
-  WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT,
-  WB_NEW_WINDOW,
   WB_WINDOW_RELOAD_WEBVIEW,
   WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
 
@@ -53,20 +41,10 @@ import {
   WBECRX_RELOAD_OWNER
 } from 'shared/ipcEvents'
 import {
-  WAVEBOX_CAPTURE_URL_PREFIX,
-  WAVEBOX_CAPTURE_URL_HOSTNAME
-} from 'shared/constants'
-import {
-  WAVEBOX_HOSTED_EXTENSION_PROTOCOL
-} from 'shared/extensionApis'
-import {
   TraySettings
 } from 'shared/Models/Settings'
 import Resolver from 'Runtime/Resolver'
 
-const { app, ipcMain, shell } = electron
-
-const WINDOW_OPEN_MODES = CoreService.WINDOW_OPEN_MODES
 const ALLOWED_URLS = [
   'file://' + Resolver.mailboxesScene('mailboxes.html'),
   'file://' + Resolver.mailboxesScene('offline.html')
@@ -86,9 +64,6 @@ class MailboxesWindow extends WaveboxWindow {
     this.authSlack = new AuthSlack()
     this.authMicrosoft = new AuthMicrosoft()
     this.authWavebox = new AuthWavebox()
-    this.attachedMailboxes = new Map()
-    this.attachedExtensions = new Map()
-    this.provisionalTargetUrls = new Map()
     this.gracefulReloadTimeout = null
   }
 
@@ -132,6 +107,9 @@ class MailboxesWindow extends WaveboxWindow {
         plugins: true
       }
     })
+    this.windowId = this.window.id
+    MailboxesTabManager.attachMailboxesWindow(this.windowId)
+
     this.window.once('ready-to-show', () => {
       if (!hidden) { this.show() }
     })
@@ -149,13 +127,8 @@ class MailboxesWindow extends WaveboxWindow {
     }
 
     // Bind event listeners
-    app.on('web-contents-created', this.handleAppWebContentsCreated)
-    ipcMain.on(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, this.handleMailboxesWebViewAttached)
-    ipcMain.on(WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED, this.handleExtensionWebViewAttached)
-    ipcMain.on(WB_NEW_WINDOW, this.handleOpenNewWindow)
-    ipcMain.on(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, this.handleFetchOpenWindowCount)
-    ipcMain.on(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)
-    ipcMain.on(WBECRX_RELOAD_OWNER, this.handleCRXReloadOwner)
+    electron.ipcMain.on(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)
+    electron.ipcMain.on(WBECRX_RELOAD_OWNER, this.handleCRXReloadOwner)
 
     // We're locking on to our window. This stops file drags redirecting the page
     this.window.webContents.on('will-navigate', (evt, url) => {
@@ -178,73 +151,16 @@ class MailboxesWindow extends WaveboxWindow {
   * Handles destroy being called
   */
   destroy (evt) {
+    MailboxesTabManager.detachMailboxesWindow(this.windowId)
     clearTimeout(this.gracefulReloadTimeout)
-    app.removeListener('web-contents-created', this.handleAppWebContentsCreated)
-    ipcMain.removeListener(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, this.handleMailboxesWebViewAttached)
-    ipcMain.removeListener(WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED, this.handleExtensionWebViewAttached)
-    ipcMain.removeListener(WB_NEW_WINDOW, this.handleOpenNewWindow)
-    ipcMain.removeListener(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, this.handleFetchOpenWindowCount)
-    ipcMain.removeListener(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)
-    ipcMain.removeListener(WBECRX_RELOAD_OWNER, this.handleCRXReloadOwner)
+    electron.ipcMain.removeListener(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)
+    electron.ipcMain.removeListener(WBECRX_RELOAD_OWNER, this.handleCRXReloadOwner)
     super.destroy(evt)
   }
 
   /* ****************************************************************************/
   // App Events
   /* ****************************************************************************/
-
-  /**
-  * Handles a new web contents being created
-  * @param evt: the event that fired
-  * @param contents: the webcontent that were created
-  */
-  handleAppWebContentsCreated = (evt, contents) => {
-    if (contents.getType() === 'webview' && contents.hostWebContents === this.window.webContents) {
-      contents.on('new-window', (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
-        this.handleWebViewNewWindow(contents.id, evt, targetUrl, frameName, disposition, options, additionalFeatures)
-      })
-      contents.on('will-navigate', (evt, url) => {
-        this.handleWebViewWillNavigate(contents.id, evt, url)
-      })
-      contents.on('update-target-url', (evt, url) => {
-        this.handleWebViewUpdateTargetUrl(contents.id, evt, url)
-      })
-    }
-  }
-
-  /**
-  * Handles a mailboes webview being attached
-  * @param evt: the event that fired
-  * @param data: the data that came with the event
-  */
-  handleMailboxesWebViewAttached = (evt, data) => {
-    if (evt.sender === this.window.webContents) {
-      this.attachedMailboxes.set(data.webContentsId, data)
-    }
-  }
-
-  /**
-  * Handles an extension webview being attached
-  */
-  handleExtensionWebViewAttached = (evt, data) => {
-    if (evt.sender === this.window.webContents) {
-      this.attachedExtensions.set(data.webContentsId, data)
-    }
-  }
-
-  /**
-  * Opens a new content window
-  * @param evt: the event that fired
-  * @param body: the arguments from the body
-  */
-  handleOpenNewWindow = (evt, body) => {
-    if (evt.sender === this.window.webContents) {
-      const contentWindow = new ContentWindow()
-      contentWindow.ownerId = `${body.mailboxId}:${body.serviceType}`
-      appWindowManager.addContentWindow(contentWindow)
-      contentWindow.create(this.window, body.url, body.partition, body.windowPreferences, body.webPreferences)
-    }
-  }
 
   /**
   * Handles the webview accepting a graceful reload
@@ -264,224 +180,6 @@ class MailboxesWindow extends WaveboxWindow {
   */
   handleCRXReloadOwner = (evt) => {
     this.reload()
-  }
-
-  /* ****************************************************************************/
-  // Content window getters
-  /* ****************************************************************************/
-
-  /**
-  * Gets the list of open windows for the specified mailbox and service
-  * @param evt: the event that fired
-  * @param body: the message sent
-  */
-  handleFetchOpenWindowCount = (evt, body) => {
-    if (evt.sender === this.window.webContents) {
-      const ownerId = `${body.mailboxId}:${body.serviceType}`
-      const count = appWindowManager.getContentWindowsWithOwnerId(ownerId).length
-      if (body.response) {
-        evt.sender.send(body.response, { count: count })
-      } else {
-        evt.returnValue = { count: count }
-      }
-    }
-  }
-
-  /* ****************************************************************************/
-  // WebView Events
-  /* ****************************************************************************/
-
-  /**
-  * Handles a new window being generated from a webview
-  * @param webContentsId: the id of the webcontents
-  * @param evt: the event that fired
-  * @param targetUrl: the webview url
-  * @param frameName: the name of the frame
-  * @param disposition: the frame disposition
-  * @param options: the browser window options
-  * @param additionalFeatures: The non-standard features
-  */
-  handleWebViewNewWindow (webContentsId, evt, targetUrl, frameName, disposition, options, additionalFeatures) {
-    evt.preventDefault()
-
-    // Check for some urls to never handle
-    const purl = url.parse(targetUrl, true)
-    if (purl.hostname === WAVEBOX_CAPTURE_URL_HOSTNAME && purl.pathname.startsWith(WAVEBOX_CAPTURE_URL_PREFIX)) { return }
-
-    // Handle other urls
-    let openMode = WINDOW_OPEN_MODES.EXTERNAL
-    let ownerId = null
-    let mailbox = null
-    let service = null
-    let provisionalTargetUrl
-
-    // Grab the service and mailbox
-    if (this.attachedMailboxes.has(webContentsId)) {
-      const { mailboxId, serviceType } = this.attachedMailboxes.get(webContentsId)
-      ownerId = `${mailboxId}:${serviceType}`
-      mailbox = mailboxStore.getMailbox(mailboxId)
-      service = mailboxStore.getService(mailboxId, serviceType)
-    }
-
-    if (service) {
-      provisionalTargetUrl = this.provisionalTargetUrls.get(ownerId)
-      openMode = service.getWindowOpenModeForUrl(
-        targetUrl,
-        purl,
-        disposition,
-        provisionalTargetUrl,
-        provisionalTargetUrl ? url.parse(provisionalTargetUrl, true) : undefined
-      )
-    }
-
-    // Check installed extensions to see if they overwrite the behaviour
-    const extensionPopoutMode = CRExtensionManager.runtimeHandler.shouldOpenWindowAsPopout(webContentsId, targetUrl, purl, disposition)
-    if (extensionPopoutMode !== false) {
-      if (extensionPopoutMode === CRExtensionManifest.POPOUT_WINDOW_MODES.POPOUT) {
-        openMode = WINDOW_OPEN_MODES.POPUP_CONTENT
-      } else if (extensionPopoutMode === CRExtensionManifest.POPOUT_WINDOW_MODES.CONTENT) {
-        openMode = WINDOW_OPEN_MODES.CONTENT
-      }
-    }
-
-    if (openMode === WINDOW_OPEN_MODES.POPUP_CONTENT) {
-      evt.newGuest = this.openWindowWaveboxPopupContent(ownerId, targetUrl, options).window
-    } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL) {
-      this.openWindowExternal(targetUrl, mailbox)
-    } else if (openMode === WINDOW_OPEN_MODES.DEFAULT || openMode === WINDOW_OPEN_MODES.DEFAULT_IMPORTANT) {
-      this.openWindowDefault(ownerId, mailbox, targetUrl, options)
-    } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL) {
-      this.openWindowExternal(provisionalTargetUrl, mailbox)
-    } else if (openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL || openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT) {
-      this.openWindowDefault(ownerId, mailbox, provisionalTargetUrl, options)
-    } else if (openMode === WINDOW_OPEN_MODES.CONTENT) {
-      this.openWindowWaveboxContent(ownerId, targetUrl, options)
-    } else if (openMode === WINDOW_OPEN_MODES.CONTENT_PROVSIONAL) {
-      this.openWindowWaveboxContent(ownerId, provisionalTargetUrl, options)
-    } else if (openMode === WINDOW_OPEN_MODES.DOWNLOAD) {
-      if ((options || {}).webContents) {
-        options.webContents.downloadURL(targetUrl)
-      }
-    }
-  }
-
-  /**
-  * Handles the webview navigating
-  * @param webContentsId: the id of the web contents
-  * @param evt: the event that fired
-  * @param targetUrl: the url we're navigating to
-  */
-  handleWebViewWillNavigate (webContentsId, evt, targetUrl) {
-    // Extensions
-    if (this.attachedExtensions.has(webContentsId)) {
-      if (url.parse(targetUrl).protocol !== WAVEBOX_HOSTED_EXTENSION_PROTOCOL + ':') {
-        evt.preventDefault()
-        return
-      }
-    }
-
-    // Navigation modes
-    if (this.attachedMailboxes.has(webContentsId)) {
-      const { mailboxId, serviceType } = this.attachedMailboxes.get(webContentsId)
-      let navigateMode = CoreService.NAVIGATE_MODES.DEFAULT
-      const mailbox = mailboxStore.getMailbox(mailboxId)
-      const service = mailboxStore.getService(mailboxId, serviceType)
-      if (service) {
-        navigateMode = service.getNavigateModeForUrl(targetUrl, url.parse(targetUrl, true))
-      }
-
-      if (navigateMode === CoreService.NAVIGATE_MODES.SUPPRESS) {
-        evt.preventDefault()
-      } else if (navigateMode === CoreService.NAVIGATE_MODES.OPEN_EXTERNAL) {
-        evt.preventDefault()
-        this.openWindowExternal(targetUrl, mailbox)
-      } else if (navigateMode === CoreService.NAVIGATE_MODES.OPEN_CONTENT) {
-        evt.preventDefault()
-        this.openWindowWaveboxContent(webContentsId, targetUrl, {
-          webPreferences: {
-            partition: 'persist:' + mailboxId
-          }
-        })
-      }
-    }
-  }
-
-  /**
-  * Handles the target url of a webcontents updating
-  * @param webContentsId: the id of the web contents
-  * @param evt: the event that fired
-  * @param targetUrl: the url we're pointing at
-  */
-  handleWebViewUpdateTargetUrl (webContentsId, evt, targetUrl) {
-    if (this.attachedMailboxes.has(webContentsId)) {
-      const { mailboxId, serviceType } = this.attachedMailboxes.get(webContentsId)
-      const ownerId = `${mailboxId}:${serviceType}`
-      this.provisionalTargetUrls.set(ownerId, targetUrl)
-    }
-  }
-
-  /* ****************************************************************************/
-  // Window opening
-  /* ****************************************************************************/
-
-  /**
-  * Opens a window with the default behaviour
-  * @param ownerId: the id of the owning window
-  * @param mailbox: the mailbox that's attempting to open
-  * @param targetUrl: the url to open
-  * @param options: the config options for the window
-  */
-  openWindowDefault (ownerId, mailbox, targetUrl, options) {
-    if (!mailbox) {
-      this.openWindowExternal(targetUrl, mailbox)
-    } else {
-      if (mailbox.defaultWindowOpenMode === CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
-        this.openWindowExternal(targetUrl, mailbox)
-      } else if (mailbox.defaultWindowOpenMode === CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
-        this.openWindowWaveboxContent(ownerId, targetUrl, options)
-      }
-    }
-  }
-
-  /**
-  * Opens a wavebox popup content window
-  * @param ownerId: the id of the owning window
-  * @param targetUrl: the url to open
-  * @param options: the config options for the window
-  * @return the new contentwindow instance
-  */
-  openWindowWaveboxPopupContent (ownerId, targetUrl, options) {
-    const contentWindow = new ContentPopupWindow()
-    contentWindow.ownerId = ownerId
-    appWindowManager.addContentWindow(contentWindow)
-    contentWindow.create(targetUrl, options)
-    return contentWindow
-  }
-
-  /**
-  * Opens a wavebox content window
-  * @param ownerId: the id of the owning window
-  * @param targetUrl: the url to open
-  * @param options: the config options for the window
-  * @return the new  contentwindow instance
-  */
-  openWindowWaveboxContent (ownerId, targetUrl, options) {
-    const contentWindow = new ContentWindow()
-    contentWindow.ownerId = ownerId
-    appWindowManager.addContentWindow(contentWindow)
-    contentWindow.create(this.window, targetUrl, ((options || {}).webPreferences || {}).partition, options)
-    return contentWindow
-  }
-
-  /**
-  * Opens links in an external window
-  * @param targetUrl: the url to open
-  * @param mailbox=undefined: the mailbox to take the settings from if available
-  */
-  openWindowExternal (targetUrl, mailbox = undefined) {
-    shell.openExternal(targetUrl, {
-      activate: !settingStore.os.openLinksInBackground
-    })
   }
 
   /* ****************************************************************************/

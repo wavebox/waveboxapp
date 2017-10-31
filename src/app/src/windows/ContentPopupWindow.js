@@ -1,6 +1,23 @@
 import WaveboxWindow from './WaveboxWindow'
+import { evtMain } from 'AppEvents'
+import {
+  WB_MAILBOX_TAB_WEBCONTENTS_ATTACHED,
+  WB_MAILBOX_TAB_WEBCONTENTES_DETACHED
+} from 'shared/ipcEvents'
 
 class ContentPopupWindow extends WaveboxWindow {
+  /* ****************************************************************************/
+  // Lifecycle
+  /* ****************************************************************************/
+
+  /**
+  * @param ownerId: the id of the owner - mailbox/service
+  */
+  constructor (ownerId) {
+    super()
+    this.ownerId = ownerId
+  }
+
   /* ****************************************************************************/
   // Window lifecycle
   /* ****************************************************************************/
@@ -15,8 +32,13 @@ class ContentPopupWindow extends WaveboxWindow {
     // The browser settings don't need to be sanitized as they should be in the same thread
     // and come from the parent webContents
     super.create(url, Object.assign({}, safeBrowserWindowOptions, { show: false }))
+    const webContentsId = this.window.webContents.id
+    evtMain.emit(WB_MAILBOX_TAB_WEBCONTENTS_ATTACHED, webContentsId)
 
     // Bind listeners
+    this.window.webContents.once('destroyed', () => {
+      evtMain.emit(WB_MAILBOX_TAB_WEBCONTENTES_DETACHED, webContentsId)
+    })
     this.window.once('ready-to-show', () => {
       this.show()
     })
