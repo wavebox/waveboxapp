@@ -48,7 +48,7 @@ class MailboxStore extends EventEmitter {
         this.activeMailboxId = data.mailboxId
         this.activeServiceType = data.serviceType
         this.emit('changed', {})
-        this.emit('changed:active', {})
+        this.emit('changed:active', { mailboxId: data.mailboxId, serviceType: data.serviceType })
       }
     })
   }

@@ -310,6 +310,20 @@ class MailboxStore {
       }
     }
 
+    /**
+    * @param mailboxId: the id of the mailbox
+    * @return true if all services are sleeping
+    */
+    this.isAllServicesSleeping = (mailboxId) => {
+      if (!userStore.getState().user.hasSleepable) { return false }
+
+      const mailbox = this.getMailbox(mailboxId)
+      const awake = mailbox.enabledServiceTypes.find((serviceType) => {
+        return !this.isSleeping(mailboxId, serviceType)
+      })
+      return !awake
+    }
+
     /* ****************************************/
     // Search
     /* ****************************************/

@@ -8,9 +8,7 @@ import {
   WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
   WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD,
-  WB_NEW_WINDOW,
-  WB_MAILBOX_TAB_WEBCONTENTS_ATTACHED,
-  WB_MAILBOX_TAB_WEBCONTENTES_DETACHED
+  WB_NEW_WINDOW
 } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
 
@@ -32,6 +30,9 @@ const COPY_WEBVIEW_WEB_PREFERENCES_KEYS = [
   'partition'
 ]
 
+const privLaunchInfo = Symbol('privLaunchInfo')
+const privGuestWebContentsId = Symbol('privGuestWebContentsId')
+
 class ContentWindow extends WaveboxWindow {
   /* ****************************************************************************/
   // Lifecycle
@@ -43,14 +44,15 @@ class ContentWindow extends WaveboxWindow {
   constructor (ownerId) {
     super()
     this.ownerId = ownerId
-    this.__launchInfo__ = null
+    this[privLaunchInfo] = null
+    this[privGuestWebContentsId] = null
   }
 
   /* ****************************************************************************/
   // Properties
   /* ****************************************************************************/
 
-  get launchInfo () { return this.__launchInfo__ }
+  get launchInfo () { return this[privLaunchInfo] }
 
   /* ****************************************************************************/
   // Window lifecycle
@@ -114,7 +116,7 @@ class ContentWindow extends WaveboxWindow {
   * @param webPreferences={}: the web preferences for the hosted child
   */
   create (parentWindow, url, partition, browserWindowPreferences = {}, webPreferences = {}) {
-    this.__launchInfo__ = Object.freeze({
+    this[privLaunchInfo] = Object.freeze({
       partition: partition,
       browserWindowPreferences: browserWindowPreferences,
       webPreferences: webPreferences
@@ -185,10 +187,12 @@ class ContentWindow extends WaveboxWindow {
   */
   handleAppWebContentsCreated = (evt, contents) => {
     if (contents.getType() === 'webview' && contents.hostWebContents.id === this.window.webContents.id) {
-      const webContentsId = contents.id
-      evtMain.emit(WB_MAILBOX_TAB_WEBCONTENTS_ATTACHED, webContentsId)
+      this[privGuestWebContentsId] = contents.id
+      evtMain.emit(evtMain.WB_TAB_CREATED, this[privGuestWebContentsId])
       contents.once('destroyed', () => {
-        evtMain.emit(WB_MAILBOX_TAB_WEBCONTENTES_DETACHED, webContentsId)
+        const wcId = this[privGuestWebContentsId]
+        this[privGuestWebContentsId] = null
+        evtMain.emit(evtMain.WB_TAB_DESTROYED, wcId)
       })
     }
   }
@@ -263,6 +267,24 @@ class ContentWindow extends WaveboxWindow {
   */
   openDevTools () {
     this.window.webContents.send(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, {})
+  }
+
+  /* ****************************************************************************/
+  // Query
+  /* ****************************************************************************/
+
+  /**
+  * @return the id of the focused webcontents
+  */
+  focusedTabId () {
+    return this[privGuestWebContentsId]
+  }
+
+  /**
+  * @return the ids of the tabs in this window
+  */
+  tabIds () {
+    return [this[privGuestWebContentsId]]
   }
 }
 

@@ -129,6 +129,7 @@ export default class SidelistItemMalboxAvatar extends React.Component {
       isMailboxActive: mailboxState.activeMailboxId() === mailboxId,
       isDefaultServiceActive: mailboxState.isActive(mailboxId, CoreMailbox.SERVICE_TYPES.DEFAULT),
       isDefaultServiceSleeping: mailboxState.isSleeping(mailboxId, CoreMailbox.SERVICE_TYPES.DEFAULT),
+      isAllServicesSleeping: mailboxState.isAllServicesSleeping(mailboxId),
       isRestricted: mailboxState.isMailboxRestricted(mailboxId, userState.user)
     }
   }
@@ -142,7 +143,8 @@ export default class SidelistItemMalboxAvatar extends React.Component {
       showActiveIndicator: mailboxState.activeMailboxId() === mailboxId,
       isMailboxActive: mailboxState.activeMailboxId() === mailboxId,
       isDefaultServiceActive: mailboxState.isActive(mailboxId, CoreMailbox.SERVICE_TYPES.DEFAULT),
-      isDefaultServiceSleeping: mailboxState.isSleeping(mailboxId, CoreMailbox.SERVICE_TYPES.DEFAULT)
+      isDefaultServiceSleeping: mailboxState.isSleeping(mailboxId, CoreMailbox.SERVICE_TYPES.DEFAULT),
+      isAllServicesSleeping: mailboxState.isAllServicesSleeping(mailboxId)
     })
   }
 
@@ -178,6 +180,7 @@ export default class SidelistItemMalboxAvatar extends React.Component {
       isMailboxActive,
       isDefaultServiceActive,
       isDefaultServiceSleeping,
+      isAllServicesSleeping,
       isRestricted,
       mailbox,
       service,
@@ -195,7 +198,7 @@ export default class SidelistItemMalboxAvatar extends React.Component {
       displayMailboxOverview = mailbox.collapseSidebarServices && !isMailboxActive && mailbox.hasAdditionalServices
     } else {
       borderColor = isMailboxActive || isHovering ? mailbox.color : Color(mailbox.color).lighten(0.4).rgb().string()
-      showSleeping = false
+      showSleeping = isAllServicesSleeping && mailbox.showSleepableServiceIndicator && globalShowSleepableServiceIndicator
       displayMailboxOverview = mailbox.hasAdditionalServices
     }
 

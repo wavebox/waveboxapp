@@ -1,7 +1,6 @@
-import { ipcRenderer } from 'electron'
+import { ipcRenderer } from 'electronCrx'
 import ArgParser from 'Core/ArgParser'
 import DispatchManager from 'Core/DispatchManager'
-import EventUnsupported from 'Core/EventUnsupported'
 import Event from 'Core/Event'
 import Tab from './Tab'
 import { CR_RUNTIME_ENVIRONMENTS } from 'shared/extensionApis'
@@ -10,14 +9,22 @@ import {
   CRX_TABS_GET_,
   CRX_TABS_QUERY_,
   CRX_TABS_CREATED_,
-  CRX_TABS_REMOVED_
+  CRX_TABS_REMOVED_,
+  CRX_TAB_ACTIVATED_,
+  CRX_TAB_UPDATED_,
+  CRX_TAB_EXECUTE_SCRIPT_
 } from 'shared/crExtensionIpcEvents'
 
 const privExtensionId = Symbol('privExtensionId')
 const privRuntimeEnvironment = Symbol('privRuntimeEnvironment')
 const privHasPermission = Symbol('privHasPermission')
 const QUERY_SUPPORTED_OPTIONS = new Set([
-  'active'
+  'active',
+  'windowId',
+  'lastFocusedWindow'
+])
+const EXECUTE_SCRIPT_SUPPORTED_OPTIONS = new Set([
+  'file'
 ])
 
 class Tabs {
@@ -38,14 +45,20 @@ class Tabs {
 
     this.onCreated = new Event()
     this.onRemoved = new Event()
-    this.onActivated = new EventUnsupported('chrome.tabs.onActivated')
-    this.onUpdated = new EventUnsupported('chrome.tabs.onUpdated')
+    this.onActivated = new Event()
+    this.onUpdated = new Event()
 
     ipcRenderer.on(`${CRX_TABS_CREATED_}${this[privExtensionId]}`, (evt, tabData) => {
       this.onCreated.emit(new Tab(tabData.id, tabData))
     })
     ipcRenderer.on(`${CRX_TABS_REMOVED_}${this[privExtensionId]}`, (evt, tabData) => {
       this.onRemoved.emit(new Tab(tabData.id, tabData))
+    })
+    ipcRenderer.on(`${CRX_TAB_ACTIVATED_}${this[privExtensionId]}`, (evt, changeData) => {
+      this.onActivated.emit(changeData)
+    })
+    ipcRenderer.on(`${CRX_TAB_UPDATED_}${this[privExtensionId]}`, (evt, tabId, changeData, tab) => {
+      this.onUpdated.emit(tabId, changeData, tab)
     })
 
     Object.freeze(this)
@@ -119,6 +132,32 @@ class Tabs {
       (evt, err, response) => {
         if (!err && callback) {
           callback(response)
+        }
+      })
+  }
+
+  /* **************************************************************************/
+  // Execution
+  /* **************************************************************************/
+
+  executeScript (...fullArgs) {
+    const { callback, args } = ArgParser.callback(fullArgs)
+    const [tabId, details] = ArgParser.match(args, [
+      { pattern: ['number', 'object'], out: [ArgParser.MATCH_ARG_0, ArgParser.MATCH_ARG_1] },
+      { pattern: ['object'], out: [undefined, ArgParser.MATCH_ARG_0] }
+    ])
+
+    const unsupported = Object.keys(details).filter((k) => !EXECUTE_SCRIPT_SUPPORTED_OPTIONS.has(k))
+    if (unsupported.length) {
+      console.warn(`chrome.tabs.executeScript does not support the following options at this time "[${unsupported.join(', ')}]" and they will be ignored`)
+    }
+
+    DispatchManager.request(
+      `${CRX_TAB_EXECUTE_SCRIPT_}${this[privExtensionId]}`,
+      [ tabId, details ],
+      (evt, err, response) => {
+        if (callback) {
+          callback(response || [])
         }
       })
   }

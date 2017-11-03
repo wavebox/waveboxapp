@@ -1,5 +1,6 @@
-import {BrowserWindow} from 'electron'
+import { BrowserWindow, webContents } from 'electron'
 import EventEmitter from 'events'
+import { evtMain } from 'AppEvents'
 import settingStore from 'stores/settingStore'
 import WaveboxWindowLocationSaver from './WaveboxWindowLocationSaver'
 import {
@@ -16,20 +17,103 @@ import {
 } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
 
+const privOwnerId = Symbol('privOwnerId')
+const privWindow = Symbol('privWindow')
+const privBrowserWindowId = Symbol('privBrowserWindowId')
+const privLocationSaver = Symbol('privLocationSaver')
+const privLastTimeInFocus = Symbol('privLastTimeInFocus')
+
+const attached = new Map()
+
 class WaveboxWindow extends EventEmitter {
+  /* ****************************************************************************/
+  // Class
+  /* ****************************************************************************/
+
+  /**
+  * @return all the attached wavebox windows
+  */
+  static all () { return Array.from(attached.values()) }
+
+  /**
+  * @return the window that was in focus last or is in focus now
+  */
+  static lastFocused () {
+    const all = this.all()
+    let last
+    for (let i = 0; i < all.length; i++) {
+      if (all[i].isFocused()) { return all[i] }
+      if (!last || all[i].lastTimeInFocus > last.lastTimeInFocus) {
+        last = all[i]
+      }
+    }
+    return last
+  }
+
+  /**
+  * @return the id of the window that was in focus last
+  */
+  static lastFocusedId () {
+    const last = this.lastFocused()
+    return last ? last.browserWindowId : undefined
+  }
+
+  /**
+  * @return a list of tab ids
+  */
+  static allTabIds () {
+    return this.all().reduce((acc, waveboxWindow) => {
+      return acc.concat(waveboxWindow.tabIds())
+    }, [])
+  }
+
+  /**
+  * @param tabId: the id of the tab
+  * @return the wavebox window that relates to the tab or undefined
+  */
+  static fromTabId (tabId) {
+    const wc = webContents.fromId(tabId)
+    if (!wc) { return undefined }
+    const bw = BrowserWindow.fromWebContents(wc.hostWebContents || wc)
+    if (!bw) { return undefined }
+    return attached.get(bw.id)
+  }
+
+  /**
+  * @return all the attached browser window ids
+  */
+  static allBrowserWindowIds () { return Array.from(attached.keys()) }
+
+  /**
+  * @param bwId: the id of the browser window
+  * @return the window reference or undefined
+  */
+  static fromBrowserWindowId (bwId) { return attached.get(bwId) }
+
+  /**
+  * @return the id of the tab that's in focus in the focused window
+  */
+  static focusedTabId () {
+    const focusedWindow = this.lastFocused()
+    if (!focusedWindow) { return undefined }
+    return focusedWindow.focusedTabId()
+  }
+
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
   /**
-  * @param windowId = undefined: the id of the window
+  * @param saverTag = undefined: the tag to use when saving the window position
   */
-  constructor (windowId = undefined) {
+  constructor (saverTag = undefined) {
     super()
-    this.windowId = windowId
-    this.ownerId = null
-    this.window = null
-    this.locationSaver = new WaveboxWindowLocationSaver(windowId)
+
+    this[privOwnerId] = null
+    this[privWindow] = null
+    this[privBrowserWindowId] = null
+    this[privLastTimeInFocus] = 0
+    this[privLocationSaver] = new WaveboxWindowLocationSaver(saverTag)
   }
 
   /**
@@ -49,6 +133,18 @@ class WaveboxWindow extends EventEmitter {
       icon: icon
     }
   }
+
+  /* ****************************************************************************/
+  // Properties
+  /* ****************************************************************************/
+
+  get ownerId () { return this[privOwnerId] }
+  set ownerId (v) { this[privOwnerId] = v }
+
+  get window () { return this[privWindow] }
+  get browserWindowId () { return this[privBrowserWindowId] }
+  get locationSaver () { return this[privLocationSaver] }
+  get lastTimeInFocus () { return this[privLastTimeInFocus] }
 
   /* ****************************************************************************/
   // Window lifecycle
@@ -73,8 +169,15 @@ class WaveboxWindow extends EventEmitter {
       fullBrowserWindowPreferences.y = Math.max(fullBrowserWindowPreferences.y, 25)
     }
 
-    // Create the window
-    this.window = new BrowserWindow(fullBrowserWindowPreferences)
+    // Create the window & prep for lifecycle
+    this[privWindow] = new BrowserWindow(fullBrowserWindowPreferences)
+    this[privBrowserWindowId] = this.window.id
+    attached.set(this.browserWindowId, this)
+    setTimeout(() => { // Requeue to happen on setup complete
+      evtMain.emit(evtMain.WB_WINDOW_CREATED, this.browserWindowId)
+    })
+
+    // Restore the window position
     if (savedLocation.maximized && browserWindowPreferences.show !== false) {
       this.window.maximize()
     }
@@ -83,8 +186,8 @@ class WaveboxWindow extends EventEmitter {
     // Bind window event listeners
     this.window.on('close', (evt) => { this.emit('close', evt) })
     this.window.on('closed', (evt) => this.destroy(evt))
-    this.window.on('focus', (evt) => this.window.webContents.send(WB_WINDOW_FOCUS))
-    this.window.on('blur', (evt) => this.window.webContents.send(WB_WINDOW_BLUR))
+    this.window.on('focus', this._handleWindowFocused)
+    this.window.on('blur', this._handleWindowBlurred)
     this.bindMouseNavigation()
 
     // Register state savers
@@ -111,8 +214,12 @@ class WaveboxWindow extends EventEmitter {
         this.window.close()
         this.window.destroy()
       }
-      this.window = null
+      this[privWindow] = null
     }
+    attached.delete(this.browserWindowId)
+    setTimeout(() => {
+      evtMain.emit(evtMain.WB_WINDOW_DESTROYED, this.browserWindowId)
+    })
     this.emit('closed', evt)
   }
 
@@ -140,6 +247,30 @@ class WaveboxWindow extends EventEmitter {
         }
       })
     }
+  }
+
+  /* ****************************************************************************/
+  // Window handlers
+  /* ****************************************************************************/
+
+  /**
+  * Handles the window coming into focus
+  * @param evt: the event that fired
+  */
+  _handleWindowFocused = (evt) => {
+    this[privLastTimeInFocus] = new Date().getTime()
+    this.window.webContents.send(WB_WINDOW_FOCUS)
+    evtMain.emit(evtMain.WB_WINDOW_FOCUSED, this.window.id)
+  }
+
+  /**
+  * Handles the window leaving focus
+  * @param evt: the event that fired
+  */
+  _handleWindowBlurred = (evt) => {
+    this[privLastTimeInFocus] = new Date().getTime()
+    this.window.webContents.send(WB_WINDOW_BLUR)
+    evtMain.emit(evtMain.WB_WINDOW_BLURRED, this.window.id)
   }
 
   /* ****************************************************************************/
@@ -389,6 +520,20 @@ class WaveboxWindow extends EventEmitter {
   */
   isFocused () {
     return this.window.isFocused()
+  }
+
+  /**
+  * @return the id of the focused tab
+  */
+  focusedTabId () {
+    throw new Error('WaveboxWindow.focusedTabId not implemented')
+  }
+
+  /**
+  * @return the ids of the tabs in this window
+  */
+  tabIds () {
+    throw new Error('WaveboxWindow.tabIds not implemented')
   }
 
   /**

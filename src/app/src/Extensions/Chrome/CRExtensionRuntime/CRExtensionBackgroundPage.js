@@ -8,6 +8,7 @@ import {
 } from 'shared/extensionApis'
 import Resolver from 'Runtime/Resolver'
 import { SessionManager } from 'SessionManager'
+import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
 
 class CRExtensionBackgroundPage {
   /* ****************************************************************************/
@@ -104,12 +105,10 @@ class CRExtensionBackgroundPage {
       .onBlocking(undefined, this._handleBeforeSendHeaders)
 
     // Relax cors for extensions that request it
-    if (this.extension.manifest.permissions.has('<all_urls>')) {
-      SessionManager
-        .webRequestEmitterFromPartitionId(partitionId)
-        .headersReceived
-        .onBlocking(undefined, this._handleAllUrlHeadersReceived)
-    }
+    SessionManager
+      .webRequestEmitterFromPartitionId(partitionId)
+      .headersReceived
+      .onBlocking(undefined, this._handleAllUrlHeadersReceived)
   }
 
   /**
@@ -154,22 +153,24 @@ class CRExtensionBackgroundPage {
   */
   _handleAllUrlHeadersReceived = (details, responder) => {
     if (details.resourceType === 'xhr') {
-      const headers = details.responseHeaders
-      const updatedHeaders = {
-        ...headers,
-        'access-control-allow-credentials': headers['access-control-allow-credentials'] || ['true'],
-        'access-control-allow-origin': (headers['access-control-allow-origin'] || []).concat([
-          url.format({
-            protocol: CR_EXTENSION_PROTOCOL,
-            slashes: true,
-            hostname: this.extension.id
-          })
-        ])
+      const purl = url.parse(details.url)
+      if (CRExtensionMatchPatterns.matchUrls(purl.protocol, purl.host, purl.pathname, Array.from(this.extension.manifest.permissions))) {
+        const headers = details.responseHeaders
+        const updatedHeaders = {
+          ...headers,
+          'access-control-allow-credentials': headers['access-control-allow-credentials'] || ['true'],
+          'access-control-allow-origin': [
+            url.format({
+              protocol: CR_EXTENSION_PROTOCOL,
+              slashes: true,
+              hostname: this.extension.id
+            })
+          ]
+        }
+        return responder({ responseHeaders: updatedHeaders })
       }
-      responder({ responseHeaders: updatedHeaders })
-    } else {
-      responder({})
     }
+    return responder({})
   }
 
   /* ****************************************************************************/

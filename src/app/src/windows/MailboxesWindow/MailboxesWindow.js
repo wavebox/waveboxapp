@@ -1,9 +1,9 @@
 import electron from 'electron'
-import WaveboxWindow from './WaveboxWindow'
+import WaveboxWindow from '../WaveboxWindow'
+import mailboxStore from 'stores/mailboxStore'
 import settingStore from 'stores/settingStore'
 import userStore from 'stores/userStore'
 import CRExtensionUISubscriber from 'Extensions/Chrome/CRExtensionUISubscriber'
-import { MailboxesTabManager } from 'SessionManager'
 import {
   AuthGoogle,
   AuthMicrosoft,
@@ -44,6 +44,8 @@ import {
   TraySettings
 } from 'shared/Models/Settings'
 import Resolver from 'Runtime/Resolver'
+import MailboxesWindowTabManager from './MailboxesWindowTabManager'
+import MailboxesWindowBehaviour from './MailboxesWindowBehaviour'
 
 const ALLOWED_URLS = [
   'file://' + Resolver.mailboxesScene('mailboxes.html'),
@@ -65,6 +67,8 @@ class MailboxesWindow extends WaveboxWindow {
     this.authMicrosoft = new AuthMicrosoft()
     this.authWavebox = new AuthWavebox()
     this.gracefulReloadTimeout = null
+    this.tabManager = null
+    this.behaviour = null
   }
 
   /**
@@ -107,8 +111,8 @@ class MailboxesWindow extends WaveboxWindow {
         plugins: true
       }
     })
-    this.windowId = this.window.id
-    MailboxesTabManager.attachMailboxesWindow(this.windowId)
+    this.tabManager = new MailboxesWindowTabManager(this.window.webContents.id)
+    this.behaviour = new MailboxesWindowBehaviour(this.window.webContents.id, this.tabManager)
 
     this.window.once('ready-to-show', () => {
       if (!hidden) { this.show() }
@@ -151,7 +155,7 @@ class MailboxesWindow extends WaveboxWindow {
   * Handles destroy being called
   */
   destroy (evt) {
-    MailboxesTabManager.detachMailboxesWindow(this.windowId)
+    this.tabManager.destroy()
     clearTimeout(this.gracefulReloadTimeout)
     electron.ipcMain.removeListener(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)
     electron.ipcMain.removeListener(WBECRX_RELOAD_OWNER, this.handleCRXReloadOwner)
@@ -453,6 +457,27 @@ class MailboxesWindow extends WaveboxWindow {
   */
   openDevTools () {
     this.window.webContents.send(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, {})
+  }
+
+  /* ****************************************************************************/
+  // Query
+  /* ****************************************************************************/
+
+  /**
+  * @return the id of the focused webcontents
+  */
+  focusedTabId () {
+    return this.tabManager.getWebContentsId(
+      mailboxStore.getActiveMailboxId(),
+      mailboxStore.getActiveServiceType()
+    )
+  }
+
+  /**
+  * @return the ids of the tabs in this window
+  */
+  tabIds () {
+    return this.tabManager.allWebContentIds()
   }
 }
 

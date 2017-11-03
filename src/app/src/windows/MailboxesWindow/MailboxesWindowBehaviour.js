@@ -8,7 +8,6 @@ import mailboxStore from 'stores/mailboxStore'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import CRExtensionManager from 'Extensions/Chrome/CRExtensionManager'
-import MailboxesTabManager from './MailboxesTabManager'
 import {
   WB_NEW_WINDOW
 } from 'shared/ipcEvents'
@@ -22,12 +21,18 @@ import {
 
 const WINDOW_OPEN_MODES = CoreService.WINDOW_OPEN_MODES
 
-class MailboxBehaviour {
+class MailboxesWindowBehaviour {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
-  constructor () {
+  /**
+  * @param webContentsId: the host window webcontents
+  * @param tabManager: the tab manager for the window
+  */
+  constructor (webContentsId, tabManager) {
+    this.webContentsId = webContentsId
+    this.tabManager = tabManager
     app.on('web-contents-created', this.handleAppWebContentsCreated)
     ipcMain.on(WB_NEW_WINDOW, this.handleOpenIPCWaveboxWindow)
   }
@@ -42,7 +47,7 @@ class MailboxBehaviour {
   * @param contents: the webcontent that were created
   */
   handleAppWebContentsCreated = (evt, contents) => {
-    if (contents.getType() === 'webview' && MailboxesTabManager.hasMailboxesWindowWithWebContentsId(contents.hostWebContents.id)) {
+    if (contents.getType() === 'webview' && contents.hostWebContents.id === this.webContentsId) {
       contents.on('new-window', this.handleWebViewNewWindow)
       contents.on('will-navigate', this.handleWebViewWillNavigate)
     }
@@ -58,7 +63,7 @@ class MailboxBehaviour {
   * @param body: the arguments from the body
   */
   handleOpenIPCWaveboxWindow = (evt, body) => {
-    if (MailboxesTabManager.hasMailboxesWindowWithWebContentsId(evt.sender.id)) {
+    if (evt.sender.id === this.webContentsId) {
       const contentWindow = new ContentWindow(`${body.mailboxId}:${body.serviceType}`)
       appWindowManager.addContentWindow(contentWindow)
 
@@ -116,15 +121,15 @@ class MailboxBehaviour {
     let provisionalTargetUrl
 
     // Grab the service and mailbox
-    if (MailboxesTabManager.hasServiceId(webContentsId)) {
-      const { mailboxId, serviceType } = MailboxesTabManager.getServiceId(webContentsId)
+    if (this.tabManager.hasServiceId(webContentsId)) {
+      const { mailboxId, serviceType } = this.tabManager.getServiceId(webContentsId)
       ownerId = `${mailboxId}:${serviceType}`
       mailbox = mailboxStore.getMailbox(mailboxId)
       service = mailboxStore.getService(mailboxId, serviceType)
     }
 
     if (service) {
-      provisionalTargetUrl = MailboxesTabManager.getTargetUrl(webContentsId)
+      provisionalTargetUrl = this.tabManager.getTargetUrl(webContentsId)
       openMode = service.getWindowOpenModeForUrl(
         targetUrl,
         purl,
@@ -170,7 +175,7 @@ class MailboxBehaviour {
     const webContentsId = evt.sender.id
 
     // Extensions
-    if (MailboxesTabManager.hasExtensionPane(webContentsId)) {
+    if (this.tabManager.hasExtensionPane(webContentsId)) {
       if (url.parse(targetUrl).protocol !== WAVEBOX_HOSTED_EXTENSION_PROTOCOL + ':') {
         evt.preventDefault()
         return
@@ -178,8 +183,8 @@ class MailboxBehaviour {
     }
 
     // Navigation modes
-    if (MailboxesTabManager.hasServiceId(webContentsId)) {
-      const { mailboxId, mailbox, service } = MailboxesTabManager.getService(webContentsId)
+    if (this.tabManager.hasServiceId(webContentsId)) {
+      const { mailboxId, mailbox, service } = this.tabManager.getService(webContentsId)
 
       let navigateMode = CoreService.NAVIGATE_MODES.DEFAULT
       if (service) {
@@ -269,4 +274,4 @@ class MailboxBehaviour {
   }
 }
 
-export default new MailboxBehaviour()
+export default MailboxesWindowBehaviour
