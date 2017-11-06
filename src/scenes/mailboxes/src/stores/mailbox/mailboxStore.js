@@ -318,6 +318,7 @@ class MailboxStore {
       if (!userStore.getState().user.hasSleepable) { return false }
 
       const mailbox = this.getMailbox(mailboxId)
+      if (!mailbox) { return false }
       const awake = mailbox.enabledServiceTypes.find((serviceType) => {
         return !this.isSleeping(mailboxId, serviceType)
       })

@@ -69,6 +69,45 @@ class GoogleDefaultServiceReducer extends ServiceReducer {
       return service.changeData({ customUnreadLabelWatchString: str })
     }
   }
+
+  /**
+  * Sets if the custom unread count should be taken from the label
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param takeFromLabel: true or false
+  */
+  static setCustomUnreadCountFromLabel (mailbox, service, takeFromLabel) {
+    if (takeFromLabel !== service.customUnreadCountFromLabel) {
+      googleActions.syncMailboxMessages.defer(mailbox.id, true)
+      return service.changeData({ customUnreadCountFromLabel: takeFromLabel })
+    }
+  }
+
+  /**
+  * Sets the label to get the custom unread query from
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param label: the label id
+  */
+  static setCustomUnreadCountLabel (mailbox, service, label) {
+    if (label !== service.customUnreadCountLabel) {
+      googleActions.syncMailboxMessages.defer(mailbox.id, true)
+      return service.changeData({ customUnreadCountLabel: label })
+    }
+  }
+
+  /**
+  * Sets the field to get the custom unread query from
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param label: the label id
+  */
+  static setCustomUnreadCountLabelField (mailbox, service, field) {
+    if (field !== service.customUnreadCountLabelField) {
+      googleActions.syncMailboxMessages.defer(mailbox.id, true)
+      return service.changeData({ customUnreadCountLabelField: field })
+    }
+  }
 }
 
 export default GoogleDefaultServiceReducer
