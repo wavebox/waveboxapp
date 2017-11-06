@@ -284,7 +284,7 @@ class ContentWindow extends WaveboxWindow {
   * @return the ids of the tabs in this window
   */
   tabIds () {
-    return [this[privGuestWebContentsId]]
+    return this[privGuestWebContentsId] === null ? [] : [this[privGuestWebContentsId]]
   }
 }
 

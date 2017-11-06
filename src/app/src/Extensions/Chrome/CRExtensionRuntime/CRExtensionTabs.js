@@ -184,8 +184,9 @@ class CRExtensionTabs {
   */
   handleQueryTabs = (evt, [options], responseCallback) => {
     const lastFocusedWindowId = WaveboxWindow.lastFocusedId()
+
     const tabs = WaveboxWindow.allTabIds()
-      .map((id) => this._tabDataFromWebContents(webContents.fromId(id)))
+      .map((id) => this._tabDataFromWebContentsId(id))
       .filter((tab) => {
         if (!tab) { return false }
 
