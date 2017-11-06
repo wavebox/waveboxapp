@@ -449,7 +449,7 @@ class GoogleStore {
         error = 'Using custom query parameters but not all fields are configured. This is most likely a configuration error'
       }
       console[error ? 'warn' : 'log'](
-        'LOG_PFX ' + (error || 'Using custom query parameters'),
+        `${LOG_PFX}${error || 'Using custom query parameters'}`,
         mailbox.id,
         service.customUnreadQuery,
         service.customUnreadLabelWatchArray,
