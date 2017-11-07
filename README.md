@@ -43,6 +43,6 @@ module.exports = { API_KEY: 'your_api_key' }
 ```
 
 ### Dependencies & Running
-* To install all Wavebox npm dependencies: `npm run install:all`
+* To install all Wavebox npm dependencies: `npm install; npm run install:all`
 * To recompile native modules: `npm run rebuild:electron`
 * To run compile and run the app: `npm start`

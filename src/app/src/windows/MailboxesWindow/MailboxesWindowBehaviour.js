@@ -1,4 +1,5 @@
 import { app, ipcMain, shell, BrowserWindow } from 'electron'
+import { evtMain } from 'AppEvents'
 import appWindowManager from 'R/appWindowManager'
 import ContentWindow from 'windows/ContentWindow'
 import ContentPopupWindow from 'windows/ContentPopupWindow'
@@ -50,6 +51,10 @@ class MailboxesWindowBehaviour {
     if (contents.getType() === 'webview' && contents.hostWebContents.id === this.webContentsId) {
       contents.on('new-window', this.handleWebViewNewWindow)
       contents.on('will-navigate', this.handleWebViewWillNavigate)
+      contents.on('before-input-event', this.handleBeforeInputEvent)
+      contents.on('destroyed', () => {
+        contents.removeListener('before-input-event', this.handleBeforeInputEvent) // Doesn't get un-bound automatically
+      })
     }
   }
 
@@ -204,6 +209,29 @@ class MailboxesWindowBehaviour {
           }
         })
       }
+    }
+  }
+
+  /**
+  * Checks to see if any key combinations are banned from entering the webview.
+  * These would be ones that interfere with accelerators
+  * @param evt: the event that fired
+  * @param input: the input details
+  */
+  handleBeforeInputEvent = (evt, input) => {
+    // Do the fastest check we can first
+    if (!input.shift && !input.control && !input.alt && !input.meta) { return }
+
+    // Grab everything we need dropping out as we go...
+    const webContentsId = evt.sender.id
+    if (!this.tabManager.hasServiceId(webContentsId)) { return }
+    const { mailboxId, serviceType } = this.tabManager.getServiceId(webContentsId)
+    const service = mailboxStore.getService(mailboxId, serviceType)
+    if (!service) { return }
+
+    if (service.shouldPreventInputEvent(input)) {
+      evt.preventDefault()
+      evtMain.emit(evtMain.INPUT_EVENT_PREVENTED, evt.sender.id, input)
     }
   }
 

@@ -222,6 +222,15 @@ class CoreService extends Model {
     return NAVIGATE_MODES.DEFAULT
   }
 
+  /**
+  * Looks to see if the input event should be prevented
+  * @param input: the input info
+  * @return true if the input should be prevented, false otherwise
+  */
+  shouldPreventInputEvent (input) {
+    return false
+  }
+
   /* **************************************************************************/
   // Utils
   /* **************************************************************************/

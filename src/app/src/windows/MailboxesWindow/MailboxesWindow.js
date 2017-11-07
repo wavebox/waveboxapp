@@ -144,7 +144,7 @@ class MailboxesWindow extends WaveboxWindow {
 
     // remove built in listener so we can handle this on our own
     this.window.webContents.removeAllListeners('devtools-reload-page')
-    this.window.webContents.on('devtools-reload-page', () => this.reload())
+    this.window.webContents.on('devtools-reload-page', () => this.reloadWaveboxWindow())
 
     CRExtensionUISubscriber.subscribe(this.window.webContents)
 

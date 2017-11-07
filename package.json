@@ -63,7 +63,7 @@
     "less": "2.7.3",
     "less-loader": "4.0.5",
     "style-loader": "0.19.0",
-    "uglify-es": "3.1.7",
+    "uglify-es": "3.1.8",
     "url-loader": "0.6.2",
     "uuid": "3.1.0",
     "webpack": "3.8.1",

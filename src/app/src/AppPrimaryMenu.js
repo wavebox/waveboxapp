@@ -5,6 +5,8 @@ import Release from 'shared/Release'
 import pkg from 'package.json'
 import MenuTool from 'shared/Electron/MenuTool'
 import electronLocalshortcut from 'electron-localshortcut'
+import { evtMain } from 'AppEvents'
+import { toKeyEvent } from 'keyboardevent-from-electron-accelerator'
 import {
   GITHUB_URL,
   BLOG_URL,
@@ -165,12 +167,9 @@ class AppPrimaryMenu {
     this._lastActiveServiceType = null
     this._lastMenu = null
 
-    mailboxStore.on('changed', () => {
-      this.handleMailboxesChanged()
-    })
-    settingStore.on('changed:accelerators', (evt) => {
-      this.handleAcceleratorsChanged(evt)
-    })
+    mailboxStore.on('changed', this.handleMailboxesChanged)
+    settingStore.on('changed:accelerators', this.handleAcceleratorsChanged)
+    evtMain.on(evtMain.INPUT_EVENT_PREVENTED, this.handleInputEventPrevented)
   }
 
   /* ****************************************************************************/
@@ -517,7 +516,7 @@ class AppPrimaryMenu {
   /**
   * Handles the mailboxes changing
   */
-  handleMailboxesChanged () {
+  handleMailboxesChanged = () => {
     const activeMailbox = mailboxStore.getActiveMailbox()
     const activeServiceType = mailboxStore.getActiveServiceType()
     const mailboxes = mailboxStore.orderedMailboxes()
@@ -543,8 +542,88 @@ class AppPrimaryMenu {
   * Handles the accelerators changing. If these change it will definately have a reflection in the
   * menu, so just update immediately
   */
-  handleAcceleratorsChanged ({ next }) {
+  handleAcceleratorsChanged = ({ next }) => {
     this.updateApplicationMenu(next, this._lastMailboxes, this._lastActiveMailbox, this._lastActiveServiceType)
+  }
+
+  /* ****************************************************************************/
+  // Input events
+  /* ****************************************************************************/
+
+  /**
+  * Converts an accelerator to an input key event, removing any quirks
+  * @param accelerator: the accelertor
+  * @return the input event that can be matched
+  */
+  _acceleratorToInputKeyEvent (accelerator) {
+    const keyEvent = toKeyEvent(accelerator)
+
+    if (!isNaN(parseInt(keyEvent.key))) {
+      keyEvent.code = 'Digit' + keyEvent.key
+      delete keyEvent.key
+    }
+
+    if (keyEvent.metaKey !== undefined) {
+      keyEvent.meta = keyEvent.metaKey
+      delete keyEvent.metaKey
+    }
+
+    return keyEvent
+  }
+
+  /**
+  * Looks to see if an input event matches an accelerator
+  * @param input: the input event
+  * @param accelerator: the accelerator
+  * @return true if they match
+  */
+  _matchInputEventToAccelerator (input, accelerator) {
+    if (!accelerator) { return false }
+
+    let expanded
+    if (accelerator.toLowerCase().indexOf('number') !== -1) {
+      expanded = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'].map((n) => {
+        accelerator.replace(/number/i, n)
+      })
+    } else {
+      expanded = [accelerator]
+    }
+
+    const match = expanded.find((accel) => {
+      try {
+        const targetKeyEvent = this._acceleratorToInputKeyEvent(accel)
+        if (!isNaN(parseInt(targetKeyEvent.key))) {
+          targetKeyEvent.code = 'Digit' + targetKeyEvent.key
+          delete targetKeyEvent.key
+        }
+        for (var k in targetKeyEvent) {
+          if (input[k] !== targetKeyEvent[k]) {
+            return false
+          }
+        }
+        return true
+      } catch (ex) {
+        return false
+      }
+    })
+    return !!match
+  }
+
+  /**
+  * Handles an input event being prevented
+  * @param webContentsId: the id of the webcontents that the event was prevented on
+  * @param input: the input params that were prevented
+  */
+  handleInputEventPrevented = (webContentsId, input) => {
+    if (input.type !== 'keyDown') { return }
+    if (!this._lastMenu) { return }
+
+    const matchedMenu = MenuTool.allAcceleratorMenuItems(this._lastMenu)
+      .find((menuItem) => this._matchInputEventToAccelerator(input, menuItem.accelerator))
+
+    if (matchedMenu && matchedMenu.click) {
+      matchedMenu.click()
+    }
   }
 }
 
