@@ -11,7 +11,7 @@ try {
 
 const cmds = [
   {
-    cmd: 'npm',
+    cmd: process.platform === 'win32' ? 'npm.cmd' : 'npm',
     args: ['run', 'cache-clean'],
     opts: {
       stdio: 'inherit',
@@ -20,7 +20,7 @@ const cmds = [
     prelog: `${Colors.inverse('cache-clean')}`
   },
   {
-    cmd: 'npm',
+    cmd: process.platform === 'win32' ? 'npm.cmd' : 'npm',
     args: ['run', 'postinstall'],
     opts: {
       stdio: 'inherit',
