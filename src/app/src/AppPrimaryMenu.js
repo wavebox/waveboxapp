@@ -567,6 +567,14 @@ class AppPrimaryMenu {
       keyEvent.meta = keyEvent.metaKey
       delete keyEvent.metaKey
     }
+    if (keyEvent.ctrlKey !== undefined) {
+      keyEvent.control = keyEvent.ctrlKey
+      delete keyEvent.ctrlKey
+    }
+    if (keyEvent.shiftKey !== undefined) {
+      keyEvent.shift = keyEvent.shiftKey
+      delete keyEvent.shiftKey
+    }
 
     return keyEvent
   }

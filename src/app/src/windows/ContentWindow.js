@@ -142,6 +142,10 @@ class ContentWindow extends WaveboxWindow {
     // New window handling
     ipcMain.on(WB_NEW_WINDOW, this.handleOpenNewWindow)
 
+    // remove built in listener so we can handle this on our own
+    this.window.webContents.removeAllListeners('devtools-reload-page')
+    this.window.webContents.on('devtools-reload-page', () => this.window.reload())
+
     // Listen on webcontents events
     this.window.webContents.on('new-window', this.handleWebContentsNewWindow)
     this.window.webContents.on('will-attach-webview', this.handleWillAttachWebview)
