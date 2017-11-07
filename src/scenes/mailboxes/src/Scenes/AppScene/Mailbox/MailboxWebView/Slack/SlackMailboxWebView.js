@@ -129,7 +129,7 @@ export default class SlackMailboxWebView extends React.Component {
     if (this.state.isActive) {
       if (this.state.isSearching !== prevState.isSearching || this.state.searchId !== prevState.searchId) {
         if (this.state.isSearching) {
-          this.refs[REF].executeJavaScript(`document.querySelector('[name="q"]').focus()`)
+          this.refs[REF].executeJavaScript(`document.querySelector('.search_input>[contenteditable]').focus()`)
           mailboxActions.untrackSearchingMailbox.defer(this.props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT)
         }
       }
