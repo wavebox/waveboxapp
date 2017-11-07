@@ -20,7 +20,6 @@ import {
   WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
 } from 'shared/ipcEvents'
 import { ipcRenderer, webFrame } from 'electron'
-import DistributionConfig from 'Runtime/DistributionConfig'
 
 // Prevent zooming
 webFrame.setZoomLevelLimits(1, 1)
@@ -96,10 +95,3 @@ ipcRenderer.send(WB_MAILBOXES_WINDOW_JS_LOADED, {})
 // Resource usage monitoring
 const resourceMonitorListener = new ResourceMonitorResponder()
 resourceMonitorListener.listen()
-
-// Forced setup wizards
-if (DistributionConfig.isSnapInstall && !settingsStore.getState().app.hasSeenSnapSetupMessage) {
-  setTimeout(() => {
-    window.location.hash = '/snap/setup'
-  }, 1000)
-}

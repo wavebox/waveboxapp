@@ -23,7 +23,6 @@ import {
   AccountAuthenticatingScene,
   AccountStandaloneScene
 } from './AccountScene'
-import SnapSetupScene from './SnapSetupScene'
 
 export default class WaveboxRouter extends React.Component {
   /* **************************************************************************/
@@ -64,8 +63,6 @@ export default class WaveboxRouter extends React.Component {
           <Route path='/account/auth/:mode?' component={AccountAuthScene} />
           <Route path='/account/authenticating' component={AccountAuthenticatingScene} />
           <Route path='/account/view' component={AccountStandaloneScene} />
-
-          <Route path='/snap/setup' component={SnapSetupScene} />
         </div>
       </HashRouter>
     )
