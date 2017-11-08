@@ -1,6 +1,5 @@
 import uuid from 'uuid'
-import { WB_PING_RESOURCE_USAGE, WB_PONG_RESOURCE_USAGE } from 'shared/ipcEvents'
-import { ipcRenderer, remote } from 'electron'
+import { remote } from 'electron'
 import path from 'path'
 
 const { BrowserWindow } = remote
@@ -36,26 +35,8 @@ class EnhancedNotificationWindowLinux {
 
     this.window.on('page-title-updated', this.handleNotificationEvent)
     this.window.once('ready-to-show', this.handleWindowReady)
-    ipcRenderer.on(WB_PING_RESOURCE_USAGE, this.handlePingResourceUsage)
     window.addEventListener('beforeunload', () => {
       this.window.close()
-    })
-  }
-
-  /* **************************************************************************/
-  // App Event Handlers
-  /* **************************************************************************/
-
-  handlePingResourceUsage = () => {
-    const js = `
-      Object.assign({},
-        process.getCPUUsage(),
-        process.getProcessMemoryInfo(),
-        { pid: process.pid, description: 'Notification Service' }
-      )
-    `
-    this.window.webContents.executeJavaScript(js, (res) => {
-      ipcRenderer.send(WB_PONG_RESOURCE_USAGE, res)
     })
   }
 

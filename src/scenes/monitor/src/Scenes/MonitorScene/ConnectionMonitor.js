@@ -23,13 +23,13 @@ export default class ConnectionMonitor extends React.Component {
 
   state = (() => {
     return {
-      connectionInfo: monitorStore.getState().connectionInfoArray()
+      connections: monitorStore.getState().allConnectionMetrics()
     }
   })()
 
   monitorUpdated = (monitorState) => {
     this.setState({
-      connectionInfo: monitorState.connectionInfoArray()
+      connections: monitorState.allConnectionMetrics()
     })
   }
 
@@ -88,7 +88,7 @@ export default class ConnectionMonitor extends React.Component {
   }
 
   render () {
-    const { connectionInfo } = this.state
+    const { connections } = this.state
 
     return (
       <Table selectable={false}>
@@ -103,7 +103,7 @@ export default class ConnectionMonitor extends React.Component {
           </TableRow>
         </TableHeader>
         <TableBody displayRowCheckbox={false} stripedRows>
-          {connectionInfo.map((conn, i) => this.renderRow(conn, i))}
+          {connections.map((conn, i) => this.renderRow(conn, i))}
         </TableBody>
       </Table>
     )

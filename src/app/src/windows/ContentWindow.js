@@ -1,5 +1,5 @@
 import WaveboxWindow from './WaveboxWindow'
-import { shell, ipcMain, app } from 'electron'
+import { shell, ipcMain, app, webContents } from 'electron'
 import { evtMain } from 'AppEvents'
 import querystring from 'querystring'
 import appWindowManager from 'R/appWindowManager'
@@ -288,6 +288,24 @@ class ContentWindow extends WaveboxWindow {
   */
   tabIds () {
     return this[privGuestWebContentsId] === null ? [] : [this[privGuestWebContentsId]]
+  }
+
+  /**
+  * @return process info about the tabs with { webContentsId, description, pid, url }
+  */
+  webContentsProcessInfo () {
+    return this.tabIds().map((tabId) => {
+      const wc = webContents.fromId(tabId)
+      return {
+        webContentsId: tabId,
+        pid: wc ? wc.getOSProcessId() : undefined,
+        url: wc ? wc.getURL() : undefined
+      }
+    }).concat([{
+      webContentsId: this.window.webContents.id,
+      pid: this.window.webContents.getOSProcessId(),
+      description: 'Content Window'
+    }])
   }
 }
 

@@ -481,6 +481,26 @@ class MailboxesWindow extends WaveboxWindow {
   tabIds () {
     return this.tabManager.allWebContentIds()
   }
+
+  /**
+  * @return process info about the tabs with { webContentsId, description, pid }
+  */
+  webContentsProcessInfo () {
+    return this.tabIds().map((tabId) => {
+      const wc = electron.webContents.fromId(tabId)
+      const { mailbox, service } = this.tabManager.getService(tabId)
+      return {
+        webContentsId: tabId,
+        pid: wc ? wc.getOSProcessId() : undefined,
+        description: mailbox && service ? `${service.humanizedType}: ${mailbox.displayName}` : undefined,
+        url: wc ? wc.getURL() : undefined
+      }
+    }).concat([{
+      webContentsId: this.window.webContents.id,
+      pid: this.window.webContents.getOSProcessId(),
+      description: 'Mailboxes Window'
+    }])
+  }
 }
 
 export default MailboxesWindow

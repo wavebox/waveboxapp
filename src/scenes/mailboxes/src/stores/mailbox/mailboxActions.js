@@ -28,9 +28,7 @@ import {
   WB_WINDOW_FOCUS,
 
   WB_MAILBOXES_WINDOW_SWITCH_MAILBOX,
-  WB_MAILBOXES_WINDOW_SWITCH_SERVICE,
-
-  WB_PING_RESOURCE_USAGE
+  WB_MAILBOXES_WINDOW_SWITCH_SERVICE
 } from 'shared/ipcEvents'
 import { ipcRenderer, remote } from 'electron'
 
@@ -752,11 +750,6 @@ class MailboxActions {
   /* **************************************************************************/
 
   /**
-  * Pings all the mailboxes to submit their resource usage
-  */
-  pingResourceUsage () { return {} }
-
-  /**
   * Reloads the active mailbox
   */
   reloadActiveMailbox () { return {} }
@@ -812,7 +805,6 @@ ipcRenderer.on(WB_MAILBOXES_WINDOW_SWITCH_SERVICE, (evt, req) => {
 })
 
 // Misc
-ipcRenderer.on(WB_PING_RESOURCE_USAGE, actions.pingResourceUsage)
 ipcRenderer.on(WB_WINDOW_RELOAD_WEBVIEW, actions.reloadActiveMailbox)
 ipcRenderer.on(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, actions.openDevToolsActiveMailbox)
 ipcRenderer.on(WB_WINDOW_FOCUS, actions.windowDidFocus)

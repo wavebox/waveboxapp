@@ -1,5 +1,4 @@
 import { EventEmitter } from 'events'
-import { WB_PING_RESOURCE_USAGE } from 'shared/ipcEvents'
 
 class MailboxDispatch extends EventEmitter {
   /* **************************************************************************/
@@ -63,24 +62,6 @@ class MailboxDispatch extends EventEmitter {
         })
       ])
     }
-  }
-
-  /* **************************************************************************/
-  // Responders : Higher level
-  /* **************************************************************************/
-
-  /**
-  * Asks the mailbox to submit its resource usage
-  * @param mailboxId: the id of the mailbox
-  * @param serviceType: the type of service
-  * @param description: the description that should be returned in the pong
-  */
-  pingResourceUsage (mailboxId, serviceType, description) {
-    return this.emit(WB_PING_RESOURCE_USAGE, {
-      mailboxId: mailboxId,
-      serviceType: serviceType,
-      description: description
-    })
   }
 
   /* **************************************************************************/

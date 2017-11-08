@@ -22,13 +22,13 @@ export default class ProcessMonitor extends React.Component {
 
   state = (() => {
     return {
-      processInfo: monitorStore.getState().processInfoArray()
+      metrics: monitorStore.getState().allProcessMetrics()
     }
   })()
 
   monitorUpdated = (monitorState) => {
     this.setState({
-      processInfo: monitorState.processInfoArray()
+      metrics: monitorStore.getState().allProcessMetrics()
     })
   }
 
@@ -42,30 +42,47 @@ export default class ProcessMonitor extends React.Component {
 
   /**
   * Renders a row
-  * @param proc: the process info
+  * @param metric: the process info
   * @return jsx
   */
-  renderRow (proc) {
+  renderRow (metric) {
+    let description
+    if (metric.pid === process.pid) {
+      description = 'Task Monitor'
+    } else if (metric.type === 'Browser') {
+      description = 'Main'
+    } else if (metric.description) {
+      description = metric.description
+    } else if (metric.url) {
+      if (metric.url.startsWith('chrome-devtools://')) {
+        description = 'Dev Tools'
+      } else {
+        description = metric.url
+      }
+    } else {
+      description = metric.type
+    }
+
     return (
-      <TableRow key={proc.pid}>
+      <TableRow key={metric.pid}>
         <TableRowColumn style={{width: 100}}>
-          {proc.pid}
+          {metric.pid}
         </TableRowColumn>
         <TableRowColumn>
-          {proc.description || '-'}
+          {description}
         </TableRowColumn>
         <TableRowColumn style={{width: 100}}>
-          {`${Math.round((proc.workingSetSize || 0) / 1024)} MB`}
+          {`${Math.round((metric.memory.workingSetSize || 0) / 1024)} MB`}
         </TableRowColumn>
         <TableRowColumn style={{width: 100}}>
-          {proc.percentCPUUsage === undefined ? '-' : (Math.round(proc.percentCPUUsage * 100) / 100) + '%'}
+          {metric.cpu.percentCPUUsage === undefined ? '-' : (Math.round(metric.cpu.percentCPUUsage * 100) / 100) + '%'}
         </TableRowColumn>
       </TableRow>
     )
   }
 
   render () {
-    const { processInfo } = this.state
+    const { metrics } = this.state
 
     return (
       <Table selectable={false}>
@@ -78,7 +95,7 @@ export default class ProcessMonitor extends React.Component {
           </TableRow>
         </TableHeader>
         <TableBody displayRowCheckbox={false} stripedRows>
-          {processInfo.map((proc) => this.renderRow(proc))}
+          {metrics.map((metric) => this.renderRow(metric))}
         </TableBody>
       </Table>
     )

@@ -9,7 +9,6 @@ import {
   WB_WINDOW_ZOOM_IN,
   WB_WINDOW_ZOOM_OUT,
   WB_WINDOW_ZOOM_RESET,
-  WB_PING_RESOURCE_USAGE,
   WB_WINDOW_DARWIN_SCROLL_TOUCH_BEGIN,
   WB_WINDOW_DARWIN_SCROLL_TOUCH_END,
   WB_WINDOW_FOCUS,
@@ -413,15 +412,6 @@ class WaveboxWindow extends EventEmitter {
     return this
   }
 
-  /**
-  * Requests that the window returns resource usage
-  * @return this
-  */
-  pingResourceUsage () {
-    this.window.webContents.send(WB_PING_RESOURCE_USAGE, { })
-    return this
-  }
-
   /* ****************************************************************************/
   // Actions: Display
   /* ****************************************************************************/
@@ -534,6 +524,25 @@ class WaveboxWindow extends EventEmitter {
   */
   tabIds () {
     throw new Error('WaveboxWindow.tabIds not implemented')
+  }
+
+  /**
+  * @return process info about the tabs with { webContentsId, description, pid }
+  */
+  webContentsProcessInfo () {
+    const webContentsIds = new Set(this.tabIds())
+    webContentsIds.add(this.window.webContents.id)
+
+    return Array.from(webContentsIds).map((wcId) => {
+      const wc = webContents.fromId(wcId)
+      const pid = wc ? wc.getOSProcessId() : undefined
+      const url = wc ? wc.getURL() : undefined
+      return {
+        webContentsId: wcId,
+        pid: pid,
+        url: url
+      }
+    })
   }
 
   /**

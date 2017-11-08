@@ -48,6 +48,24 @@ class ExtensionOptionsWindow extends WaveboxWindow {
   }
 
   /* ****************************************************************************/
+  // Query
+  /* ****************************************************************************/
+
+  /**
+  * @return the id of the focused tab
+  */
+  focusedTabId () {
+    return this.window.webContents.id
+  }
+
+  /**
+  * @return the ids of the tabs in this window
+  */
+  tabIds () {
+    return [this.window.webContents.id]
+  }
+
+  /* ****************************************************************************/
   // Unsupported Actions
   /* ****************************************************************************/
 

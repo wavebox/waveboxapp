@@ -1,6 +1,10 @@
 import alt from '../alt'
-import { WB_SUBMIT_PROCESS_RESOURCE_USAGE } from 'shared/ipcEvents'
-import { ipcRenderer } from 'electron'
+import { ipcRenderer, remote } from 'electron'
+import {
+  WB_COLLECTED_METRICS,
+  WB_START_CONNECTION_REPORTER,
+  WB_COLLECT_CONNECTION_METRICS
+} from 'shared/ipcEvents'
 
 class MonitorActions {
   /* **************************************************************************/
@@ -10,24 +14,32 @@ class MonitorActions {
   /**
   * Basically a no-op but ensures that the ipcRenderer events are bound
   */
-  load () { return {} }
+  load () {
+    const returnId = remote.getCurrentWebContents().id
+    remote.webContents.getAllWebContents().forEach((wc) => {
+      wc.send(WB_START_CONNECTION_REPORTER, returnId)
+    })
+    return {}
+  }
 
   /* **************************************************************************/
   // Syncers
   /* **************************************************************************/
 
   /**
-  * Resyncs the process list
+  * Updates the metrics
+  * @param metrics: the metric info
   */
-  resyncProcesses () { return {} }
+  updateMetrics (metrics) { return { metrics } }
 
   /**
-  * Submits the process resource usage
-  * @param info: the info to submit
+  * Updates the connection metrics
+  * @param metrics: the metric info
   */
-  submitProcessResourceUsage (info) { return { info: info } }
+  updateConnectionMetrics (metrics) { return { metrics } }
 }
 
 const actions = alt.createActions(MonitorActions)
-ipcRenderer.on(WB_SUBMIT_PROCESS_RESOURCE_USAGE, (evt, body) => actions.submitProcessResourceUsage(body))
+ipcRenderer.on(WB_COLLECTED_METRICS, (evt, { metrics }) => actions.updateMetrics(metrics))
+ipcRenderer.on(WB_COLLECT_CONNECTION_METRICS, (evt, metrics) => actions.updateConnectionMetrics(metrics))
 export default actions

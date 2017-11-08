@@ -1,3 +1,5 @@
+import pkg from 'package.json'
+
 class WaveboxHTTP {
   /* **************************************************************************/
   // News
@@ -9,7 +11,7 @@ class WaveboxHTTP {
   */
   static fetchLatestNewsHeading () {
     return Promise.resolve()
-      .then(() => window.fetch('https://wavebox.io/news/feed/'))
+      .then(() => window.fetch(`https://wavebox.io/news/feed/?channel=${pkg.releaseChannel}`))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
   }

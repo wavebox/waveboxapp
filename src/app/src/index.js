@@ -121,10 +121,6 @@
     appWindowManager.openMonitorWindow()
   })
 
-  ipcMain.on(ipcEvents.WB_PONG_RESOURCE_USAGE, (evt, body) => {
-    appWindowManager.submitProcessResourceUsage(body)
-  })
-
   ipcMain.on(ipcEvents.WB_FOCUS_APP, (evt, body) => {
     appWindowManager.focusMailboxesWindow()
   })

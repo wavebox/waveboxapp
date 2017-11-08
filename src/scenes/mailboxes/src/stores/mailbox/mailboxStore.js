@@ -580,7 +580,6 @@ class MailboxStore {
       handleFullSyncMailbox: actions.FULL_SYNC_MAILBOX,
 
       // Misc
-      handlePingResourceUsage: actions.PING_RESOURCE_USAGE,
       handleReloadActiveMailbox: actions.RELOAD_ACTIVE_MAILBOX,
       handleOpenDevToolsActiveMailbox: actions.OPEN_DEV_TOOLS_ACTIVE_MAILBOX,
       handleWindowDidFocus: actions.WINDOW_DID_FOCUS
@@ -1550,16 +1549,6 @@ class MailboxStore {
   /* **************************************************************************/
   // Handlers : Misc
   /* **************************************************************************/
-
-  handlePingResourceUsage () {
-    this.preventDefault()
-    this.allMailboxes().forEach((mailbox) => {
-      mailbox.enabledServices.forEach((service) => {
-        const description = `Mailbox WebView: ${mailbox.displayName}:${service.humanizedType}`
-        mailboxDispatch.pingResourceUsage(mailbox.id, service.type, description)
-      })
-    })
-  }
 
   handleReloadActiveMailbox () {
     this.preventDefault()
