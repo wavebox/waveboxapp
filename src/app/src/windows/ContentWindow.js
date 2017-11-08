@@ -128,16 +128,15 @@ class ContentWindow extends WaveboxWindow {
         fullscreenable: true,
         title: 'Wavebox',
         backgroundColor: '#FFFFFF',
+        show: true,
         webPreferences: {
           nodeIntegration: true,
           plugins: true
         }
       },
       this.generateWindowPosition(parentWindow),
-      this.safeBrowserWindowPreferences(browserWindowPreferences),
-      { show: false }
+      this.safeBrowserWindowPreferences(browserWindowPreferences)
     ))
-    this.window.once('ready-to-show', () => { this.show() })
 
     // New window handling
     ipcMain.on(WB_NEW_WINDOW, this.handleOpenNewWindow)

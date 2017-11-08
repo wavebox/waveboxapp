@@ -14,12 +14,9 @@ class ExtensionOptionsWindow extends WaveboxWindow {
   create (url, options = {}) {
     // The browser settings don't need to be sanitized as they should be in the same thread
     // and come from the parent webContents
-    super.create(url, Object.assign({}, options, { show: false }))
+    super.create(url, Object.assign({}, options, { show: true }))
 
     // Bind listeners
-    this.window.once('ready-to-show', () => {
-      this.show()
-    })
     this.window.webContents.on('new-window', this.handleNewWindow)
 
     return this

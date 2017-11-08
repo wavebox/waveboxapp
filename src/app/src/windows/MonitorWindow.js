@@ -12,9 +12,8 @@ class MonitorWindow extends WaveboxWindow {
       title: 'Wavebox Monitor',
       width: 660,
       height: 500,
-      show: false
+      show: true
     })
-    this.window.once('ready-to-show', () => { this.show() })
   }
 
   /* ****************************************************************************/

@@ -41,7 +41,8 @@ import {
   WBECRX_RELOAD_OWNER
 } from 'shared/ipcEvents'
 import {
-  TraySettings
+  TraySettings,
+  UISettings
 } from 'shared/Models/Settings'
 import Resolver from 'Runtime/Resolver'
 import MailboxesWindowTabManager from './MailboxesWindowTabManager'
@@ -104,19 +105,20 @@ class MailboxesWindow extends WaveboxWindow {
       titleBarStyle: process.platform === 'darwin' && settingStore.ui.showTitlebar === false ? 'hidden' : 'default',
       frame: settingStore.ui.showTitlebar,
       title: 'Wavebox',
-      backgroundColor: '#f2f2f2',
+      ...(process.platform === 'darwin' && settingStore.launched.ui.vibrancyMode !== UISettings.VIBRANCY_MODES.NONE ? {
+        vibrancy: settingStore.launched.ui.electronVibrancyMode
+      } : {
+        backgroundColor: '#f2f2f2'
+      }),
       webPreferences: {
         nodeIntegration: true,
         backgroundThrottling: false,
         plugins: true
       }
     })
+    this.window.once('ready-to-show', () => this.window.show())
     this.tabManager = new MailboxesWindowTabManager(this.window.webContents.id)
     this.behaviour = new MailboxesWindowBehaviour(this.window.webContents.id, this.tabManager)
-
-    this.window.once('ready-to-show', () => {
-      if (!hidden) { this.show() }
-    })
 
     // Bind window behaviour events
     if (TraySettings.SUPPORTS_TRAY_MINIMIZE_CONFIG) {

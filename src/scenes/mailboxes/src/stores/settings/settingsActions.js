@@ -288,6 +288,13 @@ class SettingsActions {
     return this.update(SEGMENTS.UI, 'showSidebarNewsfeed', mode)
   }
 
+  /**
+  * @param mode: the mode to set
+  */
+  setVibrancyMode (mode) {
+    return this.update(SEGMENTS.UI, 'vibrancyMode', mode)
+  }
+
   /* **************************************************************************/
   // App
   /* **************************************************************************/

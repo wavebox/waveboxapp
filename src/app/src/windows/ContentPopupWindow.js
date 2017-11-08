@@ -27,10 +27,7 @@ class ContentPopupWindow extends WaveboxWindow {
   create (url, safeBrowserWindowOptions = {}) {
     // The browser settings don't need to be sanitized as they should be in the same thread
     // and come from the parent webContents
-    super.create(url, Object.assign({}, safeBrowserWindowOptions, { show: false }))
-    this.window.once('ready-to-show', () => {
-      this.show()
-    })
+    super.create(url, Object.assign({}, safeBrowserWindowOptions, { show: true }))
 
     // Setup for tab lifecycle
     const webContentsId = this.window.webContents.id

@@ -129,7 +129,7 @@ class PDFRenderService {
       minimizable: false,
       maximizable: false,
       modal: true,
-      show: false,
+      show: true,
       webPreferences: {
         nodeIntegration: true,
         backgroundThrottling: false
@@ -181,7 +181,6 @@ class PDFRenderService {
 
       const window = new BrowserWindow(this._pdfPrintWindowProperties(sourceWebContents))
       window.setMenuBarVisibility(false)
-      window.once('ready-to-show', () => { window.show() })
       window.on('closed', () => { reject(new Error('User closed window')) })
       window.on('page-title-updated', (evt, title) => {
         if (title.startsWith('wbaction:')) {

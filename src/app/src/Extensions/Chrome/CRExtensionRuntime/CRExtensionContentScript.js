@@ -3,7 +3,7 @@ import path from 'path'
 import {
   CR_EXTENSION_PROTOCOL
 } from 'shared/extensionApis'
-const renderProcessPreferences = process.atomBinding('render_process_preferences').forAllWebContents()
+import { renderProcessPreferences } from 'R/atomProcess'
 
 class CRExtensionContentScript {
   /* ****************************************************************************/

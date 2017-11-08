@@ -186,6 +186,9 @@
       }
     }
 
+    // Write any state
+    settingStore.writeLaunchSettingsToRenderProcess()
+
     // Doing this outside of ready has a side effect on high-sierra where you get a _TSGetMainThread error
     // To resolve this, run it when in ready
     const openHidden = (function () {

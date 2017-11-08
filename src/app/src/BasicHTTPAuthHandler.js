@@ -33,12 +33,11 @@ class BasicHTTPAuthHandler {
       resizable: false,
       alwaysOnTop: true,
       autoHideMenuBar: true,
-      show: false,
+      show: true,
       backgroundColor: 'white'
     })
 
     // Bind event listeners
-    this.window.once('ready-to-show', () => this.window.show())
     this.window.on('page-title-updated', this.handlePageTitleUpdated.bind(this))
 
     // Load url
