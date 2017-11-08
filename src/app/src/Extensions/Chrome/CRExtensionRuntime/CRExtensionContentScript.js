@@ -4,14 +4,20 @@ import {
   CR_EXTENSION_PROTOCOL
 } from 'shared/extensionApis'
 import { renderProcessPreferences } from 'R/atomProcess'
+import { RENDER_PROCESS_PREFERENCE_TYPES } from 'shared/processPreferences'
 
 class CRExtensionContentScript {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
-  constructor (extension) {
+  /**
+  * @param extension: the extension
+  * @param datasource: the datasource object
+  */
+  constructor (extension, datasource) {
     this.extension = extension
+    this.datasource = datasource
     this._renderProcEntry = undefined
 
     this._start()
@@ -31,9 +37,15 @@ class CRExtensionContentScript {
   _start () {
     if (!this.extension.manifest.hasContentScripts) { return }
 
+    const suggestedLocale = this.datasource.getSuggestedLocale()
     const entry = {
+      type: RENDER_PROCESS_PREFERENCE_TYPES.WB_CREXTENSION_CONTENTSCRIPT_CONFIG,
       extensionId: this.extension.id,
       popoutWindowPostmessageCapture: this.extension.manifest.popoutWindowPostmessageCapture,
+      manifest: this.extension.manifest.cloneData(),
+      messages: {
+        [suggestedLocale]: this.datasource.getMessages(suggestedLocale)
+      },
       crExtensionContentScripts: this.extension.manifest.contentScripts.map((cs) => {
         return {
           matches: cs.matches,

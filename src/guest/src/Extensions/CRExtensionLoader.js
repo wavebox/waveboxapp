@@ -5,6 +5,7 @@ const { WBECRX_EXECUTE_SCRIPT } = req.shared('ipcEvents')
 const GuestHost = require('../GuestHost')
 const CRExtensionPopoutPostMessageListener = require('./CRExtensionPopoutPostMessageListener')
 const DispatchManager = require('../DispatchManager')
+const { RENDER_PROCESS_PREFERENCE_TYPES } = req.shared('processPreferences')
 
 class CRExtensionLoader {
   /* **************************************************************************/
@@ -43,11 +44,13 @@ class CRExtensionLoader {
       const preferences = process.getRenderProcessPreferences()
       if (preferences) {
         for (const pref of preferences) {
-          if (pref.crExtensionContentScripts) {
-            this._initializeExtensionContentScript(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, pref.crExtensionContentScripts)
-          }
-          if (pref.popoutWindowPostmessageCapture) {
-            this._capturePopoutWindowPostmessages(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, pref.popoutWindowPostmessageCapture)
+          if (pref.type === RENDER_PROCESS_PREFERENCE_TYPES.WB_CREXTENSION_CONTENTSCRIPT_CONFIG) {
+            if (pref.crExtensionContentScripts) {
+              this._initializeExtensionContentScript(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, pref.crExtensionContentScripts)
+            }
+            if (pref.popoutWindowPostmessageCapture) {
+              this._capturePopoutWindowPostmessages(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, pref.popoutWindowPostmessageCapture)
+            }
           }
         }
       }

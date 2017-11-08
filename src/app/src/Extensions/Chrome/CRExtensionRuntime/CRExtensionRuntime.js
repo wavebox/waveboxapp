@@ -37,7 +37,7 @@ class CRExtensionRuntime {
 
     // Pages second
     this.backgroundPage = new CRExtensionBackgroundPage(extension)
-    this.contentScript = new CRExtensionContentScript(extension)
+    this.contentScript = new CRExtensionContentScript(extension, this.datasource)
     this.optionsPage = new CRExtensionOptionsPage(extension)
 
     // Binding

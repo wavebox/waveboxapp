@@ -357,7 +357,7 @@ export default class ExtensionListItem extends React.Component {
               ) : undefined}
               {showBetaTrial && onProLevel ? (
                 <div style={styles.tryOnBeta}>
-                  Free to try with Wavebox basic until the end of November 2017
+                  Pro
                 </div>
               ) : undefined}
               <div>
