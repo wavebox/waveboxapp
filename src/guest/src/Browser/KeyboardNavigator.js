@@ -7,8 +7,9 @@ class KeyboardNavigator {
 
   constructor () {
     this._setup = false
-    document.addEventListener('DOMContentLoaded', this._bindListener.bind(this), false)
-    remote.getCurrentWebContents().once('dom-ready', this._bindListener.bind(this))
+    this._boundBindListener = this._bindListener.bind(this)
+    document.addEventListener('DOMContentLoaded', this._boundBindListener, false)
+    remote.getCurrentWebContents().once('dom-ready', this._boundBindListener)
   }
 
   /* **************************************************************************/
@@ -19,6 +20,8 @@ class KeyboardNavigator {
     if (this._setup) { return }
     this._setup = true
     document.body.addEventListener('keydown', this._handleKeydown, false)
+    document.removeEventListener('DOMContentLoaded', this._boundBindListener)
+    remote.getCurrentWebContents().removeListener('dom-ready', this._boundBindListener)
   }
 
   _handleKeydown (evt) {
