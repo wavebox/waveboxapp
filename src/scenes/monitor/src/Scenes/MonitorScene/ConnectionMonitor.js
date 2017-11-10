@@ -1,8 +1,9 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { monitorStore } from 'stores/monitor'
-import { Table, TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowColumn, FontIcon } from 'material-ui'
+import { FontIcon } from 'material-ui'
 import * as Colors from 'material-ui/styles/colors'
+import './processTable.less'
 
 export default class ConnectionMonitor extends React.Component {
   /* **************************************************************************/
@@ -58,32 +59,32 @@ export default class ConnectionMonitor extends React.Component {
       conn.connection
     ].join('_')
     return (
-      <TableRow key={key}>
-        <TableRowColumn style={{width: 100}}>
+      <tr key={key}>
+        <td style={{width: 100}}>
           {conn.pid}
-        </TableRowColumn>
-        <TableRowColumn>
+        </td>
+        <td>
           {conn.description || '-'}
-        </TableRowColumn>
-        <TableRowColumn style={{width: 100, textAlign: 'center'}}>
+        </td>
+        <td style={{width: 100, textAlign: 'center'}}>
           <FontIcon className='material-icons' color={conn.isSetup ? Colors.green600 : Colors.red600}>
             {conn.isSetup ? 'check_circle' : 'cancel'}
           </FontIcon>
-        </TableRowColumn>
-        <TableRowColumn style={{width: 100, textAlign: 'center'}}>
+        </td>
+        <td style={{width: 100, textAlign: 'center'}}>
           <FontIcon className='material-icons' color={conn.isConnected ? Colors.green600 : Colors.red600}>
             {conn.isConnected ? 'check_circle' : 'cancel'}
           </FontIcon>
-        </TableRowColumn>
-        <TableRowColumn style={{width: 100, textAlign: 'center'}}>
+        </td>
+        <td style={{width: 100, textAlign: 'center'}}>
           <FontIcon className='material-icons' color={conn.isUnderMaintenance ? Colors.amber600 : Colors.green600}>
             {conn.isUnderMaintenance ? 'warning' : 'cancel'}
           </FontIcon>
-        </TableRowColumn>
-        <TableRowColumn style={{width: 150}}>
+        </td>
+        <td style={{width: 150}}>
           {conn.connectionMode}
-        </TableRowColumn>
-      </TableRow>
+        </td>
+      </tr>
     )
   }
 
@@ -91,21 +92,21 @@ export default class ConnectionMonitor extends React.Component {
     const { connections } = this.state
 
     return (
-      <Table selectable={false}>
-        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-          <TableRow>
-            <TableHeaderColumn style={{width: 100}}>Pid</TableHeaderColumn>
-            <TableHeaderColumn>Description</TableHeaderColumn>
-            <TableHeaderColumn style={{width: 100, textAlign: 'center', padding: 0}}>Setup</TableHeaderColumn>
-            <TableHeaderColumn style={{width: 100, textAlign: 'center', padding: 0}}>Connected</TableHeaderColumn>
-            <TableHeaderColumn style={{width: 100, textAlign: 'center', padding: 0}}>Maintenance</TableHeaderColumn>
-            <TableHeaderColumn style={{width: 150}}>Mode</TableHeaderColumn>
-          </TableRow>
-        </TableHeader>
-        <TableBody displayRowCheckbox={false} stripedRows>
+      <table className='processTable'>
+        <thead>
+          <tr>
+            <th style={{width: 100}}>Pid</th>
+            <th>Description</th>
+            <th style={{width: 100, textAlign: 'center', padding: 0}}>Setup</th>
+            <th style={{width: 100, textAlign: 'center', padding: 0}}>Connected</th>
+            <th style={{width: 100, textAlign: 'center', padding: 0}}>Maintenance</th>
+            <th style={{width: 150}}>Mode</th>
+          </tr>
+        </thead>
+        <tbody>
           {connections.map((conn, i) => this.renderRow(conn, i))}
-        </TableBody>
-      </Table>
+        </tbody>
+      </table>
     )
   }
 }

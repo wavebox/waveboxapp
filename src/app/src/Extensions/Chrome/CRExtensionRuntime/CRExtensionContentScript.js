@@ -1,10 +1,10 @@
 import fs from 'fs-extra'
-import path from 'path'
 import {
   CR_EXTENSION_PROTOCOL
 } from 'shared/extensionApis'
 import { renderProcessPreferences } from 'R/atomProcess'
 import { RENDER_PROCESS_PREFERENCE_TYPES } from 'shared/processPreferences'
+import pathTool from 'shared/pathTool'
 
 class CRExtensionContentScript {
   /* ****************************************************************************/
@@ -41,7 +41,6 @@ class CRExtensionContentScript {
     const entry = {
       type: RENDER_PROCESS_PREFERENCE_TYPES.WB_CREXTENSION_CONTENTSCRIPT_CONFIG,
       extensionId: this.extension.id,
-      popoutWindowPostmessageCapture: this.extension.manifest.popoutWindowPostmessageCapture,
       manifest: this.extension.manifest.cloneData(),
       messages: {
         [suggestedLocale]: this.datasource.getMessages(suggestedLocale)
@@ -50,22 +49,33 @@ class CRExtensionContentScript {
         return {
           matches: cs.matches,
           runAt: cs.runAt,
-          js: cs.js.map((scriptPath) => {
-            return {
-              url: `${CR_EXTENSION_PROTOCOL}://${this.extension.id}/${scriptPath}`,
-              code: String(fs.readFileSync(path.join(this.extension.srcPath, scriptPath)))
-            }
-          }),
-          css: cs.css.map((scriptPath) => {
-            return {
-              url: `${CR_EXTENSION_PROTOCOL}://${this.extension.id}/${scriptPath}`,
-              code: String(fs.readFileSync(path.join(this.extension.srcPath, scriptPath)))
-            }
-          })
+          js: this._loadScripts(cs.js),
+          css: this._loadScripts(cs.css)
         }
       })
     }
     this._renderProcEntry = renderProcessPreferences.addEntry(entry)
+  }
+
+  /**
+  * Loads an array of scripts ready for the content script
+  * @param scripts: the scripts to laod
+  * @return an array of loaded scripts
+  */
+  _loadScripts (scripts) {
+    return scripts
+      .map((scriptPath) => {
+        const scopedPath = pathTool.scopeToDir(this.extension.srcPath, scriptPath)
+        if (scopedPath) {
+          return {
+            url: `${CR_EXTENSION_PROTOCOL}://${this.extension.id}/${scriptPath}`,
+            code: String(fs.readFileSync(scopedPath))
+          }
+        } else {
+          return undefined
+        }
+      })
+      .filter((d) => !!d)
   }
 
   /**

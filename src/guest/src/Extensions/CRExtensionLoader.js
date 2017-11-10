@@ -48,9 +48,6 @@ class CRExtensionLoader {
             if (pref.crExtensionContentScripts) {
               this._initializeExtensionContentScript(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, pref.crExtensionContentScripts)
             }
-            if (pref.popoutWindowPostmessageCapture) {
-              this._capturePopoutWindowPostmessages(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, pref.popoutWindowPostmessageCapture)
-            }
           }
         }
       }

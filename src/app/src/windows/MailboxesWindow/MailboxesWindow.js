@@ -498,7 +498,7 @@ class MailboxesWindow extends WaveboxWindow {
     }).concat([{
       webContentsId: this.window.webContents.id,
       pid: this.window.webContents.getOSProcessId(),
-      description: 'Mailboxes Window'
+      description: 'Main Wavebox Window'
     }])
   }
 }

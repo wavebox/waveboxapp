@@ -126,35 +126,6 @@ class Model {
     const changedKey = Array.from(keyset).find((key) => this.__data__[key] !== other.__data__[key])
     return changedKey === undefined
   }
-
-  /* **************************************************************************/
-  // Path
-  /* **************************************************************************/
-
-  /**
-  * Sanitizes a path value by removing banned characters
-  * @param value: the value to sanitize
-  * @return the value with banned path characters removed
-  */
-  _sanitizePathValue_ (value) {
-    if (!value) { return undefined }
-    return value
-      .replace(/(\.\.\/)/, '')
-      .replace(/(\/\.\.)$/, '')
-  }
-
-  /**
-  * Sanitizes path values in an object - 1 deep
-  * @param obj: the object in the format { key: path, key: path }
-  * @return a new object with the path values sanitized
-  */
-  _sanitizePathValuesInObject_ (obj) {
-    if (!obj) { return undefined }
-    return Object.keys(obj).reduce((acc, key) => {
-      acc[key] = this._sanitizePathValue_(obj[key])
-      return acc
-    }, {})
-  }
 }
 
 module.exports = Model

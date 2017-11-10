@@ -1,6 +1,5 @@
 import { webContents, ipcMain } from 'electron'
 import fs from 'fs-extra'
-import path from 'path'
 import url from 'url'
 import CRDispatchManager from './CRDispatchManager'
 import CRExtensionRuntime from './CRExtensionRuntime'
@@ -24,6 +23,7 @@ import {
   WBECRX_INSPECT_BACKGROUND
 } from 'shared/ipcEvents'
 import { CSPParser, CSPBuilder } from './CSP'
+import pathTool from 'shared/pathTool'
 
 class CRExtensionRuntimeHandler {
   /* ****************************************************************************/
@@ -103,10 +103,14 @@ class CRExtensionRuntimeHandler {
     }
 
     // Serve the asset/file
-    const safePath = purl.path.replace(/(\.\.\/)/, '').replace(/(\/\.\.)$/, '')
-    fs.readFile(path.join(runtime.extension.srcPath, safePath))
-      .then((data) => responder(data))
-      .catch(() => responder(-6)) // not found
+    const scopedPath = pathTool.scopeToDir(runtime.extension.srcPath, purl.path)
+    if (scopedPath) {
+      fs.readFile(scopedPath)
+        .then((data) => responder(data))
+        .catch(() => responder(-6)) // not found
+    } else {
+      responder(-6) // not found
+    }
   }
 
   /* ****************************************************************************/

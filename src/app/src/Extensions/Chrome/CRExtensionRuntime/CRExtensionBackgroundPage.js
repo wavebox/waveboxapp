@@ -1,6 +1,5 @@
 import { webContents } from 'electron'
 import fs from 'fs-extra'
-import path from 'path'
 import url from 'url'
 import {
   CR_EXTENSION_PROTOCOL,
@@ -75,7 +74,11 @@ class CRExtensionBackgroundPage {
 
     if (this.extension.manifest.background.hasHtmlPage) {
       this._name = this.extension.manifest.background.htmlPage
-      this._html = fs.readFileSync(path.join(this.extension.srcPath, this.extension.manifest.background.htmlPage))
+      try {
+        this._html = fs.readFileSync(this.extension.manifest.background.getHtmlPageScoped(this.extension.srcPath))
+      } catch (ex) {
+        this.html = ''
+      }
     } else {
       this._name = '_generated_background_page.html'
       this._html = Buffer.from(this.extension.manifest.background.generateHtmlPageForScriptset())

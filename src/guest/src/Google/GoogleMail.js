@@ -60,6 +60,9 @@ class GoogleMail extends GoogleService {
           body, .wl, .aeJ {
             background-color: transparent !important;
           }
+          .az {
+            background-color: gba(221, 221, 221, 0.8) !important;
+          }
         `)
       }
     }

@@ -1,7 +1,7 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { monitorStore } from 'stores/monitor'
-import { Table, TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowColumn } from 'material-ui'
+import './processTable.less'
 
 export default class ProcessMonitor extends React.Component {
   /* **************************************************************************/
@@ -41,43 +41,70 @@ export default class ProcessMonitor extends React.Component {
   }
 
   /**
+  * Sanitizes the description url
+  * @param url: the url
+  * @return a sanitized version of the url
+  */
+  sanitizeDescriptionUrl (url) {
+    if (url) {
+      if (url.startsWith('chrome-devtools://')) { return 'Devtools' }
+    }
+    return url
+  }
+
+  /**
+  * Renders a description for a metric
+  * @param metric: the metric to get info from
+  * @return jsx
+  */
+  renderDescription (metric) {
+    if (metric.pid === process.pid) {
+      return 'Task Monitor'
+    } else if (metric.webContentsInfo && metric.webContentsInfo.length) {
+      if (metric.webContentsInfo.length === 1) {
+        const info = metric.webContentsInfo[0]
+        return info.description || this.sanitizeDescriptionUrl(info.url) || 'about:blank'
+      } else {
+        return (
+          <div>
+            {metric.webContentsInfo.map((info) => {
+              return (
+                <div key={info.webContentsId}>
+                  • {info.description || this.sanitizeDescriptionUrl(info.url) || 'about:blank'}
+                </div>
+              )
+            })}
+          </div>
+        )
+      }
+    } else if (metric.type === 'Browser') {
+      return 'Wavebox Main'
+    } else {
+      return metric.type
+    }
+  }
+
+  /**
   * Renders a row
   * @param metric: the process info
   * @return jsx
   */
   renderRow (metric) {
-    let description
-    if (metric.pid === process.pid) {
-      description = 'Task Monitor'
-    } else if (metric.type === 'Browser') {
-      description = 'Main'
-    } else if (metric.description) {
-      description = metric.description
-    } else if (metric.url) {
-      if (metric.url.startsWith('chrome-devtools://')) {
-        description = 'Dev Tools'
-      } else {
-        description = metric.url
-      }
-    } else {
-      description = metric.type
-    }
-
     return (
-      <TableRow key={metric.pid}>
-        <TableRowColumn style={{width: 100}}>
+      <tr key={metric.pid}>
+        <td style={{width: 100}}>
           {metric.pid}
-        </TableRowColumn>
-        <TableRowColumn>
-          {description}
-        </TableRowColumn>
-        <TableRowColumn style={{width: 100}}>
+        </td>
+        <td>
+          {this.renderDescription(metric)}
+        </td>
+        <td style={{width: 100}}>
           {`${Math.round((metric.memory.workingSetSize || 0) / 1024)} MB`}
-        </TableRowColumn>
-        <TableRowColumn style={{width: 100}}>
+        </td>
+        <td style={{width: 100}}>
           {metric.cpu.percentCPUUsage === undefined ? '-' : (Math.round(metric.cpu.percentCPUUsage * 100) / 100) + '%'}
-        </TableRowColumn>
-      </TableRow>
+        </td>
+      </tr>
     )
   }
 
@@ -85,19 +112,19 @@ export default class ProcessMonitor extends React.Component {
     const { metrics } = this.state
 
     return (
-      <Table selectable={false}>
-        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-          <TableRow>
-            <TableHeaderColumn style={{width: 100}}>Pid</TableHeaderColumn>
-            <TableHeaderColumn>Description</TableHeaderColumn>
-            <TableHeaderColumn style={{width: 100}}>Memory</TableHeaderColumn>
-            <TableHeaderColumn style={{width: 100}}>CPU</TableHeaderColumn>
-          </TableRow>
-        </TableHeader>
-        <TableBody displayRowCheckbox={false} stripedRows>
+      <table className='processTable'>
+        <thead>
+          <tr>
+            <th style={{width: 100}}>Pid</th>
+            <th>Description</th>
+            <th style={{width: 100}}>Memory</th>
+            <th style={{width: 100}}>CPU</th>
+          </tr>
+        </thead>
+        <tbody>
           {metrics.map((metric) => this.renderRow(metric))}
-        </TableBody>
-      </Table>
+        </tbody>
+      </table>
     )
   }
 }

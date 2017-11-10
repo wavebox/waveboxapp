@@ -66,7 +66,7 @@ class CRExtensionManifest extends Model {
   get defaultLocale () { return this._value_('default_locale', 'en') }
   get homepageUrl () { return this._value_('homepage_url') }
   get hasHomepageUrl () { return !!this.homepageUrl }
-  get icons () { return this._sanitizePathValuesInObject_(this._value_('icons', {})) }
+  get icons () { return this._value_('icons', {}) }
   get manifestVersion () { return this._value_('manifest_version', 1) }
   get version () { return this._value_('version') }
 
@@ -149,7 +149,6 @@ class CRExtensionManifest extends Model {
   /* **************************************************************************/
 
   get popoutWindowWhitelist () { return this._value_('wavebox_popout_window_whitelist', []) }
-  get popoutWindowPostmessageCapture () { return this._value_('wavebox_popout_postmessage_capture', []) }
 
   /**
   * Checks to see if a window should open as a popout
