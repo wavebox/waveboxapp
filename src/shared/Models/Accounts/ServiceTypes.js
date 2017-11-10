@@ -14,5 +14,6 @@ module.exports = Object.freeze({
   MESSENGER: 'MESSENGER',
   DOCS: 'DOCS',
   SHEETS: 'SHEETS',
-  SLIDES: 'SLIDES'
+  SLIDES: 'SLIDES',
+  CLASSROOM: 'CLASSROOM'
 })
