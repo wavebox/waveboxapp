@@ -23,8 +23,21 @@ class GoogleClassroomService extends GoogleService {
   /* **************************************************************************/
 
   static get supportsUnreadCount () { return true }
-  static get supportsNativeNotifications () { return true }
-  static get supportsTrayMessages () { return true }
+  static get supportsgGuestNotifications () { return true }
+
+  /* **************************************************************************/
+  // Class: Creation
+  /* **************************************************************************/
+  
+  /**
+  * Creates a blank js object that can be used to instantiate this service
+  * @return a vanilla js object representing the data for this service
+  */
+  static createJS() {
+    return Object.assign({}, super.createJS()), {
+      sleepable: false
+    })
+  }
 
   /* **************************************************************************/
   // Properties

@@ -18,6 +18,29 @@ class GoogleMusicService extends GoogleService {
   }
 
   /* **************************************************************************/
+  // Class: Support
+  /* **************************************************************************/
+
+  static get supportsGuestNotifications () { return true }
+  static get supportsTrayMessages () { return true }
+
+  /* **************************************************************************/
+  // Class: Creation
+  /* **************************************************************************/
+
+  /**
+  * Creates a blank js object that can used to instantiate this service
+  * @return a vanilla js object representing the data for this service
+  */
+  static createJS () {
+    return Object.assign({}, super.createJS(), {
+      // We need this because the music will stop
+      // playing if the service goes to sleep
+      sleepable: false
+    })
+  }
+
+  /* **************************************************************************/
   // Properties
   /* **************************************************************************/
 
