@@ -27,6 +27,7 @@ class GoogleMailbox extends CoreMailbox {
       CoreMailbox.SERVICE_TYPES.MESSENGER,
       CoreMailbox.SERVICE_TYPES.MUSIC,
       CoreMailbox.SERVICE_TYPES.ADMIN,
+      CoreMailbox.SERVICE_TYPES.FI,
       CoreMailbox.SERVICE_TYPES.CLASSROOM
     ]
   }

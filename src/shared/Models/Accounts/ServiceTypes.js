@@ -17,5 +17,6 @@ module.exports = Object.freeze({
   SLIDES: 'SLIDES',
   MUSIC: 'MUSIC',
   ADMIN: 'ADMIN',
+  FI: 'FI',
   CLASSROOM: 'CLASSROOM'
 })
