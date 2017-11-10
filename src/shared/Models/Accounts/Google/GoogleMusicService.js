@@ -45,6 +45,8 @@ class GoogleMusicService extends GoogleService {
   /* **************************************************************************/
 
   get url () { return 'https://play.google.com/music' }
+
+  get hasUnreadActivity () { return this._value_('lastUnseenNotificationTime', null) !== null }
 }
 
 module.exports = GoogleMusicService

@@ -34,7 +34,7 @@ class GoogleClassroomService extends GoogleService {
   * @return a vanilla js object representing the data for this service
   */
   static createJS() {
-    return Object.assign({}, super.createJS()), {
+    return Object.assign({}, super.createJS(), {
       sleepable: false
     })
   }
