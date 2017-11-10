@@ -1,6 +1,6 @@
 const GoogleService = require('./GoogleService')
 
-class GoogleNotesService extends GoogleService {
+class GoogleClassroomService extends GoogleService {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
