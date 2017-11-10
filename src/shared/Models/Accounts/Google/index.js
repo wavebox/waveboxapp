@@ -14,5 +14,7 @@ module.exports = {
   GoogleSlidesService: require('./GoogleSlidesService'),
   GoogleSocialService: require('./GoogleSocialService'),
   GoogleVideoService: require('./GoogleVideoService'),
+  GoogleMusicService: require('./GoogleMusicService'),
+  GoogleAdminService: require('./GoogleAdminService'),
   GoogleClassroomService: require('./GoogleClassroomService')
 }
