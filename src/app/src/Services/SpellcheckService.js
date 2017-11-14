@@ -18,8 +18,6 @@ class SpellcheckService {
     settingStore.on(`changed:${SEGMENTS.LANGUAGE}`, this._handleLanguageSettingsChanged)
   }
 
-  load () { /* no-op */ }
-
   /* ****************************************************************************/
   // Event handlers
   /* ****************************************************************************/

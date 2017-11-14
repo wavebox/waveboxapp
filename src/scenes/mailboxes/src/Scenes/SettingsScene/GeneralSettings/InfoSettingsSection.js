@@ -4,9 +4,8 @@ import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import { updaterActions } from 'stores/updater'
 import { takeoutActions } from 'stores/takeout'
-import { WB_OPEN_MONITOR_WINDOW } from 'shared/ipcEvents'
+import { settingsActions } from 'stores/settings'
 import Release from 'shared/Release'
-import { ipcRenderer } from 'electron'
 import pkg from 'package.json'
 
 export default class InfoSettingsSection extends React.Component {
@@ -53,7 +52,7 @@ export default class InfoSettingsSection extends React.Component {
         <FlatButton
           label='Task Monitor'
           icon={<FontIcon className='material-icons'>timeline</FontIcon>}
-          onClick={() => ipcRenderer.send(WB_OPEN_MONITOR_WINDOW, {})} />
+          onClick={() => settingsActions.openMetricsMonitor()} />
         <br />
         <FlatButton
           label='Export Data'

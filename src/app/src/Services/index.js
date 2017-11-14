@@ -1,7 +1,2 @@
-import SpellcheckService from './SpellcheckService'
-import PDFRenderService from './PDFRenderService'
-
-export {
-  SpellcheckService,
-  PDFRenderService
-}
+import ServicesManager from './ServicesManager'
+export default ServicesManager
