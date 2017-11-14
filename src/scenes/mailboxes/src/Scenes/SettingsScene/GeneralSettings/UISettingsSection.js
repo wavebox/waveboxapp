@@ -112,6 +112,11 @@ export default class UISettingsSection extends React.Component {
             labelPosition='right'
             onToggle={(evt, toggled) => settingsActions.setEnableSidebar(toggled)} />
           <Toggle
+            toggled={ui.sidebarTooltipsEnabled}
+            label='Show tooltip snippets'
+            labelPosition='right'
+            onToggle={(evt, toggled) => settingsActions.setSidebarTooltipsEnabled(toggled)} />
+          <Toggle
             toggled={ui.showSidebarSupport}
             label='Show Support in Sidebar'
             labelPosition='right'

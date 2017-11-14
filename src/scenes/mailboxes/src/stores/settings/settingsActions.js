@@ -254,6 +254,13 @@ class SettingsActions {
   }
 
   /**
+  * @param enabled: true to enable sidebar tooltips
+  */
+  setSidebarTooltipsEnabled (enabled) {
+    return this.update(SEGMENTS.UI, 'sidebarTooltipsEnabled', enabled)
+  }
+
+  /**
   * Toggles the sidebar
   */
   toggleSidebar () {
