@@ -94,12 +94,16 @@ export default class SidelistItemMailboxService extends React.Component {
   // Component Lifecycle
   /* **************************************************************************/
 
-  state = {
-    ...this.generateState(),
-    isHovering: false,
-    instanceId: uuid.v4(),
-    globalShowSleepableServiceIndicator: settingsStore.getState().ui.showSleepableServiceIndicator
-  }
+  state = (() => {
+    const settingsState = settingsStore.getState()
+    return {
+      ...this.generateState(),
+      isHovering: false,
+      instanceId: uuid.v4(),
+      globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator,
+      tooltipsEnabled: settingsState.ui.sidebarTooltipsEnabled
+    }
+  })()
 
   generateState (props = this.props) {
     const { mailboxId, serviceType } = props
@@ -128,7 +132,8 @@ export default class SidelistItemMailboxService extends React.Component {
 
   settingsChanged = (settingsState) => {
     this.setState({
-      globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator
+      globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator,
+      tooltipsEnabled: settingsState.ui.sidebarTooltipsEnabled
     })
   }
 
@@ -172,7 +177,8 @@ export default class SidelistItemMailboxService extends React.Component {
       mailbox,
       service,
       isRestricted,
-      globalShowSleepableServiceIndicator
+      globalShowSleepableServiceIndicator,
+      tooltipsEnabled
     } = this.state
     if (!mailbox || !service) { return false }
 
@@ -209,16 +215,18 @@ export default class SidelistItemMailboxService extends React.Component {
             borderColor: borderColor,
             filter: showSleeping ? 'grayscale(100%)' : 'none'
           }} />
-        <ServiceTooltip
-          mailbox={mailbox}
-          service={service}
-          isRestricted={isRestricted}
-          active={isHovering}
-          tooltipTimeout={0}
-          position='right'
-          arrow='center'
-          group={this.instanceId}
-          parent={`#ReactComponent-Sidelist-Item-Mailbox-Service-${this.instanceId}`} />
+        {tooltipsEnabled ? (
+          <ServiceTooltip
+            mailbox={mailbox}
+            service={service}
+            isRestricted={isRestricted}
+            active={isHovering}
+            tooltipTimeout={0}
+            position='right'
+            arrow='center'
+            group={this.instanceId}
+            parent={`#ReactComponent-Sidelist-Item-Mailbox-Service-${this.instanceId}`} />
+        ) : undefined}
       </ServiceBadge>
     )
   }

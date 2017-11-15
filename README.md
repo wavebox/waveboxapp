@@ -27,13 +27,17 @@ Here's how to build Wavebox from source.
 ### Prerequisites
 Before you get started you'll need the following
 
-* Nodejs version 7.9.0 [download](https://nodejs.org/en/)
+* Python 2.7
+* Nodejs 8.2.1
 * Wavebox API Key
   * Download & install Wavebox for free
   * Go to Settings and then the Wavebox Pro Tab
   * In the top right if you see login, login for free otherwise continue to the next step
   * In the top right click your email address and choose Developers
   * Under the API Key section you can get your API Key
+  
+### Additional Prerequisites (windows)
+* windows-build-tools available through `npm install -g windows-build-tools`
 
 ### Build Configuration
 Once you've cloned the repository you will need to add your Wavebox API Key to the repository. This key will ensure that the client can talk to Google, Microsoft etc without needing to configure each one individually. Create a file in `src/shared/credentials.js` and in it place

@@ -14,8 +14,6 @@ class PDFRenderService {
     app.on('web-contents-created', this._handleWebContentsCreated)
   }
 
-  load () { /* no-op */ }
-
   /* ****************************************************************************/
   // Event listeners
   /* ****************************************************************************/

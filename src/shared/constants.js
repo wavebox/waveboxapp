@@ -27,6 +27,9 @@ module.exports = Object.freeze({
   DB_BACKUP_INTERVAL: minutes(15),
   DB_MAX_BACKUPS: 10,
 
+  // Metrics
+  METRICS_LOG_WRITE_INTERVAL: minutes(30),
+
   // Mailboxes
   MAILBOX_SLEEP_WAIT: minutes(5),
   MAILBOX_SLEEP_EXTEND: seconds(30),

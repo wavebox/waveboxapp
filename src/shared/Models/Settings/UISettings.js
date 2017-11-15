@@ -55,6 +55,7 @@ class UISettings extends Model {
   get sidebarEnabled () { return this._value_('sidebarEnabled', true) }
   get showSidebarSupport () { return this._value_('showSidebarSupport', true) }
   get showSidebarNewsfeed () { return this._value_('showSidebarNewsfeed', SIDEBAR_NEWS_MODES.ALWAYS) }
+  get sidebarTooltipsEnabled () { return this._value_('sidebarTooltipsEnabled', true) }
 }
 
 module.exports = UISettings

@@ -10,6 +10,9 @@ module.exports = function (pkg, path, AppDirectory) {
     // Databases
     DB_DIR_PATH: appDirectory.userData(),
 
+    // Metrics
+    METRICS_LOG_PATH: path.join(appDirectory.userData(), 'metrics.log'),
+
     // Notifications
     NOTIFICATION_PERMISSION_PATH: path.join(appDirectory.userData(), 'notification_permissions.records'),
 

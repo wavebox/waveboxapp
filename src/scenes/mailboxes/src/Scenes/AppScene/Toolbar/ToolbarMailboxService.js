@@ -112,12 +112,14 @@ export default class ToolbarMailboxService extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
+    const settingsState = settingsStore.getState()
     const { mailboxId, serviceType } = this.props
     return Object.assign({
       isHovering: false,
       popover: false,
       popoverAnchor: null,
-      globalShowSleepableServiceIndicator: settingsStore.getState().ui.showSleepableServiceIndicator
+      globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator,
+      tooltipsEnabled: settingsState.ui.sidebarTooltipsEnabled
     }, this.generateStateFromMailbox(mailboxStore.getState(), mailboxId, serviceType))
   })()
 
@@ -128,7 +130,8 @@ export default class ToolbarMailboxService extends React.Component {
 
   settingsChanged = (settingsState) => {
     this.setState({
-      globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator
+      globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator,
+      tooltipsEnabled: settingsState.ui.sidebarTooltipsEnabled
     })
   }
 
@@ -163,10 +166,23 @@ export default class ToolbarMailboxService extends React.Component {
 
   /**
   * Handles the service being clicked
+  * @param evt: the event that fired
   */
   handleServiceClicked = (evt) => {
     evt.preventDefault()
     mailboxActions.changeActive(this.props.mailboxId, this.props.serviceType)
+  }
+
+  /**
+  * Handles the popover opening
+  * @param evt: the event that fired
+  */
+  handleOpenPopover = (evt) => {
+    evt.preventDefault()
+    this.setState({
+      popover: true,
+      popoverAnchor: evt.target
+    })
   }
 
   /* **************************************************************************/
@@ -193,6 +209,7 @@ export default class ToolbarMailboxService extends React.Component {
       popover,
       popoverAnchor,
       globalShowSleepableServiceIndicator,
+      tooltipsEnabled,
       isRestricted
     } = this.state
 
@@ -214,7 +231,7 @@ export default class ToolbarMailboxService extends React.Component {
         onMouseEnter={() => this.setState({ isHovering: true })}
         onMouseLeave={() => this.setState({ isHovering: false })}
         onClick={this.handleServiceClicked}
-        onContextMenu={(evt) => this.setState({ popover: true, popoverAnchor: evt.target })}>
+        onContextMenu={this.handleOpenPopover}>
         <ServiceBadge
           id={`ReactComponent-Sidelist-Item-Mailbox-Service-${this.instanceId}`}
           isAuthInvalid={false}
@@ -236,16 +253,18 @@ export default class ToolbarMailboxService extends React.Component {
             ...styles.avatar
           }} />
         </ServiceBadge>
-        <ServiceTooltip
-          mailbox={mailbox}
-          service={service}
-          isRestricted={isRestricted}
-          active={isHovering}
-          tooltipTimeout={0}
-          position='bottom'
-          arrow='center'
-          group={this.instanceId}
-          parent={`#ReactComponent-Toolbar-Mailbox-Service-${this.instanceId}`} />
+        {tooltipsEnabled ? (
+          <ServiceTooltip
+            mailbox={mailbox}
+            service={service}
+            isRestricted={isRestricted}
+            active={isHovering}
+            tooltipTimeout={0}
+            position='bottom'
+            arrow='center'
+            group={this.instanceId}
+            parent={`#ReactComponent-Toolbar-Mailbox-Service-${this.instanceId}`} />
+        ) : undefined}
         <MailboxServicePopover
           mailboxId={mailboxId}
           serviceType={serviceType}
