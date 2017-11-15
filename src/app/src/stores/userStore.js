@@ -83,6 +83,16 @@ class UserStore extends EventEmitter {
       .map((ext) => ext.id)
     return new Set(ids)
   }
+
+  /**
+  * @return the extensions in a map indexed by id
+  */
+  indexedExtensions () {
+    return this.extensions.reduce((acc, info) => {
+      acc.set(info.id, info)
+      return acc
+    }, new Map())
+  }
 }
 
 export default new UserStore()

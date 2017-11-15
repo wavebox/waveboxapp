@@ -21,7 +21,9 @@ const privHasPermission = Symbol('privHasPermission')
 const QUERY_SUPPORTED_OPTIONS = new Set([
   'active',
   'windowId',
-  'lastFocusedWindow'
+  'lastFocusedWindow',
+  'url',
+  'currentWindow'
 ])
 const EXECUTE_SCRIPT_SUPPORTED_OPTIONS = new Set([
   'file'

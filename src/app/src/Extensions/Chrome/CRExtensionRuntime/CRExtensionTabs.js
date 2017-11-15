@@ -184,6 +184,7 @@ class CRExtensionTabs {
   */
   handleQueryTabs = (evt, [options], responseCallback) => {
     const lastFocusedWindowId = WaveboxWindow.lastFocusedId()
+    const hasTabsPermission = this.extension.manifest.permissions.has('tabs')
 
     const tabs = WaveboxWindow.allTabIds()
       .map((id) => this._tabDataFromWebContentsId(id))
@@ -198,6 +199,23 @@ class CRExtensionTabs {
         }
         if (options.lastFocusedWindow === true) {
           if (lastFocusedWindowId === undefined || tab.windowId !== lastFocusedWindowId) { return false }
+        }
+        if (options.currentWindow === true) { // Not quite true - but close enough
+          if (lastFocusedWindowId === undefined || tab.windowId !== lastFocusedWindowId) { return false }
+        }
+
+        if (hasTabsPermission) {
+          if (typeof (options.url) === 'string' || Array.isArray(options.url)) {
+            const urlQuery = typeof (options.url) === 'string' ? [options.url] : options.url
+            const purl = url.parse(tab.url)
+            const matches = CRExtensionMatchPatterns.matchUrls(
+              purl.protocol,
+              purl.hostname,
+              purl.pathname,
+              urlQuery
+            )
+            if (!matches) { return false }
+          }
         }
 
         return true

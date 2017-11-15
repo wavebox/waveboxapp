@@ -5,10 +5,14 @@ import User from 'shared/Models/User'
 import persistence from './userPersistence'
 import Bootstrap from '../../Bootstrap'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
-import { WB_AUTH_WAVEBOX } from 'shared/ipcEvents'
 import semver from 'semver'
 import { ipcRenderer } from 'electron'
 import pkg from 'package.json'
+import { EXTENSION_AUTO_UPDATE_INTERVAL } from 'shared/constants'
+import {
+  WB_AUTH_WAVEBOX,
+  WB_UPDATE_INSTALLED_EXTENSIONS
+} from 'shared/ipcEvents'
 
 class UserStore {
   /* **************************************************************************/
@@ -22,6 +26,7 @@ class UserStore {
     this.createdTime = null
     this.account = null
     this.extensions = null
+    this.extensionAutoUpdater = null
 
     /* ****************************************/
     // Extensions
@@ -70,7 +75,9 @@ class UserStore {
     this.bindListeners({
       // Store lifecycle
       handleLoad: actions.LOAD,
-      handleLoadExtensions: actions.LOAD_EXTENSIONS,
+      handleUpdateExtensions: actions.UPDATE_EXTENSIONS,
+      handleStartAutoUpdateExtensions: actions.START_AUTO_UPDATE_EXTENSIONS,
+      handleStopAutoupdateExtensions: actions.STOP_AUTO_UPDATE_EXTENSIONS,
 
       handleRemoteChangeAccount: actions.REMOTE_CHANGE_ACCOUNT,
 
@@ -103,7 +110,12 @@ class UserStore {
     this.user = new User(Bootstrap.accountJS, now)
   }
 
-  handleLoadExtensions () {
+  /* **************************************************************************/
+  // Handlers: Extensions
+  /* **************************************************************************/
+
+  handleUpdateExtensions () {
+    this.preventDefault()
     Promise.resolve()
       .then(() => window.fetch(`https://wavebox.io/client/${this.clientId}/extensions.json`))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
@@ -111,8 +123,26 @@ class UserStore {
       .then((res) => {
         this.extensions = res
         persistence.setJSONItem(EXTENSIONS, res)
+        ipcRenderer.send(WB_UPDATE_INSTALLED_EXTENSIONS, {})
         this.emitChange()
       })
+  }
+
+  handleStartAutoUpdateExtensions () {
+    actions.updateExtensions.defer()
+
+    if (this.extensionAutoUpdater !== null) {
+      this.preventDefault()
+      return
+    }
+    this.extensionAutoUpdater = setInterval(() => {
+      actions.updateExtensions()
+    }, EXTENSION_AUTO_UPDATE_INTERVAL)
+  }
+
+  handleStopAutoupdateExtensions () {
+    clearInterval(this.extensionAutoUpdater)
+    this.extensionAutoUpdater = null
   }
 
   /* **************************************************************************/

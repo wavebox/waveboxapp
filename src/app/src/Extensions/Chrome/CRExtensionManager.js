@@ -10,7 +10,8 @@ import {
   WBECRX_GET_EXTENSION_INSTALL_META,
   WBECRX_EXTENSION_INSTALL_META_CHANGED,
   WBECRX_UNINSTALL_EXTENSION,
-  WBECRX_INSTALL_EXTENSION
+  WBECRX_INSTALL_EXTENSION,
+  WB_UPDATE_INSTALLED_EXTENSIONS
 } from 'shared/ipcEvents'
 import {
   CR_EXTENSION_PROTOCOL
@@ -28,6 +29,8 @@ class CRExtensionManager {
     this.downloader = new CRExtensionDownloader()
     this.installQueue = new Set()
     this.uninstallQueue = new Set()
+    this.updateQueue = new Set()
+    this.isCheckingForUpdates = false
     this._isSetup_ = false
 
     ipcMain.on(WBECRX_GET_EXTENSION_INSTALL_META, (evt) => {
@@ -38,6 +41,9 @@ class CRExtensionManager {
     })
     ipcMain.on(WBECRX_INSTALL_EXTENSION, (evt, extensionId, installInfo) => {
       this.installExtension(extensionId, installInfo)
+    })
+    ipcMain.on(WB_UPDATE_INSTALLED_EXTENSIONS, () => {
+      this.updateExtensions()
     })
   }
 
@@ -113,6 +119,37 @@ class CRExtensionManager {
     }
   }
 
+  /**
+  * Checks for updates and updates the extensions
+  * @return true if update checking started, false otherwise
+  */
+  updateExtensions () {
+    if (this.isCheckingForUpdates) { return false }
+    this.isCheckingForUpdates = true
+    this._handleSendInstallMetadata()
+
+    const extensionsToUpdate = Array.from(this.extensions.values())
+      .filter((extension) => !this.updateQueue.has(extension.id))
+
+    if (extensionsToUpdate.length === 0) { return false }
+
+    Promise.resolve()
+      .then(() => this.downloader.updateCWSExtensions(extensionsToUpdate))
+      .then((updateIds) => {
+        updateIds.forEach((id) => {
+          this.updateQueue.add(id)
+        })
+        this._handleSendInstallMetadata()
+      })
+      .catch(() => Promise.resolve())
+      .then(() => {
+        this.isCheckingForUpdates = false
+        this._handleSendInstallMetadata()
+      })
+
+    return true
+  }
+
   /* ****************************************************************************/
   // Loading
   /* ****************************************************************************/
@@ -184,7 +221,8 @@ class CRExtensionManager {
         installed: this.extensions.has(extensionId),
         willInstall: this.installQueue.has(extensionId),
         willUninstall: this.uninstallQueue.has(extensionId),
-        willUpdate: false
+        willUpdate: this.updateQueue.has(extensionId),
+        checkingUpdates: this.isCheckingForUpdates && !this.updateQueue.has(extensionId)
       }
       return acc
     }, {})

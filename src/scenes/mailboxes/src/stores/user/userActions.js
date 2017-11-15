@@ -13,9 +13,19 @@ class UserActions {
   load () { return {} }
 
   /**
-  * Indicates for the store to load extensions
+  * Indicates for the store to load extensions from the web
   */
-  loadExtensions () { return {} }
+  updateExtensions () { return {} }
+
+  /**
+  * Starts auto updates the extensions after a period
+  */
+  startAutoUpdateExtensions () { return {} }
+
+  /**
+  * Stops auto updates the extensions after a period
+  */
+  stopAutoUpdateExtensions () { return {} }
 
   /* **************************************************************************/
   // Account
