@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { settingsStore, settingsActions } from 'stores/settings'
-import { Toggle, Paper, SelectField, MenuItem } from 'material-ui'
+import { userActions } from 'stores/user'
+import { Toggle, Paper, SelectField, MenuItem, RaisedButton } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import commonStyles from '../CommonSettingStyles'
 import { Container, Row, Col } from 'Components/Grid'
@@ -112,6 +113,9 @@ export default class ExtensionSettingsTab extends React.Component {
                     )
                   })}
                 </SelectField>
+                <RaisedButton
+                  label='Check for updates'
+                  onClick={() => { userActions.updateExtensions() }} />
               </Paper>
             </Col>
           </Row>

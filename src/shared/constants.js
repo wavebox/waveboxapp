@@ -76,6 +76,9 @@ module.exports = Object.freeze({
     'allo.google.com'
   ],
 
+  // Extensions
+  EXTENSION_AUTO_UPDATE_INTERVAL: hours(2),
+
   // Cookies
   ARTIFICIAL_COOKIE_PERSIST_WAIT: seconds(30),
   ARTIFICIAL_COOKIE_PERSIST_PERIOD: days(30),

@@ -55,7 +55,7 @@ if (process.platform === 'darwin') {
 // Load what we have in the db
 userStore.getState()
 userActions.load()
-userActions.loadExtensions()
+userActions.startAutoUpdateExtensions()
 mailboxStore.getState()
 mailboxActions.load()
 settingsStore.getState()

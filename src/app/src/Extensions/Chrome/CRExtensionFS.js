@@ -60,11 +60,12 @@ class CRExtensionFS {
         const version = CRExtensionVersionParser.valid(components[0])
         if (version === null) { return undefined }
 
-        const revision = components.slice(1).join('_')
+        const revision = parseInt(components.slice(1).join('_'))
         return {
+          path: path.join(RuntimePaths.CHROME_EXTENSION_INSTALL_PATH, extensionId, versionStr),
           extensionId: extensionId,
           version: version,
-          revision: revision,
+          revision: isNaN(revision) ? 0 : revision,
           versionString: versionStr
         }
       })
@@ -77,6 +78,27 @@ class CRExtensionFS {
       })
 
     return versionInfo
+  }
+
+  /**
+  * Gets the latest revision for a given version
+  * @param extensionId: the id of the extension
+  * @param version: the extension version
+  * @return the latest revision or undefined if there is none
+  */
+  static getLatestRevisionForVersion (extensionId, version) {
+    const versions = this.listInstalledVersions(extensionId)
+    let latest
+    versions.forEach((installed) => {
+      if (installed.version !== version) { return }
+      if (latest === undefined) {
+        latest = installed.revision
+      } else if (installed.revision > latest) {
+        latest = installed.revision
+      }
+    })
+
+    return latest
   }
 
   /**
@@ -145,7 +167,14 @@ class CRExtensionFS {
 
     // Run an update
     if (versions.length > 1) {
-      const sortedVersions = Array.from(versions).sort((a, b) => CRExtensionVersionParser.gt(a.version, b.version) ? -1 : 1)
+      const sortedVersions = Array.from(versions)
+        .sort((a, b) => {
+          if (a.version === b.version) {
+            return a.revision > b.revision ? -1 : 1
+          } else {
+            return CRExtensionVersionParser.gt(a.version, b.version) ? -1 : 1
+          }
+        })
       const latest = sortedVersions[0]
       const remove = sortedVersions.slice(1)
       remove.forEach((info) => {
