@@ -102,6 +102,8 @@ module.exports = Object.freeze({
   TERMS_URL: 'https://wavebox.io/terms/',
   EULA_URL: 'https://wavebox.io/eula/',
   USER_SCRIPTS_WEB_URL: 'https://github.com/Thomas101/wmail-user-scripts',
+  QUICK_START_WEB_URL: 'https://wavebox.io/quick_start_guide',
+  KB_BETA_CHANNEL_URL: 'https://wavebox.io/kb/beta-channel',
 
   // Update
   UPDATE_FEED_DARWIN: 'https://wavebox.io/squirrel/darwin/updates/latest/',

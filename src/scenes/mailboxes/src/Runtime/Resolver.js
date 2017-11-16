@@ -18,6 +18,15 @@ class Resolver {
   static icon (name) {
     return path.join(path.dirname(window.location.pathname), '../../icons', name)
   }
+
+  /**
+  * Resolves an image path
+  * @param name: the name of the image
+  * @return the full path to the file
+  */
+  static image (name) {
+    return path.join(path.dirname(window.location.pathname), '../../images', name)
+  }
 }
 
 export default Resolver
