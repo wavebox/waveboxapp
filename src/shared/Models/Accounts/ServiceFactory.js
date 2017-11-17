@@ -19,6 +19,9 @@ const GoogleVideoService = require('./Google/GoogleVideoService')
 const GoogleSocialService = require('./Google/GoogleSocialService')
 const GoogleMessengerService = require('./Google/GoogleMessengerService')
 const GoogleClassroomService = require('./Google/GoogleClassroomService')
+const GoogleMusicService = require('./Google/GoogleMusicService')
+const GoogleFiService = require('./Google/GoogleFiService')
+const GoogleAdminService = require('./Google/GoogleAdminService')
 const MicrosoftDefaultService = require('./Microsoft/MicrosoftDefaultService')
 const MicrosoftCalendarService = require('./Microsoft/MicrosoftCalendarService')
 const MicrosoftContactsService = require('./Microsoft/MicrosoftContactsService')
@@ -57,6 +60,9 @@ class ServiceFactory {
       case MAILBOX_TYPES.GOOGLE + ':' + SERVICE_TYPES.SOCIAL: return GoogleSocialService
       case MAILBOX_TYPES.GOOGLE + ':' + SERVICE_TYPES.MESSENGER: return GoogleMessengerService
       case MAILBOX_TYPES.GOOGLE + ':' + SERVICE_TYPES.CLASSROOM: return GoogleClassroomService
+      case MAILBOX_TYPES.GOOGLE + ':' + SERVICE_TYPES.MUSIC: return GoogleMusicService
+      case MAILBOX_TYPES.GOOGLE + ':' + SERVICE_TYPES.FI: return GoogleFiService
+      case MAILBOX_TYPES.GOOGLE + ':' + SERVICE_TYPES.ADMIN: return GoogleAdminService
 
       // Microsoft
       case MAILBOX_TYPES.MICROSOFT + ':' + SERVICE_TYPES.DEFAULT: return MicrosoftDefaultService

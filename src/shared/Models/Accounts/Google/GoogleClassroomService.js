@@ -8,6 +8,7 @@ class GoogleClassroomService extends GoogleService {
   static get type () { return GoogleService.SERVICE_TYPES.CLASSROOM }
   static get humanizedType () { return 'Google Classroom' }
   static get humanizedTypeShort () { return 'Classroom' }
+  static get humanizedUnreadItemType () { return 'message' }
   static get humanizedLogos () {
     return [
       'images/google/logo_classroom_32px.png',
