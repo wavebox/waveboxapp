@@ -36,7 +36,6 @@ class GoogleMusicService extends GoogleService {
   /* **************************************************************************/
 
   get url () { return 'https://play.google.com/music' }
-
 }
 
 module.exports = GoogleMusicService

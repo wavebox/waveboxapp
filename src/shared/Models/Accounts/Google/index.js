@@ -16,6 +16,6 @@ module.exports = {
   GoogleVideoService: require('./GoogleVideoService'),
   GoogleMusicService: require('./GoogleMusicService'),
   GoogleAdminService: require('./GoogleAdminService'),
-  GoogleAdminService: require('./GoogleFiService'),
+  GoogleFiService: require('./GoogleFiService'),
   GoogleClassroomService: require('./GoogleClassroomService')
 }
