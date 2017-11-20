@@ -207,63 +207,6 @@ export default class SupportSettings extends React.Component {
   }
 
   render () {
-    /*
-    <Row>
-      <Col xs={6}>
-        <Row>
-          <Col md={6}>
-            {this.renderBoxedCell(
-              'fa-tachometer',
-              'Optimize Wavebox',
-              'Check to see how your Wavebox is performing and sleep accounts to save resources.',
-              'Optimize Wavebox',
-              () => { }
-            )}
-          </Col>
-          <Col md={6}>
-            {this.renderBoxedCell(
-              'fa-magic',
-              'Setup Wizard',
-              'Follow the step-by-step wizard to correctly configure your Wavebox.',
-              'Get Started',
-              () => { window.location.hash = '/app_wizard' }
-            )}
-          </Col>
-        </Row>
-      </Col>
-      <Col xs={6}>
-        <Row>
-          <Col md={6}>
-            {this.renderBoxedCell(
-              'fa-list-alt',
-              'Quick Start Guide',
-              'Are you getting the most out of Wavebox? Read our getting started guide to find out.',
-              'Quick Start',
-              () => electron.remote.shell.openExternal(QUICK_START_WEB_URL)
-            )}
-          </Col>
-          <Col md={6}>
-            <div style={styles.doubleHeightCellContainer}>
-              {this.renderDoubleBoxedCell(
-                'fa-star-o',
-                'rgb(249, 103, 97)',
-                'What\'s New?',
-                'From new extensions to bug fixes, make sure you\'re up-to-date with development news.',
-                () => { window.location.hash = '/news' }
-              )}
-              {this.renderDoubleBoxedCell(
-                'fa-tasks',
-                'rgb(101, 187, 188)',
-                'Try Wavebox Beta',
-                'Be the first to try out the latest features by switching to our beta channel.',
-                () => electron.remote.shell.openExternal(KB_BETA_CHANNEL_URL)
-              )}
-            </div>
-          </Col>
-        </Row>
-      </Col>
-    </Row>
-    */
     return (
       <div style={styles.scroller} className='ReactComponent-MaterialUI-Dialog-Body-Scrollbars'>
         <Container fluid style={styles.container}>
@@ -272,11 +215,11 @@ export default class SupportSettings extends React.Component {
               <Row>
                 <Col md={6}>
                   {this.renderBoxedCell(
-                    'fa-star-o',
-                    'What\'s New?',
-                    'From new extensions to bug fixes, make sure you\'re up-to-date with development news.',
-                    'What\'s New?',
-                    () => { window.location.hash = '/news' }
+                    'fa-tachometer',
+                    'Optimize Wavebox',
+                    'Check to see how your Wavebox is performing and sleep accounts to save resources.',
+                    'Optimize Wavebox',
+                    () => { window.location.hash = '/optimize_wizard/start' }
                   )}
                 </Col>
                 <Col md={6}>
@@ -285,7 +228,7 @@ export default class SupportSettings extends React.Component {
                     'Setup Wizard',
                     'Follow the step-by-step wizard to correctly configure your Wavebox.',
                     'Get Started',
-                    () => { window.location.hash = '/app_wizard' }
+                    () => { window.location.hash = '/app_wizard/start' }
                   )}
                 </Col>
               </Row>
@@ -302,13 +245,22 @@ export default class SupportSettings extends React.Component {
                   )}
                 </Col>
                 <Col md={6}>
-                  {this.renderBoxedCell(
-                    'fa-tasks',
-                    'Try Wavebox Beta',
-                    'Be the first to try out the latest features by switching to our beta channel.',
-                    'Try Beta',
-                    () => electron.remote.shell.openExternal(KB_BETA_CHANNEL_URL)
-                  )}
+                  <div style={styles.doubleHeightCellContainer}>
+                    {this.renderDoubleBoxedCell(
+                      'fa-star-o',
+                      'rgb(249, 103, 97)',
+                      'What\'s New?',
+                      'From new extensions to bug fixes, make sure you\'re up-to-date with development news.',
+                      () => { window.location.hash = '/news' }
+                    )}
+                    {this.renderDoubleBoxedCell(
+                      'fa-tasks',
+                      'rgb(101, 187, 188)',
+                      'Try Wavebox Beta',
+                      'Be the first to try out the latest features by switching to our beta channel.',
+                      () => electron.remote.shell.openExternal(KB_BETA_CHANNEL_URL)
+                    )}
+                  </div>
                 </Col>
               </Row>
             </Col>

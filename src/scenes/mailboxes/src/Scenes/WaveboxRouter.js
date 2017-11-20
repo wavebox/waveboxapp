@@ -11,6 +11,7 @@ import MailboxWizardAddScene from './MailboxWizardAddScene'
 import MailboxReauthenticatingScene from './MailboxReauthenticatingScene'
 import AppWizardScene from './AppWizardScene'
 import NewsScene from './NewsScene'
+import OptimizeWizardScene from './OptimizeWizardScene'
 import {
   CheckingUpdatesScene,
   UpdateAvailableScene,
@@ -47,6 +48,7 @@ export default class WaveboxRouter extends React.Component {
           <Route path='/mailbox/reauthenticating' component={MailboxReauthenticatingScene} />
 
           <Route path='/app_wizard/:step?' component={AppWizardScene} />
+          <Route path='/optimize_wizard/:step?' component={OptimizeWizardScene} />
 
           <Route path='/incoming/compose' component={ComposePickerScene} />
 

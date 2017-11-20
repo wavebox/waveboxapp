@@ -95,3 +95,13 @@ ipcRenderer.send(WB_MAILBOXES_WINDOW_JS_LOADED, {})
 // Resource usage monitoring
 const resourceMonitorListener = new ResourceMonitorResponder()
 resourceMonitorListener.listen()
+
+// Prep any wizards
+setTimeout(() => {
+  const mailboxState = mailboxStore.getState()
+  const settingsState = settingsStore.getState()
+  const userState = userStore.getState()
+  if (!settingsState.app.hasSeenOptimizeWizard && userState.user.hasSleepable && mailboxState.mailboxCount() > 1) {
+    window.location.hash = '/optimize_wizard'
+  }
+}, 1000)

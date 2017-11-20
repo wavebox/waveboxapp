@@ -20,7 +20,8 @@ const SERVICE_GROUPS = {
     CoreMailbox.SERVICE_TYPES.DOCS,
     CoreMailbox.SERVICE_TYPES.SHEETS,
     CoreMailbox.SERVICE_TYPES.SLIDES,
-    CoreMailbox.SERVICE_TYPES.CLASSROOM
+    CoreMailbox.SERVICE_TYPES.CLASSROOM,
+    CoreMailbox.SERVICE_TYPES.ADMIN
   ]
 }
 const SERVICE_ORDERING = [

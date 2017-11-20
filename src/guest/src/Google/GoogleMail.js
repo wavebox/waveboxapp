@@ -60,9 +60,6 @@ class GoogleMail extends GoogleService {
           body, .wl, .aeJ {
             background-color: transparent !important;
           }
-          .az {
-            background-color: gba(221, 221, 221, 0.8) !important;
-          }
         `)
       }
     }
@@ -72,8 +69,12 @@ class GoogleMail extends GoogleService {
 
       if (process.platform === 'darwin' && settingStore.ui.vibrancyMode !== UISettings.VIBRANCY_MODES.NONE) {
         webFrame.insertCSS(`
-          body, nav[jsaction]:not([role="banner"]), nav[jsaction]:not([role="banner"])>[role="menu"] {
+          body, nav[jsaction]:not([role="banner"]), nav[jsaction]:not([role="banner"])>[role="menu"], .I {
             background-color: transparent !important;
+          }
+          .az {
+            background-color: rgba(221, 221, 221, 0.8) !important;
+            border-radius: 3px !important;
           }
         `)
       }

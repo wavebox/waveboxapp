@@ -366,6 +366,13 @@ class SettingsActions {
   }
 
   /**
+  * @param hasSeen: true if the user has seen the optimize wizard
+  */
+  setHasSeenOptimizeWizard (hasSeen) {
+    return this.update(SEGMENTS.APP, 'hasSeenOptimizeWizard', hasSeen)
+  }
+
+  /**
   * Declines the EULA and quits the app
   */
   declineEULA () {

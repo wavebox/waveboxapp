@@ -116,7 +116,7 @@ export default class MailboxAvatar extends React.Component {
       backgroundColor: mailbox.hasCustomAvatar || mailbox.avatarURL ? 'white' : mailbox.color
     }, otherProps)
 
-    const sizeAndBorder = this.renderStyles(mailbox, size, style, useBorderHack)
+    const sizeAndBorder = this.renderStyles(mailbox, size, style || {}, useBorderHack)
     passProps.size = sizeAndBorder.size
     passProps.style = {...passProps.style, ...sizeAndBorder.style}
 
