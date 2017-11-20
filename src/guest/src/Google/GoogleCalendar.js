@@ -38,7 +38,7 @@ class GoogleCalendar extends GoogleService {
         const browserWindow = remote.getCurrentWindow()
         remote.dialog.showMessageBox(browserWindow, {
           type: 'none',
-          message: data.message
+          message: `${data.message}`
         })
         ipcRenderer.sendToHost({
           type: WB_BROWSER_GOOGLE_CALENDAR_ALERT_PRESENTED,

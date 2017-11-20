@@ -20,6 +20,20 @@ const SUPPRESSED_PROTOCOLS = new Set([
   `${CHROME_PROTOCOL}:`,
   'about:'
 ])
+const DEQUEUE_ENDPOINTS = new Set([
+  /**
+  * Because we use contextIsolation, electron re-runs some of the window
+  * setup code after the preload script. If we're overwriting anything
+  * our overwrites may be overwritten. To prevent this deque the following
+  * items to ensure they are loaded last
+  */
+  WAVEBOX_CONTENT_IMPL_ENDPOINTS.NOTIFICATION,
+  WAVEBOX_CONTENT_IMPL_ENDPOINTS.CREXTENSION_POPOUT_WINDOW_POSTMESSAGE,
+
+  WAVEBOX_CONTENT_IMPL_ENDPOINTS.GOOGLE_MAIL_WINDOW_OPEN,
+  WAVEBOX_CONTENT_IMPL_ENDPOINTS.GOOGLE_CALENDAR_ALERT,
+  WAVEBOX_CONTENT_IMPL_ENDPOINTS.ONEDRIVE_WINDOW_OPEN
+])
 
 class ExtensionLoader {
   get ENDPOINTS () { return WAVEBOX_CONTENT_IMPL_ENDPOINTS }
@@ -49,8 +63,18 @@ class ExtensionLoader {
         ${req.guestApi(apiName)}
       })('${apiKey}', ${JSON.stringify(config)})
     `
-    webFrame.executeJavaScript(wrapper)
-    return Promise.resolve()
+
+    if (DEQUEUE_ENDPOINTS.has(apiName)) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          webFrame.executeJavaScript(wrapper)
+          resolve()
+        })
+      })
+    } else {
+      webFrame.executeJavaScript(wrapper)
+      return Promise.resolve()
+    }
   }
 }
 

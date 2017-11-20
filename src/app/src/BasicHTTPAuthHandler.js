@@ -38,7 +38,7 @@ class BasicHTTPAuthHandler {
     })
 
     // Bind event listeners
-    this.window.on('page-title-updated', this.handlePageTitleUpdated.bind(this))
+    this.window.on('page-title-updated', this.handlePageTitleUpdated)
 
     // Load url
     const qs = querystring.stringify({
@@ -57,7 +57,7 @@ class BasicHTTPAuthHandler {
   * @param evt: the event that fired
   * @param title: the title that was set
   */
-  handlePageTitleUpdated (evt, title) {
+  handlePageTitleUpdated = (evt, title) => {
     if (title.startsWith('wbaction:')) {
       evt.preventDefault()
 

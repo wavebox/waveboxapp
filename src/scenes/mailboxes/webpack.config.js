@@ -16,6 +16,7 @@ module.exports = function (env) {
   return {
     target: 'electron-renderer',
     devtool: isProduction ? undefined : (process.env.WEBPACK_DEVTOOL || 'source-map'),
+    stats: process.env.VERBOSE_LOG === 'true' ? undefined : 'errors-only',
     node: {
       __dirname: false,
       __filename: false
@@ -38,7 +39,7 @@ module.exports = function (env) {
       // Clean out our bin dir
       new CleanWebpackPlugin([path.relative(BIN_DIR, OUT_DIR)], {
         root: BIN_DIR,
-        verbose: true,
+        verbose: process.env.VERBOSE_LOG === 'true',
         dry: false
       }),
 
