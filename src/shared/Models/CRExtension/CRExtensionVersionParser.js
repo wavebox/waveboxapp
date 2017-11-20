@@ -72,10 +72,11 @@ class CRExtensionVersionParser {
     if (a === undefined || b === undefined) { return false }
 
     for (let i = 0; i < Math.max(a.length, b.length); i++) {
-      console.log((a[i] || 0), (b[i] || 0), (b[i] || 0) > (a[i] || 0))
-      if ((a[i] || 0) > (b[i] || 0)) {
-        return true
-      }
+      const aDel = a[i] || 0
+      const bDel = b[i] || 0
+      if (aDel === bDel) { continue }
+      if (aDel > bDel) { return true }
+      if (aDel < bDel) { return false }
     }
 
     return false
