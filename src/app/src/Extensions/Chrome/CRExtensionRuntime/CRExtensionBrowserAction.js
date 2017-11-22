@@ -1,6 +1,7 @@
 import { ipcMain, webContents } from 'electron'
 import CRDispatchManager from '../CRDispatchManager'
 import CRExtensionUISubscriber from '../CRExtensionUISubscriber'
+import CRExtensionTab from './CRExtensionTab'
 import {
   CRX_BROWSER_ACTION_SET_TITLE_,
   CRX_BROWSER_ACTION_FETCH_TITLE_,
@@ -271,8 +272,9 @@ class CRExtensionBrowserAction {
   * @param tabId: the id of the tab
   */
   handleClick = (evt, tabId) => {
+    const tabInfo = CRExtensionTab.dataFromWebContentsId(this.extension, tabId)
     webContents.getAllWebContents().forEach((targetWebcontents) => {
-      targetWebcontents.send(`${CRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, tabId)
+      targetWebcontents.send(`${CRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, tabInfo)
     })
   }
 }

@@ -6,6 +6,7 @@ const GuestHost = require('../GuestHost')
 const CRExtensionPopoutPostMessageListener = require('./CRExtensionPopoutPostMessageListener')
 const DispatchManager = require('../DispatchManager')
 const { RENDER_PROCESS_PREFERENCE_TYPES } = req.shared('processPreferences')
+const fs = require('fs')
 
 class CRExtensionLoader {
   /* **************************************************************************/
@@ -15,6 +16,7 @@ class CRExtensionLoader {
   constructor () {
     this._hasLoaded = false
     this._contexts = new Map()
+    this._extensionPreferences = new Map()
     this.popoutPostMessageListner = new CRExtensionPopoutPostMessageListener()
 
     DispatchManager.registerHandler(WBECRX_EXECUTE_SCRIPT, this._handleCRXExecuteScript.bind(this))
@@ -41,19 +43,22 @@ class CRExtensionLoader {
 
     const hostUrl = GuestHost.parsedUrl
     if (hostUrl.protocol === 'http:' || hostUrl.protocol === 'https:') {
-      const preferences = process.getRenderProcessPreferences()
-      if (preferences) {
-        for (const pref of preferences) {
+      this._extensionPreferences = Array.from(process.getRenderProcessPreferences() || [])
+        .reduce((acc, pref) => {
           if (pref.type === RENDER_PROCESS_PREFERENCE_TYPES.WB_CREXTENSION_CONTENTSCRIPT_CONFIG) {
-            if (pref.crExtensionContentScripts) {
-              this._initializeExtensionContentScript(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, pref.crExtensionContentScripts)
-            }
-            if (pref.popoutWindowPostmessageCapture) {
-              this._capturePopoutWindowPostmessages(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, pref.popoutWindowPostmessageCapture)
-            }
+            acc.set(pref.extensionId, pref)
           }
+          return acc
+        }, new Map())
+
+      Array.from(this._extensionPreferences.values()).forEach((pref) => {
+        if (pref.crExtensionContentScripts) {
+          this._initializeExtensionContentScript(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, pref.crExtensionContentScripts)
         }
-      }
+        if (pref.popoutWindowPostmessageCapture) {
+          this._capturePopoutWindowPostmessages(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, pref.popoutWindowPostmessageCapture)
+        }
+      })
     }
   }
 
@@ -222,11 +227,23 @@ class CRExtensionLoader {
   /**
   * Executes a script on behalf of an extension
   * @param evt: the event that fired
-  * @param [extensionId, details]: the extension id requesting and details
+  * @param [extensionId, details, format, code]: the extension id requesting and details
   * @param responseCallback: the response callback to reply with
   */
-  _handleCRXExecuteScript (evt, [extensionId, details], responseCallback) {
-    responseCallback(null, [])
+  _handleCRXExecuteScript (evt, [extensionId, details, format, code], responseCallback) {
+    if (format === '.js') {
+      const contextId = this._getOrCreateContextForScript(extensionId)
+      console.log("HERE")
+      webFrame.executeContextScript(contextId, code, (res) => {
+        console.log("BACK", res)
+        responseCallback(null, [res])
+      })
+    } else if (format === '.css') {
+      webFrame.insertCSS(code)
+      responseCallback(null, [])
+    } else {
+      responseCallback(new Error(`Unable to load unknown format "${format}"`))
+    }
   }
 }
 

@@ -9,6 +9,7 @@ const MinifyPlugin = devRequire('babel-minify-webpack-plugin')
 const CleanWebpackPlugin = devRequire('clean-webpack-plugin')
 const CopyWebpackPlugin = devRequire('copy-webpack-plugin')
 const WebpackNotifierPlugin = devRequire('webpack-notifier')
+const WebpackOnBuildPlugin = devRequire('on-build-webpack')
 
 module.exports = function (env) {
   const isProduction = process.env.NODE_ENV === 'production'
@@ -55,7 +56,8 @@ module.exports = function (env) {
       isProduction ? new MinifyPlugin({ simplify: false }, { sourceMap: false, comments: false }) : undefined,
 
       // Dev tools
-      process.env.NOTIFICATIONS === 'true' ? new WebpackNotifierPlugin({ title: 'WB CRExtension API', alwaysNotify: true }) : undefined
+      process.env.NOTIFICATIONS === 'true' ? new WebpackNotifierPlugin({ title: 'WB CRExtension API', alwaysNotify: true }) : undefined,
+      new WebpackOnBuildPlugin((stats) => { console.log('WB CRExtension API') })
     ].filter((p) => !!p),
     resolve: {
       extensions: ['.js', '.jsx', '.less', '.css'],

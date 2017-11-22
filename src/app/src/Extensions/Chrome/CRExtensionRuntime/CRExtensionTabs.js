@@ -1,4 +1,4 @@
-import { BrowserWindow, webContents } from 'electron'
+import { webContents } from 'electron'
 import { evtMain } from 'AppEvents'
 import CRDispatchManager from '../CRDispatchManager'
 import {
@@ -16,6 +16,10 @@ import {
 import WaveboxWindow from 'windows/WaveboxWindow'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
 import url from 'url'
+import fs from 'fs-extra'
+import path from 'path'
+import CRExtensionTab from './CRExtensionTab'
+import pathTool from 'shared/pathTool'
 
 class CRExtensionTabs {
   /* ****************************************************************************/
@@ -57,12 +61,7 @@ class CRExtensionTabs {
   * @return the raw tab data
   */
   _tabDataFromWebContentsId (webContentsId) {
-    const wc = webContents.fromId(webContentsId)
-    if (!wc || wc.isDestroyed()) {
-      return { id: webContentsId }
-    } else {
-      return this._tabDataFromWebContents(wc)
-    }
+    return CRExtensionTab.dataFromWebContentsId(this.extension, webContentsId)
   }
 
   /**
@@ -71,22 +70,7 @@ class CRExtensionTabs {
   * @return the raw tab data
   */
   _tabDataFromWebContents (webContents) {
-    const browserWindow = BrowserWindow.fromWebContents(webContents.hostWebContents ? webContents.hostWebContents : webContents)
-    const waveboxWindow = browserWindow ? WaveboxWindow.fromBrowserWindowId(browserWindow.id) : undefined
-
-    return {
-      id: webContents.id,
-      ...(browserWindow && !browserWindow.isDestroyed() ? {
-        windowId: browserWindow.id
-      } : undefined),
-      ...(waveboxWindow ? {
-        active: waveboxWindow.focusedTabId() === webContents.id
-      } : undefined),
-      ...(this.extension.manifest.permissions.has('tabs') ? {
-        url: webContents.getURL(),
-        title: webContents.getTitle()
-      } : undefined)
-    }
+    return CRExtensionTab.dataFromWebContents(this.extension, webContents)
   }
 
   /* ****************************************************************************/
@@ -252,14 +236,32 @@ class CRExtensionTabs {
       return
     }
 
-    CRDispatchManager.requestOnTarget(
-      contents,
-      WBECRX_EXECUTE_SCRIPT,
-      [this.extension.id, details],
-      (evt, err, response) => {
-        responseCallback(err, response)
+    if (details.file) {
+      const scopedPath = pathTool.scopeToDir(this.extension.srcPath, details.file)
+      if (!scopedPath) {
+        responseCallback(`Unable to load file with path "${details.file}"`, null)
+        return
       }
-    )
+
+      Promise.resolve()
+        .then(() => fs.readFile(scopedPath, 'utf8'))
+        .then((data) => {
+          CRDispatchManager.requestOnTarget(
+            contents,
+            WBECRX_EXECUTE_SCRIPT,
+            [this.extension.id, details, path.extname(scopedPath), data],
+            (evt, err, response) => {
+              responseCallback(err, response)
+            }
+          )
+        })
+        .catch((ex) => {
+          responseCallback(`Unable to load file with path "${details.file}"`, null)
+        })
+    } else {
+      responseCallback(`No loadable file provided`, null)
+      // return
+    }
   }
 }
 

@@ -24,6 +24,7 @@ import {
 } from 'shared/ipcEvents'
 import { CSPParser, CSPBuilder } from './CSP'
 import pathTool from 'shared/pathTool'
+import CRExtensionTab from './CRExtensionRuntime/CRExtensionTab'
 
 class CRExtensionRuntimeHandler {
   /* ****************************************************************************/
@@ -133,7 +134,11 @@ class CRExtensionRuntimeHandler {
     CRDispatchManager.requestAllOnTarget(
       runtime.backgroundPage.webContents,
       `${CRX_RUNTIME_ONMESSAGE_}${extensionId}`,
-      [ extensionId, evt.sender.id, message ],
+      [
+        extensionId,
+        CRExtensionTab.dataFromWebContentsId(runtime.extension, evt.sender.id),
+        message
+      ],
       (evt, err, response) => {
         responseCallback(err, response)
       }
@@ -147,6 +152,11 @@ class CRExtensionRuntimeHandler {
   * @param responseCallback: callback to execute with response
   */
   _handleTabsSendmessage = (evt, [extensionId, tabId, isBackgroundPage, message], responseCallback) => {
+    const runtime = this.runtimes.get(extensionId)
+    if (!runtime) {
+      responseCallback(new Error(`Could not find extension ${extensionId}`))
+      return
+    }
     const targetWebcontents = webContents.fromId(tabId)
     if (!targetWebcontents) {
       responseCallback(new Error(`Could not find tab ${tabId}`))
@@ -156,7 +166,11 @@ class CRExtensionRuntimeHandler {
     CRDispatchManager.requestAllOnTarget(
       targetWebcontents,
       `${CRX_RUNTIME_ONMESSAGE_}${extensionId}`,
-      [ extensionId, isBackgroundPage ? null : evt.sender.id, message ],
+      [
+        extensionId,
+        isBackgroundPage ? null : CRExtensionTab.dataFromWebContentsId(runtime.extension, evt.sender.id),
+        message
+      ],
       (evt, err, response) => {
         responseCallback(err, response)
       }
@@ -203,7 +217,8 @@ class CRExtensionRuntimeHandler {
     })
 
     // Emit the connect event
-    backgroundContents.sendToAll(`${CRX_PORT_CONNECTED_}${extensionId}`, evt.sender.id, portId, connectInfo)
+    const tabInfo = CRExtensionTab.dataFromWebContents(runtime.extension, evt.sender)
+    backgroundContents.sendToAll(`${CRX_PORT_CONNECTED_}${extensionId}`, tabInfo, portId, connectInfo)
   }
 
   /* ****************************************************************************/

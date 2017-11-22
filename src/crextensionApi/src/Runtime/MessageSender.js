@@ -11,12 +11,12 @@ class MessageSender {
   /**
   * https://developer.chrome.com/extensions/runtime#type-MessageSender
   * @param extensionId: the id of the extension that sent the message
-  * @param tabId: the id of the tab that sent the message
+  * @param tabIdOrTab: the id of the tab that sent the message or a prebuilt tab
   */
-  constructor (extensionId, tabId) {
+  constructor (extensionId, tabIdOrTab) {
     this.id = extensionId
     this.url = `${CR_EXTENSION_PROTOCOL}://${extensionId}`
-    this.tab = new Tab(tabId)
+    this.tab = typeof (tabIdOrTab) === 'object' ? tabIdOrTab : new Tab(tabIdOrTab)
     Object.freeze(this)
   }
 }

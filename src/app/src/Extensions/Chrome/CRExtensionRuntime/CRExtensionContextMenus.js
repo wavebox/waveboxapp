@@ -1,6 +1,7 @@
 import { ipcMain, webContents } from 'electron'
 import CRDispatchManager from '../CRDispatchManager'
 import CRExtensionUISubscriber from '../CRExtensionUISubscriber'
+import CRExtensionTab from './CRExtensionTab'
 import {
   CRX_CONTEXT_MENU_CREATE_,
   CRX_CONTEXT_MENU_CLICKED_
@@ -86,8 +87,9 @@ class CRExtensionContextMenus {
   * @param params: the click params
   */
   handleClick = (evt, tabId, params) => {
+    const tabInfo = CRExtensionTab.dataFromWebContentsId(this.extension, tabId)
     webContents.getAllWebContents().forEach((targetWebcontents) => {
-      targetWebcontents.send(`${CRX_CONTEXT_MENU_CLICKED_}${this.extension.id}`, tabId, params)
+      targetWebcontents.send(`${CRX_CONTEXT_MENU_CLICKED_}${this.extension.id}`, tabInfo, params)
     })
   }
 }

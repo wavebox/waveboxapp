@@ -143,6 +143,7 @@ class Tabs {
   /* **************************************************************************/
 
   executeScript (...fullArgs) {
+    console.log("EXECUTE SCRIPT", fullArgs)
     const { callback, args } = ArgParser.callback(fullArgs)
     const [tabId, details] = ArgParser.match(args, [
       { pattern: ['number', 'object'], out: [ArgParser.MATCH_ARG_0, ArgParser.MATCH_ARG_1] },
@@ -156,7 +157,7 @@ class Tabs {
 
     DispatchManager.request(
       `${CRX_TAB_EXECUTE_SCRIPT_}${this[privExtensionId]}`,
-      [ tabId, details ],
+      [tabId, details],
       (evt, err, response) => {
         if (callback) {
           callback(response || [])

@@ -49,6 +49,7 @@ class MailboxesWindowBehaviour {
   */
   handleAppWebContentsCreated = (evt, contents) => {
     if (contents.getType() === 'webview' && contents.hostWebContents.id === this.webContentsId) {
+      contents.openDevTools()//TODO
       contents.on('new-window', this.handleWebViewNewWindow)
       contents.on('will-navigate', this.handleWebViewWillNavigate)
       contents.on('before-input-event', this.handleBeforeInputEvent)

@@ -18,6 +18,7 @@ import EventUnsupported from 'Core/EventUnsupported'
 import DispatchManager from 'Core/DispatchManager'
 import MessageSender from './MessageSender'
 import Port from './Port'
+import Tab from '../Tabs/Tab'
 import {
   protectedHandleError,
   protectedCtrlEvt1,
@@ -66,8 +67,8 @@ class Runtime {
 
     // Handlers
     DispatchManager.registerHandler(`${CRX_RUNTIME_ONMESSAGE_}${extensionId}`, this._handleRuntimeOnMessage.bind(this))
-    ipcRenderer.on(`${CRX_PORT_CONNECTED_}${this[privExtensionId]}`, (evt, tabId, portId, connectInfo) => {
-      const port = new Port(this[privExtensionId], portId, tabId, connectInfo.name)
+    ipcRenderer.on(`${CRX_PORT_CONNECTED_}${this[privExtensionId]}`, (evt, tabInfo, portId, connectInfo) => {
+      const port = new Port(this[privExtensionId], portId, new Tab(tabInfo), connectInfo.name)
       this.onConnect.emit(port)
     })
 
@@ -121,8 +122,11 @@ class Runtime {
     if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.CONTENTSCRIPT) {
       return undefined
     } else {
-      return () => {
+      return (url, callback) => {
         console.warn('chrome.runtime.setUninstallURL is not supported by Wavebox at this time')
+        if (callback) {
+          setTimeout(() => { callback() })
+        }
       }
     }
   }
@@ -167,7 +171,7 @@ class Runtime {
       { pattern: [], out: [this[privExtensionId], {}] }
     ])
     const {tabId, portId} = ipcRenderer.sendSync(CRX_PORT_CONNECT_SYNC, targetExtensionId, connectInfo)
-    return new Port(this[privExtensionId], portId, tabId, connectInfo.name)
+    return new Port(this[privExtensionId], portId, new Tab(tabId), connectInfo.name)
   }
 
   /* **************************************************************************/
@@ -177,10 +181,10 @@ class Runtime {
   /**
   * Handles a runtime message
   * @param evt: the event that fired
-  * @param [extensionId, tabId, message]: the id of the extension to send the message to and the message
+  * @param [extensionId, tabInfo, message]: the id of the extension to send the message to and the message
   * @param responseCallback: callback to execute with response
   */
-  _handleRuntimeOnMessage (evt, [extensionId, tabId, message], responseCallback) {
+  _handleRuntimeOnMessage (evt, [extensionId, tabInfo, message], responseCallback) {
     // Make sure we always respond even with control events
     switch (extensionId) {
       case this[protectedCtrlEvt1]:
@@ -199,7 +203,7 @@ class Runtime {
         })
         break
       default:
-        this.onMessage.emit(message, new MessageSender(extensionId, tabId), (response) => {
+        this.onMessage.emit(message, new MessageSender(extensionId, new Tab(tabInfo)), (response) => {
           responseCallback(null, response)
         })
     }

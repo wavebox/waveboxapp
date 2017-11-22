@@ -32,8 +32,8 @@ class BrowserAction {
     this[privExtensionId] = extensionId
     this.onClicked = new Event()
 
-    ipcRenderer.on(`${CRX_BROWSER_ACTION_CLICKED_}${extensionId}`, (evt, tabId) => {
-      this.onClicked.emit(new Tab(tabId))
+    ipcRenderer.on(`${CRX_BROWSER_ACTION_CLICKED_}${extensionId}`, (evt, tabInfo) => {
+      this.onClicked.emit(new Tab(tabInfo))
     })
     Object.freeze(this)
   }
