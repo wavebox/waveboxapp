@@ -102,7 +102,7 @@ export default class AccountBadgeSettings extends React.Component {
         ) : undefined}
         <div style={commonStyles.button}>
           <ColorPickerButton
-            label='Badge Colour'
+            label='Badge Color'
             icon={<FontIcon className='material-icons'>sms</FontIcon>}
             value={service.unreadBadgeColor}
             onChange={(col) => {

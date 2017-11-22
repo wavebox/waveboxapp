@@ -134,7 +134,8 @@ export default class SidelistItemMalboxAvatar extends React.Component {
       isDefaultServiceActive: mailboxState.isActive(mailboxId, CoreMailbox.SERVICE_TYPES.DEFAULT),
       isDefaultServiceSleeping: mailboxState.isSleeping(mailboxId, CoreMailbox.SERVICE_TYPES.DEFAULT),
       isAllServicesSleeping: mailboxState.isAllServicesSleeping(mailboxId),
-      isRestricted: mailboxState.isMailboxRestricted(mailboxId, userState.user)
+      isRestricted: mailboxState.isMailboxRestricted(mailboxId, userState.user),
+      userHasServices: userState.user.hasServices
     }
   }
 
@@ -162,7 +163,8 @@ export default class SidelistItemMalboxAvatar extends React.Component {
   userChanged = (userState) => {
     const mailboxState = mailboxStore.getState()
     this.setState({
-      isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId, userState.user)
+      isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId, userState.user),
+      userHasServices: userState.user.hasServices
     })
   }
 
@@ -191,7 +193,8 @@ export default class SidelistItemMalboxAvatar extends React.Component {
       service,
       globalShowSleepableServiceIndicator,
       showActiveIndicator,
-      tooltipsEnabled
+      tooltipsEnabled,
+      userHasServices
     } = this.state
     if (!mailbox || !service) { return false }
 
@@ -201,11 +204,11 @@ export default class SidelistItemMalboxAvatar extends React.Component {
     if (mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR) {
       borderColor = isDefaultServiceActive || isHovering ? mailbox.color : Color(mailbox.color).lighten(0.4).rgb().string()
       showSleeping = isDefaultServiceSleeping && mailbox.showSleepableServiceIndicator && globalShowSleepableServiceIndicator
-      displayMailboxOverview = mailbox.collapseSidebarServices && !isMailboxActive && mailbox.hasAdditionalServices
+      displayMailboxOverview = userHasServices && mailbox.collapseSidebarServices && !isMailboxActive && mailbox.hasAdditionalServices
     } else {
       borderColor = isMailboxActive || isHovering ? mailbox.color : Color(mailbox.color).lighten(0.4).rgb().string()
       showSleeping = isAllServicesSleeping && mailbox.showSleepableServiceIndicator && globalShowSleepableServiceIndicator
-      displayMailboxOverview = mailbox.hasAdditionalServices
+      displayMailboxOverview = userHasServices && mailbox.hasAdditionalServices
     }
 
     return (
