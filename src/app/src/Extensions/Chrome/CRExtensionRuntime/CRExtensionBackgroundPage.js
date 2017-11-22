@@ -1,6 +1,5 @@
 import { webContents } from 'electron'
 import fs from 'fs-extra'
-import path from 'path'
 import url from 'url'
 import {
   CR_EXTENSION_PROTOCOL,
@@ -8,8 +7,21 @@ import {
 } from 'shared/extensionApis'
 import Resolver from 'Runtime/Resolver'
 import { SessionManager } from 'SessionManager'
+import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
 
 class CRExtensionBackgroundPage {
+  /* ****************************************************************************/
+  // Class: utils
+  /* ****************************************************************************/
+
+  /**
+  * @param extensionId: the id of the extension
+  * @return the partition that will be used for the background page
+  */
+  static partitionIdForExtension (extensionId) {
+    return `${CR_EXTENSION_BG_PARTITION_PREFIX}${extensionId}`
+  }
+
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
@@ -38,6 +50,19 @@ class CRExtensionBackgroundPage {
   get name () { return this._name }
 
   /* ****************************************************************************/
+  // WebContents pass-through
+  /* ****************************************************************************/
+
+  /**
+  * Provides a function call that will send events to the webcontents
+  * @param ...args: the arguments to send
+  */
+  sendToWebContents = (...args) => {
+    if (!this._webContents) { return }
+    this._webContents.send(...args)
+  }
+
+  /* ****************************************************************************/
   // Script lifecycle
   /* ****************************************************************************/
 
@@ -49,13 +74,17 @@ class CRExtensionBackgroundPage {
 
     if (this.extension.manifest.background.hasHtmlPage) {
       this._name = this.extension.manifest.background.htmlPage
-      this._html = fs.readFileSync(path.join(this.extension.srcPath, this.extension.manifest.background.htmlPage))
+      try {
+        this._html = fs.readFileSync(this.extension.manifest.background.getHtmlPageScoped(this.extension.srcPath))
+      } catch (ex) {
+        this.html = ''
+      }
     } else {
       this._name = '_generated_background_page.html'
       this._html = Buffer.from(this.extension.manifest.background.generateHtmlPageForScriptset())
     }
 
-    const partitionId = `${CR_EXTENSION_BG_PARTITION_PREFIX}${this.extension.id}`
+    const partitionId = this.constructor.partitionIdForExtension(this.extension.id)
     this._webContents = webContents.create({
       partition: partitionId,
       isBackgroundPage: true,
@@ -72,13 +101,17 @@ class CRExtensionBackgroundPage {
       pathname: this._name
     }))
 
+    // Update cors via the extension config
+    SessionManager
+      .webRequestEmitterFromPartitionId(partitionId)
+      .beforeSendHeaders
+      .onBlocking(undefined, this._handleBeforeSendHeaders)
+
     // Relax cors for extensions that request it
-    if (this.extension.manifest.permissions.has('<all_urls>')) {
-      SessionManager
-        .webRequestEmitterFromPartitionId(partitionId)
-        .headersReceived
-        .onBlocking(undefined, this._handleAllUrlHeadersReceived)
-    }
+    SessionManager
+      .webRequestEmitterFromPartitionId(partitionId)
+      .headersReceived
+      .onBlocking(undefined, this._handleAllUrlHeadersReceived)
   }
 
   /**
@@ -99,28 +132,48 @@ class CRExtensionBackgroundPage {
   /* ****************************************************************************/
 
   /**
+  * Handles the before send headers event
+  * @param details: the details of the request
+  * @param responder: function to call with updated headers
+  */
+  _handleBeforeSendHeaders (details, responder) {
+    if (details.resourceType === 'xhr') {
+      responder({
+        requestHeaders: {
+          ...details.requestHeaders,
+          'Origin': ['null']
+        }
+      })
+    } else {
+      responder({})
+    }
+  }
+
+  /**
   * Handles the headers being received and updates them if required
   * @param details: the details of the request
   * @param responder: function to call with updated headers
   */
   _handleAllUrlHeadersReceived = (details, responder) => {
     if (details.resourceType === 'xhr') {
-      const headers = details.responseHeaders
-      const updatedHeaders = {
-        ...headers,
-        'access-control-allow-credentials': headers['access-control-allow-credentials'] || ['true'],
-        'access-control-allow-origin': (headers['access-control-allow-origin'] || []).concat([
-          url.format({
-            protocol: CR_EXTENSION_PROTOCOL,
-            slashes: true,
-            hostname: this.extension.id
-          })
-        ])
+      const purl = url.parse(details.url)
+      if (CRExtensionMatchPatterns.matchUrls(purl.protocol, purl.host, purl.pathname, Array.from(this.extension.manifest.permissions))) {
+        const headers = details.responseHeaders
+        const updatedHeaders = {
+          ...headers,
+          'access-control-allow-credentials': headers['access-control-allow-credentials'] || ['true'],
+          'access-control-allow-origin': [
+            url.format({
+              protocol: CR_EXTENSION_PROTOCOL,
+              slashes: true,
+              hostname: this.extension.id
+            })
+          ]
+        }
+        return responder({ responseHeaders: updatedHeaders })
       }
-      responder({ responseHeaders: updatedHeaders })
-    } else {
-      responder({})
     }
+    return responder({})
   }
 
   /* ****************************************************************************/

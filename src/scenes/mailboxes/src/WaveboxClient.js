@@ -20,7 +20,6 @@ import {
   WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
 } from 'shared/ipcEvents'
 import { ipcRenderer, webFrame } from 'electron'
-import DistributionConfig from 'Runtime/DistributionConfig'
 
 // Prevent zooming
 webFrame.setZoomLevelLimits(1, 1)
@@ -56,7 +55,7 @@ if (process.platform === 'darwin') {
 // Load what we have in the db
 userStore.getState()
 userActions.load()
-userActions.loadExtensions()
+userActions.startAutoUpdateExtensions()
 mailboxStore.getState()
 mailboxActions.load()
 settingsStore.getState()
@@ -97,9 +96,12 @@ ipcRenderer.send(WB_MAILBOXES_WINDOW_JS_LOADED, {})
 const resourceMonitorListener = new ResourceMonitorResponder()
 resourceMonitorListener.listen()
 
-// Forced setup wizards
-if (DistributionConfig.isSnapInstall && !settingsStore.getState().app.hasSeenSnapSetupMessage) {
-  setTimeout(() => {
-    window.location.hash = '/snap/setup'
-  }, 1000)
-}
+// Prep any wizards
+setTimeout(() => {
+  const mailboxState = mailboxStore.getState()
+  const settingsState = settingsStore.getState()
+  const userState = userStore.getState()
+  if (!settingsState.app.hasSeenOptimizeWizard && userState.user.hasSleepable && mailboxState.mailboxCount() > 1) {
+    window.location.hash = '/optimize_wizard'
+  }
+}, 1000)

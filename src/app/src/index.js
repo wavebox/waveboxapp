@@ -51,8 +51,8 @@
   const { HostedExtensionProvider, HostedExtensionSessionManager } = require('Extensions/Hosted')
   const { BrowserWindow, protocol } = require('electron')
   const { CRExtensionManager } = require('Extensions/Chrome')
-  const { SpellcheckService, PDFRenderService } = require('./Services')
   const { SessionManager, MailboxesSessionManager } = require('./SessionManager')
+  const ServicesManager = require('./Services').default
 
   /* ****************************************************************************/
   // Managers
@@ -60,6 +60,7 @@
 
   SessionManager.start()
   MailboxesSessionManager.start()
+  ServicesManager.load()
 
   /* ****************************************************************************/
   // Stores
@@ -98,10 +99,6 @@
   const appMenu = new AppPrimaryMenu(shortcutSelectors)
   const appGlobalShortcutSelectors = AppGlobalShortcuts.buildSelectors(appWindowManager)
   const appGlobalShortcuts = new AppGlobalShortcuts(appGlobalShortcutSelectors)
-  const spellcheckService = new SpellcheckService()
-  spellcheckService.load()
-  const pdfRenderService = new PDFRenderService()
-  pdfRenderService.load()
 
   /* ****************************************************************************/
   // Extensions
@@ -116,14 +113,6 @@
   /* ****************************************************************************/
   // IPC Events
   /* ****************************************************************************/
-
-  ipcMain.on(ipcEvents.WB_OPEN_MONITOR_WINDOW, (evt, body) => {
-    appWindowManager.openMonitorWindow()
-  })
-
-  ipcMain.on(ipcEvents.WB_PONG_RESOURCE_USAGE, (evt, body) => {
-    appWindowManager.submitProcessResourceUsage(body)
-  })
 
   ipcMain.on(ipcEvents.WB_FOCUS_APP, (evt, body) => {
     appWindowManager.focusMailboxesWindow()
@@ -185,6 +174,9 @@
         console.error(`Failed to load extensions. Continuing...`, ex)
       }
     }
+
+    // Write any state
+    settingStore.writeLaunchSettingsToRenderProcess()
 
     // Doing this outside of ready has a side effect on high-sierra where you get a _TSGetMainThread error
     // To resolve this, run it when in ready

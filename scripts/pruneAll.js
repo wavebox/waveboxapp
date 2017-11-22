@@ -4,7 +4,7 @@ const Colors = require('colors/safe')
 
 const cmds = PACKAGE_DIRS.map((dir) => {
   return {
-    cmd: 'npm',
+    cmd: process.platform === 'win32' ? 'npm.cmd' : 'npm',
     args: ['prune'],
     opts: { stdio: 'inherit', cwd: dir },
     prelog: `${Colors.inverse('npm prune:')} ${dir}`

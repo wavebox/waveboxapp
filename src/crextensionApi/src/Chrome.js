@@ -11,7 +11,7 @@ import Management from './Management'
 import WebRequest from 'WebRequest'
 import ExtensionDatasource from 'Core/ExtensionDatasource'
 import Notifications from './Notifications'
-import Cookies from './Cookies'
+import Cookies from './Cookies/Cookies'
 import Windows from './Windows'
 import { CR_RUNTIME_ENVIRONMENTS } from 'shared/extensionApis'
 
@@ -56,7 +56,7 @@ class Chrome {
         this.notifications = new Notifications(extensionId)
       }
       if (permissions.has('cookies')) {
-        this.cookies = new Cookies(extensionId)
+        this.cookies = new Cookies(extensionId, this.runtime)
       }
     }
 

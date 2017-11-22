@@ -30,7 +30,6 @@ window.printPDF = function (localPath) {
       progressUI.percentage = 0
       progressUI.isIndeterminate = true
       progressUI.status = 'Printing...'
-      progressUI.showCancel = false
       return new Promise((resolve) => {
         setTimeout(resolve, 500) // Let the DOM catch up
       })

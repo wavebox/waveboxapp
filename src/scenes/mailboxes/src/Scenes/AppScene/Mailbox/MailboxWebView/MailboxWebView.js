@@ -19,8 +19,6 @@ import {
   WB_BROWSER_NOTIFICATION_CLICK,
   WB_BROWSER_NOTIFICATION_PRESENT,
   WB_BROWSER_INJECT_CUSTOM_CONTENT,
-  WB_PING_RESOURCE_USAGE,
-  WB_PONG_RESOURCE_USAGE,
   WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED,
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
   WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG,
@@ -82,7 +80,6 @@ export default class MailboxWebView extends React.Component {
     mailboxDispatch.on('devtools', this.handleOpenDevTools)
     mailboxDispatch.on('refocus', this.handleRefocus)
     mailboxDispatch.on('reload', this.handleReload)
-    mailboxDispatch.on(WB_PING_RESOURCE_USAGE, this.pingResourceUsage)
     mailboxDispatch.addGetter('current-url', this.handleGetCurrentUrl)
     mailboxDispatch.on('navigateBack', this.handleNavigateBack)
     mailboxDispatch.on('navigateForward', this.handleNavigateForward)
@@ -102,7 +99,6 @@ export default class MailboxWebView extends React.Component {
     mailboxDispatch.removeListener('devtools', this.handleOpenDevTools)
     mailboxDispatch.removeListener('refocus', this.handleRefocus)
     mailboxDispatch.removeListener('reload', this.handleReload)
-    mailboxDispatch.removeListener(WB_PING_RESOURCE_USAGE, this.pingResourceUsage)
     mailboxDispatch.removeGetter('current-url', this.handleGetCurrentUrl)
     mailboxDispatch.removeListener('navigateBack', this.handleNavigateBack)
     mailboxDispatch.removeListener('navigateForward', this.handleNavigateForward)
@@ -275,18 +271,6 @@ export default class MailboxWebView extends React.Component {
   }
 
   /**
-  * Pings the webview for the current resource usage
-  * @param mailboxId: the id of the mailbox
-  * @param serviceType: the type of service
-  * @param description: the description that can be passed around for the ping
-  */
-  pingResourceUsage = ({ mailboxId, serviceType, description }) => {
-    if (mailboxId === this.props.mailboxId && serviceType === this.props.serviceType) {
-      this.refs[BROWSER_REF].send(WB_PING_RESOURCE_USAGE, { description: description })
-    }
-  }
-
-  /**
   * Handles getting the current url
   * @param mailboxId: the id of the mailbox
   * @param serviceType: the type of service
@@ -350,9 +334,6 @@ export default class MailboxWebView extends React.Component {
         break
       case WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG:
         settingsActions.setSpellcheckerLanguage(evt.channel.data.lang)
-        break
-      case WB_PONG_RESOURCE_USAGE:
-        ipcRenderer.send(WB_PONG_RESOURCE_USAGE, evt.channel.data)
         break
       case WB_NEW_WINDOW:
         MailboxLinker.openContentWindow(this.props.mailboxId, this.props.serviceType, evt.channel.data.url)

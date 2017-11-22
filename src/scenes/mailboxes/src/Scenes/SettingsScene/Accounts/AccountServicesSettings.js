@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Paper, SelectField, MenuItem, Toggle } from 'material-ui'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
-import { settingsStore } from 'stores/settings'
+import { userStore } from 'stores/user'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
@@ -21,24 +21,27 @@ export default class AccountServicesSettings extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    settingsStore.listen(this.settingsChanged)
+    userStore.listen(this.userChanged)
   }
 
   componentWillUnmount () {
-    settingsStore.unlisten(this.settingsChanged)
+    userStore.unlisten(this.userChanged)
   }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  state = {
-    ui: settingsStore.getState().ui
-  }
+  state = (() => {
+    const userState = userStore.getState()
+    return {
+      userHasServices: userState.user.hasServices
+    }
+  })()
 
-  settingsChanged = (settingsState) => {
+  userChanged = (userState) => {
     this.setState({
-      ui: settingsState.ui
+      userHasServices: userState.user.hasServices
     })
   }
 
@@ -52,7 +55,9 @@ export default class AccountServicesSettings extends React.Component {
 
   render () {
     const { mailbox, ...passProps } = this.props
-    const { ui } = this.state
+    const { userHasServices } = this.state
+
+    if (!userHasServices) { return false }
 
     return (
       <Paper zDepth={1} style={styles.paper} {...passProps}>
@@ -98,22 +103,6 @@ export default class AccountServicesSettings extends React.Component {
             </SelectField>
           </div>
         ) : undefined}
-        <Toggle
-          disabled={!ui.showSleepableServiceIndicator}
-          toggled={mailbox.showSleepableServiceIndicator}
-          label={ui.showSleepableServiceIndicator ? (
-            'Indicate when services are sleeping'
-          ) : (
-            <span>
-              <span>Indicate when services are sleeping</span>
-              <br />
-              <small>Enable "Allow services to indicate when Sleeping" in the main UI settings first</small>
-            </span>
-          )}
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
-            mailboxActions.reduce(mailbox.id, MailboxReducer.setShowSleepableServiceIndicator, toggled)
-          }} />
       </Paper>
     )
   }

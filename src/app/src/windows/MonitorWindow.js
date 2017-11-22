@@ -1,6 +1,7 @@
 import WaveboxWindow from './WaveboxWindow'
-import { WB_SUBMIT_PROCESS_RESOURCE_USAGE } from 'shared/ipcEvents'
+import { WB_COLLECTED_METRICS } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
+import ServicesManager from '../Services'
 
 class MonitorWindow extends WaveboxWindow {
   /* ****************************************************************************/
@@ -10,26 +11,38 @@ class MonitorWindow extends WaveboxWindow {
   create (url, browserWindowPreferences = {}) {
     super.create(`file://${Resolver.monitorScene('monitor.html')}`, {
       title: 'Wavebox Monitor',
-      width: 660,
-      height: 500,
-      show: false
+      width: 900,
+      height: 700,
+      show: true
     })
-    this.window.once('ready-to-show', () => { this.show() })
+
+    this.collectInterval = setInterval(this.collectMetrics, 1000)
+  }
+
+  destroy (evt) {
+    clearTimeout(this.collectInterval)
+    super.destroy(evt)
+  }
+
+  /* ****************************************************************************/
+  // Collectors
+  /* ****************************************************************************/
+
+  /**
+  * Collects the current stats and forwards them to the webcontents
+  */
+  collectMetrics = () => {
+    this.window.webContents.send(WB_COLLECTED_METRICS, {
+      metrics: ServicesManager.metricsService.getMetrics()
+    })
   }
 
   /* ****************************************************************************/
   // Info
   /* ****************************************************************************/
 
-  /**
-  * Sends the resource usage to the monitor window
-  * @param info: the info to send
-  * @return this
-  */
-  submitProcessResourceUsage (info) {
-    this.window.webContents.send(WB_SUBMIT_PROCESS_RESOURCE_USAGE, info)
-    return this
-  }
+  focusedTabId () { return null }
+  tabIds () { return [] }
 }
 
 export default MonitorWindow

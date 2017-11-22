@@ -3,6 +3,8 @@ import React from 'react'
 import { Paper, RaisedButton, FontIcon, Toggle } from 'material-ui'
 import { ColorPickerButton } from 'Components'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
+import { userStore } from 'stores/user'
+import { settingsStore } from 'stores/settings'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
@@ -14,6 +16,45 @@ export default class AccountAppearanceSettings extends React.Component {
 
   static propTypes = {
     mailbox: PropTypes.object.isRequired
+  }
+
+  /* **************************************************************************/
+  // Component Lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    settingsStore.listen(this.settingsChanged)
+    userStore.listen(this.userChanged)
+  }
+
+  componentWillUnmount () {
+    settingsStore.unlisten(this.settingsChanged)
+    userStore.unlisten(this.userChanged)
+  }
+
+  /* **************************************************************************/
+  // Data lifecycle
+  /* **************************************************************************/
+
+  state = (() => {
+    const userState = userStore.getState()
+    return {
+      ui: settingsStore.getState().ui,
+      userHasServices: userState.user.hasServices,
+      userHasSleepable: userState.user.hasSleepable
+    }
+  })()
+
+  settingsChanged = (settingsState) => {
+    this.setState({
+      ui: settingsState.ui
+    })
+  }
+  userChanged = (userState) => {
+    this.setState({
+      userHasServices: userState.user.hasServices,
+      userHasSleepable: userState.user.hasSleepable
+    })
   }
 
   /* **************************************************************************/
@@ -59,22 +100,28 @@ export default class AccountAppearanceSettings extends React.Component {
 
   render () {
     const { mailbox, ...passProps } = this.props
+    const { userHasServices, userHasSleepable, ui } = this.state
 
-    const hasCumulativeBadge = (
+    const hasCumulativeBadge = userHasServices && ((
         mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR &&
         mailbox.hasAdditionalServices
       ) || (
         mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR &&
         mailbox.collapseSidebarServices &&
         mailbox.hasAdditionalServices
-      )
+      ))
+    const sleepIndicatorText = mailbox.supportsAdditionalServiceTypes ? (
+      'Show sleeping service icons in grey'
+    ) : (
+      'Show sleeping account icon in grey'
+    )
 
     return (
       <Paper zDepth={1} style={styles.paper} {...passProps}>
         <h1 style={styles.subheading}>Appearance</h1>
         <div style={styles.button}>
           <ColorPickerButton
-            label='Account Colour'
+            label='Account Color'
             icon={<FontIcon className='material-icons'>color_lens</FontIcon>}
             value={mailbox.color}
             onChange={(col) => mailboxActions.reduce(mailbox.id, MailboxReducer.setColor, col)} />
@@ -100,9 +147,25 @@ export default class AccountAppearanceSettings extends React.Component {
         </div>
         <Toggle
           toggled={mailbox.showAvatarColorRing}
-          label='Show Account Colour around Icon'
+          label='Show Account Color around Icon'
           labelPosition='right'
           onToggle={(evt, toggled) => mailboxActions.reduce(mailbox.id, MailboxReducer.setShowAvatarColorRing, toggled)} />
+        {userHasSleepable ? (
+          <Toggle
+            disabled={!ui.showSleepableServiceIndicator}
+            toggled={mailbox.showSleepableServiceIndicator}
+            label={ui.showSleepableServiceIndicator ? (sleepIndicatorText) : (
+              <span>
+                <span>{sleepIndicatorText}</span>
+                <br />
+                <small>Enable "Show sleeping service icons in grey" in the main UI settings first</small>
+              </span>
+            )}
+            labelPosition='right'
+            onToggle={(evt, toggled) => {
+              mailboxActions.reduce(mailbox.id, MailboxReducer.setShowSleepableServiceIndicator, toggled)
+            }} />
+        ) : undefined}
         {hasCumulativeBadge ? (
           <div>
             <hr style={styles.subsectionRule} />
@@ -120,7 +183,7 @@ export default class AccountAppearanceSettings extends React.Component {
               }} />
             <div style={styles.button}>
               <ColorPickerButton
-                label='Badge Colour'
+                label='Badge Color'
                 icon={<FontIcon className='material-icons'>sms</FontIcon>}
                 value={mailbox.cumulativeSidebarUnreadBadgeColor}
                 onChange={(col) => {

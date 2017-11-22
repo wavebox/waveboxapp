@@ -201,15 +201,16 @@ class CoreService extends Model {
   * @return the window open mode
   */
   getWindowOpenModeForUrl (url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl) {
-    if (disposition === 'background-tab') {
-      return WINDOW_OPEN_MODES.EXTERNAL
-    } else if (disposition === 'new-window' || url === 'about:blank') {
+    // We have some specific overrides for oauth2 and google
+    if (parsedUrl.hostname === 'accounts.google.com' && parsedUrl.pathname.startsWith('/o/oauth2/auth')) {
       return WINDOW_OPEN_MODES.POPUP_CONTENT
-    } else if (disposition === 'save-to-disk') {
-      return WINDOW_OPEN_MODES.DOWNLOAD
-    } else {
-      return WINDOW_OPEN_MODES.DEFAULT
     }
+
+    if (disposition === 'background-tab') { return WINDOW_OPEN_MODES.EXTERNAL }
+    if (disposition === 'new-window' || url === 'about:blank') { return WINDOW_OPEN_MODES.POPUP_CONTENT }
+    if (disposition === 'save-to-disk') { return WINDOW_OPEN_MODES.DOWNLOAD }
+
+    return WINDOW_OPEN_MODES.DEFAULT
   }
 
   /**
@@ -220,6 +221,15 @@ class CoreService extends Model {
   */
   getNavigateModeForUrl (url, parsedUrl) {
     return NAVIGATE_MODES.DEFAULT
+  }
+
+  /**
+  * Looks to see if the input event should be prevented
+  * @param input: the input info
+  * @return true if the input should be prevented, false otherwise
+  */
+  shouldPreventInputEvent (input) {
+    return false
   }
 
   /* **************************************************************************/

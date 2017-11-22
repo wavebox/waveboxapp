@@ -3,7 +3,10 @@ import { SEGMENTS } from 'shared/Models/Settings/SettingsIdent'
 import {
   WB_MAILBOXES_WINDOW_TOGGLE_SIDEBAR,
   WB_MAILBOXES_WINDOW_TOGGLE_APP_MENU,
-  WB_QUIT_APP
+  WB_QUIT_APP,
+  WB_METRICS_OPEN_MONITOR,
+  WB_METRICS_OPEN_LOG,
+  WB_METRICS_RELEASE_MEMORY
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
 
@@ -254,6 +257,13 @@ class SettingsActions {
   }
 
   /**
+  * @param enabled: true to enable sidebar tooltips
+  */
+  setSidebarTooltipsEnabled (enabled) {
+    return this.update(SEGMENTS.UI, 'sidebarTooltipsEnabled', enabled)
+  }
+
+  /**
   * Toggles the sidebar
   */
   toggleSidebar () {
@@ -286,6 +296,13 @@ class SettingsActions {
   */
   setShowSidebarNewsfeed (mode) {
     return this.update(SEGMENTS.UI, 'showSidebarNewsfeed', mode)
+  }
+
+  /**
+  * @param mode: the mode to set
+  */
+  setVibrancyMode (mode) {
+    return this.update(SEGMENTS.UI, 'vibrancyMode', mode)
   }
 
   /* **************************************************************************/
@@ -349,6 +366,13 @@ class SettingsActions {
   }
 
   /**
+  * @param hasSeen: true if the user has seen the optimize wizard
+  */
+  setHasSeenOptimizeWizard (hasSeen) {
+    return this.update(SEGMENTS.APP, 'hasSeenOptimizeWizard', hasSeen)
+  }
+
+  /**
   * Declines the EULA and quits the app
   */
   declineEULA () {
@@ -378,6 +402,38 @@ class SettingsActions {
   */
   setEnableGeolocationApi (enabled) {
     return this.update(SEGMENTS.APP, 'enableGeolocationApi', enabled)
+  }
+
+  /**
+  * Sets whether the metrics log should be written
+  * @param write: true to write the log
+  */
+  setWriteMetricsLog (write) {
+    return this.update(SEGMENTS.APP, 'writeMetricsLog', write)
+  }
+
+  /**
+  * Opens the metrics log
+  */
+  openMetricsLog () {
+    ipcRenderer.send(WB_METRICS_OPEN_LOG, {})
+    return {}
+  }
+
+  /**
+  * Opens the metrics monitor window
+  */
+  openMetricsMonitor () {
+    ipcRenderer.send(WB_METRICS_OPEN_MONITOR, {})
+    return {}
+  }
+
+  /**
+  * Attempts to free v8 memory
+  */
+  freeMetricsV8Memory () {
+    ipcRenderer.send(WB_METRICS_RELEASE_MEMORY, {})
+    return {}
   }
 
   /* **************************************************************************/

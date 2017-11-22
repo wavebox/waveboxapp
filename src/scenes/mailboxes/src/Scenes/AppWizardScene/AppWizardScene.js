@@ -5,6 +5,7 @@ import { RaisedButton, FlatButton } from 'material-ui'
 import { FullscreenModal } from 'Components'
 import { settingsActions } from 'stores/settings'
 import { platformStore } from 'stores/platform'
+import { Redirect } from 'react-router-dom'
 
 import AppWizardIntroScene from './AppWizardIntroScene'
 import AppWizardTrayScene from './AppWizardTrayScene'
@@ -208,16 +209,21 @@ export default class AppWizardScene extends React.Component {
   render () {
     const { open } = this.state
     const { match } = this.props
+    const step = match.params.step
+
+    if (step === 'start') {
+      return (<Redirect to='/app_wizard/tray' />)
+    }
 
     return (
       <FullscreenModal
         modal={false}
         bodyStyle={styles.modalBody}
         actionsContainerStyle={styles.modalActions}
-        actions={this.renderActions(match.params.step)}
+        actions={this.renderActions(step)}
         open={open}
         onRequestClose={this.handleClose}>
-        {this.renderContent(match.params.step)}
+        {this.renderContent(step)}
       </FullscreenModal>
     )
   }

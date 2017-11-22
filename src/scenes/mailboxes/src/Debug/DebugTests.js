@@ -198,8 +198,8 @@ class DebugTests {
         })
         .then(() => MicrosoftHTTP.fetchUnreadMessages(auth))
         .then((response) => {
-          console.log(`${sig} ${mailbox.displayName} unread count:${response.value.length}`)
-          console.log(`${sig} ${mailbox.displayName} unread messages:\n`, response.value.map((m) => m.subject + ':' + m.bodyPreview + ':' + m.receivedDateTime).join('\n'))
+          console.log(`${sig} ${mailbox.displayName} unread count:${response.length}`)
+          console.log(`${sig} ${mailbox.displayName} unread messages:\n`, response.map((m) => m.subject + ':' + m.bodyPreview + ':' + m.receivedDateTime).join('\n'))
           return Promise.resolve()
         })
     }, Promise.resolve())

@@ -43,6 +43,14 @@ module.exports = function (env = {}) {
     process.env.NOTIFICATIONS = 'true'
   }
 
+  if (env.verbose) {
+    console.log('[VERBOSE LOG]')
+    process.env.VERBOSE_LOG = 'true'
+  } else {
+    console.log('[QUIET LOG]')
+    process.env.VERBOSE_LOG = 'false'
+  }
+
   // Tasks
   const taskInput = env.task ? env.task : ['all']
   const taskNames = Array.isArray(taskInput) ? taskInput : [taskInput]

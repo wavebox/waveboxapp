@@ -66,6 +66,8 @@ class SlackMailbox extends CoreMailbox {
   get authUserName () { return this.auth.user_name }
   get authUrl () { return this.auth.url }
 
+  get isAuthenticationInvalid () { return this.auth.isInvalid }
+
   /* **************************************************************************/
   // Properties : Provider Details & counts etc
   /* **************************************************************************/

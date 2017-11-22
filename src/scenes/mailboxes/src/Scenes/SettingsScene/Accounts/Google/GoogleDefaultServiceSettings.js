@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { SelectField, MenuItem, TextField, RaisedButton, Paper, FontIcon } from 'material-ui'
+import { SelectField, MenuItem, Paper } from 'material-ui'
 import AccountServiceItem from '../AccountServiceItem'
 import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
 import { mailboxActions, GoogleDefaultServiceReducer } from 'stores/mailbox'
@@ -11,6 +11,7 @@ import AccountBehaviourSettings from '../AccountBehaviourSettings'
 import styles from '../../CommonSettingStyles'
 import AccountBadgeSettings from '../AccountBadgeSettings'
 import AccountNotificationSettings from '../AccountNotificationSettings'
+import GoogleCustomUnreadSettings from './GoogleCustomUnreadSettings'
 
 export default class GoogleDefaultServiceSettings extends React.Component {
   /* **************************************************************************/
@@ -21,46 +22,6 @@ export default class GoogleDefaultServiceSettings extends React.Component {
     mailbox: PropTypes.object.isRequired,
     onRequestEditCustomCode: PropTypes.func.isRequired
   }
-
-  /* **************************************************************************/
-  // Component Lifecycle
-  /* **************************************************************************/
-
-  componentWillReceiveProps (nextProps) {
-    const service = nextProps.mailbox.serviceForType(GoogleDefaultService.SERVICE_TYPES.DEFAULT)
-
-    if (this.props.mailbox.id !== nextProps.mailbox.id) {
-      this.setState({
-        customUnreadQuery: service.customUnreadQuery,
-        customUnreadLabelWatchString: service.customUnreadLabelWatchString,
-        showCustomUnreadSettings: service.hasCustomUnreadQuery || service.hasCustomUnreadLabelWatch
-      })
-    } else {
-      const update = {}
-      if (service.customUnreadQuery !== this.state.customUnreadQuery) {
-        update.customUnreadQuery = service.customUnreadQuery
-      }
-      if (service.customUnreadLabelWatchString !== this.state.customUnreadLabelWatchString) {
-        update.customUnreadLabelWatchString = service.customUnreadLabelWatchString
-      }
-      if (Object.keys(update).length) {
-        this.setState(update)
-      }
-    }
-  }
-
-  /* **************************************************************************/
-  // Data lifecycle
-  /* **************************************************************************/
-
-  state = (() => {
-    const service = this.props.mailbox.serviceForType(GoogleDefaultService.SERVICE_TYPES.DEFAULT)
-    return {
-      customUnreadQuery: service.customUnreadQuery,
-      customUnreadLabelWatchString: service.customUnreadLabelWatchString,
-      showCustomUnreadSettings: service.hasCustomUnreadQuery || service.hasCustomUnreadLabelWatch
-    }
-  })()
 
   /* **************************************************************************/
   // Rendering
@@ -96,15 +57,9 @@ export default class GoogleDefaultServiceSettings extends React.Component {
       onRequestEditCustomCode,
       ...passProps
     } = this.props
-    const {
-      customUnreadQuery,
-      customUnreadLabelWatchString,
-      showCustomUnreadSettings
-    } = this.state
 
     const serviceType = GoogleDefaultService.SERVICE_TYPES.DEFAULT
     const service = mailbox.serviceForType(serviceType)
-    const hasCustomConfiguration = service.hasCustomUnreadQuery || service.hasCustomUnreadLabelWatch
 
     return (
       <AccountServiceItem {...passProps} mailbox={mailbox} serviceType={serviceType}>
@@ -128,45 +83,7 @@ export default class GoogleDefaultServiceSettings extends React.Component {
                   )
                 })}
               </SelectField>
-              {showCustomUnreadSettings ? (
-                <Paper style={styles.paper}>
-                  <h1 style={styles.subheading}>Advanced Unread Options</h1>
-                  <TextField
-                    key={`customUnreadQuery_${mailbox.id}`}
-                    id={`customUnreadQuery_${mailbox.id}`}
-                    value={customUnreadQuery}
-                    fullWidth
-                    floatingLabelText='Custom Unread Query'
-                    hintText='label:inbox label:unread'
-                    errorText={hasCustomConfiguration && !customUnreadQuery ? 'This must be configured. Failing to do so may have unexpected side effects' : undefined}
-                    onChange={(evt) => this.setState({ customUnreadQuery: evt.target.value })}
-                    onBlur={(evt) => {
-                      mailboxActions.reduceService(mailbox.id, serviceType, GoogleDefaultServiceReducer.setCustomUnreadQuery, customUnreadQuery)
-                    }} />
-                  <TextField
-                    key={`customUnreadWatchLabels_${mailbox.id}`}
-                    id={`customUnreadWatchLabels_${mailbox.id}`}
-                    value={customUnreadLabelWatchString}
-                    fullWidth
-                    floatingLabelText='Custom Unread Watch Labels (Comma seperated)'
-                    hintText='INBOX, UNREAD'
-                    errorText={hasCustomConfiguration && !customUnreadLabelWatchString ? 'This must be configured. Failing to do so may have unexpected side effects' : undefined}
-                    onChange={(evt) => this.setState({ customUnreadLabelWatchString: evt.target.value })}
-                    onBlur={(evt) => {
-                      mailboxActions.reduceService(mailbox.id, serviceType, GoogleDefaultServiceReducer.setCustomUnreadLabelWatchString, customUnreadLabelWatchString)
-                    }} />
-                </Paper>
-              ) : (
-                <div>
-                  <RaisedButton
-                    label='Advanced Unread Options'
-                    icon={(<FontIcon className='fa fa-fw fa-wrench' />)}
-                    onClick={() => this.setState({ showCustomUnreadSettings: true })} />
-                  <p style={styles.extraInfo}>
-                    These can be used to configure Wavebox to provide Notifications and Badges for a custom set of messages
-                  </p>
-                </div>
-              )}
+              <GoogleCustomUnreadSettings mailbox={mailbox} service={service} />
             </Paper>
             <AccountBadgeSettings mailbox={mailbox} service={service} />
             <AccountNotificationSettings mailbox={mailbox} service={service} />

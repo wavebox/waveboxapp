@@ -15,6 +15,13 @@ const EXTENSION_LAYOUT_MODE_LABELS = {
   [ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_LEFT]: 'Left',
   [ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_RIGHT]: 'Right'
 }
+const VIBRANCY_MODE_LABELS = {
+  [UISettings.VIBRANCY_MODES.NONE]: 'None',
+  [UISettings.VIBRANCY_MODES.LIGHT]: 'Light',
+  [UISettings.VIBRANCY_MODES.MEDIUM_LIGHT]: 'Medium Light',
+  [UISettings.VIBRANCY_MODES.DARK]: 'Dark',
+  [UISettings.VIBRANCY_MODES.ULTRA_DARK]: 'Ultra Dark'
+}
 
 export default class UISettingsSection extends React.Component {
   /* **************************************************************************/
@@ -70,9 +77,25 @@ export default class UISettingsSection extends React.Component {
             onToggle={(evt, toggled) => settingsActions.setOpenHidden(toggled)} />
           <Toggle
             toggled={ui.showSleepableServiceIndicator}
-            label='Allow services to indicate when sleeping'
+            label='Show sleeping service icons in grey'
             labelPosition='right'
             onToggle={(evt, toggled) => settingsActions.setShowSleepableServiceIndicator(toggled)} />
+          {process.platform === 'darwin' ? (
+            <SelectField
+              floatingLabelText='Translucent window backgrounds (experimental) (Requires Restart)'
+              value={ui.vibrancyMode}
+              fullWidth
+              onChange={(evt, index, value) => {
+                showRestart()
+                settingsActions.setVibrancyMode(value)
+              }}>
+              {Object.keys(UISettings.VIBRANCY_MODES).map((value) => {
+                return (
+                  <MenuItem key={value} value={value} primaryText={VIBRANCY_MODE_LABELS[value]} />
+                )
+              })}
+            </SelectField>
+          ) : undefined}
 
           <hr style={styles.subsectionRule} />
           <h1 style={styles.subsectionheading}>Sidebar</h1>
@@ -89,6 +112,11 @@ export default class UISettingsSection extends React.Component {
             labelPosition='right'
             onToggle={(evt, toggled) => settingsActions.setEnableSidebar(toggled)} />
           <Toggle
+            toggled={ui.sidebarTooltipsEnabled}
+            label='Show tooltip snippets'
+            labelPosition='right'
+            onToggle={(evt, toggled) => settingsActions.setSidebarTooltipsEnabled(toggled)} />
+          <Toggle
             toggled={ui.showSidebarSupport}
             label='Show Support in Sidebar'
             labelPosition='right'
@@ -100,10 +128,7 @@ export default class UISettingsSection extends React.Component {
             onChange={(evt, index, value) => { settingsActions.setShowSidebarNewsfeed(value) }}>
             {Object.keys(UISettings.SIDEBAR_NEWS_MODES).map((value) => {
               return (
-                <MenuItem
-                  key={value}
-                  value={value}
-                  primaryText={SIDEBAR_NEWS_MODE_LABELS[value]} />
+                <MenuItem key={value} value={value} primaryText={SIDEBAR_NEWS_MODE_LABELS[value]} />
               )
             })}
           </SelectField>

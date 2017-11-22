@@ -3,9 +3,8 @@ import {
   CRX_GET_MANIFEST_,
   CRX_GET_MESSAGES_
 } from 'shared/crExtensionIpcEvents'
-import {
-  CRExtensionManifest
-} from 'shared/Models/CRExtension'
+import { CRExtensionManifest } from 'shared/Models/CRExtension'
+import { RENDER_PROCESS_PREFERENCE_TYPES } from 'shared/processPreferences'
 
 const privExtensionId = Symbol('privExtensionId')
 const privManifest = Symbol('privManifest')
@@ -23,6 +22,24 @@ class ExtensionDatasource {
     this[privExtensionId] = extensionId
     this[privManifest] = undefined
     this[privMessages] = new Map()
+
+    // Populate from the render preferences
+    const preferences = process.getRenderProcessPreferences()
+    if (preferences) {
+      for (const pref of preferences) {
+        if (pref.type === RENDER_PROCESS_PREFERENCE_TYPES.WB_CREXTENSION_CONTENTSCRIPT_CONFIG && pref.extensionId === extensionId) {
+          if (pref.manifest) {
+            this[privManifest] = new CRExtensionManifest(pref.manifest)
+          }
+          if (pref.messages) {
+            for (let lang in pref.messages) {
+              this[privMessages].set(lang, pref.messages[lang])
+            }
+          }
+          break
+        }
+      }
+    }
   }
 
   /* **************************************************************************/

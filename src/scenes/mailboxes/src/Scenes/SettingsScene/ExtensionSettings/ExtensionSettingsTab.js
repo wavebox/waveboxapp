@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { settingsStore, settingsActions } from 'stores/settings'
-import { Toggle, Paper, SelectField, MenuItem } from 'material-ui'
+import { userActions } from 'stores/user'
+import { Toggle, Paper, SelectField, MenuItem, RaisedButton } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import commonStyles from '../CommonSettingStyles'
 import { Container, Row, Col } from 'Components/Grid'
@@ -85,9 +86,9 @@ export default class ExtensionSettingsTab extends React.Component {
             <Col md={6}>
               <div style={styles.tryOnBeta}>
                 <h3>Extension Support</h3>
-                Extensions support is currently experimental and all extensions are free to try until
-                the end of November 2017. Thereafter those marked as free to try will be available
-                with Wavebox Pro
+                Extension support is currently experimental and all extensions are available to install until
+                the end of November 2017. Thereafter those marked as Pro are only available to install with a
+                Wavebox Pro membership
               </div>
             </Col>
             <Col md={6}>
@@ -112,6 +113,9 @@ export default class ExtensionSettingsTab extends React.Component {
                     )
                   })}
                 </SelectField>
+                <RaisedButton
+                  label='Check for updates'
+                  onClick={() => { userActions.updateExtensions() }} />
               </Paper>
             </Col>
           </Row>

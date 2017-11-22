@@ -34,7 +34,6 @@ class CoreMailbox extends Model {
   static get supportedServiceTypes () { return [SERVICE_TYPES.DEFAULT] }
   static get defaultServiceTypes () { return [SERVICE_TYPES.DEFAULT] }
   static get supportsAdditionalServiceTypes () { return this.supportedServiceTypes.length > 1 }
-  static get userAgentChanges () { return [] }
   static get defaultColor () { return undefined }
 
   /* **************************************************************************/

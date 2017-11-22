@@ -11,7 +11,6 @@ class Content {
     this.browser = new Browser({
       contextMenu: {
         copyCurrentPageUrlOption: true,
-        openCurrentPageInBrowserOption: true,
         hasSettingsOption: false,
         hasChangeDictionaryOption: false
       }

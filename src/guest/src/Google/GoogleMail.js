@@ -11,6 +11,8 @@ const {
   WB_BROWSER_OPEN_MESSAGE,
   WB_BROWSER_COMPOSE_MESSAGE
 } = req.shared('ipcEvents')
+const { UISettings } = req.shared('Models/Settings')
+const settingStore = require('../settingStore')
 
 class GoogleMail extends GoogleService {
   /* **************************************************************************/
@@ -52,10 +54,30 @@ class GoogleMail extends GoogleService {
     if (this.isGmail) {
       this.loadGmailAPI()
       ipcRenderer.on(WB_BROWSER_COMPOSE_MESSAGE, this.handleComposeMessageGmail.bind(this))
+
+      if (process.platform === 'darwin' && settingStore.ui.vibrancyMode !== UISettings.VIBRANCY_MODES.NONE) {
+        webFrame.insertCSS(`
+          body, .wl, .aeJ {
+            background-color: transparent !important;
+          }
+        `)
+      }
     }
     if (this.isGinbox) {
       this.loadInboxAPI()
       ipcRenderer.on(WB_BROWSER_COMPOSE_MESSAGE, this.handleComposeMessageGinbox.bind(this))
+
+      if (process.platform === 'darwin' && settingStore.ui.vibrancyMode !== UISettings.VIBRANCY_MODES.NONE) {
+        webFrame.insertCSS(`
+          body, nav[jsaction]:not([role="banner"]), nav[jsaction]:not([role="banner"])>[role="menu"], .I {
+            background-color: transparent !important;
+          }
+          .az {
+            background-color: rgba(221, 221, 221, 0.8) !important;
+            border-radius: 3px !important;
+          }
+        `)
+      }
     }
   }
 

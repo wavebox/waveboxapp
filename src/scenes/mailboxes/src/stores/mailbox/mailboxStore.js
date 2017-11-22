@@ -310,6 +310,21 @@ class MailboxStore {
       }
     }
 
+    /**
+    * @param mailboxId: the id of the mailbox
+    * @return true if all services are sleeping
+    */
+    this.isAllServicesSleeping = (mailboxId) => {
+      if (!userStore.getState().user.hasSleepable) { return false }
+
+      const mailbox = this.getMailbox(mailboxId)
+      if (!mailbox) { return false }
+      const awake = mailbox.enabledServiceTypes.find((serviceType) => {
+        return !this.isSleeping(mailboxId, serviceType)
+      })
+      return !awake
+    }
+
     /* ****************************************/
     // Search
     /* ****************************************/
@@ -565,7 +580,6 @@ class MailboxStore {
       handleFullSyncMailbox: actions.FULL_SYNC_MAILBOX,
 
       // Misc
-      handlePingResourceUsage: actions.PING_RESOURCE_USAGE,
       handleReloadActiveMailbox: actions.RELOAD_ACTIVE_MAILBOX,
       handleOpenDevToolsActiveMailbox: actions.OPEN_DEV_TOOLS_ACTIVE_MAILBOX,
       handleWindowDidFocus: actions.WINDOW_DID_FOCUS
@@ -1535,16 +1549,6 @@ class MailboxStore {
   /* **************************************************************************/
   // Handlers : Misc
   /* **************************************************************************/
-
-  handlePingResourceUsage () {
-    this.preventDefault()
-    this.allMailboxes().forEach((mailbox) => {
-      mailbox.enabledServices.forEach((service) => {
-        const description = `Mailbox WebView: ${mailbox.displayName}:${service.humanizedType}`
-        mailboxDispatch.pingResourceUsage(mailbox.id, service.type, description)
-      })
-    })
-  }
 
   handleReloadActiveMailbox () {
     this.preventDefault()

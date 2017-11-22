@@ -12,6 +12,5 @@
       return undefined
     }
   }
-
   polyfillAlert(window)
 })()

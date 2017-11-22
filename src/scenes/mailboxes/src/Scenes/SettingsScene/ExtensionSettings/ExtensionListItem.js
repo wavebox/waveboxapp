@@ -149,22 +149,28 @@ export default class ExtensionListItem extends React.Component {
       unknownSource: true,
       availableToUser: true,
       ...(manifest ? {
-        name: manifest.name,
-        description: manifest.description,
-        websiteUrl: manifest.homepageUrl,
-        version: manifest.version,
         unknownSource: true,
         availableToUser: true
       } : undefined),
       ...(storeRec ? {
         ...storeRec,
+        version: undefined,
         unknownSource: false,
         availableToUser: userState.user.hasExtensionWithLevel(storeRec.availableTo)
+      } : undefined),
+      ...(manifest ? {
+        name: manifest.name,
+        description: manifest.description,
+        websiteUrl: manifest.homepageUrl,
+        version: manifest.version,
+        waveboxVersion: manifest.waveboxVersion
       } : undefined),
       isWaitingInstall: crextensionState.isWaitingInstall(props.extensionId),
       isWaitingUninstall: crextensionState.isWaitingUninstall(props.extensionId),
       isInstalled: crextensionState.isInstalled(props.extensionId),
       isDownloading: crextensionState.isDownloading(props.extensionId),
+      isWaitingUpdate: crextensionState.isWaitingUpdate(props.extensionId),
+      isCheckingUpdate: crextensionState.isCheckingUpdate(props.extensionId),
       hasBackgroundPage: crextensionState.hasBackgroundPage(props.extensionId),
       hasOptionsPage: crextensionState.hasOptionsPage(props.extensionId)
     }
@@ -251,6 +257,8 @@ export default class ExtensionListItem extends React.Component {
       isWaitingUninstall,
       isDownloading,
       isInstalled,
+      isWaitingUpdate,
+      isCheckingUpdate,
       hasBackgroundPage,
       hasOptionsPage,
       availableToUser
@@ -273,6 +281,19 @@ export default class ExtensionListItem extends React.Component {
         <div style={styles.actions}>
           <CircularProgress size={20} thickness={3} style={styles.actionSpinner} />
           <span style={styles.actionDownload}>Downloading...</span>
+        </div>
+      )
+    } else if (isWaitingUpdate) {
+      return (
+        <div style={styles.actions}>
+          <span style={styles.actionAfterRestart}>Update will complete after restart</span>
+        </div>
+      )
+    } else if (isCheckingUpdate) {
+      return (
+        <div style={styles.actions}>
+          <CircularProgress size={20} thickness={3} style={styles.actionSpinner} />
+          <span style={styles.actionDownload}>Checking for updates...</span>
         </div>
       )
     } else if (isInstalled) {
@@ -332,6 +353,7 @@ export default class ExtensionListItem extends React.Component {
       name,
       description,
       version,
+      waveboxVersion,
       iconUrl,
       websiteUrl,
       licenseUrl,
@@ -349,7 +371,11 @@ export default class ExtensionListItem extends React.Component {
             <div style={styles.info}>
               <h2 style={styles.name}>
                 {name}
-                {version ? (<span style={styles.version}> {version}</span>) : undefined}
+                {version !== undefined || waveboxVersion !== undefined ? (
+                  <span style={styles.version}>
+                    {` ${version || '0'}-${waveboxVersion || '0'}`}
+                  </span>
+                ) : undefined}
               </h2>
               <p style={styles.description}>{description}</p>
               {unknownSource ? (
@@ -357,7 +383,7 @@ export default class ExtensionListItem extends React.Component {
               ) : undefined}
               {showBetaTrial && onProLevel ? (
                 <div style={styles.tryOnBeta}>
-                  Free to try with Wavebox basic until the end of November 2017
+                  Pro
                 </div>
               ) : undefined}
               <div>

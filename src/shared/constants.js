@@ -27,6 +27,9 @@ module.exports = Object.freeze({
   DB_BACKUP_INTERVAL: minutes(15),
   DB_MAX_BACKUPS: 10,
 
+  // Metrics
+  METRICS_LOG_WRITE_INTERVAL: minutes(30),
+
   // Mailboxes
   MAILBOX_SLEEP_WAIT: minutes(5),
   MAILBOX_SLEEP_EXTEND: seconds(30),
@@ -73,6 +76,9 @@ module.exports = Object.freeze({
     'allo.google.com'
   ],
 
+  // Extensions
+  EXTENSION_AUTO_UPDATE_INTERVAL: hours(2),
+
   // Cookies
   ARTIFICIAL_COOKIE_PERSIST_WAIT: seconds(30),
   ARTIFICIAL_COOKIE_PERSIST_PERIOD: days(30),
@@ -96,6 +102,8 @@ module.exports = Object.freeze({
   TERMS_URL: 'https://wavebox.io/terms/',
   EULA_URL: 'https://wavebox.io/eula/',
   USER_SCRIPTS_WEB_URL: 'https://github.com/Thomas101/wmail-user-scripts',
+  QUICK_START_WEB_URL: 'https://wavebox.io/quick_start_guide',
+  KB_BETA_CHANNEL_URL: 'https://wavebox.io/kb/beta-channel',
 
   // Update
   UPDATE_FEED_DARWIN: 'https://wavebox.io/squirrel/darwin/updates/latest/',

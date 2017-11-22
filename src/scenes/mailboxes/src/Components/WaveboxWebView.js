@@ -100,6 +100,7 @@ export default class WaveboxWebView extends React.Component {
       body::-webkit-scrollbar {
         -webkit-appearance: none;
         width: 7px;
+        height: 7px;
       }
       body::-webkit-scrollbar-thumb {
         border-radius: 4px;

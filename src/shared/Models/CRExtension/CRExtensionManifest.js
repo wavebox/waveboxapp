@@ -66,9 +66,10 @@ class CRExtensionManifest extends Model {
   get defaultLocale () { return this._value_('default_locale', 'en') }
   get homepageUrl () { return this._value_('homepage_url') }
   get hasHomepageUrl () { return !!this.homepageUrl }
-  get icons () { return this._sanitizePathValuesInObject_(this._value_('icons', {})) }
+  get icons () { return this._value_('icons', {}) }
   get manifestVersion () { return this._value_('manifest_version', 1) }
   get version () { return this._value_('version') }
+  get waveboxVersion () { return this._value_('wavebox_extension_version') }
 
   /**
   * Return the icons relative to the given root path
@@ -200,6 +201,16 @@ class CRExtensionManifest extends Model {
   }
 
   get waveboxSupportsBrowserAction () { return this._value_('wavebox_support_browser_action', true) }
+
+  get cwsId () {
+    const explicit = this._value_('wavebox_cws_id', undefined)
+    if (explicit) { return explicit }
+    const inferred = this._value_('wavebox_extension_id', undefined)
+    if (inferred && inferred.endsWith('-wavebox')) {
+      return inferred.substr(0, inferred.length - 8)
+    }
+    return undefined
+  }
 }
 
 module.exports = CRExtensionManifest

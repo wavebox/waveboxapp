@@ -29,7 +29,8 @@ class ContextMenu {
 
       // External linking
       copyCurrentPageUrlOption: true,
-      openCurrentPageInBrowserOption: false,
+      openCurrentPageInBrowserOption: true,
+      openCurrentPageInWaveboxOption: true,
       openLinkInWaveboxOption: true,
 
       // Navigation options
@@ -272,6 +273,12 @@ class ContextMenu {
       template.push({
         label: 'Open page in Browser',
         click: () => { shell.openExternal(params.pageURL) }
+      })
+    }
+    if (this.config.openCurrentPageInWaveboxOption) {
+      template.push({
+        label: 'Open page with Wavebox',
+        click: () => { ipcRenderer.sendToHost({ type: WB_NEW_WINDOW, data: { url: params.pageURL } }) }
       })
     }
     return template

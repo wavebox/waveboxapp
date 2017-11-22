@@ -81,7 +81,7 @@ export default class WizardConfigureGmail extends React.Component {
         {...passProps}>
         <h2 style={styles.heading}>Choose your Inbox mode</h2>
         <p style={styles.subHeading}>
-          Your Gmail account uses on of the following modes to organise your inbox.
+          Your Gmail account uses one of the following modes to organise your inbox.
           Select the one that matches your existing settings. Don't worry if you don't know
           what it is you can change it later!
         </p>

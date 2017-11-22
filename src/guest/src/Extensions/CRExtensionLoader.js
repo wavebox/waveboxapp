@@ -1,8 +1,11 @@
 const req = require('../req')
 const { remote, webFrame } = require('electron')
 const { CRExtensionMatchPatterns } = req.shared('Models/CRExtension')
+const { WBECRX_EXECUTE_SCRIPT } = req.shared('ipcEvents')
 const GuestHost = require('../GuestHost')
 const CRExtensionPopoutPostMessageListener = require('./CRExtensionPopoutPostMessageListener')
+const DispatchManager = require('../DispatchManager')
+const { RENDER_PROCESS_PREFERENCE_TYPES } = req.shared('processPreferences')
 
 class CRExtensionLoader {
   /* **************************************************************************/
@@ -11,7 +14,10 @@ class CRExtensionLoader {
 
   constructor () {
     this._hasLoaded = false
+    this._contexts = new Map()
     this.popoutPostMessageListner = new CRExtensionPopoutPostMessageListener()
+
+    DispatchManager.registerHandler(WBECRX_EXECUTE_SCRIPT, this._handleCRXExecuteScript.bind(this))
   }
 
   /* **************************************************************************/
@@ -38,14 +44,40 @@ class CRExtensionLoader {
       const preferences = process.getRenderProcessPreferences()
       if (preferences) {
         for (const pref of preferences) {
-          if (pref.crExtensionContentScripts) {
-            this._initializeExtensionContentScript(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, pref.crExtensionContentScripts)
-          }
-          if (pref.popoutWindowPostmessageCapture) {
-            this._capturePopoutWindowPostmessages(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, pref.popoutWindowPostmessageCapture)
+          if (pref.type === RENDER_PROCESS_PREFERENCE_TYPES.WB_CREXTENSION_CONTENTSCRIPT_CONFIG) {
+            if (pref.crExtensionContentScripts) {
+              this._initializeExtensionContentScript(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, pref.crExtensionContentScripts)
+            }
+            if (pref.popoutWindowPostmessageCapture) {
+              this._capturePopoutWindowPostmessages(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, pref.popoutWindowPostmessageCapture)
+            }
           }
         }
       }
+    }
+  }
+
+  /* **************************************************************************/
+  // Content Scripts
+  /* **************************************************************************/
+
+  /**
+  * Gets or creates a context for a script
+  * @param extensionId: the id of the extension
+  * @return the id of the created context
+  */
+  _getOrCreateContextForScript (extensionId) {
+    if (!this._contexts.has(extensionId)) {
+      const contextId = webFrame.createContext(extensionId, JSON.stringify({
+        preload: req.crextensionApiPath(),
+        crExtensionCSAutoInit: true,
+        crExtensionCSExtensionId: extensionId,
+        crExtensionCSGuestHost: GuestHost.url
+      }))
+      this._contexts.set(extensionId, contextId)
+      return contextId
+    } else {
+      return this._contexts.get(extensionId)
     }
   }
 
@@ -69,13 +101,7 @@ class CRExtensionLoader {
     })
 
     if (matchedContentScripts.length) {
-      const contextId = webFrame.createContext(extensionId, JSON.stringify({
-        preload: req.crextensionApiPath(),
-        crExtensionCSAutoInit: true,
-        crExtensionCSExtensionId: extensionId,
-        crExtensionCSGuestHost: GuestHost.url
-      }))
-
+      const contextId = this._getOrCreateContextForScript(extensionId)
       matchedContentScripts.forEach(({js, css, runAt}) => {
         if (js && js.length) {
           this._injectContentJavaScript(contextId, extensionId, js, runAt)
@@ -187,6 +213,20 @@ class CRExtensionLoader {
     if (matchedTargets.length) {
       this.popoutPostMessageListner.addConfigs(matchedTargets)
     }
+  }
+
+  /* **************************************************************************/
+  // Handlers
+  /* **************************************************************************/
+
+  /**
+  * Executes a script on behalf of an extension
+  * @param evt: the event that fired
+  * @param [extensionId, details]: the extension id requesting and details
+  * @param responseCallback: the response callback to reply with
+  */
+  _handleCRXExecuteScript (evt, [extensionId, details], responseCallback) {
+    responseCallback(null, [])
   }
 }
 

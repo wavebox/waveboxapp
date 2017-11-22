@@ -10,8 +10,6 @@ import {
 } from 'shared/extensionApis'
 import {
   WB_BROWSER_START_SPELLCHECK,
-  WB_PING_RESOURCE_USAGE,
-  WB_PONG_RESOURCE_USAGE,
   WB_BROWSER_NOTIFICATION_PRESENT,
   WB_BROWSER_NOTIFICATION_CLICK,
   WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED
@@ -38,13 +36,11 @@ export default class ToolwindowExtension extends React.Component {
   componentDidMount () {
     extensionStore.listen(this.extensionUpdated)
     settingsStore.listen(this.settingsChanged)
-    ipcRenderer.on(WB_PING_RESOURCE_USAGE, this.handlePingResourceUsage)
   }
 
   componentWillUnmount () {
     extensionStore.unlisten(this.extensionUpdated)
     settingsStore.unlisten(this.settingsChanged)
-    ipcRenderer.removeListener(WB_PING_RESOURCE_USAGE, this.handlePingResourceUsage)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -97,24 +93,11 @@ export default class ToolwindowExtension extends React.Component {
   }
 
   /* **************************************************************************/
-  // IPC Events
-  /* **************************************************************************/
-
-  handlePingResourceUsage = () => {
-    this.refs[BROWSER_REF].send(WB_PING_RESOURCE_USAGE, {
-      description: `Extension: ${this.state.extension.humanizedIdentifier}`
-    })
-  }
-
-  /* **************************************************************************/
   // Webview events
   /* **************************************************************************/
 
   handleIPCMessage = (evt) => {
     switch (evt.channel.type) {
-      case WB_PONG_RESOURCE_USAGE:
-        ipcRenderer.send(WB_PONG_RESOURCE_USAGE, evt.channel.data)
-        break
       case WB_BROWSER_NOTIFICATION_PRESENT:
         NotificationService.processHTML5HostedExtensionNotification(
           evt.channel.notificationId,

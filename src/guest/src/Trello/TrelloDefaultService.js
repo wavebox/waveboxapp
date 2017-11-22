@@ -9,8 +9,7 @@ class TrelloDefaultService {
   constructor () {
     this.browser = new Browser({
       contextMenu: {
-        copyCurrentPageUrlOption: true,
-        openCurrentPageInBrowserOption: true
+        copyCurrentPageUrlOption: true
       }
     })
     this.wavebox = new Wavebox()

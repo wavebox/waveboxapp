@@ -6,16 +6,8 @@ class CRExtensionManifestContentScript extends Model {
   /* **************************************************************************/
 
   get matches () { return this._value_('matches', []) }
-  get js () {
-    return this._value_('js', [])
-      .map((value) => value ? this._sanitizePathValue_(value) : undefined)
-      .filter((value) => !!value)
-  }
-  get css () {
-    return this._value_('css', [])
-      .map((value) => value ? this._sanitizePathValue_(value) : undefined)
-      .filter((value) => !!value)
-  }
+  get js () { return this._value_('js', []).filter((value) => !!value) }
+  get css () { return this._value_('css', []).filter((value) => !!value) }
   get runAt () { return this._value_('run_at', 'document_idle') }
 }
 

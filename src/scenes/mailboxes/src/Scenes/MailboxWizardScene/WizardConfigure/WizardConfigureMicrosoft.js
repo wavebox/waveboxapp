@@ -96,7 +96,7 @@ export default class WizardConfigureMicrosoft extends React.Component {
         {...passProps}>
         <h2 style={styles.heading}>Choose your Inbox mode</h2>
         <p style={styles.subHeading}>
-          Your Microsoft account uses on of the following modes to organise your inbox.
+          Your Microsoft account uses one of the following modes to organise your inbox.
           Select the one that matches your existing settings. Don't worry if you don't know
           what it is you can change it later!
         </p>

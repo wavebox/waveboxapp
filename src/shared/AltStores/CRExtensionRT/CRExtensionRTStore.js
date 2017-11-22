@@ -114,6 +114,20 @@ class CRExtensionRTStore {
 
     /**
     * @param extensionId: the id of the extension
+    * @return true if the extension is waiting to update
+    */
+    this.isWaitingUpdate = (extensionId) => {
+      const meta = this.installMeta.get(extensionId)
+      return meta ? meta.willUpdate : false
+    }
+
+    this.isCheckingUpdate = (extensionId) => {
+      const meta = this.installMeta.get(extensionId)
+      return meta ? meta.checkingUpdates : false
+    }
+
+    /**
+    * @param extensionId: the id of the extension
     * @return true if the extension is installed with a background page
     */
     this.hasBackgroundPage = (extensionId) => {

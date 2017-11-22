@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron'
+import { ipcMain, app } from 'electron'
 import fs from 'fs-extra'
 import {
   CRX_GET_MANIFEST_,
@@ -48,6 +48,14 @@ class CRExtensionDatasource {
     }
 
     return this.messages.get(language)
+  }
+
+  /**
+  * Gets the suggested locale
+  * @return language code
+  */
+  getSuggestedLocale () {
+    return app.getLocale().replace(/-.*$/, '').toLowerCase()
   }
 
   /* ****************************************************************************/

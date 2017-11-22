@@ -72,6 +72,12 @@ export default {
     whiteSpace: 'nowrap'
   },
 
+  link: {
+    textDecoration: 'underline',
+    cursor: 'pointer',
+    color: Colors.blue800
+  },
+
   /* **************************************************************************/
   // Layout
   /* **************************************************************************/

@@ -12,6 +12,12 @@ const UNREAD_MODES = Object.freeze({
   INBOX_UNREAD_PERSONAL: 'INBOX_UNREAD_PERSONAL',
   INBOX_UNREAD_UNBUNDLED: 'INBOX_UNREAD_UNBUNDLED'
 })
+const CUSTOM_UNREAD_COUNT_LABEL_FIELDS = Object.freeze([
+  'messagesTotal',
+  'messagesUnread',
+  'threadsTotal',
+  'threadsUnread'
+])
 
 class GoogleDefaultService extends GoogleService {
   /* **************************************************************************/
@@ -21,6 +27,7 @@ class GoogleDefaultService extends GoogleService {
   static get type () { return GoogleService.SERVICE_TYPES.DEFAULT }
   static get ACCESS_MODES () { return ACCESS_MODES }
   static get UNREAD_MODES () { return UNREAD_MODES }
+  static get CUSTOM_UNREAD_COUNT_LABEL_FIELDS () { return CUSTOM_UNREAD_COUNT_LABEL_FIELDS }
 
   /* **************************************************************************/
   // Class: Support
@@ -89,6 +96,11 @@ class GoogleDefaultService extends GoogleService {
       .filter((l) => !!l)
   }
   get hasCustomUnreadLabelWatch () { return !!this.customUnreadLabelWatchString }
+
+  get customUnreadCountFromLabel () { return this._value_('customUnreadCountFromLabel', false) }
+  get customUnreadCountLabel () { return this._value_('customUnreadCountLabel', '').trim() }
+  get hasCustomUnreadCountLabel () { return !!this.customUnreadCountLabel }
+  get customUnreadCountLabelField () { return this._value_('customUnreadCountLabelField', 'threadsTotal') }
 
   /* **************************************************************************/
   // Properties: Humanized

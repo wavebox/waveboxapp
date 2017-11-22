@@ -15,6 +15,7 @@ module.exports = function (env) {
   return {
     devtool: isProduction ? undefined : (process.env.WEBPACK_DEVTOOL || 'source-map'),
     entry: path.join(__dirname, 'src/index.js'),
+    stats: process.env.VERBOSE_LOG === 'true' ? undefined : 'errors-only',
     target: 'electron-main',
     node: {
       __dirname: false,
@@ -38,7 +39,7 @@ module.exports = function (env) {
 
       new CleanWebpackPlugin(['app'], {
         root: BIN_DIR,
-        verbose: true,
+        verbose: process.env.VERBOSE_LOG === 'true',
         dry: false
       }),
       new CopyWebpackPlugin([
@@ -65,6 +66,7 @@ module.exports = function (env) {
       alias: {
         R: path.resolve(path.join(__dirname, 'src')),
         shared: path.resolve(path.join(__dirname, '../shared')),
+        AppEvents: path.resolve(path.join(__dirname, 'src/AppEvents')),
         AppUpdater: path.resolve(path.join(__dirname, 'src/AppUpdater')),
         AuthProviders: path.resolve(path.join(__dirname, 'src/AuthProviders')),
         DownloadManager: path.resolve(path.join(__dirname), 'src/DownloadManager'),

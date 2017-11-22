@@ -366,6 +366,9 @@ class GoogleStore {
   * @return the label id or undefined
   */
   mailLabelForLabelQuery (service) {
+    if (service.customUnreadCountFromLabel && service.customUnreadCountLabel) {
+      return (service.customUnreadCountLabel || '').toUpperCase()
+    }
     switch (service.unreadMode) {
       case GoogleDefaultService.UNREAD_MODES.INBOX_ALL:
       case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD:
@@ -381,6 +384,9 @@ class GoogleStore {
   * @return the name of the field the unread count will be stored within
   */
   mailLabelUnreadCountField (service) {
+    if (service.customUnreadCountFromLabel && service.customUnreadCountLabel) {
+      return service.customUnreadCountLabelField
+    }
     switch (service.unreadMode) {
       case GoogleDefaultService.UNREAD_MODES.INBOX_ALL:
         return 'threadsTotal'
@@ -438,11 +444,19 @@ class GoogleStore {
 
     // Log some info if the user is using custom config
     if (service.hasCustomUnreadQuery || service.hasCustomUnreadLabelWatch) {
-      if (service.hasCustomUnreadQuery && service.hasCustomUnreadLabelWatch) {
-        console.log(`${LOG_PFX} Using custom query parameters: `, service.customUnreadQuery, service.customUnreadLabelWatchArray)
-      } else {
-        console.warn(`${LOG_PFX} Using custom query parameters but not all fields are configured. This is most likely a configuration error`, service.customUnreadQuery, service.customUnreadLabelWatchArray)
+      let error
+      if (!service.hasCustomUnreadQuery || !service.hasCustomUnreadLabelWatch || (service.customUnreadCountFromLabel && !service.customUnreadCountLabel)) {
+        error = 'Using custom query parameters but not all fields are configured. This is most likely a configuration error'
       }
+      console[error ? 'warn' : 'log'](
+        `${LOG_PFX}${error || 'Using custom query parameters'}`,
+        mailbox.id,
+        service.customUnreadQuery,
+        service.customUnreadLabelWatchArray,
+        service.customUnreadCountFromLabel,
+        service.customUnreadCountLabel,
+        service.customUnreadCountLabelField
+      )
     }
 
     // Start chatting to Google

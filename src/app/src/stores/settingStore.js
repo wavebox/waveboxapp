@@ -12,12 +12,18 @@ import {
   TraySettings,
   UISettings
 } from 'shared/Models/Settings'
-
+import { RENDER_PROCESS_PREFERENCE_TYPES } from 'shared/processPreferences'
+import { renderProcessPreferences } from 'R/atomProcess'
 const { SEGMENTS } = SettingsIdent
 
 class SettingStore extends EventEmitter {
+  /* ****************************************************************************/
+  // Lifecycle
+  /* ****************************************************************************/
+
   constructor () {
     super()
+    this._renderProcEntry = undefined
 
     // Build the current data
     this.accelerators = new AcceleratorSettings(persistence.getJSONItem(SEGMENTS.ACCELERATORS, {}))
@@ -92,6 +98,28 @@ class SettingStore extends EventEmitter {
   }
 
   checkAwake () { return true }
+
+  /* ****************************************************************************/
+  // Calls
+  /* ****************************************************************************/
+
+  /**
+  * Writes the launch settings to the render process if it hasn't been written before
+  * @return true if written, false otherwise
+  */
+  writeLaunchSettingsToRenderProcess () {
+    if (this._renderProcEntry) { return false }
+
+    this._renderProcEntry = renderProcessPreferences.addEntry({
+      ...Object.keys(this.launched).reduce((acc, segment) => {
+        acc[segment] = this.launched[segment].cloneData()
+        return acc
+      }, {}),
+      type: RENDER_PROCESS_PREFERENCE_TYPES.WB_LAUNCH_SETTINGS
+    })
+
+    return true
+  }
 }
 
 export default new SettingStore()

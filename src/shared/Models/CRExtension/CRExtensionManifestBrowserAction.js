@@ -8,9 +8,9 @@ class CRExtensionManifestBrowserAction extends Model {
   get defaultIcon () {
     const value = this._value_('default_icon')
     if (typeof (value) === 'string') {
-      return { '32': this._sanitizePathValue_(value) }
+      return { '32': value }
     } else if (typeof (value) === 'object') {
-      return this._sanitizePathValuesInObject_(value)
+      return value
     } else {
       return undefined
     }

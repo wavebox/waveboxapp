@@ -1,7 +1,7 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { monitorStore } from 'stores/monitor'
-import { Table, TableHeader, TableRow, TableHeaderColumn, TableBody, TableRowColumn } from 'material-ui'
+import './processTable.less'
 
 export default class ProcessMonitor extends React.Component {
   /* **************************************************************************/
@@ -22,13 +22,13 @@ export default class ProcessMonitor extends React.Component {
 
   state = (() => {
     return {
-      processInfo: monitorStore.getState().processInfoArray()
+      metrics: monitorStore.getState().allProcessMetrics()
     }
   })()
 
   monitorUpdated = (monitorState) => {
     this.setState({
-      processInfo: monitorState.processInfoArray()
+      metrics: monitorStore.getState().allProcessMetrics()
     })
   }
 
@@ -41,46 +41,90 @@ export default class ProcessMonitor extends React.Component {
   }
 
   /**
-  * Renders a row
-  * @param proc: the process info
+  * Sanitizes the description url
+  * @param url: the url
+  * @return a sanitized version of the url
+  */
+  sanitizeDescriptionUrl (url) {
+    if (url) {
+      if (url.startsWith('chrome-devtools://')) { return 'Devtools' }
+    }
+    return url
+  }
+
+  /**
+  * Renders a description for a metric
+  * @param metric: the metric to get info from
   * @return jsx
   */
-  renderRow (proc) {
+  renderDescription (metric) {
+    if (metric.pid === process.pid) {
+      return 'Task Monitor'
+    } else if (metric.webContentsInfo && metric.webContentsInfo.length) {
+      if (metric.webContentsInfo.length === 1) {
+        const info = metric.webContentsInfo[0]
+        return info.description || this.sanitizeDescriptionUrl(info.url) || 'about:blank'
+      } else {
+        return (
+          <div>
+            {metric.webContentsInfo.map((info) => {
+              return (
+                <div key={info.webContentsId}>
+                  • {info.description || this.sanitizeDescriptionUrl(info.url) || 'about:blank'}
+                </div>
+              )
+            })}
+          </div>
+        )
+      }
+    } else if (metric.type === 'Browser') {
+      return 'Wavebox Main'
+    } else {
+      return metric.type
+    }
+  }
+
+  /**
+  * Renders a row
+  * @param metric: the process info
+  * @return jsx
+  */
+  renderRow (metric) {
     return (
-      <TableRow key={proc.pid}>
-        <TableRowColumn style={{width: 100}}>
-          {proc.pid}
-        </TableRowColumn>
-        <TableRowColumn>
-          {proc.description || '-'}
-        </TableRowColumn>
-        <TableRowColumn style={{width: 100}}>
-          {`${Math.round((proc.workingSetSize || 0) / 1024)} MB`}
-        </TableRowColumn>
-        <TableRowColumn style={{width: 100}}>
-          {proc.percentCPUUsage === undefined ? '-' : (Math.round(proc.percentCPUUsage * 100) / 100) + '%'}
-        </TableRowColumn>
-      </TableRow>
+      <tr key={metric.pid}>
+        <td style={{width: 100}}>
+          {metric.pid}
+        </td>
+        <td>
+          {this.renderDescription(metric)}
+        </td>
+        <td style={{width: 100}}>
+          {`${Math.round((metric.memory.workingSetSize || 0) / 1024)} MB`}
+        </td>
+        <td style={{width: 100}}>
+          {metric.cpu.percentCPUUsage === undefined ? '-' : (Math.round(metric.cpu.percentCPUUsage * 100) / 100) + '%'}
+        </td>
+      </tr>
     )
   }
 
   render () {
-    const { processInfo } = this.state
+    const { metrics } = this.state
 
     return (
-      <Table selectable={false}>
-        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-          <TableRow>
-            <TableHeaderColumn style={{width: 100}}>Pid</TableHeaderColumn>
-            <TableHeaderColumn>Description</TableHeaderColumn>
-            <TableHeaderColumn style={{width: 100}}>Memory</TableHeaderColumn>
-            <TableHeaderColumn style={{width: 100}}>CPU</TableHeaderColumn>
-          </TableRow>
-        </TableHeader>
-        <TableBody displayRowCheckbox={false} stripedRows>
-          {processInfo.map((proc) => this.renderRow(proc))}
-        </TableBody>
-      </Table>
+      <table className='processTable'>
+        <thead>
+          <tr>
+            <th style={{width: 100}}>Pid</th>
+            <th>Description</th>
+            <th style={{width: 100}}>Memory</th>
+            <th style={{width: 100}}>CPU</th>
+          </tr>
+        </thead>
+        <tbody>
+          {metrics.map((metric) => this.renderRow(metric))}
+        </tbody>
+      </table>
     )
   }
 }

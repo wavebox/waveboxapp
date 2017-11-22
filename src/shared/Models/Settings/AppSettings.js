@@ -34,10 +34,12 @@ class AppSettings extends Model {
   get checkForUpdates () { return this._value_('checkForUpdates', true) }
   get updateChannel () { return this._value_('updateChannel', this.__defaults__.updateChannel) }
   get hasSeenAppWizard () { return this._value_('hasSeenAppWizard', false) }
+  get hasSeenOptimizeWizard () { return this._value_('hasSeenOptimizeWizard', false) }
   get hasSeenAppTour () { return this._value_('hasSeenAppTour', false) }
   get lastSeenAccountMessageUrl () { return this._value_('lastSeenAccountMessageUrl', undefined) }
   get hasSeenSnapSetupMessage () { return this._value_('hasSeenSnapSetupMessage', false) }
   get enableGeolocationApi () { return this._value_('enableGeolocationApi', true) }
+  get writeMetricsLog () { return this._value_('writeMetricsLog', false) }
 }
 
 module.exports = AppSettings

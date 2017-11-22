@@ -1,5 +1,6 @@
 import WaveboxWindow from './WaveboxWindow'
-import { shell, ipcMain } from 'electron'
+import { shell, ipcMain, app, webContents } from 'electron'
+import { evtMain } from 'AppEvents'
 import querystring from 'querystring'
 import appWindowManager from 'R/appWindowManager'
 import {
@@ -29,22 +30,29 @@ const COPY_WEBVIEW_WEB_PREFERENCES_KEYS = [
   'partition'
 ]
 
+const privLaunchInfo = Symbol('privLaunchInfo')
+const privGuestWebContentsId = Symbol('privGuestWebContentsId')
+
 class ContentWindow extends WaveboxWindow {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
-  constructor () {
+  /**
+  * @param ownerId: the id of the owner - mailbox/service
+  */
+  constructor (ownerId) {
     super()
-    this.ownerId = null
-    this.__launchInfo__ = null
+    this.ownerId = ownerId
+    this[privLaunchInfo] = null
+    this[privGuestWebContentsId] = null
   }
 
   /* ****************************************************************************/
   // Properties
   /* ****************************************************************************/
 
-  get launchInfo () { return this.__launchInfo__ }
+  get launchInfo () { return this[privLaunchInfo] }
 
   /* ****************************************************************************/
   // Window lifecycle
@@ -108,7 +116,7 @@ class ContentWindow extends WaveboxWindow {
   * @param webPreferences={}: the web preferences for the hosted child
   */
   create (parentWindow, url, partition, browserWindowPreferences = {}, webPreferences = {}) {
-    this.__launchInfo__ = Object.freeze({
+    this[privLaunchInfo] = Object.freeze({
       partition: partition,
       browserWindowPreferences: browserWindowPreferences,
       webPreferences: webPreferences
@@ -120,34 +128,27 @@ class ContentWindow extends WaveboxWindow {
         fullscreenable: true,
         title: 'Wavebox',
         backgroundColor: '#FFFFFF',
+        show: true,
         webPreferences: {
           nodeIntegration: true,
           plugins: true
         }
       },
       this.generateWindowPosition(parentWindow),
-      this.safeBrowserWindowPreferences(browserWindowPreferences),
-      { show: false }
+      this.safeBrowserWindowPreferences(browserWindowPreferences)
     ))
-    this.window.once('ready-to-show', () => { this.show() })
 
     // New window handling
     ipcMain.on(WB_NEW_WINDOW, this.handleOpenNewWindow)
-    this.window.webContents.on('new-window', (evt, url) => {
-      evt.preventDefault()
-      shell.openExternal(url)
-    })
 
-    // Patch through options into webview
-    this.window.webContents.on('will-attach-webview', (evt, webViewWebPreferences, webViewProperties) => {
-      COPY_WEBVIEW_WEB_PREFERENCES_KEYS.forEach((k) => {
-        webViewWebPreferences.partition = partition
-        if (webPreferences[k] !== undefined) {
-          webViewWebPreferences[k] = webPreferences[k]
-        }
-      })
-      webViewProperties.partition = partition
-    })
+    // remove built in listener so we can handle this on our own
+    this.window.webContents.removeAllListeners('devtools-reload-page')
+    this.window.webContents.on('devtools-reload-page', () => this.window.reload())
+
+    // Listen on webcontents events
+    this.window.webContents.on('new-window', this.handleWebContentsNewWindow)
+    this.window.webContents.on('will-attach-webview', this.handleWillAttachWebview)
+    app.on('web-contents-created', this.handleAppWebContentsCreated)
 
     return this
   }
@@ -157,7 +158,58 @@ class ContentWindow extends WaveboxWindow {
   */
   destroy (evt) {
     ipcMain.removeListener(WB_NEW_WINDOW, this.handleOpenNewWindow)
+    app.removeListener('web-contents-created', this.handleAppWebContentsCreated)
     super.destroy(evt)
+  }
+
+  /* ****************************************************************************/
+  // Webview events
+  /* ****************************************************************************/
+
+  /**
+  * Handles a webview preparing to attach
+  * @param evt: the event that fired
+  * @param webViewWebPreferences: the webPreferences of the new webview
+  * @param webViewProperties: the properites of the new webview
+  */
+  handleWillAttachWebview = (evt, webViewWebPreferences, webViewProperties) => {
+    const launchInfo = this.launchInfo
+    COPY_WEBVIEW_WEB_PREFERENCES_KEYS.forEach((k) => {
+      webViewWebPreferences.partition = launchInfo.partition
+      if (launchInfo.webPreferences[k] !== undefined) {
+        webViewWebPreferences[k] = launchInfo.webPreferences[k]
+      }
+    })
+    webViewProperties.partition = launchInfo.partition
+  }
+
+  /**
+  * Handles a webview attaching
+  * @param evt: the event that fired
+  * @param contents: the webcontents that did attach
+  */
+  handleAppWebContentsCreated = (evt, contents) => {
+    if (contents.getType() === 'webview' && contents.hostWebContents.id === this.window.webContents.id) {
+      this[privGuestWebContentsId] = contents.id
+      evtMain.emit(evtMain.WB_TAB_CREATED, this[privGuestWebContentsId])
+      contents.once('destroyed', () => {
+        const wcId = this[privGuestWebContentsId]
+        this[privGuestWebContentsId] = null
+        evtMain.emit(evtMain.WB_TAB_DESTROYED, wcId)
+      })
+    }
+  }
+
+  /* ****************************************************************************/
+  // Webcontents events
+  /* ****************************************************************************/
+
+  /**
+  * Handles the webcontents requesting a new window
+  */
+  handleWebContentsNewWindow = (evt, url) => {
+    evt.preventDefault()
+    shell.openExternal(url)
   }
 
   /* ****************************************************************************/
@@ -171,8 +223,7 @@ class ContentWindow extends WaveboxWindow {
   */
   handleOpenNewWindow = (evt, body) => {
     if (evt.sender === this.window.webContents) {
-      const contentWindow = new ContentWindow()
-      contentWindow.ownerId = this.ownerId
+      const contentWindow = new ContentWindow(this.ownerId)
       appWindowManager.addContentWindow(contentWindow)
       contentWindow.create(this.window, body.url, this.launchInfo.partition, this.launchInfo.windowPreferences, this.launchInfo.webPreferences)
     }
@@ -219,6 +270,42 @@ class ContentWindow extends WaveboxWindow {
   */
   openDevTools () {
     this.window.webContents.send(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, {})
+  }
+
+  /* ****************************************************************************/
+  // Query
+  /* ****************************************************************************/
+
+  /**
+  * @return the id of the focused webcontents
+  */
+  focusedTabId () {
+    return this[privGuestWebContentsId]
+  }
+
+  /**
+  * @return the ids of the tabs in this window
+  */
+  tabIds () {
+    return this[privGuestWebContentsId] === null ? [] : [this[privGuestWebContentsId]]
+  }
+
+  /**
+  * @return process info about the tabs with { webContentsId, description, pid, url }
+  */
+  webContentsProcessInfo () {
+    return this.tabIds().map((tabId) => {
+      const wc = webContents.fromId(tabId)
+      return {
+        webContentsId: tabId,
+        pid: wc ? wc.getOSProcessId() : undefined,
+        url: wc ? wc.getURL() : undefined
+      }
+    }).concat([{
+      webContentsId: this.window.webContents.id,
+      pid: this.window.webContents.getOSProcessId(),
+      description: 'Content Window'
+    }])
   }
 }
 

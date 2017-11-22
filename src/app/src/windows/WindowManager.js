@@ -16,7 +16,7 @@ class WindowManager {
   constructor (mailboxesWindow) {
     this.contentWindows = []
     this.mailboxesWindow = null
-    this.monitor = { window: null, ping: null, active: false }
+    this.monitorWindow = null
     this.forceQuit = false
   }
 
@@ -98,33 +98,19 @@ class WindowManager {
   * @return this
   */
   openMonitorWindow () {
-    if (this.monitor.active) { return }
+    if (this.monitorWindow) {
+      this.monitorWindow.focus()
+      return
+    }
 
-    this.monitor.window = new MonitorWindow()
-    this.monitor.window.create()
-    this.monitor.ping = setInterval(() => {
-      this.contentWindows.forEach((w) => w.pingResourceUsage())
-      this.mailboxesWindow.pingResourceUsage()
-    }, 2000)
+    this.monitorWindow = new MonitorWindow()
+    this.monitorWindow.create()
 
-    this.monitor.window.on('closed', () => {
-      clearInterval(this.monitor.ping)
-      this.monitor.window = null
-      this.monitor.active = false
+    this.monitorWindow.on('closed', () => {
+      this.monitorWindow = null
     })
 
-    this.monitor.active = true
-
     return this
-  }
-
-  /**
-  * Sends resource info to the monitoring window
-  */
-  submitProcessResourceUsage (info) {
-    if (this.monitor.active && this.monitor.window) {
-      this.monitor.window.submitProcessResourceUsage(info)
-    }
   }
 
   /* ****************************************************************************/
@@ -221,8 +207,8 @@ class WindowManager {
   focused () {
     if (this.mailboxesWindow.isFocused()) {
       return this.mailboxesWindow
-    } else if (this.monitor && this.monitor.window && this.monitor.window.isFocused()) {
-      return this.monitor.window
+    } else if (this.monitorWindow && this.monitorWindow.isFocused()) {
+      return this.monitorWindow
     } else {
       return this.contentWindows.find((w) => w.isFocused())
     }

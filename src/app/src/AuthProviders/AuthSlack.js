@@ -18,6 +18,22 @@ class AuthSlack {
   /* ****************************************************************************/
 
   /**
+  * Tries to scrape the authentication info from the webcontents
+  * @return promise, rejected if could not be found
+  */
+  _scrapeAuthenticationInfo (webContents) {
+    return new Promise((resolve, reject) => {
+      webContents.executeJavaScript('(window.TS || {}).boot_data', (bootData) => {
+        if (bootData && bootData.team_url && bootData.api_token) {
+          resolve({ teamUrl: bootData.team_url, token: bootData.api_token })
+        } else {
+          reject(new Error('Not found'))
+        }
+      })
+    })
+  }
+
+  /**
   * Gets the authorization code by prompting the user to sign in
   * @param partitionId: the id of the partition
   * @return promise
@@ -34,6 +50,7 @@ class AuthSlack {
         autoHideMenuBar: true,
         title: 'Slack',
         height: 750,
+        width: 830, // fixes some styling issues with the slack toolbar
         webPreferences: {
           nodeIntegration: false,
           contextIsolation: true,
@@ -52,14 +69,23 @@ class AuthSlack {
           oauthWin.hide()
         }
       })
-      oauthWin.webContents.on('dom-ready', (evt) => {
-        oauthWin.webContents.executeJavaScript('(window.TS || {}).boot_data', (bootData) => {
-          if (bootData && bootData.team_url && bootData.api_token) {
+      oauthWin.webContents.on('did-get-response-details', (evt) => {
+        this._scrapeAuthenticationInfo(oauthWin.webContents)
+          .then((data) => {
             oauthWin.removeAllListeners('closed')
             oauthWin.close()
-            resolve({ teamUrl: bootData.team_url, token: bootData.api_token })
-          }
-        })
+            resolve(data)
+          })
+          .catch(() => { /* no-op */ })
+      })
+      oauthWin.webContents.on('dom-ready', (evt) => {
+        this._scrapeAuthenticationInfo(oauthWin.webContents)
+          .then((data) => {
+            oauthWin.removeAllListeners('closed')
+            oauthWin.close()
+            resolve(data)
+          })
+          .catch(() => { /* no-op */ })
       })
     })
   }

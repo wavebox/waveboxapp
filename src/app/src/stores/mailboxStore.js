@@ -44,9 +44,12 @@ class MailboxStore extends EventEmitter {
     })
 
     ipcMain.on(WB_MAILBOX_STORAGE_CHANGE_ACTIVE, (evt, data) => {
-      this.activeMailboxId = data.mailboxId
-      this.activeServiceType = data.serviceType
-      this.emit('changed', {})
+      if (this.activeMailboxId !== data.mailboxId || this.activeServiceType !== data.serviceType) {
+        this.activeMailboxId = data.mailboxId
+        this.activeServiceType = data.serviceType
+        this.emit('changed', {})
+        this.emit('changed:active', { mailboxId: data.mailboxId, serviceType: data.serviceType })
+      }
     })
   }
 
@@ -70,6 +73,17 @@ class MailboxStore extends EventEmitter {
   * @return the mailbox record
   */
   getMailbox (id) { return this.mailboxes.get(id) }
+
+  /**
+  * @param id: the id of the mailbox
+  * @return true if there is a mailbox with the given id
+  */
+  hasMailbox (id) { return this.mailboxes.has(id) }
+
+  /**
+  * @return the mailbox ids
+  */
+  getMailboxIds () { return Array.from(this.index) }
 
   /**
   * @return the id of the active mailbox

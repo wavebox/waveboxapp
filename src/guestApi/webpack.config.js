@@ -13,6 +13,7 @@ module.exports = function (env) {
   const isProduction = process.env.NODE_ENV === 'production'
   return {
     entry: path.join(__dirname, '__.js'),
+    stats: process.env.VERBOSE_LOG === 'true' ? undefined : 'errors-only',
     output: {
       path: OUT_DIR,
       filename: '__.js'
@@ -20,7 +21,7 @@ module.exports = function (env) {
     plugins: [
       new CleanWebpackPlugin([path.relative(BIN_DIR, OUT_DIR)], {
         root: BIN_DIR,
-        verbose: true,
+        verbose: process.env.VERBOSE_LOG === 'true',
         dry: false
       }),
       new CopyWebpackPlugin([
