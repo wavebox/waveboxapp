@@ -1,10 +1,11 @@
 import React from 'react'
-import { Avatar, RaisedButton, FlatButton, FontIcon } from 'material-ui'
+import { Avatar, RaisedButton, FlatButton, FontIcon, Paper } from 'material-ui'
 import { mailboxStore, mailboxActions, MailboxReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
 import { settingsActions } from 'stores/settings'
 import * as Colors from 'material-ui/styles/colors'
 import Resolver from 'Runtime/Resolver'
+import { Container, Col, Row } from 'Components/Grid'
 
 const styles = {
   container: {
@@ -50,48 +51,29 @@ const styles = {
   },
 
   // Options
-  optionsPane: {
-    marginLeft: 16,
-    marginRight: 16,
-    marginTop: 0,
-    marginBottom: 16,
-    paddingTop: 0,
-    paddingLeft: 16,
-    paddingRight: 16,
-    paddingBottom: 16
-  },
   option: {
-    position: 'relative',
-    minHeight: 100,
-    marginTop: 48,
-    marginBottom: 48
-  },
-  optionImageContainer: {
-    position: 'absolute',
+    padding: 16,
+    marginLeft: 0,
+    marginRight: 0,
+    marginTop: 16,
+    marginBottom: 16,
+    minHeight: 300,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    width: 250,
-    backgroundSize: 'contain',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat'
-  },
-  optionImage: {
+    flexDirection: 'column',
+    textAlign: 'center',
     cursor: 'pointer'
   },
-  optionBody: {
-    marginLeft: 265
-  },
-  optionTitle: {
-    fontWeight: 300,
-    fontSize: 25,
-    marginBottom: 0
-  },
-  optionDescription: {
-    marginTop: 0
+  optionImage: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundSize: 'contain',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    height: 150,
+    width: '100%'
   }
 }
 
@@ -191,81 +173,69 @@ export default class OptimizeWizardSleepDisplayScene extends React.Component {
         <div style={styles.leadPane}>
           <h1 style={styles.leadTitle}>Account Sleeping</h1>
           <p>
-            You can set you services to be greyed out when sleeping. This can help you quickly see what
-            is and what isn't running in Wavebox. Pick whether you want to enable or disable this feature
-            by choosing an option below.
+            You can choose to display sleeping account icons as grey or full colour. Having them grey will
+            help you quickly see which accounts are awake or asleep. Choose an option below.
           </p>
         </div>
         {hasSleepable ? (
-          <div style={styles.optionsPane}>
-            <div style={styles.option}>
-              <div onClick={this.handleEnableSleepIndicator} style={{
-                ...styles.optionImageContainer,
-                backgroundImage: `url("${Resolver.image('optimize_wizard_sleep_display_indicator.png', Resolver.API_TYPES.BROWSER)}")`
-              }} />
-              <div style={styles.optionBody}>
-                <h2 style={styles.optionTitle}>Make sleeping services appear grey</h2>
-                <p style={styles.optionDescription}>
-                  When a service goes to sleep it will be greyed out in your sidebar and toolbar, quickly
-                  letting you know what's running in Wavebox.
-                </p>
-                <RaisedButton
-                  primary
-                  disabled={isWorking}
-                  icon={isWorking ? (
-                    <span>
-                      <FontIcon className='fa fa-spin fa-circle-o-notch' color='rgba(0, 0, 0, 0.3)' style={{ fontSize: '20px' }} />
-                    </span>
-                  ) : undefined}
-                  label='Make sleeping services appear grey'
-                  onClick={this.handleEnableSleepIndicator} />
-              </div>
-            </div>
-            <div style={styles.option}>
-              <div onClick={this.handleDisableSleepIndicator} style={{
-                ...styles.optionImageContainer,
-                backgroundImage: `url("${Resolver.image('optimize_wizard_sleep_display_no_indicator.png', Resolver.API_TYPES.BROWSER)}")`
-              }} />
-              <div style={styles.optionBody}>
-                <h2 style={styles.optionTitle}>Use the standard icon coloring</h2>
-                <p style={styles.optionDescription}>
-                  Services will always be displayed in full color, giving you a consistent look and feel
-                  when using Wavebox.
-                </p>
-                <RaisedButton
-                  primary
-                  disabled={isWorking}
-                  icon={isWorking ? (
-                    <span>
-                      <FontIcon className='fa fa-spin fa-circle-o-notch' color='rgba(0, 0, 0, 0.3)' style={{ fontSize: '20px' }} />
-                    </span>
-                  ) : undefined}
-                  label={`Use the standard icon coloring`}
-                  onClick={this.handleDisableSleepIndicator} />
-              </div>
-            </div>
-            <div style={{ ...styles.option, marginBottom: 0 }}>
-              <div style={styles.optionImageContainer}>
-                <Avatar
-                  style={styles.optionImage}
-                  onClick={this.handleKeepSettings}
-                  color='white'
-                  backgroundColor={Colors.grey600}
-                  icon={(<FontIcon className='fa fa-fw fa-tasks' />)}
-                  size={100} />
-              </div>
-              <div style={styles.optionBody}>
-                <h2 style={styles.optionTitle}>Keep my current configuration</h2>
-                <p style={styles.optionDescription}>
-                  Leave my configuration as it is already.
-                </p>
-                <RaisedButton
-                  label='Keep configration'
-                  disabled={isWorking}
-                  onClick={this.handleKeepSettings} />
-              </div>
-            </div>
-          </div>
+          <Container fluid>
+            <Row>
+              <Col sm={4}>
+                <Paper onClick={this.handleEnableSleepIndicator} style={styles.option}>
+                  <div style={{
+                    ...styles.optionImage,
+                    backgroundImage: `url("${Resolver.image('optimize_wizard_sleep_display_indicator.png', Resolver.API_TYPES.BROWSER)}")`
+                  }} />
+                  <p>Show my service icons in grey when sleeping.</p>
+                  <RaisedButton
+                    primary
+                    disabled={isWorking}
+                    icon={isWorking ? (
+                      <span>
+                        <FontIcon className='fa fa-spin fa-circle-o-notch' color='rgba(0, 0, 0, 0.3)' style={{ fontSize: '20px' }} />
+                      </span>
+                    ) : undefined}
+                    label='Select'
+                    onClick={this.handleEnableSleepIndicator} />
+                </Paper>
+              </Col>
+              <Col sm={4}>
+                <Paper onClick={this.handleDisableSleepIndicator} style={styles.option}>
+                  <div style={{
+                    ...styles.optionImage,
+                    backgroundImage: `url("${Resolver.image('optimize_wizard_sleep_display_no_indicator.png', Resolver.API_TYPES.BROWSER)}")`
+                  }} />
+                  <p>Leave my service icons coloured when sleeping.</p>
+                  <RaisedButton
+                    primary
+                    disabled={isWorking}
+                    icon={isWorking ? (
+                      <span>
+                        <FontIcon className='fa fa-spin fa-circle-o-notch' color='rgba(0, 0, 0, 0.3)' style={{ fontSize: '20px' }} />
+                      </span>
+                    ) : undefined}
+                    label='Select'
+                    onClick={this.handleDisableSleepIndicator} />
+                </Paper>
+              </Col>
+              <Col sm={4}>
+                <Paper onClick={this.handleKeepSettings} style={styles.option}>
+                  <div style={styles.optionImage}>
+                    <Avatar
+                      color='white'
+                      backgroundColor={Colors.grey600}
+                      icon={(<FontIcon className='fa fa-fw fa-tasks' />)}
+                      size={100} />
+                  </div>
+                  <p>Keep my current configuration.</p>
+                  <RaisedButton
+                    label='Select'
+                    disabled={isWorking}
+                    onClick={this.handleKeepSettings} />
+                </Paper>
+              </Col>
+            </Row>
+          </Container>
         ) : (
           <div style={styles.purchaseContainer}>
             <p>You can only pick how your sleeping services are displayed when you purchase Wavebox.</p>
