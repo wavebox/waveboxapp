@@ -77,7 +77,7 @@ export default class UISettingsSection extends React.Component {
             onToggle={(evt, toggled) => settingsActions.setOpenHidden(toggled)} />
           <Toggle
             toggled={ui.showSleepableServiceIndicator}
-            label='Allow services to indicate when sleeping'
+            label='Show sleeping services with greyed out icons'
             labelPosition='right'
             onToggle={(evt, toggled) => settingsActions.setShowSleepableServiceIndicator(toggled)} />
           {process.platform === 'darwin' ? (

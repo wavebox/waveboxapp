@@ -67,7 +67,6 @@ export default class Toolbar extends React.Component {
     if (!settingsState.extension.enableChromeExperimental) { return false }
     if (!settingsState.extension.showBrowserActionsInToolbar) { return false }
     if (crextensionState.browserActionExtensionCount() === 0) { return false }
-
     return true
   }
 
