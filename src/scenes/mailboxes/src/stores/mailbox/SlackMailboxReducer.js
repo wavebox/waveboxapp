@@ -13,6 +13,30 @@ class SlackMailboxReducer extends MailboxReducer {
       selfOverview: selfOverview
     })
   }
+
+  /**
+  * Indicates that the authentication information on the mailbox is invalid
+  * @param mailbox: the mailbox to update
+  */
+  static invalidateAuth (mailbox) {
+    if (!mailbox.isAuthenticationInvalid) {
+      return mailbox.changeDataWithChangeset({
+        auth: { isInvalid: true }
+      })
+    }
+  }
+
+  /**
+  * Indicates that the authentication information on the mailbox is valid
+  * @param mailbox: the mailbox to update
+  */
+  static revalidateAuth (mailbox) {
+    if (mailbox.isAuthenticationInvalid) {
+      return mailbox.changeDataWithChangeset({
+        auth: { isInvalid: false }
+      })
+    }
+  }
 }
 
 export default SlackMailboxReducer
