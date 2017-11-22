@@ -154,6 +154,23 @@ class SlackStore {
   }
 
   /* **************************************************************************/
+  // Error Detection
+  /* **************************************************************************/
+
+  /**
+  * Checks if an error is an invalid grant error
+  * @param err: the error that was thrown
+  * @return true if this error is invalid grant
+  */
+  isInvalidAuthError (err) {
+    if (typeof (err) === 'object' && err.error === 'invalid_auth') {
+      return true
+    }
+
+    return false
+  }
+
+  /* **************************************************************************/
   // Handlers: Connection open
   /* **************************************************************************/
 
@@ -209,6 +226,8 @@ class SlackStore {
     SlackHTTP.startRTM(mailbox.authToken)
       .then(({ response, rtm }) => {
         if (!this.isValidConnection(mailboxId, connectionId)) { return }
+
+        mailboxActions.reduce.defer(mailboxId, SlackMailboxReducer.revalidateAuth)
 
         // Bind events
         rtm.on('message:error', (data) => {
@@ -284,8 +303,14 @@ class SlackStore {
 
         this.emitChange()
       })
-      .catch(() => {
+      .catch((err) => {
         if (!this.isValidConnection(mailboxId, connectionId)) { return }
+
+        if (this.isInvalidAuthError(err)) {
+          mailboxActions.reduce.defer(mailboxId, SlackMailboxReducer.invalidateAuth)
+        } else {
+          console.error(err)
+        }
 
         // Retry connection
         setTimeout(() => {
@@ -378,6 +403,8 @@ class SlackStore {
         )
         this.trackCloseRequest(REQUEST_TYPES.UNREAD, mailboxId, requestId)
         this.emitChange()
+        mailboxActions.reduce.defer(mailboxId, SlackMailboxReducer.revalidateAuth)
+
         if (Debug.flags.slackLogUnreadCounts) {
           console.log(`[SLACK:UNREAD] success: ${mailboxId}`, JSON.stringify({
             channels: response.channels.map((c) => {
@@ -411,7 +438,13 @@ class SlackStore {
       .catch((err) => {
         this.trackCloseRequest(REQUEST_TYPES.UNREAD, mailboxId, requestId)
         this.emitChange()
-        console.error(err)
+
+        if (this.isInvalidAuthError(err)) {
+          mailboxActions.reduce.defer(mailboxId, SlackMailboxReducer.invalidateAuth)
+        } else {
+          console.error(err)
+        }
+
         Debug.flagLog('slackLogUnreadCounts', [`[SLACK:UNREAD] error: ${mailboxId}`, err])
       })
   }
