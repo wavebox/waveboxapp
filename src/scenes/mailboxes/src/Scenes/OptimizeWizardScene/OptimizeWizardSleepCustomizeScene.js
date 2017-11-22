@@ -342,7 +342,7 @@ export default class OptimizeWizardSleepCustomizeScene extends React.Component {
               <div>
                 <Checkbox
                   checked={showSleepableServiceIndicator && allMailboxesShowSleepableServiceIndicator}
-                  label='Show me when services are sleeping'
+                  label='Grey-out services that are sleeping'
                   onCheck={this.handleSetShowSleepingServiceIndicator} />
               </div>
             </div>

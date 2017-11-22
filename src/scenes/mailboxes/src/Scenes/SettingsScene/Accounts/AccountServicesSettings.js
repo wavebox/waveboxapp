@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Paper, SelectField, MenuItem, Toggle } from 'material-ui'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
-import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -22,12 +21,10 @@ export default class AccountServicesSettings extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    settingsStore.listen(this.settingsChanged)
     userStore.listen(this.userChanged)
   }
 
   componentWillUnmount () {
-    settingsStore.unlisten(this.settingsChanged)
     userStore.unlisten(this.userChanged)
   }
 
@@ -38,21 +35,13 @@ export default class AccountServicesSettings extends React.Component {
   state = (() => {
     const userState = userStore.getState()
     return {
-      ui: settingsStore.getState().ui,
-      userHasServices: userState.user.hasServices,
-      userHasSleepable: userState.user.hasSleepable
+      userHasServices: userState.user.hasServices
     }
   })()
 
-  settingsChanged = (settingsState) => {
-    this.setState({
-      ui: settingsState.ui
-    })
-  }
   userChanged = (userState) => {
     this.setState({
-      userHasServices: userState.user.hasServices,
-      userHasSleepable: userState.user.hasSleepable
+      userHasServices: userState.user.hasServices
     })
   }
 
@@ -66,9 +55,9 @@ export default class AccountServicesSettings extends React.Component {
 
   render () {
     const { mailbox, ...passProps } = this.props
-    const { ui, userHasServices, userHasSleepable } = this.state
+    const { userHasServices } = this.state
 
-    if (!userHasServices && !userHasSleepable) { return false }
+    if (!userHasServices) { return false }
 
     return (
       <Paper zDepth={1} style={styles.paper} {...passProps}>
@@ -78,63 +67,41 @@ export default class AccountServicesSettings extends React.Component {
           Storage & Contacts. You can enable, disable & change
           the way these behave
         </p>
-        {userHasServices ? (
+        <SelectField
+          fullWidth
+          floatingLabelText='Where should services be displayed?'
+          value={mailbox.serviceDisplayMode}
+          onChange={(evt, index, mode) => {
+            mailboxActions.reduce(mailbox.id, MailboxReducer.setServiceDisplayMode, mode)
+          }}>
+          <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR} primaryText='Left Sidebar' />
+          <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR} primaryText='Top Toolbar' />
+        </SelectField>
+        {mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR ? (
+          <div>
+            <Toggle
+              toggled={mailbox.collapseSidebarServices}
+              disabled={mailbox.serviceDisplayMode !== CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR}
+              label='Collapse sidebar services when account is inactive'
+              labelPosition='right'
+              onToggle={(evt, toggled) => {
+                mailboxActions.reduce(mailbox.id, MailboxReducer.setCollapseSidebarServices, toggled)
+              }} />
+          </div>
+        ) : undefined}
+        {mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR ? (
           <div>
             <SelectField
               fullWidth
-              floatingLabelText='Where should services be displayed?'
-              value={mailbox.serviceDisplayMode}
+              floatingLabelText='Icon positioning'
+              value={mailbox.serviceToolbarIconLayout}
               onChange={(evt, index, mode) => {
-                mailboxActions.reduce(mailbox.id, MailboxReducer.setServiceDisplayMode, mode)
+                mailboxActions.reduce(mailbox.id, MailboxReducer.setServiceToolbarIconLayout, mode)
               }}>
-              <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR} primaryText='Left Sidebar' />
-              <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR} primaryText='Top Toolbar' />
+              <MenuItem value={CoreMailbox.SERVICE_TOOLBAR_ICON_LAYOUTS.LEFT_ALIGN} primaryText='Left Align' />
+              <MenuItem value={CoreMailbox.SERVICE_TOOLBAR_ICON_LAYOUTS.RIGHT_ALIGN} primaryText='Right Align' />
             </SelectField>
-            {mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR ? (
-              <div>
-                <Toggle
-                  toggled={mailbox.collapseSidebarServices}
-                  disabled={mailbox.serviceDisplayMode !== CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR}
-                  label='Collapse sidebar services when account is inactive'
-                  labelPosition='right'
-                  onToggle={(evt, toggled) => {
-                    mailboxActions.reduce(mailbox.id, MailboxReducer.setCollapseSidebarServices, toggled)
-                  }} />
-              </div>
-            ) : undefined}
-            {mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR ? (
-              <div>
-                <SelectField
-                  fullWidth
-                  floatingLabelText='Icon positioning'
-                  value={mailbox.serviceToolbarIconLayout}
-                  onChange={(evt, index, mode) => {
-                    mailboxActions.reduce(mailbox.id, MailboxReducer.setServiceToolbarIconLayout, mode)
-                  }}>
-                  <MenuItem value={CoreMailbox.SERVICE_TOOLBAR_ICON_LAYOUTS.LEFT_ALIGN} primaryText='Left Align' />
-                  <MenuItem value={CoreMailbox.SERVICE_TOOLBAR_ICON_LAYOUTS.RIGHT_ALIGN} primaryText='Right Align' />
-                </SelectField>
-              </div>
-            ) : undefined}
           </div>
-        ) : undefined}
-        {userHasSleepable ? (
-          <Toggle
-            disabled={!ui.showSleepableServiceIndicator}
-            toggled={mailbox.showSleepableServiceIndicator}
-            label={ui.showSleepableServiceIndicator ? (
-              'Show sleeping services with greyed out icons'
-            ) : (
-              <span>
-                <span>Show sleeping services with greyed out icons</span>
-                <br />
-                <small>Enable "Show sleeping services with greyed out icons" in the main UI settings first</small>
-              </span>
-            )}
-            labelPosition='right'
-            onToggle={(evt, toggled) => {
-              mailboxActions.reduce(mailbox.id, MailboxReducer.setShowSleepableServiceIndicator, toggled)
-            }} />
         ) : undefined}
       </Paper>
     )

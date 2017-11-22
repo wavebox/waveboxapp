@@ -1,9 +1,10 @@
 import React from 'react'
 import { Avatar, RaisedButton, FlatButton, FontIcon } from 'material-ui'
-import { mailboxStore, mailboxActions, ServiceReducer } from 'stores/mailbox'
+import { mailboxStore, mailboxActions, MailboxReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
+import { settingsActions } from 'stores/settings'
 import * as Colors from 'material-ui/styles/colors'
-import CoreService from 'shared/Models/Accounts/CoreService'
+import Resolver from 'Runtime/Resolver'
 
 const styles = {
   container: {
@@ -65,21 +66,24 @@ const styles = {
     marginTop: 48,
     marginBottom: 48
   },
-  optionAvatarContainer: {
+  optionImageContainer: {
     position: 'absolute',
     display: 'flex',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
     top: 0,
     left: 0,
     bottom: 0,
-    width: 130
+    width: 250,
+    backgroundSize: 'contain',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat'
   },
-  optionAvatar: {
+  optionImage: {
     cursor: 'pointer'
   },
   optionBody: {
-    marginLeft: 130
+    marginLeft: 265
   },
   optionTitle: {
     fontWeight: 300,
@@ -91,7 +95,7 @@ const styles = {
   }
 }
 
-export default class OptimizeWizardSleepScene extends React.Component {
+export default class OptimizeWizardSleepDisplayScene extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
@@ -111,7 +115,7 @@ export default class OptimizeWizardSleepScene extends React.Component {
   state = (() => {
     return {
       hasSleepable: userStore.getState().user.hasSleepable,
-      isOptimizing: false
+      isWorking: false
     }
   })()
 
@@ -126,38 +130,42 @@ export default class OptimizeWizardSleepScene extends React.Component {
   /* **************************************************************************/
 
   /**
-  * Automatically optimizes the settings
+  * Enables the sleep indicator across all accounts
   */
-  handleAutoOptimizeSettings = () => {
-    if (this.state.isOptimizing) { return }
-    this.setState({ isOptimizing: true }, () => {
-      setTimeout(() => {
-        // This should really be in a single reduce command, but it happens infreqently so just burn a little cpu
-        mailboxStore.getState().allMailboxes().forEach((mailbox) => {
-          mailbox.enabledServices.forEach((service) => {
-            if (service.type !== CoreService.SERVICE_TYPES.DEFAULT) {
-              mailboxActions.reduceService.defer(mailbox.id, service.type, ServiceReducer.setSleepable, true)
-            }
-          })
-        })
-        window.location.hash = '/optimize_wizard/sleep_display'
-      }, 100)
-    })
+  handleEnableSleepIndicator = () => {
+    this._handleChangeSleepIndicatorSetting(true)
   }
 
   /**
-  * Customizes the settings
+  * Disables the sleep indicator across all accounts
   */
-  handleCustomizeSettings = () => {
-    if (this.state.isOptimizing) { return }
-    window.location.hash = '/optimize_wizard/sleep_advanced'
+  handleDisableSleepIndicator = () => {
+    this._handleChangeSleepIndicatorSetting(false)
+  }
+
+  /**
+  * Changes the sleep indicator setting across all accounts
+  * @param enabled: true to display the indicator, false otherwise
+  */
+  _handleChangeSleepIndicatorSetting = (enabled) => {
+    if (this.state.isWorking) { return }
+    this.setState({ isWorking: true }, () => {
+      setTimeout(() => {
+        // This should really be in a single reduce command, but it happens infreqently so just burn a little cpu
+        mailboxStore.getState().allMailboxes().forEach((mailbox) => {
+          mailboxActions.reduce(mailbox.id, MailboxReducer.setShowSleepableServiceIndicator, enabled)
+        })
+        settingsActions.setShowSleepableServiceIndicator.defer(enabled)
+        window.location.hash = '/optimize_wizard/finish'
+      }, 100)
+    })
   }
 
   /**
   * Keeps the current settings
   */
   handleKeepSettings = () => {
-    if (this.state.isOptimizing) { return }
+    if (this.state.isWorking) { return }
     window.location.hash = '/optimize_wizard/finish'
   }
 
@@ -175,7 +183,7 @@ export default class OptimizeWizardSleepScene extends React.Component {
   render () {
     const {
       hasSleepable,
-      isOptimizing
+      isWorking
     } = this.state
 
     return (
@@ -183,67 +191,63 @@ export default class OptimizeWizardSleepScene extends React.Component {
         <div style={styles.leadPane}>
           <h1 style={styles.leadTitle}>Account Sleeping</h1>
           <p>
-            You can set your accounts to sleep automatically when not in use. This helps your machine
-            to run more efficiently. An account will wake up the next time you click on it and be ready
-            to use in no time at all. Automatically optimize Wavebox or customize each service individually
+            You can set you services to be greyed out when sleeping. This can help you quickly see what
+            is and what isn't running in Wavebox. Pick whether you want to enable or disable this feature
             by choosing an option below.
           </p>
         </div>
         {hasSleepable ? (
           <div style={styles.optionsPane}>
             <div style={styles.option}>
-              <div style={styles.optionAvatarContainer}>
-                <Avatar
-                  style={styles.optionAvatar}
-                  onClick={this.handleAutoOptimizeSettings}
-                  color='white'
-                  backgroundColor={Colors.green600}
-                  icon={(<FontIcon className='fa fa-fw fa-fighter-jet' />)}
-                  size={100} />
-              </div>
+              <div onClick={this.handleEnableSleepIndicator} style={{
+                ...styles.optionImageContainer,
+                backgroundImage: `url("${Resolver.image('optimize_wizard_sleep_display_indicator.png', Resolver.API_TYPES.BROWSER)}")`
+              }} />
               <div style={styles.optionBody}>
-                <h2 style={styles.optionTitle}>Automatically optimize my Wavebox (Recommended)</h2>
+                <h2 style={styles.optionTitle}>Make sleeping services appear grey</h2>
                 <p style={styles.optionDescription}>
-                  Enable sleep for all additional services, to keep quick access to my primary services
-                  and save resouces by sleeping the others.
+                  When a service goes to sleep it will be greyed out in your sidebar and toolbar, quickly
+                  letting you know what's running in Wavebox.
                 </p>
                 <RaisedButton
                   primary
-                  disabled={isOptimizing}
-                  icon={isOptimizing ? (
+                  disabled={isWorking}
+                  icon={isWorking ? (
                     <span>
                       <FontIcon className='fa fa-spin fa-circle-o-notch' color='rgba(0, 0, 0, 0.3)' style={{ fontSize: '20px' }} />
                     </span>
                   ) : undefined}
-                  label='Automatically optimize (Recommended)'
-                  onClick={this.handleAutoOptimizeSettings} />
+                  label='Make sleeping services appear grey'
+                  onClick={this.handleEnableSleepIndicator} />
               </div>
             </div>
             <div style={styles.option}>
-              <div style={styles.optionAvatarContainer}>
-                <Avatar
-                  style={styles.optionAvatar}
-                  onClick={this.handleCustomizeSettings}
-                  color='white'
-                  backgroundColor={Colors.blue600}
-                  icon={(<FontIcon className='fa fa-fw fa-cogs' />)}
-                  size={100} />
-              </div>
+              <div onClick={this.handleDisableSleepIndicator} style={{
+                ...styles.optionImageContainer,
+                backgroundImage: `url("${Resolver.image('optimize_wizard_sleep_display_no_indicator.png', Resolver.API_TYPES.BROWSER)}")`
+              }} />
               <div style={styles.optionBody}>
-                <h2 style={styles.optionTitle}>Customize my settings</h2>
+                <h2 style={styles.optionTitle}>Use the standard icon coloring</h2>
                 <p style={styles.optionDescription}>
-                  Decide which services you want to sleep to make sure Wavebox works for your workflow.
+                  Services will always be displayed in full color, giving you a consistent look and feel
+                  when using Wavebox.
                 </p>
                 <RaisedButton
-                  label='Customize each service'
-                  disabled={isOptimizing}
-                  onClick={this.handleCustomizeSettings} />
+                  primary
+                  disabled={isWorking}
+                  icon={isWorking ? (
+                    <span>
+                      <FontIcon className='fa fa-spin fa-circle-o-notch' color='rgba(0, 0, 0, 0.3)' style={{ fontSize: '20px' }} />
+                    </span>
+                  ) : undefined}
+                  label={`Use the standard icon coloring`}
+                  onClick={this.handleDisableSleepIndicator} />
               </div>
             </div>
             <div style={{ ...styles.option, marginBottom: 0 }}>
-              <div style={styles.optionAvatarContainer}>
+              <div style={styles.optionImageContainer}>
                 <Avatar
-                  style={styles.optionAvatar}
+                  style={styles.optionImage}
                   onClick={this.handleKeepSettings}
                   color='white'
                   backgroundColor={Colors.grey600}
@@ -257,14 +261,14 @@ export default class OptimizeWizardSleepScene extends React.Component {
                 </p>
                 <RaisedButton
                   label='Keep configration'
-                  disabled={isOptimizing}
+                  disabled={isWorking}
                   onClick={this.handleKeepSettings} />
               </div>
             </div>
           </div>
         ) : (
           <div style={styles.purchaseContainer}>
-            <p>You can sleep any of your accounts and services when you purchase Wavebox.</p>
+            <p>You can only pick how your sleeping services are displayed when you purchase Wavebox.</p>
             <FlatButton
               primary
               label='Purchase Wavebox'

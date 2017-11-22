@@ -9,6 +9,7 @@ import { Redirect } from 'react-router-dom'
 import OptimizeWizardIntroScene from './OptimizeWizardIntroScene'
 import OptimizeWizardCompleteScene from './OptimizeWizardCompleteScene'
 import OptimizeWizardSleepScene from './OptimizeWizardSleepScene'
+import OptimizeWizardSleepDisplayScene from './OptimizeWizardSleepDisplayScene'
 import OptimizeWizardSleepCustomizeScene from './OptimizeWizardSleepCustomizeScene'
 
 const styles = {
@@ -126,7 +127,19 @@ export default class OptimizeWizardScene extends React.Component {
           </div>
         )
       }
-    } else if (step === 'sleep_customize') {
+    } else if (step === 'sleep_display') {
+      return {
+        content: (<OptimizeWizardSleepDisplayScene />),
+        actions: (
+          <div>
+            <FlatButton
+              style={styles.modalActionLeftButton}
+              label='Cancel'
+              onClick={() => { this.handleClose() }} />
+          </div>
+        )
+      }
+    } else if (step === 'sleep_advanced') {
       return {
         content: (<OptimizeWizardSleepCustomizeScene />),
         actions: (
