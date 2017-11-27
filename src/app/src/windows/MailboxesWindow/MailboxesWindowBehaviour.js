@@ -49,7 +49,6 @@ class MailboxesWindowBehaviour {
   */
   handleAppWebContentsCreated = (evt, contents) => {
     if (contents.getType() === 'webview' && contents.hostWebContents.id === this.webContentsId) {
-      contents.openDevTools()//TODO
       contents.on('new-window', this.handleWebViewNewWindow)
       contents.on('will-navigate', this.handleWebViewWillNavigate)
       contents.on('before-input-event', this.handleBeforeInputEvent)
@@ -151,8 +150,7 @@ class MailboxesWindowBehaviour {
     }
 
     if (openMode === WINDOW_OPEN_MODES.POPUP_CONTENT) {
-      //evt.newGuest = this.openWindowWaveboxPopupContent(openingBrowserWindow, ownerId, targetUrl, options).window
-      this.openWindowWaveboxPopupContent(openingBrowserWindow, ownerId, targetUrl, options)
+      evt.newGuest = this.openWindowWaveboxPopupContent(openingBrowserWindow, ownerId, targetUrl, options).window
     } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL) {
       this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
     } else if (openMode === WINDOW_OPEN_MODES.DEFAULT || openMode === WINDOW_OPEN_MODES.DEFAULT_IMPORTANT) {

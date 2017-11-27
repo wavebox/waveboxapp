@@ -211,6 +211,8 @@ class CRExtensionManifest extends Model {
     }
     return undefined
   }
+
+  get waveboxCookieScopes () { return new Set(this._value_('wavebox_cookie_scopes', ['background'])) }
 }
 
 module.exports = CRExtensionManifest

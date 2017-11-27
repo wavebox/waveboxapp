@@ -101,7 +101,6 @@ class CRExtensionBackgroundPage {
       hostname: this.extension.id,
       pathname: this._name
     }))
-    this._webContents.openDevTools()//TODO
 
     // Update cors via the extension config
     SessionManager
@@ -157,7 +156,6 @@ class CRExtensionBackgroundPage {
   * @param responder: function to call with updated headers
   */
   _handleAllUrlHeadersReceived = (details, responder) => {
-    //return responder({})
     if (details.resourceType === 'xhr') {
       const purl = url.parse(details.url)
       if (CRExtensionMatchPatterns.matchUrls(purl.protocol, purl.host, purl.pathname, Array.from(this.extension.manifest.permissions))) {

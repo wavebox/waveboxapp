@@ -55,7 +55,6 @@ class Cookies {
       `${CRX_COOKIES_GET_}${this[privExtensionId]}`,
       [details],
       (evt, err, response) => {
-        console.log("chrome.cookies.get",details, response)
         if (callback) {
           callback(response ? new Cookie(response) : null)
         }
@@ -71,7 +70,6 @@ class Cookies {
       `${CRX_COOKIES_GET_ALL_}${this[privExtensionId]}`,
       [details],
       (evt, err, response) => {
-        console.log("chrome.cookies.getAll",details,response)
         if (callback) {
           const cookies = response.map((raw) => {
             return new Cookie(raw)
@@ -90,7 +88,6 @@ class Cookies {
       `${CRX_COOKIES_SET_}${this[privExtensionId]}`,
       [details],
       (evt, err, response) => {
-        console.log("chrome.cookies.set", details, response)
         if (err) {
           this[privRuntime][protectedHandleError](err)
         }
@@ -109,7 +106,6 @@ class Cookies {
       `${CRX_COOKIES_REMOVE_}${this[privExtensionId]}`,
       [details],
       (evt, err, response) => {
-        console.log("chrome.cookies.remove",details,response)
         if (callback) {
           callback(response)
         }

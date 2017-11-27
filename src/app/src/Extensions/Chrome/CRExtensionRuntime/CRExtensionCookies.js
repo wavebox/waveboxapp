@@ -20,32 +20,6 @@ const ELECTRON_TO_CRX_COOKIE_CHANGE_CAUSE = {
   'expired-overwrite': 'expired_overwrite'
 }
 
-
-// Option 1: munge the cookie engine
-/*
-cookie_listen_scope: "background"|"tab"|"all"
-cookie_get_scope: "background"|"tab"|"all"
-cookie_set_scope: "background"|"tab"|"all"
-cooke_modifiers: [
-  domains: [".grammarly.com", "www.grammarly.com", "grammarly.com"],
-  getReducer: "expiry:newest"|"path:longest",
-  tabChangesToBackground: true
-]
-*/
-
-// Option 2: Open some pages in extension context
-/*
-Something goes wrong with the window opener and our wrapup I think...
-*/
-
-
-
-
-
-
-
-
-
 class CRExtensionCookies {
   /* ****************************************************************************/
   // Lifecycle
@@ -57,18 +31,21 @@ class CRExtensionCookies {
     this._changeListenerSessions = new Set()
     this._partiallyModifiedCookies = []
 
-    if (this.extension.manifest.hasBackground && this.extension.manifest.permissions.has('cookies')) {
+    const scopes = this.extension.manifest.waveboxCookieScopes
+    const permissions = this.extension.manifest.permissions
+
+    if (this.extension.manifest.hasBackground && scopes.size > 0 && permissions.has('cookies')) {
       CRDispatchManager.registerHandler(`${CRX_COOKIES_GET_}${this.extension.id}`, this.handleGetCookie)
       CRDispatchManager.registerHandler(`${CRX_COOKIES_GET_ALL_}${this.extension.id}`, this.handleGetAllCookies)
       CRDispatchManager.registerHandler(`${CRX_COOKIES_SET_}${this.extension.id}`, this.handleSetCookie)
       CRDispatchManager.registerHandler(`${CRX_COOKIES_REMOVE_}${this.extension.id}`, this.handleRemoveCookie)
 
-      MailboxesSessionManager.on('session-managed', this._handleSessionManaged)
       this._getAllPartitions().forEach((partitionId) => {
-        const ses = session.fromPartition(partitionId)
-        this._changeListenerSessions.add(ses)
-        ses.cookies.on('changed', this._handleCookiesChanged)
+        this._handleSessionManaged(session.fromPartition(partitionId))
       })
+      if (scopes.has('tabs')) {
+        MailboxesSessionManager.on('session-managed', this._handleSessionManaged)
+      }
     }
   }
 
@@ -92,10 +69,17 @@ class CRExtensionCookies {
   * @return all the partitions that are currently relevant
   */
   _getAllPartitions () {
-    return [].concat(
-      [CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)],
-      //mailboxStore.getMailboxIds().map((mailboxId) => `persist:${mailboxId}`) ++_handleSessionManaged
-    )
+    const scopes = this.extension.manifest.waveboxCookieScopes
+    const partitions = []
+    if (scopes.has('background')) {
+      partitions.push(CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id))
+    }
+    if (scopes.has('tabs')) {
+      mailboxStore.getMailboxIds().forEach((mailboxId) => {
+        partitions.push(`persist:${mailboxId}`)
+      })
+    }
+    return partitions
   }
 
   /**
@@ -123,7 +107,6 @@ class CRExtensionCookies {
   * @param ses: the new session
   */
   _handleSessionManaged = (ses) => {
-    return
     if (this._changeListenerSessions.has(ses)) { return }
     this._changeListenerSessions.add(ses)
     ses.cookies.on('changed', this._handleCookiesChanged)
@@ -145,8 +128,6 @@ class CRExtensionCookies {
       }
     }
 
-    //TODO tabChangesToBackground
-
     this.backgroundPageSender(`${CRX_COOKIES_CHANGED_}${this.extension.id}`, {
       cause: ELECTRON_TO_CRX_COOKIE_CHANGE_CAUSE[cause],
       cookie: cookie,
@@ -165,7 +146,6 @@ class CRExtensionCookies {
   * @param responseCallback: executed on completion
   */
   handleGetCookie = (evt, [details], responseCallback) => {
-    //TODO getScope
     Promise.resolve()
       .then(() => ElectronCookiePromise.getFromPartitions(this._getAllPartitions(), { url: details.url, name: details.name }, true))
       .then((cookies) => {
@@ -173,20 +153,10 @@ class CRExtensionCookies {
           responseCallback(null, cookies[0] || null)
         } else {
           let target = null
-          //TODO getReducer
           cookies.forEach((cookie) => {
-            if (!target) {
+            if (!target || cookie.path.length > target.path.length) {
               target = cookie
-            } else {
-              if (cookie.expirationDate && target.expirationDate && cookie.expirationDate > target.expirationDate) {
-                target = cookie
-              } else if (cookie.path && target.path && cookie.path.length > target.path.length) {
-                target = cookie
-              }
             }
-            /*if (!target || cookie.path.length > target.path.length) {
-              target = cookie
-            }*/
           })
           responseCallback(null, target)
         }
@@ -200,29 +170,10 @@ class CRExtensionCookies {
   * @param responseCallback: executed on completion
   */
   handleGetAllCookies = (evt, [details], responseCallback) => {
-    //TODO getScope
     Promise.resolve()
       .then(() => ElectronCookiePromise.getFromPartitions(this._getAllPartitions(), details, true))
       .then((cookies) => {
-        const unique = new Map()
-        //TODO getReducer
-        cookies.forEach((cookie) => {
-          const id = `${cookie.domain}:${cookie.name}`
-          const target = unique.get(id)
-          if (!target) {
-            unique.set(id, cookie)
-          } else {
-            if (cookie.expirationDate && target.expirationDate && cookie.expirationDate > target.expirationDate) {
-              unique.set(id, cookie)
-            } else if (cookie.path && target.path && cookie.path.length > target.path.length) {
-              unique.set(id, cookie)
-            }
-          }
-        })
-        responseCallback(null, Array.from(unique.values()))
-
-
-        //responseCallback(null, cookies)
+        responseCallback(null, cookies)
       })
   }
 
@@ -233,8 +184,6 @@ class CRExtensionCookies {
   * @param responseCallback: executed on completion
   */
   handleSetCookie = (evt, [details], responseCallback) => {
-
-    //TODO setScope
     const partitionIds = this._getAllPartitions()
     const partialId = this._partiallyModifiedCookieId(details)
     this._partiallyModifiedCookies.push(partialId)
