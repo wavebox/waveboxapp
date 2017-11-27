@@ -1,31 +1,17 @@
 import {globalShortcut} from 'electron'
 import settingStore from 'stores/settingStore'
+import WaveboxTrayBehaviour from './WaveboxTrayBehaviour'
 
-class AppGlobalShortcuts {
-  /* ****************************************************************************/
-  // Selectors
-  /* ****************************************************************************/
+const privConfig = Symbol('privConfig')
 
-  /**
-  * Builds the selector index for the global shortcuts
-  * @param windowManager: the window manager instance the callbacks can call into
-  * @return the selectors map
-  */
-  static buildSelectors (windowManager) {
-    return {
-      toggle: () => {
-        windowManager.toggleMailboxWindowVisibilityFromTray()
-      }
-    }
-  }
-
+class WaveboxAppGlobalShortcuts {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
-  constructor (selectors) {
-    this._config = [
-      { selector: selectors.toggle, accelerator: '', acceleratorName: 'globalToggleApp' }
+  constructor () {
+    this[privConfig] = [
+      { selector: this._handleToggle, accelerator: '', acceleratorName: 'globalToggleApp' }
     ]
   }
 
@@ -42,7 +28,7 @@ class AppGlobalShortcuts {
   */
   unregister () {
     settingStore.removeListener('changed:accelerators', this.handleAcceleratorSettingsChanged)
-    this._config.forEach((config) => {
+    this[privConfig].forEach((config) => {
       if (config.accelerator) {
         try {
           globalShortcut.unregister(config.accelerator)
@@ -74,7 +60,7 @@ class AppGlobalShortcuts {
   * @return a dictionary of function to accelerator
   */
   updateGlobalAccelerators (accelerators) {
-    this._config.forEach((config) => {
+    this[privConfig].forEach((config) => {
       const accelerator = accelerators[config.acceleratorName]
       if (accelerator !== config.accelerator) {
         if (config.accelerator) {
@@ -92,6 +78,17 @@ class AppGlobalShortcuts {
       }
     })
   }
+
+  /* ****************************************************************************/
+  // Event handlers
+  /* ****************************************************************************/
+
+  /**
+  * Toggles the main mailboxes window in the same way the tray does
+  */
+  _handleToggle = () => {
+    WaveboxTrayBehaviour.toggleMailboxesWindow()
+  }
 }
 
-export default AppGlobalShortcuts
+export default WaveboxAppGlobalShortcuts

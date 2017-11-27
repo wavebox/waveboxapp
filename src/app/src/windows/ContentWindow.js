@@ -2,7 +2,6 @@ import WaveboxWindow from './WaveboxWindow'
 import { shell, ipcMain, app, webContents } from 'electron'
 import { evtMain } from 'AppEvents'
 import querystring from 'querystring'
-import appWindowManager from 'R/appWindowManager'
 import {
   WB_WINDOW_RELOAD_WEBVIEW,
   WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
@@ -224,7 +223,6 @@ class ContentWindow extends WaveboxWindow {
   handleOpenNewWindow = (evt, body) => {
     if (evt.sender === this.window.webContents) {
       const contentWindow = new ContentWindow(this.ownerId)
-      appWindowManager.addContentWindow(contentWindow)
       contentWindow.create(this.window, body.url, this.launchInfo.partition, this.launchInfo.windowPreferences, this.launchInfo.webPreferences)
     }
   }

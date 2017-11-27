@@ -1,6 +1,5 @@
 import { app, ipcMain, shell, BrowserWindow } from 'electron'
 import { evtMain } from 'AppEvents'
-import appWindowManager from 'R/appWindowManager'
 import ContentWindow from 'windows/ContentWindow'
 import ContentPopupWindow from 'windows/ContentPopupWindow'
 import url from 'url'
@@ -70,7 +69,6 @@ class MailboxesWindowBehaviour {
   handleOpenIPCWaveboxWindow = (evt, body) => {
     if (evt.sender.id === this.webContentsId) {
       const contentWindow = new ContentWindow(`${body.mailboxId}:${body.serviceType}`)
-      appWindowManager.addContentWindow(contentWindow)
 
       const window = BrowserWindow.fromWebContents(evt.sender)
       contentWindow.create(window, body.url, body.partition, body.windowPreferences, body.webPreferences)
@@ -269,7 +267,6 @@ class MailboxesWindowBehaviour {
   */
   openWindowWaveboxPopupContent (openingBrowserWindow, ownerId, targetUrl, options) {
     const contentWindow = new ContentPopupWindow(ownerId)
-    appWindowManager.addContentWindow(contentWindow)
     contentWindow.create(targetUrl, options)
     return contentWindow
   }
@@ -284,7 +281,6 @@ class MailboxesWindowBehaviour {
   */
   openWindowWaveboxContent (openingBrowserWindow, ownerId, targetUrl, options) {
     const contentWindow = new ContentWindow(ownerId)
-    appWindowManager.addContentWindow(contentWindow)
     contentWindow.create(openingBrowserWindow, targetUrl, ((options || {}).webPreferences || {}).partition, options)
     return contentWindow
   }

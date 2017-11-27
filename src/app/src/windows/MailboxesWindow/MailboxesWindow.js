@@ -55,13 +55,34 @@ const ALLOWED_URLS = [
 const MIN_WINDOW_WIDTH = 400
 const MIN_WINDOW_HEIGHT = 300
 
+let singletonAttached
 class MailboxesWindow extends WaveboxWindow {
+  /* ****************************************************************************/
+  // Class
+  /* ****************************************************************************/
+
+  /**
+  * @return true if the mailboxes window is attached, false otherwise
+  */
+  static isAttached () { return !!singletonAttached }
+
+  /**
+  * @return the attached mailboxes window
+  */
+  static getAttached () { return singletonAttached }
+
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
   constructor () {
+    if (singletonAttached) {
+      throw new Error('Mailboxes window already attached')
+    }
+
     super('mailbox_window_state')
+    singletonAttached = this
+
     this.authGoogle = new AuthGoogle()
     this.authTrello = new AuthTrello()
     this.authSlack = new AuthSlack()
@@ -161,8 +182,11 @@ class MailboxesWindow extends WaveboxWindow {
   destroy (evt) {
     this.tabManager.destroy()
     clearTimeout(this.gracefulReloadTimeout)
+
     electron.ipcMain.removeListener(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)
     electron.ipcMain.removeListener(WBECRX_RELOAD_OWNER, this.handleCRXReloadOwner)
+
+    singletonAttached = undefined
     super.destroy(evt)
   }
 

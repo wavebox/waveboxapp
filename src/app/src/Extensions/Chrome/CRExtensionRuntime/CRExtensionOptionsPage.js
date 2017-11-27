@@ -4,7 +4,6 @@ import {
   CR_EXTENSION_BG_PARTITION_PREFIX
 } from 'shared/extensionApis'
 import ExtensionOptionsWindow from 'windows/ExtensionOptionsWindow'
-import appWindowManager from 'R/appWindowManager'
 import Resolver from 'Runtime/Resolver'
 
 class CRExtensionOptionsPage {
@@ -57,7 +56,6 @@ class CRExtensionOptionsPage {
     }
 
     this._optionsWindow = new ExtensionOptionsWindow()
-    appWindowManager.addContentWindow(this._optionsWindow)
     this._optionsWindow.create(targetUrl, options)
 
     // Bind event listeners

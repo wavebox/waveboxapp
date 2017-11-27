@@ -2,8 +2,9 @@ import { ipcMain, webContents, app, shell } from 'electron'
 import fs from 'fs-extra'
 import path from 'path'
 import mkdirp from 'mkdirp'
-import WaveboxWindow from '../windows/WaveboxWindow'
-import settingStore from '../stores/settingStore'
+import WaveboxWindow from 'windows/WaveboxWindow'
+import MonitorWindow from 'windows/MonitorWindow'
+import settingStore from 'stores/settingStore'
 import {
   WB_METRICS_OPEN_MONITOR,
   WB_METRICS_OPEN_LOG,
@@ -12,7 +13,6 @@ import {
 import { METRICS_LOG_WRITE_INTERVAL } from 'shared/constants'
 import { SEGMENTS } from 'shared/Models/Settings/SettingsIdent'
 import RuntimePaths from 'Runtime/RuntimePaths'
-import appWindowManager from '../appWindowManager'
 
 const LOG_TAG = '[METRICS]'
 mkdirp.sync(path.dirname(RuntimePaths.METRICS_LOG_PATH))
@@ -66,7 +66,13 @@ class MetricsService {
   * Opens the monitor window
   */
   openMonitorWindow = () => {
-    appWindowManager.openMonitorWindow()
+    const existingWindow = WaveboxWindow.getOfType(MonitorWindow)
+    if (existingWindow) {
+      existingWindow.focus()
+    } else {
+      const newWindow = new MonitorWindow()
+      newWindow.create()
+    }
   }
 
   /* ****************************************************************************/

@@ -5,7 +5,8 @@ import path from 'path'
 import os from 'os'
 import settingStore from 'stores/settingStore'
 import unusedFilename from 'unused-filename'
-import appWindowManager from 'appWindowManager'
+import WaveboxWindow from 'windows/WaveboxWindow'
+import MailboxesWindow from 'windows/MailboxesWindow'
 
 const MAX_PLATFORM_START_TIME = 1000 * 30
 
@@ -24,6 +25,12 @@ class DownloadManager {
       queue: new Map()
     }
   }
+
+  /* ****************************************************************************/
+  // Utils
+  /* ****************************************************************************/
+
+  _getMailboxesWindow () { return WaveboxWindow.getOfType(MailboxesWindow) }
 
   /* ****************************************************************************/
   // User downloads
@@ -130,12 +137,15 @@ class DownloadManager {
       }
     }, { received: 0, total: 0 })
 
-    if (isNaN(all.received) || isNaN(all.total)) {
-      appWindowManager.mailboxesWindow.setProgressBar(-1)
-    } else if (all.received === 0 && all.total === 0) {
-      appWindowManager.mailboxesWindow.setProgressBar(-1)
-    } else {
-      appWindowManager.mailboxesWindow.setProgressBar(all.received / all.total)
+    const mainWindow = this._getMailboxesWindow()
+    if (mainWindow) {
+      if (isNaN(all.received) || isNaN(all.total)) {
+        mainWindow.setProgressBar(-1)
+      } else if (all.received === 0 && all.total === 0) {
+        mainWindow.setProgressBar(-1)
+      } else {
+        mainWindow.setProgressBar(all.received / all.total)
+      }
     }
   }
 
@@ -165,7 +175,10 @@ class DownloadManager {
     this._updateDownloadProgressBar()
     if (savePath) {
       const saveName = path.basename(savePath)
-      appWindowManager.mailboxesWindow.downloadCompleted(savePath, saveName)
+      const mainWindow = this._getMailboxesWindow()
+      if (mainWindow) {
+        mainWindow.downloadCompleted(savePath, saveName)
+      }
 
       if (process.platform === 'darwin') {
         app.dock.downloadFinished(savePath)
