@@ -1,4 +1,4 @@
-import { webContents } from 'electron'
+import { webContents, session } from 'electron'
 import fs from 'fs-extra'
 import url from 'url'
 import {
@@ -46,6 +46,7 @@ class CRExtensionBackgroundPage {
   get isRunning () { return this._webContents && !this._webContents.isDestroyed() }
   get webContents () { return this._webContents }
   get webContentsId () { return this._webContents.id }
+  get partitionId () { return this.constructor.partitionIdForExtension(this.extension.id) }
   get html () { return this._html }
   get name () { return this._name }
 
@@ -84,7 +85,7 @@ class CRExtensionBackgroundPage {
       this._html = Buffer.from(this.extension.manifest.background.generateHtmlPageForScriptset())
     }
 
-    const partitionId = this.constructor.partitionIdForExtension(this.extension.id)
+    const partitionId = this.partitionId
     this._webContents = webContents.create({
       partition: partitionId,
       isBackgroundPage: true,
@@ -156,6 +157,7 @@ class CRExtensionBackgroundPage {
   * @param responder: function to call with updated headers
   */
   _handleAllUrlHeadersReceived = (details, responder) => {
+    //return responder({})
     if (details.resourceType === 'xhr') {
       const purl = url.parse(details.url)
       if (CRExtensionMatchPatterns.matchUrls(purl.protocol, purl.host, purl.pathname, Array.from(this.extension.manifest.permissions))) {
@@ -178,7 +180,7 @@ class CRExtensionBackgroundPage {
   }
 
   /* ****************************************************************************/
-  // Dev
+  // Dev & data management
   /* ****************************************************************************/
 
   /**
@@ -187,6 +189,36 @@ class CRExtensionBackgroundPage {
   openDevTools () {
     if (!this._webContents) { return }
     this._webContents.openDevTools()
+  }
+
+  /**
+  * Clears the current browser session
+  * @param reloadOnComplete=true: set to false not to reload on clearing the session
+  * @return promise
+  */
+  clearBrowserSession (reloadOnComplete = true) {
+    if (!this._webContents) { return }
+
+    const ses = session.fromPartition(this.partitionId)
+    return Promise.resolve()
+      .then(() => {
+        return new Promise((resolve) => { ses.clearStorageData(resolve) })
+      })
+      .then(() => {
+        return new Promise((resolve) => { ses.clearCache(resolve) })
+      })
+      .then(() => {
+        if (reloadOnComplete) { this.reload() }
+        return Promise.resolve()
+      })
+  }
+
+  /**
+  * Reloads the background page
+  */
+  reload () {
+    if (!this._webContents) { return }
+    this._webContents.reload()
   }
 }
 

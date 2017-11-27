@@ -27,6 +27,7 @@ class CRExtensionWebRequestListener {
   }
 
   destroy () {
+    MailboxesSessionManager.removeListener('session-managed', this._handleSessionManaged)
     Array.from(this.listeners.keys()).forEach((id) => {
       this._handleRemoveListener(null, id)
     })

@@ -151,7 +151,8 @@ class MailboxesWindowBehaviour {
     }
 
     if (openMode === WINDOW_OPEN_MODES.POPUP_CONTENT) {
-      evt.newGuest = this.openWindowWaveboxPopupContent(openingBrowserWindow, ownerId, targetUrl, options).window
+      //evt.newGuest = this.openWindowWaveboxPopupContent(openingBrowserWindow, ownerId, targetUrl, options).window
+      this.openWindowWaveboxPopupContent(openingBrowserWindow, ownerId, targetUrl, options)
     } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL) {
       this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
     } else if (openMode === WINDOW_OPEN_MODES.DEFAULT || openMode === WINDOW_OPEN_MODES.DEFAULT_IMPORTANT) {

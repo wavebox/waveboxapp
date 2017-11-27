@@ -67,8 +67,8 @@ class Runtime {
 
     // Handlers
     DispatchManager.registerHandler(`${CRX_RUNTIME_ONMESSAGE_}${extensionId}`, this._handleRuntimeOnMessage.bind(this))
-    ipcRenderer.on(`${CRX_PORT_CONNECTED_}${this[privExtensionId]}`, (evt, tabInfo, portId, connectInfo) => {
-      const port = new Port(this[privExtensionId], portId, new Tab(tabInfo), connectInfo.name)
+    ipcRenderer.on(`${CRX_PORT_CONNECTED_}${this[privExtensionId]}`, (evt, portId, connectedParty, connectInfo) => {
+      const port = new Port(this[privExtensionId], portId, connectedParty, connectInfo.name)
       this.onConnect.emit(port)
     })
 
@@ -170,8 +170,8 @@ class Runtime {
       { pattern: ['object'], out: [this[privExtensionId], ArgParser.MATCH_ARG_0] },
       { pattern: [], out: [this[privExtensionId], {}] }
     ])
-    const {tabId, portId} = ipcRenderer.sendSync(CRX_PORT_CONNECT_SYNC, targetExtensionId, connectInfo)
-    return new Port(this[privExtensionId], portId, new Tab(tabId), connectInfo.name)
+    const {portId, connectedParty} = ipcRenderer.sendSync(CRX_PORT_CONNECT_SYNC, targetExtensionId, connectInfo)
+    return new Port(this[privExtensionId], portId, connectedParty, connectInfo.name)
   }
 
   /* **************************************************************************/

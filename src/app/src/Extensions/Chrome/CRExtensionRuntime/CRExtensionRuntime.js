@@ -43,6 +43,7 @@ class CRExtensionRuntime {
     // Binding
     this.tabs.backgroundPageSender = this.backgroundPage.sendToWebContents
     this.windows.backgroundPageSender = this.backgroundPage.sendToWebContents
+    this.cookies.backgroundPageSender = this.backgroundPage.sendToWebContents
 
     // Runtime API
     ipcMain.on(`${CRX_RUNTIME_CONTENTSCRIPT_CONNECT_}${this.extension.id}`, this.handleContentScriptRuntimeConnect)

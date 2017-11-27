@@ -72,6 +72,7 @@ module.exports = function (env) {
         AppUpdater: path.resolve(path.join(__dirname, 'src/AppUpdater')),
         AuthProviders: path.resolve(path.join(__dirname, 'src/AuthProviders')),
         DownloadManager: path.resolve(path.join(__dirname), 'src/DownloadManager'),
+        ElectronTools: path.resolve(path.join(__dirname, 'src/ElectronTools')),
         Extensions: path.resolve(path.join(__dirname, 'src/Extensions')),
         Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
         SessionManager: path.resolve(path.join(__dirname, 'src/SessionManager')),

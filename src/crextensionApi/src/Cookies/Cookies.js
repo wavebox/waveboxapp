@@ -1,11 +1,13 @@
-import EventUnsupported from 'Core/EventUnsupported'
+import Event from 'Core/Event'
 import DispatchManager from 'Core/DispatchManager'
 import Cookie from './Cookie'
+import { ipcRenderer } from 'electronCrx'
 import {
   CRX_COOKIES_GET_,
   CRX_COOKIES_GET_ALL_,
   CRX_COOKIES_SET_,
-  CRX_COOKIES_REMOVE_
+  CRX_COOKIES_REMOVE_,
+  CRX_COOKIES_CHANGED_
 } from 'shared/crExtensionIpcEvents'
 import { protectedHandleError } from 'Runtime/ProtectedRuntimeSymbols'
 
@@ -26,7 +28,17 @@ class Cookies {
     this[privExtensionId] = extensionId
     this[privRuntime] = runtime
 
-    this.onChanged = new EventUnsupported('chrome.cookies.onChanged')
+    this.onChanged = new Event()
+
+    // Handlers
+    ipcRenderer.on(`${CRX_COOKIES_CHANGED_}${this[privExtensionId]}`, (evt, rawChangeInfo) => {
+      const changeInfo = {
+        cause: rawChangeInfo.cause,
+        cookie: new Cookie(rawChangeInfo.cookie),
+        removed: rawChangeInfo.removed
+      }
+      this.onChanged.emit(changeInfo)
+    })
 
     Object.freeze(this)
   }
@@ -43,6 +55,7 @@ class Cookies {
       `${CRX_COOKIES_GET_}${this[privExtensionId]}`,
       [details],
       (evt, err, response) => {
+        console.log("chrome.cookies.get",details, response)
         if (callback) {
           callback(response ? new Cookie(response) : null)
         }
@@ -58,6 +71,7 @@ class Cookies {
       `${CRX_COOKIES_GET_ALL_}${this[privExtensionId]}`,
       [details],
       (evt, err, response) => {
+        console.log("chrome.cookies.getAll",details,response)
         if (callback) {
           const cookies = response.map((raw) => {
             return new Cookie(raw)
@@ -76,6 +90,7 @@ class Cookies {
       `${CRX_COOKIES_SET_}${this[privExtensionId]}`,
       [details],
       (evt, err, response) => {
+        console.log("chrome.cookies.set", details, response)
         if (err) {
           this[privRuntime][protectedHandleError](err)
         }
@@ -94,6 +109,7 @@ class Cookies {
       `${CRX_COOKIES_REMOVE_}${this[privExtensionId]}`,
       [details],
       (evt, err, response) => {
+        console.log("chrome.cookies.remove",details,response)
         if (callback) {
           callback(response)
         }

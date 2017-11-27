@@ -27,7 +27,26 @@ class ContentPopupWindow extends WaveboxWindow {
   create (url, safeBrowserWindowOptions = {}) {
     // The browser settings don't need to be sanitized as they should be in the same thread
     // and come from the parent webContents
-    super.create(url, Object.assign({}, safeBrowserWindowOptions, { show: true }))
+    //super.create(url, Object.assign({}, safeBrowserWindowOptions, { show: true }))
+    const opts=Object.assign({}, safeBrowserWindowOptions, { show: true })
+    opts.webPreferences.partition='persist:__chrome_extension:kbfnbcaeplbcioakkpcpgfkobkghlhen'
+    delete opts.webPreferences.openerId
+    delete opts.webPreferences.guestInstanceId
+    delete opts.webContents
+    delete opts.webPreferences.preloadURL
+    //ALSO disable CORS RW on background session; Needs webContentsId from 1.8.* to get the url to check for bgpage
+    //ALSO takes a while to register... not sure why? Maybe the close event doesn't trigger from window.close()
+    console.log(opts,url)
+    super.create(url,opts)
+    this.window.webContents.openDevTools()
+    this.window.webContents.on('new-window', (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
+      evt.preventDefault()
+      console.log("here")
+      const contentWindow = new ContentPopupWindow()
+      //appWindowManager.addContentWindow(contentWindow)
+      contentWindow.create(targetUrl, options)
+      //evt.newGuest = contentWindow.window
+    })
 
     // Setup for tab lifecycle
     const webContentsId = this.window.webContents.id

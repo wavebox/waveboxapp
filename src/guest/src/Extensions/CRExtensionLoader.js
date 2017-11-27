@@ -6,7 +6,6 @@ const GuestHost = require('../GuestHost')
 const CRExtensionPopoutPostMessageListener = require('./CRExtensionPopoutPostMessageListener')
 const DispatchManager = require('../DispatchManager')
 const { RENDER_PROCESS_PREFERENCE_TYPES } = req.shared('processPreferences')
-const fs = require('fs')
 
 class CRExtensionLoader {
   /* **************************************************************************/
@@ -233,9 +232,7 @@ class CRExtensionLoader {
   _handleCRXExecuteScript (evt, [extensionId, details, format, code], responseCallback) {
     if (format === '.js') {
       const contextId = this._getOrCreateContextForScript(extensionId)
-      console.log("HERE")
       webFrame.executeContextScript(contextId, code, (res) => {
-        console.log("BACK", res)
         responseCallback(null, [res])
       })
     } else if (format === '.css') {

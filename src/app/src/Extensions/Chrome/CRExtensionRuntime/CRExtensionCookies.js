@@ -5,9 +5,46 @@ import {
   CRX_COOKIES_GET_,
   CRX_COOKIES_GET_ALL_,
   CRX_COOKIES_SET_,
-  CRX_COOKIES_REMOVE_
+  CRX_COOKIES_REMOVE_,
+  CRX_COOKIES_CHANGED_
 } from 'shared/crExtensionIpcEvents'
 import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
+import { MailboxesSessionManager } from 'SessionManager'
+import { ElectronCookiePromise } from 'ElectronTools'
+
+const ELECTRON_TO_CRX_COOKIE_CHANGE_CAUSE = {
+  'explicit': 'explicit',
+  'overwrite': 'overwrite',
+  'expired': 'expired',
+  'evicted': 'evicted',
+  'expired-overwrite': 'expired_overwrite'
+}
+
+
+// Option 1: munge the cookie engine
+/*
+cookie_listen_scope: "background"|"tab"|"all"
+cookie_get_scope: "background"|"tab"|"all"
+cookie_set_scope: "background"|"tab"|"all"
+cooke_modifiers: [
+  domains: [".grammarly.com", "www.grammarly.com", "grammarly.com"],
+  getReducer: "expiry:newest"|"path:longest",
+  tabChangesToBackground: true
+]
+*/
+
+// Option 2: Open some pages in extension context
+/*
+Something goes wrong with the window opener and our wrapup I think...
+*/
+
+
+
+
+
+
+
+
 
 class CRExtensionCookies {
   /* ****************************************************************************/
@@ -16,12 +53,22 @@ class CRExtensionCookies {
 
   constructor (extension) {
     this.extension = extension
+    this.backgroundPageSender = null
+    this._changeListenerSessions = new Set()
+    this._partiallyModifiedCookies = []
 
-    if (this.extension.manifest.permissions.has('cookies')) {
+    if (this.extension.manifest.hasBackground && this.extension.manifest.permissions.has('cookies')) {
       CRDispatchManager.registerHandler(`${CRX_COOKIES_GET_}${this.extension.id}`, this.handleGetCookie)
       CRDispatchManager.registerHandler(`${CRX_COOKIES_GET_ALL_}${this.extension.id}`, this.handleGetAllCookies)
       CRDispatchManager.registerHandler(`${CRX_COOKIES_SET_}${this.extension.id}`, this.handleSetCookie)
       CRDispatchManager.registerHandler(`${CRX_COOKIES_REMOVE_}${this.extension.id}`, this.handleRemoveCookie)
+
+      MailboxesSessionManager.on('session-managed', this._handleSessionManaged)
+      this._getAllPartitions().forEach((partitionId) => {
+        const ses = session.fromPartition(partitionId)
+        this._changeListenerSessions.add(ses)
+        ses.cookies.on('changed', this._handleCookiesChanged)
+      })
     }
   }
 
@@ -30,158 +77,11 @@ class CRExtensionCookies {
     CRDispatchManager.unregisterHandler(`${CRX_COOKIES_GET_ALL_}${this.extension.id}`, this.handleGetAllCookies)
     CRDispatchManager.unregisterHandler(`${CRX_COOKIES_SET_}${this.extension.id}`, this.handleSetCookie)
     CRDispatchManager.unregisterHandler(`${CRX_COOKIES_REMOVE_}${this.extension.id}`, this.handleRemoveCookie)
-  }
-
-  /* ****************************************************************************/
-  // Utils: Getters
-  /* ****************************************************************************/
-
-  /**
-  * Gets the cookies as a promise
-  * @param partitionId: the id of the partition
-  * @param filter: the filter to apply when getting
-  * @param suppressError=false: set to true to return an empty array rather than throwing
-  * @return promise
-  */
-  _promiseGetCookies (partitionId, filter, suppressError = false) {
-    return new Promise((resolve, reject) => {
-      session.fromPartition(partitionId).cookies.get(filter, (err, cookies) => {
-        if (err) {
-          if (suppressError) {
-            resolve([])
-          } else {
-            reject(err)
-          }
-        } else {
-          resolve(cookies)
-        }
-      })
+    MailboxesSessionManager.removeListener('session-managed', this._handleSessionManaged)
+    Array.from(this._changeListenerSessions).forEach((ses) => {
+      ses.cookies.removeListener('changed', this._handleCookiesChanged)
     })
-  }
-
-  /**
-  * Gets the cookies as a promise from multiple partitions
-  * @param partitionIds: the ids of the partition
-  * @param filter: the filter to apply when getting
-  * @param suppressError=false: set to true to return an empty array rather than throwing
-  * @return promise
-  */
-  _promiseGetCookiesFromPartitions (partitionIds, filter, suppressError = false) {
-    let allCookies = []
-    return Promise.resolve()
-      .then(() => {
-        return partitionIds.reduce((acc, partition) => {
-          return acc
-            .then(() => this._promiseGetCookies(partition, filter, suppressError))
-            .then((cookies) => {
-              allCookies = allCookies.concat(cookies)
-              return Promise.resolve()
-            })
-        }, Promise.resolve())
-      })
-      .then(() => {
-        return Promise.resolve(allCookies)
-      })
-  }
-
-  /* ****************************************************************************/
-  // Utils: Setters
-  /* ****************************************************************************/
-
-  /**
-  * Sets a cookie as a promise
-  * @param partitionId: the id of the partition
-  * @param details: the details of the cookie
-  * @return promise
-  */
-  _promiseSetCookie (partitionId, details) {
-    return new Promise((resolve, reject) => {
-      session.fromPartition(partitionId).cookies.set(details, (err) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve()
-        }
-      })
-    })
-  }
-
-  /**
-  * Sets a cookie as a promise
-  * @param partitionIds: the array of partition ids to set the cookie on
-  * @param details: the details of the cookie
-  * @return promise
-  */
-  _promiseSetCookiesForPartitions (partitionIds, details) {
-    let lastError = null
-    return Promise.resolve()
-      .then(() => {
-        return partitionIds.reduce((acc, partition) => {
-          return acc
-            .then(() => this._promiseSetCookie(partition, details))
-            .catch((err) => {
-              lastError = err
-              return Promise.resolve()
-            })
-        }, Promise.resolve())
-      })
-      .then(() => {
-        if (lastError) {
-          return Promise.reject(lastError)
-        } else {
-          return Promise.resolve()
-        }
-      })
-  }
-
-  /* ****************************************************************************/
-  // Utils: Removal
-  /* ****************************************************************************/
-
-  /**
-  * Removes a cookie as a promise
-  * @param partitionId: the id of the partition
-  * @param details: the details of the cookie
-  * @return promise
-  */
-  _promiseRemoveCookie (partitionId, url, name) {
-    return new Promise((resolve, reject) => {
-      session.fromPartition(partitionId).cookies.remove(url, name, (err) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve()
-        }
-      })
-    })
-  }
-
-  /**
-  * Removes a cookie as a promise
-  * @param partitionIds: the array of partition ids to set the cookie on
-  * @param details: the details of the cookie
-  * @return promise
-  */
-  _promiseRemoveCookieForPartitions (partitionIds, url, name) {
-    let lastError = null
-    return Promise.resolve()
-      .then(() => {
-        return partitionIds.reduce((acc, partition) => {
-          return acc
-            .then(() => this._promiseRemoveCookie(partition, url, name))
-            .catch((err) => {
-              lastError = err
-              return Promise.resolve()
-            })
-        }, Promise.resolve())
-      })
-      .then(() => {
-        if (lastError) {
-          return Promise.reject(lastError)
-        } else {
-          return Promise.resolve()
-        }
-      })
+    this._changeListenerSessions.clear()
   }
 
   /* ****************************************************************************/
@@ -194,12 +94,68 @@ class CRExtensionCookies {
   _getAllPartitions () {
     return [].concat(
       [CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)],
-      mailboxStore.getMailboxIds().map((mailboxId) => `persist:${mailboxId}`)
+      //mailboxStore.getMailboxIds().map((mailboxId) => `persist:${mailboxId}`) ++_handleSessionManaged
     )
   }
 
+  /**
+  * @return the session for the background page
+  */
+  _getBackgroundPageSession () {
+    const partitionId = CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
+    return session.fromPartition(partitionId)
+  }
+
+  /**
+  * Generates an id for a partially set cookie
+  * @param detailsOrCookie: the details or actual cookie
+  */
+  _partiallyModifiedCookieId (detailsOrCookie) {
+    return `${detailsOrCookie.name}:${detailsOrCookie.value}`
+  }
+
   /* ****************************************************************************/
-  // Handlers
+  // Handlers: Session
+  /* ****************************************************************************/
+
+  /**
+  * Handles session being created by binding all current listeners into it
+  * @param ses: the new session
+  */
+  _handleSessionManaged = (ses) => {
+    return
+    if (this._changeListenerSessions.has(ses)) { return }
+    this._changeListenerSessions.add(ses)
+    ses.cookies.on('changed', this._handleCookiesChanged)
+  }
+
+  /**
+  * Handles the cookies changing
+  * @param evt: the event that fired
+  * @param cookie: the cookie that was changed
+  * @param cause: the cause of the change
+  * @param removed: true if the cookie was removed
+  */
+  _handleCookiesChanged = (evt, cookie, cause, removed) => {
+    if (!this.backgroundPageSender) { return }
+    if (evt.sender === this._getBackgroundPageSession().cookies) {
+      const partialId = this._partiallyModifiedCookieId(cookie)
+      if (this._partiallyModifiedCookies.find((id) => id === partialId)) {
+        return
+      }
+    }
+
+    //TODO tabChangesToBackground
+
+    this.backgroundPageSender(`${CRX_COOKIES_CHANGED_}${this.extension.id}`, {
+      cause: ELECTRON_TO_CRX_COOKIE_CHANGE_CAUSE[cause],
+      cookie: cookie,
+      removed: removed
+    })
+  }
+
+  /* ****************************************************************************/
+  // Handlers: Api
   /* ****************************************************************************/
 
   /**
@@ -209,17 +165,28 @@ class CRExtensionCookies {
   * @param responseCallback: executed on completion
   */
   handleGetCookie = (evt, [details], responseCallback) => {
+    //TODO getScope
     Promise.resolve()
-      .then(() => this._promiseGetCookiesFromPartitions(this._getAllPartitions(), { url: details.url, name: details.name }, true))
+      .then(() => ElectronCookiePromise.getFromPartitions(this._getAllPartitions(), { url: details.url, name: details.name }, true))
       .then((cookies) => {
         if (cookies.length <= 1) {
           responseCallback(null, cookies[0] || null)
         } else {
           let target = null
+          //TODO getReducer
           cookies.forEach((cookie) => {
-            if (!target || cookie.path.length > target.path.length) {
+            if (!target) {
               target = cookie
+            } else {
+              if (cookie.expirationDate && target.expirationDate && cookie.expirationDate > target.expirationDate) {
+                target = cookie
+              } else if (cookie.path && target.path && cookie.path.length > target.path.length) {
+                target = cookie
+              }
             }
+            /*if (!target || cookie.path.length > target.path.length) {
+              target = cookie
+            }*/
           })
           responseCallback(null, target)
         }
@@ -233,10 +200,29 @@ class CRExtensionCookies {
   * @param responseCallback: executed on completion
   */
   handleGetAllCookies = (evt, [details], responseCallback) => {
+    //TODO getScope
     Promise.resolve()
-      .then(() => this._promiseGetCookiesFromPartitions(this._getAllPartitions(), details, true))
+      .then(() => ElectronCookiePromise.getFromPartitions(this._getAllPartitions(), details, true))
       .then((cookies) => {
-        responseCallback(null, cookies)
+        const unique = new Map()
+        //TODO getReducer
+        cookies.forEach((cookie) => {
+          const id = `${cookie.domain}:${cookie.name}`
+          const target = unique.get(id)
+          if (!target) {
+            unique.set(id, cookie)
+          } else {
+            if (cookie.expirationDate && target.expirationDate && cookie.expirationDate > target.expirationDate) {
+              unique.set(id, cookie)
+            } else if (cookie.path && target.path && cookie.path.length > target.path.length) {
+              unique.set(id, cookie)
+            }
+          }
+        })
+        responseCallback(null, Array.from(unique.values()))
+
+
+        //responseCallback(null, cookies)
       })
   }
 
@@ -247,14 +233,20 @@ class CRExtensionCookies {
   * @param responseCallback: executed on completion
   */
   handleSetCookie = (evt, [details], responseCallback) => {
+
+    //TODO setScope
     const partitionIds = this._getAllPartitions()
+    const partialId = this._partiallyModifiedCookieId(details)
+    this._partiallyModifiedCookies.push(partialId)
     Promise.resolve()
-      .then(() => this._promiseSetCookiesForPartitions(partitionIds, details))
-      .then(() => this._promiseGetCookiesFromPartitions(partitionIds, details))
+      .then(() => ElectronCookiePromise.setForPartitions(partitionIds, details))
+      .then(() => ElectronCookiePromise.getFromPartitions(partitionIds, details))
       .then((cookies) => {
+        this._partiallyModifiedCookies = this._partiallyModifiedCookies.filter((id) => id !== partialId)
         responseCallback(null, cookies[0] || null)
       })
       .catch((err) => {
+        this._partiallyModifiedCookies = this._partiallyModifiedCookies.filter((id) => id !== partialId)
         responseCallback(err, null)
       })
   }
@@ -269,12 +261,12 @@ class CRExtensionCookies {
     const partitionIds = this._getAllPartitions()
     let removableCookie
     Promise.resolve()
-      .then(() => this._promiseGetCookiesFromPartitions(partitionIds, { url: details.url, name: details.name }, true))
+      .then(() => ElectronCookiePromise.getFromPartitions(partitionIds, { url: details.url, name: details.name }, true))
       .then((cookies) => {
         removableCookie = cookies[0]
         return Promise.resolve()
       })
-      .then(() => this._promiseRemoveCookieForPartitions(partitionIds, details.url, details.name))
+      .then(() => ElectronCookiePromise.removeForPartitions(partitionIds, details.url, details.name))
       .then(() => {
         responseCallback(null, removableCookie ? {
           url: removableCookie.url,

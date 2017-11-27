@@ -51,7 +51,7 @@
   const { HostedExtensionProvider, HostedExtensionSessionManager } = require('Extensions/Hosted')
   const { BrowserWindow, protocol } = require('electron')
   const { CRExtensionManager } = require('Extensions/Chrome')
-  const { SessionManager, MailboxesSessionManager } = require('./SessionManager')
+  const { SessionManager, MailboxesSessionManager, ExtensionSessionManager } = require('./SessionManager')
   const ServicesManager = require('./Services').default
 
   /* ****************************************************************************/
@@ -60,6 +60,7 @@
 
   SessionManager.start()
   MailboxesSessionManager.start()
+  ExtensionSessionManager.start()
   ServicesManager.load()
 
   /* ****************************************************************************/

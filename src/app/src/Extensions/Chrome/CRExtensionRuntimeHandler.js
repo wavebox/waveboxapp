@@ -4,6 +4,7 @@ import url from 'url'
 import CRDispatchManager from './CRDispatchManager'
 import CRExtensionRuntime from './CRExtensionRuntime'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
+import {EventEmitter} from 'events'
 import {
   CR_EXTENSION_PROTOCOL
 } from 'shared/extensionApis'
@@ -20,18 +21,20 @@ import {
   WBECRX_GET_EXTENSION_RUNTIME_DATA,
   WBECRX_GET_EXTENSION_RUNTIME_CONTEXT_MENU_DATA,
   WBECRX_LAUNCH_OPTIONS,
-  WBECRX_INSPECT_BACKGROUND
+  WBECRX_INSPECT_BACKGROUND,
+  WBECRX_CLEAR_ALL_BROWSER_SESSIONS
 } from 'shared/ipcEvents'
 import { CSPParser, CSPBuilder } from './CSP'
 import pathTool from 'shared/pathTool'
 import CRExtensionTab from './CRExtensionRuntime/CRExtensionTab'
 
-class CRExtensionRuntimeHandler {
+class CRExtensionRuntimeHandler extends EventEmitter {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
   constructor () {
+    super()
     this.runtimes = new Map()
     this.nextPortId = 0
 
@@ -43,6 +46,20 @@ class CRExtensionRuntimeHandler {
     ipcMain.on(WBECRX_INSPECT_BACKGROUND, this._handleInspectBackground)
     ipcMain.on(CRX_RUNTIME_HAS_RESPONDER, this._handleHasRuntimeResponder)
     ipcMain.on(CRX_PORT_CONNECT_SYNC, this._handlePortConnect)
+    ipcMain.on(WBECRX_CLEAR_ALL_BROWSER_SESSIONS, this._handleClearAllBrowserSessions)
+  }
+
+  /* ****************************************************************************/
+  // Properties
+  /* ****************************************************************************/
+
+  get allRuntimes () { return Array.from(this.runtimes.values()) }
+  get inUsePartitions () {
+    return this.allRuntimes
+      .map((runtime) => {
+        return runtime.extension.manifest.manifest.hasBackground ? runtime.backgroundPage.partitionId : undefined
+      })
+      .filter((p) => !!p)
   }
 
   /* ****************************************************************************/
@@ -56,6 +73,7 @@ class CRExtensionRuntimeHandler {
   startExtension (extension) {
     if (this.runtimes.has(extension.id)) { return }
     this.runtimes.set(extension.id, new CRExtensionRuntime(extension))
+    this.emit('extension-started', extension.id, extension, this.runtimes.get(extension.id))
   }
 
   /**
@@ -78,6 +96,7 @@ class CRExtensionRuntimeHandler {
     if (!this.runtimes.has(extension.id)) { return }
     this.runtimes.get(extension.id).destroy()
     this.runtimes.delete(extension.id)
+    this.emit('extension-stopped', extension.id, extension)
   }
 
   /* ****************************************************************************/
@@ -202,23 +221,34 @@ class CRExtensionRuntimeHandler {
       evt.returnValue = null
       return
     }
-    const backgroundContents = runtime.backgroundPage.webContents
 
+    const backgroundContents = runtime.backgroundPage.webContents
     const portId = this.nextPortId++
     evt.returnValue = {
       portId: portId,
-      tabId: backgroundContents.id
+      connectedParty: {
+        tabId: backgroundContents.id
+      }
     }
 
     // Prepare for teardown
     evt.sender.once('render-view-deleted', () => {
-      if (backgroundContents.isDestroyed()) { return }
+      const backgroundContents = runtime.backgroundPage.webContents
+      if (!backgroundContents || backgroundContents.isDestroyed()) { return }
       backgroundContents.sendToAll(`${CRX_PORT_DISCONNECTED_}${portId}`)
     })
 
     // Emit the connect event
-    const tabInfo = CRExtensionTab.dataFromWebContents(runtime.extension, evt.sender)
-    backgroundContents.sendToAll(`${CRX_PORT_CONNECTED_}${extensionId}`, tabInfo, portId, connectInfo)
+    runtime.backgroundPage.webContents.sendToAll(
+      `${CRX_PORT_CONNECTED_}${extensionId}`,
+      portId,
+      {
+        tabId: evt.sender.id,
+        tab: CRExtensionTab.dataFromWebContents(runtime.extension, evt.sender),
+        url: evt.sender.getURL()
+      },
+      connectInfo
+    )
   }
 
   /* ****************************************************************************/
@@ -275,6 +305,19 @@ class CRExtensionRuntimeHandler {
     const runtime = this.runtimes.get(extensionId)
     if (!runtime) { return }
     runtime.backgroundPage.openDevTools()
+  }
+
+  /* ****************************************************************************/
+  // Data Manaement
+  /* ****************************************************************************/
+
+  /**
+  * Clears all the browser sessions
+  */
+  _handleClearAllBrowserSessions = () => {
+    Array.from(this.runtimes.values()).forEach((runtime) => {
+      runtime.backgroundPage.clearBrowserSession()
+    })
   }
 
   /* ****************************************************************************/
