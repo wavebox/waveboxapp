@@ -116,7 +116,9 @@ class MailboxesWindow extends WaveboxWindow {
         plugins: true
       }
     })
-    this.window.once('ready-to-show', () => this.window.show())
+    this.window.once('ready-to-show', () => {
+      if (!hidden) { this.window.show() }
+    })
     this.tabManager = new MailboxesWindowTabManager(this.window.webContents.id)
     this.behaviour = new MailboxesWindowBehaviour(this.window.webContents.id, this.tabManager)
 
