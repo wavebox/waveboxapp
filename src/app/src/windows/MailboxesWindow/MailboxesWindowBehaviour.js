@@ -167,23 +167,41 @@ class MailboxesWindowBehaviour {
     }
 
     // Action the window open
+    let openedWindow
     if (openMode === WINDOW_OPEN_MODES.POPUP_CONTENT) {
-      evt.newGuest = this.openWindowWaveboxPopupContent(openingBrowserWindow, ownerId, targetUrl, options).window
+      openedWindow = this.openWindowWaveboxPopupContent(openingBrowserWindow, ownerId, targetUrl, options)
+      evt.newGuest = openedWindow.window
     } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL) {
-      this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+      openedWindow = this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
     } else if (openMode === WINDOW_OPEN_MODES.DEFAULT || openMode === WINDOW_OPEN_MODES.DEFAULT_IMPORTANT) {
-      this.openWindowDefault(openingBrowserWindow, ownerId, mailbox, targetUrl, options, partitionOverride)
+      openedWindow = this.openWindowDefault(openingBrowserWindow, ownerId, mailbox, targetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL) {
-      this.openWindowExternal(openingBrowserWindow, provisionalTargetUrl, mailbox)
+      openedWindow = this.openWindowExternal(openingBrowserWindow, provisionalTargetUrl, mailbox)
     } else if (openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL || openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT) {
-      this.openWindowDefault(openingBrowserWindow, ownerId, mailbox, provisionalTargetUrl, options, partitionOverride)
+      openedWindow = this.openWindowDefault(openingBrowserWindow, ownerId, mailbox, provisionalTargetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.CONTENT) {
-      this.openWindowWaveboxContent(openingBrowserWindow, ownerId, targetUrl, options, partitionOverride)
+      openedWindow = this.openWindowWaveboxContent(openingBrowserWindow, ownerId, targetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.CONTENT_PROVSIONAL) {
-      this.openWindowWaveboxContent(openingBrowserWindow, ownerId, provisionalTargetUrl, options, partitionOverride)
+      openedWindow = this.openWindowWaveboxContent(openingBrowserWindow, ownerId, provisionalTargetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.DOWNLOAD) {
       if ((options || {}).webContents) {
         options.webContents.downloadURL(targetUrl)
+      }
+    }
+
+    // Add any final bind events from the extension. Mainly as work-arounds for window opener
+    if (extensionPopoutConfig) {
+      if (typeof (extensionPopoutConfig.match.actions) === 'object') {
+        if (extensionPopoutConfig.match.actions.onClose === 'reload_opener') {
+          if (openedWindow) {
+            openedWindow.on('closed', () => {
+              const openerWC = webContents.fromId(webContentsId)
+              if (openerWC) {
+                openerWC.reload()
+              }
+            })
+          }
+        }
       }
     }
   }
@@ -265,15 +283,16 @@ class MailboxesWindowBehaviour {
   * @param targetUrl: the url to open
   * @param options: the config options for the window
   * @param partitionOverride = undefined: an optional override for the opener partition
+  * @return the opened window if any
   */
   openWindowDefault (openingBrowserWindow, ownerId, mailbox, targetUrl, options, partitionOverride = undefined) {
     if (!mailbox) {
-      this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+      return this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
     } else {
       if (mailbox.defaultWindowOpenMode === CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
-        this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+        return this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
       } else if (mailbox.defaultWindowOpenMode === CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
-        this.openWindowWaveboxContent(openingBrowserWindow, ownerId, targetUrl, options, partitionOverride)
+        return this.openWindowWaveboxContent(openingBrowserWindow, ownerId, targetUrl, options, partitionOverride)
       }
     }
   }

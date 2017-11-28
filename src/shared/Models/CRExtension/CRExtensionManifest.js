@@ -158,7 +158,7 @@ class CRExtensionManifest extends Model {
   * @param url: the url to open with
   * @param parsedUrl: the parsed url
   * @param disposition: the open mode disposition
-  * @return the mode from POPOUT_WINDOW_MODES
+  * @return {mode, match} from POPOUT_WINDOW_MODES or false
   */
   getWindowPopoutModePreference (url, parsedUrl, disposition) {
     const match = this.popoutWindowWhitelist.find((item) => {
@@ -185,9 +185,11 @@ class CRExtensionManifest extends Model {
     if (match) {
       if (typeof (match.mode) === 'string') {
         const mode = POPOUT_WINDOW_MODES[match.mode.toUpperCase()]
-        if (mode) { return mode }
+        if (mode) {
+          return { mode: mode, match: match }
+        }
       }
-      return POPOUT_WINDOW_MODES.POPOUT
+      return { mode: POPOUT_WINDOW_MODES.POPOUT, match: match }
     } else {
       return false
     }
