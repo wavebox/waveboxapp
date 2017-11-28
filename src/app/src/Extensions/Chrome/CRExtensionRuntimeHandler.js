@@ -155,7 +155,11 @@ class CRExtensionRuntimeHandler extends EventEmitter {
       `${CRX_RUNTIME_ONMESSAGE_}${extensionId}`,
       [
         extensionId,
-        CRExtensionTab.dataFromWebContentsId(runtime.extension, evt.sender.id),
+        {
+          tabId: evt.sender.id,
+          tab: CRExtensionTab.dataFromWebContents(runtime.extension, evt.sender),
+          url: evt.sender.getURL()
+        },
         message
       ],
       (evt, err, response) => {
@@ -187,7 +191,11 @@ class CRExtensionRuntimeHandler extends EventEmitter {
       `${CRX_RUNTIME_ONMESSAGE_}${extensionId}`,
       [
         extensionId,
-        isBackgroundPage ? null : CRExtensionTab.dataFromWebContentsId(runtime.extension, evt.sender.id),
+        {
+          tabId: evt.sender.id,
+          tab: isBackgroundPage ? null : CRExtensionTab.dataFromWebContents(runtime.extension, evt.sender),
+          url: isBackgroundPage ? undefined : evt.sender.getURL()
+        },
         message
       ],
       (evt, err, response) => {
@@ -378,7 +386,9 @@ class CRExtensionRuntimeHandler extends EventEmitter {
       const directives = runtime.extension.manifest.waveboxContentSecurityPolicy.directives
       responseCSPs.forEach((responseCSP) => {
         Object.keys(directives).forEach((k) => {
-          responseCSP[k] = (responseCSP[k] || []).concat(directives[k])
+          if (responseCSP[k] !== undefined) {
+            responseCSP[k] = responseCSP[k].concat(directives[k])
+          }
         })
       })
     })

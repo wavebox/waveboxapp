@@ -18,7 +18,6 @@ import EventUnsupported from 'Core/EventUnsupported'
 import DispatchManager from 'Core/DispatchManager'
 import MessageSender from './MessageSender'
 import Port from './Port'
-import Tab from '../Tabs/Tab'
 import {
   protectedHandleError,
   protectedCtrlEvt1,
@@ -181,10 +180,10 @@ class Runtime {
   /**
   * Handles a runtime message
   * @param evt: the event that fired
-  * @param [extensionId, tabInfo, message]: the id of the extension to send the message to and the message
+  * @param [extensionId, connectedParty, message]: the id of the extension to send the message to and the message
   * @param responseCallback: callback to execute with response
   */
-  _handleRuntimeOnMessage (evt, [extensionId, tabInfo, message], responseCallback) {
+  _handleRuntimeOnMessage (evt, [extensionId, connectedParty, message], responseCallback) {
     // Make sure we always respond even with control events
     switch (extensionId) {
       case this[protectedCtrlEvt1]:
@@ -203,7 +202,7 @@ class Runtime {
         })
         break
       default:
-        this.onMessage.emit(message, new MessageSender(extensionId, new Tab(tabInfo)), (response) => {
+        this.onMessage.emit(message, new MessageSender(extensionId, connectedParty), (response) => {
           responseCallback(null, response)
         })
     }
