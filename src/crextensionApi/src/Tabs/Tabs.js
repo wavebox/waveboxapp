@@ -6,6 +6,7 @@ import Tab from './Tab'
 import { CR_RUNTIME_ENVIRONMENTS } from 'shared/extensionApis'
 import {
   CRX_TABS_SENDMESSAGE,
+  CRX_TABS_CREATE_,
   CRX_TABS_GET_,
   CRX_TABS_QUERY_,
   CRX_TABS_CREATED_,
@@ -18,6 +19,9 @@ import {
 const privExtensionId = Symbol('privExtensionId')
 const privRuntimeEnvironment = Symbol('privRuntimeEnvironment')
 const privHasPermission = Symbol('privHasPermission')
+const CREATE_SUPPORTED_OPTIONS = new Set([
+  'url'
+])
 const QUERY_SUPPORTED_OPTIONS = new Set([
   'active',
   'windowId',
@@ -71,11 +75,19 @@ class Tabs {
   /* **************************************************************************/
 
   create (options, callback) {
-    console.warn('chrome.tabs.create is not yet implemented')
-    if (callback) {
-      const res = []
-      setTimeout(() => callback(res))
+    const unsupported = Object.keys(options).filter((k) => !CREATE_SUPPORTED_OPTIONS.has(k))
+    if (unsupported.length) {
+      console.warn(`chrome.tabs.create does not support the following options at this time "[${unsupported.join(', ')}]" and they will be ignored`)
     }
+
+    DispatchManager.request(
+      `${CRX_TABS_CREATE_}${this[privExtensionId]}`,
+      [options],
+      (evt, err, response) => {
+        if (callback) {
+          callback(response ? new Tab(response.id, response) : null)
+        }
+      })
   }
 
   get (tabId, callback) {

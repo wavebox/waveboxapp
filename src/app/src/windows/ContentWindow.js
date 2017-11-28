@@ -10,6 +10,8 @@ import {
   WB_NEW_WINDOW
 } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
+import ContentPopupWindow from './ContentPopupWindow'
+import url from 'url'
 
 const SAFE_CONFIG_KEYS = [
   'width',
@@ -138,14 +140,13 @@ class ContentWindow extends WaveboxWindow {
     ))
 
     // New window handling
-    ipcMain.on(WB_NEW_WINDOW, this.handleOpenNewWindow)
+    ipcMain.on(WB_NEW_WINDOW, this.handleIPCOpenNewWindow)
 
     // remove built in listener so we can handle this on our own
     this.window.webContents.removeAllListeners('devtools-reload-page')
     this.window.webContents.on('devtools-reload-page', () => this.window.reload())
 
     // Listen on webcontents events
-    this.window.webContents.on('new-window', this.handleWebContentsNewWindow)
     this.window.webContents.on('will-attach-webview', this.handleWillAttachWebview)
     app.on('web-contents-created', this.handleAppWebContentsCreated)
 
@@ -156,7 +157,7 @@ class ContentWindow extends WaveboxWindow {
   * Handles destroy being called
   */
   destroy (evt) {
-    ipcMain.removeListener(WB_NEW_WINDOW, this.handleOpenNewWindow)
+    ipcMain.removeListener(WB_NEW_WINDOW, this.handleIPCOpenNewWindow)
     app.removeListener('web-contents-created', this.handleAppWebContentsCreated)
     super.destroy(evt)
   }
@@ -191,6 +192,7 @@ class ContentWindow extends WaveboxWindow {
     if (contents.getType() === 'webview' && contents.hostWebContents.id === this.window.webContents.id) {
       this[privGuestWebContentsId] = contents.id
       evtMain.emit(evtMain.WB_TAB_CREATED, this[privGuestWebContentsId])
+      contents.on('new-window', this.handleWebContentsNewWindow)
       contents.once('destroyed', () => {
         const wcId = this[privGuestWebContentsId]
         this[privGuestWebContentsId] = null
@@ -205,10 +207,45 @@ class ContentWindow extends WaveboxWindow {
 
   /**
   * Handles the webcontents requesting a new window
+  * @param evt: the event that fired
+  * @param targetUrl: the webview url
+  * @param frameName: the name of the frame
+  * @param disposition: the frame disposition
+  * @param options: the browser window options
+  * @param additionalFeatures: The non-standard features
   */
-  handleWebContentsNewWindow = (evt, url) => {
+  handleWebContentsNewWindow = (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
+    // (@Thomas101) This is really just a slimmed down implementation of what MailboxesWindowBehaviour
+    // does. It was added with grammarly & extension tabbing in mind and should work well for most use
+    // cases but may need some review in the future
+
     evt.preventDefault()
-    shell.openExternal(url)
+    const parsedTargetUrl = url.parse(targetUrl, true)
+
+    // Content Popup Window
+    const openPopup = (
+      disposition === 'new-window' ||
+      targetUrl === 'about:blank' ||
+      // We have some specific overrides for oauth2 and google
+      (parsedTargetUrl.hostname === 'accounts.google.com' && parsedTargetUrl.pathname.startsWith('/o/oauth2/auth'))
+    )
+    if (openPopup) {
+      const contentWindow = new ContentPopupWindow(this.ownerId)
+      contentWindow.create(targetUrl, options)
+      evt.newGuest = contentWindow.window
+      return
+    }
+
+    // Save
+    if (disposition === 'save-to-disk') {
+      if ((options || {}).webContents) {
+        options.webContents.downloadURL(targetUrl)
+        return
+      }
+    }
+
+    // Catch-all: browser
+    shell.openExternal(targetUrl)
   }
 
   /* ****************************************************************************/
@@ -220,7 +257,7 @@ class ContentWindow extends WaveboxWindow {
   * @param evt: the event that fired
   * @param body: the arguments from the body
   */
-  handleOpenNewWindow = (evt, body) => {
+  handleIPCOpenNewWindow = (evt, body) => {
     if (evt.sender === this.window.webContents) {
       const contentWindow = new ContentWindow(this.ownerId)
       contentWindow.create(this.window, body.url, this.launchInfo.partition, this.launchInfo.windowPreferences, this.launchInfo.webPreferences)

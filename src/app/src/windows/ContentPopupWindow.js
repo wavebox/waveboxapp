@@ -36,6 +36,9 @@ class ContentPopupWindow extends WaveboxWindow {
       evtMain.emit(evtMain.WB_TAB_DESTROYED, webContentsId)
     })
 
+    // Listen to webview events
+    this.window.webContents.on('new-window', this.handleWebContentsNewWindow)
+
     return this
   }
 
@@ -45,6 +48,27 @@ class ContentPopupWindow extends WaveboxWindow {
   */
   destroy (evt) {
     super.destroy(evt)
+  }
+
+  /* ****************************************************************************/
+  // Webcontents events
+  /* ****************************************************************************/
+
+  /**
+  * Handles the webcontents requesting a new window
+  * @param evt: the event that fired
+  * @param targetUrl: the webview url
+  * @param frameName: the name of the frame
+  * @param disposition: the frame disposition
+  * @param options: the browser window options
+  * @param additionalFeatures: The non-standard features
+  */
+  handleWebContentsNewWindow = (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
+    evt.preventDefault()
+
+    const contentWindow = new ContentPopupWindow(this.ownerId)
+    contentWindow.create(targetUrl, options)
+    evt.newGuest = contentWindow.window
   }
 
   /* ****************************************************************************/

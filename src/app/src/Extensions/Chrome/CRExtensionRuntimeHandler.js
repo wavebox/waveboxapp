@@ -330,12 +330,12 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   * @param url: the url to open with
   * @param parsedUrl: the parsed url
   * @param disposition: the open mode disposition
-  * @return the mode to open in, or false if nothing matched
+  * @return {mode, extension} to open in, or false if nothing matched
   */
-  shouldOpenWindowAsPopout (webContentsId, url, parsedUrl, disposition) {
+  getWindowPopoutModePreference (webContentsId, url, parsedUrl, disposition) {
     const runtimes = Array.from(this.runtimes.values())
     for (let i = 0; i < runtimes.length; i++) {
-      const mode = runtimes[i].shouldOpenWindowAsPopout(webContentsId, url, parsedUrl, disposition)
+      const mode = runtimes[i].getWindowPopoutModePreference(webContentsId, url, parsedUrl, disposition)
       if (mode !== false) { return mode }
     }
     return false

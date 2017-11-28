@@ -181,6 +181,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   destroy (evt) {
     this.tabManager.destroy()
+    this.behaviour.destroy()
     clearTimeout(this.gracefulReloadTimeout)
 
     electron.ipcMain.removeListener(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)

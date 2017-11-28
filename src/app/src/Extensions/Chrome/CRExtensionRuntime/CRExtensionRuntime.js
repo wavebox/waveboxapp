@@ -110,11 +110,14 @@ class CRExtensionRuntime {
   * @param url: the url to open with
   * @param parsedUrl: the parsed url
   * @param disposition: the open mode disposition
-  * @return true if the window should open as popout
+  * @return { mode, extension } the popout mode if the window should open as popout along with the extension model or false if the extension has no preference
   */
-  shouldOpenWindowAsPopout (webContentsId, url, parsedUrl, disposition) {
+  getWindowPopoutModePreference (webContentsId, url, parsedUrl, disposition) {
     if (this.connectedContentScripts.has(webContentsId)) {
-      return this.extension.manifest.shouldOpenWindowAsPopout(url, parsedUrl, disposition)
+      const mode = this.extension.manifest.getWindowPopoutModePreference(url, parsedUrl, disposition)
+      if (mode) {
+        return { mode: mode, extension: this.extension }
+      }
     }
     return false
   }

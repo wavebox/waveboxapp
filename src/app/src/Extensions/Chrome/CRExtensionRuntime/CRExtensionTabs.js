@@ -3,6 +3,7 @@ import { evtMain } from 'AppEvents'
 import CRDispatchManager from '../CRDispatchManager'
 import {
   CRX_TABS_QUERY_,
+  CRX_TABS_CREATE_,
   CRX_TABS_GET_,
   CRX_TABS_CREATED_,
   CRX_TABS_REMOVED_,
@@ -20,6 +21,8 @@ import fs from 'fs-extra'
 import path from 'path'
 import CRExtensionTab from './CRExtensionTab'
 import pathTool from 'shared/pathTool'
+import ContentWindow from 'windows/ContentWindow'
+import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
 
 class CRExtensionTabs {
   /* ****************************************************************************/
@@ -37,6 +40,7 @@ class CRExtensionTabs {
     }
 
     CRDispatchManager.registerHandler(`${CRX_TABS_GET_}${this.extension.id}`, this.handleGetTab)
+    CRDispatchManager.registerHandler(`${CRX_TABS_CREATE_}${this.extension.id}`, this.handleCreateTab)
     CRDispatchManager.registerHandler(`${CRX_TABS_QUERY_}${this.extension.id}`, this.handleQueryTabs)
     CRDispatchManager.registerHandler(`${CRX_TAB_EXECUTE_SCRIPT_}${this.extension.id}`, this.handleExecuteScript)
   }
@@ -47,6 +51,7 @@ class CRExtensionTabs {
     evtMain.removeListener(evtMain.WB_TAB_ACTIVATED, this.handleTabActivated)
 
     CRDispatchManager.unregisterHandler(`${CRX_TABS_GET_}${this.extension.id}`, this.handleGetTab)
+    CRDispatchManager.unregisterHandler(`${CRX_TABS_CREATE_}${this.extension.id}`, this.handleCreateTab)
     CRDispatchManager.unregisterHandler(`${CRX_TABS_QUERY_}${this.extension.id}`, this.handleQueryTabs)
     CRDispatchManager.unregisterHandler(`${CRX_TAB_EXECUTE_SCRIPT_}${this.extension.id}`, this.handleExecuteScript)
   }
@@ -158,6 +163,19 @@ class CRExtensionTabs {
     } else {
       responseCallback(null, null)
     }
+  }
+
+  /**
+  * Creates a tab with the given id
+  * @param evt: the event that fired
+  * @param [tabId]: the id of the tab
+  * @param responseCallback: executed on completion
+  */
+  handleCreateTab = (evt, [options], responseCallback) => {
+    const contentWindow = new ContentWindow()
+    const partitionId = CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
+    contentWindow.create(undefined, (options.url || ''), partitionId)
+    responseCallback(null, undefined)
   }
 
   /**

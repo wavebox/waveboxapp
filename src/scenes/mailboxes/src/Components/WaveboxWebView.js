@@ -87,8 +87,10 @@ export default class WaveboxWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleOpenNewWindow = (evt) => {
-    // Unhandled urls will be handled by the main thread
-    WaveboxWebView.routeWaveboxUrl(evt.url)
+    const handled = WaveboxWebView.routeWaveboxUrl(evt.url)
+    if (!handled) {
+      electron.remote.shell.openExternal(evt.url)
+    }
   }
 
   /**

@@ -137,17 +137,19 @@ class CRExtensionBackgroundPage {
   * @param details: the details of the request
   * @param responder: function to call with updated headers
   */
-  _handleBeforeSendHeaders (details, responder) {
-    if (details.resourceType === 'xhr') {
-      responder({
-        requestHeaders: {
-          ...details.requestHeaders,
-          'Origin': ['null']
-        }
-      })
-    } else {
-      responder({})
+  _handleBeforeSendHeaders = (details, responder) => {
+    if (this.isRunning && this.webContentsId === details.webContentsId) {
+      if (details.resourceType === 'xhr') {
+        return responder({
+          requestHeaders: {
+            ...details.requestHeaders,
+            'Origin': ['null']
+          }
+        })
+      }
     }
+
+    responder({})
   }
 
   /**
@@ -156,22 +158,24 @@ class CRExtensionBackgroundPage {
   * @param responder: function to call with updated headers
   */
   _handleAllUrlHeadersReceived = (details, responder) => {
-    if (details.resourceType === 'xhr') {
-      const purl = url.parse(details.url)
-      if (CRExtensionMatchPatterns.matchUrls(purl.protocol, purl.host, purl.pathname, Array.from(this.extension.manifest.permissions))) {
-        const headers = details.responseHeaders
-        const updatedHeaders = {
-          ...headers,
-          'access-control-allow-credentials': headers['access-control-allow-credentials'] || ['true'],
-          'access-control-allow-origin': [
-            url.format({
-              protocol: CR_EXTENSION_PROTOCOL,
-              slashes: true,
-              hostname: this.extension.id
-            })
-          ]
+    if (this.isRunning && this.webContentsId === details.webContentsId) {
+      if (details.resourceType === 'xhr') {
+        const purl = url.parse(details.url)
+        if (CRExtensionMatchPatterns.matchUrls(purl.protocol, purl.host, purl.pathname, Array.from(this.extension.manifest.permissions))) {
+          const headers = details.responseHeaders
+          const updatedHeaders = {
+            ...headers,
+            'access-control-allow-credentials': headers['access-control-allow-credentials'] || ['true'],
+            'access-control-allow-origin': [
+              url.format({
+                protocol: CR_EXTENSION_PROTOCOL,
+                slashes: true,
+                hostname: this.extension.id
+              })
+            ]
+          }
+          return responder({ responseHeaders: updatedHeaders })
         }
-        return responder({ responseHeaders: updatedHeaders })
       }
     }
     return responder({})

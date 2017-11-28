@@ -26,6 +26,8 @@ import {
 import {
   CRExtensionRTBrowserAction
 } from 'shared/Models/CRExtensionRT'
+import ContentWindow from 'windows/ContentWindow'
+import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
 
 class CRExtensionBrowserAction {
   /* ****************************************************************************/
@@ -272,10 +274,16 @@ class CRExtensionBrowserAction {
   * @param tabId: the id of the tab
   */
   handleClick = (evt, tabId) => {
-    const tabInfo = CRExtensionTab.dataFromWebContentsId(this.extension, tabId)
-    webContents.getAllWebContents().forEach((targetWebcontents) => {
-      targetWebcontents.send(`${CRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, tabInfo)
-    })
+    if (this.extension.manifest.hasWaveboxBrowserActionOpenUrl) {
+      const contentWindow = new ContentWindow()
+      const partitionId = CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
+      contentWindow.create(undefined, this.extension.manifest.waveboxBrowserActionOpenUrl, partitionId)
+    } else {
+      const tabInfo = CRExtensionTab.dataFromWebContentsId(this.extension, tabId)
+      webContents.getAllWebContents().forEach((targetWebcontents) => {
+        targetWebcontents.send(`${CRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, tabInfo)
+      })
+    }
   }
 }
 

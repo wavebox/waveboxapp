@@ -39,7 +39,7 @@ class WaveboxWindow extends EventEmitter {
   static allTabIds () { return waveboxWindowManager.allTabIds() }
   static fromTabId (tabId) { return waveboxWindowManager.fromTabId(tabId) }
   static allBrowserWindowIds () { return waveboxWindowManager.allBrowserWindowIds() }
-  static fromBrowserWindowId () { return waveboxWindowManager.fromBrowserWindowId() }
+  static fromBrowserWindowId (browserWindowId) { return waveboxWindowManager.fromBrowserWindowId(browserWindowId) }
   static focusedTabId () { return waveboxWindowManager.focusedTabId() }
   static cycleNextWindow () { return waveboxWindowManager.cycleNextWindow() }
 
