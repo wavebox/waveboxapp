@@ -1,166 +1,18 @@
-import { Menu, shell, dialog } from 'electron'
+import { Menu } from 'electron'
 import mailboxStore from 'stores/mailboxStore'
 import settingStore from 'stores/settingStore'
-import Release from 'shared/Release'
-import pkg from 'package.json'
 import MenuTool from 'shared/Electron/MenuTool'
 import electronLocalshortcut from 'electron-localshortcut'
 import { evtMain } from 'AppEvents'
 import { toKeyEvent } from 'keyboardevent-from-electron-accelerator'
-import {
-  GITHUB_URL,
-  BLOG_URL,
-  WEB_URL,
-  PRIVACY_URL,
-  KB_URL,
-  EULA_URL,
-  SUPPORT_URL
-} from 'shared/constants'
+import WaveboxAppPrimaryMenuActions from './WaveboxAppPrimaryMenuActions'
 
-class AppPrimaryMenu {
-  /* ****************************************************************************/
-  // Selectors
-  /* ****************************************************************************/
-
-  /**
-  * Builds the selector index for the primary menu manager
-  * @param windowManager: the window manager instance the callbacks can call into
-  * @return the selectors map
-  */
-  static buildSelectors (windowManager) {
-    return {
-      fullQuit: () => {
-        windowManager.quit()
-      },
-      closeWindow: () => {
-        const focused = windowManager.focused()
-        if (focused) { focused.close() }
-      },
-      showWindow: () => {
-        windowManager.mailboxesWindow.show().focus()
-      },
-      fullscreenToggle: () => {
-        const focused = windowManager.focused()
-        if (focused) { focused.toggleFullscreen() }
-      },
-      sidebarToggle: () => {
-        windowManager.mailboxesWindow.show().focus().toggleSidebar()
-      },
-      menuToggle: () => {
-        windowManager.mailboxesWindow.show().focus().toggleAppMenu()
-      },
-      preferences: () => {
-        windowManager.mailboxesWindow.show().focus().launchPreferences()
-      },
-      addAccount: () => {
-        windowManager.mailboxesWindow.show().focus().addAccount()
-      },
-      composeMail: () => {
-        windowManager.mailboxesWindow.show().focus().openMailtoLink('mailto://')
-      },
-      reload: () => {
-        const focused = windowManager.focused()
-        if (focused) { focused.reload() }
-      },
-      reloadWavebox: () => {
-        const focused = windowManager.focused()
-        if (focused) { focused.reloadWaveboxWindow() }
-      },
-      devTools: () => {
-        const focused = windowManager.focused()
-        if (focused) { focused.openDevTools() }
-      },
-      devToolsWavebox: () => {
-        const focused = windowManager.focused()
-        if (focused) { focused.openWaveboxDevTools() }
-      },
-      waveboxGithub: () => { shell.openExternal(GITHUB_URL) },
-      waveboxWebsite: () => { shell.openExternal(WEB_URL) },
-      waveboxBlog: () => { shell.openExternal(BLOG_URL) },
-      privacy: () => { shell.openExternal(PRIVACY_URL) },
-      eula: () => { shell.openExternal(EULA_URL) },
-      support: () => { shell.openExternal(SUPPORT_URL) },
-      knowledgeBase: () => { shell.openExternal(KB_URL) },
-      supportCenter: () => {
-        windowManager.mailboxesWindow.show().focus().launchSupportCenter()
-      },
-      whatsNew: () => {
-        windowManager.mailboxesWindow.show().focus().launchWhatsNew()
-      },
-      zoomIn: () => {
-        const focused = windowManager.focused()
-        if (focused) { focused.zoomIn() }
-      },
-      zoomOut: () => {
-        const focused = windowManager.focused()
-        if (focused) { focused.zoomOut() }
-      },
-      zoomReset: () => {
-        const focused = windowManager.focused()
-        if (focused) { focused.zoomReset() }
-      },
-      changeMailbox: (mailboxId, serviceType = undefined) => {
-        windowManager.mailboxesWindow.show().focus().switchMailbox(mailboxId, serviceType)
-      },
-      changeMailboxServiceToIndex: (index) => {
-        windowManager.mailboxesWindow.show().focus().switchToServiceAtIndex(index)
-      },
-      prevMailbox: () => {
-        windowManager.mailboxesWindow.show().focus().switchPrevMailbox(true)
-      },
-      nextMailbox: () => {
-        windowManager.mailboxesWindow.show().focus().switchNextMailbox(true)
-      },
-      prevService: () => {
-        windowManager.mailboxesWindow.show().focus().switchPrevService(true)
-      },
-      nextService: () => {
-        windowManager.mailboxesWindow.show().focus().switchNextService(true)
-      },
-      cycleWindows: () => { windowManager.focusNextWindow() },
-      aboutDialog: () => {
-        dialog.showMessageBox({
-          title: pkg.name,
-          message: pkg.name,
-          detail: [
-            Release.generateVersionString(pkg, '\n'),
-            'Made with ♥ at wavebox.io'
-          ].filter((l) => !!l).join('\n'),
-          buttons: [ 'Done', 'Website' ]
-        }, (index) => {
-          if (index === 1) {
-            shell.openExternal(WEB_URL)
-          }
-        })
-      },
-      checkForUpdate: () => {
-        windowManager.mailboxesWindow.show().focus().userCheckForUpdate()
-      },
-      find: () => {
-        const focused = windowManager.focused()
-        if (focused) { focused.findStart() }
-      },
-      findNext: () => {
-        const focused = windowManager.focused()
-        if (focused) { focused.findNext() }
-      },
-      mailboxNavBack: () => {
-        const focused = windowManager.focused()
-        if (focused) { focused.navigateBack() }
-      },
-      mailboxNavForward: () => {
-        const focused = windowManager.focused()
-        if (focused) { focused.navigateForward() }
-      }
-    }
-  }
-
+class WaveboxAppPrimaryMenu {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
-  constructor (selectors) {
-    this._selectors = selectors
+  constructor () {
     this._lastAccelerators = null
     this._lastMailboxes = null
     this._lastActiveMailbox = null
@@ -191,26 +43,26 @@ class AppPrimaryMenu {
         submenu: [
           {
             label: 'About',
-            click: this._selectors.aboutDialog
+            click: WaveboxAppPrimaryMenuActions.aboutDialog
           },
           {
             label: 'Check for Update',
-            click: this._selectors.checkForUpdate
+            click: WaveboxAppPrimaryMenuActions.checkForUpdate
           },
           { type: 'separator' },
           {
             label: 'Add Account',
-            click: this._selectors.addAccount
+            click: WaveboxAppPrimaryMenuActions.addAccount
           },
           {
             label: 'Preferences',
-            click: this._selectors.preferences,
+            click: WaveboxAppPrimaryMenuActions.preferences,
             accelerator: accelerators.preferences
           },
           { type: 'separator' },
           {
             label: 'Compose Mail',
-            click: this._selectors.composeMail,
+            click: WaveboxAppPrimaryMenuActions.composeMail,
             accelerator: accelerators.composeMail
           },
           { type: 'separator' },
@@ -218,12 +70,12 @@ class AppPrimaryMenu {
           process.platform === 'darwin' ? { type: 'separator' } : undefined,
           {
             label: 'Show Window',
-            click: this._selectors.showWindow,
+            click: WaveboxAppPrimaryMenuActions.showWindow,
             accelerator: accelerators.showWindow
           },
           {
             label: 'Hide Window',
-            click: this._selectors.closeWindow,
+            click: WaveboxAppPrimaryMenuActions.closeWindow,
             accelerator: accelerators.hideWindow
           },
           {
@@ -243,7 +95,7 @@ class AppPrimaryMenu {
           { type: 'separator' },
           {
             label: 'Quit',
-            click: this._selectors.fullQuit,
+            click: WaveboxAppPrimaryMenuActions.fullQuit,
             accelerator: accelerators.quit
           }
         ].filter((item) => item !== undefined)
@@ -290,12 +142,12 @@ class AppPrimaryMenu {
           { type: 'separator' },
           {
             label: 'Find',
-            click: this._selectors.find,
+            click: WaveboxAppPrimaryMenuActions.find,
             accelerator: accelerators.find
           },
           {
             label: 'Find Next',
-            click: this._selectors.findNext,
+            click: WaveboxAppPrimaryMenuActions.findNext,
             accelerator: accelerators.findNext
           }
         ]
@@ -305,50 +157,50 @@ class AppPrimaryMenu {
         submenu: [
           {
             label: 'Toggle Full Screen',
-            click: this._selectors.fullscreenToggle,
+            click: WaveboxAppPrimaryMenuActions.fullscreenToggle,
             accelerator: accelerators.toggleFullscreen
           },
           {
             label: 'Toggle Sidebar',
-            click: this._selectors.sidebarToggle,
+            click: WaveboxAppPrimaryMenuActions.sidebarToggle,
             accelerator: accelerators.toggleSidebar
           },
           process.platform === 'darwin' ? undefined : {
             label: 'Toggle Menu',
-            click: this._selectors.menuToggle,
+            click: WaveboxAppPrimaryMenuActions.menuToggle,
             accelerator: accelerators.toggleMenu
           },
           { type: 'separator' },
           {
             label: 'Navigate Back',
-            click: this._selectors.mailboxNavBack,
+            click: WaveboxAppPrimaryMenuActions.mailboxNavBack,
             accelerator: accelerators.navigateBack
           },
           {
             label: 'Navigate Forward',
-            click: this._selectors.mailboxNavForward,
+            click: WaveboxAppPrimaryMenuActions.mailboxNavForward,
             accelerator: accelerators.navigateForward
           },
           { type: 'separator' },
           {
             label: 'Zoom In',
-            click: this._selectors.zoomIn,
+            click: WaveboxAppPrimaryMenuActions.zoomIn,
             accelerator: accelerators.zoomIn
           },
           {
             label: 'Zoom Out',
-            click: this._selectors.zoomOut,
+            click: WaveboxAppPrimaryMenuActions.zoomOut,
             accelerator: accelerators.zoomOut
           },
           {
             label: 'Reset Zoom',
-            click: this._selectors.zoomReset,
+            click: WaveboxAppPrimaryMenuActions.zoomReset,
             accelerator: accelerators.zoomReset
           },
           { type: 'separator' },
           {
             label: 'Reload',
-            click: this._selectors.reload,
+            click: WaveboxAppPrimaryMenuActions.reload,
             accelerator: accelerators.reload
           },
           {
@@ -356,18 +208,18 @@ class AppPrimaryMenu {
             submenu: [
               {
                 label: 'Developer Tools',
-                click: this._selectors.devTools,
+                click: WaveboxAppPrimaryMenuActions.devTools,
                 accelerator: accelerators.developerTools
               },
               { type: 'separator' },
               {
                 label: 'Reload Wavebox Window',
-                click: this._selectors.reloadWavebox,
+                click: WaveboxAppPrimaryMenuActions.reloadWavebox,
                 accelerator: accelerators.reloadWavebox
               },
               {
                 label: 'Wavebox Developer Tools',
-                click: this._selectors.devToolsWavebox,
+                click: WaveboxAppPrimaryMenuActions.devToolsWavebox,
                 accelerator: accelerators.developerToolsWavebox
               }
             ]
@@ -385,7 +237,7 @@ class AppPrimaryMenu {
           },
           {
             label: 'Cycle Windows',
-            click: this._selectors.cycleWindows,
+            click: WaveboxAppPrimaryMenuActions.cycleWindows,
             accelerator: accelerators.cycleWindows
           }
         ]
@@ -393,12 +245,12 @@ class AppPrimaryMenu {
           { type: 'separator' },
           {
             label: 'Previous Account',
-            click: this._selectors.prevMailbox,
+            click: WaveboxAppPrimaryMenuActions.prevMailbox,
             accelerator: accelerators.previousMailbox
           },
           {
             label: 'Next Account',
-            click: this._selectors.nextMailbox,
+            click: WaveboxAppPrimaryMenuActions.nextMailbox,
             accelerator: accelerators.nextMailbox
           }
         ])
@@ -408,7 +260,7 @@ class AppPrimaryMenu {
             label: mailbox.displayName || 'Untitled',
             type: 'radio',
             checked: mailbox.id === (activeMailbox || {}).id,
-            click: () => { this._selectors.changeMailbox(mailbox.id) },
+            click: () => { WaveboxAppPrimaryMenuActions.changeMailbox(mailbox.id) },
             accelerator: this.buildAcceleratorStringForIndex(accelerators.mailboxIndex, index)
           }
         }))
@@ -416,12 +268,12 @@ class AppPrimaryMenu {
           { type: 'separator' },
           {
             label: 'Previous Service',
-            click: this._selectors.prevService,
+            click: WaveboxAppPrimaryMenuActions.prevService,
             accelerator: accelerators.servicePrevious
           },
           {
             label: 'Next Service',
-            click: this._selectors.nextService,
+            click: WaveboxAppPrimaryMenuActions.nextService,
             accelerator: accelerators.serviceNext
           }
         ] : [])
@@ -431,7 +283,7 @@ class AppPrimaryMenu {
             label: service.humanizedType,
             type: 'radio',
             checked: service.type === activeServiceType,
-            click: () => { this._selectors.changeMailbox(activeMailbox.id, service.type) },
+            click: () => { WaveboxAppPrimaryMenuActions.changeMailbox(activeMailbox.id, service.type) },
             accelerator: this.buildAcceleratorStringForIndex(accelerators.serviceIndex, index)
           }
         }) : [])
@@ -440,15 +292,15 @@ class AppPrimaryMenu {
         label: 'Help',
         role: 'help',
         submenu: [
-          { label: 'Wavebox Website', click: this._selectors.waveboxWebsite },
-          { label: 'Wavebox Blog', click: this._selectors.waveboxBlog },
-          { label: 'Wavebox on GitHub', click: this._selectors.waveboxGithub },
+          { label: 'Wavebox Website', click: WaveboxAppPrimaryMenuActions.waveboxWebsite },
+          { label: 'Wavebox Blog', click: WaveboxAppPrimaryMenuActions.waveboxBlog },
+          { label: 'Wavebox on GitHub', click: WaveboxAppPrimaryMenuActions.waveboxGithub },
           { type: 'separator' },
-          { label: 'Support Center', click: this._selectors.supportCenter },
-          { label: 'What\'s new', click: this._selectors.whatsNew },
+          { label: 'Support Center', click: WaveboxAppPrimaryMenuActions.supportCenter },
+          { label: 'What\'s new', click: WaveboxAppPrimaryMenuActions.whatsNew },
           { type: 'separator' },
-          { label: 'Privacy', click: this._selectors.privacy },
-          { label: 'EULA', click: this._selectors.eula }
+          { label: 'Privacy', click: WaveboxAppPrimaryMenuActions.privacy },
+          { label: 'EULA', click: WaveboxAppPrimaryMenuActions.eula }
         ]
       }
     ])
@@ -500,7 +352,7 @@ class AppPrimaryMenu {
     const hiddenZoomInShortcut = process.platform === 'darwin' ? 'Cmd+=' : 'Ctrl+='
     if (accelerators.zoomIn === accelerators.zoomInDefault) {
       if (!electronLocalshortcut.isRegistered(hiddenZoomInShortcut)) {
-        electronLocalshortcut.register(hiddenZoomInShortcut, this._selectors.zoomIn)
+        electronLocalshortcut.register(hiddenZoomInShortcut, WaveboxAppPrimaryMenuActions.zoomIn)
       }
     } else {
       if (electronLocalshortcut.isRegistered(hiddenZoomInShortcut)) {
@@ -635,4 +487,4 @@ class AppPrimaryMenu {
   }
 }
 
-export default AppPrimaryMenu
+export default WaveboxAppPrimaryMenu

@@ -1,7 +1,7 @@
 {
   "name": "wavebox",
-  "version": "3.6.0",
-  "releaseChannel": "STABLE",
+  "version": "3.6.1",
+  "releaseChannel": "BETA",
   "description": "Wavebox",
   "scripts": {
     "rebuild:electron": "node scripts/rebuildElectron.js",
@@ -62,6 +62,7 @@
     "jsx-loader": "0.13.2",
     "less": "2.7.3",
     "less-loader": "4.0.5",
+    "on-build-webpack": "0.1.0",
     "style-loader": "0.19.0",
     "uglify-es": "3.1.8",
     "url-loader": "0.6.2",

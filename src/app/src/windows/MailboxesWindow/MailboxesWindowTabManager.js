@@ -6,7 +6,7 @@ import {
   WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED,
   WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT
 } from 'shared/ipcEvents'
-import appWindowManager from 'R/appWindowManager'
+import WaveboxWindow from 'windows/WaveboxWindow'
 
 const privQueuedMailboxToTabChange = Symbol('privQueuedMailboxToTabChange')
 
@@ -224,7 +224,7 @@ class MailboxesWindowTabManager {
   */
   handleFetchOpenWindowCount = (evt, body) => {
     const ownerId = `${body.mailboxId}:${body.serviceType}`
-    const count = appWindowManager.getContentWindowsWithOwnerId(ownerId).length
+    const count = WaveboxWindow.all().filter((w) => w.ownerId === ownerId).length
     if (body.response) {
       evt.sender.send(body.response, { count: count })
     } else {

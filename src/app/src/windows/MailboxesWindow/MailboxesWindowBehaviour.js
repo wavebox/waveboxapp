@@ -1,6 +1,5 @@
-import { app, ipcMain, shell, BrowserWindow } from 'electron'
+import { ipcMain, shell, BrowserWindow, webContents } from 'electron'
 import { evtMain } from 'AppEvents'
-import appWindowManager from 'R/appWindowManager'
 import ContentWindow from 'windows/ContentWindow'
 import ContentPopupWindow from 'windows/ContentPopupWindow'
 import url from 'url'
@@ -9,6 +8,7 @@ import mailboxStore from 'stores/mailboxStore'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import CRExtensionManager from 'Extensions/Chrome/CRExtensionManager'
+import CRExtensionManifest from 'shared/Models/CRExtension/CRExtensionManifest'
 import {
   WB_NEW_WINDOW
 } from 'shared/ipcEvents'
@@ -17,7 +17,8 @@ import {
   WAVEBOX_CAPTURE_URL_HOSTNAME
 } from 'shared/constants'
 import {
-  WAVEBOX_HOSTED_EXTENSION_PROTOCOL
+  WAVEBOX_HOSTED_EXTENSION_PROTOCOL,
+  CR_EXTENSION_BG_PARTITION_PREFIX
 } from 'shared/extensionApis'
 
 const WINDOW_OPEN_MODES = CoreService.WINDOW_OPEN_MODES
@@ -34,8 +35,14 @@ class MailboxesWindowBehaviour {
   constructor (webContentsId, tabManager) {
     this.webContentsId = webContentsId
     this.tabManager = tabManager
-    app.on('web-contents-created', this.handleAppWebContentsCreated)
+
+    evtMain.on(evtMain.WB_TAB_CREATED, this.handleTabCreated)
     ipcMain.on(WB_NEW_WINDOW, this.handleOpenIPCWaveboxWindow)
+  }
+
+  destroy () {
+    evtMain.removeListener(evtMain.WB_TAB_CREATED, this.handleTabCreated)
+    ipcMain.removeListener(WB_NEW_WINDOW, this.handleOpenIPCWaveboxWindow)
   }
 
   /* ****************************************************************************/
@@ -43,12 +50,12 @@ class MailboxesWindowBehaviour {
   /* ****************************************************************************/
 
   /**
-  * Handles a new web contents being created
-  * @param evt: the event that fired
-  * @param contents: the webcontent that were created
+  * Handles a new tab being created
+  * @param webContentsId: the id of the webcontents
   */
-  handleAppWebContentsCreated = (evt, contents) => {
-    if (contents.getType() === 'webview' && contents.hostWebContents.id === this.webContentsId) {
+  handleTabCreated = (webContentsId) => {
+    const contents = webContents.fromId(webContentsId)
+    if (contents && contents.getType() === 'webview' && contents.hostWebContents.id === this.webContentsId) {
       contents.on('new-window', this.handleWebViewNewWindow)
       contents.on('will-navigate', this.handleWebViewWillNavigate)
       contents.on('before-input-event', this.handleBeforeInputEvent)
@@ -70,7 +77,6 @@ class MailboxesWindowBehaviour {
   handleOpenIPCWaveboxWindow = (evt, body) => {
     if (evt.sender.id === this.webContentsId) {
       const contentWindow = new ContentWindow(`${body.mailboxId}:${body.serviceType}`)
-      appWindowManager.addContentWindow(contentWindow)
 
       const window = BrowserWindow.fromWebContents(evt.sender)
       contentWindow.create(window, body.url, body.partition, body.windowPreferences, body.webPreferences)
@@ -124,6 +130,7 @@ class MailboxesWindowBehaviour {
     let mailbox = null
     let service = null
     let provisionalTargetUrl
+    let partitionOverride
 
     // Grab the service and mailbox
     if (this.tabManager.hasServiceId(webContentsId)) {
@@ -145,27 +152,56 @@ class MailboxesWindowBehaviour {
     }
 
     // Check installed extensions to see if they overwrite the behaviour
-    if (CRExtensionManager.runtimeHandler.shouldOpenWindowAsPopout(webContentsId, targetUrl, purl, disposition)) {
-      openMode = WINDOW_OPEN_MODES.POPUP_CONTENT
+    const extensionPopoutConfig = CRExtensionManager.runtimeHandler.getWindowPopoutModePreference(webContentsId, targetUrl, purl, disposition)
+    if (extensionPopoutConfig !== false) {
+      if (extensionPopoutConfig.mode === CRExtensionManifest.POPOUT_WINDOW_MODES.POPOUT) {
+        openMode = WINDOW_OPEN_MODES.POPUP_CONTENT
+      } else if (extensionPopoutConfig.mode === CRExtensionManifest.POPOUT_WINDOW_MODES.CONTENT) {
+        openMode = WINDOW_OPEN_MODES.CONTENT
+      } else if (extensionPopoutConfig.mode === CRExtensionManifest.POPOUT_WINDOW_MODES.CONTENT_BACKGROUND) {
+        openMode = WINDOW_OPEN_MODES.CONTENT
+        if (extensionPopoutConfig.extension.manifest.hasBackground) {
+          partitionOverride = `${CR_EXTENSION_BG_PARTITION_PREFIX}${extensionPopoutConfig.extension.id}`
+        }
+      }
     }
 
+    // Action the window open
+    let openedWindow
     if (openMode === WINDOW_OPEN_MODES.POPUP_CONTENT) {
-      evt.newGuest = this.openWindowWaveboxPopupContent(openingBrowserWindow, ownerId, targetUrl, options).window
+      openedWindow = this.openWindowWaveboxPopupContent(openingBrowserWindow, ownerId, targetUrl, options)
+      evt.newGuest = openedWindow.window
     } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL) {
-      this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+      openedWindow = this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
     } else if (openMode === WINDOW_OPEN_MODES.DEFAULT || openMode === WINDOW_OPEN_MODES.DEFAULT_IMPORTANT) {
-      this.openWindowDefault(openingBrowserWindow, ownerId, mailbox, targetUrl, options)
+      openedWindow = this.openWindowDefault(openingBrowserWindow, ownerId, mailbox, targetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL) {
-      this.openWindowExternal(openingBrowserWindow, provisionalTargetUrl, mailbox)
+      openedWindow = this.openWindowExternal(openingBrowserWindow, provisionalTargetUrl, mailbox)
     } else if (openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL || openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT) {
-      this.openWindowDefault(openingBrowserWindow, ownerId, mailbox, provisionalTargetUrl, options)
+      openedWindow = this.openWindowDefault(openingBrowserWindow, ownerId, mailbox, provisionalTargetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.CONTENT) {
-      this.openWindowWaveboxContent(openingBrowserWindow, ownerId, targetUrl, options)
+      openedWindow = this.openWindowWaveboxContent(openingBrowserWindow, ownerId, targetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.CONTENT_PROVSIONAL) {
-      this.openWindowWaveboxContent(openingBrowserWindow, ownerId, provisionalTargetUrl, options)
+      openedWindow = this.openWindowWaveboxContent(openingBrowserWindow, ownerId, provisionalTargetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.DOWNLOAD) {
       if ((options || {}).webContents) {
         options.webContents.downloadURL(targetUrl)
+      }
+    }
+
+    // Add any final bind events from the extension. Mainly as work-arounds for window opener
+    if (extensionPopoutConfig) {
+      if (typeof (extensionPopoutConfig.match.actions) === 'object') {
+        if (extensionPopoutConfig.match.actions.onClose === 'reload_opener') {
+          if (openedWindow) {
+            openedWindow.on('closed', () => {
+              const openerWC = webContents.fromId(webContentsId)
+              if (openerWC) {
+                openerWC.reload()
+              }
+            })
+          }
+        }
       }
     }
   }
@@ -205,7 +241,7 @@ class MailboxesWindowBehaviour {
         evt.preventDefault()
         this.openWindowWaveboxContent(openingBrowserWindow, webContentsId, targetUrl, {
           webPreferences: {
-            partition: 'persist:' + mailboxId
+            partition: `persist:${mailboxId}`
           }
         })
       }
@@ -246,15 +282,17 @@ class MailboxesWindowBehaviour {
   * @param mailbox: the mailbox that's attempting to open
   * @param targetUrl: the url to open
   * @param options: the config options for the window
+  * @param partitionOverride = undefined: an optional override for the opener partition
+  * @return the opened window if any
   */
-  openWindowDefault (openingBrowserWindow, ownerId, mailbox, targetUrl, options) {
+  openWindowDefault (openingBrowserWindow, ownerId, mailbox, targetUrl, options, partitionOverride = undefined) {
     if (!mailbox) {
-      this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+      return this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
     } else {
       if (mailbox.defaultWindowOpenMode === CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
-        this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+        return this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
       } else if (mailbox.defaultWindowOpenMode === CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
-        this.openWindowWaveboxContent(openingBrowserWindow, ownerId, targetUrl, options)
+        return this.openWindowWaveboxContent(openingBrowserWindow, ownerId, targetUrl, options, partitionOverride)
       }
     }
   }
@@ -269,7 +307,6 @@ class MailboxesWindowBehaviour {
   */
   openWindowWaveboxPopupContent (openingBrowserWindow, ownerId, targetUrl, options) {
     const contentWindow = new ContentPopupWindow(ownerId)
-    appWindowManager.addContentWindow(contentWindow)
     contentWindow.create(targetUrl, options)
     return contentWindow
   }
@@ -280,12 +317,14 @@ class MailboxesWindowBehaviour {
   * @param ownerId: the id of the owning window
   * @param targetUrl: the url to open
   * @param options: the config options for the window
-  * @return the new  contentwindow instance
+  * @param partitionOverride = undefined: an optional override for the opener partition
+  * @return the new contentwindow instance
   */
-  openWindowWaveboxContent (openingBrowserWindow, ownerId, targetUrl, options) {
+  openWindowWaveboxContent (openingBrowserWindow, ownerId, targetUrl, options, partitionOverride = undefined) {
     const contentWindow = new ContentWindow(ownerId)
-    appWindowManager.addContentWindow(contentWindow)
-    contentWindow.create(openingBrowserWindow, targetUrl, ((options || {}).webPreferences || {}).partition, options)
+    const openerPartition = ((options || {}).webPreferences || {}).partition
+    const partitionId = partitionOverride || openerPartition
+    contentWindow.create(openingBrowserWindow, targetUrl, partitionId, options)
     return contentWindow
   }
 

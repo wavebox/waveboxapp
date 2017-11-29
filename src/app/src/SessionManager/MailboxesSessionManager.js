@@ -19,9 +19,6 @@ class MailboxesSessionManager extends EventEmitter {
   // Lifecycle
   /* ****************************************************************************/
 
-  /**
-  * @param mailboxWindow: the mailbox window instance we're working for
-  */
   constructor () {
     super()
     this._setup = false

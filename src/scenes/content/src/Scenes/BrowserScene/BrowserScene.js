@@ -18,8 +18,6 @@ import {
 } from 'shared/ipcEvents'
 import { ipcRenderer, remote } from 'electron'
 
-const { shell } = remote
-
 const SEARCH_REF = 'search'
 const BROWSER_REF = 'browser'
 
@@ -171,6 +169,7 @@ export default class BrowserScene extends React.Component {
             src={url}
             partition={partition}
             plugins
+            allowpopups
             className='ReactComponent-BrowserSceneWebView'
             webpreferences='contextIsolation=yes, nativeWindowOpen=yes'
             preload={window.guestResolve('preload/contentWindow')}
@@ -181,7 +180,6 @@ export default class BrowserScene extends React.Component {
             pageTitleUpdated={(evt) => browserActions.setPageTitle(evt.title)}
             didStartLoading={(evt) => browserActions.startLoading()}
             didStopLoading={(evt) => browserActions.stopLoading()}
-            newWindow={(evt) => shell.openExternal(evt.url, { })}
             ipcMessage={this.handleBrowserIPCMessage}
             willNavigate={this.navigationStateDidChange}
             didNavigate={this.navigationStateDidChange}

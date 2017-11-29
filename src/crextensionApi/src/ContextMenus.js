@@ -29,8 +29,8 @@ class ContextMenus {
     this[privClickListeners] = new Map()
     this.onClicked = new Event()
 
-    ipcRenderer.on(`${CRX_CONTEXT_MENU_CLICKED_}${extensionId}`, (evt, tabId, params) => {
-      const tab = new Tab(tabId)
+    ipcRenderer.on(`${CRX_CONTEXT_MENU_CLICKED_}${extensionId}`, (evt, tabInfo, params) => {
+      const tab = new Tab(tabInfo)
       const clickListener = this[privClickListeners].get(params.menuItemId)
       if (clickListener) { clickListener(params, tab) }
       this.onClicked.emit(params, tab)

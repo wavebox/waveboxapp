@@ -93,6 +93,15 @@ class CRExtensionRTActions {
   * @param extensionId: the id of the extension
   */
   inspectBackgroundPage (extensionId) { return { extensionId } }
+
+  /* **************************************************************************/
+  // Data management
+  /* **************************************************************************/
+
+  /**
+  * Clears all the browser sessions
+  */
+  clearAllBrowserSessions () { return {} }
 }
 
 module.exports = {

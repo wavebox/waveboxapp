@@ -1,6 +1,3 @@
-import {
-  CR_EXTENSION_PROTOCOL
-} from 'shared/extensionApis'
 import Tab from 'Tabs/Tab'
 
 class MessageSender {
@@ -11,12 +8,12 @@ class MessageSender {
   /**
   * https://developer.chrome.com/extensions/runtime#type-MessageSender
   * @param extensionId: the id of the extension that sent the message
-  * @param tabId: the id of the tab that sent the message
+  * @param connectedParty: the other connected party that opened the connection { tabId, url, tab }
   */
-  constructor (extensionId, tabId) {
+  constructor (extensionId, connectedParty) {
     this.id = extensionId
-    this.url = `${CR_EXTENSION_PROTOCOL}://${extensionId}`
-    this.tab = new Tab(tabId)
+    this.url = connectedParty.url
+    this.tab = new Tab(connectedParty.tab || connectedParty.tabId)
     Object.freeze(this)
   }
 }

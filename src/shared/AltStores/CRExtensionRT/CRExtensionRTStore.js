@@ -12,7 +12,8 @@ const {
   WBECRX_GET_EXTENSION_INSTALL_META,
   WBECRX_INSPECT_BACKGROUND,
   WBECRX_INSTALL_EXTENSION,
-  WBECRX_UNINSTALL_EXTENSION
+  WBECRX_UNINSTALL_EXTENSION,
+  WBECRX_CLEAR_ALL_BROWSER_SESSIONS
 } = require('../../ipcEvents')
 
 const privIpcRenderer = Symbol('privIpcRenderer')
@@ -212,7 +213,9 @@ class CRExtensionRTStore {
       handleContextMenusChanged: actions.CONTEXT_MENUS_CHANGED,
 
       handleOpenExtensionOptions: actions.OPEN_EXTENSION_OPTIONS,
-      handleInspectBackgroundPage: actions.INSPECT_BACKGROUND_PAGE
+      handleInspectBackgroundPage: actions.INSPECT_BACKGROUND_PAGE,
+
+      handleClearAllBrowserSessions: actions.CLEAR_ALL_BROWSER_SESSIONS
     })
   }
 
@@ -335,6 +338,15 @@ class CRExtensionRTStore {
   handleInspectBackgroundPage ({ extensionId }) {
     this.preventDefault()
     this[privIpcRenderer].send(WBECRX_INSPECT_BACKGROUND, extensionId)
+  }
+
+  /* **************************************************************************/
+  // Data management
+  /* **************************************************************************/
+
+  handleClearAllBrowserSessions () {
+    this.preventDefault()
+    this[privIpcRenderer].send(WBECRX_CLEAR_ALL_BROWSER_SESSIONS)
   }
 }
 

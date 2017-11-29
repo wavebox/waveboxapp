@@ -21,13 +21,13 @@ class Port {
   * https://developer.chrome.com/extensions/runtime#type-Port
   * @param extensionId: the current extension id
   * @param portId: the id of the port
-  * @param tabId: the id of the sending tab
+  * @param connectedParty: the other connected party of the connection { tabId, url, tab }
   * @param name: the port name if supplied
   */
-  constructor (extensionId, portId, tabId, name) {
+  constructor (extensionId, portId, connectedParty, name) {
     this[privExtensionId] = extensionId
     this[privPortId] = portId
-    this[privTabId] = tabId
+    this[privTabId] = connectedParty.tabId
     this[privName] = name
     this[privState] = {
       connected: true
@@ -35,7 +35,7 @@ class Port {
 
     this.onDisconnect = new Event()
     this.onMessage = new Event()
-    this.sender = new MessageSender(extensionId, tabId)
+    this.sender = new MessageSender(extensionId, connectedParty)
 
     Object.freeze(this)
 
@@ -50,6 +50,12 @@ class Port {
       })
     })
   }
+
+  /* **************************************************************************/
+  // Properties
+  /* **************************************************************************/
+
+  get name () { return this[privName] }
 
   /* **************************************************************************/
   // Connection

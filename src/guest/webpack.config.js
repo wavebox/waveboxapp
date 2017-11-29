@@ -7,6 +7,7 @@ const devRequire = (n) => require(path.join(ROOT_DIR, 'node_modules', n))
 const CleanWebpackPlugin = devRequire('clean-webpack-plugin')
 const CopyWebpackPlugin = devRequire('copy-webpack-plugin')
 const WebpackNotifierPlugin = devRequire('webpack-notifier')
+const WebpackOnBuildPlugin = devRequire('on-build-webpack')
 
 module.exports = function (env) {
   return {
@@ -31,7 +32,8 @@ module.exports = function (env) {
         ignore: [ '.DS_Store' ]
       }),
 
-      process.env.NOTIFICATIONS === 'true' ? new WebpackNotifierPlugin({ title: 'WB Guest', alwaysNotify: true }) : undefined
+      process.env.NOTIFICATIONS === 'true' ? new WebpackNotifierPlugin({ title: 'WB Guest', alwaysNotify: true }) : undefined,
+      new WebpackOnBuildPlugin((stats) => { console.log('WB Guest') })
     ]
   }
 }

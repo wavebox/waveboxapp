@@ -3,6 +3,7 @@ import EventEmitter from 'events'
 import { evtMain } from 'AppEvents'
 import settingStore from 'stores/settingStore'
 import WaveboxWindowLocationSaver from './WaveboxWindowLocationSaver'
+import WaveboxWindowManager from './WaveboxWindowManager'
 import {
   WB_WINDOW_FIND_START,
   WB_WINDOW_FIND_NEXT,
@@ -22,81 +23,25 @@ const privBrowserWindowId = Symbol('privBrowserWindowId')
 const privLocationSaver = Symbol('privLocationSaver')
 const privLastTimeInFocus = Symbol('privLastTimeInFocus')
 
-const attached = new Map()
+const waveboxWindowManager = new WaveboxWindowManager()
 
 class WaveboxWindow extends EventEmitter {
   /* ****************************************************************************/
-  // Class
+  // Class: Window Manager Passthroughs
   /* ****************************************************************************/
 
-  /**
-  * @return all the attached wavebox windows
-  */
-  static all () { return Array.from(attached.values()) }
-
-  /**
-  * @return the window that was in focus last or is in focus now
-  */
-  static lastFocused () {
-    const all = this.all()
-    let last
-    for (let i = 0; i < all.length; i++) {
-      if (all[i].isFocused()) { return all[i] }
-      if (!last || all[i].lastTimeInFocus > last.lastTimeInFocus) {
-        last = all[i]
-      }
-    }
-    return last
-  }
-
-  /**
-  * @return the id of the window that was in focus last
-  */
-  static lastFocusedId () {
-    const last = this.lastFocused()
-    return last ? last.browserWindowId : undefined
-  }
-
-  /**
-  * @return a list of tab ids
-  */
-  static allTabIds () {
-    return this.all().reduce((acc, waveboxWindow) => {
-      return acc.concat(waveboxWindow.tabIds())
-    }, [])
-  }
-
-  /**
-  * @param tabId: the id of the tab
-  * @return the wavebox window that relates to the tab or undefined
-  */
-  static fromTabId (tabId) {
-    const wc = webContents.fromId(tabId)
-    if (!wc) { return undefined }
-    const bw = BrowserWindow.fromWebContents(wc.hostWebContents || wc)
-    if (!bw) { return undefined }
-    return attached.get(bw.id)
-  }
-
-  /**
-  * @return all the attached browser window ids
-  */
-  static allBrowserWindowIds () { return Array.from(attached.keys()) }
-
-  /**
-  * @param bwId: the id of the browser window
-  * @return the window reference or undefined
-  */
-  static fromBrowserWindowId (bwId) { return attached.get(bwId) }
-
-  /**
-  * @return the id of the tab that's in focus in the focused window
-  */
-  static focusedTabId () {
-    const focusedWindow = this.lastFocused()
-    if (!focusedWindow) { return undefined }
-    return focusedWindow.focusedTabId()
-  }
+  static all () { return waveboxWindowManager.all() }
+  static allOfType (Constructor) { return waveboxWindowManager.allOfType(Constructor) }
+  static getOfType (Constructor) { return waveboxWindowManager.getOfType(Constructor) }
+  static lastFocused () { return waveboxWindowManager.lastFocused() }
+  static focused () { return waveboxWindowManager.focused() }
+  static lastFocusedId () { return waveboxWindowManager.lastFocusedId() }
+  static allTabIds () { return waveboxWindowManager.allTabIds() }
+  static fromTabId (tabId) { return waveboxWindowManager.fromTabId(tabId) }
+  static allBrowserWindowIds () { return waveboxWindowManager.allBrowserWindowIds() }
+  static fromBrowserWindowId (browserWindowId) { return waveboxWindowManager.fromBrowserWindowId(browserWindowId) }
+  static focusedTabId () { return waveboxWindowManager.focusedTabId() }
+  static cycleNextWindow () { return waveboxWindowManager.cycleNextWindow() }
 
   /* ****************************************************************************/
   // Lifecycle
@@ -151,7 +96,7 @@ class WaveboxWindow extends EventEmitter {
 
   /**
   * Starts the app
-  * @param url: the start url
+  * @param url = undefined: the start url
   * @param browserWindowPreferences = {}: preferences to pass to the browser window
   * @return this
   */
@@ -171,10 +116,6 @@ class WaveboxWindow extends EventEmitter {
     // Create the window & prep for lifecycle
     this[privWindow] = new BrowserWindow(fullBrowserWindowPreferences)
     this[privBrowserWindowId] = this.window.id
-    attached.set(this.browserWindowId, this)
-    setTimeout(() => { // Requeue to happen on setup complete
-      evtMain.emit(evtMain.WB_WINDOW_CREATED, this.browserWindowId)
-    })
 
     // Restore the window position
     if (savedLocation.maximized && browserWindowPreferences.show !== false) {
@@ -196,7 +137,15 @@ class WaveboxWindow extends EventEmitter {
     settingStore.on('changed', this.updateWindowMenubar)
 
     // Load the start url
-    this.window.loadURL(url)
+    if (url !== undefined) {
+      this.window.loadURL(url)
+    }
+
+    // Global registers
+    waveboxWindowManager.attach(this)
+    setTimeout(() => { // Requeue to happen on setup complete
+      evtMain.emit(evtMain.WB_WINDOW_CREATED, this.browserWindowId)
+    })
 
     return this
   }
@@ -215,7 +164,9 @@ class WaveboxWindow extends EventEmitter {
       }
       this[privWindow] = null
     }
-    attached.delete(this.browserWindowId)
+
+    // Global registers
+    waveboxWindowManager.detach(this)
     setTimeout(() => {
       evtMain.emit(evtMain.WB_WINDOW_DESTROYED, this.browserWindowId)
     })

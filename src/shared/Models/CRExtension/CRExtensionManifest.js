@@ -8,6 +8,7 @@ const CRExtensionMatchPatterns = require('./CRExtensionMatchPatterns')
 
 const POPOUT_WINDOW_MODES = Object.freeze({
   CONTENT: 'CONTENT',
+  CONTENT_BACKGROUND: 'CONTENT_BACKGROUND',
   POPOUT: 'POPOUT'
 })
 
@@ -157,9 +158,9 @@ class CRExtensionManifest extends Model {
   * @param url: the url to open with
   * @param parsedUrl: the parsed url
   * @param disposition: the open mode disposition
-  * @return the mode the window should use from POPOUT_WINDOW_MODES or false if nothing is matches
+  * @return {mode, match} from POPOUT_WINDOW_MODES or false
   */
-  shouldOpenWindowAsPopout (url, parsedUrl, disposition) {
+  getWindowPopoutModePreference (url, parsedUrl, disposition) {
     const match = this.popoutWindowWhitelist.find((item) => {
       if (!item.pattern) { return false }
 
@@ -184,9 +185,11 @@ class CRExtensionManifest extends Model {
     if (match) {
       if (typeof (match.mode) === 'string') {
         const mode = POPOUT_WINDOW_MODES[match.mode.toUpperCase()]
-        if (mode) { return mode }
+        if (mode) {
+          return { mode: mode, match: match }
+        }
       }
-      return POPOUT_WINDOW_MODES.POPOUT
+      return { mode: POPOUT_WINDOW_MODES.POPOUT, match: match }
     } else {
       return false
     }
@@ -201,6 +204,8 @@ class CRExtensionManifest extends Model {
   }
 
   get waveboxSupportsBrowserAction () { return this._value_('wavebox_support_browser_action', true) }
+  get waveboxBrowserActionOpenUrl () { return this._value_('wavebox_browser_action_open_url', undefined) }
+  get hasWaveboxBrowserActionOpenUrl () { return !!this.waveboxBrowserActionOpenUrl }
 
   get cwsId () {
     const explicit = this._value_('wavebox_cws_id', undefined)
@@ -211,6 +216,8 @@ class CRExtensionManifest extends Model {
     }
     return undefined
   }
+
+  get waveboxCookieScopes () { return new Set(this._value_('wavebox_cookie_scopes', ['background'])) }
 }
 
 module.exports = CRExtensionManifest

@@ -1,11 +1,13 @@
-import EventUnsupported from 'Core/EventUnsupported'
+import Event from 'Core/Event'
 import DispatchManager from 'Core/DispatchManager'
 import Cookie from './Cookie'
+import { ipcRenderer } from 'electronCrx'
 import {
   CRX_COOKIES_GET_,
   CRX_COOKIES_GET_ALL_,
   CRX_COOKIES_SET_,
-  CRX_COOKIES_REMOVE_
+  CRX_COOKIES_REMOVE_,
+  CRX_COOKIES_CHANGED_
 } from 'shared/crExtensionIpcEvents'
 import { protectedHandleError } from 'Runtime/ProtectedRuntimeSymbols'
 
@@ -26,7 +28,17 @@ class Cookies {
     this[privExtensionId] = extensionId
     this[privRuntime] = runtime
 
-    this.onChanged = new EventUnsupported('chrome.cookies.onChanged')
+    this.onChanged = new Event()
+
+    // Handlers
+    ipcRenderer.on(`${CRX_COOKIES_CHANGED_}${this[privExtensionId]}`, (evt, rawChangeInfo) => {
+      const changeInfo = {
+        cause: rawChangeInfo.cause,
+        cookie: new Cookie(rawChangeInfo.cookie),
+        removed: rawChangeInfo.removed
+      }
+      this.onChanged.emit(changeInfo)
+    })
 
     Object.freeze(this)
   }
