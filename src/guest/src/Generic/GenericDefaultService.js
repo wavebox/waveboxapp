@@ -7,16 +7,7 @@ class GenericDefaultService {
   /* **************************************************************************/
 
   constructor () {
-    this.browser = new Browser({
-      contextMenu: {
-        copyCurrentPageUrlOption: true,
-
-        navigateBackOption: true,
-        navigateForwardOption: true,
-        navigateHomeOption: true,
-        navigateReloadOption: true
-      }
-    })
+    this.browser = new Browser()
     this.wavebox = new Wavebox()
   }
 }

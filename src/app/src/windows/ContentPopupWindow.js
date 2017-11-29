@@ -31,9 +31,9 @@ class ContentPopupWindow extends WaveboxWindow {
 
     // Setup for tab lifecycle
     const webContentsId = this.window.webContents.id
-    evtMain.emit(evtMain.WB_TAB_CREATED, webContentsId)
+    evtMain.emit(evtMain.WB_TAB_CREATED, {}, webContentsId)
     this.window.webContents.once('destroyed', () => {
-      evtMain.emit(evtMain.WB_TAB_DESTROYED, webContentsId)
+      evtMain.emit(evtMain.WB_TAB_DESTROYED, {}, webContentsId)
     })
 
     // Listen to webview events

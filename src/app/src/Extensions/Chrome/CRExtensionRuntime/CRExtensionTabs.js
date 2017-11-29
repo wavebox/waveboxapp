@@ -84,9 +84,10 @@ class CRExtensionTabs {
 
   /**
   * Handles a tab being attached by passing to the extension
+  * @param evt: the event that fired
   * @param tabId: the id of the webcontents
   */
-  handleTabCreated = (tabId) => {
+  handleTabCreated = (evt, tabId) => {
     // Bind tab listeners - even if there isn't a sender right now
     this.bindTabEventListeners(tabId)
 
@@ -97,19 +98,21 @@ class CRExtensionTabs {
 
   /**
   * Handles a tab being detached by passing to the extension
+  * @param evt: the event that fired
   * @param tabId: the id of the webcontents
   */
-  handleTabDestroyed = (tabId) => {
+  handleTabDestroyed = (evt, tabId) => {
     if (!this.backgroundPageSender) { return }
     this.backgroundPageSender(`${CRX_TABS_REMOVED_}${this.extension.id}`, this._tabDataFromWebContentsId(tabId))
   }
 
   /**
   * Handles a tab being activated
+  * @param evt: the event that fired
   * @param browserWindowId: the id of the browser window
   * @param tabId: the id of the tab
   */
-  handleTabActivated = (browserWindowId, tabId) => {
+  handleTabActivated = (evt, browserWindowId, tabId) => {
     if (!this.backgroundPageSender) { return }
     this.backgroundPageSender(`${CRX_TAB_ACTIVATED_}${this.extension.id}`, {
       windowId: browserWindowId,

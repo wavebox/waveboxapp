@@ -44,9 +44,10 @@ class CRExtensionWindows {
 
   /**
   * Handles a window becoming blurred
+  * @param evt: the event that fired
   * @param windowId: the id of the window
   */
-  handleWindowBlurred = (windowId) => {
+  handleWindowBlurred = (evt, windowId) => {
     if (!this.backgroundPageSender) { return }
     const focusedId = this._getFocusedWindowId()
     this.backgroundPageSender(`${CRX_WINDOW_FOCUS_CHANGED_}${this.extension.id}`, focusedId === undefined ? -1 : focusedId)
@@ -54,9 +55,10 @@ class CRExtensionWindows {
 
   /**
   * Handles a window becoming focused
+  * @param evt: the event that fired
   * @param windowId: the id of the window
   */
-  handleWindowFocused = (windowId) => {
+  handleWindowFocused = (evt, windowId) => {
     if (!this.backgroundPageSender) { return }
     this.backgroundPageSender(`${CRX_WINDOW_FOCUS_CHANGED_}${this.extension.id}`, windowId === undefined ? -1 : windowId)
   }

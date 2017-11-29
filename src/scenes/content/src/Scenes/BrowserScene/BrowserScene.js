@@ -13,8 +13,7 @@ import {
   WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
   WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD,
-  WB_BROWSER_GUEST_WINDOW_CLOSE,
-  WB_NEW_WINDOW
+  WB_BROWSER_GUEST_WINDOW_CLOSE
 } from 'shared/ipcEvents'
 import { ipcRenderer, remote } from 'electron'
 
@@ -127,9 +126,6 @@ export default class BrowserScene extends React.Component {
     switch (evt.channel.type) {
       case WB_BROWSER_GUEST_WINDOW_CLOSE:
         this.handleIPCGuestWindowClose(evt.channel.data)
-        break
-      case WB_NEW_WINDOW:
-        ipcRenderer.send(WB_NEW_WINDOW, evt.channel.data)
         break
     }
   }

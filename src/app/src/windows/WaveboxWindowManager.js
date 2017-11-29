@@ -69,6 +69,19 @@ class WaveboxWindowManager {
   }
 
   /* ****************************************************************************/
+  // Getters: WebContents
+  /* ****************************************************************************/
+
+  /**
+  * @param wcId: the webcontents id
+  * @return the wavebox window
+  */
+  fromWebContentsId (wcId) {
+    return Array.from(this[privAttached].values())
+      .find((w) => w.window.webContents.id === wcId)
+  }
+
+  /* ****************************************************************************/
   // Getters: Tabs
   /* ****************************************************************************/
 
@@ -107,6 +120,12 @@ class WaveboxWindowManager {
   * @return the window reference or undefined
   */
   fromBrowserWindowId (bwId) { return this[privAttached].get(bwId) }
+
+  /**
+  * @param bw: the browser window
+  * @return the window reference or undefined
+  */
+  fromBrowserWindow (bw) { return bw ? this.fromBrowserWindowId(bw.id) : undefined }
 
   /* ****************************************************************************/
   // Getters: Focused

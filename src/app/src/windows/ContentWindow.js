@@ -1,13 +1,12 @@
 import WaveboxWindow from './WaveboxWindow'
-import { shell, ipcMain, app, webContents } from 'electron'
+import { shell, app, webContents } from 'electron'
 import { evtMain } from 'AppEvents'
 import querystring from 'querystring'
 import {
   WB_WINDOW_RELOAD_WEBVIEW,
   WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
-  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD,
-  WB_NEW_WINDOW
+  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
 } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
 import ContentPopupWindow from './ContentPopupWindow'
@@ -54,6 +53,7 @@ class ContentWindow extends WaveboxWindow {
   /* ****************************************************************************/
 
   get launchInfo () { return this[privLaunchInfo] }
+  get rootWebContentsHasContextMenu () { return false }
 
   /* ****************************************************************************/
   // Window lifecycle
@@ -139,9 +139,6 @@ class ContentWindow extends WaveboxWindow {
       this.safeBrowserWindowPreferences(browserWindowPreferences)
     ))
 
-    // New window handling
-    ipcMain.on(WB_NEW_WINDOW, this.handleIPCOpenNewWindow)
-
     // remove built in listener so we can handle this on our own
     this.window.webContents.removeAllListeners('devtools-reload-page')
     this.window.webContents.on('devtools-reload-page', () => this.window.reload())
@@ -157,7 +154,6 @@ class ContentWindow extends WaveboxWindow {
   * Handles destroy being called
   */
   destroy (evt) {
-    ipcMain.removeListener(WB_NEW_WINDOW, this.handleIPCOpenNewWindow)
     app.removeListener('web-contents-created', this.handleAppWebContentsCreated)
     super.destroy(evt)
   }
@@ -189,16 +185,19 @@ class ContentWindow extends WaveboxWindow {
   * @param contents: the webcontents that did attach
   */
   handleAppWebContentsCreated = (evt, contents) => {
-    if (contents.getType() === 'webview' && contents.hostWebContents.id === this.window.webContents.id) {
-      this[privGuestWebContentsId] = contents.id
-      evtMain.emit(evtMain.WB_TAB_CREATED, this[privGuestWebContentsId])
-      contents.on('new-window', this.handleWebContentsNewWindow)
-      contents.once('destroyed', () => {
-        const wcId = this[privGuestWebContentsId]
-        this[privGuestWebContentsId] = null
-        evtMain.emit(evtMain.WB_TAB_DESTROYED, wcId)
-      })
-    }
+    setImmediate(() => {
+      if (contents.isDestroyed()) { return }
+      if (contents.getType() === 'webview' && contents.hostWebContents.id === this.window.webContents.id) {
+        this[privGuestWebContentsId] = contents.id
+        evtMain.emit(evtMain.WB_TAB_CREATED, {}, this[privGuestWebContentsId])
+        contents.on('new-window', this.handleWebContentsNewWindow)
+        contents.once('destroyed', () => {
+          const wcId = this[privGuestWebContentsId]
+          this[privGuestWebContentsId] = null
+          evtMain.emit(evtMain.WB_TAB_DESTROYED, {}, wcId)
+        })
+      }
+    })
   }
 
   /* ****************************************************************************/

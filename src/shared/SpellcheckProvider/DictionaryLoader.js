@@ -1,17 +1,22 @@
-const req = require('../req')
 const fs = require('fs')
 const path = require('path')
-const enUS = require('dictionary-en-us')
-const { PREINSTALLED_DICTIONARIES } = req.shared('constants.js')
-const { USER_DICTIONARIES_PATH } = req.runtimePaths()
+const { PREINSTALLED_DICTIONARIES } = require('../constants')
 
-class DictionaryLoad {
+const privUserDictionaryPath = Symbol('privUserDictionaryPath')
+const privENUSDictionaryPath = Symbol('privENUSDictionaryPath')
+
+class DictionaryLoader {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
 
-  constructor () {
-    this._installedDictionaries = null
+  /**
+  * @param enUSDictionaryPath: the path to the enUS dictionary
+  * @param userDictionaryPath: the path to the user dictionaries
+  */
+  constructor (enUSDictionaryPath, userDictionaryPath) {
+    this[privENUSDictionaryPath] = enUSDictionaryPath
+    this[privUserDictionaryPath] = userDictionaryPath
   }
 
   /* **************************************************************************/
@@ -26,8 +31,8 @@ class DictionaryLoad {
   _loadCustomDictionary_ (language) {
     return new Promise((resolve, reject) => {
       const tasks = [
-        { path: path.join(USER_DICTIONARIES_PATH, language + '.aff'), type: 'aff' },
-        { path: path.join(USER_DICTIONARIES_PATH, language + '.dic'), type: 'dic' }
+        { path: path.join(this[privUserDictionaryPath], language + '.aff'), type: 'aff' },
+        { path: path.join(this[privUserDictionaryPath], language + '.dic'), type: 'dic' }
       ].map((desc) => {
         return new Promise((resolve, reject) => {
           fs.readFile(desc.path, (err, data) => {
@@ -55,30 +60,9 @@ class DictionaryLoad {
   * @return promise
   */
   _loadCustomDictionarySync_ (language) {
-    const aff = fs.readFileSync(path.join(USER_DICTIONARIES_PATH, language + '.aff'))
-    const dic = fs.readFileSync(path.join(USER_DICTIONARIES_PATH, language + '.dic'))
+    const aff = fs.readFileSync(path.join(this[privUserDictionaryPath], language + '.aff'))
+    const dic = fs.readFileSync(path.join(this[privUserDictionaryPath], language + '.dic'))
     return { aff: aff, dic: dic }
-  }
-
-  /**
-  * Loads an inbuilt language
-  * @param language: the language to load
-  * @return promise
-  */
-  _loadInbuiltDictionary_ (language) {
-    if (language === 'en_US') {
-      return new Promise((resolve, reject) => {
-        enUS((err, load) => {
-          if (err) {
-            reject(err)
-          } else {
-            resolve({ aff: load.aff, dic: load.dic })
-          }
-        })
-      })
-    } else {
-      return Promise.reject(new Error('Unknown Dictionary'))
-    }
   }
 
   /**
@@ -88,9 +72,8 @@ class DictionaryLoad {
   */
   _loadInbuiltDictionarySync_ (language) {
     if (language === 'en_US') {
-      const basePath = path.dirname(require.resolve('dictionary-en-us'))
-      const aff = fs.readFileSync(path.join(basePath, 'index.aff'))
-      const dic = fs.readFileSync(path.join(basePath, 'index.dic'))
+      const aff = fs.readFileSync(path.join(this[privENUSDictionaryPath], 'index.aff'))
+      const dic = fs.readFileSync(path.join(this[privENUSDictionaryPath], 'index.dic'))
       return { aff: aff, dic: dic }
     } else {
       throw new Error('Unknown Dictionary')
@@ -100,25 +83,6 @@ class DictionaryLoad {
   /* **************************************************************************/
   // Loaders
   /* **************************************************************************/
-
-  /**
-  * Loads a dictionary
-  * @param language: the language to load
-  * @return promise
-  */
-  load (language) {
-    return new Promise((resolve, reject) => {
-      this._loadInbuiltDictionary_(language).then(
-        (dic) => resolve(dic),
-        (_err) => {
-          this._loadCustomDictionary_(language).then(
-            (dic) => resolve(dic),
-            (_err) => reject(new Error('Unknown Dictionary'))
-          )
-        }
-      )
-    })
-  }
 
   /**
   * Loads a dictionary synchronously
@@ -152,28 +116,25 @@ class DictionaryLoad {
   * @return a list of dictionary codes
   */
   getInstalledDictionaries () {
-    if (!this._installedDictionaries) {
-      let files
-      try {
-        files = fs.readdirSync(USER_DICTIONARIES_PATH)
-      } catch (ex) {
-        files = []
-      }
-
-      const dictionaries = files.reduce((acc, filename) => {
-        const ext = path.extname(filename).replace('.', '')
-        const lang = path.basename(filename, '.' + ext)
-        acc[lang] = acc[lang] || {}
-        acc[lang][ext] = true
-        return acc
-      }, {})
-      this._installedDictionaries = Object.keys(dictionaries)
-        .filter((lang) => dictionaries[lang].aff && dictionaries[lang].dic)
-        .concat(PREINSTALLED_DICTIONARIES)
+    let files
+    try {
+      files = fs.readdirSync(this[privUserDictionaryPath])
+    } catch (ex) {
+      files = []
     }
 
-    return this._installedDictionaries
+    const dictionaries = files.reduce((acc, filename) => {
+      const ext = path.extname(filename).replace('.', '')
+      const lang = path.basename(filename, '.' + ext)
+      acc[lang] = acc[lang] || {}
+      acc[lang][ext] = true
+      return acc
+    }, {})
+
+    return Object.keys(dictionaries)
+      .filter((lang) => dictionaries[lang].aff && dictionaries[lang].dic)
+      .concat(PREINSTALLED_DICTIONARIES)
   }
 }
 
-module.exports = new DictionaryLoad()
+module.exports = DictionaryLoader

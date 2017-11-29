@@ -51,9 +51,10 @@ class MailboxesWindowBehaviour {
 
   /**
   * Handles a new tab being created
+  * @param evt: the event that fired
   * @param webContentsId: the id of the webcontents
   */
-  handleTabCreated = (webContentsId) => {
+  handleTabCreated = (evt, webContentsId) => {
     const contents = webContents.fromId(webContentsId)
     if (contents && contents.getType() === 'webview' && contents.hostWebContents.id === this.webContentsId) {
       contents.on('new-window', this.handleWebViewNewWindow)
@@ -267,7 +268,7 @@ class MailboxesWindowBehaviour {
 
     if (service.shouldPreventInputEvent(input)) {
       evt.preventDefault()
-      evtMain.emit(evtMain.INPUT_EVENT_PREVENTED, evt.sender.id, input)
+      evtMain.emit(evtMain.INPUT_EVENT_PREVENTED, {}, evt.sender.id, input)
     }
   }
 

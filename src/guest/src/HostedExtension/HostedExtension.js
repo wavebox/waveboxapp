@@ -12,12 +12,7 @@ class HostedExtension {
 
   constructor () {
     webFrame.registerURLSchemeAsPrivileged(WAVEBOX_HOSTED_EXTENSION_PROTOCOL)
-    this.browser = new Browser({
-      contextMenu: {
-        hasSettingsOption: false,
-        hasChangeDictionaryOption: false
-      }
-    })
+    this.browser = new Browser()
   }
 }
 

@@ -59,10 +59,10 @@ class MailboxesWindowTabManager {
         this.attachedMailboxes.delete(data.webContentsId)
         this.attachedExtensions.delete(data.webContentsId)
         this.targetUrls.delete(data.webContentsId)
-        evtMain.emit(evtMain.WB_TAB_DESTROYED, data.webContentsId)
+        evtMain.emit(evtMain.WB_TAB_DESTROYED, {}, data.webContentsId)
       })
 
-      evtMain.emit(evtMain.WB_TAB_CREATED, data.webContentsId)
+      evtMain.emit(evtMain.WB_TAB_CREATED, {}, data.webContentsId)
 
       // Look to see if there was a queued change event
       if (this[privQueuedMailboxToTabChange]) {
@@ -72,7 +72,7 @@ class MailboxesWindowTabManager {
           const tabId = this.getWebContentsId(mailboxId, serviceType)
 
           if (browserWindow && tabId) {
-            evtMain.emit(evtMain.WB_TAB_ACTIVATED, browserWindow.id, tabId)
+            evtMain.emit(evtMain.WB_TAB_ACTIVATED, {}, browserWindow.id, tabId)
           }
         }
         this[privQueuedMailboxToTabChange] = null
@@ -119,7 +119,7 @@ class MailboxesWindowTabManager {
 
     if (browserWindow && tabId) {
       this[privQueuedMailboxToTabChange] = null
-      evtMain.emit(evtMain.WB_TAB_ACTIVATED, browserWindow.id, tabId)
+      evtMain.emit(evtMain.WB_TAB_ACTIVATED, {}, browserWindow.id, tabId)
     } else {
       // Sometimes the mailbox changes comes in before the webview is mounted.
       // To cope with this queue it up to dequeue on mount

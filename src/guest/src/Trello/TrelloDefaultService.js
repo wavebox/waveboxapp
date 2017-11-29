@@ -7,11 +7,7 @@ class TrelloDefaultService {
   /* **************************************************************************/
 
   constructor () {
-    this.browser = new Browser({
-      contextMenu: {
-        copyCurrentPageUrlOption: true
-      }
-    })
+    this.browser = new Browser()
     this.wavebox = new Wavebox()
   }
 }

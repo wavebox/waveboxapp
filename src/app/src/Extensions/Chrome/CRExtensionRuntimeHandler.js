@@ -19,7 +19,6 @@ import {
 } from 'shared/crExtensionIpcEvents'
 import {
   WBECRX_GET_EXTENSION_RUNTIME_DATA,
-  WBECRX_GET_EXTENSION_RUNTIME_CONTEXT_MENU_DATA,
   WBECRX_LAUNCH_OPTIONS,
   WBECRX_INSPECT_BACKGROUND,
   WBECRX_CLEAR_ALL_BROWSER_SESSIONS
@@ -41,7 +40,6 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     CRDispatchManager.registerHandler(CRX_RUNTIME_SENDMESSAGE, this._handleRuntimeSendmessage)
     CRDispatchManager.registerHandler(CRX_TABS_SENDMESSAGE, this._handleTabsSendmessage)
     ipcMain.on(WBECRX_GET_EXTENSION_RUNTIME_DATA, this._handleGetRuntimeData)
-    ipcMain.on(WBECRX_GET_EXTENSION_RUNTIME_CONTEXT_MENU_DATA, this._handleGetRuntimeContextMenuData)
     ipcMain.on(WBECRX_LAUNCH_OPTIONS, this._handleOpenOptionsPage)
     ipcMain.on(WBECRX_INSPECT_BACKGROUND, this._handleInspectBackground)
     ipcMain.on(CRX_RUNTIME_HAS_RESPONDER, this._handleHasRuntimeResponder)
@@ -278,15 +276,14 @@ class CRExtensionRuntimeHandler extends EventEmitter {
 
   /**
   * Gets the context menu runtime data in a synchronous way
-  * @param evt: the event that fired
+  * @return an object-map of UI data for rendering the context menu
   */
-  _handleGetRuntimeContextMenuData = (evt) => {
-    const data = Array.from(this.runtimes.keys())
+  getRuntimeContextMenuData () {
+    return Array.from(this.runtimes.keys())
       .reduce((acc, key) => {
         acc[key] = this.runtimes.get(key).buildUIRuntimeContextMenuData()
         return acc
       }, {})
-    evt.returnValue = data
   }
 
   /* ****************************************************************************/
@@ -347,6 +344,22 @@ class CRExtensionRuntimeHandler extends EventEmitter {
       if (mode !== false) { return mode }
     }
     return false
+  }
+
+  /* ****************************************************************************/
+  // Actioning
+  /* ****************************************************************************/
+
+  /**
+  * Handles a context menu item being selected
+  * @param extensionId: the id of the extension to dispatch to
+  * @param contents: the contents that's dispatching
+  * @param params: the click params
+  */
+  contextMenuItemSelected (extensionId, contents, params) {
+    const runtime = this.runtimes.get(extensionId)
+    if (!runtime || !runtime.contextMenus) { return }
+    runtime.contextMenus.itemSelected(contents, params)
   }
 
   /* ****************************************************************************/

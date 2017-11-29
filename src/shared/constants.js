@@ -15,7 +15,6 @@ module.exports = Object.freeze({
   // App
   APP_ID: 'wavebox.io',
   ANALYTICS_HEARTBEAT_INTERVAL: minutes(5),
-  PRELOAD_USE_SYNC_FS: true, // Temporary fix for https://github.com/electron/electron/issues/9713
   RELEASE_CHANNELS: Object.assign({
     STABLE: 'STABLE',
     BETA: 'BETA'

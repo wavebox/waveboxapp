@@ -6,8 +6,7 @@ import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import { mailboxStore, mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
-  WB_BROWSER_NOTIFICATION_PRESENT,
-  WB_MAILBOXES_WEBVIEW_NAVIGATE_HOME
+  WB_BROWSER_NOTIFICATION_PRESENT
 } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
 
@@ -109,7 +108,6 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
   handleIPCMessage = (evt) => {
     switch (evt.channel.type) {
       case WB_BROWSER_NOTIFICATION_PRESENT: this.handleBrowserNotificationPresented(); break
-      case WB_MAILBOXES_WEBVIEW_NAVIGATE_HOME: this.refs[REF].loadURL(this.state.url); break
       default: break
     }
   }

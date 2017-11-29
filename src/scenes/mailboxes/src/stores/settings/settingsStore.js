@@ -1,7 +1,7 @@
 import alt from '../alt'
 import actions from './settingsActions'
 import persistence from './settingsPersistence'
-import dictionaries from 'shared/dictionaries.js'
+import dictionaries from 'shared/SpellcheckProvider/dictionaries.js'
 import fs from 'fs'
 import {
   AcceleratorSettings,

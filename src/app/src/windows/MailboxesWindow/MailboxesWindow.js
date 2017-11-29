@@ -29,6 +29,7 @@ import {
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
   WB_WINDOW_RELOAD_WEBVIEW,
   WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
+  WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG,
 
   WB_USER_CHECK_FOR_UPDATE,
   WB_SQUIRREL_UPDATE_DOWNLOADED,
@@ -104,6 +105,12 @@ class MailboxesWindow extends WaveboxWindow {
     })
     return `file://${Resolver.mailboxesScene('mailboxes.html')}?${params}`
   }
+
+  /* ****************************************************************************/
+  // Properties
+  /* ****************************************************************************/
+
+  get rootWebContentsHasContextMenu () { return false }
 
   /* ****************************************************************************/
   // Window lifecycle
@@ -482,10 +489,22 @@ class MailboxesWindow extends WaveboxWindow {
 
   /**
   * Opens the dev tools for the webview
-  * @return this
   */
   openDevTools () {
     this.window.webContents.send(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, {})
+  }
+
+  /* ****************************************************************************/
+  // Actions: Misc
+  /* ****************************************************************************/
+
+  /**
+  * Changes the primary spell check lang. This is a bad call because really
+  * we should have data access on the top level
+  * @param lang: the language to change to
+  */
+  changePrimarySpellcheckLanguage (lang) {
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG, { lang })
   }
 
   /* ****************************************************************************/

@@ -8,13 +8,7 @@ class Content {
   /* **************************************************************************/
 
   constructor () {
-    this.browser = new Browser({
-      contextMenu: {
-        copyCurrentPageUrlOption: true,
-        hasSettingsOption: false,
-        hasChangeDictionaryOption: false
-      }
-    })
+    this.browser = new Browser()
     this.wavebox = new Wavebox()
     this.childWindow = new ChildWindowProvider()
   }

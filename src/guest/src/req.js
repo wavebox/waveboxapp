@@ -38,5 +38,19 @@ module.exports = {
   /**
   * @return the runtime paths object
   */
-  runtimePaths: () => { return runtimePaths }
+  runtimePaths: () => { return runtimePaths },
+
+  /**
+  * The path to node modules in the app directory
+  * @param n: the name of the module
+  * @return the path to the module
+  */
+  appNodeModulesPath: (n) => { return require.resolve(path.join('../../app/node_modules', n)) },
+
+  /**
+  * The module from node modules in the app directory
+  * @param n: the name of the module
+  * @return the module
+  */
+  appNodeModules: (n) => { return require(require.resolve(path.join('../../app/node_modules', n))) }
 }

@@ -30,7 +30,7 @@ class WaveboxAppPrimaryMenuAcions {
   // App Lifecycle
   /* ****************************************************************************/
   fullQuit = () => {
-    evtMain.emit(evtMain.WB_QUIT_APP)
+    evtMain.emit(evtMain.WB_QUIT_APP, {})
   }
 
   closeWindow = () => {

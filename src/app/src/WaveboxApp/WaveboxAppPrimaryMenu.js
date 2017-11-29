@@ -471,10 +471,11 @@ class WaveboxAppPrimaryMenu {
 
   /**
   * Handles an input event being prevented
+  * @param evt: the event that fired
   * @param webContentsId: the id of the webcontents that the event was prevented on
   * @param input: the input params that were prevented
   */
-  handleInputEventPrevented = (webContentsId, input) => {
+  handleInputEventPrevented = (evt, webContentsId, input) => {
     if (input.type !== 'keyDown') { return }
     if (!this._lastMenu) { return }
 

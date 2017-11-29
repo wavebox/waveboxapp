@@ -36,10 +36,12 @@ class WaveboxWindow extends EventEmitter {
   static lastFocused () { return waveboxWindowManager.lastFocused() }
   static focused () { return waveboxWindowManager.focused() }
   static lastFocusedId () { return waveboxWindowManager.lastFocusedId() }
+  static fromWebContentsId (wcId) { return waveboxWindowManager.fromWebContentsId(wcId) }
   static allTabIds () { return waveboxWindowManager.allTabIds() }
   static fromTabId (tabId) { return waveboxWindowManager.fromTabId(tabId) }
   static allBrowserWindowIds () { return waveboxWindowManager.allBrowserWindowIds() }
   static fromBrowserWindowId (browserWindowId) { return waveboxWindowManager.fromBrowserWindowId(browserWindowId) }
+  static fromBrowserWindow (bw) { return waveboxWindowManager.fromBrowserWindow(bw) }
   static focusedTabId () { return waveboxWindowManager.focusedTabId() }
   static cycleNextWindow () { return waveboxWindowManager.cycleNextWindow() }
 
@@ -85,10 +87,28 @@ class WaveboxWindow extends EventEmitter {
   get ownerId () { return this[privOwnerId] }
   set ownerId (v) { this[privOwnerId] = v }
 
+  /* ****************************************************************************/
+  // Properties: Window
+  /* ****************************************************************************/
+
   get window () { return this[privWindow] }
   get browserWindowId () { return this[privBrowserWindowId] }
+  get rootWebContents () {
+    const has = this[privWindow] && !this[privWindow].isDestroyed() && this[privWindow].webContents
+    return has ? this[privWindow].webContents : undefined
+  }
+  get rootWebContentsId () {
+    const rootWebContents = this.rootWebContents
+    return rootWebContents && !rootWebContents.isDestroyed() ? rootWebContents.id : undefined
+  }
   get locationSaver () { return this[privLocationSaver] }
   get lastTimeInFocus () { return this[privLastTimeInFocus] }
+
+  /* ****************************************************************************/
+  // Properties: Behaviour
+  /* ****************************************************************************/
+
+  get rootWebContentsHasContextMenu () { return true }
 
   /* ****************************************************************************/
   // Window lifecycle
@@ -144,7 +164,7 @@ class WaveboxWindow extends EventEmitter {
     // Global registers
     waveboxWindowManager.attach(this)
     setTimeout(() => { // Requeue to happen on setup complete
-      evtMain.emit(evtMain.WB_WINDOW_CREATED, this.browserWindowId)
+      evtMain.emit(evtMain.WB_WINDOW_CREATED, {}, this.browserWindowId)
     })
 
     return this
@@ -168,7 +188,7 @@ class WaveboxWindow extends EventEmitter {
     // Global registers
     waveboxWindowManager.detach(this)
     setTimeout(() => {
-      evtMain.emit(evtMain.WB_WINDOW_DESTROYED, this.browserWindowId)
+      evtMain.emit(evtMain.WB_WINDOW_DESTROYED, {}, this.browserWindowId)
     })
     this.emit('closed', evt)
   }
@@ -210,7 +230,7 @@ class WaveboxWindow extends EventEmitter {
   _handleWindowFocused = (evt) => {
     this[privLastTimeInFocus] = new Date().getTime()
     this.window.webContents.send(WB_WINDOW_FOCUS)
-    evtMain.emit(evtMain.WB_WINDOW_FOCUSED, this.window.id)
+    evtMain.emit(evtMain.WB_WINDOW_FOCUSED, {}, this.window.id)
   }
 
   /**
@@ -220,7 +240,7 @@ class WaveboxWindow extends EventEmitter {
   _handleWindowBlurred = (evt) => {
     this[privLastTimeInFocus] = new Date().getTime()
     this.window.webContents.send(WB_WINDOW_BLUR)
-    evtMain.emit(evtMain.WB_WINDOW_BLURRED, this.window.id)
+    evtMain.emit(evtMain.WB_WINDOW_BLURRED, {}, this.window.id)
   }
 
   /* ****************************************************************************/

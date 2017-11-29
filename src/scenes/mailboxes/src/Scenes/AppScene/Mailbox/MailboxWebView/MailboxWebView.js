@@ -2,8 +2,7 @@ import './MailboxWebView.less'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { CircularProgress, RaisedButton, FontIcon } from 'material-ui'
-import { mailboxStore, mailboxActions, mailboxDispatch, MailboxLinker } from 'stores/mailbox'
-import { settingsActions } from 'stores/settings'
+import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
 import { guestActions } from 'stores/guest'
 import BrowserView from 'sharedui/Components/BrowserView'
 import CoreService from 'shared/Models/Accounts/CoreService'
@@ -19,10 +18,7 @@ import {
   WB_BROWSER_NOTIFICATION_CLICK,
   WB_BROWSER_NOTIFICATION_PRESENT,
   WB_BROWSER_INJECT_CUSTOM_CONTENT,
-  WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED,
-  WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
-  WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG,
-  WB_NEW_WINDOW
+  WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
 
@@ -329,15 +325,6 @@ export default class MailboxWebView extends React.Component {
   */
   dispatchBrowserIPCMessage = (evt) => {
     switch (evt.channel.type) {
-      case WB_MAILBOXES_WINDOW_SHOW_SETTINGS:
-        window.location.hash = '/settings'
-        break
-      case WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG:
-        settingsActions.setSpellcheckerLanguage(evt.channel.data.lang)
-        break
-      case WB_NEW_WINDOW:
-        MailboxLinker.openContentWindow(this.props.mailboxId, this.props.serviceType, evt.channel.data.url)
-        break
       case WB_BROWSER_NOTIFICATION_PRESENT:
         if (this.props.plugHTML5Notifications) {
           NotificationService.processHTML5MailboxNotification(
