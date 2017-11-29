@@ -107,6 +107,8 @@ export default class Toolbar extends React.Component {
       } : undefined),
       hasExtensionsInToolbar: Toolbar.hasExtensionsInToolbar(crextensionState, settingsState),
       extensionLayoutMode: settingsState.extension.toolbarBrowserActionLayout,
+      showTitlebar: settingsState.ui.showTitlebar,
+      sidebarEnabled: settingsState.ui.sidebarEnabled,
       activeMailboxTabId: mailboxState.getActiveWebcontentTabId()
     }
   })()
@@ -141,7 +143,9 @@ export default class Toolbar extends React.Component {
   settingsUpdated = (settingsState) => {
     this.setState({
       extensionLayoutMode: settingsState.extension.toolbarBrowserActionLayout,
-      hasExtensionsInToolbar: Toolbar.hasExtensionsInToolbar(undefined, settingsState)
+      hasExtensionsInToolbar: Toolbar.hasExtensionsInToolbar(undefined, settingsState),
+      showTitlebar: settingsState.ui.showTitlebar,
+      sidebarEnabled: settingsState.ui.sidebarEnabled
     })
   }
 
@@ -165,7 +169,9 @@ export default class Toolbar extends React.Component {
       mailboxLayoutMode,
       hasExtensionsInToolbar,
       extensionLayoutMode,
-      activeMailboxTabId
+      activeMailboxTabId,
+      showTitlebar,
+      sidebarEnabled
     } = this.state
 
     return (
@@ -173,6 +179,7 @@ export default class Toolbar extends React.Component {
         {...passProps}
         style={{
           height: toolbarHeight,
+          paddingLeft: !showTitlebar && !sidebarEnabled ? 70 : 0,
           ...styles.toolbar,
           ...style
         }}>
