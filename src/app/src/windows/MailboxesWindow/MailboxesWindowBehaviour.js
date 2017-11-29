@@ -14,7 +14,7 @@ import {
 } from 'shared/ipcEvents'
 import {
   WAVEBOX_CAPTURE_URL_PREFIX,
-  WAVEBOX_CAPTURE_URL_HOSTNAME
+  WAVEBOX_CAPTURE_URL_HOSTNAMES
 } from 'shared/constants'
 import {
   WAVEBOX_HOSTED_EXTENSION_PROTOCOL,
@@ -123,7 +123,7 @@ class MailboxesWindowBehaviour {
 
     // Check for some urls to never handle
     const purl = url.parse(targetUrl, true)
-    if (purl.hostname === WAVEBOX_CAPTURE_URL_HOSTNAME && purl.pathname.startsWith(WAVEBOX_CAPTURE_URL_PREFIX)) { return }
+    if (WAVEBOX_CAPTURE_URL_HOSTNAMES.indexOf(purl.hostname) !== -1 && purl.pathname.startsWith(WAVEBOX_CAPTURE_URL_PREFIX)) { return }
 
     // Handle other urls
     let openMode = WINDOW_OPEN_MODES.EXTERNAL

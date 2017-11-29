@@ -117,7 +117,7 @@ class UserStore {
   handleUpdateExtensions () {
     this.preventDefault()
     Promise.resolve()
-      .then(() => window.fetch(`https://wavebox.io/client/${this.clientId}/extensions.json`))
+      .then(() => window.fetch(`https://waveboxio.com/client/${this.clientId}/extensions.json`))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
       .then((res) => {

@@ -30,8 +30,8 @@ class AuthWavebox {
   generateAuthenticationURL (clientSecret, type, serverArgs) {
     let authUrl
     switch (type) {
-      case CoreMailbox.MAILBOX_TYPES.GOOGLE: authUrl = 'https://wavebox.io/auth/accountgoogle'; break
-      case CoreMailbox.MAILBOX_TYPES.MICROSOFT: authUrl = 'https://wavebox.io/auth/accountmicrosoft'; break
+      case CoreMailbox.MAILBOX_TYPES.GOOGLE: authUrl = 'https://waveboxio.com/auth/accountgoogle'; break
+      case CoreMailbox.MAILBOX_TYPES.MICROSOFT: authUrl = 'https://waveboxio.com/auth/accountmicrosoft'; break
     }
     if (authUrl) {
       const args = querystring.stringify(Object.assign({}, serverArgs, {
@@ -90,12 +90,12 @@ class AuthWavebox {
       })
 
       oauthWin.webContents.on('did-get-redirect-request', (evt, prevUrl, nextUrl) => {
-        if (nextUrl.indexOf('https://wavebox.io/account/register/completed') === 0) {
+        if (nextUrl.startsWith('https://wavebox.io/account/register/completed') || nextUrl.startsWith('https://waveboxio.com/account/register/completed')) {
           const purl = url.parse(nextUrl, true)
           oauthWin.removeAllListeners('closed')
           oauthWin.close()
           resolve({ next: purl.query.next })
-        } else if (nextUrl.indexOf('https://wavebox.io/account/register/failure') === 0) {
+        } else if (nextUrl.startsWith('https://wavebox.io/account/register/failure') || nextUrl.startsWith('https://waveboxio.com/account/register/failure')) {
           const purl = url.parse(nextUrl, true)
           oauthWin.removeAllListeners('closed')
           oauthWin.close()

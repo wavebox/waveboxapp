@@ -4,7 +4,7 @@ import BrowserView from 'sharedui/Components/BrowserView'
 import URI from 'urijs'
 import {
   WAVEBOX_CAPTURE_URLS,
-  WAVEBOX_CAPTURE_URL_HOSTNAME
+  WAVEBOX_CAPTURE_URL_HOSTNAMES
 } from 'shared/constants'
 import electron from 'electron'
 import pkg from 'package.json'
@@ -32,7 +32,7 @@ export default class WaveboxWebView extends React.Component {
   */
   static routeWaveboxUrl (url) {
     const purl = URI(url)
-    if (purl.hostname() === WAVEBOX_CAPTURE_URL_HOSTNAME) {
+    if (WAVEBOX_CAPTURE_URL_HOSTNAMES.indexOf(purl.hostname()) !== -1) {
       switch (purl.pathname()) {
         case WAVEBOX_CAPTURE_URLS.SETTINGS:
           window.location.hash = '/settings'
