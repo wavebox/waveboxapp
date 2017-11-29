@@ -5,6 +5,9 @@ const {
   WB_BROWSER_NOTIFICATION_CLICK,
   WB_BROWSER_NOTIFICATION_PRESENT
 } = req.shared('ipcEvents')
+const {
+  DEFAULT_HTML5_NOTIFICATION_OPTIONS
+} = req.shared('constants.js')
 const NotificationPermissionManager = require('./NotificationPermissionManager')
 const extensionLoader = require('../Extensions/extensionLoader')
 const GuestHost = require('../GuestHost')
@@ -55,7 +58,13 @@ class NotificationProvider {
               ipcRenderer.sendToHost({
                 type: WB_BROWSER_NOTIFICATION_PRESENT,
                 notificationId: data.notificationId,
-                notification: data.notification
+                notification: {
+                  title: data.notification.title,
+                  options: Object.assign(
+                    DEFAULT_HTML5_NOTIFICATION_OPTIONS[window.location.host] || {},
+                    data.notification.options
+                  )
+                }
               })
             }
           })

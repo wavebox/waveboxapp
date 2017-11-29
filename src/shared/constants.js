@@ -74,6 +74,9 @@ module.exports = Object.freeze({
     'calendar.google.com',
     'allo.google.com'
   ],
+  DEFAULT_HTML5_NOTIFICATION_OPTIONS: {
+    'play.google.com': { silent: true }
+  },
 
   // Extensions
   EXTENSION_AUTO_UPDATE_INTERVAL: hours(2),
