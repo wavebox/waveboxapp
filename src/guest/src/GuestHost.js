@@ -1,17 +1,16 @@
-const electron = require('electron')
+const { ipcRenderer } = require('electron')
+const req = require('./req')
 const url = require('url')
+const { WCRPC_SYNC_GET_OPENER_INFO } = req.shared('webContentsRPC')
 
 class GuestHost {
   static get url () {
     if (window.location.href === 'about:blank') {
       if (window.opener && window.opener.location.href) {
-        const webPreferences = electron.remote.getCurrentWebContents().getWebPreferences()
-        if (webPreferences.openerId !== undefined) {
-          const openerWebContents = electron.remote.webContents.fromId(webPreferences.openerId)
-          if (openerWebContents) {
-            if (openerWebContents.getURL() === window.opener.location.href) {
-              return window.opener.location.href
-            }
+        const openerInfo = ipcRenderer.sendSync(WCRPC_SYNC_GET_OPENER_INFO)
+        if (openerInfo.hasOpener) {
+          if (openerInfo.url === window.opener.location.href) {
+            return window.opener.location.href
           }
         }
       }

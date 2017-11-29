@@ -1,9 +1,10 @@
-const { ipcRenderer, remote } = require('electron')
+const { ipcRenderer } = require('electron')
 const req = require('../req')
 const {
   WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP,
   WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN
 } = req.shared('ipcEvents')
+const { WCRPC_DOM_READY } = req.shared('webContentsRPC')
 
 class Lifecycle {
   /* **************************************************************************/
@@ -16,7 +17,7 @@ class Lifecycle {
 
     ipcRenderer.on(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP, this.sleep.bind(this))
     ipcRenderer.on(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN, this.awaken.bind(this))
-    remote.getCurrentWebContents().once('dom-ready', this.updateState.bind(this))
+    ipcRenderer.on(WCRPC_DOM_READY, this.updateState.bind(this))
   }
 
   /* **************************************************************************/

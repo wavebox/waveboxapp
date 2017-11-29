@@ -1,4 +1,6 @@
-const { remote } = require('electron')
+const { ipcRenderer } = require('electron')
+const req = require('../req')
+const { WCRPC_DOM_READY } = req.shared('webContentsRPC')
 
 class KeyboardNavigator {
   /* **************************************************************************/
@@ -9,7 +11,7 @@ class KeyboardNavigator {
     this._setup = false
     this._boundBindListener = this._bindListener.bind(this)
     document.addEventListener('DOMContentLoaded', this._boundBindListener, false)
-    remote.getCurrentWebContents().once('dom-ready', this._boundBindListener)
+    ipcRenderer.once(WCRPC_DOM_READY, this._boundBindListener)
   }
 
   /* **************************************************************************/
@@ -21,7 +23,7 @@ class KeyboardNavigator {
     this._setup = true
     document.body.addEventListener('keydown', this._handleKeydown, false)
     document.removeEventListener('DOMContentLoaded', this._boundBindListener)
-    remote.getCurrentWebContents().removeListener('dom-ready', this._boundBindListener)
+    ipcRenderer.removeListener(WCRPC_DOM_READY, this._boundBindListener)
   }
 
   _handleKeydown (evt) {

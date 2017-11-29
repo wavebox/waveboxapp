@@ -1,5 +1,4 @@
 const Browser = require('../Browser/Browser')
-const Wavebox = require('../Wavebox/Wavebox')
 
 class TrelloDefaultService {
   /* **************************************************************************/
@@ -8,7 +7,6 @@ class TrelloDefaultService {
 
   constructor () {
     this.browser = new Browser()
-    this.wavebox = new Wavebox()
   }
 }
 

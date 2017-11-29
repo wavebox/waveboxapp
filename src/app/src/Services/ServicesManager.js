@@ -2,14 +2,14 @@ import SpellcheckService from './SpellcheckService'
 import PDFRenderService from './PDFRenderService'
 import MetricsService from './MetricsService'
 import ContextMenuService from './ContextMenuService'
-import GuestContentEventProxyService from './GuestContentEventProxyService'
+import WebContentsRPCService from './WebContentsRPCService'
 
 const privLoaded = Symbol('privLoaded')
 const privSpellcheckService = Symbol('privSpellcheckService')
 const privMetricsService = Symbol('privMetricsService')
 const privPdfRenderService = Symbol('privPdfRenderService')
 const privContextMenuService = Symbol('privContextMenuService')
-const privGuestContentEventProxyService = Symbol('privGuestContentEventProxyService')
+const privWebContentsRPCService = Symbol('privWebContentsRPCService')
 
 class ServicesManager {
   /* ****************************************************************************/
@@ -23,7 +23,7 @@ class ServicesManager {
     this[privContextMenuService] = undefined
     this[privMetricsService] = undefined
     this[privPdfRenderService] = undefined
-    this[privGuestContentEventProxyService] = undefined
+    this[privWebContentsRPCService] = undefined
   }
 
   load () {
@@ -34,7 +34,7 @@ class ServicesManager {
     this[privContextMenuService] = new ContextMenuService(this[privSpellcheckService])
     this[privMetricsService] = new MetricsService()
     this[privPdfRenderService] = new PDFRenderService()
-    this[privGuestContentEventProxyService] = new GuestContentEventProxyService()
+    this[privWebContentsRPCService] = new WebContentsRPCService()
   }
 
   /* ****************************************************************************/
@@ -45,7 +45,7 @@ class ServicesManager {
   get PDFRenderService () { return this[privPdfRenderService] }
   get spellcheckService () { return this[privSpellcheckService] }
   get contextMenuService () { return this[privContextMenuService] }
-  get guestContentEventProxyService () { return this[privGuestContentEventProxyService] }
+  get webContentsRPCService () { return this[privWebContentsRPCService] }
 }
 
 export default new ServicesManager()

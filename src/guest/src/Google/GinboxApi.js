@@ -1,5 +1,7 @@
 const escapeHTML = require('escape-html')
-const { remote } = require('electron')
+const { ipcRenderer } = require('electron')
+const req = require('../req')
+const { WCRPC_SEND_INPUT_EVENTS } = req.shared('webContentsRPC')
 
 class GinboxApi {
   /**
@@ -126,21 +128,22 @@ class GinboxApi {
         if (element) {
           clearInterval(interval)
           const rect = element.getBoundingClientRect()
-          const wc = remote.getCurrentWebContents()
-          wc.sendInputEvent({
-            type: 'mouseDown',
-            x: rect.left + 1,
-            y: rect.top + 1,
-            button: 'left',
-            clickCount: 1
-          })
-          wc.sendInputEvent({
-            type: 'mouseUp',
-            x: rect.left + 1,
-            y: rect.top + 1,
-            button: 'left',
-            clickCount: 1
-          })
+          ipcRenderer.send(WCRPC_SEND_INPUT_EVENTS, [
+            {
+              type: 'mouseDown',
+              x: rect.left + 1,
+              y: rect.top + 1,
+              button: 'left',
+              clickCount: 1
+            },
+            {
+              type: 'mouseUp',
+              x: rect.left + 1,
+              y: rect.top + 1,
+              button: 'left',
+              clickCount: 1
+            }
+          ])
           if (completeFn) { completeFn(true) }
         }
       }

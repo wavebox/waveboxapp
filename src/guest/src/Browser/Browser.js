@@ -1,11 +1,10 @@
-const { remote } = require('electron')
 const KeyboardNavigator = require('./KeyboardNavigator')
 const Spellchecker = require('./Spellchecker')
 const Lifecycle = require('./Lifecycle')
 const NotificationProvider = require('./NotificationProvider')
-const environment = remote.getCurrentWebContents().getType()
 const extensionLoader = require('../Extensions/extensionLoader')
 const { CRExtensionLoader } = require('../Extensions')
+const CustomCode = require('./CustomCode')
 
 class Browser {
   /* **************************************************************************/
@@ -19,11 +18,8 @@ class Browser {
     this.keyboardNavigator = new KeyboardNavigator()
     this.spellchecker = new Spellchecker()
     this.notificationProvider = new NotificationProvider()
-
-    // Some tools are only exposed in nested webviews
-    if (environment === 'webview') {
-      this.lifecycle = new Lifecycle()
-    }
+    this.customCode = new CustomCode()
+    this.lifecycle = new Lifecycle()
   }
 }
 

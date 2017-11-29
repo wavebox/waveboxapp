@@ -1,8 +1,9 @@
-const { ipcRenderer, remote } = require('electron')
+const { ipcRenderer } = require('electron')
 const req = require('../req')
 const uuid = require('uuid')
 const extensionLoader = require('./extensionLoader')
 const { WBECRX_RELOAD_OWNER } = req.shared('ipcEvents')
+const { WCRPC_CLOSE_WINDOW } = req.shared('webContentsRPC')
 
 class CRExtensionPopoutPostMessageListener {
   /* **************************************************************************/
@@ -70,7 +71,7 @@ class CRExtensionPopoutPostMessageListener {
             if (action === 'reload_parent') {
               ipcRenderer.send(WBECRX_RELOAD_OWNER)
             } else if (action === 'close_window') {
-              remote.getCurrentWindow().close()
+              ipcRenderer.on(WCRPC_CLOSE_WINDOW)
             }
           })
         }

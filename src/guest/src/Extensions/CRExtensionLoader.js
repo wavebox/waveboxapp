@@ -1,11 +1,12 @@
 const req = require('../req')
-const { remote, webFrame } = require('electron')
+const { ipcRenderer, webFrame } = require('electron')
 const { CRExtensionMatchPatterns } = req.shared('Models/CRExtension')
 const { WBECRX_EXECUTE_SCRIPT } = req.shared('ipcEvents')
 const GuestHost = require('../GuestHost')
 const CRExtensionPopoutPostMessageListener = require('./CRExtensionPopoutPostMessageListener')
 const DispatchManager = require('../DispatchManager')
 const { RENDER_PROCESS_PREFERENCE_TYPES } = req.shared('processPreferences')
+const { WCRPC_DOM_READY } = req.shared('webContentsRPC')
 
 class CRExtensionLoader {
   /* **************************************************************************/
@@ -136,12 +137,12 @@ class CRExtensionLoader {
         }
       } else if (runAt === 'document_end') {
         if (this.isContextlessDocument) {
-          remote.getCurrentWebContents().once('dom-ready', execute)
+          ipcRenderer.once(WCRPC_DOM_READY, execute)
         } else {
           document.addEventListener('DOMContentLoaded', execute)
         }
       } else if (runAt === 'document_idle') {
-        remote.getCurrentWebContents().once('dom-ready', execute)
+        ipcRenderer.once(WCRPC_DOM_READY, execute)
       }
     })
   }
@@ -171,12 +172,12 @@ class CRExtensionLoader {
         setTimeout(execute)
       } else if (runAt === 'document_end') {
         if (this.isContextlessDocument) {
-          remote.getCurrentWebContents().once('dom-ready', execute)
+          ipcRenderer.once(WCRPC_DOM_READY, execute)
         } else {
           document.addEventListener('DOMContentLoaded', execute)
         }
       } else if (runAt === 'document_idle') {
-        remote.getCurrentWebContents().once('dom-ready', execute)
+        ipcRenderer.once(WCRPC_DOM_READY, execute)
       }
     })
   }

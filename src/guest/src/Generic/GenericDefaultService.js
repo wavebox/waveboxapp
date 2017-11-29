@@ -1,5 +1,4 @@
 const Browser = require('../Browser/Browser')
-const Wavebox = require('../Wavebox/Wavebox')
 
 class GenericDefaultService {
   /* **************************************************************************/
@@ -8,7 +7,6 @@ class GenericDefaultService {
 
   constructor () {
     this.browser = new Browser()
-    this.wavebox = new Wavebox()
   }
 }
 

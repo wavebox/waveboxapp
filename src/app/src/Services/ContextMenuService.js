@@ -395,6 +395,10 @@ class ContextMenuService {
   * @return the template section or undefined
   */
   renderExtensionSection (contents, params) {
+    // Check we're in a regonized tab - extensions don't work universally for us on purpose!
+    const waveboxWindow = WaveboxWindow.fromTabId(contents.id)
+    if (!waveboxWindow) { return [] }
+
     // Munge the data a little bit to make it easier to work with
     const extensionContextMenus = CRExtensionManager.runtimeHandler.getRuntimeContextMenuData()
     Object.keys(extensionContextMenus).forEach((extensionId) => {

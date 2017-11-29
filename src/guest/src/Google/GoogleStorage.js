@@ -1,6 +1,5 @@
 const { webFrame } = require('electron')
 const Browser = require('../Browser/Browser')
-const Wavebox = require('../Wavebox/Wavebox')
 
 class GoogleStorage {
   /* **************************************************************************/
@@ -9,7 +8,6 @@ class GoogleStorage {
 
   constructor () {
     this.browser = new Browser()
-    this.wavebox = new Wavebox()
 
     webFrame.insertCSS(`
       a[href*="/SignOutOptions"] {
