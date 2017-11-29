@@ -353,6 +353,11 @@ class SettingsActions {
   }
 
   /**
+  * Takes the current channel of the app and glues it to the user update channel
+  */
+  glueCurrentUpdateChannel () { return {} }
+
+  /**
   * @param hasSeen: true if the user has seen the app tour
   */
   setHasSeenTour (hasSeen) {

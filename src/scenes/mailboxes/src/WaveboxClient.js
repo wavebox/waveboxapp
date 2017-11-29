@@ -105,3 +105,6 @@ setTimeout(() => {
     window.location.hash = '/optimize_wizard'
   }
 }, 1000)
+
+// Update our settings
+settingsActions.glueCurrentUpdateChannel.defer()

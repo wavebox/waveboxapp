@@ -157,7 +157,9 @@ class SettingsStore {
 
       handleSetHasSeenAppWizard: actions.SET_HAS_SEEN_APP_WIZARD,
       handleSetSpellcheckerLanguage: actions.SET_SPELLCHECKER_LANGUAGE,
-      handleSetSecondarySpellcheckerLanguage: actions.SET_SECONDARY_SPELLCHECKER_LANGUAGE
+      handleSetSecondarySpellcheckerLanguage: actions.SET_SECONDARY_SPELLCHECKER_LANGUAGE,
+
+      handleGlueCurrentUpdateChannel: actions.GLUE_CURRENT_UPDATE_CHANNEL
     })
   }
 
@@ -397,6 +399,17 @@ class SettingsStore {
           updates: { secondarySpellcheckerLanguage: lang }
         })
       }
+    }
+  }
+
+  /* **************************************************************************/
+  // Changing : Misc
+  /* **************************************************************************/
+
+  handleGlueCurrentUpdateChannel () {
+    this.preventDefault()
+    if (!this.app.hasSetUpdateChannel && pkg.releaseChannel !== AppSettings.UPDATE_CHANNELS.STABLE) {
+      actions.setUpdateChannel.defer(pkg.releaseChannel)
     }
   }
 }
