@@ -142,7 +142,9 @@ export default class BrowserToolbar extends React.Component {
             )}
           </ToolbarGroup>
           <ToolbarGroup style={{ minWidth: 0 }}>
-            <ToolbarTitle text={this.externalUrl(currentUrl)} style={{ fontSize: '14px' }} />
+            <ToolbarTitle
+              text={this.externalUrl(currentUrl)}
+              style={{ fontSize: '14px', userSelect: 'initial' }} />
           </ToolbarGroup>
           <ToolbarGroup lastChild>
             <IconButton
