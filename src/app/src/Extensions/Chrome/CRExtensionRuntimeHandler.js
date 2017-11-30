@@ -6,7 +6,8 @@ import CRExtensionRuntime from './CRExtensionRuntime'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
 import {EventEmitter} from 'events'
 import {
-  CR_EXTENSION_PROTOCOL
+  CR_EXTENSION_PROTOCOL,
+  CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX
 } from 'shared/extensionApis'
 import {
   CRX_RUNTIME_SENDMESSAGE,
@@ -27,6 +28,9 @@ import { CSPParser, CSPBuilder } from './CSP'
 import pathTool from 'shared/pathTool'
 import CRExtensionTab from './CRExtensionRuntime/CRExtensionTab'
 
+const privNextPortId = Symbol('privNextPortId')
+const privOpenXHRRequests = Symbol('privOpenXHRRequests')
+
 class CRExtensionRuntimeHandler extends EventEmitter {
   /* ****************************************************************************/
   // Lifecycle
@@ -35,7 +39,8 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   constructor () {
     super()
     this.runtimes = new Map()
-    this.nextPortId = 0
+    this[privNextPortId] = 0
+    this[privOpenXHRRequests] = new Map()
 
     CRDispatchManager.registerHandler(CRX_RUNTIME_SENDMESSAGE, this._handleRuntimeSendmessage)
     CRDispatchManager.registerHandler(CRX_TABS_SENDMESSAGE, this._handleTabsSendmessage)
@@ -229,7 +234,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     }
 
     const backgroundContents = runtime.backgroundPage.webContents
-    const portId = this.nextPortId++
+    const portId = this[privNextPortId]++
     evt.returnValue = {
       portId: portId,
       connectedParty: {
@@ -411,6 +416,113 @@ class CRExtensionRuntimeHandler extends EventEmitter {
       return CSPBuilder({ directives: csp })
     })
     return responseHeaders
+  }
+
+  /* ****************************************************************************/
+  // XHR
+  /* ****************************************************************************/
+
+  /**
+  * Extracts the accept header
+  * @param requestHeaders: the request headers
+  * @return { acceptHeader, extensionId, xhrToken } the new accept header, the extensionId and the xhrToken
+  */
+  _extractCSXHRAcceptHeader (requestHeaders) {
+    const prevAccept = requestHeaders['Accept']
+    if (prevAccept === undefined) { return {} }
+    if (prevAccept.indexOf(CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX) === -1) { return { acceptHeader: prevAccept } }
+
+    // Extract the accept header
+    let extensionAccept
+    const nextAccept = prevAccept
+      .split(',')
+      .map((a) => a.trim())
+      .filter((a) => {
+        if (a.startsWith(CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX)) {
+          extensionAccept = a.split('/')
+          return false
+        } else {
+          return true
+        }
+      })
+      .join(', ')
+
+    return {
+      acceptHeader: nextAccept.length ? nextAccept : undefined,
+      extensionId: extensionAccept[1],
+      xhrToken: extensionAccept[2]
+    }
+  }
+
+  /**
+  * Handles the before send headers event on content scripts
+  * @param details: the details of the request
+  * @return the updated headers or undefined
+  */
+  updateCSXHRBeforeSendHeaders = (details) => {
+    if (details.resourceType !== 'xhr') { return }
+
+    // Look to see if we have credentials
+    const { acceptHeader, extensionId, xhrToken } = this._extractCSXHRAcceptHeader(details.requestHeaders)
+    const nextHeaders = {
+      ...details.requestHeaders,
+      'Accept': acceptHeader
+    }
+    if (!extensionId || !xhrToken) { return nextHeaders }
+
+    // Check we have the credentials
+    const runtime = this.runtimes.get(extensionId)
+    if (!runtime || runtime.contentScript.xhrToken !== xhrToken) { return nextHeaders }
+
+    // Check we are able to match this url
+    const requestWebContents = webContents.fromId(details.webContentsId)
+    if (!requestWebContents || requestWebContents.isDestroyed()) { return nextHeaders }
+
+    const purl = url.parse(requestWebContents.getURL())
+    const matches = CRExtensionMatchPatterns.matchUrls(
+      purl.protocol,
+      purl.hostname,
+      purl.pathname,
+      [].concat.apply([],
+        runtime.extension.manifest.contentScripts.map((cs) => cs.matches)
+      )
+    )
+    if (!matches) { return nextHeaders }
+
+    // Looks like an extension request
+    this[privOpenXHRRequests].set(details.id, details.requestHeaders['Origin'])
+    return nextHeaders
+  }
+
+  /**
+  * Handles the headers received on content scripts
+  * @param details: the details of the request
+  * @param responder: function to call with updated headers
+  */
+  updateCSXHROnHeadersReceived = (details) => {
+    // Check we are waiting
+    if (details.resourceType !== 'xhr') { return }
+
+    if (!this[privOpenXHRRequests].has(details.id)) { return }
+
+    const headers = details.responseHeaders
+    const updatedHeaders = {
+      ...headers,
+      'access-control-allow-credentials': headers['access-control-allow-credentials'] || ['true'],
+      'access-control-allow-origin': [this[privOpenXHRRequests].get(details.id)]
+    }
+
+    this[privOpenXHRRequests].delete(details.id)
+    return updatedHeaders
+  }
+
+  /**
+  * Handles the a content script xhr ending in error
+  * @param details: the details of the request
+  * @param responder: function to call with updated headers
+  */
+  onCSXHRError = (details) => {
+    this[privOpenXHRRequests].delete(details.id)
   }
 }
 

@@ -98,7 +98,7 @@ class MailboxesSessionManager extends EventEmitter {
       })
     }
 
-    // Extensions
+    // Extensions: CSP
     SessionManager.webRequestEmitterFromSession(ses).headersReceived.onBlocking(undefined, (details, responder) => {
       const updatedHeaders = CRExtensionManager.runtimeHandler.updateContentSecurityPolicy(details.url, details.responseHeaders)
       if (updatedHeaders) {
@@ -107,8 +107,29 @@ class MailboxesSessionManager extends EventEmitter {
         responder({})
       }
     })
-    this.__managed__.add(partition)
 
+    // Extensions: XHR
+    SessionManager.webRequestEmitterFromSession(ses).beforeSendHeaders.onBlocking(undefined, (details, responder) => {
+      const updatedHeaders = CRExtensionManager.runtimeHandler.updateCSXHRBeforeSendHeaders(details)
+      if (updatedHeaders) {
+        responder({ requestHeaders: updatedHeaders })
+      } else {
+        responder({})
+      }
+    })
+    SessionManager.webRequestEmitterFromSession(ses).headersReceived.onBlocking(undefined, (details, responder) => {
+      const updatedHeaders = CRExtensionManager.runtimeHandler.updateCSXHROnHeadersReceived(details)
+      if (updatedHeaders) {
+        responder({ responseHeaders: updatedHeaders })
+      } else {
+        responder({})
+      }
+    })
+    SessionManager.webRequestEmitterFromSession(ses).errorOccurred.on((details) => {
+      CRExtensionManager.runtimeHandler.onCSXHRError(details)
+    })
+
+    this.__managed__.add(partition)
     return true
   }
 

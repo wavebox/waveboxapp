@@ -31,5 +31,6 @@ module.exports = {
   CR_STORAGE_TYPES: {
     LOCAL: 'LOCAL',
     SYNC: 'SYNC'
-  }
+  },
+  CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX: 'x-wb-crx-cs/'
 }

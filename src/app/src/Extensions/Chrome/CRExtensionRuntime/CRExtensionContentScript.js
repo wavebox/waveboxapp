@@ -5,6 +5,10 @@ import {
 import { renderProcessPreferences } from 'R/atomProcess'
 import { RENDER_PROCESS_PREFERENCE_TYPES } from 'shared/processPreferences'
 import pathTool from 'shared/pathTool'
+import uuid from 'uuid'
+
+const privRenderProcEntry = Symbol('privRenderProcEntry')
+const privXHRToken = Symbol('privXHRToken')
 
 class CRExtensionContentScript {
   /* ****************************************************************************/
@@ -18,7 +22,8 @@ class CRExtensionContentScript {
   constructor (extension, datasource) {
     this.extension = extension
     this.datasource = datasource
-    this._renderProcEntry = undefined
+    this[privRenderProcEntry] = undefined
+    this[privXHRToken] = uuid.v4()
 
     this._start()
   }
@@ -26,6 +31,12 @@ class CRExtensionContentScript {
   destroy () {
     this._stop()
   }
+
+  /* ****************************************************************************/
+  // Properties
+  /* ****************************************************************************/
+
+  get xhrToken () { return this[privXHRToken] }
 
   /* ****************************************************************************/
   // Script lifecycle
@@ -46,6 +57,7 @@ class CRExtensionContentScript {
       messages: {
         [suggestedLocale]: this.datasource.getMessages(suggestedLocale)
       },
+      xhrToken: this[privXHRToken],
       crExtensionContentScripts: this.extension.manifest.contentScripts.map((cs) => {
         return {
           matches: cs.matches,
@@ -55,7 +67,7 @@ class CRExtensionContentScript {
         }
       })
     }
-    this._renderProcEntry = renderProcessPreferences.addEntry(entry)
+    this[privRenderProcEntry] = renderProcessPreferences.addEntry(entry)
   }
 
   /**
@@ -84,9 +96,9 @@ class CRExtensionContentScript {
   * @param extension: the extension to stop
   */
   _stop (extension) {
-    if (this._renderProcEntry) {
-      renderProcessPreferences.removeEntry(this._renderProcEntry)
-      this._renderProcEntry = undefined
+    if (this[privRenderProcEntry]) {
+      renderProcessPreferences.removeEntry(this[privRenderProcEntry])
+      this[privRenderProcEntry] = undefined
     }
   }
 }

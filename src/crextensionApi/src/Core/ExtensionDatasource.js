@@ -9,6 +9,7 @@ import { RENDER_PROCESS_PREFERENCE_TYPES } from 'shared/processPreferences'
 const privExtensionId = Symbol('privExtensionId')
 const privManifest = Symbol('privManifest')
 const privMessages = Symbol('privMessages')
+const privXHRToken = Symbol('privXHRToken')
 
 class ExtensionDatasource {
   /* **************************************************************************/
@@ -22,6 +23,7 @@ class ExtensionDatasource {
     this[privExtensionId] = extensionId
     this[privManifest] = undefined
     this[privMessages] = new Map()
+    this[privXHRToken] = ''
 
     // Populate from the render preferences
     const preferences = process.getRenderProcessPreferences()
@@ -35,6 +37,9 @@ class ExtensionDatasource {
             for (let lang in pref.messages) {
               this[privMessages].set(lang, pref.messages[lang])
             }
+          }
+          if (pref.xhrToken) {
+            this[privXHRToken] = pref.xhrToken
           }
           break
         }
@@ -56,6 +61,8 @@ class ExtensionDatasource {
     }
     return this[privManifest]
   }
+
+  get xhrToken () { return this[privXHRToken] }
 
   /* **************************************************************************/
   // Getters
