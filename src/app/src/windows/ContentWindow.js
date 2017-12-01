@@ -54,6 +54,7 @@ class ContentWindow extends WaveboxWindow {
 
   get launchInfo () { return this[privLaunchInfo] }
   get rootWebContentsHasContextMenu () { return false }
+  get allowsGuestClosing () { return true }
 
   /* ****************************************************************************/
   // Window lifecycle

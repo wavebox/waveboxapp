@@ -24,7 +24,7 @@ export default class GoogleMailboxStorageWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={Resolver.guestPreload('googleStorage')}
+        preload={Resolver.guestPreload()}
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.STORAGE} />
     )

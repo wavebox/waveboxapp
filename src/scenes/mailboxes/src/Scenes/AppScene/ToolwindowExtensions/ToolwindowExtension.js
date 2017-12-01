@@ -173,7 +173,7 @@ export default class ToolwindowExtension extends React.Component {
         <WebView
           ref={BROWSER_REF}
           key={installTime}
-          preload={Resolver.guestPreload('hostedExtension')}
+          preload={Resolver.guestPreload()}
           src={`${WAVEBOX_HOSTED_EXTENSION_PROTOCOL}://${installId}/${toolwindowIndex}`}
           partition={'persist:' + installId}
           webpreferences={'contextIsolation=yes, nativeWindowOpen=yes'}

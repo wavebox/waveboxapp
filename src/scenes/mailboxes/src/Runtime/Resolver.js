@@ -48,8 +48,8 @@ class Resolver {
   */
   static guestPreload (name, targetApi = API_TYPES.NODE) {
     switch (targetApi) {
-      case API_TYPES.NODE: return this._joinNodePath(__dirname, '../../guest/guest/preload/', name)
-      case API_TYPES.BROWSER: return this._joinBrowserPath(__dirname, '../../guest/guest/preload/', name)
+      case API_TYPES.NODE: return this._joinNodePath(__dirname, '../../guest/guest.js')
+      case API_TYPES.BROWSER: return this._joinBrowserPath(__dirname, '../../guest/guest.js')
     }
   }
 

@@ -109,6 +109,7 @@ class WaveboxWindow extends EventEmitter {
   /* ****************************************************************************/
 
   get rootWebContentsHasContextMenu () { return true }
+  get allowsGuestClosing () { return false }
 
   /* ****************************************************************************/
   // Window lifecycle

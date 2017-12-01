@@ -85,6 +85,9 @@ module.exports = Object.freeze({
   ARTIFICIAL_COOKIE_PERSIST_WAIT: seconds(30),
   ARTIFICIAL_COOKIE_PERSIST_PERIOD: days(30),
 
+  // Misc
+  ELEVATED_LOG_PREFIX: '[ELEVATED_LOG]',
+
   // Chrome
   CHROME_PROTOCOL: 'chrome',
   CHROME_PDF_URL: 'chrome://pdf-viewer/index.html',

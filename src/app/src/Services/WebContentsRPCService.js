@@ -3,11 +3,14 @@ import { ElectronWebContents } from 'ElectronTools'
 import {
   WCRPC_DOM_READY,
   WCRPC_CLOSE_WINDOW,
+  WCRPC_GUEST_CLOSE_WINDOW,
   WCRPC_SEND_INPUT_EVENT,
   WCRPC_SEND_INPUT_EVENTS,
   WCRPC_SHOW_ASYNC_MESSAGE_DIALOG,
   WCRPC_SYNC_GET_OPENER_INFO
 } from 'shared/webContentsRPC'
+import { ELEVATED_LOG_PREFIX } from 'shared/constants'
+import WaveboxWindow from 'windows/WaveboxWindow'
 
 const privConnected = Symbol('privConnected')
 
@@ -20,6 +23,7 @@ class WebContentsRPCService {
     this[privConnected] = new Set()
     app.on('web-contents-created', this._handleWebContentsCreated)
     ipcMain.on(WCRPC_CLOSE_WINDOW, this._handleCloseWindow)
+    ipcMain.on(WCRPC_GUEST_CLOSE_WINDOW, this._handleGuestCloseWindow)
     ipcMain.on(WCRPC_SEND_INPUT_EVENT, this._handleSendInputEvent)
     ipcMain.on(WCRPC_SEND_INPUT_EVENTS, this._handleSendInputEvents)
     ipcMain.on(WCRPC_SHOW_ASYNC_MESSAGE_DIALOG, this._handleShowAsyncMessageDialog)
@@ -43,6 +47,7 @@ class WebContentsRPCService {
       this[privConnected].add(webContentsId)
 
       contents.on('dom-ready', this._handleDomReady)
+      contents.on('console-message', this._handleConsoleMessage)
       contents.on('destroyed', () => {
         this[privConnected].delete(webContentsId)
       })
@@ -57,6 +62,23 @@ class WebContentsRPCService {
     evt.sender.send(WCRPC_DOM_READY, evt.sender.id)
   }
 
+  _handleConsoleMessage = (evt, level, message, line, sourceId) => {
+    if (message.startsWith(ELEVATED_LOG_PREFIX)) {
+      const logArgs = [
+        '[ELEVATED LOG]',
+        `sender=${evt.sender.id}`,
+        `line=${line}`,
+        `sourceId=${sourceId}`,
+        message
+      ]
+      switch (level) {
+        case 1: console.warn(...logArgs); break
+        case 2: console.error(...logArgs); break
+        default: console.log(...logArgs); break
+      }
+    }
+  }
+
   /* ****************************************************************************/
   // IPC Events
   /* ****************************************************************************/
@@ -68,7 +90,20 @@ class WebContentsRPCService {
   _handleCloseWindow = (evt) => {
     if (!this[privConnected].has(evt.sender.id)) { return }
     const bw = BrowserWindow.fromWebContents(ElectronWebContents.rootWebContents(evt.sender))
-    if (!bw) { return }
+    if (!bw || bw.isDestroyed()) { return }
+    bw.close()
+  }
+
+  /**
+  * Closes the browser window as a guest request
+  * @param evt: the event that fired
+  */
+  _handleGuestCloseWindow = (evt) => {
+    if (!this[privConnected].has(evt.sender.id)) { return }
+    const bw = BrowserWindow.fromWebContents(ElectronWebContents.rootWebContents(evt.sender))
+    if (!bw || bw.isDestroyed()) { return }
+    const waveboxWindow = WaveboxWindow.fromBrowserWindow(bw)
+    if (!waveboxWindow || !waveboxWindow.allowsGuestClosing) { return }
     bw.close()
   }
 

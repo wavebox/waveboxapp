@@ -1,23 +1,19 @@
-const { webFrame, ipcRenderer } = require('electron')
-const req = require('../req')
-const elconsole = require('../elconsole')
-const path = require('path')
-const SpellcheckProvider = req.shared('SpellcheckProvider/SpellcheckProvider')
-const DictionaryLoader = req.shared('SpellcheckProvider/DictionaryLoader')
-const {
-  WB_SPELLCHECKER_CONNECT,
-  WB_SPELLCHECKER_CONFIGURE
-} = req.shared('ipcEvents')
-const { USER_DICTIONARIES_PATH } = req.runtimePaths()
+import { webFrame, ipcRenderer } from 'electron'
+import elconsole from '../elconsole'
+import SpellcheckProvider from 'shared/SpellcheckProvider/SpellcheckProvider'
+import DictionaryLoader from 'shared/SpellcheckProvider/DictionaryLoader'
+import { WB_SPELLCHECKER_CONNECT, WB_SPELLCHECKER_CONFIGURE } from 'shared/ipcEvents'
+import RuntimePaths from 'Runtime/RuntimePaths'
+import Resolver from 'Runtime/Resolver'
 
 let Nodehun
 try {
-  Nodehun = req.appNodeModules('nodehun')
+  Nodehun = require('nodehun')
 } catch (ex) {
   elconsole.error('Failed to load spellchecker', ex)
 }
 
-const enUSDictionaryPath = path.dirname(req.appNodeModulesPath('dictionary-en-us'))
+const enUSDictionaryPath = Resolver.appNodeModules('dictionary-en-us')
 const privDictionaryLoader = Symbol('privDictionaryLoader')
 const privPrimary = Symbol('privPrimary')
 const privSecondary = Symbol('privSecondary')
@@ -28,12 +24,12 @@ class Spellchecker {
   /* **************************************************************************/
 
   constructor () {
-    this[privDictionaryLoader] = new DictionaryLoader(enUSDictionaryPath, USER_DICTIONARIES_PATH)
+    this[privDictionaryLoader] = new DictionaryLoader(enUSDictionaryPath, RuntimePaths.USER_DICTIONARIES_PATH)
     this[privPrimary] = new SpellcheckProvider(this[privDictionaryLoader], Nodehun)
     this[privSecondary] = new SpellcheckProvider(this[privDictionaryLoader], Nodehun)
 
     if (Nodehun) {
-      ipcRenderer.on(WB_SPELLCHECKER_CONFIGURE, this._handleRuntimeConfigure.bind(this))
+      ipcRenderer.on(WB_SPELLCHECKER_CONFIGURE, this._handleRuntimeConfigure)
       setTimeout(() => { // Requeue to ensure the bridge is initialized
         ipcRenderer.send(WB_SPELLCHECKER_CONNECT, {})
       })
@@ -49,7 +45,7 @@ class Spellchecker {
   * @param evt: the event that fired
   * @param data: the configuration
   */
-  _handleRuntimeConfigure (evt, data) {
+  _handleRuntimeConfigure = (evt, data) => {
     if (!Nodehun) { return }
     this[privPrimary].language = data.language
     this[privPrimary].addWords(data.userWords || [])
@@ -87,4 +83,4 @@ class Spellchecker {
   }
 }
 
-module.exports = Spellchecker
+export default Spellchecker

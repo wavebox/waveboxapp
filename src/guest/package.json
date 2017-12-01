@@ -12,6 +12,10 @@
     "uuid": "3.1.0"
   },
   "devDependencies": {
-    "standard": "10.0.3"
+    "standard": "10.0.3",
+    "babel-eslint": "8.0.1"
+  },
+  "standard": {
+    "parser": "babel-eslint"
   }
 }
