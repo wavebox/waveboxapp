@@ -29,6 +29,7 @@ class Extension {
   get onMessage () { return this[privRuntime].onMessage }
   get sendMessage () { return this[privRuntime].sendMessage.bind(this[privRuntime]) }
   get getURL () { return this[privRuntime].getURL.bind(this[privRuntime]) }
+  get connect () { return this[privRuntime].connect.bind(this[privRuntime]) }
 
   /* **************************************************************************/
   // Getters

@@ -63,7 +63,7 @@ class CRExtensionContentScript {
           matches: cs.matches,
           runAt: cs.runAt,
           js: this._loadScripts(cs.js),
-          css: this._loadScripts(cs.css)
+          css: this._templateCSSScripts(this._loadScripts(cs.css))
         }
       })
     }
@@ -89,6 +89,20 @@ class CRExtensionContentScript {
         }
       })
       .filter((d) => !!d)
+  }
+
+  /**
+  * Replaces template keywords in css files
+  * @param scripts: the loaded scripts in the format [{ url, code }, ...]
+  * @return the scripts in the same format with templating applied
+  */
+  _templateCSSScripts (scripts) {
+    return scripts.map(({ url, code }) => {
+      return {
+        url: url,
+        code: code.replace(/__MSG_@@extension_id__/g, this.extension.id)
+      }
+    })
   }
 
   /**
