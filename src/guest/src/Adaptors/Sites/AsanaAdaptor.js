@@ -8,7 +8,9 @@ class AsanaAdaptor extends BaseAdaptor {
   /* **************************************************************************/
 
   static get matches () {
-    return ['*://app.asana.com/-/login*']
+    return [
+      'http(s)\\://app.asana.com/-/login(/*)'
+    ]
   }
   static get hasJS () { return true }
 

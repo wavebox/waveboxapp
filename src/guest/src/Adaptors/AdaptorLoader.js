@@ -1,41 +1,13 @@
 import { ipcRenderer, webFrame } from 'electron'
 import AdaptorRegistry from './AdaptorRegistry'
 import { WCRPC_DOM_READY } from 'shared/webContentsRPC'
-import url from 'url'
 import {ExtensionLoader} from 'Browser'
+import UrlPattern from 'url-pattern'
 
 const privHasStarted = Symbol('privHasStarted')
 const privRunningAdaptors = Symbol('privRunningAdaptors')
 
 class AdaptorLoader {
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  /**
-  * Matches a pattern against a url
-  * @param protocol: the url protocol
-  * @param host: the url host
-  * @param pathname: the url pathname
-  * @param pattern: the pattern to match against
-  * @return true if there is a match, false otherwise
-  */
-  static matchUrl (protocol, host, pathname, pattern) {
-    const regexp = new RegExp('^' + pattern.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$')
-    const url = `${protocol}//${host}${pathname}`
-    return url.match(regexp) !== null
-  }
-
-  /**
-  * Version of matchUrl which accepts multiple patterns
-  * @return true if there is a match, false otherwise
-  */
-  static matchUrls (protocol, host, pathname, patterns) {
-    return !!patterns.find((pattern) => {
-      return this.matchUrl(protocol, host, pathname, pattern)
-    })
-  }
-
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
@@ -53,11 +25,11 @@ class AdaptorLoader {
     this[privHasStarted] = true
 
     if (window.location.href !== 'about:blank') {
-      this._loadAdaptor(url.parse(window.location.href))
+      this._loadAdaptor(window.location.href)
     } else {
       // Defer loading of about:blank
       ipcRenderer.once(WCRPC_DOM_READY, () => {
-        this._loadAdaptor(url.parse(window.location.href))
+        this._loadAdaptor(window.location.href)
       })
     }
   }
@@ -68,11 +40,15 @@ class AdaptorLoader {
 
   /**
   * Loads the adaptor
-  * @param parsedUrl { host, protocol, pathname }: the host that we're running on
+  * @param targetUrl: the url to load for
   */
-  _loadAdaptor ({ protocol, host, pathname }) {
+  _loadAdaptor (targetUrl) {
     const matched = AdaptorRegistry.filter((Adaptor) => {
-      return this.constructor.matchUrls(protocol, host, pathname, Adaptor.matches)
+      const match = Adaptor.matches.find((patternStr) => {
+        const pattern = new UrlPattern(patternStr)
+        return pattern.match(targetUrl) !== null
+      })
+      return match !== undefined
     })
 
     if (matched.length) {

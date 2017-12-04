@@ -8,8 +8,8 @@ class OneDriveAdaptor extends BaseAdaptor {
 
   static get matches () {
     return [
-      '*://onedrive.live.com*',
-      '*://*.sharepoint.com*'
+      'http(s)\\://onedrive.live.com(/*)',
+      'http(s)\\://*.sharepoint.com(/*)'
     ]
   }
   static get guestApis () { return [ExtensionLoader.ENDPOINTS.ONEDRIVE_WINDOW_OPEN] }

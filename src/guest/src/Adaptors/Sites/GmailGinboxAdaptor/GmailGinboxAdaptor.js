@@ -20,8 +20,8 @@ class GmailGinboxAdaptor extends BaseAdaptor {
 
   static get matches () {
     return [
-      '*://mail.google.com*',
-      '*://inbox.google.com*'
+      'http(s)\\://mail.google.com(/*)',
+      'http(s)\\://inbox.google.com(/*)'
     ]
   }
   static get hasJS () { return true }

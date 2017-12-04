@@ -12,7 +12,11 @@ class GoogleCalendarAdaptor extends BaseAdaptor {
   // Class properties
   /* **************************************************************************/
 
-  static get matches () { return ['*://calendar.google.com*'] }
+  static get matches () {
+    return [
+      'http(s)\\://calendar.google.com(/*)'
+    ]
+  }
   static get hasJS () { return true }
 
   /* **************************************************************************/

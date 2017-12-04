@@ -5,7 +5,11 @@ class GoogleDriveAdaptor extends BaseAdaptor {
   // Class properties
   /* **************************************************************************/
 
-  static get matches () { return ['*://drive.google.com*'] }
+  static get matches () {
+    return [
+      'http(s)\\://drive.google.com(/*)'
+    ]
+  }
 
   /* **************************************************************************/
   // Class: CSS

@@ -7,7 +7,11 @@ class HostedExtensionAdaptor extends BaseAdaptor {
   // Class properties
   /* **************************************************************************/
 
-  static get matches () { return [`${WAVEBOX_HOSTED_EXTENSION_PROTOCOL}://*`] }
+  static get matches () {
+    return [
+      `${WAVEBOX_HOSTED_EXTENSION_PROTOCOL}\\://*`
+    ]
+  }
   static get hasJS () { return true }
 
   /* **************************************************************************/

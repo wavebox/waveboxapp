@@ -9,6 +9,7 @@
     "appdirectory": "0.1.0",
     "escape-html": "1.0.3",
     "fs-extra": "4.0.2",
+    "url-pattern": "1.0.3",
     "uuid": "3.1.0"
   },
   "devDependencies": {

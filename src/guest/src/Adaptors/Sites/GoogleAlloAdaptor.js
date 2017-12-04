@@ -11,7 +11,11 @@ class GoogleAlloAdaptor extends BaseAdaptor {
   // Class properties
   /* **************************************************************************/
 
-  static get matches () { return ['*://allo.google.com*'] }
+  static get matches () {
+    return [
+      'http(s)\\://allo.google.com(/*)'
+    ]
+  }
   static get hasJS () { return true }
 
   /* **************************************************************************/

@@ -5,7 +5,11 @@ class SlackAdapator extends BaseAdaptor {
   // Class properties
   /* **************************************************************************/
 
-  static get matches () { return ['*://*.slack.com*'] }
+  static get matches () {
+    return [
+      'http(s)\\://*.slack.com(/*)'
+    ]
+  }
 
   /* **************************************************************************/
   // Class: CSS

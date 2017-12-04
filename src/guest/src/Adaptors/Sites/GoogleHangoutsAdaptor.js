@@ -11,7 +11,11 @@ class GoogleHangoutsAdaptor extends BaseAdaptor {
   // Class properties
   /* **************************************************************************/
 
-  static get matches () { return ['*://hangouts.google.com*'] }
+  static get matches () {
+    return [
+      'http(s)\\://hangouts.google.com(/*)'
+    ]
+  }
   static get hasJS () { return true }
 
   /* **************************************************************************/
