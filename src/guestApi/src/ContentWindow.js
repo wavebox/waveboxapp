@@ -2,18 +2,23 @@
 ;(function () {
   const originalWindowClose = window.close
   window.close = function () {
-    window.postMessage(JSON.stringify({
-      wavebox: true,
-      apiKey: WB_API_KEY,
-      type: 'WB_BROWSER_GUEST_WINDOW_CLOSE'
-    }), '*')
-
-    // Cover both bases in case we actually do have a window close and
-    // nobodies listening on the polyfilled version. This can happen if a
-    // ContentWindow was opened then a ContentPopupWindow on the same site
-    // instance which has the same preload but no responder
+    // If the original closer is available make sure we call that first
+    // Failure to do so can cause the cross-window opening code to fail
+    // on some calls in the opening window
+    let retValue
     if (originalWindowClose) {
-      setTimeout(() => { originalWindowClose() })
+      retValue = originalWindowClose()
     }
+
+    // Requeue the polyfilled call
+    setTimeout(() => {
+      window.postMessage(JSON.stringify({
+        wavebox: true,
+        apiKey: WB_API_KEY,
+        type: 'WB_BROWSER_GUEST_WINDOW_CLOSE'
+      }), '*')
+    })
+
+    return retValue
   }
 })()

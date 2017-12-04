@@ -31,9 +31,21 @@ class ContentPopupWindow extends WaveboxWindow {
   * from the parent webContents
   */
   create (url, safeBrowserWindowOptions = {}) {
+    // Blank urls are often used to just skim the referrer out of the request. This
+    // can lead to a phantom window popping up and then shutting down. To prevent this
+    // delay showing them on instances that might be this
+    const shouldDelayShow = url === '' || url === 'about:blank'
+
     // The browser settings don't need to be sanitized as they should be in the same thread
     // and come from the parent webContents
-    super.create(url, Object.assign({}, safeBrowserWindowOptions, { show: true }))
+    super.create(url, Object.assign({}, safeBrowserWindowOptions, {
+      show: !shouldDelayShow
+    }))
+    if (shouldDelayShow) {
+      this.window.on('ready-to-show', () => {
+        this.window.show()
+      })
+    }
 
     // Setup for tab lifecycle
     const webContentsId = this.window.webContents.id
@@ -44,7 +56,6 @@ class ContentPopupWindow extends WaveboxWindow {
 
     // Listen to webview events
     this.window.webContents.on('new-window', this.handleWebContentsNewWindow)
-
     return this
   }
 
