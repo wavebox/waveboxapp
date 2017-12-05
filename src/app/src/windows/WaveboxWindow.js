@@ -158,7 +158,7 @@ class WaveboxWindow extends EventEmitter {
     settingStore.on('changed', this.updateWindowMenubar)
 
     // Load the start url
-    if (url !== undefined) {
+    if (url !== undefined && url !== '' && url !== 'about:blank') {
       this.window.loadURL(url)
     }
 

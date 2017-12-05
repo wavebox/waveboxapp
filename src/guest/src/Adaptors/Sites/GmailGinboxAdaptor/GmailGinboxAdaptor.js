@@ -48,13 +48,6 @@ class GmailGinboxAdaptor extends BaseAdaptor {
       }
     `
 
-    // Inject some styles
-    webFrame.insertCSS(`
-      a[href*="/SignOutOptions"] {
-        visibility: hidden !important;
-      }
-    `)
-
     // Bind our listeners
     ipcRenderer.on(WB_BROWSER_WINDOW_ICONS_IN_SCREEN, this.handleWindowIconsInScreenChange)
     ipcRenderer.on(WB_BROWSER_OPEN_MESSAGE, this.handleOpenMesage)

@@ -73,7 +73,7 @@ export default class EarlyBuildToast extends React.Component {
         bodyStyle={styles.body}
         autoHideDuration={-1}
         onRequestClose={this.handleRequestClose}
-        onActionTouchTap={this.handleActionTouchTap} />
+        onActionClick={this.handleActionTouchTap} />
     )
   }
 }

@@ -201,32 +201,6 @@ class SlackDefaultService extends CoreService {
 
     return [].concat(ims, mpims, channels, groups)
   }
-
-  /* **************************************************************************/
-  // Behaviour
-  /* **************************************************************************/
-
-  /**
-  * Gets the window open mode for a given url
-  * @param url: the url to open with
-  * @param parsedUrl: the url object parsed by nodejs url
-  * @param disposition: the open mode disposition
-  * @param provisionalTargetUrl: the provisional target url that the user may be hovering over or have highlighted
-  * @param parsedProvisionalTargetUrl: the provisional target parsed by nodejs url
-  * @return the window open mode
-  */
-  getWindowOpenModeForUrl (url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl) {
-    const superMode = super.getWindowOpenModeForUrl(url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl)
-    if (superMode !== this.constructor.WINDOW_OPEN_MODES.DEFAULT) { return superMode }
-
-    if (parsedUrl.hostname === 'files.slack.com') {
-      return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // You would think download but this doesn't work
-    } else if (parsedUrl.hostname.endsWith('.slack.com') && parsedUrl.pathname.startsWith('/call/')) {
-      return this.constructor.WINDOW_OPEN_MODES.CONTENT
-    } else {
-      return this.constructor.WINDOW_OPEN_MODES.DEFAULT
-    }
-  }
 }
 
 module.exports = SlackDefaultService

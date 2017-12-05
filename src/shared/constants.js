@@ -78,8 +78,9 @@ module.exports = Object.freeze({
     'play.google.com': { silent: true }
   },
 
-  // Extensions
+  // Live autoupdate
   EXTENSION_AUTO_UPDATE_INTERVAL: hours(2),
+  WIRE_CONFIG_AUTO_UPDATE_INTERVAL: hours(2),
 
   // Cookies
   ARTIFICIAL_COOKIE_PERSIST_WAIT: seconds(30),

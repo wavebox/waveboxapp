@@ -1,5 +1,5 @@
 import WaveboxWindow from './WaveboxWindow'
-import { shell, app, webContents } from 'electron'
+import { app, webContents } from 'electron'
 import { evtMain } from 'AppEvents'
 import querystring from 'querystring'
 import {
@@ -9,8 +9,7 @@ import {
   WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
 } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
-import ContentPopupWindow from './ContentPopupWindow'
-import url from 'url'
+import {WindowOpeningHandler} from './WindowOpeningEngine'
 
 const SAFE_CONFIG_KEYS = [
   'width',
@@ -118,27 +117,31 @@ class ContentWindow extends WaveboxWindow {
   * @param webPreferences={}: the web preferences for the hosted child
   */
   create (parentWindow, url, partition, browserWindowPreferences = {}, webPreferences = {}) {
+    // Save the launch info for later
     this[privLaunchInfo] = Object.freeze({
       partition: partition,
       browserWindowPreferences: browserWindowPreferences,
       webPreferences: webPreferences
     })
-    super.create(this.generateWindowUrl(url, partition), Object.assign(
-      {
-        minWidth: 300,
-        minHeight: 300,
-        fullscreenable: true,
-        title: 'Wavebox',
-        backgroundColor: '#FFFFFF',
-        show: true,
-        webPreferences: {
-          nodeIntegration: true,
-          plugins: true
-        }
+
+    // Generate a composite of options
+    const options = {
+      minWidth: 300,
+      minHeight: 300,
+      fullscreenable: true,
+      title: 'Wavebox',
+      backgroundColor: '#FFFFFF',
+      show: true,
+      webPreferences: {
+        nodeIntegration: true,
+        plugins: true
       },
-      this.generateWindowPosition(parentWindow),
-      this.safeBrowserWindowPreferences(browserWindowPreferences)
-    ))
+      ...this.generateWindowPosition(parentWindow),
+      ...this.safeBrowserWindowPreferences(browserWindowPreferences)
+    }
+
+    // Launch the new window
+    super.create(this.generateWindowUrl(url, partition), options)
 
     // remove built in listener so we can handle this on our own
     this.window.webContents.removeAllListeners('devtools-reload-page')
@@ -192,6 +195,7 @@ class ContentWindow extends WaveboxWindow {
         this[privGuestWebContentsId] = contents.id
         evtMain.emit(evtMain.WB_TAB_CREATED, {}, this[privGuestWebContentsId])
         contents.on('new-window', this.handleWebContentsNewWindow)
+        contents.on('will-navigate', this.handleWebViewWillNavigate)
         contents.once('destroyed', () => {
           const wcId = this[privGuestWebContentsId]
           this[privGuestWebContentsId] = null
@@ -215,37 +219,31 @@ class ContentWindow extends WaveboxWindow {
   * @param additionalFeatures: The non-standard features
   */
   handleWebContentsNewWindow = (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
-    // (@Thomas101) This is really just a slimmed down implementation of what MailboxesWindowBehaviour
-    // does. It was added with grammarly & extension tabbing in mind and should work well for most use
-    // cases but may need some review in the future
+    WindowOpeningHandler.handleOpenNewWindow(evt, {
+      targetUrl: targetUrl,
+      frameName: frameName,
+      disposition: disposition,
+      options: options,
+      additionalFeatures: additionalFeatures,
+      openingBrowserWindow: this.window,
+      ownerId: this.ownerId,
+      provisionalTargetUrl: undefined,
+      mailbox: undefined
+    })
+  }
 
-    evt.preventDefault()
-    const parsedTargetUrl = url.parse(targetUrl, true)
-
-    // Content Popup Window
-    const openPopup = (
-      disposition === 'new-window' ||
-      targetUrl === 'about:blank' ||
-      // We have some specific overrides for oauth2 and google
-      (parsedTargetUrl.hostname === 'accounts.google.com' && parsedTargetUrl.pathname.startsWith('/o/oauth2/auth'))
-    )
-    if (openPopup) {
-      const contentWindow = new ContentPopupWindow(this.ownerId)
-      contentWindow.create(targetUrl, options)
-      evt.newGuest = contentWindow.window
-      return
-    }
-
-    // Save
-    if (disposition === 'save-to-disk') {
-      if ((options || {}).webContents) {
-        options.webContents.downloadURL(targetUrl)
-        return
-      }
-    }
-
-    // Catch-all: browser
-    shell.openExternal(targetUrl)
+  /**
+  * Handles the webview navigating
+  * @param evt: the event that fired
+  * @param targetUrl: the url we're navigating to
+  */
+  handleWebViewWillNavigate = (evt, targetUrl) => {
+    WindowOpeningHandler.handleWillNavigate(evt, {
+      targetUrl: targetUrl,
+      openingBrowserWindow: this.window,
+      ownerId: this.ownerId,
+      mailbox: undefined
+    })
   }
 
   /* ****************************************************************************/

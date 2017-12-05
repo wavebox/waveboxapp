@@ -22,31 +22,6 @@ class GoogleContactsService extends GoogleService {
   /* **************************************************************************/
 
   get url () { return 'https://contacts.google.com' }
-
-  /* **************************************************************************/
-  // Behaviour
-  /* **************************************************************************/
-
-  /**
-  * Gets the window open mode for a given url
-  * @param url: the url to open with
-  * @param parsedUrl: the url object parsed by nodejs url
-  * @param disposition: the open mode disposition
-  * @param provisionalTargetUrl: the provisional target url that the user may be hovering over or have highlighted
-  * @param parsedProvisionalTargetUrl: the provisional target parsed by nodejs url
-  * @return the window open mode
-  */
-  getWindowOpenModeForUrl (url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl) {
-    if (parsedUrl.hostname === 'mail.google.com' && parsedUrl.query.to !== undefined) { // Click email link
-      if (parsedProvisionalTargetUrl && provisionalTargetUrl === `mailto:${parsedUrl.query.to}`) {
-        return this.constructor.WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL
-      } else {
-        return this.constructor.WINDOW_OPEN_MODES.EXTERNAL
-      }
-    }
-
-    return super.getWindowOpenModeForUrl(url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl)
-  }
 }
 
 module.exports = GoogleContactsService

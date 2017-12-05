@@ -40,7 +40,7 @@ export default class WelcomeAccountButton extends React.Component {
   // Component Lifecycle
   /* **************************************************************************/
 
-  static PropTypes = {
+  static propTypes = {
     tooltipText: PropTypes.string.isRequired,
     logoPath: PropTypes.string.isRequired,
     size: PropTypes.number.isRequired

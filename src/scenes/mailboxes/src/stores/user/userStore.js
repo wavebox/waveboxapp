@@ -1,6 +1,5 @@
 import alt from '../alt'
 import actions from './userActions'
-import { ANALYTICS_ID, CREATED_TIME, USER, USER_EPOCH, EXTENSIONS } from 'shared/Models/DeviceKeys'
 import User from 'shared/Models/User'
 import persistence from './userPersistence'
 import Bootstrap from '../../Bootstrap'
@@ -8,7 +7,18 @@ import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import semver from 'semver'
 import { ipcRenderer } from 'electron'
 import pkg from 'package.json'
-import { EXTENSION_AUTO_UPDATE_INTERVAL } from 'shared/constants'
+import {
+  ANALYTICS_ID,
+  CREATED_TIME,
+  USER,
+  USER_EPOCH,
+  EXTENSIONS,
+  WIRE_CONFIG
+} from 'shared/Models/DeviceKeys'
+import {
+  EXTENSION_AUTO_UPDATE_INTERVAL,
+  WIRE_CONFIG_AUTO_UPDATE_INTERVAL
+} from 'shared/constants'
 import {
   WB_AUTH_WAVEBOX,
   WB_UPDATE_INSTALLED_EXTENSIONS
@@ -27,6 +37,8 @@ class UserStore {
     this.account = null
     this.extensions = null
     this.extensionAutoUpdater = null
+    this.wireConfig = null
+    this.wireConfigAutoUpdater = null
 
     /* ****************************************/
     // Extensions
@@ -69,18 +81,41 @@ class UserStore {
     }
 
     /* ****************************************/
+    // Wire config
+    /* ****************************************/
+
+    /**
+    * @return true if we have wire config, false otherwise
+    */
+    this.hasWireConfig = () => { return !!this.wireConfig }
+
+    /**
+    * @return the wire config version or 0.0.0
+    */
+    this.wireConfigVersion = () => { return (this.wireConfig || {}).version || '0.0.0' }
+
+    /* ****************************************/
     // Listeners
     /* ****************************************/
 
     this.bindListeners({
       // Store lifecycle
       handleLoad: actions.LOAD,
+
+      // Extensions
       handleUpdateExtensions: actions.UPDATE_EXTENSIONS,
       handleStartAutoUpdateExtensions: actions.START_AUTO_UPDATE_EXTENSIONS,
       handleStopAutoupdateExtensions: actions.STOP_AUTO_UPDATE_EXTENSIONS,
 
+      // Wire Config
+      handleUpdateWireConfig: actions.UPDATE_WIRE_CONFIG,
+      handleStartAutoUpdateWireConfig: actions.START_AUTO_UPDATE_WIRE_CONFIG,
+      handleStopAutoUpdateWireConfig: actions.STOP_AUTO_UPDATE_WIRE_CONFIG,
+
+      // Remote changes
       handleRemoteChangeAccount: actions.REMOTE_CHANGE_ACCOUNT,
 
+      // Auth
       handleAuthenticateWithMailbox: actions.AUTHENTICATE_WITH_MAILBOX,
       handleAuthenticateWithGoogle: actions.AUTHENTICATE_WITH_GOOGLE,
       handleAuthenticateWithMicrosoft: actions.AUTHENTICATE_WITH_MICROSOFT,
@@ -108,6 +143,12 @@ class UserStore {
     persistence.setJSONItem(USER_EPOCH, now)
     persistence.setJSONItem(USER, Bootstrap.accountJS)
     this.user = new User(Bootstrap.accountJS, now)
+
+    // Extensions
+    this.extensions = allData[EXTENSIONS] || null
+
+    // Wire Config
+    this.wireConfig = allData[WIRE_CONFIG] || null
   }
 
   /* **************************************************************************/
@@ -117,7 +158,7 @@ class UserStore {
   handleUpdateExtensions () {
     this.preventDefault()
     Promise.resolve()
-      .then(() => window.fetch(`https://waveboxio.com/client/${this.clientId}/extensions.json`))
+      .then(() => window.fetch(`https://waveboxio.com/client/${this.clientId}/extensions.json?version=${pkg.version}&channel=${pkg.releaseChannel}`))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
       .then((res) => {
@@ -143,6 +184,46 @@ class UserStore {
   handleStopAutoupdateExtensions () {
     clearInterval(this.extensionAutoUpdater)
     this.extensionAutoUpdater = null
+  }
+
+  /* **************************************************************************/
+  // Handlers: Wire Config
+  /* **************************************************************************/
+
+  handleUpdateWireConfig () {
+    this.preventDefault()
+    Promise.resolve()
+      .then(() => window.fetch(`https://waveboxio.com/client/${this.clientId}/wire.json?version=${pkg.version}&channel=${pkg.releaseChannel}`))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.json())
+      .then((res) => {
+        try {
+          if (!semver.gt(res.version, this.wireConfigVersion())) { return }
+        } catch (ex) {
+          return
+        }
+
+        this.wireConfig = res
+        persistence.setJSONItem(WIRE_CONFIG, res)
+        this.emitChange()
+      })
+  }
+
+  handleStartAutoUpdateWireConfig () {
+    actions.updateWireConfig.defer()
+
+    if (this.wireConfigAutoUpdater !== null) {
+      this.preventDefault()
+      return
+    }
+    this.wireConfigAutoUpdater = setInterval(() => {
+      actions.updateWireConfig()
+    }, WIRE_CONFIG_AUTO_UPDATE_INTERVAL)
+  }
+
+  handleStopAutoUpdateWireConfig () {
+    clearInterval(this.wireConfigAutoUpdater)
+    this.wireConfigAutoUpdater = null
   }
 
   /* **************************************************************************/

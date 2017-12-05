@@ -3,19 +3,27 @@ class Release {
   /**
   * Generates the version components
   * @param pkg: the current package info
+  * @param wireConfigVersion: the current wire config version
   * @return an array of plain text strings with the version info
   */
-  static generateVersionComponents (pkg) {
-    if (pkg.earlyBuildId) {
-      return [
-        `Version ${pkg.version}`,
-        `Early Build Reference: ${pkg.earlyBuildId}`
-      ]
-    } else if (pkg.releaseChannel === RELEASE_CHANNELS.BETA) {
-      return [`Version ${pkg.version}beta`]
+  static generateVersionComponents (pkg, wireConfigVersion = undefined) {
+    const info = []
+
+    if (pkg.releaseChannel === RELEASE_CHANNELS.BETA) {
+      info.push(`Version ${pkg.version}beta`)
     } else {
-      return [`Version ${pkg.version}`]
+      info.push(`Version ${pkg.version}`)
     }
+
+    if (pkg.earlyBuildId) {
+      info.push(`Early Build Reference: ${pkg.earlyBuildId}`)
+    }
+
+    if (wireConfigVersion) {
+      info.push(`Wire Config Version: ${wireConfigVersion}`)
+    }
+
+    return info
   }
   /**
   * Generates a version string

@@ -207,10 +207,25 @@ class MailboxesWindowTabManager {
   /* ****************************************************************************/
 
   /**
+  * @param webContentsId: the id of the webcontents to get for
   * @return the target url for the given webContentsId
   */
   getTargetUrl (webContentsId) {
     return this.targetUrls.get(webContentsId)
+  }
+
+  /**
+  * Gets the owner id for a given webcontents
+  * @param webContentsId: the id of the webcontents to get for
+  * @return the ownerId or undefined
+  */
+  getOwnerId (webContentsId) {
+    const { match, mailboxId, serviceType } = this.getServiceId(webContentsId)
+    if (match) {
+      return `${mailboxId}:${serviceType}`
+    } else {
+      return undefined
+    }
   }
 
   /* ****************************************************************************/

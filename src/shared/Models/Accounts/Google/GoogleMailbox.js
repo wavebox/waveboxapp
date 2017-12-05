@@ -2,6 +2,7 @@ const CoreMailbox = require('../CoreMailbox')
 const GoogleDefaultService = require('./GoogleDefaultService')
 const MailboxColors = require('../MailboxColors')
 const ServiceFactory = require('../ServiceFactory')
+const url = require('url')
 
 class GoogleMailbox extends CoreMailbox {
   /* **************************************************************************/
@@ -210,6 +211,29 @@ class GoogleMailbox extends CoreMailbox {
 
   get email () { return this.__data__.email }
   get displayName () { return this.email }
+
+  /* **************************************************************************/
+  // Behaviour
+  /* **************************************************************************/
+
+  /**
+  * Gets a window open mode override for a given action
+  * @param currentUrl: the url the page is currently on
+  * @param targetUrl: the url we're trying to open
+  * @param provisionalTargetUrl: the target url the user is hovering over
+  * @param disposition: the new window disposition
+  * @return undefined for no override, or unsanitized WINDOW_OPEN_MODES if there is an override
+  */
+  getWindowOpenModeOverrides (currentUrl, targetUrl, provisionalTargetUrl, disposition) {
+    const parsedTargetUrl = url.parse(targetUrl)
+    if (parsedTargetUrl.hostname === 'docs.google.com' || parsedTargetUrl.hostname === 'drive.google.com') {
+      if (this.openDriveLinksWithDefaultOpener) {
+        return 'DEFAULT_IMPORTANT'
+      }
+    }
+
+    return super.getWindowOpenModeOverrides(currentUrl, targetUrl, provisionalTargetUrl, disposition)
+  }
 }
 
 module.exports = GoogleMailbox

@@ -12,6 +12,10 @@ class UserActions {
   */
   load () { return {} }
 
+  /* **************************************************************************/
+  // Extensions
+  /* **************************************************************************/
+
   /**
   * Indicates for the store to load extensions from the web
   */
@@ -26,6 +30,25 @@ class UserActions {
   * Stops auto updates the extensions after a period
   */
   stopAutoUpdateExtensions () { return {} }
+
+  /* **************************************************************************/
+  // Wire config
+  /* **************************************************************************/
+
+  /**
+  * Indicates for the store update the wire config
+  */
+  updateWireConfig () { return {} }
+
+  /**
+  * Starts auto updates the wire config after a period
+  */
+  startAutoUpdateWireConfig () { return {} }
+
+  /**
+  * Stops auto updates the wire config after a period
+  */
+  stopAutoUpdateWireConfig () { return {} }
 
   /* **************************************************************************/
   // Account

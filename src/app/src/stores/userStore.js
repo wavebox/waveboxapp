@@ -7,7 +7,8 @@ import {
   CLIENT_TOKEN,
   USER,
   USER_EPOCH,
-  EXTENSIONS
+  EXTENSIONS,
+  WIRE_CONFIG
 } from 'shared/Models/DeviceKeys'
 import User from 'shared/Models/User'
 
@@ -24,6 +25,7 @@ class UserStore extends EventEmitter {
     this.analyticsId = persistence.getJSONItem(ANALYTICS_ID)
     this.createdTime = persistence.getJSONItem(CREATED_TIME)
     this.extensions = persistence.getJSONItem(EXTENSIONS)
+    this.wireConfig = persistence.getJSONItem(WIRE_CONFIG)
     this._user = {
       cached: null,
       dirty: true,
@@ -32,24 +34,39 @@ class UserStore extends EventEmitter {
 
     persistence.on(`changed:${CLIENT_ID}`, () => {
       this.clientId = persistence.getJSONItem(CLIENT_ID)
+      this.emit('changed', { })
     })
     persistence.on(`changed:${CLIENT_TOKEN}`, () => {
       this.clientToken = persistence.getJSONItem(CLIENT_TOKEN)
+      this.emit('changed', { })
     })
     persistence.on(`changed:${ANALYTICS_ID}`, () => {
       this.analyticsId = persistence.getJSONItem(ANALYTICS_ID)
+      this.emit('changed', { })
     })
     persistence.on(`changed:${CREATED_TIME}`, () => {
       this.createdTime = persistence.getJSONItem(CREATED_TIME)
+      this.emit('changed', { })
     })
     persistence.on(`changed:${USER}`, () => {
       this._user.dirty = true
+      this.emit('changed', { })
     })
     persistence.on(`changed:${USER_EPOCH}`, () => {
       this._user.dirty = true
+      this.emit('changed', { })
     })
     persistence.on(`changed:${EXTENSIONS}`, () => {
+      const prev = this.extensions
       this.extensions = persistence.getJSONItem(EXTENSIONS)
+      this.emit('changed', { })
+      this.emit(`changed:${EXTENSIONS}`, { prev: prev, next: this.extensions })
+    })
+    persistence.on(`changed:${WIRE_CONFIG}`, () => {
+      const prev = this.wireConfig
+      this.wireConfig = persistence.getJSONItem(WIRE_CONFIG)
+      this.emit('changed', { })
+      this.emit(`changed:${WIRE_CONFIG}`, { prev: prev, next: this.wireConfig })
     })
   }
 
@@ -93,6 +110,10 @@ class UserStore extends EventEmitter {
       return acc
     }, new Map())
   }
+
+  /* ****************************************************************************/
+  // Properties: Wire config
+  /* ****************************************************************************/
 }
 
 export default new UserStore()

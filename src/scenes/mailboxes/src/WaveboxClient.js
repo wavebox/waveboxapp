@@ -56,6 +56,7 @@ if (process.platform === 'darwin') {
 userStore.getState()
 userActions.load()
 userActions.startAutoUpdateExtensions()
+userActions.startAutoUpdateWireConfig()
 mailboxStore.getState()
 mailboxActions.load()
 settingsStore.getState()

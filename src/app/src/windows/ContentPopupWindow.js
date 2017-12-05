@@ -37,14 +37,26 @@ class ContentPopupWindow extends WaveboxWindow {
     const shouldDelayShow = url === '' || url === 'about:blank'
 
     // The browser settings don't need to be sanitized as they should be in the same thread
-    // and come from the parent webContents
-    super.create(url, Object.assign({}, safeBrowserWindowOptions, {
+    // and come from the parent webContents.
+    const options = {
+      ...safeBrowserWindowOptions,
       show: !shouldDelayShow
-    }))
+    }
+
+    // Make sure we defer loading of the url so we can customize it further
+    super.create(undefined, options)
     if (shouldDelayShow) {
       this.window.on('ready-to-show', () => {
         this.window.show()
       })
+    }
+    // Load the initial url
+    if (!options.webContents || url !== 'about:blank') {
+      // For the same reasons in https://github.com/electron/electron/blob/6ebd00267e3dbe06ee32c7f31b1b22ee77fde919/lib/browser/guest-window-manager.js
+      // We should not call `loadURL` if the window was constructed from an
+      // existing webContents(window.open in a sandboxed renderer) and if the url
+      // is not 'about:blank'.
+      this.window.loadURL(url)
     }
 
     // Setup for tab lifecycle
