@@ -41,7 +41,7 @@ export default class MailboxWizardAccountButton extends React.Component {
   // Component Lifecycle
   /* **************************************************************************/
 
-  static PropTypes = {
+  static propTypes = {
     buttonText: PropTypes.string.isRequired,
     tooltipText: PropTypes.string,
     logoPath: PropTypes.string.isRequired,

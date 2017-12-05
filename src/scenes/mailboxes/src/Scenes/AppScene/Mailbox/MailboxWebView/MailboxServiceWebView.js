@@ -1,18 +1,18 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
-import CoreService from 'shared/Models/Accounts/CoreService'
+import MailboxWebViewHibernator from './MailboxWebViewHibernator'
 import Resolver from 'Runtime/Resolver'
 
 const REF = 'mailbox_tab'
 
-export default class GoogleMailboxStorageWebView extends React.Component {
+export default class MailboxServiceWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired
+    mailboxId: PropTypes.string.isRequired,
+    serviceType: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -20,13 +20,17 @@ export default class GoogleMailboxStorageWebView extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { mailboxId } = this.props
+    const {
+      mailboxId,
+      serviceType
+    } = this.props
+
     return (
       <MailboxWebViewHibernator
         ref={REF}
         preload={Resolver.guestPreload()}
         mailboxId={mailboxId}
-        serviceType={CoreService.SERVICE_TYPES.STORAGE} />
+        serviceType={serviceType} />
     )
   }
 }

@@ -34,7 +34,7 @@ export default class AppWizardMailtoScene extends React.Component {
   // Class
   /* **************************************************************************/
 
-  static PropTypes = {
+  static propTypes = {
     onRequestNext: PropTypes.func.isRequired
   }
 

@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import { mailboxStore, mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
@@ -55,7 +54,6 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     const mailbox = mailboxState.getMailbox(props.mailboxId)
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     return {
-      defaultWindowOpenMode: mailbox ? mailbox.defaultWindowOpenMode : CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX,
       url: service ? service.url : undefined
     }
   }
@@ -64,7 +62,6 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     const mailbox = mailboxState.getMailbox(this.props.mailboxId)
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     this.setState({
-      defaultWindowOpenMode: mailbox ? mailbox.defaultWindowOpenMode : CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX,
       url: service ? service.url : undefined
     })
   }

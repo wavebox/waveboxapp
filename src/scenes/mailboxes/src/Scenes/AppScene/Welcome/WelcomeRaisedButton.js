@@ -6,7 +6,7 @@ export default class MailboxWizardRaisedButton extends React.Component {
   // Class
   /* **************************************************************************/
 
-  static PropTypes = { ...RaisedButton.propTypes }
+  static propTypes = { ...RaisedButton.propTypes }
 
   /* **************************************************************************/
   // Rendering
