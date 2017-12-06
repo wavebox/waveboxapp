@@ -10,10 +10,10 @@ class GoogleSlidesService extends GoogleService {
   static get humanizedTypeShort () { return 'Slides' }
   static get humanizedLogos () {
     return [
-      'images/google/logo_slides_32px.png',
-      'images/google/logo_slides_48px.png',
-      'images/google/logo_slides_64px.png',
-      'images/google/logo_slides_128px.png'
+      'google/logo_slides_32px.png',
+      'google/logo_slides_48px.png',
+      'google/logo_slides_64px.png',
+      'google/logo_slides_128px.png'
     ]
   }
 

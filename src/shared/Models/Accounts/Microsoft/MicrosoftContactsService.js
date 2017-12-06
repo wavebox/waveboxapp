@@ -9,10 +9,10 @@ class MicrosoftContactsService extends MicrosoftService {
   static get humanizedType () { return 'People' }
   static get humanizedLogos () {
     return [
-      'images/microsoft/logo_contacts_32px.png',
-      'images/microsoft/logo_contacts_48px.png',
-      'images/microsoft/logo_contacts_64px.png',
-      'images/microsoft/logo_contacts_128px.png'
+      'microsoft/logo_contacts_32px.png',
+      'microsoft/logo_contacts_48px.png',
+      'microsoft/logo_contacts_64px.png',
+      'microsoft/logo_contacts_128px.png'
     ]
   }
 

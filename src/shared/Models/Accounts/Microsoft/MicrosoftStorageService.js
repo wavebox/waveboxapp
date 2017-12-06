@@ -9,10 +9,10 @@ class MicrosoftStorageService extends MicrosoftService {
   static get humanizedType () { return 'OneDrive' }
   static get humanizedLogos () {
     return [
-      'images/microsoft/logo_drive_32px.png',
-      'images/microsoft/logo_drive_48px.png',
-      'images/microsoft/logo_drive_64px.png',
-      'images/microsoft/logo_drive_128px.png'
+      'microsoft/logo_drive_32px.png',
+      'microsoft/logo_drive_48px.png',
+      'microsoft/logo_drive_64px.png',
+      'microsoft/logo_drive_128px.png'
     ]
   }
 

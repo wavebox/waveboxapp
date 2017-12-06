@@ -10,10 +10,10 @@ class GooglePhotosService extends GoogleService {
   static get humanizedTypeShort () { return 'Photos' }
   static get humanizedLogos () {
     return [
-      'images/google/logo_photos_32px.png',
-      'images/google/logo_photos_48px.png',
-      'images/google/logo_photos_64px.png',
-      'images/google/logo_photos_128px.png'
+      'google/logo_photos_32px.png',
+      'google/logo_photos_48px.png',
+      'google/logo_photos_64px.png',
+      'google/logo_photos_128px.png'
     ]
   }
 

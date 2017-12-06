@@ -23,6 +23,7 @@ import {evtMain} from 'AppEvents'
 import {
   appStorage,
   avatarStorage,
+  containerStorage,
   mailboxStorage,
   extensionStorage,
   settingStorage,
@@ -91,6 +92,7 @@ class WaveboxApp {
     // Start our stores
     appStorage.checkAwake()
     avatarStorage.checkAwake()
+    containerStorage.checkAwake()
     mailboxStorage.checkAwake()
     extensionStorage.checkAwake()
     settingStorage.checkAwake()

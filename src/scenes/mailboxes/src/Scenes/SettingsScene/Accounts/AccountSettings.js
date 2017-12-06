@@ -13,6 +13,7 @@ import SlackAccountSettings from './Slack/SlackAccountSettings'
 import TrelloAccountSettings from './Trello/TrelloAccountSettings'
 import GenericAccountSettings from './Generic/GenericAccountSettings'
 import MicrosoftAccountSettings from './Microsoft/MicrosoftAccountSettings'
+import ContainerAccountSettings from './Container/ContainerAccountSettings'
 import { Row, Col } from 'Components/Grid'
 import { MailboxAvatar } from 'Components/Mailbox'
 
@@ -209,6 +210,12 @@ export default class AccountSettings extends React.Component {
       case CoreMailbox.MAILBOX_TYPES.GENERIC:
         return (
           <GenericAccountSettings
+            mailbox={mailbox}
+            showRestart={showRestart}
+            onRequestEditCustomCode={this.handleEditCustomCode} />)
+      case CoreMailbox.MAILBOX_TYPES.CONTAINER:
+        return (
+          <ContainerAccountSettings
             mailbox={mailbox}
             showRestart={showRestart}
             onRequestEditCustomCode={this.handleEditCustomCode} />)

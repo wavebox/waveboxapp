@@ -13,6 +13,7 @@ import SlackMailboxWebView from './MailboxWebView/Slack/SlackMailboxWebView'
 import GenericMailboxDefaultServiceWebView from './MailboxWebView/Generic/GenericMailboxDefaultServiceWebView'
 import MicrosoftMailboxMailWebView from './MailboxWebView/Microsoft/MicrosoftMailboxMailWebView'
 import MailboxServiceWebView from './MailboxWebView/MailboxServiceWebView'
+import ContainerMailboxDefaultServiceWebView from './MailboxWebView/Container/ContainerMailboxDefaultServiceWebView'
 
 const styles = {
   mailboxTab: {
@@ -151,6 +152,8 @@ export default class MailboxTab extends React.Component {
       }
     } else if (mailboxType === CoreMailbox.MAILBOX_TYPES.GENERIC) {
       return (<GenericMailboxDefaultServiceWebView mailboxId={mailboxId} key={key} />)
+    } else if (mailboxType === CoreMailbox.MAILBOX_TYPES.CONTAINER) {
+      return (<ContainerMailboxDefaultServiceWebView mailboxId={mailboxId} key={key} />)
     }
 
     return (<MailboxServiceWebView mailboxId={mailboxId} serviceType={serviceType} key={key} />)

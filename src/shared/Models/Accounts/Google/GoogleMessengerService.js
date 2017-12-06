@@ -15,10 +15,10 @@ class GoogleMessengerService extends GoogleService {
   static get humanizedTypeShort () { return 'Allo' }
   static get humanizedLogos () {
     return [
-      'images/google/logo_allo_32px.png',
-      'images/google/logo_allo_48px.png',
-      'images/google/logo_allo_64px.png',
-      'images/google/logo_allo_128px.png'
+      'google/logo_allo_32px.png',
+      'google/logo_allo_48px.png',
+      'google/logo_allo_64px.png',
+      'google/logo_allo_128px.png'
     ]
   }
 

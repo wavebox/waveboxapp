@@ -14,6 +14,7 @@ import GoogleMailbox from 'shared/Models/Accounts/Google/GoogleMailbox'
 import MailboxWizardAccountButton from './MailboxWizardAccountButton'
 import MailboxWizardRaisedButton from './MailboxWizardRaisedButton'
 import electron from 'electron'
+import Resolver from 'Runtime/Resolver'
 
 const styles = {
   // Modal
@@ -200,49 +201,49 @@ export default class MailboxWizardAddScene extends React.Component {
       {
         key: 'gmail',
         buttonText: 'Gmail',
-        logoPath: `../../${GoogleMailbox.humanizedGmailVectorLogo}`,
+        logoPath: Resolver.image(GoogleMailbox.humanizedGmailVectorLogo),
         accountType: GoogleMailbox.type,
         clickHandler: mailboxActions.startAddGmailWizard
       },
       {
         key: 'googleinbox',
         buttonText: 'Google Inbox',
-        logoPath: `../../${GoogleMailbox.humanizedGinboxVectorLogo}`,
+        logoPath: Resolver.image(GoogleMailbox.humanizedGinboxVectorLogo),
         accountType: GoogleMailbox.type,
         clickHandler: mailboxActions.startAddGinboxWizard
       },
       {
         key: 'outlook',
         buttonText: 'Outlook',
-        logoPath: `../../${MicrosoftMailbox.humanizedOutlookVectorLogo}`,
+        logoPath: Resolver.image(MicrosoftMailbox.humanizedOutlookVectorLogo),
         accountType: MicrosoftMailbox.type,
         clickHandler: mailboxActions.startAddOutlookWizard
       },
       {
         key: 'office365',
         buttonText: 'Office 365',
-        logoPath: `../../${MicrosoftMailbox.humanizedOffice365VectorLogo}`,
+        logoPath: Resolver.image(MicrosoftMailbox.humanizedOffice365VectorLogo),
         accountType: MicrosoftMailbox.type,
         clickHandler: mailboxActions.startAddOffice365Wizard
       },
       {
         key: 'trello',
         buttonText: 'Trello',
-        logoPath: `../../${TrelloMailbox.humanizedVectorLogo}`,
+        logoPath: Resolver.image(TrelloMailbox.humanizedVectorLogo),
         accountType: TrelloMailbox.type,
         clickHandler: mailboxActions.startAddTrelloWizard
       },
       {
         key: 'slack',
         buttonText: 'Slack',
-        logoPath: `../../${SlackMailbox.humanizedVectorLogo}`,
+        logoPath: Resolver.image(SlackMailbox.humanizedVectorLogo),
         accountType: SlackMailbox.type,
         clickHandler: mailboxActions.startAddSlackWizard
       },
       {
         key: 'generic',
         buttonText: 'Weblink',
-        logoPath: `../../${GenericMailbox.humanizedVectorLogo}`,
+        logoPath: Resolver.image(GenericMailbox.humanizedVectorLogo),
         accountType: GenericMailbox.type,
         clickHandler: mailboxActions.startAddGenericWizard
       }

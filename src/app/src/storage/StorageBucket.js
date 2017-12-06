@@ -30,13 +30,14 @@ class StorageBucket extends EventEmitter {
 
     this._loadFromDiskSync()
 
-    ipcMain.on(`storageBucket:${bucketName}:setItem`, this._handleIPCSetItem.bind(this))
-    ipcMain.on(`storageBucket:${bucketName}:removeItem`, this._handleIPCRemoveItem.bind(this))
-    ipcMain.on(`storageBucket:${bucketName}:getItem`, this._handleIPCGetItem.bind(this))
-    ipcMain.on(`storageBucket:${bucketName}:allKeys`, this._handleIPCAllKeys.bind(this))
-    ipcMain.on(`storageBucket:${bucketName}:allItems`, this._handleIPCAllItems.bind(this))
-    ipcMain.on(`storageBucket:${bucketName}:getStats`, this._handleIPCGetStats.bind(this))
-    ipcMain.on(`storageBucket:${bucketName}:measurePerformance`, this._handleIPCMeasurePerformance.bind(this))
+    ipcMain.on(`storageBucket:${bucketName}:setItem`, this._handleIPCSetItem)
+    ipcMain.on(`storageBucket:${bucketName}:setItems`, this._handleIPCSetItems)
+    ipcMain.on(`storageBucket:${bucketName}:removeItem`, this._handleIPCRemoveItem)
+    ipcMain.on(`storageBucket:${bucketName}:getItem`, this._handleIPCGetItem)
+    ipcMain.on(`storageBucket:${bucketName}:allKeys`, this._handleIPCAllKeys)
+    ipcMain.on(`storageBucket:${bucketName}:allItems`, this._handleIPCAllItems)
+    ipcMain.on(`storageBucket:${bucketName}:getStats`, this._handleIPCGetStats)
+    ipcMain.on(`storageBucket:${bucketName}:measurePerformance`, this._handleIPCMeasurePerformance)
   }
 
   checkAwake () { return true }
@@ -282,6 +283,20 @@ class StorageBucket extends EventEmitter {
   }
 
   /**
+  * @param items: the items to set
+  */
+  _setItems (items) {
+    Object.keys(items).forEach((k) => {
+      this.__data__[k] = `${items[k]}`
+    })
+    this._writeToDisk()
+    Object.keys(items).forEach((k) => {
+      this.emit('changed', { type: 'setItem', key: k })
+      this.emit('changed:' + k, { })
+    })
+  }
+
+  /**
   * @param k: the key to remove
   */
   _removeItem (k) {
@@ -314,8 +329,18 @@ class StorageBucket extends EventEmitter {
   * @param evt: the fired event
   * @param body: request body
   */
-  _handleIPCSetItem (evt, body) {
+  _handleIPCSetItem = (evt, body) => {
     this._setItem(body.key, body.value)
+    this._sendIPCResponse(evt, { id: body.id, response: null }, body.sync)
+  }
+
+  /**
+  * Sets items over IPC
+  * @param evt: the fired event
+  * @param body: the request body
+  */
+  _handleIPCSetItems = (evt, body) => {
+    this._setItems(body.items)
     this._sendIPCResponse(evt, { id: body.id, response: null }, body.sync)
   }
 
@@ -324,7 +349,7 @@ class StorageBucket extends EventEmitter {
   * @param evt: the fired event
   * @param body: request body
   */
-  _handleIPCRemoveItem (evt, body) {
+  _handleIPCRemoveItem = (evt, body) => {
     this._removeItem(body.key)
     this._sendIPCResponse(evt, { id: body.id, response: null }, body.sync)
   }
@@ -334,7 +359,7 @@ class StorageBucket extends EventEmitter {
   * @param evt: the fired event
   * @param body: request body
   */
-  _handleIPCGetItem (evt, body) {
+  _handleIPCGetItem = (evt, body) => {
     this._sendIPCResponse(evt, {
       id: body.id,
       response: this.getItem(body.key)
@@ -345,7 +370,7 @@ class StorageBucket extends EventEmitter {
   * Gets the keys over IPC
   * @param body: request body
   */
-  _handleIPCAllKeys (evt, body) {
+  _handleIPCAllKeys = (evt, body) => {
     this._sendIPCResponse(evt, {
       id: body.id,
       response: this.allKeys()
@@ -356,7 +381,7 @@ class StorageBucket extends EventEmitter {
   * Gets all the items over IPC
   * @param body: request body
   */
-  _handleIPCAllItems (evt, body) {
+  _handleIPCAllItems = (evt, body) => {
     this._sendIPCResponse(evt, {
       id: body.id,
       response: this.allItems()
@@ -367,7 +392,7 @@ class StorageBucket extends EventEmitter {
   * Gets stats for the database
   * @param body: request body
   */
-  _handleIPCGetStats (evt, body) {
+  _handleIPCGetStats = (evt, body) => {
     this._sendIPCResponse(evt, {
       id: body.id,
       response: this.getStats()
@@ -378,7 +403,7 @@ class StorageBucket extends EventEmitter {
   * Measures the buckets performance
   * @param body: request body
   */
-  _handleIPCMeasurePerformance (evt, body) {
+  _handleIPCMeasurePerformance = (evt, body) => {
     this._sendIPCResponse(evt, {
       id: body.id,
       response: this.measurePerformance(body.runs)

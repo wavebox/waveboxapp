@@ -1,0 +1,73 @@
+const Model = require('../Model')
+const ContainerService = require('./ContainerService')
+
+class Container extends Model {
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  /**
+  * @param id: the container id
+  * @param data: the container data
+  */
+  constructor (id, data) {
+    super(data)
+    this.__id__ = id
+
+    const serviceMetadata = this.buildServiceMetadata()
+    this.__blankService__ = new ContainerService({}, serviceMetadata)
+    this.__services__ = Object.keys(data.services || {}).reduce((acc, serviceType) => {
+      acc[serviceType] = new ContainerService(data.services[serviceType], serviceMetadata)
+      return acc
+    }, {})
+  }
+
+  /**
+  * Builds the metadata for a service
+  */
+  buildServiceMetadata () {
+    return {
+      name: this.name,
+      logos: this.logos,
+      logo: this.logo
+    }
+  }
+
+  /* **************************************************************************/
+  // Properties
+  /* **************************************************************************/
+
+  get id () { return this.__id__ }
+  get version () { return this.__data__.version }
+  get minAppVersion () { return this.__data__.minAppVersion }
+
+  /* **************************************************************************/
+  // Properties: Appearance
+  /* **************************************************************************/
+
+  get name () { return this._value_('name', 'Container') }
+  get defaultColor () { return this._value_('defaultColor', 'rgb(255, 255, 255)') }
+  get logos () { return this._value_('logos', []) }
+  get logo () { return this.logos.slice(-1)[0] }
+
+  /* **************************************************************************/
+  // Properties: Service
+  /* **************************************************************************/
+
+  /**
+  * @param serviceType: the service type
+  * @return the defaults for the service type or an empty service defaults
+  */
+  serviceForType (serviceType) { return this.__services__[serviceType] || this.__blankService__ }
+
+  /* **************************************************************************/
+  // Cloning
+  /* **************************************************************************/
+
+  /**
+  * Makes a clone of the data that can be injected into a mailbox
+  */
+  cloneForMailbox () { return this.cloneData() }
+}
+
+module.exports = Container

@@ -16,10 +16,10 @@ class GoogleCommunicationService extends GoogleService {
   static get humanizedUnreadItemType () { return 'message' }
   static get humanizedLogos () {
     return [
-      'images/google/logo_hangouts_32px.png',
-      'images/google/logo_hangouts_48px.png',
-      'images/google/logo_hangouts_64px.png',
-      'images/google/logo_hangouts_128px.png'
+      'google/logo_hangouts_32px.png',
+      'google/logo_hangouts_48px.png',
+      'google/logo_hangouts_64px.png',
+      'google/logo_hangouts_128px.png'
     ]
   }
 

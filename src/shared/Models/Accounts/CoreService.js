@@ -102,7 +102,15 @@ class CoreService extends Model {
   get supportsNativeNotifications () { return this.constructor.supportsNativeNotifications }
   get supportsGuestNotifications () { return this.constructor.supportsGuestNotifications }
   get supportsSyncWhenSleeping () { return this.constructor.supportsSyncWhenSleeping }
-  get supportsSync () { return this.constructor.supportsSync }
+  get supportsSync () {
+    // Don't inherit in case we set these seperately in the model
+    return [
+      this.supportsUnreadActivity,
+      this.supportsUnreadCount,
+      this.supportsNativeNotifications,
+      this.supportsGuestNotifications
+    ].find((s) => s) || false
+  }
   get mergeChangesetOnActive () { return this.constructor.mergeChangesetOnActive }
 
   /* **************************************************************************/

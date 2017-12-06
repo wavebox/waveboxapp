@@ -14,10 +14,10 @@ class SlackDefaultService extends CoreService {
   static get humanizedType () { return 'Slack' }
   static get humanizedLogos () {
     return [
-      'images/slack/logo_32px.png',
-      'images/slack/logo_48px.png',
-      'images/slack/logo_64px.png',
-      'images/slack/logo_128px.png'
+      'slack/logo_32px.png',
+      'slack/logo_48px.png',
+      'slack/logo_64px.png',
+      'slack/logo_128px.png'
     ]
   }
   static get humanizedUnreadItemType () { return 'notification' }

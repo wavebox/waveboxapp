@@ -213,9 +213,15 @@ export default class WizardPersonalise extends React.Component {
       } else if (accessMode === MicrosoftMailbox.ACCESS_MODES.OFFICE365) {
         return MailboxClass.defaultColorOffice365
       }
-    } else {
-      return MailboxClass.defaultColor
+    } else if (MailboxClass.type === MailboxTypes.CONTAINER) {
+      // Bad that we don't listen on state here
+      const container = userStore.getState().getContainer(accessMode)
+      if (container && container.defaultColor) {
+        return container.defaultColor
+      }
     }
+
+    return MailboxClass.defaultColor
   }
 
   /* **************************************************************************/

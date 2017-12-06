@@ -10,10 +10,10 @@ class GoogleAnalyticsService extends GoogleService {
   static get humanizedTypeShort () { return 'Analytics' }
   static get humanizedLogos () {
     return [
-      'images/google/logo_analytics_32px.png',
-      'images/google/logo_analytics_48px.png',
-      'images/google/logo_analytics_64px.png',
-      'images/google/logo_analytics_128px.png'
+      'google/logo_analytics_32px.png',
+      'google/logo_analytics_48px.png',
+      'google/logo_analytics_64px.png',
+      'google/logo_analytics_128px.png'
     ]
   }
 

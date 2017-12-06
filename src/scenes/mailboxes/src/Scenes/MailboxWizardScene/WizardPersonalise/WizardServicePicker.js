@@ -6,6 +6,7 @@ import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
 import { List, ListItem, Toggle, SelectField, MenuItem } from 'material-ui'
 import { Row, Col, Container } from 'Components/Grid'
+import Resolver from 'Runtime/Resolver'
 
 const SERVICE_GROUPS = {
   common: [
@@ -125,7 +126,7 @@ export default class WizardServicePicker extends React.Component {
         primaryText={ServiceClass.humanizedType}
         leftAvatar={(
           <img
-            src={'../../' + ServiceClass.humanizedLogo}
+            src={Resolver.image(ServiceClass.humanizedLogo)}
             style={{
               ...styles.logo,
               ...(!userHasServices ? styles.logoDisabled : {})

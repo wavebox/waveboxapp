@@ -9,10 +9,10 @@ class GoogleVideoService extends GoogleService {
   static get humanizedType () { return 'YouTube' }
   static get humanizedLogos () {
     return [
-      'images/google/logo_youtube_32px.png',
-      'images/google/logo_youtube_48px.png',
-      'images/google/logo_youtube_64px.png',
-      'images/google/logo_youtube_128px.png'
+      'google/logo_youtube_32px.png',
+      'google/logo_youtube_48px.png',
+      'google/logo_youtube_64px.png',
+      'google/logo_youtube_128px.png'
     ]
   }
 

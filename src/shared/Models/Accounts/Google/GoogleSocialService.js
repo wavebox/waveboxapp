@@ -10,10 +10,10 @@ class GoogleSocialService extends GoogleService {
   static get humanizedTypeShort () { return 'Google+' }
   static get humanizedLogos () {
     return [
-      'images/google/logo_plus_32px.png',
-      'images/google/logo_plus_48px.png',
-      'images/google/logo_plus_64px.png',
-      'images/google/logo_plus_128px.png'
+      'google/logo_plus_32px.png',
+      'google/logo_plus_48px.png',
+      'google/logo_plus_64px.png',
+      'google/logo_plus_128px.png'
     ]
   }
 

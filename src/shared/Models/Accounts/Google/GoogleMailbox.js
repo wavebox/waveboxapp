@@ -56,26 +56,26 @@ class GoogleMailbox extends CoreMailbox {
   static get humanizedType () { return 'Google' }
   static get humanizedGmailLogos () {
     return [
-      'images/google/logo_gmail_32px.png',
-      'images/google/logo_gmail_48px.png',
-      'images/google/logo_gmail_64px.png',
-      'images/google/logo_gmail_128px.png',
-      'images/google/logo_gmail_512px.png'
+      'google/logo_gmail_32px.png',
+      'google/logo_gmail_48px.png',
+      'google/logo_gmail_64px.png',
+      'google/logo_gmail_128px.png',
+      'google/logo_gmail_512px.png'
     ]
   }
   static get humanizedGmailLogo () { return this.humanizedGmailLogos[this.humanizedGmailLogos.length - 1] }
-  static get humanizedGmailVectorLogo () { return 'images/google/logo_gmail_vector.svg' }
+  static get humanizedGmailVectorLogo () { return 'google/logo_gmail_vector.svg' }
   static get humanizedGinboxLogos () {
     return [
-      'images/google/logo_ginbox_32px.png',
-      'images/google/logo_ginbox_48px.png',
-      'images/google/logo_ginbox_64px.png',
-      'images/google/logo_ginbox_128px.png',
-      'images/google/logo_ginbox_512px.png'
+      'google/logo_ginbox_32px.png',
+      'google/logo_ginbox_48px.png',
+      'google/logo_ginbox_64px.png',
+      'google/logo_ginbox_128px.png',
+      'google/logo_ginbox_512px.png'
     ]
   }
   static get humanizedGinboxLogo () { return this.humanizedGinboxLogos[this.humanizedGinboxLogos.length - 1] }
-  static get humanizedGinboxVectorLogo () { return 'images/google/logo_ginbox_vector.png' }
+  static get humanizedGinboxVectorLogo () { return 'google/logo_ginbox_vector.png' }
 
   /**
   * Gets an icon that is closest to the given size

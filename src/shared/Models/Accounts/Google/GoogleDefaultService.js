@@ -121,16 +121,16 @@ class GoogleDefaultService extends GoogleService {
   get humanizedLogos () {
     switch (this.accessMode) {
       case ACCESS_MODES.GMAIL: return [
-        'images/google/logo_gmail_32px.png',
-        'images/google/logo_gmail_48px.png',
-        'images/google/logo_gmail_64px.png',
-        'images/google/logo_gmail_128px.png'
+        'google/logo_gmail_32px.png',
+        'google/logo_gmail_48px.png',
+        'google/logo_gmail_64px.png',
+        'google/logo_gmail_128px.png'
       ]
       case ACCESS_MODES.GINBOX: return [
-        'images/google/logo_ginbox_32px.png',
-        'images/google/logo_ginbox_48px.png',
-        'images/google/logo_ginbox_64px.png',
-        'images/google/logo_ginbox_128px.png'
+        'google/logo_ginbox_32px.png',
+        'google/logo_ginbox_48px.png',
+        'google/logo_ginbox_64px.png',
+        'google/logo_ginbox_128px.png'
       ]
     }
   }

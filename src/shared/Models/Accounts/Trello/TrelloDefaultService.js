@@ -14,10 +14,10 @@ class TrelloDefaultService extends CoreService {
   static get humanizedType () { return 'Trello' }
   static get humanizedLogos () {
     return [
-      'images/trello/logo_32px.png',
-      'images/trello/logo_48px.png',
-      'images/trello/logo_64px.png',
-      'images/trello/logo_128px.png'
+      'trello/logo_32px.png',
+      'trello/logo_48px.png',
+      'trello/logo_64px.png',
+      'trello/logo_128px.png'
     ]
   }
   static get humanizedUnreadItemType () { return 'notification' }

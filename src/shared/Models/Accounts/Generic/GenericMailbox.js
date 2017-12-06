@@ -10,14 +10,14 @@ class GenericMailbox extends CoreMailbox {
 
   static get humanizedLogos () {
     return [
-      'images/generic/logo_32px.png',
-      'images/generic/logo_48px.png',
-      'images/generic/logo_64px.png',
-      'images/generic/logo_128px.png',
-      'images/generic/logo_512px.png'
+      'generic/logo_32px.png',
+      'generic/logo_48px.png',
+      'generic/logo_64px.png',
+      'generic/logo_128px.png',
+      'generic/logo_512px.png'
     ]
   }
-  static get humanizedVectorLogo () { return 'images/generic/logo_vector.svg' }
+  static get humanizedVectorLogo () { return 'generic/logo_vector.svg' }
   static get humanizedType () { return 'Weblink' }
   static get defaultColor () { return MailboxColors.GENERIC }
 

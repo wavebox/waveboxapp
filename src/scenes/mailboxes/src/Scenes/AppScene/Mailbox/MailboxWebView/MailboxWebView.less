@@ -1,5 +1,4 @@
 .ReactComponent-MailboxWebView {
-  @NAVIGATION_TOOLBAR_HEIGHT: 40px;
   @SEARCH_HEIGHT: 48px;
   @TARGET_URL_HEIGHT: 16px;
 
@@ -22,20 +21,6 @@
     left: 0;
     right: 0;
     bottom: 0;
-
-    &.hasNavigationToolbar {
-      top: @NAVIGATION_TOOLBAR_HEIGHT;
-    }
-  }
-
-  .ReactComponent-MailboxNavigationToolbar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: @NAVIGATION_TOOLBAR_HEIGHT;
-    z-index: 101; //Takes it over the app drag bar
-    -webkit-app-region: drag;
   }
 
   .ReactComponent-MailboxSnapshot {
@@ -50,10 +35,6 @@
     background-position: center;
     background-repeat: no-repeat;
     filter: grayscale(100%);
-
-    &.hasNavigationToolbar {
-      top: @NAVIGATION_TOOLBAR_HEIGHT;
-    }
   }
 
   .ReactComponent-MailboxLoader {

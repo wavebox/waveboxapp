@@ -11,6 +11,7 @@ import { TERMS_URL, EULA_URL } from 'shared/constants'
 import WelcomeRaisedButton from './WelcomeRaisedButton'
 import WelcomeAccountButton from './WelcomeAccountButton'
 import electron from 'electron'
+import Resolver from 'Runtime/Resolver'
 
 const styles = {
   // Layout
@@ -150,7 +151,7 @@ export default class Welcome extends React.Component {
       <WelcomeAccountButton
         tooltipText={`Add ${name}`}
         size={60}
-        logoPath={'../../' + logo}
+        logoPath={Resolver.image(logo)}
         onClick={() => user.hasAccountsOfType(type) ? action() : this.handleOpenAddWizard()}
         style={styles.accountIcon} />
     )

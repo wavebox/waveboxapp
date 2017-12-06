@@ -10,10 +10,10 @@ class GoogleDocsService extends GoogleService {
   static get humanizedTypeShort () { return 'Docs' }
   static get humanizedLogos () {
     return [
-      'images/google/logo_docs_32px.png',
-      'images/google/logo_docs_48px.png',
-      'images/google/logo_docs_64px.png',
-      'images/google/logo_docs_128px.png'
+      'google/logo_docs_32px.png',
+      'google/logo_docs_48px.png',
+      'google/logo_docs_64px.png',
+      'google/logo_docs_128px.png'
     ]
   }
 

@@ -1,11 +1,14 @@
 import alt from '../alt'
 import actions from './userActions'
 import User from 'shared/Models/User'
-import persistence from './userPersistence'
+import userPersistence from './userPersistence'
+import containerPersistence from './containerPersistence'
+import mailboxActions from '../mailbox/mailboxActions'
 import Bootstrap from '../../Bootstrap'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import semver from 'semver'
 import { ipcRenderer } from 'electron'
+import Container from 'shared/Models/Container/Container'
 import pkg from 'package.json'
 import {
   ANALYTICS_ID,
@@ -39,6 +42,8 @@ class UserStore {
     this.extensionAutoUpdater = null
     this.wireConfig = null
     this.wireConfigAutoUpdater = null
+    this.containers = new Map()
+    this.containerAutoUpdater = null
 
     /* ****************************************/
     // Extensions
@@ -95,6 +100,16 @@ class UserStore {
     this.wireConfigVersion = () => { return (this.wireConfig || {}).version || '0.0.0' }
 
     /* ****************************************/
+    // Containers
+    /* ****************************************/
+
+    /**
+    * @param containerId: the id of the container
+    * @return the container or null
+    */
+    this.getContainer = (containerId) => { return this.containers.get(containerId) || null }
+
+    /* ****************************************/
     // Listeners
     /* ****************************************/
 
@@ -111,6 +126,12 @@ class UserStore {
       handleUpdateWireConfig: actions.UPDATE_WIRE_CONFIG,
       handleStartAutoUpdateWireConfig: actions.START_AUTO_UPDATE_WIRE_CONFIG,
       handleStopAutoUpdateWireConfig: actions.STOP_AUTO_UPDATE_WIRE_CONFIG,
+
+      // Containers
+      handleUpdateContainers: actions.UPDATE_CONTAINERS,
+      handleStartAutoUpdateContainers: actions.START_AUTO_UPDATE_CONTAINERS,
+      handleStopAutoUpdateContainers: actions.STOP_AUTO_UPDATE_CONTAINERS,
+      handleAddContainer: actions.ADD_CONTAINER,
 
       // Remote changes
       handleRemoteChangeAccount: actions.REMOTE_CHANGE_ACCOUNT,
@@ -130,25 +151,32 @@ class UserStore {
   /* **************************************************************************/
 
   handleLoad () {
-    const allData = persistence.allJSONItemsSync()
+    const allUserData = userPersistence.allJSONItemsSync()
+    const allContainerData = containerPersistence.allJSONItemsSync()
 
     // Instance
     this.clientId = Bootstrap.clientToken
     this.clientToken = Bootstrap.clientToken
-    this.analyticsId = allData[ANALYTICS_ID]
-    this.createdTime = allData[CREATED_TIME]
+    this.analyticsId = allUserData[ANALYTICS_ID]
+    this.createdTime = allUserData[CREATED_TIME]
 
     // User
     const now = new Date().getTime()
-    persistence.setJSONItem(USER_EPOCH, now)
-    persistence.setJSONItem(USER, Bootstrap.accountJS)
+    userPersistence.setJSONItem(USER_EPOCH, now)
+    userPersistence.setJSONItem(USER, Bootstrap.accountJS)
     this.user = new User(Bootstrap.accountJS, now)
 
     // Extensions
-    this.extensions = allData[EXTENSIONS] || null
+    this.extensions = allUserData[EXTENSIONS] || null
 
     // Wire Config
-    this.wireConfig = allData[WIRE_CONFIG] || null
+    this.wireConfig = allUserData[WIRE_CONFIG] || null
+
+    // Containers
+    this.containers = Object.keys(allContainerData).reduce((acc, id) => {
+      acc.set(id, new Container(id, allContainerData[id]))
+      return acc
+    }, new Map())
   }
 
   /* **************************************************************************/
@@ -163,7 +191,7 @@ class UserStore {
       .then((res) => res.json())
       .then((res) => {
         this.extensions = res
-        persistence.setJSONItem(EXTENSIONS, res)
+        userPersistence.setJSONItem(EXTENSIONS, res)
         ipcRenderer.send(WB_UPDATE_INSTALLED_EXTENSIONS, {})
         this.emitChange()
       })
@@ -204,7 +232,7 @@ class UserStore {
         }
 
         this.wireConfig = res
-        persistence.setJSONItem(WIRE_CONFIG, res)
+        userPersistence.setJSONItem(WIRE_CONFIG, res)
         this.emitChange()
       })
   }
@@ -227,13 +255,88 @@ class UserStore {
   }
 
   /* **************************************************************************/
+  // Handlers: Containers
+  /* **************************************************************************/
+
+  handleUpdateContainers () {
+    this.preventDefault()
+    if (this.containers.size === 0) { return }
+
+    // Generate current manifest
+    const containerInfo = Array.from(this.containers.values())
+      .reduce((acc, container) => {
+        acc[container.id] = container.version
+        return acc
+      }, {})
+
+    Promise.resolve()
+      .then(() => {
+        return window.fetch(`https://waveboxio.com/client/${this.clientId}/container_update.json`, {
+          method: 'POST',
+          body: JSON.stringify({
+            version: pkg.version,
+            channel: pkg.releaseChannel,
+            containers: containerInfo
+          })
+        })
+      })
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.json())
+      .then((res) => {
+        if (!res.containers || Object.keys(res.containers).length === 0) { return }
+
+        containerPersistence.setJSONItems(res.containers)
+        const updatedContainers = {}
+        Object.keys(res.containers).forEach((id) => {
+          const container = new Container(id, res.containers[id])
+          updatedContainers[id] = container
+          this.containers.set(id, container)
+        })
+        mailboxActions.containersUpdated.defer(updatedContainers)
+        this.emitChange()
+      })
+  }
+
+  handleStartAutoUpdateContainers () {
+    actions.updateContainers.defer()
+
+    if (this.containerAutoUpdater !== null) {
+      this.preventDefault()
+      return
+    }
+    this.containerAutoUpdater = setInterval(() => {
+      actions.updateContainers()
+    }, WIRE_CONFIG_AUTO_UPDATE_INTERVAL)
+  }
+
+  handleStopAutoUpdateContainers () {
+    clearInterval(this.containerAutoUpdater)
+    this.containerAutoUpdater = null
+  }
+
+  handleAddContainer ({ id, data }) {
+    const container = new Container(id, data)
+
+    // Check if we already have this or a newer version
+    if (this.containers.has(id)) {
+      if (this.containers.get(id).version >= container.version) {
+        this.preventDefault()
+        return
+      }
+    }
+
+    this.containers.set(id, container)
+    containerPersistence.setJSONItem(id, data)
+  }
+
+  /* **************************************************************************/
   // Handlers: Account
   /* **************************************************************************/
 
   handleRemoteChangeAccount ({ account }) {
     const now = new Date().getTime()
-    persistence.setJSONItem(USER_EPOCH, now)
-    persistence.setJSONItem(USER, account)
+    userPersistence.setJSONItem(USER_EPOCH, now)
+    userPersistence.setJSONItem(USER, account)
     this.user = new User(account, now)
   }
 

@@ -132,6 +132,7 @@ module.exports = Object.freeze({
     WAVEBOX_AUTH: '/app/redirect/waveboxauth',
     WAVEBOX_AUTH_PAYMENT: '/app/redirect/waveboxauth/payment',
     WAVEBOX_AUTH_AFFILIATE: '/app/redirect/waveboxauth/affiliate',
-    WAVEBOX_PRO_BUY: '/app/redirect/pro/buy'
+    WAVEBOX_PRO_BUY: '/app/redirect/pro/buy',
+    ADD_MAILBOX: '/app/redirect/mailbox/add'
   }
 })

@@ -10,10 +10,10 @@ class GoogleStorageService extends GoogleService {
   static get humanizedTypeShort () { return 'Drive' }
   static get humanizedLogos () {
     return [
-      'images/google/logo_drive_32px.png',
-      'images/google/logo_drive_48px.png',
-      'images/google/logo_drive_64px.png',
-      'images/google/logo_drive_128px.png'
+      'google/logo_drive_32px.png',
+      'google/logo_drive_48px.png',
+      'google/logo_drive_64px.png',
+      'google/logo_drive_128px.png'
     ]
   }
 

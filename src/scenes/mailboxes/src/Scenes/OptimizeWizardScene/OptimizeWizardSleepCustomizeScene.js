@@ -7,6 +7,7 @@ import * as Colors from 'material-ui/styles/colors'
 import { MailboxAvatar } from 'Components/Mailbox'
 import { Container, Row, Col } from 'Components/Grid'
 import CoreService from 'shared/Models/Accounts/CoreService'
+import Resolver from 'Runtime/Resolver'
 
 const styles = {
   container: {
@@ -209,7 +210,7 @@ export default class OptimizeWizardSleepCustomizeScene extends React.Component {
         primaryText={service.humanizedType}
         leftAvatar={(
           <img
-            src={'../../' + service.humanizedLogo}
+            src={Resolver.image(service.humanizedLogo)}
             style={styles.serviceIcon} />
         )}
         rightToggle={(

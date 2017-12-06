@@ -4,6 +4,7 @@ const SlackMailbox = require('./Slack/SlackMailbox')
 const GoogleMailbox = require('./Google/GoogleMailbox')
 const MicrosoftMailbox = require('./Microsoft/MicrosoftMailbox')
 const GenericMailbox = require('./Generic/GenericMailbox')
+const ContainerMailbox = require('./Container/ContainerMailbox')
 
 class MailboxFactory {
   /**
@@ -18,6 +19,7 @@ class MailboxFactory {
       case MAILBOX_TYPES.GOOGLE: return GoogleMailbox
       case MAILBOX_TYPES.MICROSOFT: return MicrosoftMailbox
       case MAILBOX_TYPES.GENERIC: return GenericMailbox
+      case MAILBOX_TYPES.CONTAINER: return ContainerMailbox
     }
   }
 

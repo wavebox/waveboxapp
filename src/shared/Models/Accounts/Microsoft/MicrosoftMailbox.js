@@ -42,26 +42,26 @@ class MicrosoftMailbox extends CoreMailbox {
   static get humanizedType () { return 'Microsoft' }
   static get humanizedOutlookLogos () {
     return [
-      'images/microsoft/outlook_logo_32px.png',
-      'images/microsoft/outlook_logo_48px.png',
-      'images/microsoft/outlook_logo_64px.png',
-      'images/microsoft/outlook_logo_128px.png',
-      'images/microsoft/outlook_logo_512px.png'
+      'microsoft/outlook_logo_32px.png',
+      'microsoft/outlook_logo_48px.png',
+      'microsoft/outlook_logo_64px.png',
+      'microsoft/outlook_logo_128px.png',
+      'microsoft/outlook_logo_512px.png'
     ]
   }
   static get humanizedOutlookLogo () { return this.humanizedOutlookLogos[this.humanizedOutlookLogos.length - 1] }
-  static get humanizedOutlookVectorLogo () { return 'images/microsoft/outlook_logo_vector.svg' }
+  static get humanizedOutlookVectorLogo () { return 'microsoft/outlook_logo_vector.svg' }
   static get humanizedOffice365Logos () {
     return [
-      'images/microsoft/office365_logo_32px.png',
-      'images/microsoft/office365_logo_48px.png',
-      'images/microsoft/office365_logo_64px.png',
-      'images/microsoft/office365_logo_128px.png',
-      'images/microsoft/office365_logo_512px.png'
+      'microsoft/office365_logo_32px.png',
+      'microsoft/office365_logo_48px.png',
+      'microsoft/office365_logo_64px.png',
+      'microsoft/office365_logo_128px.png',
+      'microsoft/office365_logo_512px.png'
     ]
   }
   static get humanizedOffice365Logo () { return this.humanizedOffice365Logos[this.humanizedOffice365Logos.length - 1] }
-  static get humanizedOffice365VectorLogo () { return 'images/microsoft/office365_logo_vector.svg' }
+  static get humanizedOffice365VectorLogo () { return 'microsoft/office365_logo_vector.svg' }
 
   /**
   * Gets an icon that is closest to the given size

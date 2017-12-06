@@ -51,6 +51,32 @@ class UserActions {
   stopAutoUpdateWireConfig () { return {} }
 
   /* **************************************************************************/
+  // Containers
+  /* **************************************************************************/
+
+  /**
+  * Adds a new container
+  * @param id: the id of the container
+  * @param data: the data for the container
+  */
+  addContainer (id, data) { return { id, data } }
+
+  /**
+  * Indicates for the store update the containers
+  */
+  updateContainers () { return {} }
+
+  /**
+  * Starts auto updates the containers after a period
+  */
+  startAutoUpdateContainers () { return {} }
+
+  /**
+  * Stops auto updates the containers after a period
+  */
+  stopAutoUpdateContainers () { return {} }
+
+  /* **************************************************************************/
   // Account
   /* **************************************************************************/
 

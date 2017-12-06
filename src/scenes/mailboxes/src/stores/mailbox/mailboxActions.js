@@ -7,6 +7,7 @@ import { SlackMailbox } from 'shared/Models/Accounts/Slack'
 import { TrelloMailbox } from 'shared/Models/Accounts/Trello'
 import { MicrosoftMailbox } from 'shared/Models/Accounts/Microsoft'
 import { GenericMailbox } from 'shared/Models/Accounts/Generic'
+import { ContainerMailbox } from 'shared/Models/Accounts/Container'
 import MailboxTypes from 'shared/Models/Accounts/MailboxTypes'
 import {
   WB_AUTH_GOOGLE_COMPLETE,
@@ -73,6 +74,35 @@ class MailboxActions {
   /* **************************************************************************/
 
   /**
+  * Starts adding a new mailbox
+  * @param type: the mailbox type
+  * @param accessMode=undefined: the acessMode if applicable
+  */
+  startAddMailbox (type, accessMode) {
+    if (type === MailboxTypes.GOOGLE) {
+      if (accessMode === GoogleDefaultService.ACCESS_MODES.GMAIL) {
+        return this.startAddGmailWizard()
+      } else if (accessMode === GoogleDefaultService.ACCESS_MODES.GINBOX) {
+        return this.startAddGinboxWizard()
+      }
+    } else if (type === MailboxTypes.MICROSOFT) {
+      if (accessMode === MicrosoftMailbox.ACCESS_MODES.OUTLOOK) {
+        return this.startAddOutlookWizard()
+      } else if (accessMode === MicrosoftMailbox.ACCESS_MODES.OFFICE365) {
+        return this.startAddOffice365Wizard()
+      }
+    } else if (type === MailboxTypes.TRELLO) {
+      return this.startAddTrelloWizard()
+    } else if (type === MailboxTypes.SLACK) {
+      return this.startAddSlackWizard()
+    } else if (type === MailboxTypes.GENERIC) {
+      return this.startAddGenericWizard()
+    } else if (type === MailboxTypes.CONTAINER) {
+      return this.startAddContainerWizard(accessMode)
+    }
+  }
+
+  /**
   * Starts the add mailbox wizard
   */
   startAddGinboxWizard () {
@@ -128,6 +158,15 @@ class MailboxActions {
     return {}
   }
 
+  /**
+  * Starts the add container wizard
+  * @param containerId: the id of the container
+  */
+  startAddContainerWizard (containerId) {
+    window.location.hash = `/mailbox_wizard/${ContainerMailbox.type}/${containerId}/0`
+    return {}
+  }
+
   /* **************************************************************************/
   // Mailbox Auth
   /* **************************************************************************/
@@ -157,6 +196,8 @@ class MailboxActions {
       return this.authenticateSlackMailbox(provisionalJS)
     } else if (MailboxClass.type === MailboxTypes.GENERIC) {
       return this.authenticateGenericMailbox(provisionalJS)
+    } else if (MailboxClass.type === MailboxTypes.CONTAINER) {
+      return this.authenticateContainerMailbox(accessMode, provisionalJS)
     }
   }
 
@@ -259,6 +300,20 @@ class MailboxActions {
       provisionalJS = GenericMailbox.createJS(CoreMailbox.provisionId())
     }
     return { provisionalJS: provisionalJS, provisionalId: provisionalJS.id }
+  }
+
+  /**
+  * Starts the auth process for generic mailbox
+  * @param containerId: the id of the container to use
+  * @param provisionalJS=undefined: the provisional json object to create the mailbox
+  */
+  authenticateContainerMailbox (containerId, provisionalJS = undefined) {
+    if (provisionalJS) {
+      provisionalJS = ContainerMailbox.sanitizeProvisionalJS(provisionalJS)
+    } else {
+      provisionalJS = ContainerMailbox.createJS(CoreMailbox.provisionId())
+    }
+    return { containerId: containerId, provisionalJS: provisionalJS, provisionalId: provisionalJS.id }
   }
 
   /* **************************************************************************/
@@ -744,6 +799,16 @@ class MailboxActions {
 
     return { promise: promise }
   }
+
+  /* **************************************************************************/
+  // Containers
+  /* **************************************************************************/
+
+  /**
+  * Indicates the ids of the given containers have been updated
+  * @param containers: a key-value object map of the updated containers
+  */
+  containersUpdated (containers) { return { containers } }
 
   /* **************************************************************************/
   // Misc

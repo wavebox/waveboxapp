@@ -25,10 +25,10 @@ class GenericDefaultService extends CoreService {
   static get humanizedType () { return 'Weblink' }
   static get humanizedLogos () {
     return [
-      'images/generic/logo_32px.png',
-      'images/generic/logo_48px.png',
-      'images/generic/logo_64px.png',
-      'images/generic/logo_128px.png'
+      'generic/logo_32px.png',
+      'generic/logo_48px.png',
+      'generic/logo_64px.png',
+      'generic/logo_128px.png'
     ]
   }
   static get humanizedUnreadItemType () { return 'notification' }

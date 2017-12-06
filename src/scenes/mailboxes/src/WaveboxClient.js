@@ -55,8 +55,6 @@ if (process.platform === 'darwin') {
 // Load what we have in the db
 userStore.getState()
 userActions.load()
-userActions.startAutoUpdateExtensions()
-userActions.startAutoUpdateWireConfig()
 mailboxStore.getState()
 mailboxActions.load()
 settingsStore.getState()
@@ -69,6 +67,13 @@ extensionStore.getState()
 extensionActions.load()
 crextensionStore.getState()
 crextensionActions.load()
+
+// Setup the updaters
+userActions.startAutoUpdateExtensions()
+userActions.startAutoUpdateWireConfig()
+userActions.startAutoUpdateContainers()
+
+// Debugging
 Debug.load()
 
 // Remove loading

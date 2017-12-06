@@ -212,6 +212,21 @@ class StorageBucket {
   }
 
   /**
+  * @param items: a map of key value pairs to set
+  * @return promise
+  */
+  setItems (items) {
+    return new Promise((resolve) => {
+      const id = this._nextCallId()
+      this.__responseHandlers__.set(id, (body) => {
+        resolve(body.response)
+      })
+
+      ipcRenderer.send(`storageBucket:${this.__bucketName__}:setItems`, { id: id, items: items })
+    })
+  }
+
+  /**
   * @param k: the key of the item
   * @param v: the value of the item
   */
@@ -226,6 +241,18 @@ class StorageBucket {
   */
   setJSONItem (k, v) {
     return this.setItem(k, JSON.stringify(v))
+  }
+
+  /**
+  * @param items: a map of key value pairs to set
+  * @return promise
+  */
+  setJSONItems (items) {
+    const jsonItems = Object.keys(items).reduce((acc, k) => {
+      acc[k] = JSON.stringify(items[k])
+      return acc
+    }, {})
+    return this.setItems(jsonItems)
   }
 
   /**

@@ -24,6 +24,8 @@ import { SlackMailbox } from 'shared/Models/Accounts/Slack'
 import { TrelloMailbox } from 'shared/Models/Accounts/Trello'
 import { MicrosoftMailbox } from 'shared/Models/Accounts/Microsoft'
 import { GenericMailbox } from 'shared/Models/Accounts/Generic'
+import { ContainerMailbox } from 'shared/Models/Accounts/Container'
+import Resolver from 'Runtime/Resolver'
 import {
   WB_AUTH_GOOGLE,
   WB_AUTH_MICROSOFT,
@@ -222,10 +224,9 @@ class MailboxStore {
       } else if (mailbox.hasServiceLocalAvatar) {
         return this.getAvatar(mailbox.serviceLocalAvatarId)
       } else if (!mailbox.avatarCharacterDisplay) {
-        if (mailbox.humanizedLogo) {
-          return '../../' + mailbox.humanizedLogo
-        } else if (mailbox.serviceForType(CoreMailbox.SERVICE_TYPES.DEFAULT).humanizedLogo) {
-          return '../../' + mailbox.serviceForType(CoreMailbox.SERVICE_TYPES.DEFAULT).humanizedLogo
+        const logoPath = mailbox.humanizedLogo || mailbox.serviceForType(CoreMailbox.SERVICE_TYPES.DEFAULT).humanizedLogo
+        if (logoPath) {
+          return Resolver.image(logoPath)
         }
       }
     }
@@ -509,6 +510,7 @@ class MailboxStore {
       handleAuthenticateOutlookMailbox: actions.AUTHENTICATE_OUTLOOK_MAILBOX,
       handleAuthenticateOffice365Mailbox: actions.AUTHENTICATE_OFFICE365MAILBOX,
       handleAuthenticateGenericMailbox: actions.AUTHENTICATE_GENERIC_MAILBOX,
+      handleAuthenticateContainerMailbox: actions.AUTHENTICATE_CONTAINER_MAILBOX,
 
       // Mailbox re-auth
       handleReauthenticateMailbox: actions.REAUTHENTICATE_MAILBOX,
@@ -578,6 +580,9 @@ class MailboxStore {
 
       // Sync
       handleFullSyncMailbox: actions.FULL_SYNC_MAILBOX,
+
+      // Containers
+      handleContainersUpdated: actions.CONTAINERS_UPDATED,
 
       // Misc
       handleReloadActiveMailbox: actions.RELOAD_ACTIVE_MAILBOX,
@@ -736,6 +741,20 @@ class MailboxStore {
     this.preventDefault()
     actions.create.defer(provisionalId, provisionalJS)
     this._finalizeCreateAccount(`/mailbox_wizard/${GenericMailbox.type}/_/2/${provisionalId}`)
+  }
+
+  handleAuthenticateContainerMailbox ({ containerId, provisionalId, provisionalJS, writePermission }) {
+    this.preventDefault()
+
+    const container = userStore.getState().getContainer(containerId)
+    if (!container) {
+      console.error('[AUTH ERR]', `Unable to authenticate mailbox with id "${provisionalId}" as containerId "${containerId}" is unknown`)
+      return
+    }
+
+    provisionalJS.container = container.cloneForMailbox()
+    actions.create.defer(provisionalId, provisionalJS)
+    this._finalizeCreateAccount(`/mailbox_wizard/${ContainerMailbox.type}/${containerId}/2/${provisionalId}`)
   }
 
   /* **************************************************************************/
@@ -1544,6 +1563,27 @@ class MailboxStore {
       microsoftActions.syncMailboxMail.defer(id)
       this.preventDefault() // No change in this store
     }
+  }
+
+  /* **************************************************************************/
+  // Handlers : Containers
+  /* **************************************************************************/
+
+  handleContainersUpdated ({ containers }) {
+    if (Object.keys(containers).length === 0) { this.preventDefault(); return }
+
+    // Get the mailboxes that need to be updated
+    const mailboxes = this.getMailboxesOfType(CoreMailbox.MAILBOX_TYPES.CONTAINER).filter((mailbox) => {
+      return containers[mailbox.containerId] !== undefined
+    })
+    if (mailboxes.length === 0) { this.preventDefault(); return }
+
+    mailboxes.forEach((mailbox) => {
+      const nextMailbox = mailbox.changeData({
+        container: containers[mailbox.containerId].cloneForMailbox()
+      })
+      this.saveMailbox(mailbox.id, nextMailbox)
+    })
   }
 
   /* **************************************************************************/

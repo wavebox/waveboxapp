@@ -15,10 +15,10 @@ class GoogleCalendarService extends GoogleService {
   static get humanizedTypeShort () { return 'Calendar' }
   static get humanizedLogos () {
     return [
-      'images/google/logo_calendar_32px.png',
-      'images/google/logo_calendar_48px.png',
-      'images/google/logo_calendar_64px.png',
-      'images/google/logo_calendar_128px.png'
+      'google/logo_calendar_32px.png',
+      'google/logo_calendar_48px.png',
+      'google/logo_calendar_64px.png',
+      'google/logo_calendar_128px.png'
     ]
   }
 

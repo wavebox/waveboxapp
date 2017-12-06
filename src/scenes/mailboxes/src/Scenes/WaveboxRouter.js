@@ -7,6 +7,7 @@ import ComposePickerScene from './ComposePickerScene'
 import ProScene from './ProScene'
 import EarlyBuildToast from './EarlyBuildToast'
 import MailboxWizardScene from './MailboxWizardScene'
+import MailboxWizardAddSceneNew from './MailboxWizardAddSceneNew'
 import MailboxWizardAddScene from './MailboxWizardAddScene'
 import MailboxReauthenticatingScene from './MailboxReauthenticatingScene'
 import AppWizardScene from './AppWizardScene'
@@ -44,6 +45,7 @@ export default class WaveboxRouter extends React.Component {
           <Route path='/dictionary_installer' component={DictionaryInstallerScene} />
 
           <Route path='/mailbox_wizard/add' component={MailboxWizardAddScene} />
+          <Route path='/mailbox_wizard/add_new' component={MailboxWizardAddSceneNew} />
           <Route path='/mailbox_wizard/:mailboxType/:accessMode/:step/:mailboxId?' component={MailboxWizardScene} />
           <Route path='/mailbox/reauthenticating' component={MailboxReauthenticatingScene} />
 

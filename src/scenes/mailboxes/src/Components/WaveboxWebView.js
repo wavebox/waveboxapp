@@ -8,6 +8,8 @@ import {
 } from 'shared/constants'
 import electron from 'electron'
 import pkg from 'package.json'
+import { userActions } from 'stores/user'
+import { mailboxActions } from 'stores/mailbox'
 
 const REF = 'webview'
 
@@ -31,8 +33,12 @@ export default class WaveboxWebView extends React.Component {
   * @return true if the url was routed, false otherwise
   */
   static routeWaveboxUrl (url) {
-    const purl = URI(url)
-    if (WAVEBOX_CAPTURE_URL_HOSTNAMES.indexOf(purl.hostname()) !== -1) {
+    const match = WAVEBOX_CAPTURE_URL_HOSTNAMES.find((hostname) => {
+      return url.startsWith(`https://${hostname}`)
+    })
+
+    if (match) {
+      const purl = URI(url)
       switch (purl.pathname()) {
         case WAVEBOX_CAPTURE_URLS.SETTINGS:
           window.location.hash = '/settings'
@@ -56,9 +62,26 @@ export default class WaveboxWebView extends React.Component {
           window.location.hash = '/'
           electron.remote.shell.openExternal(purl.search(true).url)
           return true
+        case WAVEBOX_CAPTURE_URLS.ADD_MAILBOX:
+          this.processAddMailbox(purl)
+          return true
       }
     }
     return false
+  }
+
+  /**
+  * Runs the add mailbox process from an add url
+  * @param purl: the parsed url that should be processed
+  */
+  static processAddMailbox (purl) {
+    const query = purl.search(true)
+    if (query.container_id && query.container) {
+      userActions.addContainer(query.container_id, JSON.parse(query.container))
+    }
+    if (query.type) {
+      mailboxActions.startAddMailbox(query.type, query.access_mode)
+    }
   }
 
   /* **************************************************************************/

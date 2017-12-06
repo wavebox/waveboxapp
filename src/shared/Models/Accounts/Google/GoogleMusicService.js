@@ -10,10 +10,10 @@ class GoogleMusicService extends GoogleService {
   static get humanizedTypeShort () { return 'Music' }
   static get humanizedLogos () {
     return [
-      'images/google/logo_music_32px.png',
-      'images/google/logo_music_48px.png',
-      'images/google/logo_music_64px.png',
-      'images/google/logo_music_128px.png'
+      'google/logo_music_32px.png',
+      'google/logo_music_48px.png',
+      'google/logo_music_64px.png',
+      'google/logo_music_128px.png'
     ]
   }
 

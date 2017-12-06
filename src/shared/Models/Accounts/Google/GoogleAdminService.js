@@ -10,10 +10,10 @@ class GoogleAdminService extends GoogleService {
   static get humanizedTypeShort () { return 'Admin' }
   static get humanizedLogos () {
     return [
-      'images/google/logo_admin_32px.png',
-      'images/google/logo_admin_48px.png',
-      'images/google/logo_admin_64px.png',
-      'images/google/logo_admin_128px.png'
+      'google/logo_admin_32px.png',
+      'google/logo_admin_48px.png',
+      'google/logo_admin_64px.png',
+      'google/logo_admin_128px.png'
     ]
   }
 

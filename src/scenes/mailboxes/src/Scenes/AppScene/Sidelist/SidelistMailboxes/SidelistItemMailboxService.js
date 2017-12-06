@@ -9,6 +9,7 @@ import { userStore } from 'stores/user'
 import { ServiceBadge, ServiceTooltip } from 'Components/Service'
 import * as Colors from 'material-ui/styles/colors'
 import uuid from 'uuid'
+import Resolver from 'Runtime/Resolver'
 
 const styles = {
   /**
@@ -159,7 +160,7 @@ export default class SidelistItemMailboxService extends React.Component {
   */
   getServiceIconUrl (mailboxType, serviceType) {
     const ServiceClass = ServiceFactory.getClass(mailboxType, serviceType)
-    return ServiceClass ? '../../' + ServiceClass.humanizedLogo : ''
+    return ServiceClass ? Resolver.image(ServiceClass.humanizedLogo) : ''
   }
 
   render () {

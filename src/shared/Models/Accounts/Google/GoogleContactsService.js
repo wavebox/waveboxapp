@@ -10,10 +10,10 @@ class GoogleContactsService extends GoogleService {
   static get humanizedTypeShort () { return 'Contacts' }
   static get humanizedLogos () {
     return [
-      'images/google/logo_contacts_32px.png',
-      'images/google/logo_contacts_48px.png',
-      'images/google/logo_contacts_64px.png',
-      'images/google/logo_contacts_128px.png'
+      'google/logo_contacts_32px.png',
+      'google/logo_contacts_48px.png',
+      'google/logo_contacts_64px.png',
+      'google/logo_contacts_128px.png'
     ]
   }
 

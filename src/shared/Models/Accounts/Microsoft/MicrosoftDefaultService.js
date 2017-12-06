@@ -20,10 +20,10 @@ class MicrosoftDefaultService extends MicrosoftService {
   static get humanizedType () { return 'Mail' }
   static get humanizedLogos () {
     return [
-      'images/microsoft/logo_mail_32px.png',
-      'images/microsoft/logo_mail_48px.png',
-      'images/microsoft/logo_mail_64px.png',
-      'images/microsoft/logo_mail_128px.png'
+      'microsoft/logo_mail_32px.png',
+      'microsoft/logo_mail_48px.png',
+      'microsoft/logo_mail_64px.png',
+      'microsoft/logo_mail_128px.png'
     ]
   }
 

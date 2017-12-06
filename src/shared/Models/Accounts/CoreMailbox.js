@@ -126,10 +126,16 @@ class CoreMailbox extends Model {
   /**
   * @param id: the id ofthe tab
   * @param data: the data of the tab
+  * @param expando={}: additional items to write into this on creatiton time
   */
-  constructor (id, data) {
+  constructor (id, data, expando = {}) {
     super(data)
     this.__id__ = id
+
+    // Write expando properties
+    Object.keys(expando).forEach((k) => {
+      this[k] = expando[k]
+    })
 
     // If we don't have default model data, inject it into the json
     if (!this.__data__.services || !this.__data__.services.length) {
@@ -152,7 +158,13 @@ class CoreMailbox extends Model {
   * @return a modelled version of the service
   */
   modelizeService (serviceData) {
-    return ServiceFactory.modelize(this.id, this.type, serviceData, undefined, this.buildMailboxToServiceMigrationData(serviceData.type))
+    return ServiceFactory.modelize(
+      this.id,
+      this.type,
+      serviceData,
+      undefined,
+      this.buildMailboxToServiceMigrationData(serviceData.type)
+    )
   }
 
   /**

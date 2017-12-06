@@ -112,6 +112,7 @@ export default class AppScene extends React.Component {
       appHasTitlebar: settingsState.launched.ui.showTitlebar,
       hasExtensionsInToolbar: Toolbar.hasExtensionsInToolbar(crextensionState, settingsState),
       hasServicesInToolbar: Toolbar.hasServicesInToolbar(mailboxState, userState),
+      hasNavigationInToolbar: Toolbar.hasNavigationInToolbar(mailboxState),
       toolwindowExtBottom: extensionState
         .getInstalledWithToolwindows(CoreExtensionManifest.TOOLWINDOW_POSITIONS.BOTTOM)
         .map((extension) => extension.manifest.toolwindowSize)
@@ -138,7 +139,8 @@ export default class AppScene extends React.Component {
 
   mailboxUpdated = (mailboxState) => {
     this.setState({
-      hasServicesInToolbar: Toolbar.hasServicesInToolbar(mailboxState, undefined)
+      hasServicesInToolbar: Toolbar.hasServicesInToolbar(mailboxState, undefined),
+      hasNavigationInToolbar: Toolbar.hasNavigationInToolbar(mailboxState)
     })
   }
 
@@ -176,10 +178,11 @@ export default class AppScene extends React.Component {
       appHasTitlebar,
       hasExtensionsInToolbar,
       hasServicesInToolbar,
+      hasNavigationInToolbar,
       toolwindowExtBottom,
       toolwindowExtSidebarO
     } = this.state
-    const hasToolbar = hasExtensionsInToolbar || hasServicesInToolbar
+    const hasToolbar = hasExtensionsInToolbar || hasServicesInToolbar || hasNavigationInToolbar
 
     return (
       <div {...passProps}>
