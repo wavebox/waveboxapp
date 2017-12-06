@@ -45,11 +45,29 @@ class ContentPopupWindow extends WaveboxWindow {
 
     // Make sure we defer loading of the url so we can customize it further
     super.create(undefined, options)
+
+    // If we've decided to delay the show above then wait for the ready-to-show
+    // event. When the window is ready to show check if the url is blank again. If
+    // it is wait a cautionary 500ms before opening. In this case it's normally the host
+    // page try to open a url without a referrer. Removing this though can cause the window
+    // to flash up. Just be careful when re-accessing window, expect it to be destroyed sometimes
     if (shouldDelayShow) {
       this.window.on('ready-to-show', () => {
-        this.window.show()
+        const windowCpy = this.window
+        if (windowCpy.isDestroyed() || windowCpy.webContents.isDestroyed()) { return }
+        const url = windowCpy.webContents.getURL()
+
+        if (!url || url === 'about:blank') {
+          setTimeout(() => {
+            if (windowCpy.isDestroyed() || windowCpy.webContents.isDestroyed()) { return }
+            windowCpy.show()
+          }, 500)
+        } else {
+          windowCpy.show()
+        }
       })
     }
+
     // Load the initial url
     if (!options.webContents || url !== 'about:blank') {
       // For the same reasons in https://github.com/electron/electron/blob/6ebd00267e3dbe06ee32c7f31b1b22ee77fde919/lib/browser/guest-window-manager.js
