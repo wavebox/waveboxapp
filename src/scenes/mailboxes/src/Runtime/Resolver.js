@@ -83,20 +83,20 @@ class Resolver {
   /**
   * Resolves an icon path
   * @param name: the name of the icon
-  * @param targetApi=NODE: the target api
+  * @param targetApi=BROWSER: the target api
   * @return the full path to the file
   */
-  static icon (name, targetApi = API_TYPES.NODE) {
+  static icon (name, targetApi = API_TYPES.BROWSER) {
     return this._scopedResolve(path.join(__dirname, '../../icons'), name, targetApi, true)
   }
 
   /**
   * Resolves an image path
   * @param name: the name of the image
-  * @param targetApi=NODE: the target api
+  * @param targetApi=BROWSER: the target api
   * @return the full path to the file
   */
-  static image (name, targetApi = API_TYPES.NODE) {
+  static image (name, targetApi = API_TYPES.BROWSER) {
     return this._scopedResolve(path.join(__dirname, '../../images'), name, targetApi, true)
   }
 }

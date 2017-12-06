@@ -270,7 +270,7 @@ export default class SupportSettings extends React.Component {
               <Row>
                 <Col md={6}>
                   {this.renderUnboxedCell(
-                    Resolver.image('support_kb_icon.png', Resolver.API_TYPES.BROWSER),
+                    Resolver.image('support_kb_icon.png'),
                     'Knowledge Base',
                     'Find the answers to the most commonly asked questions.',
                     'rgb(246, 109, 99)',
@@ -280,7 +280,7 @@ export default class SupportSettings extends React.Component {
                 </Col>
                 <Col md={6}>
                   {this.renderUnboxedCell(
-                    Resolver.image('support_blog_icon.png', Resolver.API_TYPES.BROWSER),
+                    Resolver.image('support_blog_icon.png'),
                     'Blog',
                     'How-to articles and tutorials, plus the latest new from Wavebox HQ.',
                     'rgb(82, 145, 149)',
@@ -294,7 +294,7 @@ export default class SupportSettings extends React.Component {
               <Row>
                 <Col md={6}>
                   {this.renderUnboxedCell(
-                    Resolver.image('support_github_icon.png', Resolver.API_TYPES.BROWSER),
+                    Resolver.image('support_github_icon.png'),
                     'GitHub',
                     'Join our discussion group on GitHub.',
                     'rgb(106, 109, 152)',
@@ -304,7 +304,7 @@ export default class SupportSettings extends React.Component {
                 </Col>
                 <Col md={6}>
                   {this.renderUnboxedCell(
-                    Resolver.image('support_contact_icon.png', Resolver.API_TYPES.BROWSER),
+                    Resolver.image('support_contact_icon.png'),
                     'Email Support',
                     'Send feature requests and get help from our support team by email.',
                     'rgb(240, 169, 43)',

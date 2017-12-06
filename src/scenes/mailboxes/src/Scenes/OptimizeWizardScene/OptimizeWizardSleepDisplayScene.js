@@ -184,7 +184,7 @@ export default class OptimizeWizardSleepDisplayScene extends React.Component {
                 <Paper onClick={this.handleEnableSleepIndicator} style={styles.option}>
                   <div style={{
                     ...styles.optionImage,
-                    backgroundImage: `url("${Resolver.image('optimize_wizard_sleep_display_indicator.png', Resolver.API_TYPES.BROWSER)}")`
+                    backgroundImage: `url("${Resolver.image('optimize_wizard_sleep_display_indicator.png')}")`
                   }} />
                   <p>Show my service icons in grey when sleeping.</p>
                   <RaisedButton
@@ -203,7 +203,7 @@ export default class OptimizeWizardSleepDisplayScene extends React.Component {
                 <Paper onClick={this.handleDisableSleepIndicator} style={styles.option}>
                   <div style={{
                     ...styles.optionImage,
-                    backgroundImage: `url("${Resolver.image('optimize_wizard_sleep_display_no_indicator.png', Resolver.API_TYPES.BROWSER)}")`
+                    backgroundImage: `url("${Resolver.image('optimize_wizard_sleep_display_no_indicator.png')}")`
                   }} />
                   <p>Leave my service icons coloured when sleeping.</p>
                   <RaisedButton
