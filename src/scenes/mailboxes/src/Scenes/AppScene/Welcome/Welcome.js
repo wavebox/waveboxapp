@@ -184,7 +184,7 @@ export default class Welcome extends React.Component {
               Add your first account
             </h1>
             <h3 style={styles.introSubtitle}>
-              Get started by adding your first account. Tap on an icon below...
+              Get started by adding your first account to Wavebox below...
             </h3>
             <p style={styles.introTerms}>
               <span>By continuing you agree to the Software </span>
