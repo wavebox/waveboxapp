@@ -212,11 +212,11 @@ class CRExtensionTabs {
         if (hasTabsPermission) {
           if (typeof (options.url) === 'string' || Array.isArray(options.url)) {
             const urlQuery = typeof (options.url) === 'string' ? [options.url] : options.url
-            const purl = url.parse(tab.url)
+            const {protocol, hostname, pathname} = url.parse(tab.url)
             const matches = CRExtensionMatchPatterns.matchUrls(
-              purl.protocol,
-              purl.hostname,
-              purl.pathname,
+              protocol,
+              hostname,
+              pathname,
               urlQuery
             )
             if (!matches) { return false }
@@ -245,11 +245,11 @@ class CRExtensionTabs {
     }
 
     const contents = webContents.fromId(tabId)
-    const purl = url.parse(contents.getURL())
+    const {protocol, hostname, pathname} = url.parse(contents.getURL())
     const matches = CRExtensionMatchPatterns.matchUrls(
-      purl.protocol,
-      purl.hostname,
-      purl.pathname,
+      protocol,
+      hostname,
+      pathname,
       Array.from(this.extension.manifest.permissions)
     )
     if (!matches) {

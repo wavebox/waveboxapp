@@ -160,8 +160,8 @@ class CRExtensionBackgroundPage {
   _handleAllUrlHeadersReceived = (details, responder) => {
     if (this.isRunning && this.webContentsId === details.webContentsId) {
       if (details.resourceType === 'xhr') {
-        const purl = url.parse(details.url)
-        if (CRExtensionMatchPatterns.matchUrls(purl.protocol, purl.host, purl.pathname, Array.from(this.extension.manifest.permissions))) {
+        const {protocol, host, pathname} = url.parse(details.url)
+        if (CRExtensionMatchPatterns.matchUrls(protocol, host, pathname, Array.from(this.extension.manifest.permissions))) {
           const headers = details.responseHeaders
           const updatedHeaders = {
             ...headers,

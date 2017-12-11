@@ -105,7 +105,7 @@ class WindowOpeningEngine {
     const extensionPopoutConfig = CRExtensionManager.runtimeHandler.getWindowPopoutModePreference(
       webContentsId,
       targetUrl,
-      url.parse(targetUrl),
+      url.parse(targetUrl, true),
       disposition
     )
 
