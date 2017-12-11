@@ -4,7 +4,7 @@ By submitting a pull request, you represent that you have the right to license y
 
 # Raising a new issue & requesting Features
 
-Thanks for being an A* tester and helping to make Wavebox better by either reporting a bug or raising an issue! Before you create a new issue here are a few things that might be worth checking first...
+Thanks for being a tester and helping to make Wavebox better by either reporting a bug or raising an issue! Before you create a new issue here are a few things that might be worth checking first...
 
 1. Make sure you're using the latest version. These are available to download on the wavebox.io download page [https://wavebox.io/download](https://wavebox.io/download)
 
