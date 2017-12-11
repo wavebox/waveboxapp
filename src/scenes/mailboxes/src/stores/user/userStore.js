@@ -9,6 +9,7 @@ import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import semver from 'semver'
 import { ipcRenderer } from 'electron'
 import Container from 'shared/Models/Container/Container'
+import { WaveboxHTTP } from 'Server'
 import pkg from 'package.json'
 import {
   ANALYTICS_ID,
@@ -155,7 +156,7 @@ class UserStore {
     const allContainerData = containerPersistence.allJSONItemsSync()
 
     // Instance
-    this.clientId = Bootstrap.clientToken
+    this.clientId = Bootstrap.clientId
     this.clientToken = Bootstrap.clientToken
     this.analyticsId = allUserData[ANALYTICS_ID]
     this.createdTime = allUserData[CREATED_TIME]
@@ -185,10 +186,8 @@ class UserStore {
 
   handleUpdateExtensions () {
     this.preventDefault()
-    Promise.resolve()
-      .then(() => window.fetch(`https://waveboxio.com/client/${this.clientId}/extensions.json?version=${pkg.version}&channel=${pkg.releaseChannel}`))
-      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
-      .then((res) => res.json())
+
+    WaveboxHTTP.fetchExtensionInfo(this.clientId)
       .then((res) => {
         this.extensions = res
         userPersistence.setJSONItem(EXTENSIONS, res)
@@ -220,10 +219,8 @@ class UserStore {
 
   handleUpdateWireConfig () {
     this.preventDefault()
-    Promise.resolve()
-      .then(() => window.fetch(`https://waveboxio.com/client/${this.clientId}/wire.json?version=${pkg.version}&channel=${pkg.releaseChannel}`))
-      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
-      .then((res) => res.json())
+
+    WaveboxHTTP.fetchWireConfig(this.clientId)
       .then((res) => {
         try {
           if (!semver.gt(res.version, this.wireConfigVersion())) { return }
@@ -269,19 +266,7 @@ class UserStore {
         return acc
       }, {})
 
-    Promise.resolve()
-      .then(() => {
-        return window.fetch(`https://waveboxio.com/client/${this.clientId}/container_update.json`, {
-          method: 'POST',
-          body: JSON.stringify({
-            version: pkg.version,
-            channel: pkg.releaseChannel,
-            containers: containerInfo
-          })
-        })
-      })
-      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
-      .then((res) => res.json())
+    WaveboxHTTP.fetchContainerUpdates(this.clientId, containerInfo)
       .then((res) => {
         if (!res.containers || Object.keys(res.containers).length === 0) { return }
 

@@ -1,17 +1,21 @@
 import React from 'react'
 import * as Colors from 'material-ui/styles/colors'
-import { mailboxActions } from 'stores/mailbox'
 import { userStore } from 'stores/user'
-import MicrosoftMailbox from 'shared/Models/Accounts/Microsoft/MicrosoftMailbox'
-import TrelloMailbox from 'shared/Models/Accounts/Trello/TrelloMailbox'
-import SlackMailbox from 'shared/Models/Accounts/Slack/SlackMailbox'
-import GenericMailbox from 'shared/Models/Accounts/Generic/GenericMailbox'
-import GoogleMailbox from 'shared/Models/Accounts/Google/GoogleMailbox'
+import { RaisedButton, FontIcon } from 'material-ui'
 import { TERMS_URL, EULA_URL } from 'shared/constants'
 import WelcomeRaisedButton from './WelcomeRaisedButton'
 import WelcomeAccountButton from './WelcomeAccountButton'
 import electron from 'electron'
 import Resolver from 'Runtime/Resolver'
+
+/* TODO (@Thomas101) remove these
+import { mailboxActions } from 'stores/mailbox'
+import MicrosoftMailbox from 'shared/Models/Accounts/Microsoft/MicrosoftMailbox'
+import TrelloMailbox from 'shared/Models/Accounts/Trello/TrelloMailbox'
+import SlackMailbox from 'shared/Models/Accounts/Slack/SlackMailbox'
+import GenericMailbox from 'shared/Models/Accounts/Generic/GenericMailbox'
+import GoogleMailbox from 'shared/Models/Accounts/Google/GoogleMailbox'
+*/
 
 const styles = {
   // Layout
@@ -160,6 +164,17 @@ export default class Welcome extends React.Component {
   render () {
     const { user } = this.state
 
+    /*
+    TODO (Thomas101) remove these
+    {this.renderMailboxType(user, GoogleMailbox.type, GoogleMailbox.humanizedGmailVectorLogo, 'Gmail', mailboxActions.startAddGmailWizard)}
+    {this.renderMailboxType(user, GoogleMailbox.type, GoogleMailbox.humanizedGinboxVectorLogo, 'Google Inbox', mailboxActions.startAddGinboxWizard)}
+    {this.renderMailboxType(user, MicrosoftMailbox.type, MicrosoftMailbox.humanizedOutlookVectorLogo, 'Outlook', mailboxActions.startAddOutlookWizard)}
+    {this.renderMailboxType(user, MicrosoftMailbox.type, MicrosoftMailbox.humanizedOffice365VectorLogo, 'Office 365', mailboxActions.startAddOffice365Wizard)}
+    {this.renderMailboxType(user, TrelloMailbox.type, TrelloMailbox.humanizedVectorLogo, 'Trello', mailboxActions.startAddTrelloWizard)}
+    {this.renderMailboxType(user, SlackMailbox.type, SlackMailbox.humanizedVectorLogo, 'Slack', mailboxActions.startAddSlackWizard)}
+    {this.renderMailboxType(user, GenericMailbox.type, GenericMailbox.humanizedVectorLogo, 'Weblink', mailboxActions.startAddGenericWizard)}
+    */
+
     return (
       <div style={styles.container}>
         <div>
@@ -179,13 +194,13 @@ export default class Welcome extends React.Component {
             </p>
           </div>
           <div style={styles.accounts}>
-            {this.renderMailboxType(user, GoogleMailbox.type, GoogleMailbox.humanizedGmailVectorLogo, 'Gmail', mailboxActions.startAddGmailWizard)}
-            {this.renderMailboxType(user, GoogleMailbox.type, GoogleMailbox.humanizedGinboxVectorLogo, 'Google Inbox', mailboxActions.startAddGinboxWizard)}
-            {this.renderMailboxType(user, MicrosoftMailbox.type, MicrosoftMailbox.humanizedOutlookVectorLogo, 'Outlook', mailboxActions.startAddOutlookWizard)}
-            {this.renderMailboxType(user, MicrosoftMailbox.type, MicrosoftMailbox.humanizedOffice365VectorLogo, 'Office 365', mailboxActions.startAddOffice365Wizard)}
-            {this.renderMailboxType(user, TrelloMailbox.type, TrelloMailbox.humanizedVectorLogo, 'Trello', mailboxActions.startAddTrelloWizard)}
-            {this.renderMailboxType(user, SlackMailbox.type, SlackMailbox.humanizedVectorLogo, 'Slack', mailboxActions.startAddSlackWizard)}
-            {this.renderMailboxType(user, GenericMailbox.type, GenericMailbox.humanizedVectorLogo, 'Weblink', mailboxActions.startAddGenericWizard)}
+            <RaisedButton
+              onClick={this.handleOpenAddWizard}
+              primary
+              style={{ height: 58 }}
+              labelStyle={{ fontSize: '20px', fontWeight: '300' }}
+              icon={<FontIcon className='material-icons' style={{ marginTop: -8 }}>add_circle</FontIcon>}
+              label='Add your first account' />
           </div>
           <div style={styles.extraActions}>
             {!user.isLoggedIn ? (
