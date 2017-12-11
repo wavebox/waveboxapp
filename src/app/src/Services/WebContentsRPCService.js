@@ -48,6 +48,7 @@ class WebContentsRPCService {
 
       contents.on('dom-ready', this._handleDomReady)
       contents.on('console-message', this._handleConsoleMessage)
+      contents.on('will-prevent-unload', this._handleWillPreventUnload)
       contents.on('destroyed', () => {
         this[privConnected].delete(webContentsId)
       })
@@ -76,6 +77,24 @@ class WebContentsRPCService {
         case 2: console.error(...logArgs); break
         default: console.log(...logArgs); break
       }
+    }
+  }
+
+  _handleWillPreventUnload = (evt) => {
+    const bw = BrowserWindow.fromWebContents(ElectronWebContents.rootWebContents(evt.sender))
+    if (!bw || bw.isDestroyed()) { return }
+
+    const choice = dialog.showMessageBox(bw, {
+      type: 'question',
+      buttons: ['Leave', 'Stay'],
+      title: '',
+      message: 'Do you want to leave this site?',
+      detail: 'Changes you made may not be saved.',
+      defaultId: 0,
+      cancelId: 1
+    })
+    if (choice === 0) {
+      evt.preventDefault()
     }
   }
 

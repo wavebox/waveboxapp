@@ -140,7 +140,11 @@ export default class SidelistItemMailboxPopover extends React.Component {
   * Reloads this mailbox
   */
   handleReload = () => {
-    mailboxDispatch.reload(this.props.mailboxId, this.props.serviceType)
+    const { mailboxId, serviceType } = this.props
+    mailboxActions.changeActive(mailboxId, serviceType)
+    setTimeout(() => {
+      mailboxDispatch.reload(mailboxId, serviceType)
+    }, 100) // Give the UI some time to catch up
     this.handleClosePopover()
   }
 

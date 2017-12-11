@@ -109,7 +109,7 @@ export default class MailboxWebView extends React.Component {
         return {
           url: nextProps.url || (prevState.service || {}).url,
           isCrashed: false,
-          browserDOMReady: false
+          initialLoadDone: false
         }
       })
     }
@@ -143,7 +143,7 @@ export default class MailboxWebView extends React.Component {
         url: props.url || service.url
       },
       {
-        browserDOMReady: false,
+        initialLoadDone: false,
         isCrashed: false,
         focusedUrl: null,
         snapshot: mailboxState.getSnapshot(props.mailboxId, props.serviceType),
@@ -184,7 +184,6 @@ export default class MailboxWebView extends React.Component {
   */
   loadURL = (url) => {
     this.setState({
-      browserDOMReady: false,
       isCrashed: false
     })
     return this.refs[BROWSER_REF].loadURL(url)
@@ -256,10 +255,7 @@ export default class MailboxWebView extends React.Component {
         } else {
           this.reload()
         }
-        this.setState({
-          isCrashed: false,
-          browserDOMReady: false
-        })
+        this.setState({ isCrashed: false })
       }
     }
   }
@@ -365,8 +361,7 @@ export default class MailboxWebView extends React.Component {
     }
 
     this.setState({
-      browserDOMReady: true,
-      isCrashed: false
+      initialLoadDone: true, isCrashed: false
     })
   }
 
@@ -481,7 +476,7 @@ export default class MailboxWebView extends React.Component {
       searchTerm,
       searchId,
       url,
-      browserDOMReady,
+      initialLoadDone,
       isCrashed,
       snapshot
     } = this.state
@@ -546,10 +541,10 @@ export default class MailboxWebView extends React.Component {
               this.multiCallBrowserEvent([this.handleBrowserUpdateTargetUrl, webviewEventProps.updateTargetUrl], [evt])
             }} />
         </div>
-        {browserDOMReady || !snapshot ? undefined : (
+        {initialLoadDone || !snapshot ? undefined : (
           <div className='ReactComponent-MailboxSnapshot' style={{ backgroundImage: `url("${snapshot}")` }} />
         )}
-        {!service.hasNavigationToolbar && !browserDOMReady ? (
+        {!service.hasNavigationToolbar && !initialLoadDone ? (
           <div className='ReactComponent-MailboxLoader'>
             <CircularProgress size={80} thickness={5} />
           </div>
@@ -568,7 +563,7 @@ export default class MailboxWebView extends React.Component {
               icon={<FontIcon className='material-icons'>refresh</FontIcon>}
               onClick={() => {
                 this.reloadIgnoringCache()
-                this.setState({ isCrashed: false, browserDOMReady: false })
+                this.setState({ isCrashed: false })
               }} />
           </div>
         ) : undefined}
