@@ -1,6 +1,6 @@
 import BaseAdaptor from './BaseAdaptor'
 import { ipcRenderer } from 'electron'
-import { WCRPC_DOM_READY } from 'shared/webContentsRPC'
+import { WCRPC_DID_GET_REDIRECT_REQUEST } from 'shared/webContentsRPC'
 
 class AsanaAdaptor extends BaseAdaptor {
   /* **************************************************************************/
@@ -9,7 +9,7 @@ class AsanaAdaptor extends BaseAdaptor {
 
   static get matches () {
     return [
-      'http(s)\\://app.asana.com/-/login(*)'
+      'http(s)\\://twitter.com(/*)'
     ]
   }
   static get hasJS () { return true }
@@ -19,12 +19,12 @@ class AsanaAdaptor extends BaseAdaptor {
   /* **************************************************************************/
 
   executeJS () {
-    ipcRenderer.on(WCRPC_DOM_READY, () => {
-      const googleLoginButton = document.querySelector('#google_auth_button')
-      if (googleLoginButton) {
-        const patched = googleLoginButton.getAttribute('onclick')
-          .replace('loginWithGoogle(false,', 'loginWithGoogle(true,')
-        googleLoginButton.setAttribute('onclick', patched)
+    // Workaround https://github.com/electron/electron/issues/3471
+    ipcRenderer.on(WCRPC_DID_GET_REDIRECT_REQUEST, (evt, webContentsId, prevUrl, nextUrl, isMainFrame, httpResponseCode, requestMethod, referrer, headers) => {
+      if (isMainFrame && requestMethod === 'POST' && httpResponseCode === 302) {
+        setTimeout(() => {
+          window.location.href = nextUrl
+        }, 500)
       }
     })
   }

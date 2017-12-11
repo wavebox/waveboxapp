@@ -7,7 +7,8 @@ import {
   WCRPC_SEND_INPUT_EVENT,
   WCRPC_SEND_INPUT_EVENTS,
   WCRPC_SHOW_ASYNC_MESSAGE_DIALOG,
-  WCRPC_SYNC_GET_OPENER_INFO
+  WCRPC_SYNC_GET_OPENER_INFO,
+  WCRPC_DID_GET_REDIRECT_REQUEST
 } from 'shared/webContentsRPC'
 import { ELEVATED_LOG_PREFIX } from 'shared/constants'
 import WaveboxWindow from 'windows/WaveboxWindow'
@@ -49,6 +50,7 @@ class WebContentsRPCService {
       contents.on('dom-ready', this._handleDomReady)
       contents.on('console-message', this._handleConsoleMessage)
       contents.on('will-prevent-unload', this._handleWillPreventUnload)
+      contents.on('did-get-redirect-request', this._handleDidGetRedirectRequest)
       contents.on('destroyed', () => {
         this[privConnected].delete(webContentsId)
       })
@@ -96,6 +98,10 @@ class WebContentsRPCService {
     if (choice === 0) {
       evt.preventDefault()
     }
+  }
+
+  _handleDidGetRedirectRequest = (evt, prevUrl, nextUrl, isMainFrame, httpResponseCode, requestMethod, referrer, headers) => {
+    evt.sender.send(WCRPC_DID_GET_REDIRECT_REQUEST, evt.sender.id, prevUrl, nextUrl, isMainFrame, httpResponseCode, requestMethod, referrer, headers)
   }
 
   /* ****************************************************************************/
