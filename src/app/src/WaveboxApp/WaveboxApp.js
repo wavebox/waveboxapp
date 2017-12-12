@@ -24,10 +24,12 @@ import {
   appStorage,
   avatarStorage,
   containerStorage,
-  mailboxStorage,
   extensionStorage,
+  extensionStoreStorage,
+  mailboxStorage,
   settingStorage,
-  userStorage
+  userStorage,
+  wireStorage
 } from 'storage'
 
 const privStarted = Symbol('privStarted')
@@ -93,10 +95,13 @@ class WaveboxApp {
     appStorage.checkAwake()
     avatarStorage.checkAwake()
     containerStorage.checkAwake()
-    mailboxStorage.checkAwake()
     extensionStorage.checkAwake()
+    extensionStoreStorage.checkAwake()
+    mailboxStorage.checkAwake()
     settingStorage.checkAwake()
     userStorage.checkAwake()
+    wireStorage.checkAwake()
+
     mailboxStore.checkAwake()
     extensionStore.checkAwake()
     settingStore.checkAwake()

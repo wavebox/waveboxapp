@@ -1,17 +1,21 @@
 import appStorage from './appStorage'
 import avatarStorage from './avatarStorage'
 import containerStorage from './containerStorage'
-import mailboxStorage from './mailboxStorage'
 import extensionStorage from './extensionStorage'
+import extensionStoreStorage from './extensionStoreStorage'
+import mailboxStorage from './mailboxStorage'
 import settingStorage from './settingStorage'
 import userStorage from './userStorage'
+import wireStorage from './wireStorage'
 
 export {
   appStorage,
   avatarStorage,
   containerStorage,
-  mailboxStorage,
   extensionStorage,
+  extensionStoreStorage,
+  mailboxStorage,
   settingStorage,
-  userStorage
+  userStorage,
+  wireStorage
 }

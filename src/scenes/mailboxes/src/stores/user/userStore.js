@@ -3,6 +3,8 @@ import actions from './userActions'
 import User from 'shared/Models/User'
 import userPersistence from './userPersistence'
 import containerPersistence from './containerPersistence'
+import extensionStorePersistence from './extensionStorePersistence'
+import wirePersistence from './wirePersistence'
 import mailboxActions from '../mailbox/mailboxActions'
 import Bootstrap from '../../Bootstrap'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
@@ -154,6 +156,8 @@ class UserStore {
   handleLoad () {
     const allUserData = userPersistence.allJSONItemsSync()
     const allContainerData = containerPersistence.allJSONItemsSync()
+    const allExtensionStoreData = extensionStorePersistence.allJSONItemsSync()
+    const allWireConfigData = wirePersistence.allJSONItemsSync()
 
     // Instance
     this.clientId = Bootstrap.clientId
@@ -168,10 +172,10 @@ class UserStore {
     this.user = new User(Bootstrap.accountJS, now)
 
     // Extensions
-    this.extensions = allUserData[EXTENSIONS] || null
+    this.extensions = allExtensionStoreData[EXTENSIONS] || null
 
     // Wire Config
-    this.wireConfig = allUserData[WIRE_CONFIG] || null
+    this.wireConfig = allWireConfigData[WIRE_CONFIG] || null
 
     // Containers
     this.containers = Object.keys(allContainerData).reduce((acc, id) => {
@@ -190,7 +194,7 @@ class UserStore {
     WaveboxHTTP.fetchExtensionInfo(this.clientId)
       .then((res) => {
         this.extensions = res
-        userPersistence.setJSONItem(EXTENSIONS, res)
+        extensionStorePersistence.setJSONItem(EXTENSIONS, res)
         ipcRenderer.send(WB_UPDATE_INSTALLED_EXTENSIONS, {})
         this.emitChange()
       })
@@ -229,7 +233,7 @@ class UserStore {
         }
 
         this.wireConfig = res
-        userPersistence.setJSONItem(WIRE_CONFIG, res)
+        wirePersistence.setJSONItem(WIRE_CONFIG, res)
         this.emitChange()
       })
   }
