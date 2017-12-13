@@ -48,7 +48,7 @@ const styles = {
     marginTop: 0,
     marginBottom: 0
   },
-  tryOnBeta: {
+  onProLevel: {
     border: `2px solid ${Colors.lightBlue500}`,
     borderRadius: 4,
     display: 'inline-block',
@@ -107,8 +107,7 @@ export default class ExtensionListItem extends React.Component {
 
   static propTypes = {
     showRestart: PropTypes.func.isRequired,
-    extensionId: PropTypes.string.isRequired,
-    showBetaTrial: PropTypes.bool.isRequired
+    extensionId: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -345,7 +344,6 @@ export default class ExtensionListItem extends React.Component {
     const {
       showRestart,
       extensionId,
-      showBetaTrial,
       style,
       ...passProps
     } = this.props
@@ -381,8 +379,8 @@ export default class ExtensionListItem extends React.Component {
               {unknownSource ? (
                 <div style={styles.unknownSource}>Installed from an unknown source</div>
               ) : undefined}
-              {showBetaTrial && onProLevel ? (
-                <div style={styles.tryOnBeta}>
+              {onProLevel ? (
+                <div style={styles.onProLevel}>
                   Pro
                 </div>
               ) : undefined}

@@ -8,23 +8,10 @@ import commonStyles from '../CommonSettingStyles'
 import { Container, Row, Col } from 'Components/Grid'
 import { ExtensionSettings } from 'shared/Models/Settings'
 import ExtensionList from './ExtensionList'
-import * as Colors from 'material-ui/styles/colors'
 
 const EXTENSION_LAYOUT_MODE_LABELS = {
   [ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_LEFT]: 'Left',
   [ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_RIGHT]: 'Right'
-}
-
-const styles = {
-  tryOnBeta: {
-    border: `2px solid ${Colors.lightBlue500}`,
-    borderRadius: 4,
-    padding: 4,
-    marginTop: 4,
-    marginBottom: 4,
-    color: Colors.lightBlue500,
-    fontSize: '14px'
-  }
 }
 
 export default class ExtensionSettingsTab extends React.Component {
@@ -83,14 +70,6 @@ export default class ExtensionSettingsTab extends React.Component {
       <div {...passProps}>
         <Container fluid>
           <Row>
-            <Col md={6}>
-              <div style={styles.tryOnBeta}>
-                <h3>Extension Support</h3>
-                Extension support is currently experimental and all extensions are available to install until
-                the end of November 2017. Thereafter those marked as Pro are only available to install with a
-                Wavebox Pro membership
-              </div>
-            </Col>
             <Col md={6}>
               <Paper zDepth={1} style={commonStyles.paper}>
                 <Toggle
