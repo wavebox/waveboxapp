@@ -35,7 +35,10 @@ class ContainerMailbox extends CoreMailbox {
       this.id,
       this.type,
       serviceData,
-      { container: this.container },
+      {
+        container: this.container,
+        urlSubdomain: this.urlSubdomain
+      },
       this.buildMailboxToServiceMigrationData(serviceData.type)
     )
   }
@@ -69,6 +72,8 @@ class ContainerMailbox extends CoreMailbox {
   // Properties : Provider Details & counts etc
   /* **************************************************************************/
 
+  get hasUrlSubdomain () { return this.container.hasUrlSubdomain }
+  get urlSubdomain () { return this._value_('urlSubdomain', '') }
   get displayName () { return this.container.name }
 }
 

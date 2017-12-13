@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Toggle, FontIcon } from 'material-ui'
+import { Toggle } from 'material-ui'
 import { mailboxActions, ContainerDefaultServiceReducer } from 'stores/mailbox'
 import * as Colors from 'material-ui/styles/colors'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
@@ -83,23 +83,6 @@ export default class WizardConfigureContainer extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
-
-  /**
-  * Renders a warning label
-  * @param hasWarning: true if there is a warning
-  * @param hasWarningPtr: pointer to write true into if there is a warning
-  * @param text: the text for the label
-  * @return jsx
-  */
-  renderWarningLabel (hasWarning, hasWarningPtr, text) {
-    if (hasWarning) { hasWarningPtr.hasWarning = true }
-    return (
-      <span>
-        {hasWarning ? (<FontIcon className='material-icons' style={styles.warningTextIcon}>warning</FontIcon>) : undefined}
-        <span>{text}</span>
-      </span>
-    )
-  }
 
   render () {
     const { mailbox, onRequestCancel, ...passProps } = this.props

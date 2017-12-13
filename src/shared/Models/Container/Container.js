@@ -28,6 +28,7 @@ class Container extends Model {
   buildServiceMetadata () {
     return {
       name: this.name,
+      hasUrlSubdomain: this.hasUrlSubdomain,
       logos: this.logos,
       logo: this.logo
     }
@@ -49,6 +50,14 @@ class Container extends Model {
   get defaultColor () { return this._value_('defaultColor', 'rgb(255, 255, 255)') }
   get logos () { return this._value_('logos', []) }
   get logo () { return this.logos.slice(-1)[0] }
+
+  /* **************************************************************************/
+  // Properties: Behaviour
+  /* **************************************************************************/
+
+  get urlSubdomainName () { return this._value_('urlSubdomainName', 'subdomain') }
+  get urlSubdomainHint () { return this._value_('urlSubdomainHint', '') }
+  get hasUrlSubdomain () { return this._value_('hasUrlSubdomain', false) }
 
   /* **************************************************************************/
   // Properties: Service

@@ -491,6 +491,18 @@ class MailboxStore {
       return this.getWebcontentTabId(this.activeMailboxId(), this.activeMailboxService())
     }
 
+    /**
+    * @param mailboxId: the id of the mailbox
+    * @param serviceType: the type of service
+    * @return the metrics for the web contents or undefined if not found
+    */
+    this.getWebcontentMetrics = (mailboxId, serviceType) => {
+      const webContentsId = this.getWebcontentTabId(mailboxId, serviceType)
+      const wc = webContentsId !== undefined ? remote.webContents.fromId(webContentsId) : undefined
+      const webContentsPid = wc ? wc.getOSProcessId() : -1
+      return remote.app.getAppMetrics().find((metric) => metric.pid === webContentsPid)
+    }
+
     /* ****************************************/
     // Listeners
     /* ****************************************/
@@ -1464,7 +1476,11 @@ class MailboxStore {
 
       if (count === 0) {
         this.clearSleep(mailboxId, serviceType)
-        this.sleepingQueue.set(key, { sleeping: true, timer: null })
+        this.sleepingQueue.set(key, {
+          sleeping: true,
+          timer: null,
+          closeMetrics: this.getWebcontentMetrics(mailboxId, serviceType)
+        })
         this.emitChange()
       } else {
         this.clearSleep(mailboxId, serviceType)

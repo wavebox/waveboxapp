@@ -21,7 +21,8 @@ class ContainerDefaultService extends CoreService {
   // Properties: Container
   /* **************************************************************************/
 
-  get url () { return this.containerService.url }
+  get url () { return this.containerService.getUrlWithSubdomain(this.urlSubdomain) }
+  get urlSubdomain () { return this.__metadata__.urlSubdomain }
   get sleepable () { return this._value_('sleepable', this.containerService.sleepableDefault) }
   get hasNavigationToolbar () { return this._value_('hasNavigationToolbar', this.containerService.hasNavigationToolbarDefault) }
 
