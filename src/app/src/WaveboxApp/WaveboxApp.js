@@ -169,10 +169,12 @@ class WaveboxApp {
     ipcMain.on(ipcEvents.WB_FOCUS_APP, (evt, body) => {
       const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
       if (mailboxesWindow) {
+        mailboxesWindow.show()
         mailboxesWindow.focus()
       } else {
         const any = WaveboxWindow.all()
         if (any) {
+          any.show()
           any.focus()
         }
       }
