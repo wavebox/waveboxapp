@@ -75,7 +75,7 @@ export default class AccountBehaviourSettings extends React.Component {
 
     return (
       <Paper zDepth={1} style={commonStyles.paper} {...passProps}>
-        <h1 style={commonStyles.subheading}>Behaviour</h1>
+        <h1 style={commonStyles.subheading}>Sleep & Behaviour</h1>
         {userHasSleepable ? (
           <SleepableField
             key={`${mailbox.id}:${service.type}`}

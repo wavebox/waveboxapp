@@ -33,7 +33,8 @@ import {
   WB_AUTH_TRELLO,
   WB_MAILBOX_STORAGE_CHANGE_ACTIVE,
   WB_PREPARE_MAILBOX_SESSION,
-  WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT
+  WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT,
+  WB_NEW_WINDOW
 } from 'shared/ipcEvents'
 import { ipcRenderer, remote } from 'electron'
 
@@ -805,6 +806,24 @@ class MailboxStore {
       ContainerMailbox.applyExperimentsToProvisionalJS(provisionalJS, userStore.getState().wireConfigExperiments())
     )
     this._finalizeCreateAccount(`/mailbox_wizard/${ContainerMailbox.type}/${containerId}/2/${provisionalId}`)
+
+    // Open post-install
+    if (container.hasPostInstallUrl) {
+      setTimeout(() => {
+        ipcRenderer.send(WB_NEW_WINDOW, {
+          mailboxId: provisionalId,
+          serviceType: CoreMailbox.SERVICE_TYPES.DEFAULT,
+          url: container.postInstallUrl,
+          partition: `persist:${provisionalJS}`,
+          windowPreferences: {
+            webPreferences: undefined
+          },
+          webPreferences: {
+            partition: `persist:${provisionalId}`
+          }
+        })
+      }, container.postInstallUrlDelay)
+    }
   }
 
   /* **************************************************************************/

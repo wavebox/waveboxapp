@@ -43,6 +43,14 @@ class Container extends Model {
   get minAppVersion () { return this.__data__.minAppVersion }
 
   /* **************************************************************************/
+  // Properties: Install
+  /* **************************************************************************/
+
+  get postInstallUrl () { return this._value_('postInstallUrl', '') }
+  get postInstallUrlDelay () { return this._value_('postInstallUrlDelay', 2500) }
+  get hasPostInstallUrl () { return !!this.postInstallUrl }
+
+  /* **************************************************************************/
   // Properties: Appearance
   /* **************************************************************************/
 
@@ -52,7 +60,7 @@ class Container extends Model {
   get logo () { return this.logos.slice(-1)[0] }
 
   /* **************************************************************************/
-  // Properties: Behaviour
+  // Properties: Subdomain
   /* **************************************************************************/
 
   get urlSubdomainName () { return this._value_('urlSubdomainName', 'subdomain') }
