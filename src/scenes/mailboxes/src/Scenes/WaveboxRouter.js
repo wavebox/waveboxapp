@@ -13,6 +13,7 @@ import MailboxReauthenticatingScene from './MailboxReauthenticatingScene'
 import AppWizardScene from './AppWizardScene'
 import NewsScene from './NewsScene'
 import OptimizeWizardScene from './OptimizeWizardScene'
+import NotificationPanel from './NotificationPanel'
 import {
   CheckingUpdatesScene,
   UpdateAvailableScene,
@@ -39,6 +40,7 @@ export default class WaveboxRouter extends React.Component {
         <div>
           <AppScene />
           <EarlyBuildToast />
+          <NotificationPanel />
 
           <Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
 

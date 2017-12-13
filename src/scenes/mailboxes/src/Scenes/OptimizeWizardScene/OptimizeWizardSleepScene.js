@@ -81,11 +81,6 @@ const styles = {
   optionBody: {
     marginLeft: 130
   },
-  optionTitle: {
-    fontWeight: 300,
-    fontSize: 25,
-    marginBottom: 0
-  },
   optionDescription: {
     marginTop: 0
   }
@@ -202,7 +197,6 @@ export default class OptimizeWizardSleepScene extends React.Component {
                   size={100} />
               </div>
               <div style={styles.optionBody}>
-                <h2 style={styles.optionTitle}>Automatically optimize my Wavebox (Recommended)</h2>
                 <p style={styles.optionDescription}>
                   Enable sleep for all additional services, to keep quick access to my primary services
                   and save resouces by sleeping the others.
@@ -215,7 +209,7 @@ export default class OptimizeWizardSleepScene extends React.Component {
                       <FontIcon className='fa fa-spin fa-circle-o-notch' color='rgba(0, 0, 0, 0.3)' style={{ fontSize: '20px' }} />
                     </span>
                   ) : undefined}
-                  label='Automatically optimize (Recommended)'
+                  label='Automatically optimize my Wavebox (Recommended)'
                   onClick={this.handleAutoOptimizeSettings} />
               </div>
             </div>
@@ -230,12 +224,11 @@ export default class OptimizeWizardSleepScene extends React.Component {
                   size={100} />
               </div>
               <div style={styles.optionBody}>
-                <h2 style={styles.optionTitle}>Customize my settings</h2>
                 <p style={styles.optionDescription}>
                   Decide which services you want to sleep to make sure Wavebox works for your workflow.
                 </p>
                 <RaisedButton
-                  label='Customize each service'
+                  label='Customize my settings'
                   disabled={isOptimizing}
                   onClick={this.handleCustomizeSettings} />
               </div>
@@ -251,12 +244,11 @@ export default class OptimizeWizardSleepScene extends React.Component {
                   size={100} />
               </div>
               <div style={styles.optionBody}>
-                <h2 style={styles.optionTitle}>Keep my current configuration</h2>
                 <p style={styles.optionDescription}>
                   Leave my configuration as it is already.
                 </p>
                 <RaisedButton
-                  label='Keep configration'
+                  label='Keep my current configuration'
                   disabled={isOptimizing}
                   onClick={this.handleKeepSettings} />
               </div>

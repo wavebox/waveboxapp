@@ -102,6 +102,11 @@ class UserStore {
     */
     this.wireConfigVersion = () => { return (this.wireConfig || {}).version || '0.0.0' }
 
+    /**
+    * @return the wire config experiments dictionary
+    */
+    this.wireConfigExperiments = () => { return (this.wireConfig || {}).experiments || {} }
+
     /* ****************************************/
     // Containers
     /* ****************************************/

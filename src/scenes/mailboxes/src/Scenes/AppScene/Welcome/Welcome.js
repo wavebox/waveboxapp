@@ -1,21 +1,11 @@
+import './Welcome.less'
 import React from 'react'
 import * as Colors from 'material-ui/styles/colors'
 import { userStore } from 'stores/user'
-import { RaisedButton, FontIcon } from 'material-ui'
+import { RaisedButton, FontIcon, FlatButton } from 'material-ui'
 import { TERMS_URL, EULA_URL } from 'shared/constants'
-import WelcomeRaisedButton from './WelcomeRaisedButton'
-import WelcomeAccountButton from './WelcomeAccountButton'
 import electron from 'electron'
 import Resolver from 'Runtime/Resolver'
-
-/* TODO (@Thomas101) remove these
-import { mailboxActions } from 'stores/mailbox'
-import MicrosoftMailbox from 'shared/Models/Accounts/Microsoft/MicrosoftMailbox'
-import TrelloMailbox from 'shared/Models/Accounts/Trello/TrelloMailbox'
-import SlackMailbox from 'shared/Models/Accounts/Slack/SlackMailbox'
-import GenericMailbox from 'shared/Models/Accounts/Generic/GenericMailbox'
-import GoogleMailbox from 'shared/Models/Accounts/Google/GoogleMailbox'
-*/
 
 const styles = {
   // Layout
@@ -24,11 +14,19 @@ const styles = {
     top: 0,
     left: 0,
     right: 0,
+    bottom: 0
+  },
+  contentContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
     bottom: 0,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    overflowY: 'auto'
+    overflowY: 'auto',
+    zIndex: 4
   },
 
   // Intro
@@ -51,30 +49,18 @@ const styles = {
   },
   introTermsLink: {
     textDecoration: 'underline',
-    color: Colors.lightBlue400,
+    color: Colors.blueGrey800,
     cursor: 'pointer'
-  },
-
-  // Accounts
-  accounts: {
-    marginTop: 40,
-    marginBottom: 40,
-    textAlign: 'center'
-  },
-  accountIcon: {
-    display: 'inline-block',
-    marginLeft: 20,
-    marginRight: 20
-  },
-
-  // Extra
-  extraActions: {
-    textAlign: 'center'
   },
   extraActionButton: {
     display: 'inline-block',
     marginLeft: 16,
     marginRight: 16
+  },
+  addButton: {
+    height: 58,
+    marginTop: 24,
+    marginBottom: 16
   }
 }
 
@@ -141,74 +127,50 @@ export default class Welcome extends React.Component {
   // Rendering
   /* **************************************************************************/
 
-  /**
-  * Renders an account
-  * @param user: the user object
-  * @param type: the account type
-  * @param logo: the account logo
-  * @param name: the account type name
-  * @param action: callback to execute on click
-  * @return jsx or undefined
-  */
-  renderMailboxType (user, type, logo, name, action) {
-    return (
-      <WelcomeAccountButton
-        tooltipText={`Add ${name}`}
-        size={60}
-        logoPath={Resolver.image(logo)}
-        onClick={() => user.hasAccountsOfType(type) ? action() : this.handleOpenAddWizard()}
-        style={styles.accountIcon} />
-    )
-  }
-
   render () {
     const { user } = this.state
 
-    /*
-    TODO (Thomas101) remove these
-    {this.renderMailboxType(user, GoogleMailbox.type, GoogleMailbox.humanizedGmailVectorLogo, 'Gmail', mailboxActions.startAddGmailWizard)}
-    {this.renderMailboxType(user, GoogleMailbox.type, GoogleMailbox.humanizedGinboxVectorLogo, 'Google Inbox', mailboxActions.startAddGinboxWizard)}
-    {this.renderMailboxType(user, MicrosoftMailbox.type, MicrosoftMailbox.humanizedOutlookVectorLogo, 'Outlook', mailboxActions.startAddOutlookWizard)}
-    {this.renderMailboxType(user, MicrosoftMailbox.type, MicrosoftMailbox.humanizedOffice365VectorLogo, 'Office 365', mailboxActions.startAddOffice365Wizard)}
-    {this.renderMailboxType(user, TrelloMailbox.type, TrelloMailbox.humanizedVectorLogo, 'Trello', mailboxActions.startAddTrelloWizard)}
-    {this.renderMailboxType(user, SlackMailbox.type, SlackMailbox.humanizedVectorLogo, 'Slack', mailboxActions.startAddSlackWizard)}
-    {this.renderMailboxType(user, GenericMailbox.type, GenericMailbox.humanizedVectorLogo, 'Weblink', mailboxActions.startAddGenericWizard)}
-    */
-
     return (
       <div style={styles.container}>
-        <div>
-          <div style={styles.intro}>
-            <img style={styles.introIcon} src='../../icons/app.svg' />
-            <h1 style={styles.introTitle}>
-              Add your first account
-            </h1>
-            <h3 style={styles.introSubtitle}>
-              Get started by adding your first account to Wavebox below...
-            </h3>
-            <p style={styles.introTerms}>
-              <span>By continuing you agree to the Software </span>
-              <span style={styles.introTermsLink} onClick={this.handleOpenEULA}>EULA</span>
-              <span> and our </span>
-              <span style={styles.introTermsLink} onClick={this.handleOpenTerms}>service terms</span>
-            </p>
-          </div>
-          <div style={styles.accounts}>
-            <RaisedButton
-              onClick={this.handleOpenAddWizard}
-              primary
-              style={{ height: 58 }}
-              labelStyle={{ fontSize: '20px', fontWeight: '300' }}
-              icon={<FontIcon className='material-icons' style={{ marginTop: -8 }}>add_circle</FontIcon>}
-              label='Add your first account' />
-          </div>
-          <div style={styles.extraActions}>
-            {!user.isLoggedIn ? (
-              <WelcomeRaisedButton
-                onClick={this.handleLoginWavebox}
-                style={styles.extraActionButton}
-                label='Already a User? Login' />
-            ) : undefined}
+        <div className='ReactCompontent-Welcome-Clouds'>
+          <div className='ReactCompontent-Welcome-Cloud Foreground' style={{backgroundImage: `url("${Resolver.image('clouds/cloud_365.png')}")`}} />
+          <div className='ReactCompontent-Welcome-Cloud Background' style={{backgroundImage: `url("${Resolver.image('clouds/cloud_evernote.png')}")`}} />
+          <div className='ReactCompontent-Welcome-Cloud Foreground' style={{backgroundImage: `url("${Resolver.image('clouds/cloud_facebook.png')}")`}} />
+          <div className='ReactCompontent-Welcome-Cloud Background' style={{backgroundImage: `url("${Resolver.image('clouds/cloud_github.png')}")`}} />
+          <div className='ReactCompontent-Welcome-Cloud Foreground' style={{backgroundImage: `url("${Resolver.image('clouds/cloud_gmail.png')}")`}} />
+          <div className='ReactCompontent-Welcome-Cloud Background' style={{backgroundImage: `url("${Resolver.image('clouds/cloud_mail.png')}")`}} />
+          <div className='ReactCompontent-Welcome-Cloud Background' style={{backgroundImage: `url("${Resolver.image('clouds/cloud_mailchimp.png')}")`}} />
+          <div className='ReactCompontent-Welcome-Cloud Background' style={{backgroundImage: `url("${Resolver.image('clouds/cloud_salesforce.png')}")`}} />
+          <div className='ReactCompontent-Welcome-Cloud Foreground' style={{backgroundImage: `url("${Resolver.image('clouds/cloud_slack.png')}")`}} />
+          <div className='ReactCompontent-Welcome-Cloud Foreground' style={{backgroundImage: `url("${Resolver.image('clouds/cloud_trello.png')}")`}} />
+        </div>
+        <div style={styles.contentContainer}>
+          <div>
+            <div style={styles.intro}>
+              <img style={styles.introIcon} src='../../icons/app.svg' />
+              <div style={styles.accounts}>
+                <RaisedButton
+                  onClick={this.handleOpenAddWizard}
+                  backgroundColor={Colors.blueGrey900}
+                  labelColor='#FFFFFF'
+                  style={styles.addButton}
+                  labelStyle={{ fontSize: '20px', fontWeight: '300' }}
+                  icon={<FontIcon className='material-icons' style={{ marginTop: -8 }}>add_circle</FontIcon>}
+                  label='Add your first account' />
+              </div>
+              <p style={styles.introTerms}>
+                <span>By continuing you agree to the Software </span>
+                <span style={styles.introTermsLink} onClick={this.handleOpenEULA}>EULA</span>
+                <span> and our </span>
+                <span style={styles.introTermsLink} onClick={this.handleOpenTerms}>service terms</span>
+              </p>
+              {!user.isLoggedIn ? (
+                <FlatButton
+                  onClick={this.handleLoginWavebox}
+                  labelStyle={{ fontSize: '12px', fontWeight: 'bold', color: Colors.blueGrey800 }}
+                  label='Use your Wavebox membership on this machine' />
+              ) : undefined}
+            </div>
           </div>
         </div>
       </div>

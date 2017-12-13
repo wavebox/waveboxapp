@@ -23,6 +23,7 @@
     "react-addons-shallow-compare": "15.6.2",
     "react-color": "2.13.8",
     "react-dom": "16.2.0",
+    "react-notification-system": "0.2.16",
     "react-portal-tooltip": "2.1.2",
     "react-router": "4.2.0",
     "react-router-dom": "4.2.2",

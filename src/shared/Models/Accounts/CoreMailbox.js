@@ -35,6 +35,7 @@ class CoreMailbox extends Model {
   static get defaultServiceTypes () { return [SERVICE_TYPES.DEFAULT] }
   static get supportsAdditionalServiceTypes () { return this.supportedServiceTypes.length > 1 }
   static get defaultColor () { return undefined }
+  static get isIntegrated () { return true }
 
   /* **************************************************************************/
   // Class : Humanized
@@ -107,6 +108,23 @@ class CoreMailbox extends Model {
     sanitized.type = this.type
     sanitized.changedTime = new Date().getTime()
     return sanitized
+  }
+
+  /**
+  * Applies any experiments to the provisional js
+  * @param provisionalJS: the javascript to apply to
+  * @param experiments: the experiments dictionary to use
+  * @return a copy of the javascript updated
+  */
+  static applyExperimentsToProvisionalJS (provisionalJS, experiments) {
+    const cpy = JSON.parse(JSON.stringify(provisionalJS))
+
+    if (experiments.autoSleepIntegratedApp === true && this.isIntegrated) {
+      const defaultService = (cpy.services || []).find((s) => s.type === SERVICE_TYPES.DEFAULT)
+      if (defaultService) { defaultService.sleepable = true } // There should always be a default service, so don't create one
+    }
+
+    return cpy
   }
 
   /**
@@ -198,6 +216,7 @@ class CoreMailbox extends Model {
   get type () { return this.constructor.type }
   get partition () { return this.id }
   get artificiallyPersistCookies () { return this._value_('artificiallyPersistCookies', false) }
+  get isIntegrated () { return this.constructor.isIntegrated }
 
   /* **************************************************************************/
   // Properties: Window opening
@@ -238,6 +257,7 @@ class CoreMailbox extends Model {
     return this.enabledServiceTypes.filter((serviceType) => serviceType !== SERVICE_TYPES.DEFAULT)
   }
   get defaultService () { return this.serviceForType(SERVICE_TYPES.DEFAULT) }
+  get additionalServices () { return this.additionalServiceTypes.map((type) => this.serviceForType(type)) }
 
   /**
   * @param type: the type of service

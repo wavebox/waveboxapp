@@ -2,7 +2,7 @@ import { MAILBOX_SLEEP_WAIT } from 'shared/constants'
 
 class ServiceReducer {
   /* **************************************************************************/
-  // Behaviour
+  // Sleepable
   /* **************************************************************************/
 
   /**
@@ -29,6 +29,16 @@ class ServiceReducer {
     value = isNaN(value) ? MAILBOX_SLEEP_WAIT : value
     value = Math.min(Math.max(timeout, min), max)
     return service.changeData({ sleepableTimeout: value })
+  }
+
+  /**
+  * Sets if the user has seen the sleepable wizard for this account
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param seen: true if the user has seen
+  */
+  static setHasSeenSleepableWizard (mailbox, service, seen) {
+    return service.changeData({ hasSeenSleepableWizard: seen })
   }
 
   /* **************************************************************************/

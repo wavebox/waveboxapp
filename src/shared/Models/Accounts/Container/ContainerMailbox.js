@@ -12,6 +12,7 @@ class ContainerMailbox extends CoreMailbox {
 
   static get humanizedType () { return 'Container' }
   static get defaultColor () { return MailboxColors.CONTAINER }
+  static get isIntegrated () { return false }
 
   /* **************************************************************************/
   // Lifecycle
