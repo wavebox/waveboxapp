@@ -13,6 +13,7 @@ class GoogleFiService extends GoogleService {
       'google/logo_fi_32px.png',
       'google/logo_fi_48px.png',
       'google/logo_fi_64px.png',
+      'google/logo_fi_96px.png',
       'google/logo_fi_128px.png'
     ]
   }

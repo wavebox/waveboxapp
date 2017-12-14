@@ -59,6 +59,7 @@ class GoogleMailbox extends CoreMailbox {
       'google/logo_gmail_32px.png',
       'google/logo_gmail_48px.png',
       'google/logo_gmail_64px.png',
+      'google/logo_gmail_96px.png',
       'google/logo_gmail_128px.png',
       'google/logo_gmail_512px.png'
     ]
@@ -70,6 +71,7 @@ class GoogleMailbox extends CoreMailbox {
       'google/logo_ginbox_32px.png',
       'google/logo_ginbox_48px.png',
       'google/logo_ginbox_64px.png',
+      'google/logo_ginbox_96px.png',
       'google/logo_ginbox_128px.png',
       'google/logo_ginbox_512px.png'
     ]

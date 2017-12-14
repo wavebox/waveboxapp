@@ -13,6 +13,7 @@ class GoogleDocsService extends GoogleService {
       'google/logo_docs_32px.png',
       'google/logo_docs_48px.png',
       'google/logo_docs_64px.png',
+      'google/logo_docs_96px.png',
       'google/logo_docs_128px.png'
     ]
   }

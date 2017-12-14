@@ -18,6 +18,7 @@ class GoogleCalendarService extends GoogleService {
       'google/logo_calendar_32px.png',
       'google/logo_calendar_48px.png',
       'google/logo_calendar_64px.png',
+      'google/logo_calendar_96px.png',
       'google/logo_calendar_128px.png'
     ]
   }

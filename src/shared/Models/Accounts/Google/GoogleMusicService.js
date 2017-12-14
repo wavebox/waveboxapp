@@ -13,6 +13,7 @@ class GoogleMusicService extends GoogleService {
       'google/logo_music_32px.png',
       'google/logo_music_48px.png',
       'google/logo_music_64px.png',
+      'google/logo_music_96px.png',
       'google/logo_music_128px.png'
     ]
   }

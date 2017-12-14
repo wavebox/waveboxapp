@@ -14,6 +14,7 @@ class GoogleClassroomService extends GoogleService {
       'google/logo_classroom_32px.png',
       'google/logo_classroom_48px.png',
       'google/logo_classroom_64px.png',
+      'google/logo_classroom_96px.png',
       'google/logo_classroom_128px.png'
     ]
   }

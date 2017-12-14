@@ -14,6 +14,7 @@ class SlackMailbox extends CoreMailbox {
       'slack/logo_32px.png',
       'slack/logo_48px.png',
       'slack/logo_64px.png',
+      'slack/logo_96px.png',
       'slack/logo_128px.png',
       'slack/logo_600px.png'
     ]

@@ -28,6 +28,7 @@ class GenericDefaultService extends CoreService {
       'generic/logo_32px.png',
       'generic/logo_48px.png',
       'generic/logo_64px.png',
+      'generic/logo_96px.png',
       'generic/logo_128px.png'
     ]
   }

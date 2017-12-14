@@ -32,7 +32,7 @@ const styles = {
     right: 7,
     bottom: 7,
     backgroundRepeat: 'no-repeat',
-    backgroundSize: 'contain'
+    backgroundSize: '24px 24px'
   },
 
   /**
@@ -249,7 +249,7 @@ export default class ToolbarMailboxService extends React.Component {
           onMouseEnter={() => this.setState({ isHovering: true })}
           onMouseLeave={() => this.setState({ isHovering: false })}>
           <div style={{
-            backgroundImage: `url("${Resolver.image(service.humanizedLogo)}")`,
+            backgroundImage: `url("${Resolver.image(service.humanizedLogoAtSize(96))}")`,
             filter: showSleeping ? 'grayscale(100%)' : 'none',
             ...styles.avatar
           }} />

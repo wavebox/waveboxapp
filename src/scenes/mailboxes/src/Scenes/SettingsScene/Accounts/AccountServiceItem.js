@@ -58,8 +58,8 @@ export default class AccountServiceItem extends React.Component {
         <Toolbar {...passProps}>
           <ToolbarGroup>
             <Avatar
-              size={36}
-              src={Resolver.image(service.humanizedLogo)}
+              size={32}
+              src={Resolver.image(service.humanizedLogoAtSize(128))}
               backgroundColor='white'
               style={{
                 margin: '2px 10px 2px 2px',

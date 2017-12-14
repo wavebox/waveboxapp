@@ -13,6 +13,7 @@ class GoogleAnalyticsService extends GoogleService {
       'google/logo_analytics_32px.png',
       'google/logo_analytics_48px.png',
       'google/logo_analytics_64px.png',
+      'google/logo_analytics_96px.png',
       'google/logo_analytics_128px.png'
     ]
   }

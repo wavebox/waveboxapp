@@ -13,6 +13,7 @@ class GooglePhotosService extends GoogleService {
       'google/logo_photos_32px.png',
       'google/logo_photos_48px.png',
       'google/logo_photos_64px.png',
+      'google/logo_photos_96px.png',
       'google/logo_photos_128px.png'
     ]
   }

@@ -12,6 +12,7 @@ class MicrosoftStorageService extends MicrosoftService {
       'microsoft/logo_drive_32px.png',
       'microsoft/logo_drive_48px.png',
       'microsoft/logo_drive_64px.png',
+      'microsoft/logo_drive_96px.png',
       'microsoft/logo_drive_128px.png'
     ]
   }

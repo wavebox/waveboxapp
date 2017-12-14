@@ -18,6 +18,7 @@ class GoogleMessengerService extends GoogleService {
       'google/logo_allo_32px.png',
       'google/logo_allo_48px.png',
       'google/logo_allo_64px.png',
+      'google/logo_allo_96px.png',
       'google/logo_allo_128px.png'
     ]
   }

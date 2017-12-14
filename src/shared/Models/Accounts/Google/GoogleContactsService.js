@@ -13,6 +13,7 @@ class GoogleContactsService extends GoogleService {
       'google/logo_contacts_32px.png',
       'google/logo_contacts_48px.png',
       'google/logo_contacts_64px.png',
+      'google/logo_contacts_96px.png',
       'google/logo_contacts_128px.png'
     ]
   }

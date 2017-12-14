@@ -50,6 +50,23 @@ class CoreService extends Model {
   static get humanizedLogo () { return this.humanizedLogos[this.humanizedLogos.length - 1] }
   static get humanizedUnreadItemType () { return 'message' }
 
+  /**
+  * Gets the logo at a specific size
+  * @param size: the prefered size
+  * @return the logo with the size or a default one
+  */
+  static humanizedLogoAtSize (size) { return this.getLogoAtSize(this.humanizedLogos, size) }
+
+  /**
+  * Gets a logo at a specific size
+  * @param logos: the list of logos to get from
+  * @param size: the prefered size
+  * @return the logo with the size or a default one
+  */
+  static getLogoAtSize (logos, size) {
+    return logos.find((l) => l.indexOf(`${size}px`) !== -1) || logos.slice(-1)[0]
+  }
+
   /* **************************************************************************/
   // Class: Creation
   /* **************************************************************************/
@@ -130,6 +147,13 @@ class CoreService extends Model {
   get humanizedLogos () { return this.constructor.humanizedLogos }
   get humanizedLogo () { return this.constructor.humanizedLogo }
   get humanizedUnreadItemType () { return this.constructor.humanizedUnreadItemType }
+
+  /**
+  * Gets the logo at a specific size
+  * @param size: the prefered size
+  * @return the logo with the size or a default one
+  */
+  humanizedLogoAtSize (size) { return this.constructor.getLogoAtSize(this.humanizedLogos, size) }
 
   /* **************************************************************************/
   // Properties: Display

@@ -12,6 +12,7 @@ class MicrosoftContactsService extends MicrosoftService {
       'microsoft/logo_contacts_32px.png',
       'microsoft/logo_contacts_48px.png',
       'microsoft/logo_contacts_64px.png',
+      'microsoft/logo_contacts_96px.png',
       'microsoft/logo_contacts_128px.png'
     ]
   }

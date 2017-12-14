@@ -19,6 +19,7 @@ class GoogleCommunicationService extends GoogleService {
       'google/logo_hangouts_32px.png',
       'google/logo_hangouts_48px.png',
       'google/logo_hangouts_64px.png',
+      'google/logo_hangouts_96px.png',
       'google/logo_hangouts_128px.png'
     ]
   }

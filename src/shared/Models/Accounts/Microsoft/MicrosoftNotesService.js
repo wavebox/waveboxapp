@@ -12,6 +12,7 @@ class MicrosoftNotesService extends MicrosoftService {
       'microsoft/logo_tasks_32px.png',
       'microsoft/logo_tasks_48px.png',
       'microsoft/logo_tasks_64px.png',
+      'microsoft/logo_tasks_96px.png',
       'microsoft/logo_tasks_128px.png'
     ]
   }

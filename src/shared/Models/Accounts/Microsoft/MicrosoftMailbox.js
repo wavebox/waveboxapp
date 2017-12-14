@@ -45,6 +45,7 @@ class MicrosoftMailbox extends CoreMailbox {
       'microsoft/outlook_logo_32px.png',
       'microsoft/outlook_logo_48px.png',
       'microsoft/outlook_logo_64px.png',
+      'microsoft/outlook_logo_96px.png',
       'microsoft/outlook_logo_128px.png',
       'microsoft/outlook_logo_512px.png'
     ]
@@ -56,6 +57,7 @@ class MicrosoftMailbox extends CoreMailbox {
       'microsoft/office365_logo_32px.png',
       'microsoft/office365_logo_48px.png',
       'microsoft/office365_logo_64px.png',
+      'microsoft/office365_logo_96px.png',
       'microsoft/office365_logo_128px.png',
       'microsoft/office365_logo_512px.png'
     ]

@@ -13,6 +13,7 @@ class GoogleSlidesService extends GoogleService {
       'google/logo_slides_32px.png',
       'google/logo_slides_48px.png',
       'google/logo_slides_64px.png',
+      'google/logo_slides_96px.png',
       'google/logo_slides_128px.png'
     ]
   }

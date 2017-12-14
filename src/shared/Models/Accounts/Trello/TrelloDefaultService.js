@@ -17,6 +17,7 @@ class TrelloDefaultService extends CoreService {
       'trello/logo_32px.png',
       'trello/logo_48px.png',
       'trello/logo_64px.png',
+      'trello/logo_96px.png',
       'trello/logo_128px.png'
     ]
   }

@@ -13,6 +13,7 @@ class GoogleStorageService extends GoogleService {
       'google/logo_drive_32px.png',
       'google/logo_drive_48px.png',
       'google/logo_drive_64px.png',
+      'google/logo_drive_96px.png',
       'google/logo_drive_128px.png'
     ]
   }

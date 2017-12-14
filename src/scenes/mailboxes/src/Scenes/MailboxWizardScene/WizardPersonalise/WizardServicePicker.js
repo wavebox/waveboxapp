@@ -53,7 +53,8 @@ const styles = {
   },
   logo: {
     display: 'inline-block',
-    height: 40
+    height: 32,
+    marginTop: 4
   },
   logoDisabled: {
     filter: 'grayscale(100%)'
@@ -126,7 +127,7 @@ export default class WizardServicePicker extends React.Component {
         primaryText={ServiceClass.humanizedType}
         leftAvatar={(
           <img
-            src={Resolver.image(ServiceClass.humanizedLogo)}
+            src={Resolver.image(ServiceClass.humanizedLogoAtSize(128))}
             style={{
               ...styles.logo,
               ...(!userHasServices ? styles.logoDisabled : {})

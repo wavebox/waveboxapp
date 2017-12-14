@@ -12,6 +12,7 @@ class GoogleVideoService extends GoogleService {
       'google/logo_youtube_32px.png',
       'google/logo_youtube_48px.png',
       'google/logo_youtube_64px.png',
+      'google/logo_youtube_96px.png',
       'google/logo_youtube_128px.png'
     ]
   }

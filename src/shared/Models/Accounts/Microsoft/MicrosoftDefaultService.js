@@ -23,6 +23,7 @@ class MicrosoftDefaultService extends MicrosoftService {
       'microsoft/logo_mail_32px.png',
       'microsoft/logo_mail_48px.png',
       'microsoft/logo_mail_64px.png',
+      'microsoft/logo_mail_96px.png',
       'microsoft/logo_mail_128px.png'
     ]
   }

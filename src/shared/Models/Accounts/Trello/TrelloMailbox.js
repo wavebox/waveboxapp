@@ -13,6 +13,7 @@ class TrelloMailbox extends CoreMailbox {
       'trello/logo_32px.png',
       'trello/logo_48px.png',
       'trello/logo_64px.png',
+      'trello/logo_96px.png',
       'trello/logo_128px.png',
       'trello/logo_600px.png'
     ]

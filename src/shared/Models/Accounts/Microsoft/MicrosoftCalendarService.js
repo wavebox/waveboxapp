@@ -12,6 +12,7 @@ class MicrosoftCalendarService extends MicrosoftService {
       'microsoft/logo_calendar_32px.png',
       'microsoft/logo_calendar_48px.png',
       'microsoft/logo_calendar_64px.png',
+      'microsoft/logo_calendar_96px.png',
       'microsoft/logo_calendar_128px.png'
     ]
   }

@@ -13,6 +13,7 @@ class GoogleSocialService extends GoogleService {
       'google/logo_plus_32px.png',
       'google/logo_plus_48px.png',
       'google/logo_plus_64px.png',
+      'google/logo_plus_96px.png',
       'google/logo_plus_128px.png'
     ]
   }

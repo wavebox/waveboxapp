@@ -13,6 +13,7 @@ class GoogleNotesService extends GoogleService {
       'google/logo_keep_32px.png',
       'google/logo_keep_48px.png',
       'google/logo_keep_64px.png',
+      'google/logo_keep_96px.png',
       'google/logo_keep_128px.png'
     ]
   }
