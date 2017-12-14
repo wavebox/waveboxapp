@@ -70,8 +70,8 @@ export default class AccountAppearanceSettings extends React.Component {
       // Get the image size
       const image = new window.Image()
       image.onload = () => {
-        // Scale the image down
-        const scale = 150 / (image.width > image.height ? image.width : image.height)
+        // Scale the image down. Never scale up
+        const scale = Math.min(1.0, 150 / (image.width > image.height ? image.width : image.height))
         const width = image.width * scale
         const height = image.height * scale
 
