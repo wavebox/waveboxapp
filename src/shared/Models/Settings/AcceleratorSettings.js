@@ -11,8 +11,7 @@ class AcceleratorSettings extends Model {
   // Application
   get preferencesDefault () { return 'CmdOrCtrl+,' }
   get composeMailDefault () { return 'CmdOrCtrl+N' }
-  get showWindowDefault () { return 'CmdOrCtrl+Shift+N' }
-  get hideWindowDefault () { return 'CmdOrCtrl+W' }
+  get closeWindowDefault () { return 'CmdOrCtrl+W' }
   get hideDefault () { return 'CmdOrCtrl+H' }
   get hideOthersDefault () { return process.platform === 'darwin' ? 'Command+Alt+H' : 'Ctrl+Shift+H' }
   get quitDefault () { return 'CmdOrCtrl+Q' }
@@ -62,8 +61,7 @@ class AcceleratorSettings extends Model {
   // Application
   get preferences () { return this._value_('preferences', this.preferencesDefault) }
   get composeMail () { return this._value_('composeMail', this.composeMailDefault) }
-  get showWindow () { return this._value_('showWindow', this.showWindowDefault) }
-  get hideWindow () { return this._value_('hideWindow', this.hideWindowDefault) }
+  get closeWindow () { return this._value_('closeWindow', this.closeWindowDefault) }
   get hide () { return this._value_('hide', this.hideDefault) }
   get hideOthers () { return this._value_('hideOthers', this.hideOthersDefault) }
   get quit () { return this._value_('quit', this.quitDefault) }

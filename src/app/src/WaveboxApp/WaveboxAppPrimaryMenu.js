@@ -69,36 +69,30 @@ class WaveboxAppPrimaryMenu {
           process.platform === 'darwin' ? { label: 'Services', role: 'services', submenu: [] } : undefined,
           process.platform === 'darwin' ? { type: 'separator' } : undefined,
           {
-            label: 'Show Window',
-            click: WaveboxAppPrimaryMenuActions.showWindow,
-            accelerator: accelerators.showWindow
-          },
-          {
             label: 'Close Window',
             click: WaveboxAppPrimaryMenuActions.closeWindow,
-            accelerator: accelerators.hideWindow
+            accelerator: accelerators.closeWindow
           },
           process.platform === 'darwin' ? {
-            label: 'Hide',
+            label: 'Hide Wavebox',
             role: 'hide',
             accelerator: accelerators.hide
           } : {
-            label: 'Hide',
+            label: 'Hide Window',
             click: WaveboxAppPrimaryMenuActions.hideAll,
             accelerator: accelerators.hide
           },
           process.platform === 'darwin' ? {
             label: 'Hide Others',
-            role: 'hideothers'
+            role: 'hideothers',
+            accelerator: accelerators.hideOthers
           } : undefined,
           process.platform === 'darwin' ? {
             label: 'Show All',
-            role: 'unhide',
-            accelerator: accelerators.showAll
+            role: 'unhide'
           } : {
             label: 'Show All',
-            click: WaveboxAppPrimaryMenuActions.showAll,
-            accelerator: accelerators.showAll
+            click: WaveboxAppPrimaryMenuActions.showAll
           },
           { type: 'separator' },
           {

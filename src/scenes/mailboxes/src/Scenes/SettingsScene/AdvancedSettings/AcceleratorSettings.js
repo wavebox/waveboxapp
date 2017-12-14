@@ -15,9 +15,8 @@ const ACCELERATOR_NAMES = {
   // Application
   preferences: 'Preferences',
   composeMail: 'Compose Mail',
-  showWindow: 'Show Window',
-  hideWindow: 'Hide Window',
-  hide: 'Hide',
+  closeWindow: 'Close Window',
+  hide: process.platform === 'darwin' ? 'Hide Wavebox' : 'Hide Window',
   hideOthers: 'Hide Others',
   quit: 'Quit',
 
@@ -62,8 +61,7 @@ const GLOBAL_SECTION = [
 const APPLICATION_SECTION = [
   'preferences',
   'composeMail',
-  'showWindow',
-  'hideWindow',
+  'closeWindow',
   'hide',
   'hideOthers',
   'quit'
