@@ -78,16 +78,16 @@ class WaveboxAppPrimaryMenu {
             click: WaveboxAppPrimaryMenuActions.closeWindow,
             accelerator: accelerators.hideWindow
           },
-          {
+          process.platform === 'darwin' ? {
             label: 'Hide',
             role: 'hide',
             accelerator: accelerators.hide
-          },
-          {
+          } : undefined,
+          process.platform === 'darwin' ? {
             label: 'Hide Others',
             role: 'hideothers',
             accelerator: accelerators.hideOthers
-          },
+          } : undefined,
           {
             label: 'Show All',
             role: 'unhide'
