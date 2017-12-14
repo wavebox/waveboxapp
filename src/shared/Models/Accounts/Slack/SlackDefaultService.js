@@ -201,6 +201,26 @@ class SlackDefaultService extends CoreService {
 
     return [].concat(ims, mpims, channels, groups)
   }
+
+  /* **************************************************************************/
+  // Behaviour
+  /* **************************************************************************/
+
+  /**
+  * Looks to see if the input event should be prevented
+  * @param input: the input info
+  * @return true if the input should be prevented, false otherwise
+  */
+  shouldPreventInputEvent (input) {
+    if (process.platform === 'darwin') {
+      if (input.meta && input.shift && input.key === '<') { return true }
+      if (input.meta && input.shift && input.key === '>') { return true }
+    } else {
+      if (input.control && input.shift && input.key === '<') { return true }
+      if (input.control && input.shift && input.key === '>') { return true }
+    }
+    return false
+  }
 }
 
 module.exports = SlackDefaultService
