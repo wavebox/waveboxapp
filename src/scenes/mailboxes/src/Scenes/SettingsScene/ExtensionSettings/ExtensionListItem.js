@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Paper, RaisedButton, FlatButton, CircularProgress } from 'material-ui'
+import { Paper, RaisedButton, FlatButton } from 'material-ui'
 import * as Colors from 'material-ui/styles/colors'
+import Spinner from 'sharedui/Components/Activity/Spinner'
 import { crextensionStore, crextensionActions } from 'stores/crextension'
 import { userStore } from 'stores/user'
 import electron from 'electron'
@@ -88,7 +89,7 @@ const styles = {
     lineHeight: '20px'
   },
   actionSpinner: {
-    display: 'inline-block',
+    display: 'inline-flex',
     verticalAlign: 'middle'
   },
   action: {
@@ -278,7 +279,9 @@ export default class ExtensionListItem extends React.Component {
     } else if (isDownloading) {
       return (
         <div style={styles.actions}>
-          <CircularProgress size={20} thickness={3} style={styles.actionSpinner} />
+          <div style={styles.actionSpinner}>
+            <Spinner size={12} color={Colors.lightBlue600} />
+          </div>
           <span style={styles.actionDownload}>Downloading...</span>
         </div>
       )
@@ -291,7 +294,9 @@ export default class ExtensionListItem extends React.Component {
     } else if (isCheckingUpdate) {
       return (
         <div style={styles.actions}>
-          <CircularProgress size={20} thickness={3} style={styles.actionSpinner} />
+          <div style={styles.actionSpinner}>
+            <Spinner size={12} color={Colors.lightBlue600} />
+          </div>
           <span style={styles.actionDownload}>Checking for updates...</span>
         </div>
       )

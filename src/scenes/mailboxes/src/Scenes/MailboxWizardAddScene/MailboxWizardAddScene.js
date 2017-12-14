@@ -1,10 +1,12 @@
 import React from 'react'
-import { RaisedButton, CircularProgress } from 'material-ui'
+import { RaisedButton } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import { WaveboxWebView, FullscreenModal } from 'Components'
 import { userStore } from 'stores/user'
 import { mailboxStore } from 'stores/mailbox'
 import { WaveboxHTTP } from 'Server'
+import Spinner from 'sharedui/Components/Activity/Spinner'
+import * as Colors from 'material-ui/styles/colors'
 
 const styles = {
   modalActions: {
@@ -144,7 +146,7 @@ export default class MailboxWizardAddScene extends React.Component {
         onRequestClose={this.handleClose}>
         {isLoading ? (
           <div style={styles.loadingCover}>
-            <CircularProgress size={80} thickness={5} />
+            <Spinner size={50} color={Colors.lightBlue600} speed={0.75} />
             <p>Fetching all the latest Apps</p>
           </div>
         ) : undefined}

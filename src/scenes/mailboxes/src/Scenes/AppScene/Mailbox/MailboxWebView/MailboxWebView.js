@@ -1,7 +1,7 @@
 import './MailboxWebView.less'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { CircularProgress, RaisedButton, FontIcon } from 'material-ui'
+import { RaisedButton, FontIcon } from 'material-ui'
 import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
 import { guestActions } from 'stores/guest'
 import BrowserView from 'sharedui/Components/BrowserView'
@@ -20,6 +20,8 @@ import {
   WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
+import Spinner from 'sharedui/Components/Activity/Spinner'
+import * as Colors from 'material-ui/styles/colors'
 
 const BROWSER_REF = 'browser'
 
@@ -546,7 +548,7 @@ export default class MailboxWebView extends React.Component {
         )}
         {!service.hasNavigationToolbar && !initialLoadDone ? (
           <div className='ReactComponent-MailboxLoader'>
-            <CircularProgress size={80} thickness={5} />
+            <Spinner size={50} color={Colors.lightBlue600} speed={0.75} />
           </div>
         ) : undefined}
         <MailboxTargetUrl url={focusedUrl} />

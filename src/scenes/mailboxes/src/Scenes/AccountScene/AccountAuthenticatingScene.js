@@ -1,5 +1,7 @@
 import React from 'react'
-import { Dialog, CircularProgress } from 'material-ui'
+import { Dialog } from 'material-ui'
+import Spinner from 'sharedui/Components/Activity/Spinner'
+import * as Colors from 'material-ui/styles/colors'
 
 export default class AccountAuthenticatingScene extends React.Component {
   /* **************************************************************************/
@@ -11,14 +13,11 @@ export default class AccountAuthenticatingScene extends React.Component {
       <Dialog
         modal
         open
-        contentStyle={{ width: 180, transition: 'none' }}
+        contentStyle={{ width: 180, transition: 'none', textAlign: 'center' }}
         style={{ transition: 'none' }}
         overlayStyle={{ transition: 'none' }}>
-        <CircularProgress
-          size={80}
-          thickness={5}
-          style={{ display: 'block', margin: '0px auto' }} />
-        <div style={{ marginTop: 20, textAlign: 'center' }}>
+        <Spinner size={50} color={Colors.lightBlue600} speed={0.75} />
+        <div style={{ marginTop: 20 }}>
           Just a moment...
         </div>
       </Dialog>

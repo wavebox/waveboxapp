@@ -4,9 +4,10 @@ import shallowCompare from 'react-addons-shallow-compare'
 import * as Colors from 'material-ui/styles/colors'
 import { mailboxStore } from 'stores/mailbox'
 import { remote } from 'electron'
-import { IconButton, FontIcon, CircularProgress } from 'material-ui'
+import { IconButton, FontIcon } from 'material-ui'
 import { CHROME_PDF_URL } from 'shared/constants'
 import url from 'url'
+import Spinner from 'sharedui/Components/Activity/Spinner'
 
 const styles = {
   container: {
@@ -32,10 +33,12 @@ const styles = {
     fontSize: '14px',
     color: Colors.blueGrey50
   },
-  loadingPlaceholder: {
-    width: 18,
-    height: 18,
-    margin: 10
+  loadingContainer: {
+    width: 40,
+    height: 40,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 }
 
@@ -360,15 +363,11 @@ export default class ToolbarNavigation extends React.Component {
           </div>
         </div>
         <div style={styles.group}>
-          {isLoading ? (
-            <CircularProgress
-              size={18}
-              thickness={2}
-              color={Colors.cyan200}
-              style={{ margin: 10 }} />
-          ) : (
-            <div style={styles.loadingPlaceholder} />
-          )}
+          <div style={styles.loadingContainer}>
+            {isLoading ? (
+              <Spinner size={15} color={Colors.cyan200} />
+            ) : undefined}
+          </div>
         </div>
       </div>
     )

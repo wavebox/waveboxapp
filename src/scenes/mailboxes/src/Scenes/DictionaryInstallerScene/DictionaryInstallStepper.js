@@ -3,10 +3,12 @@ import dictionariesStore from 'stores/dictionaries/dictionariesStore'
 import dictionariesActions from 'stores/dictionaries/dictionariesActions'
 import {
   Stepper, Step, StepLabel, StepContent,
-  RaisedButton, FlatButton, LinearProgress,
+  RaisedButton, FlatButton,
   SelectField, MenuItem
 } from 'material-ui'
 import electron from 'electron'
+import Spinner from 'sharedui/Components/Activity/Spinner'
+import * as Colors from 'material-ui/styles/colors'
 
 const STEPS = {
   PICK: 0,
@@ -166,7 +168,9 @@ export default class DictionaryInstallStepper extends React.Component {
           <StepLabel>Download</StepLabel>
           <StepContent>
             <p>Downloading <strong>{(installLanguageInfo || {}).name}</strong></p>
-            <LinearProgress mode='indeterminate' />
+            <div style={{ paddingLeft: 16 }}>
+              <Spinner size={30} color={Colors.lightBlue600} speed={0.75} />
+            </div>
           </StepContent>
         </Step>
         <Step>
