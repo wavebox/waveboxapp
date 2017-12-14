@@ -55,6 +55,14 @@ class WaveboxAppPrimaryMenuAcions {
     if (focused) { focused.reloadWaveboxWindow() }
   }
 
+  hideAll = () => {
+    WaveboxWindow.all().forEach((w) => w.hide())
+  }
+
+  showAll = () => {
+    WaveboxWindow.all().forEach((w) => w.show())
+  }
+
   /* ****************************************************************************/
   // Dev
   /* ****************************************************************************/

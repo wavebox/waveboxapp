@@ -74,7 +74,7 @@ class WaveboxAppPrimaryMenu {
             accelerator: accelerators.showWindow
           },
           {
-            label: 'Hide Window',
+            label: 'Close Window',
             click: WaveboxAppPrimaryMenuActions.closeWindow,
             accelerator: accelerators.hideWindow
           },
@@ -82,15 +82,23 @@ class WaveboxAppPrimaryMenu {
             label: 'Hide',
             role: 'hide',
             accelerator: accelerators.hide
-          } : undefined,
+          } : {
+            label: 'Hide',
+            click: WaveboxAppPrimaryMenuActions.hideAll,
+            accelerator: accelerators.hide
+          },
           process.platform === 'darwin' ? {
             label: 'Hide Others',
-            role: 'hideothers',
-            accelerator: accelerators.hideOthers
+            role: 'hideothers'
           } : undefined,
-          {
+          process.platform === 'darwin' ? {
             label: 'Show All',
-            role: 'unhide'
+            role: 'unhide',
+            accelerator: accelerators.showAll
+          } : {
+            label: 'Show All',
+            click: WaveboxAppPrimaryMenuActions.showAll,
+            accelerator: accelerators.showAll
           },
           { type: 'separator' },
           {

@@ -112,7 +112,6 @@ const SECTIONS = [
 ]
 const PLATFORM_EXCLUDES = new Set([
   process.platform === 'darwin' ? 'toggleMenu' : undefined,
-  process.platform !== 'darwin' ? 'hide' : undefined,
   process.platform !== 'darwin' ? 'hideOthers' : undefined
 ].filter((n) => !!n))
 
