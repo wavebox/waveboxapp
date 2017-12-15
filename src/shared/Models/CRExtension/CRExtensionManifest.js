@@ -218,6 +218,9 @@ class CRExtensionManifest extends Model {
   }
 
   get waveboxCookieScopes () { return new Set(this._value_('wavebox_cookie_scopes', ['background'])) }
+
+  get waveboxBrowserActionIconFilter () { return this._value_('wavebox_browser_action_icon_filter', '') }
+  get hasWaveboxBrowserActionIconFilter () { return !!this.waveboxBrowserActionIconFilter }
 }
 
 module.exports = CRExtensionManifest

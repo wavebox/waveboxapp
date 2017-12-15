@@ -14,10 +14,10 @@ const styles = {
     position: 'absolute',
     top: '50%',
     left: '50%',
-    marginTop: -9,
-    marginLeft: -9,
-    width: 18,
-    height: 18,
+    marginTop: -10,
+    marginLeft: -10,
+    width: 19,
+    height: 19,
     backgroundSize: 'contain',
     backgroundPosition: 'center center',
     backgroundRepeat: 'no-repeat'
@@ -36,6 +36,7 @@ export default class ToolbarExtensionAction extends React.Component {
     onIconClicked: PropTypes.func.isRequired,
     enabled: PropTypes.bool.isRequired,
     icon: PropTypes.object.isRequired,
+    iconFilter: PropTypes.string,
     title: PropTypes.string
   }
 
@@ -101,6 +102,7 @@ export default class ToolbarExtensionAction extends React.Component {
       onIconClicked,
       enabled,
       icon,
+      iconFilter,
       title,
       style,
       ...passProps
@@ -108,6 +110,11 @@ export default class ToolbarExtensionAction extends React.Component {
     const {
       isHovering
     } = this.state
+
+    const cssFilter = [
+      iconFilter,
+      enabled ? undefined : 'grayscale(100%)'
+    ].filter((f) => !!f).join(' ') || 'none'
 
     const elementId = `ReactComponent-ToolbarExtensionAction-${this.instanceId}`
     const iconUrl = this.getIconUrl(icon)
@@ -127,7 +134,7 @@ export default class ToolbarExtensionAction extends React.Component {
         <div style={{
           ...styles.icon,
           backgroundImage: iconUrl ? `url("${iconUrl}")` : undefined,
-          filter: enabled ? 'none' : 'grayscale(100%)'
+          filter: cssFilter
         }} />
         {title ? (
           <ReactPortalTooltip

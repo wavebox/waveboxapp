@@ -194,7 +194,11 @@ class CRExtensionRTStore {
         ...(globalBA ? globalBA.cloneData() : undefined),
         ...(tabBA ? tabBA.cloneData() : undefined)
       }
-      return new CRExtensionRTBrowserAction(extensionId, tabId, compositeJS)
+      return new CRExtensionRTBrowserAction(
+        extensionId,
+        tabId,
+        compositeJS
+      )
     }
 
     /* ****************************************/
