@@ -51,7 +51,7 @@ class GenericMailbox extends CoreMailbox {
   get pageTitle () { return this._value_('pageTitle') }
 
   /* **************************************************************************/
-  // Properties : Setup
+  // Properties : Useragent
   /* **************************************************************************/
 
   get useCustomUserAgent () { return this._value_('useCustomUserAgent', false) }

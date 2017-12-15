@@ -305,6 +305,13 @@ class CoreMailbox extends Model {
   get hasAuth () { return true }
 
   /* **************************************************************************/
+  // Properties : Useragent
+  /* **************************************************************************/
+
+  get useCustomUserAgent () { return false }
+  get customUserAgentString () { return '' }
+
+  /* **************************************************************************/
   // Properties : Provider Details & counts etc
   /* **************************************************************************/
 

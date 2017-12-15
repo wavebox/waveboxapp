@@ -279,13 +279,19 @@ class UserStore {
       .then((res) => {
         if (!res.containers || Object.keys(res.containers).length === 0) { return }
 
-        containerPersistence.setJSONItems(res.containers)
+        // Filter any nulls or undefineds from the server
         const updatedContainers = {}
         Object.keys(res.containers).forEach((id) => {
-          const container = new Container(id, res.containers[id])
-          updatedContainers[id] = container
-          this.containers.set(id, container)
+          const data = res.containers[id]
+          if (data !== undefined && data !== null) {
+            const container = new Container(id, data)
+            updatedContainers[id] = container
+            this.containers.set(id, container)
+          }
         })
+
+        // Save and update
+        containerPersistence.setJSONItems(updatedContainers)
         mailboxActions.containersUpdated.defer(updatedContainers)
         this.emitChange()
       })

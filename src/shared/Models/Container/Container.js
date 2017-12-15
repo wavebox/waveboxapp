@@ -68,6 +68,13 @@ class Container extends Model {
   get hasUrlSubdomain () { return this._value_('hasUrlSubdomain', false) }
 
   /* **************************************************************************/
+  // Properties: UA
+  /* **************************************************************************/
+
+  get userAgentString () { return this._value_('userAgentString', '') }
+  get hasUserAgentString () { return !!this.userAgentString }
+
+  /* **************************************************************************/
   // Properties: Service
   /* **************************************************************************/
 

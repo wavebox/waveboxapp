@@ -145,11 +145,9 @@ class MailboxesSessionManager extends EventEmitter {
   */
   _setupUserAgent (ses, partition, mailboxType) {
     // Handle accounts that have custom settings
-    if (mailboxType === CoreMailbox.MAILBOX_TYPES.GENERIC) {
-      const mailbox = this._getMailboxFromPartition(partition)
-      if (mailbox && mailbox.useCustomUserAgent && mailbox.customUserAgentString) {
-        ses.setUserAgent(mailbox.customUserAgentString)
-      }
+    const mailbox = this._getMailboxFromPartition(partition)
+    if (mailbox && mailbox.useCustomUserAgent && mailbox.customUserAgentString) {
+      ses.setUserAgent(mailbox.customUserAgentString)
     }
   }
 

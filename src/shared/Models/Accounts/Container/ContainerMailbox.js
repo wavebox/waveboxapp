@@ -76,6 +76,13 @@ class ContainerMailbox extends CoreMailbox {
   get hasUrlSubdomain () { return this.container.hasUrlSubdomain }
   get urlSubdomain () { return this._value_('urlSubdomain', '') }
   get displayName () { return this.container.name }
+
+  /* **************************************************************************/
+  // Properties : Useragent
+  /* **************************************************************************/
+
+  get useCustomUserAgent () { return this.container.hasUserAgentString }
+  get customUserAgentString () { return this.container.userAgentString }
 }
 
 module.exports = ContainerMailbox
