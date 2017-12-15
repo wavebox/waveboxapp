@@ -9,7 +9,6 @@ import {
 import {
   WB_PREPARE_MAILBOX_SESSION
 } from 'shared/ipcEvents'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { DownloadManager } from 'Download'
 import SessionManager from './SessionManager'
