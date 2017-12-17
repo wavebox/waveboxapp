@@ -14,10 +14,10 @@ export default class SidelistControlExpander extends React.Component {
       <SidelistControl
         onClick={this.props.onClick}
         tooltip={this.props.expanded ? 'Contract' : 'Expand'}
-        tourStep={TOUR_STEPS.NONE}
+        tourStep={TOUR_STEPS.EXPANDER}
         tourTooltip={(
           <div>
-            Click here to open shrink the these controls.
+            Click here to shrink the these controls.
           </div>
         )}
         tourTooltipStyles={{
