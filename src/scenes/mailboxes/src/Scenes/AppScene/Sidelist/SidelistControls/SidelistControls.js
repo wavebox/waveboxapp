@@ -6,6 +6,7 @@ import SidelistControlAddMailbox from './SidelistControlAddMailbox'
 import SidelistControlSettings from './SidelistControlSettings'
 import shallowCompare from 'react-addons-shallow-compare'
 import SidelistControlWhatsNew from './SidelistControlWhatsNew'
+import SidelistControlExpander from './SidelistControlExpander'
 
 export default class SidelistControls extends React.Component {
   /* **************************************************************************/
@@ -28,7 +29,8 @@ export default class SidelistControls extends React.Component {
     const settingsState = settingsStore.getState()
     return {
       showWizard: !settingsState.app.hasSeenAppWizard,
-      showSupport: settingsState.ui.showSidebarSupport
+      showSupport: settingsState.ui.showSidebarSupport,
+      expanded: true
     }
   })()
 
@@ -53,11 +55,17 @@ export default class SidelistControls extends React.Component {
 
     return (
       <div {...passProps}>
-        <SidelistControlWhatsNew />
-        {showWizard ? (<SidelistControlWizard />) : undefined}
-        {showSupport ? (<SidelistControlSupport />) : undefined}
-        <SidelistControlAddMailbox />
-        <SidelistControlSettings />
+        <SidelistControlExpander expanded={this.state.expanded}
+          onClick={() => { this.setState({ expanded: !this.state.expanded }) }} />
+        <div style={{
+          'height': this.state.expanded ? 'initial' : '0'
+        }}>
+          <SidelistControlWhatsNew />
+          {showWizard ? (<SidelistControlWizard />) : undefined}
+          {showSupport ? (<SidelistControlSupport />) : undefined}
+          <SidelistControlAddMailbox />
+          <SidelistControlSettings />
+        </div>
       </div>
     )
   }
