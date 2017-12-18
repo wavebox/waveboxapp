@@ -36,7 +36,8 @@ export default class MailboxWebView extends React.Component {
     preload: PropTypes.string,
     url: PropTypes.string,
     hasSearch: PropTypes.bool.isRequired,
-    plugHTML5Notifications: PropTypes.bool.isRequired
+    plugHTML5Notifications: PropTypes.bool.isRequired,
+    webpreferences: PropTypes.string
   }, BrowserView.REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
     acc[name] = PropTypes.func
     return acc
@@ -484,7 +485,7 @@ export default class MailboxWebView extends React.Component {
     } = this.state
 
     if (!mailbox || !service) { return false }
-    const { className, preload, hasSearch, allowpopups, ...passProps } = this.props
+    const { className, preload, hasSearch, allowpopups, webpreferences, ...passProps } = this.props
     delete passProps.serviceType
     delete passProps.mailboxId
     const webviewEventProps = BrowserView.REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
@@ -511,7 +512,7 @@ export default class MailboxWebView extends React.Component {
             zoomFactor={service.zoomFactor}
             searchId={searchId}
             searchTerm={isSearching ? searchTerm : ''}
-            webpreferences={'contextIsolation=yes, nativeWindowOpen=yes'}
+            webpreferences={webpreferences || 'contextIsolation=yes, nativeWindowOpen=yes'}
             allowpopups={allowpopups === undefined ? true : allowpopups}
             plugins
             onWebContentsAttached={this.handleWebContentsAttached}

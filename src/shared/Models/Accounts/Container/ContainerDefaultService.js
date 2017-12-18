@@ -47,6 +47,8 @@ class ContainerDefaultService extends CoreService {
   /* **************************************************************************/
 
   get reloadBehaviour () { return CoreService.RELOAD_BEHAVIOURS[this.containerService.reloadBehaviour] || super.reloadBehaviour }
+  get useNativeWindowOpen () { return this.containerService.useNativeWindowOpen }
+  get useContextIsolation () { return this.containerService.useContextIsolation }
 
   /* **************************************************************************/
   // Properties : Notifications
