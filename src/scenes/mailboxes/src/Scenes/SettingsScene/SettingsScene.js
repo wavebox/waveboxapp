@@ -138,6 +138,28 @@ export default class SettingsScene extends React.Component {
     }, 250)
   }
 
+  /**
+  * Restarts the app
+  */
+  handleRestart = () => {
+    // The temptation for the user is sometimes to edit a field and hit restart,
+    // but this can leave some waiting ipc events and data that isn't written to
+    // disk. Seeing that we don't have a "wait for everything to finish" call at
+    // the moment we need to wait a little time. By the way this is really bad,
+    // but it's an infrequent event and just fixes it. (@Thomas101) we should
+    // look into a better solution to this problem
+
+    // Close the popup so it looks like something is happening
+    setTimeout(() => {
+      this.handleClose()
+    }, 250)
+
+    // Wait and then restart
+    setTimeout(() => {
+      ipcRenderer.send(WB_RELAUNCH_APP, { })
+    }, 1000)
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -153,7 +175,7 @@ export default class SettingsScene extends React.Component {
     const buttons = showRestart ? (
       <div style={{ textAlign: 'right' }}>
         <RaisedButton label='Close' style={{ marginRight: 16 }} onClick={this.handleClose} />
-        <RaisedButton label='Restart' primary onClick={() => ipcRenderer.send(WB_RELAUNCH_APP, { })} />
+        <RaisedButton label='Restart' primary onClick={this.handleRestart} />
       </div>
     ) : (
       <div style={{ textAlign: 'right' }}>

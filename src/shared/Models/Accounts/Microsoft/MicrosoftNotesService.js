@@ -9,10 +9,11 @@ class MicrosoftNotesService extends MicrosoftService {
   static get humanizedType () { return 'Tasks' }
   static get humanizedLogos () {
     return [
-      'images/microsoft/logo_tasks_32px.png',
-      'images/microsoft/logo_tasks_48px.png',
-      'images/microsoft/logo_tasks_64px.png',
-      'images/microsoft/logo_tasks_128px.png'
+      'microsoft/logo_tasks_32px.png',
+      'microsoft/logo_tasks_48px.png',
+      'microsoft/logo_tasks_64px.png',
+      'microsoft/logo_tasks_96px.png',
+      'microsoft/logo_tasks_128px.png'
     ]
   }
 

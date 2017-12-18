@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { FlatButton } from 'material-ui'
+import { RaisedButton } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import commonStyles from '../CommonSettingStyles'
 import ExtensionListItem from './ExtensionListItem'
@@ -16,6 +16,9 @@ const styles = {
   },
   heading: {
     marginTop: 0
+  },
+  subheading: {
+    color: Colors.lightBlue500
   }
 }
 
@@ -109,8 +112,8 @@ export default class UpgradeExtensionList extends React.Component {
       <div style={{...styles.container, ...style}} {...passProps}>
         <h1 style={{...commonStyles.heading, ...styles.heading}}>More Extensions</h1>
         <div>
-          <p>These additional extensions are available when you purchase Wavebox</p>
-          <FlatButton
+          <p style={styles.subheading}>These additional extensions are available when you purchase Wavebox</p>
+          <RaisedButton
             primary
             label='Purchase Wavebox'
             onClick={this.handleOpenPro} />
@@ -119,7 +122,6 @@ export default class UpgradeExtensionList extends React.Component {
           return (
             <ExtensionListItem
               key={id}
-              showBetaTrial={false}
               extensionId={id}
               showRestart={showRestart} />
           )

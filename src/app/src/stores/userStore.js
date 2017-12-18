@@ -1,4 +1,6 @@
-import persistence from '../storage/userStorage'
+import userPersistence from '../storage/userStorage'
+import extensionStorePersistence from '../storage/extensionStoreStorage'
+import wirePersistence from '../storage/wireStorage'
 import { EventEmitter } from 'events'
 import {
   CLIENT_ID,
@@ -7,7 +9,8 @@ import {
   CLIENT_TOKEN,
   USER,
   USER_EPOCH,
-  EXTENSIONS
+  EXTENSIONS,
+  WIRE_CONFIG
 } from 'shared/Models/DeviceKeys'
 import User from 'shared/Models/User'
 
@@ -19,37 +22,53 @@ class UserStore extends EventEmitter {
   constructor () {
     super()
 
-    this.clientId = persistence.getJSONItem(CLIENT_ID)
-    this.clientToken = persistence.getJSONItem(CLIENT_TOKEN)
-    this.analyticsId = persistence.getJSONItem(ANALYTICS_ID)
-    this.createdTime = persistence.getJSONItem(CREATED_TIME)
-    this.extensions = persistence.getJSONItem(EXTENSIONS)
+    this.clientId = userPersistence.getJSONItem(CLIENT_ID)
+    this.clientToken = userPersistence.getJSONItem(CLIENT_TOKEN)
+    this.analyticsId = userPersistence.getJSONItem(ANALYTICS_ID)
+    this.createdTime = userPersistence.getJSONItem(CREATED_TIME)
+    this.extensions = extensionStorePersistence.getJSONItem(EXTENSIONS)
+    this.wireConfig = wirePersistence.getJSONItem(WIRE_CONFIG)
     this._user = {
       cached: null,
       dirty: true,
       placeholder: new User({}, new Date().getTime())
     }
 
-    persistence.on(`changed:${CLIENT_ID}`, () => {
-      this.clientId = persistence.getJSONItem(CLIENT_ID)
+    userPersistence.on(`changed:${CLIENT_ID}`, () => {
+      this.clientId = userPersistence.getJSONItem(CLIENT_ID)
+      this.emit('changed', { })
     })
-    persistence.on(`changed:${CLIENT_TOKEN}`, () => {
-      this.clientToken = persistence.getJSONItem(CLIENT_TOKEN)
+    userPersistence.on(`changed:${CLIENT_TOKEN}`, () => {
+      this.clientToken = userPersistence.getJSONItem(CLIENT_TOKEN)
+      this.emit('changed', { })
     })
-    persistence.on(`changed:${ANALYTICS_ID}`, () => {
-      this.analyticsId = persistence.getJSONItem(ANALYTICS_ID)
+    userPersistence.on(`changed:${ANALYTICS_ID}`, () => {
+      this.analyticsId = userPersistence.getJSONItem(ANALYTICS_ID)
+      this.emit('changed', { })
     })
-    persistence.on(`changed:${CREATED_TIME}`, () => {
-      this.createdTime = persistence.getJSONItem(CREATED_TIME)
+    userPersistence.on(`changed:${CREATED_TIME}`, () => {
+      this.createdTime = userPersistence.getJSONItem(CREATED_TIME)
+      this.emit('changed', { })
     })
-    persistence.on(`changed:${USER}`, () => {
+    userPersistence.on(`changed:${USER}`, () => {
       this._user.dirty = true
+      this.emit('changed', { })
     })
-    persistence.on(`changed:${USER_EPOCH}`, () => {
+    userPersistence.on(`changed:${USER_EPOCH}`, () => {
       this._user.dirty = true
+      this.emit('changed', { })
     })
-    persistence.on(`changed:${EXTENSIONS}`, () => {
-      this.extensions = persistence.getJSONItem(EXTENSIONS)
+    extensionStorePersistence.on(`changed:${EXTENSIONS}`, () => {
+      const prev = this.extensions
+      this.extensions = extensionStorePersistence.getJSONItem(EXTENSIONS)
+      this.emit('changed', { })
+      this.emit(`changed:${EXTENSIONS}`, { prev: prev, next: this.extensions })
+    })
+    wirePersistence.on(`changed:${WIRE_CONFIG}`, () => {
+      const prev = this.wireConfig
+      this.wireConfig = wirePersistence.getJSONItem(WIRE_CONFIG)
+      this.emit('changed', { })
+      this.emit(`changed:${WIRE_CONFIG}`, { prev: prev, next: this.wireConfig })
     })
   }
 
@@ -61,7 +80,7 @@ class UserStore extends EventEmitter {
 
   get user () {
     if (this._user.dirty) {
-      this._user.cached = new User(persistence.getJSONItem(USER), persistence.getJSONItem(USER_EPOCH))
+      this._user.cached = new User(userPersistence.getJSONItem(USER), userPersistence.getJSONItem(USER_EPOCH))
       this._user.dirty = false
     }
     return this._user.cached
@@ -93,6 +112,10 @@ class UserStore extends EventEmitter {
       return acc
     }, new Map())
   }
+
+  /* ****************************************************************************/
+  // Properties: Wire config
+  /* ****************************************************************************/
 }
 
 export default new UserStore()

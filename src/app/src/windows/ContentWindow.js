@@ -1,16 +1,15 @@
 import WaveboxWindow from './WaveboxWindow'
-import { shell, ipcMain, app, webContents } from 'electron'
+import { app, webContents } from 'electron'
 import { evtMain } from 'AppEvents'
 import querystring from 'querystring'
-import appWindowManager from 'R/appWindowManager'
 import {
   WB_WINDOW_RELOAD_WEBVIEW,
   WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
-  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD,
-  WB_NEW_WINDOW
+  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
 } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
+import {WindowOpeningHandler} from './WindowOpeningEngine'
 
 const SAFE_CONFIG_KEYS = [
   'width',
@@ -53,6 +52,8 @@ class ContentWindow extends WaveboxWindow {
   /* ****************************************************************************/
 
   get launchInfo () { return this[privLaunchInfo] }
+  get rootWebContentsHasContextMenu () { return false }
+  get allowsGuestClosing () { return true }
 
   /* ****************************************************************************/
   // Window lifecycle
@@ -116,37 +117,37 @@ class ContentWindow extends WaveboxWindow {
   * @param webPreferences={}: the web preferences for the hosted child
   */
   create (parentWindow, url, partition, browserWindowPreferences = {}, webPreferences = {}) {
+    // Save the launch info for later
     this[privLaunchInfo] = Object.freeze({
       partition: partition,
       browserWindowPreferences: browserWindowPreferences,
       webPreferences: webPreferences
     })
-    super.create(this.generateWindowUrl(url, partition), Object.assign(
-      {
-        minWidth: 300,
-        minHeight: 300,
-        fullscreenable: true,
-        title: 'Wavebox',
-        backgroundColor: '#FFFFFF',
-        show: true,
-        webPreferences: {
-          nodeIntegration: true,
-          plugins: true
-        }
-      },
-      this.generateWindowPosition(parentWindow),
-      this.safeBrowserWindowPreferences(browserWindowPreferences)
-    ))
 
-    // New window handling
-    ipcMain.on(WB_NEW_WINDOW, this.handleOpenNewWindow)
+    // Generate a composite of options
+    const options = {
+      minWidth: 300,
+      minHeight: 300,
+      fullscreenable: true,
+      title: 'Wavebox',
+      backgroundColor: '#FFFFFF',
+      show: true,
+      webPreferences: {
+        nodeIntegration: true,
+        plugins: true
+      },
+      ...this.generateWindowPosition(parentWindow),
+      ...this.safeBrowserWindowPreferences(browserWindowPreferences)
+    }
+
+    // Launch the new window
+    super.create(this.generateWindowUrl(url, partition), options)
 
     // remove built in listener so we can handle this on our own
     this.window.webContents.removeAllListeners('devtools-reload-page')
     this.window.webContents.on('devtools-reload-page', () => this.window.reload())
 
     // Listen on webcontents events
-    this.window.webContents.on('new-window', this.handleWebContentsNewWindow)
     this.window.webContents.on('will-attach-webview', this.handleWillAttachWebview)
     app.on('web-contents-created', this.handleAppWebContentsCreated)
 
@@ -157,7 +158,6 @@ class ContentWindow extends WaveboxWindow {
   * Handles destroy being called
   */
   destroy (evt) {
-    ipcMain.removeListener(WB_NEW_WINDOW, this.handleOpenNewWindow)
     app.removeListener('web-contents-created', this.handleAppWebContentsCreated)
     super.destroy(evt)
   }
@@ -189,15 +189,20 @@ class ContentWindow extends WaveboxWindow {
   * @param contents: the webcontents that did attach
   */
   handleAppWebContentsCreated = (evt, contents) => {
-    if (contents.getType() === 'webview' && contents.hostWebContents.id === this.window.webContents.id) {
-      this[privGuestWebContentsId] = contents.id
-      evtMain.emit(evtMain.WB_TAB_CREATED, this[privGuestWebContentsId])
-      contents.once('destroyed', () => {
-        const wcId = this[privGuestWebContentsId]
-        this[privGuestWebContentsId] = null
-        evtMain.emit(evtMain.WB_TAB_DESTROYED, wcId)
-      })
-    }
+    setImmediate(() => {
+      if (contents.isDestroyed()) { return }
+      if (contents.getType() === 'webview' && contents.hostWebContents.id === this.window.webContents.id) {
+        this[privGuestWebContentsId] = contents.id
+        evtMain.emit(evtMain.WB_TAB_CREATED, {}, this[privGuestWebContentsId])
+        contents.on('new-window', this.handleWebContentsNewWindow)
+        contents.on('will-navigate', this.handleWebViewWillNavigate)
+        contents.once('destroyed', () => {
+          const wcId = this[privGuestWebContentsId]
+          this[privGuestWebContentsId] = null
+          evtMain.emit(evtMain.WB_TAB_DESTROYED, {}, wcId)
+        })
+      }
+    })
   }
 
   /* ****************************************************************************/
@@ -206,10 +211,39 @@ class ContentWindow extends WaveboxWindow {
 
   /**
   * Handles the webcontents requesting a new window
+  * @param evt: the event that fired
+  * @param targetUrl: the webview url
+  * @param frameName: the name of the frame
+  * @param disposition: the frame disposition
+  * @param options: the browser window options
+  * @param additionalFeatures: The non-standard features
   */
-  handleWebContentsNewWindow = (evt, url) => {
-    evt.preventDefault()
-    shell.openExternal(url)
+  handleWebContentsNewWindow = (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
+    WindowOpeningHandler.handleOpenNewWindow(evt, {
+      targetUrl: targetUrl,
+      frameName: frameName,
+      disposition: disposition,
+      options: options,
+      additionalFeatures: additionalFeatures,
+      openingBrowserWindow: this.window,
+      ownerId: this.ownerId,
+      provisionalTargetUrl: undefined,
+      mailbox: undefined
+    })
+  }
+
+  /**
+  * Handles the webview navigating
+  * @param evt: the event that fired
+  * @param targetUrl: the url we're navigating to
+  */
+  handleWebViewWillNavigate = (evt, targetUrl) => {
+    WindowOpeningHandler.handleWillNavigate(evt, {
+      targetUrl: targetUrl,
+      openingBrowserWindow: this.window,
+      ownerId: this.ownerId,
+      mailbox: undefined
+    })
   }
 
   /* ****************************************************************************/
@@ -221,10 +255,9 @@ class ContentWindow extends WaveboxWindow {
   * @param evt: the event that fired
   * @param body: the arguments from the body
   */
-  handleOpenNewWindow = (evt, body) => {
+  handleIPCOpenNewWindow = (evt, body) => {
     if (evt.sender === this.window.webContents) {
       const contentWindow = new ContentWindow(this.ownerId)
-      appWindowManager.addContentWindow(contentWindow)
       contentWindow.create(this.window, body.url, this.launchInfo.partition, this.launchInfo.windowPreferences, this.launchInfo.webPreferences)
     }
   }

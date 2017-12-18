@@ -43,6 +43,7 @@ class CRExtensionRuntime {
     // Binding
     this.tabs.backgroundPageSender = this.backgroundPage.sendToWebContents
     this.windows.backgroundPageSender = this.backgroundPage.sendToWebContents
+    this.cookies.backgroundPageSender = this.backgroundPage.sendToWebContents
 
     // Runtime API
     ipcMain.on(`${CRX_RUNTIME_CONTENTSCRIPT_CONNECT_}${this.extension.id}`, this.handleContentScriptRuntimeConnect)
@@ -109,11 +110,14 @@ class CRExtensionRuntime {
   * @param url: the url to open with
   * @param parsedUrl: the parsed url
   * @param disposition: the open mode disposition
-  * @return true if the window should open as popout
+  * @return { mode, match, extension } the popout mode if the window should open as popout along with the extension model or false if the extension has no preference
   */
-  shouldOpenWindowAsPopout (webContentsId, url, parsedUrl, disposition) {
+  getWindowPopoutModePreference (webContentsId, url, parsedUrl, disposition) {
     if (this.connectedContentScripts.has(webContentsId)) {
-      return this.extension.manifest.shouldOpenWindowAsPopout(url, parsedUrl, disposition)
+      const preference = this.extension.manifest.getWindowPopoutModePreference(url, parsedUrl, disposition)
+      if (preference) {
+        return { mode: preference.mode, match: preference.match, extension: this.extension }
+      }
     }
     return false
   }

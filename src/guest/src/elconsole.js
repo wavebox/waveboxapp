@@ -1,32 +1,21 @@
-const { ipcRenderer } = require('electron')
-const req = require('./req')
-const {
-  WB_BROWSER_ELEVATED_LOG,
-  WB_BROWSER_ELEVATED_ERROR
-} = req.shared('ipcEvents')
+import { ELEVATED_LOG_PREFIX } from 'shared/constants'
 
 class ELConsole {
   /**
   * Logs the supplied arguments and also logs them to the parent frame
+  * @param message: the message to send
   */
-  log () {
-    ipcRenderer.sendToHost({
-      type: WB_BROWSER_ELEVATED_LOG,
-      messages: Array.from(arguments)
-    })
-    console.log.apply(this, Array.from(arguments))
+  log (message) {
+    console.log(`${ELEVATED_LOG_PREFIX}${message}`)
   }
 
   /**
   * Logs the supplied arguments as errors and also logs them to the parent frame
+  * @param message: the message to send
   */
-  error () {
-    ipcRenderer.sendToHost({
-      type: WB_BROWSER_ELEVATED_ERROR,
-      messages: Array.from(arguments)
-    })
-    console.error.apply(this, Array.from(arguments))
+  error (message) {
+    console.error(`${ELEVATED_LOG_PREFIX}${message}`)
   }
 }
 
-module.exports = new ELConsole()
+export default new ELConsole()

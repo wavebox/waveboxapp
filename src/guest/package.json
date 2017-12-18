@@ -7,13 +7,16 @@
   "description": "Guest code for Wavebox",
   "dependencies": {
     "appdirectory": "0.1.0",
-    "dictionary-en-us": "2.0.0",
     "escape-html": "1.0.3",
-    "fs-extra": "4.0.2",
-    "nodehun": "2.0.11",
+    "fs-extra": "5.0.0",
+    "url-pattern": "1.0.3",
     "uuid": "3.1.0"
   },
   "devDependencies": {
-    "standard": "10.0.3"
+    "standard": "10.0.3",
+    "babel-eslint": "8.0.3"
+  },
+  "standard": {
+    "parser": "babel-eslint"
   }
 }

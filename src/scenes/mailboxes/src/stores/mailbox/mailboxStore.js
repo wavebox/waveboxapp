@@ -24,6 +24,8 @@ import { SlackMailbox } from 'shared/Models/Accounts/Slack'
 import { TrelloMailbox } from 'shared/Models/Accounts/Trello'
 import { MicrosoftMailbox } from 'shared/Models/Accounts/Microsoft'
 import { GenericMailbox } from 'shared/Models/Accounts/Generic'
+import { ContainerMailbox } from 'shared/Models/Accounts/Container'
+import Resolver from 'Runtime/Resolver'
 import {
   WB_AUTH_GOOGLE,
   WB_AUTH_MICROSOFT,
@@ -31,7 +33,8 @@ import {
   WB_AUTH_TRELLO,
   WB_MAILBOX_STORAGE_CHANGE_ACTIVE,
   WB_PREPARE_MAILBOX_SESSION,
-  WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT
+  WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT,
+  WB_NEW_WINDOW
 } from 'shared/ipcEvents'
 import { ipcRenderer, remote } from 'electron'
 
@@ -222,10 +225,9 @@ class MailboxStore {
       } else if (mailbox.hasServiceLocalAvatar) {
         return this.getAvatar(mailbox.serviceLocalAvatarId)
       } else if (!mailbox.avatarCharacterDisplay) {
-        if (mailbox.humanizedLogo) {
-          return '../../' + mailbox.humanizedLogo
-        } else if (mailbox.serviceForType(CoreMailbox.SERVICE_TYPES.DEFAULT).humanizedLogo) {
-          return '../../' + mailbox.serviceForType(CoreMailbox.SERVICE_TYPES.DEFAULT).humanizedLogo
+        const logoPath = mailbox.humanizedLogo || mailbox.serviceForType(CoreMailbox.SERVICE_TYPES.DEFAULT).humanizedLogo
+        if (logoPath) {
+          return Resolver.image(logoPath)
         }
       }
     }
@@ -288,10 +290,11 @@ class MailboxStore {
     /**
     * @param mailboxId: the id of the mailbox
     * @param serviceType: the type of service
+    * @param userState=autoget: the user state if available
     * @return true if the mailbox is sleeping
     */
-    this.isSleeping = (mailboxId, serviceType) => {
-      if (!userStore.getState().user.hasSleepable) { return false }
+    this.isSleeping = (mailboxId, serviceType, userState = userStore.getState()) => {
+      if (!userState.user.hasSleepable) { return false }
 
       // Check we support sleeping
       const mailbox = this.getMailbox(mailboxId)
@@ -323,6 +326,37 @@ class MailboxStore {
         return !this.isSleeping(mailboxId, serviceType)
       })
       return !awake
+    }
+
+    /**
+    * Checks to see if we should show a sleeping notification and returns some
+    * info if the mailbox is sleeping
+    * @param mailboxId: the id of the mailbox
+    * @param serviceType: the type of service
+    * @return some sleep info {mailbox,service,closeMetrics} or undefined if there is no notification to show
+    */
+    this.getSleepingNotificationInfo = (mailboxId, serviceType) => {
+      if (serviceType !== CoreMailbox.SERVICE_TYPES.DEFAULT) { return } // Only support default right now
+
+      const userState = userStore.getState()
+      if (userState.wireConfigExperiments().showDefaultServiceSleepNotifications !== true) { return }
+
+      const mailbox = this.getMailbox(mailboxId)
+      const service = mailbox ? mailbox.serviceForType(serviceType) : undefined
+      if (!service || service.hasSeenSleepableWizard) { return }
+
+      // As well as checking if we are sleeping, also check we have an entry in the
+      // sleep queue. This indicates were not sleeping from launch
+      if (!this.isSleeping(mailboxId, serviceType, userState)) { return undefined }
+      const sleepInfo = this.sleepingQueue.get(`${mailboxId}:${serviceType}`)
+      if (!sleepInfo) { return undefined }
+
+      // Build the return info
+      return {
+        mailbox: mailbox,
+        service: service,
+        closeMetrics: sleepInfo.closeMetrics
+      }
     }
 
     /* ****************************************/
@@ -490,6 +524,18 @@ class MailboxStore {
       return this.getWebcontentTabId(this.activeMailboxId(), this.activeMailboxService())
     }
 
+    /**
+    * @param mailboxId: the id of the mailbox
+    * @param serviceType: the type of service
+    * @return the metrics for the web contents or undefined if not found
+    */
+    this.getWebcontentMetrics = (mailboxId, serviceType) => {
+      const webContentsId = this.getWebcontentTabId(mailboxId, serviceType)
+      const wc = webContentsId !== undefined ? remote.webContents.fromId(webContentsId) : undefined
+      const webContentsPid = wc ? wc.getOSProcessId() : -1
+      return remote.app.getAppMetrics().find((metric) => metric.pid === webContentsPid)
+    }
+
     /* ****************************************/
     // Listeners
     /* ****************************************/
@@ -509,6 +555,7 @@ class MailboxStore {
       handleAuthenticateOutlookMailbox: actions.AUTHENTICATE_OUTLOOK_MAILBOX,
       handleAuthenticateOffice365Mailbox: actions.AUTHENTICATE_OFFICE365MAILBOX,
       handleAuthenticateGenericMailbox: actions.AUTHENTICATE_GENERIC_MAILBOX,
+      handleAuthenticateContainerMailbox: actions.AUTHENTICATE_CONTAINER_MAILBOX,
 
       // Mailbox re-auth
       handleReauthenticateMailbox: actions.REAUTHENTICATE_MAILBOX,
@@ -578,6 +625,9 @@ class MailboxStore {
 
       // Sync
       handleFullSyncMailbox: actions.FULL_SYNC_MAILBOX,
+
+      // Containers
+      handleContainersUpdated: actions.CONTAINERS_UPDATED,
 
       // Misc
       handleReloadActiveMailbox: actions.RELOAD_ACTIVE_MAILBOX,
@@ -677,7 +727,7 @@ class MailboxStore {
     ipcRenderer.send(WB_AUTH_GOOGLE, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: provisionalJS
+      provisional: GoogleMailbox.applyExperimentsToProvisionalJS(provisionalJS, userStore.getState().wireConfigExperiments())
     })
   }
 
@@ -687,7 +737,7 @@ class MailboxStore {
     ipcRenderer.send(WB_AUTH_GOOGLE, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: provisionalJS
+      provisional: GoogleMailbox.applyExperimentsToProvisionalJS(provisionalJS, userStore.getState().wireConfigExperiments())
     })
   }
 
@@ -696,7 +746,7 @@ class MailboxStore {
     window.location.hash = `/mailbox_wizard/${SlackMailbox.type}/_/1/${provisionalId}`
     ipcRenderer.send(WB_AUTH_SLACK, {
       id: provisionalId,
-      provisional: provisionalJS
+      provisional: SlackMailbox.applyExperimentsToProvisionalJS(provisionalJS, userStore.getState().wireConfigExperiments())
     })
   }
 
@@ -706,7 +756,7 @@ class MailboxStore {
     ipcRenderer.send(WB_AUTH_TRELLO, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: provisionalJS
+      provisional: TrelloMailbox.applyExperimentsToProvisionalJS(provisionalJS, userStore.getState().wireConfigExperiments())
     })
   }
 
@@ -716,7 +766,7 @@ class MailboxStore {
     ipcRenderer.send(WB_AUTH_MICROSOFT, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: provisionalJS,
+      provisional: MicrosoftMailbox.applyExperimentsToProvisionalJS(provisionalJS, userStore.getState().wireConfigExperiments()),
       additionalPermissions: additionalPermissions
     })
   }
@@ -727,15 +777,53 @@ class MailboxStore {
     ipcRenderer.send(WB_AUTH_MICROSOFT, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: provisionalJS,
+      provisional: MicrosoftMailbox.applyExperimentsToProvisionalJS(provisionalJS, userStore.getState().wireConfigExperiments()),
       additionalPermissions: additionalPermissions
     })
   }
 
   handleAuthenticateGenericMailbox ({ provisionalId, provisionalJS, writePermission }) {
     this.preventDefault()
-    actions.create.defer(provisionalId, provisionalJS)
+    actions.create.defer(
+      provisionalId,
+      GenericMailbox.applyExperimentsToProvisionalJS(provisionalJS, userStore.getState().wireConfigExperiments())
+    )
     this._finalizeCreateAccount(`/mailbox_wizard/${GenericMailbox.type}/_/2/${provisionalId}`)
+  }
+
+  handleAuthenticateContainerMailbox ({ containerId, provisionalId, provisionalJS, writePermission }) {
+    this.preventDefault()
+
+    const container = userStore.getState().getContainer(containerId)
+    if (!container) {
+      console.error('[AUTH ERR]', `Unable to authenticate mailbox with id "${provisionalId}" as containerId "${containerId}" is unknown`)
+      return
+    }
+
+    provisionalJS.container = container.cloneForMailbox()
+    actions.create.defer(
+      provisionalId,
+      ContainerMailbox.applyExperimentsToProvisionalJS(provisionalJS, userStore.getState().wireConfigExperiments())
+    )
+    this._finalizeCreateAccount(`/mailbox_wizard/${ContainerMailbox.type}/${containerId}/2/${provisionalId}`)
+
+    // Open post-install
+    if (container.hasPostInstallUrl) {
+      setTimeout(() => {
+        ipcRenderer.send(WB_NEW_WINDOW, {
+          mailboxId: provisionalId,
+          serviceType: CoreMailbox.SERVICE_TYPES.DEFAULT,
+          url: container.postInstallUrl,
+          partition: `persist:${provisionalJS}`,
+          windowPreferences: {
+            webPreferences: undefined
+          },
+          webPreferences: {
+            partition: `persist:${provisionalId}`
+          }
+        })
+      }, container.postInstallUrlDelay)
+    }
   }
 
   /* **************************************************************************/
@@ -1445,7 +1533,11 @@ class MailboxStore {
 
       if (count === 0) {
         this.clearSleep(mailboxId, serviceType)
-        this.sleepingQueue.set(key, { sleeping: true, timer: null })
+        this.sleepingQueue.set(key, {
+          sleeping: true,
+          timer: null,
+          closeMetrics: this.getWebcontentMetrics(mailboxId, serviceType)
+        })
         this.emitChange()
       } else {
         this.clearSleep(mailboxId, serviceType)
@@ -1544,6 +1636,27 @@ class MailboxStore {
       microsoftActions.syncMailboxMail.defer(id)
       this.preventDefault() // No change in this store
     }
+  }
+
+  /* **************************************************************************/
+  // Handlers : Containers
+  /* **************************************************************************/
+
+  handleContainersUpdated ({ containers }) {
+    if (Object.keys(containers).length === 0) { this.preventDefault(); return }
+
+    // Get the mailboxes that need to be updated
+    const mailboxes = this.getMailboxesOfType(CoreMailbox.MAILBOX_TYPES.CONTAINER).filter((mailbox) => {
+      return containers[mailbox.containerId] !== undefined
+    })
+    if (mailboxes.length === 0) { this.preventDefault(); return }
+
+    mailboxes.forEach((mailbox) => {
+      const nextMailbox = mailbox.changeData({
+        container: containers[mailbox.containerId].cloneForMailbox()
+      })
+      this.saveMailbox(mailbox.id, nextMailbox)
+    })
   }
 
   /* **************************************************************************/

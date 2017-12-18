@@ -10,14 +10,15 @@ class TrelloMailbox extends CoreMailbox {
 
   static get humanizedLogos () {
     return [
-      'images/trello/logo_32px.png',
-      'images/trello/logo_48px.png',
-      'images/trello/logo_64px.png',
-      'images/trello/logo_128px.png',
-      'images/trello/logo_600px.png'
+      'trello/logo_32px.png',
+      'trello/logo_48px.png',
+      'trello/logo_64px.png',
+      'trello/logo_96px.png',
+      'trello/logo_128px.png',
+      'trello/logo_600px.png'
     ]
   }
-  static get humanizedVectorLogo () { return 'images/trello/logo_vector.svg' }
+  static get humanizedVectorLogo () { return 'trello/logo_vector.svg' }
   static get humanizedType () { return 'Trello' }
   static get defaultColor () { return MailboxColors.TRELLO }
 

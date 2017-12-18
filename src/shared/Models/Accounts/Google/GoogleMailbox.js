@@ -2,6 +2,7 @@ const CoreMailbox = require('../CoreMailbox')
 const GoogleDefaultService = require('./GoogleDefaultService')
 const MailboxColors = require('../MailboxColors')
 const ServiceFactory = require('../ServiceFactory')
+const url = require('url')
 
 class GoogleMailbox extends CoreMailbox {
   /* **************************************************************************/
@@ -55,26 +56,28 @@ class GoogleMailbox extends CoreMailbox {
   static get humanizedType () { return 'Google' }
   static get humanizedGmailLogos () {
     return [
-      'images/google/logo_gmail_32px.png',
-      'images/google/logo_gmail_48px.png',
-      'images/google/logo_gmail_64px.png',
-      'images/google/logo_gmail_128px.png',
-      'images/google/logo_gmail_512px.png'
+      'google/logo_gmail_32px.png',
+      'google/logo_gmail_48px.png',
+      'google/logo_gmail_64px.png',
+      'google/logo_gmail_96px.png',
+      'google/logo_gmail_128px.png',
+      'google/logo_gmail_512px.png'
     ]
   }
   static get humanizedGmailLogo () { return this.humanizedGmailLogos[this.humanizedGmailLogos.length - 1] }
-  static get humanizedGmailVectorLogo () { return 'images/google/logo_gmail_vector.svg' }
+  static get humanizedGmailVectorLogo () { return 'google/logo_gmail_vector.svg' }
   static get humanizedGinboxLogos () {
     return [
-      'images/google/logo_ginbox_32px.png',
-      'images/google/logo_ginbox_48px.png',
-      'images/google/logo_ginbox_64px.png',
-      'images/google/logo_ginbox_128px.png',
-      'images/google/logo_ginbox_512px.png'
+      'google/logo_ginbox_32px.png',
+      'google/logo_ginbox_48px.png',
+      'google/logo_ginbox_64px.png',
+      'google/logo_ginbox_96px.png',
+      'google/logo_ginbox_128px.png',
+      'google/logo_ginbox_512px.png'
     ]
   }
   static get humanizedGinboxLogo () { return this.humanizedGinboxLogos[this.humanizedGinboxLogos.length - 1] }
-  static get humanizedGinboxVectorLogo () { return 'images/google/logo_ginbox_vector.png' }
+  static get humanizedGinboxVectorLogo () { return 'google/logo_ginbox_vector.png' }
 
   /**
   * Gets an icon that is closest to the given size
@@ -210,6 +213,29 @@ class GoogleMailbox extends CoreMailbox {
 
   get email () { return this.__data__.email }
   get displayName () { return this.email }
+
+  /* **************************************************************************/
+  // Behaviour
+  /* **************************************************************************/
+
+  /**
+  * Gets a window open mode override for a given action
+  * @param currentUrl: the url the page is currently on
+  * @param targetUrl: the url we're trying to open
+  * @param provisionalTargetUrl: the target url the user is hovering over
+  * @param disposition: the new window disposition
+  * @return undefined for no override, or unsanitized WINDOW_OPEN_MODES if there is an override
+  */
+  getWindowOpenModeOverrides (currentUrl, targetUrl, provisionalTargetUrl, disposition) {
+    const parsedTargetUrl = url.parse(targetUrl)
+    if (parsedTargetUrl.hostname === 'docs.google.com' || parsedTargetUrl.hostname === 'drive.google.com') {
+      if (this.openDriveLinksWithDefaultOpener) {
+        return 'DEFAULT_IMPORTANT'
+      }
+    }
+
+    return super.getWindowOpenModeOverrides(currentUrl, targetUrl, provisionalTargetUrl, disposition)
+  }
 }
 
 module.exports = GoogleMailbox

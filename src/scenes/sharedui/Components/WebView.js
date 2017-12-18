@@ -1,10 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {
-  WB_BROWSER_ELEVATED_LOG,
-  WB_BROWSER_ELEVATED_ERROR
-} from 'shared/ipcEvents'
+import { ELEVATED_LOG_PREFIX } from 'shared/constants'
 import electron from 'electron'
 
 const camelCase = function (name) {
@@ -173,7 +170,7 @@ export default class WebView extends React.Component {
       })
     })
 
-    // Wait for the DOM to pain before running this
+    // Wait for the DOM to paint before running this
     let webContentsAttachedAttempts = 0
     this.webContentsAttachedInterval = setInterval(() => {
       webContentsAttachedAttempts++
@@ -215,13 +212,30 @@ export default class WebView extends React.Component {
   * @param evt: the event that fired
   */
   dispatchWebViewEvent (name, evt) {
-    if (this.props[camelCase(name)]) {
-      if (name === 'ipc-message') {
-        const didSiphon = this.siphonIPCMessage(evt)
-        if (didSiphon) { return }
+    const ccName = camelCase(name)
+    if (name === 'ipc-message') {
+      const didSiphon = this.siphonIPCMessage(evt)
+      if (!didSiphon) {
+        if (this.props[ccName]) { this.props[ccName](evt) }
       }
-
-      this.props[camelCase(name)](evt)
+    } else if (name === 'console-message') {
+      if (evt.message.startsWith(ELEVATED_LOG_PREFIX)) {
+        const logArgs = [
+          '[ELEVATED WEBVIEW LOG]',
+          this.getWebviewNode(),
+          `line=${evt.line}`,
+          `sourceId=${evt.sourceId}`,
+          evt.message
+        ]
+        switch (evt.level) {
+          case 1: console.warn(...logArgs); break
+          case 2: console.error(...logArgs); break
+          default: console.log(...logArgs); break
+        }
+      }
+      if (this.props[ccName]) { this.props[ccName](evt) }
+    } else {
+      if (this.props[ccName]) { this.props[ccName](evt) }
     }
   }
 
@@ -239,12 +253,6 @@ export default class WebView extends React.Component {
         this.ipcPromises[evt.channel.type].resolve(evt.channel.data)
         delete this.ipcPromises[evt.channel.type]
       }
-      return true
-    } else if (evt.channel.type === WB_BROWSER_ELEVATED_LOG) {
-      console.log.apply(this, ['[ELEVATED LOG]', this.getWebviewNode()].concat(evt.channel.messages))
-      return true
-    } else if (evt.channel.type === WB_BROWSER_ELEVATED_ERROR) {
-      console.error.apply(this, ['[ELEVATED ERROR]', this.getWebviewNode()].concat(evt.channel.messages))
       return true
     } else {
       return false

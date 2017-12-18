@@ -1,6 +1,7 @@
 import { ipcMain, webContents } from 'electron'
 import CRDispatchManager from '../CRDispatchManager'
 import CRExtensionUISubscriber from '../CRExtensionUISubscriber'
+import CRExtensionTab from './CRExtensionTab'
 import {
   CRX_BROWSER_ACTION_SET_TITLE_,
   CRX_BROWSER_ACTION_FETCH_TITLE_,
@@ -25,6 +26,8 @@ import {
 import {
   CRExtensionRTBrowserAction
 } from 'shared/Models/CRExtensionRT'
+import ContentWindow from 'windows/ContentWindow'
+import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
 
 class CRExtensionBrowserAction {
   /* ****************************************************************************/
@@ -271,9 +274,16 @@ class CRExtensionBrowserAction {
   * @param tabId: the id of the tab
   */
   handleClick = (evt, tabId) => {
-    webContents.getAllWebContents().forEach((targetWebcontents) => {
-      targetWebcontents.send(`${CRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, tabId)
-    })
+    if (this.extension.manifest.hasWaveboxBrowserActionOpenUrl) {
+      const contentWindow = new ContentWindow()
+      const partitionId = CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
+      contentWindow.create(undefined, this.extension.manifest.waveboxBrowserActionOpenUrl, partitionId)
+    } else {
+      const tabInfo = CRExtensionTab.dataFromWebContentsId(this.extension, tabId)
+      webContents.getAllWebContents().forEach((targetWebcontents) => {
+        targetWebcontents.send(`${CRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, tabInfo)
+      })
+    }
   }
 }
 

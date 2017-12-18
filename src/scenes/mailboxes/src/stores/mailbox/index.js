@@ -18,6 +18,8 @@ import TrelloDefaultServiceReducer from './TrelloDefaultServiceReducer'
 import MicrosoftMailboxReducer from './MicrosoftMailboxReducer'
 import MicrosoftDefaultServiceReducer from './MicrosoftDefaultServiceReducer'
 import MicrosoftStorageServiceReducer from './MicrosoftStorageServiceReducer'
+import ContainerDefaultServiceReducer from './ContainerDefaultServiceReducer'
+import ContainerMailboxReducer from './ContainerMailboxReducer'
 
 export {
   mailboxActions,
@@ -39,5 +41,7 @@ export {
   TrelloDefaultServiceReducer,
   MicrosoftMailboxReducer,
   MicrosoftDefaultServiceReducer,
-  MicrosoftStorageServiceReducer
+  MicrosoftStorageServiceReducer,
+  ContainerDefaultServiceReducer,
+  ContainerMailboxReducer
 }

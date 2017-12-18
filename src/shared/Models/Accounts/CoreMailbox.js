@@ -35,6 +35,7 @@ class CoreMailbox extends Model {
   static get defaultServiceTypes () { return [SERVICE_TYPES.DEFAULT] }
   static get supportsAdditionalServiceTypes () { return this.supportedServiceTypes.length > 1 }
   static get defaultColor () { return undefined }
+  static get isIntegrated () { return true }
 
   /* **************************************************************************/
   // Class : Humanized
@@ -110,6 +111,23 @@ class CoreMailbox extends Model {
   }
 
   /**
+  * Applies any experiments to the provisional js
+  * @param provisionalJS: the javascript to apply to
+  * @param experiments: the experiments dictionary to use
+  * @return a copy of the javascript updated
+  */
+  static applyExperimentsToProvisionalJS (provisionalJS, experiments) {
+    const cpy = JSON.parse(JSON.stringify(provisionalJS))
+
+    if (experiments.autoSleepIntegratedApp === true && this.isIntegrated) {
+      const defaultService = (cpy.services || []).find((s) => s.type === SERVICE_TYPES.DEFAULT)
+      if (defaultService) { defaultService.sleepable = true } // There should always be a default service, so don't create one
+    }
+
+    return cpy
+  }
+
+  /**
   * Modifies raw mailbox json for export
   * @param id: the id of the mailbox
   * @param mailboxJS: the js mailbox object
@@ -126,10 +144,16 @@ class CoreMailbox extends Model {
   /**
   * @param id: the id ofthe tab
   * @param data: the data of the tab
+  * @param expando={}: additional items to write into this on creatiton time
   */
-  constructor (id, data) {
+  constructor (id, data, expando = {}) {
     super(data)
     this.__id__ = id
+
+    // Write expando properties
+    Object.keys(expando).forEach((k) => {
+      this[k] = expando[k]
+    })
 
     // If we don't have default model data, inject it into the json
     if (!this.__data__.services || !this.__data__.services.length) {
@@ -152,7 +176,13 @@ class CoreMailbox extends Model {
   * @return a modelled version of the service
   */
   modelizeService (serviceData) {
-    return ServiceFactory.modelize(this.id, this.type, serviceData, undefined, this.buildMailboxToServiceMigrationData(serviceData.type))
+    return ServiceFactory.modelize(
+      this.id,
+      this.type,
+      serviceData,
+      undefined,
+      this.buildMailboxToServiceMigrationData(serviceData.type)
+    )
   }
 
   /**
@@ -186,6 +216,7 @@ class CoreMailbox extends Model {
   get type () { return this.constructor.type }
   get partition () { return this.id }
   get artificiallyPersistCookies () { return this._value_('artificiallyPersistCookies', false) }
+  get isIntegrated () { return this.constructor.isIntegrated }
 
   /* **************************************************************************/
   // Properties: Window opening
@@ -226,6 +257,7 @@ class CoreMailbox extends Model {
     return this.enabledServiceTypes.filter((serviceType) => serviceType !== SERVICE_TYPES.DEFAULT)
   }
   get defaultService () { return this.serviceForType(SERVICE_TYPES.DEFAULT) }
+  get additionalServices () { return this.additionalServiceTypes.map((type) => this.serviceForType(type)) }
 
   /**
   * @param type: the type of service
@@ -271,6 +303,13 @@ class CoreMailbox extends Model {
 
   get isAuthenticationInvalid () { return false }
   get hasAuth () { return true }
+
+  /* **************************************************************************/
+  // Properties : Useragent
+  /* **************************************************************************/
+
+  get useCustomUserAgent () { return false }
+  get customUserAgentString () { return '' }
 
   /* **************************************************************************/
   // Properties : Provider Details & counts etc
@@ -348,6 +387,22 @@ class CoreMailbox extends Model {
         return acc
       }
     }, [])
+  }
+
+  /* **************************************************************************/
+  // Behaviour
+  /* **************************************************************************/
+
+  /**
+  * Gets a window open mode override for a given action
+  * @param currentUrl: the url the page is currently on
+  * @param targetUrl: the url we're trying to open
+  * @param provisionalTargetUrl: the target url the user is hovering over
+  * @param disposition: the new window disposition
+  * @return undefined for no override, or unsanitized WINDOW_OPEN_MODES if there is an override
+  */
+  getWindowOpenModeOverrides (currentUrl, targetUrl, provisionalTargetUrl, disposition) {
+    return undefined
   }
 }
 

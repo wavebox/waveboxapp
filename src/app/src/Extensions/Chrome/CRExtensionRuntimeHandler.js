@@ -4,8 +4,10 @@ import url from 'url'
 import CRDispatchManager from './CRDispatchManager'
 import CRExtensionRuntime from './CRExtensionRuntime'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
+import {EventEmitter} from 'events'
 import {
-  CR_EXTENSION_PROTOCOL
+  CR_EXTENSION_PROTOCOL,
+  CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX
 } from 'shared/extensionApis'
 import {
   CRX_RUNTIME_SENDMESSAGE,
@@ -18,30 +20,49 @@ import {
 } from 'shared/crExtensionIpcEvents'
 import {
   WBECRX_GET_EXTENSION_RUNTIME_DATA,
-  WBECRX_GET_EXTENSION_RUNTIME_CONTEXT_MENU_DATA,
   WBECRX_LAUNCH_OPTIONS,
-  WBECRX_INSPECT_BACKGROUND
+  WBECRX_INSPECT_BACKGROUND,
+  WBECRX_CLEAR_ALL_BROWSER_SESSIONS
 } from 'shared/ipcEvents'
 import { CSPParser, CSPBuilder } from './CSP'
 import pathTool from 'shared/pathTool'
+import CRExtensionTab from './CRExtensionRuntime/CRExtensionTab'
 
-class CRExtensionRuntimeHandler {
+const privNextPortId = Symbol('privNextPortId')
+const privOpenXHRRequests = Symbol('privOpenXHRRequests')
+
+class CRExtensionRuntimeHandler extends EventEmitter {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
   constructor () {
+    super()
     this.runtimes = new Map()
-    this.nextPortId = 0
+    this[privNextPortId] = 0
+    this[privOpenXHRRequests] = new Map()
 
     CRDispatchManager.registerHandler(CRX_RUNTIME_SENDMESSAGE, this._handleRuntimeSendmessage)
     CRDispatchManager.registerHandler(CRX_TABS_SENDMESSAGE, this._handleTabsSendmessage)
     ipcMain.on(WBECRX_GET_EXTENSION_RUNTIME_DATA, this._handleGetRuntimeData)
-    ipcMain.on(WBECRX_GET_EXTENSION_RUNTIME_CONTEXT_MENU_DATA, this._handleGetRuntimeContextMenuData)
     ipcMain.on(WBECRX_LAUNCH_OPTIONS, this._handleOpenOptionsPage)
     ipcMain.on(WBECRX_INSPECT_BACKGROUND, this._handleInspectBackground)
     ipcMain.on(CRX_RUNTIME_HAS_RESPONDER, this._handleHasRuntimeResponder)
     ipcMain.on(CRX_PORT_CONNECT_SYNC, this._handlePortConnect)
+    ipcMain.on(WBECRX_CLEAR_ALL_BROWSER_SESSIONS, this._handleClearAllBrowserSessions)
+  }
+
+  /* ****************************************************************************/
+  // Properties
+  /* ****************************************************************************/
+
+  get allRuntimes () { return Array.from(this.runtimes.values()) }
+  get inUsePartitions () {
+    return this.allRuntimes
+      .map((runtime) => {
+        return runtime.extension.manifest.manifest.hasBackground ? runtime.backgroundPage.partitionId : undefined
+      })
+      .filter((p) => !!p)
   }
 
   /* ****************************************************************************/
@@ -55,6 +76,7 @@ class CRExtensionRuntimeHandler {
   startExtension (extension) {
     if (this.runtimes.has(extension.id)) { return }
     this.runtimes.set(extension.id, new CRExtensionRuntime(extension))
+    this.emit('extension-started', extension.id, extension, this.runtimes.get(extension.id))
   }
 
   /**
@@ -77,6 +99,7 @@ class CRExtensionRuntimeHandler {
     if (!this.runtimes.has(extension.id)) { return }
     this.runtimes.get(extension.id).destroy()
     this.runtimes.delete(extension.id)
+    this.emit('extension-stopped', extension.id, extension)
   }
 
   /* ****************************************************************************/
@@ -133,7 +156,15 @@ class CRExtensionRuntimeHandler {
     CRDispatchManager.requestAllOnTarget(
       runtime.backgroundPage.webContents,
       `${CRX_RUNTIME_ONMESSAGE_}${extensionId}`,
-      [ extensionId, evt.sender.id, message ],
+      [
+        extensionId,
+        {
+          tabId: evt.sender.id,
+          tab: CRExtensionTab.dataFromWebContents(runtime.extension, evt.sender),
+          url: evt.sender.getURL()
+        },
+        message
+      ],
       (evt, err, response) => {
         responseCallback(err, response)
       }
@@ -147,6 +178,11 @@ class CRExtensionRuntimeHandler {
   * @param responseCallback: callback to execute with response
   */
   _handleTabsSendmessage = (evt, [extensionId, tabId, isBackgroundPage, message], responseCallback) => {
+    const runtime = this.runtimes.get(extensionId)
+    if (!runtime) {
+      responseCallback(new Error(`Could not find extension ${extensionId}`))
+      return
+    }
     const targetWebcontents = webContents.fromId(tabId)
     if (!targetWebcontents) {
       responseCallback(new Error(`Could not find tab ${tabId}`))
@@ -156,7 +192,15 @@ class CRExtensionRuntimeHandler {
     CRDispatchManager.requestAllOnTarget(
       targetWebcontents,
       `${CRX_RUNTIME_ONMESSAGE_}${extensionId}`,
-      [ extensionId, isBackgroundPage ? null : evt.sender.id, message ],
+      [
+        extensionId,
+        {
+          tabId: evt.sender.id,
+          tab: isBackgroundPage ? null : CRExtensionTab.dataFromWebContents(runtime.extension, evt.sender),
+          url: isBackgroundPage ? undefined : evt.sender.getURL()
+        },
+        message
+      ],
       (evt, err, response) => {
         responseCallback(err, response)
       }
@@ -188,22 +232,34 @@ class CRExtensionRuntimeHandler {
       evt.returnValue = null
       return
     }
-    const backgroundContents = runtime.backgroundPage.webContents
 
-    const portId = this.nextPortId++
+    const backgroundContents = runtime.backgroundPage.webContents
+    const portId = this[privNextPortId]++
     evt.returnValue = {
       portId: portId,
-      tabId: backgroundContents.id
+      connectedParty: {
+        tabId: backgroundContents.id
+      }
     }
 
     // Prepare for teardown
     evt.sender.once('render-view-deleted', () => {
-      if (backgroundContents.isDestroyed()) { return }
+      const backgroundContents = runtime.backgroundPage.webContents
+      if (!backgroundContents || backgroundContents.isDestroyed()) { return }
       backgroundContents.sendToAll(`${CRX_PORT_DISCONNECTED_}${portId}`)
     })
 
     // Emit the connect event
-    backgroundContents.sendToAll(`${CRX_PORT_CONNECTED_}${extensionId}`, evt.sender.id, portId, connectInfo)
+    runtime.backgroundPage.webContents.sendToAll(
+      `${CRX_PORT_CONNECTED_}${extensionId}`,
+      portId,
+      {
+        tabId: evt.sender.id,
+        tab: CRExtensionTab.dataFromWebContents(runtime.extension, evt.sender),
+        url: evt.sender.getURL()
+      },
+      connectInfo
+    )
   }
 
   /* ****************************************************************************/
@@ -225,15 +281,14 @@ class CRExtensionRuntimeHandler {
 
   /**
   * Gets the context menu runtime data in a synchronous way
-  * @param evt: the event that fired
+  * @return an object-map of UI data for rendering the context menu
   */
-  _handleGetRuntimeContextMenuData = (evt) => {
-    const data = Array.from(this.runtimes.keys())
+  getRuntimeContextMenuData () {
+    return Array.from(this.runtimes.keys())
       .reduce((acc, key) => {
         acc[key] = this.runtimes.get(key).buildUIRuntimeContextMenuData()
         return acc
       }, {})
-    evt.returnValue = data
   }
 
   /* ****************************************************************************/
@@ -263,6 +318,19 @@ class CRExtensionRuntimeHandler {
   }
 
   /* ****************************************************************************/
+  // Data Manaement
+  /* ****************************************************************************/
+
+  /**
+  * Clears all the browser sessions
+  */
+  _handleClearAllBrowserSessions = () => {
+    Array.from(this.runtimes.values()).forEach((runtime) => {
+      runtime.backgroundPage.clearBrowserSession()
+    })
+  }
+
+  /* ****************************************************************************/
   // Window open
   /* ****************************************************************************/
 
@@ -272,15 +340,31 @@ class CRExtensionRuntimeHandler {
   * @param url: the url to open with
   * @param parsedUrl: the parsed url
   * @param disposition: the open mode disposition
-  * @return the mode to open in, or false if nothing matched
+  * @return {mode, extension} to open in, or false if nothing matched
   */
-  shouldOpenWindowAsPopout (webContentsId, url, parsedUrl, disposition) {
+  getWindowPopoutModePreference (webContentsId, url, parsedUrl, disposition) {
     const runtimes = Array.from(this.runtimes.values())
     for (let i = 0; i < runtimes.length; i++) {
-      const mode = runtimes[i].shouldOpenWindowAsPopout(webContentsId, url, parsedUrl, disposition)
+      const mode = runtimes[i].getWindowPopoutModePreference(webContentsId, url, parsedUrl, disposition)
       if (mode !== false) { return mode }
     }
     return false
+  }
+
+  /* ****************************************************************************/
+  // Actioning
+  /* ****************************************************************************/
+
+  /**
+  * Handles a context menu item being selected
+  * @param extensionId: the id of the extension to dispatch to
+  * @param contents: the contents that's dispatching
+  * @param params: the click params
+  */
+  contextMenuItemSelected (extensionId, contents, params) {
+    const runtime = this.runtimes.get(extensionId)
+    if (!runtime || !runtime.contextMenus) { return }
+    runtime.contextMenus.itemSelected(contents, params)
   }
 
   /* ****************************************************************************/
@@ -320,7 +404,9 @@ class CRExtensionRuntimeHandler {
       const directives = runtime.extension.manifest.waveboxContentSecurityPolicy.directives
       responseCSPs.forEach((responseCSP) => {
         Object.keys(directives).forEach((k) => {
-          responseCSP[k] = (responseCSP[k] || []).concat(directives[k])
+          if (responseCSP[k] !== undefined) {
+            responseCSP[k] = responseCSP[k].concat(directives[k])
+          }
         })
       })
     })
@@ -330,6 +416,113 @@ class CRExtensionRuntimeHandler {
       return CSPBuilder({ directives: csp })
     })
     return responseHeaders
+  }
+
+  /* ****************************************************************************/
+  // XHR
+  /* ****************************************************************************/
+
+  /**
+  * Extracts the accept header
+  * @param requestHeaders: the request headers
+  * @return { acceptHeader, extensionId, xhrToken } the new accept header, the extensionId and the xhrToken
+  */
+  _extractCSXHRAcceptHeader (requestHeaders) {
+    const prevAccept = requestHeaders['Accept']
+    if (prevAccept === undefined) { return {} }
+    if (prevAccept.indexOf(CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX) === -1) { return { acceptHeader: prevAccept } }
+
+    // Extract the accept header
+    let extensionAccept
+    const nextAccept = prevAccept
+      .split(',')
+      .map((a) => a.trim())
+      .filter((a) => {
+        if (a.startsWith(CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX)) {
+          extensionAccept = a.split('/')
+          return false
+        } else {
+          return true
+        }
+      })
+      .join(', ')
+
+    return {
+      acceptHeader: nextAccept.length ? nextAccept : undefined,
+      extensionId: extensionAccept[1],
+      xhrToken: extensionAccept[2]
+    }
+  }
+
+  /**
+  * Handles the before send headers event on content scripts
+  * @param details: the details of the request
+  * @return the updated headers or undefined
+  */
+  updateCSXHRBeforeSendHeaders = (details) => {
+    if (details.resourceType !== 'xhr') { return }
+
+    // Look to see if we have credentials
+    const { acceptHeader, extensionId, xhrToken } = this._extractCSXHRAcceptHeader(details.requestHeaders)
+    const nextHeaders = {
+      ...details.requestHeaders,
+      'Accept': acceptHeader
+    }
+    if (!extensionId || !xhrToken) { return nextHeaders }
+
+    // Check we have the credentials
+    const runtime = this.runtimes.get(extensionId)
+    if (!runtime || runtime.contentScript.xhrToken !== xhrToken) { return nextHeaders }
+
+    // Check we are able to match this url
+    const requestWebContents = webContents.fromId(details.webContentsId)
+    if (!requestWebContents || requestWebContents.isDestroyed()) { return nextHeaders }
+
+    const purl = url.parse(requestWebContents.getURL())
+    const matches = CRExtensionMatchPatterns.matchUrls(
+      purl.protocol,
+      purl.hostname,
+      purl.pathname,
+      [].concat.apply([],
+        runtime.extension.manifest.contentScripts.map((cs) => cs.matches)
+      )
+    )
+    if (!matches) { return nextHeaders }
+
+    // Looks like an extension request
+    this[privOpenXHRRequests].set(details.id, details.requestHeaders['Origin'])
+    return nextHeaders
+  }
+
+  /**
+  * Handles the headers received on content scripts
+  * @param details: the details of the request
+  * @param responder: function to call with updated headers
+  */
+  updateCSXHROnHeadersReceived = (details) => {
+    // Check we are waiting
+    if (details.resourceType !== 'xhr') { return }
+
+    if (!this[privOpenXHRRequests].has(details.id)) { return }
+
+    const headers = details.responseHeaders
+    const updatedHeaders = {
+      ...headers,
+      'access-control-allow-credentials': headers['access-control-allow-credentials'] || ['true'],
+      'access-control-allow-origin': [this[privOpenXHRRequests].get(details.id)]
+    }
+
+    this[privOpenXHRRequests].delete(details.id)
+    return updatedHeaders
+  }
+
+  /**
+  * Handles the a content script xhr ending in error
+  * @param details: the details of the request
+  * @param responder: function to call with updated headers
+  */
+  onCSXHRError = (details) => {
+    this[privOpenXHRRequests].delete(details.id)
   }
 }
 

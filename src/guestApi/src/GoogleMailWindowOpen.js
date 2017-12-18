@@ -16,16 +16,24 @@
                 get: (target, key) => {
                   if (key === 'write') {
                     return function (value) {
-                      if (value.startsWith('<META HTTP-EQUIV="refresh" content="0')) {
+                      try {
                         const parser = new window.DOMParser()
                         const xml = parser.parseFromString(value, 'text/xml')
-                        const content = xml.firstChild.getAttribute('content')
-                        const url = content.replace('0; url=', '')
-                        defaultOpenFn(url)
-                        windowRef.close()
-                      } else {
-                        target.write.apply(target, Array.from(arguments))
-                      }
+                        const redirect = xml.querySelector('meta[http-equiv="refresh"], meta[HTTP-EQUIV="refresh"], META[http-equiv="refresh"], META[HTTP-EQUIV="refresh"]')
+                        if (redirect) {
+                          const content = redirect.getAttribute('content')
+                          const urlDefIndex = content.indexOf('url=')
+                          if (urlDefIndex !== -1) {
+                            const url = content.slice(urlDefIndex + 4).split(' ')[0]
+                            defaultOpenFn(url)
+                            windowRef.close()
+                            return
+                          }
+                        }
+                      } catch (ex) { /* no-op */ }
+
+                      // Default behaviour
+                      target.write.apply(target, Array.from(arguments))
                     }
                   } else {
                     return target[key]

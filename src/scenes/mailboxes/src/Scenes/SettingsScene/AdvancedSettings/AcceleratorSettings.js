@@ -15,9 +15,8 @@ const ACCELERATOR_NAMES = {
   // Application
   preferences: 'Preferences',
   composeMail: 'Compose Mail',
-  showWindow: 'Show Window',
-  hideWindow: 'Hide Window',
-  hide: 'Hide',
+  closeWindow: 'Close Window',
+  hide: process.platform === 'darwin' ? 'Hide Wavebox' : 'Hide Window',
   hideOthers: 'Hide Others',
   quit: 'Quit',
 
@@ -62,8 +61,7 @@ const GLOBAL_SECTION = [
 const APPLICATION_SECTION = [
   'preferences',
   'composeMail',
-  'showWindow',
-  'hideWindow',
+  'closeWindow',
   'hide',
   'hideOthers',
   'quit'
@@ -110,6 +108,10 @@ const SECTIONS = [
   { name: 'Window', items: WINDOW_SECTION },
   { name: 'Global', subtitle: 'These shortcuts will also work when Wavebox is minimized or out of focus', items: GLOBAL_SECTION }
 ]
+const PLATFORM_EXCLUDES = new Set([
+  process.platform === 'darwin' ? 'toggleMenu' : undefined,
+  process.platform !== 'darwin' ? 'hideOthers' : undefined
+].filter((n) => !!n))
 
 export default class AcceleratorSettings extends React.Component {
   /* **************************************************************************/
@@ -137,6 +139,8 @@ export default class AcceleratorSettings extends React.Component {
   * @return jsx
   */
   renderAcceleratorTableRow (accelerators, name, isFirst, isLast) {
+    if (PLATFORM_EXCLUDES.has(name)) { return undefined }
+
     const accelerator = accelerators[name]
     const acceleratorDefault = accelerators[name + 'Default']
 

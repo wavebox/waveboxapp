@@ -9,7 +9,6 @@ import {
 import {
   WB_PREPARE_MAILBOX_SESSION
 } from 'shared/ipcEvents'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { DownloadManager } from 'Download'
 import SessionManager from './SessionManager'
@@ -19,9 +18,6 @@ class MailboxesSessionManager extends EventEmitter {
   // Lifecycle
   /* ****************************************************************************/
 
-  /**
-  * @param mailboxWindow: the mailbox window instance we're working for
-  */
   constructor () {
     super()
     this._setup = false
@@ -101,7 +97,7 @@ class MailboxesSessionManager extends EventEmitter {
       })
     }
 
-    // Extensions
+    // Extensions: CSP
     SessionManager.webRequestEmitterFromSession(ses).headersReceived.onBlocking(undefined, (details, responder) => {
       const updatedHeaders = CRExtensionManager.runtimeHandler.updateContentSecurityPolicy(details.url, details.responseHeaders)
       if (updatedHeaders) {
@@ -110,8 +106,29 @@ class MailboxesSessionManager extends EventEmitter {
         responder({})
       }
     })
-    this.__managed__.add(partition)
 
+    // Extensions: XHR
+    SessionManager.webRequestEmitterFromSession(ses).beforeSendHeaders.onBlocking(undefined, (details, responder) => {
+      const updatedHeaders = CRExtensionManager.runtimeHandler.updateCSXHRBeforeSendHeaders(details)
+      if (updatedHeaders) {
+        responder({ requestHeaders: updatedHeaders })
+      } else {
+        responder({})
+      }
+    })
+    SessionManager.webRequestEmitterFromSession(ses).headersReceived.onBlocking(undefined, (details, responder) => {
+      const updatedHeaders = CRExtensionManager.runtimeHandler.updateCSXHROnHeadersReceived(details)
+      if (updatedHeaders) {
+        responder({ responseHeaders: updatedHeaders })
+      } else {
+        responder({})
+      }
+    })
+    SessionManager.webRequestEmitterFromSession(ses).errorOccurred.on((details) => {
+      CRExtensionManager.runtimeHandler.onCSXHRError(details)
+    })
+
+    this.__managed__.add(partition)
     return true
   }
 
@@ -127,11 +144,9 @@ class MailboxesSessionManager extends EventEmitter {
   */
   _setupUserAgent (ses, partition, mailboxType) {
     // Handle accounts that have custom settings
-    if (mailboxType === CoreMailbox.MAILBOX_TYPES.GENERIC) {
-      const mailbox = this._getMailboxFromPartition(partition)
-      if (mailbox && mailbox.useCustomUserAgent && mailbox.customUserAgentString) {
-        ses.setUserAgent(mailbox.customUserAgentString)
-      }
+    const mailbox = this._getMailboxFromPartition(partition)
+    if (mailbox && mailbox.useCustomUserAgent && mailbox.customUserAgentString) {
+      ses.setUserAgent(mailbox.customUserAgentString)
     }
   }
 

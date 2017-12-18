@@ -1,13 +1,12 @@
-const url = require('url')
-const fs = require('fs')
-const req = require('../req')
-const {
+import url from 'url'
+import fs from 'fs'
+import {
   DISALLOWED_HTML5_NOTIFICATION_HOSTS,
   ALLOWED_HTML5_NOTIFICATION_HOSTS
-} = req.shared('constants.js')
-const {
+} from 'shared/constants'
+import {
   WAVEBOX_HOSTED_EXTENSION_PROTOCOL
-} = req.shared('extensionApis.js')
+} from 'shared/extensionApis'
 
 /**
 * Can be accessed from main and rendering thread
@@ -219,4 +218,4 @@ class NotificationPermissionManager {
   }
 }
 
-module.exports = NotificationPermissionManager
+export default NotificationPermissionManager

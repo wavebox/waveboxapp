@@ -6,7 +6,7 @@ import {
   WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED,
   WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT
 } from 'shared/ipcEvents'
-import appWindowManager from 'R/appWindowManager'
+import WaveboxWindow from 'windows/WaveboxWindow'
 
 const privQueuedMailboxToTabChange = Symbol('privQueuedMailboxToTabChange')
 
@@ -59,10 +59,10 @@ class MailboxesWindowTabManager {
         this.attachedMailboxes.delete(data.webContentsId)
         this.attachedExtensions.delete(data.webContentsId)
         this.targetUrls.delete(data.webContentsId)
-        evtMain.emit(evtMain.WB_TAB_DESTROYED, data.webContentsId)
+        evtMain.emit(evtMain.WB_TAB_DESTROYED, {}, data.webContentsId)
       })
 
-      evtMain.emit(evtMain.WB_TAB_CREATED, data.webContentsId)
+      evtMain.emit(evtMain.WB_TAB_CREATED, {}, data.webContentsId)
 
       // Look to see if there was a queued change event
       if (this[privQueuedMailboxToTabChange]) {
@@ -72,7 +72,7 @@ class MailboxesWindowTabManager {
           const tabId = this.getWebContentsId(mailboxId, serviceType)
 
           if (browserWindow && tabId) {
-            evtMain.emit(evtMain.WB_TAB_ACTIVATED, browserWindow.id, tabId)
+            evtMain.emit(evtMain.WB_TAB_ACTIVATED, {}, browserWindow.id, tabId)
           }
         }
         this[privQueuedMailboxToTabChange] = null
@@ -119,7 +119,7 @@ class MailboxesWindowTabManager {
 
     if (browserWindow && tabId) {
       this[privQueuedMailboxToTabChange] = null
-      evtMain.emit(evtMain.WB_TAB_ACTIVATED, browserWindow.id, tabId)
+      evtMain.emit(evtMain.WB_TAB_ACTIVATED, {}, browserWindow.id, tabId)
     } else {
       // Sometimes the mailbox changes comes in before the webview is mounted.
       // To cope with this queue it up to dequeue on mount
@@ -207,10 +207,25 @@ class MailboxesWindowTabManager {
   /* ****************************************************************************/
 
   /**
+  * @param webContentsId: the id of the webcontents to get for
   * @return the target url for the given webContentsId
   */
   getTargetUrl (webContentsId) {
     return this.targetUrls.get(webContentsId)
+  }
+
+  /**
+  * Gets the owner id for a given webcontents
+  * @param webContentsId: the id of the webcontents to get for
+  * @return the ownerId or undefined
+  */
+  getOwnerId (webContentsId) {
+    const { match, mailboxId, serviceType } = this.getServiceId(webContentsId)
+    if (match) {
+      return `${mailboxId}:${serviceType}`
+    } else {
+      return undefined
+    }
   }
 
   /* ****************************************************************************/
@@ -224,7 +239,7 @@ class MailboxesWindowTabManager {
   */
   handleFetchOpenWindowCount = (evt, body) => {
     const ownerId = `${body.mailboxId}:${body.serviceType}`
-    const count = appWindowManager.getContentWindowsWithOwnerId(ownerId).length
+    const count = WaveboxWindow.all().filter((w) => w.ownerId === ownerId).length
     if (body.response) {
       evt.sender.send(body.response, { count: count })
     } else {

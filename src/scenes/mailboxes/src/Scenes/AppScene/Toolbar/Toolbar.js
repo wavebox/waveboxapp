@@ -9,6 +9,7 @@ import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import shallowCompare from 'react-addons-shallow-compare'
 import ToolbarMailboxServices from './ToolbarMailboxServices'
 import ToolbarExtensions from './ToolbarExtensions'
+import ToolbarNavigation from './ToolbarNavigation'
 import { ExtensionSettings } from 'shared/Models/Settings'
 
 const styles = {
@@ -24,11 +25,10 @@ const styles = {
     alignItems: 'center',
     flexDirection: 'row'
   },
-  services: {
-
-  },
-  extensions: {
-
+  services: { },
+  extensions: { },
+  navigation: {
+    width: '100%'
   }
 }
 
@@ -70,6 +70,19 @@ export default class Toolbar extends React.Component {
     return true
   }
 
+  /**
+  * Works out if the active servie has the navigation toolbar in the toolbar
+  * @param mailboxState=autoget: the mailbox state
+  * @return true if there are navigation controls
+  */
+  static hasNavigationInToolbar (mailboxState = mailboxStore.getState()) {
+    const mailbox = mailboxState.activeMailbox()
+    const serviceType = mailboxState.activeMailboxService()
+    if (!mailbox || !mailbox.serviceForType(serviceType)) { return false }
+    const service = mailbox.serviceForType(serviceType)
+    return service.hasNavigationToolbar
+  }
+
   /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
@@ -98,15 +111,20 @@ export default class Toolbar extends React.Component {
     const userState = userStore.getState()
     const crextensionState = crextensionStore.getState()
     const mailbox = mailboxState.activeMailbox()
+    const serviceType = mailboxState.activeMailboxService()
 
     return {
       hasServicesInToolbar: Toolbar.hasServicesInToolbar(mailboxState, userState),
       ...(mailbox ? {
         mailboxId: mailbox.id,
+        serviceType: serviceType,
         mailboxLayoutMode: mailbox.serviceToolbarIconLayout
       } : undefined),
       hasExtensionsInToolbar: Toolbar.hasExtensionsInToolbar(crextensionState, settingsState),
+      hasNavigationInToolbar: Toolbar.hasNavigationInToolbar(mailboxState),
       extensionLayoutMode: settingsState.extension.toolbarBrowserActionLayout,
+      showTitlebar: settingsState.ui.showTitlebar,
+      sidebarEnabled: settingsState.ui.sidebarEnabled,
       activeMailboxTabId: mailboxState.getActiveWebcontentTabId()
     }
   })()
@@ -121,8 +139,10 @@ export default class Toolbar extends React.Component {
     const mailbox = mailboxState.activeMailbox()
     this.setState({
       hasServicesInToolbar: Toolbar.hasServicesInToolbar(mailboxState, undefined),
+      hasNavigationInToolbar: Toolbar.hasNavigationInToolbar(mailboxState),
       ...(mailbox ? {
         mailboxId: mailbox.id,
+        serviceType: mailboxState.activeMailboxService(),
         mailboxLayoutMode: mailbox.serviceToolbarIconLayout
       } : {
         mailboxId: undefined,
@@ -141,7 +161,9 @@ export default class Toolbar extends React.Component {
   settingsUpdated = (settingsState) => {
     this.setState({
       extensionLayoutMode: settingsState.extension.toolbarBrowserActionLayout,
-      hasExtensionsInToolbar: Toolbar.hasExtensionsInToolbar(undefined, settingsState)
+      hasExtensionsInToolbar: Toolbar.hasExtensionsInToolbar(undefined, settingsState),
+      showTitlebar: settingsState.ui.showTitlebar,
+      sidebarEnabled: settingsState.ui.sidebarEnabled
     })
   }
 
@@ -161,11 +183,15 @@ export default class Toolbar extends React.Component {
     } = this.props
     const {
       hasServicesInToolbar,
+      hasNavigationInToolbar,
       mailboxId,
+      serviceType,
       mailboxLayoutMode,
       hasExtensionsInToolbar,
       extensionLayoutMode,
-      activeMailboxTabId
+      activeMailboxTabId,
+      showTitlebar,
+      sidebarEnabled
     } = this.state
 
     return (
@@ -173,6 +199,7 @@ export default class Toolbar extends React.Component {
         {...passProps}
         style={{
           height: toolbarHeight,
+          paddingLeft: !showTitlebar && !sidebarEnabled ? 70 : 0,
           ...styles.toolbar,
           ...style
         }}>
@@ -190,6 +217,14 @@ export default class Toolbar extends React.Component {
               toolbarHeight={toolbarHeight} />
           ) : undefined}
         </div>
+        {hasNavigationInToolbar ? (
+          <ToolbarNavigation
+            style={styles.navigation}
+            tabId={activeMailboxTabId}
+            toolbarHeight={toolbarHeight}
+            mailboxId={mailboxId}
+            serviceType={serviceType} />
+        ) : undefined}
         <div style={styles.toolbarGroup}>
           {hasServicesInToolbar && mailboxLayoutMode === CoreMailbox.SERVICE_TOOLBAR_ICON_LAYOUTS.RIGHT_ALIGN ? (
             <ToolbarMailboxServices

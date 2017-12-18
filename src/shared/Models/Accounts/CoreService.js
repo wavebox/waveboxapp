@@ -3,27 +3,6 @@ const SERVICE_TYPES = require('./ServiceTypes')
 const PROTOCOL_TYPES = require('./ProtocolTypes')
 const { MAILBOX_SLEEP_WAIT } = require('../../constants')
 
-const WINDOW_OPEN_MODES = Object.freeze({
-  CONTENT: 'CONTENT',
-  CONTENT_PROVSIONAL: 'CONTENT_PROVSIONAL',
-  POPUP_CONTENT: 'POPUP_CONTENT',
-  EXTERNAL: 'EXTERNAL',
-  EXTERNAL_PROVSIONAL: 'EXTERNAL_PROVSIONAL',
-  DEFAULT: 'DEFAULT',
-  DEFAULT_IMPORTANT: 'DEFAULT_IMPORTANT',
-  DEFAULT_PROVISIONAL: 'DEFAULT_PROVISIONAL',
-  DEFAULT_PROVISIONAL_IMPORTANT: 'DEFAULT_PROVISIONAL_IMPORTANT',
-  DOWNLOAD: 'DOWNLOAD',
-  SUPPRESS: 'SUPPRESS'
-})
-
-const NAVIGATE_MODES = Object.freeze({
-  DEFAULT: 'DEFAULT',
-  SUPPRESS: 'SUPPRESS',
-  OPEN_EXTERNAL: 'OPEN_EXTERNAL',
-  OPEN_CONTENT: 'OPEN_CONTENT'
-})
-
 const RELOAD_BEHAVIOURS = Object.freeze({
   RELOAD: 'RELOAD',
   RESET_URL: 'RESET_URL'
@@ -34,8 +13,6 @@ class CoreService extends Model {
   // Class: Config & Types
   /* **************************************************************************/
 
-  static get WINDOW_OPEN_MODES () { return WINDOW_OPEN_MODES }
-  static get NAVIGATE_MODES () { return NAVIGATE_MODES }
   static get SERVICE_TYPES () { return SERVICE_TYPES }
   static get PROTOCOL_TYPES () { return PROTOCOL_TYPES }
   static get RELOAD_BEHAVIOURS () { return RELOAD_BEHAVIOURS }
@@ -72,6 +49,23 @@ class CoreService extends Model {
   static get humanizedLogos () { return [] }
   static get humanizedLogo () { return this.humanizedLogos[this.humanizedLogos.length - 1] }
   static get humanizedUnreadItemType () { return 'message' }
+
+  /**
+  * Gets the logo at a specific size
+  * @param size: the prefered size
+  * @return the logo with the size or a default one
+  */
+  static humanizedLogoAtSize (size) { return this.getLogoAtSize(this.humanizedLogos, size) }
+
+  /**
+  * Gets a logo at a specific size
+  * @param logos: the list of logos to get from
+  * @param size: the prefered size
+  * @return the logo with the size or a default one
+  */
+  static getLogoAtSize (logos, size) {
+    return logos.find((l) => l.indexOf(`${size}px`) !== -1) || logos.slice(-1)[0]
+  }
 
   /* **************************************************************************/
   // Class: Creation
@@ -113,6 +107,7 @@ class CoreService extends Model {
   get sleepableTimeout () { return this._value_('sleepableTimeout', MAILBOX_SLEEP_WAIT) }
   get hasNavigationToolbar () { return false }
   get reloadBehaviour () { return this.constructor.reloadBehaviour }
+  get hasSeenSleepableWizard () { return this._value_('hasSeenSleepableWizard', false) }
 
   /* **************************************************************************/
   // Properties: Support
@@ -125,7 +120,15 @@ class CoreService extends Model {
   get supportsNativeNotifications () { return this.constructor.supportsNativeNotifications }
   get supportsGuestNotifications () { return this.constructor.supportsGuestNotifications }
   get supportsSyncWhenSleeping () { return this.constructor.supportsSyncWhenSleeping }
-  get supportsSync () { return this.constructor.supportsSync }
+  get supportsSync () {
+    // Don't inherit in case we set these seperately in the model
+    return [
+      this.supportsUnreadActivity,
+      this.supportsUnreadCount,
+      this.supportsNativeNotifications,
+      this.supportsGuestNotifications
+    ].find((s) => s) || false
+  }
   get mergeChangesetOnActive () { return this.constructor.mergeChangesetOnActive }
 
   /* **************************************************************************/
@@ -144,6 +147,13 @@ class CoreService extends Model {
   get humanizedLogos () { return this.constructor.humanizedLogos }
   get humanizedLogo () { return this.constructor.humanizedLogo }
   get humanizedUnreadItemType () { return this.constructor.humanizedUnreadItemType }
+
+  /**
+  * Gets the logo at a specific size
+  * @param size: the prefered size
+  * @return the logo with the size or a default one
+  */
+  humanizedLogoAtSize (size) { return this.constructor.getLogoAtSize(this.humanizedLogos, size) }
 
   /* **************************************************************************/
   // Properties: Display
@@ -190,38 +200,6 @@ class CoreService extends Model {
   /* **************************************************************************/
   // Behaviour
   /* **************************************************************************/
-
-  /**
-  * Gets the window open mode for a given url
-  * @param url: the url to open with
-  * @param parsedUrl: the url object parsed by nodejs url
-  * @param disposition: the open mode disposition
-  * @param provisionalTargetUrl: the provisional target url that the user may be hovering over or have highlighted
-  * @param parsedProvisionalTargetUrl: the provisional target parsed by nodejs url
-  * @return the window open mode
-  */
-  getWindowOpenModeForUrl (url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl) {
-    // We have some specific overrides for oauth2 and google
-    if (parsedUrl.hostname === 'accounts.google.com' && parsedUrl.pathname.startsWith('/o/oauth2/auth')) {
-      return WINDOW_OPEN_MODES.POPUP_CONTENT
-    }
-
-    if (disposition === 'background-tab') { return WINDOW_OPEN_MODES.EXTERNAL }
-    if (disposition === 'new-window' || url === 'about:blank') { return WINDOW_OPEN_MODES.POPUP_CONTENT }
-    if (disposition === 'save-to-disk') { return WINDOW_OPEN_MODES.DOWNLOAD }
-
-    return WINDOW_OPEN_MODES.DEFAULT
-  }
-
-  /**
-  * Gets the navigate mode for a url
-  * @param url: the url to open with
-  * @param parsedUrl: the url object parsed by nodejs url
-  * @return the navigate mode
-  */
-  getNavigateModeForUrl (url, parsedUrl) {
-    return NAVIGATE_MODES.DEFAULT
-  }
 
   /**
   * Looks to see if the input event should be prevented

@@ -9,6 +9,7 @@ import {
   Toolbar, ToolbarGroup, ToolbarTitle,
   Avatar, FontIcon, IconButton, Paper
 } from 'material-ui'
+import Resolver from 'Runtime/Resolver'
 
 const styles = {
   servicePaper: {
@@ -57,8 +58,8 @@ export default class AccountServiceItem extends React.Component {
         <Toolbar {...passProps}>
           <ToolbarGroup>
             <Avatar
-              size={36}
-              src={'../../' + service.humanizedLogo}
+              size={32}
+              src={Resolver.image(service.humanizedLogoAtSize(128))}
               backgroundColor='white'
               style={{
                 margin: '2px 10px 2px 2px',
@@ -111,7 +112,7 @@ export default class AccountServiceItem extends React.Component {
           <ToolbarGroup>
             <Avatar
               size={40}
-              src={'../../' + serviceClass.humanizedLogo}
+              src={Resolver.image(serviceClass.humanizedLogo)}
               backgroundColor='white'
               style={{ marginRight: 8, border: '2px solid rgb(139, 139, 139)' }} />
             <ToolbarTitle text={serviceClass.humanizedType} />

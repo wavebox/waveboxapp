@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Paper, FontIcon } from 'material-ui'
 import { mailboxActions } from 'stores/mailbox'
+import { crextensionActions } from 'stores/crextension'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import { ConfirmFlatButton } from 'Components/Buttons'
@@ -36,7 +37,10 @@ export default class DataSettingsSection extends React.Component {
             confirmWaitMs={4000}
             icon={<FontIcon className='material-icons'>clear</FontIcon>}
             confirmIcon={<FontIcon className='material-icons'>help_outline</FontIcon>}
-            onConfirmedClick={() => mailboxActions.clearAllBrowserSessions()} />
+            onConfirmedClick={() => {
+              mailboxActions.clearAllBrowserSessions()
+              crextensionActions.clearAllBrowserSessions()
+            }} />
           <div style={styles.flatButtonHelp}>
             You will need to sign back into all accounts after doing this
           </div>

@@ -20,10 +20,11 @@ class MicrosoftDefaultService extends MicrosoftService {
   static get humanizedType () { return 'Mail' }
   static get humanizedLogos () {
     return [
-      'images/microsoft/logo_mail_32px.png',
-      'images/microsoft/logo_mail_48px.png',
-      'images/microsoft/logo_mail_64px.png',
-      'images/microsoft/logo_mail_128px.png'
+      'microsoft/logo_mail_32px.png',
+      'microsoft/logo_mail_48px.png',
+      'microsoft/logo_mail_64px.png',
+      'microsoft/logo_mail_96px.png',
+      'microsoft/logo_mail_128px.png'
     ]
   }
 
@@ -99,29 +100,6 @@ class MicrosoftDefaultService extends MicrosoftService {
         }
       }
     })
-  }
-
-  /* **************************************************************************/
-  // Behaviour
-  /* **************************************************************************/
-
-  /**
-  * Gets the window open mode for a given url
-  * @param url: the url to open with
-  * @param parsedUrl: the url object parsed by nodejs url
-  * @param disposition: the open mode disposition
-  * @param provisionalTargetUrl: the provisional target url that the user may be hovering over or have highlighted
-  * @param parsedProvisionalTargetUrl: the provisional target parsed by nodejs url
-  * @return the window open mode
-  */
-  getWindowOpenModeForUrl (url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl) {
-    const superMode = super.getWindowOpenModeForUrl(url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl)
-    if (superMode !== this.constructor.WINDOW_OPEN_MODES.DEFAULT) { return superMode }
-    if (parsedUrl.hostname === 'word-view.officeapps.live.com') { // Print PDF
-      return this.constructor.WINDOW_OPEN_MODES.CONTENT
-    }
-
-    return this.constructor.WINDOW_OPEN_MODES.DEFAULT
   }
 }
 

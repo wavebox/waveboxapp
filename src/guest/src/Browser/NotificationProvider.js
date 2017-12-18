@@ -1,13 +1,11 @@
-const { ipcRenderer } = require('electron')
-const req = require('../req')
-const uuid = require('uuid')
-const {
-  WB_BROWSER_NOTIFICATION_CLICK,
-  WB_BROWSER_NOTIFICATION_PRESENT
-} = req.shared('ipcEvents')
-const NotificationPermissionManager = require('./NotificationPermissionManager')
-const extensionLoader = require('../Extensions/extensionLoader')
-const GuestHost = require('../GuestHost')
+import { ipcRenderer } from 'electron'
+import uuid from 'uuid'
+import { WB_BROWSER_NOTIFICATION_CLICK, WB_BROWSER_NOTIFICATION_PRESENT } from 'shared/ipcEvents'
+import { DEFAULT_HTML5_NOTIFICATION_OPTIONS } from 'shared/constants'
+import NotificationPermissionManager from './NotificationPermissionManager'
+import ExtensionLoader from './Extensions/ExtensionLoader'
+import GuestHost from './GuestHost'
+import RuntimePaths from 'Runtime/RuntimePaths'
 
 class NotificationProvider {
   /* **************************************************************************/
@@ -16,12 +14,12 @@ class NotificationProvider {
 
   constructor () {
     this.apiKey = uuid.v4()
-    this.permissionManager = new NotificationPermissionManager(req.runtimePaths().NOTIFICATION_PERMISSION_PATH)
+    this.permissionManager = new NotificationPermissionManager(RuntimePaths.NOTIFICATION_PERMISSION_PATH)
 
-    extensionLoader.loadWaveboxGuestApi(extensionLoader.ENDPOINTS.NOTIFICATION, this.apiKey, {
+    ExtensionLoader.loadWaveboxGuestApi(ExtensionLoader.ENDPOINTS.NOTIFICATION, this.apiKey, {
       permission: this.permissionManager.getDomainPermissionSync(GuestHost.url)
     })
-    window.addEventListener('message', this.handleWindowMessage.bind(this))
+    window.addEventListener('message', this.handleWindowMessage)
     ipcRenderer.on(WB_BROWSER_NOTIFICATION_CLICK, (evt, data) => {
       window.postMessage(JSON.stringify({
         type: 'wavebox-notification-clicked',
@@ -39,7 +37,7 @@ class NotificationProvider {
   * Handles a new window message
   * @param evt: the event that fired
   */
-  handleWindowMessage (evt) {
+  handleWindowMessage = (evt) => {
     if (evt.origin === window.location.origin && evt.isTrusted) {
       let data
       try {
@@ -55,7 +53,13 @@ class NotificationProvider {
               ipcRenderer.sendToHost({
                 type: WB_BROWSER_NOTIFICATION_PRESENT,
                 notificationId: data.notificationId,
-                notification: data.notification
+                notification: {
+                  title: data.notification.title,
+                  options: Object.assign(
+                    DEFAULT_HTML5_NOTIFICATION_OPTIONS[window.location.host] || {},
+                    data.notification.options
+                  )
+                }
               })
             }
           })
@@ -76,4 +80,4 @@ class NotificationProvider {
   }
 }
 
-module.exports = NotificationProvider
+export default NotificationProvider

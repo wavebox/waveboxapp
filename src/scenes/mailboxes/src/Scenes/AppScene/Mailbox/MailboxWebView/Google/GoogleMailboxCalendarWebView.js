@@ -68,7 +68,7 @@ export default class GoogleMailboxCalendarWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={Resolver.guestPreload('googleCalendar')}
+        preload={Resolver.guestPreload()}
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.CALENDAR}
         ipcMessage={this.dispatchBrowserIPCMessage} />

@@ -9,6 +9,7 @@ const CleanWebpackPlugin = devRequire('clean-webpack-plugin')
 const CopyWebpackPlugin = devRequire('copy-webpack-plugin')
 const WebpackNotifierPlugin = devRequire('webpack-notifier')
 const MinifyPlugin = devRequire('babel-minify-webpack-plugin')
+const WebpackOnBuildPlugin = devRequire('on-build-webpack')
 
 module.exports = function (env) {
   const isProduction = process.env.NODE_ENV === 'production'
@@ -59,7 +60,8 @@ module.exports = function (env) {
       }),
 
       // Dev tools
-      process.env.NOTIFICATIONS === 'true' ? new WebpackNotifierPlugin({ title: 'WB App', alwaysNotify: true }) : undefined
+      process.env.NOTIFICATIONS === 'true' ? new WebpackNotifierPlugin({ title: 'WB App', alwaysNotify: true }) : undefined,
+      new WebpackOnBuildPlugin((stats) => { console.log('WB App') })
     ].filter((p) => !!p),
     resolve: {
       extensions: ['.js', '.jsx'],
@@ -70,6 +72,7 @@ module.exports = function (env) {
         AppUpdater: path.resolve(path.join(__dirname, 'src/AppUpdater')),
         AuthProviders: path.resolve(path.join(__dirname, 'src/AuthProviders')),
         DownloadManager: path.resolve(path.join(__dirname), 'src/DownloadManager'),
+        ElectronTools: path.resolve(path.join(__dirname, 'src/ElectronTools')),
         Extensions: path.resolve(path.join(__dirname, 'src/Extensions')),
         Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
         SessionManager: path.resolve(path.join(__dirname, 'src/SessionManager')),

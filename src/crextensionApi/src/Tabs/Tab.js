@@ -8,12 +8,17 @@ class Tab {
 
   /**
   * https://developer.chrome.com/extensions/tabs#type-Tab
-  * @param tabId: the id of the tab
-  * @param raw={}: the raw tab config
+  * @param tabIdOrTabData: the id of the tab or the raw tab data
+  * @param raw={}: the raw tab config if the tab id is supplied as the first argument
   */
-  constructor (tabId, raw = {}) {
-    this[privTabId] = tabId
-    this[privRaw] = raw
+  constructor (tabIdOrTabData, raw = {}) {
+    if (typeof (tabIdOrTabData) === 'object') {
+      this[privTabId] = tabIdOrTabData.id
+      this[privRaw] = tabIdOrTabData
+    } else {
+      this[privTabId] = tabIdOrTabData
+      this[privRaw] = raw
+    }
 
     Object.freeze(this)
   }

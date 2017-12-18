@@ -1,13 +1,13 @@
-import { ipcMain, webContents } from 'electron'
+import { webContents } from 'electron'
 import CRDispatchManager from '../CRDispatchManager'
 import CRExtensionUISubscriber from '../CRExtensionUISubscriber'
+import CRExtensionTab from './CRExtensionTab'
 import {
   CRX_CONTEXT_MENU_CREATE_,
   CRX_CONTEXT_MENU_CLICKED_
 } from 'shared/crExtensionIpcEvents'
 import {
-  WBECRX_CONTEXT_MENUS_CHANGED,
-  WBECRX_CONTEXT_MENU_ITEM_CLICKED_
+  WBECRX_CONTEXT_MENUS_CHANGED
 } from 'shared/ipcEvents'
 import {
   CRExtensionRTContextMenu
@@ -23,12 +23,10 @@ class CRExtensionContextMenus {
     this.menuItems = []
 
     CRDispatchManager.registerHandler(`${CRX_CONTEXT_MENU_CREATE_}${this.extension.id}`, this.handleCreateMenu)
-    ipcMain.on(`${WBECRX_CONTEXT_MENU_ITEM_CLICKED_}${this.extension.id}`, this.handleClick)
   }
 
   destroy () {
     CRDispatchManager.unregisterHandler(`${CRX_CONTEXT_MENU_CREATE_}${this.extension.id}`, this.handleCreateMenu)
-    ipcMain.removeListener(`${WBECRX_CONTEXT_MENU_ITEM_CLICKED_}${this.extension.id}`, this.handleClick)
   }
 
   /* ****************************************************************************/
@@ -81,13 +79,13 @@ class CRExtensionContextMenus {
 
   /**
   * Handles the user clicking on a context menu action
-  * @param evt: the event that fired
-  * @param tabId: the id of the tab that fired the event
+  * @param contents: the webcontents that clicked the item
   * @param params: the click params
   */
-  handleClick = (evt, tabId, params) => {
+  itemSelected = (contents, params) => {
+    const tabInfo = CRExtensionTab.dataFromWebContentsId(this.extension, contents.id)
     webContents.getAllWebContents().forEach((targetWebcontents) => {
-      targetWebcontents.send(`${CRX_CONTEXT_MENU_CLICKED_}${this.extension.id}`, tabId, params)
+      targetWebcontents.send(`${CRX_CONTEXT_MENU_CLICKED_}${this.extension.id}`, tabInfo, params)
     })
   }
 }

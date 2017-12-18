@@ -9,7 +9,6 @@ import App from './App'
 import Omnibox from './Omnibox'
 import Management from './Management'
 import WebRequest from 'WebRequest'
-import ExtensionDatasource from 'Core/ExtensionDatasource'
 import Notifications from './Notifications'
 import Cookies from './Cookies/Cookies'
 import Windows from './Windows'
@@ -23,9 +22,9 @@ class Chrome {
   /**
   * @param extensionId: the id of the extension
   * @param runtimeEnvironment: the environemtn we're running in
+  * @param extensionDatasource: the datasource to use
   */
-  constructor (extensionId, runtimeEnvironment) {
-    const extensionDatasource = new ExtensionDatasource(extensionId)
+  constructor (extensionId, runtimeEnvironment, extensionDatasource) {
     const permissions = extensionDatasource.manifest.permissions
 
     this.runtime = new Runtime(extensionId, runtimeEnvironment, extensionDatasource)

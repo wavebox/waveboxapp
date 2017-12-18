@@ -5,12 +5,12 @@
   "repository": "https://github.com/wavebox/waveboxapp",
   "description": "Printer UI for Wavebox",
   "dependencies": {
-    "pdfjs-dist": "2.0.99",
+    "pdfjs-dist": "2.0.185",
     "uuid": "3.1.0"
   },
   "devDependencies": {
     "standard": "10.0.3",
-    "babel-eslint": "8.0.1"
+    "babel-eslint": "8.0.3"
   },
   "standard": {
     "parser": "babel-eslint"

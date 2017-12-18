@@ -10,10 +10,11 @@ class GoogleNotesService extends GoogleService {
   static get humanizedTypeShort () { return 'Keep' }
   static get humanizedLogos () {
     return [
-      'images/google/logo_keep_32px.png',
-      'images/google/logo_keep_48px.png',
-      'images/google/logo_keep_64px.png',
-      'images/google/logo_keep_128px.png'
+      'google/logo_keep_32px.png',
+      'google/logo_keep_48px.png',
+      'google/logo_keep_64px.png',
+      'google/logo_keep_96px.png',
+      'google/logo_keep_128px.png'
     ]
   }
 

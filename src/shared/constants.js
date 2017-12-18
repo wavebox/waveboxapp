@@ -15,8 +15,7 @@ module.exports = Object.freeze({
   // App
   APP_ID: 'wavebox.io',
   ANALYTICS_HEARTBEAT_INTERVAL: minutes(5),
-  PRELOAD_USE_SYNC_FS: true, // Temporary fix for https://github.com/electron/electron/issues/9713
-  RELEASE_CHANNELS: Object.assign({
+  RELEASE_CHANNELS: Object.freeze({
     STABLE: 'STABLE',
     BETA: 'BETA'
   }),
@@ -54,7 +53,7 @@ module.exports = Object.freeze({
   MICROSOFT_UNREAD_SYNC_INTERVAL: seconds(60),
 
   // Sync
-  SYNC_SOCKET_URL: 'wss://wavebox.io/socket',
+  SYNC_SOCKET_URL: 'wss://waveboxio.com/socket',
   SYNC_SOCKET_UPGRADE_INTERVAL: minutes(5),
   SYNC_SOCKET_RECONNECT_MIN: 500,
   SYNC_SOCKET_RECONNECT_RANGE: seconds(4.5),
@@ -75,13 +74,20 @@ module.exports = Object.freeze({
     'calendar.google.com',
     'allo.google.com'
   ],
+  DEFAULT_HTML5_NOTIFICATION_OPTIONS: {
+    'play.google.com': { silent: true }
+  },
 
-  // Extensions
+  // Live autoupdate
   EXTENSION_AUTO_UPDATE_INTERVAL: hours(2),
+  WIRE_CONFIG_AUTO_UPDATE_INTERVAL: hours(2),
 
   // Cookies
   ARTIFICIAL_COOKIE_PERSIST_WAIT: seconds(30),
   ARTIFICIAL_COOKIE_PERSIST_PERIOD: days(30),
+
+  // Misc
+  ELEVATED_LOG_PREFIX: '[ELEVATED_LOG]',
 
   // Chrome
   CHROME_PROTOCOL: 'chrome',
@@ -106,15 +112,18 @@ module.exports = Object.freeze({
   KB_BETA_CHANNEL_URL: 'https://wavebox.io/kb/beta-channel',
 
   // Update
-  UPDATE_FEED_DARWIN: 'https://wavebox.io/squirrel/darwin/updates/latest/',
-  UPDATE_FEED_WIN32_IA32: 'https://wavebox.io/squirrel/win32_ia32/updates/latest/',
-  UPDATE_FEED_WIN32_X64: 'https://wavebox.io/squirrel/win32_x86_64/updates/latest/',
-  UPDATE_FEED_MANUAL: 'https://wavebox.io/updates/latest/',
+  UPDATE_FEED_DARWIN: 'https://waveboxio.com/squirrel/darwin/updates/latest/',
+  UPDATE_FEED_WIN32_IA32: 'https://waveboxio.com/squirrel/win32_ia32/updates/latest/',
+  UPDATE_FEED_WIN32_X64: 'https://waveboxio.com/squirrel/win32_x86_64/updates/latest/',
+  UPDATE_FEED_MANUAL: 'https://waveboxio.com/updates/latest/',
   UPDATE_CHECK_INTERVAL: hours(12),
   UPDATE_USER_MANUAL_DOWNLOAD_STABLE: 'https://wavebox.io/download',
   UPDATE_USER_MANUAL_DOWNLOAD_BETA: 'https://github.com/wavebox/waveboxapp/releases',
 
-  WAVEBOX_CAPTURE_URL_HOSTNAME: 'wavebox.io',
+  WAVEBOX_CAPTURE_URL_HOSTNAMES: [
+    'wavebox.io',
+    'waveboxio.com'
+  ],
   WAVEBOX_CAPTURE_URL_PREFIX: '/app/redirect/',
   WAVEBOX_CAPTURE_URLS: {
     SETTINGS: '/app/redirect/settings',
@@ -123,6 +132,7 @@ module.exports = Object.freeze({
     WAVEBOX_AUTH: '/app/redirect/waveboxauth',
     WAVEBOX_AUTH_PAYMENT: '/app/redirect/waveboxauth/payment',
     WAVEBOX_AUTH_AFFILIATE: '/app/redirect/waveboxauth/affiliate',
-    WAVEBOX_PRO_BUY: '/app/redirect/pro/buy'
+    WAVEBOX_PRO_BUY: '/app/redirect/pro/buy',
+    ADD_MAILBOX: '/app/redirect/mailbox/add'
   }
 })

@@ -4,10 +4,12 @@ import BrowserView from 'sharedui/Components/BrowserView'
 import URI from 'urijs'
 import {
   WAVEBOX_CAPTURE_URLS,
-  WAVEBOX_CAPTURE_URL_HOSTNAME
+  WAVEBOX_CAPTURE_URL_HOSTNAMES
 } from 'shared/constants'
 import electron from 'electron'
 import pkg from 'package.json'
+import { userActions } from 'stores/user'
+import { mailboxActions } from 'stores/mailbox'
 
 const REF = 'webview'
 
@@ -31,8 +33,12 @@ export default class WaveboxWebView extends React.Component {
   * @return true if the url was routed, false otherwise
   */
   static routeWaveboxUrl (url) {
-    const purl = URI(url)
-    if (purl.hostname() === WAVEBOX_CAPTURE_URL_HOSTNAME) {
+    const match = WAVEBOX_CAPTURE_URL_HOSTNAMES.find((hostname) => {
+      return url.startsWith(`https://${hostname}`)
+    })
+
+    if (match) {
+      const purl = URI(url)
       switch (purl.pathname()) {
         case WAVEBOX_CAPTURE_URLS.SETTINGS:
           window.location.hash = '/settings'
@@ -56,9 +62,26 @@ export default class WaveboxWebView extends React.Component {
           window.location.hash = '/'
           electron.remote.shell.openExternal(purl.search(true).url)
           return true
+        case WAVEBOX_CAPTURE_URLS.ADD_MAILBOX:
+          this.processAddMailbox(purl)
+          return true
       }
     }
     return false
+  }
+
+  /**
+  * Runs the add mailbox process from an add url
+  * @param purl: the parsed url that should be processed
+  */
+  static processAddMailbox (purl) {
+    const query = purl.search(true)
+    if (query.container_id && query.container) {
+      userActions.addContainer(query.container_id, JSON.parse(query.container))
+    }
+    if (query.type) {
+      mailboxActions.startAddMailbox(query.type, query.access_mode)
+    }
   }
 
   /* **************************************************************************/
@@ -87,8 +110,10 @@ export default class WaveboxWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleOpenNewWindow = (evt) => {
-    // Unhandled urls will be handled by the main thread
-    WaveboxWebView.routeWaveboxUrl(evt.url)
+    const handled = WaveboxWebView.routeWaveboxUrl(evt.url)
+    if (!handled) {
+      electron.remote.shell.openExternal(evt.url)
+    }
   }
 
   /**

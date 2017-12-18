@@ -6,6 +6,8 @@ import pkg from 'package.json'
 import fs from 'fs-extra'
 import AppDirectory from 'appdirectory'
 import AppUpdaterLog from './AppUpdaterLog'
+import WaveboxWindow from 'windows/WaveboxWindow'
+import MailboxesWindow from 'windows/MailboxesWindow'
 
 const SQUIRREL_INSTALL_SWITCH = '--squirrel-install'
 const SQUIRREL_UPDATE_SWITCH = '--squirrel-updated'
@@ -19,6 +21,14 @@ class AppUpdater {
 
   static get isSupportedPlatform () {
     return process.platform === 'darwin' || process.platform === 'win32'
+  }
+
+  /* ****************************************************************************/
+  // Getters
+  /* ****************************************************************************/
+
+  static getMailboxesWindow () {
+    return WaveboxWindow.getOfType(MailboxesWindow)
   }
 
   /* ****************************************************************************/
@@ -58,38 +68,57 @@ class AppUpdater {
 
   /**
   * Registers the app updater handlers
-  * @param windowManager: the window manager instance
   * @return true if the platform was registered
   */
-  static register (windowManager) {
+  static register () {
     if (this.isSupportedPlatform) {
       try {
         autoUpdater.on('update-downloaded', (evt) => {
-          windowManager.mailboxesWindow.squirrelUpdateDownloaded()
+          const mailboxesWindow = this.getMailboxesWindow()
+          if (mailboxesWindow) {
+            mailboxesWindow.squirrelUpdateDownloaded()
+          }
         })
         autoUpdater.on('error', (evt) => {
+          const mailboxesWindow = this.getMailboxesWindow()
           if (this.isSigningFailureException(evt)) {
             console.log('Autoupdater disabled:', evt.message)
-            windowManager.mailboxesWindow.squirrelUpdateDisabled()
+            if (mailboxesWindow) {
+              mailboxesWindow.squirrelUpdateDisabled()
+            }
           } else {
-            windowManager.mailboxesWindow.squirrelUpdateError()
+            if (mailboxesWindow) {
+              mailboxesWindow.squirrelUpdateError()
+            }
           }
         })
         autoUpdater.on('update-available', (evt) => {
-          windowManager.mailboxesWindow.squirrelUpdateAvailable()
+          const mailboxesWindow = this.getMailboxesWindow()
+          if (mailboxesWindow) {
+            mailboxesWindow.squirrelUpdateAvailable()
+          }
         })
         autoUpdater.on('update-not-available', (evt) => {
-          windowManager.mailboxesWindow.squirrelUpdateNotAvailable()
+          const mailboxesWindow = this.getMailboxesWindow()
+          if (mailboxesWindow) {
+            mailboxesWindow.squirrelUpdateNotAvailable()
+          }
         })
         autoUpdater.on('checking-for-update', (evt) => {
-          windowManager.mailboxesWindow.squirrelCheckingForUpdate()
+          const mailboxesWindow = this.getMailboxesWindow()
+          if (mailboxesWindow) {
+            mailboxesWindow.squirrelCheckingForUpdate()
+          }
         })
 
         return true
       } catch (ex) {
         if (this.isSigningFailureException(ex)) {
           console.log('Autoupdater disabled:', ex.message)
-          windowManager.mailboxesWindow.squirrelUpdateDisabled()
+          const mailboxesWindow = this.getMailboxesWindow()
+          if (mailboxesWindow) {
+            mailboxesWindow.squirrelUpdateDisabled()
+          }
         } else {
           throw ex
         }
@@ -107,8 +136,7 @@ class AppUpdater {
   * Applies a squirrel update
   * @Param windowManager: the window manager
   */
-  static applySquirrelUpdate (windowManager) {
-    windowManager.forceQuit = true
+  static applySquirrelUpdate () {
     autoUpdater.quitAndInstall()
   }
 

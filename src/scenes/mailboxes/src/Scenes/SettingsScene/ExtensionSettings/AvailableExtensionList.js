@@ -88,7 +88,6 @@ export default class AvailableExtensionList extends React.Component {
           return (
             <ExtensionListItem
               key={id}
-              showBetaTrial
               extensionId={id}
               showRestart={showRestart} />
           )

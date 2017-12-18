@@ -2,6 +2,9 @@ import { EventEmitter } from 'events'
 const emitter = new EventEmitter()
 
 const events = {
+  // App
+  WB_QUIT_APP: 'WB_QUIT_APP',
+
   // Windows
   WB_WINDOW_CREATED: 'WB_WINDOW_CREATED',
   WB_WINDOW_DESTROYED: 'WB_WINDOW_DESTROYED',

@@ -8,17 +8,14 @@ import BrowserSearch from './BrowserSearch'
 import BrowserToolbar from './BrowserToolbar'
 import { browserActions, browserStore } from 'stores/browser'
 import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
+import path from 'path'
 import {
   WB_WINDOW_RELOAD_WEBVIEW,
   WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
   WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
-  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD,
-  WB_BROWSER_GUEST_WINDOW_CLOSE,
-  WB_NEW_WINDOW
+  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
 } from 'shared/ipcEvents'
 import { ipcRenderer, remote } from 'electron'
-
-const { shell } = remote
 
 const SEARCH_REF = 'search'
 const BROWSER_REF = 'browser'
@@ -126,14 +123,7 @@ export default class BrowserScene extends React.Component {
   * @param evt: the event that fired
   */
   handleBrowserIPCMessage = (evt) => {
-    switch (evt.channel.type) {
-      case WB_BROWSER_GUEST_WINDOW_CLOSE:
-        this.handleIPCGuestWindowClose(evt.channel.data)
-        break
-      case WB_NEW_WINDOW:
-        ipcRenderer.send(WB_NEW_WINDOW, evt.channel.data)
-        break
-    }
+
   }
 
   /**
@@ -171,9 +161,10 @@ export default class BrowserScene extends React.Component {
             src={url}
             partition={partition}
             plugins
+            allowpopups
             className='ReactComponent-BrowserSceneWebView'
             webpreferences='contextIsolation=yes, nativeWindowOpen=yes'
-            preload={window.guestResolve('preload/contentWindow')}
+            preload={path.join(__dirname, '../../guest/guest.js')}
             zoomFactor={zoomFactor}
             searchTerm={isSearching ? searchTerm : undefined}
             searchId={searchNextHash}
@@ -181,7 +172,6 @@ export default class BrowserScene extends React.Component {
             pageTitleUpdated={(evt) => browserActions.setPageTitle(evt.title)}
             didStartLoading={(evt) => browserActions.startLoading()}
             didStopLoading={(evt) => browserActions.stopLoading()}
-            newWindow={(evt) => shell.openExternal(evt.url, { })}
             ipcMessage={this.handleBrowserIPCMessage}
             willNavigate={this.navigationStateDidChange}
             didNavigate={this.navigationStateDidChange}

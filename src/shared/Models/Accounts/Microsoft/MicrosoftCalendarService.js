@@ -9,10 +9,11 @@ class MicrosoftCalendarService extends MicrosoftService {
   static get humanizedType () { return 'Calendar' }
   static get humanizedLogos () {
     return [
-      'images/microsoft/logo_calendar_32px.png',
-      'images/microsoft/logo_calendar_48px.png',
-      'images/microsoft/logo_calendar_64px.png',
-      'images/microsoft/logo_calendar_128px.png'
+      'microsoft/logo_calendar_32px.png',
+      'microsoft/logo_calendar_48px.png',
+      'microsoft/logo_calendar_64px.png',
+      'microsoft/logo_calendar_96px.png',
+      'microsoft/logo_calendar_128px.png'
     ]
   }
 

@@ -6,7 +6,8 @@ import {
   WB_QUIT_APP,
   WB_METRICS_OPEN_MONITOR,
   WB_METRICS_OPEN_LOG,
-  WB_METRICS_RELEASE_MEMORY
+  WB_METRICS_RELEASE_MEMORY,
+  WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
 
@@ -352,6 +353,11 @@ class SettingsActions {
   }
 
   /**
+  * Takes the current channel of the app and glues it to the user update channel
+  */
+  glueCurrentUpdateChannel () { return {} }
+
+  /**
   * @param hasSeen: true if the user has seen the app tour
   */
   setHasSeenTour (hasSeen) {
@@ -582,5 +588,6 @@ class SettingsActions {
 const actions = alt.createActions(SettingsActions)
 ipcRenderer.on(WB_MAILBOXES_WINDOW_TOGGLE_SIDEBAR, actions.toggleSidebar)
 ipcRenderer.on(WB_MAILBOXES_WINDOW_TOGGLE_APP_MENU, actions.toggleAppMenu)
+ipcRenderer.on(WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG, (evt, data) => actions.setSpellcheckerLanguage(data.lang))
 
 export default actions

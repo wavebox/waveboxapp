@@ -5,11 +5,13 @@ import GoogleMailbox from 'shared/Models/Accounts/Google/GoogleMailbox'
 import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
 import MicrosoftMailbox from 'shared/Models/Accounts/Microsoft/MicrosoftMailbox'
 import GenericMailbox from 'shared/Models/Accounts/Generic/GenericMailbox'
+import ContainerMailbox from 'shared/Models/Accounts/Container/ContainerMailbox'
 import WizardConfigureGmail from './WizardConfigureGmail'
 import WizardConfigureGinbox from './WizardConfigureGinbox'
 import WizardConfigureMicrosoft from './WizardConfigureMicrosoft'
 import WizardConfigureGeneric from './WizardConfigureGeneric'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
+import WizardConfigureContainer from './WizardConfigureContainer'
 
 export default class WizardConfigure extends React.Component {
   /* **************************************************************************/
@@ -67,29 +69,21 @@ export default class WizardConfigure extends React.Component {
       if (mailbox.type === GoogleMailbox.type) {
         if (mailbox.defaultService.accessMode === GoogleDefaultService.ACCESS_MODES.GMAIL) {
           return (
-            <WizardConfigureGmail
-              onRequestCancel={onRequestCancel}
-              mailbox={mailbox}
-              {...passProps} />)
+            <WizardConfigureGmail onRequestCancel={onRequestCancel} mailbox={mailbox} {...passProps} />)
         } else if (mailbox.defaultService.accessMode === GoogleDefaultService.ACCESS_MODES.GINBOX) {
           return (
-            <WizardConfigureGinbox
-              onRequestCancel={onRequestCancel}
-              mailbox={mailbox}
-              {...passProps} />)
+            <WizardConfigureGinbox onRequestCancel={onRequestCancel} mailbox={mailbox} {...passProps} />)
         }
       } else if (mailbox.type === MicrosoftMailbox.type) {
         return (
-          <WizardConfigureMicrosoft
-            onRequestCancel={onRequestCancel}
-            mailbox={mailbox}
-            {...passProps} />)
+          <WizardConfigureMicrosoft onRequestCancel={onRequestCancel} mailbox={mailbox} {...passProps} />)
       } else if (mailbox.type === GenericMailbox.type) {
         return (
-          <WizardConfigureGeneric
-            onRequestCancel={onRequestCancel}
-            mailbox={mailbox}
-            {...passProps} />)
+          <WizardConfigureGeneric onRequestCancel={onRequestCancel} mailbox={mailbox} {...passProps} />)
+      } else if (mailbox.type === ContainerMailbox.type) {
+        return (
+          <WizardConfigureContainer onRequestCancel={onRequestCancel} mailbox={mailbox} {...passProps} />
+        )
       }
     }
 

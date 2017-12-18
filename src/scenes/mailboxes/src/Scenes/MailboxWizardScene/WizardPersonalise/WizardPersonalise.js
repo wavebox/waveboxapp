@@ -12,6 +12,7 @@ import { mailboxActions } from 'stores/mailbox'
 import { userStore } from 'stores/user'
 import * as Colors from 'material-ui/styles/colors'
 import { TERMS_URL, EULA_URL } from 'shared/constants'
+import WizardPersonaliseContainer from './WizardPersonaliseContainer'
 import electron from 'electron'
 
 const styles = {
@@ -86,6 +87,8 @@ const styles = {
   }
 }
 
+const CUSTOM_PERSONALIZE_REF = 'CUSTOM_PERSONALIZE_REF'
+
 export default class WizardPersonalise extends React.Component {
   /* **************************************************************************/
   // Class
@@ -146,8 +149,14 @@ export default class WizardPersonalise extends React.Component {
   handleNext = () => {
     const { MailboxClass, accessMode } = this.props
     const { enabledServices, servicesDisplayMode, color } = this.state
-    const mailboxJS = this.createJS(MailboxClass, accessMode, enabledServices, servicesDisplayMode, color)
-    mailboxActions.authenticateMailbox(MailboxClass, accessMode, mailboxJS)
+
+    if (this.refs[CUSTOM_PERSONALIZE_REF]) {
+      const mailboxJS = this.createJS(MailboxClass, accessMode, enabledServices, servicesDisplayMode, color)
+      this.refs[CUSTOM_PERSONALIZE_REF].handleNext(MailboxClass, accessMode, mailboxJS)
+    } else {
+      const mailboxJS = this.createJS(MailboxClass, accessMode, enabledServices, servicesDisplayMode, color)
+      mailboxActions.authenticateMailbox(MailboxClass, accessMode, mailboxJS)
+    }
   }
 
   /**
@@ -213,9 +222,15 @@ export default class WizardPersonalise extends React.Component {
       } else if (accessMode === MicrosoftMailbox.ACCESS_MODES.OFFICE365) {
         return MailboxClass.defaultColorOffice365
       }
-    } else {
-      return MailboxClass.defaultColor
+    } else if (MailboxClass.type === MailboxTypes.CONTAINER) {
+      // Bad that we don't listen on state here
+      const container = userStore.getState().getContainer(accessMode)
+      if (container && container.defaultColor) {
+        return container.defaultColor
+      }
     }
+
+    return MailboxClass.defaultColor
   }
 
   /* **************************************************************************/
@@ -224,6 +239,19 @@ export default class WizardPersonalise extends React.Component {
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
+  }
+
+  /**
+  * @param MailboxClass: the class of mailbox we're creating
+  * @param accessMode: the access mode we're using
+  * @return jsx or undefined
+  */
+  renderCustomSection (MailboxClass, accessMode) {
+    if (MailboxClass.type === MailboxTypes.CONTAINER) {
+      return (<WizardPersonaliseContainer ref={CUSTOM_PERSONALIZE_REF} containerId={accessMode} />)
+    }
+
+    return undefined
   }
 
   render () {
@@ -278,6 +306,7 @@ export default class WizardPersonalise extends React.Component {
               </div>
             </div>
           ) : undefined}
+          {this.renderCustomSection(MailboxClass, accessMode)}
         </div>
         <div style={styles.footer}>
           <div style={styles.footerTerms}>

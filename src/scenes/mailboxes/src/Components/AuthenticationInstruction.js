@@ -1,5 +1,7 @@
 import React from 'react'
-import { Paper, LinearProgress } from 'material-ui'
+import { Paper } from 'material-ui'
+import Spinner from 'sharedui/Components/Activity/Spinner'
+import * as Colors from 'material-ui/styles/colors'
 
 const styles = {
   container: {
@@ -64,9 +66,9 @@ const styles = {
     fontSize: '20px'
   },
   progress: {
-    width: 400,
     marginBottom: 20,
-    marginTop: 10
+    marginTop: 10,
+    textAlign: 'center'
   }
 }
 
@@ -81,7 +83,9 @@ export default class AuthenticationInstruction extends React.Component {
     return (
       <div {...passProps} style={{...styles.container, ...style}}>
         <h2 style={styles.title}>When prompted, use the popup authentication window to sign in to your account...</h2>
-        <LinearProgress mode='indeterminate' style={styles.progress} />
+        <div style={styles.progress}>
+          <Spinner size={30} color={Colors.lightBlue600} speed={0.5} />
+        </div>
         <Paper style={styles.window}>
           {process.platform === 'darwin' ? (
             <div style={styles.windowToolbar}>

@@ -42,7 +42,7 @@ export default class Tray extends React.Component {
   componentWillMount () {
     const { launchTraySettings } = this.props
     if (IS_GTK_PLATFORM && launchTraySettings.gtkUpdateMode === GTK_UPDATE_MODES.STATIC) {
-      const image = nativeImage.createFromPath(Resolver.icon('app_64.png'))
+      const image = nativeImage.createFromPath(Resolver.icon('app_64.png', Resolver.API_TYPES.NODE))
       const resizedImage = image.resize({ width: launchTraySettings.iconSize, height: launchTraySettings.iconSize })
       this.appTray = new remote.Tray(resizedImage)
     } else {

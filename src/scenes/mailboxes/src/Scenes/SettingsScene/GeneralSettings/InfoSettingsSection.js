@@ -5,6 +5,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { updaterActions } from 'stores/updater'
 import { takeoutActions } from 'stores/takeout'
 import { settingsActions } from 'stores/settings'
+import { userStore } from 'stores/user'
 import Release from 'shared/Release'
 import pkg from 'package.json'
 
@@ -40,7 +41,7 @@ export default class InfoSettingsSection extends React.Component {
     return (
       <Paper zDepth={1} style={styles.paper} {...this.props}>
         <div style={{ fontSize: '85%' }}>
-          {Release.generateVersionComponents(pkg).map((c) => {
+          {Release.generateVersionComponents(pkg, userStore.getState().wireConfigVersion()).map((c) => {
             return (<p key={c}>{c}</p>)
           })}
         </div>

@@ -13,6 +13,7 @@ import { RaisedButton, Avatar, FontIcon, Toggle } from 'material-ui'
 import GoogleDefaultServiceSettings from './GoogleDefaultServiceSettings'
 import GoogleServiceSettings from './GoogleServiceSettings'
 import { mailboxActions, GoogleMailboxReducer } from 'stores/mailbox'
+import Resolver from 'Runtime/Resolver'
 
 const styles = {
   proServices: {
@@ -161,7 +162,7 @@ export default class GoogleAccountSettings extends React.Component {
                     <Avatar
                       key={serviceType}
                       size={40}
-                      src={'../../' + serviceClass.humanizedLogo}
+                      src={Resolver.image(serviceClass.humanizedLogo)}
                       backgroundColor='white'
                       style={{ marginRight: 8, border: '2px solid rgb(139, 139, 139)' }} />)
                 })}

@@ -10,10 +10,11 @@ class GoogleFiService extends GoogleService {
   static get humanizedTypeShort () { return 'Fi' }
   static get humanizedLogos () {
     return [
-      'images/google/logo_fi_32px.png',
-      'images/google/logo_fi_48px.png',
-      'images/google/logo_fi_64px.png',
-      'images/google/logo_fi_128px.png'
+      'google/logo_fi_32px.png',
+      'google/logo_fi_48px.png',
+      'google/logo_fi_64px.png',
+      'google/logo_fi_96px.png',
+      'google/logo_fi_128px.png'
     ]
   }
 

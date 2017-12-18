@@ -3,12 +3,14 @@ import React from 'react'
 import { browserStore, browserActions } from 'stores/browser'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
-  Paper, IconButton, FontIcon, CircularProgress,
+  Paper, IconButton, FontIcon,
   Toolbar, ToolbarGroup, ToolbarTitle
 } from 'material-ui'
 import { CHROME_PDF_URL } from 'shared/constants'
 import URI from 'urijs'
 import { remote } from 'electron'
+import * as Colors from 'material-ui/styles/colors'
+import Spinner from 'sharedui/Components/Activity/Spinner'
 
 export default class BrowserToolbar extends React.Component {
   /* **************************************************************************/
@@ -132,17 +134,16 @@ export default class BrowserToolbar extends React.Component {
             <IconButton onClick={isLoading ? handleStop : handleReload}>
               <FontIcon className='material-icons'>{isLoading ? 'close' : 'refresh'}</FontIcon>
             </IconButton>
-            {isLoading ? (
-              <CircularProgress
-                size={18}
-                thickness={2}
-                style={{ margin: 10 }} />
-            ) : (
-              <div style={{ width: 18, height: 18, margin: 10 }} />
-            )}
+            <div style={{ width: 40, height: 40, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              {isLoading ? (
+                <Spinner size={15} color={Colors.lightBlue600} />
+              ) : undefined}
+            </div>
           </ToolbarGroup>
           <ToolbarGroup style={{ minWidth: 0 }}>
-            <ToolbarTitle text={this.externalUrl(currentUrl)} style={{ fontSize: '14px' }} />
+            <ToolbarTitle
+              text={this.externalUrl(currentUrl)}
+              style={{ fontSize: '14px', userSelect: 'initial' }} />
           </ToolbarGroup>
           <ToolbarGroup lastChild>
             <IconButton

@@ -1,15 +1,13 @@
 import './MailboxWebView.less'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { CircularProgress, RaisedButton, FontIcon } from 'material-ui'
-import { mailboxStore, mailboxActions, mailboxDispatch, MailboxLinker } from 'stores/mailbox'
-import { settingsActions } from 'stores/settings'
+import { RaisedButton, FontIcon } from 'material-ui'
+import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
 import { guestActions } from 'stores/guest'
 import BrowserView from 'sharedui/Components/BrowserView'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import MailboxSearch from './MailboxSearch'
 import MailboxTargetUrl from './MailboxTargetUrl'
-import MailboxNavigationToolbar from './MailboxNavigationToolbar'
 import shallowCompare from 'react-addons-shallow-compare'
 import URI from 'urijs'
 import { NotificationService } from 'Notifications'
@@ -19,15 +17,13 @@ import {
   WB_BROWSER_NOTIFICATION_CLICK,
   WB_BROWSER_NOTIFICATION_PRESENT,
   WB_BROWSER_INJECT_CUSTOM_CONTENT,
-  WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED,
-  WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
-  WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG,
-  WB_NEW_WINDOW
+  WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
+import Spinner from 'sharedui/Components/Activity/Spinner'
+import * as Colors from 'material-ui/styles/colors'
 
 const BROWSER_REF = 'browser'
-const TOOLBAR_REF = 'toolbar'
 
 export default class MailboxWebView extends React.Component {
   /* **************************************************************************/
@@ -115,7 +111,7 @@ export default class MailboxWebView extends React.Component {
         return {
           url: nextProps.url || (prevState.service || {}).url,
           isCrashed: false,
-          browserDOMReady: false
+          initialLoadDone: false
         }
       })
     }
@@ -149,7 +145,7 @@ export default class MailboxWebView extends React.Component {
         url: props.url || service.url
       },
       {
-        browserDOMReady: false,
+        initialLoadDone: false,
         isCrashed: false,
         focusedUrl: null,
         snapshot: mailboxState.getSnapshot(props.mailboxId, props.serviceType),
@@ -190,7 +186,6 @@ export default class MailboxWebView extends React.Component {
   */
   loadURL = (url) => {
     this.setState({
-      browserDOMReady: false,
       isCrashed: false
     })
     return this.refs[BROWSER_REF].loadURL(url)
@@ -262,10 +257,7 @@ export default class MailboxWebView extends React.Component {
         } else {
           this.reload()
         }
-        this.setState({
-          isCrashed: false,
-          browserDOMReady: false
-        })
+        this.setState({ isCrashed: false })
       }
     }
   }
@@ -329,15 +321,6 @@ export default class MailboxWebView extends React.Component {
   */
   dispatchBrowserIPCMessage = (evt) => {
     switch (evt.channel.type) {
-      case WB_MAILBOXES_WINDOW_SHOW_SETTINGS:
-        window.location.hash = '/settings'
-        break
-      case WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG:
-        settingsActions.setSpellcheckerLanguage(evt.channel.data.lang)
-        break
-      case WB_NEW_WINDOW:
-        MailboxLinker.openContentWindow(this.props.mailboxId, this.props.serviceType, evt.channel.data.url)
-        break
       case WB_BROWSER_NOTIFICATION_PRESENT:
         if (this.props.plugHTML5Notifications) {
           NotificationService.processHTML5MailboxNotification(
@@ -380,8 +363,7 @@ export default class MailboxWebView extends React.Component {
     }
 
     this.setState({
-      browserDOMReady: true,
-      isCrashed: false
+      initialLoadDone: true, isCrashed: false
     })
   }
 
@@ -442,62 +424,6 @@ export default class MailboxWebView extends React.Component {
         }
       })
     }
-
-    if (this.refs[TOOLBAR_REF]) {
-      this.refs[TOOLBAR_REF].updateBrowserState({
-        currentUrl: evt.url,
-        canGoBack: this.refs[BROWSER_REF].canGoBack(),
-        canGoForward: this.refs[BROWSER_REF].canGoForward()
-      })
-    }
-  }
-
-  /**
-  * Handles the browser starting to load
-  * @param evt: the event that fired
-  */
-  handleBrowserDidStartLoading = (evt) => {
-    if (this.refs[TOOLBAR_REF]) {
-      this.refs[TOOLBAR_REF].updateBrowserState({ isLoading: true })
-    }
-  }
-
-  /**
-  * Handles the browser finishing to load
-  * @param evt: the event that fired
-  */
-  handleBrowserDidStopLoading = (evt) => {
-    if (this.refs[TOOLBAR_REF]) {
-      this.refs[TOOLBAR_REF].updateBrowserState({ isLoading: false })
-    }
-  }
-
-  /**
-  * Handles the browser navigating in the page
-  * @param evt: the event that fired
-  */
-  handleBrowserDidNavigateInPage = (evt) => {
-    if (evt.isMainFrame && this.refs[TOOLBAR_REF]) {
-      this.refs[TOOLBAR_REF].updateBrowserState({
-        currentUrl: evt.url,
-        canGoBack: this.refs[BROWSER_REF].canGoBack(),
-        canGoForward: this.refs[BROWSER_REF].canGoForward()
-      })
-    }
-  }
-
-  /**
-  * Handles the browser finishing navigate
-  * @param evt: the event that fired
-  */
-  handleBrowserDidNavigate = (evt) => {
-    if (this.refs[TOOLBAR_REF]) {
-      this.refs[TOOLBAR_REF].updateBrowserState({
-        currentUrl: evt.url,
-        canGoBack: this.refs[BROWSER_REF].canGoBack(),
-        canGoForward: this.refs[BROWSER_REF].canGoForward()
-      })
-    }
   }
 
   /* **************************************************************************/
@@ -552,7 +478,7 @@ export default class MailboxWebView extends React.Component {
       searchTerm,
       searchId,
       url,
-      browserDOMReady,
+      initialLoadDone,
       isCrashed,
       snapshot
     } = this.state
@@ -573,27 +499,10 @@ export default class MailboxWebView extends React.Component {
       'ReactComponent-MailboxWebView',
       isActive ? 'active' : undefined
     ].filter((c) => !!c).join(' ')
-    const browserViewContainerClassName = [
-      'ReactComponent-BrowserContainer',
-      service.hasNavigationToolbar ? 'hasNavigationToolbar' : undefined
-    ].filter((c) => !!c).join(' ')
-    const snapshowViewContainerClass = [
-      'ReactComponent-MailboxSnapshot',
-      service.hasNavigationToolbar ? 'hasNavigationToolbar' : undefined
-    ].filter((c) => !!c).join(' ')
 
     return (
       <div className={saltedClassName}>
-        {service.hasNavigationToolbar ? (
-          <MailboxNavigationToolbar
-            ref={TOOLBAR_REF}
-            handleGoHome={() => this.loadURL(url)}
-            handleGoBack={() => this.goBack()}
-            handleGoForward={() => this.goForward()}
-            handleStop={() => this.stop()}
-            handleReload={() => this.reload()} />
-        ) : undefined}
-        <div className={browserViewContainerClassName}>
+        <div className={'ReactComponent-BrowserContainer'}>
           <BrowserView
             ref={BROWSER_REF}
             preload={preload}
@@ -609,26 +518,8 @@ export default class MailboxWebView extends React.Component {
 
             {...webviewEventProps}
 
-            didStartLoading={(evt) => {
-              this.multiCallBrowserEvent([this.handleBrowserDidStartLoading, webviewEventProps.didStartLoading], [evt])
-            }}
-            didStopLoading={(evt) => {
-              this.multiCallBrowserEvent([this.handleBrowserDidStopLoading, webviewEventProps.didStopLoading], [evt])
-            }}
-            didNavigateInPage={(evt) => {
-              this.multiCallBrowserEvent([this.handleBrowserDidNavigateInPage, webviewEventProps.didNavigateInPage], [evt])
-            }}
             crashed={(evt) => {
               this.multiCallBrowserEvent([this.handleCrashed, webviewEventProps.crashed], [evt])
-            }}
-            loadCommit={(evt) => {
-              this.multiCallBrowserEvent([webviewEventProps.loadCommit], [evt])
-            }}
-            didGetResponseDetails={(evt) => {
-              this.multiCallBrowserEvent([webviewEventProps.didGetResponseDetails], [evt])
-            }}
-            didNavigate={(evt) => {
-              this.multiCallBrowserEvent([this.handleBrowserDidNavigate, webviewEventProps.didNavigate], [evt])
             }}
             pageTitleUpdated={(evt) => {
               this.multiCallBrowserEvent([this.handleBrowserPageTitleUpdated, webviewEventProps.pageTitleUpdated], [evt])
@@ -652,12 +543,12 @@ export default class MailboxWebView extends React.Component {
               this.multiCallBrowserEvent([this.handleBrowserUpdateTargetUrl, webviewEventProps.updateTargetUrl], [evt])
             }} />
         </div>
-        {browserDOMReady || !snapshot ? undefined : (
-          <div className={snapshowViewContainerClass} style={{ backgroundImage: `url("${snapshot}")` }} />
+        {initialLoadDone || !snapshot ? undefined : (
+          <div className='ReactComponent-MailboxSnapshot' style={{ backgroundImage: `url("${snapshot}")` }} />
         )}
-        {!service.hasNavigationToolbar && !browserDOMReady ? (
+        {!service.hasNavigationToolbar && !initialLoadDone ? (
           <div className='ReactComponent-MailboxLoader'>
-            <CircularProgress size={80} thickness={5} />
+            <Spinner size={50} color={Colors.lightBlue600} speed={0.75} />
           </div>
         ) : undefined}
         <MailboxTargetUrl url={focusedUrl} />
@@ -674,7 +565,7 @@ export default class MailboxWebView extends React.Component {
               icon={<FontIcon className='material-icons'>refresh</FontIcon>}
               onClick={() => {
                 this.reloadIgnoringCache()
-                this.setState({ isCrashed: false, browserDOMReady: false })
+                this.setState({ isCrashed: false })
               }} />
           </div>
         ) : undefined}

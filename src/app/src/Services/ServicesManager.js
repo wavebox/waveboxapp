@@ -1,6 +1,15 @@
 import SpellcheckService from './SpellcheckService'
 import PDFRenderService from './PDFRenderService'
 import MetricsService from './MetricsService'
+import ContextMenuService from './ContextMenuService'
+import WebContentsRPCService from './WebContentsRPCService'
+
+const privLoaded = Symbol('privLoaded')
+const privSpellcheckService = Symbol('privSpellcheckService')
+const privMetricsService = Symbol('privMetricsService')
+const privPdfRenderService = Symbol('privPdfRenderService')
+const privContextMenuService = Symbol('privContextMenuService')
+const privWebContentsRPCService = Symbol('privWebContentsRPCService')
 
 class ServicesManager {
   /* ****************************************************************************/
@@ -8,29 +17,35 @@ class ServicesManager {
   /* ****************************************************************************/
 
   constructor () {
-    this._loaded = false
+    this[privLoaded] = false
 
-    this._metricsService = undefined
-    this._pdfRenderService = undefined
-    this._spellcheckService = undefined
+    this[privSpellcheckService] = undefined
+    this[privContextMenuService] = undefined
+    this[privMetricsService] = undefined
+    this[privPdfRenderService] = undefined
+    this[privWebContentsRPCService] = undefined
   }
 
   load () {
-    if (this._loaded) { return }
-    this._loaded = true
+    if (this[privLoaded]) { return }
+    this[privLoaded] = true
 
-    this._metricsService = new MetricsService()
-    this._pdfRenderService = new PDFRenderService()
-    this._spellcheckService = new SpellcheckService()
+    this[privSpellcheckService] = new SpellcheckService()
+    this[privContextMenuService] = new ContextMenuService(this[privSpellcheckService])
+    this[privMetricsService] = new MetricsService()
+    this[privPdfRenderService] = new PDFRenderService()
+    this[privWebContentsRPCService] = new WebContentsRPCService()
   }
 
   /* ****************************************************************************/
   // Properties
   /* ****************************************************************************/
 
-  get metricsService () { return this._metricsService }
-  get PDFRenderService () { return this._pdfRenderService }
-  get SpellcheckService () { return this._spellcheckService }
+  get metricsService () { return this[privMetricsService] }
+  get PDFRenderService () { return this[privPdfRenderService] }
+  get spellcheckService () { return this[privSpellcheckService] }
+  get contextMenuService () { return this[privContextMenuService] }
+  get webContentsRPCService () { return this[privWebContentsRPCService] }
 }
 
 export default new ServicesManager()

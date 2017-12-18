@@ -1,4 +1,3 @@
-const { ipcRenderer } = require('electron')
-const req = require('./req')
-const IPCDispatcher = req.shared('Electron/IPCDispatcher')
-module.exports = new IPCDispatcher(ipcRenderer, ipcRenderer)
+import { ipcRenderer } from 'electron'
+import IPCDispatcher from 'shared/Electron/IPCDispatcher'
+export default new IPCDispatcher(ipcRenderer, ipcRenderer)

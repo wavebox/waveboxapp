@@ -14,10 +14,11 @@ class SlackDefaultService extends CoreService {
   static get humanizedType () { return 'Slack' }
   static get humanizedLogos () {
     return [
-      'images/slack/logo_32px.png',
-      'images/slack/logo_48px.png',
-      'images/slack/logo_64px.png',
-      'images/slack/logo_128px.png'
+      'slack/logo_32px.png',
+      'slack/logo_48px.png',
+      'slack/logo_64px.png',
+      'slack/logo_96px.png',
+      'slack/logo_128px.png'
     ]
   }
   static get humanizedUnreadItemType () { return 'notification' }
@@ -207,25 +208,19 @@ class SlackDefaultService extends CoreService {
   /* **************************************************************************/
 
   /**
-  * Gets the window open mode for a given url
-  * @param url: the url to open with
-  * @param parsedUrl: the url object parsed by nodejs url
-  * @param disposition: the open mode disposition
-  * @param provisionalTargetUrl: the provisional target url that the user may be hovering over or have highlighted
-  * @param parsedProvisionalTargetUrl: the provisional target parsed by nodejs url
-  * @return the window open mode
+  * Looks to see if the input event should be prevented
+  * @param input: the input info
+  * @return true if the input should be prevented, false otherwise
   */
-  getWindowOpenModeForUrl (url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl) {
-    const superMode = super.getWindowOpenModeForUrl(url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl)
-    if (superMode !== this.constructor.WINDOW_OPEN_MODES.DEFAULT) { return superMode }
-
-    if (parsedUrl.hostname === 'files.slack.com') {
-      return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // You would think download but this doesn't work
-    } else if (parsedUrl.hostname.endsWith('.slack.com') && parsedUrl.pathname.startsWith('/call/')) {
-      return this.constructor.WINDOW_OPEN_MODES.CONTENT
+  shouldPreventInputEvent (input) {
+    if (process.platform === 'darwin') {
+      if (input.meta && input.shift && input.key === '<') { return true }
+      if (input.meta && input.shift && input.key === '>') { return true }
     } else {
-      return this.constructor.WINDOW_OPEN_MODES.DEFAULT
+      if (input.control && input.shift && input.key === '<') { return true }
+      if (input.control && input.shift && input.key === '>') { return true }
     }
+    return false
   }
 }
 

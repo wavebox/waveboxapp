@@ -1,8 +1,9 @@
-import { BrowserWindow, webContents } from 'electron'
+import { webContents } from 'electron'
 import { evtMain } from 'AppEvents'
 import CRDispatchManager from '../CRDispatchManager'
 import {
   CRX_TABS_QUERY_,
+  CRX_TABS_CREATE_,
   CRX_TABS_GET_,
   CRX_TABS_CREATED_,
   CRX_TABS_REMOVED_,
@@ -16,6 +17,12 @@ import {
 import WaveboxWindow from 'windows/WaveboxWindow'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
 import url from 'url'
+import fs from 'fs-extra'
+import path from 'path'
+import CRExtensionTab from './CRExtensionTab'
+import pathTool from 'shared/pathTool'
+import ContentWindow from 'windows/ContentWindow'
+import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
 
 class CRExtensionTabs {
   /* ****************************************************************************/
@@ -33,6 +40,7 @@ class CRExtensionTabs {
     }
 
     CRDispatchManager.registerHandler(`${CRX_TABS_GET_}${this.extension.id}`, this.handleGetTab)
+    CRDispatchManager.registerHandler(`${CRX_TABS_CREATE_}${this.extension.id}`, this.handleCreateTab)
     CRDispatchManager.registerHandler(`${CRX_TABS_QUERY_}${this.extension.id}`, this.handleQueryTabs)
     CRDispatchManager.registerHandler(`${CRX_TAB_EXECUTE_SCRIPT_}${this.extension.id}`, this.handleExecuteScript)
   }
@@ -43,6 +51,7 @@ class CRExtensionTabs {
     evtMain.removeListener(evtMain.WB_TAB_ACTIVATED, this.handleTabActivated)
 
     CRDispatchManager.unregisterHandler(`${CRX_TABS_GET_}${this.extension.id}`, this.handleGetTab)
+    CRDispatchManager.unregisterHandler(`${CRX_TABS_CREATE_}${this.extension.id}`, this.handleCreateTab)
     CRDispatchManager.unregisterHandler(`${CRX_TABS_QUERY_}${this.extension.id}`, this.handleQueryTabs)
     CRDispatchManager.unregisterHandler(`${CRX_TAB_EXECUTE_SCRIPT_}${this.extension.id}`, this.handleExecuteScript)
   }
@@ -57,12 +66,7 @@ class CRExtensionTabs {
   * @return the raw tab data
   */
   _tabDataFromWebContentsId (webContentsId) {
-    const wc = webContents.fromId(webContentsId)
-    if (!wc || wc.isDestroyed()) {
-      return { id: webContentsId }
-    } else {
-      return this._tabDataFromWebContents(wc)
-    }
+    return CRExtensionTab.dataFromWebContentsId(this.extension, webContentsId)
   }
 
   /**
@@ -71,22 +75,7 @@ class CRExtensionTabs {
   * @return the raw tab data
   */
   _tabDataFromWebContents (webContents) {
-    const browserWindow = BrowserWindow.fromWebContents(webContents.hostWebContents ? webContents.hostWebContents : webContents)
-    const waveboxWindow = browserWindow ? WaveboxWindow.fromBrowserWindowId(browserWindow.id) : undefined
-
-    return {
-      id: webContents.id,
-      ...(browserWindow && !browserWindow.isDestroyed() ? {
-        windowId: browserWindow.id
-      } : undefined),
-      ...(waveboxWindow ? {
-        active: waveboxWindow.focusedTabId() === webContents.id
-      } : undefined),
-      ...(this.extension.manifest.permissions.has('tabs') ? {
-        url: webContents.getURL(),
-        title: webContents.getTitle()
-      } : undefined)
-    }
+    return CRExtensionTab.dataFromWebContents(this.extension, webContents)
   }
 
   /* ****************************************************************************/
@@ -95,9 +84,10 @@ class CRExtensionTabs {
 
   /**
   * Handles a tab being attached by passing to the extension
+  * @param evt: the event that fired
   * @param tabId: the id of the webcontents
   */
-  handleTabCreated = (tabId) => {
+  handleTabCreated = (evt, tabId) => {
     // Bind tab listeners - even if there isn't a sender right now
     this.bindTabEventListeners(tabId)
 
@@ -108,19 +98,21 @@ class CRExtensionTabs {
 
   /**
   * Handles a tab being detached by passing to the extension
+  * @param evt: the event that fired
   * @param tabId: the id of the webcontents
   */
-  handleTabDestroyed = (tabId) => {
+  handleTabDestroyed = (evt, tabId) => {
     if (!this.backgroundPageSender) { return }
     this.backgroundPageSender(`${CRX_TABS_REMOVED_}${this.extension.id}`, this._tabDataFromWebContentsId(tabId))
   }
 
   /**
   * Handles a tab being activated
+  * @param evt: the event that fired
   * @param browserWindowId: the id of the browser window
   * @param tabId: the id of the tab
   */
-  handleTabActivated = (browserWindowId, tabId) => {
+  handleTabActivated = (evt, browserWindowId, tabId) => {
     if (!this.backgroundPageSender) { return }
     this.backgroundPageSender(`${CRX_TAB_ACTIVATED_}${this.extension.id}`, {
       windowId: browserWindowId,
@@ -177,6 +169,19 @@ class CRExtensionTabs {
   }
 
   /**
+  * Creates a tab with the given id
+  * @param evt: the event that fired
+  * @param [tabId]: the id of the tab
+  * @param responseCallback: executed on completion
+  */
+  handleCreateTab = (evt, [options], responseCallback) => {
+    const contentWindow = new ContentWindow()
+    const partitionId = CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
+    contentWindow.create(undefined, (options.url || ''), partitionId)
+    responseCallback(null, undefined)
+  }
+
+  /**
   * Queries the tabs
   * @param evt: the event that fired
   * @param [options]: the query info
@@ -207,11 +212,11 @@ class CRExtensionTabs {
         if (hasTabsPermission) {
           if (typeof (options.url) === 'string' || Array.isArray(options.url)) {
             const urlQuery = typeof (options.url) === 'string' ? [options.url] : options.url
-            const purl = url.parse(tab.url)
+            const {protocol, hostname, pathname} = url.parse(tab.url)
             const matches = CRExtensionMatchPatterns.matchUrls(
-              purl.protocol,
-              purl.hostname,
-              purl.pathname,
+              protocol,
+              hostname,
+              pathname,
               urlQuery
             )
             if (!matches) { return false }
@@ -240,11 +245,11 @@ class CRExtensionTabs {
     }
 
     const contents = webContents.fromId(tabId)
-    const purl = url.parse(contents.getURL())
+    const {protocol, hostname, pathname} = url.parse(contents.getURL())
     const matches = CRExtensionMatchPatterns.matchUrls(
-      purl.protocol,
-      purl.hostname,
-      purl.pathname,
+      protocol,
+      hostname,
+      pathname,
       Array.from(this.extension.manifest.permissions)
     )
     if (!matches) {
@@ -252,14 +257,32 @@ class CRExtensionTabs {
       return
     }
 
-    CRDispatchManager.requestOnTarget(
-      contents,
-      WBECRX_EXECUTE_SCRIPT,
-      [this.extension.id, details],
-      (evt, err, response) => {
-        responseCallback(err, response)
+    if (details.file) {
+      const scopedPath = pathTool.scopeToDir(this.extension.srcPath, details.file)
+      if (!scopedPath) {
+        responseCallback(`Unable to load file with path "${details.file}"`, null)
+        return
       }
-    )
+
+      Promise.resolve()
+        .then(() => fs.readFile(scopedPath, 'utf8'))
+        .then((data) => {
+          CRDispatchManager.requestOnTarget(
+            contents,
+            WBECRX_EXECUTE_SCRIPT,
+            [this.extension.id, details, path.extname(scopedPath), data],
+            (evt, err, response) => {
+              responseCallback(err, response)
+            }
+          )
+        })
+        .catch((ex) => {
+          responseCallback(`Unable to load file with path "${details.file}"`, null)
+        })
+    } else {
+      responseCallback(`No loadable file provided`, null)
+      // return
+    }
   }
 }
 

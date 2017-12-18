@@ -33,6 +33,7 @@ class AppSettings extends Model {
   get disableHardwareAcceleration () { return this._value_('disableHardwareAcceleration', false) }
   get checkForUpdates () { return this._value_('checkForUpdates', true) }
   get updateChannel () { return this._value_('updateChannel', this.__defaults__.updateChannel) }
+  get hasSetUpdateChannel () { return this._value_('updateChannel', undefined) !== undefined }
   get hasSeenAppWizard () { return this._value_('hasSeenAppWizard', false) }
   get hasSeenOptimizeWizard () { return this._value_('hasSeenOptimizeWizard', false) }
   get hasSeenAppTour () { return this._value_('hasSeenAppTour', false) }

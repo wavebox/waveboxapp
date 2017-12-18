@@ -2,12 +2,10 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import { mailboxStore, mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
-  WB_BROWSER_NOTIFICATION_PRESENT,
-  WB_MAILBOXES_WEBVIEW_NAVIGATE_HOME
+  WB_BROWSER_NOTIFICATION_PRESENT
 } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
 
@@ -56,7 +54,6 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     const mailbox = mailboxState.getMailbox(props.mailboxId)
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     return {
-      defaultWindowOpenMode: mailbox ? mailbox.defaultWindowOpenMode : CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX,
       url: service ? service.url : undefined
     }
   }
@@ -65,7 +62,6 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     const mailbox = mailboxState.getMailbox(this.props.mailboxId)
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     this.setState({
-      defaultWindowOpenMode: mailbox ? mailbox.defaultWindowOpenMode : CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX,
       url: service ? service.url : undefined
     })
   }
@@ -109,7 +105,6 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
   handleIPCMessage = (evt) => {
     switch (evt.channel.type) {
       case WB_BROWSER_NOTIFICATION_PRESENT: this.handleBrowserNotificationPresented(); break
-      case WB_MAILBOXES_WEBVIEW_NAVIGATE_HOME: this.refs[REF].loadURL(this.state.url); break
       default: break
     }
   }
@@ -140,7 +135,7 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={Resolver.guestPreload('genericDefaultService')}
+        preload={Resolver.guestPreload()}
         mailboxId={mailboxId}
         url={url}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}

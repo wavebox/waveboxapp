@@ -74,7 +74,7 @@ export default class GoogleMailboxCommunicationWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={Resolver.guestPreload('googleCommunication')}
+        preload={Resolver.guestPreload()}
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.COMMUNICATION}
         ipcMessage={this.dispatchBrowserIPCMessage} />

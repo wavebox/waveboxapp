@@ -1,4 +1,5 @@
 import path from 'path'
+import pathTool from 'shared/pathTool'
 
 const API_TYPES = Object.freeze({
   BROWSER: 'BROWSER',
@@ -36,6 +37,32 @@ class Resolver {
     }
   }
 
+  /**
+  * Scopes a resolution to a path
+  * @param scopeTo: the path to scope the resolves to
+  * @param name: the name of the file to resolve
+  * @param targetApi: the api type to target
+  * @param allowWeb: true to allow http:// and https:// urls
+  * @return a resolved url or path or an empty string on failure
+  */
+  static _scopedResolve (scopeTo, name, targetApi, allowWeb) {
+    if (allowWeb) {
+      if (name.startsWith('http://') || name.startsWith('https://')) {
+        return name
+      }
+    }
+
+    const scoped = pathTool.scopeToDir(scopeTo, name)
+    if (scoped) {
+      switch (targetApi) {
+        case API_TYPES.NODE: return this._joinNodePath(scoped)
+        case API_TYPES.BROWSER: return this._joinBrowserPath(scoped)
+      }
+    }
+
+    return ''
+  }
+
   /* ****************************************************************************/
   // Resolvers
   /* ****************************************************************************/
@@ -48,35 +75,29 @@ class Resolver {
   */
   static guestPreload (name, targetApi = API_TYPES.NODE) {
     switch (targetApi) {
-      case API_TYPES.NODE: return this._joinNodePath(__dirname, '../../guest/guest/preload/', name)
-      case API_TYPES.BROWSER: return this._joinBrowserPath(__dirname, '../../guest/guest/preload/', name)
+      case API_TYPES.NODE: return this._joinNodePath(__dirname, '../../guest/guest.js')
+      case API_TYPES.BROWSER: return this._joinBrowserPath(__dirname, '../../guest/guest.js')
     }
   }
 
   /**
   * Resolves an icon path
   * @param name: the name of the icon
-  * @param targetApi=NODE: the target api
+  * @param targetApi=BROWSER: the target api
   * @return the full path to the file
   */
-  static icon (name, targetApi = API_TYPES.NODE) {
-    switch (targetApi) {
-      case API_TYPES.NODE: return this._joinNodePath(__dirname, '../../icons', name)
-      case API_TYPES.BROWSER: return this._joinBrowserPath(__dirname, '../../icons', name)
-    }
+  static icon (name, targetApi = API_TYPES.BROWSER) {
+    return this._scopedResolve(path.join(__dirname, '../../icons'), name, targetApi, true)
   }
 
   /**
   * Resolves an image path
   * @param name: the name of the image
-  * @param targetApi=NODE: the target api
+  * @param targetApi=BROWSER: the target api
   * @return the full path to the file
   */
-  static image (name, targetApi = API_TYPES.NODE) {
-    switch (targetApi) {
-      case API_TYPES.NODE: return this._joinNodePath(__dirname, '../../images', name)
-      case API_TYPES.BROWSER: return this._joinBrowserPath(__dirname, '../../images', name)
-    }
+  static image (name, targetApi = API_TYPES.BROWSER) {
+    return this._scopedResolve(path.join(__dirname, '../../images'), name, targetApi, true)
   }
 }
 

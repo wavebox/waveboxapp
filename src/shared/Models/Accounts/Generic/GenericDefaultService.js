@@ -25,10 +25,11 @@ class GenericDefaultService extends CoreService {
   static get humanizedType () { return 'Weblink' }
   static get humanizedLogos () {
     return [
-      'images/generic/logo_32px.png',
-      'images/generic/logo_48px.png',
-      'images/generic/logo_64px.png',
-      'images/generic/logo_128px.png'
+      'generic/logo_32px.png',
+      'generic/logo_48px.png',
+      'generic/logo_64px.png',
+      'generic/logo_96px.png',
+      'generic/logo_128px.png'
     ]
   }
   static get humanizedUnreadItemType () { return 'notification' }
@@ -56,23 +57,6 @@ class GenericDefaultService extends CoreService {
   /* **************************************************************************/
 
   get hasUnreadActivity () { return !!this._value_('lastUnseenNotificationTime', undefined) }
-
-  /* **************************************************************************/
-  // Behaviour
-  /* **************************************************************************/
-
-  /**
-  * Gets the window open mode for a given url
-  * @param url: the url to open with
-  * @param parsedUrl: the url object parsed by nodejs url
-  * @param disposition: the open mode disposition
-  * @param provisionalTargetUrl: the provisional target url that the user may be hovering over or have highlighted
-  * @param parsedProvisionalTargetUrl: the provisional target parsed by nodejs url
-  * @return the window open mode
-  */
-  getWindowOpenModeForUrl (url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl) {
-    return super.getWindowOpenModeForUrl(url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl)
-  }
 }
 
 module.exports = GenericDefaultService

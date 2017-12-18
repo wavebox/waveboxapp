@@ -10,10 +10,11 @@ class GoogleSheetsService extends GoogleService {
   static get humanizedTypeShort () { return 'Sheets' }
   static get humanizedLogos () {
     return [
-      'images/google/logo_sheets_32px.png',
-      'images/google/logo_sheets_48px.png',
-      'images/google/logo_sheets_64px.png',
-      'images/google/logo_sheets_128px.png'
+      'google/logo_sheets_32px.png',
+      'google/logo_sheets_48px.png',
+      'google/logo_sheets_64px.png',
+      'google/logo_sheets_96px.png',
+      'google/logo_sheets_128px.png'
     ]
   }
 

@@ -11,10 +11,11 @@ class GoogleClassroomService extends GoogleService {
   static get humanizedUnreadItemType () { return 'message' }
   static get humanizedLogos () {
     return [
-      'images/google/logo_classroom_32px.png',
-      'images/google/logo_classroom_48px.png',
-      'images/google/logo_classroom_64px.png',
-      'images/google/logo_classroom_128px.png'
+      'google/logo_classroom_32px.png',
+      'google/logo_classroom_48px.png',
+      'google/logo_classroom_64px.png',
+      'google/logo_classroom_96px.png',
+      'google/logo_classroom_128px.png'
     ]
   }
 

@@ -28,6 +28,7 @@ const MicrosoftContactsService = require('./Microsoft/MicrosoftContactsService')
 const MicrosoftNotesService = require('./Microsoft/MicrosoftNotesService')
 const MicrosoftStorageService = require('./Microsoft/MicrosoftStorageService')
 const GenericDefaultService = require('./Generic/GenericDefaultService')
+const ContainerDefaultService = require('./Container/ContainerDefaultService')
 
 class ServiceFactory {
   /**
@@ -73,6 +74,9 @@ class ServiceFactory {
 
       // Generic
       case MAILBOX_TYPES.GENERIC + ':' + SERVICE_TYPES.DEFAULT: return GenericDefaultService
+
+      // Container
+      case MAILBOX_TYPES.CONTAINER + ':' + SERVICE_TYPES.DEFAULT: return ContainerDefaultService
 
       default: return CoreService
     }

@@ -121,16 +121,18 @@ class GoogleDefaultService extends GoogleService {
   get humanizedLogos () {
     switch (this.accessMode) {
       case ACCESS_MODES.GMAIL: return [
-        'images/google/logo_gmail_32px.png',
-        'images/google/logo_gmail_48px.png',
-        'images/google/logo_gmail_64px.png',
-        'images/google/logo_gmail_128px.png'
+        'google/logo_gmail_32px.png',
+        'google/logo_gmail_48px.png',
+        'google/logo_gmail_64px.png',
+        'google/logo_gmail_96px.png',
+        'google/logo_gmail_128px.png'
       ]
       case ACCESS_MODES.GINBOX: return [
-        'images/google/logo_ginbox_32px.png',
-        'images/google/logo_ginbox_48px.png',
-        'images/google/logo_ginbox_64px.png',
-        'images/google/logo_ginbox_128px.png'
+        'google/logo_ginbox_32px.png',
+        'google/logo_ginbox_48px.png',
+        'google/logo_ginbox_64px.png',
+        'google/logo_ginbox_96px.png',
+        'google/logo_ginbox_128px.png'
       ]
     }
   }
@@ -236,33 +238,16 @@ class GoogleDefaultService extends GoogleService {
   /* **************************************************************************/
 
   /**
-  * Gets the window open mode for a given url
-  * @param url: the url to open with
-  * @param parsedUrl: the url object parsed by nodejs url
-  * @param disposition: the open mode disposition
-  * @param provisionalTargetUrl: the provisional target url that the user may be hovering over or have highlighted
-  * @param parsedProvisionalTargetUrl: the provisional target parsed by nodejs url
-  * @return the window open mode
+  * Looks to see if the input event should be prevented
+  * @param input: the input info
+  * @return true if the input should be prevented, false otherwise
   */
-  getWindowOpenModeForUrl (url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl) {
-    const superMode = super.getWindowOpenModeForUrl(url, parsedUrl, disposition, provisionalTargetUrl, parsedProvisionalTargetUrl)
-    if (superMode !== this.constructor.WINDOW_OPEN_MODES.DEFAULT) { return superMode }
-    if (parsedUrl.hostname === 'mail.google.com') {
-      if (parsedUrl.query.ui === '2') {
-        switch (parsedUrl.query.view) {
-          case 'pt': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Print message
-          case 'btop': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Open google drive doc. This doesn't work with default_important. Context is lost
-          case 'lg': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Open entire message (after being clipped)
-          case 'att': return this.constructor.WINDOW_OPEN_MODES.POPUP_CONTENT // Open attachment in external window (also works on inbox)
-        }
-      }
-
-      if (parsedUrl.query.view === 'om') { // View original. (Also from inbox.google.com)
-        return this.constructor.WINDOW_OPEN_MODES.CONTENT
-      }
+  shouldPreventInputEvent (input) {
+    // Bushfix for issue #323
+    if (process.platform === 'darwin') {
+      if (input.meta && input.code === 'Comma') { return true }
     }
-
-    return this.constructor.WINDOW_OPEN_MODES.DEFAULT
+    return false
   }
 }
 

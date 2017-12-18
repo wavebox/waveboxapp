@@ -1,36 +1,57 @@
-const { remote } = require('electron')
-const KeyboardNavigator = require('./KeyboardNavigator')
-const Spellchecker = require('./Spellchecker')
-const ContextMenu = require('./ContextMenu')
-const Lifecycle = require('./Lifecycle')
-const NotificationProvider = require('./NotificationProvider')
-const environment = remote.getCurrentWebContents().getType()
-const extensionLoader = require('../Extensions/extensionLoader')
-const { CRExtensionLoader } = require('../Extensions')
+import KeyboardShim from './KeyboardShim'
+import Spellchecker from './Spellchecker'
+import Lifecycle from './Lifecycle'
+import NotificationProvider from './NotificationProvider'
+import ExtensionLoader from './Extensions/ExtensionLoader'
+import CRExtensionLoader from './Extensions/CRExtensionLoader'
+import UserCodeInjection from './UserCodeInjection'
+import WindowCloser from './WindowCloser'
+
+const privStarted = Symbol('privStarted')
+const privKeyboardShim = Symbol('privKeyboardShim')
+const privSpellchecker = Symbol('privSpellchecker')
+const privNotificationProvider = Symbol('privNotificationProvider')
+const privUserCodeInjection = Symbol('privUserCodeInjection')
+const privLifecycle = Symbol('privLifecycle')
+const privCRExtensionLoader = Symbol('privCRExtensionLoader')
+const privWindowCloser = Symbol('privWindowCloser')
 
 class Browser {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
 
+  constructor () {
+    this[privStarted] = false
+
+    this[privKeyboardShim] = undefined
+    this[privSpellchecker] = undefined
+    this[privNotificationProvider] = undefined
+    this[privUserCodeInjection] = undefined
+    this[privLifecycle] = undefined
+    this[privCRExtensionLoader] = undefined
+    this[privWindowCloser] = undefined
+  }
+
   /**
-  * @param config={}: configuration for the different elements. Keys can include:
-  *                     contextMenu
+  * Starts everything up
   */
-  constructor (config = {}) {
-    extensionLoader.loadWaveboxGuestApi(extensionLoader.ENDPOINTS.CHROME)
-    CRExtensionLoader.load()
+  start () {
+    if (this[privStarted]) { return }
+    this[privStarted] = true
 
-    this.keyboardNavigator = new KeyboardNavigator()
-    this.spellchecker = new Spellchecker()
-    this.contextMenu = new ContextMenu(this.spellchecker, config.contextMenu)
-    this.notificationProvider = new NotificationProvider()
+    this[privKeyboardShim] = new KeyboardShim()
+    this[privSpellchecker] = new Spellchecker()
+    this[privNotificationProvider] = new NotificationProvider()
+    this[privUserCodeInjection] = new UserCodeInjection()
+    this[privLifecycle] = new Lifecycle()
+    this[privWindowCloser] = new WindowCloser()
 
-    // Some tools are only exposed in nested webviews
-    if (environment === 'webview') {
-      this.lifecycle = new Lifecycle()
-    }
+    // Extensions
+    this[privCRExtensionLoader] = new CRExtensionLoader()
+    this[privCRExtensionLoader].load()
+    ExtensionLoader.loadWaveboxGuestApi(ExtensionLoader.ENDPOINTS.CHROME)
   }
 }
 
-module.exports = Browser
+export default Browser

@@ -1,4 +1,5 @@
 module.exports = {
+  CONTAINER: 'rgb(255, 255, 255)',
   GMAIL: 'rgb(220, 75, 75)',
   GINBOX: 'rgb(66, 133, 244)',
   GENERIC: '#2ecc71',

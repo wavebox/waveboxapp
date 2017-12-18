@@ -11,14 +11,15 @@ class SlackMailbox extends CoreMailbox {
 
   static get humanizedLogos () {
     return [
-      'images/slack/logo_32px.png',
-      'images/slack/logo_48px.png',
-      'images/slack/logo_64px.png',
-      'images/slack/logo_128px.png',
-      'images/slack/logo_600px.png'
+      'slack/logo_32px.png',
+      'slack/logo_48px.png',
+      'slack/logo_64px.png',
+      'slack/logo_96px.png',
+      'slack/logo_128px.png',
+      'slack/logo_600px.png'
     ]
   }
-  static get humanizedVectorLogo () { return 'images/slack/logo_vector.svg' }
+  static get humanizedVectorLogo () { return 'slack/logo_vector.svg' }
   static get humanizedType () { return 'Slack' }
   static get defaultColor () { return MailboxColors.SLACK }
 

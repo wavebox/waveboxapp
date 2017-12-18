@@ -4,9 +4,9 @@ import { mailboxStore, mailboxActions, ServiceReducer, MailboxReducer } from 'st
 import { userStore } from 'stores/user'
 import { settingsStore, settingsActions } from 'stores/settings'
 import * as Colors from 'material-ui/styles/colors'
-import { MailboxAvatar } from 'Components/Mailbox'
-import { Container, Row, Col } from 'Components/Grid'
+import { Row, Col } from 'Components/Grid'
 import CoreService from 'shared/Models/Accounts/CoreService'
+import Resolver from 'Runtime/Resolver'
 
 const styles = {
   container: {
@@ -60,25 +60,16 @@ const styles = {
   // Mailbox
   mailboxPane: {
     margin: 16,
-    padding: 16
+    padding: 16,
+    maxWidth: 600
   },
-  mailboxTitle: {
-    fontWeight: 300,
-    fontSize: 25,
-    textAlign: 'center',
-    marginTop: 0,
-    marginBottom: 30
-  },
-  mailboxAvatar: {
-    marginRight: 10,
-    verticalAlign: 'middle'
+  mailboxPaneHr: {
+    borderBottom: '1px solid black',
+    borderTop: 'none'
   },
 
   // Services
   servicesColumn: {
-    maxWidth: 420,
-    marginLeft: 'auto',
-    marginRight: 'auto',
     paddingTop: 0,
     paddingBottom: 0
   },
@@ -207,12 +198,7 @@ export default class OptimizeWizardSleepCustomizeScene extends React.Component {
       <ListItem
         key={key}
         primaryText={service.humanizedType}
-        leftAvatar={(
-          <img
-            src={'../../' + service.humanizedLogo}
-            style={styles.serviceIcon} />
-        )}
-        rightToggle={(
+        leftCheckbox={(
           <Checkbox
             checked={service.sleepable}
             onCheck={(evt, toggled) => {
@@ -224,65 +210,6 @@ export default class OptimizeWizardSleepCustomizeScene extends React.Component {
   }
 
   /**
-  * Renders the given services
-  * @param mailbox: the mailbox
-  * @param services: the servies to render
-  * @param hasSleepable: true if the user has sleepable
-  * @return jsx
-  */
-  renderServicesColumn (mailbox, services) {
-    return (
-      <List style={styles.servicesColumn}>
-        {services.map((service) => {
-          return this.renderServiceItem(`${mailbox.id}:${service.type}`, mailbox, service)
-        })}
-      </List>
-    )
-  }
-
-  /**
-  * Renders the services for a mailbox
-  * @param mailbox: the mailbox to render for
-  * @return jsx
-  */
-  renderMailboxServices (mailbox) {
-    const services = mailbox.enabledServices
-    if (services.length < 3) {
-      return (
-        <Container fluid>
-          <Row>
-            <Col md={12}>
-              {this.renderServicesColumn(mailbox, services)}
-            </Col>
-          </Row>
-        </Container>
-      )
-    } else {
-      const third = Math.ceil(services.length / 3)
-      const columns = [
-        services.slice(0, third * 1),
-        services.slice(third * 1, third * 2),
-        services.slice(third * 2)
-      ]
-      return (
-        <Container fluid>
-          <Row>
-            <Col md={4}>
-              {this.renderServicesColumn(mailbox, columns[0])}
-            </Col>
-            <Col md={4}>
-              {this.renderServicesColumn(mailbox, columns[1])}
-            </Col>
-            <Col md={4}>
-              {this.renderServicesColumn(mailbox, columns[2])}
-            </Col>
-          </Row>
-        </Container>
-      )
-    }
-  }
-
-  /**
   * Renders the mailboxes
   * @param mailboxes: the mailboxes to render
   * @return jsx
@@ -291,13 +218,57 @@ export default class OptimizeWizardSleepCustomizeScene extends React.Component {
     return (
       <div>
         {mailboxes.map((mailbox) => {
+          const defaultService = mailbox.defaultService
+          const additionalServices = mailbox.additionalServices
+          const additionalServices1 = additionalServices.slice(0, Math.ceil(additionalServices.length / 2))
+          const additionalServices2 = additionalServices.slice(Math.ceil(additionalServices.length / 2))
+
+          const primaryServiceText = mailbox.hasAdditionalServices ? (
+            `${mailbox.displayName} : ${defaultService.humanizedType}`
+          ) : (
+            mailbox.displayName
+          )
+
           return (
             <Paper key={mailbox.id} style={styles.mailboxPane}>
-              <h1 style={styles.mailboxTitle}>
-                <MailboxAvatar mailbox={mailbox} size={40} style={styles.mailboxAvatar} />
-                {mailbox.displayName}
-              </h1>
-              {this.renderMailboxServices(mailbox)}
+              <List style={styles.servicesColumn}>
+                <ListItem
+                  primaryText={primaryServiceText}
+                  leftAvatar={(
+                    <img
+                      src={Resolver.image(defaultService.humanizedLogo)}
+                      style={styles.serviceIcon} />
+                  )}
+                  rightToggle={(
+                    <Checkbox
+                      checked={defaultService.sleepable}
+                      onCheck={(evt, toggled) => {
+                        mailboxActions.reduceService(mailbox.id, defaultService.type, ServiceReducer.setSleepable, toggled)
+                      }}
+                    />
+                  )} />
+              </List>
+              {additionalServices.length ? (
+                <div>
+                  <hr />
+                  <Row>
+                    <Col sm={6}>
+                      <List style={styles.servicesColumn}>
+                        {additionalServices1.map((service) => {
+                          return this.renderServiceItem(`${mailbox.id}:${service.type}`, mailbox, service)
+                        })}
+                      </List>
+                    </Col>
+                    <Col sm={6}>
+                      <List style={styles.servicesColumn}>
+                        {additionalServices2.map((service) => {
+                          return this.renderServiceItem(`${mailbox.id}:${service.type}`, mailbox, service)
+                        })}
+                      </List>
+                    </Col>
+                  </Row>
+                </div>
+              ) : undefined}
             </Paper>
           )
         })}

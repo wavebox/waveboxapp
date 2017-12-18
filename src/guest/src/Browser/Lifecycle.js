@@ -1,9 +1,12 @@
-const { ipcRenderer, remote } = require('electron')
-const req = require('../req')
-const {
+import { ipcRenderer } from 'electron'
+import {
   WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP,
   WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN
-} = req.shared('ipcEvents')
+} from 'shared/ipcEvents'
+import { WCRPC_DOM_READY } from 'shared/webContentsRPC'
+
+const privSleeping = Symbol('privSleeping')
+const privSleepStyleElement = Symbol('privSleepStyleElement')
 
 class Lifecycle {
   /* **************************************************************************/
@@ -11,12 +14,12 @@ class Lifecycle {
   /* **************************************************************************/
 
   constructor () {
-    this.sleeping = false
-    this.sleepStyleElement = null
+    this[privSleeping] = false
+    this[privSleepStyleElement] = null
 
-    ipcRenderer.on(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP, this.sleep.bind(this))
-    ipcRenderer.on(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN, this.awaken.bind(this))
-    remote.getCurrentWebContents().once('dom-ready', this.updateState.bind(this))
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP, this.sleep)
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN, this.awaken)
+    ipcRenderer.on(WCRPC_DOM_READY, this.updateState)
   }
 
   /* **************************************************************************/
@@ -26,8 +29,8 @@ class Lifecycle {
   /**
   * Updates the state of
   */
-  updateState () {
-    if (this.sleeping) {
+  updateState = () => {
+    if (this[privSleeping]) {
       this.sleep()
     } else {
       this.awaken()
@@ -37,33 +40,33 @@ class Lifecycle {
   /**
   * Sleeps the current page
   */
-  sleep () {
-    this.sleeping = true
+  sleep = () => {
+    this[privSleeping] = true
 
     if (!document.head) { return }
 
-    if (!this.sleepStyleElement) {
-      this.sleepStyleElement = document.createElement('style')
-      this.sleepStyleElement.innerHTML = `
+    if (!this[privSleepStyleElement]) {
+      this[privSleepStyleElement] = document.createElement('style')
+      this[privSleepStyleElement].innerHTML = `
         img[src*=".gif"] { visibility: hidden !important; }
       `
-      document.head.appendChild(this.sleepStyleElement)
+      document.head.appendChild(this[privSleepStyleElement])
     }
   }
 
   /**
   * Wakes the current page
   */
-  awaken () {
-    this.sleeping = false
+  awaken = () => {
+    this[privSleeping] = false
 
     if (!document.head) { return }
 
-    if (this.sleepStyleElement) {
-      this.sleepStyleElement.parentElement.removeChild(this.sleepStyleElement)
-      this.sleepStyleElement = null
+    if (this[privSleepStyleElement]) {
+      this[privSleepStyleElement].parentElement.removeChild(this[privSleepStyleElement])
+      this[privSleepStyleElement] = null
     }
   }
 }
 
-module.exports = Lifecycle
+export default Lifecycle

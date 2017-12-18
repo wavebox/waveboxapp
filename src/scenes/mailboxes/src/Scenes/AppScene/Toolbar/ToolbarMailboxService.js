@@ -8,6 +8,7 @@ import uuid from 'uuid'
 import MailboxServicePopover from '../MailboxServicePopover'
 import { ServiceBadge, ServiceTooltip } from 'Components/Service'
 import * as Colors from 'material-ui/styles/colors'
+import Resolver from 'Runtime/Resolver'
 
 const styles = {
   /**
@@ -31,7 +32,7 @@ const styles = {
     right: 7,
     bottom: 7,
     backgroundRepeat: 'no-repeat',
-    backgroundSize: 'contain'
+    backgroundSize: '24px 24px'
   },
 
   /**
@@ -248,7 +249,7 @@ export default class ToolbarMailboxService extends React.Component {
           onMouseEnter={() => this.setState({ isHovering: true })}
           onMouseLeave={() => this.setState({ isHovering: false })}>
           <div style={{
-            backgroundImage: `url("../../${service.humanizedLogo}")`,
+            backgroundImage: `url("${Resolver.image(service.humanizedLogoAtSize(96))}")`,
             filter: showSleeping ? 'grayscale(100%)' : 'none',
             ...styles.avatar
           }} />

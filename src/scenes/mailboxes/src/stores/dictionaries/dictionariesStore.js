@@ -1,6 +1,6 @@
 import alt from '../alt'
 import actions from './dictionariesActions'
-import dictionaries from 'shared/dictionaries.js'
+import dictionaries from 'shared/SpellcheckProvider/dictionaries.js'
 import path from 'path'
 import { PREINSTALLED_DICTIONARIES } from 'shared/constants'
 import RuntimePaths from 'Runtime/RuntimePaths'
