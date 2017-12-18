@@ -7,7 +7,7 @@ class SlackAdapator extends BaseAdaptor {
 
   static get matches () {
     return [
-      'http(s)\\://*.slack.com(/*)'
+      'http(s)\\://*.slack.com(*)'
     ]
   }
 

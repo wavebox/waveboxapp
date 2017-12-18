@@ -13,7 +13,7 @@ class GoogleHangoutsAdaptor extends BaseAdaptor {
 
   static get matches () {
     return [
-      'http(s)\\://hangouts.google.com(/*)'
+      'http(s)\\://hangouts.google.com(*)'
     ]
   }
   static get hasJS () { return true }

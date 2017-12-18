@@ -13,7 +13,7 @@ class GoogleAlloAdaptor extends BaseAdaptor {
 
   static get matches () {
     return [
-      'http(s)\\://allo.google.com(/*)'
+      'http(s)\\://allo.google.com(*)'
     ]
   }
   static get hasJS () { return true }

@@ -7,7 +7,7 @@ class GoogleDriveAdaptor extends BaseAdaptor {
 
   static get matches () {
     return [
-      'http(s)\\://drive.google.com(/*)'
+      'http(s)\\://drive.google.com(*)'
     ]
   }
 
@@ -16,8 +16,9 @@ class GoogleDriveAdaptor extends BaseAdaptor {
   /* **************************************************************************/
 
   static get styles () {
+    /* Turn on notifications snackbar */
     return `
-      .g-Yd.a-la-B.a-Ff-B.g-Yd-Ya.g-Yd-Na { /* Turn on notifications popup */
+      .g-Yd.a-la-B.a-Ff-B.g-Yd-Ya.g-Yd-Na {
         display: none !important;
       }
     `

@@ -14,7 +14,7 @@ class GoogleCalendarAdaptor extends BaseAdaptor {
 
   static get matches () {
     return [
-      'http(s)\\://calendar.google.com(/*)'
+      'http(s)\\://calendar.google.com(*)'
     ]
   }
   static get hasJS () { return true }

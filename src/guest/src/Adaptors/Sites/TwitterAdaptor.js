@@ -9,7 +9,7 @@ class AsanaAdaptor extends BaseAdaptor {
 
   static get matches () {
     return [
-      'http(s)\\://twitter.com(/*)'
+      'http(s)\\://twitter.com(*)'
     ]
   }
   static get hasJS () { return true }
