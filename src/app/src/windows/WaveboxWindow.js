@@ -372,6 +372,15 @@ class WaveboxWindow extends EventEmitter {
     return this
   }
 
+  /**
+  * Minimizes the window
+  * @return this
+  */
+  minimize () {
+    this.window.minimize()
+    return this
+  }
+
   /* ****************************************************************************/
   // Actions: Dev
   /* ****************************************************************************/

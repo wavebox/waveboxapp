@@ -96,7 +96,7 @@ export default class TraySettingsSection extends React.Component {
               value={tray.mouseTriggerAction}>
               <MenuItem value={MOUSE_TRIGGER_ACTIONS.TOGGLE} primaryText='Hide or Show Window' />
               <MenuItem value={MOUSE_TRIGGER_ACTIONS.TOGGLE_MINIMIZE} primaryText='Minimize or Show Window' />
-              <MenuItem value={MOUSE_TRIGGER_ACTIONS.SHOW} primaryText='Focus & Show Window' />
+              <MenuItem value={MOUSE_TRIGGER_ACTIONS.SHOW} primaryText='Always Focus Window' />
             </SelectField>
           ) : undefined }
           {IS_GTK_PLATFORM ? (
