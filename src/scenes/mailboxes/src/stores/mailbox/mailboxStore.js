@@ -589,6 +589,7 @@ class MailboxStore {
       handleRemove: actions.REMOVE,
       handleMoveUp: actions.MOVE_UP,
       handleMoveDown: actions.MOVE_DOWN,
+      handleChangeIndex: actions.CHANGE_INDEX,
       handleReduce: actions.REDUCE,
 
       // Avatar
@@ -1198,6 +1199,17 @@ class MailboxStore {
     const mailboxIndex = index.findIndex((i) => i === id)
     if (mailboxIndex !== -1 && mailboxIndex < index.length) {
       index.splice(mailboxIndex + 1, 0, index.splice(mailboxIndex, 1)[0])
+      this.saveIndex(index)
+    } else {
+      this.preventDefault()
+    }
+  }
+
+  handleChangeIndex ({ id, nextIndex }) {
+    const index = Array.from(this.index)
+    const prevIndex = index.findIndex((i) => i === id)
+    if (prevIndex !== -1) {
+      index.splice(nextIndex, 0, index.splice(prevIndex, 1)[0])
       this.saveIndex(index)
     } else {
       this.preventDefault()

@@ -28,6 +28,7 @@
     "react-portal-tooltip": "2.1.4",
     "react-router": "4.2.0",
     "react-router-dom": "4.2.2",
+    "react-sortable-hoc": "0.6.8",
     "react-timer-mixin": "0.13.3",
     "semver": "5.4.1",
     "slug": "0.9.1",

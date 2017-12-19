@@ -2,7 +2,8 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import SidelistItemMailboxService from './SidelistItemMailboxService'
-import { mailboxStore } from 'stores/mailbox'
+import { mailboxStore, mailboxActions, MailboxReducer } from 'stores/mailbox'
+import {SortableContainer, SortableElement} from 'react-sortable-hoc'
 
 const styles = {
   container: {
@@ -14,6 +15,33 @@ const styles = {
     maxHeight: 0
   }
 }
+
+const SortableItem = SortableElement(({ mailboxId, serviceType, onOpenService, onContextMenu }) => {
+  return (
+    <SidelistItemMailboxService
+      key={serviceType}
+      mailboxId={mailboxId}
+      serviceType={serviceType}
+      onOpenService={onOpenService}
+      onContextMenu={(evt) => onContextMenu(evt, serviceType)} />
+  )
+})
+
+const SortableList = SortableContainer(({ mailboxId, serviceTypes, onOpenService, onContextMenu }) => {
+  return (
+    <div>
+      {serviceTypes.map((serviceType, index) => (
+        <SortableItem
+          key={serviceType}
+          index={index}
+          mailboxId={mailboxId}
+          serviceType={serviceType}
+          onOpenService={onOpenService}
+          onContextMenu={onContextMenu} />
+      ))}
+    </div>
+  )
+})
 
 export default class SidelistItemMailboxServices extends React.Component {
   /* **************************************************************************/
@@ -90,16 +118,17 @@ export default class SidelistItemMailboxServices extends React.Component {
 
     return (
       <div style={style}>
-        {mailbox.additionalServiceTypes.map((serviceType) => {
-          return (
-            <SidelistItemMailboxService
-              key={serviceType}
-              mailboxId={mailbox.id}
-              serviceType={serviceType}
-              onOpenService={onOpenService}
-              onContextMenu={(evt) => onContextMenuService(evt, serviceType)} />
-          )
-        })}
+        <SortableList
+          axis='y'
+          distance={20}
+          serviceTypes={mailbox.additionalServiceTypes}
+          mailboxId={mailbox.id}
+          onOpenService={onOpenService}
+          onContextMenu={onContextMenuService}
+          onSortEnd={({ oldIndex, newIndex }) => {
+            // +1 to the index because the default service isn't counted in this list
+            mailboxActions.reduce(mailbox.id, MailboxReducer.changeServiceIndex, mailbox.additionalServiceTypes[oldIndex], newIndex + 1)
+          }} />
       </div>
     )
   }

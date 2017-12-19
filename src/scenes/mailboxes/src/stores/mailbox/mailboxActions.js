@@ -532,6 +532,11 @@ class MailboxActions {
   moveDown (id) { return { id: id } }
 
   /**
+  * Changes the index of a mailbox
+  */
+  changeIndex (id, nextIndex) { return { id, nextIndex } }
+
+  /**
   * Updates and modifies a mailbox
   * @param id: the id of the mailbox to change
   * @param reducer: the reducer to run on the mailbox
