@@ -161,7 +161,17 @@ export default class Tray extends React.Component {
   handleMouseTriggerClick = () => {
     const { mouseTrigger, mouseTriggerAction } = this.props.traySettings
     if (mouseTrigger === MOUSE_TRIGGERS.SINGLE) {
-      ipcRenderer.send(mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY : WB_SHOW_MAILBOX_WINDOW_FROM_TRAY)
+      switch (mouseTriggerAction) {
+        case MOUSE_TRIGGER_ACTIONS.TOGGLE:
+          ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY)
+          break
+        case MOUSE_TRIGGER_ACTIONS.SHOW:
+          ipcRenderer.send(WB_SHOW_MAILBOX_WINDOW_FROM_TRAY)
+          break
+        case MOUSE_TRIGGER_ACTIONS.TOGGLE_MINIMIZE:
+          ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY, true)
+          break
+      }
     }
   }
 
@@ -171,7 +181,17 @@ export default class Tray extends React.Component {
   handleMouseTriggerDoubleClick = () => {
     const { mouseTrigger, mouseTriggerAction } = this.props.traySettings
     if (mouseTrigger === MOUSE_TRIGGERS.DOUBLE) {
-      ipcRenderer.send(mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY : WB_SHOW_MAILBOX_WINDOW_FROM_TRAY)
+      switch (mouseTriggerAction) {
+        case MOUSE_TRIGGER_ACTIONS.TOGGLE:
+          ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY)
+          break
+        case MOUSE_TRIGGER_ACTIONS.SHOW:
+          ipcRenderer.send(WB_SHOW_MAILBOX_WINDOW_FROM_TRAY)
+          break
+        case MOUSE_TRIGGER_ACTIONS.TOGGLE_MINIMIZE:
+          ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY, true)
+          break
+      }
     }
   }
 

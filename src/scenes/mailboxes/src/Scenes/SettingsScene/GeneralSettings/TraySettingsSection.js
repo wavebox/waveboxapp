@@ -94,8 +94,9 @@ export default class TraySettingsSection extends React.Component {
               disabled={!tray.show}
               onChange={(evt, index, value) => settingsActions.setMouseTriggerAction(value)}
               value={tray.mouseTriggerAction}>
-              <MenuItem value={MOUSE_TRIGGER_ACTIONS.TOGGLE} primaryText='Toggle window visibility' />
-              <MenuItem value={MOUSE_TRIGGER_ACTIONS.SHOW} primaryText='Show window' />
+              <MenuItem value={MOUSE_TRIGGER_ACTIONS.TOGGLE} primaryText='Hide or Show Window' />
+              <MenuItem value={MOUSE_TRIGGER_ACTIONS.TOGGLE_MINIMIZE} primaryText='Minimize or Show Window' />
+              <MenuItem value={MOUSE_TRIGGER_ACTIONS.SHOW} primaryText='Focus & Show Window' />
             </SelectField>
           ) : undefined }
           {IS_GTK_PLATFORM ? (

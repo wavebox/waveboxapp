@@ -36,8 +36,10 @@ class WaveboxTrayBehaviour {
 
   /**
   * Toggles the mailboxes window visibility by hiding or showing the mailboxes windoww
+  * @param evt: the event that fired
+  * @param minimize=false: set to true to prefer minimize (on platforms that support it)
   */
-  toggleMailboxesWindow = () => {
+  toggleMailboxesWindow = (evt, minimize = false) => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (!mailboxesWindow) { return }
 
@@ -45,7 +47,11 @@ class WaveboxTrayBehaviour {
       // On windows clicking on non-window elements (e.g. tray) causes window
       // to lose focus, so the window will never have focus
       if (mailboxesWindow.isVisible()) {
-        mailboxesWindow.close()
+        if (minimize) {
+          mailboxesWindow.minimize()
+        } else {
+          mailboxesWindow.close()
+        }
       } else {
         mailboxesWindow.show()
         mailboxesWindow.focus()
