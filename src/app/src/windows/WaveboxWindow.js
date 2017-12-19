@@ -381,6 +381,13 @@ class WaveboxWindow extends EventEmitter {
     return this
   }
 
+  /**
+  * @return true if the window is minimized
+  */
+  isMinimized () {
+    return this.window.isMinimized()
+  }
+
   /* ****************************************************************************/
   // Actions: Dev
   /* ****************************************************************************/

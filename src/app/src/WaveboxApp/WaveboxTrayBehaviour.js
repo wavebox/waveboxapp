@@ -46,7 +46,7 @@ class WaveboxTrayBehaviour {
     if (process.platform === 'win32') {
       // On windows clicking on non-window elements (e.g. tray) causes window
       // to lose focus, so the window will never have focus
-      if (mailboxesWindow.isVisible()) {
+      if (mailboxesWindow.isVisible() && !mailboxesWindow.isMinimized()) {
         if (minimize) {
           mailboxesWindow.minimize()
         } else {
