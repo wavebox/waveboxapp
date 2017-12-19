@@ -306,6 +306,13 @@ class SettingsActions {
     return this.update(SEGMENTS.UI, 'vibrancyMode', mode)
   }
 
+  /**
+  * @param css: the new css
+  */
+  setCustomMainCSS (css) {
+    return this.update(SEGMENTS.UI, 'customMainCSS', css)
+  }
+
   /* **************************************************************************/
   // App
   /* **************************************************************************/

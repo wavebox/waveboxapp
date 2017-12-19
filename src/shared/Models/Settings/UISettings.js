@@ -56,6 +56,13 @@ class UISettings extends Model {
   get showSidebarSupport () { return this._value_('showSidebarSupport', true) }
   get showSidebarNewsfeed () { return this._value_('showSidebarNewsfeed', SIDEBAR_NEWS_MODES.ALWAYS) }
   get sidebarTooltipsEnabled () { return this._value_('sidebarTooltipsEnabled', true) }
+
+  /* **************************************************************************/
+  // CSS
+  /* **************************************************************************/
+
+  get customMainCSS () { return this._value_('customMainCSS', undefined) }
+  get hasCustomMainCSS () { return !!this.customMainCSS }
 }
 
 module.exports = UISettings
