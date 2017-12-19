@@ -258,10 +258,10 @@ class SettingsActions {
   }
 
   /**
-  * @param enabled: true to enable sidebar tooltips
+  * @param mode: the mode to set for the tooltips
   */
-  setSidebarTooltipsEnabled (enabled) {
-    return this.update(SEGMENTS.UI, 'sidebarTooltipsEnabled', enabled)
+  setAccountTooltipMode (mode) {
+    return this.update(SEGMENTS.UI, 'accountTooltipMode', mode)
   }
 
   /**
