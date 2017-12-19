@@ -31,7 +31,8 @@ const NAVIGATE_MODES = Object.freeze({
   DEFAULT: 'DEFAULT',
   SUPPRESS: 'SUPPRESS',
   OPEN_EXTERNAL: 'OPEN_EXTERNAL',
-  OPEN_CONTENT: 'OPEN_CONTENT'
+  OPEN_CONTENT: 'OPEN_CONTENT',
+  OPEN_CONTENT_RESET: 'OPEN_CONTENT_RESET'
 })
 
 const privWindowOpenRules = Symbol('privWindowOpenRules')
@@ -84,8 +85,8 @@ class WindowOpeningEngine {
   * @param disposition: the new window disposition
   * @return a WINDOW_OPEN_MODES
   */
-  getRuleForWindowOpen (currentUrl, targetUrl, provisionalTargetUrl, disposition) {
-    const matchTask = new WindowOpeningMatchTask(currentUrl, targetUrl, provisionalTargetUrl, disposition)
+  getRuleForWindowOpen (currentUrl, targetUrl, openingWindowType, provisionalTargetUrl, disposition) {
+    const matchTask = new WindowOpeningMatchTask(currentUrl, targetUrl, openingWindowType, provisionalTargetUrl, disposition)
     const mode = this[privWindowOpenRules].getMatchingMode(matchTask)
     if (mode && WINDOW_OPEN_MODES[mode]) {
       return mode
@@ -154,10 +155,11 @@ class WindowOpeningEngine {
   * Gets a santized rule for navigating
   * @param currentUrl: the current url the page is on
   * @param targetUrl: the target url we are trying to navigate to
+  * @param openingWindowType: the type of window that's trying to open
   * @return a NAVIGATE_MODES
   */
-  getRuleForNavigation (currentUrl, targetUrl) {
-    const matchTask = new WindowOpeningMatchTask(currentUrl, targetUrl)
+  getRuleForNavigation (currentUrl, targetUrl, openingWindowType) {
+    const matchTask = new WindowOpeningMatchTask(currentUrl, targetUrl, openingWindowType)
     const mode = this[privNavigateRules].getMatchingMode(matchTask)
     if (mode && NAVIGATE_MODES[mode]) {
       return mode

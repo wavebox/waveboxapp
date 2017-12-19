@@ -149,6 +149,17 @@ class WindowOpeningRules {
       // Url
       if (!this._doesPatternMatch(match.url, matchTask.targetUri)) { return false }
 
+      // Window Opening Type
+      if (match.windowType !== undefined) {
+        if (Array.isArray(match.windowType)) {
+          if (!(matchTask.windowType in match.windowType)) { return false }
+        } else if (typeof (match.windowType) === 'string') {
+          if (match.windowType !== matchTask.windowType) { return false }
+        } else {
+          return false
+        }
+      }
+
       // Disposition (Optional)
       if (match.disposition !== undefined) {
         if (match.disposition !== matchTask.disposition) { return false }

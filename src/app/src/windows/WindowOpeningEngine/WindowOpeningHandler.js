@@ -22,6 +22,7 @@ class WindowOpeningHandler {
   *     @param options: the browser window options
   *     @param additionalFeatures: The non-standard features
   *     @param openingBrowserWindow: the browser window that's opening
+  *     @param openingWindowType: the type of window that's opening
   *     @param ownerId=undefined: the id of the owner
   *     @param provisionalTargetUrl=undefined: the provisional target url the user is hovering over
   *     @param mailbox=undefined: the mailbox if any
@@ -34,6 +35,7 @@ class WindowOpeningHandler {
       disposition,
       options,
       openingBrowserWindow,
+      openingWindowType,
       ownerId,
       provisionalTargetUrl,
       mailbox
@@ -51,7 +53,7 @@ class WindowOpeningHandler {
     let partitionOverride
 
     // Run through our standard config
-    openMode = WindowOpeningEngine.getRuleForWindowOpen(currentUrl, targetUrl, provisionalTargetUrl, disposition)
+    openMode = WindowOpeningEngine.getRuleForWindowOpen(currentUrl, targetUrl, openingWindowType, provisionalTargetUrl, disposition)
 
     // Look to see if the mailbox has an override
     if (mailbox) {
@@ -116,13 +118,16 @@ class WindowOpeningHandler {
   * @param config: the config for opening
   *     @param targetUrl: the webview url
   *     @param openingBrowserWindow: the browser window that's opening
+  *     @param openingWindowType: the type of window that's opening
   *     @param ownerId=undefined: the id of the owner
   *     @param mailbox=undefined: the mailbox if any
+  *     @param windowTag: the tag of the window
   */
   handleWillNavigate (evt, config) {
     const {
       targetUrl,
       openingBrowserWindow,
+      openingWindowType,
       mailbox
     } = config
 
@@ -130,7 +135,7 @@ class WindowOpeningHandler {
     const webContentsId = evt.sender.id
     const currentUrl = evt.sender.getURL()
 
-    const navigateMode = WindowOpeningEngine.getRuleForNavigation(currentUrl, targetUrl)
+    const navigateMode = WindowOpeningEngine.getRuleForNavigation(currentUrl, targetUrl, openingWindowType)
 
     if (navigateMode === WindowOpeningEngine.NAVIGATE_MODES.SUPPRESS) {
       evt.preventDefault()
@@ -139,11 +144,21 @@ class WindowOpeningHandler {
       this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
     } else if (navigateMode === WindowOpeningEngine.NAVIGATE_MODES.OPEN_CONTENT) {
       evt.preventDefault()
+      const webPreferences = evt.sender.getWebPreferences() || {}
       this.openWindowWaveboxContent(openingBrowserWindow, webContentsId, targetUrl, {
         webPreferences: {
-          partition: `persist:${(mailbox || {}).id}`
+          partition: webPreferences.partition
         }
       })
+    } else if (navigateMode === WindowOpeningEngine.NAVIGATE_MODES.OPEN_CONTENT_RESET) {
+      evt.preventDefault()
+      const webPreferences = evt.sender.getWebPreferences() || {}
+      this.openWindowWaveboxContent(openingBrowserWindow, webContentsId, targetUrl, {
+        webPreferences: {
+          partition: webPreferences.partition
+        }
+      })
+      evt.sender.goToIndex(0)
     }
   }
 

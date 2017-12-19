@@ -72,6 +72,8 @@ class MailboxesWindow extends WaveboxWindow {
   */
   static getAttached () { return singletonAttached }
 
+  static get windowType () { return this.WINDOW_TYPES.MAIN }
+
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/

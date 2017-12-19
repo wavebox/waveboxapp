@@ -10,14 +10,16 @@ class WindowOpeningMatchTask {
   /**
   * @param currentUrl: the current url
   * @param targetUrl: the target url to open
+  * @param windowType: the window type that's opening
   * @param provisionalTargetUrl=undefined: the provisional target url the user is hovering over
   * @param disposition=undefined: the dispos of the new window
   * @param version: the version of the ruleset
   * @param ruleset: the raw ruleset
   */
-  constructor (currentUrl, targetUrl, provisionalTargetUrl = undefined, disposition = undefined) {
+  constructor (currentUrl, targetUrl, windowType, provisionalTargetUrl = undefined, disposition = undefined) {
     this.fullCurrentUrl = currentUrl
     this.fullTargetUrl = targetUrl
+    this.windowType = windowType
     this.fullProvisionalTargetUrl = provisionalTargetUrl
     this.disposition = disposition
     this[privCache] = new Map()

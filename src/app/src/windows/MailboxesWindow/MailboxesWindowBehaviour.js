@@ -6,6 +6,7 @@ import mailboxStore from 'stores/mailboxStore'
 import { WindowOpeningHandler } from '../WindowOpeningEngine'
 import { WB_NEW_WINDOW } from 'shared/ipcEvents'
 import { WAVEBOX_HOSTED_EXTENSION_PROTOCOL } from 'shared/extensionApis'
+import WINDOW_TYPES from '../WindowTypes'
 
 class MailboxesWindowBehaviour {
   /* ****************************************************************************/
@@ -107,6 +108,7 @@ class MailboxesWindowBehaviour {
       options: options,
       additionalFeatures: additionalFeatures,
       openingBrowserWindow: this._getOpeningBrowserWindow(evt),
+      openingWindowType: WINDOW_TYPES.MAIN,
       ownerId: this.tabManager.getOwnerId(evt.sender.id),
       provisionalTargetUrl: this.tabManager.getTargetUrl(evt.sender.id),
       mailbox: this.tabManager.getService(evt.sender.id).mailbox
@@ -130,6 +132,7 @@ class MailboxesWindowBehaviour {
     WindowOpeningHandler.handleWillNavigate(evt, {
       targetUrl: targetUrl,
       openingBrowserWindow: this._getOpeningBrowserWindow(evt),
+      openingWindowType: WINDOW_TYPES.MAIN,
       ownerId: this.tabManager.getOwnerId(evt.sender.id),
       mailbox: this.tabManager.getService(evt.sender.id).mailbox
     })

@@ -34,6 +34,12 @@ const privGuestWebContentsId = Symbol('privGuestWebContentsId')
 
 class ContentWindow extends WaveboxWindow {
   /* ****************************************************************************/
+  // Class: Properties
+  /* ****************************************************************************/
+
+  static get windowType () { return this.WINDOW_TYPES.CONTENT }
+
+  /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
@@ -226,6 +232,7 @@ class ContentWindow extends WaveboxWindow {
       options: options,
       additionalFeatures: additionalFeatures,
       openingBrowserWindow: this.window,
+      openingWindowType: this.windowType,
       ownerId: this.ownerId,
       provisionalTargetUrl: undefined,
       mailbox: undefined
@@ -241,6 +248,7 @@ class ContentWindow extends WaveboxWindow {
     WindowOpeningHandler.handleWillNavigate(evt, {
       targetUrl: targetUrl,
       openingBrowserWindow: this.window,
+      openingWindowType: this.windowType,
       ownerId: this.ownerId,
       mailbox: undefined
     })

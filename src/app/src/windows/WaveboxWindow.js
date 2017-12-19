@@ -16,6 +16,7 @@ import {
   WB_WINDOW_BLUR
 } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
+import WINDOW_TYPES from './WindowTypes'
 
 const privOwnerId = Symbol('privOwnerId')
 const privWindow = Symbol('privWindow')
@@ -44,6 +45,13 @@ class WaveboxWindow extends EventEmitter {
   static fromBrowserWindow (bw) { return waveboxWindowManager.fromBrowserWindow(bw) }
   static focusedTabId () { return waveboxWindowManager.focusedTabId() }
   static cycleNextWindow () { return waveboxWindowManager.cycleNextWindow() }
+
+  /* ****************************************************************************/
+  // Class: Properties
+  /* ****************************************************************************/
+
+  static get WINDOW_TYPES () { return WINDOW_TYPES }
+  static get windowType () { return WINDOW_TYPES.NONE }
 
   /* ****************************************************************************/
   // Lifecycle
@@ -86,6 +94,8 @@ class WaveboxWindow extends EventEmitter {
 
   get ownerId () { return this[privOwnerId] }
   set ownerId (v) { this[privOwnerId] = v }
+  get WINDOW_TYPES () { return this.constructor.WINDOW_TYPES }
+  get windowType () { return this.constructor.windowType }
 
   /* ****************************************************************************/
   // Properties: Window
