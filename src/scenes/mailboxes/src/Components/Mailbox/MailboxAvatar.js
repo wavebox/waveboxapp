@@ -112,7 +112,10 @@ export default class MailboxAvatar extends React.Component {
     const { style, mailbox, size, useBorderHack, ...otherProps } = this.props
     const passProps = Object.assign({
       draggable: false,
-      style: {...style},
+      style: {
+        textIndent: -100000, // Stops showing the broken image icon if the url doesn't resolve
+        ...style
+      },
       backgroundColor: mailbox.hasCustomAvatar || mailbox.avatarURL ? 'white' : mailbox.color
     }, otherProps)
 
