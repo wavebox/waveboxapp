@@ -38,6 +38,12 @@ export default class DebugSettingsSection extends React.Component {
           <FlatButton
             label='Free V8 Memory'
             onClick={() => settingsActions.freeMetricsV8Memory()} />
+          <FlatButton
+            label='Classic Add Screen'
+            icon={<FontIcon className='material-icons'>add_circle</FontIcon>}
+            onClick={() => {
+              window.location.hash = '/mailbox_wizard/add_classic'
+            }} />
         </div>
         <Toggle
           toggled={app.writeMetricsLog}

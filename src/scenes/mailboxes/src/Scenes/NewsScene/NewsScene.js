@@ -4,6 +4,8 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { WaveboxWebView, FullscreenModal } from 'Components'
 import { NEWS_URL } from 'shared/constants'
 import { settingsActions } from 'stores/settings'
+import Spinner from 'sharedui/Components/Activity/Spinner'
+import * as Colors from 'material-ui/styles/colors'
 
 const styles = {
   modalActions: {
@@ -25,6 +27,17 @@ const styles = {
     bottom: 52,
     borderTopLeftRadius: 2,
     borderTopRightRadius: 2
+  },
+  loadingCover: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 }
 
@@ -35,6 +48,9 @@ export default class NewsScene extends React.Component {
 
   componentDidMount () {
     settingsActions.openAndMarkNews.defer()
+
+    // Hopefully fixes an issue where the webview fails to render any content https://github.com/electron/electron/issues/8505
+    setTimeout(() => { this.setState({ renderWebview: true }) }, 100)
   }
 
   /* **************************************************************************/
@@ -42,7 +58,9 @@ export default class NewsScene extends React.Component {
   /* **************************************************************************/
 
   state = {
-    open: true
+    open: true,
+    renderWebview: false,
+    isLoading: true
   }
 
   /* **************************************************************************/
@@ -68,7 +86,11 @@ export default class NewsScene extends React.Component {
   }
 
   render () {
-    const { open } = this.state
+    const {
+      open,
+      renderWebview,
+      isLoading
+    } = this.state
 
     return (
       <FullscreenModal
@@ -78,9 +100,18 @@ export default class NewsScene extends React.Component {
         actions={(<RaisedButton primary label='Close' onClick={this.handleClose} />)}
         open={open}
         onRequestClose={this.handleClose}>
-        <WaveboxWebView
-          src={NEWS_URL}
-          saltClientInfoInUrl={false} />
+        {isLoading ? (
+          <div style={styles.loadingCover}>
+            <Spinner size={50} color={Colors.lightBlue600} speed={0.75} />
+          </div>
+        ) : undefined}
+        {renderWebview ? (
+          <WaveboxWebView
+            didStartLoading={() => this.setState({ isLoading: true })}
+            didStopLoading={() => this.setState({ isLoading: false })}
+            saltClientInfoInUrl={false}
+            src={NEWS_URL} />
+        ) : undefined}
       </FullscreenModal>
     )
   }
