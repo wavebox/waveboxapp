@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper, Toggle } from 'material-ui'
+import { Paper, Toggle, TextField } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Row, Col } from 'Components/Grid'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
@@ -11,7 +11,7 @@ import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
 import AccountBehaviourSettings from '../AccountBehaviourSettings'
 import styles from '../../CommonSettingStyles'
-import { mailboxActions, ContainerDefaultServiceReducer } from 'stores/mailbox'
+import { mailboxActions, ContainerDefaultServiceReducer, ContainerMailboxReducer } from 'stores/mailbox'
 
 export default class ContainerAccountSettings extends React.Component {
   /* **************************************************************************/
@@ -47,6 +47,16 @@ export default class ContainerAccountSettings extends React.Component {
         <Row>
           <Col md={6}>
             <Paper style={styles.paper}>
+              <TextField
+                key={`displayName_${mailbox.userDisplayName}`}
+                fullWidth
+                floatingLabelFixed
+                hintText='My Account'
+                floatingLabelText='Account Name'
+                defaultValue={mailbox.userDisplayName}
+                onBlur={(evt) => {
+                  mailboxActions.reduce(this.props.mailbox.id, ContainerMailboxReducer.setDisplayName, evt.target.value)
+                }} />
               <Toggle
                 toggled={service.hasNavigationToolbar}
                 label='Show navigation toolbar'

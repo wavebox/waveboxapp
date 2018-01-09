@@ -137,9 +137,14 @@ export default class Tray extends React.Component {
         signature: messageItemsSignature,
         label: [
           unreadCount ? `(${unreadCount})` : undefined,
-          mailbox.displayName || 'Untitled'
+          mailbox.humanizedType === mailbox.displayName ? (
+            mailbox.humanizedType
+          ) : (
+            `${mailbox.humanizedType} : ${mailbox.displayName || 'Untitled'}`
+          )
         ].filter((item) => !!item).join(' '),
-        submenu: messageItems.length === 2 ? [...messageItems,
+        submenu: messageItems.length === 2 ? [
+          ...messageItems,
           { label: 'No messages', enabled: false }
         ] : messageItems
       }
@@ -234,7 +239,14 @@ export default class Tray extends React.Component {
   * @return the tooltip string for the tray icon
   */
   renderTooltip () {
-    return this.props.unreadCount ? this.props.unreadCount + ' unread items' : 'No unread items'
+    const {unreadCount} = this.props
+    if (unreadCount === 1) {
+      return `1 unread item`
+    } else if (unreadCount > 1) {
+      return `${unreadCount} unread items`
+    } else {
+      return 'No unread items'
+    }
   }
 
   /**

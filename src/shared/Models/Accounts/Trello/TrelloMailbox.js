@@ -67,7 +67,11 @@ class TrelloMailbox extends CoreMailbox {
   get avatarCharacterDisplay () { return this.initials || super.avatarCharacterDisplay }
   get displayName () {
     if (this.fullName && this.username) {
-      return '(' + this.fullName + ') ' + this.username
+      if (this.fullName === this.username) {
+        return this.username
+      } else {
+        return `${this.username} - ${this.fullName}`
+      }
     } else if (this.username) {
       return this.username
     } else {
