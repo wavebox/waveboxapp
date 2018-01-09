@@ -61,6 +61,7 @@ class Runtime {
     this.onStartup = new EventUnsupported('chrome.runtime.onStartup')
     this.onUpdateAvailable = new EventUnsupported('chrome.runtime.onUpdateAvailable')
     this.onSuspend = new EventUnsupported('chrome.runtime.onSuspend')
+    this.onMessageExternal = new EventUnsupported('chrome.runtime.onMessageExternal')
 
     Object.freeze(this)
 

@@ -114,7 +114,7 @@ class CRExtensionRuntime {
   */
   getWindowPopoutModePreference (webContentsId, url, parsedUrl, disposition) {
     if (this.connectedContentScripts.has(webContentsId)) {
-      const preference = this.extension.manifest.getWindowPopoutModePreference(url, parsedUrl, disposition)
+      const preference = this.extension.manifest.wavebox.getWindowPopoutModePreference(url, parsedUrl, disposition)
       if (preference) {
         return { mode: preference.mode, match: preference.match, extension: this.extension }
       }
@@ -132,6 +132,19 @@ class CRExtensionRuntime {
   */
   handleContentScriptRuntimeConnect = (evt) => {
     this.connectedContentScripts.add(evt.sender.id)
+  }
+
+  /* ****************************************************************************/
+  // WebRequest
+  /* ****************************************************************************/
+
+  /**
+  * Runs the before request code provided by the extension
+  * @param details: the details of the request
+  * @return modifiers that will cancel or redirect the request or undefined
+  */
+  runExtensionOnBeforeRequest = (details) => {
+    return this.webRequest ? this.webRequest.blockingOnBeforeRequest(details) : undefined
   }
 }
 

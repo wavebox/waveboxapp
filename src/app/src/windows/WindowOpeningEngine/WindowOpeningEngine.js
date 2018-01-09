@@ -1,7 +1,7 @@
 import WindowOpeningRules from './WindowOpeningRules'
 import WindowOpeningMatchTask from './WindowOpeningMatchTask'
 import CRExtensionManager from 'Extensions/Chrome/CRExtensionManager'
-import CRExtensionManifest from 'shared/Models/CRExtension/CRExtensionManifest'
+import CRExtensionManifestWavebox from 'shared/Models/CRExtension/CRExtensionManifestWavebox'
 import url from 'url'
 import fallbackConfig from './fallbackConfig'
 import {
@@ -111,19 +111,19 @@ class WindowOpeningEngine {
     )
 
     if (extensionPopoutConfig !== false) {
-      if (extensionPopoutConfig.mode === CRExtensionManifest.POPOUT_WINDOW_MODES.POPOUT) {
+      if (extensionPopoutConfig.mode === CRExtensionManifestWavebox.POPOUT_WINDOW_MODES.POPOUT) {
         return {
           match: true,
           config: extensionPopoutConfig,
           mode: WINDOW_OPEN_MODES.POPUP_CONTENT
         }
-      } else if (extensionPopoutConfig.mode === CRExtensionManifest.POPOUT_WINDOW_MODES.CONTENT) {
+      } else if (extensionPopoutConfig.mode === CRExtensionManifestWavebox.POPOUT_WINDOW_MODES.CONTENT) {
         return {
           match: true,
           config: extensionPopoutConfig,
           mode: WINDOW_OPEN_MODES.CONTENT
         }
-      } else if (extensionPopoutConfig.mode === CRExtensionManifest.POPOUT_WINDOW_MODES.CONTENT_BACKGROUND) {
+      } else if (extensionPopoutConfig.mode === CRExtensionManifestWavebox.POPOUT_WINDOW_MODES.CONTENT_BACKGROUND) {
         return {
           match: true,
           config: extensionPopoutConfig,

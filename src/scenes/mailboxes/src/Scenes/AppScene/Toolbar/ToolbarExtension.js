@@ -149,7 +149,7 @@ export default class ToolbarExtension extends React.Component {
           tabId={tabId}
           enabled={browserActionEnabled}
           icon={browserActionIcon}
-          iconFilter={manifest.waveboxBrowserActionIconFilter}
+          iconFilter={manifest.wavebox.browserActionIconFilter}
           title={browserActionTitle}
           onIconClicked={this.handleIconClicked}
           onContextMenu={this.handleOpenContextMenu} />

@@ -31,7 +31,7 @@ class CRExtensionCookies {
     this._changeListenerSessions = new Set()
     this._partiallyModifiedCookies = []
 
-    const scopes = this.extension.manifest.waveboxCookieScopes
+    const scopes = this.extension.manifest.wavebox.cookieScopes
     const permissions = this.extension.manifest.permissions
 
     if (this.extension.manifest.hasBackground && scopes.size > 0 && permissions.has('cookies')) {
@@ -69,7 +69,7 @@ class CRExtensionCookies {
   * @return all the partitions that are currently relevant
   */
   _getAllPartitions () {
-    const scopes = this.extension.manifest.waveboxCookieScopes
+    const scopes = this.extension.manifest.wavebox.cookieScopes
     const partitions = []
     if (scopes.has('background')) {
       partitions.push(CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id))
