@@ -29,7 +29,7 @@
     "vm2": "3.5.2",
     "winreg": "1.2.4",
     "xml2js": "0.4.19",
-    "yargs": "10.0.3"
+    "yargs": "10.1.1"
   },
   "optionalDependencies": {
     "electron-windows-notifications": "1.1.15",
