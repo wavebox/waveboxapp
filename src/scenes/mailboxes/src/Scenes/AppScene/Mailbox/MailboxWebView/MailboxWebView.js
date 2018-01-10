@@ -167,7 +167,7 @@ export default class MailboxWebView extends React.Component {
             baseUrl: service.url,
             restorableUrl: service.restorableUrl,
             initialLoadDone: false
-          } : {}) //TODO test (generic & container & slack)
+          } : {})
         }
       })
     } else {
