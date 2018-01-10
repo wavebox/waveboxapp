@@ -410,6 +410,14 @@ class SettingsActions {
   }
 
   /**
+  * Sets whether the user has seen the linux setup message
+  * @param seen: true if seen
+  */
+  setHasSeenLinuxSetupMessage (seen) {
+    return this.update(SEGMENTS.APP, 'hasSeenLinuxSetupMessage', seen)
+  }
+
+  /**
   * Sets whether geolocation api requests are granted or not
   * @param enabled: true to enable, false to disable
   */

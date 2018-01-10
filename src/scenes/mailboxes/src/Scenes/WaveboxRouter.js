@@ -26,6 +26,7 @@ import {
   AccountAuthenticatingScene,
   AccountStandaloneScene
 } from './AccountScene'
+import LinuxSetupScene from './LinuxSetupScene'
 
 export default class WaveboxRouter extends React.Component {
   /* **************************************************************************/
@@ -69,6 +70,8 @@ export default class WaveboxRouter extends React.Component {
           <Route path='/account/auth/:mode?' component={AccountAuthScene} />
           <Route path='/account/authenticating' component={AccountAuthenticatingScene} />
           <Route path='/account/view' component={AccountStandaloneScene} />
+
+          <Route path='/setup/linux' component={LinuxSetupScene} />
         </div>
       </HashRouter>
     )

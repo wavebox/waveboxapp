@@ -18,6 +18,7 @@ import {
 import AppSettings from 'shared/Models/Settings/AppSettings'
 import { ipcRenderer } from 'electron'
 import pkg from 'package.json'
+import DistributionConfig from 'Runtime/DistributionConfig'
 
 const UPDATE_STATES = Object.freeze({
   CHECKING: 'CHECKING',
@@ -153,7 +154,8 @@ class UpdaterStore {
       mode: this.userActionedUpdate ? 'manual' : 'auto',
       channel: updateChannel,
       platform: process.platform,
-      arch: process.arch
+      arch: process.arch,
+      installmethod: DistributionConfig.installMethod
     })
   }
 
