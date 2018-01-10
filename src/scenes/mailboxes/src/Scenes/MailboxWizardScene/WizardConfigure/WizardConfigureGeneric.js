@@ -62,6 +62,7 @@ export default class WizardConfigureGeneric extends React.Component {
       configureDisplayFromPage: true,
       defaultWindowOpenMode: CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER,
       hasNavigationToolbar: true,
+      restoreLastUrl: true,
       displayNameError: null,
       serviceUrlError: null,
       displayName: '',
@@ -141,7 +142,8 @@ export default class WizardConfigureGeneric extends React.Component {
         serviceUrl,
         configureDisplayFromPage,
         defaultWindowOpenMode,
-        hasNavigationToolbar
+        hasNavigationToolbar,
+        restoreLastUrl
       } = this.state
 
       mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setDisplayName, displayName)
@@ -150,6 +152,7 @@ export default class WizardConfigureGeneric extends React.Component {
       mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setDefaultWindowOpenMode, defaultWindowOpenMode)
       mailboxActions.reduceService(mailbox.id, GenericDefaultService.type, GenericDefaultServiceReducer.setUrl, serviceUrl)
       mailboxActions.reduceService(mailbox.id, GenericDefaultService.type, GenericDefaultServiceReducer.setHasNavigationToolbar, hasNavigationToolbar)
+      mailboxActions.reduceService(mailbox.id, GenericDefaultService.type, GenericDefaultServiceReducer.setRestoreLastUrl, restoreLastUrl)
       onRequestCancel()
       return true
     }
@@ -172,6 +175,7 @@ export default class WizardConfigureGeneric extends React.Component {
       configureDisplayFromPage,
       defaultWindowOpenMode,
       hasNavigationToolbar,
+      restoreLastUrl,
       displayName,
       displayNameError,
       serviceUrl,
@@ -257,6 +261,13 @@ export default class WizardConfigureGeneric extends React.Component {
           })}
         </SelectField>
         <br />
+        <Toggle
+          toggled={restoreLastUrl}
+          label='Restore last page on load'
+          labelPosition='right'
+          onToggle={(evt, toggled) => {
+            this.setState({ restoreLastUrl: toggled })
+          }} />
         <Toggle
           toggled={configureDisplayFromPage}
           label='Use Page Title & Theme to customise icon appearance'

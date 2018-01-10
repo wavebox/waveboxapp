@@ -64,6 +64,13 @@ export default class ContainerAccountSettings extends React.Component {
                 onToggle={(evt, toggled) => {
                   mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setHasNavigationToolbar, toggled)
                 }} />
+              <Toggle
+                toggled={service.restoreLastUrl}
+                label='Restore last page on load'
+                labelPosition='right'
+                onToggle={(evt, toggled) => {
+                  mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setRestoreLastUrl, toggled)
+                }} />
             </Paper>
             <AccountAppearanceSettings mailbox={mailbox} />
             <AccountBadgeSettings mailbox={mailbox} service={service} />

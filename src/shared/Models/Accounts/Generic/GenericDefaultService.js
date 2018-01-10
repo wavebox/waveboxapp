@@ -38,7 +38,6 @@ class GenericDefaultService extends CoreService {
   // Properties
   /* **************************************************************************/
 
-  get url () { return this.__data__.url || 'about:blank' }
   get sleepable () { return this._value_('sleepable', false) }
   get depricatedOpenWindowsExternally () { return this._value_('openWindowsExternally', false) }
   get hasNavigationToolbar () { return this._value_('hasNavigationToolbar', false) }
@@ -51,6 +50,13 @@ class GenericDefaultService extends CoreService {
 
     return super.defaultWindowOpenMode
   }
+
+  /* **************************************************************************/
+  // Properties: Url
+  /* **************************************************************************/
+
+  get url () { return this.__data__.url || 'about:blank' }
+  get restoreLastUrlDefault () { return true }
 
   /* **************************************************************************/
   // Properties : Provider Details & counts etc

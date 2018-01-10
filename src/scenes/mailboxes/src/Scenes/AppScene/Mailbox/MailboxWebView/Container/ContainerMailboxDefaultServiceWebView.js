@@ -54,7 +54,6 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
     const mailbox = mailboxState.getMailbox(props.mailboxId)
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     return {
-      url: service ? service.url : undefined,
       useNativeWindowOpen: service ? service.useNativeWindowOpen : true,
       useContextIsolation: service ? service.useContextIsolation : true
     }
@@ -64,7 +63,6 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
     const mailbox = mailboxState.getMailbox(this.props.mailboxId)
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     this.setState({
-      url: service ? service.url : undefined,
       useNativeWindowOpen: service ? service.useNativeWindowOpen : true,
       useContextIsolation: service ? service.useContextIsolation : true
     })
@@ -106,7 +104,7 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
 
   render () {
     const { mailboxId } = this.props
-    const { url, useNativeWindowOpen, useContextIsolation } = this.state
+    const { useNativeWindowOpen, useContextIsolation } = this.state
 
     // Don't use string templating or inline in jsx. The compiler optimizes it out!!
     const webpreferences = [
@@ -119,7 +117,6 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
         ref={REF}
         preload={Resolver.guestPreload()}
         mailboxId={mailboxId}
-        url={url}
         webpreferences={webpreferences}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
         ipcMessage={this.handleIPCMessage} />

@@ -38,8 +38,14 @@ class SlackDefaultService extends CoreService {
   /* **************************************************************************/
 
   get teamName () { return this.__metadata__.teamName }
-  get url () { return this.__metadata__.authUrl }
   get sleepable () { return this._value_('sleepable', false) }
+
+  /* **************************************************************************/
+  // Properties: Url
+  /* **************************************************************************/
+
+  get url () { return this.__metadata__.authUrl }
+  get restoreLastUrlDefault () { return true }
 
   /* **************************************************************************/
   // Properties : Slack info

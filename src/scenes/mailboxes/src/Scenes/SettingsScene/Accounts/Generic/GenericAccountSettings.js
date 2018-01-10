@@ -131,6 +131,13 @@ export default class GenericAccountSettings extends React.Component {
                 errorText={serviceUrlError}
                 onBlur={this.handleUrlChange} />
               <Toggle
+                toggled={service.restoreLastUrl}
+                label='Restore last page on load'
+                labelPosition='right'
+                onToggle={(evt, toggled) => {
+                  mailboxActions.reduceService(mailbox.id, service.type, GenericDefaultServiceReducer.setRestoreLastUrl, toggled)
+                }} />
+              <Toggle
                 toggled={service.hasNavigationToolbar}
                 label='Show navigation toolbar'
                 labelPosition='right'

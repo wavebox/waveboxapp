@@ -2,6 +2,32 @@ import { MAILBOX_SLEEP_WAIT } from 'shared/constants'
 
 class ServiceReducer {
   /* **************************************************************************/
+  // Urls
+  /* **************************************************************************/
+
+  /**
+  * Sets the last url of the service
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param url: the current url
+  */
+  static setLastUrl (mailbox, service, url) {
+    return service.changeData({
+      lastUrl: { url: url, baseUrl: service.url }
+    })
+  }
+
+  /**
+  * Sets whether the last url should be restored or not
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param restore: true to restore, false otherwise
+  */
+  static setRestoreLastUrl (mailbox, service, restore) {
+    return service.changeData({ restoreLastUrl: restore })
+  }
+
+  /* **************************************************************************/
   // Sleepable
   /* **************************************************************************/
 

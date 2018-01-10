@@ -102,12 +102,34 @@ class CoreService extends Model {
 
   get parentId () { return this.__parentId__ }
   get type () { return this.constructor.type }
-  get url () { return undefined }
   get sleepable () { return this._value_('sleepable', true) }
   get sleepableTimeout () { return this._value_('sleepableTimeout', MAILBOX_SLEEP_WAIT) }
   get hasNavigationToolbar () { return false }
   get reloadBehaviour () { return this.constructor.reloadBehaviour }
   get hasSeenSleepableWizard () { return this._value_('hasSeenSleepableWizard', false) }
+
+  /* **************************************************************************/
+  // Properties: Url
+  /* **************************************************************************/
+
+  get url () { return undefined }
+  get lastUrl () {
+    const value = this._value_('lastUrl', {})
+    if (value && value.baseUrl === this.url && value.url && value.url !== 'about:blank') {
+      return value.url
+    } else {
+      return undefined
+    }
+  }
+  get restoreLastUrlDefault () { return false }
+  get restoreLastUrl () { return this._value_('restoreLastUrl', this.restoreLastUrlDefault) }
+  get restorableUrl () {
+    if (this.restoreLastUrl) {
+      return this.lastUrl || this.url
+    } else {
+      return this.url
+    }
+  }
 
   /* **************************************************************************/
   // Properties: Support

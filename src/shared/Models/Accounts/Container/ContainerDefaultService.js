@@ -18,13 +18,19 @@ class ContainerDefaultService extends CoreService {
   get containerService () { return this.container.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) }
 
   /* **************************************************************************/
-  // Properties: Container
+  // Properties
+  /* **************************************************************************/
+
+  get sleepable () { return this._value_('sleepable', this.containerService.sleepableDefault) }
+  get hasNavigationToolbar () { return this._value_('hasNavigationToolbar', this.containerService.hasNavigationToolbarDefault) }
+
+  /* **************************************************************************/
+  // Properties: Url
   /* **************************************************************************/
 
   get url () { return this.containerService.getUrlWithSubdomain(this.urlSubdomain) }
   get urlSubdomain () { return this.__metadata__.urlSubdomain }
-  get sleepable () { return this._value_('sleepable', this.containerService.sleepableDefault) }
-  get hasNavigationToolbar () { return this._value_('hasNavigationToolbar', this.containerService.hasNavigationToolbarDefault) }
+  get restoreLastUrlDefault () { return this.containerService.restoreLastUrlDefault }
 
   /* **************************************************************************/
   // Properties: Humanized

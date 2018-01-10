@@ -18,11 +18,17 @@ class ContainerService extends Model {
   // Properties
   /* **************************************************************************/
 
-  get url () { return this._value_('url', 'about:blank') }
-  get hasUrlSubdomain () { return this.__metadata__.hasUrlSubdomain }
   get name () { return this._value_('name', this.__metadata__.name) }
   get logos () { return this._value_('logos', this.__metadata__.logos) }
   get logo () { return this.logos.slice(-1)[0] }
+
+  /* **************************************************************************/
+  // Properties: Url
+  /* **************************************************************************/
+
+  get url () { return this._value_('url', 'about:blank') }
+  get hasUrlSubdomain () { return this.__metadata__.hasUrlSubdomain }
+  get restoreLastUrlDefault () { return this._value_('restoreLastUrlDefault', false) }
 
   /**
   * @param subdomain: the subdomain to replace with
