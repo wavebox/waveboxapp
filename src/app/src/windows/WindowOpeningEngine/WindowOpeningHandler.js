@@ -23,7 +23,7 @@ class WindowOpeningHandler {
   *     @param additionalFeatures: The non-standard features
   *     @param openingBrowserWindow: the browser window that's opening
   *     @param openingWindowType: the type of window that's opening
-  *     @param ownerId=undefined: the id of the owner
+  *     @param tabMetaInfo=undefined: the meta info to provide the new tab with
   *     @param provisionalTargetUrl=undefined: the provisional target url the user is hovering over
   *     @param mailbox=undefined: the mailbox if any
   */
@@ -36,7 +36,7 @@ class WindowOpeningHandler {
       options,
       openingBrowserWindow,
       openingWindowType,
-      ownerId,
+      tabMetaInfo,
       provisionalTargetUrl,
       mailbox
     } = config
@@ -73,20 +73,20 @@ class WindowOpeningHandler {
     // Action the window open
     let openedWindow
     if (openMode === WINDOW_OPEN_MODES.POPUP_CONTENT) {
-      openedWindow = this.openWindowWaveboxPopupContent(openingBrowserWindow, ownerId, targetUrl, options)
+      openedWindow = this.openWindowWaveboxPopupContent(openingBrowserWindow, tabMetaInfo, targetUrl, options)
       evt.newGuest = openedWindow.window
     } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL) {
       openedWindow = this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
     } else if (openMode === WINDOW_OPEN_MODES.DEFAULT || openMode === WINDOW_OPEN_MODES.DEFAULT_IMPORTANT) {
-      openedWindow = this.openWindowDefault(openingBrowserWindow, ownerId, mailbox, targetUrl, options, partitionOverride)
+      openedWindow = this.openWindowDefault(openingBrowserWindow, tabMetaInfo, mailbox, targetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL) {
       openedWindow = this.openWindowExternal(openingBrowserWindow, provisionalTargetUrl, mailbox)
     } else if (openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL || openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT) {
-      openedWindow = this.openWindowDefault(openingBrowserWindow, ownerId, mailbox, provisionalTargetUrl, options, partitionOverride)
+      openedWindow = this.openWindowDefault(openingBrowserWindow, tabMetaInfo, mailbox, provisionalTargetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.CONTENT) {
-      openedWindow = this.openWindowWaveboxContent(openingBrowserWindow, ownerId, targetUrl, options, partitionOverride)
+      openedWindow = this.openWindowWaveboxContent(openingBrowserWindow, tabMetaInfo, targetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.CONTENT_PROVSIONAL) {
-      openedWindow = this.openWindowWaveboxContent(openingBrowserWindow, ownerId, provisionalTargetUrl, options, partitionOverride)
+      openedWindow = this.openWindowWaveboxContent(openingBrowserWindow, tabMetaInfo, provisionalTargetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.DOWNLOAD) {
       evt.sender.downloadURL(targetUrl)
     }
@@ -119,7 +119,7 @@ class WindowOpeningHandler {
   *     @param targetUrl: the webview url
   *     @param openingBrowserWindow: the browser window that's opening
   *     @param openingWindowType: the type of window that's opening
-  *     @param ownerId=undefined: the id of the owner
+  *     @param tabMetaInfo=undefined: the meta info to provide the new tab with
   *     @param mailbox=undefined: the mailbox if any
   *     @param windowTag: the tag of the window
   */
@@ -169,21 +169,21 @@ class WindowOpeningHandler {
   /**
   * Opens a window with the default behaviour
   * @param openingBrowserWindow: the browser window that's opening
-  * @param ownerId: the id of the owning window
+  * @param tabMetaInfo: the meta info to provide the new tab with
   * @param mailbox: the mailbox that's attempting to open
   * @param targetUrl: the url to open
   * @param options: the config options for the window
   * @param partitionOverride = undefined: an optional override for the opener partition
   * @return the opened window if any
   */
-  openWindowDefault (openingBrowserWindow, ownerId, mailbox, targetUrl, options, partitionOverride = undefined) {
+  openWindowDefault (openingBrowserWindow, tabMetaInfo, mailbox, targetUrl, options, partitionOverride = undefined) {
     if (!mailbox) {
       return this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
     } else {
       if (mailbox.defaultWindowOpenMode === CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
         return this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
       } else if (mailbox.defaultWindowOpenMode === CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
-        return this.openWindowWaveboxContent(openingBrowserWindow, ownerId, targetUrl, options, partitionOverride)
+        return this.openWindowWaveboxContent(openingBrowserWindow, tabMetaInfo, targetUrl, options, partitionOverride)
       }
     }
   }
@@ -191,13 +191,13 @@ class WindowOpeningHandler {
   /**
   * Opens a wavebox popup content window
   * @param openingBrowserWindow: the browser window that's opening
-  * @param ownerId: the id of the owning window
+  * @param tabMetaInfo: the meta info to provide the new tab with
   * @param targetUrl: the url to open
   * @param options: the config options for the window
   * @return the new contentwindow instance
   */
-  openWindowWaveboxPopupContent (openingBrowserWindow, ownerId, targetUrl, options) {
-    const contentWindow = new ContentPopupWindow(ownerId)
+  openWindowWaveboxPopupContent (openingBrowserWindow, tabMetaInfo, targetUrl, options) {
+    const contentWindow = new ContentPopupWindow(tabMetaInfo)
     contentWindow.create(targetUrl, options)
     return contentWindow
   }
@@ -205,14 +205,14 @@ class WindowOpeningHandler {
   /**
   * Opens a wavebox content window
   * @param openingBrowserWindow: the browser window that's opening
-  * @param ownerId: the id of the owning window
+  * @param tabMetaInfo: the meta info to provide the new tab with
   * @param targetUrl: the url to open
   * @param options: the config options for the window
   * @param partitionOverride = undefined: an optional override for the opener partition
   * @return the new contentwindow instance
   */
-  openWindowWaveboxContent (openingBrowserWindow, ownerId, targetUrl, options, partitionOverride = undefined) {
-    const contentWindow = new ContentWindow(ownerId)
+  openWindowWaveboxContent (openingBrowserWindow, tabMetaInfo, targetUrl, options, partitionOverride = undefined) {
+    const contentWindow = new ContentWindow(tabMetaInfo)
     const openerPartition = ((options || {}).webPreferences || {}).partition
     const partitionId = partitionOverride || openerPartition
     contentWindow.create(openingBrowserWindow, targetUrl, partitionId, options)

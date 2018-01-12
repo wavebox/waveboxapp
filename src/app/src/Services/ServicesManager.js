@@ -3,6 +3,8 @@ import PDFRenderService from './PDFRenderService'
 import MetricsService from './MetricsService'
 import ContextMenuService from './ContextMenuService'
 import WebContentsRPCService from './WebContentsRPCService'
+import MailboxAdaptorService from './MailboxAdaptorService'
+import GuestApiService from './GuestApiService'
 
 const privLoaded = Symbol('privLoaded')
 const privSpellcheckService = Symbol('privSpellcheckService')
@@ -10,6 +12,8 @@ const privMetricsService = Symbol('privMetricsService')
 const privPdfRenderService = Symbol('privPdfRenderService')
 const privContextMenuService = Symbol('privContextMenuService')
 const privWebContentsRPCService = Symbol('privWebContentsRPCService')
+const privMailboxAdaptorService = Symbol('privMailboxAdaptorService')
+const privGuestApiService = Symbol('privGuestApiService')
 
 class ServicesManager {
   /* ****************************************************************************/
@@ -24,6 +28,8 @@ class ServicesManager {
     this[privMetricsService] = undefined
     this[privPdfRenderService] = undefined
     this[privWebContentsRPCService] = undefined
+    this[privMailboxAdaptorService] = undefined
+    this[privGuestApiService] = undefined
   }
 
   load () {
@@ -35,6 +41,8 @@ class ServicesManager {
     this[privMetricsService] = new MetricsService()
     this[privPdfRenderService] = new PDFRenderService()
     this[privWebContentsRPCService] = new WebContentsRPCService()
+    this[privMailboxAdaptorService] = new MailboxAdaptorService()
+    this[privGuestApiService] = new GuestApiService()
   }
 
   /* ****************************************************************************/
@@ -46,6 +54,8 @@ class ServicesManager {
   get spellcheckService () { return this[privSpellcheckService] }
   get contextMenuService () { return this[privContextMenuService] }
   get webContentsRPCService () { return this[privWebContentsRPCService] }
+  get mailboxAdaptorService () { return this[privMailboxAdaptorService] }
+  get guestApiService () { return this[privGuestApiService] }
 }
 
 export default new ServicesManager()

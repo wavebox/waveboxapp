@@ -48,6 +48,15 @@ class ContainerService extends Model {
 
   get supportsUnreadActivity () { return this._value_('supportsUnreadActivity', true) }
   get supportsGuestNotifications () { return this._value_('supportsGuestNotifications', true) }
+  get supportsUnreadCount () { return this._value_('supportsUnreadCount', false) }
+  get supportsTrayMessages () { return this._value_('supportsTrayMessages', false) }
+  get supportsGuestConfig () { return this._value_('supportsGuestConfig', false) }
+
+  /* **************************************************************************/
+  // Properties: Adaptor
+  /* **************************************************************************/
+
+  get adaptors () { return this._value_('adaptors', []) }
 
   /* **************************************************************************/
   // Properties: Behaviour
@@ -56,6 +65,7 @@ class ContainerService extends Model {
   get reloadBehaviour () { return this._value_('reloadBehaviour', 'RESET_URL') }
   get useNativeWindowOpen () { return this._value_('useNativeWindowOpen', true) }
   get useContextIsolation () { return this._value_('useContextIsolation', true) }
+  get html5NotificationsGenerateUnreadActivity () { return this._value_('html5NotificationsGenerateUnreadActivity', true) }
 
   /* **************************************************************************/
   // Properties: User settings

@@ -30,16 +30,6 @@ class GoogleDefaultService extends GoogleService {
   static get CUSTOM_UNREAD_COUNT_LABEL_FIELDS () { return CUSTOM_UNREAD_COUNT_LABEL_FIELDS }
 
   /* **************************************************************************/
-  // Class: Support
-  /* **************************************************************************/
-
-  static get supportsUnreadCount () { return true }
-  static get supportsTrayMessages () { return true }
-  static get supportsSyncedDiffNotifications () { return true }
-  static get supportsNativeNotifications () { return true }
-  static get supportsSyncWhenSleeping () { return true }
-
-  /* **************************************************************************/
   // Properties
   /* **************************************************************************/
 
@@ -81,6 +71,16 @@ class GoogleDefaultService extends GoogleService {
       case ACCESS_MODES.GINBOX: return this.constructor.RELOAD_BEHAVIOURS.RELOAD
     }
   }
+
+  /* **************************************************************************/
+  // Properties: Support
+  /* **************************************************************************/
+
+  get supportsUnreadCount () { return true }
+  get supportsTrayMessages () { return true }
+  get supportsSyncedDiffNotifications () { return true }
+  get supportsNativeNotifications () { return true }
+  get supportsSyncWhenSleeping () { return true }
 
   /* **************************************************************************/
   // Properties: Custom search

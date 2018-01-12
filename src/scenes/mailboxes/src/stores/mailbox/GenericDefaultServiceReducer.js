@@ -25,6 +25,16 @@ class GenericDefaultServiceReducer extends ServiceReducer {
     return service.changeData({ hasNavigationToolbar: has })
   }
 
+  /**
+  * Updates the setting to show adaptor data
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param supports: true to supports, false otherwise
+  */
+  static setsupportsGuestConfig (mailbox, service, supports) {
+    return service.changeData({ supportsGuestConfig: supports })
+  }
+
   /* **************************************************************************/
   // Notifications
   /* **************************************************************************/

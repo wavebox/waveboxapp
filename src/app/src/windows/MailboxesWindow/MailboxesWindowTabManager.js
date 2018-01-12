@@ -7,6 +7,7 @@ import {
   WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT
 } from 'shared/ipcEvents'
 import WaveboxWindow from 'windows/WaveboxWindow'
+import WINDOW_BACKING_TYPES from 'windows/WindowBackingTypes'
 
 const privQueuedMailboxToTabChange = Symbol('privQueuedMailboxToTabChange')
 
@@ -52,7 +53,6 @@ class MailboxesWindowTabManager {
   handleMailboxesWebViewAttached = (evt, data) => {
     if (evt.sender.id === this.webContentsId) {
       this.attachedMailboxes.set(data.webContentsId, data)
-
       const contents = webContents.fromId(data.webContentsId)
       contents.on('update-target-url', this.handleWebViewUpdateTargetUrl)
       contents.once('destroyed', (evt) => {
@@ -191,6 +191,27 @@ class MailboxesWindowTabManager {
   }
 
   /* ****************************************************************************/
+  // Getters: Tabs
+  /* ****************************************************************************/
+
+  /**
+  * @param tabId: the id of the tab
+  * @return the info about the tab
+  */
+  tabMetaInfo (tabId) {
+    const val = this.attachedMailboxes.get(tabId)
+    if (val && val.serviceType && val.mailboxId) {
+      return {
+        backing: WINDOW_BACKING_TYPES.MAILBOX_SERVICE,
+        mailboxId: val.mailboxId,
+        serviceType: val.serviceType
+      }
+    } else {
+      return undefined
+    }
+  }
+
+  /* ****************************************************************************/
   // Getters: Extensions
   /* ****************************************************************************/
 
@@ -214,20 +235,6 @@ class MailboxesWindowTabManager {
     return this.targetUrls.get(webContentsId)
   }
 
-  /**
-  * Gets the owner id for a given webcontents
-  * @param webContentsId: the id of the webcontents to get for
-  * @return the ownerId or undefined
-  */
-  getOwnerId (webContentsId) {
-    const { match, mailboxId, serviceType } = this.getServiceId(webContentsId)
-    if (match) {
-      return `${mailboxId}:${serviceType}`
-    } else {
-      return undefined
-    }
-  }
-
   /* ****************************************************************************/
   // Getters: IPC
   /* ****************************************************************************/
@@ -238,8 +245,19 @@ class MailboxesWindowTabManager {
   * @param body: the message sent
   */
   handleFetchOpenWindowCount = (evt, body) => {
-    const ownerId = `${body.mailboxId}:${body.serviceType}`
-    const count = WaveboxWindow.all().filter((w) => w.ownerId === ownerId).length
+    const mailboxesWindowId = WaveboxWindow.fromWebContentsId(this.webContentsId).browserWindowId
+    const count = WaveboxWindow.all().reduce((acc, w) => {
+      if (w.browserWindowId === mailboxesWindowId) { return acc }
+      const windowCount = w.tabIds().reduce((acc, tabId) => {
+        const meta = w.tabMetaInfo(tabId)
+        if (!meta) { return acc }
+        if (!meta.backing === WINDOW_BACKING_TYPES.MAILBOX_SERVICE) { return acc }
+        if (meta.mailboxId !== body.mailboxId || meta.serviceType !== body.serviceType) { return acc }
+        return acc + 1
+      }, 0)
+      return acc + windowCount
+    }, 0)
+
     if (body.response) {
       evt.sender.send(body.response, { count: count })
     } else {

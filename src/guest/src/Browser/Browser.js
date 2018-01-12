@@ -6,6 +6,7 @@ import ExtensionLoader from './Extensions/ExtensionLoader'
 import CRExtensionLoader from './Extensions/CRExtensionLoader'
 import UserCodeInjection from './UserCodeInjection'
 import WindowCloser from './WindowCloser'
+import WaveboxApiProvider from './WaveboxApiProvider'
 
 const privStarted = Symbol('privStarted')
 const privKeyboardShim = Symbol('privKeyboardShim')
@@ -15,6 +16,7 @@ const privUserCodeInjection = Symbol('privUserCodeInjection')
 const privLifecycle = Symbol('privLifecycle')
 const privCRExtensionLoader = Symbol('privCRExtensionLoader')
 const privWindowCloser = Symbol('privWindowCloser')
+const privWaveboxApiProvider = Symbol('privWaveboxApiProvider')
 
 class Browser {
   /* **************************************************************************/
@@ -31,6 +33,7 @@ class Browser {
     this[privLifecycle] = undefined
     this[privCRExtensionLoader] = undefined
     this[privWindowCloser] = undefined
+    this[privWaveboxApiProvider] = undefined
   }
 
   /**
@@ -46,6 +49,7 @@ class Browser {
     this[privUserCodeInjection] = new UserCodeInjection()
     this[privLifecycle] = new Lifecycle()
     this[privWindowCloser] = new WindowCloser()
+    this[privWaveboxApiProvider] = new WaveboxApiProvider()
 
     // Extensions
     this[privCRExtensionLoader] = new CRExtensionLoader()

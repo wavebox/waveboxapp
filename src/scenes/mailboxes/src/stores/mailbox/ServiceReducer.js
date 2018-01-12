@@ -220,6 +220,43 @@ class ServiceReducer {
       return undefined
     }
   }
+
+  /* **************************************************************************/
+  // Adaptor
+  /* **************************************************************************/
+
+  /**
+  * Sets the adaptor unread activity
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param hasActivity: true if there is activity, false otherwise
+  */
+  static setAdaptorHasUnreadActivity (mailbox, service, hasActivity) {
+    if (!service.supportsGuestConfig) { return undefined }
+    return service.changeData({ '::guestConfig:hasUnreadActivity': hasActivity })
+  }
+
+  /**
+  * Sets the adaptor unread count
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param count: the new count
+  */
+  static setAdaptorUnreadCount (mailbox, service, count) {
+    if (!service.supportsGuestConfig) { return undefined }
+    return service.changeData({ '::guestConfig:unreadCount': count })
+  }
+
+  /**
+  * Sets the adaptor tray messages
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param messages: the array of messages
+  */
+  static setAdaptorTrayMessages (mailbox, service, messages) {
+    if (!service.supportsGuestConfig) { return undefined }
+    return service.changeData({ '::guestConfig:trayMessages': messages })
+  }
 }
 
 export default ServiceReducer

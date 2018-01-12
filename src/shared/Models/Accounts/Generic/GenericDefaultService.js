@@ -6,17 +6,6 @@ class GenericDefaultService extends CoreService {
   /* **************************************************************************/
 
   static get type () { return CoreService.SERVICE_TYPES.DEFAULT }
-  static get reloadBehaviour () { return this.RELOAD_BEHAVIOURS.RELOAD }
-
-  /* **************************************************************************/
-  // Class: Support
-  /* **************************************************************************/
-
-  static get supportsUnreadActivity () { return true }
-  static get supportsGuestNotifications () { return true }
-  static get mergeChangesetOnActive () {
-    return { lastUnseenNotificationTime: null }
-  }
 
   /* **************************************************************************/
   // Class: Humanized
@@ -52,6 +41,23 @@ class GenericDefaultService extends CoreService {
   }
 
   /* **************************************************************************/
+  // Properties: Support
+  /* **************************************************************************/
+
+  get supportsUnreadActivity () { return true }
+  get supportsGuestNotifications () { return true }
+  get supportsUnreadCount () { return this.supportsGuestConfig }
+  get supportsTrayMessages () { return this.supportsGuestConfig }
+  get supportsGuestConfig () { return this._value_('supportsGuestConfig', false) }
+
+  /* **************************************************************************/
+  // Properties: Behavuour
+  /* **************************************************************************/
+
+  get mergeChangesetOnActive () { return { lastUnseenNotificationTime: null } }
+  get reloadBehaviour () { return this.constructor.RELOAD_BEHAVIOURS.RELOAD }
+
+  /* **************************************************************************/
   // Properties: Url
   /* **************************************************************************/
 
@@ -62,7 +68,13 @@ class GenericDefaultService extends CoreService {
   // Properties : Provider Details & counts etc
   /* **************************************************************************/
 
-  get hasUnreadActivity () { return !!this._value_('lastUnseenNotificationTime', undefined) }
+  get hasUnreadActivity () {
+    if (this.supportsGuestConfig) {
+      return this.guestConfig.hasUnreadActivity
+    } else {
+      return !!this._value_('lastUnseenNotificationTime', undefined)
+    }
+  }
 }
 
 module.exports = GenericDefaultService

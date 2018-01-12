@@ -531,6 +531,14 @@ class MailboxesWindow extends WaveboxWindow {
   }
 
   /**
+  * @param tabId: the id of the tab
+  * @return the info about the tab
+  */
+  tabMetaInfo (tabId) {
+    return this.tabManager.tabMetaInfo(tabId)
+  }
+
+  /**
   * @return process info about the tabs with { webContentsId, description, pid }
   */
   webContentsProcessInfo () {

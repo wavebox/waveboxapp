@@ -7,6 +7,7 @@ import { WindowOpeningHandler } from '../WindowOpeningEngine'
 import { WB_NEW_WINDOW } from 'shared/ipcEvents'
 import { WAVEBOX_HOSTED_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import WINDOW_TYPES from '../WindowTypes'
+import WINDOW_BACKING_TYPES from '../WindowBackingTypes'
 
 class MailboxesWindowBehaviour {
   /* ****************************************************************************/
@@ -62,7 +63,11 @@ class MailboxesWindowBehaviour {
   */
   handleOpenIPCWaveboxWindow = (evt, body) => {
     if (evt.sender.id === this.webContentsId) {
-      const contentWindow = new ContentWindow(`${body.mailboxId}:${body.serviceType}`)
+      const contentWindow = new ContentWindow(body.mailboxId && body.serviceType ? {
+        backing: WINDOW_BACKING_TYPES.MAILBOX_SERVICE,
+        mailboxId: body.mailboxId,
+        serviceType: body.serviceType
+      } : undefined)
 
       const window = BrowserWindow.fromWebContents(evt.sender)
       contentWindow.create(window, body.url, body.partition, body.windowPreferences, body.webPreferences)
@@ -109,7 +114,7 @@ class MailboxesWindowBehaviour {
       additionalFeatures: additionalFeatures,
       openingBrowserWindow: this._getOpeningBrowserWindow(evt),
       openingWindowType: WINDOW_TYPES.MAIN,
-      ownerId: this.tabManager.getOwnerId(evt.sender.id),
+      tabMetaInfo: this.tabManager.tabMetaInfo(evt.sender.id),
       provisionalTargetUrl: this.tabManager.getTargetUrl(evt.sender.id),
       mailbox: this.tabManager.getService(evt.sender.id).mailbox
     })
@@ -133,7 +138,7 @@ class MailboxesWindowBehaviour {
       targetUrl: targetUrl,
       openingBrowserWindow: this._getOpeningBrowserWindow(evt),
       openingWindowType: WINDOW_TYPES.MAIN,
-      ownerId: this.tabManager.getOwnerId(evt.sender.id),
+      tabMetaInfo: this.tabManager.tabMetaInfo(evt.sender.id),
       mailbox: this.tabManager.getService(evt.sender.id).mailbox
     })
   }

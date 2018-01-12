@@ -158,6 +158,13 @@ export default class GenericAccountSettings extends React.Component {
                 onToggle={(evt, toggled) => {
                   mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageThemeAsColor, toggled)
                 }} />
+              <Toggle
+                toggled={service.supportsGuestConfig}
+                label='Enable Wavebox API (Experiemental)'
+                labelPosition='right'
+                onToggle={(evt, toggled) => {
+                  mailboxActions.reduceService(mailbox.id, service.type, GenericDefaultServiceReducer.setsupportsGuestConfig, toggled)
+                }} />
             </Paper>
             <AccountAppearanceSettings mailbox={mailbox} />
             <AccountBadgeSettings mailbox={mailbox} service={service} />

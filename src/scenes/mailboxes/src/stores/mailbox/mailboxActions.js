@@ -29,7 +29,9 @@ import {
   WB_WINDOW_FOCUS,
 
   WB_MAILBOXES_WINDOW_SWITCH_MAILBOX,
-  WB_MAILBOXES_WINDOW_SWITCH_SERVICE
+  WB_MAILBOXES_WINDOW_SWITCH_SERVICE,
+
+  WB_GUEST_API_SAFE_REDUCE
 } from 'shared/ipcEvents'
 import { ipcRenderer, remote } from 'electron'
 
@@ -878,5 +880,19 @@ ipcRenderer.on(WB_MAILBOXES_WINDOW_SWITCH_SERVICE, (evt, req) => {
 ipcRenderer.on(WB_WINDOW_RELOAD_WEBVIEW, actions.reloadActiveMailbox)
 ipcRenderer.on(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, actions.openDevToolsActiveMailbox)
 ipcRenderer.on(WB_WINDOW_FOCUS, actions.windowDidFocus)
+
+ipcRenderer.on(WB_GUEST_API_SAFE_REDUCE, (evt, mailboxId, serviceType, name, reducerConfig) => {
+  switch (name) {
+    case 'badge:setCount':
+      actions.reduceService(mailboxId, serviceType, ServiceReducer.setAdaptorUnreadCount, ...reducerConfig)
+      break
+    case 'badge:setHasUnreadActivity':
+      actions.reduceService(mailboxId, serviceType, ServiceReducer.setAdaptorHasUnreadActivity, ...reducerConfig)
+      break
+    case 'tray:setMessages':
+      actions.reduceService(mailboxId, serviceType, ServiceReducer.setAdaptorTrayMessages, ...reducerConfig)
+      break
+  }
+})
 
 export default actions
