@@ -331,7 +331,7 @@ class CRExtensionDownloader {
   */
   _getUpdatableCWSExtensions (updater, extensions) {
     const cwsExtensions = extensions.reduce((acc, extension) => {
-      const cwsId = extension.manifest.cwsId
+      const cwsId = extension.manifest.wavebox.cwsId
       if (cwsId) {
         acc.set(cwsId, extension)
       }
@@ -397,7 +397,7 @@ class CRExtensionDownloader {
           if (!store) { return false }
 
           const storeVersion = store.version || '0.0.0'
-          const extensionVersion = extension.manifest.waveboxVersion || '0.0.0'
+          const extensionVersion = extension.manifest.wavebox.version || '0.0.0'
 
           try {
             return semver.gt(storeVersion, extensionVersion)

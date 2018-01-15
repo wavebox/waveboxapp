@@ -255,7 +255,7 @@ export default class AccountSettings extends React.Component {
                       <MenuItem
                         value={m.id}
                         key={m.id}
-                        primaryText={m.displayName + ' (' + m.humanizedType + ')'} />
+                        primaryText={`${m.humanizedType} : ${m.displayName}`} />
                     )
                   })
                 }

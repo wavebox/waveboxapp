@@ -485,9 +485,10 @@ class ContextMenuService {
   openLinkInWaveboxWindow (contents, url) {
     const rootContents = ElectronWebContents.rootWebContents(contents)
     const openerWindow = rootContents ? BrowserWindow.fromWebContents(rootContents) : undefined
+    const waveboxWindow = WaveboxWindow.fromBrowserWindow(openerWindow)
 
     const openerWebPreferences = contents.getWebPreferences()
-    const contentWindow = new ContentWindow(openerWindow.ownerId)
+    const contentWindow = new ContentWindow(waveboxWindow ? waveboxWindow.tabMetaInfo(contents.id) : undefined)
     contentWindow.create(openerWindow, url, openerWebPreferences.partition)
   }
 

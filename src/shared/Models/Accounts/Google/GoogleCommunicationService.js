@@ -25,18 +25,18 @@ class GoogleCommunicationService extends GoogleService {
   }
 
   /* **************************************************************************/
-  // Class: Support
-  /* **************************************************************************/
-
-  static get supportsUnreadCount () { return true }
-  static get supportsNativeNotifications () { return true }
-  static get supportsTrayMessages () { return true }
-
-  /* **************************************************************************/
   // Properties
   /* **************************************************************************/
 
   get url () { return 'https://hangouts.google.com' }
+
+  /* **************************************************************************/
+  // Properties: Support
+  /* **************************************************************************/
+
+  get supportsUnreadCount () { return true }
+  get supportsNativeNotifications () { return true }
+  get supportsTrayMessages () { return true }
 
   /* **************************************************************************/
   // Properties : Provider Details & counts etc

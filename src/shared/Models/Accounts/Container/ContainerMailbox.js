@@ -75,7 +75,8 @@ class ContainerMailbox extends CoreMailbox {
 
   get hasUrlSubdomain () { return this.container.hasUrlSubdomain }
   get urlSubdomain () { return this._value_('urlSubdomain', '') }
-  get displayName () { return this.container.name }
+  get displayName () { return this.userDisplayName || this.container.name }
+  get userDisplayName () { return this._value_('displayName', '') }
 
   /* **************************************************************************/
   // Properties : Useragent

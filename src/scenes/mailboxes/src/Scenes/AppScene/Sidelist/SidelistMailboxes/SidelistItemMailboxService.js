@@ -10,6 +10,7 @@ import { ServiceBadge, ServiceTooltip } from 'Components/Service'
 import * as Colors from 'material-ui/styles/colors'
 import uuid from 'uuid'
 import Resolver from 'Runtime/Resolver'
+import UISettings from 'shared/Models/Settings/UISettings'
 
 const styles = {
   /**
@@ -102,7 +103,7 @@ export default class SidelistItemMailboxService extends React.Component {
       isHovering: false,
       instanceId: uuid.v4(),
       globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator,
-      tooltipsEnabled: settingsState.ui.sidebarTooltipsEnabled
+      tooltipsEnabled: settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED || settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.SIDEBAR_ONLY
     }
   })()
 
@@ -134,7 +135,7 @@ export default class SidelistItemMailboxService extends React.Component {
   settingsChanged = (settingsState) => {
     this.setState({
       globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator,
-      tooltipsEnabled: settingsState.ui.sidebarTooltipsEnabled
+      tooltipsEnabled: settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED || settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.SIDEBAR_ONLY
     })
   }
 

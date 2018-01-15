@@ -31,6 +31,10 @@ export default class Provider extends React.Component {
   // Lifecycle
   /* **************************************************************************/
 
+  componentWillMount () {
+    this.customCSSElement = null
+  }
+
   componentDidMount () {
     // STEP 0. Maintaining focus
     this.refocusTO = null
@@ -58,6 +62,11 @@ export default class Provider extends React.Component {
     mailboxStore.listen(this.mailboxesChanged)
     settingsStore.listen(this.settingsChanged)
     mailboxDispatch.on('blurred', this.mailboxBlurred)
+
+    // Step 4. Customizations
+    if (this.state.uiSettings.customMainCSS) {
+      this.renderCustomCSS(this.state.uiSettings.customMainCSS)
+    }
   }
 
   componentWillUnmount () {
@@ -87,6 +96,15 @@ export default class Provider extends React.Component {
     mailboxStore.unlisten(this.mailboxesChanged)
     settingsStore.unlisten(this.settingsChanged)
     mailboxDispatch.removeListener('blurred', this.mailboxBlurred)
+
+    // STEP 4. Customizations
+    this.renderCustomCSS(null)
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    if (prevState.uiSettings.customMainCSS !== this.state.uiSettings.customMainCSS) {
+      this.renderCustomCSS(this.state.uiSettings.customMainCSS)
+    }
   }
 
   /* **************************************************************************/
@@ -215,6 +233,26 @@ export default class Provider extends React.Component {
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
+  }
+
+  /**
+  * Renders the custom css into the dom
+  * @param css: the css to render
+  */
+  renderCustomCSS (css) {
+    if (css) {
+      if (!this.customCSSElement) {
+        this.customCSSElement = document.createElement('style')
+        this.customCSSElement.setAttribute('data-custom-css', 'true')
+        document.head.appendChild(this.customCSSElement)
+      }
+      this.customCSSElement.innerHTML = css
+    } else {
+      if (this.customCSSElement) {
+        this.customCSSElement.parentElement.removeChild(this.customCSSElement)
+        this.customCSSElement = null
+      }
+    }
   }
 
   render () {

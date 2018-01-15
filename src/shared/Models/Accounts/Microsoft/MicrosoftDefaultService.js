@@ -29,16 +29,6 @@ class MicrosoftDefaultService extends MicrosoftService {
   }
 
   /* **************************************************************************/
-  // Class: Support
-  /* **************************************************************************/
-
-  static get supportsUnreadCount () { return true }
-  static get supportsTrayMessages () { return true }
-  static get supportsSyncedDiffNotifications () { return true }
-  static get supportsNativeNotifications () { return true }
-  static get supportsSyncWhenSleeping () { return true }
-
-  /* **************************************************************************/
   // Properties
   /* **************************************************************************/
 
@@ -50,6 +40,16 @@ class MicrosoftDefaultService extends MicrosoftService {
   }
 
   get sleepable () { return this._value_('sleepable', false) }
+
+  /* **************************************************************************/
+  // Properties: Support
+  /* **************************************************************************/
+
+  get supportsUnreadCount () { return true }
+  get supportsTrayMessages () { return true }
+  get supportsSyncedDiffNotifications () { return true }
+  get supportsNativeNotifications () { return true }
+  get supportsSyncWhenSleeping () { return true }
 
   /* **************************************************************************/
   // Properties : Messages & unread info

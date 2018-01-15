@@ -29,20 +29,27 @@ const COPY_WEBVIEW_WEB_PREFERENCES_KEYS = [
   'partition'
 ]
 
+const privTabMetaInfo = Symbol('tabMetaInfo')
 const privLaunchInfo = Symbol('privLaunchInfo')
 const privGuestWebContentsId = Symbol('privGuestWebContentsId')
 
 class ContentWindow extends WaveboxWindow {
   /* ****************************************************************************/
+  // Class: Properties
+  /* ****************************************************************************/
+
+  static get windowType () { return this.WINDOW_TYPES.CONTENT }
+
+  /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
   /**
-  * @param ownerId: the id of the owner - mailbox/service
+  * @param tabMetaInfo=undefined: the tab meta info for the tab we will be hosting
   */
-  constructor (ownerId) {
+  constructor (tabMetaInfo = undefined) {
     super()
-    this.ownerId = ownerId
+    this[privTabMetaInfo] = tabMetaInfo
     this[privLaunchInfo] = null
     this[privGuestWebContentsId] = null
   }
@@ -226,7 +233,8 @@ class ContentWindow extends WaveboxWindow {
       options: options,
       additionalFeatures: additionalFeatures,
       openingBrowserWindow: this.window,
-      ownerId: this.ownerId,
+      openingWindowType: this.windowType,
+      tabMetaInfo: this[privTabMetaInfo],
       provisionalTargetUrl: undefined,
       mailbox: undefined
     })
@@ -241,7 +249,8 @@ class ContentWindow extends WaveboxWindow {
     WindowOpeningHandler.handleWillNavigate(evt, {
       targetUrl: targetUrl,
       openingBrowserWindow: this.window,
-      ownerId: this.ownerId,
+      openingWindowType: this.windowType,
+      tabMetaInfo: this[privTabMetaInfo],
       mailbox: undefined
     })
   }
@@ -257,7 +266,7 @@ class ContentWindow extends WaveboxWindow {
   */
   handleIPCOpenNewWindow = (evt, body) => {
     if (evt.sender === this.window.webContents) {
-      const contentWindow = new ContentWindow(this.ownerId)
+      const contentWindow = new ContentWindow(this[privTabMetaInfo])
       contentWindow.create(this.window, body.url, this.launchInfo.partition, this.launchInfo.windowPreferences, this.launchInfo.webPreferences)
     }
   }
@@ -321,6 +330,14 @@ class ContentWindow extends WaveboxWindow {
   */
   tabIds () {
     return this[privGuestWebContentsId] === null ? [] : [this[privGuestWebContentsId]]
+  }
+
+  /**
+  * @param tabId: the id of the tab
+  * @return the info about the tab
+  */
+  tabMetaInfo (tabId) {
+    return tabId === this[privGuestWebContentsId] ? this[privTabMetaInfo] : undefined
   }
 
   /**

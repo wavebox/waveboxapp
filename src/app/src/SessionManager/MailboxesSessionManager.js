@@ -128,6 +128,16 @@ class MailboxesSessionManager extends EventEmitter {
       CRExtensionManager.runtimeHandler.onCSXHRError(details)
     })
 
+    // Extensions: Functionality
+    SessionManager.webRequestEmitterFromSession(ses).beforeRequest.onBlocking(undefined, (details, responder) => {
+      const modifier = CRExtensionManager.runtimeHandler.runExtensionOnBeforeRequest(details)
+      if (modifier) {
+        responder(modifier)
+      } else {
+        responder({})
+      }
+    })
+
     this.__managed__.add(partition)
     return true
   }

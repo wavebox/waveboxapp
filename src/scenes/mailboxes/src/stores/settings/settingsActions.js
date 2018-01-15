@@ -258,10 +258,10 @@ class SettingsActions {
   }
 
   /**
-  * @param enabled: true to enable sidebar tooltips
+  * @param mode: the mode to set for the tooltips
   */
-  setSidebarTooltipsEnabled (enabled) {
-    return this.update(SEGMENTS.UI, 'sidebarTooltipsEnabled', enabled)
+  setAccountTooltipMode (mode) {
+    return this.update(SEGMENTS.UI, 'accountTooltipMode', mode)
   }
 
   /**
@@ -304,6 +304,13 @@ class SettingsActions {
   */
   setVibrancyMode (mode) {
     return this.update(SEGMENTS.UI, 'vibrancyMode', mode)
+  }
+
+  /**
+  * @param css: the new css
+  */
+  setCustomMainCSS (css) {
+    return this.update(SEGMENTS.UI, 'customMainCSS', css)
   }
 
   /* **************************************************************************/
@@ -400,6 +407,14 @@ class SettingsActions {
   */
   setHasSeenSnapSetupMessage (seen) {
     return this.update(SEGMENTS.APP, 'hasSeenSnapSetupMessage', seen)
+  }
+
+  /**
+  * Sets whether the user has seen the linux setup message
+  * @param seen: true if seen
+  */
+  setHasSeenLinuxSetupMessage (seen) {
+    return this.update(SEGMENTS.APP, 'hasSeenLinuxSetupMessage', seen)
   }
 
   /**

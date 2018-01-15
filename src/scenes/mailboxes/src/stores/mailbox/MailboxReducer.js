@@ -137,7 +137,7 @@ class MailboxReducer {
   /**
   * Moves a service up
   * @param mailbox: the mailbox to update
-  * @param service: the service type
+  * @param serviceType: the service type
   */
   static moveServiceUp (mailbox, serviceType) {
     const mailboxJS = mailbox.cloneData()
@@ -153,13 +153,30 @@ class MailboxReducer {
   /**
   * Moves a service down
   * @param mailbox: the mailbox to update
-  * @param service: the service type
+  * @param serviceType: the service type
   */
   static moveServiceDown (mailbox, serviceType) {
     const mailboxJS = mailbox.cloneData()
     const index = mailboxJS.services.findIndex((s) => s.type === serviceType)
     if (index !== -1 && index < mailboxJS.services.length) {
       mailboxJS.services.splice(index + 1, 0, mailboxJS.services.splice(index, 1)[0])
+      return mailboxJS
+    } else {
+      return undefined
+    }
+  }
+
+  /**
+  * Changes a service index
+  * @param mailbox: the mailbox to update
+  * @param serviceType: the service type to move
+  * @param nextIndex: the next index of the service
+  */
+  static changeServiceIndex (mailbox, serviceType, nextIndex) {
+    const mailboxJS = mailbox.cloneData()
+    const prevIndex = mailboxJS.services.findIndex((s) => s.type === serviceType)
+    if (prevIndex !== -1) {
+      mailboxJS.services.splice(nextIndex, 0, mailboxJS.services.splice(prevIndex, 1)[0])
       return mailboxJS
     } else {
       return undefined

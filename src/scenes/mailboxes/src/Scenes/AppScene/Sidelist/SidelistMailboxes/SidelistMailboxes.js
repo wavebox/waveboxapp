@@ -1,6 +1,21 @@
 import React from 'react'
-import { mailboxStore } from 'stores/mailbox'
+import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import SidelistItemMailbox from './SidelistItemMailbox'
+import {SortableContainer, SortableElement} from 'react-sortable-hoc'
+
+const SortableItem = SortableElement(({ mailboxId }) => {
+  return (<SidelistItemMailbox mailboxId={mailboxId} />)
+})
+
+const SortableList = SortableContainer(({ mailboxIds }) => {
+  return (
+    <div>
+      {mailboxIds.map((mailboxId, index) => (
+        <SortableItem key={mailboxId} index={index} mailboxId={mailboxId} />
+      ))}
+    </div>
+  )
+})
 
 export default class SidelistMailboxes extends React.Component {
   /* **************************************************************************/
@@ -44,7 +59,13 @@ export default class SidelistMailboxes extends React.Component {
 
     return (
       <div {...passProps}>
-        {mailboxIds.map((mailboxId) => (<SidelistItemMailbox key={mailboxId} mailboxId={mailboxId} />))}
+        <SortableList
+          axis='y'
+          distance={20}
+          mailboxIds={mailboxIds}
+          onSortEnd={({ oldIndex, newIndex }) => {
+            mailboxActions.changeIndex(mailboxIds[oldIndex], newIndex)
+          }} />
       </div>
     )
   }

@@ -16,8 +16,8 @@ import {
   WB_WINDOW_BLUR
 } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
+import WINDOW_TYPES from './WindowTypes'
 
-const privOwnerId = Symbol('privOwnerId')
 const privWindow = Symbol('privWindow')
 const privBrowserWindowId = Symbol('privBrowserWindowId')
 const privLocationSaver = Symbol('privLocationSaver')
@@ -39,11 +39,19 @@ class WaveboxWindow extends EventEmitter {
   static fromWebContentsId (wcId) { return waveboxWindowManager.fromWebContentsId(wcId) }
   static allTabIds () { return waveboxWindowManager.allTabIds() }
   static fromTabId (tabId) { return waveboxWindowManager.fromTabId(tabId) }
+  static tabMetaInfo (tabId) { return waveboxWindowManager.tabMetaInfo(tabId) }
   static allBrowserWindowIds () { return waveboxWindowManager.allBrowserWindowIds() }
   static fromBrowserWindowId (browserWindowId) { return waveboxWindowManager.fromBrowserWindowId(browserWindowId) }
   static fromBrowserWindow (bw) { return waveboxWindowManager.fromBrowserWindow(bw) }
   static focusedTabId () { return waveboxWindowManager.focusedTabId() }
   static cycleNextWindow () { return waveboxWindowManager.cycleNextWindow() }
+
+  /* ****************************************************************************/
+  // Class: Properties
+  /* ****************************************************************************/
+
+  static get WINDOW_TYPES () { return WINDOW_TYPES }
+  static get windowType () { return WINDOW_TYPES.NONE }
 
   /* ****************************************************************************/
   // Lifecycle
@@ -55,7 +63,6 @@ class WaveboxWindow extends EventEmitter {
   constructor (saverTag = undefined) {
     super()
 
-    this[privOwnerId] = null
     this[privWindow] = null
     this[privBrowserWindowId] = null
     this[privLastTimeInFocus] = 0
@@ -84,8 +91,8 @@ class WaveboxWindow extends EventEmitter {
   // Properties
   /* ****************************************************************************/
 
-  get ownerId () { return this[privOwnerId] }
-  set ownerId (v) { this[privOwnerId] = v }
+  get WINDOW_TYPES () { return this.constructor.WINDOW_TYPES }
+  get windowType () { return this.constructor.windowType }
 
   /* ****************************************************************************/
   // Properties: Window
@@ -362,6 +369,22 @@ class WaveboxWindow extends EventEmitter {
     return this
   }
 
+  /**
+  * Minimizes the window
+  * @return this
+  */
+  minimize () {
+    this.window.minimize()
+    return this
+  }
+
+  /**
+  * @return true if the window is minimized
+  */
+  isMinimized () {
+    return this.window.isMinimized()
+  }
+
   /* ****************************************************************************/
   // Actions: Dev
   /* ****************************************************************************/
@@ -496,6 +519,14 @@ class WaveboxWindow extends EventEmitter {
   */
   tabIds () {
     throw new Error('WaveboxWindow.tabIds not implemented')
+  }
+
+  /**
+  * @param tabId: the id of the tab
+  * @return the info about the tab
+  */
+  tabMetaInfo (tabId) {
+    throw new Error('WaveboxWindow.tabMetaInfo not implemented')
   }
 
   /**

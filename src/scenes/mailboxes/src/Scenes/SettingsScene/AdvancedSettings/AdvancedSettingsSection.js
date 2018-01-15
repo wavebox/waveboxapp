@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Toggle, Paper } from 'material-ui'
+import { Toggle, Paper, FontIcon, RaisedButton } from 'material-ui'
 import { settingsActions } from 'stores/settings'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
+import CustomStylesEditingDialog from './CustomStylesEditingDialog'
 
 export default class AdvancedSettingsSection extends React.Component {
   /* **************************************************************************/
@@ -13,7 +14,16 @@ export default class AdvancedSettingsSection extends React.Component {
   static propTypes = {
     showRestart: PropTypes.func.isRequired,
     app: PropTypes.object.isRequired,
-    extension: PropTypes.object.isRequired
+    extension: PropTypes.object.isRequired,
+    ui: PropTypes.object.isRequired
+  }
+
+  /* **************************************************************************/
+  // Data lifecycle
+  /* **************************************************************************/
+
+  state = {
+    customCSSEditorOpen: false
   }
 
   /* **************************************************************************/
@@ -29,9 +39,13 @@ export default class AdvancedSettingsSection extends React.Component {
       showRestart,
       app,
       extension,
+      ui,
       style,
       ...passProps
     } = this.props
+    const {
+      customCSSEditorOpen
+    } = this.state
 
     return (
       <Paper zDepth={1} style={{...styles.paper, ...style}} {...passProps}>
@@ -80,6 +94,22 @@ export default class AdvancedSettingsSection extends React.Component {
             showRestart()
             settingsActions.setExtensionEnableChromeExperimental(toggled)
           }} />
+        <div style={{ marginTop: 8 }}>
+          <RaisedButton
+            style={styles.buttonInline}
+            label='Main Window Custom CSS'
+            icon={<FontIcon className='material-icons'>code</FontIcon>}
+            onClick={() => this.setState({ customCSSEditorOpen: true })} />
+          <CustomStylesEditingDialog
+            title='Main Window Custom CSS'
+            open={customCSSEditorOpen}
+            code={ui.customMainCSS}
+            onCancel={() => this.setState({ customCSSEditorOpen: false })}
+            onSave={(evt, css) => {
+              this.setState({ customCSSEditorOpen: false })
+              settingsActions.setCustomMainCSS(css)
+            }} />
+        </div>
       </Paper>
     )
   }

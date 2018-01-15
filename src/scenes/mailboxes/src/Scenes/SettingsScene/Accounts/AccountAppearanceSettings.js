@@ -158,7 +158,7 @@ export default class AccountAppearanceSettings extends React.Component {
               <span>
                 <span>{sleepIndicatorText}</span>
                 <br />
-                <small>Enable "Show sleeping service icons in grey" in the main UI settings first</small>
+                <small>Enable "Show sleeping account icons in grey" in the main UI settings first</small>
               </span>
             )}
             labelPosition='right'

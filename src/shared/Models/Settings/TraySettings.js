@@ -7,6 +7,7 @@ const MOUSE_TRIGGERS = Object.assign({
 
 const MOUSE_TRIGGER_ACTIONS = Object.assign({
   TOGGLE: 'TOGGLE',
+  TOGGLE_MINIMIZE: 'TOGGLE_MINIMIZE',
   SHOW: 'SHOW'
 })
 

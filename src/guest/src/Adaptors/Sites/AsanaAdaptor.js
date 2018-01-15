@@ -19,12 +19,26 @@ class AsanaAdaptor extends BaseAdaptor {
   /* **************************************************************************/
 
   executeJS () {
-    ipcRenderer.on(WCRPC_DOM_READY, () => {
+    let patchInterval = setInterval(() => {
       const googleLoginButton = document.querySelector('#google_auth_button')
       if (googleLoginButton) {
+        const willChange = googleLoginButton.getAttribute('onclick').indexOf('loginWithGoogle(false,') !== -1
         const patched = googleLoginButton.getAttribute('onclick')
           .replace('loginWithGoogle(false,', 'loginWithGoogle(true,')
         googleLoginButton.setAttribute('onclick', patched)
+
+        if (willChange) {
+          clearInterval(patchInterval)
+          patchInterval = null
+        }
+      }
+    }, 100)
+
+    ipcRenderer.on(WCRPC_DOM_READY, () => {
+      if (patchInterval !== null) {
+        setTimeout(() => {
+          clearInterval(patchInterval)
+        }, 2000)
       }
     })
   }

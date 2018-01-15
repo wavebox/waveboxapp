@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Popover, Menu, MenuItem, Divider, FontIcon } from 'material-ui'
-import { mailboxActions, mailboxDispatch, MailboxReducer, mailboxStore } from 'stores/mailbox'
+import { mailboxActions, mailboxDispatch, mailboxStore, MailboxLinker } from 'stores/mailbox'
 import { userStore } from 'stores/user'
 import shallowCompare from 'react-addons-shallow-compare'
 import * as Colors from 'material-ui/styles/colors'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 
 export default class SidelistItemMailboxPopover extends React.Component {
   /* **************************************************************************/
@@ -73,8 +72,6 @@ export default class SidelistItemMailboxPopover extends React.Component {
 
     return {
       mailbox: mailbox,
-      mailboxIsFirst: mailboxState.mailboxIsAtFirstIndex(mailboxId),
-      mailboxIsLast: mailboxState.mailboxIsAtLastIndex(mailboxId),
       service: service,
       userHasSleepable: userStore.getState().user.hasSleepable,
       isServiceSleeping: mailboxState.isSleeping(mailboxId, serviceType),
@@ -89,8 +86,6 @@ export default class SidelistItemMailboxPopover extends React.Component {
 
     this.setState({
       mailbox: mailbox,
-      mailboxIsFirst: mailboxState.mailboxIsAtFirstIndex(mailboxId),
-      mailboxIsLast: mailboxState.mailboxIsAtLastIndex(mailboxId),
       service: service,
       serviceSupportsSleeping: service ? service.sleepable : false,
       isServiceSleeping: mailboxState.isSleeping(mailboxId, serviceType),
@@ -129,14 +124,6 @@ export default class SidelistItemMailboxPopover extends React.Component {
   }
 
   /**
-  * Opens the inspector window for this mailbox
-  */
-  handleInspect = () => {
-    mailboxDispatch.openDevTools(this.props.mailboxId, this.props.serviceType)
-    this.handleClosePopover()
-  }
-
-  /**
   * Reloads this mailbox
   */
   handleReload = () => {
@@ -154,43 +141,6 @@ export default class SidelistItemMailboxPopover extends React.Component {
   handleResync = () => {
     mailboxActions.fullSyncMailbox(this.props.mailboxId)
     this.handleClosePopover()
-  }
-
-  /**
-  * Moves this item up
-  */
-  handleMoveAccountUp = () => {
-    this.handleClosePopover(() => {
-      mailboxActions.moveUp(this.props.mailboxId)
-    })
-  }
-
-  /**
-  * Moves this item down
-  */
-  handleMoveAccountDown = () => {
-    this.handleClosePopover(() => {
-      mailboxActions.moveDown(this.props.mailboxId)
-    })
-  }
-
-  /**
-  * Moves the given service down
-  */
-  handleMoveServiceUp = () => {
-    this.handleClosePopover(() => {
-      mailboxActions.reduce(this.props.mailboxId, MailboxReducer.moveServiceUp, this.props.serviceType)
-    })
-  }
-
-  /**
-  * Moves the given service up
-  * @param serviceType: the type of service
-  */
-  handleMoveServiceDown = () => {
-    this.handleClosePopover(() => {
-      mailboxActions.reduce(this.props.mailboxId, MailboxReducer.moveServiceDown, this.props.serviceType)
-    })
   }
 
   /**
@@ -236,74 +186,22 @@ export default class SidelistItemMailboxPopover extends React.Component {
     })
   }
 
+  /**
+  * Handles opening a service in a new window
+  */
+  handleOpenInWindow = () => {
+    const { mailboxId, serviceType } = this.props
+    this.handleClosePopover()
+    const url = mailboxDispatch.getCurrentUrl(mailboxId, serviceType) || this.state.service.url
+    MailboxLinker.openContentWindow(mailboxId, serviceType, url)
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState)
-  }
-
-  /**
-  * Renders the movement menu items
-  * @return an array of menu items
-  */
-  renderMovementMenuItems () {
-    const { serviceType } = this.props
-    const { service, mailbox, mailboxIsFirst, mailboxIsLast } = this.state
-    const menuItems = []
-
-    if (!mailboxIsFirst) {
-      menuItems.push(
-        <MenuItem
-          key='moveup'
-          primaryText='Move Account Up'
-          onClick={this.handleMoveAccountUp}
-          leftIcon={<FontIcon className='material-icons'>arrow_upward</FontIcon>} />
-      )
-    }
-    if (!mailboxIsLast) {
-      menuItems.push(
-        <MenuItem
-          key='movedown'
-          primaryText='Move Account Down'
-          onClick={this.handleMoveAccountDown}
-          leftIcon={<FontIcon className='material-icons'>arrow_downward</FontIcon>} />
-      )
-    }
-
-    if (serviceType !== CoreMailbox.SERVICE_TYPES.DEFAULT && mailbox.additionalServiceTypes.length > 1) {
-      const enabledServiceTypes = mailbox.additionalServiceTypes
-      const serviceIndex = enabledServiceTypes.findIndex((s) => s === serviceType)
-      const isServiceFirst = serviceIndex === 0
-      const isServiceLast = serviceIndex === enabledServiceTypes.length - 1
-      const vertLayout = mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR
-
-      if (!isServiceFirst) {
-        menuItems.push(
-          <MenuItem
-            key='moveup_service'
-            primaryText={`Move ${service.humanizedTypeShort} ${vertLayout ? 'Up' : 'Left'}`}
-            onClick={() => this.handleMoveServiceUp()}
-            leftIcon={(
-              <FontIcon className='material-icons'>{vertLayout ? 'arrow_upward' : 'arrow_back'}</FontIcon>
-            )} />
-        )
-      }
-      if (!isServiceLast) {
-        menuItems.push(
-          <MenuItem
-            key='movedown_service'
-            primaryText={`Move ${service.humanizedTypeShort} ${vertLayout ? 'Down' : 'Right'}`}
-            onClick={() => this.handleMoveServiceDown()}
-            leftIcon={(
-              <FontIcon className='material-icons'>{vertLayout ? 'arrow_downward' : 'arrow_forward'}</FontIcon>
-            )} />
-        )
-      }
-    }
-
-    return menuItems
   }
 
   /**
@@ -323,6 +221,13 @@ export default class SidelistItemMailboxPopover extends React.Component {
           disabled />
       )
     }
+    menuItems.push(
+      <MenuItem
+        key='open_in_window'
+        primaryText='Open in New Window'
+        onClick={this.handleOpenInWindow}
+        leftIcon={<FontIcon className='material-icons'>open_in_new</FontIcon>} />
+    )
     if (userHasSleepable && (service || {}).sleepable && !isServiceActive) {
       if (isServiceSleeping) {
         menuItems.push(
@@ -395,22 +300,6 @@ export default class SidelistItemMailboxPopover extends React.Component {
           primaryText='Re-Authenticate'
           onClick={this.handeReauthenticateBrowserSession}
           leftIcon={<FontIcon className='material-icons'>lock_outline</FontIcon>} />
-      )
-    }
-
-    // Settings: Movement
-    const movementMenuItems = this.renderMovementMenuItems()
-    menuItems.splice(Infinity, 0, ...movementMenuItems)
-
-    // Advanced actions
-    if (!isServiceSleeping) {
-      menuItems.push(<Divider key='div-settings' />) // For above section
-      menuItems.push(
-        <MenuItem
-          key='inspect'
-          primaryText='Inspect'
-          onClick={this.handleInspect}
-          leftIcon={<FontIcon className='material-icons'>bug_report</FontIcon>} />
       )
     }
 

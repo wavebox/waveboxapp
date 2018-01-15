@@ -2,6 +2,32 @@ import { MAILBOX_SLEEP_WAIT } from 'shared/constants'
 
 class ServiceReducer {
   /* **************************************************************************/
+  // Urls
+  /* **************************************************************************/
+
+  /**
+  * Sets the last url of the service
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param url: the current url
+  */
+  static setLastUrl (mailbox, service, url) {
+    return service.changeData({
+      lastUrl: { url: url, baseUrl: service.url }
+    })
+  }
+
+  /**
+  * Sets whether the last url should be restored or not
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param restore: true to restore, false otherwise
+  */
+  static setRestoreLastUrl (mailbox, service, restore) {
+    return service.changeData({ restoreLastUrl: restore })
+  }
+
+  /* **************************************************************************/
   // Sleepable
   /* **************************************************************************/
 
@@ -193,6 +219,43 @@ class ServiceReducer {
     } else {
       return undefined
     }
+  }
+
+  /* **************************************************************************/
+  // Adaptor
+  /* **************************************************************************/
+
+  /**
+  * Sets the adaptor unread activity
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param hasActivity: true if there is activity, false otherwise
+  */
+  static setAdaptorHasUnreadActivity (mailbox, service, hasActivity) {
+    if (!service.supportsGuestConfig) { return undefined }
+    return service.changeData({ '::guestConfig:hasUnreadActivity': hasActivity })
+  }
+
+  /**
+  * Sets the adaptor unread count
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param count: the new count
+  */
+  static setAdaptorUnreadCount (mailbox, service, count) {
+    if (!service.supportsGuestConfig) { return undefined }
+    return service.changeData({ '::guestConfig:unreadCount': count })
+  }
+
+  /**
+  * Sets the adaptor tray messages
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param messages: the array of messages
+  */
+  static setAdaptorTrayMessages (mailbox, service, messages) {
+    if (!service.supportsGuestConfig) { return undefined }
+    return service.changeData({ '::guestConfig:trayMessages': messages })
   }
 }
 

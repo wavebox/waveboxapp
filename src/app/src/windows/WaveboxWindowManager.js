@@ -106,6 +106,15 @@ class WaveboxWindowManager {
     return this[privAttached].get(bw.id)
   }
 
+  /**
+  * @param tabId: the id of the tab
+  * @return the meta info for the tab
+  */
+  tabMetaInfo (tabId) {
+    const w = this.fromTabId(tabId)
+    return w ? w.tabMetaInfo(tabId) : undefined
+  }
+
   /* ****************************************************************************/
   // Getters: Browser window ids
   /* ****************************************************************************/

@@ -1,7 +1,6 @@
-sudo: false
+sudo: required
 dist: trusty
 language: node_js
-node_js: "6.2.0"
+node_js: "7.9.0"
 install:
-  - npm install -g babel-eslint
-  - npm install -g standard
+  - npm install --only=dev

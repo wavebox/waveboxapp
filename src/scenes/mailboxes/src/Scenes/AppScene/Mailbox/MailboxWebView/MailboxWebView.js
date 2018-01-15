@@ -2,7 +2,7 @@ import './MailboxWebView.less'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { RaisedButton, FontIcon } from 'material-ui'
-import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
+import { mailboxStore, mailboxActions, mailboxDispatch, ServiceReducer } from 'stores/mailbox'
 import { guestActions } from 'stores/guest'
 import BrowserView from 'sharedui/Components/BrowserView'
 import CoreService from 'shared/Models/Accounts/CoreService'
@@ -34,9 +34,9 @@ export default class MailboxWebView extends React.Component {
     mailboxId: PropTypes.string.isRequired,
     serviceType: PropTypes.string.isRequired,
     preload: PropTypes.string,
-    url: PropTypes.string,
     hasSearch: PropTypes.bool.isRequired,
-    plugHTML5Notifications: PropTypes.bool.isRequired
+    plugHTML5Notifications: PropTypes.bool.isRequired,
+    webpreferences: PropTypes.string
   }, BrowserView.REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
     acc[name] = PropTypes.func
     return acc
@@ -106,14 +106,6 @@ export default class MailboxWebView extends React.Component {
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceType !== nextProps.serviceType) {
       this.setState(this.generateState(nextProps))
-    } else if (this.props.url !== nextProps.url) {
-      this.setState((prevState) => {
-        return {
-          url: nextProps.url || (prevState.service || {}).url,
-          isCrashed: false,
-          initialLoadDone: false
-        }
-      })
     }
   }
 
@@ -133,28 +125,27 @@ export default class MailboxWebView extends React.Component {
     const mailbox = mailboxState.getMailbox(props.mailboxId)
     const service = mailbox ? mailbox.serviceForType(props.serviceType) : null
 
-    return Object.assign(
-      {},
-      !mailbox || !service ? {
+    return {
+      initialLoadDone: false,
+      isCrashed: false,
+      focusedUrl: null,
+      snapshot: mailboxState.getSnapshot(props.mailboxId, props.serviceType),
+      isActive: mailboxState.isActive(props.mailboxId, props.serviceType),
+      isSearching: mailboxState.isSearchingMailbox(props.mailboxId, props.serviceType),
+      searchTerm: mailboxState.mailboxSearchTerm(props.mailboxId, props.serviceType),
+      searchId: mailboxState.mailboxSearchHash(props.mailboxId, props.serviceType),
+      ...(!mailbox || !service ? {
         mailbox: null,
         service: null,
-        url: props.url || 'about:blank'
+        baseUrl: 'about:blank',
+        restorableUrl: 'about:blank'
       } : {
         mailbox: mailbox,
         service: service,
-        url: props.url || service.url
-      },
-      {
-        initialLoadDone: false,
-        isCrashed: false,
-        focusedUrl: null,
-        snapshot: mailboxState.getSnapshot(props.mailboxId, props.serviceType),
-        isActive: mailboxState.isActive(props.mailboxId, props.serviceType),
-        isSearching: mailboxState.isSearchingMailbox(props.mailboxId, props.serviceType),
-        searchTerm: mailboxState.mailboxSearchTerm(props.mailboxId, props.serviceType),
-        searchId: mailboxState.mailboxSearchHash(props.mailboxId, props.serviceType)
-      }
-    )
+        baseUrl: service.url,
+        restorableUrl: service.restorableUrl
+      })
+    }
   }
 
   mailboxesChanged = (mailboxState) => {
@@ -163,14 +154,21 @@ export default class MailboxWebView extends React.Component {
     const service = mailbox ? mailbox.serviceForType(serviceType) : null
 
     if (mailbox && service) {
-      this.setState({
-        mailbox: mailbox,
-        service: service,
-        isActive: mailboxState.isActive(mailboxId, serviceType),
-        snapshot: mailboxState.getSnapshot(mailboxId, serviceType),
-        isSearching: mailboxState.isSearchingMailbox(mailboxId, serviceType),
-        searchTerm: mailboxState.mailboxSearchTerm(mailboxId, serviceType),
-        searchId: mailboxState.mailboxSearchHash(mailboxId, serviceType)
+      this.setState((prevState) => {
+        return {
+          mailbox: mailbox,
+          service: service,
+          isActive: mailboxState.isActive(mailboxId, serviceType),
+          snapshot: mailboxState.getSnapshot(mailboxId, serviceType),
+          isSearching: mailboxState.isSearchingMailbox(mailboxId, serviceType),
+          searchTerm: mailboxState.mailboxSearchTerm(mailboxId, serviceType),
+          searchId: mailboxState.mailboxSearchHash(mailboxId, serviceType),
+          ...(prevState.baseUrl !== service.url ? {
+            baseUrl: service.url,
+            restorableUrl: service.restorableUrl,
+            initialLoadDone: false
+          } : {})
+        }
       })
     } else {
       this.setState({ mailbox: null, service: null })
@@ -185,9 +183,6 @@ export default class MailboxWebView extends React.Component {
   * @Pass through to webview.loadURL()
   */
   loadURL = (url) => {
-    this.setState({
-      isCrashed: false
-    })
     return this.refs[BROWSER_REF].loadURL(url)
   }
 
@@ -257,7 +252,6 @@ export default class MailboxWebView extends React.Component {
         } else {
           this.reload()
         }
-        this.setState({ isCrashed: false })
       }
     }
   }
@@ -363,7 +357,8 @@ export default class MailboxWebView extends React.Component {
     }
 
     this.setState({
-      initialLoadDone: true, isCrashed: false
+      initialLoadDone: true,
+      isCrashed: false // Catch-all in case loadCommit fails
     })
   }
 
@@ -381,6 +376,38 @@ export default class MailboxWebView extends React.Component {
   */
   handleBrowserUpdateTargetUrl = (evt) => {
     this.setState({ focusedUrl: evt.url !== '' ? evt.url : null })
+  }
+
+  /**
+  * Handles a load starting
+  * @param evt: the event that fired
+  */
+  handleBrowserLoadCommit = (evt) => {
+    if (evt.isMainFrame) {
+      this.setState({ isCrashed: false })
+    }
+  }
+
+  /**
+  * Handles the browser navigating
+  * @param evt: the event that fired
+  */
+  handleBrowserDidNavigate = (evt) => {
+    if (evt.url && evt.url !== 'about:blank') {
+      const { mailboxId, serviceType } = this.props
+      mailboxActions.reduceService(mailboxId, serviceType, ServiceReducer.setLastUrl, evt.url)
+    }
+  }
+
+  /**
+  * Handles the browser navigating in page
+  * @param evt: the event that fired
+  */
+  handleBrowserDidNavigateInPage = (evt) => {
+    if (evt.isMainFrame && evt.url && evt.url !== 'about:blank') {
+      const { mailboxId, serviceType } = this.props
+      mailboxActions.reduceService(mailboxId, serviceType, ServiceReducer.setLastUrl, evt.url)
+    }
   }
 
   /**
@@ -477,14 +504,14 @@ export default class MailboxWebView extends React.Component {
       isSearching,
       searchTerm,
       searchId,
-      url,
+      restorableUrl,
       initialLoadDone,
       isCrashed,
       snapshot
     } = this.state
 
     if (!mailbox || !service) { return false }
-    const { className, preload, hasSearch, allowpopups, ...passProps } = this.props
+    const { className, preload, hasSearch, allowpopups, webpreferences, ...passProps } = this.props
     delete passProps.serviceType
     delete passProps.mailboxId
     const webviewEventProps = BrowserView.REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
@@ -507,11 +534,11 @@ export default class MailboxWebView extends React.Component {
             ref={BROWSER_REF}
             preload={preload}
             partition={'persist:' + mailbox.partition}
-            src={url || 'about:blank'}
+            src={restorableUrl || 'about:blank'}
             zoomFactor={service.zoomFactor}
             searchId={searchId}
             searchTerm={isSearching ? searchTerm : ''}
-            webpreferences={'contextIsolation=yes, nativeWindowOpen=yes'}
+            webpreferences={webpreferences || 'contextIsolation=yes, nativeWindowOpen=yes'}
             allowpopups={allowpopups === undefined ? true : allowpopups}
             plugins
             onWebContentsAttached={this.handleWebContentsAttached}
@@ -541,6 +568,15 @@ export default class MailboxWebView extends React.Component {
             }}
             updateTargetUrl={(evt) => {
               this.multiCallBrowserEvent([this.handleBrowserUpdateTargetUrl, webviewEventProps.updateTargetUrl], [evt])
+            }}
+            didNavigate={(evt) => {
+              this.multiCallBrowserEvent([this.handleBrowserDidNavigate, webviewEventProps.didNavigate], [evt])
+            }}
+            didNavigateInPage={(evt) => {
+              this.multiCallBrowserEvent([this.handleBrowserDidNavigateInPage, webviewEventProps.didNavigateInPage], [evt])
+            }}
+            loadCommit={(evt) => {
+              this.multiCallBrowserEvent([this.handleBrowserLoadCommit, webviewEventProps.loadCommit], [evt])
             }} />
         </div>
         {initialLoadDone || !snapshot ? undefined : (
@@ -564,8 +600,8 @@ export default class MailboxWebView extends React.Component {
               label='Reload'
               icon={<FontIcon className='material-icons'>refresh</FontIcon>}
               onClick={() => {
+                this.setState({ isCrashed: false }) // Set immediately to update user
                 this.reloadIgnoringCache()
-                this.setState({ isCrashed: false })
               }} />
           </div>
         ) : undefined}

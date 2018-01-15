@@ -51,6 +51,9 @@ export default class MailboxWizardAddScene extends React.Component {
   componentDidMount () {
     userStore.listen(this.userChanged)
     mailboxStore.listen(this.mailboxChanged)
+
+    // Hopefully fixes an issue where the webview fails to render any content https://github.com/electron/electron/issues/8505
+    setTimeout(() => { this.setState({ renderWebview: true }) }, 100)
   }
 
   componentWillUnmount () {
@@ -67,7 +70,8 @@ export default class MailboxWizardAddScene extends React.Component {
     const mailboxState = mailboxStore.getState()
     return {
       open: true,
-      isLoading: false,
+      renderWebview: false,
+      isLoading: true,
       url: WaveboxHTTP.addMailboxUrl(
         userState.clientId,
         userState.clientToken,
@@ -127,6 +131,7 @@ export default class MailboxWizardAddScene extends React.Component {
     const {
       open,
       isLoading,
+      renderWebview,
       url
     } = this.state
 
@@ -150,10 +155,12 @@ export default class MailboxWizardAddScene extends React.Component {
             <p>Fetching all the latest Apps</p>
           </div>
         ) : undefined}
-        <WaveboxWebView
-          didStartLoading={() => this.setState({ isLoading: true })}
-          didStopLoading={() => this.setState({ isLoading: false })}
-          src={url} />
+        {renderWebview ? (
+          <WaveboxWebView
+            didStartLoading={() => this.setState({ isLoading: true })}
+            didStopLoading={() => this.setState({ isLoading: false })}
+            src={url} />
+        ) : undefined}
       </FullscreenModal>
     )
   }

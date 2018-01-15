@@ -22,6 +22,12 @@ const VIBRANCY_MODE_LABELS = {
   [UISettings.VIBRANCY_MODES.DARK]: 'Dark',
   [UISettings.VIBRANCY_MODES.ULTRA_DARK]: 'Ultra Dark'
 }
+const ACCOUNT_TOOLTIP_MODE_LABELS = {
+  [UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED]: { label: 'Show', primaryText: 'Show in Sidebar & Toolbar' },
+  [UISettings.ACCOUNT_TOOLTIP_MODES.DISABLED]: { label: 'Hide', primaryText: 'Hide all' },
+  [UISettings.ACCOUNT_TOOLTIP_MODES.SIDEBAR_ONLY]: { label: 'Sidebar Only', primaryText: 'Show only in the Sidebar' },
+  [UISettings.ACCOUNT_TOOLTIP_MODES.TOOLBAR_ONLY]: { label: 'Toolbar Only', primaryText: 'Show only in the Toolbar' }
+}
 
 export default class UISettingsSection extends React.Component {
   /* **************************************************************************/
@@ -77,9 +83,18 @@ export default class UISettingsSection extends React.Component {
             onToggle={(evt, toggled) => settingsActions.setOpenHidden(toggled)} />
           <Toggle
             toggled={ui.showSleepableServiceIndicator}
-            label='Show sleeping service icons in grey'
+            label='Show sleeping account icons in grey'
             labelPosition='right'
             onToggle={(evt, toggled) => settingsActions.setShowSleepableServiceIndicator(toggled)} />
+          <SelectField
+            floatingLabelText='Account tooltips'
+            value={ui.accountTooltipMode}
+            fullWidth
+            onChange={(evt, index, value) => settingsActions.setAccountTooltipMode(value)}>
+            {Object.keys(UISettings.ACCOUNT_TOOLTIP_MODES).map((value) => {
+              return (<MenuItem key={value} value={value} {...ACCOUNT_TOOLTIP_MODE_LABELS[value]} />)
+            })}
+          </SelectField>
           {process.platform === 'darwin' ? (
             <SelectField
               floatingLabelText='Translucent window backgrounds (experimental) (Requires Restart)'
@@ -111,11 +126,6 @@ export default class UISettingsSection extends React.Component {
             )}
             labelPosition='right'
             onToggle={(evt, toggled) => settingsActions.setEnableSidebar(toggled)} />
-          <Toggle
-            toggled={ui.sidebarTooltipsEnabled}
-            label='Show tooltip snippets'
-            labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.setSidebarTooltipsEnabled(toggled)} />
           <Toggle
             toggled={ui.showSidebarSupport}
             label='Show Support in Sidebar'

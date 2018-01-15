@@ -72,6 +72,8 @@ class MailboxesWindow extends WaveboxWindow {
   */
   static getAttached () { return singletonAttached }
 
+  static get windowType () { return this.WINDOW_TYPES.MAIN }
+
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
@@ -526,6 +528,14 @@ class MailboxesWindow extends WaveboxWindow {
   */
   tabIds () {
     return this.tabManager.allWebContentIds()
+  }
+
+  /**
+  * @param tabId: the id of the tab
+  * @return the info about the tab
+  */
+  tabMetaInfo (tabId) {
+    return this.tabManager.tabMetaInfo(tabId)
   }
 
   /**

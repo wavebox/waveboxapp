@@ -163,7 +163,7 @@ export default class ExtensionListItem extends React.Component {
         description: manifest.description,
         websiteUrl: manifest.homepageUrl,
         version: manifest.version,
-        waveboxVersion: manifest.waveboxVersion
+        waveboxVersion: manifest.wavebox.version
       } : undefined),
       isWaitingInstall: crextensionState.isWaitingInstall(props.extensionId),
       isWaitingUninstall: crextensionState.isWaitingUninstall(props.extensionId),

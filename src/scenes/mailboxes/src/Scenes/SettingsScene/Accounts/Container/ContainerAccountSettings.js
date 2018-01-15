@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper } from 'material-ui'
+import { Paper, Toggle, TextField } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Row, Col } from 'Components/Grid'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
@@ -11,6 +11,7 @@ import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
 import AccountBehaviourSettings from '../AccountBehaviourSettings'
 import styles from '../../CommonSettingStyles'
+import { mailboxActions, ContainerDefaultServiceReducer, ContainerMailboxReducer } from 'stores/mailbox'
 
 export default class ContainerAccountSettings extends React.Component {
   /* **************************************************************************/
@@ -45,6 +46,32 @@ export default class ContainerAccountSettings extends React.Component {
       <div {...passProps}>
         <Row>
           <Col md={6}>
+            <Paper style={styles.paper}>
+              <TextField
+                key={`displayName_${mailbox.userDisplayName}`}
+                fullWidth
+                floatingLabelFixed
+                hintText='My Account'
+                floatingLabelText='Account Name'
+                defaultValue={mailbox.userDisplayName}
+                onBlur={(evt) => {
+                  mailboxActions.reduce(this.props.mailbox.id, ContainerMailboxReducer.setDisplayName, evt.target.value)
+                }} />
+              <Toggle
+                toggled={service.hasNavigationToolbar}
+                label='Show navigation toolbar'
+                labelPosition='right'
+                onToggle={(evt, toggled) => {
+                  mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setHasNavigationToolbar, toggled)
+                }} />
+              <Toggle
+                toggled={service.restoreLastUrl}
+                label='Restore last page on load'
+                labelPosition='right'
+                onToggle={(evt, toggled) => {
+                  mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setRestoreLastUrl, toggled)
+                }} />
+            </Paper>
             <AccountAppearanceSettings mailbox={mailbox} />
             <AccountBadgeSettings mailbox={mailbox} service={service} />
             <AccountNotificationSettings mailbox={mailbox} service={service} />

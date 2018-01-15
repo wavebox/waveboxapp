@@ -24,22 +24,28 @@ class SlackDefaultService extends CoreService {
   static get humanizedUnreadItemType () { return 'notification' }
 
   /* **************************************************************************/
-  // Properties: Support
-  /* **************************************************************************/
-
-  static get supportsUnreadActivity () { return true }
-  static get supportsUnreadCount () { return true }
-  static get supportsTrayMessages () { return true }
-  static get supportsNativeNotifications () { return true }
-  static get supportsSyncWhenSleeping () { return true }
-
-  /* **************************************************************************/
   // Properties
   /* **************************************************************************/
 
   get teamName () { return this.__metadata__.teamName }
-  get url () { return this.__metadata__.authUrl }
   get sleepable () { return this._value_('sleepable', false) }
+
+  /* **************************************************************************/
+  // Properties: Support
+  /* **************************************************************************/
+
+  get supportsUnreadActivity () { return true }
+  get supportsUnreadCount () { return true }
+  get supportsTrayMessages () { return true }
+  get supportsNativeNotifications () { return true }
+  get supportsSyncWhenSleeping () { return true }
+
+  /* **************************************************************************/
+  // Properties: Url
+  /* **************************************************************************/
+
+  get url () { return this.__metadata__.authUrl }
+  get restoreLastUrlDefault () { return true }
 
   /* **************************************************************************/
   // Properties : Slack info

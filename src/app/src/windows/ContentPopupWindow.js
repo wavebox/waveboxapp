@@ -1,17 +1,25 @@
 import WaveboxWindow from './WaveboxWindow'
 import { evtMain } from 'AppEvents'
 
+const privTabMetaInfo = Symbol('privTabMetaInfo')
+
 class ContentPopupWindow extends WaveboxWindow {
+  /* ****************************************************************************/
+  // Class: Properties
+  /* ****************************************************************************/
+
+  static get windowType () { return this.WINDOW_TYPES.CONTENT_POPUP }
+
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
   /**
-  * @param ownerId: the id of the owner - mailbox/service
+  * @param tabMetaInfo=undefined: the tab meta info for the tab we will be hosting
   */
-  constructor (ownerId) {
+  constructor (tabMetaInfo = undefined) {
     super()
-    this.ownerId = ownerId
+    this[privTabMetaInfo] = tabMetaInfo
   }
 
   /* ****************************************************************************/
@@ -113,7 +121,7 @@ class ContentPopupWindow extends WaveboxWindow {
   handleWebContentsNewWindow = (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
     evt.preventDefault()
 
-    const contentWindow = new ContentPopupWindow(this.ownerId)
+    const contentWindow = new ContentPopupWindow(this[privTabMetaInfo])
     contentWindow.create(targetUrl, options)
     evt.newGuest = contentWindow.window
   }
@@ -134,6 +142,14 @@ class ContentPopupWindow extends WaveboxWindow {
   */
   tabIds () {
     return [this.window.webContents.id]
+  }
+
+  /**
+  * @param tabId: the id of the tab
+  * @return the info about the tab
+  */
+  tabMetaInfo (tabId) {
+    return tabId === this.window.webContents.id ? this[privTabMetaInfo] : undefined
   }
 
   /* ****************************************************************************/

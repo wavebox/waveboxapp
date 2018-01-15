@@ -1,4 +1,5 @@
 const CoreService = require('../CoreService')
+const ContainerServiceAdaptor = require('./ContainerServiceAdaptor')
 
 class ContainerDefaultService extends CoreService {
   /* **************************************************************************/
@@ -6,8 +7,17 @@ class ContainerDefaultService extends CoreService {
   /* **************************************************************************/
 
   static get type () { return CoreService.SERVICE_TYPES.DEFAULT }
-  static get mergeChangesetOnActive () {
-    return { lastUnseenNotificationTime: null }
+
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  /**
+  * @param ...args: the args to pass to CoreService
+  */
+  constructor (...args) {
+    super(...args)
+    this.__adaptors__ = undefined
   }
 
   /* **************************************************************************/
@@ -18,13 +28,19 @@ class ContainerDefaultService extends CoreService {
   get containerService () { return this.container.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) }
 
   /* **************************************************************************/
-  // Properties: Container
+  // Properties
+  /* **************************************************************************/
+
+  get sleepable () { return this._value_('sleepable', this.containerService.sleepableDefault) }
+  get hasNavigationToolbar () { return this._value_('hasNavigationToolbar', this.containerService.hasNavigationToolbarDefault) }
+
+  /* **************************************************************************/
+  // Properties: Url
   /* **************************************************************************/
 
   get url () { return this.containerService.getUrlWithSubdomain(this.urlSubdomain) }
   get urlSubdomain () { return this.__metadata__.urlSubdomain }
-  get sleepable () { return this._value_('sleepable', this.containerService.sleepableDefault) }
-  get hasNavigationToolbar () { return this._value_('hasNavigationToolbar', this.containerService.hasNavigationToolbarDefault) }
+  get restoreLastUrlDefault () { return this.containerService.restoreLastUrlDefault }
 
   /* **************************************************************************/
   // Properties: Humanized
@@ -41,12 +57,33 @@ class ContainerDefaultService extends CoreService {
 
   get supportsUnreadActivity () { return this.containerService.supportsUnreadActivity }
   get supportsGuestNotifications () { return this.containerService.supportsGuestNotifications }
+  get supportsUnreadCount () { return this.containerService.supportsUnreadCount }
+  get supportsTrayMessages () { return this.containerService.supportsTrayMessages }
+  get supportsGuestConfig () { return this.containerService.supportsGuestConfig }
 
   /* **************************************************************************/
   // Properties: Behaviour
   /* **************************************************************************/
 
   get reloadBehaviour () { return CoreService.RELOAD_BEHAVIOURS[this.containerService.reloadBehaviour] || super.reloadBehaviour }
+  get useNativeWindowOpen () { return this.containerService.useNativeWindowOpen }
+  get useContextIsolation () { return this.containerService.useContextIsolation }
+  get mergeChangesetOnActive () { return { lastUnseenNotificationTime: null } }
+  get html5NotificationsGenerateUnreadActivity () { return this.containerService.html5NotificationsGenerateUnreadActivity }
+
+  /* **************************************************************************/
+  // Properties: Adaptors
+  /* **************************************************************************/
+
+  get adaptors () {
+    // Lazy load this - most threads wont use it
+    if (this.__adaptors__ === undefined) {
+      this.__adaptors__ = this.containerService.adaptors.map((adaptorConfig) => {
+        return new ContainerServiceAdaptor(adaptorConfig)
+      })
+    }
+    return this.__adaptors__
+  }
 
   /* **************************************************************************/
   // Properties : Notifications
@@ -65,7 +102,15 @@ class ContainerDefaultService extends CoreService {
   // Properties : Provider Details & counts etc
   /* **************************************************************************/
 
-  get hasUnreadActivity () { return !!this._value_('lastUnseenNotificationTime', undefined) }
+  get hasUnreadActivity () {
+    if (this.supportsGuestConfig) {
+      return this.guestConfig.hasUnreadActivity
+    } else if (this.html5NotificationsGenerateUnreadActivity) {
+      return !!this._value_('lastUnseenNotificationTime', undefined)
+    } else {
+      return false
+    }
+  }
 }
 
 module.exports = ContainerDefaultService

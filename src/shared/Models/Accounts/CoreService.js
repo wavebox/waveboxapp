@@ -2,6 +2,7 @@ const Model = require('../Model')
 const SERVICE_TYPES = require('./ServiceTypes')
 const PROTOCOL_TYPES = require('./ProtocolTypes')
 const { MAILBOX_SLEEP_WAIT } = require('../../constants')
+const CoreServiceGuestConfig = require('./CoreServiceGuestConfig')
 
 const RELOAD_BEHAVIOURS = Object.freeze({
   RELOAD: 'RELOAD',
@@ -17,28 +18,6 @@ class CoreService extends Model {
   static get PROTOCOL_TYPES () { return PROTOCOL_TYPES }
   static get RELOAD_BEHAVIOURS () { return RELOAD_BEHAVIOURS }
   static get type () { return SERVICE_TYPES.UNKNOWN }
-  static get reloadBehaviour () { return RELOAD_BEHAVIOURS.RESET_URL }
-
-  /* **************************************************************************/
-  // Class: Support
-  /* **************************************************************************/
-
-  static get supportsUnreadActivity () { return false }
-  static get supportsUnreadCount () { return false }
-  static get supportsTrayMessages () { return false }
-  static get supportsSyncedDiffNotifications () { return false }
-  static get supportsNativeNotifications () { return false }
-  static get supportsGuestNotifications () { return false }
-  static get supportsSyncWhenSleeping () { return false }
-  static get supportsSync () {
-    return [
-      this.supportsUnreadActivity,
-      this.supportsUnreadCount,
-      this.supportsNativeNotifications,
-      this.supportsGuestNotifications
-    ].find((s) => s) || false
-  }
-  static get mergeChangesetOnActive () { return undefined }
 
   /* **************************************************************************/
   // Class: Humanized
@@ -94,6 +73,7 @@ class CoreService extends Model {
     this.__parentId__ = parentId
     this.__metadata__ = metadata
     this.__mailboxMigrationData__ = mailboxMigrationData
+    this.__guestConfig__ = new CoreServiceGuestConfig(data)
   }
 
   /* **************************************************************************/
@@ -102,26 +82,47 @@ class CoreService extends Model {
 
   get parentId () { return this.__parentId__ }
   get type () { return this.constructor.type }
-  get url () { return undefined }
   get sleepable () { return this._value_('sleepable', true) }
   get sleepableTimeout () { return this._value_('sleepableTimeout', MAILBOX_SLEEP_WAIT) }
   get hasNavigationToolbar () { return false }
-  get reloadBehaviour () { return this.constructor.reloadBehaviour }
+  get reloadBehaviour () { return RELOAD_BEHAVIOURS.RESET_URL }
   get hasSeenSleepableWizard () { return this._value_('hasSeenSleepableWizard', false) }
+
+  /* **************************************************************************/
+  // Properties: Url
+  /* **************************************************************************/
+
+  get url () { return undefined }
+  get lastUrl () {
+    const value = this._value_('lastUrl', {})
+    if (value && value.baseUrl === this.url && value.url && value.url !== 'about:blank') {
+      return value.url
+    } else {
+      return undefined
+    }
+  }
+  get restoreLastUrlDefault () { return false }
+  get restoreLastUrl () { return this._value_('restoreLastUrl', this.restoreLastUrlDefault) }
+  get restorableUrl () {
+    if (this.restoreLastUrl) {
+      return this.lastUrl || this.url
+    } else {
+      return this.url
+    }
+  }
 
   /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
-  get supportsUnreadActivity () { return this.constructor.supportsUnreadActivity }
-  get supportsUnreadCount () { return this.constructor.supportsUnreadCount }
-  get supportsTrayMessages () { return this.constructor.supportsTrayMessages }
-  get supportsSyncedDiffNotifications () { return this.constructor.supportsSyncedDiffNotifications }
-  get supportsNativeNotifications () { return this.constructor.supportsNativeNotifications }
-  get supportsGuestNotifications () { return this.constructor.supportsGuestNotifications }
-  get supportsSyncWhenSleeping () { return this.constructor.supportsSyncWhenSleeping }
+  get supportsUnreadActivity () { return false }
+  get supportsUnreadCount () { return false }
+  get supportsTrayMessages () { return false }
+  get supportsSyncedDiffNotifications () { return false }
+  get supportsNativeNotifications () { return false }
+  get supportsGuestNotifications () { return false }
+  get supportsSyncWhenSleeping () { return false }
   get supportsSync () {
-    // Don't inherit in case we set these seperately in the model
     return [
       this.supportsUnreadActivity,
       this.supportsUnreadCount,
@@ -129,7 +130,7 @@ class CoreService extends Model {
       this.supportsGuestNotifications
     ].find((s) => s) || false
   }
-  get mergeChangesetOnActive () { return this.constructor.mergeChangesetOnActive }
+  get supportsGuestConfig () { return false }
 
   /* **************************************************************************/
   // Properties: Protocols & actions
@@ -183,9 +184,9 @@ class CoreService extends Model {
   // Properties : Provider Details & counts etc
   /* **************************************************************************/
 
-  get unreadCount () { return 0 }
-  get hasUnreadActivity () { return false }
-  get trayMessages () { return [] }
+  get unreadCount () { return this.supportsGuestConfig ? this.guestConfig.unreadCount : 0 }
+  get hasUnreadActivity () { return this.supportsGuestConfig ? this.guestConfig.hasUnreadActivity : false }
+  get trayMessages () { return this.supportsGuestConfig ? this.guestConfig.trayMessages : [] }
   get notifications () { return [] }
 
   /* **************************************************************************/
@@ -198,8 +199,17 @@ class CoreService extends Model {
   get hasCustomJS () { return !!this.customJS }
 
   /* **************************************************************************/
+  // Properties: Adaptors
+  /* **************************************************************************/
+
+  get adaptors () { return [] }
+  get guestConfig () { return this.__guestConfig__ }
+
+  /* **************************************************************************/
   // Behaviour
   /* **************************************************************************/
+
+  get mergeChangesetOnActive () { return undefined }
 
   /**
   * Looks to see if the input event should be prevented

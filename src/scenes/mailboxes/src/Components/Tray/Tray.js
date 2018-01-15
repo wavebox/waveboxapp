@@ -137,9 +137,14 @@ export default class Tray extends React.Component {
         signature: messageItemsSignature,
         label: [
           unreadCount ? `(${unreadCount})` : undefined,
-          mailbox.displayName || 'Untitled'
+          mailbox.humanizedType === mailbox.displayName ? (
+            mailbox.humanizedType
+          ) : (
+            `${mailbox.humanizedType} : ${mailbox.displayName || 'Untitled'}`
+          )
         ].filter((item) => !!item).join(' '),
-        submenu: messageItems.length === 2 ? [...messageItems,
+        submenu: messageItems.length === 2 ? [
+          ...messageItems,
           { label: 'No messages', enabled: false }
         ] : messageItems
       }
@@ -161,7 +166,17 @@ export default class Tray extends React.Component {
   handleMouseTriggerClick = () => {
     const { mouseTrigger, mouseTriggerAction } = this.props.traySettings
     if (mouseTrigger === MOUSE_TRIGGERS.SINGLE) {
-      ipcRenderer.send(mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY : WB_SHOW_MAILBOX_WINDOW_FROM_TRAY)
+      switch (mouseTriggerAction) {
+        case MOUSE_TRIGGER_ACTIONS.TOGGLE:
+          ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY)
+          break
+        case MOUSE_TRIGGER_ACTIONS.SHOW:
+          ipcRenderer.send(WB_SHOW_MAILBOX_WINDOW_FROM_TRAY)
+          break
+        case MOUSE_TRIGGER_ACTIONS.TOGGLE_MINIMIZE:
+          ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY, true)
+          break
+      }
     }
   }
 
@@ -171,7 +186,17 @@ export default class Tray extends React.Component {
   handleMouseTriggerDoubleClick = () => {
     const { mouseTrigger, mouseTriggerAction } = this.props.traySettings
     if (mouseTrigger === MOUSE_TRIGGERS.DOUBLE) {
-      ipcRenderer.send(mouseTriggerAction === MOUSE_TRIGGER_ACTIONS.TOGGLE ? WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY : WB_SHOW_MAILBOX_WINDOW_FROM_TRAY)
+      switch (mouseTriggerAction) {
+        case MOUSE_TRIGGER_ACTIONS.TOGGLE:
+          ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY)
+          break
+        case MOUSE_TRIGGER_ACTIONS.SHOW:
+          ipcRenderer.send(WB_SHOW_MAILBOX_WINDOW_FROM_TRAY)
+          break
+        case MOUSE_TRIGGER_ACTIONS.TOGGLE_MINIMIZE:
+          ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY, true)
+          break
+      }
     }
   }
 
@@ -214,7 +239,14 @@ export default class Tray extends React.Component {
   * @return the tooltip string for the tray icon
   */
   renderTooltip () {
-    return this.props.unreadCount ? this.props.unreadCount + ' unread items' : 'No unread items'
+    const {unreadCount} = this.props
+    if (unreadCount === 1) {
+      return `1 unread item`
+    } else if (unreadCount > 1) {
+      return `${unreadCount} unread items`
+    } else {
+      return 'No unread items'
+    }
   }
 
   /**

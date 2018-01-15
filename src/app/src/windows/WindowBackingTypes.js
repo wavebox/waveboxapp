@@ -1,0 +1,9 @@
+const WINDOW_BACKING_TYPES = Object.freeze({
+  MAILBOX_SERVICE: 'MAILBOX_SERVICE',
+  NONE: 'NONE'
+})
+
+export default WINDOW_BACKING_TYPES
+export {
+  WINDOW_BACKING_TYPES
+}

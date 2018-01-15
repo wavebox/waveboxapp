@@ -9,6 +9,7 @@ import { DefaultServiceBadge, ServiceTooltip } from 'Components/Service'
 import * as Colors from 'material-ui/styles/colors'
 import uuid from 'uuid'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import UISettings from 'shared/Models/Settings/UISettings'
 import Color from 'color'
 
 const styles = {
@@ -117,7 +118,7 @@ export default class SidelistItemMalboxAvatar extends React.Component {
       ...this.generateState(),
       isHovering: false,
       globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator,
-      tooltipsEnabled: settingsState.ui.sidebarTooltipsEnabled
+      tooltipsEnabled: settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED || settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.SIDEBAR_ONLY
     }
   })()
 
@@ -156,7 +157,7 @@ export default class SidelistItemMalboxAvatar extends React.Component {
   settingsChanged = (settingsState) => {
     this.setState({
       globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator,
-      tooltipsEnabled: settingsState.ui.sidebarTooltipsEnabled
+      tooltipsEnabled: settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED || settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.SIDEBAR_ONLY
     })
   }
 

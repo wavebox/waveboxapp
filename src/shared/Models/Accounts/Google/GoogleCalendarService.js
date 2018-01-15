@@ -24,20 +24,18 @@ class GoogleCalendarService extends GoogleService {
   }
 
   /* **************************************************************************/
-  // Class: Support
-  /* **************************************************************************/
-
-  static get supportsUnreadActivity () { return true }
-  static get supportsGuestNotifications () { return true }
-  static get mergeChangesetOnActive () {
-    return { lastUnseenNotificationTime: null }
-  }
-
-  /* **************************************************************************/
   // Properties
   /* **************************************************************************/
 
   get url () { return 'https://calendar.google.com/calendar/render?new_calendar_optin=true' }
+
+  /* **************************************************************************/
+  // Properties: Support
+  /* **************************************************************************/
+
+  get supportsUnreadActivity () { return true }
+  get supportsGuestNotifications () { return true }
+  get mergeChangesetOnActive () { return { lastUnseenNotificationTime: null } }
 
   /* **************************************************************************/
   // Properties : Provider Details & counts etc

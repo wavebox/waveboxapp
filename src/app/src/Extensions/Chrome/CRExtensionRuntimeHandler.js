@@ -384,13 +384,13 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     const purl = url.parse(requestUrl)
     const matchingRuntimes = Array.from(this.runtimes.values()).filter((runtime) => {
       const manifest = runtime.extension.manifest
-      if (!manifest.hasWaveboxContentSecurityPolicy) { return false }
+      if (!manifest.wavebox.hasContentSecurityPolicy) { return false }
 
       const matches = CRExtensionMatchPatterns.matchUrls(
         purl.protocol,
         purl.hostname,
         purl.pathname,
-        manifest.waveboxContentSecurityPolicy.matches
+        manifest.wavebox.contentSecurityPolicy.matches
       )
       if (!matches) { return false }
 
@@ -401,7 +401,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     // Parse and update the incoming headers
     const responseCSPs = responseHeaders['content-security-policy'].map((csp) => CSPParser(csp))
     matchingRuntimes.forEach((runtime) => {
-      const directives = runtime.extension.manifest.waveboxContentSecurityPolicy.directives
+      const directives = runtime.extension.manifest.wavebox.contentSecurityPolicy.directives
       responseCSPs.forEach((responseCSP) => {
         Object.keys(directives).forEach((k) => {
           if (responseCSP[k] !== undefined) {
@@ -497,7 +497,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   /**
   * Handles the headers received on content scripts
   * @param details: the details of the request
-  * @param responder: function to call with updated headers
+  * @return the updated headers
   */
   updateCSXHROnHeadersReceived = (details) => {
     // Check we are waiting
@@ -523,6 +523,22 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   */
   onCSXHRError = (details) => {
     this[privOpenXHRRequests].delete(details.id)
+  }
+
+  /* ****************************************************************************/
+  // WebRequest
+  /* ****************************************************************************/
+
+  /**
+  * Runs the before request code provided by the extension
+  * @param details: the details of the request
+  * @return modifiers that will cancel or redirect the request
+  */
+  runExtensionOnBeforeRequest = (details) => {
+    return Array.from(this.runtimes.values()).reduce((modifier, runtime) => {
+      if (modifier) { return modifier }
+      return runtime.runExtensionOnBeforeRequest(details)
+    }, undefined)
   }
 }
 

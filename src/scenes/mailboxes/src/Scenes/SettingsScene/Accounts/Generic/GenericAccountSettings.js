@@ -131,6 +131,13 @@ export default class GenericAccountSettings extends React.Component {
                 errorText={serviceUrlError}
                 onBlur={this.handleUrlChange} />
               <Toggle
+                toggled={service.restoreLastUrl}
+                label='Restore last page on load'
+                labelPosition='right'
+                onToggle={(evt, toggled) => {
+                  mailboxActions.reduceService(mailbox.id, service.type, GenericDefaultServiceReducer.setRestoreLastUrl, toggled)
+                }} />
+              <Toggle
                 toggled={service.hasNavigationToolbar}
                 label='Show navigation toolbar'
                 labelPosition='right'
@@ -150,6 +157,13 @@ export default class GenericAccountSettings extends React.Component {
                 labelPosition='right'
                 onToggle={(evt, toggled) => {
                   mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageThemeAsColor, toggled)
+                }} />
+              <Toggle
+                toggled={service.supportsGuestConfig}
+                label='Enable Wavebox API (Experiemental)'
+                labelPosition='right'
+                onToggle={(evt, toggled) => {
+                  mailboxActions.reduceService(mailbox.id, service.type, GenericDefaultServiceReducer.setsupportsGuestConfig, toggled)
                 }} />
             </Paper>
             <AccountAppearanceSettings mailbox={mailbox} />

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
-import { mailboxStore, mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
+import { mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
   WB_BROWSER_NOTIFICATION_PRESENT
@@ -18,52 +18,6 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
 
   static propTypes = {
     mailboxId: PropTypes.string.isRequired
-  }
-
-  /* **************************************************************************/
-  // Component lifecycle
-  /* **************************************************************************/
-
-  componentDidMount () {
-    mailboxStore.listen(this.mailboxChanged)
-  }
-
-  componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxChanged)
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if (this.props.mailboxId !== nextProps.mailboxId) {
-      this.setState(this.generateState(nextProps))
-    }
-  }
-
-  /* **************************************************************************/
-  // Data lifecycle
-  /* **************************************************************************/
-
-  state = this.generateState(this.props)
-
-  /**
-  * Generates the state from the given props
-  * @param props: the props to use
-  * @return state object
-  */
-  generateState (props) {
-    const mailboxState = mailboxStore.getState()
-    const mailbox = mailboxState.getMailbox(props.mailboxId)
-    const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
-    return {
-      url: service ? service.url : undefined
-    }
-  }
-
-  mailboxChanged = (mailboxState) => {
-    const mailbox = mailboxState.getMailbox(this.props.mailboxId)
-    const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
-    this.setState({
-      url: service ? service.url : undefined
-    })
   }
 
   /* **************************************************************************/
@@ -130,14 +84,12 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
 
   render () {
     const { mailboxId } = this.props
-    const { url } = this.state
 
     return (
       <MailboxWebViewHibernator
         ref={REF}
         preload={Resolver.guestPreload()}
         mailboxId={mailboxId}
-        url={url}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
         didChangeThemeColor={this.handleThemeColorChanged}
         pageTitleUpdated={this.handlePageTitleUpdated}

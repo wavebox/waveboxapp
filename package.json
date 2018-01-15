@@ -1,6 +1,6 @@
 {
   "name": "wavebox",
-  "version": "3.7.0",
+  "version": "3.8.0",
   "releaseChannel": "STABLE",
   "description": "Wavebox",
   "scripts": {
@@ -51,12 +51,12 @@
     "babel-preset-stage-0": "6.24.1",
     "clean-webpack-plugin": "0.1.17",
     "colors": "1.1.2",
-    "copy-webpack-plugin": "4.3.0",
-    "css-loader": "0.28.7",
+    "copy-webpack-plugin": "4.3.1",
+    "css-loader": "0.28.8",
     "electron": "1.7.9",
     "electron-rebuild": "1.6.0",
     "extract-text-webpack-plugin": "3.0.2",
-    "file-loader": "1.1.5",
+    "file-loader": "1.1.6",
     "fs-extra": "5.0.0",
     "graceful-fs": "4.1.11",
     "json-loader": "0.5.7",
@@ -65,13 +65,13 @@
     "less-loader": "4.0.5",
     "on-build-webpack": "0.1.0",
     "style-loader": "0.19.1",
-    "uglify-es": "3.2.2",
+    "uglify-es": "3.3.5",
     "url-loader": "0.6.2",
     "uuid": "3.1.0",
     "webpack": "3.10.0",
     "webpack-notifier": "1.5.0",
     "webpack-target-electron-renderer": "0.4.0",
-    "yargs": "10.0.3"
+    "yargs": "10.1.1"
   },
   "devDependencies": {
     "standard": "10.0.3",

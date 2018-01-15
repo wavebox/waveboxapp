@@ -24,14 +24,6 @@ class GoogleMessengerService extends GoogleService {
   }
 
   /* **************************************************************************/
-  // Class: Support
-  /* **************************************************************************/
-
-  static get supportsUnreadCount () { return true }
-  static get supportsGuestNotifications () { return true }
-  static get supportsTrayMessages () { return true }
-
-  /* **************************************************************************/
   // Class: Creation
   /* **************************************************************************/
 
@@ -50,6 +42,14 @@ class GoogleMessengerService extends GoogleService {
   /* **************************************************************************/
 
   get url () { return 'https://allo.google.com/web' }
+
+  /* **************************************************************************/
+  // Properties: Support
+  /* **************************************************************************/
+
+  get supportsUnreadCount () { return true }
+  get supportsGuestNotifications () { return true }
+  get supportsTrayMessages () { return true }
 
   /* **************************************************************************/
   // Properties : Provider Details & counts etc
