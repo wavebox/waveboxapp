@@ -95,6 +95,8 @@ class ContainerDefaultService extends CoreService {
   // Properties : Badges
   /* **************************************************************************/
 
+  get showUnreadBadge () { return this._migrationValue_('showUnreadBadge', this.containerService.showUnreadBadgeDefault) }
+  get unreadCountsTowardsAppUnread () { return this._migrationValue_('unreadCountsTowardsAppUnread', this.containerService.unreadCountsTowardsAppUnreadDefault) }
   get showUnreadActivityBadge () { return this._migrationValue_('showUnreadActivityBadge', this.containerService.showUnreadActivityBadgeDefault) }
   get unreadActivityCountsTowardsAppUnread () { return this._migrationValue_('unreadActivityCountsTowardsAppUnread', this.containerService.unreadActivityCountsTowardsAppUnreadDefault) }
 

@@ -73,17 +73,9 @@ class ContainerService extends Model {
 
   get hasNavigationToolbarDefault () { return this._value_('hasNavigationToolbarDefault', true) }
   get sleepableDefault () { return this._value_('sleepableDefault', true) }
-
-  /* **************************************************************************/
-  // Properties : Notifications
-  /* **************************************************************************/
-
   get showNotificationsDefault () { return this._value_('showNotificationsDefault', true) }
-
-  /* **************************************************************************/
-  // Properties : Badges
-  /* **************************************************************************/
-
+  get showUnreadBadgeDefault () { return this._value_('showUnreadBadgeDefault', true) }
+  get unreadCountsTowardsAppUnreadDefault () { return this._value_('unreadCountsTowardsAppUnreadDefault', true) }
   get showUnreadActivityBadgeDefault () { return this._value_('showUnreadActivityBadgeDefault', true) }
   get unreadActivityCountsTowardsAppUnreadDefault () { return this._value_('unreadActivityCountsTowardsAppUnreadDefault', true) }
 }

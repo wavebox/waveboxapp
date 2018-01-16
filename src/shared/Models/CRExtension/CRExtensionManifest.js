@@ -96,7 +96,7 @@ class CRExtensionManifest extends Model {
   /* **************************************************************************/
 
   get browserAction () { return this.__browserAction__ }
-  get hasBrowserAction () { return this.waveboxSupportsBrowserAction && !!this.browserAction }
+  get hasBrowserAction () { return this.wavebox.supportsBrowserAction && !!this.browserAction }
 
   /* **************************************************************************/
   // Properties: Options
