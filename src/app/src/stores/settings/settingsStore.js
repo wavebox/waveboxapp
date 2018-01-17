@@ -6,6 +6,10 @@ import { SettingsIdent, AppSettings } from 'shared/Models/Settings'
 import actions from './settingsActions'
 import dictionaries from 'shared/SpellcheckProvider/dictionaries.js'
 import pkg from 'package.json'
+import { RENDER_PROCESS_PREFERENCE_TYPES } from 'shared/processPreferences'
+import { renderProcessPreferences } from 'R/atomProcess'
+
+const privRenderProcEntry = Symbol('privRenderProcEntry')
 
 class SettingsStore extends CoreSettingsStore {
   /* **************************************************************************/
@@ -14,6 +18,7 @@ class SettingsStore extends CoreSettingsStore {
 
   constructor () {
     super()
+    this[privRenderProcEntry] = undefined
 
     /* ****************************************/
     // Actions
@@ -66,6 +71,25 @@ class SettingsStore extends CoreSettingsStore {
         return acc
       }, {}),
       defaults: this.defaults
+    }
+  }
+
+  /* **************************************************************************/
+  // Loading
+  /* **************************************************************************/
+
+  handleLoad (...args) {
+    super.handleLoad(...args)
+
+    // Write a copy of the launch settings to the render process
+    if (!this[privRenderProcEntry]) {
+      this[privRenderProcEntry] = renderProcessPreferences.addEntry({
+        ...Object.keys(this.launched).reduce((acc, segment) => {
+          acc[segment] = this.launched[segment].cloneData()
+          return acc
+        }, {}),
+        type: RENDER_PROCESS_PREFERENCE_TYPES.WB_LAUNCH_SETTINGS
+      })
     }
   }
 

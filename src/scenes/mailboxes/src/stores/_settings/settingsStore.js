@@ -68,7 +68,7 @@ class SettingsStore extends RendererSettingsStore {
   /* **************************************************************************/
 
   handleLoad (...args) {
-    super(...args)
+    super.handleLoad(...args)
     actions.startSyncingNews.defer()
   }
 
