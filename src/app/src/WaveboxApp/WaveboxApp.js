@@ -3,7 +3,7 @@ import yargs from 'yargs'
 import credentials from 'shared/credentials'
 import WaveboxAppPrimaryMenu from './WaveboxAppPrimaryMenu'
 import WaveboxAppGlobalShortcuts from './WaveboxAppGlobalShortcuts'
-import settingStore from 'stores/settingStore'
+import { settingsStore, settingsActions } from 'stores/settings'
 import mailboxStore from 'stores/mailboxStore'
 import userStore from 'stores/userStore'
 import extensionStore from 'stores/extensionStore'
@@ -27,7 +27,6 @@ import {
   extensionStorage,
   extensionStoreStorage,
   mailboxStorage,
-  settingStorage,
   userStorage,
   wireStorage
 } from 'storage'
@@ -38,35 +37,7 @@ const privAppMenu = Symbol('privAppMenu')
 const privGlobalShortcuts = Symbol('privGlobalShortcuts')
 const privMainWindow = Symbol('privMainWindow')
 const privCloseBehaviour = Symbol('privCloseBehaviour')
-
-const webContents=require('electron').webContents
-const Alt = require('alt/src').default
-
-const alt = new Alt()
-
-class TActions {
-  updateT (time,sender) {
-    return { time:time,sender:sender}
-  }
-}
-const actions = alt.createActions(TActions)
-
-class TStore {
-  constructor () {
-    this.t=0
-    this.bindListeners({
-      handleT: actions.UPDATE_T
-    })
-  }
-
-  handleT({time,sender}) {
-    this.t=time
-    webContents.fromId(sender).send("t",time)
-  }
-}
-
-const store = alt.createStore(TStore, 'TStore')
-
+const privSettingsRenderProcEntry = Symbol('privSettingsRenderProcEntry')
 
 class WaveboxApp {
   /* ****************************************************************************/
@@ -80,6 +51,7 @@ class WaveboxApp {
     this[privGlobalShortcuts] = undefined
     this[privMainWindow] = undefined
     this[privCloseBehaviour] = undefined
+    this[privSettingsRenderProcEntry] = undefined
   }
 
   /**
@@ -100,6 +72,22 @@ class WaveboxApp {
     this[privStarted] = true
     this[privArgv] = yargs.parse(process.argv)
 
+    // Start our stores
+    appStorage.checkAwake()
+    avatarStorage.checkAwake()
+    containerStorage.checkAwake()
+    extensionStorage.checkAwake()
+    extensionStoreStorage.checkAwake()
+    mailboxStorage.checkAwake()
+    userStorage.checkAwake()
+    wireStorage.checkAwake()
+
+    mailboxStore.checkAwake()
+    extensionStore.checkAwake()
+    settingsStore.getState()
+    settingsActions.load()
+    userStore.checkAwake()
+
     // Component behaviour
     this[privCloseBehaviour] = new WaveboxAppCloseBehaviour()
     WaveboxTrayBehaviour.setup()
@@ -119,22 +107,6 @@ class WaveboxApp {
     MailboxesSessionManager.start()
     ExtensionSessionManager.start()
     ServicesManager.load()
-
-    // Start our stores
-    appStorage.checkAwake()
-    avatarStorage.checkAwake()
-    containerStorage.checkAwake()
-    extensionStorage.checkAwake()
-    extensionStoreStorage.checkAwake()
-    mailboxStorage.checkAwake()
-    settingStorage.checkAwake()
-    userStorage.checkAwake()
-    wireStorage.checkAwake()
-
-    mailboxStore.checkAwake()
-    extensionStore.checkAwake()
-    settingStore.checkAwake()
-    userStore.checkAwake()
 
     // Setup the environment
     this._configureEnvironment()
@@ -171,16 +143,17 @@ class WaveboxApp {
   * Configures the environment - including commandline switches etc
   */
   _configureEnvironment () {
-    if (settingStore.app.ignoreGPUBlacklist) {
+    const launchSettings = settingsStore.getState().launched
+    if (launchSettings.app.ignoreGPUBlacklist) {
       app.commandLine.appendSwitch('ignore-gpu-blacklist', 'true')
     }
-    if (settingStore.app.disableSmoothScrolling) {
+    if (launchSettings.app.disableSmoothScrolling) {
       app.commandLine.appendSwitch('disable-smooth-scrolling', 'true')
     }
-    if (!settingStore.app.enableUseZoomForDSF) {
+    if (!launchSettings.app.enableUseZoomForDSF) {
       app.commandLine.appendSwitch('enable-use-zoom-for-dsf', 'false')
     }
-    if (settingStore.app.disableHardwareAcceleration) {
+    if (launchSettings.app.disableHardwareAcceleration) {
       app.disableHardwareAcceleration()
     }
 
@@ -195,12 +168,6 @@ class WaveboxApp {
   * Binds the IPC listeners
   */
   _bindIPCListeners () {
-    ipcMain.on("t", (evt, time) => {
-      actions.updateT(time,evt.sender.id)
-      //evt.sender.send("t", time)
-    })
-
-
     ipcMain.on(ipcEvents.WB_FOCUS_APP, (evt, body) => {
       const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
       if (mailboxesWindow) {
@@ -255,7 +222,7 @@ class WaveboxApp {
   * @return true if we should open hidden, false otherwise
   */
   _syncFetchShouldOpenHidden () {
-    if (settingStore.ui.openHidden) { return true }
+    if (settingsStore.getState().ui.openHidden) { return true }
     if (this[privArgv].hidden || this[privArgv].hide) { return true }
     if (process.platform === 'darwin' && app.getLoginItemSettings().wasOpenedAsHidden) { return true }
     return false
@@ -265,8 +232,9 @@ class WaveboxApp {
   * Handles the app becoming ready
   */
   _handleAppReady = () => {
+    const settingsState = settingsStore.getState()
     // Load extensions before any webcontents get created
-    if (settingStore.extension.enableChromeExperimental) {
+    if (settingsState.launched.extension.enableChromeExperimental) {
       try {
         CRExtensionManager.loadExtensionDirectory()
       } catch (ex) {
@@ -275,7 +243,9 @@ class WaveboxApp {
     }
 
     // Write any state
-    settingStore.writeLaunchSettingsToRenderProcess()
+    if (!this[privSettingsRenderProcEntry]) {
+      this[privSettingsRenderProcEntry] = settingsState.createRenderProcessEntry()
+    }
 
     // Doing this outside of ready has a side effect on high-sierra where you get a _TSGetMainThread error
     // To resolve this, run it when in ready
@@ -283,7 +253,7 @@ class WaveboxApp {
 
     // Prep app menu
     this[privAppMenu].updateApplicationMenu(
-      settingStore.accelerators,
+      settingsState.accelerators,
       mailboxStore.orderedMailboxes(),
       mailboxStore.getActiveMailbox(),
       mailboxStore.getActiveServiceType()

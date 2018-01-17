@@ -1,8 +1,9 @@
 import {globalShortcut} from 'electron'
-import settingStore from 'stores/settingStore'
+import { settingsStore } from 'stores/settings'
 import WaveboxTrayBehaviour from './WaveboxTrayBehaviour'
 
 const privConfig = Symbol('privConfig')
+const privState = Symbol('privState')
 
 class WaveboxAppGlobalShortcuts {
   /* ****************************************************************************/
@@ -13,21 +14,24 @@ class WaveboxAppGlobalShortcuts {
     this[privConfig] = [
       { selector: this._handleToggle, accelerator: '', acceleratorName: 'globalToggleApp' }
     ]
+    this[privState] = {
+      accelerators: settingsStore.getState().accelerators
+    }
   }
 
   /**
   * Creates all the bindings
   */
   register () {
-    this.updateGlobalAccelerators(settingStore.accelerators)
-    settingStore.on('changed:accelerators', this.handleAcceleratorSettingsChanged)
+    this.updateGlobalAccelerators(this[privState].accelerators)
+    settingsStore.listen(this.handleAcceleratorSettingsChanged)
   }
 
   /**
   * Removes all bindings
   */
   unregister () {
-    settingStore.removeListener('changed:accelerators', this.handleAcceleratorSettingsChanged)
+    settingsStore.unlisten(this.handleAcceleratorSettingsChanged)
     this[privConfig].forEach((config) => {
       if (config.accelerator) {
         try {
@@ -46,8 +50,11 @@ class WaveboxAppGlobalShortcuts {
   * Handles the accelerator settings changing
   * @param { next }: the next settings
   */
-  handleAcceleratorSettingsChanged = ({ next }) => {
-    this.updateGlobalAccelerators(next)
+  handleAcceleratorSettingsChanged = (settingsState) => {
+    if (settingsState.accelerators !== this[privState].accelerators) {
+      this[privState].accelerators = settingsState.accelerators
+      this.updateGlobalAccelerators(settingsState.accelerators)
+    }
   }
 
   /* ****************************************************************************/

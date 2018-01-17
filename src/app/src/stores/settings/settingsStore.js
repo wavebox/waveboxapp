@@ -9,8 +9,6 @@ import pkg from 'package.json'
 import { RENDER_PROCESS_PREFERENCE_TYPES } from 'shared/processPreferences'
 import { renderProcessPreferences } from 'R/atomProcess'
 
-const privRenderProcEntry = Symbol('privRenderProcEntry')
-
 class SettingsStore extends CoreSettingsStore {
   /* **************************************************************************/
   // Lifecycle
@@ -18,7 +16,24 @@ class SettingsStore extends CoreSettingsStore {
 
   constructor () {
     super()
-    this[privRenderProcEntry] = undefined
+
+    /* ****************************************/
+    // Render preferences
+    /* ****************************************/
+
+    /**
+    * Creates a render process entry
+    * @return the actual render process entry. This should be stored somewhere
+    */
+    this.createRenderProcessEntry = () => {
+      return renderProcessPreferences.addEntry({
+        ...Object.keys(this.launched).reduce((acc, segment) => {
+          acc[segment] = this.launched[segment].cloneData()
+          return acc
+        }, {}),
+        type: RENDER_PROCESS_PREFERENCE_TYPES.WB_LAUNCH_SETTINGS
+      })
+    }
 
     /* ****************************************/
     // Actions
@@ -27,6 +42,7 @@ class SettingsStore extends CoreSettingsStore {
     this.bindActions({
       handleMergeSettingsModelChangeset: actions.MERGE_SETTINGS_MODEL_CHANGESET,
       handleToggleSettingsModelField: actions.TOGGLE_SETTINGS_MODEL_FIELD,
+      handleRemoveSettingsModelField: actions.REMOVE_SETTINGS_MODEL_FIELD,
 
       handleSetSpellcheckerLanguage: actions.SET_SPELLCHECKER_LANGUAGE,
       handleSetSecondarySpellcheckerLanguage: actions.SET_SECONDARY_SPELLCHECKER_LANGUAGE,
@@ -57,9 +73,8 @@ class SettingsStore extends CoreSettingsStore {
   /**
   * Overwrite
   */
-  _remoteHandleConnect = (evt) => {
-    super._remoteHandleConnect(evt)
-    evt.returnValue = {
+  _remoteConnectReturnValue () {
+    return {
       modelData: Object.keys(SettingsIdent.SEGMENTS).reduce((acc, k) => {
         const segment = SettingsIdent.SEGMENTS[k]
         acc[segment] = this[segment].cloneData()
@@ -71,25 +86,6 @@ class SettingsStore extends CoreSettingsStore {
         return acc
       }, {}),
       defaults: this.defaults
-    }
-  }
-
-  /* **************************************************************************/
-  // Loading
-  /* **************************************************************************/
-
-  handleLoad (...args) {
-    super.handleLoad(...args)
-
-    // Write a copy of the launch settings to the render process
-    if (!this[privRenderProcEntry]) {
-      this[privRenderProcEntry] = renderProcessPreferences.addEntry({
-        ...Object.keys(this.launched).reduce((acc, segment) => {
-          acc[segment] = this.launched[segment].cloneData()
-          return acc
-        }, {}),
-        type: RENDER_PROCESS_PREFERENCE_TYPES.WB_LAUNCH_SETTINGS
-      })
     }
   }
 
@@ -107,6 +103,10 @@ class SettingsStore extends CoreSettingsStore {
     this.saveSettingsModel(id, modelJS)
   }
 
+  handleRemoveSettingsModelField ({ id, key }) {
+    this.saveSettingsModel(id, this[id].changeData({[key]: undefined}))
+  }
+
   /* **************************************************************************/
   // Updating : Language
   /* **************************************************************************/
@@ -116,12 +116,12 @@ class SettingsStore extends CoreSettingsStore {
     const secondaryInfo = (dictionaries[this.language.secondarySpellcheckerLanguage] || {})
 
     if (primaryInfo.charset !== secondaryInfo.charset) {
-      this.saveSettingsModel(SettingsIdent.SEGMENTS.LANGUAGE, this.languge.changeData({
+      this.saveSettingsModel(SettingsIdent.SEGMENTS.LANGUAGE, this.language.changeData({
         spellcheckerLanguage: lang,
         secondarySpellcheckerLanguage: null
       }))
     } else {
-      this.saveSettingsModel(SettingsIdent.SEGMENTS.LANGUAGE, this.languge.changeData({
+      this.saveSettingsModel(SettingsIdent.SEGMENTS.LANGUAGE, this.language.changeData({
         spellcheckerLanguage: lang
       }))
     }
@@ -129,14 +129,14 @@ class SettingsStore extends CoreSettingsStore {
 
   handleSetSecondarySpellcheckerLanguage ({ lang }) {
     if (!lang) {
-      this.saveSettingsModel(SettingsIdent.SEGMENTS.LANGUAGE, this.languge.changeData({
+      this.saveSettingsModel(SettingsIdent.SEGMENTS.LANGUAGE, this.language.changeData({
         secondarySpellcheckerLanguage: null
       }))
     } else {
       const primaryInfo = (dictionaries[this.language.spellcheckerLanguage] || {})
       const secondaryInfo = (dictionaries[lang] || {})
       if (primaryInfo.charset === secondaryInfo.charset) {
-        this.saveSettingsModel(SettingsIdent.SEGMENTS.LANGUAGE, this.languge.changeData({
+        this.saveSettingsModel(SettingsIdent.SEGMENTS.LANGUAGE, this.language.changeData({
           secondarySpellcheckerLanguage: lang
         }))
       }

@@ -45,20 +45,20 @@ export default class TraySettingsSection extends React.Component {
             toggled={tray.show}
             label='Show icon'
             labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.setShowTrayIcon(toggled)} />
+            onToggle={(evt, toggled) => settingsActions.sub.tray.setShowTrayIcon(toggled)} />
           <Toggle
             toggled={tray.showUnreadCount}
             label='Show unread count'
             labelPosition='right'
             disabled={!tray.show}
-            onToggle={(evt, toggled) => settingsActions.setShowTrayUnreadCount(toggled)} />
+            onToggle={(evt, toggled) => settingsActions.sub.tray.setShowTrayUnreadCount(toggled)} />
           {SUPPORTS_DOCK_HIDING ? (
             <Toggle
               toggled={tray.removeFromDockDarwin}
               label='Remove from dock when all windows are hidden'
               labelPosition='right'
               disabled={!tray.show}
-              onToggle={(evt, toggled) => settingsActions.setRemoveFromDockDarwin(toggled)} />
+              onToggle={(evt, toggled) => settingsActions.sub.tray.setRemoveFromDockDarwin(toggled)} />
           ) : undefined}
           {SUPPORTS_TRAY_MINIMIZE_CONFIG ? (
             <Toggle
@@ -66,7 +66,7 @@ export default class TraySettingsSection extends React.Component {
               disabled={!tray.show}
               label='Hide main window to tray on closed'
               labelPosition='right'
-              onToggle={(evt, toggled) => { settingsActions.setHideWhenClosed(toggled) }} />
+              onToggle={(evt, toggled) => { settingsActions.sub.tray.setHideWhenClosed(toggled) }} />
           ) : undefined}
           {SUPPORTS_TRAY_MINIMIZE_CONFIG ? (
             <Toggle
@@ -74,14 +74,14 @@ export default class TraySettingsSection extends React.Component {
               disabled={!tray.show}
               label='Hide main window to tray on minimize'
               labelPosition='right'
-              onToggle={(evt, toggled) => { settingsActions.setHideWhenMinimized(toggled) }} />
+              onToggle={(evt, toggled) => { settingsActions.sub.tray.setHideWhenMinimized(toggled) }} />
           ) : undefined}
           {SUPPORTS_MOUSE_TRIGGERS ? (
             <SelectField
               fullWidth
               floatingLabelText='Mouse trigger'
               disabled={!tray.show}
-              onChange={(evt, index, value) => settingsActions.setMouseTrigger(value)}
+              onChange={(evt, index, value) => settingsActions.sub.tray.setMouseTrigger(value)}
               value={tray.mouseTrigger}>
               <MenuItem value={MOUSE_TRIGGERS.SINGLE} primaryText='Single click' />
               <MenuItem value={MOUSE_TRIGGERS.DOUBLE} primaryText='Double click' />
@@ -92,7 +92,7 @@ export default class TraySettingsSection extends React.Component {
               fullWidth
               floatingLabelText='Mouse trigger action'
               disabled={!tray.show}
-              onChange={(evt, index, value) => settingsActions.setMouseTriggerAction(value)}
+              onChange={(evt, index, value) => settingsActions.sub.tray.setMouseTriggerAction(value)}
               value={tray.mouseTriggerAction}>
               <MenuItem value={MOUSE_TRIGGER_ACTIONS.TOGGLE} primaryText='Hide or Show Window' />
               <MenuItem value={MOUSE_TRIGGER_ACTIONS.TOGGLE_MINIMIZE} primaryText='Minimize or Show Window' />
@@ -105,7 +105,7 @@ export default class TraySettingsSection extends React.Component {
               floatingLabelText='GTK icon update mode (Requires Restart)'
               disabled={!tray.show}
               onChange={(evt, index, value) => {
-                settingsActions.setTrayGtkUpdateMode(value)
+                settingsActions.sub.tray.setTrayGtkUpdateMode(value)
                 showRestart()
               }}
               value={tray.gtkUpdateMode}>
@@ -130,7 +130,7 @@ export default class TraySettingsSection extends React.Component {
                 floatingLabelText='DPI Multiplier'
                 disabled={!tray.show}
                 value={tray.dpiMultiplier}
-                onChange={(evt, index, value) => settingsActions.setDpiMultiplier(value)}>
+                onChange={(evt, index, value) => settingsActions.sub.tray.setDpiMultiplier(value)}>
                 <MenuItem value={1} primaryText='1x' />
                 <MenuItem value={2} primaryText='2x' />
                 <MenuItem value={3} primaryText='3x' />
@@ -149,7 +149,7 @@ export default class TraySettingsSection extends React.Component {
                 floatingLabelText={`Icon Size (Pixels) ${IS_GTK_PLATFORM && tray.gtkUpdateMode === GTK_UPDATE_MODES.STATIC ? ' (Requires Restart)' : ''}`}
                 defaultValue={tray.iconSize}
                 onBlur={(evt) => {
-                  settingsActions.setTrayIconSize(evt.target.value)
+                  settingsActions.sub.tray.setTrayIconSize(evt.target.value)
                   if (IS_GTK_PLATFORM && tray.gtkUpdateMode === GTK_UPDATE_MODES.STATIC) {
                     showRestart()
                   }

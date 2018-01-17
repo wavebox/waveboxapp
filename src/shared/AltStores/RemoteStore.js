@@ -47,7 +47,15 @@ class RemoteStore {
       })
     }
 
-    evt.returnValue = {}
+    evt.returnValue = this._remoteConnectReturnValue()
+  }
+
+  /**
+  * Provides an overwritable hook to return data to a clien on connect
+  * @return an object to return to the remote client
+  */
+  _remoteConnectReturnValue () {
+    return {}
   }
 
   /**

@@ -5,8 +5,7 @@ import {
   WB_SPELLCHECKER_CONNECT,
   WB_SPELLCHECKER_CONFIGURE
 } from 'shared/ipcEvents'
-import settingStore from 'stores/settingStore'
-import { SEGMENTS } from 'shared/Models/Settings/SettingsIdent'
+import { settingsStore } from 'stores/settings'
 import DictionaryLoader from 'shared/SpellcheckProvider/DictionaryLoader'
 import SpellcheckProvider from 'shared/SpellcheckProvider/SpellcheckProvider'
 import RuntimePaths from 'Runtime/RuntimePaths'
@@ -23,6 +22,7 @@ const privPrimary = Symbol('privPrimary')
 const privSecondary = Symbol('privSecondary')
 const privConnected = Symbol('privConnected')
 const privUserWords = Symbol('privUserWords')
+const privState = Symbol('privState')
 
 class SpellcheckService {
   /* ****************************************************************************/
@@ -35,12 +35,17 @@ class SpellcheckService {
     this[privSecondary] = new SpellcheckProvider(this[privDictionaryLoader], Nodehun)
     this[privUserWords] = new Set(this.loadUserWordsSync())
 
+    this[privState] = (() => {
+      const settingsState = settingsStore.getState()
+      return {
+        language: settingsState.language
+      }
+    })()
+    settingsStore.listen(this._handleLanguageSettingsChanged)
+    this.configureSpellcheckers(this[privState].language)
+
     this[privConnected] = new Set()
-
     ipcMain.on(WB_SPELLCHECKER_CONNECT, this._handleConnect)
-    settingStore.on(`changed:${SEGMENTS.LANGUAGE}`, this._handleLanguageSettingsChanged)
-
-    this.configureSpellcheckers(settingStore.language)
   }
 
   /* ****************************************************************************/
@@ -105,26 +110,28 @@ class SpellcheckService {
 
     wc.on('destroyed', () => { this[privConnected].delete(id) })
     wc.on('dom-ready', () => { // Content popup windows seem to be more reliable with this
-      wc.send(WB_SPELLCHECKER_CONFIGURE, this.buildGuestConfigurePayload(settingStore.language))
+      wc.send(WB_SPELLCHECKER_CONFIGURE, this.buildGuestConfigurePayload(this[privState].language))
     })
-    wc.send(WB_SPELLCHECKER_CONFIGURE, this.buildGuestConfigurePayload(settingStore.language))
+    wc.send(WB_SPELLCHECKER_CONFIGURE, this.buildGuestConfigurePayload(this[privState].language))
 
     this[privConnected].add(id)
   }
 
   /**
   * Handles the language settings changing
-  * @param prev: the previous language
-  * @param next: the next language
+  * @param settingsState: the new state of settings
   */
-  _handleLanguageSettingsChanged = ({ prev, next }) => {
-    const storeChangedKeys = [
+  _handleLanguageSettingsChanged = (settingsState) => {
+    const prev = this[privState].language
+    const next = settingsState.language
+    const storeChangedKey = [
       'spellcheckerEnabled',
       'spellcheckerLanguage',
       'secondarySpellcheckerLanguage'
     ].find((k) => prev[k] !== next[k])
 
-    if (storeChangedKeys.length) {
+    if (storeChangedKey) {
+      this[privState].language = next
       const payload = this.buildGuestConfigurePayload(next)
       Array.from(this[privConnected]).forEach((id) => {
         webContents.fromId(id).send(WB_SPELLCHECKER_CONFIGURE, payload)
@@ -232,7 +239,7 @@ class SpellcheckService {
 
     this[privUserWords].add(word)
     this.writeUserWordsSync(Array.from(this[privUserWords]))
-    const payload = this.buildGuestConfigurePayload(settingStore.language)
+    const payload = this.buildGuestConfigurePayload(this[privState].language)
     Array.from(this[privConnected]).forEach((id) => {
       webContents.fromId(id).send(WB_SPELLCHECKER_CONFIGURE, payload)
     })

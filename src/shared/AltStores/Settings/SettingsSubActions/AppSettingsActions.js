@@ -1,4 +1,4 @@
-import { SettingsIdent } from '../../Models/Settings'
+import { SettingsIdent } from '../../../Models/Settings'
 import CoreSettingsActions from './CoreSettingsActions'
 import {
   WB_METRICS_OPEN_MONITOR,
@@ -83,11 +83,6 @@ class AppSettingsActions extends CoreSettingsActions {
   * @param hasSeen: true if the user has seen the app wizard
   */
   setHasSeenAppWizard (hasSeen) {
-     //TODO my behaviour has changed.
-     //I no longer call....
-     // if (this.isTourActive()) {
-    //   actions.tourNext.defer()
-     //}
     this.dispatchUpdate('hasSeenAppWizard', hasSeen)
   }
 

@@ -49,6 +49,7 @@ class MonitorWindow extends WaveboxWindow {
 
   focusedTabId () { return null }
   tabIds () { return [] }
+  tabMetaInfo (tabId) { return undefined }
 }
 
 export default MonitorWindow

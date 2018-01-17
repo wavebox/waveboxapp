@@ -155,17 +155,17 @@ export default class AcceleratorSettings extends React.Component {
             style={{ width: 180 }}
             hintText={acceleratorDefault}
             defaultValue={accelerator}
-            onBlur={(evt) => settingsActions.setAccelerator(name, evt.target.value)} />
+            onBlur={(evt) => settingsActions.sub.accelerators.set(name, evt.target.value)} />
           {acceleratorDefault ? (
             <IconButton
-              onClick={() => settingsActions.restoreAcceleratorDefault(name)}
+              onClick={() => settingsActions.sub.accelerators.restoreDefault(name)}
               tooltipPosition={isLast ? 'top-center' : 'bottom-center'}
               tooltip={`Restore Default (${acceleratorDefault})`}>
               <FontIcon className='material-icons'>settings_backup_restore</FontIcon>
             </IconButton>
           ) : (
             <IconButton
-              onClick={() => settingsActions.restoreAcceleratorDefault(name)}>
+              onClick={() => settingsActions.sub.accelerators.restoreDefault(name)}>
               <FontIcon className='material-icons'>delete</FontIcon>
             </IconButton>
           )}

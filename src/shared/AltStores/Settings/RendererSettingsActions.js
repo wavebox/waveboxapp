@@ -8,7 +8,9 @@ class RendererSettingsActions extends CoreSettingsActions {
   /**
   * @overwrite
   */
-  load () { return this.remoteConnect() }
+  load () {
+    return this.remoteConnect()
+  }
 
   /* **************************************************************************/
   // Updates
@@ -26,6 +28,13 @@ class RendererSettingsActions extends CoreSettingsActions {
   */
   toggleSettingsModelField (...args) {
     return this.remoteDispatch('toggleSettingsModelField', args)
+  }
+
+  /**
+  * @overwrite
+  */
+  removeSettingsModelField (...args) {
+    return this.remoteDispatch('removeSettingsModelField', args)
   }
 
   /**

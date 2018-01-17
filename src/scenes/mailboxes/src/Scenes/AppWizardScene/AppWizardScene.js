@@ -102,7 +102,8 @@ export default class AppWizardScene extends React.Component {
   * Handles the user electing not to do the wizard
   */
   handleNever = () => {
-    settingsActions.setHasSeenAppWizard(true)
+    settingsActions.sub.app.setHasSeenAppWizard(true)
+    settingsActions.tourNextIfActive()
     this.handleClose()
   }
 
@@ -110,7 +111,8 @@ export default class AppWizardScene extends React.Component {
   * Handles the user finishing the wizard
   */
   handleFinish = () => {
-    settingsActions.setHasSeenAppWizard(true)
+    settingsActions.sub.app.setHasSeenAppWizard(true)
+    settingsActions.tourNextIfActive()
     this.handleClose()
   }
 
@@ -118,7 +120,8 @@ export default class AppWizardScene extends React.Component {
   * Handles the user finish the wizard and continuing to settings
   */
   handleFinishSettings = () => {
-    settingsActions.setHasSeenAppWizard(true)
+    settingsActions.sub.app.setHasSeenAppWizard(true)
+    settingsActions.tourNextIfActive()
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/settings'

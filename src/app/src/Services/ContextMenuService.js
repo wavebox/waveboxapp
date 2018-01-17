@@ -13,6 +13,7 @@ import MailboxesWindow from 'windows/MailboxesWindow'
 import MenuTool from 'shared/Electron/MenuTool'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import CRExtensionRTContextMenu from 'shared/Models/CRExtensionRT/CRExtensionRTContextMenu'
+import { settingsActions } from 'stores/settings'
 
 const privConnected = Symbol('privConnected')
 const privSpellcheckerService = Symbol('privSpellcheckerService')
@@ -313,10 +314,7 @@ class ContextMenuService {
             type: 'radio',
             checked: lang === currentLanguage,
             click: () => {
-              const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
-              if (mailboxesWindow) {
-                mailboxesWindow.changePrimarySpellcheckLanguage(lang)
-              }
+              settingsActions.sub.language.setSpellcheckerLanguage(lang)
             }
           }
         })

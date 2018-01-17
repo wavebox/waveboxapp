@@ -87,7 +87,7 @@ export default class NotificationSettingsSection extends React.Component {
             value={os.notificationsSound}
             disabled={os.notificationsSilent || !os.notificationsEnabled}
             fullWidth
-            onChange={(evt, index, value) => { settingsActions.setNotificationsSound(value) }}>
+            onChange={(evt, index, value) => { settingsActions.sub.os.setNotificationsSound(value) }}>
             {Object.keys(NOTIFICATION_SOUNDS).map((value) => {
               return (
                 <MenuItem
@@ -116,7 +116,7 @@ export default class NotificationSettingsSection extends React.Component {
             floatingLabelText='Notification Provider'
             value={os.notificationsProvider}
             fullWidth
-            onChange={(evt, index, value) => { settingsActions.setNotificationsProvider(value) }}>
+            onChange={(evt, index, value) => { settingsActions.sub.os.setNotificationsProvider(value) }}>
             {validProviders.map((provider) => {
               return (
                 <MenuItem
@@ -132,13 +132,13 @@ export default class NotificationSettingsSection extends React.Component {
           toggled={os.notificationsEnabled}
           labelPosition='right'
           label='Show new mail/message notifications'
-          onToggle={(evt, toggled) => settingsActions.setNotificationsEnabled(toggled)} />
+          onToggle={(evt, toggled) => settingsActions.sub.os.setNotificationsEnabled(toggled)} />
         <Toggle
           toggled={!os.notificationsSilent}
           label='Play notification sound'
           labelPosition='right'
           disabled={!os.notificationsEnabled}
-          onToggle={(evt, toggled) => settingsActions.setNotificationsSilent(!toggled)} />
+          onToggle={(evt, toggled) => settingsActions.sub.os.setNotificationsSilent(!toggled)} />
         {this.renderEnhanced(os)}
         <div>
           <FlatButton

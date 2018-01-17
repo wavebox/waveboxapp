@@ -13,6 +13,7 @@ import {
   SUPPORT_URL
 } from 'shared/constants'
 import { evtMain } from 'AppEvents'
+import { settingsActions } from 'stores/settings'
 
 class WaveboxAppPrimaryMenuAcions {
   /* ****************************************************************************/
@@ -87,16 +88,18 @@ class WaveboxAppPrimaryMenuAcions {
   }
 
   sidebarToggle = () => {
+    settingsActions.sub.ui.toggleSidebar()
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().toggleSidebar()
+      mailboxesWindow.show().focus()
     }
   }
 
   menuToggle = () => {
+    settingsActions.sub.ui.toggleAppMenu()
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().toggleAppMenu()
+      mailboxesWindow.show().focus()
     }
   }
 

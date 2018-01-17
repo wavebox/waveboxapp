@@ -4,14 +4,13 @@ import path from 'path'
 import mkdirp from 'mkdirp'
 import WaveboxWindow from 'windows/WaveboxWindow'
 import MonitorWindow from 'windows/MonitorWindow'
-import settingStore from 'stores/settingStore'
+import { settingsStore } from 'stores/settings'
 import {
   WB_METRICS_OPEN_MONITOR,
   WB_METRICS_OPEN_LOG,
   WB_METRICS_RELEASE_MEMORY
 } from 'shared/ipcEvents'
 import { METRICS_LOG_WRITE_INTERVAL } from 'shared/constants'
-import { SEGMENTS } from 'shared/Models/Settings/SettingsIdent'
 import RuntimePaths from 'Runtime/RuntimePaths'
 
 const LOG_TAG = '[METRICS]'
@@ -25,12 +24,12 @@ class MetricsService {
   constructor () {
     this._logUpdater = null
 
-    if (settingStore.app.writeMetricsLog) {
+    if (settingsStore.getState().app.writeMetricsLog) {
       this.updateMetricsLog()
       this._logUpdater = setInterval(this.updateMetricsLog, METRICS_LOG_WRITE_INTERVAL)
     }
 
-    settingStore.on('changed:' + SEGMENTS.APP, this.handleSettingsChanged)
+    settingsStore.listen(this.handleSettingsChanged)
     ipcMain.on(WB_METRICS_OPEN_LOG, this.openMetricsLogLocation)
     ipcMain.on(WB_METRICS_OPEN_MONITOR, this.openMonitorWindow)
     ipcMain.on(WB_METRICS_RELEASE_MEMORY, this.freeV8Memory)
@@ -44,14 +43,14 @@ class MetricsService {
   * Handles the settings changing
   * @param next: the new settings
   */
-  handleSettingsChanged = ({ next }) => {
+  handleSettingsChanged = (settingsState) => {
     if (this._logUpdater === null) {
-      if (next.writeMetricsLog) {
+      if (settingsState.app.writeMetricsLog) {
         this.updateMetricsLog()
         this._logUpdater = setInterval(this.updateMetricsLog, METRICS_LOG_WRITE_INTERVAL)
       }
     } else {
-      if (!next.writeMetricsLog) {
+      if (!settingsState.app.writeMetricsLog) {
         clearInterval(this._logUpdater)
         this._logUpdater = null
       }

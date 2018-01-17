@@ -33,7 +33,7 @@ class RemoteActions {
     if (process.type !== 'renderer') {
       throw new Error('"actions.remoteDispatch" is only available in the renderer thread')
     }
-    ipcRenderer.send(`ALT:DISPATCH_REMOTE_ACTION:${this.__remote__.name.dispatch}`, fnName, args)
+    ipcRenderer.send(`ALT:DISPATCH_REMOTE_ACTION:${this.__remote__.names.dispatch}`, fnName, args)
     return {}
   }
 
@@ -45,7 +45,7 @@ class RemoteActions {
     if (process.type !== 'renderer') {
       throw new Error('"actions.remoteConnect" is only available in the renderer thread')
     }
-    return ipcRenderer.sendSync(`ALT:CONNECT:${this.__remote__.name.dispatch}`)
+    return ipcRenderer.sendSync(`ALT:CONNECT:${this.__remote__.names.dispatch}`)
   }
 }
 

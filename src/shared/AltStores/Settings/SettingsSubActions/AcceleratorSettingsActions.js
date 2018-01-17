@@ -1,4 +1,4 @@
-import { SettingsIdent } from '../../Models/Settings'
+import { SettingsIdent } from '../../../Models/Settings'
 import CoreSettingsActions from './CoreSettingsActions'
 
 class AcceleratorSettingsActions extends CoreSettingsActions {
@@ -28,7 +28,9 @@ class AcceleratorSettingsActions extends CoreSettingsActions {
   * Restores an accelerator to its default value
   * @param name: the name of the accelerator
   */
-  restoreDefault (name) { this.dispatchUpdate(name, undefined) }
+  restoreDefault (name) {
+    this.dispatchRemove(name)
+  }
 }
 
 export default AcceleratorSettingsActions

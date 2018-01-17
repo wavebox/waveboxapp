@@ -1,4 +1,4 @@
-import SettingsIdent from '../../Models/Settings/SettingsIdent'
+import SettingsIdent from '../../../Models/Settings/SettingsIdent'
 import AcceleratorSettingsActions from './AcceleratorSettingsActions'
 import AppSettingsActions from './AppSettingsActions'
 import ExtensionSettingsActions from './ExtensionSettingsActions'

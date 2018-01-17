@@ -55,7 +55,7 @@ export default class AdvancedSettingsSection extends React.Component {
           labelPosition='right'
           onToggle={(evt, toggled) => {
             showRestart()
-            settingsActions.ignoreGPUBlacklist(toggled)
+            settingsActions.sub.app.ignoreGPUBlacklist(toggled)
           }} />
         <Toggle
           toggled={!app.disableHardwareAcceleration}
@@ -63,7 +63,7 @@ export default class AdvancedSettingsSection extends React.Component {
           labelPosition='right'
           onToggle={(evt, toggled) => {
             showRestart()
-            settingsActions.disableHardwareAcceleration(!toggled)
+            settingsActions.sub.app.disableHardwareAcceleration(!toggled)
           }} />
         <Toggle
           toggled={app.enableUseZoomForDSF}
@@ -71,7 +71,7 @@ export default class AdvancedSettingsSection extends React.Component {
           labelPosition='right'
           onToggle={(evt, toggled) => {
             showRestart()
-            settingsActions.enableUseZoomForDSF(toggled)
+            settingsActions.sub.app.enableUseZoomForDSF(toggled)
           }} />
         <Toggle
           toggled={!app.disableSmoothScrolling}
@@ -79,20 +79,20 @@ export default class AdvancedSettingsSection extends React.Component {
           labelPosition='right'
           onToggle={(evt, toggled) => {
             showRestart()
-            settingsActions.disableSmoothScrolling(!toggled)
+            settingsActions.sub.app.disableSmoothScrolling(!toggled)
           }} />
         <Toggle
           toggled={app.enableGeolocationApi}
           label='Geolocation API'
           labelPosition='right'
-          onToggle={(evt, toggled) => { settingsActions.setEnableGeolocationApi(toggled) }} />
+          onToggle={(evt, toggled) => { settingsActions.sub.app.setEnableGeolocationApi(toggled) }} />
         <Toggle
           toggled={extension.enableChromeExperimental}
           label='Experimental chrome extension support (Requires Restart)'
           labelPosition='right'
           onToggle={(evt, toggled) => {
             showRestart()
-            settingsActions.setExtensionEnableChromeExperimental(toggled)
+            settingsActions.sub.extension.setEnableChromeExperimental(toggled)
           }} />
         <div style={{ marginTop: 8 }}>
           <RaisedButton
@@ -107,7 +107,7 @@ export default class AdvancedSettingsSection extends React.Component {
             onCancel={() => this.setState({ customCSSEditorOpen: false })}
             onSave={(evt, css) => {
               this.setState({ customCSSEditorOpen: false })
-              settingsActions.setCustomMainCSS(css)
+              settingsActions.sub.ui.setCustomMainCSS(css)
             }} />
         </div>
       </Paper>

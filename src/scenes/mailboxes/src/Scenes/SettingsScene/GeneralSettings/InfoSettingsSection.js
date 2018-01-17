@@ -53,7 +53,7 @@ export default class InfoSettingsSection extends React.Component {
         <FlatButton
           label='Task Monitor'
           icon={<FontIcon className='material-icons'>timeline</FontIcon>}
-          onClick={() => settingsActions.openMetricsMonitor()} />
+          onClick={() => settingsActions.sub.app.openMetricsMonitor()} />
         <br />
         <FlatButton
           label='Export Data'

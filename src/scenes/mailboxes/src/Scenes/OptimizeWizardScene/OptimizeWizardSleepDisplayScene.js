@@ -137,7 +137,7 @@ export default class OptimizeWizardSleepDisplayScene extends React.Component {
         mailboxStore.getState().allMailboxes().forEach((mailbox) => {
           mailboxActions.reduce(mailbox.id, MailboxReducer.setShowSleepableServiceIndicator, enabled)
         })
-        settingsActions.setShowSleepableServiceIndicator.defer(enabled)
+        settingsActions.sub.ui.setShowSleepableServiceIndicator(enabled)
         window.location.hash = '/optimize_wizard/finish'
       }, 100)
     })

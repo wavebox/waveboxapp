@@ -1,7 +1,7 @@
 import electron from 'electron'
 import WaveboxWindow from '../WaveboxWindow'
 import mailboxStore from 'stores/mailboxStore'
-import settingStore from 'stores/settingStore'
+import { settingsStore } from 'stores/settings'
 import userStore from 'stores/userStore'
 import CRExtensionUISubscriber from 'Extensions/Chrome/CRExtensionUISubscriber'
 import {
@@ -15,8 +15,6 @@ import querystring from 'querystring'
 import {
   WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD,
   WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD,
-  WB_MAILBOXES_WINDOW_TOGGLE_SIDEBAR,
-  WB_MAILBOXES_WINDOW_TOGGLE_APP_MENU,
   WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE,
   WB_MAILBOXES_WINDOW_OPEN_MAILTO_LINK,
   WB_MAILBOXES_WINDOW_SWITCH_MAILBOX,
@@ -29,7 +27,6 @@ import {
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
   WB_WINDOW_RELOAD_WEBVIEW,
   WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
-  WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG,
 
   WB_USER_CHECK_FOR_UPDATE,
   WB_SQUIRREL_UPDATE_DOWNLOADED,
@@ -125,6 +122,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   create (hidden = false) {
     const screenSize = electron.screen.getPrimaryDisplay().workAreaSize
+    const settingsState = settingsStore.getState()
     super.create(this.generateWindowUrl(), {
       show: false,
       minWidth: MIN_WINDOW_WIDTH,
@@ -132,11 +130,11 @@ class MailboxesWindow extends WaveboxWindow {
       width: Math.min(Math.max(screenSize.width, MIN_WINDOW_WIDTH), 1200),
       height: Math.min(Math.max(screenSize.height, MIN_WINDOW_HEIGHT), 1000),
       fullscreenable: true,
-      titleBarStyle: process.platform === 'darwin' && settingStore.ui.showTitlebar === false ? 'hidden' : 'default',
-      frame: settingStore.ui.showTitlebar,
+      titleBarStyle: process.platform === 'darwin' && settingsState.launched.ui.showTitlebar === false ? 'hidden' : 'default',
+      frame: settingsState.launched.ui.showTitlebar,
       title: 'Wavebox',
-      ...(process.platform === 'darwin' && settingStore.launched.ui.vibrancyMode !== UISettings.VIBRANCY_MODES.NONE ? {
-        vibrancy: settingStore.launched.ui.electronVibrancyMode
+      ...(process.platform === 'darwin' && settingsState.launched.ui.vibrancyMode !== UISettings.VIBRANCY_MODES.NONE ? {
+        vibrancy: settingsState.launched.ui.electronVibrancyMode
       } : {
         backgroundColor: '#f2f2f2'
       }),
@@ -157,7 +155,8 @@ class MailboxesWindow extends WaveboxWindow {
       // Preventing default on minimize has little effect. The window saver doesn't take note of minimized state
       // though so we can query this to see what the last state was and re-apply that on restore
       this.window.on('minimize', (evt) => {
-        if (settingStore.tray.show && settingStore.tray.hideWhenMinimized) {
+        const { tray } = settingsStore.getState()
+        if (tray.show && tray.hideWhenMinimized) {
           evt.preventDefault()
           this.window.hide()
         }
@@ -282,24 +281,6 @@ class MailboxesWindow extends WaveboxWindow {
   */
   addAccount () {
     this.window.webContents.send(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, { })
-    return this
-  }
-
-  /**
-  * Toggles the sidebar
-  * @return this
-  */
-  toggleSidebar () {
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_TOGGLE_SIDEBAR, { })
-    return this
-  }
-
-  /**
-  * Toggles the app menu
-  * @return this
-  */
-  toggleAppMenu () {
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_TOGGLE_APP_MENU, { })
     return this
   }
 
@@ -494,19 +475,6 @@ class MailboxesWindow extends WaveboxWindow {
   */
   openDevTools () {
     this.window.webContents.send(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, {})
-  }
-
-  /* ****************************************************************************/
-  // Actions: Misc
-  /* ****************************************************************************/
-
-  /**
-  * Changes the primary spell check lang. This is a bad call because really
-  * we should have data access on the top level
-  * @param lang: the language to change to
-  */
-  changePrimarySpellcheckLanguage (lang) {
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_CHANGE_PRIMARY_SPELLCHECK_LANG, { lang })
   }
 
   /* ****************************************************************************/

@@ -7,6 +7,12 @@ import {
 
 class CoreSettingsActions extends RemoteActions {
   /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get displayName () { return ACTIONS_NAME }
+
+  /* **************************************************************************/
   // Lifecyle
   /* **************************************************************************/
 
@@ -46,6 +52,15 @@ class CoreSettingsActions extends RemoteActions {
   */
   toggleSettingsModelField (segment, key) {
     throw new Error('Action not implemented "toggleSettingsModelField"')
+  }
+
+  /**
+  * Removes a value in settings field
+  * @param segment: the segment to update
+  * @param key: the key to remove
+  */
+  removeSettingsModelField (segment, key) {
+    throw new Error('Action not implemented "removeSettingsModelField"')
   }
 
   /* **************************************************************************/

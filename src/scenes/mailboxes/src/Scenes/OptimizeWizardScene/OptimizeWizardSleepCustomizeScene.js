@@ -164,12 +164,12 @@ export default class OptimizeWizardSleepCustomizeScene extends React.Component {
   */
   handleSetShowSleepingServiceIndicator = (evt, show) => {
     if (show) {
-      settingsActions.setShowSleepableServiceIndicator.defer(true)
+      settingsActions.sub.ui.setShowSleepableServiceIndicator(true)
       mailboxStore.getState().allMailboxes().forEach((mailbox) => {
         mailboxActions.reduce(mailbox.id, MailboxReducer.setShowSleepableServiceIndicator, true)
       })
     } else {
-      settingsActions.setShowSleepableServiceIndicator(false)
+      settingsActions.sub.ui.setShowSleepableServiceIndicator(false)
     }
   }
 

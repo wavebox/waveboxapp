@@ -67,7 +67,7 @@ export default class AccountMessageScene extends React.Component {
   */
   handleClose = () => {
     this.setState({ open: false })
-    settingsActions.setSeenAccountMessageUrl(this.state.url)
+    settingsActions.sub.app.setSeenAccountMessageUrl(this.state.url)
     setTimeout(() => {
       window.location.hash = '/'
     }, 250)
@@ -77,7 +77,7 @@ export default class AccountMessageScene extends React.Component {
     // Unhandled urls will be handled by the main thread
     const didRoute = WaveboxWebView.routeWaveboxUrl(evt.url)
     if (didRoute) {
-      settingsActions.setSeenAccountMessageUrl(this.state.url)
+      settingsActions.sub.app.setSeenAccountMessageUrl(this.state.url)
     }
   }
 

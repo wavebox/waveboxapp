@@ -39,6 +39,13 @@ class CoreSettingsActions {
   dispatchToggle (key) {
     this[privActions].toggleSettingsModelField(this[privSegment], key)
   }
+
+  /**
+  * @param key: the model key to remove
+  */
+  dispatchRemove (key) {
+    this[privActions].removeSettingsModelField(this[privSegment], key)
+  }
 }
 
 export default CoreSettingsActions

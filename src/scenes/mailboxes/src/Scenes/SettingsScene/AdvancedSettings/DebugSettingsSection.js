@@ -34,10 +34,10 @@ export default class DebugSettingsSection extends React.Component {
             style={{ marginRight: 8 }}
             label='Task Monitor'
             icon={<FontIcon className='material-icons'>timeline</FontIcon>}
-            onClick={() => settingsActions.openMetricsMonitor()} />
+            onClick={() => settingsActions.sub.app.openMetricsMonitor()} />
           <FlatButton
             label='Free V8 Memory'
-            onClick={() => settingsActions.freeMetricsV8Memory()} />
+            onClick={() => settingsActions.sub.app.freeMetricsV8Memory()} />
           <FlatButton
             label='Classic Add Screen'
             icon={<FontIcon className='material-icons'>add_circle</FontIcon>}
@@ -50,11 +50,11 @@ export default class DebugSettingsSection extends React.Component {
           label='Write app metrics log'
           labelPosition='right'
           onToggle={(evt, toggled) => {
-            settingsActions.setWriteMetricsLog(toggled)
+            settingsActions.sub.app.setWriteMetricsLog(toggled)
           }} />
         <div
           style={{...styles.link}}
-          onClick={() => settingsActions.openMetricsLog()}>
+          onClick={() => settingsActions.sub.app.openMetricsLog()}>
           <small>Open metrics log</small>
         </div>
       </Paper>

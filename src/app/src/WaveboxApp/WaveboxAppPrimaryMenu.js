@@ -1,6 +1,6 @@
 import { Menu } from 'electron'
 import mailboxStore from 'stores/mailboxStore'
-import settingStore from 'stores/settingStore'
+import { settingsStore } from 'stores/settings'
 import MenuTool from 'shared/Electron/MenuTool'
 import electronLocalshortcut from 'electron-localshortcut'
 import { evtMain } from 'AppEvents'
@@ -20,7 +20,7 @@ class WaveboxAppPrimaryMenu {
     this._lastMenu = null
 
     mailboxStore.on('changed', this.handleMailboxesChanged)
-    settingStore.on('changed:accelerators', this.handleAcceleratorsChanged)
+    settingsStore.listen(this.handleAcceleratorsChanged)
     evtMain.on(evtMain.INPUT_EVENT_PREVENTED, this.handleInputEventPrevented)
   }
 
@@ -396,8 +396,15 @@ class WaveboxAppPrimaryMenu {
   * Handles the accelerators changing. If these change it will definately have a reflection in the
   * menu, so just update immediately
   */
-  handleAcceleratorsChanged = ({ next }) => {
-    this.updateApplicationMenu(next, this._lastMailboxes, this._lastActiveMailbox, this._lastActiveServiceType)
+  handleAcceleratorsChanged = (settingsState) => {
+    if (settingsState.accelerators !== this._lastAccelerators) {
+      this.updateApplicationMenu(
+        settingsState.accelerators,
+        this._lastMailboxes,
+        this._lastActiveMailbox,
+        this._lastActiveServiceType
+      )
+    }
   }
 
   /* ****************************************************************************/

@@ -1,7 +1,7 @@
 import { shell, webContents } from 'electron'
 import ContentWindow from 'windows/ContentWindow'
 import ContentPopupWindow from 'windows/ContentPopupWindow'
-import settingStore from 'stores/settingStore'
+import { settingsStore } from 'stores/settings'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import WindowOpeningEngine from './WindowOpeningEngine'
 
@@ -227,7 +227,7 @@ class WindowOpeningHandler {
   */
   openWindowExternal (openingBrowserWindow, targetUrl, mailbox = undefined) {
     shell.openExternal(targetUrl, {
-      activate: !settingStore.os.openLinksInBackground
+      activate: !settingsStore.getState().os.openLinksInBackground
     })
   }
 }

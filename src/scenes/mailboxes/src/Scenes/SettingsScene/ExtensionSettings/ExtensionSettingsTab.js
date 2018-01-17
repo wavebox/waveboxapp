@@ -76,13 +76,13 @@ export default class ExtensionSettingsTab extends React.Component {
                   toggled={extension.showBrowserActionsInToolbar}
                   label='Show extensions in toolbar'
                   labelPosition='right'
-                  onToggle={(evt, toggled) => settingsActions.setExtensionShowBrowserActionsInToolbar(toggled)} />
+                  onToggle={(evt, toggled) => settingsActions.sub.extension.setShowBrowserActionsInToolbar(toggled)} />
                 <SelectField
                   floatingLabelText='Extension position in toolbar'
                   value={extension.toolbarBrowserActionLayout}
                   disabled={!extension.showBrowserActionsInToolbar}
                   fullWidth
-                  onChange={(evt, index, value) => { settingsActions.setExtensionToolbarBrowserActionLayout(value) }}>
+                  onChange={(evt, index, value) => { settingsActions.sub.extension.setToolbarBrowserActionLayout(value) }}>
                   {Object.keys(ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT).map((value) => {
                     return (
                       <MenuItem

@@ -1,7 +1,7 @@
 import {session, ipcMain} from 'electron'
 import {EventEmitter} from 'events'
 import mailboxStore from 'stores/mailboxStore'
-import settingStore from 'stores/settingStore'
+import {settingsStore} from 'stores/settings'
 import {
   ARTIFICIAL_COOKIE_PERSIST_WAIT,
   ARTIFICIAL_COOKIE_PERSIST_PERIOD
@@ -174,7 +174,7 @@ class MailboxesSessionManager extends EventEmitter {
     if (permission === 'notifications') {
       fn(false)
     } else if (permission === 'geolocation') {
-      fn(settingStore.app.enableGeolocationApi)
+      fn(settingsStore.getState().app.enableGeolocationApi)
     } else {
       fn(true)
     }

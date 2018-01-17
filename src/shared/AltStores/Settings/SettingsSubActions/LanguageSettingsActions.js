@@ -1,4 +1,4 @@
-import { SettingsIdent } from '../../Models/Settings'
+import { SettingsIdent } from '../../../Models/Settings'
 import CoreSettingsActions from './CoreSettingsActions'
 
 class LanguageSettingsActions extends CoreSettingsActions {

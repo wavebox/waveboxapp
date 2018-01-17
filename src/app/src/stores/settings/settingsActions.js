@@ -1,5 +1,5 @@
 import CoreSettingsActions from 'shared/AltStores/Settings/CoreSettingsActions'
-import subActionsFactory from 'shared/AltStores/Settings/settingsSubactions'
+import subActionsFactory from 'shared/AltStores/Settings/SettingsSubactions'
 import alt from '../alt'
 import persistence from 'storage/settingStorage'
 import SettingsDefaults from './SettingsDefaults'
@@ -42,6 +42,13 @@ class SettingsActions extends CoreSettingsActions {
   * @overwrite
   */
   toggleSettingsModelField (segment, key) {
+    return { id: segment, key: key }
+  }
+
+  /**
+  * @overwrite
+  */
+  removeSettingsModelField (segment, key) {
     return { id: segment, key: key }
   }
 

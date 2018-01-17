@@ -1,5 +1,5 @@
 import { app } from 'electron'
-import settingStore from 'stores/settingStore'
+import { settingsStore } from 'stores/settings'
 import { SUPPORTS_TRAY_MINIMIZE_CONFIG } from 'shared/Models/Settings/TraySettings'
 
 const privForceQuit = Symbol('privForceQuit')
@@ -44,13 +44,14 @@ class WaveboxAppCloseBehaviour {
   */
   _handleMainWindowClose = (evt) => {
     if (!this[privForceQuit]) {
+      const { tray } = settingsStore.getState()
       let hide = false
       if (SUPPORTS_TRAY_MINIMIZE_CONFIG) {
-        if (settingStore.tray.show && settingStore.tray.hideWhenClosed) {
+        if (tray.show && tray.hideWhenClosed) {
           hide = true
         }
       } else {
-        if (process.platform === 'darwin' || settingStore.tray.show) {
+        if (process.platform === 'darwin' || tray.show) {
           hide = true
         }
       }

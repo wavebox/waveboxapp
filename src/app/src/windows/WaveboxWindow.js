@@ -1,7 +1,7 @@
 import { BrowserWindow, webContents } from 'electron'
 import EventEmitter from 'events'
 import { evtMain } from 'AppEvents'
-import settingStore from 'stores/settingStore'
+import { settingsStore } from 'stores/settings'
 import WaveboxWindowLocationSaver from './WaveboxWindowLocationSaver'
 import WaveboxWindowManager from './WaveboxWindowManager'
 import {
@@ -149,7 +149,7 @@ class WaveboxWindow extends EventEmitter {
     if (savedLocation.maximized && browserWindowPreferences.show !== false) {
       this.window.maximize()
     }
-    this[settingStore.ui.showAppMenu ? 'showAppMenu' : 'hideAppMenu']()
+    this[settingsStore.getState().ui.showAppMenu ? 'showAppMenu' : 'hideAppMenu']()
 
     // Bind window event listeners
     this.window.on('close', (evt) => { this.emit('close', evt) })
@@ -162,7 +162,7 @@ class WaveboxWindow extends EventEmitter {
     this.locationSaver.register(this.window)
 
     // Bind other change listeners
-    settingStore.on('changed', this.updateWindowMenubar)
+    settingsStore.listen(this.updateWindowMenubar)
 
     // Load the start url
     if (url !== undefined && url !== '' && url !== 'about:blank') {
@@ -183,7 +183,7 @@ class WaveboxWindow extends EventEmitter {
   * @param evt: the event that caused destroy
   */
   destroy (evt) {
-    settingStore.removeListener('changed', this.updateWindowMenubar)
+    settingsStore.unlisten(this.updateWindowMenubar)
     if (this.window) {
       this.locationSaver.unregister(this.window)
       if (!this.window.isDestroyed()) {
@@ -258,8 +258,8 @@ class WaveboxWindow extends EventEmitter {
   /**
   * Updates the menubar
   */
-  updateWindowMenubar = (prev, next) => {
-    this[settingStore.ui.showAppMenu ? 'showAppMenu' : 'hideAppMenu']()
+  updateWindowMenubar = (settingsState) => {
+    this[settingsState.ui.showAppMenu ? 'showAppMenu' : 'hideAppMenu']()
   }
 
   /* ****************************************************************************/
