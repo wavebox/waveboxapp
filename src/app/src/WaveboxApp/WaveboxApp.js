@@ -4,6 +4,7 @@ import credentials from 'shared/credentials'
 import WaveboxAppPrimaryMenu from './WaveboxAppPrimaryMenu'
 import WaveboxAppGlobalShortcuts from './WaveboxAppGlobalShortcuts'
 import { settingsStore, settingsActions } from 'stores/settings'
+import { platformStore, platformActions } from 'stores/platform'
 import mailboxStore from 'stores/mailboxStore'
 import userStore from 'stores/userStore'
 import extensionStore from 'stores/extensionStore'
@@ -86,6 +87,8 @@ class WaveboxApp {
     extensionStore.checkAwake()
     settingsStore.getState()
     settingsActions.load()
+    platformStore.getState()
+    platformActions.load()
     userStore.checkAwake()
 
     // Component behaviour

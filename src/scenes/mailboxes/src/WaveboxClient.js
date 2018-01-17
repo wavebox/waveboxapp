@@ -9,6 +9,7 @@ import {updaterStore, updaterActions} from 'stores/updater'
 import {userStore, userActions} from 'stores/user'
 import {extensionStore, extensionActions} from 'stores/extension'
 import {crextensionStore, crextensionActions} from 'stores/crextension'
+import {platformStore, platformActions} from 'stores/platform'
 import Debug from 'Debug'
 import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
 import ResourceMonitorResponder from './ResourceMonitorResponder'
@@ -67,6 +68,8 @@ extensionStore.getState()
 extensionActions.load()
 crextensionStore.getState()
 crextensionActions.load()
+platformStore.getState()
+platformActions.load()
 
 // Setup the updaters
 userActions.startAutoUpdateExtensions()
