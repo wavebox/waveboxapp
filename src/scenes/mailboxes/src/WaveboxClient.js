@@ -117,3 +117,11 @@ setTimeout(() => {
 
 // Update our settings
 settingsActions.glueCurrentUpdateChannel.defer()
+
+
+import alt from 'stores/alt'
+import TestActions from 'shared/TestStore/TestActions'
+import TestStore from 'shared/TestStore/TestStore'
+
+window.testActions = alt.createActions(TestActions)
+window.testStore = alt.createStore(TestStore, 'TestStore', "tom")

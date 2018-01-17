@@ -7,6 +7,7 @@
   "description": "Main thread code for Wavebox",
   "dependencies": {
     "addressparser": "1.0.1",
+    "alt": "0.18.6",
     "appdirectory": "0.1.0",
     "append-query": "2.0.1",
     "auto-launch": "5.0.5",

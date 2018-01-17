@@ -39,6 +39,35 @@ const privGlobalShortcuts = Symbol('privGlobalShortcuts')
 const privMainWindow = Symbol('privMainWindow')
 const privCloseBehaviour = Symbol('privCloseBehaviour')
 
+const webContents=require('electron').webContents
+const Alt = require('alt/src').default
+
+const alt = new Alt()
+
+class TActions {
+  updateT (time,sender) {
+    return { time:time,sender:sender}
+  }
+}
+const actions = alt.createActions(TActions)
+
+class TStore {
+  constructor () {
+    this.t=0
+    this.bindListeners({
+      handleT: actions.UPDATE_T
+    })
+  }
+
+  handleT({time,sender}) {
+    this.t=time
+    webContents.fromId(sender).send("t",time)
+  }
+}
+
+const store = alt.createStore(TStore, 'TStore')
+
+
 class WaveboxApp {
   /* ****************************************************************************/
   // Lifecycle
@@ -166,6 +195,12 @@ class WaveboxApp {
   * Binds the IPC listeners
   */
   _bindIPCListeners () {
+    ipcMain.on("t", (evt, time) => {
+      actions.updateT(time,evt.sender.id)
+      //evt.sender.send("t", time)
+    })
+
+
     ipcMain.on(ipcEvents.WB_FOCUS_APP, (evt, body) => {
       const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
       if (mailboxesWindow) {
