@@ -1,6 +1,6 @@
-import CorePlatformActions from './CorePlatformActions'
+import CoreUserActions from './CoreUserActions'
 
-class RendererPlatformActions extends CorePlatformActions {
+class RendererUserActions extends CoreUserActions {
   /* **************************************************************************/
   // Loading
   /* **************************************************************************/
@@ -13,13 +13,16 @@ class RendererPlatformActions extends CorePlatformActions {
   }
 
   /* **************************************************************************/
-  // Remote
+  // Remote: User & env
   /* **************************************************************************/
 
   /**
-  * Emits a change in the store to indicate an upstream change
+  * Handles the client token being set remotely
+  * @param clientToken: the client token
   */
-  remoteEmitChange () { return { } }
+  remoteSetClientToken (clientToken) {
+    return { clientToken }
+  }
 }
 
-export default RendererPlatformActions
+export default RendererUserActions

@@ -39,8 +39,13 @@ class CorePlatformActions extends RemoteActions {
   * @param openAtLogin: true to open at login
   * @param openAsHidden: true to open as hidden
   */
-  changeLoginPref (openAtLogin, openAsHidden) {
-    throw new Error('Action not implemented "changeLoginPref"')
+  changeLoginPref (...args) {
+    if (process.type === 'browser') {
+      const [openAtLogin, openAsHidden] = args
+      return { openAtLogin, openAsHidden }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('changeLoginPref', args)
+    }
   }
 
   /* **************************************************************************/
@@ -51,8 +56,13 @@ class CorePlatformActions extends RemoteActions {
   * Sets if the app is the default mailto link handler
   * @param isCurrentApp: true if this is the handler
   */
-  changeMailtoLinkHandler (isCurrentApp) {
-    throw new Error('Action not implemented "changeMailtoLinkHandler"')
+  changeMailtoLinkHandler (...args) {
+    if (process.type === 'browser') {
+      const [isCurrentApp] = args
+      return { isCurrentApp }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('changeMailtoLinkHandler', args)
+    }
   }
 }
 

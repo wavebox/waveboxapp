@@ -30,6 +30,7 @@ class StorageBucket extends EventEmitter {
 
     this._loadFromDiskSync()
 
+    //TODO remove my ipc's and look towards perforamcne
     ipcMain.on(`storageBucket:${bucketName}:setItem`, this._handleIPCSetItem)
     ipcMain.on(`storageBucket:${bucketName}:setItems`, this._handleIPCSetItems)
     ipcMain.on(`storageBucket:${bucketName}:removeItem`, this._handleIPCRemoveItem)

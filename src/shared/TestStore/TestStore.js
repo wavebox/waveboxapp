@@ -24,8 +24,17 @@ class TestStore {
       //handleDispatchOnMain: actions.DISPATCH_ON_MAIN
     })
     this.bindListeners({
-      handleDispatchOnMain: actions.DISPATCH_ON_MAIN
+      handleDispatchOnMain: actions.DISPATCH_ON_MAIN,
+      handleA: actions.A_ACTION,
+      handleB: actions.B_ACTION
     })
+  }
+
+  handleA (a) {
+    console.log("A",a)
+  }
+  handleB (a) {
+    console.log("B",a)
   }
 
   handleSetItem ({id, item}) {

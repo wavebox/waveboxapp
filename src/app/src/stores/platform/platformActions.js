@@ -10,28 +10,6 @@ class PlatformActions extends CorePlatformActions {
   * @overwrite
   */
   load () { return {} }
-
-  /* **************************************************************************/
-  // Login
-  /* **************************************************************************/
-
-  /**
-  * @overwrite
-  */
-  changeLoginPref (openAtLogin, openAsHidden) {
-    return { openAtLogin, openAsHidden }
-  }
-
-  /* **************************************************************************/
-  // Mailto
-  /* **************************************************************************/
-
-  /**
-  * @overwrite
-  */
-  changeMailtoLinkHandler (isCurrentApp) {
-    return { isCurrentApp }
-  }
 }
 
 export default alt.createActions(PlatformActions)

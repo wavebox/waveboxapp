@@ -41,8 +41,19 @@ class CoreSettingsActions extends RemoteActions {
   * @param changesetOrKey: either a dict of k -> or a single key
   * @param undefinedOrVal: if changesetOrKey is a key, this should be the value
   */
-  mergeSettingsModelChangeset (segment, changesetOrKey, undefinedOrVal) {
-    throw new Error('Action not implemented "mergeSettingsModelChangeset"')
+  mergeSettingsModelChangeset (...args) {
+    if (process.type === 'browser') {
+      const [segment, changesetOrKey, undefinedOrVal] = args
+      if (typeof (changesetOrKey) === 'string') {
+        const changeset = {}
+        changeset[changesetOrKey] = undefinedOrVal
+        return { id: segment, changeset: changeset }
+      } else {
+        return { id: segment, changeset: changesetOrKey }
+      }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('mergeSettingsModelChangeset', args)
+    }
   }
 
   /**
@@ -50,8 +61,13 @@ class CoreSettingsActions extends RemoteActions {
   * @param segment: the segment to update
   * @param key: the key to toggle
   */
-  toggleSettingsModelField (segment, key) {
-    throw new Error('Action not implemented "toggleSettingsModelField"')
+  toggleSettingsModelField (...args) {
+    if (process.type === 'browser') {
+      const [segment, key] = args
+      return { id: segment, key: key }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('toggleSettingsModelField', args)
+    }
   }
 
   /**
@@ -59,8 +75,13 @@ class CoreSettingsActions extends RemoteActions {
   * @param segment: the segment to update
   * @param key: the key to remove
   */
-  removeSettingsModelField (segment, key) {
-    throw new Error('Action not implemented "removeSettingsModelField"')
+  removeSettingsModelField (...args) {
+    if (process.type === 'browser') {
+      const [segment, key] = args
+      return { id: segment, key: key }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('removeSettingsModelField', args)
+    }
   }
 
   /* **************************************************************************/
@@ -70,15 +91,25 @@ class CoreSettingsActions extends RemoteActions {
   /**
   * @param lang: the language to set to
   */
-  setSpellcheckerLanguage (lang) {
-    throw new Error('Action not implemented "setSpellcheckerLanguage"')
+  setSpellcheckerLanguage (...args) {
+    if (process.type === 'browser') {
+      const [lang] = args
+      return { lang }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('setSpellcheckerLanguage', args)
+    }
   }
 
   /**
   * @param lang: the language to set to
   */
-  setSecondarySpellcheckerLanguage (lang) {
-    throw new Error('Action not implemented "setSecondarySpellcheckerLanguage"')
+  setSecondarySpellcheckerLanguage (...args) {
+    if (process.type === 'browser') {
+      const [lang] = args
+      return { lang }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('setSecondarySpellcheckerLanguage', args)
+    }
   }
 
   /* **************************************************************************/
@@ -88,8 +119,12 @@ class CoreSettingsActions extends RemoteActions {
   /**
   * Takes the current channel of the app and glues it to the user update channel
   */
-  glueCurrentUpdateChannel () {
-    throw new Error('Action not implemented "glueCurrentUpdateChannel"')
+  glueCurrentUpdateChannel (...args) {
+    if (process.type === 'browser') {
+      return {}
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('glueCurrentUpdateChannel', args)
+    }
   }
 }
 

@@ -1,4 +1,5 @@
-import { ipcRenderer } from 'electron'
+import electron from 'electron'
+import { UNIVERSAL_DISPATCH_KEY } from './UniversalDispatch'
 
 class RemoteActions {
   /* **************************************************************************/
@@ -33,8 +34,10 @@ class RemoteActions {
     if (process.type !== 'renderer') {
       throw new Error('"actions.remoteDispatch" is only available in the renderer thread')
     }
-    ipcRenderer.send(`ALT:DISPATCH_REMOTE_ACTION:${this.__remote__.names.dispatch}`, fnName, args)
-    return {}
+    electron.ipcRenderer.send(`ALT:DISPATCH_REMOTE_ACTION:${this.__remote__.names.dispatch}`, fnName, args)
+
+    // Return a function from here - alt wont dispatch the callee
+    return () => fnName
   }
 
   /**
@@ -45,7 +48,26 @@ class RemoteActions {
     if (process.type !== 'renderer') {
       throw new Error('"actions.remoteConnect" is only available in the renderer thread')
     }
-    return ipcRenderer.sendSync(`ALT:CONNECT:${this.__remote__.names.dispatch}`)
+    return electron.ipcRenderer.sendSync(`ALT:CONNECT:${this.__remote__.names.dispatch}`)
+  }
+
+  /**
+  * Routes an action universally so it can be dispatched from anywhere
+  * but handled correctly
+  * @param fnName: the function name if we need to dispatch over the bridge
+  * @param args: the array of arguments
+  * @param handler: the handler to return the dispatchable
+  */
+  universalDispatch (fnName, args, handler) {
+    if (process.type === 'browser') {
+      return handler(...args)
+    } else if (process.type === 'renderer') {
+      if (args[0] === UNIVERSAL_DISPATCH_KEY) {
+        return handler(...args.slice(1))
+      } else {
+        return this.remoteDispatch(fnName, args)
+      }
+    }
   }
 }
 

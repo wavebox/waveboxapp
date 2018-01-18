@@ -16,6 +16,14 @@ class TestActions {
       return this.dispatchOnMain('SET_ITEM', {id,item})
     }
   }
+
+  aAction () {
+    return { a:'true'}
+  }
+
+  bAction () {
+    return () => this.aAction()
+  }
 }
 
 export default TestActions

@@ -15,3 +15,5 @@ if (storageBucket.getItem(CREATED_TIME) === undefined) {
 }
 
 export default storageBucket
+
+//TODO - mutable. Don't write items

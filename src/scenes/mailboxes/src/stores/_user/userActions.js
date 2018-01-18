@@ -1,17 +1,7 @@
+import RendererUserActions from 'shared/AltStores/User/RendererUserActions'
 import alt from '../alt'
-import { WB_AUTH_WAVEBOX_COMPLETE, WB_AUTH_WAVEBOX_ERROR } from 'shared/ipcEvents'
-import { ipcRenderer } from 'electron'
 
-class UserActions {
-  /* **************************************************************************/
-  // Store Lifecyle
-  /* **************************************************************************/
-
-  /**
-  * Indicates the store to drop all data and load from disk
-  */
-  load () { return {} }
-
+class UserActions extends RendererUserActions {
   /* **************************************************************************/
   // Extensions
   /* **************************************************************************/
@@ -55,13 +45,6 @@ class UserActions {
   /* **************************************************************************/
 
   /**
-  * Adds a new container
-  * @param id: the id of the container
-  * @param data: the data for the container
-  */
-  addContainer (id, data) { return { id, data } }
-
-  /**
   * Indicates for the store update the containers
   */
   updateContainers () { return {} }
@@ -75,14 +58,6 @@ class UserActions {
   * Stops auto updates the containers after a period
   */
   stopAutoUpdateContainers () { return {} }
-
-  /* **************************************************************************/
-  // Account
-  /* **************************************************************************/
-
-  remoteChangeAccount (account) { //now is setuser
-    return { account: account }
-  }
 
   /* **************************************************************************/
   // Auth
@@ -140,10 +115,4 @@ class UserActions {
   }
 }
 
-const actions = alt.createActions(UserActions)
-
-// Auth
-ipcRenderer.on(WB_AUTH_WAVEBOX_COMPLETE, actions.authenticationSuccess)
-ipcRenderer.on(WB_AUTH_WAVEBOX_ERROR, actions.authenticationFailure)
-
-export default actions
+export default alt.createActions(UserActions)
