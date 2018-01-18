@@ -209,7 +209,7 @@ class ServerVent extends EventEmitter {
         clientChannel.leave()
         this._setupVents()
       })
-    clientChannel.on('userDetails', (data) => { userActions.remoteChangeAccount(data) })
+    clientChannel.on('userDetails', (data) => { userActions.setUser(data, new Date().getTime()) })
     clientChannel.on('maintenance', this._handleMaintenanceStart)
 
     return this

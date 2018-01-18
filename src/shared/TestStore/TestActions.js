@@ -1,6 +1,11 @@
 class TestActions {
+
   constructor () {
     this.test = 'tom'
+
+    this.testFn=() => {
+      console.log('a')
+    }
   }
 
   dispatchOnMain (name, args) {
@@ -18,11 +23,13 @@ class TestActions {
   }
 
   aAction () {
+    return Promise.resolve()
     return { a:'true'}
   }
 
   bAction () {
-    return () => this.aAction()
+    this.aAction()
+    return Promise.resolve()
   }
 }
 

@@ -1,16 +1,16 @@
 import { ipcMain } from 'electron'
 import alt from '../alt'
 import CoreUserStore from 'shared/AltStores/User/CoreUserStore'
-import { STORE_NAME } from 'shared/AltStores/Platform/AltUserIdentifiers'
-import User from 'shared/Models/User'
+import { STORE_NAME } from 'shared/AltStores/User/AltUserIdentifiers'
 import PersistenceBootstrapper from './PersistenceBootstrapper'
-import actions from './userActions'
+import actions from './userActions'  // eslint-disable-line
 import pkg from 'package.json'
 import semver from 'semver'
 import userPersistence from 'storage/userStorage'
 import wirePersistence from 'storage/wireStorage'
-import extensionStorePersistence from 'storage/extensionStoragePersistence'
-import containerPersistence from 'storage/containerPersistence'
+import extensionStorePersistence from 'storage/extensionStoreStorage'
+import containerPersistence from 'storage/containerStorage'
+import { evtMain } from 'AppEvents'
 import {
   CLIENT_TOKEN,
   USER,
@@ -49,22 +49,11 @@ class UserStore extends CoreUserStore {
     }
 
     /* ****************************************/
-    // Actions
-    /* ****************************************/
-
-    this.bindActions({
-
-    })
-
-    /* ****************************************/
     // Remote
     /* ****************************************/
 
     ipcMain.on(WB_USER_SET_CLIENT_TOKEN, this.handleIPCSetClientToken)
     ipcMain.on(WB_USER_SET_USER, this.handleIPCSetUser)
-
-    //In main .html
-    //Set token and user through IPC
   }
 
   /* **************************************************************************/
@@ -95,6 +84,7 @@ class UserStore extends CoreUserStore {
     userPersistence.setJSONItem(CLIENT_TOKEN, clientToken)
     this.dispatchToRemote('remoteSetClientToken', [clientToken])
     this.emitChange()
+    evt.returnValue = {}
   }
 
   /**
@@ -106,6 +96,7 @@ class UserStore extends CoreUserStore {
   handleIPCSetUser = (evt, userJS, userEpoch) => {
     this.handleSetUser({ userJS, userEpoch })
     this.emitChange()
+    evt.returnValue = {}
   }
 
   /* **************************************************************************/
@@ -129,7 +120,10 @@ class UserStore extends CoreUserStore {
     extensionStorePersistence.setJSONItem(EXTENSIONS, extensions)
     super.handleSetExtensions(payload)
     this.dispatchToUniversalRemote('setExtensions', [extensions])
-    //ipcRenderer.send(WB_UPDATE_INSTALLED_EXTENSIONS, {})
+
+    // Not exactly great but picks up from the setExtensions call
+    // @Thomas101 look to refactor at a later date
+    evtMain.emit(evtMain.WB_UPDATE_INSTALLED_EXTENSIONS, {})
   }
 
   /* **************************************************************************/
@@ -154,12 +148,12 @@ class UserStore extends CoreUserStore {
 
   handleAddContainers (payload) {
     const updated = super.handleAddContainers(payload)
-
     if (Object.keys(updated).length) {
       const vanillaUpdated = Object.keys(updated).reduce((acc, id) => {
         acc[id] = updated[id].cloneData()
         return acc
       }, {})
+      console.log(vanillaUpdated)
       containerPersistence.setJSONItems(vanillaUpdated)
       this.dispatchToUniversalRemote('addContainers', vanillaUpdated)
     }

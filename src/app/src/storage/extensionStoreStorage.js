@@ -1,2 +1,2 @@
-import StorageBucket from './StorageBucket'
-export default new StorageBucket('extension_store')
+import StorageBucketAppMutable from './StorageBucketAppMutable'
+export default new StorageBucketAppMutable('extension_store')

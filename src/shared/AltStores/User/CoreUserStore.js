@@ -46,13 +46,13 @@ class CoreUserStore extends RemoteStore {
     this.extensionList = () => { return this.extensions || [] }
 
     /**
-    * @return all the extensions supported in this version, indexed by id
+    * @return the extensions in a map indexed by id
     */
-    this.supportedExtensionsIndex = () => {
-      return this.supportedExtensionList().reduce((acc, ext) => {
-        acc[ext.id] = ext
+    this.extensionMap = () => {
+      return this.extensionList().reduce((acc, info) => {
+        acc.set(info.id, info)
         return acc
-      }, {})
+      }, new Map())
     }
 
     /**
@@ -63,6 +63,17 @@ class CoreUserStore extends RemoteStore {
       return this.extensionList().find((ext) => ext.id === extensionId)
     }
 
+    /**
+    * Generates a set of disabled extension ids
+    * @return a set of known disabled extension ids
+    */
+    this.disabledExtensionIdSet = () => {
+      const ids = this.extensionList()
+        .filter((ext) => this.user && !this.user.hasExtensionWithLevel(ext.availableTo))
+        .map((ext) => ext.id)
+      return new Set(ids)
+    }
+
     /* ****************************************/
     // Wire config
     /* ****************************************/
@@ -70,17 +81,39 @@ class CoreUserStore extends RemoteStore {
     /**
     * @return true if we have wire config, false otherwise
     */
-    this.hasWireConfig = () => { return !!this.wireConfig }
+    this.hasWireConfig = () => {
+      return !!this.wireConfig
+    }
 
     /**
     * @return the wire config version or 0.0.0
     */
-    this.wireConfigVersion = () => { return (this.wireConfig || {}).version || '0.0.0' }
+    this.wireConfigVersion = () => {
+      return (this.wireConfig || {}).version || '0.0.0'
+    }
 
     /**
     * @return the wire config experiments dictionary
     */
-    this.wireConfigExperiments = () => { return (this.wireConfig || {}).experiments || {} }
+    this.wireConfigExperiments = () => {
+      return (this.wireConfig || {}).experiments || {}
+    }
+
+    /**
+    * @param defaultVal={}: the default value if none is found
+    * @return the window open rules
+    */
+    this.wireConfigWindowOpenRules = (defaultVal = {}) => {
+      return (this.wireConfig || {}).windowOpen || defaultVal
+    }
+
+    /**
+    * @param defaultVal={}: the default value if none is found
+    * @return the navigate rules
+    */
+    this.wireConfigNavigateRules = (defaultVal = {}) => {
+      return (this.wireConfig || {}).navigate || defaultVal
+    }
 
     /* ****************************************/
     // Containers
@@ -101,7 +134,7 @@ class CoreUserStore extends RemoteStore {
       handleLoad: actions.LOAD,
       handleSetUser: actions.SET_USER,
       handleSetExtensions: actions.SET_EXTENSIONS,
-      handleSetWriteConfig: actions.SET_WIRE_CONFIG,
+      handleSetWireConfig: actions.SET_WIRE_CONFIG,
       handleAddContainers: actions.ADD_CONTAINERS
     })
   }
@@ -174,7 +207,7 @@ class CoreUserStore extends RemoteStore {
       }
 
       updatedContainers[id] = container
-      this.container.set(id, container)
+      this.containers.set(id, container)
     })
 
     return updatedContainers

@@ -82,15 +82,6 @@ class CoreUserActions extends RemoteActions {
   /* **************************************************************************/
 
   /**
-  * Adds a new container
-  * @param id: the id of the container
-  * @param data: the data for the container
-  */
-  addContainer (id, data) {
-    return () => this.updateContainers({ [id]: data })
-  }
-
-  /**
   * Adds new containers
   * @param containers: an object of id to data
   */

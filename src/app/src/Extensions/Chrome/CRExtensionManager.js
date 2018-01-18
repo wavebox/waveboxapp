@@ -10,13 +10,13 @@ import {
   WBECRX_GET_EXTENSION_INSTALL_META,
   WBECRX_EXTENSION_INSTALL_META_CHANGED,
   WBECRX_UNINSTALL_EXTENSION,
-  WBECRX_INSTALL_EXTENSION,
-  WB_UPDATE_INSTALLED_EXTENSIONS
+  WBECRX_INSTALL_EXTENSION
 } from 'shared/ipcEvents'
 import {
   CR_EXTENSION_PROTOCOL
 } from 'shared/extensionApis'
-import userStore from 'stores/userStore'
+import { userStore } from 'stores/user'
+import { evtMain } from 'AppEvents'
 
 class CRExtensionManager {
   /* ****************************************************************************/
@@ -42,7 +42,7 @@ class CRExtensionManager {
     ipcMain.on(WBECRX_INSTALL_EXTENSION, (evt, extensionId, installInfo) => {
       this.installExtension(extensionId, installInfo)
     })
-    ipcMain.on(WB_UPDATE_INSTALLED_EXTENSIONS, () => {
+    evtMain.on(evtMain.WB_UPDATE_INSTALLED_EXTENSIONS, () => {
       this.updateExtensions()
     })
   }
@@ -158,7 +158,7 @@ class CRExtensionManager {
   * Loads all the extensions in the extension directory
   */
   loadExtensionDirectory () {
-    const disabledIds = userStore.generateDisabledExtensionIds()
+    const disabledIds = userStore.getState().disabledExtensionIdSet()
     const extensions = CRExtensionFS.listInstalledExtensionIds()
       .map((extensionId) => CRExtensionFS.updateEntry(extensionId))
       .filter((info) => !!info)

@@ -35,9 +35,7 @@ class RemoteActions {
       throw new Error('"actions.remoteDispatch" is only available in the renderer thread')
     }
     electron.ipcRenderer.send(`ALT:DISPATCH_REMOTE_ACTION:${this.__remote__.names.dispatch}`, fnName, args)
-
-    // Return a function from here - alt wont dispatch the callee
-    return () => fnName
+    return Promise.resolve(fnName)
   }
 
   /**

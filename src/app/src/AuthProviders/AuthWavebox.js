@@ -1,6 +1,6 @@
 import { ipcMain, BrowserWindow } from 'electron'
 import { WB_AUTH_WAVEBOX, WB_AUTH_WAVEBOX_COMPLETE, WB_AUTH_WAVEBOX_ERROR } from 'shared/ipcEvents'
-import userStore from 'stores/userStore'
+import { userStore } from 'stores/user'
 import querystring from 'querystring'
 import url from 'url'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
@@ -35,7 +35,7 @@ class AuthWavebox {
     }
     if (authUrl) {
       const args = querystring.stringify(Object.assign({}, serverArgs, {
-        client_id: userStore.clientId,
+        client_id: userStore.getState().clientId,
         client_secret: clientSecret
       }))
       return `${authUrl}?${args}`

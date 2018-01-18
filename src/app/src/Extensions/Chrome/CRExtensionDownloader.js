@@ -13,7 +13,7 @@ import {
   CRExtensionVersionParser
 } from 'shared/Models/CRExtension'
 import RuntimePaths from 'Runtime/RuntimePaths'
-import userStore from 'stores/userStore'
+import { userStore } from 'stores/user'
 import semver from 'semver'
 import CRExtensionFS from './CRExtensionFS'
 
@@ -230,7 +230,7 @@ class CRExtensionDownloader {
       // Build update list
       .then(() => {
         if (updateIds.size === 0) { return Promise.resolve([]) }
-        const storeExtensionIndex = userStore.indexedExtensions()
+        const storeExtensionIndex = userStore.getState().extensionMap()
         const storeReferences = Array.from(updateIds)
           .map((id) => storeExtensionIndex.get(id))
           .filter((info) => !!info)
@@ -389,7 +389,7 @@ class CRExtensionDownloader {
   * @return promise which returns an array of extensions to be updated
   */
   _getUpdatableWaveboxManifests (extensions) {
-    const storeExtensionIndex = userStore.indexedExtensions()
+    const storeExtensionIndex = userStore.getState().extensionMap()
     return Promise.resolve()
       .then(() => {
         return extensions.filter((extension) => {

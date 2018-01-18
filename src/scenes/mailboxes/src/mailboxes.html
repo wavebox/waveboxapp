@@ -185,13 +185,11 @@
             .then((config) => {
                // Persist the token if its been provided
               if (config.client_token) {
-                electron.ipcRenderer.sendSync(`storageBucket:user:setItem`, {
-                  key: 'CLIENT_TOKEN',
-                  value: JSON.stringify(config.client_token),
-                  sync: true
-                })
+                electron.ipcRenderer.sendSync('WB_USER_SET_CLIENT_TOKEN', config.client_token)
               }
+
               // Write into window for bootstrap to pickup
+              electron.ipcRenderer.sendSync('WB_USER_SET_USER', config.account_js, new Date().getTime())
               window.config = config
               return Promise.resolve()
             })

@@ -1,2 +1,2 @@
-import StorageBucket from './StorageBucket'
-export default new StorageBucket('wire')
+import StorageBucketAppMutable from './StorageBucketAppMutable'
+export default new StorageBucketAppMutable('wire')

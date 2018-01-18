@@ -2,7 +2,7 @@ import electron from 'electron'
 import WaveboxWindow from '../WaveboxWindow'
 import mailboxStore from 'stores/mailboxStore'
 import { settingsStore } from 'stores/settings'
-import userStore from 'stores/userStore'
+import { userStore } from 'stores/user'
 import CRExtensionUISubscriber from 'Extensions/Chrome/CRExtensionUISubscriber'
 import {
   AuthGoogle,
@@ -98,9 +98,10 @@ class MailboxesWindow extends WaveboxWindow {
   * @return a fully qualified url to give to the window object
   */
   generateWindowUrl () {
+    const userState = userStore.getState()
     const params = querystring.stringify({
-      clientId: userStore.clientId,
-      clientToken: userStore.clientToken
+      clientId: userState.clientId,
+      clientToken: userState.clientToken
     })
     return `file://${Resolver.mailboxesScene('mailboxes.html')}?${params}`
   }

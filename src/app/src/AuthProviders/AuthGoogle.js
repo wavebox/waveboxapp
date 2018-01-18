@@ -1,7 +1,7 @@
 import { ipcMain, BrowserWindow } from 'electron'
 import { WB_AUTH_GOOGLE, WB_AUTH_GOOGLE_COMPLETE, WB_AUTH_GOOGLE_ERROR } from 'shared/ipcEvents'
 import googleapis from 'googleapis'
-import userStore from 'stores/userStore'
+import { userStore } from 'stores/user'
 import url from 'url'
 import querystring from 'querystring'
 import pkg from 'package.json'
@@ -50,9 +50,10 @@ class AuthGoogle {
   * @return the url that can be used
   */
   generatePushServiceAuthenticationURL (credentials) {
+    const userState = userStore.getState()
     const query = querystring.stringify({
-      client_id: userStore.clientId,
-      client_token: userStore.clientToken,
+      client_id: userState.clientId,
+      client_token: userState.clientToken,
       client_version: pkg.version
     })
     return `${credentials.GOOGLE_PUSH_SERVICE_AUTH_URL}?${query}`

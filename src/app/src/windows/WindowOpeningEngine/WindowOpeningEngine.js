@@ -11,7 +11,7 @@ import {
   WAVEBOX_CAPTURE_URL_PREFIX,
   WAVEBOX_CAPTURE_URL_HOSTNAMES
 } from 'shared/constants'
-import userStore from 'stores/userStore'
+import { userStore } from 'stores/user'
 
 const WINDOW_OPEN_MODES = Object.freeze({
   CONTENT: 'CONTENT',
@@ -37,6 +37,7 @@ const NAVIGATE_MODES = Object.freeze({
 
 const privWindowOpenRules = Symbol('privWindowOpenRules')
 const privNavigateRules = Symbol('privNavigateRules')
+const privLoadedWireConfigVersion = Symbol('privLoadedWireConfigVersion')
 
 class WindowOpeningEngine {
   /* ****************************************************************************/
@@ -46,8 +47,10 @@ class WindowOpeningEngine {
   constructor () {
     this[privWindowOpenRules] = undefined
     this[privNavigateRules] = undefined
+    this[privLoadedWireConfigVersion] = undefined
+
     this.populateRulesets()
-    userStore.on('changed:WIRE_CONFIG', this.populateRulesets)
+    userStore.listen(this.populateRulesets)
   }
 
   /* ****************************************************************************/
@@ -63,14 +66,19 @@ class WindowOpeningEngine {
 
   /**
   * Populates the rulesets from the user store
+  * @param userState=autoget: the user state
   */
-  populateRulesets = () => {
-    const version = (userStore.wireConfig || {}).version || '0.0.0'
-    const windowOpenRules = (userStore.wireConfig || {}).windowOpen || fallbackConfig.windowOpen
-    const navigateRules = (userStore.wireConfig || {}).navigate || fallbackConfig.navigate
+  populateRulesets = (userState = userStore.getState()) => {
+    const version = userState.wireConfigVersion()
+    if (this[privLoadedWireConfigVersion] === userState.wireConfigVersion()) {
+      return
+    }
 
+    const windowOpenRules = userState.wireConfigWindowOpenRules(fallbackConfig.windowOpen)
+    const navigateRules = userState.wireConfigNavigateRules(fallbackConfig.navigate)
     this[privWindowOpenRules] = new WindowOpeningRules(version, windowOpenRules)
     this[privNavigateRules] = new WindowOpeningRules(version, navigateRules)
+    this[privLoadedWireConfigVersion] = version
   }
 
   /* ****************************************************************************/

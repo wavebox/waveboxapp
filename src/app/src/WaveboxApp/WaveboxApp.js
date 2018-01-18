@@ -6,7 +6,7 @@ import WaveboxAppGlobalShortcuts from './WaveboxAppGlobalShortcuts'
 import { settingsStore, settingsActions } from 'stores/settings'
 import { platformStore, platformActions } from 'stores/platform'
 import mailboxStore from 'stores/mailboxStore'
-import userStore from 'stores/userStore'
+import { userStore, userActions } from 'stores/user'
 import extensionStore from 'stores/extensionStore'
 import ipcEvents from 'shared/ipcEvents'
 import BasicHTTPAuthHandler from '../BasicHTTPAuthHandler'
@@ -24,12 +24,8 @@ import {evtMain} from 'AppEvents'
 import {
   appStorage,
   avatarStorage,
-  containerStorage,
   extensionStorage,
-  extensionStoreStorage,
-  mailboxStorage,
-  userStorage,
-  wireStorage
+  mailboxStorage
 } from 'storage'
 
 const privStarted = Symbol('privStarted')
@@ -76,12 +72,8 @@ class WaveboxApp {
     // Start our stores
     appStorage.checkAwake()
     avatarStorage.checkAwake()
-    containerStorage.checkAwake()
     extensionStorage.checkAwake()
-    extensionStoreStorage.checkAwake()
     mailboxStorage.checkAwake()
-    userStorage.checkAwake()
-    wireStorage.checkAwake()
 
     mailboxStore.checkAwake()
     extensionStore.checkAwake()
@@ -89,7 +81,8 @@ class WaveboxApp {
     settingsActions.load()
     platformStore.getState()
     platformActions.load()
-    userStore.checkAwake()
+    userStore.getState()
+    userActions.load()
 
     // Component behaviour
     this[privCloseBehaviour] = new WaveboxAppCloseBehaviour()

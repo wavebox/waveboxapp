@@ -2,7 +2,7 @@ import { ipcMain, BrowserWindow } from 'electron'
 import { WB_AUTH_MICROSOFT, WB_AUTH_MICROSOFT_COMPLETE, WB_AUTH_MICROSOFT_ERROR } from 'shared/ipcEvents'
 import url from 'url'
 import querystring from 'querystring'
-import userStore from 'stores/userStore'
+import { userStore } from 'stores/user'
 import pkg from 'package.json'
 
 class AuthMicrosoft {
@@ -50,9 +50,10 @@ class AuthMicrosoft {
   * @return the url that can be used
   */
   generatePushServiceAuthenticationURL (credentials) {
+    const userState = userStore.getState()
     const query = querystring.stringify({
-      client_id: userStore.clientId,
-      client_token: userStore.clientToken,
+      client_id: userState.clientId,
+      client_token: userState.clientToken,
       client_version: pkg.version
     })
     return `${credentials.MICROSOFT_PUSH_SERVICE_AUTH_URL}?${query}`
