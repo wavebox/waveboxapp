@@ -8,7 +8,7 @@ class GoogleMailboxReducer extends MailboxReducer {
   * @param avatar: the users avatar url
   */
   static setProfileInfo (mailbox, email, avatar) {
-    if (mailbox.email !== email || mailbox.avatarURL !== avatar) { //TODO reread
+    if (mailbox.email !== email || mailbox.avatarURL !== avatar) {
       return mailbox.changeData({
         email: email,
         avatar: avatar
@@ -23,7 +23,7 @@ class GoogleMailboxReducer extends MailboxReducer {
   * @param mailbox: the mailbox to update
   */
   static invalidateAuth (mailbox) {
-    if (!mailbox.isAuthenticationInvalid) { //TODO reread
+    if (!mailbox.isAuthenticationInvalid) {
       return mailbox.changeDataWithChangeset({
         auth: { isInvalid: true }
       })
@@ -35,11 +35,20 @@ class GoogleMailboxReducer extends MailboxReducer {
   * @param mailbox: the mailbox to update
   */
   static revalidateAuth (mailbox) {
-    if (mailbox.isAuthenticationInvalid) { //TODO reread
+    if (mailbox.isAuthenticationInvalid) {
       return mailbox.changeDataWithChangeset({
         auth: { isInvalid: false }
       })
     }
+  }
+
+  /**
+  * Sets the mailbox authentication details
+  * @param mailbox: the mailbox to update
+  * @param auth: the auth info
+  */
+  static setAuth (mailbox, auth) {
+    return mailbox.changeData({ auth: auth })
   }
 
   /**

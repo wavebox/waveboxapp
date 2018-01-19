@@ -18,6 +18,10 @@ class TestStore {
     this.getItem = (id) => this.items.get(id)
     this.complex = new Complex()
 
+    this.test = () => {
+      console.log(this.handleA)
+    }
+
     const actions = this.alt.getActions('TestActions')
     this.bindListeners({
       handleSetItem: actions.SET_ITEM,

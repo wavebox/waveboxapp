@@ -1,5 +1,5 @@
 import ServiceReducer from './ServiceReducer'
-import microsoftActions from '../microsoft/microsoftActions'
+import microsoftActions from '../microsoft/microsoftActions' //TODO nope
 
 class MicrosoftDefaultServiceReducer extends ServiceReducer {
   /**
@@ -23,7 +23,7 @@ class MicrosoftDefaultServiceReducer extends ServiceReducer {
   * @param unreadMode: the new unread mode
   */
   static setUnreadMode (mailbox, service, unreadMode) {
-    if (service.unreadMode !== unreadMode) { //TODO reread
+    if (service.unreadMode !== unreadMode) {
       microsoftActions.syncMailboxMail.defer(mailbox.id)
       return service.changeData({ unreadMode: unreadMode })
     }

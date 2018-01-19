@@ -70,7 +70,7 @@ class SlackDefaultServiceReducer extends ServiceReducer {
   * @param rtmEvent: the event that came through from the rtm channel
   */
   static rtmChannelMarked (mailbox, service, rtmEvent) {
-    if (service.slackUnreadChannelInfo[rtmEvent.channel]) { //TODO reread:req
+    if (service.slackUnreadChannelInfo[rtmEvent.channel]) {
       return service.changeDataWithChangeset({
         slackUnreadChannelInfo: {
           [rtmEvent.channel]: {
@@ -91,7 +91,7 @@ class SlackDefaultServiceReducer extends ServiceReducer {
   * @param rtmEvent: the event that came through from the rtm group
   */
   static rtmGroupMarked (mailbox, service, rtmEvent) {
-    if (service.slackUnreadGroupInfo[rtmEvent.channel]) { //TODO reread:req
+    if (service.slackUnreadGroupInfo[rtmEvent.channel]) {
       return service.changeDataWithChangeset({
         slackUnreadGroupInfo: {
           [rtmEvent.channel]: {
@@ -112,7 +112,7 @@ class SlackDefaultServiceReducer extends ServiceReducer {
   * @param rtmEvent: the event that came through from the rtm group
   */
   static rtmMpimMarked (mailbox, service, rtmEvent) {
-    if (service.slackUnreadMPIMInfo[rtmEvent.channel]) { //TODO reread:req
+    if (service.slackUnreadMPIMInfo[rtmEvent.channel]) {
       return service.changeDataWithChangeset({
         slackUnreadMPIMInfo: {
           [rtmEvent.channel]: {
@@ -133,7 +133,7 @@ class SlackDefaultServiceReducer extends ServiceReducer {
   * @param rtmEvent: the event that came through from the rtm IM
   */
   static rtmImMarked (mailbox, service, rtmEvent) {
-    if (service.slackUnreadIMInfo[rtmEvent.channel]) { //TODO reread:req
+    if (service.slackUnreadIMInfo[rtmEvent.channel]) {
       return service.changeDataWithChangeset({
         slackUnreadIMInfo: {
           [rtmEvent.channel]: {
@@ -156,7 +156,7 @@ class SlackDefaultServiceReducer extends ServiceReducer {
   * @param service: the service to update
   * @param rtmEvent: the event that came through from the rtm
   */
-  static rtmMessage (mailbox, service, rtmEvent) { //TODO reread:req
+  static rtmMessage (mailbox, service, rtmEvent) {
     if (mailbox.hasSelfOverview) {
       if (mailbox.selfOverview.id === rtmEvent.user) {
         return undefined // We created the message, nothing to do

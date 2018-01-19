@@ -155,7 +155,7 @@ class ServiceReducer {
   * @param service: the service to update
   */
   static increaseZoom (mailbox, service) {
-    return service.changeData({ //TODO reread:req
+    return service.changeData({
       zoomFactor: Math.min(1.5, service.zoomFactor + 0.1)
     })
   }
@@ -166,7 +166,7 @@ class ServiceReducer {
   * @param service: the service to update
   */
   static decreaseZoom (mailbox, service) {
-    return service.changeData({ //TODO reread:req
+    return service.changeData({
       zoomFactor: Math.max(0.5, service.zoomFactor - 0.1)
     })
   }
@@ -214,7 +214,7 @@ class ServiceReducer {
   * @param service: the service to update
   */
   static mergeChangesetOnActive (mailbox, service) {
-    if (service.mergeChangesetOnActive) { //TODO reread:req
+    if (service.mergeChangesetOnActive) {
       return service.changeData(service.mergeChangesetOnActive)
     } else {
       return undefined
@@ -232,7 +232,7 @@ class ServiceReducer {
   * @param hasActivity: true if there is activity, false otherwise
   */
   static setAdaptorHasUnreadActivity (mailbox, service, hasActivity) {
-    if (!service.supportsGuestConfig) { return undefined } //TODO reread:req
+    if (!service.supportsGuestConfig) { return undefined }
     return service.changeData({ '::guestConfig:hasUnreadActivity': hasActivity })
   }
 
@@ -243,7 +243,7 @@ class ServiceReducer {
   * @param count: the new count
   */
   static setAdaptorUnreadCount (mailbox, service, count) {
-    if (!service.supportsGuestConfig) { return undefined } //TODO reread:req
+    if (!service.supportsGuestConfig) { return undefined }
     return service.changeData({ '::guestConfig:unreadCount': count })
   }
 
@@ -254,7 +254,7 @@ class ServiceReducer {
   * @param messages: the array of messages
   */
   static setAdaptorTrayMessages (mailbox, service, messages) {
-    if (!service.supportsGuestConfig) { return undefined } //TODO reread:req
+    if (!service.supportsGuestConfig) { return undefined }
     return service.changeData({ '::guestConfig:trayMessages': messages })
   }
 }
