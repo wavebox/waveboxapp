@@ -454,7 +454,8 @@ class CoreMailboxStore extends RemoteStore {
 
     const actions = this.alt.getActions(ACTIONS_NAME)
     this.bindActions({
-      handleLoad: actions.LOAD
+      handleLoad: actions.LOAD,
+      handleChangeIndex: actions.CHANGE_INDEX
     })
   }
 
@@ -548,6 +549,18 @@ class CoreMailboxStore extends RemoteStore {
       acc.set(id, allAvatars[id])
       return acc
     }, new Map())
+  }
+
+  handleChangeIndex ({ id, nextIndex }) {
+    const index = Array.from(this.index)
+    const prevIndex = index.findIndex((i) => i === id)
+    if (prevIndex !== -1) {
+      index.splice(nextIndex, 0, index.splice(prevIndex, 1)[0])
+      this.index = index
+    } else {
+      this.preventDefault()
+    }
+    return this.index
   }
 }
 

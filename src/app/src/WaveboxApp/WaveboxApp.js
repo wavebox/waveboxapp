@@ -7,6 +7,7 @@ import { settingsStore, settingsActions } from 'stores/settings'
 import { platformStore, platformActions } from 'stores/platform'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import { userStore, userActions } from 'stores/user'
+import { takeoutStore, takeoutActions } from 'stores/takeout'
 import extensionStore from 'stores/extensionStore'
 import ipcEvents from 'shared/ipcEvents'
 import BasicHTTPAuthHandler from '../BasicHTTPAuthHandler'
@@ -80,6 +81,8 @@ class WaveboxApp {
     platformActions.load()
     userStore.getState()
     userActions.load()
+    takeoutStore.getState()
+    takeoutActions.load()
 
     // Component behaviour
     this[privCloseBehaviour] = new WaveboxAppCloseBehaviour()
@@ -126,6 +129,7 @@ class WaveboxApp {
     app.on('open-url', this._handleOpenUrl)
     app.on('login', this._handleHTTPBasicLogin)
     evtMain.on(evtMain.WB_QUIT_APP, this.fullyQuitApp)
+    evtMain.on(evtMain.WB_RELAUNCH_APP, this.restartApp)
   }
 
   /* ****************************************************************************/

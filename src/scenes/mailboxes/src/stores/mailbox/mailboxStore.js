@@ -683,5 +683,3 @@ class MailboxStore extends RendererMailboxStore {
 }
 
 export default alt.createStore(MailboxStore, STORE_NAME)
-
-window.alt=alt

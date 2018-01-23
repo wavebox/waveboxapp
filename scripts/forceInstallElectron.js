@@ -12,6 +12,12 @@ try {
 const cmds = [
   {
     cmd: process.platform === 'win32' ? 'npm.cmd' : 'npm',
+    args: ['install'],
+    opts: { stdio: 'inherit', cwd: ROOT_DIR },
+    prelog: `${Colors.inverse('npm install:')} ${ROOT_DIR}`
+  },
+  {
+    cmd: process.platform === 'win32' ? 'npm.cmd' : 'npm',
     args: ['run', 'cache-clean'],
     opts: {
       stdio: 'inherit',

@@ -153,7 +153,6 @@ class UserStore extends CoreUserStore {
         acc[id] = updated[id].cloneData()
         return acc
       }, {})
-      console.log(vanillaUpdated)
       containerPersistence.setJSONItems(vanillaUpdated)
       this.dispatchToUniversalRemote('addContainers', vanillaUpdated)
     }

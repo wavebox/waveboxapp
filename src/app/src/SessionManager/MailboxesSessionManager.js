@@ -184,7 +184,6 @@ class MailboxesSessionManager extends EventEmitter {
   */
   _artificiallyPersistCookies (partition) {
     if (this.persistCookieThrottle[partition] !== undefined) { return }
-
     this.persistCookieThrottle[partition] = setTimeout(() => {
       const ses = session.fromPartition(partition)
       ses.cookies.get({ session: true }, (error, cookies) => {

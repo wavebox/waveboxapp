@@ -73,12 +73,12 @@ class CoreMailboxActions extends RemoteActions {
   * @param nextIndex: the next index to place the mailbox
   */
   changeIndex (...args) {
-    if (process.type === 'browser') {
-      const [id, nextIndex] = args
-      return { id, nextIndex }
-    } else if (process.type === 'renderer') {
-      return this.remoteDispatch('changeIndex', args)
+    if (process.type === 'renderer') {
+      this.remoteDispatch('changeIndex', args)
     }
+
+    const [id, nextIndex] = args
+    return { id, nextIndex }
   }
 
   /**

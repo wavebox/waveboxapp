@@ -129,7 +129,6 @@ class WindowOpeningRules {
         if (!site.url) { return undefined }
         if (!this._doesPatternMatch(site.url, matchTask.currentUri)) { return undefined }
       }
-
       return site.matches.find((match) => {
         return this._doesSiteRuleMatch(match, matchTask)
       })

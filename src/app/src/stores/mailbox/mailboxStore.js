@@ -38,7 +38,6 @@ class MailboxStore extends CoreMailboxStore {
       // Mailbox
       handleCreate: actions.CREATE,
       handleRemove: actions.REMOVE,
-      handleChangeIndex: actions.CHANGE_INDEX,
       handleReduce: actions.REDUCE,
       handleContainersUpdated: actions.CONTAINERS_UPDATED,
 
@@ -206,15 +205,10 @@ class MailboxStore extends CoreMailboxStore {
     }
   }
 
-  handleChangeIndex ({ id, nextIndex }) {
-    const index = Array.from(this.index)
-    const prevIndex = index.findIndex((i) => i === id)
-    if (prevIndex !== -1) {
-      index.splice(nextIndex, 0, index.splice(prevIndex, 1)[0])
-      this.saveIndex(index)
-    } else {
-      this.preventDefault()
-    }
+  handleChangeIndex (payload) {
+    const next = super.handleChangeIndex(payload)
+    this.saveIndex(next)
+    return next
   }
 
   handleReduce ({ id = this.activeMailboxId(), reducer, reducerArgs }) {
@@ -234,7 +228,7 @@ class MailboxStore extends CoreMailboxStore {
   // Containers
   /* **************************************************************************/
 
-  containersUpdated ({ containerIds }) {
+  handleContainersUpdated ({ containerIds }) {
     if (containerIds.length === 0) {
       this.preventDefault()
       return

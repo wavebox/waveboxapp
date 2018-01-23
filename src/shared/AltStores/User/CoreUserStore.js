@@ -100,18 +100,18 @@ class CoreUserStore extends RemoteStore {
     }
 
     /**
-    * @param defaultVal={}: the default value if none is found
+    * @param defaultVal=[]: the default value if none is found
     * @return the window open rules
     */
-    this.wireConfigWindowOpenRules = (defaultVal = {}) => {
+    this.wireConfigWindowOpenRules = (defaultVal = []) => {
       return (this.wireConfig || {}).windowOpen || defaultVal
     }
 
     /**
-    * @param defaultVal={}: the default value if none is found
+    * @param defaultVal=[]: the default value if none is found
     * @return the navigate rules
     */
-    this.wireConfigNavigateRules = (defaultVal = {}) => {
+    this.wireConfigNavigateRules = (defaultVal = []) => {
       return (this.wireConfig || {}).navigate || defaultVal
     }
 

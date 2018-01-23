@@ -4,6 +4,7 @@ const emitter = new EventEmitter()
 const events = {
   // App
   WB_QUIT_APP: 'WB_QUIT_APP',
+  WB_RELAUNCH_APP: 'WB_RELAUNCH_APP',
 
   // Windows
   WB_WINDOW_CREATED: 'WB_WINDOW_CREATED',
