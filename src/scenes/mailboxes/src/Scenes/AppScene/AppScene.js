@@ -3,15 +3,12 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import MailboxTabManager from './Mailbox/MailboxTabManager'
 import Sidelist from './Sidelist'
-import ToolwindowExtensions from './ToolwindowExtensions'
 import Toolbar from './Toolbar'
 import shallowCompare from 'react-addons-shallow-compare'
 import { settingsStore } from 'stores/settings'
-import { extensionStore } from 'stores/extension'
 import { crextensionStore } from 'stores/crextension'
 import { userStore } from 'stores/user'
 import { mailboxStore } from 'stores/mailbox'
-import CoreExtensionManifest from 'shared/Models/Extensions/CoreExtensionManifest'
 
 const SIDEBAR_WIDTH = 70
 const TOOLBAR_HEIGHT = 40
@@ -57,13 +54,6 @@ const styles = {
     left: 0,
     right: 0,
     bottom: 0
-  },
-  toolwindowExtensions: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0
   }
 }
 
@@ -84,7 +74,6 @@ export default class AppScene extends React.Component {
     settingsStore.listen(this.settingsUpdated)
     userStore.listen(this.userUpdated)
     mailboxStore.listen(this.mailboxUpdated)
-    extensionStore.listen(this.extensionUpdated)
     crextensionStore.listen(this.crextensionUpdated)
   }
 
@@ -92,7 +81,6 @@ export default class AppScene extends React.Component {
     settingsStore.unlisten(this.settingsUpdated)
     userStore.unlisten(this.userUpdated)
     mailboxStore.unlisten(this.mailboxUpdated)
-    extensionStore.unlisten(this.extensionUpdated)
     crextensionStore.unlisten(this.crextensionUpdated)
   }
 
@@ -102,7 +90,6 @@ export default class AppScene extends React.Component {
 
   state = (() => {
     const settingsState = settingsStore.getState()
-    const extensionState = extensionStore.getState()
     const userState = userStore.getState()
     const mailboxState = mailboxStore.getState()
     const crextensionState = crextensionStore.getState()
@@ -112,15 +99,7 @@ export default class AppScene extends React.Component {
       appHasTitlebar: settingsState.launched.ui.showTitlebar,
       hasExtensionsInToolbar: Toolbar.hasExtensionsInToolbar(crextensionState, settingsState),
       hasServicesInToolbar: Toolbar.hasServicesInToolbar(mailboxState, userState),
-      hasNavigationInToolbar: Toolbar.hasNavigationInToolbar(mailboxState),
-      toolwindowExtBottom: extensionState
-        .getInstalledWithToolwindows(CoreExtensionManifest.TOOLWINDOW_POSITIONS.BOTTOM)
-        .map((extension) => extension.manifest.toolwindowSize)
-        .reduce((a, b) => a + b, 0),
-      toolwindowExtSidebarO: extensionState
-        .getInstalledWithToolwindows(CoreExtensionManifest.TOOLWINDOW_POSITIONS.SIDEBAR_O)
-        .map((extension) => extension.manifest.toolwindowSize)
-        .reduce((a, b) => a + b, 0)
+      hasNavigationInToolbar: Toolbar.hasNavigationInToolbar(mailboxState)
     }
   })()
 
@@ -141,19 +120,6 @@ export default class AppScene extends React.Component {
     this.setState({
       hasServicesInToolbar: Toolbar.hasServicesInToolbar(mailboxState, undefined),
       hasNavigationInToolbar: Toolbar.hasNavigationInToolbar(mailboxState)
-    })
-  }
-
-  extensionUpdated = (extensionState) => {
-    this.setState({
-      toolwindowExtBottom: extensionState
-        .getInstalledWithToolwindows(CoreExtensionManifest.TOOLWINDOW_POSITIONS.BOTTOM)
-        .map((extension) => extension.manifest.toolwindowSize)
-        .reduce((a, b) => a + b, 0),
-      toolwindowExtSidebarO: extensionState
-        .getInstalledWithToolwindows(CoreExtensionManifest.TOOLWINDOW_POSITIONS.SIDEBAR_O)
-        .map((extension) => extension.manifest.toolwindowSize)
-        .reduce((a, b) => a + b, 0)
     })
   }
 
@@ -178,9 +144,7 @@ export default class AppScene extends React.Component {
       appHasTitlebar,
       hasExtensionsInToolbar,
       hasServicesInToolbar,
-      hasNavigationInToolbar,
-      toolwindowExtBottom,
-      toolwindowExtSidebarO
+      hasNavigationInToolbar
     } = this.state
     const hasToolbar = hasExtensionsInToolbar || hasServicesInToolbar || hasNavigationInToolbar
 
@@ -207,30 +171,7 @@ export default class AppScene extends React.Component {
           ...(hasSidebar ? {} : { left: 0 }),
           ...(hasToolbar ? {} : { top: 0 })
         }}>
-          {toolwindowExtBottom ? (
-            <ToolwindowExtensions
-              position={CoreExtensionManifest.TOOLWINDOW_POSITIONS.BOTTOM}
-              style={{
-                ...styles.toolwindowExtensions,
-                top: 'auto',
-                height: toolwindowExtBottom
-              }} />
-          ) : undefined}
-          {toolwindowExtSidebarO ? (
-            <ToolwindowExtensions
-              position={CoreExtensionManifest.TOOLWINDOW_POSITIONS.SIDEBAR_O}
-              style={{
-                ...styles.toolwindowExtensions,
-                left: 'auto',
-                width: toolwindowExtSidebarO
-              }} />
-          ) : undefined}
-          <MailboxTabManager
-            style={{
-              ...styles.mailboxTabManager,
-              right: toolwindowExtSidebarO,
-              bottom: toolwindowExtBottom
-            }} />
+          <MailboxTabManager style={styles.mailboxTabManager} />
         </div>
         {this.props.children}
       </div>

@@ -8,10 +8,8 @@ import { platformStore, platformActions } from 'stores/platform'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import { userStore, userActions } from 'stores/user'
 import { takeoutStore, takeoutActions } from 'stores/takeout'
-import extensionStore from 'stores/extensionStore'
 import ipcEvents from 'shared/ipcEvents'
 import BasicHTTPAuthHandler from '../BasicHTTPAuthHandler'
-import { HostedExtensionProvider, HostedExtensionSessionManager } from 'Extensions/Hosted'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { SessionManager, MailboxesSessionManager, ExtensionSessionManager } from '../SessionManager'
 import ServicesManager from '../Services'
@@ -22,10 +20,6 @@ import WaveboxAppCloseBehaviour from './WaveboxAppCloseBehaviour'
 import WaveboxDarwinDockBehaviour from './WaveboxDarwinDockBehaviour'
 import WaveboxTrayBehaviour from './WaveboxTrayBehaviour'
 import {evtMain} from 'AppEvents'
-import {
-  appStorage,
-  extensionStorage
-} from 'storage'
 
 const privStarted = Symbol('privStarted')
 const privArgv = Symbol('privArgv')
@@ -69,12 +63,8 @@ class WaveboxApp {
     this[privArgv] = yargs.parse(process.argv)
 
     // Start our stores
-    appStorage.checkAwake() //TODO dep
-    extensionStorage.checkAwake() //TODO dep
-
     mailboxStore.getState()
     mailboxActions.load()
-    extensionStore.checkAwake()
     settingsStore.getState()
     settingsActions.load()
     platformStore.getState()
@@ -110,7 +100,6 @@ class WaveboxApp {
     // Configure extensions
     CRExtensionManager.setup()
     protocol.registerStandardSchemes([].concat(
-      HostedExtensionProvider.supportedProtocols,
       CRExtensionManager.supportedProtocols
     ), { secure: true })
 
@@ -189,11 +178,6 @@ class WaveboxApp {
     ipcMain.on(ipcEvents.WB_SQUIRREL_APPLY_UPDATE, (evt, body) => {
       this[privCloseBehaviour].prepareForQuit()
       AppUpdater.applySquirrelUpdate()
-    })
-
-    ipcMain.on(ipcEvents.WB_PREPARE_EXTENSION_SESSION, (evt, data) => {
-      HostedExtensionSessionManager.startManagingSession(data.partition)
-      evt.returnValue = true
     })
 
     ipcMain.on(ipcEvents.WB_MAILBOXES_WINDOW_JS_LOADED, (evt, data) => {

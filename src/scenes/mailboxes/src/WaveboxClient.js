@@ -7,7 +7,6 @@ import {settingsStore, settingsActions} from 'stores/settings'
 import {composeStore, composeActions} from 'stores/compose'
 import {updaterStore, updaterActions} from 'stores/updater'
 import {userStore, userActions} from 'stores/user'
-import {extensionStore, extensionActions} from 'stores/extension'
 import {crextensionStore, crextensionActions} from 'stores/crextension'
 import {platformStore, platformActions} from 'stores/platform'
 import Debug from 'Debug'
@@ -60,8 +59,6 @@ composeStore.getState()
 composeActions.load()
 updaterStore.getState()
 updaterActions.load()
-extensionStore.getState()
-extensionActions.load()
 crextensionStore.getState()
 crextensionActions.load()
 platformStore.getState()

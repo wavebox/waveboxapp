@@ -3,7 +3,7 @@ import { WB_TAKEOUT_IMPORT, WB_TAKEOUT_EXPORT } from 'shared/ipcEvents'
 import {ipcMain} from 'electron'
 
 class TakeoutActions {
-  load () { }
+  load () { return {} }
 
   /**
   * Exports the data to disk with a file picker dialog etc
@@ -17,6 +17,6 @@ class TakeoutActions {
 }
 
 const actions = alt.createActions(TakeoutActions)
-ipcMain.on(WB_TAKEOUT_IMPORT => actions.importDataFromDisk())
-ipcMain.on(WB_TAKEOUT_EXPORT => actions.exportDataToDisk())
+ipcMain.on(WB_TAKEOUT_IMPORT, () => actions.importDataFromDisk())
+ipcMain.on(WB_TAKEOUT_EXPORT, () => actions.exportDataToDisk())
 export default actions
