@@ -1,2 +1,2 @@
-import StorageBucketAppMutable from './StorageBucketAppMutable'
-export default new StorageBucketAppMutable('user')
+import StorageBucket from './StorageBucket'
+export default new StorageBucket('user')

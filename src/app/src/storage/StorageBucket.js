@@ -1,5 +1,3 @@
-import { EventEmitter } from 'events'
-import { ipcMain } from 'electron'
 import mkdirp from 'mkdirp'
 import path from 'path'
 import fs from 'fs-extra'
@@ -14,34 +12,32 @@ import RuntimePaths from 'Runtime/RuntimePaths'
 // Setup
 mkdirp.sync(RuntimePaths.DB_DIR_PATH)
 
-class StorageBucket extends EventEmitter {
+const privPath = Symbol('privPath')
+const privWriteHold = Symbol('privWriteHold')
+const privWriteLock = Symbol('privWriteLock')
+const privData = Symbol('privData')
+const privLastBackup = Symbol('privLastBackup')
+
+class StorageBucket {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
   constructor (bucketName) {
-    super()
-    this.__path__ = path.join(RuntimePaths.DB_DIR_PATH, bucketName + '_db.json')
-    this.__writeHold__ = null
-    this.__writeLock__ = false
-    this.__data__ = undefined
-    this.__lastBackup__ = 0
-    this.__ipcReplyChannel__ = `storageBucket:${bucketName}:reply`
+    this[privPath] = path.join(RuntimePaths.DB_DIR_PATH, bucketName + '_db.json')
+    this[privWriteHold] = null
+    this[privWriteLock] = false
+    this[privData] = undefined
+    this[privLastBackup] = 0
 
     this._loadFromDiskSync()
-
-    //TODO remove my ipc's and look towards perforamcne
-    ipcMain.on(`storageBucket:${bucketName}:setItem`, this._handleIPCSetItem)
-    ipcMain.on(`storageBucket:${bucketName}:setItems`, this._handleIPCSetItems)
-    ipcMain.on(`storageBucket:${bucketName}:removeItem`, this._handleIPCRemoveItem)
-    ipcMain.on(`storageBucket:${bucketName}:getItem`, this._handleIPCGetItem)
-    ipcMain.on(`storageBucket:${bucketName}:allKeys`, this._handleIPCAllKeys)
-    ipcMain.on(`storageBucket:${bucketName}:allItems`, this._handleIPCAllItems)
-    ipcMain.on(`storageBucket:${bucketName}:getStats`, this._handleIPCGetStats)
-    ipcMain.on(`storageBucket:${bucketName}:measurePerformance`, this._handleIPCMeasurePerformance)
   }
 
-  checkAwake () { return true }
+  /* ****************************************************************************/
+  // Properties
+  /* ****************************************************************************/
+
+  get exportName () { return path.basename(this[privPath]) }
 
   /* ****************************************************************************/
   // Persistence
@@ -52,21 +48,21 @@ class StorageBucket extends EventEmitter {
   */
   _loadFromDiskSync () {
     // Look for import data
-    const importPath = `${this.__path__}.import`
+    const importPath = `${this[privPath]}.import`
     try {
-      fs.moveSync(importPath, this.__path__, { overwrite: true })
+      fs.moveSync(importPath, this[privPath], { overwrite: true })
     } catch (ex) { }
 
     // Load the data
     let data = '{}'
     try {
-      data = fs.readFileSync(this.__path__, 'utf8')
+      data = fs.readFileSync(this[privPath], 'utf8')
     } catch (ex) { }
 
     try {
-      this.__data__ = JSON.parse(data)
+      this[privData] = JSON.parse(data)
     } catch (ex) {
-      this.__data__ = {}
+      this[privData] = {}
     }
   }
 
@@ -74,41 +70,41 @@ class StorageBucket extends EventEmitter {
   * Writes the current data to disk
   */
   _writeToDisk () {
-    clearTimeout(this.__writeHold__)
-    this.__writeHold__ = setTimeout(() => {
-      if (this.__writeLock__) {
+    clearTimeout(this[privWriteHold])
+    this[privWriteHold] = setTimeout(() => {
+      if (this[privWriteLock]) {
         // Requeue in DB_WRITE_DELAY_MS
         this._writeToDisk()
       } else {
-        this.__writeLock__ = true
+        this[privWriteLock] = true
 
-        const flushPath = `${this.__path__}.${uuid.v4().replace(/-/g, '')}`
-        const data = JSON.stringify(this.__data__)
+        const flushPath = `${this[privPath]}.${uuid.v4().replace(/-/g, '')}`
+        const data = JSON.stringify(this[privData])
 
         Promise.resolve()
           .then(() => {
             const now = new Date().getTime()
-            if (now - this.__lastBackup__ < DB_BACKUP_INTERVAL) {
+            if (now - this[privLastBackup] < DB_BACKUP_INTERVAL) {
               return Promise.resolve()
             }
 
             // Run a backup first
-            const backupPath = `${this.__path__}.${now}.backup`
+            const backupPath = `${this[privPath]}.${now}.backup`
             return Promise.resolve()
-              .then(() => fs.copy(this.__path__, backupPath))
+              .then(() => fs.copy(this[privPath], backupPath))
               .then(() => fs.readdir(RuntimePaths.DB_DIR_PATH))
               .then((files) => {
                 const redundantBackups = files
-                  .filter((f) => f.startsWith(path.basename(this.__path__)) && f.endsWith('.backup'))
-                  .map((f) => parseInt(f.replace(`${path.basename(this.__path__)}.`, '').replace('.backup', '')))
+                  .filter((f) => f.startsWith(path.basename(this[privPath])) && f.endsWith('.backup'))
+                  .map((f) => parseInt(f.replace(`${path.basename(this[privPath])}.`, '').replace('.backup', '')))
                   .sort((a, b) => b - a)
                   .slice(DB_MAX_BACKUPS)
-                  .map((ts) => `${this.__path__}.${ts}.backup`)
+                  .map((ts) => `${this[privPath]}.${ts}.backup`)
                 return Promise.all(redundantBackups.map((path) => fs.remove(path)))
               })
-              .catch(() => Promise.resolve()) // Will also end up here when this.__path__ does not exist
+              .catch(() => Promise.resolve()) // Will also end up here when this[privPath] does not exist
               .then(() => {
-                this.__lastBackup__ = now
+                this[privLastBackup] = now
                 return Promise.resolve()
               })
           })
@@ -121,11 +117,11 @@ class StorageBucket extends EventEmitter {
           })
           .then(() => fs.readFile(flushPath, 'utf8'))
           .then((readData) => readData === data ? Promise.resolve() : Promise.reject(new Error('Integrity failure')))
-          .then(() => fs.rename(flushPath, this.__path__))
+          .then(() => fs.rename(flushPath, this[privPath]))
           .then(() => {
-            this.__writeLock__ = false
+            this[privWriteLock] = false
           }, (e) => {
-            this.__writeLock__ = false
+            this[privWriteLock] = false
           })
       }
     }, DB_WRITE_DELAY_MS)
@@ -141,7 +137,7 @@ class StorageBucket extends EventEmitter {
   * @return the string item or d
   */
   getItem (k, d) {
-    const json = this.__data__[k]
+    const json = this[privData][k]
     return json || d
   }
 
@@ -163,7 +159,7 @@ class StorageBucket extends EventEmitter {
   * @return a list of all keys
   */
   allKeys () {
-    return Object.keys(this.__data__)
+    return Object.keys(this[privData])
   }
 
   /**
@@ -190,7 +186,7 @@ class StorageBucket extends EventEmitter {
   * @return the size of the file
   */
   getFileSize () {
-    const stats = fs.statSync(this.__path__, 'utf8')
+    const stats = fs.statSync(this[privPath], 'utf8')
     return stats.size
   }
 
@@ -214,7 +210,7 @@ class StorageBucket extends EventEmitter {
     return {
       filesize: this.getFileSize(),
       keyLengths: this.getKeyLengths(),
-      dataSize: JSON.stringify(this.__data__).length
+      dataSize: JSON.stringify(this[privData]).length
     }
   }
 
@@ -227,7 +223,7 @@ class StorageBucket extends EventEmitter {
       const results = []
       for (let i = 0; i < runs; i++) {
         const start = new Date().getTime()
-        JSON.stringify(this.__data__)
+        JSON.stringify(this[privData])
         const finish = new Date().getTime()
         results.push(finish - start)
       }
@@ -237,8 +233,8 @@ class StorageBucket extends EventEmitter {
     const flush = (() => {
       const results = []
       for (let i = 0; i < runs; i++) {
-        const data = JSON.stringify(this.__data__)
-        const testPath = `${this.__path__}.measure`
+        const data = JSON.stringify(this[privData])
+        const testPath = `${this[privPath]}.measure`
         const start = new Date().getTime()
         fs.writeFileSync(testPath, data)
         const finish = new Date().getTime()
@@ -250,9 +246,9 @@ class StorageBucket extends EventEmitter {
     const both = (() => {
       const results = []
       for (let i = 0; i < runs; i++) {
-        const testPath = `${this.__path__}.measure`
+        const testPath = `${this[privPath]}.measure`
         const start = new Date().getTime()
-        fs.writeFileSync(testPath, JSON.stringify(this.__data__))
+        fs.writeFileSync(testPath, JSON.stringify(this[privData]))
         const finish = new Date().getTime()
         results.push(finish - start)
       }
@@ -275,140 +271,71 @@ class StorageBucket extends EventEmitter {
   * @param v: the value to set
   * @return v
   */
-  _setItem (k, v) {
-    this.__data__[k] = '' + v
+  setItem (k, v) {
+    this[privData][k] = '' + v
     this._writeToDisk()
-    this.emit('changed', { type: 'setItem', key: k })
-    this.emit('changed:' + k, { })
     return v
   }
 
   /**
   * @param items: the items to set
   */
-  _setItems (items) {
+  setItems (items) {
     Object.keys(items).forEach((k) => {
-      this.__data__[k] = `${items[k]}`
+      this[privData][k] = `${items[k]}`
     })
     this._writeToDisk()
-    Object.keys(items).forEach((k) => {
-      this.emit('changed', { type: 'setItem', key: k })
-      this.emit('changed:' + k, { })
-    })
+  }
+
+  /**
+  * @param k: the key to set
+  * @param v: the value to set
+  * @return v
+  */
+  setJSONItem (k, v) {
+    return this.setItem(k, JSON.stringify(v))
+  }
+
+  /**
+  * @param items: a map of key value pairs to set
+  */
+  setJSONItems (items) {
+    const jsonItems = Object.keys(items).reduce((acc, k) => {
+      acc[k] = JSON.stringify(items[k])
+      return acc
+    }, {})
+    return this.setItems(jsonItems)
   }
 
   /**
   * @param k: the key to remove
   */
-  _removeItem (k) {
-    delete this.__data__[k]
+  removeItem (k) {
+    delete this[privData][k]
     this._writeToDisk()
-    this.emit('changed', { type: 'removeItem', key: k })
-    this.emit('changed:' + k, { })
   }
 
   /* ****************************************************************************/
-  // IPC Access
+  // Import/Export
   /* ****************************************************************************/
 
   /**
-  * Responds to an ipc message
-  * @param evt: the original event that fired
-  * @param response: teh response to send
-  * @param sendSync: set to true to respond synchronously
+  * Exports the data in this store
+  * @return { name, data } to export
   */
-  _sendIPCResponse (evt, response, sendSync = false) {
-    if (sendSync) {
-      evt.returnValue = response
-    } else {
-      evt.sender.send(this.__ipcReplyChannel__, response)
+  getExportDataSync () {
+    return {
+      name: this.exportName,
+      data: JSON.parse(JSON.stringify(this[privData]))
     }
   }
 
   /**
-  * Sets an item over IPC
-  * @param evt: the fired event
-  * @param body: request body
+  * Writes the import data to disk that will be loaded next run
+  * @param data: the data to write
   */
-  _handleIPCSetItem = (evt, body) => {
-    this._setItem(body.key, body.value)
-    this._sendIPCResponse(evt, { id: body.id, response: null }, body.sync)
-  }
-
-  /**
-  * Sets items over IPC
-  * @param evt: the fired event
-  * @param body: the request body
-  */
-  _handleIPCSetItems = (evt, body) => {
-    this._setItems(body.items)
-    this._sendIPCResponse(evt, { id: body.id, response: null }, body.sync)
-  }
-
-  /**
-  * Removes an item over IPC
-  * @param evt: the fired event
-  * @param body: request body
-  */
-  _handleIPCRemoveItem = (evt, body) => {
-    this._removeItem(body.key)
-    this._sendIPCResponse(evt, { id: body.id, response: null }, body.sync)
-  }
-
-  /**
-  * Gets an item over IPC
-  * @param evt: the fired event
-  * @param body: request body
-  */
-  _handleIPCGetItem = (evt, body) => {
-    this._sendIPCResponse(evt, {
-      id: body.id,
-      response: this.getItem(body.key)
-    }, body.sync)
-  }
-
-  /**
-  * Gets the keys over IPC
-  * @param body: request body
-  */
-  _handleIPCAllKeys = (evt, body) => {
-    this._sendIPCResponse(evt, {
-      id: body.id,
-      response: this.allKeys()
-    }, body.sync)
-  }
-
-  /**
-  * Gets all the items over IPC
-  * @param body: request body
-  */
-  _handleIPCAllItems = (evt, body) => {
-    this._sendIPCResponse(evt, {
-      id: body.id,
-      response: this.allItems()
-    }, body.sync)
-  }
-
-  /**
-  * Gets stats for the database
-  * @param body: request body
-  */
-  _handleIPCGetStats = (evt, body) => {
-    this._sendIPCResponse(evt, {
-      id: body.id,
-      response: this.getStats()
-    }, body.sync)
-  }
-
-  /**
-  * Measures the buckets performance
-  * @param body: request body
-  */
-  _handleIPCMeasurePerformance = (evt, body) => {
-    this._sendIPCResponse(evt, {
-      id: body.id,
-      response: this.measurePerformance(body.runs)
-    }, body.sync)
+  writeImportDataSync (data) {
+    fs.writeFileSync(`${this[privPath]}.import`, JSON.stringify(data))
   }
 }
 

@@ -19,22 +19,6 @@ class SettingsStore extends RendererSettingsStore {
     this.tourStep = TOUR_STEPS.NONE
 
     /* ****************************************/
-    // Export
-    /* ****************************************/
-
-    /**
-    * Exports the data synchronously
-    * @return the raw data
-    */
-    this.exportDataSync = () => {
-      return Object.keys(SettingsIdent.SEGMENTS).reduce((acc, k) => {
-        const segment = SettingsIdent.SEGMENTS[k]
-        acc[segment] = this[segment].cloneData()
-        return acc
-      }, {})
-    }
-
-    /* ****************************************/
     // News
     /* ****************************************/
 

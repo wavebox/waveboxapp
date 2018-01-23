@@ -1,2 +1,2 @@
-import StorageBucketAppMutable from './StorageBucketAppMutable'
-export default new StorageBucketAppMutable('settings')
+import StorageBucket from './StorageBucket'
+export default new StorageBucket('settings')

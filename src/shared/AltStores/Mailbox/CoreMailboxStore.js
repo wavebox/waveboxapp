@@ -4,7 +4,6 @@ import {
   CoreMailbox,
   MailboxFactory
 } from '../../Models/Accounts'
-import { PERSISTENCE_INDEX_KEY } from '../../constants'
 import {
   ACTIONS_NAME,
   DISPATCH_NAME,
@@ -411,41 +410,6 @@ class CoreMailboxStore extends RemoteStore {
       const mailbox = this.getMailbox(id)
       if (!mailbox) { return [] }
       return mailbox.getTrayMessages(!this.getUser().hasServices)
-    }
-
-    /* ****************************************/
-    // Takeout
-    /* ****************************************/
-
-    /**
-    * Exports the data synchronously
-    * @return the raw data
-    */
-    this.exportMailboxDataSync = () => { //?
-      const allData = mailboxPersistence.allItemsSync()
-      return Object.keys(allData)
-        .reduce((acc, id) => {
-          if (id === PERSISTENCE_INDEX_KEY) {
-            acc[id] = allData[id]
-          } else {
-            const data = JSON.parse(allData[id])
-            const MailboxClass = MailboxFactory.getClass(data.type)
-            if (MailboxClass) {
-              acc[id] = JSON.stringify(MailboxClass.prepareForExport(id, data))
-            } else {
-              acc[id] = allData[id]
-            }
-          }
-          return acc
-        }, {})
-    }
-
-    /**
-    * Exports the data synchronously
-    * @return the raw data
-    */
-    this.exportAvatarDataSync = () => { //?
-      return avatarPersistence.allItemsSync()
     }
 
     /* ****************************************/

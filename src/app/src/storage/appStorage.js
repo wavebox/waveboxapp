@@ -1,2 +1,2 @@
-import StorageBucketAppMutable from './StorageBucketAppMutable'
-export default new StorageBucketAppMutable('app') //TODO depricate? What do i do?
+import StorageBucket from './StorageBucket'
+export default new StorageBucket('app')
