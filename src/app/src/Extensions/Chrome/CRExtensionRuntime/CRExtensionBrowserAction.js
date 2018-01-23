@@ -49,7 +49,7 @@ class CRExtensionBrowserAction {
     CRDispatchManager.registerHandler(`${CRX_BROWSER_ACTION_FETCH_BADGE_BACKGROUND_COLOR_}${this.extension.id}`, this.handleFetchBadgeBackgroundColor)
     ipcMain.on(`${CRX_BROWSER_ACTION_ENABLE_}${this.extension.id}`, this.handleEnable)
     ipcMain.on(`${CRX_BROWSER_ACTION_DISABLE_}${this.extension.id}`, this.handleDisable)
-    ipcMain.on(`${WBECRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, this.handleClick)
+    ipcMain.on(`${WBECRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, this.handleClick) //TODO kill?
 
     // Populate from the extension
     if (extension.manifest.hasBrowserAction) {
@@ -284,6 +284,13 @@ class CRExtensionBrowserAction {
         targetWebcontents.send(`${CRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, tabInfo)
       })
     }
+  }
+
+  /**
+  * @param tabId: the id of the tab
+  */
+  browserActionClicked (tabId) {
+    this.handleClick({}, tabId)
   }
 }
 

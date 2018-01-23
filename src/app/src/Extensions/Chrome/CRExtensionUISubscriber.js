@@ -1,6 +1,6 @@
 import { webContents } from 'electron'
 
-class CRExtensionUISubscriber {
+class CRExtensionUISubscriber { //TODO depricate
   /* ****************************************************************************/
   // Extension Management
   /* ****************************************************************************/

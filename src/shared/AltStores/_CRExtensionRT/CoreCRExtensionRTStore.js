@@ -1,3 +1,9 @@
+import RemoteStore from '../RemoteStore'
+import {
+  ACTIONS_NAME,
+  DISPATCH_NAME,
+  STORE_NAME
+} from './AltCRExtensionRTIdentifiers'
 const {
   CRExtensionManifest
 } = require('../../Models/CRExtension')
@@ -5,32 +11,14 @@ const {
   CRExtensionRTBrowserAction,
   CRExtensionRTContextMenu
 } = require('../../Models/CRExtensionRT')
-const {
-  WBECRX_GET_EXTENSION_RUNTIME_DATA,
-  WBECRX_LAUNCH_OPTIONS,
-  WBECRX_BROWSER_ACTION_CLICKED_,
-  WBECRX_GET_EXTENSION_INSTALL_META,
-  WBECRX_INSPECT_BACKGROUND,
-  WBECRX_INSTALL_EXTENSION,
-  WBECRX_UNINSTALL_EXTENSION,
-  WBECRX_CLEAR_ALL_BROWSER_SESSIONS
-} = require('../../ipcEvents') //TODO depricate
 
-const privIpcRenderer = Symbol('privIpcRenderer')
-const privActions = Symbol('privActions')
-
-class CRExtensionRTStore {
+class CoreCRExtensionRTStore extends RemoteStore {
   /* **************************************************************************/
-  // Lifecycle
+  // Lifecyle
   /* **************************************************************************/
 
-  /**
-  * @param ipcRenderer: the ipc renderer instance
-  * @param actions: the setup actions
-  */
-  constructor (ipcRenderer, actions) {
-    this[privIpcRenderer] = ipcRenderer
-    this[privActions] = actions
+  constructor () {
+    super(DISPATCH_NAME, ACTIONS_NAME, STORE_NAME)
 
     this.manifests = new Map()
     this.installMeta = new Map()
@@ -202,24 +190,15 @@ class CRExtensionRTStore {
     }
 
     /* ****************************************/
-    // Listeners
+    // Actions
     /* ****************************************/
-    this.bindListeners({
+
+    const actions = this.alt.getActions(ACTIONS_NAME)
+    this.bindActions({
       handleLoad: actions.LOAD,
-
       handleInstallMetaChanged: actions.INSTALL_META_CHANGED,
-      handleUninstallExtension: actions.UNINSTALL_EXTENSION,
-      handleInstallExtension: actions.INSTALL_EXTENSION,
-
       handleBrowserActionChanged: actions.BROWSER_ACTION_CHANGED,
-      handleBrowserActionClicked: actions.BROWSER_ACTION_CLICKED,
-
-      handleContextMenusChanged: actions.CONTEXT_MENUS_CHANGED,
-
-      handleOpenExtensionOptions: actions.OPEN_EXTENSION_OPTIONS,
-      handleInspectBackgroundPage: actions.INSPECT_BACKGROUND_PAGE,
-
-      handleClearAllBrowserSessions: actions.CLEAR_ALL_BROWSER_SESSIONS
+      handleContextMenusChanged: actions.CONTEXT_MENUS_CHANGED
     })
   }
 
@@ -227,8 +206,7 @@ class CRExtensionRTStore {
   // Loading
   /* **************************************************************************/
 
-  handleLoad () {
-    const runtimeData = this[privIpcRenderer].sendSync(WBECRX_GET_EXTENSION_RUNTIME_DATA)
+  handleLoad ({runtimeData, installMeta}) {
     Object.keys(runtimeData)
       .forEach((extensionId) => {
         const {
@@ -243,17 +221,16 @@ class CRExtensionRTStore {
 
         // Browser actions
         if (browserAction.global) {
-          this._saveBrowserAction(extensionId, undefined, browserAction.global)
+          this.saveBrowserAction(extensionId, undefined, browserAction.global)
         }
         Object.keys(browserAction.tabs).forEach((tabId) => {
-          this._saveBrowserAction(extensionId, tabId, browserAction.tabs[tabId])
+          this.saveBrowserAction(extensionId, tabId, browserAction.tabs[tabId])
         })
 
         // Context menus
-        this._saveContextMenus(extensionId, contextMenus)
+        this.saveContextMenus(extensionId, contextMenus)
       })
 
-    const installMeta = this[privIpcRenderer].sendSync(WBECRX_GET_EXTENSION_INSTALL_META)
     Object.keys(installMeta)
       .forEach((extensionId) => {
         this.installMeta.set(extensionId, installMeta[extensionId])
@@ -261,28 +238,22 @@ class CRExtensionRTStore {
   }
 
   /* **************************************************************************/
-  // Install metadata
+  // Install metadata & lifecycle
   /* **************************************************************************/
 
-  handleInstallMetaChanged ({ metadata }) {
+  handleInstallMetaChanged ({metadata}) {
     Object.keys(metadata)
       .forEach((extensionId) => {
         this.installMeta.set(extensionId, metadata[extensionId])
       })
-  }
 
-  handleUninstallExtension ({ extensionId }) {
-    this.preventDefault()
-    this[privIpcRenderer].send(WBECRX_UNINSTALL_EXTENSION, extensionId)
-  }
-
-  handleInstallExtension ({ extensionId, installInfo }) {
-    this.preventDefault()
-    this[privIpcRenderer].send(WBECRX_INSTALL_EXTENSION, extensionId, installInfo)
+    if (process.type === 'browser') {
+      this.dispatchToRemote('installMetaChanged', [metadata])
+    }
   }
 
   /* **************************************************************************/
-  // Browser actions
+  // Browser Action
   /* **************************************************************************/
 
   /**
@@ -292,7 +263,7 @@ class CRExtensionRTStore {
   * @param data: the data to set in the action
   * @return the saved action
   */
-  _saveBrowserAction (extensionId, tabId, data) {
+  saveBrowserAction (extensionId, tabId, data) {
     const browserAction = new CRExtensionRTBrowserAction(extensionId, tabId, data)
     if (!this.browserActions.has(extensionId)) {
       this.browserActions.set(extensionId, new Map())
@@ -300,12 +271,15 @@ class CRExtensionRTStore {
     this.browserActions.get(extensionId).set(tabId, browserAction)
   }
 
-  handleBrowserActionChanged ({ extensionId, tabId, browserAction }) {
-    this._saveBrowserAction(extensionId, tabId, browserAction)
+  handleBrowserActionChanged ({extensionId, tabId, browserAction}) {
+    this.saveBrowserAction(extensionId, tabId, browserAction)
+    if (process.type === 'browser') {
+      this.dispatchToRemote('browserActionChanged', [extensionId, tabId, browserAction])
+    }
   }
 
   /* **************************************************************************/
-  // Context menu
+  // Context menus
   /* **************************************************************************/
 
   /**
@@ -314,44 +288,19 @@ class CRExtensionRTStore {
   * @param data: the menus for that extension as an array
   * @return the saved menus
   */
-  _saveContextMenus (extensionId, data) {
+  saveContextMenus (extensionId, data) {
     const contextMenuModels = data
       .map(([id, d]) => new CRExtensionRTContextMenu(extensionId, id, d))
     this.contextMenus.set(extensionId, contextMenuModels)
     return contextMenuModels
   }
 
-  handleContextMenusChanged ({ extensionId, menus }) {
-    this._saveContextMenus(extensionId, menus)
-  }
-
-  handleBrowserActionClicked ({ extensionId, tabId }) {
-    this.preventDefault()
-    this[privIpcRenderer].send(`${WBECRX_BROWSER_ACTION_CLICKED_}${extensionId}`, tabId)
-  }
-
-  /* **************************************************************************/
-  // Settings & Inspect
-  /* **************************************************************************/
-
-  handleOpenExtensionOptions ({ extensionId }) {
-    this.preventDefault()
-    this[privIpcRenderer].send(WBECRX_LAUNCH_OPTIONS, extensionId)
-  }
-
-  handleInspectBackgroundPage ({ extensionId }) {
-    this.preventDefault()
-    this[privIpcRenderer].send(WBECRX_INSPECT_BACKGROUND, extensionId)
-  }
-
-  /* **************************************************************************/
-  // Data management
-  /* **************************************************************************/
-
-  handleClearAllBrowserSessions () {
-    this.preventDefault()
-    this[privIpcRenderer].send(WBECRX_CLEAR_ALL_BROWSER_SESSIONS)
+  handleContextMenusChanged ({extensionId, menus}) {
+    this.saveContextMenus(extensionId, menus)
+    if (process.type === 'browser') {
+      this.dispatchToRemote('contextMenusChanged', [extensionId, menus])
+    }
   }
 }
 
-module.exports = CRExtensionRTStore
+export default CoreCRExtensionRTStore

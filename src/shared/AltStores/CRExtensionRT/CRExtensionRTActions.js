@@ -2,7 +2,7 @@ const {
   WBECRX_BROWSER_ACTION_CHANGED,
   WBECRX_CONTEXT_MENUS_CHANGED,
   WBECRX_EXTENSION_INSTALL_META_CHANGED
-} = require('../../ipcEvents')
+} = require('../../ipcEvents') //TODO depricate
 
 class CRExtensionRTActions {
   /* **************************************************************************/

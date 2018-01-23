@@ -37,13 +37,13 @@ class CRExtensionManager {
       evt.returnValue = this._generateInstallMetadata()
     })
     ipcMain.on(WBECRX_UNINSTALL_EXTENSION, (evt, extensionId) => {
-      this.uninstallExtension(extensionId)
+      this.uninstallExtension(extensionId) //TODO kill?
     })
     ipcMain.on(WBECRX_INSTALL_EXTENSION, (evt, extensionId, installInfo) => {
-      this.installExtension(extensionId, installInfo)
+      this.installExtension(extensionId, installInfo) //TODO kill?
     })
     evtMain.on(evtMain.WB_UPDATE_INSTALLED_EXTENSIONS, () => {
-      this.updateExtensions()
+      this.updateExtensions() //TODO kill?
     })
   }
 
