@@ -145,7 +145,7 @@ class UserStore extends RendererUserStore {
   handleAddContainers (payload) {
     const updated = super.handleAddContainers(payload)
     if (Object.keys(updated).length) {
-      mailboxActions.containersUpdated.defer(updated)
+      mailboxActions.containersUpdated.defer(Object.keys(updated))
     }
     return updated
   }

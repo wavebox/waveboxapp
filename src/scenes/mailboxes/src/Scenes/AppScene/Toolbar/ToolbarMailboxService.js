@@ -140,7 +140,7 @@ export default class ToolbarMailboxService extends React.Component {
   userChanged = (userState) => {
     const mailboxState = mailboxStore.getState()
     this.setState({
-      isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId, userState.user)
+      isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId)
     })
   }
 
@@ -152,13 +152,12 @@ export default class ToolbarMailboxService extends React.Component {
   */
   generateStateFromMailbox (mailboxState, mailboxId, serviceType) {
     const mailbox = mailboxState.getMailbox(mailboxId)
-    const userState = userStore.getState()
     return {
       mailbox: mailboxState.getMailbox(mailboxId),
       service: mailbox ? mailbox.serviceForType(serviceType) : null,
       isSleeping: mailboxState.isSleeping(mailboxId, serviceType),
       isActive: mailboxState.isActive(mailboxId, serviceType),
-      isRestricted: mailboxState.isMailboxRestricted(mailboxId, userState.user)
+      isRestricted: mailboxState.isMailboxRestricted(mailboxId)
     }
   }
 

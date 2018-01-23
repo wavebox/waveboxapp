@@ -1,4 +1,3 @@
-import googleActions from '../google/googleActions'//TODO nope
 import ServiceReducer from './ServiceReducer'
 
 class GoogleDefaultServiceReducer extends ServiceReducer {
@@ -39,7 +38,6 @@ class GoogleDefaultServiceReducer extends ServiceReducer {
   */
   static setUnreadMode (mailbox, service, unreadMode) {
     if (service.unreadMode !== unreadMode) {
-      googleActions.syncMailboxMessages.defer(mailbox.id, true)
       return service.changeData({ unreadMode: unreadMode })
     }
   }
@@ -52,7 +50,6 @@ class GoogleDefaultServiceReducer extends ServiceReducer {
   */
   static setCustomUnreadQuery (mailbox, service, query) {
     if (query !== service.customUnreadQuery) {
-      googleActions.syncMailboxMessages.defer(mailbox.id, true)
       return service.changeData({ customUnreadQuery: query })
     }
   }
@@ -65,7 +62,6 @@ class GoogleDefaultServiceReducer extends ServiceReducer {
   */
   static setCustomUnreadLabelWatchString (mailbox, service, str) {
     if (str !== service.customUnreadLabelWatchString) {
-      googleActions.syncMailboxMessages.defer(mailbox.id, true)
       return service.changeData({ customUnreadLabelWatchString: str })
     }
   }
@@ -78,7 +74,6 @@ class GoogleDefaultServiceReducer extends ServiceReducer {
   */
   static setCustomUnreadCountFromLabel (mailbox, service, takeFromLabel) {
     if (takeFromLabel !== service.customUnreadCountFromLabel) {
-      googleActions.syncMailboxMessages.defer(mailbox.id, true)
       return service.changeData({ customUnreadCountFromLabel: takeFromLabel })
     }
   }
@@ -91,7 +86,6 @@ class GoogleDefaultServiceReducer extends ServiceReducer {
   */
   static setCustomUnreadCountLabel (mailbox, service, label) {
     if (label !== service.customUnreadCountLabel) {
-      googleActions.syncMailboxMessages.defer(mailbox.id, true)
       return service.changeData({ customUnreadCountLabel: label })
     }
   }
@@ -104,7 +98,6 @@ class GoogleDefaultServiceReducer extends ServiceReducer {
   */
   static setCustomUnreadCountLabelField (mailbox, service, field) {
     if (field !== service.customUnreadCountLabelField) {
-      googleActions.syncMailboxMessages.defer(mailbox.id, true)
       return service.changeData({ customUnreadCountLabelField: field })
     }
   }

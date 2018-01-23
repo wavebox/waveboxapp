@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { Avatar } from 'material-ui'
 import { mailboxStore } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
+import Resolver from 'Runtime/Resolver'
 
 export default class MailboxAvatar extends React.Component {
   /* **************************************************************************/
@@ -52,7 +53,9 @@ export default class MailboxAvatar extends React.Component {
   */
   generateInitialState (props) {
     const { mailbox } = props
-    return { url: mailboxStore.getState().getResolvedAvatar(mailbox.id) }
+    return {
+      url: mailboxStore.getState().getResolvedAvatar(mailbox.id, (i) => Resolver.image(i))
+    }
   }
 
   mailboxUpdated = (mailboxState) => {

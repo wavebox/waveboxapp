@@ -110,14 +110,13 @@ export default class SidelistItemMailboxService extends React.Component {
   generateState (props = this.props) {
     const { mailboxId, serviceType } = props
     const mailboxState = mailboxStore.getState()
-    const userState = userStore.getState()
     const mailbox = mailboxState.getMailbox(mailboxId)
     return {
       mailbox: mailbox,
       service: mailbox ? mailbox.serviceForType(serviceType) : null,
       isActive: mailboxState.isActive(mailboxId, serviceType),
       isSleeping: mailboxState.isSleeping(mailboxId, serviceType),
-      isRestricted: mailboxState.isMailboxRestricted(mailboxId, userState.user)
+      isRestricted: mailboxState.isMailboxRestricted(mailboxId)
     }
   }
 
@@ -142,7 +141,7 @@ export default class SidelistItemMailboxService extends React.Component {
   userChanged = (userState) => {
     const mailboxState = mailboxStore.getState()
     this.setState({
-      isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId, userState.user)
+      isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId)
     })
   }
 

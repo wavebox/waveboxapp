@@ -135,7 +135,7 @@ export default class SidelistItemMalboxAvatar extends React.Component {
       isDefaultServiceActive: mailboxState.isActive(mailboxId, CoreMailbox.SERVICE_TYPES.DEFAULT),
       isDefaultServiceSleeping: mailboxState.isSleeping(mailboxId, CoreMailbox.SERVICE_TYPES.DEFAULT),
       isAllServicesSleeping: mailboxState.isAllServicesSleeping(mailboxId),
-      isRestricted: mailboxState.isMailboxRestricted(mailboxId, userState.user),
+      isRestricted: mailboxState.isMailboxRestricted(mailboxId),
       userHasServices: userState.user.hasServices
     }
   }
@@ -164,7 +164,7 @@ export default class SidelistItemMalboxAvatar extends React.Component {
   userChanged = (userState) => {
     const mailboxState = mailboxStore.getState()
     this.setState({
-      isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId, userState.user),
+      isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId),
       userHasServices: userState.user.hasServices
     })
   }

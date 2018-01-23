@@ -5,7 +5,7 @@ import WaveboxAppPrimaryMenu from './WaveboxAppPrimaryMenu'
 import WaveboxAppGlobalShortcuts from './WaveboxAppGlobalShortcuts'
 import { settingsStore, settingsActions } from 'stores/settings'
 import { platformStore, platformActions } from 'stores/platform'
-import mailboxStore from 'stores/mailboxStore'
+import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import { userStore, userActions } from 'stores/user'
 import extensionStore from 'stores/extensionStore'
 import ipcEvents from 'shared/ipcEvents'
@@ -23,9 +23,7 @@ import WaveboxTrayBehaviour from './WaveboxTrayBehaviour'
 import {evtMain} from 'AppEvents'
 import {
   appStorage,
-  avatarStorage,
-  extensionStorage,
-  mailboxStorage
+  extensionStorage
 } from 'storage'
 
 const privStarted = Symbol('privStarted')
@@ -70,12 +68,11 @@ class WaveboxApp {
     this[privArgv] = yargs.parse(process.argv)
 
     // Start our stores
-    appStorage.checkAwake()
-    avatarStorage.checkAwake()
-    extensionStorage.checkAwake()
-    mailboxStorage.checkAwake()
+    appStorage.checkAwake() //TODO dep
+    extensionStorage.checkAwake() //TODO dep
 
-    mailboxStore.checkAwake()
+    mailboxStore.getState()
+    mailboxActions.load()
     extensionStore.checkAwake()
     settingsStore.getState()
     settingsActions.load()
@@ -229,6 +226,7 @@ class WaveboxApp {
   */
   _handleAppReady = () => {
     const settingsState = settingsStore.getState()
+    const mailboxState = mailboxStore.getState()
     // Load extensions before any webcontents get created
     if (settingsState.launched.extension.enableChromeExperimental) {
       try {
@@ -250,9 +248,9 @@ class WaveboxApp {
     // Prep app menu
     this[privAppMenu].updateApplicationMenu(
       settingsState.accelerators,
-      mailboxStore.orderedMailboxes(),
-      mailboxStore.getActiveMailbox(),
-      mailboxStore.getActiveServiceType()
+      mailboxState.allMailboxes(),
+      mailboxState.activeMailboxId(),
+      mailboxState.activeMailboxService()
     )
     this[privMainWindow].create(openHidden)
     AppUpdater.register()

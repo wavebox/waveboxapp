@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import {SelectField, MenuItem, RaisedButton} from 'material-ui'
 import mailboxStore from 'stores/mailbox/mailboxStore'
-import userStore from 'stores/user/userStore'
 import * as Colors from 'material-ui/styles/colors'
 import commonStyles from '../CommonSettingStyles'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
@@ -231,7 +230,7 @@ export default class AccountSettings extends React.Component {
     const { mailboxId, showRestart, ...passProps } = this.props
     const { mailboxes, codeEditorOpen, codeEditorTitle, codeEditorCode } = this.state
     const selected = mailboxes.find((mailbox) => mailbox.id === mailboxId) || mailboxes[0]
-    const isSelectedRestricted = mailboxStore.getState().isMailboxRestricted(selected.id, userStore.getState().user) // Bad
+    const isSelectedRestricted = mailboxStore.getState().isMailboxRestricted(selected.id) // Bad
 
     return (
       <div {...passProps}>

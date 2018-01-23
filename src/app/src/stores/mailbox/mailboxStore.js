@@ -1,11 +1,14 @@
 import CoreMailboxStore from 'shared/AltStores/Mailbox/CoreMailboxStore'
 import { ServiceReducer } from 'shared/AltStores/Mailbox/MailboxReducers'
 import alt from '../alt'
-import { session } from 'electron'
+import { session, webContents } from 'electron'
 import { STORE_NAME } from 'shared/AltStores/Mailbox/AltMailboxIdentifiers'
 import actions from './mailboxActions'
 import mailboxPersistence from 'storage/mailboxStorage'
 import avatarPersistence from 'storage/avatarStorage'
+import { MailboxesSessionManager } from 'SessionManager'
+import MailboxesWindow from 'windows/MailboxesWindow'
+import WaveboxWindow from 'windows/WaveboxWindow'
 import uuid from 'uuid'
 import {
   MailboxFactory,
@@ -46,11 +49,11 @@ class MailboxStore extends CoreMailboxStore {
 
       // Active
       handleChangeActive: actions.CHANGE_ACTIVE,
-      handleChangeActivePrev: actions.CHANGE_ACTIVE_TO_PREV,
-      handleChangeActiveNext: actions.CHANGE_ACTIVE_TO_NEXT,
+      handleChangeActiveToPrev: actions.CHANGE_ACTIVE_TO_PREV,
+      handleChangeActiveToNext: actions.CHANGE_ACTIVE_TO_NEXT,
       handleChangeActiveServiceIndex: actions.CHANGE_ACTIVE_SERVICE_INDEX,
-      handleChangeActiveServicePrev: actions.CHANGE_ACTIVE_SERVICE_TO_PREV,
-      handleChangeActiveServiceNext: actions.CHANGE_ACTIVE_SERVICE_TO_NEXT,
+      handleChangeActiveServiceToPrev: actions.CHANGE_ACTIVE_SERVICE_TO_PREV,
+      handleChangeActiveServiceToNext: actions.CHANGE_ACTIVE_SERVICE_TO_NEXT,
 
       // Sleeping
       handleAwakenService: actions.AWAKEN_SERVICE,
@@ -86,7 +89,10 @@ class MailboxStore extends CoreMailboxStore {
       mailboxIndex: this.index,
       activeMailbox: this.active,
       activeService: this.activeService,
-      sleepingServices: Array.from(this.sleepingServices)
+      sleepingServices: Array.from(this.sleepingServices.keys()).reduce((acc, k) => {
+        acc[k] = this.sleepingServices.get(k)
+        return acc
+      }, {})
     }
   }
 
@@ -129,10 +135,10 @@ class MailboxStore extends CoreMailboxStore {
 
   /**
   * Saves the active items
-  * @param mailboxId = this.active: the id of the mailbox
-  * @param serviceType = this.activeService: the service type
+  * @param mailboxId: the id of the mailbox
+  * @param serviceType: the service type
   */
-  saveActive (mailboxId = this.active, serviceType = this.activeService) {
+  saveActive (mailboxId, serviceType) {
     let changed = false
     if (mailboxId !== this.active) {
       this.active = mailboxId
@@ -168,16 +174,24 @@ class MailboxStore extends CoreMailboxStore {
   }
 
   /* **************************************************************************/
-  // Handlers: Mailboxes
+  // Load
   /* **************************************************************************/
 
-  handleCreate ({ id, data }) { //TODO
-    //TODO do me differently
-    /*ipcRenderer.sendSync(WB_PREPARE_MAILBOX_SESSION, { // Sync us across bridge so everything is setup before webview created
-      partition: 'persist:' + mailboxModel.partition,
-      mailboxType: mailboxModel.type
-    })*/
-    this.saveMailbox(id, data)
+  handleLoad (payload) {
+    super.handleLoad(payload)
+
+    this.allMailboxes().forEach((mailbox) => {
+      MailboxesSessionManager.startManagingSession(mailbox)
+    })
+  }
+
+  /* **************************************************************************/
+  // Mailboxes
+  /* **************************************************************************/
+
+  handleCreate ({ id, data }) {
+    const mailbox = this.saveMailbox(id, data)
+    MailboxesSessionManager.startManagingSession(mailbox)
     this.saveIndex(this.index.concat(id))
     actions.changeActive.defer(id)
   }
@@ -281,7 +295,10 @@ class MailboxStore extends CoreMailboxStore {
 
   handleReduceServiceIfInactive ({ id = this.activeMailboxId(), serviceType = this.activeMailboxService(), reducer, reducerArgs }) {
     this.preventDefault()
-    if (!this.isActive(id, serviceType) || !remote.getCurrentWindow().isFocused()) { //TODO we'll need a different way to do this
+
+    const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
+    const isMailboxesWindowFocused = mailboxesWindow && mailboxesWindow.isFocused()
+    if (!this.isActive(id, serviceType) || !isMailboxesWindowFocused) {
       actions.reduceService.defer(...[id, serviceType, reducer, ...reducerArgs])
     }
   }
@@ -290,7 +307,7 @@ class MailboxStore extends CoreMailboxStore {
   // Handlers: Active
   /* **************************************************************************/
 
-  handleChangeActive ({ id = this.index[0], service = CoreMailbox.SERVICE_TYPES.DEFAULT }) {
+  handleChangeActive ({ id = (this.index[0] || null), service = CoreMailbox.SERVICE_TYPES.DEFAULT }) {
     if (this.isMailboxRestricted(id)) {
       this.preventDefault()
       return
@@ -421,8 +438,8 @@ class MailboxStore extends CoreMailboxStore {
     this.sleepingQueue.delete(key)
 
     // Sleep
-    this.sleepingQueue.delete(key)
-    this.remoteDispatch('remoteSetSleep', [mailboxId, serviceType, false])
+    this.sleepingServices.set(key, false)
+    this.dispatchToRemote('remoteSetSleep', [mailboxId, serviceType, false])
   }
 
   /**
@@ -467,7 +484,8 @@ class MailboxStore extends CoreMailboxStore {
     }
 
     const key = this.getFullServiceKey(mailboxId, serviceType)
-    const openWindowCount = magicFunction() //We did use WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, so now do it manually
+    const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
+    const openWindowCount = mailboxesWindow ? mailboxesWindow.tabManager.getOpenWindowCount(mailboxId, serviceType) : 0
     if (openWindowCount === 0) {
       // Clear previous
       clearTimeout(this.sleepingQueue.get(key) || null)
@@ -476,11 +494,11 @@ class MailboxStore extends CoreMailboxStore {
       // Record metrics
       const sleepMetrics = this.generateMailboxSleepMetrics(mailboxId, serviceType)
       this.sleepingMetrics.set(key, sleepMetrics)
-      this.remoteDispatch('remoteSetSleepMetrics', [mailboxId, serviceType, sleepMetrics])
+      this.dispatchToRemote('remoteSetSleepMetrics', [mailboxId, serviceType, sleepMetrics])
 
       // Sleep
-      this.sleepingQueue.add(key)
-      this.remoteDispatch('remoteSetSleep', [mailboxId, serviceType, true])
+      this.sleepingServices.set(key, true)
+      this.dispatchToRemote('remoteSetSleep', [mailboxId, serviceType, true])
       return true
     } else {
       // Clear previous
@@ -502,12 +520,8 @@ class MailboxStore extends CoreMailboxStore {
   * @return the metrics for the web contents or undefined if not found
   */
   generateMailboxSleepMetrics (mailboxId, serviceType) {
-    //TODO
-    //const webContentsId = this.getWebcontentTabId(mailboxId, serviceType)
-    //const wc = webContentsId !== undefined ? remote.webContents.fromId(webContentsId) : undefined
-    //const webContentsPid = wc ? wc.getOSProcessId() : -1
-    //return remote.app.getAppMetrics().find((metric) => metric.pid === webContentsPid)
-    return {}
+    const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
+    return mailboxesWindow ? mailboxesWindow.tabManager.getServiceMetrics(mailboxId, serviceType) : undefined
   }
 
   /* **************************************************************************/
@@ -532,7 +546,7 @@ class MailboxStore extends CoreMailboxStore {
 
       const avatarId = uuid.v4()
       this.saveAvatar(avatarId, b64Image)
-      this.saveMailbox(mailbox.changeData({ customAvatar: avatarId }))
+      this.saveMailbox(id, mailbox.changeData({ customAvatar: avatarId }))
       if (prevAvatarId) {
         this.saveAvatar(prevAvatarId, null)
       }
@@ -542,7 +556,7 @@ class MailboxStore extends CoreMailboxStore {
         return
       }
       const prevAvatarId = mailbox.customAvatarId
-      this.saveMailbox(mailbox.changeData({ customAvatar: undefined }))
+      this.saveMailbox(id, mailbox.changeData({ customAvatar: undefined }))
       this.saveAvatar(prevAvatarId, null)
     }
   }
@@ -565,7 +579,7 @@ class MailboxStore extends CoreMailboxStore {
 
       const avatarId = `${SERVICE_LOCAL_AVATAR_PREFIX}:${uuid.v4()}`
       this.saveAvatar(avatarId, b64Image)
-      this.saveMailbox(mailbox.changeData({ serviceLocalAvatar: avatarId }))
+      this.saveMailbox(id, mailbox.changeData({ serviceLocalAvatar: avatarId }))
       if (prevAvatarId) {
         this.saveAvatar(prevAvatarId, null)
       }
@@ -576,7 +590,7 @@ class MailboxStore extends CoreMailboxStore {
       }
 
       const prevAvatarId = mailbox.serviceLocalAvatarId
-      this.saveMailbox(mailbox.changeData({ serviceLocalAvatar: undefined }))
+      this.saveMailbox(id, mailbox.changeData({ serviceLocalAvatar: undefined }))
       this.saveAvatar(prevAvatarId, null)
     }
   }
@@ -600,8 +614,15 @@ class MailboxStore extends CoreMailboxStore {
         return new Promise((resolve) => { ses.clearCache(resolve) })
       })
       .then(() => {
-        //TODO something for me
-        //mailboxDispatch.reloadAllServices(mailboxId)
+        const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
+        if (mailboxesWindow) {
+          mailboxesWindow.tabManager.getWebContentIdsForMailbox(mailboxId).forEach((wcId) => {
+            const wc = webContents.fromId(wcId)
+            if (wc) {
+              wc.reload()
+            }
+          })
+        }
       })
   }
 

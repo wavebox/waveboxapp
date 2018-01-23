@@ -4,18 +4,13 @@ import {
   CoreMailbox,
   MailboxFactory
 } from '../../Models/Accounts'
-import {
-  PERSISTENCE_INDEX_KEY,
-  SERVICE_LOCAL_AVATAR_PREFIX,
-  MAILBOX_SLEEP_EXTEND
-} from '../../constants'
+import { PERSISTENCE_INDEX_KEY } from '../../constants'
 import {
   ACTIONS_NAME,
   DISPATCH_NAME,
   STORE_NAME
 } from './AltMailboxIdentifiers'
 import AltUserIdentifiers from '../User/AltUserIdentifiers'
-import User from '../../Models/User'
 
 class CoreMailboxStore extends RemoteStore {
   /* **************************************************************************/
@@ -34,16 +29,11 @@ class CoreMailboxStore extends RemoteStore {
     this.activeService = CoreMailbox.SERVICE_TYPES.DEFAULT
 
     // Sleep
-    this.sleepingServices = new Set()
+    this.sleepingServices = new Map()
     this.sleepingMetrics = new Map()
 
     // Media
     this.avatars = new Map()
-    //this.snapshots = new Map() //move me into guest?
-
-    // Runtime
-    //this.webcontentTabIds = new Map() //unify me into main - use by content windows
-    //this.search = new Map() //unify me into main - use by contentwindows
 
     /* ****************************************/
     // Mailboxes
@@ -126,7 +116,7 @@ class CoreMailboxStore extends RemoteStore {
     * @param id: the mailbox id
     * @return true if the mailbox is restricted, false otherwise
     */
-    this.isMailboxRestricted = (id) => { //TODO dropuser
+    this.isMailboxRestricted = (id) => {
       if (this.mailboxCount() === 0) { return false }
 
       const user = this.getUser()
@@ -145,7 +135,7 @@ class CoreMailboxStore extends RemoteStore {
 
     * @return a list of unrestricted mailbox ids
     */
-    this.unrestrictedMailboxIds = () => { //TODO dropuser
+    this.unrestrictedMailboxIds = () => {
       const user = this.getUser()
       if (user.hasAccountLimit || user.hasAccountTypeRestriction) {
         return this
@@ -162,7 +152,7 @@ class CoreMailboxStore extends RemoteStore {
     * Checks to see if the user can add a new unrestricted account
     * @return true if the user can add a mailbox, false otherwise
     */
-    this.canAddUnrestrictedMailbox = () => { //TODO drop user
+    this.canAddUnrestrictedMailbox = () => {
       const user = this.getUser()
       return this.unrestrictedMailboxIds().length < user.accountLimit
     }
@@ -212,9 +202,10 @@ class CoreMailboxStore extends RemoteStore {
     /**
     * Gets the mailbox avatar using the order of precidence
     * @param id: the id of the mailbox
+    * @param imageResolverFn=undefined: a function to resolve images if required
     * @return the url/base64 avatar url or undefiend if none
     */
-    this.getResolvedAvatar = (id) => {
+    this.getResolvedAvatar = (id, imageResolverFn = undefined) => {
       const mailbox = this.getMailbox(id)
       if (!mailbox) { return }
 
@@ -227,23 +218,10 @@ class CoreMailboxStore extends RemoteStore {
       } else if (!mailbox.avatarCharacterDisplay) {
         const logoPath = mailbox.humanizedLogo || mailbox.serviceForType(CoreMailbox.SERVICE_TYPES.DEFAULT).humanizedLogo
         if (logoPath) {
-          return Resolver.image(logoPath) //TODO i'm at runtime
+          return imageResolverFn ? imageResolverFn(logoPath) : logoPath
         }
       }
     }
-
-    /* ****************************************/
-    // Snapshots
-    /* ****************************************/
-
-    /**
-    * @param id: the id of the mailbox
-    * @param service: the type of service
-    * @return the snapshot base64 string
-    */
-    //this.getSnapshot = (id, service) => {
-    //  return this.snapshots.get(`${id}:${service}`)
-    //}
 
     /* ****************************************/
     // Active
@@ -296,7 +274,7 @@ class CoreMailboxStore extends RemoteStore {
     * @param serviceType: the type of service
     * @return true if the mailbox is sleeping
     */
-    this.isSleeping = (mailboxId, serviceType) => { //TODO userState? checkusages and this.getUser()
+    this.isSleeping = (mailboxId, serviceType) => {
       if (!this.getUser().hasSleepable) { return false }
 
       // Check we support sleeping
@@ -308,7 +286,12 @@ class CoreMailboxStore extends RemoteStore {
       if (this.isActive(mailboxId, serviceType)) { return false }
 
       // Check if we are queued for sleeping sleeping
-      return this.sleepingServices.has(this.getFullServiceKey(mailboxId, serviceType))
+      const key = this.getFullServiceKey(mailboxId, serviceType)
+      if (this.sleepingServices.has(key)) {
+        return this.sleepingServices.get(key) === true
+      } else {
+        return true
+      }
     }
 
     /**
@@ -333,7 +316,7 @@ class CoreMailboxStore extends RemoteStore {
     * @param serviceType: the type of service
     * @return some sleep info {mailbox,service,closeMetrics} or undefined if there is no notification to show
     */
-    this.getSleepingNotificationInfo = (mailboxId, serviceType) => { //TODO userStore  checkusages and this.getUser()
+    this.getSleepingNotificationInfo = (mailboxId, serviceType) => {
       if (serviceType !== CoreMailbox.SERVICE_TYPES.DEFAULT) { return } // Only support default right now
 
       if (this.getWireConfigExperiments().showDefaultServiceSleepNotifications !== true) { return }
@@ -364,7 +347,7 @@ class CoreMailboxStore extends RemoteStore {
     /**
     * @return the total amount of unread items
     */
-    this.totalUnreadCountForUser = () => { //userstore  checkusages and this.getUser()
+    this.totalUnreadCountForUser = () => {
       const hasServices = this.getUser().hasServices
       return this.allMailboxes().reduce((acc, mailbox) => {
         if (mailbox) {
@@ -377,7 +360,7 @@ class CoreMailboxStore extends RemoteStore {
     /**
     * @return the total amount of unread items taking mailbox settings into account
     */
-    this.totalUnreadCountForAppBadgeForUser = () => { //userstore  checkusages and this.getUser()
+    this.totalUnreadCountForAppBadgeForUser = () => {
       const hasServices = this.getUser().hasServices
       return this.allMailboxes().reduce((acc, mailbox) => {
         if (mailbox) {
@@ -391,7 +374,7 @@ class CoreMailboxStore extends RemoteStore {
     /**
     * @return true if any mailboxes have another unread info status, taking settings into account
     */
-    this.hasUnreadActivityForAppBadgeForUser = () => { //userstore  checkusages and this.getUser()
+    this.hasUnreadActivityForAppBadgeForUser = () => {
       const hasServices = this.getUser().hasServices
       return !!this.allMailboxes().find((mailbox) => {
         return mailbox && mailbox.getUnreadActivityForAppbadge(!hasServices)
@@ -403,7 +386,7 @@ class CoreMailboxStore extends RemoteStore {
     * @param id: the id of the mailbox
     * @return the unread count
     */
-    this.mailboxUnreadCountForUser = (id) => { //userstore  checkusages and this.getUser()
+    this.mailboxUnreadCountForUser = (id) => {
       const mailbox = this.getMailbox(id)
       if (!mailbox) { return 0 }
       return mailbox.getUnreadCount(!this.getUser().hasServices)
@@ -414,7 +397,7 @@ class CoreMailboxStore extends RemoteStore {
     * @param id: the id of the mailbox
     * @return true if there is unread activity for the account
     */
-    this.mailboxHasUnreadActivityForUser = (id) => { //userstore  checkusages and this.getUser()
+    this.mailboxHasUnreadActivityForUser = (id) => {
       const mailbox = this.getMailbox(id)
       if (!mailbox) { return false }
       return mailbox.getHasUnreadActivity(!this.getUser().hasServices)
@@ -424,7 +407,7 @@ class CoreMailboxStore extends RemoteStore {
     * @param id: the id of the mailbox
     * @return the array of tray messages
     */
-    this.mailboxTrayMessagesForUser = (id) => { //userstore  checkusages and this.getUser()
+    this.mailboxTrayMessagesForUser = (id) => {
       const mailbox = this.getMailbox(id)
       if (!mailbox) { return [] }
       return mailbox.getTrayMessages(!this.getUser().hasServices)
@@ -464,38 +447,6 @@ class CoreMailboxStore extends RemoteStore {
     this.exportAvatarDataSync = () => { //?
       return avatarPersistence.allItemsSync()
     }
-
-    /* ****************************************/
-    // Tabs
-    /* ****************************************/
-
-    /**
-    * @param mailboxId: the id of the mailbox
-    * @param serviceType: the type of service
-    * @return the tabId for a mailbox and service
-    */
-    /*this.getWebcontentTabId = (mailboxId, serviceType) => {
-      return this.webcontentTabIds.get(`${mailboxId}:${serviceType}`)
-    }*/
-
-    /**
-    * @return the tab id for the active mailbox and service
-    */
-    /*this.getActiveWebcontentTabId = () => {
-      return this.getWebcontentTabId(this.activeMailboxId(), this.activeMailboxService())
-    }*/
-
-    /**
-    * @param mailboxId: the id of the mailbox
-    * @param serviceType: the type of service
-    * @return the metrics for the web contents or undefined if not found
-    */
-    /*this.getWebcontentMetrics = (mailboxId, serviceType) => { //TODO depricated. check usages
-      const webContentsId = this.getWebcontentTabId(mailboxId, serviceType)
-      const wc = webContentsId !== undefined ? remote.webContents.fromId(webContentsId) : undefined
-      const webContentsPid = wc ? wc.getOSProcessId() : -1
-      return remote.app.getAppMetrics().find((metric) => metric.pid === webContentsPid)
-    }*/
 
     /* ****************************************/
     // Actions
@@ -584,7 +535,13 @@ class CoreMailboxStore extends RemoteStore {
     this.activeService = activeService || CoreMailbox.SERVICE_TYPES.DEFAULT
 
     // Sleeping
-    this.sleepingServices = new Set(sleepingServices || [])
+    this.sleepingServices = Object.keys(sleepingServices).reduce((acc, k) => {
+      acc.set(k, sleepingServices[k])
+      return acc
+    }, new Map())
+    if (this.active && this.activeService) {
+      this.sleepingServices.set(this.getFullServiceKey(this.active, this.activeService), false)
+    }
 
     // Avatars
     this.avatars = Object.keys(allAvatars).reduce((acc, id) => {
@@ -595,5 +552,3 @@ class CoreMailboxStore extends RemoteStore {
 }
 
 export default CoreMailboxStore
-
-//TODO Depricate WB_MAILBOX_STORAGE_CHANGE_ACTIVE from this.sendActiveStateToMainThread

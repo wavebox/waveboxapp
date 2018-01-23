@@ -1,17 +1,16 @@
-import {session, ipcMain} from 'electron'
+import {session, app} from 'electron'
 import {EventEmitter} from 'events'
-import mailboxStore from 'stores/mailboxStore'
 import {settingsStore} from 'stores/settings'
 import {
   ARTIFICIAL_COOKIE_PERSIST_WAIT,
   ARTIFICIAL_COOKIE_PERSIST_PERIOD
 } from 'shared/constants'
-import {
-  WB_PREPARE_MAILBOX_SESSION
-} from 'shared/ipcEvents'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { DownloadManager } from 'Download'
 import SessionManager from './SessionManager'
+
+const privManaged = Symbol('privManaged')
+const privEarlyManaged = Symbol('privEarlyManaged')
 
 class MailboxesSessionManager extends EventEmitter {
   /* ****************************************************************************/
@@ -25,7 +24,19 @@ class MailboxesSessionManager extends EventEmitter {
     this.downloadsInProgress = { }
     this.persistCookieThrottle = { }
 
-    this.__managed__ = new Set()
+    this[privManaged] = new Set()
+
+    // Sessions can only be accessed once the app is ready. We have eager classes trying
+    // to setup management, so queue those up
+    if (!app.isReady()) {
+      this[privEarlyManaged] = new Map()
+      app.on('ready', () => {
+        Array.from(this[privEarlyManaged].values()).forEach((mailbox) => {
+          this.startManagingSession(mailbox)
+        })
+        delete this[privEarlyManaged]
+      })
+    }
   }
 
   /**
@@ -34,14 +45,6 @@ class MailboxesSessionManager extends EventEmitter {
   start () {
     if (this._setup) { return }
     this._setup = true
-
-    ipcMain.on(WB_PREPARE_MAILBOX_SESSION, (evt, data) => {
-      const nowManaging = this._startManagingSession(data.partition, data.mailboxType)
-      if (nowManaging) {
-        this.emit('session-managed', session.fromPartition(data.partition))
-      }
-      evt.returnValue = nowManaging
-    })
   }
 
   /* ****************************************************************************/
@@ -52,21 +55,9 @@ class MailboxesSessionManager extends EventEmitter {
   * @return all currently managed sessions
   */
   getAllSessions () {
-    return Array.from(this.__managed__).map((partition) => {
+    return Array.from(this[privManaged]).map((partition) => {
       return session.fromPartition(partition)
     })
-  }
-
-  /* ****************************************************************************/
-  // Utils
-  /* ****************************************************************************/
-
-  /**
-  * @param partition: the partition id
-  * @return the mailbox model for the partition
-  */
-  _getMailboxFromPartition (partition) {
-    return mailboxStore.getMailbox(partition.replace('persist:', ''))
   }
 
   /* ****************************************************************************/
@@ -75,22 +66,27 @@ class MailboxesSessionManager extends EventEmitter {
 
   /**
   * Starts managing a session
-  * @param parition the name of the partion to manage
-  * @param mailboxType: the type of mailbox we're managing for
-  * @return true if this is a new session and its now being managed, false otherwise
+  * @param mailbox: the mailbox to start managing
   */
-  _startManagingSession (partition, mailboxType) {
-    if (this.__managed__.has(partition)) { return false }
+  startManagingSession (mailbox) {
+    if (!app.isReady()) {
+      this[privEarlyManaged].set(mailbox.id, mailbox)
+      return
+    }
+
+    const partition = `persist:${mailbox.partition}`
+    if (this[privManaged].has(partition)) {
+      return
+    }
 
     const ses = session.fromPartition(partition)
-    const mailbox = this._getMailboxFromPartition(partition)
 
     // Downloads
     DownloadManager.setupUserDownloadHandlerForPartition(partition)
 
     // Permissions & env
     ses.setPermissionRequestHandler(this._handlePermissionRequest)
-    this._setupUserAgent(ses, partition, mailboxType)
+    this._setupUserAgent(ses, mailbox)
     if (mailbox && mailbox.artificiallyPersistCookies) {
       SessionManager.webRequestEmitterFromSession(ses).completed.on(undefined, (evt) => {
         this._artificiallyPersistCookies(partition)
@@ -138,8 +134,8 @@ class MailboxesSessionManager extends EventEmitter {
       }
     })
 
-    this.__managed__.add(partition)
-    return true
+    this[privManaged].add(partition)
+    this.emit('session-managed', ses)
   }
 
   /* ****************************************************************************/
@@ -149,12 +145,10 @@ class MailboxesSessionManager extends EventEmitter {
   /**
   * Sets up the user agent for each mailbox type
   * @param ses: the session object to update
-  * @param partition: the partition the useragent is for
-  * @param mailboxType: the type of mailbox this is
+  * @param mailbox: the mailbox to setup for
   */
-  _setupUserAgent (ses, partition, mailboxType) {
+  _setupUserAgent (ses, mailbox) {
     // Handle accounts that have custom settings
-    const mailbox = this._getMailboxFromPartition(partition)
     if (mailbox && mailbox.useCustomUserAgent && mailbox.customUserAgentString) {
       ses.setUserAgent(mailbox.customUserAgentString)
     }

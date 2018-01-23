@@ -1,4 +1,4 @@
-import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
+import ServiceFactory from '../../../Models/Accounts/ServiceFactory'
 
 class MailboxReducer {
   /**

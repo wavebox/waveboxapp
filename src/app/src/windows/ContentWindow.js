@@ -2,12 +2,6 @@ import WaveboxWindow from './WaveboxWindow'
 import { app, webContents } from 'electron'
 import { evtMain } from 'AppEvents'
 import querystring from 'querystring'
-import {
-  WB_WINDOW_RELOAD_WEBVIEW,
-  WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
-  WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
-  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
-} from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
 import {WindowOpeningHandler} from './WindowOpeningEngine'
 
@@ -276,11 +270,15 @@ class ContentWindow extends WaveboxWindow {
   /* ****************************************************************************/
 
   /**
-  * Reloads the webview content
+  * Reloads the webview
   * @return this
   */
   reload () {
-    this.window.webContents.send(WB_WINDOW_RELOAD_WEBVIEW, {})
+    const wcId = this.focusedTabId()
+    if (!wcId) { return }
+    const wc = webContents.fromId(wcId)
+    if (!wc) { return }
+    wc.reload()
     return this
   }
 
@@ -289,7 +287,11 @@ class ContentWindow extends WaveboxWindow {
   * @return this
   */
   navigateBack () {
-    this.window.webContents.send(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, {})
+    const wcId = this.focusedTabId()
+    if (!wcId) { return }
+    const wc = webContents.fromId(wcId)
+    if (!wc) { return }
+    wc.goBack()
     return this
   }
 
@@ -298,7 +300,11 @@ class ContentWindow extends WaveboxWindow {
   * @return this
   */
   navigateForward () {
-    this.window.webContents.send(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, {})
+    const wcId = this.focusedTabId()
+    if (!wcId) { return }
+    const wc = webContents.fromId(wcId)
+    if (!wc) { return }
+    wc.goForward()
     return this
   }
 
@@ -311,7 +317,12 @@ class ContentWindow extends WaveboxWindow {
   * @return this
   */
   openDevTools () {
-    this.window.webContents.send(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, {})
+    const wcId = this.focusedTabId()
+    if (!wcId) { return }
+    const wc = webContents.fromId(wcId)
+    if (!wc) { return }
+    wc.openDevTools()
+    return this
   }
 
   /* ****************************************************************************/

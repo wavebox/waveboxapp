@@ -147,7 +147,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
   * Handles the user requesting an account reauthentication
   */
   handeReauthenticateBrowserSession = () => {
-    mailboxActions.reauthenticateBrowserSession(this.props.mailboxId, this.state.mailbox.partition)
+    mailboxActions.clearMailboxBrowserSession(this.props.mailboxId)
     this.handleClosePopover()
   }
 

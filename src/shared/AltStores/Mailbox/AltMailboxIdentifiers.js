@@ -7,3 +7,8 @@ export {
   ACTIONS_NAME,
   DISPATCH_NAME
 }
+export default {
+  STORE_NAME,
+  ACTIONS_NAME,
+  DISPATCH_NAME
+}

@@ -113,7 +113,7 @@ class CoreMailboxActions extends RemoteActions {
   * Indicates the ids of the given containers have been updated
   * @param containerIds: a list of container ids that have been udpated
   */
-  containersUpdated (...args) { //TODO i used to accept containers, now accept [containerIds]
+  containersUpdated (...args) {
     if (process.type === 'browser') {
       const [containerIds] = args
       return { containerIds }
@@ -153,8 +153,6 @@ class CoreMailboxActions extends RemoteActions {
       return this.remoteDispatch('setServiceLocalAvatar', args)
     }
   }
-
-
 
   /* **************************************************************************/
   // Services
@@ -328,7 +326,7 @@ class CoreMailboxActions extends RemoteActions {
   * Changes the active service to the previous in the list
   * @param allowCycling=false: set to true to allow cycling at end/beginning
   */
-  changeActiveServiceToPrev (args) {
+  changeActiveServiceToPrev (...args) {
     if (process.type === 'browser') {
       const [allowCycling = false] = args
       return { allowCycling }
@@ -374,124 +372,9 @@ class CoreMailboxActions extends RemoteActions {
     if (process.type === 'browser') {
       return { }
     } else if (process.type === 'renderer') {
-      return this.remoteDispatch('clearMailboxBrowserSession', args)
+      return this.remoteDispatch('clearAllBrowserSessions', args)
     }
   }
-
-  /* **************************************************************************/
-  // Guest
-  /* **************************************************************************/
-
-  /**
-  * Sets the title of the guest page
-  * @param id: the mailbox id of the guest
-  * @param service: the type of service of the guest
-  * @param title: the new title
-  */
-  /*setGuestTitle (id, service, title) { //usages?
-    return { id: id, service: service, title: title }
-  }*/
-
-  /* **************************************************************************/
-  // Auth Tools
-  /* **************************************************************************/
-
-  /**
-  * Reauthenticates the user by logging them out of the webview
-  * @param id: the id of the mailbox
-  * @param partition: the partition of the mailbox
-  */
-  /*reauthenticateBrowserSession (id, partition) {
-    const ses = session.fromPartition('persist:' + partition)
-    const promise = Promise.resolve()
-      .then(() => {
-        return new Promise((resolve) => {
-          ses.clearStorageData(resolve)
-        })
-      })
-      .then(() => {
-        return new Promise((resolve) => {
-          ses.clearCache(resolve)
-        })
-      })
-      .then(() => {
-        mailboxDispatch.reloadAllServices(id)
-        return Promise.resolve()
-      })
-
-    return { promise: promise }
-  }*/
-
-  /* **************************************************************************/
-  // Misc
-  /* **************************************************************************/
-
-  /**
-  * Reloads the active mailbox
-  */
-  //reloadActiveMailbox () { return {} }
-
-  /**
-  * Opens the dev tools on the active mailbox
-  */
-  //openDevToolsActiveMailbox () { return {} }
-
-  /**
-  * Indicates the main window focused
-  */
-  //windowDidFocus () { return {} }
 }
 
 export default CoreMailboxActions
-
-
-
-
-
-
-//Depricate below...
-// Mailbox modifiers
-//ipcRenderer.on(WB_WINDOW_ZOOM_IN, () => actions.reduceService(undefined, undefined, ServiceReducer.increaseZoom))
-//ipcRenderer.on(WB_WINDOW_ZOOM_OUT, () => actions.reduceService(undefined, undefined, ServiceReducer.decreaseZoom))
-//ipcRenderer.on(WB_WINDOW_ZOOM_RESET, () => actions.reduceService(undefined, undefined, ServiceReducer.resetZoom))
-//ipcRenderer.on(WB_WINDOW_FIND_START, () => actions.startSearchingMailbox())
-//ipcRenderer.on(WB_WINDOW_FIND_NEXT, () => actions.searchNextTerm())
-
-// Switching
-/*ipcRenderer.on(WB_MAILBOXES_WINDOW_SWITCH_MAILBOX, (evt, req) => {
-if (req.mailboxId) {
-  actions.changeActive(req.mailboxId, req.serviceType)
-} else if (req.prev) {
-  actions.changeActiveToPrev(req.allowCycling)
-} else if (req.next) {
-  actions.changeActiveToNext(req.allowCycling)
-}
-})*/
-/*ipcRenderer.on(WB_MAILBOXES_WINDOW_SWITCH_SERVICE, (evt, req) => {
-if (req.index) {
-  actions.changeActiveServiceIndex(req.index)
-} else if (req.prev) {
-  actions.changeActiveServiceToPrev(req.allowCycling)
-} else if (req.next) {
-  actions.changeActiveServiceToNext(req.allowCycling)
-}
-})*/
-
-// Misc
-//ipcRenderer.on(WB_WINDOW_RELOAD_WEBVIEW, actions.reloadActiveMailbox)
-//ipcRenderer.on(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, actions.openDevToolsActiveMailbox)
-//ipcRenderer.on(WB_WINDOW_FOCUS, actions.windowDidFocus)
-
-/*ipcRenderer.on(WB_GUEST_API_SAFE_REDUCE, (evt, mailboxId, serviceType, name, reducerConfig) => {
-switch (name) {
-  case 'badge:setCount':
-    actions.reduceService(mailboxId, serviceType, ServiceReducer.setAdaptorUnreadCount, ...reducerConfig)
-    break
-  case 'badge:setHasUnreadActivity':
-    actions.reduceService(mailboxId, serviceType, ServiceReducer.setAdaptorHasUnreadActivity, ...reducerConfig)
-    break
-  case 'tray:setMessages':
-    actions.reduceService(mailboxId, serviceType, ServiceReducer.setAdaptorTrayMessages, ...reducerConfig)
-    break
-}
-})*/

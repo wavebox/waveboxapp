@@ -62,7 +62,7 @@ export default class AccountAdvancedSettings extends React.Component {
               onClick={(evt) => {
                 evt.preventDefault()
                 if (mailbox.artificiallyPersistCookies) {
-                  mailboxActions.reauthenticateBrowserSession(mailbox.id, mailbox.partition)
+                  mailboxActions.clearMailboxBrowserSession(mailbox.id)
                 }
               }}>
               Reauthenticate your account manually

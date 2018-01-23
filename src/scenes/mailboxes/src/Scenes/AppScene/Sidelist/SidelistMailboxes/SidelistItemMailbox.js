@@ -61,17 +61,16 @@ export default class SidelistItemMailbox extends React.Component {
       popoverAnchor: null,
       popoverServiceType: undefined,
       userHasServices: userState.user.hasServices,
-      isRestricted: mailboxState.isMailboxRestricted(mailboxId, userState.user)
+      isRestricted: mailboxState.isMailboxRestricted(mailboxId)
     }
   })()
 
   mailboxesChanged = (mailboxState) => {
     const { mailboxId } = this.props
     const mailbox = mailboxState.getMailbox(mailboxId)
-    const userState = userStore.getState()
     this.setState({
       mailbox: mailbox,
-      isRestricted: mailboxState.isMailboxRestricted(mailboxId, userState.user)
+      isRestricted: mailboxState.isMailboxRestricted(mailboxId)
     })
   }
 
@@ -79,7 +78,7 @@ export default class SidelistItemMailbox extends React.Component {
     const mailboxState = mailboxStore.getState()
     this.setState({
       userHasServices: userState.user.hasServices,
-      isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId, userState.user)
+      isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId)
     })
   }
 

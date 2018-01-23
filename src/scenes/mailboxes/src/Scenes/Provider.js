@@ -4,7 +4,7 @@ import constants from 'shared/constants'
 import shallowCompare from 'react-addons-shallow-compare'
 import Theme from 'sharedui/Components/Theme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import { mailboxStore, mailboxDispatch, mailboxActions } from 'stores/mailbox'
+import { mailboxStore, mailboxDispatch } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
 import { googleActions } from 'stores/google'
 import { trelloActions } from 'stores/trello'
@@ -53,7 +53,6 @@ export default class Provider extends React.Component {
     ipcRenderer.on(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
 
     // STEP 2. Mailbox connections
-    mailboxActions.connectAllMailboxes()
     googleActions.startPollingUpdates()
     trelloActions.startPollingUpdates()
     microsoftActions.startPollingUpdates()
@@ -86,7 +85,6 @@ export default class Provider extends React.Component {
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
 
     // STEP 2. Mailbox connections
-    mailboxActions.disconnectAllMailboxes()
     googleActions.stopPollingUpdates()
     trelloActions.stopPollingUpdates()
     slackActions.disconnectAllMailboxes()

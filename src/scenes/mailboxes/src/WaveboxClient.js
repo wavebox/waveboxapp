@@ -16,9 +16,7 @@ import ResourceMonitorResponder from './ResourceMonitorResponder'
 import {
   WB_MAILBOXES_WINDOW_JS_LOADED,
   WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD,
-  WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD,
-  WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
-  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
+  WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD
 } from 'shared/ipcEvents'
 import { ipcRenderer, webFrame } from 'electron'
 
@@ -40,8 +38,6 @@ document.addEventListener('dragover', (evt) => {
 })
 
 // Navigation
-ipcRenderer.on(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, () => mailboxDispatch.navigateBack())
-ipcRenderer.on(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, () => mailboxDispatch.navigateForward())
 if (process.platform === 'darwin') {
   const mouseNavigator = new MouseNavigationDarwin(
     () => mailboxDispatch.navigateBack(),
@@ -120,11 +116,3 @@ setTimeout(() => {
 
 // Update our settings
 settingsActions.glueCurrentUpdateChannel.defer()
-
-
-import alt from 'stores/alt'
-import TestActions from 'shared/TestStore/TestActions'
-import TestStore from 'shared/TestStore/TestStore'
-
-window.testActions = alt.createActions(TestActions)
-window.testStore = alt.createStore(TestStore, 'TestStore', "tom")

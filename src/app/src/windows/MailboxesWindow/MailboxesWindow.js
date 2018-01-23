@@ -1,7 +1,7 @@
 import electron from 'electron'
 import WaveboxWindow from '../WaveboxWindow'
-import mailboxStore from 'stores/mailboxStore'
 import { settingsStore } from 'stores/settings'
+import { mailboxActions, ServiceReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
 import CRExtensionUISubscriber from 'Extensions/Chrome/CRExtensionUISubscriber'
 import {
@@ -17,16 +17,10 @@ import {
   WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD,
   WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE,
   WB_MAILBOXES_WINDOW_OPEN_MAILTO_LINK,
-  WB_MAILBOXES_WINDOW_SWITCH_MAILBOX,
-  WB_MAILBOXES_WINDOW_SWITCH_SERVICE,
-  WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
-  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD,
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
   WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER,
   WB_MAILBOXES_WINDOW_SHOW_NEWS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
-  WB_WINDOW_RELOAD_WEBVIEW,
-  WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
 
   WB_USER_CHECK_FOR_UPDATE,
   WB_SQUIRREL_UPDATE_DOWNLOADED,
@@ -167,6 +161,9 @@ class MailboxesWindow extends WaveboxWindow {
     // Bind event listeners
     electron.ipcMain.on(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)
     electron.ipcMain.on(WBECRX_RELOAD_OWNER, this.handleCRXReloadOwner)
+    this.window.on('focus', () => {
+      mailboxActions.reduceService.defer(undefined, undefined, ServiceReducer.mergeChangesetOnActive)
+    })
 
     // We're locking on to our window. This stops file drags redirecting the page
     this.window.webContents.on('will-navigate', (evt, url) => {
@@ -233,7 +230,11 @@ class MailboxesWindow extends WaveboxWindow {
   * @return this
   */
   reload () {
-    this.window.webContents.send(WB_WINDOW_RELOAD_WEBVIEW, {})
+    const wcId = this.focusedTabId()
+    if (!wcId) { return }
+    const wc = electron.webContents.fromId(wcId)
+    if (!wc) { return }
+    wc.reload()
   }
 
   /**
@@ -321,10 +322,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchMailbox (mailboxId, serviceType = undefined) {
     this.show().focus()
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_MAILBOX, {
-      mailboxId: mailboxId,
-      serviceType: serviceType
-    })
+    mailboxActions.changeActive(mailboxId, serviceType)
     return this
   }
 
@@ -335,7 +333,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchPrevMailbox (allowCycling = false) {
     this.show().focus()
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_MAILBOX, { prev: true, allowCycling: allowCycling })
+    mailboxActions.changeActiveToPrev(allowCycling)
     return this
   }
 
@@ -346,7 +344,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchNextMailbox (allowCycling = false) {
     this.show().focus()
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_MAILBOX, { next: true, allowCycling: allowCycling })
+    mailboxActions.changeActiveToNext(allowCycling)
     return this
   }
 
@@ -362,7 +360,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchToServiceAtIndex (index) {
     this.show().focus()
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_SERVICE, { index: index })
+    mailboxActions.changeActiveServiceIndex(index)
     return this
   }
 
@@ -373,7 +371,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchPrevService (allowCycling = false) {
     this.show().focus()
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_SERVICE, { prev: true, allowCycling: allowCycling })
+    mailboxActions.changeActiveServiceToPrev(allowCycling)
     return this
   }
 
@@ -384,7 +382,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchNextService (allowCycling = false) {
     this.show().focus()
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_SWITCH_SERVICE, { next: true, allowCycling: allowCycling })
+    mailboxActions.changeActiveServiceToNext(allowCycling)
     return this
   }
 
@@ -397,7 +395,11 @@ class MailboxesWindow extends WaveboxWindow {
   * @return this
   */
   navigateBack () {
-    this.window.webContents.send(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, { })
+    const wcId = this.focusedTabId()
+    if (!wcId) { return }
+    const wc = electron.webContents.fromId(wcId)
+    if (!wc) { return }
+    wc.goBack()
     return this
   }
 
@@ -406,7 +408,11 @@ class MailboxesWindow extends WaveboxWindow {
   * @return this
   */
   navigateForward () {
-    this.window.webContents.send(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, { })
+    const wcId = this.focusedTabId()
+    if (!wcId) { return }
+    const wc = electron.webContents.fromId(wcId)
+    if (!wc) { return }
+    wc.goForward()
     return this
   }
 
@@ -475,7 +481,43 @@ class MailboxesWindow extends WaveboxWindow {
   * Opens the dev tools for the webview
   */
   openDevTools () {
-    this.window.webContents.send(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, {})
+    const wcId = this.focusedTabId()
+    if (!wcId) { return }
+    const wc = electron.webContents.fromId(wcId)
+    if (!wc) { return }
+    wc.openDevTools()
+    return this
+  }
+
+  /* ****************************************************************************/
+  // Actions: Zoom
+  /* ****************************************************************************/
+
+  /**
+  * Zooms the current window in
+  * @return this
+  */
+  zoomIn () {
+    mailboxActions.reduceService(undefined, undefined, ServiceReducer.increaseZoom)
+    return this
+  }
+
+  /**
+  * Zooms the current window out
+  * @return this
+  */
+  zoomOut () {
+    mailboxActions.reduceService(undefined, undefined, ServiceReducer.decreaseZoom)
+    return this
+  }
+
+  /**
+  * Resets the zoom on the current window
+  * @return this
+  */
+  zoomReset () {
+    mailboxActions.reduceService(undefined, undefined, ServiceReducer.resetZoom)
+    return this
   }
 
   /* ****************************************************************************/
@@ -486,17 +528,14 @@ class MailboxesWindow extends WaveboxWindow {
   * @return the id of the focused webcontents
   */
   focusedTabId () {
-    return this.tabManager.getWebContentsId(
-      mailboxStore.getActiveMailboxId(),
-      mailboxStore.getActiveServiceType()
-    )
+    return this.tabManager.activeTabId
   }
 
   /**
   * @return the ids of the tabs in this window
   */
   tabIds () {
-    return this.tabManager.allWebContentIds()
+    return this.tabManager.allWebContentIds
   }
 
   /**

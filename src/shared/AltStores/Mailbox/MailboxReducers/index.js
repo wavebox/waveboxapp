@@ -45,8 +45,8 @@ const { REDUCER_NAME_TO_FN, REDUCER_FN_TO_NAME } = REDUCER_CLASSES.reduce((acc, 
   methodNames.forEach((methodName) => {
     const ident = `${className}.${methodName}`
     const fn = ReducerClass[methodName]
-    acc[REDUCER_NAME_TO_FN].set(ident, fn)
-    acc[REDUCER_FN_TO_NAME].set(fn, ident)
+    acc['REDUCER_NAME_TO_FN'].set(ident, fn)
+    acc['REDUCER_FN_TO_NAME'].set(fn, ident)
   })
   return acc
 }, {REDUCER_NAME_TO_FN: new Map(), REDUCER_FN_TO_NAME: new Map()})

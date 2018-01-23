@@ -2,6 +2,7 @@ import stringHash from 'string-hash'
 import os from 'os'
 import path from 'path'
 import fs from 'fs-extra'
+import Resolver from 'Runtime/Resolver'
 
 export default class NotificationRendererUtils {
   /* **************************************************************************/
@@ -112,7 +113,7 @@ export default class NotificationRendererUtils {
   */
   static preparedServiceIcon (mailbox, service, mailboxState) {
     if (service.showAvatarInNotifications) {
-      return mailboxState.getResolvedAvatar(mailbox.id)
+      return mailboxState.getResolvedAvatar(mailbox.id, (i) => Resolver.image(i))
     } else {
       return undefined
     }

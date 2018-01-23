@@ -2,7 +2,7 @@ import { ipcMain, BrowserWindow, webContents } from 'electron'
 import { evtMain } from 'AppEvents'
 import ContentWindow from 'windows/ContentWindow'
 import url from 'url'
-import mailboxStore from 'stores/mailboxStore'
+import { mailboxStore } from 'stores/mailbox'
 import { WindowOpeningHandler } from '../WindowOpeningEngine'
 import { WB_NEW_WINDOW } from 'shared/ipcEvents'
 import { WAVEBOX_HOSTED_EXTENSION_PROTOCOL } from 'shared/extensionApis'
@@ -157,7 +157,9 @@ class MailboxesWindowBehaviour {
     const webContentsId = evt.sender.id
     if (!this.tabManager.hasServiceId(webContentsId)) { return }
     const { mailboxId, serviceType } = this.tabManager.getServiceId(webContentsId)
-    const service = mailboxStore.getService(mailboxId, serviceType)
+    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
+    if (!mailbox) { return }
+    const service = mailbox.serviceForType(serviceType)
     if (!service) { return }
 
     if (service.shouldPreventInputEvent(input)) {

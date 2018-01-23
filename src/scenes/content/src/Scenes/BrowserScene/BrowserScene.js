@@ -9,13 +9,7 @@ import BrowserToolbar from './BrowserToolbar'
 import { browserActions, browserStore } from 'stores/browser'
 import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
 import path from 'path'
-import {
-  WB_WINDOW_RELOAD_WEBVIEW,
-  WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
-  WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
-  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
-} from 'shared/ipcEvents'
-import { ipcRenderer, remote } from 'electron'
+import { remote } from 'electron'
 
 const SEARCH_REF = 'search'
 const BROWSER_REF = 'browser'
@@ -36,22 +30,17 @@ export default class BrowserScene extends React.Component {
 
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
-    ipcRenderer.on(WB_WINDOW_RELOAD_WEBVIEW, this.handleIPCReload)
-    ipcRenderer.on(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, this.handleIPCOpenDevTools)
-    ipcRenderer.on(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, this.handleIPCNavigateBack)
-    ipcRenderer.on(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, this.handleIPCNavigateForward)
     if (process.platform === 'darwin') {
-      this.mouseNavigator = new MouseNavigationDarwin(this.handleIPCNavigateBack, this.handleIPCNavigateForward)
+      this.mouseNavigator = new MouseNavigationDarwin(
+        () => this.refs[BROWSER_REF].goBack(),
+        () => this.refs[BROWSER_REF].goForward()
+      )
       this.mouseNavigator.register()
     }
   }
 
   componentWillUnmount () {
     browserStore.unlisten(this.browserUpdated)
-    ipcRenderer.removeListener(WB_WINDOW_RELOAD_WEBVIEW, this.handleIPCReload)
-    ipcRenderer.removeListener(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, this.handleIPCOpenDevTools)
-    ipcRenderer.removeListener(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, this.handleIPCNavigateBack)
-    ipcRenderer.removeListener(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, this.handleIPCNavigateForward)
     if (process.platform === 'darwin') {
       this.mouseNavigator.unregister()
     }
@@ -78,26 +67,6 @@ export default class BrowserScene extends React.Component {
       searchNextHash: browserState.searchNextHash,
       zoomFactor: browserState.zoomFactor
     })
-  }
-
-  /* **************************************************************************/
-  // IPC Events
-  /* **************************************************************************/
-
-  handleIPCReload = () => {
-    this.refs[BROWSER_REF].reload()
-  }
-
-  handleIPCNavigateBack = () => {
-    this.refs[BROWSER_REF].goBack()
-  }
-
-  handleIPCNavigateForward = () => {
-    this.refs[BROWSER_REF].goForward()
-  }
-
-  handleIPCOpenDevTools = () => {
-    this.refs[BROWSER_REF].openDevTools()
   }
 
   /* **************************************************************************/

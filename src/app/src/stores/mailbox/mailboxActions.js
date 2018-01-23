@@ -15,13 +15,6 @@ class MailboxActions extends CoreMailboxActions {
   */
   load () {
     const mailboxData = mailboxPersistence.allJSONItems()
-
-    //TODO I need to be done differently now
-    /*ipcRenderer.sendSync(WB_PREPARE_MAILBOX_SESSION, { // Sync us across bridge so everything is setup before webview created
-      partition: 'persist:' + mailboxModel.partition,
-      mailboxType: mailboxModel.type
-    })*/
-
     return {
       allAvatars: avatarPersistence.allItems(),
       allMailboxes: Object.keys(mailboxData).reduce((acc, id) => {
@@ -33,7 +26,7 @@ class MailboxActions extends CoreMailboxActions {
       mailboxIndex: mailboxData[PERSISTENCE_INDEX_KEY] || [],
       activeMailbox: mailboxData[PERSISTENCE_INDEX_KEY][0] || null,
       activeService: CoreMailbox.SERVICE_TYPES.DEFAULT,
-      sleepingServices: []
+      sleepingServices: {}
     }
   }
 }

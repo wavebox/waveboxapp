@@ -1,5 +1,5 @@
 import CoreMailboxStore from './CoreMailboxStore'
-import { ACTIONS_NAME } from './AltUserIdentifiers'
+import { ACTIONS_NAME } from './AltMailboxIdentifiers'
 import MailboxFactory from '../../Models/Accounts/MailboxFactory'
 
 class RendererMailboxStore extends CoreMailboxStore {
@@ -45,7 +45,7 @@ class RendererMailboxStore extends CoreMailboxStore {
   // Active
   /* **************************************************************************/
 
-  remoteSetActive ({mailboxId, serviceType}) {
+  handleRemoteSetActive ({mailboxId, serviceType}) {
     this.active = mailboxId
     this.activeService = serviceType
   }
@@ -56,11 +56,7 @@ class RendererMailboxStore extends CoreMailboxStore {
 
   handleRemoteSetSleep ({mailboxId, serviceType, isSleeping}) {
     const key = this.getFullServiceKey(mailboxId, serviceType)
-    if (isSleeping) {
-      this.sleepingServices.add(key)
-    } else {
-      this.sleepingServices.delete(key)
-    }
+    this.sleepingServices.set(key, isSleeping)
   }
 
   handleRemoteSetSleepMetrics ({mailboxId, serviceType, metrics}) {
@@ -71,7 +67,7 @@ class RendererMailboxStore extends CoreMailboxStore {
   // Avatar
   /* **************************************************************************/
 
-  remoteSetAvatar (id, b64Image) {
+  handleRemoteSetAvatar ({id, b64Image}) {
     if (!b64Image) {
       this.avatars.delete(id)
     } else {

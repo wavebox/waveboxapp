@@ -1,11 +1,9 @@
 import { ipcMain } from 'electron'
 import WINDOW_BACKING_TYPES from 'windows/WindowBackingTypes'
 import WaveboxWindow from 'windows/WaveboxWindow'
-import MailboxesWindow from 'windows/MailboxesWindow'
-import mailboxStore from 'stores/mailboxStore'
+import { mailboxStore, mailboxActions, ServiceReducer } from 'stores/mailbox'
 import {
-  WB_GUEST_API_REQUEST,
-  WB_GUEST_API_SAFE_REDUCE
+  WB_GUEST_API_REQUEST
 } from 'shared/ipcEvents'
 
 /**
@@ -37,7 +35,9 @@ class GuestApiService {
     if (!tabInfo) { return }
     if (tabInfo.backing !== WINDOW_BACKING_TYPES.MAILBOX_SERVICE) { return }
 
-    const service = mailboxStore.getService(tabInfo.mailboxId, tabInfo.serviceType)
+    const mailbox = mailboxStore.getState().getMailbox(tabInfo.mailboxId)
+    if (!mailbox) { return }
+    const service = mailbox.serviceForType(tabInfo.serviceType)
     if (!service) { return }
     if (!service.supportsGuestConfig) { return }
 
@@ -77,15 +77,21 @@ class GuestApiService {
   /* ****************************************************************************/
 
   _setBadgeCount (mailboxId, serviceType, unsafeCount) {
-    this._reduceToStore(mailboxId, serviceType, 'badge:setCount', [
+    mailboxActions.reduceService(
+      mailboxId,
+      serviceType,
+      ServiceReducer.setAdaptorUnreadCount,
       this._shapeInt(unsafeCount, 0)
-    ])
+    )
   }
 
   _setBadgeHasUnreadActivity (mailboxId, serviceType, unsafeHasActivity) {
-    this._reduceToStore(mailboxId, serviceType, 'badge:setHasUnreadActivity', [
+    mailboxActions.reduceService(
+      mailboxId,
+      serviceType,
+      ServiceReducer.setAdaptorHasUnreadActivity,
       this._shapeBool(unsafeHasActivity, false)
-    ])
+    )
   }
 
   _setTrayMessages (mailboxId, serviceType, unsafeMessages) {
@@ -103,21 +109,12 @@ class GuestApiService {
           }
         }
       })
-    this._reduceToStore(mailboxId, serviceType, 'tray:setMessages', [messages])
-  }
-
-  /**
-  * Sends the message to the mailboxes window. This provides a workaround
-  * until our cross-thread store is ready
-  * @param mailboxId: the id of the mailbox
-  * @param serviceType: the type of service
-  * @param name: the method name
-  * @param reducerConfig: the config to pass to the reducer
-  */
-  _reduceToStore (mailboxId, serviceType, name, reducerConfig) {
-    const mainWindow = WaveboxWindow.getOfType(MailboxesWindow)
-    if (!mainWindow) { return }
-    mainWindow.window.webContents.send(WB_GUEST_API_SAFE_REDUCE, mailboxId, serviceType, name, reducerConfig)
+    mailboxActions.reduceService(
+      mailboxId,
+      serviceType,
+      ServiceReducer.setAdaptorTrayMessages,
+      messages
+    )
   }
 }
 

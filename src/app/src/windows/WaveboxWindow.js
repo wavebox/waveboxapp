@@ -271,7 +271,10 @@ class WaveboxWindow extends EventEmitter {
   * @return this
   */
   close () {
-    this.window.close()
+    // If we're in a failed launch, we can try to close which just causes another error
+    if (this.window) {
+      this.window.close()
+    }
     return this
   }
 
@@ -298,7 +301,11 @@ class WaveboxWindow extends EventEmitter {
   * @return this
   */
   reload () {
-    this.window.webContents.reload()
+    const wcId = this.focusedTabId()
+    if (!wcId) { return }
+    const wc = webContents.fromId(wcId)
+    if (!wc) { return }
+    wc.reload()
     return this
   }
 

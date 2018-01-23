@@ -26,23 +26,21 @@ export default class MailboxTabManager extends React.Component {
 
   state = (() => {
     const mailboxState = mailboxStore.getState()
-    const userState = userStore.getState()
     return {
-      mailboxIds: mailboxState.unrestrictedMailboxIds(userState.user)
+      mailboxIds: mailboxState.unrestrictedMailboxIds()
     }
   })()
 
   mailboxesChanged = (mailboxState) => {
-    const userState = userStore.getState()
     this.setState({
-      mailboxIds: mailboxState.unrestrictedMailboxIds(userState.user)
+      mailboxIds: mailboxState.unrestrictedMailboxIds()
     })
   }
 
   userChanged = (userState) => {
     const mailboxState = mailboxStore.getState()
     this.setState({
-      mailboxIds: mailboxState.unrestrictedMailboxIds(userState.user)
+      mailboxIds: mailboxState.unrestrictedMailboxIds()
     })
   }
 

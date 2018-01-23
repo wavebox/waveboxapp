@@ -1,6 +1,6 @@
 import { session } from 'electron'
 import CRDispatchManager from '../CRDispatchManager'
-import mailboxStore from 'stores/mailboxStore'
+import { mailboxStore } from 'stores/mailbox'
 import {
   CRX_COOKIES_GET_,
   CRX_COOKIES_GET_ALL_,
@@ -75,7 +75,7 @@ class CRExtensionCookies {
       partitions.push(CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id))
     }
     if (scopes.has('tabs')) {
-      mailboxStore.getMailboxIds().forEach((mailboxId) => {
+      mailboxStore.getState().mailboxIds().forEach((mailboxId) => {
         partitions.push(`persist:${mailboxId}`)
       })
     }

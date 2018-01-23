@@ -1,15 +1,14 @@
-import { ipcMain, webContents, BrowserWindow } from 'electron'
-import mailboxStore from 'stores/mailboxStore'
+import { ipcMain, webContents, BrowserWindow, app } from 'electron'
+import { mailboxStore } from 'stores/mailbox'
 import { evtMain } from 'AppEvents'
 import {
   WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED,
-  WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED,
-  WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT
+  WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED
 } from 'shared/ipcEvents'
 import WaveboxWindow from 'windows/WaveboxWindow'
 import WINDOW_BACKING_TYPES from 'windows/WindowBackingTypes'
 
-const privQueuedMailboxToTabChange = Symbol('privQueuedMailboxToTabChange')
+const privActiveTabId = Symbol('privActiveTabId')
 
 class MailboxesWindowTabManager {
   /* ****************************************************************************/
@@ -25,21 +24,28 @@ class MailboxesWindowTabManager {
     this.attachedExtensions = new Map()
     this.targetUrls = new Map()
 
-    this[privQueuedMailboxToTabChange] = null
+    this[privActiveTabId] = undefined
 
     // Bind event listeners
-    mailboxStore.on('changed:active', this.handleActiveMailboxChanged)
+    mailboxStore.listen(this.attemptEmitTabActivatedOnMailboxesChanged)
     ipcMain.on(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, this.handleMailboxesWebViewAttached)
     ipcMain.on(WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED, this.handleExtensionWebViewAttached)
-    ipcMain.on(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, this.handleFetchOpenWindowCount)
   }
 
   destroy () {
-    mailboxStore.removeListener('changed:active', this.handleActiveMailboxChanged)
+    mailboxStore.unlisten(this.attemptEmitTabActivatedOnMailboxesChanged)
     ipcMain.removeListener(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, this.handleMailboxesWebViewAttached)
     ipcMain.removeListener(WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED, this.handleExtensionWebViewAttached)
-    ipcMain.removeListener(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, this.handleFetchOpenWindowCount)
   }
+
+  /* ****************************************************************************/
+  // Properties
+  /* ****************************************************************************/
+
+  get activeTabId () {
+    return this.attachedMailboxes.has(this[privActiveTabId]) ? this[privActiveTabId] : undefined
+  }
+  get allWebContentIds () { return Array.from(this.attachedMailboxes.keys()) }
 
   /* ****************************************************************************/
   // Event handlers: Mailboxes
@@ -64,19 +70,10 @@ class MailboxesWindowTabManager {
 
       evtMain.emit(evtMain.WB_TAB_CREATED, {}, data.webContentsId)
 
-      // Look to see if there was a queued change event
-      if (this[privQueuedMailboxToTabChange]) {
-        const { mailboxId, serviceType } = this[privQueuedMailboxToTabChange]
-        if (mailboxId === data.mailboxId && serviceType === data.serviceType) {
-          const browserWindow = BrowserWindow.fromWebContents(webContents.fromId(this.webContentsId))
-          const tabId = this.getWebContentsId(mailboxId, serviceType)
-
-          if (browserWindow && tabId) {
-            evtMain.emit(evtMain.WB_TAB_ACTIVATED, {}, browserWindow.id, tabId)
-          }
-        }
-        this[privQueuedMailboxToTabChange] = null
-      }
+      // Sometimes the active tab change call fails because the webview is not
+      // yet attached. It fails silently and doesn't set, so run it again here
+      // to see if we can re-emit
+      this.attemptEmitTabActivatedOnMailboxesChanged(mailboxStore.getState())
     }
   }
 
@@ -111,19 +108,19 @@ class MailboxesWindowTabManager {
 
   /**
   * Handles the active mailbox chaning
-  * @param evt: the event that fired
+  * @param mailboxState: the new mailbox state
   */
-  handleActiveMailboxChanged = (evt) => {
-    const browserWindow = BrowserWindow.fromWebContents(webContents.fromId(this.webContentsId))
-    const tabId = this.getWebContentsId(evt.mailboxId, evt.serviceType)
+  attemptEmitTabActivatedOnMailboxesChanged = (mailboxState) => {
+    const mailboxId = mailboxState.activeMailboxId()
+    const serviceType = mailboxState.activeMailboxService()
+    const tabId = this.getWebContentsId(mailboxId, serviceType)
 
-    if (browserWindow && tabId) {
-      this[privQueuedMailboxToTabChange] = null
-      evtMain.emit(evtMain.WB_TAB_ACTIVATED, {}, browserWindow.id, tabId)
-    } else {
-      // Sometimes the mailbox changes comes in before the webview is mounted.
-      // To cope with this queue it up to dequeue on mount
-      this[privQueuedMailboxToTabChange] = evt
+    if (tabId && tabId !== this[privActiveTabId]) {
+      const browserWindow = BrowserWindow.fromWebContents(webContents.fromId(this.webContentsId))
+      if (browserWindow) {
+        this[privActiveTabId] = tabId
+        evtMain.emit(evtMain.WB_TAB_ACTIVATED, {}, browserWindow.id, tabId)
+      }
     }
   }
 
@@ -162,8 +159,8 @@ class MailboxesWindowTabManager {
   getService (webContentsId) {
     const { match, mailboxId, serviceType } = this.getServiceId(webContentsId)
     if (match) {
-      const mailbox = mailboxStore.getMailbox(mailboxId)
-      const service = mailboxStore.getService(mailboxId, serviceType)
+      const mailbox = mailboxStore.getState().getMailbox(mailboxId)
+      const service = mailbox ? mailbox.serviceForType(serviceType) : undefined
       return { mailboxId, serviceType, mailbox, service, match: mailbox && service }
     } else {
       return { match: false }
@@ -174,6 +171,7 @@ class MailboxesWindowTabManager {
   * Gets the webcontents id for a mailbox and service
   * @param mailboxId: the id of the mailbox
   * @param serviceType: the type of service
+  * @return the web contents id or null
   */
   getWebContentsId (mailboxId, serviceType) {
     const wcId = Array.from(this.attachedMailboxes.keys()).find((wcId) => {
@@ -184,10 +182,33 @@ class MailboxesWindowTabManager {
   }
 
   /**
-  * @return a list of all attached mailboxes
+  * Gets the web content ids for a specific mailbox
+  * @param mailboxId: the id of the mailbox
+  * @return a list of web content ids that match
   */
-  allWebContentIds () {
+  getWebContentIdsForMailbox (mailboxId) {
     return Array.from(this.attachedMailboxes.keys())
+      .filter((wcId) => {
+        const rec = this.attachedMailboxes.get(wcId)
+        return rec.mailboxId === mailboxId
+      })
+  }
+
+  /**
+  * Gets the metrics for a running service
+  * @param mailboxId: the id of the mailbox
+  * @param serviceType: the type of service
+  * @return the metrics for the service or undefined
+  */
+  getServiceMetrics (mailboxId, serviceType) {
+    const wcId = this.getWebContentsId(mailboxId, serviceType)
+    if (!wcId) { return undefined }
+
+    const wc = webContents.fromId(wcId)
+    if (!wc) { return undefined }
+
+    const pid = wc.getOSProcessId()
+    return app.getAppMetrics().find((metric) => metric.pid === pid)
   }
 
   /* ****************************************************************************/
@@ -235,16 +256,13 @@ class MailboxesWindowTabManager {
     return this.targetUrls.get(webContentsId)
   }
 
-  /* ****************************************************************************/
-  // Getters: IPC
-  /* ****************************************************************************/
-
   /**
-  * Gets the list of open windows for the specified mailbox and service
-  * @param evt: the event that fired
-  * @param body: the message sent
+  * Gets the open window count for a mailboxId and serviceType
+  * @param mailboxId: the id of the mailbox
+  * @param serviceType: the type of service
+  * @return the number of windows that owned by the given items
   */
-  handleFetchOpenWindowCount = (evt, body) => {
+  getOpenWindowCount (mailboxId, serviceType) {
     const mailboxesWindowId = WaveboxWindow.fromWebContentsId(this.webContentsId).browserWindowId
     const count = WaveboxWindow.all().reduce((acc, w) => {
       if (w.browserWindowId === mailboxesWindowId) { return acc }
@@ -252,17 +270,13 @@ class MailboxesWindowTabManager {
         const meta = w.tabMetaInfo(tabId)
         if (!meta) { return acc }
         if (!meta.backing === WINDOW_BACKING_TYPES.MAILBOX_SERVICE) { return acc }
-        if (meta.mailboxId !== body.mailboxId || meta.serviceType !== body.serviceType) { return acc }
+        if (meta.mailboxId !== mailboxId || meta.serviceType !== serviceType) { return acc }
         return acc + 1
       }, 0)
       return acc + windowCount
     }, 0)
 
-    if (body.response) {
-      evt.sender.send(body.response, { count: count })
-    } else {
-      evt.returnValue = { count: count }
-    }
+    return count
   }
 }
 

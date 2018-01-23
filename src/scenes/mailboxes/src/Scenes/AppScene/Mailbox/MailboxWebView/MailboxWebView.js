@@ -421,7 +421,9 @@ export default class MailboxWebView extends React.Component {
       mailboxId: mailboxId,
       serviceType: serviceType
     })
-    mailboxActions.setWebcontentTabId(mailboxId, serviceType, webContents.id)
+
+    // Update the store
+    mailboxActions.setWebcontentTabId.defer(mailboxId, serviceType, webContents.id)
   }
 
   /**
