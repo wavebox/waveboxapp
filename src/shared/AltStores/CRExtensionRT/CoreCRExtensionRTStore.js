@@ -8,8 +8,7 @@ const {
   CRExtensionManifest
 } = require('../../Models/CRExtension')
 const {
-  CRExtensionRTBrowserAction,
-  CRExtensionRTContextMenu
+  CRExtensionRTBrowserAction
 } = require('../../Models/CRExtensionRT')
 
 class CoreCRExtensionRTStore extends RemoteStore {
@@ -23,7 +22,6 @@ class CoreCRExtensionRTStore extends RemoteStore {
     this.manifests = new Map()
     this.installMeta = new Map()
     this.browserActions = new Map()
-    this.contextMenus = new Map()
 
     /* ****************************************/
     // Manifests
@@ -197,8 +195,7 @@ class CoreCRExtensionRTStore extends RemoteStore {
     this.bindActions({
       handleLoad: actions.LOAD,
       handleInstallMetaChanged: actions.INSTALL_META_CHANGED,
-      handleBrowserActionChanged: actions.BROWSER_ACTION_CHANGED,
-      handleContextMenusChanged: actions.CONTEXT_MENUS_CHANGED
+      handleBrowserActionChanged: actions.BROWSER_ACTION_CHANGED
     })
   }
 
@@ -211,8 +208,7 @@ class CoreCRExtensionRTStore extends RemoteStore {
       .forEach((extensionId) => {
         const {
           manifest,
-          browserAction,
-          contextMenus
+          browserAction
         } = runtimeData[extensionId]
 
         // Manifest
@@ -226,9 +222,6 @@ class CoreCRExtensionRTStore extends RemoteStore {
         Object.keys(browserAction.tabs).forEach((tabId) => {
           this.saveBrowserAction(extensionId, tabId, browserAction.tabs[tabId])
         })
-
-        // Context menus
-        this.saveContextMenus(extensionId, contextMenus)
       })
 
     Object.keys(installMeta)
@@ -275,30 +268,6 @@ class CoreCRExtensionRTStore extends RemoteStore {
     this.saveBrowserAction(extensionId, tabId, browserAction)
     if (process.type === 'browser') {
       this.dispatchToRemote('browserActionChanged', [extensionId, tabId, browserAction])
-    }
-  }
-
-  /* **************************************************************************/
-  // Context menus
-  /* **************************************************************************/
-
-  /**
-  * Saves the context menus
-  * @param extensionId: the id of the extension
-  * @param data: the menus for that extension as an array
-  * @return the saved menus
-  */
-  saveContextMenus (extensionId, data) {
-    const contextMenuModels = data
-      .map(([id, d]) => new CRExtensionRTContextMenu(extensionId, id, d))
-    this.contextMenus.set(extensionId, contextMenuModels)
-    return contextMenuModels
-  }
-
-  handleContextMenusChanged ({extensionId, menus}) {
-    this.saveContextMenus(extensionId, menus)
-    if (process.type === 'browser') {
-      this.dispatchToRemote('contextMenusChanged', [extensionId, menus])
     }
   }
 }

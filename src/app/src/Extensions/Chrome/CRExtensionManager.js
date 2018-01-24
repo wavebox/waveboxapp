@@ -1,4 +1,4 @@
-import { app, ipcMain, webContents } from 'electron'
+import { app, webContents } from 'electron'
 import CRExtensionRuntimeHandler from './CRExtensionRuntimeHandler'
 import CRExtensionFS from './CRExtensionFS'
 import CRExtensionDownloader from './CRExtensionDownloader'
@@ -7,10 +7,7 @@ import {
   CRExtensionManifest
 } from 'shared/Models/CRExtension'
 import {
-  WBECRX_GET_EXTENSION_INSTALL_META,
-  WBECRX_EXTENSION_INSTALL_META_CHANGED,
-  WBECRX_UNINSTALL_EXTENSION,
-  WBECRX_INSTALL_EXTENSION
+  WBECRX_EXTENSION_INSTALL_META_CHANGED
 } from 'shared/ipcEvents'
 import {
   CR_EXTENSION_PROTOCOL
@@ -33,18 +30,7 @@ class CRExtensionManager {
     this.isCheckingForUpdates = false
     this._isSetup_ = false
 
-    ipcMain.on(WBECRX_GET_EXTENSION_INSTALL_META, (evt) => {
-      evt.returnValue = this._generateInstallMetadata()
-    })
-    ipcMain.on(WBECRX_UNINSTALL_EXTENSION, (evt, extensionId) => {
-      this.uninstallExtension(extensionId) //TODO kill?
-    })
-    ipcMain.on(WBECRX_INSTALL_EXTENSION, (evt, extensionId, installInfo) => {
-      this.installExtension(extensionId, installInfo) //TODO kill?
-    })
-    evtMain.on(evtMain.WB_UPDATE_INSTALLED_EXTENSIONS, () => {
-      this.updateExtensions() //TODO kill?
-    })
+    evtMain.on(evtMain.WB_UPDATE_INSTALLED_EXTENSIONS, () => { this.updateExtensions() })
   }
 
   /* ****************************************************************************/
@@ -206,7 +192,7 @@ class CRExtensionManager {
   * Generates the full install metadata
   * @return install metadata for each known extension
   */
-  _generateInstallMetadata () {
+  generateInstallMetadata () {
     const allExtensionIds = [].concat(
       this.downloader.downloadingExtensionIds,
       Array.from(this.extensions.keys()),
@@ -232,7 +218,7 @@ class CRExtensionManager {
   * Sends the install metadata to all listeners
   */
   _handleSendInstallMetadata () {
-    const metadata = this._generateInstallMetadata()
+    const metadata = this.generateInstallMetadata()
     webContents.getAllWebContents().forEach((wc) => {
       wc.send(WBECRX_EXTENSION_INSTALL_META_CHANGED, metadata)
     })

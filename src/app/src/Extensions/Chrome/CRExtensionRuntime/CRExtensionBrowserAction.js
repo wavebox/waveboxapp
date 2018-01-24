@@ -1,6 +1,5 @@
 import { ipcMain, webContents } from 'electron'
 import CRDispatchManager from '../CRDispatchManager'
-import CRExtensionUISubscriber from '../CRExtensionUISubscriber'
 import CRExtensionTab from './CRExtensionTab'
 import {
   CRX_BROWSER_ACTION_SET_TITLE_,
@@ -17,10 +16,6 @@ import {
   CRX_BROWSER_ACTION_CLICKED_
 } from 'shared/crExtensionIpcEvents'
 import {
-  WBECRX_BROWSER_ACTION_CHANGED,
-  WBECRX_BROWSER_ACTION_CLICKED_
-} from 'shared/ipcEvents'
-import {
   CR_EXTENSION_PROTOCOL
 } from 'shared/extensionApis'
 import {
@@ -28,6 +23,8 @@ import {
 } from 'shared/Models/CRExtensionRT'
 import ContentWindow from 'windows/ContentWindow'
 import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
+import { evtMain } from 'AppEvent'
+import {crExtensionRTActions} from 'stores/crextensionRT'
 
 class CRExtensionBrowserAction {
   /* ****************************************************************************/
@@ -49,7 +46,8 @@ class CRExtensionBrowserAction {
     CRDispatchManager.registerHandler(`${CRX_BROWSER_ACTION_FETCH_BADGE_BACKGROUND_COLOR_}${this.extension.id}`, this.handleFetchBadgeBackgroundColor)
     ipcMain.on(`${CRX_BROWSER_ACTION_ENABLE_}${this.extension.id}`, this.handleEnable)
     ipcMain.on(`${CRX_BROWSER_ACTION_DISABLE_}${this.extension.id}`, this.handleDisable)
-    ipcMain.on(`${WBECRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, this.handleClick) //TODO kill?
+
+    evtMain.on(`${evtMain.WBECRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, this.handleClick)
 
     // Populate from the extension
     if (extension.manifest.hasBrowserAction) {
@@ -69,7 +67,8 @@ class CRExtensionBrowserAction {
     CRDispatchManager.unregisterHandler(`${CRX_BROWSER_ACTION_FETCH_BADGE_BACKGROUND_COLOR_}${this.extension.id}`, this.handleFetchBadgeBackgroundColor)
     ipcMain.removeListener(`${CRX_BROWSER_ACTION_ENABLE_}${this.extension.id}`, this.handleEnable)
     ipcMain.removeListener(`${CRX_BROWSER_ACTION_DISABLE_}${this.extension.id}`, this.handleDisable)
-    ipcMain.removeListener(`${WBECRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, this.handleClick)
+
+    evtMain.removeListener(`${evtMain.WBECRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, this.handleClick)
   }
 
   /* ****************************************************************************/
@@ -118,7 +117,7 @@ class CRExtensionBrowserAction {
 
     // Send the change to any ui components
     if (emitChange && this.extension.manifest.hasBrowserAction) {
-      CRExtensionUISubscriber.send(WBECRX_BROWSER_ACTION_CHANGED, this.extension.id, tabId, nextJS)
+      crExtensionRTActions.browserActionChanged(this.extension.id, tabId, nextJS)
     }
   }
 

@@ -1,14 +1,10 @@
 import { webContents } from 'electron'
 import CRDispatchManager from '../CRDispatchManager'
-import CRExtensionUISubscriber from '../CRExtensionUISubscriber'
 import CRExtensionTab from './CRExtensionTab'
 import {
   CRX_CONTEXT_MENU_CREATE_,
   CRX_CONTEXT_MENU_CLICKED_
 } from 'shared/crExtensionIpcEvents'
-import {
-  WBECRX_CONTEXT_MENUS_CHANGED
-} from 'shared/ipcEvents'
 import {
   CRExtensionRTContextMenu
 } from 'shared/Models/CRExtensionRT'
@@ -69,7 +65,6 @@ class CRExtensionContextMenus {
 
     const contextMenu = new CRExtensionRTContextMenu(this.extension.id, id, properties)
     this.menuItems.push(contextMenu)
-    CRExtensionUISubscriber.send(WBECRX_CONTEXT_MENUS_CHANGED, this.extension.id, this.buildUIRuntimeData())
     responseCallback(null, undefined)
   }
 

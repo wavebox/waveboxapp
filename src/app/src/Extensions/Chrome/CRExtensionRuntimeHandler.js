@@ -18,12 +18,6 @@ import {
   CRX_PORT_CONNECTED_,
   CRX_PORT_DISCONNECTED_
 } from 'shared/crExtensionIpcEvents'
-import {
-  WBECRX_GET_EXTENSION_RUNTIME_DATA,
-  WBECRX_LAUNCH_OPTIONS,
-  WBECRX_INSPECT_BACKGROUND,
-  WBECRX_CLEAR_ALL_BROWSER_SESSIONS
-} from 'shared/ipcEvents'
 import { CSPParser, CSPBuilder } from './CSP'
 import pathTool from 'shared/pathTool'
 import CRExtensionTab from './CRExtensionRuntime/CRExtensionTab'
@@ -44,12 +38,9 @@ class CRExtensionRuntimeHandler extends EventEmitter {
 
     CRDispatchManager.registerHandler(CRX_RUNTIME_SENDMESSAGE, this._handleRuntimeSendmessage)
     CRDispatchManager.registerHandler(CRX_TABS_SENDMESSAGE, this._handleTabsSendmessage)
-    ipcMain.on(WBECRX_GET_EXTENSION_RUNTIME_DATA, this._handleGetRuntimeData)
-    ipcMain.on(WBECRX_LAUNCH_OPTIONS, this._handleOpenOptionsPage)
-    ipcMain.on(WBECRX_INSPECT_BACKGROUND, this._handleInspectBackground)
+
     ipcMain.on(CRX_RUNTIME_HAS_RESPONDER, this._handleHasRuntimeResponder)
     ipcMain.on(CRX_PORT_CONNECT_SYNC, this._handlePortConnect)
-    ipcMain.on(WBECRX_CLEAR_ALL_BROWSER_SESSIONS, this._handleClearAllBrowserSessions)
   }
 
   /* ****************************************************************************/
@@ -268,15 +259,14 @@ class CRExtensionRuntimeHandler extends EventEmitter {
 
   /**
   * Gets the runtime data in a synchronous way
-  * @param evt: the event that fired
   */
-  _handleGetRuntimeData = (evt) => {
+  getRuntimeData () {
     const data = Array.from(this.runtimes.keys())
       .reduce((acc, key) => {
         acc[key] = this.runtimes.get(key).buildUIRuntimeData()
         return acc
       }, {})
-    evt.returnValue = data
+    return data
   }
 
   /**
@@ -297,10 +287,9 @@ class CRExtensionRuntimeHandler extends EventEmitter {
 
   /**
   * Opens the options page
-  * @param evt: the event that fired
   * @param extensionId: the id of the extension
   */
-  _handleOpenOptionsPage = (evt, extensionId) => {
+  openOptionsPage (extensionId) {
     const runtime = this.runtimes.get(extensionId)
     if (!runtime) { return }
     runtime.optionsPage.launchWindow()
@@ -308,10 +297,9 @@ class CRExtensionRuntimeHandler extends EventEmitter {
 
   /**
   * Opens the inspector for the background page
-  * @param evt: the event that fired
   * @param extensionId: the id of the extension
   */
-  _handleInspectBackground = (evt, extensionId) => {
+  inspectBackgroundPage (extensionId) {
     const runtime = this.runtimes.get(extensionId)
     if (!runtime) { return }
     runtime.backgroundPage.openDevTools()
@@ -324,7 +312,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   /**
   * Clears all the browser sessions
   */
-  _handleClearAllBrowserSessions = () => {
+  clearAllBrowserSessions () {
     Array.from(this.runtimes.values()).forEach((runtime) => {
       runtime.backgroundPage.clearBrowserSession()
     })

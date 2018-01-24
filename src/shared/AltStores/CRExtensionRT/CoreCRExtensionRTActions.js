@@ -39,7 +39,7 @@ class CoreCRExtensionRTActions extends RemoteActions {
   * Accepts new install metadata
   * @param metadata: the metadata
   */
-  installMetaChanged (metadata) {
+  installMetaChanged (metadata) { //TODO not called anywhere
     return { metadata }
   }
 
@@ -93,20 +93,6 @@ class CoreCRExtensionRTActions extends RemoteActions {
     } else if (process.type === 'renderer') {
       return this.remoteDispatch('browserActionClicked', args)
     }
-  }
-
-  /* **************************************************************************/
-  // Context menus
-  /* **************************************************************************/
-
-  /**
-  * Creates a new context menu
-  * @param evt: the ipc event
-  * @param extensionId: the id of the extension
-  * @param menus: the new menus
-  */
-  contextMenusChanged (extensionId, menus) {
-    return { extensionId, menus }
   }
 
   /* **************************************************************************/

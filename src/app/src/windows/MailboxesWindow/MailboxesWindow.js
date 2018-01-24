@@ -3,7 +3,6 @@ import WaveboxWindow from '../WaveboxWindow'
 import { settingsStore } from 'stores/settings'
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
-import CRExtensionUISubscriber from 'Extensions/Chrome/CRExtensionUISubscriber'
 import {
   AuthGoogle,
   AuthMicrosoft,
@@ -176,8 +175,6 @@ class MailboxesWindow extends WaveboxWindow {
     // remove built in listener so we can handle this on our own
     this.window.webContents.removeAllListeners('devtools-reload-page')
     this.window.webContents.on('devtools-reload-page', () => this.reloadWaveboxWindow())
-
-    CRExtensionUISubscriber.subscribe(this.window.webContents)
 
     return this
   }

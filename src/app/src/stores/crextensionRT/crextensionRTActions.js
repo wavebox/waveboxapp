@@ -13,8 +13,8 @@ class CRExtensionRTActions extends CoreCRExtensionRTActions {
   */
   load () {
     return {
-      runtimeData: CRExtensionManager.runtimeHandler.getRuntimeData(), //TODO add to runtime, depricate ipc
-      installMeta: CRExtensionManager.generateInstallMetadata() //TODO add to manager, depricate ipc
+      runtimeData: CRExtensionManager.runtimeHandler.getRuntimeData(),
+      installMeta: CRExtensionManager.generateInstallMetadata()
     }
   }
 
@@ -38,6 +38,14 @@ class CRExtensionRTActions extends CoreCRExtensionRTActions {
     return Promise.resolve() // Suppress
   }
 
+  /**
+  * Updates the installed extensions
+  */
+  updateInstalledExtensions () {
+    CRExtensionManager.updateExtensions()
+    return Promise.resolve() // Suppress
+  }
+
   /* **************************************************************************/
   // Browser Action
   /* **************************************************************************/
@@ -46,7 +54,7 @@ class CRExtensionRTActions extends CoreCRExtensionRTActions {
   * @overwrite
   */
   browserActionClicked (extensionId, tabId) {
-    evtMain.emit(`${evtMain.WBECRX_BROWSER_ACTION_CLICKED_}${extensionId}`, tabId) //TODO add to evtMain
+    evtMain.emit(`${evtMain.WBECRX_BROWSER_ACTION_CLICKED_}${extensionId}`, tabId)
     return Promise.resolve() // Suppress
   }
 
@@ -58,7 +66,7 @@ class CRExtensionRTActions extends CoreCRExtensionRTActions {
   * @overwrite
   */
   openExtensionOptions (extensionId) {
-    CRExtensionManager.runtimeHandler.openOptionsPage(extensionId) //TODO add to runtime. depricate ipc
+    CRExtensionManager.runtimeHandler.openOptionsPage(extensionId)
     return Promise.resolve() // Suppress
   }
 
@@ -66,7 +74,7 @@ class CRExtensionRTActions extends CoreCRExtensionRTActions {
   * @overwrite
   */
   inspectBackgroundPage (extensionId) {
-    CRExtensionManager.runtimeHandler.inspectBackgroundPage(extensionId) //TODO add to runtime. depricate ipc
+    CRExtensionManager.runtimeHandler.inspectBackgroundPage(extensionId)
     return Promise.resolve() // Suppress
   }
 
@@ -78,7 +86,7 @@ class CRExtensionRTActions extends CoreCRExtensionRTActions {
   * @overwrite
   */
   clearAllBrowserSessions () {
-    CRExtensionManager.runtimeHandler.clearAllBrowserSessions() //TODO add to runtime. depricate ipc
+    CRExtensionManager.runtimeHandler.clearAllBrowserSessions()
     return Promise.resolve() // Suppress
   }
 }
