@@ -1,10 +1,10 @@
-import CoreCRExtensionRTStore from 'shared/AltStores/CRExtensionRT/CoreCRExtensionRTStore'
+import CoreCRExtensionStore from 'shared/AltStores/CRExtension/CoreCRExtensionStore'
 import alt from '../alt'
-import { STORE_NAME } from 'shared/AltStores/CRExtensionRT/AltCRExtensionRTIdentifiers'
-import actions from './crextensionRTActions'  // eslint-disable-line
+import { STORE_NAME } from 'shared/AltStores/CRExtension/AltCRExtensionIdentifiers'
+import actions from './crextensionActions'  // eslint-disable-line
 import { CRExtensionManager } from 'Extensions/Chrome'
 
-class CRExtensionRTStore extends CoreCRExtensionRTStore {
+class CRExtensionStore extends CoreCRExtensionStore {
   /* **************************************************************************/
   // Remote
   /* **************************************************************************/
@@ -20,4 +20,4 @@ class CRExtensionRTStore extends CoreCRExtensionRTStore {
   }
 }
 
-export default alt.createStore(CRExtensionRTStore, STORE_NAME)
+export default alt.createStore(CRExtensionStore, STORE_NAME)

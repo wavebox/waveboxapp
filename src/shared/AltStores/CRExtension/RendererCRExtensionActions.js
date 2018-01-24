@@ -1,6 +1,6 @@
-import CoreCRExtensionRTActions from './CoreCRExtensionRTActions'
+import CoreCRExtensionActions from './CoreCRExtensionActions'
 
-class RendererCRExtensionRTActions extends CoreCRExtensionRTActions {
+class RendererCRExtensionActions extends CoreCRExtensionActions {
   /* **************************************************************************/
   // Loading
   /* **************************************************************************/
@@ -13,4 +13,4 @@ class RendererCRExtensionRTActions extends CoreCRExtensionRTActions {
   }
 }
 
-export default RendererCRExtensionRTActions
+export default RendererCRExtensionActions

@@ -1,6 +1,6 @@
-const STORE_NAME = 'CRExtensionRTStore'
-const ACTIONS_NAME = 'CRExtensionRTActions'
-const DISPATCH_NAME = 'CRExtensionRT'
+const STORE_NAME = 'CRExtensionStore'
+const ACTIONS_NAME = 'CRExtensionActions'
+const DISPATCH_NAME = 'CRExtension'
 
 export {
   STORE_NAME,

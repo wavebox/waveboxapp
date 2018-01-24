@@ -3,9 +3,9 @@ import {
   ACTIONS_NAME,
   DISPATCH_NAME,
   STORE_NAME
-} from './AltCRExtensionRTIdentifiers'
+} from './AltCRExtensionIdentifiers'
 
-class CoreCRExtensionRTActions extends RemoteActions {
+class CoreCRExtensionActions extends RemoteActions {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -39,7 +39,7 @@ class CoreCRExtensionRTActions extends RemoteActions {
   * Accepts new install metadata
   * @param metadata: the metadata
   */
-  installMetaChanged (metadata) { //TODO not called anywhere
+  installMetaChanged (metadata) {
     return { metadata }
   }
 
@@ -139,4 +139,4 @@ class CoreCRExtensionRTActions extends RemoteActions {
   }
 }
 
-export default CoreCRExtensionRTActions
+export default CoreCRExtensionActions

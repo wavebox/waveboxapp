@@ -1,5 +1,6 @@
 import { shell } from 'electron'
 import WaveboxWindow from './WaveboxWindow'
+import { WINDOW_BACKING_TYPES } from './WindowTypes'
 
 class ExtensionOptionsWindow extends WaveboxWindow {
   /* ****************************************************************************/
@@ -63,6 +64,15 @@ class ExtensionOptionsWindow extends WaveboxWindow {
   */
   tabIds () {
     return [this.window.webContents.id]
+  }
+  tabMetaInfo (tabId) {
+    if (tabId === this.window.webContentsId) {
+      return {
+        backing: WINDOW_BACKING_TYPES.EXTENSION
+      }
+    } else {
+      return undefined
+    }
   }
 
   /* ****************************************************************************/

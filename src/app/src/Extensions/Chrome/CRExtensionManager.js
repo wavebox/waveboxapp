@@ -1,4 +1,4 @@
-import { app, webContents } from 'electron'
+import { app } from 'electron'
 import CRExtensionRuntimeHandler from './CRExtensionRuntimeHandler'
 import CRExtensionFS from './CRExtensionFS'
 import CRExtensionDownloader from './CRExtensionDownloader'
@@ -7,12 +7,10 @@ import {
   CRExtensionManifest
 } from 'shared/Models/CRExtension'
 import {
-  WBECRX_EXTENSION_INSTALL_META_CHANGED
-} from 'shared/ipcEvents'
-import {
   CR_EXTENSION_PROTOCOL
 } from 'shared/extensionApis'
 import { userStore } from 'stores/user'
+import { crextensionActions } from 'stores/crextension'
 import { evtMain } from 'AppEvents'
 
 class CRExtensionManager {
@@ -219,9 +217,7 @@ class CRExtensionManager {
   */
   _handleSendInstallMetadata () {
     const metadata = this.generateInstallMetadata()
-    webContents.getAllWebContents().forEach((wc) => {
-      wc.send(WBECRX_EXTENSION_INSTALL_META_CHANGED, metadata)
-    })
+    crextensionActions.installMetaChanged.defer(metadata)
   }
 }
 

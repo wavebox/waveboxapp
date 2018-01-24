@@ -1,9 +1,9 @@
-import CoreCRExtensionRTActions from 'shared/AltStores/CRExtensionRT/CoreCRExtensionRTActions'
+import CoreCRExtensionActions from 'shared/AltStores/CRExtension/CoreCRExtensionActions'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { evtMain } from 'AppEvents'
 import alt from '../alt'
 
-class CRExtensionRTActions extends CoreCRExtensionRTActions {
+class CRExtensionActions extends CoreCRExtensionActions {
   /* **************************************************************************/
   // Loading
   /* **************************************************************************/
@@ -54,7 +54,7 @@ class CRExtensionRTActions extends CoreCRExtensionRTActions {
   * @overwrite
   */
   browserActionClicked (extensionId, tabId) {
-    evtMain.emit(`${evtMain.WBECRX_BROWSER_ACTION_CLICKED_}${extensionId}`, tabId)
+    evtMain.emit(`${evtMain.WBECRX_BROWSER_ACTION_CLICKED_}${extensionId}`, {}, tabId)
     return Promise.resolve() // Suppress
   }
 
@@ -91,4 +91,4 @@ class CRExtensionRTActions extends CoreCRExtensionRTActions {
   }
 }
 
-export default alt.createActions(CRExtensionRTActions)
+export default alt.createActions(CRExtensionActions)

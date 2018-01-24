@@ -23,8 +23,8 @@ import {
 } from 'shared/Models/CRExtensionRT'
 import ContentWindow from 'windows/ContentWindow'
 import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
-import { evtMain } from 'AppEvent'
-import {crExtensionRTActions} from 'stores/crextensionRT'
+import { evtMain } from 'AppEvents'
+import {crextensionActions} from 'stores/crextension'
 
 class CRExtensionBrowserAction {
   /* ****************************************************************************/
@@ -117,7 +117,7 @@ class CRExtensionBrowserAction {
 
     // Send the change to any ui components
     if (emitChange && this.extension.manifest.hasBrowserAction) {
-      crExtensionRTActions.browserActionChanged(this.extension.id, tabId, nextJS)
+      crextensionActions.browserActionChanged.defer(this.extension.id, tabId, nextJS)
     }
   }
 

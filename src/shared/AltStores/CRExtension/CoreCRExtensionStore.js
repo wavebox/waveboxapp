@@ -3,7 +3,7 @@ import {
   ACTIONS_NAME,
   DISPATCH_NAME,
   STORE_NAME
-} from './AltCRExtensionRTIdentifiers'
+} from './AltCRExtensionIdentifiers'
 const {
   CRExtensionManifest
 } = require('../../Models/CRExtension')
@@ -11,7 +11,7 @@ const {
   CRExtensionRTBrowserAction
 } = require('../../Models/CRExtensionRT')
 
-class CoreCRExtensionRTStore extends RemoteStore {
+class CoreCRExtensionStore extends RemoteStore {
   /* **************************************************************************/
   // Lifecyle
   /* **************************************************************************/
@@ -239,7 +239,6 @@ class CoreCRExtensionRTStore extends RemoteStore {
       .forEach((extensionId) => {
         this.installMeta.set(extensionId, metadata[extensionId])
       })
-
     if (process.type === 'browser') {
       this.dispatchToRemote('installMetaChanged', [metadata])
     }
@@ -272,4 +271,4 @@ class CoreCRExtensionRTStore extends RemoteStore {
   }
 }
 
-export default CoreCRExtensionRTStore
+export default CoreCRExtensionStore
