@@ -205,13 +205,6 @@ class MicrosoftMailbox extends CoreMailbox {
   get userFullName () { return this.__data__.userFullName }
   get userId () { return this.__data__.userId }
   get displayName () { return this.email || this.userFullName }
-
-  /* **************************************************************************/
-  // Properties : Useragent
-  /* **************************************************************************/
-
-  get useCustomUserAgent () { return true }
-  get customUserAgentString () { return 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.24 Safari/537.36' } // Really an override for teams
 }
 
 module.exports = MicrosoftMailbox

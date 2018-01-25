@@ -1,6 +1,6 @@
 import { shell } from 'electron'
 import WaveboxWindow from './WaveboxWindow'
-import { WINDOW_BACKING_TYPES } from './WindowTypes'
+import { WINDOW_BACKING_TYPES } from './WindowBackingTypes'
 
 class ExtensionOptionsWindow extends WaveboxWindow {
   /* ****************************************************************************/
