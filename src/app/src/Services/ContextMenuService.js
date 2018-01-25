@@ -7,9 +7,9 @@ import {
   nativeImage
 } from 'electron'
 import { ElectronWebContents } from 'ElectronTools'
-import WaveboxWindow from 'windows/WaveboxWindow'
-import ContentWindow from 'windows/ContentWindow'
-import MailboxesWindow from 'windows/MailboxesWindow'
+import WaveboxWindow from 'Windows/WaveboxWindow'
+import ContentWindow from 'Windows/ContentWindow'
+import MailboxesWindow from 'Windows/MailboxesWindow'
 import MenuTool from 'shared/Electron/MenuTool'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import CRExtensionRTContextMenu from 'shared/Models/CRExtensionRT/CRExtensionRTContextMenu'

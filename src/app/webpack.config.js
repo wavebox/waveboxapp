@@ -76,10 +76,10 @@ module.exports = function (env) {
         Extensions: path.resolve(path.join(__dirname, 'src/Extensions')),
         Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
         SessionManager: path.resolve(path.join(__dirname, 'src/SessionManager')),
-        storage: path.resolve(path.join(__dirname, 'src/storage')),
+        Storage: path.resolve(path.join(__dirname, 'src/storage')),
         stores: path.resolve(path.join(__dirname, 'src/stores')),
         WebContentsManager: path.resolve(path.join(__dirname, 'src/WebContentsManager')),
-        windows: path.resolve(path.join(__dirname, 'src/windows')),
+        Windows: path.resolve(path.join(__dirname, 'src/windows')),
         'package.json': path.resolve(path.join(__dirname, '../../package.json'))
       },
       modules: [

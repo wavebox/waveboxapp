@@ -1,7 +1,7 @@
 import CoreMailboxActions from 'shared/AltStores/Mailbox/CoreMailboxActions'
 import alt from '../alt'
-import mailboxPersistence from 'storage/mailboxStorage'
-import avatarPersistence from 'storage/avatarStorage'
+import mailboxPersistence from 'Storage/mailboxStorage'
+import avatarPersistence from 'Storage/avatarStorage'
 import { PERSISTENCE_INDEX_KEY } from 'shared/constants'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 

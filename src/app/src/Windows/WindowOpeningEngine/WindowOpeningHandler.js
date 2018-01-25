@@ -1,6 +1,6 @@
 import { shell, webContents } from 'electron'
-import ContentWindow from 'windows/ContentWindow'
-import ContentPopupWindow from 'windows/ContentPopupWindow'
+import ContentWindow from 'Windows/ContentWindow'
+import ContentPopupWindow from 'Windows/ContentPopupWindow'
 import { settingsStore } from 'stores/settings'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import WindowOpeningEngine from './WindowOpeningEngine'

@@ -1,12 +1,12 @@
 import alt from '../alt'
 import actions from './takeoutActions'
 import fs from 'fs'
-import mailboxStorage from 'storage/mailboxStorage'
-import avatarStorage from 'storage/avatarStorage'
-import settingStorage from 'storage/settingStorage'
+import mailboxStorage from 'Storage/mailboxStorage'
+import avatarStorage from 'Storage/avatarStorage'
+import settingStorage from 'Storage/settingStorage'
 import pkg from 'package.json'
 import { dialog } from 'electron'
-import WaveboxWindow from 'windows/WaveboxWindow'
+import WaveboxWindow from 'Windows/WaveboxWindow'
 import {evtMain} from 'AppEvents'
 
 const TAKEOUT_STORES = [

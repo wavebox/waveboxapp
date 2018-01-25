@@ -6,10 +6,10 @@ import PersistenceBootstrapper from './PersistenceBootstrapper'
 import actions from './userActions'  // eslint-disable-line
 import pkg from 'package.json'
 import semver from 'semver'
-import userPersistence from 'storage/userStorage'
-import wirePersistence from 'storage/wireStorage'
-import extensionStorePersistence from 'storage/extensionStoreStorage'
-import containerPersistence from 'storage/containerStorage'
+import userPersistence from 'Storage/userStorage'
+import wirePersistence from 'Storage/wireStorage'
+import extensionStorePersistence from 'Storage/extensionStoreStorage'
+import containerPersistence from 'Storage/containerStorage'
 import { evtMain } from 'AppEvents'
 import {
   CLIENT_TOKEN,

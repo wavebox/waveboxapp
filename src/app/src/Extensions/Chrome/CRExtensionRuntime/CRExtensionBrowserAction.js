@@ -21,7 +21,7 @@ import {
 import {
   CRExtensionRTBrowserAction
 } from 'shared/Models/CRExtensionRT'
-import ContentWindow from 'windows/ContentWindow'
+import ContentWindow from 'Windows/ContentWindow'
 import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
 import { evtMain } from 'AppEvents'
 import {crextensionActions} from 'stores/crextension'

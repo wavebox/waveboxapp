@@ -1,8 +1,8 @@
 import uuid from 'uuid'
-import userPersistence from 'storage/userStorage'
-import wirePersistence from 'storage/wireStorage'
-import extensionStorePersistence from 'storage/extensionStoreStorage'
-import containerPersistence from 'storage/containerStorage'
+import userPersistence from 'Storage/userStorage'
+import wirePersistence from 'Storage/wireStorage'
+import extensionStorePersistence from 'Storage/extensionStoreStorage'
+import containerPersistence from 'Storage/containerStorage'
 import {
   CLIENT_ID,
   ANALYTICS_ID,

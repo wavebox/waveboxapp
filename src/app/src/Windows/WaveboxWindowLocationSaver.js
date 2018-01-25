@@ -1,4 +1,4 @@
-import appStorage from 'storage/appStorage'
+import appStorage from 'Storage/appStorage'
 
 class WaveboxWindowLocationSaver {
   /* ****************************************************************************/

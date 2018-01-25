@@ -5,8 +5,8 @@ import path from 'path'
 import os from 'os'
 import { settingsStore } from 'stores/settings'
 import unusedFilename from 'unused-filename'
-import WaveboxWindow from 'windows/WaveboxWindow'
-import MailboxesWindow from 'windows/MailboxesWindow'
+import WaveboxWindow from 'Windows/WaveboxWindow'
+import MailboxesWindow from 'Windows/MailboxesWindow'
 
 const MAX_PLATFORM_START_TIME = 1000 * 30
 

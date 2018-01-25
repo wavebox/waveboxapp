@@ -11,7 +11,7 @@ import {
   WCRPC_DID_GET_REDIRECT_REQUEST
 } from 'shared/webContentsRPC'
 import { ELEVATED_LOG_PREFIX } from 'shared/constants'
-import WaveboxWindow from 'windows/WaveboxWindow'
+import WaveboxWindow from 'Windows/WaveboxWindow'
 
 const privConnected = Symbol('privConnected')
 

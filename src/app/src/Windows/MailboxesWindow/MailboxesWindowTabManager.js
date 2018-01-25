@@ -5,8 +5,8 @@ import {
   WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED,
   WB_MAILBOXES_WINDOW_EXTENSION_WEBVIEW_ATTACHED
 } from 'shared/ipcEvents'
-import WaveboxWindow from 'windows/WaveboxWindow'
-import WINDOW_BACKING_TYPES from 'windows/WindowBackingTypes'
+import WaveboxWindow from 'Windows/WaveboxWindow'
+import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
 
 const privActiveTabId = Symbol('privActiveTabId')
 

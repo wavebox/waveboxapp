@@ -1,5 +1,5 @@
 import { BrowserWindow, webContents } from 'electron'
-import WaveboxWindow from 'windows/WaveboxWindow'
+import WaveboxWindow from 'Windows/WaveboxWindow'
 
 class CRExtensionTab {
   /* ****************************************************************************/

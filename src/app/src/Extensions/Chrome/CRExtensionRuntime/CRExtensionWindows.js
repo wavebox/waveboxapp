@@ -2,7 +2,7 @@ import { evtMain } from 'AppEvents'
 import {
   CRX_WINDOW_FOCUS_CHANGED_
 } from 'shared/crExtensionIpcEvents'
-import WaveboxWindow from 'windows/WaveboxWindow'
+import WaveboxWindow from 'Windows/WaveboxWindow'
 
 class CRExtensionWindows {
   /* ****************************************************************************/

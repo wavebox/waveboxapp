@@ -1,5 +1,5 @@
 import CoreSettingsStore from 'shared/AltStores/Settings/CoreSettingsStore'
-import persistence from 'storage/settingStorage'
+import persistence from 'Storage/settingStorage'
 import alt from '../alt'
 import { STORE_NAME } from 'shared/AltStores/Settings/AltSettingsIdentifiers'
 import { SettingsIdent, AppSettings } from 'shared/Models/Settings'

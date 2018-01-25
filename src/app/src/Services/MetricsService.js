@@ -2,8 +2,8 @@ import { ipcMain, webContents, app, shell } from 'electron'
 import fs from 'fs-extra'
 import path from 'path'
 import mkdirp from 'mkdirp'
-import WaveboxWindow from 'windows/WaveboxWindow'
-import MonitorWindow from 'windows/MonitorWindow'
+import WaveboxWindow from 'Windows/WaveboxWindow'
+import MonitorWindow from 'Windows/MonitorWindow'
 import { settingsStore } from 'stores/settings'
 import {
   WB_METRICS_OPEN_MONITOR,

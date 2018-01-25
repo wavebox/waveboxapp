@@ -3,7 +3,7 @@ import {
   CR_EXTENSION_PROTOCOL,
   CR_EXTENSION_BG_PARTITION_PREFIX
 } from 'shared/extensionApis'
-import ExtensionOptionsWindow from 'windows/ExtensionOptionsWindow'
+import ExtensionOptionsWindow from 'Windows/ExtensionOptionsWindow'
 import Resolver from 'Runtime/Resolver'
 
 class CRExtensionOptionsPage {

@@ -1,6 +1,6 @@
 import { ipcMain, BrowserWindow, webContents } from 'electron'
 import { evtMain } from 'AppEvents'
-import ContentWindow from 'windows/ContentWindow'
+import ContentWindow from 'Windows/ContentWindow'
 import url from 'url'
 import { mailboxStore } from 'stores/mailbox'
 import { WindowOpeningHandler } from '../WindowOpeningEngine'

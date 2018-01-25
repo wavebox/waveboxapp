@@ -1,7 +1,7 @@
 import { app } from 'electron'
 import UrlPattern from 'url-pattern'
-import WINDOW_BACKING_TYPES from 'windows/WindowBackingTypes'
-import WaveboxWindow from 'windows/WaveboxWindow'
+import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
+import WaveboxWindow from 'Windows/WaveboxWindow'
 import { mailboxStore } from 'stores/mailbox'
 
 class MailboxAdaptorService {

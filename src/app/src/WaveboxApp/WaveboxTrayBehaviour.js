@@ -1,6 +1,6 @@
 import { app, ipcMain } from 'electron'
-import WaveboxWindow from 'windows/WaveboxWindow'
-import MailboxesWindow from 'windows/MailboxesWindow'
+import WaveboxWindow from 'Windows/WaveboxWindow'
+import MailboxesWindow from 'Windows/MailboxesWindow'
 import {
   WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY,
   WB_SHOW_MAILBOX_WINDOW_FROM_TRAY

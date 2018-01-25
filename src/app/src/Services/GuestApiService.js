@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
-import WINDOW_BACKING_TYPES from 'windows/WindowBackingTypes'
-import WaveboxWindow from 'windows/WaveboxWindow'
+import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
+import WaveboxWindow from 'Windows/WaveboxWindow'
 import { mailboxStore, mailboxActions, ServiceReducer } from 'stores/mailbox'
 import {
   WB_GUEST_API_REQUEST

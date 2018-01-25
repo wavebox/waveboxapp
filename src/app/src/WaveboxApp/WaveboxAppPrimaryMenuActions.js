@@ -1,5 +1,5 @@
-import WaveboxWindow from 'windows/WaveboxWindow'
-import MailboxesWindow from 'windows/MailboxesWindow'
+import WaveboxWindow from 'Windows/WaveboxWindow'
+import MailboxesWindow from 'Windows/MailboxesWindow'
 import { shell, dialog } from 'electron'
 import Release from 'shared/Release'
 import pkg from 'package.json'

@@ -14,14 +14,14 @@ import {
 import {
   WBECRX_EXECUTE_SCRIPT
 } from 'shared/ipcEvents'
-import WaveboxWindow from 'windows/WaveboxWindow'
+import WaveboxWindow from 'Windows/WaveboxWindow'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
 import url from 'url'
 import fs from 'fs-extra'
 import path from 'path'
 import CRExtensionTab from './CRExtensionTab'
 import pathTool from 'shared/pathTool'
-import ContentWindow from 'windows/ContentWindow'
+import ContentWindow from 'Windows/ContentWindow'
 import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
 
 class CRExtensionTabs {
