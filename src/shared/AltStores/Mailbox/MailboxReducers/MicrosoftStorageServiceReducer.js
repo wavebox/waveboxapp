@@ -1,6 +1,16 @@
 import ServiceReducer from './ServiceReducer'
 
 class MicrosoftStorageServiceReducer extends ServiceReducer {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get name () { return 'MicrosoftStorageServiceReducer' }
+
+  /* **************************************************************************/
+  // Reducers
+  /* **************************************************************************/
+
   /**
   * Sets the drive url
   * @param mailbox: the mailbox that contains the service

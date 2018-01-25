@@ -2,6 +2,12 @@ import ServiceReducer from './ServiceReducer'
 
 class GoogleCalendarServiceReducer extends ServiceReducer {
   /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get name () { return 'GoogleCalendarServiceReducer' }
+
+  /* **************************************************************************/
   // Notifications
   /* **************************************************************************/
 

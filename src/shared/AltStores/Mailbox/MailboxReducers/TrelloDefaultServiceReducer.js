@@ -1,6 +1,16 @@
 import ServiceReducer from './ServiceReducer'
 
 class TrelloDefaultServiceReducer extends ServiceReducer {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get name () { return 'TrelloDefaultServiceReducer' }
+
+  /* **************************************************************************/
+  // Reducers
+  /* **************************************************************************/
+
   /**
   * Sets the unread notifications
   * @param mailbox: the mailbox that contains the service

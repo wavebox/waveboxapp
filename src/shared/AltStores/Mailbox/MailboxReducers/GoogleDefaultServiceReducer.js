@@ -1,6 +1,16 @@
 import ServiceReducer from './ServiceReducer'
 
 class GoogleDefaultServiceReducer extends ServiceReducer {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get name () { return 'GoogleDefaultServiceReducer' }
+
+  /* **************************************************************************/
+  // Reducers
+  /* **************************************************************************/
+
   /**
   * Updates the unread info for gmail
   * @param mailbox: the mailbox that contains the service

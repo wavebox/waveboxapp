@@ -1,6 +1,16 @@
 import MailboxReducer from './MailboxReducer'
 
 class ContainerMailboxReducer extends MailboxReducer {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get name () { return 'ContainerMailboxReducer' }
+
+  /* **************************************************************************/
+  // Reducers
+  /* **************************************************************************/
+
   /**
   * Sets the display name for this account
   * @param mailbox: the mailbox to update

@@ -1,6 +1,16 @@
 import MailboxReducer from './MailboxReducer'
 
 class SlackMailboxReducer extends MailboxReducer {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get name () { return 'SlackMailboxReducer' }
+
+  /* **************************************************************************/
+  // Reducers
+  /* **************************************************************************/
+
   /**
   * Sets the basic profile info for this account
   * @param mailbox: the mailbox to update

@@ -1,6 +1,16 @@
 import MailboxReducer from './MailboxReducer'
 
 class MicrosoftMailboxReducer extends MailboxReducer {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get name () { return 'MicrosoftMailboxReducer' }
+
+  /* **************************************************************************/
+  // Reducers
+  /* **************************************************************************/
+
   /**
   * Sets the basic profile info for this account
   * @param mailbox: the mailbox to update

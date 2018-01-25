@@ -2,6 +2,12 @@ import MailboxReducer from './MailboxReducer'
 
 class GenericMailboxReducer extends MailboxReducer {
   /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get name () { return 'GenericMailboxReducer' }
+
+  /* **************************************************************************/
   // Provider Details & counts etc
   /* **************************************************************************/
 

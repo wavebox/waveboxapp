@@ -91,6 +91,9 @@ const stringifyReducer = function (nameOrReducer) {
   return undefined
 }
 
+console.log(REDUCER_FN_TO_NAME)
+console.log(REDUCER_NAME_TO_FN)
+
 export {
   MailboxReducer,
   ServiceReducer,

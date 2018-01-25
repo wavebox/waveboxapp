@@ -1,6 +1,16 @@
 import MailboxReducer from './MailboxReducer'
 
 class GoogleMailboxReducer extends MailboxReducer {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get name () { return 'GoogleMailboxReducer' }
+
+  /* **************************************************************************/
+  // Reducers
+  /* **************************************************************************/
+
   /**
   * Sets the basic profile info for this account
   * @param mailbox: the mailbox to update

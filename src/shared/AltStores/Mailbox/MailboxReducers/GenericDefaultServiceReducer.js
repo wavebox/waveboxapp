@@ -2,6 +2,12 @@ import ServiceReducer from './ServiceReducer'
 
 class GenericDefaultServiceReducer extends ServiceReducer {
   /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get name () { return 'GenericDefaultServiceReducer' }
+
+  /* **************************************************************************/
   // Settings
   /* **************************************************************************/
 

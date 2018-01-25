@@ -2,6 +2,12 @@ import ServiceReducer from './ServiceReducer'
 
 class ContainerDefaultServiceReducer extends ServiceReducer {
   /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get name () { return 'ContainerDefaultServiceReducer' }
+
+  /* **************************************************************************/
   // Settings
   /* **************************************************************************/
 

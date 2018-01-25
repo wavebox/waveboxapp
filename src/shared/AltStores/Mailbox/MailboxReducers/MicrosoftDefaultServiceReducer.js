@@ -1,6 +1,16 @@
 import ServiceReducer from './ServiceReducer'
 
 class MicrosoftDefaultServiceReducer extends ServiceReducer {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get name () { return 'MicrosoftDefaultServiceReducer' }
+
+  /* **************************************************************************/
+  // Reducers
+  /* **************************************************************************/
+
   /**
   * Updates the unread info for gmail
   * @param mailbox: the mailbox that contains the service

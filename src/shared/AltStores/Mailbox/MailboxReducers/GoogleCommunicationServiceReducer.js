@@ -1,6 +1,16 @@
 import ServiceReducer from './ServiceReducer'
 
 class GoogleCommunicationServiceReducer extends ServiceReducer {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get name () { return 'GoogleCommunicationServiceReducer' }
+
+  /* **************************************************************************/
+  // Reducers
+  /* **************************************************************************/
+
   /**
   * Sets the unread count
   * @param mailbox: the mailbox that contains the service

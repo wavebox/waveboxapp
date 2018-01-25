@@ -1,6 +1,16 @@
 import ServiceFactory from '../../../Models/Accounts/ServiceFactory'
 
 class MailboxReducer {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get name () { return 'MailboxReducer' }
+
+  /* **************************************************************************/
+  // Cookies
+  /* **************************************************************************/
+
   /**
   * Artificially persist the cookies for this mailbox
   * @param mailbox: the mailbox to update

@@ -2,6 +2,12 @@ import ServiceReducer from './ServiceReducer'
 
 class SlackDefaultServiceReducer extends ServiceReducer {
   /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get name () { return 'SlackDefaultServiceReducer' }
+
+  /* **************************************************************************/
   // Full unread
   /* **************************************************************************/
 
