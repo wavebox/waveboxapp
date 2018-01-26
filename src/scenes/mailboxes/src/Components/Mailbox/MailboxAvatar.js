@@ -4,6 +4,7 @@ import { Avatar } from 'material-ui'
 import { mailboxStore } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
 import Resolver from 'Runtime/Resolver'
+import classnames from 'classnames'
 
 export default class MailboxAvatar extends React.Component {
   /* **************************************************************************/
@@ -112,12 +113,20 @@ export default class MailboxAvatar extends React.Component {
 
   render () {
     const { url } = this.state
-    const { style, mailbox, size, useBorderHack, ...otherProps } = this.props
-    const passProps = Object.assign({
+    const {
+      style,
+      mailbox,
+      size,
+      useBorderHack,
+      className,
+      ...otherProps
+    } = this.props
+    const passProps = {
       draggable: false,
       style: style,
-      backgroundColor: mailbox.hasCustomAvatar || mailbox.avatarURL ? 'white' : mailbox.color
-    }, otherProps)
+      backgroundColor: mailbox.hasCustomAvatar || mailbox.avatarURL ? 'white' : mailbox.color,
+      ...otherProps
+    }
 
     const sizeAndBorder = this.renderStyles(mailbox, size, style || {}, useBorderHack)
     passProps.size = sizeAndBorder.size
@@ -126,13 +135,14 @@ export default class MailboxAvatar extends React.Component {
       ...sizeAndBorder.style,
       ...(!mailbox.avatarCharacterDisplay ? {textIndent: -100000} : undefined) // Stops showing the broken image icon if the url doesn't resolve
     }
+    const fullClassName = classnames(`WB-MailboxAvatar WB-Mailbox-${mailbox.id}`, className)
 
     if (url) {
-      return (<Avatar {...passProps} src={url} />)
+      return (<Avatar {...passProps} src={url} className={fullClassName} />)
     } else if (mailbox.avatarCharacterDisplay) {
-      return (<Avatar {...passProps}>{mailbox.avatarCharacterDisplay}</Avatar>)
+      return (<Avatar {...passProps} className={fullClassName}>{mailbox.avatarCharacterDisplay}</Avatar>)
     } else {
-      return (<Avatar {...passProps} />)
+      return (<Avatar {...passProps} className={fullClassName} />)
     }
   }
 }

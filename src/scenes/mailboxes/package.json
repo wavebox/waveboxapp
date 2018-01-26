@@ -9,6 +9,7 @@
     "alt": "0.18.6",
     "appdirectory": "0.1.0",
     "bootstrap-grid": "2.0.1",
+    "classnames": "2.2.5",
     "color": "2.0.1",
     "fbjs": "0.8.16",
     "fs-extra": "5.0.0",

@@ -11,6 +11,7 @@ import * as Colors from 'material-ui/styles/colors'
 import uuid from 'uuid'
 import Resolver from 'Runtime/Resolver'
 import UISettings from 'shared/Models/Settings/UISettings'
+import classnames from 'classnames'
 
 const styles = {
   /**
@@ -169,6 +170,7 @@ export default class SidelistItemMailboxService extends React.Component {
       serviceType,
       onOpenService,
       style,
+      className,
       ...passProps
     } = this.props
     const {
@@ -211,6 +213,7 @@ export default class SidelistItemMailboxService extends React.Component {
           size={35}
           backgroundColor='white'
           draggable={false}
+          className={classnames('WB-ServiceIcon', `WB-ServiceIcon-${mailbox.id}_${service.type}`, className)}
           style={{
             ...styles.avatar,
             borderColor: borderColor,

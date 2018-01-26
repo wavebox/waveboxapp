@@ -151,7 +151,7 @@ export default class AppScene extends React.Component {
     return (
       <div {...passProps}>
         {hasSidebar ? (
-          <div style={styles.master}>
+          <div style={styles.master} className='WB-Master'>
             <Sidelist />
           </div>
         ) : undefined}
@@ -170,7 +170,7 @@ export default class AppScene extends React.Component {
           ...styles.detail,
           ...(hasSidebar ? {} : { left: 0 }),
           ...(hasToolbar ? {} : { top: 0 })
-        }}>
+        }} className='WB-Detail'>
           <MailboxTabManager style={styles.mailboxTabManager} />
         </div>
         {this.props.children}

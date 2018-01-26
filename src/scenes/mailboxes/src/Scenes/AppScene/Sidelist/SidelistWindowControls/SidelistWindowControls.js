@@ -2,6 +2,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import SidelistWindowControl from './SidelistWindowControl'
 import { remote } from 'electron'
+import classnames from 'classnames'
 
 const HAS_WINDOW_CONTROLS = process.platform !== 'darwin'
 const styles = {
@@ -72,12 +73,15 @@ export default class SidelistWindowControls extends React.Component {
   }
 
   render () {
-    const { style, ...passProps } = this.props
+    const { style, className, ...passProps } = this.props
 
     if (HAS_WINDOW_CONTROLS) {
       const { isWindowMaximized } = this.state
       return (
-        <div {...passProps} style={{ ...styles.container, ...style }}>
+        <div
+          {...passProps}
+          style={{ ...styles.container, ...style }}
+          className={classnames('WB-SidelistWindowControls', className)}>
           <SidelistWindowControl
             type={SidelistWindowControl.TYPES.CLOSE}
             onClick={() => remote.getCurrentWindow().close()} />

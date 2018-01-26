@@ -2,6 +2,8 @@ import React from 'react'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import SidelistItemMailbox from './SidelistItemMailbox'
 import {SortableContainer, SortableElement} from 'react-sortable-hoc'
+import classnames from 'classnames'
+import './SidelistMailboxes.less'
 
 const SortableItem = SortableElement(({ mailboxId }) => {
   return (<SidelistItemMailbox mailboxId={mailboxId} />)
@@ -54,11 +56,13 @@ export default class SidelistMailboxes extends React.Component {
   }
 
   render () {
-    const { ...passProps } = this.props
+    const { className, ...passProps } = this.props
     const { mailboxIds } = this.state
 
     return (
-      <div {...passProps}>
+      <div
+        {...passProps}
+        className={classnames('ReactComponent-Sidelist-Mailboxes', 'WB-Sidelist-Mailboxes', className)}>
         <SortableList
           axis='y'
           distance={20}

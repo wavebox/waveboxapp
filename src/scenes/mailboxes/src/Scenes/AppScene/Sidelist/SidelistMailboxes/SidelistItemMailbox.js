@@ -7,6 +7,7 @@ import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import MailboxServicePopover from '../../MailboxServicePopover'
 import SidelistItemMailboxAvatar from './SidelistItemMailboxAvatar'
 import SidelistItemMailboxServices from './SidelistItemMailboxServices'
+import classnames from 'classnames'
 
 const styles = {
   /**
@@ -141,7 +142,7 @@ export default class SidelistItemMailbox extends React.Component {
       userHasServices,
       isRestricted
     } = this.state
-    const { style, mailboxId, ...passProps } = this.props
+    const { style, className, mailboxId, ...passProps } = this.props
 
     const containerStyle = {
       ...styles.mailboxContainer,
@@ -150,7 +151,7 @@ export default class SidelistItemMailbox extends React.Component {
     }
 
     return (
-      <div {...passProps} style={containerStyle}>
+      <div {...passProps} style={containerStyle} className={classnames('WB-SidelistItemMailbox', className)}>
         <SidelistItemMailboxAvatar
           mailboxId={mailboxId}
           serviceType={CoreMailbox.SERVICE_TYPES.DEFAULT}

@@ -12,6 +12,7 @@ export default class SidelistControlAddMailbox extends React.Component {
   render () {
     return (
       <SidelistControl
+        className={`WB-SidelistControlAddMailbox`}
         onClick={() => { window.location.hash = '/mailbox_wizard/add' }}
         tooltip='Add Account'
         tourStep={TOUR_STEPS.ADD_ACCOUNT}

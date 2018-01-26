@@ -12,6 +12,7 @@ export default class SidelistControlSettings extends React.Component {
   render () {
     return (
       <SidelistControl
+        className={`WB-SidelistControlSettings`}
         onClick={() => { window.location.hash = '/settings' }}
         tooltip='Settings'
         tourStep={TOUR_STEPS.SETTINGS}

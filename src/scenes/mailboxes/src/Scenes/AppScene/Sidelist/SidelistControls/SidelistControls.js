@@ -7,6 +7,7 @@ import SidelistControlSettings from './SidelistControlSettings'
 import shallowCompare from 'react-addons-shallow-compare'
 import SidelistControlWhatsNew from './SidelistControlWhatsNew'
 import SidelistControlExpander from './SidelistControlExpander'
+import classnames from 'classnames'
 
 export default class SidelistControls extends React.Component {
   /* **************************************************************************/
@@ -50,11 +51,11 @@ export default class SidelistControls extends React.Component {
   }
 
   render () {
-    const { ...passProps } = this.props
+    const { className, ...passProps } = this.props
     const { showWizard, showSupport } = this.state
 
     return (
-      <div {...passProps}>
+      <div {...passProps} className={classnames('WB-SidelistControls', className)}>
         <SidelistControlExpander expanded={this.state.expanded}
           onClick={() => { this.setState({ expanded: !this.state.expanded }) }} />
         <div style={{

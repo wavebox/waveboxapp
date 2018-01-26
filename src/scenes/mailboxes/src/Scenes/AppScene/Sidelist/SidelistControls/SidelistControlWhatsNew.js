@@ -89,6 +89,7 @@ export default class SidelistControlWhatsNew extends React.Component {
 
     return (
       <SidelistControl
+        className={`WB-SidelistControlWhatsNew`}
         onClick={() => { window.location.hash = '/news' }}
         tooltip={hasUnseenNews && headline && summary ? (
           <div>

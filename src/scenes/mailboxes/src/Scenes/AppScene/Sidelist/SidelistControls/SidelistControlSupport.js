@@ -12,6 +12,7 @@ export default class SidelistControlSupport extends React.Component {
   render () {
     return (
       <SidelistControl
+        className={`WB-SidelistControlSupport`}
         onClick={() => { window.location.hash = '/settings/support' }}
         tooltip={`Help, Support & FAQs`}
         tourStep={TOUR_STEPS.SUPPORT_CENTER}

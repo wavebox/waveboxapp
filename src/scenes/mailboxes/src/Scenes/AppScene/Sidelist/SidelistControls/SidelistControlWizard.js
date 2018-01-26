@@ -12,6 +12,7 @@ export default class SidelistControlWizard extends React.Component {
   render () {
     return (
       <SidelistControl
+        className={`WB-SidelistControlWizard`}
         onClick={() => { window.location.hash = '/app_wizard' }}
         tooltip='Setup Wizard'
         iconStyle={{ fontSize: '24px', marginLeft: -4 }}

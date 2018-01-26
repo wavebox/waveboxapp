@@ -248,11 +248,13 @@ export default class ToolbarMailboxService extends React.Component {
           iconStyle={styles.badgeFAIcon}
           onMouseEnter={() => this.setState({ isHovering: true })}
           onMouseLeave={() => this.setState({ isHovering: false })}>
-          <div style={{
-            backgroundImage: `url("${Resolver.image(service.humanizedLogoAtSize(96))}")`,
-            filter: showSleeping ? 'grayscale(100%)' : 'none',
-            ...styles.avatar
-          }} />
+          <div
+            className={`WB-ServiceIcon-${mailbox.id}_${service.type}`}
+            style={{
+              backgroundImage: `url("${Resolver.image(service.humanizedLogoAtSize(96))}")`,
+              filter: showSleeping ? 'grayscale(100%)' : 'none',
+              ...styles.avatar
+            }} />
         </ServiceBadge>
         {tooltipsEnabled ? (
           <ServiceTooltip

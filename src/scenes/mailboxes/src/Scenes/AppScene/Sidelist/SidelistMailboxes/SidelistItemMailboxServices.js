@@ -4,6 +4,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import SidelistItemMailboxService from './SidelistItemMailboxService'
 import { mailboxStore, mailboxActions, MailboxReducer } from 'stores/mailbox'
 import {SortableContainer, SortableElement} from 'react-sortable-hoc'
+import classnames from 'classnames'
 
 const styles = {
   container: {
@@ -106,7 +107,8 @@ export default class SidelistItemMailboxServices extends React.Component {
   render () {
     const {
       onOpenService,
-      onContextMenuService
+      onContextMenuService,
+      className
     } = this.props
     const { mailbox, isActiveMailbox } = this.state
     if (!mailbox || !mailbox.hasAdditionalServices) { return false }
@@ -117,7 +119,7 @@ export default class SidelistItemMailboxServices extends React.Component {
     }
 
     return (
-      <div style={style}>
+      <div style={style} className={classnames('WB-SidelistItemMailboxServices', className)}>
         <SortableList
           axis='y'
           distance={20}

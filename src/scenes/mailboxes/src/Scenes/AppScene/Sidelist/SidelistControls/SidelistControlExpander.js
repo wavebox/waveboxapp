@@ -12,6 +12,7 @@ export default class SidelistControlExpander extends React.Component {
   render () {
     return (
       <SidelistControl
+        className={`WB-SidelistControlExpander`}
         onClick={this.props.onClick}
         tooltip={this.props.expanded ? 'Hide' : 'Show'}
         tourStep={TOUR_STEPS.EXPANDER}
