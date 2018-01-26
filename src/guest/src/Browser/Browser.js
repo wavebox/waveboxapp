@@ -2,6 +2,7 @@ import KeyboardShim from './KeyboardShim'
 import Spellchecker from './Spellchecker'
 import Lifecycle from './Lifecycle'
 import NotificationProvider from './NotificationProvider'
+import DialogProvider from './DialogProvider'
 import ExtensionLoader from './Extensions/ExtensionLoader'
 import CRExtensionLoader from './Extensions/CRExtensionLoader'
 import UserCodeInjection from './UserCodeInjection'
@@ -11,6 +12,7 @@ import WaveboxApiProvider from './WaveboxApiProvider'
 const privStarted = Symbol('privStarted')
 const privKeyboardShim = Symbol('privKeyboardShim')
 const privSpellchecker = Symbol('privSpellchecker')
+const privDialogProvider = Symbol('privDialogProvider')
 const privNotificationProvider = Symbol('privNotificationProvider')
 const privUserCodeInjection = Symbol('privUserCodeInjection')
 const privLifecycle = Symbol('privLifecycle')
@@ -28,6 +30,7 @@ class Browser {
 
     this[privKeyboardShim] = undefined
     this[privSpellchecker] = undefined
+    this[privDialogProvider] = undefined
     this[privNotificationProvider] = undefined
     this[privUserCodeInjection] = undefined
     this[privLifecycle] = undefined
@@ -45,6 +48,7 @@ class Browser {
 
     this[privKeyboardShim] = new KeyboardShim()
     this[privSpellchecker] = new Spellchecker()
+    this[privDialogProvider] = new DialogProvider()
     this[privNotificationProvider] = new NotificationProvider()
     this[privUserCodeInjection] = new UserCodeInjection()
     this[privLifecycle] = new Lifecycle()

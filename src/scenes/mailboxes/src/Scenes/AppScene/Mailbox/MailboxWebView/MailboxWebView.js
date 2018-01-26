@@ -17,7 +17,9 @@ import {
   WB_BROWSER_NOTIFICATION_CLICK,
   WB_BROWSER_NOTIFICATION_PRESENT,
   WB_BROWSER_INJECT_CUSTOM_CONTENT,
-  WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED
+  WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED,
+  WB_BROWSER_ALERT_PRESENT,
+  WB_BROWSER_CONFIRM_PRESENT
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
 import Spinner from 'sharedui/Components/Activity/Spinner'
@@ -327,6 +329,10 @@ export default class MailboxWebView extends React.Component {
             }
           )
         }
+        break
+      case WB_BROWSER_CONFIRM_PRESENT:
+      case WB_BROWSER_ALERT_PRESENT:
+        mailboxActions.changeActive(this.props.mailboxId, this.props.serviceType)
         break
     }
   }

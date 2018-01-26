@@ -3,11 +3,11 @@ const WAVEBOX_CONTENT_IMPL_ENDPOINTS = {
   CHROME: 'Chrome.js',
   CONTENT_WINDOW: 'ContentWindow.js',
   WAVEBOX_API: 'WaveboxApi.js',
+  WINDOW_DIALOGS: 'NativeWindowDialogs.js',
 
   CREXTENSION_POPOUT_WINDOW_POSTMESSAGE: 'CRExtensionPopoutWindowPostmessage.js',
 
   GOOGLE_MAIL_WINDOW_OPEN: 'GoogleMailWindowOpen.js',
-  GOOGLE_CALENDAR_ALERT: 'GoogleCalendarAlert.js',
   ONEDRIVE_WINDOW_OPEN: 'OnedriveWindowOpen.js'
 }
 const VALID_WAVEBOX_CONTENT_IMPL_ENDPOINTS = new Set(Array.from(Object.keys(WAVEBOX_CONTENT_IMPL_ENDPOINTS).map((k) => WAVEBOX_CONTENT_IMPL_ENDPOINTS[k])))
