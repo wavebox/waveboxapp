@@ -11,9 +11,8 @@ class DialogProvider {
   constructor () {
     this.apiKey = uuid.v4()
 
-    console.log("HERE")
+    // Workaround for runaway memory https://github.com/electron/electron/issues/11739
     ExtensionLoader.loadWaveboxGuestApi(ExtensionLoader.ENDPOINTS.WINDOW_DIALOGS, this.apiKey, {})
-    console.log("HERE2")
     window.addEventListener('message', this.handleWindowMessage)
   }
 
