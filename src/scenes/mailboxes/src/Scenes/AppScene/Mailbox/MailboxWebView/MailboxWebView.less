@@ -89,6 +89,28 @@
     }
   }
 
+  .ReactComponent-MailboxLoadBar {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 0px;
+    height: 3px;
+    background-color: #2196F3;
+    opacity: 0;
+    transition: 700ms ease-in-out opacity;
+    animation-delay: 500ms;
+
+    @keyframes loadbar {
+      0% { width: 10%; }
+      100% { width: 90%; }
+    }
+
+    &.loading {
+      opacity: 1;
+      animation: 3s loadbar;
+    }
+  }
+
   .ReactComponent-MailboxCrashed, .ReactComponent-MailboxAuthInvalid {
     position: absolute;
     top: 0;

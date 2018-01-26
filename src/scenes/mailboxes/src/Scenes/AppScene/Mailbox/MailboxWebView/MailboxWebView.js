@@ -8,6 +8,7 @@ import BrowserView from 'sharedui/Components/BrowserView'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import MailboxSearch from './MailboxSearch'
 import MailboxTargetUrl from './MailboxTargetUrl'
+import MailboxLoadBar from './MailboxLoadBar'
 import shallowCompare from 'react-addons-shallow-compare'
 import URI from 'urijs'
 import { NotificationService } from 'Notifications'
@@ -129,6 +130,7 @@ export default class MailboxWebView extends React.Component {
 
     return {
       initialLoadDone: false,
+      isLoading: false,
       isCrashed: false,
       focusedUrl: null,
       snapshot: mailboxState.getSnapshot(props.mailboxId, props.serviceType),
@@ -395,6 +397,22 @@ export default class MailboxWebView extends React.Component {
   }
 
   /**
+  * Handles a load starting
+  * @param evt: the event that fired
+  */
+  handleDidStartLoading = (evt) => {
+    this.setState({ isLoading: true })
+  }
+
+  /**
+  * Handles a load stopping
+  * @param evt: the event that fired
+  */
+  handleDidStopLoading = (evt) => {
+    this.setState({ isLoading: false })
+  }
+
+  /**
   * Handles the browser navigating
   * @param evt: the event that fired
   */
@@ -515,6 +533,7 @@ export default class MailboxWebView extends React.Component {
       restorableUrl,
       initialLoadDone,
       isCrashed,
+      isLoading,
       snapshot
     } = this.state
 
@@ -585,7 +604,14 @@ export default class MailboxWebView extends React.Component {
             }}
             loadCommit={(evt) => {
               this.multiCallBrowserEvent([this.handleBrowserLoadCommit, webviewEventProps.loadCommit], [evt])
-            }} />
+            }}
+            didStartLoading={(evt) => {
+              this.multiCallBrowserEvent([this.handleDidStartLoading, webviewEventProps.didStartLoading], [evt])
+            }}
+            didStopLoading={(evt) => {
+              this.multiCallBrowserEvent([this.handleDidStopLoading, webviewEventProps.handleDidStopLoading], [evt])
+            }}
+          />
         </div>
         {initialLoadDone || !snapshot ? undefined : (
           <div className='ReactComponent-MailboxSnapshot' style={{ backgroundImage: `url("${snapshot}")` }} />
@@ -595,6 +621,7 @@ export default class MailboxWebView extends React.Component {
             <Spinner size={50} color={Colors.lightBlue600} speed={0.75} />
           </div>
         ) : undefined}
+        <MailboxLoadBar isLoading={isLoading} />
         <MailboxTargetUrl url={focusedUrl} />
         {hasSearch ? (
           <MailboxSearch mailboxId={mailbox.id} serviceType={service.type} />
