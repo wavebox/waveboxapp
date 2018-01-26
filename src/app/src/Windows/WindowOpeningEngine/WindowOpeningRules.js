@@ -184,6 +184,17 @@ class WindowOpeningRules {
         if (mismatch) { return false }
       }
 
+      // Query Excludes (Optional)
+      if (match.queryExcludes) {
+        const query = matchTask.targetUrlQuery
+        const mismatch = Object.keys(match.queryExcludes).find((k) => {
+          if (query[k] === undefined) { return false }
+          if (this._doesPatternMatch(match.queryExcludes[k], query[k])) { return true }
+          return false
+        })
+        if (mismatch) { return false }
+      }
+
       // Nothing caused us to quit, so we matched!
       return true
     } catch (ex) {

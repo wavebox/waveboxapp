@@ -134,7 +134,6 @@ class WindowOpeningHandler {
     // Grab some info about our opener
     const webContentsId = evt.sender.id
     const currentUrl = evt.sender.getURL()
-
     const navigateMode = WindowOpeningEngine.getRuleForNavigation(currentUrl, targetUrl, openingWindowType)
 
     if (navigateMode === WindowOpeningEngine.NAVIGATE_MODES.SUPPRESS) {
