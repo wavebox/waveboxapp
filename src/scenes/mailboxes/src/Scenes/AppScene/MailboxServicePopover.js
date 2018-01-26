@@ -118,9 +118,8 @@ export default class SidelistItemMailboxPopover extends React.Component {
   * Deletes this mailbox
   */
   handleDelete = () => {
-    this.handleClosePopover(() => {
-      mailboxActions.remove(this.props.mailboxId)
-    })
+    window.location.hash = `/mailbox_delete/${this.props.mailboxId}`
+    this.handleClosePopover()
   }
 
   /**

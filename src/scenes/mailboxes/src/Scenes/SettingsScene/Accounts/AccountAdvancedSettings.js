@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper, Toggle, FontIcon, SelectField, MenuItem } from 'material-ui'
+import { Paper, Toggle, FontIcon, SelectField, MenuItem, FlatButton } from 'material-ui'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -120,15 +120,14 @@ export default class AccountAdvancedSettings extends React.Component {
             onConfirmedClick={() => mailboxActions.clearMailboxBrowserSession(mailbox.id)} />
         </div>
         <div>
-          <ConfirmFlatButton
+          <FlatButton
             key={mailbox.id}
             label='Delete this Account'
-            confirmLabel='Click again to confirm'
-            confirmWaitMs={4000}
             icon={<FontIcon color={Colors.red600} className='material-icons'>delete</FontIcon>}
-            confirmIcon={<FontIcon color={Colors.red600} className='material-icons'>help_outline</FontIcon>}
             labelStyle={{color: Colors.red600}}
-            onConfirmedClick={() => mailboxActions.remove(mailbox.id)} />
+            onClick={() => {
+              window.location.hash = `/mailbox_delete/${mailbox.id}`
+            }} />
         </div>
       </div>
     )
