@@ -409,7 +409,10 @@ export default class MailboxWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleDidStopLoading = (evt) => {
-    this.setState({ isLoading: false })
+    this.setState({
+      isLoading: false,
+      initialLoadDone: true
+    })
   }
 
   /**

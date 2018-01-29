@@ -98,7 +98,6 @@
     background-color: #2196F3;
     opacity: 0;
     transition: 700ms ease-in-out opacity;
-    animation-delay: 500ms;
 
     @keyframes loadbar {
       0% { width: 10%; }
@@ -107,7 +106,10 @@
 
     &.loading {
       opacity: 1;
-      animation: 3s loadbar;
+      animation-name: loadbar;
+      animation-delay: 500ms;
+      animation-duration: 3s;
+      animation-fill-mode: forwards;
     }
   }
 
