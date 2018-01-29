@@ -15,6 +15,7 @@ class MailboxActions extends CoreMailboxActions {
   */
   load () {
     const mailboxData = mailboxPersistence.allJSONItems()
+    const mailboxIndex = mailboxData[PERSISTENCE_INDEX_KEY] || []
     return {
       allAvatars: avatarPersistence.allItems(),
       allMailboxes: Object.keys(mailboxData).reduce((acc, id) => {
@@ -23,8 +24,8 @@ class MailboxActions extends CoreMailboxActions {
         }
         return acc
       }, {}),
-      mailboxIndex: mailboxData[PERSISTENCE_INDEX_KEY] || [],
-      activeMailbox: mailboxData[PERSISTENCE_INDEX_KEY][0] || null,
+      mailboxIndex,
+      activeMailbox: mailboxIndex || null,
       activeService: CoreMailbox.SERVICE_TYPES.DEFAULT,
       sleepingServices: {}
     }
