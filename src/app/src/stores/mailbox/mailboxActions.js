@@ -25,7 +25,7 @@ class MailboxActions extends CoreMailboxActions {
         return acc
       }, {}),
       mailboxIndex,
-      activeMailbox: mailboxIndex || null,
+      activeMailbox: mailboxIndex[0] || null,
       activeService: CoreMailbox.SERVICE_TYPES.DEFAULT,
       sleepingServices: {}
     }
