@@ -1,10 +1,11 @@
-import { ipcMain, BrowserWindow } from 'electron'
+import { ipcMain } from 'electron'
 import { WB_AUTH_GOOGLE, WB_AUTH_GOOGLE_COMPLETE, WB_AUTH_GOOGLE_ERROR } from 'shared/ipcEvents'
 import googleapis from 'googleapis'
 import { userStore } from 'stores/user'
 import url from 'url'
 import querystring from 'querystring'
 import pkg from 'package.json'
+import AuthWindow from 'Windows/AuthWindow'
 
 class AuthGoogle {
   /* ****************************************************************************/
@@ -67,12 +68,12 @@ class AuthGoogle {
   */
   promptUserToGetAuthorizationCode (credentials, partitionId) {
     return new Promise((resolve, reject) => {
-      const oauthWin = new BrowserWindow({
+      const waveboxOauthWin = new AuthWindow()
+      waveboxOauthWin.create(this.generatePushServiceAuthenticationURL(credentials), {
         useContentSize: true,
         center: true,
         show: true,
         resizable: false,
-        alwaysOnTop: true,
         standardWindow: true,
         autoHideMenuBar: true,
         title: 'Google',
@@ -83,7 +84,7 @@ class AuthGoogle {
           partition: partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
         }
       })
-      oauthWin.loadURL(this.generatePushServiceAuthenticationURL(credentials))
+      const oauthWin = waveboxOauthWin.window
 
       oauthWin.on('closed', () => {
         reject(new Error('User closed the window'))

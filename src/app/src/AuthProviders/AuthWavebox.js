@@ -1,9 +1,10 @@
-import { ipcMain, BrowserWindow } from 'electron'
+import { ipcMain } from 'electron'
 import { WB_AUTH_WAVEBOX, WB_AUTH_WAVEBOX_COMPLETE, WB_AUTH_WAVEBOX_ERROR } from 'shared/ipcEvents'
 import { userStore } from 'stores/user'
 import querystring from 'querystring'
 import url from 'url'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import AuthWindow from 'Windows/AuthWindow'
 
 class AuthWavebox {
   /* ****************************************************************************/
@@ -67,12 +68,12 @@ class AuthWavebox {
         partitionId = `rand_${new Date().getTime()}`
       }
 
-      const oauthWin = new BrowserWindow({
+      const waveboxOauthWin = new AuthWindow()
+      waveboxOauthWin.create(authUrl, {
         useContentSize: true,
         center: true,
         show: false,
         resizable: false,
-        alwaysOnTop: true,
         standardWindow: true,
         autoHideMenuBar: true,
         title: 'Wavebox',
@@ -83,7 +84,7 @@ class AuthWavebox {
           partition: partitionId
         }
       })
-      oauthWin.loadURL(authUrl)
+      const oauthWin = waveboxOauthWin.window
 
       oauthWin.on('closed', () => {
         reject(new Error('User closed the window'))

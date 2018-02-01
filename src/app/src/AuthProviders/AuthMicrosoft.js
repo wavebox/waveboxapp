@@ -1,5 +1,6 @@
-import { ipcMain, BrowserWindow } from 'electron'
+import { ipcMain } from 'electron'
 import { WB_AUTH_MICROSOFT, WB_AUTH_MICROSOFT_COMPLETE, WB_AUTH_MICROSOFT_ERROR } from 'shared/ipcEvents'
+import AuthWindow from 'Windows/AuthWindow'
 import url from 'url'
 import querystring from 'querystring'
 import { userStore } from 'stores/user'
@@ -68,12 +69,12 @@ class AuthMicrosoft {
   */
   promptUserToGetAuthorizationCode (credentials, partitionId, additionalPermissions) {
     return new Promise((resolve, reject) => {
-      const oauthWin = new BrowserWindow({
+      const waveboxOauthWin = new AuthWindow()
+      waveboxOauthWin.create(this.generatePushServiceAuthenticationURL(credentials), {
         useContentSize: true,
         center: true,
         show: true,
         resizable: false,
-        alwaysOnTop: true,
         standardWindow: true,
         autoHideMenuBar: true,
         title: 'Microsoft',
@@ -84,8 +85,7 @@ class AuthMicrosoft {
           partition: partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
         }
       })
-
-      oauthWin.loadURL(this.generatePushServiceAuthenticationURL(credentials))
+      const oauthWin = waveboxOauthWin.window
 
       oauthWin.on('closed', () => {
         reject(new Error('User closed the window'))

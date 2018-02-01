@@ -1,10 +1,12 @@
 import { ipcMain, BrowserWindow, webContents } from 'electron'
 import { evtMain } from 'AppEvents'
 import ContentWindow from 'Windows/ContentWindow'
+import WaveboxWindow from 'Windows/WaveboxWindow'
+import AuthWindow from 'Windows/AuthWindow'
 import url from 'url'
 import { mailboxStore } from 'stores/mailbox'
 import { WindowOpeningHandler } from '../WindowOpeningEngine'
-import { WB_NEW_WINDOW } from 'shared/ipcEvents'
+import { WB_NEW_WINDOW, WB_FOCUS_AUTH_WINDOW } from 'shared/ipcEvents'
 import { WAVEBOX_HOSTED_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import WINDOW_TYPES from '../WindowTypes'
 import WINDOW_BACKING_TYPES from '../WindowBackingTypes'
@@ -24,11 +26,13 @@ class MailboxesWindowBehaviour {
 
     evtMain.on(evtMain.WB_TAB_CREATED, this.handleTabCreated)
     ipcMain.on(WB_NEW_WINDOW, this.handleOpenIPCWaveboxWindow)
+    ipcMain.on(WB_FOCUS_AUTH_WINDOW, this.handleIPCFocusAuthWindow)
   }
 
   destroy () {
     evtMain.removeListener(evtMain.WB_TAB_CREATED, this.handleTabCreated)
     ipcMain.removeListener(WB_NEW_WINDOW, this.handleOpenIPCWaveboxWindow)
+    ipcMain.removeListener(WB_FOCUS_AUTH_WINDOW, this.handleIPCFocusAuthWindow)
   }
 
   /* ****************************************************************************/
@@ -71,6 +75,19 @@ class MailboxesWindowBehaviour {
 
       const window = BrowserWindow.fromWebContents(evt.sender)
       contentWindow.create(window, body.url, body.partition, body.windowPreferences, body.webPreferences)
+    }
+  }
+
+  /**
+  * Focuses an auth window
+  * @param evt: the event that fired
+  */
+  handleIPCFocusAuthWindow = (evt) => {
+    if (evt.sender.id === this.webContentsId) {
+      const win = WaveboxWindow.getOfType(AuthWindow)
+      if (win) {
+        win.focus()
+      }
     }
   }
 

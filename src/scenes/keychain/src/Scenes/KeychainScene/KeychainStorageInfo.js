@@ -6,19 +6,19 @@ export default class KeychainStorageInfo extends React.Component {
       case 'darwin':
         return (
           <div {...this.props}>
-            Passwords are stored in macOS Keychain and can also be modified from the Keychain Access App
+            Passwords are stored securely in your macOS Keychain
           </div>
         )
       case 'linux':
         return (
           <div {...this.props}>
-            Passwords are stored in libsecret and can also be modified using an app such as GNOME Keyring
+            Passwords are stored securely in your local libsecret
           </div>
         )
       case 'win32':
         return (
           <div {...this.props}>
-            Passwords are stored in the Windows Credential Vault and can also be modified from the Control Panel
+            Passwords are stored securely in the local Windows Credential Vault
           </div>
         )
     }

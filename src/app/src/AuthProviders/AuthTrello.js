@@ -1,7 +1,8 @@
-import {ipcMain, BrowserWindow} from 'electron'
+import {ipcMain} from 'electron'
 import { WB_AUTH_TRELLO, WB_AUTH_TRELLO_COMPLETE, WB_AUTH_TRELLO_ERROR } from 'shared/ipcEvents'
 import url from 'url'
 import querystring from 'querystring'
+import AuthWindow from 'Windows/AuthWindow'
 
 const TOKEN_REGEX = new RegExp(/[&#]?token=([0-9a-f]{64})/)
 
@@ -45,12 +46,12 @@ class AuthTrello {
   */
   promptUserToGetAuthorizationCode (credentials, partitionId) {
     return new Promise((resolve, reject) => {
-      const oauthWin = new BrowserWindow({
+      const waveboxOauthWin = new AuthWindow()
+      waveboxOauthWin.create('https://trello.com/login', {
         useContentSize: true,
         center: true,
         show: true,
         resizable: false,
-        alwaysOnTop: true,
         standardWindow: true,
         autoHideMenuBar: true,
         title: 'Trello',
@@ -61,10 +62,8 @@ class AuthTrello {
           partition: partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
         }
       })
+      const oauthWin = waveboxOauthWin.window
       let appKey
-
-      // STEP 1: User login
-      oauthWin.loadURL('https://trello.com/login')
 
       oauthWin.on('closed', () => {
         reject(new Error('User closed the window'))

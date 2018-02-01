@@ -2,6 +2,8 @@ import React from 'react'
 import { Paper } from 'material-ui'
 import Spinner from 'sharedui/Components/Activity/Spinner'
 import * as Colors from 'material-ui/styles/colors'
+import {ipcRenderer} from 'electron'
+import { WB_FOCUS_AUTH_WINDOW } from 'shared/ipcEvents'
 
 const styles = {
   container: {
@@ -74,6 +76,14 @@ const styles = {
 
 export default class AuthenticationInstruction extends React.Component {
   /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  handleClick = () => {
+    ipcRenderer.send(WB_FOCUS_AUTH_WINDOW)
+  }
+
+  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
@@ -81,7 +91,7 @@ export default class AuthenticationInstruction extends React.Component {
     const { style, ...passProps } = this.props
 
     return (
-      <div {...passProps} style={{...styles.container, ...style}}>
+      <div {...passProps} style={{...styles.container, ...style}} onClick={this.handleClick}>
         <h2 style={styles.title}>When prompted, use the popup authentication window to sign in to your account...</h2>
         <div style={styles.progress}>
           <Spinner size={30} color={Colors.lightBlue600} speed={0.5} />

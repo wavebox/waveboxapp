@@ -442,7 +442,11 @@ class ContextMenuService {
         return {
           icon: nativeImage.createFromDataURL(AUTOFILL_MENU),
           label: rec.account,
-          click: () => { contents.insertText(rec.password) }
+          click: () => {
+            contents.selectAll()
+            contents.insertText(rec.password)
+            contents.unselect()
+          }
         }
       })
       .concat([

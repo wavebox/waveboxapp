@@ -67,13 +67,13 @@ class AutofillService {
 
     evt.sender.insertCSS(`
       input[type="password"] {
-        background-size: contain;
+        background-size: auto 24px;
         background-repeat: no-repeat;
         background-position: right center;
         background-image: url("${AUTOFILL}");
       }
       input[type="password"]:hover {
-        background-size: contain;
+        background-size: auto 24px;
         background-repeat: no-repeat;
         background-position: right center;
         background-image: url("${AUTOFILL_HOVER}");
