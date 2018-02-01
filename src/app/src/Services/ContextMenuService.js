@@ -119,6 +119,11 @@ class ContextMenuService {
             this.renderAutofillSection(contents, params, credentials)
           ].concat(sections))
         })
+        .catch(() => {
+          // If we end in an error state it could be because the lib is not working on this machine.
+          // In this case, just present the normal menu
+          this.presentMenu(browserWindow, sections)
+        })
     } else {
       this.presentMenu(browserWindow, sections)
     }
