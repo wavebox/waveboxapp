@@ -212,6 +212,10 @@ class ContextMenuService {
         label: `Search Google for “${displayText}”`,
         click: () => { shell.openExternal(`https://google.com/search?q=${encodeURIComponent(params.selectionText)}`) }
       })
+      template.push({
+        label: `Translate “${displayText}”`,
+        click: () => { shell.openExternal(`http://translate.google.com/#auto/#/${encodeURIComponent(params.selectionText)}`) }
+      })
     }
     return template
   }
