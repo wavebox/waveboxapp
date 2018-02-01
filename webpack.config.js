@@ -5,6 +5,7 @@ gracefulFs.gracefulify(fs)
 const TASKS = {
   assets: require('./assets/webpack.config.js'),
   app: require('./src/app/webpack.config.js'),
+  keychain: require('./src/scenes/keychain/webpack.config.js'),
   content: require('./src/scenes/content/webpack.config.js'),
   mailboxes: require('./src/scenes/mailboxes/webpack.config.js'),
   print: require('./src/scenes/print/webpack.config.js'),

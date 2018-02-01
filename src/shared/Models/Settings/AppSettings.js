@@ -42,6 +42,7 @@ class AppSettings extends Model {
   get hasSeenLinuxSetupMessage () { return this._value_('hasSeenLinuxSetupMessage', false) }
   get enableGeolocationApi () { return this._value_('enableGeolocationApi', true) }
   get writeMetricsLog () { return this._value_('writeMetricsLog', false) }
+  get enableAutofillService () { return this._value_('enableAutofillService', true) }
 }
 
 module.exports = AppSettings

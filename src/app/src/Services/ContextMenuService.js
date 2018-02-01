@@ -14,9 +14,11 @@ import MenuTool from 'shared/Electron/MenuTool'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import CRExtensionRTContextMenu from 'shared/Models/CRExtensionRT/CRExtensionRTContextMenu'
 import { settingsActions } from 'stores/settings'
+import { AUTOFILL_MENU } from 'shared/b64Assets'
 
 const privConnected = Symbol('privConnected')
 const privSpellcheckerService = Symbol('privSpellcheckerService')
+const privAutofillService = Symbol('privAutofillService')
 
 class ContextMenuService {
   /* ****************************************************************************/
@@ -25,9 +27,11 @@ class ContextMenuService {
 
   /**
   *  @param spellcheckService: the spellchecker service to use
+  * @param autofillService: the autofill service to use
   */
-  constructor (spellcheckService) {
+  constructor (spellcheckService, autofillService) {
     this[privSpellcheckerService] = spellcheckService
+    this[privAutofillService] = autofillService
     this[privConnected] = new Set()
 
     app.on('web-contents-created', this._handleWebContentsCreated)
@@ -107,6 +111,25 @@ class ContextMenuService {
       this.renderWaveboxSection(contents, params)
     ]
 
+    if (this[privAutofillService].isAvailable && this.isAutofillPasswordField(contents, params)) {
+      this[privAutofillService]
+        .findCredentials(contents.getURL())
+        .then((credentials) => {
+          this.presentMenu(browserWindow, [
+            this.renderAutofillSection(contents, params, credentials)
+          ].concat(sections))
+        })
+    } else {
+      this.presentMenu(browserWindow, sections)
+    }
+  }
+
+  /**
+  * Presents the menu
+  * @param browserWindow: the browser window to present on
+  * @param sections: the sections to render
+  */
+  presentMenu (browserWindow, sections) {
     const menu = Menu.buildFromTemplate(this.convertSectionsToTemplate(sections))
     menu.popup(browserWindow)
     setTimeout(() => {
@@ -380,6 +403,54 @@ class ContextMenuService {
       menuItems.push({ label: 'No Spelling Suggestions', enabled: false })
     }
     return menuItems
+  }
+
+  /* **************************************************************************/
+  // Rendering: Autofill
+  /* **************************************************************************/
+
+  /**
+  * Checks to see if this is an enabled autofill password field
+  * @param contents: the webcontents that opened
+  * @param params: the parameters passed alongside the event
+  * @return true if it's enabled for autofill
+  */
+  isAutofillPasswordField (contents, params) {
+    if (params.inputFieldType !== 'password') { return false }
+    if (!params.isEditable) { return false }
+    if (!contents.getURL().startsWith('https://')) { return false }
+
+    return true
+  }
+
+  /**
+  * Renders the autofill section
+  * @param contents: the webcontents that opened
+  * @param params: the parameters passed alongside the event
+  * @param credentials: the credentials
+  * @return the template section or undefined
+  */
+  renderAutofillSection (contents, params, credentials) {
+    if (!this.isAutofillPasswordField(contents, params)) { return undefined }
+
+    return credentials
+      .map((rec) => {
+        return {
+          icon: nativeImage.createFromDataURL(AUTOFILL_MENU),
+          label: rec.account,
+          click: () => { contents.insertText(rec.password) }
+        }
+      })
+      .concat([
+        {
+          label: 'Manage saved passwords',
+          click: () => { this[privAutofillService].openAutofillManager(contents.getURL()) }
+        },
+        {
+          label: 'Add new password',
+          click: () => { this[privAutofillService].addAutofillPassword(contents.getURL()) }
+        }
+      ])
   }
 
   /* **************************************************************************/

@@ -134,6 +134,14 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * Sets whether autofill is enabled
+  * @param enabled: true to enable, false to disable
+  */
+  setEnableAutofillServie (enabled) {
+    this.dispatchUpdate('enableAutofillService', enabled)
+  }
+
+  /**
   * Opens the metrics log
   */
   openMetricsLog () {

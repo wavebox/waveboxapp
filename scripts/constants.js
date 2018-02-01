@@ -18,7 +18,8 @@ module.exports = {
     path.join(SRC_DIR, 'scenes/mailboxes'),
     path.join(SRC_DIR, 'scenes/content'),
     path.join(SRC_DIR, 'scenes/monitor'),
-    path.join(SRC_DIR, 'scenes/print')
+    path.join(SRC_DIR, 'scenes/print'),
+    path.join(SRC_DIR, 'scenes/keychain')
   ],
   REBUILD_PACKAGE_DIRS: [
     path.join(SRC_DIR, 'app'),

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Wavebox Keychain</title>
+    <link rel="stylesheet" type="text/css" href="../../fonts/opensans/opensans.css">
+    <link rel="stylesheet" type="text/css" href="../../fonts/materialdesign/material-icons.css">
+    <link rel="stylesheet" type="text/css" href="../../fonts/fontawesome/font-awesome.min.css">
+    <style>
+      /** Core styles **/
+      html, body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Open Sans', sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+        backface-visibility: hidden;
+      }
+      body {
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+      body::-webkit-scrollbar {
+        -webkit-appearance: none;
+        width: 7px;
+      }
+      body::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+        background-color: rgba(0,0,0,.5);
+        -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="ReactComponent-AppScene"></div>
+    <script type="text/javascript" src="keychain.js"></script>
+  </body>
+</html>

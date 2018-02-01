@@ -16,6 +16,7 @@
     "dev:guestApi": "webpack --env.task=guestApi && electron bin/app/index.js",
     "dev:crextensionApi": "webpack --env.task=crextensionApi && electron bin/app/index.js",
     "dev:app": "webpack --env.task=app && electron bin/app/index.js",
+    "dev:keychain": "webpack --env.task=keychain --env.fast && electron bin/app/index.js",
     "dev:mailboxes": "webpack --env.task=mailboxes --env.fast && electron bin/app/index.js",
     "dev:content": "webpack --env.task=content && electron bin/app/index.js",
     "dev:monitor": "webpack --env.task=monitor && electron bin/app/index.js",

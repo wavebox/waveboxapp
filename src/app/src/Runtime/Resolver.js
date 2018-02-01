@@ -34,6 +34,14 @@ class Resolver {
   }
 
   /**
+  * @param name: the name of the file in the keychain scene
+  * @return the full path to the file
+  */
+  static keychainScene (name) {
+    return path.resolve(path.join(__dirname, '../scenes/keychain/', name))
+  }
+
+  /**
   * @param name: the name of the file in the guest preload repo
   * @return the full path to the file
   */

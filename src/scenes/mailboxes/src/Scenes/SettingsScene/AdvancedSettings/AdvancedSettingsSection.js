@@ -87,6 +87,11 @@ export default class AdvancedSettingsSection extends React.Component {
           labelPosition='right'
           onToggle={(evt, toggled) => { settingsActions.sub.app.setEnableGeolocationApi(toggled) }} />
         <Toggle
+          toggled={app.enableAutofillService}
+          label='Autofill passwords on right click'
+          labelPosition='right'
+          onToggle={(evt, toggled) => { settingsActions.sub.app.setEnableAutofillServie(toggled) }} />
+        <Toggle
           toggled={extension.enableChromeExperimental}
           label='Experimental chrome extension support (Requires Restart)'
           labelPosition='right'
