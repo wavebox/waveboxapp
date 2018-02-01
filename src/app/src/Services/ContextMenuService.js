@@ -443,8 +443,10 @@ class ContextMenuService {
           icon: nativeImage.createFromDataURL(AUTOFILL_MENU),
           label: rec.account,
           click: () => {
+            // contents.insertText seems to insert the text 3 times on linux and Windows.
+            // Using replace doesn't have this problem
             contents.selectAll()
-            contents.insertText(rec.password)
+            contents.replace(rec.password)
             contents.unselect()
           }
         }
