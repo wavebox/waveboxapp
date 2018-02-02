@@ -1,6 +1,7 @@
 import React from 'react'
 import MailboxWebView from './MailboxWebView'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
+import shallowCompare from 'react-addons-shallow-compare'
 
 const REF = 'MailboxWebView'
 
@@ -97,6 +98,10 @@ export default class MailboxWebViewHibernator extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
+
+  shouldComponentUpdate (nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState)
+  }
 
   /**
   * Captures a snapshot of the webview and pushes it to sleep on completion
