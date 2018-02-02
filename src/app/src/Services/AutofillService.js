@@ -4,6 +4,7 @@ import { AUTOFILL, AUTOFILL_HOVER } from 'shared/b64Assets'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import KeychainWindow from 'Windows/KeychainWindow'
 import {settingsStore} from 'stores/settings'
+import DistributionConfig from 'Runtime/DistributionConfig'
 
 let Keytar
 try {
@@ -29,7 +30,7 @@ class AutofillService {
 
   get isLibraryLoaded () { return !!Keytar }
   get isEnabled () { return settingsStore.getState().app.enableAutofillService }
-  get isAvailable () { return this.isLibraryLoaded && this.isEnabled }
+  get isAvailable () { return this.isLibraryLoaded && this.isEnabled && !DistributionConfig.isSnapInstall }
 
   /* ****************************************************************************/
   // App Events

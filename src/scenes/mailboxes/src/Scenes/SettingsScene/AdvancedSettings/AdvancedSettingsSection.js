@@ -5,6 +5,7 @@ import { settingsActions } from 'stores/settings'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import CustomStylesEditingDialog from './CustomStylesEditingDialog'
+import DistributionConfig from 'Runtime/DistributionConfig'
 
 export default class AdvancedSettingsSection extends React.Component {
   /* **************************************************************************/
@@ -86,11 +87,13 @@ export default class AdvancedSettingsSection extends React.Component {
           label='Geolocation API'
           labelPosition='right'
           onToggle={(evt, toggled) => { settingsActions.sub.app.setEnableGeolocationApi(toggled) }} />
-        <Toggle
-          toggled={app.enableAutofillService}
-          label='Autofill passwords on right click'
-          labelPosition='right'
-          onToggle={(evt, toggled) => { settingsActions.sub.app.setEnableAutofillServie(toggled) }} />
+        {DistributionConfig.isSnapInstall ? undefined : (
+          <Toggle
+            toggled={app.enableAutofillService}
+            label='Autofill passwords on right click'
+            labelPosition='right'
+            onToggle={(evt, toggled) => { settingsActions.sub.app.setEnableAutofillServie(toggled) }} />
+        )}
         <Toggle
           toggled={extension.enableChromeExperimental}
           label='Experimental chrome extension support (Requires Restart)'
