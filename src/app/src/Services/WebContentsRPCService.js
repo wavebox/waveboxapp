@@ -162,7 +162,9 @@ class WebContentsRPCService {
   _handleShowAsyncMessageDialog = (evt, options) => {
     if (!this[privConnected].has(evt.sender.id)) { return }
     const bw = BrowserWindow.fromWebContents(ElectronWebContents.rootWebContents(evt.sender))
-    dialog.showMessageBox(bw, options)
+    dialog.showMessageBox(bw, options, () => {
+      /* no-op */
+    })
   }
 
   /**

@@ -1,39 +1,48 @@
 /* global WB_API_KEY */
 
 (function () {
+  let asyncAlert = true
+  window.addEventListener('message', function (evt) {
+    if (evt.origin === window.location.origin && evt.isTrusted) {
+      let data
+      try {
+        data = JSON.parse(evt.data)
+      } catch (ex) { return }
+      if (!data.wavebox) { return }
+
+      if (data.type === 'wavebox-configure-alert') {
+        asyncAlert = data.async
+      }
+    }
+  }, false)
+
   const polyfillAlert = function (window) {
+    const original = window.alert
     window.alert = function (message) {
       window.top.postMessage(JSON.stringify({
         apiKey: WB_API_KEY,
         wavebox: true,
-        type: 'wavebox-alert-present'
+        type: 'wavebox-alert-present',
+        message: message
       }), '*')
-      const proxy = document.createElement('iframe')
-      proxy.style.display = 'none'
-      document.body.appendChild(proxy)
-
-      const response = proxy.contentWindow.alert(message)
-
-      document.body.removeChild(proxy)
-      return response
+      if (asyncAlert) {
+        return undefined
+      } else {
+        return original(message)
+      }
     }
   }
 
   const polyfillConfirm = function (window) {
+    const original = window.confirm
     window.confirm = function (message) {
       window.top.postMessage(JSON.stringify({
         apiKey: WB_API_KEY,
         wavebox: true,
-        type: 'wavebox-confirm-present'
+        type: 'wavebox-confirm-present',
+        message: message
       }), '*')
-      const proxy = document.createElement('iframe')
-      proxy.style.display = 'none'
-      document.body.appendChild(proxy)
-
-      const response = proxy.contentWindow.confirm(message)
-
-      document.body.removeChild(proxy)
-      return response
+      return original(message)
     }
   }
 

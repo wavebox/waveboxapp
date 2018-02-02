@@ -5,7 +5,8 @@ import CoreService from 'shared/Models/Accounts/CoreService'
 import { mailboxStore, mailboxActions, ContainerDefaultServiceReducer } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
-  WB_BROWSER_NOTIFICATION_PRESENT
+  WB_BROWSER_NOTIFICATION_PRESENT,
+  WB_BROWSER_CONFIGURE_ALERT
 } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
 
@@ -55,7 +56,8 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     return {
       useNativeWindowOpen: service ? service.useNativeWindowOpen : true,
-      useContextIsolation: service ? service.useContextIsolation : true
+      useContextIsolation: service ? service.useContextIsolation : true,
+      useAsyncAlerts: service ? service.useAsyncAlerts : true
     }
   }
 
@@ -64,7 +66,8 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     this.setState({
       useNativeWindowOpen: service ? service.useNativeWindowOpen : true,
-      useContextIsolation: service ? service.useContextIsolation : true
+      useContextIsolation: service ? service.useContextIsolation : true,
+      useAsyncAlerts: service ? service.useAsyncAlerts : true
     })
   }
 
@@ -81,6 +84,15 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
       case WB_BROWSER_NOTIFICATION_PRESENT: this.handleBrowserNotificationPresented(); break
       default: break
     }
+  }
+
+  /**
+  * Handles the dom being ready
+  */
+  handleDOMReady = (evt) => {
+    this.refs[REF].send(WB_BROWSER_CONFIGURE_ALERT, {
+      async: this.state.useAsyncAlerts
+    })
   }
 
   /**
@@ -119,7 +131,8 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
         mailboxId={mailboxId}
         webpreferences={webpreferences}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
-        ipcMessage={this.handleIPCMessage} />
+        ipcMessage={this.handleIPCMessage}
+        domReady={this.handleDOMReady} />
     )
   }
 }

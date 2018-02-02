@@ -65,6 +65,7 @@ class ContainerService extends Model {
   get reloadBehaviour () { return this._value_('reloadBehaviour', 'RESET_URL') }
   get useNativeWindowOpen () { return this._value_('useNativeWindowOpen', true) }
   get useContextIsolation () { return this._value_('useContextIsolation', true) }
+  get useAsyncAlerts () { return this._value_('useAsyncAlerts', true) }
   get html5NotificationsGenerateUnreadActivity () { return this._value_('html5NotificationsGenerateUnreadActivity', true) }
 
   /* **************************************************************************/
