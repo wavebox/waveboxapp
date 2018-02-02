@@ -11,6 +11,16 @@ import {
 const ACCELERATOR_NAMES = {
   // Global
   globalToggleApp: 'Toggle App',
+  globalShowAppMailbox0: 'Show account in 1st position',
+  globalShowAppMailbox1: 'Show account in 2nd position',
+  globalShowAppMailbox2: 'Show account in 3rd position',
+  globalShowAppMailbox3: 'Show account in 4th position',
+  globalShowAppMailbox4: 'Show account in 5th position',
+  globalShowAppMailbox5: 'Show account in 6th position',
+  globalShowAppMailbox6: 'Show account in 7th position',
+  globalShowAppMailbox7: 'Show account in 8th position',
+  globalShowAppMailbox8: 'Show account in 9th position',
+  globalShowAppMailbox9: 'Show account in 10th position',
 
   // Application
   preferences: 'Preferences',
@@ -56,7 +66,17 @@ const ACCELERATOR_NAMES = {
   serviceIndex: 'Service at Index'
 }
 const GLOBAL_SECTION = [
-  'globalToggleApp'
+  'globalToggleApp',
+  'globalShowAppMailbox0',
+  'globalShowAppMailbox1',
+  'globalShowAppMailbox2',
+  'globalShowAppMailbox3',
+  'globalShowAppMailbox4',
+  'globalShowAppMailbox5',
+  'globalShowAppMailbox6',
+  'globalShowAppMailbox7',
+  'globalShowAppMailbox8',
+  'globalShowAppMailbox9'
 ]
 const APPLICATION_SECTION = [
   'preferences',

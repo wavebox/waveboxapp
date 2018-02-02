@@ -7,6 +7,16 @@ class AcceleratorSettings extends Model {
 
   // Global
   get globalToggleAppDefault () { return '' }
+  get globalShowAppMailbox0Default () { return '' }
+  get globalShowAppMailbox1Default () { return '' }
+  get globalShowAppMailbox2Default () { return '' }
+  get globalShowAppMailbox3Default () { return '' }
+  get globalShowAppMailbox4Default () { return '' }
+  get globalShowAppMailbox5Default () { return '' }
+  get globalShowAppMailbox6Default () { return '' }
+  get globalShowAppMailbox7Default () { return '' }
+  get globalShowAppMailbox8Default () { return '' }
+  get globalShowAppMailbox9Default () { return '' }
 
   // Application
   get preferencesDefault () { return 'CmdOrCtrl+,' }
@@ -57,6 +67,16 @@ class AcceleratorSettings extends Model {
 
   // Global
   get globalToggleApp () { return this._value_('globalToggleApp', this.globalToggleAppDefault) }
+  get globalShowAppMailbox0 () { return this._value_('globalShowAppMailbox0', this.globalShowAppMailbox0Default) }
+  get globalShowAppMailbox1 () { return this._value_('globalShowAppMailbox1', this.globalShowAppMailbox1Default) }
+  get globalShowAppMailbox2 () { return this._value_('globalShowAppMailbox2', this.globalShowAppMailbox2Default) }
+  get globalShowAppMailbox3 () { return this._value_('globalShowAppMailbox3', this.globalShowAppMailbox3Default) }
+  get globalShowAppMailbox4 () { return this._value_('globalShowAppMailbox4', this.globalShowAppMailbox4Default) }
+  get globalShowAppMailbox5 () { return this._value_('globalShowAppMailbox5', this.globalShowAppMailbox5Default) }
+  get globalShowAppMailbox6 () { return this._value_('globalShowAppMailbox6', this.globalShowAppMailbox6Default) }
+  get globalShowAppMailbox7 () { return this._value_('globalShowAppMailbox7', this.globalShowAppMailbox7Default) }
+  get globalShowAppMailbox8 () { return this._value_('globalShowAppMailbox8', this.globalShowAppMailbox8Default) }
+  get globalShowAppMailbox9 () { return this._value_('globalShowAppMailbox9', this.globalShowAppMailbox9Default) }
 
   // Application
   get preferences () { return this._value_('preferences', this.preferencesDefault) }
