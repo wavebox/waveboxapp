@@ -16,13 +16,11 @@ class DistributionConfig {
 
   load () {
     if (this.cache === undefined) {
-      console.log('load DC')
       try {
         this.cache = fs.readJsonSync(path.join(__dirname, './distributionConfig.json'))
       } catch (ex) {
         this.cache = {}
       }
-      console.log(this.cache)
     }
     return this.cache
   }

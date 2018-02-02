@@ -30,7 +30,10 @@ class AutofillService {
 
   get isLibraryLoaded () { return !!Keytar }
   get isEnabled () { return settingsStore.getState().app.enableAutofillService }
-  get isAvailable () { return this.isLibraryLoaded && this.isEnabled && !DistributionConfig.isSnapInstall }
+  get isAvailable () {
+    // Disable for snap distribution: https://forum.snapcraft.io/t/password-manager-service-not-working-with-node-keytar/3829
+    return this.isLibraryLoaded && this.isEnabled && !DistributionConfig.isSnapInstall
+  }
 
   /* ****************************************************************************/
   // App Events
