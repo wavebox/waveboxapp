@@ -19,6 +19,7 @@ import {
   SlackDefaultServiceReducer
 } from '../mailbox'
 import { remote } from 'electron'
+import emoji from 'node-emoji'
 
 const MAX_NOTIFICATION_RECORD_AGE = 1000 * 60 * 10 // 10 mins
 const HTML5_NOTIFICATION_DELAY = 1000 * 2 // 2 secs
@@ -520,7 +521,9 @@ class SlackStore {
 
     NotificationService.processPushedMailboxNotification(mailboxId, SlackDefaultService.type, {
       title: `${message.title} ${message.subtitle}`,
-      body: [{ content: message.content }],
+      body: [{
+        content: emoji.emojify(message.content)
+      }],
       data: {
         mailboxId: mailboxId,
         serviceType: SlackDefaultService.type,
@@ -544,7 +547,7 @@ class SlackStore {
 
       NotificationService.processHandledMailboxNotification(mailboxId, SlackDefaultService.type, {
         title: notification.title,
-        body: (notification.options || {}).body,
+        body: emoji.emojify((notification.options || {}).body),
         data: {
           mailboxId: mailboxId,
           serviceType: SlackDefaultService.type,
