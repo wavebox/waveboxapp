@@ -137,9 +137,12 @@ class ContextMenuService {
   presentMenu (browserWindow, sections) {
     const menu = Menu.buildFromTemplate(this.convertSectionsToTemplate(sections))
     menu.popup(browserWindow)
-    setTimeout(() => {
-      MenuTool.fullDestroyMenu(menu)
-    }, 100) // Wait a little just in case
+
+    if (process.platform !== 'linux') {
+      setTimeout(() => {
+        MenuTool.fullDestroyMenu(menu)
+      }, 100) // Wait a little just in case
+    }
   }
 
   /**
