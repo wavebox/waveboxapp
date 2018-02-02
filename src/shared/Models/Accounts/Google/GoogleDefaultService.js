@@ -182,14 +182,15 @@ class GoogleDefaultService extends GoogleService {
       try { fromAddress = addressparser(message.from)[0].address } catch (ex) { /* no-op */ }
       let toAddress
       try { toAddress = addressparser(message.to)[0].address } catch (ex) { /* no-op */ }
-      const messageDate = new Date(parseInt(message.internalDate))
+      const afterDate = new Date(parseInt(message.internalDate))
+      const beforeDate = new Date(parseInt(message.internalDate) + (1000 * 60 * 60 * 24))
 
       data.search = [
         fromAddress ? `from:"${fromAddress}"` : undefined,
         toAddress ? `to:${toAddress}` : undefined,
         message.subject ? `subject:"${message.subject}"` : undefined,
-        `after:${messageDate.getFullYear()}/${messageDate.getMonth() + 1}/${messageDate.getDate()}`,
-        `before:${messageDate.getFullYear()}/${messageDate.getMonth() + 1}/${messageDate.getDate() + 1}` // doesn't cope with end of months, but goog seems okay with it
+        `after:${afterDate.getFullYear()}/${afterDate.getMonth() + 1}/${afterDate.getDate()}`,
+        `before:${beforeDate.getFullYear()}/${beforeDate.getMonth() + 1}/${beforeDate.getDate()}`
       ].filter((q) => !!q).join(' ')
     }
 

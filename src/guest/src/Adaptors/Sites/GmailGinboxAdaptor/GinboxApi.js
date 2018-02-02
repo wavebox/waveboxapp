@@ -97,16 +97,45 @@ class GinboxApi {
   /**
   * Starts a search
   * @param term: the term to search for
+  * @param completeFn=undefined: executed on completion
   */
-  static startSearch (term) {
+  static startSearch (term, completeFn = undefined) {
     const element = document.querySelector('[role="search"] input')
     element.value = term
+    element.dispatchEvent(new window.Event('input', { bubbles: true, cancelable: true }))
+    if (completeFn) {
+      setTimeout(() => { completeFn() })
+    }
+  }
 
-    const evt = new window.Event('input', {
-      bubbles: true,
-      cancelable: true
-    })
-    element.dispatchEvent(evt)
+  /**
+  * Clears the search items
+  * @param completeFn=undefined: executed on complete
+  */
+  static clearSearchItems (completeFn) {
+    const element = document.querySelector('[role="search"] input')
+    if (!element.value) {
+      if (completeFn) { completeFn() }
+    } else {
+      this.startSearch('', () => {
+        const retry = 100
+        const timeout = 2000
+        const start = new Date().getTime()
+        const interval = setInterval(() => {
+          if (new Date().getTime() > start + timeout) {
+            clearInterval(interval)
+            if (completeFn) { completeFn() }
+          } else {
+            const element = Array.from(document.querySelectorAll('[jsaction*="search.toggle_item"]'))
+              .find((el) => !!el.offsetParent)
+            if (!element) {
+              clearInterval(interval)
+              if (completeFn) { completeFn() }
+            }
+          }
+        }, retry)
+      })
+    }
   }
 
   /**
@@ -123,7 +152,8 @@ class GinboxApi {
         clearInterval(interval)
         if (completeFn) { completeFn(false) }
       } else {
-        const element = document.querySelector('[jsaction*="search.toggle_item"]')
+        const element = Array.from(document.querySelectorAll('[jsaction*="search.toggle_item"]'))
+          .find((el) => !!el.offsetParent)
         if (element) {
           clearInterval(interval)
           const rect = element.getBoundingClientRect()

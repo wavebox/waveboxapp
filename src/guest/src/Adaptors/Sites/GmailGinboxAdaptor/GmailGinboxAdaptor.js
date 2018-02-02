@@ -139,8 +139,11 @@ class GmailGinboxAdaptor extends BaseAdaptor {
       window.location.hash = 'inbox/' + data.messageId
     } else if (this.isGinbox) {
       if (data.search && data.search.length) {
-        GinboxApi.startSearch(data.search)
-        GinboxApi.openFirstSearchItem()
+        GinboxApi.clearSearchItems(() => {
+          GinboxApi.startSearch(data.search, () => {
+            GinboxApi.openFirstSearchItem()
+          })
+        })
       }
     }
   }
