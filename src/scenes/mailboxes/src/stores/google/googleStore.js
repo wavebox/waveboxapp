@@ -480,6 +480,24 @@ class GoogleStore {
                 hasContentChanged: forceSync || this.hasMailUnreadChangedFromHistory(labelIds, history || [])
               }
             })
+            .catch((err) => {
+              // It's rare, but there's a bug with the API which means Google
+              // can return a 404 for some history ids. This can shouldn't happen
+              // so capture that and instead run a second profile request and assume
+              // our history request is wrong
+              if (err.message.indexOf('Not Found') !== -1) {
+                // Handle the bug mentioned above
+                return GoogleHTTP.fetchGmailProfile(auth)
+                  .then(({ historyId }) => {
+                    return {
+                      historyId: isNaN(parseInt(historyId)) ? undefined : parseInt(historyId),
+                      hasContentChanged: true
+                    }
+                  })
+              } else {
+                return Promise.reject(err)
+              }
+            })
         } else {
           return GoogleHTTP.fetchGmailProfile(auth)
             .then(({ historyId }) => {
