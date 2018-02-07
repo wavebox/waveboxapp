@@ -19,6 +19,7 @@ import { AUTOFILL_MENU } from 'shared/b64Assets'
 const privConnected = Symbol('privConnected')
 const privSpellcheckerService = Symbol('privSpellcheckerService')
 const privAutofillService = Symbol('privAutofillService')
+const privContextMenu = Symbol('privContextMenu')
 
 class ContextMenuService {
   /* ****************************************************************************/
@@ -33,6 +34,7 @@ class ContextMenuService {
     this[privSpellcheckerService] = spellcheckService
     this[privAutofillService] = autofillService
     this[privConnected] = new Set()
+    this[privContextMenu] = undefined
 
     app.on('web-contents-created', this._handleWebContentsCreated)
     app.on('browser-window-created', this._handleBrowserWindowCreated)
@@ -135,14 +137,19 @@ class ContextMenuService {
   * @param sections: the sections to render
   */
   presentMenu (browserWindow, sections) {
-    const menu = Menu.buildFromTemplate(this.convertSectionsToTemplate(sections))
-    menu.popup(browserWindow)
-
-    if (process.platform !== 'linux') {
-      setTimeout(() => {
-        MenuTool.fullDestroyMenu(menu)
-      }, 100) // Wait a little just in case
+    // This works around a memory leak with the menu api. It's bad that we
+    // have to contiunously keep a menu in memory but it's better than having
+    // multiple copies forever.
+    //
+    // Once the callback field comes into the menu api (1.9.*) we can use that
+    // to release the local copy of the menu on dismissal
+    if (this[privContextMenu]) {
+      MenuTool.fullDestroyMenu(this[privContextMenu])
+      this[privContextMenu] = undefined
     }
+
+    this[privContextMenu] = Menu.buildFromTemplate(this.convertSectionsToTemplate(sections))
+    this[privContextMenu].popup(browserWindow)
   }
 
   /**
