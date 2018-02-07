@@ -1,13 +1,27 @@
+import { ipcRenderer } from 'electron'
 import Bootstrap from 'R/Bootstrap'
-import { ANALYTICS_HEARTBEAT_INTERVAL } from 'shared/constants'
 import { userStore } from 'stores/user'
 import { mailboxStore } from 'stores/mailbox'
+import { crextensionStore } from 'stores/crextension'
 import settingsStore from 'stores/settings/settingsStore'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import SettingsIdent from 'shared/Models/Settings/SettingsIdent'
 import querystring from 'querystring'
 import os from 'os'
+import url from 'url'
 import pkg from 'package.json'
 import DistributionConfig from 'Runtime/DistributionConfig'
+import {
+  ANALYTICS_HEARTBEAT_INTERVAL,
+  ANALYTICS_RESOURCE_INTERVAL,
+  ANALYTICS_CONFIG_INTERVAL
+} from 'shared/constants'
+import {
+  WB_METRICS_GET_METRICS_SYNC
+} from 'shared/ipcEvents'
+
+const privAutoreportTO = Symbol('privAutoreportTO')
+const privLifecycleArgs = Symbol('privLifecycleArgs')
 
 class Analytics {
   /* ****************************************************************************/
@@ -15,21 +29,39 @@ class Analytics {
   /* ****************************************************************************/
 
   constructor () {
-    this.heartbeatTO = null
-    this.lifecycleDefaultArgs = Object.freeze({
-      v: 1,
-      tid: Bootstrap.credentials.GOOGLE_ANALYTICS_ID,
-      cd: 'Wavebox',
-      ul: window.navigator.language,
-      an: `${pkg.name}:${process.platform}`,
-      ua: window.navigator.userAgent,
-      av: `${pkg.version}${pkg.earlyBuildId ? '-' + pkg.earlyBuildId : ''}`,
-      cd6: process.platform,
-      cd7: process.arch,
-      cd8: os.release(),
-      cd9: DistributionConfig.installMethod,
-      cd10: pkg.releaseChannel
-    })
+    this[privAutoreportTO] = {
+      heartbeat: null,
+      resource: null,
+      config: null
+    }
+    this[privLifecycleArgs] = {
+      ga: Object.freeze({
+        v: 1,
+        tid: Bootstrap.credentials.GOOGLE_ANALYTICS_ID,
+        cd: 'Wavebox',
+        ul: window.navigator.language,
+        an: `${pkg.name}:${process.platform}`,
+        ua: window.navigator.userAgent,
+        av: `${pkg.version}${pkg.earlyBuildId ? '-' + pkg.earlyBuildId : ''}`,
+        cd6: process.platform,
+        cd7: process.arch,
+        cd8: os.release(),
+        cd9: DistributionConfig.installMethod,
+        cd10: pkg.releaseChannel
+      }),
+      wb: Object.freeze({
+        _analyticsId: Bootstrap.credentials.GOOGLE_ANALYTICS_ID,
+        _language: window.navigator.language,
+        _userAgent: window.navigator.userAgent,
+        _name: pkg.name,
+        _version: pkg.version,
+        _releaseChannel: pkg.releaseChannel,
+        _installMethod: DistributionConfig.installMethod,
+        _platform: process.platform,
+        _arch: process.arch,
+        _osRelease: os.release()
+      })
+    }
   }
 
   /* ****************************************************************************/
@@ -41,12 +73,29 @@ class Analytics {
   * @return self
   */
   startAutoreporting () {
-    this.stopAutoreporting()
-    this.heartbeatTO = setInterval(() => {
-      this.appHeartbeat()
-    }, ANALYTICS_HEARTBEAT_INTERVAL)
-    this.appOpened()
-    window.addEventListener('hashchange', this.handleHashChanged, false)
+    setTimeout(() => {
+      this.stopAutoreporting()
+
+      // heartbeat
+      this[privAutoreportTO].heartbeat = setInterval(() => {
+        this.appHeartbeat()
+      }, ANALYTICS_HEARTBEAT_INTERVAL)
+      this.appOpened()
+
+      // Hashchange
+      window.addEventListener('hashchange', this.handleHashChanged, false)
+
+      // Resource
+      this[privAutoreportTO].resource = setInterval(() => {
+        this.sendResourceUsage()
+      }, ANALYTICS_RESOURCE_INTERVAL)
+
+      // Usage
+      this[privAutoreportTO].config = setInterval(() => {
+        this.sendConfig()
+      }, ANALYTICS_CONFIG_INTERVAL)
+      this.sendConfig()
+    })
   }
 
   /**
@@ -54,7 +103,9 @@ class Analytics {
   * @return self
   */
   stopAutoreporting () {
-    clearTimeout(this.heartbeatTO)
+    clearInterval(this[privAutoreportTO].heartbeat)
+    clearInterval(this[privAutoreportTO].resource)
+    clearInterval(this[privAutoreportTO].config)
     window.removeEventListener('hashchange', this.handleHashChanged)
   }
 
@@ -63,23 +114,150 @@ class Analytics {
   * @param evt: the event that fired
   */
   handleHashChanged = (evt) => {
-    this.sendHashChangeEvent('hashchange')
+    return this.sendGAEvent('hashchange', {
+      ni: 0,
+      ec: 'hashchange',
+      ea: window.location.hash
+    }, true)
   }
 
   /* ****************************************************************************/
-  // Transmitters
+  // Events: WB
   /* ****************************************************************************/
+
+  /**
+  * Log the current config
+  */
+  sendConfig () {
+    // Mailboxes
+    const mailboxState = mailboxStore.getState()
+    const mailboxes = mailboxState.allMailboxes().map((mailbox) => {
+      return {
+        type: mailbox.type,
+        containerId: mailbox.type === CoreMailbox.MAILBOX_TYPES.CONTAINER ? mailbox.containerId : undefined,
+        services: mailbox.enabledServices.map((service) => {
+          const standard = { type: service.type }
+          if (mailbox.type === CoreMailbox.MAILBOX_TYPES.CONTAINER || mailbox.type === CoreMailbox.MAILBOX_TYPES.GENERIC) {
+            return {
+              ...standard,
+              url: service.url ? url.parse(service.url).hostname : undefined
+            }
+          } else {
+            return standard
+          }
+        })
+      }
+    })
+
+    // Settings
+    const settingsState = settingsStore.getState()
+    const settings = Object.keys(SettingsIdent.SEGMENTS).reduce((acc, id) => {
+      const key = SettingsIdent.SEGMENTS[id]
+      acc[key] = settingsState[key].cloneData()
+      return acc
+    }, {})
+
+    // Extensions
+    const crexensionState = crextensionStore.getState()
+    const extensions = crexensionState.extensionIds()
+
+    // Send
+    return this.sendWb('config', {
+      mailboxes: mailboxes,
+      settings: settings,
+      extensions: extensions
+    }, true)
+  }
+
+  /**
+  * Log the resource usage
+  */
+  sendResourceUsage () {
+    const metrics = ipcRenderer.sendSync(WB_METRICS_GET_METRICS_SYNC)
+    const sendMetrics = metrics.map((metric) => {
+      if (metric.webContentsInfo) {
+        return {
+          ...metric,
+          webContentsInfo: metric.webContentsInfo.map((wcMetric) => {
+            return {
+              description: wcMetric.description,
+              url: wcMetric.url ? url.parse(wcMetric.url).hostname : undefined
+            }
+          })
+        }
+      } else {
+        return metric
+      }
+    })
+
+    return this.sendWb('resource', {
+      metrics: sendMetrics
+    }, true)
+  }
+
+  /* ****************************************************************************/
+  // Events: GA
+  /* ****************************************************************************/
+
+  /**
+  * Log the app was opened
+  */
+  appOpened () {
+    return this.sendGAScreenView('opened', undefined, true)
+  }
+
+  /**
+  * Log the app is alive
+  */
+  appHeartbeat () {
+    return this.sendGAScreenView('heartbeat', undefined, true)
+  }
+
+  /* ****************************************************************************/
+  // Transmitters: GA
+  /* ****************************************************************************/
+
+  /**
+  * Sends an analytics report
+  * @param reportEventReason: the type of report we're sending
+  * @param args={}: the items to append
+  * @param autocatch=true: true to automatically swallow errors
+  * @return promise
+  */
+  sendGAScreenView (reportEventReason, args = {}, autocatch = true) {
+    return this.sendGA({
+      ...this.buildDefaultGAArguments(),
+      cd2: reportEventReason,
+      t: 'screenview',
+      ...args
+    }, autocatch)
+  }
+
+  /**
+  * Sends an analytics event
+  * @param reportEventReason: the type of report we're sending
+  * @param args={}: items to append
+  * @param autocatch=true: true to automatically swallow errors
+  */
+  sendGAEvent (reportEventReason, args = {}, autocatch = true) {
+    return this.sendGA({
+      ...this.buildDefaultGAArguments(),
+      cd2: reportEventReason,
+      t: 'event',
+      ...args
+    }, autocatch)
+  }
 
   /**
   * Builds the default configuration
   * @return default configuration
   */
-  buildDefaultArguments () {
+  buildDefaultGAArguments () {
     const userState = userStore.getState()
     const mailboxState = mailboxStore.getState()
 
     return {
-      ...this.lifecycleDefaultArgs,
+      ...this[privLifecycleArgs].ga,
       cid: userState.analyticsId,
       vp: `${window.innerWidth}x${window.innerHeight}`,
       cd1: mailboxState.mailboxCount(),
@@ -88,102 +266,14 @@ class Analytics {
   }
 
   /**
-  * Sends an analytics report
-  * @param reportEventReason: the type of report we're sending
-  * @param args={}: the items to append
-  * @param autocatch=true: true to automatically swallow errors
-  * @param sendGa=true: true to send to ga
-  * @param sendWb=true: true to send to wb
-  * @return promise
-  */
-  sendScreenView (reportEventReason, args = {}, autocatch = true, sendGa = true, sendWb = true) {
-    return this.send({
-      ...this.buildDefaultArguments(),
-      cd2: reportEventReason,
-      t: 'screenview',
-      ...args
-    }, autocatch, sendGa, sendWb)
-  }
-
-  /**
-  * Sends an analytics event
-  * @param reportEventReason: the type of report we're sending
-  * @param args={}: items to append
-  * @param autocatch=true: true to automatically swallow errors
-  * @param sendGa=true: true to send to ga
-  * @param sendWb=true: true to send to wb
-  */
-  sendEvent (reportEventReason, args = {}, autocatch = true, sendGa = false, sendWb = true) {
-    return this.send({
-      ...this.buildDefaultArguments(),
-      cd2: reportEventReason,
-      t: 'event',
-      ...args
-    }, autocatch, sendGa, sendWb)
-  }
-
-  /**
-  * Sends an account spread event
-  * @param reportEventReason: the type of report we're sending
-  * @param autocatch=true: true to automatically swallow errors
-  */
-  sendAccountSpreadEvent (reportEventReason, autocatch = true) {
-    const mailboxState = mailboxStore.getState()
-    const spreadString = Object.keys(CoreMailbox.MAILBOX_TYPES)
-      .sort()
-      .map((type) => `${type}=${mailboxState.getMailboxesOfType(type).length}`)
-      .join('&')
-
-    return this.sendEvent(reportEventReason, {
-      ni: 0,
-      ec: 'account_spread',
-      ea: spreadString
-    }, autocatch)
-  }
-
-  /**
-  * Sends the info about the current state of experimental settings
-  * @param reportEventReason: the type of report we're sending
-  * @param autocatch=true: true to automatically swallow errors
-  */
-  sendExperimentalConfigEvent (reportEventReason, autocatch = true) {
-    const settingsState = settingsStore.getState()
-    const experimentalString = [
-      'notifications=' + settingsState.os.notificationsProvider,
-      'crextensions=' + settingsState.extension.enableChromeExperimental
-    ].join('&')
-
-    return this.sendEvent(reportEventReason, {
-      ni: 0,
-      ec: 'experimental',
-      ea: experimentalString
-    }, autocatch)
-  }
-
-  /**
-  * Sends the info about the current window hash
-  * @param reportEventReason: the type of report we're sending
-  * @param autocatch=true: true to automatically swallow errors
-  */
-  sendHashChangeEvent (reportEventReason, autocatch = true) {
-    return this.sendEvent(reportEventReason, {
-      ni: 0,
-      ec: 'hashchange',
-      ea: window.location.hash
-    }, autocatch)
-  }
-
-  /**
   * Sends the message down the pipe
   * https://developers.google.com/analytics/devguides/collection/protocol/v1/parameters
   * https://ga-dev-tools.appspot.com/hit-builder/
   * @param args: the full arguments
   * @param autocatch: true to automatically swallow errors
-  * @param sendGa: true to send to ga
-  * @param sendWb: true to send to wb
   * @return promise
   */
-  send (args, autocatch, sendGa, sendWb) {
+  sendGA (args, autocatch) {
     if (!Bootstrap.credentials.GOOGLE_ANALYTICS_ID) {
       const error = new Error('No Anayltics ID specified')
       return autocatch ? Promise.resolve({ sent: false, error: error }) : Promise.reject(error)
@@ -196,28 +286,20 @@ class Analytics {
     let wbOk = true
     return Promise.resolve()
       .then(() => {
-        if (sendGa) {
-          return Promise.resolve()
-            .then(() => window.fetch(gaUrl, { method: 'POST' }))
-            .then((res) => {
-              gaOk = res.ok
-              return Promise.resolve()
-            })
-        } else {
-          return Promise.resolve()
-        }
+        return Promise.resolve()
+          .then(() => window.fetch(gaUrl, { method: 'POST' }))
+          .then((res) => {
+            gaOk = res.ok
+            return Promise.resolve()
+          })
       })
       .then(() => {
-        if (sendWb) {
-          return Promise.resolve()
-            .then(() => window.fetch(wbUrl, { method: 'POST' }))
-            .then((res) => {
-              wbOk = res.ok
-              return Promise.resolve()
-            })
-        } else {
-          return Promise.resolve()
-        }
+        return Promise.resolve()
+          .then(() => window.fetch(wbUrl, { method: 'POST' }))
+          .then((res) => {
+            wbOk = res.ok
+            return Promise.resolve()
+          })
       })
       .then(() => {
         if (!gaOk || !wbOk) {
@@ -233,24 +315,49 @@ class Analytics {
   }
 
   /* ****************************************************************************/
-  // Events
+  // Transmitters: WB
   /* ****************************************************************************/
 
   /**
-  * Log the app was opened
+  * Builds the default WB args
+  * @return the default configuration
   */
-  appOpened () {
-    return Promise.resolve()
-      .then(() => this.sendScreenView('opened', undefined, true))
-      .then(() => this.sendAccountSpreadEvent('opened', true))
-      .then(() => this.sendExperimentalConfigEvent('opened', true))
+  buildDefaultWBArguments () {
+    const userState = userStore.getState()
+
+    return {
+      ...this[privLifecycleArgs].wb,
+      _analyticsId: userState.analyticsId,
+      _plan: userState.user.plan,
+      _ga: false
+    }
   }
 
   /**
-  * Log the app is alive
+  * Sends the to wb
+  * @param type: the type of report
+  * @param args: the full arguments
+  * @param autocatch: true to automatically swallow errors
+  * @return promise
   */
-  appHeartbeat () {
-    return this.sendScreenView('heartbeat', undefined, true)
+  sendWb (type, args, autocatch) {
+    const endpoint = 'https://stats.wavebox.io/app/collect?ga=false'
+    const payload = JSON.stringify({
+      ...this.buildDefaultWBArguments(),
+      _type: type,
+      ...args
+    })
+
+    return Promise.resolve()
+      .then(() => window.fetch(endpoint, {
+        method: 'POST',
+        body: payload,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }))
+      .then((res) => Promise.resolve({ sent: true }))
+      .catch((err) => autocatch ? Promise.resolve({ sent: false }) : Promise.reject(err))
   }
 }
 

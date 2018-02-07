@@ -15,6 +15,8 @@ module.exports = Object.freeze({
   // App
   APP_ID: 'wavebox.io',
   ANALYTICS_HEARTBEAT_INTERVAL: minutes(5),
+  ANALYTICS_RESOURCE_INTERVAL: hours(1),
+  ANALYTICS_CONFIG_INTERVAL: days(1),
   RELEASE_CHANNELS: Object.freeze({
     STABLE: 'STABLE',
     BETA: 'BETA'

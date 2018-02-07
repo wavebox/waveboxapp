@@ -8,7 +8,8 @@ import { settingsStore } from 'stores/settings'
 import {
   WB_METRICS_OPEN_MONITOR,
   WB_METRICS_OPEN_LOG,
-  WB_METRICS_RELEASE_MEMORY
+  WB_METRICS_RELEASE_MEMORY,
+  WB_METRICS_GET_METRICS_SYNC
 } from 'shared/ipcEvents'
 import { METRICS_LOG_WRITE_INTERVAL } from 'shared/constants'
 import RuntimePaths from 'Runtime/RuntimePaths'
@@ -33,6 +34,7 @@ class MetricsService {
     ipcMain.on(WB_METRICS_OPEN_LOG, this.openMetricsLogLocation)
     ipcMain.on(WB_METRICS_OPEN_MONITOR, this.openMonitorWindow)
     ipcMain.on(WB_METRICS_RELEASE_MEMORY, this.freeV8Memory)
+    ipcMain.on(WB_METRICS_GET_METRICS_SYNC, this.ipcGetMetricsSync)
   }
 
   /* ****************************************************************************/
@@ -85,6 +87,18 @@ class MetricsService {
     webContents.getAllWebContents().forEach((wc) => {
       wc.releaseMemory()
     })
+  }
+
+  /* ****************************************************************************/
+  // Getters
+  /* ****************************************************************************/
+
+  /**
+  * Get the metrics synchronously
+  * @param evt: the event that fired
+  */
+  ipcGetMetricsSync = (evt) => {
+    evt.returnValue = this.getMetrics()
   }
 
   /* ****************************************************************************/
