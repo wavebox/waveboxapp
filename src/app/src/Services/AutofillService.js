@@ -4,7 +4,6 @@ import { AUTOFILL, AUTOFILL_HOVER } from 'shared/b64Assets'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import KeychainWindow from 'Windows/KeychainWindow'
 import {settingsStore} from 'stores/settings'
-import DistributionConfig from 'Runtime/DistributionConfig'
 
 let Keytar
 try {
@@ -30,10 +29,7 @@ class AutofillService {
 
   get isLibraryLoaded () { return !!Keytar }
   get isEnabled () { return settingsStore.getState().app.enableAutofillService }
-  get isAvailable () {
-    // Disable for snap distribution: https://forum.snapcraft.io/t/password-manager-service-not-working-with-node-keytar/3829
-    return this.isLibraryLoaded && this.isEnabled && !DistributionConfig.isSnapInstall
-  }
+  get isAvailable () { return this.isLibraryLoaded && this.isEnabled }
 
   /* ****************************************************************************/
   // App Events
