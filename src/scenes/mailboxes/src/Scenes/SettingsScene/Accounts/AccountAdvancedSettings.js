@@ -109,6 +109,14 @@ export default class AccountAdvancedSettings extends React.Component {
   renderDestructiveActions (mailbox) {
     return (
       <div>
+        {mailbox.supportsAuth ? (
+          <div>
+            <FlatButton
+              label='Reauthenticate'
+              icon={<FontIcon className='material-icons'>lock_outline</FontIcon>}
+              onClick={() => mailboxActions.reauthenticateMailbox(mailbox.id)} />
+          </div>
+        ) : undefined}
         <div>
           <ConfirmFlatButton
             key={mailbox.id}
@@ -121,7 +129,6 @@ export default class AccountAdvancedSettings extends React.Component {
         </div>
         <div>
           <FlatButton
-            key={mailbox.id}
             label='Delete this Account'
             icon={<FontIcon color={Colors.red600} className='material-icons'>delete</FontIcon>}
             labelStyle={{color: Colors.red600}}
