@@ -26,21 +26,25 @@ export default class MailboxTabManager extends React.Component {
 
   state = (() => {
     const mailboxState = mailboxStore.getState()
+    // When re-ordering mailboxes, the action of moving a webview around the dom
+    // can cause a reload. Particularly when the new position is lower in the tree.
+    // Sorting the mailbox ids prevents this behaviour and we don't actually use
+    // the ordering for anything more than sanity. Fixes #548
     return {
-      mailboxIds: mailboxState.unrestrictedMailboxIds()
+      mailboxIds: mailboxState.unrestrictedMailboxIds().sort()
     }
   })()
 
   mailboxesChanged = (mailboxState) => {
     this.setState({
-      mailboxIds: mailboxState.unrestrictedMailboxIds()
+      mailboxIds: mailboxState.unrestrictedMailboxIds().sort()
     })
   }
 
   userChanged = (userState) => {
     const mailboxState = mailboxStore.getState()
     this.setState({
-      mailboxIds: mailboxState.unrestrictedMailboxIds()
+      mailboxIds: mailboxState.unrestrictedMailboxIds().sort()
     })
   }
 

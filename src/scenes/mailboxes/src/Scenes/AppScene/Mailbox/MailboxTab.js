@@ -168,7 +168,11 @@ export default class MailboxTab extends React.Component {
       isMailboxActive
     } = this.state
 
-    const allowedServiceTypes = userHasServices ? serviceTypes : [CoreMailbox.SERVICE_TYPES.DEFAULT]
+    // When re-ordering services, the action of moving a webview around the dom
+    // can cause a reload. Particularly when the new position is lower in the tree.
+    // Sorting the service types prevents this behaviour and we don't actually use
+    // the ordering for anything more than sanity. Fixes #548
+    const allowedServiceTypes = (userHasServices ? serviceTypes : [CoreMailbox.SERVICE_TYPES.DEFAULT]).sort()
     return (
       <div
         {...passProps}

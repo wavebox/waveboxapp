@@ -562,6 +562,7 @@ export default class MailboxWebView extends React.Component {
         <div className={'ReactComponent-BrowserContainer'}>
           <BrowserView
             ref={BROWSER_REF}
+            id={`guest_${mailbox.id}_${service.type}`}
             preload={preload}
             partition={'persist:' + mailbox.partition}
             src={restorableUrl || 'about:blank'}
