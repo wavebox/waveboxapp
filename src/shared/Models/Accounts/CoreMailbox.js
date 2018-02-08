@@ -303,6 +303,7 @@ class CoreMailbox extends Model {
 
   get isAuthenticationInvalid () { return false }
   get hasAuth () { return true }
+  get supportsAuth () { return false }
 
   /* **************************************************************************/
   // Properties : Useragent

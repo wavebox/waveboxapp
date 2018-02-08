@@ -145,7 +145,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
   /**
   * Handles the user requesting an account reauthentication
   */
-  handeReauthenticateBrowserSession = () => {
+  handleClearBrowserSession = () => {
     mailboxActions.clearMailboxBrowserSession(this.props.mailboxId)
     this.handleClosePopover()
   }
@@ -262,20 +262,22 @@ export default class SidelistItemMailboxPopover extends React.Component {
         onClick={this.handleResync}
         leftIcon={<FontIcon className='material-icons'>sync</FontIcon>} />
     )
-    menuItems.push(<Divider key='div-actions' />)
-
-    // Errors
-    if (mailbox.isAuthenticationInvalid || !mailbox.hasAuth) {
+    if (mailbox.supportsAuth) {
+      const invalid = mailbox.isAuthenticationInvalid || !mailbox.hasAuth
       menuItems.push(
         <MenuItem
           key='reauthenticate'
           primaryText='Reauthenticate'
           onClick={this.handleReauthenticate}
-          style={{ color: Colors.red600 }}
-          leftIcon={<FontIcon className='material-icons' style={{ color: Colors.red600 }}>error_outline</FontIcon>} />
+          style={invalid ? { color: Colors.red600 } : undefined}
+          leftIcon={invalid ? (
+            <FontIcon className='material-icons' style={{ color: Colors.red600 }}>error_outline</FontIcon>
+          ) : (
+            <FontIcon className='material-icons'>lock_outline</FontIcon>
+          )} />
       )
-      menuItems.push(<Divider key='div-errors' />)
     }
+    menuItems.push(<Divider key='div-actions' />)
 
     // Account Settings
     menuItems.push(
@@ -285,6 +287,15 @@ export default class SidelistItemMailboxPopover extends React.Component {
         onClick={this.handleAccountSettings}
         leftIcon={<FontIcon className='material-icons'>settings</FontIcon>} />
     )
+    if (mailbox.artificiallyPersistCookies) {
+      menuItems.push(
+        <MenuItem
+          key='reauthenticate'
+          primaryText='Clear All Cookies'
+          onClick={this.handleClearBrowserSession}
+          leftIcon={<FontIcon className='material-icons'>layers_clear</FontIcon>} />
+      )
+    }
     menuItems.push(
       <MenuItem
         key='delete'
@@ -292,15 +303,6 @@ export default class SidelistItemMailboxPopover extends React.Component {
         onClick={this.handleDelete}
         leftIcon={<FontIcon className='material-icons'>delete</FontIcon>} />
     )
-    if (mailbox.artificiallyPersistCookies) {
-      menuItems.push(
-        <MenuItem
-          key='reauthenticate'
-          primaryText='Re-Authenticate'
-          onClick={this.handeReauthenticateBrowserSession}
-          leftIcon={<FontIcon className='material-icons'>lock_outline</FontIcon>} />
-      )
-    }
 
     return menuItems
   }

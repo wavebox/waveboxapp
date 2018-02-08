@@ -198,6 +198,7 @@ class GoogleMailbox extends CoreMailbox {
 
   get auth () { return this._value_('auth', {}) }
   get hasAuth () { return Object.keys(this.auth).length !== 0 }
+  get supportsAuth () { return true }
   get authTime () { return this.auth.date }
   get accessToken () { return this.auth.access_token }
   get refreshToken () { return this.auth.refresh_token }

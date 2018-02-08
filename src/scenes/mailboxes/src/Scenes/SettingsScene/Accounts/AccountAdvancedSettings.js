@@ -65,7 +65,7 @@ export default class AccountAdvancedSettings extends React.Component {
                   mailboxActions.clearMailboxBrowserSession(mailbox.id)
                 }
               }}>
-              Reauthenticate your account manually
+              Clear all cookies manually
             </a>
           </small>
         </div>
