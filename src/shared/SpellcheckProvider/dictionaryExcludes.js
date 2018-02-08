@@ -1,6 +1,8 @@
 const EN = new Set([
   'ain',
+  'aren',
   'can',
+  'could',
   'couldn',
   'didn',
   'don',
@@ -9,6 +11,7 @@ const EN = new Set([
   'hasn',
   'havn',
   'isn',
+  'ma',
   'mightn',
   'mustn',
   'needn',

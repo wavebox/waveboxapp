@@ -5,6 +5,7 @@ import DictionaryLoader from 'shared/SpellcheckProvider/DictionaryLoader'
 import { WB_SPELLCHECKER_CONNECT, WB_SPELLCHECKER_CONFIGURE } from 'shared/ipcEvents'
 import RuntimePaths from 'Runtime/RuntimePaths'
 import Resolver from 'Runtime/Resolver'
+import LRU from 'lru-cache'
 
 let Nodehun
 try {
@@ -25,8 +26,8 @@ class Spellchecker {
 
   constructor () {
     this[privDictionaryLoader] = new DictionaryLoader(enUSDictionaryPath, RuntimePaths.USER_DICTIONARIES_PATH)
-    this[privPrimary] = new SpellcheckProvider(this[privDictionaryLoader], Nodehun)
-    this[privSecondary] = new SpellcheckProvider(this[privDictionaryLoader], Nodehun)
+    this[privPrimary] = new SpellcheckProvider(this[privDictionaryLoader], Nodehun, new LRU({ max: 512, maxAge: 4000 }))
+    this[privSecondary] = new SpellcheckProvider(this[privDictionaryLoader], Nodehun, new LRU({ max: 512, maxAge: 4000 }))
 
     if (Nodehun) {
       ipcRenderer.on(WB_SPELLCHECKER_CONFIGURE, this._handleRuntimeConfigure)

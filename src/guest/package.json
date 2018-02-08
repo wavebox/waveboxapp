@@ -9,8 +9,9 @@
     "appdirectory": "0.1.0",
     "escape-html": "1.0.3",
     "fs-extra": "5.0.0",
+    "lru-cache": "4.1.1",
     "url-pattern": "1.0.3",
-    "uuid": "3.1.0"
+    "uuid": "3.2.1"
   },
   "devDependencies": {
     "standard": "10.0.3",

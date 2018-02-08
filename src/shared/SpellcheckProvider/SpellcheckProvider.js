@@ -6,6 +6,7 @@ const privNodehun = Symbol('privNodehun')
 const privLanguage = Symbol('privLanguage')
 const privUserWords = Symbol('privUserWords')
 const privNodehunInitFailed = Symbol('privNodehunInitFailed')
+const privLRUCache = Symbol('privLRUCache')
 
 class SpellcheckProvider {
   /* **************************************************************************/
@@ -15,15 +16,17 @@ class SpellcheckProvider {
   /**
   * @param DictionaryLoader: the dictionary loader
   * @param Nodehun: the nodehun library
+  * @param lruCache=undefined: an optional cache to use
   * @param userWords=[]: a list of words provided by the user
   */
-  constructor (DictionaryLoader, Nodehun, userWords = []) {
+  constructor (DictionaryLoader, Nodehun, lruCache = undefined, userWords = []) {
     this[privDictionaryLoader] = DictionaryLoader
     this[privNodehunLib] = Nodehun
     this[privUserWords] = new Set(userWords)
     this[privNodehun] = null
     this[privNodehunInitFailed] = false
     this[privLanguage] = null
+    this[privLRUCache] = lruCache
   }
 
   /* **************************************************************************/
@@ -42,6 +45,9 @@ class SpellcheckProvider {
     this[privLanguage] = l
     this[privNodehun] = null
     this[privNodehunInitFailed] = false
+    if (this[privLRUCache]) {
+      this[privLRUCache].reset()
+    }
   }
   get isConfigured () { return !!this.language }
 
@@ -85,12 +91,15 @@ class SpellcheckProvider {
   */
   isCorrectSync (word) {
     if (!this.isConfigured) { return false }
-    if (dictionaryExcludes[this.language] && dictionaryExcludes[this.language].has(word)) { return true }
+    if (dictionaryExcludes[this.language] && dictionaryExcludes[this.language].has(word.toLowerCase())) { return true }
+    if (this[privLRUCache] && this[privLRUCache].peek(word) !== undefined) { return this[privLRUCache].get(word) }
 
     const spellchecker = this.loadedNodehun
     if (!spellchecker) { throw new Error('Failed to load spellchecker') }
 
-    return spellchecker.isCorrectSync(word)
+    const res = spellchecker.isCorrectSync(word)
+    if (this[privLRUCache]) { this[privLRUCache].set(word, res) }
+    return res
   }
 
   /**

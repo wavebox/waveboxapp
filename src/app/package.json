@@ -11,7 +11,7 @@
     "appdirectory": "0.1.0",
     "append-query": "2.0.1",
     "auto-launch": "5.0.5",
-    "content-security-policy-builder": "1.1.0",
+    "content-security-policy-builder": "2.0.0",
     "content-security-policy-parser": "0.1.1",
     "decompress": "4.2.0",
     "dictionary-en-us": "2.0.0",
@@ -27,11 +27,11 @@
     "unused-filename": "1.0.0",
     "unzip-crx": "0.2.0",
     "url-pattern": "1.0.3",
-    "uuid": "3.1.0",
+    "uuid": "3.2.1",
     "vm2": "3.5.2",
     "winreg": "1.2.4",
     "xml2js": "0.4.19",
-    "yargs": "10.1.1"
+    "yargs": "11.0.0"
   },
   "optionalDependencies": {
     "electron-windows-notifications": "1.1.15",
