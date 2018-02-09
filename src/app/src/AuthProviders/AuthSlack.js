@@ -59,9 +59,12 @@ class AuthSlack {
         }
       })
       const oauthWin = waveboxOauthWin.window
+      let userClose = true
 
       oauthWin.on('closed', () => {
-        reject(new Error('User closed the window'))
+        if (userClose) {
+          reject(new Error('User closed the window'))
+        }
       })
 
       oauthWin.webContents.on('will-navigate', (evt, nextUrl) => {
@@ -73,7 +76,7 @@ class AuthSlack {
       oauthWin.webContents.on('did-get-response-details', (evt) => {
         this._scrapeAuthenticationInfo(oauthWin.webContents)
           .then((data) => {
-            oauthWin.removeAllListeners('closed')
+            userClose = false
             oauthWin.close()
             resolve(data)
           })
@@ -82,7 +85,7 @@ class AuthSlack {
       oauthWin.webContents.on('dom-ready', (evt) => {
         this._scrapeAuthenticationInfo(oauthWin.webContents)
           .then((data) => {
-            oauthWin.removeAllListeners('closed')
+            userClose = false
             oauthWin.close()
             resolve(data)
           })

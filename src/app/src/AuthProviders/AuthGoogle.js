@@ -85,9 +85,12 @@ class AuthGoogle {
         }
       })
       const oauthWin = waveboxOauthWin.window
+      let userClose = true
 
       oauthWin.on('closed', () => {
-        reject(new Error('User closed the window'))
+        if (userClose) {
+          reject(new Error('User closed the window'))
+        }
       })
 
       // Step 1: Handle push service auth
@@ -100,7 +103,7 @@ class AuthGoogle {
           oauthWin.loadURL(this.generateGoogleAuthenticationURL(credentials))
         } else if (nextUrl.indexOf(credentials.GOOGLE_PUSH_SERVICE_FAILURE_URL) === 0) {
           evt.preventDefault()
-          oauthWin.removeAllListeners('closed')
+          userClose = false
           oauthWin.close()
           const purl = url.parse(nextUrl, true)
           reject(new Error(purl.query.error))
@@ -113,11 +116,11 @@ class AuthGoogle {
         setTimeout(() => {
           const title = oauthWin.getTitle()
           if (title.startsWith('Denied')) {
-            oauthWin.removeAllListeners('closed')
+            userClose = false
             oauthWin.close()
             reject(new Error(title.split(/[ =]/)[2]))
           } else if (title.startsWith('Success')) {
-            oauthWin.removeAllListeners('closed')
+            userClose = false
             oauthWin.close()
             resolve({
               push: pushServiceToken,

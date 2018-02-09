@@ -85,20 +85,23 @@ class AuthWavebox {
         }
       })
       const oauthWin = waveboxOauthWin.window
+      let userClose = true
 
       oauthWin.on('closed', () => {
-        reject(new Error('User closed the window'))
+        if (userClose) {
+          reject(new Error('User closed the window'))
+        }
       })
 
       oauthWin.webContents.on('did-get-redirect-request', (evt, prevUrl, nextUrl) => {
         if (nextUrl.startsWith('https://wavebox.io/account/register/completed') || nextUrl.startsWith('https://waveboxio.com/account/register/completed')) {
           const purl = url.parse(nextUrl, true)
-          oauthWin.removeAllListeners('closed')
+          userClose = false
           oauthWin.close()
           resolve({ next: purl.query.next })
         } else if (nextUrl.startsWith('https://wavebox.io/account/register/failure') || nextUrl.startsWith('https://waveboxio.com/account/register/failure')) {
           const purl = url.parse(nextUrl, true)
-          oauthWin.removeAllListeners('closed')
+          userClose = false
           oauthWin.close()
           reject(new Error(purl.query.error || 'Registration failure'))
         }

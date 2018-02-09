@@ -64,9 +64,12 @@ class AuthTrello {
       })
       const oauthWin = waveboxOauthWin.window
       let appKey
+      let userClose = true
 
       oauthWin.on('closed', () => {
-        reject(new Error('User closed the window'))
+        if (userClose) {
+          reject(new Error('User closed the window'))
+        }
       })
 
       // STEP 2: Get app key
@@ -98,7 +101,7 @@ class AuthTrello {
       oauthWin.webContents.on('will-navigate', (evt, nextUrl) => {
         if (nextUrl.indexOf(credentials.TRELLO_AUTH_RETURN_URL) === 0) {
           evt.preventDefault()
-          oauthWin.removeAllListeners('closed')
+          userClose = false
           oauthWin.close()
           const token = TOKEN_REGEX.exec(nextUrl)
           if (token && token.length === 2) {

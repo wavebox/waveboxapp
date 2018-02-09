@@ -87,8 +87,11 @@ class AuthMicrosoft {
       })
       const oauthWin = waveboxOauthWin.window
 
+      let userClose = true
       oauthWin.on('closed', () => {
-        reject(new Error('User closed the window'))
+        if (userClose) {
+          reject(new Error('User closed the window'))
+        }
       })
 
       // Listen for changes
@@ -98,7 +101,7 @@ class AuthMicrosoft {
           oauthWin.loadURL(this.generateMicrosoftAuthenticationURL(credentials, additionalPermissions))
         } else if (nextUrl.indexOf(credentials.MICROSOFT_PUSH_SERVICE_FAILURE_URL) === 0) {
           evt.preventDefault()
-          oauthWin.removeAllListeners('closed')
+          userClose = false
           oauthWin.close()
           const purl = url.parse(nextUrl, true)
           reject(new Error(purl.query.error))
@@ -106,11 +109,11 @@ class AuthMicrosoft {
           evt.preventDefault()
           const purl = url.parse(nextUrl, true)
           if (purl.query.code) {
-            oauthWin.removeAllListeners('closed')
+            userClose = false
             oauthWin.close()
             resolve(purl.query.code)
           } else if (purl.query.error) {
-            oauthWin.removeAllListeners('closed')
+            userClose = false
             oauthWin.close()
 
             if (purl.query.error === 'access_denied') {
