@@ -20,9 +20,8 @@ const styles = {
   addressGroup: {
     display: 'flex',
     width: '100%',
-    textAlign: 'center',
-    alignItems: 'center',
-    justifyContent: 'center',
+    textAlign: 'left',
+    justifyContent: 'flex-start',
     overflow: 'hidden'
   },
   address: {
