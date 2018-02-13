@@ -7,6 +7,7 @@ const privPositioner = Symbol('privPositioner')
 
 //TODO process monitor info
 //TODO disable ctx menu
+//TODO re-add tray to packager
 class TrayPopout {
   /* ****************************************************************************/
   // Lifecycle
