@@ -20,6 +20,7 @@ import WaveboxAppCloseBehaviour from './WaveboxAppCloseBehaviour'
 import WaveboxDarwinDockBehaviour from './WaveboxDarwinDockBehaviour'
 import WaveboxTrayBehaviour from './WaveboxTrayBehaviour'
 import {evtMain} from 'AppEvents'
+import WaveboxCert from './WaveboxCert'
 
 const privStarted = Symbol('privStarted')
 const privArgv = Symbol('privArgv')
@@ -117,6 +118,7 @@ class WaveboxApp {
     app.on('before-quit', this._handleBeforeQuit)
     app.on('open-url', this._handleOpenUrl)
     app.on('login', this._handleHTTPBasicLogin)
+    app.on('certificate-error', WaveboxCert.handleCertificateError.bind(WaveboxCert))
     evtMain.on(evtMain.WB_QUIT_APP, this.fullyQuitApp)
     evtMain.on(evtMain.WB_RELAUNCH_APP, this.restartApp)
   }
