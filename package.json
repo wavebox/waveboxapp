@@ -1,5 +1,5 @@
 {
-  "name": "wavebox",
+  "name": "waveboxdev",
   "version": "3.10.2",
   "releaseChannel": "BETA",
   "description": "Wavebox",
@@ -17,6 +17,7 @@
     "dev:crextensionApi": "webpack --env.task=crextensionApi && electron bin/app/index.js",
     "dev:app": "webpack --env.task=app && electron bin/app/index.js",
     "dev:keychain": "webpack --env.task=keychain --env.fast && electron bin/app/index.js",
+    "dev:traypopout": "webpack --env.task=traypopout --env.fast && electron bin/app/index.js",
     "dev:mailboxes": "webpack --env.task=mailboxes --env.fast && electron bin/app/index.js",
     "dev:content": "webpack --env.task=content && electron bin/app/index.js",
     "dev:monitor": "webpack --env.task=monitor && electron bin/app/index.js",

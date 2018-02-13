@@ -78,6 +78,7 @@ module.exports = function (env) {
         SessionManager: path.resolve(path.join(__dirname, 'src/SessionManager')),
         Storage: path.resolve(path.join(__dirname, 'src/Storage')),
         stores: path.resolve(path.join(__dirname, 'src/stores')),
+        Tray: path.resolve(path.join(__dirname, 'src/Tray')),
         WebContentsManager: path.resolve(path.join(__dirname, 'src/WebContentsManager')),
         Windows: path.resolve(path.join(__dirname, 'src/Windows')),
         'package.json': path.resolve(path.join(__dirname, '../../package.json'))

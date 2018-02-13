@@ -16,6 +16,7 @@ export default class AdvancedSettingsSection extends React.Component {
     showRestart: PropTypes.func.isRequired,
     app: PropTypes.object.isRequired,
     extension: PropTypes.object.isRequired,
+    tray: PropTypes.object.isRequired,
     ui: PropTypes.object.isRequired
   }
 
@@ -41,6 +42,7 @@ export default class AdvancedSettingsSection extends React.Component {
       app,
       extension,
       ui,
+      tray,
       style,
       ...passProps
     } = this.props
@@ -101,6 +103,14 @@ export default class AdvancedSettingsSection extends React.Component {
           onToggle={(evt, toggled) => {
             showRestart()
             settingsActions.sub.extension.setEnableChromeExperimental(toggled)
+          }} />
+        <Toggle
+          toggled={tray.classicTray}
+          label='Use the classic tray (Requires Restart)'
+          labelPosition='right'
+          onToggle={(evt, toggled) => {
+            showRestart()
+            settingsActions.sub.tray.setClassicTray(toggled)
           }} />
         <div style={{ marginTop: 8 }}>
           <RaisedButton

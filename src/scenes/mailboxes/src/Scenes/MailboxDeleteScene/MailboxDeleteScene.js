@@ -132,7 +132,7 @@ export default class MailboxDeleteScene extends React.Component {
         {mailbox ? (
           <div style={styles.avatarContainer}>
             <MailboxAvatar
-              mailbox={mailbox}
+              mailboxId={mailbox.id}
               size={45}
               style={styles.avatar} />
             <div>

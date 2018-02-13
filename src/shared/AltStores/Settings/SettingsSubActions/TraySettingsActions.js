@@ -103,6 +103,13 @@ class TraySettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param use: true to use the classic tray, false otherwise
+  */
+  setClassicTray (use) {
+    this.dispatchUpdate('classicTray', use)
+  }
+
+  /**
   * Toggles whether to hide when closed
   */
   toggleHideWhenClosed () {

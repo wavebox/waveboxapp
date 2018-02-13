@@ -16,6 +16,7 @@
     "decompress": "4.2.0",
     "dictionary-en-us": "2.0.0",
     "electron-localshortcut": "2.0.2",
+    "electron-positioner": "3.0.0",
     "fs-extra": "5.0.0",
     "googleapis": "22.2.0",
     "home-dir": "1.0.0",

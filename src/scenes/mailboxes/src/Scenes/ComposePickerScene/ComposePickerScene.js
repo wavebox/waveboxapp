@@ -156,7 +156,7 @@ export default class ComposePickerScene extends React.Component {
                 disableKeyboardFocus
                 key={`${service.parentId}:${service.type}`}
                 style={index === keyboardIndex ? { backgroundColor: 'rgba(0, 0, 0, 0.1)' } : undefined}
-                leftAvatar={<MailboxAvatar mailbox={mailbox} />}
+                leftAvatar={<MailboxAvatar mailboxId={mailbox.id} />}
                 primaryText={mailbox.displayName}
                 secondaryText={service.humanizedType}
                 onClick={(evt) => this.handleSelectService(evt, service)} />)

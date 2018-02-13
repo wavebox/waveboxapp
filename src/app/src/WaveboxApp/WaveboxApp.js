@@ -20,6 +20,7 @@ import WaveboxAppCloseBehaviour from './WaveboxAppCloseBehaviour'
 import WaveboxDarwinDockBehaviour from './WaveboxDarwinDockBehaviour'
 import WaveboxTrayBehaviour from './WaveboxTrayBehaviour'
 import {evtMain} from 'AppEvents'
+import {TrayPopout} from 'Tray'
 
 const privStarted = Symbol('privStarted')
 const privArgv = Symbol('privArgv')
@@ -240,8 +241,17 @@ class WaveboxApp {
       mailboxState.activeMailboxId(),
       mailboxState.activeMailboxService()
     )
+
+    // Create UI
     this[privMainWindow].create(openHidden)
+    if (!settingsState.launched.tray.classicTray) {
+      TrayPopout.load()
+    }
+
+    // Check for updates
     AppUpdater.register()
+
+    // Register global items
     this[privGlobalShortcuts].register()
   }
 

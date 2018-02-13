@@ -137,7 +137,7 @@ export default class MailboxSleepNotification extends React.Component {
           <span style={styles.z2}>z</span>
           <span style={styles.z3}>z</span>
           <span style={styles.z4}>z</span>
-          <MailboxAvatar mailbox={mailbox} size={50} style={styles.icon} />
+          <MailboxAvatar mailboxId={mailbox.id} size={50} style={styles.icon} />
         </div>
         <div style={styles.content}>
           <p style={styles.title}>{`${displayNameText} has just been put to sleep, ${savingText}.`}</p>

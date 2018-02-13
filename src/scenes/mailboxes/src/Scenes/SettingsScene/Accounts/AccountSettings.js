@@ -237,7 +237,7 @@ export default class AccountSettings extends React.Component {
         <Row>
           <Col md={8} offset={2} style={styles.accountPicker}>
             <MailboxAvatar
-              mailbox={selected}
+              mailboxId={selected.id}
               size={60}
               style={styles.accountPickerAvatar} />
             <div style={styles.accountPickerContainer}>

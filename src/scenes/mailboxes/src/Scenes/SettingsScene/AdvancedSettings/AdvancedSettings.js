@@ -41,6 +41,7 @@ export default class AdvancedSettings extends React.Component {
   generateState (settingsState = settingsStore.getState()) {
     return {
       app: settingsState.app,
+      tray: settingsState.tray,
       ui: settingsState.ui,
       extension: settingsState.extension,
       accelerators: settingsState.accelerators
@@ -64,14 +65,14 @@ export default class AdvancedSettings extends React.Component {
   }
 
   render () {
-    const { app, accelerators, extension, ui } = this.state
+    const { app, accelerators, extension, tray, ui } = this.state
     const { showRestart, ...passProps } = this.props
 
     return (
       <div {...passProps}>
         <Row>
           <Col md={6}>
-            <AdvancedSettingsSection showRestart={showRestart} app={app} extension={extension} ui={ui} />
+            <AdvancedSettingsSection showRestart={showRestart} app={app} extension={extension} ui={ui} tray={tray} />
             <DataSettingsSection showRestart={showRestart} />
           </Col>
           <Col md={6}>

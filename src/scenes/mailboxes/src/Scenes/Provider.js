@@ -15,7 +15,7 @@ import { Analytics, ServerVent } from 'Server'
 import { NotificationService, NotificationRenderer } from 'Notifications'
 import Bootstrap from 'R/Bootstrap'
 import AccountMessageDispatcher from './AccountMessageDispatcher'
-import { Tray } from 'Components/Tray'
+import { Tray, TrayClassic } from 'Components/Tray'
 import { AppBadge, WindowTitle } from 'Components'
 import {
   WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE,
@@ -253,6 +253,32 @@ export default class Provider extends React.Component {
     }
   }
 
+  /**
+  * Renders the tray
+  * @param traySettings: the current tray settings
+  * @param launchTraySettings: the launch settings for the tray
+  * @param unreadCount: the current unread count for the tray
+  * @return jsx or undefined
+  */
+  renderTray (traySettings, launchTraySettings, unreadCount) {
+    if (!traySettings.show) { return }
+    if (launchTraySettings.classicTray) {
+      return (
+        <TrayClassic
+          unreadCount={unreadCount}
+          launchTraySettings={launchTraySettings}
+          traySettings={traySettings} />
+      )
+    } else {
+      return (
+        <Tray
+          unreadCount={unreadCount}
+          launchTraySettings={launchTraySettings}
+          traySettings={traySettings} />
+      )
+    }
+  }
+
   render () {
     const {
       traySettings,
@@ -269,12 +295,7 @@ export default class Provider extends React.Component {
         </MuiThemeProvider>
         <AccountMessageDispatcher />
         <WindowTitle />
-        {!traySettings.show ? undefined : (
-          <Tray
-            unreadCount={messagesUnreadCount}
-            launchTraySettings={launchTraySettings}
-            traySettings={traySettings} />
-        )}
+        {this.renderTray(traySettings, launchTraySettings, messagesUnreadCount)}
         {!uiSettings.showAppBadge ? undefined : (
           <AppBadge
             unreadCount={messagesUnreadCount}

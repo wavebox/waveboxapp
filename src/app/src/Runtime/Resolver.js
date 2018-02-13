@@ -42,6 +42,14 @@ class Resolver {
   }
 
   /**
+  * @param name: the name of the file in the traypopout scene
+  * @return the full path to the file
+  */
+  static traypopoutScene (name) {
+    return path.resolve(path.join(__dirname, '../scenes/traypopout/', name))
+  }
+
+  /**
   * @param name: the name of the file in the guest preload repo
   * @return the full path to the file
   */

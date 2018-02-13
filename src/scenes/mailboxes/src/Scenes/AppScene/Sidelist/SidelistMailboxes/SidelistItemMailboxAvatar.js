@@ -229,7 +229,7 @@ export default class SidelistItemMalboxAvatar extends React.Component {
         ) : undefined}
         <MailboxAvatar
           {...passProps}
-          mailbox={mailbox}
+          mailboxId={mailbox.id}
           size={42}
           draggable={false}
           style={{

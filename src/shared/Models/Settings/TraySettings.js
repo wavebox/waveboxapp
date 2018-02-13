@@ -59,6 +59,7 @@ class TraySettings extends Model {
   get mouseTriggerAction () { return this._value_('mouseTriggerAction', MOUSE_TRIGGER_ACTIONS.TOGGLE) }
   get hideWhenMinimized () { return this._value_('hideWhenMinimized', false) }
   get hideWhenClosed () { return this._value_('hideWhenClosed', true) }
+  get classicTray () { return this._value_('classicTray', false) }
 
   /* **************************************************************************/
   // Properties: Theming

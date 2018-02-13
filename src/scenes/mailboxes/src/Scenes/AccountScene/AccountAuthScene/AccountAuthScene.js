@@ -194,7 +194,7 @@ export default class AccountAuthScene extends React.Component {
                 return (
                   <ListItem
                     key={mailbox.id}
-                    leftAvatar={<MailboxAvatar mailbox={mailbox} />}
+                    leftAvatar={<MailboxAvatar mailboxId={mailbox.id} />}
                     primaryText={mailbox.displayName}
                     secondaryText={mailbox.humanizedType}
                     onClick={(evt) => userActions.authenticateWithMailbox(mailbox, { mode: mode })} />)

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { mailboxStore } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
 import Resolver from 'Runtime/Resolver'
-import classnames from 'classnames'
 import SharedMailboxAvatar from 'sharedui/Components/Mailbox/MailboxAvatar'
 
 export default class MailboxAvatar extends React.Component {
@@ -77,13 +76,11 @@ export default class MailboxAvatar extends React.Component {
 
   render () {
     const { mailbox, url } = this.state
-    const { mailboxId, className, ...passProps } = this.props
-    const fullClassName = classnames(`WB-MailboxAvatar WB-Mailbox-${mailboxId}`, className)
+    const { mailboxId, ...passProps } = this.props
     return (
       <SharedMailboxAvatar
         mailbox={mailbox}
         resolvedAvatar={url}
-        className={fullClassName}
         {...passProps} />
     )
   }

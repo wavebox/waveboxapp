@@ -1,9 +1,11 @@
 import { app, ipcMain } from 'electron'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import MailboxesWindow from 'Windows/MailboxesWindow'
+import { TrayPopout } from 'Tray'
 import {
   WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY,
-  WB_SHOW_MAILBOX_WINDOW_FROM_TRAY
+  WB_SHOW_MAILBOX_WINDOW_FROM_TRAY,
+  WB_TOGGLE_TRAY_POPOUT
 } from 'shared/ipcEvents'
 
 class WaveboxTrayBehaviour {
@@ -14,6 +16,7 @@ class WaveboxTrayBehaviour {
   constructor () {
     ipcMain.on(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY, this.toggleMailboxesWindow)
     ipcMain.on(WB_SHOW_MAILBOX_WINDOW_FROM_TRAY, this.showMailboxesWindow)
+    ipcMain.on(WB_TOGGLE_TRAY_POPOUT, this.toggleTrayPopout)
   }
 
   setup () { /* no-op */ }
@@ -87,6 +90,24 @@ class WaveboxTrayBehaviour {
     if (!mailboxesWindow) { return }
     mailboxesWindow.show()
     mailboxesWindow.focus()
+  }
+
+  /* ****************************************************************************/
+  // Popout
+  /* ****************************************************************************/
+
+  /**
+  * Toggles the tray popout
+  * @param evt: the event that fired
+  * @param bounds: the bounds of the tray
+  * @param actionKey: true if an action key was used
+  */
+  toggleTrayPopout = (evt, bounds, actionKey) => {
+    if (actionKey) {
+      TrayPopout.hide()
+    } else {
+      TrayPopout.toggle(bounds)
+    }
   }
 }
 
