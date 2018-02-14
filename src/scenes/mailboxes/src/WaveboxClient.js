@@ -4,9 +4,9 @@ import ReactDOM from 'react-dom'
 import Provider from 'Scenes/Provider'
 import {mailboxStore, mailboxActions, mailboxDispatch} from 'stores/mailbox'
 import {settingsStore, settingsActions} from 'stores/settings'
-import {composeStore, composeActions} from 'stores/compose'
 import {updaterStore, updaterActions} from 'stores/updater'
 import {userStore, userActions} from 'stores/user'
+import {emblinkStore, emblinkActions} from 'stores/emblink'
 import {crextensionStore, crextensionActions} from 'stores/crextension'
 import {platformStore, platformActions} from 'stores/platform'
 import Debug from 'Debug'
@@ -55,14 +55,14 @@ mailboxStore.getState()
 mailboxActions.load()
 settingsStore.getState()
 settingsActions.load()
-composeStore.getState()
-composeActions.load()
 updaterStore.getState()
 updaterActions.load()
 crextensionStore.getState()
 crextensionActions.load()
 platformStore.getState()
 platformActions.load()
+emblinkStore.getState()
+emblinkActions.load()
 
 // Setup the updaters
 userActions.startAutoUpdateExtensions()

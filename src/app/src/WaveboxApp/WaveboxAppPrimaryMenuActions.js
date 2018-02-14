@@ -14,6 +14,7 @@ import {
 } from 'shared/constants'
 import { evtMain } from 'AppEvents'
 import { settingsActions } from 'stores/settings'
+import { emblinkActions } from 'stores/emblink'
 
 class WaveboxAppPrimaryMenuAcions {
   /* ****************************************************************************/
@@ -121,8 +122,9 @@ class WaveboxAppPrimaryMenuAcions {
   composeMail = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().openMailtoLink('mailto://')
+      mailboxesWindow.show().focus()
     }
+    emblinkActions.composeNewMessage()
   }
 
   checkForUpdate = () => {

@@ -146,6 +146,10 @@ class SlackDefaultService extends CoreService {
         acc.push({
           id: channelId,
           text: `${chan.name} (${chan.mention_count})`,
+          textSplit: [
+            chan.name,
+            `${chan.mention_count} mention${chan.mention_count === 1 ? '' : 's'}`
+          ],
           date: 0,
           data: {
             channelId: channelId,
@@ -162,6 +166,10 @@ class SlackDefaultService extends CoreService {
         acc.push({
           id: imId,
           text: `@${im.name} (${im.dm_count})`,
+          textSplit: [
+            im.name,
+            `${im.dm_count} message${im.dm_count === 1 ? '' : 's'}`
+          ],
           date: 0,
           data: {
             channelId: imId,
@@ -178,6 +186,10 @@ class SlackDefaultService extends CoreService {
         acc.push({
           id: groupId,
           text: `@${group.name} (${group.mention_count})`,
+          textSplit: [
+            group.name,
+            `${group.mention_count} mention${group.mention_count === 1 ? '' : 's'}`
+          ],
           date: 0,
           data: {
             channelId: groupId,

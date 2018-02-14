@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { composeActions } from 'stores/compose'
+import { emblinkActions } from 'stores/emblink'
 import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
 import { BLANK_PNG } from 'shared/b64Assets'
 import TrayRenderer from './TrayRenderer'
@@ -275,7 +275,7 @@ export default class TrayClassic extends React.Component {
           label: 'Compose New Message',
           click: (e) => {
             ipcRenderer.send(WB_FOCUS_APP)
-            composeActions.composeNewMessage()
+            emblinkActions.composeNewMessage()
           }
         },
         {

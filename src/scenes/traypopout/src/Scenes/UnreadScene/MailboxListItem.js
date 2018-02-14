@@ -24,13 +24,15 @@ const styles = {
   }
 }
 
-export default class UnreadMailboxListItem extends React.Component {
+export default class MailboxListItem extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired
+    mailboxId: PropTypes.string.isRequired,
+    onAvatarClick: PropTypes.func,
+    isForwards: PropTypes.bool.isRequired
   }
 
   /* **************************************************************************/
@@ -86,44 +88,44 @@ export default class UnreadMailboxListItem extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
-  /**
-  * @param mailbox: the mailbox
-  * @return the name of the mailbox
-  */
-  renderMailboxName (mailbox) {
-    if (mailbox.humanizedType === mailbox.displayName) {
-      return mailbox.humanizedType
-    } else {
-      return `${mailbox.humanizedType} : ${mailbox.displayName || 'Untitled'}`
-    }
-  }
-
   render () {
-    const { mailboxId, ...passProps } = this.props
+    const {
+      mailboxId,
+      requestSwitchMailbox,
+      requestShowMailbox,
+      onAvatarClick,
+      isForwards,
+      ...passProps
+    } = this.props
     const { mailbox, unreadCount } = this.state
+
     const badgeColor = mailbox.cumulativeSidebarUnreadBadgeColor
     const inverseBadgeColor = badgeColor ? Color(badgeColor).isLight() ? 'black' : 'white' : undefined
 
+    const avatar = (
+      <Badge
+        onClick={onAvatarClick}
+        style={styles.badgeContainer}
+        badgeStyle={{
+          ...styles.badge,
+          backgroundColor: badgeColor,
+          color: inverseBadgeColor,
+          ...(unreadCount === 0 ? { display: 'none' } : undefined)
+        }}
+        badgeContent={unreadCount}>
+        <MailboxAvatar mailboxId={mailbox.id} />
+      </Badge>
+    )
+
     return (
       <ListItem
-        {...passProps}
-        leftAvatar={(
-          <Badge
-            style={styles.badgeContainer}
-            badgeStyle={{
-              ...styles.badge,
-              backgroundColor: badgeColor,
-              color: inverseBadgeColor,
-              ...(unreadCount === 0 ? { display: 'none' } : undefined)
-            }}
-            badgeContent={unreadCount}>
-            <MailboxAvatar mailboxId={mailbox.id} />
-          </Badge>
-        )}
-        primaryText={(
-          <span style={styles.primaryText}>{this.renderMailboxName(mailbox)}</span>
-        )}
-        rightIcon={<FontIcon className='material-icons'>keyboard_arrow_right</FontIcon>} />
+        leftAvatar={isForwards ? avatar : undefined}
+        rightAvatar={isForwards ? undefined : avatar}
+        primaryText={(<span style={styles.primaryText}>{mailbox.displayName || 'Untitled'}</span>)}
+        secondaryText={mailbox.humanizedType}
+        rightIcon={isForwards ? (<FontIcon className='material-icons'>keyboard_arrow_right</FontIcon>) : undefined}
+        leftIcon={isForwards ? undefined : (<FontIcon className='material-icons'>keyboard_arrow_left</FontIcon>)}
+        {...passProps} />
     )
   }
 }

@@ -1,45 +1,66 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { mailboxStore } from 'stores/mailbox'
-import { List, ListItem, Divider } from 'material-ui'
-import UnreadMailboxListItem from './UnreadMailboxListItem'
-import NavigationController from 'react-navigation-controller'
+import UnreadMailboxList from './UnreadMailboxList'
+import UnreadMailbox from './UnreadMailbox'
+import SwipeableViews from 'react-swipeable-views'
 
 const styles = {
-  list: {
-    paddingTop: 0,
-    paddingBottom: 0
+  tabContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
+  },
+  tab: {
+    height: '100%',
+    overflow: 'hidden',
+    position: 'relative'
   }
 }
 
 export default class UnreadScene extends React.Component {
   /* **************************************************************************/
-  // Component Lifecycle
+  // Component lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxesChanged)
-  }
-
-  componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxesChanged)
+    this.clearDisplayMailboxIdTO = null
   }
 
   /* **************************************************************************/
-  // Data Lifecycle
+  // Data lifecycle
   /* **************************************************************************/
 
-  state = (() => {
-    const mailboxState = mailboxStore.getState()
+  state = {
+    index: 0,
+    displayMailboxId: undefined
+  }
 
-    return {
-      mailboxIds: mailboxState.mailboxIds()
-    }
-  })()
+  /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
 
-  mailboxesChanged = (mailboxState) => {
+  /**
+  * Handles showing the mailboxes list
+  */
+  handleShowMailboxList = () => {
+    clearTimeout(this.clearDisplayMailboxIdTO)
+    this.clearDisplayMailboxIdTO = setTimeout(() => {
+      this.setState({ displayMailboxId: undefined })
+    }, 1000)
+
+    this.setState({ index: 0 })
+  }
+
+  /**
+  * Handles showing the mailbox
+  */
+  handleShowMailbox = (mailboxId) => {
+    clearTimeout(this.clearDisplayMailboxIdTO)
     this.setState({
-      mailboxIds: mailboxState.mailboxIds()
+      displayMailboxId: mailboxId,
+      index: 1
     })
   }
 
@@ -53,56 +74,23 @@ export default class UnreadScene extends React.Component {
 
   render () {
     const { ...passProps } = this.props
-    const { mailboxIds } = this.state
-
-    return (
-      <NavigationController
-        ref="NC"
-        views={[
-          (
-            <List style={styles.list}>
-              {mailboxIds.length ? (
-                mailboxIds.reduce((acc, id, index, arr) => {
-                  return acc.concat([
-                    (<UnreadMailboxListItem key={id} mailboxId={id} onClick={() => {
-                      console.log("ONCLICK")
-                      this.refs.NC.pushView((
-                        <List>
-                          <ListItem onClick={() => this.refs.NC.popView()}>1</ListItem>
-                          <ListItem>1</ListItem>
-                          <ListItem>1</ListItem>
-                          <ListItem>1</ListItem>
-                        </List>
-                      ))
-                    }} />),
-                    index === arr.length - 1 ? undefined : (<Divider key={`inset-${id}`} />)
-                  ])
-                }, [])
-              ) : (
-                <div>{"none"}</div>
-              )}
-            </List>
-          )
-        ]}
-      />
-    )
-
+    const { displayMailboxId, index } = this.state
 
     return (
       <div {...passProps}>
-        <List style={styles.list}>
-          {mailboxIds.length ? (
-            mailboxIds.reduce((acc, id, index, arr) => {
-              return acc.concat([
-                (<UnreadMailboxListItem key={id} mailboxId={id} />),
-                index === arr.length - 1 ? undefined : (<Divider key={`inset-${id}`} />)
-              ])
-            }, [])
+        <SwipeableViews
+          containerStyle={styles.tabContainer}
+          slideStyle={styles.tab}
+          index={index}>
+          <UnreadMailboxList requestShowMailbox={this.handleShowMailbox} />
+          {displayMailboxId ? (
+            <UnreadMailbox
+              mailboxId={displayMailboxId}
+              requestShowMailboxList={this.handleShowMailboxList} />
           ) : (
-            <div>{"none"}</div>
+            <div />
           )}
-          {}
-        </List>
+        </SwipeableViews>
       </div>
     )
   }

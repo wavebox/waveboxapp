@@ -15,7 +15,6 @@ import {
   WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD,
   WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD,
   WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE,
-  WB_MAILBOXES_WINDOW_OPEN_MAILTO_LINK,
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
   WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER,
   WB_MAILBOXES_WINDOW_SHOW_NEWS,
@@ -28,6 +27,8 @@ import {
   WB_SQUIRREL_UPDATE_NOT_AVAILABLE,
   WB_SQUIRREL_UPDATE_CHECK_START,
   WB_SQUIRREL_UPDATE_DISABLED,
+
+  WB_FOCUS_MAILBOXES_WINDOW,
 
   WBECRX_RELOAD_OWNER
 } from 'shared/ipcEvents'
@@ -160,6 +161,7 @@ class MailboxesWindow extends WaveboxWindow {
     // Bind event listeners
     electron.ipcMain.on(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)
     electron.ipcMain.on(WBECRX_RELOAD_OWNER, this.handleCRXReloadOwner)
+    electron.ipcMain.on(WB_FOCUS_MAILBOXES_WINDOW, this.handleFocusMailboxesWindow)
     this.window.on('focus', () => {
       mailboxActions.reduceService.defer(undefined, undefined, ServiceReducer.mergeChangesetOnActive)
     })
@@ -189,6 +191,7 @@ class MailboxesWindow extends WaveboxWindow {
 
     electron.ipcMain.removeListener(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)
     electron.ipcMain.removeListener(WBECRX_RELOAD_OWNER, this.handleCRXReloadOwner)
+    electron.ipcMain.removeListener(WB_FOCUS_MAILBOXES_WINDOW, this.handleFocusMailboxesWindow)
 
     singletonAttached = undefined
     super.destroy(evt)
@@ -216,6 +219,15 @@ class MailboxesWindow extends WaveboxWindow {
   */
   handleCRXReloadOwner = (evt) => {
     this.reload()
+  }
+
+  /**
+  * Shows and focuses this window
+  * @param evt: the event that fired
+  */
+  handleFocusMailboxesWindow = (evt) => {
+    this.show()
+    this.focus()
   }
 
   /* ****************************************************************************/
@@ -294,16 +306,6 @@ class MailboxesWindow extends WaveboxWindow {
       path: path,
       filename: filename
     })
-    return this
-  }
-
-  /**
-  * Opens a mailto link
-  * @param mailtoLink: the link to open
-  * @return this
-  */
-  openMailtoLink (mailtoLink) {
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_OPEN_MAILTO_LINK, { mailtoLink: mailtoLink })
     return this
   }
 

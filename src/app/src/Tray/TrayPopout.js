@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, ipcMain } from 'electron'
 import Resolver from 'Runtime/Resolver'
 import Positioner from 'electron-positioner'
 
@@ -40,7 +40,6 @@ class TrayPopout {
     })
     this[privPositioner] = new Positioner(this[privWindow])
     this[privWindow].loadURL(`file://${Resolver.traypopoutScene('popout.html')}`)
-
     //this[privWindow].on('blur', () => this[privWindow].hide())
 
     this[privWindow].openDevTools() //Test

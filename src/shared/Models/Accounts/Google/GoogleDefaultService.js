@@ -212,6 +212,10 @@ class GoogleDefaultService extends GoogleService {
       return {
         id: `${thread.id}:${thread.historyId}`,
         text: `${fromName} : ${message.subject || 'No Subject'}`,
+        textSplit: [
+          message.subject || 'No Subject',
+          fromName
+        ],
         date: parseInt(message.internalDate),
         data: this._generateMessageOpenData(thread, message)
       }

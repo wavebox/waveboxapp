@@ -68,6 +68,10 @@ class MicrosoftDefaultService extends MicrosoftService {
       return {
         id: message.id,
         text: `${message.from.emailAddress.name} : ${message.subject || 'No Subject'}`,
+        textSplit: [
+          message.subject || 'No Subject',
+          message.from.emailAddress.name
+        ],
         date: new Date(message.receivedDateTime).getTime(),
         data: {
           messageId: message.id,

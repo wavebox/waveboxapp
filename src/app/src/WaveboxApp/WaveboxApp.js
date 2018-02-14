@@ -8,6 +8,7 @@ import { platformStore, platformActions } from 'stores/platform'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import { userStore, userActions } from 'stores/user'
 import { takeoutStore, takeoutActions } from 'stores/takeout'
+import { emblinkStore, emblinkActions } from 'stores/emblink'
 import ipcEvents from 'shared/ipcEvents'
 import BasicHTTPAuthHandler from '../BasicHTTPAuthHandler'
 import { CRExtensionManager } from 'Extensions/Chrome'
@@ -75,6 +76,8 @@ class WaveboxApp {
     userActions.load()
     takeoutStore.getState()
     takeoutActions.load()
+    emblinkStore.getState()
+    emblinkActions.load()
 
     // Component behaviour
     this[privCloseBehaviour] = new WaveboxAppCloseBehaviour()
@@ -185,12 +188,12 @@ class WaveboxApp {
 
     ipcMain.on(ipcEvents.WB_MAILBOXES_WINDOW_JS_LOADED, (evt, data) => {
       if (this[privArgv].mailto) {
-        this[privMainWindow].openMailtoLink(this[privArgv].mailto)
+        emblinkActions.composeNewMailtoLink(this[privArgv].mailto)
         delete this[privArgv].mailto
       } else {
         const index = this[privArgv]._.findIndex((a) => a.indexOf('mailto') === 0)
         if (index !== -1) {
-          this[privMainWindow].openMailtoLink(this[privArgv]._[index])
+          emblinkActions.composeNewMailtoLink(this[privArgv]._[index])
           this[privArgv]._.splice(1)
         }
       }
@@ -276,7 +279,7 @@ class WaveboxApp {
   */
   _handleBeforeQuit = () => {
     this[privGlobalShortcuts].unregister()
-    this[privCloseBehaviour].fullyQuitApp()
+    this[privCloseBehaviour].prepareForQuit()
   }
 
   /**
@@ -286,7 +289,7 @@ class WaveboxApp {
   */
   _handleOpenUrl = (evt, url) => {
     evt.preventDefault()
-    this[privMainWindow].openMailtoLink(url)
+    emblinkActions.composeNewMailtoLink(url)
   }
 
   /**
