@@ -39,7 +39,7 @@ class Container extends Model {
   /* **************************************************************************/
 
   get id () { return this.__id__ }
-  get version () { return this.__data__.version }
+  get version () { return this.__data__.version || 0 }
   get minAppVersion () { return this.__data__.minAppVersion }
 
   /* **************************************************************************/
