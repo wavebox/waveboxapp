@@ -36,8 +36,6 @@ export default class Tray extends React.Component {
       this.appTray = new remote.Tray(remote.nativeImage.createFromDataURL(BLANK_PNG))
     }
 
-    //TODO test tray click behaviour on.... darwin, darwin-maveriks, win10, win7, linux-libappindicator, linux-gtkicon
-    //TODO click and double click behaviour is currently depricated from classic. Maybe bring back with alt/ctrl/shift etc
     this.appTray.on('click', this.handleClick)
   }
 

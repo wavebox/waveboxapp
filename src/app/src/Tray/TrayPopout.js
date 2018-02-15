@@ -5,7 +5,6 @@ import Positioner from 'electron-positioner'
 const privWindow = Symbol('privWindow')
 const privPositioner = Symbol('privPositioner')
 
-//TODO re-add tray to packager
 class TrayPopout {
   /* ****************************************************************************/
   // Lifecycle
