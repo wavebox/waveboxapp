@@ -48,7 +48,6 @@ module.exports = function (env) {
       new CopyWebpackPlugin([
         { from: path.join(__dirname, 'src/mailboxes.html'), to: 'mailboxes.html', force: true },
         { from: path.join(__dirname, 'src/offline.html'), to: 'offline.html', force: true },
-        { from: path.join(__dirname, 'src/notification_linux.html'), to: 'notification_linux.html', force: true },
         { from: path.join(__dirname, '../../../package.json'), to: 'package.json', force: true },
         { from: path.join(__dirname, '../../shared/credentials.js'), to: 'credentials.js', force: true }
       ], {

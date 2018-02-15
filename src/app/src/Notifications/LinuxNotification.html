@@ -40,7 +40,7 @@
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
-        background-image: url("../../icons/app.svg");
+        background-image: url("../icons/app.svg");
       }
 
       /* Controls */
@@ -111,14 +111,9 @@
 
     <script type="text/javascript">
       const electron = require('electron')
-      const screenSize = electron.remote.screen.getPrimaryDisplay().workAreaSize
-      const browserWindow = electron.remote.getCurrentWindow()
-      const width = 325
-      const height = 65
-      browserWindow.setSize(width, height)
-      browserWindow.setPosition(screenSize.width - width - 10, 30)
+      const audioPlayer = new window.Audio()
 
-      window.render = (options) => {
+      electron.ipcRenderer.on('WB_LIN_NOTIF_RENDER', (evt, options) => {
         // Title
         document.querySelector('#content .title').textContent = options.title || ''
 
@@ -149,16 +144,27 @@
           `
           document.head.appendChild(window.iconStyle)
         }
-      }
+      })
+
+      electron.ipcRenderer.on('WB_LIN_NOTIF_PLAY_AUDIO', (evt, audio) => {
+        audioPlayer.pause()
+        audioPlayer.src = `file://${audio}`
+        audioPlayer.currentTime = 0
+        audioPlayer.play()
+      })
 
       document.getElementById('close-button').addEventListener('click', (evt) => {
         evt.preventDefault()
         evt.stopPropagation()
-        document.title = 'wbaction:close:' + new Date().getTime()
+        electron.ipcRenderer.send('WB_LIN_NOTIF_CLOSE', {})
       }, false)
       document.body.addEventListener('click', (evt) => {
         evt.preventDefault()
-        document.title = 'wbaction:click:' + new Date().getTime()
+        electron.ipcRenderer.send('WB_LIN_NOTIF_CLICK', {})
+      }, false)
+      window.addEventListener('contextmenu', (evt) => {
+        evt.preventDefault()
+        evt.stopPropagation()
       }, false)
     </script>
   </body>

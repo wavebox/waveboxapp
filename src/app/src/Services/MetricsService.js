@@ -14,6 +14,7 @@ import {
 import { METRICS_LOG_WRITE_INTERVAL } from 'shared/constants'
 import RuntimePaths from 'Runtime/RuntimePaths'
 import TrayPopout from 'Tray/TrayPopout'
+import LinuxNotification from 'Notifications/LinuxNotification'
 
 const LOG_TAG = '[METRICS]'
 mkdirp.sync(path.dirname(RuntimePaths.METRICS_LOG_PATH))
@@ -157,6 +158,15 @@ class MetricsService {
         webContentsId: wcId,
         pid: wc ? wc.getOSProcessId() : undefined,
         description: 'Wavebox Tray Popout'
+      })
+    }
+    if (LinuxNotification.isLoaded) {
+      const wcId = LinuxNotification.webContentsId
+      const wc = webContents.fromId(wcId)
+      allTabInfos.set(wcId, {
+        webContentsId: wcId,
+        pid: wc ? wc.getOSProcessId() : undefined,
+        description: 'Wavebox Notification Provider (Linux-only)'
       })
     }
 

@@ -23,6 +23,7 @@ import WaveboxDarwinDockBehaviour from './WaveboxDarwinDockBehaviour'
 import WaveboxTrayBehaviour from './WaveboxTrayBehaviour'
 import {evtMain} from 'AppEvents'
 import {TrayPopout} from 'Tray'
+import {LinuxNotification} from 'Notifications'
 import WaveboxCert from './WaveboxCert'
 
 const privStarted = Symbol('privStarted')
@@ -255,6 +256,7 @@ class WaveboxApp {
     if (!settingsState.launched.tray.classicTray) {
       TrayPopout.load()
     }
+    LinuxNotification.load()
 
     // Check for updates
     AppUpdater.register()

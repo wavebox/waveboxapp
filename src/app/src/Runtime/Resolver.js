@@ -79,6 +79,14 @@ class Resolver {
   static icon (name) {
     return path.resolve(path.join(__dirname, '../icons/', name))
   }
+
+  /**
+  * @param name: the name of the audio file
+  * @return the full path to the file
+  */
+  static audio (name) {
+    return path.resolve(path.join(__dirname, '../audio/', name))
+  }
 }
 
 export default Resolver

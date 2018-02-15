@@ -58,7 +58,7 @@ export default class NotificationRenderer {
     const { enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceType, mailboxStore.getState(), settingsStore.getState())
     if (!enabled) { return }
 
-    this.presentNotification(title, serviceType, html5Options, clickHandler, clickData)
+    this.presentNotification(title, html5Options, clickHandler, clickData)
     notifhistActions.addNotification({
       mailboxId: mailboxId,
       serviceType: serviceType,
