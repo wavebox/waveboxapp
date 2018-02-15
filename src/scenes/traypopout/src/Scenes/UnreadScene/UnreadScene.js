@@ -38,6 +38,21 @@ export default class UnreadScene extends React.Component {
   }
 
   /* **************************************************************************/
+  // Public
+  /* **************************************************************************/
+
+  /**
+  * Resets the navigation stack
+  */
+  resetNavigationStack = () => {
+    clearTimeout(this.clearDisplayMailboxIdTO)
+    this.setState({
+      index: 0,
+      displayMailboxId: undefined
+    })
+  }
+
+  /* **************************************************************************/
   // UI Events
   /* **************************************************************************/
 

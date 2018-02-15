@@ -115,9 +115,16 @@ class TrelloDefaultService extends CoreService {
 
   get trayMessages () {
     return this.unreadNotifications.slice(0, 10).map((notif) => {
+      const username = (notif.memberCreator || {}).username || 'Someone'
+      const notifText = this._generateNotificationText(notif)
       return {
         id: notif.id,
-        text: this._generateNotificationText(notif),
+        text: notifText,
+        extended: {
+          title: `@${username}`,
+          subtitle: notifText,
+          optAvatarText: username[0]
+        },
         date: new Date(notif.date).getTime(),
         data: {
           notificationId: notif.id,

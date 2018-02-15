@@ -9,6 +9,7 @@ import {userStore, userActions} from 'stores/user'
 import {emblinkStore, emblinkActions} from 'stores/emblink'
 import {crextensionStore, crextensionActions} from 'stores/crextension'
 import {platformStore, platformActions} from 'stores/platform'
+import {notifhistStore, notifhistActions} from 'stores/notifhist'
 import Debug from 'Debug'
 import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
 import ResourceMonitorResponder from './ResourceMonitorResponder'
@@ -63,6 +64,8 @@ platformStore.getState()
 platformActions.load()
 emblinkStore.getState()
 emblinkActions.load()
+notifhistStore.getState()
+notifhistActions.load()
 
 // Setup the updaters
 userActions.startAutoUpdateExtensions()

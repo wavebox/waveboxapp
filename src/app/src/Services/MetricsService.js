@@ -13,6 +13,7 @@ import {
 } from 'shared/ipcEvents'
 import { METRICS_LOG_WRITE_INTERVAL } from 'shared/constants'
 import RuntimePaths from 'Runtime/RuntimePaths'
+import TrayPopout from 'Tray/TrayPopout'
 
 const LOG_TAG = '[METRICS]'
 mkdirp.sync(path.dirname(RuntimePaths.METRICS_LOG_PATH))
@@ -147,6 +148,17 @@ class MetricsService {
       })
       return acc
     }, new Map())
+
+    // Add some info about system-non-window webcontents
+    if (TrayPopout.isLoaded) {
+      const wcId = TrayPopout.webContentsId
+      const wc = webContents.fromId(wcId)
+      allTabInfos.set(wcId, {
+        webContentsId: wcId,
+        pid: wc ? wc.getOSProcessId() : undefined,
+        description: 'Wavebox Tray Popout'
+      })
+    }
 
     // For anyone we don't have specific info about just grab what we can
     const allWebContentsInfo = webContents.getAllWebContents().reduce((acc, wc) => {

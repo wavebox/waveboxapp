@@ -5,6 +5,7 @@ import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import { emblinkActions } from 'stores/emblink'
 import { List, ListItem, Divider } from 'material-ui'
 import UnreadMailboxControlListItem from './UnreadMailboxControlListItem'
+import UnreadMailboxMessageListItem from './UnreadMailboxMessageListItem'
 import { ipcRenderer } from 'electron'
 import {
   WB_FOCUS_MAILBOXES_WINDOW
@@ -22,16 +23,6 @@ const styles = {
   list: {
     paddingTop: 0,
     paddingBottom: 0
-  },
-  listItem: {
-    paddingTop: 8,
-    paddingBottom: 8
-  },
-  primaryMessageText: {
-    fontSize: 14
-  },
-  secondaryMessageText: {
-    fontSize: 13
   }
 }
 
@@ -113,7 +104,7 @@ export default class UnreadMailbox extends React.Component {
   handleOpenMessage = (evt, message) => {
     ipcRenderer.send(WB_FOCUS_MAILBOXES_WINDOW, {})
     emblinkActions.openItem(message.data.mailboxId, message.data.serviceType, message.data)
-    mailboxActions.changeActive(this.props.mailboxId)
+    mailboxActions.changeActive(this.props.mailboxId, message.data.serviceType)
   }
 
   /* **************************************************************************/
@@ -140,29 +131,12 @@ export default class UnreadMailbox extends React.Component {
           <Divider />
           {messages.length ? (
             messages.map((message, index) => {
-              if (message.textSplit && message.textSplit.length) {
-                return (
-                  <ListItem
-                    key={`${message.id}:${index}`}
-                    innerDivStyle={styles.listItem}
-                    primaryText={(
-                      <div style={styles.primaryMessageText}>{message.textSplit[0]}</div>
-                    )}
-                    secondaryText={(
-                      <div style={styles.secondaryMessageText}>{message.textSplit.slice(1).join('\n')}</div>
-                    )}
-                    onClick={(evt) => { this.handleOpenMessage(evt, message) }}
-                  />)
-              } else {
-                return (
-                  <ListItem
-                    key={`${message.id}:${index}`}
-                    primaryText={(
-                      <span style={styles.primaryMessageText}>{message.text}</span>
-                    )}
-                    onClick={(evt) => { this.handleOpenMessage(evt, message) }}
-                  />)
-              }
+              return (
+                <UnreadMailboxMessageListItem
+                  key={`${message.id}:${index}`}
+                  message={message}
+                  onClick={(evt) => { this.handleOpenMessage(evt, message) }} />
+              )
             })
           ) : (
             <ListItem primaryText='No Messages' disabled />

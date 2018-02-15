@@ -14,6 +14,10 @@ import {
 
 const TAB_HEIGHT = 40
 const TOOLBAR_HEIGHT = 40
+const UNREAD_INDEX = 0
+const NOTIF_INDEX = 1
+const UNREAD_REF = 'UNREAD'
+const NOTIF_REF = 'NOTIF'
 
 const styles = {
   container: {
@@ -64,20 +68,65 @@ const styles = {
     right: 0,
     bottom: 0,
     height: TOOLBAR_HEIGHT,
-    backgroundColor: Colors.blue600
+    backgroundColor: Colors.lightBlue600
   }
 }
 
 export default class AppScene extends React.Component {
+  /* **************************************************************************/
+  // Component lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    this.resetNavTOs = new Map()
+  }
+
+  componentWillUnmount () {
+    Array.from(this.resetNavTOs.values()).forEach((to) => {
+      clearTimeout(to)
+    })
+  }
+
   /* **************************************************************************/
   // Data Lifecycle
   /* **************************************************************************/
 
   state = (() => {
     return {
-      tabIndex: 0
+      tabIndex: UNREAD_INDEX
     }
   })()
+
+  /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  /**
+  * Changes tab
+  * @param index: the new index
+  */
+  handleChangeTab = (index) => {
+    this.setState((prevState) => {
+      const prevIndex = prevState.tabIndex
+      if (prevIndex === index) { return undefined }
+
+      if (this.resetNavTOs.has(index)) {
+        clearTimeout(this.resetNavTOs.get(index))
+        this.resetNavTOs.delete(index)
+      }
+      if (this.resetNavTOs.has(prevIndex)) {
+        clearTimeout(this.resetNavTOs.get(prevIndex))
+      }
+      this.resetNavTOs.set(prevIndex, setTimeout(() => {
+        switch (prevIndex) {
+          case UNREAD_INDEX: this.refs[UNREAD_REF].resetNavigationStack(); break
+          case NOTIF_INDEX: this.refs[NOTIF_REF].resetNavigationStack(); break
+        }
+      }, 500))
+
+      return { tabIndex: index }
+    })
+  }
 
   /* **************************************************************************/
   // Rendering
@@ -96,15 +145,15 @@ export default class AppScene extends React.Component {
           value={tabIndex}
           inkBarStyle={styles.inkBar}
           tabItemContainerStyle={styles.tabItemContainer}
-          onChange={(index) => this.setState({ tabIndex: index })}>
+          onChange={this.handleChangeTab}>
           <Tab
             label='Unread'
             buttonStyle={styles.tabButton}
-            value={0} />
+            value={UNREAD_INDEX} />
           <Tab
             label='Notifications'
             buttonStyle={styles.tabButton}
-            value={1} />
+            value={NOTIF_INDEX} />
         </Tabs>
         <SwipeableViews
           style={styles.tabs}
@@ -112,8 +161,8 @@ export default class AppScene extends React.Component {
           slideStyle={styles.tab}
           index={tabIndex}
           onChangeIndex={(index) => this.setState({ tabIndex: index })}>
-          <UnreadScene />
-          <NotificationScene />
+          <UnreadScene ref={UNREAD_REF} />
+          <NotificationScene ref={NOTIF_REF} />
         </SwipeableViews>
         <Toolbar style={styles.toolbar}>
           <ToolbarGroup firstChild>
@@ -121,13 +170,13 @@ export default class AppScene extends React.Component {
               tooltip='Compose'
               onClick={() => { emblinkActions.composeNewMessage() }}
               tooltipPosition='top-right'>
-              <FontIcon className='material-icons' color={Colors.blue50}>create</FontIcon>
+              <FontIcon className='material-icons' color='rgba(255, 255, 255, 0.7)'>create</FontIcon>
             </IconButton>
             <IconButton
               tooltip='Show main window'
               onClick={() => { ipcRenderer.send(WB_FOCUS_APP, {}) }}
               tooltipPosition='top-center'>
-              <FontIcon className='material-icons' color={Colors.blue50}>launch</FontIcon>
+              <FontIcon className='material-icons' color='rgba(255, 255, 255, 0.7)'>launch</FontIcon>
             </IconButton>
           </ToolbarGroup>
           <ToolbarGroup lastChild>
@@ -135,7 +184,7 @@ export default class AppScene extends React.Component {
               tooltip='Quit Wavebox'
               onClick={() => { ipcRenderer.send(WB_QUIT_APP, {}) }}
               tooltipPosition='top-left'>
-              <FontIcon className='material-icons' color={Colors.blue50}>close</FontIcon>
+              <FontIcon className='material-icons' color='rgba(255, 255, 255, 0.7)'>close</FontIcon>
             </IconButton>
           </ToolbarGroup>
         </Toolbar>

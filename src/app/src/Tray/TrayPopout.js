@@ -1,12 +1,10 @@
-import { BrowserWindow, ipcMain } from 'electron'
+import { BrowserWindow } from 'electron'
 import Resolver from 'Runtime/Resolver'
 import Positioner from 'electron-positioner'
 
 const privWindow = Symbol('privWindow')
 const privPositioner = Symbol('privPositioner')
 
-//TODO process monitor info
-//TODO disable ctx menu
 //TODO re-add tray to packager
 class TrayPopout {
   /* ****************************************************************************/
@@ -40,9 +38,7 @@ class TrayPopout {
     })
     this[privPositioner] = new Positioner(this[privWindow])
     this[privWindow].loadURL(`file://${Resolver.traypopoutScene('popout.html')}`)
-    //this[privWindow].on('blur', () => this[privWindow].hide())
-
-    this[privWindow].openDevTools() //Test
+    this[privWindow].on('blur', () => this[privWindow].hide())
   }
 
   /* ****************************************************************************/
@@ -50,6 +46,7 @@ class TrayPopout {
   /* ****************************************************************************/
 
   get isLoaded () { return !!this[privWindow] }
+  get webContentsId () { return this.isLoaded ? this[privWindow].webContents.id : undefined }
   get isVisible () { return this[privWindow].isVisible() && this[privWindow].isFocused() }
 
   /* ****************************************************************************/
