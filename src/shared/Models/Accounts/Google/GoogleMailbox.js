@@ -157,7 +157,7 @@ class GoogleMailbox extends CoreMailbox {
       this.id,
       this.type,
       serviceData,
-      { openDriveLinksWithDefaultOpener: this.openDriveLinksWithDefaultOpener },
+      { },
       this.buildMailboxToServiceMigrationData(serviceData.type))
   }
 
@@ -171,7 +171,10 @@ class GoogleMailbox extends CoreMailbox {
   // Properties: Window opening
   /* **************************************************************************/
 
-  get openDriveLinksWithDefaultOpener () { return this._value_('openDriveLinksWithDefaultOpener', false) }
+  get openDriveLinksWithExternalBrowser () {
+    // openDriveLinksWithDefaultOpener is a depricated value
+    return this._value_('openDriveLinksWithExternalBrowser', this._value_('openDriveLinksWithDefaultOpener', false))
+  }
 
   /* **************************************************************************/
   // Properties : Display
@@ -228,10 +231,17 @@ class GoogleMailbox extends CoreMailbox {
   * @return undefined for no override, or unsanitized WINDOW_OPEN_MODES if there is an override
   */
   getWindowOpenModeOverrides (currentUrl, targetUrl, provisionalTargetUrl, disposition) {
-    const parsedTargetUrl = url.parse(targetUrl)
-    if (parsedTargetUrl.hostname === 'docs.google.com' || parsedTargetUrl.hostname === 'drive.google.com') {
-      if (this.openDriveLinksWithDefaultOpener) {
-        return 'DEFAULT_IMPORTANT'
+    if (this.openDriveLinksWithExternalBrowser && targetUrl.indexOf('google.com') !== -1) {
+      const parsedTargetUrl = url.parse(targetUrl, true)
+      if (parsedTargetUrl.hostname === 'docs.google.com' || parsedTargetUrl.hostname === 'drive.google.com') {
+        return 'EXTERNAL'
+      } else if (parsedTargetUrl.hostname === 'www.google.com' || parsedTargetUrl.hostname === 'google.com') {
+        if (parsedTargetUrl.pathname.startsWith('/url') && parsedTargetUrl.query.q) {
+          const parsedQUrl = url.parse(parsedTargetUrl.query.q)
+          if (parsedQUrl.hostname === 'docs.google.com' || parsedQUrl.hostname === 'drive.google.com') {
+            return 'EXTERNAL'
+          }
+        }
       }
     }
 

@@ -125,11 +125,11 @@ export default class GoogleAccountSettings extends React.Component {
               showRestart={showRestart}
               windowOpenAfter={(
                 <Toggle
-                  toggled={mailbox.openDriveLinksWithDefaultOpener}
+                  toggled={mailbox.openDriveLinksWithExternalBrowser}
                   label='Open Google Drive links with browser'
                   labelPosition='right'
                   onToggle={(evt, toggled) => {
-                    mailboxActions.reduce(mailbox.id, GoogleMailboxReducer.setOpenDriveLinksWithDefaultOpener, toggled)
+                    mailboxActions.reduce(mailbox.id, GoogleMailboxReducer.setOpenDriveLinksWithExternalBrowser, toggled)
                   }} />
               )}
             />

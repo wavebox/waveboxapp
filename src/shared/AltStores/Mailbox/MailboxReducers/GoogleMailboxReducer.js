@@ -66,9 +66,9 @@ class GoogleMailboxReducer extends MailboxReducer {
   * @param mailbox: the mailbox to update
   * @param open: true to always open, false otherwise
   */
-  static setOpenDriveLinksWithDefaultOpener (mailbox, open) {
+  static setOpenDriveLinksWithExternalBrowser (mailbox, open) {
     return mailbox.changeDataWithChangeset({
-      openDriveLinksWithDefaultOpener: open
+      openDriveLinksWithExternalBrowser: open
     })
   }
 }
