@@ -569,7 +569,7 @@ export default class MailboxWebView extends React.Component {
             zoomFactor={service.zoomFactor}
             searchId={searchId}
             searchTerm={isSearching ? searchTerm : ''}
-            webpreferences={webpreferences || 'contextIsolation=yes, nativeWindowOpen=yes'}
+            webpreferences={webpreferences || 'contextIsolation=yes, nativeWindowOpen=yes, sharedSiteInstances=yes'}
             allowpopups={allowpopups === undefined ? true : allowpopups}
             plugins
             onWebContentsAttached={this.handleWebContentsAttached}

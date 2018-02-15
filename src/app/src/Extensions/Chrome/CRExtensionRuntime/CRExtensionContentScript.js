@@ -52,7 +52,6 @@ class CRExtensionContentScript {
     const entry = {
       type: RENDER_PROCESS_PREFERENCE_TYPES.WB_CREXTENSION_CONTENTSCRIPT_CONFIG,
       extensionId: this.extension.id,
-      popoutWindowPostmessageCapture: this.extension.manifest.wavebox.popoutWindowPostmessageCapture,
       manifest: this.extension.manifest.cloneData(),
       messages: {
         [suggestedLocale]: this.datasource.getMessages(suggestedLocale)

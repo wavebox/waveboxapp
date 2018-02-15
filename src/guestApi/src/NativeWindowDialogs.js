@@ -46,9 +46,6 @@
     }
   }
 
-  // Requeue - the default injector seems to come in first
-  setTimeout(() => {
-    polyfillAlert(window)
-    polyfillConfirm(window)
-  })
+  polyfillAlert(window)
+  polyfillConfirm(window)
 })()

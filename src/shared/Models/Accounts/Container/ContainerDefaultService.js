@@ -68,6 +68,7 @@ class ContainerDefaultService extends CoreService {
   get reloadBehaviour () { return CoreService.RELOAD_BEHAVIOURS[this.containerService.reloadBehaviour] || super.reloadBehaviour }
   get useNativeWindowOpen () { return this.containerService.useNativeWindowOpen }
   get useContextIsolation () { return this.containerService.useContextIsolation }
+  get useSharedSiteInstances () { return this.containerService.useSharedSiteInstances }
   get useAsyncAlerts () { return this.containerService.useAsyncAlerts }
   get mergeChangesetOnActive () { return { lastUnseenNotificationTime: null } }
   get html5NotificationsGenerateUnreadActivity () { return this.containerService.html5NotificationsGenerateUnreadActivity }
