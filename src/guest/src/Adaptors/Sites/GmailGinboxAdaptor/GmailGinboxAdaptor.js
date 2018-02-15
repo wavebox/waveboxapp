@@ -4,7 +4,6 @@ import GinboxApi from './GinboxApi'
 import GmailApi from './GmailApi'
 import GmailChangeEmitter from './GmailChangeEmitter'
 import GinboxChangeEmitter from './GinboxChangeEmitter'
-import { ExtensionLoader } from 'Browser'
 import {
   WB_BROWSER_WINDOW_ICONS_IN_SCREEN,
   WB_BROWSER_OPEN_MESSAGE,
@@ -51,7 +50,6 @@ class GmailGinboxAdaptor extends BaseAdaptor {
     // Bind our listeners
     ipcRenderer.on(WB_BROWSER_WINDOW_ICONS_IN_SCREEN, this.handleWindowIconsInScreenChange)
     ipcRenderer.on(WB_BROWSER_OPEN_MESSAGE, this.handleOpenMesage)
-    ExtensionLoader.loadWaveboxGuestApi(ExtensionLoader.ENDPOINTS.GOOGLE_MAIL_WINDOW_OPEN)
 
     if (this.isGmail) {
       this.loadGmailAPI()

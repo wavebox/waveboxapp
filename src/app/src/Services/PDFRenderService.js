@@ -24,19 +24,23 @@ class PDFRenderService {
   * @param wc: the web contents that were created
   */
   _handleWebContentsCreated = (evt, wc) => {
-    wc.on('did-navigate', this._handleWebContentsNavigated)
     wc.on('dom-ready', this._handleWebContentsDomReady)
     wc.on('page-title-updated', this._handleWebContentsTitleUpdated)
   }
 
   /**
-  * Handles a web contents navigating
+  * Handles a webcontents dom being ready
   * @param evt: the event that fired
-  * @param url: the url navigated to
   */
-  _handleWebContentsNavigated = (evt, targetUrl) => {
+  _handleWebContentsDomReady = (evt) => {
+    const targetUrl = evt.sender.getURL()
     if (!targetUrl.startsWith(CHROME_PDF_URL)) { return }
+    this._injectPrintButton(evt.sender)
 
+    // Look to see if we should print. Really this should be under did-navigate
+    // but if a new window is a launched the modal popup can appear to early in
+    // the window lifecycle which causes a visual glitch. Running on dom-ready
+    // has negligable delay but makes sure everyone is setup correctly
     const pdfUrl = url.parse(targetUrl, true).query.src
     if (url.parse(pdfUrl, true).query.print === 'true') {
       Promise.resolve()
@@ -47,15 +51,6 @@ class PDFRenderService {
           }
         })
     }
-  }
-
-  /**
-  * Handles a webcontents dom being ready
-  * @param evt: the event that fired
-  */
-  _handleWebContentsDomReady = (evt) => {
-    if (!evt.sender.getURL().startsWith(CHROME_PDF_URL)) { return }
-    this._injectPrintButton(evt.sender)
   }
 
   /**

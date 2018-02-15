@@ -132,7 +132,7 @@ export default class BrowserScene extends React.Component {
             plugins
             allowpopups
             className='ReactComponent-BrowserSceneWebView'
-            webpreferences='contextIsolation=yes, nativeWindowOpen=yes'
+            webpreferences='contextIsolation=yes, nativeWindowOpen=yes, sharedSiteInstances=yes'
             preload={path.join(__dirname, '../../guest/guest.js')}
             zoomFactor={zoomFactor}
             searchTerm={isSearching ? searchTerm : undefined}

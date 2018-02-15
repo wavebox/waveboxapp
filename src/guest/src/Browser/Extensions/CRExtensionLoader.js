@@ -2,7 +2,6 @@ import { ipcRenderer, webFrame } from 'electron'
 import { CRExtensionMatchPatterns } from 'shared/Models/CRExtension'
 import { WBECRX_EXECUTE_SCRIPT } from 'shared/ipcEvents'
 import GuestHost from '../GuestHost'
-import CRExtensionPopoutPostMessageListener from './CRExtensionPopoutPostMessageListener'
 import DispatchManager from 'DispatchManager'
 import { RENDER_PROCESS_PREFERENCE_TYPES } from 'shared/processPreferences'
 import { WCRPC_DOM_READY } from 'shared/webContentsRPC'
@@ -11,7 +10,6 @@ import Resolver from 'Runtime/Resolver'
 const privHasLoaded = Symbol('privHasLoaded')
 const privContexts = Symbol('privContexts')
 const privExtensionPreferences = Symbol('privExtensionPreferences')
-const privPostMessageListener = Symbol('privPostMessageListener')
 
 class CRExtensionLoader {
   /* **************************************************************************/
@@ -22,7 +20,6 @@ class CRExtensionLoader {
     this[privHasLoaded] = false
     this[privContexts] = new Map()
     this[privExtensionPreferences] = new Map()
-    this[privPostMessageListener] = new CRExtensionPopoutPostMessageListener()
 
     DispatchManager.registerHandler(WBECRX_EXECUTE_SCRIPT, this._handleCRXExecuteScript)
   }
@@ -59,9 +56,6 @@ class CRExtensionLoader {
       Array.from(this[privExtensionPreferences].values()).forEach((pref) => {
         if (pref.crExtensionContentScripts) {
           this._initializeExtensionContentScript(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, pref.crExtensionContentScripts)
-        }
-        if (pref.popoutWindowPostmessageCapture) {
-          this._capturePopoutWindowPostmessages(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, pref.popoutWindowPostmessageCapture)
         }
       })
     }
@@ -195,34 +189,6 @@ class CRExtensionLoader {
   */
   _executeContentStyle (extensionId, url, code) {
     webFrame.insertCSS(code)
-  }
-
-  /* **************************************************************************/
-  // Loading: Popout windows
-  /* **************************************************************************/
-
-  /**
-  * Starts an extension post message capture in the current page
-  * @param protocol: the host protocl
-  * @param hostname: the host hostname
-  * @param pathname: the host pathname
-  * @param extensionId: the id of the extension to inject
-  * @param popoutWindowPostmessageCapture: the configuration for the opener
-  */
-  _capturePopoutWindowPostmessages (protocol, hostname, pathname, extensionId, popoutWindowPostmessageCapture) {
-    const matchedTargets = (popoutWindowPostmessageCapture || []).filter((capture) => {
-      if (typeof (capture.matches) === 'string') {
-        return CRExtensionMatchPatterns.matchUrl(protocol, hostname, pathname, capture.matches)
-      } else if (Array.isArray(capture.matches)) {
-        return CRExtensionMatchPatterns.matchUrls(protocol, hostname, pathname, capture.matches)
-      } else {
-        return false
-      }
-    })
-
-    if (matchedTargets.length) {
-      this[privPostMessageListener].addConfigs(matchedTargets)
-    }
   }
 
   /* **************************************************************************/

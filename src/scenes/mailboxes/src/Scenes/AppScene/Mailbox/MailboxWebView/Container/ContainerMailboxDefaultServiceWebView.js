@@ -57,6 +57,7 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
     return {
       useNativeWindowOpen: service ? service.useNativeWindowOpen : true,
       useContextIsolation: service ? service.useContextIsolation : true,
+      useSharedSiteInstances: service ? service.useSharedSiteInstances : true,
       useAsyncAlerts: service ? service.useAsyncAlerts : true
     }
   }
@@ -67,6 +68,7 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
     this.setState({
       useNativeWindowOpen: service ? service.useNativeWindowOpen : true,
       useContextIsolation: service ? service.useContextIsolation : true,
+      useSharedSiteInstances: service ? service.useSharedSiteInstances : true,
       useAsyncAlerts: service ? service.useAsyncAlerts : true
     })
   }
@@ -116,12 +118,13 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
 
   render () {
     const { mailboxId } = this.props
-    const { useNativeWindowOpen, useContextIsolation } = this.state
+    const { useNativeWindowOpen, useContextIsolation, useSharedSiteInstances } = this.state
 
     // Don't use string templating or inline in jsx. The compiler optimizes it out!!
     const webpreferences = [
       'contextIsolation=' + (useContextIsolation ? 'yes' : 'no'),
-      'nativeWindowOpen=' + (useNativeWindowOpen ? 'yes' : 'no')
+      'nativeWindowOpen=' + (useNativeWindowOpen ? 'yes' : 'no'),
+      'sharedSiteInstances=' + (useSharedSiteInstances ? 'yes' : 'no')
     ].join(', ')
 
     return (
@@ -129,8 +132,8 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
         ref={REF}
         preload={Resolver.guestPreload()}
         mailboxId={mailboxId}
-        webpreferences={webpreferences}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
+        webpreferences={webpreferences}
         ipcMessage={this.handleIPCMessage}
         domReady={this.handleDOMReady} />
     )

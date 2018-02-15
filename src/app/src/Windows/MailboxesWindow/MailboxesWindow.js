@@ -28,9 +28,7 @@ import {
   WB_SQUIRREL_UPDATE_CHECK_START,
   WB_SQUIRREL_UPDATE_DISABLED,
 
-  WB_FOCUS_MAILBOXES_WINDOW,
-
-  WBECRX_RELOAD_OWNER
+  WB_FOCUS_MAILBOXES_WINDOW
 } from 'shared/ipcEvents'
 import {
   TraySettings,
@@ -160,8 +158,8 @@ class MailboxesWindow extends WaveboxWindow {
 
     // Bind event listeners
     electron.ipcMain.on(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)
-    electron.ipcMain.on(WBECRX_RELOAD_OWNER, this.handleCRXReloadOwner)
     electron.ipcMain.on(WB_FOCUS_MAILBOXES_WINDOW, this.handleFocusMailboxesWindow)
+
     this.window.on('focus', () => {
       mailboxActions.reduceService.defer(undefined, undefined, ServiceReducer.mergeChangesetOnActive)
     })
@@ -190,7 +188,6 @@ class MailboxesWindow extends WaveboxWindow {
     clearTimeout(this.gracefulReloadTimeout)
 
     electron.ipcMain.removeListener(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)
-    electron.ipcMain.removeListener(WBECRX_RELOAD_OWNER, this.handleCRXReloadOwner)
     electron.ipcMain.removeListener(WB_FOCUS_MAILBOXES_WINDOW, this.handleFocusMailboxesWindow)
 
     singletonAttached = undefined
@@ -211,14 +208,6 @@ class MailboxesWindow extends WaveboxWindow {
       clearTimeout(this.gracefulReloadTimeout)
       this.window.loadURL(this.generateWindowUrl())
     }
-  }
-
-  /**
-  * Handles an extension requesting the owner is reloaded
-  * @param evt: the event that fired
-  */
-  handleCRXReloadOwner = (evt) => {
-    this.reload()
   }
 
   /**

@@ -40,7 +40,6 @@ class CRExtensionManifestWavebox extends Model {
   /* **************************************************************************/
 
   get popoutWindowWhitelist () { return this._value_('wavebox_popout_window_whitelist', []) }
-  get popoutWindowPostmessageCapture () { return this._value_('wavebox_popout_postmessage_capture', []) }
 
   /**
   * Checks to see if a window should open as a popout
