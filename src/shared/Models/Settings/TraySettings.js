@@ -64,7 +64,13 @@ class TraySettings extends Model {
   /* **************************************************************************/
 
   get removeFromDockDarwin () { return this._value_('removeFromDockDarwin', false) }
-  get clickAction () { return this._value_('clickAction', CLICK_ACTIONS.TOGGLE_POPOUT) }
+  get clickAction () {
+    if (process.platform === 'win32') {
+      return this._value_('clickAction', CLICK_ACTIONS.TOGGLE_APP)
+    } else {
+      return this._value_('clickAction', CLICK_ACTIONS.TOGGLE_POPOUT)
+    }
+  }
   get altClickAction () { return this._value_('altClickAction', CLICK_ACTIONS.HIDE_POPOUT) }
   get rightClickAction () {
     if (process.platform === 'darwin') {
