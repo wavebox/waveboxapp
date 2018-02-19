@@ -281,6 +281,7 @@ class WaveboxApp {
   */
   _handleBeforeQuit = () => {
     this[privGlobalShortcuts].unregister()
+    TrayPopout.unload()
     this[privCloseBehaviour].prepareForQuit()
   }
 

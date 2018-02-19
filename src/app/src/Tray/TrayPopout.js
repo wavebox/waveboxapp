@@ -55,6 +55,17 @@ class TrayPopout {
     this[privWindow].on('close', this._handleClose)
   }
 
+  /**
+  * Destorys the window
+  */
+  unload () {
+    if (!this.isLoaded) { return }
+    this[privWindow].removeListener('close', this._handleClose)
+    this[privWindow].close()
+    this[privWindow] = undefined
+    this[privPositioner] = undefined
+  }
+
   /* ****************************************************************************/
   // Properties
   /* ****************************************************************************/
@@ -117,7 +128,7 @@ class TrayPopout {
   * Positions the window for the given bounds
   * @param bound: the bounds to position for
   */
-  positionWindow (bounds) {
+  _positionWindow (bounds) {
     const position = settingsStore.getState().tray.popoutPosition
     if (position === POPOUT_POSITIONS.AUTO) {
       if (process.platform === 'darwin') {
@@ -180,7 +191,7 @@ class TrayPopout {
     this._throwIfNotLoaded()
 
     if (!this.isWindowedMode) {
-      this.positionWindow(bounds)
+      this._positionWindow(bounds)
     }
 
     this[privWindow].show()
