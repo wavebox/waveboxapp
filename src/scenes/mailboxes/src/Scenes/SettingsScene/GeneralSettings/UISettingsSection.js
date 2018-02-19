@@ -97,7 +97,7 @@ export default class UISettingsSection extends React.Component {
           </SelectField>
           {process.platform === 'darwin' ? (
             <SelectField
-              floatingLabelText='Translucent window backgrounds (experimental) (Requires Restart)'
+              floatingLabelText='Translucent window backgrounds (Requires Restart)'
               value={ui.vibrancyMode}
               fullWidth
               onChange={(evt, index, value) => {

@@ -6,8 +6,7 @@ import { POPOUT_POSITIONS } from 'shared/Models/Settings/TraySettings'
 
 const privWindow = Symbol('privWindow')
 const privPositioner = Symbol('privPositioner')
-const privIsDelayedHideTO = Symbol('privIsDelayedHideTO')
-const privIsDelayedHide = Symbol('privIdDelayedHide')
+const privHideTO = Symbol('privHideTO')
 
 class TrayPopout {
   /* ****************************************************************************/
@@ -17,8 +16,6 @@ class TrayPopout {
   constructor () {
     this[privWindow] = undefined
     this[privPositioner] = undefined
-    this[privIsDelayedHideTO] = null
-    this[privIsDelayedHide] = false
   }
 
   /**
@@ -43,7 +40,8 @@ class TrayPopout {
     })
     this[privPositioner] = new Positioner(this[privWindow])
     this[privWindow].loadURL(`file://${Resolver.traypopoutScene('popout.html')}`)
-    this[privWindow].on('blur', () => this.hide())
+    this[privWindow].on('blur', this._handleBlur)
+    this[privWindow].on('focus', this._handleFocus)
   }
 
   /* ****************************************************************************/
@@ -52,11 +50,7 @@ class TrayPopout {
 
   get isLoaded () { return !!this[privWindow] }
   get webContentsId () { return this.isLoaded ? this[privWindow].webContents.id : undefined }
-  get isVisible () {
-    if (this[privIsDelayedHide]) { return true }
-    if (this[privWindow].isVisible() && this[privWindow].isFocused()) { return true }
-    return false
-  }
+  get isVisible () { return this.isLoaded && this[privWindow].isVisible() }
 
   /* ****************************************************************************/
   // Utils
@@ -64,6 +58,31 @@ class TrayPopout {
 
   _throwIfNotLoaded () {
     if (!this.isLoaded) { throw new Error('TrayPopout is not loaded') }
+  }
+
+  /* ****************************************************************************/
+  // UI Events
+  /* ****************************************************************************/
+
+  /**
+  * Handles the blur event
+  */
+  _handleBlur = () => {
+    if (process.platform === 'win32') {
+      clearTimeout(this[privHideTO])
+      this[privHideTO] = setTimeout(() => {
+        this.hide()
+      }, 250)
+    } else {
+      this.hide()
+    }
+  }
+
+  /**
+  * Handles the focus event
+  */
+  _handleFocus = () => {
+    clearTimeout(this[privHideTO])
   }
 
   /* ****************************************************************************/
@@ -130,9 +149,6 @@ class TrayPopout {
       }
     }
 
-    this[privIsDelayedHide] = false
-    clearTimeout(this[privIsDelayedHideTO])
-
     this[privWindow].show()
     this[privWindow].focus()
   }
@@ -142,18 +158,6 @@ class TrayPopout {
   */
   hide () {
     this._throwIfNotLoaded()
-
-    if (process.platform === 'win32') {
-      // On windows clicking on the taskbar removes focus from the window.
-      // Artifially persist the focus a little longer to avoid the popout
-      // flashing in and out
-      if (this.isVisible) {
-        this[privIsDelayedHide] = true
-        this[privIsDelayedHideTO] = setTimeout(() => {
-          this[privIsDelayedHide] = false
-        }, 250)
-      }
-    }
 
     this[privWindow].hide()
   }
