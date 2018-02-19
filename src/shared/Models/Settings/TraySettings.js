@@ -31,13 +31,13 @@ class TraySettings extends Model {
   // Class
   /* **************************************************************************/
 
-  static get CLICK_ACTIONS () { return CLICK_ACTIONS } // Popout only
-  static get SUPPORTS_RIGHT_CLICK () { return process.platform === 'win32' || process.platform === 'darwin' } // Popout only
-  static get SUPPORTS_DOUBLE_CLICK () { return process.platform === 'win32' || process.platform === 'darwin' } // Popout only
+  static get CLICK_ACTIONS () { return CLICK_ACTIONS }
+  static get SUPPORTS_CLICK_ACTIONS () { return process.platform === 'win32' || process.platform === 'darwin' }
   static get GTK_UPDATE_MODES () { return GTK_UPDATE_MODES }
   static get POPOUT_POSITIONS () { return POPOUT_POSITIONS }
   static get SUPPORTS_DOCK_HIDING () { return process.platform === 'darwin' }
   static get IS_GTK_PLATFORM () { return process.platform === 'linux' }
+  static get CTX_MENU_ONLY_SUPPORT () { return process.platform === 'linux' }
 
   /* **************************************************************************/
   // Lifecycle
@@ -66,7 +66,7 @@ class TraySettings extends Model {
   get removeFromDockDarwin () { return this._value_('removeFromDockDarwin', false) }
   get clickAction () {
     if (process.platform === 'win32') {
-      return this._value_('clickAction', CLICK_ACTIONS.TOGGLE_APP)
+      return this._value_('clickAction', CLICK_ACTIONS.SHOW_APP)
     } else {
       return this._value_('clickAction', CLICK_ACTIONS.TOGGLE_POPOUT)
     }

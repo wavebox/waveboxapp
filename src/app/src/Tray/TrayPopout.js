@@ -2,7 +2,10 @@ import { BrowserWindow, screen } from 'electron'
 import Resolver from 'Runtime/Resolver'
 import Positioner from 'electron-positioner'
 import { settingsStore } from 'stores/settings'
-import { POPOUT_POSITIONS } from 'shared/Models/Settings/TraySettings'
+import {
+  POPOUT_POSITIONS,
+  CTX_MENU_ONLY_SUPPORT
+} from 'shared/Models/Settings/TraySettings'
 
 const privWindow = Symbol('privWindow')
 const privPositioner = Symbol('privPositioner')
@@ -26,22 +29,29 @@ class TrayPopout {
     this[privWindow] = new BrowserWindow({
       width: 450,
       height: 500,
+      minWidth: 300,
+      minHeight: 300,
       show: false,
-      frame: false,
-      alwaysOnTop: true,
-      skipTaskbar: true,
-      movable: false,
-      resizable: false,
       backgroundColor: '#ffffff',
       transparent: false,
       webPreferences: {
         nodeIntegration: true
-      }
+      },
+      ...(this.isWindowedMode ? {
+        title: 'Mini Wavebox'
+      } : {
+        frame: false,
+        alwaysOnTop: true,
+        skipTaskbar: true,
+        movable: false,
+        resizable: false
+      })
     })
     this[privPositioner] = new Positioner(this[privWindow])
     this[privWindow].loadURL(`file://${Resolver.traypopoutScene('popout.html')}`)
     this[privWindow].on('blur', this._handleBlur)
     this[privWindow].on('focus', this._handleFocus)
+    this[privWindow].on('close', this._handleClose)
   }
 
   /* ****************************************************************************/
@@ -51,6 +61,7 @@ class TrayPopout {
   get isLoaded () { return !!this[privWindow] }
   get webContentsId () { return this.isLoaded ? this[privWindow].webContents.id : undefined }
   get isVisible () { return this.isLoaded && this[privWindow].isVisible() }
+  get isWindowedMode () { return CTX_MENU_ONLY_SUPPORT }
 
   /* ****************************************************************************/
   // Utils
@@ -68,6 +79,8 @@ class TrayPopout {
   * Handles the blur event
   */
   _handleBlur = () => {
+    if (this.isWindowedMode) { return }
+
     if (process.platform === 'win32') {
       clearTimeout(this[privHideTO])
       this[privHideTO] = setTimeout(() => {
@@ -85,17 +98,25 @@ class TrayPopout {
     clearTimeout(this[privHideTO])
   }
 
+  /**
+  * Handles the close event
+  */
+  _handleClose = (evt) => {
+    if (this.isWindowedMode) {
+      evt.preventDefault()
+      this[privWindow].hide()
+    }
+  }
+
   /* ****************************************************************************/
   // Show / Hide
   /* ****************************************************************************/
 
   /**
-  * Shows the tray
-  * @param bounds: the current tray bounds
+  * Positions the window for the given bounds
+  * @param bound: the bounds to position for
   */
-  show (bounds) {
-    this._throwIfNotLoaded()
-
+  positionWindow (bounds) {
     const position = settingsStore.getState().tray.popoutPosition
     if (position === POPOUT_POSITIONS.AUTO) {
       if (process.platform === 'darwin') {
@@ -147,6 +168,18 @@ class TrayPopout {
           this[privPositioner].move('trayBottomRight', bounds)
           break
       }
+    }
+  }
+
+  /**
+  * Shows the tray
+  * @param bounds: the current tray bounds
+  */
+  show (bounds) {
+    this._throwIfNotLoaded()
+
+    if (!this.isWindowedMode) {
+      this.positionWindow(bounds)
     }
 
     this[privWindow].show()

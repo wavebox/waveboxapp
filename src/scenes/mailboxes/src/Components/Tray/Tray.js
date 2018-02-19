@@ -1,14 +1,17 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { BLANK_PNG } from 'shared/b64Assets'
+import { mailboxStore } from 'stores/mailbox'
+import { emblinkActions } from 'stores/emblink'
 import TrayRenderer from './TrayRenderer'
 import uuid from 'uuid'
+import MenuTool from 'shared/Electron/MenuTool'
 import {
   IS_GTK_PLATFORM,
+  CTX_MENU_ONLY_SUPPORT,
   GTK_UPDATE_MODES,
   CLICK_ACTIONS,
-  SUPPORTS_RIGHT_CLICK,
-  SUPPORTS_DOUBLE_CLICK
+  SUPPORTS_CLICK_ACTIONS
 } from 'shared/Models/Settings/TraySettings'
 import { ipcRenderer, remote } from 'electron'
 import Resolver from 'Runtime/Resolver'
@@ -18,15 +21,19 @@ import {
   WB_SHOW_TRAY_POPOUT,
   WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY,
   WB_SHOW_MAILBOX_WINDOW_FROM_TRAY,
-  WB_HIDE_MAILBOX_WINDOW_FROM_TRAY
+  WB_HIDE_MAILBOX_WINDOW_FROM_TRAY,
+  WB_FOCUS_MAILBOXES_WINDOW,
+  WB_FOCUS_APP,
+  WB_QUIT_APP
 } from 'shared/ipcEvents'
+import TrayContextMenuUnreadRenderer from './TrayContextMenuUnreadRenderer'
 
 export default class Tray extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  static propTypes = {
+  static propTypes = { // Careful we're strict in shouldComponentUpdate
     unreadCount: PropTypes.number.isRequired,
     traySettings: PropTypes.object.isRequired,
     launchTraySettings: PropTypes.object.isRequired
@@ -37,7 +44,10 @@ export default class Tray extends React.Component {
   /* **************************************************************************/
 
   componentWillMount () {
-    const { launchTraySettings } = this.props
+    const {
+      launchTraySettings
+    } = this.props
+
     if (IS_GTK_PLATFORM && launchTraySettings.gtkUpdateMode === GTK_UPDATE_MODES.STATIC) {
       const image = remote.nativeImage.createFromPath(Resolver.icon('app_64.png', Resolver.API_TYPES.NODE))
       const resizedImage = image.resize({ width: launchTraySettings.iconSize, height: launchTraySettings.iconSize })
@@ -45,10 +55,45 @@ export default class Tray extends React.Component {
     } else {
       this.appTray = this.createTray(remote.nativeImage.createFromDataURL(BLANK_PNG))
     }
+
+    this.contextMenu = null
+  }
+
+  componentDidMount () {
+    if (CTX_MENU_ONLY_SUPPORT) {
+      mailboxStore.listen(this.mailboxesUpdated)
+    }
   }
 
   componentWillUnmount () {
     this.appTray = this.destroyTray(this.appTray)
+
+    if (CTX_MENU_ONLY_SUPPORT) {
+      mailboxStore.unlisten(this.mailboxesUpdated)
+    }
+  }
+
+  /* **************************************************************************/
+  // Data lifecycle
+  /* **************************************************************************/
+
+  state = (() => { // Careful we're strict in shouldComponentUpdate
+    this.unreadCtxRenderer = new TrayContextMenuUnreadRenderer()
+    if (CTX_MENU_ONLY_SUPPORT) {
+      this.unreadCtxRenderer.build(mailboxStore.getState())
+    }
+    return {
+      ctxMenuSig: this.unreadCtxRenderer.signature
+    }
+  })()
+
+  mailboxesUpdated = (mailboxState) => {
+    if (CTX_MENU_ONLY_SUPPORT) {
+      this.unreadCtxRenderer.build(mailboxStore.getState())
+      this.setState({
+        ctxMenuSig: this.unreadCtxRenderer.signature
+      })
+    }
   }
 
   /* **************************************************************************/
@@ -62,12 +107,18 @@ export default class Tray extends React.Component {
   */
   createTray (image) {
     const tray = new remote.Tray(image)
-    tray.on('click', this.handleClick)
-    if (SUPPORTS_RIGHT_CLICK) {
-      tray.on('right-click', this.handleRightClick)
-    }
-    if (SUPPORTS_DOUBLE_CLICK) {
-      tray.on('double-click', this.handleDoubleClick)
+    if (CTX_MENU_ONLY_SUPPORT) {
+      // On platforms that have app indicator support - i.e. ubuntu clicking on the
+      // icon will launch the context menu. On other linux platforms the context
+      // menu is opened on right click. For app indicator platforms click event
+      // is ignored
+      tray.on('click', this.handleToggleApp)
+    } else {
+      tray.on('click', this.handleClick)
+      if (SUPPORTS_CLICK_ACTIONS) {
+        tray.on('right-click', this.handleRightClick)
+        tray.on('double-click', this.handleDoubleClick)
+      }
     }
     return tray
   }
@@ -117,6 +168,39 @@ export default class Tray extends React.Component {
   */
   handleDoubleClick = (evt, bounds) => {
     this.dispatchClickAction(this.props.traySettings.doubleClickAction, bounds)
+  }
+
+  /**
+  * Handles compose being clicked
+  * @param evt: the event that fired
+  */
+  handleCompose = (evt) => {
+    ipcRenderer.send(WB_FOCUS_MAILBOXES_WINDOW, {})
+    emblinkActions.composeNewMessage()
+  }
+
+  /**
+  * Shows the popout
+  * @param evt: the event that fired
+  */
+  handleShowPopout = (evt) => {
+    ipcRenderer.send(WB_SHOW_TRAY_POPOUT)
+  }
+
+  /**
+  * Handles the toggle call
+  * @param evt: the event that fired
+  */
+  handleToggleApp = () => {
+    ipcRenderer.send(WB_FOCUS_APP)
+  }
+
+  /**
+  * Handles quitting the app
+  * @param evt: the event that fired
+  */
+  handleQuit = () => {
+    ipcRenderer.send(WB_QUIT_APP)
   }
 
   /**
@@ -170,6 +254,7 @@ export default class Tray extends React.Component {
       return this.props.traySettings[k] !== nextProps.traySettings[k]
     }) !== -1
     if (trayDiff) { return true }
+    if (this.state.ctxMenuSig !== nextState.ctxMenuSig) { return true }
 
     return false
   }
@@ -186,6 +271,30 @@ export default class Tray extends React.Component {
     } else {
       return 'No unread items'
     }
+  }
+
+  /**
+  * Renders the context menu
+  * @return the menu object
+  */
+  renderContextMenu () {
+    const unread = this.unreadCtxRenderer.template
+
+    const template = [].concat(
+      [
+        { label: 'Show mini Wavebox', click: this.handleShowPopout },
+        { type: 'separator' },
+        { label: 'Compose New Message', click: this.handleCompose },
+        { label: 'Toggle App', click: this.handleToggleApp },
+        { type: 'separator' }
+      ],
+      unread,
+      unread.length ? ([{ type: 'separator' }]) : [],
+      [
+        { label: 'Quit', click: this.handleQuit }
+      ]
+    )
+    return remote.Menu.buildFromTemplate(template)
   }
 
   render () {
@@ -211,12 +320,22 @@ export default class Tray extends React.Component {
             this.appTray = this.createTray(image)
           } else if (launchTraySettings.gtkUpdateMode === GTK_UPDATE_MODES.UPDATE) {
             this.appTray.setImage(image)
+          } else {
+            // We don't update the image on static
           }
-          // We don't update the image on static
         } else {
           this.appTray.setImage(image)
         }
         this.appTray.setToolTip(this.renderTooltip())
+
+        if (CTX_MENU_ONLY_SUPPORT) {
+          const lastContextMenu = this.contextMenu
+          this.contextMenu = this.renderContextMenu()
+          this.appTray.setContextMenu(this.contextMenu)
+          if (lastContextMenu) {
+            MenuTool.fullDestroyMenu(lastContextMenu)
+          }
+        }
       })
 
     return (<div />)

@@ -7,10 +7,8 @@ import UnreadScene from 'Scenes/UnreadScene'
 import * as Colors from 'material-ui/styles/colors'
 import { ipcRenderer } from 'electron'
 import { emblinkActions } from 'stores/emblink'
-import {
-  WB_FOCUS_APP,
-  WB_QUIT_APP
-} from 'shared/ipcEvents'
+import { WB_FOCUS_APP, WB_QUIT_APP } from 'shared/ipcEvents'
+import { CTX_MENU_ONLY_SUPPORT } from 'shared/Models/Settings/TraySettings'
 
 const TAB_HEIGHT = 40
 const TOOLBAR_HEIGHT = 40
@@ -179,14 +177,16 @@ export default class AppScene extends React.Component {
               <FontIcon className='material-icons' color='rgba(255, 255, 255, 0.7)'>launch</FontIcon>
             </IconButton>
           </ToolbarGroup>
-          <ToolbarGroup lastChild>
-            <IconButton
-              tooltip='Quit Wavebox'
-              onClick={() => { ipcRenderer.send(WB_QUIT_APP, {}) }}
-              tooltipPosition='top-left'>
-              <FontIcon className='material-icons' color='rgba(255, 255, 255, 0.7)'>close</FontIcon>
-            </IconButton>
-          </ToolbarGroup>
+          {CTX_MENU_ONLY_SUPPORT ? undefined : (
+            <ToolbarGroup lastChild>
+              <IconButton
+                tooltip='Quit Wavebox'
+                onClick={() => { ipcRenderer.send(WB_QUIT_APP, {}) }}
+                tooltipPosition='top-left'>
+                <FontIcon className='material-icons' color='rgba(255, 255, 255, 0.7)'>close</FontIcon>
+              </IconButton>
+            </ToolbarGroup>
+          )}
         </Toolbar>
       </div>
     )

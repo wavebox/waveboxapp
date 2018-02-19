@@ -11,8 +11,8 @@ import {
   POPOUT_POSITIONS,
   SUPPORTS_DOCK_HIDING,
   IS_GTK_PLATFORM,
-  SUPPORTS_RIGHT_CLICK,
-  SUPPORTS_DOUBLE_CLICK,
+  CTX_MENU_ONLY_SUPPORT,
+  SUPPORTS_CLICK_ACTIONS,
   CLICK_ACTIONS
 } from 'shared/Models/Settings/TraySettings'
 
@@ -155,96 +155,98 @@ export default class TraySettingsSection extends React.Component {
               }} />
           </Col>
         </Row>
-        <SelectField
-          fullWidth
-          floatingLabelText='Popout screen position'
-          disabled={!tray.show}
-          onChange={(evt, index, value) => { settingsActions.sub.tray.setPopoutPosition(value) }}
-          value={tray.popoutPosition}>
-          <MenuItem
-            value={POPOUT_POSITIONS.AUTO}
-            label='Auto'
-            primaryText='Auto: Position popover automatically' />
-          <MenuItem
-            value={POPOUT_POSITIONS.TOP_CENTER}
-            label='Top Center'
-            primaryText='Top Center: Centered above the icon' />
-          <MenuItem
-            value={POPOUT_POSITIONS.TOP_LEFT}
-            label='Top Left:'
-            primaryText='Top Left: Above the icon to the left' />
-          <MenuItem
-            value={POPOUT_POSITIONS.TOP_RIGHT}
-            label='Top Right'
-            primaryText='Top Right: Above the icon to the right' />
-          <MenuItem
-            value={POPOUT_POSITIONS.BOTTOM_CENTER}
-            label='Bottom Center'
-            primaryText='Bottom Center: Centered below the icon' />
-          <MenuItem
-            value={POPOUT_POSITIONS.BOTTOM_LEFT}
-            label='Bottom Left'
-            primaryText='Bottom Left: Below the icon to the left' />
-          <MenuItem
-            value={POPOUT_POSITIONS.BOTTOM_RIGHT}
-            label='Bottom Right'
-            primaryText='Bottom Right: Below the icon to the right' />
-        </SelectField>
+        {CTX_MENU_ONLY_SUPPORT ? undefined : (
+          <SelectField
+            fullWidth
+            floatingLabelText='Popout screen position'
+            disabled={!tray.show}
+            onChange={(evt, index, value) => { settingsActions.sub.tray.setPopoutPosition(value) }}
+            value={tray.popoutPosition}>
+            <MenuItem
+              value={POPOUT_POSITIONS.AUTO}
+              label='Auto'
+              primaryText='Auto: Position popover automatically' />
+            <MenuItem
+              value={POPOUT_POSITIONS.TOP_CENTER}
+              label='Top Center'
+              primaryText='Top Center: Centered above the icon' />
+            <MenuItem
+              value={POPOUT_POSITIONS.TOP_LEFT}
+              label='Top Left:'
+              primaryText='Top Left: Above the icon to the left' />
+            <MenuItem
+              value={POPOUT_POSITIONS.TOP_RIGHT}
+              label='Top Right'
+              primaryText='Top Right: Above the icon to the right' />
+            <MenuItem
+              value={POPOUT_POSITIONS.BOTTOM_CENTER}
+              label='Bottom Center'
+              primaryText='Bottom Center: Centered below the icon' />
+            <MenuItem
+              value={POPOUT_POSITIONS.BOTTOM_LEFT}
+              label='Bottom Left'
+              primaryText='Bottom Left: Below the icon to the left' />
+            <MenuItem
+              value={POPOUT_POSITIONS.BOTTOM_RIGHT}
+              label='Bottom Right'
+              primaryText='Bottom Right: Below the icon to the right' />
+          </SelectField>
+        )}
 
         <br />
         <TrayIconEditor tray={tray} />
         <br />
 
-        <hr style={styles.subsectionRule} />
-        <h1 style={styles.subsectionheading}>Tray Mouse Actions</h1>
-        <Row>
-          <Col md={6}>
-            <SelectField
-              fullWidth
-              floatingLabelText='Click Action'
-              disabled={!tray.show}
-              onChange={(evt, index, value) => { settingsActions.sub.tray.setClickAction(value) }}
-              value={tray.clickAction}>
-              {this.renderTrayActionOptions()}
-            </SelectField>
-          </Col>
-          <Col md={6}>
-            <SelectField
-              fullWidth
-              floatingLabelText='Alt Click Action (Click + Ctrl/Alt/Shift)'
-              disabled={!tray.show}
-              onChange={(evt, index, value) => { settingsActions.sub.tray.setAltClickAction(value) }}
-              value={tray.altClickAction}>
-              {this.renderTrayActionOptions()}
-            </SelectField>
-          </Col>
-        </Row>
-        <Row>
-          {SUPPORTS_RIGHT_CLICK ? (
-            <Col md={6}>
-              <SelectField
-                fullWidth
-                floatingLabelText='Right Click Action'
-                disabled={!tray.show}
-                onChange={(evt, index, value) => { settingsActions.sub.tray.setRightClickAction(value) }}
-                value={tray.rightClickAction}>
-                {this.renderTrayActionOptions()}
-              </SelectField>
-            </Col>
-          ) : undefined}
-          {SUPPORTS_DOUBLE_CLICK ? (
-            <Col md={6}>
-              <SelectField
-                fullWidth
-                floatingLabelText='Double Click Action'
-                disabled={!tray.show}
-                onChange={(evt, index, value) => { settingsActions.sub.tray.setDoubleClickAction(value) }}
-                value={tray.doubleClickAction}>
-                {this.renderTrayActionOptions()}
-              </SelectField>
-            </Col>
-          ) : undefined}
-        </Row>
+        {!CTX_MENU_ONLY_SUPPORT && SUPPORTS_CLICK_ACTIONS ? (
+          <div>
+            <hr style={styles.subsectionRule} />
+            <h1 style={styles.subsectionheading}>Tray Mouse Actions</h1>
+            <Row>
+              <Col md={6}>
+                <SelectField
+                  fullWidth
+                  floatingLabelText='Click Action'
+                  disabled={!tray.show}
+                  onChange={(evt, index, value) => { settingsActions.sub.tray.setClickAction(value) }}
+                  value={tray.clickAction}>
+                  {this.renderTrayActionOptions()}
+                </SelectField>
+              </Col>
+              <Col md={6}>
+                <SelectField
+                  fullWidth
+                  floatingLabelText='Alt Click Action (Click + Ctrl/Alt/Shift)'
+                  disabled={!tray.show}
+                  onChange={(evt, index, value) => { settingsActions.sub.tray.setAltClickAction(value) }}
+                  value={tray.altClickAction}>
+                  {this.renderTrayActionOptions()}
+                </SelectField>
+              </Col>
+            </Row>
+            <Row>
+              <Col md={6}>
+                <SelectField
+                  fullWidth
+                  floatingLabelText='Right Click Action'
+                  disabled={!tray.show}
+                  onChange={(evt, index, value) => { settingsActions.sub.tray.setRightClickAction(value) }}
+                  value={tray.rightClickAction}>
+                  {this.renderTrayActionOptions()}
+                </SelectField>
+              </Col>
+              <Col md={6}>
+                <SelectField
+                  fullWidth
+                  floatingLabelText='Double Click Action'
+                  disabled={!tray.show}
+                  onChange={(evt, index, value) => { settingsActions.sub.tray.setDoubleClickAction(value) }}
+                  value={tray.doubleClickAction}>
+                  {this.renderTrayActionOptions()}
+                </SelectField>
+              </Col>
+            </Row>
+          </div>
+        ) : undefined}
       </Paper>
     )
   }
