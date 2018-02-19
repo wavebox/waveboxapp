@@ -38,7 +38,8 @@ class TrayPopout {
         nodeIntegration: true
       },
       ...(this.isWindowedMode ? {
-        title: 'Mini Wavebox'
+        title: 'Wavebox Mini',
+        maximizable: false
       } : {
         frame: false,
         alwaysOnTop: true,
