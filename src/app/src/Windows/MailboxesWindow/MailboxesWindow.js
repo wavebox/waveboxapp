@@ -31,7 +31,6 @@ import {
   WB_FOCUS_MAILBOXES_WINDOW
 } from 'shared/ipcEvents'
 import {
-  TraySettings,
   UISettings
 } from 'shared/Models/Settings'
 import Resolver from 'Runtime/Resolver'
@@ -142,19 +141,6 @@ class MailboxesWindow extends WaveboxWindow {
     })
     this.tabManager = new MailboxesWindowTabManager(this.window.webContents.id)
     this.behaviour = new MailboxesWindowBehaviour(this.window.webContents.id, this.tabManager)
-
-    // Bind window behaviour events
-    if (TraySettings.SUPPORTS_TRAY_MINIMIZE_CONFIG) {
-      // Preventing default on minimize has little effect. The window saver doesn't take note of minimized state
-      // though so we can query this to see what the last state was and re-apply that on restore
-      this.window.on('minimize', (evt) => {
-        const { tray } = settingsStore.getState()
-        if (tray.show && tray.hideWhenMinimized) {
-          evt.preventDefault()
-          this.window.hide()
-        }
-      })
-    }
 
     // Bind event listeners
     electron.ipcMain.on(WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD, this.handleAcceptGracefulReload)

@@ -5,11 +5,21 @@ import TrayRenderer from './TrayRenderer'
 import uuid from 'uuid'
 import {
   IS_GTK_PLATFORM,
-  GTK_UPDATE_MODES
+  GTK_UPDATE_MODES,
+  CLICK_ACTIONS,
+  SUPPORTS_RIGHT_CLICK,
+  SUPPORTS_DOUBLE_CLICK
 } from 'shared/Models/Settings/TraySettings'
 import { ipcRenderer, remote } from 'electron'
 import Resolver from 'Runtime/Resolver'
-import { WB_TOGGLE_TRAY_POPOUT } from 'shared/ipcEvents'
+import {
+  WB_TOGGLE_TRAY_POPOUT,
+  WB_HIDE_TRAY_POPOUT,
+  WB_SHOW_TRAY_POPOUT,
+  WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY,
+  WB_SHOW_MAILBOX_WINDOW_FROM_TRAY,
+  WB_HIDE_MAILBOX_WINDOW_FROM_TRAY
+} from 'shared/ipcEvents'
 
 export default class Tray extends React.Component {
   /* **************************************************************************/
@@ -31,12 +41,47 @@ export default class Tray extends React.Component {
     if (IS_GTK_PLATFORM && launchTraySettings.gtkUpdateMode === GTK_UPDATE_MODES.STATIC) {
       const image = remote.nativeImage.createFromPath(Resolver.icon('app_64.png', Resolver.API_TYPES.NODE))
       const resizedImage = image.resize({ width: launchTraySettings.iconSize, height: launchTraySettings.iconSize })
-      this.appTray = new remote.Tray(resizedImage)
+      this.appTray = this.createTray(resizedImage)
     } else {
-      this.appTray = new remote.Tray(remote.nativeImage.createFromDataURL(BLANK_PNG))
+      this.appTray = this.createTray(remote.nativeImage.createFromDataURL(BLANK_PNG))
     }
+  }
 
-    this.appTray.on('click', this.handleClick)
+  componentWillUnmount () {
+    this.appTray = this.destroyTray(this.appTray)
+  }
+
+  /* **************************************************************************/
+  // Tray utils
+  /* **************************************************************************/
+
+  /**
+  * Creates a new tray and ensures all callbacks are bound
+  * @param image: the initial image to use
+  * @return the new tray
+  */
+  createTray (image) {
+    const tray = new remote.Tray(image)
+    tray.on('click', this.handleClick)
+    if (SUPPORTS_RIGHT_CLICK) {
+      tray.on('right-click', this.handleRightClick)
+    }
+    if (SUPPORTS_DOUBLE_CLICK) {
+      tray.on('double-click', this.handleDoubleClick)
+    }
+    return tray
+  }
+
+  /**
+  * Destroys a tray
+  * @param tray: the tray to destroy
+  * @return null
+  */
+  destroyTray (tray) {
+    if (tray) {
+      tray.destroy()
+    }
+    return null
   }
 
   /* **************************************************************************/
@@ -49,8 +94,57 @@ export default class Tray extends React.Component {
   * @param bounds: the bounds of the tray icon
   */
   handleClick = (evt, bounds) => {
-    const actionKey = evt.altKey || evt.ctrlKey || evt.shiftKey || evt.metaKey
-    ipcRenderer.send(WB_TOGGLE_TRAY_POPOUT, bounds, actionKey)
+    if (evt.altKey || evt.ctrlKey || evt.shiftKey || evt.metaKey) {
+      this.dispatchClickAction(this.props.traySettings.altClickAction, bounds)
+    } else {
+      this.dispatchClickAction(this.props.traySettings.clickAction, bounds)
+    }
+  }
+
+  /**
+  * Handles a click event on the tray
+  * @param evt: the event that fired
+  * @param bounds: the bounds of the tray icon
+  */
+  handleRightClick = (evt, bounds) => {
+    this.dispatchClickAction(this.props.traySettings.rightClickAction, bounds)
+  }
+
+  /**
+  * Handles a click event on the tray
+  * @param evt: the event that fired
+  * @param bounds: the bounds of the tray icon
+  */
+  handleDoubleClick = (evt, bounds) => {
+    this.dispatchClickAction(this.props.traySettings.doubleClickAction, bounds)
+  }
+
+  /**
+  * Dispatches a click action
+  * @param action: the action to dispatch
+  * @param bounds: the current tray bounds
+  */
+  dispatchClickAction (action, bounds) {
+    switch (action) {
+      case CLICK_ACTIONS.TOGGLE_POPOUT:
+        ipcRenderer.send(WB_TOGGLE_TRAY_POPOUT, bounds)
+        break
+      case CLICK_ACTIONS.HIDE_POPOUT:
+        ipcRenderer.send(WB_HIDE_TRAY_POPOUT)
+        break
+      case CLICK_ACTIONS.SHOW_POPOUT:
+        ipcRenderer.send(WB_SHOW_TRAY_POPOUT, bounds)
+        break
+      case CLICK_ACTIONS.TOGGLE_APP:
+        ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY)
+        break
+      case CLICK_ACTIONS.HIDE_APP:
+        ipcRenderer.send(WB_HIDE_MAILBOX_WINDOW_FROM_TRAY)
+        break
+      case CLICK_ACTIONS.SHOW_APP:
+        ipcRenderer.send(WB_SHOW_MAILBOX_WINDOW_FROM_TRAY)
+        break
+    }
   }
 
   /* **************************************************************************/
@@ -113,8 +207,8 @@ export default class Tray extends React.Component {
         // Update the icon
         if (IS_GTK_PLATFORM) {
           if (launchTraySettings.gtkUpdateMode === GTK_UPDATE_MODES.RECREATE) {
-            this.appTray.destroy()
-            this.appTray = new remote.Tray(image)
+            this.appTray = this.destroyTray(this.appTray)
+            this.appTray = this.createTray(image)
           } else if (launchTraySettings.gtkUpdateMode === GTK_UPDATE_MODES.UPDATE) {
             this.appTray.setImage(image)
           }

@@ -1,6 +1,5 @@
 import { app } from 'electron'
 import { settingsStore } from 'stores/settings'
-import { SUPPORTS_TRAY_MINIMIZE_CONFIG } from 'shared/Models/Settings/TraySettings'
 
 const privForceQuit = Symbol('privForceQuit')
 const privMainWindow = Symbol('privMainWindow')
@@ -46,20 +45,16 @@ class WaveboxAppCloseBehaviour {
     if (!this[privForceQuit]) {
       const { tray } = settingsStore.getState()
       let hide = false
-      if (SUPPORTS_TRAY_MINIMIZE_CONFIG) {
-        if (tray.show && tray.hideWhenClosed) {
-          hide = true
-        }
-      } else {
-        if (process.platform === 'darwin' || tray.show) {
-          hide = true
-        }
-      }
 
-      // Tailor the behaviour slightly on darwin
       if (process.platform === 'darwin') {
         if (this.mainWindow && this.mainWindow.isFullScreen()) {
           hide = false
+        } else {
+          hide = true
+        }
+      } else {
+        if (tray.show) {
+          hide = true
         }
       }
 

@@ -1,11 +1,14 @@
 import { app, ipcMain } from 'electron'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import MailboxesWindow from 'Windows/MailboxesWindow'
-import { TrayPopout } from 'Tray'
+import TrayPopout from './TrayPopout'
 import {
   WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY,
   WB_SHOW_MAILBOX_WINDOW_FROM_TRAY,
-  WB_TOGGLE_TRAY_POPOUT
+  WB_HIDE_MAILBOX_WINDOW_FROM_TRAY,
+  WB_TOGGLE_TRAY_POPOUT,
+  WB_HIDE_TRAY_POPOUT,
+  WB_SHOW_TRAY_POPOUT
 } from 'shared/ipcEvents'
 
 class WaveboxTrayBehaviour {
@@ -14,9 +17,12 @@ class WaveboxTrayBehaviour {
   /* ****************************************************************************/
 
   constructor () {
-    ipcMain.on(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY, this.toggleMailboxesWindow)
-    ipcMain.on(WB_SHOW_MAILBOX_WINDOW_FROM_TRAY, this.showMailboxesWindow)
-    ipcMain.on(WB_TOGGLE_TRAY_POPOUT, this.toggleTrayPopout)
+    ipcMain.on(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY, this.ipcToggleMailboxesWindow)
+    ipcMain.on(WB_SHOW_MAILBOX_WINDOW_FROM_TRAY, this.ipcShowMailboxesWindow)
+    ipcMain.on(WB_HIDE_MAILBOX_WINDOW_FROM_TRAY, this.ipcHideAllWindows)
+    ipcMain.on(WB_TOGGLE_TRAY_POPOUT, this.ipcToggleTrayPopout)
+    ipcMain.on(WB_HIDE_TRAY_POPOUT, this.ipcHideTrayPopout)
+    ipcMain.on(WB_SHOW_TRAY_POPOUT, this.ipcShowTrayPopout)
   }
 
   setup () { /* no-op */ }
@@ -40,41 +46,15 @@ class WaveboxTrayBehaviour {
   /**
   * Toggles the mailboxes window visibility by hiding or showing the mailboxes windoww
   * @param evt: the event that fired
-  * @param minimize=false: set to true to prefer minimize (on platforms that support it)
   */
-  toggleMailboxesWindow = (evt, minimize = false) => {
+  ipcToggleMailboxesWindow = (evt) => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (!mailboxesWindow) { return }
 
-    if (process.platform === 'win32') {
-      // On windows clicking on non-window elements (e.g. tray) causes window
-      // to lose focus, so the window will never have focus
-      if (mailboxesWindow.isVisible() && !mailboxesWindow.isMinimized()) {
-        if (minimize) {
-          mailboxesWindow.minimize()
-        } else {
-          mailboxesWindow.close()
-        }
-      } else {
-        mailboxesWindow.show()
-        mailboxesWindow.focus()
-      }
+    if (mailboxesWindow.isVisible() && !mailboxesWindow.isMinimized()) {
+      this.ipcHideAllWindows(evt)
     } else {
-      if (mailboxesWindow.isVisible()) {
-        if (mailboxesWindow.isFocused()) {
-          if (process.platform === 'darwin') {
-            mailboxesWindow.hide()
-            app.hide()
-          } else {
-            mailboxesWindow.hide()
-          }
-        } else {
-          mailboxesWindow.focus()
-        }
-      } else {
-        mailboxesWindow.show()
-        mailboxesWindow.focus()
-      }
+      this.ipcShowMailboxesWindow(evt)
     }
   }
 
@@ -84,12 +64,37 @@ class WaveboxTrayBehaviour {
 
   /**
   * Shows and focuses the mailboxes window
+  * @param evt: the event that fired
   */
-  showMailboxesWindow = () => {
+  ipcShowMailboxesWindow = (evt) => {
     const mailboxesWindow = this._getMailboxesWindow()
-    if (!mailboxesWindow) { return }
-    mailboxesWindow.show()
-    mailboxesWindow.focus()
+    if (mailboxesWindow) {
+      mailboxesWindow.show()
+      mailboxesWindow.focus()
+    }
+  }
+
+  /**
+  * Hides all windows
+  * @param evt: the event that fired
+  */
+  ipcHideAllWindows = (evt) => {
+    if (process.platform === 'win32') {
+      WaveboxWindow.all().forEach((win) => {
+        win.minimize()
+      })
+    } else if (process.platform === 'darwin') {
+      const mailboxesWindow = this._getMailboxesWindow()
+      if (mailboxesWindow) {
+        mailboxesWindow.hide()
+      }
+      app.hide()
+    } else if (process.platform === 'linux') {
+      const mailboxesWindow = this._getMailboxesWindow()
+      if (mailboxesWindow) {
+        mailboxesWindow.hide()
+      }
+    }
   }
 
   /* ****************************************************************************/
@@ -100,14 +105,26 @@ class WaveboxTrayBehaviour {
   * Toggles the tray popout
   * @param evt: the event that fired
   * @param bounds: the bounds of the tray
-  * @param actionKey: true if an action key was used
   */
-  toggleTrayPopout = (evt, bounds, actionKey) => {
-    if (actionKey) {
-      TrayPopout.hide()
-    } else {
-      TrayPopout.toggle(bounds)
-    }
+  ipcToggleTrayPopout = (evt, bounds) => {
+    TrayPopout.toggle(bounds)
+  }
+
+  /**
+  * Hides the tray popout
+  * @param evt: the event that fired
+  */
+  ipcHideTrayPopout = (evt) => {
+    TrayPopout.hide()
+  }
+
+  /**
+  * Shows the tray popout
+  * @param evt: the event that fired
+  * @param bounds: the bounds of the tray
+  */
+  ipcShowTrayPopout = (evt, bounds) => {
+    TrayPopout.show()
   }
 }
 

@@ -104,14 +104,6 @@ export default class AdvancedSettingsSection extends React.Component {
             showRestart()
             settingsActions.sub.extension.setEnableChromeExperimental(toggled)
           }} />
-        <Toggle
-          toggled={tray.classicTray}
-          label='Use the classic tray (Requires Restart)'
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
-            showRestart()
-            settingsActions.sub.tray.setClassicTray(toggled)
-          }} />
         <div style={{ marginTop: 8 }}>
           <RaisedButton
             style={styles.buttonInline}

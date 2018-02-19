@@ -1,7 +1,6 @@
-import { globalShortcut } from 'electron'
+import { globalShortcut, app } from 'electron'
 import { settingsStore } from 'stores/settings'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
-import WaveboxTrayBehaviour from './WaveboxTrayBehaviour'
 import MailboxesWindow from 'Windows/MailboxesWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 
@@ -107,7 +106,20 @@ class WaveboxAppGlobalShortcuts {
   * Toggles the main mailboxes window in the same way the tray does
   */
   _handleToggle = () => {
-    WaveboxTrayBehaviour.toggleMailboxesWindow()
+    const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
+    if (mailboxesWindow.isVisible() && !mailboxesWindow.isMinimized()) {
+      if (process.platform === 'win32') {
+        WaveboxWindow.all().forEach((win) => { win.minimize() })
+      } else if (process.platform === 'darwin') {
+        WaveboxWindow.all().forEach((win) => { win.hide() })
+        app.hide()
+      } else if (process.platform === 'linux') {
+        WaveboxWindow.all().forEach((win) => { win.hide() })
+      }
+    } else {
+      mailboxesWindow.show()
+      mailboxesWindow.focus()
+    }
   }
 
   /**

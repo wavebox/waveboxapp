@@ -15,7 +15,7 @@ import { Analytics, ServerVent } from 'Server'
 import { NotificationService, NotificationRenderer } from 'Notifications'
 import Bootstrap from 'R/Bootstrap'
 import AccountMessageDispatcher from './AccountMessageDispatcher'
-import { Tray, TrayClassic } from 'Components/Tray'
+import { Tray } from 'Components/Tray'
 import { AppBadge, WindowTitle } from 'Components'
 import {
   WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE,
@@ -262,21 +262,12 @@ export default class Provider extends React.Component {
   */
   renderTray (traySettings, launchTraySettings, unreadCount) {
     if (!traySettings.show) { return }
-    if (launchTraySettings.classicTray) {
-      return (
-        <TrayClassic
-          unreadCount={unreadCount}
-          launchTraySettings={launchTraySettings}
-          traySettings={traySettings} />
-      )
-    } else {
-      return (
-        <Tray
-          unreadCount={unreadCount}
-          launchTraySettings={launchTraySettings}
-          traySettings={traySettings} />
-      )
-    }
+    return (
+      <Tray
+        unreadCount={unreadCount}
+        launchTraySettings={launchTraySettings}
+        traySettings={traySettings} />
+    )
   }
 
   render () {

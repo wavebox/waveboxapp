@@ -82,52 +82,42 @@ class TraySettingsActions extends CoreSettingsActions {
   }
 
   /**
-  * @param enabled: true to hide the window when minimized, false otherwise
+  * @param position: the new position
   */
-  setHideWhenMinimized (enabled) {
-    this.dispatchUpdate('hideWhenMinimized', enabled)
+  setPopoutPosition (position) {
+    this.dispatchUpdate('popoutPosition', position)
   }
 
   /**
-  * Toggles whether to hide when minimized
+  * Sets the click action
+  * @param action
   */
-  toggleHideWhenMinimized () {
-    this.dispatchToggle('hideWhenMinimized')
+  setClickAction (action) {
+    this.dispatchUpdate('clickAction', action)
   }
 
   /**
-  * @param enabled: true to hide the window when closed, false otherwise
+  * Sets the alt click action
+  * @param action
   */
-  setHideWhenClosed (enabled) {
-    this.dispatchUpdate('hideWhenClosed', enabled)
+  setAltClickAction (action) {
+    this.dispatchUpdate('altClickAction', action)
   }
 
   /**
-  * @param use: true to use the classic tray, false otherwise
+  * Sets the right click action
+  * @param action
   */
-  setClassicTray (use) {
-    this.dispatchUpdate('classicTray', use)
+  setRightClickAction (action) {
+    this.dispatchUpdate('rightClickAction', action)
   }
 
   /**
-  * Toggles whether to hide when closed
+  * Sets the double click action
+  * @param action
   */
-  toggleHideWhenClosed () {
-    this.dispatchToggle('hideWhenClosed')
-  }
-
-  /**
-  * @param val: the mouse clicks that will trigger the action
-  */
-  setMouseTrigger (val) {
-    this.dispatchUpdate('mouseTrigger', val)
-  }
-
-  /**
-  * @param val: the action to take when the mouse is triggered
-  */
-  setMouseTriggerAction (val) {
-    this.dispatchUpdate('mouseTriggerAction', val)
+  setDoubleClickAction (action) {
+    this.dispatchUpdate('doubleClickAction', action)
   }
 
   /**

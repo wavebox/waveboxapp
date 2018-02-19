@@ -20,9 +20,8 @@ import WaveboxWindow from 'Windows/WaveboxWindow'
 import AppUpdater from 'AppUpdater'
 import WaveboxAppCloseBehaviour from './WaveboxAppCloseBehaviour'
 import WaveboxDarwinDockBehaviour from './WaveboxDarwinDockBehaviour'
-import WaveboxTrayBehaviour from './WaveboxTrayBehaviour'
 import {evtMain} from 'AppEvents'
-import {TrayPopout} from 'Tray'
+import {TrayPopout, TrayBehaviour} from 'Tray'
 import {LinuxNotification} from 'Notifications'
 import WaveboxCert from './WaveboxCert'
 
@@ -85,7 +84,7 @@ class WaveboxApp {
 
     // Component behaviour
     this[privCloseBehaviour] = new WaveboxAppCloseBehaviour()
-    WaveboxTrayBehaviour.setup()
+    TrayBehaviour.setup()
     if (process.platform === 'darwin') { WaveboxDarwinDockBehaviour.setup() }
 
     // Main window
@@ -253,9 +252,7 @@ class WaveboxApp {
 
     // Create UI
     this[privMainWindow].create(openHidden)
-    if (!settingsState.launched.tray.classicTray) {
-      TrayPopout.load()
-    }
+    TrayPopout.load()
     LinuxNotification.load()
 
     // Check for updates
