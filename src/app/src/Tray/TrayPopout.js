@@ -147,7 +147,7 @@ class TrayPopout {
       // On windows clicking on the taskbar removes focus from the window.
       // Artifially persist the focus a little longer to avoid the popout
       // flashing in and out
-      if (this.isVisible()) {
+      if (this.isVisible) {
         this[privIsDelayedHide] = true
         this[privIsDelayedHideTO] = setTimeout(() => {
           this[privIsDelayedHide] = false

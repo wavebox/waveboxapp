@@ -66,8 +66,22 @@ class TraySettings extends Model {
   get removeFromDockDarwin () { return this._value_('removeFromDockDarwin', false) }
   get clickAction () { return this._value_('clickAction', CLICK_ACTIONS.TOGGLE_POPOUT) }
   get altClickAction () { return this._value_('altClickAction', CLICK_ACTIONS.HIDE_POPOUT) }
-  get rightClickAction () { return this._value_('rightClickAction', CLICK_ACTIONS.TOGGLE_APP) }
-  get doubleClickAction () { return this._value_('doubleClickAction', CLICK_ACTIONS.NONE) }
+  get rightClickAction () {
+    if (process.platform === 'darwin') {
+      return this._value_('rightClickAction', CLICK_ACTIONS.TOGGLE_APP)
+    } else if (process.platform === 'win32') {
+      return this._value_('rightClickAction', CLICK_ACTIONS.TOGGLE_POPOUT)
+    } else {
+      return this._value_('rightClickAction', CLICK_ACTIONS.NONE)
+    }
+  }
+  get doubleClickAction () {
+    if (process.platform === 'win32') {
+      return this._value_('doubleClickAction', CLICK_ACTIONS.TOGGLE_APP)
+    } else {
+      return this._value_('doubleClickAction', CLICK_ACTIONS.NONE)
+    }
+  }
 
   /* **************************************************************************/
   // Properties: Popout
