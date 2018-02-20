@@ -151,7 +151,7 @@ class MetricsService {
     }, new Map())
 
     // Add some info about system-non-window webcontents
-    if (TrayPopout.isLoaded) {
+    if (TrayPopout.isLoaded && TrayPopout.webContentsId !== undefined) {
       const wcId = TrayPopout.webContentsId
       const wc = webContents.fromId(wcId)
       allTabInfos.set(wcId, {
@@ -160,7 +160,7 @@ class MetricsService {
         description: 'Wavebox Tray Popout'
       })
     }
-    if (LinuxNotification.isLoaded) {
+    if (LinuxNotification.isLoaded && LinuxNotification.webContentsId !== undefined) {
       const wcId = LinuxNotification.webContentsId
       const wc = webContents.fromId(wcId)
       allTabInfos.set(wcId, {
