@@ -129,11 +129,7 @@ class CRExtensionLoader {
       const execute = this._executeContentJavaScript.bind(window, contextId, extensionId, url, code)
 
       if (runAt === 'document_start') {
-        if (this.isContextlessDocument) {
-          setTimeout(execute)
-        } else {
-          process.once('document-start', execute)
-        }
+        setTimeout(execute)
       } else if (runAt === 'document_end') {
         if (this.isContextlessDocument) {
           ipcRenderer.once(WCRPC_DOM_READY, execute)
