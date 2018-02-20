@@ -9,7 +9,7 @@ import {
   WB_LIN_NOTIF_PRESENT
 } from 'shared/ipcEvents'
 import { OSSettings } from 'shared/Models/Settings'
-import { WB_WINDOW_AFFINITY } from 'shared/webContentAffinities'
+import { WB_MAIN_AFFINITY } from 'shared/webContentAffinities'
 
 const privLoaded = Symbol('privLoaded')
 const privWindow = Symbol('privWindow')
@@ -67,7 +67,7 @@ class LinuxNotification {
       backgroundColor: '#FFFFFF',
       webPreferences: {
         nodeIntegration: true,
-        affinity: settingsStore.getState().launched.app.isolateWaveboxProcesses ? undefined : WB_WINDOW_AFFINITY
+        affinity: settingsStore.getState().launched.app.isolateWaveboxProcesses ? undefined : WB_MAIN_AFFINITY
       }
     })
     this[privWindow].on('closed', () => { this[privWindow] = undefined })

@@ -202,6 +202,19 @@ class MailboxStore extends RendererMailboxStore {
   }
 
   /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  handleLoad (payload) {
+    super.handleLoad(payload)
+
+    this.mailboxIds().forEach((mailboxId) => {
+      this.connectMailbox(mailboxId)
+      actions.fullSyncMailbox.defer(mailboxId)
+    })
+  }
+
+  /* **************************************************************************/
   // Mailbox
   /* **************************************************************************/
 
@@ -215,6 +228,7 @@ class MailboxStore extends RendererMailboxStore {
     }
     super.handleRemoteSetMailbox(payload)
     const next = this.mailboxes.get(id)
+
     if (!prev && next) {
       this.connectMailbox(id)
       actions.fullSyncMailbox.defer(id)

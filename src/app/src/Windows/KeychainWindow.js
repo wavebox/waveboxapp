@@ -10,7 +10,7 @@ import {
   WB_KEYCHAIN_ADD_CREDENTIALS,
   WB_KEYCHAIN_DELETE_CREDENTIALS
 } from 'shared/ipcEvents'
-import { WB_WINDOW_AFFINITY } from 'shared/webContentAffinities'
+import { WB_MAIN_AFFINITY } from 'shared/webContentAffinities'
 import { settingsStore } from 'stores/settings'
 
 const privServiceName = Symbol('privServiceName')
@@ -60,7 +60,7 @@ class KeychainWindow extends WaveboxWindow {
       height: 700,
       show: true,
       webPreferences: {
-        affinity: settingsStore.getState().launched.app.isolateWaveboxProcesses ? undefined : WB_WINDOW_AFFINITY
+        affinity: settingsStore.getState().launched.app.isolateWaveboxProcesses ? undefined : WB_MAIN_AFFINITY
       }
     })
 
