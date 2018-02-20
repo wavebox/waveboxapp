@@ -4,6 +4,8 @@ import { evtMain } from 'AppEvents'
 import querystring from 'querystring'
 import Resolver from 'Runtime/Resolver'
 import {WindowOpeningHandler} from './WindowOpeningEngine'
+import { WB_WINDOW_AFFINITY } from 'shared/webContentAffinities'
+import { settingsStore } from 'stores/settings'
 
 const SAFE_CONFIG_KEYS = [
   'width',
@@ -20,7 +22,8 @@ const SAFE_CONFIG_KEYS = [
 const COPY_WEBVIEW_WEB_PREFERENCES_KEYS = [
   'guestInstanceId',
   'openerId',
-  'partition'
+  'partition',
+  'affinity'
 ]
 
 const privTabMetaInfo = Symbol('tabMetaInfo')
@@ -135,7 +138,8 @@ class ContentWindow extends WaveboxWindow {
       show: true,
       webPreferences: {
         nodeIntegration: true,
-        plugins: true
+        plugins: true,
+        affinity: settingsStore.getState().launched.app.isolateWaveboxProcesses ? undefined : WB_WINDOW_AFFINITY
       },
       ...this.generateWindowPosition(parentWindow),
       ...this.safeBrowserWindowPreferences(browserWindowPreferences)

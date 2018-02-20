@@ -3,6 +3,7 @@ import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import { mailboxStore, mailboxActions, ContainerDefaultServiceReducer } from 'stores/mailbox'
+import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
   WB_BROWSER_NOTIFICATION_PRESENT,
@@ -58,7 +59,8 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
       useNativeWindowOpen: service ? service.useNativeWindowOpen : true,
       useContextIsolation: service ? service.useContextIsolation : true,
       useSharedSiteInstances: service ? service.useSharedSiteInstances : true,
-      useAsyncAlerts: service ? service.useAsyncAlerts : true
+      useAsyncAlerts: service ? service.useAsyncAlerts : true,
+      isolateMailboxProcesses: settingsStore.getState().launched.app.isolateMailboxProcesses // does not update
     }
   }
 
@@ -118,14 +120,29 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
 
   render () {
     const { mailboxId } = this.props
-    const { useNativeWindowOpen, useContextIsolation, useSharedSiteInstances } = this.state
+    const {
+      useNativeWindowOpen,
+      useContextIsolation,
+      useSharedSiteInstances,
+      isolateMailboxProcesses
+    } = this.state
+
+    let affinityOpt
+    if (useSharedSiteInstances) {
+      if (isolateMailboxProcesses) {
+        affinityOpt = `affinity=${mailboxId + ':' + CoreService.SERVICE_TYPES.DEFAULT}`
+      } else {
+        affinityOpt = `affinity=${mailboxId}`
+      }
+    }
 
     // Don't use string templating or inline in jsx. The compiler optimizes it out!!
     const webpreferences = [
       'contextIsolation=' + (useContextIsolation ? 'yes' : 'no'),
       'nativeWindowOpen=' + (useNativeWindowOpen ? 'yes' : 'no'),
-      'sharedSiteInstances=' + (useSharedSiteInstances ? 'yes' : 'no')
-    ].join(', ')
+      'sharedSiteInstances=' + (useSharedSiteInstances ? 'yes' : 'no'),
+      affinityOpt
+    ].filter((l) => !!l).join(', ')
 
     return (
       <MailboxWebViewHibernator

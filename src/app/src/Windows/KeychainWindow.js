@@ -10,6 +10,8 @@ import {
   WB_KEYCHAIN_ADD_CREDENTIALS,
   WB_KEYCHAIN_DELETE_CREDENTIALS
 } from 'shared/ipcEvents'
+import { WB_WINDOW_AFFINITY } from 'shared/webContentAffinities'
+import { settingsStore } from 'stores/settings'
 
 const privServiceName = Symbol('privServiceName')
 const privKey = Symbol('privKey')
@@ -56,7 +58,10 @@ class KeychainWindow extends WaveboxWindow {
       title: 'Wavebox Keychain',
       width: 900,
       height: 700,
-      show: true
+      show: true,
+      webPreferences: {
+        affinity: settingsStore.getState().launched.app.isolateWaveboxProcesses ? undefined : WB_WINDOW_AFFINITY
+      }
     })
 
     ipcMain.on(WB_KEYCHAIN_REQUEST_CREDENTIALS, this.handleCredentialsRequest)
@@ -171,6 +176,17 @@ class KeychainWindow extends WaveboxWindow {
   focusedTabId () { return null }
   tabIds () { return [] }
   tabMetaInfo (tabId) { return undefined }
+
+  /**
+  * @return process info about the tabs with { webContentsId, description, pid }
+  */
+  webContentsProcessInfo () {
+    return [{
+      webContentsId: this.window.webContents.id,
+      pid: this.window.webContents.getOSProcessId(),
+      description: `Wavebox Keychain Window (${this[privServiceName]})`
+    }]
+  }
 }
 
 export default KeychainWindow

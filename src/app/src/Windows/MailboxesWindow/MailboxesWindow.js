@@ -3,6 +3,7 @@ import WaveboxWindow from '../WaveboxWindow'
 import { settingsStore } from 'stores/settings'
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
+import { WB_WINDOW_AFFINITY } from 'shared/webContentAffinities'
 import {
   AuthGoogle,
   AuthMicrosoft,
@@ -133,7 +134,8 @@ class MailboxesWindow extends WaveboxWindow {
       webPreferences: {
         nodeIntegration: true,
         backgroundThrottling: false,
-        plugins: true
+        plugins: true,
+        affinity: settingsStore.getState().launched.app.isolateWaveboxProcesses ? undefined : WB_WINDOW_AFFINITY
       }
     })
     this.window.once('ready-to-show', () => {

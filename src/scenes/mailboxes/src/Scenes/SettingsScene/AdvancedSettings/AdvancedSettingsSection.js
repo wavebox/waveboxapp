@@ -69,6 +69,22 @@ export default class AdvancedSettingsSection extends React.Component {
             settingsActions.sub.app.disableHardwareAcceleration(!toggled)
           }} />
         <Toggle
+          toggled={app.isolateWaveboxProcesses}
+          label='Isolate Wavebox Processes (Requires Restart)'
+          labelPosition='right'
+          onToggle={(evt, toggled) => {
+            showRestart()
+            settingsActions.sub.app.setIsolateWaveboxProcesses(toggled)
+          }} />
+        <Toggle
+          toggled={app.isolateMailboxProcesses}
+          label='Isolate Account Processes (Requires Restart)'
+          labelPosition='right'
+          onToggle={(evt, toggled) => {
+            showRestart()
+            settingsActions.sub.app.setIsolateMailboxProcesses(toggled)
+          }} />
+        <Toggle
           toggled={app.enableUseZoomForDSF}
           label='Use Zoom For DSF (Requires Restart)'
           labelPosition='right'

@@ -2,6 +2,7 @@ import { BrowserWindow, screen } from 'electron'
 import Resolver from 'Runtime/Resolver'
 import Positioner from 'electron-positioner'
 import { settingsStore } from 'stores/settings'
+import { WB_WINDOW_AFFINITY } from 'shared/webContentAffinities'
 import {
   POPOUT_POSITIONS,
   CTX_MENU_ONLY_SUPPORT
@@ -35,7 +36,8 @@ class TrayPopout {
       backgroundColor: '#ffffff',
       transparent: false,
       webPreferences: {
-        nodeIntegration: true
+        nodeIntegration: true,
+        affinity: settingsStore.getState().launched.app.isolateWaveboxProcesses ? undefined : WB_WINDOW_AFFINITY
       },
       ...(this.isWindowedMode ? {
         title: 'Wavebox Mini',

@@ -2,6 +2,8 @@ import WaveboxWindow from './WaveboxWindow'
 import { WB_COLLECTED_METRICS } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
 import ServicesManager from '../Services'
+import { WB_WINDOW_AFFINITY } from 'shared/webContentAffinities'
+import { settingsStore } from 'stores/settings'
 
 class MonitorWindow extends WaveboxWindow {
   /* ****************************************************************************/
@@ -19,7 +21,10 @@ class MonitorWindow extends WaveboxWindow {
       title: 'Wavebox Monitor',
       width: 900,
       height: 700,
-      show: true
+      show: true,
+      webPreferences: {
+        affinity: settingsStore.getState().launched.app.isolateWaveboxProcesses ? undefined : WB_WINDOW_AFFINITY
+      }
     })
 
     this.collectInterval = setInterval(this.collectMetrics, 1000)

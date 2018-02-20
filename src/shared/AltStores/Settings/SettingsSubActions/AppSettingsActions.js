@@ -142,6 +142,22 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * Sets whether wavebox processes should be isolated from each other
+  * @param isolate: true to isolate, false to not
+  */
+  setIsolateWaveboxProcesses (isolate) {
+    this.dispatchUpdate('isolateWaveboxProcesses', isolate)
+  }
+
+  /**
+  * Sets whether mailbox processes should be isolated from each other
+  * @param isolate: true to isolate, false to not
+  */
+  setIsolateMailboxProcesses (isolate) {
+    this.dispatchUpdate('isolateMailboxProcesses', isolate)
+  }
+
+  /**
   * Opens the metrics log
   */
   openMetricsLog () {

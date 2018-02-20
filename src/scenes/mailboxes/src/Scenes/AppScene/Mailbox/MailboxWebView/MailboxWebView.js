@@ -25,6 +25,7 @@ import {
 import { ipcRenderer } from 'electron'
 import Spinner from 'sharedui/Components/Activity/Spinner'
 import * as Colors from 'material-ui/styles/colors'
+import { settingsStore } from 'stores/settings'
 
 const BROWSER_REF = 'browser'
 
@@ -138,6 +139,7 @@ export default class MailboxWebView extends React.Component {
       isSearching: mailboxState.isSearchingMailbox(props.mailboxId, props.serviceType),
       searchTerm: mailboxState.mailboxSearchTerm(props.mailboxId, props.serviceType),
       searchId: mailboxState.mailboxSearchHash(props.mailboxId, props.serviceType),
+      isolateMailboxProcesses: settingsStore.getState().launched.app.isolateMailboxProcesses, // does not update
       ...(!mailbox || !service ? {
         mailbox: null,
         service: null,
@@ -537,13 +539,21 @@ export default class MailboxWebView extends React.Component {
       initialLoadDone,
       isCrashed,
       isLoading,
-      snapshot
+      snapshot,
+      isolateMailboxProcesses
     } = this.state
 
     if (!mailbox || !service) { return false }
-    const { className, preload, hasSearch, allowpopups, webpreferences, ...passProps } = this.props
-    delete passProps.serviceType
-    delete passProps.mailboxId
+    const {
+      className,
+      preload,
+      hasSearch,
+      allowpopups,
+      webpreferences,
+      mailboxId,
+      serviceType,
+      ...passProps
+    } = this.props
     const webviewEventProps = BrowserView.REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
       acc[name] = this.props[name]
       delete passProps[name]
@@ -557,6 +567,14 @@ export default class MailboxWebView extends React.Component {
       isActive ? 'active' : undefined
     ].filter((c) => !!c).join(' ')
 
+    // Don't use string templating or inline in jsx. The compiler optimizes it out!!
+    const passWebpreferences = webpreferences || [
+      'contextIsolation=yes',
+      'nativeWindowOpen=yes',
+      'sharedSiteInstances=yes',
+      'affinity=' + (isolateMailboxProcesses ? mailboxId + ':' + serviceType : mailboxId)
+    ].filter((l) => !!l).join(', ')
+
     return (
       <div className={saltedClassName}>
         <div className={'ReactComponent-BrowserContainer'}>
@@ -569,7 +587,7 @@ export default class MailboxWebView extends React.Component {
             zoomFactor={service.zoomFactor}
             searchId={searchId}
             searchTerm={isSearching ? searchTerm : ''}
-            webpreferences={webpreferences || 'contextIsolation=yes, nativeWindowOpen=yes, sharedSiteInstances=yes'}
+            webpreferences={passWebpreferences}
             allowpopups={allowpopups === undefined ? true : allowpopups}
             plugins
             onWebContentsAttached={this.handleWebContentsAttached}

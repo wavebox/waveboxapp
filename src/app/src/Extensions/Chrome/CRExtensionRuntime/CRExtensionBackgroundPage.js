@@ -5,6 +5,8 @@ import {
   CR_EXTENSION_PROTOCOL,
   CR_EXTENSION_BG_PARTITION_PREFIX
 } from 'shared/extensionApis'
+import { WB_EXTENSION_AFFINITY } from 'shared/webContentAffinities'
+import { settingsStore } from 'stores/settings'
 import Resolver from 'Runtime/Resolver'
 import { SessionManager } from 'SessionManager'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
@@ -88,6 +90,7 @@ class CRExtensionBackgroundPage {
     const partitionId = this.partitionId
     this._webContents = webContents.create({
       partition: partitionId,
+      affinity: settingsStore.getState().launched.app.isolateWaveboxProcesses ? undefined : WB_EXTENSION_AFFINITY,
       isBackgroundPage: true,
       preload: Resolver.crExtensionApi(),
       commandLineSwitches: [

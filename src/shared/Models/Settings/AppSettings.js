@@ -43,6 +43,8 @@ class AppSettings extends Model {
   get enableGeolocationApi () { return this._value_('enableGeolocationApi', true) }
   get writeMetricsLog () { return this._value_('writeMetricsLog', false) }
   get enableAutofillService () { return this._value_('enableAutofillService', true) }
+  get isolateWaveboxProcesses () { return this._value_('isolateWaveboxProcesses', false) }
+  get isolateMailboxProcesses () { return this._value_('isolateMailboxProcesses', false) }
 }
 
 module.exports = AppSettings
