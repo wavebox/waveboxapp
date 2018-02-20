@@ -34,10 +34,11 @@ class LinuxNotification {
   * Loads the tray
   */
   load () {
+    if (process.platform !== 'linux') { return }
+
     if (this.isLoaded) { return }
     this[privLoaded] = true
 
-    if (process.platform !== 'linux') { return }
     settingsStore.listen(this.settingsChanged)
     if (settingsStore.getState().os.notificationsProvider === OSSettings.NOTIFICATION_PROVIDERS.ENHANCED) {
       this.createWindow()

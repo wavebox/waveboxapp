@@ -44,12 +44,23 @@ class MonitorWindow extends WaveboxWindow {
   }
 
   /* ****************************************************************************/
-  // Info
+  // Query
   /* ****************************************************************************/
 
   focusedTabId () { return null }
   tabIds () { return [] }
   tabMetaInfo (tabId) { return undefined }
+
+  /**
+  * @return process info about the tabs with { webContentsId, description, pid }
+  */
+  webContentsProcessInfo () {
+    return [{
+      webContentsId: this.window.webContents.id,
+      pid: this.window.webContents.getOSProcessId(),
+      description: 'Wavebox Task Monitor'
+    }]
+  }
 }
 
 export default MonitorWindow
