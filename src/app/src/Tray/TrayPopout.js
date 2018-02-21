@@ -50,6 +50,7 @@ class TrayPopout {
         resizable: false
       })
     })
+    this[privWindow].setMenuBarVisibility(false)
     this[privPositioner] = new Positioner(this[privWindow])
     this[privWindow].loadURL(`file://${Resolver.traypopoutScene('popout.html')}`)
     this[privWindow].on('blur', this._handleBlur)
