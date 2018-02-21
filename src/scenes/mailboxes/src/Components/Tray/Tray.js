@@ -282,10 +282,10 @@ export default class Tray extends React.Component {
 
     const template = [].concat(
       [
+        { label: 'Toggle App', click: this.handleToggleApp },
         { label: 'Show Wavebox Mini', click: this.handleShowPopout },
         { type: 'separator' },
         { label: 'Compose New Message', click: this.handleCompose },
-        { label: 'Toggle App', click: this.handleToggleApp },
         { type: 'separator' }
       ],
       unread,
