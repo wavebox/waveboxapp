@@ -168,6 +168,8 @@ class SlackDefaultServiceReducer extends ServiceReducer {
         return undefined // We created the message, nothing to do
       } else if (mailbox.selfOverview.id === ((rtmEvent.message || {}).edited || {}).user) {
         return undefined // We edited the message, nothing to do
+      } else if (mailbox.selfOverview.id === (rtmEvent.comment || {}).user) {
+        return undefined // We commented on an item, nothing to do
       }
     }
 
