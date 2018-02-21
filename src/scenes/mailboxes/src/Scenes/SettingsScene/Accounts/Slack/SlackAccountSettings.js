@@ -4,6 +4,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { Row, Col } from 'Components/Grid'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
+import AccountDestructiveSettings from '../AccountDestructiveSettings'
 import AccountBadgeSettings from '../AccountBadgeSettings'
 import AccountNotificationSettings from '../AccountNotificationSettings'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
@@ -48,6 +49,7 @@ export default class SlackAccountSettings extends React.Component {
               service={service}
               onRequestEditCustomCode={onRequestEditCustomCode} />
             <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
+            <AccountDestructiveSettings mailbox={mailbox} />
           </Col>
         </Row>
       </div>

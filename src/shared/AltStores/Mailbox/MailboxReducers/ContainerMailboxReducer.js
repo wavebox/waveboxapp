@@ -19,6 +19,39 @@ class ContainerMailboxReducer extends MailboxReducer {
   static setDisplayName (mailbox, displayName) {
     return mailbox.changeData({ displayName: displayName })
   }
+
+  /* **************************************************************************/
+  // Config
+  /* **************************************************************************/
+
+  /**
+  * Sets whether to use a custom user agent string or not
+  * @param mailbox: the mailbox to update
+  * @param use: true to use, false to not
+  */
+  static setUseCustomUserAgent (mailbox, use) {
+    return mailbox.changeData({ useCustomUserAgent: use })
+  }
+
+  /**
+  * Sets whether to use a custom user agent string or not
+  * @param mailbox: the mailbox to update
+  * @param str: the user agent string
+  */
+  static setCustomUserAgentString (mailbox, str) {
+    return mailbox.changeData({ customUserAgentString: str })
+  }
+
+  /**
+  * Restores the user agent config to the default
+  * @param mailbox: the mailbox to update
+  */
+  static restoreUserAgentDefaults (mailbox) {
+    return mailbox.changeData({
+      customUserAgentString: null,
+      useCustomUserAgent: null
+    })
+  }
 }
 
 export default ContainerMailboxReducer

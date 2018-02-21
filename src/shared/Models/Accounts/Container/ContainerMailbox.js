@@ -82,8 +82,22 @@ class ContainerMailbox extends CoreMailbox {
   // Properties : Useragent
   /* **************************************************************************/
 
-  get useCustomUserAgent () { return this.container.hasUserAgentString }
-  get customUserAgentString () { return this.container.userAgentString }
+  get useCustomUserAgent () {
+    const overwrite = this._value_('useCustomUserAgent', null)
+    if (overwrite === undefined || overwrite === null) {
+      return this.container.hasUserAgentString
+    } else {
+      return overwrite
+    }
+  }
+  get customUserAgentString () {
+    const overwrite = this._value_('customUserAgentString', null)
+    if (overwrite === undefined || overwrite === null || overwrite.trim() === '') {
+      return this.container.userAgentString
+    } else {
+      return overwrite
+    }
+  }
 }
 
 module.exports = ContainerMailbox

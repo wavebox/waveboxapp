@@ -5,6 +5,7 @@ import { Paper, TextField, Toggle } from 'material-ui'
 import { Row, Col } from 'Components/Grid'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
+import AccountDestructiveSettings from '../AccountDestructiveSettings'
 import styles from '../../CommonSettingStyles'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
@@ -176,10 +177,11 @@ export default class GenericAccountSettings extends React.Component {
               mailbox={mailbox}
               service={service}
               onRequestEditCustomCode={onRequestEditCustomCode} />
-            <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart}>
+            <Paper zDepth={1} style={styles.paper}>
+              <h1 style={styles.subheading}>UserAgent</h1>
               <Toggle
                 toggled={mailbox.useCustomUserAgent}
-                label='Use custom UserAgent'
+                label='Use custom UserAgent (Requires restart)'
                 labelPosition='right'
                 onToggle={this.handleChangeUseCustomUserAgent} />
               <TextField
@@ -187,10 +189,12 @@ export default class GenericAccountSettings extends React.Component {
                 disabled={!mailbox.useCustomUserAgent}
                 fullWidth
                 floatingLabelFixed
-                floatingLabelText='Custom UserAgent String'
+                floatingLabelText='Custom UserAgent String (Requires restart)'
                 defaultValue={mailbox.customUserAgentString}
                 onBlur={this.handleChangeCustomUserAgent} />
-            </AccountAdvancedSettings>
+            </Paper>
+            <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
+            <AccountDestructiveSettings mailbox={mailbox} />
           </Col>
         </Row>
       </div>

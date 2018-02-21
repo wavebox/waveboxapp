@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper, Toggle, FontIcon, SelectField, MenuItem, FlatButton } from 'material-ui'
+import { Paper, Toggle, SelectField, MenuItem } from 'material-ui'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import * as Colors from 'material-ui/styles/colors'
-import { ConfirmFlatButton } from 'Components/Buttons'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 
 const humanizedOpenModes = {
@@ -101,45 +100,6 @@ export default class AccountAdvancedSettings extends React.Component {
     )
   }
 
-  /**
-  * Renders the destructive actions
-  * @param mailbox: the mailbox to render for
-  * @return jsx
-  */
-  renderDestructiveActions (mailbox) {
-    return (
-      <div>
-        {mailbox.supportsAuth ? (
-          <div>
-            <FlatButton
-              label='Reauthenticate'
-              icon={<FontIcon className='material-icons'>lock_outline</FontIcon>}
-              onClick={() => mailboxActions.reauthenticateMailbox(mailbox.id)} />
-          </div>
-        ) : undefined}
-        <div>
-          <ConfirmFlatButton
-            key={mailbox.id}
-            label='Clear all browsing data'
-            confirmLabel='Click again to confirm'
-            confirmWaitMs={4000}
-            icon={<FontIcon className='material-icons'>clear</FontIcon>}
-            confirmIcon={<FontIcon className='material-icons'>help_outline</FontIcon>}
-            onConfirmedClick={() => mailboxActions.clearMailboxBrowserSession(mailbox.id)} />
-        </div>
-        <div>
-          <FlatButton
-            label='Delete this Account'
-            icon={<FontIcon color={Colors.red600} className='material-icons'>delete</FontIcon>}
-            labelStyle={{color: Colors.red600}}
-            onClick={() => {
-              window.location.hash = `/mailbox_delete/${mailbox.id}`
-            }} />
-        </div>
-      </div>
-    )
-  }
-
   render () {
     const {
       mailbox,
@@ -158,7 +118,6 @@ export default class AccountAdvancedSettings extends React.Component {
         {this.renderWindowOpenSettings(mailbox, windowOpenBefore, windowOpenAfter)}
         <br />
         {children}
-        {this.renderDestructiveActions(mailbox)}
       </Paper>
     )
   }

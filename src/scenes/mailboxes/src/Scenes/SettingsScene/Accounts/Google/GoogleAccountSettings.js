@@ -6,6 +6,7 @@ import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
 import AccountServicesHeading from '../AccountServicesHeading'
 import AccountServicesSettings from '../AccountServicesSettings'
+import AccountDestructiveSettings from '../AccountDestructiveSettings'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
 import { userStore } from 'stores/user'
@@ -133,6 +134,7 @@ export default class GoogleAccountSettings extends React.Component {
                   }} />
               )}
             />
+            <AccountDestructiveSettings mailbox={mailbox} />
           </Col>
         </Row>
         <Row>
