@@ -42,7 +42,7 @@ const styles = {
   titleDragbar: {
     position: 'absolute',
     top: 0,
-    left: 0,
+    left: SIDEBAR_WIDTH,
     right: 0,
     height: 16,
     zIndex: 100,
@@ -147,7 +147,6 @@ export default class AppScene extends React.Component {
       hasNavigationInToolbar
     } = this.state
     const hasToolbar = hasExtensionsInToolbar || hasServicesInToolbar || hasNavigationInToolbar
-
     return (
       <div {...passProps}>
         {hasSidebar ? (
@@ -164,7 +163,10 @@ export default class AppScene extends React.Component {
             }} />
         ) : undefined}
         {!appHasTitlebar ? (
-          <div style={styles.titleDragbar} />
+          <div style={{
+            ...styles.titleDragbar,
+            ...(hasSidebar ? {} : { left: 0 })
+          }} />
         ) : undefined}
         <div style={{
           ...styles.detail,
