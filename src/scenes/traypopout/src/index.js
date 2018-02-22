@@ -18,10 +18,21 @@ notifhistStore.getState()
 notifhistActions.load()
 
 // Prevent zooming
-webFrame.setZoomLevelLimits(1, 1)
+webFrame.setVisualZoomLevelLimits(1, 1)
+webFrame.setLayoutZoomLevelLimits(1, 1)
 
 // Prevent right click
 window.addEventListener('contextmenu', (evt) => {
+  evt.preventDefault()
+  evt.stopPropagation()
+}, false)
+
+// Prevent Drag/Drop
+document.addEventListener('drop', (evt) => {
+  evt.preventDefault()
+  evt.stopPropagation()
+}, false)
+document.addEventListener('dragover', (evt) => {
   evt.preventDefault()
   evt.stopPropagation()
 }, false)

@@ -81,9 +81,6 @@ class ExtensionOptionsWindow extends WaveboxWindow {
 
   findStart () { return this }
   findNext () { return this }
-  zoomIn () { return this }
-  zoomOut () { return this }
-  zoomReset () { return this }
 }
 
 export default ExtensionOptionsWindow

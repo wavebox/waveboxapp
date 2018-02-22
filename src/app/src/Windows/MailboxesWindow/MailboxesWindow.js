@@ -466,37 +466,6 @@ class MailboxesWindow extends WaveboxWindow {
   }
 
   /* ****************************************************************************/
-  // Actions: Zoom
-  /* ****************************************************************************/
-
-  /**
-  * Zooms the current window in
-  * @return this
-  */
-  zoomIn () {
-    mailboxActions.reduceService(undefined, undefined, ServiceReducer.increaseZoom)
-    return this
-  }
-
-  /**
-  * Zooms the current window out
-  * @return this
-  */
-  zoomOut () {
-    mailboxActions.reduceService(undefined, undefined, ServiceReducer.decreaseZoom)
-    return this
-  }
-
-  /**
-  * Resets the zoom on the current window
-  * @return this
-  */
-  zoomReset () {
-    mailboxActions.reduceService(undefined, undefined, ServiceReducer.resetZoom)
-    return this
-  }
-
-  /* ****************************************************************************/
   // Query
   /* ****************************************************************************/
 

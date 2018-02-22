@@ -21,7 +21,8 @@ import {
 import { ipcRenderer, webFrame } from 'electron'
 
 // Prevent zooming
-webFrame.setZoomLevelLimits(1, 1)
+webFrame.setVisualZoomLevelLimits(1, 1)
+webFrame.setLayoutZoomLevelLimits(1, 1)
 
 // Prevent drag/drop
 document.addEventListener('drop', (evt) => {
@@ -29,13 +30,13 @@ document.addEventListener('drop', (evt) => {
     evt.preventDefault()
     evt.stopPropagation()
   }
-})
+}, false)
 document.addEventListener('dragover', (evt) => {
   if (evt.target.tagName !== 'INPUT' && evt.target.type !== 'file') {
     evt.preventDefault()
     evt.stopPropagation()
   }
-})
+}, false)
 
 // Navigation
 if (process.platform === 'darwin') {

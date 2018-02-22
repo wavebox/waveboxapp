@@ -7,9 +7,6 @@ import WaveboxWindowManager from './WaveboxWindowManager'
 import {
   WB_WINDOW_FIND_START,
   WB_WINDOW_FIND_NEXT,
-  WB_WINDOW_ZOOM_IN,
-  WB_WINDOW_ZOOM_OUT,
-  WB_WINDOW_ZOOM_RESET,
   WB_WINDOW_DARWIN_SCROLL_TOUCH_BEGIN,
   WB_WINDOW_DARWIN_SCROLL_TOUCH_END,
   WB_WINDOW_FOCUS,
@@ -481,7 +478,11 @@ class WaveboxWindow extends EventEmitter {
   * @return this
   */
   zoomIn () {
-    this.window.webContents.send(WB_WINDOW_ZOOM_IN, { })
+    const webContentsId = this.focusedTabId()
+    if (!webContentsId) { return this }
+    const wc = webContents.fromId(webContentsId)
+    if (!wc || wc.isDestroyed()) { return this }
+    wc.getZoomFactor((factor) => { wc.setZoomFactor(factor + 0.1) })
     return this
   }
 
@@ -490,7 +491,11 @@ class WaveboxWindow extends EventEmitter {
   * @return this
   */
   zoomOut () {
-    this.window.webContents.send(WB_WINDOW_ZOOM_OUT, { })
+    const webContentsId = this.focusedTabId()
+    if (!webContentsId) { return this }
+    const wc = webContents.fromId(webContentsId)
+    if (!wc || wc.isDestroyed()) { return this }
+    wc.getZoomFactor((factor) => { wc.setZoomFactor(factor - 0.1) })
     return this
   }
 
@@ -499,7 +504,11 @@ class WaveboxWindow extends EventEmitter {
   * @return this
   */
   zoomReset () {
-    this.window.webContents.send(WB_WINDOW_ZOOM_RESET, { })
+    const webContentsId = this.focusedTabId()
+    if (!webContentsId) { return this }
+    const wc = webContents.fromId(webContentsId)
+    if (!wc || wc.isDestroyed()) { return this }
+    wc.setZoomFactor(1.0)
     return this
   }
 

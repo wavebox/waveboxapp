@@ -152,41 +152,6 @@ class ServiceReducer {
   }
 
   /* **************************************************************************/
-  // Zoom
-  /* **************************************************************************/
-
-  /**
-  * Increases the zoom of the active mailbox
-  * @param mailbox: the mailbox that contains the service
-  * @param service: the service to update
-  */
-  static increaseZoom (mailbox, service) {
-    return service.changeData({
-      zoomFactor: Math.min(1.5, service.zoomFactor + 0.1)
-    })
-  }
-
-  /**
-  * Decreases the zoom of the active mailbox
-  * @param mailbox: the mailbox that contains the service
-  * @param service: the service to update
-  */
-  static decreaseZoom (mailbox, service) {
-    return service.changeData({
-      zoomFactor: Math.max(0.5, service.zoomFactor - 0.1)
-    })
-  }
-
-  /**
-  * Resets the zoom of the the active mailbox
-  * @param mailbox: the mailbox that contains the service
-  * @param service: the service to update
-  */
-  static resetZoom (mailbox, service) {
-    return service.changeData({ zoomFactor: 1.0 })
-  }
-
-  /* **************************************************************************/
   // Custom Code
   /* **************************************************************************/
 

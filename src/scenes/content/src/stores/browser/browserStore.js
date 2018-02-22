@@ -19,8 +19,6 @@ class BrowserStore {
     this.searchTerm = ''
     this.searchNextHash = 0
 
-    this.zoomFactor = 1.0
-
     /* ****************************************/
     // Listeners
     /* ****************************************/
@@ -36,11 +34,7 @@ class BrowserStore {
       handleStopSearch: actions.STOP_SEARCH,
       handleToggleSearch: actions.TOGGLE_SEARCH,
       handleSetSearch: actions.SET_SEARCH,
-      handleSearchNext: actions.SEARCH_NEXT,
-
-      handleIncreaseZoom: actions.INCREASE_ZOOM,
-      handleDecreaseZoom: actions.DECREASE_ZOOM,
-      handleResetZoom: actions.RESET_ZOOM
+      handleSearchNext: actions.SEARCH_NEXT
     })
   }
 
@@ -105,22 +99,6 @@ class BrowserStore {
 
   handleSearchNext () {
     this.searchNextHash = new Date().getTime()
-  }
-
-  /* **************************************************************************/
-  // Handlers: Zoom
-  /* **************************************************************************/
-
-  handleIncreaseZoom () {
-    this.zoomFactor = Math.min(1.5, this.zoomFactor + 0.1)
-  }
-
-  handleDecreaseZoom () {
-    this.zoomFactor = Math.max(0.5, this.zoomFactor - 0.1)
-  }
-
-  handleResetZoom () {
-    this.zoomFactor = 1.0
   }
 }
 

@@ -8,6 +8,16 @@ progressUI.isIndeterminate = true
 progressUI.status = 'Downloading...'
 progressUI.showCancel = true
 
+// Prevent Drag/Drop
+document.addEventListener('drop', (evt) => {
+  evt.preventDefault()
+  evt.stopPropagation()
+}, false)
+document.addEventListener('dragover', (evt) => {
+  evt.preventDefault()
+  evt.stopPropagation()
+}, false)
+
 window.printPDFEncoded = function (encodedLocalPath) {
   window.printPDF(decodeURIComponent(encodedLocalPath))
 }

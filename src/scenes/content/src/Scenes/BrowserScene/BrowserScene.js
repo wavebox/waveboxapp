@@ -55,8 +55,7 @@ export default class BrowserScene extends React.Component {
     return {
       isSearching: browserState.isSearching,
       searchTerm: browserState.searchTerm,
-      searchNextHash: browserState.searchNextHash,
-      zoomFactor: browserState.zoomFactor
+      searchNextHash: browserState.searchNextHash
     }
   })()
 
@@ -64,8 +63,7 @@ export default class BrowserScene extends React.Component {
     this.setState({
       isSearching: browserState.isSearching,
       searchTerm: browserState.searchTerm,
-      searchNextHash: browserState.searchNextHash,
-      zoomFactor: browserState.zoomFactor
+      searchNextHash: browserState.searchNextHash
     })
   }
 
@@ -113,7 +111,7 @@ export default class BrowserScene extends React.Component {
 
   render () {
     const { url, partition } = this.props
-    const { zoomFactor, isSearching, searchTerm, searchNextHash } = this.state
+    const { isSearching, searchTerm, searchNextHash } = this.state
 
     // The partition should be set on the will-attach-webview in the main thread
     // but this doesn't have the desired effect. Set it here for good-stead
@@ -134,7 +132,6 @@ export default class BrowserScene extends React.Component {
             className='ReactComponent-BrowserSceneWebView'
             webpreferences='contextIsolation=yes, nativeWindowOpen=yes, sharedSiteInstances=yes'
             preload={path.join(__dirname, '../../guest/guest.js')}
-            zoomFactor={zoomFactor}
             searchTerm={isSearching ? searchTerm : undefined}
             searchId={searchNextHash}
             updateTargetUrl={(evt) => browserActions.setTargetUrl(evt.url)}

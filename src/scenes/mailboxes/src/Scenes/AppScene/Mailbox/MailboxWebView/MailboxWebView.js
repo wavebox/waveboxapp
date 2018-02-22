@@ -584,7 +584,6 @@ export default class MailboxWebView extends React.Component {
             preload={preload}
             partition={'persist:' + mailbox.partition}
             src={restorableUrl || 'about:blank'}
-            zoomFactor={service.zoomFactor}
             searchId={searchId}
             searchTerm={isSearching ? searchTerm : ''}
             webpreferences={passWebpreferences}

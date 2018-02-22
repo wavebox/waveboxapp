@@ -160,7 +160,6 @@ class CoreService extends Model {
   // Properties: Display
   /* **************************************************************************/
 
-  get zoomFactor () { return this._value_('zoomFactor', 1.0) }
   get unreadBadgeColor () { return this._migrationValue_('unreadBadgeColor', 'rgba(238, 54, 55, 0.95)') }
 
   /* **************************************************************************/
