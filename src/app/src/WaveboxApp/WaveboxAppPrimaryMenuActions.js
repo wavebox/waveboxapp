@@ -243,6 +243,18 @@ class WaveboxAppPrimaryMenuAcions {
       mailboxesWindow.show().focus().switchNextService(true)
     }
   }
+  nextMailboxTab = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.show().focus().switchNextTab()
+    }
+  }
+  prevMailboxTab = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.show().focus().switchPrevTab()
+    }
+  }
 
   mailboxNavBack = () => {
     const focused = WaveboxWindow.focused()

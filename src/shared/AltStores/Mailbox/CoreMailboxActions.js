@@ -348,6 +348,28 @@ class CoreMailboxActions extends RemoteActions {
     }
   }
 
+  /**
+  * Changes the active service or mailbox to the next in the list
+  */
+  changeActiveTabToNext (...args) {
+    if (process.type === 'browser') {
+      return { }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('changeActiveTabToNext', args)
+    }
+  }
+
+  /**
+  * Changes the active service or mailbox to the prev in the list
+  */
+  changeActiveTabToPrev (...args) {
+    if (process.type === 'browser') {
+      return { }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('changeActiveTabToPrev', args)
+    }
+  }
+
   /* **************************************************************************/
   // Mailbox auth teardown
   /* **************************************************************************/

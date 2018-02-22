@@ -60,6 +60,8 @@ class AcceleratorSettings extends Model {
   get servicePreviousDefault () { return 'CmdOrCtrl+Alt+<' }
   get serviceNextDefault () { return 'CmdOrCtrl+Alt+>' }
   get serviceIndexDefault () { return process.platform === 'darwin' ? 'Command+Alt+Number' : undefined }
+  get nextTabDefault () { return process.platform === 'darwin' ? 'Command+Alt+Right' : 'Ctrl+Tab' }
+  get prevTabDefault () { return process.platform === 'darwin' ? 'Command+Alt+Left' : 'Ctrl+Shift+Tab' }
 
   /* ****************************************************************************/
   // Config
@@ -120,6 +122,8 @@ class AcceleratorSettings extends Model {
   get servicePrevious () { return this._value_('servicePrevious', this.servicePreviousDefault) }
   get serviceNext () { return this._value_('serviceNext', this.serviceNextDefault) }
   get serviceIndex () { return this._value_('serviceIndex', this.serviceIndexDefault) }
+  get nextTab () { return this._value_('nextTab', this.nextTabDefault) }
+  get prevTab () { return this._value_('prevTab', this.prevTabDefault) }
 }
 
 module.exports = AcceleratorSettings

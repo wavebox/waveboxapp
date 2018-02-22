@@ -363,6 +363,32 @@ class MailboxesWindow extends WaveboxWindow {
   }
 
   /* ****************************************************************************/
+  // Mailbox Actions: Switching Mailbox & Service
+  /* ****************************************************************************/
+
+  /**
+  * Switches to the next mailbox or service in the stack
+  * @param allowCycling=false: set to true to allow cycling at end/beginning
+  * @return this
+  */
+  switchNextTab () {
+    this.show().focus()
+    mailboxActions.changeActiveTabToNext()
+    return this
+  }
+
+  /**
+  * Switches to the previous mailbox or service in the stack
+  * @param allowCycling=false: set to true to allow cycling at end/beginning
+  * @return this
+  */
+  switchPrevTab () {
+    this.show().focus()
+    mailboxActions.changeActiveTabToPrev()
+    return this
+  }
+
+  /* ****************************************************************************/
   // Mailbox Actions: Navigation
   /* ****************************************************************************/
 

@@ -53,6 +53,8 @@ class MailboxStore extends CoreMailboxStore {
       handleChangeActiveServiceIndex: actions.CHANGE_ACTIVE_SERVICE_INDEX,
       handleChangeActiveServiceToPrev: actions.CHANGE_ACTIVE_SERVICE_TO_PREV,
       handleChangeActiveServiceToNext: actions.CHANGE_ACTIVE_SERVICE_TO_NEXT,
+      handleChangeActiveTabToNext: actions.CHANGE_ACTIVE_TAB_TO_NEXT,
+      handleChangeActiveTabToPrev: actions.CHANGE_ACTIVE_TAB_TO_PREV,
 
       // Sleeping
       handleAwakenService: actions.AWAKEN_SERVICE,
@@ -321,10 +323,6 @@ class MailboxStore extends CoreMailboxStore {
     actions.reduceService.defer(id, service, ServiceReducer.mergeChangesetOnActive)
   }
 
-  /**
-  * Handles the active mailbox changing to the prev in the index
-  * @param allowCycling: if true will cycle back when at end or beginning
-  */
   handleChangeActiveToPrev ({ allowCycling }) {
     this.preventDefault()
     const activeIndex = this.index.findIndex((id) => id === this.active)
@@ -337,10 +335,6 @@ class MailboxStore extends CoreMailboxStore {
     actions.changeActive.defer(nextId)
   }
 
-  /**
-  * Handles the active mailbox changing to the next in the index
-  * @param allowCycling: if true will cycle back when at end or beginning
-  */
   handleChangeActiveToNext ({ allowCycling }) {
     this.preventDefault()
     const activeIndex = this.index.findIndex((id) => id === this.active)
@@ -353,10 +347,6 @@ class MailboxStore extends CoreMailboxStore {
     actions.changeActive.defer(nextId)
   }
 
-  /**
-  * Handles changing the active service to the one at the service
-  * @param index: the index of the service
-  */
   handleChangeActiveServiceIndex ({ index }) {
     this.preventDefault()
     if (this.isMailboxRestricted(this.active)) { return }
@@ -367,10 +357,6 @@ class MailboxStore extends CoreMailboxStore {
     }
   }
 
-  /**
-  * Handles the active service changing to the previous in the index
-  * @param allowCycling: if true will cycle back when at end or beginning
-  */
   handleChangeActiveServiceToPrev ({ allowCycling }) {
     this.preventDefault()
     if (this.isMailboxRestricted(this.active)) { return }
@@ -387,10 +373,6 @@ class MailboxStore extends CoreMailboxStore {
     actions.changeActive.defer(mailbox.id, nextServiceType)
   }
 
-  /**
-  * Handles the active service changing to the next in the index
-  * @param allowCycling: if true will cycle back when at end or beginning
-  */
   handleChangeActiveServiceToNext ({ allowCycling }) {
     this.preventDefault()
     if (this.isMailboxRestricted(this.active)) { return }
@@ -405,6 +387,58 @@ class MailboxStore extends CoreMailboxStore {
       nextServiceType = mailbox.enabledServiceTypes[Math.min(mailbox.enabledServiceTypes.length - 1, activeIndex + 1)] || null
     }
     actions.changeActive.defer(mailbox.id, nextServiceType)
+  }
+
+  handleChangeActiveTabToNext () {
+    this.preventDefault()
+
+    const mailbox = this.getMailbox(this.active)
+    const activeServiceIndex = mailbox.enabledServiceTypes.findIndex((t) => t === this.activeService)
+
+    if (activeServiceIndex === mailbox.enabledServiceTypes.length - 1) {
+      // Next Mailbox
+      const activeMailboxIndex = this.index.findIndex((id) => id === this.active)
+      let nextMailboxId
+      if (activeMailboxIndex === this.index.length - 1) {
+        nextMailboxId = this.index[0] || null
+      } else {
+        nextMailboxId = this.index[Math.min(this.index.length - 1, activeMailboxIndex + 1)] || null
+      }
+      if (nextMailboxId) {
+        const nextMailbox = this.getMailbox(nextMailboxId)
+        actions.changeActive.defer(nextMailboxId, nextMailbox.enabledServiceTypes[0])
+      }
+    } else {
+      // Next Service
+      const nextServiceType = mailbox.enabledServiceTypes[Math.min(mailbox.enabledServiceTypes.length - 1, activeServiceIndex + 1)] || null
+      actions.changeActive.defer(mailbox.id, nextServiceType)
+    }
+  }
+
+  handleChangeActiveTabToPrev () {
+    this.preventDefault()
+
+    const mailbox = this.getMailbox(this.active)
+    const activeServiceIndex = mailbox.enabledServiceTypes.findIndex((t) => t === this.activeService)
+
+    if (activeServiceIndex === 0) {
+      // Next Mailbox
+      const activeMailboxIndex = this.index.findIndex((id) => id === this.active)
+      let nextMailboxId
+      if (activeMailboxIndex === 0) {
+        nextMailboxId = this.index[this.index.length - 1] || null
+      } else {
+        nextMailboxId = this.index[Math.max(0, activeMailboxIndex - 1)] || null
+      }
+      if (nextMailboxId) {
+        const nextMailbox = this.getMailbox(nextMailboxId)
+        actions.changeActive.defer(nextMailboxId, nextMailbox.enabledServiceTypes[nextMailbox.enabledServiceTypes.length - 1])
+      }
+    } else {
+      // Next Service
+      const nextServiceType = mailbox.enabledServiceTypes[Math.max(0, activeServiceIndex - 1)] || null
+      actions.changeActive.defer(mailbox.id, nextServiceType)
+    }
   }
 
   /* **************************************************************************/

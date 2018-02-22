@@ -242,7 +242,19 @@ class WaveboxAppPrimaryMenu {
             click: WaveboxAppPrimaryMenuActions.cycleWindows,
             accelerator: accelerators.cycleWindows
           }
-        ].concat(mailboxes.length <= 1 ? [] : [
+        ].concat(mailboxes.length > 1 || (activeMailbox && activeMailbox.hasAdditionalServices) ? [
+          { type: 'separator' },
+          {
+            label: 'Previous Account / Service',
+            click: WaveboxAppPrimaryMenuActions.prevMailboxTab,
+            accelerator: accelerators.prevTab
+          },
+          {
+            label: 'Next Account / Service',
+            click: WaveboxAppPrimaryMenuActions.nextMailboxTab,
+            accelerator: accelerators.nextTab
+          }
+        ] : []).concat(mailboxes.length <= 1 ? [] : [
           { type: 'separator' },
           {
             label: 'Previous Account',
