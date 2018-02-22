@@ -75,7 +75,7 @@ export default class UISettingsSection extends React.Component {
               label='Open links in background'
               labelPosition='right'
               onToggle={(evt, toggled) => settingsActions.sub.os.setOpenLinksInBackground(toggled)} />
-            ) : undefined}
+          ) : undefined}
           <Toggle
             toggled={ui.openHidden}
             label='Always start minimized'

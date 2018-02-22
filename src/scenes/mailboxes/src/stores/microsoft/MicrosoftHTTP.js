@@ -314,20 +314,20 @@ class MicrosoftHTTP {
   */
   static markMessageRead (auth, messageId) {
     return Promise.resolve()
-    .then(() => window.fetch(`https://graph.microsoft.com/beta/me/messages/${messageId}`, {
-      method: 'PATCH',
-      headers: {
-        'Accept': 'application/json',
-        'User-Agent': 'wavebox',
-        'Authorization': `Bearer ${auth}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        isRead: true
-      })
-    }))
-    .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
-    .then((res) => res.json())
+      .then(() => window.fetch(`https://graph.microsoft.com/beta/me/messages/${messageId}`, {
+        method: 'PATCH',
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'wavebox',
+          'Authorization': `Bearer ${auth}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          isRead: true
+        })
+      }))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.json())
   }
 
   /* **************************************************************************/

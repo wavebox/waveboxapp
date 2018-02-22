@@ -81,18 +81,18 @@ export default class ResourceMonitorResponder {
         }
       ].concat(
         mailboxStore
-        .getState()
-        .getMailboxesOfType(MailboxTypes.SLACK)
-        .map((mailbox) => {
-          const slackState = slackStore.getState()
-          return {
-            description: `Slack : ${mailbox.displayName}`,
-            isSetup: slackState.isMailboxConnectionSetup(mailbox.id),
-            isUnderMaintenance: false,
-            isConnected: slackState.isMailboxConnected(mailbox.id),
-            connectionMode: 'WebSocket'
-          }
-        })
+          .getState()
+          .getMailboxesOfType(MailboxTypes.SLACK)
+          .map((mailbox) => {
+            const slackState = slackStore.getState()
+            return {
+              description: `Slack : ${mailbox.displayName}`,
+              isSetup: slackState.isMailboxConnectionSetup(mailbox.id),
+              isUnderMaintenance: false,
+              isConnected: slackState.isMailboxConnected(mailbox.id),
+              connectionMode: 'WebSocket'
+            }
+          })
       )
     }
   }

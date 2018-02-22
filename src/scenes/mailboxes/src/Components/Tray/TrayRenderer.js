@@ -247,8 +247,8 @@ class TrayRenderer {
   */
   static renderPNGDataImage (size, tray, unreadCount) {
     return Promise.resolve()
-     .then(() => TrayRenderer.renderCanvas(size, tray, unreadCount))
-     .then((canvas) => Promise.resolve(canvas.toDataURL('image/png')))
+      .then(() => TrayRenderer.renderCanvas(size, tray, unreadCount))
+      .then((canvas) => Promise.resolve(canvas.toDataURL('image/png')))
   }
 
   /**

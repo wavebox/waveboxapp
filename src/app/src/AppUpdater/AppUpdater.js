@@ -183,8 +183,10 @@ class AppUpdater {
       }
       AppUpdater.migrateWin32DatabaseLocation(logger)
       Win32Registry.addManifestEntries(path.join(process.execPath, '../../Wavebox.exe'))
-        .then(() => logger.promiseLog(`Added Registry Entries`),
-        (err) => logger.promiseLog(`Failed to add Registry Entries ${err}`))
+        .then(
+          () => logger.promiseLog(`Added Registry Entries`),
+          (err) => logger.promiseLog(`Failed to add Registry Entries ${err}`)
+        )
         .then(() => {
           logger.flush()
           setTimeout(app.quit, 1000)
@@ -194,8 +196,10 @@ class AppUpdater {
       logger.log(`Remove shortcuts`)
       AppUpdater._spawnWin32Update(['--removeShortcut', path.basename(process.execPath)])
       Win32Registry.removeManifestEntries(path.join(process.execPath, '../../Wavebox.exe'))
-        .then(() => logger.promiseLog(`Removed Registry Entries`),
-        (err) => logger.promiseLog(`Failed to remove Registry Entries ${err}`))
+        .then(
+          () => logger.promiseLog(`Removed Registry Entries`),
+          (err) => logger.promiseLog(`Failed to remove Registry Entries ${err}`)
+        )
         .then(() => {
           logger.flush()
           setTimeout(app.quit, 1000)

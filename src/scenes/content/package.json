@@ -15,12 +15,12 @@
     "react-dom": "16.2.0",
     "react-portal-tooltip": "2.3.0",
     "react-timer-mixin": "0.13.3",
-    "urijs": "1.19.0",
     "uuid": "3.2.1"
   },
   "devDependencies": {
-    "standard": "10.0.3",
-    "babel-eslint": "8.0.3"
+    "standard": "11.0.0",
+    "babel-eslint": "8.2.2",
+    "babel-plugin-transform-class-properties": "6.24.1"
   },
   "standard": {
     "parser": "babel-eslint"

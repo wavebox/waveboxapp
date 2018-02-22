@@ -54,21 +54,21 @@
     "babel-preset-stage-0": "6.24.1",
     "clean-webpack-plugin": "0.1.18",
     "colors": "1.1.2",
-    "copy-webpack-plugin": "4.4.0",
+    "copy-webpack-plugin": "4.4.1",
     "css-loader": "0.28.9",
     "electron": "1.8.2",
     "electron-rebuild": "1.7.3",
     "extract-text-webpack-plugin": "3.0.2",
-    "file-loader": "1.1.6",
+    "file-loader": "1.1.9",
     "fs-extra": "5.0.0",
     "graceful-fs": "4.1.11",
     "json-loader": "0.5.7",
     "jsx-loader": "0.13.2",
-    "less": "2.7.3",
+    "less": "3.0.1",
     "less-loader": "4.0.5",
     "on-build-webpack": "0.1.0",
-    "style-loader": "0.20.1",
-    "uglify-es": "3.3.10",
+    "style-loader": "0.20.2",
+    "uglify-es": "3.3.9",
     "url-loader": "0.6.2",
     "uuid": "3.2.1",
     "webpack": "3.10.0",
@@ -77,8 +77,8 @@
     "yargs": "11.0.0"
   },
   "devDependencies": {
-    "standard": "10.0.3",
-    "babel-eslint": "8.0.3"
+    "standard": "11.0.0",
+    "babel-eslint": "8.2.2"
   },
   "standard": {
     "parser": "babel-eslint"

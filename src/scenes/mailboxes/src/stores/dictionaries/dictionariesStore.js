@@ -200,8 +200,7 @@ class DictionariesStore {
         .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
         .then((res) => res.text())
         .then((dic) => { return { dic: dic } })
-    ])
-    .then((responses) => {
+    ]).then((responses) => {
       const data = responses.reduce((acc, res) => Object.assign(acc, res))
       const affPath = path.join(RuntimePaths.USER_DICTIONARIES_PATH, this.install.lang + '.aff')
       const dicPath = path.join(RuntimePaths.USER_DICTIONARIES_PATH, this.install.lang + '.dic')

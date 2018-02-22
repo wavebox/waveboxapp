@@ -93,7 +93,7 @@ class EnhancedNotificationRenderer {
         const notif = new Win32Notification.ToastNotification({
           appId: pkg.name,
           template: [
-            /*eslint-disable */
+            /* eslint-disable */
             '<toast>',
               '<visual>',
                 '<binding template="ToastGeneric">',
@@ -104,7 +104,7 @@ class EnhancedNotificationRenderer {
               '</visual>',
               `<audio src="${sound}" silent="${html5Options.silent ? 'true' : 'false'}" />`,
             '</toast>'
-            /*eslint-enable */
+            /* eslint-enable */
           ].filter((l) => !!l).join(''),
           strings: [
             title,
@@ -139,7 +139,7 @@ class EnhancedNotificationRenderer {
         const notif = new Win32Notification.ToastNotification({
           appId: pkg.name,
           template: [
-            /*eslint-disable */
+            /* eslint-disable */
             '<toast launch="launchApp">',
               '<visual>',
                 '<binding template="ToastGeneric">',
@@ -150,7 +150,7 @@ class EnhancedNotificationRenderer {
               '</visual>',
               `<audio src="${sound || DEFAULT_NOTIFICATION_SOUND}" silent="${sound === undefined ? 'true' : 'false'}" />`,
             '</toast>'
-            /*eslint-enable */
+            /* eslint-enable */
           ].filter((l) => !!l).join(''),
           strings: [
             NotificationRendererUtils.formattedTitle(notification),

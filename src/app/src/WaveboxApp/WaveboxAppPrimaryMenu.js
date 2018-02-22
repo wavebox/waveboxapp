@@ -242,8 +242,7 @@ class WaveboxAppPrimaryMenu {
             click: WaveboxAppPrimaryMenuActions.cycleWindows,
             accelerator: accelerators.cycleWindows
           }
-        ]
-        .concat(mailboxes.length <= 1 ? [] : [
+        ].concat(mailboxes.length <= 1 ? [] : [
           { type: 'separator' },
           {
             label: 'Previous Account',
@@ -255,9 +254,9 @@ class WaveboxAppPrimaryMenu {
             click: WaveboxAppPrimaryMenuActions.nextMailbox,
             accelerator: accelerators.nextMailbox
           }
-        ])
-        .concat(mailboxes.length <= 1 ? [] : [{ type: 'separator' }])
-        .concat(mailboxes.length <= 1 ? [] : mailboxes.map((mailbox, index) => {
+        ]).concat(mailboxes.length <= 1 ? [] : [
+          { type: 'separator' }
+        ]).concat(mailboxes.length <= 1 ? [] : mailboxes.map((mailbox, index) => {
           return {
             label: mailbox.displayName || 'Untitled',
             type: 'radio',
@@ -265,8 +264,7 @@ class WaveboxAppPrimaryMenu {
             click: () => { WaveboxAppPrimaryMenuActions.changeMailbox(mailbox.id) },
             accelerator: this.buildAcceleratorStringForIndex(accelerators.mailboxIndex, index)
           }
-        }))
-        .concat(activeMailbox && activeMailbox.hasAdditionalServices ? [
+        })).concat(activeMailbox && activeMailbox.hasAdditionalServices ? [
           { type: 'separator' },
           {
             label: 'Previous Service',
@@ -278,9 +276,9 @@ class WaveboxAppPrimaryMenu {
             click: WaveboxAppPrimaryMenuActions.nextService,
             accelerator: accelerators.serviceNext
           }
-        ] : [])
-        .concat(activeMailbox && activeMailbox.hasAdditionalServices ? [{ type: 'separator' }] : [])
-        .concat(activeMailbox && activeMailbox.hasAdditionalServices ? activeMailbox.enabledServices.map((service, index) => {
+        ] : []).concat(activeMailbox && activeMailbox.hasAdditionalServices ? [
+          { type: 'separator' }
+        ] : []).concat(activeMailbox && activeMailbox.hasAdditionalServices ? activeMailbox.enabledServices.map((service, index) => {
           return {
             label: service.humanizedType,
             type: 'radio',
