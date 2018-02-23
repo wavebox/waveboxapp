@@ -75,9 +75,6 @@ export default class ContainerAccountSettings extends React.Component {
     const service = mailbox.serviceForType(CoreMailbox.SERVICE_TYPES.DEFAULT)
     const container = mailbox.container
 
-
-    console.log(">", container.hasWindowOpenOverrides, mailbox.getAllWindowOpenOverrideUserConfigs())
-
     return (
       <div {...passProps}>
         <Row>

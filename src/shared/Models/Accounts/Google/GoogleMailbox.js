@@ -2,7 +2,6 @@ const CoreMailbox = require('../CoreMailbox')
 const GoogleDefaultService = require('./GoogleDefaultService')
 const MailboxColors = require('../MailboxColors')
 const ServiceFactory = require('../ServiceFactory')
-const url = require('url')
 
 class GoogleMailbox extends CoreMailbox {
   /* **************************************************************************/
