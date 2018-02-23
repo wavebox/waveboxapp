@@ -394,17 +394,8 @@ class CoreMailbox extends Model {
   // Behaviour
   /* **************************************************************************/
 
-  /**
-  * Gets a window open mode override for a given action
-  * @param currentUrl: the url the page is currently on
-  * @param targetUrl: the url we're trying to open
-  * @param provisionalTargetUrl: the target url the user is hovering over
-  * @param disposition: the new window disposition
-  * @return undefined for no override, or unsanitized WINDOW_OPEN_MODES if there is an override
-  */
-  getWindowOpenModeOverrides (currentUrl, targetUrl, provisionalTargetUrl, disposition) {
-    return undefined
-  }
+  get windowOpenModeOverrideRulesets () { return [] }
+  get hasWindowOpenModeRulesetOverrides () { return this.windowOpenModeOverrideRulesets && this.windowOpenModeOverrideRulesets.length }
 }
 
 module.exports = CoreMailbox

@@ -75,6 +75,9 @@ export default class ContainerAccountSettings extends React.Component {
     const service = mailbox.serviceForType(CoreMailbox.SERVICE_TYPES.DEFAULT)
     const container = mailbox.container
 
+
+    console.log(">", container.hasWindowOpenOverrides, mailbox.getAllWindowOpenOverrideUserConfigs())
+
     return (
       <div {...passProps}>
         <Row>
@@ -134,7 +137,25 @@ export default class ContainerAccountSettings extends React.Component {
                 label='Restore defaults (Requires restart)'
                 onClick={this.handleResetCustomUserAgent} />
             </Paper>
-            <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
+            <AccountAdvancedSettings
+              mailbox={mailbox}
+              showRestart={showRestart}
+              windowOpenAfter={container.hasWindowOpenOverrides ? (
+                <div>
+                  {mailbox.getAllWindowOpenOverrideUserConfigs().map((config) => {
+                    return (
+                      <Toggle
+                        key={config.id}
+                        toggled={config.value}
+                        label={config.label}
+                        labelPosition='right'
+                        onToggle={(evt, toggled) => {
+                          mailboxActions.reduce(mailbox.id, ContainerMailboxReducer.setWindowOpenUserConfig, config.id, toggled)
+                        }} />
+                    )
+                  })}
+                </div>
+              ) : undefined} />
             <AccountDestructiveSettings mailbox={mailbox} />
             <Paper zDepth={1} style={styles.paper}>
               <div style={{ fontSize: '85%' }}>

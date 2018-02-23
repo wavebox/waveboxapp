@@ -4,6 +4,8 @@ import ContentPopupWindow from 'Windows/ContentPopupWindow'
 import { settingsStore } from 'stores/settings'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import WindowOpeningEngine from './WindowOpeningEngine'
+import WindowOpeningRules from './WindowOpeningRules'
+import WindowOpeningMatchTask from './WindowOpeningMatchTask'
 
 const WINDOW_OPEN_MODES = WindowOpeningEngine.WINDOW_OPEN_MODES
 
@@ -53,21 +55,40 @@ class WindowOpeningHandler {
     let partitionOverride
 
     // Run through our standard config
-    openMode = WindowOpeningEngine.getRuleForWindowOpen(currentUrl, targetUrl, openingWindowType, provisionalTargetUrl, disposition)
+    try {
+      openMode = WindowOpeningEngine.getRuleForWindowOpen(currentUrl, targetUrl, openingWindowType, provisionalTargetUrl, disposition)
+    } catch (ex) {
+      console.error(`Failed to process default window opening rules. Continuing with "${openMode}" behaviour...`, ex)
+    }
 
     // Look to see if the mailbox has an override
     if (mailbox) {
-      const mailboxOverride = mailbox.getWindowOpenModeOverrides(currentUrl, targetUrl, provisionalTargetUrl, disposition)
-      if (mailboxOverride && WINDOW_OPEN_MODES[mailboxOverride.toUpperCase()]) {
-        openMode = WINDOW_OPEN_MODES[mailboxOverride.toUpperCase()]
+      const mailboxRulesets = mailbox.windowOpenModeOverrideRulesets
+      if (Array.isArray(mailboxRulesets) && mailboxRulesets.length) {
+        try {
+          // Create a transient match task and ruleset to test matching
+          const matchTask = new WindowOpeningMatchTask(currentUrl, targetUrl, openingWindowType, provisionalTargetUrl, disposition)
+          const rules = new WindowOpeningRules(0, mailboxRulesets)
+          const mode = rules.getMatchingMode(matchTask)
+          if (mode && WINDOW_OPEN_MODES[mode]) {
+            openMode = mode
+          }
+        } catch (ex) {
+          console.error(`Failed to process mailbox "${mailbox.id}" window opening rules. Continuing with "${openMode}" behaviour...`, ex)
+        }
       }
     }
 
     // Check installed extensions to see if they overwrite the behaviour
-    const extensionRule = WindowOpeningEngine.getExtensionRuleForWindowOpen(webContentsId, targetUrl, disposition)
-    if (extensionRule.match) {
-      openMode = extensionRule.mode
-      partitionOverride = extensionRule.partitionOverride
+    let extensionRule
+    try {
+      extensionRule = WindowOpeningEngine.getExtensionRuleForWindowOpen(webContentsId, targetUrl, disposition)
+      if (extensionRule.match) {
+        openMode = extensionRule.mode
+        partitionOverride = extensionRule.partitionOverride
+      }
+    } catch (ex) {
+      console.error(`Failed to process extension window opening rules. Continuing with "${openMode}" behaviour...`, ex)
     }
 
     // Action the window open
@@ -92,7 +113,7 @@ class WindowOpeningHandler {
     }
 
     // Add any final bind events from the extension. Mainly as work-arounds for window opener
-    if (extensionRule.match) {
+    if (extensionRule && extensionRule.match) {
       if (typeof (extensionRule.config.match.actions) === 'object') {
         if (extensionRule.config.match.actions.onClose === 'reload_opener') {
           if (openedWindow) {
@@ -134,7 +155,13 @@ class WindowOpeningHandler {
     // Grab some info about our opener
     const webContentsId = evt.sender.id
     const currentUrl = evt.sender.getURL()
-    const navigateMode = WindowOpeningEngine.getRuleForNavigation(currentUrl, targetUrl, openingWindowType)
+
+    let navigateMode
+    try {
+      navigateMode = WindowOpeningEngine.getRuleForNavigation(currentUrl, targetUrl, openingWindowType)
+    } catch (ex) {
+      console.error(`Failed to process default navigate rules. Continuing with "${navigateMode}" behaviour...`, ex)
+    }
 
     if (navigateMode === WindowOpeningEngine.NAVIGATE_MODES.SUPPRESS) {
       evt.preventDefault()

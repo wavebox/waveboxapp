@@ -52,6 +52,25 @@ class ContainerMailboxReducer extends MailboxReducer {
       useCustomUserAgent: null
     })
   }
+
+  /* **************************************************************************/
+  // Window opening
+  /* **************************************************************************/
+
+  /**
+  * Sets the user config for a window open setting
+  * @param mailbox: the mailbox to update
+  * @param id: the id of the config setting
+  * @param value: the new value
+  */
+  static setWindowOpenUserConfig (mailbox, id, value) {
+    return mailbox.changeData({
+      windowOpenUserConfig: {
+        ...mailbox.windowOpenUserConfig,
+        [id]: value
+      }
+    })
+  }
 }
 
 export default ContainerMailboxReducer
