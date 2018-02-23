@@ -52,45 +52,58 @@ class GinboxApi {
   /**
   * Handles opening the compose ui and prefills relevant items
   * @param data: the data that was sent with the event
+  * @return promise with true if compose was a success, false otherwise
   */
   static composeMessage (data) {
-    const composeButton = document.querySelector('button.y.hC') || document.querySelector('[jsaction="jsl._"]')
-    if (!composeButton) { return }
-    composeButton.click()
-
-    setTimeout(() => {
-      // Grab elements
-      const bodyEl = document.querySelector('[g_editable="true"][role="textbox"]')
-      if (!bodyEl) { return }
-      const dialogEl = bodyEl.closest('[role="dialog"]')
-      if (!dialogEl) { return }
-      const recipientEl = dialogEl.querySelector('input') // first input
-      const subjectEl = dialogEl.querySelector('[jsaction*="subject"]')
-      let focusableEl
-
-      // Recipient
-      if (data.recipient && recipientEl) {
-        recipientEl.value = escapeHTML(data.recipient)
-        focusableEl = subjectEl
+    return new Promise((resolve, reject) => {
+      const composeButton = document.querySelector('button.y.hC') || document.querySelector('[jsaction="jsl._"]')
+      if (!composeButton) {
+        resolve(false)
+        return
       }
+      composeButton.click()
 
-      // Subject
-      if (data.subject && subjectEl) {
-        subjectEl.value = escapeHTML(data.subject)
-        focusableEl = bodyEl
-      }
+      setTimeout(() => {
+        // Grab elements
+        const bodyEl = document.querySelector('[g_editable="true"][role="textbox"]')
+        if (!bodyEl) {
+          resolve(false)
+          return
+        }
+        const dialogEl = bodyEl.closest('[role="dialog"]')
+        if (!dialogEl) {
+          resolve(false)
+          return
+        }
+        const recipientEl = dialogEl.querySelector('input') // first input
+        const subjectEl = dialogEl.querySelector('[jsaction*="subject"]')
+        let focusableEl
 
-      // Body
-      if (data.body && bodyEl) {
-        bodyEl.innerHTML = escapeHTML(data.body) + bodyEl.innerHTML
-        const labelEl = bodyEl.parentElement.querySelector('label')
-        if (labelEl) { labelEl.style.display = 'none' }
-        focusableEl = bodyEl
-      }
+        // Recipient
+        if (data.recipient && recipientEl) {
+          recipientEl.value = escapeHTML(data.recipient)
+          focusableEl = subjectEl
+        }
 
-      if (focusableEl) {
-        setTimeout(() => focusableEl.focus(), 500)
-      }
+        // Subject
+        if (data.subject && subjectEl) {
+          subjectEl.value = escapeHTML(data.subject)
+          focusableEl = bodyEl
+        }
+
+        // Body
+        if (data.body && bodyEl) {
+          bodyEl.innerHTML = escapeHTML(data.body) + bodyEl.innerHTML
+          const labelEl = bodyEl.parentElement.querySelector('label')
+          if (labelEl) { labelEl.style.display = 'none' }
+          focusableEl = bodyEl
+        }
+
+        if (focusableEl) {
+          setTimeout(() => focusableEl.focus(), 500)
+        }
+        resolve(true)
+      }, 250)
     })
   }
 

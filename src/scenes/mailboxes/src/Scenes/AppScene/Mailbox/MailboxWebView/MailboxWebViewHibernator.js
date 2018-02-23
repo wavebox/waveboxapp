@@ -26,13 +26,15 @@ export default class MailboxWebViewHibernator extends React.Component {
   constructor (props) {
     super(props)
 
+    this.queuedIPCSend = []
+
     // Expose the pass-through methods
     const self = this
     this.constructor.WEBVIEW_METHODS.forEach((m) => {
       if (self[m] !== undefined) { return } // Allow overwriting
-      self[m] = function () {
+      self[m] = function (...args) {
         if (self.refs[REF]) {
-          return self.refs[REF][m].apply(self.refs[REF], Array.from(arguments))
+          return self.refs[REF][m](...args)
         } else {
           throw new Error(`MailboxWebViewHibernator has slept MailboxWebView. Cannot call ${m}`)
         }
@@ -96,6 +98,46 @@ export default class MailboxWebViewHibernator extends React.Component {
   }
 
   /* **************************************************************************/
+  // Webview events
+  /* **************************************************************************/
+
+  handleDomReady = (evt) => {
+    // Send delayed ipc
+    if (this.queuedIPCSend.length) {
+      const queued = this.queuedIPCSend
+      this.queuedIPCSend = []
+      queued.forEach((req) => {
+        this.send(...req)
+      })
+    }
+
+    // Call parent
+    if (this.props.domReady) {
+      this.props.domReady(evt)
+    }
+  }
+
+  /* **************************************************************************/
+  // Pass-throughs
+  /* **************************************************************************/
+
+  /**
+  * Sends a message over IPC, however if the webview is sleeping queues
+  * it up until domready is fired
+  * @param {...args} the arguments to pass
+  * @return true if sent immediately, false otherwise
+  */
+  sendOrQueueIfSleeping (...args) {
+    if (this.state.isSleeping) {
+      this.queuedIPCSend.push(args)
+      return false
+    } else {
+      this.refs[REF].send(...args)
+      return true
+    }
+  }
+
+  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
@@ -130,9 +172,14 @@ export default class MailboxWebViewHibernator extends React.Component {
 
   render () {
     const { isSleeping, isCapturing } = this.state
+    const { domReady, ...passProps } = this.props
 
     if (!isSleeping || isCapturing) {
-      return (<MailboxWebView ref={REF} {...this.props} />)
+      return (
+        <MailboxWebView
+          ref={REF}
+          domReady={this.handleDomReady}
+          {...passProps} />)
     } else {
       return false
     }

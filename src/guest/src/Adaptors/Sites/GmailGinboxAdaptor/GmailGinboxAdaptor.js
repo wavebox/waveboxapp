@@ -152,7 +152,16 @@ class GmailGinboxAdaptor extends BaseAdaptor {
   * @param data: the data that was sent with the event
   */
   handleComposeMessageGmail = (evt, data) => {
-    GmailApi.composeMessage(data)
+    if (!GmailApi.composeMessage(data)) {
+      let retries = 0
+      const retry = setInterval(() => {
+        if (retries >= 10 || GmailApi.composeMessage(data)) {
+          clearInterval(retry)
+        } else {
+          retries++
+        }
+      }, 250)
+    }
   }
 
   /**
@@ -161,7 +170,20 @@ class GmailGinboxAdaptor extends BaseAdaptor {
   * @param data: the data that was sent with the event
   */
   handleComposeMessageGinbox = (evt, data) => {
-    GinboxApi.composeMessage(data)
+    const retrier = function (tries, max) {
+      if (tries >= max) { return }
+      GinboxApi.composeMessage(data)
+        .catch(() => Promise.resolve())
+        .then((success) => {
+          if (!success) {
+            setTimeout(() => {
+              retrier(tries + 1, max)
+            }, 250)
+          }
+        })
+    }
+
+    retrier(0, 10)
   }
 }
 
