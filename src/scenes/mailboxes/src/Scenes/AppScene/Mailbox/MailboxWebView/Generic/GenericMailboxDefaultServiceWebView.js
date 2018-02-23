@@ -33,7 +33,7 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
   }
 
   /**
-  * Handles the page favicon updating
+  * Handles the page title updating
   * @param evt: the event that fired
   */
   handlePageTitleUpdated = (evt) => {

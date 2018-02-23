@@ -2,6 +2,7 @@ import { ipcRenderer } from 'electron'
 import uuid from 'uuid'
 import { WB_GUEST_API_REQUEST } from 'shared/ipcEvents'
 import ExtensionLoader from './Extensions/ExtensionLoader'
+import pkg from 'package.json'
 
 class WaveboxApiProvider {
   /* **************************************************************************/
@@ -11,7 +12,9 @@ class WaveboxApiProvider {
   constructor () {
     this.apiKey = uuid.v4()
 
-    ExtensionLoader.loadWaveboxGuestApi(ExtensionLoader.ENDPOINTS.WAVEBOX_API, this.apiKey, {})
+    ExtensionLoader.loadWaveboxGuestApi(ExtensionLoader.ENDPOINTS.WAVEBOX_API, this.apiKey, {
+      appVersion: pkg.version
+    })
     window.addEventListener('message', this.handleWindowMessage)
   }
 

@@ -48,7 +48,7 @@ class ContainerService extends Model {
 
   get supportsUnreadActivity () { return this._value_('supportsUnreadActivity', true) }
   get supportsGuestNotifications () { return this._value_('supportsGuestNotifications', true) }
-  get supportsUnreadCount () { return this._value_('supportsUnreadCount', false) }
+  get supportsUnreadCount () { return this._value_('supportsUnreadCount', true) }
   get supportsTrayMessages () { return this._value_('supportsTrayMessages', false) }
   get supportsGuestConfig () { return this._value_('supportsGuestConfig', false) }
 
@@ -68,6 +68,13 @@ class ContainerService extends Model {
   get useSharedSiteInstances () { return this._value_('useSharedSiteInstances2', true) }
   get useAsyncAlerts () { return this._value_('useAsyncAlerts', true) }
   get html5NotificationsGenerateUnreadActivity () { return this._value_('html5NotificationsGenerateUnreadActivity', true) }
+
+  /* **************************************************************************/
+  // Properties: Unread
+  /* **************************************************************************/
+
+  get documentTitleHasUnread () { return this._value_('documentTitleHasUnread', true) }
+  get documentTitleUnreadBlinks () { return this._value_('documentTitleUnreadBlinks', false) }
 
   /* **************************************************************************/
   // Properties: User settings

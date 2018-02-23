@@ -42,6 +42,20 @@ class ContainerDefaultServiceReducer extends ServiceReducer {
   static clearUnseenNotifications (mailbox, service) {
     return service.changeData({ lastUnseenNotificationTime: null })
   }
+
+  /* **************************************************************************/
+  // Unread
+  /* **************************************************************************/
+
+  /**
+  * Sets the unread count for the document title
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param count: the new count
+  */
+  static setDocumentTitleUnreadCount (mailbox, service, count) {
+    return service.changeData({ documentTitleUnreadCount: count })
+  }
 }
 
 export default ContainerDefaultServiceReducer

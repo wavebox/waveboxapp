@@ -74,6 +74,19 @@ class ContainerDefaultService extends CoreService {
   get html5NotificationsGenerateUnreadActivity () { return this.containerService.html5NotificationsGenerateUnreadActivity }
 
   /* **************************************************************************/
+  // Properties : Unread
+  /* **************************************************************************/
+
+  get documentTitleHasUnread () { return this.containerService.documentTitleHasUnread }
+  get documentTitleUnreadBlinks () { return this.containerService.documentTitleUnreadBlinks }
+  get unreadCount () {
+    // Take super first as the api may have set it
+    const superUnread = super.unreadCount
+    if (superUnread && superUnread > 0) { return superUnread }
+    return this._value_('documentTitleUnreadCount', 0)
+  }
+
+  /* **************************************************************************/
   // Properties: Adaptors
   /* **************************************************************************/
 

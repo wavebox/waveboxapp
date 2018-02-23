@@ -1,4 +1,5 @@
 /* global WB_API_KEY */
+/* global WB_CONFIG */
 
 ;(function () {
   window.wavebox = {}
@@ -29,5 +30,6 @@
     apiCall('tray:setMessages', Array.from(arguments))
   }
 
-  window.wavebox.api.version = '0.0.1-alpha'
+  window.wavebox.api.version = '0.0.2-alpha'
+  window.wavebox.api.appVersion = WB_CONFIG.appVersion
 })()
