@@ -108,13 +108,16 @@ class SpellcheckService {
     const wc = evt.sender
     const id = wc.id
 
-    wc.on('destroyed', () => { this[privConnected].delete(id) })
-    wc.on('dom-ready', () => { // Content popup windows seem to be more reliable with this
-      wc.send(WB_SPELLCHECKER_CONFIGURE, this.buildGuestConfigurePayload(this[privState].language))
-    })
-    wc.send(WB_SPELLCHECKER_CONFIGURE, this.buildGuestConfigurePayload(this[privState].language))
+    if (!this[privConnected].has(id)) {
+      this[privConnected].add(id)
+      wc.on('destroyed', () => { this[privConnected].delete(id) })
+      wc.on('dom-ready', () => { // Content popup windows seem to be more reliable with this
+        console.log('domready')
+        wc.send(WB_SPELLCHECKER_CONFIGURE, this.buildGuestConfigurePayload(this[privState].language))
+      })
+    }
 
-    this[privConnected].add(id)
+    wc.send(WB_SPELLCHECKER_CONFIGURE, this.buildGuestConfigurePayload(this[privState].language))
   }
 
   /**
