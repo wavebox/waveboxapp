@@ -252,6 +252,19 @@ class CoreMailboxActions extends RemoteActions {
   }
 
   /**
+  * Sleeps all services in a mailbox
+  * @param id: the id of the mailbox
+  */
+  sleepAllServices (...args) {
+    if (process.type === 'browser') {
+      const [id] = args
+      return { id }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('sleepAllServices', args)
+    }
+  }
+
+  /**
   * Wakes up a service from sleep
   * @param id: the id of the mailbox
   * @param service: the service to awaken

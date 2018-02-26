@@ -6,6 +6,18 @@ import { userStore } from 'stores/user'
 import shallowCompare from 'react-addons-shallow-compare'
 import * as Colors from 'material-ui/styles/colors'
 
+class SleepAllIcon extends React.Component {
+  render () {
+    const { color, ...passProps } = this.props
+    return (
+      <span {...passProps}>
+        <FontIcon className='material-icons' color={color}>hotel</FontIcon>
+        <FontIcon className='material-icons' color={color} style={{ left: -12 }}>clear_all</FontIcon>
+      </span>
+    )
+  }
+}
+
 export default class SidelistItemMailboxPopover extends React.Component {
   /* **************************************************************************/
   // Class
@@ -186,6 +198,15 @@ export default class SidelistItemMailboxPopover extends React.Component {
   }
 
   /**
+  * Handles sleeping all services
+  */
+  handleSleepAllServices = () => {
+    this.handleClosePopover(() => {
+      mailboxActions.sleepAllServices(this.props.mailboxId)
+    })
+  }
+
+  /**
   * Handles opening a service in a new window
   */
   handleOpenInWindow = () => {
@@ -208,7 +229,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
   * @return array of jsx elements
   */
   renderMenuItems () {
-    const { mailbox, userHasSleepable, isServiceSleeping, isServiceActive, service } = this.state
+    const { mailbox, userHasSleepable, isServiceSleeping, service } = this.state
     const menuItems = []
 
     // Identification & Status
@@ -227,14 +248,14 @@ export default class SidelistItemMailboxPopover extends React.Component {
         onClick={this.handleOpenInWindow}
         leftIcon={<FontIcon className='material-icons'>open_in_new</FontIcon>} />
     )
-    if (userHasSleepable && (service || {}).sleepable && !isServiceActive) {
+    if (userHasSleepable && (service || {}).sleepable) {
       if (isServiceSleeping) {
         menuItems.push(
           <MenuItem
             key='awaken'
             primaryText='Awaken'
             onClick={this.handleAwakenService}
-            leftIcon={<FontIcon className='material-icons'>local_hotel</FontIcon>} />
+            leftIcon={<FontIcon className='material-icons'>alarm</FontIcon>} />
         )
       } else {
         menuItems.push(
@@ -242,7 +263,20 @@ export default class SidelistItemMailboxPopover extends React.Component {
             key='sleep'
             primaryText='Sleep'
             onClick={this.handleSleepService}
-            leftIcon={<FontIcon className='material-icons'>local_hotel</FontIcon>} />
+            leftIcon={<FontIcon className='material-icons'>hotel</FontIcon>} />
+        )
+      }
+    }
+
+    if (userHasSleepable && mailbox.enabledServices.length > 1) {
+      const sleepableService = mailbox.enabledServices.find((s) => s.sleepable)
+      if (sleepableService) {
+        menuItems.push(
+          <MenuItem
+            key='sleep_all'
+            primaryText='Sleep All'
+            onClick={this.handleSleepAllServices}
+            leftIcon={<SleepAllIcon />} />
         )
       }
     }

@@ -59,6 +59,7 @@ class MailboxStore extends CoreMailboxStore {
       // Sleeping
       handleAwakenService: actions.AWAKEN_SERVICE,
       handleSleepService: actions.SLEEP_SERVICE,
+      handleSleepAllServices: actions.SLEEP_ALL_SERVICES,
 
       // Avatar
       handleSetCustomAvatar: actions.SET_CUSTOM_AVATAR,
@@ -450,7 +451,24 @@ class MailboxStore extends CoreMailboxStore {
   }
 
   handleSleepService ({ id, service }) {
+    if (this.isSleeping(id, service)) {
+      this.preventDefault()
+      return
+    }
+
     this.sleepMailbox(id, service)
+  }
+
+  handleSleepAllServices ({ id }) {
+    const mailbox = this.getMailbox(id)
+    if (!mailbox) {
+      this.preventDefault()
+      return
+    }
+
+    mailbox.enabledServiceTypes.forEach((serviceType) => {
+      this.sleepMailbox(id, serviceType)
+    })
   }
 
   /**
@@ -506,10 +524,7 @@ class MailboxStore extends CoreMailboxStore {
   * @return true if we did sleep, false otherwise
   */
   sleepMailbox (mailboxId, serviceType) {
-    if (this.isSleeping(mailboxId, serviceType)) {
-      this.preventDefault()
-      return
-    }
+    if (this.isSleeping(mailboxId, serviceType)) { return }
 
     const key = this.getFullServiceKey(mailboxId, serviceType)
     const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)

@@ -281,15 +281,17 @@ class CoreMailboxStore extends RemoteStore {
       const service = mailbox ? mailbox.serviceForType(serviceType) : undefined
       if (!service || !service.sleepable) { return false }
 
-      // Check if we are active
-      if (this.isActive(mailboxId, serviceType)) { return false }
-
       // Check if we are queued for sleeping sleeping
       const key = this.getFullServiceKey(mailboxId, serviceType)
       if (this.sleepingServices.has(key)) {
         return this.sleepingServices.get(key) === true
       } else {
-        return true
+        // If we're not explicitly set to be sleeping/awake use the active state as a great guess
+        if (this.isActive(mailboxId, serviceType)) {
+          return false
+        } else {
+          return true
+        }
       }
     }
 
