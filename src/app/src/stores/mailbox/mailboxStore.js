@@ -48,6 +48,7 @@ class MailboxStore extends CoreMailboxStore {
 
       // Active
       handleChangeActive: actions.CHANGE_ACTIVE,
+      handleChangeActiveIndex: actions.CHANGE_ACTIVE_INDEX,
       handleChangeActiveToPrev: actions.CHANGE_ACTIVE_TO_PREV,
       handleChangeActiveToNext: actions.CHANGE_ACTIVE_TO_NEXT,
       handleChangeActiveServiceIndex: actions.CHANGE_ACTIVE_SERVICE_INDEX,
@@ -322,6 +323,12 @@ class MailboxStore extends CoreMailboxStore {
     // Change active & update model
     this.saveActive(id, service)
     actions.reduceService.defer(id, service, ServiceReducer.mergeChangesetOnActive)
+  }
+
+  handleChangeActiveIndex ({ index }) {
+    this.preventDefault()
+    const id = this.index[index]
+    if (id) { actions.changeActive.defer(id) }
   }
 
   handleChangeActiveToPrev ({ allowCycling }) {

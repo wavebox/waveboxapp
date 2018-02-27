@@ -24,6 +24,7 @@ import {evtMain} from 'AppEvents'
 import {TrayPopout, TrayBehaviour} from 'Tray'
 import {LinuxNotification} from 'Notifications'
 import WaveboxCert from './WaveboxCert'
+import WaveboxCommandArgs from './WaveboxCommandArgs'
 
 const privStarted = Symbol('privStarted')
 const privArgv = Symbol('privArgv')
@@ -260,6 +261,9 @@ class WaveboxApp {
 
     // Register global items
     this[privGlobalShortcuts].register()
+
+    // Proces any user arguments
+    WaveboxCommandArgs.processModifierArgs(this[privArgv], emblinkActions, mailboxActions)
   }
 
   /**

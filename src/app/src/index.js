@@ -7,13 +7,8 @@
 
   // Single app instance
   const singleAppQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
-    // Late require all of these...
-    const AppSingleInstance = require('./AppSingleInstance').default
-    const emblinkActions = require('stores/emblink/emblinkActions').default
-    const WaveboxWindow = require('Windows/WaveboxWindow').default
-    const MailboxesWindow = require('Windows/MailboxesWindow').default
-    const mainWindow = WaveboxWindow.getOfType(MailboxesWindow)
-    AppSingleInstance.processSingleInstanceArgs(mainWindow, emblinkActions, commandLine, workingDirectory)
+    const AppSingleInstance = require('./AppSingleInstance').default // Late require me
+    AppSingleInstance.processSingleInstanceArgs(commandLine, workingDirectory)
     return true
   })
   if (singleAppQuit) { app.quit(); return }

@@ -297,6 +297,20 @@ class CoreMailboxActions extends RemoteActions {
   }
 
   /**
+  * Changes the active mailbox to the one at the given index.
+  * If the index is out of bounds, fails silently
+  * @param index: the index of the mailbox
+  */
+  changeActiveIndex (...args) {
+    if (process.type === 'browser') {
+      const [index] = args
+      return { index }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('changeActiveIndex', args)
+    }
+  }
+
+  /**
   * Changes the active mailbox to the previous in the list
   * @param allowCycling=false: set to true to allow cycling at end/beginning
   */
