@@ -1,4 +1,4 @@
-import { BrowserWindow, webContents } from 'electron'
+import { BrowserWindow, webContents, screen } from 'electron'
 import EventEmitter from 'events'
 import { evtMain } from 'AppEvents'
 import { settingsStore } from 'stores/settings'
@@ -134,22 +134,18 @@ class WaveboxWindow extends EventEmitter {
     )
 
     // On darwin if we set the y coord too high we can end up not showing the titlebar
-    if (process.platform === 'darwin' && fullBrowserWindowPreferences.y !== undefined) {
-      fullBrowserWindowPreferences.y = Math.max(fullBrowserWindowPreferences.y, 25)
-    }
+    //if (process.platform === 'darwin' && fullBrowserWindowPreferences.y !== undefined) {
+      //fullBrowserWindowPreferences.y = Math.max(fullBrowserWindowPreferences.y, 30)
+    //}
 
     // Create the window & prep for lifecycle
     this[privWindow] = new BrowserWindow(fullBrowserWindowPreferences)
     this[privBrowserWindowId] = this.window.id
-
-    // Restore the window position
-    if (savedLocation.maximized && browserWindowPreferences.show !== false) {
-      this.window.maximize()
-    }
     this[settingsStore.getState().ui.showAppMenu ? 'showAppMenu' : 'hideAppMenu']()
 
     // Bind window event listeners
-    this.window.on('close', (evt) => { this.emit('close', evt) })
+    this.window.once('ready-to-show', (evt) => this._handleReadyToShow(evt, savedLocation))
+    this.window.on('close', (evt) => this.emit('close', evt))
     this.window.on('closed', (evt) => this.destroy(evt))
     this.window.on('focus', this._handleWindowFocused)
     this.window.on('blur', this._handleWindowBlurred)
@@ -246,6 +242,33 @@ class WaveboxWindow extends EventEmitter {
     this[privLastTimeInFocus] = new Date().getTime()
     this.window.webContents.send(WB_WINDOW_BLUR)
     evtMain.emit(evtMain.WB_WINDOW_BLURRED, {}, this.window.id)
+  }
+
+  /**
+  * Handles the window becoming ready to show
+  * @param evt: the event that fired
+  * @param savedLocation: the previous saved location
+  */
+  _handleReadyToShow = (evt, savedLocation) => {
+    // Requeue in case a later listener is changing state
+    setImmediate(() => {
+      if (this[privWindow].isVisible()) {
+        if (savedLocation.maximized) {
+          this[privWindow].maximize()
+        }
+
+        if (!this[privWindow].isMaximized()) {
+          const windowBounds = this[privWindow].getBounds()
+          const workArea = (screen.getDisplayMatching(windowBounds) || screen.getPrimaryDisplay()).workArea
+
+          if (windowBounds.x < workArea.x || windowBounds.y < workArea.y) {
+            const x = Math.max(windowBounds.x, workArea.x)
+            const y = Math.max(windowBounds.y, workArea.y)
+            this[privWindow].setPosition(x, y, false)
+          }
+        }
+      }
+    })
   }
 
   /* ****************************************************************************/
