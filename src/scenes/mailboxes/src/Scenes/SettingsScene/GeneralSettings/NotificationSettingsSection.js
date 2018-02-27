@@ -1,14 +1,31 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Toggle, Paper, SelectField, MenuItem, FlatButton, FontIcon } from 'material-ui'
+import { Toggle, Paper, SelectField, MenuItem, FlatButton, FontIcon, IconMenu, Divider } from 'material-ui'
+import Timeago from 'react-timeago'
 import settingsActions from 'stores/settings/settingsActions'
-import styles from '../CommonSettingStyles'
+import commonStyles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import { NotificationPlatformSupport, NotificationService } from 'Notifications'
 import {
   NOTIFICATION_PROVIDERS,
   NOTIFICATION_SOUNDS
 } from 'shared/Notifications'
+
+const styles = {
+  buttonIcon: {
+    marginLeft: 0
+  },
+  notificationMenuItem: {
+    minHeight: 32,
+    lineHeight: '32px',
+    fontSize: 14
+  },
+  notificationMutedInfoMenuItem: {
+    minHeight: 32,
+    lineHeight: '32px',
+    fontSize: 12
+  }
+}
 
 export default class NotificationSettingsSection extends React.Component {
   /* **************************************************************************/
@@ -35,6 +52,27 @@ export default class NotificationSettingsSection extends React.Component {
         `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
       ].join('\n')
     )
+  }
+
+  /**
+  * Mutes the notification for a certain amount of time
+  * @param time: the time to pass to the dispatcher
+  */
+  muteNotificationsForTime = (time) => {
+    // Defer the update slightly so we don't update the menu when it's open
+    setTimeout(() => {
+      settingsActions.sub.os.muteNotificationsForHours(time)
+    }, 500)
+  }
+
+  /**
+  * Clears the notification mute
+  */
+  unmuteNotifications = () => {
+    // Defer the update slightly so we don't update the menu when it's open
+    setTimeout(() => {
+      settingsActions.sub.os.clearNotificationMute()
+    }, 500)
   }
 
   /* **************************************************************************/
@@ -102,6 +140,81 @@ export default class NotificationSettingsSection extends React.Component {
     )
   }
 
+  /**
+  * Renders the mute section
+  * @param os: the os settings
+  * @return jsx
+  */
+  renderMute (os) {
+    return (
+      <div>
+        <IconMenu
+          iconButtonElement={os.notificationsMuted ? (
+            <FlatButton
+              icon={<FontIcon style={styles.buttonIcon} className='material-icons'>notifications_paused</FontIcon>}
+              label='Notifications muted' />
+          ) : (
+            <FlatButton
+              icon={<FontIcon style={styles.buttonIcon} className='material-icons'>notifications</FontIcon>}
+              label='Mute notifications' />
+          )}
+          anchorOrigin={{horizontal: 'left', vertical: 'top'}}
+          targetOrigin={{horizontal: 'left', vertical: 'top'}}>
+          <MenuItem
+            style={styles.notificationMenuItem}
+            primaryText='Mute for 30 minutes'
+            onClick={() => this.muteNotificationsForTime(0.5)} />
+          <MenuItem
+            style={styles.notificationMenuItem}
+            primaryText='Mute for 1 hour'
+            onClick={() => this.muteNotificationsForTime(1)} />
+          <MenuItem
+            style={styles.notificationMenuItem}
+            primaryText='Mute for 2 hours'
+            onClick={() => this.muteNotificationsForTime(2)} />
+          <MenuItem
+            style={styles.notificationMenuItem}
+            primaryText='Mute for 6 hours'
+            onClick={() => this.muteNotificationsForTime(6)} />
+          <MenuItem
+            style={styles.notificationMenuItem}
+            primaryText='Mute for 1 day'
+            onClick={() => this.muteNotificationsForTime(24)} />
+          {os.notificationsMuted ? (
+            <Divider />
+          ) : undefined}
+          {os.notificationsMuted ? (
+            <MenuItem
+              style={styles.notificationMenuItem}
+              primaryText='Unmute'
+              leftIcon={(
+                <FontIcon
+                  style={{ margin: '4px 12px' }}
+                  size={30}
+                  className='material-icons'>
+                  notifications
+                </FontIcon>
+              )}
+              onClick={this.unmuteNotifications} />
+          ) : undefined}
+          {os.notificationsMuted ? (
+            <MenuItem
+              style={styles.notificationMutedInfoMenuItem}
+              disabled
+              primaryText={(
+                <Timeago
+                  date={os.notificationsMutedEndEpoch}
+                  formatter={(value, unit, suffix) => {
+                    if (value !== 1) { unit += 's' }
+                    return 'Notifications muted for ' + value + ' ' + unit
+                  }} />
+              )} />
+          ) : undefined}
+        </IconMenu>
+      </div>
+    )
+  }
+
   render () {
     const { os, ...passProps } = this.props
 
@@ -109,8 +222,8 @@ export default class NotificationSettingsSection extends React.Component {
       .filter((provider) => NotificationPlatformSupport.supportsProvider(provider))
 
     return (
-      <Paper zDepth={1} style={styles.paper} {...passProps}>
-        <h1 style={styles.subheading}>Notifications</h1>
+      <Paper zDepth={1} style={commonStyles.paper} {...passProps}>
+        <h1 style={commonStyles.subheading}>Notifications</h1>
         {validProviders.length > 1 ? (
           <SelectField
             floatingLabelText='Notification Provider'
@@ -140,12 +253,13 @@ export default class NotificationSettingsSection extends React.Component {
           disabled={!os.notificationsEnabled}
           onToggle={(evt, toggled) => settingsActions.sub.os.setNotificationsSilent(!toggled)} />
         {this.renderEnhanced(os)}
+        {this.renderMute(os)}
         <div>
           <FlatButton
             disabled={!os.notificationsEnabled}
             onClick={this.sendTestNotification}
             label='Test Notification'
-            icon={<FontIcon style={{ marginLeft: 0 }} className='material-icons'>play_arrow</FontIcon>}
+            icon={<FontIcon style={styles.buttonIcon} className='material-icons'>play_arrow</FontIcon>}
           />
         </div>
       </Paper>

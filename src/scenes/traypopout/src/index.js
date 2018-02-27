@@ -6,6 +6,7 @@ import { userStore, userActions } from 'stores/user'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import { emblinkStore, emblinkActions } from 'stores/emblink'
 import { notifhistStore, notifhistActions } from 'stores/notifhist'
+import { settingsStore, settingsActions } from 'stores/settings'
 
 // Load what we have in the db
 userStore.getState()
@@ -16,6 +17,8 @@ emblinkStore.getState()
 emblinkActions.load()
 notifhistStore.getState()
 notifhistActions.load()
+settingsStore.getState()
+settingsActions.load()
 
 // Prevent zooming
 webFrame.setVisualZoomLevelLimits(1, 1)

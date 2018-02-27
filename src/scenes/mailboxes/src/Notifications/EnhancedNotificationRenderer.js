@@ -25,6 +25,8 @@ class EnhancedNotificationRenderer {
   * @param clickData={}: the data to provide to the click handler
   */
   presentNotificationDarwin (title, html5Options = {}, clickHandler = undefined, clickData = {}) {
+    if (NotificationRendererUtils.areNotificationsMuted()) { return }
+
     const notif = new MacNotification(title, {
       body: html5Options.body,
       icon: html5Options.icon,
@@ -48,6 +50,7 @@ class EnhancedNotificationRenderer {
   * @param settingsState: the current settings state
   */
   presentMailboxNotificationDarwin (mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState) {
+    if (NotificationRendererUtils.areNotificationsMuted(settingsState)) { return }
     const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceType, mailboxState, settingsState)
     if (!enabled) { return }
 
@@ -87,6 +90,8 @@ class EnhancedNotificationRenderer {
   * @param clickData={}: the data to provide to the click handler
   */
   presentNotificationWin32 (title, html5Options = {}, clickHandler = undefined, clickData = {}) {
+    if (NotificationRendererUtils.areNotificationsMuted()) { return }
+
     const sound = settingsStore.getState().os.notificationsSound || DEFAULT_NOTIFICATION_SOUND
     NotificationRendererUtils.preparedIconWin32(html5Options.icon)
       .then((icon) => {
@@ -130,6 +135,7 @@ class EnhancedNotificationRenderer {
   * @param settingsState: the current settings state
   */
   presentMailboxNotificationWin32 (mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState) {
+    if (NotificationRendererUtils.areNotificationsMuted(settingsState)) { return }
     const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceType, mailboxState, settingsState)
     if (!enabled) { return }
 
@@ -178,6 +184,8 @@ class EnhancedNotificationRenderer {
   * @param clickData={}: the data to provide to the click handler
   */
   presentNotificationLinux (title, html5Options = {}, clickHandler = undefined, clickData = {}) {
+    if (NotificationRendererUtils.areNotificationsMuted()) { return }
+
     const sound = settingsStore.getState().os.notificationsSound || DEFAULT_NOTIFICATION_SOUND
     this._showLinuxNotification({
       title: title,
@@ -197,6 +205,7 @@ class EnhancedNotificationRenderer {
   * @param settingsState: the current settings state
   */
   presentMailboxNotificationLinux (mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState) {
+    if (NotificationRendererUtils.areNotificationsMuted(settingsState)) { return }
     const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceType, mailboxState, settingsState)
     if (!enabled) { return }
 

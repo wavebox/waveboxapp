@@ -3,8 +3,22 @@ import os from 'os'
 import path from 'path'
 import fs from 'fs-extra'
 import Resolver from 'Runtime/Resolver'
+import settingsStore from 'stores/settings/settingsStore'
 
 export default class NotificationRendererUtils {
+  /* **************************************************************************/
+  // OS Settings
+  /* **************************************************************************/
+
+  /**
+  * Checks if notifications are muted
+  * @param settingsState=autoget: the settings state
+  * @return true if notifications are muted, false otherwise
+  */
+  static areNotificationsMuted (settingsState = settingsStore.getState()) {
+    return settingsState.os.notificationsMuted
+  }
+
   /* **************************************************************************/
   // Config utils
   /* **************************************************************************/

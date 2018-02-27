@@ -74,6 +74,23 @@ class OSSettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * Mutes the notification for a certain amount of hours
+  * @param hours: the hours to mute for
+  */
+  muteNotificationsForHours (hours) {
+    const now = new Date().getTime()
+    const epoch = now + (1000 * 60 * 60 * hours)
+    this.dispatchUpdate('notificationsMutedEndEpoch', epoch)
+  }
+
+  /**
+  * Clears the notification mute
+  */
+  clearNotificationMute () {
+    this.dispatchUpdate('notificationsMutedEndEpoch', null)
+  }
+
+  /**
   * @param background: true to open links in the background
   */
   setOpenLinksInBackground (background) {

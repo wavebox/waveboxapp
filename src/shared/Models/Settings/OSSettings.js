@@ -30,6 +30,12 @@ class OSSettings extends Model {
   get notificationsSilent () { return this._value_('notificationsSilent', false) }
   get notificationsProvider () { return this._value_('notificationsProvider', NOTIFICATION_PROVIDERS.ELECTRON) }
   get notificationsSound () { return this._value_('notificationsSound', DEFAULT_NOTIFICATION_SOUND) }
+  get notificationsMutedEndEpoch () { return this._value_('notificationsMutedEndEpoch', null) }
+  get notificationsMuted () {
+    if (this.notificationsMutedEndEpoch === null) { return false }
+    if (new Date().getTime() > this.notificationsMutedEndEpoch) { return false }
+    return true
+  }
 
   /* ****************************************************************************/
   // Misc
