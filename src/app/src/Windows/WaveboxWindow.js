@@ -245,10 +245,12 @@ class WaveboxWindow extends EventEmitter {
   * @param savedLocation: the previous saved location
   */
   _handleReadyToShow = (evt, savedLocation) => {
-    // Requeue in case a later listener is changing state
+    // Defer this as we may be showing the window hidden and choosing
+    // to show on this callback. Do this to to ensure we are the last
+    // callback and we have the most up to date state
     setImmediate(() => {
       if (this[privWindow].isVisible()) {
-        if (savedLocation.maximized) {
+        if (savedLocation.maximized === true) {
           this[privWindow].maximize()
         }
 
