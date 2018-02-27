@@ -133,11 +133,6 @@ class WaveboxWindow extends EventEmitter {
       savedLocation
     )
 
-    // On darwin if we set the y coord too high we can end up not showing the titlebar
-    //if (process.platform === 'darwin' && fullBrowserWindowPreferences.y !== undefined) {
-      //fullBrowserWindowPreferences.y = Math.max(fullBrowserWindowPreferences.y, 30)
-    //}
-
     // Create the window & prep for lifecycle
     this[privWindow] = new BrowserWindow(fullBrowserWindowPreferences)
     this[privBrowserWindowId] = this.window.id
