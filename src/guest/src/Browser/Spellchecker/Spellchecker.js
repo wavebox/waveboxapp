@@ -108,6 +108,7 @@ class Spellchecker {
     // Fix for https://github.com/electron/electron/issues/11868
     clearTimeout(this[privRebindThrottle])
     this[privRebindThrottle] = setTimeout(() => {
+      if (!this[privWebFrameLanguage]) { return }
       webFrame.setSpellCheckProvider(this[privWebFrameLanguage], true, {
         spellCheck: this._checkSpelling
       })
