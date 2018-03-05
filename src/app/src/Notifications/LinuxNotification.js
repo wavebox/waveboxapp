@@ -196,9 +196,11 @@ class LinuxNotification {
   * Shows the window ensuring it's positioned correctly
   */
   showWindow () {
-    const screenSize = screen.getPrimaryDisplay().workAreaSize
+    const workArea = screen.getPrimaryDisplay().workArea
+    const y = workArea.y + 30
+    const x = (workArea.x + workArea.width) - WINDOW_WIDTH - 10
     this[privWindow].setSize(WINDOW_WIDTH, WINDOW_HEIGHT)
-    this[privWindow].setPosition(screenSize.width - WINDOW_WIDTH - 10, 30)
+    this[privWindow].setPosition(x, y)
     this[privWindow].show()
   }
 
