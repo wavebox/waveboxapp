@@ -215,7 +215,7 @@ export default class TraySettingsSection extends React.Component {
               <Col md={6}>
                 <SelectField
                   fullWidth
-                  floatingLabelText='Alt Click Action (Click + Ctrl/Alt/Shift)'
+                  floatingLabelText='Alt Click Action'
                   disabled={!tray.show}
                   onChange={(evt, index, value) => { settingsActions.sub.tray.setAltClickAction(value) }}
                   value={tray.altClickAction}>

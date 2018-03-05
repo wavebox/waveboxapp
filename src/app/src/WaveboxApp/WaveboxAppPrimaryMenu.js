@@ -143,6 +143,12 @@ class WaveboxAppPrimaryMenu {
           },
           { type: 'separator' },
           {
+            label: 'Copy Current Tab URL',
+            click: WaveboxAppPrimaryMenuActions.copyCurrentTabUrl,
+            accelerator: accelerators.copyCurrentTabUrl
+          },
+          { type: 'separator' },
+          {
             label: 'Find',
             click: WaveboxAppPrimaryMenuActions.find,
             accelerator: accelerators.find

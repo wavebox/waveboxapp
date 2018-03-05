@@ -1,6 +1,6 @@
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import MailboxesWindow from 'Windows/MailboxesWindow'
-import { shell, dialog } from 'electron'
+import { shell, dialog, webContents, clipboard } from 'electron'
 import Release from 'shared/Release'
 import pkg from 'package.json'
 import {
@@ -263,6 +263,20 @@ class WaveboxAppPrimaryMenuAcions {
   mailboxNavForward = () => {
     const focused = WaveboxWindow.focused()
     if (focused) { focused.navigateForward() }
+  }
+
+  /* ****************************************************************************/
+  // Copy tools
+  /* ****************************************************************************/
+
+  copyCurrentTabUrl = () => {
+    const focusedWindow = WaveboxWindow.focused()
+    if (!focusedWindow) { return }
+    const focusedTabId = focusedWindow.focusedTabId()
+    if (focusedTabId === undefined) { return }
+    const focusedWebContents = webContents.fromId(focusedTabId)
+    if (!focusedWebContents) { return }
+    clipboard.writeText(focusedWebContents.getURL())
   }
 
   /* ****************************************************************************/

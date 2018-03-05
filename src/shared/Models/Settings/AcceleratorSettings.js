@@ -34,6 +34,7 @@ class AcceleratorSettings extends Model {
   get pasteDefault () { return 'CmdOrCtrl+V' }
   get pasteAndMatchStyleDefault () { return 'CmdOrCtrl+Shift+V' }
   get selectAllDefault () { return 'CmdOrCtrl+A' }
+  get copyCurrentTabUrlDefault () { return undefined }
   get findDefault () { return 'CmdOrCtrl+F' }
   get findNextDefault () { return 'CmdOrCtrl+G' }
 
@@ -96,6 +97,7 @@ class AcceleratorSettings extends Model {
   get paste () { return this._value_('paste', this.pasteDefault) }
   get pasteAndMatchStyle () { return this._value_('pasteAndMatchStyle', this.pasteAndMatchStyleDefault) }
   get selectAll () { return this._value_('selectAll', this.selectAllDefault) }
+  get copyCurrentTabUrl () { return this._value_('copyCurrentTabUrl', this.copyCurrentTabUrlDefault) }
   get find () { return this._value_('find', this.findDefault) }
   get findNext () { return this._value_('findNext', this.findNextDefault) }
 

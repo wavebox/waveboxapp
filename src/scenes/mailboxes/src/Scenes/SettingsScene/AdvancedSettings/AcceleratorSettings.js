@@ -38,6 +38,7 @@ const ACCELERATOR_NAMES = {
   paste: 'Paste',
   pasteAndMatchStyle: 'Paste and Match Style',
   selectAll: 'Select All',
+  copyCurrentTabUrl: 'Copy Current Tab URL',
   find: 'Find',
   findNext: 'Find Next',
 
@@ -96,6 +97,7 @@ const EDIT_SECTION = [
   'paste',
   'pasteAndMatchStyle',
   'selectAll',
+  'copyCurrentTabUrl',
   'find',
   'findNext'
 ]
