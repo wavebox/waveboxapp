@@ -32,7 +32,6 @@ const privAppMenu = Symbol('privAppMenu')
 const privGlobalShortcuts = Symbol('privGlobalShortcuts')
 const privMainWindow = Symbol('privMainWindow')
 const privCloseBehaviour = Symbol('privCloseBehaviour')
-const privSettingsRenderProcEntry = Symbol('privSettingsRenderProcEntry')
 
 class WaveboxApp {
   /* ****************************************************************************/
@@ -46,7 +45,6 @@ class WaveboxApp {
     this[privGlobalShortcuts] = undefined
     this[privMainWindow] = undefined
     this[privCloseBehaviour] = undefined
-    this[privSettingsRenderProcEntry] = undefined
   }
 
   /**
@@ -232,11 +230,6 @@ class WaveboxApp {
       } catch (ex) {
         console.error(`Failed to load extensions. Continuing...`, ex)
       }
-    }
-
-    // Write any state
-    if (!this[privSettingsRenderProcEntry]) {
-      this[privSettingsRenderProcEntry] = settingsState.createRenderProcessEntry()
     }
 
     // Doing this outside of ready has a side effect on high-sierra where you get a _TSGetMainThread error

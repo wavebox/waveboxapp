@@ -4,7 +4,6 @@ import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import { mailboxDispatch, MailboxLinker } from 'stores/mailbox'
 import { microsoftActions } from 'stores/microsoft'
-import Resolver from 'Runtime/Resolver'
 
 const REF = 'mailbox_tab'
 
@@ -60,7 +59,6 @@ export default class MicrosoftMailboxMailWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={Resolver.guestPreload()}
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT} />
     )

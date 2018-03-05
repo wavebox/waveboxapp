@@ -1,5 +1,9 @@
-import { app, ipcMain, BrowserWindow, dialog, webContents } from 'electron'
+import { app, ipcMain, BrowserWindow, dialog } from 'electron'
 import { ElectronWebContents } from 'ElectronTools'
+import { settingsStore } from 'stores/settings'
+import { CRExtensionManager } from 'Extensions/Chrome'
+import { ELEVATED_LOG_PREFIX } from 'shared/constants'
+import WaveboxWindow from 'Windows/WaveboxWindow'
 import {
   WCRPC_DOM_READY,
   WCRPC_CLOSE_WINDOW,
@@ -7,28 +11,35 @@ import {
   WCRPC_SEND_INPUT_EVENT,
   WCRPC_SEND_INPUT_EVENTS,
   WCRPC_SHOW_ASYNC_MESSAGE_DIALOG,
-  WCRPC_SYNC_GET_OPENER_INFO,
+  WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG,
+  WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG,
   WCRPC_DID_GET_REDIRECT_REQUEST
 } from 'shared/webContentsRPC'
-import { ELEVATED_LOG_PREFIX } from 'shared/constants'
-import WaveboxWindow from 'Windows/WaveboxWindow'
 
 const privConnected = Symbol('privConnected')
+const privNotificationService = Symbol('privNotificationService')
 
 class WebContentsRPCService {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
-  constructor () {
+  /**
+  * @param notificationService: the notification service
+  */
+  constructor (notificationService) {
+    this[privNotificationService] = notificationService
+
     this[privConnected] = new Set()
+
     app.on('web-contents-created', this._handleWebContentsCreated)
     ipcMain.on(WCRPC_CLOSE_WINDOW, this._handleCloseWindow)
     ipcMain.on(WCRPC_GUEST_CLOSE_WINDOW, this._handleGuestCloseWindow)
     ipcMain.on(WCRPC_SEND_INPUT_EVENT, this._handleSendInputEvent)
     ipcMain.on(WCRPC_SEND_INPUT_EVENTS, this._handleSendInputEvents)
     ipcMain.on(WCRPC_SHOW_ASYNC_MESSAGE_DIALOG, this._handleShowAsyncMessageDialog)
-    ipcMain.on(WCRPC_SYNC_GET_OPENER_INFO, this._handleSyncGetOpenerInfo)
+    ipcMain.on(WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG, this._handleSyncGetGuestPreloadInfo)
+    ipcMain.on(WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG, this._handleSyncGetExtensionPreloadInfo)
   }
 
   /* ****************************************************************************/
@@ -168,22 +179,53 @@ class WebContentsRPCService {
   }
 
   /**
-  * Synchronously gets the opener url from the webpreferences
+  * Synchronously gets the guest preload info
   * @param evt: the event that fired
   */
-  _handleSyncGetOpenerInfo = (evt) => {
+  _handleSyncGetGuestPreloadInfo = (evt) => {
     if (!this[privConnected].has(evt.sender.id)) { return }
 
-    const webPref = evt.sender.getWebPreferences()
-    if (webPref.openerId === undefined) {
-      evt.returnValue = { hasOpener: false }
-    } else {
-      const opener = webContents.fromId(webPref.openerId)
-      if (!opener) {
-        evt.returnValue = { hasOpener: false }
-      } else {
-        evt.returnValue = { hasOpener: true, url: opener.getURL(), openerId: webPref.openerId }
+    try {
+      evt.returnValue = {
+        launchSettings: settingsStore.getState().launchSettingsJS(),
+        extensions: CRExtensionManager.runtimeHandler.getAllContentScriptGuestConfigs(),
+        initialHostUrl: ElectronWebContents.getHostUrl(evt.sender),
+        notificationPermission: this[privNotificationService].getDomainPermissionForWebContents(evt.sender),
+        paths: {},
+        platform: process.platform
       }
+    } catch (ex) {
+      console.error(`Failed to respond to "${WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG}" continuing with unkown side effects`, ex)
+      evt.returnValue = {}
+    }
+  }
+
+  /**
+  * Synchronously gets the extension runtime config
+  * @param evt: the event that fired
+  * @param extensionId: the id of the extension
+  */
+  _handleSyncGetExtensionPreloadInfo = (evt, extensionId) => {
+    if (!this[privConnected].has(evt.sender.id)) { return }
+
+    try {
+      const hasRuntime = CRExtensionManager.runtimeHandler.hasRuntime(extensionId)
+      if (hasRuntime) {
+        evt.returnValue = {
+          extensionId: extensionId,
+          hasRuntime: true,
+          runtimeConfig: CRExtensionManager.runtimeHandler.getContentScriptRuntimeConfig(extensionId),
+          isBackgroundPage: evt.sender.id === CRExtensionManager.runtimeHandler.getBackgroundPageId(extensionId)
+        }
+      } else {
+        evt.returnValue = {
+          extensionId: extensionId,
+          hasRuntime: false
+        }
+      }
+    } catch (ex) {
+      console.error(`Failed to respond to "${WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG}" continuing with unkown side effects`, ex)
+      evt.returnValue = undefined
     }
   }
 }

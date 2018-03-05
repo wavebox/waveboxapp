@@ -47,7 +47,7 @@ class CRExtensionBackgroundPage {
 
   get isRunning () { return this._webContents && !this._webContents.isDestroyed() }
   get webContents () { return this._webContents }
-  get webContentsId () { return this._webContents.id }
+  get webContentsId () { return this.isRunning ? this._webContents.id : undefined }
   get partitionId () { return this.constructor.partitionIdForExtension(this.extension.id) }
   get html () { return this._html }
   get name () { return this._name }
@@ -90,7 +90,8 @@ class CRExtensionBackgroundPage {
     const partitionId = this.partitionId
     this._webContents = webContents.create({
       partition: partitionId,
-      affinity: settingsStore.getState().launched.app.isolateWaveboxProcesses ? undefined : WB_EXTENSION_AFFINITY,
+      affinity: settingsStore.getState().launched.app.isolateExtensionProcesses ? undefined : WB_EXTENSION_AFFINITY,
+      sandbox: true,
       isBackgroundPage: true,
       preload: Resolver.crExtensionApi(),
       commandLineSwitches: [

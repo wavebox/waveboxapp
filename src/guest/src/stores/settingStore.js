@@ -1,4 +1,4 @@
-import { RENDER_PROCESS_PREFERENCE_TYPES } from 'shared/processPreferences'
+import LiveConfig from 'LiveConfig'
 import pkg from 'package.json'
 import {
   AcceleratorSettings,
@@ -17,34 +17,7 @@ class SettingStore {
   /* **************************************************************************/
 
   constructor () {
-    this._loadData(this._getFromProcess() || {})
-  }
-
-  /* **************************************************************************/
-  // Loading
-  /* **************************************************************************/
-
-  /**
-  * Gets the setting data from the process
-  * @return the data or undefined
-  */
-  _getFromProcess () {
-    const preferences = process.getRenderProcessPreferences()
-    if (preferences) {
-      for (const pref of preferences) {
-        if (pref.type === RENDER_PROCESS_PREFERENCE_TYPES.WB_LAUNCH_SETTINGS) {
-          return pref
-        }
-      }
-    }
-    return undefined
-  }
-
-  /**
-  * Loads the models from the given pref
-  * @param data: the data to load from
-  */
-  _loadData (data) {
+    const data = LiveConfig.launchSettings
     this.accelerators = new AcceleratorSettings(data.accelerators || {})
     this.app = new AppSettings(data.app || {}, pkg)
     this.extension = new ExtensionSettings(data.extension || {})

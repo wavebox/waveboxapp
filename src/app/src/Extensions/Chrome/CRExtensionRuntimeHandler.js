@@ -281,6 +281,45 @@ class CRExtensionRuntimeHandler extends EventEmitter {
       }, {})
   }
 
+  /**
+  * Gets all the content script guest configs
+  * @return an array of guest configs
+  */
+  getAllContentScriptGuestConfigs () {
+    return Array.from(this.runtimes.values())
+      .map((runtime) => runtime.contentScript.guestConfig)
+      .filter((c) => !!c)
+  }
+
+  /*
+  * Gets the guest config for an extension
+  * @param extensionId: the id of the extension
+  * @return the guest config or undefined
+  */
+  getContentScriptRuntimeConfig (extensionId) {
+    const runtime = this.runtimes.get(extensionId)
+    if (!runtime) { return undefined }
+    return runtime.contentScript.runtimeConfig
+  }
+
+  /**
+  * @param extensionId: the id of the extension
+  * @return true if there is a runtime
+  */
+  hasRuntime (extensionId) {
+    return this.runtimes.has(extensionId)
+  }
+
+  /**
+  * @param extensionId: the id of the extension
+  * @return the webcontents id or undefined
+  */
+  getBackgroundPageId (extensionId) {
+    const runtime = this.runtimes.get(extensionId)
+    if (!runtime) { return undefined }
+    return runtime.backgroundPage.webContentsId
+  }
+
   /* ****************************************************************************/
   // Options
   /* ****************************************************************************/

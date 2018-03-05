@@ -14,7 +14,6 @@ import {
   WB_BROWSER_GOOGLE_INBOX_TOP_MESSAGE_CHANGED,
   WB_BROWSER_GOOGLE_GMAIL_UNREAD_COUNT_CHANGED
 } from 'shared/ipcEvents'
-import Resolver from 'Runtime/Resolver'
 
 const REF = 'mailbox_tab'
 
@@ -216,7 +215,6 @@ export default class GoogleMailboxMailWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={Resolver.guestPreload()}
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
         domReady={this.handleBrowserDomReady}

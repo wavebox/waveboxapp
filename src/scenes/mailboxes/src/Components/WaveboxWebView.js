@@ -6,12 +6,10 @@ import {
   WAVEBOX_CAPTURE_URLS,
   WAVEBOX_CAPTURE_URL_HOSTNAMES
 } from 'shared/constants'
-import { WB_MAIN_AFFINITY } from 'shared/webContentAffinities'
 import electron from 'electron'
 import pkg from 'package.json'
 import { userActions } from 'stores/user'
 import { mailboxActions } from 'stores/mailbox'
-import { settingsStore } from 'stores/settings'
 
 const REF = 'webview'
 
@@ -143,16 +141,12 @@ export default class WaveboxWebView extends React.Component {
 
   render () {
     const { src, saltClientInfoInUrl, ...passProps } = this.props
-    const webPreferences = [
-      'contextIsolation=yes',
-      settingsStore.getState().launched.app.isolateWaveboxProcesses ? undefined : 'affinity=' + WB_MAIN_AFFINITY
-    ].filter((l) => !!l).join(', ')
 
     return (
       <BrowserView
         ref={REF}
         src={saltClientInfoInUrl ? this.saltUrlWithClientInfo(src) : src}
-        webpreferences={webPreferences}
+        webpreferences='contextIsolation=yes'
         newWindow={this.handleOpenNewWindow}
         domReady={this.handleDomReady}
         {...passProps} />

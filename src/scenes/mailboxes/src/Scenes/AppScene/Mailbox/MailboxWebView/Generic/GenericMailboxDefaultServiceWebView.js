@@ -7,7 +7,6 @@ import shallowCompare from 'react-addons-shallow-compare'
 import {
   WB_BROWSER_NOTIFICATION_PRESENT
 } from 'shared/ipcEvents'
-import Resolver from 'Runtime/Resolver'
 
 const REF = 'mailbox_tab'
 
@@ -88,7 +87,6 @@ export default class GenericMailboxDefaultServiceWebView extends React.Component
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={Resolver.guestPreload()}
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
         didChangeThemeColor={this.handleThemeColorChanged}

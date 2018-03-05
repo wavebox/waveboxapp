@@ -70,6 +70,7 @@ class MailboxAdaptorService {
           webContents.insertCSS(adaptor.styles)
         }
         if (adaptor.hasJS) {
+          console.log(adaptor.JS)
           webContents.executeJavaScript(adaptor.JS)
         }
       })

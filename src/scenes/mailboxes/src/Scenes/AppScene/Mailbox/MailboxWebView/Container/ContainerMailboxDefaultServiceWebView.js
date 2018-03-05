@@ -3,13 +3,11 @@ import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import { mailboxStore, mailboxActions, ContainerDefaultServiceReducer } from 'stores/mailbox'
-import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
   WB_BROWSER_NOTIFICATION_PRESENT,
   WB_BROWSER_CONFIGURE_ALERT
 } from 'shared/ipcEvents'
-import Resolver from 'Runtime/Resolver'
 
 const REF = 'mailbox_tab'
 const DOC_TITLE_UNREAD_RES = [
@@ -59,8 +57,7 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
   */
   generateState (props) {
     return {
-      ...this.generateMailboxState(props, mailboxStore.getState()),
-      isolateMailboxProcesses: settingsStore.getState().launched.app.isolateMailboxProcesses // does not update
+      ...this.generateMailboxState(props, mailboxStore.getState())
     }
   }
 
@@ -74,9 +71,6 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
     const mailbox = mailboxState.getMailbox(props.mailboxId)
     const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
     return {
-      useNativeWindowOpen: service ? service.useNativeWindowOpen : true,
-      useContextIsolation: service ? service.useContextIsolation : true,
-      useSharedSiteInstances: service ? service.useSharedSiteInstances : true,
       useAsyncAlerts: service ? service.useAsyncAlerts : true,
       documentTitleHasUnread: service ? service.documentTitleHasUnread : false,
       documentTitleUnreadBlinks: service ? service.documentTitleUnreadBlinks : false
@@ -218,37 +212,12 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
 
   render () {
     const { mailboxId } = this.props
-    const {
-      useNativeWindowOpen,
-      useContextIsolation,
-      useSharedSiteInstances,
-      isolateMailboxProcesses
-    } = this.state
-
-    let affinityOpt
-    if (useSharedSiteInstances) {
-      if (isolateMailboxProcesses) {
-        affinityOpt = `affinity=${mailboxId + ':' + CoreService.SERVICE_TYPES.DEFAULT}`
-      } else {
-        affinityOpt = `affinity=${mailboxId}`
-      }
-    }
-
-    // Don't use string templating or inline in jsx. The compiler optimizes it out!!
-    const webpreferences = [
-      'contextIsolation=' + (useContextIsolation ? 'yes' : 'no'),
-      'nativeWindowOpen=' + (useNativeWindowOpen ? 'yes' : 'no'),
-      'sharedSiteInstances=' + (useSharedSiteInstances ? 'yes' : 'no'),
-      affinityOpt
-    ].filter((l) => !!l).join(', ')
 
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={Resolver.guestPreload()}
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
-        webpreferences={webpreferences}
         ipcMessage={this.handleIPCMessage}
         domReady={this.handleDOMReady}
         pageTitleUpdated={this.handlePageTitleUpdated} />

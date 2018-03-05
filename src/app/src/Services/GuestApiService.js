@@ -1,23 +1,29 @@
 import { ipcMain } from 'electron'
+import fs from 'fs-extra'
+import Resolver from 'Runtime/Resolver'
 import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import { mailboxStore, mailboxActions, ServiceReducer } from 'stores/mailbox'
 import {
-  WB_GUEST_API_REQUEST
+  WB_GUEST_API_REQUEST,
+  WB_GUEST_API_READ_SYNC
 } from 'shared/ipcEvents'
+import {
+  VALID_WAVEBOX_CONTENT_IMPL_ENDPOINTS
+} from 'shared/extensionApis'
 
-/**
-* @Thomas101 there is some refactoring to be done here when we move over to our
-* multi-process stores. Write the data directly from here rather than bouncing down
-* to the mailboxes window
-*/
+const privCachedGuestAPIs = Symbol('privCachedGuestAPIs')
+
 class GuestApiService {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
   constructor () {
+    this[privCachedGuestAPIs] = new Map()
+
     ipcMain.on(WB_GUEST_API_REQUEST, this._handleGuestApiRequest)
+    ipcMain.on(WB_GUEST_API_READ_SYNC, this._handleGuestApiReadSync)
   }
 
   /* ****************************************************************************/
@@ -48,6 +54,30 @@ class GuestApiService {
         return this._setBadgeHasUnreadActivity(tabInfo.mailboxId, tabInfo.serviceType, ...args)
       case 'tray:setMessages':
         return this._setTrayMessages(tabInfo.mailboxId, tabInfo.serviceType, ...args)
+    }
+  }
+
+  /**
+  * Loads a guest api from disk
+  * @param evt: the event that fired
+  * @param name: the name of the api
+  */
+  _handleGuestApiReadSync = (evt, name) => {
+    try {
+      if (!VALID_WAVEBOX_CONTENT_IMPL_ENDPOINTS.has(name)) {
+        evt.returnValue = undefined
+        return
+      }
+
+      if (!this[privCachedGuestAPIs].has(name)) {
+        const code = fs.readFileSync(Resolver.guestApi(name), 'utf8')
+        this[privCachedGuestAPIs].set(name, code)
+      }
+
+      evt.returnValue = this[privCachedGuestAPIs].get(name)
+    } catch (ex) {
+      console.error('Failed to respond to "WB_GUEST_API_READ_SYNC" continuing with unkown side effects', ex)
+      evt.returnValue = undefined
     }
   }
 

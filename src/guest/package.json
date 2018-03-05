@@ -6,9 +6,8 @@
   "repository": "https://github.com/wavebox/waveboxapp",
   "description": "Guest code for Wavebox",
   "dependencies": {
-    "appdirectory": "0.1.0",
     "escape-html": "1.0.3",
-    "fs-extra": "5.0.0",
+    "hunspell-asm": "1.0.1",
     "lru-cache": "4.1.1",
     "url-pattern": "1.0.3",
     "uuid": "3.2.1"

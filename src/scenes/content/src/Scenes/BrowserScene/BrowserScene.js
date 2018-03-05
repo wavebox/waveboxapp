@@ -8,7 +8,7 @@ import BrowserSearch from './BrowserSearch'
 import BrowserToolbar from './BrowserToolbar'
 import { browserActions, browserStore } from 'stores/browser'
 import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
-import path from 'path'
+import Resolver from 'Runtime/Resolver'
 import { remote } from 'electron'
 
 const SEARCH_REF = 'search'
@@ -113,6 +113,11 @@ export default class BrowserScene extends React.Component {
     const { url, partition } = this.props
     const { isSearching, searchTerm, searchNextHash } = this.state
 
+    const preloadScripts = [
+      Resolver.guestPreload(),
+      Resolver.crExtensionApiPreload()
+    ].join('_wavebox_preload_split_')
+
     // The partition should be set on the will-attach-webview in the main thread
     // but this doesn't have the desired effect. Set it here for good-stead
     return (
@@ -130,8 +135,8 @@ export default class BrowserScene extends React.Component {
             plugins
             allowpopups
             className='ReactComponent-BrowserSceneWebView'
-            webpreferences='contextIsolation=yes, nativeWindowOpen=yes, sharedSiteInstances=yes'
-            preload={path.join(__dirname, '../../guest/guest.js')}
+            webpreferences='contextIsolation=yes, nativeWindowOpen=yes, sharedSiteInstances=yes, sandbox=yes'
+            preload={preloadScripts}
             searchTerm={isSearching ? searchTerm : undefined}
             searchId={searchNextHash}
             updateTargetUrl={(evt) => browserActions.setTargetUrl(evt.url)}

@@ -6,8 +6,8 @@ import { SettingsIdent, AppSettings } from 'shared/Models/Settings'
 import actions from './settingsActions'
 import dictionaries from 'shared/SpellcheckProvider/dictionaries.js'
 import pkg from 'package.json'
-import { RENDER_PROCESS_PREFERENCE_TYPES } from 'shared/processPreferences'
-import { renderProcessPreferences } from 'R/atomProcess'
+
+const privCachedLaunchDataJS = Symbol('privCachedLaunchDataJS')
 
 class SettingsStore extends CoreSettingsStore {
   /* **************************************************************************/
@@ -17,22 +17,24 @@ class SettingsStore extends CoreSettingsStore {
   constructor () {
     super()
 
+    this[privCachedLaunchDataJS] = null
+
     /* ****************************************/
     // Render preferences
     /* ****************************************/
 
     /**
-    * Creates a render process entry
-    * @return the actual render process entry. This should be stored somewhere
+    * Gets a js object with all the launch settings
+    * @return the launch settings as plain js
     */
-    this.createRenderProcessEntry = () => {
-      return renderProcessPreferences.addEntry({
-        ...Object.keys(this.launched).reduce((acc, segment) => {
+    this.launchSettingsJS = () => {
+      if (this[privCachedLaunchDataJS] === null) {
+        this[privCachedLaunchDataJS] = Object.keys(this.launched).reduce((acc, segment) => {
           acc[segment] = this.launched[segment].cloneData()
           return acc
-        }, {}),
-        type: RENDER_PROCESS_PREFERENCE_TYPES.WB_LAUNCH_SETTINGS
-      })
+        }, {})
+      }
+      return this[privCachedLaunchDataJS]
     }
 
     /* ****************************************/
@@ -80,11 +82,7 @@ class SettingsStore extends CoreSettingsStore {
         acc[segment] = this[segment].cloneData()
         return acc
       }, {}),
-      launchedModelData: Object.keys(SettingsIdent.SEGMENTS).reduce((acc, k) => {
-        const segment = SettingsIdent.SEGMENTS[k]
-        acc[segment] = this.launched[segment].cloneData()
-        return acc
-      }, {}),
+      launchedModelData: this.launchSettingsJS(),
       defaults: this.defaults
     }
   }

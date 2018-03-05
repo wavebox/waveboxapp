@@ -36,9 +36,6 @@ export default class DebugSettingsSection extends React.Component {
             icon={<FontIcon className='material-icons'>timeline</FontIcon>}
             onClick={() => settingsActions.sub.app.openMetricsMonitor()} />
           <FlatButton
-            label='Free V8 Memory'
-            onClick={() => settingsActions.sub.app.freeMetricsV8Memory()} />
-          <FlatButton
             label='Classic Add Screen'
             icon={<FontIcon className='material-icons'>add_circle</FontIcon>}
             onClick={() => {

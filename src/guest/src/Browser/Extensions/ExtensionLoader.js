@@ -1,7 +1,6 @@
-import { webFrame } from 'electron'
-import GuestHost from '../GuestHost'
-import fs from 'fs'
-import Resolver from 'Runtime/Resolver'
+import { webFrame, ipcRenderer } from 'electron'
+import LiveConfig from 'LiveConfig'
+import url from 'url'
 import {
   WAVEBOX_HOSTED_EXTENSION_PROTOCOL,
   CR_EXTENSION_PROTOCOL,
@@ -11,6 +10,9 @@ import {
 import {
   CHROME_PROTOCOL
 } from 'shared/constants'
+import {
+  WB_GUEST_API_READ_SYNC
+} from 'shared/ipcEvents'
 
 const SUPPORTED_PROTOCOLS = new Set([
   'http:',
@@ -49,7 +51,7 @@ class ExtensionLoader {
       return Promise.reject(new Error(`Unsupported Api ${apiName}`))
     }
 
-    const hostUrl = GuestHost.parsedUrl
+    const hostUrl = url.parse(LiveConfig.hostUrl)
     if (SUPPRESSED_PROTOCOLS.has(hostUrl.protocol)) {
       return Promise.resolve() /* no-op */
     }
@@ -57,7 +59,7 @@ class ExtensionLoader {
       return Promise.reject(new Error('Unsupported Guest Protocol'))
     }
 
-    const code = fs.readFileSync(Resolver.guestApi(apiName))
+    const code = ipcRenderer.sendSync(WB_GUEST_API_READ_SYNC, apiName)
     const wrapper = `
       ;(function (WB_API_KEY, WB_CONFIG) {
         ${code}

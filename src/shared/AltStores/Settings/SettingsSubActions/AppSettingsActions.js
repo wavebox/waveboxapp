@@ -2,8 +2,7 @@ import { SettingsIdent } from '../../../Models/Settings'
 import CoreSettingsActions from './CoreSettingsActions'
 import {
   WB_METRICS_OPEN_MONITOR,
-  WB_METRICS_OPEN_LOG,
-  WB_METRICS_RELEASE_MEMORY
+  WB_METRICS_OPEN_LOG
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
 
@@ -142,19 +141,19 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
-  * Sets whether wavebox processes should be isolated from each other
-  * @param isolate: true to isolate, false to not
-  */
-  setIsolateWaveboxProcesses (isolate) {
-    this.dispatchUpdate('isolateWaveboxProcesses', isolate)
-  }
-
-  /**
   * Sets whether mailbox processes should be isolated from each other
   * @param isolate: true to isolate, false to not
   */
   setIsolateMailboxProcesses (isolate) {
     this.dispatchUpdate('isolateMailboxProcesses', isolate)
+  }
+
+  /**
+  * Sets whether extension background processes should be isolated from each other
+  * @param isolate: true to isolate, false to not
+  */
+  setIsolateExtensionProcesses (isolate) {
+    this.dispatchUpdate('isolateExtensionProcesses', isolate)
   }
 
   /**
@@ -175,16 +174,6 @@ class AppSettingsActions extends CoreSettingsActions {
       throw new Error('"openMetricsMonitor" is only available in the renderer process')
     }
     ipcRenderer.send(WB_METRICS_OPEN_MONITOR, {})
-  }
-
-  /**
-  * Attempts to free v8 memory
-  */
-  freeMetricsV8Memory () {
-    if (process.type !== 'renderer') {
-      throw new Error('"freeMetricsV8Memory" is only available in the renderer process')
-    }
-    ipcRenderer.send(WB_METRICS_RELEASE_MEMORY, {})
   }
 }
 

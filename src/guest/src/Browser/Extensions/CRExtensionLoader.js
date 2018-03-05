@@ -1,11 +1,10 @@
 import { ipcRenderer, webFrame } from 'electron'
 import { CRExtensionMatchPatterns } from 'shared/Models/CRExtension'
 import { WBECRX_EXECUTE_SCRIPT } from 'shared/ipcEvents'
-import GuestHost from '../GuestHost'
 import DispatchManager from 'DispatchManager'
-import { RENDER_PROCESS_PREFERENCE_TYPES } from 'shared/processPreferences'
 import { WCRPC_DOM_READY } from 'shared/webContentsRPC'
-import Resolver from 'Runtime/Resolver'
+import LiveConfig from 'LiveConfig'
+import url from 'url'
 
 const privHasLoaded = Symbol('privHasLoaded')
 const privContexts = Symbol('privContexts')
@@ -43,19 +42,28 @@ class CRExtensionLoader {
     if (this[privHasLoaded]) { return }
     this[privHasLoaded] = true
 
-    const hostUrl = GuestHost.parsedUrl
+    const hostUrl = url.parse(LiveConfig.hostUrl)
     if (hostUrl.protocol === 'http:' || hostUrl.protocol === 'https:') {
-      this[privExtensionPreferences] = Array.from(process.getRenderProcessPreferences() || [])
+      this[privExtensionPreferences] = LiveConfig.extensions
         .reduce((acc, pref) => {
-          if (pref.type === RENDER_PROCESS_PREFERENCE_TYPES.WB_CREXTENSION_CONTENTSCRIPT_CONFIG) {
-            acc.set(pref.extensionId, pref)
-          }
+          acc.set(pref.extensionId, pref)
           return acc
         }, new Map())
 
       Array.from(this[privExtensionPreferences].values()).forEach((pref) => {
+        this._provisionContext(
+          pref.extensionId,
+          `${hostUrl.protocol}//${hostUrl.host}`,
+          pref.contentSecurityPolicy
+        )
         if (pref.crExtensionContentScripts) {
-          this._initializeExtensionContentScript(hostUrl.protocol, hostUrl.hostname, hostUrl.pathname, pref.extensionId, pref.crExtensionContentScripts)
+          this._initializeExtensionContentScript(
+            hostUrl.protocol,
+            hostUrl.hostname,
+            hostUrl.pathname,
+            pref.extensionId,
+            pref.crExtensionContentScripts
+          )
         }
       })
     }
@@ -66,23 +74,59 @@ class CRExtensionLoader {
   /* **************************************************************************/
 
   /**
-  * Gets or creates a context for a script
+  * Initializes the context framework. Doesn't create the context just stores the
+  * data for creation later
+  * @param extensionId: the id of the extension
+  * @param securityOrgin: the security origin of the extension
+  * @param contentSecurityPolicy: the csp of the extension
+  */
+  _provisionContext (extensionId, securityOrigin, contentSecurityPolicy) {
+    if (!this[privContexts].has(extensionId)) {
+      this[privContexts].set(extensionId, {
+        extensionId: extensionId,
+        securityOrgin: securityOrigin,
+        contentSecurityPolicy: contentSecurityPolicy,
+        contextId: undefined
+      })
+    }
+  }
+
+  /**
+  * Gets or creates a context for a script. If the script has not been provisioned throws an exception
   * @param extensionId: the id of the extension
   * @return the id of the created context
   */
   _getOrCreateContextForScript (extensionId) {
-    if (!this[privContexts].has(extensionId)) {
-      const contextId = webFrame.createContext(extensionId, JSON.stringify({
-        preload: Resolver.crextensionApi(),
-        crExtensionCSAutoInit: true,
-        crExtensionCSExtensionId: extensionId,
-        crExtensionCSGuestHost: GuestHost.url
-      }))
-      this[privContexts].set(extensionId, contextId)
-      return contextId
-    } else {
-      return this[privContexts].get(extensionId)
+    if (!this[privContexts].has(extensionId) || !webFrame.createContextId) {
+      throw new Error(`Context has not been provisioned for extension "${extensionId}"`)
     }
+
+    const provisioned = this[privContexts].get(extensionId)
+    if (provisioned.contextId !== undefined) {
+      return provisioned.contextId
+    } else {
+      const contextId = webFrame.createContextId()
+      webFrame.setIsolatedWorldHumanReadableName(contextId, extensionId)
+      webFrame.setIsolatedWorldSecurityOrigin(contextId, provisioned.securityOrgin)
+      webFrame.setIsolatedWorldContentSecurityPolicy(contextId, provisioned.contentSecurityPolicy)
+      webFrame.executeJavaScriptInIsolatedWorld(contextId, [
+        { code: `;(() => { window.contentScriptInit("${extensionId}") })();` }
+      ])
+      this[privContexts].set(extensionId, {
+        ...provisioned,
+        contextId: contextId
+      })
+      return contextId
+    }
+  }
+
+  /**
+  * Gets a context for a script
+  * @param extensionId: the id of the extension
+  * @return the id of the context or undefined
+  */
+  _getContextForScript (extensionId) {
+    return this[privContexts].get(extensionId)
   }
 
   /* **************************************************************************/
@@ -98,14 +142,18 @@ class CRExtensionLoader {
   * @param contentScripts: the configuration for the content scripts
   */
   _initializeExtensionContentScript (protocol, hostname, pathname, extensionId, contentScripts) {
-    if (!webFrame.createContext) { return }
-
     const matchedContentScripts = (contentScripts || []).filter((cs) => {
       return CRExtensionMatchPatterns.matchUrls(protocol, hostname, pathname, cs.matches)
     })
 
     if (matchedContentScripts.length) {
-      const contextId = this._getOrCreateContextForScript(extensionId)
+      let contextId
+      try {
+        contextId = this._getOrCreateContextForScript(extensionId)
+      } catch (ex) {
+        return
+      }
+
       matchedContentScripts.forEach(({js, css, runAt}) => {
         if (js && js.length) {
           this._injectContentJavaScript(contextId, extensionId, js, runAt)
@@ -150,7 +198,9 @@ class CRExtensionLoader {
   * @param code: the code to inject
   */
   _executeContentJavaScript (contextId, extensionId, url, code) {
-    webFrame.executeContextScript(contextId, code)
+    webFrame.executeJavaScriptInIsolatedWorld(contextId, [
+      { code: code, url: url }
+    ])
   }
 
   /**
@@ -199,8 +249,16 @@ class CRExtensionLoader {
   */
   _handleCRXExecuteScript = (evt, [extensionId, details, format, code], responseCallback) => {
     if (format === '.js') {
-      const contextId = this._getOrCreateContextForScript(extensionId)
-      webFrame.executeContextScript(contextId, code, (res) => {
+      let contextId
+      try {
+        contextId = this._getOrCreateContextForScript(extensionId)
+      } catch (ex) {
+        responseCallback(new Error(`Failed to initialize world context for extension "${extensionId}`))
+        return
+      }
+      webFrame.executeJavaScriptInIsolatedWorld(contextId, [
+        { code: code }
+      ], (res) => {
         responseCallback(null, [res])
       })
     } else if (format === '.css') {

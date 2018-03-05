@@ -26,6 +26,7 @@ import { ipcRenderer } from 'electron'
 import Spinner from 'sharedui/Components/Activity/Spinner'
 import * as Colors from 'material-ui/styles/colors'
 import { settingsStore } from 'stores/settings'
+import Resolver from 'Runtime/Resolver'
 
 const BROWSER_REF = 'browser'
 
@@ -37,10 +38,8 @@ export default class MailboxWebView extends React.Component {
   static propTypes = Object.assign({
     mailboxId: PropTypes.string.isRequired,
     serviceType: PropTypes.string.isRequired,
-    preload: PropTypes.string,
     hasSearch: PropTypes.bool.isRequired,
-    plugHTML5Notifications: PropTypes.bool.isRequired,
-    webpreferences: PropTypes.string
+    plugHTML5Notifications: PropTypes.bool.isRequired
   }, BrowserView.REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
     acc[name] = PropTypes.func
     return acc
@@ -546,10 +545,8 @@ export default class MailboxWebView extends React.Component {
     if (!mailbox || !service) { return false }
     const {
       className,
-      preload,
       hasSearch,
       allowpopups,
-      webpreferences,
       mailboxId,
       serviceType,
       ...passProps
@@ -568,12 +565,17 @@ export default class MailboxWebView extends React.Component {
     ].filter((c) => !!c).join(' ')
 
     // Don't use string templating or inline in jsx. The compiler optimizes it out!!
-    const passWebpreferences = webpreferences || [
+    const webpreferences = [
       'contextIsolation=yes',
       'nativeWindowOpen=yes',
       'sharedSiteInstances=yes',
+      'sandbox=yes',
       'affinity=' + (isolateMailboxProcesses ? mailboxId + ':' + serviceType : mailboxId)
     ].filter((l) => !!l).join(', ')
+    const preloadScripts = [
+      Resolver.guestPreload(),
+      Resolver.crExtensionApiPreload()
+    ].join('_wavebox_preload_split_')
 
     return (
       <div className={saltedClassName}>
@@ -581,12 +583,12 @@ export default class MailboxWebView extends React.Component {
           <BrowserView
             ref={BROWSER_REF}
             id={`guest_${mailbox.id}_${service.type}`}
-            preload={preload}
+            preload={preloadScripts}
             partition={'persist:' + mailbox.partition}
             src={restorableUrl || 'about:blank'}
             searchId={searchId}
             searchTerm={isSearching ? searchTerm : ''}
-            webpreferences={passWebpreferences}
+            webpreferences={webpreferences}
             allowpopups={allowpopups === undefined ? true : allowpopups}
             plugins
             onWebContentsAttached={this.handleWebContentsAttached}

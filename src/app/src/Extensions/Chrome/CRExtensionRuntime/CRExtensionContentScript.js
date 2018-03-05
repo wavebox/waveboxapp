@@ -2,13 +2,12 @@ import fs from 'fs-extra'
 import {
   CR_EXTENSION_PROTOCOL
 } from 'shared/extensionApis'
-import { renderProcessPreferences } from 'R/atomProcess'
-import { RENDER_PROCESS_PREFERENCE_TYPES } from 'shared/processPreferences'
 import pathTool from 'shared/pathTool'
 import uuid from 'uuid'
 
-const privRenderProcEntry = Symbol('privRenderProcEntry')
 const privXHRToken = Symbol('privXHRToken')
+const privCachedGuestConfig = Symbol('privCachedGuestConfig')
+const privCachedRuntimeConfig = Symbol('privCachedRuntimeConfig')
 
 class CRExtensionContentScript {
   /* ****************************************************************************/
@@ -22,14 +21,9 @@ class CRExtensionContentScript {
   constructor (extension, datasource) {
     this.extension = extension
     this.datasource = datasource
-    this[privRenderProcEntry] = undefined
     this[privXHRToken] = uuid.v4()
-
-    this._start()
-  }
-
-  destroy () {
-    this._stop()
+    this[privCachedGuestConfig] = null
+    this[privCachedRuntimeConfig] = null
   }
 
   /* ****************************************************************************/
@@ -37,22 +31,39 @@ class CRExtensionContentScript {
   /* ****************************************************************************/
 
   get xhrToken () { return this[privXHRToken] }
+  get guestConfig () {
+    if (!this.extension.manifest.hasContentScripts) { return undefined }
+
+    if (this[privCachedGuestConfig] === null) {
+      this[privCachedGuestConfig] = this._generateGuestConfig()
+    }
+
+    return this[privCachedGuestConfig]
+  }
+  get runtimeConfig () {
+    if (!this.extension.manifest.hasContentScripts) { return undefined }
+
+    if (this[privCachedRuntimeConfig] === null) {
+      this[privCachedRuntimeConfig] = this._generateRuntimeConfig()
+    }
+
+    return this[privCachedRuntimeConfig]
+  }
 
   /* ****************************************************************************/
   // Script lifecycle
   /* ****************************************************************************/
 
   /**
-  * Starts the content scripts
+  * Generates the guest config
+  * @return the config or undefined
   */
-  _start () {
-    if (!this.extension.manifest.hasContentScripts) { return }
-
+  _generateGuestConfig () {
     const suggestedLocale = this.datasource.getSuggestedLocale()
-    const entry = {
-      type: RENDER_PROCESS_PREFERENCE_TYPES.WB_CREXTENSION_CONTENTSCRIPT_CONFIG,
+    return {
       extensionId: this.extension.id,
       manifest: this.extension.manifest.cloneData(),
+      contentSecurityPolicy: this.extension.manifest.contentSecurityPolicy,
       messages: {
         [suggestedLocale]: this.datasource.getMessages(suggestedLocale)
       },
@@ -66,7 +77,21 @@ class CRExtensionContentScript {
         }
       })
     }
-    this[privRenderProcEntry] = renderProcessPreferences.addEntry(entry)
+  }
+
+  /**
+  * Generates the runtime config
+  * @return the config or undefined
+  */
+  _generateRuntimeConfig () {
+    const suggestedLocale = this.datasource.getSuggestedLocale()
+    return {
+      manifest: this.extension.manifest.cloneData(),
+      messages: {
+        [suggestedLocale]: this.datasource.getMessages(suggestedLocale)
+      },
+      xhrToken: this[privXHRToken]
+    }
   }
 
   /**
@@ -102,17 +127,6 @@ class CRExtensionContentScript {
         code: code.replace(/__MSG_@@extension_id__/g, this.extension.id)
       }
     })
-  }
-
-  /**
-  * Stops background scripts
-  * @param extension: the extension to stop
-  */
-  _stop (extension) {
-    if (this[privRenderProcEntry]) {
-      renderProcessPreferences.removeEntry(this[privRenderProcEntry])
-      this[privRenderProcEntry] = undefined
-    }
   }
 }
 

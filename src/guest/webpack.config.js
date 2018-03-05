@@ -1,12 +1,10 @@
 const path = require('path')
-const fs = require('fs')
 const ROOT_DIR = path.resolve(path.join(__dirname, '../../'))
 const BIN_DIR = path.join(ROOT_DIR, 'bin')
 const devRequire = (n) => require(path.join(ROOT_DIR, 'node_modules', n))
 
 const webpack = devRequire('webpack')
 const CleanWebpackPlugin = devRequire('clean-webpack-plugin')
-const CopyWebpackPlugin = devRequire('copy-webpack-plugin')
 const WebpackNotifierPlugin = devRequire('webpack-notifier')
 const MinifyPlugin = devRequire('babel-minify-webpack-plugin')
 const WebpackOnBuildPlugin = devRequire('on-build-webpack')
@@ -17,7 +15,6 @@ module.exports = function (env) {
     devtool: isProduction ? undefined : (process.env.WEBPACK_DEVTOOL || 'source-map'),
     entry: path.join(__dirname, 'src/index.js'),
     stats: process.env.VERBOSE_LOG === 'true' ? undefined : 'errors-only',
-    target: 'electron-main',
     node: {
       __dirname: false,
       __filename: false
@@ -26,14 +23,10 @@ module.exports = function (env) {
       path: BIN_DIR,
       filename: 'guest/guest.js'
     },
-    externals: fs.readdirSync(path.join(__dirname, 'node_modules')).reduce((acc, m) => {
-      if (!m.startsWith('.')) {
-        acc[m] = 'commonjs ' + m
-      }
-      return acc
-    }, {
-      'nodehun': 'commonjs ../app/node_modules/nodehun' // special
-    }),
+    externals: {
+      'electron': 'commonjs electron',
+      'fs': 'throw new Error("fs is not available")' // require('fs') is in hunspell-asm but it handles the failure gracefully :)
+    },
     plugins: [
       !isProduction ? undefined : new webpack.DefinePlugin({
         __DEV__: false,
@@ -45,20 +38,10 @@ module.exports = function (env) {
         verbose: process.env.VERBOSE_LOG === 'true',
         dry: false
       }),
-      new CopyWebpackPlugin([
-        { from: path.join(__dirname, 'node_modules'), to: 'guest/node_modules', force: true }
-      ], {
-        ignore: [ '.DS_Store' ]
-      }),
 
       // Minify & optimization & devtools
       new webpack.optimize.ModuleConcatenationPlugin(),
       isProduction ? new MinifyPlugin({ simplify: false }, { sourceMap: false }) : undefined,
-      isProduction ? undefined : new webpack.BannerPlugin({
-        banner: 'require("source-map-support").install();',
-        raw: true,
-        entryOnly: false
-      }),
 
       // Dev tools
       process.env.NOTIFICATIONS === 'true' ? new WebpackNotifierPlugin({ title: 'WB Guest', alwaysNotify: true }) : undefined,
@@ -72,7 +55,7 @@ module.exports = function (env) {
         DispatchManager: path.resolve(path.join(__dirname, 'src/DispatchManager')),
         Extensions: path.resolve(path.join(__dirname, 'src/Extensions')),
         elconsole: path.resolve(path.join(__dirname, 'src/elconsole')),
-        Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
+        LiveConfig: path.resolve(path.join(__dirname, 'src/LiveConfig')),
         R: path.resolve(path.join(__dirname, 'src')),
         shared: path.resolve(path.join(__dirname, '../shared')),
         stores: path.resolve(path.join(__dirname, 'src/stores')),

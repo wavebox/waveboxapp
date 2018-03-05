@@ -11,6 +11,7 @@ import {
 } from 'shared/ipcEvents'
 import { UISettings } from 'shared/Models/Settings'
 import settingStore from 'stores/settingStore'
+import LiveConfig from 'LiveConfig'
 
 class GmailGinboxAdaptor extends BaseAdaptor {
   /* **************************************************************************/
@@ -34,16 +35,10 @@ class GmailGinboxAdaptor extends BaseAdaptor {
 
     this.sidebarStylesheet = document.createElement('style')
     this.sidebarStylesheet.innerHTML = `
-      [href="#inbox"][data-ved]>* {
+      [role="banner"] [href="#inbox"][title] {
         max-height:33px !important;
         margin-top: 22px;
         background-position-x: center;
-      }
-      [jsaction="global.toggle_main_menu"] {
-        margin-top: 5px;
-      }
-      [jsaction="global.toggle_main_menu"] ~ [data-action-data] {
-        margin-top: 21px;
       }
     `
 
@@ -55,7 +50,7 @@ class GmailGinboxAdaptor extends BaseAdaptor {
       this.loadGmailAPI()
       ipcRenderer.on(WB_BROWSER_COMPOSE_MESSAGE, this.handleComposeMessageGmail)
 
-      if (process.platform === 'darwin' && settingStore.ui.vibrancyMode !== UISettings.VIBRANCY_MODES.NONE) {
+      if (LiveConfig.platform === 'darwin' && settingStore.ui.vibrancyMode !== UISettings.VIBRANCY_MODES.NONE) {
         webFrame.insertCSS(`
           body, .wl, .aeJ {
             background-color: transparent !important;
@@ -67,7 +62,7 @@ class GmailGinboxAdaptor extends BaseAdaptor {
       this.loadInboxAPI()
       ipcRenderer.on(WB_BROWSER_COMPOSE_MESSAGE, this.handleComposeMessageGinbox)
 
-      if (process.platform === 'darwin' && settingStore.ui.vibrancyMode !== UISettings.VIBRANCY_MODES.NONE) {
+      if (LiveConfig.platform === 'darwin' && settingStore.ui.vibrancyMode !== UISettings.VIBRANCY_MODES.NONE) {
         webFrame.insertCSS(`
           body, nav[jsaction]:not([role="banner"]), nav[jsaction]:not([role="banner"])>[role="menu"], .I {
             background-color: transparent !important;

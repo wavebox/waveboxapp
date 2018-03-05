@@ -4,8 +4,6 @@ import { evtMain } from 'AppEvents'
 import querystring from 'querystring'
 import Resolver from 'Runtime/Resolver'
 import {WindowOpeningHandler} from './WindowOpeningEngine'
-import { WB_MAIN_AFFINITY } from 'shared/webContentAffinities'
-import { settingsStore } from 'stores/settings'
 
 const SAFE_CONFIG_KEYS = [
   'width',
@@ -138,8 +136,7 @@ class ContentWindow extends WaveboxWindow {
       show: true,
       webPreferences: {
         nodeIntegration: true,
-        plugins: true,
-        affinity: settingsStore.getState().launched.app.isolateWaveboxProcesses ? undefined : WB_MAIN_AFFINITY
+        plugins: true
       },
       ...this.generateWindowPosition(parentWindow),
       ...this.safeBrowserWindowPreferences(browserWindowPreferences)

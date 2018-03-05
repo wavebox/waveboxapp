@@ -63,6 +63,7 @@ module.exports = function (env) {
         shared: path.resolve(path.join(__dirname, '../../shared')),
         sharedui: path.resolve(path.join(__dirname, '../sharedui')),
         R: path.resolve(path.join(__dirname, 'src')),
+        Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
         stores: path.resolve(path.join(__dirname, 'src/stores')),
         Scenes: path.resolve(path.join(__dirname, 'src/Scenes')),
         'package.json': path.resolve(ROOT_DIR, 'package.json')

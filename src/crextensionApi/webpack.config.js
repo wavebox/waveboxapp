@@ -15,7 +15,6 @@ module.exports = function (env) {
   const isProduction = process.env.NODE_ENV === 'production'
 
   return {
-    target: 'electron-renderer',
     devtool: isProduction ? undefined : (process.env.WEBPACK_DEVTOOL || 'source-map'),
     stats: process.env.VERBOSE_LOG === 'true' ? undefined : 'errors-only',
     node: {
@@ -26,6 +25,9 @@ module.exports = function (env) {
       crextensionApi: [
         path.join(__dirname, 'src')
       ]
+    },
+    externals: {
+      'electron': 'commonjs electron'
     },
     output: {
       path: OUT_DIR,

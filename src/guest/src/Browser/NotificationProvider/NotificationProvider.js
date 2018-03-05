@@ -3,9 +3,7 @@ import uuid from 'uuid'
 import { WB_BROWSER_NOTIFICATION_CLICK, WB_BROWSER_NOTIFICATION_PRESENT } from 'shared/ipcEvents'
 import { DEFAULT_HTML5_NOTIFICATION_OPTIONS } from 'shared/constants'
 import NotificationPermissionManager from './NotificationPermissionManager'
-import ExtensionLoader from './Extensions/ExtensionLoader'
-import GuestHost from './GuestHost'
-import RuntimePaths from 'Runtime/RuntimePaths'
+import ExtensionLoader from '../Extensions/ExtensionLoader'
 
 class NotificationProvider {
   /* **************************************************************************/
@@ -14,10 +12,10 @@ class NotificationProvider {
 
   constructor () {
     this.apiKey = uuid.v4()
-    this.permissionManager = new NotificationPermissionManager(RuntimePaths.NOTIFICATION_PERMISSION_PATH)
+    this.permissionManager = new NotificationPermissionManager()
 
     ExtensionLoader.loadWaveboxGuestApi(ExtensionLoader.ENDPOINTS.NOTIFICATION, this.apiKey, {
-      permission: this.permissionManager.getDomainPermissionSync(GuestHost.url)
+      permission: this.permissionManager.getDomainPermission()
     })
     window.addEventListener('message', this.handleWindowMessage)
     ipcRenderer.on(WB_BROWSER_NOTIFICATION_CLICK, (evt, data) => {
@@ -47,34 +45,30 @@ class NotificationProvider {
       if (data.apiKey !== this.apiKey) { return }
 
       if (data.type === 'wavebox-notification-present') {
-        this.permissionManager.getDomainPermission(window.location.href)
-          .then((permission) => {
-            if (permission === 'granted') {
-              ipcRenderer.sendToHost({
-                type: WB_BROWSER_NOTIFICATION_PRESENT,
-                notificationId: data.notificationId,
-                notification: {
-                  title: data.notification.title,
-                  options: Object.assign(
-                    DEFAULT_HTML5_NOTIFICATION_OPTIONS[window.location.host] || {},
-                    data.notification.options
-                  )
-                }
-              })
+        const permission = this.permissionManager.getDomainPermission()
+        if (permission === 'granted') {
+          ipcRenderer.sendToHost({
+            type: WB_BROWSER_NOTIFICATION_PRESENT,
+            notificationId: data.notificationId,
+            notification: {
+              title: data.notification.title,
+              options: Object.assign(
+                DEFAULT_HTML5_NOTIFICATION_OPTIONS[window.location.host] || {},
+                data.notification.options
+              )
             }
           })
+        }
       } else if (data.type === 'wavebox-notification-permission-request') {
-        this.permissionManager.processPermissionRequest(window.location.href)
-          .then((permission) => {
-            setTimeout(() => {
-              window.postMessage(JSON.stringify({
-                type: 'wavebox-notification-permission-request-response',
-                wavebox: true,
-                responseId: data.responseId,
-                permission: permission
-              }), '*')
-            }, 1000)
-          })
+        const newPermission = this.permissionManager.processPermissionRequest()
+        setTimeout(() => {
+          window.postMessage(JSON.stringify({
+            type: 'wavebox-notification-permission-request-response',
+            wavebox: true,
+            responseId: data.responseId,
+            permission: newPermission
+          }), '*')
+        }, 1000)
       }
     }
   }
