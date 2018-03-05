@@ -12,11 +12,18 @@ import {
   WB_SPELLCHECKER_GET_PRIMARY_DICTIONARY_SYNC,
   WB_SPELLCHECKER_GET_SECONDARY_DICTIONARY_SYNC
 } from 'shared/ipcEvents'
+import {
+  WCRPC_DID_FRAME_FINISH_LOAD
+} from 'shared/webContentsRPC'
+
+const MAX_REMOTE_CALL_COUNT = 5
 
 const privProvider = Symbol('privProvider')
+const privRemoteCallCount = Symbol('privRemoteCallCount')
 const privHasStartedInit = Symbol('privHasStartedInit')
 const privWebFrameLanguage = Symbol('privWebFrameLanguage')
 const privRemoteLRU = Symbol('privRemoteLRU')
+const privRebindThrottle = Symbol('privRebindThrottle')
 
 class Spellchecker {
   /* **************************************************************************/
@@ -25,12 +32,15 @@ class Spellchecker {
 
   constructor () {
     this[privWebFrameLanguage] = undefined
+    this[privRemoteCallCount] = 0
     this[privHasStartedInit] = false
     this[privProvider] = undefined
     this[privRemoteLRU] = new LRU({ max: 512, maxAge: 10000 }) // Heavily cache this
+    this[privRebindThrottle] = null
 
     ipcRenderer.on(WB_SPELLCHECKER_CONFIGURE, this._handleRuntimeConfigure)
     ipcRenderer.on(WB_SPELLCHECKER_INIT_CONFIGURE, this._handleRuntimeInitConfigure)
+    ipcRenderer.on(WCRPC_DID_FRAME_FINISH_LOAD, this._handleRebindProvider)
 
     // Requeue to ensure the bridge is initialized
     setTimeout(() => {
@@ -86,6 +96,24 @@ class Spellchecker {
     this._bindToWebFrame(language)
   }
 
+  /**
+  * Re-binds the provider
+  * @param evt: the event that fired
+  * @param webContentsId: the id of the webcontents
+  * @param isMainFrame: true if it was the main frame that finished
+  */
+  _handleRebindProvider = (evt, webContentsId, isMainFrame) => {
+    if (isMainFrame) { return }
+    if (!this[privWebFrameLanguage]) { return }
+    // Fix for https://github.com/electron/electron/issues/11868
+    clearTimeout(this[privRebindThrottle])
+    this[privRebindThrottle] = setTimeout(() => {
+      webFrame.setSpellCheckProvider(this[privWebFrameLanguage], true, {
+        spellCheck: this._checkSpelling
+      })
+    }, 250)
+  }
+
   /* **************************************************************************/
   // Spellcheck events
   /* **************************************************************************/
@@ -113,10 +141,13 @@ class Spellchecker {
       return this[privProvider].isCorrect(word, true)
     } else {
       if (!this.hasStartedInit) {
-        this[privHasStartedInit] = true
-        ipcRenderer.send(WB_SPELLCHECKER_INIT, {})
+        if (this[privRemoteCallCount] > MAX_REMOTE_CALL_COUNT) {
+          this[privHasStartedInit] = true
+          ipcRenderer.send(WB_SPELLCHECKER_INIT, {})
+        }
       }
 
+      this[privRemoteCallCount] = this[privRemoteCallCount] + 1
       if (this[privRemoteLRU]) {
         if (this[privRemoteLRU].peek(word) !== undefined) {
           return this[privRemoteLRU].get(word)

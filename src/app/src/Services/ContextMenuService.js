@@ -190,6 +190,10 @@ class ContextMenuService {
         label: 'Open Link with Wavebox',
         click: () => { this.openLinkInWaveboxWindow(contents, params.linkURL) }
       })
+      template.push({
+        label: 'Open Link in Current Tab',
+        click: () => { contents.loadURL(params.linkURL) }
+      })
       if (process.platform === 'darwin') {
         template.push({
           label: 'Open Link in Background',

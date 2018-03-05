@@ -6,6 +6,7 @@ import { ELEVATED_LOG_PREFIX } from 'shared/constants'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import {
   WCRPC_DOM_READY,
+  WCRPC_DID_FRAME_FINISH_LOAD,
   WCRPC_CLOSE_WINDOW,
   WCRPC_GUEST_CLOSE_WINDOW,
   WCRPC_SEND_INPUT_EVENT,
@@ -59,6 +60,7 @@ class WebContentsRPCService {
       this[privConnected].add(webContentsId)
 
       contents.on('dom-ready', this._handleDomReady)
+      contents.on('did-frame-finish-load', this._handleFrameFinishLoad)
       contents.on('console-message', this._handleConsoleMessage)
       contents.on('will-prevent-unload', this._handleWillPreventUnload)
       contents.on('did-get-redirect-request', this._handleDidGetRedirectRequest)
@@ -74,6 +76,10 @@ class WebContentsRPCService {
 
   _handleDomReady = (evt) => {
     evt.sender.send(WCRPC_DOM_READY, evt.sender.id)
+  }
+
+  _handleFrameFinishLoad = (evt, isMainFrame) => {
+    evt.sender.send(WCRPC_DID_FRAME_FINISH_LOAD, evt.sender.id, isMainFrame)
   }
 
   _handleConsoleMessage = (evt, level, message, line, sourceId) => {
