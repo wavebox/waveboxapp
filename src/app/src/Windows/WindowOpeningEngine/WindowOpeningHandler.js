@@ -1,4 +1,4 @@
-import { shell, webContents } from 'electron'
+import { shell } from 'electron'
 import ContentWindow from 'Windows/ContentWindow'
 import ContentPopupWindow from 'Windows/ContentPopupWindow'
 import { settingsStore } from 'stores/settings'
