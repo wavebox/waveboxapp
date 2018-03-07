@@ -111,22 +111,6 @@ class WindowOpeningHandler {
     } else if (openMode === WINDOW_OPEN_MODES.DOWNLOAD) {
       evt.sender.downloadURL(targetUrl)
     }
-
-    // Add any final bind events from the extension. Mainly as work-arounds for window opener
-    if (extensionRule && extensionRule.match) {
-      if (typeof (extensionRule.config.match.actions) === 'object') {
-        if (extensionRule.config.match.actions.onClose === 'reload_opener') {
-          if (openedWindow) {
-            openedWindow.on('closed', () => {
-              const openerWC = webContents.fromId(webContentsId)
-              if (openerWC) {
-                openerWC.reload()
-              }
-            })
-          }
-        }
-      }
-    }
   }
 
   /* ****************************************************************************/

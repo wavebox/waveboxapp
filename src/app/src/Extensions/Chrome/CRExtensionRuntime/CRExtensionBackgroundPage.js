@@ -92,6 +92,8 @@ class CRExtensionBackgroundPage {
       partition: partitionId,
       affinity: settingsStore.getState().launched.app.isolateExtensionProcesses ? undefined : WB_EXTENSION_AFFINITY,
       sandbox: true,
+      nativeWindowOpen: true,
+      sharedSiteInstances: true,
       isBackgroundPage: true,
       preload: Resolver.crExtensionApi(),
       commandLineSwitches: [
