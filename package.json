@@ -78,7 +78,9 @@
   },
   "devDependencies": {
     "standard": "11.0.0",
-    "babel-eslint": "8.2.2"
+    "babel-eslint": "8.2.2",
+    "colors": "1.1.2",
+    "fs-extra": "5.0.0"
   },
   "standard": {
     "parser": "babel-eslint"
