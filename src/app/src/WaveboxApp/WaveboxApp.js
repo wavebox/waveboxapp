@@ -23,7 +23,6 @@ import WaveboxDarwinDockBehaviour from './WaveboxDarwinDockBehaviour'
 import {evtMain} from 'AppEvents'
 import {TrayPopout, TrayBehaviour} from 'Tray'
 import {LinuxNotification} from 'Notifications'
-import WaveboxCert from './WaveboxCert'
 import WaveboxCommandArgs from './WaveboxCommandArgs'
 
 const privStarted = Symbol('privStarted')
@@ -124,7 +123,6 @@ class WaveboxApp {
     app.on('before-quit', this._handleBeforeQuit)
     app.on('open-url', this._handleOpenUrl)
     app.on('login', this._handleHTTPBasicLogin)
-    app.on('certificate-error', WaveboxCert.handleCertificateError.bind(WaveboxCert))
     evtMain.on(evtMain.WB_QUIT_APP, this.fullyQuitApp)
     evtMain.on(evtMain.WB_RELAUNCH_APP, this.restartApp)
   }
