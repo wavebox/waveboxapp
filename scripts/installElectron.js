@@ -1,3 +1,8 @@
+// Don't run when using travis. We only install dev dependencies and will fail
+if (process.env.TRAVIS === 'true') {
+  process.exit(0)
+}
+
 const { ROOT_DIR, PKG } = require('./constants')
 const { sequencePromiseSpawn } = require('./Tools')
 const Colors = require('colors/safe')
