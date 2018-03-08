@@ -1,4 +1,4 @@
-// Don't run when using travis. We only install dev dependencies and will fail
+// Don't run when using travis. We only install dev dependencies and this will fail
 if (process.env.TRAVIS === 'true') {
   process.exit(0)
 }
@@ -7,7 +7,7 @@ const { ROOT_DIR, PKG } = require('./constants')
 const { sequencePromiseSpawn } = require('./Tools')
 const Colors = require('colors/safe')
 const path = require('path')
-const fs = require('fs')
+const fs = require('fs-extra')
 
 // Check if we are up to date
 const versionPath = path.join(ROOT_DIR, 'node_modules/electron/dist/wb_version')
@@ -17,33 +17,31 @@ try {
 } catch (ex) {}
 
 if (wbVersion !== PKG.electronInstallEnv.ELECTRON_CUSTOM_DIR) {
-  const cmds = [
-    {
-      cmd: process.platform === 'win32' ? 'npm.cmd' : 'npm',
-      args: ['run', 'cache-clean'],
-      opts: {
-        stdio: 'inherit',
-        cwd: path.join(ROOT_DIR, 'node_modules/electron')
-      },
-      prelog: `${Colors.inverse('cache-clean')}`
-    },
-    {
-      cmd: process.platform === 'win32' ? 'npm.cmd' : 'npm',
-      args: ['run', 'postinstall'],
-      opts: {
-        stdio: 'inherit',
-        cwd: path.join(ROOT_DIR, 'node_modules/electron'),
-        env: Object.assign({}, process.env, PKG.electronInstallEnv)
-      },
-      prelog: `${Colors.inverse('postinstall')}`
-    }
-  ]
-
-  sequencePromiseSpawn(cmds)
+  Promise.resolve()
+    // "electron/npm run cache-clean" doesn't work on windows. So just do cache-clean manually
+    .then(() => fs.remove(path.join(ROOT_DIR, 'node_modules/electron/dist')))
+    .then(() => fs.remove('~/.electron'))
+    .then(() => {
+      return sequencePromiseSpawn([
+        {
+          cmd: process.platform === 'win32' ? 'npm.cmd' : 'npm',
+          args: ['run', 'postinstall'],
+          opts: {
+            stdio: 'inherit',
+            cwd: path.join(ROOT_DIR, 'node_modules/electron'),
+            env: Object.assign({}, process.env, PKG.electronInstallEnv)
+          },
+          prelog: `${Colors.inverse('postinstall')}`
+        }
+      ])
+    })
     .then(() => {
       try {
         fs.writeFileSync(versionPath, PKG.electronInstallEnv.ELECTRON_CUSTOM_DIR)
       } catch (ex) { }
     })
-    .catch((e) => process.exit(-1))
+    .catch((e) => {
+      console.log(e)
+      process.exit(-1)
+    })
 }
