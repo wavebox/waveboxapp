@@ -7,6 +7,12 @@ import { webFrame } from 'electron'
 webFrame.setVisualZoomLevelLimits(1, 1)
 webFrame.setLayoutZoomLevelLimits(1, 1)
 
+// Prevent right click
+window.addEventListener('contextmenu', (evt) => {
+  evt.preventDefault()
+  evt.stopPropagation()
+}, false)
+
 // Prevent Drag/Drop
 document.addEventListener('drop', (evt) => {
   evt.preventDefault()

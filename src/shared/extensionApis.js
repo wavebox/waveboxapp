@@ -1,7 +1,6 @@
 const WAVEBOX_CONTENT_IMPL_ENDPOINTS = {
   NOTIFICATION: 'Notification.js',
   CHROME: 'Chrome.js',
-  CONTENT_WINDOW: 'ContentWindow.js',
   WAVEBOX_API: 'WaveboxApi.js',
   WINDOW_DIALOGS: 'NativeWindowDialogs.js',
 

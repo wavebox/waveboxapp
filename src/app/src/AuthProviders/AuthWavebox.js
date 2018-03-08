@@ -81,6 +81,9 @@ class AuthWavebox {
         webPreferences: {
           nodeIntegration: false,
           contextIsolation: true,
+          sandbox: true,
+          nativeWindowOpen: true,
+          sharedSiteInstances: true,
           partition: partitionId
         }
       })

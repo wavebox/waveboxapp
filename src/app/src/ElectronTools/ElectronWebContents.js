@@ -28,7 +28,7 @@ class ElectronWebContents {
   static getHostUrl (wc) {
     if (wc.isDestroyed()) {
       return 'about:blank'
-    } else if (wc.getURL() === 'about:blank') {
+    } else if (!wc.getURL() || wc.getURL() === 'about:blank') {
       const webPref = wc.getWebPreferences()
       if (webPref.openerId) {
         const opener = webContents.fromId(webPref.openerId)

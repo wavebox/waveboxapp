@@ -12,6 +12,12 @@ import { ipcRenderer, webFrame, remote } from 'electron'
 webFrame.setVisualZoomLevelLimits(1, 1)
 webFrame.setLayoutZoomLevelLimits(1, 1)
 
+// Prevent right click
+window.addEventListener('contextmenu', (evt) => {
+  evt.preventDefault()
+  evt.stopPropagation()
+}, false)
+
 // Prevent drag/drop
 document.addEventListener('drop', (evt) => {
   if (evt.target.tagName !== 'INPUT' && evt.target.type !== 'file') {

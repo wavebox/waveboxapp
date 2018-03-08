@@ -81,6 +81,9 @@ class AuthGoogle {
         webPreferences: {
           nodeIntegration: false,
           contextIsolation: true,
+          sandbox: true,
+          nativeWindowOpen: true,
+          sharedSiteInstances: true,
           partition: partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
         }
       })

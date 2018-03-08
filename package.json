@@ -9,7 +9,7 @@
     "start": "electron bin/app/index.js",
     "test": "standard",
     "install:all": "node scripts/installAll.js",
-    "install:electron:force": "node scripts/forceInstallElectron.js",
+    "postinstall": "node scripts/installElectron.js",
     "outdated:all": "node scripts/outdatedAll.js",
     "prune:all": "node scripts/pruneAll.js",
     "dev:guest": "webpack --env.task=guest && electron bin/app/index.js",
@@ -56,7 +56,7 @@
     "colors": "1.1.2",
     "copy-webpack-plugin": "4.4.1",
     "css-loader": "0.28.9",
-    "electron": "1.8.2",
+    "electron": "1.8.3",
     "electron-rebuild": "1.7.3",
     "extract-text-webpack-plugin": "3.0.2",
     "file-loader": "1.1.9",
@@ -82,6 +82,10 @@
   },
   "standard": {
     "parser": "babel-eslint"
+  },
+  "electronInstallEnv": {
+    "ELECTRON_MIRROR": "https://electron-wb.s3.us-east-2.amazonaws.com/",
+    "ELECTRON_CUSTOM_DIR": "wb_3_10_4"
   },
   "appConfig": {
     "osxAppBundleId": "io.wavebox.wavebox"

@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import WebView from './WebView'
 import shallowCompare from 'react-addons-shallow-compare'
+import uuid from 'uuid'
 
 const WEBVIEW_REF = 'webview'
 
@@ -39,6 +40,28 @@ export default class BrowserView extends React.Component {
   }
 
   /* **************************************************************************/
+  // Data lifecycle
+  /* **************************************************************************/
+
+  state = {
+    webViewInstanceKey: uuid.v4()
+  }
+
+  /* **************************************************************************/
+  // Public
+  /* **************************************************************************/
+
+  /**
+  * Resets the webview by effectively taking it out the dom and adding a new one
+  * again. Handy if the webview has crashed and you want to restart it
+  */
+  reset = () => {
+    this.setState({
+      webViewInstanceKey: uuid.v4()
+    })
+  }
+
+  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
@@ -66,6 +89,7 @@ export default class BrowserView extends React.Component {
 
   render () {
     const {...passProps} = this.props
-    return (<WebView {...passProps} ref={WEBVIEW_REF} />)
+    const { webViewInstanceKey } = this.state
+    return (<WebView {...passProps} ref={WEBVIEW_REF} key={webViewInstanceKey} />)
   }
 }

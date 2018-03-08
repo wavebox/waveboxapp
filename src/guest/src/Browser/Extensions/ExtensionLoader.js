@@ -1,8 +1,5 @@
 import { webFrame, ipcRenderer } from 'electron'
-import LiveConfig from 'LiveConfig'
-import url from 'url'
 import {
-  WAVEBOX_HOSTED_EXTENSION_PROTOCOL,
   CR_EXTENSION_PROTOCOL,
   WAVEBOX_CONTENT_IMPL_ENDPOINTS,
   VALID_WAVEBOX_CONTENT_IMPL_ENDPOINTS
@@ -17,12 +14,11 @@ import {
 const SUPPORTED_PROTOCOLS = new Set([
   'http:',
   'https:',
-  `${WAVEBOX_HOSTED_EXTENSION_PROTOCOL}:`
+  'about:'
 ])
 const SUPPRESSED_PROTOCOLS = new Set([
   `${CR_EXTENSION_PROTOCOL}:`,
-  `${CHROME_PROTOCOL}:`,
-  'about:'
+  `${CHROME_PROTOCOL}:`
 ])
 const DEQUEUE_ENDPOINTS = new Set([
   /**
@@ -51,11 +47,10 @@ class ExtensionLoader {
       return Promise.reject(new Error(`Unsupported Api ${apiName}`))
     }
 
-    const hostUrl = url.parse(LiveConfig.hostUrl)
-    if (SUPPRESSED_PROTOCOLS.has(hostUrl.protocol)) {
+    if (SUPPRESSED_PROTOCOLS.has(window.location.protocol)) {
       return Promise.resolve() /* no-op */
     }
-    if (!SUPPORTED_PROTOCOLS.has(hostUrl.protocol)) {
+    if (!SUPPORTED_PROTOCOLS.has(window.location.protocol)) {
       return Promise.reject(new Error('Unsupported Guest Protocol'))
     }
 

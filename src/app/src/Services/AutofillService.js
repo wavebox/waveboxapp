@@ -64,7 +64,6 @@ class AutofillService {
   */
   injectStyles = (evt) => {
     if (!this.isAvailable) { return }
-
     evt.sender.insertCSS(`
       input[type="password"] {
         background-size: auto 24px;

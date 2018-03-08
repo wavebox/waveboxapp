@@ -11,6 +11,12 @@ webFrame.setLayoutZoomLevelLimits(1, 1)
 // Load what we have in the db
 monitorActions.load()
 
+// Prevent right click
+window.addEventListener('contextmenu', (evt) => {
+  evt.preventDefault()
+  evt.stopPropagation()
+}, false)
+
 // Prevent Drag/Drop
 document.addEventListener('drop', (evt) => {
   evt.preventDefault()

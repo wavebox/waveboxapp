@@ -365,10 +365,7 @@ export default class MailboxWebView extends React.Component {
       this.refs[BROWSER_REF].send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP, {})
     }
 
-    this.setState({
-      initialLoadDone: true,
-      isCrashed: false // Catch-all in case loadCommit fails
-    })
+    this.setState({ initialLoadDone: true })
   }
 
   /**
@@ -385,16 +382,6 @@ export default class MailboxWebView extends React.Component {
   */
   handleBrowserUpdateTargetUrl = (evt) => {
     this.setState({ focusedUrl: evt.url !== '' ? evt.url : null })
-  }
-
-  /**
-  * Handles a load starting
-  * @param evt: the event that fired
-  */
-  handleBrowserLoadCommit = (evt) => {
-    if (evt.isMainFrame) {
-      this.setState({ isCrashed: false })
-    }
   }
 
   /**
@@ -625,9 +612,6 @@ export default class MailboxWebView extends React.Component {
             didNavigateInPage={(evt) => {
               this.multiCallBrowserEvent([this.handleBrowserDidNavigateInPage, webviewEventProps.didNavigateInPage], [evt])
             }}
-            loadCommit={(evt) => {
-              this.multiCallBrowserEvent([this.handleBrowserLoadCommit, webviewEventProps.loadCommit], [evt])
-            }}
             didStartLoading={(evt) => {
               this.multiCallBrowserEvent([this.handleDidStartLoading, webviewEventProps.didStartLoading], [evt])
             }}
@@ -652,14 +636,15 @@ export default class MailboxWebView extends React.Component {
         {isCrashed ? (
           <div className='ReactComponent-MailboxCrashed'>
             <h1>Whoops!</h1>
-            <p>Something went wrong with this mailbox and it crashed</p>
+            <p>Something went wrong with this tab and it crashed</p>
             <br />
             <RaisedButton
               label='Reload'
               icon={<FontIcon className='material-icons'>refresh</FontIcon>}
               onClick={() => {
-                this.setState({ isCrashed: false }) // Set immediately to update user
-                this.reloadIgnoringCache()
+                // Update our crashed state
+                this.setState({ isCrashed: false })
+                this.refs[BROWSER_REF].reset()
               }} />
           </div>
         ) : undefined}

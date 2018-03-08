@@ -97,7 +97,7 @@ export default class BrowserScene extends React.Component {
   * Handles closing the guest requesting the ipc window closure
   * @param evt: the event that fired
   */
-  handleIPCGuestWindowClose = (evt) => {
+  handleClose = (evt) => {
     remote.getCurrentWindow().close()
   }
 
@@ -139,6 +139,7 @@ export default class BrowserScene extends React.Component {
             preload={preloadScripts}
             searchTerm={isSearching ? searchTerm : undefined}
             searchId={searchNextHash}
+            close={this.handleClose}
             updateTargetUrl={(evt) => browserActions.setTargetUrl(evt.url)}
             pageTitleUpdated={(evt) => browserActions.setPageTitle(evt.title)}
             didStartLoading={(evt) => browserActions.startLoading()}

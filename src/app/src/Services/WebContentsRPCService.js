@@ -3,12 +3,10 @@ import { ElectronWebContents } from 'ElectronTools'
 import { settingsStore } from 'stores/settings'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { ELEVATED_LOG_PREFIX } from 'shared/constants'
-import WaveboxWindow from 'Windows/WaveboxWindow'
 import {
   WCRPC_DOM_READY,
   WCRPC_DID_FRAME_FINISH_LOAD,
   WCRPC_CLOSE_WINDOW,
-  WCRPC_GUEST_CLOSE_WINDOW,
   WCRPC_SEND_INPUT_EVENT,
   WCRPC_SEND_INPUT_EVENTS,
   WCRPC_SHOW_ASYNC_MESSAGE_DIALOG,
@@ -35,7 +33,6 @@ class WebContentsRPCService {
 
     app.on('web-contents-created', this._handleWebContentsCreated)
     ipcMain.on(WCRPC_CLOSE_WINDOW, this._handleCloseWindow)
-    ipcMain.on(WCRPC_GUEST_CLOSE_WINDOW, this._handleGuestCloseWindow)
     ipcMain.on(WCRPC_SEND_INPUT_EVENT, this._handleSendInputEvent)
     ipcMain.on(WCRPC_SEND_INPUT_EVENTS, this._handleSendInputEvents)
     ipcMain.on(WCRPC_SHOW_ASYNC_MESSAGE_DIALOG, this._handleShowAsyncMessageDialog)
@@ -133,19 +130,6 @@ class WebContentsRPCService {
     if (!this[privConnected].has(evt.sender.id)) { return }
     const bw = BrowserWindow.fromWebContents(ElectronWebContents.rootWebContents(evt.sender))
     if (!bw || bw.isDestroyed()) { return }
-    bw.close()
-  }
-
-  /**
-  * Closes the browser window as a guest request
-  * @param evt: the event that fired
-  */
-  _handleGuestCloseWindow = (evt) => {
-    if (!this[privConnected].has(evt.sender.id)) { return }
-    const bw = BrowserWindow.fromWebContents(ElectronWebContents.rootWebContents(evt.sender))
-    if (!bw || bw.isDestroyed()) { return }
-    const waveboxWindow = WaveboxWindow.fromBrowserWindow(bw)
-    if (!waveboxWindow || !waveboxWindow.allowsGuestClosing) { return }
     bw.close()
   }
 

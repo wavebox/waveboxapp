@@ -42,6 +42,8 @@ class CRExtensionLoader {
     if (this[privHasLoaded]) { return }
     this[privHasLoaded] = true
 
+    // If we're loading into about:blank we need to get the parent url
+    // so we can setup correctly.
     const hostUrl = url.parse(LiveConfig.hostUrl)
     if (hostUrl.protocol === 'http:' || hostUrl.protocol === 'https:') {
       this[privExtensionPreferences] = LiveConfig.extensions
