@@ -82,10 +82,12 @@ class AuthMicrosoft {
         webPreferences: {
           nodeIntegration: false,
           contextIsolation: true,
-          sandbox: true,
-          nativeWindowOpen: true,
-          sharedSiteInstances: true,
           partition: partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
+          // Don't use the default brower behaviour as the returned urn:// url has some funny
+          // behaviour on windows and this exacerbates it
+          // sandbox: true,
+          // nativeWindowOpen: true,
+          // sharedSiteInstances: true,
         }
       })
       const oauthWin = waveboxOauthWin.window
