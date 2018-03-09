@@ -8,6 +8,7 @@ const { sequencePromiseSpawn } = require('./Tools')
 const Colors = require('colors/safe')
 const path = require('path')
 const fs = require('fs-extra')
+const homePath = require('home-path')
 
 // Check if we are up to date
 const versionPath = path.join(ROOT_DIR, 'node_modules/electron/dist/wb_version')
@@ -20,7 +21,7 @@ if (wbVersion !== PKG.electronInstallEnv.ELECTRON_CUSTOM_DIR) {
   Promise.resolve()
     // "electron/npm run cache-clean" doesn't work on windows. So just do cache-clean manually
     .then(() => fs.remove(path.join(ROOT_DIR, 'node_modules/electron/dist')))
-    .then(() => fs.remove('~/.electron'))
+    .then(() => fs.remove(path.join(homePath(), '.electron')))
     .then(() => {
       return sequencePromiseSpawn([
         {
