@@ -7,7 +7,6 @@ import url from 'url'
 import { mailboxStore } from 'stores/mailbox'
 import { WindowOpeningHandler } from '../WindowOpeningEngine'
 import { WB_NEW_WINDOW, WB_FOCUS_AUTH_WINDOW } from 'shared/ipcEvents'
-import { WAVEBOX_HOSTED_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import WINDOW_TYPES from '../WindowTypes'
 import WINDOW_BACKING_TYPES from '../WindowBackingTypes'
 
@@ -143,14 +142,6 @@ class MailboxesWindowBehaviour {
   * @param targetUrl: the url we're navigating to
   */
   handleWebViewWillNavigate = (evt, targetUrl) => {
-    // Extensions
-    if (this.tabManager.hasExtensionPane(evt.sender.id)) {
-      if (url.parse(targetUrl).protocol !== WAVEBOX_HOSTED_EXTENSION_PROTOCOL + ':') {
-        evt.preventDefault()
-        return
-      }
-    }
-
     WindowOpeningHandler.handleWillNavigate(evt, {
       targetUrl: targetUrl,
       openingBrowserWindow: this._getOpeningBrowserWindow(evt),

@@ -5,9 +5,6 @@ import {
   ALLOWED_HTML5_NOTIFICATION_HOSTS
 } from 'shared/constants'
 import {
-  WAVEBOX_HOSTED_EXTENSION_PROTOCOL
-} from 'shared/extensionApis'
-import {
   WB_NOTIFICATION_PERMISSION_SET_SYNC
 } from 'shared/ipcEvents'
 import LiveConfig from 'LiveConfig'
@@ -39,8 +36,6 @@ class NotificationPermissionManager {
     if (this._isDomainAlwaysDisallowed(domain)) {
       return 'denied'
     } else if (this._isDomainAlwaysAllowed(domain)) {
-      return 'granted'
-    } else if (this._isProtocolAlwaysAllowed(this._getProtocolFromUrl(domain))) {
       return 'granted'
     } else {
       return LiveConfig.notificationPermission.permission
@@ -89,14 +84,6 @@ class NotificationPermissionManager {
   */
   _isDomainAlwaysAllowed (domain) {
     return !!ALLOWED_HTML5_NOTIFICATION_HOSTS.find((all) => domain.indexOf(all) !== -1)
-  }
-
-  /**
-  * @param protocol: the protocol to query for in the format http:
-  * @return true if this domain is always allowed, false otherwise
-  */
-  _isProtocolAlwaysAllowed (protocol) {
-    return protocol === WAVEBOX_HOSTED_EXTENSION_PROTOCOL + ':'
   }
 }
 
