@@ -78,15 +78,18 @@ export default class MailboxAvatar extends React.Component {
   render () {
     const { mailboxId, className, ...passProps } = this.props
     const { mailbox, url } = this.state
-    if (!mailbox) { return false }
 
-    const fullClassName = classnames(`WB-MailboxAvatar WB-Mailbox-${mailboxId}`, className)
-    return (
-      <SharedMailboxAvatar
-        mailbox={mailbox}
-        resolvedAvatar={url}
-        className={fullClassName}
-        {...passProps} />
-    )
+    if (mailbox) {
+      const fullClassName = classnames(`WB-MailboxAvatar WB-Mailbox-${mailboxId}`, className)
+      return (
+        <SharedMailboxAvatar
+          mailbox={mailbox}
+          resolvedAvatar={url}
+          className={fullClassName}
+          {...passProps} />
+      )
+    } else {
+      return false
+    }
   }
 }

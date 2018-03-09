@@ -79,6 +79,8 @@ export default class MailboxAvatar extends React.Component {
       resolvedAvatar,
       ...otherProps
     } = this.props
+    if (!mailbox) { return false }
+
     const passProps = {
       draggable: false,
       style: style,
