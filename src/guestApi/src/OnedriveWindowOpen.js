@@ -1,4 +1,5 @@
-(function () {
+'use strict'
+;(function () {
   if (window.location.host === 'onedrive.live.com' && window.location.pathname === '/create.aspx') {
     // On OneDrive After creating documents we get left at create.aspx, so take us back to oneDrive
     setTimeout(() => {

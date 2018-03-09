@@ -1,6 +1,7 @@
+'use strict'
 /* global WB_API_KEY */
 
-(function () {
+;(function () {
   let asyncAlert = true
   window.addEventListener('message', function (evt) {
     if (evt.origin === window.location.origin && evt.isTrusted) {

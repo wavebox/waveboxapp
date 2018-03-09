@@ -1,3 +1,4 @@
+'use strict'
 /* global WB_API_KEY */
 /* global WB_CONFIG */
 
