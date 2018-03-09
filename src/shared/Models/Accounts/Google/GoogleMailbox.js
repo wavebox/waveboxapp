@@ -225,7 +225,7 @@ class GoogleMailbox extends CoreMailbox {
     if (this.openDriveLinksWithExternalBrowser) {
       return [
         {
-          url: 'http(s)\\://(*.)google.com',
+          url: 'http(s)\\://(*.)google.com(/*)',
           matches: [
             { url: 'http(s)\\://docs.google.com(/*)', mode: 'EXTERNAL' },
             { url: 'http(s)\\://drive.google.com(/*)', mode: 'EXTERNAL' },
