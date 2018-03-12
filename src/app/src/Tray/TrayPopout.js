@@ -34,12 +34,13 @@ class TrayPopout {
       show: false,
       backgroundColor: '#ffffff',
       transparent: false,
+      maximizable: false,
+      fullscreenable: false,
       webPreferences: {
         nodeIntegration: true
       },
       ...(this.isWindowedMode ? {
-        title: 'Wavebox Mini',
-        maximizable: false
+        title: 'Wavebox Mini'
       } : {
         frame: false,
         alwaysOnTop: true,
