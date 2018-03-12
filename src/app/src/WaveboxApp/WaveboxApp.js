@@ -54,11 +54,23 @@ class WaveboxApp {
       throw new Error('App already started. Subsequent calls to start() are disallowed')
     }
 
-    // Errors
-    process.on('uncaughtException', (err) => {
-      console.error(err)
-      console.error(err.stack)
-    })
+    // Errors. Some 3rd party libraries (hunspell) bind uncaughtException and can kill
+    // the app. Prevent anyone else binding into uncaughtException so we can protect
+    // against this
+    ;(() => {
+      process.on('uncaughtException', (err) => {
+        console.error(err)
+        console.error(err.stack)
+      })
+      const original = process.on
+      process.on = (...args) => {
+        if (args[0] === 'uncaughtException') {
+          console.log('Refusing to bind "uncaughtException"')
+        } else {
+          original(...args)
+        }
+      }
+    })()
 
     // State
     this[privStarted] = true
