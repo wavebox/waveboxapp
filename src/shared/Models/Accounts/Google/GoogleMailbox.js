@@ -230,12 +230,12 @@ class GoogleMailbox extends CoreMailbox {
             { url: 'http(s)\\://docs.google.com(/*)', mode: 'EXTERNAL' },
             { url: 'http(s)\\://drive.google.com(/*)', mode: 'EXTERNAL' },
             { // Embedded google drive url
-              url: 'http(s)\\://(*.)google.com/url(*)',
+              url: 'http(s)\\://(*.)google.com(/*)',
               query: { q: 'http(s)\\://drive.google.com(/*)' },
               mode: 'EXTERNAL'
             },
             { // Embedded google docs url
-              url: 'http(s)\\://(*.)google.com/url(*)',
+              url: 'http(s)\\://(*.)google.com(/*)',
               query: { q: 'http(s)\\://docs.google.com(/*)' },
               mode: 'EXTERNAL'
             }
