@@ -11,7 +11,7 @@
     "react": "16.2.0",
     "react-addons-shallow-compare": "15.6.2",
     "react-dom": "16.2.0",
-    "prop-types": "15.6.0"
+    "prop-types": "15.6.1"
   },
   "devDependencies": {
     "standard": "11.0.0",
