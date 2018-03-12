@@ -258,10 +258,18 @@ class WaveboxWindow extends EventEmitter {
           const windowBounds = this[privWindow].getBounds()
           const workArea = (screen.getDisplayMatching(windowBounds) || screen.getPrimaryDisplay()).workArea
 
-          if (windowBounds.x < workArea.x || windowBounds.y < workArea.y) {
-            const x = Math.max(windowBounds.x, workArea.x)
-            const y = Math.max(windowBounds.y, workArea.y)
-            this[privWindow].setPosition(x, y, false)
+          if (process.platform === 'darwin') {
+            if (windowBounds.x < workArea.x || windowBounds.y < workArea.y || windowBounds.y < 25) {
+              const x = Math.max(windowBounds.x, workArea.x)
+              const y = Math.max(windowBounds.y, workArea.y, 25)
+              this[privWindow].setPosition(x, y, false)
+            }
+          } else {
+            if (windowBounds.x < workArea.x || windowBounds.y < workArea.y) {
+              const x = Math.max(windowBounds.x, workArea.x)
+              const y = Math.max(windowBounds.y, workArea.y)
+              this[privWindow].setPosition(x, y, false)
+            }
           }
         }
       }
