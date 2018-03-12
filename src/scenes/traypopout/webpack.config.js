@@ -30,6 +30,7 @@ module.exports = function (env) {
       path: OUT_DIR,
       filename: 'traypopout.js'
     },
+    performance: { hints: false },
     plugins: [
       !isProduction ? undefined : new webpack.DefinePlugin({
         __DEV__: false,

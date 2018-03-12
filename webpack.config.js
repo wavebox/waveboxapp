@@ -1,4 +1,5 @@
 const fs = require('fs')
+const argv = require('yargs').argv
 const gracefulFs = require('graceful-fs')
 gracefulFs.gracefulify(fs)
 
@@ -21,8 +22,13 @@ module.exports = function (env = {}) {
   process.env.CHROME_TARGET = 59
   process.env.NODE_TARGET = '8.2.1'
 
+  const mode = new Set([
+    'production',
+    'development'
+  ]).has(argv.mode) ? argv.mode : 'development'
+
   // Production
-  if (env.p || env.production) {
+  if (mode === 'production') {
     console.log('[PRODUCTION BUILD]')
     process.env.NODE_ENV = 'production'
   } else {
@@ -30,11 +36,14 @@ module.exports = function (env = {}) {
   }
 
   // Cheap / expensive source maps
-  if (env.fast) {
-    console.log('[CHEAP SOURCEMAPS]')
-    process.env.WEBPACK_DEVTOOL = 'eval-cheap-module-source-map'
-  } else {
-    console.log('[FULL SOURCEMAPS]')
+  if (mode === 'development') {
+    if (env.fast) {
+      console.log('[CHEAP SOURCEMAPS]')
+      process.env.WEBPACK_DEVTOOL = 'eval-cheap-module-source-map'
+    } else {
+      console.log('[FULL SOURCEMAPS]')
+      process.env.WEBPACK_DEVTOOL = 'source-map'
+    }
   }
 
   if (env.disableNotify) {

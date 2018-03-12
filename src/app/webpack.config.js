@@ -32,6 +32,7 @@ module.exports = function (env) {
       }
       return acc
     }, {}),
+    performance: { hints: false },
     plugins: [
       !isProduction ? undefined : new webpack.DefinePlugin({
         __DEV__: false,

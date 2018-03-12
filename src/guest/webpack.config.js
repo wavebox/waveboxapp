@@ -27,6 +27,7 @@ module.exports = function (env) {
       'electron': 'commonjs electron',
       'fs': 'throw new Error("fs is not available")' // require('fs') is in hunspell-asm but it handles the failure gracefully :)
     },
+    performance: { hints: false },
     plugins: [
       !isProduction ? undefined : new webpack.DefinePlugin({
         __DEV__: false,
