@@ -249,7 +249,7 @@ class WaveboxWindow extends EventEmitter {
     // to show on this callback. Do this to to ensure we are the last
     // callback and we have the most up to date state
     setImmediate(() => {
-      if (this[privWindow].isVisible()) {
+      if (this[privWindow] && this[privWindow].isVisible()) {
         if (savedLocation.maximized === true) {
           this[privWindow].maximize()
         }

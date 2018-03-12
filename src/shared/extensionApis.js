@@ -4,7 +4,8 @@ const WAVEBOX_CONTENT_IMPL_ENDPOINTS = {
   WAVEBOX_API: 'WaveboxApi.js',
   WINDOW_DIALOGS: 'NativeWindowDialogs.js',
 
-  ONEDRIVE_WINDOW_OPEN: 'OnedriveWindowOpen.js'
+  ONEDRIVE_WINDOW_OPEN: 'OnedriveWindowOpen.js',
+  GOOGLE_MAIL_WINDOW_OPEN: 'GoogleMailWindowOpen.js',
 }
 const VALID_WAVEBOX_CONTENT_IMPL_ENDPOINTS = new Set(Array.from(Object.keys(WAVEBOX_CONTENT_IMPL_ENDPOINTS).map((k) => WAVEBOX_CONTENT_IMPL_ENDPOINTS[k])))
 
