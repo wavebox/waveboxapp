@@ -139,12 +139,25 @@ class WaveboxWindow extends EventEmitter {
     this[settingsStore.getState().ui.showAppMenu ? 'showAppMenu' : 'hideAppMenu']()
 
     // Bind window event listeners
-    this.window.once('ready-to-show', (evt) => this._handleReadyToShow(evt, savedLocation))
     this.window.on('close', (evt) => this.emit('close', evt))
     this.window.on('closed', (evt) => this.destroy(evt))
     this.window.on('focus', this._handleWindowFocused)
     this.window.on('blur', this._handleWindowBlurred)
     this.bindMouseNavigation()
+
+    // Restore window position
+    if (fullBrowserWindowPreferences.show) {
+      this._restoreWindowPosition(savedLocation)
+    } else {
+      this.window.once('ready-to-show', (evt) => {
+        // Defer this as we may be showing the window hidden and choosing
+        // to show on this callback. Do this to to ensure we are the last
+        // callback and we have the most up to date state
+        setImmediate(() => {
+          this._restoreWindowPosition(savedLocation)
+        })
+      })
+    }
 
     // Register state savers
     this.locationSaver.register(this.window)
@@ -164,6 +177,29 @@ class WaveboxWindow extends EventEmitter {
     })
 
     return this
+  }
+
+  /**
+  * Restores the window position
+  * @param savedLocation: the previous saved location
+  */
+  _restoreWindowPosition (savedLocation) {
+    if (this[privWindow] && this[privWindow].isVisible()) {
+      if (savedLocation.maximized === true) {
+        this[privWindow].maximize()
+      }
+
+      if (!this[privWindow].isMaximized()) {
+        const windowBounds = this[privWindow].getBounds()
+        const workArea = (screen.getDisplayMatching(windowBounds) || screen.getPrimaryDisplay()).workArea
+
+        if (windowBounds.x < workArea.x || windowBounds.y < workArea.y) {
+          const x = Math.max(windowBounds.x, workArea.x)
+          const y = Math.max(windowBounds.y, workArea.y)
+          this[privWindow].setPosition(x, y, false)
+        }
+      }
+    }
   }
 
   /**
@@ -237,43 +273,6 @@ class WaveboxWindow extends EventEmitter {
     this[privLastTimeInFocus] = new Date().getTime()
     this.window.webContents.send(WB_WINDOW_BLUR)
     evtMain.emit(evtMain.WB_WINDOW_BLURRED, {}, this.window.id)
-  }
-
-  /**
-  * Handles the window becoming ready to show
-  * @param evt: the event that fired
-  * @param savedLocation: the previous saved location
-  */
-  _handleReadyToShow = (evt, savedLocation) => {
-    // Defer this as we may be showing the window hidden and choosing
-    // to show on this callback. Do this to to ensure we are the last
-    // callback and we have the most up to date state
-    setImmediate(() => {
-      if (this[privWindow] && this[privWindow].isVisible()) {
-        if (savedLocation.maximized === true) {
-          this[privWindow].maximize()
-        }
-
-        if (!this[privWindow].isMaximized()) {
-          const windowBounds = this[privWindow].getBounds()
-          const workArea = (screen.getDisplayMatching(windowBounds) || screen.getPrimaryDisplay()).workArea
-
-          if (process.platform === 'darwin') {
-            if (windowBounds.x < workArea.x || windowBounds.y < workArea.y || windowBounds.y < 25) {
-              const x = Math.max(windowBounds.x, workArea.x)
-              const y = Math.max(windowBounds.y, workArea.y, 25)
-              this[privWindow].setPosition(x, y, false)
-            }
-          } else {
-            if (windowBounds.x < workArea.x || windowBounds.y < workArea.y) {
-              const x = Math.max(windowBounds.x, workArea.x)
-              const y = Math.max(windowBounds.y, workArea.y)
-              this[privWindow].setPosition(x, y, false)
-            }
-          }
-        }
-      }
-    })
   }
 
   /* ****************************************************************************/
