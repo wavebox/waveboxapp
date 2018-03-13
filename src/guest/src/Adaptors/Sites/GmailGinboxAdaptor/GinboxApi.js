@@ -63,6 +63,14 @@ class GinboxApi {
       }
       composeButton.click()
 
+      // If mixmax is used we can't talk into the compose window because it's in a nested iframe.
+      // If we don't return that we we're successfull though we end up in a nasty state where
+      // we keep hitting compose. Fail gracefully getting as far as we can
+      if (composeButton.classList.contains('mixmax-compose-button')) {
+        resolve(true)
+        return
+      }
+
       setTimeout(() => {
         // Grab elements
         const bodyEl = document.querySelector('[g_editable="true"][role="textbox"]')
