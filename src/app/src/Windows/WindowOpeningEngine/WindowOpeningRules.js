@@ -195,6 +195,11 @@ class WindowOpeningRules {
         if (mismatch) { return false }
       }
 
+      // Hash
+      if (match.hash) {
+        if (!this._doesPatternMatch(match.hash, matchTask.targetUrlHash)) { return false }
+      }
+
       // Nothing caused us to quit, so we matched!
       return true
     } catch (ex) {

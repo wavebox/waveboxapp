@@ -106,6 +106,11 @@ class IPCDispatcher {
 
     const registeredHandler = (evt, requestId, request) => {
       handler(evt, request, (err, response) => {
+        // Sometimes by the time we come back the return path may have been destroyed. In
+        // this case there's not really anything to do as nobody is waiting for or listening
+        // on the call. In this case just return
+        if (evt.sender.isDestroyed()) { return }
+
         evt.sender.send(`${name}_${requestId}`, err, response)
       })
     }

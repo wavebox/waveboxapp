@@ -56,7 +56,10 @@ class WindowOpeningHandler {
 
     // Run through our standard config
     try {
-      openMode = WindowOpeningEngine.getRuleForWindowOpen(currentUrl, targetUrl, openingWindowType, provisionalTargetUrl, disposition)
+      const mode = WindowOpeningEngine.getRuleForWindowOpen(currentUrl, targetUrl, openingWindowType, provisionalTargetUrl, disposition)
+      if (mode && WINDOW_OPEN_MODES[mode]) {
+        openMode = mode
+      }
     } catch (ex) {
       console.error(`Failed to process default window opening rules. Continuing with "${openMode}" behaviour...`, ex)
     }
@@ -110,6 +113,18 @@ class WindowOpeningHandler {
       openedWindow = this.openWindowWaveboxContent(openingBrowserWindow, tabMetaInfo, provisionalTargetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.DOWNLOAD) {
       evt.sender.downloadURL(targetUrl)
+    } else if (openMode === WINDOW_OPEN_MODES.CURRENT) {
+      evt.sender.loadURL(targetUrl)
+    } else if (openMode === WINDOW_OPEN_MODES.CURRENT_PROVISIONAL) {
+      evt.sender.loadURL(provisionalTargetUrl)
+    } else if (openMode === WINDOW_OPEN_MODES.BLANK_AND_CURRENT) {
+      evt.sender.loadURL('about:blank')
+      evt.sender.loadURL(targetUrl)
+    } else if (openMode === WINDOW_OPEN_MODES.BLANK_AND_CURRENT_PROVISIONAL) {
+      evt.sender.loadURL('about:blank')
+      evt.sender.loadURL(provisionalTargetUrl)
+    } else {
+      openedWindow = this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
     }
   }
 

@@ -54,11 +54,25 @@ class WindowOpeningMatchTask {
     return this[privCache].get('targetUrlQuery')
   }
 
+  get targetUrlHash () {
+    if (!this[privCache].has('targetUrlHash')) {
+      this[privCache].set('targetUrlHash', url.parse(this.fullTargetUrl).hash)
+    }
+    return this[privCache].get('targetUrlHash')
+  }
+
   get provisionalTargetUri () {
     if (!this[privCache].has('provisionalTargetUri')) {
       this[privCache].set('provisionalTargetUri', this._justUri(this.fullProvisionalTargetUrl))
     }
     return this[privCache].get('provisionalTargetUri')
+  }
+
+  get provisionalTargetUrlHash () {
+    if (!this[privCache].has('provisionalTargetUrlHash')) {
+      this[privCache].set('provisionalTargetUrlHash', url.parse(this.fullProvisionalTargetUrl).hash)
+    }
+    return this[privCache].get('provisionalTargetUrlHash')
   }
 
   /* ****************************************************************************/

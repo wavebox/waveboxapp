@@ -62,7 +62,7 @@ class WaveboxApp {
     process.on = (...args) => {
       if (args[0] === 'uncaughtException') {
         console.log([
-          'Wavebox is fefusing to bind to the "uncaughtException" event to process.',
+          'Wavebox is refusing to bind to the "uncaughtException" event to process.',
           '  If you really meant to do this use "process.__on_unsafe__()"'
         ].join('\n'))
       } else {
