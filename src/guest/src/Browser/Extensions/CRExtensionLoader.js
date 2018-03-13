@@ -200,9 +200,13 @@ class CRExtensionLoader {
   * @param code: the code to inject
   */
   _executeContentJavaScript (contextId, extensionId, url, code) {
-    webFrame.executeJavaScriptInIsolatedWorld(contextId, [
-      { code: code, url: url }
-    ])
+    try {
+      webFrame.executeJavaScriptInIsolatedWorld(contextId, [
+        { code: code, url: url }
+      ])
+    } catch (ex) {
+      /* no-op */
+    }
   }
 
   /**

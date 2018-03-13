@@ -46,10 +46,11 @@ class ElectronWebContents {
   * Gets the permission root url for a webcontents. This helps when about:blank
   * is opened and the page has a parent
   * @param wc: the webcontents to look at
+  * @param currentUrl=undefined: the url reported by the page
   * @return the domain to run permissions off
   */
-  static getPermissionRootUrl (wc) {
-    const hostUrl = this.getHostUrl(wc)
+  static getPermissionRootUrl (wc, currentUrl = undefined) {
+    const hostUrl = !currentUrl || currentUrl === 'about:blank' ? this.getHostUrl(wc) : currentUrl
 
     const purl = url.parse(hostUrl || 'about:blank')
     const host = purl.host.startsWith('www.') ? purl.host.replace('www.', '') : purl.host

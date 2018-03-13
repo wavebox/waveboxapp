@@ -11,9 +11,33 @@ import {
 
 const REF = 'mailbox_tab'
 const DOC_TITLE_UNREAD_RES = [
-  new RegExp('^[(]([0-9]+)[)].*?$'),
-  new RegExp('^.*?[(]([0-9]+)[)]$')
+  new RegExp('^[(]([0-9]+)[)].*?$'), // (12) text
+  new RegExp('^.*?[(]([0-9]+)[)]$'), // text (12)
+  new RegExp('^[\\[]([0-9]+)[\\]].*?$'), // [12] text
+  new RegExp('^.*?[\\[]([0-9]+)[\\]]$') // text [12]
 ]
+const DOC_TITLE_UNREAD_CONVERTS = {
+  '➀': 1,
+  '➁': 2,
+  '➂': 3,
+  '➃': 4,
+  '➄': 5,
+  '➅': 6,
+  '➆': 7,
+  '➇': 8,
+  '➈': 9,
+  '➉': 10,
+  '❶': 1,
+  '❷': 2,
+  '❸': 3,
+  '❹': 4,
+  '❺': 5,
+  '❻': 6,
+  '❼': 7,
+  '❽': 8,
+  '❾': 9,
+  '❿': 10
+}
 
 export default class ContainerMailboxDefaultServiceWebView extends React.Component {
   /* **************************************************************************/
@@ -153,12 +177,13 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
     const { mailboxId } = this.props
     const { documentTitleHasUnread, documentTitleUnreadBlinks } = this.state
     if (!documentTitleHasUnread) { return }
+    title = title || ''
 
-    // Parse the count
+    // Check the title for a regex count match
     let hasCount = false
     let count = 0
     DOC_TITLE_UNREAD_RES.find((re) => {
-      const match = re.exec(title || '')
+      const match = re.exec(title)
       if (match) {
         const matchCount = parseInt(match[1])
         if (!isNaN(matchCount)) {
@@ -168,6 +193,17 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
       }
       return hasCount
     })
+
+    // Check the title for a prefix or suffix count
+    if (!hasCount) {
+      if (DOC_TITLE_UNREAD_CONVERTS[title[0]] !== undefined) {
+        count = DOC_TITLE_UNREAD_CONVERTS[title[0]]
+        hasCount = true
+      } else if (DOC_TITLE_UNREAD_CONVERTS[title[title.length - 1]] !== undefined) {
+        count = DOC_TITLE_UNREAD_CONVERTS[title[title.length - 1]]
+        hasCount = true
+      }
+    }
 
     // Run the update depending on how we are configured
     clearTimeout(this.titleUpdateWaiter)

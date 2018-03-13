@@ -52,10 +52,11 @@ class NotificationService {
   /**
   * Gets the domain permission for a webcontents
   * @param wc: the webcontents
+  * @param currentUrl: the url as reported by the page
   * @return { domain, permission }
   */
-  getDomainPermissionForWebContents (wc) {
-    const domain = ElectronWebContents.getPermissionRootUrl(wc)
+  getDomainPermissionForWebContents (wc, currentUrl) {
+    const domain = ElectronWebContents.getPermissionRootUrl(wc, currentUrl)
     if (this.permissionCache.has(domain)) {
       return this.permissionCache.get(domain)
     } else {

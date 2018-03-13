@@ -19,7 +19,7 @@ class LiveConfig {
 
   get config () {
     if (this[privConfig] === null) {
-      this[privConfig] = Object.freeze(ipcRenderer.sendSync(WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG))
+      this[privConfig] = Object.freeze(ipcRenderer.sendSync(WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG, window.location.href))
     }
     return this[privConfig]
   }

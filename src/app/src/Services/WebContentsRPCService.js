@@ -171,21 +171,26 @@ class WebContentsRPCService {
   /**
   * Synchronously gets the guest preload info
   * @param evt: the event that fired
+  * @param currentUrl: the current url sent by the page
   */
-  _handleSyncGetGuestPreloadInfo = (evt) => {
+  _handleSyncGetGuestPreloadInfo = (evt, currentUrl) => {
     if (!this[privConnected].has(evt.sender.id)) { return }
+
+    // Worth noting that webContents.getURL() can sometimes be wrong if this is called early
+    // in the exec stack. In case this is the case use the url the client sends to us. It's
+    // sandboxed in our own context so there wont be any case for xss
 
     try {
       evt.returnValue = {
         launchSettings: settingsStore.getState().launchSettingsJS(),
         extensions: CRExtensionManager.runtimeHandler.getAllContentScriptGuestConfigs(),
-        initialHostUrl: ElectronWebContents.getHostUrl(evt.sender),
-        notificationPermission: this[privNotificationService].getDomainPermissionForWebContents(evt.sender),
+        initialHostUrl: !currentUrl || currentUrl === 'about:blank' ? ElectronWebContents.getHostUrl(evt.sender) : currentUrl,
+        notificationPermission: this[privNotificationService].getDomainPermissionForWebContents(evt.sender, currentUrl),
         paths: {},
         platform: process.platform
       }
     } catch (ex) {
-      console.error(`Failed to respond to "${WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG}" continuing with unkown side effects`, ex)
+      console.error(`Failed to respond to "${WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG}" continuing with unknown side effects`, ex)
       evt.returnValue = {}
     }
   }
@@ -214,7 +219,7 @@ class WebContentsRPCService {
         }
       }
     } catch (ex) {
-      console.error(`Failed to respond to "${WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG}" continuing with unkown side effects`, ex)
+      console.error(`Failed to respond to "${WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG}" continuing with unknown side effects`, ex)
       evt.returnValue = undefined
     }
   }
