@@ -12,6 +12,7 @@ import TrelloMailboxWebView from './MailboxWebView/Trello/TrelloMailboxWebView'
 import SlackMailboxWebView from './MailboxWebView/Slack/SlackMailboxWebView'
 import GenericMailboxDefaultServiceWebView from './MailboxWebView/Generic/GenericMailboxDefaultServiceWebView'
 import MicrosoftMailboxMailWebView from './MailboxWebView/Microsoft/MicrosoftMailboxMailWebView'
+import MicrosoftMailboxTeamWebView from './MailboxWebView/Microsoft/MicrosoftMailboxTeamWebView'
 import MailboxServiceWebView from './MailboxWebView/MailboxServiceWebView'
 import ContainerMailboxDefaultServiceWebView from './MailboxWebView/Container/ContainerMailboxDefaultServiceWebView'
 
@@ -149,6 +150,8 @@ export default class MailboxTab extends React.Component {
       switch (serviceType) {
         case CoreService.SERVICE_TYPES.DEFAULT:
           return (<MicrosoftMailboxMailWebView mailboxId={mailboxId} key={key} />)
+        case CoreService.SERVICE_TYPES.TEAM:
+          return (<MicrosoftMailboxTeamWebView mailboxId={mailboxId} key={key} />)
       }
     } else if (mailboxType === CoreMailbox.MAILBOX_TYPES.GENERIC) {
       return (<GenericMailboxDefaultServiceWebView mailboxId={mailboxId} key={key} />)

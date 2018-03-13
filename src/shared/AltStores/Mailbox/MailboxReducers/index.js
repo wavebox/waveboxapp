@@ -14,6 +14,7 @@ import TrelloDefaultServiceReducer from './TrelloDefaultServiceReducer'
 import MicrosoftMailboxReducer from './MicrosoftMailboxReducer'
 import MicrosoftDefaultServiceReducer from './MicrosoftDefaultServiceReducer'
 import MicrosoftStorageServiceReducer from './MicrosoftStorageServiceReducer'
+import MicrosoftTeamServiceReducer from './MicrosoftTeamServiceReducer'
 import ContainerDefaultServiceReducer from './ContainerDefaultServiceReducer'
 import ContainerMailboxReducer from './ContainerMailboxReducer'
 
@@ -34,6 +35,7 @@ const REDUCER_CLASSES = [
   MicrosoftMailboxReducer,
   MicrosoftDefaultServiceReducer,
   MicrosoftStorageServiceReducer,
+  MicrosoftTeamServiceReducer,
   ContainerDefaultServiceReducer,
   ContainerMailboxReducer
 ]
@@ -108,6 +110,7 @@ export {
   MicrosoftMailboxReducer,
   MicrosoftDefaultServiceReducer,
   MicrosoftStorageServiceReducer,
+  MicrosoftTeamServiceReducer,
   ContainerDefaultServiceReducer,
   ContainerMailboxReducer,
   REDUCER_NAME_TO_FN,
