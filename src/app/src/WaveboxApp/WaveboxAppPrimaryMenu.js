@@ -235,32 +235,10 @@ class WaveboxAppPrimaryMenu {
         ].filter((item) => item !== undefined)
       },
       {
-        label: 'Window',
-        role: 'window',
+        label: 'Accounts',
         submenu: [
-          {
-            label: 'Minimize',
-            role: 'minimize',
-            accelerator: accelerators.minimize
-          },
-          {
-            label: 'Cycle Windows',
-            click: WaveboxAppPrimaryMenuActions.cycleWindows,
-            accelerator: accelerators.cycleWindows
-          }
-        ].concat(mailboxes.length > 1 || (activeMailbox && activeMailbox.hasAdditionalServices) ? [
-          { type: 'separator' },
-          {
-            label: 'Previous Account / Service',
-            click: WaveboxAppPrimaryMenuActions.prevMailboxTab,
-            accelerator: accelerators.prevTab
-          },
-          {
-            label: 'Next Account / Service',
-            click: WaveboxAppPrimaryMenuActions.nextMailboxTab,
-            accelerator: accelerators.nextTab
-          }
-        ] : []).concat(mailboxes.length <= 1 ? [] : [
+
+        ].concat(mailboxes.length <= 1 ? [] : [
           { type: 'separator' },
           {
             label: 'Previous Account',
@@ -305,6 +283,34 @@ class WaveboxAppPrimaryMenu {
             accelerator: this.buildAcceleratorStringForIndex(accelerators.serviceIndex, index)
           }
         }) : [])
+      },
+      {
+        label: 'Window',
+        role: 'window',
+        submenu: [
+          {
+            label: 'Minimize',
+            role: 'minimize',
+            accelerator: accelerators.minimize
+          },
+          {
+            label: 'Cycle Windows',
+            click: WaveboxAppPrimaryMenuActions.cycleWindows,
+            accelerator: accelerators.cycleWindows
+          }
+        ].concat(mailboxes.length > 1 || (activeMailbox && activeMailbox.hasAdditionalServices) ? [
+          { type: 'separator' },
+          {
+            label: 'Previous Tab',
+            click: WaveboxAppPrimaryMenuActions.prevMailboxTab,
+            accelerator: accelerators.prevTab
+          },
+          {
+            label: 'Next Tab',
+            click: WaveboxAppPrimaryMenuActions.nextMailboxTab,
+            accelerator: accelerators.nextTab
+          }
+        ] : [])
       },
       {
         label: 'Help',

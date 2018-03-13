@@ -56,17 +56,19 @@ const ACCELERATOR_NAMES = {
   developerTools: 'Developer Tools',
   developerToolsWavebox: 'Wavebox Developer Tools',
 
-  // Window
-  minimize: 'Minimize',
-  cycleWindows: 'Cycle Windows',
+  // Accounts
   previousMailbox: 'Previous Account',
-  nextTab: 'Next Account / Service',
-  prevTab: 'Previous Account / Service',
   nextMailbox: 'Next Account',
   mailboxIndex: 'Account at Index',
   servicePrevious: 'Previous Service',
   serviceNext: 'Next Service',
-  serviceIndex: 'Service at Index'
+  serviceIndex: 'Service at Index',
+
+  // Window
+  minimize: 'Minimize',
+  cycleWindows: 'Cycle Windows',
+  nextTab: 'Next Tab',
+  prevTab: 'Previous Tab'
 }
 const GLOBAL_SECTION = [
   'globalToggleApp',
@@ -115,22 +117,25 @@ const VIEW_SECTION = [
   'developerTools',
   'developerToolsWavebox'
 ]
-const WINDOW_SECTION = [
-  'minimize',
-  'cycleWindows',
+const ACCOUNTS_SECTION = [
   'previousMailbox',
-  'nextTab',
-  'prevTab',
   'nextMailbox',
   'mailboxIndex',
   'servicePrevious',
   'serviceNext',
   'serviceIndex'
 ]
+const WINDOW_SECTION = [
+  'minimize',
+  'cycleWindows',
+  'nextTab',
+  'prevTab'
+]
 const SECTIONS = [
   { name: 'Application', items: APPLICATION_SECTION },
   { name: 'Edit', items: EDIT_SECTION },
   { name: 'View', items: VIEW_SECTION },
+  { name: 'Account', items: ACCOUNTS_SECTION },
   { name: 'Window', items: WINDOW_SECTION },
   { name: 'Global', subtitle: 'These shortcuts will also work when Wavebox is minimized or out of focus', items: GLOBAL_SECTION }
 ]
