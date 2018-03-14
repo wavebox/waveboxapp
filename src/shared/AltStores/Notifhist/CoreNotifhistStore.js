@@ -5,7 +5,7 @@ import {
   STORE_NAME
 } from './AltNotifhistIdentifiers'
 
-const MAX_HISTORY = 100
+const MAX_HISTORY = 10
 
 class CoreNotifhistStore extends RemoteStore {
   /* **************************************************************************/

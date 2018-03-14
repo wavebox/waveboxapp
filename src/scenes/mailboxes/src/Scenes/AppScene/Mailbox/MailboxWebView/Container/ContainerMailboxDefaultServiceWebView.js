@@ -97,7 +97,8 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
     return {
       useAsyncAlerts: service ? service.useAsyncAlerts : true,
       documentTitleHasUnread: service ? service.documentTitleHasUnread : false,
-      documentTitleUnreadBlinks: service ? service.documentTitleUnreadBlinks : false
+      documentTitleUnreadBlinks: service ? service.documentTitleUnreadBlinks : false,
+      faviconUnreadActivityRegexp: service ? service.faviconUnreadActivityRegexp : undefined
     }
   }
 
@@ -124,7 +125,7 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
   * Handles the dom being ready
   */
   handleDOMReady = (evt) => {
-    const { useAsyncAlerts, documentTitleHasUnread } = this.state
+    const { useAsyncAlerts, documentTitleHasUnread, faviconUnreadActivityRegexp } = this.state
     this.refs[REF].send(WB_BROWSER_CONFIGURE_ALERT, {
       async: useAsyncAlerts
     })
@@ -138,6 +139,15 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
         CoreService.SERVICE_TYPES.DEFAULT,
         ContainerDefaultServiceReducer.setDocumentTitleUnreadCount,
         0
+      )
+    }
+    if (!faviconUnreadActivityRegexp) {
+      // Always dispatch this in case we revoke the unread setting from the config!
+      mailboxActions.reduceService(
+        this.props.mailboxId,
+        CoreService.SERVICE_TYPES.DEFAULT,
+        ContainerDefaultServiceReducer.setFaviconIndicatesUnreadActivity,
+        false
       )
     }
   }
@@ -162,6 +172,30 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
     if (documentTitleHasUnread) {
       this.updateUnreadFromDocumentTitle(evt.title, false)
     }
+  }
+
+  /**
+  * Handles the page favicon updating
+  * @param evt: the event that fired
+  */
+  handlePageFaviconUpdated = (evt) => {
+    const { faviconUnreadActivityRegexp } = this.state
+    if (!faviconUnreadActivityRegexp) { return }
+
+    let indicates
+    try {
+      const re = new RegExp(faviconUnreadActivityRegexp)
+      indicates = !!evt.favicons.find((fav) => re.exec(fav) !== null)
+    } catch (ex) {
+      indicates = false
+    }
+
+    mailboxActions.reduceService(
+      this.props.mailboxId,
+      CoreService.SERVICE_TYPES.DEFAULT,
+      ContainerDefaultServiceReducer.setFaviconIndicatesUnreadActivity,
+      indicates
+    )
   }
 
   /* **************************************************************************/
@@ -256,7 +290,8 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
         ipcMessage={this.handleIPCMessage}
         domReady={this.handleDOMReady}
-        pageTitleUpdated={this.handlePageTitleUpdated} />
+        pageTitleUpdated={this.handlePageTitleUpdated}
+        pageFaviconUpdated={this.handlePageFaviconUpdated} />
     )
   }
 }

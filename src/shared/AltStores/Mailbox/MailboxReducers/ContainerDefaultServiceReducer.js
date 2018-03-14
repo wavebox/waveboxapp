@@ -56,6 +56,16 @@ class ContainerDefaultServiceReducer extends ServiceReducer {
   static setDocumentTitleUnreadCount (mailbox, service, count) {
     return service.changeData({ documentTitleUnreadCount: count })
   }
+
+  /**
+  * Sets whether the favicon indicates an unread activity
+  * @param mailbox: the mailbox that contains the service
+  * @param service: the service to update
+  * @param indicates: true if it indicates, false otherwise
+  */
+  static setFaviconIndicatesUnreadActivity (mailbox, service, indicates) {
+    return service.changeData({ faviconIndicatesUnreadActivity: indicates })
+  }
 }
 
 export default ContainerDefaultServiceReducer

@@ -7,6 +7,7 @@ import GoogleDefaultServiceReducer from './GoogleDefaultServiceReducer'
 import GoogleCommunicationServiceReducer from './GoogleCommunicationServiceReducer'
 import GoogleCalendarServiceReducer from './GoogleCalendarServiceReducer'
 import GoogleMessengerServiceReducer from './GoogleMessengerServiceReducer'
+import GoogleTeamServiceReducer from './GoogleTeamServiceReducer'
 import SlackMailboxReducer from './SlackMailboxReducer'
 import SlackDefaultServiceReducer from './SlackDefaultServiceReducer'
 import TrelloMailboxReducer from './TrelloMailboxReducer'
@@ -28,6 +29,7 @@ const REDUCER_CLASSES = [
   GoogleCommunicationServiceReducer,
   GoogleCalendarServiceReducer,
   GoogleMessengerServiceReducer,
+  GoogleTeamServiceReducer,
   SlackMailboxReducer,
   SlackDefaultServiceReducer,
   TrelloMailboxReducer,
@@ -103,6 +105,7 @@ export {
   GoogleCommunicationServiceReducer,
   GoogleCalendarServiceReducer,
   GoogleMessengerServiceReducer,
+  GoogleTeamServiceReducer,
   SlackMailboxReducer,
   SlackDefaultServiceReducer,
   TrelloMailboxReducer,

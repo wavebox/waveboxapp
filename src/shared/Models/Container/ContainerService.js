@@ -72,6 +72,7 @@ class ContainerService extends Model {
 
   get documentTitleHasUnread () { return this._value_('documentTitleHasUnread', true) }
   get documentTitleUnreadBlinks () { return this._value_('documentTitleUnreadBlinks', false) }
+  get faviconUnreadActivityRegexp () { return this._value_('faviconUnreadActivityRegexp', undefined) }
 
   /* **************************************************************************/
   // Properties: User settings

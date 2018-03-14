@@ -82,6 +82,7 @@ class ContainerDefaultService extends CoreService {
     if (superUnread && superUnread > 0) { return superUnread }
     return this._value_('documentTitleUnreadCount', 0)
   }
+  get faviconUnreadActivityRegexp () { return this.containerService.faviconUnreadActivityRegexp }
 
   /* **************************************************************************/
   // Properties: Adaptors
@@ -119,6 +120,8 @@ class ContainerDefaultService extends CoreService {
   get hasUnreadActivity () {
     if (this.supportsGuestConfig) {
       return this.guestConfig.hasUnreadActivity
+    } else if (this.faviconUnreadActivityRegexp) {
+      return this._value_('faviconIndicatesUnreadActivity', false)
     } else if (this.html5NotificationsGenerateUnreadActivity) {
       return !!this._value_('lastUnseenNotificationTime', undefined)
     } else {

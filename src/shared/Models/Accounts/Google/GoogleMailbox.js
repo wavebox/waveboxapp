@@ -28,7 +28,8 @@ class GoogleMailbox extends CoreMailbox {
       CoreMailbox.SERVICE_TYPES.MUSIC,
       CoreMailbox.SERVICE_TYPES.ADMIN,
       CoreMailbox.SERVICE_TYPES.FI,
-      CoreMailbox.SERVICE_TYPES.CLASSROOM
+      CoreMailbox.SERVICE_TYPES.CLASSROOM,
+      CoreMailbox.SERVICE_TYPES.TEAM
     ]
   }
   static get defaultServiceTypes () {
