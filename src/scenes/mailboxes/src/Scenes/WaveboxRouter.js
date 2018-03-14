@@ -15,6 +15,7 @@ import NewsScene from './NewsScene'
 import OptimizeWizardScene from './OptimizeWizardScene'
 import NotificationPanel from './NotificationPanel'
 import MailboxDeleteScene from './MailboxDeleteScene'
+import MailboxServiceDeleteScene from './MailboxServiceDeleteScene'
 import {
   CheckingUpdatesScene,
   UpdateAvailableScene,
@@ -54,6 +55,7 @@ export default class WaveboxRouter extends React.Component {
           <Route path='/mailbox/reauthenticating' component={MailboxReauthenticatingScene} />
 
           <Route path='/mailbox_delete/:mailboxId' component={MailboxDeleteScene} />
+          <Route path='/mailbox_service_delete/:mailboxId/:serviceType' component={MailboxServiceDeleteScene} />
 
           <Route path='/app_wizard/:step?' component={AppWizardScene} />
           <Route path='/optimize_wizard/:step?' component={OptimizeWizardScene} />
