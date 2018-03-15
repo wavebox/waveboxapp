@@ -89,8 +89,17 @@ class WaveboxWindowLocationSaver {
 
     // Make copies of variables for later use
     const windowId = this.windowId
-    const state = this.getCurrentWindowState()
+    let state = this.getCurrentWindowState()
     if (!state) { return }
+
+    // If we're fullscreen or maximized only partially save the state
+    if (state.fullscreen || state.maximized) {
+      state = {
+        ...this.getSavedScreenLocation(),
+        fullscreen: state.fullscreen,
+        maximized: state.maximized
+      }
+    }
 
     // Store the state and queue for disk write
     this.cache = state
