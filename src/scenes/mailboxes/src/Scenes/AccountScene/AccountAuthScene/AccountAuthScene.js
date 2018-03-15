@@ -201,14 +201,14 @@ export default class AccountAuthScene extends React.Component {
               })}
               <ListItem
                 leftAvatar={(
-                  <Avatar backgroundColor='rgb(223, 75, 56)' icon={(<FontIcon className='fa fa-fw fa-google' />)} />
+                  <Avatar backgroundColor='rgb(223, 75, 56)' icon={(<FontIcon className='fab fa-fw fa-google' />)} />
                 )}
                 primaryText='Sign in with Google'
                 secondaryText='Use a different Google Account'
                 onClick={(evt) => userActions.authenticateWithGoogle({ mode: mode })} />
               <ListItem
                 leftAvatar={(
-                  <Avatar backgroundColor='rgb(0, 114, 198)' icon={(<FontIcon className='fa fa-fw fa-windows' />)} />
+                  <Avatar backgroundColor='rgb(0, 114, 198)' icon={(<FontIcon className='fab fa-fw fa-windows' />)} />
                 )}
                 primaryText='Sign in with Microsoft'
                 secondaryText='Use a different Outlook or Office Account'

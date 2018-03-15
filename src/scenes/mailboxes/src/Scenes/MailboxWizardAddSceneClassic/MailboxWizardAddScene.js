@@ -352,7 +352,7 @@ export default class MailboxWizardAddScene extends React.Component {
                       <FontIcon
                         style={{ fontSize: 18 }}
                         color='#0084b4'
-                        className='fa fa-fw fa-twitter' />
+                        className='fab fa-fw fa-twitter' />
                       <span>Tweet us some ♥</span>
                     </span>
                   )} />
@@ -364,7 +364,7 @@ export default class MailboxWizardAddScene extends React.Component {
                       <FontIcon
                         style={{ fontSize: 18 }}
                         color={Colors.teal600}
-                        className='fa fa-fw fa-question-circle-o' />
+                        className='far fa-fw fa-question-circle' />
                       <span>Get some help</span>
                     </span>
                   )}

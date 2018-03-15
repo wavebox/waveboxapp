@@ -15,7 +15,7 @@ export default class SidelistControlWizard extends React.Component {
         className={`WB-SidelistControlWizard`}
         onClick={() => { window.location.hash = '/app_wizard' }}
         tooltip='Setup Wizard'
-        iconStyle={{ fontSize: '24px', marginLeft: -4 }}
+        iconStyle={{ fontSize: '24px', marginLeft: -3 }}
         tourStep={TOUR_STEPS.APP_WIZARD}
         tourTooltip={(
           <div>
@@ -25,7 +25,7 @@ export default class SidelistControlWizard extends React.Component {
         )}
         icon={(
           <FontIcon
-            className='fa fa-fw fa-magic'
+            className='far fa-fw fa-magic'
             color={Colors.amber600}
             hoverColor={Colors.amber200} />
         )} />

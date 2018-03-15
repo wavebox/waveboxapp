@@ -192,7 +192,7 @@ export default class OptimizeWizardSleepDisplayScene extends React.Component {
                     disabled={isWorking}
                     icon={isWorking ? (
                       <span>
-                        <FontIcon className='fa fa-spin fa-circle-o-notch' color='rgba(0, 0, 0, 0.3)' style={{ fontSize: '20px' }} />
+                        <FontIcon className='fas fa-spin fa-circle-notch' color='rgba(0, 0, 0, 0.3)' style={{ fontSize: '20px' }} />
                       </span>
                     ) : undefined}
                     label='Select'
@@ -211,7 +211,7 @@ export default class OptimizeWizardSleepDisplayScene extends React.Component {
                     disabled={isWorking}
                     icon={isWorking ? (
                       <span>
-                        <FontIcon className='fa fa-spin fa-circle-o-notch' color='rgba(0, 0, 0, 0.3)' style={{ fontSize: '20px' }} />
+                        <FontIcon className='fas fa-spin fa-circle-notch' color='rgba(0, 0, 0, 0.3)' style={{ fontSize: '20px' }} />
                       </span>
                     ) : undefined}
                     label='Select'
@@ -224,7 +224,7 @@ export default class OptimizeWizardSleepDisplayScene extends React.Component {
                     <Avatar
                       color='white'
                       backgroundColor={Colors.grey600}
-                      icon={(<FontIcon className='fa fa-fw fa-tasks' />)}
+                      icon={(<FontIcon className='fas fa-fw fa-tasks' />)}
                       size={100} />
                   </div>
                   <p>Keep my current configuration.</p>

@@ -127,7 +127,7 @@ export default class MailboxWizardStepperStep extends React.Component {
         {complete ? (
           <FontIcon
             style={active ? styles.stepCheckActive : styles.stepCheckInactive}
-            className='fa fa-check' />
+            className='fas fa-check' />
         ) : (
           <span style={styles.stepNumber}>{step + 1}</span>
         )}

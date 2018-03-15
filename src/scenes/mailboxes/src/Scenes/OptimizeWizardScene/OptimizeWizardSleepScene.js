@@ -193,7 +193,7 @@ export default class OptimizeWizardSleepScene extends React.Component {
                   onClick={this.handleAutoOptimizeSettings}
                   color='white'
                   backgroundColor={Colors.green600}
-                  icon={(<FontIcon className='fa fa-fw fa-fighter-jet' />)}
+                  icon={(<FontIcon className='fas fa-fw fa-fighter-jet' />)}
                   size={100} />
               </div>
               <div style={styles.optionBody}>
@@ -206,7 +206,7 @@ export default class OptimizeWizardSleepScene extends React.Component {
                   disabled={isOptimizing}
                   icon={isOptimizing ? (
                     <span>
-                      <FontIcon className='fa fa-spin fa-circle-o-notch' color='rgba(0, 0, 0, 0.3)' style={{ fontSize: '20px' }} />
+                      <FontIcon className='fas fa-spin fa-circle-notch' color='rgba(0, 0, 0, 0.3)' style={{ fontSize: '20px' }} />
                     </span>
                   ) : undefined}
                   label='Automatically optimize my Wavebox (Recommended)'
@@ -220,7 +220,7 @@ export default class OptimizeWizardSleepScene extends React.Component {
                   onClick={this.handleCustomizeSettings}
                   color='white'
                   backgroundColor={Colors.blue600}
-                  icon={(<FontIcon className='fa fa-fw fa-cogs' />)}
+                  icon={(<FontIcon className='fas fa-fw fa-cogs' style={{ left: -8 }} />)}
                   size={100} />
               </div>
               <div style={styles.optionBody}>
@@ -240,7 +240,7 @@ export default class OptimizeWizardSleepScene extends React.Component {
                   onClick={this.handleKeepSettings}
                   color='white'
                   backgroundColor={Colors.grey600}
-                  icon={(<FontIcon className='fa fa-fw fa-tasks' />)}
+                  icon={(<FontIcon className='fas fa-fw fa-tasks' />)}
                   size={100} />
               </div>
               <div style={styles.optionBody}>

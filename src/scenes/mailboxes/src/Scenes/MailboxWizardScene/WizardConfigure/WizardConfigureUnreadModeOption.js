@@ -93,7 +93,7 @@ export default class WizardConfigureUnreadModeOption extends React.Component {
           onClick={onSelected}>
           <div style={{ ...styles.option, backgroundColor: color, borderColor: hovering ? color : 'white' }}>
             {selected ? (
-              <FontIcon className='fa fa-check' style={styles.selectedIcon} />
+              <FontIcon className='fas fa-check' style={styles.selectedIcon} />
             ) : undefined}
           </div>
           <div style={styles.name}>{name}</div>

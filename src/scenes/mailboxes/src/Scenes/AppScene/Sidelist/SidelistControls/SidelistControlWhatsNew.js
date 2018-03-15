@@ -10,7 +10,7 @@ import { UISettings } from 'shared/Models/Settings'
 const styles = {
   icon: {
     fontSize: '24px',
-    marginLeft: -4
+    marginLeft: -3
   },
   activeIcon: {
     textShadow: `0px 0px 3px ${Colors.red50}`
@@ -112,7 +112,7 @@ export default class SidelistControlWhatsNew extends React.Component {
         }}
         icon={(
           <FontIcon
-            className='fa fa-fw fa-star-o'
+            className='far fa-fw fa-star'
             color={hasUnseenNews ? Colors.red100 : Colors.red400}
             hoverColor={hasUnseenNews ? Colors.red50 : Colors.red100} />
         )} />

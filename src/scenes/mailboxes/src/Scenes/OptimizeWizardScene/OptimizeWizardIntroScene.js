@@ -39,7 +39,7 @@ export default class OptimizeWizardIntroScene extends React.Component {
         <Avatar
           color='white'
           backgroundColor={Colors.blue600}
-          icon={(<FontIcon className='fa fa-fw fa-tachometer' />)}
+          icon={(<FontIcon className='fas fa-fw fa-tachometer-alt' style={{ left: -3 }} />)}
           size={100} />
         <h2 style={styles.heading}>
           Optimize Wavebox

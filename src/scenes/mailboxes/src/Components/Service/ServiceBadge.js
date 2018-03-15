@@ -50,7 +50,7 @@ export default class Servicebadge extends React.Component {
 
     let badgeContent
     if (isAuthInvalid) {
-      badgeContent = (<FontIcon className='fa fa-exclamation' style={{ ...iconStyle, color: colorInverse }} />)
+      badgeContent = (<FontIcon className='fas fa-exclamation' style={{ ...iconStyle, color: colorInverse }} />)
     } else if (supportsUnreadCount && showUnreadBadge && unreadCount) {
       badgeContent = unreadCount >= 1000 ? Math.floor(unreadCount / 1000) + 'K+' : unreadCount
     } else if (supportsUnreadActivity && showUnreadActivityBadge && hasUnreadActivity) {

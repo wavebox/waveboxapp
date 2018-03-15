@@ -61,13 +61,13 @@ export default class SidelistWindowControl extends React.Component {
   renderIconForType (type) {
     switch (type) {
       case TYPES.RESTORE:
-        return (<FontIcon className='fa fa-fw fa-window-restore' color={Colors.blueGrey50} />)
+        return (<FontIcon className='fal fa-fw fa-window-restore' color={Colors.blueGrey50} />)
       case TYPES.MAXIMIZE:
-        return (<FontIcon className='fa fa-fw fa-window-maximize' color={Colors.blueGrey50} />)
+        return (<FontIcon className='fal fa-fw fa-window-maximize' color={Colors.blueGrey50} />)
       case TYPES.MINIMIZE:
-        return (<FontIcon className='fa fa-fw fa-window-minimize' color={Colors.blueGrey50} />)
+        return (<FontIcon className='fal fa-fw fa-window-minimize' color={Colors.blueGrey50} />)
       case TYPES.CLOSE:
-        return (<FontIcon className='fa fa-fw fa-window-close' color={Colors.blueGrey50} />)
+        return (<FontIcon className='fal fa-fw fa-window-close' color={Colors.blueGrey50} />)
       case TYPES.UNFULLSCREEN:
         return (<FontIcon className='material-icons' color={Colors.blueGrey50}>fullscreen_exit</FontIcon>)
     }

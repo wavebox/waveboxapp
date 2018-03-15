@@ -171,7 +171,7 @@ export default class GoogleAccountSettings extends React.Component {
               </div>
               <RaisedButton
                 primary
-                icon={(<FontIcon className='fa fa-diamond' />)}
+                icon={(<FontIcon className='fas fa-gem' style={{ fontSize: 20 }} />)}
                 label='Purchase Wavebox'
                 onClick={this.openWaveboxPro} />
             </div>

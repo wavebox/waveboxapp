@@ -167,7 +167,7 @@ export default class SupportSettings extends React.Component {
       <Paper style={styles.boxedCell}>
         <div style={styles.imageContainer}>
           <FontIcon
-            className={`fa fa-fw ${iconName}`}
+            className={iconName}
             color='rgb(0, 153, 232)'
             style={{ fontSize: 100 }} />
         </div>
@@ -194,7 +194,7 @@ export default class SupportSettings extends React.Component {
       <Paper style={styles.doubleBoxedCell} onClick={click}>
         <div style={{...styles.imageContainer, height: '50%'}}>
           <FontIcon
-            className={`fa fa-fw ${iconName}`}
+            className={iconName}
             color={iconColor}
             style={{ fontSize: 50 }} />
         </div>
@@ -215,7 +215,7 @@ export default class SupportSettings extends React.Component {
               <Row>
                 <Col md={6}>
                   {this.renderBoxedCell(
-                    'fa-tachometer',
+                    'fas fa-fw fa-tachometer-alt',
                     'Optimize Wavebox',
                     'Check to see how your Wavebox is performing and sleep accounts to save resources.',
                     'Optimize Wavebox',
@@ -224,7 +224,7 @@ export default class SupportSettings extends React.Component {
                 </Col>
                 <Col md={6}>
                   {this.renderBoxedCell(
-                    'fa-magic',
+                    'fas fa-fw fa-magic',
                     'Setup Wizard',
                     'Follow the step-by-step wizard to correctly configure your Wavebox.',
                     'Get Started',
@@ -237,7 +237,7 @@ export default class SupportSettings extends React.Component {
               <Row>
                 <Col md={6}>
                   {this.renderBoxedCell(
-                    'fa-list-alt',
+                    'fas fa-fw fa-list-alt',
                     'Quick Start Guide',
                     'Are you getting the most out of Wavebox? Read our getting started guide to find out.',
                     'Quick Start',
@@ -247,14 +247,14 @@ export default class SupportSettings extends React.Component {
                 <Col md={6}>
                   <div style={styles.doubleHeightCellContainer}>
                     {this.renderDoubleBoxedCell(
-                      'fa-star-o',
+                      'far fa-fw fa-star',
                       'rgb(249, 103, 97)',
                       'What\'s New?',
                       'From new extensions to bug fixes, make sure you\'re up-to-date with development news.',
                       () => { window.location.hash = '/news' }
                     )}
                     {this.renderDoubleBoxedCell(
-                      'fa-tasks',
+                      'fas fa-fw fa-tasks',
                       'rgb(101, 187, 188)',
                       'Try Wavebox Beta',
                       'Be the first to try out the latest features by switching to our beta channel.',

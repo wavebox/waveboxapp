@@ -204,7 +204,7 @@ export default class GoogleCustomUnreadSettings extends React.Component {
         <div style={style} {...passProps}>
           <RaisedButton
             label='Advanced Unread Options'
-            icon={(<FontIcon className='fa fa-fw fa-wrench' />)}
+            icon={(<FontIcon className='fas fa-fw fa-wrench' style={{ fontSize: 20 }} />)}
             onClick={() => this.setState({ showCustomUnreadSettings: true })} />
           <p style={styles.extraInfo}>
             These can be used to configure Wavebox to provide Notifications and Badges for a custom set of messages
