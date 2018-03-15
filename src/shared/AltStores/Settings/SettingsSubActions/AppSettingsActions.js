@@ -157,6 +157,14 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * Sets whether links should be aggressively opened in the browser
+  * @param open: true to open, false otherwise
+  */
+  setAggressivelyOpenEveryLinkInBrowser (open) {
+    this.dispatchUpdate('aggressivelyOpenEveryLinkInBrowser', open)
+  }
+
+  /**
   * Opens the metrics log
   */
   openMetricsLog () {

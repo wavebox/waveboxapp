@@ -45,6 +45,7 @@ class AppSettings extends Model {
   get enableAutofillService () { return this._value_('enableAutofillService', true) }
   get isolateMailboxProcesses () { return this._value_('isolateMailboxProcesses', false) }
   get isolateExtensionProcesses () { return this._value_('isolateExtensionProcesses', false) }
+  get aggressivelyOpenEveryLinkInBrowser () { return this._value_('aggressivelyOpenEveryLinkInBrowser', false) }
 }
 
 module.exports = AppSettings

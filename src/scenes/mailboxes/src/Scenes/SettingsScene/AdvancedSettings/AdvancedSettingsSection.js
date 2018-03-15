@@ -120,6 +120,13 @@ export default class AdvancedSettingsSection extends React.Component {
             showRestart()
             settingsActions.sub.extension.setEnableChromeExperimental(toggled)
           }} />
+        <Toggle
+          toggled={app.aggressivelyOpenEveryLinkInBrowser}
+          label='Aggressively open all links in browser (Not Recommended)'
+          labelPosition='right'
+          onToggle={(evt, toggled) => {
+            settingsActions.sub.app.setAggressivelyOpenEveryLinkInBrowser(toggled)
+          }} />
         <div style={{ marginTop: 8 }}>
           <RaisedButton
             style={styles.buttonInline}

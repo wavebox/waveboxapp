@@ -46,6 +46,12 @@ class WindowOpeningHandler {
     // Check for some urls to never handle
     if (WindowOpeningEngine.shouldAlwaysIgnoreWindowOpen(targetUrl)) { return }
 
+    // Check if the kill-switch is set for this
+    if (settingsStore.getState().app.aggressivelyOpenEveryLinkInBrowser) {
+      this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+      return
+    }
+
     // Grab some info about our opener
     const webContentsId = evt.sender.id
     const currentUrl = evt.sender.getURL()
@@ -95,22 +101,21 @@ class WindowOpeningHandler {
     }
 
     // Action the window open
-    let openedWindow
     if (openMode === WINDOW_OPEN_MODES.POPUP_CONTENT) {
-      openedWindow = this.openWindowWaveboxPopupContent(openingBrowserWindow, tabMetaInfo, targetUrl, options)
+      const openedWindow = this.openWindowWaveboxPopupContent(openingBrowserWindow, tabMetaInfo, targetUrl, options)
       evt.newGuest = openedWindow.window
     } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL) {
-      openedWindow = this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+      this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
     } else if (openMode === WINDOW_OPEN_MODES.DEFAULT || openMode === WINDOW_OPEN_MODES.DEFAULT_IMPORTANT) {
-      openedWindow = this.openWindowDefault(openingBrowserWindow, tabMetaInfo, mailbox, targetUrl, options, partitionOverride)
+      this.openWindowDefault(openingBrowserWindow, tabMetaInfo, mailbox, targetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL) {
-      openedWindow = this.openWindowExternal(openingBrowserWindow, provisionalTargetUrl, mailbox)
+      this.openWindowExternal(openingBrowserWindow, provisionalTargetUrl, mailbox)
     } else if (openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL || openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT) {
-      openedWindow = this.openWindowDefault(openingBrowserWindow, tabMetaInfo, mailbox, provisionalTargetUrl, options, partitionOverride)
+      this.openWindowDefault(openingBrowserWindow, tabMetaInfo, mailbox, provisionalTargetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.CONTENT) {
-      openedWindow = this.openWindowWaveboxContent(openingBrowserWindow, tabMetaInfo, targetUrl, options, partitionOverride)
+      this.openWindowWaveboxContent(openingBrowserWindow, tabMetaInfo, targetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.CONTENT_PROVSIONAL) {
-      openedWindow = this.openWindowWaveboxContent(openingBrowserWindow, tabMetaInfo, provisionalTargetUrl, options, partitionOverride)
+      this.openWindowWaveboxContent(openingBrowserWindow, tabMetaInfo, provisionalTargetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.DOWNLOAD) {
       evt.sender.downloadURL(targetUrl)
     } else if (openMode === WINDOW_OPEN_MODES.CURRENT) {
@@ -124,7 +129,7 @@ class WindowOpeningHandler {
       evt.sender.loadURL('about:blank')
       evt.sender.loadURL(provisionalTargetUrl)
     } else {
-      openedWindow = this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+      this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
     }
   }
 
