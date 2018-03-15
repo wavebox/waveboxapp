@@ -1,5 +1,7 @@
 import { app } from 'electron'
 import { settingsStore } from 'stores/settings'
+import fs from 'fs-extra'
+import path from 'path'
 
 const privForceQuit = Symbol('privForceQuit')
 const privMainWindow = Symbol('privMainWindow')
@@ -34,6 +36,34 @@ class WaveboxAppCloseBehaviour {
   }
 
   /* ****************************************************************************/
+  // Platform interface
+  /* ****************************************************************************/
+
+  /**
+  * Checks if the app is pinned to the taskbar
+  * @return true if pinned, false otherwise
+  */
+  isPinnedToWin32Taskbar () {
+    if (process.platform !== 'win32') { return false }
+
+    const pinnedQuicklaunchPath = path.join(app.getPath('appData'), 'Microsoft/Internet Explorer/Quick Launch/User Pinned/TaskBar')
+    let quickLaunchShortcutNames
+    try {
+      quickLaunchShortcutNames = fs.readdirSync(pinnedQuicklaunchPath)
+    } catch (ex) {
+      return false
+    }
+
+    const match = quickLaunchShortcutNames.find((filename) => {
+      const ext = path.extname(filename)
+      const name = filename.substr(0, filename.length - ext.length)
+      return name.trim().toLowerCase() === 'wavebox'
+    })
+
+    return !!match
+  }
+
+  /* ****************************************************************************/
   // Event handlers
   /* ****************************************************************************/
 
@@ -43,27 +73,47 @@ class WaveboxAppCloseBehaviour {
   */
   _handleMainWindowClose = (evt) => {
     if (!this[privForceQuit]) {
-      const { tray } = settingsStore.getState()
-      let hide = false
+      if (!this.mainWindow) { return }
 
+      const { tray } = settingsStore.getState()
       if (process.platform === 'darwin') {
-        if (this.mainWindow && this.mainWindow.isFullScreen()) {
-          hide = false
-        } else {
-          hide = true
+        if (!this.mainWindow.isFullScreen()) {
+          this._hideMainWindowOnClose(evt)
+        }
+      } else if (process.platform === 'win32') {
+        if (tray.show) {
+          if (this.isPinnedToWin32Taskbar()) {
+            this._minimizeMainWindowOnClose(evt)
+          } else {
+            this._hideMainWindowOnClose(evt)
+          }
         }
       } else {
         if (tray.show) {
-          hide = true
+          this._hideMainWindowOnClose(evt)
         }
       }
-
-      if (hide) {
-        this.mainWindow.hide()
-        evt.preventDefault()
-        this[privForceQuit] = false
-      }
     }
+  }
+
+  /**
+  * Hides the main window on close and prevents quit
+  * @param evt: the event that fired from the close event
+  */
+  _hideMainWindowOnClose = (evt) => {
+    this.mainWindow.hide()
+    evt.preventDefault()
+    this[privForceQuit] = false
+  }
+
+  /**
+  * Minimizes the main window on close and prevents quit
+  * @param evt: the event that fired from the close event
+  */
+  _minimizeMainWindowOnClose = (evt) => {
+    this.mainWindow.minimize()
+    evt.preventDefault()
+    this[privForceQuit] = false
   }
 
   /* ****************************************************************************/
