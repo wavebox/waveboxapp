@@ -1,8 +1,7 @@
-import { Menu } from 'electron'
+import { Menu, globalShortcut, app, BrowserWindow } from 'electron'
 import { mailboxStore } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
 import MenuTool from 'shared/Electron/MenuTool'
-import electronLocalshortcut from 'electron-localshortcut'
 import { evtMain } from 'AppEvents'
 import { toKeyEvent } from 'keyboardevent-from-electron-accelerator'
 import WaveboxAppPrimaryMenuActions from './WaveboxAppPrimaryMenuActions'
@@ -18,10 +17,13 @@ class WaveboxAppPrimaryMenu {
     this._lastActiveMailbox = null
     this._lastActiveServiceType = null
     this._lastMenu = null
+    this._hiddenShortcuts = new Map()
 
     mailboxStore.listen(this.handleMailboxesChanged)
     settingsStore.listen(this.handleAcceleratorsChanged)
     evtMain.on(evtMain.INPUT_EVENT_PREVENTED, this.handleInputEventPrevented)
+    app.on('browser-window-focus', this.bindHiddenShortcuts)
+    app.on('browser-window-blur', this.unbindHiddenShortcuts)
   }
 
   /* ****************************************************************************/
@@ -368,6 +370,32 @@ class WaveboxAppPrimaryMenu {
     }
   }
 
+  /* ****************************************************************************/
+  // Hidden shortcuts
+  /* ****************************************************************************/
+
+  /**
+  * Binds the current set of hidden shortcuts
+  */
+  bindHiddenShortcuts = () => {
+    Array.from(this._hiddenShortcuts.keys()).forEach((shortcut) => {
+      try {
+        globalShortcut.register(shortcut, this._hiddenShortcuts.get(shortcut))
+      } catch (ex) { }
+    })
+  }
+
+  /**
+  * Unbinds the current set of hidden shortcuts
+  */
+  unbindHiddenShortcuts = () => {
+    Array.from(this._hiddenShortcuts.keys()).forEach((shortcut) => {
+      try {
+        globalShortcut.unregister(shortcut)
+      } catch (ex) { }
+    })
+  }
+
   /**
   * Updates the hidden shortcuts
   * @param accelerators: the accelerators to use
@@ -375,12 +403,22 @@ class WaveboxAppPrimaryMenu {
   updateHiddenShortcuts (accelerators) {
     const hiddenZoomInShortcut = process.platform === 'darwin' ? 'Cmd+=' : 'Ctrl+='
     if (accelerators.zoomIn === accelerators.zoomInDefault) {
-      if (!electronLocalshortcut.isRegistered(hiddenZoomInShortcut)) {
-        electronLocalshortcut.register(hiddenZoomInShortcut, WaveboxAppPrimaryMenuActions.zoomIn)
+      if (!this._hiddenShortcuts.has(hiddenZoomInShortcut)) {
+        this._hiddenShortcuts.set(hiddenZoomInShortcut, () => WaveboxAppPrimaryMenuActions.zoomIn())
+        if (BrowserWindow.getFocusedWindow()) {
+          try {
+            globalShortcut.register(hiddenZoomInShortcut, this._hiddenShortcuts.get(hiddenZoomInShortcut))
+          } catch (ex) { }
+        }
       }
     } else {
-      if (electronLocalshortcut.isRegistered(hiddenZoomInShortcut)) {
-        electronLocalshortcut.unregister(hiddenZoomInShortcut)
+      if (this._hiddenShortcuts.has(hiddenZoomInShortcut)) {
+        this._hiddenShortcuts.delete(hiddenZoomInShortcut)
+        if (BrowserWindow.getFocusedWindow()) {
+          try {
+            globalShortcut.unregister(hiddenZoomInShortcut)
+          } catch (ex) { }
+        }
       }
     }
   }

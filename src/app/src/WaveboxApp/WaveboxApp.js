@@ -1,6 +1,6 @@
 /* global __DEV__ */
 
-import { app, BrowserWindow, protocol, ipcMain } from 'electron'
+import { app, BrowserWindow, protocol, ipcMain, globalShortcut } from 'electron'
 import yargs from 'yargs'
 import credentials from 'shared/credentials'
 import WaveboxAppPrimaryMenu from './WaveboxAppPrimaryMenu'
@@ -149,6 +149,7 @@ class WaveboxApp {
     app.on('before-quit', this._handleBeforeQuit)
     app.on('open-url', this._handleOpenUrl)
     app.on('login', this._handleHTTPBasicLogin)
+    app.on('will-quit', this._handleWillQuit)
     evtMain.on(evtMain.WB_QUIT_APP, this.fullyQuitApp)
     evtMain.on(evtMain.WB_RELAUNCH_APP, this.restartApp)
   }
@@ -329,6 +330,13 @@ class WaveboxApp {
     const handler = new BasicHTTPAuthHandler()
     const parentWindow = BrowserWindow.fromWebContents(webContents.hostWebContents ? webContents.hostWebContents : webContents)
     handler.start(parentWindow, request, authInfo, callback)
+  }
+
+  /**
+  * Handles the app preparing to quit
+  */
+  _handleWillQuit = () => {
+    globalShortcut.unregisterAll()
   }
 
   /* ****************************************************************************/
