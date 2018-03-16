@@ -184,18 +184,28 @@ class WaveboxWindow extends EventEmitter {
   * @param savedLocation: the previous saved location
   */
   _restoreWindowPosition (savedLocation) {
-    if (this[privWindow] && this[privWindow].isVisible()) {
+    if (this[privWindow]) {
+      // Restore maximize seperately from the saved location as it can't be set in the launch args
       if (savedLocation.maximized === true) {
         this[privWindow].maximize()
       }
 
-      if (!this[privWindow].isMaximized()) {
+      // Bound the window to our current screen to ensure it's not off-screen
+      if (!this[privWindow].isMaximized() && !this[privWindow].isFullScreen()) {
         const windowBounds = this[privWindow].getBounds()
         const workArea = (screen.getDisplayMatching(windowBounds) || screen.getPrimaryDisplay()).workArea
+        const workAreaX = workArea.x
+        // On macOS if the opening window is in fullscreen mode we can end up with Y=0 for the workarea. We
+        // can also end up with screen.getMenuBarHeight()=0 as the menu bar is hidden. This can result in
+        // the bounding failing and the window titlebar being placed under the menubar which means the
+        // user can't move the window. Guard against this by adding an arbituary 25 (barHeight=22 + 3 padd).
+        // In means we can waste some space at the top of the screen, but better than being unusable
+        // wavebox/waveboxapp/#388 wavebox/waveboxapp/#607
+        const workAreaY = process.platform !== 'darwin' ? workArea.y : Math.max(workArea.y, 25)
 
-        if (windowBounds.x < workArea.x || windowBounds.y < workArea.y) {
-          const x = Math.max(windowBounds.x, workArea.x)
-          const y = Math.max(windowBounds.y, workArea.y)
+        if (windowBounds.x < workAreaX || windowBounds.y < workAreaY) {
+          const x = Math.max(windowBounds.x, workAreaX)
+          const y = Math.max(windowBounds.y, workAreaY)
           this[privWindow].setPosition(x, y, false)
         }
       }
