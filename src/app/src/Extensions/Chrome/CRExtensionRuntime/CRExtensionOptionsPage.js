@@ -1,10 +1,6 @@
 import url from 'url'
-import {
-  CR_EXTENSION_PROTOCOL,
-  CR_EXTENSION_BG_PARTITION_PREFIX
-} from 'shared/extensionApis'
-import ExtensionOptionsWindow from 'Windows/ExtensionOptionsWindow'
-import Resolver from 'Runtime/Resolver'
+import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
+import ExtensionHostedWindow from 'Windows/ExtensionHostedWindow'
 
 class CRExtensionOptionsPage {
   /* ****************************************************************************/
@@ -45,18 +41,9 @@ class CRExtensionOptionsPage {
       hostname: this.extension.id,
       pathname: this.extension.manifest.optionsPage
     })
-    const options = {
-      useContentSize: true,
-      title: this.extension.manifest.name,
-      webPreferences: {
-        nodeIntegration: false,
-        preload: Resolver.crExtensionApi(),
-        partition: `${CR_EXTENSION_BG_PARTITION_PREFIX}${this.extension.id}`
-      }
-    }
 
-    this._optionsWindow = new ExtensionOptionsWindow()
-    this._optionsWindow.create(targetUrl, options)
+    this._optionsWindow = new ExtensionHostedWindow(this.extension.id, this.extension.manifest.name)
+    this._optionsWindow.create(targetUrl, { useContentSize: true })
 
     // Bind event listeners
     this._optionsWindow.on('closed', () => {

@@ -14,7 +14,8 @@ import {
 const SUPPORTED_PROTOCOLS = new Set([
   'http:',
   'https:',
-  'about:'
+  'about:',
+  CR_EXTENSION_PROTOCOL
 ])
 const SUPPRESSED_PROTOCOLS = new Set([
   `${CR_EXTENSION_PROTOCOL}:`,

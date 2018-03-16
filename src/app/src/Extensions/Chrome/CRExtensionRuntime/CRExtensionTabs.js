@@ -11,9 +11,7 @@ import {
   CRX_TAB_UPDATED_,
   CRX_TAB_EXECUTE_SCRIPT_
 } from 'shared/crExtensionIpcEvents'
-import {
-  WBECRX_EXECUTE_SCRIPT
-} from 'shared/ipcEvents'
+import { WBECRX_EXECUTE_SCRIPT } from 'shared/ipcEvents'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
 import url from 'url'
@@ -22,6 +20,7 @@ import path from 'path'
 import CRExtensionTab from './CRExtensionTab'
 import pathTool from 'shared/pathTool'
 import ContentWindow from 'Windows/ContentWindow'
+import ExtensionHostedWindow from 'Windows/ExtensionHostedWindow'
 import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
 
 class CRExtensionTabs {
@@ -175,10 +174,16 @@ class CRExtensionTabs {
   * @param responseCallback: executed on completion
   */
   handleCreateTab = (evt, [options], responseCallback) => {
-    const contentWindow = new ContentWindow()
-    const partitionId = CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
-    contentWindow.create(undefined, (options.url || ''), partitionId)
-    responseCallback(null, undefined)
+    if (ExtensionHostedWindow.isHostedExtensionUrlForExtension(options.url || '', this.extension.id)) {
+      const contentWindow = new ExtensionHostedWindow(this.extension.id, this.extension.manifest.name)
+      contentWindow.create(options.url, { useContentSize: true })
+      responseCallback(null, undefined)
+    } else {
+      const contentWindow = new ContentWindow()
+      const partitionId = CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
+      contentWindow.create(undefined, (options.url || 'about:blank'), partitionId)
+      responseCallback(null, undefined)
+    }
   }
 
   /**

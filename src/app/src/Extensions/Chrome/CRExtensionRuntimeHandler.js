@@ -21,6 +21,7 @@ import {
 import { CSPParser, CSPBuilder } from './CSP'
 import pathTool from 'shared/pathTool'
 import CRExtensionTab from './CRExtensionRuntime/CRExtensionTab'
+import mime from 'mime'
 
 const privNextPortId = Symbol('privNextPortId')
 const privOpenXHRRequests = Symbol('privOpenXHRRequests')
@@ -104,12 +105,12 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   */
   _handleChromeExtensionBufferRequest = (request, responder) => {
     const purl = url.parse(request.url)
-    if (!purl.hostname || !purl.path) { return responder() }
+    if (!purl.hostname || !purl.pathname) { return responder() }
     const runtime = this.runtimes.get(purl.hostname)
     if (!runtime) { return responder() }
 
     // Serve the background page
-    if (runtime && runtime.backgroundPage.isRunning && purl.path === `/${runtime.backgroundPage.name}`) {
+    if (runtime && runtime.backgroundPage.isRunning && purl.pathname === `/${runtime.backgroundPage.name}`) {
       return responder({
         mimeType: 'text/html',
         data: runtime.backgroundPage.html
@@ -117,10 +118,20 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     }
 
     // Serve the asset/file
-    const scopedPath = pathTool.scopeToDir(runtime.extension.srcPath, purl.path)
+    const scopedPath = pathTool.scopeToDir(runtime.extension.srcPath, purl.pathname)
     if (scopedPath) {
       fs.readFile(scopedPath)
-        .then((data) => responder(data))
+        .then((data) => {
+          const mimeType = mime.getType(scopedPath)
+          if (mimeType) {
+            responder({
+              mimeType: mimeType,
+              data: data
+            })
+          } else {
+            responder(data)
+          }
+        })
         .catch(() => responder(-6)) // not found
     } else {
       responder(-6) // not found
@@ -529,13 +540,12 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   updateCSXHROnHeadersReceived = (details) => {
     // Check we are waiting
     if (details.resourceType !== 'xhr') { return }
-
     if (!this[privOpenXHRRequests].has(details.id)) { return }
 
     const headers = details.responseHeaders
     const updatedHeaders = {
       ...headers,
-      'access-control-allow-credentials': headers['access-control-allow-credentials'] || ['true'],
+      'access-control-allow-credentials': ['true'],
       'access-control-allow-origin': [this[privOpenXHRRequests].get(details.id)]
     }
 

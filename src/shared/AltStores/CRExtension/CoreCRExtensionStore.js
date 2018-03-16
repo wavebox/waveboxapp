@@ -138,7 +138,7 @@ class CoreCRExtensionStore extends RemoteStore {
     }
 
     /* ****************************************/
-    // Browser extensions
+    // Browser Actions
     /* ****************************************/
 
     /**

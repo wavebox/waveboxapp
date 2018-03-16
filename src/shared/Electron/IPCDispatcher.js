@@ -108,8 +108,9 @@ class IPCDispatcher {
       handler(evt, request, (err, response) => {
         // Sometimes by the time we come back the return path may have been destroyed. In
         // this case there's not really anything to do as nobody is waiting for or listening
-        // on the call. In this case just return
-        if (evt.sender.isDestroyed()) { return }
+        // on the call. In this case just return. Be careful guarding here because we could
+        // have a webContents or ipcRenderer. Only apply the check to webContents
+        if (evt && evt.sender && evt.sender.isDestroyed && evt.sender.isDestroyed()) { return }
 
         evt.sender.send(`${name}_${requestId}`, err, response)
       })

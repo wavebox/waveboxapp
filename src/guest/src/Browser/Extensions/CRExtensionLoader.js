@@ -1,14 +1,20 @@
-import { ipcRenderer, webFrame } from 'electron'
+import { webFrame } from 'electron'
 import { CRExtensionMatchPatterns } from 'shared/Models/CRExtension'
 import { WBECRX_EXECUTE_SCRIPT } from 'shared/ipcEvents'
 import DispatchManager from 'DispatchManager'
-import { WCRPC_DOM_READY } from 'shared/webContentsRPC'
 import LiveConfig from 'LiveConfig'
 import url from 'url'
+import CRExtensionRunEvents from './CRExtensionRunEvents'
+
+const SUPPORTED_CONTENT_SCRIPT_PROTOCOLS = new Set([
+  'http:',
+  'https:'
+])
 
 const privHasLoaded = Symbol('privHasLoaded')
 const privContexts = Symbol('privContexts')
 const privExtensionPreferences = Symbol('privExtensionPreferences')
+const privRunEvents = Symbol('privRunEvents')
 
 class CRExtensionLoader {
   /* **************************************************************************/
@@ -19,16 +25,9 @@ class CRExtensionLoader {
     this[privHasLoaded] = false
     this[privContexts] = new Map()
     this[privExtensionPreferences] = new Map()
+    this[privRunEvents] = new CRExtensionRunEvents()
 
     DispatchManager.registerHandler(WBECRX_EXECUTE_SCRIPT, this._handleCRXExecuteScript)
-  }
-
-  /* **************************************************************************/
-  // Properties
-  /* **************************************************************************/
-
-  get isContextlessDocument () {
-    return window.location.href === 'about:blank'
   }
 
   /* **************************************************************************/
@@ -45,7 +44,7 @@ class CRExtensionLoader {
     // If we're loading into about:blank we need to get the parent url
     // so we can setup correctly.
     const hostUrl = url.parse(LiveConfig.hostUrl)
-    if (hostUrl.protocol === 'http:' || hostUrl.protocol === 'https:') {
+    if (SUPPORTED_CONTENT_SCRIPT_PROTOCOLS.has(hostUrl.protocol)) {
       this[privExtensionPreferences] = LiveConfig.extensions
         .reduce((acc, pref) => {
           acc.set(pref.extensionId, pref)
@@ -179,15 +178,11 @@ class CRExtensionLoader {
       const execute = this._executeContentJavaScript.bind(window, contextId, extensionId, url, code)
 
       if (runAt === 'document_start') {
-        setTimeout(execute)
+        this[privRunEvents].documentStart(execute)
       } else if (runAt === 'document_end') {
-        if (this.isContextlessDocument) {
-          ipcRenderer.once(WCRPC_DOM_READY, execute)
-        } else {
-          document.addEventListener('DOMContentLoaded', execute)
-        }
+        this[privRunEvents].documentEnd(execute)
       } else if (runAt === 'document_idle') {
-        ipcRenderer.once(WCRPC_DOM_READY, execute)
+        this[privRunEvents].documentIdle(execute)
       }
     })
   }
@@ -220,15 +215,11 @@ class CRExtensionLoader {
       const execute = this._executeContentStyle.bind(window, extensionId, url, code)
 
       if (runAt === 'document_start') {
-        setTimeout(execute)
+        this[privRunEvents].documentStart(execute)
       } else if (runAt === 'document_end') {
-        if (this.isContextlessDocument) {
-          ipcRenderer.once(WCRPC_DOM_READY, execute)
-        } else {
-          document.addEventListener('DOMContentLoaded', execute)
-        }
+        this[privRunEvents].documentEnd(execute)
       } else if (runAt === 'document_idle') {
-        ipcRenderer.once(WCRPC_DOM_READY, execute)
+        this[privRunEvents].documentIdle(execute)
       }
     })
   }
