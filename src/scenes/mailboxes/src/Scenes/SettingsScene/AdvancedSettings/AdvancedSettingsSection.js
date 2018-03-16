@@ -121,11 +121,29 @@ export default class AdvancedSettingsSection extends React.Component {
             settingsActions.sub.extension.setEnableChromeExperimental(toggled)
           }} />
         <Toggle
-          toggled={app.aggressivelyOpenEveryLinkInBrowser}
-          label='Aggressively open all links in browser (Not Recommended)'
+          toggled={app.enableWindowOpeningEngine}
+          label={(
+            <div>
+              <div>Enable window opening engine (Recommended)</div>
+              {app.enableWindowOpeningEngine === false ? (
+                <div>
+                  <div style={styles.extraInfo}>All links will open in your default browser</div>
+                  <div style={styles.warningText}>
+                    <FontIcon className='material-icons' style={styles.warningTextIcon}>warning</FontIcon>
+                    You may experience broken links and blank windows with this setting
+                  </div>
+                </div>
+              ) : (
+                <div style={styles.extraInfo}>
+                  Some links will continue to open with Wavebox to give the best experience and the
+                  remaining links will open using your per-account configuration
+                </div>
+              )}
+            </div>
+          )}
           labelPosition='right'
           onToggle={(evt, toggled) => {
-            settingsActions.sub.app.setAggressivelyOpenEveryLinkInBrowser(toggled)
+            settingsActions.sub.app.setEnableWindowOpeningEngine(toggled)
           }} />
         <div style={{ marginTop: 8 }}>
           <RaisedButton

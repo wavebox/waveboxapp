@@ -47,7 +47,7 @@ class WindowOpeningHandler {
     if (WindowOpeningEngine.shouldAlwaysIgnoreWindowOpen(targetUrl)) { return }
 
     // Check if the kill-switch is set for this
-    if (settingsStore.getState().app.aggressivelyOpenEveryLinkInBrowser) {
+    if (settingsStore.getState().app.enableWindowOpeningEngine === false) {
       this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
       return
     }

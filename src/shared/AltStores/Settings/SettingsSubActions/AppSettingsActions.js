@@ -157,11 +157,11 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
-  * Sets whether links should be aggressively opened in the browser
-  * @param open: true to open, false otherwise
+  * Sets whether the window opening engine should be enabled or not
+  * @param enable: true to enable
   */
-  setAggressivelyOpenEveryLinkInBrowser (open) {
-    this.dispatchUpdate('aggressivelyOpenEveryLinkInBrowser', open)
+  setEnableWindowOpeningEngine (enable) {
+    this.dispatchUpdate('enableWindowOpeningEngine', enable)
   }
 
   /**
