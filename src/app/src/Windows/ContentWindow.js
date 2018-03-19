@@ -82,7 +82,15 @@ class ContentWindow extends WaveboxWindow {
   */
   generateWindowPosition (parentWindow) {
     if (!parentWindow) { return undefined }
-    if (parentWindow.isFullScreen() || parentWindow.isMaximized()) { return undefined }
+    if (parentWindow.isFullScreen() || parentWindow.isMaximized()) {
+      return {
+        x: undefined,
+        y: undefined,
+        width: undefined,
+        height: undefined,
+        center: true
+      }
+    }
 
     const [x, y] = parentWindow.getPosition()
     const [width, height] = parentWindow.getSize()
