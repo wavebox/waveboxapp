@@ -6,6 +6,7 @@ import GoogleHangoutsAdaptor from './Sites/GoogleHangoutsAdaptor'
 import OneDriveAdaptor from './Sites/OneDriveAdaptor'
 import SlackAdaptor from './Sites/SlackAdaptor'
 import TwitterAdaptor from './Sites/TwitterAdaptor'
+import TrelloAdaptor from './Sites/TrelloAdaptor'
 
 const registry = [
   AsanaAdaptor,
@@ -15,7 +16,8 @@ const registry = [
   GoogleHangoutsAdaptor,
   OneDriveAdaptor,
   SlackAdaptor,
-  TwitterAdaptor
+  TwitterAdaptor,
+  TrelloAdaptor
 ]
 
 export default registry
