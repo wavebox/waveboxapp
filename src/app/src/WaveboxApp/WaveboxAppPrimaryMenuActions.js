@@ -1,6 +1,6 @@
-import WaveboxWindow from 'windows/WaveboxWindow'
-import MailboxesWindow from 'windows/MailboxesWindow'
-import { shell, dialog } from 'electron'
+import WaveboxWindow from 'Windows/WaveboxWindow'
+import MailboxesWindow from 'Windows/MailboxesWindow'
+import { shell, dialog, webContents, clipboard } from 'electron'
 import Release from 'shared/Release'
 import pkg from 'package.json'
 import {
@@ -13,6 +13,8 @@ import {
   SUPPORT_URL
 } from 'shared/constants'
 import { evtMain } from 'AppEvents'
+import { settingsActions } from 'stores/settings'
+import { emblinkActions } from 'stores/emblink'
 
 class WaveboxAppPrimaryMenuAcions {
   /* ****************************************************************************/
@@ -87,16 +89,18 @@ class WaveboxAppPrimaryMenuAcions {
   }
 
   sidebarToggle = () => {
+    settingsActions.sub.ui.toggleSidebar()
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().toggleSidebar()
+      mailboxesWindow.show().focus()
     }
   }
 
   menuToggle = () => {
+    settingsActions.sub.ui.toggleAppMenu()
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().toggleAppMenu()
+      mailboxesWindow.show().focus()
     }
   }
 
@@ -118,8 +122,9 @@ class WaveboxAppPrimaryMenuAcions {
   composeMail = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().openMailtoLink('mailto://')
+      mailboxesWindow.show().focus()
     }
+    emblinkActions.composeNewMessage()
   }
 
   checkForUpdate = () => {
@@ -238,6 +243,18 @@ class WaveboxAppPrimaryMenuAcions {
       mailboxesWindow.show().focus().switchNextService(true)
     }
   }
+  nextMailboxTab = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.show().focus().switchNextTab()
+    }
+  }
+  prevMailboxTab = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.show().focus().switchPrevTab()
+    }
+  }
 
   mailboxNavBack = () => {
     const focused = WaveboxWindow.focused()
@@ -246,6 +263,20 @@ class WaveboxAppPrimaryMenuAcions {
   mailboxNavForward = () => {
     const focused = WaveboxWindow.focused()
     if (focused) { focused.navigateForward() }
+  }
+
+  /* ****************************************************************************/
+  // Copy tools
+  /* ****************************************************************************/
+
+  copyCurrentTabUrl = () => {
+    const focusedWindow = WaveboxWindow.focused()
+    if (!focusedWindow) { return }
+    const focusedTabId = focusedWindow.focusedTabId()
+    if (focusedTabId === undefined) { return }
+    const focusedWebContents = webContents.fromId(focusedTabId)
+    if (!focusedWebContents) { return }
+    clipboard.writeText(focusedWebContents.getURL())
   }
 
   /* ****************************************************************************/

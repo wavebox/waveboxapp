@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import WebView from './WebView'
 import shallowCompare from 'react-addons-shallow-compare'
+import uuid from 'uuid'
 
 const WEBVIEW_REF = 'webview'
 
@@ -12,12 +13,10 @@ export default class BrowserView extends React.Component {
 
   static propTypes = {
     ...WebView.propTypes,
-    zoomFactor: PropTypes.number.isRequired,
     searchId: PropTypes.any.isRequired,
     searchTerm: PropTypes.string
   }
   static defaultProps = {
-    zoomFactor: 1.0,
     searchId: `${Math.random()}`
   }
   static REACT_WEBVIEW_EVENTS = WebView.REACT_WEBVIEW_EVENTS
@@ -41,24 +40,25 @@ export default class BrowserView extends React.Component {
   }
 
   /* **************************************************************************/
-  // Browser Events
+  // Data lifecycle
+  /* **************************************************************************/
+
+  state = {
+    webViewInstanceKey: uuid.v4()
+  }
+
+  /* **************************************************************************/
+  // Public
   /* **************************************************************************/
 
   /**
-  * Until https://github.com/electron/electron/issues/6958 is fixed we need to
-  * be really agressive about setting zoom levels
+  * Resets the webview by effectively taking it out the dom and adding a new one
+  * again. Handy if the webview has crashed and you want to restart it
   */
-  handleZoomFixEvent = () => {
-    if (this.props.zoomFactor !== 1.0) {
-      this.refs[WEBVIEW_REF].setZoomFactor(this.props.zoomFactor)
-    }
-  }
-
-  /**
-  * Handles the dom being ready
-  */
-  handleDomReady () {
-    this.refs[WEBVIEW_REF].setZoomFactor(this.props.zoomFactor)
+  reset = () => {
+    this.setState({
+      webViewInstanceKey: uuid.v4()
+    })
   }
 
   /* **************************************************************************/
@@ -71,12 +71,7 @@ export default class BrowserView extends React.Component {
 
   componentDidUpdate (prevProps, prevState) {
     // Push state down into webview on update
-    const { searchTerm, searchId, zoomFactor } = this.props
-
-    // Zoom
-    if (prevProps.zoomFactor !== zoomFactor) {
-      this.refs[WEBVIEW_REF].setZoomFactor(zoomFactor)
-    }
+    const { searchTerm, searchId } = this.props
 
     // Search
     if (prevProps.searchTerm !== searchTerm) {
@@ -93,44 +88,8 @@ export default class BrowserView extends React.Component {
   }
 
   render () {
-    const {
-      domReady,
-      loadCommit,
-      didGetResponseDetails,
-      willNavigate,
-      didNavigate,
-      didNavigateInPage,
-      ...passProps
-    } = this.props
-
-    return (
-      <WebView
-        {...passProps}
-        ref={WEBVIEW_REF}
-        domReady={(evt) => {
-          this.handleDomReady()
-          if (domReady) { domReady(evt) }
-        }}
-        loadCommit={(evt) => {
-          this.handleZoomFixEvent()
-          if (loadCommit) { loadCommit(evt) }
-        }}
-        didGetResponseDetails={(evt) => {
-          this.handleZoomFixEvent()
-          if (didGetResponseDetails) { didGetResponseDetails(evt) }
-        }}
-        willNavigate={(evt) => {
-          this.handleZoomFixEvent()
-          if (willNavigate) { willNavigate(evt) }
-        }}
-        didNavigate={(evt) => {
-          this.handleZoomFixEvent()
-          if (didNavigate) { didNavigate(evt) }
-        }}
-        didNavigateInPage={(evt) => {
-          this.handleZoomFixEvent()
-          if (didNavigateInPage) { didNavigateInPage(evt) }
-        }} />
-    )
+    const {...passProps} = this.props
+    const { webViewInstanceKey } = this.state
+    return (<WebView {...passProps} ref={WEBVIEW_REF} key={webViewInstanceKey} />)
   }
 }

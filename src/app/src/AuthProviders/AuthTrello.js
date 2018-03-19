@@ -1,7 +1,8 @@
-import {ipcMain, BrowserWindow} from 'electron'
+import {ipcMain} from 'electron'
 import { WB_AUTH_TRELLO, WB_AUTH_TRELLO_COMPLETE, WB_AUTH_TRELLO_ERROR } from 'shared/ipcEvents'
 import url from 'url'
 import querystring from 'querystring'
+import AuthWindow from 'Windows/AuthWindow'
 
 const TOKEN_REGEX = new RegExp(/[&#]?token=([0-9a-f]{64})/)
 
@@ -45,12 +46,12 @@ class AuthTrello {
   */
   promptUserToGetAuthorizationCode (credentials, partitionId) {
     return new Promise((resolve, reject) => {
-      const oauthWin = new BrowserWindow({
+      const waveboxOauthWin = new AuthWindow()
+      waveboxOauthWin.create('https://trello.com/login', {
         useContentSize: true,
         center: true,
         show: true,
         resizable: false,
-        alwaysOnTop: true,
         standardWindow: true,
         autoHideMenuBar: true,
         title: 'Trello',
@@ -58,16 +59,20 @@ class AuthTrello {
         webPreferences: {
           nodeIntegration: false,
           contextIsolation: true,
+          sandbox: true,
+          nativeWindowOpen: true,
+          sharedSiteInstances: true,
           partition: partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
         }
       })
+      const oauthWin = waveboxOauthWin.window
       let appKey
-
-      // STEP 1: User login
-      oauthWin.loadURL('https://trello.com/login')
+      let userClose = true
 
       oauthWin.on('closed', () => {
-        reject(new Error('User closed the window'))
+        if (userClose) {
+          reject(new Error('User closed the window'))
+        }
       })
 
       // STEP 2: Get app key
@@ -99,7 +104,7 @@ class AuthTrello {
       oauthWin.webContents.on('will-navigate', (evt, nextUrl) => {
         if (nextUrl.indexOf(credentials.TRELLO_AUTH_RETURN_URL) === 0) {
           evt.preventDefault()
-          oauthWin.removeAllListeners('closed')
+          userClose = false
           oauthWin.close()
           const token = TOKEN_REGEX.exec(nextUrl)
           if (token && token.length === 2) {

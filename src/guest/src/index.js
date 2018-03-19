@@ -10,5 +10,6 @@ try {
   adaptors = new Adaptors()
   adaptors.start()
 } catch (ex) {
-  elconsole.error('Failed to execute preload script', ex)
+  elconsole.error(`Failed to execute preload script:\n${ex}`)
+  console.error(`Failed to execute preload script`, ex)
 }

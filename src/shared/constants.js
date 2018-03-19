@@ -15,6 +15,8 @@ module.exports = Object.freeze({
   // App
   APP_ID: 'wavebox.io',
   ANALYTICS_HEARTBEAT_INTERVAL: minutes(5),
+  ANALYTICS_RESOURCE_INTERVAL: hours(1),
+  ANALYTICS_CONFIG_INTERVAL: days(1),
   RELEASE_CHANNELS: Object.freeze({
     STABLE: 'STABLE',
     BETA: 'BETA'
@@ -24,7 +26,7 @@ module.exports = Object.freeze({
   PERSISTENCE_INDEX_KEY: '__index__',
   DB_WRITE_DELAY_MS: 500,
   DB_BACKUP_INTERVAL: minutes(15),
-  DB_MAX_BACKUPS: 10,
+  DB_MAX_BACKUPS: 5,
 
   // Metrics
   METRICS_LOG_WRITE_INTERVAL: minutes(30),

@@ -2,7 +2,6 @@ const CoreMailbox = require('../CoreMailbox')
 const GoogleDefaultService = require('./GoogleDefaultService')
 const MailboxColors = require('../MailboxColors')
 const ServiceFactory = require('../ServiceFactory')
-const url = require('url')
 
 class GoogleMailbox extends CoreMailbox {
   /* **************************************************************************/
@@ -29,7 +28,8 @@ class GoogleMailbox extends CoreMailbox {
       CoreMailbox.SERVICE_TYPES.MUSIC,
       CoreMailbox.SERVICE_TYPES.ADMIN,
       CoreMailbox.SERVICE_TYPES.FI,
-      CoreMailbox.SERVICE_TYPES.CLASSROOM
+      CoreMailbox.SERVICE_TYPES.CLASSROOM,
+      CoreMailbox.SERVICE_TYPES.TEAM
     ]
   }
   static get defaultServiceTypes () {
@@ -157,7 +157,7 @@ class GoogleMailbox extends CoreMailbox {
       this.id,
       this.type,
       serviceData,
-      { openDriveLinksWithDefaultOpener: this.openDriveLinksWithDefaultOpener },
+      { },
       this.buildMailboxToServiceMigrationData(serviceData.type))
   }
 
@@ -171,7 +171,10 @@ class GoogleMailbox extends CoreMailbox {
   // Properties: Window opening
   /* **************************************************************************/
 
-  get openDriveLinksWithDefaultOpener () { return this._value_('openDriveLinksWithDefaultOpener', false) }
+  get openDriveLinksWithExternalBrowser () {
+    // openDriveLinksWithDefaultOpener is a depricated value
+    return this._value_('openDriveLinksWithExternalBrowser', this._value_('openDriveLinksWithDefaultOpener', false))
+  }
 
   /* **************************************************************************/
   // Properties : Display
@@ -198,6 +201,7 @@ class GoogleMailbox extends CoreMailbox {
 
   get auth () { return this._value_('auth', {}) }
   get hasAuth () { return Object.keys(this.auth).length !== 0 }
+  get supportsAuth () { return true }
   get authTime () { return this.auth.date }
   get accessToken () { return this.auth.access_token }
   get refreshToken () { return this.auth.refresh_token }
@@ -218,23 +222,30 @@ class GoogleMailbox extends CoreMailbox {
   // Behaviour
   /* **************************************************************************/
 
-  /**
-  * Gets a window open mode override for a given action
-  * @param currentUrl: the url the page is currently on
-  * @param targetUrl: the url we're trying to open
-  * @param provisionalTargetUrl: the target url the user is hovering over
-  * @param disposition: the new window disposition
-  * @return undefined for no override, or unsanitized WINDOW_OPEN_MODES if there is an override
-  */
-  getWindowOpenModeOverrides (currentUrl, targetUrl, provisionalTargetUrl, disposition) {
-    const parsedTargetUrl = url.parse(targetUrl)
-    if (parsedTargetUrl.hostname === 'docs.google.com' || parsedTargetUrl.hostname === 'drive.google.com') {
-      if (this.openDriveLinksWithDefaultOpener) {
-        return 'DEFAULT_IMPORTANT'
-      }
+  get windowOpenModeOverrideRulesets () {
+    if (this.openDriveLinksWithExternalBrowser) {
+      return [
+        {
+          url: 'http(s)\\://(*.)google.com(/*)',
+          matches: [
+            { url: 'http(s)\\://docs.google.com(/*)', mode: 'EXTERNAL' },
+            { url: 'http(s)\\://drive.google.com(/*)', mode: 'EXTERNAL' },
+            { // Embedded google drive url
+              url: 'http(s)\\://(*.)google.com(/*)',
+              query: { q: 'http(s)\\://drive.google.com(/*)' },
+              mode: 'EXTERNAL'
+            },
+            { // Embedded google docs url
+              url: 'http(s)\\://(*.)google.com(/*)',
+              query: { q: 'http(s)\\://docs.google.com(/*)' },
+              mode: 'EXTERNAL'
+            }
+          ]
+        }
+      ]
+    } else {
+      return []
     }
-
-    return super.getWindowOpenModeOverrides(currentUrl, targetUrl, provisionalTargetUrl, disposition)
   }
 }
 

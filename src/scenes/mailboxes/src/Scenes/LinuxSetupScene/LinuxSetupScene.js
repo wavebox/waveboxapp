@@ -32,7 +32,7 @@ export default class LinuxSetupScene extends React.Component {
   }
 
   handleDone = () => {
-    settingsActions.setHasSeenLinuxSetupMessage(true)
+    settingsActions.sub.app.setHasSeenLinuxSetupMessage(true)
     this.handleClose()
   }
 

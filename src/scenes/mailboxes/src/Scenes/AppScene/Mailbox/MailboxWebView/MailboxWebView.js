@@ -8,6 +8,7 @@ import BrowserView from 'sharedui/Components/BrowserView'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import MailboxSearch from './MailboxSearch'
 import MailboxTargetUrl from './MailboxTargetUrl'
+import MailboxLoadBar from './MailboxLoadBar'
 import shallowCompare from 'react-addons-shallow-compare'
 import URI from 'urijs'
 import { NotificationService } from 'Notifications'
@@ -17,11 +18,15 @@ import {
   WB_BROWSER_NOTIFICATION_CLICK,
   WB_BROWSER_NOTIFICATION_PRESENT,
   WB_BROWSER_INJECT_CUSTOM_CONTENT,
-  WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED
+  WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED,
+  WB_BROWSER_ALERT_PRESENT,
+  WB_BROWSER_CONFIRM_PRESENT
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
 import Spinner from 'sharedui/Components/Activity/Spinner'
 import * as Colors from 'material-ui/styles/colors'
+import { settingsStore } from 'stores/settings'
+import Resolver from 'Runtime/Resolver'
 
 const BROWSER_REF = 'browser'
 
@@ -33,10 +38,8 @@ export default class MailboxWebView extends React.Component {
   static propTypes = Object.assign({
     mailboxId: PropTypes.string.isRequired,
     serviceType: PropTypes.string.isRequired,
-    preload: PropTypes.string,
     hasSearch: PropTypes.bool.isRequired,
-    plugHTML5Notifications: PropTypes.bool.isRequired,
-    webpreferences: PropTypes.string
+    plugHTML5Notifications: PropTypes.bool.isRequired
   }, BrowserView.REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
     acc[name] = PropTypes.func
     return acc
@@ -127,6 +130,7 @@ export default class MailboxWebView extends React.Component {
 
     return {
       initialLoadDone: false,
+      isLoading: false,
       isCrashed: false,
       focusedUrl: null,
       snapshot: mailboxState.getSnapshot(props.mailboxId, props.serviceType),
@@ -134,6 +138,7 @@ export default class MailboxWebView extends React.Component {
       isSearching: mailboxState.isSearchingMailbox(props.mailboxId, props.serviceType),
       searchTerm: mailboxState.mailboxSearchTerm(props.mailboxId, props.serviceType),
       searchId: mailboxState.mailboxSearchHash(props.mailboxId, props.serviceType),
+      isolateMailboxProcesses: settingsStore.getState().launched.app.isolateMailboxProcesses, // does not update
       ...(!mailbox || !service ? {
         mailbox: null,
         service: null,
@@ -328,6 +333,10 @@ export default class MailboxWebView extends React.Component {
           )
         }
         break
+      case WB_BROWSER_CONFIRM_PRESENT:
+      case WB_BROWSER_ALERT_PRESENT:
+        mailboxActions.changeActive(this.props.mailboxId, this.props.serviceType)
+        break
     }
   }
 
@@ -356,10 +365,7 @@ export default class MailboxWebView extends React.Component {
       this.refs[BROWSER_REF].send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP, {})
     }
 
-    this.setState({
-      initialLoadDone: true,
-      isCrashed: false // Catch-all in case loadCommit fails
-    })
+    this.setState({ initialLoadDone: true })
   }
 
   /**
@@ -382,10 +388,19 @@ export default class MailboxWebView extends React.Component {
   * Handles a load starting
   * @param evt: the event that fired
   */
-  handleBrowserLoadCommit = (evt) => {
-    if (evt.isMainFrame) {
-      this.setState({ isCrashed: false })
-    }
+  handleDidStartLoading = (evt) => {
+    this.setState({ isLoading: true })
+  }
+
+  /**
+  * Handles a load stopping
+  * @param evt: the event that fired
+  */
+  handleDidStopLoading = (evt) => {
+    this.setState({
+      isLoading: false,
+      initialLoadDone: true
+    })
   }
 
   /**
@@ -421,7 +436,9 @@ export default class MailboxWebView extends React.Component {
       mailboxId: mailboxId,
       serviceType: serviceType
     })
-    mailboxActions.setWebcontentTabId(mailboxId, serviceType, webContents.id)
+
+    // Update the store
+    mailboxActions.setWebcontentTabId.defer(mailboxId, serviceType, webContents.id)
   }
 
   /**
@@ -507,13 +524,20 @@ export default class MailboxWebView extends React.Component {
       restorableUrl,
       initialLoadDone,
       isCrashed,
-      snapshot
+      isLoading,
+      snapshot,
+      isolateMailboxProcesses
     } = this.state
 
     if (!mailbox || !service) { return false }
-    const { className, preload, hasSearch, allowpopups, webpreferences, ...passProps } = this.props
-    delete passProps.serviceType
-    delete passProps.mailboxId
+    const {
+      className,
+      hasSearch,
+      allowpopups,
+      mailboxId,
+      serviceType,
+      ...passProps
+    } = this.props
     const webviewEventProps = BrowserView.REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
       acc[name] = this.props[name]
       delete passProps[name]
@@ -527,18 +551,31 @@ export default class MailboxWebView extends React.Component {
       isActive ? 'active' : undefined
     ].filter((c) => !!c).join(' ')
 
+    // Don't use string templating or inline in jsx. The compiler optimizes it out!!
+    const webpreferences = [
+      'contextIsolation=yes',
+      'nativeWindowOpen=yes',
+      'sharedSiteInstances=yes',
+      'sandbox=yes',
+      'affinity=' + (isolateMailboxProcesses ? mailboxId + ':' + serviceType : mailboxId)
+    ].filter((l) => !!l).join(', ')
+    const preloadScripts = [
+      Resolver.guestPreload(),
+      Resolver.crExtensionApiPreload()
+    ].join('_wavebox_preload_split_')
+
     return (
       <div className={saltedClassName}>
         <div className={'ReactComponent-BrowserContainer'}>
           <BrowserView
             ref={BROWSER_REF}
-            preload={preload}
+            id={`guest_${mailbox.id}_${service.type}`}
+            preload={preloadScripts}
             partition={'persist:' + mailbox.partition}
             src={restorableUrl || 'about:blank'}
-            zoomFactor={service.zoomFactor}
             searchId={searchId}
             searchTerm={isSearching ? searchTerm : ''}
-            webpreferences={webpreferences || 'contextIsolation=yes, nativeWindowOpen=yes'}
+            webpreferences={webpreferences}
             allowpopups={allowpopups === undefined ? true : allowpopups}
             plugins
             onWebContentsAttached={this.handleWebContentsAttached}
@@ -575,9 +612,13 @@ export default class MailboxWebView extends React.Component {
             didNavigateInPage={(evt) => {
               this.multiCallBrowserEvent([this.handleBrowserDidNavigateInPage, webviewEventProps.didNavigateInPage], [evt])
             }}
-            loadCommit={(evt) => {
-              this.multiCallBrowserEvent([this.handleBrowserLoadCommit, webviewEventProps.loadCommit], [evt])
-            }} />
+            didStartLoading={(evt) => {
+              this.multiCallBrowserEvent([this.handleDidStartLoading, webviewEventProps.didStartLoading], [evt])
+            }}
+            didStopLoading={(evt) => {
+              this.multiCallBrowserEvent([this.handleDidStopLoading, webviewEventProps.handleDidStopLoading], [evt])
+            }}
+          />
         </div>
         {initialLoadDone || !snapshot ? undefined : (
           <div className='ReactComponent-MailboxSnapshot' style={{ backgroundImage: `url("${snapshot}")` }} />
@@ -587,6 +628,7 @@ export default class MailboxWebView extends React.Component {
             <Spinner size={50} color={Colors.lightBlue600} speed={0.75} />
           </div>
         ) : undefined}
+        <MailboxLoadBar isLoading={isLoading} />
         <MailboxTargetUrl url={focusedUrl} />
         {hasSearch ? (
           <MailboxSearch mailboxId={mailbox.id} serviceType={service.type} />
@@ -594,14 +636,15 @@ export default class MailboxWebView extends React.Component {
         {isCrashed ? (
           <div className='ReactComponent-MailboxCrashed'>
             <h1>Whoops!</h1>
-            <p>Something went wrong with this mailbox and it crashed</p>
+            <p>Something went wrong with this tab and it crashed</p>
             <br />
             <RaisedButton
               label='Reload'
               icon={<FontIcon className='material-icons'>refresh</FontIcon>}
               onClick={() => {
-                this.setState({ isCrashed: false }) // Set immediately to update user
-                this.reloadIgnoringCache()
+                // Update our crashed state
+                this.setState({ isCrashed: false })
+                this.refs[BROWSER_REF].reset()
               }} />
           </div>
         ) : undefined}

@@ -45,7 +45,7 @@ export default class DownloadSettingsSection extends React.Component {
           toggled={os.alwaysAskDownloadLocation}
           label='Always ask download location'
           labelPosition='right'
-          onToggle={(evt, toggled) => settingsActions.setAlwaysAskDownloadLocation(toggled)} />
+          onToggle={(evt, toggled) => settingsActions.sub.os.setAlwaysAskDownloadLocation(toggled)} />
         <div style={Object.assign({}, styles.button, { display: 'flex', alignItems: 'center' })}>
           <RaisedButton
             label='Select location'
@@ -58,7 +58,7 @@ export default class DownloadSettingsSection extends React.Component {
               style={styles.fileInput}
               ref='defaultDownloadInput'
               disabled={os.alwaysAskDownloadLocation}
-              onChange={(evt) => settingsActions.setDefaultDownloadLocation(evt.target.files[0].path)} />
+              onChange={(evt) => settingsActions.sub.os.setDefaultDownloadLocation(evt.target.files[0].path)} />
           </RaisedButton>
           {os.alwaysAskDownloadLocation ? undefined : <small>{os.defaultDownloadLocation}</small>}
         </div>
@@ -66,13 +66,13 @@ export default class DownloadSettingsSection extends React.Component {
           toggled={os.downloadNotificationEnabled}
           label='Show notification when download completes'
           labelPosition='right'
-          onToggle={(evt, toggled) => settingsActions.setDownloadNotificationEnabled(toggled)} />
+          onToggle={(evt, toggled) => settingsActions.sub.os.setDownloadNotificationEnabled(toggled)} />
         <Toggle
           toggled={os.downloadNotificationSoundEnabled}
           disabled={!os.downloadNotificationEnabled}
           label='Play sound when download completes'
           labelPosition='right'
-          onToggle={(evt, toggled) => settingsActions.setDownloadNotificationSoundEnabled(toggled)} />
+          onToggle={(evt, toggled) => settingsActions.sub.os.setDownloadNotificationSoundEnabled(toggled)} />
       </Paper>
     )
   }

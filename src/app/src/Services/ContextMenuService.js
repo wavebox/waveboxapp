@@ -7,15 +7,19 @@ import {
   nativeImage
 } from 'electron'
 import { ElectronWebContents } from 'ElectronTools'
-import WaveboxWindow from 'windows/WaveboxWindow'
-import ContentWindow from 'windows/ContentWindow'
-import MailboxesWindow from 'windows/MailboxesWindow'
+import WaveboxWindow from 'Windows/WaveboxWindow'
+import ContentWindow from 'Windows/ContentWindow'
+import MailboxesWindow from 'Windows/MailboxesWindow'
 import MenuTool from 'shared/Electron/MenuTool'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import CRExtensionRTContextMenu from 'shared/Models/CRExtensionRT/CRExtensionRTContextMenu'
+import { settingsActions } from 'stores/settings'
+import { AUTOFILL_MENU } from 'shared/b64Assets'
 
 const privConnected = Symbol('privConnected')
 const privSpellcheckerService = Symbol('privSpellcheckerService')
+const privAutofillService = Symbol('privAutofillService')
+const privContextMenu = Symbol('privContextMenu')
 
 class ContextMenuService {
   /* ****************************************************************************/
@@ -24,10 +28,13 @@ class ContextMenuService {
 
   /**
   *  @param spellcheckService: the spellchecker service to use
+  * @param autofillService: the autofill service to use
   */
-  constructor (spellcheckService) {
+  constructor (spellcheckService, autofillService) {
     this[privSpellcheckerService] = spellcheckService
+    this[privAutofillService] = autofillService
     this[privConnected] = new Set()
+    this[privContextMenu] = undefined
 
     app.on('web-contents-created', this._handleWebContentsCreated)
     app.on('browser-window-created', this._handleBrowserWindowCreated)
@@ -106,11 +113,43 @@ class ContextMenuService {
       this.renderWaveboxSection(contents, params)
     ]
 
-    const menu = Menu.buildFromTemplate(this.convertSectionsToTemplate(sections))
-    menu.popup(browserWindow)
-    setTimeout(() => {
-      MenuTool.fullDestroyMenu(menu)
-    }, 100) // Wait a little just in case
+    if (this[privAutofillService].isAvailable && this.isAutofillPasswordField(contents, params)) {
+      this[privAutofillService]
+        .findCredentials(contents.getURL())
+        .then((credentials) => {
+          this.presentMenu(browserWindow, [
+            this.renderAutofillSection(contents, params, credentials)
+          ].concat(sections))
+        })
+        .catch(() => {
+          // If we end in an error state it could be because the lib is not working on this machine.
+          // In this case, just present the normal menu
+          this.presentMenu(browserWindow, sections)
+        })
+    } else {
+      this.presentMenu(browserWindow, sections)
+    }
+  }
+
+  /**
+  * Presents the menu
+  * @param browserWindow: the browser window to present on
+  * @param sections: the sections to render
+  */
+  presentMenu (browserWindow, sections) {
+    // This works around a memory leak with the menu api. It's bad that we
+    // have to contiunously keep a menu in memory but it's better than having
+    // multiple copies forever.
+    //
+    // Once the callback field comes into the menu api (1.9.*) we can use that
+    // to release the local copy of the menu on dismissal
+    if (this[privContextMenu]) {
+      MenuTool.fullDestroyMenu(this[privContextMenu])
+      this[privContextMenu] = undefined
+    }
+
+    this[privContextMenu] = Menu.buildFromTemplate(this.convertSectionsToTemplate(sections))
+    this[privContextMenu].popup(browserWindow)
   }
 
   /**
@@ -151,6 +190,10 @@ class ContextMenuService {
         label: 'Open Link with Wavebox',
         click: () => { this.openLinkInWaveboxWindow(contents, params.linkURL) }
       })
+      template.push({
+        label: 'Open Link in Current Tab',
+        click: () => { contents.loadURL(params.linkURL) }
+      })
       if (process.platform === 'darwin') {
         template.push({
           label: 'Open Link in Background',
@@ -187,6 +230,10 @@ class ContextMenuService {
       template.push({
         label: `Search Google for “${displayText}”`,
         click: () => { shell.openExternal(`https://google.com/search?q=${encodeURIComponent(params.selectionText)}`) }
+      })
+      template.push({
+        label: `Translate “${displayText}”`,
+        click: () => { shell.openExternal(`http://translate.google.com/#auto/#/${encodeURIComponent(params.selectionText)}`) }
       })
     }
     return template
@@ -313,10 +360,7 @@ class ContextMenuService {
             type: 'radio',
             checked: lang === currentLanguage,
             click: () => {
-              const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
-              if (mailboxesWindow) {
-                mailboxesWindow.changePrimarySpellcheckLanguage(lang)
-              }
+              settingsActions.sub.language.setSpellcheckerLanguage(lang)
             }
           }
         })
@@ -382,6 +426,60 @@ class ContextMenuService {
       menuItems.push({ label: 'No Spelling Suggestions', enabled: false })
     }
     return menuItems
+  }
+
+  /* **************************************************************************/
+  // Rendering: Autofill
+  /* **************************************************************************/
+
+  /**
+  * Checks to see if this is an enabled autofill password field
+  * @param contents: the webcontents that opened
+  * @param params: the parameters passed alongside the event
+  * @return true if it's enabled for autofill
+  */
+  isAutofillPasswordField (contents, params) {
+    if (params.inputFieldType !== 'password') { return false }
+    if (!params.isEditable) { return false }
+    if (!contents.getURL().startsWith('https://')) { return false }
+
+    return true
+  }
+
+  /**
+  * Renders the autofill section
+  * @param contents: the webcontents that opened
+  * @param params: the parameters passed alongside the event
+  * @param credentials: the credentials
+  * @return the template section or undefined
+  */
+  renderAutofillSection (contents, params, credentials) {
+    if (!this.isAutofillPasswordField(contents, params)) { return undefined }
+
+    return credentials
+      .map((rec) => {
+        return {
+          icon: nativeImage.createFromDataURL(AUTOFILL_MENU),
+          label: rec.account,
+          click: () => {
+            // contents.insertText seems to insert the text 3 times on linux and Windows.
+            // Using replace doesn't have this problem
+            contents.selectAll()
+            contents.replace(rec.password)
+            contents.unselect()
+          }
+        }
+      })
+      .concat([
+        {
+          label: 'Manage saved passwords',
+          click: () => { this[privAutofillService].openAutofillManager(contents.getURL()) }
+        },
+        {
+          label: 'Add new password',
+          click: () => { this[privAutofillService].addAutofillPassword(contents.getURL()) }
+        }
+      ])
   }
 
   /* **************************************************************************/

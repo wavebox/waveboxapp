@@ -48,14 +48,14 @@ export default class ServiceTooltip extends React.Component {
     if (isRestricted) {
       unreadContent = (
         <span>
-          <FontIcon className='fa fa-fw fa-diamond' style={{ color: 'white', fontSize: 16 }} />
+          <FontIcon className='far fa-fw fa-gem' style={{ color: 'white', fontSize: 14, marginRight: 2 }} />
           <span>Upgrade to Pro</span>
         </span>
       )
     } else if (mailbox.isAuthenticationInvalid) {
       unreadContent = (
         <span style={{ color: Colors.redA200 }}>
-          <FontIcon className='fa fa-fw fa-exclamation-circle' style={{ color: Colors.redA200, fontSize: 16 }} />
+          <FontIcon className='fas fa-fw fa-exclamation-circle' style={{ color: Colors.redA200, fontSize: 16, marginRight: 2 }} />
           <span>Authentication Problem. Right click to reauthenticate</span>
         </span>
       )

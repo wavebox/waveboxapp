@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
-import Resolver from 'Runtime/Resolver'
 import { mailboxActions, GoogleMessengerServiceReducer } from 'stores/mailbox'
 import {
   WB_BROWSER_GOOGLE_MESSENGER_UNREAD_COUNT_CHANGED
@@ -59,7 +58,6 @@ export default class GoogleMailboxCommunicationWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={Resolver.guestPreload()}
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.MESSENGER}
         ipcMessage={this.dispatchBrowserIPCMessage} />

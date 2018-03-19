@@ -1,35 +1,39 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { composeActions } from 'stores/compose'
-import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
 import { BLANK_PNG } from 'shared/b64Assets'
+import { mailboxStore } from 'stores/mailbox'
+import { emblinkActions } from 'stores/emblink'
 import TrayRenderer from './TrayRenderer'
 import uuid from 'uuid'
 import MenuTool from 'shared/Electron/MenuTool'
 import {
-  MOUSE_TRIGGERS,
-  MOUSE_TRIGGER_ACTIONS,
   IS_GTK_PLATFORM,
-  GTK_UPDATE_MODES
+  CTX_MENU_ONLY_SUPPORT,
+  GTK_UPDATE_MODES,
+  CLICK_ACTIONS,
+  SUPPORTS_CLICK_ACTIONS
 } from 'shared/Models/Settings/TraySettings'
+import { ipcRenderer, remote } from 'electron'
+import Resolver from 'Runtime/Resolver'
 import {
+  WB_TOGGLE_TRAY_POPOUT,
+  WB_HIDE_TRAY_POPOUT,
+  WB_SHOW_TRAY_POPOUT,
   WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY,
   WB_SHOW_MAILBOX_WINDOW_FROM_TRAY,
+  WB_HIDE_MAILBOX_WINDOW_FROM_TRAY,
+  WB_FOCUS_MAILBOXES_WINDOW,
   WB_FOCUS_APP,
   WB_QUIT_APP
 } from 'shared/ipcEvents'
-import electron from 'electron'
-import Resolver from 'Runtime/Resolver'
-
-const { ipcRenderer, remote } = electron
-const { Menu, nativeImage } = remote
+import TrayContextMenuUnreadRenderer from './TrayContextMenuUnreadRenderer'
 
 export default class Tray extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  static propTypes = {
+  static propTypes = { // Careful we're strict in shouldComponentUpdate
     unreadCount: PropTypes.number.isRequired,
     traySettings: PropTypes.object.isRequired,
     launchTraySettings: PropTypes.object.isRequired
@@ -40,171 +44,191 @@ export default class Tray extends React.Component {
   /* **************************************************************************/
 
   componentWillMount () {
-    const { launchTraySettings } = this.props
-    if (IS_GTK_PLATFORM && launchTraySettings.gtkUpdateMode === GTK_UPDATE_MODES.STATIC) {
-      const image = nativeImage.createFromPath(Resolver.icon('app_64.png', Resolver.API_TYPES.NODE))
-      const resizedImage = image.resize({ width: launchTraySettings.iconSize, height: launchTraySettings.iconSize })
-      this.appTray = new remote.Tray(resizedImage)
-    } else {
-      this.appTray = new remote.Tray(nativeImage.createFromDataURL(BLANK_PNG))
-    }
-    this.lastContextMenu = null
-    window.addEventListener('beforeunload', this.handleDestroyTray) // Be super pushy about this to avoid dangling tray references
+    const {
+      launchTraySettings
+    } = this.props
 
-    if (process.platform === 'win32') {
-      this.appTray.on('double-click', this.handleMouseTriggerDoubleClick)
-      this.appTray.on('click', this.handleMouseTriggerClick)
-    } else if (process.platform === 'linux') {
+    if (IS_GTK_PLATFORM && launchTraySettings.gtkUpdateMode === GTK_UPDATE_MODES.STATIC) {
+      const image = remote.nativeImage.createFromPath(Resolver.icon('app_64.png', Resolver.API_TYPES.NODE))
+      const resizedImage = image.resize({ width: launchTraySettings.iconSize, height: launchTraySettings.iconSize })
+      this.appTray = this.createTray(resizedImage)
+    } else {
+      this.appTray = this.createTray(remote.nativeImage.createFromDataURL(BLANK_PNG))
+    }
+
+    this.contextMenu = null
+  }
+
+  componentDidMount () {
+    if (CTX_MENU_ONLY_SUPPORT) {
+      mailboxStore.listen(this.mailboxesUpdated)
+    }
+  }
+
+  componentWillUnmount () {
+    this.appTray = this.destroyTray(this.appTray)
+
+    if (CTX_MENU_ONLY_SUPPORT) {
+      mailboxStore.unlisten(this.mailboxesUpdated)
+    }
+  }
+
+  /* **************************************************************************/
+  // Data lifecycle
+  /* **************************************************************************/
+
+  state = (() => { // Careful we're strict in shouldComponentUpdate
+    this.unreadCtxRenderer = new TrayContextMenuUnreadRenderer()
+    if (CTX_MENU_ONLY_SUPPORT) {
+      this.unreadCtxRenderer.build(mailboxStore.getState())
+    }
+    return {
+      ctxMenuSig: this.unreadCtxRenderer.signature
+    }
+  })()
+
+  mailboxesUpdated = (mailboxState) => {
+    if (CTX_MENU_ONLY_SUPPORT) {
+      this.unreadCtxRenderer.build(mailboxStore.getState())
+      this.setState({
+        ctxMenuSig: this.unreadCtxRenderer.signature
+      })
+    }
+  }
+
+  /* **************************************************************************/
+  // Tray utils
+  /* **************************************************************************/
+
+  /**
+  * Creates a new tray and ensures all callbacks are bound
+  * @param image: the initial image to use
+  * @return the new tray
+  */
+  createTray (image) {
+    const tray = new remote.Tray(image)
+    if (CTX_MENU_ONLY_SUPPORT) {
       // On platforms that have app indicator support - i.e. ubuntu clicking on the
       // icon will launch the context menu. On other linux platforms the context
       // menu is opened on right click. For app indicator platforms click event
       // is ignored
-      this.appTray.on('click', this.handleToggleVisibility)
-    } else if (process.platform === 'darwin') {
-      this.appTray.on('right-click', this.handleToggleVisibility)
-    }
-  }
-
-  componentDidMount () {
-    mailboxStore.listen(this.mailboxesChanged)
-  }
-
-  componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxesChanged)
-    this.handleDestroyTray()
-    window.removeEventListener('beforeunload', this.handleDestroyTray)
-  }
-
-  /**
-  * Destroys the tray icon
-  */
-  handleDestroyTray = () => {
-    if (this.appTray) {
-      this.appTray.destroy()
-      this.appTray = null
-    }
-  }
-
-  /* **************************************************************************/
-  // Data Lifecyle
-  /* **************************************************************************/
-
-  state = (() => {
-    return Object.assign({}, this.generateMenuUnreadMessages())
-  })()
-
-  mailboxesChanged = (mailboxState) => {
-    this.setState(this.generateMenuUnreadMessages(mailboxState))
-  }
-
-  /**
-  * Generates the unread messages from the mailboxes store
-  * @param mailboxState=autogen: the mailbox store
-  * @return { mailboxOverviews, mailboxOverviewsSig } with menuUnreadMessages
-  * being an array of mailboxes with menu items prepped to display and menuUnreadMessagesSig
-  * being a string hash of these to compare
-  */
-  generateMenuUnreadMessages (mailboxState = mailboxStore.getState()) {
-    const mailboxMenuItems = mailboxState.allMailboxes().map((mailbox) => {
-      const trayMessages = mailboxState.mailboxTrayMessagesForUser(mailbox.id)
-      const messageItemsSignature = trayMessages.map((message) => message.id).join(':')
-      let messageItems = trayMessages.map((message) => {
-        return {
-          id: message.id,
-          label: message.text,
-          click: (e) => {
-            ipcRenderer.send(WB_FOCUS_APP, { })
-            mailboxActions.changeActive(message.data.mailboxId, message.data.serviceType)
-            mailboxDispatch.openItem(message.data.mailboxId, message.data.serviceType, message.data)
-          }
-        }
-      })
-
-      messageItems.unshift(
-        {
-          label: 'Open Account',
-          click: (e) => {
-            ipcRenderer.send(WB_FOCUS_APP, { })
-            mailboxActions.changeActive(mailbox.__id__)
-          }
-        },
-
-        { type: 'separator' }
-      )
-
-      const unreadCount = mailboxState.mailboxUnreadCountForUser(mailbox.id)
-      return {
-        signature: messageItemsSignature,
-        label: [
-          unreadCount ? `(${unreadCount})` : undefined,
-          mailbox.humanizedType === mailbox.displayName ? (
-            mailbox.humanizedType
-          ) : (
-            `${mailbox.humanizedType} : ${mailbox.displayName || 'Untitled'}`
-          )
-        ].filter((item) => !!item).join(' '),
-        submenu: messageItems.length === 2 ? [
-          ...messageItems,
-          { label: 'No messages', enabled: false }
-        ] : messageItems
-      }
-    })
-
-    return {
-      mailboxOverviews: mailboxMenuItems,
-      mailboxOverviewsSig: mailboxMenuItems.map((m) => m.signature).join('|')
-    }
-  }
-
-  /* **************************************************************************/
-  // Action handlers
-  /* **************************************************************************/
-
-  /**
-  * Handles a mouse trigger click
-  */
-  handleMouseTriggerClick = () => {
-    const { mouseTrigger, mouseTriggerAction } = this.props.traySettings
-    if (mouseTrigger === MOUSE_TRIGGERS.SINGLE) {
-      switch (mouseTriggerAction) {
-        case MOUSE_TRIGGER_ACTIONS.TOGGLE:
-          ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY)
-          break
-        case MOUSE_TRIGGER_ACTIONS.SHOW:
-          ipcRenderer.send(WB_SHOW_MAILBOX_WINDOW_FROM_TRAY)
-          break
-        case MOUSE_TRIGGER_ACTIONS.TOGGLE_MINIMIZE:
-          ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY, true)
-          break
+      tray.on('click', this.handleToggleApp)
+    } else {
+      tray.on('click', this.handleClick)
+      if (SUPPORTS_CLICK_ACTIONS) {
+        tray.on('right-click', this.handleRightClick)
+        tray.on('double-click', this.handleDoubleClick)
       }
     }
+    return tray
   }
 
   /**
-  * Handles a mouse trigger double click
+  * Destroys a tray
+  * @param tray: the tray to destroy
+  * @return null
   */
-  handleMouseTriggerDoubleClick = () => {
-    const { mouseTrigger, mouseTriggerAction } = this.props.traySettings
-    if (mouseTrigger === MOUSE_TRIGGERS.DOUBLE) {
-      switch (mouseTriggerAction) {
-        case MOUSE_TRIGGER_ACTIONS.TOGGLE:
-          ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY)
-          break
-        case MOUSE_TRIGGER_ACTIONS.SHOW:
-          ipcRenderer.send(WB_SHOW_MAILBOX_WINDOW_FROM_TRAY)
-          break
-        case MOUSE_TRIGGER_ACTIONS.TOGGLE_MINIMIZE:
-          ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY, true)
-          break
-      }
+  destroyTray (tray) {
+    if (tray) {
+      tray.destroy()
+    }
+    return null
+  }
+
+  /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  /**
+  * Handles a click event on the tray
+  * @param evt: the event that fired
+  * @param bounds: the bounds of the tray icon
+  */
+  handleClick = (evt, bounds) => {
+    if (evt.altKey || evt.ctrlKey || evt.shiftKey || evt.metaKey) {
+      this.dispatchClickAction(this.props.traySettings.altClickAction, bounds)
+    } else {
+      this.dispatchClickAction(this.props.traySettings.clickAction, bounds)
     }
   }
 
   /**
-  * Toggles the apps visibility
+  * Handles a click event on the tray
+  * @param evt: the event that fired
+  * @param bounds: the bounds of the tray icon
   */
-  handleToggleVisibility = () => {
-    ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY)
+  handleRightClick = (evt, bounds) => {
+    this.dispatchClickAction(this.props.traySettings.rightClickAction, bounds)
+  }
+
+  /**
+  * Handles a click event on the tray
+  * @param evt: the event that fired
+  * @param bounds: the bounds of the tray icon
+  */
+  handleDoubleClick = (evt, bounds) => {
+    this.dispatchClickAction(this.props.traySettings.doubleClickAction, bounds)
+  }
+
+  /**
+  * Handles compose being clicked
+  * @param evt: the event that fired
+  */
+  handleCompose = (evt) => {
+    ipcRenderer.send(WB_FOCUS_MAILBOXES_WINDOW, {})
+    emblinkActions.composeNewMessage()
+  }
+
+  /**
+  * Shows the popout
+  * @param evt: the event that fired
+  */
+  handleShowPopout = (evt) => {
+    ipcRenderer.send(WB_SHOW_TRAY_POPOUT)
+  }
+
+  /**
+  * Handles the toggle call
+  * @param evt: the event that fired
+  */
+  handleToggleApp = () => {
+    ipcRenderer.send(WB_FOCUS_APP)
+  }
+
+  /**
+  * Handles quitting the app
+  * @param evt: the event that fired
+  */
+  handleQuit = () => {
+    ipcRenderer.send(WB_QUIT_APP)
+  }
+
+  /**
+  * Dispatches a click action
+  * @param action: the action to dispatch
+  * @param bounds: the current tray bounds
+  */
+  dispatchClickAction (action, bounds) {
+    switch (action) {
+      case CLICK_ACTIONS.TOGGLE_POPOUT:
+        ipcRenderer.send(WB_TOGGLE_TRAY_POPOUT, bounds)
+        break
+      case CLICK_ACTIONS.HIDE_POPOUT:
+        ipcRenderer.send(WB_HIDE_TRAY_POPOUT)
+        break
+      case CLICK_ACTIONS.SHOW_POPOUT:
+        ipcRenderer.send(WB_SHOW_TRAY_POPOUT, bounds)
+        break
+      case CLICK_ACTIONS.TOGGLE_APP:
+        ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY)
+        break
+      case CLICK_ACTIONS.HIDE_APP:
+        ipcRenderer.send(WB_HIDE_MAILBOX_WINDOW_FROM_TRAY)
+        break
+      case CLICK_ACTIONS.SHOW_APP:
+        ipcRenderer.send(WB_SHOW_MAILBOX_WINDOW_FROM_TRAY)
+        break
+    }
   }
 
   /* **************************************************************************/
@@ -230,7 +254,7 @@ export default class Tray extends React.Component {
       return this.props.traySettings[k] !== nextProps.traySettings[k]
     }) !== -1
     if (trayDiff) { return true }
-    if (this.state.mailboxOverviewsSig !== nextState.mailboxOverviewsSig) { return true }
+    if (this.state.ctxMenuSig !== nextState.ctxMenuSig) { return true }
 
     return false
   }
@@ -250,53 +274,27 @@ export default class Tray extends React.Component {
   }
 
   /**
-  * @return the context menu for the tray icon
+  * Renders the context menu
+  * @return the menu object
   */
   renderContextMenu () {
-    const { mailboxOverviews } = this.state
-    let mailboxOverviewSection
-    if (mailboxOverviews.length === 1) {
-      mailboxOverviewSection = [].concat(
-        mailboxOverviews[0].submenu,
-        { type: 'separator' }
-      )
-    } else if (mailboxOverviews.length > 1) {
-      mailboxOverviewSection = [].concat(
-        { label: this.renderTooltip(), enabled: false },
-        mailboxOverviews,
-        { type: 'separator' }
-      )
-    }
+    const unread = this.unreadCtxRenderer.template
 
     const template = [].concat(
       [
-        {
-          label: 'Compose New Message',
-          click: (e) => {
-            ipcRenderer.send(WB_FOCUS_APP)
-            composeActions.composeNewMessage()
-          }
-        },
-        {
-          label: 'Show / Hide',
-          click: (e) => {
-            ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY)
-          }
-        },
+        { label: 'Toggle App', click: this.handleToggleApp },
+        { label: 'Show Wavebox Mini', click: this.handleShowPopout },
+        { type: 'separator' },
+        { label: 'Compose New Message', click: this.handleCompose },
         { type: 'separator' }
       ],
-      mailboxOverviewSection,
+      unread,
+      unread.length ? ([{ type: 'separator' }]) : [],
       [
-        {
-          label: 'Quit',
-          click: (e) => {
-            ipcRenderer.send(WB_QUIT_APP)
-          }
-        }
+        { label: 'Quit', click: this.handleQuit }
       ]
-    ).filter((item) => !!item)
-
-    return Menu.buildFromTemplate(template)
+    )
+    return remote.Menu.buildFromTemplate(template)
   }
 
   render () {
@@ -318,23 +316,25 @@ export default class Tray extends React.Component {
         // Update the icon
         if (IS_GTK_PLATFORM) {
           if (launchTraySettings.gtkUpdateMode === GTK_UPDATE_MODES.RECREATE) {
-            this.appTray.destroy()
-            this.appTray = new remote.Tray(image)
+            this.appTray = this.destroyTray(this.appTray)
+            this.appTray = this.createTray(image)
           } else if (launchTraySettings.gtkUpdateMode === GTK_UPDATE_MODES.UPDATE) {
             this.appTray.setImage(image)
+          } else {
+            // We don't update the image on static
           }
-          // We don't update the image on static
         } else {
           this.appTray.setImage(image)
         }
         this.appTray.setToolTip(this.renderTooltip())
 
-        // Prevent Memory leak with menu
-        const lastContextMenu = this.lastContextMenu
-        this.lastContextMenu = this.renderContextMenu()
-        this.appTray.setContextMenu(this.lastContextMenu)
-        if (lastContextMenu) {
-          MenuTool.fullDestroyMenu(lastContextMenu)
+        if (CTX_MENU_ONLY_SUPPORT) {
+          const lastContextMenu = this.contextMenu
+          this.contextMenu = this.renderContextMenu()
+          this.appTray.setContextMenu(this.contextMenu)
+          if (lastContextMenu) {
+            MenuTool.fullDestroyMenu(lastContextMenu)
+          }
         }
       })
 

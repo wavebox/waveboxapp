@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper, Toggle, FontIcon, SelectField, MenuItem } from 'material-ui'
+import { Paper, Toggle, SelectField, MenuItem } from 'material-ui'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import * as Colors from 'material-ui/styles/colors'
-import { ConfirmFlatButton } from 'Components/Buttons'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 
 const humanizedOpenModes = {
@@ -62,10 +61,10 @@ export default class AccountAdvancedSettings extends React.Component {
               onClick={(evt) => {
                 evt.preventDefault()
                 if (mailbox.artificiallyPersistCookies) {
-                  mailboxActions.reauthenticateBrowserSession(mailbox.id, mailbox.partition)
+                  mailboxActions.clearMailboxBrowserSession(mailbox.id)
                 }
               }}>
-              Reauthenticate your account manually
+              Clear all cookies manually
             </a>
           </small>
         </div>
@@ -101,39 +100,6 @@ export default class AccountAdvancedSettings extends React.Component {
     )
   }
 
-  /**
-  * Renders the destructive actions
-  * @param mailbox: the mailbox to render for
-  * @return jsx
-  */
-  renderDestructiveActions (mailbox) {
-    return (
-      <div>
-        <div>
-          <ConfirmFlatButton
-            key={mailbox.id}
-            label='Clear all browsing data'
-            confirmLabel='Click again to confirm'
-            confirmWaitMs={4000}
-            icon={<FontIcon className='material-icons'>clear</FontIcon>}
-            confirmIcon={<FontIcon className='material-icons'>help_outline</FontIcon>}
-            onConfirmedClick={() => mailboxActions.clearMailboxBrowserSession(mailbox.id)} />
-        </div>
-        <div>
-          <ConfirmFlatButton
-            key={mailbox.id}
-            label='Delete this Account'
-            confirmLabel='Click again to confirm'
-            confirmWaitMs={4000}
-            icon={<FontIcon color={Colors.red600} className='material-icons'>delete</FontIcon>}
-            confirmIcon={<FontIcon color={Colors.red600} className='material-icons'>help_outline</FontIcon>}
-            labelStyle={{color: Colors.red600}}
-            onConfirmedClick={() => mailboxActions.remove(mailbox.id)} />
-        </div>
-      </div>
-    )
-  }
-
   render () {
     const {
       mailbox,
@@ -152,7 +118,6 @@ export default class AccountAdvancedSettings extends React.Component {
         {this.renderWindowOpenSettings(mailbox, windowOpenBefore, windowOpenAfter)}
         <br />
         {children}
-        {this.renderDestructiveActions(mailbox)}
       </Paper>
     )
   }

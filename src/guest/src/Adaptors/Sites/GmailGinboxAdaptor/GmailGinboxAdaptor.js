@@ -4,7 +4,6 @@ import GinboxApi from './GinboxApi'
 import GmailApi from './GmailApi'
 import GmailChangeEmitter from './GmailChangeEmitter'
 import GinboxChangeEmitter from './GinboxChangeEmitter'
-import { ExtensionLoader } from 'Browser'
 import {
   WB_BROWSER_WINDOW_ICONS_IN_SCREEN,
   WB_BROWSER_OPEN_MESSAGE,
@@ -12,6 +11,8 @@ import {
 } from 'shared/ipcEvents'
 import { UISettings } from 'shared/Models/Settings'
 import settingStore from 'stores/settingStore'
+import LiveConfig from 'LiveConfig'
+import { ExtensionLoader } from 'Browser'
 
 class GmailGinboxAdaptor extends BaseAdaptor {
   /* **************************************************************************/
@@ -35,6 +36,12 @@ class GmailGinboxAdaptor extends BaseAdaptor {
 
     this.sidebarStylesheet = document.createElement('style')
     this.sidebarStylesheet.innerHTML = `
+      [role="banner"] [href="#inbox"][title] {
+        max-height:33px !important;
+        margin-top: 22px;
+        background-position-x: center;
+      }
+
       [href="#inbox"][data-ved]>* {
         max-height:33px !important;
         margin-top: 22px;
@@ -57,7 +64,7 @@ class GmailGinboxAdaptor extends BaseAdaptor {
       this.loadGmailAPI()
       ipcRenderer.on(WB_BROWSER_COMPOSE_MESSAGE, this.handleComposeMessageGmail)
 
-      if (process.platform === 'darwin' && settingStore.ui.vibrancyMode !== UISettings.VIBRANCY_MODES.NONE) {
+      if (LiveConfig.platform === 'darwin' && settingStore.ui.vibrancyMode !== UISettings.VIBRANCY_MODES.NONE) {
         webFrame.insertCSS(`
           body, .wl, .aeJ {
             background-color: transparent !important;
@@ -69,7 +76,7 @@ class GmailGinboxAdaptor extends BaseAdaptor {
       this.loadInboxAPI()
       ipcRenderer.on(WB_BROWSER_COMPOSE_MESSAGE, this.handleComposeMessageGinbox)
 
-      if (process.platform === 'darwin' && settingStore.ui.vibrancyMode !== UISettings.VIBRANCY_MODES.NONE) {
+      if (LiveConfig.platform === 'darwin' && settingStore.ui.vibrancyMode !== UISettings.VIBRANCY_MODES.NONE) {
         webFrame.insertCSS(`
           body, nav[jsaction]:not([role="banner"]), nav[jsaction]:not([role="banner"])>[role="menu"], .I {
             background-color: transparent !important;
@@ -139,8 +146,11 @@ class GmailGinboxAdaptor extends BaseAdaptor {
       window.location.hash = 'inbox/' + data.messageId
     } else if (this.isGinbox) {
       if (data.search && data.search.length) {
-        GinboxApi.startSearch(data.search)
-        GinboxApi.openFirstSearchItem()
+        GinboxApi.clearSearchItems(() => {
+          GinboxApi.startSearch(data.search, () => {
+            GinboxApi.openFirstSearchItem()
+          })
+        })
       }
     }
   }
@@ -151,7 +161,16 @@ class GmailGinboxAdaptor extends BaseAdaptor {
   * @param data: the data that was sent with the event
   */
   handleComposeMessageGmail = (evt, data) => {
-    GmailApi.composeMessage(data)
+    if (!GmailApi.composeMessage(data)) {
+      let retries = 0
+      const retry = setInterval(() => {
+        if (retries >= 10 || GmailApi.composeMessage(data)) {
+          clearInterval(retry)
+        } else {
+          retries++
+        }
+      }, 250)
+    }
   }
 
   /**
@@ -160,7 +179,20 @@ class GmailGinboxAdaptor extends BaseAdaptor {
   * @param data: the data that was sent with the event
   */
   handleComposeMessageGinbox = (evt, data) => {
-    GinboxApi.composeMessage(data)
+    const retrier = function (tries, max) {
+      if (tries >= max) { return }
+      GinboxApi.composeMessage(data)
+        .catch(() => Promise.resolve())
+        .then((success) => {
+          if (!success) {
+            setTimeout(() => {
+              retrier(tries + 1, max)
+            }, 250)
+          }
+        })
+    }
+
+    retrier(0, 10)
   }
 }
 

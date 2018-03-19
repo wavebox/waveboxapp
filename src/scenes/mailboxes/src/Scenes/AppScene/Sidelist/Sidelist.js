@@ -1,5 +1,4 @@
 import React from 'react'
-import './Sidelist.less'
 import SidelistMailboxes from './SidelistMailboxes'
 import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
@@ -8,6 +7,7 @@ import SidelistWindowControls from './SidelistWindowControls'
 import SidelistControls from './SidelistControls'
 import SidelistUpgradePlans from './SidelistUpgradePlans'
 import * as Colors from 'material-ui/styles/colors'
+import classnames from 'classnames'
 
 const styles = {
   container: {
@@ -68,13 +68,16 @@ export default class Sidelist extends React.Component {
 
   render () {
     const { showTitlebar, showPlans } = this.state
-    const { style, ...passProps } = this.props
+    const { style, className, ...passProps } = this.props
 
     return (
-      <div {...passProps} style={{...styles.container, ...style}}>
+      <div
+        {...passProps}
+        style={{...styles.container, ...style}}
+        className={classnames('WB-Sidelist', className)}>
         {!showTitlebar ? (<SidelistWindowControls />) : undefined}
         {showPlans ? (<SidelistUpgradePlans />) : undefined}
-        <SidelistMailboxes style={styles.mailboxes} className='ReactComponent-Sidelist-Mailboxes' />
+        <SidelistMailboxes style={styles.mailboxes} />
         <SidelistControls />
       </div>
     )

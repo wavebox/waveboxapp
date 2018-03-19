@@ -38,10 +38,10 @@ export default class AppWizardCompleteScene extends React.Component {
         <Avatar
           color={Colors.lightGreen400}
           backgroundColor={Colors.blueGrey900}
-          icon={(<FontIcon className='fa fa-fw fa-magic' />)}
+          icon={(<FontIcon className='fas fa-fw fa-magic' />)}
           size={100} />
         <h2 style={styles.heading}>
-          <FontIcon className='fa fa-fw fa-check-circle' color={Colors.green600} />
+          <FontIcon className='fas fa-fw fa-check-circle' color={Colors.green600} />
           All Done!
         </h2>
         <p style={styles.subHeading}>

@@ -1,11 +1,9 @@
-const dictionaryExcludes = require('./dictionaryExcludes')
+import Hunspell from './Hunspell'
 
-const privDictionaryLoader = Symbol('privDictionaryLoader')
-const privNodehunLib = Symbol('privNodehunLib')
-const privNodehun = Symbol('privNodehun')
-const privLanguage = Symbol('privLanguage')
+const privDictionaryProvider = Symbol('privDictionaryProvider')
 const privUserWords = Symbol('privUserWords')
-const privNodehunInitFailed = Symbol('privNodehunInitFailed')
+const privHunspell = Symbol('privHunspell')
+const privLanguage = Symbol('privLanguage')
 
 class SpellcheckProvider {
   /* **************************************************************************/
@@ -13,65 +11,83 @@ class SpellcheckProvider {
   /* **************************************************************************/
 
   /**
-  * @param DictionaryLoader: the dictionary loader
-  * @param Nodehun: the nodehun library
+  * @param dictionaryProvider: the dictionary provider
   * @param userWords=[]: a list of words provided by the user
   */
-  constructor (DictionaryLoader, Nodehun, userWords = []) {
-    this[privDictionaryLoader] = DictionaryLoader
-    this[privNodehunLib] = Nodehun
+  constructor (dictionaryProvider, userWords = []) {
+    this[privDictionaryProvider] = dictionaryProvider
     this[privUserWords] = new Set(userWords)
-    this[privNodehun] = null
-    this[privNodehunInitFailed] = false
-    this[privLanguage] = null
+    this[privHunspell] = undefined
+    this[privLanguage] = undefined
+  }
+
+  /**
+  * Destroys the current hunspell instance
+  */
+  _destroyHunspell () {
+    if (this[privHunspell]) {
+      this[privHunspell].destroy()
+      this[privHunspell] = undefined
+    }
+  }
+
+  /**
+  * Creates the hunspell instance
+  */
+  _createHunspell () {
+    if (this[privHunspell]) {
+      throw new Error('Call _destroyHunspell before attempting to create a second instance')
+    }
+    if (!this.language) {
+      throw new Error('Set language before calling _createHunspell')
+    }
+
+    const dictionaries = this[privDictionaryProvider].loadDictionarySync(this.language)
+    if (dictionaries) {
+      this[privHunspell] = new Hunspell(this.language, dictionaries.aff, dictionaries.dic)
+      this[privHunspell].addWords(Array.from(this[privUserWords]))
+    }
   }
 
   /* **************************************************************************/
   // Properties
   /* **************************************************************************/
 
-  get isConfiguredAndOk () { return this.isConfigured && !this.didNodehunInitFail }
-
-  /* **************************************************************************/
-  // Properties: Language
-  /* **************************************************************************/
-
   get language () { return this[privLanguage] }
   set language (l) {
     if (l === this[privLanguage]) { return }
-    this[privLanguage] = l
-    this[privNodehun] = null
-    this[privNodehunInitFailed] = false
-  }
-  get isConfigured () { return !!this.language }
-
-  /* **************************************************************************/
-  // Properties: Spellchecker
-  /* **************************************************************************/
-
-  get nodehun () { return this[privNodehun] }
-  get isNodehunLoaded () { return !!this.nodehun }
-  get didNodehunInitFail () { return this[privNodehunInitFailed] }
-  get loadedNodehun () {
-    if (!this.isConfigured) { return null }
-    if (!this[privNodehunLib]) { return null }
-    if (this[privNodehunInitFailed]) { return null }
-
-    if (!this[privNodehun]) {
-      try {
-        const Nodehun = this[privNodehunLib]
-        const dic = this[privDictionaryLoader].loadSync(this.language)
-        this[privNodehun] = new Nodehun(dic.aff, dic.dic)
-        Array.from(this[privUserWords]).forEach((word) => {
-          this[privNodehun].addWordSync(word)
-        })
-        this[privNodehunInitFailed] = false
-      } catch (ex) {
-        this[privNodehunInitFailed] = true
-      }
+    // Teardown
+    if (this[privLanguage]) {
+      this[privDictionaryProvider].unloadDictionarySync()
     }
+    this._destroyHunspell()
 
-    return this[privNodehun]
+    // Set-up
+    this[privLanguage] = l
+    if (this[privLanguage]) {
+      this._createHunspell()
+    }
+  }
+  get isAvailable () {
+    if (!this[privHunspell]) { return false }
+    if (!this[privHunspell].loaded) { return false }
+    return true
+  }
+  get isLoading () {
+    if (!this.language) { return false }
+    return !this.isAvailable
+  }
+  get dictionaryProvider () { return this[privDictionaryProvider] }
+  get userWords () { return Array.from(this[privUserWords]) }
+
+  /* **************************************************************************/
+  // Utils
+  /* **************************************************************************/
+
+  _guardAvailability () {
+    if (!this.isAvailable) {
+      throw new Error('Spellchecker is not yet available')
+    }
   }
 
   /* **************************************************************************/
@@ -81,52 +97,33 @@ class SpellcheckProvider {
   /**
   * Checks if a word is correct synchronously
   * @param word: the word to check
+  * @param suppressErrors=false: set to true to gobble errors and return true in that case
   * @return true if correct or failed, false otherwise
   */
-  isCorrectSync (word) {
-    if (!this.isConfigured) { return false }
-    if (dictionaryExcludes[this.language] && dictionaryExcludes[this.language].has(word)) { return true }
-
-    const spellchecker = this.loadedNodehun
-    if (!spellchecker) { throw new Error('Failed to load spellchecker') }
-
-    return spellchecker.isCorrectSync(word)
-  }
-
-  /**
-  * Gets spelling suggestions for a word
-  * @param word: the word to get suggestions for
-  * @return promise provded with the list of words
-  */
-  spellSuggestions (word) {
-    if (!this.isConfigured) { return Promise.resolve([]) }
-
-    const spellchecker = this.loadedNodehun
-    if (!spellchecker) { return Promise.reject(new Error('Failed to load spellchecker')) }
-
-    return new Promise((resolve, reject) => {
-      spellchecker.spellSuggestions(word, (err, correct, suggestions) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve(suggestions)
-        }
-      })
-    })
+  isCorrect (word, suppressErrors = false) {
+    try {
+      this._guardAvailability()
+      return this[privHunspell].isCorrect(word)
+    } catch (ex) {
+      if (suppressErrors) { return true }
+      throw ex
+    }
   }
 
   /**
   * Gets spelling suggestions for a word synchronously
   * @param word: the word to get suggestions for
+  * @param suppressErrors=false: set to true to gobble errors and return an empty list in that case
   * @return a list of suggested words
   */
-  spellSuggestionsSync (word) {
-    if (!this.isConfigured) { return Promise.resolve([]) }
-
-    const spellchecker = this.loadedNodehun
-    if (!spellchecker) { throw new Error('Failed to load spellchecker') }
-
-    return spellchecker.spellSuggestionsSync(word)
+  suggestions (word, suppressErrors = false) {
+    try {
+      this._guardAvailability()
+      return this[privHunspell].suggestions(word)
+    } catch (ex) {
+      if (suppressErrors) { return [] }
+      throw ex
+    }
   }
 
   /* **************************************************************************/
@@ -136,44 +133,26 @@ class SpellcheckProvider {
   /**
   * Adds a word to the spellchecker
   * @param word: the word to add
-  * @return promise: on completion
   */
   addWord (word) {
-    // Store the word in our list
-    if (this[privUserWords].has(word)) { return Promise.resolve() }
     this[privUserWords].add(word)
-
-    if (!this.isConfigured) { return Promise.resolve() }
-
-    const spellchecker = this.loadedNodehun
-    if (!spellchecker) { return Promise.reject(new Error('Failed to load spellchecker')) }
-
-    return new Promise((resolve, reject) => {
-      spellchecker.addWord(word, (err) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve()
-        }
-      })
-    })
+    if (this[privHunspell]) {
+      this[privHunspell].addWord(word)
+    }
   }
 
   /**
   * Adds a set of words to the dictionary
   * @param words: the list of words to add
-  * @param ignoreErrors=true: true to ignore thrown errors
-  * @return promise: on completion
   */
-  addWords (words, ignoreErrors = true) {
-    return words.reduce((acc, word) => {
-      return acc
-        .then(() => this.addWord(word))
-        .catch((err) => {
-          return ignoreErrors ? Promise.resolve() : Promise.reject(err)
-        })
-    }, Promise.resolve())
+  addWords (words) {
+    words.forEach((word) => {
+      this[privUserWords].add(word)
+    })
+    if (this[privHunspell]) {
+      this[privHunspell].addWords(words)
+    }
   }
 }
 
-module.exports = SpellcheckProvider
+export default SpellcheckProvider

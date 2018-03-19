@@ -39,7 +39,7 @@ export default class AppWizardIntroScene extends React.Component {
         <Avatar
           color={Colors.yellow600}
           backgroundColor={Colors.blueGrey900}
-          icon={(<FontIcon className='fa fa-fw fa-magic' />)}
+          icon={(<FontIcon className='fas fa-fw fa-magic' />)}
           size={100} />
         <h2 style={styles.heading}>
           Wavebox Setup Wizard

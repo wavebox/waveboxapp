@@ -2,17 +2,18 @@ import { ipcMain, webContents, app, shell } from 'electron'
 import fs from 'fs-extra'
 import path from 'path'
 import mkdirp from 'mkdirp'
-import WaveboxWindow from 'windows/WaveboxWindow'
-import MonitorWindow from 'windows/MonitorWindow'
-import settingStore from 'stores/settingStore'
+import WaveboxWindow from 'Windows/WaveboxWindow'
+import MonitorWindow from 'Windows/MonitorWindow'
+import { settingsStore } from 'stores/settings'
 import {
   WB_METRICS_OPEN_MONITOR,
   WB_METRICS_OPEN_LOG,
-  WB_METRICS_RELEASE_MEMORY
+  WB_METRICS_GET_METRICS_SYNC
 } from 'shared/ipcEvents'
 import { METRICS_LOG_WRITE_INTERVAL } from 'shared/constants'
-import { SEGMENTS } from 'shared/Models/Settings/SettingsIdent'
 import RuntimePaths from 'Runtime/RuntimePaths'
+import TrayPopout from 'Tray/TrayPopout'
+import LinuxNotification from 'Notifications/LinuxNotification'
 
 const LOG_TAG = '[METRICS]'
 mkdirp.sync(path.dirname(RuntimePaths.METRICS_LOG_PATH))
@@ -25,15 +26,15 @@ class MetricsService {
   constructor () {
     this._logUpdater = null
 
-    if (settingStore.app.writeMetricsLog) {
+    if (settingsStore.getState().app.writeMetricsLog) {
       this.updateMetricsLog()
       this._logUpdater = setInterval(this.updateMetricsLog, METRICS_LOG_WRITE_INTERVAL)
     }
 
-    settingStore.on('changed:' + SEGMENTS.APP, this.handleSettingsChanged)
+    settingsStore.listen(this.handleSettingsChanged)
     ipcMain.on(WB_METRICS_OPEN_LOG, this.openMetricsLogLocation)
     ipcMain.on(WB_METRICS_OPEN_MONITOR, this.openMonitorWindow)
-    ipcMain.on(WB_METRICS_RELEASE_MEMORY, this.freeV8Memory)
+    ipcMain.on(WB_METRICS_GET_METRICS_SYNC, this.ipcGetMetricsSync)
   }
 
   /* ****************************************************************************/
@@ -44,14 +45,14 @@ class MetricsService {
   * Handles the settings changing
   * @param next: the new settings
   */
-  handleSettingsChanged = ({ next }) => {
+  handleSettingsChanged = (settingsState) => {
     if (this._logUpdater === null) {
-      if (next.writeMetricsLog) {
+      if (settingsState.app.writeMetricsLog) {
         this.updateMetricsLog()
         this._logUpdater = setInterval(this.updateMetricsLog, METRICS_LOG_WRITE_INTERVAL)
       }
     } else {
-      if (!next.writeMetricsLog) {
+      if (!settingsState.app.writeMetricsLog) {
         clearInterval(this._logUpdater)
         this._logUpdater = null
       }
@@ -76,16 +77,15 @@ class MetricsService {
   }
 
   /* ****************************************************************************/
-  // Clearing
+  // Getters
   /* ****************************************************************************/
 
   /**
-  * Tries to free v8 memory by running release memory on all webcontents
+  * Get the metrics synchronously
+  * @param evt: the event that fired
   */
-  freeV8Memory = () => {
-    webContents.getAllWebContents().forEach((wc) => {
-      wc.releaseMemory()
-    })
+  ipcGetMetricsSync = (evt) => {
+    evt.returnValue = this.getMetrics()
   }
 
   /* ****************************************************************************/
@@ -134,6 +134,26 @@ class MetricsService {
       })
       return acc
     }, new Map())
+
+    // Add some info about system-non-window webcontents
+    if (TrayPopout.isLoaded && TrayPopout.webContentsId !== undefined) {
+      const wcId = TrayPopout.webContentsId
+      const wc = webContents.fromId(wcId)
+      allTabInfos.set(wcId, {
+        webContentsId: wcId,
+        pid: wc ? wc.getOSProcessId() : undefined,
+        description: 'Wavebox Tray Popout'
+      })
+    }
+    if (LinuxNotification.isLoaded && LinuxNotification.webContentsId !== undefined) {
+      const wcId = LinuxNotification.webContentsId
+      const wc = webContents.fromId(wcId)
+      allTabInfos.set(wcId, {
+        webContentsId: wcId,
+        pid: wc ? wc.getOSProcessId() : undefined,
+        description: 'Wavebox Notification Provider (Linux-only)'
+      })
+    }
 
     // For anyone we don't have specific info about just grab what we can
     const allWebContentsInfo = webContents.getAllWebContents().reduce((acc, wc) => {

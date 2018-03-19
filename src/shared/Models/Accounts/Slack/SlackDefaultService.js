@@ -146,6 +146,11 @@ class SlackDefaultService extends CoreService {
         acc.push({
           id: channelId,
           text: `${chan.name} (${chan.mention_count})`,
+          extended: {
+            title: chan.name,
+            subtitle: `${chan.mention_count} mention${chan.mention_count === 1 ? '' : 's'}`,
+            optAvatarText: (chan.name || '')[0]
+          },
           date: 0,
           data: {
             channelId: channelId,
@@ -162,6 +167,11 @@ class SlackDefaultService extends CoreService {
         acc.push({
           id: imId,
           text: `@${im.name} (${im.dm_count})`,
+          extended: {
+            title: `@${im.name}`,
+            subtitle: `${im.dm_count} message${im.dm_count === 1 ? '' : 's'}`,
+            optAvatarText: (im.name || '')[0]
+          },
           date: 0,
           data: {
             channelId: imId,
@@ -178,6 +188,11 @@ class SlackDefaultService extends CoreService {
         acc.push({
           id: groupId,
           text: `@${group.name} (${group.mention_count})`,
+          extended: {
+            title: `@${group.name}`,
+            subtitle: `${group.mention_count} mention${group.mention_count === 1 ? '' : 's'}`,
+            optAvatarText: (group.name || '')[0]
+          },
           date: 0,
           data: {
             channelId: groupId,
@@ -195,6 +210,11 @@ class SlackDefaultService extends CoreService {
         acc.push({
           id: mpimId,
           text: `@${formattedMembers} (${mpim.unread_count})`,
+          extended: {
+            title: `@${formattedMembers}`,
+            subtitle: `${mpim.unread_count} mention${mpim.unread_count === 1 ? '' : 's'}`,
+            optAvatarText: '@'
+          },
           date: 0,
           data: {
             channelId: mpimId,

@@ -3,32 +3,17 @@ import { Paper, FlatButton, FontIcon } from 'material-ui'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import { updaterActions } from 'stores/updater'
-import { takeoutActions } from 'stores/takeout'
 import { settingsActions } from 'stores/settings'
 import { userStore } from 'stores/user'
 import Release from 'shared/Release'
 import pkg from 'package.json'
+import {ipcRenderer} from 'electron'
+import {
+  WB_TAKEOUT_IMPORT,
+  WB_TAKEOUT_EXPORT
+} from 'shared/ipcEvents'
 
 export default class InfoSettingsSection extends React.Component {
-  /* **************************************************************************/
-  // UI Event
-  /* **************************************************************************/
-
-  /**
-  * Starts the data import process
-  */
-  handleImportData = () => {
-    const shouldImport = window.confirm([
-      'Importing accounts and settings will remove any configuration you have done on this machine.',
-      '',
-      'Are you sure you want to do this?'
-    ].join('\n'))
-
-    if (shouldImport) {
-      takeoutActions.importDataFromDisk()
-    }
-  }
-
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -53,17 +38,17 @@ export default class InfoSettingsSection extends React.Component {
         <FlatButton
           label='Task Monitor'
           icon={<FontIcon className='material-icons'>timeline</FontIcon>}
-          onClick={() => settingsActions.openMetricsMonitor()} />
+          onClick={() => settingsActions.sub.app.openMetricsMonitor()} />
         <br />
         <FlatButton
           label='Export Data'
           icon={<FontIcon className='material-icons'>import_export</FontIcon>}
-          onClick={() => takeoutActions.exportDataToDisk()} />
+          onClick={() => ipcRenderer.send(WB_TAKEOUT_EXPORT)} />
         <br />
         <FlatButton
           label='Import Data'
           icon={<FontIcon className='material-icons'>import_export</FontIcon>}
-          onClick={this.handleImportData} />
+          onClick={() => ipcRenderer.send(WB_TAKEOUT_IMPORT)} />
       </Paper>
     )
   }

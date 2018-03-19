@@ -14,7 +14,6 @@ import {
   WB_BROWSER_GOOGLE_INBOX_TOP_MESSAGE_CHANGED,
   WB_BROWSER_GOOGLE_GMAIL_UNREAD_COUNT_CHANGED
 } from 'shared/ipcEvents'
-import Resolver from 'Runtime/Resolver'
 
 const REF = 'mailbox_tab'
 
@@ -123,7 +122,7 @@ export default class GoogleMailboxMailWebView extends React.Component {
   */
   handleOpenItem = (evt) => {
     if (evt.mailboxId === this.props.mailboxId && evt.service === CoreService.SERVICE_TYPES.DEFAULT) {
-      this.refs[REF].send(WB_BROWSER_OPEN_MESSAGE, {
+      this.refs[REF].sendOrQueueIfSleeping(WB_BROWSER_OPEN_MESSAGE, {
         messageId: evt.data.messageId,
         threadId: evt.data.threadId,
         search: evt.data.search
@@ -137,7 +136,7 @@ export default class GoogleMailboxMailWebView extends React.Component {
   */
   handleComposeMessage = (evt) => {
     if (evt.mailboxId === this.props.mailboxId && evt.service === CoreService.SERVICE_TYPES.DEFAULT) {
-      this.refs[REF].send(WB_BROWSER_COMPOSE_MESSAGE, {
+      this.refs[REF].sendOrQueueIfSleeping(WB_BROWSER_COMPOSE_MESSAGE, {
         recipient: evt.data.recipient,
         subject: evt.data.subject,
         body: evt.data.body
@@ -216,7 +215,6 @@ export default class GoogleMailboxMailWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={Resolver.guestPreload()}
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT}
         domReady={this.handleBrowserDomReady}

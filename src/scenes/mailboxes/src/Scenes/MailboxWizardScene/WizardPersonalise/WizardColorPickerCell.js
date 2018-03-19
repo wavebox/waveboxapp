@@ -64,7 +64,7 @@ export default class WizardColorPickerCell extends React.Component {
         }}>
         {isSelected ? (
           <FontIcon
-            className='fa fa-check'
+            className='fas fa-check'
             style={{
               ...styles.selectedIcon,
               verticalAlign: 'text-bottom',

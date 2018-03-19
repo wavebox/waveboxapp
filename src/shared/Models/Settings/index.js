@@ -8,5 +8,6 @@ module.exports = {
   TraySettings: require('./TraySettings'),
   UISettings: require('./UISettings'),
 
-  SettingsIdent: require('./SettingsIdent')
+  SettingsIdent: require('./SettingsIdent'),
+  SettingsFactory: require('./SettingsFactory')
 }

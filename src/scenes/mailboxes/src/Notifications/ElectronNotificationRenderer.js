@@ -13,6 +13,8 @@ class ElectronNotificationRenderer {
   * @param clickData={}: the data to provide to the click handler
   */
   presentNotification (title, html5Options = {}, clickHandler = undefined, clickData = {}) {
+    if (NotificationRendererUtils.areNotificationsMuted()) { return }
+
     const notification = new window.Notification(title, html5Options)
     notification.onclick = function () {
       if (clickHandler) {
@@ -31,6 +33,7 @@ class ElectronNotificationRenderer {
   * @param settingsState: the current settings state
   */
   presentMailboxNotification (mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState) {
+    if (NotificationRendererUtils.areNotificationsMuted(settingsState)) { return }
     const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceType, mailboxState, settingsState)
     if (!enabled) { return }
 

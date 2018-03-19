@@ -44,6 +44,7 @@ class TrelloMailbox extends CoreMailbox {
   get authToken () { return this._value_('authToken') }
   get authAppKey () { return this._value_('authAppKey') }
   get hasAuth () { return this.authToken && this.authAppKey }
+  get supportsAuth () { return true }
 
   /* **************************************************************************/
   // Properties : Provider Details & counts etc

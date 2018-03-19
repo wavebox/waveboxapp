@@ -1,6 +1,8 @@
+import RendererCRExtensionStore from 'shared/AltStores/CRExtension/RendererCRExtensionStore'
+import { STORE_NAME } from 'shared/AltStores/CRExtension/AltCRExtensionIdentifiers'
 import alt from '../alt'
-import actions from './crextensionActions'
-import CRExtensionRTStore from 'shared/AltStores/CRExtensionRT/CRExtensionRTStore'
-import { ipcRenderer } from 'electron'
+import actions from './crextensionActions' // eslint-disable-line
 
-export default alt.createStore(CRExtensionRTStore, 'CRExtension', ipcRenderer, actions)
+class CRExtensionStore extends RendererCRExtensionStore { }
+
+export default alt.createStore(CRExtensionStore, STORE_NAME)

@@ -89,7 +89,31 @@
     }
   }
 
-  .ReactComponent-MailboxCrashed, .ReactComponent-MailboxAuthInvalid {
+  .ReactComponent-MailboxLoadBar {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 0px;
+    height: 3px;
+    background-color: #2196F3;
+    opacity: 0;
+    transition: 700ms ease-in-out opacity;
+
+    @keyframes loadbar {
+      0% { width: 10%; }
+      100% { width: 90%; }
+    }
+
+    &.loading {
+      opacity: 1;
+      animation-name: loadbar;
+      animation-delay: 500ms;
+      animation-duration: 3s;
+      animation-fill-mode: forwards;
+    }
+  }
+
+  .ReactComponent-MailboxCrashed, .ReactComponent-MailboxAuthInvalid, .ReactComponent-MailboxSleeping {
     position: absolute;
     top: 0;
     left: 0;

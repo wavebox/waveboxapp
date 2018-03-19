@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+      /* Layout */
+      html, body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        width: 325px;
+        height: 65px;
+        position: relative;
+        overflow: hidden;
+        background-color: rgb(240, 240, 240);
+        color:  rgb(77, 77, 77);
+      }
+      * {
+        user-select: none;
+        cursor: default;
+      }
+
+      /* Icon */
+      #app-icon {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 45px;
+      }
+      #app-icon>.image {
+        position: absolute;
+        top: 10px;
+        bottom: 10px;
+        left: 5px;
+        right: 5px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-image: url("../icons/app.svg");
+      }
+
+      /* Controls */
+      #close-button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 25px;
+        line-height: 65px;
+        vertical-align: middle;
+        font-size: 20px;
+        text-align: center;
+        color: rgb(190, 190, 190);
+        cursor: pointer;
+      }
+      #close-button:active, #close-button:hover {
+        color: rgb(210, 210, 210);
+      }
+
+      /* Content */
+      #content {
+        position: absolute;
+        top: 0px;
+        bottom: 0px;
+        left: 45px;
+        right: 25px;
+      }
+      #content>.inner>.title, #content>.inner>.body {
+        position: absolute;
+        left: 0;
+        right: 0;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      #content>.inner>.title {
+        top: 8px;
+        height: 15px;
+        font-size: 13px;
+        line-height: 16px;
+        font-weight: bold;
+      }
+      #content>.inner>.body {
+        top: 26px;
+        bottom: 8px;
+        font-size: 12px;
+        line-height: 15px;
+      }
+      #content>.inner>.body>* {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app-icon">
+      <div class="image"></div>
+    </div>
+    <div id="content">
+      <div class="inner">
+        <div class="title"></div>
+        <div class="body"></div>
+      </div>
+    </div>
+    <div id="close-button">×</div>
+
+    <script type="text/javascript">
+      const electron = require('electron')
+      const audioPlayer = new window.Audio()
+
+      electron.ipcRenderer.on('WB_LIN_NOTIF_RENDER', (evt, options) => {
+        // Title
+        document.querySelector('#content .title').textContent = options.title || ''
+
+        // Body
+        const bodyElement = document.querySelector('#content .body')
+        bodyElement.innerHTML = ''
+        const body = (options.body || '')
+          .split('\n')
+          .slice(0, 2)
+          .map((line) => {
+            const e = document.createElement('div')
+            e.textContent = line
+            return e
+          })
+        body.forEach((e) => {
+          bodyElement.appendChild(e)
+        })
+
+        // Icon
+        if (window.iconStyle) {
+          window.iconStyle.parentElement.removeChild(window.iconStyle)
+          window.iconStyle = null
+        }
+        if (options.icon) {
+          window.iconStyle = document.createElement('style')
+          window.iconStyle.innerHTML = `
+            #app-icon>.image { background-image: url("${options.icon}")}
+          `
+          document.head.appendChild(window.iconStyle)
+        }
+      })
+
+      electron.ipcRenderer.on('WB_LIN_NOTIF_PLAY_AUDIO', (evt, audio) => {
+        audioPlayer.pause()
+        audioPlayer.src = `file://${audio}`
+        audioPlayer.currentTime = 0
+        audioPlayer.play()
+      })
+
+      document.getElementById('close-button').addEventListener('click', (evt) => {
+        evt.preventDefault()
+        evt.stopPropagation()
+        electron.ipcRenderer.send('WB_LIN_NOTIF_CLOSE', {})
+      }, false)
+      document.body.addEventListener('click', (evt) => {
+        evt.preventDefault()
+        electron.ipcRenderer.send('WB_LIN_NOTIF_CLICK', {})
+      }, false)
+      window.addEventListener('contextmenu', (evt) => {
+        evt.preventDefault()
+        evt.stopPropagation()
+      }, false)
+    </script>
+  </body>
+</html>

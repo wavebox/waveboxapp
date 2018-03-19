@@ -6,8 +6,8 @@ import pkg from 'package.json'
 import fs from 'fs-extra'
 import AppDirectory from 'appdirectory'
 import AppUpdaterLog from './AppUpdaterLog'
-import WaveboxWindow from 'windows/WaveboxWindow'
-import MailboxesWindow from 'windows/MailboxesWindow'
+import WaveboxWindow from 'Windows/WaveboxWindow'
+import MailboxesWindow from 'Windows/MailboxesWindow'
 
 const SQUIRREL_INSTALL_SWITCH = '--squirrel-install'
 const SQUIRREL_UPDATE_SWITCH = '--squirrel-updated'
@@ -183,8 +183,10 @@ class AppUpdater {
       }
       AppUpdater.migrateWin32DatabaseLocation(logger)
       Win32Registry.addManifestEntries(path.join(process.execPath, '../../Wavebox.exe'))
-        .then(() => logger.promiseLog(`Added Registry Entries`),
-        (err) => logger.promiseLog(`Failed to add Registry Entries ${err}`))
+        .then(
+          () => logger.promiseLog(`Added Registry Entries`),
+          (err) => logger.promiseLog(`Failed to add Registry Entries ${err}`)
+        )
         .then(() => {
           logger.flush()
           setTimeout(app.quit, 1000)
@@ -194,8 +196,10 @@ class AppUpdater {
       logger.log(`Remove shortcuts`)
       AppUpdater._spawnWin32Update(['--removeShortcut', path.basename(process.execPath)])
       Win32Registry.removeManifestEntries(path.join(process.execPath, '../../Wavebox.exe'))
-        .then(() => logger.promiseLog(`Removed Registry Entries`),
-        (err) => logger.promiseLog(`Failed to remove Registry Entries ${err}`))
+        .then(
+          () => logger.promiseLog(`Removed Registry Entries`),
+          (err) => logger.promiseLog(`Failed to remove Registry Entries ${err}`)
+        )
         .then(() => {
           logger.flush()
           setTimeout(app.quit, 1000)

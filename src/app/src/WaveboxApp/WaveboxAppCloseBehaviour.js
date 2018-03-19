@@ -1,6 +1,7 @@
 import { app } from 'electron'
-import settingStore from 'stores/settingStore'
-import { SUPPORTS_TRAY_MINIMIZE_CONFIG } from 'shared/Models/Settings/TraySettings'
+import { settingsStore } from 'stores/settings'
+import fs from 'fs-extra'
+import path from 'path'
 
 const privForceQuit = Symbol('privForceQuit')
 const privMainWindow = Symbol('privMainWindow')
@@ -35,6 +36,34 @@ class WaveboxAppCloseBehaviour {
   }
 
   /* ****************************************************************************/
+  // Platform interface
+  /* ****************************************************************************/
+
+  /**
+  * Checks if the app is pinned to the taskbar
+  * @return true if pinned, false otherwise
+  */
+  isPinnedToWin32Taskbar () {
+    if (process.platform !== 'win32') { return false }
+
+    const pinnedQuicklaunchPath = path.join(app.getPath('appData'), 'Microsoft/Internet Explorer/Quick Launch/User Pinned/TaskBar')
+    let quickLaunchShortcutNames
+    try {
+      quickLaunchShortcutNames = fs.readdirSync(pinnedQuicklaunchPath)
+    } catch (ex) {
+      return false
+    }
+
+    const match = quickLaunchShortcutNames.find((filename) => {
+      const ext = path.extname(filename)
+      const name = filename.substr(0, filename.length - ext.length)
+      return name.trim().toLowerCase() === 'wavebox'
+    })
+
+    return !!match
+  }
+
+  /* ****************************************************************************/
   // Event handlers
   /* ****************************************************************************/
 
@@ -44,30 +73,47 @@ class WaveboxAppCloseBehaviour {
   */
   _handleMainWindowClose = (evt) => {
     if (!this[privForceQuit]) {
-      let hide = false
-      if (SUPPORTS_TRAY_MINIMIZE_CONFIG) {
-        if (settingStore.tray.show && settingStore.tray.hideWhenClosed) {
-          hide = true
+      if (!this.mainWindow) { return }
+
+      const { tray } = settingsStore.getState()
+      if (process.platform === 'darwin') {
+        if (!this.mainWindow.isFullScreen()) {
+          this._hideMainWindowOnClose(evt)
+        }
+      } else if (process.platform === 'win32') {
+        if (tray.show) {
+          if (this.isPinnedToWin32Taskbar()) {
+            this._minimizeMainWindowOnClose(evt)
+          } else {
+            this._hideMainWindowOnClose(evt)
+          }
         }
       } else {
-        if (process.platform === 'darwin' || settingStore.tray.show) {
-          hide = true
+        if (tray.show) {
+          this._hideMainWindowOnClose(evt)
         }
-      }
-
-      // Tailor the behaviour slightly on darwin
-      if (process.platform === 'darwin') {
-        if (this.mainWindow && this.mainWindow.isFullScreen()) {
-          hide = false
-        }
-      }
-
-      if (hide) {
-        this.mainWindow.hide()
-        evt.preventDefault()
-        this[privForceQuit] = false
       }
     }
+  }
+
+  /**
+  * Hides the main window on close and prevents quit
+  * @param evt: the event that fired from the close event
+  */
+  _hideMainWindowOnClose = (evt) => {
+    this.mainWindow.hide()
+    evt.preventDefault()
+    this[privForceQuit] = false
+  }
+
+  /**
+  * Minimizes the main window on close and prevents quit
+  * @param evt: the event that fired from the close event
+  */
+  _minimizeMainWindowOnClose = (evt) => {
+    this.mainWindow.minimize()
+    evt.preventDefault()
+    this[privForceQuit] = false
   }
 
   /* ****************************************************************************/

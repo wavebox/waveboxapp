@@ -1,9 +1,14 @@
 import NotificationRendererUtils from './NotificationRendererUtils'
-import EnhancedNotificationWindowLinux from './EnhancedNotificationWindowLinux'
 import { DEFAULT_NOTIFICATION_SOUND } from 'shared/Notifications'
 import Win32Notification from './Win32NotificationLossy'
 import pkg from 'package.json'
+import uuid from 'uuid'
 import { settingsStore } from 'stores/settings'
+import { ipcRenderer } from 'electron'
+import {
+  WB_LIN_NOTIF_CLICK,
+  WB_LIN_NOTIF_PRESENT
+} from 'shared/ipcEvents'
 
 const MacNotification = process.platform === 'darwin' ? window.appNodeModulesRequire('node-mac-notifier') : null
 
@@ -20,6 +25,8 @@ class EnhancedNotificationRenderer {
   * @param clickData={}: the data to provide to the click handler
   */
   presentNotificationDarwin (title, html5Options = {}, clickHandler = undefined, clickData = {}) {
+    if (NotificationRendererUtils.areNotificationsMuted()) { return }
+
     const notif = new MacNotification(title, {
       body: html5Options.body,
       icon: html5Options.icon,
@@ -43,6 +50,7 @@ class EnhancedNotificationRenderer {
   * @param settingsState: the current settings state
   */
   presentMailboxNotificationDarwin (mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState) {
+    if (NotificationRendererUtils.areNotificationsMuted(settingsState)) { return }
     const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceType, mailboxState, settingsState)
     if (!enabled) { return }
 
@@ -82,13 +90,15 @@ class EnhancedNotificationRenderer {
   * @param clickData={}: the data to provide to the click handler
   */
   presentNotificationWin32 (title, html5Options = {}, clickHandler = undefined, clickData = {}) {
+    if (NotificationRendererUtils.areNotificationsMuted()) { return }
+
     const sound = settingsStore.getState().os.notificationsSound || DEFAULT_NOTIFICATION_SOUND
     NotificationRendererUtils.preparedIconWin32(html5Options.icon)
       .then((icon) => {
         const notif = new Win32Notification.ToastNotification({
           appId: pkg.name,
           template: [
-            /*eslint-disable */
+            /* eslint-disable */
             '<toast>',
               '<visual>',
                 '<binding template="ToastGeneric">',
@@ -99,7 +109,7 @@ class EnhancedNotificationRenderer {
               '</visual>',
               `<audio src="${sound}" silent="${html5Options.silent ? 'true' : 'false'}" />`,
             '</toast>'
-            /*eslint-enable */
+            /* eslint-enable */
           ].filter((l) => !!l).join(''),
           strings: [
             title,
@@ -125,6 +135,7 @@ class EnhancedNotificationRenderer {
   * @param settingsState: the current settings state
   */
   presentMailboxNotificationWin32 (mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState) {
+    if (NotificationRendererUtils.areNotificationsMuted(settingsState)) { return }
     const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceType, mailboxState, settingsState)
     if (!enabled) { return }
 
@@ -134,7 +145,7 @@ class EnhancedNotificationRenderer {
         const notif = new Win32Notification.ToastNotification({
           appId: pkg.name,
           template: [
-            /*eslint-disable */
+            /* eslint-disable */
             '<toast launch="launchApp">',
               '<visual>',
                 '<binding template="ToastGeneric">',
@@ -145,7 +156,7 @@ class EnhancedNotificationRenderer {
               '</visual>',
               `<audio src="${sound || DEFAULT_NOTIFICATION_SOUND}" silent="${sound === undefined ? 'true' : 'false'}" />`,
             '</toast>'
-            /*eslint-enable */
+            /* eslint-enable */
           ].filter((l) => !!l).join(''),
           strings: [
             NotificationRendererUtils.formattedTitle(notification),
@@ -173,8 +184,10 @@ class EnhancedNotificationRenderer {
   * @param clickData={}: the data to provide to the click handler
   */
   presentNotificationLinux (title, html5Options = {}, clickHandler = undefined, clickData = {}) {
+    if (NotificationRendererUtils.areNotificationsMuted()) { return }
+
     const sound = settingsStore.getState().os.notificationsSound || DEFAULT_NOTIFICATION_SOUND
-    EnhancedNotificationWindowLinux.showNotification({
+    this._showLinuxNotification({
       title: title,
       body: html5Options.body,
       icon: html5Options.icon,
@@ -192,15 +205,42 @@ class EnhancedNotificationRenderer {
   * @param settingsState: the current settings state
   */
   presentMailboxNotificationLinux (mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState) {
+    if (NotificationRendererUtils.areNotificationsMuted(settingsState)) { return }
     const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceType, mailboxState, settingsState)
     if (!enabled) { return }
 
-    EnhancedNotificationWindowLinux.showNotification({
+    this._showLinuxNotification({
       title: NotificationRendererUtils.formattedTitle(notification),
       body: NotificationRendererUtils.formattedBody(notification),
       icon: NotificationRendererUtils.preparedServiceIcon(mailbox, service, mailboxState),
       sound: NotificationRendererUtils.preparedServiceSound(mailbox, service, settingsState)
     }, clickHandler, notification.data)
+  }
+
+  /**
+  * Handles the heavy lifting of showing the linux notification
+  * @param options: the notification options
+  * @param clickHandler: the click handler
+  * @param clickData: the click data
+  */
+  _showLinuxNotification (options, clickHandler, clickData) {
+    const id = uuid.v4()
+    if (clickHandler) {
+      let expirer = null
+      const callbackListener = (evt, callbackId) => {
+        if (callbackId === id) {
+          clearTimeout(expirer)
+          ipcRenderer.removeListener(WB_LIN_NOTIF_CLICK, callbackListener)
+          clickHandler(clickData)
+        }
+      }
+      expirer = setTimeout(() => {
+        ipcRenderer.removeListener(WB_LIN_NOTIF_CLICK, callbackListener)
+      }, 60000)
+
+      ipcRenderer.on(WB_LIN_NOTIF_CLICK, callbackListener)
+    }
+    ipcRenderer.send(WB_LIN_NOTIF_PRESENT, id, options)
   }
 }
 

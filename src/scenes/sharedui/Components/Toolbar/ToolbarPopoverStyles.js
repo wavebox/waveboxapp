@@ -22,6 +22,10 @@ const basicPopoverStyles400w = {
   arrowStyle: arrow
 }
 
+export default {
+  basicPopoverStyles,
+  basicPopoverStyles400w
+}
 export {
   basicPopoverStyles,
   basicPopoverStyles400w

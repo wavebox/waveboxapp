@@ -1,236 +1,56 @@
+import RendererMailboxStore from 'shared/AltStores/Mailbox/RendererMailboxStore'
+import { STORE_NAME } from 'shared/AltStores/Mailbox/AltMailboxIdentifiers'
 import alt from '../alt'
 import actions from './mailboxActions'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
-import MailboxFactory from 'shared/Models/Accounts/MailboxFactory'
-import mailboxPersistence from './mailboxPersistence'
-import avatarPersistence from './avatarPersistence'
-import userStore from '../user/userStore'
 import settingsActions from '../settings/settingsActions'
-import { PERSISTENCE_INDEX_KEY, SERVICE_LOCAL_AVATAR_PREFIX, MAILBOX_SLEEP_EXTEND } from 'shared/constants'
-import { BLANK_PNG } from 'shared/b64Assets'
-import uuid from 'uuid'
-import googleActions from '../google/googleActions'
 import GoogleHTTP from '../google/GoogleHTTP'
-import slackActions from '../slack/slackActions'
 import SlackHTTP from '../slack/SlackHTTP'
-import trelloActions from '../trello/trelloActions'
 import MicrosoftHTTP from '../microsoft/MicrosoftHTTP'
-import microsoftActions from '../microsoft/microsoftActions'
 import mailboxDispatch from './mailboxDispatch'
-import ServiceReducer from './ServiceReducer'
 import Bootstrap from 'R/Bootstrap'
+import googleActions from '../google/googleActions'
+import slackActions from '../slack/slackActions'
+import trelloActions from '../trello/trelloActions'
+import microsoftActions from '../microsoft/microsoftActions'
 import { GoogleMailbox, GoogleDefaultService } from 'shared/Models/Accounts/Google'
 import { SlackMailbox } from 'shared/Models/Accounts/Slack'
 import { TrelloMailbox } from 'shared/Models/Accounts/Trello'
 import { MicrosoftMailbox } from 'shared/Models/Accounts/Microsoft'
 import { GenericMailbox } from 'shared/Models/Accounts/Generic'
 import { ContainerMailbox } from 'shared/Models/Accounts/Container'
-import Resolver from 'Runtime/Resolver'
+import {
+  GoogleMailboxReducer,
+  SlackMailboxReducer,
+  TrelloMailboxReducer,
+  MicrosoftMailboxReducer
+} from 'shared/AltStores/Mailbox/MailboxReducers'
 import {
   WB_AUTH_GOOGLE,
   WB_AUTH_MICROSOFT,
   WB_AUTH_SLACK,
   WB_AUTH_TRELLO,
-  WB_MAILBOX_STORAGE_CHANGE_ACTIVE,
-  WB_PREPARE_MAILBOX_SESSION,
-  WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT,
   WB_NEW_WINDOW
 } from 'shared/ipcEvents'
-import { ipcRenderer, remote } from 'electron'
+import { ipcRenderer } from 'electron'
+import uuid from 'uuid'
 
 const AUTH_MODES = {
   CREATE: 'CREATE',
   REAUTHENTICATE: 'REAUTHENTICATE'
 }
 
-class MailboxStore {
+class MailboxStore extends RendererMailboxStore {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
 
   constructor () {
-    this.index = []
-    this.mailboxes = new Map()
-    this.webcontentTabIds = new Map()
-    this.sleepingQueue = new Map()
-    this.avatars = new Map()
+    super()
+
     this.snapshots = new Map()
-    this.active = null
-    this.activeService = CoreMailbox.SERVICE_TYPES.DEFAULT
     this.search = new Map()
-
-    /* ****************************************/
-    // Mailboxes
-    /* ****************************************/
-
-    /**
-    * @return all the mailboxes in order
-    */
-    this.allMailboxes = () => { return this.index.map((id) => this.mailboxes.get(id)) }
-
-    /**
-    * @return all the mailboxes in an object
-    */
-    this.allMailboxesIndexed = () => {
-      return this.allMailboxes().reduce((acc, mailbox) => {
-        acc[mailbox.id] = mailbox
-        return acc
-      }, {})
-    }
-
-    /**
-    * @return the ids
-    */
-    this.mailboxIds = () => { return Array.from(this.index) }
-
-    /**
-    * @return the mailbox
-    */
-    this.getMailbox = (id) => { return this.mailboxes.get(id) || null }
-
-    /**
-    * @return the count of mailboxes
-    */
-    this.mailboxCount = () => { return this.mailboxes.size }
-
-    /**
-    * @param type: the type of mailboxes to return
-    * @return a list of mailboxes with the given type
-    */
-    this.getMailboxesOfType = (type) => {
-      return this.allMailboxes().filter((mailbox) => mailbox.type === type)
-    }
-
-    /**
-    * @return a list of mailboxes that support wavebox auth
-    */
-    this.getMailboxesSupportingWaveboxAuth = () => {
-      return this.allMailboxes().filter((mailbox) => mailbox.supportsWaveboxAuth)
-    }
-
-    /**
-    * @param mailboxId: the id of the mailbox
-    * @return true if this is the first mailbox
-    */
-    this.mailboxIsAtFirstIndex = (mailboxId) => {
-      return this.index[0] === mailboxId
-    }
-
-    /**
-    * @param mailboxId: the id of the mailbox
-    * @return true if this is the last mailbox
-    */
-    this.mailboxIsAtLastIndex = (mailboxId) => {
-      return this.index[this.index.length - 1] === mailboxId
-    }
-
-    /* ****************************************/
-    // Mailbox Restrictions
-    /* ****************************************/
-
-    /**
-    * @param id: the mailbox id
-    * @param user: the current user object
-    * @return true if the mailbox is restricted, false otherwise
-    */
-    this.isMailboxRestricted = (id, user) => {
-      if (this.mailboxCount() === 0) { return false }
-      if (user.hasAccountLimit || user.hasAccountTypeRestriction) {
-        return !this
-          .allMailboxes()
-          .filter((mailbox) => user.hasAccountsOfType(mailbox.type))
-          .slice(0, user.accountLimit)
-          .find((mailbox) => mailbox.id === id)
-      } else {
-        return false
-      }
-    }
-
-    /**
-    * @param user: the current user object
-    * @return a list of unrestricted mailbox ids
-    */
-    this.unrestrictedMailboxIds = (user) => {
-      if (user.hasAccountLimit || user.hasAccountTypeRestriction) {
-        return this
-          .allMailboxes()
-          .filter((mailbox) => user.hasAccountsOfType(mailbox.type))
-          .slice(0, user.accountLimit)
-          .map((mailbox) => mailbox.id)
-      } else {
-        return this.mailboxIds()
-      }
-    }
-
-    /**
-    * Checks to see if the user can add a new unrestricted account
-    * @param user: the curent user object
-    * @return true if the user can add a mailbox, false otherwise
-    */
-    this.canAddUnrestrictedMailbox = (user) => {
-      return this.unrestrictedMailboxIds(user).length < user.accountLimit
-    }
-
-    /* ****************************************/
-    // Services
-    /* ****************************************/
-
-    /**
-    * @return a list of all services
-    */
-    this.allServices = () => {
-      return this.allMailboxes().reduce((acc, mailbox) => {
-        return acc.concat(mailbox.enabledServices)
-      }, [])
-    }
-
-    /**
-    * @return an array of services that support compose
-    */
-    this.getServicesSupportingCompose = () => {
-      return this.allServices().filter((service) => service.supportsCompose)
-    }
-
-    /**
-    * @param protocol: the protocol to get services for
-    * @return an array of services that support the given protocol
-    */
-    this.getServicesSupportingProtocol = (protocol) => {
-      return this.allServices().filter((service) => service.supportedProtocols.has(protocol))
-    }
-
-    /* ****************************************/
-    // Avatar
-    /* ****************************************/
-
-    /**
-    * @param id: the id of the mailbox
-    * @return the avatar base64 string or a blank png string
-    */
-    this.getAvatar = (id) => { return this.avatars.get(id) || BLANK_PNG }
-
-    /**
-    * Gets the mailbox avatar using the order of precidence
-    * @param id: the id of the mailbox
-    * @return the url/base64 avatar url or undefiend if none
-    */
-    this.getResolvedAvatar = (id) => {
-      const mailbox = this.getMailbox(id)
-      if (!mailbox) { return }
-
-      if (mailbox.hasCustomAvatar) {
-        return this.getAvatar(mailbox.customAvatarId)
-      } else if (mailbox.avatarURL) {
-        return mailbox.avatarURL
-      } else if (mailbox.hasServiceLocalAvatar) {
-        return this.getAvatar(mailbox.serviceLocalAvatarId)
-      } else if (!mailbox.avatarCharacterDisplay) {
-        const logoPath = mailbox.humanizedLogo || mailbox.serviceForType(CoreMailbox.SERVICE_TYPES.DEFAULT).humanizedLogo
-        if (logoPath) {
-          return Resolver.image(logoPath)
-        }
-      }
-    }
+    this.webcontentTabIds = new Map()
 
     /* ****************************************/
     // Snapshots
@@ -241,122 +61,8 @@ class MailboxStore {
     * @param service: the type of service
     * @return the snapshot base64 string
     */
-    this.getSnapshot = (id, service) => { return this.snapshots.get(`${id}:${service}`) }
-
-    /* ****************************************/
-    // Active
-    /* ****************************************/
-
-    /**
-    * @return the id of the active mailbox
-    */
-    this.activeMailboxId = () => { return this.active }
-
-    /**
-    * @return the service type of the active mailbox
-    */
-    this.activeMailboxService = () => {
-      if (this.activeService === CoreMailbox.SERVICE_TYPES.DEFAULT) {
-        return CoreMailbox.SERVICE_TYPES.DEFAULT
-      } else {
-        const mailbox = this.activeMailbox()
-        if (mailbox) {
-          const service = mailbox.serviceForType(this.activeService)
-          return service ? this.activeService : CoreMailbox.SERVICE_TYPES.DEFAULT
-        } else {
-          return CoreMailbox.SERVICE_TYPES.DEFAULT
-        }
-      }
-    }
-
-    /**
-    * @return the active mailbox
-    */
-    this.activeMailbox = () => { return this.mailboxes.get(this.active) }
-
-    /**
-    * @param mailboxId: the id of the mailbox
-    * @param service: the type of service
-    * @return true if this mailbox is active, false otherwise
-    */
-    this.isActive = (mailboxId, service) => {
-      return this.activeMailboxId() === mailboxId && this.activeMailboxService() === service
-    }
-
-    /* ****************************************/
-    // Sleeping
-    /* ****************************************/
-
-    /**
-    * @param mailboxId: the id of the mailbox
-    * @param serviceType: the type of service
-    * @param userState=autoget: the user state if available
-    * @return true if the mailbox is sleeping
-    */
-    this.isSleeping = (mailboxId, serviceType, userState = userStore.getState()) => {
-      if (!userState.user.hasSleepable) { return false }
-
-      // Check we support sleeping
-      const mailbox = this.getMailbox(mailboxId)
-      const service = mailbox ? mailbox.serviceForType(serviceType) : undefined
-      if (!service || !service.sleepable) { return false }
-
-      // Check if we are active
-      if (this.isActive(mailboxId, serviceType)) { return false }
-
-      // Check if we are queued for sleeping sleeping
-      const key = `${mailboxId}:${serviceType}`
-      if (this.sleepingQueue.has(key)) {
-        return this.sleepingQueue.get(key).sleeping === true
-      } else {
-        return true
-      }
-    }
-
-    /**
-    * @param mailboxId: the id of the mailbox
-    * @return true if all services are sleeping
-    */
-    this.isAllServicesSleeping = (mailboxId) => {
-      if (!userStore.getState().user.hasSleepable) { return false }
-
-      const mailbox = this.getMailbox(mailboxId)
-      if (!mailbox) { return false }
-      const awake = mailbox.enabledServiceTypes.find((serviceType) => {
-        return !this.isSleeping(mailboxId, serviceType)
-      })
-      return !awake
-    }
-
-    /**
-    * Checks to see if we should show a sleeping notification and returns some
-    * info if the mailbox is sleeping
-    * @param mailboxId: the id of the mailbox
-    * @param serviceType: the type of service
-    * @return some sleep info {mailbox,service,closeMetrics} or undefined if there is no notification to show
-    */
-    this.getSleepingNotificationInfo = (mailboxId, serviceType) => {
-      if (serviceType !== CoreMailbox.SERVICE_TYPES.DEFAULT) { return } // Only support default right now
-
-      const userState = userStore.getState()
-      if (userState.wireConfigExperiments().showDefaultServiceSleepNotifications !== true) { return }
-
-      const mailbox = this.getMailbox(mailboxId)
-      const service = mailbox ? mailbox.serviceForType(serviceType) : undefined
-      if (!service || service.hasSeenSleepableWizard) { return }
-
-      // As well as checking if we are sleeping, also check we have an entry in the
-      // sleep queue. This indicates were not sleeping from launch
-      if (!this.isSleeping(mailboxId, serviceType, userState)) { return undefined }
-      const sleepInfo = this.sleepingQueue.get(`${mailboxId}:${serviceType}`)
-      if (!sleepInfo) { return undefined }
-
-      // Build the return info
-      return {
-        mailbox: mailbox,
-        service: service,
-        closeMetrics: sleepInfo.closeMetrics
-      }
+    this.getSnapshot = (id, service) => {
+      return this.snapshots.get(this.getFullServiceKey(id, service))
     }
 
     /* ****************************************/
@@ -369,7 +75,7 @@ class MailboxStore {
     * @return true if the mailbox is searching, false otherwise
     */
     this.isSearchingMailbox = (mailboxId, service) => {
-      return this.search.has(`${mailboxId}:${service}`)
+      return this.search.has(this.getFullServiceKey(mailboxId, service))
     }
 
     /**
@@ -378,7 +84,7 @@ class MailboxStore {
     * @return the search term for the mailbox
     */
     this.mailboxSearchTerm = (mailboxId, service) => {
-      return (this.search.get(`${mailboxId}:${service}`) || {}).term || ''
+      return (this.search.get(this.getFullServiceKey(mailboxId, service)) || {}).term || ''
     }
 
     /**
@@ -387,121 +93,7 @@ class MailboxStore {
     * @return the search has for the mailbox
     */
     this.mailboxSearchHash = (mailboxId, service) => {
-      return (this.search.get(`${mailboxId}:${service}`) || {}).hash || ''
-    }
-
-    /* ****************************************/
-    // Unread
-    /* ****************************************/
-
-    /**
-    * @param user=autoget: the user object
-    * @return the total amount of unread items
-    */
-    this.totalUnreadCountForUser = (user = userStore.getState().user) => {
-      const hasServices = user.hasServices
-      return this.allMailboxes().reduce((acc, mailbox) => {
-        if (mailbox) {
-          acc += mailbox.getUnreadCount(!hasServices)
-        }
-        return acc
-      }, 0)
-    }
-
-    /**
-    * @param user=autoget: the user object
-    * @return the total amount of unread items taking mailbox settings into account
-    */
-    this.totalUnreadCountForAppBadgeForUser = (user = userStore.getState().user) => {
-      const hasServices = user.hasServices
-      return this.allMailboxes().reduce((acc, mailbox) => {
-        if (mailbox) {
-          return acc + mailbox.getUnreadCountForAppBadge(!hasServices)
-        } else {
-          return acc
-        }
-      }, 0)
-    }
-
-    /**
-    * @param user=autoget: the user object
-    * @return true if any mailboxes have another unread info status, taking settings into account
-    */
-    this.hasUnreadActivityForAppBadgeForUser = (user = userStore.getState().user) => {
-      const hasServices = user.hasServices
-      return !!this.allMailboxes().find((mailbox) => {
-        return mailbox && mailbox.getUnreadActivityForAppbadge(!hasServices)
-      })
-    }
-
-    /**
-    * Gets the unread count taking into account the current user state
-    * @param id: the id of the mailbox
-    * @param user=autoget: the user object
-    * @return the unread count
-    */
-    this.mailboxUnreadCountForUser = (id, user = userStore.getState().user) => {
-      const mailbox = this.getMailbox(id)
-      if (!mailbox) { return 0 }
-      return mailbox.getUnreadCount(!user.hasServices)
-    }
-
-    /**
-    * Gets the unread activity taking into account the current user state
-    * @param id: the id of the mailbox
-    * @param user=autoget: the user object
-    * @return true if there is unread activity for the account
-    */
-    this.mailboxHasUnreadActivityForUser = (id, user = userStore.getState().user) => {
-      const mailbox = this.getMailbox(id)
-      if (!mailbox) { return false }
-      return mailbox.getHasUnreadActivity(!user.hasServices)
-    }
-
-    /**
-    * @param id: the id of the mailbox
-    * @param user=autoget: the user object
-    * @return the array of tray messages
-    */
-    this.mailboxTrayMessagesForUser = (id, user = userStore.getState().user) => {
-      const mailbox = this.getMailbox(id)
-      if (!mailbox) { return [] }
-      return mailbox.getTrayMessages(!user.hasServices)
-    }
-
-    /* ****************************************/
-    // Takeout
-    /* ****************************************/
-
-    /**
-    * Exports the data synchronously
-    * @return the raw data
-    */
-    this.exportMailboxDataSync = () => {
-      const allData = mailboxPersistence.allItemsSync()
-      return Object.keys(allData)
-        .reduce((acc, id) => {
-          if (id === PERSISTENCE_INDEX_KEY) {
-            acc[id] = allData[id]
-          } else {
-            const data = JSON.parse(allData[id])
-            const MailboxClass = MailboxFactory.getClass(data.type)
-            if (MailboxClass) {
-              acc[id] = JSON.stringify(MailboxClass.prepareForExport(id, data))
-            } else {
-              acc[id] = allData[id]
-            }
-          }
-          return acc
-        }, {})
-    }
-
-    /**
-    * Exports the data synchronously
-    * @return the raw data
-    */
-    this.exportAvatarDataSync = () => {
-      return avatarPersistence.allItemsSync()
+      return (this.search.get(this.getFullServiceKey(mailboxId, service)) || {}).hash || ''
     }
 
     /* ****************************************/
@@ -524,26 +116,12 @@ class MailboxStore {
       return this.getWebcontentTabId(this.activeMailboxId(), this.activeMailboxService())
     }
 
-    /**
-    * @param mailboxId: the id of the mailbox
-    * @param serviceType: the type of service
-    * @return the metrics for the web contents or undefined if not found
-    */
-    this.getWebcontentMetrics = (mailboxId, serviceType) => {
-      const webContentsId = this.getWebcontentTabId(mailboxId, serviceType)
-      const wc = webContentsId !== undefined ? remote.webContents.fromId(webContentsId) : undefined
-      const webContentsPid = wc ? wc.getOSProcessId() : -1
-      return remote.app.getAppMetrics().find((metric) => metric.pid === webContentsPid)
-    }
-
     /* ****************************************/
     // Listeners
     /* ****************************************/
 
     this.bindListeners({
-      // Store lifecycle
-      handleLoad: actions.LOAD,
-      handleRemoteChange: actions.REMOTE_CHANGE,
+      // Tabs
       handleSetWebcontentTabId: actions.SET_WEBCONTENT_TAB_ID,
       handleDeleteWebcontentTabId: actions.DELETE_WEBCONTENT_TAB_ID,
 
@@ -574,148 +152,131 @@ class MailboxStore {
       handleAuthMicrosoftMailboxSuccess: actions.AUTH_MICROSOFT_MAILBOX_SUCCESS,
       handleAuthMicrosoftMailboxFailure: actions.AUTH_MICROSOFT_MAILBOX_FAILURE,
 
-      // Mailbox auth teardown
-      handleClearMailboxBrowserSession: actions.CLEAR_MAILBOX_BROWSER_SESSION,
-      handleClearAllBrowserSessions: actions.CLEAR_ALL_BROWSER_SESSIONS,
-
-      // Mailbox lifecycle
-      handleConnectAllMailboxes: actions.CONNECT_ALL_MAILBOXES,
-      handleConnectMailbox: actions.CONNECT_MAILBOX,
-      handleDisconnectAllMailboxes: actions.DISCONNECT_ALL_MAILBOXES,
-      handleDisconnectMailbox: actions.DISCONNECT_MAILBOX,
-
-      // Mailboxes
-      handleCreate: actions.CREATE,
-      handleRemove: actions.REMOVE,
-      handleMoveUp: actions.MOVE_UP,
-      handleMoveDown: actions.MOVE_DOWN,
-      handleChangeIndex: actions.CHANGE_INDEX,
-      handleReduce: actions.REDUCE,
-
-      // Avatar
-      handleSetCustomAvatar: actions.SET_CUSTOM_AVATAR,
-      handleSetServiceLocalAvatar: actions.SET_SERVICE_LOCAL_AVATAR,
+      // Connection & Sync
+      handleFullSyncMailbox: actions.FULL_SYNC_MAILBOX,
 
       // Snapshots
       handleSetServiceSnapshot: actions.SET_SERVICE_SNAPSHOT,
-
-      // Services
-      handleReduceService: actions.REDUCE_SERVICE,
-      handleReduceServiceIfActive: actions.REDUCE_SERVICE_IF_ACTIVE,
-      handleReduceServiceIfInactive: actions.REDUCE_SERVICE_IF_INACTIVE,
-
-      // Active
-      handleChangeActive: actions.CHANGE_ACTIVE,
-      handleChangeActivePrev: actions.CHANGE_ACTIVE_TO_PREV,
-      handleChangeActiveNext: actions.CHANGE_ACTIVE_TO_NEXT,
-
-      handleChangeActiveServiceIndex: actions.CHANGE_ACTIVE_SERVICE_INDEX,
-      handleChangeActiveServicePrev: actions.CHANGE_ACTIVE_SERVICE_TO_PREV,
-      handleChangeActiveServiceNext: actions.CHANGE_ACTIVE_SERVICE_TO_NEXT,
-
-      // Sleeping
-      handleAwakenService: actions.AWAKEN_SERVICE,
-      handleSleepService: actions.SLEEP_SERVICE,
 
       // Search
       handleStartSearchingMailbox: actions.START_SEARCHING_MAILBOX,
       handleUntrackSearchingMailbox: actions.UNTRACK_SEARCHING_MAILBOX,
       handleStopSearchingMailbox: actions.STOP_SEARCHING_MAILBOX,
       handleSetSearchTerm: actions.SET_SEARCH_TERM,
-      handleSearchNextTerm: actions.SEARCH_NEXT_TERM,
-
-      // Sync
-      handleFullSyncMailbox: actions.FULL_SYNC_MAILBOX,
-
-      // Containers
-      handleContainersUpdated: actions.CONTAINERS_UPDATED,
-
-      // Misc
-      handleReloadActiveMailbox: actions.RELOAD_ACTIVE_MAILBOX,
-      handleOpenDevToolsActiveMailbox: actions.OPEN_DEV_TOOLS_ACTIVE_MAILBOX,
-      handleWindowDidFocus: actions.WINDOW_DID_FOCUS
+      handleSearchNextTerm: actions.SEARCH_NEXT_TERM
     })
   }
 
   /* **************************************************************************/
-  // Handlers: Store Lifecycle
-  /* **************************************************************************/
-
-  handleLoad () {
-    // Load
-    const allAvatars = avatarPersistence.allItemsSync()
-    const allMailboxes = mailboxPersistence.allJSONItemsSync()
-    this.index = []
-    this.mailboxes = new Map()
-    this.avatars = new Map()
-
-    // Mailboxes
-    Object.keys(allMailboxes).forEach((id) => {
-      if (id === PERSISTENCE_INDEX_KEY) {
-        this.index = allMailboxes[PERSISTENCE_INDEX_KEY]
-      } else {
-        const mailboxModel = MailboxFactory.modelize(id, allMailboxes[id])
-        this.mailboxes.set(id, mailboxModel)
-        ipcRenderer.sendSync(WB_PREPARE_MAILBOX_SESSION, { // Sync us across bridge so everything is setup before webview created
-          partition: 'persist:' + mailboxModel.partition,
-          mailboxType: mailboxModel.type
-        })
-      }
-    })
-    this.active = this.index[0] || null
-    this.sendActiveStateToMainThread()
-
-    // Avatars
-    Object.keys(allAvatars).forEach((id) => {
-      this.avatars.set(id, allAvatars[id])
-    })
-  }
-
-  handleRemoteChange () {
-    /* no-op */
-  }
-
-  handleSetWebcontentTabId ({ mailboxId, serviceType, tabId }) {
-    this.webcontentTabIds.set(`${mailboxId}:${serviceType}`, tabId)
-  }
-
-  handleDeleteWebcontentTabId ({ mailboxId, serviceType }) {
-    this.webcontentTabIds.delete(`${mailboxId}:${serviceType}`)
-  }
-
-  /* **************************************************************************/
-  // Providers: Utils
+  // Utils: Mailbox connection
   /* **************************************************************************/
 
   /**
-  * Saves a local mailbox ensuring changed time etc update accordingly and data sent up socket
-  * @param id: the id of the provider
-  * @param mailboxJS: the new js object for the mailbox or null to remove
-  * @return the generated model
+  * Connect a mailbox
+  * @param mailboxId: the id of the mailbox
   */
-  saveMailbox (id, mailboxJS) {
-    if (mailboxJS === null) {
-      mailboxPersistence.removeItem(id)
-      this.mailboxes.delete(id)
-      return undefined
-    } else {
-      mailboxJS.changedTime = new Date().getTime()
-      mailboxJS.id = id
-      const model = MailboxFactory.modelize(id, mailboxJS)
-      mailboxPersistence.setJSONItem(id, mailboxJS)
-      this.mailboxes.set(id, model)
-      return model
+  connectMailbox (mailboxId) {
+    const mailbox = this.getMailbox(mailboxId)
+    if (!mailbox) { return }
+
+    if (mailbox.type === GoogleMailbox.type) {
+      googleActions.connectMailbox.defer(mailboxId)
+    } else if (mailbox.type === SlackMailbox.type) {
+      slackActions.connectMailbox.defer(mailboxId)
     }
   }
 
   /**
-  * Persist the provided index
-  * @param index: the index to persist
+  * Disconnects a mailbox
+  * @param mailboxId: the id of the mailbox
   */
-  saveIndex (index) {
-    // @future send mailbox index to sever?
-    this.index = index
-    mailboxPersistence.setJSONItem(PERSISTENCE_INDEX_KEY, index)
+  disconnectMailbox ({ mailboxId }) {
+    const mailbox = this.getMailbox(mailboxId)
+    if (!mailbox) { return }
+
+    if (mailbox.type === GoogleMailbox.type) {
+      googleActions.disconnectMailbox.defer(mailboxId)
+    } else if (mailbox.type === SlackMailbox.type) {
+      slackActions.disconnectMailbox.defer(mailboxId)
+    }
+  }
+
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  handleLoad (payload) {
+    super.handleLoad(payload)
+
+    this.mailboxIds().forEach((mailboxId) => {
+      this.connectMailbox(mailboxId)
+      actions.fullSyncMailbox.defer(mailboxId)
+    })
+  }
+
+  /* **************************************************************************/
+  // Mailbox
+  /* **************************************************************************/
+
+  handleRemoteSetMailbox (payload) {
+    const { id, mailboxJS } = payload
+
+    // Set the mailbox and also auto-connect or disconnect during set
+    const prev = this.mailboxes.get(id)
+    if (prev && !mailboxJS) {
+      this.disconnectMailbox(id)
+    }
+    super.handleRemoteSetMailbox(payload)
+    const next = this.mailboxes.get(id)
+
+    if (!prev && next) {
+      this.connectMailbox(id)
+      actions.fullSyncMailbox.defer(id)
+    }
+
+    // Look for any watch fields to see if we should re-sync
+    if (prev && next) {
+      if (next.type === CoreMailbox.MAILBOX_TYPES.GOOGLE) {
+        const watch = [
+          'unreadMode',
+          'customUnreadQuery',
+          'customUnreadLabelWatchString',
+          'customUnreadCountFromLabel',
+          'customUnreadCountLabel',
+          'customUnreadCountLabelField'
+        ]
+        const prevService = prev.defaultService
+        const nextService = next.defaultService
+        const changed = !!watch.find((n) => prevService[n] !== nextService[n])
+
+        if (changed) {
+          googleActions.syncMailboxMessages.defer(id, true)
+        }
+      } else if (next.type === CoreMailbox.MAILBOX_TYPES.MICROSOFT) {
+        const watch = [
+          'unreadMode'
+        ]
+        const prevService = prev.defaultService
+        const nextService = next.defaultService
+        const changed = !!watch.find((n) => prevService[n] !== nextService[n])
+
+        if (changed) {
+          microsoftActions.syncMailboxMail.defer(id)
+        }
+      }
+    }
+  }
+
+  /* **************************************************************************/
+  // Tabs
+  /* **************************************************************************/
+
+  handleSetWebcontentTabId ({ mailboxId, serviceType, tabId }) {
+    this.webcontentTabIds.set(this.getFullServiceKey(mailboxId, serviceType), tabId)
+  }
+
+  handleDeleteWebcontentTabId ({ mailboxId, serviceType }) {
+    this.webcontentTabIds.delete(this.getFullServiceKey(mailboxId, serviceType))
   }
 
   /* **************************************************************************/
@@ -728,7 +289,7 @@ class MailboxStore {
     ipcRenderer.send(WB_AUTH_GOOGLE, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: GoogleMailbox.applyExperimentsToProvisionalJS(provisionalJS, userStore.getState().wireConfigExperiments())
+      provisional: GoogleMailbox.applyExperimentsToProvisionalJS(provisionalJS, this.getWireConfigExperiments())
     })
   }
 
@@ -738,7 +299,7 @@ class MailboxStore {
     ipcRenderer.send(WB_AUTH_GOOGLE, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: GoogleMailbox.applyExperimentsToProvisionalJS(provisionalJS, userStore.getState().wireConfigExperiments())
+      provisional: GoogleMailbox.applyExperimentsToProvisionalJS(provisionalJS, this.getWireConfigExperiments())
     })
   }
 
@@ -747,7 +308,7 @@ class MailboxStore {
     window.location.hash = `/mailbox_wizard/${SlackMailbox.type}/_/1/${provisionalId}`
     ipcRenderer.send(WB_AUTH_SLACK, {
       id: provisionalId,
-      provisional: SlackMailbox.applyExperimentsToProvisionalJS(provisionalJS, userStore.getState().wireConfigExperiments())
+      provisional: SlackMailbox.applyExperimentsToProvisionalJS(provisionalJS, this.getWireConfigExperiments())
     })
   }
 
@@ -757,7 +318,7 @@ class MailboxStore {
     ipcRenderer.send(WB_AUTH_TRELLO, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: TrelloMailbox.applyExperimentsToProvisionalJS(provisionalJS, userStore.getState().wireConfigExperiments())
+      provisional: TrelloMailbox.applyExperimentsToProvisionalJS(provisionalJS, this.getWireConfigExperiments())
     })
   }
 
@@ -767,7 +328,7 @@ class MailboxStore {
     ipcRenderer.send(WB_AUTH_MICROSOFT, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: MicrosoftMailbox.applyExperimentsToProvisionalJS(provisionalJS, userStore.getState().wireConfigExperiments()),
+      provisional: MicrosoftMailbox.applyExperimentsToProvisionalJS(provisionalJS, this.getWireConfigExperiments()),
       additionalPermissions: additionalPermissions
     })
   }
@@ -778,7 +339,7 @@ class MailboxStore {
     ipcRenderer.send(WB_AUTH_MICROSOFT, {
       credentials: Bootstrap.credentials,
       id: provisionalId,
-      provisional: MicrosoftMailbox.applyExperimentsToProvisionalJS(provisionalJS, userStore.getState().wireConfigExperiments()),
+      provisional: MicrosoftMailbox.applyExperimentsToProvisionalJS(provisionalJS, this.getWireConfigExperiments()),
       additionalPermissions: additionalPermissions
     })
   }
@@ -787,7 +348,7 @@ class MailboxStore {
     this.preventDefault()
     actions.create.defer(
       provisionalId,
-      GenericMailbox.applyExperimentsToProvisionalJS(provisionalJS, userStore.getState().wireConfigExperiments())
+      GenericMailbox.applyExperimentsToProvisionalJS(provisionalJS, this.getWireConfigExperiments())
     )
     this._finalizeCreateAccount(`/mailbox_wizard/${GenericMailbox.type}/_/2/${provisionalId}`)
   }
@@ -795,7 +356,7 @@ class MailboxStore {
   handleAuthenticateContainerMailbox ({ containerId, provisionalId, provisionalJS, writePermission }) {
     this.preventDefault()
 
-    const container = userStore.getState().getContainer(containerId)
+    const container = this.getContainer(containerId)
     if (!container) {
       console.error('[AUTH ERR]', `Unable to authenticate mailbox with id "${provisionalId}" as containerId "${containerId}" is unknown`)
       return
@@ -804,7 +365,7 @@ class MailboxStore {
     provisionalJS.container = container.cloneForMailbox()
     actions.create.defer(
       provisionalId,
-      ContainerMailbox.applyExperimentsToProvisionalJS(provisionalJS, userStore.getState().wireConfigExperiments())
+      ContainerMailbox.applyExperimentsToProvisionalJS(provisionalJS, this.getWireConfigExperiments())
     )
     this._finalizeCreateAccount(`/mailbox_wizard/${ContainerMailbox.type}/${containerId}/2/${provisionalId}`)
 
@@ -832,6 +393,7 @@ class MailboxStore {
   /* **************************************************************************/
 
   handleReauthenticateMailbox ({ mailboxId }) {
+    this.preventDefault()
     const mailbox = this.mailboxes.get(mailboxId)
     if (mailbox) {
       switch (mailbox.type) {
@@ -851,7 +413,6 @@ class MailboxStore {
           throw new Error('Mailbox does not support reauthentication')
       }
     }
-    this.preventDefault()
   }
 
   handleReauthenticateGoogleMailbox ({ mailboxId }) {
@@ -910,8 +471,6 @@ class MailboxStore {
   * @param mailboxId: the id of the mailbox
   */
   _finalizeReauthentication (mailboxId) {
-    actions.fullSyncMailbox.defer(mailboxId)
-    actions.connectMailbox.defer(mailboxId)
     setTimeout(() => { mailboxDispatch.reload(mailboxId) }, 500)
     window.location.hash = '/'
   }
@@ -943,9 +502,7 @@ class MailboxStore {
       })
       .then((auth) => {
         if (authMode === AUTH_MODES.REAUTHENTICATE) {
-          actions.reduce.defer(provisionalId, (mailbox, auth) => {
-            return mailbox.changeData({ auth: auth })
-          }, auth)
+          actions.reduce.defer(provisionalId, GoogleMailboxReducer.setAuth, auth)
           this._finalizeReauthentication(provisionalId)
         } else {
           actions.create.defer(provisionalId, Object.assign(provisional, {
@@ -982,9 +539,7 @@ class MailboxStore {
         }
 
         if (authMode === AUTH_MODES.REAUTHENTICATE) {
-          actions.reduce.defer(provisionalId, (mailbox, auth) => {
-            return mailbox.changeData({ auth: auth })
-          }, auth)
+          actions.reduce.defer(provisionalId, SlackMailboxReducer.setAuth, auth)
           this._finalizeReauthentication(provisionalId)
         } else {
           actions.create.defer(provisionalId, Object.assign(provisional, {
@@ -1008,12 +563,7 @@ class MailboxStore {
 
   handleAuthTrelloMailboxSuccess ({ provisionalId, provisional, authToken, authAppKey, authMode }) {
     if (authMode === AUTH_MODES.REAUTHENTICATE) {
-      actions.reduce.defer(provisionalId, (mailbox, auth) => {
-        return mailbox.changeData({
-          authToken: auth.authToken,
-          authAppKey: auth.authAppKey
-        })
-      }, { authToken: authToken, authAppKey: authAppKey })
+      actions.reduce.defer(provisionalId, TrelloMailboxReducer.setAuth, authToken, authAppKey)
       this._finalizeReauthentication(provisionalId)
     } else {
       actions.create.defer(provisionalId, Object.assign(provisional, {
@@ -1038,14 +588,10 @@ class MailboxStore {
       .then(() => MicrosoftHTTP.upgradeAuthCodeToPermenant(temporaryCode, codeRedirectUri, 2))
       .then((auth) => {
         if (authMode === AUTH_MODES.REAUTHENTICATE) {
-          actions.reduce.defer(provisionalId, (mailbox, auth) => {
-            return mailbox.changeData({
-              auth: {
-                ...auth,
-                protocolVersion: 2
-              }
-            })
-          }, auth)
+          actions.reduce.defer(provisionalId, MicrosoftMailboxReducer.setAuthInfo, {
+            ...auth,
+            protocolVersion: 2
+          })
           this._finalizeReauthentication(provisionalId)
         } else {
           actions.create.defer(provisionalId, {
@@ -1072,559 +618,9 @@ class MailboxStore {
   }
 
   /* **************************************************************************/
-  // Handlers: Auth teardown
+  // Connection & Sync
   /* **************************************************************************/
 
-  handleClearMailboxBrowserSession ({ mailboxId }) {
-    this.preventDefault()
-
-    const mailbox = this.mailboxes.get(mailboxId)
-    if (!mailbox) { return }
-
-    const ses = remote.session.fromPartition('persist:' + mailbox.partition)
-    Promise.resolve()
-      .then(() => {
-        return new Promise((resolve) => { ses.clearStorageData(resolve) })
-      })
-      .then(() => {
-        return new Promise((resolve) => { ses.clearCache(resolve) })
-      })
-      .then(() => {
-        mailboxDispatch.reloadAllServices(mailboxId)
-      })
-  }
-
-  handleClearAllBrowserSessions () {
-    this.preventDefault()
-    this.mailboxIds().forEach((mailboxId) => {
-      actions.clearMailboxBrowserSession.defer(mailboxId)
-    })
-  }
-
-  /* **************************************************************************/
-  // Handlers: Mailbox lifecycle
-  /* **************************************************************************/
-
-  handleConnectAllMailboxes () {
-    this.mailboxIds().forEach((mailboxId) => {
-      actions.connectMailbox.defer(mailboxId)
-    })
-    this.preventDefault()
-  }
-
-  handleConnectMailbox ({ mailboxId }) {
-    const mailbox = this.getMailbox(mailboxId)
-    if (!mailbox) {
-      this.preventDefault()
-      return
-    }
-
-    if (mailbox.type === GoogleMailbox.type) {
-      googleActions.connectMailbox.defer(mailboxId)
-      this.preventDefault() // No change in this store
-    } else if (mailbox.type === SlackMailbox.type) {
-      slackActions.connectMailbox.defer(mailboxId)
-      this.preventDefault() // No change in this store
-    }
-  }
-
-  handleDisconnectAllMailboxes () {
-    this.mailboxIds().forEach((mailboxId) => {
-      actions.disconnectMailbox.defer(mailboxId)
-    })
-    this.preventDefault()
-  }
-
-  handleDisconnectMailbox ({ mailboxId }) {
-    const mailbox = this.getMailbox(mailboxId)
-    if (!mailbox) {
-      this.preventDefault()
-      return
-    }
-
-    if (mailbox.type === GoogleMailbox.type) {
-      googleActions.disconnectMailbox.defer(mailboxId)
-      this.preventDefault() // No change in this store
-    } else if (mailbox.type === SlackMailbox.type) {
-      slackActions.disconnectMailbox.defer(mailboxId)
-      this.preventDefault() // No change in this store
-    }
-  }
-
-  /* **************************************************************************/
-  // Handlers: Mailboxes
-  /* **************************************************************************/
-
-  handleCreate ({ id, data }) {
-    const mailboxModel = this.saveMailbox(id, data)
-    this.saveIndex(this.index.concat(id))
-    ipcRenderer.sendSync(WB_PREPARE_MAILBOX_SESSION, { // Sync us across bridge so everything is setup before webview created
-      partition: 'persist:' + mailboxModel.partition,
-      mailboxType: mailboxModel.type
-    })
-    actions.changeActive.defer(id)
-    actions.fullSyncMailbox.defer(id)
-    actions.connectMailbox.defer(id)
-  }
-
-  handleRemove ({ id = this.activeMailboxId() }) {
-    id = id || this.activeMailboxId()
-
-    const wasActive = this.active === id
-    this.saveMailbox(id, null)
-    this.saveIndex(this.index.filter((i) => i !== id))
-    if (wasActive) {
-      actions.changeActive.defer(undefined)
-    }
-    actions.disconnectMailbox.defer(id)
-  }
-
-  handleMoveUp ({ id = this.activeMailboxId() }) {
-    id = id || this.activeMailboxId()
-
-    const index = Array.from(this.index)
-    const mailboxIndex = index.findIndex((i) => i === id)
-    if (mailboxIndex !== -1 && mailboxIndex !== 0) {
-      index.splice(mailboxIndex - 1, 0, index.splice(mailboxIndex, 1)[0])
-      this.saveIndex(index)
-    } else {
-      this.preventDefault()
-    }
-  }
-
-  handleMoveDown ({ id = this.activeMailboxId() }) {
-    id = id || this.activeMailboxId()
-
-    const index = Array.from(this.index)
-    const mailboxIndex = index.findIndex((i) => i === id)
-    if (mailboxIndex !== -1 && mailboxIndex < index.length) {
-      index.splice(mailboxIndex + 1, 0, index.splice(mailboxIndex, 1)[0])
-      this.saveIndex(index)
-    } else {
-      this.preventDefault()
-    }
-  }
-
-  handleChangeIndex ({ id, nextIndex }) {
-    const index = Array.from(this.index)
-    const prevIndex = index.findIndex((i) => i === id)
-    if (prevIndex !== -1) {
-      index.splice(nextIndex, 0, index.splice(prevIndex, 1)[0])
-      this.saveIndex(index)
-    } else {
-      this.preventDefault()
-    }
-  }
-
-  handleReduce ({ id = this.activeMailboxId(), reducer, reducerArgs }) {
-    const mailbox = this.mailboxes.get(id)
-    if (mailbox) {
-      const updatedJS = reducer.apply(this, [mailbox].concat(reducerArgs))
-      if (updatedJS) {
-        this.saveMailbox(id, updatedJS)
-      } else {
-        this.preventDefault()
-      }
-    } else {
-      this.preventDefault()
-    }
-  }
-
-  /* **************************************************************************/
-  // Handlers: Avatar
-  /* **************************************************************************/
-
-  handleSetCustomAvatar ({id, b64Image}) {
-    const mailbox = this.mailboxes.get(id)
-    const data = mailbox.cloneData()
-    if (b64Image) {
-      if (data.customAvatar && this.avatars.get(data.customAvatar) === b64Image) {
-        // Setting the same image. Nothing to do
-        this.preventDefault()
-        return
-      } else {
-        if (data.customAvatar) {
-          avatarPersistence.removeItem(data.customAvatar)
-          this.avatars.delete(data.customAvatar)
-        }
-        const imageId = uuid.v4()
-        data.customAvatar = imageId
-        avatarPersistence.setItem(imageId, b64Image)
-        this.avatars.set(imageId, b64Image)
-      }
-    } else {
-      if (data.customAvatar) {
-        avatarPersistence.removeItem(data.customAvatar)
-        this.avatars.delete(data.customAvatar)
-        delete data.customAvatar
-      }
-    }
-    this.saveMailbox(id, data)
-  }
-
-  handleSetServiceLocalAvatar ({ id, b64Image }) {
-    const mailbox = this.mailboxes.get(id)
-    if (!mailbox) {
-      this.preventDefault()
-      return
-    }
-
-    const data = mailbox.cloneData()
-    if (b64Image) {
-      if (data.serviceLocalAvatar && this.avatars.get(data.serviceLocalAvatar) === b64Image) {
-        // Setting the same image. Nothing to do
-        this.preventDefault()
-        return
-      } else {
-        if (data.serviceLocalAvatar) {
-          avatarPersistence.removeItem(data.serviceLocalAvatar)
-          this.avatars.delete(data.serviceLocalAvatar)
-        }
-        const imageId = SERVICE_LOCAL_AVATAR_PREFIX + uuid.v4()
-        data.serviceLocalAvatar = imageId
-        avatarPersistence.setItem(imageId, b64Image)
-        this.avatars.set(imageId, b64Image)
-      }
-    } else {
-      if (data.serviceLocalAvatar) {
-        avatarPersistence.removeItem(data.serviceLocalAvatar)
-        this.avatars.delete(data.serviceLocalAvatar)
-        delete data.serviceLocalAvatarr
-      }
-    }
-    this.saveMailbox(id, data)
-  }
-
-  /* **************************************************************************/
-  // Handlers: Snapshots
-  /* **************************************************************************/
-
-  handleSetServiceSnapshot ({ id, service, snapshot }) {
-    this.snapshots.set(`${id}:${service}`, snapshot)
-  }
-
-  /* **************************************************************************/
-  // Handlers: Service
-  /* **************************************************************************/
-
-  handleReduceService ({ id = this.activeMailboxId(), serviceType = this.activeMailboxService(), reducer, reducerArgs }) {
-    const mailbox = this.mailboxes.get(id)
-    if (mailbox) {
-      const service = mailbox.serviceForType(serviceType)
-      if (service) {
-        const updatedServiceJS = reducer.apply(this, [mailbox, service].concat(reducerArgs))
-        if (updatedServiceJS) {
-          const updatedMailboxJS = mailbox.changeData({
-            services: mailbox.enabledServices.map((service) => {
-              if (service.type === serviceType) {
-                return updatedServiceJS
-              } else {
-                return service.cloneData()
-              }
-            })
-          })
-          this.saveMailbox(id, updatedMailboxJS)
-          return
-        }
-      }
-    }
-    this.preventDefault()
-  }
-
-  handleReduceServiceIfActive ({ id = this.activeMailboxId(), serviceType = this.activeMailboxService(), reducer, reducerArgs }) {
-    this.preventDefault()
-    if (this.isActive(id, serviceType)) {
-      actions.reduceService.defer(...[id, serviceType, reducer, ...reducerArgs])
-    }
-  }
-
-  handleReduceServiceIfInactive ({ id = this.activeMailboxId(), serviceType = this.activeMailboxService(), reducer, reducerArgs }) {
-    this.preventDefault()
-    if (!this.isActive(id, serviceType) || !remote.getCurrentWindow().isFocused()) {
-      actions.reduceService.defer(...[id, serviceType, reducer, ...reducerArgs])
-    }
-  }
-
-  /* **************************************************************************/
-  // Handlers : Active
-  /* **************************************************************************/
-
-  /**
-  * Handles the active mailbox changing
-  * @param id: the id of the mailbox
-  * @param service: the service type
-  */
-  handleChangeActive ({id, service}) {
-    const nextMailbox = id || this.index[0]
-    const nextService = service || CoreMailbox.SERVICE_TYPES.DEFAULT
-
-    if (this.isMailboxRestricted(nextMailbox, userStore.getState().user)) {
-      this.preventDefault()
-      window.location.hash = '/pro'
-    } else {
-      // Check we actually did change
-      if (nextMailbox === this.active && nextService === this.activeService) {
-        this.preventDefault()
-        return
-      }
-
-      // Clear sleep
-      this.scheduleSleep(this.active, this.activeService)
-      this.clearSleep(nextMailbox, nextService)
-
-      // Change active & update model
-      this.active = nextMailbox
-      this.activeService = nextService
-      actions.reduceService.defer(nextMailbox, nextService, ServiceReducer.mergeChangesetOnActive)
-
-      // Update to main thread
-      this.sendActiveStateToMainThread()
-    }
-  }
-
-  /**
-  * Handles the active mailbox changing to the prev in the index
-  * @param allowCycling: if true will cycle back when at end or beginning
-  */
-  handleChangeActivePrev ({ allowCycling }) {
-    this.preventDefault()
-    const activeIndex = this.index.findIndex((id) => id === this.active)
-    let nextId
-    if (allowCycling && activeIndex === 0) {
-      nextId = this.index[this.index.length - 1] || null
-    } else {
-      nextId = this.index[Math.max(0, activeIndex - 1)] || null
-    }
-    actions.changeActive.defer(nextId)
-  }
-
-  /**
-  * Handles the active mailbox changing to the next in the index
-  * @param allowCycling: if true will cycle back when at end or beginning
-  */
-  handleChangeActiveNext ({ allowCycling }) {
-    this.preventDefault()
-    const activeIndex = this.index.findIndex((id) => id === this.active)
-    let nextId
-    if (allowCycling && activeIndex === this.index.length - 1) {
-      nextId = this.index[0] || null
-    } else {
-      nextId = this.index[Math.min(this.index.length - 1, activeIndex + 1)] || null
-    }
-    actions.changeActive.defer(nextId)
-  }
-
-  /**
-  * Handles changing the active service to the one at the service
-  * @param index: the index of the service
-  */
-  handleChangeActiveServiceIndex ({ index }) {
-    this.preventDefault()
-    if (this.isMailboxRestricted(this.active, userStore.getState().user)) {
-      window.location.hash = '/pro'
-    } else {
-      const mailbox = this.getMailbox(this.active)
-      if (mailbox.enabledServiceTypes[index]) {
-        actions.changeActive.defer(mailbox.id, mailbox.enabledServiceTypes[index])
-      }
-    }
-  }
-
-  /**
-  * Handles the active service changing to the previous in the index
-  * @param allowCycling: if true will cycle back when at end or beginning
-  */
-  handleChangeActiveServicePrev ({ allowCycling }) {
-    this.preventDefault()
-    if (this.isMailboxRestricted(this.active, userStore.getState().user)) { return }
-
-    const mailbox = this.getMailbox(this.active)
-    const activeIndex = mailbox.enabledServiceTypes.findIndex((t) => t === this.activeService)
-
-    let nextServiceType
-    if (allowCycling && activeIndex === 0) {
-      nextServiceType = mailbox.enabledServiceTypes[mailbox.enabledServiceTypes.length - 1] || null
-    } else {
-      nextServiceType = mailbox.enabledServiceTypes[Math.max(0, activeIndex - 1)] || null
-    }
-    actions.changeActive.defer(mailbox.id, nextServiceType)
-  }
-
-  /**
-  * Handles the active service changing to the next in the index
-  * @param allowCycling: if true will cycle back when at end or beginning
-  */
-  handleChangeActiveServiceNext ({ allowCycling }) {
-    this.preventDefault()
-    if (this.isMailboxRestricted(this.active, userStore.getState().user)) { return }
-
-    const mailbox = this.getMailbox(this.active)
-    const activeIndex = mailbox.enabledServiceTypes.findIndex((t) => t === this.activeService)
-
-    let nextServiceType
-    if (allowCycling && activeIndex === mailbox.enabledServiceTypes.length - 1) {
-      nextServiceType = mailbox.enabledServiceTypes[0] || null
-    } else {
-      nextServiceType = mailbox.enabledServiceTypes[Math.min(mailbox.enabledServiceTypes.length - 1, activeIndex + 1)] || null
-    }
-    actions.changeActive.defer(mailbox.id, nextServiceType)
-  }
-
-  /**
-  * Sends the current active state to the main thread
-  */
-  sendActiveStateToMainThread () {
-    ipcRenderer.send(WB_MAILBOX_STORAGE_CHANGE_ACTIVE, {
-      mailboxId: this.activeMailboxId(),
-      serviceType: this.activeMailboxService()
-    })
-  }
-
-  /* **************************************************************************/
-  // Handlers : Sleep
-  /* **************************************************************************/
-
-  handleAwakenService ({ id, service }) {
-    this.clearSleep(id, service)
-    const key = `${id}:${service}`
-    this.sleepingQueue.set(key, { sleeping: false, timer: null })
-  }
-
-  handleSleepService ({ id, service }) {
-    this._sendMailboxToSleep(id, service)
-  }
-
-  /**
-  * Clears sleep for a mailbox and service
-  * @param mailboxId: the id of the mailbox
-  * @param serviceType: the type of service
-  */
-  clearSleep (mailboxId, serviceType) {
-    const key = `${mailboxId}:${serviceType}`
-    if (this.sleepingQueue.has(key)) {
-      clearTimeout(this.sleepingQueue.get(key).timer)
-      this.sleepingQueue.delete(key)
-    }
-  }
-
-  /**
-  * Schedules a new sleep for a mailbox/service
-  * @param mailboxId: the id of the mailbox
-  * @param serviceType: the type of service
-  */
-  scheduleSleep (mailboxId, serviceType) {
-    this.clearSleep(mailboxId, serviceType)
-
-    const mailbox = this.getMailbox(mailboxId)
-    const service = mailbox ? mailbox.serviceForType(serviceType) : undefined
-    const wait = service ? service.sleepableTimeout : 0
-
-    if (wait <= 0) {
-      this._sendMailboxToSleep(mailboxId, serviceType)
-    } else {
-      const key = `${mailboxId}:${serviceType}`
-      this.sleepingQueue.set(key, {
-        sleeping: false,
-        timer: setTimeout(() => {
-          this._sendMailboxToSleep(mailboxId, serviceType)
-        }, wait)
-      })
-    }
-  }
-
-  /**
-  * Runs the process of sending a webview to sleep whilst also checking if it owns any other windows
-  * @param mailboxId: the id of the mailbox
-  * @param serviceType: the type of service
-  */
-  _sendMailboxToSleep (mailboxId, serviceType) {
-    const key = `${mailboxId}:${serviceType}`
-    const responseId = uuid.v4()
-    const responder = (evt, { count }) => {
-      if (this.isSleeping(mailboxId, serviceType)) { return }
-
-      if (count === 0) {
-        this.clearSleep(mailboxId, serviceType)
-        this.sleepingQueue.set(key, {
-          sleeping: true,
-          timer: null,
-          closeMetrics: this.getWebcontentMetrics(mailboxId, serviceType)
-        })
-        this.emitChange()
-      } else {
-        this.clearSleep(mailboxId, serviceType)
-        this.sleepingQueue.set(key, {
-          sleeping: false,
-          timer: setTimeout(() => {
-            this._sendMailboxToSleep(mailboxId, serviceType)
-          }, MAILBOX_SLEEP_EXTEND)
-        })
-      }
-    }
-
-    ipcRenderer.once(responseId, responder)
-    ipcRenderer.send(WB_MAILBOXES_WINDOW_FETCH_OPEN_WINDOW_COUNT, {
-      mailboxId: mailboxId,
-      serviceType: serviceType,
-      response: responseId
-    })
-  }
-
-  /* **************************************************************************/
-  // Handlers : Search
-  /* **************************************************************************/
-
-  /**
-  * Indicates the mailbox is searching
-  */
-  handleStartSearchingMailbox ({ id, service }) {
-    const key = `${id || this.active}:${service || this.activeService}`
-    this.search.set(key, { term: '', hash: `${Math.random()}` })
-  }
-
-  /**
-  * Indicates the mailbox is no longer tracking search (i.e. handled by another provider)
-  */
-  handleUntrackSearchingMailbox ({ id, service }) {
-    const key = `${id || this.active}:${service || this.activeService}`
-    this.search.delete(key)
-  }
-
-  /**
-  * Indicates the mailbox is no longer searching
-  */
-  handleStopSearchingMailbox ({id, service}) {
-    const key = `${id || this.active}:${service || this.activeService}`
-    this.search.delete(key)
-  }
-
-  /**
-  * Sets the search term for a mailbox
-  */
-  handleSetSearchTerm ({ id, service, str }) {
-    const key = `${id || this.active}:${service || this.activeService}`
-    this.search.set(key, { term: str, hash: `${Math.random()}` })
-  }
-
-  /**
-  * Indicates the user wants to search next
-  */
-  handleSearchNextTerm ({ id, service }) {
-    const key = `${id || this.active}:${service || this.activeService}`
-    if (this.search.has(key)) {
-      this.search.set(key, Object.assign({}, this.search.get(key), { hash: `${Math.random()}` }))
-    } else {
-      this.search.set(key, { term: '', hash: `${Math.random()}` })
-    }
-  }
-
-  /* **************************************************************************/
-  // Handlers : Sync
-  /* **************************************************************************/
-
-  /**
-  * Runs a full sync on a mailbox
-  */
   handleFullSyncMailbox ({ id }) {
     const mailbox = this.getMailbox(id)
     if (!mailbox) { return }
@@ -1651,44 +647,53 @@ class MailboxStore {
   }
 
   /* **************************************************************************/
-  // Handlers : Containers
+  // Snapshots
   /* **************************************************************************/
 
-  handleContainersUpdated ({ containers }) {
-    if (Object.keys(containers).length === 0) { this.preventDefault(); return }
+  handleSetServiceSnapshot ({ id, service, snapshot }) {
+    this.snapshots.set(this.getFullServiceKey(id, service), snapshot)
+  }
 
-    // Get the mailboxes that need to be updated
-    const mailboxes = this.getMailboxesOfType(CoreMailbox.MAILBOX_TYPES.CONTAINER).filter((mailbox) => {
-      return containers[mailbox.containerId] !== undefined
+  /* **************************************************************************/
+  // Handlers : Search
+  /* **************************************************************************/
+
+  handleStartSearchingMailbox ({ id = this.active, service = this.activeService }) {
+    this.search.set(this.getFullServiceKey(id, service), {
+      term: '',
+      hash: uuid.v4()
     })
-    if (mailboxes.length === 0) { this.preventDefault(); return }
+  }
 
-    mailboxes.forEach((mailbox) => {
-      const nextMailbox = mailbox.changeData({
-        container: containers[mailbox.containerId].cloneForMailbox()
+  handleUntrackSearchingMailbox ({ id = this.active, service = this.activeService }) {
+    this.search.delete(this.getFullServiceKey(id, service))
+  }
+
+  handleStopSearchingMailbox ({ id = this.active, service = this.activeService }) {
+    this.search.delete(this.getFullServiceKey(id, service))
+  }
+
+  handleSetSearchTerm ({ id = this.active, service = this.activeService, str }) {
+    this.search.set(this.getFullServiceKey(id, service), {
+      term: str,
+      hash: uuid.v4()
+    })
+  }
+
+  handleSearchNextTerm ({ id = this.active, service = this.activeService }) {
+    const key = this.getFullServiceKey(id, service)
+    if (this.search.has(key)) {
+      this.search.set(key, {
+        ...this.search.get(key),
+        hash: uuid.v4()
       })
-      this.saveMailbox(mailbox.id, nextMailbox)
-    })
-  }
-
-  /* **************************************************************************/
-  // Handlers : Misc
-  /* **************************************************************************/
-
-  handleReloadActiveMailbox () {
-    this.preventDefault()
-    mailboxDispatch.reload(this.activeMailboxId(), this.activeMailboxService())
-  }
-
-  handleOpenDevToolsActiveMailbox () {
-    this.preventDefault()
-    mailboxDispatch.openDevTools(this.activeMailboxId(), this.activeMailboxService())
-  }
-
-  handleWindowDidFocus () {
-    this.preventDefault()
-    actions.reduceService.defer(this.active, this.activeService, ServiceReducer.mergeChangesetOnActive)
+    } else {
+      this.search.set(key, {
+        term: '',
+        hash: uuid.v4()
+      })
+    }
   }
 }
 
-export default alt.createStore(MailboxStore, 'MailboxStore')
+export default alt.createStore(MailboxStore, STORE_NAME)

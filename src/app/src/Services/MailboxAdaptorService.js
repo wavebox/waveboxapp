@@ -1,8 +1,8 @@
 import { app } from 'electron'
 import UrlPattern from 'url-pattern'
-import WINDOW_BACKING_TYPES from 'windows/WindowBackingTypes'
-import WaveboxWindow from 'windows/WaveboxWindow'
-import mailboxStore from 'stores/mailboxStore'
+import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
+import WaveboxWindow from 'Windows/WaveboxWindow'
+import { mailboxStore } from 'stores/mailbox'
 
 class MailboxAdaptorService {
   /* ****************************************************************************/
@@ -35,7 +35,9 @@ class MailboxAdaptorService {
     if (!tabInfo) { return }
     if (tabInfo.backing !== WINDOW_BACKING_TYPES.MAILBOX_SERVICE) { return }
 
-    const service = mailboxStore.getService(tabInfo.mailboxId, tabInfo.serviceType)
+    const mailbox = mailboxStore.getState().getMailbox(tabInfo.mailboxId)
+    if (!mailbox) { return }
+    const service = mailbox.serviceForType(tabInfo.serviceType)
     if (!service) { return }
 
     this._executeAdaptors(evt.sender, service)

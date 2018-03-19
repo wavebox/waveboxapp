@@ -4,7 +4,6 @@ import {
   CRX_GET_MESSAGES_
 } from 'shared/crExtensionIpcEvents'
 import { CRExtensionManifest } from 'shared/Models/CRExtension'
-import { RENDER_PROCESS_PREFERENCE_TYPES } from 'shared/processPreferences'
 
 const privExtensionId = Symbol('privExtensionId')
 const privManifest = Symbol('privManifest')
@@ -18,31 +17,26 @@ class ExtensionDatasource {
 
   /**
   * @param extensionId: the id of the extension
+  * @param runtimeConfig: the runtime config to extract data from
   */
-  constructor (extensionId) {
+  constructor (extensionId, runtimeConfig) {
     this[privExtensionId] = extensionId
     this[privManifest] = undefined
     this[privMessages] = new Map()
     this[privXHRToken] = ''
 
-    // Populate from the render preferences
-    const preferences = process.getRenderProcessPreferences()
-    if (preferences) {
-      for (const pref of preferences) {
-        if (pref.type === RENDER_PROCESS_PREFERENCE_TYPES.WB_CREXTENSION_CONTENTSCRIPT_CONFIG && pref.extensionId === extensionId) {
-          if (pref.manifest) {
-            this[privManifest] = new CRExtensionManifest(pref.manifest)
-          }
-          if (pref.messages) {
-            for (let lang in pref.messages) {
-              this[privMessages].set(lang, pref.messages[lang])
-            }
-          }
-          if (pref.xhrToken) {
-            this[privXHRToken] = pref.xhrToken
-          }
-          break
+    // Populate
+    if (runtimeConfig) {
+      if (runtimeConfig.manifest) {
+        this[privManifest] = new CRExtensionManifest(runtimeConfig.manifest)
+      }
+      if (runtimeConfig.messages) {
+        for (let lang in runtimeConfig.messages) {
+          this[privMessages].set(lang, runtimeConfig.messages[lang])
         }
+      }
+      if (runtimeConfig.xhrToken) {
+        this[privXHRToken] = runtimeConfig.xhrToken
       }
     }
   }

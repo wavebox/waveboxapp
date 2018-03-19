@@ -34,6 +34,22 @@ class Resolver {
   }
 
   /**
+  * @param name: the name of the file in the keychain scene
+  * @return the full path to the file
+  */
+  static keychainScene (name) {
+    return path.resolve(path.join(__dirname, '../scenes/keychain/', name))
+  }
+
+  /**
+  * @param name: the name of the file in the traypopout scene
+  * @return the full path to the file
+  */
+  static traypopoutScene (name) {
+    return path.resolve(path.join(__dirname, '../scenes/traypopout/', name))
+  }
+
+  /**
   * @param name: the name of the file in the guest preload repo
   * @return the full path to the file
   */
@@ -62,6 +78,14 @@ class Resolver {
   */
   static icon (name) {
     return path.resolve(path.join(__dirname, '../icons/', name))
+  }
+
+  /**
+  * @param name: the name of the audio file
+  * @return the full path to the file
+  */
+  static audio (name) {
+    return path.resolve(path.join(__dirname, '../audio/', name))
   }
 }
 

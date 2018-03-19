@@ -1,4 +1,5 @@
-(function () {
+'use strict'
+;(function () {
   /**
   * Patches the window open command for a given window
   * @param window: the window to patch

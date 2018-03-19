@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
-import Resolver from 'Runtime/Resolver'
 import { mailboxActions, GoogleCommunicationServiceReducer } from 'stores/mailbox'
 import { NotificationService } from 'Notifications'
 import {
@@ -74,7 +73,6 @@ export default class GoogleMailboxCommunicationWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={Resolver.guestPreload()}
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.COMMUNICATION}
         ipcMessage={this.dispatchBrowserIPCMessage} />

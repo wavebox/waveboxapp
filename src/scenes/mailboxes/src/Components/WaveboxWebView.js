@@ -77,7 +77,7 @@ export default class WaveboxWebView extends React.Component {
   static processAddMailbox (purl) {
     const query = purl.search(true)
     if (query.container_id && query.container) {
-      userActions.addContainer(query.container_id, JSON.parse(query.container))
+      userActions.sideloadContainerLocally(query.container_id, JSON.parse(query.container))
     }
     if (query.type) {
       mailboxActions.startAddMailbox(query.type, query.access_mode)

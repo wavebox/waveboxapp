@@ -40,7 +40,6 @@ class CRExtensionManifestWavebox extends Model {
   /* **************************************************************************/
 
   get popoutWindowWhitelist () { return this._value_('wavebox_popout_window_whitelist', []) }
-  get popoutWindowPostmessageCapture () { return this._value_('wavebox_popout_postmessage_capture', []) }
 
   /**
   * Checks to see if a window should open as a popout
@@ -91,7 +90,11 @@ class CRExtensionManifestWavebox extends Model {
   get contentSecurityPolicy () { return this._value_('wavebox_content_security_policy') }
   get hasContentSecurityPolicy () {
     const csp = this.contentSecurityPolicy
-    return csp && Array.isArray(csp.matches) && csp.matches.length && typeof (csp.directives) === 'object'
+    if (!csp) { return false }
+    if (csp.useInAdditionToCSPString !== true) { return false }
+    if (!Array.isArray(csp.matches) || !csp.matches.length) { return false }
+    if (typeof (csp.directives) !== 'object') { return false }
+    return true
   }
 
   /* **************************************************************************/

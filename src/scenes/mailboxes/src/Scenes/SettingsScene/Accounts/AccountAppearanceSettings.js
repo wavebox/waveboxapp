@@ -103,9 +103,9 @@ export default class AccountAppearanceSettings extends React.Component {
     const { userHasServices, userHasSleepable, ui } = this.state
 
     const hasCumulativeBadge = userHasServices && ((
-        mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR &&
-        mailbox.hasAdditionalServices
-      ) || (
+      mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR &&
+      mailbox.hasAdditionalServices
+    ) || (
         mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR &&
         mailbox.collapseSidebarServices &&
         mailbox.hasAdditionalServices

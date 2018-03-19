@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper, Toggle, TextField } from 'material-ui'
+import { Paper, Toggle, TextField, RaisedButton } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Row, Col } from 'Components/Grid'
+import AccountDestructiveSettings from '../AccountDestructiveSettings'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
 import AccountBadgeSettings from '../AccountBadgeSettings'
@@ -22,6 +23,38 @@ export default class ContainerAccountSettings extends React.Component {
     mailbox: PropTypes.object.isRequired,
     showRestart: PropTypes.func.isRequired,
     onRequestEditCustomCode: PropTypes.func.isRequired
+  }
+
+  /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  /**
+  * Handles toggling using the custom agent
+  * @param evt: the event that fired
+  * @param toggled: the toggled state
+  */
+  handleChangeUseCustomUserAgent = (evt, toggled) => {
+    mailboxActions.reduce(this.props.mailbox.id, ContainerMailboxReducer.setUseCustomUserAgent, toggled)
+    this.props.showRestart()
+  }
+
+  /**
+  * Handles the custom user agent changing
+  * @param evt: the event that fired
+  */
+  handleChangeCustomUserAgent = (evt) => {
+    mailboxActions.reduce(this.props.mailbox.id, ContainerMailboxReducer.setCustomUserAgentString, evt.target.value)
+    this.props.showRestart()
+  }
+
+  /**
+  * Restores the user agent defaults
+  * @param evt: the event that fired
+  */
+  handleResetCustomUserAgent = (evt) => {
+    mailboxActions.reduce(this.props.mailbox.id, ContainerMailboxReducer.restoreUserAgentDefaults)
+    this.props.showRestart()
   }
 
   /* **************************************************************************/
@@ -82,7 +115,45 @@ export default class ContainerAccountSettings extends React.Component {
               mailbox={mailbox}
               service={service}
               onRequestEditCustomCode={onRequestEditCustomCode} />
-            <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
+            <Paper zDepth={1} style={styles.paper}>
+              <h1 style={styles.subheading}>UserAgent</h1>
+              <Toggle
+                toggled={mailbox.useCustomUserAgent}
+                label='Use custom UserAgent (Requires restart)'
+                labelPosition='right'
+                onToggle={this.handleChangeUseCustomUserAgent} />
+              <TextField
+                key={service.url}
+                disabled={!mailbox.useCustomUserAgent}
+                fullWidth
+                floatingLabelFixed
+                floatingLabelText='Custom UserAgent String (Requires restart)'
+                defaultValue={mailbox.customUserAgentString}
+                onBlur={this.handleChangeCustomUserAgent} />
+              <RaisedButton
+                label='Restore defaults (Requires restart)'
+                onClick={this.handleResetCustomUserAgent} />
+            </Paper>
+            <AccountAdvancedSettings
+              mailbox={mailbox}
+              showRestart={showRestart}
+              windowOpenAfter={container.hasWindowOpenOverrides ? (
+                <div>
+                  {mailbox.getAllWindowOpenOverrideUserConfigs().map((config) => {
+                    return (
+                      <Toggle
+                        key={config.id}
+                        toggled={config.value}
+                        label={config.label}
+                        labelPosition='right'
+                        onToggle={(evt, toggled) => {
+                          mailboxActions.reduce(mailbox.id, ContainerMailboxReducer.setWindowOpenUserConfig, config.id, toggled)
+                        }} />
+                    )
+                  })}
+                </div>
+              ) : undefined} />
+            <AccountDestructiveSettings mailbox={mailbox} />
             <Paper zDepth={1} style={styles.paper}>
               <div style={{ fontSize: '85%' }}>
                 <p>Container ID: {container.id}</p>

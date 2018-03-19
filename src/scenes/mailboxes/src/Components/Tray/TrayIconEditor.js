@@ -61,7 +61,7 @@ export default class TrayIconEditor extends React.Component {
                 targetOrigin={{horizontal: 'left', vertical: 'bottom'}}
                 disabled={!tray.show}
                 value={tray.readColor}
-                onChange={(col) => settingsActions.setTrayReadColor(col.rgbaStr)} />
+                onChange={(col) => settingsActions.sub.tray.setTrayReadColor(col.rgbaStr)} />
             </div>
             <div style={styles.button}>
               <ColorPickerButton
@@ -71,7 +71,7 @@ export default class TrayIconEditor extends React.Component {
                 targetOrigin={{horizontal: 'left', vertical: 'bottom'}}
                 disabled={!tray.show}
                 value={tray.readBackgroundColor}
-                onChange={(col) => settingsActions.setTrayReadBackgroundColor(col.rgbaStr)} />
+                onChange={(col) => settingsActions.sub.tray.setTrayReadBackgroundColor(col.rgbaStr)} />
             </div>
             <TrayPreview style={trayPreviewStyles} size={100} tray={tray} unreadCount={0} />
           </Col>
@@ -85,7 +85,7 @@ export default class TrayIconEditor extends React.Component {
                 targetOrigin={{horizontal: 'left', vertical: 'bottom'}}
                 disabled={!tray.show}
                 value={tray.unreadColor}
-                onChange={(col) => settingsActions.setTrayUnreadColor(col.rgbaStr)} />
+                onChange={(col) => settingsActions.sub.tray.setTrayUnreadColor(col.rgbaStr)} />
             </div>
             <div style={styles.button}>
               <ColorPickerButton
@@ -95,7 +95,7 @@ export default class TrayIconEditor extends React.Component {
                 targetOrigin={{horizontal: 'left', vertical: 'bottom'}}
                 disabled={!tray.show}
                 value={tray.unreadBackgroundColor}
-                onChange={(col) => settingsActions.setTrayUnreadBackgroundColor(col.rgbaStr)} />
+                onChange={(col) => settingsActions.sub.tray.setTrayUnreadBackgroundColor(col.rgbaStr)} />
             </div>
             <TrayPreview style={trayPreviewStyles} size={100} tray={tray} unreadCount={1} />
           </Col>

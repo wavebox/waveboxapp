@@ -140,7 +140,7 @@ export default class ToolbarMailboxService extends React.Component {
   userChanged = (userState) => {
     const mailboxState = mailboxStore.getState()
     this.setState({
-      isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId, userState.user)
+      isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId)
     })
   }
 
@@ -152,13 +152,12 @@ export default class ToolbarMailboxService extends React.Component {
   */
   generateStateFromMailbox (mailboxState, mailboxId, serviceType) {
     const mailbox = mailboxState.getMailbox(mailboxId)
-    const userState = userStore.getState()
     return {
       mailbox: mailboxState.getMailbox(mailboxId),
       service: mailbox ? mailbox.serviceForType(serviceType) : null,
       isSleeping: mailboxState.isSleeping(mailboxId, serviceType),
       isActive: mailboxState.isActive(mailboxId, serviceType),
-      isRestricted: mailboxState.isMailboxRestricted(mailboxId, userState.user)
+      isRestricted: mailboxState.isMailboxRestricted(mailboxId)
     }
   }
 
@@ -249,11 +248,13 @@ export default class ToolbarMailboxService extends React.Component {
           iconStyle={styles.badgeFAIcon}
           onMouseEnter={() => this.setState({ isHovering: true })}
           onMouseLeave={() => this.setState({ isHovering: false })}>
-          <div style={{
-            backgroundImage: `url("${Resolver.image(service.humanizedLogoAtSize(96))}")`,
-            filter: showSleeping ? 'grayscale(100%)' : 'none',
-            ...styles.avatar
-          }} />
+          <div
+            className={`WB-ServiceIcon-${mailbox.id}_${service.type}`}
+            style={{
+              backgroundImage: `url("${Resolver.image(service.humanizedLogoAtSize(96))}")`,
+              filter: showSleeping ? 'grayscale(100%)' : 'none',
+              ...styles.avatar
+            }} />
         </ServiceBadge>
         {tooltipsEnabled ? (
           <ServiceTooltip

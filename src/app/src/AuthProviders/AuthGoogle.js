@@ -1,10 +1,11 @@
-import { ipcMain, BrowserWindow } from 'electron'
+import { ipcMain } from 'electron'
 import { WB_AUTH_GOOGLE, WB_AUTH_GOOGLE_COMPLETE, WB_AUTH_GOOGLE_ERROR } from 'shared/ipcEvents'
 import googleapis from 'googleapis'
-import userStore from 'stores/userStore'
+import { userStore } from 'stores/user'
 import url from 'url'
 import querystring from 'querystring'
 import pkg from 'package.json'
+import AuthWindow from 'Windows/AuthWindow'
 
 class AuthGoogle {
   /* ****************************************************************************/
@@ -50,9 +51,10 @@ class AuthGoogle {
   * @return the url that can be used
   */
   generatePushServiceAuthenticationURL (credentials) {
+    const userState = userStore.getState()
     const query = querystring.stringify({
-      client_id: userStore.clientId,
-      client_token: userStore.clientToken,
+      client_id: userState.clientId,
+      client_token: userState.clientToken,
       client_version: pkg.version
     })
     return `${credentials.GOOGLE_PUSH_SERVICE_AUTH_URL}?${query}`
@@ -66,12 +68,12 @@ class AuthGoogle {
   */
   promptUserToGetAuthorizationCode (credentials, partitionId) {
     return new Promise((resolve, reject) => {
-      const oauthWin = new BrowserWindow({
+      const waveboxOauthWin = new AuthWindow()
+      waveboxOauthWin.create(this.generatePushServiceAuthenticationURL(credentials), {
         useContentSize: true,
         center: true,
         show: true,
         resizable: false,
-        alwaysOnTop: true,
         standardWindow: true,
         autoHideMenuBar: true,
         title: 'Google',
@@ -79,13 +81,19 @@ class AuthGoogle {
         webPreferences: {
           nodeIntegration: false,
           contextIsolation: true,
+          sandbox: true,
+          nativeWindowOpen: true,
+          sharedSiteInstances: true,
           partition: partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
         }
       })
-      oauthWin.loadURL(this.generatePushServiceAuthenticationURL(credentials))
+      const oauthWin = waveboxOauthWin.window
+      let userClose = true
 
       oauthWin.on('closed', () => {
-        reject(new Error('User closed the window'))
+        if (userClose) {
+          reject(new Error('User closed the window'))
+        }
       })
 
       // Step 1: Handle push service auth
@@ -98,7 +106,7 @@ class AuthGoogle {
           oauthWin.loadURL(this.generateGoogleAuthenticationURL(credentials))
         } else if (nextUrl.indexOf(credentials.GOOGLE_PUSH_SERVICE_FAILURE_URL) === 0) {
           evt.preventDefault()
-          oauthWin.removeAllListeners('closed')
+          userClose = false
           oauthWin.close()
           const purl = url.parse(nextUrl, true)
           reject(new Error(purl.query.error))
@@ -111,11 +119,11 @@ class AuthGoogle {
         setTimeout(() => {
           const title = oauthWin.getTitle()
           if (title.startsWith('Denied')) {
-            oauthWin.removeAllListeners('closed')
+            userClose = false
             oauthWin.close()
             reject(new Error(title.split(/[ =]/)[2]))
           } else if (title.startsWith('Success')) {
-            oauthWin.removeAllListeners('closed')
+            userClose = false
             oauthWin.close()
             resolve({
               push: pushServiceToken,

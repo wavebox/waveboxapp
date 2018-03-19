@@ -1,0 +1,15 @@
+const WINDOW_TYPES = Object.freeze({
+  NONE: 'NONE',
+  MAIN: 'MAIN',
+  CONTENT: 'CONTENT',
+  CONTENT_POPUP: 'CONTENT_POPUP',
+  MONITOR: 'MONITOR',
+  EXTENSION: 'EXTENSION',
+  KEYCHAIN: 'KEYCHAIN',
+  AUTH: 'AUTH'
+})
+
+export default WINDOW_TYPES
+export {
+  WINDOW_TYPES
+}

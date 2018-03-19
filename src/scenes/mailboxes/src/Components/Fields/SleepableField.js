@@ -111,11 +111,11 @@ export default class SleepableField extends React.Component {
   * @return the safe value
   */
   intermediaryToSlider (val) {
-    const valueInt = parseInt(this.state.intermediaryValue)
-    if (isNaN(valueInt)) {
+    const valueFloat = parseFloat(this.state.intermediaryValue)
+    if (isNaN(valueFloat)) {
       return this.props.sleepWaitMs
     } else {
-      const value = valueInt * 1000 * 60
+      const value = valueFloat * 1000 * 60
       return Math.max(Math.min(value, MAX_MILLIS), MIN_MILLIS)
     }
   }
@@ -136,11 +136,11 @@ export default class SleepableField extends React.Component {
   * Finishes editing the sleep wait millis by converting to a safe number and emitting
   */
   finishEditingSleepWaitMs () {
-    const valueInt = parseInt(this.state.intermediaryValue)
-    if (isNaN(valueInt)) {
+    const valueFloat = parseFloat(this.state.intermediaryValue)
+    if (isNaN(valueFloat)) {
       this.setState({ intermediaryValue: `${this.humanizeMillis(this.props.sleepWaitMs)}` })
     } else {
-      const value = valueInt * 1000 * 60
+      const value = valueFloat * 1000 * 60
       if (value !== this.props.sleepWaitMs) {
         this.props.onSleepWaitMsChanged(value)
       }

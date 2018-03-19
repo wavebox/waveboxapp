@@ -32,7 +32,7 @@ const styles = {
   },
   remainingText: {
     position: 'absolute',
-    top: 17,
+    top: 15,
     left: 6,
     right: 6,
     height: 24,
@@ -245,7 +245,7 @@ export default class SidelistUpgradePlans extends React.Component {
           <div>
             <FontIcon
               style={styles.icon}
-              className='fa fa-fw fa-calendar-o'
+              className='far fa-fw fa-calendar'
               color={buttonHover ? Colors.lightBlue200 : Colors.lightBlue400} />
             <div style={{...styles.remainingText, ...(formattedDays.length === 2 ? styles.remainingText2Char : styles.remainingText3Char)}}>
               {formattedDays}

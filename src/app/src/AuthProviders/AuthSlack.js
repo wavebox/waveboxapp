@@ -1,6 +1,7 @@
-import { ipcMain, BrowserWindow } from 'electron'
+import { ipcMain } from 'electron'
 import { WB_AUTH_SLACK, WB_AUTH_SLACK_COMPLETE, WB_AUTH_SLACK_ERROR } from 'shared/ipcEvents'
 import url from 'url'
+import AuthWindow from 'Windows/AuthWindow'
 
 class AuthSlack {
   /* ****************************************************************************/
@@ -40,12 +41,12 @@ class AuthSlack {
   */
   promptUserToGetAuthorizationCode (partitionId) {
     return new Promise((resolve, reject) => {
-      const oauthWin = new BrowserWindow({
+      const waveboxOauthWin = new AuthWindow()
+      waveboxOauthWin.create('https://slack.com/signin', {
         useContentSize: true,
         center: true,
         show: true,
         resizable: false,
-        alwaysOnTop: true,
         standardWindow: true,
         autoHideMenuBar: true,
         title: 'Slack',
@@ -54,13 +55,19 @@ class AuthSlack {
         webPreferences: {
           nodeIntegration: false,
           contextIsolation: true,
+          sandbox: true,
+          nativeWindowOpen: true,
+          sharedSiteInstances: true,
           partition: partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
         }
       })
+      const oauthWin = waveboxOauthWin.window
+      let userClose = true
 
-      oauthWin.loadURL('https://slack.com/signin')
       oauthWin.on('closed', () => {
-        reject(new Error('User closed the window'))
+        if (userClose) {
+          reject(new Error('User closed the window'))
+        }
       })
 
       oauthWin.webContents.on('will-navigate', (evt, nextUrl) => {
@@ -72,7 +79,7 @@ class AuthSlack {
       oauthWin.webContents.on('did-get-response-details', (evt) => {
         this._scrapeAuthenticationInfo(oauthWin.webContents)
           .then((data) => {
-            oauthWin.removeAllListeners('closed')
+            userClose = false
             oauthWin.close()
             resolve(data)
           })
@@ -81,7 +88,7 @@ class AuthSlack {
       oauthWin.webContents.on('dom-ready', (evt) => {
         this._scrapeAuthenticationInfo(oauthWin.webContents)
           .then((data) => {
-            oauthWin.removeAllListeners('closed')
+            userClose = false
             oauthWin.close()
             resolve(data)
           })

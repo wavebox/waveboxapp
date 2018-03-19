@@ -1,4 +1,4 @@
-import { app, ipcMain, webContents } from 'electron'
+import { app } from 'electron'
 import CRExtensionRuntimeHandler from './CRExtensionRuntimeHandler'
 import CRExtensionFS from './CRExtensionFS'
 import CRExtensionDownloader from './CRExtensionDownloader'
@@ -7,16 +7,11 @@ import {
   CRExtensionManifest
 } from 'shared/Models/CRExtension'
 import {
-  WBECRX_GET_EXTENSION_INSTALL_META,
-  WBECRX_EXTENSION_INSTALL_META_CHANGED,
-  WBECRX_UNINSTALL_EXTENSION,
-  WBECRX_INSTALL_EXTENSION,
-  WB_UPDATE_INSTALLED_EXTENSIONS
-} from 'shared/ipcEvents'
-import {
   CR_EXTENSION_PROTOCOL
 } from 'shared/extensionApis'
-import userStore from 'stores/userStore'
+import { userStore } from 'stores/user'
+import { crextensionActions } from 'stores/crextension'
+import { evtMain } from 'AppEvents'
 
 class CRExtensionManager {
   /* ****************************************************************************/
@@ -33,18 +28,7 @@ class CRExtensionManager {
     this.isCheckingForUpdates = false
     this._isSetup_ = false
 
-    ipcMain.on(WBECRX_GET_EXTENSION_INSTALL_META, (evt) => {
-      evt.returnValue = this._generateInstallMetadata()
-    })
-    ipcMain.on(WBECRX_UNINSTALL_EXTENSION, (evt, extensionId) => {
-      this.uninstallExtension(extensionId)
-    })
-    ipcMain.on(WBECRX_INSTALL_EXTENSION, (evt, extensionId, installInfo) => {
-      this.installExtension(extensionId, installInfo)
-    })
-    ipcMain.on(WB_UPDATE_INSTALLED_EXTENSIONS, () => {
-      this.updateExtensions()
-    })
+    evtMain.on(evtMain.WB_UPDATE_INSTALLED_EXTENSIONS, () => { this.updateExtensions() })
   }
 
   /* ****************************************************************************/
@@ -158,7 +142,7 @@ class CRExtensionManager {
   * Loads all the extensions in the extension directory
   */
   loadExtensionDirectory () {
-    const disabledIds = userStore.generateDisabledExtensionIds()
+    const disabledIds = userStore.getState().disabledExtensionIdSet()
     const extensions = CRExtensionFS.listInstalledExtensionIds()
       .map((extensionId) => CRExtensionFS.updateEntry(extensionId))
       .filter((info) => !!info)
@@ -206,7 +190,7 @@ class CRExtensionManager {
   * Generates the full install metadata
   * @return install metadata for each known extension
   */
-  _generateInstallMetadata () {
+  generateInstallMetadata () {
     const allExtensionIds = [].concat(
       this.downloader.downloadingExtensionIds,
       Array.from(this.extensions.keys()),
@@ -232,10 +216,8 @@ class CRExtensionManager {
   * Sends the install metadata to all listeners
   */
   _handleSendInstallMetadata () {
-    const metadata = this._generateInstallMetadata()
-    webContents.getAllWebContents().forEach((wc) => {
-      wc.send(WBECRX_EXTENSION_INSTALL_META_CHANGED, metadata)
-    })
+    const metadata = this.generateInstallMetadata()
+    crextensionActions.installMetaChanged.defer(metadata)
   }
 }
 

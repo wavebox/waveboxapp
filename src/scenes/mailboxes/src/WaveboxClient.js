@@ -4,25 +4,25 @@ import ReactDOM from 'react-dom'
 import Provider from 'Scenes/Provider'
 import {mailboxStore, mailboxActions, mailboxDispatch} from 'stores/mailbox'
 import {settingsStore, settingsActions} from 'stores/settings'
-import {composeStore, composeActions} from 'stores/compose'
 import {updaterStore, updaterActions} from 'stores/updater'
 import {userStore, userActions} from 'stores/user'
-import {extensionStore, extensionActions} from 'stores/extension'
+import {emblinkStore, emblinkActions} from 'stores/emblink'
 import {crextensionStore, crextensionActions} from 'stores/crextension'
+import {platformStore, platformActions} from 'stores/platform'
+import {notifhistStore, notifhistActions} from 'stores/notifhist'
 import Debug from 'Debug'
 import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
 import ResourceMonitorResponder from './ResourceMonitorResponder'
 import {
   WB_MAILBOXES_WINDOW_JS_LOADED,
   WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD,
-  WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD,
-  WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
-  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
+  WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD
 } from 'shared/ipcEvents'
 import { ipcRenderer, webFrame } from 'electron'
 
 // Prevent zooming
-webFrame.setZoomLevelLimits(1, 1)
+webFrame.setVisualZoomLevelLimits(1, 1)
+webFrame.setLayoutZoomLevelLimits(1, 1)
 
 // Prevent drag/drop
 document.addEventListener('drop', (evt) => {
@@ -30,17 +30,15 @@ document.addEventListener('drop', (evt) => {
     evt.preventDefault()
     evt.stopPropagation()
   }
-})
+}, false)
 document.addEventListener('dragover', (evt) => {
   if (evt.target.tagName !== 'INPUT' && evt.target.type !== 'file') {
     evt.preventDefault()
     evt.stopPropagation()
   }
-})
+}, false)
 
 // Navigation
-ipcRenderer.on(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, () => mailboxDispatch.navigateBack())
-ipcRenderer.on(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, () => mailboxDispatch.navigateForward())
 if (process.platform === 'darwin') {
   const mouseNavigator = new MouseNavigationDarwin(
     () => mailboxDispatch.navigateBack(),
@@ -59,14 +57,16 @@ mailboxStore.getState()
 mailboxActions.load()
 settingsStore.getState()
 settingsActions.load()
-composeStore.getState()
-composeActions.load()
 updaterStore.getState()
 updaterActions.load()
-extensionStore.getState()
-extensionActions.load()
 crextensionStore.getState()
 crextensionActions.load()
+platformStore.getState()
+platformActions.load()
+emblinkStore.getState()
+emblinkActions.load()
+notifhistStore.getState()
+notifhistActions.load()
 
 // Setup the updaters
 userActions.startAutoUpdateExtensions()

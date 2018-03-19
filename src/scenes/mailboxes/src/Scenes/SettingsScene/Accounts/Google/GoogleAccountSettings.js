@@ -6,6 +6,7 @@ import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
 import AccountServicesHeading from '../AccountServicesHeading'
 import AccountServicesSettings from '../AccountServicesSettings'
+import AccountDestructiveSettings from '../AccountDestructiveSettings'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
 import { userStore } from 'stores/user'
@@ -125,14 +126,15 @@ export default class GoogleAccountSettings extends React.Component {
               showRestart={showRestart}
               windowOpenAfter={(
                 <Toggle
-                  toggled={mailbox.openDriveLinksWithDefaultOpener}
+                  toggled={mailbox.openDriveLinksWithExternalBrowser}
                   label='Open Google Drive links with browser'
                   labelPosition='right'
                   onToggle={(evt, toggled) => {
-                    mailboxActions.reduce(mailbox.id, GoogleMailboxReducer.setOpenDriveLinksWithDefaultOpener, toggled)
+                    mailboxActions.reduce(mailbox.id, GoogleMailboxReducer.setOpenDriveLinksWithExternalBrowser, toggled)
                   }} />
               )}
             />
+            <AccountDestructiveSettings mailbox={mailbox} />
           </Col>
         </Row>
         <Row>
@@ -169,7 +171,7 @@ export default class GoogleAccountSettings extends React.Component {
               </div>
               <RaisedButton
                 primary
-                icon={(<FontIcon className='fa fa-diamond' />)}
+                icon={(<FontIcon className='fas fa-gem' style={{ fontSize: 20 }} />)}
                 label='Purchase Wavebox'
                 onClick={this.openWaveboxPro} />
             </div>

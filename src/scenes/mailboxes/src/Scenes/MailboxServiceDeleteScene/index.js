@@ -1,0 +1,2 @@
+import MailboxServiceDeleteScene from './MailboxServiceDeleteScene'
+export default MailboxServiceDeleteScene

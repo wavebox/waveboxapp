@@ -103,7 +103,7 @@ export default class OptimizeWizardScene extends React.Component {
             <FlatButton
               label='Not interested'
               style={styles.modalActionLeftButton}
-              onClick={() => { settingsActions.setHasSeenOptimizeWizard(true); this.handleClose() }} />
+              onClick={() => { settingsActions.sub.app.setHasSeenOptimizeWizard(true); this.handleClose() }} />
             <FlatButton
               label='Later'
               style={styles.modalActionExtraButton}
@@ -167,11 +167,11 @@ export default class OptimizeWizardScene extends React.Component {
             <FlatButton
               label='More Settings'
               style={styles.modalActionExtraButton}
-              onClick={() => { settingsActions.setHasSeenOptimizeWizard(true); this.handleClose('/settings/accounts') }} />
+              onClick={() => { settingsActions.sub.app.setHasSeenOptimizeWizard(true); this.handleClose('/settings/accounts') }} />
             <RaisedButton
               label='Finish'
               primary
-              onClick={() => { settingsActions.setHasSeenOptimizeWizard(true); this.handleClose() }} />
+              onClick={() => { settingsActions.sub.app.setHasSeenOptimizeWizard(true); this.handleClose() }} />
           </div>
         )
       }

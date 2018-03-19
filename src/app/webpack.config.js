@@ -32,6 +32,7 @@ module.exports = function (env) {
       }
       return acc
     }, {}),
+    performance: { hints: false },
     plugins: [
       !isProduction ? undefined : new webpack.DefinePlugin({
         __DEV__: false,
@@ -45,7 +46,8 @@ module.exports = function (env) {
       }),
       new CopyWebpackPlugin([
         { from: path.join(__dirname, 'node_modules'), to: 'app/node_modules', force: true },
-        { from: path.join(__dirname, 'src/BasicHTTPAuthHandler.html'), to: 'app/BasicHTTPAuthHandler.html', force: true }
+        { from: path.join(__dirname, 'src/BasicHTTPAuthHandler.html'), to: 'app/BasicHTTPAuthHandler.html', force: true },
+        { from: path.join(__dirname, 'src/Notifications/LinuxNotification.html'), to: 'app/LinuxNotification.html', force: true }
       ], {
         ignore: [ '.DS_Store' ]
       }),
@@ -74,12 +76,14 @@ module.exports = function (env) {
         DownloadManager: path.resolve(path.join(__dirname), 'src/DownloadManager'),
         ElectronTools: path.resolve(path.join(__dirname, 'src/ElectronTools')),
         Extensions: path.resolve(path.join(__dirname, 'src/Extensions')),
+        Notifications: path.resolve(path.join(__dirname, 'src/Notifications')),
         Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
         SessionManager: path.resolve(path.join(__dirname, 'src/SessionManager')),
-        storage: path.resolve(path.join(__dirname, 'src/storage')),
+        Storage: path.resolve(path.join(__dirname, 'src/Storage')),
         stores: path.resolve(path.join(__dirname, 'src/stores')),
+        Tray: path.resolve(path.join(__dirname, 'src/Tray')),
         WebContentsManager: path.resolve(path.join(__dirname, 'src/WebContentsManager')),
-        windows: path.resolve(path.join(__dirname, 'src/windows')),
+        Windows: path.resolve(path.join(__dirname, 'src/Windows')),
         'package.json': path.resolve(path.join(__dirname, '../../package.json'))
       },
       modules: [

@@ -7,6 +7,7 @@ import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
 import AccountBadgeSettings from '../AccountBadgeSettings'
 import AccountNotificationSettings from '../AccountNotificationSettings'
+import AccountDestructiveSettings from '../AccountDestructiveSettings'
 import styles from '../../CommonSettingStyles'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
@@ -71,6 +72,7 @@ export default class TrelloAccountSettings extends React.Component {
               service={service}
               onRequestEditCustomCode={onRequestEditCustomCode} />
             <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
+            <AccountDestructiveSettings mailbox={mailbox} />
           </Col>
         </Row>
       </div>

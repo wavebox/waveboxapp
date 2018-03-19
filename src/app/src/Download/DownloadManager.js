@@ -3,10 +3,10 @@ import uuid from 'uuid'
 import fs from 'fs-extra'
 import path from 'path'
 import os from 'os'
-import settingStore from 'stores/settingStore'
+import { settingsStore } from 'stores/settings'
 import unusedFilename from 'unused-filename'
-import WaveboxWindow from 'windows/WaveboxWindow'
-import MailboxesWindow from 'windows/MailboxesWindow'
+import WaveboxWindow from 'Windows/WaveboxWindow'
+import MailboxesWindow from 'Windows/MailboxesWindow'
 
 const MAX_PLATFORM_START_TIME = 1000 * 30
 
@@ -61,10 +61,12 @@ class DownloadManager {
   _handleUserDownload = (evt, item, wc) => {
     if (this._isPlatformDownload(item, wc)) { return }
 
+    const settingsState = settingsStore.getState()
+
     // Find out where to save the file
     let savePath
-    if (!settingStore.os.alwaysAskDownloadLocation && settingStore.os.defaultDownloadLocation) {
-      const folderLocation = settingStore.os.defaultDownloadLocation
+    if (!settingsState.os.alwaysAskDownloadLocation && settingsState.os.defaultDownloadLocation) {
+      const folderLocation = settingsState.os.defaultDownloadLocation
 
       // Check the containing folder exists
       fs.ensureDirSync(folderLocation)

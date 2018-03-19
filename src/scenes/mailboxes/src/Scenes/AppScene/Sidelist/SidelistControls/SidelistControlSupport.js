@@ -12,6 +12,7 @@ export default class SidelistControlSupport extends React.Component {
   render () {
     return (
       <SidelistControl
+        className={`WB-SidelistControlSupport`}
         onClick={() => { window.location.hash = '/settings/support' }}
         tooltip={`Help, Support & FAQs`}
         tourStep={TOUR_STEPS.SUPPORT_CENTER}
@@ -22,10 +23,10 @@ export default class SidelistControlSupport extends React.Component {
             involved with the Wavebox community
           </div>
         )}
-        iconStyle={{ fontSize: '28px', marginLeft: -6 }}
+        iconStyle={{ fontSize: '24px', marginLeft: -3 }}
         icon={(
           <FontIcon
-            className='fa fa-fw fa-question-circle-o'
+            className='far fa-fw fa-question-circle'
             color={Colors.teal600}
             hoverColor={Colors.teal200} />
         )} />

@@ -39,7 +39,7 @@ class Container extends Model {
   /* **************************************************************************/
 
   get id () { return this.__id__ }
-  get version () { return this.__data__.version }
+  get version () { return this.__data__.version || 0 }
   get minAppVersion () { return this.__data__.minAppVersion }
 
   /* **************************************************************************/
@@ -73,6 +73,21 @@ class Container extends Model {
 
   get userAgentString () { return this._value_('userAgentString', '') }
   get hasUserAgentString () { return !!this.userAgentString }
+
+  /* **************************************************************************/
+  // Properties: Window Opening
+  /* **************************************************************************/
+
+  get windowOpenOverrides () {
+    return this._value_('windowOpenOverrides', [])
+      .filter((ovr) => {
+        if (!ovr.id) { return false }
+        if (!Array.isArray(ovr.rulesets) || ovr.rulesets.length === 0) { return false }
+        if (!ovr.label) { return false }
+        return true
+      })
+  }
+  get hasWindowOpenOverrides () { return Array.isArray(this.windowOpenOverrides) && this.windowOpenOverrides.length }
 
   /* **************************************************************************/
   // Properties: Service

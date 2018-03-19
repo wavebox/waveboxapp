@@ -82,8 +82,57 @@ class ContainerMailbox extends CoreMailbox {
   // Properties : Useragent
   /* **************************************************************************/
 
-  get useCustomUserAgent () { return this.container.hasUserAgentString }
-  get customUserAgentString () { return this.container.userAgentString }
+  get useCustomUserAgent () {
+    const overwrite = this._value_('useCustomUserAgent', null)
+    if (overwrite === undefined || overwrite === null) {
+      return this.container.hasUserAgentString
+    } else {
+      return overwrite
+    }
+  }
+  get customUserAgentString () {
+    const overwrite = this._value_('customUserAgentString', null)
+    if (overwrite === undefined || overwrite === null || overwrite.trim() === '') {
+      return this.container.userAgentString
+    } else {
+      return overwrite
+    }
+  }
+
+  /* **************************************************************************/
+  // Properties: Window Opening
+  /* **************************************************************************/
+
+  get windowOpenModeOverrideRulesets () {
+    const userConfigs = this.windowOpenUserConfig
+    return this.container.windowOpenOverrides
+      .filter((ovr) => {
+        if (userConfigs[ovr.id] !== undefined) { return userConfigs[ovr.id] }
+        if (ovr.defaultValue) { return true }
+        return false
+      })
+      .reduce((acc, ovr) => acc.concat(ovr.rulesets), [])
+  }
+  get windowOpenUserConfig () { return this._value_('windowOpenUserConfig', {}) }
+
+  /**
+  * Gets the user configuration for all the ruleset returning id, label and value
+  * @return an array of { id, label, value }
+  */
+  getAllWindowOpenOverrideUserConfigs () {
+    const userConfigs = this.windowOpenUserConfig
+    return this.container.windowOpenOverrides.map((ovr) => {
+      let value
+      if (userConfigs[ovr.id] !== undefined) {
+        value = userConfigs[ovr.id]
+      } else if (ovr.defaultValue !== undefined) {
+        value = ovr.defaultValue
+      } else {
+        value = false
+      }
+      return { id: ovr.id, label: ovr.label, value: value }
+    })
+  }
 }
 
 module.exports = ContainerMailbox

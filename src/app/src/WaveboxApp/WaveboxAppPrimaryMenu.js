@@ -1,8 +1,7 @@
-import { Menu } from 'electron'
-import mailboxStore from 'stores/mailboxStore'
-import settingStore from 'stores/settingStore'
+import { Menu, globalShortcut, app, BrowserWindow } from 'electron'
+import { mailboxStore } from 'stores/mailbox'
+import { settingsStore } from 'stores/settings'
 import MenuTool from 'shared/Electron/MenuTool'
-import electronLocalshortcut from 'electron-localshortcut'
 import { evtMain } from 'AppEvents'
 import { toKeyEvent } from 'keyboardevent-from-electron-accelerator'
 import WaveboxAppPrimaryMenuActions from './WaveboxAppPrimaryMenuActions'
@@ -18,10 +17,13 @@ class WaveboxAppPrimaryMenu {
     this._lastActiveMailbox = null
     this._lastActiveServiceType = null
     this._lastMenu = null
+    this._hiddenShortcuts = new Map()
 
-    mailboxStore.on('changed', this.handleMailboxesChanged)
-    settingStore.on('changed:accelerators', this.handleAcceleratorsChanged)
+    mailboxStore.listen(this.handleMailboxesChanged)
+    settingsStore.listen(this.handleAcceleratorsChanged)
     evtMain.on(evtMain.INPUT_EVENT_PREVENTED, this.handleInputEventPrevented)
+    app.on('browser-window-focus', this.bindHiddenShortcuts)
+    app.on('browser-window-blur', this.unbindHiddenShortcuts)
   }
 
   /* ****************************************************************************/
@@ -143,6 +145,12 @@ class WaveboxAppPrimaryMenu {
           },
           { type: 'separator' },
           {
+            label: 'Copy Current Tab URL',
+            click: WaveboxAppPrimaryMenuActions.copyCurrentTabUrl,
+            accelerator: accelerators.copyCurrentTabUrl
+          },
+          { type: 'separator' },
+          {
             label: 'Find',
             click: WaveboxAppPrimaryMenuActions.find,
             accelerator: accelerators.find
@@ -229,6 +237,56 @@ class WaveboxAppPrimaryMenu {
         ].filter((item) => item !== undefined)
       },
       {
+        label: 'Accounts',
+        submenu: [
+
+        ].concat(mailboxes.length <= 1 ? [] : [
+          { type: 'separator' },
+          {
+            label: 'Previous Account',
+            click: WaveboxAppPrimaryMenuActions.prevMailbox,
+            accelerator: accelerators.previousMailbox
+          },
+          {
+            label: 'Next Account',
+            click: WaveboxAppPrimaryMenuActions.nextMailbox,
+            accelerator: accelerators.nextMailbox
+          }
+        ]).concat(mailboxes.length <= 1 ? [] : [
+          { type: 'separator' }
+        ]).concat(mailboxes.length <= 1 ? [] : mailboxes.map((mailbox, index) => {
+          return {
+            label: mailbox.displayName || 'Untitled',
+            type: 'radio',
+            checked: mailbox.id === (activeMailbox || {}).id,
+            click: () => { WaveboxAppPrimaryMenuActions.changeMailbox(mailbox.id) },
+            accelerator: this.buildAcceleratorStringForIndex(accelerators.mailboxIndex, index)
+          }
+        })).concat(activeMailbox && activeMailbox.hasAdditionalServices ? [
+          { type: 'separator' },
+          {
+            label: 'Previous Service',
+            click: WaveboxAppPrimaryMenuActions.prevService,
+            accelerator: accelerators.servicePrevious
+          },
+          {
+            label: 'Next Service',
+            click: WaveboxAppPrimaryMenuActions.nextService,
+            accelerator: accelerators.serviceNext
+          }
+        ] : []).concat(activeMailbox && activeMailbox.hasAdditionalServices ? [
+          { type: 'separator' }
+        ] : []).concat(activeMailbox && activeMailbox.hasAdditionalServices ? activeMailbox.enabledServices.map((service, index) => {
+          return {
+            label: service.humanizedType,
+            type: 'radio',
+            checked: service.type === activeServiceType,
+            click: () => { WaveboxAppPrimaryMenuActions.changeMailbox(activeMailbox.id, service.type) },
+            accelerator: this.buildAcceleratorStringForIndex(accelerators.serviceIndex, index)
+          }
+        }) : [])
+      },
+      {
         label: 'Window',
         role: 'window',
         submenu: [
@@ -242,53 +300,19 @@ class WaveboxAppPrimaryMenu {
             click: WaveboxAppPrimaryMenuActions.cycleWindows,
             accelerator: accelerators.cycleWindows
           }
-        ]
-        .concat(mailboxes.length <= 1 ? [] : [
+        ].concat(mailboxes.length > 1 || (activeMailbox && activeMailbox.hasAdditionalServices) ? [
           { type: 'separator' },
           {
-            label: 'Previous Account',
-            click: WaveboxAppPrimaryMenuActions.prevMailbox,
-            accelerator: accelerators.previousMailbox
+            label: 'Previous Tab',
+            click: WaveboxAppPrimaryMenuActions.prevMailboxTab,
+            accelerator: accelerators.prevTab
           },
           {
-            label: 'Next Account',
-            click: WaveboxAppPrimaryMenuActions.nextMailbox,
-            accelerator: accelerators.nextMailbox
-          }
-        ])
-        .concat(mailboxes.length <= 1 ? [] : [{ type: 'separator' }])
-        .concat(mailboxes.length <= 1 ? [] : mailboxes.map((mailbox, index) => {
-          return {
-            label: mailbox.displayName || 'Untitled',
-            type: 'radio',
-            checked: mailbox.id === (activeMailbox || {}).id,
-            click: () => { WaveboxAppPrimaryMenuActions.changeMailbox(mailbox.id) },
-            accelerator: this.buildAcceleratorStringForIndex(accelerators.mailboxIndex, index)
-          }
-        }))
-        .concat(activeMailbox && activeMailbox.hasAdditionalServices ? [
-          { type: 'separator' },
-          {
-            label: 'Previous Service',
-            click: WaveboxAppPrimaryMenuActions.prevService,
-            accelerator: accelerators.servicePrevious
-          },
-          {
-            label: 'Next Service',
-            click: WaveboxAppPrimaryMenuActions.nextService,
-            accelerator: accelerators.serviceNext
+            label: 'Next Tab',
+            click: WaveboxAppPrimaryMenuActions.nextMailboxTab,
+            accelerator: accelerators.nextTab
           }
         ] : [])
-        .concat(activeMailbox && activeMailbox.hasAdditionalServices ? [{ type: 'separator' }] : [])
-        .concat(activeMailbox && activeMailbox.hasAdditionalServices ? activeMailbox.enabledServices.map((service, index) => {
-          return {
-            label: service.humanizedType,
-            type: 'radio',
-            checked: service.type === activeServiceType,
-            click: () => { WaveboxAppPrimaryMenuActions.changeMailbox(activeMailbox.id, service.type) },
-            accelerator: this.buildAcceleratorStringForIndex(accelerators.serviceIndex, index)
-          }
-        }) : [])
       },
       {
         label: 'Help',
@@ -346,6 +370,32 @@ class WaveboxAppPrimaryMenu {
     }
   }
 
+  /* ****************************************************************************/
+  // Hidden shortcuts
+  /* ****************************************************************************/
+
+  /**
+  * Binds the current set of hidden shortcuts
+  */
+  bindHiddenShortcuts = () => {
+    Array.from(this._hiddenShortcuts.keys()).forEach((shortcut) => {
+      try {
+        globalShortcut.register(shortcut, this._hiddenShortcuts.get(shortcut))
+      } catch (ex) { }
+    })
+  }
+
+  /**
+  * Unbinds the current set of hidden shortcuts
+  */
+  unbindHiddenShortcuts = () => {
+    Array.from(this._hiddenShortcuts.keys()).forEach((shortcut) => {
+      try {
+        globalShortcut.unregister(shortcut)
+      } catch (ex) { }
+    })
+  }
+
   /**
   * Updates the hidden shortcuts
   * @param accelerators: the accelerators to use
@@ -353,12 +403,22 @@ class WaveboxAppPrimaryMenu {
   updateHiddenShortcuts (accelerators) {
     const hiddenZoomInShortcut = process.platform === 'darwin' ? 'Cmd+=' : 'Ctrl+='
     if (accelerators.zoomIn === accelerators.zoomInDefault) {
-      if (!electronLocalshortcut.isRegistered(hiddenZoomInShortcut)) {
-        electronLocalshortcut.register(hiddenZoomInShortcut, WaveboxAppPrimaryMenuActions.zoomIn)
+      if (!this._hiddenShortcuts.has(hiddenZoomInShortcut)) {
+        this._hiddenShortcuts.set(hiddenZoomInShortcut, () => WaveboxAppPrimaryMenuActions.zoomIn())
+        if (BrowserWindow.getFocusedWindow()) {
+          try {
+            globalShortcut.register(hiddenZoomInShortcut, this._hiddenShortcuts.get(hiddenZoomInShortcut))
+          } catch (ex) { }
+        }
       }
     } else {
-      if (electronLocalshortcut.isRegistered(hiddenZoomInShortcut)) {
-        electronLocalshortcut.unregister(hiddenZoomInShortcut)
+      if (this._hiddenShortcuts.has(hiddenZoomInShortcut)) {
+        this._hiddenShortcuts.delete(hiddenZoomInShortcut)
+        if (BrowserWindow.getFocusedWindow()) {
+          try {
+            globalShortcut.unregister(hiddenZoomInShortcut)
+          } catch (ex) { }
+        }
       }
     }
   }
@@ -369,11 +429,12 @@ class WaveboxAppPrimaryMenu {
 
   /**
   * Handles the mailboxes changing
+  * @param mailboxState: the latest mailbox state
   */
-  handleMailboxesChanged = () => {
-    const activeMailbox = mailboxStore.getActiveMailbox()
-    const activeServiceType = mailboxStore.getActiveServiceType()
-    const mailboxes = mailboxStore.orderedMailboxes()
+  handleMailboxesChanged = (mailboxState) => {
+    const activeMailbox = mailboxState.activeMailbox()
+    const activeServiceType = mailboxState.activeMailboxService()
+    const mailboxes = mailboxState.allMailboxes()
 
     // Munge our states for easier comparison
     const props = [
@@ -395,9 +456,17 @@ class WaveboxAppPrimaryMenu {
   /**
   * Handles the accelerators changing. If these change it will definately have a reflection in the
   * menu, so just update immediately
+  * @param settingsState: the latest settings state
   */
-  handleAcceleratorsChanged = ({ next }) => {
-    this.updateApplicationMenu(next, this._lastMailboxes, this._lastActiveMailbox, this._lastActiveServiceType)
+  handleAcceleratorsChanged = (settingsState) => {
+    if (settingsState.accelerators !== this._lastAccelerators) {
+      this.updateApplicationMenu(
+        settingsState.accelerators,
+        this._lastMailboxes,
+        this._lastActiveMailbox,
+        this._lastActiveServiceType
+      )
+    }
   }
 
   /* ****************************************************************************/

@@ -1,10 +1,13 @@
 const fs = require('fs')
+const argv = require('yargs').argv
 const gracefulFs = require('graceful-fs')
 gracefulFs.gracefulify(fs)
 
 const TASKS = {
   assets: require('./assets/webpack.config.js'),
   app: require('./src/app/webpack.config.js'),
+  keychain: require('./src/scenes/keychain/webpack.config.js'),
+  traypopout: require('./src/scenes/traypopout/webpack.config.js'),
   content: require('./src/scenes/content/webpack.config.js'),
   mailboxes: require('./src/scenes/mailboxes/webpack.config.js'),
   print: require('./src/scenes/print/webpack.config.js'),
@@ -16,11 +19,16 @@ const TASKS = {
 
 module.exports = function (env = {}) {
   // Config
-  process.env.CHROME_TARGET = 58
-  process.env.NODE_TARGET = '7.9.0'
+  process.env.CHROME_TARGET = 59
+  process.env.NODE_TARGET = '8.2.1'
+
+  const mode = new Set([
+    'production',
+    'development'
+  ]).has(argv.mode) ? argv.mode : 'development'
 
   // Production
-  if (env.p || env.production) {
+  if (mode === 'production') {
     console.log('[PRODUCTION BUILD]')
     process.env.NODE_ENV = 'production'
   } else {
@@ -28,11 +36,14 @@ module.exports = function (env = {}) {
   }
 
   // Cheap / expensive source maps
-  if (env.fast) {
-    console.log('[CHEAP SOURCEMAPS]')
-    process.env.WEBPACK_DEVTOOL = 'eval-cheap-module-source-map'
-  } else {
-    console.log('[FULL SOURCEMAPS]')
+  if (mode === 'development') {
+    if (env.fast) {
+      console.log('[CHEAP SOURCEMAPS]')
+      process.env.WEBPACK_DEVTOOL = 'eval-cheap-module-source-map'
+    } else {
+      console.log('[FULL SOURCEMAPS]')
+      process.env.WEBPACK_DEVTOOL = 'source-map'
+    }
   }
 
   if (env.disableNotify) {

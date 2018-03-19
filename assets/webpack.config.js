@@ -30,7 +30,7 @@ module.exports = function (env) {
       ], {
         ignore: [ '.DS_Store' ]
       }),
-      process.env.NOTIFICATIONS === 'true' ? new WebpackNotifierPlugin({ title: 'WB Content', alwaysNotify: true }) : undefined,
+      process.env.NOTIFICATIONS === 'true' ? new WebpackNotifierPlugin({ title: 'WB Assets', alwaysNotify: true }) : undefined,
       new WebpackOnBuildPlugin((stats) => { console.log('WB Assets') })
     ]
   }

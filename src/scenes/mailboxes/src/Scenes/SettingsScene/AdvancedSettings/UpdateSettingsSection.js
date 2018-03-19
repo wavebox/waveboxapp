@@ -45,7 +45,7 @@ export default class UpdateSettingsSection extends React.Component {
             labelPosition='right'
             onToggle={(evt, toggled) => {
               showRestart()
-              settingsActions.checkForUpdates(toggled)
+              settingsActions.sub.app.checkForUpdates(toggled)
             }} />
         </div>
         <SelectField
@@ -53,7 +53,7 @@ export default class UpdateSettingsSection extends React.Component {
           floatingLabelText='Update channel'
           value={app.updateChannel}
           onChange={(evt, index, channel) => {
-            settingsActions.setUpdateChannel(channel)
+            settingsActions.sub.app.setUpdateChannel(channel)
             updaterActions.checkForUpdates()
           }}>
           {Object.keys(AppSettings.UPDATE_CHANNELS).map((channel) => {

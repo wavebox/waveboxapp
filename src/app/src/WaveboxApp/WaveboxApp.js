@@ -1,36 +1,31 @@
-import { app, BrowserWindow, protocol, ipcMain } from 'electron'
+/* global __DEV__ */
+
+import { app, BrowserWindow, protocol, ipcMain, globalShortcut } from 'electron'
 import yargs from 'yargs'
 import credentials from 'shared/credentials'
 import WaveboxAppPrimaryMenu from './WaveboxAppPrimaryMenu'
 import WaveboxAppGlobalShortcuts from './WaveboxAppGlobalShortcuts'
-import settingStore from 'stores/settingStore'
-import mailboxStore from 'stores/mailboxStore'
-import userStore from 'stores/userStore'
-import extensionStore from 'stores/extensionStore'
+import { settingsStore, settingsActions } from 'stores/settings'
+import { platformStore, platformActions } from 'stores/platform'
+import { mailboxStore, mailboxActions } from 'stores/mailbox'
+import { userStore, userActions } from 'stores/user'
+import { takeoutStore, takeoutActions } from 'stores/takeout'
+import { emblinkStore, emblinkActions } from 'stores/emblink'
+import { notifhistStore, notifhistActions } from 'stores/notifhist'
 import ipcEvents from 'shared/ipcEvents'
 import BasicHTTPAuthHandler from '../BasicHTTPAuthHandler'
-import { HostedExtensionProvider, HostedExtensionSessionManager } from 'Extensions/Hosted'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { SessionManager, MailboxesSessionManager, ExtensionSessionManager } from '../SessionManager'
 import ServicesManager from '../Services'
-import MailboxesWindow from 'windows/MailboxesWindow'
-import WaveboxWindow from 'windows/WaveboxWindow'
+import MailboxesWindow from 'Windows/MailboxesWindow'
+import WaveboxWindow from 'Windows/WaveboxWindow'
 import AppUpdater from 'AppUpdater'
 import WaveboxAppCloseBehaviour from './WaveboxAppCloseBehaviour'
 import WaveboxDarwinDockBehaviour from './WaveboxDarwinDockBehaviour'
-import WaveboxTrayBehaviour from './WaveboxTrayBehaviour'
 import {evtMain} from 'AppEvents'
-import {
-  appStorage,
-  avatarStorage,
-  containerStorage,
-  extensionStorage,
-  extensionStoreStorage,
-  mailboxStorage,
-  settingStorage,
-  userStorage,
-  wireStorage
-} from 'storage'
+import {TrayPopout, TrayBehaviour} from 'Tray'
+import {LinuxNotification} from 'Notifications'
+import WaveboxCommandArgs from './WaveboxCommandArgs'
 
 const privStarted = Symbol('privStarted')
 const privArgv = Symbol('privArgv')
@@ -62,7 +57,31 @@ class WaveboxApp {
     }
 
     // Errors
-    process.on('uncaughtException', (err) => {
+    // Some 3rd party libraries (hunspell) bind uncaughtException and can kill
+    // the app. Prevent anyone else binding into uncaughtException so we can protect
+    // against this
+    process.__on_unsafe__ = process.on
+    process.on = (...args) => {
+      if (args[0] === 'uncaughtException') {
+        let isDev
+        try {
+          isDev = __DEV__
+        } catch (ex) {
+          isDev = true
+        }
+
+        if (isDev) {
+          console.log([
+            'Wavebox is refusing to bind the "uncaughtException" event to process.',
+            '  If you really meant to do this use "process.__on_unsafe__()"',
+            '  This message will not be displayed in production'
+          ].join('\n'))
+        }
+      } else {
+        process.__on_unsafe__(...args)
+      }
+    }
+    process.__on_unsafe__('uncaughtException', (err) => {
       console.error(err)
       console.error(err.stack)
     })
@@ -71,9 +90,25 @@ class WaveboxApp {
     this[privStarted] = true
     this[privArgv] = yargs.parse(process.argv)
 
+    // Start our stores
+    mailboxStore.getState()
+    mailboxActions.load()
+    settingsStore.getState()
+    settingsActions.load()
+    platformStore.getState()
+    platformActions.load()
+    userStore.getState()
+    userActions.load()
+    takeoutStore.getState()
+    takeoutActions.load()
+    emblinkStore.getState()
+    emblinkActions.load()
+    notifhistStore.getState()
+    notifhistActions.load()
+
     // Component behaviour
     this[privCloseBehaviour] = new WaveboxAppCloseBehaviour()
-    WaveboxTrayBehaviour.setup()
+    TrayBehaviour.setup()
     if (process.platform === 'darwin') { WaveboxDarwinDockBehaviour.setup() }
 
     // Main window
@@ -91,29 +126,12 @@ class WaveboxApp {
     ExtensionSessionManager.start()
     ServicesManager.load()
 
-    // Start our stores
-    appStorage.checkAwake()
-    avatarStorage.checkAwake()
-    containerStorage.checkAwake()
-    extensionStorage.checkAwake()
-    extensionStoreStorage.checkAwake()
-    mailboxStorage.checkAwake()
-    settingStorage.checkAwake()
-    userStorage.checkAwake()
-    wireStorage.checkAwake()
-
-    mailboxStore.checkAwake()
-    extensionStore.checkAwake()
-    settingStore.checkAwake()
-    userStore.checkAwake()
-
     // Setup the environment
     this._configureEnvironment()
 
     // Configure extensions
     CRExtensionManager.setup()
     protocol.registerStandardSchemes([].concat(
-      HostedExtensionProvider.supportedProtocols,
       CRExtensionManager.supportedProtocols
     ), { secure: true })
 
@@ -131,7 +149,9 @@ class WaveboxApp {
     app.on('before-quit', this._handleBeforeQuit)
     app.on('open-url', this._handleOpenUrl)
     app.on('login', this._handleHTTPBasicLogin)
+    app.on('will-quit', this._handleWillQuit)
     evtMain.on(evtMain.WB_QUIT_APP, this.fullyQuitApp)
+    evtMain.on(evtMain.WB_RELAUNCH_APP, this.restartApp)
   }
 
   /* ****************************************************************************/
@@ -142,16 +162,17 @@ class WaveboxApp {
   * Configures the environment - including commandline switches etc
   */
   _configureEnvironment () {
-    if (settingStore.app.ignoreGPUBlacklist) {
+    const launchSettings = settingsStore.getState().launched
+    if (launchSettings.app.ignoreGPUBlacklist) {
       app.commandLine.appendSwitch('ignore-gpu-blacklist', 'true')
     }
-    if (settingStore.app.disableSmoothScrolling) {
+    if (launchSettings.app.disableSmoothScrolling) {
       app.commandLine.appendSwitch('disable-smooth-scrolling', 'true')
     }
-    if (!settingStore.app.enableUseZoomForDSF) {
+    if (!launchSettings.app.enableUseZoomForDSF) {
       app.commandLine.appendSwitch('enable-use-zoom-for-dsf', 'false')
     }
-    if (settingStore.app.disableHardwareAcceleration) {
+    if (launchSettings.app.disableHardwareAcceleration) {
       app.disableHardwareAcceleration()
     }
 
@@ -192,19 +213,14 @@ class WaveboxApp {
       AppUpdater.applySquirrelUpdate()
     })
 
-    ipcMain.on(ipcEvents.WB_PREPARE_EXTENSION_SESSION, (evt, data) => {
-      HostedExtensionSessionManager.startManagingSession(data.partition)
-      evt.returnValue = true
-    })
-
     ipcMain.on(ipcEvents.WB_MAILBOXES_WINDOW_JS_LOADED, (evt, data) => {
       if (this[privArgv].mailto) {
-        this[privMainWindow].openMailtoLink(this[privArgv].mailto)
+        emblinkActions.composeNewMailtoLink(this[privArgv].mailto)
         delete this[privArgv].mailto
       } else {
         const index = this[privArgv]._.findIndex((a) => a.indexOf('mailto') === 0)
         if (index !== -1) {
-          this[privMainWindow].openMailtoLink(this[privArgv]._[index])
+          emblinkActions.composeNewMailtoLink(this[privArgv]._[index])
           this[privArgv]._.splice(1)
         }
       }
@@ -220,7 +236,7 @@ class WaveboxApp {
   * @return true if we should open hidden, false otherwise
   */
   _syncFetchShouldOpenHidden () {
-    if (settingStore.ui.openHidden) { return true }
+    if (settingsStore.getState().ui.openHidden) { return true }
     if (this[privArgv].hidden || this[privArgv].hide) { return true }
     if (process.platform === 'darwin' && app.getLoginItemSettings().wasOpenedAsHidden) { return true }
     return false
@@ -230,8 +246,10 @@ class WaveboxApp {
   * Handles the app becoming ready
   */
   _handleAppReady = () => {
+    const settingsState = settingsStore.getState()
+    const mailboxState = mailboxStore.getState()
     // Load extensions before any webcontents get created
-    if (settingStore.extension.enableChromeExperimental) {
+    if (settingsState.launched.extension.enableChromeExperimental) {
       try {
         CRExtensionManager.loadExtensionDirectory()
       } catch (ex) {
@@ -239,23 +257,31 @@ class WaveboxApp {
       }
     }
 
-    // Write any state
-    settingStore.writeLaunchSettingsToRenderProcess()
-
     // Doing this outside of ready has a side effect on high-sierra where you get a _TSGetMainThread error
     // To resolve this, run it when in ready
     const openHidden = this._syncFetchShouldOpenHidden()
 
     // Prep app menu
     this[privAppMenu].updateApplicationMenu(
-      settingStore.accelerators,
-      mailboxStore.orderedMailboxes(),
-      mailboxStore.getActiveMailbox(),
-      mailboxStore.getActiveServiceType()
+      settingsState.accelerators,
+      mailboxState.allMailboxes(),
+      mailboxState.activeMailboxId(),
+      mailboxState.activeMailboxService()
     )
+
+    // Create UI
     this[privMainWindow].create(openHidden)
+    TrayPopout.load()
+    LinuxNotification.load()
+
+    // Check for updates
     AppUpdater.register()
+
+    // Register global items
     this[privGlobalShortcuts].register()
+
+    // Proces any user arguments
+    WaveboxCommandArgs.processModifierArgs(this[privArgv], emblinkActions, mailboxActions)
   }
 
   /**
@@ -277,7 +303,8 @@ class WaveboxApp {
   */
   _handleBeforeQuit = () => {
     this[privGlobalShortcuts].unregister()
-    this[privCloseBehaviour].fullyQuitApp()
+    TrayPopout.unload()
+    this[privCloseBehaviour].prepareForQuit()
   }
 
   /**
@@ -287,7 +314,7 @@ class WaveboxApp {
   */
   _handleOpenUrl = (evt, url) => {
     evt.preventDefault()
-    this[privMainWindow].openMailtoLink(url)
+    emblinkActions.composeNewMailtoLink(url)
   }
 
   /**
@@ -303,6 +330,13 @@ class WaveboxApp {
     const handler = new BasicHTTPAuthHandler()
     const parentWindow = BrowserWindow.fromWebContents(webContents.hostWebContents ? webContents.hostWebContents : webContents)
     handler.start(parentWindow, request, authInfo, callback)
+  }
+
+  /**
+  * Handles the app preparing to quit
+  */
+  _handleWillQuit = () => {
+    globalShortcut.unregisterAll()
   }
 
   /* ****************************************************************************/

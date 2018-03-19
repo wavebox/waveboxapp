@@ -52,61 +52,111 @@ class GinboxApi {
   /**
   * Handles opening the compose ui and prefills relevant items
   * @param data: the data that was sent with the event
+  * @return promise with true if compose was a success, false otherwise
   */
   static composeMessage (data) {
-    const composeButton = document.querySelector('button.y.hC') || document.querySelector('[jsaction="jsl._"]')
-    if (!composeButton) { return }
-    composeButton.click()
+    return new Promise((resolve, reject) => {
+      const composeButton = document.querySelector('button.y.hC') || document.querySelector('[jsaction="jsl._"]')
+      if (!composeButton) {
+        resolve(false)
+        return
+      }
+      composeButton.click()
 
-    setTimeout(() => {
-      // Grab elements
-      const bodyEl = document.querySelector('[g_editable="true"][role="textbox"]')
-      if (!bodyEl) { return }
-      const dialogEl = bodyEl.closest('[role="dialog"]')
-      if (!dialogEl) { return }
-      const recipientEl = dialogEl.querySelector('input') // first input
-      const subjectEl = dialogEl.querySelector('[jsaction*="subject"]')
-      let focusableEl
-
-      // Recipient
-      if (data.recipient && recipientEl) {
-        recipientEl.value = escapeHTML(data.recipient)
-        focusableEl = subjectEl
+      // If mixmax is used we can't talk into the compose window because it's in a nested iframe.
+      // If we don't return that we we're successfull though we end up in a nasty state where
+      // we keep hitting compose. Fail gracefully getting as far as we can
+      if (composeButton.classList.contains('mixmax-compose-button')) {
+        resolve(true)
+        return
       }
 
-      // Subject
-      if (data.subject && subjectEl) {
-        subjectEl.value = escapeHTML(data.subject)
-        focusableEl = bodyEl
-      }
+      setTimeout(() => {
+        // Grab elements
+        const bodyEl = document.querySelector('[g_editable="true"][role="textbox"]')
+        if (!bodyEl) {
+          resolve(false)
+          return
+        }
+        const dialogEl = bodyEl.closest('[role="dialog"]')
+        if (!dialogEl) {
+          resolve(false)
+          return
+        }
+        const recipientEl = dialogEl.querySelector('input') // first input
+        const subjectEl = dialogEl.querySelector('[jsaction*="subject"]')
+        let focusableEl
 
-      // Body
-      if (data.body && bodyEl) {
-        bodyEl.innerHTML = escapeHTML(data.body) + bodyEl.innerHTML
-        const labelEl = bodyEl.parentElement.querySelector('label')
-        if (labelEl) { labelEl.style.display = 'none' }
-        focusableEl = bodyEl
-      }
+        // Recipient
+        if (data.recipient && recipientEl) {
+          recipientEl.value = escapeHTML(data.recipient)
+          focusableEl = subjectEl
+        }
 
-      if (focusableEl) {
-        setTimeout(() => focusableEl.focus(), 500)
-      }
+        // Subject
+        if (data.subject && subjectEl) {
+          subjectEl.value = escapeHTML(data.subject)
+          focusableEl = bodyEl
+        }
+
+        // Body
+        if (data.body && bodyEl) {
+          bodyEl.innerHTML = escapeHTML(data.body) + bodyEl.innerHTML
+          const labelEl = bodyEl.parentElement.querySelector('label')
+          if (labelEl) { labelEl.style.display = 'none' }
+          focusableEl = bodyEl
+        }
+
+        if (focusableEl) {
+          setTimeout(() => focusableEl.focus(), 500)
+        }
+        resolve(true)
+      }, 250)
     })
   }
 
   /**
   * Starts a search
   * @param term: the term to search for
+  * @param completeFn=undefined: executed on completion
   */
-  static startSearch (term) {
+  static startSearch (term, completeFn = undefined) {
     const element = document.querySelector('[role="search"] input')
     element.value = term
+    element.dispatchEvent(new window.Event('input', { bubbles: true, cancelable: true }))
+    if (completeFn) {
+      setTimeout(() => { completeFn() })
+    }
+  }
 
-    const evt = new window.Event('input', {
-      bubbles: true,
-      cancelable: true
-    })
-    element.dispatchEvent(evt)
+  /**
+  * Clears the search items
+  * @param completeFn=undefined: executed on complete
+  */
+  static clearSearchItems (completeFn) {
+    const element = document.querySelector('[role="search"] input')
+    if (!element.value) {
+      if (completeFn) { completeFn() }
+    } else {
+      this.startSearch('', () => {
+        const retry = 100
+        const timeout = 2000
+        const start = new Date().getTime()
+        const interval = setInterval(() => {
+          if (new Date().getTime() > start + timeout) {
+            clearInterval(interval)
+            if (completeFn) { completeFn() }
+          } else {
+            const element = Array.from(document.querySelectorAll('[jsaction*="search.toggle_item"]'))
+              .find((el) => !!el.offsetParent)
+            if (!element) {
+              clearInterval(interval)
+              if (completeFn) { completeFn() }
+            }
+          }
+        }, retry)
+      })
+    }
   }
 
   /**
@@ -123,7 +173,8 @@ class GinboxApi {
         clearInterval(interval)
         if (completeFn) { completeFn(false) }
       } else {
-        const element = document.querySelector('[jsaction*="search.toggle_item"]')
+        const element = Array.from(document.querySelectorAll('[jsaction*="search.toggle_item"]'))
+          .find((el) => !!el.offsetParent)
         if (element) {
           clearInterval(interval)
           const rect = element.getBoundingClientRect()

@@ -74,12 +74,12 @@ export default class LanguageSettingsSection extends React.Component {
           toggled={language.spellcheckerEnabled}
           labelPosition='right'
           label='Spell-checker'
-          onToggle={(evt, toggled) => settingsActions.setEnableSpellchecker(toggled)} />
+          onToggle={(evt, toggled) => settingsActions.sub.language.setEnableSpellchecker(toggled)} />
         <SelectField
           floatingLabelText='Spell-checker language'
           value={language.spellcheckerLanguage}
           fullWidth
-          onChange={(evt, index, value) => { settingsActions.setSpellcheckerLanguage(value) }}>
+          onChange={(evt, index, value) => { settingsActions.sub.language.setSpellcheckerLanguage(value) }}>
           {installedDictionaries.map((info) => {
             return (<MenuItem key={info.lang} value={info.lang} primaryText={info.name} />)
           })}
@@ -89,7 +89,7 @@ export default class LanguageSettingsSection extends React.Component {
           value={language.secondarySpellcheckerLanguage !== null ? language.secondarySpellcheckerLanguage : '__none__'}
           fullWidth
           onChange={(evt, index, value) => {
-            settingsActions.setSecondarySpellcheckerLanguage(value !== '__none__' ? value : null)
+            settingsActions.sub.language.setSecondarySpellcheckerLanguage(value !== '__none__' ? value : null)
           }}>
           {
             [].concat(

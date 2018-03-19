@@ -66,10 +66,23 @@ class ContainerDefaultService extends CoreService {
   /* **************************************************************************/
 
   get reloadBehaviour () { return CoreService.RELOAD_BEHAVIOURS[this.containerService.reloadBehaviour] || super.reloadBehaviour }
-  get useNativeWindowOpen () { return this.containerService.useNativeWindowOpen }
-  get useContextIsolation () { return this.containerService.useContextIsolation }
+  get useAsyncAlerts () { return this.containerService.useAsyncAlerts }
   get mergeChangesetOnActive () { return { lastUnseenNotificationTime: null } }
   get html5NotificationsGenerateUnreadActivity () { return this.containerService.html5NotificationsGenerateUnreadActivity }
+
+  /* **************************************************************************/
+  // Properties : Unread
+  /* **************************************************************************/
+
+  get documentTitleHasUnread () { return this.containerService.documentTitleHasUnread }
+  get documentTitleUnreadBlinks () { return this.containerService.documentTitleUnreadBlinks }
+  get unreadCount () {
+    // Take super first as the api may have set it
+    const superUnread = super.unreadCount
+    if (superUnread && superUnread > 0) { return superUnread }
+    return this._value_('documentTitleUnreadCount', 0)
+  }
+  get faviconUnreadActivityRegexp () { return this.containerService.faviconUnreadActivityRegexp }
 
   /* **************************************************************************/
   // Properties: Adaptors
@@ -107,6 +120,8 @@ class ContainerDefaultService extends CoreService {
   get hasUnreadActivity () {
     if (this.supportsGuestConfig) {
       return this.guestConfig.hasUnreadActivity
+    } else if (this.faviconUnreadActivityRegexp) {
+      return this._value_('faviconIndicatesUnreadActivity', false)
     } else if (this.html5NotificationsGenerateUnreadActivity) {
       return !!this._value_('lastUnseenNotificationTime', undefined)
     } else {

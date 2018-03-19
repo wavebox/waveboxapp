@@ -140,17 +140,9 @@ class NotificationService extends EventEmitter {
   * @param clickHandler=undefined: the handler to call on click
   */
   processHTML5MailboxNotification (mailboxId, serviceType, notificationId, notification, clickHandler = undefined) {
-    // Check we're allowed to display
-    const settingsState = settingsStore.getState()
-    if (!settingsState.os.notificationsEnabled) { return }
-
-    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    if (!mailbox) { return }
-    const service = mailbox.serviceForType(serviceType)
-    if (!service) { return }
-    if (!service.showNotifications) { return }
-
-    NotificationRenderer.presentNotification(
+    NotificationRenderer.presentHtml5MailboxNotification(
+      mailboxId,
+      serviceType,
       notification.title,
       {
         body: (notification.options || {}).body,
@@ -183,32 +175,6 @@ class NotificationService extends EventEmitter {
       { body: body, silent: false },
       (data) => { ipcRenderer.send(WB_FOCUS_APP, { }) },
       {})
-  }
-
-  /**
-  * Processes a new html5 notification thats been pushed from a hosted extension
-  * @param notificationId: the id of the notification to pass back to the webview
-  * @param notification: the notification info to push split into { title, options }
-  * @param clickHandler=undefined: the handler to call on click
-  */
-  processHTML5HostedExtensionNotification (notificationId, notification, clickHandler = undefined) {
-    NotificationRenderer.presentNotification(
-      notification.title,
-      {
-        body: (notification.options || {}).body,
-        silent: (notification.options || {}).silent,
-        icon: (notification.options || {}).icon
-      },
-      (data) => {
-        ipcRenderer.send(WB_FOCUS_APP, { })
-        if (data.clickHandler) {
-          data.clickHandler(notificationId)
-        }
-      },
-      {
-        notificationId: notificationId,
-        clickHandler: clickHandler
-      })
   }
 
   /**

@@ -2,6 +2,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import SidelistWindowControl from './SidelistWindowControl'
 import { remote } from 'electron'
+import classnames from 'classnames'
 
 const HAS_WINDOW_CONTROLS = process.platform !== 'darwin'
 const styles = {
@@ -30,16 +31,20 @@ export default class SidelistWindowControls extends React.Component {
   componentDidMount () {
     if (HAS_WINDOW_CONTROLS) {
       const currentWindow = remote.getCurrentWindow()
-      currentWindow.on('maximize', this.handleWindowMaximize)
-      currentWindow.on('unmaximize', this.handleWindowUnmaximize)
+      currentWindow.on('maximize', this.handleWindowStateChanged)
+      currentWindow.on('unmaximize', this.handleWindowStateChanged)
+      currentWindow.on('enter-full-screen', this.handleWindowStateChanged)
+      currentWindow.on('leave-full-screen', this.handleWindowStateChanged)
     }
   }
 
   componentWillUnmount () {
     if (HAS_WINDOW_CONTROLS) {
       const currentWindow = remote.getCurrentWindow()
-      currentWindow.removeListener('maximize', this.handleWindowMaximize)
-      currentWindow.removeListener('unmaximize', this.handleWindowUnmaximize)
+      currentWindow.removeListener('maximize', this.handleWindowStateChanged)
+      currentWindow.removeListener('unmaximize', this.handleWindowStateChanged)
+      currentWindow.removeListener('enter-full-screen', this.handleWindowStateChanged)
+      currentWindow.removeListener('leave-full-screen', this.handleWindowStateChanged)
     }
   }
 
@@ -47,20 +52,70 @@ export default class SidelistWindowControls extends React.Component {
   // Data lifecyle
   /* **************************************************************************/
 
-  state = {
-    isWindowMaximized: HAS_WINDOW_CONTROLS ? remote.getCurrentWindow().isMaximized() : undefined
-  }
+  state = (() => {
+    if (!HAS_WINDOW_CONTROLS) { return {} }
+
+    const currentWindow = remote.getCurrentWindow()
+    return {
+      isMaximized: currentWindow.isMaximized(),
+      isFullScreen: currentWindow.isFullScreen()
+    }
+  })()
 
   /* **************************************************************************/
   // Window Events
   /* **************************************************************************/
 
-  handleWindowMaximize = () => {
-    this.setState({ isWindowMaximized: true })
+  handleWindowStateChanged = () => {
+    const currentWindow = remote.getCurrentWindow()
+    this.setState({
+      isMaximized: currentWindow.isMaximized(),
+      isFullScreen: currentWindow.isFullScreen()
+    })
   }
 
-  handleWindowUnmaximize = () => {
-    this.setState({ isWindowMaximized: false })
+  /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  /**
+  * Closes the current window
+  * @param evt: the event that fired
+  */
+  handleClose = (evt) => {
+    remote.getCurrentWindow().close()
+  }
+
+  /**
+  * Minimizes the current window
+  * @param evt: the event that fired
+  */
+  handleMinimize = (evt) => {
+    const currentWindow = remote.getCurrentWindow()
+    if (currentWindow.isFullScreen()) {
+      currentWindow.setFullScreen(false)
+    }
+    currentWindow.minimize()
+  }
+
+  /**
+  * Maximizes the current window
+  * @param evt: the event that fired
+  */
+  handleMaximize = (evt) => {
+    remote.getCurrentWindow().maximize()
+  }
+
+  /**
+  * Restores the current window
+  * @param evt: the event that fired
+  */
+  handleUnmaximize = (evt) => {
+    const currentWindow = remote.getCurrentWindow()
+    if (currentWindow.isFullScreen()) {
+      currentWindow.setFullScreen(false)
+    }
+    currentWindow.unmaximize()
   }
 
   /* **************************************************************************/
@@ -72,27 +127,24 @@ export default class SidelistWindowControls extends React.Component {
   }
 
   render () {
-    const { style, ...passProps } = this.props
+    const { style, className, ...passProps } = this.props
 
     if (HAS_WINDOW_CONTROLS) {
-      const { isWindowMaximized } = this.state
+      const { isMaximized, isFullScreen } = this.state
       return (
-        <div {...passProps} style={{ ...styles.container, ...style }}>
-          <SidelistWindowControl
-            type={SidelistWindowControl.TYPES.CLOSE}
-            onClick={() => remote.getCurrentWindow().close()} />
-          {isWindowMaximized ? (
+        <div
+          {...passProps}
+          style={{ ...styles.container, ...style }}
+          className={classnames('WB-SidelistWindowControls', className)}>
+          <SidelistWindowControl type={SidelistWindowControl.TYPES.CLOSE} onClick={this.handleClose} />
+          {isFullScreen || isMaximized ? (
             <SidelistWindowControl
-              type={SidelistWindowControl.TYPES.RESTORE}
-              onClick={() => remote.getCurrentWindow().unmaximize()} />
+              type={isFullScreen ? SidelistWindowControl.TYPES.UNFULLSCREEN : SidelistWindowControl.TYPES.RESTORE}
+              onClick={this.handleUnmaximize} />
           ) : (
-            <SidelistWindowControl
-              type={SidelistWindowControl.TYPES.MAXIMIZE}
-              onClick={() => remote.getCurrentWindow().maximize()} />
+            <SidelistWindowControl type={SidelistWindowControl.TYPES.MAXIMIZE} onClick={this.handleMaximize} />
           )}
-          <SidelistWindowControl
-            type={SidelistWindowControl.TYPES.MINIMIZE}
-            onClick={() => remote.getCurrentWindow().minimize()} />
+          <SidelistWindowControl type={SidelistWindowControl.TYPES.MINIMIZE} onClick={this.handleMinimize} />
         </div>
       )
     } else {

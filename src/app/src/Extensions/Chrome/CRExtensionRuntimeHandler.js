@@ -18,15 +18,10 @@ import {
   CRX_PORT_CONNECTED_,
   CRX_PORT_DISCONNECTED_
 } from 'shared/crExtensionIpcEvents'
-import {
-  WBECRX_GET_EXTENSION_RUNTIME_DATA,
-  WBECRX_LAUNCH_OPTIONS,
-  WBECRX_INSPECT_BACKGROUND,
-  WBECRX_CLEAR_ALL_BROWSER_SESSIONS
-} from 'shared/ipcEvents'
 import { CSPParser, CSPBuilder } from './CSP'
 import pathTool from 'shared/pathTool'
 import CRExtensionTab from './CRExtensionRuntime/CRExtensionTab'
+import mime from 'mime'
 
 const privNextPortId = Symbol('privNextPortId')
 const privOpenXHRRequests = Symbol('privOpenXHRRequests')
@@ -44,12 +39,9 @@ class CRExtensionRuntimeHandler extends EventEmitter {
 
     CRDispatchManager.registerHandler(CRX_RUNTIME_SENDMESSAGE, this._handleRuntimeSendmessage)
     CRDispatchManager.registerHandler(CRX_TABS_SENDMESSAGE, this._handleTabsSendmessage)
-    ipcMain.on(WBECRX_GET_EXTENSION_RUNTIME_DATA, this._handleGetRuntimeData)
-    ipcMain.on(WBECRX_LAUNCH_OPTIONS, this._handleOpenOptionsPage)
-    ipcMain.on(WBECRX_INSPECT_BACKGROUND, this._handleInspectBackground)
+
     ipcMain.on(CRX_RUNTIME_HAS_RESPONDER, this._handleHasRuntimeResponder)
     ipcMain.on(CRX_PORT_CONNECT_SYNC, this._handlePortConnect)
-    ipcMain.on(WBECRX_CLEAR_ALL_BROWSER_SESSIONS, this._handleClearAllBrowserSessions)
   }
 
   /* ****************************************************************************/
@@ -113,12 +105,12 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   */
   _handleChromeExtensionBufferRequest = (request, responder) => {
     const purl = url.parse(request.url)
-    if (!purl.hostname || !purl.path) { return responder() }
+    if (!purl.hostname || !purl.pathname) { return responder() }
     const runtime = this.runtimes.get(purl.hostname)
     if (!runtime) { return responder() }
 
     // Serve the background page
-    if (runtime && runtime.backgroundPage.isRunning && purl.path === `/${runtime.backgroundPage.name}`) {
+    if (runtime && runtime.backgroundPage.isRunning && purl.pathname === `/${runtime.backgroundPage.name}`) {
       return responder({
         mimeType: 'text/html',
         data: runtime.backgroundPage.html
@@ -126,10 +118,20 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     }
 
     // Serve the asset/file
-    const scopedPath = pathTool.scopeToDir(runtime.extension.srcPath, purl.path)
+    const scopedPath = pathTool.scopeToDir(runtime.extension.srcPath, purl.pathname)
     if (scopedPath) {
       fs.readFile(scopedPath)
-        .then((data) => responder(data))
+        .then((data) => {
+          const mimeType = mime.getType(scopedPath)
+          if (mimeType) {
+            responder({
+              mimeType: mimeType,
+              data: data
+            })
+          } else {
+            responder(data)
+          }
+        })
         .catch(() => responder(-6)) // not found
     } else {
       responder(-6) // not found
@@ -268,15 +270,14 @@ class CRExtensionRuntimeHandler extends EventEmitter {
 
   /**
   * Gets the runtime data in a synchronous way
-  * @param evt: the event that fired
   */
-  _handleGetRuntimeData = (evt) => {
+  getRuntimeData () {
     const data = Array.from(this.runtimes.keys())
       .reduce((acc, key) => {
         acc[key] = this.runtimes.get(key).buildUIRuntimeData()
         return acc
       }, {})
-    evt.returnValue = data
+    return data
   }
 
   /**
@@ -291,16 +292,54 @@ class CRExtensionRuntimeHandler extends EventEmitter {
       }, {})
   }
 
+  /**
+  * Gets all the content script guest configs
+  * @return an array of guest configs
+  */
+  getAllContentScriptGuestConfigs () {
+    return Array.from(this.runtimes.values())
+      .map((runtime) => runtime.contentScript.guestConfig)
+      .filter((c) => !!c)
+  }
+
+  /*
+  * Gets the guest config for an extension
+  * @param extensionId: the id of the extension
+  * @return the guest config or undefined
+  */
+  getContentScriptRuntimeConfig (extensionId) {
+    const runtime = this.runtimes.get(extensionId)
+    if (!runtime) { return undefined }
+    return runtime.contentScript.runtimeConfig
+  }
+
+  /**
+  * @param extensionId: the id of the extension
+  * @return true if there is a runtime
+  */
+  hasRuntime (extensionId) {
+    return this.runtimes.has(extensionId)
+  }
+
+  /**
+  * @param extensionId: the id of the extension
+  * @return the webcontents id or undefined
+  */
+  getBackgroundPageId (extensionId) {
+    const runtime = this.runtimes.get(extensionId)
+    if (!runtime) { return undefined }
+    return runtime.backgroundPage.webContentsId
+  }
+
   /* ****************************************************************************/
   // Options
   /* ****************************************************************************/
 
   /**
   * Opens the options page
-  * @param evt: the event that fired
   * @param extensionId: the id of the extension
   */
-  _handleOpenOptionsPage = (evt, extensionId) => {
+  openOptionsPage (extensionId) {
     const runtime = this.runtimes.get(extensionId)
     if (!runtime) { return }
     runtime.optionsPage.launchWindow()
@@ -308,10 +347,9 @@ class CRExtensionRuntimeHandler extends EventEmitter {
 
   /**
   * Opens the inspector for the background page
-  * @param evt: the event that fired
   * @param extensionId: the id of the extension
   */
-  _handleInspectBackground = (evt, extensionId) => {
+  inspectBackgroundPage (extensionId) {
     const runtime = this.runtimes.get(extensionId)
     if (!runtime) { return }
     runtime.backgroundPage.openDevTools()
@@ -324,7 +362,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   /**
   * Clears all the browser sessions
   */
-  _handleClearAllBrowserSessions = () => {
+  clearAllBrowserSessions () {
     Array.from(this.runtimes.values()).forEach((runtime) => {
       runtime.backgroundPage.clearBrowserSession()
     })
@@ -502,13 +540,12 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   updateCSXHROnHeadersReceived = (details) => {
     // Check we are waiting
     if (details.resourceType !== 'xhr') { return }
-
     if (!this[privOpenXHRRequests].has(details.id)) { return }
 
     const headers = details.responseHeaders
     const updatedHeaders = {
       ...headers,
-      'access-control-allow-credentials': headers['access-control-allow-credentials'] || ['true'],
+      'access-control-allow-credentials': ['true'],
       'access-control-allow-origin': [this[privOpenXHRRequests].get(details.id)]
     }
 

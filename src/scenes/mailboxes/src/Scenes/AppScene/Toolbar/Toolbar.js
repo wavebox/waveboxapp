@@ -11,6 +11,7 @@ import ToolbarMailboxServices from './ToolbarMailboxServices'
 import ToolbarExtensions from './ToolbarExtensions'
 import ToolbarNavigation from './ToolbarNavigation'
 import { ExtensionSettings } from 'shared/Models/Settings'
+import classnames from 'classnames'
 
 const styles = {
   toolbar: {
@@ -179,6 +180,7 @@ export default class Toolbar extends React.Component {
     const {
       style,
       toolbarHeight,
+      className,
       ...passProps
     } = this.props
     const {
@@ -197,6 +199,7 @@ export default class Toolbar extends React.Component {
     return (
       <div
         {...passProps}
+        className={classnames('WB-Toolbar', className)}
         style={{
           height: toolbarHeight,
           paddingLeft: !showTitlebar && !sidebarEnabled ? 70 : 0,

@@ -7,6 +7,5 @@ module.exports = {
   Models: require('./Models'),
   dictionaries: require('./dictionaries'),
   Notifications: require('./Notifications'),
-  AltStores: require('./AltStores'),
-  processPreferences: require('./processPreferences')
+  AltStores: require('./AltStores')
 }

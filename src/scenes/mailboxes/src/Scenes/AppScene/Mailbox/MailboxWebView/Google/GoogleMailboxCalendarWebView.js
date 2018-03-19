@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
-import Resolver from 'Runtime/Resolver'
 import { mailboxActions, GoogleCalendarServiceReducer } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
@@ -68,7 +67,6 @@ export default class GoogleMailboxCalendarWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={Resolver.guestPreload()}
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.CALENDAR}
         ipcMessage={this.dispatchBrowserIPCMessage} />

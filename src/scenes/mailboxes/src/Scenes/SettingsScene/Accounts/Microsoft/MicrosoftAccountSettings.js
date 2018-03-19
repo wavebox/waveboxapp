@@ -4,6 +4,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { Row, Col } from 'Components/Grid'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
+import AccountDestructiveSettings from '../AccountDestructiveSettings'
 import AccountServicesHeading from '../AccountServicesHeading'
 import AccountServicesSettings from '../AccountServicesSettings'
 import MicrosoftServiceSettings from './MicrosoftServiceSettings'
@@ -95,6 +96,7 @@ export default class MicrosoftAccountSettings extends React.Component {
           </Col>
           <Col md={6}>
             <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
+            <AccountDestructiveSettings mailbox={mailbox} />
           </Col>
         </Row>
         <Row>

@@ -7,12 +7,8 @@
 
   // Single app instance
   const singleAppQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
-    // Late require all of these...
-    const AppSingleInstance = require('./AppSingleInstance').default
-    const WaveboxWindow = require('windows/WaveboxWindow').default
-    const MailboxesWindow = require('windows/MailboxesWindow').default
-    const mainWindow = WaveboxWindow.getOfType(MailboxesWindow)
-    AppSingleInstance.processSingleInstanceArgs(mainWindow, commandLine, workingDirectory)
+    const AppSingleInstance = require('./AppSingleInstance').default // Late require me
+    AppSingleInstance.processSingleInstanceArgs(commandLine, workingDirectory)
     return true
   })
   if (singleAppQuit) { app.quit(); return }

@@ -164,12 +164,12 @@ export default class OptimizeWizardSleepCustomizeScene extends React.Component {
   */
   handleSetShowSleepingServiceIndicator = (evt, show) => {
     if (show) {
-      settingsActions.setShowSleepableServiceIndicator.defer(true)
+      settingsActions.sub.ui.setShowSleepableServiceIndicator(true)
       mailboxStore.getState().allMailboxes().forEach((mailbox) => {
         mailboxActions.reduce(mailbox.id, MailboxReducer.setShowSleepableServiceIndicator, true)
       })
     } else {
-      settingsActions.setShowSleepableServiceIndicator(false)
+      settingsActions.sub.ui.setShowSleepableServiceIndicator(false)
     }
   }
 
@@ -303,7 +303,7 @@ export default class OptimizeWizardSleepCustomizeScene extends React.Component {
                   disabled={isOptimizing}
                   icon={isOptimizing ? (
                     <span>
-                      <FontIcon className='fa fa-spin fa-circle-o-notch' color='rgba(0, 0, 0, 0.3)' style={{ fontSize: '20px' }} />
+                      <FontIcon className='fas fa-spin fa-circle-notch' color='rgba(0, 0, 0, 0.3)' style={{ fontSize: '20px' }} />
                     </span>
                   ) : undefined}
                   label='Turn on sleep for all additional services (Recommended)'

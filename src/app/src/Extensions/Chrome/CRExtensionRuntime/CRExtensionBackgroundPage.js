@@ -5,6 +5,8 @@ import {
   CR_EXTENSION_PROTOCOL,
   CR_EXTENSION_BG_PARTITION_PREFIX
 } from 'shared/extensionApis'
+import { WB_EXTENSION_AFFINITY } from 'shared/webContentAffinities'
+import { settingsStore } from 'stores/settings'
 import Resolver from 'Runtime/Resolver'
 import { SessionManager } from 'SessionManager'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
@@ -45,7 +47,7 @@ class CRExtensionBackgroundPage {
 
   get isRunning () { return this._webContents && !this._webContents.isDestroyed() }
   get webContents () { return this._webContents }
-  get webContentsId () { return this._webContents.id }
+  get webContentsId () { return this.isRunning ? this._webContents.id : undefined }
   get partitionId () { return this.constructor.partitionIdForExtension(this.extension.id) }
   get html () { return this._html }
   get name () { return this._name }
@@ -88,6 +90,10 @@ class CRExtensionBackgroundPage {
     const partitionId = this.partitionId
     this._webContents = webContents.create({
       partition: partitionId,
+      affinity: settingsStore.getState().launched.app.isolateExtensionProcesses ? undefined : WB_EXTENSION_AFFINITY,
+      sandbox: true,
+      nativeWindowOpen: true,
+      sharedSiteInstances: true,
       isBackgroundPage: true,
       preload: Resolver.crExtensionApi(),
       commandLineSwitches: [

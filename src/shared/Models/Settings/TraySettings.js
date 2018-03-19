@@ -1,20 +1,29 @@
 const Model = require('../Model')
 
-const MOUSE_TRIGGERS = Object.assign({
-  SINGLE: 'SINGLE',
-  DOUBLE: 'DOUBLE'
-})
-
-const MOUSE_TRIGGER_ACTIONS = Object.assign({
-  TOGGLE: 'TOGGLE',
-  TOGGLE_MINIMIZE: 'TOGGLE_MINIMIZE',
-  SHOW: 'SHOW'
-})
-
-const GTK_UPDATE_MODES = Object.assign({
+const GTK_UPDATE_MODES = Object.freeze({
   UPDATE: 'UPDATE',
   RECREATE: 'RECREATE',
   STATIC: 'STATIC'
+})
+
+const POPOUT_POSITIONS = Object.freeze({
+  AUTO: 'AUTO',
+  TOP_CENTER: 'TOP_CENTER',
+  TOP_LEFT: 'TOP_LEFT',
+  TOP_RIGHT: 'TOP_RIGHT',
+  BOTTOM_CENTER: 'BOTTOM_CENTER',
+  BOTTOM_LEFT: 'BOTTOM_LEFT',
+  BOTTOM_RIGHT: 'BOTTOM_RIGHT'
+})
+
+const CLICK_ACTIONS = Object.freeze({
+  TOGGLE_POPOUT: 'TOGGLE_POPOUT',
+  SHOW_POPOUT: 'SHOW_POPOUT',
+  HIDE_POPOUT: 'HIDE_POPOUT',
+  TOGGLE_APP: 'TOGGLE_APP',
+  SHOW_APP: 'SHOW_APP',
+  HIDE_APP: 'HIDE_APP',
+  NONE: 'NONE'
 })
 
 class TraySettings extends Model {
@@ -22,13 +31,13 @@ class TraySettings extends Model {
   // Class
   /* **************************************************************************/
 
-  static get MOUSE_TRIGGERS () { return MOUSE_TRIGGERS }
-  static get MOUSE_TRIGGER_ACTIONS () { return MOUSE_TRIGGER_ACTIONS }
+  static get CLICK_ACTIONS () { return CLICK_ACTIONS }
+  static get SUPPORTS_CLICK_ACTIONS () { return process.platform === 'win32' || process.platform === 'darwin' }
   static get GTK_UPDATE_MODES () { return GTK_UPDATE_MODES }
-  static get SUPPORTS_MOUSE_TRIGGERS () { return process.platform === 'win32' }
-  static get SUPPORTS_TRAY_MINIMIZE_CONFIG () { return process.platform === 'win32' }
+  static get POPOUT_POSITIONS () { return POPOUT_POSITIONS }
   static get SUPPORTS_DOCK_HIDING () { return process.platform === 'darwin' }
   static get IS_GTK_PLATFORM () { return process.platform === 'linux' }
+  static get CTX_MENU_ONLY_SUPPORT () { return process.platform === 'linux' }
 
   /* **************************************************************************/
   // Lifecycle
@@ -55,10 +64,36 @@ class TraySettings extends Model {
   /* **************************************************************************/
 
   get removeFromDockDarwin () { return this._value_('removeFromDockDarwin', false) }
-  get mouseTrigger () { return this._value_('mouseTrigger', MOUSE_TRIGGERS.SINGLE) }
-  get mouseTriggerAction () { return this._value_('mouseTriggerAction', MOUSE_TRIGGER_ACTIONS.TOGGLE) }
-  get hideWhenMinimized () { return this._value_('hideWhenMinimized', false) }
-  get hideWhenClosed () { return this._value_('hideWhenClosed', true) }
+  get clickAction () {
+    if (process.platform === 'win32') {
+      return this._value_('clickAction', CLICK_ACTIONS.SHOW_APP)
+    } else {
+      return this._value_('clickAction', CLICK_ACTIONS.TOGGLE_POPOUT)
+    }
+  }
+  get altClickAction () { return this._value_('altClickAction', CLICK_ACTIONS.HIDE_POPOUT) }
+  get rightClickAction () {
+    if (process.platform === 'darwin') {
+      return this._value_('rightClickAction', CLICK_ACTIONS.TOGGLE_APP)
+    } else if (process.platform === 'win32') {
+      return this._value_('rightClickAction', CLICK_ACTIONS.TOGGLE_POPOUT)
+    } else {
+      return this._value_('rightClickAction', CLICK_ACTIONS.NONE)
+    }
+  }
+  get doubleClickAction () {
+    if (process.platform === 'win32') {
+      return this._value_('doubleClickAction', CLICK_ACTIONS.TOGGLE_APP)
+    } else {
+      return this._value_('doubleClickAction', CLICK_ACTIONS.NONE)
+    }
+  }
+
+  /* **************************************************************************/
+  // Properties: Popout
+  /* **************************************************************************/
+
+  get popoutPosition () { return this._value_('popoutPosition', POPOUT_POSITIONS.AUTO) }
 
   /* **************************************************************************/
   // Properties: Theming

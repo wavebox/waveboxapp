@@ -1,9 +1,5 @@
-import { webFrame } from 'electron'
-import GuestHost from '../GuestHost'
-import fs from 'fs'
-import Resolver from 'Runtime/Resolver'
+import { webFrame, ipcRenderer } from 'electron'
 import {
-  WAVEBOX_HOSTED_EXTENSION_PROTOCOL,
   CR_EXTENSION_PROTOCOL,
   WAVEBOX_CONTENT_IMPL_ENDPOINTS,
   VALID_WAVEBOX_CONTENT_IMPL_ENDPOINTS
@@ -11,16 +7,19 @@ import {
 import {
   CHROME_PROTOCOL
 } from 'shared/constants'
+import {
+  WB_GUEST_API_READ_SYNC
+} from 'shared/ipcEvents'
 
 const SUPPORTED_PROTOCOLS = new Set([
   'http:',
   'https:',
-  `${WAVEBOX_HOSTED_EXTENSION_PROTOCOL}:`
+  'about:',
+  CR_EXTENSION_PROTOCOL
 ])
 const SUPPRESSED_PROTOCOLS = new Set([
   `${CR_EXTENSION_PROTOCOL}:`,
-  `${CHROME_PROTOCOL}:`,
-  'about:'
+  `${CHROME_PROTOCOL}:`
 ])
 const DEQUEUE_ENDPOINTS = new Set([
   /**
@@ -30,11 +29,9 @@ const DEQUEUE_ENDPOINTS = new Set([
   * items to ensure they are loaded last
   */
   WAVEBOX_CONTENT_IMPL_ENDPOINTS.NOTIFICATION,
-  WAVEBOX_CONTENT_IMPL_ENDPOINTS.CREXTENSION_POPOUT_WINDOW_POSTMESSAGE,
-
-  WAVEBOX_CONTENT_IMPL_ENDPOINTS.GOOGLE_MAIL_WINDOW_OPEN,
-  WAVEBOX_CONTENT_IMPL_ENDPOINTS.GOOGLE_CALENDAR_ALERT,
-  WAVEBOX_CONTENT_IMPL_ENDPOINTS.ONEDRIVE_WINDOW_OPEN
+  WAVEBOX_CONTENT_IMPL_ENDPOINTS.WINDOW_DIALOGS,
+  WAVEBOX_CONTENT_IMPL_ENDPOINTS.ONEDRIVE_WINDOW_OPEN,
+  WAVEBOX_CONTENT_IMPL_ENDPOINTS.GOOGLE_MAIL_WINDOW_OPEN
 ])
 
 class ExtensionLoader {
@@ -52,15 +49,14 @@ class ExtensionLoader {
       return Promise.reject(new Error(`Unsupported Api ${apiName}`))
     }
 
-    const hostUrl = GuestHost.parsedUrl
-    if (SUPPRESSED_PROTOCOLS.has(hostUrl.protocol)) {
+    if (SUPPRESSED_PROTOCOLS.has(window.location.protocol)) {
       return Promise.resolve() /* no-op */
     }
-    if (!SUPPORTED_PROTOCOLS.has(hostUrl.protocol)) {
+    if (!SUPPORTED_PROTOCOLS.has(window.location.protocol)) {
       return Promise.reject(new Error('Unsupported Guest Protocol'))
     }
 
-    const code = fs.readFileSync(Resolver.guestApi(apiName))
+    const code = ipcRenderer.sendSync(WB_GUEST_API_READ_SYNC, apiName)
     const wrapper = `
       ;(function (WB_API_KEY, WB_CONFIG) {
         ${code}

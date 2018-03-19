@@ -65,6 +65,8 @@ const WEBVIEW_PROPS = {
   webpreferences: PropTypes.string
 }
 const WEBVIEW_ATTRS = Object.keys(WEBVIEW_PROPS)
+const HTML_ATTRS = ['id'] // we don't support all attributes
+const SUPPORTED_ATTRS = [].concat(WEBVIEW_ATTRS, HTML_ATTRS)
 
 const WEBVIEW_METHODS = [
   'blur',
@@ -130,7 +132,6 @@ export default class WebView extends React.Component {
   // Class
   /* **************************************************************************/
   static propTypes = {
-    className: PropTypes.string,
     onWebContentsAttached: PropTypes.func,
     ...WEBVIEW_PROPS,
     ...REACT_WEBVIEW_EVENT_PROPS
@@ -193,7 +194,7 @@ export default class WebView extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const changed = WEBVIEW_ATTRS.filter((name) => this.props[name] !== nextProps[name])
+    const changed = SUPPORTED_ATTRS.filter((name) => this.props[name] !== nextProps[name])
     if (changed.length) {
       const node = this.getWebviewNode()
       changed.forEach((name) => {
@@ -343,7 +344,7 @@ export default class WebView extends React.Component {
   }
 
   render () {
-    const attrs = WEBVIEW_ATTRS
+    const attrs = SUPPORTED_ATTRS
       .filter((k) => this.props[k] !== undefined && this.props[k] !== false)
       .map((k) => {
         return `${k}="${this.props[k]}"`

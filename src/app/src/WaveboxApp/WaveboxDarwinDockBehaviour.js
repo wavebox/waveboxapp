@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from 'electron'
-import settingStore from 'stores/settingStore'
+import { settingsStore } from 'stores/settings'
 import { SUPPORTS_DOCK_HIDING } from 'shared/Models/Settings/TraySettings'
 
 class WaveboxDarwinDockBehaviour {
@@ -26,7 +26,8 @@ class WaveboxDarwinDockBehaviour {
   _updateDock = () => {
     if (!SUPPORTS_DOCK_HIDING) { return }
 
-    if (settingStore.tray.show && settingStore.tray.removeFromDockDarwin) {
+    const { tray } = settingsStore.getState()
+    if (tray.show && tray.removeFromDockDarwin) {
       const visibleWindow = BrowserWindow.getAllWindows().find((w) => w.isVisible())
       if (!visibleWindow) {
         if (app.dock.isVisible()) {

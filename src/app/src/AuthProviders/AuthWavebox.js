@@ -1,9 +1,10 @@
-import { ipcMain, BrowserWindow } from 'electron'
+import { ipcMain } from 'electron'
 import { WB_AUTH_WAVEBOX, WB_AUTH_WAVEBOX_COMPLETE, WB_AUTH_WAVEBOX_ERROR } from 'shared/ipcEvents'
-import userStore from 'stores/userStore'
+import { userStore } from 'stores/user'
 import querystring from 'querystring'
 import url from 'url'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import AuthWindow from 'Windows/AuthWindow'
 
 class AuthWavebox {
   /* ****************************************************************************/
@@ -35,7 +36,7 @@ class AuthWavebox {
     }
     if (authUrl) {
       const args = querystring.stringify(Object.assign({}, serverArgs, {
-        client_id: userStore.clientId,
+        client_id: userStore.getState().clientId,
         client_secret: clientSecret
       }))
       return `${authUrl}?${args}`
@@ -67,12 +68,12 @@ class AuthWavebox {
         partitionId = `rand_${new Date().getTime()}`
       }
 
-      const oauthWin = new BrowserWindow({
+      const waveboxOauthWin = new AuthWindow()
+      waveboxOauthWin.create(authUrl, {
         useContentSize: true,
         center: true,
         show: false,
         resizable: false,
-        alwaysOnTop: true,
         standardWindow: true,
         autoHideMenuBar: true,
         title: 'Wavebox',
@@ -80,24 +81,30 @@ class AuthWavebox {
         webPreferences: {
           nodeIntegration: false,
           contextIsolation: true,
+          sandbox: true,
+          nativeWindowOpen: true,
+          sharedSiteInstances: true,
           partition: partitionId
         }
       })
-      oauthWin.loadURL(authUrl)
+      const oauthWin = waveboxOauthWin.window
+      let userClose = true
 
       oauthWin.on('closed', () => {
-        reject(new Error('User closed the window'))
+        if (userClose) {
+          reject(new Error('User closed the window'))
+        }
       })
 
       oauthWin.webContents.on('did-get-redirect-request', (evt, prevUrl, nextUrl) => {
         if (nextUrl.startsWith('https://wavebox.io/account/register/completed') || nextUrl.startsWith('https://waveboxio.com/account/register/completed')) {
           const purl = url.parse(nextUrl, true)
-          oauthWin.removeAllListeners('closed')
+          userClose = false
           oauthWin.close()
           resolve({ next: purl.query.next })
         } else if (nextUrl.startsWith('https://wavebox.io/account/register/failure') || nextUrl.startsWith('https://waveboxio.com/account/register/failure')) {
           const purl = url.parse(nextUrl, true)
-          oauthWin.removeAllListeners('closed')
+          userClose = false
           oauthWin.close()
           reject(new Error(purl.query.error || 'Registration failure'))
         }

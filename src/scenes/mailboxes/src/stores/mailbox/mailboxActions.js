@@ -1,7 +1,6 @@
+import RendererMailboxActions from 'shared/AltStores/Mailbox/RendererMailboxActions'
 import alt from '../alt'
-import mailboxDispatch from './mailboxDispatch'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
-import ServiceReducer from './ServiceReducer'
 import { GoogleMailbox, GoogleDefaultService } from 'shared/Models/Accounts/Google'
 import { SlackMailbox } from 'shared/Models/Accounts/Slack'
 import { TrelloMailbox } from 'shared/Models/Accounts/Trello'
@@ -20,37 +19,14 @@ import {
   WB_AUTH_TRELLO_ERROR,
 
   WB_WINDOW_FIND_START,
-  WB_WINDOW_FIND_NEXT,
-  WB_WINDOW_ZOOM_IN,
-  WB_WINDOW_ZOOM_OUT,
-  WB_WINDOW_ZOOM_RESET,
-  WB_WINDOW_RELOAD_WEBVIEW,
-  WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
-  WB_WINDOW_FOCUS,
-
-  WB_MAILBOXES_WINDOW_SWITCH_MAILBOX,
-  WB_MAILBOXES_WINDOW_SWITCH_SERVICE,
-
-  WB_GUEST_API_SAFE_REDUCE
+  WB_WINDOW_FIND_NEXT
 } from 'shared/ipcEvents'
-import { ipcRenderer, remote } from 'electron'
+import { ipcRenderer } from 'electron'
 
-const { session } = remote
-
-class MailboxActions {
+class MailboxActions extends RendererMailboxActions {
   /* **************************************************************************/
-  // Store Lifecyle
+  // Tab ids
   /* **************************************************************************/
-
-  /**
-  * Indicates the store to drop all data and load from disk
-  */
-  load () { return {} }
-
-  /**
-  * Handles a remote change by mirroring the changes in our own store
-  */
-  remoteChange () { return {} }
 
   /**
   * Sets the tab id for a mailbox
@@ -454,163 +430,15 @@ class MailboxActions {
   }
 
   /* **************************************************************************/
-  // Mailbox auth teardown
+  // Sync
   /* **************************************************************************/
 
   /**
-  * Clears the browser session for a mailbox
-  * @param mailboxId: the id of the mailbox to clear
-  */
-  clearMailboxBrowserSession (mailboxId) {
-    return { mailboxId: mailboxId }
-  }
-
-  /**
-  * Clears all the browser sessions
-  */
-  clearAllBrowserSessions () { return {} }
-
-  /* **************************************************************************/
-  // Mailbox connection lifecycle
-  /* **************************************************************************/
-
-  /**
-  * Connects all mailboxes from the sync services
-  */
-  connectAllMailboxes () {
-    return {}
-  }
-
-  /**
-  * Connects a mailbox to the sync service
-  * @param mailboxId: the id of the mailbox
-  */
-  connectMailbox (mailboxId) {
-    return { mailboxId: mailboxId }
-  }
-
-  /**
-  * Disconnects all mailboxes from the sync services
-  */
-  disconnectAllMailboxes () {
-    return {}
-  }
-
-  /**
-  * Disconnects a mailbox from the sync service
-  * @param mailboxId: the id of the mailbox
-  */
-  disconnectMailbox (mailboxId) {
-    return { mailboxId: mailboxId }
-  }
-
-  /* **************************************************************************/
-  // Mailboxes
-  /* **************************************************************************/
-
-  /**
-  * Creates a new mailbox
-  * @param id: the id of the mailbox
-  * @param data: the data to create it with
-  */
-  create (id, data) { return { id: id, data: data } }
-
-  /**
-  * Removes a mailbox
-  * @param id: the id of the mailbox to update
-  */
-  remove (id) { return { id: id } }
-
-  /**
-  * Moves a mailbox up in the index
+  * Triggers a full sync on a mailbox
   * @param id: the id of the mailbox
   */
-  moveUp (id) { return { id: id } }
-
-  /**
-  * Moves a mailbox down in the index
-  * @param id: the id of the mailbox
-  */
-  moveDown (id) { return { id: id } }
-
-  /**
-  * Changes the index of a mailbox
-  */
-  changeIndex (id, nextIndex) { return { id, nextIndex } }
-
-  /**
-  * Updates and modifies a mailbox
-  * @param id: the id of the mailbox to change
-  * @param reducer: the reducer to run on the mailbox
-  * @param ...reducerArgs: the arguments to supply to the reducer
-  */
-  reduce (id, reducer, ...reducerArgs) {
-    return { id: id, reducer: reducer, reducerArgs: reducerArgs }
-  }
-
-  /**
-  * Sets a custom avatar
-  * @param id: the id of the mailbox
-  * @param b64Image: the image to set
-  */
-  setCustomAvatar (id, b64Image) { return { id: id, b64Image: b64Image } }
-
-  /**
-  * Sets a service avatar locally for services that don't support grabbing it off the web
-  * @param id: the id of the mailbox
-  * @param b64Image: the image to set
-  */
-  setServiceLocalAvatar (id, b64Image) { return { id: id, b64Image: b64Image } }
-
-  /* **************************************************************************/
-  // Services
-  /* **************************************************************************/
-
-  /**
-  * Updates and modifies a mailbox service
-  * @param id: the id of the mailbox to change
-  * @param serviceType: the type of service to work on
-  * @param reducer: the reducer to run on the mailbox
-  * @param ...reducerArgs: the arguments to supply to the reducer
-  */
-  reduceService (id, serviceType, reducer, ...reducerArgs) {
-    return { id: id, serviceType: serviceType, reducer: reducer, reducerArgs: reducerArgs }
-  }
-
-  /**
-  * Updates and modifies a mailbox service only if it's active
-  * @param id: the id of the mailbox to change
-  * @param serviceType: the type of service to work on
-  * @param reducer: the reducer to run on the mailbox
-  * @param ...reducerArgs: the arguments to supply to the reducer
-  */
-  reduceServiceIfActive (id, serviceType, reducer, ...reducerArgs) {
-    return { id: id, serviceType: serviceType, reducer: reducer, reducerArgs: reducerArgs }
-  }
-
-  /**
-  * Updates and modifies a mailbox service only if it's inactive
-  * @param id: the id of the mailbox to change
-  * @param serviceType: the type of service to work on
-  * @param reducer: the reducer to run on the mailbox
-  * @param ...reducerArgs: the arguments to supply to the reducer
-  */
-  reduceServiceIfInactive (id, serviceType, reducer, ...reducerArgs) {
-    return { id: id, serviceType: serviceType, reducer: reducer, reducerArgs: reducerArgs }
-  }
-
-  /* **************************************************************************/
-  // Avatar
-  /* **************************************************************************/
-
-  /**
-  * Updates and modifies a mailbox avatar
-  * @param id: the id of the mailbox to change
-  * @param reducer: the reducer to run on the mailbox
-  * @param ...reducerArgs: the arguments to supply to the reducer
-  */
-  reduceAvatar (id, reducer, ...reducerArgs) {
-    return { id: id, reducer: reducer, reducerArgs: reducerArgs }
+  fullSyncMailbox (id) {
+    return { id: id }
   }
 
   /* **************************************************************************/
@@ -625,81 +453,6 @@ class MailboxActions {
   */
   setServiceSnapshot (id, service, snapshot) {
     return { id: id, service: service, snapshot: snapshot }
-  }
-
-  /* **************************************************************************/
-  // Sleeping
-  /* **************************************************************************/
-
-  /**
-  * Sleeps a service
-  * @param id: the id of the mailbox
-  * @param service: the service to awaken
-  */
-  sleepService (id, service) {
-    return { id: id, service: service }
-  }
-
-  /**
-  * Wakes up a service from sleep
-  * @param id: the id of the mailbox
-  * @param service: the service to awaken
-  */
-  awakenService (id, service) {
-    return { id: id, service: service }
-  }
-
-  /* **************************************************************************/
-  // Active
-  /* **************************************************************************/
-
-  /**
-  * Changes the active mailbox
-  * @param id: the id of the mailbox
-  * @param service=default: the service to change to
-  */
-  changeActive (id, service = CoreMailbox.SERVICE_TYPES.DEFAULT) {
-    return { id: id, service: service }
-  }
-
-  /**
-  * Changes the active mailbox to the previous in the list
-  * @param allowCycling=false: set to true to allow cycling at end/beginning
-  */
-  changeActiveToPrev (allowCycling = false) {
-    return { allowCycling: allowCycling }
-  }
-
-  /**
-  * Changes the active mailbox to the next in the list
-  * @param allowCycling=false: set to true to allow cycling at end/beginning
-  */
-  changeActiveToNext (allowCycling = false) {
-    return { allowCycling: allowCycling }
-  }
-
-  /**
-  * Changes the active service to the one at the supplied index. If there
-  * is no service this will just fail silently
-  */
-  changeActiveServiceIndex (index) {
-    return { index: index }
-  }
-
-  /**
-  * Changes the active service to the previous in the list
-  * @param allowCycling=false: set to true to allow cycling at end/beginning
-  */
-  changeActiveServiceToPrev (allowCycling = false) {
-    return { allowCycling: allowCycling }
-  }
-
-  /**
-  * Changes the active service to the next in the list
-  * @param allowCycling=false: set to true to allow cycling at end/beginning
-  */
-  changeActiveServiceToNext (allowCycling = false) {
-    return { allowCycling: allowCycling }
   }
 
   /* **************************************************************************/
@@ -750,91 +503,6 @@ class MailboxActions {
   searchNextTerm (id, service) {
     return { id: id, service: service }
   }
-
-  /* **************************************************************************/
-  // Guest
-  /* **************************************************************************/
-
-  /**
-  * Sets the title of the guest page
-  * @param id: the mailbox id of the guest
-  * @param service: the type of service of the guest
-  * @param title: the new title
-  */
-  setGuestTitle (id, service, title) {
-    return { id: id, service: service, title: title }
-  }
-
-  /* **************************************************************************/
-  // Sync
-  /* **************************************************************************/
-
-  /**
-  * Triggers a full sync on a mailbox
-  * @param id: the id of the mailbox
-  */
-  fullSyncMailbox (id) {
-    return { id: id }
-  }
-
-  /* **************************************************************************/
-  // Auth Tools
-  /* **************************************************************************/
-
-  /**
-  * Reauthenticates the user by logging them out of the webview
-  * @param id: the id of the mailbox
-  * @param partition: the partition of the mailbox
-  */
-  reauthenticateBrowserSession (id, partition) {
-    const ses = session.fromPartition('persist:' + partition)
-    const promise = Promise.resolve()
-      .then(() => {
-        return new Promise((resolve) => {
-          ses.clearStorageData(resolve)
-        })
-      })
-      .then(() => {
-        return new Promise((resolve) => {
-          ses.clearCache(resolve)
-        })
-      })
-      .then(() => {
-        mailboxDispatch.reloadAllServices(id)
-        return Promise.resolve()
-      })
-
-    return { promise: promise }
-  }
-
-  /* **************************************************************************/
-  // Containers
-  /* **************************************************************************/
-
-  /**
-  * Indicates the ids of the given containers have been updated
-  * @param containers: a key-value object map of the updated containers
-  */
-  containersUpdated (containers) { return { containers } }
-
-  /* **************************************************************************/
-  // Misc
-  /* **************************************************************************/
-
-  /**
-  * Reloads the active mailbox
-  */
-  reloadActiveMailbox () { return {} }
-
-  /**
-  * Opens the dev tools on the active mailbox
-  */
-  openDevToolsActiveMailbox () { return {} }
-
-  /**
-  * Indicates the main window focused
-  */
-  windowDidFocus () { return {} }
 }
 
 const actions = alt.createActions(MailboxActions)
@@ -850,49 +518,7 @@ ipcRenderer.on(WB_AUTH_MICROSOFT_COMPLETE, actions.authMicrosoftMailboxSuccess)
 ipcRenderer.on(WB_AUTH_MICROSOFT_ERROR, actions.authMicrosoftMailboxFailure)
 
 // Mailbox modifiers
-ipcRenderer.on(WB_WINDOW_ZOOM_IN, () => actions.reduceService(undefined, undefined, ServiceReducer.increaseZoom))
-ipcRenderer.on(WB_WINDOW_ZOOM_OUT, () => actions.reduceService(undefined, undefined, ServiceReducer.decreaseZoom))
-ipcRenderer.on(WB_WINDOW_ZOOM_RESET, () => actions.reduceService(undefined, undefined, ServiceReducer.resetZoom))
 ipcRenderer.on(WB_WINDOW_FIND_START, () => actions.startSearchingMailbox())
 ipcRenderer.on(WB_WINDOW_FIND_NEXT, () => actions.searchNextTerm())
-
-// Switching
-ipcRenderer.on(WB_MAILBOXES_WINDOW_SWITCH_MAILBOX, (evt, req) => {
-  if (req.mailboxId) {
-    actions.changeActive(req.mailboxId, req.serviceType)
-  } else if (req.prev) {
-    actions.changeActiveToPrev(req.allowCycling)
-  } else if (req.next) {
-    actions.changeActiveToNext(req.allowCycling)
-  }
-})
-ipcRenderer.on(WB_MAILBOXES_WINDOW_SWITCH_SERVICE, (evt, req) => {
-  if (req.index) {
-    actions.changeActiveServiceIndex(req.index)
-  } else if (req.prev) {
-    actions.changeActiveServiceToPrev(req.allowCycling)
-  } else if (req.next) {
-    actions.changeActiveServiceToNext(req.allowCycling)
-  }
-})
-
-// Misc
-ipcRenderer.on(WB_WINDOW_RELOAD_WEBVIEW, actions.reloadActiveMailbox)
-ipcRenderer.on(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, actions.openDevToolsActiveMailbox)
-ipcRenderer.on(WB_WINDOW_FOCUS, actions.windowDidFocus)
-
-ipcRenderer.on(WB_GUEST_API_SAFE_REDUCE, (evt, mailboxId, serviceType, name, reducerConfig) => {
-  switch (name) {
-    case 'badge:setCount':
-      actions.reduceService(mailboxId, serviceType, ServiceReducer.setAdaptorUnreadCount, ...reducerConfig)
-      break
-    case 'badge:setHasUnreadActivity':
-      actions.reduceService(mailboxId, serviceType, ServiceReducer.setAdaptorHasUnreadActivity, ...reducerConfig)
-      break
-    case 'tray:setMessages':
-      actions.reduceService(mailboxId, serviceType, ServiceReducer.setAdaptorTrayMessages, ...reducerConfig)
-      break
-  }
-})
 
 export default actions

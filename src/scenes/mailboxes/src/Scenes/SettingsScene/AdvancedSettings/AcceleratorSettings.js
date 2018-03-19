@@ -11,6 +11,16 @@ import {
 const ACCELERATOR_NAMES = {
   // Global
   globalToggleApp: 'Toggle App',
+  globalShowAppMailbox0: 'Show account in 1st position',
+  globalShowAppMailbox1: 'Show account in 2nd position',
+  globalShowAppMailbox2: 'Show account in 3rd position',
+  globalShowAppMailbox3: 'Show account in 4th position',
+  globalShowAppMailbox4: 'Show account in 5th position',
+  globalShowAppMailbox5: 'Show account in 6th position',
+  globalShowAppMailbox6: 'Show account in 7th position',
+  globalShowAppMailbox7: 'Show account in 8th position',
+  globalShowAppMailbox8: 'Show account in 9th position',
+  globalShowAppMailbox9: 'Show account in 10th position',
 
   // Application
   preferences: 'Preferences',
@@ -28,6 +38,7 @@ const ACCELERATOR_NAMES = {
   paste: 'Paste',
   pasteAndMatchStyle: 'Paste and Match Style',
   selectAll: 'Select All',
+  copyCurrentTabUrl: 'Copy Current Tab URL',
   find: 'Find',
   findNext: 'Find Next',
 
@@ -45,18 +56,32 @@ const ACCELERATOR_NAMES = {
   developerTools: 'Developer Tools',
   developerToolsWavebox: 'Wavebox Developer Tools',
 
-  // Window
-  minimize: 'Minimize',
-  cycleWindows: 'Cycle Windows',
+  // Accounts
   previousMailbox: 'Previous Account',
   nextMailbox: 'Next Account',
   mailboxIndex: 'Account at Index',
   servicePrevious: 'Previous Service',
   serviceNext: 'Next Service',
-  serviceIndex: 'Service at Index'
+  serviceIndex: 'Service at Index',
+
+  // Window
+  minimize: 'Minimize',
+  cycleWindows: 'Cycle Windows',
+  nextTab: 'Next Tab',
+  prevTab: 'Previous Tab'
 }
 const GLOBAL_SECTION = [
-  'globalToggleApp'
+  'globalToggleApp',
+  'globalShowAppMailbox0',
+  'globalShowAppMailbox1',
+  'globalShowAppMailbox2',
+  'globalShowAppMailbox3',
+  'globalShowAppMailbox4',
+  'globalShowAppMailbox5',
+  'globalShowAppMailbox6',
+  'globalShowAppMailbox7',
+  'globalShowAppMailbox8',
+  'globalShowAppMailbox9'
 ]
 const APPLICATION_SECTION = [
   'preferences',
@@ -74,6 +99,7 @@ const EDIT_SECTION = [
   'paste',
   'pasteAndMatchStyle',
   'selectAll',
+  'copyCurrentTabUrl',
   'find',
   'findNext'
 ]
@@ -91,9 +117,7 @@ const VIEW_SECTION = [
   'developerTools',
   'developerToolsWavebox'
 ]
-const WINDOW_SECTION = [
-  'minimize',
-  'cycleWindows',
+const ACCOUNTS_SECTION = [
   'previousMailbox',
   'nextMailbox',
   'mailboxIndex',
@@ -101,10 +125,17 @@ const WINDOW_SECTION = [
   'serviceNext',
   'serviceIndex'
 ]
+const WINDOW_SECTION = [
+  'minimize',
+  'cycleWindows',
+  'nextTab',
+  'prevTab'
+]
 const SECTIONS = [
   { name: 'Application', items: APPLICATION_SECTION },
   { name: 'Edit', items: EDIT_SECTION },
   { name: 'View', items: VIEW_SECTION },
+  { name: 'Account', items: ACCOUNTS_SECTION },
   { name: 'Window', items: WINDOW_SECTION },
   { name: 'Global', subtitle: 'These shortcuts will also work when Wavebox is minimized or out of focus', items: GLOBAL_SECTION }
 ]
@@ -155,17 +186,17 @@ export default class AcceleratorSettings extends React.Component {
             style={{ width: 180 }}
             hintText={acceleratorDefault}
             defaultValue={accelerator}
-            onBlur={(evt) => settingsActions.setAccelerator(name, evt.target.value)} />
+            onBlur={(evt) => settingsActions.sub.accelerators.set(name, evt.target.value)} />
           {acceleratorDefault ? (
             <IconButton
-              onClick={() => settingsActions.restoreAcceleratorDefault(name)}
+              onClick={() => settingsActions.sub.accelerators.restoreDefault(name)}
               tooltipPosition={isLast ? 'top-center' : 'bottom-center'}
               tooltip={`Restore Default (${acceleratorDefault})`}>
               <FontIcon className='material-icons'>settings_backup_restore</FontIcon>
             </IconButton>
           ) : (
             <IconButton
-              onClick={() => settingsActions.restoreAcceleratorDefault(name)}>
+              onClick={() => settingsActions.sub.accelerators.restoreDefault(name)}>
               <FontIcon className='material-icons'>delete</FontIcon>
             </IconButton>
           )}

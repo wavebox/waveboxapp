@@ -22,6 +22,32 @@ class MicrosoftTeamService extends MicrosoftService {
   /* **************************************************************************/
 
   get url () { return 'https://teams.microsoft.com' }
+
+  /* **************************************************************************/
+  // Properties: Support
+  /* **************************************************************************/
+
+  get supportsUnreadCount () { return true }
+  get supportsNativeNotifications () { return true }
+  get supportsTrayMessages () { return true }
+
+  /* **************************************************************************/
+  // Properties : Provider Details & counts etc
+  /* **************************************************************************/
+
+  get unreadCount () { return this._value_('unreadCount', 0) }
+  get unreadCountUpdateTime () { return this._value_('unreadCountUpdateTime', 0) }
+  get trayMessages () {
+    const count = this.unreadCount
+    return count === 0 ? [] : [
+      {
+        id: `auto_${count}`,
+        text: `${count} unseen ${this.humanizedTypeShort} ${this.humanizedUnreadItemType}${count > 1 ? 's' : ''}`,
+        date: this.unreadCountUpdateTime,
+        data: {}
+      }
+    ]
+  }
 }
 
 module.exports = MicrosoftTeamService

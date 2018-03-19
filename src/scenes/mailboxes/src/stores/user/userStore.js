@@ -1,61 +1,36 @@
+import RendererUserStore from 'shared/AltStores/User/RendererUserStore'
+import { STORE_NAME } from 'shared/AltStores/User/AltUserIdentifiers'
+import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import alt from '../alt'
 import actions from './userActions'
-import User from 'shared/Models/User'
-import userPersistence from './userPersistence'
-import containerPersistence from './containerPersistence'
-import extensionStorePersistence from './extensionStorePersistence'
-import wirePersistence from './wirePersistence'
-import mailboxActions from '../mailbox/mailboxActions'
-import Bootstrap from '../../Bootstrap'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
-import semver from 'semver'
-import { ipcRenderer } from 'electron'
-import Container from 'shared/Models/Container/Container'
 import { WaveboxHTTP } from 'Server'
+import { ipcRenderer } from 'electron'
+import mailboxActions from '../mailbox/mailboxActions'
+import semver from 'semver'
 import pkg from 'package.json'
-import {
-  ANALYTICS_ID,
-  CREATED_TIME,
-  USER,
-  USER_EPOCH,
-  EXTENSIONS,
-  WIRE_CONFIG
-} from 'shared/Models/DeviceKeys'
 import {
   EXTENSION_AUTO_UPDATE_INTERVAL,
   WIRE_CONFIG_AUTO_UPDATE_INTERVAL
 } from 'shared/constants'
 import {
-  WB_AUTH_WAVEBOX,
-  WB_UPDATE_INSTALLED_EXTENSIONS
+  WB_AUTH_WAVEBOX
 } from 'shared/ipcEvents'
 
-class UserStore {
+class UserStore extends RendererUserStore {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
 
   constructor () {
-    this.clientId = null
-    this.clientToken = null
-    this.analyticsId = null
-    this.createdTime = null
-    this.account = null
-    this.extensions = null
+    super()
+
     this.extensionAutoUpdater = null
-    this.wireConfig = null
     this.wireConfigAutoUpdater = null
-    this.containers = new Map()
     this.containerAutoUpdater = null
 
     /* ****************************************/
     // Extensions
     /* ****************************************/
-
-    /**
-    * @return all the extensions
-    */
-    this.extensionList = () => { return this.extensions || [] }
 
     /**
     * @return all the extensions supported in this version
@@ -70,61 +45,11 @@ class UserStore {
       })
     }
 
-    /**
-    * @return all the extensions supported in this version, indexed by id
-    */
-    this.supportedExtensionsIndex = () => {
-      return this.supportedExtensionList().reduce((acc, ext) => {
-        acc[ext.id] = ext
-        return acc
-      }, {})
-    }
-
-    /**
-    * @param extensionId: the id of the extension
-    * @return the extension
-    */
-    this.getExtension = (extensionId) => {
-      return this.extensionList().find((ext) => ext.id === extensionId)
-    }
-
-    /* ****************************************/
-    // Wire config
-    /* ****************************************/
-
-    /**
-    * @return true if we have wire config, false otherwise
-    */
-    this.hasWireConfig = () => { return !!this.wireConfig }
-
-    /**
-    * @return the wire config version or 0.0.0
-    */
-    this.wireConfigVersion = () => { return (this.wireConfig || {}).version || '0.0.0' }
-
-    /**
-    * @return the wire config experiments dictionary
-    */
-    this.wireConfigExperiments = () => { return (this.wireConfig || {}).experiments || {} }
-
-    /* ****************************************/
-    // Containers
-    /* ****************************************/
-
-    /**
-    * @param containerId: the id of the container
-    * @return the container or null
-    */
-    this.getContainer = (containerId) => { return this.containers.get(containerId) || null }
-
     /* ****************************************/
     // Listeners
     /* ****************************************/
 
     this.bindListeners({
-      // Store lifecycle
-      handleLoad: actions.LOAD,
-
       // Extensions
       handleUpdateExtensions: actions.UPDATE_EXTENSIONS,
       handleStartAutoUpdateExtensions: actions.START_AUTO_UPDATE_EXTENSIONS,
@@ -136,13 +61,10 @@ class UserStore {
       handleStopAutoUpdateWireConfig: actions.STOP_AUTO_UPDATE_WIRE_CONFIG,
 
       // Containers
+      handleSideloadContainerLocally: actions.SIDELOAD_CONTAINER_LOCALLY,
       handleUpdateContainers: actions.UPDATE_CONTAINERS,
       handleStartAutoUpdateContainers: actions.START_AUTO_UPDATE_CONTAINERS,
       handleStopAutoUpdateContainers: actions.STOP_AUTO_UPDATE_CONTAINERS,
-      handleAddContainer: actions.ADD_CONTAINER,
-
-      // Remote changes
-      handleRemoteChangeAccount: actions.REMOTE_CHANGE_ACCOUNT,
 
       // Auth
       handleAuthenticateWithMailbox: actions.AUTHENTICATE_WITH_MAILBOX,
@@ -155,41 +77,6 @@ class UserStore {
   }
 
   /* **************************************************************************/
-  // Handlers: Store Lifecycle
-  /* **************************************************************************/
-
-  handleLoad () {
-    const allUserData = userPersistence.allJSONItemsSync()
-    const allContainerData = containerPersistence.allJSONItemsSync()
-    const allExtensionStoreData = extensionStorePersistence.allJSONItemsSync()
-    const allWireConfigData = wirePersistence.allJSONItemsSync()
-
-    // Instance
-    this.clientId = Bootstrap.clientId
-    this.clientToken = Bootstrap.clientToken
-    this.analyticsId = allUserData[ANALYTICS_ID]
-    this.createdTime = allUserData[CREATED_TIME]
-
-    // User
-    const now = new Date().getTime()
-    userPersistence.setJSONItem(USER_EPOCH, now)
-    userPersistence.setJSONItem(USER, Bootstrap.accountJS)
-    this.user = new User(Bootstrap.accountJS, now)
-
-    // Extensions
-    this.extensions = allExtensionStoreData[EXTENSIONS] || null
-
-    // Wire Config
-    this.wireConfig = allWireConfigData[WIRE_CONFIG] || null
-
-    // Containers
-    this.containers = Object.keys(allContainerData).reduce((acc, id) => {
-      acc.set(id, new Container(id, allContainerData[id]))
-      return acc
-    }, new Map())
-  }
-
-  /* **************************************************************************/
   // Handlers: Extensions
   /* **************************************************************************/
 
@@ -197,12 +84,7 @@ class UserStore {
     this.preventDefault()
 
     WaveboxHTTP.fetchExtensionInfo(this.clientId)
-      .then((res) => {
-        this.extensions = res
-        extensionStorePersistence.setJSONItem(EXTENSIONS, res)
-        ipcRenderer.send(WB_UPDATE_INSTALLED_EXTENSIONS, {})
-        this.emitChange()
-      })
+      .then((res) => actions.setExtensions(res))
   }
 
   handleStartAutoUpdateExtensions () {
@@ -230,17 +112,7 @@ class UserStore {
     this.preventDefault()
 
     WaveboxHTTP.fetchWireConfig(this.clientId)
-      .then((res) => {
-        try {
-          if (!semver.gt(res.version, this.wireConfigVersion())) { return }
-        } catch (ex) {
-          return
-        }
-
-        this.wireConfig = res
-        wirePersistence.setJSONItem(WIRE_CONFIG, res)
-        this.emitChange()
-      })
+      .then((res) => actions.setWireConfig(res))
   }
 
   handleStartAutoUpdateWireConfig () {
@@ -261,8 +133,22 @@ class UserStore {
   }
 
   /* **************************************************************************/
-  // Handlers: Containers
+  // Containers
   /* **************************************************************************/
+
+  handleSideloadContainerLocally ({ id, data }) {
+    super.handleAddContainers({
+      containers: { [id]: data }
+    })
+  }
+
+  handleAddContainers (payload) {
+    const updated = super.handleAddContainers(payload)
+    if (Object.keys(updated).length) {
+      mailboxActions.containersUpdated.defer(Object.keys(updated))
+    }
+    return updated
+  }
 
   handleUpdateContainers () {
     this.preventDefault()
@@ -277,23 +163,9 @@ class UserStore {
 
     WaveboxHTTP.fetchContainerUpdates(this.clientId, containerInfo)
       .then((res) => {
-        if (!res.containers || Object.keys(res.containers).length === 0) { return }
-
-        // Filter any nulls or undefineds from the server
-        const updatedContainers = {}
-        Object.keys(res.containers).forEach((id) => {
-          const data = res.containers[id]
-          if (data !== undefined && data !== null) {
-            const container = new Container(id, data)
-            updatedContainers[id] = container
-            this.containers.set(id, container)
-          }
-        })
-
-        // Save and update
-        containerPersistence.setJSONItems(updatedContainers)
-        mailboxActions.containersUpdated.defer(updatedContainers)
-        this.emitChange()
+        if (res.containers && Object.keys(res.containers).length) {
+          actions.addContainers(res.containers)
+        }
       })
   }
 
@@ -312,32 +184,6 @@ class UserStore {
   handleStopAutoUpdateContainers () {
     clearInterval(this.containerAutoUpdater)
     this.containerAutoUpdater = null
-  }
-
-  handleAddContainer ({ id, data }) {
-    const container = new Container(id, data)
-
-    // Check if we already have this or a newer version
-    if (this.containers.has(id)) {
-      if (this.containers.get(id).version >= container.version) {
-        this.preventDefault()
-        return
-      }
-    }
-
-    this.containers.set(id, container)
-    containerPersistence.setJSONItem(id, data)
-  }
-
-  /* **************************************************************************/
-  // Handlers: Account
-  /* **************************************************************************/
-
-  handleRemoteChangeAccount ({ account }) {
-    const now = new Date().getTime()
-    userPersistence.setJSONItem(USER_EPOCH, now)
-    userPersistence.setJSONItem(USER, account)
-    this.user = new User(account, now)
   }
 
   /* **************************************************************************/
@@ -396,4 +242,4 @@ class UserStore {
   }
 }
 
-export default alt.createStore(UserStore, 'UserStore')
+export default alt.createStore(UserStore, STORE_NAME)

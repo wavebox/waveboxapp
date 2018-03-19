@@ -75,11 +75,12 @@ class GmailApi {
   /**
   * Handles opening the compose ui and prefills relevant items
   * @param data: the data that was sent with the event
+  * @return true if compose was a success, false otherwise
   */
   static composeMessage (data) {
     // Open the compose window
     const composeButton = document.querySelector('.T-I.J-J5-Ji.T-I-KE.L3')
-    if (!composeButton) { return }
+    if (!composeButton) { return false }
 
     const downEvent = document.createEvent('MouseEvents')
     downEvent.initEvent('mousedown', true, false)
@@ -103,6 +104,8 @@ class GmailApi {
         }
       }, 1)
     }
+
+    return true
   }
 }
 

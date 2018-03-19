@@ -8,14 +8,8 @@ import BrowserSearch from './BrowserSearch'
 import BrowserToolbar from './BrowserToolbar'
 import { browserActions, browserStore } from 'stores/browser'
 import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
-import path from 'path'
-import {
-  WB_WINDOW_RELOAD_WEBVIEW,
-  WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW,
-  WB_WINDOW_NAVIGATE_WEBVIEW_BACK,
-  WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD
-} from 'shared/ipcEvents'
-import { ipcRenderer, remote } from 'electron'
+import Resolver from 'Runtime/Resolver'
+import { remote } from 'electron'
 
 const SEARCH_REF = 'search'
 const BROWSER_REF = 'browser'
@@ -36,22 +30,17 @@ export default class BrowserScene extends React.Component {
 
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
-    ipcRenderer.on(WB_WINDOW_RELOAD_WEBVIEW, this.handleIPCReload)
-    ipcRenderer.on(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, this.handleIPCOpenDevTools)
-    ipcRenderer.on(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, this.handleIPCNavigateBack)
-    ipcRenderer.on(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, this.handleIPCNavigateForward)
     if (process.platform === 'darwin') {
-      this.mouseNavigator = new MouseNavigationDarwin(this.handleIPCNavigateBack, this.handleIPCNavigateForward)
+      this.mouseNavigator = new MouseNavigationDarwin(
+        () => this.refs[BROWSER_REF].goBack(),
+        () => this.refs[BROWSER_REF].goForward()
+      )
       this.mouseNavigator.register()
     }
   }
 
   componentWillUnmount () {
     browserStore.unlisten(this.browserUpdated)
-    ipcRenderer.removeListener(WB_WINDOW_RELOAD_WEBVIEW, this.handleIPCReload)
-    ipcRenderer.removeListener(WB_WINDOW_OPEN_DEV_TOOLS_WEBVIEW, this.handleIPCOpenDevTools)
-    ipcRenderer.removeListener(WB_WINDOW_NAVIGATE_WEBVIEW_BACK, this.handleIPCNavigateBack)
-    ipcRenderer.removeListener(WB_WINDOW_NAVIGATE_WEBVIEW_FORWARD, this.handleIPCNavigateForward)
     if (process.platform === 'darwin') {
       this.mouseNavigator.unregister()
     }
@@ -66,8 +55,7 @@ export default class BrowserScene extends React.Component {
     return {
       isSearching: browserState.isSearching,
       searchTerm: browserState.searchTerm,
-      searchNextHash: browserState.searchNextHash,
-      zoomFactor: browserState.zoomFactor
+      searchNextHash: browserState.searchNextHash
     }
   })()
 
@@ -75,29 +63,8 @@ export default class BrowserScene extends React.Component {
     this.setState({
       isSearching: browserState.isSearching,
       searchTerm: browserState.searchTerm,
-      searchNextHash: browserState.searchNextHash,
-      zoomFactor: browserState.zoomFactor
+      searchNextHash: browserState.searchNextHash
     })
-  }
-
-  /* **************************************************************************/
-  // IPC Events
-  /* **************************************************************************/
-
-  handleIPCReload = () => {
-    this.refs[BROWSER_REF].reload()
-  }
-
-  handleIPCNavigateBack = () => {
-    this.refs[BROWSER_REF].goBack()
-  }
-
-  handleIPCNavigateForward = () => {
-    this.refs[BROWSER_REF].goForward()
-  }
-
-  handleIPCOpenDevTools = () => {
-    this.refs[BROWSER_REF].openDevTools()
   }
 
   /* **************************************************************************/
@@ -130,7 +97,7 @@ export default class BrowserScene extends React.Component {
   * Handles closing the guest requesting the ipc window closure
   * @param evt: the event that fired
   */
-  handleIPCGuestWindowClose = (evt) => {
+  handleClose = (evt) => {
     remote.getCurrentWindow().close()
   }
 
@@ -144,7 +111,12 @@ export default class BrowserScene extends React.Component {
 
   render () {
     const { url, partition } = this.props
-    const { zoomFactor, isSearching, searchTerm, searchNextHash } = this.state
+    const { isSearching, searchTerm, searchNextHash } = this.state
+
+    const preloadScripts = [
+      Resolver.guestPreload(),
+      Resolver.crExtensionApiPreload()
+    ].join('_wavebox_preload_split_')
 
     // The partition should be set on the will-attach-webview in the main thread
     // but this doesn't have the desired effect. Set it here for good-stead
@@ -163,11 +135,11 @@ export default class BrowserScene extends React.Component {
             plugins
             allowpopups
             className='ReactComponent-BrowserSceneWebView'
-            webpreferences='contextIsolation=yes, nativeWindowOpen=yes'
-            preload={path.join(__dirname, '../../guest/guest.js')}
-            zoomFactor={zoomFactor}
+            webpreferences='contextIsolation=yes, nativeWindowOpen=yes, sharedSiteInstances=yes, sandbox=yes'
+            preload={preloadScripts}
             searchTerm={isSearching ? searchTerm : undefined}
             searchId={searchNextHash}
+            close={this.handleClose}
             updateTargetUrl={(evt) => browserActions.setTargetUrl(evt.url)}
             pageTitleUpdated={(evt) => browserActions.setPageTitle(evt.title)}
             didStartLoading={(evt) => browserActions.startLoading()}

@@ -5,6 +5,7 @@ import { settingsActions } from 'stores/settings'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import CustomStylesEditingDialog from './CustomStylesEditingDialog'
+import DistributionConfig from 'Runtime/DistributionConfig'
 
 export default class AdvancedSettingsSection extends React.Component {
   /* **************************************************************************/
@@ -15,6 +16,7 @@ export default class AdvancedSettingsSection extends React.Component {
     showRestart: PropTypes.func.isRequired,
     app: PropTypes.object.isRequired,
     extension: PropTypes.object.isRequired,
+    tray: PropTypes.object.isRequired,
     ui: PropTypes.object.isRequired
   }
 
@@ -40,6 +42,7 @@ export default class AdvancedSettingsSection extends React.Component {
       app,
       extension,
       ui,
+      tray,
       style,
       ...passProps
     } = this.props
@@ -55,7 +58,7 @@ export default class AdvancedSettingsSection extends React.Component {
           labelPosition='right'
           onToggle={(evt, toggled) => {
             showRestart()
-            settingsActions.ignoreGPUBlacklist(toggled)
+            settingsActions.sub.app.ignoreGPUBlacklist(toggled)
           }} />
         <Toggle
           toggled={!app.disableHardwareAcceleration}
@@ -63,7 +66,23 @@ export default class AdvancedSettingsSection extends React.Component {
           labelPosition='right'
           onToggle={(evt, toggled) => {
             showRestart()
-            settingsActions.disableHardwareAcceleration(!toggled)
+            settingsActions.sub.app.disableHardwareAcceleration(!toggled)
+          }} />
+        <Toggle
+          toggled={app.isolateMailboxProcesses}
+          label='Isolate Account Processes (Requires Restart)'
+          labelPosition='right'
+          onToggle={(evt, toggled) => {
+            showRestart()
+            settingsActions.sub.app.setIsolateMailboxProcesses(toggled)
+          }} />
+        <Toggle
+          toggled={app.isolateExtensionProcesses}
+          label='Isolate Extension background Processes (Requires Restart)'
+          labelPosition='right'
+          onToggle={(evt, toggled) => {
+            showRestart()
+            settingsActions.sub.app.setIsolateExtensionProcesses(toggled)
           }} />
         <Toggle
           toggled={app.enableUseZoomForDSF}
@@ -71,7 +90,7 @@ export default class AdvancedSettingsSection extends React.Component {
           labelPosition='right'
           onToggle={(evt, toggled) => {
             showRestart()
-            settingsActions.enableUseZoomForDSF(toggled)
+            settingsActions.sub.app.enableUseZoomForDSF(toggled)
           }} />
         <Toggle
           toggled={!app.disableSmoothScrolling}
@@ -79,20 +98,52 @@ export default class AdvancedSettingsSection extends React.Component {
           labelPosition='right'
           onToggle={(evt, toggled) => {
             showRestart()
-            settingsActions.disableSmoothScrolling(!toggled)
+            settingsActions.sub.app.disableSmoothScrolling(!toggled)
           }} />
         <Toggle
           toggled={app.enableGeolocationApi}
           label='Geolocation API'
           labelPosition='right'
-          onToggle={(evt, toggled) => { settingsActions.setEnableGeolocationApi(toggled) }} />
+          onToggle={(evt, toggled) => { settingsActions.sub.app.setEnableGeolocationApi(toggled) }} />
+        {DistributionConfig.isSnapInstall ? undefined : (
+          <Toggle
+            toggled={app.enableAutofillService}
+            label='Autofill passwords on right click'
+            labelPosition='right'
+            onToggle={(evt, toggled) => { settingsActions.sub.app.setEnableAutofillServie(toggled) }} />
+        )}
         <Toggle
           toggled={extension.enableChromeExperimental}
           label='Experimental chrome extension support (Requires Restart)'
           labelPosition='right'
           onToggle={(evt, toggled) => {
             showRestart()
-            settingsActions.setExtensionEnableChromeExperimental(toggled)
+            settingsActions.sub.extension.setEnableChromeExperimental(toggled)
+          }} />
+        <Toggle
+          toggled={app.enableWindowOpeningEngine}
+          label={(
+            <div>
+              <div>Enable window opening engine (Recommended)</div>
+              {app.enableWindowOpeningEngine === false ? (
+                <div>
+                  <div style={styles.extraInfo}>All links will open in your default browser</div>
+                  <div style={styles.warningText}>
+                    <FontIcon className='material-icons' style={styles.warningTextIcon}>warning</FontIcon>
+                    You may experience broken links and blank windows with this setting
+                  </div>
+                </div>
+              ) : (
+                <div style={styles.extraInfo}>
+                  Some links will continue to open with Wavebox to give the best experience and the
+                  remaining links will open using your per-account configuration
+                </div>
+              )}
+            </div>
+          )}
+          labelPosition='right'
+          onToggle={(evt, toggled) => {
+            settingsActions.sub.app.setEnableWindowOpeningEngine(toggled)
           }} />
         <div style={{ marginTop: 8 }}>
           <RaisedButton
@@ -107,7 +158,7 @@ export default class AdvancedSettingsSection extends React.Component {
             onCancel={() => this.setState({ customCSSEditorOpen: false })}
             onSave={(evt, css) => {
               this.setState({ customCSSEditorOpen: false })
-              settingsActions.setCustomMainCSS(css)
+              settingsActions.sub.ui.setCustomMainCSS(css)
             }} />
         </div>
       </Paper>

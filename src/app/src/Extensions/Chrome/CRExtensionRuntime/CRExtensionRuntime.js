@@ -80,8 +80,7 @@ class CRExtensionRuntime {
   buildUIRuntimeData () {
     return {
       manifest: this.extension.manifest.cloneData(),
-      browserAction: this.browserAction.buildUIRuntimeData(),
-      contextMenus: this.contextMenus.buildUIRuntimeData()
+      browserAction: this.browserAction.buildUIRuntimeData()
     }
   }
 

@@ -58,9 +58,7 @@ export default class ProcessMonitor extends React.Component {
   * @return jsx
   */
   renderDescription (metric) {
-    if (metric.pid === process.pid) {
-      return 'Task Monitor'
-    } else if (metric.webContentsInfo && metric.webContentsInfo.length) {
+    if (metric.webContentsInfo && metric.webContentsInfo.length) {
       if (metric.webContentsInfo.length === 1) {
         const info = metric.webContentsInfo[0]
         return info.description || this.sanitizeDescriptionUrl(info.url) || 'about:blank'

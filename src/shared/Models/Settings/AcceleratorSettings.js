@@ -7,6 +7,16 @@ class AcceleratorSettings extends Model {
 
   // Global
   get globalToggleAppDefault () { return '' }
+  get globalShowAppMailbox0Default () { return '' }
+  get globalShowAppMailbox1Default () { return '' }
+  get globalShowAppMailbox2Default () { return '' }
+  get globalShowAppMailbox3Default () { return '' }
+  get globalShowAppMailbox4Default () { return '' }
+  get globalShowAppMailbox5Default () { return '' }
+  get globalShowAppMailbox6Default () { return '' }
+  get globalShowAppMailbox7Default () { return '' }
+  get globalShowAppMailbox8Default () { return '' }
+  get globalShowAppMailbox9Default () { return '' }
 
   // Application
   get preferencesDefault () { return 'CmdOrCtrl+,' }
@@ -24,6 +34,7 @@ class AcceleratorSettings extends Model {
   get pasteDefault () { return 'CmdOrCtrl+V' }
   get pasteAndMatchStyleDefault () { return 'CmdOrCtrl+Shift+V' }
   get selectAllDefault () { return 'CmdOrCtrl+A' }
+  get copyCurrentTabUrlDefault () { return undefined }
   get findDefault () { return 'CmdOrCtrl+F' }
   get findNextDefault () { return 'CmdOrCtrl+G' }
 
@@ -50,6 +61,8 @@ class AcceleratorSettings extends Model {
   get servicePreviousDefault () { return 'CmdOrCtrl+Alt+<' }
   get serviceNextDefault () { return 'CmdOrCtrl+Alt+>' }
   get serviceIndexDefault () { return process.platform === 'darwin' ? 'Command+Alt+Number' : undefined }
+  get nextTabDefault () { return process.platform === 'darwin' ? 'Command+Alt+Right' : 'Ctrl+Tab' }
+  get prevTabDefault () { return process.platform === 'darwin' ? 'Command+Alt+Left' : 'Ctrl+Shift+Tab' }
 
   /* ****************************************************************************/
   // Config
@@ -57,6 +70,16 @@ class AcceleratorSettings extends Model {
 
   // Global
   get globalToggleApp () { return this._value_('globalToggleApp', this.globalToggleAppDefault) }
+  get globalShowAppMailbox0 () { return this._value_('globalShowAppMailbox0', this.globalShowAppMailbox0Default) }
+  get globalShowAppMailbox1 () { return this._value_('globalShowAppMailbox1', this.globalShowAppMailbox1Default) }
+  get globalShowAppMailbox2 () { return this._value_('globalShowAppMailbox2', this.globalShowAppMailbox2Default) }
+  get globalShowAppMailbox3 () { return this._value_('globalShowAppMailbox3', this.globalShowAppMailbox3Default) }
+  get globalShowAppMailbox4 () { return this._value_('globalShowAppMailbox4', this.globalShowAppMailbox4Default) }
+  get globalShowAppMailbox5 () { return this._value_('globalShowAppMailbox5', this.globalShowAppMailbox5Default) }
+  get globalShowAppMailbox6 () { return this._value_('globalShowAppMailbox6', this.globalShowAppMailbox6Default) }
+  get globalShowAppMailbox7 () { return this._value_('globalShowAppMailbox7', this.globalShowAppMailbox7Default) }
+  get globalShowAppMailbox8 () { return this._value_('globalShowAppMailbox8', this.globalShowAppMailbox8Default) }
+  get globalShowAppMailbox9 () { return this._value_('globalShowAppMailbox9', this.globalShowAppMailbox9Default) }
 
   // Application
   get preferences () { return this._value_('preferences', this.preferencesDefault) }
@@ -74,6 +97,7 @@ class AcceleratorSettings extends Model {
   get paste () { return this._value_('paste', this.pasteDefault) }
   get pasteAndMatchStyle () { return this._value_('pasteAndMatchStyle', this.pasteAndMatchStyleDefault) }
   get selectAll () { return this._value_('selectAll', this.selectAllDefault) }
+  get copyCurrentTabUrl () { return this._value_('copyCurrentTabUrl', this.copyCurrentTabUrlDefault) }
   get find () { return this._value_('find', this.findDefault) }
   get findNext () { return this._value_('findNext', this.findNextDefault) }
 
@@ -100,6 +124,8 @@ class AcceleratorSettings extends Model {
   get servicePrevious () { return this._value_('servicePrevious', this.servicePreviousDefault) }
   get serviceNext () { return this._value_('serviceNext', this.serviceNextDefault) }
   get serviceIndex () { return this._value_('serviceIndex', this.serviceIndexDefault) }
+  get nextTab () { return this._value_('nextTab', this.nextTabDefault) }
+  get prevTab () { return this._value_('prevTab', this.prevTabDefault) }
 }
 
 module.exports = AcceleratorSettings

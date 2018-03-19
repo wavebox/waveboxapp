@@ -6,15 +6,16 @@
   "repository": "https://github.com/wavebox/waveboxapp",
   "description": "Guest code for Wavebox",
   "dependencies": {
-    "appdirectory": "0.1.0",
     "escape-html": "1.0.3",
-    "fs-extra": "5.0.0",
+    "hunspell-asm": "1.0.2",
+    "lru-cache": "4.1.2",
     "url-pattern": "1.0.3",
-    "uuid": "3.1.0"
+    "uuid": "3.2.1"
   },
   "devDependencies": {
-    "standard": "10.0.3",
-    "babel-eslint": "8.0.3"
+    "standard": "11.0.0",
+    "babel-eslint": "8.2.2",
+    "babel-plugin-transform-class-properties": "6.24.1"
   },
   "standard": {
     "parser": "babel-eslint"

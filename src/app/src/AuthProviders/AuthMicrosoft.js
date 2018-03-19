@@ -1,8 +1,9 @@
-import { ipcMain, BrowserWindow } from 'electron'
+import { ipcMain } from 'electron'
 import { WB_AUTH_MICROSOFT, WB_AUTH_MICROSOFT_COMPLETE, WB_AUTH_MICROSOFT_ERROR } from 'shared/ipcEvents'
+import AuthWindow from 'Windows/AuthWindow'
 import url from 'url'
 import querystring from 'querystring'
-import userStore from 'stores/userStore'
+import { userStore } from 'stores/user'
 import pkg from 'package.json'
 
 class AuthMicrosoft {
@@ -50,9 +51,10 @@ class AuthMicrosoft {
   * @return the url that can be used
   */
   generatePushServiceAuthenticationURL (credentials) {
+    const userState = userStore.getState()
     const query = querystring.stringify({
-      client_id: userStore.clientId,
-      client_token: userStore.clientToken,
+      client_id: userState.clientId,
+      client_token: userState.clientToken,
       client_version: pkg.version
     })
     return `${credentials.MICROSOFT_PUSH_SERVICE_AUTH_URL}?${query}`
@@ -67,12 +69,12 @@ class AuthMicrosoft {
   */
   promptUserToGetAuthorizationCode (credentials, partitionId, additionalPermissions) {
     return new Promise((resolve, reject) => {
-      const oauthWin = new BrowserWindow({
+      const waveboxOauthWin = new AuthWindow()
+      waveboxOauthWin.create(this.generatePushServiceAuthenticationURL(credentials), {
         useContentSize: true,
         center: true,
         show: true,
         resizable: false,
-        alwaysOnTop: true,
         standardWindow: true,
         autoHideMenuBar: true,
         title: 'Microsoft',
@@ -81,13 +83,20 @@ class AuthMicrosoft {
           nodeIntegration: false,
           contextIsolation: true,
           partition: partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
+          // Don't use the default brower behaviour as the returned urn:// url has some funny
+          // behaviour on windows and this exacerbates it
+          // sandbox: true,
+          // nativeWindowOpen: true,
+          // sharedSiteInstances: true,
         }
       })
+      const oauthWin = waveboxOauthWin.window
 
-      oauthWin.loadURL(this.generatePushServiceAuthenticationURL(credentials))
-
+      let userClose = true
       oauthWin.on('closed', () => {
-        reject(new Error('User closed the window'))
+        if (userClose) {
+          reject(new Error('User closed the window'))
+        }
       })
 
       // Listen for changes
@@ -97,7 +106,7 @@ class AuthMicrosoft {
           oauthWin.loadURL(this.generateMicrosoftAuthenticationURL(credentials, additionalPermissions))
         } else if (nextUrl.indexOf(credentials.MICROSOFT_PUSH_SERVICE_FAILURE_URL) === 0) {
           evt.preventDefault()
-          oauthWin.removeAllListeners('closed')
+          userClose = false
           oauthWin.close()
           const purl = url.parse(nextUrl, true)
           reject(new Error(purl.query.error))
@@ -105,11 +114,11 @@ class AuthMicrosoft {
           evt.preventDefault()
           const purl = url.parse(nextUrl, true)
           if (purl.query.code) {
-            oauthWin.removeAllListeners('closed')
+            userClose = false
             oauthWin.close()
             resolve(purl.query.code)
           } else if (purl.query.error) {
-            oauthWin.removeAllListeners('closed')
+            userClose = false
             oauthWin.close()
 
             if (purl.query.error === 'access_denied') {

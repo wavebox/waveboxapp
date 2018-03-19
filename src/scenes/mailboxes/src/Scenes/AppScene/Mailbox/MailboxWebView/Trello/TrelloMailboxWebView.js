@@ -4,7 +4,6 @@ import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import { mailboxDispatch } from 'stores/mailbox'
 import { trelloActions } from 'stores/trello'
-import Resolver from 'Runtime/Resolver'
 
 const REF = 'mailbox_tab'
 
@@ -65,7 +64,6 @@ export default class TrelloMailboxWebView extends React.Component {
     return (
       <MailboxWebViewHibernator
         ref={REF}
-        preload={Resolver.guestPreload()}
         mailboxId={mailboxId}
         serviceType={CoreService.SERVICE_TYPES.DEFAULT} />
     )

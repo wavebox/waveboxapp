@@ -68,41 +68,41 @@ export default class UISettingsSection extends React.Component {
             toggled={ui.showAppBadge}
             label='Show app unread badge'
             labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.setShowAppBadge(toggled)} />
+            onToggle={(evt, toggled) => settingsActions.sub.ui.setShowAppBadge(toggled)} />
           {process.platform === 'darwin' ? (
             <Toggle
               toggled={os.openLinksInBackground}
               label='Open links in background'
               labelPosition='right'
-              onToggle={(evt, toggled) => settingsActions.setOpenLinksInBackground(toggled)} />
-            ) : undefined}
+              onToggle={(evt, toggled) => settingsActions.sub.os.setOpenLinksInBackground(toggled)} />
+          ) : undefined}
           <Toggle
             toggled={ui.openHidden}
             label='Always start minimized'
             labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.setOpenHidden(toggled)} />
+            onToggle={(evt, toggled) => settingsActions.sub.ui.setOpenHidden(toggled)} />
           <Toggle
             toggled={ui.showSleepableServiceIndicator}
             label='Show sleeping account icons in grey'
             labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.setShowSleepableServiceIndicator(toggled)} />
+            onToggle={(evt, toggled) => settingsActions.sub.ui.setShowSleepableServiceIndicator(toggled)} />
           <SelectField
             floatingLabelText='Account tooltips'
             value={ui.accountTooltipMode}
             fullWidth
-            onChange={(evt, index, value) => settingsActions.setAccountTooltipMode(value)}>
+            onChange={(evt, index, value) => settingsActions.sub.ui.setAccountTooltipMode(value)}>
             {Object.keys(UISettings.ACCOUNT_TOOLTIP_MODES).map((value) => {
               return (<MenuItem key={value} value={value} {...ACCOUNT_TOOLTIP_MODE_LABELS[value]} />)
             })}
           </SelectField>
           {process.platform === 'darwin' ? (
             <SelectField
-              floatingLabelText='Translucent window backgrounds (experimental) (Requires Restart)'
+              floatingLabelText='Translucent window backgrounds (Requires Restart)'
               value={ui.vibrancyMode}
               fullWidth
               onChange={(evt, index, value) => {
                 showRestart()
-                settingsActions.setVibrancyMode(value)
+                settingsActions.sub.ui.setVibrancyMode(value)
               }}>
               {Object.keys(UISettings.VIBRANCY_MODES).map((value) => {
                 return (
@@ -125,17 +125,17 @@ export default class UISettingsSection extends React.Component {
               </span>
             )}
             labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.setEnableSidebar(toggled)} />
+            onToggle={(evt, toggled) => settingsActions.sub.ui.setEnableSidebar(toggled)} />
           <Toggle
             toggled={ui.showSidebarSupport}
             label='Show Support in Sidebar'
             labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.setShowSidebarSupport(toggled)} />
+            onToggle={(evt, toggled) => settingsActions.sub.ui.setShowSidebarSupport(toggled)} />
           <SelectField
             floatingLabelText={`Show What's New in Sidebar`}
             value={ui.showSidebarNewsfeed}
             fullWidth
-            onChange={(evt, index, value) => { settingsActions.setShowSidebarNewsfeed(value) }}>
+            onChange={(evt, index, value) => { settingsActions.sub.ui.setShowSidebarNewsfeed(value) }}>
             {Object.keys(UISettings.SIDEBAR_NEWS_MODES).map((value) => {
               return (
                 <MenuItem key={value} value={value} primaryText={SIDEBAR_NEWS_MODE_LABELS[value]} />
@@ -155,7 +155,7 @@ export default class UISettingsSection extends React.Component {
             )}
             onToggle={(evt, toggled) => {
               showRestart()
-              settingsActions.setShowTitlebar(toggled)
+              settingsActions.sub.ui.setShowTitlebar(toggled)
             }} />
           {process.platform !== 'darwin' ? (
             <Toggle
@@ -169,18 +169,18 @@ export default class UISettingsSection extends React.Component {
                   })}
                 </span>
               )}
-              onToggle={(evt, toggled) => settingsActions.setShowAppMenu(toggled)} />
+              onToggle={(evt, toggled) => settingsActions.sub.ui.setShowAppMenu(toggled)} />
           ) : undefined}
           <Toggle
             toggled={ui.showTitlebarCount}
             label='Show titlebar unread count'
             labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.setShowTitlebarUnreadCount(toggled)} />
+            onToggle={(evt, toggled) => settingsActions.sub.ui.setShowTitlebarUnreadCount(toggled)} />
           <Toggle
             toggled={ui.showTitlebarAccount}
             label='Show titlebar active account'
             labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.setShowTitlebarAccount(toggled)} />
+            onToggle={(evt, toggled) => settingsActions.sub.ui.setShowTitlebarAccount(toggled)} />
           {extension.enableChromeExperimental ? (
             <div>
               <hr style={styles.subsectionRule} />
@@ -189,13 +189,13 @@ export default class UISettingsSection extends React.Component {
                 toggled={extension.showBrowserActionsInToolbar}
                 label='Show extensions in toolbar'
                 labelPosition='right'
-                onToggle={(evt, toggled) => settingsActions.setExtensionShowBrowserActionsInToolbar(toggled)} />
+                onToggle={(evt, toggled) => settingsActions.sub.extension.setShowBrowserActionsInToolbar(toggled)} />
               <SelectField
                 floatingLabelText='Extension position in toolbar'
                 value={extension.toolbarBrowserActionLayout}
                 disabled={!extension.showBrowserActionsInToolbar}
                 fullWidth
-                onChange={(evt, index, value) => { settingsActions.setExtensionToolbarBrowserActionLayout(value) }}>
+                onChange={(evt, index, value) => { settingsActions.sub.extension.setToolbarBrowserActionLayout(value) }}>
                 {Object.keys(ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT).map((value) => {
                   return (
                     <MenuItem

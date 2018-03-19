@@ -2,7 +2,7 @@ import BaseAdaptor from './BaseAdaptor'
 import { ipcRenderer } from 'electron'
 import { WCRPC_DID_GET_REDIRECT_REQUEST } from 'shared/webContentsRPC'
 
-class AsanaAdaptor extends BaseAdaptor {
+class TwitterAdaptor extends BaseAdaptor {
   /* **************************************************************************/
   // Class properties
   /* **************************************************************************/
@@ -30,4 +30,4 @@ class AsanaAdaptor extends BaseAdaptor {
   }
 }
 
-export default AsanaAdaptor
+export default TwitterAdaptor

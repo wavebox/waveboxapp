@@ -11,6 +11,7 @@ import * as Colors from 'material-ui/styles/colors'
 import uuid from 'uuid'
 import Resolver from 'Runtime/Resolver'
 import UISettings from 'shared/Models/Settings/UISettings'
+import classnames from 'classnames'
 
 const styles = {
   /**
@@ -110,14 +111,13 @@ export default class SidelistItemMailboxService extends React.Component {
   generateState (props = this.props) {
     const { mailboxId, serviceType } = props
     const mailboxState = mailboxStore.getState()
-    const userState = userStore.getState()
     const mailbox = mailboxState.getMailbox(mailboxId)
     return {
       mailbox: mailbox,
       service: mailbox ? mailbox.serviceForType(serviceType) : null,
       isActive: mailboxState.isActive(mailboxId, serviceType),
       isSleeping: mailboxState.isSleeping(mailboxId, serviceType),
-      isRestricted: mailboxState.isMailboxRestricted(mailboxId, userState.user)
+      isRestricted: mailboxState.isMailboxRestricted(mailboxId)
     }
   }
 
@@ -142,7 +142,7 @@ export default class SidelistItemMailboxService extends React.Component {
   userChanged = (userState) => {
     const mailboxState = mailboxStore.getState()
     this.setState({
-      isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId, userState.user)
+      isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId)
     })
   }
 
@@ -170,6 +170,7 @@ export default class SidelistItemMailboxService extends React.Component {
       serviceType,
       onOpenService,
       style,
+      className,
       ...passProps
     } = this.props
     const {
@@ -212,6 +213,7 @@ export default class SidelistItemMailboxService extends React.Component {
           size={35}
           backgroundColor='white'
           draggable={false}
+          className={classnames('WB-ServiceIcon', `WB-ServiceIcon-${mailbox.id}_${service.type}`, className)}
           style={{
             ...styles.avatar,
             borderColor: borderColor,

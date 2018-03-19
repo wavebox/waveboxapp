@@ -11,11 +11,12 @@
     "react": "16.2.0",
     "react-addons-shallow-compare": "15.6.2",
     "react-dom": "16.2.0",
-    "prop-types": "15.6.0"
+    "prop-types": "15.6.1"
   },
   "devDependencies": {
-    "standard": "10.0.3",
-    "babel-eslint": "8.0.3"
+    "standard": "11.0.0",
+    "babel-eslint": "8.2.2",
+    "babel-plugin-transform-class-properties": "6.24.1"
   },
   "standard": {
     "parser": "babel-eslint"

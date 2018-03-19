@@ -60,6 +60,7 @@ class SlackMailbox extends CoreMailbox {
 
   get auth () { return this._value_('auth', {}) }
   get hasAuth () { return Object.keys(this.auth).length !== 0 }
+  get supportsAuth () { return true }
   get authToken () { return this.auth.access_token }
   get authTeamId () { return this.auth.team_id }
   get authTeamName () { return this.auth.team_name }

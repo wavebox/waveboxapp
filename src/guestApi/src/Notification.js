@@ -1,7 +1,8 @@
+'use strict'
 /* global WB_API_KEY */
 /* global WB_CONFIG */
 
-(function () {
+;(function () {
   const openNotifications = []
   const permissionRequests = new Map()
   let idAcc = 0
