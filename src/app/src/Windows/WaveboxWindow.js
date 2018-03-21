@@ -143,6 +143,7 @@ class WaveboxWindow extends EventEmitter {
     this.window.on('closed', (evt) => this.destroy(evt))
     this.window.on('focus', this._handleWindowFocused)
     this.window.on('blur', this._handleWindowBlurred)
+    this.window.on('minimize', this._handleWindowMinimize)
     this.bindMouseNavigation()
 
     // Restore window position
@@ -283,6 +284,19 @@ class WaveboxWindow extends EventEmitter {
     this[privLastTimeInFocus] = new Date().getTime()
     this.window.webContents.send(WB_WINDOW_BLUR)
     evtMain.emit(evtMain.WB_WINDOW_BLURRED, {}, this.window.id)
+  }
+
+  /**
+  * Handles the window minimizing
+  * @param evt: the event that fired
+  */
+  _handleWindowMinimize = (evt) => {
+    if (process.platform === 'win32') {
+      if (settingsStore.getState().ui.hideMainWindowFromWin32TaskbarOnMinimize) {
+        this.preventDefault()
+        this.window.hide()
+      }
+    }
   }
 
   /* ****************************************************************************/

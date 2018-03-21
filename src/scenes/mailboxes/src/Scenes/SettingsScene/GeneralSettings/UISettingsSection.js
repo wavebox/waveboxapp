@@ -208,6 +208,16 @@ export default class UISettingsSection extends React.Component {
             </div>
           ) : undefined}
         </Paper>
+        {process.platform === 'win32' ? (
+          <Paper zDepth={1} style={styles.paper}>
+            <h1 style={styles.subheading}>Main Window</h1>
+            <Toggle
+              toggled={ui.hideMainWindowFromWin32TaskbarOnMinimize}
+              label='Hide main window from taskbar on minimize'
+              labelPosition='right'
+              onToggle={(evt, toggled) => settingsActions.sub.ui.setHideMainWindowFromWin32TaskbarOnMinimize(toggled)} />
+          </Paper>
+        ) : undefined}
       </div>
     )
   }
