@@ -2,6 +2,7 @@ import { webFrame, ipcRenderer } from 'electron'
 import SpellcheckProvider from 'shared/SpellcheckProvider/SpellcheckProvider'
 import DualSpellcheckProvider from 'shared/SpellcheckProvider/DualSpellcheckProvider'
 import DictionaryProviderImpl from './DictionaryProviderImpl'
+import settingsStore from 'stores/settingStore'
 import LRU from 'lru-cache'
 import {
   WB_SPELLCHECKER_CONNECT,
@@ -24,6 +25,7 @@ const privHasStartedInit = Symbol('privHasStartedInit')
 const privWebFrameLanguage = Symbol('privWebFrameLanguage')
 const privRemoteLRU = Symbol('privRemoteLRU')
 const privRebindThrottle = Symbol('privRebindThrottle')
+const privInProcessSpellchecking = Symbol('privInProcessSpellchecking')
 
 class Spellchecker {
   /* **************************************************************************/
@@ -37,6 +39,7 @@ class Spellchecker {
     this[privProvider] = undefined
     this[privRemoteLRU] = new LRU({ max: 512, maxAge: 10000 }) // Heavily cache this
     this[privRebindThrottle] = null
+    this[privInProcessSpellchecking] = settingsStore.language.inProcessSpellchecking // Store locally for performance
 
     ipcRenderer.on(WB_SPELLCHECKER_CONFIGURE, this._handleRuntimeConfigure)
     ipcRenderer.on(WB_SPELLCHECKER_INIT_CONFIGURE, this._handleRuntimeInitConfigure)
@@ -141,14 +144,16 @@ class Spellchecker {
     if (this.isRunningLocally && !this[privProvider].isLoading) {
       return this[privProvider].isCorrect(word, true)
     } else {
-      if (!this.hasStartedInit) {
-        if (this[privRemoteCallCount] > MAX_REMOTE_CALL_COUNT) {
-          this[privHasStartedInit] = true
-          ipcRenderer.send(WB_SPELLCHECKER_INIT, {})
+      if (this[privInProcessSpellchecking]) {
+        if (!this.hasStartedInit) {
+          if (this[privRemoteCallCount] > MAX_REMOTE_CALL_COUNT) {
+            this[privHasStartedInit] = true
+            ipcRenderer.send(WB_SPELLCHECKER_INIT, {})
+          }
         }
+        this[privRemoteCallCount] = this[privRemoteCallCount] + 1
       }
 
-      this[privRemoteCallCount] = this[privRemoteCallCount] + 1
       if (this[privRemoteLRU]) {
         if (this[privRemoteLRU].peek(word) !== undefined) {
           return this[privRemoteLRU].get(word)

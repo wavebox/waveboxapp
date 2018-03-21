@@ -18,6 +18,7 @@ class LanguageSettings extends Model {
   /* ****************************************************************************/
 
   get spellcheckerEnabled () { return this._value_('spellcheckerEnabled', true) }
+  get inProcessSpellchecking () { return this._value_('inProcessSpellchecking', true) }
   get spellcheckerLanguage () { return this._value_('spellcheckerLanguage', LanguageSettings.defaultSpellcheckerLanguage) }
   get hasSecondarySpellcheckerLanguage () { return this.secondarySpellcheckerLanguage === null }
   get secondarySpellcheckerLanguage () { return this._value_('secondarySpellcheckerLanguage', null) }

@@ -25,6 +25,13 @@ class LanguageSettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param inProcess: true to use in process spellchecking
+  */
+  setInProcessSpellchecking (inProcess) {
+    this.dispatchUpdate('inProcessSpellchecking', inProcess)
+  }
+
+  /**
   * @param lang: the language to set to
   */
   setSpellcheckerLanguage (lang) {
