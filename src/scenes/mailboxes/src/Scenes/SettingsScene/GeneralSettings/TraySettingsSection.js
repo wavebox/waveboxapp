@@ -10,6 +10,7 @@ import {
   GTK_UPDATE_MODES,
   POPOUT_POSITIONS,
   SUPPORTS_DOCK_HIDING,
+  SUPPORTS_TASKBAR_HIDING,
   IS_GTK_PLATFORM,
   CTX_MENU_ONLY_SUPPORT,
   SUPPORTS_CLICK_ACTIONS,
@@ -97,6 +98,14 @@ export default class TraySettingsSection extends React.Component {
             labelPosition='right'
             disabled={!tray.show}
             onToggle={(evt, toggled) => settingsActions.sub.tray.setRemoveFromDockDarwin(toggled)} />
+        ) : undefined}
+        {SUPPORTS_TASKBAR_HIDING ? (
+          <Toggle
+            toggled={tray.removeFromTaskbarWin32}
+            label='Remove from taskbar when main window is minimized'
+            labelPosition='right'
+            disabled={!tray.show}
+            onToggle={(evt, toggled) => settingsActions.sub.tray.setRemoveFromTaskbarWin32(toggled)} />
         ) : undefined}
         {IS_GTK_PLATFORM ? (
           <SelectField

@@ -36,6 +36,7 @@ class TraySettings extends Model {
   static get GTK_UPDATE_MODES () { return GTK_UPDATE_MODES }
   static get POPOUT_POSITIONS () { return POPOUT_POSITIONS }
   static get SUPPORTS_DOCK_HIDING () { return process.platform === 'darwin' }
+  static get SUPPORTS_TASKBAR_HIDING () { return process.platform === 'win32' }
   static get IS_GTK_PLATFORM () { return process.platform === 'linux' }
   static get CTX_MENU_ONLY_SUPPORT () { return process.platform === 'linux' }
 
@@ -64,6 +65,7 @@ class TraySettings extends Model {
   /* **************************************************************************/
 
   get removeFromDockDarwin () { return this._value_('removeFromDockDarwin', false) }
+  get removeFromTaskbarWin32 () { return this._value_('removeFromTaskbarWin32', false) }
   get clickAction () {
     if (process.platform === 'win32') {
       return this._value_('clickAction', CLICK_ACTIONS.SHOW_APP)

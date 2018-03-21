@@ -32,6 +32,13 @@ class TraySettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param remove: true to remove the app from the taskbar on minimize
+  */
+  setRemoveFromTaskbarWin32 (remove) {
+    this.dispatchUpdate('removeFromTaskbarWin32', remove)
+  }
+
+  /**
   * @param show: true to show the unread count in the tray
   */
   setShowTrayUnreadCount (show) {

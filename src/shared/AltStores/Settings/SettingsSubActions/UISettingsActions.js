@@ -18,13 +18,6 @@ class UISettingsActions extends CoreSettingsActions {
   /* **************************************************************************/
 
   /**
-  * @param hide: true to hide the app when minimized
-  */
-  setHideMainWindowFromWin32TaskbarOnMinimize (hide) {
-    this.dispatchUpdate('hideMainWindowFromWin32TaskbarOnMinimize', hide)
-  }
-
-  /**
   * @param show: true to show the titlebar, false otherwise
   */
   setShowTitlebar (show) {

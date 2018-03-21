@@ -37,12 +37,6 @@ class UISettings extends Model {
   static get VIBRANCY_MODES () { return VIBRANCY_MODES }
 
   /* **************************************************************************/
-  // Window behaviour
-  /* **************************************************************************/
-
-  get hideMainWindowFromWin32TaskbarOnMinimize () { return this._value_('hideMainWindowFromWin32TaskbarOnMinimize', false) }
-
-  /* **************************************************************************/
   // Titlebar
   /* **************************************************************************/
 
