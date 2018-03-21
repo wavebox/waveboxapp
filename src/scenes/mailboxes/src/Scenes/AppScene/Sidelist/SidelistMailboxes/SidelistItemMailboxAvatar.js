@@ -203,11 +203,27 @@ export default class SidelistItemMalboxAvatar extends React.Component {
     let showSleeping
     let displayMailboxOverview
     if (mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR) {
-      borderColor = isDefaultServiceActive || isHovering ? mailbox.color : Color(mailbox.color).lighten(0.4).rgb().string()
+      try {
+        if (isDefaultServiceActive || isHovering) {
+          borderColor = mailbox.color
+        } else {
+          borderColor = Color(mailbox.color).lighten(0.4).rgb().string()
+        }
+      } catch (ex) {
+        borderColor = mailbox.color
+      }
       showSleeping = isDefaultServiceSleeping && mailbox.showSleepableServiceIndicator && globalShowSleepableServiceIndicator
       displayMailboxOverview = userHasServices && mailbox.collapseSidebarServices && !isMailboxActive && mailbox.hasAdditionalServices
     } else {
-      borderColor = isMailboxActive || isHovering ? mailbox.color : Color(mailbox.color).lighten(0.4).rgb().string()
+      try {
+        if (isMailboxActive || isHovering) {
+          borderColor = mailbox.color
+        } else {
+          borderColor = Color(mailbox.color).lighten(0.4).rgb().string()
+        }
+      } catch (ex) {
+        borderColor = mailbox.color
+      }
       showSleeping = isAllServicesSleeping && mailbox.showSleepableServiceIndicator && globalShowSleepableServiceIndicator
       displayMailboxOverview = userHasServices && mailbox.hasAdditionalServices
     }

@@ -15,6 +15,7 @@ export default class AdvancedSettingsSection extends React.Component {
   static propTypes = {
     showRestart: PropTypes.func.isRequired,
     app: PropTypes.object.isRequired,
+    language: PropTypes.object.isRequired,
     extension: PropTypes.object.isRequired,
     tray: PropTypes.object.isRequired,
     ui: PropTypes.object.isRequired
@@ -41,6 +42,7 @@ export default class AdvancedSettingsSection extends React.Component {
       showRestart,
       app,
       extension,
+      language,
       ui,
       tray,
       style,
@@ -121,10 +123,18 @@ export default class AdvancedSettingsSection extends React.Component {
             settingsActions.sub.extension.setEnableChromeExperimental(toggled)
           }} />
         <Toggle
+          toggled={language.inProcessSpellchecking}
+          label='In process spellchecking (Requires Restart)'
+          labelPosition='right'
+          onToggle={(evt, toggled) => {
+            showRestart()
+            settingsActions.sub.language.setInProcessSpellchecking(toggled)
+          }} />
+        <Toggle
           toggled={app.enableWindowOpeningEngine}
           label={(
             <div>
-              <div>Enable window opening engine (Recommended)</div>
+              <div>Window opening engine (Recommended)</div>
               {app.enableWindowOpeningEngine === false ? (
                 <div>
                   <div style={styles.extraInfo}>All links will open in your default browser</div>

@@ -121,19 +121,25 @@ class SpellcheckService {
   * @param evt: the event that fired
   */
   _handleIPCInit = (evt) => {
-    const languageSettings = this[privState].language
-    if (languageSettings.spellcheckerEnabled) {
-      evt.sender.send(WB_SPELLCHECKER_INIT_CONFIGURE, {
-        ...this._buildIPCConfigurePayload(languageSettings),
-        primaryDictionary: this[privProvider].primary.dictionaryProvider.getCached(),
-        secondaryDictionary: this[privProvider].secondary.dictionaryProvider.getCached()
-      })
-    } else {
-      evt.sender.send(WB_SPELLCHECKER_INIT_CONFIGURE, {
-        language: null,
-        secondaryLanguage: null
-      })
-    }
+    const senderId = evt.sender.id
+    setTimeout(() => { // Wait a small amount of time to reduce jank when the user is typing
+      const target = webContents.fromId(senderId)
+      if (target.isDestroyed()) { return }
+
+      const languageSettings = this[privState].language
+      if (languageSettings.spellcheckerEnabled) {
+        target.send(WB_SPELLCHECKER_INIT_CONFIGURE, {
+          ...this._buildIPCConfigurePayload(languageSettings),
+          primaryDictionary: this[privProvider].primary.dictionaryProvider.getCached(),
+          secondaryDictionary: this[privProvider].secondary.dictionaryProvider.getCached()
+        })
+      } else {
+        target.send(WB_SPELLCHECKER_INIT_CONFIGURE, {
+          language: null,
+          secondaryLanguage: null
+        })
+      }
+    }, 500)
   }
 
   /**

@@ -31,7 +31,8 @@ import {
   WB_FOCUS_MAILBOXES_WINDOW
 } from 'shared/ipcEvents'
 import {
-  UISettings
+  UISettings,
+  TraySettings
 } from 'shared/Models/Settings'
 import Resolver from 'Runtime/Resolver'
 import MailboxesWindowTabManager from './MailboxesWindowTabManager'
@@ -139,6 +140,7 @@ class MailboxesWindow extends WaveboxWindow {
     this.window.once('ready-to-show', () => {
       if (!hidden) { this.window.show() }
     })
+    this.window.on('minimize', this._handleWindowMinimize)
     this.tabManager = new MailboxesWindowTabManager(this.window.webContents.id)
     this.behaviour = new MailboxesWindowBehaviour(this.window.webContents.id, this.tabManager)
 
@@ -178,6 +180,24 @@ class MailboxesWindow extends WaveboxWindow {
 
     singletonAttached = undefined
     super.destroy(evt)
+  }
+
+  /* ****************************************************************************/
+  // Window events
+  /* ****************************************************************************/
+
+  /**
+  * Handles the window minimizing
+  * @param evt: the event that fired
+  */
+  _handleWindowMinimize = (evt) => {
+    if (TraySettings.SUPPORTS_TASKBAR_HIDING) {
+      const settingsState = settingsStore.getState()
+      if (settingsState.tray.show && settingsState.tray.removeFromTaskbarWin32) {
+        this.window.hide()
+        this.preventDefault()
+      }
+    }
   }
 
   /* ****************************************************************************/
