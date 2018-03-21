@@ -29,9 +29,13 @@ class MailboxReducer {
   * @param col: the color as either a hex string or object that contains hex key
   */
   static setColor (mailbox, col) {
-    return mailbox.changeData({
-      color: typeof (col) === 'object' ? col.rgbaStr : col
-    })
+    if (typeof (col) === 'object') {
+      return mailbox.changeData({ color: col.rgbaStr })
+    } else if (typeof (col) === 'string') {
+      return mailbox.changeData({ color: col.trim() })
+    } else {
+      return undefined
+    }
   }
 
   /**

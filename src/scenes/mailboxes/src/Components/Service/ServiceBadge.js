@@ -46,7 +46,13 @@ export default class Servicebadge extends React.Component {
       children,
       ...passProps
     } = this.props
-    const colorInverse = color ? Color(color).isLight() ? 'black' : 'white' : undefined
+
+    let colorInverse
+    try {
+      if (color) {
+        colorInverse = Color(color).isLight() ? 'black' : 'white'
+      }
+    } catch (ex) { /* no-op */ }
 
     let badgeContent
     if (isAuthInvalid) {
