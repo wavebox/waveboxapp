@@ -127,11 +127,15 @@ class WaveboxWindow extends EventEmitter {
   */
   create (url, browserWindowPreferences = {}) {
     const savedLocation = this.locationSaver.getSavedScreenLocation()
-    const fullBrowserWindowPreferences = Object.assign({},
-      this.defaultBrowserWindowPreferences(),
-      browserWindowPreferences,
-      savedLocation
-    )
+    const fullBrowserWindowPreferences = {
+      ...this.defaultBrowserWindowPreferences(),
+      ...browserWindowPreferences,
+      ...savedLocation,
+      // Setting fullscreen on launch has some funny effects particularly on macOS. Window
+      // controls are not rendered. Window is draggable. wavebox/waveboxapp/#616
+      fullscreen: undefined,
+      maximized: undefined
+    }
 
     // Create the window & prep for lifecycle
     this[privWindow] = new BrowserWindow(fullBrowserWindowPreferences)
@@ -188,6 +192,11 @@ class WaveboxWindow extends EventEmitter {
       // Restore maximize seperately from the saved location as it can't be set in the launch args
       if (savedLocation.maximized === true) {
         this[privWindow].maximize()
+      }
+      // Restore fullscreen seperately to circumvent odd behaviour, particularly on macOS. Window
+      // controls are not rendered. Window is draggable. wavebox/waveboxapp/#616
+      if (savedLocation.fullscreen === true) {
+        this[privWindow].setFullScreen(true)
       }
 
       // Bound the window to our current screen to ensure it's not off-screen
