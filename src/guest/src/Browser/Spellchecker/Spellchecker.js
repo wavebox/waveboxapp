@@ -144,14 +144,8 @@ class Spellchecker {
   */
   _checkSpelling = (word) => {
     try {
-      // if (this.isRunningLocally && !this[privProvider].isLoading) {
-      //  return this[privProvider].isCorrect(word, true)
-      if (this.isRunningLocally) {
-        if (this[privProvider].isLoading) {
-          return true
-        } else {
-          return this[privProvider].isCorrect(word, true)
-        }
+      if (this.isRunningLocally && !this[privProvider].isLoading) {
+        return this[privProvider].isCorrect(word, true)
       } else {
         if (this[privInProcessSpellchecking]) {
           if (!this.hasStartedInit) {
