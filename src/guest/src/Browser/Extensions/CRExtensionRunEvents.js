@@ -50,7 +50,7 @@ class CRExtensionRunEvents {
     })
 
     // In case we late call
-    if (document.readyState === 'complete') {
+    if (document.readyState === 'complete' && document.documentElement) {
       this._moveToPhase(PHASES.IDLE)
     }
   }
