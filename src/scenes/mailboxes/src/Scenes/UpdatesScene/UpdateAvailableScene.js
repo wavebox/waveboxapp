@@ -175,6 +175,13 @@ export default class UpdateAvailableScene extends React.Component {
             <code style={styles.managerCode}>
               sudo apt update; sudo apt install wavebox
             </code>
+            <h4>
+              If you installed using yum
+              <span style={{ fontWeight: 'normal' }}> you can use the following...</span>
+            </h4>
+            <code style={styles.managerCode}>
+              sudo yum update Wavebox
+            </code>
           </div>
         )
       } else {
