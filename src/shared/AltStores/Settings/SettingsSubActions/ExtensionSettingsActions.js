@@ -13,17 +13,6 @@ class ExtensionSettingsActions extends CoreSettingsActions {
     super(SettingsIdent.SEGMENTS.EXTENSION, actions)
   }
 
-  /* **************************************************************************/
-  // Dispatch
-  /* **************************************************************************/
-
-  /**
-  * @param enable: true to enable chrome extension support, false otherwise
-  */
-  setEnableChromeExperimental (enable) {
-    this.dispatchUpdate('enableChromeExperimental', enable)
-  }
-
   /**
   * @param show: true to show browser actions in the toolbar
   */

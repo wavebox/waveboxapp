@@ -65,7 +65,6 @@ export default class Toolbar extends React.Component {
   * @return true if there are extensions, false otherwise
   */
   static hasExtensionsInToolbar (crextensionState = crextensionStore.getState(), settingsState = settingsStore.getState()) {
-    if (!settingsState.extension.enableChromeExperimental) { return false }
     if (!settingsState.extension.showBrowserActionsInToolbar) { return false }
     if (crextensionState.browserActionExtensionCount() === 0) { return false }
     return true

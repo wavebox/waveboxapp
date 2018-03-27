@@ -115,14 +115,6 @@ export default class AdvancedSettingsSection extends React.Component {
             onToggle={(evt, toggled) => { settingsActions.sub.app.setEnableAutofillServie(toggled) }} />
         )}
         <Toggle
-          toggled={extension.enableChromeExperimental}
-          label='Experimental chrome extension support (Requires Restart)'
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
-            showRestart()
-            settingsActions.sub.extension.setEnableChromeExperimental(toggled)
-          }} />
-        <Toggle
           toggled={language.inProcessSpellchecking}
           label='In process spellchecking (Requires Restart)'
           labelPosition='right'

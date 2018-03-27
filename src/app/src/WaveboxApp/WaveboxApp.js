@@ -249,12 +249,10 @@ class WaveboxApp {
     const settingsState = settingsStore.getState()
     const mailboxState = mailboxStore.getState()
     // Load extensions before any webcontents get created
-    if (settingsState.launched.extension.enableChromeExperimental) {
-      try {
-        CRExtensionManager.loadExtensionDirectory()
-      } catch (ex) {
-        console.error(`Failed to load extensions. Continuing...`, ex)
-      }
+    try {
+      CRExtensionManager.loadExtensionDirectory()
+    } catch (ex) {
+      console.error(`Failed to load extensions. Continuing...`, ex)
     }
 
     // Doing this outside of ready has a side effect on high-sierra where you get a _TSGetMainThread error
