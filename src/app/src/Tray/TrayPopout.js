@@ -57,6 +57,7 @@ class TrayPopout {
     this[privWindow].on('blur', this._handleBlur)
     this[privWindow].on('focus', this._handleFocus)
     this[privWindow].on('close', this._handleClose)
+    this[privWindow].on('closed', this._handleClosed)
   }
 
   /**
@@ -74,7 +75,7 @@ class TrayPopout {
   // Properties
   /* ****************************************************************************/
 
-  get isLoaded () { return !!this[privWindow] }
+  get isLoaded () { return this[privWindow] && !this[privWindow].isDestroyed() }
   get webContentsId () { return this.isLoaded ? this[privWindow].webContents.id : undefined }
   get isVisible () { return this.isLoaded && this[privWindow].isVisible() }
   get isWindowedMode () { return CTX_MENU_ONLY_SUPPORT }
@@ -122,6 +123,14 @@ class TrayPopout {
       evt.preventDefault()
       this[privWindow].hide()
     }
+  }
+
+  /**
+  * Handles the window being closed
+  */
+  _handleClosed = (evt) => {
+    this[privWindow] = undefined
+    this[privPositioner] = undefined
   }
 
   /* ****************************************************************************/
