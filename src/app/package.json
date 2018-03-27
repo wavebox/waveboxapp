@@ -21,7 +21,7 @@
     "home-dir": "1.0.0",
     "hunspell-asm": "1.0.2",
     "keyboardevent-from-electron-accelerator": "1.0.1",
-    "keytar": "4.2.0",
+    "keytar": "4.2.1",
     "lru-cache": "4.1.2",
     "mime": "2.2.0",
     "mkdirp": "0.5.1",
@@ -40,7 +40,7 @@
     "node-mac-notifier": "0.0.13"
   },
   "devDependencies": {
-    "standard": "11.0.0",
+    "standard": "11.0.1",
     "babel-eslint": "8.2.2",
     "babel-plugin-transform-class-properties": "6.24.1"
   },

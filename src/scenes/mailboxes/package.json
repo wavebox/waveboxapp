@@ -22,7 +22,7 @@
     "qs": "6.5.1",
     "querystring": "0.2.0",
     "react": "16.2.0",
-    "react-activity": "1.2.1",
+    "react-activity": "1.2.2",
     "react-addons-shallow-compare": "15.6.2",
     "react-color": "2.14.0",
     "react-dom": "16.2.0",
@@ -41,7 +41,7 @@
     "valid-url": "1.0.9"
   },
   "devDependencies": {
-    "standard": "11.0.0",
+    "standard": "11.0.1",
     "babel-eslint": "8.2.2",
     "babel-plugin-transform-class-properties": "6.24.1"
   },

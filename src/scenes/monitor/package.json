@@ -14,7 +14,7 @@
     "prop-types": "15.6.1"
   },
   "devDependencies": {
-    "standard": "11.0.0",
+    "standard": "11.0.1",
     "babel-eslint": "8.2.2",
     "babel-plugin-transform-class-properties": "6.24.1"
   },
