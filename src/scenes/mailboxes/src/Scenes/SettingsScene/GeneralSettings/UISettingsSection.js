@@ -86,6 +86,11 @@ export default class UISettingsSection extends React.Component {
             label='Show sleeping account icons in grey'
             labelPosition='right'
             onToggle={(evt, toggled) => settingsActions.sub.ui.setShowSleepableServiceIndicator(toggled)} />
+          <Toggle
+            toggled={ui.showDefaultServiceSleepNotifications}
+            label='Show first time sleep notifications for accounts'
+            labelPosition='right'
+            onToggle={(evt, toggled) => settingsActions.sub.ui.setShowDefaultServiceSleepNotifications(toggled)} />
           <SelectField
             floatingLabelText='Account tooltips'
             value={ui.accountTooltipMode}

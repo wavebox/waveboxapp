@@ -2,6 +2,7 @@ import React from 'react'
 import NotificationSystem from 'react-notification-system'
 import {mailboxStore} from 'stores/mailbox'
 import {userStore} from 'stores/user'
+import {settingsStore} from 'stores/settings'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import MailboxSleepNotification from './MailboxSleepNotification'
 import * as Colors from 'material-ui/styles/colors'
@@ -41,12 +42,14 @@ export default class NotificationPanel extends React.Component {
 
     mailboxStore.listen(this.checkSleepNotifications)
     userStore.listen(this.userChanged)
+    settingsStore.listen(this.settingsChanged)
     this.checkSleepNotifications()
   }
 
   componentWillUnmount () {
     mailboxStore.unlisten(this.checkSleepNotifications)
     userStore.unlisten(this.userChanged)
+    settingsStore.unlisten(this.settingsChanged)
   }
 
   /* **************************************************************************/
@@ -55,21 +58,38 @@ export default class NotificationPanel extends React.Component {
 
   state = (() => {
     return {
-      showDefaultServiceSleepNotifications: userStore.getState().wireConfigExperiments().showDefaultServiceSleepNotifications === true
+      showDefaultServiceSleepNotifications: this.shouldShowSleepNotifications(undefined, undefined)
     }
   })()
 
   userChanged = (userState) => {
     this.setState({
-      showDefaultServiceSleepNotifications: userState.wireConfigExperiments().showDefaultServiceSleepNotifications === true
+      showDefaultServiceSleepNotifications: this.shouldShowSleepNotifications(userState, undefined)
+    })
+  }
+
+  settingsChanged = (settingsState) => {
+    this.setState({
+      showDefaultServiceSleepNotifications: this.shouldShowSleepNotifications(undefined, settingsState)
     })
   }
 
   mailboxesChanged = (mailboxState) => {
+    if (!this.refs[REF]) { return }
     clearTimeout(this._checkSleepNotificationsThrottle)
     this._checkSleepNotificationsThrottle = setTimeout(() => {
       this.checkSleepNotifications(mailboxState)
     }, 1000)
+  }
+
+  /**
+  * @param userState=autoget: the current user state
+  * @param settingsState=autoget: the current settings state
+  * @return true if we should show sleep notifications, false otherwise
+  */
+  shouldShowSleepNotifications (userState = userStore.getState(), settingsState = settingsStore.getState()) {
+    return userState.wireConfigExperiments().showDefaultServiceSleepNotifications === true &&
+      settingsState.ui.showDefaultServiceSleepNotifications === true
   }
 
   /* **************************************************************************/
@@ -80,6 +100,7 @@ export default class NotificationPanel extends React.Component {
   * Checks for sleeping notifications we should show
   */
   checkSleepNotifications = () => {
+    if (!this.refs[REF]) { return }
     clearTimeout(this._checkSleepNotificationsThrottle)
     const mailboxState = mailboxStore.getState()
     mailboxState
