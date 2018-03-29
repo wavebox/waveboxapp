@@ -181,8 +181,7 @@ class WaveboxApp {
 
     if (AppSettings.SUPPORTS_MIXED_SANDBOX_MODE) {
       if (launchSettings.app.enableMixedSandboxMode) {
-        app.enableMixedSandbox() //TODO
-        console.log("enable")
+        app.enableMixedSandbox()
       }
     }
   }
