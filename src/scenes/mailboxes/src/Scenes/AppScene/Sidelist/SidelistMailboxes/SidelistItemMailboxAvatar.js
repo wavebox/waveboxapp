@@ -18,6 +18,7 @@ const styles = {
   */
   avatar: {
     display: 'block',
+    transform: 'translate3d(0,0,0)', // fix for wavebox/waveboxapp#619
     margin: '4px auto',
     cursor: 'pointer',
     WebkitAppRegion: 'no-drag'
