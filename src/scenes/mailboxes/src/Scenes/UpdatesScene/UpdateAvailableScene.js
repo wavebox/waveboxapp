@@ -7,6 +7,10 @@ import UpdateModalTitle from './UpdateModalTitle'
 import electron from 'electron'
 
 const styles = {
+  method: {
+    display: 'inline-block',
+    width: 100
+  },
   managerCode: {
     padding: 8,
     fontSize: 14,
@@ -159,29 +163,30 @@ export default class UpdateAvailableScene extends React.Component {
               Depending on how you installed Wavebox you may be able to update using your package
               manager, otherwise you can download the update using your web browser
             </p>
-            <br />
-            <h4>
-              If you installed using Snap
-              <span style={{ fontWeight: 'normal' }}> you can use the following...</span>
-            </h4>
-            <code style={styles.managerCode}>
-              {`sudo snap refresh wavebox`}
-            </code>
-            <br />
-            <h4>
-              If you installed using apt
-              <span style={{ fontWeight: 'normal' }}> you can use the following...</span>
-            </h4>
-            <code style={styles.managerCode}>
-              sudo apt update; sudo apt install wavebox
-            </code>
-            <h4>
-              If you installed using yum
-              <span style={{ fontWeight: 'normal' }}> you can use the following...</span>
-            </h4>
-            <code style={styles.managerCode}>
-              sudo yum update Wavebox
-            </code>
+            <p>
+              <strong style={styles.method}>Snap:</strong>
+              <code style={styles.managerCode}>
+                {`sudo snap refresh wavebox`}
+              </code>
+            </p>
+            <p>
+              <strong style={styles.method}>Apt:</strong>
+              <code style={styles.managerCode}>
+                {`sudo apt update; sudo apt install wavebox`}
+              </code>
+            </p>
+            <p>
+              <strong style={styles.method}>Yum:</strong>
+              <code style={styles.managerCode}>
+                {`sudo yum update Wavebox`}
+              </code>
+            </p>
+            <p>
+              <strong style={styles.method}>Zypper:</strong>
+              <code style={styles.managerCode}>
+                {`sudo zypper up Wavebox`}
+              </code>
+            </p>
           </div>
         )
       } else {
