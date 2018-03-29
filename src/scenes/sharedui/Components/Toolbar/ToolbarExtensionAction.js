@@ -4,6 +4,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import ReactPortalTooltip from 'react-portal-tooltip'
 import { basicPopoverStyles } from './ToolbarPopoverStyles'
 import uuid from 'uuid'
+import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 
 const styles = {
   button: {
@@ -79,17 +80,25 @@ export default class ToolbarExtensionAction extends React.Component {
   }
 
   /**
+  * @param extensionId: the id of the extension
   * @param icon: the icon information
   * @return a url to the icon image
   */
-  getIconUrl (icon) {
+  getIconUrl (extensionId, icon) {
     if (!icon) { return undefined }
     if (icon.path) {
       const sizes = Object.keys(icon.path)
         .map((size) => parseInt(size))
         .filter((size) => !isNaN(size))
       const size = `${Math.max(...sizes)}`
-      return icon.path[size]
+      const rawIcon = icon.path[size]
+      if (rawIcon.startsWith('data:')) {
+        return rawIcon
+      } else if (rawIcon.startsWith(`${CR_EXTENSION_PROTOCOL}:`)) {
+        return rawIcon
+      } else {
+        return `${CR_EXTENSION_PROTOCOL}://${extensionId}/${rawIcon}`
+      }
     }
     return undefined
   }
@@ -117,7 +126,7 @@ export default class ToolbarExtensionAction extends React.Component {
     ].filter((f) => !!f).join(' ') || 'none'
 
     const elementId = `ReactComponent-ToolbarExtensionAction-${this.instanceId}`
-    const iconUrl = this.getIconUrl(icon)
+    const iconUrl = this.getIconUrl(extensionId, icon)
     return (
       <div
         {...passProps}
