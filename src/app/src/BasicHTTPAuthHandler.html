@@ -2,6 +2,11 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'none';
+      script-src 'sha256-AK2xwwpcPRR5L31GTNlWUdowne/EbhhxFUlvdqhDuis=';
+      style-src 'sha256-wkV4qiKIBY/oSSXBrWMBYDouJuZlKedXv5fbPL6ReD4=';
+    ">
     <title>Authentication Required</title>
     <style>
       * {
@@ -77,24 +82,24 @@
       </div>
     </form>
     <script type="text/javascript">
-      const querystring = require('querystring')
-      const query = querystring.parse(window.location.search.substr(1))
-      if (query.port === 443) {
-        document.getElementById('requestor').textContent = `https://${query.realm}`
-      } else if (query.port === 80) {
-        document.getElementById('requestor').textContent = `http://${query.realm}`
-      } else {
-        document.getElementById('requestor').textContent = `${query.realm}:${query.port}`
-      }
+const querystring = require('querystring')
+const query = querystring.parse(window.location.search.substr(1))
+if (query.port === 443) {
+  document.getElementById('requestor').textContent = `https://${query.realm}`
+} else if (query.port === 80) {
+  document.getElementById('requestor').textContent = `http://${query.realm}`
+} else {
+  document.getElementById('requestor').textContent = `${query.realm}:${query.port}`
+}
 
-      document.querySelector('[data-action="cancel"]').addEventListener('click', (evt) => {
-        evt.preventDefault()
-        document.title = 'wbaction:cancel'
-      }, false)
-      document.querySelector('[data-action="login"]').addEventListener('click', (evt) => {
-        evt.preventDefault()
-        document.title = 'wbaction:login'
-      }, false)
+document.querySelector('[data-action="cancel"]').addEventListener('click', (evt) => {
+  evt.preventDefault()
+  document.title = 'wbaction:cancel'
+}, false)
+document.querySelector('[data-action="login"]').addEventListener('click', (evt) => {
+  evt.preventDefault()
+  document.title = 'wbaction:login'
+}, false)
     </script>
   </body>
 </html>

@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron'
-import url from 'url'
+import { URL } from 'whatwg-url'
 import {
   DISALLOWED_HTML5_NOTIFICATION_HOSTS,
   ALLOWED_HTML5_NOTIFICATION_HOSTS
@@ -66,7 +66,7 @@ class NotificationPermissionManager {
   * @return a sanitized version of the protocl such as http:
   */
   _getProtocolFromUrl (u) {
-    const purl = url.parse(u)
+    const purl = new URL(u)
     return purl.protocol
   }
 

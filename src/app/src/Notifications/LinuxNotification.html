@@ -2,6 +2,12 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'none';
+      img-src * data:;
+      script-src 'sha256-bF9QRNHfZ5AgCfj5jpegWL6nj81gUERMobMOCKR/FHs=';
+      style-src 'sha256-bP82C70c4y+ap78o/kNp83MKe7btT25BSl3L3bTivv8=';
+    ">
     <title></title>
     <style>
       /* Layout */
@@ -110,62 +116,62 @@
     <div id="close-button">×</div>
 
     <script type="text/javascript">
-      const electron = require('electron')
-      const audioPlayer = new window.Audio()
+const electron = require('electron')
+const audioPlayer = new window.Audio()
 
-      electron.ipcRenderer.on('WB_LIN_NOTIF_RENDER', (evt, options) => {
-        // Title
-        document.querySelector('#content .title').textContent = options.title || ''
+electron.ipcRenderer.on('WB_LIN_NOTIF_RENDER', (evt, options) => {
+  // Title
+  document.querySelector('#content .title').textContent = options.title || ''
 
-        // Body
-        const bodyElement = document.querySelector('#content .body')
-        bodyElement.innerHTML = ''
-        const body = (options.body || '')
-          .split('\n')
-          .slice(0, 2)
-          .map((line) => {
-            const e = document.createElement('div')
-            e.textContent = line
-            return e
-          })
-        body.forEach((e) => {
-          bodyElement.appendChild(e)
-        })
+  // Body
+  const bodyElement = document.querySelector('#content .body')
+  bodyElement.innerHTML = ''
+  const body = (options.body || '')
+    .split('\n')
+    .slice(0, 2)
+    .map((line) => {
+      const e = document.createElement('div')
+      e.textContent = line
+      return e
+    })
+  body.forEach((e) => {
+    bodyElement.appendChild(e)
+  })
 
-        // Icon
-        if (window.iconStyle) {
-          window.iconStyle.parentElement.removeChild(window.iconStyle)
-          window.iconStyle = null
-        }
-        if (options.icon) {
-          window.iconStyle = document.createElement('style')
-          window.iconStyle.innerHTML = `
-            #app-icon>.image { background-image: url("${options.icon}")}
-          `
-          document.head.appendChild(window.iconStyle)
-        }
-      })
+  // Icon
+  if (window.iconStyle) {
+    window.iconStyle.parentElement.removeChild(window.iconStyle)
+    window.iconStyle = null
+  }
+  if (options.icon) {
+    window.iconStyle = document.createElement('style')
+    window.iconStyle.innerHTML = `
+      #app-icon>.image { background-image: url("${options.icon}")}
+    `
+    document.head.appendChild(window.iconStyle)
+  }
+})
 
-      electron.ipcRenderer.on('WB_LIN_NOTIF_PLAY_AUDIO', (evt, audio) => {
-        audioPlayer.pause()
-        audioPlayer.src = `file://${audio}`
-        audioPlayer.currentTime = 0
-        audioPlayer.play()
-      })
+electron.ipcRenderer.on('WB_LIN_NOTIF_PLAY_AUDIO', (evt, audio) => {
+  audioPlayer.pause()
+  audioPlayer.src = `file://${audio}`
+  audioPlayer.currentTime = 0
+  audioPlayer.play()
+})
 
-      document.getElementById('close-button').addEventListener('click', (evt) => {
-        evt.preventDefault()
-        evt.stopPropagation()
-        electron.ipcRenderer.send('WB_LIN_NOTIF_CLOSE', {})
-      }, false)
-      document.body.addEventListener('click', (evt) => {
-        evt.preventDefault()
-        electron.ipcRenderer.send('WB_LIN_NOTIF_CLICK', {})
-      }, false)
-      window.addEventListener('contextmenu', (evt) => {
-        evt.preventDefault()
-        evt.stopPropagation()
-      }, false)
+document.getElementById('close-button').addEventListener('click', (evt) => {
+  evt.preventDefault()
+  evt.stopPropagation()
+  electron.ipcRenderer.send('WB_LIN_NOTIF_CLOSE', {})
+}, false)
+document.body.addEventListener('click', (evt) => {
+  evt.preventDefault()
+  electron.ipcRenderer.send('WB_LIN_NOTIF_CLICK', {})
+}, false)
+window.addEventListener('contextmenu', (evt) => {
+  evt.preventDefault()
+  evt.stopPropagation()
+}, false)
     </script>
   </body>
 </html>

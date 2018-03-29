@@ -4,7 +4,7 @@ import GoogleHTTP from './GoogleHTTP'
 import { GOOGLE_PROFILE_SYNC_INTERVAL, GOOGLE_MAILBOX_WATCH_INTERVAL } from 'shared/constants'
 import { GoogleMailbox, GoogleDefaultService } from 'shared/Models/Accounts/Google'
 import uuid from 'uuid'
-import URI from 'urijs'
+import { URL } from 'url'
 import ServerVent from 'Server/ServerVent'
 import {
   mailboxStore,
@@ -197,10 +197,9 @@ class GoogleStore {
   */
   getAvatarFromResponseImage (image) {
     if (!image.url) { return image.url }
-    const purl = URI(image.url)
-    const qs = purl.search(true)
-    if (!qs.sz) { return image.url }
-    return purl.removeSearch('sz').toString()
+    const purl = new URL(image.url)
+    purl.searchParams.delete('sz')
+    return purl.toString()
   }
 
   handleSyncMailboxProfile ({ mailboxId }) {

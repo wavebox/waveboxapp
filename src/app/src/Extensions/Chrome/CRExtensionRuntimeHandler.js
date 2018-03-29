@@ -1,6 +1,6 @@
 import { webContents, ipcMain } from 'electron'
 import fs from 'fs-extra'
-import url from 'url'
+import { URL } from 'url'
 import CRDispatchManager from './CRDispatchManager'
 import CRExtensionRuntime from './CRExtensionRuntime'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
@@ -104,7 +104,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   * @param responder: the responder to return the response
   */
   _handleChromeExtensionBufferRequest = (request, responder) => {
-    const purl = url.parse(request.url)
+    const purl = new URL(request.url || 'about:blank')
     if (!purl.hostname || !purl.pathname) { return responder() }
     const runtime = this.runtimes.get(purl.hostname)
     if (!runtime) { return responder() }
@@ -419,7 +419,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     if (!responseHeaders['content-security-policy']) { return undefined }
 
     // Look to see if any extensions wnat to modify this
-    const purl = url.parse(requestUrl)
+    const purl = new URL(requestUrl || 'about:blank')
     const matchingRuntimes = Array.from(this.runtimes.values()).filter((runtime) => {
       const manifest = runtime.extension.manifest
       if (!manifest.wavebox.hasContentSecurityPolicy) { return false }
@@ -515,8 +515,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     // Check we are able to match this url
     const requestWebContents = webContents.fromId(details.webContentsId)
     if (!requestWebContents || requestWebContents.isDestroyed()) { return nextHeaders }
-
-    const purl = url.parse(requestWebContents.getURL())
+    const purl = new URL(requestWebContents.getURL() || 'about:blank')
     const matches = CRExtensionMatchPatterns.matchUrls(
       purl.protocol,
       purl.hostname,

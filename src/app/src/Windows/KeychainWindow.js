@@ -56,7 +56,12 @@ class KeychainWindow extends WaveboxWindow {
       title: 'Wavebox Keychain',
       width: 900,
       height: 700,
-      show: true
+      show: true,
+      webPreferences: {
+        nodeIntegration: true,
+        nodeIntegrationInWorker: false,
+        webviewTag: false
+      }
     })
 
     ipcMain.on(WB_KEYCHAIN_REQUEST_CREDENTIALS, this.handleCredentialsRequest)

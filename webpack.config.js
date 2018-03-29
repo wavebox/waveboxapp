@@ -39,7 +39,7 @@ module.exports = function (env = {}) {
   if (mode === 'development') {
     if (env.fast) {
       console.log('[CHEAP SOURCEMAPS]')
-      process.env.WEBPACK_DEVTOOL = 'eval-cheap-module-source-map'
+      process.env.WEBPACK_DEVTOOL = 'cheap-source-map'
     } else {
       console.log('[FULL SOURCEMAPS]')
       process.env.WEBPACK_DEVTOOL = 'source-map'

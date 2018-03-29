@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
 import { WB_AUTH_MICROSOFT, WB_AUTH_MICROSOFT_COMPLETE, WB_AUTH_MICROSOFT_ERROR } from 'shared/ipcEvents'
 import AuthWindow from 'Windows/AuthWindow'
-import url from 'url'
+import { URL } from 'url'
 import querystring from 'querystring'
 import { userStore } from 'stores/user'
 import pkg from 'package.json'
@@ -108,23 +108,23 @@ class AuthMicrosoft {
           evt.preventDefault()
           userClose = false
           oauthWin.close()
-          const purl = url.parse(nextUrl, true)
-          reject(new Error(purl.query.error))
+          const purl = new URL(nextUrl)
+          reject(new Error(purl.searchParams.get('error')))
         } else if (nextUrl.indexOf(credentials.MICROSOFT_AUTH_RETURN_URL_V2) === 0) {
           evt.preventDefault()
-          const purl = url.parse(nextUrl, true)
-          if (purl.query.code) {
+          const purl = new URL(nextUrl)
+          if (purl.searchParams.get('code')) {
             userClose = false
             oauthWin.close()
-            resolve(purl.query.code)
-          } else if (purl.query.error) {
+            resolve(purl.searchParams.get('code'))
+          } else if (purl.searchParams.get('error')) {
             userClose = false
             oauthWin.close()
 
-            if (purl.query.error === 'access_denied') {
-              reject(new Error(purl.query.error_description))
+            if (purl.searchParams.get('error') === 'access_denied') {
+              reject(new Error(purl.searchParams.get('error_description')))
             } else {
-              reject(new Error(`${purl.query.error}:${purl.query.error_subcode}:${purl.query.error_description}`))
+              reject(new Error(`${purl.searchParams.get('error')}:${purl.searchParams.get('error_subcode')}:${purl.searchParams.get('error_description')}`))
             }
           }
         }

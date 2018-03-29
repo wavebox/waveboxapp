@@ -17,12 +17,6 @@ const SAFE_CONFIG_KEYS = [
   'resizable',
   'title'
 ]
-const COPY_WEBVIEW_WEB_PREFERENCES_KEYS = [
-  'guestInstanceId',
-  'openerId',
-  'partition',
-  'affinity'
-]
 
 const privTabMetaInfo = Symbol('tabMetaInfo')
 const privLaunchInfo = Symbol('privLaunchInfo')
@@ -119,6 +113,8 @@ class ContentWindow extends WaveboxWindow {
   * @param webPreferences={}: the web preferences for the hosted child
   */
   create (parentWindow, url, partition, browserWindowPreferences = {}, webPreferences = {}) {
+    browserWindowPreferences = this.safeBrowserWindowPreferences(browserWindowPreferences)
+
     // Save the launch info for later
     this[privLaunchInfo] = Object.freeze({
       partition: partition,
@@ -139,7 +135,7 @@ class ContentWindow extends WaveboxWindow {
         plugins: true
       },
       ...this.generateWindowPosition(parentWindow),
-      ...this.safeBrowserWindowPreferences(browserWindowPreferences)
+      ...browserWindowPreferences
     }
 
     // Launch the new window
@@ -175,14 +171,19 @@ class ContentWindow extends WaveboxWindow {
   * @param webViewProperties: the properites of the new webview
   */
   handleWillAttachWebview = (evt, webViewWebPreferences, webViewProperties) => {
-    const launchInfo = this.launchInfo
-    COPY_WEBVIEW_WEB_PREFERENCES_KEYS.forEach((k) => {
-      webViewWebPreferences.partition = launchInfo.partition
-      if (launchInfo.webPreferences[k] !== undefined) {
-        webViewWebPreferences[k] = launchInfo.webPreferences[k]
+    [
+      'partition',
+      'affinity'
+    ].forEach((p) => {
+      if (this.launchInfo[p] !== undefined) {
+        webViewWebPreferences[p] = this.launchInfo[p]
       }
     })
-    webViewProperties.partition = launchInfo.partition
+    webViewWebPreferences.nodeIntegration = false
+    webViewWebPreferences.nodeIntegrationInWorker = false
+    webViewWebPreferences.webviewTag = false
+
+    webViewProperties.partition = this.launchInfo.partition
   }
 
   /**

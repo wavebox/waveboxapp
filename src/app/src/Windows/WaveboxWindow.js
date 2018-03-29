@@ -174,6 +174,9 @@ class WaveboxWindow extends EventEmitter {
       this.window.loadURL(url)
     }
 
+    // Bind webcontents event listeners
+    this.window.webContents.on('will-navigate', this._handleWillNavigate)
+
     // Global registers
     waveboxWindowManager.attach(this)
     setTimeout(() => { // Requeue to happen on setup complete
@@ -245,6 +248,22 @@ class WaveboxWindow extends EventEmitter {
   }
 
   /* ****************************************************************************/
+  // Overwritable behaviour
+  /* ****************************************************************************/
+
+  /**
+  * Checks if the webcontents is allowed to navigate to the next url. If false is returned
+  * it will be prevented
+  * @param evt: the event that fired
+  * @param browserWindow: the browserWindow that's being checked
+  * @param nextUrl: the next url to navigate
+  * @return false to suppress, true to allow
+  */
+  allowNavigate (evt, browserWindow, nextUrl) {
+    return false
+  }
+
+  /* ****************************************************************************/
   // Mouse Navigation
   /* ****************************************************************************/
 
@@ -292,6 +311,21 @@ class WaveboxWindow extends EventEmitter {
     this[privLastTimeInFocus] = new Date().getTime()
     this.window.webContents.send(WB_WINDOW_BLUR)
     evtMain.emit(evtMain.WB_WINDOW_BLURRED, {}, this.window.id)
+  }
+
+  /* ****************************************************************************/
+  // Webcontents handlers
+  /* ****************************************************************************/
+
+  /**
+  * Handles the window preparing to navigate and prevents if requred
+  * @param evt: the event that fired
+  * @param nextUrl: the next url being navigated to
+  */
+  _handleWillNavigate = (evt, nextUrl) => {
+    if (!this.allowNavigate(evt, this.window, nextUrl)) {
+      evt.preventDefault()
+    }
   }
 
   /* ****************************************************************************/

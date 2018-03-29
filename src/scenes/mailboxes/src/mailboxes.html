@@ -2,6 +2,15 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'none';
+      img-src * data:;
+      object-src 'self';
+      connect-src *;
+      font-src 'self';
+      script-src 'self' 'sha256-WYmZqQ3ga72JqV+RMBqJpypcMUXVQ4rgF9VpnWQoGdE=' 'sha256-VAWAaH0eZPN+9ERNt9rFK73goW6R5dO6gtwUqVqJNIE=';
+      style-src 'self' 'unsafe-inline';
+    ">
     <title>Wavebox</title>
     <link rel="stylesheet" type="text/css" href="../../fonts/opensans/opensans.css">
     <link rel="stylesheet" type="text/css" href="../../fonts/materialdesign/material-icons.css">
@@ -66,153 +75,153 @@
     <div id="ReactComponent-AppSceneRenderNode"></div>
 
     <script type="text/javascript">
-      window.appNodeModulesRequire = function (name) {
-        return require('../../app/node_modules/' + name)
-      }
+window.appNodeModulesRequire = function (name) {
+  return require('../../app/node_modules/' + name)
+}
     </script>
     <script type="text/javascript">
-      ;(function () {
-        const timing = {
-          init: new Date().getTime(),
-          bootstrap: null,
-          finish: null
-        }
+;(function () {
+  const timing = {
+    init: new Date().getTime(),
+    bootstrap: null,
+    finish: null
+  }
 
-        const electron = require('electron')
-        const querystring = require('querystring')
-        const query = querystring.parse(window.location.search.substr(1))
-        const pkg = require('./package.json')
-        const credentials = require('./credentials.js')
-        window.bootstrap = { clientId: query.clientId, clientToken: query.clientToken }
+  const electron = require('electron')
+  const querystring = require('querystring')
+  const query = querystring.parse(window.location.search.substr(1))
+  const pkg = require('./package.json')
+  const credentials = require('./credentials.js')
+  window.bootstrap = { clientId: query.clientId, clientToken: query.clientToken }
 
-        /**
-        * Injects a script element
-        * @param url: the url of the element
-        * @return promise
-        */
-        const injectScript = function (url) {
-          return new Promise((resolve, reject) => {
-            const element = document.createElement('script')
-            element.type = 'text/javascript'
-            element.onload = function () { resolve() }
-            element.onerror = function (err) { reject(err) }
-            element.async = true
-            element.src = url
-            document.head.appendChild(element)
-          })
-        }
+  /**
+  * Injects a script element
+  * @param url: the url of the element
+  * @return promise
+  */
+  const injectScript = function (url) {
+    return new Promise((resolve, reject) => {
+      const element = document.createElement('script')
+      element.type = 'text/javascript'
+      element.onload = function () { resolve() }
+      element.onerror = function (err) { reject(err) }
+      element.async = true
+      element.src = url
+      document.head.appendChild(element)
+    })
+  }
 
-        /**
-        * Rejects the instance
-        * @param errorStr: the string defining the error
-        * @return rejected promise
-        */
-        const rejectBounce = function (errorStr) {
-          const offlineArgs = Object.assign({}, query, { error: errorStr })
-          const error = new Error(errorStr)
-          error.bounce = `offline.html?${querystring.stringify(offlineArgs)}`
-          return Promise.reject(error)
-        }
+  /**
+  * Rejects the instance
+  * @param errorStr: the string defining the error
+  * @return rejected promise
+  */
+  const rejectBounce = function (errorStr) {
+    const offlineArgs = Object.assign({}, query, { error: errorStr })
+    const error = new Error(errorStr)
+    error.bounce = `offline.html?${querystring.stringify(offlineArgs)}`
+    return Promise.reject(error)
+  }
 
-        /**
-        * Rejects the as the device is offline
-        * @return rejected promise
-        */
-        const offlineBounce = function () { return rejectBounce('CONNECTION_FAILURE') }
+  /**
+  * Rejects the as the device is offline
+  * @return rejected promise
+  */
+  const offlineBounce = function () { return rejectBounce('CONNECTION_FAILURE') }
 
-        /**
-        * Rejects the as the device is unauthorized
-        * @return rejected promise
-        */
-        const uauthorizedBounce = function (errorStr) { return rejectBounce(errorStr || 'UNAUTHORIZED') }
+  /**
+  * Rejects the as the device is unauthorized
+  * @return rejected promise
+  */
+  const uauthorizedBounce = function (errorStr) { return rejectBounce(errorStr || 'UNAUTHORIZED') }
 
-        // Check for older clients
-        if (!credentials.API_KEY) {
-          console.warn([
-            'Deprication Warning: Missing API Key',
-            '',
-            'Rather than a credentials file, Wavebox now uses a uniform API Key. When support is added for additional services you wont need to enable them individually rather just git pull as usual.',
-            'Updated build instructions & how to get your API Key are on the project homepage https://github.com/wavebox/waveboxapp'
-          ].join('\n'))
-        }
+  // Check for older clients
+  if (!credentials.API_KEY) {
+    console.warn([
+      'Deprication Warning: Missing API Key',
+      '',
+      'Rather than a credentials file, Wavebox now uses a uniform API Key. When support is added for additional services you wont need to enable them individually rather just git pull as usual.',
+      'Updated build instructions & how to get your API Key are on the project homepage https://github.com/wavebox/waveboxapp'
+    ].join('\n'))
+  }
 
-        /**
-        * Fetches the bootstrap data
-        * @return promise
-        */
-        const fetchBootstrap = function () {
-          return Promise.resolve()
-            .then(() => {
-              const query = querystring.stringify({
-                token: window.bootstrap.clientToken,
-                version: pkg.version,
-                bid: pkg.earlyBuildId || 'release',
-                ident: pkg.name,
-                api_key: credentials.API_KEY,
-                protocol: credentials.API_KEY ? 2 : 1,
-                '_': new Date().getTime()
-              })
-              return window.fetch(`https://waveboxio.com/client/${window.bootstrap.clientId}/init.json?${query}`)
-            })
-            .then((res) => {
-              return res.text().then((text) => {
-                let jsonContent
-                try {
-                  jsonContent = JSON.parse(text)
-                } catch (_ex) { }
-                return Promise.resolve({ res: res, jsonContent: jsonContent })
-              })
-            })
-            .then(
-              ({res, jsonContent}) => {
-                if (res.status === 403 || res.status === 401) {
-                  return uauthorizedBounce(jsonContent ? jsonContent.error : undefined)
-                } else if (res.ok && jsonContent) {
-                  window.localStorage['cached_init'] = JSON.stringify(jsonContent)
-                  return Promise.resolve(jsonContent)
-                } else {
-                  if (window.localStorage['cached_init']) {
-                    try {
-                      const cached = JSON.parse(window.localStorage['cached_init'])
-                      return Promise.resolve(cached)
-                    } catch (_ex) { }
-                  }
-                  return offlineBounce()
-                }
-              },
-              (_err) => offlineBounce()
-            )
-            .then((config) => {
-               // Persist the token if its been provided
-              if (config.client_token) {
-                electron.ipcRenderer.sendSync('WB_USER_SET_CLIENT_TOKEN', config.client_token)
-              }
-
-              // Write into window for bootstrap to pickup
-              electron.ipcRenderer.sendSync('WB_USER_SET_USER', config.account_js, new Date().getTime())
-              window.config = config
-              return Promise.resolve()
-            })
-        }
-
-        // Kick everything off
-        Promise.all([
-          injectScript('mailboxes.js'),
-          fetchBootstrap()
-        ]).then((r) => {
-          timing.bootstrap = new Date().getTime()
-          window.startWaveboxClient()
-          timing.complete = new Date().getTime()
-          console.log(`Started in ${timing.bootstrap - timing.init} | ${timing.complete - timing.init}`)
-        }).catch((err) => {
-          console.error('Bootstrap failed', err)
-          if (err.bounce) {
-            setTimeout(() => {
-              window.location.href = err.bounce
-            }, 1000)
-          }
+  /**
+  * Fetches the bootstrap data
+  * @return promise
+  */
+  const fetchBootstrap = function () {
+    return Promise.resolve()
+      .then(() => {
+        const query = querystring.stringify({
+          token: window.bootstrap.clientToken,
+          version: pkg.version,
+          bid: pkg.earlyBuildId || 'release',
+          ident: pkg.name,
+          api_key: credentials.API_KEY,
+          protocol: credentials.API_KEY ? 2 : 1,
+          '_': new Date().getTime()
         })
-      })()
+        return window.fetch(`https://waveboxio.com/client/${window.bootstrap.clientId}/init.json?${query}`)
+      })
+      .then((res) => {
+        return res.text().then((text) => {
+          let jsonContent
+          try {
+            jsonContent = JSON.parse(text)
+          } catch (_ex) { }
+          return Promise.resolve({ res: res, jsonContent: jsonContent })
+        })
+      })
+      .then(
+        ({res, jsonContent}) => {
+          if (res.status === 403 || res.status === 401) {
+            return uauthorizedBounce(jsonContent ? jsonContent.error : undefined)
+          } else if (res.ok && jsonContent) {
+            window.localStorage['cached_init'] = JSON.stringify(jsonContent)
+            return Promise.resolve(jsonContent)
+          } else {
+            if (window.localStorage['cached_init']) {
+              try {
+                const cached = JSON.parse(window.localStorage['cached_init'])
+                return Promise.resolve(cached)
+              } catch (_ex) { }
+            }
+            return offlineBounce()
+          }
+        },
+        (_err) => offlineBounce()
+      )
+      .then((config) => {
+        // Persist the token if its been provided
+        if (config.client_token) {
+          electron.ipcRenderer.sendSync('WB_USER_SET_CLIENT_TOKEN', config.client_token)
+        }
+
+        // Write into window for bootstrap to pickup
+        electron.ipcRenderer.sendSync('WB_USER_SET_USER', config.account_js, new Date().getTime())
+        window.config = config
+        return Promise.resolve()
+      })
+  }
+
+  // Kick everything off
+  Promise.all([
+    injectScript('mailboxes.js'),
+    fetchBootstrap()
+  ]).then((r) => {
+    timing.bootstrap = new Date().getTime()
+    window.startWaveboxClient()
+    timing.complete = new Date().getTime()
+    console.log(`Started in ${timing.bootstrap - timing.init} | ${timing.complete - timing.init}`)
+  }).catch((err) => {
+    console.error('Bootstrap failed', err)
+    if (err.bounce) {
+      setTimeout(() => {
+        window.location.href = err.bounce
+      }, 1000)
+    }
+  })
+})()
     </script>
   </body>
 </html>

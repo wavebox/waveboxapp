@@ -2,7 +2,7 @@ import WindowOpeningRules from './WindowOpeningRules'
 import WindowOpeningMatchTask from './WindowOpeningMatchTask'
 import CRExtensionManager from 'Extensions/Chrome/CRExtensionManager'
 import CRExtensionManifestWavebox from 'shared/Models/CRExtension/CRExtensionManifestWavebox'
-import url from 'url'
+import { URL } from 'url'
 import fallbackConfig from './fallbackConfig'
 import {
   CR_EXTENSION_BG_PARTITION_PREFIX
@@ -118,7 +118,7 @@ class WindowOpeningEngine {
     const extensionPopoutConfig = CRExtensionManager.runtimeHandler.getWindowPopoutModePreference(
       webContentsId,
       targetUrl,
-      url.parse(targetUrl, true),
+      new URL(targetUrl),
       disposition
     )
 
@@ -154,7 +154,7 @@ class WindowOpeningEngine {
   * @return true if we should ignore, false otherwise
   */
   shouldAlwaysIgnoreWindowOpen (targetUrl) {
-    const purl = url.parse(targetUrl, true)
+    const purl = new URL(targetUrl)
     if (WAVEBOX_CAPTURE_URL_HOSTNAMES.indexOf(purl.hostname) !== -1 && purl.pathname.startsWith(WAVEBOX_CAPTURE_URL_PREFIX)) { return true }
     return false
   }

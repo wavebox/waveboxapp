@@ -1,6 +1,6 @@
 import { ipcRenderer } from 'electron'
 import { WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG } from 'shared/webContentsRPC'
-import url from 'url'
+import { URL } from 'whatwg-url'
 
 const privConfig = Symbol('privConfig')
 
@@ -31,7 +31,7 @@ class LiveConfig {
   get launchSettings () { return this.config.launchSettings }
   get extensions () { return this.config.extensions }
   get permissionRootUrl () {
-    const purl = url.parse(this.hostUrl || 'about:blank')
+    const purl = new URL(this.hostUrl || 'about:blank')
     const host = purl.host.startsWith('www.') ? purl.host.replace('www.', '') : purl.host
     return `${purl.protocol}//${host}`
   }

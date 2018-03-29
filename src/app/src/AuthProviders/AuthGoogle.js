@@ -2,7 +2,7 @@ import { ipcMain } from 'electron'
 import { WB_AUTH_GOOGLE, WB_AUTH_GOOGLE_COMPLETE, WB_AUTH_GOOGLE_ERROR } from 'shared/ipcEvents'
 import googleapis from 'googleapis'
 import { userStore } from 'stores/user'
-import url from 'url'
+import { URL } from 'url'
 import querystring from 'querystring'
 import pkg from 'package.json'
 import AuthWindow from 'Windows/AuthWindow'
@@ -101,15 +101,15 @@ class AuthGoogle {
       oauthWin.webContents.on('did-get-redirect-request', (evt, prevUrl, nextUrl) => {
         if (nextUrl.indexOf(credentials.GOOGLE_PUSH_SERVICE_SUCCESS_URL) === 0) {
           evt.preventDefault()
-          const purl = url.parse(nextUrl, true)
-          pushServiceToken = purl.query.token
+          const purl = new URL(nextUrl)
+          pushServiceToken = purl.searchParams.get('token')
           oauthWin.loadURL(this.generateGoogleAuthenticationURL(credentials))
         } else if (nextUrl.indexOf(credentials.GOOGLE_PUSH_SERVICE_FAILURE_URL) === 0) {
           evt.preventDefault()
           userClose = false
           oauthWin.close()
-          const purl = url.parse(nextUrl, true)
-          reject(new Error(purl.query.error))
+          const purl = new URL(nextUrl)
+          reject(new Error(purl.searchParams.get('token')))
         }
       })
 

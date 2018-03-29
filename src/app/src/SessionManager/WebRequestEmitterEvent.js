@@ -1,4 +1,4 @@
-import url from 'url'
+import { URL } from 'url'
 
 class WebRequestEmitterEvent {
   /* ****************************************************************************/
@@ -84,7 +84,7 @@ class WebRequestEmitterEvent {
   * @param details: the details that were passed in
   */
   _emitNonBlocking = (details) => {
-    const parsedTargetUrl = url.parse(details.url)
+    const parsedTargetUrl = new URL(details.url)
 
     this._listeners.forEach((listener) => {
       if (listener.blocking) { return }
@@ -102,7 +102,7 @@ class WebRequestEmitterEvent {
   * @param maybeCallback: a callback, if this is a blocking request
   */
   _emitBlocking = (details, callback) => {
-    const parsedTargetUrl = url.parse(details.url)
+    const parsedTargetUrl = new URL(details.url)
 
     Promise.resolve()
       .then(() => {

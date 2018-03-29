@@ -6,6 +6,7 @@ import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import CustomStylesEditingDialog from './CustomStylesEditingDialog'
 import DistributionConfig from 'Runtime/DistributionConfig'
+import { AppSettings } from 'shared/Models/Settings'
 
 export default class AdvancedSettingsSection extends React.Component {
   /* **************************************************************************/
@@ -86,6 +87,16 @@ export default class AdvancedSettingsSection extends React.Component {
             showRestart()
             settingsActions.sub.app.setIsolateExtensionProcesses(toggled)
           }} />
+        {AppSettings.SUPPORTS_MIXED_SANDBOX_MODE ? (
+          <Toggle
+            toggled={app.enableMixedSandboxMode}
+            label='Enable Sanboxing (Requires Restart)'
+            labelPosition='right'
+            onToggle={(evt, toggled) => {
+              showRestart()
+              settingsActions.sub.app.setEnableMixedSandboxMode(toggled)
+            }} />
+        ) : undefined}
         <Toggle
           toggled={app.enableUseZoomForDSF}
           label='Use Zoom For DSF (Requires Restart)'

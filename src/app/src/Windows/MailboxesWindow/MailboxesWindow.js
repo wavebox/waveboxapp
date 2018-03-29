@@ -152,14 +152,6 @@ class MailboxesWindow extends WaveboxWindow {
       mailboxActions.reduceService.defer(undefined, undefined, ServiceReducer.mergeChangesetOnActive)
     })
 
-    // We're locking on to our window. This stops file drags redirecting the page
-    this.window.webContents.on('will-navigate', (evt, url) => {
-      const match = ALLOWED_URLS.findIndex((allowed) => allowed.indexOf(url) === 0)
-      if (!match) {
-        evt.preventDefault()
-      }
-    })
-
     // remove built in listener so we can handle this on our own
     this.window.webContents.removeAllListeners('devtools-reload-page')
     this.window.webContents.on('devtools-reload-page', () => this.reloadWaveboxWindow())
@@ -180,6 +172,22 @@ class MailboxesWindow extends WaveboxWindow {
 
     singletonAttached = undefined
     super.destroy(evt)
+  }
+
+  /* ****************************************************************************/
+  // Overwritable behaviour
+  /* ****************************************************************************/
+
+  /**
+  * Checks if the webcontents is allowed to navigate to the next url. If false is returned
+  * it will be prevented
+  * @param evt: the event that fired
+  * @param browserWindow: the browserWindow that's being checked
+  * @param nextUrl: the next url to navigate
+  * @return false to suppress, true to allow
+  */
+  allowNavigate (evt, browserWindow, nextUrl) {
+    return !!ALLOWED_URLS.find((allowed) => nextUrl.startsWith(allowed))
   }
 
   /* ****************************************************************************/

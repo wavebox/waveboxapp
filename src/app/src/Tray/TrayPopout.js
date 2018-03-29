@@ -37,7 +37,9 @@ class TrayPopout {
       maximizable: false,
       fullscreenable: false,
       webPreferences: {
-        nodeIntegration: true
+        nodeIntegration: true,
+        nodeIntegrationInWorker: false,
+        webviewTag: false
       },
       ...(this.isWindowedMode ? {
         title: 'Wavebox Mini'
@@ -54,6 +56,7 @@ class TrayPopout {
     }
     this[privPositioner] = new Positioner(this[privWindow])
     this[privWindow].loadURL(`file://${Resolver.traypopoutScene('popout.html')}`)
+    this[privWindow].webContents.on('will-navigate', (evt, url) => evt.preventDefault())
     this[privWindow].on('blur', this._handleBlur)
     this[privWindow].on('focus', this._handleFocus)
     this[privWindow].on('close', this._handleClose)

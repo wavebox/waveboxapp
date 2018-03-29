@@ -6,7 +6,7 @@ import { mailboxStore } from 'stores/mailbox'
 import { remote } from 'electron'
 import { IconButton, FontIcon } from 'material-ui'
 import { CHROME_PDF_URL } from 'shared/constants'
-import url from 'url'
+import { URL } from 'url'
 import Spinner from 'sharedui/Components/Activity/Spinner'
 
 const styles = {
@@ -280,7 +280,7 @@ export default class ToolbarNavigation extends React.Component {
   externalUrl (fullUrl) {
     if (!fullUrl) { return fullUrl }
     if (fullUrl.startsWith(CHROME_PDF_URL)) {
-      return url.parse(fullUrl, true).query.src
+      return new URL(fullUrl).searchParams.get('src')
     } else {
       return fullUrl
     }

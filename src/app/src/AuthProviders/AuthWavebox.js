@@ -2,7 +2,7 @@ import { ipcMain } from 'electron'
 import { WB_AUTH_WAVEBOX, WB_AUTH_WAVEBOX_COMPLETE, WB_AUTH_WAVEBOX_ERROR } from 'shared/ipcEvents'
 import { userStore } from 'stores/user'
 import querystring from 'querystring'
-import url from 'url'
+import { URL } from 'url'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import AuthWindow from 'Windows/AuthWindow'
 
@@ -98,15 +98,15 @@ class AuthWavebox {
 
       oauthWin.webContents.on('did-get-redirect-request', (evt, prevUrl, nextUrl) => {
         if (nextUrl.startsWith('https://wavebox.io/account/register/completed') || nextUrl.startsWith('https://waveboxio.com/account/register/completed')) {
-          const purl = url.parse(nextUrl, true)
+          const purl = new URL(nextUrl)
           userClose = false
           oauthWin.close()
-          resolve({ next: purl.query.next })
+          resolve({ next: purl.searchParams.get('next') })
         } else if (nextUrl.startsWith('https://wavebox.io/account/register/failure') || nextUrl.startsWith('https://waveboxio.com/account/register/failure')) {
-          const purl = url.parse(nextUrl, true)
+          const purl = new URL(nextUrl)
           userClose = false
           oauthWin.close()
-          reject(new Error(purl.query.error || 'Registration failure'))
+          reject(new Error(purl.searchParams.get('error') || 'Registration failure'))
         }
       })
       oauthWin.webContents.on('dom-ready', () => {

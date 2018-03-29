@@ -65,7 +65,9 @@ class LinuxNotification {
       alwaysOnTop: true,
       backgroundColor: '#FFFFFF',
       webPreferences: {
-        nodeIntegration: true
+        nodeIntegration: true,
+        nodeIntegrationInWorker: false,
+        webviewTag: false
       }
     })
     this[privWindow].on('closed', () => { this[privWindow] = undefined })
@@ -76,6 +78,7 @@ class LinuxNotification {
     ipcMain.on(WB_LIN_NOTIF_PRESENT, this.handleNotificationPresent)
 
     this[privWindow].loadURL(`file://${__dirname}/LinuxNotification.html`)
+    this[privWindow].webContents.on('will-navigate', (evt, url) => evt.preventDefault())
   }
 
   /**

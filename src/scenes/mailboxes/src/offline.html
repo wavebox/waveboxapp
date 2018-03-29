@@ -2,6 +2,14 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'none';
+      img-src data:;
+      font-src 'self';
+      connect-src *;
+      script-src 'self' 'sha256-ZKrrkzqXNmvrQz2mL3om3Tx4vKLbqfZ3B1Ivzj/7ihM=';
+      style-src 'self' 'sha256-iDu6wJmv9RMbO1QWO+NmRmm4DrhRRdf7iDwGKR/P50g='
+    ">
     <title>Wavebox</title>
     <link rel="stylesheet" type="text/css" href="../../fonts/opensans/opensans.css">
     <style>
@@ -121,61 +129,61 @@
     </div>
 
     <script type="text/javascript">
-      const electron = require('electron')
-      const querystring = require('querystring')
-      const query = querystring.parse(window.location.search.substr(1))
-      const onlineArgs = Object.assign({}, query, { error: undefined })
+const electron = require('electron')
+const querystring = require('querystring')
+const query = querystring.parse(window.location.search.substr(1))
+const onlineArgs = Object.assign({}, query, { error: undefined })
 
-      const testEndpoint = function (endpoint, logger) {
-        logger(`<strong>Testing</strong> ${endpoint}`)
-        return Promise.resolve()
-          .then(() => {
-            return new Promise((resolve, reject) => {
-              electron.remote.session.defaultSession.resolveProxy('https://waveboxio.com', (proxy) => {
-                logger(`-- ${proxy}`)
-                resolve()
-              })
-            })
-          })
-          .then(() => window.fetch(endpoint))
-          .then((res) => {
-            logger(`-- OK:${res.ok} STATUS:${res.status}`)
-            return Promise.resolve()
-          })
-          .catch((err) => {
-            logger(`-- ERR:${err}`)
-            return Promise.resolve()
-          })
-      }
-
-      Array.from(document.querySelectorAll('[data-enhance="error"]')).forEach((el) => {
-        el.textContent = query.error
+const testEndpoint = function (endpoint, logger) {
+  logger(`<strong>Testing</strong> ${endpoint}`)
+  return Promise.resolve()
+    .then(() => {
+      return new Promise((resolve, reject) => {
+        electron.remote.session.defaultSession.resolveProxy('https://waveboxio.com', (proxy) => {
+          logger(`-- ${proxy}`)
+          resolve()
+        })
       })
-      Array.from(document.querySelectorAll('[data-enhance="reload"]')).forEach((el) => {
-        el.setAttribute('href', `mailboxes.html?${querystring.stringify(onlineArgs)}`)
-      })
-      document.querySelector('[data-enhance="test-connectivity"]').addEventListener('click', (evt) => {
-        const outputEl = document.querySelector('[data-enhance="test-connectivity-output"]')
-        outputEl.innerHTML = [
-          '<div><strong>Testing connectivity...</strong></div>',
-          '<div><strong>Current Status: </strong>' + window.location.search + '</div>'
-        ].join('\n')
+    })
+    .then(() => window.fetch(endpoint))
+    .then((res) => {
+      logger(`-- OK:${res.ok} STATUS:${res.status}`)
+      return Promise.resolve()
+    })
+    .catch((err) => {
+      logger(`-- ERR:${err}`)
+      return Promise.resolve()
+    })
+}
 
-        Promise.resolve()
-          .then(() => testEndpoint('https://waveboxio.com', (l) => { outputEl.innerHTML += `<div>${l}</div>` }))
-          .then(() => testEndpoint('https://waveboxio.com/connection_test_fail', (l) => { outputEl.innerHTML += `<div>${l}</div>` }))
-          .then(() => testEndpoint('https://google.com', (l) => { outputEl.innerHTML += `<div>${l}</div>` }))
-          .then(() => testEndpoint('https://microsoft.com', (l) => { outputEl.innerHTML += `<div>${l}</div>` }))
-          .then(() => { outputEl.innerHTML += '<div><strong>Done</strong></div>' })
-      }, false)
-      window.addEventListener('online', () => {
-        window.location.href = `mailboxes.html?${querystring.stringify(onlineArgs)}`
-      }, false)
+Array.from(document.querySelectorAll('[data-enhance="error"]')).forEach((el) => {
+  el.textContent = query.error
+})
+Array.from(document.querySelectorAll('[data-enhance="reload"]')).forEach((el) => {
+  el.setAttribute('href', `mailboxes.html?${querystring.stringify(onlineArgs)}`)
+})
+document.querySelector('[data-enhance="test-connectivity"]').addEventListener('click', (evt) => {
+  const outputEl = document.querySelector('[data-enhance="test-connectivity-output"]')
+  outputEl.innerHTML = [
+    '<div><strong>Testing connectivity...</strong></div>',
+    '<div><strong>Current Status: </strong>' + window.location.search + '</div>'
+  ].join('\n')
 
-      // Make sure the window can't remain hidden in the background
-      const browserWindow = electron.remote.getCurrentWindow()
-      browserWindow.show()
-      browserWindow.focus()
+  Promise.resolve()
+    .then(() => testEndpoint('https://waveboxio.com', (l) => { outputEl.innerHTML += `<div>${l}</div>` }))
+    .then(() => testEndpoint('https://waveboxio.com/connection_test_fail', (l) => { outputEl.innerHTML += `<div>${l}</div>` }))
+    .then(() => testEndpoint('https://google.com', (l) => { outputEl.innerHTML += `<div>${l}</div>` }))
+    .then(() => testEndpoint('https://microsoft.com', (l) => { outputEl.innerHTML += `<div>${l}</div>` }))
+    .then(() => { outputEl.innerHTML += '<div><strong>Done</strong></div>' })
+}, false)
+window.addEventListener('online', () => {
+  window.location.href = `mailboxes.html?${querystring.stringify(onlineArgs)}`
+}, false)
+
+// Make sure the window can't remain hidden in the background
+const browserWindow = electron.remote.getCurrentWindow()
+browserWindow.show()
+browserWindow.focus()
     </script>
   </body>
 </html>

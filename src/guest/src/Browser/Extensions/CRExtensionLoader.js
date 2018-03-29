@@ -3,7 +3,7 @@ import { CRExtensionMatchPatterns } from 'shared/Models/CRExtension'
 import { WBECRX_EXECUTE_SCRIPT } from 'shared/ipcEvents'
 import DispatchManager from 'DispatchManager'
 import LiveConfig from 'LiveConfig'
-import url from 'url'
+import { URL } from 'whatwg-url'
 import CRExtensionRunEvents from './CRExtensionRunEvents'
 
 const SUPPORTED_CONTENT_SCRIPT_PROTOCOLS = new Set([
@@ -43,7 +43,7 @@ class CRExtensionLoader {
 
     // If we're loading into about:blank we need to get the parent url
     // so we can setup correctly.
-    const hostUrl = url.parse(LiveConfig.hostUrl)
+    const hostUrl = new URL(LiveConfig.hostUrl)
     if (SUPPORTED_CONTENT_SCRIPT_PROTOCOLS.has(hostUrl.protocol)) {
       this[privExtensionPreferences] = LiveConfig.extensions
         .reduce((acc, pref) => {

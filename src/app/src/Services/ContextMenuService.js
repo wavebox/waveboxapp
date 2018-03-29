@@ -113,7 +113,7 @@ class ContextMenuService {
       this.renderWaveboxSection(contents, params)
     ]
 
-    if (this[privAutofillService].isAvailable && this.isAutofillPasswordField(contents, params)) {
+    if (this[privAutofillService].isAvailable && this[privAutofillService].isValidAutofillUrl(evt.sender.getURL()) && this.isAutofillPasswordField(contents, params)) {
       this[privAutofillService]
         .findCredentials(contents.getURL())
         .then((credentials) => {

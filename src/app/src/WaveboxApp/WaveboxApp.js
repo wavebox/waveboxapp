@@ -26,6 +26,7 @@ import {evtMain} from 'AppEvents'
 import {TrayPopout, TrayBehaviour} from 'Tray'
 import {LinuxNotification} from 'Notifications'
 import WaveboxCommandArgs from './WaveboxCommandArgs'
+import { AppSettings } from 'shared/Models/Settings'
 
 const privStarted = Symbol('privStarted')
 const privArgv = Symbol('privArgv')
@@ -177,6 +178,13 @@ class WaveboxApp {
     }
 
     process.env.GOOGLE_API_KEY = credentials.GOOGLE_API_KEY
+
+    if (AppSettings.SUPPORTS_MIXED_SANDBOX_MODE) {
+      if (launchSettings.app.enableMixedSandboxMode) {
+        app.enableMixedSandbox() //TODO
+        console.log("enable")
+      }
+    }
   }
 
   /* ****************************************************************************/

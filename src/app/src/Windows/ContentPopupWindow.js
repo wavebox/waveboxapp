@@ -35,10 +35,17 @@ class ContentPopupWindow extends WaveboxWindow {
   /**
   * Starts the window
   * @param url: the start url
-  * @param safeBrowserWindowOptions={}: the configuration for the window. Must be directly
+  * @param windowOptions={}: the configuration for the window. Must be directly
   * from the parent webContents
   */
-  create (url, safeBrowserWindowOptions = {}) {
+  create (url, windowOptions = {}) {
+    if (!windowOptions.webPreferences) {
+      windowOptions.webPreferences = {}
+    }
+    windowOptions.webPreferences.nodeIntegration = false
+    windowOptions.webPreferences.nodeIntegrationInWorker = false
+    windowOptions.webPreferences.webviewTag = false
+
     // Blank urls are often used to just skim the referrer out of the request. This
     // can lead to a phantom window popping up and then shutting down. To prevent this
     // delay showing them on instances that might be this
@@ -47,7 +54,7 @@ class ContentPopupWindow extends WaveboxWindow {
     // The browser settings don't need to be sanitized as they should be in the same thread
     // and come from the parent webContents.
     const options = {
-      ...safeBrowserWindowOptions,
+      ...windowOptions,
       show: !shouldDelayShow
     }
 
@@ -103,6 +110,22 @@ class ContentPopupWindow extends WaveboxWindow {
   */
   destroy (evt) {
     super.destroy(evt)
+  }
+
+  /* ****************************************************************************/
+  // Overwritable behaviour
+  /* ****************************************************************************/
+
+  /**
+  * Checks if the webcontents is allowed to navigate to the next url. If false is returned
+  * it will be prevented
+  * @param evt: the event that fired
+  * @param browserWindow: the browserWindow that's being checked
+  * @param nextUrl: the next url to navigate
+  * @return false to suppress, true to allow
+  */
+  allowNavigate (evt, browserWindow, nextUrl) {
+    return true
   }
 
   /* ****************************************************************************/

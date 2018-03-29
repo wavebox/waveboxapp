@@ -1,5 +1,5 @@
 import { VMScript, VM } from 'vm2'
-import url from 'url'
+import { URL } from 'url'
 import {
   CRX_WEB_REQUEST_ON_BEFORE_REQUEST_,
   CRX_WEB_REQUEST_ON_BEFORE_REQUEST_ADD_,
@@ -151,7 +151,7 @@ class CRExtensionWebRequest {
     if (!this._blockingOnBeforeRequestScript) { return undefined }
 
     // Check our url matches
-    const purl = url.parse(details.url)
+    const purl = new URL(details.url)
     const matches = CRExtensionMatchPatterns.matchUrls(
       purl.protocol,
       purl.hostname,

@@ -61,9 +61,9 @@ class CRExtensionManifestWavebox extends Model {
 
       // Check the search args
       if (Array.isArray(item.searchArgs) && item.searchArgs.length) {
-        if (item.searchArgs.findIndex((a) => parsedUrl.query[a] === undefined) !== -1) { return false }
+        if (item.searchArgs.findIndex((a) => parsedUrl.searchParams.get(a) === null) !== -1) { return false }
       } else if (typeof (item.searchArgs) === 'string' && item.searchArgs.length) {
-        if (parsedUrl.query[item.searchArgs] === undefined) { return false }
+        if (parsedUrl.searchParams.get(item.searchArgs) === null) { return false }
       }
 
       // Pattern match the url

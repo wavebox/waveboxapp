@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
 import { WB_AUTH_SLACK, WB_AUTH_SLACK_COMPLETE, WB_AUTH_SLACK_ERROR } from 'shared/ipcEvents'
-import url from 'url'
+import { URL } from 'url'
 import AuthWindow from 'Windows/AuthWindow'
 
 class AuthSlack {
@@ -71,8 +71,8 @@ class AuthSlack {
       })
 
       oauthWin.webContents.on('will-navigate', (evt, nextUrl) => {
-        const purl = url.parse(nextUrl, true)
-        if (purl.host === 'slack.com' && purl.pathname.indexOf('/checkcookie') === 0 && purl.query.redir) {
+        const purl = new URL(nextUrl)
+        if (purl.host === 'slack.com' && purl.pathname.indexOf('/checkcookie') === 0 && purl.searchParams.get('redir')) {
           oauthWin.hide()
         }
       })

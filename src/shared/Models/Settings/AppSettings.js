@@ -7,6 +7,7 @@ class AppSettings extends Model {
   /* **************************************************************************/
 
   static get UPDATE_CHANNELS () { return RELEASE_CHANNELS }
+  static get SUPPORTS_MIXED_SANDBOX_MODE () { return process.platform === 'darwin' || process.platform === 'win32' }
 
   /* **************************************************************************/
   // Lifecycle
@@ -45,6 +46,7 @@ class AppSettings extends Model {
   get enableAutofillService () { return this._value_('enableAutofillService', true) }
   get isolateMailboxProcesses () { return this._value_('isolateMailboxProcesses', false) }
   get isolateExtensionProcesses () { return this._value_('isolateExtensionProcesses', false) }
+  get enableMixedSandboxMode () { return this._value_('enableMixedSandboxMode', true) }
   get enableWindowOpeningEngine () { return this._value_('enableWindowOpeningEngine', true) }
 }
 
