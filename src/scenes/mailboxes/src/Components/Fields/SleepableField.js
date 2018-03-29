@@ -34,7 +34,7 @@ const styles = {
 
   // Sleep wait
   sleepWaitText: {
-    width: 50,
+    width: 75,
     marginRight: 6,
     marginTop: -18
   },
@@ -59,7 +59,7 @@ const styles = {
 }
 
 const MIN_MILLIS = 0
-const MAX_MILLIS = 600000
+const MAX_MILLIS = 14400000
 
 export default class SleepableField extends React.Component {
   /* **************************************************************************/
@@ -193,8 +193,8 @@ export default class SleepableField extends React.Component {
               onDragStop={() => { this.finishEditingSleepWaitMs() }} />
             <TextField
               style={styles.sleepWaitText}
-              inputStyle={{ textAlign: 'right' }}
-              hintStyle={{ textAlign: 'right' }}
+              inputStyle={{ textAlign: 'center' }}
+              hintStyle={{ textAlign: 'center' }}
               hintText='1.5'
               disabled={disabled || !sleepEnabled}
               value={intermediaryValue}
