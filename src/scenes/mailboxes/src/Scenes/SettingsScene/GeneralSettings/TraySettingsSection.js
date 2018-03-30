@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Toggle, Paper, SelectField, MenuItem, TextField, Divider } from 'material-ui'
+import { Toggle, Paper, SelectField, MenuItem, TextField, Divider, FontIcon } from 'material-ui'
 import { TrayIconEditor } from 'Components/Tray'
 import settingsActions from 'stores/settings/settingsActions'
 import styles from '../CommonSettingStyles'
@@ -13,7 +13,7 @@ import {
   SUPPORTS_TASKBAR_HIDING,
   IS_GTK_PLATFORM,
   IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM,
-  SUPPORTS_CLICK_ACTIONS,
+  SUPPORTS_ADDITIONAL_CLICK_EVENTS,
   CLICK_ACTIONS
 } from 'shared/Models/Settings/TraySettings'
 
@@ -200,8 +200,9 @@ export default class TraySettingsSection extends React.Component {
             primaryText='Bottom Right: Below the icon to the right' />
         </SelectField>
         {IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
-          <div style={styles.extraInfo}>
-            Popout mode is only available when your OS uses GtkStatusIcon
+          <div style={styles.inputHelpTextInfo}>
+            <FontIcon className='far fa-info-circle' style={styles.inputHelpIconInfo} />
+            This setting only takes effect when your OS uses GtkStatusIcon
           </div>
         ) : undefined}
 
@@ -223,28 +224,26 @@ export default class TraySettingsSection extends React.Component {
                 {this.renderTrayActionOptions()}
               </SelectField>
               {IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
-                <div style={styles.extraInfo}>
-                  Click Action is only available when your OS uses GtkStatusIcon
+                <div style={styles.inputHelpTextInfo}>
+                  <FontIcon className='far fa-info-circle' style={styles.inputHelpIconInfo} />
+                  This setting only takes effect when your OS uses GtkStatusIcon
                 </div>
               ) : undefined}
             </Col>
-            <Col md={6}>
-              <SelectField
-                fullWidth
-                floatingLabelText='Alt Click Action'
-                disabled={!tray.show}
-                onChange={(evt, index, value) => { settingsActions.sub.tray.setAltClickAction(value) }}
-                value={tray.altClickAction}>
-                {this.renderTrayActionOptions()}
-              </SelectField>
-              {IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
-                <div style={styles.extraInfo}>
-                  Alt Click Action is only available when your OS uses GtkStatusIcon
-                </div>
-              ) : undefined}
-            </Col>
+            {SUPPORTS_ADDITIONAL_CLICK_EVENTS ? (
+              <Col md={6}>
+                <SelectField
+                  fullWidth
+                  floatingLabelText='Alt Click Action'
+                  disabled={!tray.show}
+                  onChange={(evt, index, value) => { settingsActions.sub.tray.setAltClickAction(value) }}
+                  value={tray.altClickAction}>
+                  {this.renderTrayActionOptions()}
+                </SelectField>
+              </Col>
+            ) : undefined}
           </Row>
-          {SUPPORTS_CLICK_ACTIONS ? (
+          {SUPPORTS_ADDITIONAL_CLICK_EVENTS ? (
             <Row>
               <Col md={6}>
                 <SelectField

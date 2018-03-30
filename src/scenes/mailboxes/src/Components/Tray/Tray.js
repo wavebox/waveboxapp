@@ -11,7 +11,7 @@ import {
   GTK_UPDATE_MODES,
   IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM,
   CLICK_ACTIONS,
-  SUPPORTS_CLICK_ACTIONS
+  SUPPORTS_ADDITIONAL_CLICK_EVENTS
 } from 'shared/Models/Settings/TraySettings'
 import { ipcRenderer, remote } from 'electron'
 import Resolver from 'Runtime/Resolver'
@@ -121,7 +121,7 @@ export default class Tray extends React.Component {
       tray.on('click', this.handleClick)
     } else {
       tray.on('click', this.handleClick)
-      if (SUPPORTS_CLICK_ACTIONS) {
+      if (SUPPORTS_ADDITIONAL_CLICK_EVENTS) {
         tray.on('right-click', this.handleRightClick)
         tray.on('double-click', this.handleDoubleClick)
       }
@@ -151,8 +151,12 @@ export default class Tray extends React.Component {
   * @param bounds: the bounds of the tray icon
   */
   handleClick = (evt, bounds) => {
-    if (evt.altKey || evt.ctrlKey || evt.shiftKey || evt.metaKey) {
-      this.dispatchClickAction(this.props.traySettings.altClickAction, bounds)
+    if (SUPPORTS_ADDITIONAL_CLICK_EVENTS) {
+      if (evt.altKey || evt.ctrlKey || evt.shiftKey || evt.metaKey) {
+        this.dispatchClickAction(this.props.traySettings.altClickAction, bounds)
+      } else {
+        this.dispatchClickAction(this.props.traySettings.clickAction, bounds)
+      }
     } else {
       this.dispatchClickAction(this.props.traySettings.clickAction, bounds)
     }

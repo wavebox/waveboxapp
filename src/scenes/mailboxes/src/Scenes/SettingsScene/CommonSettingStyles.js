@@ -116,6 +116,11 @@ export default {
     marginBottom: 5,
     marginRight: 5
   },
+
+  /* **************************************************************************/
+  // Fields
+  /* **************************************************************************/
+
   extraInfo: {
     fontSize: '85%',
     marginTop: 2,
@@ -125,5 +130,15 @@ export default {
     fontSize: '85%',
     paddingLeft: 45,
     color: Colors.grey500
+  },
+  inputHelpTextInfo: {
+    fontSize: '75%',
+    marginTop: -10,
+    color: Colors.blue700
+  },
+  inputHelpIconInfo: {
+    color: Colors.blue700,
+    fontSize: '85%',
+    marginRight: 5
   }
 }

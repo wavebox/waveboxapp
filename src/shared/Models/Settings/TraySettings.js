@@ -32,7 +32,7 @@ class TraySettings extends Model {
   /* **************************************************************************/
 
   static get CLICK_ACTIONS () { return CLICK_ACTIONS }
-  static get SUPPORTS_CLICK_ACTIONS () { return process.platform === 'win32' || process.platform === 'darwin' }
+  static get SUPPORTS_ADDITIONAL_CLICK_EVENTS () { return process.platform === 'win32' || process.platform === 'darwin' }
   static get GTK_UPDATE_MODES () { return GTK_UPDATE_MODES }
   static get POPOUT_POSITIONS () { return POPOUT_POSITIONS }
   static get SUPPORTS_DOCK_HIDING () { return process.platform === 'darwin' }
