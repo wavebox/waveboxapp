@@ -175,7 +175,7 @@ class TrayPopout {
     if (position === POPOUT_POSITIONS.AUTO) {
       if (process.platform === 'darwin') {
         this[privPositioner].move('trayCenter', bounds)
-      } else if (process.platform === 'win32' || process.platform === 'linux') {
+      } else if (process.platform === 'win32') {
         const screenSize = screen.getPrimaryDisplay().workAreaSize
 
         if (bounds.x < 50) {
@@ -193,34 +193,31 @@ class TrayPopout {
           this[privPositioner].move('trayBottomCenter', bounds)
         }
       } else if (process.platform === 'linux') {
-        if (bounds.y < 100) {
-          // Taskbar Top
-          this[privPositioner].move('trayCenter', bounds)
-        } else {
-          // Taskbar Bottom
-          this[privPositioner].move('trayBottomCenter', bounds)
-        }
+        // Linux doesn't support giving bounds, it just gives a dummy object.
+        // Use a default of bottom right
+        this[privPositioner].move('bottomRight')
       }
     } else {
-      switch (position) {
-        case POPOUT_POSITIONS.TOP_CENTER:
-          this[privPositioner].move('trayCenter', bounds)
-          break
-        case POPOUT_POSITIONS.TOP_LEFT:
-          this[privPositioner].move('trayLeft', bounds)
-          break
-        case POPOUT_POSITIONS.TOP_RIGHT:
-          this[privPositioner].move('trayRight', bounds)
-          break
-        case POPOUT_POSITIONS.BOTTOM_CENTER:
-          this[privPositioner].move('trayBottomCenter', bounds)
-          break
-        case POPOUT_POSITIONS.BOTTOM_LEFT:
-          this[privPositioner].move('trayBottomLeft', bounds)
-          break
-        case POPOUT_POSITIONS.BOTTOM_RIGHT:
-          this[privPositioner].move('trayBottomRight', bounds)
-          break
+      if (process.platform !== 'linux') {
+        switch (position) {
+          case POPOUT_POSITIONS.TOP_CENTER: this[privPositioner].move('trayCenter', bounds); break
+          case POPOUT_POSITIONS.TOP_LEFT: this[privPositioner].move('trayLeft', bounds); break
+          case POPOUT_POSITIONS.TOP_RIGHT: this[privPositioner].move('trayRight', bounds); break
+          case POPOUT_POSITIONS.BOTTOM_CENTER: this[privPositioner].move('trayBottomCenter', bounds); break
+          case POPOUT_POSITIONS.BOTTOM_LEFT: this[privPositioner].move('trayBottomLeft', bounds); break
+          case POPOUT_POSITIONS.BOTTOM_RIGHT: this[privPositioner].move('trayBottomRight', bounds); break
+        }
+      } else {
+        // Because we wont get tray boudns on linux lock to the edges of the
+        // screen instead
+        switch (position) {
+          case POPOUT_POSITIONS.TOP_CENTER: this[privPositioner].move('topCenter', bounds); break
+          case POPOUT_POSITIONS.TOP_LEFT: this[privPositioner].move('topLeft', bounds); break
+          case POPOUT_POSITIONS.TOP_RIGHT: this[privPositioner].move('topRight', bounds); break
+          case POPOUT_POSITIONS.BOTTOM_CENTER: this[privPositioner].move('bottomCenter', bounds); break
+          case POPOUT_POSITIONS.BOTTOM_LEFT: this[privPositioner].move('bottomLeft', bounds); break
+          case POPOUT_POSITIONS.BOTTOM_RIGHT: this[privPositioner].move('bottomRight', bounds); break
+        }
       }
     }
   }
