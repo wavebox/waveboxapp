@@ -214,7 +214,7 @@ export default class TraySettingsSection extends React.Component {
           <hr style={styles.subsectionRule} />
           <h1 style={styles.subsectionheading}>Tray Mouse Actions</h1>
           <Row>
-            <Col md={6}>
+            <Col md={SUPPORTS_ADDITIONAL_CLICK_EVENTS ? 6 : 12}>
               <SelectField
                 fullWidth
                 floatingLabelText='Click Action'
