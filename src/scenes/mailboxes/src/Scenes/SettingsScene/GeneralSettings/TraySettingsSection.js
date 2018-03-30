@@ -177,27 +177,51 @@ export default class TraySettingsSection extends React.Component {
           <MenuItem
             value={POPOUT_POSITIONS.TOP_CENTER}
             label='Top Center'
-            primaryText='Top Center: Centered above the icon' />
+            primaryText={process.platform === 'linux' ? (
+              'Top Center: Centered at the top of the screen'
+            ) : (
+              'Top Center: Centered above the icon'
+            )} />
           <MenuItem
             value={POPOUT_POSITIONS.TOP_LEFT}
             label='Top Left:'
-            primaryText='Top Left: Above the icon to the left' />
+            primaryText={process.platform === 'linux' ? (
+              'Top Left: In the top left of the screen'
+            ) : (
+              'Top Left: Above the icon to the left'
+            )} />
           <MenuItem
             value={POPOUT_POSITIONS.TOP_RIGHT}
             label='Top Right'
-            primaryText='Top Right: Above the icon to the right' />
+            primaryText={process.platform === 'linux' ? (
+              'Top Right: In the top right of the screen'
+            ) : (
+              'Top Right: Above the icon to the right'
+            )} />
           <MenuItem
             value={POPOUT_POSITIONS.BOTTOM_CENTER}
             label='Bottom Center'
-            primaryText='Bottom Center: Centered below the icon' />
+            primaryText={process.platform === 'linux' ? (
+              'Bottom Center: Centered at the bottom of the screen'
+            ) : (
+              'Bottom Center: Centered below the icon'
+            )} />
           <MenuItem
             value={POPOUT_POSITIONS.BOTTOM_LEFT}
             label='Bottom Left'
-            primaryText='Bottom Left: Below the icon to the left' />
+            primaryText={process.platform === 'linux' ? (
+              'Bottom Left: In the bottom left of the screen'
+            ) : (
+              'Bottom Left: Below the icon to the left'
+            )} />
           <MenuItem
             value={POPOUT_POSITIONS.BOTTOM_RIGHT}
             label='Bottom Right'
-            primaryText='Bottom Right: Below the icon to the right' />
+            primaryText={process.platform === 'linux' ? (
+              'Bottom Right: In the bottom right of the screen'
+            ) : (
+              'Bottom Right: Below the icon to the right'
+            )} />
         </SelectField>
         {IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
           <div style={styles.inputHelpTextInfo}>
