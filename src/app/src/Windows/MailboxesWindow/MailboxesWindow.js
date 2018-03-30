@@ -205,7 +205,7 @@ class MailboxesWindow extends WaveboxWindow {
       const settingsState = settingsStore.getState()
       if (settingsState.tray.show && settingsState.tray.removeFromTaskbarWin32) {
         this.window.hide()
-        this.preventDefault()
+        evt.preventDefault()
       }
     }
   }
