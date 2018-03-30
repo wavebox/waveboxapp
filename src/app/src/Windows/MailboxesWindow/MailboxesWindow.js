@@ -28,7 +28,9 @@ import {
   WB_SQUIRREL_UPDATE_CHECK_START,
   WB_SQUIRREL_UPDATE_DISABLED,
 
-  WB_FOCUS_MAILBOXES_WINDOW
+  WB_FOCUS_MAILBOXES_WINDOW,
+
+  WB_TOGGLE_TRAY_WITH_BOUNDS
 } from 'shared/ipcEvents'
 import {
   UISettings,
@@ -453,6 +455,18 @@ class MailboxesWindow extends WaveboxWindow {
   */
   userCheckForUpdate () {
     this.window.webContents.send(WB_USER_CHECK_FOR_UPDATE, {})
+  }
+
+  /* ****************************************************************************/
+  // Tray
+  /* ****************************************************************************/
+
+  /**
+  * @depricated the tray object should be kept on the main thread. We shouldn't
+  * be driving this down to the mailboxes window
+  */
+  __depricatedToggleTray () {
+    this.window.webContents.send(WB_TOGGLE_TRAY_WITH_BOUNDS, {})
   }
 
   /* ****************************************************************************/

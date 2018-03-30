@@ -12,7 +12,7 @@ import {
   SUPPORTS_DOCK_HIDING,
   SUPPORTS_TASKBAR_HIDING,
   IS_GTK_PLATFORM,
-  CTX_MENU_ONLY_SUPPORT,
+  IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM,
   SUPPORTS_CLICK_ACTIONS,
   CLICK_ACTIONS
 } from 'shared/Models/Settings/TraySettings'
@@ -164,74 +164,87 @@ export default class TraySettingsSection extends React.Component {
               }} />
           </Col>
         </Row>
-        {CTX_MENU_ONLY_SUPPORT ? undefined : (
-          <SelectField
-            fullWidth
-            floatingLabelText='Popout screen position'
-            disabled={!tray.show}
-            onChange={(evt, index, value) => { settingsActions.sub.tray.setPopoutPosition(value) }}
-            value={tray.popoutPosition}>
-            <MenuItem
-              value={POPOUT_POSITIONS.AUTO}
-              label='Auto'
-              primaryText='Auto: Position popover automatically' />
-            <MenuItem
-              value={POPOUT_POSITIONS.TOP_CENTER}
-              label='Top Center'
-              primaryText='Top Center: Centered above the icon' />
-            <MenuItem
-              value={POPOUT_POSITIONS.TOP_LEFT}
-              label='Top Left:'
-              primaryText='Top Left: Above the icon to the left' />
-            <MenuItem
-              value={POPOUT_POSITIONS.TOP_RIGHT}
-              label='Top Right'
-              primaryText='Top Right: Above the icon to the right' />
-            <MenuItem
-              value={POPOUT_POSITIONS.BOTTOM_CENTER}
-              label='Bottom Center'
-              primaryText='Bottom Center: Centered below the icon' />
-            <MenuItem
-              value={POPOUT_POSITIONS.BOTTOM_LEFT}
-              label='Bottom Left'
-              primaryText='Bottom Left: Below the icon to the left' />
-            <MenuItem
-              value={POPOUT_POSITIONS.BOTTOM_RIGHT}
-              label='Bottom Right'
-              primaryText='Bottom Right: Below the icon to the right' />
-          </SelectField>
-        )}
+        <SelectField
+          fullWidth
+          floatingLabelText='Popout screen position'
+          disabled={!tray.show}
+          onChange={(evt, index, value) => { settingsActions.sub.tray.setPopoutPosition(value) }}
+          value={tray.popoutPosition}>
+          <MenuItem
+            value={POPOUT_POSITIONS.AUTO}
+            label='Auto'
+            primaryText='Auto: Position popover automatically' />
+          <MenuItem
+            value={POPOUT_POSITIONS.TOP_CENTER}
+            label='Top Center'
+            primaryText='Top Center: Centered above the icon' />
+          <MenuItem
+            value={POPOUT_POSITIONS.TOP_LEFT}
+            label='Top Left:'
+            primaryText='Top Left: Above the icon to the left' />
+          <MenuItem
+            value={POPOUT_POSITIONS.TOP_RIGHT}
+            label='Top Right'
+            primaryText='Top Right: Above the icon to the right' />
+          <MenuItem
+            value={POPOUT_POSITIONS.BOTTOM_CENTER}
+            label='Bottom Center'
+            primaryText='Bottom Center: Centered below the icon' />
+          <MenuItem
+            value={POPOUT_POSITIONS.BOTTOM_LEFT}
+            label='Bottom Left'
+            primaryText='Bottom Left: Below the icon to the left' />
+          <MenuItem
+            value={POPOUT_POSITIONS.BOTTOM_RIGHT}
+            label='Bottom Right'
+            primaryText='Bottom Right: Below the icon to the right' />
+        </SelectField>
+        {IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
+          <div style={styles.extraInfo}>
+            Popout mode is only available when your OS uses GtkStatusIcon
+          </div>
+        ) : undefined}
 
         <br />
         <TrayIconEditor tray={tray} />
         <br />
 
-        {!CTX_MENU_ONLY_SUPPORT && SUPPORTS_CLICK_ACTIONS ? (
-          <div>
-            <hr style={styles.subsectionRule} />
-            <h1 style={styles.subsectionheading}>Tray Mouse Actions</h1>
-            <Row>
-              <Col md={6}>
-                <SelectField
-                  fullWidth
-                  floatingLabelText='Click Action'
-                  disabled={!tray.show}
-                  onChange={(evt, index, value) => { settingsActions.sub.tray.setClickAction(value) }}
-                  value={tray.clickAction}>
-                  {this.renderTrayActionOptions()}
-                </SelectField>
-              </Col>
-              <Col md={6}>
-                <SelectField
-                  fullWidth
-                  floatingLabelText='Alt Click Action'
-                  disabled={!tray.show}
-                  onChange={(evt, index, value) => { settingsActions.sub.tray.setAltClickAction(value) }}
-                  value={tray.altClickAction}>
-                  {this.renderTrayActionOptions()}
-                </SelectField>
-              </Col>
-            </Row>
+        <div>
+          <hr style={styles.subsectionRule} />
+          <h1 style={styles.subsectionheading}>Tray Mouse Actions</h1>
+          <Row>
+            <Col md={6}>
+              <SelectField
+                fullWidth
+                floatingLabelText='Click Action'
+                disabled={!tray.show}
+                onChange={(evt, index, value) => { settingsActions.sub.tray.setClickAction(value) }}
+                value={tray.clickAction}>
+                {this.renderTrayActionOptions()}
+              </SelectField>
+              {IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
+                <div style={styles.extraInfo}>
+                  Click Action is only available when your OS uses GtkStatusIcon
+                </div>
+              ) : undefined}
+            </Col>
+            <Col md={6}>
+              <SelectField
+                fullWidth
+                floatingLabelText='Alt Click Action'
+                disabled={!tray.show}
+                onChange={(evt, index, value) => { settingsActions.sub.tray.setAltClickAction(value) }}
+                value={tray.altClickAction}>
+                {this.renderTrayActionOptions()}
+              </SelectField>
+              {IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
+                <div style={styles.extraInfo}>
+                  Alt Click Action is only available when your OS uses GtkStatusIcon
+                </div>
+              ) : undefined}
+            </Col>
+          </Row>
+          {SUPPORTS_CLICK_ACTIONS ? (
             <Row>
               <Col md={6}>
                 <SelectField
@@ -254,8 +267,8 @@ export default class TraySettingsSection extends React.Component {
                 </SelectField>
               </Col>
             </Row>
-          </div>
-        ) : undefined}
+          ) : undefined}
+        </div>
       </Paper>
     )
   }

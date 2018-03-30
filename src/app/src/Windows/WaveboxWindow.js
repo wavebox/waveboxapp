@@ -31,8 +31,8 @@ class WaveboxWindow extends EventEmitter {
   static allOfType (Constructor) { return waveboxWindowManager.allOfType(Constructor) }
   static getOfType (Constructor) { return waveboxWindowManager.getOfType(Constructor) }
   static lastFocused () { return waveboxWindowManager.lastFocused() }
+  static lastFocusedId (includeSpecial) { return waveboxWindowManager.lastFocusedId(includeSpecial) }
   static focused () { return waveboxWindowManager.focused() }
-  static lastFocusedId () { return waveboxWindowManager.lastFocusedId() }
   static fromWebContentsId (wcId) { return waveboxWindowManager.fromWebContentsId(wcId) }
   static allTabIds () { return waveboxWindowManager.allTabIds() }
   static fromTabId (tabId) { return waveboxWindowManager.fromTabId(tabId) }
@@ -42,6 +42,8 @@ class WaveboxWindow extends EventEmitter {
   static fromBrowserWindow (bw) { return waveboxWindowManager.fromBrowserWindow(bw) }
   static focusedTabId () { return waveboxWindowManager.focusedTabId() }
   static cycleNextWindow () { return waveboxWindowManager.cycleNextWindow() }
+  static attachSpecial (browserWindowId) { return waveboxWindowManager.attachSpecial(browserWindowId) }
+  static detachSpecial (browserWindowId) { return waveboxWindowManager.detachSpecial(browserWindowId) }
 
   /* ****************************************************************************/
   // Class: Properties

@@ -15,6 +15,7 @@ class WaveboxAppGlobalShortcuts {
   constructor () {
     this[privConfig] = [
       { selector: this._handleToggle, accelerator: '', acceleratorName: 'globalToggleApp' },
+      { selector: this._handleToggleMini, accelertor: '', acceleratorName: 'globalToggleWaveboxMini' },
       { selector: this._handleShowMailbox0, accelerator: '', acceleratorName: 'globalShowAppMailbox0' },
       { selector: this._handleShowMailbox1, accelerator: '', acceleratorName: 'globalShowAppMailbox1' },
       { selector: this._handleShowMailbox2, accelerator: '', acceleratorName: 'globalShowAppMailbox2' },
@@ -119,6 +120,18 @@ class WaveboxAppGlobalShortcuts {
     } else {
       mailboxesWindow.show()
       mailboxesWindow.focus()
+    }
+  }
+
+  /**
+  * Toggles the wavebox mini menu
+  */
+  _handleToggleMini = () => {
+    // (Thomas101) this is ripe for refactoring. The tray should be created
+    // on the main thread
+    const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
+    if (mailboxesWindow) {
+      mailboxesWindow.__depricatedToggleTray()
     }
   }
 

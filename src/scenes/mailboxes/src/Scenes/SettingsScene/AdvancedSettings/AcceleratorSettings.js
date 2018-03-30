@@ -11,6 +11,7 @@ import {
 const ACCELERATOR_NAMES = {
   // Global
   globalToggleApp: 'Toggle App',
+  globalToggleWaveboxMini: 'Toggle Wavebox Mini',
   globalShowAppMailbox0: 'Show account in 1st position',
   globalShowAppMailbox1: 'Show account in 2nd position',
   globalShowAppMailbox2: 'Show account in 3rd position',
@@ -68,10 +69,12 @@ const ACCELERATOR_NAMES = {
   minimize: 'Minimize',
   cycleWindows: 'Cycle Windows',
   nextTab: 'Next Tab',
-  prevTab: 'Previous Tab'
+  prevTab: 'Previous Tab',
+  toggleWaveboxMini: 'Toggle Wavebox Mini'
 }
 const GLOBAL_SECTION = [
   'globalToggleApp',
+  'globalToggleWaveboxMini',
   'globalShowAppMailbox0',
   'globalShowAppMailbox1',
   'globalShowAppMailbox2',
@@ -129,7 +132,8 @@ const WINDOW_SECTION = [
   'minimize',
   'cycleWindows',
   'nextTab',
-  'prevTab'
+  'prevTab',
+  'toggleWaveboxMini'
 ]
 const SECTIONS = [
   { name: 'Application', items: APPLICATION_SECTION },

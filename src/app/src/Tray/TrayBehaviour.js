@@ -7,8 +7,11 @@ import {
   WB_SHOW_MAILBOX_WINDOW_FROM_TRAY,
   WB_HIDE_MAILBOX_WINDOW_FROM_TRAY,
   WB_TOGGLE_TRAY_POPOUT,
-  WB_HIDE_TRAY_POPOUT,
-  WB_SHOW_TRAY_POPOUT
+  WB_HIDE_TRAY,
+  WB_SHOW_TRAY,
+  WB_SHOW_TRAY_WINDOWED,
+  WB_SHOW_TRAY_DOCKED,
+  WB_TRAY_TOGGLE_WINDOW_MODE
 } from 'shared/ipcEvents'
 
 class WaveboxTrayBehaviour {
@@ -21,8 +24,11 @@ class WaveboxTrayBehaviour {
     ipcMain.on(WB_SHOW_MAILBOX_WINDOW_FROM_TRAY, this.ipcShowMailboxesWindow)
     ipcMain.on(WB_HIDE_MAILBOX_WINDOW_FROM_TRAY, this.ipcHideAllWindows)
     ipcMain.on(WB_TOGGLE_TRAY_POPOUT, this.ipcToggleTrayPopout)
-    ipcMain.on(WB_HIDE_TRAY_POPOUT, this.ipcHideTrayPopout)
-    ipcMain.on(WB_SHOW_TRAY_POPOUT, this.ipcShowTrayPopout)
+    ipcMain.on(WB_HIDE_TRAY, this.ipcHideTray)
+    ipcMain.on(WB_SHOW_TRAY, this.ipcShowTray)
+    ipcMain.on(WB_SHOW_TRAY_WINDOWED, this.ipcShowTrayWindowed)
+    ipcMain.on(WB_SHOW_TRAY_DOCKED, this.ipcShowTrayDocked)
+    ipcMain.on(WB_TRAY_TOGGLE_WINDOW_MODE, this.ipcToggleTrayWindowMode)
   }
 
   setup () { /* no-op */ }
@@ -107,14 +113,14 @@ class WaveboxTrayBehaviour {
   * @param bounds: the bounds of the tray
   */
   ipcToggleTrayPopout = (evt, bounds) => {
-    TrayPopout.toggle(bounds)
+    TrayPopout.toggleVisibility(bounds)
   }
 
   /**
   * Hides the tray popout
   * @param evt: the event that fired
   */
-  ipcHideTrayPopout = (evt) => {
+  ipcHideTray = (evt) => {
     TrayPopout.hide()
   }
 
@@ -123,8 +129,32 @@ class WaveboxTrayBehaviour {
   * @param evt: the event that fired
   * @param bounds: the bounds of the tray
   */
-  ipcShowTrayPopout = (evt, bounds) => {
-    TrayPopout.show()
+  ipcShowTray = (evt, bounds) => {
+    TrayPopout.show(bounds)
+  }
+
+  /**
+  * Shows the tray in windowed mode
+  * @param evt: the event that fired
+  */
+  ipcShowTrayWindowed = (evt) => {
+    TrayPopout.showInWindowMode()
+  }
+
+  /**
+  * Shows the tray in docked mode
+  * @param evt: the event that fired
+  */
+  ipcShowTrayDocked = (evt) => {
+    TrayPopout.showInDockedMode()
+  }
+
+  /**
+  * Toggles the window mode of the tray
+  * @param evt: the event that fired
+  */
+  ipcToggleTrayWindowMode = (evt) => {
+    TrayPopout.toggleWindowMode()
   }
 }
 

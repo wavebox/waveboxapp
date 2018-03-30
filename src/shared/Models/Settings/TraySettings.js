@@ -38,7 +38,7 @@ class TraySettings extends Model {
   static get SUPPORTS_DOCK_HIDING () { return process.platform === 'darwin' }
   static get SUPPORTS_TASKBAR_HIDING () { return process.platform === 'win32' }
   static get IS_GTK_PLATFORM () { return process.platform === 'linux' }
-  static get CTX_MENU_ONLY_SUPPORT () { return process.platform === 'linux' }
+  static get IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM () { return process.platform === 'linux' }
 
   /* **************************************************************************/
   // Lifecycle

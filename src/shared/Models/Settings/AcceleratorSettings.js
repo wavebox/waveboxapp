@@ -7,6 +7,7 @@ class AcceleratorSettings extends Model {
 
   // Global
   get globalToggleAppDefault () { return '' }
+  get globalToggleWaveboxMiniDefault () { return '' }
   get globalShowAppMailbox0Default () { return '' }
   get globalShowAppMailbox1Default () { return '' }
   get globalShowAppMailbox2Default () { return '' }
@@ -63,6 +64,7 @@ class AcceleratorSettings extends Model {
   get serviceIndexDefault () { return process.platform === 'darwin' ? 'Command+Alt+Number' : undefined }
   get nextTabDefault () { return process.platform === 'darwin' ? 'Command+Alt+Right' : 'Ctrl+Tab' }
   get prevTabDefault () { return process.platform === 'darwin' ? 'Command+Alt+Left' : 'Ctrl+Shift+Tab' }
+  get toggleWaveboxMiniDefault () { return process.platform === 'darwin' ? 'Cmd+Alt+M' : 'Ctrl+Shift+M' }
 
   /* ****************************************************************************/
   // Config
@@ -70,6 +72,7 @@ class AcceleratorSettings extends Model {
 
   // Global
   get globalToggleApp () { return this._value_('globalToggleApp', this.globalToggleAppDefault) }
+  get globalToggleWaveboxMini () { return this._value_('globalToggleWaveboxMini', this.globalToggleWaveboxMiniDefault) }
   get globalShowAppMailbox0 () { return this._value_('globalShowAppMailbox0', this.globalShowAppMailbox0Default) }
   get globalShowAppMailbox1 () { return this._value_('globalShowAppMailbox1', this.globalShowAppMailbox1Default) }
   get globalShowAppMailbox2 () { return this._value_('globalShowAppMailbox2', this.globalShowAppMailbox2Default) }
@@ -126,6 +129,7 @@ class AcceleratorSettings extends Model {
   get serviceIndex () { return this._value_('serviceIndex', this.serviceIndexDefault) }
   get nextTab () { return this._value_('nextTab', this.nextTabDefault) }
   get prevTab () { return this._value_('prevTab', this.prevTabDefault) }
+  get toggleWaveboxMini () { return this._value_('toggleWaveboxMini', this.toggleWaveboxMiniDefault) }
 }
 
 module.exports = AcceleratorSettings
