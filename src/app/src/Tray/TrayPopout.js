@@ -45,6 +45,11 @@ class TrayPopout {
       maximizable: false,
       fullscreenable: false,
       title: 'Wavebox Mini',
+      icon: (() => {
+        if (process.platform === 'win32') { return Resolver.icon('app.ico') }
+        if (process.platform === 'linux') { return Resolver.icon('app.png') }
+        return undefined
+      })(),
       webPreferences: {
         nodeIntegration: true,
         nodeIntegrationInWorker: false,
