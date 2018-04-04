@@ -7,7 +7,7 @@ class AppSettings extends Model {
   /* **************************************************************************/
 
   static get UPDATE_CHANNELS () { return RELEASE_CHANNELS }
-  static get SUPPORTS_MIXED_SANDBOX_MODE () { return process.platform === 'darwin' || process.platform === 'win32' }
+  static get SUPPORTS_MIXED_SANDBOX_MODE () { return true }
 
   /* **************************************************************************/
   // Lifecycle
