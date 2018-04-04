@@ -27,6 +27,7 @@ import {TrayPopout, TrayBehaviour} from 'Tray'
 import {LinuxNotification} from 'Notifications'
 import WaveboxCommandArgs from './WaveboxCommandArgs'
 import { AppSettings } from 'shared/Models/Settings'
+import WaveboxDataManager from './WaveboxDataManager'
 
 const privStarted = Symbol('privStarted')
 const privArgv = Symbol('privArgv')
@@ -210,6 +211,7 @@ class WaveboxApp {
 
     ipcMain.on(ipcEvents.WB_QUIT_APP, this.fullyQuitApp)
     ipcMain.on(ipcEvents.WB_RELAUNCH_APP, this.restartApp)
+    ipcMain.on(ipcEvents.WB_CLEAN_EXPIRED_SESSIONS, () => WaveboxDataManager.cleanExpiredSessions())
 
     ipcMain.on(ipcEvents.WB_SQUIRREL_UPDATE_CHECK, (evt, data) => {
       AppUpdater.updateCheck(data.url)

@@ -52,7 +52,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   get inUsePartitions () {
     return this.allRuntimes
       .map((runtime) => {
-        return runtime.extension.manifest.manifest.hasBackground ? runtime.backgroundPage.partitionId : undefined
+        return runtime.extension.manifest.hasBackground ? runtime.backgroundPage.partitionId : undefined
       })
       .filter((p) => !!p)
   }

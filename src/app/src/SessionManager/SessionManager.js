@@ -1,5 +1,7 @@
 import { session, app } from 'electron'
 import WebRequestEmitter from './WebRequestEmitter'
+import fs from 'fs-extra'
+import path from 'path'
 
 class SessionManager {
   /* ****************************************************************************/
@@ -53,6 +55,54 @@ class SessionManager {
   * @return the default session
   */
   getDefaultSession () { return session.defaultSession }
+
+  /**
+  * Gets the session ids from disk
+  * @return a list of session ids from disk
+  */
+  getAllDiskSessionIdsSync () {
+    const dirPath = path.join(app.getPath('userData'), 'Partitions')
+    try {
+      return fs
+        .readdirSync(dirPath)
+        .filter((id) => !id.startsWith('.'))
+        .map((id) => `persist:${decodeURIComponent(id)}`)
+    } catch (ex) {
+      return []
+    }
+  }
+
+  /* ****************************************************************************/
+  // Session Tools
+  /* ****************************************************************************/
+
+  /**
+  * Clears a session completely - including from disk
+  * @param id: the session id
+  * @return promise
+  */
+  clearSessionFull (id) {
+    return new Promise((resolve, reject) => {
+      const ses = session.fromPartition(id)
+      ses.clearCache(() => {
+        ses.clearStorageData(() => {
+          ses.clearHostResolverCache(() => {
+            if (id.startsWith('persist:')) {
+              setTimeout(() => {
+                const pureSessionId = encodeURIComponent(id.replace('persist:', ''))
+                const dirPath = path.join(app.getPath('userData'), 'Partitions', pureSessionId)
+                fs.remove(dirPath, () => {
+                  resolve()
+                })
+              }, 100)
+            } else {
+              resolve()
+            }
+          })
+        })
+      })
+    })
+  }
 
   /* ****************************************************************************/
   // WebRequest
