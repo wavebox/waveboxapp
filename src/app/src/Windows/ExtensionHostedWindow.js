@@ -7,6 +7,7 @@ import settingsStore from 'stores/settings/settingsStore'
 import Resolver from 'Runtime/Resolver'
 import { URL } from 'url'
 import WindowOpeningHandler from './WindowOpeningEngine/WindowOpeningHandler'
+import GuestWebPreferences from './GuestWebPreferences'
 
 const privExtensionId = Symbol('privExtensionId')
 const privExtensionName = Symbol('privExtensionName')
@@ -66,17 +67,14 @@ class ExtensionHostedWindow extends WaveboxWindow {
       minHeight: 300,
       backgroundColor: '#FFFFFF',
       ...browserWindowPreferences,
-      webPreferences: {
-        nodeIntegration: false,
-        nodeIntegrationInWorker: false,
-        webviewTag: false,
+      webPreferences: GuestWebPreferences.sanitizeForGuestUse({
         contextIsolation: false, // Intentional as the extension shares the same namespace as chrome.* api and runs in a semi-priviledged position
         sandbox: true,
         sharedSiteInstances: true,
         affinity: settingsStore.getState().launched.app.isolateExtensionProcesses ? undefined : `${WB_EXTENSION_WINDOW_AFFINITY_}:${this[privExtensionId]}`,
         preload: Resolver.crExtensionApi(),
         partition: `${CR_EXTENSION_BG_PARTITION_PREFIX}${this[privExtensionId]}`
-      },
+      }),
       show: true
     }
     if (this.constructor.isHostedExtensionUrlForExtension(startUrl, this[privExtensionId])) {

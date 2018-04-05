@@ -243,9 +243,12 @@ class WindowOpeningHandler {
   */
   openWindowWaveboxContent (openingBrowserWindow, tabMetaInfo, targetUrl, options, partitionOverride = undefined) {
     const contentWindow = new ContentWindow(tabMetaInfo)
-    const openerPartition = ((options || {}).webPreferences || {}).partition
-    const partitionId = partitionOverride || openerPartition
-    contentWindow.create(openingBrowserWindow, targetUrl, partitionId, options)
+    const windowOptions = { ...options, webPreferences: undefined }
+    const guestWebPreferences = (options.webPreferences || {})
+    if (partitionOverride) {
+      guestWebPreferences.partition = partitionOverride
+    }
+    contentWindow.create(targetUrl, windowOptions, openingBrowserWindow, guestWebPreferences)
     return contentWindow
   }
 

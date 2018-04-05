@@ -72,7 +72,7 @@ class MailboxesWindowBehaviour {
       } : undefined)
 
       const window = BrowserWindow.fromWebContents(evt.sender)
-      contentWindow.create(window, body.url, body.partition, body.windowPreferences, body.webPreferences)
+      contentWindow.create(body.url, body.windowPreferences, window, body.webPreferences)
     }
   }
 

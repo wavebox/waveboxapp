@@ -1,25 +1,13 @@
 import WaveboxWindow from './WaveboxWindow'
 import { app, webContents } from 'electron'
 import { evtMain } from 'AppEvents'
-import querystring from 'querystring'
 import Resolver from 'Runtime/Resolver'
 import {WindowOpeningHandler} from './WindowOpeningEngine'
-
-const SAFE_CONFIG_KEYS = [
-  'width',
-  'height',
-  'x',
-  'y',
-  'minWidth',
-  'minHeight',
-  'maxWidth',
-  'maxHeight',
-  'resizable',
-  'title'
-]
+import GuestWebPreferences from './GuestWebPreferences'
+import querystring from 'querystring'
 
 const privTabMetaInfo = Symbol('tabMetaInfo')
-const privLaunchInfo = Symbol('privLaunchInfo')
+const privGuestWebPreferences = Symbol('privGuestWebPreferences')
 const privGuestWebContentsId = Symbol('privGuestWebContentsId')
 
 class ContentWindow extends WaveboxWindow {
@@ -39,7 +27,7 @@ class ContentWindow extends WaveboxWindow {
   constructor (tabMetaInfo = undefined) {
     super()
     this[privTabMetaInfo] = tabMetaInfo
-    this[privLaunchInfo] = null
+    this[privGuestWebPreferences] = {}
     this[privGuestWebContentsId] = null
   }
 
@@ -47,7 +35,6 @@ class ContentWindow extends WaveboxWindow {
   // Properties
   /* ****************************************************************************/
 
-  get launchInfo () { return this[privLaunchInfo] }
   get rootWebContentsHasContextMenu () { return false }
   get allowsGuestClosing () { return true }
 
@@ -90,40 +77,18 @@ class ContentWindow extends WaveboxWindow {
   }
 
   /**
-  * Generates a safe sanitized list of browser window preferences, as these may have
-  * come from a host page so they can't be trusted. e.g. don't copy anything like webPreferences
-  * @param unsafe: the unsafe browser window preferences
-  * @return a copy of the preferences from a predefined list of safe keys
-  */
-  safeBrowserWindowPreferences (unsafe) {
-    return SAFE_CONFIG_KEYS.reduce((acc, k) => {
-      if (unsafe[k] !== undefined) {
-        acc[k] = unsafe[k]
-      }
-      return acc
-    }, {})
-  }
-
-  /**
   * Starts the window
-  * @param parentWindow: the parent window this spawned from
   * @param url: the start url
-  * @param partition: the partition to supply to the webview
-  * @param browserWindowPreferences={}: the configuration for the window
-  * @param webPreferences={}: the web preferences for the hosted child
+  * @param browserWindowOptions={}: the configuration for the window
+  * @param parentWindow=null: the parent window this spawned from
+  * @param guestWebPreferences={}: the web preferences for the hosted child
   */
-  create (parentWindow, url, partition, browserWindowPreferences = {}, webPreferences = {}) {
-    browserWindowPreferences = this.safeBrowserWindowPreferences(browserWindowPreferences)
-
+  create (url, browserWindowOptions = {}, parentWindow = null, guestWebPreferences = {}) {
     // Save the launch info for later
-    this[privLaunchInfo] = Object.freeze({
-      partition: partition,
-      browserWindowPreferences: browserWindowPreferences,
-      webPreferences: webPreferences
-    })
+    this[privGuestWebPreferences] = guestWebPreferences
 
-    // Generate a composite of options
-    const options = {
+    // Launch the new window
+    super.create(this.generateWindowUrl(url, guestWebPreferences.partition), {
       minWidth: 300,
       minHeight: 300,
       fullscreenable: true,
@@ -135,11 +100,24 @@ class ContentWindow extends WaveboxWindow {
         plugins: true
       },
       ...this.generateWindowPosition(parentWindow),
-      ...browserWindowPreferences
-    }
-
-    // Launch the new window
-    super.create(this.generateWindowUrl(url, partition), options)
+      ...([
+        'width',
+        'height',
+        'x',
+        'y',
+        'minWidth',
+        'minHeight',
+        'maxWidth',
+        'maxHeight',
+        'resizable',
+        'title'
+      ].reduce((acc, k) => {
+        if (browserWindowOptions[k] !== undefined) {
+          acc[k] = browserWindowOptions[k]
+        }
+        return acc
+      }, {}))
+    })
 
     // remove built in listener so we can handle this on our own
     this.window.webContents.removeAllListeners('devtools-reload-page')
@@ -171,19 +149,13 @@ class ContentWindow extends WaveboxWindow {
   * @param webViewProperties: the properites of the new webview
   */
   handleWillAttachWebview = (evt, webViewWebPreferences, webViewProperties) => {
-    [
-      'partition',
-      'affinity'
-    ].forEach((p) => {
-      if (this.launchInfo[p] !== undefined) {
-        webViewWebPreferences[p] = this.launchInfo[p]
-      }
-    })
-    webViewWebPreferences.nodeIntegration = false
-    webViewWebPreferences.nodeIntegrationInWorker = false
-    webViewWebPreferences.webviewTag = false
+    // Web Preferences
+    GuestWebPreferences.copyForChild(this[privGuestWebPreferences], webViewWebPreferences)
+    GuestWebPreferences.defaultGuestPreferences(webViewWebPreferences)
+    GuestWebPreferences.sanitizeForGuestUse(webViewWebPreferences)
 
-    webViewProperties.partition = this.launchInfo.partition
+    // Web view properties
+    webViewProperties.partition = this[privGuestWebPreferences].partition
   }
 
   /**
@@ -249,22 +221,6 @@ class ContentWindow extends WaveboxWindow {
       tabMetaInfo: this[privTabMetaInfo],
       mailbox: undefined
     })
-  }
-
-  /* ****************************************************************************/
-  // App Events
-  /* ****************************************************************************/
-
-  /**
-  * Opens a new content window
-  * @param evt: the event that fired
-  * @param body: the arguments from the body
-  */
-  handleIPCOpenNewWindow = (evt, body) => {
-    if (evt.sender === this.window.webContents) {
-      const contentWindow = new ContentWindow(this[privTabMetaInfo])
-      contentWindow.create(this.window, body.url, this.launchInfo.partition, this.launchInfo.windowPreferences, this.launchInfo.webPreferences)
-    }
   }
 
   /* ****************************************************************************/

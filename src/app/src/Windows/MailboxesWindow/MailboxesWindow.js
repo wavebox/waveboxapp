@@ -3,6 +3,7 @@ import WaveboxWindow from '../WaveboxWindow'
 import { settingsStore } from 'stores/settings'
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
+import GuestWebPreferences from '../GuestWebPreferences'
 import {
   AuthGoogle,
   AuthMicrosoft,
@@ -135,6 +136,7 @@ class MailboxesWindow extends WaveboxWindow {
       }),
       webPreferences: {
         nodeIntegration: true,
+        webviewTag: true,
         backgroundThrottling: false,
         plugins: true
       }
@@ -153,6 +155,8 @@ class MailboxesWindow extends WaveboxWindow {
     this.window.on('focus', () => {
       mailboxActions.reduceService.defer(undefined, undefined, ServiceReducer.mergeChangesetOnActive)
     })
+
+    this.window.webContents.on('will-attach-webview', this._handleWillAttachWebview)
 
     // remove built in listener so we can handle this on our own
     this.window.webContents.removeAllListeners('devtools-reload-page')
@@ -208,6 +212,20 @@ class MailboxesWindow extends WaveboxWindow {
         evt.preventDefault()
       }
     }
+  }
+
+  /* ****************************************************************************/
+  // Webview events
+  /* ****************************************************************************/
+
+  /**
+  * Handles a webview preparing to attach
+  * @param evt: the event that fired
+  * @param webViewWebPreferences: the webPreferences of the new webview
+  * @param webViewProperties: the properites of the new webview
+  */
+  _handleWillAttachWebview = (evt, webViewWebPreferences, webViewProperties) => {
+    GuestWebPreferences.sanitizeForGuestUse(webViewWebPreferences)
   }
 
   /* ****************************************************************************/

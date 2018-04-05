@@ -1,4 +1,5 @@
 import WaveboxWindow from './WaveboxWindow'
+import GuestWebPreferences from './GuestWebPreferences'
 
 class AuthWindow extends WaveboxWindow {
   /* ****************************************************************************/
@@ -15,9 +16,7 @@ class AuthWindow extends WaveboxWindow {
     if (!browserWindowPreferences.webPreferences) {
       browserWindowPreferences.webPreferences = {}
     }
-    browserWindowPreferences.webPreferences.nodeIntegration = false
-    browserWindowPreferences.webPreferences.nodeIntegrationInWorker = false
-    browserWindowPreferences.webPreferences.webviewTag = false
+    GuestWebPreferences.sanitizeForGuestUse(browserWindowPreferences.webPreferences)
 
     return super.create(url, browserWindowPreferences)
   }

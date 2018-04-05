@@ -180,8 +180,14 @@ class CRExtensionTabs {
       responseCallback(null, undefined)
     } else {
       const contentWindow = new ContentWindow()
-      const partitionId = CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
-      contentWindow.create(undefined, (options.url || 'about:blank'), partitionId)
+      contentWindow.create(
+        options.url || 'about:blank',
+        undefined,
+        undefined,
+        {
+          partition: CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
+        }
+      )
       responseCallback(null, undefined)
     }
   }

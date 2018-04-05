@@ -1,5 +1,6 @@
 import WaveboxWindow from './WaveboxWindow'
 import { evtMain } from 'AppEvents'
+import GuestWebPreferences from './GuestWebPreferences'
 
 const privTabMetaInfo = Symbol('privTabMetaInfo')
 
@@ -42,9 +43,7 @@ class ContentPopupWindow extends WaveboxWindow {
     if (!windowOptions.webPreferences) {
       windowOptions.webPreferences = {}
     }
-    windowOptions.webPreferences.nodeIntegration = false
-    windowOptions.webPreferences.nodeIntegrationInWorker = false
-    windowOptions.webPreferences.webviewTag = false
+    GuestWebPreferences.sanitizeForGuestUse(windowOptions.webPreferences)
 
     // Blank urls are often used to just skim the referrer out of the request. This
     // can lead to a phantom window popping up and then shutting down. To prevent this

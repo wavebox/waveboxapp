@@ -587,7 +587,12 @@ class ContextMenuService {
 
     const openerWebPreferences = contents.getWebPreferences()
     const contentWindow = new ContentWindow(waveboxWindow ? waveboxWindow.tabMetaInfo(contents.id) : undefined)
-    contentWindow.create(openerWindow, url, openerWebPreferences.partition)
+    contentWindow.create(
+      url,
+      undefined,
+      openerWindow,
+      { partition: openerWebPreferences.partition }
+    )
   }
 
   /**

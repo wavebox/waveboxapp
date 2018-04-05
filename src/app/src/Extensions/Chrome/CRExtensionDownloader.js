@@ -66,6 +66,9 @@ class CRExtensionDownloader {
     const downloader = webContents.create({
       partition: `${CR_EXTENSION_DOWNLOAD_PARTITION_PREFIX}${installId}`,
       isBackgroundPage: true,
+      nodeIntegration: false,
+      nodeIntegrationInWorker: false,
+      webviewTag: false,
       commandLineSwitches: '--background-page'
     })
     this.downloads.set(extensionId, {
@@ -110,6 +113,9 @@ class CRExtensionDownloader {
     const downloader = webContents.create({
       partition: `${CR_EXTENSION_DOWNLOAD_PARTITION_PREFIX}${installId}`,
       isBackgroundPage: true,
+      nodeIntegration: false,
+      nodeIntegrationInWorker: false,
+      webviewTag: false,
       commandLineSwitches: '--background-page'
     })
     this.downloads.set(extensionId, {
@@ -202,6 +208,9 @@ class CRExtensionDownloader {
     this.updater = webContents.create({
       partition: `${CR_EXTENSION_DOWNLOAD_PARTITION_PREFIX}${updateId}`,
       isBackgroundPage: true,
+      nodeIntegration: false,
+      nodeIntegrationInWorker: false,
+      webviewTag: false,
       commandLineSwitches: '--background-page'
     })
 

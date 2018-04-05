@@ -11,9 +11,9 @@ class BrowserActions {
   /* **************************************************************************/
 
   /**
-  * Basically a no-op but ensures that the ipcRenderer events are bound
+  * @param initialUrl: the initial url
   */
-  load () { return {} }
+  load (initialUrl) { return { initialUrl } }
 
   /* **************************************************************************/
   // Display
