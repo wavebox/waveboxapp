@@ -15,6 +15,7 @@
     "content-security-policy-parser": "0.1.1",
     "decompress": "4.2.0",
     "dictionary-en-us": "2.0.0",
+    "electron-fetch": "1.1.0",
     "electron-positioner": "3.0.0",
     "fs-extra": "5.0.0",
     "googleapis": "22.2.0",
