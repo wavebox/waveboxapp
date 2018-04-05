@@ -10,9 +10,15 @@
   width: 100%;
   height: 100%;
 
+  // Explicitly set the visibility on the webview element as this allows electron to prioritize resource consumption
+  webview { visibility: hidden; }
+
   &.active {
     top: 0px;
     bottom: 0px;
+
+    // Explicitly set the visibility on the webview element as this allows electron to prioritize resource consumption
+    webview { visibility: visible; }
   }
 
   .ReactComponent-BrowserContainer {
