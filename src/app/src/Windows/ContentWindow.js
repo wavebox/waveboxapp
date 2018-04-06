@@ -203,8 +203,7 @@ class ContentWindow extends WaveboxWindow {
       openingBrowserWindow: this.window,
       openingWindowType: this.windowType,
       tabMetaInfo: this[privTabMetaInfo],
-      provisionalTargetUrl: undefined,
-      mailbox: undefined
+      provisionalTargetUrl: undefined
     })
   }
 
@@ -218,8 +217,7 @@ class ContentWindow extends WaveboxWindow {
       targetUrl: targetUrl,
       openingBrowserWindow: this.window,
       openingWindowType: this.windowType,
-      tabMetaInfo: this[privTabMetaInfo],
-      mailbox: undefined
+      tabMetaInfo: this[privTabMetaInfo]
     })
   }
 

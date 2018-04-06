@@ -130,8 +130,7 @@ class ExtensionHostedWindow extends WaveboxWindow {
         openingBrowserWindow: this.window,
         openingWindowType: this.windowType,
         tabMetaInfo: this.tabMetaInfo(evt.sender.id),
-        provisionalTargetUrl: undefined, // Don't pass this unless you're going to validate it's a hosted ext url!
-        mailbox: undefined
+        provisionalTargetUrl: undefined // Don't pass this unless you're going to validate it's a hosted ext url!
       })
     } else {
       evt.preventDefault()

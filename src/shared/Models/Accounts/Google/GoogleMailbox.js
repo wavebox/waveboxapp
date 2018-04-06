@@ -248,6 +248,24 @@ class GoogleMailbox extends CoreMailbox {
       return []
     }
   }
+
+  get navigateModeOverrideRulesets () {
+    if (this.openDriveLinksWithExternalBrowser) {
+      return [
+        {
+          url: 'http(s)\\://*.google.com(/*)',
+          matches: [
+            // Convert content popup to external
+            { windowType: 'CONTENT_POPUP', url: 'http(s)\\://docs.google.com/document/d/*/edit(*)', mode: 'CONVERT_TO_EXTERNAL' },
+            { windowType: 'CONTENT_POPUP', url: 'http(s)\\://docs.google.com/spreadsheets/d/*/edit(*)', mode: 'CONVERT_TO_EXTERNAL' },
+            { windowType: 'CONTENT_POPUP', url: 'http(s)\\://docs.google.com/presentation/d/*/edit(*)', mode: 'CONVERT_TO_EXTERNAL' }
+          ]
+        }
+      ]
+    } else {
+      return []
+    }
+  }
 }
 
 module.exports = GoogleMailbox

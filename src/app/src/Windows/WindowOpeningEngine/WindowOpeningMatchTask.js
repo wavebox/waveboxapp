@@ -17,8 +17,8 @@ class WindowOpeningMatchTask {
   * @param ruleset: the raw ruleset
   */
   constructor (currentUrl, targetUrl, windowType, provisionalTargetUrl = undefined, disposition = undefined) {
-    this.fullCurrentUrl = currentUrl
-    this.fullTargetUrl = targetUrl
+    this.fullCurrentUrl = currentUrl || 'about:blank'
+    this.fullTargetUrl = targetUrl || 'about:blank'
     this.windowType = windowType
     this.fullProvisionalTargetUrl = provisionalTargetUrl
     this.disposition = disposition

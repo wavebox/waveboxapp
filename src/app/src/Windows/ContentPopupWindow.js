@@ -1,6 +1,9 @@
 import WaveboxWindow from './WaveboxWindow'
 import { evtMain } from 'AppEvents'
 import GuestWebPreferences from './GuestWebPreferences'
+import { WindowOpeningEngine, WindowOpeningHandler } from './WindowOpeningEngine'
+
+const WINDOW_OPEN_MODES = WindowOpeningEngine.WINDOW_OPEN_MODES
 
 const privTabMetaInfo = Symbol('privTabMetaInfo')
 
@@ -100,6 +103,7 @@ class ContentPopupWindow extends WaveboxWindow {
 
     // Listen to webview events
     this.window.webContents.on('new-window', this.handleWebContentsNewWindow)
+    this.window.webContents.on('will-navigate', this.handleWebViewWillNavigate)
     return this
   }
 
@@ -141,11 +145,31 @@ class ContentPopupWindow extends WaveboxWindow {
   * @param additionalFeatures: The non-standard features
   */
   handleWebContentsNewWindow = (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
-    evt.preventDefault()
+    WindowOpeningHandler.handleOpenNewWindow(evt, {
+      targetUrl: targetUrl,
+      frameName: frameName,
+      disposition: disposition,
+      options: options,
+      additionalFeatures: additionalFeatures,
+      openingBrowserWindow: this.window,
+      openingWindowType: this.windowType,
+      tabMetaInfo: this[privTabMetaInfo],
+      provisionalTargetUrl: undefined
+    }, WINDOW_OPEN_MODES.POPUP_CONTENT)
+  }
 
-    const contentWindow = new ContentPopupWindow(this[privTabMetaInfo])
-    contentWindow.create(targetUrl, options)
-    evt.newGuest = contentWindow.window
+  /**
+  * Handles the webview navigating
+  * @param evt: the event that fired
+  * @param targetUrl: the url we're navigating to
+  */
+  handleWebViewWillNavigate = (evt, targetUrl) => {
+    WindowOpeningHandler.handleWillNavigate(evt, {
+      targetUrl: targetUrl,
+      openingBrowserWindow: this.window,
+      openingWindowType: this.windowType,
+      tabMetaInfo: this[privTabMetaInfo]
+    })
   }
 
   /* ****************************************************************************/
