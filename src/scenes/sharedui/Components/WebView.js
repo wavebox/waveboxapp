@@ -11,7 +11,8 @@ const camelCase = function (name) {
   }).join('')
 }
 
-const MAX_CAPTURE_PAGE_TIMEOUT = 1500
+const WARN_CAPTURE_PAGE_TIMEOUT = 1500
+const MAX_CAPTURE_PAGE_TIMEOUT = 2500
 const SEND_RESPOND_PREFIX = '__SEND_RESPOND__'
 const WEBVIEW_EVENTS = [
   'load-commit',
@@ -307,10 +308,13 @@ export default class WebView extends React.Component {
 
       const timeoutWarn = setTimeout(() => {
         console.warn(
-          `Calling webview.capturePage is taking more than ${MAX_CAPTURE_PAGE_TIMEOUT}ms.`,
+          `Calling webview.capturePage is taking more than ${WARN_CAPTURE_PAGE_TIMEOUT}ms.`,
           `This can be indicitive of an error or if the api is never going to return.`,
           node
         )
+      }, WARN_CAPTURE_PAGE_TIMEOUT)
+      const timeout = setTimeout(() => {
+        arg2(null, new Error(`Failed to capture. Took more that ${MAX_CAPTURE_PAGE_TIMEOUT}`))
       }, MAX_CAPTURE_PAGE_TIMEOUT)
 
       // Run the capture
@@ -318,6 +322,7 @@ export default class WebView extends React.Component {
         try {
           node.capturePage(arg1, (img) => {
             clearTimeout(timeoutWarn)
+            clearTimeout(timeout)
             setTimeout(() => {
               if (style.parentElement) { style.parentElement.removeChild(style) }
               node.removeAttribute('data-webview-capture-id')
@@ -327,6 +332,7 @@ export default class WebView extends React.Component {
           })
         } catch (ex) {
           clearTimeout(timeoutWarn)
+          clearTimeout(timeout)
           arg2(null, ex)
         }
       })
