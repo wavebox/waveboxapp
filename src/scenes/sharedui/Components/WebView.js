@@ -3,6 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { ELEVATED_LOG_PREFIX } from 'shared/constants'
 import electron from 'electron'
+import uuid from 'uuid'
 
 const camelCase = function (name) {
   return name.split('-').map((token, index) => {
@@ -10,6 +11,7 @@ const camelCase = function (name) {
   }).join('')
 }
 
+const MAX_CAPTURE_PAGE_TIMEOUT = 1500
 const SEND_RESPOND_PREFIX = '__SEND_RESPOND__'
 const WEBVIEW_EVENTS = [
   'load-commit',
@@ -74,6 +76,7 @@ const WEBVIEW_METHODS = [
   'canGoForward',
   'canGoToOffset',
   'capturePage',
+  'capturePagePromise', // addition
   'clearHistory',
   'copy',
   'cut',
@@ -281,27 +284,85 @@ export default class WebView extends React.Component {
   /**
   * Captures a screenshot of the webview page. Includes a fix for retina display
   * not automatically getting the correct size https://github.com/electron/electron/issues/8314
+  * Also includes a fix for capture not working when the element is not visible
   * @param [rect]: the area of the page to be captured
   * @param callback: executed on complete
   */
   capturePage = (arg1, arg2) => {
     const node = this.getWebviewNode()
     if (typeof (arg1) === 'object' && typeof (arg2) === 'function') {
-      node.capturePage(arg1, arg2)
-    } else {
+      // Check if anyone else is capturing
+      if (node.getAttribute('data-webview-capture-action') === 'capture') {
+        arg2(null, new Error('Failed to capture, capture already in progress'))
+      }
+
+      // Attach a style to the page that can't be overwritten in case anyone else
+      // tries to change the style in the meatime
+      const id = uuid.v4()
+      const style = document.createElement('style')
+      style.innerHTML = `webview[data-webview-capture-id="${id}"][data-webview-capture-action="capture"] { visibility: visible !important; }`
+      document.head.appendChild(style)
+      node.setAttribute('data-webview-capture-id', id)
+      node.setAttribute('data-webview-capture-action', 'capture')
+
+      const timeoutWarn = setTimeout(() => {
+        console.warn(
+          `Calling webview.capturePage is taking more than ${MAX_CAPTURE_PAGE_TIMEOUT}ms.`,
+          `This can be indicitive of an error or if the api is never going to return.`,
+          node
+        )
+      }, MAX_CAPTURE_PAGE_TIMEOUT)
+
+      // Run the capture
+      setTimeout(() => {
+        try {
+          node.capturePage(arg1, (img) => {
+            clearTimeout(timeoutWarn)
+            setTimeout(() => {
+              if (style.parentElement) { style.parentElement.removeChild(style) }
+              node.removeAttribute('data-webview-capture-id')
+              node.removeAttribute('data-webview-capture-action')
+              arg2(img)
+            })
+          })
+        } catch (ex) {
+          clearTimeout(timeoutWarn)
+          arg2(null, ex)
+        }
+      })
+    } else if (typeof (arg1) === 'function') {
       node.executeJavaScript(`(function () {
         return { height: window.innerHeight, width: window.innerWidth }
       })()`, (r) => {
         const scaleFactor = electron.screen.getPrimaryDisplay().scaleFactor
-        const rect = {
+        this.capturePage({
           x: 0,
           y: 0,
           width: r.width * scaleFactor,
           height: r.height * scaleFactor
-        }
-        node.capturePage(rect, arg1)
+        }, arg1)
       })
+    } else {
+      throw new Error('Invalid signature call to "capturePage"')
     }
+  }
+
+  /**
+  * Calls out to capturePage but returns a promise
+  * @param [rect]: the rect to capture in the page
+  * @return promise
+  */
+  capturePagePromise = (rect) => {
+    return new Promise((resolve, reject) => {
+      const args = [rect, (img, optError) => {
+        if (img) {
+          resolve(img)
+        } else {
+          reject(optError || new Error('No image returned from underlying api call'))
+        }
+      }].filter((a) => !!a)
+      this.capturePage(...args)
+    })
   }
 
   /* **************************************************************************/
