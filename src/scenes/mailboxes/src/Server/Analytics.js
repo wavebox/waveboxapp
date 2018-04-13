@@ -8,7 +8,7 @@ import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import SettingsIdent from 'shared/Models/Settings/SettingsIdent'
 import querystring from 'querystring'
 import os from 'os'
-import url from 'url'
+import { URL } from 'url'
 import pkg from 'package.json'
 import DistributionConfig from 'Runtime/DistributionConfig'
 import {
@@ -140,7 +140,7 @@ class Analytics {
           if (mailbox.type === CoreMailbox.MAILBOX_TYPES.CONTAINER || mailbox.type === CoreMailbox.MAILBOX_TYPES.GENERIC) {
             return {
               ...standard,
-              url: service.url ? url.parse(service.url).hostname : undefined
+              url: service.url ? new URL(service.url).hostname : undefined
             }
           } else {
             return standard
@@ -181,7 +181,7 @@ class Analytics {
           webContentsInfo: metric.webContentsInfo.map((wcMetric) => {
             return {
               description: wcMetric.description,
-              url: wcMetric.url ? url.parse(wcMetric.url).hostname : undefined
+              url: wcMetric.url ? new URL(wcMetric.url).hostname : undefined
             }
           })
         }

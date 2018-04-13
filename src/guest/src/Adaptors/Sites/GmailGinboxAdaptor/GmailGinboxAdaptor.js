@@ -36,22 +36,15 @@ class GmailGinboxAdaptor extends BaseAdaptor {
 
     this.sidebarStylesheet = document.createElement('style')
     this.sidebarStylesheet.innerHTML = `
-      [role="banner"] [href="#inbox"][title] {
+      body:not([jscontroller]) [role="banner"] [href="#inbox"][title] {
         max-height:33px !important;
         margin-top: 22px;
         background-position-x: center;
       }
-
-      [href="#inbox"][data-ved]>* {
+      body:not([jscontroller]) [href="#inbox"][data-ved]>* {
         max-height:33px !important;
         margin-top: 22px;
         background-position-x: center;
-      }
-      [jsaction="global.toggle_main_menu"] {
-        margin-top: 5px;
-      }
-      [jsaction="global.toggle_main_menu"] ~ [data-action-data] {
-        margin-top: 21px;
       }
     `
 

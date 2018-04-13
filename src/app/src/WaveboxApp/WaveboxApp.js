@@ -26,6 +26,8 @@ import {evtMain} from 'AppEvents'
 import {TrayPopout, TrayBehaviour} from 'Tray'
 import {LinuxNotification} from 'Notifications'
 import WaveboxCommandArgs from './WaveboxCommandArgs'
+import { AppSettings } from 'shared/Models/Settings'
+import WaveboxDataManager from './WaveboxDataManager'
 
 const privStarted = Symbol('privStarted')
 const privArgv = Symbol('privArgv')
@@ -177,6 +179,12 @@ class WaveboxApp {
     }
 
     process.env.GOOGLE_API_KEY = credentials.GOOGLE_API_KEY
+
+    if (AppSettings.SUPPORTS_MIXED_SANDBOX_MODE) {
+      if (launchSettings.app.enableMixedSandboxMode) {
+        app.enableMixedSandbox()
+      }
+    }
   }
 
   /* ****************************************************************************/
@@ -203,6 +211,7 @@ class WaveboxApp {
 
     ipcMain.on(ipcEvents.WB_QUIT_APP, this.fullyQuitApp)
     ipcMain.on(ipcEvents.WB_RELAUNCH_APP, this.restartApp)
+    ipcMain.on(ipcEvents.WB_CLEAN_EXPIRED_SESSIONS, () => WaveboxDataManager.cleanExpiredSessions())
 
     ipcMain.on(ipcEvents.WB_SQUIRREL_UPDATE_CHECK, (evt, data) => {
       AppUpdater.updateCheck(data.url)
@@ -249,12 +258,10 @@ class WaveboxApp {
     const settingsState = settingsStore.getState()
     const mailboxState = mailboxStore.getState()
     // Load extensions before any webcontents get created
-    if (settingsState.launched.extension.enableChromeExperimental) {
-      try {
-        CRExtensionManager.loadExtensionDirectory()
-      } catch (ex) {
-        console.error(`Failed to load extensions. Continuing...`, ex)
-      }
+    try {
+      CRExtensionManager.loadExtensionDirectory()
+    } catch (ex) {
+      console.error(`Failed to load extensions. Continuing...`, ex)
     }
 
     // Doing this outside of ready has a side effect on high-sierra where you get a _TSGetMainThread error

@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import BrowserView from 'sharedui/Components/BrowserView'
-import URI from 'urijs'
+import { URL } from 'url'
 import {
   WAVEBOX_CAPTURE_URLS,
   WAVEBOX_CAPTURE_URL_HOSTNAMES
@@ -38,8 +38,8 @@ export default class WaveboxWebView extends React.Component {
     })
 
     if (match) {
-      const purl = URI(url)
-      switch (purl.pathname()) {
+      const purl = new URL(url)
+      switch (purl.pathname) {
         case WAVEBOX_CAPTURE_URLS.SETTINGS:
           window.location.hash = '/settings'
           return true
@@ -60,7 +60,7 @@ export default class WaveboxWebView extends React.Component {
           return true
         case WAVEBOX_CAPTURE_URLS.WAVEBOX_PRO_BUY:
           window.location.hash = '/'
-          electron.remote.shell.openExternal(purl.search(true).url)
+          electron.remote.shell.openExternal(purl.searchParams.get('url'))
           return true
         case WAVEBOX_CAPTURE_URLS.ADD_MAILBOX:
           this.processAddMailbox(purl)
@@ -75,12 +75,15 @@ export default class WaveboxWebView extends React.Component {
   * @param purl: the parsed url that should be processed
   */
   static processAddMailbox (purl) {
-    const query = purl.search(true)
-    if (query.container_id && query.container) {
-      userActions.sideloadContainerLocally(query.container_id, JSON.parse(query.container))
+    const containerId = purl.searchParams.get('container_id')
+    const container = purl.searchParams.get('container')
+    const type = purl.searchParams.get('type')
+    const accessMode = purl.searchParams.get('access_mode')
+    if (containerId && container) {
+      userActions.sideloadContainerLocally(containerId, JSON.parse(container))
     }
-    if (query.type) {
-      mailboxActions.startAddMailbox(query.type, query.access_mode)
+    if (type) {
+      mailboxActions.startAddMailbox(type, accessMode)
     }
   }
 
@@ -94,11 +97,11 @@ export default class WaveboxWebView extends React.Component {
   * @return a url with querystring arguments salted
   */
   saltUrlWithClientInfo (url) {
-    return URI(url).addSearch({
-      'x-wavebox-version': pkg.version,
-      'x-wavebox-channel': pkg.releaseChannel,
-      'x-wavebox-app': pkg.name
-    }).toString()
+    const purl = new URL(url)
+    purl.searchParams.set('x-wavebox-version', pkg.version)
+    purl.searchParams.set('x-wavebox-channel', pkg.releaseChannel)
+    purl.searchParams.set('x-wavebox-app', pkg.name)
+    return purl.toString()
   }
 
   /* **************************************************************************/

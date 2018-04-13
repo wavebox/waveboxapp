@@ -13,7 +13,6 @@ import shallowCompare from 'react-addons-shallow-compare'
 import SettingsSceneTabTemplate from './SettingsSceneTabTemplate'
 import { WB_RELAUNCH_APP } from 'shared/ipcEvents'
 import { FullscreenModal } from 'Components'
-import { settingsStore } from 'stores/settings'
 import { ipcRenderer } from 'electron'
 
 const styles = {
@@ -78,35 +77,15 @@ export default class SettingsScene extends React.Component {
   }
 
   /* **************************************************************************/
-  // Component lifecycle
-  /* **************************************************************************/
-
-  componentDidMount () {
-    settingsStore.listen(this.settingsChanged)
-  }
-
-  componentWillUnmount () {
-    settingsStore.unlisten(this.settingsChanged)
-  }
-
-  /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
   state = (() => {
-    const settingsState = settingsStore.getState()
     return {
       open: true,
-      showRestart: false,
-      showExtensions: settingsState.extension.enableChromeExperimental
+      showRestart: false
     }
   })()
-
-  settingsChanged = (settingsState) => {
-    this.setState({
-      showExtensions: settingsState.extension.enableChromeExperimental
-    })
-  }
 
   /* **************************************************************************/
   // User Interaction
@@ -169,7 +148,7 @@ export default class SettingsScene extends React.Component {
   }
 
   render () {
-    const { showRestart, open, showExtensions } = this.state
+    const { showRestart, open } = this.state
     const { match } = this.props
 
     const buttons = showRestart ? (
@@ -186,7 +165,7 @@ export default class SettingsScene extends React.Component {
     const currentTab = match.params.tab || 'general'
     const tabHeadings = [
       ['General', 'general'],
-      showExtensions ? ['Extensions', 'extensions'] : undefined,
+      ['Extensions', 'extensions'],
       ['Accounts', 'accounts'],
       ['Wavebox', 'pro'],
       ['Advanced', 'advanced'],
@@ -231,11 +210,9 @@ export default class SettingsScene extends React.Component {
             <Tab label='General' value='general'>
               <GeneralSettings showRestart={this.handleShowRestart} />
             </Tab>
-            {showExtensions ? (
-              <Tab label='Extensions' value='extensions'>
-                <ExtensionSettings showRestart={this.handleShowRestart} />
-              </Tab>
-            ) : undefined}
+            <Tab label='Extensions' value='extensions'>
+              <ExtensionSettings showRestart={this.handleShowRestart} />
+            </Tab>
             <Tab label='Accounts' value='accounts'>
               <AccountSettings showRestart={this.handleShowRestart} mailboxId={match.params.tabArg} />
             </Tab>

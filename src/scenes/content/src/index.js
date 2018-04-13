@@ -32,14 +32,14 @@ document.addEventListener('dragover', (evt) => {
   }
 }, false)
 
-// Load what we have in the db
-browserActions.load()
-
 // Parse our settings
 const {
   url,
   partition
 } = querystring.parse(window.location.search.slice(1))
+
+// Load what we have in the db
+browserActions.load(url)
 
 // Render
 ReactDOM.render((

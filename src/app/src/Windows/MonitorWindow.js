@@ -19,7 +19,12 @@ class MonitorWindow extends WaveboxWindow {
       title: 'Wavebox Monitor',
       width: 900,
       height: 700,
-      show: true
+      show: true,
+      webPreferences: {
+        nodeIntegration: true,
+        nodeIntegrationInWorker: false,
+        webviewTag: false
+      }
     })
 
     this.collectInterval = setInterval(this.collectMetrics, 1000)

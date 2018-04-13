@@ -82,8 +82,16 @@ class Container extends Model {
     return this._value_('windowOpenOverrides', [])
       .filter((ovr) => {
         if (!ovr.id) { return false }
-        if (!Array.isArray(ovr.rulesets) || ovr.rulesets.length === 0) { return false }
         if (!ovr.label) { return false }
+
+        let hasRules = false
+        if (Array.isArray(ovr.rulesets) && ovr.rulesets.length) {
+          hasRules = true
+        } else if (Array.isArray(ovr.navigateRulesets) && ovr.navigateRulesets.length) {
+          hasRules = true
+        }
+        if (!hasRules) { return false }
+
         return true
       })
   }

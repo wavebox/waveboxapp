@@ -10,10 +10,11 @@
     "hunspell-asm": "1.0.2",
     "lru-cache": "4.1.2",
     "url-pattern": "1.0.3",
-    "uuid": "3.2.1"
+    "uuid": "3.2.1",
+    "whatwg-url": "6.4.0"
   },
   "devDependencies": {
-    "standard": "11.0.0",
+    "standard": "11.0.1",
     "babel-eslint": "8.2.2",
     "babel-plugin-transform-class-properties": "6.24.1"
   },

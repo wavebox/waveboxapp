@@ -157,6 +157,14 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * Enables or disables mixed sandbox mode
+  * @param enable: true to enable, false to not
+  */
+  setEnableMixedSandboxMode (enable) {
+    this.dispatchUpdate('enableMixedSandboxMode', enable)
+  }
+
+  /**
   * Sets whether the window opening engine should be enabled or not
   * @param enable: true to enable
   */

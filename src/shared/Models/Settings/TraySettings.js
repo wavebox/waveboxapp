@@ -32,13 +32,13 @@ class TraySettings extends Model {
   /* **************************************************************************/
 
   static get CLICK_ACTIONS () { return CLICK_ACTIONS }
-  static get SUPPORTS_CLICK_ACTIONS () { return process.platform === 'win32' || process.platform === 'darwin' }
+  static get SUPPORTS_ADDITIONAL_CLICK_EVENTS () { return process.platform === 'win32' || process.platform === 'darwin' }
   static get GTK_UPDATE_MODES () { return GTK_UPDATE_MODES }
   static get POPOUT_POSITIONS () { return POPOUT_POSITIONS }
   static get SUPPORTS_DOCK_HIDING () { return process.platform === 'darwin' }
   static get SUPPORTS_TASKBAR_HIDING () { return process.platform === 'win32' }
   static get IS_GTK_PLATFORM () { return process.platform === 'linux' }
-  static get CTX_MENU_ONLY_SUPPORT () { return process.platform === 'linux' }
+  static get IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM () { return process.platform === 'linux' }
 
   /* **************************************************************************/
   // Lifecycle

@@ -1,15 +1,40 @@
 import escapeHTML from 'escape-html'
+import { webFrame } from 'electron'
 
 class GmailApi {
+  /**
+  * Checks if we're using material UI
+  * @param callback: executed on completion. Provided with true if we're using material UI
+  */
+  static isMaterialUI (callback) {
+    webFrame.executeJavaScript('window.GM_RFT_ENABLED', (res) => {
+      const isMaterialUI = res === 'true'
+      callback(isMaterialUI)
+    })
+  }
+
   /**
   * Gets the unread count
   * @return the count or zero if not found
   */
   static getUnreadCount () {
     const element = document.querySelector('div[role=navigation] [href*="#inbox"]')
-    if (element && element.textContent.indexOf('(') !== -1) {
-      return parseInt(element.textContent.split(':')[0].replace(/[^0-9]/g, ''))
+    if (element) {
+      let text
+      if (element.getAttribute('title').indexOf('(') !== -1) {
+        text = element.getAttribute('title') // Material & non-material
+      } else if (element.textContent.indexOf('(') !== -1) {
+        text = element.textContent // Fallback
+      }
+
+      if (text) {
+        const count = parseInt((text.split(':')[0] || '').replace(/[^0-9]/g, ''))
+        if (!isNaN(count)) {
+          return count
+        }
+      }
     }
+
     return 0
   }
 
@@ -91,7 +116,9 @@ class GmailApi {
     composeButton.dispatchEvent(upEvent)
 
     if (data.recipient || data.subject || data.body) {
-      // The dom can take a little time to update, so make sure we give it time to render the window
+      // The dom can take a little time to update, so make sure we give it time to render the window.
+      // This with retries of 20 and wait of 100 it can take up to two seconds. MaterialUI typically takes
+      // 1 second-ish whilst normal ui typically takes less than 1 second
       setTimeout(() => {
         const didPopulate = this.populateNewestComposeWindow(data.recipient, data.subject, data.body)
         if (!didPopulate) {
@@ -100,7 +127,7 @@ class GmailApi {
             retries++
             const didPopulate = this.populateNewestComposeWindow(data.recipient, data.subject, data.body)
             if (didPopulate || retries > 20) { clearInterval(retry) }
-          }, 50)
+          }, 100)
         }
       }, 1)
     }

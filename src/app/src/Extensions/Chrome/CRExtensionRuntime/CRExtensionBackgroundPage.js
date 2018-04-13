@@ -1,6 +1,6 @@
 import { webContents, session } from 'electron'
 import fs from 'fs-extra'
-import url from 'url'
+import { format as urlFormat, URL } from 'url'
 import {
   CR_EXTENSION_PROTOCOL,
   CR_EXTENSION_BG_PARTITION_PREFIX
@@ -95,13 +95,17 @@ class CRExtensionBackgroundPage {
       nativeWindowOpen: true,
       sharedSiteInstances: true,
       isBackgroundPage: true,
+      nodeIntegration: false,
+      nodeIntegrationInWorker: false,
+      webviewTag: false,
       preload: Resolver.crExtensionApi(),
       commandLineSwitches: [
         '--background-page',
-        '--nodeIntegration=false'
+        '--nodeIntegration=false',
+        '--webview-tag=false'
       ]
     })
-    this._webContents.loadURL(url.format({
+    this._webContents.loadURL(urlFormat({
       protocol: CR_EXTENSION_PROTOCOL,
       slashes: true,
       hostname: this.extension.id,
@@ -166,14 +170,14 @@ class CRExtensionBackgroundPage {
   _handleAllUrlHeadersReceived = (details, responder) => {
     if (this.isRunning && this.webContentsId === details.webContentsId) {
       if (details.resourceType === 'xhr') {
-        const {protocol, host, pathname} = url.parse(details.url)
-        if (CRExtensionMatchPatterns.matchUrls(protocol, host, pathname, Array.from(this.extension.manifest.permissions))) {
+        const {protocol, hostname, pathname} = new URL(details.url)
+        if (CRExtensionMatchPatterns.matchUrls(protocol, hostname, pathname, Array.from(this.extension.manifest.permissions))) {
           const headers = details.responseHeaders
           const updatedHeaders = {
             ...headers,
             'access-control-allow-credentials': headers['access-control-allow-credentials'] || ['true'],
             'access-control-allow-origin': [
-              url.format({
+              urlFormat({
                 protocol: CR_EXTENSION_PROTOCOL,
                 slashes: true,
                 hostname: this.extension.id

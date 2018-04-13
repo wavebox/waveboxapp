@@ -8,23 +8,25 @@ import uuid from 'uuid'
 import MenuTool from 'shared/Electron/MenuTool'
 import {
   IS_GTK_PLATFORM,
-  CTX_MENU_ONLY_SUPPORT,
   GTK_UPDATE_MODES,
+  IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM,
   CLICK_ACTIONS,
-  SUPPORTS_CLICK_ACTIONS
+  SUPPORTS_ADDITIONAL_CLICK_EVENTS
 } from 'shared/Models/Settings/TraySettings'
 import { ipcRenderer, remote } from 'electron'
 import Resolver from 'Runtime/Resolver'
 import {
   WB_TOGGLE_TRAY_POPOUT,
-  WB_HIDE_TRAY_POPOUT,
-  WB_SHOW_TRAY_POPOUT,
+  WB_HIDE_TRAY,
+  WB_SHOW_TRAY,
+  WB_SHOW_TRAY_WINDOWED,
   WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY,
   WB_SHOW_MAILBOX_WINDOW_FROM_TRAY,
   WB_HIDE_MAILBOX_WINDOW_FROM_TRAY,
   WB_FOCUS_MAILBOXES_WINDOW,
   WB_FOCUS_APP,
-  WB_QUIT_APP
+  WB_QUIT_APP,
+  WB_TOGGLE_TRAY_WITH_BOUNDS
 } from 'shared/ipcEvents'
 import TrayContextMenuUnreadRenderer from './TrayContextMenuUnreadRenderer'
 
@@ -60,17 +62,21 @@ export default class Tray extends React.Component {
   }
 
   componentDidMount () {
-    if (CTX_MENU_ONLY_SUPPORT) {
+    if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
       mailboxStore.listen(this.mailboxesUpdated)
     }
+
+    ipcRenderer.on(WB_TOGGLE_TRAY_WITH_BOUNDS, this.handleIpcToggleTrayWithBounds)
   }
 
   componentWillUnmount () {
     this.appTray = this.destroyTray(this.appTray)
 
-    if (CTX_MENU_ONLY_SUPPORT) {
+    if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
       mailboxStore.unlisten(this.mailboxesUpdated)
     }
+
+    ipcRenderer.removeListener(WB_TOGGLE_TRAY_WITH_BOUNDS, this.handleIpcToggleTrayWithBounds)
   }
 
   /* **************************************************************************/
@@ -79,7 +85,7 @@ export default class Tray extends React.Component {
 
   state = (() => { // Careful we're strict in shouldComponentUpdate
     this.unreadCtxRenderer = new TrayContextMenuUnreadRenderer()
-    if (CTX_MENU_ONLY_SUPPORT) {
+    if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
       this.unreadCtxRenderer.build(mailboxStore.getState())
     }
     return {
@@ -88,7 +94,7 @@ export default class Tray extends React.Component {
   })()
 
   mailboxesUpdated = (mailboxState) => {
-    if (CTX_MENU_ONLY_SUPPORT) {
+    if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
       this.unreadCtxRenderer.build(mailboxStore.getState())
       this.setState({
         ctxMenuSig: this.unreadCtxRenderer.signature
@@ -107,15 +113,15 @@ export default class Tray extends React.Component {
   */
   createTray (image) {
     const tray = new remote.Tray(image)
-    if (CTX_MENU_ONLY_SUPPORT) {
+    if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
       // On platforms that have app indicator support - i.e. ubuntu clicking on the
-      // icon will launch the context menu. On other linux platforms the context
-      // menu is opened on right click. For app indicator platforms click event
-      // is ignored
-      tray.on('click', this.handleToggleApp)
+      // icon will launch the context menu and click will be ignored.
+      // On platforms that use GtkStatusIcon the menu appears on right click and the
+      // click action is propogated
+      tray.on('click', this.handleClick)
     } else {
       tray.on('click', this.handleClick)
-      if (SUPPORTS_CLICK_ACTIONS) {
+      if (SUPPORTS_ADDITIONAL_CLICK_EVENTS) {
         tray.on('right-click', this.handleRightClick)
         tray.on('double-click', this.handleDoubleClick)
       }
@@ -145,8 +151,12 @@ export default class Tray extends React.Component {
   * @param bounds: the bounds of the tray icon
   */
   handleClick = (evt, bounds) => {
-    if (evt.altKey || evt.ctrlKey || evt.shiftKey || evt.metaKey) {
-      this.dispatchClickAction(this.props.traySettings.altClickAction, bounds)
+    if (SUPPORTS_ADDITIONAL_CLICK_EVENTS) {
+      if (evt.altKey || evt.ctrlKey || evt.shiftKey || evt.metaKey) {
+        this.dispatchClickAction(this.props.traySettings.altClickAction, bounds)
+      } else {
+        this.dispatchClickAction(this.props.traySettings.clickAction, bounds)
+      }
     } else {
       this.dispatchClickAction(this.props.traySettings.clickAction, bounds)
     }
@@ -183,8 +193,8 @@ export default class Tray extends React.Component {
   * Shows the popout
   * @param evt: the event that fired
   */
-  handleShowPopout = (evt) => {
-    ipcRenderer.send(WB_SHOW_TRAY_POPOUT)
+  handleShowPopoutWindowMode = (evt) => {
+    ipcRenderer.send(WB_SHOW_TRAY_WINDOWED)
   }
 
   /**
@@ -214,10 +224,10 @@ export default class Tray extends React.Component {
         ipcRenderer.send(WB_TOGGLE_TRAY_POPOUT, bounds)
         break
       case CLICK_ACTIONS.HIDE_POPOUT:
-        ipcRenderer.send(WB_HIDE_TRAY_POPOUT)
+        ipcRenderer.send(WB_HIDE_TRAY)
         break
       case CLICK_ACTIONS.SHOW_POPOUT:
-        ipcRenderer.send(WB_SHOW_TRAY_POPOUT, bounds)
+        ipcRenderer.send(WB_SHOW_TRAY, bounds)
         break
       case CLICK_ACTIONS.TOGGLE_APP:
         ipcRenderer.send(WB_TOGGLE_MAILBOX_WINDOW_FROM_TRAY)
@@ -229,6 +239,20 @@ export default class Tray extends React.Component {
         ipcRenderer.send(WB_SHOW_MAILBOX_WINDOW_FROM_TRAY)
         break
     }
+  }
+
+  /* **************************************************************************/
+  // Ipc events
+  /* **************************************************************************/
+
+  /**
+  * Handles a request to toggle the tray by getting the bounds and then firing
+  * to the main thread
+  * @param evt: the event that fired
+  */
+  handleIpcToggleTrayWithBounds = (evt) => {
+    if (!this.appTray) { return }
+    ipcRenderer.send(WB_TOGGLE_TRAY_POPOUT, this.appTray.getBounds())
   }
 
   /* **************************************************************************/
@@ -283,7 +307,7 @@ export default class Tray extends React.Component {
     const template = [].concat(
       [
         { label: 'Toggle App', click: this.handleToggleApp },
-        { label: 'Show Wavebox Mini', click: this.handleShowPopout },
+        { label: 'Show Wavebox Mini', click: this.handleShowPopoutWindowMode },
         { type: 'separator' },
         { label: 'Compose New Message', click: this.handleCompose },
         { type: 'separator' }
@@ -328,7 +352,8 @@ export default class Tray extends React.Component {
         }
         this.appTray.setToolTip(this.renderTooltip())
 
-        if (CTX_MENU_ONLY_SUPPORT) {
+        // Add a context menu to fallback for libappindicator
+        if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
           const lastContextMenu = this.contextMenu
           this.contextMenu = this.renderContextMenu()
           this.appTray.setContextMenu(this.contextMenu)

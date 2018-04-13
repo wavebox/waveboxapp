@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electronCrx'
-import url from 'url'
+import {format as urlFormat} from 'url'
 import {
   CRX_RUNTIME_SENDMESSAGE,
   CRX_RUNTIME_ONMESSAGE_,
@@ -102,7 +102,7 @@ class Runtime {
   /* **************************************************************************/
 
   getURL (path) {
-    return url.format({
+    return urlFormat({
       protocol: CR_EXTENSION_PROTOCOL,
       slashes: true,
       hostname: this[privExtensionId],

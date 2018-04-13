@@ -5,8 +5,9 @@ import { WB_EXTENSION_WINDOW_AFFINITY_ } from 'shared/webContentAffinities'
 import { CR_EXTENSION_PROTOCOL, CR_EXTENSION_BG_PARTITION_PREFIX } from 'shared/extensionApis'
 import settingsStore from 'stores/settings/settingsStore'
 import Resolver from 'Runtime/Resolver'
-import url from 'url'
+import { URL } from 'url'
 import WindowOpeningHandler from './WindowOpeningEngine/WindowOpeningHandler'
+import GuestWebPreferences from './GuestWebPreferences'
 
 const privExtensionId = Symbol('privExtensionId')
 const privExtensionName = Symbol('privExtensionName')
@@ -22,7 +23,7 @@ class ExtensionHostedWindow extends WaveboxWindow {
   * @return true if it's a hosted extension url
   */
   static isHostedExtensionUrl (targetUrl) {
-    return url.parse(targetUrl).protocol === `${CR_EXTENSION_PROTOCOL}:`
+    return new URL(targetUrl).protocol === `${CR_EXTENSION_PROTOCOL}:`
   }
 
   /**
@@ -32,7 +33,7 @@ class ExtensionHostedWindow extends WaveboxWindow {
   * @return true if it's a hosted extension url
   */
   static isHostedExtensionUrlForExtension (targetUrl, extensionId) {
-    const purl = url.parse(targetUrl)
+    const purl = new URL(targetUrl)
     return purl.protocol === `${CR_EXTENSION_PROTOCOL}:` && purl.hostname === extensionId
   }
 
@@ -66,15 +67,14 @@ class ExtensionHostedWindow extends WaveboxWindow {
       minHeight: 300,
       backgroundColor: '#FFFFFF',
       ...browserWindowPreferences,
-      webPreferences: {
-        nodeIntegration: false,
+      webPreferences: GuestWebPreferences.sanitizeForGuestUse({
         contextIsolation: false, // Intentional as the extension shares the same namespace as chrome.* api and runs in a semi-priviledged position
         sandbox: true,
         sharedSiteInstances: true,
         affinity: settingsStore.getState().launched.app.isolateExtensionProcesses ? undefined : `${WB_EXTENSION_WINDOW_AFFINITY_}:${this[privExtensionId]}`,
         preload: Resolver.crExtensionApi(),
         partition: `${CR_EXTENSION_BG_PARTITION_PREFIX}${this[privExtensionId]}`
-      },
+      }),
       show: true
     }
     if (this.constructor.isHostedExtensionUrlForExtension(startUrl, this[privExtensionId])) {
@@ -88,6 +88,22 @@ class ExtensionHostedWindow extends WaveboxWindow {
     this.window.webContents.on('will-navigate', this.handleWillNavigate)
 
     return this
+  }
+
+  /* ****************************************************************************/
+  // Overwritable behaviour
+  /* ****************************************************************************/
+
+  /**
+  * Checks if the webcontents is allowed to navigate to the next url. If false is returned
+  * it will be prevented
+  * @param evt: the event that fired
+  * @param browserWindow: the browserWindow that's being checked
+  * @param nextUrl: the next url to navigate
+  * @return false to suppress, true to allow
+  */
+  allowNavigate (evt, browserWindow, nextUrl) {
+    return true
   }
 
   /* ****************************************************************************/
@@ -114,8 +130,7 @@ class ExtensionHostedWindow extends WaveboxWindow {
         openingBrowserWindow: this.window,
         openingWindowType: this.windowType,
         tabMetaInfo: this.tabMetaInfo(evt.sender.id),
-        provisionalTargetUrl: undefined, // Don't pass this unless you're going to validate it's a hosted ext url!
-        mailbox: undefined
+        provisionalTargetUrl: undefined // Don't pass this unless you're going to validate it's a hosted ext url!
       })
     } else {
       evt.preventDefault()

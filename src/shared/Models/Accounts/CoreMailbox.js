@@ -396,6 +396,8 @@ class CoreMailbox extends Model {
 
   get windowOpenModeOverrideRulesets () { return [] }
   get hasWindowOpenModeRulesetOverrides () { return this.windowOpenModeOverrideRulesets && this.windowOpenModeOverrideRulesets.length }
+  get navigateModeOverrideRulesets () { return [] }
+  get hasNavigateModeOverrideRulesets () { return this.navigateModeOverrideRulesets && this.navigateModeOverrideRulesets.length }
 }
 
 module.exports = CoreMailbox

@@ -3,7 +3,7 @@ import { CHROME_PDF_URL } from 'shared/constants'
 import { DownloadManager } from 'Download'
 import Resolver from 'Runtime/Resolver'
 import fs from 'fs-extra'
-import url from 'url'
+import { URL } from 'url'
 
 class PDFRenderService {
   /* ****************************************************************************/
@@ -41,8 +41,8 @@ class PDFRenderService {
     // but if a new window is a launched the modal popup can appear to early in
     // the window lifecycle which causes a visual glitch. Running on dom-ready
     // has negligable delay but makes sure everyone is setup correctly
-    const pdfUrl = url.parse(targetUrl, true).query.src
-    if (url.parse(pdfUrl, true).query.print === 'true') {
+    const pdfUrl = new URL(targetUrl).searchParams.get('src')
+    if (new URL(pdfUrl).searchParams.get('print') === 'true') {
       Promise.resolve()
         .then(() => this._printPdf(evt.sender, pdfUrl))
         .catch((err) => {
@@ -63,7 +63,7 @@ class PDFRenderService {
 
     if (title === 'wbaction:print') {
       evt.sender.executeJavaScript(`document.title = 'PDF'`)
-      const pdfUrl = url.parse(evt.sender.getURL(), true).query.src
+      const pdfUrl = new URL(evt.sender.getURL()).searchParams.get('src')
       Promise.resolve()
         .then(() => this._printPdf(evt.sender, pdfUrl))
         .catch((err) => {
@@ -125,7 +125,9 @@ class PDFRenderService {
       show: true,
       webPreferences: {
         nodeIntegration: true,
-        backgroundThrottling: false
+        backgroundThrottling: false,
+        nodeIntegrationInWorker: false,
+        webviewTag: false
       }
     }
 
@@ -198,6 +200,7 @@ class PDFRenderService {
         }
       })
       window.loadURL(`file://${Resolver.printScene('index.html')}`)
+      window.webContents.on('will-navigate', (evt, nextUrl) => evt.preventDefault())
       window.webContents.once('dom-ready', () => {
         DownloadManager.startPlatformDownloadToTemp(sourceWebContents, url)
           .then((localPath) => {

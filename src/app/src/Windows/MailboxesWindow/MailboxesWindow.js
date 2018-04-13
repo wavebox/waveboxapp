@@ -3,6 +3,7 @@ import WaveboxWindow from '../WaveboxWindow'
 import { settingsStore } from 'stores/settings'
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
+import GuestWebPreferences from '../GuestWebPreferences'
 import {
   AuthGoogle,
   AuthMicrosoft,
@@ -28,7 +29,9 @@ import {
   WB_SQUIRREL_UPDATE_CHECK_START,
   WB_SQUIRREL_UPDATE_DISABLED,
 
-  WB_FOCUS_MAILBOXES_WINDOW
+  WB_FOCUS_MAILBOXES_WINDOW,
+
+  WB_TOGGLE_TRAY_WITH_BOUNDS
 } from 'shared/ipcEvents'
 import {
   UISettings,
@@ -133,6 +136,7 @@ class MailboxesWindow extends WaveboxWindow {
       }),
       webPreferences: {
         nodeIntegration: true,
+        webviewTag: true,
         backgroundThrottling: false,
         plugins: true
       }
@@ -152,13 +156,7 @@ class MailboxesWindow extends WaveboxWindow {
       mailboxActions.reduceService.defer(undefined, undefined, ServiceReducer.mergeChangesetOnActive)
     })
 
-    // We're locking on to our window. This stops file drags redirecting the page
-    this.window.webContents.on('will-navigate', (evt, url) => {
-      const match = ALLOWED_URLS.findIndex((allowed) => allowed.indexOf(url) === 0)
-      if (!match) {
-        evt.preventDefault()
-      }
-    })
+    this.window.webContents.on('will-attach-webview', this._handleWillAttachWebview)
 
     // remove built in listener so we can handle this on our own
     this.window.webContents.removeAllListeners('devtools-reload-page')
@@ -183,6 +181,22 @@ class MailboxesWindow extends WaveboxWindow {
   }
 
   /* ****************************************************************************/
+  // Overwritable behaviour
+  /* ****************************************************************************/
+
+  /**
+  * Checks if the webcontents is allowed to navigate to the next url. If false is returned
+  * it will be prevented
+  * @param evt: the event that fired
+  * @param browserWindow: the browserWindow that's being checked
+  * @param nextUrl: the next url to navigate
+  * @return false to suppress, true to allow
+  */
+  allowNavigate (evt, browserWindow, nextUrl) {
+    return !!ALLOWED_URLS.find((allowed) => nextUrl.startsWith(allowed))
+  }
+
+  /* ****************************************************************************/
   // Window events
   /* ****************************************************************************/
 
@@ -195,9 +209,23 @@ class MailboxesWindow extends WaveboxWindow {
       const settingsState = settingsStore.getState()
       if (settingsState.tray.show && settingsState.tray.removeFromTaskbarWin32) {
         this.window.hide()
-        this.preventDefault()
+        evt.preventDefault()
       }
     }
+  }
+
+  /* ****************************************************************************/
+  // Webview events
+  /* ****************************************************************************/
+
+  /**
+  * Handles a webview preparing to attach
+  * @param evt: the event that fired
+  * @param webViewWebPreferences: the webPreferences of the new webview
+  * @param webViewProperties: the properites of the new webview
+  */
+  _handleWillAttachWebview = (evt, webViewWebPreferences, webViewProperties) => {
+    GuestWebPreferences.sanitizeForGuestUse(webViewWebPreferences)
   }
 
   /* ****************************************************************************/
@@ -445,6 +473,18 @@ class MailboxesWindow extends WaveboxWindow {
   */
   userCheckForUpdate () {
     this.window.webContents.send(WB_USER_CHECK_FOR_UPDATE, {})
+  }
+
+  /* ****************************************************************************/
+  // Tray
+  /* ****************************************************************************/
+
+  /**
+  * @depricated the tray object should be kept on the main thread. We shouldn't
+  * be driving this down to the mailboxes window
+  */
+  __depricatedToggleTray () {
+    this.window.webContents.send(WB_TOGGLE_TRAY_WITH_BOUNDS, {})
   }
 
   /* ****************************************************************************/

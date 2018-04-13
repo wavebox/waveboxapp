@@ -14,7 +14,7 @@ import {
 import { WBECRX_EXECUTE_SCRIPT } from 'shared/ipcEvents'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
-import url from 'url'
+import { URL } from 'url'
 import fs from 'fs-extra'
 import path from 'path'
 import CRExtensionTab from './CRExtensionTab'
@@ -180,8 +180,14 @@ class CRExtensionTabs {
       responseCallback(null, undefined)
     } else {
       const contentWindow = new ContentWindow()
-      const partitionId = CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
-      contentWindow.create(undefined, (options.url || 'about:blank'), partitionId)
+      contentWindow.create(
+        options.url || 'about:blank',
+        undefined,
+        undefined,
+        {
+          partition: CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
+        }
+      )
       responseCallback(null, undefined)
     }
   }
@@ -217,7 +223,7 @@ class CRExtensionTabs {
         if (hasTabsPermission) {
           if (typeof (options.url) === 'string' || Array.isArray(options.url)) {
             const urlQuery = typeof (options.url) === 'string' ? [options.url] : options.url
-            const {protocol, hostname, pathname} = url.parse(tab.url)
+            const {protocol, hostname, pathname} = new URL(tab.url)
             const matches = CRExtensionMatchPatterns.matchUrls(
               protocol,
               hostname,
@@ -250,7 +256,7 @@ class CRExtensionTabs {
     }
 
     const contents = webContents.fromId(tabId)
-    const {protocol, hostname, pathname} = url.parse(contents.getURL())
+    const {protocol, hostname, pathname} = new URL(contents.getURL())
     const matches = CRExtensionMatchPatterns.matchUrls(
       protocol,
       hostname,

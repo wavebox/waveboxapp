@@ -1,4 +1,4 @@
-import url from 'url'
+import { format as urlFormat } from 'url'
 
 class ElectronCookie {
   /* ****************************************************************************/
@@ -10,7 +10,7 @@ class ElectronCookie {
   */
   static urlForCookie (cookie) {
     if (cookie.url) { return cookie.url }
-    return url.format({
+    return urlFormat({
       protocol: cookie.secure ? 'https:' : 'http:',
       host: cookie.domain,
       path: cookie.path

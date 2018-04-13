@@ -1,0 +1,132 @@
+import './AppSceneWindowTitlebar.less'
+import React from 'react'
+import shallowCompare from 'react-addons-shallow-compare'
+import classnames from 'classnames'
+import { remote } from 'electron'
+import { FontIcon } from 'material-ui'
+
+export default class AppSceneWindowTitlebar extends React.Component {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get preferredHeight () {
+    if (process.platform === 'darwin') {
+      return 22
+    } else {
+      return 30
+    }
+  }
+
+  /* **************************************************************************/
+  // Component lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    const currentWindow = remote.getCurrentWindow()
+    currentWindow.on('focus', this.handleWindowStateChange)
+    currentWindow.on('blur', this.handleWindowStateChange)
+  }
+
+  componentWillUnmount () {
+    const currentWindow = remote.getCurrentWindow()
+    currentWindow.removeListener('focus', this.handleWindowStateChange)
+    currentWindow.removeListener('blur', this.handleWindowStateChange)
+  }
+
+  /* **************************************************************************/
+  // Data Lifecycle
+  /* **************************************************************************/
+
+  state = (() => {
+    return {
+      ...this.generateWindowState()
+    }
+  })()
+
+  handleWindowStateChange = (evt) => {
+    this.setState(this.generateWindowState())
+  }
+
+  /**
+  * Generates the full window state
+  * @return the window state
+  */
+  generateWindowState () {
+    const currentWindow = remote.getCurrentWindow()
+    return {
+      isFocused: currentWindow.isFocused()
+    }
+  }
+
+  /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  /**
+  * Minimizes the window
+  * @param evt: the event that fired
+  */
+  handleClose = (evt) => {
+    remote.getCurrentWindow().close()
+  }
+
+  /**
+  * Maximizes the window
+  * @param evt: the event that fired
+  */
+  handleMinimize = (evt) => {
+    remote.getCurrentWindow().minimize()
+  }
+
+  /* **************************************************************************/
+  // Rendering
+  /* **************************************************************************/
+
+  shouldComponentUpdate (nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState)
+  }
+
+  render () {
+    const { isFocused } = this.state
+    const { style, className, ...passProps } = this.props
+
+    return (
+      <div
+        style={{
+          height: this.constructor.preferredHeight,
+          ...style
+        }}
+        className={classnames(
+          'RC-AppSceneWindowTitlebar',
+          process.platform,
+          isFocused ? 'focused' : undefined,
+          className
+        )}
+        {...passProps}>
+        <div className='title'>Wavebox Mini</div>
+        <div className='controls'>
+          <div className='control close' onClick={this.handleClose}>
+            {process.platform === 'darwin' ? (
+              <FontIcon className='icon fas fa-times' />
+            ) : (
+              <FontIcon className='icon far fa-times' />
+            )}
+          </div>
+          <div className='control maximize'>
+            {process.platform === 'darwin' ? undefined : (
+              <FontIcon className='icon far fa-square' />
+            )}
+          </div>
+          <div className='control minimize' onClick={this.handleMinimize}>
+            {process.platform === 'darwin' ? (
+              <FontIcon className='icon fas fa-minus' />
+            ) : (
+              <FontIcon className='icon far fa-window-minimize' />
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
+}

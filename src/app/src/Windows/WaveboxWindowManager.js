@@ -1,7 +1,9 @@
 import { BrowserWindow, webContents } from 'electron'
 
-const privAttachedIndex = Symbol('privAttachedIndex')
+const privAttachedCycleIndex = Symbol('privAttachedCycleIndex')
 const privAttached = Symbol('privAttached')
+const privAttachedSpecial = Symbol('privAttachedSpecial')
+const privAttachedSpecialMeta = Symbol('privAttachedSpecialMeta')
 
 class WaveboxWindowManager {
   /* ****************************************************************************/
@@ -9,8 +11,12 @@ class WaveboxWindowManager {
   /* ****************************************************************************/
 
   constructor () {
-    this[privAttachedIndex] = []
     this[privAttached] = new Map()
+
+    this[privAttachedSpecial] = new Set()
+    this[privAttachedSpecialMeta] = new Map()
+
+    this[privAttachedCycleIndex] = []
   }
 
   /* ****************************************************************************/
@@ -23,8 +29,37 @@ class WaveboxWindowManager {
   */
   attach (waveboxWindow) {
     if (this[privAttached].has(waveboxWindow.browserWindowId)) { return }
+    if (this[privAttachedSpecial].has(waveboxWindow.browserWindowId)) { return }
     this[privAttached].set(waveboxWindow.browserWindowId, waveboxWindow)
-    this[privAttachedIndex].push(waveboxWindow.browserWindowId)
+    this[privAttachedCycleIndex].push(waveboxWindow.browserWindowId)
+  }
+
+  /**
+  * Attaches a special window, that isn't a proper WaveboxWindow
+  * @param browserWindowId: the browserWindow id. Only weak ref is held
+  */
+  attachSpecial (browserWindowId) {
+    if (this[privAttached].has(browserWindowId)) { return }
+    if (this[privAttachedSpecial].has(browserWindowId)) { return }
+    const bw = BrowserWindow.fromId(browserWindowId)
+    if (!bw || bw.isDestroyed()) { return }
+
+    // Bind some tracking events into the window
+    const meta = {
+      bindings: {
+        closed: this._handleSpecialClosed.bind(this, browserWindowId),
+        focus: this._handleSpecialFocused.bind(this, browserWindowId)
+      },
+      browserWindowId: browserWindowId,
+      lastTimeInFocus: bw.isFocused() ? new Date().getTime() : 0
+    }
+    bw.on('closed', meta.bindings.closed)
+    bw.on('focus', meta.bindings.focus)
+
+    // Keep a record
+    this[privAttachedSpecial].add(browserWindowId)
+    this[privAttachedSpecialMeta].set(browserWindowId, meta)
+    this[privAttachedCycleIndex].push(browserWindowId)
   }
 
   /**
@@ -35,8 +70,51 @@ class WaveboxWindowManager {
     if (!this[privAttached].has(waveboxWindow.browserWindowId)) { return }
     this[privAttached].delete(waveboxWindow.browserWindowId)
 
-    const index = this[privAttachedIndex].indexOf(waveboxWindow.browserWindowId)
-    this[privAttachedIndex].splice(index, 1)
+    const index = this[privAttachedCycleIndex].indexOf(waveboxWindow.browserWindowId)
+    this[privAttachedCycleIndex].splice(index, 1)
+  }
+
+  /**
+  * Detaches a special window, that isn't a proper WaveboxWindow
+  * @param browserWindowId: the browserWindow id. Only weak ref is held
+  */
+  detachSpecial (browserWindowId) {
+    if (!this[privAttachedSpecial].has(browserWindowId)) { return }
+
+    // Remove our tracking events
+    const bw = BrowserWindow.fromId(browserWindowId)
+    if (bw && !bw.isDestroyed()) {
+      const meta = this[privAttachedSpecialMeta].get(browserWindowId)
+      bw.removeListener('closed', meta.bindings.closed)
+      bw.removeListener('focus', meta.bindings.focus)
+    }
+
+    // Remove our records
+    const index = this[privAttachedCycleIndex].indexOf(browserWindowId)
+    this[privAttachedCycleIndex].splice(index, 1)
+    this[privAttachedSpecial].delete(browserWindowId)
+    this[privAttachedSpecialMeta].delete(browserWindowId)
+  }
+
+  /* ****************************************************************************/
+  // Special
+  /* ****************************************************************************/
+
+  /**
+  * Handles a special window closing by auto detaching
+  * @param browserWindowId: the id of the browser window
+  */
+  _handleSpecialClosed = (browserWindowId) => {
+    this.detachSpecial(browserWindowId)
+  }
+
+  /**
+  * Handles a speical window coming into focus by recording it
+  * @param browserWindowId: the id of the browser window
+  */
+  _handleSpecialFocused = (browserWindowId) => {
+    const meta = this[privAttachedSpecialMeta].get(browserWindowId)
+    meta.lastTimeInFocus = new Date().getTime()
   }
 
   /* ****************************************************************************/
@@ -122,7 +200,7 @@ class WaveboxWindowManager {
   /**
   * @return all the attached browser window ids
   */
-  allBrowserWindowIds () { return Array.from(this[privAttachedIndex]) }
+  allBrowserWindowIds () { return Array.from(this[privAttached].keys()) }
 
   /**
   * @param bwId: the id of the browser window
@@ -156,18 +234,29 @@ class WaveboxWindowManager {
   }
 
   /**
+  * @param includeSpecial=false: true to also include special windows in the search
+  * @return the id of the window that was in focus last
+  */
+  lastFocusedId (includeSpecial = false) {
+    const last = this.lastFocused()
+    if (includeSpecial) {
+      if (last && last.isFocused()) { return last.browserWindowId }
+      const lastIncludingSpecial = Array.from(this[privAttachedSpecialMeta].values()).reduce((acc, meta) => {
+        if (!last) { return meta }
+        if (meta.lastTimeInFocus > last.lastTimeInFocus) { return meta }
+        return last
+      }, last)
+      return lastIncludingSpecial ? lastIncludingSpecial.browserWindowId : undefined
+    } else {
+      return last ? last.browserWindowId : undefined
+    }
+  }
+
+  /**
   * @return the focused window or undefined
   */
   focused () {
     return this.all().find((w) => w.isFocused())
-  }
-
-  /**
-  * @return the id of the window that was in focus last
-  */
-  lastFocusedId () {
-    const last = this.lastFocused()
-    return last ? last.browserWindowId : undefined
   }
 
   /**
@@ -188,25 +277,53 @@ class WaveboxWindowManager {
   * @return the browserWindowId of the next window or undefined if none were found
   */
   cycleNextWindow () {
-    const lastId = this.lastFocusedId()
-    if (lastId !== undefined) {
-      const lastIndex = this[privAttachedIndex].indexOf(lastId)
-      if (lastIndex !== -1) {
-        const nextIndex = lastIndex >= this[privAttachedIndex].length - 1 ? 0 : lastIndex + 1
-        const nextId = this[privAttachedIndex][nextIndex]
-        const next = this[privAttached].get(nextId)
-        if (next) {
-          next.focus()
-          return next.browserWindowId
-        }
+    // We have to be careful here because we have some properly attached windows
+    // and some that are special attached windows. The special ones don't contain
+    // as must info about last focused etc
+
+    // Figure out who is in focus/who was in focus last
+    let currentIndex
+    let currentIndexLastTimeInFocus = 0
+    for (let i = 0; i < this[privAttachedCycleIndex].length; i++) {
+      const browserWindowId = this[privAttachedCycleIndex][i]
+      const bw = BrowserWindow.fromId(browserWindowId)
+      if (!bw || bw.isDestroyed()) { continue }
+      if (!bw.isVisible()) { continue }
+      if (bw.isFocused()) {
+        currentIndex = i
+        break
+      }
+
+      let lastTimeInFocus
+      if (this[privAttached].has(browserWindowId)) {
+        lastTimeInFocus = this[privAttached].get(browserWindowId).lastTimeInFocus
+      } else if (this[privAttachedSpecial].has(browserWindowId)) {
+        lastTimeInFocus = this[privAttachedSpecialMeta].get(browserWindowId).lastTimeInFocus
+      } else {
+        lastTimeInFocus = -1
+      }
+
+      if (lastTimeInFocus > currentIndexLastTimeInFocus) {
+        currentIndex = i
+        currentIndexLastTimeInFocus = lastTimeInFocus
       }
     }
 
-    if (this[privAttachedIndex][0] !== undefined) {
-      const next = this[privAttached].get(this[privAttachedIndex][0])
-      if (next) {
-        next.focus()
-        return next.browserWindowId
+    // Figure out who is in focus next
+    if (currentIndex !== undefined) {
+      const shiftedCycle = [].concat(
+        this[privAttachedCycleIndex].slice(currentIndex + 1),
+        this[privAttachedCycleIndex].slice(0, currentIndex + 1)
+      )
+
+      for (let i = 0; i < shiftedCycle.length; i++) {
+        const browserWindowId = shiftedCycle[i]
+        const bw = BrowserWindow.fromId(browserWindowId)
+        if (!bw || bw.isDestroyed()) { continue }
+        if (!bw.isVisible()) { continue }
+
+        bw.focus()
+        return bw.id
       }
     }
 

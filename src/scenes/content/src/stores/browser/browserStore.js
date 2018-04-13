@@ -1,6 +1,5 @@
 import alt from '../alt'
 import actions from './browserActions'
-import querystring from 'querystring'
 
 class BrowserStore {
   /* **************************************************************************/
@@ -10,7 +9,7 @@ class BrowserStore {
   constructor () {
     this.pageTitle = 'Wavebox'
     this.targetUrl = null
-    this.currentUrl = querystring.parse(window.location.search.slice(1)).url
+    this.currentUrl = ''
     this.isLoading = true
     this.canGoBack = false
     this.canGoForward = false
@@ -23,6 +22,8 @@ class BrowserStore {
     // Listeners
     /* ****************************************/
     this.bindListeners({
+      handleLoad: actions.LOAD,
+
       handleSetPageTitle: actions.SET_PAGE_TITLE,
       handleSetTargetUrl: actions.SET_TARGET_URL,
       handleSetCurrentUrl: actions.SET_CURRENT_URL,
@@ -36,6 +37,14 @@ class BrowserStore {
       handleSetSearch: actions.SET_SEARCH,
       handleSearchNext: actions.SEARCH_NEXT
     })
+  }
+
+  /* **************************************************************************/
+  // Handlers: Load
+  /* **************************************************************************/
+
+  handleLoad ({ initialUrl }) {
+    this.currentUrl = initialUrl
   }
 
   /* **************************************************************************/

@@ -1,4 +1,3 @@
-import { webContents, app } from 'electron'
 import fs from 'fs-extra'
 import decompress from 'decompress'
 import crxunzip from 'unzip-crx'
@@ -7,15 +6,13 @@ import uuid from 'uuid'
 import querystring from 'querystring'
 import appendQS from 'append-query'
 import {
-  CR_EXTENSION_DOWNLOAD_PARTITION_PREFIX
-} from 'shared/extensionApis'
-import {
   CRExtensionVersionParser
 } from 'shared/Models/CRExtension'
 import RuntimePaths from 'Runtime/RuntimePaths'
 import { userStore } from 'stores/user'
 import semver from 'semver'
 import CRExtensionFS from './CRExtensionFS'
+import fetch from 'electron-fetch'
 
 const xml2js = require('xml2js') // doesn't play nicely with import - defines defaults
 
@@ -26,7 +23,6 @@ class CRExtensionDownloader {
 
   constructor () {
     this.downloads = new Map()
-    this.updater = null
   }
 
   /* ****************************************************************************/
@@ -34,7 +30,6 @@ class CRExtensionDownloader {
   /* ****************************************************************************/
 
   get downloadingExtensionIds () { return Array.from(this.downloads.keys()) }
-  get hasInProgressUpdate () { return this.updater !== null }
   get cwsProdVersion () { return process.versions.chrome.split('.').slice(0, 2).join('.') }
 
   /* ****************************************************************************/
@@ -63,13 +58,7 @@ class CRExtensionDownloader {
     }
 
     const installId = uuid.v4()
-    const downloader = webContents.create({
-      partition: `${CR_EXTENSION_DOWNLOAD_PARTITION_PREFIX}${installId}`,
-      isBackgroundPage: true,
-      commandLineSwitches: '--background-page'
-    })
     this.downloads.set(extensionId, {
-      webContents: downloader,
       installId: installId,
       extensionId: extensionId
     })
@@ -77,19 +66,17 @@ class CRExtensionDownloader {
     const downloadPath = path.join(RuntimePaths.CHROME_EXTENSION_DOWNLOAD_PATH, `${installId}.zip`)
     const extractPath = path.join(RuntimePaths.CHROME_EXTENSION_INSTALL_PATH, extensionId)
     return Promise.resolve()
-      .then(() => this._downloadFile(downloader, downloadUrl, downloadPath))
+      .then(() => this._downloadFile(downloadUrl, downloadPath))
       .then(() => fs.ensureDir(extractPath))
       .then(() => decompress(downloadPath, extractPath))
       .then(() => {
         try { fs.removeSync(downloadPath) } catch (ex) { }
         this.downloads.delete(extensionId)
-        downloader.destroy()
         return Promise.resolve(extensionId)
       })
       .catch((err) => {
         try { fs.removeSync(downloadPath) } catch (ex) { }
         this.downloads.delete(extensionId)
-        downloader.destroy()
         return Promise.reject(err)
       })
   }
@@ -106,14 +93,7 @@ class CRExtensionDownloader {
     }
 
     const installId = uuid.v4()
-
-    const downloader = webContents.create({
-      partition: `${CR_EXTENSION_DOWNLOAD_PARTITION_PREFIX}${installId}`,
-      isBackgroundPage: true,
-      commandLineSwitches: '--background-page'
-    })
     this.downloads.set(extensionId, {
-      webContents: downloader,
       installId: installId,
       extensionId: extensionId
     })
@@ -129,7 +109,7 @@ class CRExtensionDownloader {
     return Promise.resolve()
       .then(() => { // Download CRX
         return Promise.resolve()
-          .then(() => this._downloadFile(downloader, appendQS(cwsUrl, { prodversion: this.cwsProdVersion }), crxDownloadPath))
+          .then(() => this._downloadFile(appendQS(cwsUrl, { prodversion: this.cwsProdVersion }), crxDownloadPath))
           .then(() => fs.ensureDir(patchDir))
           .then(() => crxunzip(crxDownloadPath, patchDir))
       })
@@ -148,7 +128,7 @@ class CRExtensionDownloader {
       })
       .then(() => { // Download patches & apply
         return Promise.resolve()
-          .then(() => this._downloadFile(downloader, appendQS(patchesUrl, { prodversion: this.cwsProdVersion, extversion: extensionVersion }), patchesDownloadPath))
+          .then(() => this._downloadFile(appendQS(patchesUrl, { prodversion: this.cwsProdVersion, extversion: extensionVersion }), patchesDownloadPath))
           .then(() => fs.readJson(patchesDownloadPath))
           .then((patches) => {
             if (patches.manifest) {
@@ -171,7 +151,6 @@ class CRExtensionDownloader {
         try { fs.removeSync(patchDir) } catch (ex) { }
         try { fs.removeSync(patchesDownloadPath) } catch (ex) { }
         this.downloads.delete(extensionId)
-        downloader.destroy()
         return Promise.resolve(extensionId)
       })
       .catch((err) => {
@@ -179,7 +158,6 @@ class CRExtensionDownloader {
         try { fs.removeSync(patchDir) } catch (ex) { }
         try { fs.removeSync(patchesDownloadPath) } catch (ex) { }
         this.downloads.delete(extensionId)
-        downloader.destroy()
         return Promise.reject(err)
       })
   }
@@ -194,21 +172,10 @@ class CRExtensionDownloader {
   * @return an array of extension ids that will update
   */
   updateCWSExtensions (extensions) {
-    if (this.hasInProgressUpdate) {
-      return Promise.reject(new Error(`Extension update already in progress`))
-    }
-
-    const updateId = uuid.v4()
-    this.updater = webContents.create({
-      partition: `${CR_EXTENSION_DOWNLOAD_PARTITION_PREFIX}${updateId}`,
-      isBackgroundPage: true,
-      commandLineSwitches: '--background-page'
-    })
-
     const updateIds = new Set()
     return Promise.resolve()
       // Check CWS
-      .then(() => this._getUpdatableCWSExtensions(this.updater, extensions))
+      .then(() => this._getUpdatableCWSExtensions(extensions))
       .then((cwsUpdateExtensions) => {
         cwsUpdateExtensions.forEach((ext) => {
           updateIds.add(ext.id)
@@ -223,10 +190,7 @@ class CRExtensionDownloader {
       })
       // Cleanup checks
       .catch(() => Promise.resolve())
-      .then(() => {
-        this.updater.destroy()
-        this.updater = null
-      })
+
       // Build update list
       .then(() => {
         if (updateIds.size === 0) { return Promise.resolve([]) }
@@ -255,81 +219,35 @@ class CRExtensionDownloader {
 
   /**
   * Downloads a file
-  * @param downloader: the downloader instance
   * @param downloadUrl: the url of the download
   * @param destinationPath: the path to location to save the file
   * @return promise which contains the output path
   */
-  _downloadFile (downloader, downloadUrl, destinationPath) {
-    return new Promise((resolve, reject) => {
-      let downloadHandler
-      downloadHandler = (evt, item, webContents) => {
-        fs.ensureDirSync(path.dirname(destinationPath))
-        item.setSavePath(destinationPath)
-
-        item.on('done', (e, state) => {
-          downloader.session.removeListener('will-download', downloadHandler)
-
-          if (state === 'completed') {
-            resolve(destinationPath)
-          } else {
-            reject(new Error('Download failed'))
-          }
-        })
-      }
-
-      downloader.session.on('will-download', downloadHandler)
-      downloader.downloadURL(downloadUrl)
-    })
-  }
-
-  /**
-  * Gets the text content of a url
-  * @param downloader: the downloader instance
-  * @param downloadUrl: the url of the download
-  * @return promise which contains the read text
-  */
-  _getUrl (downloader, downloadUrl) {
-    const tmpPath = path.join(app.getPath('temp'), `${uuid.v4()}.tmp`)
-
-    let data
+  _downloadFile (downloadUrl, destinationPath) {
+    fs.ensureDirSync(path.dirname(destinationPath))
     return Promise.resolve()
-      .then(() => {
+      .then(() => fetch(downloadUrl, { useElectronNet: true }))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(new Error(`Http Status not ok: ${res.httpStatus}`)))
+      .then((res) => {
         return new Promise((resolve, reject) => {
-          let downloadHandler
-          downloadHandler = (evt, item, webContents) => {
-            item.setSavePath(tmpPath)
-
-            item.on('done', (e, state) => {
-              downloader.session.removeListener('will-download', downloadHandler)
-              if (state === 'completed') {
-                resolve()
-              } else {
-                reject(new Error('Download failed'))
-              }
+          const stream = fs.createWriteStream(destinationPath)
+          res.body.pipe(stream)
+            .on('error', (err) => {
+              reject(err)
             })
-          }
-
-          downloader.session.on('will-download', downloadHandler)
-          downloader.downloadURL(downloadUrl)
+            .on('finish', () => {
+              resolve(destinationPath)
+            })
         })
-      })
-      .then(() => fs.readFile(tmpPath, 'utf8'))
-      .then((d) => { data = d; return fs.remove(tmpPath) })
-      .then(() => { return data })
-      .catch((err) => {
-        fs.remove(tmpPath).catch(() => { /* no-op */ })
-        return Promise.reject(err)
       })
   }
 
   /**
   * Gets a list of extensions that can be updates from the CWS
-  * @param updater: the updater instance to use
   * @param extensions: the list of extensions to check
   * @return promise which returns an array of extensions to be updated
   */
-  _getUpdatableCWSExtensions (updater, extensions) {
+  _getUpdatableCWSExtensions (extensions) {
     const cwsExtensions = extensions.reduce((acc, extension) => {
       const cwsId = extension.manifest.wavebox.cwsId
       if (cwsId) {
@@ -354,7 +272,9 @@ class CRExtensionDownloader {
     const reqURL = `https://clients2.google.com/service/update2/crx?${fullQS}`
 
     return Promise.resolve()
-      .then(() => this._getUrl(this.updater, reqURL))
+      .then(() => fetch(reqURL, { useElectronNet: true }))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(new Error(`Http Status not ok: ${res.httpStatus}`)))
+      .then((res) => res.text())
       .then((xmlString) => {
         return new Promise((resolve, reject) => {
           xml2js.parseString(xmlString, (err, xml) => {

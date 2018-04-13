@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Toggle, Paper, SelectField, MenuItem, TextField, Divider } from 'material-ui'
+import { Toggle, Paper, SelectField, MenuItem, TextField, Divider, FontIcon } from 'material-ui'
 import { TrayIconEditor } from 'Components/Tray'
 import settingsActions from 'stores/settings/settingsActions'
 import styles from '../CommonSettingStyles'
@@ -12,8 +12,8 @@ import {
   SUPPORTS_DOCK_HIDING,
   SUPPORTS_TASKBAR_HIDING,
   IS_GTK_PLATFORM,
-  CTX_MENU_ONLY_SUPPORT,
-  SUPPORTS_CLICK_ACTIONS,
+  IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM,
+  SUPPORTS_ADDITIONAL_CLICK_EVENTS,
   CLICK_ACTIONS
 } from 'shared/Models/Settings/TraySettings'
 
@@ -164,63 +164,97 @@ export default class TraySettingsSection extends React.Component {
               }} />
           </Col>
         </Row>
-        {CTX_MENU_ONLY_SUPPORT ? undefined : (
-          <SelectField
-            fullWidth
-            floatingLabelText='Popout screen position'
-            disabled={!tray.show}
-            onChange={(evt, index, value) => { settingsActions.sub.tray.setPopoutPosition(value) }}
-            value={tray.popoutPosition}>
-            <MenuItem
-              value={POPOUT_POSITIONS.AUTO}
-              label='Auto'
-              primaryText='Auto: Position popover automatically' />
-            <MenuItem
-              value={POPOUT_POSITIONS.TOP_CENTER}
-              label='Top Center'
-              primaryText='Top Center: Centered above the icon' />
-            <MenuItem
-              value={POPOUT_POSITIONS.TOP_LEFT}
-              label='Top Left:'
-              primaryText='Top Left: Above the icon to the left' />
-            <MenuItem
-              value={POPOUT_POSITIONS.TOP_RIGHT}
-              label='Top Right'
-              primaryText='Top Right: Above the icon to the right' />
-            <MenuItem
-              value={POPOUT_POSITIONS.BOTTOM_CENTER}
-              label='Bottom Center'
-              primaryText='Bottom Center: Centered below the icon' />
-            <MenuItem
-              value={POPOUT_POSITIONS.BOTTOM_LEFT}
-              label='Bottom Left'
-              primaryText='Bottom Left: Below the icon to the left' />
-            <MenuItem
-              value={POPOUT_POSITIONS.BOTTOM_RIGHT}
-              label='Bottom Right'
-              primaryText='Bottom Right: Below the icon to the right' />
-          </SelectField>
-        )}
+        <SelectField
+          fullWidth
+          floatingLabelText='Popout screen position'
+          disabled={!tray.show}
+          onChange={(evt, index, value) => { settingsActions.sub.tray.setPopoutPosition(value) }}
+          value={tray.popoutPosition}>
+          <MenuItem
+            value={POPOUT_POSITIONS.AUTO}
+            label='Auto'
+            primaryText='Auto: Position popover automatically' />
+          <MenuItem
+            value={POPOUT_POSITIONS.TOP_CENTER}
+            label='Top Center'
+            primaryText={process.platform === 'linux' ? (
+              'Top Center: Centered at the top of the screen'
+            ) : (
+              'Top Center: Centered above the icon'
+            )} />
+          <MenuItem
+            value={POPOUT_POSITIONS.TOP_LEFT}
+            label='Top Left:'
+            primaryText={process.platform === 'linux' ? (
+              'Top Left: In the top left of the screen'
+            ) : (
+              'Top Left: Above the icon to the left'
+            )} />
+          <MenuItem
+            value={POPOUT_POSITIONS.TOP_RIGHT}
+            label='Top Right'
+            primaryText={process.platform === 'linux' ? (
+              'Top Right: In the top right of the screen'
+            ) : (
+              'Top Right: Above the icon to the right'
+            )} />
+          <MenuItem
+            value={POPOUT_POSITIONS.BOTTOM_CENTER}
+            label='Bottom Center'
+            primaryText={process.platform === 'linux' ? (
+              'Bottom Center: Centered at the bottom of the screen'
+            ) : (
+              'Bottom Center: Centered below the icon'
+            )} />
+          <MenuItem
+            value={POPOUT_POSITIONS.BOTTOM_LEFT}
+            label='Bottom Left'
+            primaryText={process.platform === 'linux' ? (
+              'Bottom Left: In the bottom left of the screen'
+            ) : (
+              'Bottom Left: Below the icon to the left'
+            )} />
+          <MenuItem
+            value={POPOUT_POSITIONS.BOTTOM_RIGHT}
+            label='Bottom Right'
+            primaryText={process.platform === 'linux' ? (
+              'Bottom Right: In the bottom right of the screen'
+            ) : (
+              'Bottom Right: Below the icon to the right'
+            )} />
+        </SelectField>
+        {IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
+          <div style={styles.inputHelpTextInfo}>
+            <FontIcon className='far fa-info-circle' style={styles.inputHelpIconInfo} />
+            This setting only takes effect when your OS uses GtkStatusIcon
+          </div>
+        ) : undefined}
 
         <br />
         <TrayIconEditor tray={tray} />
         <br />
 
-        {!CTX_MENU_ONLY_SUPPORT && SUPPORTS_CLICK_ACTIONS ? (
-          <div>
-            <hr style={styles.subsectionRule} />
-            <h1 style={styles.subsectionheading}>Tray Mouse Actions</h1>
-            <Row>
-              <Col md={6}>
-                <SelectField
-                  fullWidth
-                  floatingLabelText='Click Action'
-                  disabled={!tray.show}
-                  onChange={(evt, index, value) => { settingsActions.sub.tray.setClickAction(value) }}
-                  value={tray.clickAction}>
-                  {this.renderTrayActionOptions()}
-                </SelectField>
-              </Col>
+        <div>
+          <hr style={styles.subsectionRule} />
+          <h1 style={styles.subsectionheading}>Tray Mouse Actions</h1>
+          <Row>
+            <Col md={SUPPORTS_ADDITIONAL_CLICK_EVENTS ? 6 : 12}>
+              <SelectField
+                fullWidth
+                floatingLabelText='Click Action'
+                disabled={!tray.show}
+                onChange={(evt, index, value) => { settingsActions.sub.tray.setClickAction(value) }}
+                value={tray.clickAction}>
+                {this.renderTrayActionOptions()}
+              </SelectField>
+              {IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
+                <div style={styles.inputHelpTextInfo}>
+                  <FontIcon className='far fa-info-circle' style={styles.inputHelpIconInfo} />
+                  This setting only takes effect when your OS uses GtkStatusIcon
+                </div>
+              ) : undefined}
+            </Col>
+            {SUPPORTS_ADDITIONAL_CLICK_EVENTS ? (
               <Col md={6}>
                 <SelectField
                   fullWidth
@@ -231,7 +265,9 @@ export default class TraySettingsSection extends React.Component {
                   {this.renderTrayActionOptions()}
                 </SelectField>
               </Col>
-            </Row>
+            ) : undefined}
+          </Row>
+          {SUPPORTS_ADDITIONAL_CLICK_EVENTS ? (
             <Row>
               <Col md={6}>
                 <SelectField
@@ -254,8 +290,8 @@ export default class TraySettingsSection extends React.Component {
                 </SelectField>
               </Col>
             </Row>
-          </div>
-        ) : undefined}
+          ) : undefined}
+        </div>
       </Paper>
     )
   }

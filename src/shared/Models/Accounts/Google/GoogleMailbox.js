@@ -29,7 +29,8 @@ class GoogleMailbox extends CoreMailbox {
       CoreMailbox.SERVICE_TYPES.ADMIN,
       CoreMailbox.SERVICE_TYPES.FI,
       CoreMailbox.SERVICE_TYPES.CLASSROOM,
-      CoreMailbox.SERVICE_TYPES.TEAM
+      CoreMailbox.SERVICE_TYPES.TEAM,
+      CoreMailbox.SERVICE_TYPES.PHONE
     ]
   }
   static get defaultServiceTypes () {
@@ -240,6 +241,24 @@ class GoogleMailbox extends CoreMailbox {
               query: { q: 'http(s)\\://docs.google.com(/*)' },
               mode: 'EXTERNAL'
             }
+          ]
+        }
+      ]
+    } else {
+      return []
+    }
+  }
+
+  get navigateModeOverrideRulesets () {
+    if (this.openDriveLinksWithExternalBrowser) {
+      return [
+        {
+          url: 'http(s)\\://*.google.com(/*)',
+          matches: [
+            // Convert content popup to external
+            { windowType: 'CONTENT_POPUP', url: 'http(s)\\://docs.google.com/document/d/*/edit(*)', mode: 'CONVERT_TO_EXTERNAL' },
+            { windowType: 'CONTENT_POPUP', url: 'http(s)\\://docs.google.com/spreadsheets/d/*/edit(*)', mode: 'CONVERT_TO_EXTERNAL' },
+            { windowType: 'CONTENT_POPUP', url: 'http(s)\\://docs.google.com/presentation/d/*/edit(*)', mode: 'CONVERT_TO_EXTERNAL' }
           ]
         }
       ]

@@ -1,4 +1,4 @@
-import url from 'url'
+import {format as urlFormat} from 'url'
 import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import ExtensionHostedWindow from 'Windows/ExtensionHostedWindow'
 
@@ -35,7 +35,7 @@ class CRExtensionOptionsPage {
       return
     }
 
-    const targetUrl = url.format({
+    const targetUrl = urlFormat({
       protocol: CR_EXTENSION_PROTOCOL,
       slashes: true,
       hostname: this.extension.id,

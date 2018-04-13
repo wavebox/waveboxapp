@@ -1,5 +1,9 @@
 import WaveboxWindow from './WaveboxWindow'
 import { evtMain } from 'AppEvents'
+import GuestWebPreferences from './GuestWebPreferences'
+import { WindowOpeningEngine, WindowOpeningHandler } from './WindowOpeningEngine'
+
+const WINDOW_OPEN_MODES = WindowOpeningEngine.WINDOW_OPEN_MODES
 
 const privTabMetaInfo = Symbol('privTabMetaInfo')
 
@@ -35,10 +39,15 @@ class ContentPopupWindow extends WaveboxWindow {
   /**
   * Starts the window
   * @param url: the start url
-  * @param safeBrowserWindowOptions={}: the configuration for the window. Must be directly
+  * @param windowOptions={}: the configuration for the window. Must be directly
   * from the parent webContents
   */
-  create (url, safeBrowserWindowOptions = {}) {
+  create (url, windowOptions = {}) {
+    if (!windowOptions.webPreferences) {
+      windowOptions.webPreferences = {}
+    }
+    GuestWebPreferences.sanitizeForGuestUse(windowOptions.webPreferences)
+
     // Blank urls are often used to just skim the referrer out of the request. This
     // can lead to a phantom window popping up and then shutting down. To prevent this
     // delay showing them on instances that might be this
@@ -47,7 +56,7 @@ class ContentPopupWindow extends WaveboxWindow {
     // The browser settings don't need to be sanitized as they should be in the same thread
     // and come from the parent webContents.
     const options = {
-      ...safeBrowserWindowOptions,
+      ...windowOptions,
       show: !shouldDelayShow
     }
 
@@ -94,6 +103,7 @@ class ContentPopupWindow extends WaveboxWindow {
 
     // Listen to webview events
     this.window.webContents.on('new-window', this.handleWebContentsNewWindow)
+    this.window.webContents.on('will-navigate', this.handleWebViewWillNavigate)
     return this
   }
 
@@ -103,6 +113,22 @@ class ContentPopupWindow extends WaveboxWindow {
   */
   destroy (evt) {
     super.destroy(evt)
+  }
+
+  /* ****************************************************************************/
+  // Overwritable behaviour
+  /* ****************************************************************************/
+
+  /**
+  * Checks if the webcontents is allowed to navigate to the next url. If false is returned
+  * it will be prevented
+  * @param evt: the event that fired
+  * @param browserWindow: the browserWindow that's being checked
+  * @param nextUrl: the next url to navigate
+  * @return false to suppress, true to allow
+  */
+  allowNavigate (evt, browserWindow, nextUrl) {
+    return true
   }
 
   /* ****************************************************************************/
@@ -119,11 +145,31 @@ class ContentPopupWindow extends WaveboxWindow {
   * @param additionalFeatures: The non-standard features
   */
   handleWebContentsNewWindow = (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
-    evt.preventDefault()
+    WindowOpeningHandler.handleOpenNewWindow(evt, {
+      targetUrl: targetUrl,
+      frameName: frameName,
+      disposition: disposition,
+      options: options,
+      additionalFeatures: additionalFeatures,
+      openingBrowserWindow: this.window,
+      openingWindowType: this.windowType,
+      tabMetaInfo: this[privTabMetaInfo],
+      provisionalTargetUrl: undefined
+    }, WINDOW_OPEN_MODES.POPUP_CONTENT)
+  }
 
-    const contentWindow = new ContentPopupWindow(this[privTabMetaInfo])
-    contentWindow.create(targetUrl, options)
-    evt.newGuest = contentWindow.window
+  /**
+  * Handles the webview navigating
+  * @param evt: the event that fired
+  * @param targetUrl: the url we're navigating to
+  */
+  handleWebViewWillNavigate = (evt, targetUrl) => {
+    WindowOpeningHandler.handleWillNavigate(evt, {
+      targetUrl: targetUrl,
+      openingBrowserWindow: this.window,
+      openingWindowType: this.windowType,
+      tabMetaInfo: this[privTabMetaInfo]
+    })
   }
 
   /* ****************************************************************************/

@@ -1,10 +1,10 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Toolbar, ToolbarGroup, IconButton, FontIcon, IconMenu, MenuItem, Divider } from 'material-ui'
 import { ipcRenderer } from 'electron'
 import { emblinkActions } from 'stores/emblink'
-import { WB_FOCUS_APP, WB_QUIT_APP } from 'shared/ipcEvents'
-import { CTX_MENU_ONLY_SUPPORT } from 'shared/Models/Settings/TraySettings'
+import { WB_FOCUS_APP, WB_QUIT_APP, WB_TRAY_TOGGLE_WINDOW_MODE } from 'shared/ipcEvents'
 import { settingsStore, settingsActions } from 'stores/settings'
 import Timeago from 'react-timeago'
 
@@ -18,10 +18,44 @@ const styles = {
     minHeight: 32,
     lineHeight: '32px',
     fontSize: 12
+  },
+  faIcon: {
+    width: 20,
+    height: 20,
+    fontSize: 20
+  },
+  faIconStack: {
+    width: 20,
+    height: 20,
+    position: 'relative',
+    display: 'inline-block'
+  },
+  // Open in main window icon
+  faIconOpenMainWindow1: {
+    position: 'absolute',
+    top: 1,
+    left: 0,
+    width: 20,
+    height: 20,
+    fontSize: 20
+  },
+  faIconOpenMainWindow2: {
+    position: 'absolute',
+    top: 6,
+    left: 4,
+    fontSize: 11
   }
 }
 
 export default class AppSceneToolbar extends React.Component {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static propTypes = {
+    isWindowedMode: PropTypes.bool.isRequired
+  }
+
   /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
@@ -87,22 +121,49 @@ export default class AppSceneToolbar extends React.Component {
   }
 
   render () {
+    const { isWindowedMode, ...passProps } = this.props
     const { notificationsMuted, notificationsMutedEndEpoch } = this.state
 
     return (
-      <Toolbar {...this.props}>
+      <Toolbar {...passProps}>
         <ToolbarGroup firstChild>
           <IconButton
             tooltip='Compose'
             onClick={() => { emblinkActions.composeNewMessage() }}
-            tooltipPosition='top-right'>
-            <FontIcon className='material-icons' color='rgba(255, 255, 255, 0.7)'>create</FontIcon>
+            tooltipPosition='top-right'
+            iconStyle={styles.faIcon}>
+            <FontIcon className='far fa-fw fa-edit' color='rgba(255, 255, 255, 0.7)' />
           </IconButton>
           <IconButton
             tooltip='Show main window'
             onClick={() => { ipcRenderer.send(WB_FOCUS_APP, {}) }}
-            tooltipPosition='top-center'>
-            <FontIcon className='material-icons' color='rgba(255, 255, 255, 0.7)'>launch</FontIcon>
+            tooltipPosition='top-center'
+            iconStyle={styles.faIconStack}>
+            <span>
+              <FontIcon
+                style={styles.faIconOpenMainWindow1}
+                className='far fa-fw fa-browser'
+                color='rgba(255, 255, 255, 0.7)' />
+              <FontIcon
+                style={styles.faIconOpenMainWindow2}
+                className='fas fa-fw fa-bolt'
+                color='rgba(255, 255, 255, 0.7)' />
+            </span>
+          </IconButton>
+          <IconButton
+            tooltip={isWindowedMode ? 'Dock to tray' : 'Open as window'}
+            onClick={() => { ipcRenderer.send(WB_TRAY_TOGGLE_WINDOW_MODE, {}) }}
+            tooltipPosition='top-center'
+            iconStyle={styles.faIcon}>
+            {isWindowedMode ? (
+              process.platform === 'darwin' ? (
+                <FontIcon className='far fa-fw fa-arrow-alt-square-up' color='rgba(255, 255, 255, 0.7)' />
+              ) : (
+                <FontIcon className='far fa-fw fa-arrow-alt-square-down' color='rgba(255, 255, 255, 0.7)' />
+              )
+            ) : (
+              <FontIcon className='far fa-fw fa-window' color='rgba(255, 255, 255, 0.7)' />
+            )}
           </IconButton>
           <IconMenu
             useLayerForClickAway
@@ -116,14 +177,16 @@ export default class AppSceneToolbar extends React.Component {
                       return 'Notifications muted for ' + value + ' ' + unit
                     }} />
                 )}
-                tooltipPosition='top-center'>
-                <FontIcon className='material-icons' color='rgba(255, 255, 255, 0.7)'>notifications_paused</FontIcon>
+                tooltipPosition='top-center'
+                iconStyle={styles.faIcon}>
+                <FontIcon className='far fa-fw fa-bell-slash' color='rgba(255, 255, 255, 0.7)' />
               </IconButton>
             ) : (
               <IconButton
                 tooltip={'Mute notifications'}
-                tooltipPosition='top-center'>
-                <FontIcon className='material-icons' color='rgba(255, 255, 255, 0.7)'>notifications</FontIcon>
+                tooltipPosition='top-center'
+                iconStyle={styles.faIcon}>
+                <FontIcon className='far fa-fw fa-bell' color='rgba(255, 255, 255, 0.7)' />
               </IconButton>
             )}
             anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
@@ -180,16 +243,15 @@ export default class AppSceneToolbar extends React.Component {
             ) : undefined}
           </IconMenu>
         </ToolbarGroup>
-        {CTX_MENU_ONLY_SUPPORT ? undefined : (
-          <ToolbarGroup lastChild>
-            <IconButton
-              tooltip='Quit Wavebox'
-              onClick={() => { ipcRenderer.send(WB_QUIT_APP, {}) }}
-              tooltipPosition='top-left'>
-              <FontIcon className='material-icons' color='rgba(255, 255, 255, 0.7)'>close</FontIcon>
-            </IconButton>
-          </ToolbarGroup>
-        )}
+        <ToolbarGroup lastChild>
+          <IconButton
+            tooltip='Quit Wavebox'
+            onClick={() => { ipcRenderer.send(WB_QUIT_APP, {}) }}
+            tooltipPosition='top-left'
+            iconStyle={styles.faIcon}>
+            <FontIcon className='far fa-fw fa-sign-out' color='rgba(255, 255, 255, 0.7)' />
+          </IconButton>
+        </ToolbarGroup>
       </Toolbar>
     )
   }

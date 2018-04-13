@@ -113,7 +113,7 @@ class ContextMenuService {
       this.renderWaveboxSection(contents, params)
     ]
 
-    if (this[privAutofillService].isAvailable && this.isAutofillPasswordField(contents, params)) {
+    if (this[privAutofillService].isAvailable && this[privAutofillService].isValidAutofillUrl(evt.sender.getURL()) && this.isAutofillPasswordField(contents, params)) {
       this[privAutofillService]
         .findCredentials(contents.getURL())
         .then((credentials) => {
@@ -587,7 +587,12 @@ class ContextMenuService {
 
     const openerWebPreferences = contents.getWebPreferences()
     const contentWindow = new ContentWindow(waveboxWindow ? waveboxWindow.tabMetaInfo(contents.id) : undefined)
-    contentWindow.create(openerWindow, url, openerWebPreferences.partition)
+    contentWindow.create(
+      url,
+      undefined,
+      openerWindow,
+      { partition: openerWebPreferences.partition }
+    )
   }
 
   /**

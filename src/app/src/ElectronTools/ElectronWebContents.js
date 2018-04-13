@@ -1,5 +1,5 @@
 import { webContents } from 'electron'
-import url from 'url'
+import { URL } from 'url'
 
 class ElectronWebContents {
   /* ****************************************************************************/
@@ -52,8 +52,8 @@ class ElectronWebContents {
   static getPermissionRootUrl (wc, currentUrl = undefined) {
     const hostUrl = !currentUrl || currentUrl === 'about:blank' ? this.getHostUrl(wc) : currentUrl
 
-    const purl = url.parse(hostUrl || 'about:blank')
-    const host = purl.host.startsWith('www.') ? purl.host.replace('www.', '') : purl.host
+    const purl = new URL(hostUrl || 'about:blank')
+    const host = purl.hostname.startsWith('www.') ? purl.hostname.replace('www.', '') : purl.hostname
     return `${purl.protocol}//${host}`
   }
 }

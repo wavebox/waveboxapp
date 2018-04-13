@@ -299,6 +299,11 @@ class WaveboxAppPrimaryMenu {
             label: 'Cycle Windows',
             click: WaveboxAppPrimaryMenuActions.cycleWindows,
             accelerator: accelerators.cycleWindows
+          },
+          {
+            label: 'Toggle Wavebox Mini',
+            click: WaveboxAppPrimaryMenuActions.toggleWaveboxMini,
+            accelerator: accelerators.toggleWaveboxMini
           }
         ].concat(mailboxes.length > 1 || (activeMailbox && activeMailbox.hasAdditionalServices) ? [
           { type: 'separator' },

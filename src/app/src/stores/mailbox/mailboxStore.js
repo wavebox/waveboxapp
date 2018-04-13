@@ -6,7 +6,7 @@ import { STORE_NAME } from 'shared/AltStores/Mailbox/AltMailboxIdentifiers'
 import actions from './mailboxActions'
 import mailboxPersistence from 'Storage/mailboxStorage'
 import avatarPersistence from 'Storage/avatarStorage'
-import { MailboxesSessionManager } from 'SessionManager'
+import { MailboxesSessionManager, SessionManager } from 'SessionManager'
 import MailboxesWindow from 'Windows/MailboxesWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import uuid from 'uuid'
@@ -29,6 +29,19 @@ class MailboxStore extends CoreMailboxStore {
     super()
 
     this.sleepingQueue = new Map()
+
+    /* ****************************************/
+    // Sessions
+    /* ****************************************/
+
+    /**
+    * @return a list of active session ids
+    */
+    this.getActiveSessionIds = () => {
+      return this.allMailboxes().map((mailbox) => {
+        return `persist:${mailbox.partition}`
+      })
+    }
 
     /* ****************************************/
     // Actions
@@ -114,6 +127,12 @@ class MailboxStore extends CoreMailboxStore {
       mailboxPersistence.removeItem(id)
       this.mailboxes.delete(id)
       this.dispatchToRemote('remoteSetMailbox', [id, mailboxJS])
+
+      // Queue this a little bit later as the session is probably still in use
+      setTimeout(() => {
+        SessionManager.clearSessionFull(`persist:${id}`)
+      }, 5000)
+
       return undefined
     } else {
       mailboxJS.changedTime = new Date().getTime()

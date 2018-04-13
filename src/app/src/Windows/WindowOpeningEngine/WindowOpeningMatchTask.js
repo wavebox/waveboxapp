@@ -1,4 +1,4 @@
-import url from 'url'
+import { URL, format as urlFormat } from 'url'
 
 const privCache = Symbol('privCache')
 
@@ -17,8 +17,8 @@ class WindowOpeningMatchTask {
   * @param ruleset: the raw ruleset
   */
   constructor (currentUrl, targetUrl, windowType, provisionalTargetUrl = undefined, disposition = undefined) {
-    this.fullCurrentUrl = currentUrl
-    this.fullTargetUrl = targetUrl
+    this.fullCurrentUrl = currentUrl || 'about:blank'
+    this.fullTargetUrl = targetUrl || 'about:blank'
     this.windowType = windowType
     this.fullProvisionalTargetUrl = provisionalTargetUrl
     this.disposition = disposition
@@ -49,14 +49,19 @@ class WindowOpeningMatchTask {
 
   get targetUrlQuery () {
     if (!this[privCache].has('targetUrlQuery')) {
-      this[privCache].set('targetUrlQuery', url.parse(this.fullTargetUrl, true).query)
+      const searchParams = new URL(this.fullTargetUrl).searchParams
+      const query = Array.from(searchParams.entries()).reduce((acc, [k, v]) => {
+        acc[k] = v
+        return acc
+      }, {})
+      this[privCache].set('targetUrlQuery', query)
     }
     return this[privCache].get('targetUrlQuery')
   }
 
   get targetUrlHash () {
     if (!this[privCache].has('targetUrlHash')) {
-      this[privCache].set('targetUrlHash', url.parse(this.fullTargetUrl).hash)
+      this[privCache].set('targetUrlHash', new URL(this.fullTargetUrl).hash)
     }
     return this[privCache].get('targetUrlHash')
   }
@@ -70,7 +75,7 @@ class WindowOpeningMatchTask {
 
   get provisionalTargetUrlHash () {
     if (!this[privCache].has('provisionalTargetUrlHash')) {
-      this[privCache].set('provisionalTargetUrlHash', url.parse(this.fullProvisionalTargetUrl).hash)
+      this[privCache].set('provisionalTargetUrlHash', new URL(this.fullProvisionalTargetUrl).hash)
     }
     return this[privCache].get('provisionalTargetUrlHash')
   }
@@ -85,11 +90,11 @@ class WindowOpeningMatchTask {
   */
   _justUri (targetUrl) {
     if (!targetUrl) { return targetUrl }
-    return url.format({
-      ...url.parse(targetUrl),
-      hash: undefined,
-      search: undefined,
-      query: undefined
+    const purl = new URL(targetUrl)
+    return urlFormat({
+      protocol: purl.protocol,
+      hostname: purl.hostname,
+      pathname: purl.pathname
     })
   }
 }

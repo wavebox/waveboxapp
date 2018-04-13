@@ -34,7 +34,12 @@ class BasicHTTPAuthHandler {
       alwaysOnTop: true,
       autoHideMenuBar: true,
       show: true,
-      backgroundColor: 'white'
+      backgroundColor: 'white',
+      webPreferences: {
+        nodeIntegration: true,
+        nodeIntegrationInWorker: false,
+        webviewTag: false
+      }
     })
 
     // Bind event listeners
@@ -46,6 +51,7 @@ class BasicHTTPAuthHandler {
       realm: authInfo.realm
     })
     this.window.loadURL(`file://${__dirname}/BasicHTTPAuthHandler.html?${qs}`)
+    this.window.webContents.on('will-navigate', (evt, url) => evt.preventDefault())
   }
 
   /* ****************************************************************************/

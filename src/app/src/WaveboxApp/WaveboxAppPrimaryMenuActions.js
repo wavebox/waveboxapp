@@ -108,6 +108,15 @@ class WaveboxAppPrimaryMenuAcions {
     WaveboxWindow.cycleNextWindow()
   }
 
+  toggleWaveboxMini = () => {
+    // (Thomas101) this is ripe for refactoring. The tray should be created
+    // on the main thread
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.__depricatedToggleTray()
+    }
+  }
+
   /* ****************************************************************************/
   // Wavebox actions
   /* ****************************************************************************/

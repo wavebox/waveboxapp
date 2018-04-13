@@ -19,6 +19,7 @@ const styles = {
   */
   avatar: {
     display: 'block',
+    transform: 'translate3d(0,0,0)', // fix for wavebox/waveboxapp#619
     margin: '4px auto',
     borderWidth: 3,
     borderStyle: 'solid',

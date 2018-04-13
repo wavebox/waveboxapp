@@ -1,6 +1,6 @@
 {
   "name": "wavebox",
-  "version": "3.13.0",
+  "version": "3.14.0",
   "releaseChannel": "STABLE",
   "description": "Wavebox",
   "scripts": {
@@ -59,7 +59,7 @@
     "babel-cli": "6.26.0",
     "babel-core": "6.26.0",
     "babel-loader": "7.1.4",
-    "babel-minify-webpack-plugin": "0.3.0",
+    "babel-minify-webpack-plugin": "0.3.1",
     "babel-plugin-transform-class-properties": "6.24.1",
     "babel-plugin-transform-react-remove-prop-types": "0.4.13",
     "babel-preset-env": "1.6.1",
@@ -69,8 +69,8 @@
     "clean-webpack-plugin": "0.1.19",
     "colors": "1.2.1",
     "copy-webpack-plugin": "4.5.1",
-    "css-loader": "0.28.10",
-    "electron": "1.8.3",
+    "css-loader": "0.28.11",
+    "electron": "1.8.4",
     "electron-rebuild": "1.7.3",
     "extract-text-webpack-plugin": "3.0.2",
     "file-loader": "1.1.11",
@@ -86,14 +86,14 @@
     "uglify-es": "3.3.9",
     "url-loader": "1.0.1",
     "uuid": "3.2.1",
-    "webpack": "4.1.1",
-    "webpack-cli": "2.0.11",
+    "webpack": "4.2.0",
+    "webpack-cli": "2.0.13",
     "webpack-notifier": "1.6.0",
     "webpack-target-electron-renderer": "0.4.0",
     "yargs": "11.0.0"
   },
   "devDependencies": {
-    "standard": "11.0.0",
+    "standard": "11.0.1",
     "babel-eslint": "8.2.2"
   },
   "standard": {
@@ -101,7 +101,7 @@
   },
   "electronInstallEnv": {
     "ELECTRON_MIRROR": "https://electron-wb.s3.us-east-2.amazonaws.com/",
-    "ELECTRON_CUSTOM_DIR": "wb_3_10_5"
+    "ELECTRON_CUSTOM_DIR": "wb_3_13_1"
   },
   "appConfig": {
     "osxAppBundleId": "io.wavebox.wavebox"

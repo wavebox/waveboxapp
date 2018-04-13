@@ -72,7 +72,7 @@ class MailboxesWindowBehaviour {
       } : undefined)
 
       const window = BrowserWindow.fromWebContents(evt.sender)
-      contentWindow.create(window, body.url, body.partition, body.windowPreferences, body.webPreferences)
+      contentWindow.create(body.url, body.windowPreferences, window, body.webPreferences)
     }
   }
 
@@ -130,8 +130,7 @@ class MailboxesWindowBehaviour {
       openingBrowserWindow: this._getOpeningBrowserWindow(evt),
       openingWindowType: WINDOW_TYPES.MAIN,
       tabMetaInfo: this.tabManager.tabMetaInfo(evt.sender.id),
-      provisionalTargetUrl: this.tabManager.getTargetUrl(evt.sender.id),
-      mailbox: this.tabManager.getService(evt.sender.id).mailbox
+      provisionalTargetUrl: this.tabManager.getTargetUrl(evt.sender.id)
     })
   }
 
@@ -145,8 +144,7 @@ class MailboxesWindowBehaviour {
       targetUrl: targetUrl,
       openingBrowserWindow: this._getOpeningBrowserWindow(evt),
       openingWindowType: WINDOW_TYPES.MAIN,
-      tabMetaInfo: this.tabManager.tabMetaInfo(evt.sender.id),
-      mailbox: this.tabManager.getService(evt.sender.id).mailbox
+      tabMetaInfo: this.tabManager.tabMetaInfo(evt.sender.id)
     })
   }
 

@@ -275,8 +275,14 @@ class CRExtensionBrowserAction {
   handleClick = (evt, tabId) => {
     if (this.extension.manifest.wavebox.hasBrowserActionOpenUrl) {
       const contentWindow = new ContentWindow()
-      const partitionId = CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
-      contentWindow.create(undefined, this.extension.manifest.wavebox.browserActionOpenUrl, partitionId)
+      contentWindow.create(
+        this.extension.manifest.wavebox.browserActionOpenUrl,
+        undefined,
+        undefined,
+        {
+          partition: CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
+        }
+      )
     } else {
       const tabInfo = CRExtensionTab.dataFromWebContentsId(this.extension, tabId)
       webContents.getAllWebContents().forEach((targetWebcontents) => {

@@ -10,7 +10,7 @@ import MailboxSearch from './MailboxSearch'
 import MailboxTargetUrl from './MailboxTargetUrl'
 import MailboxLoadBar from './MailboxLoadBar'
 import shallowCompare from 'react-addons-shallow-compare'
-import URI from 'urijs'
+import { URL } from 'url'
 import { NotificationService } from 'Notifications'
 import {
   WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP,
@@ -463,9 +463,9 @@ export default class MailboxWebView extends React.Component {
     // but this is the only thing I could find that leaves file drag working
     if (evt.url.indexOf('file://') === 0) {
       this.setState((prevState) => {
-        return {
-          url: URI(prevState.url).addSearch('__v__', new Date().getTime()).toString()
-        }
+        const purl = new URL(prevState.url)
+        purl.searchParams.set('__v__', new Date().getTime())
+        return { url: purl.toString() }
       })
     }
   }

@@ -1,6 +1,6 @@
 import {ipcMain} from 'electron'
 import { WB_AUTH_TRELLO, WB_AUTH_TRELLO_COMPLETE, WB_AUTH_TRELLO_ERROR } from 'shared/ipcEvents'
-import url from 'url'
+import { URL } from 'url'
 import querystring from 'querystring'
 import AuthWindow from 'Windows/AuthWindow'
 
@@ -77,8 +77,8 @@ class AuthTrello {
 
       // STEP 2: Get app key
       oauthWin.webContents.on('did-navigate', (evt, nextURL) => {
-        const { host, path } = url.parse(nextURL)
-        if (host === 'trello.com' && path === '/') {
+        const { hostname, pathname } = new URL(nextURL)
+        if (hostname === 'trello.com' && pathname === '/') {
           const captureFn = (evt) => {
             if (oauthWin.webContents.getURL() === 'https://trello.com/app-key') {
               oauthWin.webContents.executeJavaScript('document.getElementById("key").value', (key) => {
@@ -96,9 +96,12 @@ class AuthTrello {
 
       // STEP 3: Authentication complete
       oauthWin.webContents.on('did-navigate', (evt, nextURL) => {
-        const { host, path } = url.parse(nextURL)
-        if (host === 'trello.com' && path.indexOf('/1/authorize') === 0) {
-          oauthWin.show()
+        const { hostname, pathname } = new URL(nextURL)
+        if (hostname === 'trello.com' && pathname.indexOf('/1/authorize') === 0) {
+          // The UI takes some time to update and it's janky
+          setTimeout(() => {
+            oauthWin.show()
+          }, 250)
         }
       })
       oauthWin.webContents.on('will-navigate', (evt, nextUrl) => {

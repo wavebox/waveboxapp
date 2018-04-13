@@ -7,7 +7,7 @@ import {
   Toolbar, ToolbarGroup, ToolbarTitle
 } from 'material-ui'
 import { CHROME_PDF_URL } from 'shared/constants'
-import url from 'url'
+import { URL } from 'url'
 import { remote } from 'electron'
 import * as Colors from 'material-ui/styles/colors'
 import Spinner from 'sharedui/Components/Activity/Spinner'
@@ -66,7 +66,7 @@ export default class BrowserToolbar extends React.Component {
   */
   externalUrl (targetUrl) {
     if (targetUrl.startsWith(CHROME_PDF_URL)) {
-      return url.parse(targetUrl, true).query.src
+      return new URL(targetUrl).searchParams.get('src')
     } else {
       return targetUrl
     }

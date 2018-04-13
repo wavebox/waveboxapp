@@ -10,7 +10,7 @@
     "material-ui": "0.20.0",
     "prop-types": "15.6.1",
     "react": "16.2.0",
-    "react-activity": "1.2.1",
+    "react-activity": "1.2.2",
     "react-addons-shallow-compare": "15.6.2",
     "react-dom": "16.2.0",
     "react-portal-tooltip": "2.3.0",
@@ -18,7 +18,7 @@
     "uuid": "3.2.1"
   },
   "devDependencies": {
-    "standard": "11.0.0",
+    "standard": "11.0.1",
     "babel-eslint": "8.2.2",
     "babel-plugin-transform-class-properties": "6.24.1"
   },

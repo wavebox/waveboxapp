@@ -103,7 +103,7 @@ class ContainerMailbox extends CoreMailbox {
   // Properties: Window Opening
   /* **************************************************************************/
 
-  get windowOpenModeOverrideRulesets () {
+  get enabledWindowOpenOverrideConfigs () {
     const userConfigs = this.windowOpenUserConfig
     return this.container.windowOpenOverrides
       .filter((ovr) => {
@@ -111,8 +111,15 @@ class ContainerMailbox extends CoreMailbox {
         if (ovr.defaultValue) { return true }
         return false
       })
-      .reduce((acc, ovr) => acc.concat(ovr.rulesets), [])
   }
+
+  get windowOpenModeOverrideRulesets () {
+    return this.enabledWindowOpenOverrideConfigs.reduce((acc, ovr) => acc.concat(ovr.rulesets), [])
+  }
+  get navigateModeOverrideRulesets () {
+    return this.enabledWindowOpenOverrideConfigs.reduce((acc, ovr) => acc.concat(ovr.navigateRulesets), [])
+  }
+
   get windowOpenUserConfig () { return this._value_('windowOpenUserConfig', {}) }
 
   /**

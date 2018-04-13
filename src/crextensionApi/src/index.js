@@ -1,5 +1,5 @@
 import Chrome from './Chrome'
-import url from 'url'
+import { URL } from 'whatwg-url'
 import { ipcRenderer } from 'electron'
 import ExtensionDatasource from './Core/ExtensionDatasource'
 import { CR_RUNTIME_ENVIRONMENTS, CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
@@ -12,7 +12,7 @@ class Loader {
   /* **************************************************************************/
 
   static init () {
-    const parsedUrl = url.parse(window.location.href)
+    const parsedUrl = new URL(window.location.href)
     if (parsedUrl.protocol === `${CR_EXTENSION_PROTOCOL}:`) {
       const config = ipcRenderer.sendSync(WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG, parsedUrl.hostname)
       if (config.hasRuntime) {
