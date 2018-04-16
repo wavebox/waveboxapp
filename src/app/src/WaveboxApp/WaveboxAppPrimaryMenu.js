@@ -344,7 +344,7 @@ class WaveboxAppPrimaryMenu {
   * @return a string that can be used with electron
   */
   buildAcceleratorStringForIndex (accelerator, index) {
-    if (index < 0 || index > 9) {
+    if (index < 0 || index >= 9) {
       return undefined
     } else {
       return (accelerator || '').replace('Number', index + 1)
