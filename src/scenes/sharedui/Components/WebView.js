@@ -151,6 +151,16 @@ export default class WebView extends React.Component {
   constructor (props) {
     super(props)
 
+    // We force the style to be visible when first loaded to deal with https://github.com/electron/electron/issues/8505
+    // Once did-finish-load is fired we remove our override to allow normal behaviour.
+    // "did-finish-load" callback is added in componentDidMount
+    // (@Thomas101) TODO We should probably look at refactoring this later on so there's no need to
+    // apply styles later on and run the risk of overwriting the style
+    this.instanceId = uuid.v4()
+    this.firstLoadStyle = document.createElement('style')
+    this.firstLoadStyle.innerHTML = 'webview[data-webview-instance-id] { visibility: visible !important; }'
+    document.head.appendChild(this.firstLoadStyle)
+
     const self = this
     WEBVIEW_METHODS.forEach((m) => {
       if (self[m] !== undefined) { return } // Allow overwriting
@@ -167,8 +177,17 @@ export default class WebView extends React.Component {
 
   componentDidMount () {
     this.ipcPromises = {}
-
     const node = this.getWebviewNode()
+
+    // The second half of the firstLoadStyle fix. See constructor for more info
+    node.addEventListener('did-finish-load', () => {
+      if (this.firstLoadStyle && this.firstLoadStyle.parentElement) {
+        this.firstLoadStyle.parentElement.removeChild(this.firstLoadStyle)
+        this.firstLoadStyle = undefined
+      }
+    })
+
+    // Bind webview events
     WEBVIEW_EVENTS.forEach((name) => {
       node.addEventListener(name, (evt) => {
         this.dispatchWebViewEvent(name, evt)
@@ -417,7 +436,8 @@ export default class WebView extends React.Component {
         return `${k}="${this.props[k]}"`
       })
       .concat([
-        'style="position:absolute; top:0; bottom:0; right:0; left:0;"'
+        'style="position:absolute; top:0; bottom:0; right:0; left:0;"',
+        `data-webview-instance-id="${this.instanceId}"`
       ])
       .join(' ')
 
