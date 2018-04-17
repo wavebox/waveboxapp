@@ -9,6 +9,7 @@ import WindowOpeningRules from './WindowOpeningRules'
 import WindowOpeningMatchTask from './WindowOpeningMatchTask'
 import WINDOW_BACKING_TYPES from '../WindowBackingTypes'
 import mailboxStore from 'stores/mailbox/mailboxStore'
+import uuid from 'uuid'
 
 const WINDOW_OPEN_MODES = WindowOpeningEngine.WINDOW_OPEN_MODES
 const NAVIGATE_MODES = WindowOpeningEngine.NAVIGATE_MODES
@@ -339,6 +340,11 @@ class WindowOpeningHandler {
     const windowOptions = { ...options, webPreferences: undefined }
     const guestWebPreferences = (options.webPreferences || {})
     if (partitionOverride) {
+      // Be careful about overwriting the partition. If we're trying to share affinity on different
+      // partitions we're going to break the webcontents
+      if (guestWebPreferences.affinity && partitionOverride !== guestWebPreferences.partition) {
+        guestWebPreferences.affinity = `transient_${uuid.v4()}`
+      }
       guestWebPreferences.partition = partitionOverride
     }
     contentWindow.create(targetUrl, windowOptions, openingBrowserWindow, guestWebPreferences)
