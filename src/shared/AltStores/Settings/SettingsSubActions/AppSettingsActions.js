@@ -149,14 +149,6 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
-  * Sets whether extension background processes should be isolated from each other
-  * @param isolate: true to isolate, false to not
-  */
-  setIsolateExtensionProcesses (isolate) {
-    this.dispatchUpdate('isolateExtensionProcesses', isolate)
-  }
-
-  /**
   * Enables or disables mixed sandbox mode
   * @param enable: true to enable, false to not
   */

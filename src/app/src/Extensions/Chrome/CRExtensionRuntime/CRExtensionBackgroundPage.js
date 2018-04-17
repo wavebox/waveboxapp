@@ -5,8 +5,6 @@ import {
   CR_EXTENSION_PROTOCOL,
   CR_EXTENSION_BG_PARTITION_PREFIX
 } from 'shared/extensionApis'
-import { WB_EXTENSION_AFFINITY } from 'shared/webContentAffinities'
-import { settingsStore } from 'stores/settings'
 import Resolver from 'Runtime/Resolver'
 import { SessionManager } from 'SessionManager'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
@@ -90,7 +88,6 @@ class CRExtensionBackgroundPage {
     const partitionId = this.partitionId
     this._webContents = webContents.create({
       partition: partitionId,
-      affinity: settingsStore.getState().launched.app.isolateExtensionProcesses ? undefined : WB_EXTENSION_AFFINITY,
       sandbox: true,
       nativeWindowOpen: true,
       sharedSiteInstances: true,
@@ -172,10 +169,16 @@ class CRExtensionBackgroundPage {
       if (details.resourceType === 'xhr') {
         const {protocol, hostname, pathname} = new URL(details.url)
         if (CRExtensionMatchPatterns.matchUrls(protocol, hostname, pathname, Array.from(this.extension.manifest.permissions))) {
-          const headers = details.responseHeaders
+          const responseHeaders = details.responseHeaders
+          const requestHeaders = details.headers
           const updatedHeaders = {
-            ...headers,
-            'access-control-allow-credentials': headers['access-control-allow-credentials'] || ['true'],
+            ...responseHeaders,
+            'access-control-allow-credentials': responseHeaders['access-control-allow-credentials'] || ['true'],
+            'access-control-allow-headers': [].concat(
+              responseHeaders['access-control-allow-headers'],
+              requestHeaders['Access-Control-Request-Headers'],
+              Object.keys(requestHeaders).filter((k) => k.startsWith('X-'))
+            ),
             'access-control-allow-origin': [
               urlFormat({
                 protocol: CR_EXTENSION_PROTOCOL,

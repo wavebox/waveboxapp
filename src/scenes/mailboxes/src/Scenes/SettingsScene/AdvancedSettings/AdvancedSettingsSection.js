@@ -79,14 +79,6 @@ export default class AdvancedSettingsSection extends React.Component {
             showRestart()
             settingsActions.sub.app.setIsolateMailboxProcesses(toggled)
           }} />
-        <Toggle
-          toggled={app.isolateExtensionProcesses}
-          label='Isolate Extension background Processes (Requires Restart)'
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
-            showRestart()
-            settingsActions.sub.app.setIsolateExtensionProcesses(toggled)
-          }} />
         {AppSettings.SUPPORTS_MIXED_SANDBOX_MODE ? (
           <Toggle
             toggled={app.enableMixedSandboxMode}

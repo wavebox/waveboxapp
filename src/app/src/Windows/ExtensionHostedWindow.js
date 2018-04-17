@@ -1,9 +1,7 @@
 import { shell } from 'electron'
 import WaveboxWindow from './WaveboxWindow'
 import { WINDOW_BACKING_TYPES } from './WindowBackingTypes'
-import { WB_EXTENSION_WINDOW_AFFINITY_ } from 'shared/webContentAffinities'
 import { CR_EXTENSION_PROTOCOL, CR_EXTENSION_BG_PARTITION_PREFIX } from 'shared/extensionApis'
-import settingsStore from 'stores/settings/settingsStore'
 import Resolver from 'Runtime/Resolver'
 import { URL } from 'url'
 import WindowOpeningHandler from './WindowOpeningEngine/WindowOpeningHandler'
@@ -71,7 +69,6 @@ class ExtensionHostedWindow extends WaveboxWindow {
         contextIsolation: false, // Intentional as the extension shares the same namespace as chrome.* api and runs in a semi-priviledged position
         sandbox: true,
         sharedSiteInstances: true,
-        affinity: settingsStore.getState().launched.app.isolateExtensionProcesses ? undefined : `${WB_EXTENSION_WINDOW_AFFINITY_}:${this[privExtensionId]}`,
         preload: Resolver.crExtensionApi(),
         partition: `${CR_EXTENSION_BG_PARTITION_PREFIX}${this[privExtensionId]}`
       }),
