@@ -5,6 +5,7 @@ import path from 'path'
 
 const privForceQuit = Symbol('privForceQuit')
 const privMainWindow = Symbol('privMainWindow')
+const privIsInAppTeardown = Symbol('privIsInAppTeardown')
 
 class WaveboxAppCloseBehaviour {
   /* ****************************************************************************/
@@ -13,6 +14,7 @@ class WaveboxAppCloseBehaviour {
 
   constructor () {
     this[privForceQuit] = false
+    this[privIsInAppTeardown] = false
     this[privMainWindow] = undefined
   }
 
@@ -128,7 +130,7 @@ class WaveboxAppCloseBehaviour {
     if (this[privMainWindow]) {
       this[privMainWindow].close()
     } else {
-      app.quit()
+      this.safeQuitApp()
     }
   }
 
@@ -145,6 +147,30 @@ class WaveboxAppCloseBehaviour {
   restartApp = () => {
     app.relaunch()
     this.fullyQuitApp()
+  }
+
+  /* ****************************************************************************/
+  // Safe Quit
+  /* ****************************************************************************/
+
+  /**
+  * Runs app.quit() but checks if the app is in the teardown step
+  * @return true if the quit is called in this instance
+  */
+  safeQuitApp = () => {
+    if (this[privIsInAppTeardown] === false) {
+      app.quit()
+      return true
+    } else {
+      return false
+    }
+  }
+
+  /**
+  * Sets that the app is in the teardown stage
+  */
+  setAppInTeardownStage = () => {
+    this[privIsInAppTeardown] = true
   }
 }
 

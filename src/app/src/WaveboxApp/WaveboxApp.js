@@ -119,7 +119,7 @@ class WaveboxApp {
     this[privMainWindow].on('closed', () => {
       this[privMainWindow] = undefined
       this[privCloseBehaviour].mainWindow = undefined
-      app.quit()
+      this[privCloseBehaviour].safeQuitApp()
     })
 
     // Managers
@@ -295,7 +295,7 @@ class WaveboxApp {
   * Handles all the windows closing
   */
   _handleAllWindowsClosed = () => {
-    app.quit()
+    this[privCloseBehaviour].safeQuitApp()
   }
 
   /**
@@ -309,6 +309,8 @@ class WaveboxApp {
   * Handles the teardown before quit
   */
   _handleBeforeQuit = () => {
+    this[privCloseBehaviour].setAppInTeardownStage()
+
     this[privGlobalShortcuts].unregister()
     TrayPopout.unload()
     this[privCloseBehaviour].prepareForQuit()
@@ -343,6 +345,8 @@ class WaveboxApp {
   * Handles the app preparing to quit
   */
   _handleWillQuit = () => {
+    this[privCloseBehaviour].setAppInTeardownStage()
+
     globalShortcut.unregisterAll()
   }
 
