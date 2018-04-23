@@ -220,7 +220,7 @@ class WebContentsRPCService {
       }
     } catch (ex) {
       console.error(`Failed to respond to "${WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG}" continuing with unknown side effects`, ex)
-      evt.returnValue = undefined
+      evt.returnValue = null
     }
   }
 }

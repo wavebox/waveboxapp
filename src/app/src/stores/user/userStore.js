@@ -80,11 +80,16 @@ class UserStore extends CoreUserStore {
   * @param clientToken: the new client token
   */
   handleIPCSetClientToken = (evt, clientToken) => {
-    this.clientToken = clientToken
-    userPersistence.setJSONItem(CLIENT_TOKEN, clientToken)
-    this.dispatchToRemote('remoteSetClientToken', [clientToken])
-    this.emitChange()
-    evt.returnValue = {}
+    try {
+      this.clientToken = clientToken
+      userPersistence.setJSONItem(CLIENT_TOKEN, clientToken)
+      this.dispatchToRemote('remoteSetClientToken', [clientToken])
+      this.emitChange()
+      evt.returnValue = {}
+    } catch (ex) {
+      console.error(`Failed to respond to "${WB_USER_SET_CLIENT_TOKEN}" continuing with unknown side effects`, ex)
+      evt.returnValue = {}
+    }
   }
 
   /**
@@ -94,9 +99,14 @@ class UserStore extends CoreUserStore {
   * @param userEpoch: the epoch time for the user
   */
   handleIPCSetUser = (evt, userJS, userEpoch) => {
-    this.handleSetUser({ userJS, userEpoch })
-    this.emitChange()
-    evt.returnValue = {}
+    try {
+      this.handleSetUser({ userJS, userEpoch })
+      this.emitChange()
+      evt.returnValue = {}
+    } catch (ex) {
+      console.error(`Failed to respond to "${WB_USER_SET_USER}" continuing with unknown side effects`, ex)
+      evt.returnValue = {}
+    }
   }
 
   /* **************************************************************************/

@@ -215,7 +215,12 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   * @param extensionId: the id of the extension
   */
   _handleHasRuntimeResponder = (evt, extensionId) => {
-    evt.returnValue = this.runtimes.has(extensionId)
+    try {
+      evt.returnValue = this.runtimes.has(extensionId)
+    } catch (ex) {
+      console.error(`Failed to respond to "${CRX_RUNTIME_HAS_RESPONDER}" continuing with unkown side effects`, ex)
+      evt.returnValue = false
+    }
   }
 
   /**
@@ -224,44 +229,49 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   * @Param
   */
   _handlePortConnect = (evt, extensionId, connectInfo) => {
-    const runtime = this.runtimes.get(extensionId)
-    if (!runtime) {
-      evt.returnValue = null
-      return
-    }
-
-    if (!runtime.backgroundPage || !runtime.backgroundPage.isRunning) {
-      evt.returnValue = null
-      return
-    }
-
-    const backgroundContents = runtime.backgroundPage.webContents
-    const portId = this[privNextPortId]++
-    evt.returnValue = {
-      portId: portId,
-      connectedParty: {
-        tabId: backgroundContents.id
+    try {
+      const runtime = this.runtimes.get(extensionId)
+      if (!runtime) {
+        evt.returnValue = null
+        return
       }
-    }
 
-    // Prepare for teardown
-    evt.sender.once('render-view-deleted', () => {
+      if (!runtime.backgroundPage || !runtime.backgroundPage.isRunning) {
+        evt.returnValue = null
+        return
+      }
+
       const backgroundContents = runtime.backgroundPage.webContents
-      if (!backgroundContents || backgroundContents.isDestroyed()) { return }
-      backgroundContents.sendToAll(`${CRX_PORT_DISCONNECTED_}${portId}`)
-    })
+      const portId = this[privNextPortId]++
+      evt.returnValue = {
+        portId: portId,
+        connectedParty: {
+          tabId: backgroundContents.id
+        }
+      }
 
-    // Emit the connect event
-    runtime.backgroundPage.webContents.sendToAll(
-      `${CRX_PORT_CONNECTED_}${extensionId}`,
-      portId,
-      {
-        tabId: evt.sender.id,
-        tab: CRExtensionTab.dataFromWebContents(runtime.extension, evt.sender),
-        url: evt.sender.getURL()
-      },
-      connectInfo
-    )
+      // Prepare for teardown
+      evt.sender.once('render-view-deleted', () => {
+        const backgroundContents = runtime.backgroundPage.webContents
+        if (!backgroundContents || backgroundContents.isDestroyed()) { return }
+        backgroundContents.sendToAll(`${CRX_PORT_DISCONNECTED_}${portId}`)
+      })
+
+      // Emit the connect event
+      runtime.backgroundPage.webContents.sendToAll(
+        `${CRX_PORT_CONNECTED_}${extensionId}`,
+        portId,
+        {
+          tabId: evt.sender.id,
+          tab: CRExtensionTab.dataFromWebContents(runtime.extension, evt.sender),
+          url: evt.sender.getURL()
+        },
+        connectInfo
+      )
+    } catch (ex) {
+      console.error(`Failed to respond to "${CRX_PORT_CONNECT_SYNC}" continuing with unkown side effects`, ex)
+      evt.returnValue = null
+    }
   }
 
   /* ****************************************************************************/

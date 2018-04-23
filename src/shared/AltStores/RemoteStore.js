@@ -38,17 +38,25 @@ class RemoteStore {
   /* **************************************************************************/
 
   _remoteHandleConnect = (evt) => {
-    if (process.type !== 'browser') { return }
+    try {
+      if (process.type !== 'browser') {
+        evt.returnValue = null
+        return
+      }
 
-    const senderId = evt.sender.id
-    if (!this.__remote__.connected.has(senderId)) {
-      this.__remote__.connected.add(senderId)
-      evt.sender.once('destroyed', () => {
-        this.__remote__.connected.delete(senderId)
-      })
+      const senderId = evt.sender.id
+      if (!this.__remote__.connected.has(senderId)) {
+        this.__remote__.connected.add(senderId)
+        evt.sender.once('destroyed', () => {
+          this.__remote__.connected.delete(senderId)
+        })
+      }
+
+      evt.returnValue = this._remoteConnectReturnValue()
+    } catch (ex) {
+      console.error(`Failed to respond to "ALT:CONNECT:${this.__remote__.names.dispatch}" continuing with unknown side effects`, ex)
+      evt.returnValue = null
     }
-
-    evt.returnValue = this._remoteConnectReturnValue()
   }
 
   /**

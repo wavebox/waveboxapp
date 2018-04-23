@@ -32,7 +32,7 @@ class DictionaryProviderImpl extends DictionaryProvider {
     }
 
     this[privCacheLang] = lang
-    this[privCache] = DictionaryLoader.loadDictionarySync(lang)
+    this[privCache] = DictionaryLoader.loadDictionarySync(lang) || DictionaryLoader.loadFallbackDictionarySync()
     return this[privCache]
   }
 

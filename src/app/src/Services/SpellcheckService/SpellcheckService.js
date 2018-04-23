@@ -151,7 +151,7 @@ class SpellcheckService {
       evt.returnValue = this[privProvider].primary.dictionaryProvider.getCached()
     } catch (ex) {
       console.error(`Failed to respond to "${WB_SPELLCHECKER_GET_PRIMARY_DICTIONARY_SYNC}" continuing with unkown side effects`, ex)
-      evt.returnValue = undefined
+      evt.returnValue = null
     }
   }
 
@@ -164,7 +164,7 @@ class SpellcheckService {
       evt.returnValue = this[privProvider].secondary.dictionaryProvider.getCached()
     } catch (ex) {
       console.error(`Failed to respond to "${WB_SPELLCHECKER_GET_SECONDARY_DICTIONARY_SYNC}" continuing with unkown side effects`, ex)
-      evt.returnValue = undefined
+      evt.returnValue = null
     }
   }
 

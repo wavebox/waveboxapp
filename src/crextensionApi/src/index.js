@@ -15,7 +15,7 @@ class Loader {
     const parsedUrl = new URL(window.location.href)
     if (parsedUrl.protocol === `${CR_EXTENSION_PROTOCOL}:`) {
       const config = ipcRenderer.sendSync(WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG, parsedUrl.hostname)
-      if (config.hasRuntime) {
+      if (config && config.hasRuntime) {
         const extensionId = parsedUrl.hostname
         const extensionDatasource = new ExtensionDatasource(extensionId, config.runtimeConfig)
         if (config.isBackgroundPage) {
@@ -29,7 +29,7 @@ class Loader {
       window.contentScriptInit = function (extensionId) {
         delete window.contentScriptInit
         const config = ipcRenderer.sendSync(WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG, extensionId)
-        if (config.hasRuntime) {
+        if (config && config.hasRuntime) {
           const extensionDatasource = new ExtensionDatasource(extensionId, config.runtimeConfig)
           window.chrome = new Chrome(extensionId, CR_RUNTIME_ENVIRONMENTS.CONTENTSCRIPT, extensionDatasource)
           window.XMLHttpRequest = XMLHttpRequestBuilder.buildContentScriptXMLHttpRequest(

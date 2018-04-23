@@ -85,7 +85,12 @@ class MetricsService {
   * @param evt: the event that fired
   */
   ipcGetMetricsSync = (evt) => {
-    evt.returnValue = this.getMetrics()
+    try {
+      evt.returnValue = this.getMetrics()
+    } catch (ex) {
+      console.error(`Failed to respond to "${WB_METRICS_GET_METRICS_SYNC}" continuing with unkown side effects`, ex)
+      evt.returnValue = null
+    }
   }
 
   /* ****************************************************************************/

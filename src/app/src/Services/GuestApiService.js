@@ -65,7 +65,7 @@ class GuestApiService {
   _handleGuestApiReadSync = (evt, name) => {
     try {
       if (!VALID_WAVEBOX_CONTENT_IMPL_ENDPOINTS.has(name)) {
-        evt.returnValue = undefined
+        evt.returnValue = null
         return
       }
 
@@ -77,7 +77,7 @@ class GuestApiService {
       evt.returnValue = this[privCachedGuestAPIs].get(name)
     } catch (ex) {
       console.error('Failed to respond to "WB_GUEST_API_READ_SYNC" continuing with unkown side effects', ex)
-      evt.returnValue = undefined
+      evt.returnValue = null
     }
   }
 
