@@ -174,6 +174,7 @@ class Analytics {
   */
   sendResourceUsage () {
     const metrics = ipcRenderer.sendSync(WB_METRICS_GET_METRICS_SYNC)
+    if (!metrics) { return Promise.resolve({ sent: false }) }
     const sendMetrics = metrics.map((metric) => {
       if (metric.webContentsInfo) {
         return {

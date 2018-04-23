@@ -67,7 +67,12 @@ class CRExtensionDatasource {
   * @param evt: the event that fired
   */
   handleGetManifest = (evt) => {
-    evt.returnValue = this.extension.manifest.cloneData()
+    try {
+      evt.returnValue = this.extension.manifest.cloneData()
+    } catch (ex) {
+      console.error(`Failed to respond to "${CRX_GET_MANIFEST_}..." continuing with unkown side effects`, ex)
+      evt.returnValue = null
+    }
   }
 
   /**
@@ -76,7 +81,12 @@ class CRExtensionDatasource {
   * @param language: the language to get the messages for
   */
   handleGetMessages = (evt, language) => {
-    evt.returnValue = this.getMessages(language)
+    try {
+      evt.returnValue = this.getMessages(language)
+    } catch (ex) {
+      console.error(`Failed to respond to "${CRX_GET_MESSAGES_}..." continuing with unkown side effects`, ex)
+      evt.returnValue = {}
+    }
   }
 }
 

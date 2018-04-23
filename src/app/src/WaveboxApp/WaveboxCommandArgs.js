@@ -24,9 +24,17 @@ class WaveboxCommandArgs {
   */
   static processModifierArgs (argv, emblinkActions, mailboxActions) {
     // Mailto
-    const mailto = argv._.find((a) => a.startsWith('mailto'))
-    if (mailto) {
-      emblinkActions.composeNewMailtoLink(mailto)
+    let mailtoStr
+    if (argv.mailto && argv.mailto.startsWith('mailto:')) {
+      mailtoStr = argv.mailto
+    } else {
+      const unpinnedMailto = argv._.find((a) => a.startsWith('mailto:'))
+      if (unpinnedMailto) {
+        mailtoStr = unpinnedMailto
+      }
+    }
+    if (mailtoStr) {
+      emblinkActions.composeNewMailtoLink(mailtoStr)
     }
 
     // Mailbox index

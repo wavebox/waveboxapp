@@ -57,21 +57,25 @@ class ExtensionLoader {
     }
 
     const code = ipcRenderer.sendSync(WB_GUEST_API_READ_SYNC, apiName)
-    const wrapper = `
-      ;(function (WB_API_KEY, WB_CONFIG) {
-        ${code}
-      })('${apiKey}', ${JSON.stringify(config)})
-    `
+    if (code) {
+      const wrapper = `
+        ;(function (WB_API_KEY, WB_CONFIG) {
+          ${code}
+        })('${apiKey}', ${JSON.stringify(config)})
+      `
 
-    if (DEQUEUE_ENDPOINTS.has(apiName)) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          webFrame.executeJavaScript(wrapper)
-          resolve()
+      if (DEQUEUE_ENDPOINTS.has(apiName)) {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            webFrame.executeJavaScript(wrapper)
+            resolve()
+          })
         })
-      })
+      } else {
+        webFrame.executeJavaScript(wrapper)
+        return Promise.resolve()
+      }
     } else {
-      webFrame.executeJavaScript(wrapper)
       return Promise.resolve()
     }
   }

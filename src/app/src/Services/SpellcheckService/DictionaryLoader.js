@@ -3,6 +3,7 @@ import fs from 'fs-extra'
 import RuntimePaths from 'Runtime/RuntimePaths'
 import dictionaries from 'shared/SpellcheckProvider/dictionaries'
 import { PREINSTALLED_DICTIONARIES } from 'shared/constants'
+const BUILTIN_DICTIONARY_LANGUAGE = 'en_US'
 const enUSDictionaryPath = path.join(__dirname, 'node_modules/dictionary-en-us')
 
 class DictionaryLoader {
@@ -11,14 +12,13 @@ class DictionaryLoader {
   /* ****************************************************************************/
 
   /**
-  * @override
   * Loads the dictionary synchronously
   * @param lang: the language of the dictionary
   * @return { dic, aff } or undefined
   */
   static loadDictionarySync (lang) {
     try {
-      if (lang === 'en_US') {
+      if (lang === BUILTIN_DICTIONARY_LANGUAGE) {
         const aff = fs.readFileSync(path.join(enUSDictionaryPath, 'index.aff'))
         const dic = fs.readFileSync(path.join(enUSDictionaryPath, 'index.dic'))
         return { aff: aff, dic: dic }
@@ -30,6 +30,14 @@ class DictionaryLoader {
     } catch (ex) {
       return undefined
     }
+  }
+
+  /**
+  * Loads a fallback dictionary synchronously
+  * @return { dic, aff }
+  */
+  static loadFallbackDictionarySync () {
+    return this.loadDictionarySync(BUILTIN_DICTIONARY_LANGUAGE)
   }
 
   /* ****************************************************************************/
