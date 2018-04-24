@@ -68,6 +68,7 @@ class AuthTrello {
       const oauthWin = waveboxOauthWin.window
       let appKey
       let userClose = true
+      let appKeyInfoShown = false
 
       oauthWin.on('closed', () => {
         if (userClose) {
@@ -75,35 +76,59 @@ class AuthTrello {
         }
       })
 
-      // STEP 2: Get app key
+      // User logs into to trello correctly. Redirect to get app-key
       oauthWin.webContents.on('did-navigate', (evt, nextURL) => {
         const { hostname, pathname } = new URL(nextURL)
         if (hostname === 'trello.com' && pathname === '/') {
-          const captureFn = (evt) => {
-            if (oauthWin.webContents.getURL() === 'https://trello.com/app-key') {
-              oauthWin.webContents.executeJavaScript('document.getElementById("key").value', (key) => {
-                appKey = key
-                oauthWin.loadURL(this.generateAuthenticationURL(credentials, key))
-              })
-              oauthWin.webContents.removeListener('dom-ready', captureFn)
-            }
-          }
-          oauthWin.webContents.on('dom-ready', captureFn)
+          oauthWin.hide()
           oauthWin.loadURL('https://trello.com/app-key')
+        }
+      })
+
+      // App-key page starts to load. Hide window
+      oauthWin.webContents.on('will-navigate', (evt, nextUrl) => {
+        const { hostname, pathname } = new URL(nextUrl)
+        if (hostname === 'trello.com' && pathname.startsWith('/app-key')) {
           oauthWin.hide()
         }
       })
 
-      // STEP 3: Authentication complete
-      oauthWin.webContents.on('did-navigate', (evt, nextURL) => {
-        const { hostname, pathname } = new URL(nextURL)
-        if (hostname === 'trello.com' && pathname.indexOf('/1/authorize') === 0) {
-          // The UI takes some time to update and it's janky
-          setTimeout(() => {
-            oauthWin.show()
-          }, 250)
+      // App-key page loads correctly. Either fetch app key or prompt user to authorize
+      oauthWin.webContents.on('dom-ready', (evt) => {
+        const currentUrl = oauthWin.webContents.getURL()
+        const { hostname, pathname } = new URL(currentUrl)
+        if (hostname === 'trello.com' && pathname.startsWith('/app-key')) {
+          oauthWin.webContents.executeJavaScript('(document.getElementById("key") || {}).value', (key) => {
+            // Able to fetch app key - continue
+            if (key) {
+              appKey = key
+              oauthWin.loadURL(this.generateAuthenticationURL(credentials, key))
+            } else {
+              // User needs to agree to use app key. Either show more info or show trello page
+              if (appKeyInfoShown) {
+                oauthWin.show()
+              } else {
+                oauthWin.loadURL(credentials.TRELLO_APP_KEY_INFO)
+                appKeyInfoShown = true
+              }
+            }
+          })
         }
       })
+
+      // Deal with ensuring the window is visible
+      // 1. User starts to authorize wavebox with app key
+      // 2. User visits the app key info page
+      oauthWin.webContents.on('did-navigate', (evt, nextURL) => {
+        const { hostname, pathname } = new URL(nextURL)
+        if (hostname === 'trello.com' && pathname.startsWith('/1/authorize')) { // Start app-auth process
+          setTimeout(() => { oauthWin.show() }, 250) // Timeout for jank
+        } else if (nextURL.startsWith(credentials.TRELLO_APP_KEY_INFO)) { // Show apikey info
+          setTimeout(() => { oauthWin.show() }, 250) // Timeout for jank
+        }
+      })
+
+      // User gives permission for wavebox - fetch token and app key and finish
       oauthWin.webContents.on('will-navigate', (evt, nextUrl) => {
         if (nextUrl.indexOf(credentials.TRELLO_AUTH_RETURN_URL) === 0) {
           evt.preventDefault()
