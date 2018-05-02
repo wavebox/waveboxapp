@@ -37,6 +37,11 @@ export default class BrowserScene extends React.Component {
       )
       this.mouseNavigator.register()
     }
+
+    // Handle a case where the webview wont immediately take focus.
+    // Hack around a little bit to get it to focus
+    setTimeout(() => { this.focusWebView() }, 1)
+    remote.getCurrentWindow().on('focus', this.focusWebView)
   }
 
   componentWillUnmount () {
@@ -44,6 +49,7 @@ export default class BrowserScene extends React.Component {
     if (process.platform === 'darwin') {
       this.mouseNavigator.unregister()
     }
+    remote.getCurrentWindow().removeListener('focus', this.focusWebView)
   }
 
   /* **************************************************************************/
@@ -99,6 +105,20 @@ export default class BrowserScene extends React.Component {
   */
   handleClose = (evt) => {
     remote.getCurrentWindow().close()
+  }
+
+  /* **************************************************************************/
+  // UI Tools
+  /* **************************************************************************/
+
+  // (Thomas101)We shouldn't use dom manipulation, but for this simple window
+  // it's overkill for anything - consider removing this in the future when
+  // this gets more complex.
+  // There's some weird behaviour whereby passing dom.focus() doesn't always
+  // focus the element, yet when that fails wc.focus() will
+  // Fixes https://github.com/wavebox/waveboxapp/issues/660
+  focusWebView = () => {
+    this.refs[BROWSER_REF].focus()
   }
 
   /* **************************************************************************/
