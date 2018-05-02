@@ -55,8 +55,12 @@ export default class LinuxSetupScene extends React.Component {
     const actions = (
       <div>
         <FlatButton
+          label={`Don't remind me again`}
+          style={{ marginRight: 16, float: 'left' }}
+          onClick={this.handleDone} />
+        <FlatButton
           label='Remind me later'
-          style={{ marginRight: 16 }}
+          style={{ marginRight: 16, float: 'left' }}
           onClick={this.handleRemindNextTime} />
         {hasVisitedFontLink ? (
           <RaisedButton
