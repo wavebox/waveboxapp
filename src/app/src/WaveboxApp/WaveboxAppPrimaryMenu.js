@@ -39,9 +39,12 @@ class WaveboxAppPrimaryMenu {
   * @return the new menu
   */
   build (accelerators, mailboxes, activeMailbox, activeServiceType) {
+    // Fixes https://github.com/wavebox/waveboxapp/issues/562
+    const tlpfx = process.platform === 'linux' ? '&' : ''
+
     return Menu.buildFromTemplate([
       {
-        label: process.platform === 'darwin' ? 'Application' : 'File',
+        label: process.platform === 'darwin' ? `${tlpfx}Application` : `${tlpfx}File`,
         submenu: [
           {
             label: 'About',
@@ -105,7 +108,7 @@ class WaveboxAppPrimaryMenu {
         ].filter((item) => item !== undefined)
       },
       {
-        label: 'Edit',
+        label: `${tlpfx}Edit`,
         submenu: [
           {
             label: 'Undo',
@@ -163,7 +166,7 @@ class WaveboxAppPrimaryMenu {
         ]
       },
       {
-        label: 'View',
+        label: `${tlpfx}View`,
         submenu: [
           {
             label: 'Toggle Full Screen',
@@ -237,7 +240,7 @@ class WaveboxAppPrimaryMenu {
         ].filter((item) => item !== undefined)
       },
       {
-        label: 'Accounts',
+        label: `${tlpfx}Accounts`,
         submenu: [
 
         ].concat(mailboxes.length <= 1 ? [] : [
@@ -287,7 +290,7 @@ class WaveboxAppPrimaryMenu {
         }) : [])
       },
       {
-        label: 'Window',
+        label: `${tlpfx}Window`,
         role: 'window',
         submenu: [
           {
@@ -320,7 +323,7 @@ class WaveboxAppPrimaryMenu {
         ] : [])
       },
       {
-        label: 'Help',
+        label: `${tlpfx}Help`,
         role: 'help',
         submenu: [
           { label: 'Wavebox Website', click: WaveboxAppPrimaryMenuActions.waveboxWebsite },
