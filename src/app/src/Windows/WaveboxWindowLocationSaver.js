@@ -141,8 +141,11 @@ class WaveboxWindowLocationSaver {
     if (!location || Object.keys(location).length === 0) { return }
     if (!this.browserWindow || this.browserWindow.isDestroyed()) { return }
 
-    this.browserWindow.setBounds(location, false)
-    if (location.maximized) { this.browserWindow.maximize() }
+    if (location.maximized) {
+      this.browserWindow.maximize()
+    } else {
+      this.browserWindow.setBounds(location, false)
+    }
   }
 }
 
