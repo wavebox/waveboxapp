@@ -1,6 +1,9 @@
 import Bootstrap from 'R/Bootstrap'
 import GoogleHTTPTransporter from './GoogleHTTPTransporter'
 import querystring from 'querystring'
+import { WB_FETCH_SERVICE_TEXT } from 'shared/ipcEvents'
+import { ipcRenderer } from 'electron'
+import uuid from 'uuid'
 const google = window.appNodeModulesRequire('googleapis')
 const gPlus = google.plus('v1')
 const gmail = google.gmail('v1')
@@ -275,6 +278,54 @@ class GoogleHTTP {
         return threadHeaders.map((threadHeader) => {
           return updatedThreads[threadHeader.id] || knownThreads[threadHeader.id]
         })
+      })
+  }
+
+  /* **************************************************************************/
+  // Gmail: Atom
+  /* **************************************************************************/
+
+  /**
+  * Fetches and parses an atom feed
+  * @param partitionId: the id of the partition to run with
+  * @param url: the url to fetch
+  * @return promise: with the parsed xml content
+  */
+  static fetchGmailAtomFeed (partitionId, url) {
+    return new Promise((resolve, reject) => {
+      const returnChannel = `${WB_FETCH_SERVICE_TEXT}:${uuid.v4()}`
+      ipcRenderer.once(returnChannel, (evt, err, res) => {
+        if (err) {
+          reject(new Error(err.message || 'Unknown Error'))
+        } else {
+          const parser = new window.DOMParser()
+          const xmlDoc = parser.parseFromString(res, 'text/xml')
+          resolve(xmlDoc)
+        }
+      })
+      ipcRenderer.send(WB_FETCH_SERVICE_TEXT, returnChannel, partitionId, url, {
+        credentials: 'include'
+      })
+    })
+  }
+
+  /**
+  * Fetches the unread count from the atom feed
+  * @param partitionId: the id of the partition to run with
+  * @param url: the url to fetch
+  * @return promise: the unread count or rejection if parsing failed
+  */
+  static fetchGmailAtomUnreadCount (partitionId, url) {
+    return Promise.resolve()
+      .then(() => this.fetchGmailAtomFeed(partitionId, url))
+      .then((res) => {
+        const el = res.getElementsByTagName('fullcount')[0]
+        if (!el) { return Promise.reject(new Error('<fullcount> element not found')) }
+
+        const count = parseInt(el.textContent)
+        if (isNaN(count)) { return Promise.reject(new Error('Count is not a valid number')) }
+
+        return Promise.resolve(count)
       })
   }
 }
