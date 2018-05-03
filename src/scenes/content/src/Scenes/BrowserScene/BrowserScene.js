@@ -111,12 +111,9 @@ export default class BrowserScene extends React.Component {
   // UI Tools
   /* **************************************************************************/
 
-  // (Thomas101)We shouldn't use dom manipulation, but for this simple window
-  // it's overkill for anything - consider removing this in the future when
-  // this gets more complex.
-  // There's some weird behaviour whereby passing dom.focus() doesn't always
-  // focus the element, yet when that fails wc.focus() will
-  // Fixes https://github.com/wavebox/waveboxapp/issues/660
+  /**
+  * Pulls the webview into focus
+  */
   focusWebView = () => {
     this.refs[BROWSER_REF].focus()
   }
