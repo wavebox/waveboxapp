@@ -55,7 +55,7 @@ class ServiceReducer {
   */
   static setSleepableTimeout (mailbox, service, timeout) {
     const min = 1000 // 1 sec
-    const max = 6000 * 1000 // 100 minutes
+    const max = 1000 * 60 * 240 // 240 minutes, 4 hours
 
     let value = parseInt(timeout)
     value = isNaN(value) ? MAILBOX_SLEEP_WAIT : value
