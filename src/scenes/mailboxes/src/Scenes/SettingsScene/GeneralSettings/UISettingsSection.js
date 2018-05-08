@@ -88,7 +88,7 @@ export default class UISettingsSection extends React.Component {
             onToggle={(evt, toggled) => settingsActions.sub.ui.setShowSleepableServiceIndicator(toggled)} />
           <Toggle
             toggled={ui.showDefaultServiceSleepNotifications}
-            label='Show first time sleep notifications for accounts'
+            label='Show one-time sleep notification for each account'
             labelPosition='right'
             onToggle={(evt, toggled) => settingsActions.sub.ui.setShowDefaultServiceSleepNotifications(toggled)} />
           <SelectField

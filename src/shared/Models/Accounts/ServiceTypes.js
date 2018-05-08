@@ -21,5 +21,6 @@ module.exports = Object.freeze({
   CLASSROOM: 'CLASSROOM',
   NOTEBOOK: 'NOTEBOOK',
   TEAM: 'TEAM',
-  PHONE: 'PHONE'
+  PHONE: 'PHONE',
+  TASK: 'TASK'
 })

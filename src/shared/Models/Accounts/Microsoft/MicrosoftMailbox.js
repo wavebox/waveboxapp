@@ -25,7 +25,8 @@ class MicrosoftMailbox extends CoreMailbox {
       CoreMailbox.SERVICE_TYPES.SHEETS,
       CoreMailbox.SERVICE_TYPES.SLIDES,
       CoreMailbox.SERVICE_TYPES.NOTEBOOK,
-      CoreMailbox.SERVICE_TYPES.TEAM
+      CoreMailbox.SERVICE_TYPES.TEAM,
+      CoreMailbox.SERVICE_TYPES.TASK
     ]
   }
   static get defaultServiceTypes () {

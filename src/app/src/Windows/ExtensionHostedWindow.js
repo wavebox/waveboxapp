@@ -5,7 +5,7 @@ import { CR_EXTENSION_PROTOCOL, CR_EXTENSION_BG_PARTITION_PREFIX } from 'shared/
 import Resolver from 'Runtime/Resolver'
 import { URL } from 'url'
 import WindowOpeningHandler from './WindowOpeningEngine/WindowOpeningHandler'
-import GuestWebPreferences from './GuestWebPreferences'
+import { GuestWebPreferences } from 'WebContentsManager'
 
 const privExtensionId = Symbol('privExtensionId')
 const privExtensionName = Symbol('privExtensionName')

@@ -1,6 +1,6 @@
 import WaveboxWindow from './WaveboxWindow'
 import { evtMain } from 'AppEvents'
-import GuestWebPreferences from './GuestWebPreferences'
+import { GuestWebPreferences } from 'WebContentsManager'
 import { WindowOpeningEngine, WindowOpeningHandler } from './WindowOpeningEngine'
 
 const WINDOW_OPEN_MODES = WindowOpeningEngine.WINDOW_OPEN_MODES

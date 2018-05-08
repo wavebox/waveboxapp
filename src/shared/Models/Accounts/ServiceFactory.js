@@ -34,6 +34,7 @@ const MicrosoftNotebookService = require('./Microsoft/MicrosoftNotebookService')
 const MicrosoftSheetsService = require('./Microsoft/MicrosoftSheetsService')
 const MicrosoftSlidesService = require('./Microsoft/MicrosoftSlidesService')
 const MicrosoftTeamService = require('./Microsoft/MicrosoftTeamService')
+const MicrosoftTaskService = require('./Microsoft/MicrosoftTaskService')
 const GenericDefaultService = require('./Generic/GenericDefaultService')
 const ContainerDefaultService = require('./Container/ContainerDefaultService')
 
@@ -85,6 +86,7 @@ class ServiceFactory {
       case MAILBOX_TYPES.MICROSOFT + ':' + SERVICE_TYPES.SHEETS: return MicrosoftSheetsService
       case MAILBOX_TYPES.MICROSOFT + ':' + SERVICE_TYPES.SLIDES: return MicrosoftSlidesService
       case MAILBOX_TYPES.MICROSOFT + ':' + SERVICE_TYPES.TEAM: return MicrosoftTeamService
+      case MAILBOX_TYPES.MICROSOFT + ':' + SERVICE_TYPES.TASK: return MicrosoftTaskService
 
       // Generic
       case MAILBOX_TYPES.GENERIC + ':' + SERVICE_TYPES.DEFAULT: return GenericDefaultService
