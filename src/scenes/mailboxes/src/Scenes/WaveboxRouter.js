@@ -29,6 +29,7 @@ import {
   AccountStandaloneScene
 } from './AccountScene'
 import LinuxSetupScene from './LinuxSetupScene'
+import PrivacyDialog from './PrivacyDialog'
 
 export default class WaveboxRouter extends React.Component {
   /* **************************************************************************/
@@ -77,6 +78,7 @@ export default class WaveboxRouter extends React.Component {
           <Route path='/account/view' component={AccountStandaloneScene} />
 
           <Route path='/setup/linux' component={LinuxSetupScene} />
+          <PrivacyDialog />
         </div>
       </HashRouter>
     )
