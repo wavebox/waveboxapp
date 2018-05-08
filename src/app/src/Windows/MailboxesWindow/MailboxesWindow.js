@@ -3,7 +3,7 @@ import WaveboxWindow from '../WaveboxWindow'
 import { settingsStore } from 'stores/settings'
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
-import GuestWebPreferences from '../GuestWebPreferences'
+import { GuestWebPreferences } from 'WebContentsManager'
 import {
   AuthGoogle,
   AuthMicrosoft,

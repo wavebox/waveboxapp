@@ -3,7 +3,7 @@ import { app, webContents } from 'electron'
 import { evtMain } from 'AppEvents'
 import Resolver from 'Runtime/Resolver'
 import {WindowOpeningHandler} from './WindowOpeningEngine'
-import GuestWebPreferences from './GuestWebPreferences'
+import { GuestWebPreferences } from 'WebContentsManager'
 import querystring from 'querystring'
 
 const privTabMetaInfo = Symbol('tabMetaInfo')
