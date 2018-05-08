@@ -563,7 +563,7 @@ export default class MailboxWebView extends React.Component {
       Resolver.guestPreload(),
       Resolver.crExtensionApiPreload()
     ].join('_wavebox_preload_split_')
-
+console.log(">",restorableUrl)
     return (
       <div className={saltedClassName}>
         <div className={'ReactComponent-BrowserContainer'}>
