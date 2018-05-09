@@ -1,9 +1,13 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { monitorStore } from 'stores/monitor'
-import { FontIcon } from 'material-ui'
-import * as Colors from 'material-ui/styles/colors'
+import green from 'material-ui/colors/green'
+import amber from 'material-ui/colors/amber'
+import red from 'material-ui/colors/red'
 import './processTable.less'
+import CancelIcon from '@material-ui/icons/Cancel'
+import CheckCircleIcon from '@material-ui/icons/CheckCircle'
+import WarningIcon from '@material-ui/icons/Warning'
 
 export default class ConnectionMonitor extends React.Component {
   /* **************************************************************************/
@@ -67,19 +71,25 @@ export default class ConnectionMonitor extends React.Component {
           {conn.description || '-'}
         </td>
         <td style={{width: 100, textAlign: 'center'}}>
-          <FontIcon className='material-icons' color={conn.isSetup ? Colors.green600 : Colors.red600}>
-            {conn.isSetup ? 'check_circle' : 'cancel'}
-          </FontIcon>
+          {conn.isSetup ? (
+            <CheckCircleIcon style={{ color: green['600'] }} />
+          ) : (
+            <CancelIcon style={{ color: red['600'] }} />
+          )}
         </td>
         <td style={{width: 100, textAlign: 'center'}}>
-          <FontIcon className='material-icons' color={conn.isConnected ? Colors.green600 : Colors.red600}>
-            {conn.isConnected ? 'check_circle' : 'cancel'}
-          </FontIcon>
+          {conn.isConnected ? (
+            <CheckCircleIcon style={{ color: green['600'] }} />
+          ) : (
+            <CancelIcon style={{ color: red['600'] }} />
+          )}
         </td>
         <td style={{width: 100, textAlign: 'center'}}>
-          <FontIcon className='material-icons' color={conn.isUnderMaintenance ? Colors.amber600 : Colors.green600}>
-            {conn.isUnderMaintenance ? 'warning' : 'cancel'}
-          </FontIcon>
+          {conn.isUnderMaintenance ? (
+            <WarningIcon style={{ color: amber['600'] }} />
+          ) : (
+            <CheckCircleIcon style={{ color: green['600'] }} />
+          )}
         </td>
         <td style={{width: 150}}>
           {conn.connectionMode}
