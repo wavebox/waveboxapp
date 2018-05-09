@@ -21,6 +21,10 @@ const styles = {
     display: 'block',
     margin: '0px auto'
   },
+  privacyInfo: {
+    marginTop: 16,
+    marginBottom: 16
+  },
   privacyLink: {
     textDecoration: 'underline',
     cursor: 'pointer',
@@ -193,9 +197,15 @@ export default class PrivacyDialog extends React.Component {
         actions={actions}>
         <img src={Resolver.icon('app.svg')} style={styles.appIcon} />
         {hasPrivacyMessage ? (
-          <div>
+          <div style={styles.privacyInfo}>
             <div>
-              {privacyMessageText.split('\n').map((line, index) => (<p key={index}>{line}</p>))}
+              {privacyMessageText.split('\n').map((line, index) => {
+                if (line) {
+                  return (<div key={index}>{line}</div>)
+                } else {
+                  return <br key={index} />
+                }
+              })}
             </div>
             <p style={styles.privacyLink} onClick={this.handleOpenPrivacy}>{privacyUrl}</p>
           </div>
