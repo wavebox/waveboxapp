@@ -2,14 +2,16 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import PropTypes from 'prop-types'
 import { ipcRenderer } from 'electron'
-import * as Colors from 'material-ui/styles/colors'
-import Spinner from 'sharedui/Components/Activity/Spinner'
-import KeychainAddDialog from './KeychainAddDialog'
+import Spinner from 'wbui/Activity/Spinner'
 import KeychainStorageInfo from './KeychainStorageInfo'
+import KeychainAddDialog from './KeychainAddDialog'
+import { withStyles } from 'material-ui/styles'
+import grey from 'material-ui/colors/grey'
+import lightBlue from 'material-ui/colors/lightBlue'
 import {
-  RaisedButton,
-  Toolbar, ToolbarGroup, ToolbarTitle,
-  Table, TableBody, TableRow, TableRowColumn, TableHeader, TableHeaderColumn
+  Button, Checkbox,
+  Toolbar, Typography,
+  Table, TableBody, TableHead, TableRow, TableCell
 } from 'material-ui'
 import {
   WB_KEYCHAIN_REQUEST_CREDENTIALS,
@@ -41,12 +43,20 @@ const styles = {
 
   // Toolbar
   toolbar: {
+    backgroundColor: grey[200]
+  },
+  toolbarText: {
+    color: grey[600]
+  },
+
+  // Action bar
+  actionbar: {
     marginLeft: 16,
     marginRight: 16,
     marginTop: 8,
     marginBottom: 8
   },
-  toolbarButton: {
+  actionbarButton: {
     marginRight: 8
   },
 
@@ -56,10 +66,14 @@ const styles = {
     marginBottom: 16,
     textAlign: 'center',
     fontSize: '14px',
-    color: Colors.grey600
+    color: grey[600]
+  },
+  checkboxCell: {
+    width: 72
   }
 }
 
+@withStyles(styles)
 export default class KeychainScene extends React.Component {
   /* **************************************************************************/
   // Class
@@ -175,14 +189,23 @@ export default class KeychainScene extends React.Component {
   }
 
   /**
-  * Handles rows being selected
-  * @param selectedRowIndecies: an array of selected rows
+  * Handles a row being toggled on or off
+  * @param evt: the event that fired
+  * @param account: the account id
   */
-  handleRowSelection = (selectedRowIndecies) => {
-    const selected = selectedRowIndecies.map((index) => {
-      return this.state.credentials[index].account
+  handleToggleRowSelection = (evt, account) => {
+    this.setState((prevState) => {
+      const wasSelected = !!prevState.selected.find((a) => a === account)
+      if (wasSelected) {
+        return {
+          selected: prevState.selected.filter((a) => a !== account)
+        }
+      } else {
+        return {
+          selected: prevState.selected.concat([account])
+        }
+      }
     })
-    this.setState({ selected: selected })
   }
 
   /* **************************************************************************/
@@ -195,27 +218,38 @@ export default class KeychainScene extends React.Component {
 
   /**
   * Renders the crednetials table
+  * @param classes: the component classes
   * @param serviceName: the name of the service
   * @param credentials: the credentials to render
   * @param selected: an array of selected items
   * @return jsx
   */
-  renderCredentialsTable (serviceName, credentials, selected) {
+  renderCredentialsTable (classes, serviceName, credentials, selected) {
     if (credentials.length) {
       const selectedIndex = new Set(selected)
 
       return (
-        <Table onRowSelection={this.handleRowSelection} multiSelectable>
-          <TableHeader displaySelectAll={false}>
+        <Table>
+          <TableHead>
             <TableRow>
-              <TableHeaderColumn>Name</TableHeaderColumn>
+              <TableCell className={classes.checkboxCell} padding='checkbox' />
+              <TableCell>Name</TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody deselectOnClickaway={false}>
+          </TableHead>
+          <TableBody>
             {credentials.map((rec) => {
+              const isSelected = selectedIndex.has(rec.account)
               return (
-                <TableRow key={rec.account} selected={selectedIndex.has(rec.account)}>
-                  <TableRowColumn>{rec.account}</TableRowColumn>
+                <TableRow
+                  key={rec.account}
+                  onClick={(evt) => this.handleToggleRowSelection(evt, rec.account)}
+                  selected={isSelected}>
+                  <TableCell className={classes.checkboxCell} padding='checkbox'>
+                    <Checkbox color='primary' checked={isSelected} />
+                  </TableCell>
+                  <TableCell>
+                    {rec.account}
+                  </TableCell>
                 </TableRow>
               )
             })}
@@ -224,58 +258,59 @@ export default class KeychainScene extends React.Component {
       )
     } else {
       return (
-        <div style={styles.noneMessage}>
+        <div className={classes.noneMessage}>
           <div>{`No passwords saved for ${serviceName}`}</div>
           <br />
-          <RaisedButton
-            onClick={this.handleOpenAddDialog}
-            label='Add your first' />
+          <Button variant='raised' color='primary' onClick={this.handleOpenAddDialog}>
+            Add your first
+          </Button>
         </div>
       )
     }
   }
 
   render () {
-    const { serviceName, apiKey, openMode, ...passProps } = this.props
+    const { serviceName, apiKey, openMode, classes, ...passProps } = this.props
     const { requesting, credentials, selected, addDialogOpen } = this.state
 
     return (
       <div {...passProps}>
-        <Toolbar>
-          <ToolbarGroup>
-            <ToolbarTitle
-              text={(
-                <span>
-                  <span style={styles.title}>
-                    <strong>Saved passwords for </strong>
-                    <span>{serviceName}</span>
-                  </span>
-                  <KeychainStorageInfo style={styles.storageInfo} />
-                </span>
-              )} />
-          </ToolbarGroup>
+        <Toolbar className={classes.toolbar}>
+          <Typography variant='title' className={classes.toolbarText}>
+            <span>
+              <span className={classes.title}>
+                <strong>Saved passwords for </strong>
+                <span>{serviceName}</span>
+              </span>
+              <KeychainStorageInfo className={classes.storageInfo} />
+            </span>
+          </Typography>
         </Toolbar>
         {credentials.length ? (
-          <div style={styles.toolbar}>
-            <RaisedButton
-              style={styles.toolbarButton}
+          <div className={classes.actionbar}>
+            <Button
+              variant='raised'
+              className={classes.actionbarButton}
               disabled={requesting}
-              onClick={this.handleOpenAddDialog}
-              label='Add' />
-            <RaisedButton
-              style={styles.toolbarButton}
+              onClick={this.handleOpenAddDialog}>
+              Add
+            </Button>
+            <Button
+              variant='raised'
+              className={classes.actionbarButton}
               disabled={requesting || selected.length === 0}
-              onClick={this.handleDeleteSelectedCredentials}
-              label='Remove' />
+              onClick={this.handleDeleteSelectedCredentials}>
+              Remove
+            </Button>
           </div>
         ) : undefined}
         <div>
           {requesting ? (
-            <div style={styles.loading}>
-              <Spinner size={30} color={Colors.lightBlue600} speed={0.5} />
+            <div className={classes.loading}>
+              <Spinner size={30} color={lightBlue[600]} speed={0.5} />
             </div>
           ) : (
-            this.renderCredentialsTable(serviceName, credentials, selected)
+            this.renderCredentialsTable(classes, serviceName, credentials, selected)
           )}
         </div>
         <KeychainAddDialog

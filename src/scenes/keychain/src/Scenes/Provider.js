@@ -1,9 +1,9 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import Theme from 'sharedui/Components/Theme'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import KeychainScene from './KeychainScene'
 import querystring from 'querystring'
+import { MuiThemeProvider } from 'material-ui/styles'
+import Theme from 'wbui/Theme'
 
 export default class Provider extends React.Component {
   /* **************************************************************************/
@@ -30,7 +30,7 @@ export default class Provider extends React.Component {
   render () {
     const { serviceName, openMode, apiKey } = this.state
     return (
-      <MuiThemeProvider muiTheme={Theme}>
+      <MuiThemeProvider theme={Theme}>
         <KeychainScene serviceName={serviceName} apiKey={apiKey} openMode={openMode} />
       </MuiThemeProvider>
     )
