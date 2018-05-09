@@ -276,7 +276,7 @@ class Analytics {
   */
   sendGA (args, autocatch) {
     if (!userStore.getState().user.analyticsEnabled) {
-      return Promise.resolve({ enabled: false }) //TODO check
+      return Promise.resolve({ enabled: false })
     }
 
     if (!Bootstrap.credentials.GOOGLE_ANALYTICS_ID) {
@@ -347,7 +347,7 @@ class Analytics {
   */
   sendWb (type, args, autocatch) {
     if (!userStore.getState().user.analyticsEnabled) {
-      return Promise.resolve({ enabled: false }) //TODO check
+      return Promise.resolve({ enabled: false })
     }
 
     const endpoint = 'https://stats.wavebox.io/app/collect?ga=false'
