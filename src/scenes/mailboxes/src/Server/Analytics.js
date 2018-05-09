@@ -275,6 +275,10 @@ class Analytics {
   * @return promise
   */
   sendGA (args, autocatch) {
+    if (!userStore.getState().user.analyticsEnabled) {
+      return Promise.resolve({ enabled: false })
+    }
+
     if (!Bootstrap.credentials.GOOGLE_ANALYTICS_ID) {
       const error = new Error('No Anayltics ID specified')
       return autocatch ? Promise.resolve({ sent: false, error: error }) : Promise.reject(error)
@@ -342,6 +346,10 @@ class Analytics {
   * @return promise
   */
   sendWb (type, args, autocatch) {
+    if (!userStore.getState().user.analyticsEnabled) {
+      return Promise.resolve({ enabled: false })
+    }
+
     const endpoint = 'https://stats.wavebox.io/app/collect?ga=false'
     const payload = JSON.stringify({
       ...this.buildDefaultWBArguments(),

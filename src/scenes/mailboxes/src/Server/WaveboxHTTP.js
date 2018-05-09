@@ -91,6 +91,38 @@ class WaveboxHTTP {
 
     return `https://waveboxio.com/desktop/appstore?${qs}`
   }
+
+  /* **************************************************************************/
+  // User
+  /* **************************************************************************/
+
+  /**
+  * Indicates that the user has agreed to the privacy policy
+  * @param clientId: the id of the client
+  * @param clientToken: the client token
+  * @param privacyId: the id of the privacy request
+  * @return promise
+  */
+  static agreePrivacy (clientId, clientToken, privacyId) {
+    return Promise.resolve()
+      .then(() => {
+        return window.fetch(`https://waveboxio.com/clientapi/${clientId}/agree_privacy`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            version: pkg.version,
+            channel: pkg.releaseChannel,
+            client_id: clientId,
+            t: clientToken,
+            id: privacyId
+          })
+        })
+      })
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.json())
+  }
 }
 
 export default WaveboxHTTP
