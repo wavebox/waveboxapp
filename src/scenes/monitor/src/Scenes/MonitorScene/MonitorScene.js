@@ -3,6 +3,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import ProcessMonitor from './ProcessMonitor'
 import ConnectionMonitor from './ConnectionMonitor'
 import { Paper } from 'material-ui'
+import { withStyles } from 'material-ui/styles'
 
 const styles = {
   section: {
@@ -18,6 +19,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class MonitorScene extends React.Component {
   /* **************************************************************************/
   // Rendering
@@ -28,15 +30,16 @@ export default class MonitorScene extends React.Component {
   }
 
   render () {
+    const { classes } = this.props
     return (
       <div>
-        <Paper style={styles.section}>
-          <h2 style={styles.title}>Processes</h2>
-          <ProcessMonitor style={styles.section} />
+        <Paper className={classes.section}>
+          <h2 className={classes.title}>Processes</h2>
+          <ProcessMonitor className={styles.section} />
         </Paper>
-        <Paper style={styles.section}>
-          <h2 style={styles.title}>Sync Channels</h2>
-          <ConnectionMonitor style={styles.section} />
+        <Paper className={classes.section}>
+          <h2 className={classes.title}>Sync Channels</h2>
+          <ConnectionMonitor className={classes.section} />
         </Paper>
       </div>
     )

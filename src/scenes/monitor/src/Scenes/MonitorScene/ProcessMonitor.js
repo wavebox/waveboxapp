@@ -1,7 +1,7 @@
+import './MonitorTable.less'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { monitorStore } from 'stores/monitor'
-import './processTable.less'
 
 export default class ProcessMonitor extends React.Component {
   /* **************************************************************************/
@@ -90,16 +90,16 @@ export default class ProcessMonitor extends React.Component {
   renderRow (metric) {
     return (
       <tr key={metric.pid}>
-        <td style={{width: 100}}>
+        <td className='fixed-100'>
           {metric.pid}
         </td>
         <td>
           {this.renderDescription(metric)}
         </td>
-        <td style={{width: 100}}>
+        <td className='fixed-100'>
           {`${Math.round((metric.memory.workingSetSize || 0) / 1024)} MB`}
         </td>
-        <td style={{width: 100}}>
+        <td className='fixed-100'>
           {metric.cpu.percentCPUUsage === undefined ? '-' : (Math.round(metric.cpu.percentCPUUsage * 100) / 100) + '%'}
         </td>
       </tr>
@@ -110,13 +110,13 @@ export default class ProcessMonitor extends React.Component {
     const { metrics } = this.state
 
     return (
-      <table className='processTable'>
+      <table className='RC-MonitorTable'>
         <thead>
           <tr>
-            <th style={{width: 100}}>Pid</th>
+            <th className='fixed-100'>Pid</th>
             <th>Description</th>
-            <th style={{width: 100}}>Memory</th>
-            <th style={{width: 100}}>CPU</th>
+            <th className='fixed-100'>Memory</th>
+            <th className='fixed-100'>CPU</th>
           </tr>
         </thead>
         <tbody>

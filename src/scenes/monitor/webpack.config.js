@@ -66,6 +66,7 @@ module.exports = function (env) {
         R: path.resolve(path.join(__dirname, 'src')),
         stores: path.resolve(path.join(__dirname, 'src/stores')),
         Scenes: path.resolve(path.join(__dirname, 'src/Scenes')),
+        wbui: path.resolve(path.join(__dirname, '../wbui')),
         'package.json': path.resolve(ROOT_DIR, 'package.json')
       },
       modules: [
@@ -95,7 +96,10 @@ module.exports = function (env) {
                   'react',
                   'stage-0'
                 ],
-                plugins: ['transform-class-properties']
+                plugins: [
+                  'transform-decorators-legacy',
+                  'transform-class-properties'
+                ]
               }
             }
           ],
@@ -103,7 +107,8 @@ module.exports = function (env) {
           include: [
             __dirname,
             path.resolve(path.join(__dirname, '../../shared')),
-            path.resolve(path.join(__dirname, '../sharedui'))
+            path.resolve(path.join(__dirname, '../sharedui')),
+            path.resolve(path.join(__dirname, '../wbui'))
           ]
         },
         {

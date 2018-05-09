@@ -117,9 +117,3 @@ setTimeout(() => {
 
 // Update our settings
 settingsActions.glueCurrentUpdateChannel.defer()
-
-
-
-setTimeout(()=>{
-  settingsActions.sub.app.openMetricsMonitor()
-},500)
