@@ -288,7 +288,8 @@ export default class WebView extends React.Component {
   /* **************************************************************************/
 
   /**
-  * Focuses the webview, only if not in focus already
+  * Focuses the webview, only if not in focus already. Always check the focus
+  * state first to prevent issues such as https://github.com/wavebox/waveboxapp/issues/660
   * @return true if focused, false otherwise
   */
   focus = () => {

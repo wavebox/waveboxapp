@@ -95,26 +95,6 @@ export default class GoogleCustomUnreadSettings extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
-  /**
-  * Turns an unread mode into a friendlier string
-  * @param mode: the unread mode
-  * @return the humanized version
-  */
-  humanizeUnreadMode (mode) {
-    switch (mode) {
-      case GoogleDefaultService.UNREAD_MODES.INBOX_ALL:
-        return 'All Messages'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD:
-        return 'Unread Messages'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT:
-        return 'Unread Important Messages'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL:
-        return 'Unread Messages in Primary Category'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED:
-        return 'Unread Unbundled Messages'
-    }
-  }
-
   render () {
     const {
       mailbox,

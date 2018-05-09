@@ -1,5 +1,5 @@
 import WaveboxWindow from './WaveboxWindow'
-import GuestWebPreferences from './GuestWebPreferences'
+import { GuestWebPreferences } from 'WebContentsManager'
 
 class AuthWindow extends WaveboxWindow {
   /* ****************************************************************************/

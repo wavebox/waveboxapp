@@ -7,6 +7,7 @@ import MailboxAdaptorService from './MailboxAdaptorService'
 import GuestApiService from './GuestApiService'
 import AutofillService from './AutofillService'
 import NotificationService from './NotificationService'
+import FetchService from './FetchService'
 
 const privLoaded = Symbol('privLoaded')
 const privSpellcheckService = Symbol('privSpellcheckService')
@@ -18,6 +19,7 @@ const privMailboxAdaptorService = Symbol('privMailboxAdaptorService')
 const privGuestApiService = Symbol('privGuestApiService')
 const privAutofillService = Symbol('privAutofillService')
 const privNotificationService = Symbol('privNotificationService')
+const privFetchService = Symbol('privFetchService')
 
 class ServicesManager {
   /* ****************************************************************************/
@@ -36,6 +38,7 @@ class ServicesManager {
     this[privMailboxAdaptorService] = undefined
     this[privGuestApiService] = undefined
     this[privNotificationService] = undefined
+    this[privFetchService] = undefined
   }
 
   load () {
@@ -51,6 +54,7 @@ class ServicesManager {
     this[privWebContentsRPCService] = new WebContentsRPCService(this[privNotificationService])
     this[privMailboxAdaptorService] = new MailboxAdaptorService()
     this[privGuestApiService] = new GuestApiService()
+    this[privFetchService] = new FetchService()
   }
 
   /* ****************************************************************************/
@@ -66,6 +70,7 @@ class ServicesManager {
   get mailboxAdaptorService () { return this[privMailboxAdaptorService] }
   get guestApiService () { return this[privGuestApiService] }
   get notificationService () { return this[privNotificationService] }
+  get fetchService () { return this[privFetchService] }
 }
 
 export default new ServicesManager()

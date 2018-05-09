@@ -46,6 +46,12 @@ export default class GoogleDefaultServiceSettings extends React.Component {
         return 'Unread Important Messages'
       case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL:
         return 'Unread Messages in Primary Category'
+      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_ATOM:
+        return '(Experimental) Unread Messages'
+      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM:
+        return '(Experimental) Unread Important Messages'
+      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM:
+        return '(Experimental) Unread Messages in Primary Category'
       case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED:
         return 'Unread Unbundled Messages'
     }

@@ -37,6 +37,11 @@ export default class BrowserScene extends React.Component {
       )
       this.mouseNavigator.register()
     }
+
+    // Handle a case where the webview wont immediately take focus.
+    // Hack around a little bit to get it to focus
+    setTimeout(() => { this.focusWebView() }, 1)
+    remote.getCurrentWindow().on('focus', this.focusWebView)
   }
 
   componentWillUnmount () {
@@ -44,6 +49,7 @@ export default class BrowserScene extends React.Component {
     if (process.platform === 'darwin') {
       this.mouseNavigator.unregister()
     }
+    remote.getCurrentWindow().removeListener('focus', this.focusWebView)
   }
 
   /* **************************************************************************/
@@ -99,6 +105,17 @@ export default class BrowserScene extends React.Component {
   */
   handleClose = (evt) => {
     remote.getCurrentWindow().close()
+  }
+
+  /* **************************************************************************/
+  // UI Tools
+  /* **************************************************************************/
+
+  /**
+  * Pulls the webview into focus
+  */
+  focusWebView = () => {
+    this.refs[BROWSER_REF].focus()
   }
 
   /* **************************************************************************/

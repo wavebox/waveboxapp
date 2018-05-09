@@ -98,6 +98,24 @@ class User extends Model {
   get userEmail () { return this._value_('userEmail', null) }
   get hasUserEmail () { return !!this.userEmail }
   get isLoggedIn () { return this.hasUserEmail }
+
+  /* **************************************************************************/
+  // Properties: Privacy
+  /* **************************************************************************/
+
+  get privacyMessage () {
+    const privacyMessage = this._value_('privacyMessage', undefined)
+    if (privacyMessage && typeof (privacyMessage) === 'object' && Object.keys(privacyMessage).length) {
+      return privacyMessage
+    } else {
+      return undefined
+    }
+  }
+  get hasPrivacyMessage () { return !!this.privacyMessage }
+  get analyticsEnabled () {
+    const privacy = this._value_('privacy', {})
+    return privacy.enable_analytics === undefined ? false : privacy.enable_analytics
+  }
 }
 
 module.exports = User

@@ -27,6 +27,7 @@ class Extension {
   /* **************************************************************************/
 
   get onMessage () { return this[privRuntime].onMessage }
+  get onRequest () { return this[privRuntime].onMessage }
   get sendMessage () { return this[privRuntime].sendMessage.bind(this[privRuntime]) }
   get getURL () { return this[privRuntime].getURL.bind(this[privRuntime]) }
   get connect () { return this[privRuntime].connect.bind(this[privRuntime]) }
@@ -50,6 +51,10 @@ class Extension {
   isAllowedIncognitoAccess (callback) {
     const res = false
     setTimeout(() => callback(res))
+  }
+
+  sendRequest (...args) {
+    return this[privRuntime].sendMessage(...args)
   }
 }
 

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import MailboxAvatar from 'Components/Mailbox/MailboxAvatar'
 import { RaisedButton } from 'material-ui'
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
+import { settingsActions } from 'stores/settings'
 import * as Colors from 'material-ui/styles/colors'
 
 const styles = {
@@ -59,6 +60,10 @@ const styles = {
     cursor: 'pointer',
     color: Colors.blue800
   },
+  fullDisable: {
+    fontSize: '85%',
+    color: Colors.grey400
+  },
 
   // Actions
   actionContainer: {
@@ -103,6 +108,14 @@ export default class MailboxSleepNotification extends React.Component {
     mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setHasSeenSleepableWizard, true)
     window.location.hash = `/optimize_wizard/sleep_advanced`
     onRequestClose()
+  }
+
+  handleFullDisable = () => {
+    const { onRequestClose } = this.props
+    onRequestClose()
+    setTimeout(() => {
+      settingsActions.sub.ui.setShowDefaultServiceSleepNotifications(false)
+    }, 500)
   }
 
   /* **************************************************************************/
@@ -156,6 +169,9 @@ export default class MailboxSleepNotification extends React.Component {
               style={styles.button}
               onClick={this.handleDisableSleep} />
           </div>
+          <p style={styles.fullDisable}>
+            Sleep notifications only appear once for each account, unless you <span onClick={this.handleFullDisable} style={styles.link}>disable them</span> completely
+          </p>
         </div>
       </div>
     )

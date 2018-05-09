@@ -136,7 +136,7 @@ class GoogleStore {
   */
   isInvalidGrantError (err) {
     if (err && typeof (err.message) === 'string') {
-      if (err.message.indexOf('invalid_grant') !== -1 || err.message.indexOf('Invalid Credentials') !== -1) {
+      if (err.message.indexOf('invalid_grant') !== -1 || err.message.indexOf('Invalid Credentials') !== -1 || err.message.indexOf('no credentials provided') !== -1) {
         return true
       }
     }
@@ -347,10 +347,13 @@ class GoogleStore {
       case GoogleDefaultService.UNREAD_MODES.INBOX_ALL:
         return ['INBOX']
       case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD:
+      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_ATOM:
         return ['INBOX', 'UNREAD']
       case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT:
+      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM:
         return ['INBOX', 'UNREAD', 'IMPORTANT']
       case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL:
+      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM:
         return ['INBOX', 'UNREAD', 'CATEGORY_PERSONAL']
       case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED: // default
         return ['INBOX', 'UNREAD']
@@ -401,7 +404,32 @@ class GoogleStore {
   * @return true if this service can be queried just with the label. False otherwise
   */
   canFetchUnreadCountFromLabel (service) {
-    return !!this.mailLabelForLabelQuery(service)
+    return !this.isUsingCustomSyncConfig(service) && !!this.mailLabelForLabelQuery(service)
+  }
+
+  /**
+  * @param service: the service we're running a query on
+  * @return true if this service can get the unread count from atom
+  */
+  canFetchUnreadCountFromAtom (service) {
+    return !this.isUsingCustomSyncConfig(service) && !!this.mailAtomQueryForService(service)
+  }
+
+  /**
+  * @param service: the service we're runninga query on
+  * @return the query to run on the google servers for the unread counts
+  */
+  mailAtomQueryForService (service) {
+    switch (service.unreadMode) {
+      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_ATOM:
+        return 'https://mail.google.com/mail/feed/atom/'
+      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM:
+        return 'https://mail.google.com/mail/feed/atom/%5Eiim'
+      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM:
+        return 'https://mail.google.com/mail/feed/atom/%5Esq_ig_i_personal'
+      default:
+        return undefined
+    }
   }
 
   /**
@@ -414,16 +442,26 @@ class GoogleStore {
       case GoogleDefaultService.UNREAD_MODES.INBOX_ALL:
         return 'label:inbox'
       case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD:
+      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_ATOM:
         return 'label:inbox label:unread'
       case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT:
+      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM:
         return 'label:inbox label:unread is:important'
       case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL:
+      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM:
         return 'label:inbox label:unread category:primary'
       case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED:
         return 'label:inbox label:unread -has:userlabels -category:promotions -category:forums -category:social' // Removed: -category:updates
       default:
         return 'label:inbox'
     }
+  }
+
+  /**
+  * Checks to see if we're using a custom sync config
+  */
+  isUsingCustomSyncConfig (service) {
+    return service.hasCustomUnreadQuery || service.hasCustomUnreadLabelWatch
   }
 
   handleSyncMailboxMessages ({ mailboxId, forceSync }) {
@@ -442,7 +480,7 @@ class GoogleStore {
     }
 
     // Log some info if the user is using custom config
-    if (service.hasCustomUnreadQuery || service.hasCustomUnreadLabelWatch) {
+    if (this.isUsingCustomSyncConfig(service)) {
       let error
       if (!service.hasCustomUnreadQuery || !service.hasCustomUnreadLabelWatch || (service.customUnreadCountFromLabel && !service.customUnreadCountLabel)) {
         error = 'Using custom query parameters but not all fields are configured. This is most likely a configuration error'
@@ -467,6 +505,8 @@ class GoogleStore {
     const singleLabelId = this.mailLabelForLabelQuery(service)
     const canFetchUnreadFromLabel = this.canFetchUnreadCountFromLabel(service)
     const unreadFieldInLabel = this.mailLabelUnreadCountField(service)
+    const atomQuery = this.mailAtomQueryForService(service)
+    const canFetchUnreadFromAtom = this.canFetchUnreadCountFromAtom(service)
 
     Promise.resolve()
       .then(() => {
@@ -536,17 +576,26 @@ class GoogleStore {
       .then((data) => {
         // STEP 2.2 [UNREAD/2]: Some unread counts are more accurate when using the count in the label. If we can use this
         if (!data.hasContentChanged) { return data }
-        if (!canFetchUnreadFromLabel) { return data }
 
-        return Promise.resolve()
-          .then(() => GoogleHTTP.fetchGmailLabel(auth, singleLabelId))
-          .then((response) => {
-            if (response[unreadFieldInLabel] !== undefined) {
-              return Object.assign({}, data, { unreadCount: response[unreadFieldInLabel] })
-            } else {
-              return data
-            }
-          })
+        if (canFetchUnreadFromAtom) {
+          return Promise.resolve()
+            .then(() => GoogleHTTP.fetchGmailAtomUnreadCount(`persist:${mailbox.partition}`, atomQuery))
+            .then((count) => {
+              return { ...data, unreadCount: count }
+            })
+        } else if (canFetchUnreadFromLabel) {
+          return Promise.resolve()
+            .then(() => GoogleHTTP.fetchGmailLabel(auth, singleLabelId))
+            .then((response) => {
+              if (response[unreadFieldInLabel] !== undefined) {
+                return { ...data, unreadCount: response[unreadFieldInLabel] }
+              } else {
+                return data
+              }
+            })
+        } else {
+          return data
+        }
       })
       .then((data) => {
         // STEP 3 [STORE]: Update the mailbox service with the new data
