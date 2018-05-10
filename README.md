@@ -2,13 +2,13 @@
 
 Your client for Gmail, Inbox, Outlook, O365, Trello, Slack & more!
 
+Wavebox is the clever new home for cloud apps on macOS, Linux & Windows bringing  Gmail, Inbox, Outlook, O365, Trello, Slack & more into a configurable client.  
+
+Gone are the days of opening countless browser tabs and logging in and out of your favourite cloud accounts. Now you can launch Wavebox with one click, and instantly access them all in one UI, and without slowing your machine.
+
 | [![](https://raw.githubusercontent.com/wavebox/waveboxapp/master/.github/screenshot_001.png)](https://raw.githubusercontent.com/wavebox/waveboxapp/master/.github/screenshot_001.png)  | [![](https://raw.githubusercontent.com/wavebox/waveboxapp/master/.github/screenshot_002.png)](https://raw.githubusercontent.com/wavebox/waveboxapp/master/.github/screenshot_002.png) |
 |:---:|:---:|
 | [![](https://raw.githubusercontent.com/wavebox/waveboxapp/master/.github/screenshot_003.png)](https://raw.githubusercontent.com/wavebox/waveboxapp/master/.github/screenshot_003.png)  | [![](https://raw.githubusercontent.com/wavebox/waveboxapp/master/.github/screenshot_004.png)](https://raw.githubusercontent.com/wavebox/waveboxapp/master/.github/screenshot_004.png) |
-
-Wavebox is the clever new home for cloud apps on macOS, Linux & Windows bringing  Gmail, Inbox, Outlook, O365, Trello, Slack & more into a configurable client.  
-
-Gone are the days of opening countless browser tabs and logging in and out of your favourite cloud accounts. Now you can launch Wavebox with one click, and instantly access them all in one UI, and without slowing your machine:
 
 - **All your web apps in one place:** Add your favourites from our Directory of 1000+ apps/websites/services and easily hop between them to create faster workflows, and enjoy a smarter way of working.
 - **Never miss a thing:** Stay signed-in to all apps simultaneously and keep up-to-date with real-time notifications and unread badges. Wavebox brings calm to your daily cloud app chaos.
