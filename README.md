@@ -1,5 +1,10 @@
 # Wavebox
 
+![](https://img.shields.io/badge/Contributions-Welcome-brightgreen.svg)
+[![Travis Build Status](https://img.shields.io/travis/wavebox/waveboxapp.svg)](http://travis-ci.org/wavebox/waveboxapp)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
+[![Download](https://img.shields.io/badge/downloads-wavebox.io-brightgreen.svg)](https://wavebox.io/download/)
+
 Your client for Gmail, Inbox, Outlook, O365, Trello, Slack & more!
 
 Wavebox is the clever new home for cloud apps on macOS, Linux & Windows bringing  Gmail, Inbox, Outlook, O365, Trello, Slack & more into a configurable client.  
@@ -20,11 +25,6 @@ Install Wavebox and use for free with 2 Gmail/Inbox accounts. Then upgrade to Pr
 Why not give it a try at [wavebox.io](https://wavebox.io)
 
 ---
-
-![](https://img.shields.io/badge/Contributions-Welcome-brightgreen.svg)
-[![Travis Build Status](https://img.shields.io/travis/wavebox/waveboxapp.svg)](http://travis-ci.org/wavebox/waveboxapp)
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
-[![Download](https://img.shields.io/badge/downloads-wavebox.io-brightgreen.svg)](https://wavebox.io/download/)
 
 **Wavebox is built using [Electron](https://github.com/atom/electron), [React](https://facebook.github.io/react/) and [Flux](https://facebook.github.io/flux/). It supports Gmail, Google Inbox, Outlook, Office 365, Slack, Trello & more.**
 
