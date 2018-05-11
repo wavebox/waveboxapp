@@ -1,8 +1,37 @@
-import './MonitorTable.less'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { monitorStore } from 'stores/monitor'
+import {Table, TableBody, TableHead, TableRow, TableCell} from 'material-ui'
+import { withStyles } from 'material-ui/styles'
+import lightBlue from 'material-ui/colors/lightBlue'
+import classNames from 'classnames'
 
+const styles = {
+  table: {
+    tableLayout: 'fixed'
+  },
+  headRow: {
+    height: 'auto'
+  },
+  row: {
+    height: 'auto',
+    '&:nth-of-type(odd)': {
+      backgroundColor: lightBlue[50]
+    }
+  },
+  cell: {
+    padding: '6px 12px',
+    textAlign: 'left',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis'
+  },
+  fixed100: {
+    width: 100
+  }
+}
+
+@withStyles(styles)
 export default class ProcessMonitor extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
@@ -84,45 +113,47 @@ export default class ProcessMonitor extends React.Component {
 
   /**
   * Renders a row
+  * @param classes: the classes set
   * @param metric: the process info
   * @return jsx
   */
-  renderRow (metric) {
+  renderRow (classes, metric) {
     return (
-      <tr key={metric.pid}>
-        <td className='fixed-100'>
+      <TableRow key={metric.pid} className={classes.row}>
+        <TableCell className={classNames(classes.cell, classes.fixed100)}>
           {metric.pid}
-        </td>
-        <td>
+        </TableCell>
+        <TableCell className={classNames(classes.cell)}>
           {this.renderDescription(metric)}
-        </td>
-        <td className='fixed-100'>
+        </TableCell>
+        <TableCell className={classNames(classes.cell, classes.fixed100)}>
           {`${Math.round((metric.memory.workingSetSize || 0) / 1024)} MB`}
-        </td>
-        <td className='fixed-100'>
+        </TableCell>
+        <TableCell className={classNames(classes.cell, classes.fixed100)}>
           {metric.cpu.percentCPUUsage === undefined ? '-' : (Math.round(metric.cpu.percentCPUUsage * 100) / 100) + '%'}
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
     )
   }
 
   render () {
+    const { classes } = this.props
     const { metrics } = this.state
 
     return (
-      <table className='RC-MonitorTable'>
-        <thead>
-          <tr>
-            <th className='fixed-100'>Pid</th>
-            <th>Description</th>
-            <th className='fixed-100'>Memory</th>
-            <th className='fixed-100'>CPU</th>
-          </tr>
-        </thead>
-        <tbody>
-          {metrics.map((metric) => this.renderRow(metric))}
-        </tbody>
-      </table>
+      <Table className={classes.table}>
+        <TableHead>
+          <TableRow className={classes.headRow}>
+            <TableCell className={classNames(classes.cell, classes.fixed100)}>Pid</TableCell>
+            <TableCell className={classNames(classes.cell)}>Description</TableCell>
+            <TableCell className={classNames(classes.cell, classes.fixed100)}>Memory</TableCell>
+            <TableCell className={classNames(classes.cell, classes.fixed100)}>CPU</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {metrics.map((metric) => this.renderRow(classes, metric))}
+        </TableBody>
+      </Table>
     )
   }
 }
