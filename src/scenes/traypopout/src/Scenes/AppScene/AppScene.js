@@ -1,16 +1,16 @@
 import { ipcRenderer } from 'electron'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Tab, Tabs } from 'material-ui'
+import { Tab, Tabs, AppBar } from 'material-ui'
 import SwipeableViews from 'react-swipeable-views'
 import NotificationScene from 'Scenes/NotificationScene'
 import UnreadScene from 'Scenes/UnreadScene'
 import AppSceneToolbar from './AppSceneToolbar'
 import AppSceneWindowTitlebar from './AppSceneWindowTitlebar'
-import * as Colors from 'material-ui/styles/colors'
-import {
-  WB_TRAY_WINDOWED_MODE_CHANGED
-} from 'shared/ipcEvents'
+import { WB_TRAY_WINDOWED_MODE_CHANGED } from 'shared/ipcEvents'
+import { withStyles } from 'material-ui/styles'
+import lightBlue from 'material-ui/colors/lightBlue'
+import classNames from 'classnames'
 
 const TAB_HEIGHT = 40
 const TOOLBAR_HEIGHT = 40
@@ -21,7 +21,7 @@ const NOTIF_REF = 'NOTIF'
 
 const styles = {
   container: {
-    position: 'absolute',
+    position: 'fixed', // Normally absolute, but fixes a weird page jump when opening the notifications menu
     top: 0,
     left: 0,
     right: 0,
@@ -34,6 +34,9 @@ const styles = {
     right: 0,
     bottom: 0
   },
+  bodyWithTitlebar: {
+    top: AppSceneWindowTitlebar.preferredHeight
+  },
   titlebar: {
     position: 'absolute',
     top: 0,
@@ -42,15 +45,18 @@ const styles = {
   },
 
   // Tabs
-  inkBar: {
-    backgroundColor: Colors.lightBlue100
-  },
-  tabItemContainer: {
-    height: TAB_HEIGHT
+  appBar: {
+    height: TAB_HEIGHT,
+    minHeight: TAB_HEIGHT,
+    backgroundColor: lightBlue[600]
   },
   tabButton: {
-    height: TAB_HEIGHT,
-    textTransform: 'none'
+    color: 'white',
+    maxWidth: 'none',
+    height: TAB_HEIGHT
+  },
+  tabInkBar: {
+    backgroundColor: lightBlue[100]
   },
 
   // Tab content
@@ -81,10 +87,12 @@ const styles = {
     right: 0,
     bottom: 0,
     height: TOOLBAR_HEIGHT,
-    backgroundColor: Colors.lightBlue600
+    minHeight: TOOLBAR_HEIGHT,
+    backgroundColor: lightBlue[600]
   }
 }
 
+@withStyles(styles)
 export default class AppScene extends React.Component {
   /* **************************************************************************/
   // Component lifecycle
@@ -132,9 +140,10 @@ export default class AppScene extends React.Component {
 
   /**
   * Changes tab
+  * @param evt: the event that fired
   * @param index: the new index
   */
-  handleChangeTab = (index) => {
+  handleChangeTab = (evt, index) => {
     this.setState((prevState) => {
       const prevIndex = prevState.tabIndex
       if (prevIndex === index) { return undefined }
@@ -166,34 +175,34 @@ export default class AppScene extends React.Component {
   }
 
   render () {
+    const { classes } = this.props
     const {
       tabIndex,
       isWindowedMode
     } = this.state
 
     return (
-      <div style={styles.content}>
+      <div className={classes.container}>
         {isWindowedMode ? (
-          <AppSceneWindowTitlebar style={styles.titlebar} />
+          <AppSceneWindowTitlebar className={classes.titlebar} />
         ) : undefined}
-        <div style={{
-          ...styles.body,
-          ...(isWindowedMode ? { top: AppSceneWindowTitlebar.preferredHeight } : undefined)
-        }}>
-          <Tabs
-            value={tabIndex}
-            inkBarStyle={styles.inkBar}
-            tabItemContainerStyle={styles.tabItemContainer}
-            onChange={this.handleChangeTab}>
-            <Tab
-              label='Unread'
-              buttonStyle={styles.tabButton}
-              value={UNREAD_INDEX} />
-            <Tab
-              label='Notifications'
-              buttonStyle={styles.tabButton}
-              value={NOTIF_INDEX} />
-          </Tabs>
+        <div className={classNames(classes.body, isWindowedMode ? classes.bodyWithTitlebar : undefined)}>
+          <AppBar position='static' className={classes.appBar}>
+            <Tabs
+              fullWidth
+              value={tabIndex}
+              onChange={this.handleChangeTab}
+              classes={{ indicator: classes.tabInkBar }}>
+              <Tab
+                label='Unread'
+                className={classes.tabButton}
+                value={UNREAD_INDEX} />
+              <Tab
+                label='Notifications'
+                className={classes.tabButton}
+                value={NOTIF_INDEX} />
+            </Tabs>
+          </AppBar>
           <SwipeableViews
             style={styles.tabs}
             containerStyle={styles.tabContainer}
@@ -203,7 +212,7 @@ export default class AppScene extends React.Component {
             <UnreadScene ref={UNREAD_REF} />
             <NotificationScene ref={NOTIF_REF} />
           </SwipeableViews>
-          <AppSceneToolbar style={styles.toolbar} isWindowedMode={isWindowedMode} />
+          <AppSceneToolbar className={classes.toolbar} isWindowedMode={isWindowedMode} />
         </div>
       </div>
     )

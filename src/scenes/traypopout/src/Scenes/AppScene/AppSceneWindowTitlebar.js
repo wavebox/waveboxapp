@@ -3,7 +3,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import classnames from 'classnames'
 import { remote } from 'electron'
-import { FontIcon } from 'material-ui'
+import { Icon } from 'material-ui'
 
 export default class AppSceneWindowTitlebar extends React.Component {
   /* **************************************************************************/
@@ -108,21 +108,21 @@ export default class AppSceneWindowTitlebar extends React.Component {
         <div className='controls'>
           <div className='control close' onClick={this.handleClose}>
             {process.platform === 'darwin' ? (
-              <FontIcon className='icon fas fa-times' />
+              <Icon className='icon fas fa-times' />
             ) : (
-              <FontIcon className='icon far fa-times' />
+              <Icon className='icon far fa-times' />
             )}
           </div>
           <div className='control maximize'>
             {process.platform === 'darwin' ? undefined : (
-              <FontIcon className='icon far fa-square' />
+              <Icon className='icon far fa-square' />
             )}
           </div>
           <div className='control minimize' onClick={this.handleMinimize}>
             {process.platform === 'darwin' ? (
-              <FontIcon className='icon fas fa-minus' />
+              <Icon className='icon fas fa-minus' />
             ) : (
-              <FontIcon className='icon far fa-window-minimize' />
+              <Icon className='icon far fa-window-minimize' />
             )}
           </div>
         </div>

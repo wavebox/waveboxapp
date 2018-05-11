@@ -5,17 +5,16 @@ import { notifhistStore } from 'stores/notifhist'
 import { mailboxActions } from 'stores/mailbox'
 import { emblinkActions } from 'stores/emblink'
 import Infinate from 'react-infinite'
-import { List, ListItem } from 'material-ui'
-import MailboxAvatar from 'Components/Mailbox/MailboxAvatar'
-import TimeAgo from 'react-timeago'
+import { List } from 'material-ui'
 import { ipcRenderer } from 'electron'
 import { WB_FOCUS_MAILBOXES_WINDOW } from 'shared/ipcEvents'
+import NotificationListItem from './NotificationListItem'
 
 const MAIN_REF = 'MAIN'
 const INFINATE_REF = 'INFINATE'
 const LIST_ITEM_HEIGHT = 67
 
-const styles = {
+const styles = { // Use styles here so some pass-through functions work
   main: {
     position: 'absolute',
     top: 0,
@@ -26,50 +25,12 @@ const styles = {
   list: {
     padding: 0
   },
-
-  // List Item
   listItem: {
-    height: LIST_ITEM_HEIGHT,
-    paddingTop: 0,
-    paddingBottom: 0,
-    borderBottom: '1px solid rgb(224, 224, 224)'
-  },
-  listItemInner: {
-    paddingTop: 8,
-    paddingBottom: 8
-  },
-  listItemPrimaryText: {
-    fontSize: 14,
-    lineHeight: '16px',
-    height: 16,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap'
-  },
-  listItemSecondaryText: {
-    height: 'auto'
-  },
-  listItemNotificationBody: {
-    fontSize: 13,
-    lineHeight: '15px',
-    height: 15,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap'
-  },
-  listItemTimeago: {
-    fontSize: 11
-  },
-  listItemIcon: {
-    height: 40,
-    width: 40,
-    backgroundSize: 'contain',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center'
+    height: LIST_ITEM_HEIGHT
   }
 }
 
-export default class UnreadScene extends React.Component {
+export default class NotificationScene extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
@@ -161,38 +122,18 @@ export default class UnreadScene extends React.Component {
     const { notifications, containerHeight } = this.state
 
     return (
-      <div
-        ref={MAIN_REF}
-        style={{...styles.main, ...style}}
-        {...passProps}>
+      <div ref={MAIN_REF} style={{...styles.main, ...styles}} {...passProps}>
         <List style={styles.list}>
           {containerHeight === 0 ? undefined : (
             <Infinate ref={INFINATE_REF} containerHeight={containerHeight} elementHeight={LIST_ITEM_HEIGHT}>
               {notifications.map(({id, timestamp, notification}) => {
                 return (
-                  <ListItem
+                  <NotificationListItem
                     key={id}
-                    onClick={(evt) => this.handleNotificationClick(evt, notification)}
                     style={styles.listItem}
-                    innerDivStyle={{
-                      ...styles.listItemInner,
-                      ...(notification.icon ? { paddingRight: 72 } : undefined)
-                    }}
-                    leftAvatar={<MailboxAvatar mailboxId={notification.mailboxId} />}
-                    rightAvatar={notification.icon ? (
-                      <div style={{...styles.listItemIcon, backgroundImage: `url("${notification.icon}")`}} />
-                    ) : undefined}
-                    primaryText={(
-                      <div style={styles.listItemPrimaryText}>{notification.title}</div>
-                    )}
-                    secondaryText={(
-                      <div style={styles.listItemSecondaryText}>
-                        <div style={styles.listItemNotificationBody}>{notification.body || ''}</div>
-                        <div style={styles.listItemTimeago}>
-                          <TimeAgo date={timestamp} />
-                        </div>
-                      </div>
-                    )} />
+                    mailboxId={notification.mailboxId}
+                    notification={notification}
+                    timestamp={timestamp} />
                 )
               })}
             </Infinate>

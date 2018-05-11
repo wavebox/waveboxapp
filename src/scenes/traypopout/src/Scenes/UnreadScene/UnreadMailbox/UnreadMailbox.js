@@ -139,7 +139,7 @@ export default class UnreadMailbox extends React.Component {
               )
             })
           ) : (
-            <ListItem primaryText='No Messages' disabled />
+            <ListItem>No Messages</ListItem>
           )}
         </List>
       </div>

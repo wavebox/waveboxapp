@@ -1,5 +1,5 @@
 .RC-AppSceneWindowTitlebar.darwin {
-  @CONTROLS_WIDTH: 74px;
+  @CONTROLS_WIDTH: 62px;
   @CONTROLS_H_SPACE: 5px;
   @CONTROL_BG: rgb(209, 209, 209);
   @CONTROL_BD: rgb(220, 220, 220);
@@ -65,6 +65,8 @@
         font-size: 8px !important;
         transition: none !important;
         visibility: hidden;
+        height: auto;
+        width: auto;
       }
 
       &:hover>.icon {
@@ -99,6 +101,7 @@
           border-color: @CONTROL_MINIMIZE_FOCUS_BD;
         }
         >.icon {
+          left: 1px !important;
           color: rgb(153, 87, 21) !important;
         }
       }
@@ -190,6 +193,8 @@
         font-size: 12px !important;
         transition: none !important;
         color: @BAR_FG !important;
+        height: auto;
+        width: auto;
       }
 
       &.close {

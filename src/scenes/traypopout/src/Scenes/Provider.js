@@ -1,7 +1,7 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import Theme from 'sharedui/Components/Theme'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import { MuiThemeProvider } from 'material-ui/styles'
+import Theme from 'wbui/Theme'
 import AppScene from './AppScene'
 
 export default class Provider extends React.Component {
@@ -15,7 +15,7 @@ export default class Provider extends React.Component {
 
   render () {
     return (
-      <MuiThemeProvider muiTheme={Theme}>
+      <MuiThemeProvider theme={Theme}>
         <AppScene />
       </MuiThemeProvider>
     )

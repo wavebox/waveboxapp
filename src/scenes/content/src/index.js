@@ -50,3 +50,5 @@ ReactDOM.render((
 ipcRenderer.on(WB_SEND_IPC_TO_CHILD, (evt, { id, channel, payload }) => {
   remote.webContents.fromId(id).send(channel, payload)
 })
+
+//TODO more space on loading spinner
