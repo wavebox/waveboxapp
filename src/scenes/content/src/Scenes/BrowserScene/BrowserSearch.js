@@ -1,15 +1,46 @@
 import React from 'react'
 import { Paper, TextField, IconButton } from 'material-ui'
-import * as Colors from 'material-ui/styles/colors'
 import { browserActions, browserStore } from 'stores/browser'
-import {
-  WB_WINDOW_FIND_START
-} from 'shared/ipcEvents'
+import SearchIcon from '@material-ui/icons/Search'
+import CloseIcon from '@material-ui/icons/Close'
+import { WB_WINDOW_FIND_START } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
-const INPUT_REF = 'textField'
+const styles = {
+  search: {
+    position: 'absolute',
+    bottom: -48,
+    left: 0,
+    minWidth: 300,
+    height: 48,
+    backgroundColor: 'white',
+    transition: 'none !important',
+    zIndex: 10,
+    overflow: 'hidden'
+  },
+  searchActive: {
+    bottom: 0
+  },
+  searchField: {
+    marginLeft: 15,
+    width: 300
+  }
+}
 
+@withStyles(styles)
 export default class BrowserSearch extends React.Component {
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    this.searchInputRef = undefined
+  }
+
   /* **************************************************************************/
   // Component lifecylce
   /* **************************************************************************/
@@ -50,7 +81,7 @@ export default class BrowserSearch extends React.Component {
   /**
   * Focuses the textfield
   */
-  focus = () => { this.refs[INPUT_REF].focus() }
+  focus = () => { this.searchInputRef.focus() }
 
   /* **************************************************************************/
   // Events
@@ -105,38 +136,23 @@ export default class BrowserSearch extends React.Component {
   }
 
   render () {
-    const { className, ...passProps } = this.props
+    const { className, classes, ...passProps } = this.props
     const { isSearching, searchTerm } = this.state
 
-    const fullClassName = [
-      'ReactComponent-BrowserSceneSearch',
-      isSearching ? 'active' : undefined,
-      className
-    ].filter((c) => !!c).join(' ')
-
     return (
-      <Paper {...passProps} className={fullClassName}>
+      <Paper {...passProps} className={classNames(classes.search, isSearching ? classes.searchActive : undefined, className)}>
         <TextField
-          ref={INPUT_REF}
-          hintText='Search'
-          style={{ marginLeft: 15 }}
-          inputStyle={{ width: 200 }}
+          inputRef={(n) => { this.searchInputRef = n }}
+          placeholder='Search'
+          className={classes.searchField}
           value={searchTerm}
           onChange={this.handleChange}
           onKeyDown={this.handleKeyPress} />
-        <IconButton
-          iconClassName='material-icons'
-          style={{ bottom: -7 }}
-          iconStyle={{ color: Colors.grey600 }}
-          onClick={this.handleFindNext}>
-          search
+        <IconButton onClick={this.handleFindNext}>
+          <SearchIcon />
         </IconButton>
-        <IconButton
-          iconClassName='material-icons'
-          style={{ bottom: -7, zIndex: 1 }}
-          iconStyle={{ color: Colors.grey600 }}
-          onClick={this.handleStopSearch}>
-          close
+        <IconButton onClick={this.handleStopSearch}>
+          <CloseIcon />
         </IconButton>
       </Paper>
     )

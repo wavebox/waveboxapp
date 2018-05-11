@@ -1,7 +1,34 @@
 import React from 'react'
 import { Paper } from 'material-ui'
 import { browserStore } from 'stores/browser'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
+const styles = {
+  targetUrl: {
+    position: 'absolute',
+    bottom: -16,
+    height: 16,
+    maxWidth: '50%',
+    right: 0,
+    backgroundColor: 'white',
+    zIndex: 9,
+    overflow: 'hidden',
+    textAlign: 'right',
+    fontSize: '11px',
+    lineHeight: '16px',
+    paddingLeft: 3,
+    paddingRight: 3,
+    transitionDuration: '150ms !important',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis'
+  },
+  targetUrlActive: {
+    bottom: 0
+  }
+}
+
+@withStyles(styles)
 export default class BrowserTargetUrl extends React.Component {
   /* **************************************************************************/
   // Component lifecylce
@@ -37,17 +64,11 @@ export default class BrowserTargetUrl extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { className, ...passProps } = this.props
+    const { className, classes, ...passProps } = this.props
     const { url } = this.state
 
-    const fullClassName = [
-      'ReactComponent-BrowserSceneTargetUrl',
-      url ? 'active' : undefined,
-      className
-    ].filter((c) => !!c).join(' ')
-
     return (
-      <Paper {...passProps} className={fullClassName}>
+      <Paper {...passProps} className={classNames(classes.targetUrl, url ? classes.targetUrlActive : undefined, className)}>
         {url}
       </Paper>
     )

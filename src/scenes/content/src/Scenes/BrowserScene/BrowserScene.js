@@ -1,19 +1,45 @@
 import PropTypes from 'prop-types'
-import './BrowserScene.less'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import BrowserView from 'sharedui/Components/BrowserView'
+import BrowserView from 'wbui/Guest/BrowserView'
 import BrowserTargetUrl from './BrowserTargetUrl'
 import BrowserSearch from './BrowserSearch'
 import BrowserToolbar from './BrowserToolbar'
 import { browserActions, browserStore } from 'stores/browser'
-import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
+import MouseNavigationDarwin from 'wbui/MouseNavigationDarwin'
 import Resolver from 'Runtime/Resolver'
 import { remote } from 'electron'
+import { withStyles } from 'material-ui/styles'
 
 const SEARCH_REF = 'search'
 const BROWSER_REF = 'browser'
 
+const styles = {
+  scene: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0
+  },
+  webviewContainer: {
+    position: 'absolute',
+    top: 40,
+    bottom: 0,
+    left: 0,
+    right: 0
+  },
+  toolbar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 100,
+    height: 40
+  }
+}
+
+@withStyles(styles)
 export default class BrowserScene extends React.Component {
   /* **************************************************************************/
   // Class
@@ -127,7 +153,7 @@ export default class BrowserScene extends React.Component {
   }
 
   render () {
-    const { url, partition } = this.props
+    const { url, partition, classes } = this.props
     const { isSearching, searchTerm, searchNextHash } = this.state
 
     const preloadScripts = [
@@ -138,20 +164,20 @@ export default class BrowserScene extends React.Component {
     // The partition should be set on the will-attach-webview in the main thread
     // but this doesn't have the desired effect. Set it here for good-stead
     return (
-      <div className='ReactComponent-BrowserScene'>
+      <div className={classes.scene}>
         <BrowserToolbar
+          className={classes.toolbar}
           handleGoBack={() => this.refs[BROWSER_REF].goBack()}
           handleGoForward={() => this.refs[BROWSER_REF].goForward()}
           handleStop={() => this.refs[BROWSER_REF].stop()}
           handleReload={() => this.refs[BROWSER_REF].reload()} />
-        <div className='ReactComponent-BrowserSceneWebViewContainer'>
+        <div className={classes.webviewContainer}>
           <BrowserView
             ref={BROWSER_REF}
             src={url}
             partition={partition}
             plugins
             allowpopups
-            className='ReactComponent-BrowserSceneWebView'
             webpreferences='contextIsolation=yes, nativeWindowOpen=yes, sharedSiteInstances=yes, sandbox=yes'
             preload={preloadScripts}
             searchTerm={isSearching ? searchTerm : undefined}

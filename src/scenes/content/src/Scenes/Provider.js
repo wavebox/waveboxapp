@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import Theme from 'sharedui/Components/Theme'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import Theme from 'wbui/Theme'
+import { MuiThemeProvider } from 'material-ui/styles'
 import BrowserScene from './BrowserScene'
 
 export default class Provider extends React.Component {
@@ -27,7 +27,7 @@ export default class Provider extends React.Component {
     const { url, partition } = this.props
 
     return (
-      <MuiThemeProvider muiTheme={Theme}>
+      <MuiThemeProvider theme={Theme}>
         <BrowserScene url={url} partition={partition} />
       </MuiThemeProvider>
     )

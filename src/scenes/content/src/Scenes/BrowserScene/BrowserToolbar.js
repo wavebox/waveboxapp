@@ -2,16 +2,52 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { browserStore, browserActions } from 'stores/browser'
 import shallowCompare from 'react-addons-shallow-compare'
-import {
-  Paper, IconButton, FontIcon,
-  Toolbar, ToolbarGroup, ToolbarTitle
-} from 'material-ui'
+import { Paper, Toolbar, IconButton, Typography, Tooltip } from 'material-ui'
+import { withStyles } from 'material-ui/styles'
 import { CHROME_PDF_URL } from 'shared/constants'
 import { URL } from 'url'
 import { remote } from 'electron'
-import * as Colors from 'material-ui/styles/colors'
-import Spinner from 'sharedui/Components/Activity/Spinner'
+import Spinner from 'wbui/Activity/Spinner'
+import ArrowBackIcon from '@material-ui/icons/ArrowBack'
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
+import CloseIcon from '@material-ui/icons/Close'
+import RefreshIcon from '@material-ui/icons/Refresh'
+import SearchIcon from '@material-ui/icons/Search'
+import FileDownloadIcon from '@material-ui/icons/FileDownload'
+import OpenInBrowserIcon from '@material-ui/icons/OpenInBrowser'
+import lightBlue from 'material-ui/colors/lightBlue'
+import grey from 'material-ui/colors/grey'
 
+const styles = {
+  toolbar: {
+    height: 40,
+    minHeight: 40,
+    backgroundColor: grey[200]
+  },
+  toolbarLoadingIconContainer: {
+    width: 40,
+    height: 40,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  toolbarUrl: {
+    height: 40,
+    lineHeight: '40px',
+    width: '100%',
+    overflow: 'hidden',
+    fontSize: '14px',
+    userSelect: 'initial',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    color: 'rgba(0, 0, 0, 0.4)'
+  },
+  toolbarButton: {
+    color: 'rgba(0, 0, 0, 0.87)'
+  }
+}
+
+@withStyles(styles)
 export default class BrowserToolbar extends React.Component {
   /* **************************************************************************/
   // Class
@@ -109,62 +145,46 @@ export default class BrowserToolbar extends React.Component {
   }
 
   render () {
-    const { className, handleGoBack, handleGoForward, handleStop, handleReload, ...passProps } = this.props
+    const { classes, handleGoBack, handleGoForward, handleStop, handleReload, ...passProps } = this.props
     const { isLoading, currentUrl, canGoBack, canGoForward } = this.state
 
-    const fullClassName = [
-      'ReactComponent-BrowserToolbar',
-      className
-    ].filter((c) => !!c).join(' ')
-
     return (
-      <Paper {...passProps} className={fullClassName}>
-        <Toolbar style={{ height: 40 }}>
-          <ToolbarGroup firstChild>
-            <IconButton
-              disabled={!canGoBack}
-              onClick={handleGoBack}>
-              <FontIcon className='material-icons'>arrow_back</FontIcon>
-            </IconButton>
-            <IconButton
-              disabled={!canGoForward}
-              onClick={handleGoForward}>
-              <FontIcon className='material-icons'>arrow_forward</FontIcon>
-            </IconButton>
-            <IconButton onClick={isLoading ? handleStop : handleReload}>
-              <FontIcon className='material-icons'>{isLoading ? 'close' : 'refresh'}</FontIcon>
-            </IconButton>
-            <div style={{ width: 40, height: 40, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              {isLoading ? (
-                <Spinner size={15} color={Colors.lightBlue600} />
-              ) : undefined}
-            </div>
-          </ToolbarGroup>
-          <ToolbarGroup style={{ minWidth: 0, width: '100%' }}>
-            <ToolbarTitle
-              text={this.externalUrl(currentUrl)}
-              style={{ fontSize: '14px', userSelect: 'initial' }} />
-          </ToolbarGroup>
-          <ToolbarGroup lastChild>
-            <IconButton
-              tooltip='Find in Page'
-              onClick={() => browserActions.toggleSearch()}>
-              <FontIcon className='material-icons'>search</FontIcon>
-            </IconButton>
-            {this.isDownloadableUrl(currentUrl) ? (
-              <IconButton
-                tooltip='Download'
-                onClick={this.handleDownload}>
-                <FontIcon className='material-icons'>file_download</FontIcon>
-              </IconButton>
+      <Paper {...passProps}>
+        <Toolbar disableGutters className={classes.toolbar}>
+          <IconButton disabled={!canGoBack} onClick={handleGoBack} className={classes.toolbarButton}>
+            <ArrowBackIcon />
+          </IconButton>
+          <IconButton disabled={!canGoForward} onClick={handleGoForward} className={classes.toolbarButton}>
+            <ArrowForwardIcon />
+          </IconButton>
+          <IconButton onClick={isLoading ? handleStop : handleReload} className={classes.toolbarButton}>
+            {isLoading ? (<CloseIcon />) : (<RefreshIcon />)}
+          </IconButton>
+          <div className={classes.toolbarLoadingIconContainer}>
+            {isLoading ? (
+              <Spinner size={15} color={lightBlue[600]} />
             ) : undefined}
-            <IconButton
-              tooltip='Open in Browser'
-              tooltipPosition='bottom-left'
-              onClick={this.handleOpenInBrowser}>
-              <FontIcon className='material-icons'>open_in_browser</FontIcon>
+          </div>
+          <Typography className={classes.toolbarUrl}>
+            {this.externalUrl(currentUrl)}
+          </Typography>
+          <Tooltip title='Find in Page'>
+            <IconButton onClick={() => browserActions.toggleSearch()} className={classes.toolbarButton}>
+              <SearchIcon />
             </IconButton>
-          </ToolbarGroup>
+          </Tooltip>
+          {this.isDownloadableUrl(currentUrl) ? (
+            <Tooltip title='Download'>
+              <IconButton onClick={this.handleDownload} className={classes.toolbarButton}>
+                <FileDownloadIcon />
+              </IconButton>
+            </Tooltip>
+          ) : undefined}
+          <Tooltip title='Open in Browser' placement='bottom-start'>
+            <IconButton onClick={this.handleOpenInBrowser} className={classes.toolbarButton}>
+              <OpenInBrowserIcon />
+            </IconButton>
+          </Tooltip>
         </Toolbar>
       </Paper>
     )
