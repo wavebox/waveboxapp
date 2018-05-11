@@ -1,9 +1,10 @@
 # Wavebox
 
-![](https://img.shields.io/badge/Contributions-Welcome-brightgreen.svg)
+![](https://img.shields.io/badge/Contributions-Welcome-ff69b4.svg)
 [![Travis Build Status](https://img.shields.io/travis/wavebox/waveboxapp.svg)](http://travis-ci.org/wavebox/waveboxapp)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
-[![Download](https://img.shields.io/badge/downloads-wavebox.io-brightgreen.svg)](https://wavebox.io/download/)
+[![GitHub release](https://img.shields.io/github/release/wavebox/waveboxapp.svg)](https://github.com/wavebox/waveboxapp/releases)
+[![Download](https://img.shields.io/badge/downloads-wavebox.io-blue.svg)](https://wavebox.io/download/)
 
 Your client for Gmail, Inbox, Outlook, O365, Trello, Slack & more!
 
