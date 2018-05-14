@@ -1,4 +1,3 @@
-import './AppSceneWindowTitlebar.less'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import classnames from 'classnames'
