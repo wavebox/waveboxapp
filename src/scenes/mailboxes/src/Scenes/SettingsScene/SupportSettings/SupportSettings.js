@@ -213,15 +213,7 @@ export default class SupportSettings extends React.Component {
           <Row>
             <Col xs={6}>
               <Row>
-                <Col md={6}>
-                  {this.renderBoxedCell(
-                    'fas fa-fw fa-tachometer-alt',
-                    'Optimize Wavebox',
-                    'Check to see how your Wavebox is performing and sleep accounts to save resources.',
-                    'Optimize Wavebox',
-                    () => { window.location.hash = '/optimize_wizard/start' }
-                  )}
-                </Col>
+                <Col md={6} />
                 <Col md={6}>
                   {this.renderBoxedCell(
                     'fas fa-fw fa-magic',

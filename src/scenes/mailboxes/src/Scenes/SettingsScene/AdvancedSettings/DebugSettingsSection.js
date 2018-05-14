@@ -35,12 +35,6 @@ export default class DebugSettingsSection extends React.Component {
             label='Task Monitor'
             icon={<FontIcon className='material-icons'>timeline</FontIcon>}
             onClick={() => settingsActions.sub.app.openMetricsMonitor()} />
-          <FlatButton
-            label='Classic Add Screen'
-            icon={<FontIcon className='material-icons'>add_circle</FontIcon>}
-            onClick={() => {
-              window.location.hash = '/mailbox_wizard/add_classic'
-            }} />
         </div>
         <Toggle
           toggled={app.writeMetricsLog}

@@ -104,14 +104,10 @@ resourceMonitorListener.listen()
 
 // Prep any wizards
 setTimeout(() => {
-  const mailboxState = mailboxStore.getState()
   const settingsState = settingsStore.getState()
-  const userState = userStore.getState()
 
   if (process.platform === 'linux' && !settingsState.app.hasSeenLinuxSetupMessage) {
     window.location.hash = '/setup/linux'
-  } else if (!settingsState.app.hasSeenOptimizeWizard && userState.user.hasSleepable && mailboxState.mailboxCount() > 1) {
-    window.location.hash = '/optimize_wizard'
   }
 }, 1000)
 

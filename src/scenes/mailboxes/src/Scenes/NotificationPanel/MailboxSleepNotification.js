@@ -106,7 +106,7 @@ export default class MailboxSleepNotification extends React.Component {
   handleCustomize = () => {
     const { mailbox, service, onRequestClose } = this.props
     mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setHasSeenSleepableWizard, true)
-    window.location.hash = `/optimize_wizard/sleep_advanced`
+    window.location.hash = `/settings/accounts/${mailbox.id}`
     onRequestClose()
   }
 

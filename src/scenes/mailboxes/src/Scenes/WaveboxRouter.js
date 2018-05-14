@@ -7,12 +7,10 @@ import ComposePickerScene from './ComposePickerScene'
 import ProScene from './ProScene'
 import EarlyBuildToast from './EarlyBuildToast'
 import MailboxWizardScene from './MailboxWizardScene'
-import MailboxWizardAddSceneClassic from './MailboxWizardAddSceneClassic'
 import MailboxWizardAddScene from './MailboxWizardAddScene'
 import MailboxReauthenticatingScene from './MailboxReauthenticatingScene'
 import AppWizardScene from './AppWizardScene'
 import NewsScene from './NewsScene'
-import OptimizeWizardScene from './OptimizeWizardScene'
 import NotificationPanel from './NotificationPanel'
 import MailboxDeleteScene from './MailboxDeleteScene'
 import MailboxServiceDeleteScene from './MailboxServiceDeleteScene'
@@ -51,7 +49,6 @@ export default class WaveboxRouter extends React.Component {
           <Route path='/dictionary_installer' component={DictionaryInstallerScene} />
 
           <Route path='/mailbox_wizard/add' component={MailboxWizardAddScene} />
-          <Route path='/mailbox_wizard/add_classic' component={MailboxWizardAddSceneClassic} />
           <Route path='/mailbox_wizard/:mailboxType/:accessMode/:step/:mailboxId?' component={MailboxWizardScene} />
           <Route path='/mailbox/reauthenticating' component={MailboxReauthenticatingScene} />
 
@@ -59,7 +56,6 @@ export default class WaveboxRouter extends React.Component {
           <Route path='/mailbox_service_delete/:mailboxId/:serviceType' component={MailboxServiceDeleteScene} />
 
           <Route path='/app_wizard/:step?' component={AppWizardScene} />
-          <Route path='/optimize_wizard/:step?' component={OptimizeWizardScene} />
 
           <Route path='/incoming/compose' component={ComposePickerScene} />
 

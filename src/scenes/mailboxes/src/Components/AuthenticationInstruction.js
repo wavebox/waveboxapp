@@ -1,7 +1,7 @@
 import React from 'react'
-import { Paper } from 'material-ui'
+import { Paper } from 'material-ui' //TODO
 import Spinner from 'sharedui/Components/Activity/Spinner'
-import * as Colors from 'material-ui/styles/colors'
+import * as Colors from 'material-ui/styles/colors' //TODO
 import {ipcRenderer} from 'electron'
 import { WB_FOCUS_AUTH_WINDOW } from 'shared/ipcEvents'
 
