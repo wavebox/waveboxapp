@@ -90,7 +90,7 @@ export default class PrivacyMessageGDPRExisting1 extends React.Component {
         <div style={styles.modalContent}>
           <h2 style={styles.title}>Your Privacy Settings</h2>
           <p>
-            Your privacy and security is very important to us and we want to share our
+            Your privacy and security are very important to us and we want to share our
             updated GDPR compliant Privacy Policy for your consent. You can change your privacy settings
             at any time by going to Settings > Wavebox.
           </p>
