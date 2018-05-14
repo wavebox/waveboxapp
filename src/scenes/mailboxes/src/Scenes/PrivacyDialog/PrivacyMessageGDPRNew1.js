@@ -171,13 +171,13 @@ export default class PrivacyMessageGDPRNew1 extends React.Component {
           <h2 style={styles.title}>Welcome to Wavebox</h2>
           <p style={styles.subtitle}>Your cloud apps will love Wavebox and we hope you will too!</p>
           <p>
-            To use Wavebox, please review our&nbsp;
+            To use Wavebox please review our&nbsp;
             <span style={styles.inlineLink} onClick={this.handleOpenServiceTerms}>Service Agreement</span>
             ,&nbsp;
             <span style={styles.inlineLink} onClick={this.handleOpenEULA}>EULA</span>
             &nbsp;and&nbsp;
             <span style={styles.inlineLink} onClick={this.handleOpenPrivacy}>Privacy Policy</span>
-            &nbsp;which covers our agreement with you, and details how we take care of your security
+            &nbsp;which together covers our agreement with you and details how we take care of your security
             and privacy. You can change your privacy settings at any time in the app.
           </p>
           <div style={styles.checkboxContainer}>
