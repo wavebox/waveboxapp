@@ -3,8 +3,6 @@ import React from 'react'
 import * as Colors from 'material-ui/styles/colors'
 import { userStore } from 'stores/user'
 import { RaisedButton, FontIcon, FlatButton } from 'material-ui'
-import { TERMS_URL, EULA_URL } from 'shared/constants'
-import electron from 'electron'
 import Resolver from 'Runtime/Resolver'
 
 const styles = {
@@ -43,14 +41,6 @@ const styles = {
   },
   introSubtitle: {
     fontWeight: '300'
-  },
-  introTerms: {
-    fontSize: '12px'
-  },
-  introTermsLink: {
-    textDecoration: 'underline',
-    color: Colors.blueGrey800,
-    cursor: 'pointer'
   },
   extraActionButton: {
     display: 'inline-block',
@@ -109,20 +99,6 @@ export default class Welcome extends React.Component {
     window.location.hash = '/account/auth/'
   }
 
-  /**
-  * Opens the EULA externally
-  */
-  handleOpenEULA = () => {
-    electron.remote.shell.openExternal(EULA_URL)
-  }
-
-  /**
-  * Opens the terms externally
-  */
-  handleOpenTerms = () => {
-    electron.remote.shell.openExternal(TERMS_URL)
-  }
-
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -158,12 +134,6 @@ export default class Welcome extends React.Component {
                   icon={<FontIcon className='material-icons' style={{ marginTop: -8 }}>add_circle</FontIcon>}
                   label='Add your first account' />
               </div>
-              <p style={styles.introTerms}>
-                <span>By continuing you agree to the Software </span>
-                <span style={styles.introTermsLink} onClick={this.handleOpenEULA}>EULA</span>
-                <span> and our </span>
-                <span style={styles.introTermsLink} onClick={this.handleOpenTerms}>service terms</span>
-              </p>
               {!user.isLoggedIn ? (
                 <FlatButton
                   onClick={this.handleLoginWavebox}
