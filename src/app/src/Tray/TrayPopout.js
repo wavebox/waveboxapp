@@ -64,7 +64,7 @@ class TrayPopout {
       } : undefined)
     })
     this[privWindow].setMenuBarVisibility(false)
-this[privWindow].webContents.openDevTools()//TODO
+
     // Bind window events
     this[privPositioner] = new Positioner(this[privWindow])
     this[privWindow].webContents.on('will-navigate', (evt, url) => evt.preventDefault())

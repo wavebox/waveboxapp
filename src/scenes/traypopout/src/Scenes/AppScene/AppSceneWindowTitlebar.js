@@ -4,7 +4,10 @@ import shallowCompare from 'react-addons-shallow-compare'
 import classnames from 'classnames'
 import { remote } from 'electron'
 import { Icon } from 'material-ui'
+import { withStyles } from 'material-ui/styles'
+import styles from './AppSceneWindowTitlebarStyles'
 
+@withStyles(styles)
 export default class AppSceneWindowTitlebar extends React.Component {
   /* **************************************************************************/
   // Class
@@ -89,7 +92,7 @@ export default class AppSceneWindowTitlebar extends React.Component {
 
   render () {
     const { isFocused } = this.state
-    const { style, className, ...passProps } = this.props
+    const { style, className, classes, ...passProps } = this.props
 
     return (
       <div
@@ -98,8 +101,7 @@ export default class AppSceneWindowTitlebar extends React.Component {
           ...style
         }}
         className={classnames(
-          'RC-AppSceneWindowTitlebar',
-          process.platform,
+          classes.titlebar,
           isFocused ? 'focused' : undefined,
           className
         )}
