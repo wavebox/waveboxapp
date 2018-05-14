@@ -12,6 +12,7 @@ import WebRequest from 'WebRequest'
 import Notifications from './Notifications'
 import Cookies from './Cookies/Cookies'
 import Windows from './Windows'
+import Permissions from './Permissions'
 import { CR_RUNTIME_ENVIRONMENTS } from 'shared/extensionApis'
 
 class Chrome {
@@ -41,6 +42,7 @@ class Chrome {
       this.windows = new Windows(extensionId, permissions.has('tabs'))
       this.app = new App(extensionId, extensionDatasource)
       this.omnibox = new Omnibox(extensionId)
+      this.permissions = new Permissions(extensionId, extensionDatasource)
 
       if (permissions.has('contextMenus')) {
         this.contextMenus = new ContextMenus(extensionId, this.runtime)

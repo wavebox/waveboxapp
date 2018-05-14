@@ -1,47 +1,11 @@
 import React from 'react'
-import { RaisedButton, Dialog, FontIcon } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import { userStore, userActions } from 'stores/user'
 import WaveboxHTTP from 'Server/WaveboxHTTP'
-import { ipcRenderer, remote } from 'electron'
+import { ipcRenderer } from 'electron'
 import { WB_QUIT_APP } from 'shared/ipcEvents'
-import * as Colors from 'material-ui/styles/colors'
-import Resolver from 'Runtime/Resolver'
-
-const styles = {
-  modal: {
-    zIndex: 10000
-  },
-  body: {
-    textAlign: 'center'
-  },
-  appIcon: {
-    height: 100,
-    width: 'auto',
-    display: 'block',
-    margin: '0px auto'
-  },
-  privacyInfo: {
-    marginTop: 16,
-    marginBottom: 16
-  },
-  privacyLink: {
-    textDecoration: 'underline',
-    cursor: 'pointer',
-    color: Colors.blue800,
-    fontSize: '85%'
-  },
-  actions: {
-    textAlign: 'center'
-  },
-  action: {
-    marginLeft: 16,
-    marginRight: 16
-  },
-  actionIcon: {
-    fontSize: 16
-  }
-}
+import PrivacyMessageGDPRExisting1 from './PrivacyMessageGDPRExisting1'
+import PrivacyMessageGDPRNew1 from './PrivacyMessageGDPRNew1'
 
 export default class PrivacyDialog extends React.Component {
   /* **************************************************************************/
@@ -73,9 +37,7 @@ export default class PrivacyDialog extends React.Component {
       clientId: userState.clientId,
       clientToken: userState.clientToken,
       ...(hasPrivacyMessage ? {
-        privacyId: userState.user.privacyMessage.id,
-        privacyUrl: userState.user.privacyMessage.url,
-        privacyMessageText: userState.user.privacyMessage.message
+        privacyId: userState.user.privacyMessage.id
       } : {})
     }
   })()
@@ -87,13 +49,9 @@ export default class PrivacyDialog extends React.Component {
         clientId: userState.clientId,
         clientToken: userState.clientToken,
         ...(userState.user.hasPrivacyMessage ? {
-          privacyId: userState.user.privacyMessage.id,
-          privacyUrl: userState.user.privacyMessage.url,
-          privacyMessageText: userState.user.privacyMessage.message
+          privacyId: userState.user.privacyMessage.id
         } : {
-          privacyId: undefined,
-          privacyUrl: undefined,
-          privacyMessageText: undefined
+          privacyId: undefined
         })
       }
       if (prevState.hasPrivacyMessage !== update.hasPrivacyMessage) {
@@ -139,15 +97,6 @@ export default class PrivacyDialog extends React.Component {
     ipcRenderer.send(WB_QUIT_APP)
   }
 
-  /**
-  * Handles opening the privacy url
-  * @param evt: the event that fired
-  */
-  handleOpenPrivacy = (evt) => {
-    evt.preventDefault()
-    remote.shell.openExternal(this.state.privacyUrl)
-  }
-
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -161,56 +110,28 @@ export default class PrivacyDialog extends React.Component {
       hasPrivacyMessage,
       agreeRequestActive,
       shouldRender,
-      privacyUrl,
-      privacyMessageText
+      privacyId
     } = this.state
     if (!shouldRender) { return null }
 
-    const actions = (
-      <div style={styles.actions}>
-        <RaisedButton
-          label='Reject'
-          style={styles.action}
-          disabled={agreeRequestActive}
-          icon={(<FontIcon style={styles.actionIcon} className='far fa-fw fa-times-circle' />)}
-          onClick={this.handleDisagree} />
-        <RaisedButton
-          primary
-          label='Agree'
-          style={styles.action}
-          icon={agreeRequestActive ? (
-            <FontIcon style={styles.actionIcon} className='far fa-fw fa-spin fa-spinner-third' />
-          ) : (
-            <FontIcon style={styles.actionIcon} className='far fa-fw fa-check-circle' />
-          )}
-          disabled={agreeRequestActive}
-          onClick={this.handleAgree} />
-      </div>
-    )
-
-    return (
-      <Dialog
-        modal
-        style={styles.modal}
-        bodyStyle={styles.body}
-        open={hasPrivacyMessage}
-        actions={actions}>
-        <img src={Resolver.icon('app.svg')} style={styles.appIcon} />
-        {hasPrivacyMessage ? (
-          <div style={styles.privacyInfo}>
-            <div>
-              {privacyMessageText.split('\n').map((line, index) => {
-                if (line) {
-                  return (<div key={index}>{line}</div>)
-                } else {
-                  return <br key={index} />
-                }
-              })}
-            </div>
-            <p style={styles.privacyLink} onClick={this.handleOpenPrivacy}>{privacyUrl}</p>
-          </div>
-        ) : undefined}
-      </Dialog>
-    )
+    if (privacyId === 'gdpr_new_1') {
+      return (
+        <PrivacyMessageGDPRNew1
+          onAgree={this.handleAgree}
+          onDisagree={this.handleDisagree}
+          agreeRequestActive={agreeRequestActive}
+          open={hasPrivacyMessage} />
+      )
+    } else if (privacyId === 'gdpr_existing_1') {
+      return (
+        <PrivacyMessageGDPRExisting1
+          onAgree={this.handleAgree}
+          onDisagree={this.handleDisagree}
+          agreeRequestActive={agreeRequestActive}
+          open={hasPrivacyMessage} />
+      )
+    } else {
+      return null
+    }
   }
 }

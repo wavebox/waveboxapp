@@ -11,9 +11,7 @@ import { FlatButton, RaisedButton } from 'material-ui'
 import { mailboxActions } from 'stores/mailbox'
 import { userStore } from 'stores/user'
 import * as Colors from 'material-ui/styles/colors'
-import { TERMS_URL, EULA_URL } from 'shared/constants'
 import WizardPersonaliseContainer from './WizardPersonaliseContainer'
-import electron from 'electron'
 
 const styles = {
   // Layout
@@ -41,10 +39,7 @@ const styles = {
     bottom: 0,
     height: 68,
     padding: 16,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between'
+    textAlign: 'right'
   },
 
   // Typography
@@ -71,19 +66,8 @@ const styles = {
   },
 
   // Footer
-  footerButtons: {
-    whiteSpace: 'nowrap'
-  },
   footerCancelButton: {
     marginRight: 8
-  },
-  footerTerms: {
-    fontSize: '12px'
-  },
-  footerTermsLink: {
-    textDecoration: 'underline',
-    color: Colors.lightBlue400,
-    cursor: 'pointer'
   }
 }
 
@@ -164,20 +148,6 @@ export default class WizardPersonalise extends React.Component {
   */
   handleOpenPro = () => {
     window.location.hash = '/pro'
-  }
-
-  /**
-  * Opens the EULA externally
-  */
-  handleOpenEULA = () => {
-    electron.remote.shell.openExternal(EULA_URL)
-  }
-
-  /**
-  * Opens the terms externally
-  */
-  handleOpenTerms = () => {
-    electron.remote.shell.openExternal(TERMS_URL)
   }
 
   /* **************************************************************************/
@@ -309,22 +279,14 @@ export default class WizardPersonalise extends React.Component {
           {this.renderCustomSection(MailboxClass, accessMode)}
         </div>
         <div style={styles.footer}>
-          <div style={styles.footerTerms}>
-            <span>By continuing you agree to the Software </span>
-            <span style={styles.footerTermsLink} onClick={this.handleOpenEULA}>EULA</span>
-            <span> and our </span>
-            <span style={styles.footerTermsLink} onClick={this.handleOpenTerms}>service terms</span>
-          </div>
-          <div style={styles.footerButtons}>
-            <FlatButton
-              style={styles.footerCancelButton}
-              onClick={onRequestCancel}
-              label='Cancel' />
-            <RaisedButton
-              primary
-              onClick={this.handleNext}
-              label='Next' />
-          </div>
+          <FlatButton
+            style={styles.footerCancelButton}
+            onClick={onRequestCancel}
+            label='Cancel' />
+          <RaisedButton
+            primary
+            onClick={this.handleNext}
+            label='Next' />
         </div>
       </div>
     )

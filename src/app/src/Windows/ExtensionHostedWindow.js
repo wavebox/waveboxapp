@@ -117,7 +117,7 @@ class ExtensionHostedWindow extends WaveboxWindow {
   * @param additionalFeatures: The non-standard features
   */
   handleNewWindow = (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
-    if (this.constructor.isHostedExtensionUrlForExtension(targetUrl, this[privExtensionId])) {
+    if (this.constructor.isHostedExtensionUrlForExtension(evt.sender.getURL(), this[privExtensionId])) {
       WindowOpeningHandler.handleOpenNewWindow(evt, {
         targetUrl: targetUrl,
         frameName: frameName,
@@ -141,7 +141,7 @@ class ExtensionHostedWindow extends WaveboxWindow {
   * @param targetUrl: the url to open
   */
   handleWillNavigate = (evt, targetUrl) => {
-    if (this.constructor.isHostedExtensionUrlForExtension(targetUrl, this[privExtensionId])) {
+    if (!this.constructor.isHostedExtensionUrlForExtension(targetUrl, this[privExtensionId])) {
       evt.preventDefault()
       shell.openExternal(targetUrl)
     }
