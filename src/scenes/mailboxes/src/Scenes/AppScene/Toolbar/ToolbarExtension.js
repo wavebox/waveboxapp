@@ -2,10 +2,8 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { crextensionStore, crextensionActions } from 'stores/crextension'
 import shallowCompare from 'react-addons-shallow-compare'
-import {
-  ToolbarExtensionAction,
-  ToolbarExtensionActionContextMenu
-} from 'sharedui/Components/Toolbar'
+import ToolbarExtensionAction from 'wbui/ToolbarExtensionAction'
+import ToolbarExtensionActionContextMenu from 'wbui/ToolbarExtensionActionContextMenu'
 import electron from 'electron'
 
 export default class ToolbarExtension extends React.Component {

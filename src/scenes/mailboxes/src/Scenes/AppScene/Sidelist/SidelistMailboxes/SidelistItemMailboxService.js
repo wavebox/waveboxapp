@@ -6,12 +6,14 @@ import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
 import { mailboxStore } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
-import { ServiceBadge, ServiceTooltip } from 'Components/Service'
-import * as Colors from 'material-ui/styles/colors'
+import MailboxServiceBadge from 'wbui/MailboxServiceBadge'
+import MailboxServiceTooltip from 'wbui/MailboxServiceTooltip'
 import uuid from 'uuid'
 import Resolver from 'Runtime/Resolver'
 import UISettings from 'shared/Models/Settings/UISettings'
-import classnames from 'classnames'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
+import red from 'material-ui/colors/red'
 
 const styles = {
   /**
@@ -24,7 +26,10 @@ const styles = {
     borderWidth: 3,
     borderStyle: 'solid',
     cursor: 'pointer',
-    WebkitAppRegion: 'no-drag'
+    WebkitAppRegion: 'no-drag',
+    width: 35,
+    height: 35,
+    backgroundColor: 'white'
   },
   /**
   * Badge
@@ -39,7 +44,7 @@ const styles = {
     top: -3,
     right: 8,
     backgroundColor: 'rgba(238, 54, 55, 0.95)',
-    color: Colors.red50,
+    color: red[50],
     fontWeight: process.platform === 'linux' ? 'normal' : '300',
     width: 'auto',
     paddingLeft: 6,
@@ -56,6 +61,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class SidelistItemMailboxService extends React.Component {
   /* **************************************************************************/
   // Class
@@ -172,6 +178,7 @@ export default class SidelistItemMailboxService extends React.Component {
       onOpenService,
       style,
       className,
+      classes,
       ...passProps
     } = this.props
     const {
@@ -192,7 +199,7 @@ export default class SidelistItemMailboxService extends React.Component {
 
     const showSleeping = isSleeping && mailbox.showSleepableServiceIndicator && globalShowSleepableServiceIndicator
     return (
-      <ServiceBadge
+      <MailboxServiceBadge
         id={`ReactComponent-Sidelist-Item-Mailbox-Service-${this.instanceId}`}
         isAuthInvalid={false}
         supportsUnreadCount={service.supportsUnreadCount}
@@ -202,26 +209,29 @@ export default class SidelistItemMailboxService extends React.Component {
         showUnreadActivityBadge={service.showUnreadActivityBadge}
         hasUnreadActivity={service.hasUnreadActivity}
         color={service.unreadBadgeColor}
-        badgeStyle={styles.badge}
-        style={styles.badgeContainer}
-        iconStyle={styles.badgeFAIcon}
+        badgeClassName={classes.badge}
+        className={classes.badgeContainer}
+        iconClassName={classes.badgeFAIcon}
         onMouseEnter={() => this.setState({ isHovering: true })}
         onMouseLeave={() => this.setState({ isHovering: false })}
         onClick={(evt) => onOpenService(evt, serviceType)}>
         <Avatar
           {...passProps}
           src={this.getServiceIconUrl(mailbox.type, serviceType)}
-          size={35}
-          backgroundColor='white'
           draggable={false}
-          className={classnames('WB-ServiceIcon', `WB-ServiceIcon-${mailbox.id}_${service.type}`, className)}
+          className={classNames(
+            classes.avatar,
+            'WB-ServiceIcon',
+            `WB-ServiceIcon-${mailbox.id}_${service.type}`,
+            className
+          )}
           style={{
-            ...styles.avatar,
             borderColor: borderColor,
-            filter: showSleeping ? 'grayscale(100%)' : 'none'
+            filter: showSleeping ? 'grayscale(100%)' : 'none',
+            ...style
           }} />
         {tooltipsEnabled ? (
-          <ServiceTooltip
+          <MailboxServiceTooltip
             mailbox={mailbox}
             service={service}
             isRestricted={isRestricted}
@@ -232,7 +242,7 @@ export default class SidelistItemMailboxService extends React.Component {
             group={this.instanceId}
             parent={`#ReactComponent-Sidelist-Item-Mailbox-Service-${this.instanceId}`} />
         ) : undefined}
-      </ServiceBadge>
+      </MailboxServiceBadge>
     )
   }
 }

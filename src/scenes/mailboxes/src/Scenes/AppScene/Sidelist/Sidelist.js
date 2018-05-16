@@ -6,12 +6,13 @@ import shallowCompare from 'react-addons-shallow-compare'
 import SidelistWindowControls from './SidelistWindowControls'
 import SidelistControls from './SidelistControls'
 import SidelistUpgradePlans from './SidelistUpgradePlans'
-import * as Colors from 'material-ui/styles/colors'
-import classnames from 'classnames'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
+import blueGrey from 'material-ui/colors/blueGrey'
 
 const styles = {
   container: {
-    backgroundColor: Colors.blueGrey900,
+    backgroundColor: blueGrey[900],
     position: 'absolute',
     top: 0,
     bottom: 0,
@@ -26,6 +27,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class Sidelist extends React.Component {
   /* **************************************************************************/
   // Component lifecyle
@@ -68,16 +70,15 @@ export default class Sidelist extends React.Component {
 
   render () {
     const { showTitlebar, showPlans } = this.state
-    const { style, className, ...passProps } = this.props
+    const { classes, className, ...passProps } = this.props
 
     return (
       <div
         {...passProps}
-        style={{...styles.container, ...style}}
-        className={classnames('WB-Sidelist', className)}>
+        className={classNames(classes.container, 'WB-Sidelist', className)}>
         {!showTitlebar ? (<SidelistWindowControls />) : undefined}
         {showPlans ? (<SidelistUpgradePlans />) : undefined}
-        <SidelistMailboxes style={styles.mailboxes} />
+        <SidelistMailboxes className={classes.mailboxes} />
         <SidelistControls />
       </div>
     )

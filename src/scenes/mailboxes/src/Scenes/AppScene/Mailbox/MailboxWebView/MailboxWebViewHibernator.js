@@ -1,13 +1,12 @@
-import './MailboxWebView.less'
 import React from 'react'
 import PropTypes from 'prop-types'
-import { FontIcon, RaisedButton } from 'material-ui'
+import { Button } from 'material-ui'
 import MailboxWebView from './MailboxWebView'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
-import classnames from 'classnames'
-
-const REF = 'MailboxWebView'
+import MailboxInformationCover from './MailboxInformationCover'
+import HotelIcon from '@material-ui/icons/Hotel'
+import AlarmIcon from '@material-ui/icons/Alarm'
 
 export default class MailboxWebViewHibernator extends React.Component {
   /* **************************************************************************/
@@ -32,6 +31,7 @@ export default class MailboxWebViewHibernator extends React.Component {
   constructor (props) {
     super(props)
 
+    this.mailboxWebviewRef = null
     this.queuedIPCSend = []
 
     // Expose the pass-through methods
@@ -39,8 +39,8 @@ export default class MailboxWebViewHibernator extends React.Component {
     this.constructor.WEBVIEW_METHODS.forEach((m) => {
       if (self[m] !== undefined) { return } // Allow overwriting
       self[m] = function (...args) {
-        if (self.refs[REF]) {
-          return self.refs[REF][m](...args)
+        if (self.mailboxWebviewRef) {
+          return self.mailboxWebviewRef[m](...args)
         } else {
           throw new Error(`MailboxWebViewHibernator has slept MailboxWebView. Cannot call ${m}`)
         }
@@ -139,7 +139,7 @@ export default class MailboxWebViewHibernator extends React.Component {
       this.queuedIPCSend.push(args)
       return false
     } else {
-      this.refs[REF].send(...args)
+      this.mailboxWebviewRef.send(...args)
       return true
     }
   }
@@ -160,7 +160,7 @@ export default class MailboxWebViewHibernator extends React.Component {
     const { mailboxId, serviceType } = this.props
 
     Promise.resolve()
-      .then(() => this.refs[REF].capturePagePromise())
+      .then(() => this.mailboxWebviewRef.capturePagePromise())
       .then((nativeImage) => {
         mailboxActions.setServiceSnapshot(mailboxId, serviceType, nativeImage.toDataURL())
         return Promise.resolve()
@@ -192,7 +192,7 @@ export default class MailboxWebViewHibernator extends React.Component {
     if (!isSleeping || captureRef !== null) {
       return (
         <MailboxWebView
-          ref={REF}
+          innerRef={(n) => { this.mailboxWebviewRef = n }}
           mailboxId={mailboxId}
           serviceType={serviceType}
           className={className}
@@ -200,27 +200,20 @@ export default class MailboxWebViewHibernator extends React.Component {
           domReady={this.handleDomReady}
           {...passProps} />)
     } else {
-      if (showSleepPlaceholder) {
-        const fullClassname = classnames(
-          'ReactComponent-MailboxWebView sleeping',
-          isActive ? 'active' : undefined,
-          className
-        )
+      if (showSleepPlaceholder && isActive) {
         return (
-          <div className={fullClassname} style={style}>
-            <div className='ReactComponent-MailboxSleeping'>
-              <FontIcon className='material-icons primary-icon'>hotel</FontIcon>
-              <h1>Shhhh!</h1>
-              <p>This tab is currently sleeping</p>
-              <br />
-              <RaisedButton
-                label='Wake it up'
-                icon={<FontIcon className='material-icons'>alarm</FontIcon>}
-                onClick={() => {
-                  mailboxActions.awakenService(mailboxId, serviceType)
-                }} />
-            </div>
-          </div>
+          <MailboxInformationCover
+            style={style}
+            className={className}
+            IconComponent={HotelIcon}
+            title='Shhhh!'
+            text={['This tab is currently sleeping']}
+            button={(
+              <Button variant='raised' onClick={() => mailboxActions.awakenService(mailboxId, serviceType)}>
+                <AlarmIcon style={{ marginRight: 6 }} />
+                Wake it up
+              </Button>
+            )} />
         )
       } else {
         return false

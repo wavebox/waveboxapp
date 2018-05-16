@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Dialog, FlatButton, List, ListItem, FontIcon, Avatar } from 'material-ui'
+import { Dialog, FlatButton, List, ListItem, FontIcon, Avatar } from 'material-ui' //TODO
 import shallowCompare from 'react-addons-shallow-compare'
 import { mailboxStore } from 'stores/mailbox'
 import { MailboxAvatar } from 'Components/Mailbox'
 import { userActions } from 'stores/user'
-import * as Colors from 'material-ui/styles/colors'
+import * as Colors from 'material-ui/styles/colors' //TODO
 import { PRIVACY_URL, TERMS_URL } from 'shared/constants'
 import electron from 'electron'
 

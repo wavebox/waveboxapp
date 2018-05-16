@@ -1,7 +1,35 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import classnames from 'classnames'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
+import blue from 'material-ui/colors/blue'
 
+const styles = {
+  '@keyframes loadbar': {
+    '0%': { width: '10%' },
+    '100%': { width: '90%;' }
+  },
+  loadBar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 0,
+    height: 3,
+    backgroundColor: blue[600],
+    opacity: 0,
+    transition: '700ms ease-in-out opacity',
+
+    '&.loading': {
+      opacity: 1,
+      animationName: 'loadbar',
+      animationDelay: '500ms',
+      animationDuration: '3s',
+      animationFillMode: 'forwards'
+    }
+  }
+}
+
+@withStyles(styles)
 export default class MailboxLoadBar extends React.Component {
   /* **************************************************************************/
   // Class
@@ -19,17 +47,12 @@ export default class MailboxLoadBar extends React.Component {
     const {
       isLoading,
       className,
+      classes,
       ...passProps
     } = this.props
 
-    const fullClassName = classnames(
-      'ReactComponent-MailboxLoadBar',
-      isLoading ? 'loading' : undefined,
-      className
-    )
-
     return (
-      <div className={fullClassName} {...passProps} />
+      <div {...passProps} className={classNames(classes.loadBar, isLoading ? 'loading' : undefined, className)} />
     )
   }
 }

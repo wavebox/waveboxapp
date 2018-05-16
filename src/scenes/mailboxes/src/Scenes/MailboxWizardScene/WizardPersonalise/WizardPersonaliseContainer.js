@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import {TextField} from 'material-ui'
 import {userStore} from 'stores/user'
 import {mailboxActions} from 'stores/mailbox'
+import { withStyles } from 'material-ui/styles'
 
 const styles = {
   // Typography
@@ -16,8 +17,8 @@ const styles = {
     fontSize: 16
   }
 }
-const SUBDOMAIN_REF = 'SUBDOMAIN_REF'
 
+@withStyles(styles)
 export default class WizardPersonaliseContainer extends React.Component {
   /* **************************************************************************/
   // Class
@@ -25,6 +26,15 @@ export default class WizardPersonaliseContainer extends React.Component {
 
   static propTypes = {
     containerId: PropTypes.string.isRequired
+  }
+
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+    this.subdomainInputRef = null
   }
 
   /* **************************************************************************/
@@ -77,7 +87,7 @@ export default class WizardPersonaliseContainer extends React.Component {
   handleNext = (MailboxClass, accessMode, mailboxJS) => {
     const { container } = this.state
     if (container.hasUrlSubdomain) {
-      const subdomain = this.refs[SUBDOMAIN_REF].input.value
+      const subdomain = this.subdomainInputRef.value
       if (!subdomain) {
         this.setState({ showSubdomainError: true })
       } else {
@@ -96,6 +106,7 @@ export default class WizardPersonaliseContainer extends React.Component {
 
   render () {
     const { container, showSubdomainError } = this.state
+    const { classes, ...passProps } = this.props
 
     const elements = []
 
@@ -103,21 +114,22 @@ export default class WizardPersonaliseContainer extends React.Component {
       const subdomainName = container.urlSubdomainName.charAt(0).toUpperCase() + container.urlSubdomainName.slice(1)
       elements.push(
         <div key='urlSubdomain'>
-          <h2 style={styles.heading}>Personalize your account</h2>
-          <p style={styles.subHeading}>Setup your account so it's ready to use</p>
+          <h2 className={classes.heading}>Personalize your account</h2>
+          <p className={classes.subHeading}>Setup your account so it's ready to use</p>
           <TextField
-            ref={SUBDOMAIN_REF}
-            floatingLabelFixed
+            inputRef={(n) => { this.subdomainInputRef = n }}
+            InputLabelProps={{shrink: true}}
             fullWidth
-            floatingLabelText={subdomainName}
-            hintText={container.urlSubdomainHint}
-            errorText={showSubdomainError ? `${subdomainName} is required` : undefined} />
+            label={subdomainName}
+            placeholder={container.urlSubdomainHint}
+            error={showSubdomainError}
+            helperText={showSubdomainError ? `${subdomainName} is required` : undefined} />
         </div>
       )
     }
 
     if (elements.length) {
-      return (<div>{elements}</div>)
+      return (<div {...passProps}>{elements}</div>)
     } else {
       return false
     }

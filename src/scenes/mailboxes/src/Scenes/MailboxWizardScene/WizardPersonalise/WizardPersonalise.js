@@ -7,11 +7,14 @@ import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import MicrosoftMailbox from 'shared/Models/Accounts/Microsoft/MicrosoftMailbox'
 import WizardColorPicker from './WizardColorPicker'
 import WizardServicePicker from './WizardServicePicker'
-import { FlatButton, RaisedButton } from 'material-ui'
+import { Button } from 'material-ui'
 import { mailboxActions } from 'stores/mailbox'
 import { userStore } from 'stores/user'
-import * as Colors from 'material-ui/styles/colors'
 import WizardPersonaliseContainer from './WizardPersonaliseContainer'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
+import lightBlue from 'material-ui/colors/lightBlue'
+import StyleMixins from 'wbui/Styles/StyleMixins'
 
 const styles = {
   // Layout
@@ -29,8 +32,7 @@ const styles = {
     right: 0,
     bottom: 68,
     padding: 16,
-    overflowX: 'hidden',
-    overflowY: 'auto'
+    ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
   },
   footer: {
     position: 'absolute',
@@ -59,7 +61,7 @@ const styles = {
     maxWidth: '100%'
   },
   servicesPurchaseContainer: {
-    border: `2px solid ${Colors.lightBlue500}`,
+    border: `2px solid ${lightBlue[500]}`,
     borderRadius: 4,
     padding: 16,
     display: 'block'
@@ -73,6 +75,7 @@ const styles = {
 
 const CUSTOM_PERSONALIZE_REF = 'CUSTOM_PERSONALIZE_REF'
 
+@withStyles(styles)
 export default class WizardPersonalise extends React.Component {
   /* **************************************************************************/
   // Class
@@ -225,17 +228,17 @@ export default class WizardPersonalise extends React.Component {
   }
 
   render () {
-    const { MailboxClass, accessMode, onRequestCancel, style, ...passProps } = this.props
+    const { MailboxClass, accessMode, onRequestCancel, classes, className, ...passProps } = this.props
     const { color, enabledServices, servicesDisplayMode, userHasServices } = this.state
 
     return (
-      <div {...passProps} style={{ ...styles.container, ...style }}>
-        <div style={styles.body} className='ReactComponent-MaterialUI-Dialog-Body-Scrollbars'>
+      <div {...passProps} className={classNames(classes.container, className)}>
+        <div className={classes.body}>
           <div>
-            <h2 style={styles.heading}>Pick a Colour</h2>
-            <p style={styles.subHeading}>Get started by picking a colour for your account</p>
+            <h2 className={classes.heading}>Pick a Colour</h2>
+            <p className={classes.subHeading}>Get started by picking a colour for your account</p>
             <WizardColorPicker
-              style={styles.colorPicker}
+              className={classes.colorPicker}
               MailboxClass={MailboxClass}
               accessMode={accessMode}
               mailboxDefaultColor={this.getDefaultMailboxColor(MailboxClass, accessMode)}
@@ -244,8 +247,8 @@ export default class WizardPersonalise extends React.Component {
           </div>
           {MailboxClass.supportsAdditionalServiceTypes && userHasServices ? (
             <div>
-              <h2 style={styles.heading}>Choose your services</h2>
-              <p style={styles.subHeading}>Pick which other services you'd like to use alongside your account</p>
+              <h2 className={classes.heading}>Choose your services</h2>
+              <p className={classes.subHeading}>Pick which other services you'd like to use alongside your account</p>
               <WizardServicePicker
                 userHasServices={userHasServices}
                 MailboxClass={MailboxClass}
@@ -257,13 +260,12 @@ export default class WizardPersonalise extends React.Component {
           ) : undefined}
           {MailboxClass.supportsAdditionalServiceTypes && !userHasServices ? (
             <div>
-              <h2 style={styles.heading}>Choose your services</h2>
-              <p style={styles.subHeading}>You can use all these services alongside your account when you purchase Wavebox</p>
-              <div style={styles.servicesPurchaseContainer}>
-                <FlatButton
-                  primary
-                  label='Purchase Wavebox'
-                  onClick={this.handleOpenPro} />
+              <h2 className={classes.heading}>Choose your services</h2>
+              <p className={classes.subHeading}>You can use all these services alongside your account when you purchase Wavebox</p>
+              <div className={classes.servicesPurchaseContainer}>
+                <Button color='primary' onClick={this.handleOpenPro}>
+                  Purchase Wavebox
+                </Button>
                 <br />
                 <br />
                 <WizardServicePicker
@@ -278,15 +280,13 @@ export default class WizardPersonalise extends React.Component {
           ) : undefined}
           {this.renderCustomSection(MailboxClass, accessMode)}
         </div>
-        <div style={styles.footer}>
-          <FlatButton
-            style={styles.footerCancelButton}
-            onClick={onRequestCancel}
-            label='Cancel' />
-          <RaisedButton
-            primary
-            onClick={this.handleNext}
-            label='Next' />
+        <div className={classes.footer}>
+          <Button className={classes.footerCancelButton} onClick={onRequestCancel}>
+            Cancel
+          </Button>
+          <Button color='primary' variant='raised' onClick={this.handleNext}>
+            Next
+          </Button>
         </div>
       </div>
     )

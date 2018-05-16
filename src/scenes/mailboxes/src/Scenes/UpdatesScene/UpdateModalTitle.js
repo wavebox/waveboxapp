@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { FontIcon } from 'material-ui'
+import { FontIcon } from 'material-ui' //TODO
 
 export default class UpdateModalTitle extends React.Component {
   /* **************************************************************************/

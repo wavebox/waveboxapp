@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Paper, RaisedButton, FlatButton } from 'material-ui'
-import * as Colors from 'material-ui/styles/colors'
+import { Paper, RaisedButton, FlatButton } from 'material-ui' //TODO
+import * as Colors from 'material-ui/styles/colors' //TODO
 import Spinner from 'sharedui/Components/Activity/Spinner'
 import { crextensionStore, crextensionActions } from 'stores/crextension'
 import { userStore } from 'stores/user'

@@ -1,6 +1,6 @@
 import React from 'react'
-import { FontIcon, Avatar } from 'material-ui'
-import * as Colors from 'material-ui/styles/colors'
+import { FontIcon, Avatar } from 'material-ui' //TODO
+import * as Colors from 'material-ui/styles/colors' //TODO
 
 const styles = {
   container: {

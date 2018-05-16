@@ -1,35 +1,23 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Popover, Menu, MenuItem, Divider, FontIcon } from 'material-ui'
+import { Menu, MenuItem, ListItemIcon, ListItemText, Divider } from 'material-ui'
 import { mailboxActions, mailboxDispatch, mailboxStore, MailboxLinker } from 'stores/mailbox'
 import { userStore } from 'stores/user'
 import shallowCompare from 'react-addons-shallow-compare'
-import * as Colors from 'material-ui/styles/colors'
 import CoreService from 'shared/Models/Accounts/CoreService'
-
-class SleepAllIcon extends React.Component {
-  render () {
-    const { color, ...passProps } = this.props
-    return (
-      <span {...passProps}>
-        <FontIcon className='material-icons' color={color}>hotel</FontIcon>
-        <FontIcon className='material-icons' color={color} style={{ left: -12 }}>clear_all</FontIcon>
-      </span>
-    )
-  }
-}
-
-class DeleteAllIcon extends React.Component {
-  render () {
-    const { color, ...passProps } = this.props
-    return (
-      <span {...passProps}>
-        <FontIcon className='material-icons' color={color}>delete</FontIcon>
-        <FontIcon className='material-icons' color={color} style={{ left: -16, top: 1 }}>clear_all</FontIcon>
-      </span>
-    )
-  }
-}
+import red from 'material-ui/colors/red'
+import SleepAllIcon from './SleepAllIcon'
+import DeleteAllIcon from './DeleteAllIcon'
+import OpenInNewIcon from '@material-ui/icons/OpenInNew'
+import AlarmIcon from '@material-ui/icons/Alarm'
+import HotelIcon from '@material-ui/icons/Hotel'
+import RefreshIcon from '@material-ui/icons/Refresh'
+import SyncIcon from '@material-ui/icons/Sync'
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
+import LockOutlineIcon from '@material-ui/icons/LockOutline'
+import SettingsIcon from '@material-ui/icons/Settings'
+import LayersClearIcon from '@material-ui/icons/LayersClear'
+import DeleteIcon from '@material-ui/icons/Delete'
 
 export default class SidelistItemMailboxPopover extends React.Component {
   /* **************************************************************************/
@@ -132,10 +120,20 @@ export default class SidelistItemMailboxPopover extends React.Component {
   /* **************************************************************************/
 
   /**
+  * Handles the popover closing
+  * @param evt: the event that fired
+  */
+  handlePopoverClose = (evt) => {
+    evt.preventDefault()
+    evt.stopPropagation()
+    this.closePopover()
+  }
+
+  /**
   * Closes the popover
   * @param evtOrFn: the fired event or a function to call on closed
   */
-  handleClosePopover = (evtOrFn) => {
+  closePopover = (evtOrFn) => {
     this.props.onRequestClose()
     if (typeof (evtOrFn) === 'function') {
       setTimeout(() => { evtOrFn() }, 300)
@@ -147,7 +145,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
   */
   handleDelete = () => {
     window.location.hash = `/mailbox_delete/${this.props.mailboxId}`
-    this.handleClosePopover()
+    this.closePopover()
   }
 
   /**
@@ -155,7 +153,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
   */
   handleDeleteService = () => {
     window.location.hash = `/mailbox_service_delete/${this.props.mailboxId}/${this.props.serviceType}`
-    this.handleClosePopover()
+    this.closePopover()
   }
 
   /**
@@ -167,7 +165,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
     setTimeout(() => {
       mailboxDispatch.reload(mailboxId, serviceType)
     }, 100) // Give the UI some time to catch up
-    this.handleClosePopover()
+    this.closePopover()
   }
 
   /**
@@ -175,7 +173,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
   */
   handleResync = () => {
     mailboxActions.fullSyncMailbox(this.props.mailboxId)
-    this.handleClosePopover()
+    this.closePopover()
   }
 
   /**
@@ -183,14 +181,14 @@ export default class SidelistItemMailboxPopover extends React.Component {
   */
   handleClearBrowserSession = () => {
     mailboxActions.clearMailboxBrowserSession(this.props.mailboxId)
-    this.handleClosePopover()
+    this.closePopover()
   }
 
   /**
   * Handles opening the account settings
   */
   handleAccountSettings = () => {
-    this.handleClosePopover(() => {
+    this.closePopover(() => {
       window.location.hash = `/settings/accounts/${this.props.mailboxId}`
     })
   }
@@ -200,14 +198,14 @@ export default class SidelistItemMailboxPopover extends React.Component {
   */
   handleReauthenticate = () => {
     mailboxActions.reauthenticateMailbox(this.props.mailboxId)
-    this.handleClosePopover()
+    this.closePopover()
   }
 
   /**
   * Handles waking the service
   */
   handleAwakenService = () => {
-    this.handleClosePopover(() => {
+    this.closePopover(() => {
       mailboxActions.awakenService(this.props.mailboxId, this.props.serviceType)
     })
   }
@@ -216,7 +214,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
   * Handles sleeping the service
   */
   handleSleepService = () => {
-    this.handleClosePopover(() => {
+    this.closePopover(() => {
       mailboxActions.sleepService(this.props.mailboxId, this.props.serviceType)
     })
   }
@@ -225,7 +223,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
   * Handles sleeping all services
   */
   handleSleepAllServices = () => {
-    this.handleClosePopover(() => {
+    this.closePopover(() => {
       mailboxActions.sleepAllServices(this.props.mailboxId)
     })
   }
@@ -235,7 +233,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
   */
   handleOpenInWindow = () => {
     const { mailboxId, serviceType } = this.props
-    this.handleClosePopover()
+    this.closePopover()
     const url = mailboxDispatch.getCurrentUrl(mailboxId, serviceType) || this.state.service.url
     MailboxLinker.openContentWindow(mailboxId, serviceType, url)
   }
@@ -259,35 +257,37 @@ export default class SidelistItemMailboxPopover extends React.Component {
     // Identification & Status
     if (mailbox.displayName) {
       menuItems.push(
-        <MenuItem
-          key='info'
-          primaryText={`${service.humanizedTypeShort} : ${mailbox.displayName}`}
-          disabled />
+        <MenuItem key='info' disabled>
+          <ListItemText primary={`${service.humanizedTypeShort} : ${mailbox.displayName}`} />
+        </MenuItem>
       )
     }
     menuItems.push(
-      <MenuItem
-        key='open_in_window'
-        primaryText='Open in New Window'
-        onClick={this.handleOpenInWindow}
-        leftIcon={<FontIcon className='material-icons'>open_in_new</FontIcon>} />
+      <MenuItem key='open_in_window' onClick={this.handleOpenInWindow}>
+        <ListItemIcon>
+          <OpenInNewIcon />
+        </ListItemIcon>
+        <ListItemText inset primary='Open in New Window' />
+      </MenuItem>
     )
     if (userHasSleepable && (service || {}).sleepable) {
       if (isServiceSleeping) {
         menuItems.push(
-          <MenuItem
-            key='awaken'
-            primaryText='Awaken'
-            onClick={this.handleAwakenService}
-            leftIcon={<FontIcon className='material-icons'>alarm</FontIcon>} />
+          <MenuItem key='awaken' onClick={this.handleAwakenService}>
+            <ListItemIcon>
+              <AlarmIcon />
+            </ListItemIcon>
+            <ListItemText inset primary='Awaken' />
+          </MenuItem>
         )
       } else {
         menuItems.push(
-          <MenuItem
-            key='sleep'
-            primaryText='Sleep'
-            onClick={this.handleSleepService}
-            leftIcon={<FontIcon className='material-icons'>hotel</FontIcon>} />
+          <MenuItem key='sleep' onClick={this.handleSleepService}>
+            <ListItemIcon>
+              <HotelIcon />
+            </ListItemIcon>
+            <ListItemText inset primary='Sleep' />
+          </MenuItem>
         )
       }
     }
@@ -296,89 +296,97 @@ export default class SidelistItemMailboxPopover extends React.Component {
       const sleepableServices = mailbox.enabledServices.filter((s) => s.sleepable)
       if (sleepableServices.length > 1) {
         menuItems.push(
-          <MenuItem
-            key='sleep_all'
-            primaryText={`Sleep ${sleepableServices.length} Services`}
-            onClick={this.handleSleepAllServices}
-            leftIcon={<SleepAllIcon />} />
+          <MenuItem key='sleep_all' onClick={this.handleSleepAllServices}>
+            <ListItemIcon>
+              <SleepAllIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={`Sleep ${sleepableServices.length} Services`} />
+          </MenuItem>
         )
       }
     }
     if (!isServiceSleeping) {
       menuItems.push(
-        <MenuItem
-          key='reload'
-          primaryText='Reload'
-          onClick={this.handleReload}
-          leftIcon={<FontIcon className='material-icons'>refresh</FontIcon>} />
+        <MenuItem key='reload' onClick={this.handleReload}>
+          <ListItemIcon>
+            <RefreshIcon />
+          </ListItemIcon>
+          <ListItemText inset primary='Reload' />
+        </MenuItem>
       )
     }
     menuItems.push(
-      <MenuItem
-        key='sync'
-        primaryText='Resync'
-        onClick={this.handleResync}
-        leftIcon={<FontIcon className='material-icons'>sync</FontIcon>} />
+      <MenuItem key='sync' onClick={this.handleResync}>
+        <ListItemIcon>
+          <SyncIcon />
+        </ListItemIcon>
+        <ListItemText inset primary='Resync' />
+      </MenuItem>
     )
     if (mailbox.supportsAuth) {
       const invalid = mailbox.isAuthenticationInvalid || !mailbox.hasAuth
       menuItems.push(
-        <MenuItem
-          key='reauthenticate'
-          primaryText='Reauthenticate'
-          onClick={this.handleReauthenticate}
-          style={invalid ? { color: Colors.red600 } : undefined}
-          leftIcon={invalid ? (
-            <FontIcon className='material-icons' style={{ color: Colors.red600 }}>error_outline</FontIcon>
-          ) : (
-            <FontIcon className='material-icons'>lock_outline</FontIcon>
-          )} />
+        <MenuItem key='reauthenticate' onClick={this.handleReauthenticate}>
+          <ListItemIcon>
+            {invalid ? (
+              <ErrorOutlineIcon style={{ color: red[600] }} />
+            ) : (
+              <LockOutlineIcon />
+            )}
+          </ListItemIcon>
+          <ListItemText inset primary='Reauthenticate' />
+        </MenuItem>
       )
     }
     menuItems.push(<Divider key='div-actions' />)
 
     // Account Settings
     menuItems.push(
-      <MenuItem
-        key='settings'
-        primaryText='Account Settings'
-        onClick={this.handleAccountSettings}
-        leftIcon={<FontIcon className='material-icons'>settings</FontIcon>} />
+      <MenuItem key='settings' onClick={this.handleAccountSettings}>
+        <ListItemIcon>
+          <SettingsIcon />
+        </ListItemIcon>
+        <ListItemText inset primary='Account Settings' />
+      </MenuItem>
     )
     if (mailbox.artificiallyPersistCookies) {
       menuItems.push(
-        <MenuItem
-          key='reauthenticate'
-          primaryText='Clear All Cookies'
-          onClick={this.handleClearBrowserSession}
-          leftIcon={<FontIcon className='material-icons'>layers_clear</FontIcon>} />
+        <MenuItem key='clearsession' onClick={this.handleClearBrowserSession}>
+          <ListItemIcon>
+            <LayersClearIcon />
+          </ListItemIcon>
+          <ListItemText inset primary='Clear All Cookies' />
+        </MenuItem>
       )
     }
     // Delete
     if (userHasServices && mailbox.enabledServices.length > 1) {
       if (service.type !== CoreService.SERVICE_TYPES.DEFAULT) {
         menuItems.push(
-          <MenuItem
-            key='delete'
-            primaryText={`Delete ${service.humanizedType}`}
-            onClick={this.handleDeleteService}
-            leftIcon={<FontIcon className='material-icons'>delete</FontIcon>} />
+          <MenuItem key='delete' onClick={this.handleDeleteService}>
+            <ListItemIcon>
+              <DeleteIcon />
+            </ListItemIcon>
+            <ListItemText inset primary={`Delete ${service.humanizedType}`} />
+          </MenuItem>
         )
       }
       menuItems.push(
-        <MenuItem
-          key='delete_all'
-          primaryText={`Delete Account (${mailbox.enabledServices.length} services)`}
-          onClick={this.handleDelete}
-          leftIcon={<DeleteAllIcon />} />
+        <MenuItem key='delete_all' onClick={this.handleDelete}>
+          <ListItemIcon>
+            <DeleteAllIcon />
+          </ListItemIcon>
+          <ListItemText inset primary={`Delete Account (${mailbox.enabledServices.length} services)`} />
+        </MenuItem>
       )
     } else {
       menuItems.push(
-        <MenuItem
-          key='delete_all'
-          primaryText='Delete Account'
-          onClick={this.handleDelete}
-          leftIcon={<FontIcon className='material-icons'>delete</FontIcon>} />
+        <MenuItem key='delete_all' onClick={this.handleDelete}>
+          <ListItemIcon>
+            <DeleteIcon />
+          </ListItemIcon>
+          <ListItemText inset primary='Delete Account' />
+        </MenuItem>
       )
     }
 
@@ -391,16 +399,14 @@ export default class SidelistItemMailboxPopover extends React.Component {
     if (!mailbox || !service || !rendering) { return false }
 
     return (
-      <Popover
+      <Menu
         open={isOpen}
         anchorEl={anchor}
-        anchorOrigin={{ horizontal: 'middle', vertical: 'center' }}
-        targetOrigin={{ horizontal: 'left', vertical: 'top' }}
-        onRequestClose={this.handleClosePopover}>
-        <Menu desktop onEscKeyDown={this.handleClosePopover}>
-          {this.renderMenuItems()}
-        </Menu>
-      </Popover>
+        MenuListProps={{ dense: true }}
+        disableEnforceFocus
+        onClose={this.handlePopoverClose}>
+        {this.renderMenuItems()}
+      </Menu>
     )
   }
 }

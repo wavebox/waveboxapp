@@ -1,13 +1,21 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import * as Colors from 'material-ui/styles/colors'
 import { mailboxStore } from 'stores/mailbox'
 import { remote } from 'electron'
-import { IconButton, FontIcon } from 'material-ui'
+import { IconButton } from 'material-ui'
 import { CHROME_PDF_URL } from 'shared/constants'
 import { URL } from 'url'
-import Spinner from 'sharedui/Components/Activity/Spinner'
+import Spinner from 'wbui/Activity/Spinner'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
+import blueGrey from 'material-ui/colors/blueGrey'
+import cyan from 'material-ui/colors/cyan'
+import HomeIcon from '@material-ui/icons/Home'
+import ArrowBackIcon from '@material-ui/icons/ArrowBack'
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
+import CloseIcon from '@material-ui/icons/Close'
+import RefreshIcon from '@material-ui/icons/Refresh'
 
 const styles = {
   container: {
@@ -16,6 +24,21 @@ const styles = {
   },
   group: {
     display: 'flex'
+  },
+  iconButton: {
+    WebkitAppRegion: 'no-drag'
+  },
+  icon: {
+    color: blueGrey[100],
+    '&:hover': {
+      color: blueGrey[50]
+    },
+    '&.is-disabled': {
+      color: blueGrey[400],
+      '&:hover': {
+        color: blueGrey[50]
+      }
+    }
   },
   addressGroup: {
     display: 'flex',
@@ -30,7 +53,7 @@ const styles = {
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
     fontSize: '14px',
-    color: Colors.blueGrey50
+    color: blueGrey[50]
   },
   loadingContainer: {
     width: 40,
@@ -41,6 +64,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class ToolbarNavigation extends React.Component {
   /* **************************************************************************/
   // Class
@@ -297,6 +321,8 @@ export default class ToolbarNavigation extends React.Component {
       mailboxId,
       serviceType,
       style,
+      classes,
+      className,
       ...passProps
     } = this.props
     const {
@@ -307,64 +333,53 @@ export default class ToolbarNavigation extends React.Component {
     } = this.state
 
     return (
-      <div {...passProps} style={{
-        ...styles.container,
-        height: toolbarHeight,
-        ...style
-      }}>
-        <div style={styles.group}>
+      <div
+        {...passProps}
+        className={classNames(
+          classes.container,
+          className
+        )}
+        style={{
+          height: toolbarHeight,
+          ...style
+        }}>
+        <div className={classes.group}>
           <IconButton
-            style={{WebkitAppRegion: 'no-drag'}}
+            className={classes.iconButton}
             onClick={this.onGoHome}>
-            <FontIcon
-              className='material-icons'
-              color={Colors.blueGrey100}
-              hoverColor={Colors.blueGrey50}>
-              home
-            </FontIcon>
+            <HomeIcon className={classes.icon} />
           </IconButton>
           <IconButton
-            style={{WebkitAppRegion: 'no-drag'}}
+            className={classes.iconButton}
             disableTouchRipple={!canGoBack}
             onClick={canGoBack ? this.onGoBack : undefined}>
-            <FontIcon
-              className='material-icons'
-              color={canGoBack ? Colors.blueGrey100 : Colors.blueGrey400}
-              hoverColor={canGoBack ? Colors.blueGrey50 : Colors.blueGrey400}>
-              arrow_back
-            </FontIcon>
+            <ArrowBackIcon className={classNames(classes.icon, !canGoBack ? 'is-disabled' : undefined)} />
           </IconButton>
           <IconButton
-            style={{WebkitAppRegion: 'no-drag'}}
+            className={classes.iconButton}
             disableTouchRipple={!canGoForward}
             onClick={canGoForward ? this.onGoForward : undefined}>
-            <FontIcon
-              className='material-icons'
-              color={canGoForward ? Colors.blueGrey100 : Colors.blueGrey400}
-              hoverColor={canGoForward ? Colors.blueGrey50 : Colors.blueGrey400}>
-              arrow_forward
-            </FontIcon>
+            <ArrowForwardIcon className={classNames(classes.icon, !canGoForward ? 'is-disabled' : undefined)} />
           </IconButton>
           <IconButton
-            style={{WebkitAppRegion: 'no-drag'}}
+            className={classes.iconButton}
             onClick={isLoading ? this.onStop : this.onReload}>
-            <FontIcon
-              className='material-icons'
-              color={Colors.blueGrey100}
-              hoverColor={Colors.blueGrey50}>
-              {isLoading ? 'close' : 'refresh'}
-            </FontIcon>
+            {isLoading ? (
+              <CloseIcon className={classes.icon} />
+            ) : (
+              <RefreshIcon className={classes.icon} />
+            )}
           </IconButton>
         </div>
-        <div style={styles.addressGroup}>
-          <div style={styles.address}>
+        <div className={classes.addressGroup}>
+          <div className={classes.address}>
             {this.externalUrl(currentUrl)}
           </div>
         </div>
-        <div style={styles.group}>
-          <div style={styles.loadingContainer}>
+        <div className={classes.group}>
+          <div className={classes.loadingContainer}>
             {isLoading ? (
-              <Spinner size={15} color={Colors.cyan200} />
+              <Spinner size={15} color={cyan[200]} />
             ) : undefined}
           </div>
         </div>

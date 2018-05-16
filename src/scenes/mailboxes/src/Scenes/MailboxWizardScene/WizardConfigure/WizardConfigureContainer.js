@@ -1,12 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Toggle } from 'material-ui'
+import { Switch } from 'material-ui'
 import { mailboxActions, ContainerDefaultServiceReducer } from 'stores/mailbox'
-import * as Colors from 'material-ui/styles/colors'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
 import CoreService from 'shared/Models/Accounts/CoreService'
-import { SleepableField } from 'Components/Fields'
+import SleepableField from 'wbui/SleepableField'
 import { userStore } from 'stores/user'
+import { withStyles } from 'material-ui/styles'
+
+import red from 'material-ui/colors/red'
+import amber from 'material-ui/colors/amber'
 
 const styles = {
   heading: {
@@ -17,18 +20,18 @@ const styles = {
     maxWidth: 500
   },
   warningText: {
-    color: Colors.amber700,
+    color: amber[700],
     fontSize: 14,
     fontWeight: 300
   },
   warningTextIcon: {
-    color: Colors.amber700,
+    color: amber[700],
     fontSize: 18,
     marginRight: 4,
     verticalAlign: 'top'
   },
   mockUnreadActivityIndicator: {
-    backgroundColor: Colors.red400,
+    backgroundColor: red[400],
     color: 'white',
     display: 'inline-block',
     borderRadius: '50%',
@@ -42,6 +45,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class WizardConfigureContainer extends React.Component {
   /* **************************************************************************/
   // Class
@@ -85,7 +89,7 @@ export default class WizardConfigureContainer extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { mailbox, onRequestCancel, ...passProps } = this.props
+    const { mailbox, onRequestCancel, classes, ...passProps } = this.props
     const { userHasSleepable } = this.state
     const service = mailbox.defaultService
 
@@ -94,12 +98,13 @@ export default class WizardConfigureContainer extends React.Component {
         onRequestCancel={onRequestCancel}
         mailboxId={mailbox.id}
         {...passProps}>
-        <h2 style={styles.heading}>Configure your Account</h2>
-        <Toggle
-          toggled={service.hasNavigationToolbar}
+        <h2 className={classes.heading}>Configure your Account</h2>
+        <Switch
+          checked={service.hasNavigationToolbar}
+          color='primary'
           label='Show navigation toolbar'
           labelPosition='right'
-          onToggle={(evt, toggled) => {
+          onChange={(evt, toggled) => {
             mailboxActions.reduceService(
               mailbox.id,
               CoreService.SERVICE_TYPES.DEFAULT,
@@ -108,11 +113,12 @@ export default class WizardConfigureContainer extends React.Component {
             )
           }} />
         {service.supportsGuestNotifications ? (
-          <Toggle
-            toggled={service.showNotifications}
+          <Switch
+            checked={service.showNotifications}
+            color='primary'
             label='Show Notifications'
             labelPosition='right'
-            onToggle={(evt, toggled) => {
+            onChange={(evt, toggled) => {
               mailboxActions.reduceService(
                 mailbox.id,
                 CoreService.SERVICE_TYPES.DEFAULT,
@@ -122,33 +128,35 @@ export default class WizardConfigureContainer extends React.Component {
             }} />
         ) : undefined}
         <div>
-          <Toggle
-            toggled={service.showUnreadActivityBadge}
+          <Switch
+            checked={service.showUnreadActivityBadge}
+            color='primary'
             label={(
               <span>
                 <span>Show unread activity in sidebar or toolbar as </span>
-                <span style={styles.mockUnreadActivityIndicator}>●</span>
+                <span className={classes.mockUnreadActivityIndicator}>●</span>
               </span>
             )}
             labelPosition='right'
-            onToggle={(evt, toggled) => {
+            onChange={(evt, toggled) => {
               mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setShowUnreadActivityBadge, toggled)
             }} />
-          <Toggle
-            toggled={service.unreadActivityCountsTowardsAppUnread}
+          <Switch
+            checked={service.unreadActivityCountsTowardsAppUnread}
+            color='primary'
             label={(
               <span>
                 <span>Show unread activity in Menu Bar & App Badge as </span>
-                <span style={styles.mockUnreadActivityIndicator}>●</span>
+                <span className={classes.mockUnreadActivityIndicator}>●</span>
               </span>
             )}
             labelPosition='right'
-            onToggle={(evt, toggled) => {
+            onChange={(evt, toggled) => {
               mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setUnreadActivityCountsTowardsAppUnread, toggled)
             }} />
         </div>
         {userHasSleepable ? (
-          <div style={styles.sleepContainer}>
+          <div className={classes.sleepContainer}>
             <br />
             <SleepableField
               sleepEnabled={service.sleepable}

@@ -2,7 +2,8 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import SidelistWindowControl from './SidelistWindowControl'
 import { remote } from 'electron'
-import classnames from 'classnames'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
 const HAS_WINDOW_CONTROLS = process.platform !== 'darwin'
 const styles = {
@@ -23,6 +24,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class SidelistWindowControls extends React.Component {
   /* **************************************************************************/
   // Component lifecyle
@@ -127,15 +129,14 @@ export default class SidelistWindowControls extends React.Component {
   }
 
   render () {
-    const { style, className, ...passProps } = this.props
+    const { className, classes, ...passProps } = this.props
 
     if (HAS_WINDOW_CONTROLS) {
       const { isMaximized, isFullScreen } = this.state
       return (
         <div
           {...passProps}
-          style={{ ...styles.container, ...style }}
-          className={classnames('WB-SidelistWindowControls', className)}>
+          className={classNames(classes.container, 'WB-SidelistWindowControls', className)}>
           <SidelistWindowControl type={SidelistWindowControl.TYPES.CLOSE} onClick={this.handleClose} />
           {isFullScreen || isMaximized ? (
             <SidelistWindowControl
@@ -148,7 +149,7 @@ export default class SidelistWindowControls extends React.Component {
         </div>
       )
     } else {
-      return (<div {...passProps} style={{ ...styles.placeholder, ...style }} />)
+      return (<div {...passProps} className={classNames(classes.placeholder, className)} />)
     }
   }
 }

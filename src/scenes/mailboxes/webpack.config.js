@@ -67,7 +67,7 @@ module.exports = function (env) {
       extensions: ['.js', '.jsx', '.less', '.css'],
       alias: {
         shared: path.resolve(path.join(__dirname, '../../shared')),
-        sharedui: path.resolve(path.join(__dirname, '../sharedui')),
+        wbui: path.resolve(path.join(__dirname, '../wbui')),
         R: path.resolve(path.join(__dirname, 'src')),
         Components: path.resolve(path.join(__dirname, 'src/Components')),
         Notifications: path.resolve(path.join(__dirname, 'src/Notifications')),
@@ -105,7 +105,10 @@ module.exports = function (env) {
                   'react',
                   'stage-0'
                 ],
-                plugins: ['transform-class-properties']
+                plugins: [
+                  'transform-decorators-legacy',
+                  'transform-class-properties'
+                ]
               }
             }
           ],
@@ -113,7 +116,7 @@ module.exports = function (env) {
           include: [
             __dirname,
             path.resolve(path.join(__dirname, '../../shared')),
-            path.resolve(path.join(__dirname, '../sharedui'))
+            path.resolve(path.join(__dirname, '../wbui'))
           ]
         },
         {

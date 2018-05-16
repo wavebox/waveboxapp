@@ -1,19 +1,19 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { RaisedButton, FlatButton, TextField, Toggle, SelectField, MenuItem } from 'material-ui'
+import { Button, Switch, Select, MenuItem, TextField } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import GenericDefaultService from 'shared/Models/Accounts/Generic/GenericDefaultService'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import { mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
 import validUrl from 'valid-url'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
+import { withStyles } from 'material-ui/styles'
 
 const humanizedOpenModes = {
   [CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER]: 'Default Browser',
   [CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX]: 'Wavebox Browser'
 }
-const NAME_REF = 'name'
-const URL_REF = 'url'
+
 const styles = {
   // Typography
   heading: {
@@ -30,6 +30,8 @@ const styles = {
   }
 }
 
+@withStyles(styles)
+
 export default class WizardConfigureGeneric extends React.Component {
   /* **************************************************************************/
   // Class
@@ -39,6 +41,20 @@ export default class WizardConfigureGeneric extends React.Component {
     mailbox: PropTypes.object.isRequired,
     onRequestCancel: PropTypes.func.isRequired
   }
+
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+    this.nameInputRef = null
+    this.urlInputRef = null
+  }
+
+  /* **************************************************************************/
+  // Component Lifecycle
+  /* **************************************************************************/
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailbox.id !== nextProps.mailbox.id) {
@@ -170,7 +186,7 @@ export default class WizardConfigureGeneric extends React.Component {
   }
 
   render () {
-    const { mailbox, onRequestCancel, ...passProps } = this.props
+    const { mailbox, onRequestCancel, classes, ...passProps } = this.props
     const {
       configureDisplayFromPage,
       defaultWindowOpenMode,
@@ -185,24 +201,28 @@ export default class WizardConfigureGeneric extends React.Component {
 
     const buttons = (
       <div>
-        <FlatButton
-          style={styles.footerButton}
+        <Button
+          className={classes.footerButton}
           disabled={hasErrors}
           onClick={() => {
             const validated = this.handleFinish(mailbox, onRequestCancel)
             if (validated) {
               window.location.hash = `/settings/accounts/${mailbox.id}`
             }
-          }}
-          label='Account Settings' />
-        <FlatButton
-          style={styles.footerButton}
-          onClick={() => this.handleCancel(mailbox, onRequestCancel)}
-          label='Cancel' />
-        <RaisedButton
-          onClick={() => this.handleFinish(mailbox, onRequestCancel)}
-          label='Finish'
-          primary />
+          }}>
+          Account Settings
+        </Button>
+        <Button
+          className={classes.footerButton}
+          onClick={() => this.handleCancel(mailbox, onRequestCancel)}>
+          Cancel
+        </Button>
+        <Button
+          variant='raised'
+          color='primary'
+          onClick={() => this.handleFinish(mailbox, onRequestCancel)}>
+          Finish
+        </Button>
       </div>
     )
 
@@ -212,35 +232,37 @@ export default class WizardConfigureGeneric extends React.Component {
         mailboxId={mailbox.id}
         buttons={buttons}
         {...passProps}>
-        <h2 style={styles.heading}>Configure your Account</h2>
-        <div style={styles.subheading}>
+        <h2 className={classes.heading}>Configure your Account</h2>
+        <div className={classes.subheading}>
           Enter the web address and the name of the website you want
           to add
         </div>
         <div>
           <TextField
-            ref={NAME_REF}
+            inputRef={(n) => { this.nameInputRef = n }}
             fullWidth
-            floatingLabelFixed
-            hintText='My Website'
-            floatingLabelText='Website Name'
+            InputLabelProps={{ shrink: true }}
+            placeholder='My Website'
+            label='Website Name'
             value={displayName}
-            errorText={displayNameError}
+            error={!!displayNameError}
+            helperText={displayNameError}
             onChange={(evt) => this.setState({ displayName: evt.target.value })}
             onKeyDown={(evt) => {
               if (evt.keyCode === 13) {
-                this.refs[URL_REF].focus()
+                this.urlInputRef.focus()
               }
             }} />
           <TextField
-            ref={URL_REF}
+            inputRef={(n) => { this.urlInputRef = n }}
             fullWidth
             type='url'
-            floatingLabelFixed
-            hintText='https://wavebox.io'
-            floatingLabelText='Website Url'
+            InputLabelProps={{ shrink: true }}
+            placeholder='https://wavebox.io'
+            label='Website Url'
             value={serviceUrl}
-            errorText={serviceUrlError}
+            error={!!serviceUrlError}
+            helperText={serviceUrlError}
             onChange={(evt) => this.setState({ serviceUrl: evt.target.value })}
             onKeyDown={(evt) => {
               if (evt.keyCode === 13) {
@@ -248,36 +270,36 @@ export default class WizardConfigureGeneric extends React.Component {
               }
             }} />
         </div>
-        <SelectField
-          floatingLabelText='Open new windows in which Browser'
+        <Select
+          label='Open new windows in which Browser'
           value={defaultWindowOpenMode}
-          floatingLabelFixed
           fullWidth
-          onChange={(evt, index, value) => {
-            this.setState({ defaultWindowOpenMode: value })
+          onChange={(evt) => {
+            this.setState({ defaultWindowOpenMode: evt.target.value })
           }}>
           {Object.keys(CoreMailbox.DEFAULT_WINDOW_OPEN_MODES).map((mode) => {
-            return (<MenuItem key={mode} value={mode} primaryText={humanizedOpenModes[mode]} />)
+            return (<MenuItem key={mode} value={mode}>{humanizedOpenModes[mode]}</MenuItem>)
           })}
-        </SelectField>
+        </Select>
         <br />
-        <Toggle
-          toggled={restoreLastUrl}
+        <Switch
+          checked={restoreLastUrl}
+          color='primary'
           label='Restore last page on load'
           labelPosition='right'
-          onToggle={(evt, toggled) => {
-            this.setState({ restoreLastUrl: toggled })
-          }} />
-        <Toggle
-          toggled={configureDisplayFromPage}
+          onChange={(evt, toggled) => { this.setState({ restoreLastUrl: toggled }) }} />
+        <Switch
+          checked={configureDisplayFromPage}
+          color='primary'
           label='Use Page Title & Theme to customise icon appearance'
           labelPosition='right'
-          onToggle={(evt, toggled) => this.setState({ configureDisplayFromPage: toggled })} />
-        <Toggle
-          toggled={hasNavigationToolbar}
+          onChange={(evt, toggled) => this.setState({ configureDisplayFromPage: toggled })} />
+        <Switch
+          checked={hasNavigationToolbar}
+          color='primary'
           label='Show navigation toolbar'
           labelPosition='right'
-          onToggle={(evt, toggled) => this.setState({ hasNavigationToolbar: toggled })} />
+          onChange={(evt, toggled) => this.setState({ hasNavigationToolbar: toggled })} />
       </WizardConfigureDefaultLayout>
     )
   }

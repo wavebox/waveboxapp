@@ -1,13 +1,13 @@
 import React from 'react'
 import { HashRouter, Route } from 'react-router-dom'
 import AppScene from './AppScene'
-import SettingsScene from './SettingsScene'
+import MailboxWizardAddScene from './MailboxWizardAddScene'
+import MailboxWizardScene from './MailboxWizardScene'
+/*import SettingsScene from './SettingsScene'
 import DictionaryInstallerScene from './DictionaryInstallerScene'
 import ComposePickerScene from './ComposePickerScene'
 import ProScene from './ProScene'
 import EarlyBuildToast from './EarlyBuildToast'
-import MailboxWizardScene from './MailboxWizardScene'
-import MailboxWizardAddScene from './MailboxWizardAddScene'
 import MailboxReauthenticatingScene from './MailboxReauthenticatingScene'
 import AppWizardScene from './AppWizardScene'
 import NewsScene from './NewsScene'
@@ -27,7 +27,7 @@ import {
   AccountStandaloneScene
 } from './AccountScene'
 import LinuxSetupScene from './LinuxSetupScene'
-import PrivacyDialog from './PrivacyDialog'
+import PrivacyDialog from './PrivacyDialog'*/
 
 export default class WaveboxRouter extends React.Component {
   /* **************************************************************************/
@@ -41,16 +41,17 @@ export default class WaveboxRouter extends React.Component {
       <HashRouter>
         <div>
           <AppScene />
+          {/*
           <EarlyBuildToast />
           <NotificationPanel />
 
           <Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
 
-          <Route path='/dictionary_installer' component={DictionaryInstallerScene} />
+          <Route path='/dictionary_installer' component={DictionaryInstallerScene} />*/}
 
           <Route path='/mailbox_wizard/add' component={MailboxWizardAddScene} />
           <Route path='/mailbox_wizard/:mailboxType/:accessMode/:step/:mailboxId?' component={MailboxWizardScene} />
-          <Route path='/mailbox/reauthenticating' component={MailboxReauthenticatingScene} />
+          {/*<Route path='/mailbox/reauthenticating' component={MailboxReauthenticatingScene} />
 
           <Route path='/mailbox_delete/:mailboxId' component={MailboxDeleteScene} />
           <Route path='/mailbox_service_delete/:mailboxId/:serviceType' component={MailboxServiceDeleteScene} />
@@ -75,6 +76,7 @@ export default class WaveboxRouter extends React.Component {
 
           <Route path='/setup/linux' component={LinuxSetupScene} />
           <PrivacyDialog />
+          */}
         </div>
       </HashRouter>
     )

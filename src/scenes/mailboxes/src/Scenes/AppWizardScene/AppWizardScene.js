@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { RaisedButton, FlatButton } from 'material-ui'
+import { RaisedButton, FlatButton } from 'material-ui' //TODO
 import { FullscreenModal } from 'Components'
 import { settingsActions } from 'stores/settings'
 import { platformStore } from 'stores/platform'

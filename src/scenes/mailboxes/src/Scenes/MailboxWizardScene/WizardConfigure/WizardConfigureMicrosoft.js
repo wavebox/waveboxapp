@@ -4,8 +4,10 @@ import { mailboxActions, MicrosoftDefaultServiceReducer } from 'stores/mailbox'
 import { Paper } from 'material-ui'
 import WizardConfigureUnreadModeOption from './WizardConfigureUnreadModeOption'
 import MicrosoftDefaultService from 'shared/Models/Accounts/Microsoft/MicrosoftDefaultService'
-import * as Colors from 'material-ui/styles/colors'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
+import { withStyles } from 'material-ui/styles'
+import yellow from 'material-ui/colors/yellow'
+import lightBlue from 'material-ui/colors/lightBlue'
 
 const styles = {
   // Typography
@@ -58,6 +60,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class WizardConfigureMicrosoft extends React.Component {
   /* **************************************************************************/
   // Class
@@ -86,7 +89,7 @@ export default class WizardConfigureMicrosoft extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { mailbox, onRequestCancel, ...passProps } = this.props
+    const { mailbox, onRequestCancel, classes, ...passProps } = this.props
     const unreadMode = mailbox.defaultService.unreadMode
 
     return (
@@ -94,24 +97,24 @@ export default class WizardConfigureMicrosoft extends React.Component {
         onRequestCancel={onRequestCancel}
         mailboxId={mailbox.id}
         {...passProps}>
-        <h2 style={styles.heading}>Choose your Inbox mode</h2>
-        <p style={styles.subHeading}>
+        <h2 className={classes.heading}>Choose your Inbox mode</h2>
+        <p className={classes.subHeading}>
           Your Microsoft account uses one of the following modes to organise your inbox.
           Select the one that matches your existing settings. Don't worry if you don't know
           what it is you can change it later!
         </p>
-        <div style={styles.unreadOptions}>
+        <div className={classes.unreadOptions}>
           <WizardConfigureUnreadModeOption
-            style={styles.unreadOption}
-            color={Colors.yellow700}
+            className={classes.unreadOption}
+            color={yellow[700]}
             selected={unreadMode === MicrosoftDefaultService.UNREAD_MODES.INBOX_UNREAD}
             onSelected={() => this.handleModePicked(MicrosoftDefaultService.UNREAD_MODES.INBOX_UNREAD)}
             name='Unread Inbox'
             popoverContent={(
-              <div style={styles.popoverContainer}>
+              <div className={classes.popoverContainer}>
                 <h3>Unread Inbox</h3>
-                <Paper style={styles.popoverTitleTabContainer}>
-                  <div style={styles.popoverTitleTabItem}>Inbox</div>
+                <Paper className={classes.popoverTitleTabContainer}>
+                  <div className={classes.popoverTitleTabItem}>Inbox</div>
                 </Paper>
                 <p>
                   Your new emails are sent directly to your Inbox. Typically the title you see above
@@ -120,15 +123,15 @@ export default class WizardConfigureMicrosoft extends React.Component {
               </div>
             )} />
           <WizardConfigureUnreadModeOption
-            style={styles.unreadOption}
-            color={Colors.lightBlue700}
+            className={classes.unreadOption}
+            color={lightBlue[700]}
             selected={unreadMode === MicrosoftDefaultService.UNREAD_MODES.INBOX_FOCUSED_UNREAD}
             onSelected={() => this.handleModePicked(MicrosoftDefaultService.UNREAD_MODES.INBOX_FOCUSED_UNREAD)}
             name='Focused Inbox'
             popoverContent={(
-              <div style={styles.popoverContainer}>
+              <div className={classes.popoverContainer}>
                 <h3>Focused Inbox</h3>
-                <Paper style={styles.popoverTitleTabContainer}>
+                <Paper className={classes.popoverTitleTabContainer}>
                   <div style={{...styles.popoverTitleTabItem, ...styles.popoverTitleTabItemActive}}>Focused</div>
                   <div style={{...styles.popoverTitleTabItem, ...styles.popoverTitleTabItemInactive}}>Other</div>
                 </Paper>
@@ -139,7 +142,7 @@ export default class WizardConfigureMicrosoft extends React.Component {
               </div>
             )} />
         </div>
-        <p style={styles.extraSubHeading}>Hover over each choice for more information</p>
+        <p className={classes.extraSubHeading}>Hover over each choice for more information</p>
       </WizardConfigureDefaultLayout>
     )
   }

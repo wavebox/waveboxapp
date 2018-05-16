@@ -1,10 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Dialog, RaisedButton, FlatButton } from 'material-ui'
+import { Dialog, RaisedButton, FlatButton } from 'material-ui' //TODO
 import { updaterActions, updaterStore } from 'stores/updater'
 import UpdateModalTitle from './UpdateModalTitle'
-import * as Colors from 'material-ui/styles/colors'
+import * as Colors from 'material-ui/styles/colors' //TODO
 import electron from 'electron'
 import pkg from 'package.json'
 

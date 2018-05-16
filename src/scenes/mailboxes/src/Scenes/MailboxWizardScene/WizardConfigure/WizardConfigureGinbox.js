@@ -3,8 +3,10 @@ import PropTypes from 'prop-types'
 import { mailboxActions, GoogleDefaultServiceReducer } from 'stores/mailbox'
 import WizardConfigureUnreadModeOption from './WizardConfigureUnreadModeOption'
 import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
-import * as Colors from 'material-ui/styles/colors'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
+import { withStyles } from 'material-ui/styles'
+import yellow from 'material-ui/colors/yellow'
+import lightBlue from 'material-ui/colors/lightBlue'
 
 const styles = {
   // Typography
@@ -43,6 +45,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class WizardConfigureGinbox extends React.Component {
   /* **************************************************************************/
   // Class
@@ -74,6 +77,7 @@ export default class WizardConfigureGinbox extends React.Component {
     const {
       mailbox,
       onRequestCancel,
+      classes,
       ...passProps
     } = this.props
     const unreadMode = mailbox.defaultService.unreadMode
@@ -83,23 +87,23 @@ export default class WizardConfigureGinbox extends React.Component {
         onRequestCancel={onRequestCancel}
         mailboxId={mailbox.id}
         {...passProps}>
-        <h2 style={styles.heading}>Pick which unread mode to use</h2>
-        <p style={styles.subHeading}>
+        <h2 className={classes.heading}>Pick which unread mode to use</h2>
+        <p className={classes.subHeading}>
           Google Inbox organizes your emails into bundles. You can configure
           Wavebox to notify you about these or emails when they arrive depending
           on how you use Google Inbox.
         </p>
-        <div style={styles.unreadOptions}>
+        <div className={classes.unreadOptions}>
           <WizardConfigureUnreadModeOption
-            style={styles.unreadOption}
-            color={Colors.yellow700}
+            className={classes.unreadOption}
+            color={yellow[700]}
             selected={unreadMode === GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED}
             onSelected={() => this.handleModePicked(GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED)}
             name='Unread Unbundled Messages'
             popoverContent={(
-              <div style={styles.popoverContainer}>
+              <div className={classes.popoverContainer}>
                 <h3>Unread Unbundled Messages</h3>
-                <img style={styles.popoverPreviewImage} src='../../images/ginbox_mode_unreadunbundled_small.png' />
+                <img className={classes.popoverPreviewImage} src='../../images/ginbox_mode_unreadunbundled_small.png' />
                 <p>
                   Some new emails are automatically placed in bundles such as <em>Social</em>
                   and <em>Promotions</em> when they arrive. You'll only be notified about emails
@@ -109,15 +113,15 @@ export default class WizardConfigureGinbox extends React.Component {
               </div>
             )} />
           <WizardConfigureUnreadModeOption
-            style={styles.unreadOption}
-            color={Colors.lightBlue700}
+            className={classes.unreadOption}
+            color={lightBlue[700]}
             selected={unreadMode === GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD}
             onSelected={() => this.handleModePicked(GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD)}
             name='Unread Inbox'
             popoverContent={(
-              <div style={styles.popoverContainer}>
+              <div className={classes.popoverContainer}>
                 <h3>Unread Inbox</h3>
-                <img style={styles.popoverPreviewImage} src='../../images/ginbox_mode_inbox_small.png' />
+                <img className={classes.popoverPreviewImage} src='../../images/ginbox_mode_inbox_small.png' />
                 <p>
                   Some new emails are automatically placed in bundles such as <em>Social</em>
                   and <em>Promotions</em> when they arrive. You'll be notified about the total amount
@@ -126,7 +130,7 @@ export default class WizardConfigureGinbox extends React.Component {
               </div>
             )} />
         </div>
-        <p style={styles.extraSubHeading}>Hover over each choice for more information</p>
+        <p className={classes.extraSubHeading}>Hover over each choice for more information</p>
       </WizardConfigureDefaultLayout>
     )
   }

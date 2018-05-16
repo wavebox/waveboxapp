@@ -1,34 +1,28 @@
 import React from 'react'
-import { RaisedButton } from 'material-ui'
+import { Button, Dialog, DialogActions, DialogContent } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
-import { WaveboxWebView, FullscreenModal } from 'Components'
+import { WaveboxWebView } from 'Components'
 import { userStore } from 'stores/user'
 import { mailboxStore } from 'stores/mailbox'
 import { WaveboxHTTP } from 'Server'
-import Spinner from 'sharedui/Components/Activity/Spinner'
-import * as Colors from 'material-ui/styles/colors'
+import Spinner from 'wbui/Activity/Spinner'
+import lightBlue from 'material-ui/colors/lightBlue'
+import { withStyles } from 'material-ui/styles'
 
 const styles = {
-  modalActions: {
-    position: 'absolute',
-    height: 52,
-    left: 0,
-    right: 0,
-    bottom: 0,
+  dialog: {
+    maxWidth: '100%',
+    width: '100%',
+    height: '100%'
+  },
+  dialogContent: {
+    position: 'relative'
+  },
+  dialogActions: {
     backgroundColor: 'rgb(242, 242, 242)',
     borderTop: '1px solid rgb(232, 232, 232)',
-    borderBottomLeftRadius: 2,
-    borderBottomRightRadius: 2
-  },
-  modalBody: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 52,
-    backgroundColor: 'rgb(255, 255, 255)',
-    borderTopLeftRadius: 2,
-    borderTopRightRadius: 2
+    margin: 0,
+    padding: '8px 4px'
   },
   loadingCover: {
     position: 'absolute',
@@ -43,6 +37,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class MailboxWizardAddScene extends React.Component {
   /* **************************************************************************/
   // Component lifecycle
@@ -128,6 +123,7 @@ export default class MailboxWizardAddScene extends React.Component {
   }
 
   render () {
+    const { classes } = this.props
     const {
       open,
       isLoading,
@@ -135,33 +131,28 @@ export default class MailboxWizardAddScene extends React.Component {
       url
     } = this.state
 
-    const actions = (
-      <div>
-        <RaisedButton label='Cancel' onClick={this.handleClose} />
-      </div>
-    )
-
     return (
-      <FullscreenModal
-        modal={false}
-        actionsContainerStyle={styles.modalActions}
-        bodyStyle={styles.modalBody}
-        actions={actions}
-        open={open}
-        onRequestClose={this.handleClose}>
-        {isLoading ? (
-          <div style={styles.loadingCover}>
-            <Spinner size={50} color={Colors.lightBlue600} speed={0.75} />
-            <p>Fetching all the latest Apps</p>
-          </div>
-        ) : undefined}
-        {renderWebview ? (
-          <WaveboxWebView
-            didStartLoading={() => this.setState({ isLoading: true })}
-            didStopLoading={() => this.setState({ isLoading: false })}
-            src={url} />
-        ) : undefined}
-      </FullscreenModal>
+      <Dialog open={open} onClose={this.handleClose} classes={{ paper: classes.dialog }}>
+        <DialogContent className={classes.dialogContent}>
+          {isLoading ? (
+            <div className={classes.loadingCover}>
+              <Spinner size={50} color={lightBlue[600]} speed={0.75} />
+              <p>Fetching all the latest Apps</p>
+            </div>
+          ) : undefined}
+          {renderWebview ? (
+            <WaveboxWebView
+              didStartLoading={() => this.setState({ isLoading: true })}
+              didStopLoading={() => this.setState({ isLoading: false })}
+              src={url} />
+          ) : undefined}
+        </DialogContent>
+        <DialogActions className={classes.dialogActions}>
+          <Button variant='raised' onClick={this.handleClose}>
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
     )
   }
 }

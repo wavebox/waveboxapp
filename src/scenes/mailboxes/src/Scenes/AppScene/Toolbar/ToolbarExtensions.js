@@ -2,6 +2,8 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import ToolbarExtension from './ToolbarExtension'
 import { crextensionStore } from 'stores/crextension'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
 const styles = {
   buttons: {
@@ -12,6 +14,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class ToolbarExtensions extends React.Component {
   /* **************************************************************************/
   // Class
@@ -62,13 +65,16 @@ export default class ToolbarExtensions extends React.Component {
       toolbarHeight,
       tabId,
       style,
+      classes,
+      className,
       ...passProps
     } = this.props
 
     return (
       <div
         {...passProps}
-        style={{ height: toolbarHeight, ...styles.buttons, ...style }}>
+        className={classNames(classes.buttons, className)}
+        style={{ height: toolbarHeight, ...style }}>
         {extensionIds.map((extensionId) => {
           return (
             <ToolbarExtension

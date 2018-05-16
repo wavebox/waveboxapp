@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dialog, RaisedButton, List, ListItem } from 'material-ui'
+import { Dialog, RaisedButton, List, ListItem } from 'material-ui' //TODO
 import { emblinkStore, emblinkActions } from 'stores/emblink'
 import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'

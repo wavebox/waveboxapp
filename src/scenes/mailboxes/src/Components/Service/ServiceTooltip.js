@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { FontIcon } from 'material-ui'
+import { FontIcon } from 'material-ui' //TODO
 import shallowCompare from 'react-addons-shallow-compare'
 import ReactPortalTooltip from 'react-portal-tooltip'
-import * as Colors from 'material-ui/styles/colors'
+import * as Colors from 'material-ui/styles/colors' //TODO
 import { basicPopoverStyles400w } from 'sharedui/Components/Toolbar/ToolbarPopoverStyles'
 
 const styles = {

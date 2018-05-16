@@ -11,7 +11,7 @@ import {crextensionStore, crextensionActions} from 'stores/crextension'
 import {platformStore, platformActions} from 'stores/platform'
 import {notifhistStore, notifhistActions} from 'stores/notifhist'
 import Debug from 'Debug'
-import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
+import MouseNavigationDarwin from 'wbui/MouseNavigationDarwin'
 import ResourceMonitorResponder from './ResourceMonitorResponder'
 import {
   WB_MAILBOXES_WINDOW_JS_LOADED,

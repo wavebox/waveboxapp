@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Badge, FontIcon } from 'material-ui'
+import { Badge, FontIcon } from 'material-ui' //TODO
 import shallowCompare from 'react-addons-shallow-compare'
 import Color from 'color'
 
@@ -50,7 +50,7 @@ export default class Servicebadge extends React.Component {
     let colorInverse
     try {
       if (color) {
-        colorInverse = Color(color).isLight() ? 'black' : 'white'
+        colorInverse = Color(color).light() ? 'black' : 'white'
       }
     } catch (ex) { /* no-op */ }
 

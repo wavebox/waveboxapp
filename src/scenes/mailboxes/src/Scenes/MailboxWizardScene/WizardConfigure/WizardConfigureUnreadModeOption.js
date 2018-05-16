@@ -1,9 +1,11 @@
 import React from 'react'
-import { FontIcon } from 'material-ui'
+import { Icon } from 'material-ui'
 import PropTypes from 'prop-types'
 import uuid from 'uuid'
 import shallowCompare from 'react-addons-shallow-compare'
 import ReactPortalTooltip from 'react-portal-tooltip'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
 const styles = {
   container: {
@@ -49,6 +51,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class WizardConfigureUnreadModeOption extends React.Component {
   /* **************************************************************************/
   // Class
@@ -80,23 +83,23 @@ export default class WizardConfigureUnreadModeOption extends React.Component {
   }
 
   render () {
-    const { color, selected, onSelected, name, popoverContent, ...passProps } = this.props
+    const { color, selected, onSelected, name, popoverContent, classes, ...passProps } = this.props
     const { hovering, generatedId } = this.state
 
     return (
       <div {...passProps}>
         <div
           id={`ReactComponent-WizardConfigureUnreadModeOption-${generatedId}`}
-          style={styles.container}
+          className={classes.container}
           onMouseEnter={() => this.setState({ hovering: true })}
           onMouseLeave={() => this.setState({ hovering: false })}
           onClick={onSelected}>
           <div style={{ ...styles.option, backgroundColor: color, borderColor: hovering ? color : 'white' }}>
             {selected ? (
-              <FontIcon className='fas fa-check' style={styles.selectedIcon} />
+              <Icon className={classNames(classes.selectedIcon, 'fas fa-check')} />
             ) : undefined}
           </div>
-          <div style={styles.name}>{name}</div>
+          <div className={classes.name}>{name}</div>
         </div>
         <ReactPortalTooltip
           active={hovering}

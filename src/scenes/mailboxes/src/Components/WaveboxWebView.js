@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import BrowserView from 'sharedui/Components/BrowserView'
+import BrowserView from 'wbui/Guest/BrowserView'
 import { URL } from 'url'
 import {
   WAVEBOX_CAPTURE_URLS,

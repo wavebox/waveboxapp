@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper, SelectField, MenuItem, Toggle } from 'material-ui'
+import { Paper, SelectField, MenuItem, Toggle } from 'material-ui' //TODO
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
 import styles from '../CommonSettingStyles'

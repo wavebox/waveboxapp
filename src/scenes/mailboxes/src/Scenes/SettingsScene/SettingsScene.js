@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types'
 import './SettingsScene.less'
 import React from 'react'
-import { RaisedButton, FlatButton, Tabs, Tab } from 'material-ui'
+import { RaisedButton, FlatButton, Tabs, Tab } from 'material-ui' //TODO
 import GeneralSettings from './GeneralSettings'
 import ExtensionSettings from './ExtensionSettings'
 import AccountSettings from './Accounts/AccountSettings'
 import ProSettings from './ProSettings'
 import AdvancedSettings from './AdvancedSettings'
 import SupportSettings from './SupportSettings'
-import * as Colors from 'material-ui/styles/colors'
+import * as Colors from 'material-ui/styles/colors' //TODO
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsSceneTabTemplate from './SettingsSceneTabTemplate'
 import { WB_RELAUNCH_APP } from 'shared/ipcEvents'

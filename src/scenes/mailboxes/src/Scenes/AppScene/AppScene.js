@@ -1,4 +1,3 @@
-import './AppScene.less'
 import React from 'react'
 import PropTypes from 'prop-types'
 import MailboxTabManager from './Mailbox/MailboxTabManager'
@@ -9,6 +8,8 @@ import { settingsStore } from 'stores/settings'
 import { crextensionStore } from 'stores/crextension'
 import { userStore } from 'stores/user'
 import { mailboxStore } from 'stores/mailbox'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
 const SIDEBAR_WIDTH = 70
 const TOOLBAR_HEIGHT = 40
@@ -28,7 +29,9 @@ const styles = {
     top: TOOLBAR_HEIGHT,
     left: SIDEBAR_WIDTH,
     right: 0,
-    bottom: 0
+    bottom: 0,
+    '&.no-sidebar': { left: 0 },
+    '&.no-toolbar': { top: 0 }
   },
   toolbar: {
     position: 'fixed',
@@ -37,7 +40,8 @@ const styles = {
     right: 0,
     height: TOOLBAR_HEIGHT,
     zIndex: 101,
-    WebkitAppRegion: 'drag'
+    WebkitAppRegion: 'drag',
+    '&.no-sidebar': { left: 0 }
   },
   titleDragbar: {
     position: 'absolute',
@@ -46,7 +50,8 @@ const styles = {
     right: 0,
     height: 16,
     zIndex: 100,
-    WebkitAppRegion: 'drag'
+    WebkitAppRegion: 'drag',
+    '&.no-sidebar': { left: 0 }
   },
   mailboxTabManager: {
     position: 'absolute',
@@ -57,6 +62,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class AppScene extends React.Component {
   /* **************************************************************************/
   // Class
@@ -138,7 +144,7 @@ export default class AppScene extends React.Component {
   }
 
   render () {
-    const { children, ...passProps } = this.props
+    const { children, classes, ...passProps } = this.props
     const {
       hasSidebar,
       appHasTitlebar,
@@ -147,35 +153,31 @@ export default class AppScene extends React.Component {
       hasNavigationInToolbar
     } = this.state
     const hasToolbar = hasExtensionsInToolbar || hasServicesInToolbar || hasNavigationInToolbar
+
     return (
       <div {...passProps}>
         {hasSidebar ? (
-          <div style={styles.master} className='WB-Master'>
+          <div className={classNames(classes.master, 'WB-Mater')}>
             <Sidelist />
           </div>
         ) : undefined}
         {hasToolbar ? (
           <Toolbar
             toolbarHeight={TOOLBAR_HEIGHT}
-            style={{
-              ...styles.toolbar,
-              ...(hasSidebar ? {} : { left: 0 })
-            }} />
+            className={classNames(classes.toolbar, !hasSidebar ? 'no-sidebar' : undefined)} />
         ) : undefined}
         {!appHasTitlebar ? (
-          <div style={{
-            ...styles.titleDragbar,
-            ...(hasSidebar ? {} : { left: 0 })
-          }} />
+          <div className={classNames(classes.titleDragbar, !hasSidebar ? 'no-siderbar' : undefined)} />
         ) : undefined}
-        <div style={{
-          ...styles.detail,
-          ...(hasSidebar ? {} : { left: 0 }),
-          ...(hasToolbar ? {} : { top: 0 })
-        }} className='WB-Detail'>
+        <div className={classNames(
+          classes.detail,
+          !hasSidebar ? 'no-sidebar' : undefined,
+          !hasToolbar ? 'no-toolbar' : undefined,
+          'WB-Detail'
+        )}>
           <MailboxTabManager style={styles.mailboxTabManager} />
         </div>
-        {this.props.children}
+        {children}
       </div>
     )
   }

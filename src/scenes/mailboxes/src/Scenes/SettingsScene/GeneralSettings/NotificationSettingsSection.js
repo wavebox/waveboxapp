@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Toggle, Paper, SelectField, MenuItem, FlatButton, FontIcon, IconMenu, Divider } from 'material-ui'
+import { Toggle, Paper, SelectField, MenuItem, FlatButton, FontIcon, IconMenu, Divider } from 'material-ui' //TODO
 import Timeago from 'react-timeago'
 import settingsActions from 'stores/settings/settingsActions'
 import commonStyles from '../CommonSettingStyles'

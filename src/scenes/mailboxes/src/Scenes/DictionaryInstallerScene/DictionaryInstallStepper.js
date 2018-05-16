@@ -5,10 +5,10 @@ import {
   Stepper, Step, StepLabel, StepContent,
   RaisedButton, FlatButton,
   SelectField, MenuItem
-} from 'material-ui'
+} from 'material-ui' //TODO
 import electron from 'electron'
 import Spinner from 'sharedui/Components/Activity/Spinner'
-import * as Colors from 'material-ui/styles/colors'
+import * as Colors from 'material-ui/styles/colors' //TODO
 
 const STEPS = {
   PICK: 0,

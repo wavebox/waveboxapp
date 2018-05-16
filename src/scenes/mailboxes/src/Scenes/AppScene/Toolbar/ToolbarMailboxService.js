@@ -6,10 +6,13 @@ import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
 import uuid from 'uuid'
 import MailboxServicePopover from '../MailboxServicePopover'
-import { ServiceBadge, ServiceTooltip } from 'Components/Service'
-import * as Colors from 'material-ui/styles/colors'
+import MailboxServiceBagde from 'wbui/MailboxServiceBadge'
+import MailboxServiceTooltip from 'wbui/MailboxServiceTooltip'
 import Resolver from 'Runtime/Resolver'
 import UISettings from 'shared/Models/Settings/UISettings'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
+import red from 'material-ui/colors/red'
 
 const styles = {
   /**
@@ -19,8 +22,16 @@ const styles = {
     cursor: 'pointer',
     borderBottomWidth: 2,
     borderBottomStyle: 'solid',
+    borderBottomColor: 'transparent',
     position: 'relative',
-    WebkitAppRegion: 'no-drag'
+    WebkitAppRegion: 'no-drag',
+    '&.is-active': {
+      borderBottomColor: 'white',
+      backgroundColor: 'rgba(0, 0, 0, 0.3)'
+    },
+    '&:hover': {
+      borderBottomColor: 'white'
+    }
   },
 
   /**
@@ -49,7 +60,7 @@ const styles = {
     top: 3,
     right: 3,
     backgroundColor: 'rgba(238, 54, 55, 0.95)',
-    color: Colors.red50,
+    color: red[50],
     fontWeight: process.platform === 'linux' ? 'normal' : '300',
     width: 'auto',
     paddingLeft: 2,
@@ -70,6 +81,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class ToolbarMailboxService extends React.Component {
   /* **************************************************************************/
   // Class
@@ -118,7 +130,6 @@ export default class ToolbarMailboxService extends React.Component {
     const { mailboxId, serviceType } = this.props
     return Object.assign({
       isHovering: false,
-      popover: false,
       popoverAnchor: null,
       globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator,
       tooltipsEnabled: settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED || settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.TOOLBAR_ONLY
@@ -181,7 +192,6 @@ export default class ToolbarMailboxService extends React.Component {
   handleOpenPopover = (evt) => {
     evt.preventDefault()
     this.setState({
-      popover: true,
       popoverAnchor: evt.target
     })
   }
@@ -199,6 +209,9 @@ export default class ToolbarMailboxService extends React.Component {
       toolbarHeight,
       mailboxId,
       serviceType,
+      classes,
+      className,
+      style,
       ...passProps
     } = this.props
     const {
@@ -207,7 +220,6 @@ export default class ToolbarMailboxService extends React.Component {
       isSleeping,
       service,
       mailbox,
-      popover,
       popoverAnchor,
       globalShowSleepableServiceIndicator,
       tooltipsEnabled,
@@ -221,19 +233,18 @@ export default class ToolbarMailboxService extends React.Component {
     return (
       <div
         {...passProps}
-        style={{
-          borderBottomColor: isActive || isHovering ? 'white' : 'transparent',
-          backgroundColor: isActive ? 'rgba(0, 0, 0, 0.3)' : 'transparent',
-          height: toolbarHeight,
-          width: toolbarHeight,
-          ...styles.tab
-        }}
+        className={classNames(
+          classes.tab,
+          isActive ? 'is-active' : undefined,
+          className
+        )}
+        style={{ height: toolbarHeight, width: toolbarHeight, ...style }}
         id={`ReactComponent-Toolbar-Mailbox-Service-${this.instanceId}`}
         onMouseEnter={() => this.setState({ isHovering: true })}
         onMouseLeave={() => this.setState({ isHovering: false })}
         onClick={this.handleServiceClicked}
         onContextMenu={this.handleOpenPopover}>
-        <ServiceBadge
+        <MailboxServiceBagde
           id={`ReactComponent-Sidelist-Item-Mailbox-Service-${this.instanceId}`}
           isAuthInvalid={false}
           supportsUnreadCount={service.supportsUnreadCount}
@@ -243,21 +254,20 @@ export default class ToolbarMailboxService extends React.Component {
           showUnreadActivityBadge={service.showUnreadActivityBadge}
           hasUnreadActivity={service.hasUnreadActivity}
           color={service.unreadBadgeColor}
-          badgeStyle={styles.badge}
-          style={styles.badgeContainer}
-          iconStyle={styles.badgeFAIcon}
+          badgeClassName={classes.badge}
+          className={classes.badgeContainer}
+          iconClassName={classes.badgeFAIcon}
           onMouseEnter={() => this.setState({ isHovering: true })}
           onMouseLeave={() => this.setState({ isHovering: false })}>
           <div
-            className={`WB-ServiceIcon-${mailbox.id}_${service.type}`}
+            className={classNames(classes.avatar, `WB-ServiceIcon-${mailbox.id}_${service.type}`)}
             style={{
               backgroundImage: `url("${Resolver.image(service.humanizedLogoAtSize(96))}")`,
-              filter: showSleeping ? 'grayscale(100%)' : 'none',
-              ...styles.avatar
+              filter: showSleeping ? 'grayscale(100%)' : 'none'
             }} />
-        </ServiceBadge>
+        </MailboxServiceBagde>
         {tooltipsEnabled ? (
-          <ServiceTooltip
+          <MailboxServiceTooltip
             mailbox={mailbox}
             service={service}
             isRestricted={isRestricted}
@@ -271,9 +281,9 @@ export default class ToolbarMailboxService extends React.Component {
         <MailboxServicePopover
           mailboxId={mailboxId}
           serviceType={serviceType}
-          isOpen={popover}
+          isOpen={!!popoverAnchor}
           anchor={popoverAnchor}
-          onRequestClose={() => this.setState({ popover: false })} />
+          onRequestClose={() => this.setState({ popoverAnchor: null })} />
       </div>
     )
   }

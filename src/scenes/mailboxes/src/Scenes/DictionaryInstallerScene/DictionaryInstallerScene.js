@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Dialog } from 'material-ui'
+import { Dialog } from 'material-ui' //TODO
 import dictionariesStore from 'stores/dictionaries/dictionariesStore'
 import DictionaryInstallStepper from './DictionaryInstallStepper'
 

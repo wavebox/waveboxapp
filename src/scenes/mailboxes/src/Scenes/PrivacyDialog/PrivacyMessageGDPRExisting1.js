@@ -1,8 +1,8 @@
 import React from 'react'
-import { RaisedButton, FlatButton, Dialog, FontIcon } from 'material-ui'
+import { RaisedButton, FlatButton, Dialog, FontIcon } from 'material-ui' //TODO
 import shallowCompare from 'react-addons-shallow-compare'
 import { remote } from 'electron'
-import * as Colors from 'material-ui/styles/colors'
+import * as Colors from 'material-ui/styles/colors' //TODO
 import Resolver from 'Runtime/Resolver'
 import PropTypes from 'prop-types'
 import { PRIVACY_URL } from 'shared/constants'

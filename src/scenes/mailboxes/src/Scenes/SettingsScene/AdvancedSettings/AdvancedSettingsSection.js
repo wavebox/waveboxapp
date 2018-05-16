@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Toggle, Paper, FontIcon, RaisedButton } from 'material-ui'
+import { Toggle, Paper, FontIcon, RaisedButton } from 'material-ui' //TODO
 import { settingsActions } from 'stores/settings'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'

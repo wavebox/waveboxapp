@@ -4,6 +4,8 @@ import { mailboxStore, mailboxActions, MailboxReducer } from 'stores/mailbox'
 import ToolbarMailboxService from './ToolbarMailboxService'
 import {SortableContainer, SortableElement} from 'react-sortable-hoc'
 import CoreService from 'shared/Models/Accounts/CoreService'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
 const styles = {
   tabs: {
@@ -24,9 +26,9 @@ const SortableItem = SortableElement(({ mailboxId, serviceType, toolbarHeight })
   )
 })
 
-const SortableList = SortableContainer(({ mailboxId, serviceTypes, toolbarHeight, style }) => {
+const SortableList = SortableContainer(({ mailboxId, serviceTypes, toolbarHeight, style, className }) => {
   return (
-    <div style={style} >
+    <div style={style} className={className}>
       {serviceTypes.map((serviceType, index) => (
         <SortableItem
           key={serviceType}
@@ -40,6 +42,7 @@ const SortableList = SortableContainer(({ mailboxId, serviceTypes, toolbarHeight
   )
 })
 
+@withStyles(styles)
 export default class ToolbarMailboxServices extends React.Component {
   /* **************************************************************************/
   // Class
@@ -116,7 +119,7 @@ export default class ToolbarMailboxServices extends React.Component {
   }
 
   render () {
-    const { mailboxId, toolbarHeight, style } = this.props
+    const { mailboxId, toolbarHeight, style, classes, className } = this.props
     const { serviceTypes } = this.state
     if (!serviceTypes) { return false }
 
@@ -124,7 +127,8 @@ export default class ToolbarMailboxServices extends React.Component {
       <SortableList
         axis='x'
         distance={20}
-        style={{ height: toolbarHeight, ...styles.tabs, ...style }}
+        className={classNames(classes.tabs, className)}
+        style={{ height: toolbarHeight, ...style }}
         serviceTypes={serviceTypes}
         mailboxId={mailboxId}
         toolbarHeight={toolbarHeight}

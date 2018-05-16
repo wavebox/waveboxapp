@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { TextField, Checkbox, Slider } from 'material-ui'
+import { TextField, Checkbox, Slider } from 'material-ui' //TODO
 
 const styles = {
   // Sleep

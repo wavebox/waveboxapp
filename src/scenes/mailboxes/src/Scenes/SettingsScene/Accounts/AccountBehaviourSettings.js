@@ -2,11 +2,11 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import commonStyles from '../CommonSettingStyles'
-import { FlatButton, Paper } from 'material-ui'
+import { FlatButton, Paper } from 'material-ui' //TODO
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
 import { SleepableField } from 'Components/Fields'
-import * as Colors from 'material-ui/styles/colors'
+import * as Colors from 'material-ui/styles/colors' //TODO
 
 const styles = {
   sleepUnavailable: {

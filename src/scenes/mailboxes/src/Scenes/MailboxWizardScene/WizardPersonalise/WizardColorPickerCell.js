@@ -1,20 +1,23 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { FontIcon } from 'material-ui'
+import { Icon } from 'material-ui'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
 const styles = {
   container: {
-    borderWidth: 4,
-    borderStyle: 'solid',
+    border: '4px solid white',
     textAlign: 'center',
     cursor: 'pointer'
   },
   selectedIcon: {
-    color: 'white'
+    color: 'white',
+    verticalAlign: 'text-bottom'
   }
 }
 
+@withStyles(styles)
 export default class WizardColorPickerCell extends React.Component {
   /* **************************************************************************/
   // Class
@@ -44,7 +47,7 @@ export default class WizardColorPickerCell extends React.Component {
   }
 
   render () {
-    const { color, isSelected, onPicked, size, style, ...passProps } = this.props
+    const { color, isSelected, onPicked, size, className, classes, style, ...passProps } = this.props
     const { hovering } = this.state
 
     return (
@@ -53,23 +56,19 @@ export default class WizardColorPickerCell extends React.Component {
         onClick={() => onPicked(color)}
         onMouseEnter={() => this.setState({ hovering: true })}
         onMouseLeave={() => this.setState({ hovering: false })}
+        className={classNames(classes.container, className)}
         style={{
-          ...styles.container,
           width: size,
           height: size,
           lineHeight: size + 'px',
           backgroundColor: color,
-          borderColor: hovering ? color : 'white',
+          borderColor: hovering ? color : undefined,
           ...style
         }}>
         {isSelected ? (
-          <FontIcon
-            className='fas fa-check'
-            style={{
-              ...styles.selectedIcon,
-              verticalAlign: 'text-bottom',
-              fontSize: (size / 2) + 'px'
-            }} />
+          <Icon
+            className={classNames(classes.selectedIcon, 'fas fa-check')}
+            style={{ fontSize: (size / 2) + 'px' }} />
         ) : undefined}
       </div>
     )

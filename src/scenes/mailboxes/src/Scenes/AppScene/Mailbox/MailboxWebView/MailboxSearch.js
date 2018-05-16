@@ -1,16 +1,45 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Paper, TextField, IconButton } from 'material-ui'
-import * as Colors from 'material-ui/styles/colors'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
-import {
-  WB_WINDOW_FIND_START
-} from 'shared/ipcEvents'
+import { WB_WINDOW_FIND_START } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
+import grey from 'material-ui/colors/grey'
+import CloseIcon from '@material-ui/icons/Close'
+import SearchIcon from '@material-ui/icons/Search'
 
-const TEXT_FIELD_REF = 'textfield'
+const SEARCH_HEIGHT = 48
+const styles = {
+  container: {
+    position: 'absolute',
+    bottom: -SEARCH_HEIGHT - 5,
+    left: 0,
+    minWidth: 300,
+    height: SEARCH_HEIGHT,
+    backgroundColor: 'white',
+    transition: 'none !important',
+    zIndex: 10,
+    overflow: 'hidden',
 
+    '&.active': {
+      bottom: 0
+    }
+  },
+  icon: {
+    bottom: -7,
+    color: grey[600],
+    zIndex: 1
+  },
+  input: {
+    marginLeft: 15,
+    width: 200
+  }
+}
+
+@withStyles(styles)
 export default class MailboxSearch extends React.Component {
   /* **************************************************************************/
   // Class
@@ -23,6 +52,15 @@ export default class MailboxSearch extends React.Component {
 
   /* **************************************************************************/
   // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+    this.inputRef = null
+  }
+
+  /* **************************************************************************/
+  // Component Lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
@@ -115,7 +153,7 @@ export default class MailboxSearch extends React.Component {
 
   handleIPCSearchStart = () => {
     if (this.state.isActive) {
-      this.refs[TEXT_FIELD_REF].focus()
+      this.inputRef.focus()
     }
   }
 
@@ -131,50 +169,40 @@ export default class MailboxSearch extends React.Component {
     if (this.state.isActive) {
       if (this.state.isSearching !== prevState.isSearching) {
         if (this.state.isSearching) {
-          this.refs[TEXT_FIELD_REF].focus()
+          this.inputRef.focus()
         }
       }
     }
   }
 
   render () {
-    const { className, ...passProps } = this.props
+    const { className, classes, ...passProps } = this.props
     delete passProps.mailboxId
     delete passProps.serviceType
     const { isSearching, searchTerm } = this.state
 
-    const composedClassName = [
-      'ReactComponent-MailboxSearch',
-      isSearching ? 'active' : undefined
-    ].concat(className).filter((c) => !!c).join(' ')
-
     // Use tabIndex to prevent focusing with tab§
+    //TODO test above comment
     return (
-      <Paper {...passProps} className={composedClassName}>
+      <Paper
+        {...passProps}
+        className={classNames(
+          classes.container,
+          isSearching ? 'active' : undefined
+        )}>
         <TextField
-          ref={TEXT_FIELD_REF}
+          inputRef={(n) => { this.inputRef = n }}
           tabIndex={-1}
-          hintText='Search'
-          style={{ marginLeft: 15 }}
-          inputStyle={{ width: 200 }}
+          placeholder='Search'
+          className={classes.input}
           value={searchTerm}
           onChange={this.handleChange}
           onKeyDown={this.handleKeyPress} />
-        <IconButton
-          tabIndex={-1}
-          iconClassName='material-icons'
-          style={{ bottom: -7 }}
-          iconStyle={{ color: Colors.grey600 }}
-          onClick={this.handleFindNext}>
-          search
+        <IconButton tabIndex={-1} onClick={this.handleFindNext}>
+          <SearchIcon className={classes.icon} />
         </IconButton>
-        <IconButton
-          tabIndex={-1}
-          iconClassName='material-icons'
-          style={{ bottom: -7, zIndex: 1 }}
-          iconStyle={{ color: Colors.grey600 }}
-          onClick={this.handleStopSearch}>
-          close
+        <IconButton tabIndex={-1} onClick={this.handleStopSearch}>
+          <CloseIcon className={classes.icon} />
         </IconButton>
       </Paper>
     )

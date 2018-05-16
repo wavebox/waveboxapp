@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Dialog } from 'material-ui'
+import { Dialog } from 'material-ui' //TODO
 
+//TODO depricate?
 export default class MailboxWizardScene extends React.Component {
   /* **************************************************************************/
   // Class

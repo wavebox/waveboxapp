@@ -1,8 +1,11 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import * as Colors from 'material-ui/styles/colors'
 import shallowCompare from 'react-addons-shallow-compare'
-import { FontIcon } from 'material-ui'
+import { Icon } from 'material-ui'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
+import lightBlue from 'material-ui/colors/lightBlue'
+import red from 'material-ui/colors/red'
 
 const styles = {
   container: {
@@ -25,7 +28,9 @@ const styles = {
     fontSize: '35px',
     lineHeight: '60px',
     verticalAlign: 'middle',
-    marginTop: -10
+    marginTop: -10,
+    height: 60,
+    width: 60
   },
   stepNumber: {
     display: 'inline-block',
@@ -42,13 +47,13 @@ const styles = {
 styles.stepIconInactive = {
   ...styles.stepIconRaw,
   borderColor: 'rgba(255, 255, 255, 0.3)',
-  backgroundColor: Colors.lightBlue700,
+  backgroundColor: lightBlue[700],
   color: 'rgba(255, 255, 255, 0.3)'
 }
 styles.stepIconActive = {
   ...styles.stepIconRaw,
   borderColor: 'rgb(255, 255, 255)',
-  backgroundColor: Colors.redA200,
+  backgroundColor: red['A200'],
   color: 'rgb(255, 255, 255)'
 }
 styles.stepCheckInactive = {
@@ -68,6 +73,7 @@ styles.stepTextActive = {
   color: 'white'
 }
 
+@withStyles(styles)
 export default class MailboxWizardStepperStep extends React.Component {
   /* **************************************************************************/
   // Class
@@ -87,27 +93,28 @@ export default class MailboxWizardStepperStep extends React.Component {
   }
 
   /**
+  * @param classes:
   * @param step: the step to get the text for
   * @param active: true if this step is active
   * @return jsx
   */
-  renderStepText (step, active) {
+  renderStepText (classes, step, active) {
     switch (step) {
       case 0:
         return (
-          <div style={active ? styles.stepTextActive : styles.stepTextInactive}>
+          <div className={active ? classes.stepTextActive : classes.stepTextInactive}>
             Personalise
           </div>
         )
       case 1:
         return (
-          <div style={active ? styles.stepTextActive : styles.stepTextInactive}>
+          <div className={active ? classes.stepTextActive : classes.stepTextInactive}>
             Sign in
           </div>
         )
       case 2:
         return (
-          <div style={active ? styles.stepTextActive : styles.stepTextInactive}>
+          <div className={active ? classes.stepTextActive : classes.stepTextInactive}>
             Configure
           </div>
         )
@@ -116,32 +123,34 @@ export default class MailboxWizardStepperStep extends React.Component {
 
   /**
   * Renders the step icon
+  * @param classes:
   * @param step: the step to render for
   * @param active: true if this step is active
   * @param complete: true if this step is complete
   * @return jsx
   */
-  renderStepIcon (step, active, complete) {
+  renderStepIcon (classes, step, active, complete) {
     return (
-      <div style={active ? styles.stepIconActive : styles.stepIconInactive}>
+      <div className={active ? classes.stepIconActive : classes.stepIconInactive}>
         {complete ? (
-          <FontIcon
-            style={active ? styles.stepCheckActive : styles.stepCheckInactive}
-            className='fas fa-check' />
+          <Icon className={classNames(
+            active ? classes.stepCheckActive : classes.stepCheckInactive,
+            'fas fa-check'
+          )} />
         ) : (
-          <span style={styles.stepNumber}>{step + 1}</span>
+          <span className={classes.stepNumber}>{step + 1}</span>
         )}
       </div>
     )
   }
 
   render () {
-    const { renderStep, currentStep, style, ...passProps } = this.props
+    const { renderStep, currentStep, className, classes, ...passProps } = this.props
 
     return (
-      <div {...passProps} style={{...styles.container, ...style}}>
-        {this.renderStepIcon(renderStep, currentStep === renderStep, currentStep > renderStep)}
-        {this.renderStepText(renderStep, currentStep === renderStep)}
+      <div {...passProps} className={classNames(classes.container, className)}>
+        {this.renderStepIcon(classes, renderStep, currentStep === renderStep, currentStep > renderStep)}
+        {this.renderStepText(classes, renderStep, currentStep === renderStep)}
       </div>
     )
   }

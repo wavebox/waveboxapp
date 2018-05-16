@@ -4,15 +4,18 @@ import { IconButton } from 'material-ui'
 import ReactPortalTooltip from 'react-portal-tooltip'
 import uuid from 'uuid'
 import { settingsActions, settingsStore, Tour } from 'stores/settings'
-import * as Colors from 'material-ui/styles/colors'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
+import lightBlue from 'material-ui/colors/lightBlue'
 
 const styles = {
   // Icon
   container: {
-    textAlign: 'center'
-  },
-  icon: {
+    textAlign: 'center',
     WebkitAppRegion: 'no-drag'
+  },
+  button: {
+    backgroundColor: 'transparent !important'
   },
 
   // Main popover
@@ -35,7 +38,7 @@ const styles = {
   // Tour popover
   tourPopover: {
     style: {
-      background: Colors.lightBlue400,
+      background: lightBlue[400],
       paddingTop: 8,
       paddingBottom: 8,
       paddingLeft: 16,
@@ -45,7 +48,7 @@ const styles = {
       cursor: 'pointer'
     },
     arrowStyle: {
-      color: Colors.lightBlue400,
+      color: lightBlue[400],
       borderColor: false
     }
   },
@@ -77,6 +80,7 @@ styles.quitPopoverButton = {
   color: 'rgba(255, 255, 255, 0.7)'
 }
 
+@withStyles(styles)
 export default class SidelistControl extends React.Component {
   /* **************************************************************************/
   // Class
@@ -85,7 +89,6 @@ export default class SidelistControl extends React.Component {
   static propTypes = {
     onClick: PropTypes.func.isRequired,
     icon: PropTypes.element.isRequired,
-    iconStyle: PropTypes.object,
     tooltip: PropTypes.node.isRequired,
     tourStep: PropTypes.oneOf(Object.keys(Tour.TOUR_STEPS)).isRequired,
     tourTooltip: PropTypes.node.isRequired,
@@ -175,18 +178,19 @@ export default class SidelistControl extends React.Component {
 
   /**
   * Renders the tooltip content for the tour
+  * @param classes: the classes
   * @param tourTooltip: the tooltip content
   * @return jsx
   */
-  renderTourTooltipContent (tourTooltip) {
+  renderTourTooltipContent (classes, tourTooltip) {
     return (
-      <div style={styles.popoverContentContainer} onClick={this.handleTourNext}>
+      <div className={classes.popoverContentContainer} onClick={this.handleTourNext}>
         {tourTooltip}
-        <div style={styles.popoverButtonContainer}>
-          <div style={styles.quitPopoverButton} onClick={this.handleTourQuit}>
+        <div className={classes.popoverButtonContainer}>
+          <div className={classes.quitPopoverButton} onClick={this.handleTourQuit}>
             Skip Tour
           </div>
-          <div style={styles.nextPopoverButton}>
+          <div className={classes.nextPopoverButton}>
             Got it
           </div>
         </div>
@@ -195,15 +199,16 @@ export default class SidelistControl extends React.Component {
   }
 
   render () {
+    //TODO test tour
     const {
-      style,
-      onClick,
-      icon,
-      iconStyle,
+      classes,
       tooltip,
       tourStep,
       tourTooltip,
       tourTooltipStyles,
+      onClick,
+      className,
+      icon,
       ...passProps
     } = this.props
     const {
@@ -213,16 +218,16 @@ export default class SidelistControl extends React.Component {
       currentTourStep,
       dismissingTour
     } = this.state
-    const showTourPopover = !hasSeenTour && currentTourStep === tourStep && !dismissingTour
 
+    const showTourPopover = !hasSeenTour && currentTourStep === tourStep && !dismissingTour
     return (
       <div
         {...passProps}
-        style={{...styles.container, ...style}}
+        className={classNames(classes.container, className)}
         onMouseEnter={() => this.setState({ hovering: true })}
         onMouseLeave={() => this.setState({ hovering: false })}
         id={`ReactComponent-Sidelist-Control-${generatedId}`}>
-        <IconButton iconStyle={{...styles.icon, ...iconStyle}} onClick={onClick}>
+        <IconButton onClick={onClick} className={classes.button}>
           {icon}
         </IconButton>
         <ReactPortalTooltip
@@ -247,7 +252,7 @@ export default class SidelistControl extends React.Component {
             arrow='center'
             group={generatedId}
             parent={`#ReactComponent-Sidelist-Control-${generatedId}`}>
-            {this.renderTourTooltipContent(tourTooltip)}
+            {this.renderTourTooltipContent(classes, tourTooltip)}
           </ReactPortalTooltip>
         ) : undefined}
       </div>

@@ -1,16 +1,18 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { MailboxAvatar } from 'Components/Mailbox'
 import { mailboxStore } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
-import { DefaultServiceBadge, ServiceTooltip } from 'Components/Service'
-import * as Colors from 'material-ui/styles/colors'
+import MailboxServiceTooltip from 'wbui/MailboxServiceTooltip'
+import SidelistItemMailboxBadge from './SidelistItemMailboxBadge'
+import MailboxAvatar from 'Components/Backed/MailboxAvatar'
 import uuid from 'uuid'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import UISettings from 'shared/Models/Settings/UISettings'
 import Color from 'color'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
 const styles = {
   /**
@@ -21,7 +23,11 @@ const styles = {
     transform: 'translate3d(0,0,0)', // fix for wavebox/waveboxapp#619
     margin: '4px auto',
     cursor: 'pointer',
-    WebkitAppRegion: 'no-drag'
+    WebkitAppRegion: 'no-drag',
+
+    '&.is-sleeping': {
+      filter: 'grayscale(100%)'
+    }
   },
 
   /**
@@ -36,8 +42,6 @@ const styles = {
     lineHeight: '24px',
     top: -6,
     right: 4,
-    backgroundColor: 'rgba(238, 54, 55, 0.95)',
-    color: Colors.red50,
     fontWeight: process.platform === 'linux' ? 'normal' : '300',
     width: 'auto',
     paddingLeft: 4,
@@ -72,6 +76,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class SidelistItemMalboxAvatar extends React.Component {
   /* **************************************************************************/
   // Class
@@ -182,6 +187,8 @@ export default class SidelistItemMalboxAvatar extends React.Component {
     const {
       mailboxId,
       serviceType,
+      classes,
+      className,
       ...passProps
     } = this.props
     const {
@@ -230,32 +237,32 @@ export default class SidelistItemMalboxAvatar extends React.Component {
     }
 
     return (
-      <DefaultServiceBadge
+      <SidelistItemMailboxBadge
         {...passProps}
         id={`ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`}
         isAuthInvalid={mailbox.isAuthenticationInvalid || !mailbox.hasAuth}
         mailboxId={mailbox.id}
         displayMailboxOverview={displayMailboxOverview}
-        badgeStyle={styles.badge}
-        style={styles.badgeContainer}
-        iconStyle={styles.badgeFAIcon}
+        badgeClassName={classes.badge}
+        className={classNames(classes.badgeContainer, className)}
+        iconClassName={classes.badgeFAIcon}
         onMouseEnter={() => this.setState({ isHovering: true })}
         onMouseLeave={() => this.setState({ isHovering: false })}>
         {showActiveIndicator ? (
-          <div style={{ backgroundColor: mailbox.color, ...styles.activeIndicator }} />
+          <div className={classes.activeIndicator} style={{ backgroundColor: mailbox.color }} />
         ) : undefined}
         <MailboxAvatar
           {...passProps}
           mailboxId={mailbox.id}
           size={42}
           draggable={false}
-          style={{
-            ...styles.avatar,
-            boxShadow: `0 0 0 4px ${borderColor}`,
-            filter: showSleeping ? 'grayscale(100%)' : 'none'
-          }} />
+          className={classNames(
+            classes.avatar,
+            showSleeping ? 'is-sleeping' : undefined
+          )}
+          style={{ boxShadow: `0 0 0 4px ${borderColor}` }} />
         {tooltipsEnabled ? (
-          <ServiceTooltip
+          <MailboxServiceTooltip
             mailbox={mailbox}
             service={service}
             isRestricted={isRestricted}
@@ -266,7 +273,7 @@ export default class SidelistItemMalboxAvatar extends React.Component {
             group={this.instanceId}
             parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />
         ) : undefined}
-      </DefaultServiceBadge>
+      </SidelistItemMailboxBadge>
     )
   }
 }

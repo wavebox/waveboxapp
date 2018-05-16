@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import {FlatButton} from 'material-ui'
+import { Button } from 'material-ui'
 
 export default class ConfirmFlatButton extends React.Component {
   /* **************************************************************************/
@@ -8,9 +8,9 @@ export default class ConfirmFlatButton extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    ...FlatButton.propTypes,
-    confirmLabel: PropTypes.string.isRequired,
-    confirmIcon: PropTypes.node,
+    ...Button.propTypes,
+    confirmContent: PropTypes.any,
+    content: PropTypes.any,
     confirmWaitMs: PropTypes.number.isRequired,
     onConfirmedClick: PropTypes.func.isRequired
   }
@@ -31,39 +31,45 @@ export default class ConfirmFlatButton extends React.Component {
   // Data lifecycle
   /* **************************************************************************/
 
-  state = (() => {
-    return { confirming: false }
-  })()
+  state = {
+    confirming: false
+  }
+
+  /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  handleClick = (evt) => {
+    const { onClick, onConfirmedClick, confirmWaitMs } = this.props
+
+    if (onClick) { onClick(evt) }
+    this.setState((prevState) => {
+      if (prevState.confirming) {
+        clearTimeout(this.confirmingTO)
+        onConfirmedClick(evt)
+        return { confirming: false }
+      } else {
+        clearTimeout(this.confirmingTO)
+        this.confirmingTO = setTimeout(() => {
+          this.setState({ confirming: false })
+        }, confirmWaitMs)
+        return { confirming: true }
+      }
+    })
+  }
 
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   render () {
-    const { confirmLabel, confirmWaitMs, onConfirmedClick, onClick, label, confirmIcon, icon, ...passProps } = this.props
+    const { confirmContent, content, confirmWaitMs, onConfirmedClick, onClick, ...passProps } = this.props
     const { confirming } = this.state
 
     return (
-      <FlatButton
-        {...passProps}
-        label={confirming ? confirmLabel : label}
-        icon={confirmIcon && confirming ? confirmIcon : icon}
-        onClick={(evt) => {
-          if (onClick) { onClick(evt) }
-          this.setState((prevState) => {
-            if (prevState.confirming) {
-              clearTimeout(this.confirmingTO)
-              onConfirmedClick(evt)
-              return { confirming: false }
-            } else {
-              clearTimeout(this.confirmingTO)
-              this.confirmingTO = setTimeout(() => {
-                this.setState({ confirming: false })
-              }, confirmWaitMs)
-              return { confirming: true }
-            }
-          })
-        }} />
+      <Button onClick={this.handleClick} {...passProps}>
+        {confirming ? (confirmContent) : (content)}
+      </Button>
     )
   }
 }

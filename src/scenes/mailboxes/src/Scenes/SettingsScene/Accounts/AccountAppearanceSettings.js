@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper, RaisedButton, FontIcon, Toggle } from 'material-ui'
+import { Paper, RaisedButton, FontIcon, Toggle } from 'material-ui' //TODO
 import { ColorPickerButton } from 'Components'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'

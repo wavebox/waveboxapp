@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { RaisedButton } from 'material-ui'
+import { RaisedButton } from 'material-ui' //TODO
 import shallowCompare from 'react-addons-shallow-compare'
 import commonStyles from '../CommonSettingStyles'
 import ExtensionListItem from './ExtensionListItem'
 import { crextensionStore } from 'stores/crextension'
 import { userStore } from 'stores/user'
-import * as Colors from 'material-ui/styles/colors'
+import * as Colors from 'material-ui/styles/colors' //TODO
 
 const styles = {
   container: {

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dialog, FlatButton, RaisedButton, FontIcon } from 'material-ui'
+import { Dialog, FlatButton, RaisedButton, FontIcon } from 'material-ui' //TODO
 import shallowCompare from 'react-addons-shallow-compare'
 import { settingsActions } from 'stores/settings'
 import electron from 'electron'

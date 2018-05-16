@@ -1,6 +1,9 @@
 import React from 'react'
-import { RaisedButton, FlatButton } from 'material-ui'
+import { Button } from 'material-ui'
 import PropTypes from 'prop-types'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
+import StyleMixins from 'wbui/Styles/StyleMixins'
 
 const styles = {
   // Layout
@@ -18,8 +21,7 @@ const styles = {
     right: 0,
     bottom: 68,
     padding: 16,
-    overflowX: 'hidden',
-    overflowY: 'auto'
+    ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
   },
   footer: {
     position: 'absolute',
@@ -36,6 +38,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class WizardConfigure extends React.Component {
   /* **************************************************************************/
   // Class
@@ -55,30 +58,31 @@ export default class WizardConfigure extends React.Component {
     const {
       onRequestCancel,
       buttons,
-      style,
       children,
       mailboxId,
+      className,
+      classes,
       ...passProps
     } = this.props
 
     return (
-      <div {...passProps} style={{...styles.container, ...style}}>
-        <div style={styles.body} className='ReactComponent-MaterialUI-Dialog-Body-Scrollbars'>
+      <div {...passProps} className={classNames(classes.container, className)}>
+        <div className={classes.body}>
           {children}
         </div>
-        <div style={styles.footer}>
+        <div className={classes.footer}>
           {buttons || (
             <div>
-              <FlatButton
-                style={styles.settingsButton}
+              <Button
+                className={classes.settingsButton}
                 onClick={() => {
                   window.location.hash = `/settings/accounts/${mailboxId}`
-                }}
-                label='Account Settings' />
-              <RaisedButton
-                primary
-                onClick={onRequestCancel}
-                label='Finish' />
+                }}>
+                Account Settings
+              </Button>
+              <Button color='primary' variant='raised' onClick={onRequestCancel}>
+                Finish
+              </Button>
             </div>
           )}
         </div>

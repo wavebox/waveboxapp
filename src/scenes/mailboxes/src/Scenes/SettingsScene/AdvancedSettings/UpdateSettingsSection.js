@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Toggle, Paper, SelectField, MenuItem, FlatButton, FontIcon } from 'material-ui'
+import { Toggle, Paper, SelectField, MenuItem, FlatButton, FontIcon } from 'material-ui' //TODO
 import { settingsActions } from 'stores/settings'
 import { updaterActions } from 'stores/updater'
 import AppSettings from 'shared/Models/Settings/AppSettings'

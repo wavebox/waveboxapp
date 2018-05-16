@@ -30,6 +30,7 @@ const styles = {
   }
 }
 
+//TODO depricate? should I be using MailboxServicebadge???
 @withStyles(styles)
 export default class MailboxBadge extends React.Component {
   /* **************************************************************************/
@@ -63,7 +64,7 @@ export default class MailboxBadge extends React.Component {
     const badgeColor = mailbox.cumulativeSidebarUnreadBadgeColor
     let inverseBadgeColor
     try {
-      inverseBadgeColor = badgeColor ? Color(badgeColor).isLight() ? 'black' : 'white' : undefined
+      inverseBadgeColor = badgeColor ? Color(badgeColor).light() ? 'black' : 'white' : undefined
     } catch (ex) {
       inverseBadgeColor = 'white'
     }

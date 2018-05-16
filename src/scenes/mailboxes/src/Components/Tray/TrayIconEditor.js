@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { FontIcon } from 'material-ui'
 import {Row, Col} from '../Grid'
-import ColorPickerButton from '../ColorPickerButton'
+import ColorPickerButton from 'wbui/ColorPickerButton'
 import TrayPreview from './TrayPreview'
 import settingsActions from 'stores/settings/settingsActions'
 import shallowCompare from 'react-addons-shallow-compare'
+import BorderColorIcon from '@material-ui/icons/BorderColor'
+import FormatColorFillIcon from '@material-ui/icons/FormatColorFill'
+import { withStyles } from 'material-ui/styles'
 
 const styles = {
   subheading: {
@@ -21,6 +23,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class TrayIconEditor extends React.Component {
   /* **************************************************************************/
   // Class
@@ -45,6 +48,7 @@ export default class TrayIconEditor extends React.Component {
       tray,
       trayPreviewStyles,
       trayHeadingStyles,
+      classes,
       ...passProps
     } = this.props
 
@@ -52,21 +56,21 @@ export default class TrayIconEditor extends React.Component {
       <div {...passProps}>
         <Row>
           <Col xs={6}>
-            <h1 style={{...styles.subheading, ...trayHeadingStyles}}>All Messages Read</h1>
-            <div style={styles.button}>
+            <h1 className={classes.subheading} style={trayHeadingStyles}>All Messages Read</h1>
+            <div className={classes.button}>
               <ColorPickerButton
                 label='Border'
-                icon={<FontIcon className='material-icons'>border_color</FontIcon>}
+                icon={<BorderColorIcon />}
                 anchorOrigin={{horizontal: 'left', vertical: 'top'}}
                 targetOrigin={{horizontal: 'left', vertical: 'bottom'}}
                 disabled={!tray.show}
                 value={tray.readColor}
                 onChange={(col) => settingsActions.sub.tray.setTrayReadColor(col.rgbaStr)} />
             </div>
-            <div style={styles.button}>
+            <div className={classes.button}>
               <ColorPickerButton
                 label='Background'
-                icon={<FontIcon className='material-icons'>format_color_fill</FontIcon>}
+                icon={<FormatColorFillIcon />}
                 anchorOrigin={{horizontal: 'left', vertical: 'top'}}
                 targetOrigin={{horizontal: 'left', vertical: 'bottom'}}
                 disabled={!tray.show}
@@ -76,21 +80,21 @@ export default class TrayIconEditor extends React.Component {
             <TrayPreview style={trayPreviewStyles} size={100} tray={tray} unreadCount={0} />
           </Col>
           <Col xs={6}>
-            <h1 style={{...styles.subheading, ...trayHeadingStyles}}>Unread Messages</h1>
-            <div style={styles.button}>
+            <h1 className={classes.subheading} style={trayHeadingStyles}>Unread Messages</h1>
+            <div className={classes.button}>
               <ColorPickerButton
                 label='Border'
-                icon={<FontIcon className='material-icons'>border_color</FontIcon>}
+                icon={<BorderColorIcon />}
                 anchorOrigin={{horizontal: 'left', vertical: 'top'}}
                 targetOrigin={{horizontal: 'left', vertical: 'bottom'}}
                 disabled={!tray.show}
                 value={tray.unreadColor}
                 onChange={(col) => settingsActions.sub.tray.setTrayUnreadColor(col.rgbaStr)} />
             </div>
-            <div style={styles.button}>
+            <div className={classes.button}>
               <ColorPickerButton
                 label='Background'
-                icon={<FontIcon className='material-icons'>format_color_fill</FontIcon>}
+                icon={<FormatColorFillIcon />}
                 anchorOrigin={{horizontal: 'left', vertical: 'top'}}
                 targetOrigin={{horizontal: 'left', vertical: 'bottom'}}
                 disabled={!tray.show}

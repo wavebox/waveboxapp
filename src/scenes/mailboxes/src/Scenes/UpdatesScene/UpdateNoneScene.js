@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Dialog, RaisedButton } from 'material-ui'
+import { Dialog, RaisedButton } from 'material-ui' //TODO
 import UpdateModalTitle from './UpdateModalTitle'
 import pkg from 'package.json'
 

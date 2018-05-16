@@ -1,22 +1,35 @@
 import React from 'react'
-import { FontIcon } from 'material-ui'
+import { Icon } from 'material-ui'
 import SidelistControl from './SidelistControl'
-import * as Colors from 'material-ui/styles/colors'
 import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 import { TOUR_STEPS } from 'stores/settings/Tour'
 import { UISettings } from 'shared/Models/Settings'
+import red from 'material-ui/colors/red'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
 const styles = {
   icon: {
+    color: red[400],
     fontSize: '24px',
-    marginLeft: -3
-  },
-  activeIcon: {
-    textShadow: `0px 0px 3px ${Colors.red50}`
+    marginLeft: -3,
+    height: 48,
+    width: 48,
+    lineHeight: '48px',
+    '&:hover': {
+      color: red[100]
+    },
+    '&.has-news': {
+      color: red[100],
+      textShadow: `0px 0px 3px ${red[50]}`,
+      '&:hover': {
+        color: red[50]
+      }
+    }
   },
   activeFrame: {
-    backgroundColor: Colors.red400
+    backgroundColor: red[400]
   },
   tooltipHeadline: {
     maxWidth: 300,
@@ -31,6 +44,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class SidelistControlWhatsNew extends React.Component {
   /* **************************************************************************/
   // Component lifecycle
@@ -78,6 +92,8 @@ export default class SidelistControlWhatsNew extends React.Component {
   }
 
   render () {
+    //TODO test news
+    const { classes } = this.props
     const { hasUnseenNews, showMode, headline, summary } = this.state
 
     // Check if we should show
@@ -89,12 +105,15 @@ export default class SidelistControlWhatsNew extends React.Component {
 
     return (
       <SidelistControl
-        className={`WB-SidelistControlWhatsNew`}
+        className={classNames(
+          hasUnseenNews ? classes.activeFrame : undefined,
+          `WB-SidelistControlWhatsNew`
+        )}
         onClick={() => { window.location.hash = '/news' }}
         tooltip={hasUnseenNews && headline && summary ? (
           <div>
-            <h1 style={styles.tooltipHeadline}>{headline}</h1>
-            <p style={styles.tooltipSummary}>{summary}</p>
+            <h1 className={classes.tooltipHeadline}>{headline}</h1>
+            <p className={classes.tooltipSummary}>{summary}</p>
           </div>
         ) : (
           `What's new`
@@ -105,16 +124,12 @@ export default class SidelistControlWhatsNew extends React.Component {
             Click here to keep up to date with<br />everything that's new in Wavebox
           </div>
         )}
-        style={hasUnseenNews ? styles.activeFrame : undefined}
-        iconStyle={{
-          ...styles.icon,
-          ...(hasUnseenNews ? styles.activeIcon : undefined)
-        }}
         icon={(
-          <FontIcon
-            className='far fa-fw fa-star'
-            color={hasUnseenNews ? Colors.red100 : Colors.red400}
-            hoverColor={hasUnseenNews ? Colors.red50 : Colors.red100} />
+          <Icon className={classNames(
+            classes.icon,
+            hasUnseenNews ? 'has-news' : undefined,
+            'far fa-fw fa-star'
+          )} />
         )} />
     )
   }

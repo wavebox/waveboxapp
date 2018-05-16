@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper, Toggle, SelectField, MenuItem } from 'material-ui'
+import { Paper, Toggle, SelectField, MenuItem } from 'material-ui' //TODO
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
-import * as Colors from 'material-ui/styles/colors'
+import * as Colors from 'material-ui/styles/colors' //TODO
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 
 const humanizedOpenModes = {

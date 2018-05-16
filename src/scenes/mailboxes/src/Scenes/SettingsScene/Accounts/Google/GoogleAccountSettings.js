@@ -10,7 +10,7 @@ import AccountDestructiveSettings from '../AccountDestructiveSettings'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
 import { userStore } from 'stores/user'
-import { RaisedButton, Avatar, FontIcon, Toggle } from 'material-ui'
+import { RaisedButton, Avatar, FontIcon, Toggle } from 'material-ui' //TODO
 import GoogleDefaultServiceSettings from './GoogleDefaultServiceSettings'
 import GoogleServiceSettings from './GoogleServiceSettings'
 import { mailboxActions, GoogleMailboxReducer } from 'stores/mailbox'

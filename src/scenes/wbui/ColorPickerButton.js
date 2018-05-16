@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { RaisedButton, Popover } from 'material-ui'
+import { Button, Popover } from 'material-ui'
 import { ChromePicker } from 'react-color'
 
 export default class ColorPickerButton extends React.Component {
@@ -9,54 +9,40 @@ export default class ColorPickerButton extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
+    buttonProps: PropTypes.object,
+    popoverProps: PropTypes.object,
     value: PropTypes.string,
-    label: PropTypes.string.isRequired,
-    disabled: PropTypes.bool.isRequired,
-    anchorOrigin: PropTypes.object.isRequired,
-    targetOrigin: PropTypes.object.isRequired,
-    icon: PropTypes.node,
     onChange: PropTypes.func
-  }
-
-  static defaultProps = {
-    label: 'Pick Colour',
-    disabled: false,
-    anchorOrigin: {horizontal: 'left', vertical: 'bottom'},
-    targetOrigin: {horizontal: 'left', vertical: 'top'}
   }
 
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  state = (() => {
-    return {
-      open: false,
-      anchor: null
-    }
-  })()
+  state = {
+    anchorEl: null
+  }
 
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   render () {
-    const { label, disabled, onChange, anchorOrigin, targetOrigin, icon, ...passProps } = this.props
+    const { buttonProps, popoverProps, onChange, children, value, ...passProps } = this.props
+    const { anchorEl } = this.state
+
     return (
       <div {...passProps}>
-        <RaisedButton
-          icon={icon}
-          label={label}
-          disabled={disabled}
-          onClick={(evt) => this.setState({ open: true, anchor: evt.target })} />
+        <Button {...buttonProps} onClick={(evt) => this.setState({ anchorEl: evt.currentTarget })}>
+          {children}
+        </Button>
         <Popover
-          anchorOrigin={anchorOrigin}
-          targetOrigin={targetOrigin}
-          anchorEl={this.state.anchor}
-          open={this.state.open}
-          onRequestClose={() => this.setState({open: false})}>
+          {...popoverProps}
+          open={!!anchorEl}
+          anchorEl={anchorEl}
+          onClose={(evt) => this.setState({ anchorEl: false })}>
           <ChromePicker
-            color={this.props.value}
+            color={value}
             onChangeComplete={(col) => {
               if (onChange) {
                 onChange(Object.assign({}, col, {

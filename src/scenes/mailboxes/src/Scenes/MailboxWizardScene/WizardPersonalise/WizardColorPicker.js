@@ -2,6 +2,8 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import WizardColorPickerCell from './WizardColorPickerCell'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
 const PRESET_COLORS = [
   'rgb(123, 109, 179)',
@@ -31,6 +33,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class WizardColorPicker extends React.Component {
   /* **************************************************************************/
   // Class
@@ -53,13 +56,22 @@ export default class WizardColorPicker extends React.Component {
   }
 
   render () {
-    const { MailboxClass, accessMode, mailboxDefaultColor, selectedColor, onColorPicked, style, ...passProps } = this.props
+    const {
+      MailboxClass,
+      accessMode,
+      mailboxDefaultColor,
+      selectedColor,
+      onColorPicked,
+      classes,
+      className,
+      ...passProps
+    } = this.props
 
     return (
-      <div {...passProps} style={{...styles.container, ...style}}>
+      <div {...passProps} className={classNames(classes.container, className)}>
         <WizardColorPickerCell
           key='default'
-          style={styles.color}
+          className={classes.color}
           color={mailboxDefaultColor}
           isSelected={mailboxDefaultColor === selectedColor}
           size={60}
@@ -68,7 +80,7 @@ export default class WizardColorPicker extends React.Component {
           return (
             <WizardColorPickerCell
               key={col}
-              style={styles.color}
+              className={classes.color}
               color={col}
               isSelected={col === selectedColor}
               size={60}

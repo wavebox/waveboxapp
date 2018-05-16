@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper, Toggle, FontIcon } from 'material-ui'
+import { Paper, Toggle, FontIcon } from 'material-ui' //TODO
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
 import commonStyles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
-import * as Colors from 'material-ui/styles/colors'
+import * as Colors from 'material-ui/styles/colors' //TODO
 import { ColorPickerButton } from 'Components'
 import { userStore } from 'stores/user'
 

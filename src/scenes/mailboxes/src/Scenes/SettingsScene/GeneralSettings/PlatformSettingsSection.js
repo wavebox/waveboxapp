@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Toggle, Paper, RaisedButton, Popover, Menu, MenuItem, FontIcon } from 'material-ui'
+import { Toggle, Paper, RaisedButton, Popover, Menu, MenuItem, FontIcon } from 'material-ui' //TODO
 import platformActions from 'stores/platform/platformActions'
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
-import * as Colors from 'material-ui/styles/colors'
+import * as Colors from 'material-ui/styles/colors' //TODO
 
 export default class PlatformSettingsSection extends React.Component {
   /* **************************************************************************/

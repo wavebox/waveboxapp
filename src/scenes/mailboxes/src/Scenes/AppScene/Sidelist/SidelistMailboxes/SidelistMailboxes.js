@@ -2,8 +2,8 @@ import React from 'react'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import SidelistItemMailbox from './SidelistItemMailbox'
 import {SortableContainer, SortableElement} from 'react-sortable-hoc'
-import classnames from 'classnames'
-import './SidelistMailboxes.less'
+import classNames from 'classnames'
+import { withStyles } from 'material-ui/styles'
 
 const SortableItem = SortableElement(({ mailboxId }) => {
   return (<SidelistItemMailbox mailboxId={mailboxId} />)
@@ -19,6 +19,13 @@ const SortableList = SortableContainer(({ mailboxIds }) => {
   )
 })
 
+const styles = {
+  root: {
+    '&::-webkit-scrollbar': { display: 'none' }
+  }
+}
+
+@withStyles(styles)
 export default class SidelistMailboxes extends React.Component {
   /* **************************************************************************/
   // Lifecycle
@@ -56,13 +63,11 @@ export default class SidelistMailboxes extends React.Component {
   }
 
   render () {
-    const { className, ...passProps } = this.props
+    const { className, classes, ...passProps } = this.props
     const { mailboxIds } = this.state
 
     return (
-      <div
-        {...passProps}
-        className={classnames('ReactComponent-Sidelist-Mailboxes', 'WB-Sidelist-Mailboxes', className)}>
+      <div {...passProps} className={classNames(classes.root, 'WB-Sidelist-Mailboxes', className)}>
         <SortableList
           axis='y'
           distance={20}

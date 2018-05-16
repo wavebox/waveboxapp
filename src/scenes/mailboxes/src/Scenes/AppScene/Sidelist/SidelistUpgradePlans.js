@@ -1,11 +1,13 @@
 import React from 'react'
-import * as Colors from 'material-ui/styles/colors'
 import { userStore } from 'stores/user'
-import { IconButton, FontIcon } from 'material-ui'
+import { IconButton, Icon } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import uuid from 'uuid'
 import ReactPortalTooltip from 'react-portal-tooltip'
 import User from 'shared/Models/User'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
+import lightBlue from 'material-ui/colors/lightBlue'
 
 const UPDATE_INTERVAL = 1000 * 60 * 15 // 15 minutes
 const styles = {
@@ -17,7 +19,10 @@ const styles = {
     width: 70,
     height: 60,
     cursor: 'pointer',
-    WebkitAppRegion: 'no-drag'
+    WebkitAppRegion: 'no-drag',
+    '&:hover': {
+      filter: 'lighten(10%)'
+    }
   },
   compositeIconContainer: {
     position: 'absolute',
@@ -28,7 +33,7 @@ const styles = {
   },
   icon: {
     fontSize: '44px',
-    marginLeft: -5
+    color: lightBlue[400]
   },
   remainingText: {
     position: 'absolute',
@@ -37,7 +42,8 @@ const styles = {
     right: 6,
     height: 24,
     lineHeight: '24px',
-    color: 'white'
+    color: 'white',
+    textAlign: 'center'
   },
   remainingText2Char: {
     fontSize: '20px'
@@ -51,7 +57,7 @@ const styles = {
   */
   popover: {
     style: {
-      background: Colors.lightBlue400,
+      background: lightBlue[400],
       paddingTop: 8,
       paddingBottom: 8,
       paddingLeft: 16,
@@ -61,7 +67,7 @@ const styles = {
       cursor: 'pointer'
     },
     arrowStyle: {
-      color: Colors.lightBlue400,
+      color: lightBlue[400],
       borderColor: false
     }
   },
@@ -83,6 +89,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class SidelistUpgradePlans extends React.Component {
   /* **************************************************************************/
   // Component lifecyle
@@ -227,27 +234,20 @@ export default class SidelistUpgradePlans extends React.Component {
   }
 
   render () {
-    const { style, ...passProps } = this.props
+    const { classes, ...passProps } = this.props
     const { expiresInDays, currentPlan, generatedId, buttonHover, tooltipHover } = this.state
     const formattedDays = this.formatRemainingDays(expiresInDays)
 
     return (
       <div
         {...passProps}
-        style={{...style}}
         onMouseEnter={() => this.setState({ buttonHover: true })}
         onMouseLeave={() => this.setState({ buttonHover: false })}
         id={`ReactComponent-Sidelist-Item-${generatedId}`}>
-        <IconButton
-          onClick={this.handleUpgrade}
-          style={styles.button}
-          iconStyle={styles.compositeIconContainer}>
-          <div>
-            <FontIcon
-              style={styles.icon}
-              className='far fa-fw fa-calendar'
-              color={buttonHover ? Colors.lightBlue200 : Colors.lightBlue400} />
-            <div style={{...styles.remainingText, ...(formattedDays.length === 2 ? styles.remainingText2Char : styles.remainingText3Char)}}>
+        <IconButton onClick={this.handleUpgrade} className={classes.button}>
+          <div className={classes.compositeIconContainer}>
+            <Icon className={classNames(classes.icon, 'far fa-fw fa-calendar')} />
+            <div className={classNames(classes.remainingText, (formattedDays.length === 2 ? classes.remainingText2Char : classes.remainingText3Char))}>
               {formattedDays}
             </div>
           </div>

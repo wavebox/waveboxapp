@@ -295,7 +295,7 @@ export default class WebView extends React.Component {
   focus = () => {
     const node = this.getWebviewNode()
     if (document.activeElement !== node) {
-      this.getWebviewNode().focus()
+      node.focus()
       return true
     } else {
       return false

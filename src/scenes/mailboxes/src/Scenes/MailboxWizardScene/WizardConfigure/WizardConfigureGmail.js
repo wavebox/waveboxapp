@@ -3,8 +3,11 @@ import PropTypes from 'prop-types'
 import { mailboxActions, GoogleDefaultServiceReducer } from 'stores/mailbox'
 import WizardConfigureUnreadModeOption from './WizardConfigureUnreadModeOption'
 import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
-import * as Colors from 'material-ui/styles/colors'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
+import { withStyles } from 'material-ui/styles'
+import yellow from 'material-ui/colors/yellow'
+import lightBlue from 'material-ui/colors/lightBlue'
+import cyan from 'material-ui/colors/cyan'
 
 const styles = {
   // Typography
@@ -43,6 +46,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class WizardConfigureGmail extends React.Component {
   /* **************************************************************************/
   // Class
@@ -71,7 +75,7 @@ export default class WizardConfigureGmail extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { mailbox, onRequestCancel, ...passProps } = this.props
+    const { mailbox, onRequestCancel, classes, ...passProps } = this.props
     const unreadMode = mailbox.defaultService.unreadMode
 
     return (
@@ -79,23 +83,23 @@ export default class WizardConfigureGmail extends React.Component {
         onRequestCancel={onRequestCancel}
         mailboxId={mailbox.id}
         {...passProps}>
-        <h2 style={styles.heading}>Choose your Inbox mode</h2>
-        <p style={styles.subHeading}>
+        <h2 className={classes.heading}>Choose your Inbox mode</h2>
+        <p className={classes.subHeading}>
           Your Gmail account uses one of the following modes to organise your inbox.
           Select the one that matches your existing settings. Don't worry if you don't know
           what it is you can change it later!
         </p>
-        <div style={styles.unreadOptions}>
+        <div className={classes.unreadOptions}>
           <WizardConfigureUnreadModeOption
-            style={styles.unreadOption}
-            color={Colors.yellow700}
+            className={classes.unreadOption}
+            color={yellow[700]}
             selected={unreadMode === GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL}
             onSelected={() => this.handleModePicked(GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL)}
             name='Categories'
             popoverContent={(
-              <div style={styles.popoverContainer}>
+              <div className={classes.popoverContainer}>
                 <h3>Categories Inbox</h3>
-                <img style={styles.popoverPreviewImage} src='../../images/gmail_inbox_categories_small.png' />
+                <img className={classes.popoverPreviewImage} src='../../images/gmail_inbox_categories_small.png' />
                 <p>
                   Your new emails are automatically sorted into Categories such as <em>Social</em>
                   and <em>Promotions</em> when they arrive. Typically you will see a number of
@@ -104,15 +108,15 @@ export default class WizardConfigureGmail extends React.Component {
               </div>
             )} />
           <WizardConfigureUnreadModeOption
-            style={styles.unreadOption}
-            color={Colors.lightBlue700}
+            className={classes.unreadOption}
+            color={lightBlue[700]}
             selected={unreadMode === GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD}
             onSelected={() => this.handleModePicked(GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD)}
             name='Unread'
             popoverContent={(
-              <div style={styles.popoverContainer}>
+              <div className={classes.popoverContainer}>
                 <h3>Unread Inbox</h3>
-                <img style={styles.popoverPreviewImage} src='../../images/gmail_inbox_unread_small.png' />
+                <img className={classes.popoverPreviewImage} src='../../images/gmail_inbox_unread_small.png' />
                 <p>
                   Your new emails are sent directly to your Inbox and are not automatically sorted
                   into categories or ranked by priority. Typically the title you see above
@@ -121,15 +125,15 @@ export default class WizardConfigureGmail extends React.Component {
               </div>
             )} />
           <WizardConfigureUnreadModeOption
-            style={styles.unreadOption}
-            color={Colors.cyan700}
+            className={classes.unreadOption}
+            color={cyan[700]}
             selected={unreadMode === GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT}
             onSelected={() => this.handleModePicked(GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT)}
             name='Priority'
             popoverContent={(
-              <div style={styles.popoverContainer}>
+              <div className={classes.popoverContainer}>
                 <h3>Priority Inbox</h3>
-                <img style={styles.popoverPreviewImage} src='../../images/gmail_inbox_priority_small.png' />
+                <img className={classes.popoverPreviewImage} src='../../images/gmail_inbox_priority_small.png' />
                 <p>
                   Your new emails are either marked as important or not and the important
                   emails are split into their own section when they arrive. Typically the title you see above
@@ -138,7 +142,7 @@ export default class WizardConfigureGmail extends React.Component {
               </div>
             )} />
         </div>
-        <p style={styles.extraSubHeading}>Hover over each choice for more information</p>
+        <p className={classes.extraSubHeading}>Hover over each choice for more information</p>
       </WizardConfigureDefaultLayout>
     )
   }

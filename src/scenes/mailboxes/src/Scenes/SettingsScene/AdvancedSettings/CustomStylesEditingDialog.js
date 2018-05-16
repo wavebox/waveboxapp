@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { RaisedButton, FlatButton, Dialog, TextField } from 'material-ui'
+import { RaisedButton, FlatButton, Dialog, TextField } from 'material-ui' //TODO
 import shallowCompare from 'react-addons-shallow-compare'
 import uuid from 'uuid'
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Dialog, RaisedButton, FlatButton } from 'material-ui'
+import { Dialog, RaisedButton, FlatButton } from 'material-ui' //TODO
 import { updaterActions, updaterStore } from 'stores/updater'
 import UpdateModalTitle from './UpdateModalTitle'
 import electron from 'electron'

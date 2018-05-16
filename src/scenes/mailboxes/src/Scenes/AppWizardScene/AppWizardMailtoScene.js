@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { platformActions } from 'stores/platform'
 import shallowCompare from 'react-addons-shallow-compare'
-import { RaisedButton } from 'material-ui'
+import { RaisedButton } from 'material-ui' //TODO
 
 const styles = {
   container: {

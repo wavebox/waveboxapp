@@ -1,5 +1,5 @@
 import React from 'react'
-import { Paper, FlatButton, FontIcon } from 'material-ui'
+import { Paper, FlatButton, FontIcon } from 'material-ui' //TODO
 import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import { updaterActions } from 'stores/updater'

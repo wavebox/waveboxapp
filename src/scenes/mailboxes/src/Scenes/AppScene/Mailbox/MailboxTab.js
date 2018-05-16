@@ -16,6 +16,8 @@ import MicrosoftMailboxMailWebView from './MailboxWebView/Microsoft/MicrosoftMai
 import MicrosoftMailboxTeamWebView from './MailboxWebView/Microsoft/MicrosoftMailboxTeamWebView'
 import MailboxServiceWebView from './MailboxWebView/MailboxServiceWebView'
 import ContainerMailboxDefaultServiceWebView from './MailboxWebView/Container/ContainerMailboxDefaultServiceWebView'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
 const styles = {
   mailboxTab: {
@@ -41,6 +43,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class MailboxTab extends React.Component {
   /* **************************************************************************/
   // Class
@@ -166,7 +169,7 @@ export default class MailboxTab extends React.Component {
   }
 
   render () {
-    const { style, mailboxId, ...passProps } = this.props
+    const { className, mailboxId, classes, ...passProps } = this.props
     const {
       mailboxType,
       serviceTypes,
@@ -182,12 +185,11 @@ export default class MailboxTab extends React.Component {
     return (
       <div
         {...passProps}
-        style={{
-          ...styles.mailboxTab,
-          ...(isMailboxActive ? styles.mailboxTabActive : undefined),
-          ...style
-        }}>
-        <div style={styles.serviceContainer}>
+        className={classNames(
+          classes.mailboxTab,
+          isMailboxActive ? classes.mailboxTabActive : undefined,
+          className)}>
+        <div className={classes.serviceContainer}>
           {allowedServiceTypes.map((serviceType) => {
             return this.renderWebView(serviceType, mailboxType, mailboxId, serviceType)
           })}

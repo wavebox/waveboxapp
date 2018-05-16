@@ -2,21 +2,24 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import MailboxWizardStepper from './MailboxWizardStepper'
-import { FullscreenModal } from 'Components'
+import { Dialog, DialogContent } from 'material-ui'
 import MailboxTypes from 'shared/Models/Accounts/MailboxTypes'
 import MailboxFactory from 'shared/Models/Accounts/MailboxFactory'
 import WizardPersonalise from './WizardPersonalise'
 import WizardAuth from './WizardAuth'
 import WizardConfigure from './WizardConfigure'
+import { withStyles } from 'material-ui/styles'
 
-const MIN_WIDTH = 580
-const BORDER_WIDTH = 25
 const styles = {
-  modalBody: {
-    borderRadius: 2,
-    padding: 0,
-    backgroundColor: 'rgb(242, 242, 242)',
-    minWidth: MIN_WIDTH
+  dialog: {
+    maxWidth: '100%',
+    width: '100%',
+    height: '100%',
+    minWidth: 580
+  },
+  dialogContent: {
+    position: 'relative',
+    backgroundColor: 'rgb(242, 242, 242)'
   },
   master: {
     position: 'absolute',
@@ -34,6 +37,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class MailboxWizardScene extends React.Component {
   /* **************************************************************************/
   // Class
@@ -54,30 +58,11 @@ export default class MailboxWizardScene extends React.Component {
   }
 
   /* **************************************************************************/
-  // Component lifecycle
-  /* **************************************************************************/
-
-  componentDidMount () {
-    window.addEventListener('resize', this.windowSizeChanged)
-  }
-
-  componentWillUnmount () {
-    window.removeEventListener('resize', this.windowSizeChanged)
-  }
-
-  /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
   state = {
-    open: true,
-    borderWidth: window.innerWidth <= MIN_WIDTH + (2 * BORDER_WIDTH) ? 0 : BORDER_WIDTH
-  }
-
-  windowSizeChanged = () => {
-    this.setState({
-      borderWidth: window.innerWidth <= MIN_WIDTH + (2 * BORDER_WIDTH) ? 0 : BORDER_WIDTH
-    })
+    open: true
   }
 
   /* **************************************************************************/
@@ -104,52 +89,55 @@ export default class MailboxWizardScene extends React.Component {
 
   /**
   * Renders the current step
+  * @param classes
   * @param currentStep: the step to render
   * @param mailboxType: the mailbox type
   * @param accessMode: the access mode to use when creating the mailbox
   * @param mailboxId: the id of the mailbox
   * @return jsx
   */
-  renderStep (currentStep, mailboxType, accessMode, mailboxId) {
+  renderStep (classes, currentStep, mailboxType, accessMode, mailboxId) {
     switch (currentStep) {
       case 0:
         return (
           <WizardPersonalise
-            style={styles.detail}
+            className={classes.detail}
             onRequestCancel={this.handleClose}
             MailboxClass={MailboxFactory.getClass(mailboxType)}
             accessMode={accessMode} />
         )
       case 1:
         return (
-          <WizardAuth style={styles.detail} />
+          <WizardAuth className={classes.detail} />
         )
       case 2:
         return (
           <WizardConfigure
             onRequestCancel={this.handleClose}
-            style={styles.detail}
+            className={classes.detail}
             mailboxId={mailboxId} />
         )
     }
   }
 
   render () {
-    const { open, borderWidth } = this.state
-    const { match } = this.props
+    const { open } = this.state
+    const { match, classes } = this.props
     const currentStep = parseInt(match.params.step)
 
     return (
-      <FullscreenModal
-        borderWidth={borderWidth}
-        modal
-        open={open}
-        bodyStyle={styles.modalBody}>
-        <MailboxWizardStepper
-          currentStep={currentStep}
-          style={styles.master} />
-        {this.renderStep(currentStep, match.params.mailboxType, match.params.accessMode, match.params.mailboxId)}
-      </FullscreenModal>
+      <Dialog open={open} classes={{ paper: classes.dialog }}>
+        <DialogContent className={classes.dialogContent}>
+          <MailboxWizardStepper currentStep={currentStep} className={classes.master} />
+          {this.renderStep(
+            classes,
+            currentStep,
+            match.params.mailboxType,
+            match.params.accessMode,
+            match.params.mailboxId
+          )}
+        </DialogContent>
+      </Dialog>
     )
   }
 }

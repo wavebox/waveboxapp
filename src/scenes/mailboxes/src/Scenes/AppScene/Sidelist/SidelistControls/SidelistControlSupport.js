@@ -1,15 +1,33 @@
 import React from 'react'
-import { FontIcon } from 'material-ui'
+import { Icon } from 'material-ui'
 import SidelistControl from './SidelistControl'
-import * as Colors from 'material-ui/styles/colors'
 import { TOUR_STEPS } from 'stores/settings/Tour'
+import teal from 'material-ui/colors/teal'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
+const styles = {
+  icon: {
+    color: teal[600],
+    fontSize: '24px',
+    marginLeft: -3,
+    height: 48,
+    width: 48,
+    lineHeight: '48px',
+    '&:hover': {
+      color: teal[200]
+    }
+  }
+}
+
+@withStyles(styles)
 export default class SidelistControlSupport extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   render () {
+    const {classes} = this.props
     return (
       <SidelistControl
         className={`WB-SidelistControlSupport`}
@@ -23,12 +41,8 @@ export default class SidelistControlSupport extends React.Component {
             involved with the Wavebox community
           </div>
         )}
-        iconStyle={{ fontSize: '24px', marginLeft: -3 }}
         icon={(
-          <FontIcon
-            className='far fa-fw fa-question-circle'
-            color={Colors.teal600}
-            hoverColor={Colors.teal200} />
+          <Icon className={classNames(classes.icon, 'far fa-fw fa-question-circle')} />
         )} />
     )
   }

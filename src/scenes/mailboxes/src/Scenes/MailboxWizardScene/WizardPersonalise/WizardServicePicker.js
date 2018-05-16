@@ -4,9 +4,11 @@ import shallowCompare from 'react-addons-shallow-compare'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
-import { List, ListItem, Toggle, SelectField, MenuItem } from 'material-ui'
+import { Select, MenuItem, List, ListItem, ListItemText, ListItemSecondaryAction, Switch } from 'material-ui'
 import { Row, Col, Container } from 'Components/Grid'
 import Resolver from 'Runtime/Resolver'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
 const SERVICE_GROUPS = {
   common: [
@@ -51,7 +53,8 @@ const styles = {
     marginRight: -15,
     paddingTop: 0,
     paddingBottom: 0,
-    display: 'inline-block'
+    display: 'inline-block',
+    width: '100%'
   },
   logo: {
     display: 'inline-block',
@@ -66,6 +69,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class WizardServicePicker extends React.Component {
   /* **************************************************************************/
   // Class
@@ -115,32 +119,29 @@ export default class WizardServicePicker extends React.Component {
 
   /**
   * Renders the service
+  * @param classes
   * @param serviceType: the service type to render
   * @return jsx
   */
-  renderServiceListItem (serviceType) {
+  renderServiceListItem (classes, serviceType) {
     const { MailboxClass, enabledServices, userHasServices } = this.props
     const ServiceClass = ServiceFactory.getClass(MailboxClass.type, serviceType)
     const isEnabled = !!enabledServices.find((s) => s === serviceType)
 
     return (
-      <ListItem
-        key={serviceType}
-        primaryText={ServiceClass.humanizedType}
-        leftAvatar={(
-          <img
-            src={Resolver.image(ServiceClass.humanizedLogoAtSize(128))}
-            style={{
-              ...styles.logo,
-              ...(!userHasServices ? styles.logoDisabled : {})
-            }} />
-        )}
-        rightToggle={(
-          <Toggle
+      <ListItem key={serviceType} dense>
+        <img
+          src={Resolver.image(ServiceClass.humanizedLogoAtSize(128))}
+          className={classNames(classes.logo, !userHasServices ? styles.logoDisabled : undefined)} />
+        <ListItemText primary={ServiceClass.humanizedType} />
+        <ListItemSecondaryAction>
+          <Switch
             disabled={!userHasServices}
-            toggled={isEnabled}
-            onToggle={(evt, toggled) => this.handleToggle(serviceType, toggled)} />
-        )} />
+            color='primary'
+            checked={isEnabled}
+            onChange={(evt, toggled) => this.handleToggle(serviceType, toggled)} />
+        </ListItemSecondaryAction>
+      </ListItem>
     )
   }
 
@@ -205,47 +206,47 @@ export default class WizardServicePicker extends React.Component {
       MailboxClass,
       enabledServices,
       onServicesChanged,
-      style,
       servicesDisplayMode,
       onServicesDisplayModeChanged,
       userHasServices,
+      classes,
       ...passProps
     } = this.props
 
     const serviceTypeGroups = this.createServiceGroupLists(MailboxClass)
 
     return (
-      <div {...passProps} style={style}>
+      <div {...passProps}>
         <div>
-          <SelectField
-            style={styles.displayModePicker}
-            floatingLabelText='How should your services be displayed?'
+          <Select
+            className={classes.displayModePicker}
             value={servicesDisplayMode}
             disabled={!userHasServices}
-            onChange={(evt, index, mode) => { onServicesDisplayModeChanged(mode) }}>
-            <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR} primaryText='In the sidebar' />
-            <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR} primaryText='In a top toolbar' />
-          </SelectField>
+            label='How should your services be displayed?'
+            onChange={(evt) => { onServicesDisplayModeChanged(evt.target.value) }}>
+            <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR}>In the sidebar</MenuItem>
+            <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR}>In a top toolbar</MenuItem>
+          </Select>
         </div>
         <Container>
           <Row>
             <Col md={8}>
               <Row>
                 <Col sm={6}>
-                  <List style={styles.list}>
-                    {serviceTypeGroups[0].map((serviceType) => this.renderServiceListItem(serviceType))}
+                  <List className={classes.list}>
+                    {serviceTypeGroups[0].map((serviceType) => this.renderServiceListItem(classes, serviceType))}
                   </List>
                 </Col>
                 <Col sm={6}>
-                  <List style={styles.list}>
-                    {serviceTypeGroups[1].map((serviceType) => this.renderServiceListItem(serviceType))}
+                  <List className={classes.list}>
+                    {serviceTypeGroups[1].map((serviceType) => this.renderServiceListItem(classes, serviceType))}
                   </List>
                 </Col>
               </Row>
             </Col>
             <Col md={4}>
-              <List style={styles.list}>
-                {serviceTypeGroups[2].map((serviceType) => this.renderServiceListItem(serviceType))}
+              <List className={classes.list}>
+                {serviceTypeGroups[2].map((serviceType) => this.renderServiceListItem(classes, serviceType))}
               </List>
             </Col>
           </Row>

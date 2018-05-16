@@ -2,8 +2,8 @@ import React from 'react'
 import WaveboxRouter from './WaveboxRouter'
 import constants from 'shared/constants'
 import shallowCompare from 'react-addons-shallow-compare'
-import Theme from 'sharedui/Components/Theme'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import Theme from 'wbui/Theme'
+import { MuiThemeProvider } from 'material-ui/styles'
 import { mailboxStore, mailboxDispatch } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
 import { googleActions } from 'stores/google'
@@ -281,7 +281,7 @@ export default class Provider extends React.Component {
 
     return (
       <div>
-        <MuiThemeProvider muiTheme={Theme}>
+        <MuiThemeProvider theme={Theme}>
           <WaveboxRouter />
         </MuiThemeProvider>
         <AccountMessageDispatcher />

@@ -1,20 +1,33 @@
 import React from 'react'
-import { FontIcon } from 'material-ui'
 import SidelistControl from './SidelistControl'
-import * as Colors from 'material-ui/styles/colors'
 import { TOUR_STEPS } from 'stores/settings/Tour'
+import blueGrey from 'material-ui/colors/blueGrey'
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
+import { withStyles } from 'material-ui/styles'
 
+const styles = {
+  icon: {
+    color: blueGrey[400],
+    '&:hover': {
+      color: blueGrey[200]
+    }
+  }
+}
+
+@withStyles(styles)
 export default class SidelistControlExpander extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   render () {
+    const { classes, expanded, onClick } = this.props
     return (
       <SidelistControl
         className={`WB-SidelistControlExpander`}
-        onClick={this.props.onClick}
-        tooltip={this.props.expanded ? 'Hide' : 'Show'}
+        onClick={onClick}
+        tooltip={expanded ? 'Hide' : 'Show'}
         tourStep={TOUR_STEPS.EXPANDER}
         tourTooltip={(
           <div>
@@ -25,13 +38,10 @@ export default class SidelistControlExpander extends React.Component {
           style: { marginTop: -25 },
           arrowStyle: { marginTop: 20 }
         }}
-        icon={(
-          <FontIcon
-            className='material-icons'
-            color={Colors.blueGrey400}
-            hoverColor={Colors.blueGrey200}>
-            {this.props.expanded ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}
-          </FontIcon>
+        icon={expanded ? (
+          <KeyboardArrowDownIcon className={classes.icon} />
+        ) : (
+          <KeyboardArrowUpIcon className={classes.icon} />
         )} />
     )
   }

@@ -1,11 +1,11 @@
 import React from 'react'
-import { RaisedButton } from 'material-ui'
+import { RaisedButton } from 'material-ui' //TODO
 import shallowCompare from 'react-addons-shallow-compare'
 import { WaveboxWebView, FullscreenModal } from 'Components'
 import { NEWS_URL } from 'shared/constants'
 import { settingsActions } from 'stores/settings'
 import Spinner from 'sharedui/Components/Activity/Spinner'
-import * as Colors from 'material-ui/styles/colors'
+import * as Colors from 'material-ui/styles/colors' //TODO
 
 const styles = {
   modalActions: {

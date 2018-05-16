@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { ipcRenderer } from 'electron'
-import { Paper, FontIcon } from 'material-ui'
+import { Paper, FontIcon } from 'material-ui' //TODO
 import { mailboxActions } from 'stores/mailbox'
 import { crextensionActions } from 'stores/crextension'
 import styles from '../CommonSettingStyles'

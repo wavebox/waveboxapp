@@ -1,10 +1,9 @@
-import './MailboxWebView.less'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { RaisedButton, FontIcon } from 'material-ui'
+import { Button } from 'material-ui'
 import { mailboxStore, mailboxActions, mailboxDispatch, ServiceReducer } from 'stores/mailbox'
 import { guestActions } from 'stores/guest'
-import BrowserView from 'sharedui/Components/BrowserView'
+import BrowserView from 'wbui/Guest/BrowserView'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import MailboxSearch from './MailboxSearch'
 import MailboxTargetUrl from './MailboxTargetUrl'
@@ -23,13 +22,77 @@ import {
   WB_BROWSER_CONFIRM_PRESENT
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
-import Spinner from 'sharedui/Components/Activity/Spinner'
-import * as Colors from 'material-ui/styles/colors'
+import Spinner from 'wbui/Activity/Spinner'
 import { settingsStore } from 'stores/settings'
 import Resolver from 'Runtime/Resolver'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
+import MailboxInformationCover from './MailboxInformationCover'
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
+import RefreshIcon from '@material-ui/icons/Refresh'
+import lightBlue from 'material-ui/colors/lightBlue'
+
+const styles = {
+  root: {
+    position: 'absolute',
+    top: 10000,
+    bottom: -10000,
+    left: 0,
+    right: 0,
+    width: '100%',
+    height: '100%',
+
+    // Explicitly set the visibility on the webview element as this allows electron to prioritize resource consumption
+    '& webview': { visibility: 'hidden' },
+
+    '&.active': {
+      top: 0,
+      bottom: 0,
+
+      // Explicitly set the visibility on the webview element as this allows electron to prioritize resource consumption
+      '& webview': { visibility: 'visible' }
+    }
+  },
+  browserContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
+  },
+  snapshot: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: '100%',
+    width: '100%',
+    backgroundSize: '100% 100%',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    filter: 'grayscale(100%)'
+  },
+  loader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+    width: '100%'
+  },
+  infoButtonIcon: {
+    marginRight: 6
+  }
+}
 
 const BROWSER_REF = 'browser'
 
+@withStyles(styles)
 export default class MailboxWebView extends React.Component {
   /* **************************************************************************/
   // Class
@@ -531,6 +594,7 @@ export default class MailboxWebView extends React.Component {
 
     if (!mailbox || !service) { return false }
     const {
+      classes,
       className,
       hasSearch,
       allowpopups,
@@ -543,13 +607,6 @@ export default class MailboxWebView extends React.Component {
       delete passProps[name]
       return acc
     }, {})
-
-    // Prep Clasnames and other props
-    const saltedClassName = [
-      className,
-      'ReactComponent-MailboxWebView',
-      isActive ? 'active' : undefined
-    ].filter((c) => !!c).join(' ')
 
     // Don't use string templating or inline in jsx. The compiler optimizes it out!!
     const webpreferences = [
@@ -565,8 +622,8 @@ export default class MailboxWebView extends React.Component {
     ].join('_wavebox_preload_split_')
 
     return (
-      <div className={saltedClassName}>
-        <div className={'ReactComponent-BrowserContainer'}>
+      <div className={classNames(classes.root, className, isActive ? 'active' : undefined)}>
+        <div className={classes.browserContainer}>
           <BrowserView
             ref={BROWSER_REF}
             id={`guest_${mailbox.id}_${service.type}`}
@@ -621,11 +678,11 @@ export default class MailboxWebView extends React.Component {
           />
         </div>
         {initialLoadDone || !snapshot ? undefined : (
-          <div className='ReactComponent-MailboxSnapshot' style={{ backgroundImage: `url("${snapshot}")` }} />
+          <div className={classes.snapshot} style={{ backgroundImage: `url("${snapshot}")` }} />
         )}
         {!service.hasNavigationToolbar && !initialLoadDone ? (
-          <div className='ReactComponent-MailboxLoader'>
-            <Spinner size={50} color={Colors.lightBlue600} speed={0.75} />
+          <div className={classes.loader}>
+            <Spinner size={50} color={lightBlue[600]} speed={0.75} />
           </div>
         ) : undefined}
         <MailboxLoadBar isLoading={isLoading} />
@@ -634,39 +691,42 @@ export default class MailboxWebView extends React.Component {
           <MailboxSearch mailboxId={mailbox.id} serviceType={service.type} />
         ) : undefined}
         {isCrashed ? (
-          <div className='ReactComponent-MailboxCrashed'>
-            <h1>Whoops!</h1>
-            <p>Something went wrong with this tab and it crashed</p>
-            <br />
-            <RaisedButton
-              label='Reload'
-              icon={<FontIcon className='material-icons'>refresh</FontIcon>}
-              onClick={() => {
-                // Update our crashed state
-                this.setState({ isCrashed: false })
-                this.refs[BROWSER_REF].reset()
-              }} />
-          </div>
+          <MailboxInformationCover
+            title='Whoops!'
+            text={['Something went wrong with this tab and it crashed']}
+            button={(
+              <Button
+                variant='raised'
+                onClick={() => {
+                  this.setState({ isCrashed: false }) // Update our crashed state
+                  this.refs[BROWSER_REF].reset()
+                }}>
+                <RefreshIcon className={classes.infoButtonIcon} />
+                Reload
+              </Button>
+            )} />
         ) : undefined}
         {mailbox.isAuthenticationInvalid || !mailbox.hasAuth ? (
-          <div className='ReactComponent-MailboxAuthInvalid'>
-            <FontIcon className='material-icons primary-icon'>error_outline</FontIcon>
-            <h1>Whoops!</h1>
-            <p>There's an authentication problem with this account.</p>
-            {mailbox.isAuthenticationInvalid ? (
-              <p>The authentication information Wavebox has for this account is no longer valid.</p>
-            ) : undefined}
-            {!mailbox.hasAuth ? (
-              <p>Wavebox doesn't have any authentication information for this account.</p>
-            ) : undefined}
-            <br />
-            <RaisedButton
-              label='Reauthenticate'
-              icon={<FontIcon className='material-icons'>error_outline</FontIcon>}
-              onClick={() => {
-                mailboxActions.reauthenticateMailbox(mailbox.id)
-              }} />
-          </div>
+          <MailboxInformationCover
+            title='Whoops!'
+            IconComponent={ErrorOutlineIcon}
+            text={[
+              'There\'s an authentication problem with this account.',
+              mailbox.isAuthenticationInvalid ? (
+                'The authentication information Wavebox has for this account is no longer valid.'
+              ) : undefined,
+              mailbox.hasAuth ? (
+                'Wavebox doesn\'t have any authentication information for this account.'
+              ) : undefined
+            ].filter((l) => !!l)}
+            button={(
+              <Button
+                variant='raised'
+                onClick={() => { mailboxActions.reauthenticateMailbox(mailbox.id) }}>
+                <ErrorOutlineIcon className={classes.infoButtonIcon} />
+                Reauthenticate
+              </Button>
+            )} />
         ) : undefined}
       </div>
     )

@@ -1,8 +1,8 @@
 import React from 'react'
-import { RaisedButton, Dialog, FlatButton, FontIcon } from 'material-ui'
+import { RaisedButton, Dialog, FlatButton, FontIcon } from 'material-ui' //TODO
 import shallowCompare from 'react-addons-shallow-compare'
 import { mailboxStore, mailboxActions, MailboxReducer } from 'stores/mailbox'
-import * as Colors from 'material-ui/styles/colors'
+import * as Colors from 'material-ui/styles/colors' //TODO
 import PropTypes from 'prop-types'
 import { MailboxAvatar } from 'Components/Mailbox'
 import Resolver from 'Runtime/Resolver'

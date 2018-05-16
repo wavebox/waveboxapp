@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import * as Colors from 'material-ui/styles/colors'
 import { mailboxStore } from 'stores/mailbox'
 import { userStore } from 'stores/user'
 import { settingsStore } from 'stores/settings'
@@ -11,15 +10,19 @@ import ToolbarMailboxServices from './ToolbarMailboxServices'
 import ToolbarExtensions from './ToolbarExtensions'
 import ToolbarNavigation from './ToolbarNavigation'
 import { ExtensionSettings } from 'shared/Models/Settings'
-import classnames from 'classnames'
+import classNames from 'classnames'
+import { withStyles } from 'material-ui/styles'
+import blueGrey from 'material-ui/colors/blueGrey'
 
 const styles = {
   toolbar: {
-    backgroundColor: Colors.blueGrey900,
+    backgroundColor: blueGrey[900],
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingLeft: 70,
+    '&.no-left-padd': { paddingLeft: 0 }
   },
   toolbarGroup: {
     display: 'flex',
@@ -33,6 +36,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class Toolbar extends React.Component {
   /* **************************************************************************/
   // Class
@@ -180,6 +184,7 @@ export default class Toolbar extends React.Component {
       style,
       toolbarHeight,
       className,
+      classes,
       ...passProps
     } = this.props
     const {
@@ -198,45 +203,45 @@ export default class Toolbar extends React.Component {
     return (
       <div
         {...passProps}
-        className={classnames('WB-Toolbar', className)}
-        style={{
-          height: toolbarHeight,
-          paddingLeft: !showTitlebar && !sidebarEnabled ? 70 : 0,
-          ...styles.toolbar,
-          ...style
-        }}>
-        <div style={styles.toolbarGroup}>
+        className={classNames(
+          classes.toolbar,
+          !showTitlebar && !sidebarEnabled ? undefined : 'no-left-padd',
+          'WB-Toolbar',
+          className
+        )}
+        style={{ height: toolbarHeight, ...style }}>
+        <div className={classes.toolbarGroup}>
           {hasServicesInToolbar && mailboxLayoutMode === CoreMailbox.SERVICE_TOOLBAR_ICON_LAYOUTS.LEFT_ALIGN ? (
             <ToolbarMailboxServices
-              style={styles.services}
+              className={classes.services}
               mailboxId={mailboxId}
               toolbarHeight={toolbarHeight} />
           ) : undefined}
           {hasExtensionsInToolbar && extensionLayoutMode === ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_LEFT ? (
             <ToolbarExtensions
-              style={styles.extension}
+              className={classes.extension}
               tabId={activeMailboxTabId}
               toolbarHeight={toolbarHeight} />
           ) : undefined}
         </div>
         {hasNavigationInToolbar ? (
           <ToolbarNavigation
-            style={styles.navigation}
+            className={classes.navigation}
             tabId={activeMailboxTabId}
             toolbarHeight={toolbarHeight}
             mailboxId={mailboxId}
             serviceType={serviceType} />
         ) : undefined}
-        <div style={styles.toolbarGroup}>
+        <div className={classes.toolbarGroup}>
           {hasServicesInToolbar && mailboxLayoutMode === CoreMailbox.SERVICE_TOOLBAR_ICON_LAYOUTS.RIGHT_ALIGN ? (
             <ToolbarMailboxServices
-              style={styles.services}
+              className={classes.services}
               mailboxId={mailboxId}
               toolbarHeight={toolbarHeight} />
           ) : undefined}
           {hasExtensionsInToolbar && extensionLayoutMode === ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_RIGHT ? (
             <ToolbarExtensions
-              style={styles.extension}
+              className={classes.extension}
               tabId={activeMailboxTabId}
               toolbarHeight={toolbarHeight} />
           ) : undefined}

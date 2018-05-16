@@ -41,10 +41,10 @@ export default class MailboxAvatar extends React.Component {
     // This has the side effect of now overflowing the element, so try to be a bit intelligent about
     // reducing the size depending on the passed props
     const generatedStyle = {
-      backgroundColor: mailbox.hasCustomAvatar || mailbox.avatarURL ? 'white' : mailbox.color,
-      ...(!mailbox.avatarCharacterDisplay ? {textIndent: -100000} : undefined) // Stops showing the broken image icon if the url doesn't resolve
+      backgroundColor: mailbox.hasCustomAvatar || mailbox.avatarURL ? 'white' : mailbox.color
     }
 
+    //TODO test with broken image
     if (mailbox.showAvatarColorRing) {
       const borderSize = Math.round(size * 0.08)
       const adjustedSize = size - (2 * borderSize)
