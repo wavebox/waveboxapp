@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button, Switch, Select, MenuItem, TextField } from 'material-ui'
+import { Button, Switch, Select, MenuItem, TextField, FormControlLabel, FormControl, InputLabel } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import GenericDefaultService from 'shared/Models/Accounts/Generic/GenericDefaultService'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
@@ -237,69 +237,82 @@ export default class WizardConfigureGeneric extends React.Component {
           Enter the web address and the name of the website you want
           to add
         </div>
-        <div>
-          <TextField
-            inputRef={(n) => { this.nameInputRef = n }}
-            fullWidth
-            InputLabelProps={{ shrink: true }}
-            placeholder='My Website'
-            label='Website Name'
-            value={displayName}
-            error={!!displayNameError}
-            helperText={displayNameError}
-            onChange={(evt) => this.setState({ displayName: evt.target.value })}
-            onKeyDown={(evt) => {
-              if (evt.keyCode === 13) {
-                this.urlInputRef.focus()
-              }
-            }} />
-          <TextField
-            inputRef={(n) => { this.urlInputRef = n }}
-            fullWidth
-            type='url'
-            InputLabelProps={{ shrink: true }}
-            placeholder='https://wavebox.io'
-            label='Website Url'
-            value={serviceUrl}
-            error={!!serviceUrlError}
-            helperText={serviceUrlError}
-            onChange={(evt) => this.setState({ serviceUrl: evt.target.value })}
-            onKeyDown={(evt) => {
-              if (evt.keyCode === 13) {
-                this.handleFinish(mailbox, onRequestCancel)
-              }
-            }} />
-        </div>
-        <Select
-          label='Open new windows in which Browser'
-          value={defaultWindowOpenMode}
+        <TextField
+          inputRef={(n) => { this.nameInputRef = n }}
           fullWidth
-          onChange={(evt) => {
-            this.setState({ defaultWindowOpenMode: evt.target.value })
-          }}>
-          {Object.keys(CoreMailbox.DEFAULT_WINDOW_OPEN_MODES).map((mode) => {
-            return (<MenuItem key={mode} value={mode}>{humanizedOpenModes[mode]}</MenuItem>)
-          })}
-        </Select>
-        <br />
-        <Switch
-          checked={restoreLastUrl}
-          color='primary'
-          label='Restore last page on load'
-          labelPosition='right'
-          onChange={(evt, toggled) => { this.setState({ restoreLastUrl: toggled }) }} />
-        <Switch
-          checked={configureDisplayFromPage}
-          color='primary'
-          label='Use Page Title & Theme to customise icon appearance'
-          labelPosition='right'
-          onChange={(evt, toggled) => this.setState({ configureDisplayFromPage: toggled })} />
-        <Switch
-          checked={hasNavigationToolbar}
-          color='primary'
-          label='Show navigation toolbar'
-          labelPosition='right'
-          onChange={(evt, toggled) => this.setState({ hasNavigationToolbar: toggled })} />
+          InputLabelProps={{ shrink: true }}
+          placeholder='My Website'
+          label='Website Name'
+          margin='normal'
+          value={displayName}
+          error={!!displayNameError}
+          helperText={displayNameError}
+          onChange={(evt) => this.setState({ displayName: evt.target.value })}
+          onKeyDown={(evt) => {
+            if (evt.keyCode === 13) {
+              this.urlInputRef.focus()
+            }
+          }} />
+        <TextField
+          inputRef={(n) => { this.urlInputRef = n }}
+          fullWidth
+          type='url'
+          InputLabelProps={{ shrink: true }}
+          placeholder='https://wavebox.io'
+          label='Website Url'
+          margin='normal'
+          value={serviceUrl}
+          error={!!serviceUrlError}
+          helperText={serviceUrlError}
+          onChange={(evt) => this.setState({ serviceUrl: evt.target.value })}
+          onKeyDown={(evt) => {
+            if (evt.keyCode === 13) {
+              this.handleFinish(mailbox, onRequestCancel)
+            }
+          }} />
+        <FormControl fullWidth margin='normal'>
+          <InputLabel>Open new windows in which Browser</InputLabel>
+          <Select
+            value={defaultWindowOpenMode}
+            fullWidth
+            onChange={(evt) => {
+              this.setState({ defaultWindowOpenMode: evt.target.value })
+            }}>
+            {Object.keys(CoreMailbox.DEFAULT_WINDOW_OPEN_MODES).map((mode) => {
+              return (<MenuItem key={mode} value={mode}>{humanizedOpenModes[mode]}</MenuItem>)
+            })}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <FormControlLabel
+            label='Restore last page on load'
+            control={(
+              <Switch
+                checked={restoreLastUrl}
+                color='primary'
+                onChange={(evt, toggled) => { this.setState({ restoreLastUrl: toggled }) }} />
+            )} />
+        </FormControl>
+        <FormControl fullWidth>
+          <FormControlLabel
+            label='Use Page Title & Theme to customise icon appearance'
+            control={(
+              <Switch
+                checked={configureDisplayFromPage}
+                color='primary'
+                onChange={(evt, toggled) => this.setState({ configureDisplayFromPage: toggled })} />
+            )} />
+        </FormControl>
+        <FormControl fullWidth>
+          <FormControlLabel
+            label='Show navigation toolbar'
+            control={(
+              <Switch
+                checked={hasNavigationToolbar}
+                color='primary'
+                onChange={(evt, toggled) => this.setState({ hasNavigationToolbar: toggled })} />
+            )} />
+        </FormControl>
       </WizardConfigureDefaultLayout>
     )
   }

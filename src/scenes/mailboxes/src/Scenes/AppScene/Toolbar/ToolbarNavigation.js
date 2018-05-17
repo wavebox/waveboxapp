@@ -351,13 +351,13 @@ export default class ToolbarNavigation extends React.Component {
           </IconButton>
           <IconButton
             className={classes.iconButton}
-            disableTouchRipple={!canGoBack}
+            disableRipple={!canGoBack}
             onClick={canGoBack ? this.onGoBack : undefined}>
             <ArrowBackIcon className={classNames(classes.icon, !canGoBack ? 'is-disabled' : undefined)} />
           </IconButton>
           <IconButton
             className={classes.iconButton}
-            disableTouchRipple={!canGoForward}
+            disableRipple={!canGoForward}
             onClick={canGoForward ? this.onGoForward : undefined}>
             <ArrowForwardIcon className={classNames(classes.icon, !canGoForward ? 'is-disabled' : undefined)} />
           </IconButton>

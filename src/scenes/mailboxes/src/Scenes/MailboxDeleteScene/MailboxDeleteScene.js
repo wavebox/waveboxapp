@@ -1,12 +1,16 @@
 import React from 'react'
-import { RaisedButton, Dialog, FlatButton, FontIcon } from 'material-ui' //TODO
+import { Button, Dialog, DialogContent, DialogActions, DialogTitle } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import { userStore } from 'stores/user'
-import * as Colors from 'material-ui/styles/colors' //TODO
 import PropTypes from 'prop-types'
-import { MailboxAvatar } from 'Components/Mailbox'
+import MailboxAvatar from 'Components/Backed/MailboxAvatar'
+import MailboxServiceIcon from 'wbui/MailboxServiceIcon'
 import Resolver from 'Runtime/Resolver'
+import { withStyles } from 'material-ui/styles'
+import grey from 'material-ui/colors/grey'
+import red from 'material-ui/colors/red'
+import DeleteIcon from '@material-ui/icons/Delete'
 
 const styles = {
   avatarContainer: {
@@ -25,12 +29,24 @@ const styles = {
   },
   serviceLogo: {
     display: 'inline-block',
-    height: 32,
     marginLeft: 4,
     marginRight: 4
+  },
+  cancelButton: {
+    marginRight: 8
+  },
+  deleteButton: {
+    color: red[600]
+  },
+  deleteIcon: {
+    marginRight: 6
+  },
+  accountName: {
+    color: grey[700]
   }
 }
 
+@withStyles(styles)
 export default class MailboxDeleteScene extends React.Component {
   /* **************************************************************************/
   // Class
@@ -124,57 +140,54 @@ export default class MailboxDeleteScene extends React.Component {
   }
 
   render () {
+    const { classes } = this.props
     const { open, mailbox, userHasServices } = this.state
-
     if (!mailbox) { return false }
 
-    const actions = (
-      <div>
-        <FlatButton
-          label='Cancel'
-          style={{ marginRight: 8 }}
-          onClick={this.handleClose} />
-        <RaisedButton
-          labelStyle={{ color: Colors.red600 }}
-          label='Delete'
-          icon={(<FontIcon className='material-icons' color={Colors.red600}>delete</FontIcon>)}
-          onClick={this.handleDelete} />
-      </div>
-    )
-
     return (
-      <Dialog
-        onRequestClose={this.handleClose}
-        title='Delete Account'
-        actions={actions}
-        open={open}>
-        <p style={styles.message}>
+      <Dialog open={open} onClose={this.handleClose}>
+        <DialogTitle>Delete Account</DialogTitle>
+        <DialogContent>
+          <p className={classes.message}>
+            {userHasServices && mailbox.enabledServices.length > 1 ? (
+              `Are you sure you want to delete this account (including ${mailbox.enabledServices.length} services)?`
+            ) : (
+              `Are you sure you want to delete this account?`
+            )}
+          </p>
+          <div className={classes.avatarContainer}>
+            <MailboxAvatar
+              mailboxId={mailbox.id}
+              size={45}
+              className={classes.avatar} />
+            <div className={classes.accountName}>
+              {`${mailbox.humanizedType} : ${mailbox.displayName}`}
+            </div>
+          </div>
           {userHasServices && mailbox.enabledServices.length > 1 ? (
-            `Are you sure you want to delete this account (including ${mailbox.enabledServices.length} services)?`
-          ) : (
-            `Are you sure you want to delete this account?`
-          )}
-        </p>
-        <div style={styles.avatarContainer}>
-          <MailboxAvatar
-            mailboxId={mailbox.id}
-            size={45}
-            style={styles.avatar} />
-          <div>
-            {`${mailbox.humanizedType} : ${mailbox.displayName}`}
-          </div>
-        </div>
-        {userHasServices && mailbox.enabledServices.length > 1 ? (
-          <div style={styles.servicesContainer}>
-            {mailbox.enabledServices.map((service) => {
-              return (
-                <img
-                  src={Resolver.image(service.humanizedLogoAtSize(128))}
-                  style={styles.serviceLogo} />
-              )
-            })}
-          </div>
-        ) : undefined}
+            <div className={classes.servicesContainer}>
+              {mailbox.enabledServices.map((service) => {
+                return (
+                  <MailboxServiceIcon
+                    key={service.type}
+                    className={classes.serviceLogo}
+                    iconUrl={Resolver.image(service.humanizedLogoAtSize(128))}
+                    showSleeping={false}
+                    size={32} />
+                )
+              })}
+            </div>
+          ) : undefined}
+        </DialogContent>
+        <DialogActions>
+          <Button className={classes.cancelButton} onClick={this.handleClose}>
+            Cancel
+          </Button>
+          <Button className={classes.deleteButton} variant='raised' onClick={this.handleDelete}>
+            <DeleteIcon className={classes.deleteIcon} />
+            Delete
+          </Button>
+        </DialogActions>
       </Dialog>
     )
   }

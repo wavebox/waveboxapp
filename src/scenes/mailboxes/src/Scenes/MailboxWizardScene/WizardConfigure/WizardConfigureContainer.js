@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Switch } from 'material-ui'
+import { Switch, FormControl, FormControlLabel } from 'material-ui'
 import { mailboxActions, ContainerDefaultServiceReducer } from 'stores/mailbox'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
 import CoreService from 'shared/Models/Accounts/CoreService'
@@ -99,65 +99,80 @@ export default class WizardConfigureContainer extends React.Component {
         mailboxId={mailbox.id}
         {...passProps}>
         <h2 className={classes.heading}>Configure your Account</h2>
-        <Switch
-          checked={service.hasNavigationToolbar}
-          color='primary'
-          label='Show navigation toolbar'
-          labelPosition='right'
-          onChange={(evt, toggled) => {
-            mailboxActions.reduceService(
-              mailbox.id,
-              CoreService.SERVICE_TYPES.DEFAULT,
-              ContainerDefaultServiceReducer.setHasNavigationToolbar,
-              toggled
-            )
-          }} />
+        <FormControl fullWidth>
+          <FormControlLabel
+            label='Show navigation toolbar'
+            control={(
+              <Switch
+                checked={service.hasNavigationToolbar}
+                color='primary'
+                onChange={(evt, toggled) => {
+                  mailboxActions.reduceService(
+                    mailbox.id,
+                    CoreService.SERVICE_TYPES.DEFAULT,
+                    ContainerDefaultServiceReducer.setHasNavigationToolbar,
+                    toggled
+                  )
+                }} />
+            )} />
+        </FormControl>
         {service.supportsGuestNotifications ? (
-          <Switch
-            checked={service.showNotifications}
-            color='primary'
-            label='Show Notifications'
-            labelPosition='right'
-            onChange={(evt, toggled) => {
-              mailboxActions.reduceService(
-                mailbox.id,
-                CoreService.SERVICE_TYPES.DEFAULT,
-                ContainerDefaultServiceReducer.setShowNotifications,
-                toggled
-              )
-            }} />
+          <FormControl fullWidth>
+            <FormControlLabel
+              label='Show Notifications'
+              control={(
+                <Switch
+                  checked={service.showNotifications}
+                  color='primary'
+                  onChange={(evt, toggled) => {
+                    mailboxActions.reduceService(
+                      mailbox.id,
+                      CoreService.SERVICE_TYPES.DEFAULT,
+                      ContainerDefaultServiceReducer.setShowNotifications,
+                      toggled
+                    )
+                  }} />
+              )} />
+          </FormControl>
         ) : undefined}
         <div>
-          <Switch
-            checked={service.showUnreadActivityBadge}
-            color='primary'
-            label={(
-              <span>
-                <span>Show unread activity in sidebar or toolbar as </span>
-                <span className={classes.mockUnreadActivityIndicator}>●</span>
-              </span>
-            )}
-            labelPosition='right'
-            onChange={(evt, toggled) => {
-              mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setShowUnreadActivityBadge, toggled)
-            }} />
-          <Switch
-            checked={service.unreadActivityCountsTowardsAppUnread}
-            color='primary'
-            label={(
-              <span>
-                <span>Show unread activity in Menu Bar & App Badge as </span>
-                <span className={classes.mockUnreadActivityIndicator}>●</span>
-              </span>
-            )}
-            labelPosition='right'
-            onChange={(evt, toggled) => {
-              mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setUnreadActivityCountsTowardsAppUnread, toggled)
-            }} />
+          <FormControl fullWidth>
+            <FormControlLabel
+              label={(
+                <span>
+                  <span>Show unread activity in sidebar or toolbar as </span>
+                  <span className={classes.mockUnreadActivityIndicator}>●</span>
+                </span>
+              )}
+              control={(
+                <Switch
+                  checked={service.showUnreadActivityBadge}
+                  color='primary'
+                  onChange={(evt, toggled) => {
+                    mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setShowUnreadActivityBadge, toggled)
+                  }} />
+              )} />
+          </FormControl>
+          <FormControl fullWidth>
+            <FormControlLabel
+              label={(
+                <span>
+                  <span>Show unread activity in Menu Bar & App Badge as </span>
+                  <span className={classes.mockUnreadActivityIndicator}>●</span>
+                </span>
+              )}
+              control={(
+                <Switch
+                  checked={service.unreadActivityCountsTowardsAppUnread}
+                  color='primary'
+                  onChange={(evt, toggled) => {
+                    mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setUnreadActivityCountsTowardsAppUnread, toggled)
+                  }} />
+              )} />
+          </FormControl>
         </div>
         {userHasSleepable ? (
           <div className={classes.sleepContainer}>
-            <br />
             <SleepableField
               sleepEnabled={service.sleepable}
               onSleepEnabledChanged={(toggled) => {

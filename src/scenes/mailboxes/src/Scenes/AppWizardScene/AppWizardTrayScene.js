@@ -2,6 +2,7 @@ import React from 'react'
 import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 import { TrayIconEditor } from 'Components/Tray'
+import { withStyles } from 'material-ui/styles'
 
 const styles = {
   container: {
@@ -37,6 +38,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class AppWizardTrayScene extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
@@ -73,22 +75,23 @@ export default class AppWizardTrayScene extends React.Component {
   }
 
   render () {
+    const { classes } = this.props
     const { tray } = this.state
     const naming = process.platform === 'darwin' ? 'Menu Bar' : 'Tray'
 
     return (
-      <div style={styles.container}>
-        <h2 style={styles.heading}>{`${naming} Icon`}</h2>
-        <p style={styles.subHeading}>
+      <div className={classes.container}>
+        <h2 className={classes.heading}>{`${naming} Icon`}</h2>
+        <p className={classes.subHeading}>
           {`The Wavebox ${naming} Icon sits alongside the other apps that
           are running in your ${naming}. You can change the way the Wavebox
           ${naming} Icon appears so it fits perfectly with everthing else`}
         </p>
         <TrayIconEditor
           tray={tray}
-          style={styles.trayEditor}
-          trayPreviewStyles={styles.trayPreview}
-          trayHeadingStyles={styles.trayHeading} />
+          className={classes.trayEditor}
+          trayPreviewClassName={classes.trayPreview}
+          trayHeadingClassName={classes.trayHeading} />
       </div>
     )
   }

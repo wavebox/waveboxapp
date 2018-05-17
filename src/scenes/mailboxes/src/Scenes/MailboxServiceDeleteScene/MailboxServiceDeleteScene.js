@@ -1,11 +1,15 @@
 import React from 'react'
-import { RaisedButton, Dialog, FlatButton, FontIcon } from 'material-ui' //TODO
+import { Button, Dialog, DialogContent, DialogActions, DialogTitle } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import { mailboxStore, mailboxActions, MailboxReducer } from 'stores/mailbox'
-import * as Colors from 'material-ui/styles/colors' //TODO
 import PropTypes from 'prop-types'
-import { MailboxAvatar } from 'Components/Mailbox'
+import MailboxAvatar from 'Components/Backed/MailboxAvatar'
+import MailboxServiceIcon from 'wbui/MailboxServiceIcon'
 import Resolver from 'Runtime/Resolver'
+import { withStyles } from 'material-ui/styles'
+import red from 'material-ui/colors/red'
+import grey from 'material-ui/colors/grey'
+import DeleteIcon from '@material-ui/icons/Delete'
 
 const styles = {
   avatarContainer: {
@@ -21,14 +25,26 @@ const styles = {
   serviceLogo: {
     position: 'absolute',
     bottom: -7,
-    right: -7,
-    height: 32
+    right: -7
   },
   message: {
     fontWeight: 'bold'
+  },
+  cancelButton: {
+    marginRight: 8
+  },
+  deleteButton: {
+    color: red[600]
+  },
+  deleteIcon: {
+    marginRight: 6
+  },
+  serviceName: {
+    color: grey[700]
   }
 }
 
+@withStyles(styles)
 export default class MailboxServiceDeleteScene extends React.Component {
   /* **************************************************************************/
   // Class
@@ -124,46 +140,43 @@ export default class MailboxServiceDeleteScene extends React.Component {
   }
 
   render () {
+    const { classes } = this.props
     const { open, mailbox, service } = this.state
     if (!mailbox || !service) { return false }
 
-    const actions = (
-      <div>
-        <FlatButton
-          label='Cancel'
-          style={{ marginRight: 8 }}
-          onClick={this.handleClose} />
-        <RaisedButton
-          labelStyle={{ color: Colors.red600 }}
-          label='Delete'
-          icon={(<FontIcon className='material-icons' color={Colors.red600}>delete</FontIcon>)}
-          onClick={this.handleDelete} />
-      </div>
-    )
-
     return (
-      <Dialog
-        onRequestClose={this.handleClose}
-        title='Delete Service'
-        actions={actions}
-        open={open}>
-        <p style={styles.message}>
-          {`Are you sure you want to delete ${service.humanizedType} from this account?`}
-        </p>
-        <div style={styles.avatarContainer}>
-          <div style={styles.compositeAvatar}>
-            <MailboxAvatar
-              mailboxId={mailbox.id}
-              size={45}
-              style={styles.avatar} />
-            <img
-              src={Resolver.image(service.humanizedLogoAtSize(128))}
-              style={styles.serviceLogo} />
+      <Dialog open={open} onClose={this.handleClose}>
+        <DialogTitle>Delete Service</DialogTitle>
+        <DialogContent>
+          <p className={classes.message}>
+            {`Are you sure you want to delete ${service.humanizedType} from this account?`}
+          </p>
+          <div className={classes.avatarContainer}>
+            <div className={classes.compositeAvatar}>
+              <MailboxAvatar
+                mailboxId={mailbox.id}
+                size={45}
+                className={classes.avatar} />
+              <MailboxServiceIcon
+                className={classes.serviceLogo}
+                iconUrl={Resolver.image(service.humanizedLogoAtSize(128))}
+                showSleeping={false}
+                size={32} />
+            </div>
+            <div className={classes.serviceName}>
+              {`${service.humanizedType} : ${mailbox.displayName}`}
+            </div>
           </div>
-          <div>
-            {`${service.humanizedType} : ${mailbox.displayName}`}
-          </div>
-        </div>
+        </DialogContent>
+        <DialogActions>
+          <Button className={classes.cancelButton} onClick={this.handleClose}>
+            Cancel
+          </Button>
+          <Button className={classes.deleteButton} variant='raised' onClick={this.handleDelete}>
+            <DeleteIcon className={classes.deleteIcon} />
+            Delete
+          </Button>
+        </DialogActions>
       </Dialog>
     )
   }

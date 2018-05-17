@@ -1,6 +1,9 @@
 import React from 'react'
-import { FontIcon, Avatar } from 'material-ui' //TODO
-import * as Colors from 'material-ui/styles/colors' //TODO
+import { Icon, Avatar } from 'material-ui'
+import blueGrey from 'material-ui/colors/blueGrey'
+import yellow from 'material-ui/colors/yellow'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
 const styles = {
   container: {
@@ -24,27 +27,36 @@ const styles = {
     fontWeight: 300,
     marginTop: 0,
     fontSize: 16
+  },
+  avatar: {
+    backgroundColor: blueGrey[900],
+    color: yellow[600],
+    width: 100,
+    height: 100
+  },
+  avatarIcon: {
+    fontSize: '50px'
   }
 }
 
+@withStyles(styles)
 export default class AppWizardIntroScene extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   render () {
-    //
+    const { classes } = this.props
+
     return (
-      <div style={styles.container}>
-        <Avatar
-          color={Colors.yellow600}
-          backgroundColor={Colors.blueGrey900}
-          icon={(<FontIcon className='fas fa-fw fa-magic' />)}
-          size={100} />
-        <h2 style={styles.heading}>
+      <div className={classes.container}>
+        <Avatar className={classes.avatar}>
+          <Icon className={classNames(classes.avatarIcon, 'fas fa-fw fa-magic')} />
+        </Avatar>
+        <h2 className={classes.heading}>
           Wavebox Setup Wizard
         </h2>
-        <p style={styles.subHeading}>
+        <p className={classes.subHeading}>
           Take a few moments to customise some of the common Wavebox settings so it works best for you
         </p>
       </div>

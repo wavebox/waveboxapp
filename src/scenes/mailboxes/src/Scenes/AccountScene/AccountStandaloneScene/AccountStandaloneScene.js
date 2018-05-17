@@ -1,34 +1,41 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { RaisedButton } from 'material-ui' //TODO
+import { Dialog, DialogContent, DialogActions, Button } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
-import { WaveboxWebView, FullscreenModal } from 'Components'
+import { WaveboxWebView } from 'Components'
 import { userStore } from 'stores/user'
 import querystring from 'querystring'
+import { withStyles } from 'material-ui/styles'
 
 const styles = {
-  modalActions: {
-    position: 'absolute',
-    height: 52,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'white',
-    borderTop: '1px solid rgb(232, 232, 232)',
-    borderBottomLeftRadius: 2,
-    borderBottomRightRadius: 2
+  dialog: {
+    maxWidth: '100%',
+    width: '100%',
+    height: '100%'
   },
-  modalBody: {
+  dialogContent: {
+    position: 'relative'
+  },
+  dialogActions: {
+    backgroundColor: 'rgb(242, 242, 242)',
+    borderTop: '1px solid rgb(232, 232, 232)',
+    margin: 0,
+    padding: '8px 4px'
+  },
+  loadingCover: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    bottom: 52,
-    borderTopLeftRadius: 2,
-    borderTopRightRadius: 2
+    bottom: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 }
 
+@withStyles(styles)
 export default class AccountStandaloneScene extends React.Component {
   /* **************************************************************************/
   // Class
@@ -93,19 +100,21 @@ export default class AccountStandaloneScene extends React.Component {
 
   render () {
     const { open, billingUrl } = this.state
-    const { location } = this.props
+    const { location, classes } = this.props
     const url = querystring.parse(location.search.substr(1)).url || billingUrl
 
     return (
-      <FullscreenModal
-        modal={false}
-        actions={(<RaisedButton primary label='Close' onClick={this.handleClose} />)}
-        open={open}
-        actionsContainerStyle={styles.modalActions}
-        bodyStyle={styles.modalBody}
-        onRequestClose={this.handleClose}>
-        <WaveboxWebView src={url} />
-      </FullscreenModal>
+      <Dialog open={open} onClose={this.handleClose} classes={{ paper: classes.dialog }}>
+        <DialogContent className={classes.dialogContent}>
+          <WaveboxWebView
+            src={url} />
+        </DialogContent>
+        <DialogActions className={classes.dialogActions}>
+          <Button variant='raised' color='primary' onClick={this.handleClose}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     )
   }
 }

@@ -1,10 +1,22 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Dialog, RaisedButton } from 'material-ui' //TODO
+import { Dialog, DialogContent, DialogActions, Button } from 'material-ui'
 import UpdateModalTitle from './UpdateModalTitle'
 import pkg from 'package.json'
+import { withStyles } from 'material-ui/styles'
+import DoneIcon from '@material-ui/icons/Done'
 
+const styles = {
+  dialogContent: {
+    width: 600
+  },
+  versionInfo: {
+    fontSize: '85%'
+  }
+}
+
+@withStyles(styles)
 export default class UpdateNoneScene extends React.Component {
   /* **************************************************************************/
   // Class
@@ -50,17 +62,21 @@ export default class UpdateNoneScene extends React.Component {
   }
 
   render () {
+    const { classes } = this.props
     const { open } = this.state
 
     return (
-      <Dialog
-        title={(<UpdateModalTitle iconName='done' />)}
-        modal={false}
-        actions={(<RaisedButton label='Done' onClick={this.handleClose} />)}
-        open={open}
-        onRequestClose={this.handleClose}>
-        <p>Your version of Wavebox is up to date</p>
-        <p style={{ fontSize: '85%' }}>You're currently using Wavebox version <strong>{pkg.version}</strong></p>
+      <Dialog open={open} onClose={this.handleClose}>
+        <UpdateModalTitle IconClass={DoneIcon} />
+        <DialogContent className={classes.dialogContent}>
+          <p>Your version of Wavebox is up to date</p>
+          <p className={classes.versionInfo}>You're currently using Wavebox version <strong>{pkg.version}</strong></p>
+        </DialogContent>
+        <DialogActions>
+          <Button variant='raised' color='primary' onClick={this.handleClose}>
+            Done
+          </Button>
+        </DialogActions>
       </Dialog>
     )
   }

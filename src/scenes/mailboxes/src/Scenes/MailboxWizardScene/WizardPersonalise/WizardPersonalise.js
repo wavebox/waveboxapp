@@ -73,8 +73,6 @@ const styles = {
   }
 }
 
-const CUSTOM_PERSONALIZE_REF = 'CUSTOM_PERSONALIZE_REF'
-
 @withStyles(styles)
 export default class WizardPersonalise extends React.Component {
   /* **************************************************************************/
@@ -85,6 +83,16 @@ export default class WizardPersonalise extends React.Component {
     MailboxClass: PropTypes.func.isRequired,
     accessMode: PropTypes.string.isRequired,
     onRequestCancel: PropTypes.func.isRequired
+  }
+
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    this.customPersonalizeRef = null
   }
 
   /* **************************************************************************/
@@ -137,9 +145,9 @@ export default class WizardPersonalise extends React.Component {
     const { MailboxClass, accessMode } = this.props
     const { enabledServices, servicesDisplayMode, color } = this.state
 
-    if (this.refs[CUSTOM_PERSONALIZE_REF]) {
+    if (this.customPersonalizeRef) {
       const mailboxJS = this.createJS(MailboxClass, accessMode, enabledServices, servicesDisplayMode, color)
-      this.refs[CUSTOM_PERSONALIZE_REF].handleNext(MailboxClass, accessMode, mailboxJS)
+      this.customPersonalizeRef.handleNext(MailboxClass, accessMode, mailboxJS)
     } else {
       const mailboxJS = this.createJS(MailboxClass, accessMode, enabledServices, servicesDisplayMode, color)
       mailboxActions.authenticateMailbox(MailboxClass, accessMode, mailboxJS)
@@ -221,7 +229,10 @@ export default class WizardPersonalise extends React.Component {
   */
   renderCustomSection (MailboxClass, accessMode) {
     if (MailboxClass.type === MailboxTypes.CONTAINER) {
-      return (<WizardPersonaliseContainer ref={CUSTOM_PERSONALIZE_REF} containerId={accessMode} />)
+      return (
+        <WizardPersonaliseContainer
+          innerRef={(n) => { this.customPersonalizeRef = n }}
+          containerId={accessMode} />)
     }
 
     return undefined

@@ -1,12 +1,16 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Dialog, RaisedButton, FlatButton } from 'material-ui' //TODO
+import { Dialog, DialogActions, DialogContent, Button } from 'material-ui'
 import { updaterActions, updaterStore } from 'stores/updater'
 import UpdateModalTitle from './UpdateModalTitle'
 import electron from 'electron'
+import { withStyles } from 'material-ui/styles'
 
 const styles = {
+  dialogContent: {
+    width: 600
+  },
   method: {
     display: 'inline-block',
     width: 100
@@ -21,9 +25,14 @@ const styles = {
     backgroundColor: '#F5F5F5',
     border: '1px solid #CCCCCC',
     borderRadius: 4
+  },
+  button: {
+    marginLeft: 8,
+    marginRight: 8
   }
 }
 
+@withStyles(styles)
 export default class UpdateAvailableScene extends React.Component {
   /* **************************************************************************/
   // Class
@@ -44,9 +53,9 @@ export default class UpdateAvailableScene extends React.Component {
   // Data Lifecycle
   /* **************************************************************************/
 
-  state = (() => {
-    return { open: true }
-  })()
+  state = {
+    open: true
+  }
 
   /* **************************************************************************/
   // UI Events
@@ -103,53 +112,49 @@ export default class UpdateAvailableScene extends React.Component {
 
   /**
   * Renders the actions for the given provider
+  * @param classes:
   * @param provider: the provider giving the updates
   * @return jsx
   */
-  renderActions (provider) {
+  renderActions (classes, provider) {
     if (provider === 'squirrel') {
       return (
-        <div>
-          <FlatButton
-            label='After Restart'
-            style={{ marginRight: 16 }}
-            onClick={this.handleClose} />
-          <FlatButton
-            label='Later'
-            style={{ marginRight: 16 }}
-            onClick={this.handleCheckLater} />
-          <RaisedButton
-            primary
-            label='Install Now'
-            onClick={this.handleSquirrelInstall} />
-        </div>
+        <DialogActions>
+          <Button className={classes.button} onClick={this.handleClose}>
+            After Restart
+          </Button>
+          <Button className={classes.button} onClick={this.handleCheckLater}>
+            Later
+          </Button>
+          <Button variant='raised' color='primary' className={classes.button} onClick={this.handleSquirrelInstall}>
+            Install Now
+          </Button>
+        </DialogActions>
       )
     } else if (provider === 'manual') {
       return (
-        <div>
-          <FlatButton
-            label='After Restart'
-            style={{ marginRight: 16 }}
-            onClick={this.handleClose} />
-          <FlatButton
-            label='Later'
-            style={{ marginRight: 16 }}
-            onClick={this.handleCheckLater} />
-          <RaisedButton
-            primary
-            label='Download Now'
-            onClick={this.handleDownloadManual} />
-        </div>
+        <DialogActions>
+          <Button className={classes.button} onClick={this.handleClose}>
+            After Restart
+          </Button>
+          <Button className={classes.button} onClick={this.handleCheckLater}>
+            Later
+          </Button>
+          <Button variant='raised' color='primary' className={classes.button} onClick={this.handleDownloadManual}>
+            Download Now
+          </Button>
+        </DialogActions>
       )
     }
   }
 
   /**
   * Renders the message for the given provider
+  * @param classes:
   * @param provider: the provider giving the updates
   * @return jsx
   */
-  renderMessage (provider) {
+  renderMessage (classes, provider) {
     if (provider === 'squirrel') {
       return (
         <p>A new version of Wavebox has been downloaded and is ready to install. Do you want to install it now?</p>
@@ -164,26 +169,26 @@ export default class UpdateAvailableScene extends React.Component {
               manager, otherwise you can download the update using your web browser
             </p>
             <p>
-              <strong style={styles.method}>Snap:</strong>
-              <code style={styles.managerCode}>
+              <strong className={classes.method}>Snap:</strong>
+              <code className={classes.managerCode}>
                 {`sudo snap refresh wavebox`}
               </code>
             </p>
             <p>
-              <strong style={styles.method}>Apt:</strong>
-              <code style={styles.managerCode}>
+              <strong className={classes.method}>Apt:</strong>
+              <code className={classes.managerCode}>
                 {`sudo apt update; sudo apt install wavebox`}
               </code>
             </p>
             <p>
-              <strong style={styles.method}>Yum:</strong>
-              <code style={styles.managerCode}>
+              <strong className={classes.method}>Yum:</strong>
+              <code className={classes.managerCode}>
                 {`sudo yum update Wavebox`}
               </code>
             </p>
             <p>
-              <strong style={styles.method}>Zypper:</strong>
-              <code style={styles.managerCode}>
+              <strong className={classes.method}>Zypper:</strong>
+              <code className={classes.managerCode}>
                 {`sudo zypper up Wavebox`}
               </code>
             </p>
@@ -199,16 +204,18 @@ export default class UpdateAvailableScene extends React.Component {
 
   render () {
     const { open } = this.state
-    const { match: { params: { provider } } } = this.props
+    const {
+      match: { params: { provider } },
+      classes
+    } = this.props
 
     return (
-      <Dialog
-        title={<UpdateModalTitle />}
-        modal={false}
-        actions={this.renderActions(provider)}
-        open={open}
-        onRequestClose={this.handleCheckLater}>
-        {this.renderMessage(provider)}
+      <Dialog open={open} onClose={this.handleCheckLater}>
+        <UpdateModalTitle />
+        <DialogContent className={classes.dialogContent}>
+          {this.renderMessage(classes, provider)}
+        </DialogContent>
+        {this.renderActions(classes, provider)}
       </Dialog>
     )
   }

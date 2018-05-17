@@ -1,10 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import MailboxAvatar from 'Components/Mailbox/MailboxAvatar'
-import { RaisedButton } from 'material-ui'//TODO
+import MailboxAvatar from 'Components/Backed/MailboxAvatar'
+import { Button } from 'material-ui'
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
 import { settingsActions } from 'stores/settings'
-import * as Colors from 'material-ui/styles/colors' //TODO
+import { withStyles } from 'material-ui/styles'
+import grey from 'material-ui/colors/grey'
+import blue from 'material-ui/colors/blue'
 
 const styles = {
   // Layout
@@ -20,29 +22,30 @@ const styles = {
     position: 'relative'
   },
   icon: {
-    marginTop: 50
+    marginTop: 50,
+    display: 'inline-block'
   },
   z1: {
     position: 'absolute',
-    color: Colors.grey600,
+    color: grey[600],
     top: 30,
     right: 15
   },
   z2: {
     position: 'absolute',
-    color: Colors.grey600,
+    color: grey[600],
     top: 20,
     right: 10
   },
   z3: {
     position: 'absolute',
-    color: Colors.grey600,
+    color: grey[600],
     top: 10,
     right: 15
   },
   z4: {
     position: 'absolute',
-    color: Colors.grey600,
+    color: grey[600],
     top: 0,
     right: 20
   },
@@ -58,11 +61,11 @@ const styles = {
   link: {
     textDecoration: 'underline',
     cursor: 'pointer',
-    color: Colors.blue800
+    color: blue[800]
   },
   fullDisable: {
     fontSize: '85%',
-    color: Colors.grey400
+    color: grey[400]
   },
 
   // Actions
@@ -74,6 +77,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class MailboxSleepNotification extends React.Component {
   /* **************************************************************************/
   // Class
@@ -123,7 +127,7 @@ export default class MailboxSleepNotification extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { mailbox, service, closeMetrics } = this.props
+    const { mailbox, service, closeMetrics, classes } = this.props
 
     const displayNameText = mailbox.hasAdditionalServices ? (
       `${service.humanizedTypeShort} : ${mailbox.displayName}`
@@ -144,33 +148,30 @@ export default class MailboxSleepNotification extends React.Component {
     ) : ''
 
     return (
-      <div style={styles.container}>
-        <div style={styles.iconContainer}>
-          <span style={styles.z1}>z</span>
-          <span style={styles.z2}>z</span>
-          <span style={styles.z3}>z</span>
-          <span style={styles.z4}>z</span>
-          <MailboxAvatar mailboxId={mailbox.id} size={50} style={styles.icon} />
+      <div className={classes.container}>
+        <div className={classes.iconContainer}>
+          <span className={classes.z1}>z</span>
+          <span className={classes.z2}>z</span>
+          <span className={classes.z3}>z</span>
+          <span className={classes.z4}>z</span>
+          <MailboxAvatar mailboxId={mailbox.id} size={50} className={classes.icon} />
         </div>
-        <div style={styles.content}>
-          <p style={styles.title}>{`${displayNameText} has just been put to sleep, ${savingText}.`}</p>
+        <div className={classes.content}>
+          <p className={classes.title}>{`${displayNameText} has just been put to sleep, ${savingText}.`}</p>
           {additionalInfo ? (<p>{additionalInfo}</p>) : undefined}
           <p>
-            You can <span onClick={this.handleCustomize} style={styles.link}>customize these settings</span> at anytime
+            You can <span onClick={this.handleCustomize} className={classes.link}>customize these settings</span> at anytime
           </p>
-          <div style={styles.actionContainer}>
-            <RaisedButton
-              label='Okay'
-              primary
-              style={styles.button}
-              onClick={this.handleDismiss} />
-            <RaisedButton
-              label='Keep Awake'
-              style={styles.button}
-              onClick={this.handleDisableSleep} />
+          <div className={classes.actionContainer}>
+            <Button variant='raised' color='primary' className={classes.button} onClick={this.handleDismiss}>
+              Okay
+            </Button>
+            <Button variant='raised' className={classes.button} onClick={this.handleDisableSleep}>
+              Keep Awake
+            </Button>
           </div>
-          <p style={styles.fullDisable}>
-            Sleep notifications only appear once for each account, unless you <span onClick={this.handleFullDisable} style={styles.link}>disable them</span> completely
+          <p className={classes.fullDisable}>
+            Sleep notifications only appear once for each account, unless you <span onClick={this.handleFullDisable} className={classes.link}>disable them</span> completely
           </p>
         </div>
       </div>

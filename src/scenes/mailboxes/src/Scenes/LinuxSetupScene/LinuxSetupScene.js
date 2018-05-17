@@ -1,10 +1,53 @@
 import React from 'react'
-import { Dialog, FlatButton, RaisedButton, FontIcon } from 'material-ui' //TODO
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import { settingsActions } from 'stores/settings'
 import electron from 'electron'
 import Resolver from 'Runtime/Resolver'
+import { withStyles } from 'material-ui/styles'
+import WidgetsIcon from '@material-ui/icons/Widgets'
+import CheckCircleIcon from '@material-ui/icons/CheckCircle'
+import FontDownloadIcon from '@material-ui/icons/FontDownload'
 
+const styles = {
+  dialog: {
+    maxWidth: 600,
+    width: 600,
+    minWidth: 600
+  },
+  dialogContent: {
+    width: 600
+  },
+  titleIcon: {
+    verticalAlign: 'top',
+    marginRight: 10
+  },
+  instructionImage: {
+    width: '100%',
+    height: 250,
+    backgroundSize: 'contain',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat'
+  },
+  linkText: {
+    textDecoration: 'underline',
+    cursor: 'pointer'
+  },
+  buttonIcon: {
+    marginRight: 8
+  },
+  button: {
+    marginLeft: 8,
+    marginRight: 8
+  },
+  actionSpacer: {
+    maxWidth: '100%',
+    width: 'auto',
+    flexGrow: 1
+  }
+}
+
+@withStyles(styles)
 export default class LinuxSetupScene extends React.Component {
   /* **************************************************************************/
   // Data lifecycle
@@ -50,67 +93,49 @@ export default class LinuxSetupScene extends React.Component {
 
   render () {
     if (process.platform !== 'linux') { return false }
+    const { classes } = this.props
     const { open, hasVisitedFontLink } = this.state
 
-    const actions = (
-      <div>
-        <FlatButton
-          label={`Don't remind me again`}
-          style={{ marginRight: 16, float: 'left' }}
-          onClick={this.handleDone} />
-        <FlatButton
-          label='Remind me later'
-          style={{ marginRight: 16, float: 'left' }}
-          onClick={this.handleRemindNextTime} />
-        {hasVisitedFontLink ? (
-          <RaisedButton
-            primary
-            label={`Done`}
-            icon={<FontIcon className='material-icons'>check_circle</FontIcon>}
-            onClick={this.handleDone} />
-        ) : (
-          <RaisedButton
-            primary
-            label={`Find out how`}
-            icon={<FontIcon className='material-icons'>font_download</FontIcon>}
-            onClick={this.handleFontsClick} />
-        )}
-      </div>
-    )
-
     return (
-      <Dialog
-        title={(
-          <div>
-            <FontIcon className='material-icons'>widgets</FontIcon>
-            <span> Finish your Wavebox install</span>
-          </div>
-        )}
-        modal={false}
-        actions={actions}
-        open={open}
-        onRequestClose={this.handleRemindNextTime}>
-        <div style={{
-          width: '100%',
-          height: 250,
-          backgroundSize: 'contain',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          backgroundImage: `url("${Resolver.image('linux_font_setup.png')}")`
-        }} />
-        <p>
-          <span>
-            To get the best out of Wavebox, we recommend installing some additional fonts
-            on your system. There's some information available in our Knowledge base on how
-            to do this
-          </span>
-          &nbsp;
-          <span
-            onClick={this.handleFontsClick}
-            style={{textDecoration: 'underline', cursor: 'pointer'}}>
-            wavebox.io/kb/installing-linux-fonts
-          </span>
-        </p>
+      <Dialog open={open} onClose={this.handleRemindNextTime} classes={{ paper: classes.dialog }}>
+        <DialogTitle>
+          <WidgetsIcon className={classes.titleIcon} />
+          Finish your Wavebox install
+        </DialogTitle>
+        <DialogContent className={classes.dialogContent}>
+          <div className={classes.instructionImage} style={{ backgroundImage: `url("${Resolver.image('linux_font_setup.png')}")` }} />
+          <p>
+            <span>
+              To get the best out of Wavebox, we recommend installing some additional fonts
+              on your system. There's some information available in our Knowledge base on how
+              to do this
+            </span>
+            &nbsp;
+            <span onClick={this.handleFontsClick} className={classes.linkText}>
+              wavebox.io/kb/installing-linux-fonts
+            </span>
+          </p>
+        </DialogContent>
+        <DialogActions>
+          <Button className={classes.button} onClick={this.handleDone}>
+            Don't remind me again
+          </Button>
+          <Button className={classes.button} onClick={this.handleRemindNextTime}>
+            Remind me later
+          </Button>
+          <div className={classes.actionSpacer} />
+          {hasVisitedFontLink ? (
+            <Button variant='raised' color='primary' className={classes.button} onClick={this.handleDone}>
+              <CheckCircleIcon className={classes.buttonIcon} />
+              Done
+            </Button>
+          ) : (
+            <Button variant='raised' color='primary' className={classes.button} onClick={this.handleFontsClick}>
+              <FontDownloadIcon className={classes.buttonIcon} />
+              Find out how
+            </Button>
+          )}
+        </DialogActions>
       </Dialog>
     )
   }

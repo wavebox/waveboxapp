@@ -1,18 +1,25 @@
 import React from 'react'
-import { RaisedButton, FlatButton, Checkbox, Dialog, FontIcon } from 'material-ui' //TODO
+import { Dialog, DialogContent, Button, Checkbox, FormControlLabel, Icon } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import { remote } from 'electron'
-import * as Colors from 'material-ui/styles/colors' //TODO
 import Resolver from 'Runtime/Resolver'
 import PropTypes from 'prop-types'
 import { PRIVACY_URL, TERMS_URL, EULA_URL } from 'shared/constants'
+import { withStyles } from 'material-ui/styles'
+import lightBlue from 'material-ui/colors/lightBlue'
+import red from 'material-ui/colors/red'
+import classNames from 'classnames'
 
 const styles = {
   modal: {
     zIndex: 10000
   },
-  modalBody: {
-    padding: 0,
+  dialog: {
+
+  },
+  dialogContent: {
+    width: '100%',
+    padding: '0 !important',
     display: 'flex',
     flexDirection: 'column'
   },
@@ -20,7 +27,8 @@ const styles = {
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'contain',
     backgroundPosition: 'center bottom',
-    backgroundColor: Colors.lightBlue600,
+    backgroundImage: `url("${Resolver.image('privacy.png')}")`,
+    backgroundColor: lightBlue[600],
     width: '100%',
     height: 300
   },
@@ -30,7 +38,7 @@ const styles = {
   },
   title: {
     marginTop: 0,
-    color: Colors.lightBlue600
+    color: lightBlue[600]
   },
   subtitle: {
     fontWeight: 'bold',
@@ -44,17 +52,13 @@ const styles = {
     marginTop: 30,
     marginBottom: 30
   },
-  checkbox: {
-    width: 'auto',
-    marginLeft: 'auto',
-    marginRight: 'auto'
-  },
-  checkboxLabel: {
-    width: 'auto',
-    color: Colors.lightBlue600
+  checkboxControl: {
+    color: lightBlue[600]
   },
   checkboxError: {
-    color: Colors.red600
+    color: red[600],
+    fontSize: '85%',
+    marginTop: -10
   },
   primaryButtonContainer: {
     marginTop: 12,
@@ -70,6 +74,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class PrivacyMessageGDPRNew1 extends React.Component {
   /* **************************************************************************/
   // Class
@@ -160,53 +165,71 @@ export default class PrivacyMessageGDPRNew1 extends React.Component {
       onDisagree,
       agreeRequestActive,
       open,
+      classes,
       ...passProps
     } = this.props
     const { agreeChecked, agreeCheckboxPrompt } = this.state
 
     return (
-      <Dialog modal style={styles.modal} bodyStyle={styles.modalBody} open={open} {...passProps}>
-        <div style={{...styles.modalBanner, backgroundImage: `url("${Resolver.image('privacy.png')}")`}} />
-        <div style={styles.modalContent}>
-          <h2 style={styles.title}>Welcome to Wavebox</h2>
-          <p style={styles.subtitle}>Your cloud apps will love Wavebox and we hope you will too!</p>
-          <p>
-            To use Wavebox please review our&nbsp;
-            <span style={styles.inlineLink} onClick={this.handleOpenServiceTerms}>Service Agreement</span>
-            ,&nbsp;
-            <span style={styles.inlineLink} onClick={this.handleOpenEULA}>EULA</span>
-            &nbsp;and&nbsp;
-            <span style={styles.inlineLink} onClick={this.handleOpenPrivacy}>Privacy Policy</span>
-            &nbsp;which together covers our agreement with you and details how we take care of your security
-            and privacy. You can change your privacy settings at any time in the app.
-          </p>
-          <div style={styles.checkboxContainer}>
-            <Checkbox
-              label='I agree to the Service Agreement, EULA and Privacy Policy'
-              style={styles.checkbox}
-              disabled={agreeRequestActive}
-              labelStyle={styles.checkboxLabel}
-              checked={agreeChecked}
-              onCheck={this.handleAgreeCheckboxChange} />
-            {agreeCheckboxPrompt ? (
-              <small style={styles.checkboxError}>Please agree before continuing</small>
-            ) : undefined}
+      <Dialog
+        open={open}
+        className={classes.modal}
+        classes={{ paper: classes.dialog }}
+        disableBackdropClick
+        disableEscapeKeyDown
+        {...passProps}>
+        <DialogContent className={classes.dialogContent}>
+          <div className={classes.modalBanner} />
+          <div className={classes.modalContent}>
+            <h2 className={classes.title}>Welcome to Wavebox</h2>
+            <p className={classes.subtitle}>Your cloud apps will love Wavebox and we hope you will too!</p>
+            <p>
+              To use Wavebox please review our&nbsp;
+              <span className={classes.inlineLink} onClick={this.handleOpenServiceTerms}>Service Agreement</span>
+              ,&nbsp;
+              <span className={classes.inlineLink} onClick={this.handleOpenEULA}>EULA</span>
+              &nbsp;and&nbsp;
+              <span className={classes.inlineLink} onClick={this.handleOpenPrivacy}>Privacy Policy</span>
+              &nbsp;which together covers our agreement with you and details how we take care of your security
+              and privacy. You can change your privacy settings at any time in the app.
+            </p>
+            <div className={classes.checkboxContainer}>
+              <FormControlLabel
+                label='I agree to the Service Agreement, EULA and Privacy Policy'
+                classes={{ label: classes.checkboxControl }}
+                control={(
+                  <Checkbox
+                    color='primary'
+                    disabled={agreeRequestActive}
+                    checked={agreeChecked}
+                    onChange={this.handleAgreeCheckboxChange} />
+                )} />
+              {agreeCheckboxPrompt ? (
+                <div className={classes.checkboxError}>Please agree before continuing</div>
+              ) : undefined}
+            </div>
+            <div className={classes.primaryButtonContainer}>
+              <Button
+                variant='raised'
+                color='primary'
+                className={classes.primaryButton}
+                disabled={agreeRequestActive}
+                onClick={this.handleAgree}>
+                {agreeRequestActive ? (
+                  <Icon className={classNames(classes.workingIcon, 'far fa-fw fa-spin fa-spinner-third')} />
+                ) : (
+                  'Continue'
+                )}
+              </Button>
+              <Button
+                className={classes.primaryButton}
+                disabled={agreeRequestActive}
+                onClick={onDisagree}>
+                Cancel
+              </Button>
+            </div>
           </div>
-          <div style={styles.primaryButtonContainer}>
-            <RaisedButton
-              primary
-              style={styles.primaryButton}
-              disabled={agreeRequestActive}
-              onClick={this.handleAgree}
-              label={agreeRequestActive ? undefined : 'Continue'}
-              icon={agreeRequestActive ? (<FontIcon style={styles.workingIcon} className='far fa-fw fa-spin fa-spinner-third' />) : undefined} />
-            <FlatButton
-              style={styles.primaryButton}
-              disabled={agreeRequestActive}
-              onClick={onDisagree}
-              label='Cancel' />
-          </div>
-        </div>
+        </DialogContent>
       </Dialog>
     )
   }

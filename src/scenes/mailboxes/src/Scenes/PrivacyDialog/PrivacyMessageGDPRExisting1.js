@@ -1,18 +1,24 @@
 import React from 'react'
-import { RaisedButton, FlatButton, Dialog, FontIcon } from 'material-ui' //TODO
+import { Dialog, DialogContent, Button, Icon } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import { remote } from 'electron'
-import * as Colors from 'material-ui/styles/colors' //TODO
 import Resolver from 'Runtime/Resolver'
 import PropTypes from 'prop-types'
 import { PRIVACY_URL } from 'shared/constants'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
+import lightBlue from 'material-ui/colors/lightBlue'
 
 const styles = {
   modal: {
     zIndex: 10000
   },
-  modalBody: {
-    padding: 0,
+  dialog: {
+
+  },
+  dialogContent: {
+    width: '100%',
+    padding: '0 !important',
     display: 'flex',
     flexDirection: 'column'
   },
@@ -20,7 +26,8 @@ const styles = {
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'contain',
     backgroundPosition: 'center bottom',
-    backgroundColor: Colors.lightBlue600,
+    backgroundImage: `url("${Resolver.image('privacy.png')}")`,
+    backgroundColor: lightBlue[600],
     width: '100%',
     height: 300
   },
@@ -30,7 +37,7 @@ const styles = {
   },
   title: {
     marginTop: 0,
-    color: Colors.lightBlue600
+    color: lightBlue[600]
   },
   primaryButtonContainer: {
     marginTop: 12,
@@ -42,6 +49,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class PrivacyMessageGDPRExisting1 extends React.Component {
   /* **************************************************************************/
   // Class
@@ -81,40 +89,55 @@ export default class PrivacyMessageGDPRExisting1 extends React.Component {
       onDisagree,
       agreeRequestActive,
       open,
+      classes,
       ...passProps
     } = this.props
 
     return (
-      <Dialog modal style={styles.modal} bodyStyle={styles.modalBody} open={open} {...passProps}>
-        <div style={{...styles.modalBanner, backgroundImage: `url("${Resolver.image('privacy.png')}")`}} />
-        <div style={styles.modalContent}>
-          <h2 style={styles.title}>Your Privacy Settings</h2>
-          <p>
-            Your privacy and security are very important to us and we want to share our
-            updated GDPR compliant Privacy Policy for your consent. You can change your privacy settings
-            at any time by going to Settings > Wavebox.
-          </p>
-          <div style={styles.primaryButtonContainer}>
-            <RaisedButton
-              style={styles.primaryButton}
-              disabled={agreeRequestActive}
-              onClick={this.handleOpenPrivacy}
-              label='Review Policy' />
-            <RaisedButton
-              primary
-              style={styles.primaryButton}
-              disabled={agreeRequestActive}
-              onClick={onAgree}
-              label={agreeRequestActive ? undefined : 'Agree'}
-              icon={agreeRequestActive ? (<FontIcon style={styles.workingIcon} className='far fa-fw fa-spin fa-spinner-third' />) : undefined} />
+      <Dialog
+        open={open}
+        className={classes.modal}
+        classes={{ paper: classes.dialog }}
+        disableBackdropClick
+        disableEscapeKeyDown
+        {...passProps}>
+        <DialogContent className={classes.dialogContent}>
+          <div className={classes.modalBanner} />
+          <div className={classes.modalContent}>
+            <h2 className={classes.title}>Your Privacy Settings</h2>
+            <p>
+              Your privacy and security are very important to us and we want to share our
+              updated GDPR compliant Privacy Policy for your consent. You can change your privacy settings
+              at any time by going to Settings > Wavebox.
+            </p>
+            <div className={classes.primaryButtonContainer}>
+              <Button
+                variant='raised'
+                className={classes.primaryButton}
+                disabled={agreeRequestActive}
+                onClick={this.handleOpenPrivacy}>
+                Review Policy
+              </Button>
+              <Button
+                variant='raised'
+                color='primary'
+                className={classes.primaryButton}
+                disabled={agreeRequestActive}
+                onClick={onAgree}>
+                {agreeRequestActive ? (
+                  <Icon className={classNames(classes.workingIcon, 'far fa-fw fa-spin fa-spinner-third')} />
+                ) : (
+                  'Continue'
+                )}
+              </Button>
+            </div>
+            <div>
+              <Button disabled={agreeRequestActive} onClick={onDisagree}>
+                Cancel
+              </Button>
+            </div>
           </div>
-          <div>
-            <FlatButton
-              disabled={agreeRequestActive}
-              onClick={onDisagree}
-              label='Cancel' />
-          </div>
-        </div>
+        </DialogContent>
       </Dialog>
     )
   }

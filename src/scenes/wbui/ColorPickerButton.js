@@ -28,28 +28,30 @@ export default class ColorPickerButton extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { buttonProps, popoverProps, onChange, children, value, ...passProps } = this.props
+    const { buttonProps, disabled, popoverProps, onChange, children, value, ...passProps } = this.props
     const { anchorEl } = this.state
 
     return (
       <div {...passProps}>
-        <Button {...buttonProps} onClick={(evt) => this.setState({ anchorEl: evt.currentTarget })}>
+        <Button
+          {...buttonProps}
+          disabled={disabled}
+          onClick={(evt) => this.setState({ anchorEl: evt.currentTarget })}>
           {children}
         </Button>
         <Popover
           {...popoverProps}
           open={!!anchorEl}
           anchorEl={anchorEl}
-          onClose={(evt) => this.setState({ anchorEl: false })}>
-          <ChromePicker
-            color={value}
-            onChangeComplete={(col) => {
-              if (onChange) {
-                onChange(Object.assign({}, col, {
-                  rgbaStr: `rgba(${col.rgb.r}, ${col.rgb.g}, ${col.rgb.b}, ${col.rgb.a})`
-                }))
-              }
-            }} />
+          onClose={(evt) => this.setState({ anchorEl: null })}>
+          <ChromePicker color={value} onChangeComplete={(col) => {
+            if (onChange) {
+              onChange({
+                ...col,
+                rgbaStr: `rgba(${col.rgb.r}, ${col.rgb.g}, ${col.rgb.b}, ${col.rgb.a})`
+              })
+            }
+          }} />
         </Popover>
       </div>
     )

@@ -69,49 +69,45 @@ export default class ToolbarExtensionActionContextMenu extends React.Component {
   /* **************************************************************************/
 
   /**
-  * Handles the popover closing
+  * Closes the popover
   * @param evt: the event that fired
+  * @param callback = undefined: executed on close complete
   */
-  handlePopoverClose = (evt) => {
+  closePopover = (evt, callback = undefined) => {
     evt.preventDefault()
     evt.stopPropagation()
-    this.closePopover()
-  }
-
-  /**
-  * Closes the popover
-  * @param evtOrFn: the fired event or a function to call on closed
-  */
-  closePopover = (evtOrFn) => {
     this.props.onRequestClose()
-    if (typeof (evtOrFn) === 'function') {
-      setTimeout(() => { evtOrFn() }, 300)
+    if (typeof (callback) === 'function') {
+      setTimeout(() => { callback() }, 300)
     }
   }
 
   /**
   * Opens the extension options
+  * @param evt: the event that fired
   */
-  handleOpenOptions = () => {
-    this.closePopover(() => {
+  handleOpenOptions = (evt) => {
+    this.closePopover(evt, () => {
       this.props.onItemSelected(ITEM_TYPES.OPTIONS, this.props.extensionId, this.props.tabId)
     })
   }
 
   /**
   * Opens the manage extensions page
+  * @param evt: the event that fired
   */
-  handleManageExtensions = () => {
-    this.closePopover(() => {
+  handleManageExtensions = (evt) => {
+    this.closePopover(evt, () => {
       this.props.onItemSelected(ITEM_TYPES.MANAGE, this.props.extensionId, this.props.tabId)
     })
   }
 
   /**
   * Opens the extensions homepage
+  * @param evt: the event that fired
   */
-  handleOpenHomepage = () => {
-    this.closePopover(() => {
+  handleOpenHomepage = (evt) => {
+    this.closePopover(evt, () => {
       this.props.onItemSelected(ITEM_TYPES.HOMEPAGE, this.props.extensionId, this.props.tabId)
     })
   }
@@ -142,7 +138,7 @@ export default class ToolbarExtensionActionContextMenu extends React.Component {
         tranformOrigin={{ horizontal: 'left', vertical: 'top' }}
         MenuListProps={{ dense: true }}
         disableEnforceFocus
-        onClose={this.handlePopoverClose}>
+        onClose={this.closePopover}>
         {hasHomepageUrl ? (
           <MenuItem onClick={this.handleOpenHomepage}>
             <ListItemText inset primary={name} />

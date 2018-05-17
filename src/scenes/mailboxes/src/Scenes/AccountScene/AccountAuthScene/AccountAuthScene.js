@@ -1,16 +1,24 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Dialog, FlatButton, List, ListItem, FontIcon, Avatar } from 'material-ui' //TODO
+import { Dialog, DialogContent, Button, List, ListItem, ListItemText, Avatar, Icon } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import { mailboxStore } from 'stores/mailbox'
-import { MailboxAvatar } from 'Components/Mailbox'
+import MailboxAvatar from 'Components/Backed/MailboxAvatar'
 import { userActions } from 'stores/user'
-import * as Colors from 'material-ui/styles/colors' //TODO
 import { PRIVACY_URL, TERMS_URL } from 'shared/constants'
 import electron from 'electron'
+import { withStyles } from 'material-ui/styles'
+import StyleMixins from 'wbui/Styles/StyleMixins'
+import grey from 'material-ui/colors/grey'
+import blue from 'material-ui/colors/blue'
 
 const styles = {
-  // Layout
+  dialog: {
+    maxWidth: 800
+  },
+  dialogContent: {
+    ...StyleMixins.alwaysShowVerticalScrollbars
+  },
   container: {
     display: 'flex',
     alignItems: 'stretch'
@@ -27,9 +35,28 @@ const styles = {
     display: 'flex',
     width: '50%',
     paddingLeft: 16
+  },
+  link: {
+    color: blue[700]
+  },
+  terms: {
+    color: grey[700],
+    fontSize: '85%'
+  },
+  accountAvatar: {
+    marginLeft: 3
+  },
+  googleAvatar: {
+    backgroundColor: 'rgb(223, 75, 56)',
+    color: 'white'
+  },
+  microsoftAvatar: {
+    backgroundColor: 'rgb(0, 114, 198)',
+    color: 'white'
   }
 }
 
+@withStyles(styles)
 export default class AccountAuthScene extends React.Component {
   /* **************************************************************************/
   // Class
@@ -161,61 +188,71 @@ export default class AccountAuthScene extends React.Component {
 
   render () {
     const { open, mailboxes } = this.state
-    const { match: { params: { mode } } } = this.props
+    const {
+      match: { params: { mode } },
+      classes
+    } = this.props
 
     return (
-      <Dialog
-        modal={false}
-        open={open}
-        bodyClassName='ReactComponent-MaterialUI-Dialog-Body-Scrollbars'
-        autoScrollBodyContent
-        onRequestClose={this.handleClose}>
-        <div style={styles.container}>
-          <div style={styles.infoContainer}>
-            {this.renderMessage(mode)}
-            <p style={{color: Colors.grey700, fontSize: '85%'}}>
-              <span>By continuing you agree to our </span>
-              <a style={{color: Colors.blue700}} onClick={this.handleShowTermsOfUse} href='#'>
-                terms of use
-              </a>
-              <span> and </span>
-              <a style={{color: Colors.blue700}} onClick={this.handleShowPrivacyPolicy} href='#'>
-                privacy policy
-              </a>
-            </p>
-            <br />
-            <FlatButton
-              label='Cancel'
-              onClick={this.handleClose} />
+      <Dialog open={open} onClose={this.handleClose} classes={{ paper: classes.dialog }}>
+        <DialogContent className={classes.dialogContent}>
+          <div className={classes.container}>
+            <div className={classes.infoContainer}>
+              {this.renderMessage(mode)}
+              <p className={classes.terms}>
+                <span>By continuing you agree to our </span>
+                <a className={classes.link} onClick={this.handleShowTermsOfUse} href='#'>
+                  terms of use
+                </a>
+                <span> and </span>
+                <a className={classes.link} onClick={this.handleShowPrivacyPolicy} href='#'>
+                  privacy policy
+                </a>
+              </p>
+              <br />
+              <Button onClick={this.handleClose}>Cancel</Button>
+            </div>
+            <div className={classes.accountContainer}>
+              <List>
+                {mailboxes.map((mailbox) => {
+                  return (
+                    <ListItem
+                      key={mailbox.id}
+                      button
+                      disableGutters
+                      onClick={(evt) => userActions.authenticateWithMailbox(mailbox, { mode: mode })}>
+                      <MailboxAvatar className={classes.accountAvatar} mailboxId={mailbox.id} />
+                      <ListItemText
+                        primary={mailbox.displayName}
+                        secondary={mailbox.humanizedType} />
+                    </ListItem>)
+                })}
+                <ListItem
+                  button
+                  disableGutters
+                  onClick={(evt) => userActions.authenticateWithGoogle({ mode: mode })}>
+                  <Avatar className={classes.googleAvatar}>
+                    <Icon className='fab fa-fw fa-google' />
+                  </Avatar>
+                  <ListItemText
+                    primary='Sign in with Google'
+                    secondary='Use a different Google Account' />
+                </ListItem>
+                <ListItem
+                  button
+                  disableGutters
+                  onClick={(evt) => userActions.authenticateWithMicrosoft({ mode: mode })}>
+                  <Avatar className={classes.microsoftAvatar}>
+                    <Icon className='fab fa-fw fa-windows' />
+                  </Avatar>
+                  <ListItemText
+                    primary='Sign in with Microsoft'
+                    secondary='Use a different Outlook or Office Account' />
+                </ListItem>
+              </List>
+            </div>
           </div>
-          <div style={styles.accountContainer}>
-            <List>
-              {mailboxes.map((mailbox) => {
-                return (
-                  <ListItem
-                    key={mailbox.id}
-                    leftAvatar={<MailboxAvatar mailboxId={mailbox.id} />}
-                    primaryText={mailbox.displayName}
-                    secondaryText={mailbox.humanizedType}
-                    onClick={(evt) => userActions.authenticateWithMailbox(mailbox, { mode: mode })} />)
-              })}
-              <ListItem
-                leftAvatar={(
-                  <Avatar backgroundColor='rgb(223, 75, 56)' icon={(<FontIcon className='fab fa-fw fa-google' />)} />
-                )}
-                primaryText='Sign in with Google'
-                secondaryText='Use a different Google Account'
-                onClick={(evt) => userActions.authenticateWithGoogle({ mode: mode })} />
-              <ListItem
-                leftAvatar={(
-                  <Avatar backgroundColor='rgb(0, 114, 198)' icon={(<FontIcon className='fab fa-fw fa-windows' />)} />
-                )}
-                primaryText='Sign in with Microsoft'
-                secondaryText='Use a different Outlook or Office Account'
-                onClick={(evt) => userActions.authenticateWithMicrosoft({ mode: mode })} />
-            </List>
-          </div>
-        </div>
+        </DialogContent>
       </Dialog>
     )
   }

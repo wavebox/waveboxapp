@@ -1,21 +1,29 @@
 import React from 'react'
-import { Dialog, RaisedButton, List, ListItem } from 'material-ui' //TODO
+import { Dialog, DialogTitle, DialogActions, Button, List, ListItem, DialogContent, ListItemText, ListItemAvatar } from 'material-ui'
 import { emblinkStore, emblinkActions } from 'stores/emblink'
 import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
-import { MailboxAvatar } from 'Components/Mailbox'
-import uuid from 'uuid'
+import MailboxAvatar from 'Components/Backed/MailboxAvatar'
+import { withStyles } from 'material-ui/styles'
 
 const KEYBOARD_UNSELECTED_INDEX = -1
-const LIST_ITEM_HEIGHT = 72
 
+const styles = {
+  dialogContent: {
+    padding: 0
+  },
+  keyboardFocus: {
+    backgroundColor: 'rgba(0, 0, 0, 0.1)'
+  }
+}
+
+@withStyles(styles)
 export default class ComposePickerScene extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
-    this.dialogBodyClassName = `ReactComponent-DialogBody-${uuid.v4()}`
     emblinkStore.listen(this.composeChanged)
     mailboxStore.listen(this.mailboxChanged)
     window.addEventListener('keydown', this.handleKeypress)
@@ -97,6 +105,8 @@ export default class ComposePickerScene extends React.Component {
   */
   handleKeypress = (evt) => {
     if (evt.keyCode === 38 || evt.keyCode === 40) {
+      evt.preventDefault()
+      evt.stopPropagation()
       this.setState((prevState) => {
         let nextIndex
         if (prevState.keyboardIndex === KEYBOARD_UNSELECTED_INDEX) {
@@ -116,13 +126,11 @@ export default class ComposePickerScene extends React.Component {
             }
           }
         }
-
-        setTimeout(() => {
-          document.querySelector(`.${this.dialogBodyClassName}`).scrollTop = nextIndex * LIST_ITEM_HEIGHT
-        })
         return { keyboardIndex: nextIndex }
       })
     } else if (evt.keyCode === 13) {
+      evt.preventDefault()
+      evt.stopPropagation()
       if (this.state.keyboardIndex !== KEYBOARD_UNSELECTED_INDEX) {
         this.handleSelectService(evt, this.state.composeServices[this.state.keyboardIndex])
       }
@@ -138,38 +146,38 @@ export default class ComposePickerScene extends React.Component {
   }
 
   render () {
+    const { classes } = this.props
     const { composeServices, open, mailboxes, keyboardIndex } = this.state
 
-    const actions = (
-      <RaisedButton label='Cancel' onClick={this.handleCancel} />
-    )
-
     return (
-      <Dialog
-        modal={false}
-        title='Compose New Message'
-        titleStyle={{ lineHeight: '22px' }}
-        actions={actions}
-        open={open}
-        contentStyle={{ maxWidth: 'none', width: 320 }}
-        bodyStyle={{ padding: 0 }}
-        bodyClassName={this.dialogBodyClassName}
-        autoScrollBodyContent
-        onRequestClose={this.handleCancel}>
-        <List>
-          {composeServices.map((service, index) => {
-            const mailbox = mailboxes[service.parentId]
-            return (
-              <ListItem
-                disableKeyboardFocus
-                key={`${service.parentId}:${service.type}`}
-                style={index === keyboardIndex ? { backgroundColor: 'rgba(0, 0, 0, 0.1)' } : undefined}
-                leftAvatar={<MailboxAvatar mailboxId={mailbox.id} />}
-                primaryText={mailbox.displayName}
-                secondaryText={service.humanizedType}
-                onClick={(evt) => this.handleSelectService(evt, service)} />)
-          })}
-        </List>
+      <Dialog open={open} onClose={this.handleCancel}>
+        <DialogTitle>
+          Compose New Message
+        </DialogTitle>
+        <DialogContent className={classes.dialogContent}>
+          <List>
+            {composeServices.map((service, index) => {
+              const mailbox = mailboxes[service.parentId]
+              return (
+                <ListItem
+                  key={`${mailbox.id}:${service.type}`}
+                  tabIndex={-1}
+                  button
+                  onClick={(evt) => this.handleSelectService(evt, service)}
+                  className={index === keyboardIndex ? classes.keyboardFocus : undefined}>
+                  <ListItemAvatar>
+                    <MailboxAvatar mailboxId={mailbox.id} />
+                  </ListItemAvatar>
+                  <ListItemText primary={mailbox.displayName} secondary={service.humanizedType} />
+                </ListItem>)
+            })}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button variant='raised' onClick={this.handleCancel}>
+            Cancel
+          </Button>
+        </DialogActions>
       </Dialog>
     )
   }

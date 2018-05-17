@@ -1,6 +1,10 @@
 import React from 'react'
-import { FontIcon, Avatar } from 'material-ui' //TODO
-import * as Colors from 'material-ui/styles/colors' //TODO
+import { Icon, Avatar } from 'material-ui'
+import { withStyles } from 'material-ui/styles'
+import lightGreen from 'material-ui/colors/lightGreen'
+import green from 'material-ui/colors/green'
+import blueGrey from 'material-ui/colors/blueGrey'
+import classNames from 'classnames'
 
 const styles = {
   container: {
@@ -24,27 +28,40 @@ const styles = {
     fontWeight: 300,
     marginTop: 0,
     fontSize: 16
+  },
+  avatar: {
+    backgroundColor: blueGrey[900],
+    color: lightGreen[400],
+    width: 100,
+    height: 100
+  },
+  avatarIcon: {
+    fontSize: '50px'
+  },
+  doneIcon: {
+    color: green[600],
+    marginRight: 6
   }
 }
 
+@withStyles(styles)
 export default class AppWizardCompleteScene extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   render () {
+    const { classes } = this.props
     return (
-      <div style={styles.container}>
-        <Avatar
-          color={Colors.lightGreen400}
-          backgroundColor={Colors.blueGrey900}
-          icon={(<FontIcon className='fas fa-fw fa-magic' />)}
-          size={100} />
-        <h2 style={styles.heading}>
-          <FontIcon className='fas fa-fw fa-check-circle' color={Colors.green600} />
+      <div className={classes.container}>
+        <Avatar className={classes.avatar}>
+          <Icon className={classNames(classes.avatarIcon, 'fas fa-fw fa-magic')} />
+        </Avatar>
+        <h2 className={classes.heading}>
+          <Icon className={classNames(classes.doneIcon, 'fas fa-fw fa-check-circle')} />
           All Done!
         </h2>
-        <p style={styles.subHeading}>
+        <p className={classes.subHeading}>
           You can go to settings at any time to update your configuration
         </p>
       </div>

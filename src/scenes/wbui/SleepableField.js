@@ -180,10 +180,11 @@ export default class SleepableField extends React.Component {
         </label>
         <div className={classes.sleepActions}>
           <Checkbox
+            color='primary'
             className={classes.sleepToggle}
             disabled={disabled}
             checked={sleepEnabled}
-            onCheck={(evt, toggled) => { onSleepEnabledChanged(toggled) }} />
+            onChange={(evt, toggled) => { onSleepEnabledChanged(toggled) }} />
           <div className={classes.sleepWaitContainer}>
             {/*<Slider
               min={MIN_MILLIS}

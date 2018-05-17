@@ -5,7 +5,7 @@ import {userStore} from 'stores/user'
 import {settingsStore} from 'stores/settings'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import MailboxSleepNotification from './MailboxSleepNotification'
-import * as Colors from 'material-ui/styles/colors' //TODO
+import grey from 'material-ui/colors/grey'
 
 const NOTIFICATION_STYLE = {
   NotificationItem: {
@@ -13,7 +13,7 @@ const NOTIFICATION_STYLE = {
       overflow: 'hidden'
     },
     info: {
-      backgroundColor: Colors.grey200,
+      backgroundColor: grey[200],
       paddingTop: 18,
       paddingBottom: 18,
       paddingLeft: 12,

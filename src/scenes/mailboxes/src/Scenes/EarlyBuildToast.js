@@ -1,20 +1,16 @@
 import React from 'react'
-import { Snackbar } from 'material-ui' //TODO
-import * as Colors from 'material-ui/styles/colors' //TODO
+import { Snackbar, Button } from 'material-ui'
 import pkg from 'package.json'
+import { withStyles } from 'material-ui/styles'
+import lightBlue from 'material-ui/colors/lightBlue'
 
 const styles = {
-  body: {
-    height: 'auto',
-    lineHeight: '28px',
-    padding: 16,
-    whiteSpace: 'pre-line'
-  },
   buildId: {
-    color: Colors.lightBlue200
+    color: lightBlue[200]
   }
 }
 
+@withStyles(styles)
 export default class EarlyBuildToast extends React.Component {
   /* **************************************************************************/
   // State
@@ -29,13 +25,6 @@ export default class EarlyBuildToast extends React.Component {
   /* **************************************************************************/
 
   /**
-  * Handles the user touching the dismiss button
-  */
-  handleActionTouchTap = () => {
-    this.setState({ open: false })
-  }
-
-  /**
   * Handles the user requesting to close the popup
   */
   handleRequestClose = () => {
@@ -46,34 +35,30 @@ export default class EarlyBuildToast extends React.Component {
   // Rendering
   /* **************************************************************************/
 
-  renderMessage () {
-    if (!this.messageElement) {
-      this.messageElement = (
-        <div>
-          <div>Thanks for testing this early build of Wavebox</div>
-          <div>
-            <span>{`You are currently using version `}</span>
-            <span style={styles.buildId}>{`${pkg.version}:${pkg.earlyBuildId}`}</span>
-          </div>
-        </div>
-      )
-    }
-    return this.messageElement
-  }
-
   render () {
     if (!pkg.earlyBuildId) { return false }
+    const { classes } = this.props
     const { open } = this.state
 
     return (
       <Snackbar
         open={open}
-        message={this.renderMessage()}
-        action='Dismiss'
-        bodyStyle={styles.body}
-        autoHideDuration={-1}
-        onRequestClose={this.handleRequestClose}
-        onActionClick={this.handleActionTouchTap} />
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        message={(
+          <div>
+            <div>Thanks for testing this early build of Wavebox</div>
+            <div>
+              <span>{`You are currently using version `}</span>
+              <span className={classes.buildId}>{`${pkg.version}:${pkg.earlyBuildId}`}</span>
+            </div>
+          </div>
+        )}
+        action={(
+          <Button color='secondary' size='small' onClick={this.handleRequestClose}>
+            Dismiss
+          </Button>
+        )}
+        autoHideDuration={null} />
     )
   }
 }

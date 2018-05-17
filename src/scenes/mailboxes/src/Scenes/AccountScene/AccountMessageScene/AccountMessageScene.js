@@ -1,33 +1,40 @@
 import React from 'react'
-import { RaisedButton } from 'material-ui' //TODO
+import { Dialog, DialogContent, DialogActions, Button } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
-import { WaveboxWebView, FullscreenModal } from 'Components'
+import { WaveboxWebView } from 'Components'
 import { userStore } from 'stores/user'
 import { settingsActions } from 'stores/settings'
+import { withStyles } from 'material-ui/styles'
 
 const styles = {
-  modalActions: {
-    position: 'absolute',
-    height: 52,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'white',
-    borderTop: '1px solid rgb(232, 232, 232)',
-    borderBottomLeftRadius: 2,
-    borderBottomRightRadius: 2
+  dialog: {
+    maxWidth: '100%',
+    width: '100%',
+    height: '100%'
   },
-  modalBody: {
+  dialogContent: {
+    position: 'relative'
+  },
+  dialogActions: {
+    backgroundColor: 'rgb(242, 242, 242)',
+    borderTop: '1px solid rgb(232, 232, 232)',
+    margin: 0,
+    padding: '8px 4px'
+  },
+  loadingCover: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    bottom: 52,
-    borderTopLeftRadius: 2,
-    borderTopRightRadius: 2
+    bottom: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 }
 
+@withStyles(styles)
 export default class AccountMessageScene extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
@@ -90,20 +97,22 @@ export default class AccountMessageScene extends React.Component {
   }
 
   render () {
+    const { classes } = this.props
     const { open, url } = this.state
 
     return (
-      <FullscreenModal
-        modal={false}
-        actionsContainerStyle={styles.modalActions}
-        bodyStyle={styles.modalBody}
-        actions={(<RaisedButton primary label='Close' onClick={this.handleClose} />)}
-        open={open}
-        onRequestClose={this.handleClose}>
-        <WaveboxWebView
-          src={url}
-          newWindow={this.handleOpenNewWindow} />
-      </FullscreenModal>
+      <Dialog open={open} onClose={this.handleClose} classes={{ paper: classes.dialog }}>
+        <DialogContent className={classes.dialogContent}>
+          <WaveboxWebView
+            src={url}
+            newWindow={this.handleOpenNewWindow} />
+        </DialogContent>
+        <DialogActions className={classes.dialogActions}>
+          <Button variant='raised' color='primary' onClick={this.handleClose}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     )
   }
 }

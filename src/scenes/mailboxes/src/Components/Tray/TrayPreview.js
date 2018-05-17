@@ -2,7 +2,19 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import TrayRenderer from './TrayRenderer'
 import shallowCompare from 'react-addons-shallow-compare'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
+const styles = {
+  preview: {
+    backgroundImage: 'linear-gradient(45deg, #CCC 25%, transparent 25%, transparent 75%, #CCC 75%, #CCC), linear-gradient(45deg, #CCC 25%, transparent 25%, transparent 75%, #CCC 75%, #CCC)',
+    backgroundSize: '30px 30px',
+    backgroundPosition: '0 0, 15px 15px',
+    boxShadow: 'inset 0px 0px 10px 0px rgba(0,0,0,0.75)'
+  }
+}
+
+@withStyles(styles)
 export default class TrayPreview extends React.Component {
   /* **************************************************************************/
   // Class
@@ -44,20 +56,16 @@ export default class TrayPreview extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { size, style, ...passProps } = this.props
+    const { size, style, className, classes, ...passProps } = this.props
     delete passProps.unreadCount
     delete passProps.tray
     const { image } = this.state
 
     return (
-      <div {...passProps} style={Object.assign({
-        width: size + 20,
-        height: size + 20,
-        backgroundImage: 'linear-gradient(45deg, #CCC 25%, transparent 25%, transparent 75%, #CCC 75%, #CCC), linear-gradient(45deg, #CCC 25%, transparent 25%, transparent 75%, #CCC 75%, #CCC)',
-        backgroundSize: '30px 30px',
-        backgroundPosition: '0 0, 15px 15px',
-        boxShadow: 'inset 0px 0px 10px 0px rgba(0,0,0,0.75)'
-      }, style)}>
+      <div
+        {...passProps}
+        style={{ width: size + 20, height: size + 20, ...style }}
+        className={classNames(className, classes.preview)}>
         {!image ? undefined : (
           <img
             src={image}

@@ -120,120 +120,124 @@ export default class SidelistItemMailboxPopover extends React.Component {
   /* **************************************************************************/
 
   /**
-  * Handles the popover closing
+  * Closes the popover
   * @param evt: the event that fired
+  * @param callback=undefined: executed on completion
   */
-  handlePopoverClose = (evt) => {
+  closePopover = (evt, callback = undefined) => {
     evt.preventDefault()
     evt.stopPropagation()
-    this.closePopover()
-  }
-
-  /**
-  * Closes the popover
-  * @param evtOrFn: the fired event or a function to call on closed
-  */
-  closePopover = (evtOrFn) => {
     this.props.onRequestClose()
-    if (typeof (evtOrFn) === 'function') {
-      setTimeout(() => { evtOrFn() }, 300)
+    if (typeof (callback) === 'function') {
+      setTimeout(() => { callback() }, 300)
     }
   }
 
   /**
   * Deletes this mailbox
+  * @param evt: the event that fired
   */
-  handleDelete = () => {
+  handleDelete = (evt) => {
     window.location.hash = `/mailbox_delete/${this.props.mailboxId}`
-    this.closePopover()
+    this.closePopover(evt)
   }
 
   /**
   * Deletes a service
+  * @param evt: the event that fired
   */
-  handleDeleteService = () => {
+  handleDeleteService = (evt) => {
     window.location.hash = `/mailbox_service_delete/${this.props.mailboxId}/${this.props.serviceType}`
-    this.closePopover()
+    this.closePopover(evt)
   }
 
   /**
   * Reloads this mailbox
+  * @param evt: the event that fired
   */
-  handleReload = () => {
+  handleReload = (evt) => {
     const { mailboxId, serviceType } = this.props
     mailboxActions.changeActive(mailboxId, serviceType)
     setTimeout(() => {
       mailboxDispatch.reload(mailboxId, serviceType)
     }, 100) // Give the UI some time to catch up
-    this.closePopover()
+    this.closePopover(evt)
   }
 
   /**
   * Re-syncs the mailbox
+  * @param evt: the event that fired
   */
-  handleResync = () => {
+  handleResync = (evt) => {
     mailboxActions.fullSyncMailbox(this.props.mailboxId)
-    this.closePopover()
+    this.closePopover(evt)
   }
 
   /**
   * Handles the user requesting an account reauthentication
+  * @param evt: the event that fired
   */
-  handleClearBrowserSession = () => {
+  handleClearBrowserSession = (evt) => {
     mailboxActions.clearMailboxBrowserSession(this.props.mailboxId)
-    this.closePopover()
+    this.closePopover(evt)
   }
 
   /**
   * Handles opening the account settings
+  * @param evt: the event that fired
   */
-  handleAccountSettings = () => {
-    this.closePopover(() => {
+  handleAccountSettings = (evt) => {
+    this.closePopover(evt, () => {
       window.location.hash = `/settings/accounts/${this.props.mailboxId}`
     })
   }
 
   /**
   * Handles reauthenticting the mailbox
+  * @param evt: the event that fired
   */
-  handleReauthenticate = () => {
+  handleReauthenticate = (evt) => {
     mailboxActions.reauthenticateMailbox(this.props.mailboxId)
-    this.closePopover()
+    this.closePopover(evt)
   }
 
   /**
   * Handles waking the service
+  * @param evt: the event that fired
   */
-  handleAwakenService = () => {
-    this.closePopover(() => {
+  handleAwakenService = (evt) => {
+    this.closePopover(evt, () => {
       mailboxActions.awakenService(this.props.mailboxId, this.props.serviceType)
     })
   }
 
   /**
   * Handles sleeping the service
+  * @param evt: the event that fired
   */
-  handleSleepService = () => {
-    this.closePopover(() => {
+  handleSleepService = (evt) => {
+    this.closePopover(evt, () => {
       mailboxActions.sleepService(this.props.mailboxId, this.props.serviceType)
     })
   }
 
   /**
   * Handles sleeping all services
+  * @param evt: the event that fired
   */
-  handleSleepAllServices = () => {
-    this.closePopover(() => {
+  handleSleepAllServices = (evt) => {
+    this.closePopover(evt, () => {
       mailboxActions.sleepAllServices(this.props.mailboxId)
     })
   }
 
   /**
   * Handles opening a service in a new window
+  * @param evt: the event that fired
   */
-  handleOpenInWindow = () => {
+  handleOpenInWindow = (evt) => {
     const { mailboxId, serviceType } = this.props
-    this.closePopover()
+    this.closePopover(evt)
     const url = mailboxDispatch.getCurrentUrl(mailboxId, serviceType) || this.state.service.url
     MailboxLinker.openContentWindow(mailboxId, serviceType, url)
   }
