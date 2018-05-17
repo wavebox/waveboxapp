@@ -1,6 +1,6 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { RaisedButton, Paper, FontIcon } from 'material-ui' //TODO
+import { Button, Paper, Icon } from 'material-ui'
 import { Container, Row, Col } from 'Components/Grid'
 import electron from 'electron'
 import Resolver from 'Runtime/Resolver'
@@ -12,6 +12,9 @@ import {
   QUICK_START_WEB_URL,
   KB_BETA_CHANNEL_URL
 } from 'shared/constants'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
+import StyleMixins from 'wbui/Styles/StyleMixins'
 
 const ROW_HEIGHT = 400
 const V_MARGIN = 16
@@ -34,7 +37,7 @@ const styles = {
     left: 0,
     right: 0,
     bottom: 0,
-    overflow: 'auto'
+    ...StyleMixins.alwaysShowVerticalScrollbars
   },
   container: {
     minWidth: 600
@@ -112,6 +115,12 @@ const styles = {
     fontWeight: 'normal',
     fontSize: 14
   },
+  iconBoxed: {
+    color: 'rgb(0, 153, 232)',
+    fontSize: 100,
+    height: 100,
+    width: 120
+  },
   textDoubleBoxed: {
     fontWeight: 'normal',
     fontSize: 12,
@@ -119,6 +128,7 @@ const styles = {
   }
 }
 
+@withStyles(styles)
 export default class SupportSettings extends React.Component {
   /* **************************************************************************/
   // Rendering
@@ -130,6 +140,7 @@ export default class SupportSettings extends React.Component {
 
   /**
   * Renders an unboxed cell
+  * @param classes:
   * @param image: the image path
   * @param title: the title
   * @param text: the text
@@ -138,16 +149,18 @@ export default class SupportSettings extends React.Component {
   * @param click: the click handler
   * @return jsx
   */
-  renderUnboxedCell (image, title, text, color, buttonLabel, click) {
+  renderUnboxedCell (classes, image, title, text, color, buttonLabel, click) {
     return (
-      <div style={styles.unboxedCell}>
-        <div style={styles.imageContainer}>
-          <div style={{...styles.image, backgroundImage: `url("${image}")`}} />
+      <div className={classes.unboxedCell}>
+        <div className={classes.imageContainer}>
+          <div className={classes.image} style={{backgroundImage: `url("${image}")`}} />
         </div>
-        <div style={styles.contentContainer}>
-          <h2 style={{...styles.titleUnboxed, color: color}}>{title}</h2>
-          <p style={styles.textUnboxed}>{text}</p>
-          <RaisedButton onClick={click} label={buttonLabel} />
+        <div className={classes.contentContainer}>
+          <h2 className={classes.titleUnboxed} style={{color: color}}>{title}</h2>
+          <p className={classes.textUnboxed}>{text}</p>
+          <Button variant='raised' onClick={click}>
+            {buttonLabel}
+          </Button>
         </div>
       </div>
     )
@@ -155,6 +168,7 @@ export default class SupportSettings extends React.Component {
 
   /**
   * Renders an boxed cell
+  * @param classes:
   * @param iconName: the fontawesome icon to render
   * @param title: the title
   * @param text: the text
@@ -162,19 +176,18 @@ export default class SupportSettings extends React.Component {
   * @param click: the click handler
   * @return jsx
   */
-  renderBoxedCell (iconName, title, text, buttonLabel, click) {
+  renderBoxedCell (classes, iconName, title, text, buttonLabel, click) {
     return (
-      <Paper style={styles.boxedCell}>
-        <div style={styles.imageContainer}>
-          <FontIcon
-            className={iconName}
-            color='rgb(0, 153, 232)'
-            style={{ fontSize: 100 }} />
+      <Paper className={classes.boxedCell}>
+        <div className={classes.imageContainer}>
+          <Icon className={classNames(iconName, classes.iconBoxed)} />
         </div>
-        <div style={styles.contentContainer}>
-          <h2 style={styles.titleBoxed}>{title}</h2>
-          <p style={styles.textBoxed}>{text}</p>
-          <RaisedButton onClick={click} primary label={buttonLabel} />
+        <div className={classes.contentContainer}>
+          <h2 className={classes.titleBoxed}>{title}</h2>
+          <p className={classes.textBoxed}>{text}</p>
+          <Button variant='raised' color='primary' onClick={click}>
+            {buttonLabel}
+          </Button>
         </div>
       </Paper>
     )
@@ -182,6 +195,7 @@ export default class SupportSettings extends React.Component {
 
   /**
   * Renders an double boxed cell
+  * @param classes:
   * @param iconName: the fontawesome icon to render
   * @param iconColor: the color of the icon
   * @param title: the title
@@ -189,33 +203,41 @@ export default class SupportSettings extends React.Component {
   * @param click: the click handler
   * @return jsx
   */
-  renderDoubleBoxedCell (iconName, iconColor, title, text, click) {
+  renderDoubleBoxedCell (classes, iconName, iconColor, title, text, click) {
     return (
-      <Paper style={styles.doubleBoxedCell} onClick={click}>
-        <div style={{...styles.imageContainer, height: '50%'}}>
-          <FontIcon
-            className={iconName}
-            color={iconColor}
-            style={{ fontSize: 50 }} />
+      <Paper className={classes.doubleBoxedCell} onClick={click}>
+        <div className={classes.imageContainer} style={{ height: '50%' }}>
+          <Icon className={iconName} style={{ fontSize: 50, color: iconColor }} />
         </div>
-        <div style={styles.contentContainer}>
-          <h2 style={styles.titleDoubleBoxed}>{title}</h2>
-          <p style={styles.textDoubleBoxed}>{text}</p>
+        <div className={classes.contentContainer}>
+          <h2 className={classes.titleDoubleBoxed}>{title}</h2>
+          <p className={classes.textDoubleBoxed}>{text}</p>
         </div>
       </Paper>
     )
   }
 
   render () {
+    const { classes } = this.props
     return (
-      <div style={styles.scroller} className='ReactComponent-MaterialUI-Dialog-Body-Scrollbars'>
-        <Container fluid style={styles.container}>
+      <div className={classes.scroller}>
+        <Container fluid className={classes.container}>
           <Row>
             <Col xs={6}>
               <Row>
-                <Col md={6} />
                 <Col md={6}>
                   {this.renderBoxedCell(
+                    classes,
+                    'far fa-fw fa-star',
+                    'What\'s New?',
+                    'From new extensions to bug fixes, make sure you\'re up-to-date with development news.',
+                    'News',
+                    () => { window.location.hash = '/news' }
+                  )}
+                </Col>
+                <Col md={6}>
+                  {this.renderBoxedCell(
+                    classes,
                     'fas fa-fw fa-magic',
                     'Setup Wizard',
                     'Follow the step-by-step wizard to correctly configure your Wavebox.',
@@ -229,6 +251,7 @@ export default class SupportSettings extends React.Component {
               <Row>
                 <Col md={6}>
                   {this.renderBoxedCell(
+                    classes,
                     'fas fa-fw fa-list-alt',
                     'Quick Start Guide',
                     'Are you getting the most out of Wavebox? Read our getting started guide to find out.',
@@ -237,22 +260,14 @@ export default class SupportSettings extends React.Component {
                   )}
                 </Col>
                 <Col md={6}>
-                  <div style={styles.doubleHeightCellContainer}>
-                    {this.renderDoubleBoxedCell(
-                      'far fa-fw fa-star',
-                      'rgb(249, 103, 97)',
-                      'What\'s New?',
-                      'From new extensions to bug fixes, make sure you\'re up-to-date with development news.',
-                      () => { window.location.hash = '/news' }
-                    )}
-                    {this.renderDoubleBoxedCell(
-                      'fas fa-fw fa-tasks',
-                      'rgb(101, 187, 188)',
-                      'Try Wavebox Beta',
-                      'Be the first to try out the latest features by switching to our beta channel.',
-                      () => electron.remote.shell.openExternal(KB_BETA_CHANNEL_URL)
-                    )}
-                  </div>
+                  {this.renderBoxedCell(
+                    classes,
+                    'fas fa-fw fa-tasks',
+                    'Try Wavebox Beta',
+                    'Be the first to try out the latest features by switching to our beta channel',
+                    'Try Beta',
+                    () => electron.remote.shell.openExternal(KB_BETA_CHANNEL_URL)
+                  )}
                 </Col>
               </Row>
             </Col>
@@ -262,6 +277,7 @@ export default class SupportSettings extends React.Component {
               <Row>
                 <Col md={6}>
                   {this.renderUnboxedCell(
+                    classes,
                     Resolver.image('support_kb_icon.png'),
                     'Knowledge Base',
                     'Find the answers to the most commonly asked questions.',
@@ -272,6 +288,7 @@ export default class SupportSettings extends React.Component {
                 </Col>
                 <Col md={6}>
                   {this.renderUnboxedCell(
+                    classes,
                     Resolver.image('support_blog_icon.png'),
                     'Blog',
                     'How-to articles and tutorials, plus the latest new from Wavebox HQ.',
@@ -286,6 +303,7 @@ export default class SupportSettings extends React.Component {
               <Row>
                 <Col md={6}>
                   {this.renderUnboxedCell(
+                    classes,
                     Resolver.image('support_github_icon.png'),
                     'GitHub',
                     'Join our discussion group on GitHub.',
@@ -296,6 +314,7 @@ export default class SupportSettings extends React.Component {
                 </Col>
                 <Col md={6}>
                   {this.renderUnboxedCell(
+                    classes,
                     Resolver.image('support_contact_icon.png'),
                     'Email Support',
                     'Send feature requests and get help from our support team by email.',

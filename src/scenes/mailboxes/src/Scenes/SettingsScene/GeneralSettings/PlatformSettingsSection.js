@@ -1,11 +1,25 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Toggle, Paper, RaisedButton, Popover, Menu, MenuItem, FontIcon } from 'material-ui' //TODO
 import platformActions from 'stores/platform/platformActions'
-import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
-import * as Colors from 'material-ui/styles/colors' //TODO
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListSwitch from 'wbui/SettingsListSwitch'
+import SettingsListItem from 'wbui/SettingsListItem'
+import { withStyles } from 'material-ui/styles'
+import green from 'material-ui/colors/green'
+import { Button, Menu, MenuItem } from 'material-ui'
+import CheckIcon from '@material-ui/icons/Check'
 
+const styles = {
+  beenSetIcon: {
+    marginRight: 6,
+    height: 18,
+    width: 18,
+    color: green[600]
+  }
+}
+
+@withStyles(styles)
 export default class PlatformSettingsSection extends React.Component {
   /* **************************************************************************/
   // Rendering
@@ -35,7 +49,6 @@ export default class PlatformSettingsSection extends React.Component {
 
   state = (() => {
     return {
-      openLoginPopoverOpen: false,
       openLoginPopoverAnchor: null,
       openLoginHasBeenSet: false
     }
@@ -53,7 +66,7 @@ export default class PlatformSettingsSection extends React.Component {
   */
   handleOpenAtLoginChanged = (evt, openAtLogin, openAsHidden) => {
     platformActions.changeLoginPref(openAtLogin, openAsHidden)
-    this.setState({ openLoginPopoverOpen: false })
+    this.setState({ openLoginPopoverAnchor: null })
 
     clearTimeout(this.openLoginHasBeenSetTO)
     this.openLoginHasBeenSetTO = setTimeout(() => {
@@ -78,10 +91,10 @@ export default class PlatformSettingsSection extends React.Component {
       mailtoLinkHandlerSupported,
       isMailtoLinkHandler,
       openAtLoginSupported,
+      classes,
       ...passProps
     } = this.props
     const {
-      openLoginPopoverOpen,
       openLoginPopoverAnchor,
       openLoginHasBeenSet
     } = this.state
@@ -89,42 +102,39 @@ export default class PlatformSettingsSection extends React.Component {
     if (!mailtoLinkHandlerSupported && !openAtLoginSupported) { return null }
 
     return (
-      <Paper zDepth={1} style={styles.paper} {...passProps}>
-        <h1 style={styles.subheading}>Platform</h1>
+      <SettingsListSection title='Platform' {...passProps}>
         {mailtoLinkHandlerSupported ? (
-          <Toggle
-            toggled={isMailtoLinkHandler}
-            labelPosition='right'
+          <SettingsListSwitch
             label='Handle mailto links'
-            onToggle={(evt, toggled) => platformActions.changeMailtoLinkHandler(toggled)} />
+            onChange={(evt, toggled) => platformActions.changeMailtoLinkHandler(toggled)}
+            checked={isMailtoLinkHandler} />
         ) : undefined}
         {openAtLoginSupported ? (
-          <div style={{ marginTop: 8, marginBottom: 8 }}>
-            <RaisedButton
-              onClick={(evt) => this.setState({ openLoginPopoverOpen: true, openLoginPopoverAnchor: evt.target })}
-              icon={openLoginHasBeenSet ? (<FontIcon className='material-icons' color={Colors.green600}>check</FontIcon>) : undefined}
-              label={openLoginHasBeenSet ? 'All Set' : 'System Startup Settings'} />
-            <Popover
-              open={openLoginPopoverOpen}
+          <SettingsListItem divider={false}>
+            <Button
+              size='small'
+              variant='raised'
+              onClick={(evt) => this.setState({ openLoginPopoverAnchor: evt.target })}>
+              {openLoginHasBeenSet ? <CheckIcon className={classes.beenSetIcon} /> : undefined}
+              {openLoginHasBeenSet ? 'All Set' : 'System Startup Settings'}
+            </Button>
+            <Menu
               anchorEl={openLoginPopoverAnchor}
-              anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
-              targetOrigin={{ horizontal: 'left', vertical: 'top' }}
-              onRequestClose={() => this.setState({ openLoginPopoverOpen: false })}>
-              <Menu>
-                <MenuItem
-                  onClick={(evt) => this.handleOpenAtLoginChanged(evt, false, false)}
-                  primaryText={`Don't open at System Startup`} />
-                <MenuItem
-                  onClick={(evt) => this.handleOpenAtLoginChanged(evt, true, false)}
-                  primaryText={'Open at System Startup'} />
-                <MenuItem
-                  onClick={(evt) => this.handleOpenAtLoginChanged(evt, true, true)}
-                  primaryText={'Open hidden at System Startup'} />
-              </Menu>
-            </Popover>
-          </div>
+              open={!!openLoginPopoverAnchor}
+              onClose={() => this.setState({ openLoginPopoverAnchor: null })}>
+              <MenuItem onClick={(evt) => this.handleOpenAtLoginChanged(evt, false, false)}>
+                Don't open at System Startup
+              </MenuItem>
+              <MenuItem onClick={(evt) => this.handleOpenAtLoginChanged(evt, true, false)}>
+                Open at System Startup
+              </MenuItem>
+              <MenuItem onClick={(evt) => this.handleOpenAtLoginChanged(evt, true, true)}>
+                Open hidden at System Startup
+              </MenuItem>
+            </Menu>
+          </SettingsListItem>
         ) : undefined}
-      </Paper>
+      </SettingsListSection>
     )
   }
 }

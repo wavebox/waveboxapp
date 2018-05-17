@@ -1,64 +1,57 @@
 import PropTypes from 'prop-types'
-import './SettingsScene.less'
 import React from 'react'
-import { RaisedButton, FlatButton, Tabs, Tab } from 'material-ui' //TODO
+import { Dialog, DialogContent, DialogActions, Button, Tabs, Tab, AppBar } from 'material-ui' //TODO
 import GeneralSettings from './GeneralSettings'
-import ExtensionSettings from './ExtensionSettings'
-import AccountSettings from './Accounts/AccountSettings'
+//import ExtensionSettings from './ExtensionSettings'
+//import AccountSettings from './Accounts/AccountSettings'
 import ProSettings from './ProSettings'
-import AdvancedSettings from './AdvancedSettings'
+//import AdvancedSettings from './AdvancedSettings'
 import SupportSettings from './SupportSettings'
-import * as Colors from 'material-ui/styles/colors' //TODO
 import shallowCompare from 'react-addons-shallow-compare'
-import SettingsSceneTabTemplate from './SettingsSceneTabTemplate'
+//import SettingsSceneTabTemplate from './SettingsSceneTabTemplate'
 import { WB_RELAUNCH_APP } from 'shared/ipcEvents'
-import { FullscreenModal } from 'Components'
 import { ipcRenderer } from 'electron'
+import { withStyles } from 'material-ui/styles'
+import lightBlue from 'material-ui/colors/lightBlue'
 
 const styles = {
-  modalBody: {
-    borderRadius: 2,
-    padding: 0,
+  // Dialog
+  dialog: {
+    maxWidth: '100%',
+    width: '100%',
+    height: '100%'
+  },
+  dialogContent: {
+    position: 'relative',
     backgroundColor: 'rgb(242, 242, 242)'
   },
-  modalActions: {
-    position: 'absolute',
-    height: 52,
-    left: 0,
-    right: 0,
-    bottom: 0,
+  dialogActions: {
     backgroundColor: 'white',
-    borderTop: '1px solid rgb(232, 232, 232)'
+    borderTop: '1px solid rgb(232, 232, 232)',
+    margin: 0,
+    padding: '8px 4px'
   },
-  tabToggles: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 50,
-    display: 'flex',
-    flexDirection: 'row',
-    alignContent: 'stretch',
-    overflowX: 'auto'
+
+  // Tabs
+  appBar: {
+    backgroundColor: lightBlue[600]
   },
-  tabToggle: {
-    height: 50,
-    borderRadius: 0,
-    flex: 1,
-    borderBottomWidth: 2,
-    borderBottomStyle: 'solid'
+  tabButton: {
+    color: 'white',
+    maxWidth: 'none'
   },
-  body: {
-    position: 'absolute',
-    top: 50,
-    left: 0,
-    right: 0,
-    bottom: 52,
-    overflowY: 'auto',
-    padding: 24
+  tabInkBar: {
+    backgroundColor: lightBlue[100]
+  },
+
+  // Footer
+  button: {
+    marginLeft: 8,
+    marginRight: 8
   }
 }
 
+@withStyles(styles)
 export default class SettingsScene extends React.Component {
   /* **************************************************************************/
   // Class
@@ -80,12 +73,10 @@ export default class SettingsScene extends React.Component {
   // Data lifecycle
   /* **************************************************************************/
 
-  state = (() => {
-    return {
-      open: true,
-      showRestart: false
-    }
-  })()
+  state = {
+    open: true,
+    showRestart: false
+  }
 
   /* **************************************************************************/
   // User Interaction
@@ -94,7 +85,7 @@ export default class SettingsScene extends React.Component {
   /**
   * Changes the tab
   */
-  handleTabChange = (value) => {
+  handleTabChange = (evt, value) => {
     if (typeof (value) === 'string') {
       window.location.hash = `/settings/${value}`
     }
@@ -147,20 +138,49 @@ export default class SettingsScene extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
+  /**
+  * @param classes:
+  * @param currentTab: the current tab
+  */
+  renderTab (classes, currentTab) {
+    if (currentTab === 'general') {
+      return (<GeneralSettings showRestart={this.handleShowRestart} />)
+    } else if (currentTab === 'extensions') {
+      return (<div>extensions</div>)
+    } else if (currentTab === 'accounts') {
+      return (<div>accounts</div>)
+    } else if (currentTab === 'advanced') {
+      return (<div>advanced</div>)
+    } else if (currentTab === 'support') {
+      return (<SupportSettings />)
+    } else if (currentTab === 'pro') {
+      return (<ProSettings showRestart={this.handleShowRestart} />)
+    }
+    /*
+    <Tab label='General' value='general'>
+      <GeneralSettings showRestart={this.handleShowRestart} />
+    </Tab>
+    <Tab label='Extensions' value='extensions'>
+      <ExtensionSettings showRestart={this.handleShowRestart} />
+    </Tab>
+    <Tab label='Accounts' value='accounts'>
+      <AccountSettings showRestart={this.handleShowRestart} mailboxId={match.params.tabArg} />
+    </Tab>
+    <Tab label='Wavebox' value='pro'>
+      <ProSettings showRestart={this.handleShowRestart} />
+    </Tab>
+    <Tab label='Advanced' value='advanced'>
+      <AdvancedSettings showRestart={this.handleShowRestart} />
+    </Tab>
+    <Tab label='Support' value='support'>
+      <SupportSettings />
+    </Tab>
+    */
+  }
+
   render () {
     const { showRestart, open } = this.state
-    const { match } = this.props
-
-    const buttons = showRestart ? (
-      <div style={{ textAlign: 'right' }}>
-        <RaisedButton label='Close' style={{ marginRight: 16 }} onClick={this.handleClose} />
-        <RaisedButton label='Restart' primary onClick={this.handleRestart} />
-      </div>
-    ) : (
-      <div style={{ textAlign: 'right' }}>
-        <RaisedButton label='Close' primary onClick={this.handleClose} />
-      </div>
-    )
+    const { match, classes } = this.props
 
     const currentTab = match.params.tab || 'general'
     const tabHeadings = [
@@ -173,61 +193,45 @@ export default class SettingsScene extends React.Component {
     ].filter((tab) => !!tab)
 
     return (
-      <FullscreenModal
-        modal={false}
-        actions={buttons}
+      <Dialog
         open={open}
-        bodyStyle={styles.modalBody}
-        actionsContainerStyle={styles.modalActions}
-        onRequestClose={this.handleClose}>
-        <div style={styles.tabToggles} className='ReactComponent-SettingsScene-Tabs'>
-          {tabHeadings.map(([label, value]) => {
-            return (
-              <FlatButton
-                key={value}
-                label={label}
-                style={Object.assign({}, styles.tabToggle, {
-                  borderBottomColor: currentTab === value ? Colors.lightBlueA100 : 'transparent'
-                })}
-                labelStyle={{
-                  color: currentTab === value ? Colors.white : Colors.lightBlue100
-                }}
-                backgroundColor={Colors.lightBlue600}
-                hoverColor={Colors.lightBlue600}
-                rippleColor={Colors.lightBlue900}
-                onClick={() => this.handleTabChange(value)} />
-            )
-          })}
-        </div>
-        <div style={styles.body} className='ReactComponent-MaterialUI-Dialog-Body-Scrollbars'>
+        onClose={this.handleClose}
+        classes={{ paper: classes.dialog }}>
+        <AppBar position='static' className={classes.appBar}>
           <Tabs
-            inkBarStyle={{ display: 'none' }}
-            tabItemContainerStyle={{ display: 'none' }}
+            fullWidth
             value={currentTab}
             onChange={this.handleTabChange}
-            tabTemplate={SettingsSceneTabTemplate}
-            contentContainerClassName='ReactComponent-SettingsScene-TabBody'>
-            <Tab label='General' value='general'>
-              <GeneralSettings showRestart={this.handleShowRestart} />
-            </Tab>
-            <Tab label='Extensions' value='extensions'>
-              <ExtensionSettings showRestart={this.handleShowRestart} />
-            </Tab>
-            <Tab label='Accounts' value='accounts'>
-              <AccountSettings showRestart={this.handleShowRestart} mailboxId={match.params.tabArg} />
-            </Tab>
-            <Tab label='Wavebox' value='pro'>
-              <ProSettings showRestart={this.handleShowRestart} />
-            </Tab>
-            <Tab label='Advanced' value='advanced'>
-              <AdvancedSettings showRestart={this.handleShowRestart} />
-            </Tab>
-            <Tab label='Support' value='support'>
-              <SupportSettings />
-            </Tab>
+            classes={{ indicator: classes.tabInkBar }}>
+            {tabHeadings.map(([label, value]) => {
+              return (
+                <Tab key={value} label={label} className={classes.tabButton} value={value} />
+              )
+            })}
           </Tabs>
-        </div>
-      </FullscreenModal>
+        </AppBar>
+        <DialogContent className={classes.dialogContent}>
+          {this.renderTab(classes, currentTab)}
+        </DialogContent>
+        <DialogActions className={classes.dialogActions}>
+          <Button
+            variant='raised'
+            color={showRestart ? undefined : 'primary'}
+            className={classes.button}
+            onClick={this.handleClose}>
+            Close
+          </Button>
+          {showRestart ? (
+            <Button
+              variant='raised'
+              color='primary'
+              className={classes.button}
+              onClick={this.handleRestart}>
+              Restart
+            </Button>
+          ) : undefined}
+        </DialogActions>
+      </Dialog>
     )
   }
 }

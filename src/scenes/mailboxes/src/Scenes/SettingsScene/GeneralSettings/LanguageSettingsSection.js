@@ -1,11 +1,25 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Toggle, Paper, SelectField, MenuItem, RaisedButton, FontIcon, Divider } from 'material-ui' //TODO
 import { settingsActions } from 'stores/settings'
 import { dictionariesStore, dictionariesActions } from 'stores/dictionaries'
-import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListSwitch from 'wbui/SettingsListSwitch'
+import SettingsListSelect from 'wbui/SettingsListSelect'
+import SettingsListItem from 'wbui/SettingsListItem'
+import { withStyles } from 'material-ui/styles'
+import LanguageIcon from '@material-ui/icons/Language'
+import { Button } from 'material-ui'
 
+const styles = {
+  buttonIcon: {
+    marginRight: 6,
+    height: 18,
+    width: 18
+  }
+}
+
+@withStyles(styles)
 export default class LanguageSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
@@ -53,7 +67,7 @@ export default class LanguageSettingsSection extends React.Component {
   }
 
   render () {
-    const {language, showRestart, ...passProps} = this.props
+    const {language, showRestart, classes, ...passProps} = this.props
     const { installedDictionaries } = this.state
     const dictionaryState = dictionariesStore.getState()
     const primaryDictionaryInfo = dictionaryState.getDictionaryInfo(language.spellcheckerLanguage)
@@ -68,66 +82,52 @@ export default class LanguageSettingsSection extends React.Component {
     }, { availableSecondary: [], unavailbleSecondary: [] })
 
     return (
-      <Paper zDepth={1} style={styles.paper} {...passProps}>
-        <h1 style={styles.subheading}>Language</h1>
-        <Toggle
-          toggled={language.spellcheckerEnabled}
-          labelPosition='right'
-          label='Spell-checker'
-          onToggle={(evt, toggled) => settingsActions.sub.language.setEnableSpellchecker(toggled)} />
-        <SelectField
-          floatingLabelText='Spell-checker language'
+      <SettingsListSection title='Language' {...passProps}>
+        <SettingsListSwitch
+          label='Spellchecking'
+          onChange={(evt, toggled) => settingsActions.sub.language.setEnableSpellchecker(toggled)}
+          checked={language.spellcheckerEnabled} />
+        <SettingsListSelect
+          label='Spellchecking language'
           value={language.spellcheckerLanguage}
-          fullWidth
-          onChange={(evt, index, value) => { settingsActions.sub.language.setSpellcheckerLanguage(value) }}>
-          {installedDictionaries.map((info) => {
-            return (<MenuItem key={info.lang} value={info.lang} primaryText={info.name} />)
+          disabled={!language.spellcheckerEnabled}
+          options={installedDictionaries.map((info) => {
+            return { value: info.lang, label: info.name }
           })}
-        </SelectField>
-        <SelectField
-          floatingLabelText='Secondary Spell-checker language'
+          onChange={(evt, value) => settingsActions.sub.language.setSpellcheckerLanguage(value)} />
+        <SettingsListSelect
+          label='Secondary spellchecking language'
           value={language.secondarySpellcheckerLanguage !== null ? language.secondarySpellcheckerLanguage : '__none__'}
-          fullWidth
-          onChange={(evt, index, value) => {
-            settingsActions.sub.language.setSecondarySpellcheckerLanguage(value !== '__none__' ? value : null)
-          }}>
-          {
-            [].concat(
-              [<MenuItem key='__none__' value='__none__' primaryText='None' />],
-              availableSecondary.map((info) => {
-                return (<MenuItem key={info.lang} value={info.lang} primaryText={info.name} />)
-              }),
-              unavailbleSecondary.length === 0 ? [] : [
-                (<Divider key='__unavailable__' />),
-                (<MenuItem
-                  key='__unavailableTitle__'
-                  value='__unavailableTitle__'
-                  style={{
-                    whiteSpace: 'normal',
-                    fontWeight: 'bold',
-                    lineHeight: '1.2em',
-                    paddingTop: 5,
-                    paddingBottom: 5
-                  }}
-                  primaryText='These languages are not compatible with the primary language as they use a different character set'
-                  disabled />)
-              ],
-              unavailbleSecondary.map((info) => {
-                return (
-                  <MenuItem
-                    key={info.lang}
-                    value={info.lang}
-                    primaryText={info.name}
-                    disabled />)
-              })
-            )
-          }
-        </SelectField>
-        <RaisedButton
-          label='Install more Dictionaries'
-          icon={<FontIcon className='material-icons'>language</FontIcon>}
-          onClick={() => { dictionariesActions.startDictionaryInstall() }} />
-      </Paper>
+          disabled={!language.spellcheckerEnabled}
+          options={[].concat(
+            [{ value: '__none__', label: 'None' }],
+            availableSecondary.map((info) => {
+              return { value: info.lang, label: info.name }
+            }),
+            unavailbleSecondary.length === 0 ? [] : [
+              [{ divider: true }],
+              {
+                value: '__unavailableTitle__',
+                label: 'These languages are not compatible with the primary language as they use a different character set',
+                disabled: true
+              }
+            ],
+            unavailbleSecondary.map((info) => {
+              return { value: info.lang, label: info.name }
+            })
+          )}
+          onChange={(evt, value) => settingsActions.sub.language.setSecondarySpellcheckerLanguage(value !== '__none__' ? value : null)} />
+        <SettingsListItem divider={false}>
+          <Button
+            disabled={!language.spellcheckerEnabled}
+            variant='raised'
+            size='small'
+            onClick={() => { dictionariesActions.startDictionaryInstall() }}>
+            <LanguageIcon className={classes.buttonIcon} />
+            Install more Dictionaries
+          </Button>
+        </SettingsListItem>
+      </SettingsListSection>
     )
   }
 }

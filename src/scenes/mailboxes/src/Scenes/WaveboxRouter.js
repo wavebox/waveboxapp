@@ -19,8 +19,8 @@ import LinuxSetupScene from './LinuxSetupScene'
 import PrivacyDialog from './PrivacyDialog'
 import NotificationPanel from './NotificationPanel'
 import ComposePickerScene from './ComposePickerScene'
-
-/*import SettingsScene from './SettingsScene'
+import SettingsScene from './SettingsScene'
+/*
 import DictionaryInstallerScene from './DictionaryInstallerScene'
 
 */
@@ -49,7 +49,8 @@ export default class WaveboxRouter extends React.Component {
           <EarlyBuildToast />
           <NotificationPanel />
 
-          {/*<Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
+          <Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
+          {/*
 
           <Route path='/dictionary_installer' component={DictionaryInstallerScene} />*/}
 

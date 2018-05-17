@@ -3,7 +3,22 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { WaveboxWebView } from 'Components'
 import { userStore } from 'stores/user'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
+const styles = {
+  webview: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '100%',
+    height: '100%'
+  }
+}
+
+@withStyles(styles)
 export default class ProSettings extends React.Component {
   /* **************************************************************************/
   // Class
@@ -48,22 +63,15 @@ export default class ProSettings extends React.Component {
   }
 
   render () {
-    const {style, ...passProps} = this.props
+    const {className, classes, ...passProps} = this.props
     delete passProps.showRestart
     const { url } = this.state
 
     return (
       <WaveboxWebView
         src={url}
-        style={Object.assign({
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          width: '100%',
-          height: '100%'
-        }, style)} />
+        className={classNames(className, classes.webview)}
+        {...passProps} />
     )
   }
 }

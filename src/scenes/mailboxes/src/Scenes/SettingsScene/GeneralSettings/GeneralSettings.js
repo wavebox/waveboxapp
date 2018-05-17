@@ -2,15 +2,21 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import settingsStore from 'stores/settings/settingsStore'
 import platformStore from 'stores/platform/platformStore'
+import UISettingsSection from './UISettingsSection'
+import NotificationSettingsSection from './NotificationSettingsSection'
 import DownloadSettingsSection from './DownloadSettingsSection'
 import LanguageSettingsSection from './LanguageSettingsSection'
-import NotificationSettingsSection from './NotificationSettingsSection'
-import TraySettingsSection from './TraySettingsSection'
-import UISettingsSection from './UISettingsSection'
-import InfoSettingsSection from './InfoSettingsSection'
 import PlatformSettingsSection from './PlatformSettingsSection'
+import TraySettingsSection from './TraySettingsSection'
+/*import DownloadSettingsSection from './DownloadSettingsSection'
+
+
+import TraySettingsSection from './TraySettingsSection'
+
+import InfoSettingsSection from './InfoSettingsSection'
+import PlatformSettingsSection from './PlatformSettingsSection'*/
 import shallowCompare from 'react-addons-shallow-compare'
-import { Container, Row, Col } from 'Components/Grid'
+//import { Container, Row, Col } from 'Components/Grid'
 
 export default class GeneralSettings extends React.Component {
   /* **************************************************************************/
@@ -102,6 +108,20 @@ export default class GeneralSettings extends React.Component {
 
     return (
       <div {...passProps}>
+        <UISettingsSection ui={ui} os={os} accelerators={accelerators} extension={extension} showRestart={showRestart} />
+        <NotificationSettingsSection os={os} />
+        <DownloadSettingsSection os={os} />
+        <LanguageSettingsSection language={language} showRestart={showRestart} />
+        <PlatformSettingsSection
+          mailtoLinkHandlerSupported={mailtoLinkHandlerSupported}
+          isMailtoLinkHandler={isMailtoLinkHandler}
+          openAtLoginSupported={openAtLoginSupported} />
+        <TraySettingsSection tray={tray} showRestart={showRestart} />
+      </div>
+    )
+
+    /*return (
+      <div {...passProps}>
         <Container fluid>
           <Row>
             <Col md={6}>
@@ -121,6 +141,6 @@ export default class GeneralSettings extends React.Component {
           </Row>
         </Container>
       </div>
-    )
+    )*/
   }
 }
