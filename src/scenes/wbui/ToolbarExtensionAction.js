@@ -5,7 +5,7 @@ import ReactPortalTooltip from 'react-portal-tooltip'
 import { basicPopoverStyles } from './Styles/PopoverStyles'
 import uuid from 'uuid'
 import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const styles = {

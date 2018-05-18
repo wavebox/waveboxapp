@@ -1,11 +1,11 @@
 import React from 'react'
-import { Paper } from 'material-ui'
+import { Paper } from '@material-ui/core'
 import Spinner from './Activity/Spinner'
 import { ipcRenderer } from 'electron'
 import { WB_FOCUS_AUTH_WINDOW } from 'shared/ipcEvents'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import lightBlue from 'material-ui/colors/lightBlue'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const styles = {
   container: {

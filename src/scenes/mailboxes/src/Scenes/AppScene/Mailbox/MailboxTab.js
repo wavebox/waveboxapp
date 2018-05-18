@@ -16,7 +16,7 @@ import MicrosoftMailboxMailWebView from './MailboxWebView/Microsoft/MicrosoftMai
 import MicrosoftMailboxTeamWebView from './MailboxWebView/Microsoft/MicrosoftMailboxTeamWebView'
 import MailboxServiceWebView from './MailboxWebView/MailboxServiceWebView'
 import ContainerMailboxDefaultServiceWebView from './MailboxWebView/Container/ContainerMailboxDefaultServiceWebView'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const styles = {

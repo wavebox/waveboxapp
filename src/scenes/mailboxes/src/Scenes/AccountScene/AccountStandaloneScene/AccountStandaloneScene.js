@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Dialog, DialogContent, DialogActions, Button } from 'material-ui'
+import { Dialog, DialogContent, DialogActions, Button } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { WaveboxWebView } from 'Components'
 import { userStore } from 'stores/user'
 import querystring from 'querystring'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
   dialog: {

@@ -3,9 +3,9 @@ import dictionariesStore from 'stores/dictionaries/dictionariesStore'
 import dictionariesActions from 'stores/dictionaries/dictionariesActions'
 import electron from 'electron'
 import Spinner from 'wbui/Activity/Spinner'
-import { withStyles } from 'material-ui/styles'
-import { Stepper, Step, StepLabel, StepContent, Button, FormControl, InputLabel, Select, MenuItem } from 'material-ui'
-import lightBlue from 'material-ui/colors/lightBlue'
+import { withStyles } from '@material-ui/core/styles'
+import { Stepper, Step, StepLabel, StepContent, Button, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const STEPS = {
   PICK: 0,

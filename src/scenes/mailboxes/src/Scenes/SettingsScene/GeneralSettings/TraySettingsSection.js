@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { TrayIconEditor } from 'Components/Tray'
-import { Icon } from 'material-ui'
+import { Icon } from '@material-ui/core'
 import settingsActions from 'stores/settings/settingsActions'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
@@ -19,8 +19,8 @@ import SettingsListSwitch from 'wbui/SettingsListSwitch'
 import SettingsListSelect from 'wbui/SettingsListSelect'
 import SettingsListItem from 'wbui/SettingsListItem'
 import SettingsListTextField from 'wbui/SettingsListTextField'
-import { withStyles } from 'material-ui/styles'
-import blue from 'material-ui/colors/blue'
+import { withStyles } from '@material-ui/core/styles'
+import blue from '@material-ui/core/colors/blue'
 import classNames from 'classnames'
 
 const styles = {

@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { TextField, Checkbox } from 'material-ui'
-import { withStyles } from 'material-ui/styles'
+import { TextField, Checkbox } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const styles = {

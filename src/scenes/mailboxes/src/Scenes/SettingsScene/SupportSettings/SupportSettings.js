@@ -1,6 +1,6 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Button, Paper, Icon, Grid } from 'material-ui'
+import { Button, Paper, Icon, Grid } from '@material-ui/core'
 import electron from 'electron'
 import Resolver from 'Runtime/Resolver'
 import {
@@ -11,7 +11,7 @@ import {
   QUICK_START_WEB_URL,
   KB_BETA_CHANNEL_URL
 } from 'shared/constants'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import StyleMixins from 'wbui/Styles/StyleMixins'
 

@@ -1,12 +1,12 @@
 import React from 'react'
-import { Button, Dialog, DialogContent, DialogActions } from 'material-ui'
+import { Button, Dialog, DialogContent, DialogActions } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { WaveboxWebView } from 'Components'
 import { NEWS_URL } from 'shared/constants'
 import { settingsActions } from 'stores/settings'
 import Spinner from 'wbui/Activity/Spinner'
-import { withStyles } from 'material-ui/styles'
-import lightBlue from 'material-ui/colors/lightBlue'
+import { withStyles } from '@material-ui/core/styles'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const styles = {
   dialog: {

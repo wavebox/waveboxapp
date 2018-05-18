@@ -1,10 +1,10 @@
 import React from 'react'
-import { Dialog, DialogTitle, DialogActions, Button, List, ListItem, DialogContent, ListItemText, ListItemAvatar } from 'material-ui'
+import { Dialog, DialogTitle, DialogActions, Button, List, ListItem, DialogContent, ListItemText, ListItemAvatar } from '@material-ui/core'
 import { emblinkStore, emblinkActions } from 'stores/emblink'
 import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
 import MailboxAvatar from 'Components/Backed/MailboxAvatar'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 
 const KEYBOARD_UNSELECTED_INDEX = -1
 

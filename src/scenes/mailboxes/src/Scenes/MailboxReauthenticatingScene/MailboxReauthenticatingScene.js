@@ -1,8 +1,8 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import AuthenticationInstruction from 'wbui/AuthenticationInstruction'
-import { Dialog, DialogContent } from 'material-ui'
-import { withStyles } from 'material-ui/styles'
+import { Dialog, DialogContent } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
   dialog: {

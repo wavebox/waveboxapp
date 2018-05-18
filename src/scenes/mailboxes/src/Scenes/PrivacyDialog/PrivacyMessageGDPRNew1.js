@@ -1,13 +1,13 @@
 import React from 'react'
-import { Dialog, DialogContent, Button, Checkbox, FormControlLabel, Icon } from 'material-ui'
+import { Dialog, DialogContent, Button, Checkbox, FormControlLabel, Icon } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { remote } from 'electron'
 import Resolver from 'Runtime/Resolver'
 import PropTypes from 'prop-types'
 import { PRIVACY_URL, TERMS_URL, EULA_URL } from 'shared/constants'
-import { withStyles } from 'material-ui/styles'
-import lightBlue from 'material-ui/colors/lightBlue'
-import red from 'material-ui/colors/red'
+import { withStyles } from '@material-ui/core/styles'
+import lightBlue from '@material-ui/core/colors/lightBlue'
+import red from '@material-ui/core/colors/red'
 import classNames from 'classnames'
 
 const styles = {

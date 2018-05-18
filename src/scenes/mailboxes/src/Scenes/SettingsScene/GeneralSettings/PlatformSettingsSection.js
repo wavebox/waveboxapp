@@ -5,9 +5,9 @@ import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListSwitch from 'wbui/SettingsListSwitch'
 import SettingsListItem from 'wbui/SettingsListItem'
-import { withStyles } from 'material-ui/styles'
-import green from 'material-ui/colors/green'
-import { Button, Menu, MenuItem } from 'material-ui'
+import { withStyles } from '@material-ui/core/styles'
+import green from '@material-ui/core/colors/green'
+import { Button, Menu, MenuItem } from '@material-ui/core'
 import CheckIcon from '@material-ui/icons/Check'
 
 const styles = {

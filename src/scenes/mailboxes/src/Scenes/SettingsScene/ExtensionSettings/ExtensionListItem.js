@@ -1,17 +1,17 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Paper, Button } from 'material-ui'
+import { Paper, Button } from '@material-ui/core'
 import Spinner from 'wbui/Activity/Spinner'
 import { crextensionStore, crextensionActions } from 'stores/crextension'
 import { userStore } from 'stores/user'
 import electron from 'electron'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import grey from 'material-ui/colors/grey'
-import lightBlue from 'material-ui/colors/lightBlue'
-import blue from 'material-ui/colors/blue'
-import red from 'material-ui/colors/red'
+import grey from '@material-ui/core/colors/grey'
+import lightBlue from '@material-ui/core/colors/lightBlue'
+import blue from '@material-ui/core/colors/blue'
+import red from '@material-ui/core/colors/red'
 
 const styles = {
   // Layout

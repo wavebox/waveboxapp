@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import blue from 'material-ui/colors/blue'
+import blue from '@material-ui/core/colors/blue'
 
 const styles = {
   '@keyframes loadbar': {

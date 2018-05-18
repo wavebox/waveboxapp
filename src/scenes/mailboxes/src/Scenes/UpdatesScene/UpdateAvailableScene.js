@@ -1,11 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Dialog, DialogActions, DialogContent, Button } from 'material-ui'
+import { Dialog, DialogActions, DialogContent, Button } from '@material-ui/core'
 import { updaterActions, updaterStore } from 'stores/updater'
 import UpdateModalTitle from './UpdateModalTitle'
 import electron from 'electron'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
   dialogContent: {

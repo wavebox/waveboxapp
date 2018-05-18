@@ -4,9 +4,9 @@ import { mailboxActions, GoogleDefaultServiceReducer } from 'stores/mailbox'
 import WizardConfigureUnreadModeOption from './WizardConfigureUnreadModeOption'
 import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
-import { withStyles } from 'material-ui/styles'
-import yellow from 'material-ui/colors/yellow'
-import lightBlue from 'material-ui/colors/lightBlue'
+import { withStyles } from '@material-ui/core/styles'
+import yellow from '@material-ui/core/colors/yellow'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const styles = {
   // Typography

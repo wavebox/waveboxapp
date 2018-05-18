@@ -5,14 +5,14 @@ import { ipcRenderer } from 'electron'
 import Spinner from 'wbui/Activity/Spinner'
 import KeychainStorageInfo from './KeychainStorageInfo'
 import KeychainAddDialog from './KeychainAddDialog'
-import { withStyles } from 'material-ui/styles'
-import grey from 'material-ui/colors/grey'
-import lightBlue from 'material-ui/colors/lightBlue'
+import { withStyles } from '@material-ui/core/styles'
+import grey from '@material-ui/core/colors/grey'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 import {
   Button, Checkbox,
   Toolbar, Typography,
   Table, TableBody, TableHead, TableRow, TableCell
-} from 'material-ui'
+} from '@material-ui/core'
 import {
   WB_KEYCHAIN_REQUEST_CREDENTIALS,
   WB_KEYCHAIN_SUPPLY_CREDENTIALS,

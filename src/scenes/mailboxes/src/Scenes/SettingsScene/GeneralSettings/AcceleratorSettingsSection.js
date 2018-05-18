@@ -7,9 +7,9 @@ import SettingsListItem from 'wbui/SettingsListItem'
 import SettingsListAccordionDeferred from 'wbui/SettingsListAccordionDeferred'
 import DeleteIcon from '@material-ui/icons/Delete'
 import SettingsBackupRestoreIcon from '@material-ui/icons/SettingsBackupRestore'
-import { withStyles } from 'material-ui/styles'
-import { ListItemText, TextField, IconButton, ListItemSecondaryAction, Tooltip } from 'material-ui'
-import blue from 'material-ui/colors/blue'
+import { withStyles } from '@material-ui/core/styles'
+import { ListItemText, TextField, IconButton, ListItemSecondaryAction, Tooltip } from '@material-ui/core'
+import blue from '@material-ui/core/colors/blue'
 
 const ACCELERATOR_NAMES = {
   // Global

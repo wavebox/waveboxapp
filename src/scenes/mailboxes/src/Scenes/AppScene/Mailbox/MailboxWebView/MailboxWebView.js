@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button } from 'material-ui'
+import { Button } from '@material-ui/core'
 import { mailboxStore, mailboxActions, mailboxDispatch, ServiceReducer } from 'stores/mailbox'
 import { guestActions } from 'stores/guest'
 import BrowserView from 'wbui/Guest/BrowserView'
@@ -25,12 +25,12 @@ import { ipcRenderer } from 'electron'
 import Spinner from 'wbui/Activity/Spinner'
 import { settingsStore } from 'stores/settings'
 import Resolver from 'Runtime/Resolver'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import MailboxInformationCover from './MailboxInformationCover'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import RefreshIcon from '@material-ui/icons/Refresh'
-import lightBlue from 'material-ui/colors/lightBlue'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const styles = {
   root: {

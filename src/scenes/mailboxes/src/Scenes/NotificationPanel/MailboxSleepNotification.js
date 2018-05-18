@@ -1,12 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import MailboxAvatar from 'Components/Backed/MailboxAvatar'
-import { Button } from 'material-ui'
+import { Button } from '@material-ui/core'
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
 import { settingsActions } from 'stores/settings'
-import { withStyles } from 'material-ui/styles'
-import grey from 'material-ui/colors/grey'
-import blue from 'material-ui/colors/blue'
+import { withStyles } from '@material-ui/core/styles'
+import grey from '@material-ui/core/colors/grey'
+import blue from '@material-ui/core/colors/blue'
 
 const styles = {
   // Layout

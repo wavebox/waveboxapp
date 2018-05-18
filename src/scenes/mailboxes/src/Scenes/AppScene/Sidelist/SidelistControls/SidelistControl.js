@@ -1,12 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { IconButton } from 'material-ui'
+import { IconButton } from '@material-ui/core'
 import ReactPortalTooltip from 'react-portal-tooltip'
 import uuid from 'uuid'
 import { settingsActions, settingsStore, Tour } from 'stores/settings'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import lightBlue from 'material-ui/colors/lightBlue'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const styles = {
   // Icon

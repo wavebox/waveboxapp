@@ -11,7 +11,7 @@ import uuid from 'uuid'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import UISettings from 'shared/Models/Settings/UISettings'
 import Color from 'color'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const styles = {

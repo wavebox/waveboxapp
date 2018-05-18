@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { withStyles } from 'material-ui/styles'
-import { DialogTitle } from 'material-ui'
+import { withStyles } from '@material-ui/core/styles'
+import { DialogTitle } from '@material-ui/core'
 import classNames from 'classnames'
 import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt'
 

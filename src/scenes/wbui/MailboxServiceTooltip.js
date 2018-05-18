@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Icon } from 'material-ui'
+import { Icon } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import ReactPortalTooltip from 'react-portal-tooltip'
 import { basicPopoverStyles400w } from 'wbui/Styles/PopoverStyles'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import red from 'material-ui/colors/red'
+import red from '@material-ui/core/colors/red'
 
 const styles = {
   hr: {

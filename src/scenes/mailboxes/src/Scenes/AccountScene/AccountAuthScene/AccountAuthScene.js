@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Dialog, DialogContent, Button, List, ListItem, ListItemText, Avatar, Icon } from 'material-ui'
+import { Dialog, DialogContent, Button, List, ListItem, ListItemText, Avatar, Icon } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { mailboxStore } from 'stores/mailbox'
 import MailboxAvatar from 'Components/Backed/MailboxAvatar'
 import { userActions } from 'stores/user'
 import { PRIVACY_URL, TERMS_URL } from 'shared/constants'
 import electron from 'electron'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import StyleMixins from 'wbui/Styles/StyleMixins'
-import grey from 'material-ui/colors/grey'
-import blue from 'material-ui/colors/blue'
+import grey from '@material-ui/core/colors/grey'
+import blue from '@material-ui/core/colors/blue'
 
 const styles = {
   dialog: {

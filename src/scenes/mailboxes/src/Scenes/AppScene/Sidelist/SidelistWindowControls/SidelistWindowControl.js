@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { IconButton, Icon } from 'material-ui'
+import { IconButton, Icon } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
-import blueGrey from 'material-ui/colors/blueGrey'
-import { withStyles } from 'material-ui/styles'
+import blueGrey from '@material-ui/core/colors/blueGrey'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const TYPES = Object.freeze({

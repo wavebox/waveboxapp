@@ -1,8 +1,8 @@
 import React from 'react'
-import { Snackbar, Button } from 'material-ui'
+import { Snackbar, Button } from '@material-ui/core'
 import pkg from 'package.json'
-import { withStyles } from 'material-ui/styles'
-import lightBlue from 'material-ui/colors/lightBlue'
+import { withStyles } from '@material-ui/core/styles'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const styles = {
   buildId: {

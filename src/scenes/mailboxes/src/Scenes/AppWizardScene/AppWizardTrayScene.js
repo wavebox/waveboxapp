@@ -2,7 +2,7 @@ import React from 'react'
 import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 import { TrayIconEditor } from 'Components/Tray'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
   container: {

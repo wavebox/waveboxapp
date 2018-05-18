@@ -14,7 +14,7 @@ import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListSwitch from 'wbui/SettingsListSwitch'
 import SettingsListTextField from 'wbui/SettingsListTextField'
 import SettingsListButton from 'wbui/SettingsListButton'
-import { ListItemText } from 'material-ui'
+import { ListItemText } from '@material-ui/core'
 
 export default class ContainerAccountSettings extends React.Component {
   /* **************************************************************************/

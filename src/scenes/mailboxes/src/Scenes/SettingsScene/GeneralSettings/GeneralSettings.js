@@ -17,12 +17,12 @@ import DebugSettingsSection from './DebugSettingsSection'
 import InfoSettingsSection from './InfoSettingsSection'
 import shallowCompare from 'react-addons-shallow-compare'
 import Scrollspy from 'react-scrollspy'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import StyleMixins from 'wbui/Styles/StyleMixins'
 import classNames from 'classnames'
 import uuid from 'uuid'
-import { List, ListItem, Paper } from 'material-ui'
-import lightBlue from 'material-ui/colors/lightBlue'
+import { List, ListItem, Paper } from '@material-ui/core'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const CONTENT_WIDTH = 600
 const SCROLLSPY_WIDTH = 160

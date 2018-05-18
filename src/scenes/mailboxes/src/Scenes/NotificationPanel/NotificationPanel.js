@@ -5,7 +5,7 @@ import {userStore} from 'stores/user'
 import {settingsStore} from 'stores/settings'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import MailboxSleepNotification from './MailboxSleepNotification'
-import grey from 'material-ui/colors/grey'
+import grey from '@material-ui/core/colors/grey'
 
 const NOTIFICATION_STYLE = {
   NotificationItem: {

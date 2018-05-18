@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button } from 'material-ui'
+import { Button } from '@material-ui/core'
 import { settingsActions } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListSwitch from 'wbui/SettingsListSwitch'
 import TimelineIcon from '@material-ui/icons/Timeline'
 import SettingsListItem from 'wbui/SettingsListItem'
-import { withStyles } from 'material-ui/styles'
-import blue from 'material-ui/colors/blue'
+import { withStyles } from '@material-ui/core/styles'
+import blue from '@material-ui/core/colors/blue'
 
 const styles = {
   buttonIcon: {

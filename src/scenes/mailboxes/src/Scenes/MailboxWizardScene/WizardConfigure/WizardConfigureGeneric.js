@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button, Switch, Select, MenuItem, TextField, FormControlLabel, FormControl, InputLabel } from 'material-ui'
+import { Button, Switch, Select, MenuItem, TextField, FormControlLabel, FormControl, InputLabel } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import GenericDefaultService from 'shared/Models/Accounts/Generic/GenericDefaultService'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import { mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
 import validUrl from 'valid-url'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 
 const humanizedOpenModes = {
   [CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER]: 'Default Browser',

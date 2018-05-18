@@ -6,9 +6,9 @@ import shallowCompare from 'react-addons-shallow-compare'
 import SidelistWindowControls from './SidelistWindowControls'
 import SidelistControls from './SidelistControls'
 import SidelistUpgradePlans from './SidelistUpgradePlans'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import blueGrey from 'material-ui/colors/blueGrey'
+import blueGrey from '@material-ui/core/colors/blueGrey'
 
 const styles = {
   container: {

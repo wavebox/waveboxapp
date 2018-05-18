@@ -1,13 +1,13 @@
 import React from 'react'
-import { Dialog, DialogContent, Button, Icon } from 'material-ui'
+import { Dialog, DialogContent, Button, Icon } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { remote } from 'electron'
 import Resolver from 'Runtime/Resolver'
 import PropTypes from 'prop-types'
 import { PRIVACY_URL } from 'shared/constants'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import lightBlue from 'material-ui/colors/lightBlue'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const styles = {
   modal: {

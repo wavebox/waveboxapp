@@ -1,9 +1,9 @@
 import React from 'react'
 import SidelistControl from './SidelistControl'
 import { TOUR_STEPS } from 'stores/settings/Tour'
-import blueGrey from 'material-ui/colors/blueGrey'
+import blueGrey from '@material-ui/core/colors/blueGrey'
 import SettingsIcon from '@material-ui/icons/Settings'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
   icon: {

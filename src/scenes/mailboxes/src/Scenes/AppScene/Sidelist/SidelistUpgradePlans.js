@@ -1,13 +1,13 @@
 import React from 'react'
 import { userStore } from 'stores/user'
-import { IconButton, Icon } from 'material-ui'
+import { IconButton, Icon } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import uuid from 'uuid'
 import ReactPortalTooltip from 'react-portal-tooltip'
 import User from 'shared/Models/User'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import lightBlue from 'material-ui/colors/lightBlue'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const UPDATE_INTERVAL = 1000 * 60 * 15 // 15 minutes
 const styles = {

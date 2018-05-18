@@ -1,7 +1,7 @@
 import React from 'react'
-import { Paper } from 'material-ui'
+import { Paper } from '@material-ui/core'
 import { browserStore } from 'stores/browser'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const styles = {

@@ -2,13 +2,13 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import MailboxWizardStepper from './MailboxWizardStepper'
-import { Dialog, DialogContent } from 'material-ui'
+import { Dialog, DialogContent } from '@material-ui/core'
 import MailboxTypes from 'shared/Models/Accounts/MailboxTypes'
 import MailboxFactory from 'shared/Models/Accounts/MailboxFactory'
 import WizardPersonalise from './WizardPersonalise'
 import WizardAuth from './WizardAuth'
 import WizardConfigure from './WizardConfigure'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
   dialog: {

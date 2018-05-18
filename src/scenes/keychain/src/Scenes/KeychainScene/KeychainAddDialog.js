@@ -5,9 +5,9 @@ import KeychainStorageInfo from './KeychainStorageInfo'
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   Toolbar, Typography, TextField, Button
-} from 'material-ui'
-import { withStyles } from 'material-ui/styles'
-import grey from 'material-ui/colors/grey'
+} from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
+import grey from '@material-ui/core/colors/grey'
 import StyleMixins from 'wbui/Styles/StyleMixins'
 
 const styles = {

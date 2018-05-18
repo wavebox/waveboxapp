@@ -10,9 +10,9 @@ import MailboxServiceBagde from 'wbui/MailboxServiceBadge'
 import MailboxServiceTooltip from 'wbui/MailboxServiceTooltip'
 import Resolver from 'Runtime/Resolver'
 import UISettings from 'shared/Models/Settings/UISettings'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import red from 'material-ui/colors/red'
+import red from '@material-ui/core/colors/red'
 
 const styles = {
   /**

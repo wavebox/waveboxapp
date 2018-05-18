@@ -14,8 +14,8 @@ import GoogleServiceSettings from './GoogleServiceSettings'
 import { mailboxActions, GoogleMailboxReducer } from 'stores/mailbox'
 import Resolver from 'Runtime/Resolver'
 import SettingsListSwitch from 'wbui/SettingsListSwitch'
-import { withStyles } from 'material-ui/styles'
-import { Button, Icon, Avatar } from 'material-ui'
+import { withStyles } from '@material-ui/core/styles'
+import { Button, Icon, Avatar } from '@material-ui/core'
 
 const styles = {
   proServices: {

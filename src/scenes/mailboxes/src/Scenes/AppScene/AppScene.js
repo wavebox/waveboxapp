@@ -8,7 +8,7 @@ import { settingsStore } from 'stores/settings'
 import { crextensionStore } from 'stores/crextension'
 import { userStore } from 'stores/user'
 import { mailboxStore } from 'stores/mailbox'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const SIDEBAR_WIDTH = 70

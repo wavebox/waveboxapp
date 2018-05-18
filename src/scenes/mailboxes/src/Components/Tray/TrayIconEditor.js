@@ -6,9 +6,9 @@ import settingsActions from 'stores/settings/settingsActions'
 import shallowCompare from 'react-addons-shallow-compare'
 import BorderColorIcon from '@material-ui/icons/BorderColor'
 import FormatColorFillIcon from '@material-ui/icons/FormatColorFill'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import { Grid } from 'material-ui'
+import { Grid } from '@material-ui/core'
 
 const styles = {
   subheading: {

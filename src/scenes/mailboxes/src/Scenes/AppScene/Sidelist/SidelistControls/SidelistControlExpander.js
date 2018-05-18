@@ -1,10 +1,10 @@
 import React from 'react'
 import SidelistControl from './SidelistControl'
 import { TOUR_STEPS } from 'stores/settings/Tour'
-import blueGrey from 'material-ui/colors/blueGrey'
+import blueGrey from '@material-ui/core/colors/blueGrey'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
   icon: {

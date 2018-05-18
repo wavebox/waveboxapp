@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button } from 'material-ui'
+import { Button } from '@material-ui/core'
 import MailboxWebView from './MailboxWebView'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'

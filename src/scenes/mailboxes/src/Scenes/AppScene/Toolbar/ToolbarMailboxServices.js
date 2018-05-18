@@ -4,7 +4,7 @@ import { mailboxStore, mailboxActions, MailboxReducer } from 'stores/mailbox'
 import ToolbarMailboxService from './ToolbarMailboxService'
 import {SortableContainer, SortableElement} from 'react-sortable-hoc'
 import CoreService from 'shared/Models/Accounts/CoreService'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const styles = {

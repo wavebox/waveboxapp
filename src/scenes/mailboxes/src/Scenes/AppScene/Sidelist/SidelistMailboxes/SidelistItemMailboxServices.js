@@ -4,7 +4,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import SidelistItemMailboxService from './SidelistItemMailboxService'
 import { mailboxStore, mailboxActions, MailboxReducer } from 'stores/mailbox'
 import {SortableContainer, SortableElement} from 'react-sortable-hoc'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const styles = {

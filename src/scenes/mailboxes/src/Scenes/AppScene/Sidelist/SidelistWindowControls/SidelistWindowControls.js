@@ -2,7 +2,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import SidelistWindowControl from './SidelistWindowControl'
 import { remote } from 'electron'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const HAS_WINDOW_CONTROLS = process.platform !== 'darwin'

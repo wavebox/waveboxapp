@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, Typography } from 'material-ui'
+import { ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, Typography } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import shallowCompare from 'react-addons-shallow-compare'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import SettingsListContainer from './SettingsListContainer'
-import grey from 'material-ui/colors/grey'
+import grey from '@material-ui/core/colors/grey'
 
 const styles = {
   title: {

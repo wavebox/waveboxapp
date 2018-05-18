@@ -1,11 +1,11 @@
 import React from 'react'
-import { Paper, TextField, IconButton } from 'material-ui'
+import { Paper, TextField, IconButton } from '@material-ui/core'
 import { browserActions, browserStore } from 'stores/browser'
 import SearchIcon from '@material-ui/icons/Search'
 import CloseIcon from '@material-ui/icons/Close'
 import { WB_WINDOW_FIND_START } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const styles = {

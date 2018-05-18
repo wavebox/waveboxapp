@@ -7,7 +7,7 @@ import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import MailboxServicePopover from '../../MailboxServicePopover'
 import SidelistItemMailboxAvatar from './SidelistItemMailboxAvatar'
 import SidelistItemMailboxServices from './SidelistItemMailboxServices'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const styles = {

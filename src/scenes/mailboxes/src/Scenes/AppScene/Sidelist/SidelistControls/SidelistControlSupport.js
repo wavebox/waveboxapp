@@ -1,9 +1,9 @@
 import React from 'react'
-import { Icon } from 'material-ui'
+import { Icon } from '@material-ui/core'
 import SidelistControl from './SidelistControl'
 import { TOUR_STEPS } from 'stores/settings/Tour'
-import teal from 'material-ui/colors/teal'
-import { withStyles } from 'material-ui/styles'
+import teal from '@material-ui/core/colors/teal'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const styles = {

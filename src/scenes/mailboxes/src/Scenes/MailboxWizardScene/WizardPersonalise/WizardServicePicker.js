@@ -4,9 +4,9 @@ import shallowCompare from 'react-addons-shallow-compare'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
-import { Select, MenuItem, List, ListItem, ListItemText, ListItemSecondaryAction, Switch, Grid } from 'material-ui'
+import { Select, MenuItem, List, ListItem, ListItemText, ListItemSecondaryAction, Switch, Grid } from '@material-ui/core'
 import Resolver from 'Runtime/Resolver'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const SERVICE_GROUPS = {

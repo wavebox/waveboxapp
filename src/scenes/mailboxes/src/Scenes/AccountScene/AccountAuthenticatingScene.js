@@ -1,8 +1,8 @@
 import React from 'react'
-import { Dialog, DialogContent } from 'material-ui'
+import { Dialog, DialogContent } from '@material-ui/core'
 import Spinner from 'wbui/Activity/Spinner'
-import { withStyles } from 'material-ui/styles'
-import lightBlue from 'material-ui/colors/lightBlue'
+import { withStyles } from '@material-ui/core/styles'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const styles = {
   dialogContent: {

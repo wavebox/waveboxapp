@@ -4,8 +4,8 @@ import shallowCompare from 'react-addons-shallow-compare'
 import ExtensionListItem from './ExtensionListItem'
 import { crextensionStore } from 'stores/crextension'
 import { userStore } from 'stores/user'
-import grey from 'material-ui/colors/grey'
-import { withStyles } from 'material-ui/styles'
+import grey from '@material-ui/core/colors/grey'
+import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
   heading: {

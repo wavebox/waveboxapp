@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper } from 'material-ui'
-import { withStyles } from 'material-ui/styles'
+import { Paper } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const TARGET_URL_HEIGHT = 16

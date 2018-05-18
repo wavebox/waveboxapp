@@ -9,7 +9,7 @@ import { browserActions, browserStore } from 'stores/browser'
 import MouseNavigationDarwin from 'wbui/MouseNavigationDarwin'
 import Resolver from 'Runtime/Resolver'
 import { remote } from 'electron'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 
 const SEARCH_REF = 'search'
 const BROWSER_REF = 'browser'

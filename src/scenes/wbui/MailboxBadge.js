@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import Color from 'color'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const RADIUS = 12

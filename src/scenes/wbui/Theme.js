@@ -1,8 +1,8 @@
-import { createMuiTheme } from 'material-ui/styles'
-import { fade } from 'material-ui/styles/colorManipulator'
-import lightBlue from 'material-ui/colors/lightBlue'
-import red from 'material-ui/colors/red'
-import cyan from 'material-ui/colors/cyan'
+import { createMuiTheme } from '@material-ui/core/styles'
+import { fade } from '@material-ui/core/styles/colorManipulator'
+import lightBlue from '@material-ui/core/colors/lightBlue'
+import red from '@material-ui/core/colors/red'
+import cyan from '@material-ui/core/colors/cyan'
 
 export default createMuiTheme({
   palette: {

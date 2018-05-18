@@ -1,9 +1,9 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { monitorStore } from 'stores/monitor'
-import {Table, TableBody, TableHead, TableRow, TableCell} from 'material-ui'
-import { withStyles } from 'material-ui/styles'
-import lightBlue from 'material-ui/colors/lightBlue'
+import {Table, TableBody, TableHead, TableRow, TableCell} from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 import classNames from 'classnames'
 
 const styles = {

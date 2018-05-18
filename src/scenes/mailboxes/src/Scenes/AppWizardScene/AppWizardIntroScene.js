@@ -1,8 +1,8 @@
 import React from 'react'
-import { Icon, Avatar } from 'material-ui'
-import blueGrey from 'material-ui/colors/blueGrey'
-import yellow from 'material-ui/colors/yellow'
-import { withStyles } from 'material-ui/styles'
+import { Icon, Avatar } from '@material-ui/core'
+import blueGrey from '@material-ui/core/colors/blueGrey'
+import yellow from '@material-ui/core/colors/yellow'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const styles = {

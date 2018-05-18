@@ -2,8 +2,8 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { WaveboxWebView } from 'Components'
 import { userStore } from 'stores/user'
-import { withStyles } from 'material-ui/styles'
-import { Dialog, DialogContent, DialogActions, Button } from 'material-ui'
+import { withStyles } from '@material-ui/core/styles'
+import { Dialog, DialogContent, DialogActions, Button } from '@material-ui/core'
 
 const styles = {
   dialog: {

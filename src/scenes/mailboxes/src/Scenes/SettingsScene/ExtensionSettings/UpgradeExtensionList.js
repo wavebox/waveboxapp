@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button } from 'material-ui'
+import { Button } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import ExtensionListItem from './ExtensionListItem'
 import { crextensionStore } from 'stores/crextension'
 import { userStore } from 'stores/user'
-import lightBlue from 'material-ui/colors/lightBlue'
-import grey from 'material-ui/colors/grey'
-import { withStyles } from 'material-ui/styles'
+import lightBlue from '@material-ui/core/colors/lightBlue'
+import grey from '@material-ui/core/colors/grey'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const styles = {

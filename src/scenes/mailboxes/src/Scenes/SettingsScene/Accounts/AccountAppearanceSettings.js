@@ -9,12 +9,12 @@ import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListSwitch from 'wbui/SettingsListSwitch'
 import SettingsListItem from 'wbui/SettingsListItem'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import SmsIcon from '@material-ui/icons/Sms'
 import InsertEmoticonButton from '@material-ui/icons/InsertEmoticon'
 import NotInterestedIcon from '@material-ui/icons/NotInterested'
 import ColorLensIcon from '@material-ui/icons/ColorLens'
-import { Button, ListItemText } from 'material-ui'
+import { Button, ListItemText } from '@material-ui/core'
 
 const styles = {
   buttonIcon: {

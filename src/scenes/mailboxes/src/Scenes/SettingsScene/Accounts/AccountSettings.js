@@ -11,10 +11,10 @@ import GenericAccountSettings from './Generic/GenericAccountSettings'
 import MicrosoftAccountSettings from './Microsoft/MicrosoftAccountSettings'
 import ContainerAccountSettings from './Container/ContainerAccountSettings'
 import MailboxAvatar from 'Components/Backed/MailboxAvatar'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import { Button, FormControl, InputLabel, Select, MenuItem } from 'material-ui'
-import grey from 'material-ui/colors/grey'
+import { Button, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core'
+import grey from '@material-ui/core/colors/grey'
 
 const styles = {
   addFirstAccountContainer: {

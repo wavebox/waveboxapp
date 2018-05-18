@@ -1,13 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { mailboxActions, MicrosoftDefaultServiceReducer } from 'stores/mailbox'
-import { Paper } from 'material-ui'
+import { Paper } from '@material-ui/core'
 import WizardConfigureUnreadModeOption from './WizardConfigureUnreadModeOption'
 import MicrosoftDefaultService from 'shared/Models/Accounts/Microsoft/MicrosoftDefaultService'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
-import { withStyles } from 'material-ui/styles'
-import yellow from 'material-ui/colors/yellow'
-import lightBlue from 'material-ui/colors/lightBlue'
+import { withStyles } from '@material-ui/core/styles'
+import yellow from '@material-ui/core/colors/yellow'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const styles = {
   // Typography

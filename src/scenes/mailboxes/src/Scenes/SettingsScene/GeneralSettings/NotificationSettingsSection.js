@@ -4,7 +4,7 @@ import Timeago from 'react-timeago'
 import settingsActions from 'stores/settings/settingsActions'
 import shallowCompare from 'react-addons-shallow-compare'
 import { NotificationPlatformSupport, NotificationService } from 'Notifications'
-import { Button, MenuItem, Menu, ListItemIcon, Divider } from 'material-ui'
+import { Button, MenuItem, Menu, ListItemIcon, Divider } from '@material-ui/core'
 import {
   NOTIFICATION_PROVIDERS,
   NOTIFICATION_SOUNDS
@@ -13,7 +13,7 @@ import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListSwitch from 'wbui/SettingsListSwitch'
 import SettingsListSelect from 'wbui/SettingsListSelect'
 import SettingsListItem from 'wbui/SettingsListItem'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import NotificationsIcon from '@material-ui/icons/Notifications'
 import NotificationsPausedIcon from '@material-ui/icons/NotificationsPaused'

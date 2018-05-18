@@ -1,14 +1,14 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { ListItem, ListItemText } from 'material-ui'
+import { ListItem, ListItemText } from '@material-ui/core'
 import MailboxAvatar from 'wbui/MailboxAvatar'
 import TimeAgo from 'react-timeago'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
 import { mailboxStore } from 'stores/mailbox'
 import Resolver from 'Runtime/Resolver'
 import classNames from 'classnames'
-import grey from 'material-ui/colors/grey'
+import grey from '@material-ui/core/colors/grey'
 
 const styles = {
   listItem: {

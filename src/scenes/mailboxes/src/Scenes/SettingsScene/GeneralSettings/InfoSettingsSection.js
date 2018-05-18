@@ -5,7 +5,7 @@ import { RELEASE_CHANNELS } from 'shared/constants'
 import pkg from 'package.json'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItem from 'wbui/SettingsListItem'
-import { ListItemText } from 'material-ui'
+import { ListItemText } from '@material-ui/core'
 
 export default class InfoSettingsSection extends React.Component {
   /* **************************************************************************/

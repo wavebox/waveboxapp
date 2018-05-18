@@ -1,9 +1,9 @@
 import React from 'react'
 import { userStore } from 'stores/user'
-import { Button } from 'material-ui'
+import { Button } from '@material-ui/core'
 import Resolver from 'Runtime/Resolver'
-import blueGrey from 'material-ui/colors/blueGrey'
-import { withStyles } from 'material-ui/styles'
+import blueGrey from '@material-ui/core/colors/blueGrey'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
 

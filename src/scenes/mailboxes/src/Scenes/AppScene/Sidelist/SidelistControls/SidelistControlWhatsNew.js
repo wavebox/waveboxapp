@@ -1,12 +1,12 @@
 import React from 'react'
-import { Icon } from 'material-ui'
+import { Icon } from '@material-ui/core'
 import SidelistControl from './SidelistControl'
 import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 import { TOUR_STEPS } from 'stores/settings/Tour'
 import { UISettings } from 'shared/Models/Settings'
-import red from 'material-ui/colors/red'
-import { withStyles } from 'material-ui/styles'
+import red from '@material-ui/core/colors/red'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const styles = {

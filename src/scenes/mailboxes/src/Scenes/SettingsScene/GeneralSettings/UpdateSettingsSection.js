@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button } from 'material-ui'
+import { Button } from '@material-ui/core'
 import { settingsActions } from 'stores/settings'
 import { updaterActions } from 'stores/updater'
 import AppSettings from 'shared/Models/Settings/AppSettings'
@@ -10,7 +10,7 @@ import SettingsListSwitch from 'wbui/SettingsListSwitch'
 import SettingsListSelect from 'wbui/SettingsListSelect'
 import SettingsListItem from 'wbui/SettingsListItem'
 import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
   buttonIcon: {

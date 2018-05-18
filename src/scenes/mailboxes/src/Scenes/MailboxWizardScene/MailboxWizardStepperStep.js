@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Icon } from 'material-ui'
-import { withStyles } from 'material-ui/styles'
+import { Icon } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import lightBlue from 'material-ui/colors/lightBlue'
-import red from 'material-ui/colors/red'
+import lightBlue from '@material-ui/core/colors/lightBlue'
+import red from '@material-ui/core/colors/red'
 
 const styles = {
   container: {

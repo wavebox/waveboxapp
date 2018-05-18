@@ -7,9 +7,9 @@ import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListSwitch from 'wbui/SettingsListSwitch'
 import SettingsListSelect from 'wbui/SettingsListSelect'
 import SettingsListItem from 'wbui/SettingsListItem'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import LanguageIcon from '@material-ui/icons/Language'
-import { Button } from 'material-ui'
+import { Button } from '@material-ui/core'
 
 const styles = {
   buttonIcon: {

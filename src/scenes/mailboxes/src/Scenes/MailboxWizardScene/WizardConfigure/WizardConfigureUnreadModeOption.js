@@ -1,10 +1,10 @@
 import React from 'react'
-import { Icon } from 'material-ui'
+import { Icon } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import uuid from 'uuid'
 import shallowCompare from 'react-addons-shallow-compare'
 import ReactPortalTooltip from 'react-portal-tooltip'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const styles = {

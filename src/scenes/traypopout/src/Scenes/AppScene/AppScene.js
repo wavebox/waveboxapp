@@ -1,15 +1,15 @@
 import { ipcRenderer } from 'electron'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Tab, Tabs, AppBar } from 'material-ui'
+import { Tab, Tabs, AppBar } from '@material-ui/core'
 import SwipeableViews from 'react-swipeable-views'
 import NotificationScene from 'Scenes/NotificationScene'
 import UnreadScene from 'Scenes/UnreadScene'
 import AppSceneToolbar from './AppSceneToolbar'
 import AppSceneWindowTitlebar from './AppSceneWindowTitlebar'
 import { WB_TRAY_WINDOWED_MODE_CHANGED } from 'shared/ipcEvents'
-import { withStyles } from 'material-ui/styles'
-import lightBlue from 'material-ui/colors/lightBlue'
+import { withStyles } from '@material-ui/core/styles'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 import classNames from 'classnames'
 
 const TAB_HEIGHT = 40

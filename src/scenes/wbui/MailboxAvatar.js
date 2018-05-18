@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Avatar } from 'material-ui'
+import { Avatar } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 
 export default class MailboxAvatar extends React.Component {

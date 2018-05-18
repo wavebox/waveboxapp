@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { ListItemText, ListItemSecondaryAction, Select, MenuItem, Divider } from 'material-ui'
+import { ListItemText, ListItemSecondaryAction, Select, MenuItem, Divider } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import SettingsListItem from './SettingsListItem'
 
 const styles = {

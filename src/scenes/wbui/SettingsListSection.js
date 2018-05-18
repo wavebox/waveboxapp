@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { List, Paper } from 'material-ui'
+import { List, Paper } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
-import { withStyles } from 'material-ui/styles'
-import grey from 'material-ui/colors/grey'
+import { withStyles } from '@material-ui/core/styles'
+import grey from '@material-ui/core/colors/grey'
 import SettingsListContainer from './SettingsListContainer'
 
 const styles = {

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button } from 'material-ui'
+import { Button } from '@material-ui/core'
 
 export default class ConfirmFlatButton extends React.Component {
   /* **************************************************************************/

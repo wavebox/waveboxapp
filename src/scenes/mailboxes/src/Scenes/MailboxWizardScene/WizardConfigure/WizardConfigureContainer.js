@@ -1,15 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Switch, FormControl, FormControlLabel } from 'material-ui'
+import { Switch, FormControl, FormControlLabel } from '@material-ui/core'
 import { mailboxActions, ContainerDefaultServiceReducer } from 'stores/mailbox'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import SleepableField from 'wbui/SleepableField'
 import { userStore } from 'stores/user'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 
-import red from 'material-ui/colors/red'
-import amber from 'material-ui/colors/amber'
+import red from '@material-ui/core/colors/red'
+import amber from '@material-ui/core/colors/amber'
 
 const styles = {
   heading: {

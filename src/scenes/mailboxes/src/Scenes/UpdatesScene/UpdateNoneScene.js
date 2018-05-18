@@ -1,10 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Dialog, DialogContent, DialogActions, Button } from 'material-ui'
+import { Dialog, DialogContent, DialogActions, Button } from '@material-ui/core'
 import UpdateModalTitle from './UpdateModalTitle'
 import pkg from 'package.json'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import DoneIcon from '@material-ui/icons/Done'
 
 const styles = {

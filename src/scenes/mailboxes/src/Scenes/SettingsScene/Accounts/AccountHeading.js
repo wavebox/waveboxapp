@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { withStyles } from 'material-ui/styles'
-import grey from 'material-ui/colors/grey'
+import { withStyles } from '@material-ui/core/styles'
+import grey from '@material-ui/core/colors/grey'
 
 const styles = {
   heading: {

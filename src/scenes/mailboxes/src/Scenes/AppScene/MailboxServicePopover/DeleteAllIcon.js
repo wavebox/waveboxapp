@@ -1,5 +1,5 @@
 import React from 'react'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import ClearAllIcon from '@material-ui/icons/ClearAll'
 import DeleteIcon from '@material-ui/icons/Delete'
 import classNames from 'classnames'

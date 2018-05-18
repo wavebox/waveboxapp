@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Dialog, DialogContent, DialogActions, Button, Tabs, Tab, AppBar } from 'material-ui'
+import { Dialog, DialogContent, DialogActions, Button, Tabs, Tab, AppBar } from '@material-ui/core'
 import GeneralSettings from './GeneralSettings'
 import ExtensionSettings from './ExtensionSettings'
 import AccountSettings from './Accounts/AccountSettings'
@@ -9,8 +9,8 @@ import SupportSettings from './SupportSettings'
 import shallowCompare from 'react-addons-shallow-compare'
 import { WB_RELAUNCH_APP } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
-import { withStyles } from 'material-ui/styles'
-import lightBlue from 'material-ui/colors/lightBlue'
+import { withStyles } from '@material-ui/core/styles'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const styles = {
   // Dialog

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Menu, MenuItem, Divider, ListItemText, ListItemIcon } from 'material-ui'
+import { Menu, MenuItem, Divider, ListItemText, ListItemIcon } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsApplicationsIcon from '@material-ui/icons/SettingsApplications'
 import ExtensionIcon from '@material-ui/icons/Extension'

@@ -8,7 +8,7 @@ import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListSwitch from 'wbui/SettingsListSwitch'
 import SettingsListItem from 'wbui/SettingsListItem'
 import SettingsListSelect from 'wbui/SettingsListSelect'
-import { ListItemText } from 'material-ui'
+import { ListItemText } from '@material-ui/core'
 
 export default class AccountServicesSettings extends React.Component {
   /* **************************************************************************/

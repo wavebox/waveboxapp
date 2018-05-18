@@ -3,7 +3,7 @@ import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import SidelistItemMailbox from './SidelistItemMailbox'
 import {SortableContainer, SortableElement} from 'react-sortable-hoc'
 import classNames from 'classnames'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 
 const SortableItem = SortableElement(({ mailboxId }) => {
   return (<SidelistItemMailbox mailboxId={mailboxId} />)

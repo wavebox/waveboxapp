@@ -6,9 +6,9 @@ import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListSwitch from 'wbui/SettingsListSwitch'
 import SettingsListItem from 'wbui/SettingsListItem'
 import FolderIcon from '@material-ui/icons/Folder'
-import { Button, ListItemText, ListItemSecondaryAction, Switch } from 'material-ui'
-import { withStyles } from 'material-ui/styles'
-import grey from 'material-ui/colors/grey'
+import { Button, ListItemText, ListItemSecondaryAction, Switch } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
+import grey from '@material-ui/core/colors/grey'
 
 const styles = {
   buttonIcon: {

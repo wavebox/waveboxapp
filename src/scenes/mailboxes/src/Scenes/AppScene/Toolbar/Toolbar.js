@@ -11,8 +11,8 @@ import ToolbarExtensions from './ToolbarExtensions'
 import ToolbarNavigation from './ToolbarNavigation'
 import { ExtensionSettings } from 'shared/Models/Settings'
 import classNames from 'classnames'
-import { withStyles } from 'material-ui/styles'
-import blueGrey from 'material-ui/colors/blueGrey'
+import { withStyles } from '@material-ui/core/styles'
+import blueGrey from '@material-ui/core/colors/blueGrey'
 
 const styles = {
   toolbar: {

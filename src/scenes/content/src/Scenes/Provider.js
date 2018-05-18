@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import Theme from 'wbui/Theme'
-import { MuiThemeProvider } from 'material-ui/styles'
+import { MuiThemeProvider } from '@material-ui/core/styles'
 import BrowserScene from './BrowserScene'
 
 export default class Provider extends React.Component {

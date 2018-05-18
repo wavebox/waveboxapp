@@ -1,14 +1,14 @@
 import React from 'react'
-import { Button, Dialog, DialogContent, DialogActions, DialogTitle } from 'material-ui'
+import { Button, Dialog, DialogContent, DialogActions, DialogTitle } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { mailboxStore, mailboxActions, MailboxReducer } from 'stores/mailbox'
 import PropTypes from 'prop-types'
 import MailboxAvatar from 'Components/Backed/MailboxAvatar'
 import MailboxServiceIcon from 'wbui/MailboxServiceIcon'
 import Resolver from 'Runtime/Resolver'
-import { withStyles } from 'material-ui/styles'
-import red from 'material-ui/colors/red'
-import grey from 'material-ui/colors/grey'
+import { withStyles } from '@material-ui/core/styles'
+import red from '@material-ui/core/colors/red'
+import grey from '@material-ui/core/colors/grey'
 import DeleteIcon from '@material-ui/icons/Delete'
 
 const styles = {

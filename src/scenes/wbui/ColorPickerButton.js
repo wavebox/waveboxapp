@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button, Popover } from 'material-ui'
+import { Button, Popover } from '@material-ui/core'
 import { ChromePicker } from 'react-color'
 
 export default class ColorPickerButton extends React.Component {

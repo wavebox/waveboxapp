@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from 'material-ui'
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import uuid from 'uuid'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
   button: {

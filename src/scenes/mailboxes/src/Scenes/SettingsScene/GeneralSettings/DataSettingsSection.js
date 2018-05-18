@@ -9,10 +9,10 @@ import SettingsListItem from 'wbui/SettingsListItem'
 import ClearIcon from '@material-ui/icons/Clear'
 import ImportExportIcon from '@material-ui/icons/ImportExport'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import ConfirmButton from 'wbui/ConfirmButton'
-import blue from 'material-ui/colors/blue'
-import { Button } from 'material-ui'
+import blue from '@material-ui/core/colors/blue'
+import { Button } from '@material-ui/core'
 import {
   WB_CLEAN_EXPIRED_SESSIONS,
   WB_TAKEOUT_IMPORT,

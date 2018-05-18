@@ -8,12 +8,12 @@ import { AppSettings } from 'shared/Models/Settings'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListSwitch from 'wbui/SettingsListSwitch'
 import SettingsListItem from 'wbui/SettingsListItem'
-import { withStyles } from 'material-ui/styles'
+import { withStyles } from '@material-ui/core/styles'
 import WarningIcon from '@material-ui/icons/Warning'
 import CodeIcon from '@material-ui/icons/Code'
-import grey from 'material-ui/colors/grey'
-import amber from 'material-ui/colors/amber'
-import { Button } from 'material-ui'
+import grey from '@material-ui/core/colors/grey'
+import amber from '@material-ui/core/colors/amber'
+import { Button } from '@material-ui/core'
 
 const styles = {
   buttonIcon: {
