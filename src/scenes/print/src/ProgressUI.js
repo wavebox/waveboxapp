@@ -1,4 +1,4 @@
-import './progress.less'
+import './progress.css'
 
 class ProgressUI {
   /* **************************************************************************/

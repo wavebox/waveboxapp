@@ -63,7 +63,7 @@ module.exports = function (env) {
       new WebpackOnBuildPlugin((stats) => { console.log('WB CRExtension API') })
     ].filter((p) => !!p),
     resolve: {
-      extensions: ['.js', '.jsx', '.less', '.css'],
+      extensions: ['.js', '.jsx', '.css'],
       alias: {
         Core: path.resolve(path.join(__dirname, 'src/Core')),
         Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
@@ -112,8 +112,8 @@ module.exports = function (env) {
           ]
         },
         {
-          test: /(\.less|\.css)$/,
-          use: [ 'style-loader', 'css-loader', 'less-loader' ]
+          test: /(\.css)$/,
+          use: [ 'style-loader', 'css-loader' ]
         }
       ]
     }
