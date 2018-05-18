@@ -72,7 +72,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class UnreadMailboxMessageListItem extends React.Component {
+class UnreadMailboxMessageListItem extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -134,3 +134,5 @@ export default class UnreadMailboxMessageListItem extends React.Component {
     }
   }
 }
+
+export default UnreadMailboxMessageListItem

@@ -76,7 +76,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class GeneralSettings extends React.Component {
+class GeneralSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -366,3 +366,5 @@ export default class GeneralSettings extends React.Component {
     )
   }
 }
+
+export default GeneralSettings

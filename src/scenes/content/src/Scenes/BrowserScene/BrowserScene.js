@@ -40,7 +40,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class BrowserScene extends React.Component {
+class BrowserScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -200,3 +200,5 @@ export default class BrowserScene extends React.Component {
     )
   }
 }
+
+export default BrowserScene

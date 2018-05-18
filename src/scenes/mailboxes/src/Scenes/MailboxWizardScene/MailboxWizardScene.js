@@ -38,7 +38,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class MailboxWizardScene extends React.Component {
+class MailboxWizardScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -141,3 +141,5 @@ export default class MailboxWizardScene extends React.Component {
     )
   }
 }
+
+export default MailboxWizardScene

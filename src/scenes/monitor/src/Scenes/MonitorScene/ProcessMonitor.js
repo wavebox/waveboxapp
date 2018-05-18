@@ -32,7 +32,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class ProcessMonitor extends React.Component {
+class ProcessMonitor extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
@@ -157,3 +157,5 @@ export default class ProcessMonitor extends React.Component {
     )
   }
 }
+
+export default ProcessMonitor

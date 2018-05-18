@@ -20,7 +20,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class PlatformSettingsSection extends React.Component {
+class PlatformSettingsSection extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -138,3 +138,5 @@ export default class PlatformSettingsSection extends React.Component {
     )
   }
 }
+
+export default PlatformSettingsSection

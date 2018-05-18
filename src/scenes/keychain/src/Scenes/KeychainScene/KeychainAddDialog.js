@@ -40,7 +40,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class KeychainAddDialog extends React.Component {
+class KeychainAddDialog extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -244,3 +244,5 @@ export default class KeychainAddDialog extends React.Component {
     )
   }
 }
+
+export default KeychainAddDialog

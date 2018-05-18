@@ -30,7 +30,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class SleepAllIcon extends React.Component {
+class SleepAllIcon extends React.Component {
   render () {
     const { classes, className, ...passProps } = this.props
     return (
@@ -41,3 +41,5 @@ export default class SleepAllIcon extends React.Component {
     )
   }
 }
+
+export default SleepAllIcon

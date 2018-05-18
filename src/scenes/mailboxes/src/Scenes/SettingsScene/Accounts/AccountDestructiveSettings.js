@@ -1,13 +1,29 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper, FontIcon, FlatButton } from 'material-ui' //TODO
 import { mailboxActions } from 'stores/mailbox'
-import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
-import * as Colors from 'material-ui/styles/colors' //TODO
-import { ConfirmFlatButton } from 'Components/Buttons'
+import ConfirmButton from 'wbui/ConfirmButton'
+import { withStyles } from 'material-ui/styles'
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListItem from 'wbui/SettingsListItem'
+import SettingsListButton from 'wbui/SettingsListButton'
+import red from 'material-ui/colors/red'
+import LockOutlineIcon from '@material-ui/icons/LockOutline'
+import DeleteIcon from '@material-ui/icons/Delete'
+import ClearIcon from '@material-ui/icons/Clear'
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 
-export default class AccountAdvancedSettings extends React.Component {
+const styles = {
+  buttonIcon: {
+    marginRight: 6
+  },
+  deleteButton: {
+    color: red[600]
+  }
+}
+
+@withStyles(styles)
+class AccountDestructiveSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -27,39 +43,45 @@ export default class AccountAdvancedSettings extends React.Component {
   render () {
     const {
       mailbox,
+      classes,
       ...passProps
     } = this.props
 
     return (
-      <Paper zDepth={1} style={styles.paper} {...passProps}>
+      <SettingsListSection title='' {...passProps}>
         {mailbox.supportsAuth ? (
-          <div>
-            <FlatButton
-              label='Reauthenticate'
-              icon={<FontIcon className='material-icons'>lock_outline</FontIcon>}
-              onClick={() => mailboxActions.reauthenticateMailbox(mailbox.id)} />
-          </div>
+          <SettingsListButton
+            label='Reauthenticate'
+            IconClass={LockOutlineIcon}
+            onClick={() => mailboxActions.reauthenticateMailbox(mailbox.id)} />
         ) : undefined}
-        <div>
-          <ConfirmFlatButton
-            key={mailbox.id}
-            label='Clear all browsing data'
-            confirmLabel='Click again to confirm'
+        <SettingsListItem>
+          <ConfirmButton
+            size='small'
+            variant='raised'
+            content={(
+              <span>
+                <ClearIcon className={classes.buttonIcon} />
+                Clear all browsing data
+              </span>
+            )}
+            confirmContent={(
+              <span>
+                <HelpOutlineIcon className={classes.buttonIcon} />
+                Click again to confirm
+              </span>
+            )}
             confirmWaitMs={4000}
-            icon={<FontIcon className='material-icons'>clear</FontIcon>}
-            confirmIcon={<FontIcon className='material-icons'>help_outline</FontIcon>}
             onConfirmedClick={() => mailboxActions.clearMailboxBrowserSession(mailbox.id)} />
-        </div>
-        <div>
-          <FlatButton
-            label='Delete this Account'
-            icon={<FontIcon color={Colors.red600} className='material-icons'>delete</FontIcon>}
-            labelStyle={{color: Colors.red600}}
-            onClick={() => {
-              window.location.hash = `/mailbox_delete/${mailbox.id}`
-            }} />
-        </div>
-      </Paper>
+        </SettingsListItem>
+        <SettingsListButton
+          className={classes.deleteButton}
+          label='Delete this account'
+          IconClass={DeleteIcon}
+          onClick={() => { window.location.hash = `/mailbox_delete/${mailbox.id}` }} />
+      </SettingsListSection>
     )
   }
 }
+
+export default AccountDestructiveSettings

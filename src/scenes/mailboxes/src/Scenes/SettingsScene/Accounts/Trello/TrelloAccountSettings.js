@@ -1,18 +1,17 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Paper, SelectField, MenuItem } from 'material-ui' //TODO
-import { Row, Col } from 'Components/Grid'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
 import AccountBadgeSettings from '../AccountBadgeSettings'
 import AccountNotificationSettings from '../AccountNotificationSettings'
 import AccountDestructiveSettings from '../AccountDestructiveSettings'
-import styles from '../../CommonSettingStyles'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
 import AccountBehaviourSettings from '../AccountBehaviourSettings'
 import { mailboxActions, TrelloDefaultServiceReducer } from 'stores/mailbox'
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListSelect from 'wbui/SettingsListSelect'
 
 export default class TrelloAccountSettings extends React.Component {
   /* **************************************************************************/
@@ -38,43 +37,34 @@ export default class TrelloAccountSettings extends React.Component {
 
     return (
       <div {...passProps}>
-        <Row>
-          <Col md={6}>
-            <AccountAppearanceSettings mailbox={mailbox} />
-            <AccountBadgeSettings mailbox={mailbox} service={service} />
-            <AccountNotificationSettings mailbox={mailbox} service={service} />
-            <Paper zDepth={1} style={styles.paper}>
-              <SelectField
-                fullWidth
-                floatingLabelText='Home board (opens on launch)'
-                value={service.homeBoardId || 'default'}
-                onChange={(evt, index, boardId) => {
-                  mailboxActions.reduceService(
-                    mailbox.id,
-                    service.type,
-                    TrelloDefaultServiceReducer.setHomeBoardId,
-                    boardId === 'default' ? undefined : boardId
-                  )
-                }}>
-                <MenuItem value={'default'} primaryText='Trello Home (Default)' />
-                {Array.from(service.boards).map((board) => {
-                  return (
-                    <MenuItem key={board.id} value={board.id} primaryText={board.name} />
-                  )
-                })}
-              </SelectField>
-            </Paper>
-            <AccountBehaviourSettings mailbox={mailbox} service={service} />
-          </Col>
-          <Col md={6}>
-            <AccountCustomCodeSettings
-              mailbox={mailbox}
-              service={service}
-              onRequestEditCustomCode={onRequestEditCustomCode} />
-            <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
-            <AccountDestructiveSettings mailbox={mailbox} />
-          </Col>
-        </Row>
+        <AccountAppearanceSettings mailbox={mailbox} />
+        <AccountBadgeSettings mailbox={mailbox} service={service} />
+        <AccountNotificationSettings mailbox={mailbox} service={service} />
+        <SettingsListSection>
+          <SettingsListSelect
+            label='Home board (opens on launch)'
+            value={service.homeBoardId || 'default'}
+            options={[ { value: 'default', label: 'Trello Home (Default)' } ].concat(
+              Array.from(service.boards).map((board) => {
+                return { value: board.id, label: board.name }
+              })
+            )}
+            onChange={(evt, boardId) => {
+              mailboxActions.reduceService(
+                mailbox.id,
+                service.type,
+                TrelloDefaultServiceReducer.setHomeBoardId,
+                boardId === 'default' ? undefined : boardId
+              )
+            }} />
+        </SettingsListSection>
+        <AccountBehaviourSettings mailbox={mailbox} service={service} />
+        <AccountCustomCodeSettings
+          mailbox={mailbox}
+          service={service}
+          onRequestEditCustomCode={onRequestEditCustomCode} />
+        <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
+        <AccountDestructiveSettings mailbox={mailbox} />
       </div>
     )
   }

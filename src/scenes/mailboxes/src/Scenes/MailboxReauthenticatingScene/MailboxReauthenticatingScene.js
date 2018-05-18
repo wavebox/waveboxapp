@@ -24,7 +24,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class MailboxReauthenticatingScene extends React.Component {
+class MailboxReauthenticatingScene extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -45,3 +45,5 @@ export default class MailboxReauthenticatingScene extends React.Component {
     )
   }
 }
+
+export default MailboxReauthenticatingScene

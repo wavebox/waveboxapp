@@ -58,7 +58,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class AppSceneToolbar extends React.Component {
+class AppSceneToolbar extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -229,3 +229,5 @@ export default class AppSceneToolbar extends React.Component {
     )
   }
 }
+
+export default AppSceneToolbar

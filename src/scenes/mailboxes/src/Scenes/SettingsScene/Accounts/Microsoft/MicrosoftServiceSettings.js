@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import AccountServiceItem from '../AccountServiceItem'
-import { Row, Col } from 'Components/Grid'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
 import AccountBehaviourSettings from '../AccountBehaviourSettings'
 import AccountBadgeSettings from '../AccountBadgeSettings'
@@ -39,33 +38,25 @@ export default class MicrosoftServiceSettings extends React.Component {
 
     if (AccountBadgeSettings.willRenderForService(service) || AccountNotificationSettings.willRenderForService(service)) {
       return (
-        <Row>
-          <Col md={6}>
-            <AccountBadgeSettings mailbox={mailbox} service={service} />
-            <AccountNotificationSettings mailbox={mailbox} service={service} />
-          </Col>
-          <Col md={6}>
-            <AccountBehaviourSettings mailbox={mailbox} service={service} />
-            <AccountCustomCodeSettings
-              mailbox={mailbox}
-              service={service}
-              onRequestEditCustomCode={onRequestEditCustomCode} />
-          </Col>
-        </Row>
+        <div>
+          <AccountBadgeSettings mailbox={mailbox} service={service} />
+          <AccountNotificationSettings mailbox={mailbox} service={service} />
+          <AccountBehaviourSettings mailbox={mailbox} service={service} />
+          <AccountCustomCodeSettings
+            mailbox={mailbox}
+            service={service}
+            onRequestEditCustomCode={onRequestEditCustomCode} />
+        </div>
       )
     } else {
       return (
-        <Row>
-          <Col md={6}>
-            <AccountBehaviourSettings mailbox={mailbox} service={service} />
-          </Col>
-          <Col md={6}>
-            <AccountCustomCodeSettings
-              mailbox={mailbox}
-              service={service}
-              onRequestEditCustomCode={onRequestEditCustomCode} />
-          </Col>
-        </Row>
+        <div>
+          <AccountBehaviourSettings mailbox={mailbox} service={service} />
+          <AccountCustomCodeSettings
+            mailbox={mailbox}
+            service={service}
+            onRequestEditCustomCode={onRequestEditCustomCode} />
+        </div>
       )
     }
   }

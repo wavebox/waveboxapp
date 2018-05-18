@@ -163,7 +163,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class AcceleratorSettingsSection extends React.Component {
+class AcceleratorSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -255,3 +255,5 @@ export default class AcceleratorSettingsSection extends React.Component {
     )
   }
 }
+
+export default AcceleratorSettingsSection

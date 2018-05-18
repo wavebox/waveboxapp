@@ -47,7 +47,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class WizardConfigureGmail extends React.Component {
+class WizardConfigureGmail extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -147,3 +147,5 @@ export default class WizardConfigureGmail extends React.Component {
     )
   }
 }
+
+export default WizardConfigureGmail

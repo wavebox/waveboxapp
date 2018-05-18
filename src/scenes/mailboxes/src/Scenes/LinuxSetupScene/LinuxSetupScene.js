@@ -48,7 +48,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class LinuxSetupScene extends React.Component {
+class LinuxSetupScene extends React.Component {
   /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
@@ -140,3 +140,5 @@ export default class LinuxSetupScene extends React.Component {
     )
   }
 }
+
+export default LinuxSetupScene

@@ -42,7 +42,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class DownloadSettingsSection extends React.Component {
+class DownloadSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -103,3 +103,5 @@ export default class DownloadSettingsSection extends React.Component {
     )
   }
 }
+
+export default DownloadSettingsSection

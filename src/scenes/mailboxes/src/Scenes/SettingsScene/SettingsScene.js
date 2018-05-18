@@ -3,7 +3,7 @@ import React from 'react'
 import { Dialog, DialogContent, DialogActions, Button, Tabs, Tab, AppBar } from 'material-ui'
 import GeneralSettings from './GeneralSettings'
 import ExtensionSettings from './ExtensionSettings'
-//import AccountSettings from './Accounts/AccountSettings'
+import AccountSettings from './Accounts/AccountSettings'
 import ProSettings from './ProSettings'
 import SupportSettings from './SupportSettings'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -50,7 +50,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class SettingsScene extends React.Component {
+class SettingsScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -141,37 +141,19 @@ export default class SettingsScene extends React.Component {
   * @param currentTab: the current tab
   */
   renderTab (classes, currentTab) {
+    const { match } = this.props
+
     if (currentTab === 'general') {
       return (<GeneralSettings showRestart={this.handleShowRestart} />)
     } else if (currentTab === 'extensions') {
       return (<ExtensionSettings showRestart={this.handleShowRestart} />)
     } else if (currentTab === 'accounts') {
-      return (<div>accounts</div>)
+      return (<AccountSettings showRestart={this.handleShowRestart} mailboxId={match.params.tabArg} />)
     } else if (currentTab === 'support') {
       return (<SupportSettings />)
     } else if (currentTab === 'pro') {
       return (<ProSettings showRestart={this.handleShowRestart} />)
     }
-    /*
-    <Tab label='General' value='general'>
-      <GeneralSettings showRestart={this.handleShowRestart} />
-    </Tab>
-    <Tab label='Extensions' value='extensions'>
-      <ExtensionSettings showRestart={this.handleShowRestart} />
-    </Tab>
-    <Tab label='Accounts' value='accounts'>
-      <AccountSettings showRestart={this.handleShowRestart} mailboxId={match.params.tabArg} />
-    </Tab>
-    <Tab label='Wavebox' value='pro'>
-      <ProSettings showRestart={this.handleShowRestart} />
-    </Tab>
-    <Tab label='Advanced' value='advanced'>
-      <AdvancedSettings showRestart={this.handleShowRestart} />
-    </Tab>
-    <Tab label='Support' value='support'>
-      <SupportSettings />
-    </Tab>
-    */
   }
 
   render () {
@@ -230,3 +212,5 @@ export default class SettingsScene extends React.Component {
     )
   }
 }
+
+export default SettingsScene

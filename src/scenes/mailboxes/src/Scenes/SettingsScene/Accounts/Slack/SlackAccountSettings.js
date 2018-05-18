@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Row, Col } from 'Components/Grid'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
 import AccountDestructiveSettings from '../AccountDestructiveSettings'
@@ -36,22 +35,16 @@ export default class SlackAccountSettings extends React.Component {
 
     return (
       <div {...passProps}>
-        <Row>
-          <Col md={6}>
-            <AccountAppearanceSettings mailbox={mailbox} />
-            <AccountBadgeSettings mailbox={mailbox} service={service} />
-            <AccountNotificationSettings mailbox={mailbox} service={service} />
-            <AccountBehaviourSettings mailbox={mailbox} service={service} />
-          </Col>
-          <Col md={6}>
-            <AccountCustomCodeSettings
-              mailbox={mailbox}
-              service={service}
-              onRequestEditCustomCode={onRequestEditCustomCode} />
-            <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
-            <AccountDestructiveSettings mailbox={mailbox} />
-          </Col>
-        </Row>
+        <AccountAppearanceSettings mailbox={mailbox} />
+        <AccountBadgeSettings mailbox={mailbox} service={service} />
+        <AccountNotificationSettings mailbox={mailbox} service={service} />
+        <AccountBehaviourSettings mailbox={mailbox} service={service} />
+        <AccountCustomCodeSettings
+          mailbox={mailbox}
+          service={service}
+          onRequestEditCustomCode={onRequestEditCustomCode} />
+        <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
+        <AccountDestructiveSettings mailbox={mailbox} />
       </div>
     )
   }

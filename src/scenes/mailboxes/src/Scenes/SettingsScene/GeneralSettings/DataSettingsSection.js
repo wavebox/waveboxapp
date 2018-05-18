@@ -36,7 +36,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class DataSettingsSection extends React.Component {
+class DataSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -120,3 +120,5 @@ export default class DataSettingsSection extends React.Component {
     )
   }
 }
+
+export default DataSettingsSection

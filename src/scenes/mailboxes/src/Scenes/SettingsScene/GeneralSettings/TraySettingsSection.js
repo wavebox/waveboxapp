@@ -55,7 +55,7 @@ const TRAY_ACTION_OPTIONS = [
 ]
 
 @withStyles(styles)
-export default class TraySettingsSection extends React.Component {
+class TraySettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -266,3 +266,5 @@ export default class TraySettingsSection extends React.Component {
     )
   }
 }
+
+export default TraySettingsSection

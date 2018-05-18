@@ -28,7 +28,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class ToolbarExtensionAction extends React.Component {
+class ToolbarExtensionAction extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -169,3 +169,5 @@ export default class ToolbarExtensionAction extends React.Component {
     )
   }
 }
+
+export default ToolbarExtensionAction

@@ -46,7 +46,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class ConnectionMonitor extends React.Component {
+class ConnectionMonitor extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
@@ -159,3 +159,5 @@ export default class ConnectionMonitor extends React.Component {
     )
   }
 }
+
+export default ConnectionMonitor

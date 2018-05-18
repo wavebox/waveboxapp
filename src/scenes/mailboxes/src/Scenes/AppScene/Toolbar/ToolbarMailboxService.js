@@ -82,7 +82,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class ToolbarMailboxService extends React.Component {
+class ToolbarMailboxService extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -288,3 +288,5 @@ export default class ToolbarMailboxService extends React.Component {
     )
   }
 }
+
+export default ToolbarMailboxService

@@ -17,7 +17,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class UpdateNoneScene extends React.Component {
+class UpdateNoneScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -81,3 +81,5 @@ export default class UpdateNoneScene extends React.Component {
     )
   }
 }
+
+export default UpdateNoneScene

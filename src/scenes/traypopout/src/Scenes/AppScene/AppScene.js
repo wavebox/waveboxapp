@@ -93,7 +93,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class AppScene extends React.Component {
+class AppScene extends React.Component {
   /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
@@ -218,3 +218,5 @@ export default class AppScene extends React.Component {
     )
   }
 }
+
+export default AppScene

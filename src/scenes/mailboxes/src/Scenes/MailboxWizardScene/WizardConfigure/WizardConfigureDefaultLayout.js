@@ -39,7 +39,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class WizardConfigure extends React.Component {
+class WizardConfigureDefaultLayout extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -90,3 +90,5 @@ export default class WizardConfigure extends React.Component {
     )
   }
 }
+
+export default WizardConfigureDefaultLayout

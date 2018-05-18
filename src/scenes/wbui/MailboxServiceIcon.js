@@ -17,7 +17,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class MailboxServiceIcon extends React.Component {
+class MailboxServiceIcon extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -68,3 +68,5 @@ export default class MailboxServiceIcon extends React.Component {
     )
   }
 }
+
+export default MailboxServiceIcon

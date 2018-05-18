@@ -46,7 +46,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class WizardConfigureGinbox extends React.Component {
+class WizardConfigureGinbox extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -135,3 +135,5 @@ export default class WizardConfigureGinbox extends React.Component {
     )
   }
 }
+
+export default WizardConfigureGinbox

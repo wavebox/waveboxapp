@@ -7,7 +7,7 @@ import { withStyles } from 'material-ui/styles'
 import styles from './AppSceneWindowTitlebarStyles'
 
 @withStyles(styles)
-export default class AppSceneWindowTitlebar extends React.Component {
+class AppSceneWindowTitlebar extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -131,3 +131,5 @@ export default class AppSceneWindowTitlebar extends React.Component {
     )
   }
 }
+
+export default AppSceneWindowTitlebar

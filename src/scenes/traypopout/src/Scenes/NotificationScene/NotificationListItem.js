@@ -56,7 +56,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class NotificationScene extends React.Component {
+class NotificationListItem extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -145,3 +145,5 @@ export default class NotificationScene extends React.Component {
     )
   }
 }
+
+export default NotificationListItem

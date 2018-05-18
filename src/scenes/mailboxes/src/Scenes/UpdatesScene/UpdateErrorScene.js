@@ -27,7 +27,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class UpdateErrorScene extends React.Component {
+class UpdateErrorScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -195,3 +195,5 @@ export default class UpdateErrorScene extends React.Component {
     )
   }
 }
+
+export default UpdateErrorScene

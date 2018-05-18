@@ -16,7 +16,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class InstalledExtensionList extends React.Component {
+class InstalledExtensionList extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -82,3 +82,5 @@ export default class InstalledExtensionList extends React.Component {
     )
   }
 }
+
+export default InstalledExtensionList

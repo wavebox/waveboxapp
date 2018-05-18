@@ -32,7 +32,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class MailboxServicebadge extends React.Component {
+class MailboxServicebadge extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -117,3 +117,5 @@ export default class MailboxServicebadge extends React.Component {
     )
   }
 }
+
+export default MailboxServicebadge

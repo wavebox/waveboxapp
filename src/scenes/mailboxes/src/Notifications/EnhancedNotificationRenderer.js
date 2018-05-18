@@ -1,6 +1,5 @@
 import NotificationRendererUtils from './NotificationRendererUtils'
 import { DEFAULT_NOTIFICATION_SOUND } from 'shared/Notifications'
-import Win32Notification from './Win32NotificationLossy'
 import pkg from 'package.json'
 import uuid from 'uuid'
 import { settingsStore } from 'stores/settings'
@@ -90,39 +89,7 @@ class EnhancedNotificationRenderer {
   * @param clickData={}: the data to provide to the click handler
   */
   presentNotificationWin32 (title, html5Options = {}, clickHandler = undefined, clickData = {}) {
-    if (NotificationRendererUtils.areNotificationsMuted()) { return }
-
-    const sound = settingsStore.getState().os.notificationsSound || DEFAULT_NOTIFICATION_SOUND
-    NotificationRendererUtils.preparedIconWin32(html5Options.icon)
-      .then((icon) => {
-        const notif = new Win32Notification.ToastNotification({
-          appId: pkg.name,
-          template: [
-            /* eslint-disable */
-            '<toast>',
-              '<visual>',
-                '<binding template="ToastGeneric">',
-                  '<text id="1" hint-maxLines="1">%s</text>',
-                  '<text id="2">%s</text>',
-                  icon ? '<image placement="AppLogoOverride" id="3" src="%s" />' : undefined,
-                '</binding>',
-              '</visual>',
-              `<audio src="${sound}" silent="${html5Options.silent ? 'true' : 'false'}" />`,
-            '</toast>'
-            /* eslint-enable */
-          ].filter((l) => !!l).join(''),
-          strings: [
-            title,
-            html5Options.body
-          ].concat(icon ? [icon] : [])
-        })
-        notif.on('activated', () => {
-          if (clickHandler) {
-            clickHandler(clickData)
-          }
-        })
-        notif.show()
-      })
+    // no-op
   }
 
   /**
@@ -135,41 +102,7 @@ class EnhancedNotificationRenderer {
   * @param settingsState: the current settings state
   */
   presentMailboxNotificationWin32 (mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState) {
-    if (NotificationRendererUtils.areNotificationsMuted(settingsState)) { return }
-    const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceType, mailboxState, settingsState)
-    if (!enabled) { return }
-
-    NotificationRendererUtils.preparedServiceIconWin32(mailbox, service, mailboxState)
-      .then((icon) => {
-        const sound = NotificationRendererUtils.preparedServiceSound(mailbox, service, settingsState)
-        const notif = new Win32Notification.ToastNotification({
-          appId: pkg.name,
-          template: [
-            /* eslint-disable */
-            '<toast launch="launchApp">',
-              '<visual>',
-                '<binding template="ToastGeneric">',
-                  '<text id="1" hint-maxLines="1">%s</text>',
-                  '<text id="2">%s</text>',
-                  icon ? '<image placement="AppLogoOverride" hint-crop="circle" id="3" src="%s" />' : undefined,
-                '</binding>',
-              '</visual>',
-              `<audio src="${sound || DEFAULT_NOTIFICATION_SOUND}" silent="${sound === undefined ? 'true' : 'false'}" />`,
-            '</toast>'
-            /* eslint-enable */
-          ].filter((l) => !!l).join(''),
-          strings: [
-            NotificationRendererUtils.formattedTitle(notification),
-            NotificationRendererUtils.formattedBody(notification)
-          ].concat(icon ? [icon] : [])
-        })
-        notif.on('activated', () => {
-          if (clickHandler) {
-            clickHandler(notification.data)
-          }
-        })
-        notif.show()
-      })
+    // no-op
   }
 
   /* **************************************************************************/

@@ -44,7 +44,6 @@ export default class MailboxAvatar extends React.Component {
       backgroundColor: mailbox.hasCustomAvatar || mailbox.avatarURL ? 'white' : mailbox.color
     }
 
-    //TODO test with broken image
     if (mailbox.showAvatarColorRing) {
       const borderSize = Math.round(size * 0.08)
       const adjustedSize = size - (2 * borderSize)

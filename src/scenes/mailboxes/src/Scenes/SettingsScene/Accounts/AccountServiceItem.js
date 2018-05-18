@@ -4,25 +4,31 @@ import shallowCompare from 'react-addons-shallow-compare'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
-import * as Colors from 'material-ui/styles/colors' //TODO
-import {
-  Toolbar, ToolbarGroup, ToolbarTitle,
-  Avatar, FontIcon, IconButton, Paper
-} from 'material-ui' //TODO
 import Resolver from 'Runtime/Resolver'
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListItem from 'wbui/SettingsListItem'
+import { withStyles } from 'material-ui/styles'
+import { Avatar, Tooltip, IconButton } from 'material-ui'
+import grey from 'material-ui/colors/grey'
+import CheckBoxOutlineIcon from '@material-ui/icons/CheckBoxOutlineBlank'
+import CheckBoxIcon from '@material-ui/icons/CheckBox'
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
 
 const styles = {
-  servicePaper: {
-    padding: 0,
-    marginBottom: 16,
-    marginTop: 16
+  serviceAvatar: {
+    width: 30,
+    height: 30,
+    backgroundColor: 'white',
+    border: '2px solid rgb(139, 139, 139)'
   },
-  serviceBody: {
-    padding: 15
+  toolbar: {
+    backgroundColor: grey[300]
   }
 }
 
-export default class AccountServiceItem extends React.Component {
+@withStyles(styles)
+class AccountServiceItem extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -46,7 +52,7 @@ export default class AccountServiceItem extends React.Component {
   * @return jsx
   */
   renderEnabled (service) {
-    const { mailbox, serviceType, children, style, ...passProps } = this.props
+    const { classes, mailbox, serviceType, children, style, ...passProps } = this.props
     const isSingleService = mailbox.supportedServiceTypes === 1
     const serviceIndex = mailbox.additionalServiceTypes.findIndex((type) => type === serviceType)
     const isFirst = serviceIndex === 0
@@ -54,47 +60,41 @@ export default class AccountServiceItem extends React.Component {
     const isDefaultService = serviceType === CoreService.SERVICE_TYPES.DEFAULT
 
     return (
-      <Paper {...passProps} style={Object.assign({}, styles.servicePaper, style)}>
-        <Toolbar {...passProps}>
-          <ToolbarGroup>
-            <Avatar
-              size={32}
-              src={Resolver.image(service.humanizedLogoAtSize(128))}
-              backgroundColor='white'
-              style={{
-                margin: '2px 10px 2px 2px',
-                boxShadow: '0 0 0 2px rgb(139, 139, 139)'
-              }} />
-            <ToolbarTitle text={service.humanizedType} />
-          </ToolbarGroup>
-          {!isSingleService && !isDefaultService ? (
-            <ToolbarGroup>
+      <SettingsListSection
+        title={(
+          <span>
+            <Avatar className={classes.serviceAvatar} src={Resolver.image(service.humanizedLogoAtSize(128))} />
+            {service.humanizedType}
+          </span>
+        )}
+        {...passProps}>
+        {!isSingleService && !isDefaultService ? (
+          <SettingsListItem className={classes.toolbar}>
+            <Tooltip title='Disable'>
               <IconButton
-                tooltip='Move Up'
-                disabled={isFirst}
-                onClick={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceUp, serviceType)}>
-                <FontIcon className='material-icons'>arrow_upwards</FontIcon>
-              </IconButton>
-              <IconButton
-                tooltip='Move Down'
-                disabled={isLast}
-                onClick={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceDown, serviceType)}>
-                <FontIcon className='material-icons'>arrow_downwards</FontIcon>
-              </IconButton>
-              <IconButton
-                tooltip='Disable'
                 disabled={isDefaultService}
-                onClick={() => mailboxActions.reduce(mailbox.id, MailboxReducer.removeService, serviceType)}
-                iconStyle={{ color: Colors.lightBlue600 }}>
-                <FontIcon className='material-icons'>check_box</FontIcon>
+                onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.removeService, serviceType)}>
+                <CheckBoxIcon />
               </IconButton>
-            </ToolbarGroup>
-          ) : undefined}
-        </Toolbar>
-        <div style={styles.serviceBody}>
-          {children}
-        </div>
-      </Paper>
+            </Tooltip>
+            <Tooltip title='Move up'>
+              <IconButton
+                disabled={isFirst}
+                onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceUp, serviceType)}>
+                <ArrowUpwardIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title='Move down'>
+              <IconButton
+                disabled={isLast}
+                onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceDown, serviceType)}>
+                <ArrowDownwardIcon />
+              </IconButton>
+            </Tooltip>
+          </SettingsListItem>
+        ) : undefined}
+        {children}
+      </SettingsListSection>
     )
   }
 
@@ -103,29 +103,26 @@ export default class AccountServiceItem extends React.Component {
   * @return jsx
   */
   renderDisabled () {
-    const { mailbox, serviceType, style, ...passProps } = this.props
+    const { classes, mailbox, serviceType, style, ...passProps } = this.props
     const serviceClass = ServiceFactory.getClass(mailbox.type, serviceType)
 
     return (
-      <Paper {...passProps} style={Object.assign({}, styles.servicePaper, style)}>
-        <Toolbar>
-          <ToolbarGroup>
-            <Avatar
-              size={40}
-              src={Resolver.image(serviceClass.humanizedLogo)}
-              backgroundColor='white'
-              style={{ marginRight: 8, border: '2px solid rgb(139, 139, 139)' }} />
-            <ToolbarTitle text={serviceClass.humanizedType} />
-          </ToolbarGroup>
-          <ToolbarGroup>
-            <IconButton
-              tooltip='Enable'
-              onClick={() => mailboxActions.reduce(mailbox.id, MailboxReducer.addService, serviceType)}>
-              <FontIcon className='material-icons'>check_box_outline_blank</FontIcon>
+      <SettingsListSection
+        title={(
+          <span>
+            <Avatar className={classes.serviceAvatar} src={Resolver.image(serviceClass.humanizedLogo)} />
+            {serviceClass.humanizedType}
+          </span>
+        )}
+        {...passProps}>
+        <SettingsListItem className={classes.toolbar}>
+          <Tooltip title='Enable'>
+            <IconButton onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.addService, serviceType)}>
+              <CheckBoxOutlineIcon />
             </IconButton>
-          </ToolbarGroup>
-        </Toolbar>
-      </Paper>
+          </Tooltip>
+        </SettingsListItem>
+      </SettingsListSection>
     )
   }
 
@@ -139,3 +136,5 @@ export default class AccountServiceItem extends React.Component {
     }
   }
 }
+
+export default AccountServiceItem

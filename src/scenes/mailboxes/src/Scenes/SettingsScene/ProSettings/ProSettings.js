@@ -19,7 +19,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class ProSettings extends React.Component {
+class ProSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -75,3 +75,5 @@ export default class ProSettings extends React.Component {
     )
   }
 }
+
+export default ProSettings

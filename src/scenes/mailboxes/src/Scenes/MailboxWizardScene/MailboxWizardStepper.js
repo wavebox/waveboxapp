@@ -17,7 +17,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class MailboxWizardStepper extends React.Component {
+class MailboxWizardStepper extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -46,3 +46,5 @@ export default class MailboxWizardStepper extends React.Component {
     )
   }
 }
+
+export default MailboxWizardStepper

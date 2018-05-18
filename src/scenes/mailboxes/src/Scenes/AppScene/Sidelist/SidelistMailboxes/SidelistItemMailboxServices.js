@@ -47,7 +47,7 @@ const SortableList = SortableContainer(({ mailboxId, serviceTypes, onOpenService
 })
 
 @withStyles(styles)
-export default class SidelistItemMailboxServices extends React.Component {
+class SidelistItemMailboxServices extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -140,3 +140,5 @@ export default class SidelistItemMailboxServices extends React.Component {
     )
   }
 }
+
+export default SidelistItemMailboxServices

@@ -29,7 +29,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class BrowserTargetUrl extends React.Component {
+class BrowserTargetUrl extends React.Component {
   /* **************************************************************************/
   // Component lifecylce
   /* **************************************************************************/
@@ -74,3 +74,5 @@ export default class BrowserTargetUrl extends React.Component {
     )
   }
 }
+
+export default BrowserTargetUrl

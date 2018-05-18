@@ -1,15 +1,44 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper, RaisedButton, FontIcon, Toggle } from 'material-ui' //TODO
-import { ColorPickerButton } from 'Components'
+import ColorPickerButton from 'wbui/ColorPickerButton'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
 import { settingsStore } from 'stores/settings'
-import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListSwitch from 'wbui/SettingsListSwitch'
+import SettingsListItem from 'wbui/SettingsListItem'
+import { withStyles } from 'material-ui/styles'
+import SmsIcon from '@material-ui/icons/Sms'
+import InsertEmoticonButton from '@material-ui/icons/InsertEmoticon'
+import NotInterestedIcon from '@material-ui/icons/NotInterested'
+import ColorLensIcon from '@material-ui/icons/ColorLens'
+import { Button, ListItemText } from 'material-ui'
 
-export default class AccountAppearanceSettings extends React.Component {
+const styles = {
+  buttonIcon: {
+    marginRight: 6
+  },
+  fileInputButton: {
+    marginRight: 15,
+    position: 'relative',
+    overflow: 'hidden'
+  },
+  fileInput: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    opacity: 0,
+    width: '100%',
+    cursor: 'pointer'
+  }
+}
+
+@withStyles(styles)
+class AccountAppearanceSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -99,7 +128,7 @@ export default class AccountAppearanceSettings extends React.Component {
   }
 
   render () {
-    const { mailbox, ...passProps } = this.props
+    const { mailbox, classes, ...passProps } = this.props
     const { userHasServices, userHasSleepable, ui } = this.state
 
     const hasCumulativeBadge = userHasServices && ((
@@ -117,82 +146,85 @@ export default class AccountAppearanceSettings extends React.Component {
     )
 
     return (
-      <Paper zDepth={1} style={styles.paper} {...passProps}>
-        <h1 style={styles.subheading}>Appearance</h1>
-        <div style={styles.button}>
-          <ColorPickerButton
-            label='Account Color'
-            icon={<FontIcon className='material-icons'>color_lens</FontIcon>}
-            value={mailbox.color}
-            onChange={(col) => mailboxActions.reduce(mailbox.id, MailboxReducer.setColor, col)} />
-        </div>
-        <div style={styles.button}>
-          <RaisedButton
-            label='Change Account Icon'
-            containerElement='label'
-            icon={<FontIcon className='material-icons'>insert_emoticon</FontIcon>}
-            style={styles.fileInputButton}>
-            <input
-              type='file'
-              accept='image/*'
-              onChange={this.handleCustomAvatarChange}
-              style={styles.fileInput} />
-          </RaisedButton>
-        </div>
-        <div style={styles.button}>
-          <RaisedButton
-            icon={<FontIcon className='material-icons'>not_interested</FontIcon>}
-            onClick={() => mailboxActions.setCustomAvatar(mailbox.id, undefined)}
-            label='Reset Account Icon' />
-        </div>
-        <Toggle
-          toggled={mailbox.showAvatarColorRing}
-          label='Show Account Color around Icon'
-          labelPosition='right'
-          onToggle={(evt, toggled) => mailboxActions.reduce(mailbox.id, MailboxReducer.setShowAvatarColorRing, toggled)} />
-        {userHasSleepable ? (
-          <Toggle
-            disabled={!ui.showSleepableServiceIndicator}
-            toggled={mailbox.showSleepableServiceIndicator}
-            label={ui.showSleepableServiceIndicator ? (sleepIndicatorText) : (
-              <span>
-                <span>{sleepIndicatorText}</span>
-                <br />
-                <small>Enable "Show sleeping account icons in grey" in the main UI settings first</small>
-              </span>
-            )}
-            labelPosition='right'
-            onToggle={(evt, toggled) => {
-              mailboxActions.reduce(mailbox.id, MailboxReducer.setShowSleepableServiceIndicator, toggled)
-            }} />
-        ) : undefined}
+      <div {...passProps}>
+        <SettingsListSection title='Appearance'>
+          <SettingsListItem>
+            <ColorPickerButton
+              buttonProps={{ variant: 'raised', size: 'small' }}
+              value={mailbox.color}
+              onChange={(col) => mailboxActions.reduce(mailbox.id, MailboxReducer.setColor, col)}>
+              <ColorLensIcon className={classes.buttonIcon} />
+              Account Color
+            </ColorPickerButton>
+          </SettingsListItem>
+          <SettingsListItem>
+            <Button
+              size='small'
+              variant='raised'
+              className={classes.fileInputButton}>
+              <InsertEmoticonButton className={classes.buttonIcon} />
+              Change Account Icon
+              <input
+                type='file'
+                className={classes.fileInput}
+                accept='image/*'
+                onChange={this.handleCustomAvatarChange} />
+            </Button>
+            <Button size='small' variant='raised' onClick={() => mailboxActions.setCustomAvatar(mailbox.id, undefined)}>
+              <NotInterestedIcon className={classes.buttonIcon} />
+              Reset Account Icon
+            </Button>
+          </SettingsListItem>
+          <SettingsListSwitch
+            label='Show Account Color around Icon'
+            onChange={(evt, toggled) => mailboxActions.reduce(mailbox.id, MailboxReducer.setShowAvatarColorRing, toggled)}
+            checked={mailbox.showAvatarColorRing} />
+          {userHasSleepable ? (
+            <SettingsListSwitch
+              disabled={!ui.showSleepableServiceIndicator}
+              label={ui.showSleepableServiceIndicator ? (sleepIndicatorText) : (
+                <span>
+                  <span>{sleepIndicatorText}</span>
+                  <br />
+                  <small>Enable "Show sleeping account icons in grey" in the main UI settings first</small>
+                </span>
+              )}
+              onChange={(evt, toggled) => {
+                mailboxActions.reduce(mailbox.id, MailboxReducer.setShowSleepableServiceIndicator, toggled)
+              }}
+              checked={mailbox.showSleepableServiceIndicator} />
+          ) : undefined}
+        </SettingsListSection>
         {hasCumulativeBadge ? (
-          <div>
-            <hr style={styles.subsectionRule} />
-            <h1 style={styles.subsectionheading}>Sidebar Badge</h1>
-            <p style={styles.subheadingInfo}>
-              When you have multiple services you can show the total unread count for those
-              services in the sidebar, so at a glance you know what's new
-            </p>
-            <Toggle
-              toggled={mailbox.showCumulativeSidebarUnreadBadge}
+          <SettingsListSection title='Appearance' subtitle='Sidebar Badge'>
+            <SettingsListItem>
+              <ListItemText primary={(
+                <span>
+                  When you have multiple services you can show the total unread count for those
+                  services in the sidebar, so at a glance you know what's new
+                </span>
+              )} />
+            </SettingsListItem>
+            <SettingsListSwitch
               label='Show total unread count from all services'
-              labelPosition='right'
-              onToggle={(evt, toggled) => {
+              onChange={(evt, toggled) => {
                 mailboxActions.reduce(mailbox.id, MailboxReducer.setShowCumulativeSidebarUnreadBadge, toggled)
-              }} />
-            <div style={styles.button}>
+              }}
+              checked={mailbox.showCumulativeSidebarUnreadBadge} />
+            <SettingsListItem>
               <ColorPickerButton
-                label='Badge Color'
-                icon={<FontIcon className='material-icons'>sms</FontIcon>}
+                buttonProps={{ variant: 'raised', size: 'small' }}
                 value={mailbox.cumulativeSidebarUnreadBadgeColor}
-                onChange={(col) => {
-                  mailboxActions.reduce(mailbox.id, MailboxReducer.setCumulativeSidebarUnreadBadgeColor, col)
-                }} />
-            </div>
-          </div>
+                onChange={(col) => mailboxActions.reduce(mailbox.id, MailboxReducer.setCumulativeSidebarUnreadBadgeColor, col)}>
+                <SmsIcon className={classes.buttonIcon} />
+                Badge Color
+              </ColorPickerButton>
+            </SettingsListItem>
+          </SettingsListSection>
         ) : undefined}
-      </Paper>
+      </div>
     )
   }
 }
+
+export default AccountAppearanceSettings

@@ -4,7 +4,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { remote } from 'electron'
 const {nativeImage, app} = remote
 
-const AppBadge = class AppBadge extends React.Component {
+class AppBadge extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/

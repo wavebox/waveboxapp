@@ -43,7 +43,7 @@ const SortableList = SortableContainer(({ mailboxId, serviceTypes, toolbarHeight
 })
 
 @withStyles(styles)
-export default class ToolbarMailboxServices extends React.Component {
+class ToolbarMailboxServices extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -138,3 +138,5 @@ export default class ToolbarMailboxServices extends React.Component {
     )
   }
 }
+
+export default ToolbarMailboxServices

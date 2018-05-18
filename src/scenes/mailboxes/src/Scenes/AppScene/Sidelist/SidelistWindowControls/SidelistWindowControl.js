@@ -40,7 +40,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class SidelistWindowControl extends React.Component {
+class SidelistWindowControl extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -91,3 +91,5 @@ export default class SidelistWindowControl extends React.Component {
     )
   }
 }
+
+export default SidelistWindowControl

@@ -62,7 +62,7 @@ module.exports = function (env) {
       new WebpackOnBuildPlugin((stats) => { console.log('WB Print') })
     ].filter((p) => !!p),
     resolve: {
-      extensions: ['.js', '.jsx', '.less', '.css'],
+      extensions: ['.js', '.jsx', '.css'],
       alias: {
         shared: path.resolve(path.join(__dirname, '../../shared')),
         R: path.resolve(path.join(__dirname, 'src')),
@@ -106,8 +106,8 @@ module.exports = function (env) {
           ]
         },
         {
-          test: /(\.less|\.css)$/,
-          use: [ 'style-loader', 'css-loader', 'less-loader' ]
+          test: /(\.css)$/,
+          use: [ 'style-loader', 'css-loader' ]
         }
       ]
     }

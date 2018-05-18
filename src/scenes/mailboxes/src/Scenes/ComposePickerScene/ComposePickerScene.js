@@ -18,7 +18,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class ComposePickerScene extends React.Component {
+class ComposePickerScene extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
@@ -182,3 +182,5 @@ export default class ComposePickerScene extends React.Component {
     )
   }
 }
+
+export default ComposePickerScene

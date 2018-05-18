@@ -61,7 +61,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class WizardConfigureMicrosoft extends React.Component {
+class WizardConfigureMicrosoft extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -147,3 +147,5 @@ export default class WizardConfigureMicrosoft extends React.Component {
     )
   }
 }
+
+export default WizardConfigureMicrosoft

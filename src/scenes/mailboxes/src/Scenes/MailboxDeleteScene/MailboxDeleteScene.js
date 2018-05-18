@@ -47,7 +47,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class MailboxDeleteScene extends React.Component {
+class MailboxDeleteScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -192,3 +192,5 @@ export default class MailboxDeleteScene extends React.Component {
     )
   }
 }
+
+export default MailboxDeleteScene

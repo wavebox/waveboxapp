@@ -30,7 +30,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class DeleteAllIcon extends React.Component {
+class DeleteAllIcon extends React.Component {
   render () {
     const { classes, className, ...passProps } = this.props
     return (
@@ -41,3 +41,5 @@ export default class DeleteAllIcon extends React.Component {
     )
   }
 }
+
+export default DeleteAllIcon

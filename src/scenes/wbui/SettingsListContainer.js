@@ -15,7 +15,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class SettingsListContainer extends React.Component {
+class SettingsListContainer extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -34,3 +34,5 @@ export default class SettingsListContainer extends React.Component {
     )
   }
 }
+
+export default SettingsListContainer

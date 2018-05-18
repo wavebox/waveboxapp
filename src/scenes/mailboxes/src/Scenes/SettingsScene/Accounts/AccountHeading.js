@@ -1,9 +1,25 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import styles from '../CommonSettingStyles'
+import { withStyles } from 'material-ui/styles'
+import grey from 'material-ui/colors/grey'
 
-export default class AccountHeading extends React.Component {
+const styles = {
+  heading: {
+    marginTop: 30,
+    color: grey[900],
+    fontWeight: 'normal',
+    marginBottom: 10
+  },
+  headingInfo: {
+    marginTop: -10,
+    marginBottom: 10,
+    color: grey[700]
+  }
+}
+
+@withStyles(styles)
+class AccountHeading extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -21,15 +37,17 @@ export default class AccountHeading extends React.Component {
   }
 
   render () {
-    const { mailbox, ...passProps } = this.props
+    const { mailbox, classes, ...passProps } = this.props
 
     return (
       <div {...passProps}>
-        <h1 style={styles.heading}>Account</h1>
-        <p style={styles.headingInfo}>
+        <h1 className={classes.heading}>Account</h1>
+        <p className={classes.headingInfo}>
           <strong>{mailbox.humanizedType}</strong> {mailbox.displayName}
         </p>
       </div>
     )
   }
 }
+
+export default AccountHeading

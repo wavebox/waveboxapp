@@ -40,7 +40,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class MailboxSearch extends React.Component {
+class MailboxSearch extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -182,7 +182,6 @@ export default class MailboxSearch extends React.Component {
     const { isSearching, searchTerm } = this.state
 
     // Use tabIndex to prevent focusing with tab§
-    //TODO test above comment
     return (
       <Paper
         {...passProps}
@@ -208,3 +207,5 @@ export default class MailboxSearch extends React.Component {
     )
   }
 }
+
+export default MailboxSearch

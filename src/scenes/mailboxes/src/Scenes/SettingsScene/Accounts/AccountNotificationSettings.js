@@ -1,18 +1,38 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper, Toggle, SelectField, MenuItem, FlatButton, FontIcon } from 'material-ui' //TODO
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
-import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import { NotificationService } from 'Notifications'
-import {
-  NOTIFICATION_PROVIDERS,
-  NOTIFICATION_SOUNDS
-} from 'shared/Notifications'
+import { NOTIFICATION_PROVIDERS, NOTIFICATION_SOUNDS } from 'shared/Notifications'
 import { userStore } from 'stores/user'
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListSwitch from 'wbui/SettingsListSwitch'
+import SettingsListSelect from 'wbui/SettingsListSelect'
+import SettingsListItem from 'wbui/SettingsListItem'
+import SettingsListButton from 'wbui/SettingsListButton'
+import { withStyles } from 'material-ui/styles'
+import amber from 'material-ui/colors/amber'
+import { ListItemText } from 'material-ui'
+import WarningIcon from '@material-ui/icons/Warning'
+import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 
-export default class AccountNotificationSettings extends React.Component {
+const styles = {
+  warningText: {
+    color: amber[700],
+    fontSize: 14,
+    fontWeight: 300
+  },
+  warningTextIcon: {
+    color: amber[700],
+    fontSize: 18,
+    marginRight: 4,
+    verticalAlign: 'top'
+  }
+}
+
+@withStyles(styles)
+class AccountNotificationSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -109,82 +129,72 @@ export default class AccountNotificationSettings extends React.Component {
   */
   renderEnhanced (mailbox, service, os) {
     if (os.notificationsProvider !== NOTIFICATION_PROVIDERS.ENHANCED) { return undefined }
+    if (!Object.keys(NOTIFICATION_SOUNDS).length) { return undefined }
 
     return (
-      <div>
-        {Object.keys(NOTIFICATION_SOUNDS).length ? (
-          <SelectField
-            floatingLabelText='Notification Sound'
-            value={service.notificationsSound}
-            disabled={!service.showNotifications}
-            floatingLabelFixed
-            fullWidth
-            onChange={(evt, index, value) => {
-              if (value === null) {
-                mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setNotificationsSound, undefined)
-              } else {
-                mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setNotificationsSound, value)
-              }
-            }}>
-            <MenuItem key='__parent__' value={null} primaryText='' />
-            {Object.keys(NOTIFICATION_SOUNDS).map((value) => {
-              return (
-                <MenuItem
-                  key={value}
-                  value={value}
-                  primaryText={NOTIFICATION_SOUNDS[value]} />
-              )
-            })}
-          </SelectField>
-        ) : undefined}
-      </div>
+      <SettingsListSelect
+        label='Notification Sound'
+        value={service.notificationsSound}
+        disabled={!service.showNotifications}
+        options={[
+          { value: 'null', label: '' }
+        ].concat(Object.keys(NOTIFICATION_SOUNDS).map((value) => {
+          return { value: value, label: NOTIFICATION_SOUNDS[value] }
+        }))}
+        onChange={(evt, value) => {
+          if (value === 'null') {
+            mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setNotificationsSound, undefined)
+          } else {
+            mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setNotificationsSound, value)
+          }
+        }} />
     )
   }
 
   render () {
-    const { mailbox, service, ...passProps } = this.props
+    const { mailbox, service, classes, ...passProps } = this.props
     const { os, userHasSleepable } = this.state
     if (AccountNotificationSettings.willRenderForService(service) === false) { return false }
 
     return (
-      <Paper zDepth={1} style={styles.paper} {...passProps}>
-        <h1 style={styles.subheading}>Notifications</h1>
+      <SettingsListSection title='Notifications' {...passProps}>
         {userHasSleepable && service.sleepable && !service.supportsSyncWhenSleeping ? (
-          <p style={styles.warningText}>
-            <FontIcon className='material-icons' style={styles.warningTextIcon}>warning</FontIcon>
-            Notifications will only sync for this service when the account is not sleeping. To
-            ensure notifications are always displayed we recommend disabling sleeping for this service
-          </p>
+          <SettingsListItem>
+            <ListItemText primary={(
+              <span className={classes.warningText}>
+                <WarningIcon className={classes.warningTextIcon} />
+                Notifications will only sync for this service when the account is not sleeping. To
+                ensure notifications are always displayed we recommend disabling sleeping for this service
+              </span>
+            )} />
+          </SettingsListItem>
         ) : undefined}
-        <Toggle
-          toggled={service.showNotifications}
+        <SettingsListSwitch
           label='Show notifications'
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
+          onChange={(evt, toggled) => {
             mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setShowNotifications, toggled)
-          }} />
+          }}
+          checked={service.showNotification} />
         {service.supportsNativeNotifications ? (
-          <div>
-            <Toggle
-              toggled={service.showAvatarInNotifications}
-              disabled={!service.showNotifications}
-              label='Show account icon in Notifications'
-              labelPosition='right'
-              onToggle={(evt, toggled) => {
-                mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setShowAvatarInNotifications, toggled)
-              }} />
-            {this.renderEnhanced(mailbox, service, os)}
-            <div>
-              <FlatButton
-                disabled={!service.showNotifications}
-                onClick={this.sendTestNotification}
-                label='Test Notification'
-                icon={<FontIcon style={{ marginLeft: 0 }} className='material-icons'>play_arrow</FontIcon>}
-              />
-            </div>
-          </div>
+          <SettingsListSwitch
+            label='Show account icon in Notifications'
+            onChange={(evt, toggled) => {
+              mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setShowAvatarInNotifications, toggled)
+            }}
+            disabled={!service.showNotifications}
+            checked={service.showAvatarInNotifications} />
         ) : undefined}
-      </Paper>
+        {service.supportsNativeNotifications ? this.renderEnhanced(mailbox, service, os) : undefined}
+        {service.supportsNativeNotifications ? (
+          <SettingsListButton
+            label='Test Notification'
+            IconClass={PlayArrowIcon}
+            disabled={!service.showNotifications}
+            onClick={this.sendTestNotification} />
+        ) : undefined}
+      </SettingsListSection>
     )
   }
 }
+
+export default AccountNotificationSettings

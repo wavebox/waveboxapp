@@ -30,7 +30,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class BrowserSearch extends React.Component {
+class BrowserSearch extends React.Component {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
@@ -158,3 +158,5 @@ export default class BrowserSearch extends React.Component {
     )
   }
 }
+
+export default BrowserSearch

@@ -24,7 +24,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class DebugSettingsSection extends React.Component {
+class DebugSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -75,3 +75,5 @@ export default class DebugSettingsSection extends React.Component {
     )
   }
 }
+
+export default DebugSettingsSection

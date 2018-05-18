@@ -77,7 +77,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class AuthenticationInstruction extends React.Component {
+class AuthenticationInstruction extends React.Component {
   /* **************************************************************************/
   // UI Events
   /* **************************************************************************/
@@ -120,3 +120,5 @@ export default class AuthenticationInstruction extends React.Component {
     )
   }
 }
+
+export default AuthenticationInstruction

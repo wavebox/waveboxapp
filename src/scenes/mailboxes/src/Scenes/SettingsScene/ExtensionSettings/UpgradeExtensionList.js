@@ -28,7 +28,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class UpgradeExtensionList extends React.Component {
+class UpgradeExtensionList extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -135,3 +135,5 @@ export default class UpgradeExtensionList extends React.Component {
     )
   }
 }
+
+export default UpgradeExtensionList

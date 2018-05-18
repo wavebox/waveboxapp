@@ -24,7 +24,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class CustomStylesEditingDialog extends React.Component {
+class CustomStylesEditingDialog extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -116,3 +116,5 @@ export default class CustomStylesEditingDialog extends React.Component {
     )
   }
 }
+
+export default CustomStylesEditingDialog

@@ -65,7 +65,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class ToolbarNavigation extends React.Component {
+class ToolbarNavigation extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -387,3 +387,5 @@ export default class ToolbarNavigation extends React.Component {
     )
   }
 }
+
+export default ToolbarNavigation

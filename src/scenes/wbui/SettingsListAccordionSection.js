@@ -11,7 +11,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class SettingsListAccordionSection extends React.Component {
+class SettingsListAccordionSection extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -32,3 +32,5 @@ export default class SettingsListAccordionSection extends React.Component {
     )
   }
 }
+
+export default SettingsListAccordionSection

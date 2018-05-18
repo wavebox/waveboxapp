@@ -48,7 +48,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class SettingsListAccordionDeferred extends React.Component {
+class SettingsListAccordionDeferred extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -163,3 +163,5 @@ export default class SettingsListAccordionDeferred extends React.Component {
     )
   }
 }
+
+export default SettingsListAccordionDeferred

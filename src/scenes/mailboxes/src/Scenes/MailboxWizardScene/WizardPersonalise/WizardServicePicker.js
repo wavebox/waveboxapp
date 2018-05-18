@@ -4,8 +4,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
-import { Select, MenuItem, List, ListItem, ListItemText, ListItemSecondaryAction, Switch } from 'material-ui'
-import { Row, Col, Container } from 'Components/Grid'
+import { Select, MenuItem, List, ListItem, ListItemText, ListItemSecondaryAction, Switch, Grid } from 'material-ui'
 import Resolver from 'Runtime/Resolver'
 import { withStyles } from 'material-ui/styles'
 import classNames from 'classnames'
@@ -70,7 +69,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class WizardServicePicker extends React.Component {
+class WizardServicePicker extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -228,30 +227,30 @@ export default class WizardServicePicker extends React.Component {
             <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR}>In a top toolbar</MenuItem>
           </Select>
         </div>
-        <Container>
-          <Row>
-            <Col md={8}>
-              <Row>
-                <Col sm={6}>
-                  <List className={classes.list}>
-                    {serviceTypeGroups[0].map((serviceType) => this.renderServiceListItem(classes, serviceType))}
-                  </List>
-                </Col>
-                <Col sm={6}>
-                  <List className={classes.list}>
-                    {serviceTypeGroups[1].map((serviceType) => this.renderServiceListItem(classes, serviceType))}
-                  </List>
-                </Col>
-              </Row>
-            </Col>
-            <Col md={4}>
-              <List className={classes.list}>
-                {serviceTypeGroups[2].map((serviceType) => this.renderServiceListItem(classes, serviceType))}
-              </List>
-            </Col>
-          </Row>
-        </Container>
+        <Grid container spacing={12}>
+          <Grid item md={8}>
+            <Grid container spacing={12}>
+              <Grid item sm={6}>
+                <List className={classes.list}>
+                  {serviceTypeGroups[0].map((serviceType) => this.renderServiceListItem(classes, serviceType))}
+                </List>
+              </Grid>
+              <Grid item sm={6}>
+                <List className={classes.list}>
+                  {serviceTypeGroups[1].map((serviceType) => this.renderServiceListItem(classes, serviceType))}
+                </List>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item md={4}>
+            <List className={classes.list}>
+              {serviceTypeGroups[2].map((serviceType) => this.renderServiceListItem(classes, serviceType))}
+            </List>
+          </Grid>
+        </Grid>
       </div>
     )
   }
 }
+
+export default WizardServicePicker

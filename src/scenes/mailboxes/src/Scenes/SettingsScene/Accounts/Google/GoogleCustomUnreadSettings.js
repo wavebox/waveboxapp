@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { SelectField, MenuItem, TextField, RaisedButton, Paper, FontIcon, Checkbox } from 'material-ui' //TODO
-import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
-import { mailboxActions, GoogleDefaultServiceReducer } from 'stores/mailbox'
-import styles from '../../CommonSettingStyles'
 import { remote } from 'electron'
+import SettingsListButton from 'wbui/SettingsListButton'
+// import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
+// import { mailboxActions, GoogleDefaultServiceReducer } from 'stores/mailbox'
 
 const SERVICE_STATE_KEYS = [
   'customUnreadQuery',
@@ -103,17 +102,18 @@ export default class GoogleCustomUnreadSettings extends React.Component {
       ...passProps
     } = this.props
     const {
-      customUnreadQuery,
-      customUnreadLabelWatchString,
-      customUnreadCountFromLabel,
-      customUnreadCountLabel,
-      customUnreadCountLabelField,
+      // customUnreadQuery,
+      // customUnreadLabelWatchString,
+      // customUnreadCountFromLabel,
+      // customUnreadCountLabel,
+      // customUnreadCountLabelField,
       showCustomUnreadSettings
     } = this.state
-    const hasCustomQueryConfiguration = !!customUnreadQuery || !!customUnreadLabelWatchString
+    // const hasCustomQueryConfiguration = !!customUnreadQuery || !!customUnreadLabelWatchString
 
     if (showCustomUnreadSettings) {
-      return (
+      return false
+      /* return (
         <Paper style={{...styles.paper, ...style}} {...passProps}>
           <h1 style={styles.subheading}>Advanced Unread Options</h1>
           <div style={styles.link} onClick={this.handleOpenKBArticle}>
@@ -178,17 +178,16 @@ export default class GoogleCustomUnreadSettings extends React.Component {
             })}
           </SelectField>
         </Paper>
-      )
+      ) */
     } else {
       return (
-        <div style={style} {...passProps}>
-          <RaisedButton
+        <div {...passProps}>
+          <SettingsListButton
             label='Advanced Unread Options'
-            icon={(<FontIcon className='fas fa-fw fa-wrench' style={{ fontSize: 20 }} />)}
-            onClick={() => this.setState({ showCustomUnreadSettings: true })} />
-          <p style={styles.extraInfo}>
-            These can be used to configure Wavebox to provide Notifications and Badges for a custom set of messages
-          </p>
+            iconClassName='fas fa-fw fa-wrench'
+            onClick={() => this.setState({ showCustomUnreadSettings: true })}
+            secondary='These can be used to configure Wavebox to provide Notifications and Badges for a custom set of messages'
+          />
         </div>
       )
     }

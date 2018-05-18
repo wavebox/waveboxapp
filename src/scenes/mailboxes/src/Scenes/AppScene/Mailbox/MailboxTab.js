@@ -44,7 +44,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class MailboxTab extends React.Component {
+class MailboxTab extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -198,3 +198,5 @@ export default class MailboxTab extends React.Component {
     )
   }
 }
+
+export default MailboxTab

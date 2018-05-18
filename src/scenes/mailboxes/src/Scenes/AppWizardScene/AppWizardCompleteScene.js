@@ -45,7 +45,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class AppWizardCompleteScene extends React.Component {
+class AppWizardCompleteScene extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -68,3 +68,5 @@ export default class AppWizardCompleteScene extends React.Component {
     )
   }
 }
+
+export default AppWizardCompleteScene

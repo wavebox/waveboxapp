@@ -74,7 +74,7 @@ styles.stepTextActive = {
 }
 
 @withStyles(styles)
-export default class MailboxWizardStepperStep extends React.Component {
+class MailboxWizardStepperStep extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -155,3 +155,5 @@ export default class MailboxWizardStepperStep extends React.Component {
     )
   }
 }
+
+export default MailboxWizardStepperStep

@@ -26,7 +26,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class SidelistItemMailbox extends React.Component {
+class SidelistItemMailbox extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -176,3 +176,5 @@ export default class SidelistItemMailbox extends React.Component {
     )
   }
 }
+
+export default SidelistItemMailbox

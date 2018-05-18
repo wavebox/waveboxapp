@@ -16,7 +16,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class SidelistControlExpander extends React.Component {
+class SidelistControlExpander extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -46,3 +46,5 @@ export default class SidelistControlExpander extends React.Component {
     )
   }
 }
+
+export default SidelistControlExpander

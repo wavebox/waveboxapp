@@ -77,7 +77,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class SidelistItemMalboxAvatar extends React.Component {
+class SidelistItemMalboxAvatar extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -277,3 +277,5 @@ export default class SidelistItemMalboxAvatar extends React.Component {
     )
   }
 }
+
+export default SidelistItemMalboxAvatar

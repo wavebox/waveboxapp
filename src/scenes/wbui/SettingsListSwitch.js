@@ -10,7 +10,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class SettingsListSwitch extends React.Component {
+class SettingsListSwitch extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -49,3 +49,5 @@ export default class SettingsListSwitch extends React.Component {
     )
   }
 }
+
+export default SettingsListSwitch

@@ -31,7 +31,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class MailboxTargetUrl extends React.Component {
+class MailboxTargetUrl extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -54,3 +54,5 @@ export default class MailboxTargetUrl extends React.Component {
     )
   }
 }
+
+export default MailboxTargetUrl

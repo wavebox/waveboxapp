@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Row, Col } from 'Components/Grid'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
 import AccountServicesHeading from '../AccountServicesHeading'
@@ -10,11 +9,13 @@ import AccountDestructiveSettings from '../AccountDestructiveSettings'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
 import { userStore } from 'stores/user'
-import { RaisedButton, Avatar, FontIcon, Toggle } from 'material-ui' //TODO
 import GoogleDefaultServiceSettings from './GoogleDefaultServiceSettings'
 import GoogleServiceSettings from './GoogleServiceSettings'
 import { mailboxActions, GoogleMailboxReducer } from 'stores/mailbox'
 import Resolver from 'Runtime/Resolver'
+import SettingsListSwitch from 'wbui/SettingsListSwitch'
+import { withStyles } from 'material-ui/styles'
+import { Button, Icon, Avatar } from 'material-ui'
 
 const styles = {
   proServices: {
@@ -23,10 +24,18 @@ const styles = {
   proServiceAvatars: {
     marginTop: 8,
     marginBottom: 8
+  },
+  serviceAvatar: {
+    width: 40,
+    height: 40,
+    backgroundColor: 'white',
+    marginRight: 8,
+    border: '2px solid rgb(139, 139, 139)'
   }
 }
 
-export default class GoogleAccountSettings extends React.Component {
+@withStyles(styles)
+class GoogleAccountSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -110,38 +119,27 @@ export default class GoogleAccountSettings extends React.Component {
   }
 
   render () {
-    const { mailbox, showRestart, onRequestEditCustomCode, ...passProps } = this.props
+    const { classes, mailbox, showRestart, onRequestEditCustomCode, ...passProps } = this.props
     const { userHasServices } = this.state
 
     return (
       <div {...passProps}>
-        <Row>
-          <Col md={6}>
-            <AccountAppearanceSettings mailbox={mailbox} />
-            <AccountServicesSettings mailbox={mailbox} />
-          </Col>
-          <Col md={6}>
-            <AccountAdvancedSettings
-              mailbox={mailbox}
-              showRestart={showRestart}
-              windowOpenAfter={(
-                <Toggle
-                  toggled={mailbox.openDriveLinksWithExternalBrowser}
-                  label='Open Google Drive links with browser'
-                  labelPosition='right'
-                  onToggle={(evt, toggled) => {
-                    mailboxActions.reduce(mailbox.id, GoogleMailboxReducer.setOpenDriveLinksWithExternalBrowser, toggled)
-                  }} />
-              )}
-            />
-            <AccountDestructiveSettings mailbox={mailbox} />
-          </Col>
-        </Row>
-        <Row>
-          <Col md={12}>
-            <AccountServicesHeading mailbox={mailbox} />
-          </Col>
-        </Row>
+        <AccountAppearanceSettings mailbox={mailbox} />
+        <AccountServicesSettings mailbox={mailbox} />
+        <AccountAdvancedSettings
+          mailbox={mailbox}
+          showRestart={showRestart}
+          windowOpenAfter={(
+            <SettingsListSwitch
+              label='Open Google Drive links with browser'
+              onChange={(evt, toggled) => {
+                mailboxActions.reduce(mailbox.id, GoogleMailboxReducer.setOpenDriveLinksWithExternalBrowser, toggled)
+              }}
+              checked={mailbox.openDriveLinksWithExternalBrowser} />
+          )}
+        />
+        <AccountDestructiveSettings mailbox={mailbox} />
+        <AccountServicesHeading mailbox={mailbox} />
         {userHasServices ? (
           <div>
             {mailbox.enabledServiceTypes.map((serviceType) => {
@@ -154,26 +152,19 @@ export default class GoogleAccountSettings extends React.Component {
         ) : (
           <div>
             {this.renderServiceType(mailbox, CoreService.SERVICE_TYPES.DEFAULT, onRequestEditCustomCode)}
-            <div style={styles.proServices}>
+            <div className={classes.proServices}>
               <h3>Enjoy all these extra services when you purchase Wavebox...</h3>
-              <div style={styles.proServiceAvatars}>
+              <div className={classes.proServiceAvatars}>
                 {mailbox.supportedServiceTypes.map((serviceType) => {
                   if (serviceType === CoreService.SERVICE_TYPES.DEFAULT) { return undefined }
                   const serviceClass = ServiceFactory.getClass(mailbox.type, serviceType)
-                  return (
-                    <Avatar
-                      key={serviceType}
-                      size={40}
-                      src={Resolver.image(serviceClass.humanizedLogo)}
-                      backgroundColor='white'
-                      style={{ marginRight: 8, border: '2px solid rgb(139, 139, 139)' }} />)
+                  return (<Avatar key={serviceType} className={classes.serviceAvatar} src={Resolver.image(serviceClass.humanizedLogo)} />)
                 })}
               </div>
-              <RaisedButton
-                primary
-                icon={(<FontIcon className='fas fa-gem' style={{ fontSize: 20 }} />)}
-                label='Purchase Wavebox'
-                onClick={this.openWaveboxPro} />
+              <Button variant='raised' color='primary' onClick={this.openWaveboxPro}>
+                <Icon className='fas fa-gem' />
+                Purchase Wavebox
+              </Button>
             </div>
           </div>
         )}
@@ -181,3 +172,5 @@ export default class GoogleAccountSettings extends React.Component {
     )
   }
 }
+
+export default GoogleAccountSettings

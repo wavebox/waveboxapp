@@ -23,7 +23,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class ProScene extends React.Component {
+class ProScene extends React.Component {
   /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
@@ -96,3 +96,5 @@ export default class ProScene extends React.Component {
     )
   }
 }
+
+export default ProScene

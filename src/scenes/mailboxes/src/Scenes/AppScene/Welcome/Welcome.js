@@ -165,7 +165,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class Welcome extends React.Component {
+class Welcome extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
@@ -257,3 +257,5 @@ export default class Welcome extends React.Component {
     )
   }
 }
+
+export default Welcome

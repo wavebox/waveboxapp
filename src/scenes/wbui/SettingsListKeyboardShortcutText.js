@@ -22,7 +22,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class SettingsListKeyboardShortcutText extends React.Component {
+class SettingsListKeyboardShortcutText extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -53,3 +53,5 @@ export default class SettingsListKeyboardShortcutText extends React.Component {
     )
   }
 }
+
+export default SettingsListKeyboardShortcutText

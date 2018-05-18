@@ -15,7 +15,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class TrayPreview extends React.Component {
+class TrayPreview extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -77,3 +77,5 @@ export default class TrayPreview extends React.Component {
     )
   }
 }
+
+export default TrayPreview

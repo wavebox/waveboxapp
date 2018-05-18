@@ -1,10 +1,28 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import {RaisedButton, FontIcon, FlatButton} from 'material-ui' //TODO
+import {Button, Icon} from 'material-ui'
 import { mailboxActions } from 'stores/mailbox'
-import * as Colors from 'material-ui/styles/colors' //TODO
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
+import ConfirmButton from 'wbui/ConfirmButton'
+import DeleteIcon from '@material-ui/icons/Delete'
 
-export default class RestrictedAccountSettings extends React.Component {
+const styles = {
+  root: {
+    textAlign: 'center',
+    marginBottom: 16
+  },
+  proIcon: {
+    fontSize: 20,
+    marginRight: 8
+  },
+  deleteIcon: {
+    marginRight: 6
+  }
+}
+
+@withStyles(styles)
+class RestrictedAccountSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -14,82 +32,46 @@ export default class RestrictedAccountSettings extends React.Component {
   }
 
   /* **************************************************************************/
-  // Component Lifecycle
-  /* **************************************************************************/
-
-  componentWillMount () {
-    this.confirmingDeleteTO = null
-  }
-
-  componentWillUnmount () {
-    clearTimeout(this.confirmingDeleteTO)
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if (this.props.mailbox.id !== nextProps.mailbox.id) {
-      this.setState({ confirmingDelete: false })
-      clearTimeout(this.confirmingDeleteTO)
-    }
-  }
-
-  /* **************************************************************************/
-  // Data lifecycle
-  /* **************************************************************************/
-
-  state = (() => {
-    return {
-      confirmingDelete: false
-    }
-  })()
-
-  /* **************************************************************************/
-  // UI Events
-  /* **************************************************************************/
-
-  /**
-  * Handles the delete button being tapped
-  */
-  handleDeleteTapped = (evt) => {
-    if (this.state.confirmingDelete) {
-      mailboxActions.remove(this.props.mailbox.id)
-    } else {
-      this.setState({ confirmingDelete: true })
-      clearTimeout(this.confirmingDeleteTO)
-      this.confirmingDeleteTO = setTimeout(() => {
-        this.setState({ confirmingDelete: false })
-      }, 4000)
-    }
-  }
-
-  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   render () {
-    const { style, ...passProps } = this.props
-    delete passProps.mailboxId
+    const { className, classes, mailboxId, ...passProps } = this.props
 
     return (
-      <div {...passProps} style={Object.assign({ textAlign: 'center', marginBottom: 16 }, style)}>
+      <div {...passProps} className={classNames(className, classes.root)}>
         <p>
           Use and customize this account when purchasing Wavebox
         </p>
         <div>
-          <RaisedButton
-            primary
-            icon={(<FontIcon className='fas fa-gem' style={{ fontSize: 20 }} />)}
-            label='Purchase Wavebox'
-            onClick={() => { window.location.hash = '/pro' }} />
+          <Button variant='raised' color='primary' onClick={() => { window.location.hash = '/pro' }}>
+            <Icon className={classNames('fas fa-gem', classes.proIcon)} />
+            Purchase Wavebox
+          </Button>
         </div>
         <br />
         <div>
-          <FlatButton
-            label={this.state.confirmingDelete ? 'Click again to confirm' : 'Delete this Account'}
-            icon={<FontIcon color={Colors.red600} className='material-icons'>delete</FontIcon>}
-            labelStyle={{color: Colors.red600}}
-            onClick={this.handleDeleteTapped} />
+          <ConfirmButton
+            content={(
+              <span>
+                <DeleteIcon className={classes.deleteIcon} />
+                Delete this account
+              </span>
+            )}
+            confirmContent={(
+              <span>
+                <DeleteIcon className={classes.deleteIcon} />
+                Click again to confirm
+              </span>
+            )}
+            confirmWaitMs={4000}
+            onConfirmedClick={() => {
+              mailboxActions.remove(mailboxId)
+            }} />
         </div>
       </div>
     )
   }
 }
+
+export default RestrictedAccountSettings

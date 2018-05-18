@@ -20,7 +20,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class MonitorScene extends React.Component {
+class MonitorScene extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -45,3 +45,5 @@ export default class MonitorScene extends React.Component {
     )
   }
 }
+
+export default MonitorScene

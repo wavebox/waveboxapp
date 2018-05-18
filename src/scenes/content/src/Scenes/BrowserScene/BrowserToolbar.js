@@ -50,7 +50,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class BrowserToolbar extends React.Component {
+class BrowserToolbar extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -192,3 +192,5 @@ export default class BrowserToolbar extends React.Component {
     )
   }
 }
+
+export default BrowserToolbar

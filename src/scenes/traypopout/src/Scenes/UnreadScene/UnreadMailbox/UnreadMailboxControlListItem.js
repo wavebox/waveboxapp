@@ -40,7 +40,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class UnreadMailboxControlListItem extends React.Component {
+class UnreadMailboxControlListItem extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -131,3 +131,5 @@ export default class UnreadMailboxControlListItem extends React.Component {
     )
   }
 }
+
+export default UnreadMailboxControlListItem

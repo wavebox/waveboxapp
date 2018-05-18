@@ -52,7 +52,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class WizardConfigureUnreadModeOption extends React.Component {
+class WizardConfigureUnreadModeOption extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -115,3 +115,5 @@ export default class WizardConfigureUnreadModeOption extends React.Component {
     )
   }
 }
+
+export default WizardConfigureUnreadModeOption

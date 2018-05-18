@@ -45,7 +45,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class SidelistControlWhatsNew extends React.Component {
+class SidelistControlWhatsNew extends React.Component {
   /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
@@ -92,7 +92,6 @@ export default class SidelistControlWhatsNew extends React.Component {
   }
 
   render () {
-    //TODO test news
     const { classes } = this.props
     const { hasUnseenNews, showMode, headline, summary } = this.state
 
@@ -134,3 +133,5 @@ export default class SidelistControlWhatsNew extends React.Component {
     )
   }
 }
+
+export default SidelistControlWhatsNew

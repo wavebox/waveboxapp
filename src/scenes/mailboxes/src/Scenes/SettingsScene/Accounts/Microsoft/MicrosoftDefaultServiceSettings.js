@@ -1,15 +1,15 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { SelectField, MenuItem } from 'material-ui' //TODO
 import AccountServiceItem from '../AccountServiceItem'
 import MicrosoftDefaultService from 'shared/Models/Accounts/Microsoft/MicrosoftDefaultService'
 import { mailboxActions, MicrosoftDefaultServiceReducer } from 'stores/mailbox'
-import { Row, Col } from 'Components/Grid'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
 import AccountBehaviourSettings from '../AccountBehaviourSettings'
 import AccountBadgeSettings from '../AccountBadgeSettings'
 import AccountNotificationSettings from '../AccountNotificationSettings'
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListSelect from 'wbui/SettingsListSelect'
 
 export default class MicrosoftDefaultServiceSettings extends React.Component {
   /* **************************************************************************/
@@ -50,35 +50,24 @@ export default class MicrosoftDefaultServiceSettings extends React.Component {
 
     return (
       <AccountServiceItem {...passProps} mailbox={mailbox} serviceType={serviceType}>
-        <Row>
-          <Col md={6}>
-            <SelectField
-              fullWidth
-              floatingLabelText='Unread Mode'
-              value={service.unreadMode}
-              onChange={(evt, index, unreadMode) => {
-                mailboxActions.reduceService(mailbox.id, serviceType, MicrosoftDefaultServiceReducer.setUnreadMode, unreadMode)
-              }}>
-              {Object.keys(MicrosoftDefaultService.UNREAD_MODES).map((mode) => {
-                return (
-                  <MenuItem
-                    key={mode}
-                    value={mode}
-                    primaryText={this.humanizeUnreadMode(mode)} />
-                )
-              })}
-            </SelectField>
-            <AccountBadgeSettings mailbox={mailbox} service={service} />
-            <AccountNotificationSettings mailbox={mailbox} service={service} />
-          </Col>
-          <Col md={6}>
-            <AccountBehaviourSettings mailbox={mailbox} service={service} />
-            <AccountCustomCodeSettings
-              mailbox={mailbox}
-              service={service}
-              onRequestEditCustomCode={onRequestEditCustomCode} />
-          </Col>
-        </Row>
+        <SettingsListSection title='Unread & Sync'>
+          <SettingsListSelect
+            label='Unread Mode'
+            value={service.unreadMode}
+            options={Array.from(service.supportedUnreadModes).map((mode) => {
+              return { value: mode, label: this.humanizeUnreadMode(mode) }
+            })}
+            onChange={(evt, value) => {
+              mailboxActions.reduceService(mailbox.id, serviceType, MicrosoftDefaultServiceReducer.setUnreadMode, value)
+            }} />
+        </SettingsListSection>
+        <AccountBadgeSettings mailbox={mailbox} service={service} />
+        <AccountNotificationSettings mailbox={mailbox} service={service} />
+        <AccountBehaviourSettings mailbox={mailbox} service={service} />
+        <AccountCustomCodeSettings
+          mailbox={mailbox}
+          service={service}
+          onRequestEditCustomCode={onRequestEditCustomCode} />
       </AccountServiceItem>
     )
   }

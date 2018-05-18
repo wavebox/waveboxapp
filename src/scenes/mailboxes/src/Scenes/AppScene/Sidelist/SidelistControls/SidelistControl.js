@@ -81,7 +81,7 @@ styles.quitPopoverButton = {
 }
 
 @withStyles(styles)
-export default class SidelistControl extends React.Component {
+class SidelistControl extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -199,7 +199,6 @@ export default class SidelistControl extends React.Component {
   }
 
   render () {
-    //TODO test tour
     const {
       classes,
       tooltip,
@@ -259,3 +258,5 @@ export default class SidelistControl extends React.Component {
     )
   }
 }
+
+export default SidelistControl

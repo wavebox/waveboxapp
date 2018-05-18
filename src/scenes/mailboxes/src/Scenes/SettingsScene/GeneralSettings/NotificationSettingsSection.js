@@ -41,7 +41,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class NotificationSettingsSection extends React.Component {
+class NotificationSettingsSection extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -257,3 +257,5 @@ export default class NotificationSettingsSection extends React.Component {
     )
   }
 }
+
+export default NotificationSettingsSection

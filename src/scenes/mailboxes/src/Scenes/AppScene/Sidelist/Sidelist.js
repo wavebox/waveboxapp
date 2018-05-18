@@ -28,7 +28,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class Sidelist extends React.Component {
+class Sidelist extends React.Component {
   /* **************************************************************************/
   // Component lifecyle
   /* **************************************************************************/
@@ -84,3 +84,5 @@ export default class Sidelist extends React.Component {
     )
   }
 }
+
+export default Sidelist

@@ -16,7 +16,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class UpdateModalTitle extends React.Component {
+class UpdateModalTitle extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -47,3 +47,5 @@ export default class UpdateModalTitle extends React.Component {
     )
   }
 }
+
+export default UpdateModalTitle

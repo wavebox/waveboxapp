@@ -34,7 +34,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class WizardColorPicker extends React.Component {
+class WizardColorPicker extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -91,3 +91,5 @@ export default class WizardColorPicker extends React.Component {
     )
   }
 }
+
+export default WizardColorPicker

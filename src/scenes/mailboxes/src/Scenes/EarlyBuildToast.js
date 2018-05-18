@@ -11,7 +11,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class EarlyBuildToast extends React.Component {
+class EarlyBuildToast extends React.Component {
   /* **************************************************************************/
   // State
   /* **************************************************************************/
@@ -62,3 +62,5 @@ export default class EarlyBuildToast extends React.Component {
     )
   }
 }
+
+export default EarlyBuildToast

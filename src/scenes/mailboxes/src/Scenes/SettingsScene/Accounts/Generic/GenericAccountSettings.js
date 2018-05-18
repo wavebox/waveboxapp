@@ -1,18 +1,19 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Paper, TextField, Toggle } from 'material-ui' //TODO
-import { Row, Col } from 'Components/Grid'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
 import AccountDestructiveSettings from '../AccountDestructiveSettings'
-import styles from '../../CommonSettingStyles'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
 import AccountBadgeSettings from '../AccountBadgeSettings'
 import AccountNotificationSettings from '../AccountNotificationSettings'
 import AccountBehaviourSettings from '../AccountBehaviourSettings'
 import { mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListSwitch from 'wbui/SettingsListSwitch'
+import SettingsListTextField from 'wbui/SettingsListTextField'
+import SettingsListButton from 'wbui/SettingsListButton'
 import validUrl from 'valid-url'
 
 export default class GenericAccountSettings extends React.Component {
@@ -109,94 +110,87 @@ export default class GenericAccountSettings extends React.Component {
 
     return (
       <div {...passProps}>
-        <Row>
-          <Col md={6}>
-            <Paper zDepth={1} style={styles.paper}>
-              <TextField
-                key={`displayName_${mailbox.displayName}`}
-                fullWidth
-                floatingLabelFixed
-                hintText='My Website'
-                floatingLabelText='Website Name'
-                defaultValue={mailbox.displayName}
-                errorText={displayNameError}
-                onBlur={this.handleNameChange} />
-              <TextField
-                key={`service_${service.url}`}
-                fullWidth
-                type='url'
-                floatingLabelFixed
-                hintText='https://wavebox.io'
-                floatingLabelText='Website Url'
-                defaultValue={service.url}
-                errorText={serviceUrlError}
-                onBlur={this.handleUrlChange} />
-              <Toggle
-                toggled={service.restoreLastUrl}
-                label='Restore last page on load'
-                labelPosition='right'
-                onToggle={(evt, toggled) => {
-                  mailboxActions.reduceService(mailbox.id, service.type, GenericDefaultServiceReducer.setRestoreLastUrl, toggled)
-                }} />
-              <Toggle
-                toggled={service.hasNavigationToolbar}
-                label='Show navigation toolbar'
-                labelPosition='right'
-                onToggle={(evt, toggled) => {
-                  mailboxActions.reduceService(mailbox.id, service.type, GenericDefaultServiceReducer.setHasNavigationToolbar, toggled)
-                }} />
-              <Toggle
-                toggled={mailbox.usePageTitleAsDisplayName}
-                label='Use Page title as Display Name'
-                labelPosition='right'
-                onToggle={(evt, toggled) => {
-                  mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageTitleAsDisplayName, toggled)
-                }} />
-              <Toggle
-                toggled={mailbox.usePageThemeAsColor}
-                label='Use Page theme as Account Color'
-                labelPosition='right'
-                onToggle={(evt, toggled) => {
-                  mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageThemeAsColor, toggled)
-                }} />
-              <Toggle
-                toggled={service.supportsGuestConfig}
-                label='Enable Wavebox API (Experiemental)'
-                labelPosition='right'
-                onToggle={(evt, toggled) => {
-                  mailboxActions.reduceService(mailbox.id, service.type, GenericDefaultServiceReducer.setsupportsGuestConfig, toggled)
-                }} />
-            </Paper>
-            <AccountAppearanceSettings mailbox={mailbox} />
-            <AccountBadgeSettings mailbox={mailbox} service={service} />
-            <AccountNotificationSettings mailbox={mailbox} service={service} />
-            <AccountBehaviourSettings mailbox={mailbox} service={service} />
-          </Col>
-          <Col md={6}>
-            <AccountCustomCodeSettings
-              mailbox={mailbox}
-              service={service}
-              onRequestEditCustomCode={onRequestEditCustomCode} />
-            <Paper zDepth={1} style={styles.paper}>
-              <h1 style={styles.subheading}>UserAgent</h1>
-              <Toggle
-                toggled={mailbox.useCustomUserAgent}
-                label='Use custom UserAgent (Requires restart)'
-                labelPosition='right'
-                onToggle={this.handleChangeUseCustomUserAgent} />
-              <TextField
-                key={service.url}
-                disabled={!mailbox.useCustomUserAgent}
-                fullWidth
-                floatingLabelFixed
-                floatingLabelText='Custom UserAgent String (Requires restart)'
-                defaultValue={mailbox.customUserAgentString}
-                onBlur={this.handleChangeCustomUserAgent} />
-            </Paper>
-            <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
-            <AccountDestructiveSettings mailbox={mailbox} />
-          </Col>
-        </Row>
+        <SettingsListSection>
+          <SettingsListTextField
+            key={`displayName_${mailbox.displayName}`}
+            disabled={mailbox.usePageTitleAsDisplayName}
+            label='Account Name'
+            textFieldProps={{
+              defaultValue: mailbox.displayName,
+              placeholder: 'My Account',
+              error: !!displayNameError,
+              helperText: displayNameError,
+              onBlur: this.handleNameChange
+            }} />
+          <SettingsListTextField
+            key={`service_${service.url}`}
+            label='Website Url'
+            textFieldProps={{
+              type: 'url',
+              defaultValue: service.url,
+              placeholder: 'https://wavebox.io',
+              error: !!serviceUrlError,
+              helperText: serviceUrlError,
+              onBlur: this.handleUrlChange
+            }} />
+          <SettingsListSwitch
+            label='Restore last page on load'
+            onChange={(evt, toggled) => {
+              mailboxActions.reduceService(mailbox.id, service.type, GenericDefaultServiceReducer.setRestoreLastUrl, toggled)
+            }}
+            checked={service.restoreLastUrl} />
+          <SettingsListSwitch
+            label='Show navigation toolbar'
+            onChange={(evt, toggled) => {
+              mailboxActions.reduceService(mailbox.id, service.type, GenericDefaultServiceReducer.setHasNavigationToolbar, toggled)
+            }}
+            checked={service.hasNavigationToolbar} />
+          <SettingsListSwitch
+            label='Use Page title as Display Name'
+            onChange={(evt, toggled) => {
+              mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageTitleAsDisplayName, toggled)
+            }}
+            checked={mailbox.usePageTitleAsDisplayName} />
+          <SettingsListSwitch
+            label='Use Page theme as Account Color'
+            onChange={(evt, toggled) => {
+              mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageThemeAsColor, toggled)
+            }}
+            checked={mailbox.usePageThemeAsColor} />
+          <SettingsListSwitch
+            label='Enable Wavebox API (Experiemental)'
+            onChange={(evt, toggled) => {
+              mailboxActions.reduceService(mailbox.id, service.type, GenericDefaultServiceReducer.setsupportsGuestConfig, toggled)
+            }}
+            checked={service.supportsGuestConfig} />
+        </SettingsListSection>
+        <AccountAppearanceSettings mailbox={mailbox} />
+        <AccountBadgeSettings mailbox={mailbox} service={service} />
+        <AccountNotificationSettings mailbox={mailbox} service={service} />
+        <AccountBehaviourSettings mailbox={mailbox} service={service} />
+        <AccountCustomCodeSettings
+          mailbox={mailbox}
+          service={service}
+          onRequestEditCustomCode={onRequestEditCustomCode} />
+        <SettingsListSection title='UserAgent'>
+          <SettingsListSwitch
+            label='Use custom UserAgent (Requires restart)'
+            onChange={this.handleChangeUseCustomUserAgent}
+            checked={mailbox.useCustomUserAgent} />
+          <SettingsListTextField
+            key={`userAgent_${mailbox.customUserAgentString}`}
+            disabled={!mailbox.useCustomUserAgent}
+            label='Custom UserAgent String (Requires restart)'
+            textFieldProps={{
+              defaultValue: mailbox.customUserAgentString,
+              onBlur: this.handleChangeCustomUserAgent
+            }} />
+          <SettingsListButton
+            label='Restore defaults (Requires restart)'
+            onClick={this.handleResetCustomUserAgent} />
+        </SettingsListSection>
+        <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
+        <AccountDestructiveSettings mailbox={mailbox} />
       </div>
     )
   }

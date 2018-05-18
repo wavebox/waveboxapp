@@ -20,7 +20,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class LanguageSettingsSection extends React.Component {
+class LanguageSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -131,3 +131,5 @@ export default class LanguageSettingsSection extends React.Component {
     )
   }
 }
+
+export default LanguageSettingsSection

@@ -75,7 +75,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class PrivacyMessageGDPRNew1 extends React.Component {
+class PrivacyMessageGDPRNew1 extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -234,3 +234,5 @@ export default class PrivacyMessageGDPRNew1 extends React.Component {
     )
   }
 }
+
+export default PrivacyMessageGDPRNew1

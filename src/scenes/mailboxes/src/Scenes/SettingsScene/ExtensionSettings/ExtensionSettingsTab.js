@@ -20,7 +20,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class ExtensionSettingsTab extends React.Component {
+class ExtensionSettingsTab extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -99,3 +99,5 @@ export default class ExtensionSettingsTab extends React.Component {
     )
   }
 }
+
+export default ExtensionSettingsTab

@@ -21,7 +21,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class UpdateSettingsSection extends React.Component {
+class UpdateSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -72,3 +72,5 @@ export default class UpdateSettingsSection extends React.Component {
     )
   }
 }
+
+export default UpdateSettingsSection

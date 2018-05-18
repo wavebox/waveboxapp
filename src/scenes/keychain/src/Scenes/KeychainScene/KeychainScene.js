@@ -74,7 +74,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class KeychainScene extends React.Component {
+class KeychainScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -323,3 +323,5 @@ export default class KeychainScene extends React.Component {
     )
   }
 }
+
+export default KeychainScene

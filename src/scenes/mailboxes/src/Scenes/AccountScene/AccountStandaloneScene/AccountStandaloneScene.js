@@ -36,7 +36,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class AccountStandaloneScene extends React.Component {
+class AccountStandaloneScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -118,3 +118,5 @@ export default class AccountStandaloneScene extends React.Component {
     )
   }
 }
+
+export default AccountStandaloneScene

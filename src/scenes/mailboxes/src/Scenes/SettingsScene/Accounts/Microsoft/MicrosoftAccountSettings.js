@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Row, Col } from 'Components/Grid'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
 import AccountDestructiveSettings from '../AccountDestructiveSettings'
@@ -89,21 +88,11 @@ export default class MicrosoftAccountSettings extends React.Component {
 
     return (
       <div {...passProps}>
-        <Row>
-          <Col md={6}>
-            <AccountAppearanceSettings mailbox={mailbox} />
-            <AccountServicesSettings mailbox={mailbox} />
-          </Col>
-          <Col md={6}>
-            <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
-            <AccountDestructiveSettings mailbox={mailbox} />
-          </Col>
-        </Row>
-        <Row>
-          <Col md={12}>
-            <AccountServicesHeading mailbox={mailbox} />
-          </Col>
-        </Row>
+        <AccountAppearanceSettings mailbox={mailbox} />
+        <AccountServicesSettings mailbox={mailbox} />
+        <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
+        <AccountDestructiveSettings mailbox={mailbox} />
+        <AccountServicesHeading mailbox={mailbox} />
         {userHasServices ? (
           <div>
             {mailbox.enabledServiceTypes.map((serviceType) => {

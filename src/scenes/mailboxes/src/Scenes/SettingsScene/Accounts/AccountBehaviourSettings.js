@@ -1,29 +1,32 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import commonStyles from '../CommonSettingStyles'
-import { FlatButton, Paper } from 'material-ui' //TODO
+import { Button, ListItemText, ListItemSecondaryAction } from 'material-ui'
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
-import { SleepableField } from 'Components/Fields'
-import * as Colors from 'material-ui/styles/colors' //TODO
+import SleepableField from 'wbui/SleepableField'
+import { withStyles } from 'material-ui/styles'
+import lightBlue from 'material-ui/colors/lightBlue'
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListItem from 'wbui/SettingsListItem'
 
 const styles = {
   sleepUnavailable: {
-    border: `2px solid ${Colors.lightBlue500}`,
+    border: `2px solid ${lightBlue[500]}`,
     borderRadius: 4,
     padding: 16,
     marginTop: 8,
     marginBottom: 8
   },
   sleepUnavailableText: {
-    color: Colors.lightBlue500,
+    color: lightBlue[500],
     fontWeight: '300',
     marginTop: 0
   }
 }
 
-export default class AccountBehaviourSettings extends React.Component {
+@withStyles(styles)
+class AccountBehaviourSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -70,15 +73,15 @@ export default class AccountBehaviourSettings extends React.Component {
   }
 
   render () {
-    const { mailbox, service, ...passProps } = this.props
+    const { mailbox, service, classes, ...passProps } = this.props
     const { userHasSleepable } = this.state
 
     return (
-      <Paper zDepth={1} style={commonStyles.paper} {...passProps}>
-        <h1 style={commonStyles.subheading}>Sleep & Behaviour</h1>
-        {userHasSleepable ? (
+      <SettingsListSection title='Sleep & Behaviour' {...passProps}>
+        <SettingsListItem>
           <SleepableField
             key={`${mailbox.id}:${service.type}`}
+            disabled={!userHasSleepable}
             sleepEnabled={service.sleepable}
             onSleepEnabledChanged={(toggled) => {
               mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setSleepable, toggled)
@@ -87,30 +90,25 @@ export default class AccountBehaviourSettings extends React.Component {
             onSleepWaitMsChanged={(value) => {
               mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setSleepableTimeout, value)
             }} />
-        ) : (
-          <div style={styles.sleepUnavailable}>
-            <SleepableField
-              key={`${mailbox.id}:${service.type}`}
-              disabled
-              sleepEnabled={service.sleepable}
-              onSleepEnabledChanged={(toggled) => {
-                mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setSleepable, toggled)
-              }}
-              sleepWaitMs={service.sleepableTimeout}
-              onSleepWaitMsChanged={(value) => {
-                mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setSleepableTimeout, value)
-              }} />
-            <p style={styles.sleepUnavailableText}>
-              Services and accounts can sleep when in the background to save memory.
-              Enable service sleeping by purchasing Wavebox
-            </p>
-            <FlatButton
-              primary
-              label='Purchase Wavebox'
-              onClick={() => { window.location.hash = '/pro' }} />
-          </div>
-        )}
-      </Paper>
+        </SettingsListItem>
+        {!userHasSleepable ? (
+          <SettingsListItem>
+            <ListItemText primary={(
+              <span className={classes.sleepUnavailableText}>
+                Services and accounts can sleep when in the background to save memory.
+                Enable service sleeping by purchasing Wavebox
+              </span>
+            )} />
+            <ListItemSecondaryAction>
+              <Button variant='raised' color='primary' onClick={() => { window.location.hash = '/pro' }}>
+                Purchase Wavebox
+              </Button>
+            </ListItemSecondaryAction>
+          </SettingsListItem>
+        ) : undefined}
+      </SettingsListSection>
     )
   }
 }
+
+export default AccountBehaviourSettings

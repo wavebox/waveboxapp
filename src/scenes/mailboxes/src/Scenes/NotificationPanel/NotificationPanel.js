@@ -31,7 +31,7 @@ const NOTIFICATION_STYLE = {
 
 const REF = 'NOTIFICATION_SYSTEM'
 
-export default class NotificationPanel extends React.Component {
+class NotificationPanel extends React.Component {
   /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
@@ -161,3 +161,5 @@ export default class NotificationPanel extends React.Component {
     return (<NotificationSystem ref={REF} style={NOTIFICATION_STYLE} />)
   }
 }
+
+export default NotificationPanel

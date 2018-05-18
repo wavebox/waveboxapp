@@ -37,7 +37,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class NewsScene extends React.Component {
+class NewsScene extends React.Component {
   /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
@@ -113,3 +113,5 @@ export default class NewsScene extends React.Component {
     )
   }
 }
+
+export default NewsScene

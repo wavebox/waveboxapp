@@ -64,7 +64,7 @@ const MIN_MILLIS = 0
 const MAX_MILLIS = 14400000
 
 @withStyles(styles)
-export default class SleepableField extends React.Component {
+class SleepableField extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -186,7 +186,7 @@ export default class SleepableField extends React.Component {
             checked={sleepEnabled}
             onChange={(evt, toggled) => { onSleepEnabledChanged(toggled) }} />
           <div className={classes.sleepWaitContainer}>
-            {/*<Slider
+            {/* <Slider
               min={MIN_MILLIS}
               max={MAX_MILLIS}
               step={1000 * 30}
@@ -195,7 +195,7 @@ export default class SleepableField extends React.Component {
               disabled={disabled || !sleepEnabled}
               value={this.intermediaryToSlider(intermediaryValue)}
               onChange={(evt, val) => { this.setState({ intermediaryValue: this.sliderToIntermediary(val) }) }}
-              onDragStop={() => { this.finishEditingSleepWaitMs() }} />*/}
+              onDragStop={() => { this.finishEditingSleepWaitMs() }} /> */}
             <TextField
               className={classes.sleepWaitText}
               placeholder='1.5'
@@ -213,3 +213,5 @@ export default class SleepableField extends React.Component {
     )
   }
 }
+
+export default SleepableField

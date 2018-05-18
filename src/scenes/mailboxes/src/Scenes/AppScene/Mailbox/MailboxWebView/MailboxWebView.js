@@ -93,7 +93,7 @@ const styles = {
 const BROWSER_REF = 'browser'
 
 @withStyles(styles)
-export default class MailboxWebView extends React.Component {
+class MailboxWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -732,3 +732,5 @@ export default class MailboxWebView extends React.Component {
     )
   }
 }
+
+export default MailboxWebView

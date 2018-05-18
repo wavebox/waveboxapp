@@ -57,7 +57,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class AccountAuthScene extends React.Component {
+class AccountAuthScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -257,3 +257,5 @@ export default class AccountAuthScene extends React.Component {
     )
   }
 }
+
+export default AccountAuthScene

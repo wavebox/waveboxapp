@@ -24,13 +24,13 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class SettingsListSection extends React.Component {
+class SettingsListSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
-    title: PropTypes.node.isRequired,
+    title: PropTypes.node,
     subtitle: PropTypes.node
   }
 
@@ -47,12 +47,12 @@ export default class SettingsListSection extends React.Component {
 
     return (
       <SettingsListContainer {...passProps}>
-        <h3 className={classes.title}>
-          <span className={classes.titleText}>{title}</span>
-          {subtitle ? (
-            <span className={classes.subtitleText}>{subtitle}</span>
-          ) : undefined}
-        </h3>
+        {title || subtitle ? (
+          <h3 className={classes.title}>
+            {title ? (<span className={classes.titleText}>{title}</span>) : undefined}
+            {subtitle ? (<span className={classes.subtitleText}>{subtitle}</span>) : undefined}
+          </h3>
+        ) : undefined}
         <Paper>
           <List dense>
             {children}
@@ -62,3 +62,5 @@ export default class SettingsListSection extends React.Component {
     )
   }
 }
+
+export default SettingsListSection

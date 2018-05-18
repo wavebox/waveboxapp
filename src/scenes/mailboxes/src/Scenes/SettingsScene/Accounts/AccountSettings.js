@@ -1,9 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import {SelectField, MenuItem, RaisedButton} from 'material-ui' //TODO
 import mailboxStore from 'stores/mailbox/mailboxStore'
-import * as Colors from 'material-ui/styles/colors' //TODO
-import commonStyles from '../CommonSettingStyles'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import CustomCodeEditingDialog from './CustomCodeEditingDialog'
 import RestrictedAccountSettings from './RestrictedAccountSettings'
@@ -13,10 +10,16 @@ import TrelloAccountSettings from './Trello/TrelloAccountSettings'
 import GenericAccountSettings from './Generic/GenericAccountSettings'
 import MicrosoftAccountSettings from './Microsoft/MicrosoftAccountSettings'
 import ContainerAccountSettings from './Container/ContainerAccountSettings'
-import { Row, Col } from 'Components/Grid'
-import { MailboxAvatar } from 'Components/Mailbox'
+import MailboxAvatar from 'Components/Backed/MailboxAvatar'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
+import { Button, FormControl, InputLabel, Select, MenuItem } from 'material-ui'
+import grey from 'material-ui/colors/grey'
 
 const styles = {
+  addFirstAccountContainer: {
+    textAlign: 'center'
+  },
   accountPicker: {
     position: 'relative',
     height: 100,
@@ -32,10 +35,22 @@ const styles = {
     top: 25,
     left: 100,
     right: 15
+  },
+  heading: {
+    marginTop: 30,
+    color: grey[900],
+    fontWeight: 'normal',
+    marginBottom: 10
+  },
+  headingInfo: {
+    marginTop: -10,
+    marginBottom: 10,
+    color: grey[700]
   }
 }
 
-export default class AccountSettings extends React.Component {
+@withStyles(styles)
+class AccountSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -98,8 +113,8 @@ export default class AccountSettings extends React.Component {
   * @param index: the index of the first option
   * @param mailboxId: the id of the mailbox
   */
-  handleAccountChange = (evt, index, mailboxId) => {
-    window.location.hash = `/settings/accounts/${mailboxId}`
+  handleAccountChange = (evt) => {
+    window.location.hash = `/settings/accounts/${evt.target.value}`
   }
 
   /**
@@ -158,18 +173,19 @@ export default class AccountSettings extends React.Component {
   * @return jsx
   */
   renderNoMailboxes () {
-    const passProps = Object.assign({}, this.props)
-    delete passProps.showRestart
-    delete passProps.mailboxId
+    const {
+      showRestart,
+      mailboxId,
+      classes,
+      className,
+      ...passProps
+    } = this.props
 
     return (
-      <div {...passProps}>
-        <div style={{ textAlign: 'center' }}>
-          <RaisedButton
-            label='Add your first account'
-            primary
-            onClick={this.handleAddAccount} />
-        </div>
+      <div className={classNames(className, classes.addFirstAccountContainer)} {...passProps}>
+        <Button variant='raised' color='primary' onClick={this.handleAddAccount}>
+          Add your first account
+        </Button>
       </div>
     )
   }
@@ -227,53 +243,44 @@ export default class AccountSettings extends React.Component {
   * @return jsx
   */
   renderMailboxes () {
-    const { mailboxId, showRestart, ...passProps } = this.props
+    const { mailboxId, showRestart, classes, ...passProps } = this.props
     const { mailboxes, codeEditorOpen, codeEditorTitle, codeEditorCode } = this.state
     const selected = mailboxes.find((mailbox) => mailbox.id === mailboxId) || mailboxes[0]
     const isSelectedRestricted = mailboxStore.getState().isMailboxRestricted(selected.id) // Bad
 
     return (
       <div {...passProps}>
-        <Row>
-          <Col md={8} offset={2} style={styles.accountPicker}>
-            <MailboxAvatar
-              mailboxId={selected.id}
-              size={60}
-              style={styles.accountPickerAvatar} />
-            <div style={styles.accountPickerContainer}>
-              <SelectField
+        <div style={styles.accountPicker}>
+          <MailboxAvatar
+            mailboxId={selected.id}
+            size={60}
+            className={classes.accountPickerAvatar} />
+          <div className={classes.accountPickerContainer}>
+            <FormControl fullWidth>
+              <InputLabel>Pick your account</InputLabel>
+              <Select
                 value={selected.id}
-                style={{marginTop: -14}}
-                floatingLabelText='Pick your account'
-                floatingLabelStyle={{color: Colors.blue600}}
                 fullWidth
-                onChange={this.handleAccountChange}>
-                {
-                  this.state.mailboxes.map((m) => {
-                    return (
-                      <MenuItem
-                        value={m.id}
-                        key={m.id}
-                        primaryText={`${m.humanizedType} : ${m.displayName}`} />
-                    )
-                  })
-                }
-              </SelectField>
-            </div>
-          </Col>
-        </Row>
+                onChange={this.handleAccountChange} >
+                {mailboxes.map((m) => {
+                  return (
+                    <MenuItem value={m.id} key={m.id}>
+                      {`${m.humanizedType} : ${m.displayName}`}
+                    </MenuItem>
+                  )
+                })}
+              </Select>
+            </FormControl>
+          </div>
+        </div>
         {isSelectedRestricted ? (
           <RestrictedAccountSettings mailboxId={mailboxId} />
         ) : (
           <div>
-            <Row>
-              <Col md={12}>
-                <h1 style={commonStyles.heading}>Account</h1>
-                <p style={commonStyles.headingInfo}>
-                  <strong>{selected.humanizedType}</strong> {selected.displayName}
-                </p>
-              </Col>
-            </Row>
+            <h1 className={classes.heading}>Account</h1>
+            <p className={classes.headingInfo}>
+              <strong>{selected.humanizedType}</strong> {selected.displayName}
+            </p>
             {this.renderMailboxSettings(selected, showRestart)}
             <CustomCodeEditingDialog
               title={codeEditorTitle}
@@ -295,3 +302,5 @@ export default class AccountSettings extends React.Component {
     }
   }
 }
+
+export default AccountSettings

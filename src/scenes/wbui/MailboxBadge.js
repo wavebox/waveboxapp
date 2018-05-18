@@ -30,9 +30,8 @@ const styles = {
   }
 }
 
-//TODO depricate? should I be using MailboxServicebadge???
 @withStyles(styles)
-export default class MailboxBadge extends React.Component {
+class MailboxBadge extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -90,3 +89,5 @@ export default class MailboxBadge extends React.Component {
     )
   }
 }
+
+export default MailboxBadge

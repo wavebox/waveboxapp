@@ -30,7 +30,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class MailboxLoadBar extends React.Component {
+class MailboxLoadBar extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -56,3 +56,5 @@ export default class MailboxLoadBar extends React.Component {
     )
   }
 }
+
+export default MailboxLoadBar

@@ -78,7 +78,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class MailboxSleepNotification extends React.Component {
+class MailboxSleepNotification extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -178,3 +178,5 @@ export default class MailboxSleepNotification extends React.Component {
     )
   }
 }
+
+export default MailboxSleepNotification

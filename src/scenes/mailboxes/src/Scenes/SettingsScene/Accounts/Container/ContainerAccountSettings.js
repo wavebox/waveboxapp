@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper, Toggle, TextField, RaisedButton } from 'material-ui' //TODO
 import shallowCompare from 'react-addons-shallow-compare'
-import { Row, Col } from 'Components/Grid'
 import AccountDestructiveSettings from '../AccountDestructiveSettings'
 import AccountAppearanceSettings from '../AccountAppearanceSettings'
 import AccountAdvancedSettings from '../AccountAdvancedSettings'
@@ -11,8 +9,12 @@ import AccountNotificationSettings from '../AccountNotificationSettings'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
 import AccountBehaviourSettings from '../AccountBehaviourSettings'
-import styles from '../../CommonSettingStyles'
 import { mailboxActions, ContainerDefaultServiceReducer, ContainerMailboxReducer } from 'stores/mailbox'
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListSwitch from 'wbui/SettingsListSwitch'
+import SettingsListTextField from 'wbui/SettingsListTextField'
+import SettingsListButton from 'wbui/SettingsListButton'
+import { ListItemText } from 'material-ui'
 
 export default class ContainerAccountSettings extends React.Component {
   /* **************************************************************************/
@@ -77,91 +79,78 @@ export default class ContainerAccountSettings extends React.Component {
 
     return (
       <div {...passProps}>
-        <Row>
-          <Col md={6}>
-            <Paper style={styles.paper}>
-              <TextField
-                key={`displayName_${mailbox.userDisplayName}`}
-                fullWidth
-                floatingLabelFixed
-                hintText='My Account'
-                floatingLabelText='Account Name'
-                defaultValue={mailbox.userDisplayName}
-                onBlur={(evt) => {
-                  mailboxActions.reduce(this.props.mailbox.id, ContainerMailboxReducer.setDisplayName, evt.target.value)
-                }} />
-              <Toggle
-                toggled={service.hasNavigationToolbar}
-                label='Show navigation toolbar'
-                labelPosition='right'
-                onToggle={(evt, toggled) => {
-                  mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setHasNavigationToolbar, toggled)
-                }} />
-              <Toggle
-                toggled={service.restoreLastUrl}
-                label='Restore last page on load'
-                labelPosition='right'
-                onToggle={(evt, toggled) => {
-                  mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setRestoreLastUrl, toggled)
-                }} />
-            </Paper>
-            <AccountAppearanceSettings mailbox={mailbox} />
-            <AccountBadgeSettings mailbox={mailbox} service={service} />
-            <AccountNotificationSettings mailbox={mailbox} service={service} />
-            <AccountBehaviourSettings mailbox={mailbox} service={service} />
-          </Col>
-          <Col md={6}>
-            <AccountCustomCodeSettings
-              mailbox={mailbox}
-              service={service}
-              onRequestEditCustomCode={onRequestEditCustomCode} />
-            <Paper zDepth={1} style={styles.paper}>
-              <h1 style={styles.subheading}>UserAgent</h1>
-              <Toggle
-                toggled={mailbox.useCustomUserAgent}
-                label='Use custom UserAgent (Requires restart)'
-                labelPosition='right'
-                onToggle={this.handleChangeUseCustomUserAgent} />
-              <TextField
-                key={service.url}
-                disabled={!mailbox.useCustomUserAgent}
-                fullWidth
-                floatingLabelFixed
-                floatingLabelText='Custom UserAgent String (Requires restart)'
-                defaultValue={mailbox.customUserAgentString}
-                onBlur={this.handleChangeCustomUserAgent} />
-              <RaisedButton
-                label='Restore defaults (Requires restart)'
-                onClick={this.handleResetCustomUserAgent} />
-            </Paper>
-            <AccountAdvancedSettings
-              mailbox={mailbox}
-              showRestart={showRestart}
-              windowOpenAfter={container.hasWindowOpenOverrides ? (
-                <div>
-                  {mailbox.getAllWindowOpenOverrideUserConfigs().map((config) => {
-                    return (
-                      <Toggle
-                        key={config.id}
-                        toggled={config.value}
-                        label={config.label}
-                        labelPosition='right'
-                        onToggle={(evt, toggled) => {
-                          mailboxActions.reduce(mailbox.id, ContainerMailboxReducer.setWindowOpenUserConfig, config.id, toggled)
-                        }} />
-                    )
-                  })}
-                </div>
-              ) : undefined} />
-            <AccountDestructiveSettings mailbox={mailbox} />
-            <Paper zDepth={1} style={styles.paper}>
-              <div style={{ fontSize: '85%' }}>
-                <p>Container ID: {container.id}</p>
-                <p>Container Version: {container.version}</p>
-              </div>
-            </Paper>
-          </Col>
-        </Row>
+        <SettingsListSection>
+          <SettingsListTextField
+            key={`displayName_${mailbox.userDisplayName}`}
+            label='Account Name'
+            textFieldProps={{
+              defaultValue: mailbox.userDisplayName,
+              placeholder: 'My Account',
+              onBlur: (evt) => { mailboxActions.reduce(this.props.mailbox.id, ContainerMailboxReducer.setDisplayName, evt.target.value) }
+            }} />
+          <SettingsListSwitch
+            label='Show navigation toolbar'
+            onChange={(evt, toggled) => {
+              mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setHasNavigationToolbar, toggled)
+            }}
+            checked={service.hasNavigationToolbar} />
+          <SettingsListSwitch
+            label='Restore last page on load'
+            onChange={(evt, toggled) => {
+              mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setRestoreLastUrl, toggled)
+            }}
+            checked={service.restoreLastUrl} />
+        </SettingsListSection>
+        <AccountAppearanceSettings mailbox={mailbox} />
+        <AccountBadgeSettings mailbox={mailbox} service={service} />
+        <AccountNotificationSettings mailbox={mailbox} service={service} />
+        <AccountBehaviourSettings mailbox={mailbox} service={service} />
+        <AccountCustomCodeSettings
+          mailbox={mailbox}
+          service={service}
+          onRequestEditCustomCode={onRequestEditCustomCode} />
+        <SettingsListSection title='UserAgent'>
+          <SettingsListSwitch
+            label='Use custom UserAgent (Requires restart)'
+            onChange={this.handleChangeUseCustomUserAgent}
+            checked={mailbox.useCustomUserAgent} />
+          <SettingsListTextField
+            key={`userAgent_${mailbox.customUserAgentString}`}
+            disabled={!mailbox.useCustomUserAgent}
+            label='Custom UserAgent String (Requires restart)'
+            textFieldProps={{
+              defaultValue: mailbox.customUserAgentString,
+              onBlur: this.handleChangeCustomUserAgent
+            }} />
+          <SettingsListButton
+            label='Restore defaults (Requires restart)'
+            onClick={this.handleResetCustomUserAgent} />
+        </SettingsListSection>
+        <AccountAdvancedSettings
+          mailbox={mailbox}
+          showRestart={showRestart}
+          windowOpenAfter={container.hasWindowOpenOverrides ? (
+            <span>
+              {mailbox.getAllWindowOpenOverrideUserConfigs().map((config) => {
+                return (
+                  <SettingsListSwitch
+                    key={config.id}
+                    label={config.label}
+                    onChange={(evt, toggled) => {
+                      mailboxActions.reduce(mailbox.id, ContainerMailboxReducer.setWindowOpenUserConfig, config.id, toggled)
+                    }}
+                    checked={config.value} />
+                )
+              })}
+            </span>
+          ) : undefined} />
+        <AccountDestructiveSettings mailbox={mailbox} />
+        <SettingsListSection title='About'>
+          <ListItemText primary='Container ID' secondary={container.id} />
+        </SettingsListSection>
+        <SettingsListSection title='About'>
+          <ListItemText primary='Container Version' secondary={container.version} />
+        </SettingsListSection>
       </div>
     )
   }

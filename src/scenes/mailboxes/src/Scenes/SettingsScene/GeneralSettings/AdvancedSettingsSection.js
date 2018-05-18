@@ -37,7 +37,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class AdvancedSettingsSection extends React.Component {
+class AdvancedSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -182,3 +182,5 @@ export default class AdvancedSettingsSection extends React.Component {
     )
   }
 }
+
+export default AdvancedSettingsSection

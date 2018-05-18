@@ -1,16 +1,22 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper, Toggle, FontIcon } from 'material-ui' //TODO
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
-import commonStyles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
-import * as Colors from 'material-ui/styles/colors' //TODO
-import { ColorPickerButton } from 'Components'
+import ColorPickerButton from 'wbui/ColorPickerButton'
 import { userStore } from 'stores/user'
+import { withStyles } from 'material-ui/styles'
+import red from 'material-ui/colors/red'
+import amber from 'material-ui/colors/amber'
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListSwitch from 'wbui/SettingsListSwitch'
+import SettingsListItem from 'wbui/SettingsListItem'
+import { ListItemText } from 'material-ui'
+import WarningIcon from '@material-ui/icons/Warning'
+import SmsIcon from '@material-ui/icons/Sms'
 
 const styles = {
   mockUnreadActivityIndicator: {
-    backgroundColor: Colors.red400,
+    backgroundColor: red[400],
     color: 'white',
     display: 'inline-block',
     borderRadius: '50%',
@@ -21,10 +27,22 @@ const styles = {
     textAlign: 'center',
     fontSize: '10px',
     paddingRight: 1
+  },
+  warningText: {
+    color: amber[700],
+    fontSize: 14,
+    fontWeight: 300
+  },
+  warningTextIcon: {
+    color: amber[700],
+    fontSize: 18,
+    marginRight: 4,
+    verticalAlign: 'top'
   }
 }
 
-export default class AccountBadgeSettings extends React.Component {
+@withStyles(styles)
+class AccountBadgeSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -86,76 +104,77 @@ export default class AccountBadgeSettings extends React.Component {
   }
 
   render () {
-    const { mailbox, service, ...passProps } = this.props
+    const { mailbox, service, classes, ...passProps } = this.props
     const { userHasSleepable } = this.state
     if (AccountBadgeSettings.willRenderForService(service) === false) { return false }
 
     return (
-      <Paper zDepth={1} style={commonStyles.paper} {...passProps}>
-        <h1 style={commonStyles.subheading}>Badges</h1>
+      <SettingsListSection title='Badges' {...passProps}>
         {userHasSleepable && service.sleepable && !service.supportsSyncWhenSleeping ? (
-          <p style={commonStyles.warningText}>
-            <FontIcon className='material-icons' style={commonStyles.warningTextIcon}>warning</FontIcon>
-            Badges will only sync for this service when the account is not sleeping. To
-            ensure badges are always updated we recommend disabling sleeping for this service
-          </p>
+          <SettingsListItem>
+            <ListItemText primary={(
+              <span className={classes.warningText}>
+                <WarningIcon className={classes.warningTextIcon} />
+                When you have multiple services you can show the total unread count for those
+                services in the sidebar, so at a glance you know what's new
+              </span>
+            )} />
+          </SettingsListItem>
         ) : undefined}
-        <div style={commonStyles.button}>
+        <SettingsListItem>
           <ColorPickerButton
-            label='Badge Color'
-            icon={<FontIcon className='material-icons'>sms</FontIcon>}
+            buttonProps={{ variant: 'raised', size: 'small' }}
             value={service.unreadBadgeColor}
-            onChange={(col) => {
-              mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setUnreadBadgeColor, col)
-            }} />
-        </div>
+            onChange={(col) => mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setUnreadBadgeColor, col)}>
+            <SmsIcon className={classes.buttonIcon} />
+            Badge Color
+          </ColorPickerButton>
+        </SettingsListItem>
         {service.supportsUnreadCount ? (
-          <div>
-            <Toggle
-              toggled={service.showUnreadBadge}
-              label='Show unread count in sidebar or toolbar'
-              labelPosition='right'
-              onToggle={(evt, toggled) => {
-                mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setShowUnreadBadge, toggled)
-              }} />
-            <Toggle
-              toggled={service.unreadCountsTowardsAppUnread}
-              label='Show unread count in Menu Bar & App Badge'
-              labelPosition='right'
-              onToggle={(evt, toggled) => {
-                mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setUnreadCountsTowardsAppUnread, toggled)
-              }} />
-          </div>
+          <SettingsListSwitch
+            label='Show unread count in sidebar or toolbar'
+            onChange={(evt, toggled) => {
+              mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setShowUnreadBadge, toggled)
+            }}
+            checked={service.showUnreadBadge} />
+        ) : undefined}
+        {service.supportsUnreadCount ? (
+          <SettingsListSwitch
+            label='Show unread count in Menu Bar & App Badge'
+            onChange={(evt, toggled) => {
+              mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setUnreadCountsTowardsAppUnread, toggled)
+            }}
+            checked={service.unreadCountsTowardsAppUnread} />
         ) : undefined}
         {service.supportsUnreadActivity ? (
-          <div>
-            <Toggle
-              toggled={service.showUnreadActivityBadge}
-              label={(
-                <span>
-                  <span>Show unread activity in sidebar or toolbar as </span>
-                  <span style={styles.mockUnreadActivityIndicator}>●</span>
-                </span>
-              )}
-              labelPosition='right'
-              onToggle={(evt, toggled) => {
-                mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setShowUnreadActivityBadge, toggled)
-              }} />
-            <Toggle
-              toggled={service.unreadActivityCountsTowardsAppUnread}
-              label={(
-                <span>
-                  <span>Show unread activity in Menu Bar & App Badge as </span>
-                  <span style={styles.mockUnreadActivityIndicator}>●</span>
-                </span>
-              )}
-              labelPosition='right'
-              onToggle={(evt, toggled) => {
-                mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setUnreadActivityCountsTowardsAppUnread, toggled)
-              }} />
-          </div>
+          <SettingsListSwitch
+            label={(
+              <span>
+                <span>Show unread activity in sidebar or toolbar as </span>
+                <span className={classes.mockUnreadActivityIndicator}>●</span>
+              </span>
+            )}
+            onChange={(evt, toggled) => {
+              mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setShowUnreadActivityBadge, toggled)
+            }}
+            checked={service.showUnreadActivityBadge} />
         ) : undefined}
-      </Paper>
+        {service.supportsUnreadActivity ? (
+          <SettingsListSwitch
+            label={(
+              <span>
+                <span>Show unread activity in Menu Bar & App Badge as </span>
+                <span className={classes.mockUnreadActivityIndicator}>●</span>
+              </span>
+            )}
+            onChange={(evt, toggled) => {
+              mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setUnreadActivityCountsTowardsAppUnread, toggled)
+            }}
+            checked={service.unreadActivityCountsTowardsAppUnread} />
+        ) : undefined}
+      </SettingsListSection>
     )
   }
 }
+
+export default AccountBadgeSettings

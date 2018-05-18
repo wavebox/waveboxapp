@@ -39,7 +39,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class MailboxInformationCover extends React.Component {
+class MailboxInformationCover extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -94,3 +94,5 @@ export default class MailboxInformationCover extends React.Component {
     )
   }
 }
+
+export default MailboxInformationCover

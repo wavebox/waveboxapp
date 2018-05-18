@@ -33,7 +33,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class UpdateAvailableScene extends React.Component {
+class UpdateAvailableScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -220,3 +220,5 @@ export default class UpdateAvailableScene extends React.Component {
     )
   }
 }
+
+export default UpdateAvailableScene

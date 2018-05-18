@@ -16,7 +16,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class SettingsListSelect extends React.Component {
+class SettingsListSelect extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -73,3 +73,5 @@ export default class SettingsListSelect extends React.Component {
     )
   }
 }
+
+export default SettingsListSelect

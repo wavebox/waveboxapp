@@ -27,7 +27,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class DictionaryInstallStepper extends React.Component {
+class DictionaryInstallStepper extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
@@ -195,3 +195,5 @@ export default class DictionaryInstallStepper extends React.Component {
     )
   }
 }
+
+export default DictionaryInstallStepper
