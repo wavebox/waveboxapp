@@ -1,14 +1,12 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Dialog, DialogContent, DialogActions, Button, Tabs, Tab, AppBar } from 'material-ui' //TODO
+import { Dialog, DialogContent, DialogActions, Button, Tabs, Tab, AppBar } from 'material-ui'
 import GeneralSettings from './GeneralSettings'
-//import ExtensionSettings from './ExtensionSettings'
+import ExtensionSettings from './ExtensionSettings'
 //import AccountSettings from './Accounts/AccountSettings'
 import ProSettings from './ProSettings'
-//import AdvancedSettings from './AdvancedSettings'
 import SupportSettings from './SupportSettings'
 import shallowCompare from 'react-addons-shallow-compare'
-//import SettingsSceneTabTemplate from './SettingsSceneTabTemplate'
 import { WB_RELAUNCH_APP } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
 import { withStyles } from 'material-ui/styles'
@@ -146,11 +144,9 @@ export default class SettingsScene extends React.Component {
     if (currentTab === 'general') {
       return (<GeneralSettings showRestart={this.handleShowRestart} />)
     } else if (currentTab === 'extensions') {
-      return (<div>extensions</div>)
+      return (<ExtensionSettings showRestart={this.handleShowRestart} />)
     } else if (currentTab === 'accounts') {
       return (<div>accounts</div>)
-    } else if (currentTab === 'advanced') {
-      return (<div>advanced</div>)
     } else if (currentTab === 'support') {
       return (<SupportSettings />)
     } else if (currentTab === 'pro') {
@@ -188,7 +184,6 @@ export default class SettingsScene extends React.Component {
       ['Extensions', 'extensions'],
       ['Accounts', 'accounts'],
       ['Wavebox', 'pro'],
-      ['Advanced', 'advanced'],
       ['Support', 'support']
     ].filter((tab) => !!tab)
 

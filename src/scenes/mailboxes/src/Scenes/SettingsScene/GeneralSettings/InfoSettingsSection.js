@@ -1,17 +1,11 @@
 import React from 'react'
-import { Paper, FlatButton, FontIcon } from 'material-ui' //TODO
-import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
-import { updaterActions } from 'stores/updater'
-import { settingsActions } from 'stores/settings'
 import { userStore } from 'stores/user'
-import Release from 'shared/Release'
+import { RELEASE_CHANNELS } from 'shared/constants'
 import pkg from 'package.json'
-import {ipcRenderer} from 'electron'
-import {
-  WB_TAKEOUT_IMPORT,
-  WB_TAKEOUT_EXPORT
-} from 'shared/ipcEvents'
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListItem from 'wbui/SettingsListItem'
+import { ListItemText } from 'material-ui'
 
 export default class InfoSettingsSection extends React.Component {
   /* **************************************************************************/
@@ -23,33 +17,25 @@ export default class InfoSettingsSection extends React.Component {
   }
 
   render () {
+    const wireConfigVersion = userStore.getState().wireConfigVersion()
     return (
-      <Paper zDepth={1} style={styles.paper} {...this.props}>
-        <div style={{ fontSize: '85%' }}>
-          {Release.generateVersionComponents(pkg, userStore.getState().wireConfigVersion()).map((c) => {
-            return (<p key={c}>{c}</p>)
-          })}
-        </div>
-        <FlatButton
-          label='Check for Update'
-          icon={<FontIcon className='material-icons'>system_update_alt</FontIcon>}
-          onClick={() => updaterActions.userCheckForUpdates()} />
-        <br />
-        <FlatButton
-          label='Task Monitor'
-          icon={<FontIcon className='material-icons'>timeline</FontIcon>}
-          onClick={() => settingsActions.sub.app.openMetricsMonitor()} />
-        <br />
-        <FlatButton
-          label='Export Data'
-          icon={<FontIcon className='material-icons'>import_export</FontIcon>}
-          onClick={() => ipcRenderer.send(WB_TAKEOUT_EXPORT)} />
-        <br />
-        <FlatButton
-          label='Import Data'
-          icon={<FontIcon className='material-icons'>import_export</FontIcon>}
-          onClick={() => ipcRenderer.send(WB_TAKEOUT_IMPORT)} />
-      </Paper>
+      <SettingsListSection title='About'>
+        {pkg.earlyBuildId ? (
+          <SettingsListItem>
+            <ListItemText primary={'Early Build Reference'} secondary={pkg.earlyBuildId} />
+          </SettingsListItem>
+        ) : undefined}
+        {wireConfigVersion ? (
+          <SettingsListItem>
+            <ListItemText primary={'Wire Config Version'} secondary={wireConfigVersion} />
+          </SettingsListItem>
+        ) : undefined}
+        <SettingsListItem divider={false}>
+          <ListItemText
+            primary={'Version'}
+            secondary={`${pkg.version}${pkg.releaseChannel === RELEASE_CHANNELS.BETA ? 'beta' : ''}`} />
+        </SettingsListItem>
+      </SettingsListSection>
     )
   }
 }

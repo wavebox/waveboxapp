@@ -1,13 +1,42 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Toggle, Paper, FontIcon, RaisedButton } from 'material-ui' //TODO
 import { settingsActions } from 'stores/settings'
-import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
 import CustomStylesEditingDialog from './CustomStylesEditingDialog'
 import DistributionConfig from 'Runtime/DistributionConfig'
 import { AppSettings } from 'shared/Models/Settings'
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListSwitch from 'wbui/SettingsListSwitch'
+import SettingsListItem from 'wbui/SettingsListItem'
+import { withStyles } from 'material-ui/styles'
+import WarningIcon from '@material-ui/icons/Warning'
+import CodeIcon from '@material-ui/icons/Code'
+import grey from 'material-ui/colors/grey'
+import amber from 'material-ui/colors/amber'
+import { Button } from 'material-ui'
 
+const styles = {
+  buttonIcon: {
+    marginRight: 6,
+    height: 18,
+    width: 18
+  },
+  extraInfo: {
+    fontSize: '75%',
+    color: grey[700]
+  },
+  extraInfoWarning: {
+    fontSize: '75%',
+    color: amber[700]
+  },
+  extraInfoWarningIcon: {
+    marginRight: 6,
+    height: 18,
+    width: 18
+  }
+}
+
+@withStyles(styles)
 export default class AdvancedSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
@@ -46,7 +75,7 @@ export default class AdvancedSettingsSection extends React.Component {
       language,
       ui,
       tray,
-      style,
+      classes,
       ...passProps
     } = this.props
     const {
@@ -54,108 +83,91 @@ export default class AdvancedSettingsSection extends React.Component {
     } = this.state
 
     return (
-      <Paper zDepth={1} style={{...styles.paper, ...style}} {...passProps}>
-        <Toggle
-          toggled={app.ignoreGPUBlacklist}
+      <SettingsListSection {...passProps} title='Advanced'>
+        <SettingsListSwitch
           label='Ignore GPU Blacklist (Requires Restart)'
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
+          onChange={(evt, toggled) => {
             showRestart()
             settingsActions.sub.app.ignoreGPUBlacklist(toggled)
-          }} />
-        <Toggle
-          toggled={!app.disableHardwareAcceleration}
+          }}
+          checked={app.ignoreGPUBlacklist} />
+        <SettingsListSwitch
           label='Hardware acceleration (Requires Restart)'
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
+          onChange={(evt, toggled) => {
             showRestart()
             settingsActions.sub.app.disableHardwareAcceleration(!toggled)
-          }} />
-        <Toggle
-          toggled={app.isolateMailboxProcesses}
+          }}
+          checked={!app.disableHardwareAcceleration} />
+        <SettingsListSwitch
           label='Isolate Account Processes (Requires Restart)'
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
+          onChange={(evt, toggled) => {
             showRestart()
             settingsActions.sub.app.setIsolateMailboxProcesses(toggled)
-          }} />
+          }}
+          checked={app.isolateMailboxProcesses} />
         {AppSettings.SUPPORTS_MIXED_SANDBOX_MODE ? (
-          <Toggle
-            toggled={app.enableMixedSandboxMode}
+          <SettingsListSwitch
             label='Enable Sanboxing (Requires Restart)'
-            labelPosition='right'
-            onToggle={(evt, toggled) => {
+            onChange={(evt, toggled) => {
               showRestart()
               settingsActions.sub.app.setEnableMixedSandboxMode(toggled)
-            }} />
+            }}
+            checked={app.enableMixedSandboxMode} />
         ) : undefined}
-        <Toggle
-          toggled={app.enableUseZoomForDSF}
+        <SettingsListSwitch
           label='Use Zoom For DSF (Requires Restart)'
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
+          onChange={(evt, toggled) => {
             showRestart()
             settingsActions.sub.app.enableUseZoomForDSF(toggled)
-          }} />
-        <Toggle
-          toggled={!app.disableSmoothScrolling}
+          }}
+          checked={app.enableUseZoomForDSF} />
+        <SettingsListSwitch
           label='Smooth Scrolling (Requires Restart)'
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
+          onChange={(evt, toggled) => {
             showRestart()
             settingsActions.sub.app.disableSmoothScrolling(!toggled)
-          }} />
-        <Toggle
-          toggled={app.enableGeolocationApi}
+          }}
+          checked={!app.disableSmoothScrolling} />
+        <SettingsListSwitch
           label='Geolocation API'
-          labelPosition='right'
-          onToggle={(evt, toggled) => { settingsActions.sub.app.setEnableGeolocationApi(toggled) }} />
+          onChange={(evt, toggled) => { settingsActions.sub.app.setEnableGeolocationApi(toggled) }}
+          checked={app.enableGeolocationApi} />
         {DistributionConfig.isSnapInstall ? undefined : (
-          <Toggle
-            toggled={app.enableAutofillService}
+          <SettingsListSwitch
             label='Autofill passwords on right click'
-            labelPosition='right'
-            onToggle={(evt, toggled) => { settingsActions.sub.app.setEnableAutofillServie(toggled) }} />
+            onChange={(evt, toggled) => { settingsActions.sub.app.setEnableAutofillServie(toggled) }}
+            checked={app.enableAutofillService} />
         )}
-        <Toggle
-          toggled={language.inProcessSpellchecking}
+        <SettingsListSwitch
           label='In process spellchecking (Requires Restart)'
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
+          onChange={(evt, toggled) => {
             showRestart()
             settingsActions.sub.language.setInProcessSpellchecking(toggled)
-          }} />
-        <Toggle
-          toggled={app.enableWindowOpeningEngine}
-          label={(
-            <div>
-              <div>Window opening engine (Recommended)</div>
-              {app.enableWindowOpeningEngine === false ? (
-                <div>
-                  <div style={styles.extraInfo}>All links will open in your default browser</div>
-                  <div style={styles.warningText}>
-                    <FontIcon className='material-icons' style={styles.warningTextIcon}>warning</FontIcon>
-                    You may experience broken links and blank windows with this setting
-                  </div>
-                </div>
-              ) : (
-                <div style={styles.extraInfo}>
-                  Some links will continue to open with Wavebox to give the best experience and the
-                  remaining links will open using your per-account configuration
-                </div>
-              )}
-            </div>
+          }}
+          checked={language.inProcessSpellchecking} />
+        <SettingsListSwitch
+          label='Window opening engine (Recommended)'
+          secondary={app.enableWindowOpeningEngine === false ? (
+            <span style={styles.extraInfoWarning}>
+              <WarningIcon className={classes.extraInfoWarningIcon} />
+              All links will open in your default browser. You may experience
+              broken links and blank windows with this setting
+            </span>
+          ) : (
+            <span style={styles.extraInfo}>
+              Some links will continue to open with Wavebox to give the best experience and the
+              remaining links will open using your per-account configuration
+            </span>
           )}
-          labelPosition='right'
-          onToggle={(evt, toggled) => {
+          onChange={(evt, toggled) => {
             settingsActions.sub.app.setEnableWindowOpeningEngine(toggled)
-          }} />
-        <div style={{ marginTop: 8 }}>
-          <RaisedButton
-            style={styles.buttonInline}
-            label='Main Window Custom CSS'
-            icon={<FontIcon className='material-icons'>code</FontIcon>}
-            onClick={() => this.setState({ customCSSEditorOpen: true })} />
+          }}
+          checked={app.enableWindowOpeningEngine} />
+        <SettingsListItem divider={false}>
+          <Button size='small' variant='raised' onClick={() => this.setState({ customCSSEditorOpen: true })}>
+            <CodeIcon className={classes.buttonIcon} />
+            Main Window Custom CSS
+          </Button>
           <CustomStylesEditingDialog
             title='Main Window Custom CSS'
             open={customCSSEditorOpen}
@@ -165,8 +177,8 @@ export default class AdvancedSettingsSection extends React.Component {
               this.setState({ customCSSEditorOpen: false })
               settingsActions.sub.ui.setCustomMainCSS(css)
             }} />
-        </div>
-      </Paper>
+        </SettingsListItem>
+      </SettingsListSection>
     )
   }
 }

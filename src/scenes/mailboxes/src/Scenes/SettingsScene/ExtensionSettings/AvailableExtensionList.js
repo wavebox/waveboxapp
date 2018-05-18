@@ -1,11 +1,22 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import styles from '../CommonSettingStyles'
 import ExtensionListItem from './ExtensionListItem'
 import { crextensionStore } from 'stores/crextension'
 import { userStore } from 'stores/user'
+import grey from 'material-ui/colors/grey'
+import { withStyles } from 'material-ui/styles'
 
+const styles = {
+  heading: {
+    marginTop: 30,
+    color: grey[900],
+    fontWeight: 'normal',
+    marginBottom: 10
+  }
+}
+
+@withStyles(styles)
 export default class AvailableExtensionList extends React.Component {
   /* **************************************************************************/
   // Class
@@ -76,14 +87,14 @@ export default class AvailableExtensionList extends React.Component {
   }
 
   render () {
-    const {showRestart, ...passProps} = this.props
+    const {showRestart, classes, ...passProps} = this.props
     const { extensionIds } = this.state
 
     if (extensionIds.length === 0) { return false }
 
     return (
       <div {...passProps}>
-        <h1 style={styles.heading}>Available Extensions</h1>
+        <h1 className={classes.heading}>Available Extensions</h1>
         {extensionIds.map((id) => {
           return (
             <ExtensionListItem

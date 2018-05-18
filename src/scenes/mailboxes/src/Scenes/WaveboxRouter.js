@@ -20,10 +20,7 @@ import PrivacyDialog from './PrivacyDialog'
 import NotificationPanel from './NotificationPanel'
 import ComposePickerScene from './ComposePickerScene'
 import SettingsScene from './SettingsScene'
-/*
 import DictionaryInstallerScene from './DictionaryInstallerScene'
-
-*/
 
 import AppWizardScene from './AppWizardScene'
 import {
@@ -50,9 +47,7 @@ export default class WaveboxRouter extends React.Component {
           <NotificationPanel />
 
           <Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
-          {/*
-
-          <Route path='/dictionary_installer' component={DictionaryInstallerScene} />*/}
+          <Route path='/dictionary_installer' component={DictionaryInstallerScene} />
 
           <Route path='/mailbox_wizard/add' component={MailboxWizardAddScene} />
           <Route path='/mailbox_wizard/:mailboxType/:accessMode/:step/:mailboxId?' component={MailboxWizardScene} />

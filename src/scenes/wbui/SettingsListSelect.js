@@ -25,8 +25,9 @@ export default class SettingsListSelect extends React.Component {
     label: PropTypes.node.isRequired,
     secondary: PropTypes.node,
     onChange: PropTypes.func.isRequired,
-    value: PropTypes.string.isRequired,
-    options: PropTypes.array.isRequired
+    value: PropTypes.any.isRequired,
+    options: PropTypes.array.isRequired,
+    disabled: PropTypes.bool
   }
 
   /* **************************************************************************/
@@ -38,7 +39,7 @@ export default class SettingsListSelect extends React.Component {
   }
 
   render () {
-    const { classes, disabled, className, label, secondary, onChange, value, children, options, ...passProps } = this.props
+    const { classes, disabled, className, label, secondary, onChange, value, options, ...passProps } = this.props
 
     return (
       <SettingsListItem {...passProps}>

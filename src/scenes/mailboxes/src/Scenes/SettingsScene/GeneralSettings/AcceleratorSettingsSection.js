@@ -1,12 +1,15 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import settingsActions from 'stores/settings/settingsActions'
-import styles from '../CommonSettingStyles'
 import shallowCompare from 'react-addons-shallow-compare'
-import {
-  Paper, TextField, IconButton, FontIcon,
-  Table, TableRow, TableBody, TableRowColumn
-} from 'material-ui' //TODO
+import SettingsListAccordionSection from 'wbui/SettingsListAccordionSection'
+import SettingsListItem from 'wbui/SettingsListItem'
+import SettingsListAccordionDeferred from 'wbui/SettingsListAccordionDeferred'
+import DeleteIcon from '@material-ui/icons/Delete'
+import SettingsBackupRestoreIcon from '@material-ui/icons/SettingsBackupRestore'
+import { withStyles } from 'material-ui/styles'
+import { ListItemText, TextField, IconButton, ListItemSecondaryAction, Tooltip } from 'material-ui'
+import blue from 'material-ui/colors/blue'
 
 const ACCELERATOR_NAMES = {
   // Global
@@ -148,7 +151,19 @@ const PLATFORM_EXCLUDES = new Set([
   process.platform !== 'darwin' ? 'hideOthers' : undefined
 ].filter((n) => !!n))
 
-export default class AcceleratorSettings extends React.Component {
+const styles = {
+  subtitleInfo: {
+    color: blue[700],
+    fontSize: '85%'
+  },
+  textFieldInput: {
+    fontSize: '0.8rem',
+    width: 180
+  }
+}
+
+@withStyles(styles)
+export default class AcceleratorSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -166,82 +181,77 @@ export default class AcceleratorSettings extends React.Component {
   }
 
   /**
-  * Renders the table row for an accelerator
-  * @param accelerators: the accelerators
-  * @param name: the name of the field to render for
-  * @param isFirst: true if this is the first row
-  * @param isLast: true if this is the last row
-  * @return jsx
-  */
-  renderAcceleratorTableRow (accelerators, name, isFirst, isLast) {
-    if (PLATFORM_EXCLUDES.has(name)) { return undefined }
-
-    const accelerator = accelerators[name]
-    const acceleratorDefault = accelerators[name + 'Default']
-
-    // Put the key on the TextField so when the value is changed this will be updated
-    return (
-      <TableRow key={name}>
-        <TableRowColumn>{ACCELERATOR_NAMES[name]}</TableRowColumn>
-        <TableRowColumn style={{ overflow: 'visible', textAlign: 'right' }}>
-          <TextField
-            key={accelerator}
-            name={`AcceleratorSettings_${name}`}
-            style={{ width: 180 }}
-            hintText={acceleratorDefault}
-            defaultValue={accelerator}
-            onBlur={(evt) => settingsActions.sub.accelerators.set(name, evt.target.value)} />
-          {acceleratorDefault ? (
-            <IconButton
-              onClick={() => settingsActions.sub.accelerators.restoreDefault(name)}
-              tooltipPosition={isLast ? 'top-center' : 'bottom-center'}
-              tooltip={`Restore Default (${acceleratorDefault})`}>
-              <FontIcon className='material-icons'>settings_backup_restore</FontIcon>
-            </IconButton>
-          ) : (
-            <IconButton
-              onClick={() => settingsActions.sub.accelerators.restoreDefault(name)}>
-              <FontIcon className='material-icons'>delete</FontIcon>
-            </IconButton>
-          )}
-        </TableRowColumn>
-      </TableRow>
-    )
-  }
-
-  /**
   * Renders the accelerator section
   * @param accelerators: the accelerators
   * @param section: the section to render
   * @return jsx
   */
-  renderAcceleratorSection (accelerators, section) {
+  renderAcceleratorSection (classes, accelerators, section) {
     return (
-      <Paper key={section.name} zDepth={1} style={styles.paper}>
-        <h1 style={styles.subheading}>{`${section.name} Shortcuts`}</h1>
+      <SettingsListAccordionSection>
         {section.subtitle ? (
-          <p style={styles.subheadingInfo}>{section.subtitle}</p>
+          <SettingsListItem className={classes.subtitleInfo}>
+            {section.subtitle}
+          </SettingsListItem>
         ) : undefined}
-        <Table selectable={false}>
-          <TableBody displayRowCheckbox={false}>
-            {section.items.map((name, index, items) => this.renderAcceleratorTableRow(accelerators, name, index === 0, index === items.length - 1))}
-          </TableBody>
-        </Table>
-      </Paper>
+        {section.items.map((name, index, items) => {
+          if (PLATFORM_EXCLUDES.has(name)) { return undefined }
+
+          const accelerator = accelerators[name]
+          const acceleratorDefault = accelerators[name + 'Default']
+
+          return (
+            <SettingsListItem key={name} divider={index !== items.length - 1}>
+              <ListItemText primary={ACCELERATOR_NAMES[name]} />
+              <ListItemSecondaryAction>
+                <TextField
+                  key={`AcceleratorSettings_${name}_${accelerator}`}
+                  name={`AcceleratorSettings_${name}`}
+                  defaultValue={accelerator}
+                  margin='dense'
+                  placeholder={acceleratorDefault || '...'}
+                  onBlur={(evt) => settingsActions.sub.accelerators.set(name, evt.target.value)}
+                  InputProps={{
+                    disableUnderline: true,
+                    className: classes.textFieldInput
+                  }} />
+                {acceleratorDefault ? (
+                  <Tooltip title={`Restore Default (${acceleratorDefault})`}>
+                    <IconButton onClick={() => settingsActions.sub.accelerators.restoreDefault(name)}>
+                      <SettingsBackupRestoreIcon />
+                    </IconButton>
+                  </Tooltip>
+                ) : (
+                  <IconButton onClick={() => settingsActions.sub.accelerators.restoreDefault(name)}>
+                    <DeleteIcon />
+                  </IconButton>
+                )}
+              </ListItemSecondaryAction>
+            </SettingsListItem>
+          )
+        })}
+      </SettingsListAccordionSection>
     )
   }
 
   render () {
     const {
       accelerators,
+      classes,
       ...passProps
     } = this.props
 
     return (
-      <div {...passProps}>
-        <h1 style={styles.heading}>Keyboard Shortcuts</h1>
-        {SECTIONS.map((section) => this.renderAcceleratorSection(accelerators, section))}
-      </div>
+      <SettingsListAccordionDeferred
+        title='Keyboard Shortcuts'
+        {...passProps}
+        panels={SECTIONS.map((section) => {
+          return {
+            title: 'Keyboard Shortcuts',
+            subtitle: section.name,
+            render: () => this.renderAcceleratorSection(classes, accelerators, section)
+          }
+        })} />
     )
   }
 }

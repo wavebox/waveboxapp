@@ -1,27 +1,33 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { RaisedButton } from 'material-ui' //TODO
+import { Button } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
-import commonStyles from '../CommonSettingStyles'
 import ExtensionListItem from './ExtensionListItem'
 import { crextensionStore } from 'stores/crextension'
 import { userStore } from 'stores/user'
-import * as Colors from 'material-ui/styles/colors' //TODO
+import lightBlue from 'material-ui/colors/lightBlue'
+import grey from 'material-ui/colors/grey'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
 
 const styles = {
   container: {
-    border: `2px solid ${Colors.lightBlue500}`,
+    border: `2px solid ${lightBlue[500]}`,
     borderRadius: 4,
     padding: 16
   },
   heading: {
-    marginTop: 0
+    marginTop: 0,
+    color: grey[900],
+    fontWeight: 'normal',
+    marginBottom: 10
   },
   subheading: {
-    color: Colors.lightBlue500
+    color: lightBlue[500]
   }
 }
 
+@withStyles(styles)
 export default class UpgradeExtensionList extends React.Component {
   /* **************************************************************************/
   // Class
@@ -103,20 +109,19 @@ export default class UpgradeExtensionList extends React.Component {
   }
 
   render () {
-    const {showRestart, style, ...passProps} = this.props
+    const {showRestart, classes, className, ...passProps} = this.props
     const { extensionIds } = this.state
 
     if (extensionIds.length === 0) { return false }
 
     return (
-      <div style={{...styles.container, ...style}} {...passProps}>
-        <h1 style={{...commonStyles.heading, ...styles.heading}}>More Extensions</h1>
+      <div className={classNames(classes.container, className)} {...passProps}>
+        <h1 className={classes.heading}>More Extensions</h1>
         <div>
-          <p style={styles.subheading}>These additional extensions are available when you purchase Wavebox</p>
-          <RaisedButton
-            primary
-            label='Purchase Wavebox'
-            onClick={this.handleOpenPro} />
+          <p className={classes.subheading}>These additional extensions are available when you purchase Wavebox</p>
+          <Button variant='raised' color='primary' onClick={this.handleOpenPro}>
+            Purchase Wavebox
+          </Button>
         </div>
         {extensionIds.map((id) => {
           return (

@@ -1,25 +1,26 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { ListItemText, ListItemSecondaryAction, Switch } from 'material-ui'
+import { ListItemText, ListItemSecondaryAction, TextField } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from 'material-ui/styles'
 import SettingsListItem from './SettingsListItem'
+import classNames from 'classnames'
 
 const styles = {
-
+  textField: {
+    fontSize: '0.8rem'
+  }
 }
 
 @withStyles(styles)
-export default class SettingsListSwitch extends React.Component {
+export default class SettingsListTextField extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
     label: PropTypes.node.isRequired,
-    secondary: PropTypes.node,
-    onChange: PropTypes.func.isRequired,
-    checked: PropTypes.bool.isRequired,
+    textFieldProps: PropTypes.object,
     disabled: PropTypes.bool
   }
 
@@ -32,18 +33,28 @@ export default class SettingsListSwitch extends React.Component {
   }
 
   render () {
-    const { classes, disabled, className, label, onChange, checked, secondary, ...passProps } = this.props
+    const { classes, disabled, className, label, textFieldProps, ...passProps } = this.props
 
     return (
       <SettingsListItem {...passProps}>
-        <ListItemText primary={label} secondary={secondary} />
+        <ListItemText primary={label} />
         <ListItemSecondaryAction>
-          <Switch
-            color='primary'
+          <TextField
+            margin='dense'
             disabled={disabled}
-            onChange={onChange}
-            checked={checked}
-          />
+            {...textFieldProps}
+            InputProps={{
+              // Overwritable arguments
+              disableUnderline: true,
+
+              ...textFieldProps.InputProps,
+
+              // Composite arguments
+              className: classNames(
+                ((textFieldProps || {}).InputProps || {}).className,
+                classes.textField
+              )
+            }} />
         </ListItemSecondaryAction>
       </SettingsListItem>
     )

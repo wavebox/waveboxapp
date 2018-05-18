@@ -1,12 +1,17 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Paper, RaisedButton, FlatButton } from 'material-ui' //TODO
-import * as Colors from 'material-ui/styles/colors' //TODO
-import Spinner from 'sharedui/Components/Activity/Spinner'
+import { Paper, Button } from 'material-ui'
+import Spinner from 'wbui/Activity/Spinner'
 import { crextensionStore, crextensionActions } from 'stores/crextension'
 import { userStore } from 'stores/user'
 import electron from 'electron'
+import { withStyles } from 'material-ui/styles'
+import classNames from 'classnames'
+import grey from 'material-ui/colors/grey'
+import lightBlue from 'material-ui/colors/lightBlue'
+import blue from 'material-ui/colors/blue'
+import red from 'material-ui/colors/red'
 
 const styles = {
   // Layout
@@ -40,38 +45,38 @@ const styles = {
   },
   version: {
     fontSize: '13px',
-    color: Colors.grey600,
+    color: grey[600],
     fontWeight: 300
   },
   description: {
     fontSize: '13px',
-    color: Colors.grey400,
+    color: grey[400],
     marginTop: 0,
     marginBottom: 0
   },
   onProLevel: {
-    border: `2px solid ${Colors.lightBlue500}`,
+    border: `2px solid ${lightBlue[500]}`,
     borderRadius: 4,
     display: 'inline-block',
     padding: 4,
     marginTop: 4,
     marginBottom: 4,
-    color: Colors.lightBlue500,
+    color: lightBlue[500],
     fontSize: '14px'
   },
   unknownSource: {
     fontSize: '13px',
-    color: Colors.red400
+    color: red[400]
   },
   link: {
     textDecoration: 'underline',
     fontSize: '12px',
-    color: Colors.blue600,
+    color: blue[600],
     cursor: 'pointer'
   },
   linkSeperator: {
     fontSize: '12px',
-    color: Colors.grey600
+    color: grey[600]
   },
 
   // Actions
@@ -80,7 +85,7 @@ const styles = {
   },
   actionAfterRestart: {
     fontSize: '12px',
-    color: Colors.grey600
+    color: grey[600]
   },
   actionDownload: {
     display: 'inline-block',
@@ -96,11 +101,12 @@ const styles = {
     marginRight: 8
   },
   developerAction: {
-    color: Colors.grey600,
+    color: grey[600],
     textDecoration: 'underline'
   }
 }
 
+@withStyles(styles)
 export default class ExtensionListItem extends React.Component {
   /* **************************************************************************/
   // Class
@@ -248,10 +254,11 @@ export default class ExtensionListItem extends React.Component {
 
   /**
   * Renders the actions
+  * @param classes:
   * @param state: the state to use to render
   * @return jsx
   */
-  renderActions (state) {
+  renderActions (classes, state) {
     const {
       isWaitingInstall,
       isWaitingUninstall,
@@ -266,80 +273,74 @@ export default class ExtensionListItem extends React.Component {
 
     if (isWaitingInstall) {
       return (
-        <div style={styles.actions}>
-          <span style={styles.actionAfterRestart}>Install will complete after restart</span>
+        <div className={classes.actions}>
+          <span className={classes.actionAfterRestart}>Install will complete after restart</span>
         </div>
       )
     } else if (isWaitingUninstall) {
       return (
-        <div style={styles.actions}>
-          <span style={styles.actionAfterRestart}>Uninstall will complete after restart</span>
+        <div className={classes.actions}>
+          <span className={classes.actionAfterRestart}>Uninstall will complete after restart</span>
         </div>
       )
     } else if (isDownloading) {
       return (
-        <div style={styles.actions}>
-          <div style={styles.actionSpinner}>
-            <Spinner size={12} color={Colors.lightBlue600} />
+        <div className={classes.actions}>
+          <div className={classes.actionSpinner}>
+            <Spinner size={12} color={lightBlue[600]} />
           </div>
-          <span style={styles.actionDownload}>Downloading...</span>
+          <span className={classes.actionDownload}>Downloading...</span>
         </div>
       )
     } else if (isWaitingUpdate) {
       return (
-        <div style={styles.actions}>
-          <span style={styles.actionAfterRestart}>Update will complete after restart</span>
+        <div className={classes.actions}>
+          <span className={classes.actionAfterRestart}>Update will complete after restart</span>
         </div>
       )
     } else if (isCheckingUpdate) {
       return (
-        <div style={styles.actions}>
-          <div style={styles.actionSpinner}>
-            <Spinner size={12} color={Colors.lightBlue600} />
+        <div className={classes.actions}>
+          <div className={classes.actionSpinner}>
+            <Spinner size={12} color={lightBlue[600]} />
           </div>
-          <span style={styles.actionDownload}>Checking for updates...</span>
+          <span className={classes.actionDownload}>Checking for updates...</span>
         </div>
       )
     } else if (isInstalled) {
       if (availableToUser) {
         return (
-          <div style={styles.actions}>
-            <RaisedButton
-              onClick={this.handleUninstall}
-              style={styles.action}
-              label='Uninstall' />
+          <div className={classes.actions}>
+            <Button variant='raised' onClick={this.handleUninstall} className={classes.action}>
+              Uninstall
+            </Button>
             {hasOptionsPage ? (
-              <RaisedButton
-                onClick={this.handleOpenOptionsPage}
-                style={styles.action}
-                label='Options' />
+              <Button variant='raised' onClick={this.handleOpenOptionsPage} className={classes.action}>
+                Options
+              </Button>
             ) : undefined}
             {hasBackgroundPage ? (
-              <FlatButton
-                onClick={this.handleInspectBackgroundPage}
-                style={styles.action}
-                labelStyle={styles.developerAction}
-                label='Inspect background page' />
+              <Button onClick={this.handleInspectBackgroundPage} className={classNames(classes.action, classes.developerAction)}>
+                Inspect background page
+              </Button>
             ) : undefined}
           </div>
         )
       } else {
         return (
-          <div style={styles.actions}>
-            <RaisedButton
-              onClick={this.handleUninstall}
-              style={styles.action}
-              label='Uninstall' />
+          <div className={classes.actions}>
+            <Button variant='raised' onClick={this.handleUninstall} className={classes.action}>
+              Uninstall
+            </Button>
           </div>
         )
       }
     } else if (availableToUser) {
       return (
-        <div style={styles.actions}>
-          <RaisedButton
-            label='Install'
-            primary
-            onClick={this.handleInstall} />
+        <div className={classes.actions}>
+          <Button variant='raised' color='primary' onClick={this.handleInstall}>
+            Install
+          </Button>
         </div>
       )
     }
@@ -349,7 +350,8 @@ export default class ExtensionListItem extends React.Component {
     const {
       showRestart,
       extensionId,
-      style,
+      classes,
+      className,
       ...passProps
     } = this.props
     const {
@@ -367,39 +369,39 @@ export default class ExtensionListItem extends React.Component {
     const onProLevel = (availableTo || []).findIndex((l) => l === 'pro') !== -1
 
     return (
-      <Paper {...passProps} style={{...styles.paperContainer, ...style}}>
-        <div style={styles.contentContainer}>
+      <Paper className={classNames(className, classes.paperContainer)} {...passProps}>
+        <div className={classes.contentContainer}>
           <div style={{ ...styles.leftColumn, backgroundImage: `url("${iconUrl}")` }} />
-          <div style={styles.rightColumn}>
-            <div style={styles.info}>
-              <h2 style={styles.name}>
+          <div className={classes.rightColumn}>
+            <div className={classes.info}>
+              <h2 className={classes.name}>
                 {name}
                 {version !== undefined || waveboxVersion !== undefined ? (
-                  <span style={styles.version}>
+                  <span className={classes.version}>
                     {` ${version || '0'}-${waveboxVersion || '0'}`}
                   </span>
                 ) : undefined}
               </h2>
-              <p style={styles.description}>{description}</p>
+              <p className={classes.description}>{description}</p>
               {unknownSource ? (
-                <div style={styles.unknownSource}>Installed from an unknown source</div>
+                <div className={classes.unknownSource}>Installed from an unknown source</div>
               ) : undefined}
               {onProLevel ? (
-                <div style={styles.onProLevel}>
+                <div className={classes.onProLevel}>
                   Pro
                 </div>
               ) : undefined}
               <div>
                 {websiteUrl ? (
-                  <span style={styles.link} onClick={this.handleOpenWebsite}>Website</span>
+                  <span className={classes.link} onClick={this.handleOpenWebsite}>Website</span>
                 ) : undefined}
-                {websiteUrl && licenseUrl ? (<span style={styles.linkSeperator}> | </span>) : undefined}
+                {websiteUrl && licenseUrl ? (<span className={classes.linkSeperator}> | </span>) : undefined}
                 {licenseUrl ? (
-                  <span style={styles.link} onClick={this.handleOpenLicense}>License</span>
+                  <span className={classes.link} onClick={this.handleOpenLicense}>License</span>
                 ) : undefined}
               </div>
             </div>
-            {this.renderActions(this.state)}
+            {this.renderActions(classes, this.state)}
           </div>
         </div>
       </Paper>

@@ -3,18 +3,10 @@ import React from 'react'
 import { List, Paper } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from 'material-ui/styles'
-import classNames from 'classnames'
 import grey from 'material-ui/colors/grey'
+import SettingsListContainer from './SettingsListContainer'
 
 const styles = {
-  root: {
-    maxWidth: 500,
-    display: 'block',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    marginTop: 12,
-    marginBottom: 12
-  },
   title: {
     marginTop: 20,
     marginBottom: 10
@@ -51,10 +43,10 @@ export default class SettingsListSection extends React.Component {
   }
 
   render () {
-    const { classes, title, subtitle, className, children, ...passProps } = this.props
+    const { classes, title, subtitle, children, ...passProps } = this.props
 
     return (
-      <div className={classNames(classes.root, className)} {...passProps}>
+      <SettingsListContainer {...passProps}>
         <h3 className={classes.title}>
           <span className={classes.titleText}>{title}</span>
           {subtitle ? (
@@ -66,7 +58,7 @@ export default class SettingsListSection extends React.Component {
             {children}
           </List>
         </Paper>
-      </div>
+      </SettingsListContainer>
     )
   }
 }

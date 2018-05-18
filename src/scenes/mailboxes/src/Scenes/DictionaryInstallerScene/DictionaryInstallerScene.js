@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Dialog } from 'material-ui' //TODO
+import { Dialog, DialogTitle, DialogContent } from 'material-ui'
 import dictionariesStore from 'stores/dictionaries/dictionariesStore'
 import DictionaryInstallStepper from './DictionaryInstallStepper'
 
@@ -49,13 +49,13 @@ export default class DictionaryInstallerScene extends React.Component {
   render () {
     const { installId } = this.state
     return (
-      <Dialog
-        modal
-        title='Install Dictionary'
-        open>
-        {installId ? (
-          <DictionaryInstallStepper key={installId} />
-        ) : undefined}
+      <Dialog disableBackdropClick disableEscapeKeyDown open>
+        <DialogTitle>Install Dictionary</DialogTitle>
+        <DialogContent>
+          {installId ? (
+            <DictionaryInstallStepper key={installId} />
+          ) : undefined}
+        </DialogContent>
       </Dialog>
     )
   }

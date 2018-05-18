@@ -1,14 +1,11 @@
 import React from 'react'
 import dictionariesStore from 'stores/dictionaries/dictionariesStore'
 import dictionariesActions from 'stores/dictionaries/dictionariesActions'
-import {
-  Stepper, Step, StepLabel, StepContent,
-  RaisedButton, FlatButton,
-  SelectField, MenuItem
-} from 'material-ui' //TODO
 import electron from 'electron'
-import Spinner from 'sharedui/Components/Activity/Spinner'
-import * as Colors from 'material-ui/styles/colors' //TODO
+import Spinner from 'wbui/Activity/Spinner'
+import { withStyles } from 'material-ui/styles'
+import { Stepper, Step, StepLabel, StepContent, Button, FormControl, InputLabel, Select, MenuItem } from 'material-ui'
+import lightBlue from 'material-ui/colors/lightBlue'
 
 const STEPS = {
   PICK: 0,
@@ -17,6 +14,19 @@ const STEPS = {
   FINISH: 3
 }
 
+const styles = {
+  root: {
+    width: 500
+  },
+  button: {
+    margin: 8
+  },
+  spinner: {
+    marginLeft: 16
+  }
+}
+
+@withStyles(styles)
 export default class DictionaryInstallStepper extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
@@ -84,9 +94,9 @@ export default class DictionaryInstallStepper extends React.Component {
   /**
   * Progress the user when they pick their language
   */
-  handlePickLanguage = (evt, index, value) => {
-    if (value !== null) {
-      dictionariesActions.pickDictionaryInstallLanguage(this.state.installId, value)
+  handlePickLanguage = (evt) => {
+    if (evt.target.value !== null && evt.target.value !== 'null') {
+      dictionariesActions.pickDictionaryInstallLanguage(this.state.installId, evt.target.value)
     }
   }
 
@@ -101,6 +111,7 @@ export default class DictionaryInstallStepper extends React.Component {
   * Handles cancelling the install
   */
   handleCancel = () => {
+    window.location.hash = '/'
     dictionariesActions.stopDictionaryInstall()
   }
 
@@ -108,6 +119,7 @@ export default class DictionaryInstallStepper extends React.Component {
   * Handles completing the install
   */
   handleComplete = () => {
+    window.location.hash = '/'
     dictionariesActions.completeDictionaryInstall()
   }
 
@@ -116,30 +128,29 @@ export default class DictionaryInstallStepper extends React.Component {
   /* **************************************************************************/
 
   render () {
+    const { classes } = this.props
     const { stepIndex, installLanguageInfo, uninstallDictionaries } = this.state
 
     return (
-      <Stepper activeStep={stepIndex} orientation='vertical'>
+      <Stepper className={classes.root} activeStep={stepIndex} orientation='vertical'>
         <Step>
           <StepLabel>Pick Language</StepLabel>
           <StepContent>
-            <SelectField
-              floatingLabelText='Pick the dictionary to install'
-              fullWidth
-              onChange={this.handlePickLanguage}>
-              {[null].concat(uninstallDictionaries).map((info) => {
-                if (info === null) {
-                  return (<MenuItem key='null' value={null} primaryText='' />)
-                } else {
-                  return (<MenuItem key={info.lang} value={info.lang} primaryText={info.name} />)
-                }
-              })}
-            </SelectField>
-            <FlatButton
-              label='Cancel'
-              disableTouchRipple
-              disableFocusRipple
-              onClick={this.handleCancel} />
+            <FormControl fullWidth>
+              <InputLabel>Pick the dictionary to install</InputLabel>
+              <Select value='null' onChange={this.handlePickLanguage} >
+                {['null'].concat(uninstallDictionaries).map((info) => {
+                  if (info === 'null') {
+                    return (<MenuItem key='null' value={'null'} />)
+                  } else {
+                    return (<MenuItem key={info.lang} value={info.lang}>{info.name}</MenuItem>)
+                  }
+                })}
+              </Select>
+            </FormControl>
+            <Button className={classes.button} onClick={this.handleCancel}>
+              Cancel
+            </Button>
           </StepContent>
         </Step>
         <Step>
@@ -150,26 +161,20 @@ export default class DictionaryInstallStepper extends React.Component {
               <a href={(installLanguageInfo || {}).license} onClick={(evt) => { evt.preventDefault(); electron.remote.shell.openExternal(installLanguageInfo.license) }}>license</a>
               <span> of the <strong>{(installLanguageInfo || {}).name}</strong> dictionary</span>
             </p>
-            <RaisedButton
-              label='Next'
-              disableTouchRipple
-              disableFocusRipple
-              primary
-              onClick={this.handleAgreeLicense}
-              style={{marginRight: 12}} />
-            <FlatButton
-              label='Cancel'
-              disableTouchRipple
-              disableFocusRipple
-              onClick={this.handleCancel} />
+            <Button variant='raised' color='primary' className={classes.button} onClick={this.handleAgreeLicense}>
+              Next
+            </Button>
+            <Button className={classes.button} onClick={this.handleCancel}>
+              Cancel
+            </Button>
           </StepContent>
         </Step>
         <Step>
           <StepLabel>Download</StepLabel>
           <StepContent>
             <p>Downloading <strong>{(installLanguageInfo || {}).name}</strong></p>
-            <div style={{ paddingLeft: 16 }}>
-              <Spinner size={30} color={Colors.lightBlue600} speed={0.75} />
+            <div className={classes.spinner}>
+              <Spinner size={30} color={lightBlue[600]} speed={0.75} />
             </div>
           </StepContent>
         </Step>
@@ -181,12 +186,9 @@ export default class DictionaryInstallStepper extends React.Component {
               <strong>{(installLanguageInfo || {}).name}</strong>
               <span> dictionary has been downloaded and installed.</span>
             </p>
-            <RaisedButton
-              label='Done'
-              disableTouchRipple
-              disableFocusRipple
-              primary
-              onClick={this.handleComplete} />
+            <Button variant='raised' color='primary' className={classes.button} onClick={this.handleCancel}>
+              Done
+            </Button>
           </StepContent>
         </Step>
       </Stepper>

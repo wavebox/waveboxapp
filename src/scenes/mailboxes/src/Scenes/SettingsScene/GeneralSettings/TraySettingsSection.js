@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { TrayIconEditor } from 'Components/Tray'
-import { TextField, Icon } from 'material-ui'
+import { Icon } from 'material-ui'
 import settingsActions from 'stores/settings/settingsActions'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
@@ -18,6 +18,7 @@ import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListSwitch from 'wbui/SettingsListSwitch'
 import SettingsListSelect from 'wbui/SettingsListSelect'
 import SettingsListItem from 'wbui/SettingsListItem'
+import SettingsListTextField from 'wbui/SettingsListTextField'
 import { withStyles } from 'material-ui/styles'
 import blue from 'material-ui/colors/blue'
 import classNames from 'classnames'
@@ -32,6 +33,12 @@ const styles = {
     color: blue[700],
     fontSize: '85%',
     marginRight: 5
+  },
+  trayIconEditor: {
+
+  },
+  trayIconEditorTitle: {
+    fontSize: '85%'
   }
 }
 
@@ -113,31 +120,29 @@ export default class TraySettingsSection extends React.Component {
           <SettingsListSelect
             label='DPI Multiplier'
             disabled={!tray.show}
-            value={`${tray.dpiMultiplier}`}
+            value={tray.dpiMultiplier}
             options={[
-              { value: '1', label: '1x' },
-              { value: '2', label: '2x' },
-              { value: '3', label: '3x' },
-              { value: '4', label: '4x' },
-              { value: '5', label: '5x' }
+              { value: 1, label: '1x' },
+              { value: 2, label: '2x' },
+              { value: 3, label: '3x' },
+              { value: 4, label: '4x' },
+              { value: 5, label: '5x' }
             ]}
-            onChange={(evt, value) => settingsActions.sub.tray.setDpiMultiplier(parseInt(value))} />
-          <SettingsListItem>
-            <TextField
-              defaultValue={tray.iconSize}
-              type='number'
-              InputLabelProps={{ shrink: true }}
-              disabled={!tray.show}
-              label={`Icon Size (Pixels) ${IS_GTK_PLATFORM && tray.gtkUpdateMode === GTK_UPDATE_MODES.STATIC ? ' (Requires Restart)' : ''}`}
-              placeholder='32'
-              margin='dense'
-              onBlur={(evt) => {
+            onChange={(evt, value) => settingsActions.sub.tray.setDpiMultiplier(value)} />
+          <SettingsListTextField
+            label={`Icon Size (Pixels) ${IS_GTK_PLATFORM && tray.gtkUpdateMode === GTK_UPDATE_MODES.STATIC ? ' (Requires Restart)' : ''}`}
+            disabled={!tray.show}
+            textFieldProps={{
+              defaultValue: tray.iconSize,
+              type: 'number',
+              placeholder: '32',
+              onBlur: (evt) => {
                 settingsActions.sub.tray.setTrayIconSize(evt.target.value)
                 if (IS_GTK_PLATFORM && tray.gtkUpdateMode === GTK_UPDATE_MODES.STATIC) {
                   showRestart()
                 }
-              }} />
-          </SettingsListItem>
+              }
+            }} />
           <SettingsListSelect
             label='Popout screen position'
             secondary={IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
@@ -210,8 +215,12 @@ export default class TraySettingsSection extends React.Component {
               }
             ]}
             onChange={(evt, value) => settingsActions.sub.tray.setPopoutPosition(value)} />
-          <SettingsListItem divider={false}>
-            <TrayIconEditor tray={tray} />
+          <SettingsListItem className={classes.trayIconEditor} divider={false}>
+            <TrayIconEditor
+              tray={tray}
+              buttonProps={{ size: 'small' }}
+              trayHeadingClassName={classes.trayIconEditorTitle}
+            />
           </SettingsListItem>
         </SettingsListSection>
         <SettingsListSection title={process.platform === 'darwin' ? 'Menu Bar' : 'Tray'} subtitle='Mouse Actions'>
