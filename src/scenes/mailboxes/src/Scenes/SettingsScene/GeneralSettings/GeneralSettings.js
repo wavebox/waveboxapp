@@ -23,9 +23,21 @@ import classNames from 'classnames'
 import uuid from 'uuid'
 import { List, ListItem, Paper } from '@material-ui/core'
 import lightBlue from '@material-ui/core/colors/lightBlue'
+import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
+import NotificationsIcon from '@material-ui/icons/Notifications'
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
+import LanguageIcon from '@material-ui/icons/Language'
+import ComputerIcon from '@material-ui/icons/Computer'
+import AdjustIcon from '@material-ui/icons/Adjust'
+import KeyboardIcon from '@material-ui/icons/Keyboard'
+import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt'
+import StorageIcon from '@material-ui/icons/Storage'
+import BuildIcon from '@material-ui/icons/Build'
+import BugReportIcon from '@material-ui/icons/BugReport'
+import HelpIcon from '@material-ui/icons/Help'
 
 const CONTENT_WIDTH = 600
-const SCROLLSPY_WIDTH = 160
+const SCROLLSPY_WIDTH = 210
 
 const styles = {
   root: {
@@ -42,6 +54,7 @@ const styles = {
     left: 0,
     bottom: 0,
     right: 0,
+    paddingBottom: 100,
     ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
   },
   scrollspy: {
@@ -55,10 +68,15 @@ const styles = {
     paddingBottom: 0
   },
   scrollspyItem: {
+    fontSize: 14,
+
     '&.is-current': {
       backgroundColor: lightBlue[600],
       color: 'white'
     }
+  },
+  scrollspyIcon: {
+    marginRight: 6
   },
   [`@media (max-width: ${CONTENT_WIDTH + (2 * SCROLLSPY_WIDTH)}px)`]: {
     scroller: {
@@ -279,22 +297,28 @@ class GeneralSettings extends React.Component {
               <ListItem
                 divider
                 button
+                dense
                 className={classes.scrollspyItem}
                 onClick={(evt) => this.scrollToSection(evt, 'section-ui')}>
+                <ViewQuiltIcon className={classes.scrollspyIcon} />
                 User Interface
               </ListItem>
               <ListItem
                 divider
                 button
+                dense
                 className={classes.scrollspyItem}
                 onClick={(evt) => this.scrollToSection(evt, 'section-notifications')}>
+                <NotificationsIcon className={classes.scrollspyIcon} />
                 Notifications
               </ListItem>
               <ListItem
                 divider
                 button
+                dense
                 className={classes.scrollspyItem}
                 onClick={(evt) => this.scrollToSection(evt, 'section-download')}>
+                <CloudDownloadIcon className={classes.scrollspyIcon} />
                 Download
               </ListItem>
               <ListItem
@@ -302,13 +326,16 @@ class GeneralSettings extends React.Component {
                 button
                 className={classes.scrollspyItem}
                 onClick={(evt) => this.scrollToSection(evt, 'section-language')}>
+                <LanguageIcon className={classes.scrollspyIcon} />
                 Language
               </ListItem>
               <ListItem
                 divider
                 button
+                dense
                 className={classes.scrollspyItem}
                 onClick={(evt) => this.scrollToSection(evt, 'section-platform')}>
+                <ComputerIcon className={classes.scrollspyIcon} />
                 Platform
               </ListItem>
               <ListItem
@@ -316,27 +343,33 @@ class GeneralSettings extends React.Component {
                 button
                 className={classes.scrollspyItem}
                 onClick={(evt) => this.scrollToSection(evt, 'section-tray')}>
+                <AdjustIcon className={classes.scrollspyIcon} />
                 Tray
               </ListItem>
               <ListItem
                 divider
                 button
+                dense
                 className={classes.scrollspyItem}
                 onClick={(evt) => this.scrollToSection(evt, 'section-accelerators')}>
-                Accelerators
+                <KeyboardIcon className={classes.scrollspyIcon} />
+                Keyboard Shortcuts
               </ListItem>
               <ListItem
                 divider
                 button
                 className={classes.scrollspyItem}
                 onClick={(evt) => this.scrollToSection(evt, 'section-update')}>
+                <SystemUpdateAltIcon className={classes.scrollspyIcon} />
                 Update
               </ListItem>
               <ListItem
                 divider
                 button
+                dense
                 className={classes.scrollspyItem}
                 onClick={(evt) => this.scrollToSection(evt, 'section-data')}>
+                <StorageIcon className={classes.scrollspyIcon} />
                 Data
               </ListItem>
               <ListItem
@@ -344,19 +377,23 @@ class GeneralSettings extends React.Component {
                 button
                 className={classes.scrollspyItem}
                 onClick={(evt) => this.scrollToSection(evt, 'section-advanced')}>
+                <BuildIcon className={classes.scrollspyIcon} />
                 Advanced
               </ListItem>
               <ListItem
                 divider
                 button
+                dense
                 className={classes.scrollspyItem}
                 onClick={(evt) => this.scrollToSection(evt, 'section-debug')}>
+                <BugReportIcon className={classes.scrollspyIcon} />
                 Debug
               </ListItem>
               <ListItem
                 button
                 className={classes.scrollspyItem}
                 onClick={(evt) => this.scrollToSection(evt, 'section-about')}>
+                <HelpIcon className={classes.scrollspyIcon} />
                 About
               </ListItem>
             </Scrollspy>

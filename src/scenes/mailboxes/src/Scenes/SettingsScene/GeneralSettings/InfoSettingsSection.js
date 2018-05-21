@@ -6,6 +6,7 @@ import pkg from 'package.json'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItem from 'wbui/SettingsListItem'
 import { ListItemText } from '@material-ui/core'
+import HelpIcon from '@material-ui/icons/Help'
 
 export default class InfoSettingsSection extends React.Component {
   /* **************************************************************************/
@@ -19,7 +20,7 @@ export default class InfoSettingsSection extends React.Component {
   render () {
     const wireConfigVersion = userStore.getState().wireConfigVersion()
     return (
-      <SettingsListSection title='About'>
+      <SettingsListSection icon={<HelpIcon />} title='About' {...this.props}>
         {pkg.earlyBuildId ? (
           <SettingsListItem>
             <ListItemText primary={'Early Build Reference'} secondary={pkg.earlyBuildId} />

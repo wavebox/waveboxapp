@@ -7,6 +7,7 @@ import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListSwitch from 'wbui/SettingsListSwitch'
 import SettingsListSelect from 'wbui/SettingsListSelect'
 import SettingsListKeyboardShortcutText from 'wbui/SettingsListKeyboardShortcutText'
+import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
 
 export default class UISettingsSection extends React.Component {
   /* **************************************************************************/
@@ -41,7 +42,7 @@ export default class UISettingsSection extends React.Component {
 
     return (
       <div {...passProps}>
-        <SettingsListSection title='User Interface'>
+        <SettingsListSection title='User Interface' icon={<ViewQuiltIcon />}>
           <SettingsListSwitch
             label='Show app unread badge'
             onChange={(evt, toggled) => settingsActions.sub.ui.setShowAppBadge(toggled)}
@@ -93,7 +94,7 @@ export default class UISettingsSection extends React.Component {
             onChange={(evt, value) => settingsActions.sub.ui.setAccountTooltipMode(value)} />
         </SettingsListSection>
 
-        <SettingsListSection title='User Interface' subtitle='Sidebar'>
+        <SettingsListSection title='User Interface' subtitle='Sidebar' icon={<ViewQuiltIcon />}>
           <SettingsListSwitch
             label={(
               <span>
@@ -119,7 +120,7 @@ export default class UISettingsSection extends React.Component {
             onChange={(evt, value) => settingsActions.sub.ui.setShowSidebarNewsfeed(value)} />
         </SettingsListSection>
 
-        <SettingsListSection title='User Interface' subtitle='Titlebar'>
+        <SettingsListSection title='User Interface' subtitle='Titlebar' icon={<ViewQuiltIcon />}>
           <SettingsListSwitch
             label='Show titlebar (Requires Restart)'
             onChange={(evt, toggled) => {
@@ -149,7 +150,7 @@ export default class UISettingsSection extends React.Component {
             checked={ui.showTitlebarAccount} />
         </SettingsListSection>
 
-        <SettingsListSection title='User Interface' subtitle='Toolbar'>
+        <SettingsListSection title='User Interface' subtitle='Toolbar' icon={<ViewQuiltIcon />}>
           <SettingsListSwitch
             label='Show extensions in toolbar'
             onChange={(evt, toggled) => settingsActions.sub.extension.setShowBrowserActionsInToolbar(toggled)}

@@ -6,22 +6,9 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import SettingsListContainer from './SettingsListContainer'
 import grey from '@material-ui/core/colors/grey'
+import SettingsListSectionTitle from './SettingsListSectionTitle'
 
 const styles = {
-  title: {
-    marginTop: 20,
-    marginBottom: 10
-  },
-  titleText: {
-    color: grey[800],
-    fontSize: 16
-  },
-  subtitleText: {
-    color: grey[700],
-    fontSize: 14,
-    marginLeft: 6,
-    fontWeight: 'normal'
-  },
   panelSummary: {
     minHeight: 36,
     fontSize: '0.8125rem'
@@ -54,8 +41,7 @@ class SettingsListAccordionDeferred extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    title: PropTypes.node.isRequired,
-    subtitle: PropTypes.node,
+    ...SettingsListSectionTitle.propTypes,
     panels: PropTypes.array
   }
 
@@ -126,18 +112,14 @@ class SettingsListAccordionDeferred extends React.Component {
       panels,
       title,
       subtitle,
+      icon,
       ...passProps
     } = this.props
     const { expanded, expandedRender } = this.state
 
     return (
       <SettingsListContainer {...passProps}>
-        <h3 className={classes.title}>
-          <span className={classes.titleText}>{title}</span>
-          {subtitle ? (
-            <span className={classes.subtitleText}>{subtitle}</span>
-          ) : undefined}
-        </h3>
+        <SettingsListSectionTitle title={title} subtitle={subtitle} icon={icon} />
         {panels.map((panel, index) => {
           const panelId = `panel-${index}`
           const isExpanded = expanded === panelId

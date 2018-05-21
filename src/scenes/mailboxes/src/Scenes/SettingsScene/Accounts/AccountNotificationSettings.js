@@ -188,7 +188,7 @@ class AccountNotificationSettings extends React.Component {
         {service.supportsNativeNotifications ? (
           <SettingsListButton
             label='Test Notification'
-            IconClass={PlayArrowIcon}
+            icon={<PlayArrowIcon />}
             disabled={!service.showNotifications}
             onClick={this.sendTestNotification} />
         ) : undefined}

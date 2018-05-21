@@ -10,6 +10,7 @@ import SettingsBackupRestoreIcon from '@material-ui/icons/SettingsBackupRestore'
 import { withStyles } from '@material-ui/core/styles'
 import { ListItemText, TextField, IconButton, ListItemSecondaryAction, Tooltip } from '@material-ui/core'
 import blue from '@material-ui/core/colors/blue'
+import KeyboardIcon from '@material-ui/icons/Keyboard'
 
 const ACCELERATOR_NAMES = {
   // Global
@@ -244,6 +245,7 @@ class AcceleratorSettingsSection extends React.Component {
     return (
       <SettingsListAccordionDeferred
         title='Keyboard Shortcuts'
+        icon={<KeyboardIcon />}
         {...passProps}
         panels={SECTIONS.map((section) => {
           return {

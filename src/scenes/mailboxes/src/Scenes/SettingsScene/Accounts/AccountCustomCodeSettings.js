@@ -47,7 +47,7 @@ class AccountCustomCodeSettings extends React.Component {
       <SettingsListSection title='Custom Code & Userscripts' {...passProps}>
         <SettingsListButton
           label='Custom CSS'
-          IconClass={CodeIcon}
+          icon={<CodeIcon />}
           onClick={() => {
             onRequestEditCustomCode('Custom CSS', service.customCSS, (code) => {
               mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setCustomCSS, code)
@@ -56,7 +56,7 @@ class AccountCustomCodeSettings extends React.Component {
           }} />
         <SettingsListButton
           label='Custom JS'
-          IconClass={CodeIcon}
+          icon={<CodeIcon />}
           onClick={() => {
             onRequestEditCustomCode('Custom JS', service.customJS, (code) => {
               mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setCustomJS, code)

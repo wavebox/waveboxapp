@@ -52,7 +52,7 @@ class AccountDestructiveSettings extends React.Component {
         {mailbox.supportsAuth ? (
           <SettingsListButton
             label='Reauthenticate'
-            IconClass={LockOutlineIcon}
+            icon={<LockOutlineIcon />}
             onClick={() => mailboxActions.reauthenticateMailbox(mailbox.id)} />
         ) : undefined}
         <SettingsListItem>
@@ -77,7 +77,7 @@ class AccountDestructiveSettings extends React.Component {
         <SettingsListButton
           className={classes.deleteButton}
           label='Delete this account'
-          IconClass={DeleteIcon}
+          icon={<DeleteIcon />}
           onClick={() => { window.location.hash = `/mailbox_delete/${mailbox.id}` }} />
       </SettingsListSection>
     )

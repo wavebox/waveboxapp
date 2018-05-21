@@ -4,17 +4,15 @@ import platformActions from 'stores/platform/platformActions'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListSwitch from 'wbui/SettingsListSwitch'
-import SettingsListItem from 'wbui/SettingsListItem'
 import { withStyles } from '@material-ui/core/styles'
 import green from '@material-ui/core/colors/green'
-import { Button, Menu, MenuItem } from '@material-ui/core'
+import { Menu, MenuItem } from '@material-ui/core'
 import CheckIcon from '@material-ui/icons/Check'
+import ComputerIcon from '@material-ui/icons/Computer'
+import SettingsListButton from 'wbui/SettingsListButton'
 
 const styles = {
   beenSetIcon: {
-    marginRight: 6,
-    height: 18,
-    width: 18,
     color: green[600]
   }
 }
@@ -102,7 +100,7 @@ class PlatformSettingsSection extends React.Component {
     if (!mailtoLinkHandlerSupported && !openAtLoginSupported) { return null }
 
     return (
-      <SettingsListSection title='Platform' {...passProps}>
+      <SettingsListSection title='Platform' icon={<ComputerIcon />} {...passProps}>
         {mailtoLinkHandlerSupported ? (
           <SettingsListSwitch
             label='Handle mailto links'
@@ -110,14 +108,11 @@ class PlatformSettingsSection extends React.Component {
             checked={isMailtoLinkHandler} />
         ) : undefined}
         {openAtLoginSupported ? (
-          <SettingsListItem divider={false}>
-            <Button
-              size='small'
-              variant='raised'
-              onClick={(evt) => this.setState({ openLoginPopoverAnchor: evt.target })}>
-              {openLoginHasBeenSet ? <CheckIcon className={classes.beenSetIcon} /> : undefined}
-              {openLoginHasBeenSet ? 'All Set' : 'System Startup Settings'}
-            </Button>
+          <SettingsListButton
+            divider={false}
+            label={openLoginHasBeenSet ? 'All Set' : 'System Startup Settings'}
+            icon={openLoginHasBeenSet ? <CheckIcon className={classes.beenSetIcon} /> : undefined}
+            onClick={(evt) => this.setState({ openLoginPopoverAnchor: evt.target })}>
             <Menu
               anchorEl={openLoginPopoverAnchor}
               open={!!openLoginPopoverAnchor}
@@ -132,7 +127,7 @@ class PlatformSettingsSection extends React.Component {
                 Open hidden at System Startup
               </MenuItem>
             </Menu>
-          </SettingsListItem>
+          </SettingsListButton>
         ) : undefined}
       </SettingsListSection>
     )

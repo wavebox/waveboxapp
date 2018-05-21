@@ -22,6 +22,7 @@ import SettingsListTextField from 'wbui/SettingsListTextField'
 import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
 import classNames from 'classnames'
+import AdjustIcon from '@material-ui/icons/Adjust'
 
 const styles = {
   inputHelpTextInfo: {
@@ -78,7 +79,9 @@ class TraySettingsSection extends React.Component {
 
     return (
       <div {...passProps}>
-        <SettingsListSection title={process.platform === 'darwin' ? 'Menu Bar' : 'Tray'}>
+        <SettingsListSection
+          title={process.platform === 'darwin' ? 'Menu Bar' : 'Tray'}
+          icon={<AdjustIcon />}>
           <SettingsListSwitch
             label='Show icon'
             onChange={(evt, toggled) => settingsActions.sub.tray.setShowTrayIcon(toggled)}
@@ -223,7 +226,10 @@ class TraySettingsSection extends React.Component {
             />
           </SettingsListItem>
         </SettingsListSection>
-        <SettingsListSection title={process.platform === 'darwin' ? 'Menu Bar' : 'Tray'} subtitle='Mouse Actions'>
+        <SettingsListSection
+          title={process.platform === 'darwin' ? 'Menu Bar' : 'Tray'}
+          subtitle='Mouse Actions'
+          icon={<AdjustIcon />}>
           <SettingsListSelect
             label='Click Action'
             secondary={IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (

@@ -9,6 +9,7 @@ import FolderIcon from '@material-ui/icons/Folder'
 import { Button, ListItemText, ListItemSecondaryAction, Switch } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import grey from '@material-ui/core/colors/grey'
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
 
 const styles = {
   buttonIcon: {
@@ -63,12 +64,13 @@ class DownloadSettingsSection extends React.Component {
     const {os, classes, ...passProps} = this.props
 
     return (
-      <SettingsListSection title='Downloads' {...passProps}>
+      <SettingsListSection title='Downloads' icon={<CloudDownloadIcon />} {...passProps}>
         <SettingsListItem className={classes.downloadLocationItem}>
           <ListItemText primary='Always ask download location' />
           <div>
             <Button
               size='small'
+              variant='raised'
               className={classes.fileInputButton}
               disabled={!os.alwaysAskDownloadLocation}>
               <FolderIcon className={classes.buttonIcon} />

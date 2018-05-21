@@ -12,7 +12,8 @@ import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import { withStyles } from '@material-ui/core/styles'
 import ConfirmButton from 'wbui/ConfirmButton'
 import blue from '@material-ui/core/colors/blue'
-import { Button } from '@material-ui/core'
+import StorageIcon from '@material-ui/icons/Storage'
+import SettingsListButton from 'wbui/SettingsListButton'
 import {
   WB_CLEAN_EXPIRED_SESSIONS,
   WB_TAKEOUT_IMPORT,
@@ -57,7 +58,7 @@ class DataSettingsSection extends React.Component {
     const { showRestart, classes, ...passProps } = this.props
 
     return (
-      <SettingsListSection {...passProps} title='Data'>
+      <SettingsListSection {...passProps} title='Data' icon={<StorageIcon />}>
         <SettingsListItem className={classes.listItem}>
           <ConfirmButton
             variant='raised'
@@ -104,18 +105,19 @@ class DataSettingsSection extends React.Component {
               ipcRenderer.send(WB_CLEAN_EXPIRED_SESSIONS, {})
             }} />
         </SettingsListItem>
-        <SettingsListItem className={classes.listItem}>
-          <Button variant='raised' size='small' onClick={() => ipcRenderer.send(WB_TAKEOUT_EXPORT)}>
-            <ImportExportIcon className={classes.buttonIcon} />
-            Export Data
-          </Button>
-        </SettingsListItem>
-        <SettingsListItem className={classes.listItem} divider={false}>
-          <Button variant='raised' size='small' onClick={() => ipcRenderer.send(WB_TAKEOUT_IMPORT)}>
-            <ImportExportIcon className={classes.buttonIcon} />
-            Import Data
-          </Button>
-        </SettingsListItem>
+        <SettingsListButton
+          label='Export Data'
+          icon={<ImportExportIcon />}
+          onClick={() => {
+            ipcRenderer.send(WB_TAKEOUT_EXPORT)
+          }} />
+        <SettingsListButton
+          label='Import Data'
+          divider={false}
+          icon={<ImportExportIcon />}
+          onClick={() => {
+            ipcRenderer.send(WB_TAKEOUT_IMPORT)
+          }} />
       </SettingsListSection>
     )
   }

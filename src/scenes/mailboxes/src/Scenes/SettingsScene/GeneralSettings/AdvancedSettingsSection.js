@@ -7,20 +7,15 @@ import DistributionConfig from 'Runtime/DistributionConfig'
 import { AppSettings } from 'shared/Models/Settings'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListSwitch from 'wbui/SettingsListSwitch'
-import SettingsListItem from 'wbui/SettingsListItem'
 import { withStyles } from '@material-ui/core/styles'
 import WarningIcon from '@material-ui/icons/Warning'
 import CodeIcon from '@material-ui/icons/Code'
 import grey from '@material-ui/core/colors/grey'
 import amber from '@material-ui/core/colors/amber'
-import { Button } from '@material-ui/core'
+import SettingsListButton from 'wbui/SettingsListButton'
+import BuildIcon from '@material-ui/icons/Build'
 
 const styles = {
-  buttonIcon: {
-    marginRight: 6,
-    height: 18,
-    width: 18
-  },
   extraInfo: {
     fontSize: '75%',
     color: grey[700]
@@ -83,7 +78,7 @@ class AdvancedSettingsSection extends React.Component {
     } = this.state
 
     return (
-      <SettingsListSection {...passProps} title='Advanced'>
+      <SettingsListSection {...passProps} title='Advanced' icon={<BuildIcon />}>
         <SettingsListSwitch
           label='Ignore GPU Blacklist (Requires Restart)'
           onChange={(evt, toggled) => {
@@ -163,21 +158,22 @@ class AdvancedSettingsSection extends React.Component {
             settingsActions.sub.app.setEnableWindowOpeningEngine(toggled)
           }}
           checked={app.enableWindowOpeningEngine} />
-        <SettingsListItem divider={false}>
-          <Button size='small' variant='raised' onClick={() => this.setState({ customCSSEditorOpen: true })}>
-            <CodeIcon className={classes.buttonIcon} />
-            Main Window Custom CSS
-          </Button>
-          <CustomStylesEditingDialog
-            title='Main Window Custom CSS'
-            open={customCSSEditorOpen}
-            code={ui.customMainCSS}
-            onCancel={() => this.setState({ customCSSEditorOpen: false })}
-            onSave={(evt, css) => {
-              this.setState({ customCSSEditorOpen: false })
-              settingsActions.sub.ui.setCustomMainCSS(css)
-            }} />
-        </SettingsListItem>
+        <SettingsListButton
+          divider={false}
+          label='Main Window Custom CSS'
+          icon={<CodeIcon />}
+          onClick={() => {
+            this.setState({ customCSSEditorOpen: true })
+          }} />
+        <CustomStylesEditingDialog
+          title='Main Window Custom CSS'
+          open={customCSSEditorOpen}
+          code={ui.customMainCSS}
+          onCancel={() => this.setState({ customCSSEditorOpen: false })}
+          onSave={(evt, css) => {
+            this.setState({ customCSSEditorOpen: false })
+            settingsActions.sub.ui.setCustomMainCSS(css)
+          }} />
       </SettingsListSection>
     )
   }

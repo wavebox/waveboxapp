@@ -4,7 +4,7 @@ import Timeago from 'react-timeago'
 import settingsActions from 'stores/settings/settingsActions'
 import shallowCompare from 'react-addons-shallow-compare'
 import { NotificationPlatformSupport, NotificationService } from 'Notifications'
-import { Button, MenuItem, Menu, ListItemIcon, Divider } from '@material-ui/core'
+import { MenuItem, Menu, ListItemIcon, Divider } from '@material-ui/core'
 import {
   NOTIFICATION_PROVIDERS,
   NOTIFICATION_SOUNDS
@@ -12,19 +12,14 @@ import {
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListSwitch from 'wbui/SettingsListSwitch'
 import SettingsListSelect from 'wbui/SettingsListSelect'
-import SettingsListItem from 'wbui/SettingsListItem'
 import { withStyles } from '@material-ui/core/styles'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import NotificationsIcon from '@material-ui/icons/Notifications'
 import NotificationsPausedIcon from '@material-ui/icons/NotificationsPaused'
 import classNames from 'classnames'
+import SettingsListButton from 'wbui/SettingsListButton'
 
 const styles = {
-  buttonIcon: {
-    marginRight: 6,
-    height: 18,
-    width: 18
-  },
   notificationMenuItem: {
     paddingTop: 4,
     paddingBottom: 4,
@@ -162,17 +157,10 @@ class NotificationSettingsSection extends React.Component {
   renderMute (classes, os) {
     const { notificationMenuAnchor } = this.state
     return (
-      <SettingsListItem>
-        <Button
-          size='small'
-          onClick={(evt) => this.setState({ notificationMenuAnchor: evt.target })}>
-          {os.notificationsMuted ? (
-            <NotificationsPausedIcon className={classes.buttonIcon} />
-          ) : (
-            <NotificationsIcon className={classes.buttonIcon} />
-          )}
-          {os.notificationsMuted ? ('Notifications muted') : ('Mute notifications')}
-        </Button>
+      <SettingsListButton
+        label={os.notificationsMuted ? 'Notifications muted' : 'Mute notifications'}
+        icon={os.notificationsMuted ? (<NotificationsPausedIcon />) : (<NotificationsIcon />)}
+        onClick={(evt) => { this.setState({ notificationMenuAnchor: evt.target }) }}>
         <Menu
           anchorEl={notificationMenuAnchor}
           open={!!notificationMenuAnchor}
@@ -211,7 +199,7 @@ class NotificationSettingsSection extends React.Component {
             </MenuItem>
           ) : undefined}
         </Menu>
-      </SettingsListItem>
+      </SettingsListButton>
     )
   }
 
@@ -222,7 +210,7 @@ class NotificationSettingsSection extends React.Component {
       .filter((provider) => NotificationPlatformSupport.supportsProvider(provider))
 
     return (
-      <SettingsListSection title='Notifications' {...passProps}>
+      <SettingsListSection title='Notifications' icon={<NotificationsIcon />} {...passProps}>
         {validProviders.length > 1 ? (
           <SettingsListSelect
             label='Notification Provider'
@@ -247,12 +235,11 @@ class NotificationSettingsSection extends React.Component {
           checked={!os.notificationsSilent} />
         {this.renderEnhanced(os)}
         {this.renderMute(classes, os)}
-        <SettingsListItem divider={false}>
-          <Button size='small' disabled={!os.notificationsEnabled} onClick={this.sendTestNotification}>
-            <PlayArrowIcon className={classes.buttonIcon} />
-            Test Notification
-          </Button>
-        </SettingsListItem>
+        <SettingsListButton
+          divider={false}
+          label='Test Notification'
+          icon={<PlayArrowIcon />}
+          onClick={this.sendTestNotification} />
       </SettingsListSection>
     )
   }

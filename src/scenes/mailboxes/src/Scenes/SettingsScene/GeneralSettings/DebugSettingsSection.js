@@ -1,21 +1,16 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button } from '@material-ui/core'
 import { settingsActions } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListSwitch from 'wbui/SettingsListSwitch'
 import TimelineIcon from '@material-ui/icons/Timeline'
-import SettingsListItem from 'wbui/SettingsListItem'
 import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
+import BugReportIcon from '@material-ui/icons/BugReport'
+import SettingsListButton from 'wbui/SettingsListButton'
 
 const styles = {
-  buttonIcon: {
-    marginRight: 6,
-    height: 18,
-    width: 18
-  },
   link: {
     color: blue[600],
     textDecoration: 'underline',
@@ -46,7 +41,7 @@ class DebugSettingsSection extends React.Component {
     const { showRestart, app, classes, ...passProps } = this.props
 
     return (
-      <SettingsListSection title='Debug' {...passProps}>
+      <SettingsListSection title='Debug' icon={<BugReportIcon />} {...passProps}>
         <SettingsListSwitch
           label={(
             <span>
@@ -65,12 +60,13 @@ class DebugSettingsSection extends React.Component {
           )}
           onChange={(evt, toggled) => { settingsActions.sub.app.setWriteMetricsLog(toggled) }}
           checked={app.writeMetricsLog} />
-        <SettingsListItem divider={false}>
-          <Button variant='raised' size='small' onClick={() => settingsActions.sub.app.openMetricsMonitor()}>
-            <TimelineIcon className={classes.buttonIcon} />
-            Task Monitor'
-          </Button>
-        </SettingsListItem>
+        <SettingsListButton
+          divider={false}
+          label='Task Monitor'
+          icon={<TimelineIcon />}
+          onClick={() => {
+            settingsActions.sub.app.openMetricsMonitor()
+          }} />
       </SettingsListSection>
     )
   }

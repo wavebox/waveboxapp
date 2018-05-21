@@ -6,17 +6,12 @@ import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListSwitch from 'wbui/SettingsListSwitch'
 import SettingsListSelect from 'wbui/SettingsListSelect'
-import SettingsListItem from 'wbui/SettingsListItem'
+import SettingsListButton from 'wbui/SettingsListButton'
 import { withStyles } from '@material-ui/core/styles'
 import LanguageIcon from '@material-ui/icons/Language'
-import { Button } from '@material-ui/core'
 
 const styles = {
-  buttonIcon: {
-    marginRight: 6,
-    height: 18,
-    width: 18
-  }
+
 }
 
 @withStyles(styles)
@@ -82,7 +77,7 @@ class LanguageSettingsSection extends React.Component {
     }, { availableSecondary: [], unavailbleSecondary: [] })
 
     return (
-      <SettingsListSection title='Language' {...passProps}>
+      <SettingsListSection title='Language' icon={<LanguageIcon />} {...passProps}>
         <SettingsListSwitch
           label='Spellchecking'
           onChange={(evt, toggled) => settingsActions.sub.language.setEnableSpellchecker(toggled)}
@@ -117,16 +112,14 @@ class LanguageSettingsSection extends React.Component {
             })
           )}
           onChange={(evt, value) => settingsActions.sub.language.setSecondarySpellcheckerLanguage(value !== '__none__' ? value : null)} />
-        <SettingsListItem divider={false}>
-          <Button
-            disabled={!language.spellcheckerEnabled}
-            variant='raised'
-            size='small'
-            onClick={() => { dictionariesActions.startDictionaryInstall() }}>
-            <LanguageIcon className={classes.buttonIcon} />
-            Install more Dictionaries
-          </Button>
-        </SettingsListItem>
+        <SettingsListButton
+          divider={false}
+          label='Install more Dictionaries'
+          disabled={!language.spellcheckerEnabled}
+          icon={<LanguageIcon />}
+          onClick={() => {
+            dictionariesActions.startDictionaryInstall()
+          }} />
       </SettingsListSection>
     )
   }

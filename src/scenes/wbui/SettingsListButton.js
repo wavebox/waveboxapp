@@ -1,14 +1,18 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button, ListItemText, ListItemSecondaryAction, Icon } from '@material-ui/core'
+import { Button, ListItemText, ListItemSecondaryAction } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import SettingsListItem from './SettingsListItem'
-import classNames from 'classnames'
 
 const styles = {
-  buttonIcon: {
-    marginRight: 6
+  iconWrap: {
+    display: 'inline-block',
+    marginRight: 6,
+    '&>*': {
+      width: 18,
+      height: 18
+    }
   }
 }
 
@@ -21,10 +25,9 @@ class SettingsListButton extends React.Component {
   static propTypes = {
     label: PropTypes.node.isRequired,
     disabled: PropTypes.bool,
-    onClick: PropTypes.fun,
+    onClick: PropTypes.func,
     buttonProps: PropTypes.object,
-    IconClass: PropTypes.any,
-    iconClassName: PropTypes.string,
+    icon: PropTypes.node,
     primary: PropTypes.node,
     secondary: PropTypes.node
   }
@@ -44,10 +47,10 @@ class SettingsListButton extends React.Component {
       label,
       onClick,
       buttonProps,
-      IconClass,
-      iconClassName,
+      icon,
       primary,
       secondary,
+      children,
       ...passProps
     } = this.props
 
@@ -58,12 +61,10 @@ class SettingsListButton extends React.Component {
         disabled={disabled}
         onClick={onClick}
         {...buttonProps}>
-        {IconClass || iconClassName ? (
-          IconClass ? (
-            <IconClass className={classNames(classes.icon, iconClassName)} />
-          ) : (
-            <Icon className={classNames(classes.icon, iconClassName)} />
-          )
+        {icon ? (
+          <span className={classes.iconWrap}>
+            {icon}
+          </span>
         ) : undefined}
         {label}
       </Button>
@@ -80,6 +81,7 @@ class SettingsListButton extends React.Component {
           </span>
         ) : undefined}
         {button}
+        {children}
       </SettingsListItem>
     )
   }
