@@ -105,7 +105,12 @@ module.exports = function (env) {
               }
             }
           ],
-          exclude: /node_modules\//,
+          exclude: (modulePath) => {
+            const match = ([
+              { patt: `${path.sep}node_modules${path.sep}`, val: true }
+            ]).find((r) => modulePath.indexOf(r.patt) !== -1)
+            return match ? match.val : false
+          },
           include: [
             __dirname,
             path.resolve(path.join(__dirname, '../../shared'))
