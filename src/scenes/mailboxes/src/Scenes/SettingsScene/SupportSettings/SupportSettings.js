@@ -36,10 +36,12 @@ const styles = {
     left: 0,
     right: 0,
     bottom: 0,
-    ...StyleMixins.alwaysShowVerticalScrollbars
+    ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
   },
-  container: {
-    minWidth: 600
+  gridContainer: {
+    width: '100%',
+    marginLeft: 'auto',
+    marginRight: 'auto'
   },
   boxedCell: {
     ...baseCellStyle,
@@ -220,108 +222,92 @@ class SupportSettings extends React.Component {
     const { classes } = this.props
     return (
       <div className={classes.scroller}>
-        <Grid container spacing={12} className={classes.container}>
-          <Grid item xs={6}>
-            <Grid container spacing={12}>
-              <Grid item md={6}>
-                {this.renderBoxedCell(
-                  classes,
-                  'far fa-fw fa-star',
-                  'What\'s New?',
-                  'From new extensions to bug fixes, make sure you\'re up-to-date with development news.',
-                  'News',
-                  () => { window.location.hash = '/news' }
-                )}
-              </Grid>
-              <Grid item md={6}>
-                {this.renderBoxedCell(
-                  classes,
-                  'fas fa-fw fa-magic',
-                  'Setup Wizard',
-                  'Follow the step-by-step wizard to correctly configure your Wavebox.',
-                  'Get Started',
-                  () => { window.location.hash = '/app_wizard/start' }
-                )}
-              </Grid>
-            </Grid>
+        <Grid container spacing={16} className={classes.gridContainer}>
+          <Grid item md={3} sm={6} xs={12}>
+            {this.renderBoxedCell(
+              classes,
+              'far fa-fw fa-star',
+              'What\'s New?',
+              'From new extensions to bug fixes, make sure you\'re up-to-date with development news.',
+              'News',
+              () => { window.location.hash = '/news' }
+            )}
           </Grid>
-          <Grid item xs={6}>
-            <Grid container spacing={12}>
-              <Grid item md={6}>
-                {this.renderBoxedCell(
-                  classes,
-                  'fas fa-fw fa-list-alt',
-                  'Quick Start Guide',
-                  'Are you getting the most out of Wavebox? Read our getting started guide to find out.',
-                  'Quick Start',
-                  () => electron.remote.shell.openExternal(QUICK_START_WEB_URL)
-                )}
-              </Grid>
-              <Grid item md={6}>
-                {this.renderBoxedCell(
-                  classes,
-                  'fas fa-fw fa-tasks',
-                  'Try Wavebox Beta',
-                  'Be the first to try out the latest features by switching to our beta channel',
-                  'Try Beta',
-                  () => electron.remote.shell.openExternal(KB_BETA_CHANNEL_URL)
-                )}
-              </Grid>
-            </Grid>
+          <Grid item md={3} sm={6} xs={12}>
+            {this.renderBoxedCell(
+              classes,
+              'fas fa-fw fa-magic',
+              'Setup Wizard',
+              'Follow the step-by-step wizard to correctly configure your Wavebox.',
+              'Get Started',
+              () => { window.location.hash = '/app_wizard/start' }
+            )}
+          </Grid>
+          <Grid item md={3} sm={6} xs={12}>
+            {this.renderBoxedCell(
+              classes,
+              'fas fa-fw fa-list-alt',
+              'Quick Start Guide',
+              'Are you getting the most out of Wavebox? Read our getting started guide to find out.',
+              'Quick Start',
+              () => electron.remote.shell.openExternal(QUICK_START_WEB_URL)
+            )}
+          </Grid>
+          <Grid item md={3} sm={6} xs={12}>
+            {this.renderBoxedCell(
+              classes,
+              'fas fa-fw fa-tasks',
+              'Try Wavebox Beta',
+              'Be the first to try out the latest features by switching to our beta channel',
+              'Try Beta',
+              () => electron.remote.shell.openExternal(KB_BETA_CHANNEL_URL)
+            )}
           </Grid>
         </Grid>
-        <Grid container spacing={12} className={classes.container}>
-          <Grid item xs={6}>
-            <Grid container spacing={12}>
-              <Grid item md={6}>
-                {this.renderUnboxedCell(
-                  classes,
-                  Resolver.image('support_kb_icon.png'),
-                  'Knowledge Base',
-                  'Find the answers to the most commonly asked questions.',
-                  'rgb(246, 109, 99)',
-                  'Knowledge Base',
-                  () => electron.remote.shell.openExternal(KB_URL)
-                )}
-              </Grid>
-              <Grid item md={6}>
-                {this.renderUnboxedCell(
-                  classes,
-                  Resolver.image('support_blog_icon.png'),
-                  'Blog',
-                  'How-to articles and tutorials, plus the latest new from Wavebox HQ.',
-                  'rgb(82, 145, 149)',
-                  'Blog',
-                  () => electron.remote.shell.openExternal(BLOG_URL)
-                )}
-              </Grid>
-            </Grid>
+        <Grid container spacing={16} className={classes.gridContainer}>
+          <Grid item md={3} sm={6} xs={12}>
+            {this.renderUnboxedCell(
+              classes,
+              Resolver.image('support_kb_icon.png'),
+              'Knowledge Base',
+              'Find the answers to the most commonly asked questions.',
+              'rgb(246, 109, 99)',
+              'Knowledge Base',
+              () => electron.remote.shell.openExternal(KB_URL)
+            )}
           </Grid>
-          <Grid item xs={6}>
-            <Grid container spacing={12}>
-              <Grid item md={6}>
-                {this.renderUnboxedCell(
-                  classes,
-                  Resolver.image('support_github_icon.png'),
-                  'GitHub',
-                  'Join our discussion group on GitHub.',
-                  'rgb(106, 109, 152)',
-                  'GitHub',
-                  () => electron.remote.shell.openExternal(GITHUB_ISSUE_URL)
-                )}
-              </Grid>
-              <Grid item md={6}>
-                {this.renderUnboxedCell(
-                  classes,
-                  Resolver.image('support_contact_icon.png'),
-                  'Email Support',
-                  'Send feature requests and get help from our support team by email.',
-                  'rgb(240, 169, 43)',
-                  'Support',
-                  () => electron.remote.shell.openExternal(SUPPORT_URL)
-                )}
-              </Grid>
-            </Grid>
+          <Grid item md={3} sm={6} xs={12}>
+            {this.renderUnboxedCell(
+              classes,
+              Resolver.image('support_blog_icon.png'),
+              'Blog',
+              'How-to articles and tutorials, plus the latest new from Wavebox HQ.',
+              'rgb(82, 145, 149)',
+              'Blog',
+              () => electron.remote.shell.openExternal(BLOG_URL)
+            )}
+          </Grid>
+          <Grid item md={3} sm={6} xs={12}>
+            {this.renderUnboxedCell(
+              classes,
+              Resolver.image('support_github_icon.png'),
+              'GitHub',
+              'Join our discussion group on GitHub.',
+              'rgb(106, 109, 152)',
+              'GitHub',
+              () => electron.remote.shell.openExternal(GITHUB_ISSUE_URL)
+            )}
+          </Grid>
+          <Grid item md={3} sm={6} xs={12}>
+            {this.renderUnboxedCell(
+              classes,
+              Resolver.image('support_contact_icon.png'),
+              'Email Support',
+              'Send feature requests and get help from our support team by email.',
+              'rgb(240, 169, 43)',
+              'Support',
+              () => electron.remote.shell.openExternal(SUPPORT_URL)
+            )}
           </Grid>
         </Grid>
       </div>

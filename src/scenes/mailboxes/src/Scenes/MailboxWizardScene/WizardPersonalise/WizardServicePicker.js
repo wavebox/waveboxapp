@@ -227,22 +227,18 @@ class WizardServicePicker extends React.Component {
             <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR}>In a top toolbar</MenuItem>
           </Select>
         </div>
-        <Grid container spacing={12}>
-          <Grid item md={8}>
-            <Grid container spacing={12}>
-              <Grid item sm={6}>
-                <List className={classes.list}>
-                  {serviceTypeGroups[0].map((serviceType) => this.renderServiceListItem(classes, serviceType))}
-                </List>
-              </Grid>
-              <Grid item sm={6}>
-                <List className={classes.list}>
-                  {serviceTypeGroups[1].map((serviceType) => this.renderServiceListItem(classes, serviceType))}
-                </List>
-              </Grid>
-            </Grid>
+        <Grid container spacing={8}>
+          <Grid item md>
+            <List className={classes.list}>
+              {serviceTypeGroups[0].map((serviceType) => this.renderServiceListItem(classes, serviceType))}
+            </List>
           </Grid>
-          <Grid item md={4}>
+          <Grid item md>
+            <List className={classes.list}>
+              {serviceTypeGroups[1].map((serviceType) => this.renderServiceListItem(classes, serviceType))}
+            </List>
+          </Grid>
+          <Grid item md>
             <List className={classes.list}>
               {serviceTypeGroups[2].map((serviceType) => this.renderServiceListItem(classes, serviceType))}
             </List>

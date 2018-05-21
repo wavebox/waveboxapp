@@ -63,7 +63,7 @@ class TrayIconEditor extends React.Component {
     } = this.props
 
     return (
-      <Grid {...passProps} container spacing={12}>
+      <Grid {...passProps} container spacing={16}>
         <Grid item xs={6}>
           <h1 className={classNames(trayHeadingClassName, classes.subheading)} style={trayHeadingStyles}>All Messages Read</h1>
           <div className={classes.button}>
