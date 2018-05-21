@@ -42,10 +42,10 @@ export default createMuiTheme({
     MuiInput: {
       underline: {
         '&:before': {
-          backgroundColor: 'rgba(0, 0, 0, 0.32)'
+          borderBottomColor: 'rgba(0, 0, 0, 0.32)'
         },
-        '&:hover:not($disabled):before': {
-          backgroundColor: 'rgba(0, 0, 0, 0.42)'
+        '&:hover:not($disabled):not($focused):not($error):before': {
+          borderBottomColor: 'rgba(0, 0, 0, 0.42)'
         }
       }
     }
