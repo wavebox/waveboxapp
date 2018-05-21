@@ -49,10 +49,12 @@ export default class MailboxAvatar extends React.Component {
       const adjustedSize = size - (2 * borderSize)
       generatedStyle.width = adjustedSize
       generatedStyle.height = adjustedSize
+      generatedStyle.lineHeight = `${adjustedSize}px`
       generatedStyle.boxShadow = `0 0 0 ${borderSize}px ${mailbox.color}`
     } else {
       generatedStyle.width = size
       generatedStyle.height = size
+      generatedStyle.lineHeight = `${size}px`
     }
 
     const passProps = {
