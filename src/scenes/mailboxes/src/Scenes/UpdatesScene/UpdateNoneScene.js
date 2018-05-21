@@ -66,7 +66,10 @@ class UpdateNoneScene extends React.Component {
     const { open } = this.state
 
     return (
-      <Dialog open={open} onClose={this.handleClose}>
+      <Dialog
+        disableEnforceFocus
+        open={open}
+        onClose={this.handleClose}>
         <UpdateModalTitle IconClass={DoneIcon} />
         <DialogContent className={classes.dialogContent}>
           <p>Your version of Wavebox is up to date</p>

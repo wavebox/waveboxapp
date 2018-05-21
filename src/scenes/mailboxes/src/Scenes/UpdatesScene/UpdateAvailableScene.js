@@ -210,7 +210,10 @@ class UpdateAvailableScene extends React.Component {
     } = this.props
 
     return (
-      <Dialog open={open} onClose={this.handleCheckLater}>
+      <Dialog
+        disableEnforceFocus
+        open={open}
+        onClose={this.handleCheckLater}>
         <UpdateModalTitle />
         <DialogContent className={classes.dialogContent}>
           {this.renderMessage(classes, provider)}

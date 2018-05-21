@@ -172,6 +172,7 @@ class PrivacyMessageGDPRNew1 extends React.Component {
 
     return (
       <Dialog
+        disableEnforceFocus
         open={open}
         className={classes.modal}
         classes={{ paper: classes.dialog }}

@@ -104,7 +104,11 @@ class AccountStandaloneScene extends React.Component {
     const url = querystring.parse(location.search.substr(1)).url || billingUrl
 
     return (
-      <Dialog open={open} onClose={this.handleClose} classes={{ paper: classes.dialog }}>
+      <Dialog
+        disableEnforceFocus
+        open={open}
+        onClose={this.handleClose}
+        classes={{ paper: classes.dialog }}>
         <DialogContent className={classes.dialogContent}>
           <WaveboxWebView
             src={url} />

@@ -132,7 +132,11 @@ class MailboxWizardAddScene extends React.Component {
     } = this.state
 
     return (
-      <Dialog open={open} onClose={this.handleClose} classes={{ paper: classes.dialog }}>
+      <Dialog
+        disableEnforceFocus
+        open={open}
+        onClose={this.handleClose}
+        classes={{ paper: classes.dialog }}>
         <DialogContent className={classes.dialogContent}>
           {isLoading ? (
             <div className={classes.loadingCover}>

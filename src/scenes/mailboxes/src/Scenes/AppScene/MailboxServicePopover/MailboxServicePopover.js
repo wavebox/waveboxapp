@@ -408,7 +408,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
         anchorEl={anchor}
         MenuListProps={{ dense: true }}
         disableEnforceFocus
-        onClose={this.handlePopoverClose}>
+        onClose={this.closePopover}>
         {this.renderMenuItems()}
       </Menu>
     )

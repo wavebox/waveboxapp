@@ -114,6 +114,7 @@ class PlatformSettingsSection extends React.Component {
             icon={openLoginHasBeenSet ? <CheckIcon className={classes.beenSetIcon} /> : undefined}
             onClick={(evt) => this.setState({ openLoginPopoverAnchor: evt.target })}>
             <Menu
+              disableEnforceFocus
               anchorEl={openLoginPopoverAnchor}
               open={!!openLoginPopoverAnchor}
               onClose={() => this.setState({ openLoginPopoverAnchor: null })}>

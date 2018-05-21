@@ -162,6 +162,7 @@ class NotificationSettingsSection extends React.Component {
         icon={os.notificationsMuted ? (<NotificationsPausedIcon />) : (<NotificationsIcon />)}
         onClick={(evt) => { this.setState({ notificationMenuAnchor: evt.target }) }}>
         <Menu
+          disableEnforceFocus
           anchorEl={notificationMenuAnchor}
           open={!!notificationMenuAnchor}
           onClose={() => this.setState({ notificationMenuAnchor: null })}>

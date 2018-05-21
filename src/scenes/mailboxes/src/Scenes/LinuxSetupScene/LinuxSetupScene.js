@@ -97,7 +97,11 @@ class LinuxSetupScene extends React.Component {
     const { open, hasVisitedFontLink } = this.state
 
     return (
-      <Dialog open={open} onClose={this.handleRemindNextTime} classes={{ paper: classes.dialog }}>
+      <Dialog
+        disableEnforceFocus
+        open={open}
+        onClose={this.handleRemindNextTime}
+        classes={{ paper: classes.dialog }}>
         <DialogTitle>
           <WidgetsIcon className={classes.titleIcon} />
           Finish your Wavebox install

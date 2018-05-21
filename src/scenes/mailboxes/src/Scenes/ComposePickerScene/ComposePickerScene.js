@@ -150,7 +150,10 @@ class ComposePickerScene extends React.Component {
     const { composeServices, open, mailboxes, keyboardIndex } = this.state
 
     return (
-      <Dialog open={open} onClose={this.handleCancel}>
+      <Dialog
+        disableEnforceFocus
+        open={open}
+        onClose={this.handleCancel}>
         <DialogTitle>
           Compose New Message
         </DialogTitle>

@@ -171,6 +171,7 @@ class SettingsScene extends React.Component {
 
     return (
       <Dialog
+        disableEnforceFocus
         open={open}
         onClose={this.handleClose}
         classes={{ paper: classes.dialog }}>

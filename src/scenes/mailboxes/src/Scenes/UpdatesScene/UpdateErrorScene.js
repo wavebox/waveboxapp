@@ -168,7 +168,10 @@ class UpdateErrorScene extends React.Component {
     } = this.props
 
     return (
-      <Dialog open={open} onClose={this.handleCheckLater}>
+      <Dialog
+        disableEnforceFocus
+        open={open}
+        onClose={this.handleCheckLater}>
         <UpdateModalTitle
           text='Update Error'
           IconClass={ErrorIcon}

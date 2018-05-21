@@ -131,7 +131,10 @@ class CheckingUpdatesScene extends React.Component {
     } = this.props
 
     return (
-      <Dialog open={open} onClose={this.handleMinimize}>
+      <Dialog
+        disableEnforceFocus
+        open={open}
+        onClose={this.handleMinimize}>
         <UpdateModalTitle />
         <DialogContent className={classes.dialogContent}>
           {this.renderMessage(classes, provider, isCheckingUpdate, isDownloadingUpdate)}

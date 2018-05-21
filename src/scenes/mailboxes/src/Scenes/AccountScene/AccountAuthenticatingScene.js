@@ -23,7 +23,11 @@ class AccountAuthenticatingScene extends React.Component {
   render () {
     const { classes } = this.props
     return (
-      <Dialog open disableBackdropClick disableEscapeKeyDown>
+      <Dialog
+        disableEnforceFocus
+        open
+        disableBackdropClick
+        disableEscapeKeyDown>
         <DialogContent className={classes.dialogContent}>
           <Spinner size={50} color={lightBlue[600]} speed={0.75} />
           <div className={classes.text}>

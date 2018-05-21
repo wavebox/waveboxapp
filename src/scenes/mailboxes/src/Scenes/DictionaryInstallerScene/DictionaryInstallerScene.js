@@ -49,7 +49,11 @@ export default class DictionaryInstallerScene extends React.Component {
   render () {
     const { installId } = this.state
     return (
-      <Dialog disableBackdropClick disableEscapeKeyDown open>
+      <Dialog
+        disableEnforceFocus
+        disableBackdropClick
+        disableEscapeKeyDown
+        open>
         <DialogTitle>Install Dictionary</DialogTitle>
         <DialogContent>
           {installId ? (

@@ -208,7 +208,11 @@ class AppWizardScene extends React.Component {
     }
 
     return (
-      <Dialog open={open} onClose={this.handleClose} classes={{ paper: classes.dialog }}>
+      <Dialog
+        disableEnforceFocus
+        open={open}
+        onClose={this.handleClose}
+        classes={{ paper: classes.dialog }}>
         <DialogContent className={classes.dialogContent}>
           {this.renderContent(classes, step)}
         </DialogContent>

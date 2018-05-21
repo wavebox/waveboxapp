@@ -80,6 +80,7 @@ class CustomStylesEditingDialog extends React.Component {
 
     return (
       <Dialog
+        disableEnforceFocus
         disableBackdropClick
         disableEscapeKeyDown
         open={open}>

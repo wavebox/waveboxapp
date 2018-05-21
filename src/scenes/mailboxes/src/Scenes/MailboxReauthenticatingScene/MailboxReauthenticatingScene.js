@@ -37,7 +37,12 @@ class MailboxReauthenticatingScene extends React.Component {
     const {classes} = this.props
 
     return (
-      <Dialog open disableBackdropClick disableEscapeKeyDown classes={{ paper: classes.dialog }}>
+      <Dialog
+        disableEnforceFocus
+        open
+        disableBackdropClick
+        disableEscapeKeyDown
+        classes={{ paper: classes.dialog }}>
         <DialogContent className={classes.dialogContent}>
           <AuthenticationInstruction className={classes.instruction} />
         </DialogContent>

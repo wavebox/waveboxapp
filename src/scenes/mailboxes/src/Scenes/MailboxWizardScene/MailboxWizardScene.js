@@ -126,7 +126,10 @@ class MailboxWizardScene extends React.Component {
     const currentStep = parseInt(match.params.step)
 
     return (
-      <Dialog open={open} classes={{ paper: classes.dialog }}>
+      <Dialog
+        disableEnforceFocus
+        open={open}
+        classes={{ paper: classes.dialog }}>
         <DialogContent className={classes.dialogContent}>
           <MailboxWizardStepper currentStep={currentStep} className={classes.master} />
           {this.renderStep(

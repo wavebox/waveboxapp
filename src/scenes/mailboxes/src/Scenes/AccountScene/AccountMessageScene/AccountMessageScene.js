@@ -101,7 +101,11 @@ class AccountMessageScene extends React.Component {
     const { open, url } = this.state
 
     return (
-      <Dialog open={open} onClose={this.handleClose} classes={{ paper: classes.dialog }}>
+      <Dialog
+        disableEnforceFocus
+        open={open}
+        onClose={this.handleClose}
+        classes={{ paper: classes.dialog }}>
         <DialogContent className={classes.dialogContent}>
           <WaveboxWebView
             src={url}

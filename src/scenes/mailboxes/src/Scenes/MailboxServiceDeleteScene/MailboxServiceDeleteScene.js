@@ -145,7 +145,10 @@ class MailboxServiceDeleteScene extends React.Component {
     if (!mailbox || !service) { return false }
 
     return (
-      <Dialog open={open} onClose={this.handleClose}>
+      <Dialog
+        disableEnforceFocus
+        open={open}
+        onClose={this.handleClose}>
         <DialogTitle>Delete Service</DialogTitle>
         <DialogContent>
           <p className={classes.message}>

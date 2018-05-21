@@ -145,7 +145,10 @@ class MailboxDeleteScene extends React.Component {
     if (!mailbox) { return false }
 
     return (
-      <Dialog open={open} onClose={this.handleClose}>
+      <Dialog
+        disableEnforceFocus
+        open={open}
+        onClose={this.handleClose}>
         <DialogTitle>Delete Account</DialogTitle>
         <DialogContent>
           <p className={classes.message}>
