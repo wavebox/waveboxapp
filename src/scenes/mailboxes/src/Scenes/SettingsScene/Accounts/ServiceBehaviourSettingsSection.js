@@ -83,6 +83,7 @@ class ServiceBehaviourSettingsSection extends React.Component {
           <SleepableField
             key={`${mailbox.id}:${service.type}`}
             disabled={!userHasSleepable}
+            fullWidth
             sleepEnabled={service.sleepable}
             onSleepEnabledChanged={(toggled) => {
               mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setSleepable, toggled)

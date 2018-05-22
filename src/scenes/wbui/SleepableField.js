@@ -1,67 +1,27 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { TextField, Checkbox } from '@material-ui/core'
+import { FormControl, Input, InputLabel, InputAdornment, Checkbox, Grid } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
-import classNames from 'classnames'
 
 const styles = {
-  // Sleep
-  sleepLabel: {
-    lineHeight: '16.5px',
-    fontSize: '12px',
-    pointerEvents: 'none',
-    userSelect: 'none',
-    color: 'rgba(0, 0, 0, 0.3)'
+  gridContainer: {
+    marginTop: 10
   },
-  sleepActions: {
-    display: 'flex',
-    flexDirection: 'row',
-    marginTop: -10,
-    marginBottom: 4,
-    alignItems: 'center'
+  checkboxGridItem: {
+    height: 56
   },
-  sleepToggle: {
-    width: 40
+  numberGridItem: {
+    height: 56,
+    flex: 1
   },
-
-  // Sleep wait
-  sleepWaitContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    paddingTop: 12
+  checkbox: {
+    width: 20
   },
-
-  // Sleep wait
-  sleepWaitText: {
-    width: 75,
-    marginRight: 6,
-    marginTop: -18
-  },
-  sleepWaitTextSuffix: {
-    lineHeight: '16.5px',
-    fontSize: '12px',
-    pointerEvents: 'none',
-    userSelect: 'none',
-    color: 'rgba(0, 0, 0, 0.3)'
-  },
-
-  // Sleep slider
-  sleepWaitSlider: {
-    width: '100%',
-    marginLeft: 0,
-    marginRight: 12,
-    height: 48
-  },
-  sleepWaitSliderSlider: {
+  numberInput: {
     marginTop: 8
   }
 }
-
-const MIN_MILLIS = 0
-const MAX_MILLIS = 14400000
 
 @withStyles(styles)
 class SleepableField extends React.Component {
@@ -109,28 +69,6 @@ class SleepableField extends React.Component {
     return Math.round(((millis / 1000) / 60) * 10) / 10
   }
 
-  /**
-  * @param val: the value to make safe for the slider
-  * @return the safe value
-  */
-  intermediaryToSlider (val) {
-    const valueFloat = parseFloat(this.state.intermediaryValue)
-    if (isNaN(valueFloat)) {
-      return this.props.sleepWaitMs
-    } else {
-      const value = valueFloat * 1000 * 60
-      return Math.max(Math.min(value, MAX_MILLIS), MIN_MILLIS)
-    }
-  }
-
-  /**
-  * @param val: the value to convert from the slider
-  * @return the value
-  */
-  sliderToIntermediary (val) {
-    return `${val / 1000 / 60}`
-  }
-
   /* **************************************************************************/
   // UI Events
   /* **************************************************************************/
@@ -160,7 +98,6 @@ class SleepableField extends React.Component {
 
   render () {
     const {
-      className,
       disabled,
       sleepEnabled,
       onSleepEnabledChanged,
@@ -174,6 +111,40 @@ class SleepableField extends React.Component {
     } = this.state
 
     return (
+      <FormControl {...passProps}>
+        <InputLabel>Sleep tab after minutes of inactivity</InputLabel>
+        <Grid className={classes.gridContainer} container spacing={8} alignItems='flex-end'>
+          <Grid className={classes.checkboxGridItem} item>
+            <Checkbox
+              className={classes.checkbox}
+              color='primary'
+              disabled={disabled}
+              checked={sleepEnabled}
+              onChange={(evt, toggled) => { onSleepEnabledChanged(toggled) }} />
+          </Grid>
+          <Grid className={classes.numberGridItem} item>
+            <Input
+              className={classes.numberInput}
+              type='number'
+              min='0'
+              step='0.5'
+              placeholder='1.5'
+              fullWidth
+              disabled={disabled || !sleepEnabled}
+              value={intermediaryValue}
+              onChange={(evt) => { this.setState({ intermediaryValue: evt.target.value }) }}
+              onBlur={(evt) => { this.finishEditingSleepWaitMs() }}
+              endAdornment={<InputAdornment position='end'>minutes</InputAdornment>}
+            />
+          </Grid>
+        </Grid>
+      </FormControl>
+    )
+
+
+
+
+    /* return (
       <div {...passProps} className={classNames(classes.sleepContainer, className)}>
         <label className={classes.sleepLabel}>
           Sleep tab after minutes of inactivity
@@ -186,16 +157,6 @@ class SleepableField extends React.Component {
             checked={sleepEnabled}
             onChange={(evt, toggled) => { onSleepEnabledChanged(toggled) }} />
           <div className={classes.sleepWaitContainer}>
-            {/* <Slider
-              min={MIN_MILLIS}
-              max={MAX_MILLIS}
-              step={1000 * 30}
-              className={classes.sleepWaitSlider}
-              sliderStyle={styles.sleepWaitSliderSlider}
-              disabled={disabled || !sleepEnabled}
-              value={this.intermediaryToSlider(intermediaryValue)}
-              onChange={(evt, val) => { this.setState({ intermediaryValue: this.sliderToIntermediary(val) }) }}
-              onDragStop={() => { this.finishEditingSleepWaitMs() }} /> */}
             <TextField
               className={classes.sleepWaitText}
               placeholder='1.5'
@@ -210,7 +171,7 @@ class SleepableField extends React.Component {
           </div>
         </div>
       </div>
-    )
+    ) */
   }
 }
 
