@@ -4,7 +4,10 @@ import shallowCompare from 'react-addons-shallow-compare'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
-import { Select, MenuItem, List, ListItem, ListItemText, ListItemSecondaryAction, Switch, Grid } from '@material-ui/core'
+import {
+  Select, MenuItem, List, ListItem, FormControl, InputLabel,
+  ListItemText, ListItemSecondaryAction, Switch, Grid
+} from '@material-ui/core'
 import Resolver from 'Runtime/Resolver'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
@@ -217,15 +220,17 @@ class WizardServicePicker extends React.Component {
     return (
       <div {...passProps}>
         <div>
-          <Select
-            className={classes.displayModePicker}
-            value={servicesDisplayMode}
-            disabled={!userHasServices}
-            label='How should your services be displayed?'
-            onChange={(evt) => { onServicesDisplayModeChanged(evt.target.value) }}>
-            <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR}>In the sidebar</MenuItem>
-            <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR}>In a top toolbar</MenuItem>
-          </Select>
+          <FormControl fullWidth margin='normal'>
+            <InputLabel>How should your services be displayed?</InputLabel>
+            <Select
+              className={classes.displayModePicker}
+              value={servicesDisplayMode}
+              disabled={!userHasServices}
+              onChange={(evt) => { onServicesDisplayModeChanged(evt.target.value) }}>
+              <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR}>In the sidebar</MenuItem>
+              <MenuItem value={CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR}>In a top toolbar</MenuItem>
+            </Select>
+          </FormControl>
         </div>
         <Grid container spacing={8}>
           <Grid item md>
