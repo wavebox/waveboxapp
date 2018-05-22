@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import AccountAppearanceSettings from '../AccountAppearanceSettings'
-import AccountAdvancedSettings from '../AccountAdvancedSettings'
-import AccountDestructiveSettings from '../AccountDestructiveSettings'
+import AccountAppearanceSettingsSection from '../AccountAppearanceSettingsSection'
+import AccountAdvancedSettingsSection from '../AccountAdvancedSettingsSection'
+import AccountDestructiveSettingsSection from '../AccountDestructiveSettingsSection'
 import AccountServicesHeading from '../AccountServicesHeading'
-import AccountServicesSettings from '../AccountServicesSettings'
+import AccountServicesSettingsSection from '../AccountServicesSettingsSection'
 import MicrosoftServiceSettings from './MicrosoftServiceSettings'
 import MicrosoftDefaultServiceSettings from './MicrosoftDefaultServiceSettings'
 import { userStore } from 'stores/user'
@@ -88,10 +88,10 @@ export default class MicrosoftAccountSettings extends React.Component {
 
     return (
       <div {...passProps}>
-        <AccountAppearanceSettings mailbox={mailbox} />
-        <AccountServicesSettings mailbox={mailbox} />
-        <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
-        <AccountDestructiveSettings mailbox={mailbox} />
+        <AccountAppearanceSettingsSection mailbox={mailbox} />
+        <AccountServicesSettingsSection mailbox={mailbox} />
+        <AccountAdvancedSettingsSection mailbox={mailbox} showRestart={showRestart} />
+        <AccountDestructiveSettingsSection mailbox={mailbox} />
         <AccountServicesHeading mailbox={mailbox} />
         {userHasServices ? (
           <div>

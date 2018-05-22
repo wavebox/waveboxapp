@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import AccountAppearanceSettings from '../AccountAppearanceSettings'
-import AccountAdvancedSettings from '../AccountAdvancedSettings'
-import AccountDestructiveSettings from '../AccountDestructiveSettings'
+import AccountAppearanceSettingsSection from '../AccountAppearanceSettingsSection'
+import AccountAdvancedSettingsSection from '../AccountAdvancedSettingsSection'
+import AccountDestructiveSettingsSection from '../AccountDestructiveSettingsSection'
 import AccountBadgeSettings from '../AccountBadgeSettings'
 import AccountNotificationSettings from '../AccountNotificationSettings'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
@@ -35,7 +35,7 @@ export default class SlackAccountSettings extends React.Component {
 
     return (
       <div {...passProps}>
-        <AccountAppearanceSettings mailbox={mailbox} />
+        <AccountAppearanceSettingsSection mailbox={mailbox} />
         <AccountBadgeSettings mailbox={mailbox} service={service} />
         <AccountNotificationSettings mailbox={mailbox} service={service} />
         <AccountBehaviourSettings mailbox={mailbox} service={service} />
@@ -43,8 +43,8 @@ export default class SlackAccountSettings extends React.Component {
           mailbox={mailbox}
           service={service}
           onRequestEditCustomCode={onRequestEditCustomCode} />
-        <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
-        <AccountDestructiveSettings mailbox={mailbox} />
+        <AccountAdvancedSettingsSection mailbox={mailbox} showRestart={showRestart} />
+        <AccountDestructiveSettingsSection mailbox={mailbox} />
       </div>
     )
   }

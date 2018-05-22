@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import AccountAppearanceSettings from '../AccountAppearanceSettings'
-import AccountAdvancedSettings from '../AccountAdvancedSettings'
+import AccountAppearanceSettingsSection from '../AccountAppearanceSettingsSection'
+import AccountAdvancedSettingsSection from '../AccountAdvancedSettingsSection'
 import AccountServicesHeading from '../AccountServicesHeading'
-import AccountServicesSettings from '../AccountServicesSettings'
-import AccountDestructiveSettings from '../AccountDestructiveSettings'
+import AccountServicesSettingsSection from '../AccountServicesSettingsSection'
+import AccountDestructiveSettingsSection from '../AccountDestructiveSettingsSection'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
 import { userStore } from 'stores/user'
@@ -124,13 +124,14 @@ class GoogleAccountSettings extends React.Component {
 
     return (
       <div {...passProps}>
-        <AccountAppearanceSettings mailbox={mailbox} />
-        <AccountServicesSettings mailbox={mailbox} />
-        <AccountAdvancedSettings
+        <AccountAppearanceSettingsSection mailbox={mailbox} />
+        <AccountServicesSettingsSection mailbox={mailbox} />
+        <AccountAdvancedSettingsSection
           mailbox={mailbox}
           showRestart={showRestart}
           windowOpenAfter={(
             <SettingsListItemSwitch
+              divider={false}
               label='Open Google Drive links with browser'
               onChange={(evt, toggled) => {
                 mailboxActions.reduce(mailbox.id, GoogleMailboxReducer.setOpenDriveLinksWithExternalBrowser, toggled)
@@ -138,7 +139,7 @@ class GoogleAccountSettings extends React.Component {
               checked={mailbox.openDriveLinksWithExternalBrowser} />
           )}
         />
-        <AccountDestructiveSettings mailbox={mailbox} />
+        <AccountDestructiveSettingsSection mailbox={mailbox} />
         <AccountServicesHeading mailbox={mailbox} />
         {userHasServices ? (
           <div>

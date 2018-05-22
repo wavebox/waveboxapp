@@ -14,7 +14,7 @@ import MailboxAvatar from 'Components/Backed/MailboxAvatar'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import { Button, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core'
-import grey from '@material-ui/core/colors/grey'
+import SettingsListContainer from 'wbui/SettingsListContainer'
 
 const styles = {
   addFirstAccountContainer: {
@@ -22,8 +22,8 @@ const styles = {
   },
   accountPicker: {
     position: 'relative',
-    height: 100,
-    marginTop: -24
+    width: '100%',
+    height: 80
   },
   accountPickerAvatar: {
     position: 'absolute',
@@ -35,17 +35,6 @@ const styles = {
     top: 25,
     left: 100,
     right: 15
-  },
-  heading: {
-    marginTop: 30,
-    color: grey[900],
-    fontWeight: 'normal',
-    marginBottom: 10
-  },
-  headingInfo: {
-    marginTop: -10,
-    marginBottom: 10,
-    color: grey[700]
   }
 }
 
@@ -250,7 +239,7 @@ class AccountSettings extends React.Component {
 
     return (
       <div {...passProps}>
-        <div style={styles.accountPicker}>
+        <SettingsListContainer className={classes.accountPicker}>
           <MailboxAvatar
             mailboxId={selected.id}
             size={60}
@@ -278,15 +267,11 @@ class AccountSettings extends React.Component {
               </Select>
             </FormControl>
           </div>
-        </div>
+        </SettingsListContainer>
         {isSelectedRestricted ? (
           <RestrictedAccountSettings mailboxId={mailboxId} />
         ) : (
           <div>
-            <h1 className={classes.heading}>Account</h1>
-            <p className={classes.headingInfo}>
-              <strong>{selected.humanizedType}</strong> {selected.displayName}
-            </p>
             {this.renderMailboxSettings(selected, showRestart)}
             <CustomCodeEditingDialog
               title={codeEditorTitle}

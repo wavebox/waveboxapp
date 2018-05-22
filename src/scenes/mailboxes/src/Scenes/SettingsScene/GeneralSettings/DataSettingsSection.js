@@ -14,6 +14,7 @@ import ConfirmButton from 'wbui/ConfirmButton'
 import StorageIcon from '@material-ui/icons/Storage'
 import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import SettingsListTypography from 'wbui/SettingsListTypography'
+import SettingsListItemConfirmButton from 'wbui/SettingsListItemConfirmButton'
 import {
   WB_CLEAN_EXPIRED_SESSIONS,
   WB_TAKEOUT_IMPORT,
@@ -79,27 +80,13 @@ class DataSettingsSection extends React.Component {
             You will need to sign back into all accounts after doing this
           </SettingsListTypography>
         </SettingsListItem>
-        <SettingsListItem className={classes.listItem}>
-          <ConfirmButton
-            variant='raised'
-            size='small'
-            content={(
-              <span>
-                <ClearIcon className={classes.buttonIcon} />
-                Clean expired accounts
-              </span>
-            )}
-            confirmContent={(
-              <span>
-                <HelpOutlineIcon className={classes.buttonIcon} />
-                Click again to confirm
-              </span>
-            )}
-            confirmWaitMs={4000}
-            onConfirmedClick={() => {
-              ipcRenderer.send(WB_CLEAN_EXPIRED_SESSIONS, {})
-            }} />
-        </SettingsListItem>
+        <SettingsListItemConfirmButton
+          label='Clean expired accounts'
+          icon={<ClearIcon />}
+          confirmLabel='Click again to confirm'
+          confirmIcon={<HelpOutlineIcon />}
+          confirmWaitMs={4000}
+          onConfirmedClick={() => ipcRenderer.send(WB_CLEAN_EXPIRED_SESSIONS, {})} />
         <SettingsListItemButton
           label='Export Data'
           icon={<ImportExportIcon />}

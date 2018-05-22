@@ -20,12 +20,19 @@ import FileUploadButton from 'wbui/FileUploadButton'
 
 const styles = {
   buttonIcon: {
-    marginRight: 6
+    marginRight: 6,
+    width: 18,
+    height: 18,
+    verticalAlign: 'middle'
+  },
+  dualButton: {
+    marginLeft: 8,
+    marginRight: 8
   }
 }
 
 @withStyles(styles)
-class AccountAppearanceSettings extends React.Component {
+class AccountAppearanceSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -149,21 +156,28 @@ class AccountAppearanceSettings extends React.Component {
               size='small'
               variant='raised'
               accept='image/*'
+              className={classes.dualButton}
               onChange={this.handleCustomAvatarChange}>
               <InsertEmoticonButton className={classes.buttonIcon} />
               Change Account Icon
             </FileUploadButton>
-            <Button size='small' variant='raised' onClick={() => mailboxActions.setCustomAvatar(mailbox.id, undefined)}>
+            <Button
+              size='small'
+              className={classes.dualButton}
+              variant='raised'
+              onClick={() => mailboxActions.setCustomAvatar(mailbox.id, undefined)}>
               <NotInterestedIcon className={classes.buttonIcon} />
               Reset Account Icon
             </Button>
           </SettingsListItem>
           <SettingsListItemSwitch
+            divider={userHasSleepable}
             label='Show Account Color around Icon'
             onChange={(evt, toggled) => mailboxActions.reduce(mailbox.id, MailboxReducer.setShowAvatarColorRing, toggled)}
             checked={mailbox.showAvatarColorRing} />
           {userHasSleepable ? (
             <SettingsListItemSwitch
+              divider={false}
               disabled={!ui.showSleepableServiceIndicator}
               label={ui.showSleepableServiceIndicator ? (sleepIndicatorText) : (
                 <span>
@@ -193,7 +207,7 @@ class AccountAppearanceSettings extends React.Component {
                 mailboxActions.reduce(mailbox.id, MailboxReducer.setShowCumulativeSidebarUnreadBadge, toggled)
               }}
               checked={mailbox.showCumulativeSidebarUnreadBadge} />
-            <SettingsListItem>
+            <SettingsListItem divider={false}>
               <ColorPickerButton
                 buttonProps={{ variant: 'raised', size: 'small' }}
                 value={mailbox.cumulativeSidebarUnreadBadgeColor}
@@ -209,4 +223,4 @@ class AccountAppearanceSettings extends React.Component {
   }
 }
 
-export default AccountAppearanceSettings
+export default AccountAppearanceSettingsSection

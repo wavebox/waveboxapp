@@ -60,45 +60,44 @@ class AccountServiceItem extends React.Component {
     const isDefaultService = serviceType === CoreService.SERVICE_TYPES.DEFAULT
 
     return (
-      <SettingsListSection
-        title={(
-          <span>
+      <SettingsListSection {...passProps}>
+        <SettingsListItem className={classes.toolbar}>
+          <div>
             <Avatar className={classes.serviceAvatar} src={Resolver.image(service.humanizedLogoAtSize(128))} />
             {service.humanizedType}
-          </span>
-        )}
-        {...passProps}>
-        {!isSingleService && !isDefaultService ? (
-          <SettingsListItem className={classes.toolbar}>
-            <Tooltip title='Disable'>
-              <div>
-                <IconButton
-                  disabled={isDefaultService}
-                  onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.removeService, serviceType)}>
-                  <CheckBoxIcon />
-                </IconButton>
-              </div>
-            </Tooltip>
-            <Tooltip title='Move up'>
-              <div>
-                <IconButton
-                  disabled={isFirst}
-                  onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceUp, serviceType)}>
-                  <ArrowUpwardIcon />
-                </IconButton>
-              </div>
-            </Tooltip>
-            <Tooltip title='Move down'>
-              <div>
-                <IconButton
-                  disabled={isLast}
-                  onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceDown, serviceType)}>
-                  <ArrowDownwardIcon />
-                </IconButton>
-              </div>
-            </Tooltip>
-          </SettingsListItem>
-        ) : undefined}
+          </div>
+          {!isSingleService && !isDefaultService ? (
+            <div>
+              <Tooltip title='Disable'>
+                <div>
+                  <IconButton
+                    disabled={isDefaultService}
+                    onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.removeService, serviceType)}>
+                    <CheckBoxIcon />
+                  </IconButton>
+                </div>
+              </Tooltip>
+              <Tooltip title='Move up'>
+                <div>
+                  <IconButton
+                    disabled={isFirst}
+                    onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceUp, serviceType)}>
+                    <ArrowUpwardIcon />
+                  </IconButton>
+                </div>
+              </Tooltip>
+              <Tooltip title='Move down'>
+                <div>
+                  <IconButton
+                    disabled={isLast}
+                    onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceDown, serviceType)}>
+                    <ArrowDownwardIcon />
+                  </IconButton>
+                </div>
+              </Tooltip>
+            </div>
+          ) : undefined}
+        </SettingsListItem>
         {children}
       </SettingsListSection>
     )

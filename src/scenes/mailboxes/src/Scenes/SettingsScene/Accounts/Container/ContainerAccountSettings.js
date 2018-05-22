@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import AccountDestructiveSettings from '../AccountDestructiveSettings'
-import AccountAppearanceSettings from '../AccountAppearanceSettings'
-import AccountAdvancedSettings from '../AccountAdvancedSettings'
+import AccountDestructiveSettingsSection from '../AccountDestructiveSettingsSection'
+import AccountAppearanceSettingsSection from '../AccountAppearanceSettingsSection'
+import AccountAdvancedSettingsSection from '../AccountAdvancedSettingsSection'
 import AccountBadgeSettings from '../AccountBadgeSettings'
 import AccountNotificationSettings from '../AccountNotificationSettings'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
@@ -101,7 +101,7 @@ export default class ContainerAccountSettings extends React.Component {
             }}
             checked={service.restoreLastUrl} />
         </SettingsListSection>
-        <AccountAppearanceSettings mailbox={mailbox} />
+        <AccountAppearanceSettingsSection mailbox={mailbox} />
         <AccountBadgeSettings mailbox={mailbox} service={service} />
         <AccountNotificationSettings mailbox={mailbox} service={service} />
         <AccountBehaviourSettings mailbox={mailbox} service={service} />
@@ -126,7 +126,7 @@ export default class ContainerAccountSettings extends React.Component {
             label='Restore defaults (Requires restart)'
             onClick={this.handleResetCustomUserAgent} />
         </SettingsListSection>
-        <AccountAdvancedSettings
+        <AccountAdvancedSettingsSection
           mailbox={mailbox}
           showRestart={showRestart}
           windowOpenAfter={container.hasWindowOpenOverrides ? (
@@ -144,7 +144,7 @@ export default class ContainerAccountSettings extends React.Component {
               })}
             </span>
           ) : undefined} />
-        <AccountDestructiveSettings mailbox={mailbox} />
+        <AccountDestructiveSettingsSection mailbox={mailbox} />
         <SettingsListSection title='About'>
           <SettingsListItemText primary='Container ID' secondary={container.id} />
           <SettingsListItemText primary='Container Version' secondary={container.version} />

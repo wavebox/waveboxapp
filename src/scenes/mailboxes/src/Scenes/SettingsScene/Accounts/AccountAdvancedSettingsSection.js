@@ -7,7 +7,7 @@ import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 
-export default class AccountAdvancedSettings extends React.Component {
+export default class AccountAdvancedSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -69,6 +69,7 @@ export default class AccountAdvancedSettings extends React.Component {
           checked={mailbox.artificiallyPersistCookies} />
         {windowOpenBefore}
         <SettingsListItemSelect
+          divider={!windowOpenAfter && !children}
           label='Open new windows in which Browser'
           value={mailbox.defaultWindowOpenMode}
           options={[

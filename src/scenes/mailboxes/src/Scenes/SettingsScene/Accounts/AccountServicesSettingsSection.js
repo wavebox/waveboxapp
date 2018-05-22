@@ -9,7 +9,7 @@ import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemText from 'wbui/SettingsListItemText'
 import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 
-export default class AccountServicesSettings extends React.Component {
+export default class AccountServicesSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -81,6 +81,7 @@ export default class AccountServicesSettings extends React.Component {
           onChange={(evt, mode) => mailboxActions.reduce(mailbox.id, MailboxReducer.setServiceDisplayMode, mode)} />
         {mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR ? (
           <SettingsListItemSwitch
+            divider={false}
             label='Collapse sidebar services when account is inactive'
             onChange={(evt, toggled) => {
               mailboxActions.reduce(mailbox.id, MailboxReducer.setCollapseSidebarServices, toggled)
@@ -89,6 +90,7 @@ export default class AccountServicesSettings extends React.Component {
         ) : undefined}
         {mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR ? (
           <SettingsListItemSelect
+            divider={false}
             label='Icon positioning'
             value={mailbox.serviceToolbarIconLayout}
             options={[

@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import AccountAppearanceSettings from '../AccountAppearanceSettings'
-import AccountAdvancedSettings from '../AccountAdvancedSettings'
-import AccountDestructiveSettings from '../AccountDestructiveSettings'
+import AccountAppearanceSettingsSection from '../AccountAppearanceSettingsSection'
+import AccountAdvancedSettingsSection from '../AccountAdvancedSettingsSection'
+import AccountDestructiveSettingsSection from '../AccountDestructiveSettingsSection'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
 import AccountBadgeSettings from '../AccountBadgeSettings'
@@ -164,7 +164,7 @@ export default class GenericAccountSettings extends React.Component {
             }}
             checked={service.supportsGuestConfig} />
         </SettingsListSection>
-        <AccountAppearanceSettings mailbox={mailbox} />
+        <AccountAppearanceSettingsSection mailbox={mailbox} />
         <AccountBadgeSettings mailbox={mailbox} service={service} />
         <AccountNotificationSettings mailbox={mailbox} service={service} />
         <AccountBehaviourSettings mailbox={mailbox} service={service} />
@@ -189,8 +189,8 @@ export default class GenericAccountSettings extends React.Component {
             label='Restore defaults (Requires restart)'
             onClick={this.handleResetCustomUserAgent} />
         </SettingsListSection>
-        <AccountAdvancedSettings mailbox={mailbox} showRestart={showRestart} />
-        <AccountDestructiveSettings mailbox={mailbox} />
+        <AccountAdvancedSettingsSection mailbox={mailbox} showRestart={showRestart} />
+        <AccountDestructiveSettingsSection mailbox={mailbox} />
       </div>
     )
   }
