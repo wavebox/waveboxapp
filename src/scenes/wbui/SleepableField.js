@@ -140,38 +140,6 @@ class SleepableField extends React.Component {
         </Grid>
       </FormControl>
     )
-
-
-
-
-    /* return (
-      <div {...passProps} className={classNames(classes.sleepContainer, className)}>
-        <label className={classes.sleepLabel}>
-          Sleep tab after minutes of inactivity
-        </label>
-        <div className={classes.sleepActions}>
-          <Checkbox
-            color='primary'
-            className={classes.sleepToggle}
-            disabled={disabled}
-            checked={sleepEnabled}
-            onChange={(evt, toggled) => { onSleepEnabledChanged(toggled) }} />
-          <div className={classes.sleepWaitContainer}>
-            <TextField
-              className={classes.sleepWaitText}
-              placeholder='1.5'
-              disabled={disabled || !sleepEnabled}
-              value={intermediaryValue}
-              type='number'
-              min='0'
-              step='0.5'
-              onChange={(evt) => { this.setState({ intermediaryValue: evt.target.value }) }}
-              onBlur={(evt) => { this.finishEditingSleepWaitMs() }} />
-            <div className={classes.sleepWaitTextSuffix}>Minutes</div>
-          </div>
-        </div>
-      </div>
-    ) */
   }
 }
 
