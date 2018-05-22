@@ -13,17 +13,29 @@ import ContainerAccountSettings from './Container/ContainerAccountSettings'
 import MailboxAvatar from 'Components/Backed/MailboxAvatar'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import { Button, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core'
-import SettingsListContainer from 'wbui/SettingsListContainer'
+import { Button, FormControl, InputLabel, Select, MenuItem, Paper } from '@material-ui/core'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const styles = {
-  addFirstAccountContainer: {
-    textAlign: 'center'
+  /**
+  * Picker
+  */
+  accountPickerBanner: {
+    position: 'absolute',
+    width: '100%',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 85,
+    zIndex: 1,
+    backgroundColor: lightBlue[50]
   },
   accountPicker: {
     position: 'relative',
     width: '100%',
-    height: 80
+    maxWidth: 500,
+    marginLeft: 'auto',
+    marginRight: 'auto'
   },
   accountPickerAvatar: {
     position: 'absolute',
@@ -35,6 +47,20 @@ const styles = {
     top: 25,
     left: 100,
     right: 15
+  },
+
+  /**
+  * Content
+  */
+  accountContent: {
+    position: 'absolute',
+    top: 85,
+    left: 0,
+    right: 0,
+    bottom: 0
+  },
+  addFirstAccountContainer: {
+    textAlign: 'center'
   }
 }
 
@@ -239,39 +265,43 @@ class AccountSettings extends React.Component {
 
     return (
       <div {...passProps}>
-        <SettingsListContainer className={classes.accountPicker}>
-          <MailboxAvatar
-            mailboxId={selected.id}
-            size={60}
-            className={classes.accountPickerAvatar} />
-          <div className={classes.accountPickerContainer}>
-            <FormControl fullWidth>
-              <InputLabel>Pick your account</InputLabel>
-              <Select
-                value={selected.id}
-                fullWidth
-                MenuProps={{
-                  MenuListProps: { dense: true },
-                  PaperProps: {
-                    style: { maxHeight: 200 }
-                  }
-                }}
-                onChange={this.handleAccountChange} >
-                {mailboxes.map((m) => {
-                  return (
-                    <MenuItem value={m.id} key={m.id}>
-                      {`${m.humanizedType} : ${m.displayName}`}
-                    </MenuItem>
-                  )
-                })}
-              </Select>
-            </FormControl>
+        <Paper className={classes.accountPickerBanner}>
+          <div className={classes.accountPicker}>
+            <MailboxAvatar
+              mailboxId={selected.id}
+              size={60}
+              className={classes.accountPickerAvatar} />
+            <div className={classes.accountPickerContainer}>
+              <FormControl fullWidth>
+                <InputLabel>Pick your account</InputLabel>
+                <Select
+                  value={selected.id}
+                  fullWidth
+                  MenuProps={{
+                    MenuListProps: { dense: true },
+                    PaperProps: {
+                      style: { maxHeight: 200 }
+                    }
+                  }}
+                  onChange={this.handleAccountChange} >
+                  {mailboxes.map((m) => {
+                    return (
+                      <MenuItem value={m.id} key={m.id}>
+                        {`${m.humanizedType} : ${m.displayName}`}
+                      </MenuItem>
+                    )
+                  })}
+                </Select>
+              </FormControl>
+            </div>
           </div>
-        </SettingsListContainer>
+        </Paper>
         {isSelectedRestricted ? (
-          <RestrictedAccountSettings mailboxId={mailboxId} />
+          <div className={classes.accountContent}>
+            <RestrictedAccountSettings mailboxId={mailboxId} />
+          </div>
         ) : (
-          <div>
+          <div className={classes.accountContent}>
             {this.renderMailboxSettings(selected, showRestart)}
             <CustomCodeEditingDialog
               title={codeEditorTitle}

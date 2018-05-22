@@ -9,6 +9,7 @@ import lightBlue from '@material-ui/core/colors/lightBlue'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItem from 'wbui/SettingsListItem'
 import SettingsListItemButton from 'wbui/SettingsListItemButton'
+import HotelIcon from '@material-ui/icons/Hotel'
 
 const styles = {
   sleepUnavailable: {
@@ -77,8 +78,8 @@ class ServiceBehaviourSettingsSection extends React.Component {
     const { userHasSleepable } = this.state
 
     return (
-      <SettingsListSection title='Sleep & Behaviour' {...passProps}>
-        <SettingsListItem>
+      <SettingsListSection title='Sleep & Behaviour' icon={<HotelIcon />} {...passProps}>
+        <SettingsListItem divider={false}>
           <SleepableField
             key={`${mailbox.id}:${service.type}`}
             disabled={!userHasSleepable}
@@ -93,6 +94,7 @@ class ServiceBehaviourSettingsSection extends React.Component {
         </SettingsListItem>
         {!userHasSleepable ? (
           <SettingsListItemButton
+            divider={false}
             primary={(
               <span className={classes.sleepUnavailableText}>
                 Services and accounts can sleep when in the background to save memory.

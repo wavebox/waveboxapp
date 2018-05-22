@@ -6,6 +6,7 @@ import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
+import TuneIcon from '@material-ui/icons/Tune'
 
 export default class AccountAdvancedSettingsSection extends React.Component {
   /* **************************************************************************/
@@ -38,7 +39,7 @@ export default class AccountAdvancedSettingsSection extends React.Component {
     } = this.props
 
     return (
-      <SettingsListSection title='Advanced' {...passProps}>
+      <SettingsListSection title='Advanced' icon={<TuneIcon />} {...passProps}>
         <SettingsListItemSwitch
           label='Artificially Persist Cookies. (Requires Restart)'
           secondary={(
@@ -69,7 +70,7 @@ export default class AccountAdvancedSettingsSection extends React.Component {
           checked={mailbox.artificiallyPersistCookies} />
         {windowOpenBefore}
         <SettingsListItemSelect
-          divider={!windowOpenAfter && !children}
+          divider={!!windowOpenAfter && !!children}
           label='Open new windows in which Browser'
           value={mailbox.defaultWindowOpenMode}
           options={[

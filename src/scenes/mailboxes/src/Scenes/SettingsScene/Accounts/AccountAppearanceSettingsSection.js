@@ -17,6 +17,7 @@ import ColorLensIcon from '@material-ui/icons/ColorLens'
 import { Button } from '@material-ui/core'
 import SettingsListItemText from 'wbui/SettingsListItemText'
 import FileUploadButton from 'wbui/FileUploadButton'
+import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
 
 const styles = {
   buttonIcon: {
@@ -25,9 +26,10 @@ const styles = {
     height: 18,
     verticalAlign: 'middle'
   },
-  dualButton: {
-    marginLeft: 8,
-    marginRight: 8
+  buttonSpacer: {
+    width: 16,
+    height: 1,
+    display: 'inline-block'
   }
 }
 
@@ -141,7 +143,7 @@ class AccountAppearanceSettingsSection extends React.Component {
 
     return (
       <div {...passProps}>
-        <SettingsListSection title='Appearance'>
+        <SettingsListSection title='Appearance' icon={<ViewQuiltIcon />}>
           <SettingsListItem>
             <ColorPickerButton
               buttonProps={{ variant: 'raised', size: 'small' }}
@@ -156,14 +158,13 @@ class AccountAppearanceSettingsSection extends React.Component {
               size='small'
               variant='raised'
               accept='image/*'
-              className={classes.dualButton}
               onChange={this.handleCustomAvatarChange}>
               <InsertEmoticonButton className={classes.buttonIcon} />
               Change Account Icon
             </FileUploadButton>
+            <span className={classes.buttonSpacer} />
             <Button
               size='small'
-              className={classes.dualButton}
               variant='raised'
               onClick={() => mailboxActions.setCustomAvatar(mailbox.id, undefined)}>
               <NotInterestedIcon className={classes.buttonIcon} />
@@ -193,7 +194,7 @@ class AccountAppearanceSettingsSection extends React.Component {
           ) : undefined}
         </SettingsListSection>
         {hasCumulativeBadge ? (
-          <SettingsListSection title='Appearance' subtitle='Sidebar Badge'>
+          <SettingsListSection title='Appearance' subtitle='Sidebar Badge' icon={<ViewQuiltIcon />}>
             <SettingsListItemText
               primary={(
                 <span>

@@ -3,8 +3,14 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import grey from '@material-ui/core/colors/grey'
+import classNames from 'classnames'
 
 const styles = {
+  root: {
+    maxWidth: 500,
+    marginLeft: 'auto',
+    marginRight: 'auto'
+  },
   heading: {
     marginTop: 30,
     color: grey[900],
@@ -37,11 +43,11 @@ class ServicesHeading extends React.Component {
   }
 
   render () {
-    const { classes, mailbox, ...passProps } = this.props
+    const { classes, className, mailbox, ...passProps } = this.props
 
     return (
-      <div {...passProps}>
-        <h1 className={classes.heading}>Services</h1>
+      <div className={classNames(className, classes.root)} {...passProps}>
+        <h2 className={classes.heading}>Services</h2>
         <p className={classes.headingInfo}>
           This account is split into seperate services, for example Email,
           Storage &amp; Contacts. You can enable, disable &amp; change the

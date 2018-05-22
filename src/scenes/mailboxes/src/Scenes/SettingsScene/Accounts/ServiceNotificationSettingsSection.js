@@ -13,6 +13,7 @@ import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import SettingsListItemText from 'wbui/SettingsListItemText'
 import WarningIcon from '@material-ui/icons/Warning'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
+import NotificationsIcon from '@material-ui/icons/Notifications'
 
 class ServiceNotificationSettingsSection extends React.Component {
   /* **************************************************************************/
@@ -139,7 +140,7 @@ class ServiceNotificationSettingsSection extends React.Component {
     if (ServiceNotificationSettingsSection.willRenderForService(service) === false) { return false }
 
     return (
-      <SettingsListSection title='Notifications' {...passProps}>
+      <SettingsListSection title='Notifications' icon={<NotificationsIcon />} {...passProps}>
         {userHasSleepable && service.sleepable && !service.supportsSyncWhenSleeping ? (
           <SettingsListItemText
             primaryType='warning'
@@ -148,6 +149,7 @@ class ServiceNotificationSettingsSection extends React.Component {
         ) : undefined}
         <SettingsListItemSwitch
           label='Show notifications'
+          divider={service.supportsNativeNotifications}
           onChange={(evt, toggled) => {
             mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setShowNotifications, toggled)
           }}
@@ -164,6 +166,7 @@ class ServiceNotificationSettingsSection extends React.Component {
         {service.supportsNativeNotifications ? this.renderEnhanced(mailbox, service, os) : undefined}
         {service.supportsNativeNotifications ? (
           <SettingsListItemButton
+            divider={false}
             label='Test Notification'
             icon={<PlayArrowIcon />}
             disabled={!service.showNotifications}

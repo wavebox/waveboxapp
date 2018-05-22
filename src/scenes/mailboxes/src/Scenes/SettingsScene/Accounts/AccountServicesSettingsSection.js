@@ -8,6 +8,7 @@ import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemText from 'wbui/SettingsListItemText'
 import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
+import ListIcon from '@material-ui/icons/List'
 
 export default class AccountServicesSettingsSection extends React.Component {
   /* **************************************************************************/
@@ -62,7 +63,7 @@ export default class AccountServicesSettingsSection extends React.Component {
     if (!userHasServices) { return false }
 
     return (
-      <SettingsListSection title='Services' {...passProps}>
+      <SettingsListSection title='Services' icon={<ListIcon />} {...passProps}>
         <SettingsListItemText
           primary={(
             <span>

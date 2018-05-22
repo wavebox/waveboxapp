@@ -12,6 +12,7 @@ import SettingsListItem from 'wbui/SettingsListItem'
 import SettingsListItemText from 'wbui/SettingsListItemText'
 import WarningIcon from '@material-ui/icons/Warning'
 import SmsIcon from '@material-ui/icons/Sms'
+import AdjustIcon from '@material-ui/icons/Adjust'
 
 const styles = {
   mockUnreadActivityIndicator: {
@@ -97,12 +98,17 @@ class ServiceBadgeSettingsSection extends React.Component {
     if (ServiceBadgeSettingsSection.willRenderForService(service) === false) { return false }
 
     return (
-      <SettingsListSection title='Badges' {...passProps}>
+      <SettingsListSection title='Badges' icon={<AdjustIcon />} {...passProps}>
         {userHasSleepable && service.sleepable && !service.supportsSyncWhenSleeping ? (
           <SettingsListItemText
             primaryType='warning'
             primaryIcon={<WarningIcon />}
-            primary={`When you have multiple services you can show the total unread count for those services in the sidebar, so at a glance you know what's new`} />
+            primary={(
+              <span>
+                Badges will only sync for this service when the account is not sleeping. To
+                ensure badges are always updated we recommend disabling sleeping for this service
+              </span>
+            )} />
         ) : undefined}
         <SettingsListItem>
           <ColorPickerButton

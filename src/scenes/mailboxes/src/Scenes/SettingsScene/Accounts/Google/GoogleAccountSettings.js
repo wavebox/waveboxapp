@@ -16,6 +16,11 @@ import Resolver from 'Runtime/Resolver'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import { withStyles } from '@material-ui/core/styles'
 import { Button, Icon, Avatar } from '@material-ui/core'
+import AccountSettingsScroller from '../AccountSettingsScroller'
+import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
+import BuildIcon from '@material-ui/icons/Build'
+import TuneIcon from '@material-ui/icons/Tune'
+import ListIcon from '@material-ui/icons/List'
 
 const styles = {
   proServices: {
@@ -30,6 +35,12 @@ const styles = {
     height: 40,
     backgroundColor: 'white',
     marginRight: 8,
+    border: '2px solid rgb(139, 139, 139)'
+  },
+  scrollspyServiceAvatar: {
+    width: 24,
+    height: 24,
+    backgroundColor: 'white',
     border: '2px solid rgb(139, 139, 139)'
   }
 }
@@ -52,10 +63,14 @@ class GoogleAccountSettings extends React.Component {
 
   componentDidMount () {
     userStore.listen(this.userUpdated)
+    this.renderBelowFoldTO = setTimeout(() => {
+      this.setState({ renderBelowFold: true })
+    }, 1000)
   }
 
   componentWillUnmount () {
     userStore.unlisten(this.userUpdated)
+    clearTimeout(this.renderBelowFoldTO)
   }
 
   /* **************************************************************************/
@@ -64,7 +79,8 @@ class GoogleAccountSettings extends React.Component {
 
   state = (() => {
     return {
-      userHasServices: userStore.getState().user.hasServices
+      userHasServices: userStore.getState().user.hasServices,
+      renderBelowFold: false
     }
   })()
 
@@ -98,35 +114,81 @@ class GoogleAccountSettings extends React.Component {
   * @param mailbox: the current mailbox
   * @param serviceType: the type of service we are rendering for
   * @param onRequestEditCustomCode: the function call to open the edit custom code modal
+  * @param render: true to render
   * @return jsx
   */
-  renderServiceType (mailbox, serviceType, onRequestEditCustomCode) {
+  renderServiceType (mailbox, serviceType, onRequestEditCustomCode, render) {
     switch (serviceType) {
       case CoreService.SERVICE_TYPES.DEFAULT:
         return (
-          <GoogleDefaultServiceSettings
-            key={serviceType}
-            mailbox={mailbox}
-            onRequestEditCustomCode={onRequestEditCustomCode} />)
+          <section id={`sec-${mailbox.id}-${serviceType}-a-service`} key={serviceType}>
+            {render ? (
+              <GoogleDefaultServiceSettings
+                mailbox={mailbox}
+                onRequestEditCustomCode={onRequestEditCustomCode} />
+            ) : undefined}
+          </section>
+        )
       default:
         return (
-          <GoogleServiceSettings
-            key={serviceType}
-            mailbox={mailbox}
-            serviceType={serviceType}
-            onRequestEditCustomCode={onRequestEditCustomCode} />)
+          <section id={`sec-${mailbox.id}-${serviceType}-a-service`} key={serviceType}>
+            {render ? (
+              <GoogleServiceSettings
+                mailbox={mailbox}
+                serviceType={serviceType}
+                onRequestEditCustomCode={onRequestEditCustomCode} />
+            ) : undefined}
+          </section>
+        )
+    }
+  }
+
+  /**
+  * Renders the scrollspy content for a service
+  * @param serviceType: the service type
+  * @return the name
+  */
+  renderServiceScrollspy (mailbox, serviceType) {
+    const service = mailbox.serviceForType(serviceType)
+    const serviceClass = ServiceFactory.getClass(mailbox.type, serviceType)
+    return {
+      name: (service || serviceClass).humanizedType,
+      icon: (
+        <Avatar
+          className={this.props.classes.scrollspyServiceAvatar}
+          src={Resolver.image(service ? service.humanizedLogoAtSize(128) : serviceClass.humanizedLogo)} />
+      )
     }
   }
 
   render () {
     const { classes, mailbox, showRestart, onRequestEditCustomCode, ...passProps } = this.props
-    const { userHasServices } = this.state
+    const { userHasServices, renderBelowFold } = this.state
 
     return (
-      <div {...passProps}>
-        <AccountAppearanceSettingsSection mailbox={mailbox} />
-        <AccountServicesSettingsSection mailbox={mailbox} />
+      <AccountSettingsScroller
+        scrollspyItems={[
+          { id: `sec-${mailbox.id}-appearance`, name: 'Appearance', IconClass: ViewQuiltIcon },
+          { id: `sec-${mailbox.id}-services`, name: 'Services', IconClass: ListIcon },
+          { id: `sec-${mailbox.id}-advanced`, name: 'Advanced', IconClass: TuneIcon },
+          { id: `sec-${mailbox.id}-destructive`, name: 'Tools', IconClass: BuildIcon }
+        ].concat(
+          [].concat(mailbox.enabledServiceTypes, mailbox.disabledServiceTypes).map((serviceType) => {
+            return {
+              id: `sec-${mailbox.id}-${serviceType}-a-service`,
+              ...this.renderServiceScrollspy(mailbox, serviceType)
+            }
+          })
+        )}
+        {...passProps}>
+        <AccountAppearanceSettingsSection
+          id={`sec-${mailbox.id}-appearance`}
+          mailbox={mailbox} />
+        <AccountServicesSettingsSection
+          id={`sec-${mailbox.id}-services`}
+          mailbox={mailbox} />
         <AccountAdvancedSettingsSection
+          id={`sec-${mailbox.id}-advanced`}
           mailbox={mailbox}
           showRestart={showRestart}
           windowOpenAfter={(
@@ -139,17 +201,15 @@ class GoogleAccountSettings extends React.Component {
               checked={mailbox.openDriveLinksWithExternalBrowser} />
           )}
         />
-        <AccountDestructiveSettingsSection mailbox={mailbox} />
+        <AccountDestructiveSettingsSection
+          id={`sec-${mailbox.id}-destructive`}
+          mailbox={mailbox} />
         <ServicesHeading mailbox={mailbox} />
         {userHasServices ? (
-          <div>
-            {mailbox.enabledServiceTypes.map((serviceType) => {
-              return this.renderServiceType(mailbox, serviceType, onRequestEditCustomCode)
-            })}
-            {mailbox.disabledServiceTypes.map((serviceType) => {
-              return this.renderServiceType(mailbox, serviceType, onRequestEditCustomCode)
-            })}
-          </div>
+          [].concat(
+            mailbox.enabledServiceTypes,
+            mailbox.disabledServiceTypes
+          ).map((serviceType) => this.renderServiceType(mailbox, serviceType, onRequestEditCustomCode, renderBelowFold))
         ) : (
           <div>
             {this.renderServiceType(mailbox, CoreService.SERVICE_TYPES.DEFAULT, onRequestEditCustomCode)}
@@ -169,7 +229,7 @@ class GoogleAccountSettings extends React.Component {
             </div>
           </div>
         )}
-      </div>
+      </AccountSettingsScroller>
     )
   }
 }

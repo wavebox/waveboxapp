@@ -16,14 +16,35 @@ import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
 
 const styles = {
+  toolbar: {
+    backgroundColor: grey[300],
+    flexDirection: 'row',
+    marginTop: -4,
+    marginBottom: -4,
+    height: 47
+  },
+  toolbarInfo: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center'
+  },
+  toolbarControls: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center'
+  },
   serviceAvatar: {
     width: 30,
     height: 30,
     backgroundColor: 'white',
-    border: '2px solid rgb(139, 139, 139)'
+    border: '2px solid rgb(139, 139, 139)',
+    marginRight: 6
   },
-  toolbar: {
-    backgroundColor: grey[300]
+  childrenWrap: {
+    paddingLeft: 12,
+    paddingRight: 12
   }
 }
 
@@ -46,13 +67,11 @@ class ServiceSection extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
-  /**
-  * Renders the enabled service
-  * @param service: the service
-  * @return jsx
-  */
-  renderEnabled (service) {
+  render () {
     const { classes, mailbox, serviceType, children, style, ...passProps } = this.props
+    const service = mailbox.serviceForType(serviceType)
+    const serviceClass = ServiceFactory.getClass(mailbox.type, serviceType)
+
     const isSingleService = mailbox.supportedServiceTypes === 1
     const serviceIndex = mailbox.additionalServiceTypes.findIndex((type) => type === serviceType)
     const isFirst = serviceIndex === 0
@@ -62,83 +81,65 @@ class ServiceSection extends React.Component {
     return (
       <SettingsListSection {...passProps}>
         <SettingsListItem className={classes.toolbar}>
-          <div>
-            <Avatar className={classes.serviceAvatar} src={Resolver.image(service.humanizedLogoAtSize(128))} />
-            {service.humanizedType}
+          <div className={classes.toolbarInfo}>
+            <Avatar
+              className={classes.serviceAvatar}
+              src={Resolver.image(service ? service.humanizedLogoAtSize(128) : serviceClass.humanizedLogo)} />
+            {(service || serviceClass).humanizedType}
           </div>
           {!isSingleService && !isDefaultService ? (
-            <div>
-              <Tooltip title='Disable'>
-                <div>
-                  <IconButton
-                    disabled={isDefaultService}
-                    onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.removeService, serviceType)}>
-                    <CheckBoxIcon />
-                  </IconButton>
-                </div>
-              </Tooltip>
-              <Tooltip title='Move up'>
-                <div>
-                  <IconButton
-                    disabled={isFirst}
-                    onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceUp, serviceType)}>
-                    <ArrowUpwardIcon />
-                  </IconButton>
-                </div>
-              </Tooltip>
-              <Tooltip title='Move down'>
-                <div>
-                  <IconButton
-                    disabled={isLast}
-                    onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceDown, serviceType)}>
-                    <ArrowDownwardIcon />
-                  </IconButton>
-                </div>
-              </Tooltip>
+            <div className={classes.toolbarControls}>
+              {service ? (
+                <Tooltip title='Disable'>
+                  <div>
+                    <IconButton
+                      disabled={isDefaultService}
+                      onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.removeService, serviceType)}>
+                      <CheckBoxIcon />
+                    </IconButton>
+                  </div>
+                </Tooltip>
+              ) : (
+                <Tooltip title='Enable'>
+                  <div>
+                    <IconButton onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.addService, serviceType)}>
+                      <CheckBoxOutlineIcon />
+                    </IconButton>
+                  </div>
+                </Tooltip>
+              )}
+              {service ? (
+                <Tooltip title='Move up'>
+                  <div>
+                    <IconButton
+                      disabled={isFirst}
+                      onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceUp, serviceType)}>
+                      <ArrowUpwardIcon />
+                    </IconButton>
+                  </div>
+                </Tooltip>
+              ) : undefined}
+              {service ? (
+                <Tooltip title='Move down'>
+                  <div>
+                    <IconButton
+                      disabled={isLast}
+                      onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceDown, serviceType)}>
+                      <ArrowDownwardIcon />
+                    </IconButton>
+                  </div>
+                </Tooltip>
+              ) : undefined}
             </div>
-          ) : undefined}
+          ) : (
+            <div className={classes.toolbarControls} />
+          )}
         </SettingsListItem>
-        {children}
+        <div className={classes.childrenWrap}>
+          {children}
+        </div>
       </SettingsListSection>
     )
-  }
-
-  /**
-  * Renders the disabled service
-  * @return jsx
-  */
-  renderDisabled () {
-    const { classes, mailbox, serviceType, style, ...passProps } = this.props
-    const serviceClass = ServiceFactory.getClass(mailbox.type, serviceType)
-
-    return (
-      <SettingsListSection
-        title={(
-          <span>
-            <Avatar className={classes.serviceAvatar} src={Resolver.image(serviceClass.humanizedLogo)} />
-            {serviceClass.humanizedType}
-          </span>
-        )}
-        {...passProps}>
-        <SettingsListItem className={classes.toolbar}>
-          <Tooltip title='Enable'>
-            <IconButton onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.addService, serviceType)}>
-              <CheckBoxOutlineIcon />
-            </IconButton>
-          </Tooltip>
-        </SettingsListItem>
-      </SettingsListSection>
-    )
-  }
-
-  render () {
-    const { mailbox, serviceType } = this.props
-    const service = mailbox.serviceForType(serviceType)
-    if (service) {
-      return this.renderEnabled(service)
-    } else {
-      return this.renderDisabled()
-    }
   }
 }
 

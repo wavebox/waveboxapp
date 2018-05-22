@@ -15,6 +15,17 @@ import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemTextField from 'wbui/SettingsListItemTextField'
 import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import SettingsListItemText from 'wbui/SettingsListItemText'
+import AccountSettingsScroller from '../AccountSettingsScroller'
+import AccountCircleIcon from '@material-ui/icons/AccountCircle'
+import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
+import AdjustIcon from '@material-ui/icons/Adjust'
+import NotificationsIcon from '@material-ui/icons/Notifications'
+import HotelIcon from '@material-ui/icons/Hotel'
+import CodeIcon from '@material-ui/icons/Code'
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows'
+import BuildIcon from '@material-ui/icons/Build'
+import TuneIcon from '@material-ui/icons/Tune'
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 
 export default class ContainerAccountSettings extends React.Component {
   /* **************************************************************************/
@@ -78,8 +89,24 @@ export default class ContainerAccountSettings extends React.Component {
     const container = mailbox.container
 
     return (
-      <div {...passProps}>
-        <SettingsListSection>
+      <AccountSettingsScroller
+        scrollspyItems={[
+          { id: `sec-${mailbox.id}-${service.type}-account`, name: 'Account', IconClass: AccountCircleIcon },
+          { id: `sec-${mailbox.id}-${service.type}-appearance`, name: 'Appearance', IconClass: ViewQuiltIcon },
+          { id: `sec-${mailbox.id}-${service.type}-badge`, name: 'Badge', IconClass: AdjustIcon },
+          { id: `sec-${mailbox.id}-${service.type}-notifications`, name: 'Notifications', IconClass: NotificationsIcon },
+          { id: `sec-${mailbox.id}-${service.type}-behaviour`, name: 'Behaviour & Sleep', IconClass: HotelIcon },
+          { id: `sec-${mailbox.id}-${service.type}-code`, name: 'Code & Userscripts', IconClass: CodeIcon },
+          { id: `sec-${mailbox.id}-${service.type}-useragent`, name: 'UserAgent', IconClass: CompareArrowsIcon },
+          { id: `sec-${mailbox.id}-${service.type}-advanced`, name: 'Advanced', IconClass: TuneIcon },
+          { id: `sec-${mailbox.id}-${service.type}-destructive`, name: 'Tools', IconClass: BuildIcon },
+          { id: `sec-${mailbox.id}-${service.type}-about`, name: 'About', IconClass: HelpOutlineIcon }
+        ]}
+        {...passProps}>
+        <SettingsListSection
+          title='Account'
+          icon={<AccountCircleIcon />}
+          id={`sec-${mailbox.id}-${service.type}-account`}>
           <SettingsListItemTextField
             key={`displayName_${mailbox.userDisplayName}`}
             label='Account Name'
@@ -95,21 +122,37 @@ export default class ContainerAccountSettings extends React.Component {
             }}
             checked={service.hasNavigationToolbar} />
           <SettingsListItemSwitch
+            divider={false}
             label='Restore last page on load'
             onChange={(evt, toggled) => {
               mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setRestoreLastUrl, toggled)
             }}
             checked={service.restoreLastUrl} />
         </SettingsListSection>
-        <AccountAppearanceSettingsSection mailbox={mailbox} />
-        <ServiceBadgeSettingsSection mailbox={mailbox} service={service} />
-        <ServiceNotificationSettingsSection mailbox={mailbox} service={service} />
-        <ServiceBehaviourSettingsSection mailbox={mailbox} service={service} />
+        <AccountAppearanceSettingsSection
+          mailbox={mailbox}
+          id={`sec-${mailbox.id}-${service.type}-appearance`} />
+        <ServiceBadgeSettingsSection
+          mailbox={mailbox}
+          service={service}
+          id={`sec-${mailbox.id}-${service.type}-badge`} />
+        <ServiceNotificationSettingsSection
+          mailbox={mailbox}
+          service={service}
+          id={`sec-${mailbox.id}-${service.type}-notifications`} />
+        <ServiceBehaviourSettingsSection
+          mailbox={mailbox}
+          service={service}
+          id={`sec-${mailbox.id}-${service.type}-behaviour`} />
         <ServiceCustomCodeSettingsSection
           mailbox={mailbox}
           service={service}
-          onRequestEditCustomCode={onRequestEditCustomCode} />
-        <SettingsListSection title='UserAgent'>
+          onRequestEditCustomCode={onRequestEditCustomCode}
+          id={`sec-${mailbox.id}-${service.type}-code`} />
+        <SettingsListSection
+          title='UserAgent'
+          icon={<CompareArrowsIcon />}
+          id={`sec-${mailbox.id}-${service.type}-useragent`}>
           <SettingsListItemSwitch
             label='Use custom UserAgent (Requires restart)'
             onChange={this.handleChangeUseCustomUserAgent}
@@ -123,17 +166,20 @@ export default class ContainerAccountSettings extends React.Component {
               onBlur: this.handleChangeCustomUserAgent
             }} />
           <SettingsListItemButton
+            divider={false}
             label='Restore defaults (Requires restart)'
             onClick={this.handleResetCustomUserAgent} />
         </SettingsListSection>
         <AccountAdvancedSettingsSection
           mailbox={mailbox}
           showRestart={showRestart}
+          id={`sec-${mailbox.id}-${service.type}-advanced`}
           windowOpenAfter={container.hasWindowOpenOverrides ? (
             <span>
-              {mailbox.getAllWindowOpenOverrideUserConfigs().map((config) => {
+              {mailbox.getAllWindowOpenOverrideUserConfigs().map((config, i, arr) => {
                 return (
                   <SettingsListItemSwitch
+                    divider={i !== (arr.length - 1)}
                     key={config.id}
                     label={config.label}
                     onChange={(evt, toggled) => {
@@ -144,12 +190,17 @@ export default class ContainerAccountSettings extends React.Component {
               })}
             </span>
           ) : undefined} />
-        <AccountDestructiveSettingsSection mailbox={mailbox} />
-        <SettingsListSection title='About'>
+        <AccountDestructiveSettingsSection
+          mailbox={mailbox}
+          id={`sec-${mailbox.id}-${service.type}-destructive`} />
+        <SettingsListSection
+          title='About'
+          icon={<HelpOutlineIcon />}
+          id={`sec-${mailbox.id}-${service.type}-about`}>
           <SettingsListItemText primary='Container ID' secondary={container.id} />
-          <SettingsListItemText primary='Container Version' secondary={container.version} />
+          <SettingsListItemText divider={false} primary='Container Version' secondary={container.version} />
         </SettingsListSection>
-      </div>
+      </AccountSettingsScroller>
     )
   }
 }

@@ -32,7 +32,7 @@ import AdjustIcon from '@material-ui/icons/Adjust'
 import KeyboardIcon from '@material-ui/icons/Keyboard'
 import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt'
 import StorageIcon from '@material-ui/icons/Storage'
-import BuildIcon from '@material-ui/icons/Build'
+import TuneIcon from '@material-ui/icons/Tune'
 import BugReportIcon from '@material-ui/icons/BugReport'
 import HelpIcon from '@material-ui/icons/Help'
 
@@ -51,7 +51,7 @@ const styles = {
   scroller: {
     position: 'absolute',
     top: 0,
-    left: 0,
+    left: SCROLLSPY_WIDTH,
     bottom: 0,
     right: 0,
     paddingBottom: 100,
@@ -77,11 +77,6 @@ const styles = {
   },
   scrollspyIcon: {
     marginRight: 6
-  },
-  [`@media (max-width: ${CONTENT_WIDTH + (2 * SCROLLSPY_WIDTH)}px)`]: {
-    scroller: {
-      left: SCROLLSPY_WIDTH
-    }
   },
   [`@media (max-width: ${CONTENT_WIDTH + (SCROLLSPY_WIDTH)}px)`]: {
     scroller: {
@@ -109,7 +104,6 @@ class GeneralSettings extends React.Component {
 
   constructor (props) {
     super(props)
-    this.sectionRefs = {}
     this.scrollerRef = null
   }
 
@@ -188,10 +182,9 @@ class GeneralSettings extends React.Component {
   * Scrolls to a section
   */
   scrollToSection = (evt, sectionName) => {
-    if (this.sectionRefs[sectionName] && this.scrollerRef) {
-      const target = ReactDOM.findDOMNode(this.sectionRefs[sectionName])
-      ReactDOM.findDOMNode(this.scrollerRef).scrollTop = target.offsetTop
-    }
+    const scroller = ReactDOM.findDOMNode(this.scrollerRef)
+    const target = scroller.querySelector(`#${sectionName}`)
+    scroller.scrollTop = target.offsetTop
   }
 
   /* **************************************************************************/
@@ -224,19 +217,19 @@ class GeneralSettings extends React.Component {
         className={classNames(classes.root, className)}
         {...passProps}>
         <div ref={(n) => { this.scrollerRef = n }} className={classes.scroller}>
-          <section id='section-ui' ref={(n) => { this.sectionRefs['section-ui'] = n }}>
+          <section id='section-ui'>
             <UISettingsSection ui={ui} os={os} accelerators={accelerators} extension={extension} showRestart={showRestart} />
           </section>
-          <section id='section-notifications' ref={(n) => { this.sectionRefs['section-notifications'] = n }}>
+          <section id='section-notifications'>
             {renderBelowFold ? <NotificationSettingsSection os={os} /> : undefined}
           </section>
-          <section id='section-download' ref={(n) => { this.sectionRefs['section-download'] = n }}>
+          <section id='section-download'>
             {renderBelowFold ? <DownloadSettingsSection os={os} /> : undefined}
           </section>
-          <section id='section-language' ref={(n) => { this.sectionRefs['section-language'] = n }}>
+          <section id='section-language'>
             {renderBelowFold ? <LanguageSettingsSection language={language} showRestart={showRestart} /> : undefined}
           </section>
-          <section id='section-platform' ref={(n) => { this.sectionRefs['section-platform'] = n }}>
+          <section id='section-platform'>
             {renderBelowFold ? (
               <PlatformSettingsSection
                 mailtoLinkHandlerSupported={mailtoLinkHandlerSupported}
@@ -244,19 +237,19 @@ class GeneralSettings extends React.Component {
                 openAtLoginSupported={openAtLoginSupported} />
             ) : undefined}
           </section>
-          <section id='section-tray' ref={(n) => { this.sectionRefs['section-tray'] = n }}>
+          <section id='section-tray'>
             {renderBelowFold ? <TraySettingsSection tray={tray} showRestart={showRestart} /> : undefined}
           </section>
-          <section id='section-accelerators' ref={(n) => { this.sectionRefs['section-accelerators'] = n }}>
+          <section id='section-accelerators'>
             {renderBelowFold ? <AcceleratorSettingsSection accelerators={accelerators} /> : undefined}
           </section>
-          <section id='section-update' ref={(n) => { this.sectionRefs['section-update'] = n }}>
+          <section id='section-update'>
             {renderBelowFold ? <UpdateSettingsSection app={app} showRestart={showRestart} /> : undefined}
           </section>
-          <section id='section-data' ref={(n) => { this.sectionRefs['section-data'] = n }}>
+          <section id='section-data'>
             {renderBelowFold ? <DataSettingsSection showRestart={showRestart} /> : undefined}
           </section>
-          <section id='section-advanced' ref={(n) => { this.sectionRefs['section-advanced'] = n }}>
+          <section id='section-advanced'>
             {renderBelowFold ? (
               <AdvancedSettingsSection
                 showRestart={showRestart}
@@ -267,10 +260,10 @@ class GeneralSettings extends React.Component {
                 tray={tray} />
             ) : undefined}
           </section>
-          <section id='section-debug' ref={(n) => { this.sectionRefs['section-debug'] = n }}>
+          <section id='section-debug'>
             {renderBelowFold ? <DebugSettingsSection app={app} showRestart={showRestart} /> : undefined}
           </section>
-          <section id='section-about' ref={(n) => { this.sectionRefs['section-about'] = n }}>
+          <section id='section-about'>
             {renderBelowFold ? <InfoSettingsSection /> : undefined}
           </section>
         </div>
@@ -377,7 +370,7 @@ class GeneralSettings extends React.Component {
                 button
                 className={classes.scrollspyItem}
                 onClick={(evt) => this.scrollToSection(evt, 'section-advanced')}>
-                <BuildIcon className={classes.scrollspyIcon} />
+                <TuneIcon className={classes.scrollspyIcon} />
                 Advanced
               </ListItem>
               <ListItem

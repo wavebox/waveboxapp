@@ -11,6 +11,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import ClearIcon from '@material-ui/icons/Clear'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import SettingsListItemConfirmButton from 'wbui/SettingsListItemConfirmButton'
+import BuildIcon from '@material-ui/icons/Build'
 
 const styles = {
   deleteButton: {
@@ -44,7 +45,7 @@ class AccountDestructiveSettingsSection extends React.Component {
     } = this.props
 
     return (
-      <SettingsListSection title='Tools' {...passProps}>
+      <SettingsListSection title='Tools' icon={<BuildIcon />} {...passProps}>
         {mailbox.supportsAuth ? (
           <SettingsListItemButton
             label='Reauthenticate'

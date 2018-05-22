@@ -11,7 +11,7 @@ import { withStyles } from '@material-ui/core/styles'
 import WarningIcon from '@material-ui/icons/Warning'
 import CodeIcon from '@material-ui/icons/Code'
 import SettingsListItemButton from 'wbui/SettingsListItemButton'
-import BuildIcon from '@material-ui/icons/Build'
+import TuneIcon from '@material-ui/icons/Tune'
 import SettingsListTypography from 'wbui/SettingsListTypography'
 
 const styles = {
@@ -65,7 +65,7 @@ class AdvancedSettingsSection extends React.Component {
     } = this.state
 
     return (
-      <SettingsListSection {...passProps} title='Advanced' icon={<BuildIcon />}>
+      <SettingsListSection {...passProps} title='Advanced' icon={<TuneIcon />}>
         <SettingsListItemSwitch
           label='Ignore GPU Blacklist (Requires Restart)'
           onChange={(evt, toggled) => {
