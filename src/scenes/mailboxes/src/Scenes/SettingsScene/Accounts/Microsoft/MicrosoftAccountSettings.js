@@ -4,7 +4,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import AccountAppearanceSettingsSection from '../AccountAppearanceSettingsSection'
 import AccountAdvancedSettingsSection from '../AccountAdvancedSettingsSection'
 import AccountDestructiveSettingsSection from '../AccountDestructiveSettingsSection'
-import AccountServicesHeading from '../AccountServicesHeading'
+import ServicesHeading from '../ServicesHeading'
 import AccountServicesSettingsSection from '../AccountServicesSettingsSection'
 import MicrosoftServiceSettings from './MicrosoftServiceSettings'
 import MicrosoftDefaultServiceSettings from './MicrosoftDefaultServiceSettings'
@@ -92,7 +92,7 @@ export default class MicrosoftAccountSettings extends React.Component {
         <AccountServicesSettingsSection mailbox={mailbox} />
         <AccountAdvancedSettingsSection mailbox={mailbox} showRestart={showRestart} />
         <AccountDestructiveSettingsSection mailbox={mailbox} />
-        <AccountServicesHeading mailbox={mailbox} />
+        <ServicesHeading mailbox={mailbox} />
         {userHasServices ? (
           <div>
             {mailbox.enabledServiceTypes.map((serviceType) => {

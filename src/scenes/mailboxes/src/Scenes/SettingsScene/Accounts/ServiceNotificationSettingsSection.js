@@ -14,7 +14,7 @@ import SettingsListItemText from 'wbui/SettingsListItemText'
 import WarningIcon from '@material-ui/icons/Warning'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 
-class AccountNotificationSettings extends React.Component {
+class ServiceNotificationSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -136,7 +136,7 @@ class AccountNotificationSettings extends React.Component {
   render () {
     const { mailbox, service, classes, ...passProps } = this.props
     const { os, userHasSleepable } = this.state
-    if (AccountNotificationSettings.willRenderForService(service) === false) { return false }
+    if (ServiceNotificationSettingsSection.willRenderForService(service) === false) { return false }
 
     return (
       <SettingsListSection title='Notifications' {...passProps}>
@@ -174,4 +174,4 @@ class AccountNotificationSettings extends React.Component {
   }
 }
 
-export default AccountNotificationSettings
+export default ServiceNotificationSettingsSection

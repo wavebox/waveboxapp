@@ -21,7 +21,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class AccountCustomCodeSettings extends React.Component {
+class ServiceCustomCodeSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -76,4 +76,4 @@ class AccountCustomCodeSettings extends React.Component {
   }
 }
 
-export default AccountCustomCodeSettings
+export default ServiceCustomCodeSettingsSection

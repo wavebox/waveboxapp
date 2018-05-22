@@ -19,7 +19,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class AccountServicesHeading extends React.Component {
+class ServicesHeading extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -52,4 +52,4 @@ class AccountServicesHeading extends React.Component {
   }
 }
 
-export default AccountServicesHeading
+export default ServicesHeading

@@ -28,7 +28,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class AccountServiceItem extends React.Component {
+class ServiceSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -142,4 +142,4 @@ class AccountServiceItem extends React.Component {
   }
 }
 
-export default AccountServiceItem
+export default ServiceSection

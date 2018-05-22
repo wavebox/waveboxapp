@@ -4,11 +4,11 @@ import shallowCompare from 'react-addons-shallow-compare'
 import AccountAppearanceSettingsSection from '../AccountAppearanceSettingsSection'
 import AccountAdvancedSettingsSection from '../AccountAdvancedSettingsSection'
 import AccountDestructiveSettingsSection from '../AccountDestructiveSettingsSection'
-import AccountBadgeSettings from '../AccountBadgeSettings'
-import AccountNotificationSettings from '../AccountNotificationSettings'
+import ServiceBadgeSettingsSection from '../ServiceBadgeSettingsSection'
+import ServiceNotificationSettingsSection from '../ServiceNotificationSettingsSection'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
-import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
-import AccountBehaviourSettings from '../AccountBehaviourSettings'
+import ServiceCustomCodeSettingsSection from '../ServiceCustomCodeSettingsSection'
+import ServiceBehaviourSettingsSection from '../ServiceBehaviourSettingsSection'
 
 export default class SlackAccountSettings extends React.Component {
   /* **************************************************************************/
@@ -36,10 +36,10 @@ export default class SlackAccountSettings extends React.Component {
     return (
       <div {...passProps}>
         <AccountAppearanceSettingsSection mailbox={mailbox} />
-        <AccountBadgeSettings mailbox={mailbox} service={service} />
-        <AccountNotificationSettings mailbox={mailbox} service={service} />
-        <AccountBehaviourSettings mailbox={mailbox} service={service} />
-        <AccountCustomCodeSettings
+        <ServiceBadgeSettingsSection mailbox={mailbox} service={service} />
+        <ServiceNotificationSettingsSection mailbox={mailbox} service={service} />
+        <ServiceBehaviourSettingsSection mailbox={mailbox} service={service} />
+        <ServiceCustomCodeSettingsSection
           mailbox={mailbox}
           service={service}
           onRequestEditCustomCode={onRequestEditCustomCode} />

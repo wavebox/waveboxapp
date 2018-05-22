@@ -3,7 +3,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import AccountAppearanceSettingsSection from '../AccountAppearanceSettingsSection'
 import AccountAdvancedSettingsSection from '../AccountAdvancedSettingsSection'
-import AccountServicesHeading from '../AccountServicesHeading'
+import ServicesHeading from '../ServicesHeading'
 import AccountServicesSettingsSection from '../AccountServicesSettingsSection'
 import AccountDestructiveSettingsSection from '../AccountDestructiveSettingsSection'
 import CoreService from 'shared/Models/Accounts/CoreService'
@@ -140,7 +140,7 @@ class GoogleAccountSettings extends React.Component {
           )}
         />
         <AccountDestructiveSettingsSection mailbox={mailbox} />
-        <AccountServicesHeading mailbox={mailbox} />
+        <ServicesHeading mailbox={mailbox} />
         {userHasServices ? (
           <div>
             {mailbox.enabledServiceTypes.map((serviceType) => {

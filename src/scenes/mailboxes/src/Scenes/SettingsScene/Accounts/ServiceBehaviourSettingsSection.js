@@ -26,7 +26,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class AccountBehaviourSettings extends React.Component {
+class ServiceBehaviourSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -108,4 +108,4 @@ class AccountBehaviourSettings extends React.Component {
   }
 }
 
-export default AccountBehaviourSettings
+export default ServiceBehaviourSettingsSection

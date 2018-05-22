@@ -30,7 +30,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class AccountBadgeSettings extends React.Component {
+class ServiceBadgeSettingsSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -94,7 +94,7 @@ class AccountBadgeSettings extends React.Component {
   render () {
     const { mailbox, service, classes, ...passProps } = this.props
     const { userHasSleepable } = this.state
-    if (AccountBadgeSettings.willRenderForService(service) === false) { return false }
+    if (ServiceBadgeSettingsSection.willRenderForService(service) === false) { return false }
 
     return (
       <SettingsListSection title='Badges' {...passProps}>
@@ -160,4 +160,4 @@ class AccountBadgeSettings extends React.Component {
   }
 }
 
-export default AccountBadgeSettings
+export default ServiceBadgeSettingsSection

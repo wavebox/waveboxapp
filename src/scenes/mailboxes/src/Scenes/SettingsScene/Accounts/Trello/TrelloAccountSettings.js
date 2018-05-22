@@ -3,12 +3,12 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import AccountAppearanceSettingsSection from '../AccountAppearanceSettingsSection'
 import AccountAdvancedSettingsSection from '../AccountAdvancedSettingsSection'
-import AccountBadgeSettings from '../AccountBadgeSettings'
-import AccountNotificationSettings from '../AccountNotificationSettings'
+import ServiceBadgeSettingsSection from '../ServiceBadgeSettingsSection'
+import ServiceNotificationSettingsSection from '../ServiceNotificationSettingsSection'
 import AccountDestructiveSettingsSection from '../AccountDestructiveSettingsSection'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
-import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
-import AccountBehaviourSettings from '../AccountBehaviourSettings'
+import ServiceCustomCodeSettingsSection from '../ServiceCustomCodeSettingsSection'
+import ServiceBehaviourSettingsSection from '../ServiceBehaviourSettingsSection'
 import { mailboxActions, TrelloDefaultServiceReducer } from 'stores/mailbox'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
@@ -38,8 +38,8 @@ export default class TrelloAccountSettings extends React.Component {
     return (
       <div {...passProps}>
         <AccountAppearanceSettingsSection mailbox={mailbox} />
-        <AccountBadgeSettings mailbox={mailbox} service={service} />
-        <AccountNotificationSettings mailbox={mailbox} service={service} />
+        <ServiceBadgeSettingsSection mailbox={mailbox} service={service} />
+        <ServiceNotificationSettingsSection mailbox={mailbox} service={service} />
         <SettingsListSection>
           <SettingsListItemSelect
             label='Home board (opens on launch)'
@@ -58,8 +58,8 @@ export default class TrelloAccountSettings extends React.Component {
               )
             }} />
         </SettingsListSection>
-        <AccountBehaviourSettings mailbox={mailbox} service={service} />
-        <AccountCustomCodeSettings
+        <ServiceBehaviourSettingsSection mailbox={mailbox} service={service} />
+        <ServiceCustomCodeSettingsSection
           mailbox={mailbox}
           service={service}
           onRequestEditCustomCode={onRequestEditCustomCode} />

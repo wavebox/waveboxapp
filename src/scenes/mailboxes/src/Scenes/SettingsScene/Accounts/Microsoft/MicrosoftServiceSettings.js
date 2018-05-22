@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import AccountServiceItem from '../AccountServiceItem'
-import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
-import AccountBehaviourSettings from '../AccountBehaviourSettings'
-import AccountBadgeSettings from '../AccountBadgeSettings'
-import AccountNotificationSettings from '../AccountNotificationSettings'
+import ServiceSection from '../ServiceSection'
+import ServiceCustomCodeSettingsSection from '../ServiceCustomCodeSettingsSection'
+import ServiceBehaviourSettingsSection from '../ServiceBehaviourSettingsSection'
+import ServiceBadgeSettingsSection from '../ServiceBadgeSettingsSection'
+import ServiceNotificationSettingsSection from '../ServiceNotificationSettingsSection'
 
 export default class MicrosoftServiceSettings extends React.Component {
   /* **************************************************************************/
@@ -36,13 +36,13 @@ export default class MicrosoftServiceSettings extends React.Component {
   renderContent (mailbox, service, onRequestEditCustomCode) {
     if (!service) { return undefined }
 
-    if (AccountBadgeSettings.willRenderForService(service) || AccountNotificationSettings.willRenderForService(service)) {
+    if (ServiceBadgeSettingsSection.willRenderForService(service) || ServiceNotificationSettingsSection.willRenderForService(service)) {
       return (
         <div>
-          <AccountBadgeSettings mailbox={mailbox} service={service} />
-          <AccountNotificationSettings mailbox={mailbox} service={service} />
-          <AccountBehaviourSettings mailbox={mailbox} service={service} />
-          <AccountCustomCodeSettings
+          <ServiceBadgeSettingsSection mailbox={mailbox} service={service} />
+          <ServiceNotificationSettingsSection mailbox={mailbox} service={service} />
+          <ServiceBehaviourSettingsSection mailbox={mailbox} service={service} />
+          <ServiceCustomCodeSettingsSection
             mailbox={mailbox}
             service={service}
             onRequestEditCustomCode={onRequestEditCustomCode} />
@@ -51,8 +51,8 @@ export default class MicrosoftServiceSettings extends React.Component {
     } else {
       return (
         <div>
-          <AccountBehaviourSettings mailbox={mailbox} service={service} />
-          <AccountCustomCodeSettings
+          <ServiceBehaviourSettingsSection mailbox={mailbox} service={service} />
+          <ServiceCustomCodeSettingsSection
             mailbox={mailbox}
             service={service}
             onRequestEditCustomCode={onRequestEditCustomCode} />
@@ -66,9 +66,9 @@ export default class MicrosoftServiceSettings extends React.Component {
     const service = mailbox.serviceForType(serviceType)
 
     return (
-      <AccountServiceItem {...passProps} mailbox={mailbox} serviceType={serviceType}>
+      <ServiceSection {...passProps} mailbox={mailbox} serviceType={serviceType}>
         {this.renderContent(mailbox, service, onRequestEditCustomCode)}
-      </AccountServiceItem>
+      </ServiceSection>
     )
   }
 }

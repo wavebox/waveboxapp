@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import AccountServiceItem from '../AccountServiceItem'
+import ServiceSection from '../ServiceSection'
 import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
 import { mailboxActions, GoogleDefaultServiceReducer } from 'stores/mailbox'
-import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
-import AccountBehaviourSettings from '../AccountBehaviourSettings'
-import AccountBadgeSettings from '../AccountBadgeSettings'
-import AccountNotificationSettings from '../AccountNotificationSettings'
+import ServiceCustomCodeSettingsSection from '../ServiceCustomCodeSettingsSection'
+import ServiceBehaviourSettingsSection from '../ServiceBehaviourSettingsSection'
+import ServiceBadgeSettingsSection from '../ServiceBadgeSettingsSection'
+import ServiceNotificationSettingsSection from '../ServiceNotificationSettingsSection'
 import GoogleCustomUnreadSettings from './GoogleCustomUnreadSettings'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
@@ -67,7 +67,7 @@ export default class GoogleDefaultServiceSettings extends React.Component {
     const service = mailbox.serviceForType(serviceType)
 
     return (
-      <AccountServiceItem {...passProps} mailbox={mailbox} serviceType={serviceType}>
+      <ServiceSection {...passProps} mailbox={mailbox} serviceType={serviceType}>
         <SettingsListSection title='Unread & Sync'>
           <SettingsListItemSelect
             label='Unread Mode'
@@ -80,14 +80,14 @@ export default class GoogleDefaultServiceSettings extends React.Component {
             }} />
           <GoogleCustomUnreadSettings mailbox={mailbox} service={service} />
         </SettingsListSection>
-        <AccountBadgeSettings mailbox={mailbox} service={service} />
-        <AccountNotificationSettings mailbox={mailbox} service={service} />
-        <AccountBehaviourSettings mailbox={mailbox} service={service} />
-        <AccountCustomCodeSettings
+        <ServiceBadgeSettingsSection mailbox={mailbox} service={service} />
+        <ServiceNotificationSettingsSection mailbox={mailbox} service={service} />
+        <ServiceBehaviourSettingsSection mailbox={mailbox} service={service} />
+        <ServiceCustomCodeSettingsSection
           mailbox={mailbox}
           service={service}
           onRequestEditCustomCode={onRequestEditCustomCode} />
-      </AccountServiceItem>
+      </ServiceSection>
     )
   }
 }
