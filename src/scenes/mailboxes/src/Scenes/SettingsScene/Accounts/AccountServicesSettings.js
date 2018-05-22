@@ -5,10 +5,9 @@ import { userStore } from 'stores/user'
 import shallowCompare from 'react-addons-shallow-compare'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSwitch from 'wbui/SettingsListSwitch'
-import SettingsListItem from 'wbui/SettingsListItem'
-import SettingsListSelect from 'wbui/SettingsListSelect'
-import { ListItemText } from '@material-ui/core'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
+import SettingsListItemText from 'wbui/SettingsListItemText'
+import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 
 export default class AccountServicesSettings extends React.Component {
   /* **************************************************************************/
@@ -64,16 +63,15 @@ export default class AccountServicesSettings extends React.Component {
 
     return (
       <SettingsListSection title='Services' {...passProps}>
-        <SettingsListItem>
-          <ListItemText primary={(
+        <SettingsListItemText
+          primary={(
             <span>
               Your account is split into seperate services, for example Email,
               Storage & Contacts. You can enable, disable & change
               the way these behave
             </span>
           )} />
-        </SettingsListItem>
-        <SettingsListSelect
+        <SettingsListItemSelect
           label='Where should services be displayed?'
           value={mailbox.serviceDisplayMode}
           options={[
@@ -82,7 +80,7 @@ export default class AccountServicesSettings extends React.Component {
           ]}
           onChange={(evt, mode) => mailboxActions.reduce(mailbox.id, MailboxReducer.setServiceDisplayMode, mode)} />
         {mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR ? (
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Collapse sidebar services when account is inactive'
             onChange={(evt, toggled) => {
               mailboxActions.reduce(mailbox.id, MailboxReducer.setCollapseSidebarServices, toggled)
@@ -90,7 +88,7 @@ export default class AccountServicesSettings extends React.Component {
             checked={mailbox.collapseSidebarServices} />
         ) : undefined}
         {mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR ? (
-          <SettingsListSelect
+          <SettingsListItemSelect
             label='Icon positioning'
             value={mailbox.serviceToolbarIconLayout}
             options={[

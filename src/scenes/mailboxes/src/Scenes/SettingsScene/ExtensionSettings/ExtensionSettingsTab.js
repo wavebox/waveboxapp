@@ -6,8 +6,8 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { ExtensionSettings } from 'shared/Models/Settings'
 import ExtensionList from './ExtensionList'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSwitch from 'wbui/SettingsListSwitch'
-import SettingsListSelect from 'wbui/SettingsListSelect'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
+import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 import SettingsListItem from 'wbui/SettingsListItem'
 import { Button } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
@@ -75,11 +75,11 @@ class ExtensionSettingsTab extends React.Component {
     return (
       <div {...passProps}>
         <SettingsListSection className={classes.settingsList} title='Extension Settings' {...passProps}>
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Show extensions in toolbar'
             onChange={(evt, toggled) => { settingsActions.sub.extension.setShowBrowserActionsInToolbar(toggled) }}
             checked={extension.showBrowserActionsInToolbar} />
-          <SettingsListSelect
+          <SettingsListItemSelect
             label='Extension position in toolbar'
             value={extension.toolbarBrowserActionLayout}
             disabled={!extension.showBrowserActionsInToolbar}

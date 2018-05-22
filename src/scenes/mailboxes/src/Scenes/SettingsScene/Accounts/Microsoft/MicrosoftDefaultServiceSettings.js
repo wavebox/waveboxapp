@@ -9,7 +9,7 @@ import AccountBehaviourSettings from '../AccountBehaviourSettings'
 import AccountBadgeSettings from '../AccountBadgeSettings'
 import AccountNotificationSettings from '../AccountNotificationSettings'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSelect from 'wbui/SettingsListSelect'
+import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 
 export default class MicrosoftDefaultServiceSettings extends React.Component {
   /* **************************************************************************/
@@ -51,10 +51,10 @@ export default class MicrosoftDefaultServiceSettings extends React.Component {
     return (
       <AccountServiceItem {...passProps} mailbox={mailbox} serviceType={serviceType}>
         <SettingsListSection title='Unread & Sync'>
-          <SettingsListSelect
+          <SettingsListItemSelect
             label='Unread Mode'
             value={service.unreadMode}
-            options={Array.from(service.supportedUnreadModes).map((mode) => {
+            options={Object.keys(MicrosoftDefaultService.UNREAD_MODES).map((mode) => {
               return { value: mode, label: this.humanizeUnreadMode(mode) }
             })}
             onChange={(evt, value) => {

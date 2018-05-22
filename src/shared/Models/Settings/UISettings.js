@@ -51,7 +51,7 @@ class UISettings extends Model {
   get showAppBadge () { return this._value_('showAppBadge', true) }
   get showAppMenu () { return this._value_('showAppMenu', process.platform !== 'win32') }
   get openHidden () { return this._value_('openHidden', false) }
-  get showSleepableServiceIndicator () { return this._value_('showSleepableServiceIndicator', false) }
+  get showSleepableServiceIndicator () { return this._value_('showSleepableServiceIndicator', true) }
   get vibrancyMode () { return this._value_('vibrancyMode', VIBRANCY_MODES.NONE) }
   get electronVibrancyMode () { return ELECTRON_VIBRANCY_MODES[this.vibrancyMode] }
 

@@ -4,8 +4,8 @@ import settingsActions from 'stores/settings/settingsActions'
 import shallowCompare from 'react-addons-shallow-compare'
 import { UISettings, ExtensionSettings } from 'shared/Models/Settings'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSwitch from 'wbui/SettingsListSwitch'
-import SettingsListSelect from 'wbui/SettingsListSelect'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
+import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 import SettingsListKeyboardShortcutText from 'wbui/SettingsListKeyboardShortcutText'
 import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
 
@@ -43,30 +43,30 @@ export default class UISettingsSection extends React.Component {
     return (
       <div {...passProps}>
         <SettingsListSection title='User Interface' icon={<ViewQuiltIcon />}>
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Show app unread badge'
             onChange={(evt, toggled) => settingsActions.sub.ui.setShowAppBadge(toggled)}
             checked={ui.showAppBadge} />
           {process.platform === 'darwin' ? (
-            <SettingsListSwitch
+            <SettingsListItemSwitch
               label='Open links in background'
               onChange={(evt, toggled) => settingsActions.sub.os.setOpenLinksInBackground(toggled)}
               checked={os.openLinksInBackground} />
           ) : undefined}
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Always start minimized'
             onChange={(evt, toggled) => settingsActions.sub.ui.setOpenHidden(toggled)}
             checked={ui.openHidden} />
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Show sleeping account icons in grey'
             onChange={(evt, toggled) => settingsActions.sub.ui.setShowSleepableServiceIndicator(toggled)}
             checked={ui.showSleepableServiceIndicator} />
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Show one-time sleep notification for each account'
             onChange={(evt, toggled) => settingsActions.sub.ui.setShowDefaultServiceSleepNotifications(toggled)}
             checked={ui.showDefaultServiceSleepNotifications} />
           {process.platform === 'darwin' ? (
-            <SettingsListSelect
+            <SettingsListItemSelect
               label='Translucent window backgrounds (Requires Restart)'
               value={ui.vibrancyMode}
               options={[
@@ -81,7 +81,7 @@ export default class UISettingsSection extends React.Component {
                 settingsActions.sub.ui.setVibrancyMode(value)
               }} />
           ) : undefined}
-          <SettingsListSelect
+          <SettingsListItemSelect
             divider={false}
             label='Account tooltips'
             value={ui.accountTooltipMode}
@@ -95,7 +95,7 @@ export default class UISettingsSection extends React.Component {
         </SettingsListSection>
 
         <SettingsListSection title='User Interface' subtitle='Sidebar' icon={<ViewQuiltIcon />}>
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label={(
               <span>
                 <span>Show Sidebar </span>
@@ -104,11 +104,11 @@ export default class UISettingsSection extends React.Component {
             )}
             onChange={(evt, toggled) => settingsActions.sub.ui.setEnableSidebar(toggled)}
             checked={ui.sidebarEnabled} />
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Show Support in Sidebar'
             onChange={(evt, toggled) => settingsActions.sub.ui.setShowSidebarSupport(toggled)}
             checked={ui.showSidebarSupport} />
-          <SettingsListSelect
+          <SettingsListItemSelect
             divider={false}
             label={`Show What's New in Sidebar`}
             value={ui.showSidebarNewsfeed}
@@ -121,7 +121,7 @@ export default class UISettingsSection extends React.Component {
         </SettingsListSection>
 
         <SettingsListSection title='User Interface' subtitle='Titlebar' icon={<ViewQuiltIcon />}>
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Show titlebar (Requires Restart)'
             onChange={(evt, toggled) => {
               showRestart()
@@ -129,7 +129,7 @@ export default class UISettingsSection extends React.Component {
             }}
             checked={ui.showTitlebar} />
           {process.platform !== 'darwin' ? (
-            <SettingsListSwitch
+            <SettingsListItemSwitch
               label={(
                 <span>
                   <span>Show titlebar Menu </span>
@@ -139,11 +139,11 @@ export default class UISettingsSection extends React.Component {
               onChange={(evt, toggled) => settingsActions.sub.ui.setShowAppMenu(toggled)}
               checked={ui.showAppMenu} />
           ) : undefined}
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Show titlebar unread count'
             onChange={(evt, toggled) => settingsActions.sub.ui.setShowTitlebarUnreadCount(toggled)}
             checked={ui.showTitlebarCount} />
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             divider={false}
             label='Show titlebar active account'
             onChange={(evt, toggled) => settingsActions.sub.ui.setShowTitlebarAccount(toggled)}
@@ -151,11 +151,11 @@ export default class UISettingsSection extends React.Component {
         </SettingsListSection>
 
         <SettingsListSection title='User Interface' subtitle='Toolbar' icon={<ViewQuiltIcon />}>
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Show extensions in toolbar'
             onChange={(evt, toggled) => settingsActions.sub.extension.setShowBrowserActionsInToolbar(toggled)}
             checked={extension.showBrowserActionsInToolbar} />
-          <SettingsListSelect
+          <SettingsListItemSelect
             divider={false}
             label='Extension position in toolbar'
             value={extension.toolbarBrowserActionLayout}

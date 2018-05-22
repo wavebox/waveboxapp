@@ -7,33 +7,20 @@ import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSwitch from 'wbui/SettingsListSwitch'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItem from 'wbui/SettingsListItem'
 import { withStyles } from '@material-ui/core/styles'
 import SmsIcon from '@material-ui/icons/Sms'
 import InsertEmoticonButton from '@material-ui/icons/InsertEmoticon'
 import NotInterestedIcon from '@material-ui/icons/NotInterested'
 import ColorLensIcon from '@material-ui/icons/ColorLens'
-import { Button, ListItemText } from '@material-ui/core'
+import { Button } from '@material-ui/core'
+import SettingsListItemText from 'wbui/SettingsListItemText'
+import FileUploadButton from 'wbui/FileUploadButton'
 
 const styles = {
   buttonIcon: {
     marginRight: 6
-  },
-  fileInputButton: {
-    marginRight: 15,
-    position: 'relative',
-    overflow: 'hidden'
-  },
-  fileInput: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    opacity: 0,
-    width: '100%',
-    cursor: 'pointer'
   }
 }
 
@@ -158,29 +145,25 @@ class AccountAppearanceSettings extends React.Component {
             </ColorPickerButton>
           </SettingsListItem>
           <SettingsListItem>
-            <Button
+            <FileUploadButton
               size='small'
               variant='raised'
-              className={classes.fileInputButton}>
+              accept='image/*'
+              onChange={this.handleCustomAvatarChange}>
               <InsertEmoticonButton className={classes.buttonIcon} />
               Change Account Icon
-              <input
-                type='file'
-                className={classes.fileInput}
-                accept='image/*'
-                onChange={this.handleCustomAvatarChange} />
-            </Button>
+            </FileUploadButton>
             <Button size='small' variant='raised' onClick={() => mailboxActions.setCustomAvatar(mailbox.id, undefined)}>
               <NotInterestedIcon className={classes.buttonIcon} />
               Reset Account Icon
             </Button>
           </SettingsListItem>
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Show Account Color around Icon'
             onChange={(evt, toggled) => mailboxActions.reduce(mailbox.id, MailboxReducer.setShowAvatarColorRing, toggled)}
             checked={mailbox.showAvatarColorRing} />
           {userHasSleepable ? (
-            <SettingsListSwitch
+            <SettingsListItemSwitch
               disabled={!ui.showSleepableServiceIndicator}
               label={ui.showSleepableServiceIndicator ? (sleepIndicatorText) : (
                 <span>
@@ -197,15 +180,14 @@ class AccountAppearanceSettings extends React.Component {
         </SettingsListSection>
         {hasCumulativeBadge ? (
           <SettingsListSection title='Appearance' subtitle='Sidebar Badge'>
-            <SettingsListItem>
-              <ListItemText primary={(
+            <SettingsListItemText
+              primary={(
                 <span>
                   When you have multiple services you can show the total unread count for those
                   services in the sidebar, so at a glance you know what's new
                 </span>
               )} />
-            </SettingsListItem>
-            <SettingsListSwitch
+            <SettingsListItemSwitch
               label='Show total unread count from all services'
               onChange={(evt, toggled) => {
                 mailboxActions.reduce(mailbox.id, MailboxReducer.setShowCumulativeSidebarUnreadBadge, toggled)

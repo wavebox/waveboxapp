@@ -11,9 +11,9 @@ import ImportExportIcon from '@material-ui/icons/ImportExport'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import { withStyles } from '@material-ui/core/styles'
 import ConfirmButton from 'wbui/ConfirmButton'
-import blue from '@material-ui/core/colors/blue'
 import StorageIcon from '@material-ui/icons/Storage'
-import SettingsListButton from 'wbui/SettingsListButton'
+import SettingsListItemButton from 'wbui/SettingsListItemButton'
+import SettingsListTypography from 'wbui/SettingsListTypography'
 import {
   WB_CLEAN_EXPIRED_SESSIONS,
   WB_TAKEOUT_IMPORT,
@@ -28,11 +28,6 @@ const styles = {
     marginRight: 6,
     height: 18,
     width: 18
-  },
-  buttonHelp: {
-    color: blue[700],
-    fontSize: '75%',
-    marginTop: 10
   }
 }
 
@@ -80,9 +75,9 @@ class DataSettingsSection extends React.Component {
               mailboxActions.clearAllBrowserSessions()
               crextensionActions.clearAllBrowserSessions()
             }} />
-          <div className={classes.buttonHelp}>
+          <SettingsListTypography type='info' variant='button-help'>
             You will need to sign back into all accounts after doing this
-          </div>
+          </SettingsListTypography>
         </SettingsListItem>
         <SettingsListItem className={classes.listItem}>
           <ConfirmButton
@@ -105,13 +100,13 @@ class DataSettingsSection extends React.Component {
               ipcRenderer.send(WB_CLEAN_EXPIRED_SESSIONS, {})
             }} />
         </SettingsListItem>
-        <SettingsListButton
+        <SettingsListItemButton
           label='Export Data'
           icon={<ImportExportIcon />}
           onClick={() => {
             ipcRenderer.send(WB_TAKEOUT_EXPORT)
           }} />
-        <SettingsListButton
+        <SettingsListItemButton
           label='Import Data'
           divider={false}
           icon={<ImportExportIcon />}

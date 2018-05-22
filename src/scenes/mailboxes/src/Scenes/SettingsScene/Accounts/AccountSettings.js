@@ -261,6 +261,12 @@ class AccountSettings extends React.Component {
               <Select
                 value={selected.id}
                 fullWidth
+                MenuProps={{
+                  MenuListProps: { dense: true },
+                  PaperProps: {
+                    style: { maxHeight: 200 }
+                  }
+                }}
                 onChange={this.handleAccountChange} >
                 {mailboxes.map((m) => {
                   return (

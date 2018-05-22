@@ -3,13 +3,13 @@ import React from 'react'
 import platformActions from 'stores/platform/platformActions'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSwitch from 'wbui/SettingsListSwitch'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import { withStyles } from '@material-ui/core/styles'
 import green from '@material-ui/core/colors/green'
 import { Menu, MenuItem } from '@material-ui/core'
 import CheckIcon from '@material-ui/icons/Check'
 import ComputerIcon from '@material-ui/icons/Computer'
-import SettingsListButton from 'wbui/SettingsListButton'
+import SettingsListItemButton from 'wbui/SettingsListItemButton'
 
 const styles = {
   beenSetIcon: {
@@ -102,13 +102,13 @@ class PlatformSettingsSection extends React.Component {
     return (
       <SettingsListSection title='Platform' icon={<ComputerIcon />} {...passProps}>
         {mailtoLinkHandlerSupported ? (
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Handle mailto links'
             onChange={(evt, toggled) => platformActions.changeMailtoLinkHandler(toggled)}
             checked={isMailtoLinkHandler} />
         ) : undefined}
         {openAtLoginSupported ? (
-          <SettingsListButton
+          <SettingsListItemButton
             divider={false}
             label={openLoginHasBeenSet ? 'All Set' : 'System Startup Settings'}
             icon={openLoginHasBeenSet ? <CheckIcon className={classes.beenSetIcon} /> : undefined}
@@ -128,7 +128,7 @@ class PlatformSettingsSection extends React.Component {
                 Open hidden at System Startup
               </MenuItem>
             </Menu>
-          </SettingsListButton>
+          </SettingsListItemButton>
         ) : undefined}
       </SettingsListSection>
     )

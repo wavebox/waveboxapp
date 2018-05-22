@@ -4,8 +4,7 @@ import { userStore } from 'stores/user'
 import { RELEASE_CHANNELS } from 'shared/constants'
 import pkg from 'package.json'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListItem from 'wbui/SettingsListItem'
-import { ListItemText } from '@material-ui/core'
+import SettingsListItemText from 'wbui/SettingsListItemText'
 import HelpIcon from '@material-ui/icons/Help'
 
 export default class InfoSettingsSection extends React.Component {
@@ -22,20 +21,19 @@ export default class InfoSettingsSection extends React.Component {
     return (
       <SettingsListSection icon={<HelpIcon />} title='About' {...this.props}>
         {pkg.earlyBuildId ? (
-          <SettingsListItem>
-            <ListItemText primary={'Early Build Reference'} secondary={pkg.earlyBuildId} />
-          </SettingsListItem>
+          <SettingsListItemText
+            primary={'Early Build Reference'}
+            secondary={pkg.earlyBuildId} />
         ) : undefined}
         {wireConfigVersion ? (
-          <SettingsListItem>
-            <ListItemText primary={'Wire Config Version'} secondary={wireConfigVersion} />
-          </SettingsListItem>
+          <SettingsListItemText
+            primary={'Wire Config Version'}
+            secondary={wireConfigVersion} />
         ) : undefined}
-        <SettingsListItem divider={false}>
-          <ListItemText
-            primary={'Version'}
-            secondary={`${pkg.version}${pkg.releaseChannel === RELEASE_CHANNELS.BETA ? 'beta' : ''}`} />
-        </SettingsListItem>
+        <SettingsListItemText
+          divider={false}
+          primary={'Version'}
+          secondary={`${pkg.version}${pkg.releaseChannel === RELEASE_CHANNELS.BETA ? 'beta' : ''}`} />
       </SettingsListSection>
     )
   }

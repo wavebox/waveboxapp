@@ -2,15 +2,9 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { ListItemText, ListItemSecondaryAction, Switch } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
-import { withStyles } from '@material-ui/core/styles'
 import SettingsListItem from './SettingsListItem'
 
-const styles = {
-
-}
-
-@withStyles(styles)
-class SettingsListSwitch extends React.Component {
+class SettingsListItemSwitch extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -50,4 +44,4 @@ class SettingsListSwitch extends React.Component {
   }
 }
 
-export default SettingsListSwitch
+export default SettingsListItemSwitch

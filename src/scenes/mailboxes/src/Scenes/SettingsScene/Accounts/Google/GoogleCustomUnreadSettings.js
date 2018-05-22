@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { remote } from 'electron'
-import SettingsListButton from 'wbui/SettingsListButton'
+import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import { Icon } from '@material-ui/core'
 // import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
 // import { mailboxActions, GoogleDefaultServiceReducer } from 'stores/mailbox'
@@ -183,7 +183,7 @@ export default class GoogleCustomUnreadSettings extends React.Component {
     } else {
       return (
         <div {...passProps}>
-          <SettingsListButton
+          <SettingsListItemButton
             label='Advanced Unread Options'
             icon={<Icon className='fas fa-fw fa-wrench' />}
             onClick={() => this.setState({ showCustomUnreadSettings: true })}

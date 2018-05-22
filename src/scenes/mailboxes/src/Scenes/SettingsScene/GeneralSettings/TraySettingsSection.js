@@ -15,10 +15,10 @@ import {
   CLICK_ACTIONS
 } from 'shared/Models/Settings/TraySettings'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSwitch from 'wbui/SettingsListSwitch'
-import SettingsListSelect from 'wbui/SettingsListSelect'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
+import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 import SettingsListItem from 'wbui/SettingsListItem'
-import SettingsListTextField from 'wbui/SettingsListTextField'
+import SettingsListItemTextField from 'wbui/SettingsListItemTextField'
 import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
 import classNames from 'classnames'
@@ -82,31 +82,31 @@ class TraySettingsSection extends React.Component {
         <SettingsListSection
           title={process.platform === 'darwin' ? 'Menu Bar' : 'Tray'}
           icon={<AdjustIcon />}>
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Show icon'
             onChange={(evt, toggled) => settingsActions.sub.tray.setShowTrayIcon(toggled)}
             checked={tray.show} />
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Show unread count'
             disabled={!tray.show}
             onChange={(evt, toggled) => settingsActions.sub.tray.setShowTrayUnreadCount(toggled)}
             checked={tray.showUnreadCount} />
           {SUPPORTS_DOCK_HIDING ? (
-            <SettingsListSwitch
+            <SettingsListItemSwitch
               label='Remove from dock when all windows are hidden'
               onChange={(evt, toggled) => settingsActions.sub.tray.setRemoveFromDockDarwin(toggled)}
               disabled={!tray.show}
               checked={tray.removeFromDockDarwin} />
           ) : undefined}
           {SUPPORTS_TASKBAR_HIDING ? (
-            <SettingsListSwitch
+            <SettingsListItemSwitch
               label='Remove from taskbar when main window is minimized'
               onChange={(evt, toggled) => settingsActions.sub.tray.setRemoveFromTaskbarWin32(toggled)}
               disabled={!tray.show}
               checked={tray.removeFromTaskbarWin32} />
           ) : undefined}
           {IS_GTK_PLATFORM ? (
-            <SettingsListSelect
+            <SettingsListItemSelect
               label='GTK icon update mode (Requires Restart)'
               disabled={!tray.show}
               value={tray.gtkUpdateMode}
@@ -120,7 +120,7 @@ class TraySettingsSection extends React.Component {
                 showRestart()
               }} />
           ) : undefined}
-          <SettingsListSelect
+          <SettingsListItemSelect
             label='DPI Multiplier'
             disabled={!tray.show}
             value={tray.dpiMultiplier}
@@ -132,7 +132,7 @@ class TraySettingsSection extends React.Component {
               { value: 5, label: '5x' }
             ]}
             onChange={(evt, value) => settingsActions.sub.tray.setDpiMultiplier(value)} />
-          <SettingsListTextField
+          <SettingsListItemTextField
             label={`Icon Size (Pixels) ${IS_GTK_PLATFORM && tray.gtkUpdateMode === GTK_UPDATE_MODES.STATIC ? ' (Requires Restart)' : ''}`}
             disabled={!tray.show}
             textFieldProps={{
@@ -146,7 +146,7 @@ class TraySettingsSection extends React.Component {
                 }
               }
             }} />
-          <SettingsListSelect
+          <SettingsListItemSelect
             label='Popout screen position'
             secondary={IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
               <span className={classes.inputHelpTextInfo}>
@@ -230,7 +230,7 @@ class TraySettingsSection extends React.Component {
           title={process.platform === 'darwin' ? 'Menu Bar' : 'Tray'}
           subtitle='Mouse Actions'
           icon={<AdjustIcon />}>
-          <SettingsListSelect
+          <SettingsListItemSelect
             label='Click Action'
             secondary={IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
               <span className={classes.inputHelpTextInfo}>
@@ -243,7 +243,7 @@ class TraySettingsSection extends React.Component {
             options={TRAY_ACTION_OPTIONS}
             onChange={(evt, value) => settingsActions.sub.tray.setClickAction(value)} />
           {SUPPORTS_ADDITIONAL_CLICK_EVENTS ? (
-            <SettingsListSelect
+            <SettingsListItemSelect
               label='Alt Click Action'
               disabled={!tray.show}
               value={tray.altClickAction}
@@ -251,7 +251,7 @@ class TraySettingsSection extends React.Component {
               onChange={(evt, value) => settingsActions.sub.tray.setAltClickAction(value)} />
           ) : undefined}
           {SUPPORTS_ADDITIONAL_CLICK_EVENTS ? (
-            <SettingsListSelect
+            <SettingsListItemSelect
               label='Right Click Action'
               value={tray.rightClickAction}
               disabled={!tray.show}
@@ -259,7 +259,7 @@ class TraySettingsSection extends React.Component {
               onChange={(evt, value) => settingsActions.sub.tray.setRightClickAction(value)} />
           ) : undefined}
           {SUPPORTS_ADDITIONAL_CLICK_EVENTS ? (
-            <SettingsListSelect
+            <SettingsListItemSelect
               divider={false}
               label='Double Click Action'
               disabled={!tray.show}

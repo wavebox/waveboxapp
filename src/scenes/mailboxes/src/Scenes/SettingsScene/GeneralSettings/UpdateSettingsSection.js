@@ -5,9 +5,9 @@ import { updaterActions } from 'stores/updater'
 import AppSettings from 'shared/Models/Settings/AppSettings'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSwitch from 'wbui/SettingsListSwitch'
-import SettingsListSelect from 'wbui/SettingsListSelect'
-import SettingsListButton from 'wbui/SettingsListButton'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
+import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
+import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt'
 import { withStyles } from '@material-ui/core/styles'
 
@@ -39,14 +39,14 @@ class UpdateSettingsSection extends React.Component {
 
     return (
       <SettingsListSection title='Updates' icon={<SystemUpdateAltIcon />} {...passProps}>
-        <SettingsListSwitch
+        <SettingsListItemSwitch
           label='Check for updates'
           onChange={(evt, toggled) => {
             showRestart()
             settingsActions.sub.app.checkForUpdates(toggled)
           }}
           checked={app.checkForUpdates} />
-        <SettingsListSelect
+        <SettingsListItemSelect
           label='Update channel'
           value={app.updateChannel}
           options={[
@@ -57,7 +57,7 @@ class UpdateSettingsSection extends React.Component {
             settingsActions.sub.app.setUpdateChannel(value)
             updaterActions.checkForUpdates()
           }} />
-        <SettingsListButton
+        <SettingsListItemButton
           divider={false}
           label='Check for update now'
           icon={<SystemUpdateAltIcon />}

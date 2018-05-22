@@ -11,10 +11,10 @@ import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
 import AccountBehaviourSettings from '../AccountBehaviourSettings'
 import { mailboxActions, ContainerDefaultServiceReducer, ContainerMailboxReducer } from 'stores/mailbox'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSwitch from 'wbui/SettingsListSwitch'
-import SettingsListTextField from 'wbui/SettingsListTextField'
-import SettingsListButton from 'wbui/SettingsListButton'
-import { ListItemText } from '@material-ui/core'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
+import SettingsListItemTextField from 'wbui/SettingsListItemTextField'
+import SettingsListItemButton from 'wbui/SettingsListItemButton'
+import SettingsListItemText from 'wbui/SettingsListItemText'
 
 export default class ContainerAccountSettings extends React.Component {
   /* **************************************************************************/
@@ -80,7 +80,7 @@ export default class ContainerAccountSettings extends React.Component {
     return (
       <div {...passProps}>
         <SettingsListSection>
-          <SettingsListTextField
+          <SettingsListItemTextField
             key={`displayName_${mailbox.userDisplayName}`}
             label='Account Name'
             textFieldProps={{
@@ -88,13 +88,13 @@ export default class ContainerAccountSettings extends React.Component {
               placeholder: 'My Account',
               onBlur: (evt) => { mailboxActions.reduce(this.props.mailbox.id, ContainerMailboxReducer.setDisplayName, evt.target.value) }
             }} />
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Show navigation toolbar'
             onChange={(evt, toggled) => {
               mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setHasNavigationToolbar, toggled)
             }}
             checked={service.hasNavigationToolbar} />
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Restore last page on load'
             onChange={(evt, toggled) => {
               mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setRestoreLastUrl, toggled)
@@ -110,11 +110,11 @@ export default class ContainerAccountSettings extends React.Component {
           service={service}
           onRequestEditCustomCode={onRequestEditCustomCode} />
         <SettingsListSection title='UserAgent'>
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Use custom UserAgent (Requires restart)'
             onChange={this.handleChangeUseCustomUserAgent}
             checked={mailbox.useCustomUserAgent} />
-          <SettingsListTextField
+          <SettingsListItemTextField
             key={`userAgent_${mailbox.customUserAgentString}`}
             disabled={!mailbox.useCustomUserAgent}
             label='Custom UserAgent String (Requires restart)'
@@ -122,7 +122,7 @@ export default class ContainerAccountSettings extends React.Component {
               defaultValue: mailbox.customUserAgentString,
               onBlur: this.handleChangeCustomUserAgent
             }} />
-          <SettingsListButton
+          <SettingsListItemButton
             label='Restore defaults (Requires restart)'
             onClick={this.handleResetCustomUserAgent} />
         </SettingsListSection>
@@ -133,7 +133,7 @@ export default class ContainerAccountSettings extends React.Component {
             <span>
               {mailbox.getAllWindowOpenOverrideUserConfigs().map((config) => {
                 return (
-                  <SettingsListSwitch
+                  <SettingsListItemSwitch
                     key={config.id}
                     label={config.label}
                     onChange={(evt, toggled) => {
@@ -146,10 +146,8 @@ export default class ContainerAccountSettings extends React.Component {
           ) : undefined} />
         <AccountDestructiveSettings mailbox={mailbox} />
         <SettingsListSection title='About'>
-          <ListItemText primary='Container ID' secondary={container.id} />
-        </SettingsListSection>
-        <SettingsListSection title='About'>
-          <ListItemText primary='Container Version' secondary={container.version} />
+          <SettingsListItemText primary='Container ID' secondary={container.id} />
+          <SettingsListItemText primary='Container Version' secondary={container.version} />
         </SettingsListSection>
       </div>
     )

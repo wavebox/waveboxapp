@@ -13,7 +13,7 @@ import GoogleDefaultServiceSettings from './GoogleDefaultServiceSettings'
 import GoogleServiceSettings from './GoogleServiceSettings'
 import { mailboxActions, GoogleMailboxReducer } from 'stores/mailbox'
 import Resolver from 'Runtime/Resolver'
-import SettingsListSwitch from 'wbui/SettingsListSwitch'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import { withStyles } from '@material-ui/core/styles'
 import { Button, Icon, Avatar } from '@material-ui/core'
 
@@ -130,7 +130,7 @@ class GoogleAccountSettings extends React.Component {
           mailbox={mailbox}
           showRestart={showRestart}
           windowOpenAfter={(
-            <SettingsListSwitch
+            <SettingsListItemSwitch
               label='Open Google Drive links with browser'
               onChange={(evt, toggled) => {
                 mailboxActions.reduce(mailbox.id, GoogleMailboxReducer.setOpenDriveLinksWithExternalBrowser, toggled)

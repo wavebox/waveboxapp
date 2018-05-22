@@ -7,31 +7,13 @@ import { NotificationService } from 'Notifications'
 import { NOTIFICATION_PROVIDERS, NOTIFICATION_SOUNDS } from 'shared/Notifications'
 import { userStore } from 'stores/user'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSwitch from 'wbui/SettingsListSwitch'
-import SettingsListSelect from 'wbui/SettingsListSelect'
-import SettingsListItem from 'wbui/SettingsListItem'
-import SettingsListButton from 'wbui/SettingsListButton'
-import { withStyles } from '@material-ui/core/styles'
-import amber from '@material-ui/core/colors/amber'
-import { ListItemText } from '@material-ui/core'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
+import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
+import SettingsListItemButton from 'wbui/SettingsListItemButton'
+import SettingsListItemText from 'wbui/SettingsListItemText'
 import WarningIcon from '@material-ui/icons/Warning'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 
-const styles = {
-  warningText: {
-    color: amber[700],
-    fontSize: 14,
-    fontWeight: 300
-  },
-  warningTextIcon: {
-    color: amber[700],
-    fontSize: 18,
-    marginRight: 4,
-    verticalAlign: 'top'
-  }
-}
-
-@withStyles(styles)
 class AccountNotificationSettings extends React.Component {
   /* **************************************************************************/
   // Class
@@ -132,7 +114,7 @@ class AccountNotificationSettings extends React.Component {
     if (!Object.keys(NOTIFICATION_SOUNDS).length) { return undefined }
 
     return (
-      <SettingsListSelect
+      <SettingsListItemSelect
         label='Notification Sound'
         value={service.notificationsSound}
         disabled={!service.showNotifications}
@@ -159,24 +141,19 @@ class AccountNotificationSettings extends React.Component {
     return (
       <SettingsListSection title='Notifications' {...passProps}>
         {userHasSleepable && service.sleepable && !service.supportsSyncWhenSleeping ? (
-          <SettingsListItem>
-            <ListItemText primary={(
-              <span className={classes.warningText}>
-                <WarningIcon className={classes.warningTextIcon} />
-                Notifications will only sync for this service when the account is not sleeping. To
-                ensure notifications are always displayed we recommend disabling sleeping for this service
-              </span>
-            )} />
-          </SettingsListItem>
+          <SettingsListItemText
+            primaryType='warning'
+            primaryIcon={<WarningIcon />}
+            primary={`Notifications will only sync for this service when the account is not sleeping. To ensure notifications are always displayed we recommend disabling sleeping for this service`} />
         ) : undefined}
-        <SettingsListSwitch
+        <SettingsListItemSwitch
           label='Show notifications'
           onChange={(evt, toggled) => {
             mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setShowNotifications, toggled)
           }}
-          checked={service.showNotification} />
+          checked={service.showNotifications} />
         {service.supportsNativeNotifications ? (
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Show account icon in Notifications'
             onChange={(evt, toggled) => {
               mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setShowAvatarInNotifications, toggled)
@@ -186,7 +163,7 @@ class AccountNotificationSettings extends React.Component {
         ) : undefined}
         {service.supportsNativeNotifications ? this.renderEnhanced(mailbox, service, os) : undefined}
         {service.supportsNativeNotifications ? (
-          <SettingsListButton
+          <SettingsListItemButton
             label='Test Notification'
             icon={<PlayArrowIcon />}
             disabled={!service.showNotifications}

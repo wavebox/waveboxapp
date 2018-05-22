@@ -11,9 +11,9 @@ import AccountNotificationSettings from '../AccountNotificationSettings'
 import AccountBehaviourSettings from '../AccountBehaviourSettings'
 import { mailboxActions, GenericMailboxReducer, GenericDefaultServiceReducer } from 'stores/mailbox'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSwitch from 'wbui/SettingsListSwitch'
-import SettingsListTextField from 'wbui/SettingsListTextField'
-import SettingsListButton from 'wbui/SettingsListButton'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
+import SettingsListItemTextField from 'wbui/SettingsListItemTextField'
+import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import validUrl from 'valid-url'
 
 export default class GenericAccountSettings extends React.Component {
@@ -111,7 +111,7 @@ export default class GenericAccountSettings extends React.Component {
     return (
       <div {...passProps}>
         <SettingsListSection>
-          <SettingsListTextField
+          <SettingsListItemTextField
             key={`displayName_${mailbox.displayName}`}
             disabled={mailbox.usePageTitleAsDisplayName}
             label='Account Name'
@@ -122,7 +122,7 @@ export default class GenericAccountSettings extends React.Component {
               helperText: displayNameError,
               onBlur: this.handleNameChange
             }} />
-          <SettingsListTextField
+          <SettingsListItemTextField
             key={`service_${service.url}`}
             label='Website Url'
             textFieldProps={{
@@ -133,31 +133,31 @@ export default class GenericAccountSettings extends React.Component {
               helperText: serviceUrlError,
               onBlur: this.handleUrlChange
             }} />
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Restore last page on load'
             onChange={(evt, toggled) => {
               mailboxActions.reduceService(mailbox.id, service.type, GenericDefaultServiceReducer.setRestoreLastUrl, toggled)
             }}
             checked={service.restoreLastUrl} />
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Show navigation toolbar'
             onChange={(evt, toggled) => {
               mailboxActions.reduceService(mailbox.id, service.type, GenericDefaultServiceReducer.setHasNavigationToolbar, toggled)
             }}
             checked={service.hasNavigationToolbar} />
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Use Page title as Display Name'
             onChange={(evt, toggled) => {
               mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageTitleAsDisplayName, toggled)
             }}
             checked={mailbox.usePageTitleAsDisplayName} />
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Use Page theme as Account Color'
             onChange={(evt, toggled) => {
               mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageThemeAsColor, toggled)
             }}
             checked={mailbox.usePageThemeAsColor} />
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Enable Wavebox API (Experiemental)'
             onChange={(evt, toggled) => {
               mailboxActions.reduceService(mailbox.id, service.type, GenericDefaultServiceReducer.setsupportsGuestConfig, toggled)
@@ -173,11 +173,11 @@ export default class GenericAccountSettings extends React.Component {
           service={service}
           onRequestEditCustomCode={onRequestEditCustomCode} />
         <SettingsListSection title='UserAgent'>
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Use custom UserAgent (Requires restart)'
             onChange={this.handleChangeUseCustomUserAgent}
             checked={mailbox.useCustomUserAgent} />
-          <SettingsListTextField
+          <SettingsListItemTextField
             key={`userAgent_${mailbox.customUserAgentString}`}
             disabled={!mailbox.useCustomUserAgent}
             label='Custom UserAgent String (Requires restart)'
@@ -185,7 +185,7 @@ export default class GenericAccountSettings extends React.Component {
               defaultValue: mailbox.customUserAgentString,
               onBlur: this.handleChangeCustomUserAgent
             }} />
-          <SettingsListButton
+          <SettingsListItemButton
             label='Restore defaults (Requires restart)'
             onClick={this.handleResetCustomUserAgent} />
         </SettingsListSection>

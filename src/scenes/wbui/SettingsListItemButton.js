@@ -11,13 +11,14 @@ const styles = {
     marginRight: 6,
     '&>*': {
       width: 18,
-      height: 18
+      height: 18,
+      verticalAlign: 'middle'
     }
   }
 }
 
 @withStyles(styles)
-class SettingsListButton extends React.Component {
+class SettingsListItemButton extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -79,12 +80,13 @@ class SettingsListButton extends React.Component {
               {button}
             </ListItemSecondaryAction>
           </span>
-        ) : undefined}
-        {button}
+        ) : (
+          button
+        )}
         {children}
       </SettingsListItem>
     )
   }
 }
 
-export default SettingsListButton
+export default SettingsListItemButton

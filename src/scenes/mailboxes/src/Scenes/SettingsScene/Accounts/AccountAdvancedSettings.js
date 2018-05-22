@@ -4,8 +4,8 @@ import { mailboxActions, MailboxReducer } from 'stores/mailbox'
 import shallowCompare from 'react-addons-shallow-compare'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSwitch from 'wbui/SettingsListSwitch'
-import SettingsListSelect from 'wbui/SettingsListSelect'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
+import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 
 export default class AccountAdvancedSettings extends React.Component {
   /* **************************************************************************/
@@ -39,10 +39,10 @@ export default class AccountAdvancedSettings extends React.Component {
 
     return (
       <SettingsListSection title='Advanced' {...passProps}>
-        <SettingsListSwitch
+        <SettingsListItemSwitch
           label='Artificially Persist Cookies. (Requires Restart)'
           secondary={(
-            <div>
+            <span>
               <small>
                 <span>
                   Not recommended for most users but helpful if you are signed out every restart. If you enable
@@ -60,7 +60,7 @@ export default class AccountAdvancedSettings extends React.Component {
                   Clear all cookies manually
                 </a>
               </small>
-            </div>
+            </span>
           )}
           onChange={(evt, toggled) => {
             showRestart()
@@ -68,7 +68,7 @@ export default class AccountAdvancedSettings extends React.Component {
           }}
           checked={mailbox.artificiallyPersistCookies} />
         {windowOpenBefore}
-        <SettingsListSelect
+        <SettingsListItemSelect
           label='Open new windows in which Browser'
           value={mailbox.defaultWindowOpenMode}
           options={[

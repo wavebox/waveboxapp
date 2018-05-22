@@ -71,25 +71,31 @@ class AccountServiceItem extends React.Component {
         {!isSingleService && !isDefaultService ? (
           <SettingsListItem className={classes.toolbar}>
             <Tooltip title='Disable'>
-              <IconButton
-                disabled={isDefaultService}
-                onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.removeService, serviceType)}>
-                <CheckBoxIcon />
-              </IconButton>
+              <div>
+                <IconButton
+                  disabled={isDefaultService}
+                  onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.removeService, serviceType)}>
+                  <CheckBoxIcon />
+                </IconButton>
+              </div>
             </Tooltip>
             <Tooltip title='Move up'>
-              <IconButton
-                disabled={isFirst}
-                onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceUp, serviceType)}>
-                <ArrowUpwardIcon />
-              </IconButton>
+              <div>
+                <IconButton
+                  disabled={isFirst}
+                  onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceUp, serviceType)}>
+                  <ArrowUpwardIcon />
+                </IconButton>
+              </div>
             </Tooltip>
             <Tooltip title='Move down'>
-              <IconButton
-                disabled={isLast}
-                onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceDown, serviceType)}>
-                <ArrowDownwardIcon />
-              </IconButton>
+              <div>
+                <IconButton
+                  disabled={isLast}
+                  onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceDown, serviceType)}>
+                  <ArrowDownwardIcon />
+                </IconButton>
+              </div>
             </Tooltip>
           </SettingsListItem>
         ) : undefined}

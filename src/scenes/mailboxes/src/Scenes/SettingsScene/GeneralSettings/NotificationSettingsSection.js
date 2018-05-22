@@ -10,14 +10,14 @@ import {
   NOTIFICATION_SOUNDS
 } from 'shared/Notifications'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSwitch from 'wbui/SettingsListSwitch'
-import SettingsListSelect from 'wbui/SettingsListSelect'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
+import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 import { withStyles } from '@material-ui/core/styles'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import NotificationsIcon from '@material-ui/icons/Notifications'
 import NotificationsPausedIcon from '@material-ui/icons/NotificationsPaused'
 import classNames from 'classnames'
-import SettingsListButton from 'wbui/SettingsListButton'
+import SettingsListItemButton from 'wbui/SettingsListItemButton'
 
 const styles = {
   notificationMenuItem: {
@@ -138,7 +138,7 @@ class NotificationSettingsSection extends React.Component {
     if (Object.keys(NOTIFICATION_SOUNDS).length === 0) { return undefined }
 
     return (
-      <SettingsListSelect
+      <SettingsListItemSelect
         label='Notification Sound'
         value={os.notificationsSoun}
         disabled={os.notificationsSilent || !os.notificationsEnabled}
@@ -157,7 +157,7 @@ class NotificationSettingsSection extends React.Component {
   renderMute (classes, os) {
     const { notificationMenuAnchor } = this.state
     return (
-      <SettingsListButton
+      <SettingsListItemButton
         label={os.notificationsMuted ? 'Notifications muted' : 'Mute notifications'}
         icon={os.notificationsMuted ? (<NotificationsPausedIcon />) : (<NotificationsIcon />)}
         onClick={(evt) => { this.setState({ notificationMenuAnchor: evt.target }) }}>
@@ -200,7 +200,7 @@ class NotificationSettingsSection extends React.Component {
             </MenuItem>
           ) : undefined}
         </Menu>
-      </SettingsListButton>
+      </SettingsListItemButton>
     )
   }
 
@@ -213,7 +213,7 @@ class NotificationSettingsSection extends React.Component {
     return (
       <SettingsListSection title='Notifications' icon={<NotificationsIcon />} {...passProps}>
         {validProviders.length > 1 ? (
-          <SettingsListSelect
+          <SettingsListItemSelect
             label='Notification Provider'
             value={os.notificationsProvider}
             options={validProviders.map((provider) => {
@@ -225,18 +225,18 @@ class NotificationSettingsSection extends React.Component {
             })}
             onChange={(evt, value) => settingsActions.sub.os.setNotificationsProvider(value)} />
         ) : undefined}
-        <SettingsListSwitch
+        <SettingsListItemSwitch
           label='Show new mail/message notifications'
           onChange={(evt, toggled) => settingsActions.sub.os.setNotificationsEnabled(toggled)}
           checked={os.notificationsEnabled} />
-        <SettingsListSwitch
+        <SettingsListItemSwitch
           label='Play notification sound'
           onChange={(evt, toggled) => settingsActions.sub.os.setNotificationsSilent(!toggled)}
           disabled={!os.notificationsEnabled}
           checked={!os.notificationsSilent} />
         {this.renderEnhanced(os)}
         {this.renderMute(classes, os)}
-        <SettingsListButton
+        <SettingsListItemButton
           divider={false}
           label='Test Notification'
           icon={<PlayArrowIcon />}

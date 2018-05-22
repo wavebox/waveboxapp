@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Button, ListItemText, ListItemSecondaryAction } from '@material-ui/core'
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
 import SleepableField from 'wbui/SleepableField'
@@ -9,6 +8,7 @@ import { withStyles } from '@material-ui/core/styles'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItem from 'wbui/SettingsListItem'
+import SettingsListItemButton from 'wbui/SettingsListItemButton'
 
 const styles = {
   sleepUnavailable: {
@@ -92,19 +92,16 @@ class AccountBehaviourSettings extends React.Component {
             }} />
         </SettingsListItem>
         {!userHasSleepable ? (
-          <SettingsListItem>
-            <ListItemText primary={(
+          <SettingsListItemButton
+            primary={(
               <span className={classes.sleepUnavailableText}>
                 Services and accounts can sleep when in the background to save memory.
                 Enable service sleeping by purchasing Wavebox
               </span>
-            )} />
-            <ListItemSecondaryAction>
-              <Button variant='raised' color='primary' onClick={() => { window.location.hash = '/pro' }}>
-                Purchase Wavebox
-              </Button>
-            </ListItemSecondaryAction>
-          </SettingsListItem>
+            )}
+            label='Purchase Wavebox'
+            buttonProps={{ color: 'primary' }}
+            onClick={() => { window.location.hash = '/pro' }} />
         ) : undefined}
       </SettingsListSection>
     )

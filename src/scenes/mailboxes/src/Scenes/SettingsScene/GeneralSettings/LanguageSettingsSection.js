@@ -4,9 +4,9 @@ import { settingsActions } from 'stores/settings'
 import { dictionariesStore, dictionariesActions } from 'stores/dictionaries'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSwitch from 'wbui/SettingsListSwitch'
-import SettingsListSelect from 'wbui/SettingsListSelect'
-import SettingsListButton from 'wbui/SettingsListButton'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
+import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
+import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import { withStyles } from '@material-ui/core/styles'
 import LanguageIcon from '@material-ui/icons/Language'
 
@@ -78,11 +78,11 @@ class LanguageSettingsSection extends React.Component {
 
     return (
       <SettingsListSection title='Language' icon={<LanguageIcon />} {...passProps}>
-        <SettingsListSwitch
+        <SettingsListItemSwitch
           label='Spellchecking'
           onChange={(evt, toggled) => settingsActions.sub.language.setEnableSpellchecker(toggled)}
           checked={language.spellcheckerEnabled} />
-        <SettingsListSelect
+        <SettingsListItemSelect
           label='Spellchecking language'
           value={language.spellcheckerLanguage}
           disabled={!language.spellcheckerEnabled}
@@ -90,7 +90,7 @@ class LanguageSettingsSection extends React.Component {
             return { value: info.lang, label: info.name }
           })}
           onChange={(evt, value) => settingsActions.sub.language.setSpellcheckerLanguage(value)} />
-        <SettingsListSelect
+        <SettingsListItemSelect
           label='Secondary spellchecking language'
           value={language.secondarySpellcheckerLanguage !== null ? language.secondarySpellcheckerLanguage : '__none__'}
           disabled={!language.spellcheckerEnabled}
@@ -112,7 +112,7 @@ class LanguageSettingsSection extends React.Component {
             })
           )}
           onChange={(evt, value) => settingsActions.sub.language.setSecondarySpellcheckerLanguage(value !== '__none__' ? value : null)} />
-        <SettingsListButton
+        <SettingsListItemButton
           divider={false}
           label='Install more Dictionaries'
           disabled={!language.spellcheckerEnabled}

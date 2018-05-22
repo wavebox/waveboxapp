@@ -3,12 +3,12 @@ import React from 'react'
 import { settingsActions } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSwitch from 'wbui/SettingsListSwitch'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import TimelineIcon from '@material-ui/icons/Timeline'
 import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
 import BugReportIcon from '@material-ui/icons/BugReport'
-import SettingsListButton from 'wbui/SettingsListButton'
+import SettingsListItemButton from 'wbui/SettingsListItemButton'
 
 const styles = {
   link: {
@@ -42,7 +42,7 @@ class DebugSettingsSection extends React.Component {
 
     return (
       <SettingsListSection title='Debug' icon={<BugReportIcon />} {...passProps}>
-        <SettingsListSwitch
+        <SettingsListItemSwitch
           label={(
             <span>
               Write app merics log
@@ -60,7 +60,7 @@ class DebugSettingsSection extends React.Component {
           )}
           onChange={(evt, toggled) => { settingsActions.sub.app.setWriteMetricsLog(toggled) }}
           checked={app.writeMetricsLog} />
-        <SettingsListButton
+        <SettingsListItemButton
           divider={false}
           label='Task Monitor'
           icon={<TimelineIcon />}

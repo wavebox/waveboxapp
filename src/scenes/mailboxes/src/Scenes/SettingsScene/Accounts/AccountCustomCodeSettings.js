@@ -9,7 +9,7 @@ import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItem from 'wbui/SettingsListItem'
-import SettingsListButton from 'wbui/SettingsListButton'
+import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import CodeIcon from '@material-ui/icons/Code'
 
 const styles = {
@@ -45,7 +45,7 @@ class AccountCustomCodeSettings extends React.Component {
 
     return (
       <SettingsListSection title='Custom Code & Userscripts' {...passProps}>
-        <SettingsListButton
+        <SettingsListItemButton
           label='Custom CSS'
           icon={<CodeIcon />}
           onClick={() => {
@@ -54,7 +54,7 @@ class AccountCustomCodeSettings extends React.Component {
               mailboxDispatch.reload(mailbox.id, service.type)
             })
           }} />
-        <SettingsListButton
+        <SettingsListItemButton
           label='Custom JS'
           icon={<CodeIcon />}
           onClick={() => {

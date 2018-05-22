@@ -8,9 +8,9 @@ import { withStyles } from '@material-ui/core/styles'
 import red from '@material-ui/core/colors/red'
 import amber from '@material-ui/core/colors/amber'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSwitch from 'wbui/SettingsListSwitch'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItem from 'wbui/SettingsListItem'
-import { ListItemText } from '@material-ui/core'
+import SettingsListItemText from 'wbui/SettingsListItemText'
 import WarningIcon from '@material-ui/icons/Warning'
 import SmsIcon from '@material-ui/icons/Sms'
 
@@ -27,17 +27,6 @@ const styles = {
     textAlign: 'center',
     fontSize: '10px',
     paddingRight: 1
-  },
-  warningText: {
-    color: amber[700],
-    fontSize: 14,
-    fontWeight: 300
-  },
-  warningTextIcon: {
-    color: amber[700],
-    fontSize: 18,
-    marginRight: 4,
-    verticalAlign: 'top'
   }
 }
 
@@ -111,15 +100,10 @@ class AccountBadgeSettings extends React.Component {
     return (
       <SettingsListSection title='Badges' {...passProps}>
         {userHasSleepable && service.sleepable && !service.supportsSyncWhenSleeping ? (
-          <SettingsListItem>
-            <ListItemText primary={(
-              <span className={classes.warningText}>
-                <WarningIcon className={classes.warningTextIcon} />
-                When you have multiple services you can show the total unread count for those
-                services in the sidebar, so at a glance you know what's new
-              </span>
-            )} />
-          </SettingsListItem>
+          <SettingsListItemText
+            primaryType='warning'
+            primaryIcon={<WarningIcon />}
+            primary={`When you have multiple services you can show the total unread count for those services in the sidebar, so at a glance you know what's new`} />
         ) : undefined}
         <SettingsListItem>
           <ColorPickerButton
@@ -131,7 +115,7 @@ class AccountBadgeSettings extends React.Component {
           </ColorPickerButton>
         </SettingsListItem>
         {service.supportsUnreadCount ? (
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Show unread count in sidebar or toolbar'
             onChange={(evt, toggled) => {
               mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setShowUnreadBadge, toggled)
@@ -139,7 +123,7 @@ class AccountBadgeSettings extends React.Component {
             checked={service.showUnreadBadge} />
         ) : undefined}
         {service.supportsUnreadCount ? (
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label='Show unread count in Menu Bar & App Badge'
             onChange={(evt, toggled) => {
               mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setUnreadCountsTowardsAppUnread, toggled)
@@ -147,7 +131,7 @@ class AccountBadgeSettings extends React.Component {
             checked={service.unreadCountsTowardsAppUnread} />
         ) : undefined}
         {service.supportsUnreadActivity ? (
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label={(
               <span>
                 <span>Show unread activity in sidebar or toolbar as </span>
@@ -160,7 +144,7 @@ class AccountBadgeSettings extends React.Component {
             checked={service.showUnreadActivityBadge} />
         ) : undefined}
         {service.supportsUnreadActivity ? (
-          <SettingsListSwitch
+          <SettingsListItemSwitch
             label={(
               <span>
                 <span>Show unread activity in Menu Bar & App Badge as </span>

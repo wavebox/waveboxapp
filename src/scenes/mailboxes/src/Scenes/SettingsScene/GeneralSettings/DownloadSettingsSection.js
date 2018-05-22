@@ -3,13 +3,14 @@ import React from 'react'
 import settingsActions from 'stores/settings/settingsActions'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSwitch from 'wbui/SettingsListSwitch'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItem from 'wbui/SettingsListItem'
 import FolderIcon from '@material-ui/icons/Folder'
-import { Button, ListItemText, ListItemSecondaryAction, Switch } from '@material-ui/core'
+import { ListItemText, ListItemSecondaryAction, Switch } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import grey from '@material-ui/core/colors/grey'
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
+import FileUploadButton from 'wbui/FileUploadButton'
 
 const styles = {
   buttonIcon: {
@@ -17,22 +18,9 @@ const styles = {
     height: 18,
     width: 18
   },
-  fileInputButton: {
-    marginRight: 15,
-    position: 'relative',
-    overflow: 'hidden'
-  },
-  fileInput: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    opacity: 0,
-    width: '100%',
-    cursor: 'pointer'
-  },
   downloadLocation: {
+    marginLeft: 12,
+    display: 'inline-block',
     fontSize: '11px',
     color: grey[700]
   },
@@ -68,20 +56,15 @@ class DownloadSettingsSection extends React.Component {
         <SettingsListItem className={classes.downloadLocationItem}>
           <ListItemText primary='Always ask download location' />
           <div>
-            <Button
+            <FileUploadButton
               size='small'
               variant='raised'
-              className={classes.fileInputButton}
-              disabled={!os.alwaysAskDownloadLocation}>
+              disabled={!os.alwaysAskDownloadLocation}
+              webkitdirectory='webkitdirectory'
+              onChange={(evt) => settingsActions.sub.os.setDefaultDownloadLocation(evt.target.files[0].path)}>
               <FolderIcon className={classes.buttonIcon} />
               Select location
-              <input
-                type='file'
-                className={classes.fileInput}
-                webkitdirectory='webkitdirectory'
-                disabled={os.alwaysAskDownloadLocation}
-                onChange={(evt) => settingsActions.sub.os.setDefaultDownloadLocation(evt.target.files[0].path)} />
-            </Button>
+            </FileUploadButton>
             {!os.alwaysAskDownloadLocation ? undefined : <span className={classes.downloadLocation}>{os.defaultDownloadLocation}</span>}
           </div>
           <ListItemSecondaryAction>
@@ -91,11 +74,11 @@ class DownloadSettingsSection extends React.Component {
               checked={os.alwaysAskDownloadLocation} />
           </ListItemSecondaryAction>
         </SettingsListItem>
-        <SettingsListSwitch
+        <SettingsListItemSwitch
           label='Show notification when download completes'
           onChange={(evt, toggled) => settingsActions.sub.os.setDownloadNotificationEnabled(toggled)}
           checked={os.downloadNotificationEnabled} />
-        <SettingsListSwitch
+        <SettingsListItemSwitch
           divider={false}
           disabled={!os.downloadNotificationEnabled}
           label='Play sound when download completes'

@@ -6,7 +6,7 @@ import ConfirmButton from 'wbui/ConfirmButton'
 import { withStyles } from '@material-ui/core/styles'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItem from 'wbui/SettingsListItem'
-import SettingsListButton from 'wbui/SettingsListButton'
+import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import red from '@material-ui/core/colors/red'
 import LockOutlineIcon from '@material-ui/icons/LockOutline'
 import DeleteIcon from '@material-ui/icons/Delete'
@@ -50,7 +50,7 @@ class AccountDestructiveSettings extends React.Component {
     return (
       <SettingsListSection title='' {...passProps}>
         {mailbox.supportsAuth ? (
-          <SettingsListButton
+          <SettingsListItemButton
             label='Reauthenticate'
             icon={<LockOutlineIcon />}
             onClick={() => mailboxActions.reauthenticateMailbox(mailbox.id)} />
@@ -74,7 +74,7 @@ class AccountDestructiveSettings extends React.Component {
             confirmWaitMs={4000}
             onConfirmedClick={() => mailboxActions.clearMailboxBrowserSession(mailbox.id)} />
         </SettingsListItem>
-        <SettingsListButton
+        <SettingsListItemButton
           className={classes.deleteButton}
           label='Delete this account'
           icon={<DeleteIcon />}

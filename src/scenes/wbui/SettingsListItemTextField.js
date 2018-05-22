@@ -13,7 +13,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class SettingsListTextField extends React.Component {
+class SettingsListItemTextField extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -61,4 +61,4 @@ class SettingsListTextField extends React.Component {
   }
 }
 
-export default SettingsListTextField
+export default SettingsListItemTextField

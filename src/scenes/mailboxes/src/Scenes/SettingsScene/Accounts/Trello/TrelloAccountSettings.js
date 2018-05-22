@@ -11,7 +11,7 @@ import AccountCustomCodeSettings from '../AccountCustomCodeSettings'
 import AccountBehaviourSettings from '../AccountBehaviourSettings'
 import { mailboxActions, TrelloDefaultServiceReducer } from 'stores/mailbox'
 import SettingsListSection from 'wbui/SettingsListSection'
-import SettingsListSelect from 'wbui/SettingsListSelect'
+import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 
 export default class TrelloAccountSettings extends React.Component {
   /* **************************************************************************/
@@ -41,7 +41,7 @@ export default class TrelloAccountSettings extends React.Component {
         <AccountBadgeSettings mailbox={mailbox} service={service} />
         <AccountNotificationSettings mailbox={mailbox} service={service} />
         <SettingsListSection>
-          <SettingsListSelect
+          <SettingsListItemSelect
             label='Home board (opens on launch)'
             value={service.homeBoardId || 'default'}
             options={[ { value: 'default', label: 'Trello Home (Default)' } ].concat(
