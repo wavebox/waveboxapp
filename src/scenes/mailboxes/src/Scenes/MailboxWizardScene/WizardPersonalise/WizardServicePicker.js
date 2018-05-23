@@ -223,6 +223,7 @@ class WizardServicePicker extends React.Component {
           <FormControl fullWidth margin='normal'>
             <InputLabel>How should your services be displayed?</InputLabel>
             <Select
+              MenuProps={{ disableEnforceFocus: true }}
               className={classes.displayModePicker}
               value={servicesDisplayMode}
               disabled={!userHasServices}

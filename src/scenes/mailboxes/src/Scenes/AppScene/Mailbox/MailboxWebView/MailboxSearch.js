@@ -192,6 +192,7 @@ class MailboxSearch extends React.Component {
         <TextField
           inputRef={(n) => { this.inputRef = n }}
           tabIndex={-1}
+          inputProps={{ tabIndex: -1 }}
           placeholder='Search'
           className={classes.input}
           value={searchTerm}

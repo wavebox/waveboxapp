@@ -66,6 +66,7 @@ const styles = {
     bottom: 0
   },
   addFirstAccountContainer: {
+    marginTop: 36,
     textAlign: 'center'
   }
 }
@@ -284,6 +285,7 @@ class AccountSettings extends React.Component {
                   value={selected.id}
                   fullWidth
                   MenuProps={{
+                    disableEnforceFocus: true,
                     MenuListProps: { dense: true },
                     PaperProps: {
                       style: { maxHeight: 200 }

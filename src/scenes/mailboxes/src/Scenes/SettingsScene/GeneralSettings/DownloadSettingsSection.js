@@ -59,13 +59,19 @@ class DownloadSettingsSection extends React.Component {
             <FileUploadButton
               size='small'
               variant='raised'
-              disabled={!os.alwaysAskDownloadLocation}
+              disabled={os.alwaysAskDownloadLocation}
               webkitdirectory='webkitdirectory'
-              onChange={(evt) => settingsActions.sub.os.setDefaultDownloadLocation(evt.target.files[0].path)}>
+              onChange={(evt) => {
+                if (evt.target && evt.target.files && evt.target.files[0]) {
+                  settingsActions.sub.os.setDefaultDownloadLocation(evt.target.files[0].path)
+                } else {
+                  settingsActions.sub.os.setDefaultDownloadLocation(undefined)
+                }
+              }}>
               <FolderIcon className={classes.buttonIcon} />
               Select location
             </FileUploadButton>
-            {!os.alwaysAskDownloadLocation ? undefined : <span className={classes.downloadLocation}>{os.defaultDownloadLocation}</span>}
+            {os.alwaysAskDownloadLocation ? undefined : <span className={classes.downloadLocation}>{os.defaultDownloadLocation}</span>}
           </div>
           <ListItemSecondaryAction>
             <Switch

@@ -32,11 +32,12 @@ const styles = {
     marginTop: 8,
     marginBottom: 8
   },
-  serviceAvatar: {
+  proServiceAvatar: {
+    display: 'inline-block',
     width: 40,
     height: 40,
     backgroundColor: 'white',
-    marginRight: 8,
+    margin: 4,
     border: '2px solid rgb(139, 139, 139)'
   },
   scrollspyServiceAvatar: {
@@ -44,6 +45,9 @@ const styles = {
     height: 24,
     backgroundColor: 'white',
     border: '2px solid rgb(139, 139, 139)'
+  },
+  proButtonIcon: {
+    marginRight: 8
   }
 }
 
@@ -214,18 +218,18 @@ class GoogleAccountSettings extends React.Component {
           ).map((serviceType) => this.renderServiceType(mailbox, serviceType, onRequestEditCustomCode, renderBelowFold))
         ) : (
           <div>
-            {this.renderServiceType(mailbox, CoreService.SERVICE_TYPES.DEFAULT, onRequestEditCustomCode)}
+            {this.renderServiceType(mailbox, CoreService.SERVICE_TYPES.DEFAULT, onRequestEditCustomCode, renderBelowFold)}
             <div className={classes.proServices}>
               <h3>Enjoy all these extra services when you purchase Wavebox...</h3>
               <div className={classes.proServiceAvatars}>
                 {mailbox.supportedServiceTypes.map((serviceType) => {
                   if (serviceType === CoreService.SERVICE_TYPES.DEFAULT) { return undefined }
                   const serviceClass = ServiceFactory.getClass(mailbox.type, serviceType)
-                  return (<Avatar key={serviceType} className={classes.serviceAvatar} src={Resolver.image(serviceClass.humanizedLogo)} />)
+                  return (<Avatar key={serviceType} className={classes.proServiceAvatar} src={Resolver.image(serviceClass.humanizedLogo)} />)
                 })}
               </div>
               <Button variant='raised' color='primary' onClick={this.openWaveboxPro}>
-                <FontAwesomeIcon icon={fasGem} />
+                <FontAwesomeIcon icon={fasGem} className={classes.proButtonIcon} />
                 Purchase Wavebox
               </Button>
             </div>

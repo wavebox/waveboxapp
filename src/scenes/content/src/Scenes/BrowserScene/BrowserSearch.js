@@ -144,14 +144,16 @@ class BrowserSearch extends React.Component {
         <TextField
           inputRef={(n) => { this.searchInputRef = n }}
           placeholder='Search'
+          tabIndex={-1}
+          inputProps={{ tabIndex: -1 }}
           className={classes.searchField}
           value={searchTerm}
           onChange={this.handleChange}
           onKeyDown={this.handleKeyPress} />
-        <IconButton onClick={this.handleFindNext}>
+        <IconButton tabIndex={-1} onClick={this.handleFindNext}>
           <SearchIcon />
         </IconButton>
-        <IconButton onClick={this.handleStopSearch}>
+        <IconButton tabIndex={-1} onClick={this.handleStopSearch}>
           <CloseIcon />
         </IconButton>
       </Paper>

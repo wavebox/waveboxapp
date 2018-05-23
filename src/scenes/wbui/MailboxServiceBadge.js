@@ -29,6 +29,10 @@ const styles = {
     height: RADIUS * 2,
     borderRadius: '50%',
     zIndex: 1
+  },
+  icon: {
+    width: 18,
+    height: 18
   }
 }
 
@@ -94,7 +98,7 @@ class MailboxServicebadge extends React.Component {
       badgeContent = (
         <FontAwesomeIcon
           icon={fasExclamation}
-          className={iconClassName}
+          className={classNames(classes.icon, iconClassName)}
           style={{ color: colorInverse, ...iconStyle }} />
       )
     } else if (supportsUnreadCount && showUnreadBadge && unreadCount) {

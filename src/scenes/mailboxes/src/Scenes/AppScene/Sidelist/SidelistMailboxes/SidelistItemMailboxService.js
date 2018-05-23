@@ -218,7 +218,7 @@ class SidelistItemMailboxService extends React.Component {
         <Avatar
           {...passProps}
           src={this.getServiceIconUrl(mailbox.type, serviceType)}
-          draggable={false}
+          imgProps={{ draggable: false }}
           className={classNames(
             classes.avatar,
             'WB-ServiceIcon',

@@ -22,7 +22,7 @@ const styles = {
     borderRadius: '50%',
     width: 15,
     height: 15,
-    lineHeight: '14px',
+    lineHeight: '15px',
     verticalAlign: 'middle',
     textAlign: 'center',
     fontSize: '10px',
@@ -102,10 +102,12 @@ class ServiceBadgeSettingsSection extends React.Component {
     const { userHasSleepable } = this.state
     if (ServiceBadgeSettingsSection.willRenderForService(service) === false) { return false }
 
-    return (
-      <SettingsListSection title='Badges' icon={<AdjustIcon />} {...passProps}>
-        {userHasSleepable && service.sleepable && !service.supportsSyncWhenSleeping ? (
+    const items = [
+      (userHasSleepable && service.sleepable && !service.supportsSyncWhenSleeping ? (isLast) => {
+        return (
           <SettingsListItemText
+            key='info'
+            divider={!isLast}
             primaryType='warning'
             primaryIcon={<WarningIcon />}
             primary={(
@@ -114,34 +116,52 @@ class ServiceBadgeSettingsSection extends React.Component {
                 ensure badges are always updated we recommend disabling sleeping for this service
               </span>
             )} />
-        ) : undefined}
-        <SettingsListItem>
-          <ColorPickerButton
-            buttonProps={{ variant: 'raised', size: 'small' }}
-            value={service.unreadBadgeColor}
-            onChange={(col) => mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setUnreadBadgeColor, col)}>
-            <SmsIcon className={classes.buttonIcon} />
-            Badge Color
-          </ColorPickerButton>
-        </SettingsListItem>
-        {service.supportsUnreadCount ? (
+        )
+      } : undefined),
+      (isLast) => {
+        return (
+          <SettingsListItem
+            key='unreadBadgeColor'
+            divider={!isLast}>
+            <ColorPickerButton
+              buttonProps={{ variant: 'raised', size: 'small' }}
+              value={service.unreadBadgeColor}
+              onChange={(col) => mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setUnreadBadgeColor, col)}>
+              <SmsIcon className={classes.buttonIcon} />
+              Badge Color
+            </ColorPickerButton>
+          </SettingsListItem>
+        )
+      },
+      (service.supportsUnreadCount ? (isLast) => {
+        return (
           <SettingsListItemSwitch
+            key='showUnreadBadge'
+            divider={!isLast}
             label='Show unread count in sidebar or toolbar'
             onChange={(evt, toggled) => {
               mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setShowUnreadBadge, toggled)
             }}
             checked={service.showUnreadBadge} />
-        ) : undefined}
-        {service.supportsUnreadCount ? (
+        )
+      } : undefined),
+      (service.supportsUnreadCount ? (isLast) => {
+        return (
           <SettingsListItemSwitch
+            key='unreadActivityCountsTowardsAppUnread'
+            divider={!isLast}
             label='Show unread count in Menu Bar & App Badge'
             onChange={(evt, toggled) => {
               mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setUnreadCountsTowardsAppUnread, toggled)
             }}
             checked={service.unreadCountsTowardsAppUnread} />
-        ) : undefined}
-        {service.supportsUnreadActivity ? (
+        )
+      } : undefined),
+      (service.supportsUnreadActivity ? (isLast) => {
+        return (
           <SettingsListItemSwitch
+            key='showUnreadActivityBadge'
+            divider={!isLast}
             label={(
               <span>
                 <span>Show unread activity in sidebar or toolbar as </span>
@@ -152,9 +172,13 @@ class ServiceBadgeSettingsSection extends React.Component {
               mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setShowUnreadActivityBadge, toggled)
             }}
             checked={service.showUnreadActivityBadge} />
-        ) : undefined}
-        {service.supportsUnreadActivity ? (
+        )
+      } : undefined),
+      (service.supportsUnreadActivity ? (isLast) => {
+        return (
           <SettingsListItemSwitch
+            key='setUnreadActivityCountsTowardsAppUnread'
+            divider={!isLast}
             label={(
               <span>
                 <span>Show unread activity in Menu Bar & App Badge as </span>
@@ -165,7 +189,15 @@ class ServiceBadgeSettingsSection extends React.Component {
               mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setUnreadActivityCountsTowardsAppUnread, toggled)
             }}
             checked={service.unreadActivityCountsTowardsAppUnread} />
-        ) : undefined}
+        )
+      } : undefined)
+    ].filter((item) => !!item).map((item, index, arr) => {
+      return item(index === (arr.length - 1))
+    })
+
+    return (
+      <SettingsListSection title='Badges' icon={<AdjustIcon />} {...passProps}>
+        {items}
       </SettingsListSection>
     )
   }

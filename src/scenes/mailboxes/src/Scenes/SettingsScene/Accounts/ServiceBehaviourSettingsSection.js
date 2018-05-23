@@ -22,7 +22,9 @@ const styles = {
   sleepUnavailableText: {
     color: lightBlue[500],
     fontWeight: '300',
-    marginTop: 0
+    marginTop: 0,
+    paddingRight: 100,
+    display: 'inline-block'
   }
 }
 

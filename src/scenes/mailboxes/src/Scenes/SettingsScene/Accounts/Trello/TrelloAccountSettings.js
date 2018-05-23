@@ -62,6 +62,7 @@ export default class TrelloAccountSettings extends React.Component {
           title='Account'
           icon={<AccountCircleIcon />}>
           <SettingsListItemSelect
+            divider={false}
             label='Home board (opens on launch)'
             value={service.homeBoardId || 'default'}
             options={[ { value: 'default', label: 'Trello Home (Default)' } ].concat(

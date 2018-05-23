@@ -117,7 +117,7 @@ class ServiceNotificationSettingsSection extends React.Component {
     return (
       <SettingsListItemSelect
         label='Notification Sound'
-        value={service.notificationsSound}
+        value={service.notificationsSound || 'null'}
         disabled={!service.showNotifications}
         options={[
           { value: 'null', label: '' }

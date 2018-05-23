@@ -2,8 +2,17 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Avatar } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
+import { withStyles } from '@material-ui/core/styles'
+import classNames from 'classnames'
 
-export default class MailboxAvatar extends React.Component {
+const styles = {
+  img: {
+    textIndent: -100000 // Stops showing the broken image icon if the url doesn't resolve
+  }
+}
+
+@withStyles(styles)
+class MailboxAvatar extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -32,6 +41,7 @@ export default class MailboxAvatar extends React.Component {
       resolvedAvatar,
       style,
       size,
+      classes,
       ...otherProps
     } = this.props
     if (!mailbox) { return false }
@@ -44,22 +54,25 @@ export default class MailboxAvatar extends React.Component {
       backgroundColor: mailbox.hasCustomAvatar || mailbox.avatarURL ? 'white' : mailbox.color
     }
 
+    const borderSize = Math.round(size * 0.08)
+    const adjustedSize = size - (2 * borderSize)
+    generatedStyle.width = adjustedSize
+    generatedStyle.height = adjustedSize
+    generatedStyle.lineHeight = `${adjustedSize}px`
     if (mailbox.showAvatarColorRing) {
-      const borderSize = Math.round(size * 0.08)
-      const adjustedSize = size - (2 * borderSize)
-      generatedStyle.width = adjustedSize
-      generatedStyle.height = adjustedSize
-      generatedStyle.lineHeight = `${adjustedSize}px`
       generatedStyle.boxShadow = `0 0 0 ${borderSize}px ${mailbox.color}`
-    } else {
-      generatedStyle.width = size
-      generatedStyle.height = size
-      generatedStyle.lineHeight = `${size}px`
     }
 
     const passProps = {
-      draggable: false,
       ...otherProps,
+      imgProps: {
+        draggable: false,
+        ...otherProps.imgProps
+      },
+      classes: {
+        ...otherProps.classes,
+        img: classNames(classes.img, (otherProps.classes || {}).img)
+      },
       style: {
         ...generatedStyle,
         ...style
@@ -75,3 +88,5 @@ export default class MailboxAvatar extends React.Component {
     }
   }
 }
+
+export default MailboxAvatar

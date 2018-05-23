@@ -338,7 +338,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
               <LockOutlineIcon />
             )}
           </ListItemIcon>
-          <ListItemText inset primary='Reauthenticate' />
+          <ListItemText inset primary='Reauthenticate' style={{ color: red[600] }} />
         </MenuItem>
       )
     }

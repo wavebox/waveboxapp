@@ -5,12 +5,8 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { mailboxStore } from 'stores/mailbox'
 import MailboxAvatar from 'Components/Backed/MailboxAvatar'
 import { userActions } from 'stores/user'
-import { PRIVACY_URL, TERMS_URL } from 'shared/constants'
-import electron from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import StyleMixins from 'wbui/Styles/StyleMixins'
-import grey from '@material-ui/core/colors/grey'
-import blue from '@material-ui/core/colors/blue'
 import FontAwesomeIcon from '@fortawesome/react-fontawesome'
 import fabGoogle from '@fortawesome/fontawesome-free-brands/faGoogle'
 import fabWindows from '@fortawesome/fontawesome-free-brands/faWindows'
@@ -38,13 +34,6 @@ const styles = {
     display: 'flex',
     width: '50%',
     paddingLeft: 16
-  },
-  link: {
-    color: blue[700]
-  },
-  terms: {
-    color: grey[700],
-    fontSize: '85%'
   },
   accountAvatar: {
     marginLeft: 3
@@ -119,22 +108,6 @@ class AccountAuthScene extends React.Component {
     }, 500)
   }
 
-  /**
-  * Shows privacy policy
-  */
-  handleShowPrivacyPolicy = (evt) => {
-    evt.preventDefault()
-    electron.remote.shell.openExternal(PRIVACY_URL)
-  }
-
-  /**
-  * Shows terms of use
-  */
-  handleShowTermsOfUse = (evt) => {
-    evt.preventDefault()
-    electron.remote.shell.openExternal(TERMS_URL)
-  }
-
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -206,16 +179,6 @@ class AccountAuthScene extends React.Component {
           <div className={classes.container}>
             <div className={classes.infoContainer}>
               {this.renderMessage(mode)}
-              <p className={classes.terms}>
-                <span>By continuing you agree to our </span>
-                <a className={classes.link} onClick={this.handleShowTermsOfUse} href='#'>
-                  terms of use
-                </a>
-                <span> and </span>
-                <a className={classes.link} onClick={this.handleShowPrivacyPolicy} href='#'>
-                  privacy policy
-                </a>
-              </p>
               <br />
               <Button onClick={this.handleClose}>Cancel</Button>
             </div>

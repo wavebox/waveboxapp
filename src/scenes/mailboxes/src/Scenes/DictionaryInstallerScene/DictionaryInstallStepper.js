@@ -138,7 +138,10 @@ class DictionaryInstallStepper extends React.Component {
           <StepContent>
             <FormControl fullWidth>
               <InputLabel>Pick the dictionary to install</InputLabel>
-              <Select value='null' onChange={this.handlePickLanguage} >
+              <Select
+                MenuProps={{ disableEnforceFocus: true }}
+                value='null'
+                onChange={this.handlePickLanguage}>
                 {['null'].concat(uninstallDictionaries).map((info) => {
                   if (info === 'null') {
                     return (<MenuItem key='null' value={'null'} />)
@@ -186,7 +189,7 @@ class DictionaryInstallStepper extends React.Component {
               <strong>{(installLanguageInfo || {}).name}</strong>
               <span> dictionary has been downloaded and installed.</span>
             </p>
-            <Button variant='raised' color='primary' className={classes.button} onClick={this.handleCancel}>
+            <Button variant='raised' color='primary' className={classes.button} onClick={this.handleComplete}>
               Done
             </Button>
           </StepContent>

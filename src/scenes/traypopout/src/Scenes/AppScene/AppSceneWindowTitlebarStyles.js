@@ -49,7 +49,9 @@ if (process.platform === 'darwin') {
         margin: `0px ${CONTROLS_H_SPACE}px`,
 
         '& >.control': {
-          position: 'relative',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
           width: 12,
           height: 12,
           borderRadius: '50%',
@@ -59,18 +61,10 @@ if (process.platform === 'darwin') {
           backgroundColor: CONTROL_BG,
 
           '& >.icon': {
-            position: 'absolute !important',
-            top: '0 !important',
-            left: '0 !important',
-            right: '0 !important',
-            bottom: '0 !important',
-            textAlign: 'center !important',
-            lineHeight: '10px !important',
-            fontSize: '8px !important',
+            width: 8,
+            height: 8,
             transition: 'none !important',
-            visibility: 'hidden',
-            height: 'auto',
-            width: 'auto'
+            visibility: 'hidden'
           },
 
           '&:hover>.icon': {
@@ -175,7 +169,9 @@ if (process.platform === 'darwin') {
         alignItems: 'center',
 
         '& >.control': {
-          position: 'relative',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
           width: BAR_SIZE,
           height: BAR_SIZE,
           WebkitAppRegion: 'no-drag',
@@ -189,18 +185,10 @@ if (process.platform === 'darwin') {
           },
 
           '& >.icon': {
-            position: 'absolute !important',
-            top: '0 !important',
-            left: '0 !important',
-            right: '0 !important',
-            bottom: '0 !important',
-            textAlign: 'center !important',
-            lineHeight: `${BAR_SIZE}px !important`,
-            fontSize: '12px !important',
+            width: 13,
+            height: 13,
             transition: 'none !important',
-            color: `${BAR_FG} !important`,
-            height: 'auto',
-            width: 'auto'
+            color: `${BAR_FG} !important`
           },
 
           '&.close': {

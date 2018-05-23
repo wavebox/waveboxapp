@@ -41,6 +41,7 @@ export default class ColorPickerButton extends React.Component {
         </Button>
         <Popover
           {...popoverProps}
+          disableEnforceFocus
           open={!!anchorEl}
           anchorEl={anchorEl}
           onClose={(evt) => this.setState({ anchorEl: null })}>

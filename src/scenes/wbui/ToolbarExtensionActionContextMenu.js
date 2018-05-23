@@ -135,7 +135,7 @@ export default class ToolbarExtensionActionContextMenu extends React.Component {
       <Menu
         open={open}
         anchorEl={anchor}
-        tranformOrigin={{ horizontal: 'left', vertical: 'top' }}
+        transformOrigin={{ horizontal: 'left', vertical: 'top' }}
         MenuListProps={{ dense: true }}
         disableEnforceFocus
         onClose={this.closePopover}>

@@ -272,6 +272,7 @@ class WizardConfigureGeneric extends React.Component {
         <FormControl fullWidth margin='normal'>
           <InputLabel>Open new windows in which Browser</InputLabel>
           <Select
+            MenuProps={{ disableEnforceFocus: true }}
             value={defaultWindowOpenMode}
             fullWidth
             onChange={(evt) => {

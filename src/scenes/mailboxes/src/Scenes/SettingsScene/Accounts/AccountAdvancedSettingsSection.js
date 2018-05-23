@@ -70,7 +70,7 @@ export default class AccountAdvancedSettingsSection extends React.Component {
           checked={mailbox.artificiallyPersistCookies} />
         {windowOpenBefore}
         <SettingsListItemSelect
-          divider={!!windowOpenAfter && !!children}
+          divider={!!(windowOpenAfter || children)}
           label='Open new windows in which Browser'
           value={mailbox.defaultWindowOpenMode}
           options={[

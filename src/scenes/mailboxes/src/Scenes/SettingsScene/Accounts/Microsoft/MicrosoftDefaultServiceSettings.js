@@ -52,6 +52,7 @@ export default class MicrosoftDefaultServiceSettings extends React.Component {
       <ServiceSection {...passProps} mailbox={mailbox} serviceType={serviceType}>
         <SettingsListSection title='Unread & Sync'>
           <SettingsListItemSelect
+            divider={false}
             label='Unread Mode'
             value={service.unreadMode}
             options={Object.keys(MicrosoftDefaultService.UNREAD_MODES).map((mode) => {

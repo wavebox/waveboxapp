@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
+import ReactDOM from 'react-dom'
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import uuid from 'uuid'
@@ -109,7 +110,7 @@ class CustomStylesEditingDialog extends React.Component {
             variant='raised'
             color='primary'
             className={classes.button}
-            onClick={(evt) => onSave(evt, this.textFieldRef.getValue())}>
+            onClick={(evt) => onSave(evt, ReactDOM.findDOMNode(this.textFieldRef).value)}>
             Save
           </Button>
         </DialogActions>

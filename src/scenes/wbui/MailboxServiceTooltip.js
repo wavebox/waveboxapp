@@ -25,8 +25,9 @@ const styles = {
   },
   authInvalidIcon: {
     color: red['A200'],
-    fontSize: 16,
-    marginRight: 2
+    width: 14,
+    height: 14,
+    marginRight: 6
   }
 }
 

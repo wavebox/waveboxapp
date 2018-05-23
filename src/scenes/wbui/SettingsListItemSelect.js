@@ -46,6 +46,10 @@ class SettingsListItemSelect extends React.Component {
         <ListItemText primary={label} secondary={secondary} />
         <ListItemSecondaryAction className={classes.secondaryAction}>
           <Select
+            MenuProps={{
+              disableEnforceFocus: true,
+              MenuListProps: { dense: true }
+            }}
             margin='dense'
             className={classes.select}
             disabled={disabled}
@@ -58,10 +62,10 @@ class SettingsListItemSelect extends React.Component {
             onChange={(evt) => { onChange(evt, evt.target.value) }}>
             {options.map((opt, i) => {
               if (opt.divider) {
-                return (<Divider key={`divider-${i}`} />)
+                return (<Divider key={`divider-${i}`} {...opt.DividerProps} />)
               } else {
                 return (
-                  <MenuItem key={opt.value} value={opt.value} disabled={opt.disabled}>
+                  <MenuItem key={opt.value} value={opt.value} disabled={opt.disabled} {...opt.MenuItemProps}>
                     {opt.primaryText ? opt.primaryText : opt.label}
                   </MenuItem>
                 )

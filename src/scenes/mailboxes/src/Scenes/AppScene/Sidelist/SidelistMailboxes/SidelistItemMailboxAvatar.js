@@ -255,12 +255,13 @@ class SidelistItemMalboxAvatar extends React.Component {
           {...passProps}
           mailboxId={mailbox.id}
           size={42}
-          draggable={false}
           className={classNames(
             classes.avatar,
             showSleeping ? 'is-sleeping' : undefined
           )}
-          style={{ boxShadow: `0 0 0 4px ${borderColor}` }} />
+          style={{
+            boxShadow: mailbox.showAvatarColorRing ? `0 0 0 4px ${borderColor}` : 'none'
+          }} />
         {tooltipsEnabled ? (
           <MailboxServiceTooltip
             mailbox={mailbox}

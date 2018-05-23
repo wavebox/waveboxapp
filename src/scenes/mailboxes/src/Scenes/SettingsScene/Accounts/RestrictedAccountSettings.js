@@ -19,7 +19,8 @@ const styles = {
     marginRight: 8
   },
   deleteIcon: {
-    marginRight: 6
+    marginRight: 6,
+    verticalAlign: 'middle'
   }
 }
 
@@ -54,6 +55,7 @@ class RestrictedAccountSettings extends React.Component {
         <br />
         <div>
           <ConfirmButton
+            variant='raised'
             content={(
               <span>
                 <DeleteIcon className={classes.deleteIcon} />

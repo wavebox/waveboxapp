@@ -294,6 +294,10 @@ class GoogleUnreadSettings extends React.Component {
             <FormControl fullWidth margin='normal'>
               <InputLabel>Custom count label field</InputLabel>
               <Select
+                MenuProps={{
+                  disableEnforceFocus: true,
+                  MenuListProps: { dense: true }
+                }}
                 value={customUnreadCountLabelField}
                 disabled={!customUnreadCountFromLabel}
                 onChange={(evt) => {

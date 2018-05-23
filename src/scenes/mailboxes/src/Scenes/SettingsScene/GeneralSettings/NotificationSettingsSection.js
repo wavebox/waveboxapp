@@ -140,7 +140,7 @@ class NotificationSettingsSection extends React.Component {
     return (
       <SettingsListItemSelect
         label='Notification Sound'
-        value={os.notificationsSoun}
+        value={os.notificationsSound}
         disabled={os.notificationsSilent || !os.notificationsEnabled}
         options={Object.keys(NOTIFICATION_SOUNDS).map((value) => {
           return { value: value, label: NOTIFICATION_SOUNDS[value] }

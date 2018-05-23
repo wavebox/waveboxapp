@@ -114,21 +114,21 @@ class AppSceneWindowTitlebar extends React.Component {
         <div className='controls'>
           <div className='control close' onClick={this.handleClose}>
             {process.platform === 'darwin' ? (
-              <FontAwesomeIcon icon={fasTimes} />
+              <FontAwesomeIcon className='icon' icon={fasTimes} />
             ) : (
-              <FontAwesomeIcon icon={farTimes} />
+              <FontAwesomeIcon className='icon' icon={farTimes} />
             )}
           </div>
           <div className='control maximize'>
             {process.platform === 'darwin' ? undefined : (
-              <FontAwesomeIcon icon={farSquare} />
+              <FontAwesomeIcon className='icon' icon={farSquare} />
             )}
           </div>
           <div className='control minimize' onClick={this.handleMinimize}>
             {process.platform === 'darwin' ? (
-              <FontAwesomeIcon icon={fasMinus} />
+              <FontAwesomeIcon className='icon' icon={fasMinus} />
             ) : (
-              <FontAwesomeIcon icon={farWindowMinimize} />
+              <FontAwesomeIcon className='icon' icon={farWindowMinimize} />
             )}
           </div>
         </div>

@@ -56,8 +56,8 @@ class ServiceCustomCodeSettingsSection extends React.Component {
           label='Custom JS'
           icon={<CodeIcon />}
           onClick={() => {
-            onRequestEditCustomCode('Custom CSS', service.customCSS, (code) => {
-              mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setCustomCSS, code)
+            onRequestEditCustomCode('Custom JS', service.customJS, (code) => {
+              mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setCustomJS, code)
               mailboxDispatch.reload(mailbox.id, service.type)
             })
           }} />

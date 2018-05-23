@@ -100,15 +100,21 @@ class LanguageSettingsSection extends React.Component {
               return { value: info.lang, label: info.name }
             }),
             unavailbleSecondary.length === 0 ? [] : [
-              [{ divider: true }],
+              { divider: true },
               {
                 value: '__unavailableTitle__',
-                label: 'These languages are not compatible with the primary language as they use a different character set',
-                disabled: true
+                label: 'Incompatible with primary language due to different character set',
+                disabled: true,
+                MenuItemProps: {
+                  style: {
+                    fontWeight: 'bold',
+                    fontSize: '85%'
+                  }
+                }
               }
             ],
             unavailbleSecondary.map((info) => {
-              return { value: info.lang, label: info.name }
+              return { value: info.lang, label: info.name, disabled: true }
             })
           )}
           onChange={(evt, value) => settingsActions.sub.language.setSecondarySpellcheckerLanguage(value !== '__none__' ? value : null)} />
