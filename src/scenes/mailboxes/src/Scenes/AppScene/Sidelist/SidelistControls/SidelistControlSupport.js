@@ -1,10 +1,10 @@
 import React from 'react'
-import { Icon } from '@material-ui/core'
 import SidelistControl from './SidelistControl'
 import { TOUR_STEPS } from 'stores/settings/Tour'
 import teal from '@material-ui/core/colors/teal'
 import { withStyles } from '@material-ui/core/styles'
-import classNames from 'classnames'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import farQuestionCircle from '@fortawesome/fontawesome-pro-regular/faQuestionCircle'
 
 const styles = {
   icon: {
@@ -42,7 +42,7 @@ class SidelistControlSupport extends React.Component {
           </div>
         )}
         icon={(
-          <Icon className={classNames(classes.icon, 'far fa-fw fa-question-circle')} />
+          <FontAwesomeIcon className={classes.icon} icon={farQuestionCircle} />
         )} />
     )
   }

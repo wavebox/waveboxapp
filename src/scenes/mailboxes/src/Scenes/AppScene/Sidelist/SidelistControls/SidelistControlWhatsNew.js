@@ -1,5 +1,4 @@
 import React from 'react'
-import { Icon } from '@material-ui/core'
 import SidelistControl from './SidelistControl'
 import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -8,6 +7,8 @@ import { UISettings } from 'shared/Models/Settings'
 import red from '@material-ui/core/colors/red'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import farStar from '@fortawesome/fontawesome-pro-regular/faStar'
 
 const styles = {
   icon: {
@@ -124,11 +125,9 @@ class SidelistControlWhatsNew extends React.Component {
           </div>
         )}
         icon={(
-          <Icon className={classNames(
-            classes.icon,
-            hasUnseenNews ? 'has-news' : undefined,
-            'far fa-fw fa-star'
-          )} />
+          <FontAwesomeIcon
+            className={classNames(classes.icon, hasUnseenNews ? 'has-news' : undefined)}
+            icon={farStar} />
         )} />
     )
   }

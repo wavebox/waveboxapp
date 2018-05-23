@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import {Button, Icon} from '@material-ui/core'
+import {Button} from '@material-ui/core'
 import { mailboxActions } from 'stores/mailbox'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import ConfirmButton from 'wbui/ConfirmButton'
 import DeleteIcon from '@material-ui/icons/Delete'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import fasGem from '@fortawesome/fontawesome-pro-solid/faGem'
 
 const styles = {
   root: {
@@ -45,7 +47,7 @@ class RestrictedAccountSettings extends React.Component {
         </p>
         <div>
           <Button variant='raised' color='primary' onClick={() => { window.location.hash = '/pro' }}>
-            <Icon className={classNames('fas fa-gem', classes.proIcon)} />
+            <FontAwesomeIcon icon={fasGem} className={classes.proIcon} />
             Purchase Wavebox
           </Button>
         </div>

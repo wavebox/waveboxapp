@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Icon } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import fasCheck from '@fortawesome/fontawesome-pro-solid/faCheck'
 
 const styles = {
   container: {
@@ -66,8 +67,9 @@ class WizardColorPickerCell extends React.Component {
           ...style
         }}>
         {isSelected ? (
-          <Icon
-            className={classNames(classes.selectedIcon, 'fas fa-check')}
+          <FontAwesomeIcon
+            icon={fasCheck}
+            className={classes.selectedIcon}
             style={{ fontSize: (size / 2) + 'px' }} />
         ) : undefined}
       </div>

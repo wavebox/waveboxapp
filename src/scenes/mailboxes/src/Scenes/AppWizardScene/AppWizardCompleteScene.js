@@ -1,10 +1,12 @@
 import React from 'react'
-import { Icon, Avatar } from '@material-ui/core'
+import { Avatar } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import lightGreen from '@material-ui/core/colors/lightGreen'
 import green from '@material-ui/core/colors/green'
 import blueGrey from '@material-ui/core/colors/blueGrey'
-import classNames from 'classnames'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import fasMagic from '@fortawesome/fontawesome-pro-solid/faMagic'
+import fasCheckCircle from '@fortawesome/fontawesome-pro-solid/faCheckCircle'
 
 const styles = {
   container: {
@@ -55,10 +57,10 @@ class AppWizardCompleteScene extends React.Component {
     return (
       <div className={classes.container}>
         <Avatar className={classes.avatar}>
-          <Icon className={classNames(classes.avatarIcon, 'fas fa-fw fa-magic')} />
+          <FontAwesomeIcon className={classes.avatarIcon} icon={fasMagic} />
         </Avatar>
         <h2 className={classes.heading}>
-          <Icon className={classNames(classes.doneIcon, 'fas fa-fw fa-check-circle')} />
+          <FontAwesomeIcon className={classes.doneIcon} icon={fasCheckCircle} />
           All Done!
         </h2>
         <p className={classes.subHeading}>

@@ -2,9 +2,14 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import classnames from 'classnames'
 import { remote } from 'electron'
-import { Icon } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import styles from './AppSceneWindowTitlebarStyles'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import farTimes from '@fortawesome/fontawesome-pro-regular/faTimes'
+import fasTimes from '@fortawesome/fontawesome-pro-solid/faTimes'
+import farSquare from '@fortawesome/fontawesome-pro-regular/faSquare'
+import fasMinus from '@fortawesome/fontawesome-pro-solid/faMinus'
+import farWindowMinimize from '@fortawesome/fontawesome-pro-regular/faWindowMinimize'
 
 @withStyles(styles)
 class AppSceneWindowTitlebar extends React.Component {
@@ -109,21 +114,21 @@ class AppSceneWindowTitlebar extends React.Component {
         <div className='controls'>
           <div className='control close' onClick={this.handleClose}>
             {process.platform === 'darwin' ? (
-              <Icon className='icon fas fa-times' />
+              <FontAwesomeIcon icon={fasTimes} />
             ) : (
-              <Icon className='icon far fa-times' />
+              <FontAwesomeIcon icon={farTimes} />
             )}
           </div>
           <div className='control maximize'>
             {process.platform === 'darwin' ? undefined : (
-              <Icon className='icon far fa-square' />
+              <FontAwesomeIcon icon={farSquare} />
             )}
           </div>
           <div className='control minimize' onClick={this.handleMinimize}>
             {process.platform === 'darwin' ? (
-              <Icon className='icon fas fa-minus' />
+              <FontAwesomeIcon icon={fasMinus} />
             ) : (
-              <Icon className='icon far fa-window-minimize' />
+              <FontAwesomeIcon icon={farWindowMinimize} />
             )}
           </div>
         </div>

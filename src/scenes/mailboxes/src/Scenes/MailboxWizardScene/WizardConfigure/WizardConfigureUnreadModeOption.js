@@ -1,11 +1,11 @@
 import React from 'react'
-import { Icon } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import uuid from 'uuid'
 import shallowCompare from 'react-addons-shallow-compare'
 import ReactPortalTooltip from 'react-portal-tooltip'
 import { withStyles } from '@material-ui/core/styles'
-import classNames from 'classnames'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import fasCheck from '@fortawesome/fontawesome-pro-regular/faCheck'
 
 const styles = {
   container: {
@@ -96,7 +96,7 @@ class WizardConfigureUnreadModeOption extends React.Component {
           onClick={onSelected}>
           <div style={{ ...styles.option, backgroundColor: color, borderColor: hovering ? color : 'white' }}>
             {selected ? (
-              <Icon className={classNames(classes.selectedIcon, 'fas fa-check')} />
+              <FontAwesomeIcon icon={fasCheck} className={classes.selectedIcon} />
             ) : undefined}
           </div>
           <div className={classes.name}>{name}</div>

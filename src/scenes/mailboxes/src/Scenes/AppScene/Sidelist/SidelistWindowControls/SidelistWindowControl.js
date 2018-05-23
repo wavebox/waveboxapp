@@ -5,6 +5,11 @@ import shallowCompare from 'react-addons-shallow-compare'
 import blueGrey from '@material-ui/core/colors/blueGrey'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import falWindowRestore from '@fortawesome/fontawesome-pro-light/faWindowRestore'
+import falWindowMaximize from '@fortawesome/fontawesome-pro-light/faWindowMaximize'
+import falWindowMinimize from '@fortawesome/fontawesome-pro-light/faWindowMinimize'
+import falWindowClose from '@fortawesome/fontawesome-pro-light/faWindowClose'
 
 const TYPES = Object.freeze({
   RESTORE: 'RESTORE',
@@ -67,13 +72,13 @@ class SidelistWindowControl extends React.Component {
   renderIconForType (classes, type) {
     switch (type) {
       case TYPES.RESTORE:
-        return (<Icon className={classNames(classes.icon, classes.iconFA, 'fal fa-fw fa-window-restore')} />)
+        return (<FontAwesomeIcon icon={falWindowRestore} className={classNames(classes.icon, classes.iconFA)} />)
       case TYPES.MAXIMIZE:
-        return (<Icon className={classNames(classes.icon, classes.iconFA, 'fal fa-fw fa-window-maximize')} />)
+        return (<FontAwesomeIcon icon={falWindowMaximize} className={classNames(classes.icon, classes.iconFA)} />)
       case TYPES.MINIMIZE:
-        return (<Icon className={classNames(classes.icon, classes.iconFA, 'fal fa-fw fa-window-minimize')} />)
+        return (<FontAwesomeIcon icon={falWindowMinimize} className={classNames(classes.icon, classes.iconFA)} />)
       case TYPES.CLOSE:
-        return (<Icon className={classNames(classes.icon, classes.iconFA, 'fal fa-fw fa-window-close')} />)
+        return (<FontAwesomeIcon icon={falWindowClose} className={classNames(classes.icon, classes.iconFA)} />)
       case TYPES.UNFULLSCREEN:
         return (<Icon className={classNames(classes.icon, classes.iconMI, 'material-icons')}>fullscreen_exit</Icon>)
     }

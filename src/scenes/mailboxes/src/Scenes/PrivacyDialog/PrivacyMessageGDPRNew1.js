@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dialog, DialogContent, Button, Checkbox, FormControlLabel, Icon } from '@material-ui/core'
+import { Dialog, DialogContent, Button, Checkbox, FormControlLabel } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { remote } from 'electron'
 import Resolver from 'Runtime/Resolver'
@@ -8,7 +8,8 @@ import { PRIVACY_URL, TERMS_URL, EULA_URL } from 'shared/constants'
 import { withStyles } from '@material-ui/core/styles'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import red from '@material-ui/core/colors/red'
-import classNames from 'classnames'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import farSpinnerThird from '@fortawesome/fontawesome-pro-regular/faSpinnerThird'
 
 const styles = {
   modal: {
@@ -217,7 +218,7 @@ class PrivacyMessageGDPRNew1 extends React.Component {
                 disabled={agreeRequestActive}
                 onClick={this.handleAgree}>
                 {agreeRequestActive ? (
-                  <Icon className={classNames(classes.workingIcon, 'far fa-fw fa-spin fa-spinner-third')} />
+                  <FontAwesomeIcon icon={farSpinnerThird} spin className={classes.workingIcon} />
                 ) : (
                   'Continue'
                 )}

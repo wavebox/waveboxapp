@@ -1,6 +1,6 @@
 import React from 'react'
 import { userStore } from 'stores/user'
-import { IconButton, Icon } from '@material-ui/core'
+import { IconButton } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import uuid from 'uuid'
 import ReactPortalTooltip from 'react-portal-tooltip'
@@ -8,6 +8,8 @@ import User from 'shared/Models/User'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import lightBlue from '@material-ui/core/colors/lightBlue'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import farCalendar from '@fortawesome/fontawesome-pro-regular/faCalendar'
 
 const UPDATE_INTERVAL = 1000 * 60 * 15 // 15 minutes
 const styles = {
@@ -246,7 +248,7 @@ class SidelistUpgradePlans extends React.Component {
         id={`ReactComponent-Sidelist-Item-${generatedId}`}>
         <IconButton onClick={this.handleUpgrade} className={classes.button}>
           <div className={classes.compositeIconContainer}>
-            <Icon className={classNames(classes.icon, 'far fa-fw fa-calendar')} />
+            <FontAwesomeIcon className={classes.icon} icon={farCalendar} />
             <div className={classNames(classes.remainingText, (formattedDays.length === 2 ? classes.remainingText2Char : classes.remainingText3Char))}>
               {formattedDays}
             </div>

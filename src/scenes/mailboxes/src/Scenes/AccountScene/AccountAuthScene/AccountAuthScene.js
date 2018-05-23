@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Dialog, DialogContent, Button, List, ListItem, ListItemText, Avatar, Icon } from '@material-ui/core'
+import { Dialog, DialogContent, Button, List, ListItem, ListItemText, Avatar } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { mailboxStore } from 'stores/mailbox'
 import MailboxAvatar from 'Components/Backed/MailboxAvatar'
@@ -11,6 +11,9 @@ import { withStyles } from '@material-ui/core/styles'
 import StyleMixins from 'wbui/Styles/StyleMixins'
 import grey from '@material-ui/core/colors/grey'
 import blue from '@material-ui/core/colors/blue'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import fabGoogle from '@fortawesome/fontawesome-free-brands/faGoogle'
+import fabWindows from '@fortawesome/fontawesome-free-brands/faWindows'
 
 const styles = {
   dialog: {
@@ -236,7 +239,7 @@ class AccountAuthScene extends React.Component {
                   disableGutters
                   onClick={(evt) => userActions.authenticateWithGoogle({ mode: mode })}>
                   <Avatar className={classes.googleAvatar}>
-                    <Icon className='fab fa-fw fa-google' />
+                    <FontAwesomeIcon icon={fabGoogle} />
                   </Avatar>
                   <ListItemText
                     primary='Sign in with Google'
@@ -247,7 +250,7 @@ class AccountAuthScene extends React.Component {
                   disableGutters
                   onClick={(evt) => userActions.authenticateWithMicrosoft({ mode: mode })}>
                   <Avatar className={classes.microsoftAvatar}>
-                    <Icon className='fab fa-fw fa-windows' />
+                    <FontAwesomeIcon icon={fabWindows} />
                   </Avatar>
                   <ListItemText
                     primary='Sign in with Microsoft'

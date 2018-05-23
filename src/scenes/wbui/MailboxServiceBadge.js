@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Icon } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import Color from 'color'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import fasExclamation from '@fortawesome/fontawesome-pro-solid/faExclamation'
 
 const RADIUS = 12
 const styles = {
@@ -91,8 +92,9 @@ class MailboxServicebadge extends React.Component {
     let badgeContent
     if (isAuthInvalid) {
       badgeContent = (
-        <Icon
-          className={classNames('fas fa-exclamation', iconClassName)}
+        <FontAwesomeIcon
+          icon={fasExclamation}
+          className={iconClassName}
           style={{ color: colorInverse, ...iconStyle }} />
       )
     } else if (supportsUnreadCount && showUnreadBadge && unreadCount) {

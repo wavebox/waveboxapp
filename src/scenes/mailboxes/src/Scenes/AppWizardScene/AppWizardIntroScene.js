@@ -1,9 +1,10 @@
 import React from 'react'
-import { Icon, Avatar } from '@material-ui/core'
+import { Avatar } from '@material-ui/core'
 import blueGrey from '@material-ui/core/colors/blueGrey'
 import yellow from '@material-ui/core/colors/yellow'
 import { withStyles } from '@material-ui/core/styles'
-import classNames from 'classnames'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import fasMagic from '@fortawesome/fontawesome-pro-solid/faMagic'
 
 const styles = {
   container: {
@@ -51,7 +52,7 @@ class AppWizardIntroScene extends React.Component {
     return (
       <div className={classes.container}>
         <Avatar className={classes.avatar}>
-          <Icon className={classNames(classes.avatarIcon, 'fas fa-fw fa-magic')} />
+          <FontAwesomeIcon icon={fasMagic} className={classes.avatarIcon} />
         </Avatar>
         <h2 className={classes.heading}>
           Wavebox Setup Wizard

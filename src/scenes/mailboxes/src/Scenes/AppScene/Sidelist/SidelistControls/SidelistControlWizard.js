@@ -1,10 +1,10 @@
 import React from 'react'
-import { Icon } from '@material-ui/core'
 import SidelistControl from './SidelistControl'
 import { TOUR_STEPS } from 'stores/settings/Tour'
 import amber from '@material-ui/core/colors/amber'
 import { withStyles } from '@material-ui/core/styles'
-import classNames from 'classnames'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import farMagic from '@fortawesome/fontawesome-pro-regular/faMagic'
 
 const styles = {
   icon: {
@@ -40,7 +40,7 @@ class SidelistControlWizard extends React.Component {
             common Wavebox Settings with the Setup Wizard
           </div>
         )}
-        icon={(<Icon className={classNames(classes.icon, 'far fa-fw fa-magic')} />)} />
+        icon={(<FontAwesomeIcon className={classes.icon} icon={farMagic} />)} />
     )
   }
 }

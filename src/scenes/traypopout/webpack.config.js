@@ -10,6 +10,7 @@ const CopyWebpackPlugin = devRequire('copy-webpack-plugin')
 const CleanWebpackPlugin = devRequire('clean-webpack-plugin')
 const WebpackNotifierPlugin = devRequire('webpack-notifier')
 const WebpackOnBuildPlugin = devRequire('on-build-webpack')
+const FontAwesomeAlias = require(path.join(ROOT_DIR, 'webpack/FontAwesomeAlias'))
 
 module.exports = function (env) {
   const isProduction = process.env.NODE_ENV === 'production'
@@ -60,16 +61,18 @@ module.exports = function (env) {
     ].filter((p) => !!p),
     resolve: {
       extensions: ['.js', '.jsx', '.css'],
-      alias: {
-        Components: path.resolve(path.join(__dirname, 'src/Components')),
-        shared: path.resolve(path.join(__dirname, '../../shared')),
-        wbui: path.resolve(path.join(__dirname, '../wbui')),
-        R: path.resolve(path.join(__dirname, 'src')),
-        Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
-        Scenes: path.resolve(path.join(__dirname, 'src/Scenes')),
-        stores: path.resolve(path.join(__dirname, 'src/stores')),
-        'package.json': path.resolve(ROOT_DIR, 'package.json')
-      },
+      alias: Object.assign({},
+        FontAwesomeAlias(path.join(__dirname, 'node_modules')),
+        {
+          Components: path.resolve(path.join(__dirname, 'src/Components')),
+          shared: path.resolve(path.join(__dirname, '../../shared')),
+          wbui: path.resolve(path.join(__dirname, '../wbui')),
+          R: path.resolve(path.join(__dirname, 'src')),
+          Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
+          Scenes: path.resolve(path.join(__dirname, 'src/Scenes')),
+          stores: path.resolve(path.join(__dirname, 'src/stores')),
+          'package.json': path.resolve(ROOT_DIR, 'package.json')
+        }),
       modules: [
         'node_modules',
         path.join(__dirname, 'node_modules'),

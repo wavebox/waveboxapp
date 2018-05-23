@@ -15,12 +15,14 @@ import { mailboxActions, GoogleMailboxReducer } from 'stores/mailbox'
 import Resolver from 'Runtime/Resolver'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import { withStyles } from '@material-ui/core/styles'
-import { Button, Icon, Avatar } from '@material-ui/core'
+import { Button, Avatar } from '@material-ui/core'
 import AccountSettingsScroller from '../AccountSettingsScroller'
 import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
 import BuildIcon from '@material-ui/icons/Build'
 import TuneIcon from '@material-ui/icons/Tune'
 import ListIcon from '@material-ui/icons/List'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import fasGem from '@fortawesome/fontawesome-pro-solid/faGem'
 
 const styles = {
   proServices: {
@@ -223,7 +225,7 @@ class GoogleAccountSettings extends React.Component {
                 })}
               </div>
               <Button variant='raised' color='primary' onClick={this.openWaveboxPro}>
-                <Icon className='fas fa-gem' />
+                <FontAwesomeIcon icon={fasGem} />
                 Purchase Wavebox
               </Button>
             </div>

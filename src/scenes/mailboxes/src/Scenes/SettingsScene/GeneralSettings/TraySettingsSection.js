@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { TrayIconEditor } from 'Components/Tray'
-import { Icon } from '@material-ui/core'
 import settingsActions from 'stores/settings/settingsActions'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
@@ -21,8 +20,9 @@ import SettingsListItem from 'wbui/SettingsListItem'
 import SettingsListItemTextField from 'wbui/SettingsListItemTextField'
 import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
-import classNames from 'classnames'
 import AdjustIcon from '@material-ui/icons/Adjust'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import farInfoCircle from '@fortawesome/fontawesome-pro-regular/faInfoCircle'
 
 const styles = {
   inputHelpTextInfo: {
@@ -150,7 +150,7 @@ class TraySettingsSection extends React.Component {
             label='Popout screen position'
             secondary={IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
               <span className={classes.inputHelpTextInfo}>
-                <Icon className={classNames(classes.inputHelpIconInfo, 'far fa-info-circle')} />
+                <FontAwesomeIcon icon={farInfoCircle} className={classes.inputHelpIconInfo} />
                 This setting only takes effect when your OS uses GtkStatusIcon
               </span>
             ) : undefined}
@@ -234,7 +234,7 @@ class TraySettingsSection extends React.Component {
             label='Click Action'
             secondary={IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
               <span className={classes.inputHelpTextInfo}>
-                <Icon className={classNames(classes.inputHelpIconInfo, 'far fa-info-circle')} />
+                <FontAwesomeIcon icon={farInfoCircle} className={classes.inputHelpIconInfo} />
                 This setting only takes effect when your OS uses GtkStatusIcon
               </span>
             ) : undefined}

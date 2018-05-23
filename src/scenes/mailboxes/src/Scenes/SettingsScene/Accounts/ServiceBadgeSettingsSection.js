@@ -27,6 +27,11 @@ const styles = {
     textAlign: 'center',
     fontSize: '10px',
     paddingRight: 1
+  },
+  buttonIcon: {
+    marginRight: 6,
+    width: 18,
+    height: 18
   }
 }
 

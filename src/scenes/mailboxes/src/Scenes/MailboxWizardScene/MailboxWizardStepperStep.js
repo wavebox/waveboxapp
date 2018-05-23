@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Icon } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import red from '@material-ui/core/colors/red'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import fasCheck from '@fortawesome/fontawesome-pro-solid/faCheck'
 
 const styles = {
   container: {
@@ -133,10 +134,9 @@ class MailboxWizardStepperStep extends React.Component {
     return (
       <div className={active ? classes.stepIconActive : classes.stepIconInactive}>
         {complete ? (
-          <Icon className={classNames(
-            active ? classes.stepCheckActive : classes.stepCheckInactive,
-            'fas fa-check'
-          )} />
+          <FontAwesomeIcon
+            icon={fasCheck}
+            className={classNames(active ? classes.stepCheckActive : classes.stepCheckInactive)} />
         ) : (
           <span className={classes.stepNumber}>{step + 1}</span>
         )}

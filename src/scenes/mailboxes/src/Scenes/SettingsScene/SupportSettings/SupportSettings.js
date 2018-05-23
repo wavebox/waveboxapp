@@ -12,8 +12,12 @@ import {
   KB_BETA_CHANNEL_URL
 } from 'shared/constants'
 import { withStyles } from '@material-ui/core/styles'
-import classNames from 'classnames'
 import StyleMixins from 'wbui/Styles/StyleMixins'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import farStar from '@fortawesome/fontawesome-pro-regular/faStar'
+import fasMagic from '@fortawesome/fontawesome-pro-solid/faMagic'
+import fasListAlt from '@fortawesome/fontawesome-pro-solid/faListAlt'
+import fasTasks from '@fortawesome/fontawesome-pro-solid/faTasks'
 
 const ROW_HEIGHT = 400
 const V_MARGIN = 16
@@ -181,7 +185,7 @@ class SupportSettings extends React.Component {
     return (
       <Paper className={classes.boxedCell}>
         <div className={classes.imageContainer}>
-          <Icon className={classNames(iconName, classes.iconBoxed)} />
+          <FontAwesomeIcon icon={iconName} className={classes.iconBoxed} />
         </div>
         <div className={classes.contentContainer}>
           <h2 className={classes.titleBoxed}>{title}</h2>
@@ -226,7 +230,7 @@ class SupportSettings extends React.Component {
           <Grid item md={3} sm={6} xs={12}>
             {this.renderBoxedCell(
               classes,
-              'far fa-fw fa-star',
+              farStar,
               'What\'s New?',
               'From new extensions to bug fixes, make sure you\'re up-to-date with development news.',
               'News',
@@ -236,7 +240,7 @@ class SupportSettings extends React.Component {
           <Grid item md={3} sm={6} xs={12}>
             {this.renderBoxedCell(
               classes,
-              'fas fa-fw fa-magic',
+              fasMagic,
               'Setup Wizard',
               'Follow the step-by-step wizard to correctly configure your Wavebox.',
               'Get Started',
@@ -246,7 +250,7 @@ class SupportSettings extends React.Component {
           <Grid item md={3} sm={6} xs={12}>
             {this.renderBoxedCell(
               classes,
-              'fas fa-fw fa-list-alt',
+              fasListAlt,
               'Quick Start Guide',
               'Are you getting the most out of Wavebox? Read our getting started guide to find out.',
               'Quick Start',
@@ -256,7 +260,7 @@ class SupportSettings extends React.Component {
           <Grid item md={3} sm={6} xs={12}>
             {this.renderBoxedCell(
               classes,
-              'fas fa-fw fa-tasks',
+              fasTasks,
               'Try Wavebox Beta',
               'Be the first to try out the latest features by switching to our beta channel',
               'Try Beta',

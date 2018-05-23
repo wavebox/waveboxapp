@@ -7,9 +7,19 @@ import { WB_FOCUS_APP, WB_QUIT_APP, WB_TRAY_TOGGLE_WINDOW_MODE } from 'shared/ip
 import { settingsStore, settingsActions } from 'stores/settings'
 import Timeago from 'react-timeago'
 import { withStyles } from '@material-ui/core/styles'
-import { Toolbar, IconButton, Icon, Tooltip, Menu, MenuItem, Divider, ListItemIcon } from '@material-ui/core'
+import { Toolbar, IconButton, Tooltip, Menu, MenuItem, Divider, ListItemIcon } from '@material-ui/core'
 import NotificationIcon from '@material-ui/icons/Notifications'
 import classNames from 'classnames'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import farEdit from '@fortawesome/fontawesome-pro-regular/faEdit'
+import farBrowser from '@fortawesome/fontawesome-pro-regular/faBrowser'
+import farBolt from '@fortawesome/fontawesome-pro-regular/faBolt'
+import farArrowAltSquareUp from '@fortawesome/fontawesome-pro-regular/faArrowAltSquareUp'
+import farArrowAltSquareDown from '@fortawesome/fontawesome-pro-regular/faArrowAltSquareDown'
+import farWindow from '@fortawesome/fontawesome-pro-regular/faWindow'
+import farBell from '@fortawesome/fontawesome-pro-regular/faBell'
+import farBellSlash from '@fortawesome/fontawesome-pro-regular/faBellSlash'
+import farSignOut from '@fortawesome/fontawesome-pro-regular/faSignOut'
 
 const styles = {
   notificationMenuItem: {
@@ -48,8 +58,8 @@ const styles = {
   },
   faIconOpenMainWindow2: {
     position: 'absolute',
-    top: 6,
-    left: 0,
+    top: 2,
+    left: 7,
     fontSize: 11
   },
   spacer: {
@@ -142,14 +152,14 @@ class AppSceneToolbar extends React.Component {
       <Toolbar disableGutters {...passProps}>
         <Tooltip title='Compose' placement='top-end'>
           <IconButton onClick={() => emblinkActions.composeNewMessage()}>
-            <Icon className={classNames(classes.faIcon, 'far fa-fw fa-edit')} />
+            <FontAwesomeIcon icon={farEdit} className={classes.faIcon} />
           </IconButton>
         </Tooltip>
         <Tooltip title='Show main window' placement='top'>
           <IconButton onClick={() => ipcRenderer.send(WB_FOCUS_APP, {})}>
             <span className={classes.faIconStack}>
-              <Icon className={classNames(classes.faIcon, 'far fa-fw fa-browser', classes.faIconOpenMainWindow1)} />
-              <Icon className={classNames(classes.faIcon, 'far fa-fw fa-bolt', classes.faIconOpenMainWindow2)} />
+              <FontAwesomeIcon icon={farBrowser} className={classNames(classes.faIcon, classes.faIconOpenMainWindow1)} />
+              <FontAwesomeIcon icon={farBolt} className={classNames(classes.faIcon, classes.faIconOpenMainWindow2)} />
             </span>
           </IconButton>
         </Tooltip>
@@ -159,12 +169,12 @@ class AppSceneToolbar extends React.Component {
           <IconButton onClick={() => ipcRenderer.send(WB_TRAY_TOGGLE_WINDOW_MODE, {})}>
             {isWindowedMode ? (
               process.platform === 'darwin' ? (
-                <Icon className={classNames(classes.faIcon, 'far fa-fw fa-arrow-alt-square-up')} />
+                <FontAwesomeIcon icon={farArrowAltSquareUp} className={classes.faIcon} />
               ) : (
-                <Icon className={classNames(classes.faIcon, 'far fa-fw fa-arrow-alt-square-down')} />
+                <FontAwesomeIcon icon={farArrowAltSquareDown} className={classes.faIcon} />
               )
             ) : (
-              <Icon className={classNames(classes.faIcon, 'far fa-fw fa-window')} />
+              <FontAwesomeIcon icon={farWindow} className={classes.faIcon} />
             )}
           </IconButton>
         </Tooltip>
@@ -178,7 +188,7 @@ class AppSceneToolbar extends React.Component {
           )}
           placement='top'>
           <IconButton onClick={(evt) => this.setState({ notificationMenuAnchor: evt.currentTarget })}>
-            <Icon className={classNames(classes.faIcon, 'far fa-fw', notificationsMuted ? 'fa-bell-slash' : 'fa-bell')} />
+            <FontAwesomeIcon icon={notificationsMuted ? farBellSlash : farBell} className={classes.faIcon} />
           </IconButton>
         </Tooltip>
         <Menu
@@ -222,7 +232,7 @@ class AppSceneToolbar extends React.Component {
         <div className={classes.spacer} />
         <Tooltip title='Quit Wavebox' placement='top-start'>
           <IconButton onClick={() => ipcRenderer.send(WB_QUIT_APP, {})}>
-            <Icon className={classNames(classes.faIcon, 'far fa-fw fa-sign-out')} />
+            <FontAwesomeIcon className={classes.faIcon} icon={farSignOut} />
           </IconButton>
         </Tooltip>
       </Toolbar>

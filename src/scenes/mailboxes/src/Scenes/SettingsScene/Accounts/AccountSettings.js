@@ -48,6 +48,12 @@ const styles = {
     left: 100,
     right: 15
   },
+  accountPickerLabel: {
+    fontSize: 20,
+    color: lightBlue[600],
+    fontWeight: 'bold',
+    marginTop: -5
+  },
 
   /**
   * Content
@@ -273,7 +279,7 @@ class AccountSettings extends React.Component {
               className={classes.accountPickerAvatar} />
             <div className={classes.accountPickerContainer}>
               <FormControl fullWidth>
-                <InputLabel>Pick your account</InputLabel>
+                <InputLabel className={classes.accountPickerLabel}>Pick your account</InputLabel>
                 <Select
                   value={selected.id}
                   fullWidth
