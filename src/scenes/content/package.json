@@ -15,7 +15,6 @@
     "react-activity": "1.2.2",
     "react-addons-shallow-compare": "15.6.2",
     "react-dom": "16.3.2",
-    "react-event-listener": "0.5.5",
     "react-portal-tooltip": "2.4.0",
     "uuid": "3.2.1"
   },
