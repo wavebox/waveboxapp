@@ -94,7 +94,7 @@ class ServiceSection extends React.Component {
                   <div>
                     <IconButton
                       disabled={isDefaultService}
-                      onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.removeService, serviceType)}>
+                      onClick={() => mailboxActions.reduce(mailbox.id, MailboxReducer.removeService, serviceType)}>
                       <CheckBoxIcon />
                     </IconButton>
                   </div>
@@ -102,7 +102,7 @@ class ServiceSection extends React.Component {
               ) : (
                 <Tooltip title='Enable'>
                   <div>
-                    <IconButton onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.addService, serviceType)}>
+                    <IconButton onClick={() => mailboxActions.reduce(mailbox.id, MailboxReducer.addService, serviceType)}>
                       <CheckBoxOutlineIcon />
                     </IconButton>
                   </div>
