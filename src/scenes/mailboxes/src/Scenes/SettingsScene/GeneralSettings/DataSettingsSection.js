@@ -28,7 +28,8 @@ const styles = {
   buttonIcon: {
     marginRight: 6,
     height: 18,
-    width: 18
+    width: 18,
+    verticalAlign: 'middle'
   }
 }
 

@@ -12,6 +12,9 @@ import grey from '@material-ui/core/colors/grey'
 import DeleteIcon from '@material-ui/icons/Delete'
 
 const styles = {
+  dialogContent: {
+    width: 600
+  },
   avatarContainer: {
     display: 'flex',
     alignItems: 'center'
@@ -150,7 +153,7 @@ class MailboxServiceDeleteScene extends React.Component {
         open={open}
         onClose={this.handleClose}>
         <DialogTitle>Delete Service</DialogTitle>
-        <DialogContent>
+        <DialogContent className={classes.dialogContent}>
           <p className={classes.message}>
             {`Are you sure you want to delete ${service.humanizedType} from this account?`}
           </p>

@@ -9,14 +9,12 @@ import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 import SettingsListItem from 'wbui/SettingsListItem'
+import SettingsListContainer from 'wbui/SettingsListContainer'
 import { Button } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
-  settingsList: {
-    marginLeft: 0,
-    marginRight: 0
-  }
+
 }
 
 @withStyles(styles)
@@ -74,7 +72,7 @@ class ExtensionSettingsTab extends React.Component {
 
     return (
       <div {...passProps}>
-        <SettingsListSection className={classes.settingsList} title='Extension Settings' {...passProps}>
+        <SettingsListSection title='Extension Settings' {...passProps}>
           <SettingsListItemSwitch
             label='Show extensions in toolbar'
             onChange={(evt, toggled) => { settingsActions.sub.extension.setShowBrowserActionsInToolbar(toggled) }}
@@ -94,7 +92,9 @@ class ExtensionSettingsTab extends React.Component {
             </Button>
           </SettingsListItem>
         </SettingsListSection>
-        <ExtensionList showRestart={showRestart} />
+        <SettingsListContainer>
+          <ExtensionList showRestart={showRestart} />
+        </SettingsListContainer>
       </div>
     )
   }

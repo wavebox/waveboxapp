@@ -13,6 +13,9 @@ import red from '@material-ui/core/colors/red'
 import DeleteIcon from '@material-ui/icons/Delete'
 
 const styles = {
+  dialogContent: {
+    width: 600
+  },
   avatarContainer: {
     display: 'flex',
     alignItems: 'center'
@@ -150,7 +153,7 @@ class MailboxDeleteScene extends React.Component {
         open={open}
         onClose={this.handleClose}>
         <DialogTitle>Delete Account</DialogTitle>
-        <DialogContent>
+        <DialogContent className={classes.dialogContent}>
           <p className={classes.message}>
             {userHasServices && mailbox.enabledServices.length > 1 ? (
               `Are you sure you want to delete this account (including ${mailbox.enabledServices.length} services)?`

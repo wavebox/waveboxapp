@@ -174,6 +174,7 @@ class WizardConfigureContainer extends React.Component {
         {userHasSleepable ? (
           <div className={classes.sleepContainer}>
             <SleepableField
+              fullWidth
               sleepEnabled={service.sleepable}
               onSleepEnabledChanged={(toggled) => {
                 mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setSleepable, toggled)
