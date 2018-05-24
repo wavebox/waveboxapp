@@ -5,7 +5,6 @@ import { mailboxStore } from 'stores/mailbox'
 import { emblinkActions } from 'stores/emblink'
 import TrayRenderer from './TrayRenderer'
 import uuid from 'uuid'
-import MenuTool from 'shared/Electron/MenuTool'
 import {
   IS_GTK_PLATFORM,
   GTK_UPDATE_MODES,
@@ -358,7 +357,7 @@ export default class Tray extends React.Component {
           this.contextMenu = this.renderContextMenu()
           this.appTray.setContextMenu(this.contextMenu)
           if (lastContextMenu) {
-            MenuTool.fullDestroyMenu(lastContextMenu)
+            lastContextMenu.destroy()
           }
         }
       })

@@ -262,7 +262,7 @@ class TrayRenderer {
     return Promise.resolve()
       .then(() => TrayRenderer.renderCanvas(size, tray, unreadCount))
       .then((canvas) => {
-        const pngData = electron.remote.nativeImage.createFromDataURL(canvas.toDataURL('image/png')).toPng()
+        const pngData = electron.remote.nativeImage.createFromDataURL(canvas.toDataURL('image/png')).toPNG()
         return Promise.resolve(electron.remote.nativeImage.createFromBuffer(pngData, tray.dpiMultiplier))
       })
   }

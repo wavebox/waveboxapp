@@ -19,8 +19,8 @@ const TASKS = {
 
 module.exports = function (env = {}) {
   // Config
-  process.env.CHROME_TARGET = 59
-  process.env.NODE_TARGET = '8.2.1'
+  process.env.CHROME_TARGET = 61
+  process.env.NODE_TARGET = '8.9.3'
 
   const mode = new Set([
     'production',

@@ -35,6 +35,10 @@ const crawlMenuItems = function (rootMenu) {
 * @param rootMenu: the root menu item
 */
 const fullDestroyMenu = function (rootMenu) {
+  console.warn([
+    'MenuTool.fullDestroyMenu is depricated you should just use "menu.destroy()" instead.',
+    'The original issue (electron#9823) that this worked around is fixed in electron>=2.0.0'
+  ].join('\n'))
   crawlMenus(rootMenu).forEach((menu) => {
     menu.destroy()
   })

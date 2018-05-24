@@ -374,7 +374,7 @@ class WaveboxAppPrimaryMenu {
 
     // Prevent Memory leak
     if (lastMenu) {
-      MenuTool.fullDestroyMenu(lastMenu)
+      lastMenu.destroy()
     }
   }
 

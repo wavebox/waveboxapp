@@ -1,6 +1,6 @@
 /* global __DEV__ */
 
-import { app, BrowserWindow, protocol, ipcMain, globalShortcut } from 'electron'
+import { app, BrowserWindow, ipcMain, globalShortcut } from 'electron'
 import yargs from 'yargs'
 import credentials from 'shared/credentials'
 import WaveboxAppPrimaryMenu from './WaveboxAppPrimaryMenu'
@@ -133,9 +133,10 @@ class WaveboxApp {
 
     // Configure extensions
     CRExtensionManager.setup()
-    protocol.registerStandardSchemes([].concat(
-      CRExtensionManager.supportedProtocols
-    ), { secure: true })
+    // Electron registers chrome-extension by default so we don't need to do it
+    // protocol.registerStandardSchemes([].concat(
+    //   CRExtensionManager.supportedProtocols
+    // ), { secure: true })
 
     // App menus and shortcuts
     this[privAppMenu] = new WaveboxAppPrimaryMenu()
