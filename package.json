@@ -10,7 +10,7 @@
     "build": "webpack --mode=production",
     "test": "standard",
     "install:all": "node scripts/installAll.js",
-    "xpostinstall": "node scripts/installElectron.js",
+    "postinstall": "node scripts/installElectron.js",
     "outdated:all": "node scripts/outdatedAll.js",
     "prune:all": "node scripts/pruneAll.js",
     "audit:all": "node scripts/auditAll.js",
