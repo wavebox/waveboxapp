@@ -16,6 +16,7 @@ module.exports = function (env) {
       path: BIN_DIR,
       filename: '__.js'
     },
+    performance: { hints: false },
     plugins: [
       new CleanWebpackPlugin(['fonts', 'icons', 'images'], {
         root: BIN_DIR,
