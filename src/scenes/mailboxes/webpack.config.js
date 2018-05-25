@@ -65,7 +65,7 @@ module.exports = function (env) {
       new WebpackOnBuildPlugin((stats) => { console.log('WB Mailboxes') })
     ].filter((p) => !!p),
     resolve: {
-      extensions: ['.js', '.jsx', '.css'],
+      extensions: ['.js', '.jsx', '.css', '.json'],
       alias: Object.assign({},
         FontAwesomeAlias(path.join(__dirname, 'node_modules')),
         {

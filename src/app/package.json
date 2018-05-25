@@ -18,7 +18,6 @@
     "electron-fetch": "1.1.0",
     "electron-positioner": "3.0.0",
     "fs-extra": "6.0.1",
-    "googleapis": "22.2.0",
     "home-dir": "1.0.0",
     "hunspell-asm": "1.0.2",
     "keyboardevent-from-electron-accelerator": "1.0.1",

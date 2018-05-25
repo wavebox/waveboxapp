@@ -1,6 +1,5 @@
 import { ipcMain } from 'electron'
 import { WB_AUTH_GOOGLE, WB_AUTH_GOOGLE_COMPLETE, WB_AUTH_GOOGLE_ERROR } from 'shared/ipcEvents'
-import googleapis from 'googleapis'
 import { userStore } from 'stores/user'
 import { URL } from 'url'
 import querystring from 'querystring'
@@ -28,21 +27,19 @@ class AuthGoogle {
   * @return the url that can be used to authenticate with goog
   */
   generateGoogleAuthenticationURL (credentials) {
-    const oauth2Client = new googleapis.auth.OAuth2(
-      credentials.GOOGLE_CLIENT_ID,
-      credentials.GOOGLE_CLIENT_SECRET,
-      credentials.GOOGLE_AUTH_RETURN_URL
-    )
-    const url = oauth2Client.generateAuthUrl({
+    // Compatable with calling  (new require('googleapis').auth.OAuth2(...)).generateAuthUrl()
+    return `https://accounts.google.com/o/oauth2/auth?${querystring.stringify({
+      client_id: credentials.GOOGLE_CLIENT_ID,
+      redirect_uri: credentials.GOOGLE_AUTH_RETURN_URL,
       access_type: 'offline',
+      response_type: 'code',
       scope: [
         'https://www.googleapis.com/auth/plus.me',
         'profile',
         'email',
         'https://www.googleapis.com/auth/gmail.readonly'
-      ]
-    })
-    return url
+      ].join(' ')
+    })}`
   }
 
   /**

@@ -1,10 +1,22 @@
 import Bootstrap from 'R/Bootstrap'
-import GoogleHTTPTransporter from './GoogleHTTPTransporter'
 import querystring from 'querystring'
 import { WB_FETCH_SERVICE_TEXT } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
 import uuid from 'uuid'
-const google = window.appNodeModulesRequire('googleapis')
+import { google } from 'googleapis'
+import axiosDefaults from 'axios/lib/defaults'
+import axiosXHRAdaptor from 'axios/lib/adapters/xhr'
+
+// Configure Google
+google.options({
+  adapter: axiosXHRAdaptor,
+  transformRequest: (data, headers) => {
+    delete headers['User-Agent']
+    delete headers['Accept-Encoding']
+    return axiosDefaults.transformRequest[0](data, headers)
+  }
+})
+
 const gPlus = google.plus('v1')
 const gmail = google.gmail('v1')
 const OAuth2 = google.auth.OAuth2
@@ -42,7 +54,6 @@ class GoogleHTTP {
       refresh_token: refreshToken,
       expiry_date: expiryTime
     })
-    auth.transporter = new GoogleHTTPTransporter()
     return auth
   }
 
@@ -84,15 +95,22 @@ class GoogleHTTP {
   */
   static watchAccount (auth) {
     if (!auth) { return this._rejectWithNoAuth() }
-    return new Promise((resolve, reject) => {
-      gmail.users.watch({
+
+    return Promise.resolve()
+      .then(() => gmail.users.watch({
         userId: 'me',
-        topicName: 'projects/wavebox-158310/topics/gmail',
+        resource: {
+          topicName: 'projects/wavebox-158310/topics/gmail'
+        },
         auth: auth
-      }, (err, response) => {
-        err ? reject(err) : resolve(response)
+      }))
+      .then((res) => {
+        if (res.status === 200) {
+          return Promise.resolve(res.data)
+        } else {
+          return Promise.reject(new Error(`Invalid HTTP status code ${res.status}`))
+        }
       })
-    })
   }
 
   /* **************************************************************************/
@@ -106,14 +124,16 @@ class GoogleHTTP {
   */
   static fetchAccountProfile (auth) {
     if (!auth) { return this._rejectWithNoAuth() }
-    return new Promise((resolve, reject) => {
-      gPlus.people.get({
-        userId: 'me',
-        auth: auth
-      }, (err, response) => {
-        err ? reject(err) : resolve(response)
+
+    return Promise.resolve()
+      .then(() => gPlus.people.get({ userId: 'me', auth: auth }))
+      .then((res) => {
+        if (res.status === 200) {
+          return Promise.resolve(res.data)
+        } else {
+          return Promise.reject(new Error(`Invalid HTTP status code ${res.status}`))
+        }
       })
-    })
   }
 
   /**
@@ -138,14 +158,19 @@ class GoogleHTTP {
   */
   static fetchGmailProfile (auth) {
     if (!auth) { return this._rejectWithNoAuth() }
-    return new Promise((resolve, reject) => {
-      gmail.users.getProfile({
+
+    return Promise.resolve()
+      .then(() => gmail.users.getProfile({
         userId: 'me',
         auth: auth
-      }, (err, response) => {
-        err ? reject(err) : resolve(response)
+      }))
+      .then((res) => {
+        if (res.status === 200) {
+          return Promise.resolve(res.data)
+        } else {
+          return Promise.reject(new Error(`Invalid HTTP status code ${res.status}`))
+        }
       })
-    })
   }
 
   /**
@@ -156,15 +181,20 @@ class GoogleHTTP {
   */
   static fetchGmailHistoryList (auth, fromHistoryId) {
     if (!auth) { return this._rejectWithNoAuth() }
-    return new Promise((resolve, reject) => {
-      gmail.users.history.list({
+
+    return Promise.resolve()
+      .then(() => gmail.users.history.list({
         userId: 'me',
         startHistoryId: fromHistoryId,
         auth: auth
-      }, (err, response) => {
-        err ? reject(err) : resolve(response)
+      }))
+      .then((res) => {
+        if (res.status === 200) {
+          return Promise.resolve(res.data)
+        } else {
+          return Promise.reject(new Error(`Invalid HTTP status code ${res.status}`))
+        }
       })
-    })
   }
 
   /* **************************************************************************/
@@ -181,15 +211,19 @@ class GoogleHTTP {
   static fetchGmailLabel (auth, labelId) {
     if (!auth) { return this._rejectWithNoAuth() }
 
-    return new Promise((resolve, reject) => {
-      gmail.users.labels.get({
+    return Promise.resolve()
+      .then(() => gmail.users.labels.get({
         userId: 'me',
         id: labelId,
         auth: auth
-      }, (err, response) => {
-        err ? reject(err) : resolve(response)
+      }))
+      .then((res) => {
+        if (res.status === 200) {
+          return Promise.resolve(res.data)
+        } else {
+          return Promise.reject(new Error(`Invalid HTTP status code ${res.status}`))
+        }
       })
-    })
   }
 
   /* **************************************************************************/
@@ -206,17 +240,22 @@ class GoogleHTTP {
   */
   static fetchGmailThreadHeadersList (auth, query = undefined, labelIds = [], limit = 25) {
     if (!auth) { return this._rejectWithNoAuth() }
-    return new Promise((resolve, reject) => {
-      gmail.users.threads.list({
+
+    return Promise.resolve()
+      .then(() => gmail.users.threads.list({
         userId: 'me',
         labelIds: labelIds,
         q: query,
         maxResults: limit,
         auth: auth
-      }, (err, response) => {
-        err ? reject(err) : resolve(response)
+      }))
+      .then((res) => {
+        if (res.status === 200) {
+          return Promise.resolve(res.data)
+        } else {
+          return Promise.reject(new Error(`Invalid HTTP status code ${res.status}`))
+        }
       })
-    })
   }
 
   /**
@@ -227,15 +266,20 @@ class GoogleHTTP {
   */
   static fetchGmailThread (auth, threadId) {
     if (!auth) { return this._rejectWithNoAuth() }
-    return new Promise((resolve, reject) => {
-      gmail.users.threads.get({
+
+    return Promise.resolve()
+      .then(() => gmail.users.threads.get({
         userId: 'me',
         id: threadId,
         auth: auth
-      }, (err, response) => {
-        err ? reject(err) : resolve(response)
+      }))
+      .then((res) => {
+        if (res.status === 200) {
+          return Promise.resolve(res.data)
+        } else {
+          return Promise.reject(new Error(`Invalid HTTP status code ${res.status}`))
+        }
       })
-    })
   }
 
   /**

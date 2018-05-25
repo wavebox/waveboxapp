@@ -59,7 +59,7 @@ module.exports = function (env) {
       new WebpackOnBuildPlugin((stats) => { console.log('WB Content') })
     ].filter((p) => !!p),
     resolve: {
-      extensions: ['.js', '.jsx', '.css'],
+      extensions: ['.js', '.jsx', '.css', '.json'],
       alias: {
         shared: path.resolve(path.join(__dirname, '../../shared')),
         wbui: path.resolve(path.join(__dirname, '../wbui')),

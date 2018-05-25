@@ -62,7 +62,7 @@ module.exports = function (env) {
       new WebpackOnBuildPlugin((stats) => { console.log('WB Print') })
     ].filter((p) => !!p),
     resolve: {
-      extensions: ['.js', '.jsx', '.css'],
+      extensions: ['.js', '.jsx', '.css', '.json'],
       alias: {
         shared: path.resolve(path.join(__dirname, '../../shared')),
         R: path.resolve(path.join(__dirname, 'src')),
