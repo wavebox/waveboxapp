@@ -2,7 +2,8 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import Timeago from 'react-timeago'
 import settingsActions from 'stores/settings/settingsActions'
-import shallowCompare from 'react-addons-shallow-compare'
+import modelCompare from 'wbui/react-addons-model-compare'
+import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 import { NotificationPlatformSupport, NotificationService } from 'Notifications'
 import { MenuItem, Menu, ListItemIcon, Divider } from '@material-ui/core'
 import {
@@ -99,7 +100,22 @@ class NotificationSettingsSection extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+    return (
+      modelCompare(this.props.os, nextProps.os, [
+        'notificationsProvider',
+        'notificationsSound',
+        'notificationsSilent',
+        'notificationsEnabled',
+        'notificationsMuted',
+        'notificationsMutedEndEpoch'
+      ]) ||
+      partialShallowCompare(
+        { showRestart: this.props.showRestart },
+        this.state,
+        { showRestart: nextProps.showRestart },
+        nextState
+      )
+    )
   }
 
   /**

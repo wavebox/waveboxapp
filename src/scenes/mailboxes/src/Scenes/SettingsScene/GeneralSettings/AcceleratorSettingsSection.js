@@ -163,6 +163,40 @@ const styles = {
   }
 }
 
+// This has been split out into its own control because the performance of re-rendering
+// Tooltip in material-ui:1.0.0 is terrible. @Thomas101 refactor this when performance returns
+class AcceleratorSettingsSectionActionButton extends React.Component {
+  static propTypes = {
+    // Keep props primitive so we can prevent updates
+    acceleratorDefault: PropTypes.string,
+    name: PropTypes.string.isRequired
+  }
+
+  shouldComponentUpdate (nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState)
+  }
+
+  render () {
+    const { acceleratorDefault, name } = this.props
+
+    if (acceleratorDefault) {
+      return (
+        <Tooltip title={`Restore Default (${acceleratorDefault})`}>
+          <IconButton onClick={() => settingsActions.sub.accelerators.restoreDefault(name)}>
+            <SettingsBackupRestoreIcon />
+          </IconButton>
+        </Tooltip>
+      )
+    } else {
+      return (
+        <IconButton onClick={() => settingsActions.sub.accelerators.restoreDefault(name)}>
+          <DeleteIcon />
+        </IconButton>
+      )
+    }
+  }
+}
+
 @withStyles(styles)
 class AcceleratorSettingsSection extends React.Component {
   /* **************************************************************************/
@@ -216,17 +250,9 @@ class AcceleratorSettingsSection extends React.Component {
                     disableUnderline: true,
                     className: classes.textFieldInput
                   }} />
-                {acceleratorDefault ? (
-                  <Tooltip title={`Restore Default (${acceleratorDefault})`}>
-                    <IconButton onClick={() => settingsActions.sub.accelerators.restoreDefault(name)}>
-                      <SettingsBackupRestoreIcon />
-                    </IconButton>
-                  </Tooltip>
-                ) : (
-                  <IconButton onClick={() => settingsActions.sub.accelerators.restoreDefault(name)}>
-                    <DeleteIcon />
-                  </IconButton>
-                )}
+                <AcceleratorSettingsSectionActionButton
+                  name={name}
+                  acceleratorDefault={acceleratorDefault} />
               </ListItemSecondaryAction>
             </SettingsListItem>
           )

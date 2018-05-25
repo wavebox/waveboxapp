@@ -3,7 +3,8 @@ import React from 'react'
 import { settingsActions } from 'stores/settings'
 import { updaterActions } from 'stores/updater'
 import AppSettings from 'shared/Models/Settings/AppSettings'
-import shallowCompare from 'react-addons-shallow-compare'
+import modelCompare from 'wbui/react-addons-model-compare'
+import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
@@ -31,7 +32,15 @@ class UpdateSettingsSection extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+    return (
+      modelCompare(this.props.app, nextProps.app, ['checkForUpdates', 'updateChannel']) ||
+      partialShallowCompare(
+        { showRestart: this.props.showRestart },
+        this.state,
+        { showRestart: nextProps.showRestart },
+        nextState
+      )
+    )
   }
 
   render () {

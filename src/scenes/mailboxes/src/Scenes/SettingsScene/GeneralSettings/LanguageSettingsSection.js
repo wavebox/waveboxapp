@@ -2,7 +2,8 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { settingsActions } from 'stores/settings'
 import { dictionariesStore, dictionariesActions } from 'stores/dictionaries'
-import shallowCompare from 'react-addons-shallow-compare'
+import modelCompare from 'wbui/react-addons-model-compare'
+import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
@@ -58,7 +59,19 @@ class LanguageSettingsSection extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+    return (
+      modelCompare(this.props.language, nextProps.language, [
+        'spellcheckerLanguage',
+        'spellcheckerEnabled',
+        'secondarySpellcheckerLanguage'
+      ]) ||
+      partialShallowCompare(
+        { showRestart: this.props.showRestart },
+        this.state,
+        { showRestart: nextProps.showRestart },
+        nextState
+      )
+    )
   }
 
   render () {

@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import settingsActions from 'stores/settings/settingsActions'
-import shallowCompare from 'react-addons-shallow-compare'
+import modelCompare from 'wbui/react-addons-model-compare'
+import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItem from 'wbui/SettingsListItem'
@@ -45,7 +46,20 @@ class DownloadSettingsSection extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+    return (
+      modelCompare(this.props.os, nextProps.os, [
+        'alwaysAskDownloadLocation',
+        'defaultDownloadLocation',
+        'downloadNotificationEnabled',
+        'downloadNotificationSoundEnabled'
+      ]) ||
+      partialShallowCompare(
+        { showRestart: this.props.showRestart },
+        this.state,
+        { showRestart: nextProps.showRestart },
+        nextState
+      )
+    )
   }
 
   render () {

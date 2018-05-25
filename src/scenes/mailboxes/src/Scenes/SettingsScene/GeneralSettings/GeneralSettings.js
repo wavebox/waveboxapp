@@ -254,10 +254,8 @@ class GeneralSettings extends React.Component {
               <AdvancedSettingsSection
                 showRestart={showRestart}
                 app={app}
-                extension={extension}
                 language={language}
-                ui={ui}
-                tray={tray} />
+                ui={ui} />
             ) : undefined}
           </section>
           <section id='section-debug'>

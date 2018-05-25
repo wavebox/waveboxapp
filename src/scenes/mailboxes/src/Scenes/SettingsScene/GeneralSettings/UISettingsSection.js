@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import settingsActions from 'stores/settings/settingsActions'
-import shallowCompare from 'react-addons-shallow-compare'
+import modelCompare from 'wbui/react-addons-model-compare'
+import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 import { UISettings, ExtensionSettings } from 'shared/Models/Settings'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
@@ -27,7 +28,32 @@ export default class UISettingsSection extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+    return (
+      modelCompare(this.props.ui, nextProps.ui, [
+        'showAppBadge',
+        'openHidden',
+        'showSleepableServiceIndicator',
+        'showDefaultServiceSleepNotifications',
+        'vibrancyMode',
+        'accountTooltipMode',
+        'sidebarEnabled',
+        'showSidebarSupport',
+        'showSidebarNewsfeed',
+        'showTitlebar',
+        'showAppMenu',
+        'showTitlebarCount',
+        'showTitlebarCount'
+      ]) ||
+      modelCompare(this.props.os, nextProps.os, ['openLinksInBackground']) ||
+      modelCompare(this.props.accelerators, nextProps.accelerators, ['toggleSidebar', 'toggleMenu']) ||
+      modelCompare(this.props.extension, nextProps.extension, ['showBrowserActionsInToolbar', 'toolbarBrowserActionLayout']) ||
+      partialShallowCompare(
+        { showRestart: this.props.showRestart },
+        this.state,
+        { showRestart: nextProps.showRestart },
+        nextState
+      )
+    )
   }
 
   render () {
@@ -147,7 +173,7 @@ export default class UISettingsSection extends React.Component {
             divider={false}
             label='Show titlebar active account'
             onChange={(evt, toggled) => settingsActions.sub.ui.setShowTitlebarAccount(toggled)}
-            checked={ui.showTitlebarAccount} />
+            checked={ui.showTitlebarCount} />
         </SettingsListSection>
 
         <SettingsListSection title='User Interface' subtitle='Toolbar' icon={<ViewQuiltIcon />}>

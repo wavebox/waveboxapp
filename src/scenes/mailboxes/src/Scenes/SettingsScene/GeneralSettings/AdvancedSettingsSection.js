@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { settingsActions } from 'stores/settings'
-import shallowCompare from 'react-addons-shallow-compare'
 import CustomStylesEditingDialog from './CustomStylesEditingDialog'
 import DistributionConfig from 'Runtime/DistributionConfig'
 import { AppSettings } from 'shared/Models/Settings'
@@ -13,6 +12,8 @@ import CodeIcon from '@material-ui/icons/Code'
 import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import TuneIcon from '@material-ui/icons/Tune'
 import SettingsListTypography from 'wbui/SettingsListTypography'
+import modelCompare from 'wbui/react-addons-model-compare'
+import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 
 const styles = {
 
@@ -28,8 +29,6 @@ class AdvancedSettingsSection extends React.Component {
     showRestart: PropTypes.func.isRequired,
     app: PropTypes.object.isRequired,
     language: PropTypes.object.isRequired,
-    extension: PropTypes.object.isRequired,
-    tray: PropTypes.object.isRequired,
     ui: PropTypes.object.isRequired
   }
 
@@ -46,17 +45,35 @@ class AdvancedSettingsSection extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+    return (
+      modelCompare(this.props.app, nextProps.app, [
+        'ignoreGPUBlacklist',
+        'disableHardwareAcceleration',
+        'isolateMailboxProcesses',
+        'enableMixedSandboxMode',
+        'enableUseZoomForDSF',
+        'disableSmoothScrolling',
+        'enableGeolocationApi',
+        'enableAutofillService',
+        'enableWindowOpeningEngine'
+      ]) ||
+      modelCompare(this.props.language, nextProps.language, ['inProcessSpellchecking']) ||
+      modelCompare(this.props.ui, nextProps.ui, ['customMainCSS']) ||
+      partialShallowCompare(
+        { showRestart: this.props.showRestart },
+        this.state,
+        { showRestart: nextProps.showRestart },
+        nextState
+      )
+    )
   }
 
   render () {
     const {
       showRestart,
       app,
-      extension,
       language,
       ui,
-      tray,
       classes,
       ...passProps
     } = this.props
