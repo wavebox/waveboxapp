@@ -147,6 +147,12 @@ export default class GenericAccountSettings extends React.Component {
               helperText: displayNameError,
               onBlur: this.handleNameChange
             }} />
+          <SettingsListItemSwitch
+            label='Use page title as Display Name'
+            onChange={(evt, toggled) => {
+              mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageTitleAsDisplayName, toggled)
+            }}
+            checked={mailbox.usePageTitleAsDisplayName} />
           <SettingsListItemTextField
             key={`service_${service.url}`}
             label='Website Url'
@@ -171,18 +177,13 @@ export default class GenericAccountSettings extends React.Component {
             }}
             checked={service.hasNavigationToolbar} />
           <SettingsListItemSwitch
-            label='Use Page title as Display Name'
-            onChange={(evt, toggled) => {
-              mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageTitleAsDisplayName, toggled)
-            }}
-            checked={mailbox.usePageTitleAsDisplayName} />
-          <SettingsListItemSwitch
-            label='Use Page theme as Account Color'
+            label='Use page theme as Account Color'
             onChange={(evt, toggled) => {
               mailboxActions.reduce(mailbox.id, GenericMailboxReducer.setUsePageThemeAsColor, toggled)
             }}
             checked={mailbox.usePageThemeAsColor} />
           <SettingsListItemSwitch
+            divider={false}
             label='Enable Wavebox API (Experiemental)'
             onChange={(evt, toggled) => {
               mailboxActions.reduceService(mailbox.id, service.type, GenericDefaultServiceReducer.setsupportsGuestConfig, toggled)

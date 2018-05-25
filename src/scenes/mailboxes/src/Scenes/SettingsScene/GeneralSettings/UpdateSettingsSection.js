@@ -7,7 +7,7 @@ import modelCompare from 'wbui/react-addons-model-compare'
 import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
-import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
+import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt'
 import { withStyles } from '@material-ui/core/styles'
@@ -55,7 +55,7 @@ class UpdateSettingsSection extends React.Component {
             settingsActions.sub.app.checkForUpdates(toggled)
           }}
           checked={app.checkForUpdates} />
-        <SettingsListItemSelect
+        <SettingsListItemSelectInline
           label='Update channel'
           value={app.updateChannel}
           options={[

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { TextField } from '@material-ui/core'
+import { ListItemText, ListItemSecondaryAction, TextField } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import SettingsListItem from './SettingsListItem'
@@ -13,13 +13,14 @@ const styles = {
 }
 
 @withStyles(styles)
-class SettingsListItemTextField extends React.Component {
+class SettingsListItemTextFieldInline extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
     label: PropTypes.node.isRequired,
+    secondary: PropTypes.node,
     textFieldProps: PropTypes.object,
     disabled: PropTypes.bool
   }
@@ -33,29 +34,32 @@ class SettingsListItemTextField extends React.Component {
   }
 
   render () {
-    const { classes, disabled, className, label, textFieldProps, ...passProps } = this.props
+    const { classes, disabled, className, label, secondary, textFieldProps, ...passProps } = this.props
 
     return (
       <SettingsListItem {...passProps}>
-        <TextField
-          label={label}
-          margin='dense'
-          disabled={disabled}
-          fullWidth
-          InputLabelProps={{ shrink: true }}
-          {...textFieldProps}
-          InputProps={{
-            ...textFieldProps.InputProps,
+        <ListItemText primary={label} secondary={secondary} />
+        <ListItemSecondaryAction>
+          <TextField
+            margin='dense'
+            disabled={disabled}
+            {...textFieldProps}
+            InputProps={{
+              // Overwritable arguments
+              disableUnderline: true,
 
-            // Composite arguments
-            className: classNames(
-              ((textFieldProps || {}).InputProps || {}).className,
-              classes.textField
-            )
-          }} />
+              ...textFieldProps.InputProps,
+
+              // Composite arguments
+              className: classNames(
+                ((textFieldProps || {}).InputProps || {}).className,
+                classes.textField
+              )
+            }} />
+        </ListItemSecondaryAction>
       </SettingsListItem>
     )
   }
 }
 
-export default SettingsListItemTextField
+export default SettingsListItemTextFieldInline

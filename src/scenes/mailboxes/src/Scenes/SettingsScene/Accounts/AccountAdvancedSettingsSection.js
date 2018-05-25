@@ -4,7 +4,7 @@ import { mailboxActions, MailboxReducer } from 'stores/mailbox'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
-import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
+import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 import TuneIcon from '@material-ui/icons/Tune'
 import modelCompare from 'wbui/react-addons-model-compare'
 import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
@@ -82,7 +82,7 @@ export default class AccountAdvancedSettingsSection extends React.Component {
           }}
           checked={mailbox.artificiallyPersistCookies} />
         {windowOpenBefore}
-        <SettingsListItemSelect
+        <SettingsListItemSelectInline
           divider={!!(windowOpenAfter || children)}
           label='Open new windows in which Browser'
           value={mailbox.defaultWindowOpenMode}

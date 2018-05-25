@@ -12,7 +12,7 @@ import {
 } from 'shared/Notifications'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
-import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
+import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 import { withStyles } from '@material-ui/core/styles'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import NotificationsIcon from '@material-ui/icons/Notifications'
@@ -154,7 +154,7 @@ class NotificationSettingsSection extends React.Component {
     if (Object.keys(NOTIFICATION_SOUNDS).length === 0) { return undefined }
 
     return (
-      <SettingsListItemSelect
+      <SettingsListItemSelectInline
         label='Notification Sound'
         value={os.notificationsSound}
         disabled={os.notificationsSilent || !os.notificationsEnabled}
@@ -229,7 +229,7 @@ class NotificationSettingsSection extends React.Component {
     return (
       <SettingsListSection title='Notifications' icon={<NotificationsIcon />} {...passProps}>
         {validProviders.length > 1 ? (
-          <SettingsListItemSelect
+          <SettingsListItemSelectInline
             label='Notification Provider'
             value={os.notificationsProvider}
             options={validProviders.map((provider) => {

@@ -7,7 +7,7 @@ import { ExtensionSettings } from 'shared/Models/Settings'
 import ExtensionList from './ExtensionList'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
-import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
+import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 import SettingsListItem from 'wbui/SettingsListItem'
 import SettingsListContainer from 'wbui/SettingsListContainer'
 import { Button } from '@material-ui/core'
@@ -77,7 +77,7 @@ class ExtensionSettingsTab extends React.Component {
             label='Show extensions in toolbar'
             onChange={(evt, toggled) => { settingsActions.sub.extension.setShowBrowserActionsInToolbar(toggled) }}
             checked={extension.showBrowserActionsInToolbar} />
-          <SettingsListItemSelect
+          <SettingsListItemSelectInline
             label='Extension position in toolbar'
             value={extension.toolbarBrowserActionLayout}
             disabled={!extension.showBrowserActionsInToolbar}

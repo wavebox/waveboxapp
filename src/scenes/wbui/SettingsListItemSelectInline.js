@@ -1,26 +1,30 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { FormControl, InputLabel, Select } from '@material-ui/core'
+import { ListItemText, ListItemSecondaryAction, Select } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import SettingsListItem from './SettingsListItem'
 import SettingsListItemSelectOptionRenderer from './SettingsListItemSelectOptionRenderer'
 
 const styles = {
+  secondaryAction: {
+    maxWidth: 150,
+    width: '100%'
+  },
   select: {
-    fontSize: '0.8rem',
-    marginTop: 20
+    fontSize: '0.8rem'
   }
 }
 
 @withStyles(styles)
-class SettingsListItemSelect extends React.Component {
+class SettingsListItemSelectInline extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
     label: PropTypes.node.isRequired,
+    secondary: PropTypes.node,
     onChange: PropTypes.func.isRequired,
     value: PropTypes.any.isRequired,
     options: PropTypes.array.isRequired,
@@ -36,12 +40,12 @@ class SettingsListItemSelect extends React.Component {
   }
 
   render () {
-    const { classes, disabled, className, label, onChange, value, options, ...passProps } = this.props
+    const { classes, disabled, className, label, secondary, onChange, value, options, ...passProps } = this.props
 
     return (
       <SettingsListItem {...passProps}>
-        <FormControl fullWidth>
-          <InputLabel>{label}</InputLabel>
+        <ListItemText primary={label} secondary={secondary} />
+        <ListItemSecondaryAction className={classes.secondaryAction}>
           <Select
             MenuProps={{
               disableEnforceFocus: true,
@@ -52,14 +56,15 @@ class SettingsListItemSelect extends React.Component {
             disabled={disabled}
             fullWidth
             value={value}
+            disableUnderline
             renderValue={(value) => SettingsListItemSelectOptionRenderer.renderValue(options, value)}
             onChange={(evt) => { onChange(evt, evt.target.value) }}>
             {SettingsListItemSelectOptionRenderer.renderOptions(options)}
           </Select>
-        </FormControl>
+        </ListItemSecondaryAction>
       </SettingsListItem>
     )
   }
 }
 
-export default SettingsListItemSelect
+export default SettingsListItemSelectInline

@@ -6,7 +6,7 @@ import modelCompare from 'wbui/react-addons-model-compare'
 import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
-import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
+import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import { withStyles } from '@material-ui/core/styles'
 import LanguageIcon from '@material-ui/icons/Language'
@@ -95,7 +95,7 @@ class LanguageSettingsSection extends React.Component {
           label='Spellchecking'
           onChange={(evt, toggled) => settingsActions.sub.language.setEnableSpellchecker(toggled)}
           checked={language.spellcheckerEnabled} />
-        <SettingsListItemSelect
+        <SettingsListItemSelectInline
           label='Spellchecking language'
           value={language.spellcheckerLanguage}
           disabled={!language.spellcheckerEnabled}
@@ -103,7 +103,7 @@ class LanguageSettingsSection extends React.Component {
             return { value: info.lang, label: info.name }
           })}
           onChange={(evt, value) => settingsActions.sub.language.setSpellcheckerLanguage(value)} />
-        <SettingsListItemSelect
+        <SettingsListItemSelectInline
           label='Secondary spellchecking language'
           value={language.secondarySpellcheckerLanguage !== null ? language.secondarySpellcheckerLanguage : '__none__'}
           disabled={!language.spellcheckerEnabled}

@@ -7,7 +7,7 @@ import { NOTIFICATION_PROVIDERS, NOTIFICATION_SOUNDS } from 'shared/Notification
 import { userStore } from 'stores/user'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
-import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
+import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import SettingsListItemText from 'wbui/SettingsListItemText'
 import WarningIcon from '@material-ui/icons/Warning'
@@ -128,7 +128,7 @@ class ServiceNotificationSettingsSection extends React.Component {
     if (!Object.keys(NOTIFICATION_SOUNDS).length) { return undefined }
 
     return (
-      <SettingsListItemSelect
+      <SettingsListItemSelectInline
         label='Notification Sound'
         value={service.notificationsSound || 'null'}
         disabled={!service.showNotifications}

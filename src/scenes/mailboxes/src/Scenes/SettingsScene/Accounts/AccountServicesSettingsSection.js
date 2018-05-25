@@ -6,7 +6,7 @@ import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemText from 'wbui/SettingsListItemText'
-import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
+import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 import ListIcon from '@material-ui/icons/List'
 import modelCompare from 'wbui/react-addons-model-compare'
 import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
@@ -81,7 +81,7 @@ export default class AccountServicesSettingsSection extends React.Component {
               the way these behave
             </span>
           )} />
-        <SettingsListItemSelect
+        <SettingsListItemSelectInline
           label='Where should services be displayed?'
           value={mailbox.serviceDisplayMode}
           options={[
@@ -99,7 +99,7 @@ export default class AccountServicesSettingsSection extends React.Component {
             checked={mailbox.collapseSidebarServices} />
         ) : undefined}
         {mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.TOOLBAR ? (
-          <SettingsListItemSelect
+          <SettingsListItemSelectInline
             divider={false}
             label='Icon positioning'
             value={mailbox.serviceToolbarIconLayout}

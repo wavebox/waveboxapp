@@ -16,9 +16,9 @@ import {
 } from 'shared/Models/Settings/TraySettings'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
-import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
+import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 import SettingsListItem from 'wbui/SettingsListItem'
-import SettingsListItemTextField from 'wbui/SettingsListItemTextField'
+import SettingsListItemTextFieldInline from 'wbui/SettingsListItemTextFieldInline'
 import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
 import AdjustIcon from '@material-ui/icons/Adjust'
@@ -128,7 +128,7 @@ class TraySettingsSection extends React.Component {
               checked={tray.removeFromTaskbarWin32} />
           ) : undefined}
           {IS_GTK_PLATFORM ? (
-            <SettingsListItemSelect
+            <SettingsListItemSelectInline
               label='GTK icon update mode (Requires Restart)'
               disabled={!tray.show}
               value={tray.gtkUpdateMode}
@@ -142,7 +142,7 @@ class TraySettingsSection extends React.Component {
                 showRestart()
               }} />
           ) : undefined}
-          <SettingsListItemSelect
+          <SettingsListItemSelectInline
             label='DPI Multiplier'
             disabled={!tray.show}
             value={tray.dpiMultiplier}
@@ -154,7 +154,7 @@ class TraySettingsSection extends React.Component {
               { value: 5, label: '5x' }
             ]}
             onChange={(evt, value) => settingsActions.sub.tray.setDpiMultiplier(value)} />
-          <SettingsListItemTextField
+          <SettingsListItemTextFieldInline
             label={`Icon Size (Pixels) ${IS_GTK_PLATFORM && tray.gtkUpdateMode === GTK_UPDATE_MODES.STATIC ? ' (Requires Restart)' : ''}`}
             disabled={!tray.show}
             textFieldProps={{
@@ -168,7 +168,7 @@ class TraySettingsSection extends React.Component {
                 }
               }
             }} />
-          <SettingsListItemSelect
+          <SettingsListItemSelectInline
             label='Popout screen position'
             secondary={IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
               <span className={classes.inputHelpTextInfo}>
@@ -252,7 +252,7 @@ class TraySettingsSection extends React.Component {
           title={process.platform === 'darwin' ? 'Menu Bar' : 'Tray'}
           subtitle='Mouse Actions'
           icon={<AdjustIcon />}>
-          <SettingsListItemSelect
+          <SettingsListItemSelectInline
             label='Click Action'
             secondary={IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
               <span className={classes.inputHelpTextInfo}>
@@ -265,7 +265,7 @@ class TraySettingsSection extends React.Component {
             options={TRAY_ACTION_OPTIONS}
             onChange={(evt, value) => settingsActions.sub.tray.setClickAction(value)} />
           {SUPPORTS_ADDITIONAL_CLICK_EVENTS ? (
-            <SettingsListItemSelect
+            <SettingsListItemSelectInline
               label='Alt Click Action'
               disabled={!tray.show}
               value={tray.altClickAction}
@@ -273,7 +273,7 @@ class TraySettingsSection extends React.Component {
               onChange={(evt, value) => settingsActions.sub.tray.setAltClickAction(value)} />
           ) : undefined}
           {SUPPORTS_ADDITIONAL_CLICK_EVENTS ? (
-            <SettingsListItemSelect
+            <SettingsListItemSelectInline
               label='Right Click Action'
               value={tray.rightClickAction}
               disabled={!tray.show}
@@ -281,7 +281,7 @@ class TraySettingsSection extends React.Component {
               onChange={(evt, value) => settingsActions.sub.tray.setRightClickAction(value)} />
           ) : undefined}
           {SUPPORTS_ADDITIONAL_CLICK_EVENTS ? (
-            <SettingsListItemSelect
+            <SettingsListItemSelectInline
               divider={false}
               label='Double Click Action'
               disabled={!tray.show}

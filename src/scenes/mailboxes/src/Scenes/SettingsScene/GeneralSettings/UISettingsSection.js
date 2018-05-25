@@ -6,7 +6,7 @@ import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 import { UISettings, ExtensionSettings } from 'shared/Models/Settings'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
-import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
+import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 import SettingsListKeyboardShortcutText from 'wbui/SettingsListKeyboardShortcutText'
 import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
 
@@ -92,7 +92,7 @@ export default class UISettingsSection extends React.Component {
             onChange={(evt, toggled) => settingsActions.sub.ui.setShowDefaultServiceSleepNotifications(toggled)}
             checked={ui.showDefaultServiceSleepNotifications} />
           {process.platform === 'darwin' ? (
-            <SettingsListItemSelect
+            <SettingsListItemSelectInline
               label='Translucent window backgrounds (Requires Restart)'
               value={ui.vibrancyMode}
               options={[
@@ -107,7 +107,7 @@ export default class UISettingsSection extends React.Component {
                 settingsActions.sub.ui.setVibrancyMode(value)
               }} />
           ) : undefined}
-          <SettingsListItemSelect
+          <SettingsListItemSelectInline
             divider={false}
             label='Account tooltips'
             value={ui.accountTooltipMode}
@@ -134,7 +134,7 @@ export default class UISettingsSection extends React.Component {
             label='Show Support in Sidebar'
             onChange={(evt, toggled) => settingsActions.sub.ui.setShowSidebarSupport(toggled)}
             checked={ui.showSidebarSupport} />
-          <SettingsListItemSelect
+          <SettingsListItemSelectInline
             divider={false}
             label={`Show What's New in Sidebar`}
             value={ui.showSidebarNewsfeed}
@@ -181,7 +181,7 @@ export default class UISettingsSection extends React.Component {
             label='Show extensions in toolbar'
             onChange={(evt, toggled) => settingsActions.sub.extension.setShowBrowserActionsInToolbar(toggled)}
             checked={extension.showBrowserActionsInToolbar} />
-          <SettingsListItemSelect
+          <SettingsListItemSelectInline
             divider={false}
             label='Extension position in toolbar'
             value={extension.toolbarBrowserActionLayout}
