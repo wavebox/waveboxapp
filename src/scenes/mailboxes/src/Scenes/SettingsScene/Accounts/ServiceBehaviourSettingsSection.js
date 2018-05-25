@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import shallowCompare from 'react-addons-shallow-compare'
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
 import SleepableField from 'wbui/SleepableField'
@@ -10,6 +9,8 @@ import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItem from 'wbui/SettingsListItem'
 import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import HotelIcon from '@material-ui/icons/Hotel'
+import modelCompare from 'wbui/react-addons-model-compare'
+import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 
 const styles = {
   sleepUnavailable: {
@@ -72,7 +73,11 @@ class ServiceBehaviourSettingsSection extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+    return (
+      modelCompare(this.props.mailbox, nextProps.mailbox, ['id']) ||
+      modelCompare(this.props.service, nextProps.service, ['type', 'sleepable', 'sleepableTimeout']) ||
+      partialShallowCompare({}, this.state, {}, nextState)
+    )
   }
 
   render () {

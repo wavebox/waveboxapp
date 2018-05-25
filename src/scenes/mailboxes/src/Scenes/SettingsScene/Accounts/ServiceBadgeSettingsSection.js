@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
-import shallowCompare from 'react-addons-shallow-compare'
 import ColorPickerButton from 'wbui/ColorPickerButton'
 import { userStore } from 'stores/user'
 import { withStyles } from '@material-ui/core/styles'
@@ -13,6 +12,8 @@ import SettingsListItemText from 'wbui/SettingsListItemText'
 import WarningIcon from '@material-ui/icons/Warning'
 import SmsIcon from '@material-ui/icons/Sms'
 import AdjustIcon from '@material-ui/icons/Adjust'
+import modelCompare from 'wbui/react-addons-model-compare'
+import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 
 const styles = {
   mockUnreadActivityIndicator: {
@@ -94,7 +95,22 @@ class ServiceBadgeSettingsSection extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+    return (
+      modelCompare(this.props.mailbox, nextProps.mailbox, ['id']) ||
+      modelCompare(this.props.service, nextProps.service, [
+        'type',
+        'sleepable',
+        'supportsSyncWhenSleeping',
+        'unreadBadgeColor',
+        'supportsUnreadCount',
+        'showUnreadBadge',
+        'unreadCountsTowardsAppUnread',
+        'supportsUnreadActivity',
+        'showUnreadActivityBadge',
+        'unreadActivityCountsTowardsAppUnread'
+      ]) ||
+      partialShallowCompare({}, this.state, {}, nextState)
+    )
   }
 
   render () {
@@ -148,7 +164,7 @@ class ServiceBadgeSettingsSection extends React.Component {
       (service.supportsUnreadCount ? (isLast) => {
         return (
           <SettingsListItemSwitch
-            key='unreadActivityCountsTowardsAppUnread'
+            key='unreadCountsTowardsAppUnread'
             divider={!isLast}
             label='Show unread count in Menu Bar & App Badge'
             onChange={(evt, toggled) => {
@@ -177,7 +193,7 @@ class ServiceBadgeSettingsSection extends React.Component {
       (service.supportsUnreadActivity ? (isLast) => {
         return (
           <SettingsListItemSwitch
-            key='setUnreadActivityCountsTowardsAppUnread'
+            key='unreadActivityCountsTowardsAppUnread'
             divider={!isLast}
             label={(
               <span>

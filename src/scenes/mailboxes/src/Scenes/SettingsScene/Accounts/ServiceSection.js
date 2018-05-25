@@ -3,17 +3,13 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
 import CoreService from 'shared/Models/Accounts/CoreService'
-import { mailboxActions, MailboxReducer } from 'stores/mailbox'
 import Resolver from 'Runtime/Resolver'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItem from 'wbui/SettingsListItem'
 import { withStyles } from '@material-ui/core/styles'
-import { Avatar, Tooltip, IconButton } from '@material-ui/core'
+import { Avatar } from '@material-ui/core'
 import grey from '@material-ui/core/colors/grey'
-import CheckBoxOutlineIcon from '@material-ui/icons/CheckBoxOutlineBlank'
-import CheckBoxIcon from '@material-ui/icons/CheckBox'
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
+import ServiceSectionToolbarControls from './ServiceSectionToolbarControls'
 
 const styles = {
   toolbar: {
@@ -87,53 +83,15 @@ class ServiceSection extends React.Component {
               src={Resolver.image(service ? service.humanizedLogoAtSize(128) : serviceClass.humanizedLogo)} />
             {(service || serviceClass).humanizedType}
           </div>
-          {!isSingleService && !isDefaultService ? (
-            <div className={classes.toolbarControls}>
-              {service ? (
-                <Tooltip title='Disable'>
-                  <div>
-                    <IconButton
-                      disabled={isDefaultService}
-                      onClick={() => mailboxActions.reduce(mailbox.id, MailboxReducer.removeService, serviceType)}>
-                      <CheckBoxIcon />
-                    </IconButton>
-                  </div>
-                </Tooltip>
-              ) : (
-                <Tooltip title='Enable'>
-                  <div>
-                    <IconButton onClick={() => mailboxActions.reduce(mailbox.id, MailboxReducer.addService, serviceType)}>
-                      <CheckBoxOutlineIcon />
-                    </IconButton>
-                  </div>
-                </Tooltip>
-              )}
-              {service ? (
-                <Tooltip title='Move up'>
-                  <div>
-                    <IconButton
-                      disabled={isFirst}
-                      onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceUp, serviceType)}>
-                      <ArrowUpwardIcon />
-                    </IconButton>
-                  </div>
-                </Tooltip>
-              ) : undefined}
-              {service ? (
-                <Tooltip title='Move down'>
-                  <div>
-                    <IconButton
-                      disabled={isLast}
-                      onChange={() => mailboxActions.reduce(mailbox.id, MailboxReducer.moveServiceDown, serviceType)}>
-                      <ArrowDownwardIcon />
-                    </IconButton>
-                  </div>
-                </Tooltip>
-              ) : undefined}
-            </div>
-          ) : (
-            <div className={classes.toolbarControls} />
-          )}
+          <ServiceSectionToolbarControls
+            className={classes.toolbarControls}
+            mailboxId={mailbox.id}
+            serviceType={serviceType}
+            isSingleService={isSingleService}
+            isDefaultService={isDefaultService}
+            isServiceEnabled={!!service}
+            isFirstService={isFirst}
+            isLastService={isLast} />
         </SettingsListItem>
         <div className={classes.childrenWrap}>
           {children}

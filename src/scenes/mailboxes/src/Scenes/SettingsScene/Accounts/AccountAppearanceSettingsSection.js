@@ -4,7 +4,6 @@ import ColorPickerButton from 'wbui/ColorPickerButton'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
 import { settingsStore } from 'stores/settings'
-import shallowCompare from 'react-addons-shallow-compare'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
@@ -18,6 +17,8 @@ import { Button } from '@material-ui/core'
 import SettingsListItemText from 'wbui/SettingsListItemText'
 import FileUploadButton from 'wbui/FileUploadButton'
 import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
+import modelCompare from 'wbui/react-addons-model-compare'
+import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 
 const styles = {
   buttonIcon: {
@@ -120,7 +121,22 @@ class AccountAppearanceSettingsSection extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+    return (
+      modelCompare(this.props.mailbox, nextProps.mailbox, [
+        'id',
+        'serviceDisplayMode',
+        'hasAdditionalServices',
+        'collapseSidebarServices',
+        'hasAdditionalServices',
+        'supportsAdditionalServiceTypes',
+        'color',
+        'showAvatarColorRing',
+        'showSleepableServiceIndicator',
+        'showCumulativeSidebarUnreadBadge',
+        'cumulativeSidebarUnreadBadgeColor'
+      ]) ||
+      partialShallowCompare({}, this.state, {}, nextState)
+    )
   }
 
   render () {

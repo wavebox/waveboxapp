@@ -1,12 +1,13 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
-import shallowCompare from 'react-addons-shallow-compare'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 import TuneIcon from '@material-ui/icons/Tune'
+import modelCompare from 'wbui/react-addons-model-compare'
+import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 
 export default class AccountAdvancedSettingsSection extends React.Component {
   /* **************************************************************************/
@@ -25,7 +26,19 @@ export default class AccountAdvancedSettingsSection extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+    return (
+      modelCompare(this.props.mailbox, nextProps.mailbox, [
+        'id',
+        'artificiallyPersistCookies',
+        'defaultWindowOpenMode'
+      ]) ||
+      partialShallowCompare(
+        { ...this.props, mailbox: undefined },
+        this.state,
+        { ...nextProps, mailbox: undefined },
+        nextState
+      )
+    )
   }
 
   render () {

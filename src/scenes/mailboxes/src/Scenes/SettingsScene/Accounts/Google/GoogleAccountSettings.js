@@ -71,7 +71,7 @@ class GoogleAccountSettings extends React.Component {
     userStore.listen(this.userUpdated)
     this.renderBelowFoldTO = setTimeout(() => {
       this.setState({ renderBelowFold: true })
-    }, 1000)
+    }, 500)
   }
 
   componentWillUnmount () {

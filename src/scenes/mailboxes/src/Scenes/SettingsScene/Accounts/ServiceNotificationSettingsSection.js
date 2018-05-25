@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { mailboxActions, ServiceReducer } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
-import shallowCompare from 'react-addons-shallow-compare'
 import { NotificationService } from 'Notifications'
 import { NOTIFICATION_PROVIDERS, NOTIFICATION_SOUNDS } from 'shared/Notifications'
 import { userStore } from 'stores/user'
@@ -14,6 +13,8 @@ import SettingsListItemText from 'wbui/SettingsListItemText'
 import WarningIcon from '@material-ui/icons/Warning'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import NotificationsIcon from '@material-ui/icons/Notifications'
+import modelCompare from 'wbui/react-addons-model-compare'
+import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 
 class ServiceNotificationSettingsSection extends React.Component {
   /* **************************************************************************/
@@ -100,7 +101,19 @@ class ServiceNotificationSettingsSection extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+    return (
+      modelCompare(this.props.mailbox, nextProps.mailbox, ['id', 'displayName']) ||
+      modelCompare(this.props.service, nextProps.service, [
+        'type',
+        'notificationsSound',
+        'showNotifications',
+        'sleepable',
+        'supportsSyncWhenSleeping',
+        'supportsNativeNotifications',
+        'showAvatarInNotifications'
+      ]) ||
+      partialShallowCompare({}, this.state, {}, nextState)
+    )
   }
 
   /**

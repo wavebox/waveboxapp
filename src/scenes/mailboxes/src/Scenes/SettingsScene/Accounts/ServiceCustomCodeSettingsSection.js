@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import shallowCompare from 'react-addons-shallow-compare'
 import { mailboxActions, ServiceReducer, mailboxDispatch } from 'stores/mailbox'
 import { USER_SCRIPTS_WEB_URL } from 'shared/constants'
 import electron from 'electron'
@@ -10,6 +9,8 @@ import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItem from 'wbui/SettingsListItem'
 import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import CodeIcon from '@material-ui/icons/Code'
+import modelCompare from 'wbui/react-addons-model-compare'
+import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 
 const styles = {
   userscriptLink: {
@@ -35,7 +36,16 @@ class ServiceCustomCodeSettingsSection extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+    return (
+      modelCompare(this.props.mailbox, nextProps.mailbox, ['id']) ||
+      modelCompare(this.props.service, nextProps.service, ['type', 'sleepable', 'customCSS', 'customJS']) ||
+      partialShallowCompare(
+        { onRequestEditCustomCode: this.props.onRequestEditCustomCode },
+        this.state,
+        { onRequestEditCustomCode: nextProps.onRequestEditCustomCode },
+        nextState
+      )
+    )
   }
 
   render () {

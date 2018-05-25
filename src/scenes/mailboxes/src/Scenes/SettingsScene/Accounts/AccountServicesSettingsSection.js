@@ -2,13 +2,14 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { mailboxActions, MailboxReducer } from 'stores/mailbox'
 import { userStore } from 'stores/user'
-import shallowCompare from 'react-addons-shallow-compare'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemText from 'wbui/SettingsListItemText'
 import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 import ListIcon from '@material-ui/icons/List'
+import modelCompare from 'wbui/react-addons-model-compare'
+import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 
 export default class AccountServicesSettingsSection extends React.Component {
   /* **************************************************************************/
@@ -53,7 +54,15 @@ export default class AccountServicesSettingsSection extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+    return (
+      modelCompare(this.props.mailbox, nextProps.mailbox, [
+        'id',
+        'serviceDisplayMode',
+        'collapseSidebarServices',
+        'serviceToolbarIconLayout'
+      ]) ||
+      partialShallowCompare({}, this.state, {}, nextState)
+    )
   }
 
   render () {
