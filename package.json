@@ -81,6 +81,7 @@
     "jsx-loader": "0.13.2",
     "node-abi": "2.4.1",
     "on-build-webpack": "0.1.0",
+    "progress-bar-webpack-plugin": "1.11.0",
     "style-loader": "0.21.0",
     "uglify-es": "3.3.9",
     "url-loader": "1.0.1",
