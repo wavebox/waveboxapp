@@ -49,7 +49,7 @@ module.exports = function (env) {
   }
 
   ElectronRenderer(__dirname, config)
-  DevTools('WB Traypopout', config)
+  DevTools('WB Traypopout', env, config)
 
   return config
 }
