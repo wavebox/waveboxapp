@@ -8,7 +8,7 @@
       object-src 'self';
       connect-src *;
       font-src 'self';
-      script-src 'self' 'sha256-WYmZqQ3ga72JqV+RMBqJpypcMUXVQ4rgF9VpnWQoGdE=' 'sha256-dIxaHpjOXVHO1WK1GgYkgL/vg3rWrE364Xb/qDo4mY8=';
+      script-src 'self' 'sha256-WYmZqQ3ga72JqV+RMBqJpypcMUXVQ4rgF9VpnWQoGdE=' 'sha256-JIPxpP+jWFNmU+SCOSSoWuQfecxZaIcO/gYaD0U1154=';
       style-src 'self' 'unsafe-inline';
     ">
     <title>Wavebox</title>
@@ -271,7 +271,7 @@ window.appNodeModulesRequire = function (name) {
     timing.clientStart.complete = new Date().getTime()
   }).then(() => {
     timing.total.complete = new Date().getTime()
-    console.log('Start Metrics: ', [
+    console.log('[Start Metrics] ', [
       `BS=${timing.bootstrap.complete - timing.bootstrap.init}`,
       `CE=${timing.clientEval.complete - timing.clientEval.init}`,
       `CS=${timing.clientStart.complete - timing.clientStart.init}`,
