@@ -2,15 +2,15 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="
+    <!--<meta http-equiv="Content-Security-Policy" content="
       default-src 'none';
       img-src * data:;
       object-src 'self';
       connect-src *;
       font-src 'self';
-      script-src 'self' 'sha256-WYmZqQ3ga72JqV+RMBqJpypcMUXVQ4rgF9VpnWQoGdE=' 'sha256-JIPxpP+jWFNmU+SCOSSoWuQfecxZaIcO/gYaD0U1154=';
+      script-src 'self' 'sha256-WYmZqQ3ga72JqV+RMBqJpypcMUXVQ4rgF9VpnWQoGdE=';
       style-src 'self' 'unsafe-inline';
-    ">
+    ">-->
     <title>Wavebox</title>
     <link rel="stylesheet" type="text/css" href="../../fonts/opensans/opensans.css">
     <style>
@@ -108,6 +108,7 @@ window.appNodeModulesRequire = function (name) {
   const pkg = require('./package.json')
   const credentials = require('./credentials.js')
   window.bootstrap = { clientId: query.clientId, clientToken: query.clientToken }
+  const CACHED_INIT_KEY = `cached_init:${window.bootstrap.clientId}`
 
   /**
   * Injects a script element
@@ -225,7 +226,7 @@ window.appNodeModulesRequire = function (name) {
               res: { ok: false, status: -1 },
               jsonContent: { error: 'CONNECTION_TIMEOUT' }
             })
-          }, 1)
+          }, window.localStorage[CACHED_INIT_KEY] ? 15000 : 10000)
         })
       })
       .then(
@@ -233,12 +234,12 @@ window.appNodeModulesRequire = function (name) {
           if (res.status === 403 || res.status === 401) {
             return uauthorizedBounce(jsonContent ? jsonContent.error : undefined)
           } else if (res.ok && jsonContent) {
-            window.localStorage['cached_init'] = JSON.stringify(jsonContent)
+            window.localStorage[CACHED_INIT_KEY] = JSON.stringify(jsonContent)
             return Promise.resolve(jsonContent)
           } else {
-            if (window.localStorage['cached_init']) {
+            if (window.localStorage[CACHED_INIT_KEY]) {
               try {
-                const cached = JSON.parse(window.localStorage['cached_init'])
+                const cached = JSON.parse(window.localStorage[CACHED_INIT_KEY])
                 return Promise.resolve(cached)
               } catch (_ex) { }
             }
