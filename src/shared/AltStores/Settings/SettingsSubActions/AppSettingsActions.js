@@ -163,6 +163,13 @@ class AppSettingsActions extends CoreSettingsActions {
   setEnableWindowOpeningEngine (enable) {
     this.dispatchUpdate('enableWindowOpeningEngine', enable)
   }
+  /**
+  * Sets whether the mouse navigation listener should be enabled or not
+  * @param enable: true to enable
+  */
+  setEnableMouseNavigationDarwin (enable) {
+    this.dispatchUpdate('enableMouseNavigationDarwin', enable)
+  }
 
   /**
   * Opens the metrics log

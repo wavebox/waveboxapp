@@ -6,6 +6,7 @@ import BrowserTargetUrl from './BrowserTargetUrl'
 import BrowserSearch from './BrowserSearch'
 import BrowserToolbar from './BrowserToolbar'
 import { browserActions, browserStore } from 'stores/browser'
+import { settingsStore } from 'stores/settings'
 import MouseNavigationDarwin from 'wbui/MouseNavigationDarwin'
 import Resolver from 'Runtime/Resolver'
 import { remote } from 'electron'
@@ -56,7 +57,7 @@ class BrowserScene extends React.Component {
 
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
-    if (process.platform === 'darwin') {
+    if (process.platform === 'darwin' && settingsStore.getState().launched.app.enableMouseNavigationDarwin) {
       this.mouseNavigator = new MouseNavigationDarwin(
         () => this.refs[BROWSER_REF].goBack(),
         () => this.refs[BROWSER_REF].goForward()

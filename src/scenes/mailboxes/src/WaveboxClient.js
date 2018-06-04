@@ -37,24 +37,12 @@ document.addEventListener('dragover', (evt) => {
   }
 }, false)
 
-// Navigation
-if (process.platform === 'darwin') {
-  const mouseNavigator = new MouseNavigationDarwin(
-    () => mailboxDispatch.navigateBack(),
-    () => mailboxDispatch.navigateForward()
-  )
-  mouseNavigator.register()
-  window.addEventListener('beforeunload', () => {
-    mouseNavigator.unregister()
-  })
-}
-
 // Load what we have in the db
 userStore.getState()
 userActions.load()
 mailboxStore.getState()
 mailboxActions.load()
-settingsStore.getState()
+const settingsState = settingsStore.getState()
 settingsActions.load()
 updaterStore.getState()
 updaterActions.load()
@@ -71,6 +59,18 @@ notifhistActions.load()
 userActions.startAutoUpdateExtensions()
 userActions.startAutoUpdateWireConfig()
 userActions.startAutoUpdateContainers()
+
+// Navigation
+if (process.platform === 'darwin' && settingsState.launched.app.enableMouseNavigationDarwin) {
+  const mouseNavigator = new MouseNavigationDarwin(
+    () => mailboxDispatch.navigateBack(),
+    () => mailboxDispatch.navigateForward()
+  )
+  mouseNavigator.register()
+  window.addEventListener('beforeunload', () => {
+    mouseNavigator.unregister()
+  })
+}
 
 // Debugging
 Debug.load()

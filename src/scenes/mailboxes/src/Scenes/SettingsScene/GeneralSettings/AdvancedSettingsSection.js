@@ -55,7 +55,8 @@ class AdvancedSettingsSection extends React.Component {
         'disableSmoothScrolling',
         'enableGeolocationApi',
         'enableAutofillService',
-        'enableWindowOpeningEngine'
+        'enableWindowOpeningEngine',
+        'enableMouseNavigationDarwin'
       ]) ||
       modelCompare(this.props.language, nextProps.language, ['inProcessSpellchecking']) ||
       modelCompare(this.props.ui, nextProps.ui, ['customMainCSS']) ||
@@ -127,6 +128,15 @@ class AdvancedSettingsSection extends React.Component {
             settingsActions.sub.app.disableSmoothScrolling(!toggled)
           }}
           checked={!app.disableSmoothScrolling} />
+        {process.platform === 'darwin' ? (
+          <SettingsListItemSwitch
+            label='Touchpad swipe Navigation (Requires Restart)'
+            onChange={(evt, toggled) => {
+              showRestart()
+              settingsActions.sub.app.setEnableMouseNavigationDarwin(toggled)
+            }}
+            checked={app.enableMouseNavigationDarwin} />
+        ) : undefined}
         <SettingsListItemSwitch
           label='Geolocation API'
           onChange={(evt, toggled) => { settingsActions.sub.app.setEnableGeolocationApi(toggled) }}
