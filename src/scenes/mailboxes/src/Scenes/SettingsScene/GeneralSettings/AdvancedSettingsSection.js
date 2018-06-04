@@ -106,7 +106,7 @@ class AdvancedSettingsSection extends React.Component {
           checked={app.isolateMailboxProcesses} />
         {AppSettings.SUPPORTS_MIXED_SANDBOX_MODE ? (
           <SettingsListItemSwitch
-            label='Enable Sanboxing (Requires Restart)'
+            label='Enable Sandboxing (Requires Restart)'
             onChange={(evt, toggled) => {
               showRestart()
               settingsActions.sub.app.setEnableMixedSandboxMode(toggled)
