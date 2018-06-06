@@ -31,7 +31,7 @@ export default createMuiTheme({
   },
   overrides: {
     MuiButton: {
-      raised: {
+      contained: {
         backgroundColor: '#fff',
         color: 'rgba(0, 0, 0, 0.87)',
         '&:hover': {
