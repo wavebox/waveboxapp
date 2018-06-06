@@ -7,7 +7,7 @@ const cmds = PACKAGE_DIRS.map((dir) => {
     cmd: process.platform === 'win32' ? 'npm.cmd' : 'npm',
     args: [
       'outdated',
-      '--save', 'false', '--save-optional' // Makes sure we cover optional deps too
+      '--save', '--save-optional' // Makes sure we cover optional deps too
     ],
     opts: { stdio: 'inherit', cwd: dir },
     prelog: `${Colors.inverse('npm outdated:')} ${dir}`,
