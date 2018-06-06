@@ -11,8 +11,13 @@ const styles = {
     maxWidth: 150,
     width: '100%'
   },
-  select: {
+  selectRoot: {
     fontSize: '0.8rem'
+  },
+  selectControl: {
+    '&:focus': {
+      backgroundColor: 'transparent'
+    }
   }
 }
 
@@ -51,8 +56,9 @@ class SettingsListItemSelectInline extends React.Component {
               disableEnforceFocus: true,
               MenuListProps: { dense: true }
             }}
+            classes={{ select: classes.selectControl }}
             margin='dense'
-            className={classes.select}
+            className={classes.selectRoot}
             disabled={disabled}
             fullWidth
             value={value}

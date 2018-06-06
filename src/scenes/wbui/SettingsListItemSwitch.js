@@ -3,7 +3,15 @@ import React from 'react'
 import { ListItemText, ListItemSecondaryAction, Switch } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListItem from './SettingsListItem'
+import { withStyles } from '@material-ui/core/styles'
 
+const styles = {
+  text: {
+    paddingRight: 64
+  }
+}
+
+@withStyles(styles)
 class SettingsListItemSwitch extends React.Component {
   /* **************************************************************************/
   // Class
@@ -30,7 +38,7 @@ class SettingsListItemSwitch extends React.Component {
 
     return (
       <SettingsListItem {...passProps}>
-        <ListItemText primary={label} secondary={secondary} />
+        <ListItemText className={classes.text} primary={label} secondary={secondary} />
         <ListItemSecondaryAction>
           <Switch
             color='primary'

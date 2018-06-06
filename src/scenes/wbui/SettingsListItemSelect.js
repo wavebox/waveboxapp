@@ -7,9 +7,14 @@ import SettingsListItem from './SettingsListItem'
 import SettingsListItemSelectOptionRenderer from './SettingsListItemSelectOptionRenderer'
 
 const styles = {
-  select: {
+  selectRoot: {
     fontSize: '0.8rem',
     marginTop: 20
+  },
+  selectControl: {
+    '&:focus': {
+      backgroundColor: 'transparent'
+    }
   }
 }
 
@@ -47,8 +52,9 @@ class SettingsListItemSelect extends React.Component {
               disableEnforceFocus: true,
               MenuListProps: { dense: true }
             }}
+            classes={{ select: classes.selectControl }}
             margin='dense'
-            className={classes.select}
+            className={classes.selectRoot}
             disabled={disabled}
             fullWidth
             value={value}
