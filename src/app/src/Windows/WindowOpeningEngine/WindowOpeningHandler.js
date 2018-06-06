@@ -136,6 +136,8 @@ class WindowOpeningHandler {
     } else if (openMode === WINDOW_OPEN_MODES.BLANK_AND_CURRENT_PROVISIONAL) {
       evt.sender.loadURL('about:blank')
       evt.sender.loadURL(provisionalTargetUrl)
+    } else if (openMode === WINDOW_OPEN_MODES.SUPPRESS) {
+      /* no-op */
     } else {
       this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
     }
