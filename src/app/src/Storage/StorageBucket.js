@@ -115,16 +115,41 @@ class StorageBucket {
               .then(() => fs.fsync(ref))
               .then(() => fs.close(ref))
           })
-          .then(() => fs.readFile(flushPath, 'utf8'))
-          .then((readData) => readData === data ? Promise.resolve() : Promise.reject(new Error('Integrity failure')))
+          .then(() => {
+            return Promise.resolve()
+              .then(() => this._integrityCheckFile(flushPath, data))
+              .catch(() => this._integrityCheckFile(flushPath, data, 100))
+          })
           .then(() => fs.rename(flushPath, this[privPath]))
           .then(() => {
             this[privWriteLock] = false
-          }, (e) => {
+          })
+          .catch((_err) => {
+            // Try our best to clean up on failure
+            fs.remove(flushPath).catch(() => { /* no-op */ })
             this[privWriteLock] = false
           })
       }
     }, DB_WRITE_DELAY_MS)
+  }
+
+  /**
+  * Runs an integrity check of the file
+  * @param filePath: the path to check
+  * @param expected: the expected data check
+  * @param wait=0: millis to wait before running the check
+  * @return resolved promise if the check is a success, throw if fail
+  */
+  _integrityCheckFile (filePath, expected, wait = 0) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        Promise.resolve()
+          .then(() => fs.readFile(filePath, 'utf8'))
+          .then((readData) => readData === expected ? Promise.resolve() : Promise.reject(new Error('StorageBucket Integrity failure')))
+          .then(() => resolve())
+          .catch((err) => reject(err))
+      }, wait)
+    })
   }
 
   /* ****************************************************************************/
