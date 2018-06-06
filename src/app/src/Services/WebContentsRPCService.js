@@ -11,8 +11,7 @@ import {
   WCRPC_SEND_INPUT_EVENTS,
   WCRPC_SHOW_ASYNC_MESSAGE_DIALOG,
   WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG,
-  WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG,
-  WCRPC_DID_GET_REDIRECT_REQUEST
+  WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG
 } from 'shared/webContentsRPC'
 
 const privConnected = Symbol('privConnected')
@@ -60,7 +59,6 @@ class WebContentsRPCService {
       contents.on('did-frame-finish-load', this._handleFrameFinishLoad)
       contents.on('console-message', this._handleConsoleMessage)
       contents.on('will-prevent-unload', this._handleWillPreventUnload)
-      contents.on('did-get-redirect-request', this._handleDidGetRedirectRequest)
       contents.on('destroyed', () => {
         this[privConnected].delete(webContentsId)
       })
@@ -112,10 +110,6 @@ class WebContentsRPCService {
     if (choice === 0) {
       evt.preventDefault()
     }
-  }
-
-  _handleDidGetRedirectRequest = (evt, prevUrl, nextUrl, isMainFrame, httpResponseCode, requestMethod, referrer, headers) => {
-    evt.sender.send(WCRPC_DID_GET_REDIRECT_REQUEST, evt.sender.id, prevUrl, nextUrl, isMainFrame, httpResponseCode, requestMethod, referrer, headers)
   }
 
   /* ****************************************************************************/

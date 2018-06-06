@@ -5,6 +5,7 @@ import querystring from 'querystring'
 import { URL } from 'url'
 import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import AuthWindow from 'Windows/AuthWindow'
+import { SessionManager } from 'SessionManager'
 
 class AuthWavebox {
   /* ****************************************************************************/
@@ -88,30 +89,57 @@ class AuthWavebox {
         }
       })
       const oauthWin = waveboxOauthWin.window
+      const emitter = SessionManager.webRequestEmitterFromPartitionId(partitionId)
       let userClose = true
 
-      oauthWin.on('closed', () => {
-        if (userClose) {
-          reject(new Error('User closed the window'))
-        }
-      })
+      // Handle Redirects
+      const handleHeadersReceived = (details, responder) => {
+        if (details.webContentsId !== oauthWin.webContents.id) { return responder({}) }
 
-      oauthWin.webContents.on('did-get-redirect-request', (evt, prevUrl, nextUrl) => {
-        if (nextUrl.startsWith('https://wavebox.io/account/register/completed') || nextUrl.startsWith('https://waveboxio.com/account/register/completed')) {
-          const purl = new URL(nextUrl)
-          userClose = false
-          oauthWin.close()
-          resolve({ next: purl.searchParams.get('next') })
-        } else if (nextUrl.startsWith('https://wavebox.io/account/register/failure') || nextUrl.startsWith('https://waveboxio.com/account/register/failure')) {
-          const purl = new URL(nextUrl)
-          userClose = false
-          oauthWin.close()
-          reject(new Error(purl.searchParams.get('error') || 'Registration failure'))
+        if (details.statusCode === 302) {
+          let nextUrlParsed
+          let nextUrl
+          try {
+            nextUrlParsed = new URL(
+              details.responseHeaders.location || details.responseHeaders.Location,
+              details.url
+            )
+            nextUrl = nextUrlParsed.toString()
+          } catch (ex) {
+            return responder({})
+          }
+
+          if (nextUrl.startsWith('https://wavebox.io/account/register/completed') || nextUrl.startsWith('https://waveboxio.com/account/register/completed')) {
+            userClose = false
+            oauthWin.close()
+            responder({ cancel: true })
+            resolve({ next: nextUrlParsed.searchParams.get('next') })
+            return
+          } else if (nextUrl.startsWith('https://wavebox.io/account/register/failure') || nextUrl.startsWith('https://waveboxio.com/account/register/failure')) {
+            userClose = false
+            oauthWin.close()
+            responder({ cancel: true })
+            reject(new Error(nextUrlParsed.searchParams.get('error') || 'Registration failure'))
+            return
+          }
         }
-      })
+
+        responder({})
+      }
+      emitter.headersReceived.onBlocking(undefined, handleHeadersReceived)
+
+      // Handle dom Ready
       oauthWin.webContents.on('dom-ready', () => {
         if (!oauthWin.isVisible()) {
           oauthWin.show()
+        }
+      })
+
+      // Handle close
+      oauthWin.on('closed', () => {
+        emitter.headersReceived.removeListener(handleHeadersReceived)
+        if (userClose) {
+          reject(new Error('User closed the window'))
         }
       })
     })

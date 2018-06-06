@@ -21,8 +21,6 @@ const WEBVIEW_EVENTS = [
   'did-frame-finish-load',
   'did-start-loading',
   'did-stop-loading',
-  'did-get-response-details',
-  'did-get-redirect-request',
   'did-navigate',
   'did-navigate-in-page',
   'dom-ready',

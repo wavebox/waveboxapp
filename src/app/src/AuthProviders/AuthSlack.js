@@ -42,6 +42,7 @@ class AuthSlack {
   promptUserToGetAuthorizationCode (partitionId) {
     return new Promise((resolve, reject) => {
       const waveboxOauthWin = new AuthWindow()
+      const fullPartitionId = partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
       waveboxOauthWin.create('https://slack.com/signin', {
         useContentSize: true,
         center: true,
@@ -58,33 +59,28 @@ class AuthSlack {
           sandbox: true,
           nativeWindowOpen: true,
           sharedSiteInstances: true,
-          partition: partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
+          partition: fullPartitionId
         }
       })
       const oauthWin = waveboxOauthWin.window
       let userClose = true
 
+      // Handle close
       oauthWin.on('closed', () => {
         if (userClose) {
           reject(new Error('User closed the window'))
         }
       })
 
+      // Handle navigate
       oauthWin.webContents.on('will-navigate', (evt, nextUrl) => {
         const purl = new URL(nextUrl)
         if (purl.host === 'slack.com' && purl.pathname.indexOf('/checkcookie') === 0 && purl.searchParams.get('redir')) {
           oauthWin.hide()
         }
       })
-      oauthWin.webContents.on('did-get-response-details', (evt) => {
-        this._scrapeAuthenticationInfo(oauthWin.webContents)
-          .then((data) => {
-            userClose = false
-            oauthWin.close()
-            resolve(data)
-          })
-          .catch(() => { /* no-op */ })
-      })
+
+      // Capture auth info
       oauthWin.webContents.on('dom-ready', (evt) => {
         this._scrapeAuthenticationInfo(oauthWin.webContents)
           .then((data) => {

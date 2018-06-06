@@ -146,6 +146,7 @@ class AuthMicrosoft {
 
         responder({})
       }
+      emitter.headersReceived.onBlocking(undefined, handleHeadersReceived)
 
       // Window close callback
       oauthWin.on('closed', () => {
@@ -154,12 +155,6 @@ class AuthMicrosoft {
           reject(new Error('User closed the window'))
         }
       })
-
-      // Ideally we should just bind redirect request, but we can't cancel
-      // them to prevent nav and for some reason they don't fire for the
-      // urn: redirect url. Instead capture the headers so we can use the
-      // functionality we want
-      emitter.headersReceived.onBlocking(undefined, handleHeadersReceived)
     })
   }
 

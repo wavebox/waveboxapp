@@ -6,7 +6,6 @@ import GoogleDriveAdaptor from './Sites/GoogleDriveAdaptor'
 import GoogleHangoutsAdaptor from './Sites/GoogleHangoutsAdaptor'
 import OneDriveAdaptor from './Sites/OneDriveAdaptor'
 import SlackAdaptor from './Sites/SlackAdaptor'
-import TwitterAdaptor from './Sites/TwitterAdaptor'
 import TrelloAdaptor from './Sites/TrelloAdaptor'
 
 const registry = [
@@ -18,7 +17,6 @@ const registry = [
   GoogleHangoutsAdaptor,
   OneDriveAdaptor,
   SlackAdaptor,
-  TwitterAdaptor,
   TrelloAdaptor
 ]
 
