@@ -17,31 +17,49 @@ const styles = {
     tableLayout: 'fixed'
   },
   headRow: {
-    height: 'auto'
+    height: 'auto',
+    '&>*:last-child': {
+      paddingRight: 12
+    },
+    '&>*:first-child': {
+      paddingLeft: 12
+    }
   },
   row: {
     height: 'auto',
     '&:nth-of-type(odd)': {
       backgroundColor: lightBlue[50]
+    },
+    '&>*:last-child': {
+      paddingRight: 12
+    },
+    '&>*:first-child': {
+      paddingLeft: 12
     }
   },
   cell: {
-    padding: '6px 12px',
+    padding: '6px 3px',
     textAlign: 'left',
     overflow: 'hidden',
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis'
   },
-  fixed100: {
-    width: 100
-  },
   fixed150: {
-    width: 150
+    width: 150,
+    textAlign: 'right'
   },
   icon: {
     width: 100,
-    textAlign: 'center',
-    padding: 0
+    textAlign: 'right',
+    paddingTop: 0,
+    paddingBottom: 0,
+    '&>*': {
+      marginTop: 2
+    }
+  },
+  pidCell: {
+    width: 70,
+    textAlign: 'left'
   }
 }
 
@@ -102,7 +120,7 @@ class ConnectionMonitor extends React.Component {
     ].join('_')
     return (
       <TableRow key={key} className={classes.row}>
-        <TableCell className={classNames(classes.cell, classes.fixed100)}>
+        <TableCell className={classNames(classes.cell, classes.pidCell)}>
           {conn.pid}
         </TableCell>
         <TableCell className={classNames(classes.cell)}>
@@ -144,7 +162,7 @@ class ConnectionMonitor extends React.Component {
       <Table className={classes.table}>
         <TableHead>
           <TableRow className={classes.headRow}>
-            <TableCell className={classNames(classes.cell, classes.fixed100)}>Pid</TableCell>
+            <TableCell className={classNames(classes.cell, classes.pidCell)}>Pid</TableCell>
             <TableCell className={classNames(classes.cell)}>Description</TableCell>
             <TableCell className={classNames(classes.cell, classes.icon)}>Setup</TableCell>
             <TableCell className={classNames(classes.cell, classes.icon)}>Connected</TableCell>

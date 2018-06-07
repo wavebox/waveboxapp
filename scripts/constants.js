@@ -23,7 +23,6 @@ module.exports = {
     path.join(SRC_DIR, 'scenes/traypopout')
   ],
   REBUILD_PACKAGE_DIRS: [
-    path.join(SRC_DIR, 'app'),
-    path.join(SRC_DIR, 'guest')
+    path.join(SRC_DIR, 'app')
   ]
 }

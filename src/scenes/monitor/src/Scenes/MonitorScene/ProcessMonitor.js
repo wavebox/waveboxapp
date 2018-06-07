@@ -5,35 +5,66 @@ import {Table, TableBody, TableHead, TableRow, TableCell} from '@material-ui/cor
 import { withStyles } from '@material-ui/core/styles'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import classNames from 'classnames'
+import PropTypes from 'prop-types'
 
 const styles = {
   table: {
     tableLayout: 'fixed'
   },
   headRow: {
-    height: 'auto'
+    height: 'auto',
+    '&>*:last-child': {
+      paddingRight: 12
+    },
+    '&>*:first-child': {
+      paddingLeft: 12
+    }
   },
   row: {
     height: 'auto',
     '&:nth-of-type(odd)': {
       backgroundColor: lightBlue[50]
+    },
+    '&>*:last-child': {
+      paddingRight: 12
+    },
+    '&>*:first-child': {
+      paddingLeft: 12
     }
   },
   cell: {
-    padding: '6px 12px',
+    padding: '6px 3px',
     textAlign: 'left',
     overflow: 'hidden',
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis'
   },
-  fixed100: {
-    //width: 100
-    width: 200
+  hCell: {
+    padding: '6px 3px',
+    textAlign: 'left',
+    verticalAlign: 'bottom',
+    overflow: 'hidden'
+  },
+  fixed80: {
+    width: 80,
+    textAlign: 'right'
+  },
+  pidCell: {
+    width: 70,
+    textAlign: 'left'
   }
 }
 
 @withStyles(styles)
 class ProcessMonitor extends React.Component {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static propTypes = {
+    isAdvanced: PropTypes.bool.isRequired
+  }
+
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
@@ -51,14 +82,15 @@ class ProcessMonitor extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
+    const monitorState = monitorStore.getState()
     return {
-      metrics: monitorStore.getState().allProcessMetrics()
+      metrics: monitorState.allProcessMetrics()
     }
   })()
 
   monitorUpdated = (monitorState) => {
     this.setState({
-      metrics: monitorStore.getState().allProcessMetrics()
+      metrics: monitorState.allProcessMetrics()
     })
   }
 
@@ -80,6 +112,33 @@ class ProcessMonitor extends React.Component {
       if (url.startsWith('chrome-devtools://')) { return 'Devtools' }
     }
     return url
+  }
+
+  /**
+  * Humanizes bytes
+  * @param bytes: the bytes to humanize
+  * @param multiplier=1: an optional multiplier to apply to the bytes (e.g. if you're passing KB)
+  * @return bytes in a human string
+  */
+  humanizeBytes (bytes, multiplier = 1) {
+    if (typeof (bytes) === 'number') {
+      return `${Math.round(bytes * multiplier / 1024 / 1024)} MB`
+    } else {
+      return '-'
+    }
+  }
+
+  /**
+  * Humanizes percent
+  * @param pc: the percent to humanize
+  * @return percent in a human string
+  */
+  humanizePercent (pc) {
+    if (typeof (pc) === 'number') {
+      return `${Math.round(pc * 100) / 100}%`
+    } else {
+      return '-'
+    }
   }
 
   /**
@@ -115,47 +174,114 @@ class ProcessMonitor extends React.Component {
   /**
   * Renders a row
   * @param classes: the classes set
+  * @param isAdvanced: true to render advanced mode
   * @param metric: the process info
   * @return jsx
   */
-  renderRow (classes, metric) {
-    return (
-      <TableRow key={metric.pid} className={classes.row}>
-        <TableCell className={classNames(classes.cell, classes.fixed100)}>
-          {metric.pid}
-        </TableCell>
-        <TableCell className={classNames(classes.cell)}>
-          {this.renderDescription(metric)}
-        </TableCell>
-        <TableCell className={classNames(classes.cell, classes.fixed100)}>
-          {/*`${Math.round((metric.memory.workingSetSize || 0) / 1024)} MB`*/}
-          {/*`${Math.round((metric.os.memory || 0) / 1024 / 1024)} MB`*/}
-          {`${Math.round((metric.os.memory || 0) / 1024 / 1024)} MB | ${Math.round((metric.chromium.memory.workingSetSize || 0) / 1024)} MB`}
-        </TableCell>
-        <TableCell className={classNames(classes.cell, classes.fixed100)}>
-          {/*metric.cpu.percentCPUUsage === undefined ? '-' : (Math.round(metric.cpu.percentCPUUsage * 100) / 100) + '%'*/}
-          {metric.os.cpu === undefined ? '-' : (Math.round(metric.os.cpu * 100) / 100) + '%'}
-        </TableCell>
-      </TableRow>
-    )
+  renderBasicRow (classes, isAdvanced, metric) {
+    const osUnreliableIndicator = metric.os.unreliable ? '*' : ''
+    if (isAdvanced) {
+      return (
+        <TableRow key={metric.pid} className={classes.row}>
+          <TableCell className={classNames(classes.cell, classes.pidCell)}>
+            {metric.pid}
+          </TableCell>
+          <TableCell className={classNames(classes.cell)}>
+            {this.renderDescription(metric)}
+          </TableCell>
+          <TableCell className={classNames(classes.cell, classes.fixed80)}>
+            {this.humanizeBytes(metric.os.memory)}
+            {osUnreliableIndicator}
+          </TableCell>
+          <TableCell className={classNames(classes.cell, classes.fixed80)}>
+            {this.humanizeBytes(metric.chromium.memory.workingSetSize, 1024)}
+          </TableCell>
+          <TableCell className={classNames(classes.cell, classes.fixed80)}>
+            {this.humanizeBytes(metric.chromium.memory.peakWorkingSetSize, 1024)}
+          </TableCell>
+          <TableCell className={classNames(classes.cell, classes.fixed80)}>
+            {this.humanizeBytes(metric.chromium.memory.privateBytes, 1024)}
+          </TableCell>
+          <TableCell className={classNames(classes.cell, classes.fixed80)}>
+            {this.humanizeBytes(metric.chromium.memory.sharedBytes, 1024)}
+          </TableCell>
+          <TableCell className={classNames(classes.cell, classes.fixed80)}>
+            {this.humanizePercent(metric.os.cpu)}
+            {osUnreliableIndicator}
+          </TableCell>
+          <TableCell className={classNames(classes.cell, classes.fixed80)}>
+            {this.humanizePercent(metric.chromium.cpu.percentCPUUsage)}
+          </TableCell>
+        </TableRow>
+      )
+    } else {
+      return (
+        <TableRow key={metric.pid} className={classes.row}>
+          <TableCell className={classNames(classes.cell, classes.pidCell)}>
+            {metric.pid}
+          </TableCell>
+          <TableCell className={classNames(classes.cell)}>
+            {this.renderDescription(metric)}
+          </TableCell>
+          <TableCell className={classNames(classes.cell, classes.fixed80)}>
+            {this.humanizeBytes(metric.os.memory)}
+            {osUnreliableIndicator}
+          </TableCell>
+          <TableCell className={classNames(classes.cell, classes.fixed80)}>
+            {this.humanizePercent(metric.os.cpu)}
+            {osUnreliableIndicator}
+          </TableCell>
+        </TableRow>
+      )
+    }
+  }
+
+  /**
+  * Renders the header
+  * @param classes: the classes set
+  * @param isAdvanced: true to render advanced mode
+  * @return jsx
+  */
+  renderHead (classes, isAdvanced) {
+    if (isAdvanced) {
+      return (
+        <TableHead>
+          <TableRow className={classes.headRow}>
+            <TableCell className={classNames(classes.hCell, classes.pidCell)}>Pid</TableCell>
+            <TableCell className={classNames(classes.hCell)}>Description</TableCell>
+            <TableCell className={classNames(classes.hCell, classes.fixed80)}>OS Memory</TableCell>
+            <TableCell className={classNames(classes.hCell, classes.fixed80)}>Working Set</TableCell>
+            <TableCell className={classNames(classes.hCell, classes.fixed80)}>Peak Working Set</TableCell>
+            <TableCell className={classNames(classes.hCell, classes.fixed80)}>Private Memory</TableCell>
+            <TableCell className={classNames(classes.hCell, classes.fixed80)}>Shared Memory</TableCell>
+            <TableCell className={classNames(classes.hCell, classes.fixed80)}>OS CPU</TableCell>
+            <TableCell className={classNames(classes.hCell, classes.fixed80)}>CR CPU</TableCell>
+          </TableRow>
+        </TableHead>
+      )
+    } else {
+      return (
+        <TableHead>
+          <TableRow className={classes.headRow}>
+            <TableCell className={classNames(classes.hCell, classes.pidCell)}>Pid</TableCell>
+            <TableCell className={classNames(classes.hCell)}>Description</TableCell>
+            <TableCell className={classNames(classes.hCell, classes.fixed80)}>Memory</TableCell>
+            <TableCell className={classNames(classes.hCell, classes.fixed80)}>CPU</TableCell>
+          </TableRow>
+        </TableHead>
+      )
+    }
   }
 
   render () {
-    const { classes } = this.props
+    const { classes, className, isAdvanced, ...passProps } = this.props
     const { metrics } = this.state
 
     return (
-      <Table className={classes.table}>
-        <TableHead>
-          <TableRow className={classes.headRow}>
-            <TableCell className={classNames(classes.cell, classes.fixed100)}>Pid</TableCell>
-            <TableCell className={classNames(classes.cell)}>Description</TableCell>
-            <TableCell className={classNames(classes.cell, classes.fixed100)}>Memory</TableCell>
-            <TableCell className={classNames(classes.cell, classes.fixed100)}>CPU</TableCell>
-          </TableRow>
-        </TableHead>
+      <Table className={classNames(classes.table, className)} {...passProps}>
+        {this.renderHead(classes, isAdvanced)}
         <TableBody>
-          {metrics.map((metric) => this.renderRow(classes, metric))}
+          {metrics.map((metric) => this.renderBasicRow(classes, isAdvanced, metric))}
         </TableBody>
       </Table>
     )
