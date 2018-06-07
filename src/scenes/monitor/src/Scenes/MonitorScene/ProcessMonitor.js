@@ -27,7 +27,8 @@ const styles = {
     textOverflow: 'ellipsis'
   },
   fixed100: {
-    width: 100
+    //width: 100
+    width: 200
   }
 }
 
@@ -127,10 +128,13 @@ class ProcessMonitor extends React.Component {
           {this.renderDescription(metric)}
         </TableCell>
         <TableCell className={classNames(classes.cell, classes.fixed100)}>
-          {`${Math.round((metric.memory.workingSetSize || 0) / 1024)} MB`}
+          {/*`${Math.round((metric.memory.workingSetSize || 0) / 1024)} MB`*/}
+          {/*`${Math.round((metric.os.memory || 0) / 1024 / 1024)} MB`*/}
+          {`${Math.round((metric.os.memory || 0) / 1024 / 1024)} MB | ${Math.round((metric.chromium.memory.workingSetSize || 0) / 1024)} MB`}
         </TableCell>
         <TableCell className={classNames(classes.cell, classes.fixed100)}>
-          {metric.cpu.percentCPUUsage === undefined ? '-' : (Math.round(metric.cpu.percentCPUUsage * 100) / 100) + '%'}
+          {/*metric.cpu.percentCPUUsage === undefined ? '-' : (Math.round(metric.cpu.percentCPUUsage * 100) / 100) + '%'*/}
+          {metric.os.cpu === undefined ? '-' : (Math.round(metric.os.cpu * 100) / 100) + '%'}
         </TableCell>
       </TableRow>
     )

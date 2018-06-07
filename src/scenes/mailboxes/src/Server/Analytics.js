@@ -17,7 +17,7 @@ import {
   ANALYTICS_CONFIG_INTERVAL
 } from 'shared/constants'
 import {
-  WB_METRICS_GET_METRICS_SYNC
+  WB_METRICS_GET_CHROMIUM_METRICS_SYNC
 } from 'shared/ipcEvents'
 
 const privAutoreportTO = Symbol('privAutoreportTO')
@@ -173,7 +173,7 @@ class Analytics {
   * Log the resource usage
   */
   sendResourceUsage () {
-    const metrics = ipcRenderer.sendSync(WB_METRICS_GET_METRICS_SYNC)
+    const metrics = ipcRenderer.sendSync(WB_METRICS_GET_CHROMIUM_METRICS_SYNC)
     if (!metrics) { return Promise.resolve({ sent: false }) }
     const sendMetrics = metrics.map((metric) => {
       if (metric.webContentsInfo) {
