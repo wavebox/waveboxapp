@@ -126,7 +126,9 @@ class NotificationListItem extends React.Component {
 
     return (
       <ListItem button className={classNames(classes.listItem, className)} {...passProps}>
-        <MailboxAvatar mailbox={mailbox} resolvedAvatar={resolvedAvatar} />
+        {mailbox ? (
+          <MailboxAvatar mailbox={mailbox} resolvedAvatar={resolvedAvatar} />
+        ) : undefined}
         <ListItemText
           primary={(<div className={classes.listItemPrimaryText}>{notification.title}</div>)}
           disableTypography

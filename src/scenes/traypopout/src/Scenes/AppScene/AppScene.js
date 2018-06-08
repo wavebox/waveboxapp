@@ -7,7 +7,7 @@ import NotificationScene from 'Scenes/NotificationScene'
 import UnreadScene from 'Scenes/UnreadScene'
 import AppSceneToolbar from './AppSceneToolbar'
 import AppSceneWindowTitlebar from './AppSceneWindowTitlebar'
-import { WB_TRAY_WINDOWED_MODE_CHANGED } from 'shared/ipcEvents'
+import { WB_TRAY_WINDOWED_MODE_CHANGED, WB_HIDE_TRAY } from 'shared/ipcEvents'
 import { withStyles } from '@material-ui/core/styles'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import classNames from 'classnames'
@@ -101,6 +101,7 @@ class AppScene extends React.Component {
   componentDidMount () {
     this.resetNavTOs = new Map()
     ipcRenderer.on(WB_TRAY_WINDOWED_MODE_CHANGED, this.handleWindowedModeChanged)
+    document.body.addEventListener('keyup', this.handleKeyUp)
   }
 
   componentWillUnmount () {
@@ -108,6 +109,7 @@ class AppScene extends React.Component {
       clearTimeout(to)
     })
     ipcRenderer.removeListener(WB_TRAY_WINDOWED_MODE_CHANGED, this.handleWindowedModeChanged)
+    document.body.removeEventListener('keyup', this.handleKeyUp)
   }
 
   /* **************************************************************************/
@@ -164,6 +166,18 @@ class AppScene extends React.Component {
 
       return { tabIndex: index }
     })
+  }
+
+  /**
+  * Listens on key-up commands to close the window
+  * @param evt: the dom event that fired
+  */
+  handleKeyUp = (evt) => {
+    if (evt.keyCode === 27 || evt.key === 'Escape') {
+      if (!this.state.isWindowedMode) {
+        ipcRenderer.send(WB_HIDE_TRAY, {})
+      }
+    }
   }
 
   /* **************************************************************************/
