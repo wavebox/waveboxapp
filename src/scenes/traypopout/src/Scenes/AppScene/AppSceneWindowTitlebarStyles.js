@@ -150,7 +150,7 @@ if (process.platform === 'darwin') {
       // Fix resizing window top on win32 waveboxapp/#684
       ...(process.platform === 'win32' ? {
         '&:before': {
-          content: '',
+          content: '""',
           position: 'absolute',
           display: 'block',
           top: 1,
