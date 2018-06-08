@@ -145,9 +145,24 @@ if (process.platform === 'darwin') {
       display: 'flex',
       zIndex: 1,
       height: BAR_SIZE,
-      WebkitAppRegion: 'drag',
       background: BAR_BG,
       color: BAR_FG,
+      // Fix resizing window top on win32 waveboxapp/#684
+      ...(process.platform === 'win32' ? {
+        '&:before': {
+          content: '',
+          position: 'absolute',
+          display: 'block',
+          top: 1,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: -1,
+          WebkitAppRegion: 'drag'
+        }
+      } : {
+        WebkitAppRegion: 'drag'
+      }),
 
       '& >.title': {
         order: 1,
