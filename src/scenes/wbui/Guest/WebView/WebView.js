@@ -3,133 +3,30 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { ELEVATED_LOG_PREFIX } from 'shared/constants'
 import electron from 'electron'
-import uuid from 'uuid'
-
-const camelCase = function (name) {
-  return name.split('-').map((token, index) => {
-    return index === 0 ? token : (token.charAt(0).toUpperCase() + token.slice(1))
-  }).join('')
-}
-
+import camelCase from './camelCase'
+import {
+  WEBVIEW_EVENTS,
+  REACT_WEBVIEW_EVENTS,
+  REACT_WEBVIEW_EVENT_PROPS,
+  WEBVIEW_PROPS,
+  SUPPORTED_ATTRS,
+  WEBVIEW_METHODS
+} from './WebViewPropsAttrs'
 const WARN_CAPTURE_PAGE_TIMEOUT = 1500
 const MAX_CAPTURE_PAGE_TIMEOUT = 2500
 const SEND_RESPOND_PREFIX = '__SEND_RESPOND__'
-const WEBVIEW_EVENTS = [
-  'load-commit',
-  'did-finish-load',
-  'did-fail-load',
-  'did-frame-finish-load',
-  'did-start-loading',
-  'did-stop-loading',
-  'did-navigate',
-  'did-navigate-in-page',
-  'dom-ready',
-  'page-title-updated',
-  'page-favicon-updated',
-  'enter-html-full-screen',
-  'leave-html-full-screen',
-  'console-message',
-  'new-window',
-  'close',
-  'ipc-message',
-  'crashed',
-  'gpu-crashed',
-  'plugin-crashed',
-  'destroyed',
-  'focus',
-  'blur',
-  'update-target-url',
-  'will-navigate',
-  'did-change-theme-color'
-]
-const REACT_WEBVIEW_EVENTS = WEBVIEW_EVENTS.map((n) => camelCase(n))
-const REACT_WEBVIEW_EVENT_PROPS = REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
-  acc[name] = PropTypes.func
-  return acc
-}, {})
+const INTERCEPTED_WEBVIEW_EVENTS = new Set(['ipc-message', 'console-message'])
 
-const WEBVIEW_PROPS = {
-  allowpopups: PropTypes.bool,
-  autosize: PropTypes.bool,
-  blinkfeatures: PropTypes.string,
-  disableblinkfeatures: PropTypes.string,
-  disableguestresize: PropTypes.bool,
-  disablewebsecurity: PropTypes.bool,
-  guestinstance: PropTypes.number,
-  httpreferrer: PropTypes.string,
-  nodeintegration: PropTypes.bool,
-  partition: PropTypes.string,
-  plugins: PropTypes.bool,
-  preload: PropTypes.string,
-  src: PropTypes.string,
-  useragent: PropTypes.string,
-  webpreferences: PropTypes.string
-}
-const WEBVIEW_ATTRS = Object.keys(WEBVIEW_PROPS)
-const HTML_ATTRS = ['id'] // we don't support all attributes
-const SUPPORTED_ATTRS = [].concat(WEBVIEW_ATTRS, HTML_ATTRS)
+let stylesheetAttached = false
+const stylesheet = document.createElement('style')
+stylesheet.innerHTML = `
+  .RC-WebView-Root { position:absolute; top:0; left:0; right:0; bottom:0; }
+  .RC-WebView-Root>webview { position:absolute; top:0; left:0; right:0; bottom:0; }
+  .RC-WebView-Root>webview.first-load-incomplete { visibility: visible !important; }
+  .RC-WebView-Root>webview.capture-in-progress { visibility: visible !important; }
+`
 
-const WEBVIEW_METHODS = [
-  'blur',
-  'canGoBack',
-  'canGoForward',
-  'canGoToOffset',
-  'capturePage',
-  'capturePagePromise', // addition
-  'clearHistory',
-  'copy',
-  'cut',
-  'delete',
-  'executeJavaScript',
-  'focus',
-  'findInPage',
-  'getURL',
-  'getTitle',
-  'getWebContents',
-  'getUserAgent',
-  'goBack',
-  'goForward',
-  'goToIndex',
-  'goToOffset',
-  'insertCSS',
-  'inspectElement',
-  'insertText',
-  'inspectServiceWorker',
-  'isAudioMuted',
-  'isCrashed',
-  'isDevToolsOpened',
-  'isDevToolsFocused',
-  'isLoading',
-  'isWaitingForResponse',
-  'loadURL',
-  'navigateBack',
-  'navigateForward',
-  'openDevTools',
-  'closeDevTools',
-  'paste',
-  'pasteAndMatchStyle',
-  'redo',
-  'reload',
-  'reloadIgnoringCache',
-  'replace',
-  'replaceMisspelling',
-  'print',
-  'printToPDF',
-  'selectAll',
-  'send',
-  'sendInputEvent',
-  'setAudioMuted',
-  'setUserAgent',
-  'setZoomFactor',
-  'setZoomLevel',
-  'showDefinitionForSelection',
-  'stop',
-  'stopFindInPage',
-  'undo',
-  'unselect'
-]
-
-export default class WebView extends React.Component {
+class WebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -149,24 +46,15 @@ export default class WebView extends React.Component {
   constructor (props) {
     super(props)
 
-    // We force the style to be visible when first loaded to deal with https://github.com/electron/electron/issues/8505
-    // Once did-finish-load is fired we remove our override to allow normal behaviour.
-    // "did-finish-load" callback is added in componentDidMount
-    // (@Thomas101) TODO We should probably look at refactoring this later on so there's no need to
-    // apply styles later on and run the risk of overwriting the style
-    this.instanceId = uuid.v4()
-    this.firstLoadStyle = document.createElement('style')
-    this.firstLoadStyle.innerHTML = 'webview[data-webview-instance-id] { visibility: visible !important; }'
-    document.head.appendChild(this.firstLoadStyle)
+    if (!stylesheetAttached) {
+      document.head.appendChild(stylesheet)
+      stylesheetAttached = true
+    }
 
-    const self = this
-    WEBVIEW_METHODS.forEach((m) => {
-      if (self[m] !== undefined) { return } // Allow overwriting
-      this[m] = function () {
-        const node = self.getWebviewNode()
-        return node[m].apply(node, Array.from(arguments))
-      }
-    })
+    this.ipcPromises = new Map()
+    this.watchEventListeners = new Set()
+
+    this.exposeWebviewMethods()
   }
 
   /* **************************************************************************/
@@ -174,47 +62,67 @@ export default class WebView extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    this.ipcPromises = {}
     const node = this.getWebviewNode()
 
-    // The second half of the firstLoadStyle fix. See constructor for more info
-    node.addEventListener('did-finish-load', () => {
-      if (this.firstLoadStyle && this.firstLoadStyle.parentElement) {
-        this.firstLoadStyle.parentElement.removeChild(this.firstLoadStyle)
-        this.firstLoadStyle = undefined
-      }
-    })
+    // Make sure we keep the webview visibile toload. See handler comments for more info
+    node.addEventListener('did-finish-load', this.handleFinishFirstLoad)
 
     // Bind webview events
-    WEBVIEW_EVENTS.forEach((name) => {
-      node.addEventListener(name, (evt) => {
-        this.dispatchWebViewEvent(name, evt)
-      })
-    })
+    this.updateEventListeners()
 
-    // Wait for the DOM to paint before running this
-    let webContentsAttachedAttempts = 0
-    this.webContentsAttachedInterval = setInterval(() => {
-      webContentsAttachedAttempts++
-      const webContents = node.getWebContents()
-      if (webContents) {
-        clearInterval(this.webContentsAttachedInterval)
-        if (this.props.onWebContentsAttached) {
-          this.props.onWebContentsAttached(webContents)
-        }
-      }
-
-      if (webContentsAttachedAttempts > 2000) {
-        clearInterval(this.webContentsAttachedInterval)
-      }
-    }, 1)
+    // Create an artificial onWebContentsAttached event
+    electron.remote.getCurrentWebContents().on('did-attach-webview', this.handleWebContentsAttached)
   }
 
   componentWillUnmount () {
-    clearInterval(this.webContentsAttachedInterval)
+    electron.remote.getCurrentWebContents().removeListener('did-attach-webview', this.handleWebContentsAttached)
   }
 
   componentWillReceiveProps (nextProps) {
+    this.updateAttributes(nextProps)
+    this.updateEventListeners()
+  }
+
+  /* **************************************************************************/
+  // Internal event handlers
+  /* **************************************************************************/
+
+  /**
+  * We force the style to be visible when first loaded to deal with https://github.com/electron/electron/issues/8505
+  * Once did-finish-load is fired we remove our override to allow normal behaviour.
+  * "did-finish-load" callback is added in componentDidMount
+  */
+  handleFinishFirstLoad = () => {
+    const node = this.getWebviewNode()
+    node.classList.remove('first-load-incomplete')
+    node.removeEventListener('did-finish-load', this.handleFinishFirstLoad)
+  }
+
+  /**
+  * Handles a webcontents attaching to the dom
+  * @param evt: the event that fired
+  * @param wc: the webcontents that did attach
+  */
+  handleWebContentsAttached = (evt, wc) => {
+    const node = this.getWebviewNode()
+    const nwc = node.getWebContents()
+    if (nwc && wc.id === nwc.id) {
+      if (this.props.onWebContentsAttached) {
+        this.props.onWebContentsAttached(wc)
+      }
+      electron.remote.getCurrentWebContents().removeListener('did-attach-webview', this.handleWebContentsAttached)
+    }
+  }
+
+  /* **************************************************************************/
+  // Attrs
+  /* **************************************************************************/
+
+  /**
+  * Updates the attributed on the dom element
+  * @param the next props to pass to the element
+  */
+  updateAttributes (nextProps) {
     const changed = SUPPORTED_ATTRS.filter((name) => this.props[name] !== nextProps[name])
     if (changed.length) {
       const node = this.getWebviewNode()
@@ -224,23 +132,77 @@ export default class WebView extends React.Component {
     }
   }
 
+  /**
+  * Generates a string of attributes to apply to the dom element
+  * @param props: the props to use
+  * @param style: the style string to apply
+  * @param className: the className to apply
+  * @return the attributes string
+  */
+  generateAttributesString (props, className) {
+    return SUPPORTED_ATTRS
+      .filter((k) => props[k] !== undefined && props[k] !== false)
+      .map((k) => {
+        return `${k}="${props[k]}"`
+      })
+      .concat([`class="${className}"`])
+      .join(' ')
+  }
+
+  /* **************************************************************************/
+  // Methods
+  /* **************************************************************************/
+
+  /**
+  * Automatically exposes the webview calls to the react element
+  */
+  exposeWebviewMethods () {
+    WEBVIEW_METHODS.forEach((m) => {
+      if (this[m] !== undefined) { return } // Allow overwriting
+      this[m] = (...args) => {
+        const node = this.getWebviewNode()
+        return node[m](...args)
+      }
+    })
+  }
+
   /* **************************************************************************/
   // Events
   /* **************************************************************************/
 
   /**
+  * Updates the event listeners from the current props
+  */
+  updateEventListeners = () => {
+    const node = this.getWebviewNode()
+    WEBVIEW_EVENTS.forEach((domName) => {
+      const isListening = this.watchEventListeners.has(domName)
+      const hasReactListener = !!this.props[camelCase(domName)] || INTERCEPTED_WEBVIEW_EVENTS.has(domName)
+
+      if (isListening !== hasReactListener) {
+        if (isListening && !hasReactListener) {
+          node.removeEventListener(domName, this.handleWebviewEvent)
+        } else if (!isListening && hasReactListener) {
+          node.addEventListener(domName, this.handleWebviewEvent)
+        }
+      }
+    })
+  }
+
+  /**
   * Dispatches a webview event to the appropriate handler
-  * @param name: the name of the event
+  * @param domEventName: the name of the dom event
   * @param evt: the event that fired
   */
-  dispatchWebViewEvent (name, evt) {
-    const ccName = camelCase(name)
-    if (name === 'ipc-message') {
+  handleWebviewEvent = (evt) => {
+    const reactEventName = camelCase(evt.type)
+    // Ensure you add these into INTERCEPTED_WEBVIEW_EVENTS
+    if (evt.type === 'ipc-message') {
       const didSiphon = this.siphonIPCMessage(evt)
       if (!didSiphon) {
-        if (this.props[ccName]) { this.props[ccName](evt) }
+        if (this.props[reactEventName]) { this.props[reactEventName](evt) }
       }
-    } else if (name === 'console-message') {
+    } else if (evt.type === 'console-message') {
       if (evt.message.startsWith(ELEVATED_LOG_PREFIX)) {
         const logArgs = [
           '[ELEVATED WEBVIEW LOG]',
@@ -255,9 +217,9 @@ export default class WebView extends React.Component {
           default: console.log(...logArgs); break
         }
       }
-      if (this.props[ccName]) { this.props[ccName](evt) }
+      if (this.props[reactEventName]) { this.props[reactEventName](evt) }
     } else {
-      if (this.props[ccName]) { this.props[ccName](evt) }
+      if (this.props[reactEventName]) { this.props[reactEventName](evt) }
     }
   }
 
@@ -270,10 +232,11 @@ export default class WebView extends React.Component {
     if (typeof (evt.channel.type) !== 'string') { return false }
 
     if (evt.channel.type.indexOf(SEND_RESPOND_PREFIX) === 0) {
-      if (this.ipcPromises[evt.channel.type]) {
-        clearTimeout(this.ipcPromises[evt.channel.type].timeout)
-        this.ipcPromises[evt.channel.type].resolve(evt.channel.data)
-        delete this.ipcPromises[evt.channel.type]
+      if (this.ipcPromises.has(evt.channel.type)) {
+        const responder = this.ipcPromises.get(evt.channel.type)
+        clearTimeout(responder.timeout)
+        responder.resolve(evt.channel.data)
+        this.ipcPromises.delete(evt.channel.type)
       }
       return true
     } else {
@@ -311,18 +274,13 @@ export default class WebView extends React.Component {
     const node = this.getWebviewNode()
     if (typeof (arg1) === 'object' && typeof (arg2) === 'function') {
       // Check if anyone else is capturing
-      if (node.getAttribute('data-webview-capture-action') === 'capture') {
+      if (node.classList.contains('capture-in-progress')) {
         arg2(null, new Error('Failed to capture, capture already in progress'))
       }
 
       // Attach a style to the page that can't be overwritten in case anyone else
       // tries to change the style in the meatime
-      const id = uuid.v4()
-      const style = document.createElement('style')
-      style.innerHTML = `webview[data-webview-capture-id="${id}"][data-webview-capture-action="capture"] { visibility: visible !important; }`
-      document.head.appendChild(style)
-      node.setAttribute('data-webview-capture-id', id)
-      node.setAttribute('data-webview-capture-action', 'capture')
+      node.classList.add('capture-in-progress')
 
       const timeoutWarn = setTimeout(() => {
         console.warn(
@@ -342,9 +300,7 @@ export default class WebView extends React.Component {
             clearTimeout(timeoutWarn)
             clearTimeout(timeout)
             setTimeout(() => {
-              if (style.parentElement) { style.parentElement.removeChild(style) }
-              node.removeAttribute('data-webview-capture-id')
-              node.removeAttribute('data-webview-capture-action')
+              node.classList.remove('capture-in-progress')
               arg2(img)
             })
           })
@@ -405,10 +361,10 @@ export default class WebView extends React.Component {
       const id = Math.random().toString()
       const respondName = SEND_RESPOND_PREFIX + ':' + sendName + ':' + id
       const rejectTimeout = setTimeout(() => {
-        delete this.ipcPromises[respondName]
+        this.ipcPromises.delete(respondName)
         reject(new Error('Request Timeout'))
       }, timeout)
-      this.ipcPromises[respondName] = { resolve: resolve, timeout: rejectTimeout }
+      this.ipcPromises.set(respondName, { resolve: resolve, timeout: rejectTimeout })
       this.getWebviewNode().send(sendName, Object.assign({}, obj, { __respond__: respondName }))
     })
   }
@@ -425,25 +381,22 @@ export default class WebView extends React.Component {
   }
 
   shouldComponentUpdate () {
-    return false // we never want to re-render. We will handle this manually in componentWillReceiveProps
+    // we never want to re-render. We will handle this manually in componentWillReceiveProps
+    return false
   }
 
   render () {
-    const attrs = SUPPORTED_ATTRS
-      .filter((k) => this.props[k] !== undefined && this.props[k] !== false)
-      .map((k) => {
-        return `${k}="${this.props[k]}"`
-      })
-      .concat([
-        'style="position:absolute; top:0; bottom:0; right:0; left:0;"',
-        `data-webview-instance-id="${this.instanceId}"`
-      ])
-      .join(' ')
+    const attrs = this.generateAttributesString(
+      this.props,
+      'first-load-incomplete'
+    )
 
     return (
-      <div
-        style={{ position: 'absolute', top: 0, bottom: 0, right: 0, left: 0 }}
-        dangerouslySetInnerHTML={{__html: `<webview ${attrs}></webview>`}} />
+      <div className={'RC-WebView-Root'} dangerouslySetInnerHTML={{
+        __html: `<webview ${attrs}></webview>`
+      }} />
     )
   }
 }
+
+export default WebView
