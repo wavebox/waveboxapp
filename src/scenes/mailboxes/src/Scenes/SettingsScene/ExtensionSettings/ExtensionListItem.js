@@ -84,6 +84,7 @@ const styles = {
     marginTop: 8
   },
   actionAfterRestart: {
+    display: 'block',
     fontSize: '12px',
     color: grey[600]
   },
@@ -258,6 +259,47 @@ class ExtensionListItem extends React.Component {
   * @param state: the state to use to render
   * @return jsx
   */
+  renderInstalledActions (classes, state) {
+    const {
+      hasBackgroundPage,
+      hasOptionsPage,
+      availableToUser
+    } = state
+    if (availableToUser) {
+      return (
+        <div className={classes.actions}>
+          <Button variant='raised' onClick={this.handleUninstall} className={classes.action}>
+            Uninstall
+          </Button>
+          {hasOptionsPage ? (
+            <Button variant='raised' onClick={this.handleOpenOptionsPage} className={classes.action}>
+              Options
+            </Button>
+          ) : undefined}
+          {hasBackgroundPage ? (
+            <Button onClick={this.handleInspectBackgroundPage} className={classNames(classes.action, classes.developerAction)}>
+              Inspect background page
+            </Button>
+          ) : undefined}
+        </div>
+      )
+    } else {
+      return (
+        <div className={classes.actions}>
+          <Button variant='raised' onClick={this.handleUninstall} className={classes.action}>
+            Uninstall
+          </Button>
+        </div>
+      )
+    }
+  }
+
+  /**
+  * Renders the actions
+  * @param classes:
+  * @param state: the state to use to render
+  * @return jsx
+  */
   renderActions (classes, state) {
     const {
       isWaitingInstall,
@@ -266,8 +308,6 @@ class ExtensionListItem extends React.Component {
       isInstalled,
       isWaitingUpdate,
       isCheckingUpdate,
-      hasBackgroundPage,
-      hasOptionsPage,
       availableToUser
     } = state
 
@@ -296,6 +336,7 @@ class ExtensionListItem extends React.Component {
       return (
         <div className={classes.actions}>
           <span className={classes.actionAfterRestart}>Update will complete after restart</span>
+          {this.renderInstalledActions(classes, state)}
         </div>
       )
     } else if (isCheckingUpdate) {
@@ -308,33 +349,7 @@ class ExtensionListItem extends React.Component {
         </div>
       )
     } else if (isInstalled) {
-      if (availableToUser) {
-        return (
-          <div className={classes.actions}>
-            <Button variant='raised' onClick={this.handleUninstall} className={classes.action}>
-              Uninstall
-            </Button>
-            {hasOptionsPage ? (
-              <Button variant='raised' onClick={this.handleOpenOptionsPage} className={classes.action}>
-                Options
-              </Button>
-            ) : undefined}
-            {hasBackgroundPage ? (
-              <Button onClick={this.handleInspectBackgroundPage} className={classNames(classes.action, classes.developerAction)}>
-                Inspect background page
-              </Button>
-            ) : undefined}
-          </div>
-        )
-      } else {
-        return (
-          <div className={classes.actions}>
-            <Button variant='raised' onClick={this.handleUninstall} className={classes.action}>
-              Uninstall
-            </Button>
-          </div>
-        )
-      }
+      return this.renderInstalledActions(classes, state)
     } else if (availableToUser) {
       return (
         <div className={classes.actions}>
