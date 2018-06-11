@@ -25,7 +25,7 @@ const styles = {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     width: '100%',
-    lineHeight: '18px',
+    lineHeight: '20px',
     fontSize: '16px'
   },
   secondaryText: {
