@@ -133,18 +133,29 @@ class WaveboxWindowLocationSaver {
   }
 
   /**
-  * Re-applies a screen location
-  * @param location: the location to reapply
+  * Shows the window with the saved screen location. If no screen location is
+  * found, still shows the window but in whatever state the OS wants to show it
+  * in. If there is no window then just does nothing
+  * @param location=this.getSavedScreenLocation(): the location to apply
+  * @return true if a saved location was used, false otherwise or if the window is not available
   */
-  reapplySavedScreenLocation (location) {
-    if (!this.windowId) { return }
-    if (!location || Object.keys(location).length === 0) { return }
-    if (!this.browserWindow || this.browserWindow.isDestroyed()) { return }
+  showWithSavedScreenLocation (location = this.getSavedScreenLocation()) {
+    if (!this.windowId) { return false }
+    if (!this.browserWindow || this.browserWindow.isDestroyed()) { return false }
+    if (!location || Object.keys(location).length === 0) {
+      this.browserWindow.show()
+      return false
+    }
 
     if (location.maximized) {
+      // Will automatically show the window. Calling show() first will show the window
+      // in a non-maximized state and cause a jitter
       this.browserWindow.maximize()
+      return true
     } else {
+      this.browserWindow.show()
       this.browserWindow.setBounds(location, false)
+      return true
     }
   }
 }
