@@ -16,6 +16,12 @@ class MicrosoftTeamService extends MicrosoftService {
       'microsoft/logo_team_128px.png'
     ]
   }
+  static get excludedExportKeys () {
+    return super.excludedExportKeys.concat([
+      'unreadCount',
+      'unreadCountUpdateTime'
+    ])
+  }
 
   /* **************************************************************************/
   // Properties

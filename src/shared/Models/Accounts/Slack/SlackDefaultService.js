@@ -6,6 +6,14 @@ class SlackDefaultService extends CoreService {
   /* **************************************************************************/
 
   static get type () { return CoreService.SERVICE_TYPES.DEFAULT }
+  static get excludedExportKeys () {
+    return super.excludedExportKeys.concat([
+      'slackUnreadChannelInfo',
+      'slacUnreadGroupInfo',
+      'slackUnreadMPIMInfo',
+      'slackUnreadIMInfo'
+    ])
+  }
 
   /* **************************************************************************/
   // Class: Humanized

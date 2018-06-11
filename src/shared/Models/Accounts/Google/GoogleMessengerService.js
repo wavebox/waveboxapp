@@ -6,6 +6,12 @@ class GoogleMessengerService extends GoogleService {
   /* **************************************************************************/
 
   static get type () { return GoogleService.SERVICE_TYPES.MESSENGER }
+  static get excludedExportKeys () {
+    return super.excludedExportKeys.concat([
+      'unreadCount',
+      'unreadCountUpdateTime'
+    ])
+  }
 
   /* **************************************************************************/
   // Class: Humanized

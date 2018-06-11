@@ -4,6 +4,7 @@ import fs from 'fs'
 import mailboxStorage from 'Storage/mailboxStorage'
 import avatarStorage from 'Storage/avatarStorage'
 import settingStorage from 'Storage/settingStorage'
+import containerStorage from 'Storage/containerStorage'
 import pkg from 'package.json'
 import { dialog } from 'electron'
 import WaveboxWindow from 'Windows/WaveboxWindow'
@@ -12,7 +13,8 @@ import {evtMain} from 'AppEvents'
 const TAKEOUT_STORES = [
   mailboxStorage,
   avatarStorage,
-  settingStorage
+  settingStorage,
+  containerStorage
 ]
 
 class TakeoutStore {

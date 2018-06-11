@@ -40,6 +40,9 @@ class MicrosoftMailbox extends CoreMailbox {
   }
   static get defaultColorOutlook () { return MailboxColors.OUTLOOK }
   static get defaultColorOffice365 () { return MailboxColors.OFFICE365 }
+  static get excludedExportKeys () {
+    return super.excludedExportKeys.concat(['auth'])
+  }
 
   /* **************************************************************************/
   // Class: Humanized
@@ -118,21 +121,6 @@ class MicrosoftMailbox extends CoreMailbox {
     const sanitized = super.sanitizeProvisionalJS(provisionalJS)
     sanitized.accessMode = accessMode
     return sanitized
-  }
-
-  /**
-  * Modifies raw mailbox json for export
-  * @param id: the id of the mailbox
-  * @param mailboxJS: the js mailbox object
-  * @return the modified data
-  */
-  static prepareForExport (id, mailboxJS) {
-    const prep = super.prepareForExport(id, mailboxJS)
-    const clearKeys = ['auth']
-    clearKeys.forEach((k) => {
-      delete prep[k]
-    })
-    return prep
   }
 
   /* **************************************************************************/

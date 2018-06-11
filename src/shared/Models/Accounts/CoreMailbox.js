@@ -36,6 +36,7 @@ class CoreMailbox extends Model {
   static get supportsAdditionalServiceTypes () { return this.supportedServiceTypes.length > 1 }
   static get defaultColor () { return undefined }
   static get isIntegrated () { return true }
+  static get excludedExportKeys () { return [] }
 
   /* **************************************************************************/
   // Class : Humanized
@@ -127,16 +128,6 @@ class CoreMailbox extends Model {
     return cpy
   }
 
-  /**
-  * Modifies raw mailbox json for export
-  * @param id: the id of the mailbox
-  * @param mailboxJS: the js mailbox object
-  * @return the modified data
-  */
-  static prepareForExport (id, mailboxJS) {
-    return JSON.parse(JSON.stringify(mailboxJS))
-  }
-
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
@@ -204,6 +195,26 @@ class CoreMailbox extends Model {
       unreadActivityCountsTowardsAppUnread: this.__data__.unreadActivityCountsTowardsAppUnread,
       showNotifications: this.__data__.showNotifications
     } : undefined)
+  }
+
+  /**
+  * Modifies raw json for export
+  * @param includeCrossStoreReferences=false: set to true to include things like cross store references (e.g. uploaded avatars)
+  * @return copy of plain data that is safe to export
+  */
+  prepareForExport (includeCrossStoreReferences = false) {
+    const clone = this.cloneData()
+    if (!includeCrossStoreReferences) {
+      delete clone.customAvatar
+      delete clone.serviceLocalAvatar
+    }
+    clone.services = this.enabledServices.map((service) => {
+      return service.prepareForExport()
+    })
+    this.constructor.excludedExportKeys.forEach((k) => {
+      delete clone[k]
+    })
+    return clone
   }
 
   /* **************************************************************************/

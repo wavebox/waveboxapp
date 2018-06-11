@@ -49,6 +49,9 @@ class GoogleMailbox extends CoreMailbox {
   }
   static get defaultColorGmail () { return MailboxColors.GMAIL }
   static get defaultColorGinbox () { return MailboxColors.GINBOX }
+  static get excludedExportKeys () {
+    return super.excludedExportKeys.concat(['auth'])
+  }
 
   /* **************************************************************************/
   // Class: Humanized
@@ -129,21 +132,6 @@ class GoogleMailbox extends CoreMailbox {
     const defaultService = sanitized.services.find((service) => service.type === CoreMailbox.SERVICE_TYPES.DEFAULT)
     defaultService.accessMode = accessMode
     return sanitized
-  }
-
-  /**
-  * Modifies raw mailbox json for export
-  * @param id: the id of the mailbox
-  * @param mailboxJS: the js mailbox object
-  * @return the modified data
-  */
-  static prepareForExport (id, mailboxJS) {
-    const prep = super.prepareForExport(id, mailboxJS)
-    const clearKeys = ['auth']
-    clearKeys.forEach((k) => {
-      delete prep[k]
-    })
-    return prep
   }
 
   /* **************************************************************************/

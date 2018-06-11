@@ -6,6 +6,12 @@ class GoogleCommunicationService extends GoogleService {
   /* **************************************************************************/
 
   static get type () { return GoogleService.SERVICE_TYPES.COMMUNICATION }
+  static get excludedExportKeys () {
+    return super.excludedExportKeys.concat([
+      'unreadCount',
+      'unreadCountUpdateTime'
+    ])
+  }
 
   /* **************************************************************************/
   // Class: Humanized

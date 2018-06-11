@@ -7,6 +7,13 @@ class ContainerDefaultService extends CoreService {
   /* **************************************************************************/
 
   static get type () { return CoreService.SERVICE_TYPES.DEFAULT }
+  static get excludedExportKeys () {
+    return super.excludedExportKeys.concat([
+      'documentTitleUnreadCount',
+      'faviconIndicatesUnreadActivity',
+      'lastUnseenNotificationTime'
+    ])
+  }
 
   /* **************************************************************************/
   // Lifecycle

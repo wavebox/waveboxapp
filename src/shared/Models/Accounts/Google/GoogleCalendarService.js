@@ -6,6 +6,11 @@ class GoogleCalendarService extends GoogleService {
   /* **************************************************************************/
 
   static get type () { return GoogleService.SERVICE_TYPES.CALENDAR }
+  static get excludedExportKeys () {
+    return super.excludedExportKeys.concat([
+      'lastUnseenNotificationTime'
+    ])
+  }
 
   /* **************************************************************************/
   // Class: Humanized

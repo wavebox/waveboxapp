@@ -22,6 +22,9 @@ class SlackMailbox extends CoreMailbox {
   static get humanizedVectorLogo () { return 'slack/logo_vector.svg' }
   static get humanizedType () { return 'Slack' }
   static get defaultColor () { return MailboxColors.SLACK }
+  static get excludedExportKeys () {
+    return super.excludedExportKeys.concat(['auth'])
+  }
 
   /* **************************************************************************/
   // Lifecycle
@@ -37,21 +40,6 @@ class SlackMailbox extends CoreMailbox {
       serviceData,
       { authUrl: this.authUrl, teamName: this.authTeamName },
       this.buildMailboxToServiceMigrationData(serviceData.type))
-  }
-
-  /**
-  * Modifies raw mailbox json for export
-  * @param id: the id of the mailbox
-  * @param mailboxJS: the js mailbox object
-  * @return the modified data
-  */
-  static prepareForExport (id, mailboxJS) {
-    const prep = super.prepareForExport(id, mailboxJS)
-    const clearKeys = ['auth']
-    clearKeys.forEach((k) => {
-      delete prep[k]
-    })
-    return prep
   }
 
   /* **************************************************************************/

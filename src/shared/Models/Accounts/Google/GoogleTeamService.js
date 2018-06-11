@@ -6,6 +6,11 @@ class GoogleTeamService extends GoogleService {
   /* **************************************************************************/
 
   static get type () { return GoogleService.SERVICE_TYPES.TEAM }
+  static get excludedExportKeys () {
+    return super.excludedExportKeys.concat([
+      'hasUnreadActivity'
+    ])
+  }
 
   /* **************************************************************************/
   // Class: Humanized

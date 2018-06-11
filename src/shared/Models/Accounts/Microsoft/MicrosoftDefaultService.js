@@ -12,6 +12,12 @@ class MicrosoftDefaultService extends MicrosoftService {
 
   static get type () { return MicrosoftService.SERVICE_TYPES.DEFAULT }
   static get UNREAD_MODES () { return UNREAD_MODES }
+  static get excludedExportKeys () {
+    return super.excludedExportKeys.concat([
+      'unreadCount',
+      'unreadMessages'
+    ])
+  }
 
   /* **************************************************************************/
   // Class: Humanized

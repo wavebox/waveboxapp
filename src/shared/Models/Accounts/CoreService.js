@@ -18,6 +18,14 @@ class CoreService extends Model {
   static get PROTOCOL_TYPES () { return PROTOCOL_TYPES }
   static get RELOAD_BEHAVIOURS () { return RELOAD_BEHAVIOURS }
   static get type () { return SERVICE_TYPES.UNKNOWN }
+  static get excludedExportKeys () {
+    return [
+      'lastUrl',
+      '::guestConfig:hasUnreadActivity',
+      '::guestConfig:unreadCount',
+      '::guestConfig:trayMessages'
+    ]
+  }
 
   /* **************************************************************************/
   // Class: Humanized
@@ -74,6 +82,18 @@ class CoreService extends Model {
     this.__metadata__ = metadata
     this.__mailboxMigrationData__ = mailboxMigrationData
     this.__guestConfig__ = new CoreServiceGuestConfig(data)
+  }
+
+  /**
+  * Modifies raw json for export
+  * @return copy of plain data that is safe to export
+  */
+  prepareForExport () {
+    const clone = this.cloneData()
+    this.constructor.excludedExportKeys.forEach((k) => {
+      delete clone[k]
+    })
+    return clone
   }
 
   /* **************************************************************************/

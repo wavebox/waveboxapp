@@ -27,10 +27,9 @@ class MailboxStorageBucket extends StorageBucket {
         acc[id] = rawExport.data[id]
       } else {
         try {
-          const mailboxJS = JSON.parse(rawExport.data[id])
-          const MailboxClass = MailboxFactory.getClass(mailboxJS.type)
-          if (MailboxClass) {
-            acc[id] = JSON.stringify(MailboxClass.prepareForExport(id, mailboxJS))
+          const mailbox = MailboxFactory.modelize(id, JSON.parse(rawExport.data[id]))
+          if (mailbox) {
+            acc[id] = JSON.stringify(mailbox.prepareForExport(true))
           } else {
             acc[id] = rawExport.data[id]
           }

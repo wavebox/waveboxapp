@@ -31,6 +31,13 @@ class GoogleDefaultService extends GoogleService {
   static get ACCESS_MODES () { return ACCESS_MODES }
   static get UNREAD_MODES () { return UNREAD_MODES }
   static get CUSTOM_UNREAD_COUNT_LABEL_FIELDS () { return CUSTOM_UNREAD_COUNT_LABEL_FIELDS }
+  static get excludedExportKeys () {
+    return super.excludedExportKeys.concat([
+      'historyId',
+      'unreadCount',
+      'unreadThreads'
+    ])
+  }
 
   /* **************************************************************************/
   // Properties

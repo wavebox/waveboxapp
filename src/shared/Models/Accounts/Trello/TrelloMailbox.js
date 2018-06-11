@@ -21,20 +21,8 @@ class TrelloMailbox extends CoreMailbox {
   static get humanizedVectorLogo () { return 'trello/logo_vector.svg' }
   static get humanizedType () { return 'Trello' }
   static get defaultColor () { return MailboxColors.TRELLO }
-
-  /**
-  * Modifies raw mailbox json for export
-  * @param id: the id of the mailbox
-  * @param mailboxJS: the js mailbox object
-  * @return the modified data
-  */
-  static prepareForExport (id, mailboxJS) {
-    const prep = super.prepareForExport(id, mailboxJS)
-    const clearKeys = ['authToken', 'authAppKey']
-    clearKeys.forEach((k) => {
-      delete prep[k]
-    })
-    return prep
+  static get excludedExportKeys () {
+    return super.excludedExportKeys.concat(['authToken', 'authAppKey'])
   }
 
   /* **************************************************************************/
