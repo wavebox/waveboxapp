@@ -3,8 +3,8 @@ const ROOT_DIR = path.resolve(path.join(__dirname, '../'))
 const devRequire = (n) => require(path.join(ROOT_DIR, 'node_modules', n))
 
 const WebpackNotifierPlugin = devRequire('webpack-notifier')
-const WebpackOnBuildPlugin = devRequire('on-build-webpack')
 const ProgressBarPlugin = devRequire('progress-bar-webpack-plugin')
+const BuildDonePlugin = require('./BuildDonePlugin')
 const Colors = devRequire('colors')
 const {
   isNotifications,
@@ -50,7 +50,7 @@ module.exports = function (name, env, config) {
       }
     }))
   } else {
-    config.plugins.push(new WebpackOnBuildPlugin((stats) => {
+    config.plugins.push(new BuildDonePlugin((stats) => {
       console.log(`${Colors.inverse('[Build Complete]')} ${name}`)
     }))
   }

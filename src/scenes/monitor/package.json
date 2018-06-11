@@ -5,11 +5,12 @@
   "repository": "https://github.com/wavebox/waveboxapp",
   "description": "Monitor UI for Wavebox",
   "dependencies": {
-    "@material-ui/core": "1.2.0",
+    "@material-ui/core": "1.2.1",
     "@material-ui/icons": "1.1.0",
     "alt": "0.18.6",
     "fbjs": "0.8.16",
     "prop-types": "15.6.1",
+    "classnames": "2.2.6",
     "react": "16.4.0",
     "react-addons-shallow-compare": "15.6.2",
     "react-dom": "16.4.0"
