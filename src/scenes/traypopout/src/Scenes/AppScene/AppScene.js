@@ -53,7 +53,8 @@ const styles = {
   tabButton: {
     color: 'white',
     maxWidth: 'none',
-    height: TAB_HEIGHT
+    height: TAB_HEIGHT,
+    minHeight: TAB_HEIGHT
   },
   tabInkBar: {
     backgroundColor: lightBlue[100]
