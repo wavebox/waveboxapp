@@ -13,6 +13,7 @@ import MailboxesWindow from 'Windows/MailboxesWindow'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import CRExtensionRTContextMenu from 'shared/Models/CRExtensionRT/CRExtensionRTContextMenu'
 import { settingsActions } from 'stores/settings'
+import { mailboxStore } from 'stores/mailbox'
 import { AUTOFILL_MENU } from 'shared/b64Assets'
 
 const privConnected = Symbol('privConnected')
@@ -165,7 +166,7 @@ class ContextMenuService {
   /**
   * Renders the url section
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderURLSection (contents, params) {
@@ -179,6 +180,20 @@ class ContextMenuService {
         label: 'Open Link with Wavebox',
         click: () => { this.openLinkInWaveboxWindow(contents, params.linkURL) }
       })
+
+      const mailboxes = mailboxStore.getState().allMailboxes()
+      if (mailboxes.length > 1) {
+        template.push({
+          label: 'Open Link in Account Profile',
+          submenu: mailboxes.map((mailbox) => {
+            return {
+              label: `${mailbox.humanizedType} : ${mailbox.displayName}`,
+              click: () => { this.openLinkInWaveboxWindowForAccount(contents, params.linkURL, mailbox) }
+            }
+          })
+        })
+      }
+
       template.push({
         label: 'Open Link in Current Tab',
         click: () => { contents.loadURL(params.linkURL) }
@@ -200,7 +215,7 @@ class ContextMenuService {
   /**
   * Renders the lookup and search section
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderLookupAndSearchSection (contents, params) {
@@ -231,7 +246,7 @@ class ContextMenuService {
   /**
   * Renders the undo/redo section
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderRewindSection (contents, params) {
@@ -246,7 +261,7 @@ class ContextMenuService {
   /**
   * Renders the editing section
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderEditingSection (contents, params) {
@@ -277,9 +292,9 @@ class ContextMenuService {
   }
 
   /**
-  * Renders the inpage navigation section
+  * Renders the in page navigation section
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderPageNavigationSection (contents, params) {
@@ -302,9 +317,9 @@ class ContextMenuService {
   }
 
   /**
-  * Renders the inpage external open options
+  * Renders the in page external open options
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderPageExternalSection (contents, params) {
@@ -327,7 +342,7 @@ class ContextMenuService {
   /**
   * Renders the wavebox section
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderWaveboxSection (contents, params) {
@@ -370,7 +385,7 @@ class ContextMenuService {
   /**
   * Renders the spelling section
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderSpellingSection (contents, params) {
@@ -478,11 +493,11 @@ class ContextMenuService {
   /**
   * Renders the wavebox section
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderExtensionSection (contents, params) {
-    // Check we're in a regonized tab - extensions don't work universally for us on purpose!
+    // Check we're in a recognized tab - extensions don't work universally for us on purpose!
     const waveboxWindow = WaveboxWindow.fromTabId(contents.id)
     if (!waveboxWindow) { return [] }
 
@@ -581,6 +596,26 @@ class ContextMenuService {
       undefined,
       openerWindow,
       { partition: openerWebPreferences.partition }
+    )
+  }
+
+  /**
+  *  Opens a link in a Wavebox popup window, backed for a different account type
+  * @param contents: the contents to open for
+  * @param url: the url to open
+  * @param mailbox: the mailbox to open for
+  */
+  openLinkInWaveboxWindowForAccount (contents, url, mailbox) {
+    const rootContents = ElectronWebContents.rootWebContents(contents)
+    const openerWindow = rootContents ? BrowserWindow.fromWebContents(rootContents) : undefined
+    const contentWindow = new ContentWindow(
+      undefined // This is a hived window, so don't pass any meta info into it
+    )
+    contentWindow.create(
+      url,
+      undefined,
+      openerWindow,
+      { partition: `persist:${mailbox.partition}` }
     )
   }
 
