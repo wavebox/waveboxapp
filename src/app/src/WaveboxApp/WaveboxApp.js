@@ -9,7 +9,6 @@ import { settingsStore, settingsActions } from 'stores/settings'
 import { platformStore, platformActions } from 'stores/platform'
 import { mailboxStore, mailboxActions } from 'stores/mailbox'
 import { userStore, userActions } from 'stores/user'
-import { takeoutStore, takeoutActions } from 'stores/takeout'
 import { emblinkStore, emblinkActions } from 'stores/emblink'
 import { notifhistStore, notifhistActions } from 'stores/notifhist'
 import ipcEvents from 'shared/ipcEvents'
@@ -101,8 +100,6 @@ class WaveboxApp {
     platformActions.load()
     userStore.getState()
     userActions.load()
-    takeoutStore.getState()
-    takeoutActions.load()
     emblinkStore.getState()
     emblinkActions.load()
     notifhistStore.getState()
@@ -258,6 +255,8 @@ class WaveboxApp {
   _handleAppReady = () => {
     const settingsState = settingsStore.getState()
     const mailboxState = mailboxStore.getState()
+    const userState = userStore.getState()
+
     // Load extensions before any webcontents get created
     try {
       CRExtensionManager.loadExtensionDirectory()
@@ -274,7 +273,8 @@ class WaveboxApp {
       settingsState.accelerators,
       mailboxState.allMailboxes(),
       mailboxState.activeMailboxId(),
-      mailboxState.activeMailboxService()
+      mailboxState.activeMailboxService(),
+      userState.user.userEmail
     )
 
     // Create UI

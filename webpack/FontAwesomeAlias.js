@@ -34,7 +34,12 @@ const FREE_MAPPING = {
   'regular/faWindow': 'regular/faSquare',
   'regular/faWindowMinimize': true,
   'solid/faMinus': true,
-  'solid/faTimes': true
+  'solid/faTimes': true,
+  'solid/faUpload': true,
+  'solid/faDownload': true,
+  'solid/faCloudDownload': 'solid/faCloudDownloadAlt',
+  'solid/faCloudUpload': 'solid/faCloudUploadAlt',
+  'solid/faSync': true
 }
 
 module.exports = function (nodeModulesPath) {

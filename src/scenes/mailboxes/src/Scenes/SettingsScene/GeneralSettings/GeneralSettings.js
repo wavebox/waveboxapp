@@ -95,7 +95,8 @@ class GeneralSettings extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    showRestart: PropTypes.func.isRequired
+    showRestart: PropTypes.func.isRequired,
+    sectionId: PropTypes.string
   }
 
   /* **************************************************************************/
@@ -116,9 +117,18 @@ class GeneralSettings extends React.Component {
     platformStore.listen(this.platformChanged)
     this.instanceId = uuid.v4()
 
-    this.belowFoldRenderTO = setTimeout(() => {
-      this.setState({ renderBelowFold: true })
-    }, 500)
+    // If we're given a launch section id, then defering the below fold render
+    // means we can't scroll to it. If we wait on the render the UI looks really
+    // janky because there are two big visual updates. It's slow, so not great,
+    // but if the section id is provided just render the whole thing right away
+    // and scroll straight to it
+    if (this.props.sectionId) {
+      this.scrollToSection({}, this.props.sectionId)
+    } else {
+      this.belowFoldRenderTO = setTimeout(() => {
+        this.setState({ renderBelowFold: true })
+      }, 500)
+    }
   }
 
   componentWillUnmount () {
@@ -126,6 +136,12 @@ class GeneralSettings extends React.Component {
     platformStore.unlisten(this.platformChanged)
 
     clearTimeout(this.belowFoldRenderTO)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.sectionId && this.props.sectionId !== nextProps.sectionId) {
+      this.scrollToSection({}, nextProps.sectionId)
+    }
   }
 
   /* **************************************************************************/
@@ -161,7 +177,8 @@ class GeneralSettings extends React.Component {
   }
 
   state = {
-    renderBelowFold: false,
+    // If a start section is provided render immediately. It's laggy, but better than being janky
+    renderBelowFold: !!this.props.sectionId,
     ...this.generateSettingsState(),
     ...this.generatePlatformState()
   }
@@ -209,7 +226,7 @@ class GeneralSettings extends React.Component {
       isMailtoLinkHandler,
       renderBelowFold
     } = this.state
-    const {showRestart, classes, className, ...passProps} = this.props
+    const {showRestart, classes, className, sectionId, ...passProps} = this.props
 
     return (
       <div
@@ -361,7 +378,7 @@ class GeneralSettings extends React.Component {
                 className={classes.scrollspyItem}
                 onClick={(evt) => this.scrollToSection(evt, 'section-data')}>
                 <StorageIcon className={classes.scrollspyIcon} />
-                Data
+                Data & Sync
               </ListItem>
               <ListItem
                 divider

@@ -13,7 +13,7 @@ import AltUserIdentifiers from '../User/AltUserIdentifiers'
 
 class CoreMailboxStore extends RemoteStore {
   /* **************************************************************************/
-  // Lifecyle
+  // Lifecycle
   /* **************************************************************************/
 
   constructor () {
@@ -105,6 +105,18 @@ class CoreMailboxStore extends RemoteStore {
     */
     this.mailboxIsAtLastIndex = (mailboxId) => {
       return this.index[this.index.length - 1] === mailboxId
+    }
+
+    /**
+    * Gets a list of all container ids in use
+    * @return an array of container ids
+    */
+    this.allContainerIds = () => {
+      const ids = new Set()
+      this.getMailboxesOfType(CoreMailbox.MAILBOX_TYPES.CONTAINER).forEach((mailbox) => {
+        ids.add(mailbox.containerId)
+      })
+      return Array.from(ids)
     }
 
     /* ****************************************/
@@ -199,10 +211,10 @@ class CoreMailboxStore extends RemoteStore {
     }
 
     /**
-    * Gets the mailbox avatar using the order of precidence
+    * Gets the mailbox avatar using the order of precedence
     * @param id: the id of the mailbox
     * @param imageResolverFn=undefined: a function to resolve images if required
-    * @return the url/base64 avatar url or undefiend if none
+    * @return the url/base64 avatar url or undefined if none
     */
     this.getResolvedAvatar = (id, imageResolverFn = undefined) => {
       const mailbox = this.getMailbox(id)

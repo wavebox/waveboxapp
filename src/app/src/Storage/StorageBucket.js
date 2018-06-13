@@ -348,11 +348,32 @@ class StorageBucket {
   * Exports the data in this store
   * @return { name, data } to export
   */
-  getExportDataSync () {
+  getExportData () {
     return {
       name: this.exportName,
       data: JSON.parse(JSON.stringify(this[privData]))
     }
+  }
+
+  /**
+  * Gets the export manifest for this store
+  * @return { name, data } to export, or throws an exception
+  */
+  getExportChangesetManifest () {
+    const error = new Error('Not implemented/available for store')
+    error.notImplemented = true
+    throw error
+  }
+
+  /**
+  * Gets a set of export values for this store
+  * @param keys: the keys to get
+  * @return { name, data } to export
+  */
+  getExportChangeset (keys) {
+    const error = new Error('Not implemented/available for store')
+    error.notImplemented = true
+    throw error
   }
 
   /**

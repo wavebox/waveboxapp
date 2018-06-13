@@ -17,6 +17,7 @@ import {
   WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD,
   WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE,
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
+  WB_MAILBOXES_WINDOW_SHOW_WAVEBOX_ACCOUNT,
   WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER,
   WB_MAILBOXES_WINDOW_SHOW_NEWS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
@@ -288,6 +289,15 @@ class MailboxesWindow extends WaveboxWindow {
   */
   launchPreferences () {
     this.window.webContents.send(WB_MAILBOXES_WINDOW_SHOW_SETTINGS, { })
+    return this
+  }
+
+  /**
+  * Launches the wavebox account
+  * @return this
+  */
+  launchWaveboxAccount () {
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_SHOW_WAVEBOX_ACCOUNT, {})
     return this
   }
 

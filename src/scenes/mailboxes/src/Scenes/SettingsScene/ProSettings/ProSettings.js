@@ -51,7 +51,9 @@ class ProSettings extends React.Component {
   })()
 
   userUpdated = (userState) => {
-    this.setState({ url: userState.user.billingUrl })
+    this.setState({
+      url: userState.user.billingUrl
+    })
   }
 
   /* **************************************************************************/
@@ -63,13 +65,13 @@ class ProSettings extends React.Component {
   }
 
   render () {
-    const {className, classes, ...passProps} = this.props
-    delete passProps.showRestart
+    const {className, classes, showRestart, ...passProps} = this.props
     const { url } = this.state
 
     return (
       <WaveboxWebView
         src={url}
+        hasToolbar
         className={classNames(className, classes.webview)}
         {...passProps} />
     )

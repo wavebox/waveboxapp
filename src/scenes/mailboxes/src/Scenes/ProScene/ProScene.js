@@ -87,6 +87,7 @@ class ProScene extends React.Component {
         classes={{ paper: classes.dialog }}>
         <DialogContent className={classes.dialogContent}>
           <WaveboxWebView
+            hasToolbar
             didStartLoading={() => this.setState({ isLoading: true })}
             didStopLoading={() => this.setState({ isLoading: false })}
             src={url} />

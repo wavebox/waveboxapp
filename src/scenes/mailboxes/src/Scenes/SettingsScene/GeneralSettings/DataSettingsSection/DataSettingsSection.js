@@ -7,18 +7,21 @@ import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItem from 'wbui/SettingsListItem'
 import ClearIcon from '@material-ui/icons/Clear'
-import ImportExportIcon from '@material-ui/icons/ImportExport'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import { withStyles } from '@material-ui/core/styles'
 import ConfirmButton from 'wbui/ConfirmButton'
 import StorageIcon from '@material-ui/icons/Storage'
-import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import SettingsListTypography from 'wbui/SettingsListTypography'
 import SettingsListItemConfirmButton from 'wbui/SettingsListItemConfirmButton'
+import SettingsListItemMultiButtons from 'wbui/SettingsListItemMultiButtons'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome'
+import fasUpload from '@fortawesome/fontawesome-pro-solid/faUpload'
+import fasDownload from '@fortawesome/fontawesome-pro-solid/faDownload'
+import CloudProfileSyncListItem from './CloudProfileSyncListItem'
 import {
   WB_CLEAN_EXPIRED_SESSIONS,
-  WB_TAKEOUT_IMPORT,
-  WB_TAKEOUT_EXPORT
+  WB_TAKEOUT_IMPORT_FILE,
+  WB_TAKEOUT_EXPORT_FILE
 } from 'shared/ipcEvents'
 
 const styles = {
@@ -53,9 +56,23 @@ class DataSettingsSection extends React.Component {
 
   render () {
     const { showRestart, classes, ...passProps } = this.props
-
     return (
-      <SettingsListSection {...passProps} title='Data' icon={<StorageIcon />}>
+      <SettingsListSection {...passProps} title='Data & Sync' icon={<StorageIcon />}>
+        <CloudProfileSyncListItem />
+        <SettingsListItemMultiButtons
+          primary={<strong>File Import & Export</strong>}
+          buttons={[
+            {
+              label: 'Export data',
+              icon: (<FontAwesomeIcon icon={fasDownload} />),
+              onClick: () => { ipcRenderer.send(WB_TAKEOUT_EXPORT_FILE) }
+            },
+            {
+              label: 'Import data',
+              icon: (<FontAwesomeIcon icon={fasUpload} />),
+              onClick: () => { ipcRenderer.send(WB_TAKEOUT_IMPORT_FILE) }
+            }
+          ]} />
         <SettingsListItem className={classes.listItem}>
           <ConfirmButton
             variant='raised'
@@ -82,25 +99,13 @@ class DataSettingsSection extends React.Component {
           </SettingsListTypography>
         </SettingsListItem>
         <SettingsListItemConfirmButton
+          divider={false}
           label='Clean expired accounts'
           icon={<ClearIcon />}
           confirmLabel='Click again to confirm'
           confirmIcon={<HelpOutlineIcon />}
           confirmWaitMs={4000}
           onConfirmedClick={() => ipcRenderer.send(WB_CLEAN_EXPIRED_SESSIONS, {})} />
-        <SettingsListItemButton
-          label='Export Data'
-          icon={<ImportExportIcon />}
-          onClick={() => {
-            ipcRenderer.send(WB_TAKEOUT_EXPORT)
-          }} />
-        <SettingsListItemButton
-          label='Import Data'
-          divider={false}
-          icon={<ImportExportIcon />}
-          onClick={() => {
-            ipcRenderer.send(WB_TAKEOUT_IMPORT)
-          }} />
       </SettingsListSection>
     )
   }

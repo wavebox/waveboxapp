@@ -59,6 +59,7 @@ notifhistActions.load()
 userActions.startAutoUpdateExtensions()
 userActions.startAutoUpdateWireConfig()
 userActions.startAutoUpdateContainers()
+userActions.startAutoUploadUserProfile()
 
 // Navigation
 if (process.platform === 'darwin' && settingsState.launched.app.enableMouseNavigationDarwin) {

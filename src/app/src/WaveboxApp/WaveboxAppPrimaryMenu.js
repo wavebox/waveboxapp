@@ -1,6 +1,7 @@
 import { Menu, globalShortcut, app, BrowserWindow } from 'electron'
 import { mailboxStore } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
+import { userStore } from 'stores/user'
 import MenuTool from 'shared/Electron/MenuTool'
 import { evtMain } from 'AppEvents'
 import { toKeyEvent } from 'keyboardevent-from-electron-accelerator'
@@ -14,6 +15,7 @@ class WaveboxAppPrimaryMenu {
   constructor () {
     this._lastAccelerators = null
     this._lastMailboxes = null
+    this._lastUserEmail = null
     this._lastActiveMailbox = null
     this._lastActiveServiceType = null
     this._lastMenu = null
@@ -21,6 +23,7 @@ class WaveboxAppPrimaryMenu {
 
     mailboxStore.listen(this.handleMailboxesChanged)
     settingsStore.listen(this.handleAcceleratorsChanged)
+    userStore.listen(this.handleUserChanged)
     evtMain.on(evtMain.INPUT_EVENT_PREVENTED, this.handleInputEventPrevented)
     app.on('browser-window-focus', this.bindHiddenShortcuts)
     app.on('browser-window-blur', this.unbindHiddenShortcuts)
@@ -36,9 +39,10 @@ class WaveboxAppPrimaryMenu {
   * @param mailboxes: the list of mailboxes
   * @param activeMailbox: the active mailbox
   * @param activeServiceType: the type of the active service
+  * @param userEmail: the users email address
   * @return the new menu
   */
-  build (accelerators, mailboxes, activeMailbox, activeServiceType) {
+  build (accelerators, mailboxes, activeMailbox, activeServiceType, userEmail) {
     // Fixes https://github.com/wavebox/waveboxapp/issues/562
     const tlpfx = process.platform === 'linux' ? '&' : ''
 
@@ -46,6 +50,11 @@ class WaveboxAppPrimaryMenu {
       {
         label: process.platform === 'darwin' ? `${tlpfx}Application` : `${tlpfx}File`,
         submenu: [
+          {
+            label: userEmail ? `Wavebox Account: ${userEmail}` : 'Wavebox Account: Logged out',
+            click: WaveboxAppPrimaryMenuActions.waveboxAccount
+          },
+          { type: 'separator' },
           {
             label: 'About',
             click: WaveboxAppPrimaryMenuActions.aboutDialog
@@ -56,6 +65,12 @@ class WaveboxAppPrimaryMenu {
           },
           { type: 'separator' },
           {
+            label: 'Compose Mail',
+            click: WaveboxAppPrimaryMenuActions.composeMail,
+            accelerator: accelerators.composeMail
+          },
+          { type: 'separator' },
+          {
             label: 'Add Account',
             click: WaveboxAppPrimaryMenuActions.addAccount
           },
@@ -63,12 +78,6 @@ class WaveboxAppPrimaryMenu {
             label: 'Preferences',
             click: WaveboxAppPrimaryMenuActions.preferences,
             accelerator: accelerators.preferences
-          },
-          { type: 'separator' },
-          {
-            label: 'Compose Mail',
-            click: WaveboxAppPrimaryMenuActions.composeMail,
-            accelerator: accelerators.composeMail
           },
           { type: 'separator' },
           process.platform === 'darwin' ? { label: 'Services', role: 'services', submenu: [] } : undefined,
@@ -360,15 +369,17 @@ class WaveboxAppPrimaryMenu {
   * @param mailboxes: the current list of mailboxes
   * @param activeMailbox: the active mailbox
   * @param activeServiceType: the type of active service
+  * @param userEmail: the users email address
   */
-  updateApplicationMenu (accelerators, mailboxes, activeMailbox, activeServiceType) {
+  updateApplicationMenu (accelerators, mailboxes, activeMailbox, activeServiceType, userEmail) {
     this._lastAccelerators = accelerators
     this._lastActiveMailbox = activeMailbox
     this._lastActiveServiceType = activeServiceType
     this._lastMailboxes = mailboxes
+    this._lastUserEmail = userEmail
 
     const lastMenu = this._lastMenu
-    this._lastMenu = this.build(accelerators, mailboxes, activeMailbox, activeServiceType)
+    this._lastMenu = this.build(accelerators, mailboxes, activeMailbox, activeServiceType, userEmail)
     Menu.setApplicationMenu(this._lastMenu)
     this.updateHiddenShortcuts(accelerators)
 
@@ -457,7 +468,13 @@ class WaveboxAppPrimaryMenu {
     // Check for change
     const changed = props.findIndex(([prev, next]) => prev !== next) !== -1
     if (changed) {
-      this.updateApplicationMenu(this._lastAccelerators, mailboxes, activeMailbox, activeServiceType)
+      this.updateApplicationMenu(
+        this._lastAccelerators,
+        mailboxes,
+        activeMailbox,
+        activeServiceType,
+        this._lastUserEmail
+      )
     }
   }
 
@@ -472,7 +489,23 @@ class WaveboxAppPrimaryMenu {
         settingsState.accelerators,
         this._lastMailboxes,
         this._lastActiveMailbox,
-        this._lastActiveServiceType
+        this._lastActiveServiceType,
+        this._lastUserEmail
+      )
+    }
+  }
+
+  /**
+  * Handles the user state changing
+  */
+  handleUserChanged = (userState) => {
+    if (userState.user.userEmail !== this._lastUserEmail) {
+      this.updateApplicationMenu(
+        this._lastAccelerators,
+        this._lastMailboxes,
+        this._lastActiveMailbox,
+        this._lastActiveServiceType,
+        userState.user.userEmail
       )
     }
   }

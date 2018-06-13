@@ -11,6 +11,7 @@ import { WB_RELAUNCH_APP } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import lightBlue from '@material-ui/core/colors/lightBlue'
+import { userStore } from 'stores/user'
 
 const styles = {
   // Dialog
@@ -68,12 +69,36 @@ class SettingsScene extends React.Component {
   }
 
   /* **************************************************************************/
+  // Component lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    userStore.listen(this.userUpdated)
+  }
+
+  componentWillUnmount () {
+    userStore.unlisten(this.userUpdated)
+  }
+
+  /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  state = {
-    open: true,
-    showRestart: false
+  state = (() => {
+    const userState = userStore.getState()
+    return {
+      open: true,
+      showRestart: false,
+      userIsLoggedIn: userState.user.isLoggedIn,
+      userEmail: userState.user.userEmail
+    }
+  })()
+
+  userUpdated = (userState) => {
+    this.setState({
+      userIsLoggedIn: userState.user.isLoggedIn,
+      userEmail: userState.user.userEmail
+    })
   }
 
   /* **************************************************************************/
@@ -144,7 +169,7 @@ class SettingsScene extends React.Component {
     const { match } = this.props
 
     if (currentTab === 'general') {
-      return (<GeneralSettings showRestart={this.handleShowRestart} />)
+      return (<GeneralSettings showRestart={this.handleShowRestart} sectionId={match.params.tabArg} />)
     } else if (currentTab === 'extensions') {
       return (<ExtensionSettings showRestart={this.handleShowRestart} />)
     } else if (currentTab === 'accounts') {
@@ -157,17 +182,10 @@ class SettingsScene extends React.Component {
   }
 
   render () {
-    const { showRestart, open } = this.state
+    const { showRestart, open, userIsLoggedIn, userEmail } = this.state
     const { match, classes } = this.props
 
     const currentTab = match.params.tab || 'general'
-    const tabHeadings = [
-      ['General', 'general'],
-      ['Extensions', 'extensions'],
-      ['Accounts', 'accounts'],
-      ['Wavebox', 'pro'],
-      ['Support', 'support']
-    ].filter((tab) => !!tab)
 
     return (
       <Dialog
@@ -181,11 +199,26 @@ class SettingsScene extends React.Component {
             value={currentTab}
             onChange={this.handleTabChange}
             classes={{ indicator: classes.tabInkBar }}>
-            {tabHeadings.map(([label, value]) => {
-              return (
-                <Tab key={value} label={label} className={classes.tabButton} value={value} />
-              )
-            })}
+            <Tab
+              label='General'
+              className={classes.tabButton}
+              value='general' />
+            <Tab
+              label='Accounts'
+              className={classes.tabButton}
+              value='accounts' />
+            <Tab
+              label='Extensions'
+              className={classes.tabButton}
+              value='extensions' />
+            <Tab
+              label='Support'
+              className={classes.tabButton}
+              value='support' />
+            <Tab
+              label={userIsLoggedIn ? userEmail : 'Wavebox'}
+              className={classes.tabButton}
+              value='pro' />
           </Tabs>
         </AppBar>
         <DialogContent className={classes.dialogContent}>

@@ -123,6 +123,99 @@ class WaveboxHTTP {
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
   }
+
+  /* **************************************************************************/
+  // Profile
+  /* **************************************************************************/
+
+  /**
+  * Sends the user profile to the server
+  * @param clientId: the id of the client
+  * @param clientToken: the client token
+  * @param profile: the data to send as the profile data
+  * @return promise
+  */
+  static sendUserProfile (clientId, clientToken, profile) {
+    return Promise.resolve()
+      .then(() => window.fetch(`https://waveboxio.com/clientapi/profile/${clientId}/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          version: pkg.version,
+          client_id: clientId,
+          t: clientToken,
+          profile: profile
+        })
+      }))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.json())
+  }
+
+  /**
+  * Sends the user profile changeset to the server
+  * @param clientId: the id of the client
+  * @param clientToken: the client token
+  * @param changeset: the changeset data that was requested
+  * @return promise
+  */
+  static sendUserProfileChangeset (clientId, clientToken, changeset) {
+    return Promise.resolve()
+      .then(() => window.fetch(`https://waveboxio.com/clientapi/profile/${clientId}/changeset`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          version: pkg.version,
+          client_id: clientId,
+          t: clientToken,
+          changeset: changeset
+        })
+      }))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.json())
+  }
+
+  /**
+  * Fetches the user profiles from the server
+  * @param clientId: the id of the client
+  * @param clientToken: the client token
+  * @return promise
+  */
+  static fetchUserProfiles (clientId, clientToken) {
+    const qs = querystring.stringify({
+      version: pkg.version,
+      c: clientId,
+      t: clientToken
+    })
+
+    return Promise.resolve()
+      .then(() => window.fetch(`https://waveboxio.com/clientapi/profile/${clientId}/?${qs}`))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.json())
+  }
+
+  /**
+  * Fetches a full user profile from the server which can be used in a restore
+  * @param clientId: the id of the client
+  * @param clientToken: the client token
+  * @param profileId: the id of the profile to restore
+  * @return promise
+  */
+  static fetchFullUserProfile (clientId, clientToken, profileId) {
+    const qs = querystring.stringify({
+      version: pkg.version,
+      c: clientId,
+      t: clientToken
+    })
+
+    return Promise.resolve()
+      .then(() => window.fetch(`https://waveboxio.com/clientapi/fullprofile/${clientId}/${profileId}?${qs}`))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.json())
+  }
 }
 
 export default WaveboxHTTP

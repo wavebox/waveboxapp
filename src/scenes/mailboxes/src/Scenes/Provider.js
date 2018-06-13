@@ -20,6 +20,7 @@ import { AppBadge, WindowTitle } from 'Components'
 import {
   WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE,
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
+  WB_MAILBOXES_WINDOW_SHOW_WAVEBOX_ACCOUNT,
   WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER,
   WB_MAILBOXES_WINDOW_SHOW_NEWS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT
@@ -48,6 +49,7 @@ export default class Provider extends React.Component {
     updaterActions.load()
     ipcRenderer.on(WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE, this.downloadCompleted)
     ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_SETTINGS, this.ipcLaunchSettings)
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_WAVEBOX_ACCOUNT, this.ipcLaunchWaveboxAccount)
     ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER, this.ipcLaunchSupportCenter)
     ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_NEWS, this.ipcLaunchNews)
     ipcRenderer.on(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
@@ -80,6 +82,7 @@ export default class Provider extends React.Component {
     updaterActions.unload()
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE, this.downloadCompleted)
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_SETTINGS, this.ipcLaunchSettings)
+    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_WAVEBOX_ACCOUNT, this.ipcLaunchWaveboxAccount)
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER, this.ipcLaunchSupportCenter)
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_NEWS, this.ipcLaunchNews)
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
@@ -163,6 +166,13 @@ export default class Provider extends React.Component {
   */
   ipcLaunchSettings = () => {
     window.location.hash = '/settings'
+  }
+
+  /**
+  * Launches the wavebox account over the IPC channel
+  */
+  ipcLaunchWaveboxAccount = () => {
+    window.location.hash = '/settings/pro'
   }
 
   /**

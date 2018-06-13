@@ -125,6 +125,57 @@ class UserActions extends RendererUserActions {
   authenticationFailure (evt, data) {
     return { evt: evt, data: data }
   }
+
+  /* **************************************************************************/
+  // Profiles
+  /* **************************************************************************/
+
+  /**
+  * Starts auto uploading the user profile so it stays in sync
+  */
+  startAutoUploadUserProfile () { return {} }
+
+  /**
+  * Stops auto uploading the user profile so it stays in sync
+  */
+  stopAutoUploadUserProfile () { return {} }
+
+  /**
+  * Uploads the user profile
+  */
+  uploadUserProfile () { return {} }
+
+  /**
+  * Uploads the user profile after a certain wait
+  * @param wait: the time to wait before uploading
+  */
+  uploadUserProfileAfter (wait) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(this.uploadUserProfile())
+      }, wait)
+    })
+  }
+
+  /**
+  * Fetches the user profiles
+  * @param successHash=/profile/restore: the hash path to load on success
+  * @param failureHash=undefined: the hash path to load on failure
+  */
+  fetchUserProfiles (successHash = '/profile/restore', failureHash = undefined) {
+    return {
+      successHash,
+      failureHash
+    }
+  }
+
+  /**
+  * Restores a user profile
+  * @param profileId: the id of profile to restore
+  */
+  restoreUserProfile (profileId) {
+    return { profileId }
+  }
 }
 
 const actions = alt.createActions(UserActions)

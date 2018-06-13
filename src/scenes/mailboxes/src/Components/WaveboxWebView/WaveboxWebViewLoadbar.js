@@ -18,6 +18,7 @@ const styles = {
     height: 3,
     backgroundColor: blue[600],
     opacity: 0,
+    zIndex: 2, // Ensures it appears over the webview & dropshadow of toolbar
     transition: '700ms ease-in-out opacity',
 
     '&.loading': {
@@ -31,7 +32,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class MailboxLoadBar extends React.Component {
+class WaveboxWebViewLoadbar extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -62,4 +63,4 @@ class MailboxLoadBar extends React.Component {
   }
 }
 
-export default MailboxLoadBar
+export default WaveboxWebViewLoadbar

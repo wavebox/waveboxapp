@@ -17,7 +17,8 @@ import {
 import {
   PERSISTENCE_INDEX_KEY,
   SERVICE_LOCAL_AVATAR_PREFIX,
-  MAILBOX_SLEEP_EXTEND
+  MAILBOX_SLEEP_EXTEND,
+  AVATAR_TIMESTAMP_PREFIX
 } from 'shared/constants'
 
 class MailboxStore extends CoreMailboxStore {
@@ -186,11 +187,13 @@ class MailboxStore extends CoreMailboxStore {
       if (this.avatars.get(id) === b64Image) { return }
       this.avatars.set(id, b64Image)
       avatarPersistence.setItem(id, b64Image)
+      avatarPersistence.setItem(`${AVATAR_TIMESTAMP_PREFIX}${id}`, new Date().getTime())
       this.dispatchToRemote('remoteSetAvatar', [id, b64Image])
     } else {
       if (!this.avatars.has(id)) { return }
       this.avatars.delete(id)
       avatarPersistence.removeItem(id)
+      avatarPersistence.removeItem(`${AVATAR_TIMESTAMP_PREFIX}${id}`)
       this.dispatchToRemote('remoteSetAvatar', [id, null])
     }
   }

@@ -199,15 +199,10 @@ class CoreMailbox extends Model {
 
   /**
   * Modifies raw json for export
-  * @param includeCrossStoreReferences=false: set to true to include things like cross store references (e.g. uploaded avatars)
   * @return copy of plain data that is safe to export
   */
-  prepareForExport (includeCrossStoreReferences = false) {
+  prepareForExport () {
     const clone = this.cloneData()
-    if (!includeCrossStoreReferences) {
-      delete clone.customAvatar
-      delete clone.serviceLocalAvatar
-    }
     clone.services = this.enabledServices.map((service) => {
       return service.prepareForExport()
     })

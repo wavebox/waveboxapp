@@ -13,6 +13,7 @@ import googleActions from '../google/googleActions'
 import slackActions from '../slack/slackActions'
 import trelloActions from '../trello/trelloActions'
 import microsoftActions from '../microsoft/microsoftActions'
+import userActions from '../user/userActions'
 import { GoogleMailbox, GoogleDefaultService } from 'shared/Models/Accounts/Google'
 import { SlackMailbox } from 'shared/Models/Accounts/Slack'
 import { TrelloMailbox } from 'shared/Models/Accounts/Trello'
@@ -30,7 +31,8 @@ import {
   WB_AUTH_MICROSOFT,
   WB_AUTH_SLACK,
   WB_AUTH_TRELLO,
-  WB_NEW_WINDOW
+  WB_NEW_WINDOW,
+  USER_PROFILE_DEFERED_SYNC_ON_CREATE
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
 import uuid from 'uuid'
@@ -222,16 +224,23 @@ class MailboxStore extends RendererMailboxStore {
     const { id, mailboxJS } = payload
 
     // Set the mailbox and also auto-connect or disconnect during set
+    // Auto-disconnect
     const prev = this.mailboxes.get(id)
     if (prev && !mailboxJS) {
       this.disconnectMailbox(id)
+      userActions.uploadUserProfile.defer()
     }
     super.handleRemoteSetMailbox(payload)
     const next = this.mailboxes.get(id)
 
+    // Auto-connect
     if (!prev && next) {
       this.connectMailbox(id)
       actions.fullSyncMailbox.defer(id)
+      userActions.uploadUserProfile.defer()
+      // Sync the profile again after a certain amount of time. The user is likely
+      // to have customized it again within this time
+      userActions.uploadUserProfileAfter.defer(USER_PROFILE_DEFERED_SYNC_ON_CREATE)
     }
 
     // Look for any watch fields to see if we should re-sync

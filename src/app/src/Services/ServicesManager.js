@@ -8,6 +8,7 @@ import GuestApiService from './GuestApiService'
 import AutofillService from './AutofillService'
 import NotificationService from './NotificationService'
 import FetchService from './FetchService'
+import TakeoutService from './TakeoutService'
 
 const privLoaded = Symbol('privLoaded')
 const privSpellcheckService = Symbol('privSpellcheckService')
@@ -20,6 +21,7 @@ const privGuestApiService = Symbol('privGuestApiService')
 const privAutofillService = Symbol('privAutofillService')
 const privNotificationService = Symbol('privNotificationService')
 const privFetchService = Symbol('privFetchService')
+const privTakeoutService = Symbol('privTakeoutService')
 
 class ServicesManager {
   /* ****************************************************************************/
@@ -39,6 +41,7 @@ class ServicesManager {
     this[privGuestApiService] = undefined
     this[privNotificationService] = undefined
     this[privFetchService] = undefined
+    this[privTakeoutService] = undefined
   }
 
   load () {
@@ -55,6 +58,7 @@ class ServicesManager {
     this[privMailboxAdaptorService] = new MailboxAdaptorService()
     this[privGuestApiService] = new GuestApiService()
     this[privFetchService] = new FetchService()
+    this[privTakeoutService] = new TakeoutService()
   }
 
   /* ****************************************************************************/
@@ -71,6 +75,7 @@ class ServicesManager {
   get guestApiService () { return this[privGuestApiService] }
   get notificationService () { return this[privNotificationService] }
   get fetchService () { return this[privFetchService] }
+  get takeoutService () { return this[privTakeoutService] }
 }
 
 export default new ServicesManager()

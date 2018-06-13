@@ -30,6 +30,10 @@ import {
   AccountStandaloneScene
 } from './AccountScene'
 import WaveboxRouterErrorBoundary from './WaveboxRouterErrorBoundary'
+import {
+  ProfileRestoreScene,
+  ProfileRestoreWorkingScene
+} from './ProfileRestoreScene'
 
 export default class WaveboxRouter extends React.Component {
   /* **************************************************************************/
@@ -77,6 +81,9 @@ export default class WaveboxRouter extends React.Component {
             <Route path='/account/view' component={AccountStandaloneScene} />
 
             <Route path='/setup/linux' component={LinuxSetupScene} />
+
+            <Route path='/profile/restore' component={ProfileRestoreScene} />
+            <Route path='/profile/restore_working' component={ProfileRestoreWorkingScene} />
           </WaveboxRouterErrorBoundary>
           <PrivacyDialog />
         </div>

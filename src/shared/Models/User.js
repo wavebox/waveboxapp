@@ -116,6 +116,13 @@ class User extends Model {
     const privacy = this._value_('privacy', {})
     return privacy.enable_analytics === undefined ? false : privacy.enable_analytics
   }
+
+  /* **************************************************************************/
+  // Properties: Profiles
+  /* **************************************************************************/
+
+  get enableProfileSync () { return this._value_('enableProfileSync', false) }
+  get hasProfiles () { return this._value_('hasProfiles', false) }
 }
 
 module.exports = User

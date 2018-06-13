@@ -20,8 +20,8 @@ class MailboxStorageBucket extends StorageBucket {
   * Exports the data in this store
   * @return { name, data } to export
   */
-  getExportDataSync () {
-    const rawExport = super.getExportDataSync()
+  getExportData () {
+    const rawExport = super.getExportData()
     const data = Object.keys(rawExport.data).reduce((acc, id) => {
       if (id === PERSISTENCE_INDEX_KEY) {
         acc[id] = rawExport.data[id]

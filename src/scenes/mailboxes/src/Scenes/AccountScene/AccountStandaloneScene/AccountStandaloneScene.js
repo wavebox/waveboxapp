@@ -111,6 +111,7 @@ class AccountStandaloneScene extends React.Component {
         classes={{ paper: classes.dialog }}>
         <DialogContent className={classes.dialogContent}>
           <WaveboxWebView
+            hasToolbar
             src={url} />
         </DialogContent>
         <DialogActions className={classes.dialogActions}>

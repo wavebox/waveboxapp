@@ -160,6 +160,14 @@ class WaveboxAppPrimaryMenuAcions {
       mailboxesWindow.show().focus().launchSupportCenter()
     }
   }
+
+  waveboxAccount = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.show().focus().launchWaveboxAccount()
+    }
+  }
+
   whatsNew = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
