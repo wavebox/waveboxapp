@@ -16,7 +16,7 @@
     "decompress": "4.2.0",
     "dictionary-en-us": "2.0.0",
     "electron-fetch": "1.1.0",
-    "electron-positioner": "3.0.0",
+    "electron-positioner": "https://github.com/wavebox/electron-positioner/releases/download/3.0.1/electron-positioner-3.0.1.tgz",
     "fs-extra": "6.0.1",
     "home-dir": "1.0.0",
     "hunspell-asm": "1.0.2",
