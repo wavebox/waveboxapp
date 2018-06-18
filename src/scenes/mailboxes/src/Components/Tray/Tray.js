@@ -56,6 +56,7 @@ export default class Tray extends React.Component {
     } else {
       this.appTray = this.createTray(remote.nativeImage.createFromDataURL(BLANK_PNG))
     }
+    this.deferredClickTO = null
 
     this.contextMenu = null
   }
@@ -151,11 +152,19 @@ export default class Tray extends React.Component {
   */
   handleClick = (evt, bounds) => {
     if (SUPPORTS_ADDITIONAL_CLICK_EVENTS) {
-      if (evt.altKey || evt.ctrlKey || evt.shiftKey || evt.metaKey) {
-        this.dispatchClickAction(this.props.traySettings.altClickAction, bounds)
-      } else {
-        this.dispatchClickAction(this.props.traySettings.clickAction, bounds)
-      }
+      // Click and double-click both fire on macOS and win32. To make sure we don't double trigger,
+      // delay the click slightly to wait and see if double click comes in waveboxapp#707
+      const action = evt.altKey || evt.ctrlKey || evt.shiftKey || evt.metaKey ? (
+        this.props.traySettings.altClickAction
+      ) : (
+        this.props.traySettings.clickAction
+      )
+      const boundsCpy = {...bounds} // Copy to retain
+
+      clearTimeout(this.deferredClickTO)
+      this.deferredClickTO = setTimeout(() => {
+        this.dispatchClickAction(action, boundsCpy)
+      }, 300)
     } else {
       this.dispatchClickAction(this.props.traySettings.clickAction, bounds)
     }
@@ -176,6 +185,7 @@ export default class Tray extends React.Component {
   * @param bounds: the bounds of the tray icon
   */
   handleDoubleClick = (evt, bounds) => {
+    clearTimeout(this.deferredClickTO)
     this.dispatchClickAction(this.props.traySettings.doubleClickAction, bounds)
   }
 
