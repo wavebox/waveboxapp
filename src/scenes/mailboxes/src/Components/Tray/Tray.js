@@ -151,22 +151,22 @@ export default class Tray extends React.Component {
   * @param bounds: the bounds of the tray icon
   */
   handleClick = (evt, bounds) => {
+    const { clickAction, doubleClickAction, altClickAction } = this.props.traySettings
     if (SUPPORTS_ADDITIONAL_CLICK_EVENTS) {
       // Click and double-click both fire on macOS and win32. To make sure we don't double trigger,
       // delay the click slightly to wait and see if double click comes in waveboxapp#707
       const action = evt.altKey || evt.ctrlKey || evt.shiftKey || evt.metaKey ? (
-        this.props.traySettings.altClickAction
+        altClickAction
       ) : (
-        this.props.traySettings.clickAction
+        clickAction
       )
       const boundsCpy = {...bounds} // Copy to retain
-
       clearTimeout(this.deferredClickTO)
       this.deferredClickTO = setTimeout(() => {
         this.dispatchClickAction(action, boundsCpy)
-      }, 300)
+      }, doubleClickAction === CLICK_ACTIONS.NONE ? 0 : 300)
     } else {
-      this.dispatchClickAction(this.props.traySettings.clickAction, bounds)
+      this.dispatchClickAction(clickAction, bounds)
     }
   }
 
