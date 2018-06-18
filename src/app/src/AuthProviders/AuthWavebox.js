@@ -3,7 +3,7 @@ import { WB_AUTH_WAVEBOX, WB_AUTH_WAVEBOX_COMPLETE, WB_AUTH_WAVEBOX_ERROR } from
 import { userStore } from 'stores/user'
 import querystring from 'querystring'
 import { URL } from 'url'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import WaveboxAuthProviders from 'shared/Models/WaveboxAuthProviders'
 import AuthWindow from 'Windows/AuthWindow'
 import { SessionManager } from 'SessionManager'
 
@@ -32,14 +32,16 @@ class AuthWavebox {
   generateAuthenticationURL (clientSecret, type, serverArgs) {
     let authUrl
     switch (type) {
-      case CoreMailbox.MAILBOX_TYPES.GOOGLE: authUrl = 'https://waveboxio.com/auth/accountgoogle'; break
-      case CoreMailbox.MAILBOX_TYPES.MICROSOFT: authUrl = 'https://waveboxio.com/auth/accountmicrosoft'; break
+      case WaveboxAuthProviders.GOOGLE: authUrl = 'https://waveboxio.com/auth/accountgoogle'; break
+      case WaveboxAuthProviders.MICROSOFT: authUrl = 'https://waveboxio.com/auth/accountmicrosoft'; break
+      case WaveboxAuthProviders.WAVEBOX: authUrl = 'https://waveboxio.com/auth/wavebox'; break
     }
     if (authUrl) {
-      const args = querystring.stringify(Object.assign({}, serverArgs, {
+      const args = querystring.stringify({
+        ...serverArgs,
         client_id: userStore.getState().clientId,
         client_secret: clientSecret
-      }))
+      })
       return `${authUrl}?${args}`
     } else {
       return undefined
@@ -161,6 +163,7 @@ class AuthWavebox {
         evt.sender.send(WB_AUTH_WAVEBOX_COMPLETE, {
           id: body.id,
           type: body.type,
+          openAccountOnSuccess: body.openAccountOnSuccess,
           next: next
         })
       }, (err) => {

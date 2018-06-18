@@ -31,9 +31,9 @@ import {
   WB_AUTH_MICROSOFT,
   WB_AUTH_SLACK,
   WB_AUTH_TRELLO,
-  WB_NEW_WINDOW,
-  USER_PROFILE_DEFERED_SYNC_ON_CREATE
+  WB_NEW_WINDOW
 } from 'shared/ipcEvents'
+import { USER_PROFILE_DEFERED_SYNC_ON_CREATE } from 'shared/constants'
 import { ipcRenderer } from 'electron'
 import uuid from 'uuid'
 

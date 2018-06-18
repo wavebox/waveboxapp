@@ -3,6 +3,7 @@ import React from 'react'
 import { Button } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
+import shallowCompare from 'react-addons-shallow-compare'
 
 const styles = {
   button: {
@@ -39,6 +40,10 @@ class FileUploadButton extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
+
+  shouldComponentUpdate (nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState)
+  }
 
   render () {
     const {

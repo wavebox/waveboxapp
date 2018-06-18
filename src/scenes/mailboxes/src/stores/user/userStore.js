@@ -11,6 +11,7 @@ import semver from 'semver'
 import pkg from 'package.json'
 import ParallelHttpTracker from 'shared/AltStores/ParallelHttpTracker'
 import TakeoutService from './TakeoutService'
+import WaveboxAuthProviders from 'shared/Models/WaveboxAuthProviders'
 
 import {
   EXTENSION_AUTO_UPDATE_INTERVAL,
@@ -78,6 +79,7 @@ class UserStore extends RendererUserStore {
       handleAuthenticateWithMailbox: actions.AUTHENTICATE_WITH_MAILBOX,
       handleAuthenticateWithGoogle: actions.AUTHENTICATE_WITH_GOOGLE,
       handleAuthenticateWithMicrosoft: actions.AUTHENTICATE_WITH_MICROSOFT,
+      handleAuthenticateWithWavebox: actions.AUTHENTICATE_WITH_WAVEBOX,
       handleAuthenticationSuccess: actions.AUTHENTICATION_SUCCESS,
       handleAuthenticationFailure: actions.AUTHENTICATION_FAILURE,
 
@@ -217,32 +219,58 @@ class UserStore extends RendererUserStore {
   // Handlers: Auth
   /* **************************************************************************/
 
-  handleAuthenticateWithMailbox ({ id, type, serverArgs }) {
+  handleAuthenticateWithMailbox ({ id, type, serverArgs, openAccountOnSuccess }) {
+    this.preventDefault()
+    let providerType
+    if (type === CoreMailbox.MAILBOX_TYPES.GOOGLE) {
+      providerType = WaveboxAuthProviders.GOOGLE
+    } else if (type === CoreMailbox.MAILBOX_TYPES.MICROSOFT) {
+      providerType = WaveboxAuthProviders.MICROSOFT
+    }
+    if (!providerType) { return }
+
     ipcRenderer.send(WB_AUTH_WAVEBOX, {
       id: id,
-      type: type,
+      type: providerType,
       clientSecret: this.user.clientSecret,
-      serverArgs: serverArgs
+      serverArgs: serverArgs,
+      openAccountOnSuccess: openAccountOnSuccess
     })
     window.location.hash = '/account/authenticating'
   }
 
-  handleAuthenticateWithGoogle ({ serverArgs }) {
+  handleAuthenticateWithGoogle ({ serverArgs, openAccountOnSuccess }) {
+    this.preventDefault()
     ipcRenderer.send(WB_AUTH_WAVEBOX, {
       id: null,
-      type: CoreMailbox.MAILBOX_TYPES.GOOGLE,
+      type: WaveboxAuthProviders.GOOGLE,
       clientSecret: this.user.clientSecret,
-      serverArgs: serverArgs
+      serverArgs: serverArgs,
+      openAccountOnSuccess: openAccountOnSuccess
     })
     window.location.hash = '/account/authenticating'
   }
 
-  handleAuthenticateWithMicrosoft ({ serverArgs }) {
+  handleAuthenticateWithMicrosoft ({ serverArgs, openAccountOnSuccess }) {
+    this.preventDefault()
     ipcRenderer.send(WB_AUTH_WAVEBOX, {
       id: null,
-      type: CoreMailbox.MAILBOX_TYPES.MICROSOFT,
+      type: WaveboxAuthProviders.MICROSOFT,
       clientSecret: this.user.clientSecret,
-      serverArgs: serverArgs
+      serverArgs: serverArgs,
+      openAccountOnSuccess: openAccountOnSuccess
+    })
+    window.location.hash = '/account/authenticating'
+  }
+
+  handleAuthenticateWithWavebox ({ serverArgs, openAccountOnSuccess }) {
+    this.preventDefault()
+    ipcRenderer.send(WB_AUTH_WAVEBOX, {
+      id: null,
+      type: WaveboxAuthProviders.WAVEBOX,
+      clientSecret: this.user.clientSecret,
+      serverArgs: serverArgs,
+      openAccountOnSuccess: openAccountOnSuccess
     })
     window.location.hash = '/account/authenticating'
   }
@@ -251,11 +279,15 @@ class UserStore extends RendererUserStore {
   // Handlers: Auth Callbacks
   /* **************************************************************************/
 
-  handleAuthenticationSuccess ({ id, type, next }) {
-    if (next) {
-      window.location.hash = `/account/view?url=${encodeURIComponent(next)}`
+  handleAuthenticationSuccess ({ id, type, next, openAccountOnSuccess }) {
+    if (openAccountOnSuccess) {
+      if (next) {
+        window.location.hash = `/account/view?url=${encodeURIComponent(next)}`
+      } else {
+        window.location.hash = '/account/view'
+      }
     } else {
-      window.location.hash = '/account/view'
+      window.location.hash = '/'
     }
   }
 
@@ -316,9 +348,10 @@ class UserStore extends RendererUserStore {
       })
   }
 
-  handleFetchUserProfiles ({successHash, failureHash}) {
+  handleFetchUserProfiles ({loadingHash, successHash, failureHash}) {
     if (!this.user.enableProfileSync) { this.preventDefault(); return }
 
+    if (loadingHash) { window.location.hash = loadingHash }
     this.userProfilesFetch.metadata = { successHash, failureHash }
 
     if (this.userProfilesFetch.inflight) {

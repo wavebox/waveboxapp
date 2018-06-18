@@ -79,25 +79,75 @@ class UserActions extends RendererUserActions {
   * Starts the auth process with an existing mailbox
   * @param mailbox: the mailbox to auth against
   * @param serverArgs={}: an args dict to pass to the server
+  * @param openAccountOnSuccess=true: true to open the account screen on complete
   */
-  authenticateWithMailbox (mailbox, serverArgs = {}) {
-    return { id: mailbox.id, type: mailbox.type, serverArgs: serverArgs }
+  authenticateWithMailbox (mailbox, serverArgs = {}, openAccountOnSuccess = true) {
+    return {
+      id: mailbox.id,
+      type: mailbox.type,
+      serverArgs: serverArgs,
+      openAccountOnSuccess: openAccountOnSuccess
+    }
   }
 
   /**
   * Starts the auth process a google account
   * @param serverArgs={}: an args dict to pass to the server
+  * @param openAccountOnSuccess=true: true to open the account screen on complete
   */
-  authenticateWithGoogle (serverArgs = {}) {
-    return { serverArgs: serverArgs }
+  authenticateWithGoogle (serverArgs = {}, openAccountOnSuccess = true) {
+    return {
+      serverArgs: serverArgs,
+      openAccountOnSuccess: openAccountOnSuccess
+    }
   }
 
   /**
   * Starts the auth process a microsoft account
   * @param serverArgs={}: an args dict to pass to the server
+  * @param openAccountOnSuccess=true: true to open the account screen on complete
   */
-  authenticateWithMicrosoft (serverArgs = {}) {
-    return { serverArgs: serverArgs }
+  authenticateWithMicrosoft (serverArgs = {}, openAccountOnSuccess = true) {
+    return {
+      serverArgs: serverArgs,
+      openAccountOnSuccess: openAccountOnSuccess
+    }
+  }
+
+  /**
+  * Starts the auth process a wavebox account
+  * @param serverArgs={}: an args dict to pass to the server
+  * @param openAccountOnSuccess=true: true to open the account screen on complete
+  */
+  authenticateWithWavebox (serverArgs = {}, openAccountOnSuccess = true) {
+    return {
+      serverArgs: serverArgs,
+      openAccountOnSuccess: openAccountOnSuccess
+    }
+  }
+
+  /**
+  * Opens the create wavebox account
+  * @param serverArgs={}: an args dict to pass to the server
+  * @param openAccountOnSuccess=true: true to open the account screen on complete
+  */
+  createWaveboxAccount (serverArgs = {}, openAccountOnSuccess = true) {
+    return this.authenticateWithWavebox({
+      ...serverArgs,
+      start: 'create'
+    }, openAccountOnSuccess)
+  }
+
+  /**
+  * Opens the password reset wavebox account
+  * @param serverArgs={}: an args dict to pass to the server
+  * @param openAccountOnSuccess=true: true to open the account screen on complete
+  */
+  passwordResetWaveboxAccount (serverArgs = {}, openAccountOnSuccess = true) {
+    return this.authenticateWithWavebox({
+      ...serverArgs,
+      start: 'password_reset'
+    }, openAccountOnSuccess)
   }
 
   /* **************************************************************************/
@@ -159,11 +209,13 @@ class UserActions extends RendererUserActions {
 
   /**
   * Fetches the user profiles
+  * @param loadingHash='/proile/fetching_profiles':  the hash path to show on load
   * @param successHash=/profile/restore: the hash path to load on success
-  * @param failureHash=undefined: the hash path to load on failure
+  * @param failureHash='/': the hash path to load on failure
   */
-  fetchUserProfiles (successHash = '/profile/restore', failureHash = undefined) {
+  fetchUserProfiles (loadingHash = '/profile/fetching_profiles', successHash = '/profile/restore', failureHash = '/') {
     return {
+      loadingHash,
       successHash,
       failureHash
     }

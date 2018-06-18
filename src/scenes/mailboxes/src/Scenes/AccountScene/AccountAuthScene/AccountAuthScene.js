@@ -1,50 +1,110 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Dialog, DialogContent, Button, List, ListItem, ListItemText, Avatar } from '@material-ui/core'
+import { Dialog, DialogContent, DialogTitle, DialogActions, Button, List, ListItem, ListItemText, Grid } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { mailboxStore } from 'stores/mailbox'
 import MailboxAvatar from 'Components/Backed/MailboxAvatar'
 import { userActions } from 'stores/user'
 import { withStyles } from '@material-ui/core/styles'
 import StyleMixins from 'wbui/Styles/StyleMixins'
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
-import fabGoogle from '@fortawesome/fontawesome-free-brands/faGoogle'
-import fabWindows from '@fortawesome/fontawesome-free-brands/faWindows'
+import WaveboxSigninButton from 'wbui/SigninButtons/WaveboxSigninButton'
+import GoogleSigninButton from 'wbui/SigninButtons/GoogleSigninButton'
+import MicrosoftSigninButton from 'wbui/SigninButtons/MicrosoftSigninButton'
 
 const styles = {
+  // Dialog
   dialog: {
-    maxWidth: 800
+    minWidth: 700,
+    maxWidth: 850
   },
   dialogContent: {
-    ...StyleMixins.alwaysShowVerticalScrollbars
+    paddingLeft: 0,
+    paddingRight: 0,
+    marginTop: -10
   },
-  container: {
-    display: 'flex',
-    alignItems: 'stretch'
+
+  // Heading
+  dialogHeading: {
+    marginBottom: 0
   },
-  infoContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '50%',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    paddingRight: 16
+  dialogSubheading: {
+    marginTop: 0
   },
-  accountContainer: {
+
+  // Grid layout
+  gridContainer: {
+    position: 'relative'
+  },
+  gridItem: {
+    padding: '0px 36px !important',
+    zIndex: 1,
+    textAlign: 'center',
+    '@media (max-width: 930px)': {
+      padding: '0px 12px !important'
+    }
+  },
+  gridVR: {
     display: 'flex',
-    width: '50%',
-    paddingLeft: 16
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 0,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+
+    '&:before': {
+      position: 'absolute',
+      content: '""',
+      top: 0,
+      left: 'calc(50% - 2px)',
+      width: 2,
+      bottom: 0,
+      zIndex: 0,
+      backgroundColor: '#A6ABA9'
+    }
+  },
+  gridVRText: {
+    fontWeight: 'bold',
+    color: '#A6ABA9',
+    backgroundColor: '#FFFFFF',
+    paddingTop: 12,
+    paddingBottom: 12,
+    zIndex: 1,
+    fontSize: '22px',
+    '@media (max-width: 930px)': {
+      display: 'none'
+    }
+  },
+  gridSubheading: {
+    color: '#A6ABA9',
+    marginBottom: 30,
+    marginTop: 0,
+    fontSize: 15,
+    textAlign: 'center'
+  },
+
+  // New signin
+  newSigninContainer: {
+    textAlign: 'center'
+  },
+  fullWidthButton: {
+    margin: '6px 0px',
+    width: '100%'
+  },
+
+  // Accounts
+  accountsList: {
+    maxHeight: 300,
+    overflowY: 'auto',
+    ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
   },
   accountAvatar: {
     marginLeft: 3
   },
-  googleAvatar: {
-    backgroundColor: 'rgb(223, 75, 56)',
-    color: 'white'
-  },
-  microsoftAvatar: {
-    backgroundColor: 'rgb(0, 114, 198)',
-    color: 'white'
+  noAccounts: {
+    textAlign: 'center'
   }
 }
 
@@ -116,52 +176,6 @@ class AccountAuthScene extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
-  /**
-  * Renders the message for the given mode with a default catch all
-  * @param mode: the mode to render the message for
-  * @return jsx
-  */
-  renderMessage (mode) {
-    if (mode === 'payment') {
-      return (
-        <div>
-          <h3>
-            To purchase Wavebox you will need to select which account you want to use for billing
-          </h3>
-          <p>
-            If you don't want to use one of the accounts you've already added to Wavebox,
-            you can use with another one
-          </p>
-        </div>
-      )
-    } else if (mode === 'affiliate') {
-      return (
-        <div>
-          <h3>
-            To get your affiliate links you'll need to select which account you want to
-            use as your affiliate & payment account with Wavebox
-          </h3>
-          <p>
-            If you don't want to use one of the accounts you've already added to Wavebox,
-            you can use with another one
-          </p>
-        </div>
-      )
-    } else {
-      return (
-        <div>
-          <h3>
-            You need to pick the account you want to use for billing
-          </h3>
-          <p>
-            If you don't want to use one of the accounts you've already added to Wavebox,
-            you can use with another one
-          </p>
-        </div>
-      )
-    }
-  }
-
   render () {
     const { open, mailboxes } = this.state
     const {
@@ -175,54 +189,73 @@ class AccountAuthScene extends React.Component {
         open={open}
         onClose={this.handleClose}
         classes={{ paper: classes.dialog }}>
+        <DialogTitle disableTypography>
+          <h3 className={classes.dialogHeading}>Sign in to Wavebox</h3>
+          <p className={classes.dialogSubheading}>
+            Pick an account to use with Wavebox, this will be used for
+            billing and managing your Wavebox settings.
+          </p>
+        </DialogTitle>
         <DialogContent className={classes.dialogContent}>
-          <div className={classes.container}>
-            <div className={classes.infoContainer}>
-              {this.renderMessage(mode)}
+          <Grid container className={classes.gridContainer}>
+            <Grid item xs={6} className={classes.gridItem}>
+              <p className={classes.gridSubheading}>Sign in with your Account</p>
+              <WaveboxSigninButton
+                className={classes.fullWidthButton}
+                onClick={(evt) => userActions.authenticateWithWavebox({ mode: mode })} />
+              <div>
+                <Button
+                  color='primary'
+                  onClick={(evt) => userActions.passwordResetWaveboxAccount({ mode: mode })}>
+                  Forgotten password
+                </Button>
+                <Button
+                  color='primary'
+                  onClick={(evt) => userActions.createWaveboxAccount({ mode: mode })}>
+                  Create an account
+                </Button>
+              </div>
               <br />
-              <Button onClick={this.handleClose}>Cancel</Button>
+              <GoogleSigninButton
+                className={classes.fullWidthButton}
+                onClick={(evt) => userActions.authenticateWithGoogle({ mode: mode })} />
+              <MicrosoftSigninButton
+                className={classes.fullWidthButton}
+                onClick={(evt) => userActions.authenticateWithMicrosoft({ mode: mode })} />
+            </Grid>
+            <div className={classes.gridVR}>
+              <div className={classes.gridVRText}>OR</div>
             </div>
-            <div className={classes.accountContainer}>
-              <List>
-                {mailboxes.map((mailbox) => {
-                  return (
-                    <ListItem
-                      key={mailbox.id}
-                      button
-                      disableGutters
-                      onClick={(evt) => userActions.authenticateWithMailbox(mailbox, { mode: mode })}>
-                      <MailboxAvatar className={classes.accountAvatar} mailboxId={mailbox.id} />
-                      <ListItemText
-                        primary={mailbox.displayName}
-                        secondary={mailbox.humanizedType} />
-                    </ListItem>)
-                })}
-                <ListItem
-                  button
-                  disableGutters
-                  onClick={(evt) => userActions.authenticateWithGoogle({ mode: mode })}>
-                  <Avatar className={classes.googleAvatar}>
-                    <FontAwesomeIcon icon={fabGoogle} />
-                  </Avatar>
-                  <ListItemText
-                    primary='Sign in with Google'
-                    secondary='Use a different Google Account' />
-                </ListItem>
-                <ListItem
-                  button
-                  disableGutters
-                  onClick={(evt) => userActions.authenticateWithMicrosoft({ mode: mode })}>
-                  <Avatar className={classes.microsoftAvatar}>
-                    <FontAwesomeIcon icon={fabWindows} />
-                  </Avatar>
-                  <ListItemText
-                    primary='Sign in with Microsoft'
-                    secondary='Use a different Outlook or Office Account' />
-                </ListItem>
+            <Grid item xs={6} className={classes.gridItem}>
+              <p className={classes.gridSubheading}>Use an account you've added to Wavebox</p>
+              <List className={classes.accountsList}>
+                {mailboxes.length ? (
+                  mailboxes.map((mailbox) => {
+                    return (
+                      <ListItem
+                        key={mailbox.id}
+                        button
+                        disableGutters
+                        onClick={(evt) => userActions.authenticateWithMailbox(mailbox, { mode: mode })}>
+                        <MailboxAvatar className={classes.accountAvatar} mailboxId={mailbox.id} />
+                        <ListItemText
+                          primary={mailbox.displayName}
+                          secondary={mailbox.humanizedType} />
+                      </ListItem>
+                    )
+                  })
+                ) : (
+                  <ListItem disableGutters className={classes.noAccounts}>
+                    <ListItemText primary={`No accounts available`} />
+                  </ListItem>
+                )}
               </List>
-            </div>
-          </div>
+            </Grid>
+          </Grid>
         </DialogContent>
+        <DialogActions>
+          <Button onClick={this.handleClose}>Cancel</Button>
+        </DialogActions>
       </Dialog>
     )
   }

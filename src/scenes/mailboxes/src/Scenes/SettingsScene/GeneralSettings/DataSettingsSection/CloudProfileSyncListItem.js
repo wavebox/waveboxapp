@@ -242,7 +242,7 @@ class CloudProfileSyncListItem extends React.Component {
             disabled={!enableProfileSync}
             onClick={() => {
               this.setState({ userProfilesFetchShowStatus: true })
-              userActions.fetchUserProfiles()
+              userActions.fetchUserProfiles(null, undefined, null)
             }}>
             {restoreIcon}
             {restoreText}

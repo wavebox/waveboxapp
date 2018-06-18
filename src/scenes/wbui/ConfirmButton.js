@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Button } from '@material-ui/core'
+import shallowCompare from 'react-addons-shallow-compare'
 
-export default class ConfirmFlatButton extends React.Component {
+export default class ConfirmButton extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -61,6 +62,10 @@ export default class ConfirmFlatButton extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
+
+  shouldComponentUpdate (nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState)
+  }
 
   render () {
     const { confirmContent, content, confirmWaitMs, onConfirmedClick, onClick, ...passProps } = this.props

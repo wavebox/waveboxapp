@@ -1,7 +1,7 @@
 import React from 'react'
 import { mailboxStore } from 'stores/mailbox'
 import { userStore } from 'stores/user'
-import Welcome from '../Welcome/Welcome'
+import Welcome from '../Welcome'
 import MailboxTab from './MailboxTab'
 import shallowCompare from 'react-addons-shallow-compare'
 

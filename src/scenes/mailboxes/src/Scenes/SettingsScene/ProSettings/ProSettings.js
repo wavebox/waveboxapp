@@ -71,7 +71,6 @@ class ProSettings extends React.Component {
     return (
       <WaveboxWebView
         src={url}
-        hasToolbar
         className={classNames(className, classes.webview)}
         {...passProps} />
     )

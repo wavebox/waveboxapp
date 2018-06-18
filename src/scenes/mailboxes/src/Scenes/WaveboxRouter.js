@@ -32,6 +32,7 @@ import {
 import WaveboxRouterErrorBoundary from './WaveboxRouterErrorBoundary'
 import {
   ProfileRestoreScene,
+  ProfileRestoreFetchingScene,
   ProfileRestoreWorkingScene
 } from './ProfileRestoreScene'
 
@@ -83,6 +84,7 @@ export default class WaveboxRouter extends React.Component {
             <Route path='/setup/linux' component={LinuxSetupScene} />
 
             <Route path='/profile/restore' component={ProfileRestoreScene} />
+            <Route path='/profile/fetching_profiles' component={ProfileRestoreFetchingScene} />
             <Route path='/profile/restore_working' component={ProfileRestoreWorkingScene} />
           </WaveboxRouterErrorBoundary>
           <PrivacyDialog />
