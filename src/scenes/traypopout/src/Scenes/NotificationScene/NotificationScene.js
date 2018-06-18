@@ -130,6 +130,7 @@ export default class NotificationScene extends React.Component {
                 return (
                   <NotificationListItem
                     key={id}
+                    onClick={(evt) => this.handleNotificationClick(evt, notification)}
                     style={styles.listItem}
                     mailboxId={notification.mailboxId}
                     notification={notification}
