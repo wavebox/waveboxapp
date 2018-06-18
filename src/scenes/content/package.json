@@ -11,10 +11,10 @@
     "classnames": "2.2.6",
     "fbjs": "0.8.17",
     "prop-types": "15.6.1",
-    "react": "16.4.0",
+    "react": "16.4.1",
     "react-activity": "1.2.2",
     "react-addons-shallow-compare": "15.6.2",
-    "react-dom": "16.4.0",
+    "react-dom": "16.4.1",
     "react-portal-tooltip": "2.4.0",
     "uuid": "3.2.1"
   },

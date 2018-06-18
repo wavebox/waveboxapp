@@ -11,9 +11,9 @@
     "fbjs": "0.8.17",
     "prop-types": "15.6.1",
     "classnames": "2.2.6",
-    "react": "16.4.0",
+    "react": "16.4.1",
     "react-addons-shallow-compare": "15.6.2",
-    "react-dom": "16.4.0"
+    "react-dom": "16.4.1"
   },
   "devDependencies": {
     "standard": "11.0.1",
