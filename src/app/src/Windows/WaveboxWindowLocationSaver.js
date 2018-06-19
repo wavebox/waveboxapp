@@ -148,9 +148,14 @@ class WaveboxWindowLocationSaver {
     }
 
     if (location.maximized) {
-      // Will automatically show the window. Calling show() first will show the window
-      // in a non-maximized state and cause a jitter
-      this.browserWindow.maximize()
+      // maximize() Will automatically show the window if not maximized already.
+      // Calling show() first will show the window in a non-maximized state and
+      // cause visual a jitter as it resizes
+      if (this.browserWindow.isMaximized()) {
+        this.browserWindow.show()
+      } else {
+        this.browserWindow.maximize()
+      }
       return true
     } else {
       this.browserWindow.show()
