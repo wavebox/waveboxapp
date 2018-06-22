@@ -1,4 +1,4 @@
-import ACMailbox from '../../Models/ACAccounts/ACMailbox'
+import ACMailbox from '../../../Models/ACAccounts/ACMailbox'
 
 class MailboxReducer {
   /* **************************************************************************/

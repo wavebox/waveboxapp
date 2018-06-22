@@ -1,4 +1,4 @@
-import CoreACServiceData from './CoreACServiceData'
+import CoreACServiceData from '../CoreACServiceData'
 
 class GoogleAlloServiceData extends CoreACServiceData {
   /* **************************************************************************/

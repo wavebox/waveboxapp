@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { mailboxStore, mailboxActions } from 'stores/mailbox'
+import { accountStore, accountActions } from 'stores/account'
 import { List, Divider } from '@material-ui/core'
 import UnreadMailboxListItem from './UnreadMailboxListItem'
 import { WB_FOCUS_MAILBOXES_WINDOW } from 'shared/ipcEvents'
@@ -43,11 +43,11 @@ export default class UnreadMailboxList extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxesChanged)
+    accountStore.listen(this.mailboxesChanged)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxesChanged)
+    accountStore.unlisten(this.mailboxesChanged)
   }
 
   /* **************************************************************************/
@@ -55,7 +55,7 @@ export default class UnreadMailboxList extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
-    const mailboxState = mailboxStore.getState()
+    const mailboxState = accountStore.getState()
 
     return {
       mailboxIds: mailboxState.mailboxIds()
@@ -88,7 +88,7 @@ export default class UnreadMailboxList extends React.Component {
   */
   handleRequestSwitchMailbox = (evt, mailboxId) => {
     ipcRenderer.send(WB_FOCUS_MAILBOXES_WINDOW, {})
-    mailboxActions.changeActive(mailboxId)
+    accountActions.changeActiveMailbox(mailboxId)
   }
 
   /* **************************************************************************/

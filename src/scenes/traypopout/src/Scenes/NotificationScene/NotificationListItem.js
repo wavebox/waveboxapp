@@ -5,7 +5,7 @@ import MailboxAvatar from 'wbui/MailboxAvatar'
 import TimeAgo from 'react-timeago'
 import { withStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import Resolver from 'Runtime/Resolver'
 import classNames from 'classnames'
 import grey from '@material-ui/core/colors/grey'
@@ -72,11 +72,11 @@ class NotificationListItem extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxesChanged)
+    accountStore.listen(this.mailboxesChanged)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxesChanged)
+    accountStore.unlisten(this.mailboxesChanged)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -105,7 +105,7 @@ class NotificationListItem extends React.Component {
   * @param mailboxState=autoget: the current store state
   * @return the mailbox state
   */
-  generateMailboxState (mailboxId, mailboxState = mailboxStore.getState()) {
+  generateMailboxState (mailboxId, mailboxState = accountStore.getState()) {
     return {
       mailbox: mailboxState.getMailbox(mailboxId),
       resolvedAvatar: mailboxState.getResolvedAvatar(mailboxId, (i) => Resolver.image(i))

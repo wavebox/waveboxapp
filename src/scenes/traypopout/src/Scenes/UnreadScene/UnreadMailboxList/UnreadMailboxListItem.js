@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import { ListItem } from '@material-ui/core'
 import MailboxBadge from 'wbui/MailboxBadge'
 import MailboxAvatar from 'wbui/MailboxAvatar'
@@ -56,11 +56,11 @@ class UnreadMailboxListItem extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxesChanged)
+    accountStore.listen(this.mailboxesChanged)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxesChanged)
+    accountStore.unlisten(this.mailboxesChanged)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -86,14 +86,14 @@ class UnreadMailboxListItem extends React.Component {
   /**
   * Generates the mailbox state
   * @param mailboxId: the id of the mailbox
-  * @param mailboxState=autoget: the current store state
+  * @param accountState=autoget: the current store state
   * @return the mailbox state
   */
-  generateMailboxState (mailboxId, mailboxState = mailboxStore.getState()) {
+  generateMailboxState (mailboxId, accountState = accountStore.getState()) {
     return {
-      mailbox: mailboxState.getMailbox(mailboxId),
-      unreadCount: mailboxState.mailboxUnreadCountForUser(mailboxId),
-      resolvedAvatar: mailboxState.getResolvedAvatar(mailboxId, (i) => Resolver.image(i))
+      mailbox: accountState.getMailbox(mailboxId),
+      unreadCount: accountState.mailboxUnreadCountForUser(mailboxId),
+      resolvedAvatar: accountState.getResolvedAvatar(mailboxId, (i) => Resolver.image(i))
     }
   }
 

@@ -4,7 +4,7 @@ import MetricsService from './MetricsService'
 import ContextMenuService from './ContextMenuService'
 import WebContentsRPCService from './WebContentsRPCService'
 import MailboxAdaptorService from './MailboxAdaptorService'
-import GuestApiService from './GuestApiService'
+import WBGApiService from './WBGApiService'
 import AutofillService from './AutofillService'
 import NotificationService from './NotificationService'
 import FetchService from './FetchService'
@@ -17,7 +17,7 @@ const privPdfRenderService = Symbol('privPdfRenderService')
 const privContextMenuService = Symbol('privContextMenuService')
 const privWebContentsRPCService = Symbol('privWebContentsRPCService')
 const privMailboxAdaptorService = Symbol('privMailboxAdaptorService')
-const privGuestApiService = Symbol('privGuestApiService')
+const privWBGApiService = Symbol('privWBGApiService')
 const privAutofillService = Symbol('privAutofillService')
 const privNotificationService = Symbol('privNotificationService')
 const privFetchService = Symbol('privFetchService')
@@ -38,7 +38,7 @@ class ServicesManager {
     this[privPdfRenderService] = undefined
     this[privWebContentsRPCService] = undefined
     this[privMailboxAdaptorService] = undefined
-    this[privGuestApiService] = undefined
+    this[privWBGApiService] = undefined
     this[privNotificationService] = undefined
     this[privFetchService] = undefined
     this[privTakeoutService] = undefined
@@ -56,7 +56,7 @@ class ServicesManager {
     this[privPdfRenderService] = new PDFRenderService()
     this[privWebContentsRPCService] = new WebContentsRPCService(this[privNotificationService])
     this[privMailboxAdaptorService] = new MailboxAdaptorService()
-    this[privGuestApiService] = new GuestApiService()
+    this[privWBGApiService] = new WBGApiService()
     this[privFetchService] = new FetchService()
     this[privTakeoutService] = new TakeoutService()
   }
@@ -72,7 +72,7 @@ class ServicesManager {
   get contextMenuService () { return this[privContextMenuService] }
   get webContentsRPCService () { return this[privWebContentsRPCService] }
   get mailboxAdaptorService () { return this[privMailboxAdaptorService] }
-  get guestApiService () { return this[privGuestApiService] }
+  get wbgapiService () { return this[privWBGApiService] }
   get notificationService () { return this[privNotificationService] }
   get fetchService () { return this[privFetchService] }
   get takeoutService () { return this[privTakeoutService] }

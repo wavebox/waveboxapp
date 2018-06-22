@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import shallowCompare from 'react-addons-shallow-compare'
 import { notifhistStore } from 'stores/notifhist'
-import { mailboxActions } from 'stores/mailbox'
+import { accountActions } from 'stores/account'
 import { emblinkActions } from 'stores/emblink'
 import Infinate from 'react-infinite'
 import { List } from '@material-ui/core'
@@ -102,10 +102,10 @@ export default class NotificationScene extends React.Component {
   */
   handleNotificationClick = (evt, notification) => {
     ipcRenderer.send(WB_FOCUS_MAILBOXES_WINDOW, {})
-    mailboxActions.changeActive(notification.mailboxId, notification.serviceType)
+    accountActions.changeActiveService(notification.serviceId)
     if (notification.openPayload) {
       // Not all notifications are openable at any time
-      emblinkActions.openItem(notification.mailboxId, notification.serviceType, notification.openPayload)
+      emblinkActions.openItem(notification.serviceId, notification.openPayload)
     }
   }
 

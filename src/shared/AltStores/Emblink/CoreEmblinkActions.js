@@ -37,12 +37,11 @@ class CoreEmblinkActions extends RemoteActions {
 
   /**
   * Asks the user where they would like to start composing a new message
-  * @param mailboxId=undefined: the id of the mailbox
-  * @param serviceType=undefined: the type of service
+  * @param serviceId=undefined: the id of the service
   */
   composeNewMessage (...args) {
-    return this.universalDispatch('composeNewMessage', args, (mailboxId, serviceType) => {
-      return { mailboxId, serviceType }
+    return this.universalDispatch('composeNewMessage', args, (serviceId) => {
+      return { serviceId }
     })
   }
 
@@ -58,12 +57,11 @@ class CoreEmblinkActions extends RemoteActions {
   /**
   * Opens a mailto link
   * @param mailtoLink='': the link to try to open
-  * @param mailboxId=undefined: if specified and valid will open the link in the given mailbox id
-  * @param serviceType=undefined: if specified and valid will open the link in the given service type
+  * @param serviceId=undefined: if specified and valid will open the link in the given service id
   */
   composeNewMailtoLink (...args) {
-    return this.universalDispatch('composeNewMailtoLink', args, (mailtoLink, mailboxId, serviceType) => {
-      return { mailtoLink, mailboxId, serviceType }
+    return this.universalDispatch('composeNewMailtoLink', args, (mailtoLink, serviceId) => {
+      return { mailtoLink, serviceId }
     })
   }
 
@@ -73,13 +71,12 @@ class CoreEmblinkActions extends RemoteActions {
 
   /**
   * Opens an embedded item
-  * @param mailboxId: the id of the mailbox to open
-  * @param serviceType: the id of the servie to open
+  * @param serviceId: the id of the service to open
   * @param openPayload: the payload to open with
   */
   openItem (...args) {
-    return this.universalDispatch('openItem', args, (mailboxId, serviceType, openPayload) => {
-      return { mailboxId, serviceType, openPayload }
+    return this.universalDispatch('openItem', args, (serviceId, openPayload) => {
+      return { serviceId, openPayload }
     })
   }
 

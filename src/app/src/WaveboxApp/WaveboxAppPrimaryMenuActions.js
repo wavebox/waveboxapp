@@ -224,10 +224,16 @@ class WaveboxAppPrimaryMenuAcions {
   // Mailbox navigation
   /* ****************************************************************************/
 
-  changeMailbox = (mailboxId, serviceType = undefined) => {
+  changeMailbox = (mailboxId) => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().switchMailbox(mailboxId, serviceType)
+      mailboxesWindow.show().focus().switchMailbox(mailboxId)
+    }
+  }
+  changeService = (serviceId) => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.show().focus().switchService(serviceId)
     }
   }
   changeMailboxServiceToIndex = (index) => {

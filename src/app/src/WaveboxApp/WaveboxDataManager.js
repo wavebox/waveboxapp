@@ -1,5 +1,5 @@
 import { SessionManager } from 'SessionManager'
-import mailboxStore from 'stores/mailbox/mailboxStore'
+import accountStore from 'stores/account/accountStore'
 import CRExtensionManager from 'Extensions/Chrome/CRExtensionManager'
 
 class WaveboxDataManager {
@@ -13,7 +13,7 @@ class WaveboxDataManager {
   cleanExpiredSessions () {
     const expire = new Set(SessionManager.getAllDiskSessionIdsSync())
     const activeSessionIds = [].concat(
-      mailboxStore.getState().getActiveSessionIds(),
+      accountStore.getState().allPartitions(),
       CRExtensionManager.runtimeHandler.inUsePartitions
     )
     activeSessionIds.forEach((id) => expire.delete(id))

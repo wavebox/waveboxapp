@@ -1,4 +1,4 @@
-import CoreACModel from '../CoreACModel'
+import CoreACModel from './CoreACModel'
 
 class CoreACAuth extends CoreACModel {
   /* **************************************************************************/

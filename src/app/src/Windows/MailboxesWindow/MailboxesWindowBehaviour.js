@@ -3,7 +3,7 @@ import { evtMain } from 'AppEvents'
 import ContentWindow from 'Windows/ContentWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import AuthWindow from 'Windows/AuthWindow'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import { WindowOpeningHandler } from '../WindowOpeningEngine'
 import { WB_NEW_WINDOW, WB_FOCUS_AUTH_WINDOW } from 'shared/ipcEvents'
 import WINDOW_TYPES from '../WindowTypes'
@@ -65,10 +65,10 @@ class MailboxesWindowBehaviour {
   */
   handleOpenIPCWaveboxWindow = (evt, body) => {
     if (evt.sender.id === this.webContentsId) {
-      const contentWindow = new ContentWindow(body.mailboxId && body.serviceType ? {
+      const contentWindow = new ContentWindow(body.mailboxId && body.serviceId ? {
         backing: WINDOW_BACKING_TYPES.MAILBOX_SERVICE,
         mailboxId: body.mailboxId,
-        serviceType: body.serviceType
+        serviceId: body.serviceId
       } : undefined)
 
       const window = BrowserWindow.fromWebContents(evt.sender)
@@ -161,10 +161,8 @@ class MailboxesWindowBehaviour {
     // Grab everything we need dropping out as we go...
     const webContentsId = evt.sender.id
     if (!this.tabManager.hasServiceId(webContentsId)) { return }
-    const { mailboxId, serviceType } = this.tabManager.getServiceId(webContentsId)
-    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    if (!mailbox) { return }
-    const service = mailbox.serviceForType(serviceType)
+    const { serviceId } = this.tabManager.getServiceId(webContentsId)
+    const service = accountStore.getState().getService(serviceId)
     if (!service) { return }
 
     if (service.shouldPreventInputEvent(input)) {

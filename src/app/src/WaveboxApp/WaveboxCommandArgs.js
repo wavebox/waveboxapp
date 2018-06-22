@@ -20,9 +20,9 @@ class WaveboxCommandArgs {
   * Processes the command line arguments
   * @param argv: the arguments as processed by yargs
   * @param emblinkActions: the embed link actions
-  * @param mailboxActions: the mailbox actions
+  * @param accountActions: the account actions
   */
-  static processModifierArgs (argv, emblinkActions, mailboxActions) {
+  static processModifierArgs (argv, emblinkActions, accountActions) {
     // Mailto
     let mailtoStr
     if (argv.mailto && argv.mailto.startsWith('mailto:')) {
@@ -40,7 +40,7 @@ class WaveboxCommandArgs {
     // Mailbox index
     const accountIndex = parseInt(argv.accountIndex)
     if (!isNaN(accountIndex)) {
-      mailboxActions.changeActiveIndex(accountIndex)
+      accountActions.changeActiveMailboxIndex(accountIndex)
     }
   }
 }

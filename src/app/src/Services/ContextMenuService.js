@@ -13,7 +13,7 @@ import MailboxesWindow from 'Windows/MailboxesWindow'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import CRExtensionRTContextMenu from 'shared/Models/CRExtensionRT/CRExtensionRTContextMenu'
 import { settingsActions } from 'stores/settings'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import { AUTOFILL_MENU } from 'shared/b64Assets'
 
 const privConnected = Symbol('privConnected')
@@ -181,13 +181,13 @@ class ContextMenuService {
         click: () => { this.openLinkInWaveboxWindow(contents, params.linkURL) }
       })
 
-      const mailboxes = mailboxStore.getState().allMailboxes()
+      const mailboxes = accountStore.getState().allMailboxes()
       if (mailboxes.length > 1) {
         template.push({
           label: 'Open Link in Account Profile',
           submenu: mailboxes.map((mailbox) => {
             return {
-              label: `${mailbox.humanizedType} : ${mailbox.displayName}`,
+              label: mailbox.displayName,
               click: () => { this.openLinkInWaveboxWindowForAccount(contents, params.linkURL, mailbox) }
             }
           })

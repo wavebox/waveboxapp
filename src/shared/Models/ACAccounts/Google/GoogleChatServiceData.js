@@ -1,4 +1,4 @@
-import CoreACServiceData from './CoreACServiceData'
+import CoreACServiceData from '../CoreACServiceData'
 
 const BADGE_REGEXP = new RegExp('(chat-favicon-new-non-notif|chat-favicon-new-notif)')
 

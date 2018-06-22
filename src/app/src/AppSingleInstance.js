@@ -1,7 +1,7 @@
 import yargs from 'yargs'
 import WaveboxCommandArgs from './WaveboxApp/WaveboxCommandArgs'
 import emblinkActions from 'stores/emblink/emblinkActions'
-import mailboxActions from 'stores/mailbox/mailboxActions'
+import accountActions from 'stores/account/accountActions'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import MailboxesWindow from 'Windows/MailboxesWindow'
 
@@ -18,7 +18,7 @@ class AppSingleInstance {
     const mainWindow = WaveboxWindow.getOfType(MailboxesWindow)
     const argv = yargs.parse(commandLine)
     WaveboxCommandArgs.processWindowVisibility(argv, mainWindow)
-    WaveboxCommandArgs.processModifierArgs(argv, emblinkActions, mailboxActions)
+    WaveboxCommandArgs.processModifierArgs(argv, emblinkActions, accountActions)
   }
 }
 

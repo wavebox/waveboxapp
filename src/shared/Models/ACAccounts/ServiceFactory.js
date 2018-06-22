@@ -103,7 +103,7 @@ class ServiceFactory {
     const rec = MAPPING[data.type]
     if (rec) {
       const Class = rec[0]
-      return new Class(data)
+      return require("../UndefinedPropProxy")(new Class(data))
     } else {
       return undefined
     }
@@ -116,7 +116,7 @@ class ServiceFactory {
   */
   static modelizeServiceData (data) {
     const Class = this.serviceDataClass(data.parentType)
-    return new Class(data)
+    return require("../UndefinedPropProxy")(new Class(data))
   }
 
   /**

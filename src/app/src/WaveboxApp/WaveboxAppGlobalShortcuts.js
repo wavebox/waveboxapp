@@ -1,6 +1,6 @@
 import { globalShortcut, app } from 'electron'
 import { settingsStore } from 'stores/settings'
-import { mailboxStore, mailboxActions } from 'stores/mailbox'
+import { accountStore, accountActions } from 'stores/account'
 import MailboxesWindow from 'Windows/MailboxesWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 
@@ -145,9 +145,9 @@ class WaveboxAppGlobalShortcuts {
       window.show()
       window.focus()
     }
-    const mailboxId = mailboxStore.getState().mailboxIds()[index]
+    const mailboxId = accountStore.getState().mailboxIds()[index]
     if (mailboxId) {
-      mailboxActions.changeActive(mailboxId)
+      accountActions.changeActiveMailbox(mailboxId)
     }
   }
 

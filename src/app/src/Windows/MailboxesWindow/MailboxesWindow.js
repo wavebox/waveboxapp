@@ -1,7 +1,7 @@
 import electron from 'electron'
 import WaveboxWindow from '../WaveboxWindow'
 import { settingsStore } from 'stores/settings'
-import { mailboxActions, ServiceReducer } from 'stores/mailbox'
+import { accountActions, ServiceDataReducer } from 'stores/account'
 import { userStore } from 'stores/user'
 import { GuestWebPreferences } from 'WebContentsManager'
 import {
@@ -154,7 +154,7 @@ class MailboxesWindow extends WaveboxWindow {
     electron.ipcMain.on(WB_FOCUS_MAILBOXES_WINDOW, this.handleFocusMailboxesWindow)
 
     this.window.on('focus', () => {
-      mailboxActions.reduceService.defer(undefined, undefined, ServiceReducer.mergeChangesetOnActive)
+      accountActions.reduceServiceData.defer(undefined, ServiceDataReducer.mergeChangesetOnActive)
     })
 
     this.window.webContents.on('will-attach-webview', this._handleWillAttachWebview)
@@ -349,12 +349,22 @@ class MailboxesWindow extends WaveboxWindow {
   /**
   * Switches mailbox
   * @param mailboxId: the id of the mailbox to switch to
-  * @param serviceType=undefined: the type of service to also switch to if desired
   * @return this
   */
-  switchMailbox (mailboxId, serviceType = undefined) {
+  switchMailbox (mailboxId) {
     this.show().focus()
-    mailboxActions.changeActive(mailboxId, serviceType)
+    accountActions.changeActiveMailbox(mailboxId)
+    return this
+  }
+
+  /**
+  * Switches service
+  * @param serviceId: the id of the service to swtich to
+  * @return this
+  */
+  switchService (serviceId) {
+    this.show().focus()
+    accountActions.changeActiveService(serviceId)
     return this
   }
 
@@ -365,7 +375,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchPrevMailbox (allowCycling = false) {
     this.show().focus()
-    mailboxActions.changeActiveToPrev(allowCycling)
+    accountActions.changeActiveMailboxToPrev(allowCycling)
     return this
   }
 
@@ -376,7 +386,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchNextMailbox (allowCycling = false) {
     this.show().focus()
-    mailboxActions.changeActiveToNext(allowCycling)
+    accountActions.changeActiveMailboxToNext(allowCycling)
     return this
   }
 
@@ -392,7 +402,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchToServiceAtIndex (index) {
     this.show().focus()
-    mailboxActions.changeActiveServiceIndex(index)
+    accountActions.changeActiveServiceIndex(index)
     return this
   }
 
@@ -403,7 +413,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchPrevService (allowCycling = false) {
     this.show().focus()
-    mailboxActions.changeActiveServiceToPrev(allowCycling)
+    accountActions.changeActiveServiceToPrev(allowCycling)
     return this
   }
 
@@ -414,7 +424,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchNextService (allowCycling = false) {
     this.show().focus()
-    mailboxActions.changeActiveServiceToNext(allowCycling)
+    accountActions.changeActiveServiceToNext(allowCycling)
     return this
   }
 
@@ -429,7 +439,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchNextTab () {
     this.show().focus()
-    mailboxActions.changeActiveTabToNext()
+    accountActions.changeActiveTabToNext()
     return this
   }
 
@@ -440,7 +450,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchPrevTab () {
     this.show().focus()
-    mailboxActions.changeActiveTabToPrev()
+    accountActions.changeActiveTabToPrev()
     return this
   }
 

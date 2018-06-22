@@ -7,7 +7,7 @@ import WaveboxAppPrimaryMenu from './WaveboxAppPrimaryMenu'
 import WaveboxAppGlobalShortcuts from './WaveboxAppGlobalShortcuts'
 import { settingsStore, settingsActions } from 'stores/settings'
 import { platformStore, platformActions } from 'stores/platform'
-import { mailboxStore, mailboxActions } from 'stores/mailbox'
+import { accountStore, accountActions } from 'stores/account'
 import { userStore, userActions } from 'stores/user'
 import { emblinkStore, emblinkActions } from 'stores/emblink'
 import { notifhistStore, notifhistActions } from 'stores/notifhist'
@@ -92,8 +92,8 @@ class WaveboxApp {
     this[privArgv] = yargs.parse(process.argv)
 
     // Start our stores
-    mailboxStore.getState()
-    mailboxActions.load()
+    accountStore.getState()
+    accountActions.load()
     settingsStore.getState()
     settingsActions.load()
     platformStore.getState()
@@ -254,7 +254,7 @@ class WaveboxApp {
   */
   _handleAppReady = () => {
     const settingsState = settingsStore.getState()
-    const mailboxState = mailboxStore.getState()
+    const accountState = accountStore.getState()
     const userState = userStore.getState()
 
     // Load extensions before any webcontents get created
@@ -271,9 +271,7 @@ class WaveboxApp {
     // Prep app menu
     this[privAppMenu].updateApplicationMenu(
       settingsState.accelerators,
-      mailboxState.allMailboxes(),
-      mailboxState.activeMailboxId(),
-      mailboxState.activeMailboxService(),
+      this[privAppMenu].buildMailboxMenuConfig(accountState),
       userState.user.userEmail
     )
 
@@ -289,7 +287,7 @@ class WaveboxApp {
     this[privGlobalShortcuts].register()
 
     // Proces any user arguments
-    WaveboxCommandArgs.processModifierArgs(this[privArgv], emblinkActions, mailboxActions)
+    WaveboxCommandArgs.processModifierArgs(this[privArgv], emblinkActions, accountActions)
   }
 
   /**

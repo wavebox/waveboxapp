@@ -1,4 +1,4 @@
-import CoreACService from './CoreACService'
+import CoreACService from '../CoreACService'
 
 class SlackService extends CoreACService {
   /* **************************************************************************/

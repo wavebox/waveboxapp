@@ -3,12 +3,12 @@ import ContentWindow from 'Windows/ContentWindow'
 import ContentPopupWindow from 'Windows/ContentPopupWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import { settingsStore } from 'stores/settings'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import WindowOpeningEngine from './WindowOpeningEngine'
 import WindowOpeningRules from './WindowOpeningRules'
 import WindowOpeningMatchTask from './WindowOpeningMatchTask'
 import WINDOW_BACKING_TYPES from '../WindowBackingTypes'
-import mailboxStore from 'stores/mailbox/mailboxStore'
+import accountStore from 'stores/account/accountStore'
 import uuid from 'uuid'
 
 const WINDOW_OPEN_MODES = WindowOpeningEngine.WINDOW_OPEN_MODES
@@ -251,7 +251,7 @@ class WindowOpeningHandler {
     if (!tabMetaInfo) { return undefined }
     if (tabMetaInfo.backing !== WINDOW_BACKING_TYPES.MAILBOX_SERVICE) { return undefined }
 
-    const mailbox = mailboxStore.getState().getMailbox(tabMetaInfo.mailboxId)
+    const mailbox = accountStore.getState().getMailbox(tabMetaInfo.mailboxId)
     if (!mailbox) { return undefined }
 
     return mailbox
@@ -306,9 +306,9 @@ class WindowOpeningHandler {
     if (!mailbox) {
       return this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
     } else {
-      if (mailbox.defaultWindowOpenMode === CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
+      if (mailbox.defaultWindowOpenMode === ACMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
         return this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
-      } else if (mailbox.defaultWindowOpenMode === CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
+      } else if (mailbox.defaultWindowOpenMode === ACMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
         return this.openWindowWaveboxContent(openingBrowserWindow, tabMetaInfo, targetUrl, options, partitionOverride)
       }
     }

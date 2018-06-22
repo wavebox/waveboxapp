@@ -1,5 +1,5 @@
 import CoreAccountStore from './CoreAccountStore'
-import { ACTIONS_NAME } from './AltMailboxIdentifiers'
+import { ACTIONS_NAME } from './AltAccountIdentifiers'
 import ACMailbox from '../../Models/ACAccounts/ACMailbox'
 import CoreACAuth from '../../Models/ACAccounts/CoreACAuth'
 import ServiceFactory from '../../Models/ACAccounts/ServiceFactory'
@@ -36,7 +36,7 @@ class RendererAccountStore extends CoreAccountStore {
 
   handleRemoteSetMailbox ({id, mailboxJS}) {
     if (mailboxJS) {
-      this._mailboxes_.set(id, new ACMailbox(mailboxJS))
+      this._mailboxes_.set(id, require("../../Models/UndefinedPropProxy")(new ACMailbox(mailboxJS)))
     } else {
       this._mailboxes_.delete(id)
     }

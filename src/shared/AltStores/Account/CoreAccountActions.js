@@ -6,7 +6,7 @@ import {
 } from './AltAccountIdentifiers'
 import MailboxReducerManifest from './MailboxReducers/MailboxReducerManifest'
 import ServiceReducerManifest from './ServiceReducers/ServiceReducerManifest'
-import ServiceDataReducerManifest from './ServiceDataReducer/ServiceDataReducerManifest'
+import ServiceDataReducerManifest from './ServiceDataReducers/ServiceDataReducerManifest'
 
 class CoreAccountActions extends RemoteActions {
   /* **************************************************************************/
@@ -323,6 +323,45 @@ class CoreAccountActions extends RemoteActions {
   }
 
   /**
+  * Changes the active mailbox to be the one at the given index
+  * @param index: the index of the mailbox
+  */
+  changeActiveMailboxIndex (...args) {
+    if (process.type === 'browser') {
+      const [index] = args
+      return { index }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('changeActiveMailboxIndex', args)
+    }
+  }
+
+  /**
+  * Changes the active mailbox to the previous in the list
+  * @param allowCycling=false: set to true to allow cycling at end/beginning
+  */
+  changeActiveMailboxToPrev (...args) {
+    if (process.type === 'browser') {
+      const [allowCycling = false] = args
+      return { allowCycling }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('changeActiveMailboxToPrev', args)
+    }
+  }
+
+  /**
+  * Changes the active mailbox to the next in the list
+  * @param allowCycling=false: set to true to allow cycling at end/beginning
+  */
+  changeActiveMailboxToNext (...args) {
+    if (process.type === 'browser') {
+      const [allowCycling = false] = args
+      return { allowCycling }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('changeActiveMailboxToNext', args)
+    }
+  }
+
+  /**
   * Changes the active service
   * @param id: the id of the service
   */
@@ -332,6 +371,67 @@ class CoreAccountActions extends RemoteActions {
       return { id }
     } else if (process.type === 'renderer') {
       return this.remoteDispatch('changeActiveService', args)
+    }
+  }
+
+  /**
+  * Changes the active service to the one at the supplied index. If there
+  * is no service this will just fail silently
+  */
+  changeActiveServiceIndex (...args) {
+    if (process.type === 'browser') {
+      const [index] = args
+      return { index }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('changeActiveServiceIndex', args)
+    }
+  }
+
+  /**
+  * Changes the active service to the previous in the list
+  * @param allowCycling=false: set to true to allow cycling at end/beginning
+  */
+  changeActiveServiceToPrev (...args) {
+    if (process.type === 'browser') {
+      const [allowCycling = false] = args
+      return { allowCycling }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('changeActiveServiceToPrev', args)
+    }
+  }
+
+  /**
+  * Changes the active service to the next in the list
+  * @param allowCycling=false: set to true to allow cycling at end/beginning
+  */
+  changeActiveServiceToNext (...args) {
+    if (process.type === 'browser') {
+      const [allowCycling = false] = args
+      return { allowCycling }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('changeActiveServiceToNext', args)
+    }
+  }
+
+  /**
+  * Changes the active service or mailbox to the next in the list
+  */
+  changeActiveTabToNext (...args) {
+    if (process.type === 'browser') {
+      return { }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('changeActiveTabToNext', args)
+    }
+  }
+
+  /**
+  * Changes the active service or mailbox to the prev in the list
+  */
+  changeActiveTabToPrev (...args) {
+    if (process.type === 'browser') {
+      return { }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('changeActiveTabToPrev', args)
     }
   }
 

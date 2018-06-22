@@ -1,4 +1,4 @@
-import CoreGoogleMailService from '../CoreGoogleMailService'
+import CoreGoogleMailService from './CoreGoogleMailService'
 
 class GoogleMailService extends CoreGoogleMailService {
   /* **************************************************************************/

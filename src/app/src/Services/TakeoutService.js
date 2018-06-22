@@ -1,4 +1,5 @@
-import mailboxStorage from 'Storage/mailboxStorage'
+import acmailboxStorage from 'Storage/acmailboxStorage'
+import acserviceStorage from 'Storage/acserviceStorage'
 import avatarStorage from 'Storage/avatarStorage'
 import settingStorage from 'Storage/settingStorage'
 import pkg from 'package.json'
@@ -17,7 +18,8 @@ import {
 } from 'shared/ipcEvents'
 
 const TAKEOUT_STORES = [
-  mailboxStorage,
+  acmailboxStorage,
+  acserviceStorage,
   avatarStorage,
   settingStorage
 ]

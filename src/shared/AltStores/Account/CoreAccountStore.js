@@ -11,6 +11,8 @@ import ACMailbox from '../../Models/ACAccounts/ACMailbox'
 import CoreACAuth from '../../Models/ACAccounts/CoreACAuth'
 import ServiceFactory from '../../Models/ACAccounts/ServiceFactory'
 
+//TODO if you run an import, serviceData wont be imported. Handle this case
+
 class CoreAccountStore extends RemoteStore {
   /* **************************************************************************/
   // Lifecycle
@@ -164,6 +166,8 @@ class CoreAccountStore extends RemoteStore {
       return service ? service.parentId : null
     }
 
+    this.activeMailbox = () => { return this.getMailbox(this.activeMailboxId()) }
+
     /* ****************************************/
     // Sleeping
     /* ****************************************/
@@ -209,6 +213,14 @@ class CoreAccountStore extends RemoteStore {
         service: service,
         closeMetrics: metrics
       }
+    }
+
+    /* ****************************************/
+    // Misc
+    /* ****************************************/
+
+    this.allPartitions = () => {
+      return Array.from(this._mailboxes_.values()).map((mailbox) => mailbox.partiton)
     }
 
     /* ****************************************/
@@ -274,7 +286,7 @@ class CoreAccountStore extends RemoteStore {
     // Mailboxes
     this._mailboxIndex_ = mailboxIndex
     this._mailboxes_ = Object.keys(mailboxes).reduce((acc, id) => {
-      acc.set(id, new ACMailbox(mailboxes[id]))
+      acc.set(id, require("../../Models/UndefinedPropProxy")(new ACMailbox(mailboxes[id])))
       return acc
     }, new Map())
     this._mailboxAuth_ = Object.keys(mailboxAuth).reduce((acc, id) => {

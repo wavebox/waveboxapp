@@ -3,7 +3,7 @@ import fs from 'fs-extra'
 import Resolver from 'Runtime/Resolver'
 import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
 import WaveboxWindow from 'Windows/WaveboxWindow'
-import { mailboxStore, mailboxActions, ServiceReducer } from 'stores/mailbox'
+import { accountActions, ServiceDataReducer } from 'stores/account'
 import {
   WB_GUEST_API_REQUEST,
   WB_GUEST_API_READ_SYNC
@@ -14,7 +14,7 @@ import {
 
 const privCachedGuestAPIs = Symbol('privCachedGuestAPIs')
 
-class GuestApiService {
+class WBGApiService {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
@@ -41,19 +41,13 @@ class GuestApiService {
     if (!tabInfo) { return }
     if (tabInfo.backing !== WINDOW_BACKING_TYPES.MAILBOX_SERVICE) { return }
 
-    const mailbox = mailboxStore.getState().getMailbox(tabInfo.mailboxId)
-    if (!mailbox) { return }
-    const service = mailbox.serviceForType(tabInfo.serviceType)
-    if (!service) { return }
-    if (!service.supportsGuestConfig) { return }
-
     switch (name) {
       case 'badge:setCount':
-        return this._setBadgeCount(tabInfo.mailboxId, tabInfo.serviceType, ...args)
+        return this._setBadgeCount(tabInfo.serviceId, ...args)
       case 'badge:setHasUnreadActivity':
-        return this._setBadgeHasUnreadActivity(tabInfo.mailboxId, tabInfo.serviceType, ...args)
+        return this._setBadgeHasUnreadActivity(tabInfo.serviceId, ...args)
       case 'tray:setMessages':
-        return this._setTrayMessages(tabInfo.mailboxId, tabInfo.serviceType, ...args)
+        return this._setTrayMessages(tabInfo.serviceId, ...args)
     }
   }
 
@@ -106,25 +100,23 @@ class GuestApiService {
   // Api Calls
   /* ****************************************************************************/
 
-  _setBadgeCount (mailboxId, serviceType, unsafeCount) {
-    mailboxActions.reduceService(
-      mailboxId,
-      serviceType,
-      ServiceReducer.setAdaptorUnreadCount,
+  _setBadgeCount (serviceId, unsafeCount) {
+    accountActions.reduceServiceData(
+      serviceId,
+      ServiceDataReducer.setWbgapiUnreadCount,
       this._shapeInt(unsafeCount, 0)
     )
   }
 
-  _setBadgeHasUnreadActivity (mailboxId, serviceType, unsafeHasActivity) {
-    mailboxActions.reduceService(
-      mailboxId,
-      serviceType,
-      ServiceReducer.setAdaptorHasUnreadActivity,
+  _setBadgeHasUnreadActivity (serviceId, unsafeHasActivity) {
+    accountActions.reduceServiceData(
+      serviceId,
+      ServiceDataReducer.setWbgapiHasUnreadActivity,
       this._shapeBool(unsafeHasActivity, false)
     )
   }
 
-  _setTrayMessages (mailboxId, serviceType, unsafeMessages) {
+  _setTrayMessages (serviceId, unsafeMessages) {
     const messages = (Array.isArray(unsafeMessages) ? unsafeMessages : [])
       .slice(0, 10)
       .map((unsafeMessage, index) => {
@@ -133,19 +125,17 @@ class GuestApiService {
           text: this._shapeStr(unsafeMessage.text, 100),
           date: this._shapeInt(unsafeMessage.date, new Date().getTime()),
           data: {
-            mailboxId: mailboxId,
-            serviceType: serviceType,
+            serviceId: serviceId,
             open: this._shapeStr(unsafeMessage.open, '', 256)
           }
         }
       })
-    mailboxActions.reduceService(
-      mailboxId,
-      serviceType,
-      ServiceReducer.setAdaptorTrayMessages,
+    accountActions.reduceService(
+      serviceId,
+      ServiceDataReducer.setWbgapiTrayMessages,
       messages
     )
   }
 }
 
-export default GuestApiService
+export default WBGApiService

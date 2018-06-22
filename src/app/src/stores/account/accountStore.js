@@ -1,7 +1,7 @@
 import CoreAccountStore from 'shared/AltStores/Account/CoreAccountStore'
 import alt from '../alt'
 import { session, webContents } from 'electron'
-import { STORE_NAME } from 'shared/AltStores/Mailbox/AltAccountIdentifiers'
+import { STORE_NAME } from 'shared/AltStores/Account/AltAccountIdentifiers'
 import actions from './accountActions'
 import mailboxPersistence from 'Storage/acmailboxStorage'
 import mailboxAuthPersistence from 'Storage/acmailboxauthStorage'
@@ -20,8 +20,8 @@ import {
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import CoreACAuth from 'shared/Models/ACAccounts/CoreACAuth'
 import ServiceFactory from 'shared/Models/ACAccounts/ServiceFactory'
-import MailboxReducer from 'shared/Models/ACAccounts/MailboxReducers/MailboxReducer'
-import ServiceDataReducer from 'shared/Models/ACAccounts/ServiceDataReducers/ServiceDataReducer'
+import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
+import ServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/ServiceDataReducer'
 
 class AccountStore extends CoreAccountStore {
   /* **************************************************************************/
@@ -63,7 +63,15 @@ class AccountStore extends CoreAccountStore {
 
       // Active
       handleChangeActiveMailbox: actions.CHANGE_ACTIVE_MAILBOX,
+      handleChangeActiveMailboxIndex: actions.CHANGE_ACTIVE_MAILBOX_INDEX,
+       handleChangeActiveMailboxToPrev: actions.CHANGE_ACTIVE_MAILBOX_TO_PREV,
+      handleChangeActiveMailboxToNext: actions.CHANGE_ACTIVE_MAILBOX_TO_NEXT,
       handleChangeActiveService: actions.CHANGE_ACTIVE_SERVICE,
+      handleChangeActiveServiceIndex: actions.CHANGE_ACTIVE_SERVICE_INDEX,
+      handleChangeActiveServiceToPrev: actions.CHANGE_ACTIVE_SERVICE_TO_PREV,
+      handleChangeActiveServiceToNext: actions.CHANGE_ACTIVE_SERVICE_TO_NEXT,
+      handleChangeActiveTabToNext: actions.CHANGE_ACTIVE_TAB_TO_NEXT,
+      handleChangeActiveTabToPrev: actions.CHANGE_ACTIVE_TAB_TO_PREV,
 
       // Mailbox auth teardown
       handleClearMailboxBrowserSession: actions.CLEAR_MAILBOX_BROWSER_SESSION,
@@ -302,7 +310,7 @@ class AccountStore extends CoreAccountStore {
     }
   }
 
-  handleReduceMailbox ({ id, reducer, reducerArgs }) {
+  handleReduceMailbox ({ id = this.activeMailboxId(), reducer, reducerArgs }) {
     const mailbox = this.getMailbox(id)
     if (mailbox) {
       const nextJS = reducer.apply(this, [mailbox].concat(reducerArgs))
@@ -381,7 +389,7 @@ class AccountStore extends CoreAccountStore {
     this.saveServiceData(id, null)
   }
 
-  handleReduceService ({ id, reducer, reducerArgs }) {
+  handleReduceService ({ id = this.activeServiceId(), reducer, reducerArgs }) {
     const service = this.getService(id)
     if (service) {
       const nextJS = reducer.apply(this, [service].concat(reducerArgs))
@@ -411,7 +419,7 @@ class AccountStore extends CoreAccountStore {
     }
   }
 
-  handleReduceServiceData ({ id, reducer, reducerArgs }) {
+  handleReduceServiceData ({ id = this.activeServiceId(), reducer, reducerArgs }) {
     const service = this.getService(id)
     const serviceData = this.getServiceData(id)
     if (service && serviceData) {
@@ -590,17 +598,65 @@ class AccountStore extends CoreAccountStore {
   // Active
   /* **************************************************************************/
 
-  handleChangeActiveMailbox ({ id }) {
-    this.preventDefault()
-
-    if (this.activeMailboxId() === id) { return }
+  /**
+  * Re-issues a change active mailbox action as a change active service action
+  * @param id: the id of the mailbox to change
+  * @return true if it dispatched, false otherwise
+  */
+  _changeActiveMailboxBySecondaryAction (id) {
+    if (this.activeMailboxId() === id) { return false }
 
     const mailbox = this.getMailbox(id)
-    if (!mailbox) { return }
+    if (!mailbox) { return false }
     const serviceId = mailbox.allServices[0]
-    if (!serviceId) { return }
+    if (!serviceId) { return false }
 
     actions.changeActiveService.defer(serviceId)
+    return true
+  }
+
+  handleChangeActiveMailbox ({ id }) {
+    this.preventDefault()
+    this._changeActiveMailboxBySecondaryAction(id)
+  }
+
+  handleChangeActiveMailboxIndex ({ index }) {
+    this.preventDefault()
+    this._changeActiveMailboxBySecondaryAction(this._mailboxIndex_[index])
+  }
+
+  handleChangeActiveMailboxToPrev ({ allowCycling }) {
+    this.preventDefault()
+
+    const activeMailboxId = this.activeMailboxId()
+    const activeIndex = this._mailboxIndex_.findIndex((id) => id === activeMailboxId)
+    let nextId
+    if (allowCycling && activeIndex === 0) {
+      nextId = this._mailboxIndex_[this._mailboxIndex_.length - 1] || null
+    } else {
+      nextId = this._mailboxIndex_[Math.max(0, activeIndex - 1)] || null
+    }
+
+    if (nextId) {
+      this._changeActiveMailboxBySecondaryAction(nextId)
+    }
+  }
+
+  handleChangeActiveMailboxToNext ({ allowCycling }) {
+    this.preventDefault()
+
+    const activeMailboxId = this.activeMailboxId()
+    const activeIndex = this._mailboxIndex_.findIndex((id) => id === activeMailboxId)
+    let nextId
+    if (allowCycling && activeIndex === this._mailboxIndex_.length - 1) {
+      nextId = this._mailboxIndex_[0] || null
+    } else {
+      nextId = this._mailboxIndex_[Math.min(this._mailboxIndex_.length - 1, activeIndex + 1)] || null
+    }
+
+    if (nextId) {
+      this._changeActiveMailboxBySecondaryAction(nextId)
+    }
   }
 
   handleChangeActiveService ({ id }) {
@@ -617,6 +673,98 @@ class AccountStore extends CoreAccountStore {
     // Change
     this.saveActiveServiceId(id)
     actions.reduceServiceData.defer(id, ServiceDataReducer.mergeChangesetOnActive)
+  }
+
+  handleChangeActiveServiceIndex ({ index }) {
+    this.preventDefault()
+
+    const mailbox = this.activeMailbox()
+    if (!mailbox) { return }
+
+    const nextServiceId = mailbox.allServices[index]
+    if (!nextServiceId) { return }
+
+    actions.changeActiveService(nextServiceId)
+  }
+
+  handleChangeActiveServiceToPrev ({ allowCycling }) {
+    this.preventDefault()
+
+    const mailbox = this.activeMailbox()
+    if (!mailbox) { return }
+
+    const activeServiceId = this.activeServiceId()
+    const activeIndex = mailbox.allServices.findIndex((t) => t === activeServiceId)
+
+    let nextServiceId
+    if (allowCycling && activeIndex === 0) {
+      nextServiceId = mailbox.allServices[mailbox.allServices.length - 1] || null
+    } else {
+      nextServiceId = mailbox.allServices[Math.max(0, activeIndex - 1)] || null
+    }
+
+    if (nextServiceId) {
+      actions.changeActiveService.defer(nextServiceId)
+    }
+  }
+
+  handleChangeActiveServiceToNext ({ allowCycling }) {
+    this.preventDefault()
+
+    const mailbox = this.activeMailbox()
+    if (!mailbox) { return }
+
+    const activeServiceId = this.activeServiceId()
+    const activeIndex = mailbox.allServices.findIndex((t) => t === activeServiceId)
+
+    let nextServiceId
+    if (allowCycling && activeIndex === mailbox.enabledServiceTypes.length - 1) {
+      nextServiceId = mailbox.allServices[0] || null
+    } else {
+      nextServiceId = mailbox.allServices[Math.min(mailbox.allServices.length - 1, activeIndex + 1)] || null
+    }
+
+    if (nextServiceId) {
+      actions.changeActiveService.defer(nextServiceId)
+    }
+  }
+
+  handleChangeActiveTabToNext () {
+    this.preventDefault()
+
+    const activeServiceId = this.activeServiceId()
+    const allServiceIds = this.allServicesOrdered().map((s) => s.id)
+    const activeIndex = allServiceIds.findIndex((id) => id === activeServiceId)
+
+    let nextServiceId
+    if (activeIndex === allServiceIds.length - 1) {
+      nextServiceId = allServiceIds[0] || null
+    } else {
+      nextServiceId = allServiceIds[Math.min(allServiceIds.length - 1, activeIndex + 1)] || null
+    }
+
+    if (nextServiceId) {
+      actions.changeActiveService.defer(nextServiceId)
+    }
+  }
+
+  handleChangeActiveTabToPrev () {
+    this.preventDefault()
+
+    const activeServiceId = this.activeServiceId()
+    const allServiceIds = this.allServicesOrdered().map((s) => s.id)
+    const activeIndex = allServiceIds.findIndex((id) => id === activeServiceId)
+
+    let nextServiceId
+    if (activeIndex === 0) {
+      nextServiceId = allServiceIds[allServiceIds.length - 1] || null
+    } else {
+      nextServiceId = allServiceIds[Math.max(0, activeIndex - 1)] || null
+    }
+
+    if (nextServiceId) {
+      actions.changeActiveService.defer(nextServiceId)
+    }
   }
 
   /* **************************************************************************/

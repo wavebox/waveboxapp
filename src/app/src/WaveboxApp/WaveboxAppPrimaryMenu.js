@@ -1,5 +1,5 @@
 import { Menu, globalShortcut, app, BrowserWindow } from 'electron'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
 import MenuTool from 'shared/Electron/MenuTool'
@@ -14,14 +14,12 @@ class WaveboxAppPrimaryMenu {
 
   constructor () {
     this._lastAccelerators = null
-    this._lastMailboxes = null
+    this._lastMailboxMenuConfig = null
     this._lastUserEmail = null
-    this._lastActiveMailbox = null
-    this._lastActiveServiceType = null
     this._lastMenu = null
     this._hiddenShortcuts = new Map()
 
-    mailboxStore.listen(this.handleMailboxesChanged)
+    accountStore.listen(this.handleMailboxesChanged)
     settingsStore.listen(this.handleAcceleratorsChanged)
     userStore.listen(this.handleUserChanged)
     evtMain.on(evtMain.INPUT_EVENT_PREVENTED, this.handleInputEventPrevented)
@@ -36,13 +34,11 @@ class WaveboxAppPrimaryMenu {
   /**
   * Builds the menu
   * @param accelerators: the accelerators to use
-  * @param mailboxes: the list of mailboxes
-  * @param activeMailbox: the active mailbox
-  * @param activeServiceType: the type of the active service
+  * @param mailboxMenuConfig: the mailbox menu config
   * @param userEmail: the users email address
   * @return the new menu
   */
-  build (accelerators, mailboxes, activeMailbox, activeServiceType, userEmail) {
+  build (accelerators, mailboxMenuConfig, userEmail) {
     // Fixes https://github.com/wavebox/waveboxapp/issues/562
     const tlpfx = process.platform === 'linux' ? '&' : ''
 
@@ -252,7 +248,7 @@ class WaveboxAppPrimaryMenu {
         label: `${tlpfx}Accounts`,
         submenu: [
 
-        ].concat(mailboxes.length <= 1 ? [] : [
+        ].concat(mailboxMenuConfig.mailboxes <= 1 ? [] : [
           { type: 'separator' },
           {
             label: 'Previous Account',
@@ -264,17 +260,17 @@ class WaveboxAppPrimaryMenu {
             click: WaveboxAppPrimaryMenuActions.nextMailbox,
             accelerator: accelerators.nextMailbox
           }
-        ]).concat(mailboxes.length <= 1 ? [] : [
+        ]).concat(mailboxMenuConfig.mailboxes <= 1 ? [] : [
           { type: 'separator' }
-        ]).concat(mailboxes.length <= 1 ? [] : mailboxes.map((mailbox, index) => {
+        ]).concat(mailboxMenuConfig.mailboxes <= 1 ? [] : mailboxMenuConfig.mailboxes.map((config, index) => {
           return {
-            label: mailbox.displayName || 'Untitled',
+            label: config.label,
             type: 'radio',
-            checked: mailbox.id === (activeMailbox || {}).id,
-            click: () => { WaveboxAppPrimaryMenuActions.changeMailbox(mailbox.id) },
+            checked: config.isActive,
+            click: () => { WaveboxAppPrimaryMenuActions.changeMailbox(config.mailboxId) },
             accelerator: this.buildAcceleratorStringForIndex(accelerators.mailboxIndex, index)
           }
-        })).concat(activeMailbox && activeMailbox.hasAdditionalServices ? [
+        })).concat(mailboxMenuConfig.services.length > 1 ? [
           { type: 'separator' },
           {
             label: 'Previous Service',
@@ -286,14 +282,14 @@ class WaveboxAppPrimaryMenu {
             click: WaveboxAppPrimaryMenuActions.nextService,
             accelerator: accelerators.serviceNext
           }
-        ] : []).concat(activeMailbox && activeMailbox.hasAdditionalServices ? [
+        ] : []).concat(mailboxMenuConfig.services.length > 1 ? [
           { type: 'separator' }
-        ] : []).concat(activeMailbox && activeMailbox.hasAdditionalServices ? activeMailbox.enabledServices.map((service, index) => {
+        ] : []).concat(mailboxMenuConfig.services.length > 1 ? mailboxMenuConfig.services.map((config, index) => {
           return {
-            label: service.humanizedType,
+            label: config.label,
             type: 'radio',
-            checked: service.type === activeServiceType,
-            click: () => { WaveboxAppPrimaryMenuActions.changeMailbox(activeMailbox.id, service.type) },
+            checked: config.isActive,
+            click: () => { WaveboxAppPrimaryMenuActions.changeService(config.serviceId) },
             accelerator: this.buildAcceleratorStringForIndex(accelerators.serviceIndex, index)
           }
         }) : [])
@@ -317,7 +313,7 @@ class WaveboxAppPrimaryMenu {
             click: WaveboxAppPrimaryMenuActions.toggleWaveboxMini,
             accelerator: accelerators.toggleWaveboxMini
           }
-        ].concat(mailboxes.length > 1 || (activeMailbox && activeMailbox.hasAdditionalServices) ? [
+        ].concat(mailboxMenuConfig.tabCount > 1 ? [
           { type: 'separator' },
           {
             label: 'Previous Tab',
@@ -366,26 +362,53 @@ class WaveboxAppPrimaryMenu {
   /**
   * Builds and applies the mailboxes menu
   * @param accelerators: the accelerators to use
-  * @param mailboxes: the current list of mailboxes
-  * @param activeMailbox: the active mailbox
-  * @param activeServiceType: the type of active service
+  * @param mailboxMenuConfig: the config to build the mailbox menu section
   * @param userEmail: the users email address
   */
-  updateApplicationMenu (accelerators, mailboxes, activeMailbox, activeServiceType, userEmail) {
+  updateApplicationMenu (accelerators, mailboxMenuConfig, userEmail) {
     this._lastAccelerators = accelerators
-    this._lastActiveMailbox = activeMailbox
-    this._lastActiveServiceType = activeServiceType
-    this._lastMailboxes = mailboxes
+    this._lastMailboxMenuConfig = mailboxMenuConfig
     this._lastUserEmail = userEmail
 
     const lastMenu = this._lastMenu
-    this._lastMenu = this.build(accelerators, mailboxes, activeMailbox, activeServiceType, userEmail)
+    this._lastMenu = this.build(accelerators, mailboxMenuConfig, userEmail)
     Menu.setApplicationMenu(this._lastMenu)
     this.updateHiddenShortcuts(accelerators)
 
     // Prevent Memory leak
     if (lastMenu) {
       lastMenu.destroy()
+    }
+  }
+
+  /**
+  * Builds a mailbox menu config from the mailbox state
+  * @param mailboxState: the state of the mailbox
+  * @return a js object used to build the menu
+  */
+  buildMailboxMenuConfig (accountState) {
+    const activeMailboxId = accountState.activeMailboxId()
+    const activeServiceId = accountState.activeServiceId()
+    const allMailboxes = accountState.allMailboxes()
+    const activeMailbox = accountState.activeMailbox()
+
+    return {
+      tabCount: accountState.serviceCount(),
+      mailboxes: allMailboxes.map((mailbox) => {
+        return {
+          label: mailbox.displayName,
+          isActive: mailbox.id === activeMailboxId,
+          mailboxId: mailbox.id
+        }
+      }),
+      services: activeMailbox ? activeMailbox.allServices.map((serviceId) => {
+        const service = accountState.getService(serviceId)
+        return {
+          label: service.displayName,
+          isActive: serviceId === activeServiceId,
+          serviceId: serviceId
+        }
+      }) : []
     }
   }
 
@@ -448,31 +471,15 @@ class WaveboxAppPrimaryMenu {
 
   /**
   * Handles the mailboxes changing
-  * @param mailboxState: the latest mailbox state
+  * @param accountState: the latest account state
   */
-  handleMailboxesChanged = (mailboxState) => {
-    const activeMailbox = mailboxState.activeMailbox()
-    const activeServiceType = mailboxState.activeMailboxService()
-    const mailboxes = mailboxState.allMailboxes()
+  handleMailboxesChanged = (accountState) => {
+    const mailboxMenuConfig = this.buildMailboxMenuConfig(accountState)
 
-    // Munge our states for easier comparison
-    const props = [
-      [(this._lastActiveMailbox || {}).id, (activeMailbox || {}).id],
-      [this._lastActiveServiceType, activeServiceType],
-      [
-        (this._lastMailboxes || []).map((m) => m.displayName + ';' + m.enabledServiceTypes.join(';')).join('|'),
-        mailboxes.map((m) => m.displayName + ';' + m.enabledServiceTypes.join(';')).join('|')
-      ]
-    ]
-
-    // Check for change
-    const changed = props.findIndex(([prev, next]) => prev !== next) !== -1
-    if (changed) {
+    if (JSON.stringify(mailboxMenuConfig) !== this._lastMailboxMenuConfig) { // v lazy
       this.updateApplicationMenu(
         this._lastAccelerators,
-        mailboxes,
-        activeMailbox,
-        activeServiceType,
+        mailboxMenuConfig,
         this._lastUserEmail
       )
     }
@@ -487,9 +494,7 @@ class WaveboxAppPrimaryMenu {
     if (settingsState.accelerators !== this._lastAccelerators) {
       this.updateApplicationMenu(
         settingsState.accelerators,
-        this._lastMailboxes,
-        this._lastActiveMailbox,
-        this._lastActiveServiceType,
+        this._lastMailboxMenuConfig,
         this._lastUserEmail
       )
     }
@@ -502,9 +507,7 @@ class WaveboxAppPrimaryMenu {
     if (userState.user.userEmail !== this._lastUserEmail) {
       this.updateApplicationMenu(
         this._lastAccelerators,
-        this._lastMailboxes,
-        this._lastActiveMailbox,
-        this._lastActiveServiceType,
+        this._lastMailboxMenuConfig,
         userState.user.userEmail
       )
     }

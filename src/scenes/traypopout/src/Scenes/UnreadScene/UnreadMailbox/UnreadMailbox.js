@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { mailboxStore, mailboxActions } from 'stores/mailbox'
+import { accountStore, accountActions } from 'stores/account'
 import { emblinkActions } from 'stores/emblink'
 import { List, ListItem, Divider } from '@material-ui/core'
 import UnreadMailboxControlListItem from './UnreadMailboxControlListItem'
@@ -41,11 +41,11 @@ export default class UnreadMailbox extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxesChanged)
+    accountStore.listen(this.mailboxesChanged)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxesChanged)
+    accountStore.unlisten(this.mailboxesChanged)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -74,7 +74,7 @@ export default class UnreadMailbox extends React.Component {
   * @param mailboxState=autoget: the current store state
   * @return the mailbox state
   */
-  generateMailboxState (mailboxId, mailboxState = mailboxStore.getState()) {
+  generateMailboxState (mailboxId, mailboxState = accountStore.getState()) {
     const trayMessages = mailboxState.mailboxTrayMessagesForUser(mailboxId)
 
     return {
@@ -93,7 +93,7 @@ export default class UnreadMailbox extends React.Component {
   */
   handleRequestSwitchMailbox = (evt) => {
     ipcRenderer.send(WB_FOCUS_MAILBOXES_WINDOW, {})
-    mailboxActions.changeActive(this.props.mailboxId)
+    accountActions.changeActiveMailbox(this.props.mailboxId)
   }
 
   /**
@@ -103,8 +103,8 @@ export default class UnreadMailbox extends React.Component {
   */
   handleOpenMessage = (evt, message) => {
     ipcRenderer.send(WB_FOCUS_MAILBOXES_WINDOW, {})
-    emblinkActions.openItem(message.data.mailboxId, message.data.serviceType, message.data)
-    mailboxActions.changeActive(this.props.mailboxId, message.data.serviceType)
+    emblinkActions.openItem(message.data.serviceId, message.data)
+    accountActions.changeActiveService(message.data.serviceId)
   }
 
   /* **************************************************************************/
