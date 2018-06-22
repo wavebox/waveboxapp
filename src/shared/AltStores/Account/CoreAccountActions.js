@@ -1,0 +1,367 @@
+import RemoteActions from '../RemoteActions'
+import {
+  ACTIONS_NAME,
+  DISPATCH_NAME,
+  STORE_NAME
+} from './AltAccountIdentifiers'
+import MailboxReducerManifest from './MailboxReducers/MailboxReducerManifest'
+import ServiceReducerManifest from './ServiceReducers/ServiceReducerManifest'
+import ServiceDataReducerManifest from './ServiceDataReducer/ServiceDataReducerManifest'
+
+class CoreAccountActions extends RemoteActions {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static get displayName () { return ACTIONS_NAME }
+
+  /* **************************************************************************/
+  // Lifecyle
+  /* **************************************************************************/
+
+  constructor () {
+    super(DISPATCH_NAME, ACTIONS_NAME, STORE_NAME)
+  }
+
+  /* **************************************************************************/
+  // Loading
+  /* **************************************************************************/
+
+  /**
+  * Indicates the store to drop all data and load from disk
+  */
+  load () {
+    throw new Error('Action not implemented "load"')
+  }
+
+  /* **************************************************************************/
+  // Mailboxes
+  /* **************************************************************************/
+
+  /**
+  * Creates a new mailbox
+  * @param data: the data to create it with
+  */
+  createMailbox (...args) {
+    if (process.type === 'browser') {
+      const [data] = args
+      return { data }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('createMailbox', args)
+    }
+  }
+
+  /**
+  * Removes a mailbox
+  * @param id: the id of the mailbox to update
+  */
+  removeMailbox (...args) {
+    if (process.type === 'browser') {
+      const [id] = args
+      return { id }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('removeMailbox', args)
+    }
+  }
+
+  /**
+  * Updates and modifies a mailbox
+  * @param id: the id of the mailbox to change
+  * @param reducer: the reducer to run on the mailbox
+  * @param ...reducerArgs: the arguments to supply to the reducer
+  */
+  reduceMailbox (...args) {
+    const [id, reducer, ...reducerArgs] = args
+
+    if (process.type === 'browser') {
+      const reducerFn = MailboxReducerManifest.parseReducer(reducer)
+      if (!reducerFn) {
+        throw new Error(`Mailbox Reducer could not be found or deseriliazed ${reducer}`)
+      }
+      return { id: id, reducer: reducerFn, reducerArgs: reducerArgs }
+    } else if (process.type === 'renderer') {
+      const reducerName = MailboxReducerManifest.stringifyReducer(reducer)
+      if (!reducerName) {
+        throw new Error(`Mailbox Reducer could not be found or seriliazed ${reducer}`)
+      }
+      return this.remoteDispatch('reduceMailbox', [id, reducerName].concat(reducerArgs))
+    }
+  }
+
+  /**
+  * Sets a custom avatar on a mailbox
+  * @param id: the id of the mailbox
+  * @param b64Image: the image to set
+  */
+  setCustomAvatarOnMailbox (...args) {
+    if (process.type === 'browser') {
+      const [id, b64Image] = args
+      return { id, b64Image }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('setCustomAvatarOnMailbox', args)
+    }
+  }
+
+  /* **************************************************************************/
+  // Services
+  /* **************************************************************************/
+
+  /**
+  * Creates a new mailbox
+  * @param parentId: the id of the mailbox
+  * @param parentLocation to add the new service: the location from Mailbox.SERVICE_UI_LOCATIONS
+  * @param data: the data to create it with
+  */
+  createService (...args) {
+    if (process.type === 'browser') {
+      const [parentId, parentLocation, data] = args
+      return { parentId, parentLocation, data }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('createService', args)
+    }
+  }
+
+  /**
+  * Removes a Service
+  * @param id: the id of the mailbox to update
+  */
+  removeService (...args) {
+    if (process.type === 'browser') {
+      const [id] = args
+      return { id }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('removeService', args)
+    }
+  }
+
+  /**
+  * Updates and modifies a service
+  * @param id: the id of the service to change
+  * @param reducer: the reducer to run on the service
+  * @param ...reducerArgs: the arguments to supply to the reducer
+  */
+  reduceService (...args) {
+    const [id, reducer, ...reducerArgs] = args
+
+    if (process.type === 'browser') {
+      const reducerFn = ServiceReducerManifest.parseReducer(reducer)
+      if (!reducerFn) {
+        throw new Error(`Service Reducer could not be found or deseriliazed ${reducer}`)
+      }
+      return { id: id, reducer: reducerFn, reducerArgs: reducerArgs }
+    } else if (process.type === 'renderer') {
+      const reducerName = ServiceReducerManifest.stringifyReducer(reducer)
+      if (!reducerName) {
+        throw new Error(`Service Reducer could not be found or seriliazed ${reducer}`)
+      }
+      return this.remoteDispatch('reduceService', [id, reducerName].concat(reducerArgs))
+    }
+  }
+
+  /**
+  * Updates and modifies a service only if it's active
+  * @param id: the id of the service to change
+  * @param reducer: the reducer to run on the mailbox
+  * @param ...reducerArgs: the arguments to supply to the reducer
+  */
+  reduceServiceIfActive (...args) {
+    const [id, reducer, ...reducerArgs] = args
+
+    if (process.type === 'browser') {
+      const reducerFn = ServiceReducerManifest.parseReducer(reducer)
+      if (!reducerFn) {
+        throw new Error(`Service Reducer could not be found or deseriliazed ${reducer}`)
+      }
+      return { id: id, reducer: reducerFn, reducerArgs: reducerArgs }
+    } else if (process.type === 'renderer') {
+      const reducerName = ServiceReducerManifest.stringifyReducer(reducer)
+      if (!reducerName) {
+        throw new Error(`Service Reducer could not be found or seriliazed ${reducer}`)
+      }
+      return this.remoteDispatch('reduceServiceIfActive', [id, reducerName].concat(reducerArgs))
+    }
+  }
+
+  /**
+  * Updates and modifies a service only if it's inactive
+  * @param id: the id of the service to change
+  * @param serviceType: the type of service to work on
+  * @param reducer: the reducer to run on the mailbox
+  * @param ...reducerArgs: the arguments to supply to the reducer
+  */
+  reduceServiceIfInactive (...args) {
+    const [id, reducer, ...reducerArgs] = args
+
+    if (process.type === 'browser') {
+      const reducerFn = ServiceReducerManifest.parseReducer(reducer)
+      if (!reducerFn) {
+        throw new Error(`Service Reducer could not be found or deseriliazed ${reducer}`)
+      }
+      return { id: id, reducer: reducerFn, reducerArgs: reducerArgs }
+    } else if (process.type === 'renderer') {
+      const reducerName = ServiceReducerManifest.stringifyReducer(reducer)
+      if (!reducerName) {
+        throw new Error(`Service Reducer could not be found or seriliazed ${reducer}`)
+      }
+      return this.remoteDispatch('reduceServiceIfInactive', [id, reducerName].concat(reducerArgs))
+    }
+  }
+
+  /**
+  * Updates and modifies a service data
+  * @param id: the id of the service to change
+  * @param reducer: the reducer to run on the service
+  * @param ...reducerArgs: the arguments to supply to the reducer
+  */
+  reduceServiceData (...args) {
+    const [id, reducer, ...reducerArgs] = args
+
+    if (process.type === 'browser') {
+      const reducerFn = ServiceDataReducerManifest.parseReducer(reducer)
+      if (!reducerFn) {
+        throw new Error(`Service Data Reducer could not be found or deseriliazed ${reducer}`)
+      }
+      return { id: id, reducer: reducerFn, reducerArgs: reducerArgs }
+    } else if (process.type === 'renderer') {
+      const reducerName = ServiceDataReducerManifest.stringifyReducer(reducer)
+      if (!reducerName) {
+        throw new Error(`Service Data Reducer could not be found or seriliazed ${reducer}`)
+      }
+      return this.remoteDispatch('reduceServiceData', [id, reducerName].concat(reducerArgs))
+    }
+  }
+
+  /**
+  * Sets a custom avatar on a mailbox
+  * @param id: the id of the mailbox
+  * @param b64Image: the image to set
+  */
+  setCustomAvatarOnService (...args) {
+    if (process.type === 'browser') {
+      const [id, b64Image] = args
+      return { id, b64Image }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('setCustomAvatarOnService', args)
+    }
+  }
+
+  /* **************************************************************************/
+  // Containers
+  /* **************************************************************************/
+
+  /**
+  * Indicates the ids of the given containers have been updated
+  * @param containerIds: a list of container ids that have been udpated
+  */
+  containersUpdated (...args) {
+    if (process.type === 'browser') {
+      const [containerIds] = args
+      return { containerIds }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('containersUpdated', args)
+    }
+  }
+
+  /* **************************************************************************/
+  // Sleeping
+  /* **************************************************************************/
+
+  /**
+  * Sleeps a service
+  * @param id: the id of the service
+  */
+  sleepService (...args) {
+    if (process.type === 'browser') {
+      const [id] = args
+      return { id }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('sleepService', args)
+    }
+  }
+
+  /**
+  * Sleeps all services in a mailbox
+  * @param id: the id of the mailbox
+  */
+  sleepAllServicesInMailbox (...args) {
+    if (process.type === 'browser') {
+      const [id] = args
+      return { id }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('sleepAllServicesInMailbox', args)
+    }
+  }
+
+  /**
+  * Wakes up a service from sleep
+  * @param id: the id of the mailbox
+  */
+  awakenService (...args) {
+    if (process.type === 'browser') {
+      const [id] = args
+      return { id }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('awakenService', args)
+    }
+  }
+
+  /* **************************************************************************/
+  // Active
+  /* **************************************************************************/
+
+  /**
+  * Changes the active mailbox
+  * @param id: the id of the mailbox
+  */
+  changeActiveMailbox (...args) {
+    if (process.type === 'browser') {
+      const [id] = args
+      return { id }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('changeActiveMailbox', args)
+    }
+  }
+
+  /**
+  * Changes the active service
+  * @param id: the id of the service
+  */
+  changeActiveService (...args) {
+    if (process.type === 'browser') {
+      const [id] = args
+      return { id }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('changeActiveService', args)
+    }
+  }
+
+  /* **************************************************************************/
+  // Mailbox auth teardown
+  /* **************************************************************************/
+
+  /**
+  * Clears the browser session for a mailbox
+  * @param id: the id of the mailbox to clear
+  */
+  clearMailboxBrowserSession (...args) {
+    if (process.type === 'browser') {
+      const [id] = args
+      return { id }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('clearMailboxBrowserSession', args)
+    }
+  }
+
+  /**
+  * Clears all the browser sessions
+  */
+  clearAllBrowserSessions (...args) {
+    if (process.type === 'browser') {
+      return { }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('clearAllBrowserSessions', args)
+    }
+  }
+}
+
+export default CoreAccountActions
