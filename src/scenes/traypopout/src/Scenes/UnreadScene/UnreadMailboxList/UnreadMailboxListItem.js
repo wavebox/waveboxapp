@@ -93,7 +93,7 @@ class UnreadMailboxListItem extends React.Component {
     return {
       mailbox: accountState.getMailbox(mailboxId),
       unreadCount: accountState.mailboxUnreadCountForUser(mailboxId),
-      resolvedAvatar: accountState.getResolvedAvatar(mailboxId, (i) => Resolver.image(i))
+      avatar: accountState.getMailboxAvatarConfig(mailboxId)
     }
   }
 
@@ -103,7 +103,7 @@ class UnreadMailboxListItem extends React.Component {
 
   render () {
     const { mailboxId, requestSwitchMailbox, requestShowMailbox, classes, className, ...passProps } = this.props
-    const { mailbox, resolvedAvatar, unreadCount } = this.state
+    const { mailbox, avatar, unreadCount } = this.state
 
     return (
       <ListItem
@@ -113,8 +113,8 @@ class UnreadMailboxListItem extends React.Component {
         {...passProps}>
         <MailboxBadge mailbox={mailbox} unreadCount={unreadCount}>
           <MailboxAvatar
-            mailbox={mailbox}
-            resolvedAvatar={resolvedAvatar}
+            avatar={avatar}
+            resolver={(i) => Resolver.image(i)}
             size={40}
             onClick={(evt) => {
               evt.preventDefault()

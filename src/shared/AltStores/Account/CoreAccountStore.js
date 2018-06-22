@@ -10,6 +10,7 @@ import SERVICE_TYPES from '../../Models/ACAccounts/ServiceTypes'
 import ACMailbox from '../../Models/ACAccounts/ACMailbox'
 import CoreACAuth from '../../Models/ACAccounts/CoreACAuth'
 import ServiceFactory from '../../Models/ACAccounts/ServiceFactory'
+import ACMailboxAvatar from '../../Models/ACAccounts/ACMailboxAvatar'
 
 //TODO if you run an import, serviceData wont be imported. Handle this case
 
@@ -33,6 +34,7 @@ class CoreAccountStore extends RemoteStore {
     this._activeServiceId_ = null
     this._sleepingServices_ = new Map()
     this._sleepingMetrics_ = new Map()
+    this._mailboxAvatarCache_ = new Map()
 
     /* ****************************************/
     // Mailboxes
@@ -129,7 +131,7 @@ class CoreAccountStore extends RemoteStore {
       if (user.hasAccountLimit || user.hasAccountTypeRestriction) {
         return !this
           .allServicesOrdered()
-          .filter((service) => user.hasAccountsOfType(service))
+          .filter((service) => user.hasAccountsOfType(service.type))
           .slice(0, user.accountLimit)
           .find((service) => service.id === id)
       } else {
@@ -137,16 +139,15 @@ class CoreAccountStore extends RemoteStore {
       }
     }
 
-    /* ****************************************/
-    // Avatar
-    /* ****************************************/
-
-    /**
-    * @param id: the id of the mailbox
-    * @return the avatar base64 string or a blank png string
-    */
-    this.getAvatar = (id) => {
-      return this.avatars.get(id) || BLANK_PNG
+    this.unrestrictedServices = () => {
+      const user = this.getUser()
+      if (user.hasAccountLimit || user.hasAccountTypeRestriction) {
+        return Array.from(this._services_.values())
+          .filter((service) => user.hasAccountsOfType(service.type))
+          .slice(0, user.accountLimit)
+      } else {
+        return Array.from(this._services_.values())
+      }
     }
 
     /* ****************************************/
@@ -213,6 +214,81 @@ class CoreAccountStore extends RemoteStore {
         service: service,
         closeMetrics: metrics
       }
+    }
+
+    /* ****************************************/
+    // Avatar
+    /* ****************************************/
+
+    this.getMailboxAvatarConfig = (mailboxId) => {
+      const mailbox = this.getMailbox(mailboxId)
+      const avatarConfig = mailbox ? (
+        ACMailboxAvatar.autocreate(mailbox, this._services_, this._avatars_)
+      ) : (
+        new ACMailboxAvatar({})
+      )
+
+      if (this._mailboxAvatarCache_.has(mailboxId)) {
+        if (this._mailboxAvatarCache_.get(mailboxId).hashId !== avatar.hashId) {
+          this._mailboxAvatarCache_.set(mailboxId, avatarConfig)
+        }
+      } else {
+        this._mailboxAvatarCache_.set(mailboxId, avatarConfig)
+      }
+
+      return this._mailboxAvatarCache_.get(mailboxId)
+    }
+
+    /* ****************************************/
+    // Unread & tray
+    /* ****************************************/
+
+    this.userUnreadCount = () => {
+      return this.unrestrictedServices().reduce((acc, service) => {
+        return acc + this.getServiceData(service.id).getUnreadCount(service)
+      }, 0)
+    }
+
+    this.userUnreadCountForApp = () => {
+      return this.unrestrictedServices().reduce((acc, service) => {
+        if (service.showBadgeCountInApp) {
+          return acc + this.getServiceData(service.id).getUnreadCount(service)
+        } else {
+          return acc
+        }
+      }, 0)
+    }
+
+    this.userUnreadActivityForApp = () => {
+      return !!this.unrestrictedServices().find((service) => {
+        if (service.showUnreadActivityInApp) {
+          return this.getServiceData(service.id).getHasUnreadActivity(service)
+        } else {
+          return false
+        }
+      })
+    }
+
+    this.userTrayMessages = () => {
+      return this.unrestrictedServices().reduce((acc, service) => {
+        return acc.concat(this.getServiceData(service.id).getTrayMessages(service))
+      }, [])
+    }
+
+    this.userTrayMessagesForMailbox = (mailboxId) => {
+      const mailbox = this.getMailbox(mailboxId)
+      if (!mailbox) { return [] }
+      const unrestrictedServiceSet = new Set(this.unrestrictedServices().map((s) => s.id))
+
+      return mailbox.allServices.reduce((acc, serviceId) => {
+        if (unrestrictedServiceSet.has(serviceId)) {
+          const service = this.getService(serviceId)
+          const serviceData = this.getServiceData(serviceId)
+          return acc.concat(serviceData.getTrayMessages(service))
+        }
+
+        return acc
+      }, [])
     }
 
     /* ****************************************/

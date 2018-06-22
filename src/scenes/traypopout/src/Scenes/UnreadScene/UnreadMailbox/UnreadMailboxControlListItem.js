@@ -89,11 +89,11 @@ class UnreadMailboxControlListItem extends React.Component {
   * @param mailboxState=autoget: the current store state
   * @return the mailbox state
   */
-  generateMailboxState (mailboxId, mailboxState = accountStore.getState()) {
+  generateMailboxState (mailboxId, accountState = accountStore.getState()) {
     return {
-      mailbox: mailboxState.getMailbox(mailboxId),
-      unreadCount: mailboxState.mailboxUnreadCountForUser(mailboxId),
-      resolvedAvatar: mailboxState.getResolvedAvatar(mailboxId, (i) => Resolver.image(i))
+      mailbox: accountState.getMailbox(mailboxId),
+      unreadCount: accountState.mailboxUnreadCountForUser(mailboxId),
+      avatar: accountState.getMailboxAvatarConfig(mailboxId)
     }
   }
 
@@ -103,7 +103,7 @@ class UnreadMailboxControlListItem extends React.Component {
 
   render () {
     const { mailboxId, requestSwitchMailbox, requestShowMailboxList, classes, className, ...passProps } = this.props
-    const { mailbox, resolvedAvatar, unreadCount } = this.state
+    const { mailbox, avatar, unreadCount } = this.state
 
     return (
       <ListItem
@@ -118,8 +118,8 @@ class UnreadMailboxControlListItem extends React.Component {
         </span>
         <MailboxBadge mailbox={mailbox} unreadCount={unreadCount}>
           <MailboxAvatar
-            mailbox={mailbox}
-            resolvedAvatar={resolvedAvatar}
+            avatar={avatar}
+            resolver={(i) => Resolver.image(i)}
             size={40}
             onClick={(evt) => {
               evt.preventDefault()

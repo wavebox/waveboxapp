@@ -148,9 +148,10 @@ class CoreACService extends CoreACModel {
   get avatarId () { return this._value_('avatarId', undefined) }
   get hasAvatarId () { return !!this.avatarId }
   get serviceAvatarURL () { return this._value_('serviceAvatarURL') }
-  get serviceAvatarCharacterDisplay () { return undefined }
+  get hasServiceAvatarURL () { return !!this.serviceAvatarURL }
   get serviceLocalAvatarId () { return this._value_('serviceLocalAvatarId') }
-  get hasServiceLocalAvatar () { return !!this.serviceLocalAvatarId }
+  get hasServiceLocalAvatarId () { return !!this.serviceLocalAvatarId }
+  get serviceAvatarCharacterDisplay () { return undefined }
 
   /* **************************************************************************/
   // Properties: Badge & Unread

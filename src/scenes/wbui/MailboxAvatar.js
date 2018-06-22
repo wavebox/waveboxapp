@@ -18,8 +18,8 @@ class MailboxAvatar extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    mailbox: PropTypes.object.isRequired,
-    resolvedAvatar: PropTypes.string,
+    avatar: PropTypes.object.isRequired,
+    resolver: PropTypes.func.isRequired,
     size: PropTypes.number.isRequired
   }
 
@@ -37,21 +37,20 @@ class MailboxAvatar extends React.Component {
 
   render () {
     const {
-      mailbox,
-      resolvedAvatar,
+      avatar,
+      resolver,
       style,
       size,
       classes,
       ...otherProps
     } = this.props
-    if (!mailbox) { return false }
 
     // Use a box shadow hack rather than border to fix a phantom white line
     // https://stackoverflow.com/questions/31805296/why-do-i-get-a-faint-border-around-css-circles-in-internet-explorer
     // This has the side effect of now overflowing the element, so try to be a bit intelligent about
     // reducing the size depending on the passed props
     const generatedStyle = {
-      backgroundColor: mailbox.hasCustomAvatar || mailbox.avatarURL ? 'white' : mailbox.color
+      backgroundColor: avatar.hasAvatar ? 'white' : avatar.color
     }
 
     const borderSize = Math.round(size * 0.08)
@@ -59,8 +58,8 @@ class MailboxAvatar extends React.Component {
     generatedStyle.width = adjustedSize
     generatedStyle.height = adjustedSize
     generatedStyle.lineHeight = `${adjustedSize}px`
-    if (mailbox.showAvatarColorRing) {
-      generatedStyle.boxShadow = `0 0 0 ${borderSize}px ${mailbox.color}`
+    if (avatar.showAvatarColorRing) {
+      generatedStyle.boxShadow = `0 0 0 ${borderSize}px ${avatar.color}`
     }
 
     const passProps = {
@@ -79,10 +78,10 @@ class MailboxAvatar extends React.Component {
       }
     }
 
-    if (resolvedAvatar) {
-      return (<Avatar {...passProps} src={resolvedAvatar} />)
-    } else if (mailbox.avatarCharacterDisplay) {
-      return (<Avatar {...passProps}>{mailbox.avatarCharacterDisplay}</Avatar>)
+    if (avatar.hasAvatar) {
+      return (<Avatar {...passProps} src={avatar.resolveAvatar(resolver)} />)
+    } else if (avatar.avatarCharacterDisplay) {
+      return (<Avatar {...passProps}>{avatar.avatarCharacterDisplay}</Avatar>)
     } else {
       return (<Avatar {...passProps} />)
     }

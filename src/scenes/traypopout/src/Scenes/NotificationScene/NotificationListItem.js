@@ -102,13 +102,12 @@ class NotificationListItem extends React.Component {
   /**
   * Generates the mailbox state
   * @param mailboxId: the id of the mailbox
-  * @param mailboxState=autoget: the current store state
+  * @param accountState=autoget: the current store state
   * @return the mailbox state
   */
-  generateMailboxState (mailboxId, mailboxState = accountStore.getState()) {
+  generateMailboxState (mailboxId, accountState = accountStore.getState()) {
     return {
-      mailbox: mailboxState.getMailbox(mailboxId),
-      resolvedAvatar: mailboxState.getResolvedAvatar(mailboxId, (i) => Resolver.image(i))
+      avatar: accountState.getMailboxAvatarConfig(mailboxId)
     }
   }
 
@@ -122,13 +121,11 @@ class NotificationListItem extends React.Component {
 
   render () {
     const { classes, mailboxId, notification, timestamp, className, ...passProps } = this.props
-    const { mailbox, resolvedAvatar } = this.state
+    const { avatar } = this.state
 
     return (
       <ListItem button className={classNames(classes.listItem, className)} {...passProps}>
-        {mailbox ? (
-          <MailboxAvatar mailbox={mailbox} resolvedAvatar={resolvedAvatar} />
-        ) : undefined}
+        <MailboxAvatar avatar={avatar} resolver={(i) => Resolver.image(i)} />
         <ListItemText
           primary={(<div className={classes.listItemPrimaryText}>{notification.title}</div>)}
           disableTypography

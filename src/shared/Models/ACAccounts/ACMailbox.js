@@ -76,7 +76,7 @@ class ACMailbox extends CoreACModel {
   // Properties : Display
   /* **************************************************************************/
 
-  get displayName () { return this._value_('displayName', 'Untitled') }
+  get displayName () { return this._value_('displayName', undefined) }
   get avatarId () { return this._value_('avatarId', undefined) }
   get hasAvatarId () { return !!this.avatarId }
   get color () { return this._value_('color', undefined) }

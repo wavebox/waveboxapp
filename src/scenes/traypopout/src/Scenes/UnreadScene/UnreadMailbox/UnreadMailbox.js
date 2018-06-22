@@ -60,22 +60,22 @@ export default class UnreadMailbox extends React.Component {
 
   state = (() => {
     return {
-      ...this.generateMailboxState(this.props.mailboxId)
+      ...this.generateAccountState(this.props.mailboxId)
     }
   })()
 
   mailboxesChanged = (mailboxState) => {
-    this.setState(this.generateMailboxState(this.props.mailboxId, mailboxState))
+    this.setState(this.generateAccountState(this.props.mailboxId, mailboxState))
   }
 
   /**
   * Generates the mailbox state
   * @param mailboxId: the id of the mailbox
-  * @param mailboxState=autoget: the current store state
+  * @param accountState=autoget: the current store state
   * @return the mailbox state
   */
-  generateMailboxState (mailboxId, mailboxState = accountStore.getState()) {
-    const trayMessages = mailboxState.mailboxTrayMessagesForUser(mailboxId)
+  generateAccountState (mailboxId, accountState = accountStore.getState()) {
+    const trayMessages = accountState.userTrayMessagesForMailbox(mailboxId)
 
     return {
       messagesSignature: trayMessages.map((message) => message.id).join(':'),
