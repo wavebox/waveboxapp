@@ -39,8 +39,16 @@ class CoreACServiceData extends CoreACModel {
 
   get url () { return this._value_('url', undefined) }
   get documentTitle () { return this._value_('documentTitle', undefined) }
-  get favicons () { return this._value_('favicons', []) }
   get documentTheme () { return this._value_('documentTheme', undefined) }
+  get favicons () {
+    const raw = this._value_('favicons', [])
+    return raw
+      .map((f) => f.endsWith('/') ? f.substr(0, f.length - 1) : f) // Electron sometimes gives a trailing slash :-/
+      .filter((f) => f.endsWith('.png') || f.endsWith('.ico') || f.endsWith('.jpg') || f.endsWith('.gif')) // some websites send junk
+  }
+  get largestFavicon () {
+    return this.favicons.find((f) => f.endsWith('.ico')) || favicons[favicons.length - 1]
+  }
 
   /* **************************************************************************/
   // Behaviour
