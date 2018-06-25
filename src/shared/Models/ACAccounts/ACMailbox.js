@@ -62,6 +62,14 @@ class ACMailbox extends CoreACModel {
       this.sidebarServices
     )
   }
+  get hasServices () {
+    return !!this.sidebarServices.length ||
+      !!this.toolbarStartServices.length ||
+      !!this.toolbarEndServices.length
+  }
+  get hasMultipleServices () {
+    return !!this.allServices.length
+  }
 
   /**
   * Checks if there is a service with the given id
@@ -70,6 +78,33 @@ class ACMailbox extends CoreACModel {
   */
   hasServiceWithId (serviceId) {
     return !!this.allServices.find((id) => id === serviceId)
+  }
+
+  /**
+  * Checks if there is a service with the given id in the sidebar
+  * @param serviceId: the id of the service
+  * @return true if there is a service, false otherwise
+  */
+  sidebarHasServiceWithId (serviceId) {
+    return !!this.sidebarServices.find((id) => id === serviceId)
+  }
+
+  /**
+  * Checks if there is a service with the given id in the toolbar start
+  * @param serviceId: the id of the service
+  * @return true if there is a service, false otherwise
+  */
+  toolbarStartHasServiceWithId (serviceId) {
+    return !!this.toolbarStartServices.find((id) => id === serviceId)
+  }
+
+  /**
+  * Checks if there is a service with the given id in the toolbar end
+  * @param serviceId: the id of the service
+  * @return true if there is a service, false otherwise
+  */
+  toolbarEndHasServiceWithId (serviceId) {
+    return !!this.toolbarEndServices.find((id) => id === serviceId)
   }
 
   /* **************************************************************************/

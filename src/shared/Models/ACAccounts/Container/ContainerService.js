@@ -1,5 +1,5 @@
 import CoreACService from '../CoreACService'
-import ACContainer from '../ACContainer'
+import ACContainer from '../../ACContainer'
 import ContainerServiceAdaptor from './ContainerServiceAdaptor'
 
 class ContainerService extends CoreACService {

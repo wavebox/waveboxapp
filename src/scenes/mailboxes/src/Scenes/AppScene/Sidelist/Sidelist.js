@@ -1,5 +1,5 @@
 import React from 'react'
-import SidelistMailboxes from './SidelistMailboxes'
+//import SidelistMailboxes from './SidelistMailboxes'
 import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -78,7 +78,7 @@ class Sidelist extends React.Component {
         className={classNames(classes.container, 'WB-Sidelist', className)}>
         {!showTitlebar ? (<SidelistWindowControls />) : undefined}
         {showPlans ? (<SidelistUpgradePlans />) : undefined}
-        <SidelistMailboxes className={classes.mailboxes} />
+        {/*<SidelistMailboxes className={classes.mailboxes} />*/}
         <SidelistControls />
       </div>
     )

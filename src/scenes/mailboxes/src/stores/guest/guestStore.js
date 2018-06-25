@@ -19,6 +19,7 @@ class GuestStore {
     * @return the page title or undefined
     */
     this.getPageTitle = (idc) => {
+      //TODO depricate me - I'm now stored in the mailbox data
       return this.pageTitles.get(idc.join(':'))
     }
 

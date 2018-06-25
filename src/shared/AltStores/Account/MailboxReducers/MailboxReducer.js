@@ -158,6 +158,66 @@ class MailboxReducer {
     return mailboxJS
   }
 
+  /**
+  * Changes a service index
+  * @param mailbox: the mailbox to update
+  * @param serviceId: the id of the service to move
+  * @param nextIndex: the next index of the service
+  */
+  static changeServiceIndex (mailbox, serviceId, nextIndex) {
+    if (mailbox.sidebarHasServiceWithId(serviceId)) {
+      return this.changeSidebarServiceIndex(mailbox, serviceId, nextIndex)
+    } else if (mailbox.toolbarStartHasServiceWithId(serviceId)) {
+      return this.changeToolbarStartServiceIndex(mailbox, serviceId, nextIndex)
+    } else if (mailbox.toolbarEndHasServiceWithId(serviceId)) {
+      return this.changeToolbarEndServiceIndex(mailbox, serviceId, nextIndex)
+    } else {
+      return undefined
+    }
+  }
+
+  /**
+  * Changes a service index in the sidebar
+  * @param mailbox: the mailbox to update
+  * @param serviceId: the id of the service to move
+  * @param nextIndex: the next index of the service
+  */
+  static changeSidebarServiceIndex (mailbox, serviceId, nextIndex) {
+    const mailboxJS = mailbox.cloneData()
+    const prevIndex = mailboxJS.sidebarServices.findIndex((s) => s === serviceId)
+    if (prevIndex === -1) { return undefined }
+    mailboxJS.sidebarServices.splice(nextIndex, 0, mailboxJS.sidebarServices.splice(prevIndex, 1)[0])
+    return mailboxJS
+  }
+
+  /**
+  * Changes a service index in the toolbar start
+  * @param mailbox: the mailbox to update
+  * @param serviceId: the id of the service to move
+  * @param nextIndex: the next index of the service
+  */
+  static changeToolbarStartServiceIndex (mailbox, serviceId, nextIndex) {
+    const mailboxJS = mailbox.cloneData()
+    const prevIndex = mailboxJS.toolbarStartServices.findIndex((s) => s === serviceId)
+    if (prevIndex === -1) { return undefined }
+    mailboxJS.toolbarStartServices.splice(nextIndex, 0, mailboxJS.toolbarStartServices.splice(prevIndex, 1)[0])
+    return mailboxJS
+  }
+
+  /**
+  * Changes a service index in the toolbar end
+  * @param mailbox: the mailbox to update
+  * @param serviceId: the id of the service to move
+  * @param nextIndex: the next index of the service
+  */
+  static changeToolbarEndServiceIndex (mailbox, serviceId, nextIndex) {
+    const mailboxJS = mailbox.cloneData()
+    const prevIndex = mailboxJS.toolbarEndServices.findIndex((s) => s === serviceId)
+    if (prevIndex === -1) { return undefined }
+    mailboxJS.toolbarEndServices.splice(nextIndex, 0, mailboxJS.toolbarEndServices.splice(prevIndex, 1)[0])
+    return mailboxJS
+  }
+
   /* **************************************************************************/
   // Window behaviour
   /* **************************************************************************/

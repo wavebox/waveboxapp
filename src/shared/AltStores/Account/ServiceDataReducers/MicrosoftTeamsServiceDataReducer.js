@@ -1,6 +1,6 @@
-import ServiceReducer from './ServiceReducer'
+import ServiceDataReducer from './ServiceDataReducer'
 
-class MicrosoftTeamsServiceDataReducer extends ServiceReducer {
+class MicrosoftTeamsServiceDataReducer extends ServiceDataReducer {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/

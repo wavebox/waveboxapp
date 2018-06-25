@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import { remote } from 'electron'
 import { IconButton } from '@material-ui/core'
 import { CHROME_PDF_URL } from 'shared/constants'
@@ -74,7 +74,7 @@ class ToolbarNavigation extends React.Component {
     toolbarHeight: PropTypes.number.isRequired,
     tabId: PropTypes.number,
     mailboxId: PropTypes.string,
-    serviceType: PropTypes.string
+    serviceId: PropTypes.string
   }
 
   /* **************************************************************************/
@@ -239,14 +239,13 @@ class ToolbarNavigation extends React.Component {
   * Navigates home
   */
   onGoHome = () => {
-    if (this.props.tabId === undefined) { return }
+    const { tabId, serviceId } = this.props
+    if (tabId === undefined) { return }
 
-    const mailboxState = mailboxStore.getState()
-    const mailbox = mailboxState.getMailbox(this.props.mailboxId)
-    if (!mailbox) { return }
-    const service = mailbox.serviceForType(this.props.serviceType)
+    const accountState = accountStore.getState()
+    const service = accountState.getService(serviceId)
     if (!service) { return }
-    const webContents = remote.webContents.fromId(this.props.tabId)
+    const webContents = remote.webContents.fromId(tabId)
     if (!webContents) { return }
 
     webContents.loadURL(service.url)
@@ -319,7 +318,7 @@ class ToolbarNavigation extends React.Component {
       toolbarHeight,
       tabId,
       mailboxId,
-      serviceType,
+      serviceId,
       style,
       classes,
       className,

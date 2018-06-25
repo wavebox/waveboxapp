@@ -1,17 +1,16 @@
 import RendererUserStore from 'shared/AltStores/User/RendererUserStore'
 import { STORE_NAME } from 'shared/AltStores/User/AltUserIdentifiers'
-import AltMailboxIdentifiers from 'shared/AltStores/Mailbox/AltMailboxIdentifiers'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import alt from '../alt'
 import actions from './userActions'
 import { WaveboxHTTP } from 'Server'
 import { ipcRenderer } from 'electron'
-import mailboxActions from '../mailbox/mailboxActions'
 import semver from 'semver'
 import pkg from 'package.json'
 import ParallelHttpTracker from 'shared/AltStores/ParallelHttpTracker'
 import TakeoutService from './TakeoutService'
 import WaveboxAuthProviders from 'shared/Models/WaveboxAuthProviders'
+import accountActions from '../account/accountActions'
+import AltAccountIdentifiers from 'shared/AltStores/Account/AltAccountIdentifiers'
 
 import {
   EXTENSION_AUTO_UPDATE_INTERVAL,
@@ -161,7 +160,7 @@ class UserStore extends RendererUserStore {
   handleAddContainers (payload) {
     const updated = super.handleAddContainers(payload)
     if (Object.keys(updated).length) {
-      mailboxActions.containersUpdated.defer(Object.keys(updated))
+      accountActions.containersUpdated.defer(Object.keys(updated))
     }
     return updated
   }
@@ -178,11 +177,11 @@ class UserStore extends RendererUserStore {
 
     // Find any mailboxes that aren't being synced right now. This can sometimes happen
     // if the user has imported their data/profile
-    const mailboxStore = this.alt.getStore(AltMailboxIdentifiers.STORE_NAME)
-    if (!mailboxStore) {
-      throw new Error(`Alt "${STORE_NAME}" unable to locate "${AltMailboxIdentifiers.STORE_NAME}". Ensure both have been linked`)
+    const accountStore = this.alt.getStore(AltAccountIdentifiers.STORE_NAME)
+    if (!account) {
+      throw new Error(`Alt "${STORE_NAME}" unable to locate "${AltAccountIdentifiers.STORE_NAME}". Ensure both have been linked`)
     }
-    mailboxStore.getState().allContainerIds().forEach((containerId) => {
+    accountStore.getState().allContainerIds().forEach((containerId) => {
       if (containerManifest[containerId] === undefined) {
         containerManifest[containerId] = -1
       }
@@ -222,11 +221,11 @@ class UserStore extends RendererUserStore {
   handleAuthenticateWithMailbox ({ id, type, serverArgs, openAccountOnSuccess }) {
     this.preventDefault()
     let providerType
-    if (type === CoreMailbox.MAILBOX_TYPES.GOOGLE) {
+    /*if (type === CoreMailbox.MAILBOX_TYPES.GOOGLE) {
       providerType = WaveboxAuthProviders.GOOGLE
     } else if (type === CoreMailbox.MAILBOX_TYPES.MICROSOFT) {
       providerType = WaveboxAuthProviders.MICROSOFT
-    }
+    }*/
     if (!providerType) { return }
 
     ipcRenderer.send(WB_AUTH_WAVEBOX, {

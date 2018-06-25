@@ -2,7 +2,7 @@ import { Socket, LongPoll } from 'phoenix'
 import { EventEmitter } from 'events'
 import Debug from 'Debug'
 import userActions from 'stores/user/userActions'
-import googleActions from 'stores/google/googleActions'
+//import googleActions from 'stores/google/googleActions'
 import {
   SYNC_SOCKET_URL,
   SYNC_SOCKET_UPGRADE_INTERVAL,

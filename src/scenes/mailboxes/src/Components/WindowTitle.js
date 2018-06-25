@@ -1,7 +1,6 @@
 import React from 'react'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
-import { guestStore } from 'stores/guest'
 import shallowCompare from 'react-addons-shallow-compare'
 
 const TITLE_WRITE_WAIT = 200
@@ -12,16 +11,14 @@ export default class Provider extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxesChanged)
+    accountStore.listen(this.accountChanged)
     settingsStore.listen(this.settingsChanged)
-    guestStore.listen(this.guestStoreChanged)
     this.writeTimeout = null
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxesChanged)
+    accountStore.unlisten(this.accountChanged)
     settingsStore.unlisten(this.settingsChanged)
-    guestStore.unlisten(this.guestStoreChanged)
     clearTimeout(this.writeTimeout)
   }
 
@@ -29,12 +26,13 @@ export default class Provider extends React.Component {
   // Data lifecycle
   /* **************************************************************************/
 
-  mailboxesChanged = (mailboxState) => {
-    const activeMailbox = mailboxState.activeMailbox()
+  accountChanged = (accountState) => {
+    const activeService = accountState.activeService()
+    const activeServiceData = accountState.activeServiceData()
     this.setState({
-      unreadCount: mailboxState.totalUnreadCountForAppBadgeForUser(),
-      activeMailboxName: activeMailbox ? activeMailbox.displayName : undefined,
-      activeGuestTitle: this._getGuestPageTitle(mailboxState, undefined)
+      unreadCount: accountState.userUnreadCountForApp(),
+      activeServiceName: activeService ? activeService.displayName : undefined,
+      activeGuestTitle: activeServiceData ? activeServiceData.documentTitle : undefined
     })
   }
 
@@ -45,34 +43,19 @@ export default class Provider extends React.Component {
     })
   }
 
-  guestStoreChanged = (guestState) => {
-    this.setState({
-      activeGuestTitle: this._getGuestPageTitle(undefined, guestState)
-    })
-  }
-
-  /**
-  * Gets the page title for the active mailbox/service
-  * @param mailboxState=autoget: the current mailbox state
-  * @param guestState=autoget: the current guest state
-  * @return the page title or undefined
-  */
-  _getGuestPageTitle = (mailboxState = mailboxStore.getState(), guestState = guestStore.getState()) => {
-    return guestState.getPageTitle([mailboxState.activeMailboxId(), mailboxState.activeMailboxService()])
-  }
-
   state = (() => {
     const settingsState = settingsStore.getState()
-    const mailboxState = mailboxStore.getState()
-    const guestState = guestStore.getState()
-    const activeMailbox = mailboxState.activeMailbox()
+    const accountState = accountStore.getState()
+
+    const activeService = accountState.activeService()
+    const activeServiceData = accountState.activeServiceData()
 
     return {
       showTitlebarCount: settingsState.ui.showTitlebarCount,
       showTitlebarAccount: settingsState.ui.showTitlebarAccount,
-      unreadCount: mailboxState.totalUnreadCountForAppBadgeForUser(),
-      activeGuestTitle: this._getGuestPageTitle(mailboxState, guestState),
-      activeMailboxName: activeMailbox ? activeMailbox.displayName : undefined
+      unreadCount: accountState.userUnreadCountForApp(),
+      activeGuestTitle: tactiveServiceData ? activeServiceData.documentTitle : undefined,
+      activeServiceName: activeService ? activeService.displayName : undefined
     }
   })()
 
@@ -90,10 +73,10 @@ export default class Provider extends React.Component {
       showTitlebarAccount,
       unreadCount,
       activeGuestTitle,
-      activeMailboxName
+      activeServiceName
     } = this.state
 
-    const activeAcc1 = showTitlebarAccount && activeMailboxName ? activeMailboxName : undefined
+    const activeAcc1 = showTitlebarAccount && activeServiceName ? activeServiceName : undefined
     const activeAcc2 = showTitlebarAccount && activeGuestTitle ? activeGuestTitle : undefined
 
     const titleComponents = [

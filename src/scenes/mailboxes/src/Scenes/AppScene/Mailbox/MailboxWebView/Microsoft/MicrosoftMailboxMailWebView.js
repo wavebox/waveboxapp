@@ -3,7 +3,7 @@ import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import { mailboxDispatch, MailboxLinker } from 'stores/mailbox'
-import { microsoftActions } from 'stores/microsoft'
+//import { microsoftActions } from 'stores/microsoft'
 
 const REF = 'mailbox_tab'
 

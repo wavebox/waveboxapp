@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { mailboxStore, mailboxActions, MailboxReducer } from 'stores/mailbox'
+import { accountStore, accountActions } from 'stores/account'
+import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
 import ToolbarMailboxService from './ToolbarMailboxService'
 import {SortableContainer, SortableElement} from 'react-sortable-hoc'
-import CoreService from 'shared/Models/Accounts/CoreService'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
@@ -16,26 +16,25 @@ const styles = {
   }
 }
 
-const SortableItem = SortableElement(({ mailboxId, serviceType, toolbarHeight }) => {
+const SortableItem = SortableElement(({ mailboxId, serviceId, toolbarHeight }) => {
   return (
     <ToolbarMailboxService
-      key={serviceType}
+      key={serviceId}
       toolbarHeight={toolbarHeight}
       mailboxId={mailboxId}
-      serviceType={serviceType} />
+      serviceId={serviceId} />
   )
 })
 
-const SortableList = SortableContainer(({ mailboxId, serviceTypes, toolbarHeight, style, className }) => {
+const SortableList = SortableContainer(({ mailboxId, serviceIds, toolbarHeight, style, className }) => {
   return (
     <div style={style} className={className}>
-      {serviceTypes.map((serviceType, index) => (
+      {serviceIds.map((serviceId, index) => (
         <SortableItem
-          key={serviceType}
-          disabled={serviceType === CoreService.SERVICE_TYPES.DEFAULT}
+          key={serviceId}
           index={index}
           mailboxId={mailboxId}
-          serviceType={serviceType}
+          serviceId={serviceId}
           toolbarHeight={toolbarHeight} />
       ))}
     </div>
@@ -58,11 +57,11 @@ class ToolbarMailboxServices extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxChanged)
+    accountStore.listen(this.accountChanged)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxChanged)
+    accountStore.unlisten(this.accountChanged)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -83,25 +82,25 @@ class ToolbarMailboxServices extends React.Component {
   * @return state object
   */
   generateState (props) {
-    const mailbox = mailboxStore.getState().getMailbox(props.mailboxId)
+    const mailbox = accountStore.getState().getMailbox(props.mailboxId)
     if (!mailbox) {
       return { }
     } else {
       return {
-        serviceTypes: mailbox.enabledServiceTypes
+        serviceIds: mailbox.allServices
       }
     }
   }
 
-  mailboxChanged = (mailboxState) => {
-    const mailbox = mailboxState.getMailbox(this.props.mailboxId)
+  accountChanged = (accountState) => {
+    const mailbox = accountState.getMailbox(this.props.mailboxId)
     if (!mailbox) {
       this.setState({
-        serviceTypes: undefined
+        serviceIds: undefined
       })
     } else {
       this.setState({
-        serviceTypes: mailbox.enabledServiceTypes
+        serviceIds: mailbox.allServices
       })
     }
   }
@@ -113,15 +112,15 @@ class ToolbarMailboxServices extends React.Component {
   shouldComponentUpdate (nextProps, nextState) {
     if (this.props.mailboxId !== nextProps.mailboxId) { return true }
     if (this.props.toolbarHeight !== nextProps.toolbarHeight) { return true }
-    if (JSON.stringify(this.state.serviceTypes) !== JSON.stringify(nextState.serviceTypes)) { return true }
+    if (JSON.stringify(this.state.serviceIds) !== JSON.stringify(nextState.serviceIds)) { return true }
 
     return false
   }
 
   render () {
     const { mailboxId, toolbarHeight, style, classes, className } = this.props
-    const { serviceTypes } = this.state
-    if (!serviceTypes) { return false }
+    const { serviceIds } = this.state
+    if (!serviceIds) { return false }
 
     return (
       <SortableList
@@ -129,11 +128,11 @@ class ToolbarMailboxServices extends React.Component {
         distance={20}
         className={classNames(classes.tabs, className)}
         style={{ height: toolbarHeight, ...style }}
-        serviceTypes={serviceTypes}
+        serviceIds={serviceIds}
         mailboxId={mailboxId}
         toolbarHeight={toolbarHeight}
         onSortEnd={({ oldIndex, newIndex }) => {
-          mailboxActions.reduce(mailboxId, MailboxReducer.changeServiceIndex, serviceTypes[oldIndex], newIndex)
+          accountActions.reduceMailbox(mailboxId, MailboxReducer.changeServiceIndex, serviceIds[oldIndex], newIndex)
         }} />
     )
   }

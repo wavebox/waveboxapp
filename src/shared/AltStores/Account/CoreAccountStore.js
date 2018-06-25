@@ -115,6 +115,8 @@ class CoreAccountStore extends RemoteStore {
 
     this.getServiceData = (id) => { return this._serviceData_.get(id) || null }
 
+    this.activeServiceData = () => { return this.getServiceData(this.activeServiceId()) }
+
     /* ****************************************/
     // Containers
     /* ****************************************/

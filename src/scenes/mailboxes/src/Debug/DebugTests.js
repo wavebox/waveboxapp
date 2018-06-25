@@ -11,9 +11,9 @@ class DebugTests {
   */
   fetchGoogleUnreadMessageLabels () {
     // Always late require to prevent cyclic references
-    const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
-    const { mailboxStore } = require('stores/mailbox')
-    const { GoogleHTTP } = require('stores/google')
+    //const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
+    //const { mailboxStore } = require('stores/mailbox')
+    //const { GoogleHTTP } = require('stores/google')
 
     const sig = '[TEST:GOOGLE_LABELS]'
     console.log(`${sig} start`)
@@ -63,8 +63,8 @@ class DebugTests {
   */
   clearAndDisableSlackLocalStorage () {
     // Always late require to prevent cyclic references
-    const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
-    const { mailboxStore } = require('stores/mailbox')
+    //const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
+    //const { mailboxStore } = require('stores/mailbox')
 
     const sig = '[TEST:SLACK_LOCALSTORAGE]'
     console.log(`${sig} start`)
@@ -137,9 +137,9 @@ class DebugTests {
   */
   fetchMicrosoftUnreadMessageList () {
     // Always late require to prevent cyclic references
-    const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
-    const { mailboxStore } = require('stores/mailbox')
-    const { MicrosoftHTTP } = require('stores/microsoft')
+    //const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
+    //const { mailboxStore } = require('stores/mailbox')
+    //const { MicrosoftHTTP } = require('stores/microsoft')
 
     const sig = '[TEST:MICROSOFT_MESSAGES]'
     console.log(`${sig} start`)
@@ -170,9 +170,9 @@ class DebugTests {
   */
   markAllMicrosoftInboxEmailsRead (accessMode) {
     // Always late require to prevent cyclic references
-    const MicrosoftMailbox = require('shared/Models/Accounts/Microsoft/MicrosoftMailbox')
-    const { mailboxStore, mailboxActions, MicrosoftMailboxReducer } = require('stores/mailbox')
-    const { MicrosoftHTTP } = require('stores/microsoft')
+    //const MicrosoftMailbox = require('shared/Models/Accounts/Microsoft/MicrosoftMailbox')
+    //const { mailboxStore, mailboxActions, MicrosoftMailboxReducer } = require('stores/mailbox')
+    //const { MicrosoftHTTP } = require('stores/microsoft')
     const uuid = require('uuid')
     const { WB_AUTH_MICROSOFT_COMPLETE, WB_AUTH_MICROSOFT_ERROR } = require('shared/ipcEvents')
 

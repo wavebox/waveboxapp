@@ -4,7 +4,7 @@ import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
 import { mailboxStore, mailboxDispatch } from 'stores/mailbox'
-import { googleActions } from 'stores/google'
+//import { googleActions } from 'stores/google'
 import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 import {

@@ -1,10 +1,9 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Menu, MenuItem, ListItemIcon, ListItemText, Divider } from '@material-ui/core'
-import { mailboxActions, mailboxDispatch, mailboxStore, MailboxLinker } from 'stores/mailbox'
+import { accountActions, accountDispatch, accountStore, AccountLinker } from 'stores/account'
 import { userStore } from 'stores/user'
 import shallowCompare from 'react-addons-shallow-compare'
-import CoreService from 'shared/Models/Accounts/CoreService'
 import red from '@material-ui/core/colors/red'
 import SleepAllIcon from './SleepAllIcon'
 import DeleteAllIcon from './DeleteAllIcon'
@@ -26,7 +25,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
 
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
-    serviceType: PropTypes.string,
+    serviceId: PropTypes.string.isRequired,
     isOpen: PropTypes.bool.isRequired,
     anchor: PropTypes.any,
     onRequestClose: PropTypes.func.isRequired
@@ -41,18 +40,18 @@ export default class SidelistItemMailboxPopover extends React.Component {
 
   componentDidMount () {
     this.renderTO = null
-    mailboxStore.listen(this.mailboxesChanged)
+    accountStore.listen(this.accountChanged)
     userStore.listen(this.userChanged)
   }
 
   componentWillUnmount () {
     clearTimeout(this.renderTO)
-    mailboxStore.unlisten(this.mailboxesChanged)
+    accountStore.unlisten(this.accountChanged)
     userStore.unlisten(this.userChanged)
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceType !== nextProps.serviceType) {
+    if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceId !== nextProps.serviceId) {
       this.setState(this.generateState(nextProps))
     }
     if (this.props.isOpen !== nextProps.isOpen) {
@@ -78,10 +77,10 @@ export default class SidelistItemMailboxPopover extends React.Component {
   }
 
   generateState (props = this.props) {
-    const { mailboxId, serviceType } = props
-    const mailboxState = mailboxStore.getState()
-    const mailbox = mailboxState.getMailbox(mailboxId)
-    const service = mailbox ? mailbox.serviceForType(serviceType) : null
+    const { mailboxId, serviceId } = props
+    const accountState = accountStore.getState()
+    const mailbox = accountState.getMailbox(mailboxId)
+    const service = accountState.getService(serviceId)
     const user = userStore.getState().user
 
     return {
@@ -89,22 +88,22 @@ export default class SidelistItemMailboxPopover extends React.Component {
       service: service,
       userHasSleepable: user.hasSleepable,
       userHasServices: user.hasServices,
-      isServiceSleeping: mailboxState.isSleeping(mailboxId, serviceType),
-      isServiceActive: mailboxState.isActive(mailboxId, serviceType)
+      isServiceSleeping: accountState.isServiceSleeping(serviceId),
+      isServiceActive: accountState.isServiceActive(serviceId)
     }
   }
 
-  mailboxesChanged = (mailboxState) => {
-    const { mailboxId, serviceType } = this.props
-    const mailbox = mailboxState.getMailbox(mailboxId)
-    const service = mailbox ? mailbox.serviceForType(serviceType) : null
+  accountChanged = (accountState) => {
+    const { mailboxId, serviceId } = this.props
+    const mailbox = accountState.getMailbox(mailboxId)
+    const service = accountState.getService(serviceId)
 
     this.setState({
       mailbox: mailbox,
       service: service,
       serviceSupportsSleeping: service ? service.sleepable : false,
-      isServiceSleeping: mailboxState.isSleeping(mailboxId, serviceType),
-      isServiceActive: mailboxState.isActive(mailboxId, serviceType)
+      isServiceSleeping: accountState.isServiceSleeping(serviceId),
+      isServiceActive: accountState.isServiceActive(serviceId)
     })
   }
 
@@ -147,7 +146,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
   * @param evt: the event that fired
   */
   handleDeleteService = (evt) => {
-    window.location.hash = `/mailbox_service_delete/${this.props.mailboxId}/${this.props.serviceType}`
+    window.location.hash = `/mailbox_service_delete/${this.props.mailboxId}/${this.props.serviceId}`
     this.closePopover(evt)
   }
 
@@ -156,10 +155,10 @@ export default class SidelistItemMailboxPopover extends React.Component {
   * @param evt: the event that fired
   */
   handleReload = (evt) => {
-    const { mailboxId, serviceType } = this.props
-    mailboxActions.changeActive(mailboxId, serviceType)
+    const { serviceId } = this.props
+    accountActions.changeActive(serviceId)
     setTimeout(() => {
-      mailboxDispatch.reload(mailboxId, serviceType)
+      accountDispatch.reload(serviceId)
     }, 100) // Give the UI some time to catch up
     this.closePopover(evt)
   }
@@ -169,7 +168,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
   * @param evt: the event that fired
   */
   handleResync = (evt) => {
-    mailboxActions.fullSyncMailbox(this.props.mailboxId)
+    accountActions.fullSyncMailbox(this.props.mailboxId)
     this.closePopover(evt)
   }
 
@@ -178,7 +177,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
   * @param evt: the event that fired
   */
   handleClearBrowserSession = (evt) => {
-    mailboxActions.clearMailboxBrowserSession(this.props.mailboxId)
+    accountActions.clearMailboxBrowserSession(this.props.mailboxId)
     this.closePopover(evt)
   }
 
@@ -197,7 +196,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
   * @param evt: the event that fired
   */
   handleReauthenticate = (evt) => {
-    mailboxActions.reauthenticateMailbox(this.props.mailboxId)
+    accountActions.reauthenticateMailbox(this.props.mailboxId)
     this.closePopover(evt)
   }
 
@@ -207,7 +206,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
   */
   handleAwakenService = (evt) => {
     this.closePopover(evt, () => {
-      mailboxActions.awakenService(this.props.mailboxId, this.props.serviceType)
+      accountActions.awakenService(this.props.serviceType)
     })
   }
 
@@ -217,7 +216,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
   */
   handleSleepService = (evt) => {
     this.closePopover(evt, () => {
-      mailboxActions.sleepService(this.props.mailboxId, this.props.serviceType)
+      accountActions.sleepService(this.props.serviceType)
     })
   }
 
@@ -227,7 +226,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
   */
   handleSleepAllServices = (evt) => {
     this.closePopover(evt, () => {
-      mailboxActions.sleepAllServices(this.props.mailboxId)
+      accountActions.sleepAllServices(this.props.mailboxId)
     })
   }
 
@@ -236,10 +235,10 @@ export default class SidelistItemMailboxPopover extends React.Component {
   * @param evt: the event that fired
   */
   handleOpenInWindow = (evt) => {
-    const { mailboxId, serviceType } = this.props
+    const { serviceId } = this.props
     this.closePopover(evt)
-    const url = mailboxDispatch.getCurrentUrl(mailboxId, serviceType) || this.state.service.url
-    MailboxLinker.openContentWindow(mailboxId, serviceType, url)
+    const url = accountDispatch.getCurrentUrl(serviceId) || this.state.service.url
+    AccountLinker.openContentWindow(serviceId, url)
   }
 
   /* **************************************************************************/
@@ -296,7 +295,7 @@ export default class SidelistItemMailboxPopover extends React.Component {
       }
     }
 
-    if (userHasSleepable && userHasServices && mailbox.enabledServices.length > 1) {
+    if (userHasSleepable && userHasServices && mailbox.hasMultipleServices) {
       const sleepableServices = mailbox.enabledServices.filter((s) => s.sleepable)
       if (sleepableServices.length > 1) {
         menuItems.push(
@@ -364,23 +363,21 @@ export default class SidelistItemMailboxPopover extends React.Component {
       )
     }
     // Delete
-    if (userHasServices && mailbox.enabledServices.length > 1) {
-      if (service.type !== CoreService.SERVICE_TYPES.DEFAULT) {
-        menuItems.push(
-          <MenuItem key='delete' onClick={this.handleDeleteService}>
-            <ListItemIcon>
-              <DeleteIcon />
-            </ListItemIcon>
-            <ListItemText inset primary={`Delete ${service.humanizedType}`} />
-          </MenuItem>
-        )
-      }
+    if (userHasServices && mailbox.hasMultipleServices) {
+      menuItems.push(
+        <MenuItem key='delete' onClick={this.handleDeleteService}>
+          <ListItemIcon>
+            <DeleteIcon />
+          </ListItemIcon>
+          <ListItemText inset primary={`Delete ${service.humanizedType}`} />
+        </MenuItem>
+      )
       menuItems.push(
         <MenuItem key='delete_all' onClick={this.handleDelete}>
           <ListItemIcon>
             <DeleteAllIcon />
           </ListItemIcon>
-          <ListItemText inset primary={`Delete Account (${mailbox.enabledServices.length} services)`} />
+          <ListItemText inset primary={`Delete Account (${mailbox.enabledServices.length} services)`} />//me
         </MenuItem>
       )
     } else {

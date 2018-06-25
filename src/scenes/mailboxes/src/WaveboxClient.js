@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Provider from 'Scenes/Provider'
-import {mailboxStore, mailboxActions, mailboxDispatch} from 'stores/mailbox'
+import {accountStore, accountActions, accountDispatch} from 'stores/account'
 import {settingsStore, settingsActions} from 'stores/settings'
 import {updaterStore, updaterActions} from 'stores/updater'
 import {userStore, userActions} from 'stores/user'
@@ -40,8 +40,8 @@ document.addEventListener('dragover', (evt) => {
 // Load what we have in the db
 userStore.getState()
 userActions.load()
-mailboxStore.getState()
-mailboxActions.load()
+accountStore.getState()
+accountActions.load()
 const settingsState = settingsStore.getState()
 settingsActions.load()
 updaterStore.getState()
@@ -64,8 +64,8 @@ userActions.startAutoUploadUserProfile()
 // Navigation
 if (process.platform === 'darwin' && settingsState.launched.app.enableMouseNavigationDarwin) {
   const mouseNavigator = new MouseNavigationDarwin(
-    () => mailboxDispatch.navigateBack(),
-    () => mailboxDispatch.navigateForward()
+    () => accountDispatch.navigateBack(),
+    () => accountDispatch.navigateForward()
   )
   mouseNavigator.register()
   window.addEventListener('beforeunload', () => {

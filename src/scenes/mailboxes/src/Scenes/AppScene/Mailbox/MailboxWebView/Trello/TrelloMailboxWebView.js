@@ -3,7 +3,7 @@ import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import { mailboxDispatch } from 'stores/mailbox'
-import { trelloActions } from 'stores/trello'
+//import { trelloActions } from 'stores/trello'
 
 const REF = 'mailbox_tab'
 

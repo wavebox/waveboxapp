@@ -14,7 +14,7 @@ import {
   WB_WINDOW_FIND_NEXT
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
-import TEMPLATE_TYPES from 'shared/ACAccountTemplates/TemplateTypes'
+import TEMPLATE_TYPES from 'shared/Models/ACAccountTemplates/TemplateTypes'
 
 class AccountActions extends RendererAccountActions {
   /* **************************************************************************/

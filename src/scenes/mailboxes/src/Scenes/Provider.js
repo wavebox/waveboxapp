@@ -6,10 +6,10 @@ import Theme from 'wbui/Theme'
 import { MuiThemeProvider } from '@material-ui/core/styles'
 import { mailboxStore, mailboxDispatch } from 'stores/mailbox'
 import { settingsStore } from 'stores/settings'
-import { googleActions } from 'stores/google'
-import { trelloActions } from 'stores/trello'
-import { slackActions } from 'stores/slack'
-import { microsoftActions } from 'stores/microsoft'
+//import { googleActions } from 'stores/google'
+//import { trelloActions } from 'stores/trello'
+//import { slackActions } from 'stores/slack'
+//import { microsoftActions } from 'stores/microsoft'
 import { updaterActions } from 'stores/updater'
 import { Analytics, ServerVent } from 'Server'
 import { NotificationService, NotificationRenderer } from 'Notifications'
@@ -55,9 +55,9 @@ export default class Provider extends React.Component {
     ipcRenderer.on(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
 
     // STEP 2. Mailbox connections
-    googleActions.startPollingUpdates()
-    trelloActions.startPollingUpdates()
-    microsoftActions.startPollingUpdates()
+    //googleActions.startPollingUpdates()
+    //trelloActions.startPollingUpdates()
+    //microsoftActions.startPollingUpdates()
 
     // STEP 3. Listen for self
     mailboxStore.listen(this.mailboxesChanged)

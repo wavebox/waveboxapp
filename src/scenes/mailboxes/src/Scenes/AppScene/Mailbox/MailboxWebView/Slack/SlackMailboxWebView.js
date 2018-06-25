@@ -3,7 +3,7 @@ import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import CoreService from 'shared/Models/Accounts/CoreService'
 import { mailboxDispatch, mailboxStore, mailboxActions } from 'stores/mailbox'
-import { slackActions } from 'stores/slack'
+//import { slackActions } from 'stores/slack'
 import {
   WB_BROWSER_NOTIFICATION_PRESENT,
   WB_BROWSER_NOTIFICATION_CLICK

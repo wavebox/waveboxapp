@@ -1,6 +1,6 @@
 import RemoteStore from '../RemoteStore'
 import User from '../../Models/User'
-import {Container} from '../../Models/Container'
+import ACContainer from '../../Models/ACContainer'
 import {
   ACTIONS_NAME,
   DISPATCH_NAME,
@@ -165,7 +165,7 @@ class CoreUserStore extends RemoteStore {
 
     // Containers
     this.containers = Object.keys(containerData || {}).reduce((acc, id) => {
-      acc.set(id, new Container(id, containerData[id]))
+      acc.set(id, require("../../Models/UndefinedPropProxy")(new ACContainer(id, containerData[id])))
       return acc
     }, new Map())
   }
@@ -201,7 +201,7 @@ class CoreUserStore extends RemoteStore {
       if (data === undefined || data === null) {
         return
       }
-      const container = new Container(id, data)
+      const container = require("../../Models/UndefinedPropProxy")(new ACContainer(id, data))
       if (this.containers.has(id) && this.containers.get(id).version >= container.version) {
         return
       }
