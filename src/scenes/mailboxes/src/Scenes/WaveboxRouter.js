@@ -1,11 +1,12 @@
 import React from 'react'
 import { HashRouter, Route } from 'react-router-dom'
 import AppScene from './AppScene'
+import EarlyBuildToast from './EarlyBuildToast'
+/*
 import MailboxWizardAddScene from './MailboxWizardAddScene'
 import MailboxWizardScene from './MailboxWizardScene'
 import ProScene from './ProScene'
 import NewsScene from './NewsScene'
-import EarlyBuildToast from './EarlyBuildToast'
 import MailboxReauthenticatingScene from './MailboxReauthenticatingScene'
 import MailboxServiceDeleteScene from './MailboxServiceDeleteScene'
 import MailboxDeleteScene from './MailboxDeleteScene'
@@ -28,13 +29,13 @@ import {
   AccountAuthScene,
   AccountAuthenticatingScene,
   AccountStandaloneScene
-} from './AccountScene'
+} from './AccountScene'*/
 import WaveboxRouterErrorBoundary from './WaveboxRouterErrorBoundary'
-import {
+/*import {
   ProfileRestoreScene,
   ProfileRestoreFetchingScene,
   ProfileRestoreWorkingScene
-} from './ProfileRestoreScene'
+} from './ProfileRestoreScene'*/
 
 export default class WaveboxRouter extends React.Component {
   /* **************************************************************************/
@@ -50,9 +51,10 @@ export default class WaveboxRouter extends React.Component {
           <AppScene />
 
           <EarlyBuildToast />
-          <NotificationPanel />
+          {/*<NotificationPanel />*/}
 
           <WaveboxRouterErrorBoundary>
+            {/*
             <Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
             <Route path='/dictionary_installer' component={DictionaryInstallerScene} />
 
@@ -86,6 +88,7 @@ export default class WaveboxRouter extends React.Component {
             <Route path='/profile/restore' component={ProfileRestoreScene} />
             <Route path='/profile/fetching_profiles' component={ProfileRestoreFetchingScene} />
             <Route path='/profile/restore_working' component={ProfileRestoreWorkingScene} />
+            */}
           </WaveboxRouterErrorBoundary>
           <PrivacyDialog />
         </div>

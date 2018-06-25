@@ -7,6 +7,7 @@ import {
 import MailboxReducerManifest from './MailboxReducers/MailboxReducerManifest'
 import ServiceReducerManifest from './ServiceReducers/ServiceReducerManifest'
 import ServiceDataReducerManifest from './ServiceDataReducers/ServiceDataReducerManifest'
+import AuthReducerManifest from './AuthReducers/AuthReducerManifest'
 
 class CoreAccountActions extends RemoteActions {
   /* **************************************************************************/
@@ -99,6 +100,34 @@ class CoreAccountActions extends RemoteActions {
       return { id, b64Image }
     } else if (process.type === 'renderer') {
       return this.remoteDispatch('setCustomAvatarOnMailbox', args)
+    }
+  }
+
+  /* **************************************************************************/
+  // Auth
+  /* **************************************************************************/
+
+  /**
+  * Updates and modifies an auth record
+  * @param id: the id of the auth to change
+  * @param reducer: the reducer to run on the mailbox
+  * @param ...reducerArgs: the arguments to supply to the reducer
+  */
+  reduceAuth (...args) {
+    const [id, reducer, ...reducerArgs] = args
+
+    if (process.type === 'browser') {
+      const reducerFn = AuthReducerManifest.parseReducer(reducer)
+      if (!reducerFn) {
+        throw new Error(`Auth Reducer could not be found or deseriliazed ${reducer}`)
+      }
+      return { id: id, reducer: reducerFn, reducerArgs: reducerArgs }
+    } else if (process.type === 'renderer') {
+      const reducerName = AuthReducerManifest.stringifyReducer(reducer)
+      if (!reducerName) {
+        throw new Error(`Auth Reducer could not be found or seriliazed ${reducer}`)
+      }
+      return this.remoteDispatch('reduceAuth', [id, reducerName].concat(reducerArgs))
     }
   }
 

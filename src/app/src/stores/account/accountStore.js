@@ -44,6 +44,9 @@ class AccountStore extends CoreAccountStore {
       handleReduceMailbox: actions.REDUCE_MAILBOX,
       handleSetCustomAvatarOnMailbox: actions.SET_CUSTOM_AVATAR_ON_MAILBOX,
 
+      // Auth
+      handleReduceAuth: actions.REDUCE_AUTH,
+
       // Service
       handleCreateService: actions.CREATE_SERVICE,
       handleRemoveService: actions.REMOVE_SERVICE,
@@ -344,6 +347,23 @@ class AccountStore extends CoreAccountStore {
       this.saveMailbox(id, mailbox.changeData({ avatarId: undefined }))
       this.saveAvatar(prevAvatarId, null)
     }
+  }
+
+  /* **************************************************************************/
+  // Auth
+  /* **************************************************************************/
+
+  handleReduceAuth ({ id, reducer, reducerArgs }) {
+    const auth = this.getMailboxAuth(id)
+    if (auth) {
+      const nextJS = reducer.apply(this, [auth].concat(reducerArgs))
+      if (nextJS) {
+        this.saveMailboxAuth(id, nextJS)
+        return
+      }
+    }
+
+    this.preventDefault()
   }
 
   /* **************************************************************************/

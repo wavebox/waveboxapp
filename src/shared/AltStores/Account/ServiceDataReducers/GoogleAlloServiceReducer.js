@@ -1,11 +1,11 @@
-import ServiceReducer from './ServiceReducer'
+import ServiceDataReducer from './ServiceDataReducer'
 
-class MicrosoftTeamServiceReducer extends ServiceReducer {
+class GoogleAlloServiceDataReducer extends ServiceDataReducer {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  static get name () { return 'MicrosoftTeamServiceReducer' }
+  static get name () { return 'GoogleAlloServiceDataReducer' }
 
   /* **************************************************************************/
   // Reducers
@@ -25,4 +25,4 @@ class MicrosoftTeamServiceReducer extends ServiceReducer {
   }
 }
 
-export default MicrosoftTeamServiceReducer
+export default GoogleAlloServiceDataReducer

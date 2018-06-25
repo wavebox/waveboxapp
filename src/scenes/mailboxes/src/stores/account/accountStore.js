@@ -126,6 +126,7 @@ class AccountStore extends RendererAccountStore {
   * @param mailboxId: the id of the mailbox
   */
   connectMailbox (mailboxId) {
+    this.preventDefault()
     const mailbox = this.getMailbox(mailboxId)
     if (!mailbox) { return }
 
@@ -141,6 +142,7 @@ class AccountStore extends RendererAccountStore {
   * @param mailboxId: the id of the mailbox
   */
   disconnectMailbox ({ mailboxId }) {
+    this.preventDefault()
     const mailbox = this.getMailbox(mailboxId)
     if (!mailbox) { return }
 

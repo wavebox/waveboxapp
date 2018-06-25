@@ -34,7 +34,7 @@ class MicrosoftOnedriveService extends MicrosoftService {
   /* **************************************************************************/
 
   get outlookUrl () { return 'https://onedrive.live.com/' }
-  get o365Url () { return this._value_('driveUrl', 'https://onedrive.live.com/') }
+  get o365Url () { return this._value_('driveUrl', 'https://onedrive.live.com/') } //TODO I should get info from the auth
 }
 
 export default MicrosoftOnedriveService

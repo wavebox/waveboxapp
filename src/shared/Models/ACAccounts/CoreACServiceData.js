@@ -47,7 +47,8 @@ class CoreACServiceData extends CoreACModel {
       .filter((f) => f.endsWith('.png') || f.endsWith('.ico') || f.endsWith('.jpg') || f.endsWith('.gif')) // some websites send junk
   }
   get largestFavicon () {
-    return this.favicons.find((f) => f.endsWith('.ico')) || favicons[favicons.length - 1]
+    const favicons = this.favicons
+    return favicons.find((f) => f.endsWith('.ico')) || favicons[favicons.length - 1]
   }
 
   /* **************************************************************************/

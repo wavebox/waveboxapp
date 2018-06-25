@@ -61,7 +61,11 @@ class CoreAccountStore extends RemoteStore {
     // Mailbox auth
     /* ****************************************/
 
-    this.getMailboxAuth = (parentId, namespace) => {
+    this.getMailboxAuth = (id) => {
+      return this._mailboxAuth_.get(id) || null
+    }
+
+    this.getMailboxAuthForMailbox = (mailboxId, namespace) => {
       return this._mailboxAuth_.get(CoreACAuth.compositeId(parentId, namespace)) || null
     }
 
