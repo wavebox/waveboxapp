@@ -60,7 +60,7 @@ class CoreAccountStore extends RemoteStore {
     * @return an array of mailbox ids
     */
     this.mailboxIds = () => {
-      return Array.from(this._index_)
+      return Array.from(this._mailboxIndex_)
     }
 
     /**

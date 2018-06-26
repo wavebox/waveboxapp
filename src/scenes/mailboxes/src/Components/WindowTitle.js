@@ -54,7 +54,7 @@ export default class Provider extends React.Component {
       showTitlebarCount: settingsState.ui.showTitlebarCount,
       showTitlebarAccount: settingsState.ui.showTitlebarAccount,
       unreadCount: accountState.userUnreadCountForApp(),
-      activeGuestTitle: tactiveServiceData ? activeServiceData.documentTitle : undefined,
+      activeGuestTitle: activeServiceData ? activeServiceData.documentTitle : undefined,
       activeServiceName: activeService ? activeService.displayName : undefined
     }
   })()

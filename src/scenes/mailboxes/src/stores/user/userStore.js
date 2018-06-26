@@ -178,7 +178,7 @@ class UserStore extends RendererUserStore {
     // Find any mailboxes that aren't being synced right now. This can sometimes happen
     // if the user has imported their data/profile
     const accountStore = this.alt.getStore(AltAccountIdentifiers.STORE_NAME)
-    if (!account) {
+    if (!accountStore) {
       throw new Error(`Alt "${STORE_NAME}" unable to locate "${AltAccountIdentifiers.STORE_NAME}". Ensure both have been linked`)
     }
     accountStore.getState().allContainerIds().forEach((containerId) => {

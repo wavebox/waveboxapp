@@ -131,7 +131,7 @@ class Analytics {
   sendConfig () {
     // Accounts
     const accountState = accountStore.getState()
-    const accounts = accountState.allServices().map((service) => {
+    const accounts = accountState.allServicesUnordered().map((service) => {
       return {
         type: service.type,
         parentId: service.parentId,

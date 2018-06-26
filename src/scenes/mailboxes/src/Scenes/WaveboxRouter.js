@@ -2,14 +2,10 @@ import React from 'react'
 import { HashRouter, Route } from 'react-router-dom'
 import AppScene from './AppScene'
 import EarlyBuildToast from './EarlyBuildToast'
-/*
-import MailboxWizardAddScene from './MailboxWizardAddScene'
-import MailboxWizardScene from './MailboxWizardScene'
+import PrivacyDialog from './PrivacyDialog'
 import ProScene from './ProScene'
 import NewsScene from './NewsScene'
 import MailboxReauthenticatingScene from './MailboxReauthenticatingScene'
-import MailboxServiceDeleteScene from './MailboxServiceDeleteScene'
-import MailboxDeleteScene from './MailboxDeleteScene'
 import {
   CheckingUpdatesScene,
   UpdateAvailableScene,
@@ -17,13 +13,17 @@ import {
   UpdateNoneScene
 } from './UpdatesScene'
 import LinuxSetupScene from './LinuxSetupScene'
-import PrivacyDialog from './PrivacyDialog'
+import DictionaryInstallerScene from './DictionaryInstallerScene'
+import AppWizardScene from './AppWizardScene'
+/*
+import MailboxWizardAddScene from './MailboxWizardAddScene'
+import MailboxWizardScene from './MailboxWizardScene'
+import MailboxServiceDeleteScene from './MailboxServiceDeleteScene'
+import MailboxDeleteScene from './MailboxDeleteScene'
+
 import NotificationPanel from './NotificationPanel'
 import ComposePickerScene from './ComposePickerScene'
 import SettingsScene from './SettingsScene'
-import DictionaryInstallerScene from './DictionaryInstallerScene'
-
-import AppWizardScene from './AppWizardScene'
 import {
   AccountMessageScene,
   AccountAuthScene,
@@ -54,20 +54,19 @@ export default class WaveboxRouter extends React.Component {
           {/*<NotificationPanel />*/}
 
           <WaveboxRouterErrorBoundary>
-            {/*
-            <Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
-            <Route path='/dictionary_installer' component={DictionaryInstallerScene} />
+            {/*<Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
+            <Route path='/dictionary_installer' component={DictionaryInstallerScene} />*/}
 
-            <Route path='/mailbox_wizard/add' component={MailboxWizardAddScene} />
-            <Route path='/mailbox_wizard/:mailboxType/:accessMode/:step/:mailboxId?' component={MailboxWizardScene} />
+            {/*<Route path='/mailbox_wizard/add' component={MailboxWizardAddScene} />
+            <Route path='/mailbox_wizard/:mailboxType/:accessMode/:step/:mailboxId?' component={MailboxWizardScene} />*/}
             <Route path='/mailbox/reauthenticating' component={MailboxReauthenticatingScene} />
 
-            <Route path='/mailbox_delete/:mailboxId' component={MailboxDeleteScene} />
-            <Route path='/mailbox_service_delete/:mailboxId/:serviceType' component={MailboxServiceDeleteScene} />
+            {/*<Route path='/mailbox_delete/:mailboxId' component={MailboxDeleteScene} />
+            <Route path='/mailbox_service_delete/:mailboxId/:serviceType' component={MailboxServiceDeleteScene} />*/}
 
             <Route path='/app_wizard/:step?' component={AppWizardScene} />
 
-            <Route path='/incoming/compose' component={ComposePickerScene} />
+            {/*<Route path='/incoming/compose' component={ComposePickerScene} />*/}
 
             <Route path='/updates/checking/:provider' component={CheckingUpdatesScene} />
             <Route path='/updates/none/:provider' component={UpdateNoneScene} />
@@ -78,17 +77,16 @@ export default class WaveboxRouter extends React.Component {
             <Route path='/pro' component={ProScene} />
             <Route path='/news' component={NewsScene} />
 
-            <Route path='/account/message' component={AccountMessageScene} />
+            {/*<Route path='/account/message' component={AccountMessageScene} />
             <Route path='/account/auth/:mode?' component={AccountAuthScene} />
             <Route path='/account/authenticating' component={AccountAuthenticatingScene} />
-            <Route path='/account/view' component={AccountStandaloneScene} />
+            <Route path='/account/view' component={AccountStandaloneScene} />*/}
 
             <Route path='/setup/linux' component={LinuxSetupScene} />
 
-            <Route path='/profile/restore' component={ProfileRestoreScene} />
+            {/*<Route path='/profile/restore' component={ProfileRestoreScene} />
             <Route path='/profile/fetching_profiles' component={ProfileRestoreFetchingScene} />
-            <Route path='/profile/restore_working' component={ProfileRestoreWorkingScene} />
-            */}
+            <Route path='/profile/restore_working' component={ProfileRestoreWorkingScene} />*/}
           </WaveboxRouterErrorBoundary>
           <PrivacyDialog />
         </div>

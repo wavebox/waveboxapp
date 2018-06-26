@@ -37,7 +37,7 @@ class NotificationService extends EventEmitter {
     this.__state__.isRunning = true
     accountStore.listen(this.accountChanged)
 
-    this.mailboxChanged()
+    this.accountChanged()
     return this
   }
 
