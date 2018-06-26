@@ -13,6 +13,7 @@ class MicrosoftWordService extends MicrosoftService {
   get supportsGuestNotifications () { return false }
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
+  get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/
   // Properties: Humanized

@@ -66,6 +66,7 @@ class CoreACService extends CoreACModel {
     ].find((s) => s) || false
   }
   get supportsWBGAPI () { throw SubclassNotImplementedError }
+  get supportedAuthNamespace () { throw SubclassNotImplementedError }
 
   /* **************************************************************************/
   // Properties: Humanized
@@ -132,6 +133,7 @@ class CoreACService extends CoreACModel {
 
   get url () { throw SubclassNotImplementedError }
   get reloadBehaviour () { return RELOAD_BEHAVIOURS.RESET_URL }
+  get restoreLastUrl () { return this._value_('restoreLastUrl', false) }
 
   /**
   * Gets the url being provided the service data if there is any customization to do
@@ -139,7 +141,13 @@ class CoreACService extends CoreACModel {
   * @param authData: the auth data for this service
   * @return a url
   */
-  getUrlWithData (serviceData, authData) { return this.url }
+  getUrlWithData (serviceData, authData) {
+    if (this.restoreLastUrl && serviceData.url) {
+      return serviceData.url
+    } else {
+      return this.url
+    }
+  }
 
   /* **************************************************************************/
   // Properties: Avatar

@@ -1,9 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
-import CoreService from 'shared/Models/Accounts/CoreService'
-import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
-import { mailboxStore, mailboxDispatch } from 'stores/mailbox'
+import { accountStore, accountDispatch } from 'stores/account'
 //import { googleActions } from 'stores/google'
 import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -14,16 +12,18 @@ import {
   WB_BROWSER_GOOGLE_INBOX_TOP_MESSAGE_CHANGED,
   WB_BROWSER_GOOGLE_GMAIL_UNREAD_COUNT_CHANGED
 } from 'shared/ipcEvents'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 
 const REF = 'mailbox_tab'
 
-export default class GoogleMailboxMailWebView extends React.Component {
+export default class GoogleMailServiceWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired
+    mailboxId: PropTypes.string.isRequired,
+    serviceId: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -32,27 +32,32 @@ export default class GoogleMailboxMailWebView extends React.Component {
 
   componentDidMount () {
     // Stores
-    mailboxStore.listen(this.mailboxChanged)
+    accountStore.listen(this.accountChanged)
     settingsStore.listen(this.settingsChanged)
 
     // Handle dispatch events
-    mailboxDispatch.on('openItem', this.handleOpenItem)
-    mailboxDispatch.on('composeItem', this.handleComposeMessage)
+    accountDispatch.on('openItem', this.handleOpenItem)
+    accountDispatch.on('composeItem', this.handleComposeMessage)
   }
 
   componentWillUnmount () {
     // Stores
-    mailboxStore.unlisten(this.mailboxChanged)
+    accountStore.unlisten(this.accountChanged)
     settingsStore.unlisten(this.settingsChanged)
 
     // Handle dispatch events
-    mailboxDispatch.removeListener('openItem', this.handleOpenItem)
-    mailboxDispatch.removeListener('composeItem', this.handleComposeMessage)
+    accountDispatch.removeListener('openItem', this.handleOpenItem)
+    accountDispatch.removeListener('composeItem', this.handleComposeMessage)
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.mailboxId !== nextProps.mailboxId) {
-      this.setState(this.generateState(nextProps))
+    if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceId !== nextProps.serviceId) {
+      const accountState = accountStore.getState()
+      const service = accountState.getService(nextProps.serviceId)
+      this.setState({
+        serviceType: service.type,
+        isActive: accountState.isServiceActive(nextProps.serviceId)
+      })
     }
   }
 
@@ -60,34 +65,23 @@ export default class GoogleMailboxMailWebView extends React.Component {
   // Data lifecylce
   /* **************************************************************************/
 
-  state = this.generateState(this.props)
-
-  /**
-  * Generates the state from the given props
-  * @param props: the props to use
-  * @return state object
-  */
-  generateState (props) {
+  state = (() => {
     const settingsState = settingsStore.getState()
-    const mailboxState = mailboxStore.getState()
-    const mailbox = mailboxState.getMailbox(props.mailboxId)
-    const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
+    const accountState = accountStore.getState()
+    const service = accountState.getService(this.props.serviceId)
+
     return {
-      mailbox: mailbox,
-      accessMode: service ? service.accessMode : null,
-      isActive: mailboxState.isActive(props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT),
+      serviceType: service.type,
+      isActive: accountState.isServiceActive(this.props.serviceId),
       ui: settingsState.ui
     }
-  }
+  })()
 
-  mailboxChanged = (mailboxState) => {
-    const { mailboxId } = this.props
-    const mailbox = mailboxState.getMailbox(mailboxId)
-    const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
+  accountChanged = (accountState) => {
+    const service = accountState.getService(this.props.serviceId)
     this.setState({
-      mailbox: mailbox,
-      accessMode: service ? service.accessMode : null,
-      isActive: mailboxState.isActive(mailboxId, CoreService.SERVICE_TYPES.DEFAULT)
+      serviceType: service.type,
+      isActive: accountState.isServiceActive(this.props.serviceId)
     })
   }
 
@@ -121,7 +115,7 @@ export default class GoogleMailboxMailWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleOpenItem = (evt) => {
-    if (evt.mailboxId === this.props.mailboxId && evt.service === CoreService.SERVICE_TYPES.DEFAULT) {
+    if (evt.serviceId === this.props.serviceId) {
       this.refs[REF].sendOrQueueIfSleeping(WB_BROWSER_OPEN_MESSAGE, {
         messageId: evt.data.messageId,
         threadId: evt.data.threadId,
@@ -135,7 +129,7 @@ export default class GoogleMailboxMailWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleComposeMessage = (evt) => {
-    if (evt.mailboxId === this.props.mailboxId && evt.service === CoreService.SERVICE_TYPES.DEFAULT) {
+    if (evt.serviceId === this.props.serviceId) {
       this.refs[REF].sendOrQueueIfSleeping(WB_BROWSER_COMPOSE_MESSAGE, {
         recipient: evt.data.recipient,
         subject: evt.data.subject,
@@ -175,14 +169,14 @@ export default class GoogleMailboxMailWebView extends React.Component {
   * Handles the unread count changing as per the ipc event
   */
   handleIPCUnreadCountChanged = (evt) => {
-    googleActions.mailCountChanged(this.props.mailboxId, evt.next)
+    //googleActions.mailCountChanged(this.props.mailboxId, evt.next)
   }
 
   /**
   * Handles the top message changing as per the ipc event
   */
   handleIPCTopMessageChanged = (evt) => {
-    googleActions.syncMailboxMessages(this.props.mailboxId)
+    //googleActions.syncMailboxMessages(this.props.mailboxId)
   }
 
   /* **************************************************************************/
@@ -195,13 +189,13 @@ export default class GoogleMailboxMailWebView extends React.Component {
 
   componentDidUpdate (prevProps, prevState) {
     if (prevState.isActive !== this.state.isActive) {
-      if (this.state.isActive && this.state.mailbox) {
+      if (this.state.isActive) {
         // Try to get the UI to reload to show when we make this item active
-        if (this.state.accessMode === GoogleDefaultService.ACCESS_MODES.GMAIL) {
+        if (this.state.serviceType === SERVICE_TYPES.GOOGLE_MAIL) {
           this.refs[REF].executeJavaScript(`
             document.querySelector('[href*="mail.google"][href*="' + window.location.hash + '"]').click()
           `, true)
-        } else if (this.state.accessMode === GoogleDefaultService.ACCESS_MODES.INBOX) {
+        } else if (this.state.serviceType === SERVICE_TYPES.GOOGLE_INBOX) {
           this.refs[REF].executeJavaScript(`
             document.querySelector('[jsaction="global.navigate"][tabIndex="0"]').click()
           `, true)
@@ -211,12 +205,12 @@ export default class GoogleMailboxMailWebView extends React.Component {
   }
 
   render () {
-    const { mailboxId } = this.props
+    const { mailboxId, serviceId } = this.props
     return (
       <MailboxWebViewHibernator
         ref={REF}
         mailboxId={mailboxId}
-        serviceType={CoreService.SERVICE_TYPES.DEFAULT}
+        serviceId={serviceId}
         domReady={this.handleBrowserDomReady}
         ipcMessage={this.dispatchBrowserIPCMessage} />
     )

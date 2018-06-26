@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import shallowCompare from 'react-addons-shallow-compare'
 import Resolver from 'Runtime/Resolver'
 import SharedMailboxAvatar from 'wbui/MailboxAvatar'
@@ -29,16 +29,18 @@ export default class MailboxAvatar extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxUpdated)
+    accountStore.listen(this.accountChanged)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxUpdated)
+    accountStore.unlisten(this.accountChanged)
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId) {
-      this.setState(this.generateInitialState(nextProps))
+      this.setState({
+        avatar: accountStore.getState().getMailboxAvatarConfig(nextProps.mailboxId)
+      })
     }
   }
 
@@ -46,24 +48,16 @@ export default class MailboxAvatar extends React.Component {
   // Data lifecycle
   /* **************************************************************************/
 
-  state = this.generateInitialState(this.props)
-
-  /**
-  * Generates the state for the given props
-  * @param props: the props to generate state for
-  * @param mailboxState=autoget: the mailbox state
-  * @return state object
-  */
-  generateInitialState (props, mailboxState = mailboxStore.getState()) {
-    const { mailboxId } = props
+  state = (() => {
     return {
-      mailbox: mailboxState.getMailbox(mailboxId),
-      url: mailboxState.getResolvedAvatar(mailboxId, (i) => Resolver.image(i))
+      avatar: accountStore.getState().getMailboxAvatarConfig(this.props.mailboxId)
     }
-  }
+  })()
 
-  mailboxUpdated = (mailboxState) => {
-    this.setState(this.generateInitialState(this.props))
+  accountChanged = (accountState) => {
+    this.setState({
+      avatar: accountState.getMailboxAvatarConfig(this.props.mailboxId)
+    })
   }
 
   /* **************************************************************************/
@@ -76,17 +70,13 @@ export default class MailboxAvatar extends React.Component {
 
   render () {
     const { mailboxId, ...passProps } = this.props
-    const { mailbox, url } = this.state
+    const { avatar } = this.state
 
-    if (mailbox) {
-      return (
-        <SharedMailboxAvatar
-          mailbox={mailbox}
-          resolvedAvatar={url}
-          {...passProps} />
-      )
-    } else {
-      return false
-    }
+    return (
+      <SharedMailboxAvatar
+        avatar={avatar}
+        resolver={(i) => Resolver.image(i)}
+        {...passProps} />
+    )
   }
 }

@@ -19,6 +19,7 @@ class TrelloService extends CoreACService {
   get supportsGuestNotifications () { return false }
   get supportsSyncWhenSleeping () { return true }
   get supportsWBGAPI () { return false }
+  get supportedAuthNamespace () { return 'com.trello' }
 
   /* **************************************************************************/
   // Properties: Humanized

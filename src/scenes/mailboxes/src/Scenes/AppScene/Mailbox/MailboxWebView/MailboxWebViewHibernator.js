@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Button } from '@material-ui/core'
 import MailboxWebView from './MailboxWebView'
-import { mailboxStore, mailboxActions } from 'stores/mailbox'
+import { accountStore, accountActions } from 'stores/account'
 import shallowCompare from 'react-addons-shallow-compare'
 import MailboxInformationCover from './MailboxInformationCover'
 import HotelIcon from '@material-ui/icons/Hotel'
@@ -54,15 +54,15 @@ export default class MailboxWebViewHibernator extends React.Component {
 
   componentDidMount () {
     this.captureRef = 0
-    mailboxStore.listen(this.mailboxUpdated)
+    accountStore.listen(this.accountUpdated)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxUpdated)
+    accountStore.unlisten(this.accountUpdated)
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceType !== nextProps.serviceType) {
+    if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceId !== nextProps.serviceId) {
       this.setState(this.generateState(nextProps))
     }
   }
@@ -79,20 +79,20 @@ export default class MailboxWebViewHibernator extends React.Component {
   * @return state object
   */
   generateState (props) {
-    const mailboxState = mailboxStore.getState()
+    const accountState = accountStore.getState()
     return {
-      isSleeping: mailboxState.isSleeping(props.mailboxId, props.serviceType),
+      isSleeping: accountState.isServiceSleeping(props.serviceId),
       captureRef: null,
-      isActive: mailboxState.isActive(props.mailboxId, props.serviceType)
+      isActive: accountState.isServiceActive(props.serviceId)
     }
   }
 
-  mailboxUpdated = (mailboxState) => {
-    const { mailboxId, serviceType } = this.props
+  accountUpdated = (accountState) => {
+    const { serviceId } = this.props
     this.setState((prevState) => {
       const update = {
-        isSleeping: mailboxState.isSleeping(mailboxId, serviceType),
-        isActive: mailboxState.isActive(mailboxId, serviceType)
+        isSleeping: accountState.isServiceSleeping(serviceId),
+        isActive: accountState.isServiceActive(serviceId)
       }
 
       if (prevState.isSleeping !== update.isSleeping && update.isSleeping) {
@@ -157,12 +157,12 @@ export default class MailboxWebViewHibernator extends React.Component {
   * @param captureRef: the capture ref to check it's us who kicked off the capture
   */
   captureSnapshot (captureRef) {
-    const { mailboxId, serviceType } = this.props
+    const { serviceId } = this.props
 
     Promise.resolve()
       .then(() => this.mailboxWebviewRef.capturePagePromise())
       .then((nativeImage) => {
-        mailboxActions.setServiceSnapshot(mailboxId, serviceType, nativeImage.toDataURL())
+        accountActions.setServiceSnapshot(serviceId, nativeImage.toDataURL())
         return Promise.resolve()
       })
       .catch((e) => Promise.resolve())
@@ -182,7 +182,7 @@ export default class MailboxWebViewHibernator extends React.Component {
     const {
       showSleepPlaceholder,
       mailboxId,
-      serviceType,
+      serviceId,
       className,
       style,
       domReady,
@@ -194,7 +194,7 @@ export default class MailboxWebViewHibernator extends React.Component {
         <MailboxWebView
           innerRef={(n) => { this.mailboxWebviewRef = n }}
           mailboxId={mailboxId}
-          serviceType={serviceType}
+          serviceId={serviceId}
           className={className}
           style={style}
           domReady={this.handleDomReady}
@@ -209,7 +209,7 @@ export default class MailboxWebViewHibernator extends React.Component {
             title='Shhhh!'
             text={['This tab is currently sleeping']}
             button={(
-              <Button variant='raised' onClick={() => mailboxActions.awakenService(mailboxId, serviceType)}>
+              <Button variant='raised' onClick={() => accountActions.awakenService(serviceId)}>
                 <AlarmIcon style={{ marginRight: 6 }} />
                 Wake it up
               </Button>

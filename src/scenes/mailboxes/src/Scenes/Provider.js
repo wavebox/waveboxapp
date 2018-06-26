@@ -4,7 +4,7 @@ import constants from 'shared/constants'
 import shallowCompare from 'react-addons-shallow-compare'
 import Theme from 'wbui/Theme'
 import { MuiThemeProvider } from '@material-ui/core/styles'
-import { mailboxStore, mailboxDispatch } from 'stores/mailbox'
+import { accountStore, accountDispatch } from 'stores/account'
 import { settingsStore } from 'stores/settings'
 //import { googleActions } from 'stores/google'
 //import { trelloActions } from 'stores/trello'
@@ -57,12 +57,13 @@ export default class Provider extends React.Component {
     // STEP 2. Mailbox connections
     //googleActions.startPollingUpdates()
     //trelloActions.startPollingUpdates()
+    //slackActions.connectAllMailboxes()
     //microsoftActions.startPollingUpdates()
 
     // STEP 3. Listen for self
-    mailboxStore.listen(this.mailboxesChanged)
+    accountStore.listen(this.accountChanged)
     settingsStore.listen(this.settingsChanged)
-    mailboxDispatch.on('blurred', this.mailboxBlurred)
+    accountDispatch.on('blurred', this.serviceBlurred)
 
     // Step 4. Customizations
     if (this.state.uiSettings.customMainCSS) {
@@ -88,15 +89,15 @@ export default class Provider extends React.Component {
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
 
     // STEP 2. Mailbox connections
-    googleActions.stopPollingUpdates()
-    trelloActions.stopPollingUpdates()
-    slackActions.disconnectAllMailboxes()
-    microsoftActions.stopPollingUpdates()
+    //googleActions.stopPollingUpdates()
+    //trelloActions.stopPollingUpdates()
+    //slackActions.disconnectAllMailboxes()
+    //microsoftActions.stopPollingUpdates()
 
     // STEP 3. Listening for self
-    mailboxStore.unlisten(this.mailboxesChanged)
+    accountStore.unlisten(this.accountChanged)
     settingsStore.unlisten(this.settingsChanged)
-    mailboxDispatch.removeListener('blurred', this.mailboxBlurred)
+    accountDispatch.removeListener('blurred', this.serviceBlurred)
 
     // STEP 4. Customizations
     this.renderCustomCSS(null)
@@ -114,10 +115,10 @@ export default class Provider extends React.Component {
 
   state = (() => {
     const settingsState = settingsStore.getState()
-    const mailboxState = mailboxStore.getState()
+    const accountState = accountStore.getState()
     return {
-      messagesUnreadCount: mailboxState.totalUnreadCountForAppBadgeForUser(),
-      hasUnreadActivity: mailboxState.hasUnreadActivityForAppBadgeForUser(),
+      messagesUnreadCount: accountState.userUnreadCountForApp(),
+      hasUnreadActivity: accountState.userUnreadActivityForApp(),
       uiSettings: settingsState.ui,
       traySettings: settingsState.tray,
       launchTraySettings: settingsState.launched.tray,
@@ -125,10 +126,10 @@ export default class Provider extends React.Component {
     }
   })()
 
-  mailboxesChanged = (mailboxState) => {
+  accountChanged = (accountState) => {
     this.setState({
-      messagesUnreadCount: mailboxState.totalUnreadCountForAppBadgeForUser(),
-      hasUnreadActivity: mailboxState.hasUnreadActivityForAppBadgeForUser()
+      messagesUnreadCount: accountState.userUnreadCountForApp(),
+      hasUnreadActivity: accountState.userUnreadActivityForApp(),
     })
   }
 
@@ -204,7 +205,7 @@ export default class Provider extends React.Component {
   * Handles a mailbox bluring by trying to refocus the mailbox
   * @param evt: the event that fired
   */
-  mailboxBlurred = (evt) => {
+  serviceBlurred = (evt) => {
     // Requeue the event to run on the end of the render cycle
     clearTimeout(this.refocusTO)
     this.refocusTO = setTimeout(() => {
@@ -215,13 +216,13 @@ export default class Provider extends React.Component {
       } else if (active.tagName === 'BODY') {
         // Focused on body, just dip focus onto the webview
         clearInterval(this.forceFocusTO)
-        mailboxDispatch.refocus()
+        accountDispatch.refocus()
       } else {
         // focused on some element in the ui, poll until we move back to body
         this.forceFocusTO = setInterval(() => {
           if (document.activeElement.tagName === 'BODY') {
             clearInterval(this.forceFocusTO)
-            mailboxDispatch.refocus()
+            accountDispatch.refocus()
           }
         }, constants.REFOCUS_MAILBOX_INTERVAL_MS)
       }
@@ -232,7 +233,7 @@ export default class Provider extends React.Component {
   * Handles the window refocusing by pointing the focus back onto the active mailbox
   */
   handleWindowFocused = () => {
-    mailboxDispatch.refocus()
+    accountDispatch.refocus()
   }
 
   /* **************************************************************************/

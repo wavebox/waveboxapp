@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { BLANK_PNG } from 'shared/b64Assets'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import { emblinkActions } from 'stores/emblink'
 import TrayRenderer from './TrayRenderer'
 import uuid from 'uuid'
@@ -63,7 +63,7 @@ export default class Tray extends React.Component {
 
   componentDidMount () {
     if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
-      mailboxStore.listen(this.mailboxesUpdated)
+      accountStore.listen(this.accountUpdated)
     }
 
     ipcRenderer.on(WB_TOGGLE_TRAY_WITH_BOUNDS, this.handleIpcToggleTrayWithBounds)
@@ -73,7 +73,7 @@ export default class Tray extends React.Component {
     this.appTray = this.destroyTray(this.appTray)
 
     if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
-      mailboxStore.unlisten(this.mailboxesUpdated)
+      accountStore.unlisten(this.accountUpdated)
     }
 
     ipcRenderer.removeListener(WB_TOGGLE_TRAY_WITH_BOUNDS, this.handleIpcToggleTrayWithBounds)
@@ -86,16 +86,16 @@ export default class Tray extends React.Component {
   state = (() => { // Careful we're strict in shouldComponentUpdate
     this.unreadCtxRenderer = new TrayContextMenuUnreadRenderer()
     if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
-      this.unreadCtxRenderer.build(mailboxStore.getState())
+      this.unreadCtxRenderer.build(accountStore.getState())
     }
     return {
       ctxMenuSig: this.unreadCtxRenderer.signature
     }
   })()
 
-  mailboxesUpdated = (mailboxState) => {
+  accountUpdated = (accountState) => {
     if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
-      this.unreadCtxRenderer.build(mailboxStore.getState())
+      this.unreadCtxRenderer.build(accountState)
       this.setState({
         ctxMenuSig: this.unreadCtxRenderer.signature
       })

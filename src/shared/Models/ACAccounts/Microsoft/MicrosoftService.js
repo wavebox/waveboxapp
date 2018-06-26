@@ -20,6 +20,7 @@ class MicrosoftService extends CoreACService {
   get url () { return this.outlookUrl }
   get outlookUrl () { throw SubclassNotImplementedError }
   get o365Url () { throw SubclassNotImplementedError }
+  get restoreLastUrl () { return false }
 
   /**
   * @override

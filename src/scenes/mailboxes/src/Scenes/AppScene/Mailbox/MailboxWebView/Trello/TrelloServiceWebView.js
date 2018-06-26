@@ -1,19 +1,19 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
-import CoreService from 'shared/Models/Accounts/CoreService'
-import { mailboxDispatch, MailboxLinker } from 'stores/mailbox'
-//import { microsoftActions } from 'stores/microsoft'
+import { accountDispatch } from 'stores/account'
+//import { trelloActions } from 'stores/trello'
 
 const REF = 'mailbox_tab'
 
-export default class MicrosoftMailboxMailWebView extends React.Component {
+export default class TrelloServiceWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired
+    mailboxId: PropTypes.string.isRequired,
+    serviceId: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -22,12 +22,12 @@ export default class MicrosoftMailboxMailWebView extends React.Component {
 
   componentDidMount () {
     // Handle dispatch events
-    mailboxDispatch.on('openItem', this.handleOpenItem)
+    accountDispatch.on('openItem', this.handleOpenItem)
   }
 
   componentWillUnmount () {
     // Handle dispatch events
-    mailboxDispatch.removeListener('openItem', this.handleOpenItem)
+    accountDispatch.removeListener('openItem', this.handleOpenItem)
   }
 
   /* **************************************************************************/
@@ -39,13 +39,18 @@ export default class MicrosoftMailboxMailWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleOpenItem = (evt) => {
-    if (evt.mailboxId === this.props.mailboxId && evt.service === CoreService.SERVICE_TYPES.DEFAULT) {
-      if (evt.data.webLink) {
-        MailboxLinker.openContentWindow(this.props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT, evt.data.webLink)
-        // Normally being able to handle this also indicates that something changed, so lets do a sync
-        // after a few seconds to re-evaluate our state
-        microsoftActions.syncMailboxMailAfter.defer(this.props.mailboxId, 1000 * 5)
+    if (evt.serviceId === this.props.serviceId) {
+      if (evt.data.boardId && evt.data.cardId) {
+        this.refs[REF].loadURL(`https://trello.com/card/board/a/${evt.data.boardId}/${evt.data.cardId}`)
+      } else if (evt.data.board) {
+        this.refs[REF].loadURL(`https://trello.com/board/a/${evt.data.boardId}`)
+      } else {
+        this.refs[REF].loadURL('https://trello.com')
       }
+
+      // Normally being able to handle this also indicates that something changed, so lets do a sync
+      // after a few seconds to re-evaluate our state
+      //trelloActions.syncMailboxNotificationsAfter.defer(this.props.mailboxId, 1000 * 5)
     }
   }
 
@@ -54,13 +59,13 @@ export default class MicrosoftMailboxMailWebView extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { mailboxId } = this.props
+    const { mailboxId, serviceId } = this.props
 
     return (
       <MailboxWebViewHibernator
         ref={REF}
         mailboxId={mailboxId}
-        serviceType={CoreService.SERVICE_TYPES.DEFAULT} />
+        serviceId={serviceId} />
     )
   }
 }

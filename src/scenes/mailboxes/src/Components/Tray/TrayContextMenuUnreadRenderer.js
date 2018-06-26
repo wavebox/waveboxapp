@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron'
-import { mailboxActions, mailboxDispatch } from 'stores/mailbox'
+import { accountActions, accountDispatch } from 'stores/account'
 import { WB_FOCUS_MAILBOXES_WINDOW } from 'shared/ipcEvents'
 
 const privSignature = Symbol('privSignature')
@@ -27,11 +27,11 @@ class TrayContextMenuUnreadRenderer {
   /* **************************************************************************/
 
   /**
-  * @param mailboxState: the new mailbox state
+  * @param accountState: the new account state
   */
-  build (mailboxState) {
-    const mailboxMenuItems = mailboxState.allMailboxes().map((mailbox) => {
-      const trayMessages = mailboxState.mailboxTrayMessagesForUser(mailbox.id)
+  build (accountState) {
+    const mailboxMenuItems = accountState.allMailboxes().map((mailbox) => {
+      const trayMessages = accountState.userTrayMessagesForMailbox(mailbox.id)
       const messageItemsSignature = trayMessages.map((message) => message.id).join(':')
       let messageItems = trayMessages.map((message) => {
         return {
@@ -39,8 +39,8 @@ class TrayContextMenuUnreadRenderer {
           label: message.text,
           click: (e) => {
             ipcRenderer.send(WB_FOCUS_MAILBOXES_WINDOW, {})
-            mailboxActions.changeActive(message.data.mailboxId, message.data.serviceType)
-            mailboxDispatch.openItem(message.data.mailboxId, message.data.serviceType, message.data)
+            accountActions.changeActiveService(message.data.serviceId)
+            accountDispatch.openItem(message.data.serviceId, message.data)
           }
         }
       })
@@ -50,23 +50,19 @@ class TrayContextMenuUnreadRenderer {
           label: 'Open Account',
           click: (e) => {
             ipcRenderer.send(WB_FOCUS_MAILBOXES_WINDOW, {})
-            mailboxActions.changeActive(mailbox.id)
+            accountActions.changeActiveMailbox(mailbox.id)
           }
         },
 
         { type: 'separator' }
       )
 
-      const unreadCount = mailboxState.mailboxUnreadCountForUser(mailbox.id)
+      const unreadCount = accountState.userUnreadCountForMailbox(mailbox.id)
       return {
         signature: messageItemsSignature,
         label: [
           unreadCount ? `(${unreadCount})` : undefined,
-          mailbox.humanizedType === mailbox.displayName ? (
-            mailbox.humanizedType
-          ) : (
-            `${mailbox.humanizedType} : ${mailbox.displayName || 'Untitled'}`
-          )
+          mailbox.displayName
         ].filter((item) => !!item).join(' '),
         submenu: messageItems.length === 2 ? [
           ...messageItems,

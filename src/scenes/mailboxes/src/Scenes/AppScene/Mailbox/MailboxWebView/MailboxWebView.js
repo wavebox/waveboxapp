@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Button } from '@material-ui/core'
-import { mailboxStore, mailboxActions, mailboxDispatch, ServiceReducer } from 'stores/mailbox'
-import { guestActions } from 'stores/guest'
+import { accountStore, accountActions, accountDispatch } from 'stores/account'
+import ServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/ServiceDataReducer'
 import BrowserView from 'wbui/Guest/BrowserView'
-import CoreService from 'shared/Models/Accounts/CoreService'
 import MailboxSearch from './MailboxSearch'
 import MailboxTargetUrl from './MailboxTargetUrl'
 import MailboxLoadBar from './MailboxLoadBar'
 import shallowCompare from 'react-addons-shallow-compare'
+import CoreACService from 'shared/Models/ACAccounts/CoreACService'
 import { URL } from 'url'
 import { NotificationService } from 'Notifications'
 import {
@@ -100,7 +100,7 @@ class MailboxWebView extends React.Component {
 
   static propTypes = Object.assign({
     mailboxId: PropTypes.string.isRequired,
-    serviceType: PropTypes.string.isRequired,
+    serviceId: PropTypes.string.isRequired,
     hasSearch: PropTypes.bool.isRequired,
     plugHTML5Notifications: PropTypes.bool.isRequired
   }, BrowserView.REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
@@ -136,15 +136,15 @@ class MailboxWebView extends React.Component {
 
   componentDidMount () {
     // Stores
-    mailboxStore.listen(this.mailboxesChanged)
+    accountStore.listen(this.accountChanged)
 
     // Handle dispatch events
-    mailboxDispatch.on('devtools', this.handleOpenDevTools)
-    mailboxDispatch.on('refocus', this.handleRefocus)
-    mailboxDispatch.on('reload', this.handleReload)
-    mailboxDispatch.addGetter('current-url', this.handleGetCurrentUrl)
-    mailboxDispatch.on('navigateBack', this.handleNavigateBack)
-    mailboxDispatch.on('navigateForward', this.handleNavigateForward)
+    accountDispatch.on('devtools', this.handleOpenDevTools)
+    accountDispatch.on('refocus', this.handleRefocus)
+    accountDispatch.on('reload', this.handleReload)
+    accountDispatch.addGetter('current-url', this.handleGetCurrentUrl)
+    accountDispatch.on('navigateBack', this.handleNavigateBack)
+    accountDispatch.on('navigateForward', this.handleNavigateForward)
 
     if (!this.state.isActive) {
       if (this.refs[BROWSER_REF]) {
@@ -155,22 +155,22 @@ class MailboxWebView extends React.Component {
 
   componentWillUnmount () {
     // Stores
-    mailboxStore.unlisten(this.mailboxesChanged)
+    accountStore.unlisten(this.accountChanged)
 
     // Handle dispatch events
-    mailboxDispatch.removeListener('devtools', this.handleOpenDevTools)
-    mailboxDispatch.removeListener('refocus', this.handleRefocus)
-    mailboxDispatch.removeListener('reload', this.handleReload)
-    mailboxDispatch.removeGetter('current-url', this.handleGetCurrentUrl)
-    mailboxDispatch.removeListener('navigateBack', this.handleNavigateBack)
-    mailboxDispatch.removeListener('navigateForward', this.handleNavigateForward)
+    accountDispatch.removeListener('devtools', this.handleOpenDevTools)
+    accountDispatch.removeListener('refocus', this.handleRefocus)
+    accountDispatch.removeListener('reload', this.handleReload)
+    accountDispatch.removeGetter('current-url', this.handleGetCurrentUrl)
+    accountDispatch.removeListener('navigateBack', this.handleNavigateBack)
+    accountDispatch.removeListener('navigateForward', this.handleNavigateForward)
 
     // Update the store
-    mailboxActions.deleteWebcontentTabId.defer(this.props.mailboxId, this.props.serviceType)
+    accountActions.deleteWebcontentTabId.defer(this.props.serviceId)
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceType !== nextProps.serviceType) {
+    if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceId !== nextProps.serviceId) {
       this.setState(this.generateState(nextProps))
     }
   }
@@ -187,20 +187,23 @@ class MailboxWebView extends React.Component {
   * @return state object
   */
   generateState (props) {
-    const mailboxState = mailboxStore.getState()
-    const mailbox = mailboxState.getMailbox(props.mailboxId)
-    const service = mailbox ? mailbox.serviceForType(props.serviceType) : null
+    const { mailboxId, serviceId } = props
+    const accountState = accountStore.getState()
+    const mailbox = accountState.getMailbox(mailboxId)
+    const service = accountState.getService(serviceId)
+    const serviceData = accountState.getServiceData(serviceId)
+    const authData = accountState.getMailboxAuthForServiceId(serviceId)
 
     return {
       initialLoadDone: false,
       isLoading: false,
       isCrashed: false,
       focusedUrl: null,
-      snapshot: mailboxState.getSnapshot(props.mailboxId, props.serviceType),
-      isActive: mailboxState.isActive(props.mailboxId, props.serviceType),
-      isSearching: mailboxState.isSearchingMailbox(props.mailboxId, props.serviceType),
-      searchTerm: mailboxState.mailboxSearchTerm(props.mailboxId, props.serviceType),
-      searchId: mailboxState.mailboxSearchHash(props.mailboxId, props.serviceType),
+      snapshot: accountState.getSnapshot(serviceId),
+      isActive: accountState.activeServiceId() === serviceId,
+      isSearching: accountState.isSearchingService(serviceId),
+      searchTerm: accountState.serviceSearchTerm(serviceId),
+      searchId: accountState.serviceSearchHash(serviceId),
       isolateMailboxProcesses: settingsStore.getState().launched.app.isolateMailboxProcesses, // does not update
       ...(!mailbox || !service ? {
         mailbox: null,
@@ -211,29 +214,31 @@ class MailboxWebView extends React.Component {
         mailbox: mailbox,
         service: service,
         baseUrl: service.url,
-        restorableUrl: service.restorableUrl
+        restorableUrl: service.getUrlWithData(serviceData, authData)
       })
     }
   }
 
-  mailboxesChanged = (mailboxState) => {
-    const { mailboxId, serviceType } = this.props
-    const mailbox = mailboxState.getMailbox(mailboxId)
-    const service = mailbox ? mailbox.serviceForType(serviceType) : null
+  accountChanged = (accountState) => {
+    const { mailboxId, serviceId } = this.props
+    const mailbox = accountState.getMailbox(mailboxId)
+    const service = accountState.getService(serviceId)
+    const serviceData = accountState.getServiceData(serviceId)
+    const authData = accountState.getMailboxAuthForServiceId(serviceId)
 
     if (mailbox && service) {
       this.setState((prevState) => {
         return {
           mailbox: mailbox,
           service: service,
-          isActive: mailboxState.isActive(mailboxId, serviceType),
-          snapshot: mailboxState.getSnapshot(mailboxId, serviceType),
-          isSearching: mailboxState.isSearchingMailbox(mailboxId, serviceType),
-          searchTerm: mailboxState.mailboxSearchTerm(mailboxId, serviceType),
-          searchId: mailboxState.mailboxSearchHash(mailboxId, serviceType),
+          snapshot: accountState.getSnapshot(serviceId),
+          isActive: accountState.activeServiceId() === serviceId,
+          isSearching: accountState.isSearchingService(serviceId),
+          searchTerm: accountState.serviceSearchTerm(serviceId),
+          searchId: accountState.serviceSearchHash(serviceId),
           ...(prevState.baseUrl !== service.url ? {
             baseUrl: service.url,
-            restorableUrl: service.restorableUrl,
+            restorableUrl: service.getUrlWithData(serviceData, authData),
             initialLoadDone: false
           } : {})
         }
@@ -270,12 +275,9 @@ class MailboxWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleOpenDevTools = (evt) => {
-    if (evt.mailboxId === this.props.mailboxId) {
-      if (!evt.service && this.state.isActive) {
-        this.refs[BROWSER_REF].openDevTools()
-      } else if (evt.service === this.props.serviceType) {
-        this.refs[BROWSER_REF].openDevTools()
-      }
+    const isThisTab = evt.servceId === this.props.serviceId || (!evt.service && this.state.isActive)
+    if (isThisTab) {
+      this.refs[BROWSER_REF].openDevTools()
     }
   }
 
@@ -284,9 +286,8 @@ class MailboxWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleRefocus = (evt) => {
-    if ((!evt.mailboxId || !evt.service) && this.state.isActive) {
-      setTimeout(() => { this.refs[BROWSER_REF].focus() })
-    } else if (evt.mailboxId === this.props.mailboxId && evt.service === this.props.serviceType) {
+    const isThisTab = evt.servceId === this.props.serviceId || (!evt.service && this.state.isActive)
+    if (isThisTab) {
       setTimeout(() => { this.refs[BROWSER_REF].focus() })
     }
   }
@@ -296,42 +297,40 @@ class MailboxWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleReload = (evt) => {
-    const { serviceType, mailboxId } = this.props
-    const { service, isActive } = this.state
-
-    if (evt.mailboxId === mailboxId) {
-      let shouldReload = false
-
-      if (evt.allServices) {
-        shouldReload = true
-      } else if (!evt.service && isActive) {
-        shouldReload = true
-      } else if (evt.service === serviceType) {
-        shouldReload = true
+    const { mailboxId, serviceId } = this.props
+    const { isActive, service } = this.state
+    let isThisTab = false
+    if (evt.mailboxId || evt.serviceId) {
+      if (evt.mailboxId === mailboxId) {
+        isThisTab = true
+      } else if (evt.serviceId === serviceId) {
+        isThisTab = true
       }
+    } else if (isActive) {
+      isThisTab = true
+    }
 
-      if (shouldReload) {
-        if (service) {
-          if (service.reloadBehaviour === CoreService.RELOAD_BEHAVIOURS.RELOAD) {
-            this.reload()
-          } else if (service.reloadBehaviour === CoreService.RELOAD_BEHAVIOURS.RESET_URL) {
-            this.loadURL(service.url)
-          }
-        } else {
+    if (isThisTab) {
+      if (service) {
+        if (service.reloadBehaviour === CoreACService.RELOAD_BEHAVIOURS.RELOAD) {
           this.reload()
+        } else if (service.reloadBehaviour === CoreACService.RELOAD_BEHAVIOURS.RESET_URL) {
+          this.loadURL(service.url)
         }
+      } else {
+        this.reload()
       }
     }
   }
 
   /**
   * Handles getting the current url
-  * @param mailboxId: the id of the mailbox
-  * @param serviceType: the type of service
+  * @param evt: the event that fired
   * @return the current url or null if not applicable for use
   */
-  handleGetCurrentUrl = ({ mailboxId, serviceType }) => {
-    if (mailboxId === this.props.mailboxId && serviceType === this.props.serviceType) {
+  handleGetCurrentUrl = (evt) => {
+    const isThisTab = evt.servceId === this.props.serviceId
+    if (isThisTab) {
       return this.refs[BROWSER_REF].getURL()
     } else {
       return null
@@ -387,7 +386,7 @@ class MailboxWebView extends React.Component {
         if (this.props.plugHTML5Notifications) {
           NotificationService.processHTML5MailboxNotification(
             this.props.mailboxId,
-            this.props.serviceType,
+            this.props.serviceId,
             evt.channel.notificationId,
             evt.channel.notification,
             (notificationId) => {
@@ -398,7 +397,7 @@ class MailboxWebView extends React.Component {
         break
       case WB_BROWSER_CONFIRM_PRESENT:
       case WB_BROWSER_ALERT_PRESENT:
-        mailboxActions.changeActive(this.props.mailboxId, this.props.serviceType)
+        accountActions.changeActiveService(this.props.serviceId)
         break
     }
   }
@@ -436,7 +435,63 @@ class MailboxWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleBrowserPageTitleUpdated = (evt) => {
-    guestActions.setPageTitle([this.props.mailboxId, this.props.serviceType], evt.title)
+    accountActions.reduceServiceData(
+      this.props.serviceId,
+      ServiceDataReducer.setDocumentTitle,
+      evt.title
+    )
+  }
+
+  /**
+  * Handles the browser navigating
+  * @param evt: the event that fired
+  */
+  handleBrowserDidNavigate = (evt) => {
+    if (evt.url && evt.url !== 'about:blank') {
+      accountActions.reduceServiceData(
+        this.props.serviceId,
+        ServiceDataReducer.setUrl,
+        evt.url
+      )
+    }
+  }
+
+  /**
+  * Handles the browser navigating in page
+  * @param evt: the event that fired
+  */
+  handleBrowserDidNavigateInPage = (evt) => {
+    if (evt.isMainFrame && evt.url && evt.url !== 'about:blank') {
+      accountActions.reduceServiceData(
+        this.props.serviceId,
+        ServiceDataReducer.setUrl,
+        evt.url
+      )
+    }
+  }
+
+  /**
+  * Handles the browser theme updating
+  * @param evt: the event that fired
+  */
+  handleBrowserThemeUpdated = (evt) => {
+    accountActions.reduceServiceData(
+      this.props.serviceId,
+      ServiceDataReducer.setDocumentTheme,
+      evt.themeColor
+    )
+  }
+
+  /**
+  * Handles the browser favicon updating
+  * @param evt: the event that fired
+  */
+  handleBrowserFaviconsUpdated = (evt) => {
+    accountActions.reduceServiceData(
+      this.props.serviceId,
+      ServiceDataReducer.setFavicons,
+      evt.favicons
+    )
   }
 
   /**
@@ -467,41 +522,19 @@ class MailboxWebView extends React.Component {
   }
 
   /**
-  * Handles the browser navigating
-  * @param evt: the event that fired
-  */
-  handleBrowserDidNavigate = (evt) => {
-    if (evt.url && evt.url !== 'about:blank') {
-      const { mailboxId, serviceType } = this.props
-      mailboxActions.reduceService(mailboxId, serviceType, ServiceReducer.setLastUrl, evt.url)
-    }
-  }
-
-  /**
-  * Handles the browser navigating in page
-  * @param evt: the event that fired
-  */
-  handleBrowserDidNavigateInPage = (evt) => {
-    if (evt.isMainFrame && evt.url && evt.url !== 'about:blank') {
-      const { mailboxId, serviceType } = this.props
-      mailboxActions.reduceService(mailboxId, serviceType, ServiceReducer.setLastUrl, evt.url)
-    }
-  }
-
-  /**
   * Handles the webcontents being attached
   * @param webContents: the webcontents that were attached
   */
   handleWebContentsAttached = (webContents) => {
-    const { mailboxId, serviceType } = this.props
+    const { mailboxId, serviceId } = this.props
     ipcRenderer.send(WB_MAILBOXES_WINDOW_MAILBOX_WEBVIEW_ATTACHED, {
       webContentsId: webContents.id,
       mailboxId: mailboxId,
-      serviceType: serviceType
+      serviceId: serviceId
     })
 
     // Update the store
-    mailboxActions.setWebcontentTabId.defer(mailboxId, serviceType, webContents.id)
+    accountActions.setWebcontentTabId.defer(serviceId, webContents.id)
   }
 
   /**
@@ -509,7 +542,7 @@ class MailboxWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleCrashed = (evt) => {
-    console.log(`WebView Crashed ${this.props.mailboxId}:${this.props.serviceType}`, evt)
+    console.log(`WebView Crashed ${this.props.mailboxId}:${this.props.serviceId}`, evt)
     this.setState({ isCrashed: true })
   }
 
@@ -541,14 +574,14 @@ class MailboxWebView extends React.Component {
   * Handles a browser focusing
   */
   handleBrowserFocused () {
-    mailboxDispatch.focused(this.props.mailboxId, this.props.serviceType)
+    accountDispatch.focused(this.props.serviceId)
   }
 
   /**
   * Handles a browser un-focusing
   */
   handleBrowserBlurred () {
-    mailboxDispatch.blurred(this.props.mailboxId, this.props.serviceType)
+    accountDispatch.blurred(this.props.serviceId)
   }
 
   /* **************************************************************************/
@@ -599,7 +632,7 @@ class MailboxWebView extends React.Component {
       hasSearch,
       allowpopups,
       mailboxId,
-      serviceType,
+      serviceId,
       ...passProps
     } = this.props
     const webviewEventProps = BrowserView.REACT_WEBVIEW_EVENTS.reduce((acc, name) => {
@@ -614,7 +647,7 @@ class MailboxWebView extends React.Component {
       'nativeWindowOpen=yes',
       'sharedSiteInstances=yes',
       'sandbox=yes',
-      'affinity=' + (isolateMailboxProcesses ? mailboxId + ':' + serviceType : mailboxId)
+      'affinity=' + (isolateMailboxProcesses ? mailboxId + ':' + serviceId : mailboxId)
     ].filter((l) => !!l).join(', ')
     const preloadScripts = [
       Resolver.guestPreload(),
@@ -644,6 +677,12 @@ class MailboxWebView extends React.Component {
             }}
             pageTitleUpdated={(evt) => {
               this.multiCallBrowserEvent([this.handleBrowserPageTitleUpdated, webviewEventProps.pageTitleUpdated], [evt])
+            }}
+            didChangeThemeColor={(evt) => {
+              this.multiCallBrowserEvent([this.handleBrowserThemeUpdated, webviewEventProps.didChangeThemeColor], [evt])
+            }}
+            pageFaviconUpdated={(evt) => {
+              this.multiCallBrowserEvent([this.handleBrowserFaviconsUpdated, webviewEventProps.pageFaviconUpdated], [evt])
             }}
             domReady={(evt) => {
               this.multiCallBrowserEvent([this.handleBrowserDomReady, webviewEventProps.domReady], [evt])
@@ -688,7 +727,7 @@ class MailboxWebView extends React.Component {
         <MailboxLoadBar isLoading={isLoading} />
         <MailboxTargetUrl url={focusedUrl} />
         {hasSearch ? (
-          <MailboxSearch mailboxId={mailbox.id} serviceType={service.type} />
+          <MailboxSearch mailboxId={mailbox.id} serviceId={serviceId} />
         ) : undefined}
         {isCrashed ? (
           <MailboxInformationCover
@@ -722,7 +761,7 @@ class MailboxWebView extends React.Component {
             button={(
               <Button
                 variant='raised'
-                onClick={() => { mailboxActions.reauthenticateMailbox(mailbox.id) }}>
+                onClick={() => { accountActions.reauthenticateMailbox(mailboxId) }}>
                 <ErrorOutlineIcon className={classes.infoButtonIcon} />
                 Reauthenticate
               </Button>

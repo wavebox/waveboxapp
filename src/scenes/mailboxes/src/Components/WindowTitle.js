@@ -1,5 +1,5 @@
 import React from 'react'
-import { accountStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 

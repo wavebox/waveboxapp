@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
-import CoreService from 'shared/Models/Accounts/CoreService'
-import { mailboxDispatch, mailboxStore, mailboxActions } from 'stores/mailbox'
+import { accountDispatch, accountStore, accountActions } from 'stores/account'
 //import { slackActions } from 'stores/slack'
 import {
   WB_BROWSER_NOTIFICATION_PRESENT,
@@ -11,13 +10,14 @@ import {
 
 const REF = 'mailbox_tab'
 
-export default class SlackMailboxWebView extends React.Component {
+export default class SlackServiceWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired
+    mailboxId: PropTypes.string.isRequired,
+    serviceId: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -25,17 +25,17 @@ export default class SlackMailboxWebView extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxUpdated)
-    mailboxDispatch.on('openItem', this.handleOpenItem)
+    accountStore.listen(this.accountUpdated)
+    accountDispatch.on('openItem', this.handleOpenItem)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxUpdated)
-    mailboxDispatch.removeListener('openItem', this.handleOpenItem)
+    accountStore.unlisten(this.accountUpdated)
+    accountDispatch.removeListener('openItem', this.handleOpenItem)
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.mailboxId !== nextProps.mailboxId) {
+    if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceId !== nextProps.serviceId) {
       this.setState(this.generateState(nextProps))
     }
   }
@@ -52,26 +52,19 @@ export default class SlackMailboxWebView extends React.Component {
   * @return state object
   */
   generateState (props) {
-    const { mailboxId } = this.props
-    const mailboxState = mailboxStore.getState()
+    const { serviceId } = props
+    const accountState = accountStore.getState()
     return {
-      mailbox: mailboxState.getMailbox(mailboxId),
-      isActive: mailboxState.isActive(mailboxId, CoreService.SERVICE_TYPES.DEFAULT),
-      isSearching: mailboxState.isSearchingMailbox(mailboxId, CoreService.SERVICE_TYPES.DEFAULT),
-      searchTerm: mailboxState.mailboxSearchTerm(mailboxId, CoreService.SERVICE_TYPES.DEFAULT),
-      searchId: mailboxState.mailboxSearchHash(mailboxId, CoreService.SERVICE_TYPES.DEFAULT)
+      service: accountState.getService(serviceId),
+      isActive: accountState.isActiveService(serviceId),
+      isSearching: accountState.isSearchingService(serviceId),
+      searchTerm: accountState.serviceSearchTerm(serviceId),
+      searchId: accountState.serviceSearchHash(serviceId)
     }
   }
 
-  mailboxUpdated = (mailboxState) => {
-    const { mailboxId } = this.props
-    this.setState({
-      mailbox: mailboxState.getMailbox(mailboxId),
-      isActive: mailboxState.isActive(mailboxId, CoreService.SERVICE_TYPES.DEFAULT),
-      isSearching: mailboxState.isSearchingMailbox(mailboxId, CoreService.SERVICE_TYPES.DEFAULT),
-      searchTerm: mailboxState.mailboxSearchTerm(mailboxId, CoreService.SERVICE_TYPES.DEFAULT),
-      searchId: mailboxState.mailboxSearchHash(mailboxId, CoreService.SERVICE_TYPES.DEFAULT)
-    })
+  accountUpdated = (accountState) => {
+    this.setState(this.generateState(accountState, this.props))
   }
 
   /* **************************************************************************/
@@ -83,14 +76,16 @@ export default class SlackMailboxWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleOpenItem = (evt) => {
-    if (evt.mailboxId === this.props.mailboxId && evt.service === CoreService.SERVICE_TYPES.DEFAULT) {
-      const service = this.state.mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT)
+    if (evt.serviceId === this.props.serviceId) {
+      const { service } = this.state
+      if (!service) { return }
+
       if (evt.data.launchUri) {
         this.refs[REF].executeJavaScript(`TS.client.handleDeepLink('${evt.data.launchUri}');`)
       } else if (evt.data.channelId) {
-        this.refs[REF].executeJavaScript(`TS.client.handleDeepLink('slack://channel?id=${evt.data.channelId}&team=${this.state.mailbox.authTeamId}');`)
+        this.refs[REF].executeJavaScript(`TS.client.handleDeepLink('slack://channel?id=${evt.data.channelId}&team=${service.authTeamId}');`) //service.authTeamId will be undefined
       } else {
-        this.refs[REF].loadURL(service.url)
+        //this.refs[REF].loadURL(service.url)
       }
     }
   }
@@ -106,14 +101,14 @@ export default class SlackMailboxWebView extends React.Component {
   handleWebViewIPCMessage = (evt) => {
     switch (evt.channel.type) {
       case WB_BROWSER_NOTIFICATION_PRESENT:
-        slackActions.scheduleHTML5Notification(
+        /*slackActions.scheduleHTML5Notification(
           this.props.mailboxId,
           evt.channel.notificationId,
           evt.channel.notification,
           (notificationId) => {
             this.refs[REF].send(WB_BROWSER_NOTIFICATION_CLICK, { notificationId: notificationId })
           }
-        )
+        )*/
         break
     }
   }
@@ -129,21 +124,21 @@ export default class SlackMailboxWebView extends React.Component {
       if (this.state.isSearching !== prevState.isSearching || this.state.searchId !== prevState.searchId) {
         if (this.state.isSearching) {
           this.refs[REF].executeJavaScript(`document.querySelector('.search_input>[contenteditable]').focus()`)
-          mailboxActions.untrackSearchingMailbox.defer(this.props.mailboxId, CoreService.SERVICE_TYPES.DEFAULT)
+          accountActions.untrackSearchingService.defer(this.props.serviceId)
         }
       }
     }
   }
 
   render () {
-    const { mailboxId } = this.props
+    const { mailboxId, serviceId } = this.props
 
     return (
       <MailboxWebViewHibernator
         ref={REF}
         mailboxId={mailboxId}
+        serviceId={serviceId}
         hasSearch={false}
-        serviceType={CoreService.SERVICE_TYPES.DEFAULT}
         plugHTML5Notifications={false}
         ipcMessage={this.handleWebViewIPCMessage} />
     )

@@ -1,20 +1,18 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
-import CoreService from 'shared/Models/Accounts/CoreService'
-import { mailboxActions, GoogleTeamServiceReducer } from 'stores/mailbox'
-import shallowCompare from 'react-addons-shallow-compare'
 
 const REF = 'mailbox_tab'
-const BADGE_REGEXP = new RegExp('(chat-favicon-new-non-notif|chat-favicon-new-notif)')
+const TITLE_COUNT_RE = new RegExp('^[(]([0-9]+)[)].*?$')
 
-export default class GoogleMailboxTeamWebView extends React.Component {
+export default class MicrosoftTeamsServiceWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired
+    mailboxId: PropTypes.string.isRequired,
+    serviceId: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -22,37 +20,42 @@ export default class GoogleMailboxTeamWebView extends React.Component {
   /* **************************************************************************/
 
   /**
-  * Handles the page favicon updating
+  * Handles the page title updating
   * @param evt: the event that fired
   */
-  handlePageFaviconUpdated = (evt) => {
-    const hasUnread = !!evt.favicons.find((favicon) => {
-      return BADGE_REGEXP.exec(favicon) !== null
-    })
+  handlePageTitleUpdated = (evt) => {
+    //TODO move this into models & depricate this obj
+    /*const title = evt.title || ''
+
+    let count = 0
+    const match = TITLE_COUNT_RE.exec(title)
+    if (match) {
+      const matchCount = parseInt(match[1])
+      if (!isNaN(matchCount)) {
+        count = matchCount
+      }
+    }
+
     mailboxActions.reduceService(
       this.props.mailboxId,
       CoreService.SERVICE_TYPES.TEAM,
-      GoogleTeamServiceReducer.setHasUnreadActivity,
-      hasUnread
-    )
+      MicrosoftTeamServiceReducer.setUnreadCount,
+      count
+    )*/
   }
 
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
-  shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
-  }
-
   render () {
-    const { mailboxId } = this.props
+    const { mailboxId, serviceId } = this.props
     return (
       <MailboxWebViewHibernator
         ref={REF}
         mailboxId={mailboxId}
-        pageFaviconUpdated={this.handlePageFaviconUpdated}
-        serviceType={CoreService.SERVICE_TYPES.TEAM} />
+        serviceId={serviceId}
+        pageTitleUpdated={this.handlePageTitleUpdated} />
     )
   }
 }

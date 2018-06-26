@@ -19,6 +19,7 @@ class SlackService extends CoreACService {
   get supportsGuestNotifications () { return false }
   get supportsSyncWhenSleeping () { return true }
   get supportsWBGAPI () { return false }
+  get supportedAuthNamespace () { return 'com.slack' }
 
   /* **************************************************************************/
   // Properties: Humanized
@@ -58,6 +59,7 @@ class SlackService extends CoreACService {
   /* **************************************************************************/
 
   get url () { return this._value_('authUrl') }
+  get restoreLastUrl () { return false }
 
   /**
   * Gets the url being provided the service data if there is any customization to do

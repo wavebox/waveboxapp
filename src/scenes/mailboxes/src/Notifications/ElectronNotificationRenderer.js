@@ -26,22 +26,22 @@ class ElectronNotificationRenderer {
   /**
   * Presents a mailbox notification using the standard electron notification tooling
   * @param mailboxId: the id of the mailbox the notification is for
-  * @param serviceType: the type of service the notification is for
+  * @param serviceId: the id of service the notification is for
   * @param notification: the notification info to present
   * @param clickHandler: the handler to call on click
-  * @param mailboxState: the current mailbox state
+  * @param accountState: the current account state
   * @param settingsState: the current settings state
   */
-  presentMailboxNotification (mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState) {
+  presentMailboxNotification (mailboxId, serviceId, notification, clickHandler, accountState, settingsState) {
     if (NotificationRendererUtils.areNotificationsMuted(settingsState)) { return }
-    const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceType, mailboxState, settingsState)
+    const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceId, accountState, settingsState)
     if (!enabled) { return }
 
     const windowNotification = new window.Notification(NotificationRendererUtils.formattedTitle(notification), {
       body: NotificationRendererUtils.formattedBody(notification),
       silent: settingsState.os.notificationsSilent,
       data: notification.data,
-      icon: NotificationRendererUtils.preparedServiceIcon(mailbox, service, mailboxState)
+      icon: NotificationRendererUtils.preparedServiceIcon(mailbox, service, accountState)
     })
     windowNotification.onclick = (evt) => {
       if (clickHandler && evt.target && evt.target.data) {

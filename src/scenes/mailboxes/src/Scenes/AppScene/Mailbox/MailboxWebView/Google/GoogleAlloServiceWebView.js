@@ -1,22 +1,22 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
-import CoreService from 'shared/Models/Accounts/CoreService'
-import { mailboxActions, GoogleCommunicationServiceReducer } from 'stores/mailbox'
-import { NotificationService } from 'Notifications'
+import { accountActions } from 'stores/account'
+import GoogleAlloServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/GoogleAlloServiceDataReducer'
 import {
-  WB_BROWSER_GOOGLE_COMMUNICATION_UNREAD_COUNT_CHANGED
+  WB_BROWSER_GOOGLE_MESSENGER_UNREAD_COUNT_CHANGED
 } from 'shared/ipcEvents'
 
 const REF = 'mailbox_tab'
 
-export default class GoogleMailboxCommunicationWebView extends React.Component {
+export default class GoogleAlloServiceWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired
+    mailboxId: PropTypes.string.isRequired,
+    serviceId: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -29,7 +29,7 @@ export default class GoogleMailboxCommunicationWebView extends React.Component {
   */
   dispatchBrowserIPCMessage = (evt) => {
     switch (evt.channel.type) {
-      case WB_BROWSER_GOOGLE_COMMUNICATION_UNREAD_COUNT_CHANGED:
+      case WB_BROWSER_GOOGLE_MESSENGER_UNREAD_COUNT_CHANGED:
         this.handleUnreadCountChange(evt.channel.data.prev, evt.channel.data.next)
         break
       default: break
@@ -42,24 +42,9 @@ export default class GoogleMailboxCommunicationWebView extends React.Component {
   * @param next: the next count
   */
   handleUnreadCountChange (prev, next) {
-    if (prev !== undefined && next !== undefined) {
-      if (next > prev) {
-        const diff = next - prev
-        NotificationService.processPushedMailboxNotification(this.props.mailboxId, CoreService.SERVICE_TYPES.COMMUNICATION, {
-          title: 'New Hangouts Message',
-          body: [{ content: `You have ${diff} new message${diff > 1 ? 's' : ''}` }],
-          data: {
-            mailboxId: this.props.mailboxId,
-            serviceType: CoreService.SERVICE_TYPES.COMMUNICATION
-          }
-        })
-      }
-    }
-
-    mailboxActions.reduceService(
-      this.props.mailboxId,
-      CoreService.SERVICE_TYPES.COMMUNICATION,
-      GoogleCommunicationServiceReducer.setUnreadCount,
+    accountActions.reduceServiceData(
+      this.props.serviceId,
+      GoogleAlloServiceDataReducer.setUnreadCount,
       next
     )
   }
@@ -69,12 +54,12 @@ export default class GoogleMailboxCommunicationWebView extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { mailboxId } = this.props
+    const { mailboxId, serviceId } = this.props
     return (
       <MailboxWebViewHibernator
         ref={REF}
         mailboxId={mailboxId}
-        serviceType={CoreService.SERVICE_TYPES.COMMUNICATION}
+        serviceId={serviceId}
         ipcMessage={this.dispatchBrowserIPCMessage} />
     )
   }

@@ -45,25 +45,60 @@ class AccountStore extends RendererAccountStore {
     // Snapshots
     /* ****************************************/
 
-    this.getSnapshot = (serviceId) => { return this._snapshots_.get(serviceId) }
+    /**
+    * @param serviceId: the id of the service to get snapshot for
+    * @return the snapshot data or undefined
+    */
+    this.getSnapshot = (serviceId) => {
+      return this._snapshots_.get(serviceId)
+    }
 
     /* ****************************************/
     // Search
     /* ****************************************/
 
-    this.isSearchingService = (serviceId) => { return this._search_.has(serviceId) }
+    /**
+    * @param serviceId: the id of the service
+    * @return true if we're searching the service, false otherwise
+    */
+    this.isSearchingService = (serviceId) => {
+      return this._search_.has(serviceId)
+    }
 
-    this.serviceSearchTerm = (serviceId) => { return (this._search_.get(serviceId) || {}).term || '' }
+    /**
+    * @param serviceId: the id of the service
+    * @return the search term we're searching for or an empty string
+    */
+    this.serviceSearchTerm = (serviceId) => {
+      return (this._search_.get(serviceId) || {}).term || ''
+    }
 
-    this.serviceSearchHash = (serviceId) => { return (this._search_.get(serviceId) || {}).hash || '' }
+    /**
+    * @param serviceId: the id of the service
+    * @return a search hash we're looking for or an empty string
+    */
+    this.serviceSearchHash = (serviceId) => {
+      return (this._search_.get(serviceId) || {}).hash || ''
+    }
 
     /* ****************************************/
     // Tabs
     /* ****************************************/
 
-    this.getWebcontentTabId = (serviceId) => { return this._webcontentTabIds_.get(serviceId) }
+    /**
+    * @param serviceId: the id of the service
+    * @return the id of the webcontents for the given service
+    */
+    this.getWebcontentTabId = (serviceId) => {
+      return this._webcontentTabIds_.get(serviceId)
+    }
 
-    this.getActiveWebcontentTabId = () => { return this.getWebcontentTabId(this.activeServiceId()) }
+    /**
+    * @return the webcontents id for the active service
+    */
+    this.getActiveWebcontentTabId = () => {
+      return this.getWebcontentTabId(this.activeServiceId())
+    }
 
     /* ****************************************/
     // Listeners

@@ -1,23 +1,22 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import { userStore } from 'stores/user'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
-import CoreService from 'shared/Models/Accounts/CoreService'
-import GoogleMailboxMailWebView from './MailboxWebView/Google/GoogleMailboxMailWebView'
-import GoogleMailboxCommunicationWebView from './MailboxWebView/Google/GoogleMailboxCommunicationWebView'
-import GoogleMailboxCalendarWebView from './MailboxWebView/Google/GoogleMailboxCalendarWebView'
-import GoogleMailboxMessengerWebView from './MailboxWebView/Google/GoogleMailboxMessengerWebView'
-import GoogleMailboxTeamWebView from './MailboxWebView/Google/GoogleMailboxTeamWebView'
-import TrelloMailboxWebView from './MailboxWebView/Trello/TrelloMailboxWebView'
-import SlackMailboxWebView from './MailboxWebView/Slack/SlackMailboxWebView'
-import GenericMailboxDefaultServiceWebView from './MailboxWebView/Generic/GenericMailboxDefaultServiceWebView'
-import MicrosoftMailboxMailWebView from './MailboxWebView/Microsoft/MicrosoftMailboxMailWebView'
-import MicrosoftMailboxTeamWebView from './MailboxWebView/Microsoft/MicrosoftMailboxTeamWebView'
-import MailboxServiceWebView from './MailboxWebView/MailboxServiceWebView'
-import ContainerMailboxDefaultServiceWebView from './MailboxWebView/Container/ContainerMailboxDefaultServiceWebView'
+import GoogleMailServiceWebView from './MailboxWebView/Google/GoogleMailServiceWebView'
+import GoogleHangoutsServiceWebView from './MailboxWebView/Google/GoogleHangoutsServiceWebView'
+import GoogleCalendarServiceWebView from './MailboxWebView/Google/GoogleCalendarServiceWebView'
+import GoogleAlloServiceWebView from './MailboxWebView/Google/GoogleAlloServiceWebView'
+import GoogleChatServiceWebView from './MailboxWebView/Google/GoogleChatServiceWebView'
+import TrelloServiceWebView from './MailboxWebView/Trello/TrelloServiceWebView'
+import SlackServiceWebView from './MailboxWebView/Slack/SlackServiceWebView'
+import GenericServiceWebView from './MailboxWebView/Generic/GenericServiceWebView'
+import ContainerServiceWebView from './MailboxWebView/Container/ContainerServiceWebView'
+import MicrosoftMailServiceWebView from './MailboxWebView/Microsoft/MicrosoftMailServiceWebView'
+import MicrosoftTeamsServiceWebView from './MailboxWebView/Microsoft/MicrosoftTeamsServiceWebView'
+import ServiceWebView from './MailboxWebView/ServiceWebView'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 
 const styles = {
   mailboxTab: {
@@ -58,12 +57,12 @@ class MailboxTab extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxUpdated)
+    accountStore.listen(this.accountUpdated)
     userStore.listen(this.userUpdated)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxUpdated)
+    accountStore.unlisten(this.accountUpdated)
     userStore.unlisten(this.userUpdated)
   }
 
@@ -85,31 +84,46 @@ class MailboxTab extends React.Component {
   * @return state object
   */
   generateState (props) {
-    const mailboxState = mailboxStore.getState()
-    const userState = userStore.getState()
-    const mailbox = mailboxState.getMailbox(props.mailboxId)
+    const { mailboxId } = props
+    const accountState = accountStore.getState()
+
     return {
-      isMailboxActive: mailboxState.activeMailboxId() === props.mailboxId,
-      userHasServices: userState.user.hasServices,
-      serviceTypes: mailbox.enabledServiceTypes,
-      mailboxType: mailbox.type
+      isMailboxActive: accountState.activeMailboxId() === mailboxId,
+      serviceManifest: this.generateServiceManifest(accountState, mailboxId)
     }
   }
 
-  mailboxUpdated = (mailboxState) => {
-    const mailbox = mailboxState.getMailbox(this.props.mailboxId)
-    if (!mailbox) { return }
+  accountUpdated = (accountState) => {
+    const { mailboxId } = this.props
+
     this.setState({
-      isMailboxActive: mailboxState.activeMailboxId() === this.props.mailboxId,
-      serviceTypes: mailbox.enabledServiceTypes,
-      mailboxType: mailbox.type
+      isMailboxActive: accountState.activeMailboxId() === mailboxId,
+      serviceManifest: this.generateServiceManifest(accountState, mailboxId)
     })
   }
 
   userUpdated = (userState) => {
+    const accountState = accountStore.getState()
     this.setState({
-      userHasServices: userState.user.hasServices
+      serviceManifest: this.generateServiceManifest(accountState, this.props.mailboxId)
     })
+  }
+
+  /**
+  * Generates the service manifest of [{id, type}]
+  * @param accountState: the account state to use
+  * @param mailboxId: the id of the mailbox
+  * @return the serviceManifest
+  */
+  generateServiceManifest = (accountState, mailboxId) => {
+    return accountState
+      .unrestrictedMailboxServiceIds(mailboxId)
+      .map((serviceId) => {
+        return {
+          id: serviceId,
+          type: accountState.getService(serviceId).type
+        }
+      })
   }
 
   /* **************************************************************************/
@@ -119,9 +133,7 @@ class MailboxTab extends React.Component {
   shouldComponentUpdate (nextProps, nextState) {
     if (this.state.isMailboxActive !== nextState.isMailboxActive) { return true }
     if (this.props.mailboxId !== nextProps.mailboxId) { return true }
-    if (this.state.mailboxType !== nextState.mailboxType) { return true }
-    if (JSON.stringify(this.state.serviceTypes) !== JSON.stringify(nextState.serviceTypes)) { return true }
-    if (this.state.userHasServices !== nextState.userHasServices) { return true }
+    if (JSON.stringify(this.state.serviceManifest) !== JSON.stringify(nextState.serviceManifest)) { return true }
 
     return false
   }
@@ -129,51 +141,48 @@ class MailboxTab extends React.Component {
   /**
   * Renders an individual tab
   * @param key: the element key
-  * @param mailboxType: the type of mailbox
   * @param mailboxId: the id of the mailbox
+  * @param serviceId: the service of the tab
   * @param serviceType: the service of the tab
   * @return jsx
   */
-  renderWebView (key, mailboxType, mailboxId, serviceType) {
-    if (mailboxType === CoreMailbox.MAILBOX_TYPES.GOOGLE) {
-      switch (serviceType) {
-        case CoreService.SERVICE_TYPES.DEFAULT:
-          return (<GoogleMailboxMailWebView mailboxId={mailboxId} key={key} />)
-        case CoreService.SERVICE_TYPES.COMMUNICATION:
-          return (<GoogleMailboxCommunicationWebView mailboxId={mailboxId} key={key} />)
-        case CoreService.SERVICE_TYPES.CALENDAR:
-          return (<GoogleMailboxCalendarWebView mailboxId={mailboxId} key={key} />)
-        case CoreService.SERVICE_TYPES.MESSENGER:
-          return (<GoogleMailboxMessengerWebView mailboxId={mailboxId} key={key} />)
-        case CoreService.SERVICE_TYPES.TEAM:
-          return (<GoogleMailboxTeamWebView mailboxId={mailboxId} key={key} />)
-      }
-    } else if (mailboxType === CoreMailbox.MAILBOX_TYPES.TRELLO) {
-      return (<TrelloMailboxWebView mailboxId={mailboxId} key={key} />)
-    } else if (mailboxType === CoreMailbox.MAILBOX_TYPES.SLACK) {
-      return (<SlackMailboxWebView mailboxId={mailboxId} key={key} />)
-    } else if (mailboxType === CoreMailbox.MAILBOX_TYPES.MICROSOFT) {
-      switch (serviceType) {
-        case CoreService.SERVICE_TYPES.DEFAULT:
-          return (<MicrosoftMailboxMailWebView mailboxId={mailboxId} key={key} />)
-        case CoreService.SERVICE_TYPES.TEAM:
-          return (<MicrosoftMailboxTeamWebView mailboxId={mailboxId} key={key} />)
-      }
-    } else if (mailboxType === CoreMailbox.MAILBOX_TYPES.GENERIC) {
-      return (<GenericMailboxDefaultServiceWebView mailboxId={mailboxId} key={key} />)
-    } else if (mailboxType === CoreMailbox.MAILBOX_TYPES.CONTAINER) {
-      return (<ContainerMailboxDefaultServiceWebView mailboxId={mailboxId} key={key} />)
+  renderWebView (key, mailboxId, serviceId, serviceType) {
+    let ElementClass
+    switch (serviceType) {
+      case SERVICE_TYPES.GOOGLE_MAIL:
+      case SERVICE_TYPES.GOOGLE_INBOX:
+        ElementClass = GoogleMailServiceWebView; break
+      case SERVICE_TYPES.GOOGLE_HANGOUTS:
+        ElementClass = GoogleHangoutsServiceWebView; break
+      case SERVICE_TYPES.GOOGLE_CALENDAR:
+        ElementClass = GoogleCalendarServiceWebView; break
+      case SERVICE_TYPES.GOOGLE_ALLO:
+        ElementClass = GoogleAlloServiceWebView; break
+      case SERVICE_TYPES.GOOGLE_CHAT:
+        ElementClass = GoogleChatServiceWebView; break
+      case SERVICE_TYPES.TRELLO:
+        ElementClass = TrelloServiceWebView; break
+      case SERVICE_TYPES.SLACK:
+        ElementClass = SlackServiceWebView; break
+      case SERVICE_TYPES.GENERIC:
+        ElementClass = GenericServiceWebView; break
+      case SERVICE_TYPES.CONTAINER:
+        ElementClass = ContainerServiceWebView; break
+      case SERVICE_TYPES.MICROSOFT_MAIL:
+        ElementClass = MicrosoftMailServiceWebView; break
+      case SERVICE_TYPES.MICROSOFT_TEAMS:
+        ElementClass = MicrosoftTeamsServiceWebView; break
+      default:
+        ElementClass = ServiceWebView; break
     }
 
-    return (<MailboxServiceWebView mailboxId={mailboxId} serviceType={serviceType} key={key} />)
+    return (<ElementClass mailboxId={mailboxId} serviceId={serviceId} key={key} />)
   }
 
   render () {
     const { className, mailboxId, classes, ...passProps } = this.props
     const {
-      mailboxType,
-      serviceTypes,
-      userHasServices,
+      serviceManifest,
       isMailboxActive
     } = this.state
 
@@ -181,7 +190,7 @@ class MailboxTab extends React.Component {
     // can cause a reload. Particularly when the new position is lower in the tree.
     // Sorting the service types prevents this behaviour and we don't actually use
     // the ordering for anything more than sanity. Fixes #548
-    const allowedServiceTypes = (userHasServices ? serviceTypes : [CoreMailbox.SERVICE_TYPES.DEFAULT]).sort()
+    const sortedServiceManifest = serviceManifest.sort((a, b) => a.id.localeCompare(b.a))
     return (
       <div
         {...passProps}
@@ -190,8 +199,8 @@ class MailboxTab extends React.Component {
           isMailboxActive ? classes.mailboxTabActive : undefined,
           className)}>
         <div className={classes.serviceContainer}>
-          {allowedServiceTypes.map((serviceType) => {
-            return this.renderWebView(serviceType, mailboxType, mailboxId, serviceType)
+          {sortedServiceManifest.map(({id, type}) => {
+            return this.renderWebView(id, mailboxId, id, type)
           })}
         </div>
       </div>

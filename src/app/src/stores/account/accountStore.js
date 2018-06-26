@@ -54,6 +54,8 @@ class AccountStore extends CoreAccountStore {
       handleReduceServiceIfActive: actions.REDUCE_SERVICE_IF_ACTIVE,
       handleReduceServiceIfInActive: actions.REDUCE_SERVICE_IF_INACTIVE,
       handleReduceServiceData: actions.REDUCE_SERVICE_DATA,
+      handleReduceServiceDataIfActive: actions.REDUCE_SERVICE_DATA_IF_ACTIVE,
+      handleReduceServiceDataIfInactive: actions.REDUCE_SERVICE_DATA_IF_INACTIVE,
       handleSetCustomAvatarOnService: actions.SET_CUSTOM_AVATAR_ON_SERVICE,
 
       // Containers
@@ -451,6 +453,23 @@ class AccountStore extends CoreAccountStore {
     }
 
     this.preventDefault()
+  }
+
+  handleReduceServiceDataIfActive ({ id, reducer, reducerArgs }) {
+    this.preventDefault()
+    if (this.activeServiceId() === id) {
+      actions.reduceServiceData.defer(...[id, reducer, ...reducerArgs])
+    }
+  }
+
+  handleReduceServiceDataIfInactive ({ id, reducer, reducerArgs }) {
+    this.preventDefault()
+
+    const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
+    const isMailboxesWindowFocused = mailboxesWindow && mailboxesWindow.isFocused()
+    if (this.activeServiceId() !== id || !isMailboxesWindowFocused) {
+      actions.reduceServiceData.defer(...[id, reducer, ...reducerArgs])
+    }
   }
 
   handleSetCustomAvatarOnService ({id, b64Image}) {

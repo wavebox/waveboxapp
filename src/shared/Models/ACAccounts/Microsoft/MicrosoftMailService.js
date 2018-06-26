@@ -18,6 +18,7 @@ class MicrosoftCalendarService extends MicrosoftService {
   get supportsGuestNotifications () { return false }
   get supportsSyncWhenSleeping () { return true }
   get supportsWBGAPI () { return false }
+  get supportedAuthNamespace () { return 'com.microsoft' }
 
   /* **************************************************************************/
   // Properties: Humanized

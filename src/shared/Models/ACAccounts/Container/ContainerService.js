@@ -38,6 +38,7 @@ class ContainerService extends CoreACService {
   get supportsGuestNotifications () { return true }
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return this.container.supportsWBGAPI }
+  get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/
   // Properties: Humanized

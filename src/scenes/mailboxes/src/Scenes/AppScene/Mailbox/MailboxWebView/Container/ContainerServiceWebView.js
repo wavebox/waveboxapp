@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
-import CoreService from 'shared/Models/Accounts/CoreService'
-import { mailboxStore, mailboxActions, ContainerDefaultServiceReducer } from 'stores/mailbox'
+import { accountStore, accountActions } from 'stores/account'
+import ContainerServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/ContainerServiceDataReducer'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
   WB_BROWSER_NOTIFICATION_PRESENT,
@@ -39,13 +39,14 @@ const DOC_TITLE_UNREAD_CONVERTS = {
   '❿': 10
 }
 
-export default class ContainerMailboxDefaultServiceWebView extends React.Component {
+export default class ContainerServiceWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired
+    mailboxId: PropTypes.string.isRequired,
+    serviceId: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -53,12 +54,12 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxChanged)
+    accountStore.listen(this.accountChanged)
     this.titleUpdateWaiter = null
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxChanged)
+    accountStore.unlisten(this.accountChanged)
     clearTimeout(this.titleUpdateWaiter)
   }
 
@@ -81,29 +82,35 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
   */
   generateState (props) {
     return {
-      ...this.generateMailboxState(props, mailboxStore.getState())
+      ...this.generateAccountState(props, accountStore.getState())
     }
   }
 
   /**
   * Generates the state from the given props derived from the mailbox state
   * @param props: the props to use
-  * @param mailboxState: the current mailbox state
+  * @param accountState: the current account state
   * @return state object
   */
-  generateMailboxState (props, mailboxState) {
-    const mailbox = mailboxState.getMailbox(props.mailboxId)
-    const service = mailbox ? mailbox.serviceForType(CoreService.SERVICE_TYPES.DEFAULT) : null
+  generateAccountState (props, accountState) {
+    const service = accountState.getService(props.serviceId)
     return {
-      useAsyncAlerts: service ? service.useAsyncAlerts : true,
-      documentTitleHasUnread: service ? service.documentTitleHasUnread : false,
-      documentTitleUnreadBlinks: service ? service.documentTitleUnreadBlinks : false,
-      faviconUnreadActivityRegexp: service ? service.faviconUnreadActivityRegexp : undefined
+      ...(service ? {
+        useAsyncAlerts: service.useAsyncAlerts,
+        documentTitleHasUnread: service.documentTitleHasUnread,
+        documentTitleUnreadBlinks: service.documentTitleUnreadBlinks,
+        faviconUnreadActivityRegexp: service.faviconUnreadActivityRegexp
+      } : {
+        useAsyncAlerts: true,
+        documentTitleHasUnread: false,
+        documentTitleUnreadBlinks: false,
+        faviconUnreadActivityRegexp: undefined
+      })
     }
   }
 
-  mailboxChanged = (mailboxState) => {
-    this.setState(this.generateMailboxState(this.props, mailboxState))
+  accountChanged = (accountState) => {
+    this.setState(this.generateAccountState(this.props, accountState))
   }
 
   /* **************************************************************************/
@@ -134,19 +141,17 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
       this.updateUnreadFromDocumentTitle(this.refs[REF].getTitle(), true)
     } else {
       // Always dispatch this in case we revoke the unread setting from the config!
-      mailboxActions.reduceService(
-        this.props.mailboxId,
-        CoreService.SERVICE_TYPES.DEFAULT,
-        ContainerDefaultServiceReducer.setDocumentTitleUnreadCount,
+      accountActions.reduceServiceData(
+        this.props.serviceId,
+        ContainerServiceDataReducer.setDocumentTitleUnreadCount,
         0
       )
     }
     if (!faviconUnreadActivityRegexp) {
       // Always dispatch this in case we revoke the unread setting from the config!
-      mailboxActions.reduceService(
-        this.props.mailboxId,
-        CoreService.SERVICE_TYPES.DEFAULT,
-        ContainerDefaultServiceReducer.setFaviconIndicatesUnreadActivity,
+      accountActions.reduceServiceData(
+        this.props.serviceId,
+        ContainerServiceDataReducer.setFaviconIndicatesUnreadActivity,
         false
       )
     }
@@ -156,10 +161,9 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
   * Handles the browser presenting a notification
   */
   handleBrowserNotificationPresented = () => {
-    mailboxActions.reduceServiceIfInactive(
-      this.props.mailboxId,
-      CoreService.SERVICE_TYPES.DEFAULT,
-      ContainerDefaultServiceReducer.notificationPresented
+    accountActions.reduceServiceDataIfInactive(
+      this.props.serviceId,
+      ContainerServiceDataReducer.notificationPresented
     )
   }
 
@@ -190,10 +194,9 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
       indicates = false
     }
 
-    mailboxActions.reduceService(
-      this.props.mailboxId,
-      CoreService.SERVICE_TYPES.DEFAULT,
-      ContainerDefaultServiceReducer.setFaviconIndicatesUnreadActivity,
+    accountActions.reduceServiceData(
+      this.props.serviceId,
+      ContainerServiceDataReducer.setFaviconIndicatesUnreadActivity,
       indicates
     )
   }
@@ -208,7 +211,6 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
   * @param forceWait: set to true to force a short wait, false to update by normal procedure
   */
   updateUnreadFromDocumentTitle (title, forceWait) {
-    const { mailboxId } = this.props
     const { documentTitleHasUnread, documentTitleUnreadBlinks } = this.state
     if (!documentTitleHasUnread) { return }
     title = title || ''
@@ -244,29 +246,26 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
     if (forceWait) {
       // Wait a little and then update
       this.titleUpdateWaiter = setTimeout(() => {
-        mailboxActions.reduceService(
-          mailboxId,
-          CoreService.SERVICE_TYPES.DEFAULT,
-          ContainerDefaultServiceReducer.setDocumentTitleUnreadCount,
+        accountActions.reduceServiceData(
+          this.props.serviceId,
+          ContainerServiceDataReducer.setDocumentTitleUnreadCount,
           count
         )
       }, 2000)
     } else if (documentTitleUnreadBlinks && !hasCount) {
       // We recognize this site blinks, so wait before nulling it out
       this.titleUpdateWaiter = setTimeout(() => {
-        mailboxActions.reduceService(
-          mailboxId,
-          CoreService.SERVICE_TYPES.DEFAULT,
-          ContainerDefaultServiceReducer.setDocumentTitleUnreadCount,
+        accountActions.reduceService(
+          this.props.serviceId,
+          ContainerServiceDataReducer.setDocumentTitleUnreadCount,
           0
         )
       }, 5000)
     } else {
       // We found a count so set immediately
-      mailboxActions.reduceService(
-        mailboxId,
-        CoreService.SERVICE_TYPES.DEFAULT,
-        ContainerDefaultServiceReducer.setDocumentTitleUnreadCount,
+      accountActions.reduceService(
+        this.props.serviceId,
+        ContainerServiceDataReducer.setDocumentTitleUnreadCount,
         count
       )
     }
@@ -281,13 +280,13 @@ export default class ContainerMailboxDefaultServiceWebView extends React.Compone
   }
 
   render () {
-    const { mailboxId } = this.props
+    const { mailboxId, serviceId } = this.props
 
     return (
       <MailboxWebViewHibernator
         ref={REF}
         mailboxId={mailboxId}
-        serviceType={CoreService.SERVICE_TYPES.DEFAULT}
+        serviceId={serviceId}
         ipcMessage={this.handleIPCMessage}
         domReady={this.handleDOMReady}
         pageTitleUpdated={this.handlePageTitleUpdated}

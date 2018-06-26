@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events'
 import { NOTIFICATION_MAX_AGE, NOTIFICATION_FIRST_RUN_GRACE_MS } from 'shared/constants'
-import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
+import { accountStore, accountActions, accountDispatch } from 'stores/account'
 import { settingsStore } from 'stores/settings'
 import NotificationRenderer from './NotificationRenderer'
 import { WB_FOCUS_APP } from 'shared/ipcEvents'
@@ -14,9 +14,6 @@ class NotificationService extends EventEmitter {
   constructor () {
     super()
     this.__state__ = this.getInitialState()
-    this.__listeners__ = {
-      mailboxStore: this.mailboxChanged.bind(this)
-    }
   }
 
   /* **************************************************************************/
@@ -38,7 +35,7 @@ class NotificationService extends EventEmitter {
     if (this.isRunning) { return }
     this.__state__ = this.getInitialState()
     this.__state__.isRunning = true
-    mailboxStore.listen(this.__listeners__.mailboxStore)
+    accountStore.listen(this.accountChanged)
 
     this.mailboxChanged()
     return this
@@ -51,7 +48,7 @@ class NotificationService extends EventEmitter {
   stop () {
     if (!this.isRunning) { return }
     this.__state__.isRunning = false
-    mailboxStore.unlisten(this.__listeners__.mailboxStore)
+    accountStore.unlisten(this.accountChanged)
     return this
   }
 
@@ -67,8 +64,8 @@ class NotificationService extends EventEmitter {
     }
   }
 
-  mailboxChanged (mailboxState = mailboxStore.getState()) {
-    this.processNewMailboxNotifications(mailboxState)
+  accountChanged = (accountState = accountStore.getState()) => {
+    this.processNewServiceNotifications(accountState)
   }
 
   /* **************************************************************************/
@@ -78,29 +75,27 @@ class NotificationService extends EventEmitter {
   /**
   * Processes a new mailbox notification thats been pushed from a server source
   * @param mailboxId: the id of the mailbox the notification is for
-  * @param serviceType: the type of service the notification is for
+  * @param serviceId: the id of the service thisis for
   * @param notification: the notification to push
   */
-  processPushedMailboxNotification (mailboxId, serviceType, notification) {
+  processPushedMailboxNotification (mailboxId, serviceId, notification) {
     // Check we're allowed to display
     const settingsState = settingsStore.getState()
     if (!settingsState.os.notificationsEnabled) { return }
 
-    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    if (!mailbox) { return }
-    const service = mailbox.serviceForType(serviceType)
+    const service = accountStore.getState().getService(serviceId)
     if (!service) { return }
     if (!service.showNotifications) { return }
 
     NotificationRenderer.presentMailboxNotification(
       mailboxId,
-      serviceType,
+      serviceId,
       notification,
       (data) => {
         ipcRenderer.send(WB_FOCUS_APP, { })
         if (data) {
-          mailboxActions.changeActive(data.mailboxId, data.serviceType)
-          mailboxDispatch.openItem(data.mailboxId, data.serviceType, data)
+          accountActions.changeActiveService(data.serviceId)
+          accountDispatch.openItem(data.serviceId, data)
         }
       }
     )
@@ -109,20 +104,20 @@ class NotificationService extends EventEmitter {
   /**
   * Processes a new mailbox notification that can have most of its handling done elesewhere
   * @param mailboxId: the id of the mailbox the notification is for
-  * @param serviceType: the type of service the notification is for
+  * @param serviceID: the id of service the notification is for
   * @param notification: the notification to push
   * @param clickHandler: the click handler to call
   */
-  processHandledMailboxNotification (mailboxId, serviceType, notification, clickHandler) {
+  processHandledMailboxNotification (mailboxId, serviceId, notification, clickHandler) {
     NotificationRenderer.presentMailboxNotification(
       mailboxId,
-      serviceType,
+      serviceId,
       notification,
       (data) => {
         // Switch across to the mailbox if we were provided with enough info
         ipcRenderer.send(WB_FOCUS_APP, { })
         if (data && data.mailboxId && data.serviceType) {
-          mailboxActions.changeActive(data.mailboxId, data.serviceType)
+          accountActions.changeActiveService(data.serviceId)
         }
 
         // Call the click handler back
@@ -134,15 +129,15 @@ class NotificationService extends EventEmitter {
   /**
   * Processes a new html5 notification thats been pushed from a mailbox
   * @param mailboxId: the id of the mailbox
-  * @param serviceType: the type of service this is for
+  * @param serviceId: the id of service this is for
   * @param notificationId: the id of the notification to pass back to the webview
   * @param notification: the notification info to push split into { title, options }
   * @param clickHandler=undefined: the handler to call on click
   */
-  processHTML5MailboxNotification (mailboxId, serviceType, notificationId, notification, clickHandler = undefined) {
+  processHTML5MailboxNotification (mailboxId, serviceId, notificationId, notification, clickHandler = undefined) {
     NotificationRenderer.presentHtml5MailboxNotification(
       mailboxId,
-      serviceType,
+      serviceId,
       notification.title,
       {
         body: (notification.options || {}).body,
@@ -151,7 +146,7 @@ class NotificationService extends EventEmitter {
       },
       (data) => {
         ipcRenderer.send(WB_FOCUS_APP, { })
-        mailboxActions.changeActive(mailboxId, serviceType)
+        accountActions.changeActiveService(serviceId)
         if (data.clickHandler) {
           data.clickHandler(notificationId)
         }
@@ -159,7 +154,7 @@ class NotificationService extends EventEmitter {
       {
         notificationId: notificationId,
         mailboxId: mailboxId,
-        serviceType: serviceType,
+        serviceId: serviceId,
         clickHandler: clickHandler
       })
   }
@@ -179,9 +174,9 @@ class NotificationService extends EventEmitter {
 
   /**
   * Processes new notifications and prepares them for firing
-  * @param mailboxState: the current mailbox state
+  * @param accountState: the current account state
   */
-  processNewMailboxNotifications (mailboxState) {
+  processNewServiceNotifications (accountState) {
     const settingsState = settingsStore.getState()
     if (!settingsState.os.notificationsEnabled) { return }
 
@@ -189,28 +184,27 @@ class NotificationService extends EventEmitter {
     const pendingNotifications = []
 
     // Look for notifications to send
-    mailboxState.allMailboxes().forEach((mailbox) => {
-      mailbox.enabledServices.forEach((service) => {
-        if (!service.supportsSyncedDiffNotifications) { return }
-        if (!service.showNotifications) { return }
+    accountState.allServicesUnordered().forEach((service) => {
+      if (!service.supportsSyncedDiffNotifications) { return }
+      if (!service.showNotifications) { return }
 
-        service.notifications.forEach((notification) => {
-          const id = `${mailbox.id}:${service.type}:${notification.id}`
-          if (this.__state__.sent.has(id)) { return }
-          if (now - notification.timestamp > NOTIFICATION_MAX_AGE) { return }
-          if (this.suppressForGrace) {
-            this.__state__.sent.set(id, now)
-            return
-          }
-
-          pendingNotifications.push({
-            mailboxId: mailbox.id,
-            serviceType: service.type,
-            notification: notification
-          })
-
+      const serviceData = accountState.getServiceData(service.id)
+      serviceData.notifications.forEach((notification) => {
+        const id = `${service.id}:${notification.id}`
+        if (this.__state__.sent.has(id)) { return }
+        if (now - notification.timestamp > NOTIFICATION_MAX_AGE) { return }
+        if (this.suppressForGrace) {
           this.__state__.sent.set(id, now)
+          return
+        }
+
+        pendingNotifications.push({
+          mailboxId: service.parentId,
+          serviceId: service.id,
+          notification: notification
         })
+
+        this.__state__.sent.set(id, now)
       })
     })
 
@@ -223,19 +217,19 @@ class NotificationService extends EventEmitter {
 
     // Send the notifications we found
     if (pendingNotifications.length) {
-      pendingNotifications.forEach(({ mailboxId, serviceType, notification }) => {
+      pendingNotifications.forEach(({ mailboxId, serviceId, notification }) => {
         NotificationRenderer.presentMailboxNotification(
           mailboxId,
-          serviceType,
+          serviceId,
           notification,
           (data) => {
             ipcRenderer.send(WB_FOCUS_APP, { })
             if (data) {
-              mailboxActions.changeActive(data.mailboxId, data.serviceType)
-              mailboxDispatch.openItem(data.mailboxId, data.serviceType, data)
+              accountActions.changeActiveService(data.serviceId)
+              accountDispatch.openItem(data.serviceId, data)
             }
           },
-          mailboxState,
+          accountState,
           settingsState
         )
       })

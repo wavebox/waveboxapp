@@ -19,6 +19,7 @@ class GoogleChatService extends CoreACService {
   get supportsGuestNotifications () { return true }
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
+  get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/
   // Properties: Humanized

@@ -9,7 +9,7 @@ import {
 import electron from 'electron'
 import pkg from 'package.json'
 import { userActions } from 'stores/user'
-import { mailboxActions } from 'stores/mailbox'
+import { accountActions } from 'stores/account'
 import WaveboxWebViewLoadbar from './WaveboxWebViewLoadbar'
 import WaveboxWebViewToolbar from './WaveboxWebViewToolbar'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -107,7 +107,7 @@ class WaveboxWebView extends React.Component {
       userActions.sideloadContainerLocally(containerId, JSON.parse(container))
     }
     if (type) {
-      mailboxActions.startAddMailbox(type, accessMode)
+      //mailboxActions.startAddMailbox(type, accessMode)
     }
   }
 

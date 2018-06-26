@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Paper, TextField, IconButton } from '@material-ui/core'
-import { mailboxStore, mailboxActions } from 'stores/mailbox'
+import { accountStore, accountActions } from 'stores/account'
 import shallowCompare from 'react-addons-shallow-compare'
 import { WB_WINDOW_FIND_START } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
@@ -47,7 +47,7 @@ class MailboxSearch extends React.Component {
 
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
-    serviceType: PropTypes.string.isRequired
+    serviceId: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -64,17 +64,17 @@ class MailboxSearch extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxesChanged)
+    accountStore.listen(this.accountChanged)
     ipcRenderer.on(WB_WINDOW_FIND_START, this.handleIPCSearchStart)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxesChanged)
+    accountStore.unlisten(this.accountChanged)
     ipcRenderer.removeListener(WB_WINDOW_FIND_START, this.handleIPCSearchStart)
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceType !== nextProps.serviceType) {
+    if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceId !== nextProps.serviceId) {
       this.setState(this.generateState(nextProps))
     }
   }
@@ -90,21 +90,21 @@ class MailboxSearch extends React.Component {
   * @param props: the props to use
   * @return state object
   */
-  generateState ({ mailboxId, serviceType }) {
-    const mailboxState = mailboxStore.getState()
+  generateState ({ mailboxId, serviceId }) {
+    const accountState = accountStore.getState()
     return {
-      isActive: mailboxState.isActive(mailboxId, serviceType),
-      isSearching: mailboxState.isSearchingMailbox(mailboxId, serviceType),
-      searchTerm: mailboxState.mailboxSearchTerm(mailboxId, serviceType)
+      isActive: accountState.activeServiceId() === serviceId,
+      isSearching: accountState.isSearchingService(serviceId),
+      searchTerm: accountState.serviceSearchTerm(serviceId)
     }
   }
 
-  mailboxesChanged = (mailboxState) => {
-    const { mailboxId, serviceType } = this.props
+  accountChanged = (accountState) => {
+    const { serviceId } = this.props
     this.setState({
-      isActive: mailboxState.isActive(mailboxId, serviceType),
-      isSearching: mailboxState.isSearchingMailbox(mailboxId, serviceType),
-      searchTerm: mailboxState.mailboxSearchTerm(mailboxId, serviceType)
+      isActive: accountState.activeServiceId() === serviceId,
+      isSearching: accountState.isSearchingService(serviceId),
+      searchTerm: accountState.serviceSearchTerm(serviceId)
     })
   }
 
@@ -116,21 +116,21 @@ class MailboxSearch extends React.Component {
   * Handles the input string changing
   */
   handleChange = (evt) => {
-    mailboxActions.setSearchTerm(this.props.mailboxId, this.props.serviceType, evt.target.value)
+    accountActions.setServiceSearchTerm(this.props.serviceId, evt.target.value)
   }
 
   /**
   * Handles the find next command
   */
   handleFindNext = () => {
-    mailboxActions.searchNextTerm(this.props.mailboxId, this.props.serviceType)
+    accountActions.searchServiceNextTerm(this.props.serviceId)
   }
 
   /**
   * Handles the search stopping
   */
   handleStopSearch = () => {
-    mailboxActions.stopSearchingMailbox(this.props.mailboxId, this.props.serviceType)
+    accountActions.stopSearchingService(this.props.serviceId)
   }
 
   /**
@@ -176,9 +176,7 @@ class MailboxSearch extends React.Component {
   }
 
   render () {
-    const { className, classes, ...passProps } = this.props
-    delete passProps.mailboxId
-    delete passProps.serviceType
+    const { className, classes, mailboxId, serviceId, ...passProps } = this.props
     const { isSearching, searchTerm } = this.state
 
     // Use tabIndex to prevent focusing with tab§

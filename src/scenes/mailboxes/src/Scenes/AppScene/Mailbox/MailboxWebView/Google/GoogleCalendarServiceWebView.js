@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
-import CoreService from 'shared/Models/Accounts/CoreService'
-import { mailboxActions, GoogleCalendarServiceReducer } from 'stores/mailbox'
+import { accountActions } from 'stores/account'
+import GoogleCalendarServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/GoogleCalendarServiceDataReducer'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
   WB_BROWSER_NOTIFICATION_PRESENT,
@@ -11,13 +11,14 @@ import {
 
 const REF = 'mailbox_tab'
 
-export default class GoogleMailboxCalendarWebView extends React.Component {
+export default class GoogleCalendarServiceWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired
+    mailboxId: PropTypes.string.isRequired,
+    serviceId: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -40,10 +41,9 @@ export default class GoogleMailboxCalendarWebView extends React.Component {
   * Handles the browser presenting a notification or alert
   */
   handleBrowserNotificationPresented = () => {
-    mailboxActions.reduceServiceIfInactive(
-      this.props.mailboxId,
-      CoreService.SERVICE_TYPES.CALENDAR,
-      GoogleCalendarServiceReducer.notificationPresented
+    accountActions.reduceServiceDataIfInactive(
+      this.props.serviceId,
+      GoogleCalendarServiceDataReducer.notificationPresented
     )
   }
 
@@ -51,7 +51,7 @@ export default class GoogleMailboxCalendarWebView extends React.Component {
   * Auto changes the browser active mailbox to this service on presentation
   */
   handleBrowserAlertPresented = () => {
-    mailboxActions.changeActive(this.props.mailboxId, CoreService.SERVICE_TYPES.CALENDAR)
+    accountActions.changeActiveService(this.props.serviceId)
   }
 
   /* **************************************************************************/
@@ -63,12 +63,12 @@ export default class GoogleMailboxCalendarWebView extends React.Component {
   }
 
   render () {
-    const { mailboxId } = this.props
+    const { mailboxId, serviceId } = this.props
     return (
       <MailboxWebViewHibernator
         ref={REF}
         mailboxId={mailboxId}
-        serviceType={CoreService.SERVICE_TYPES.CALENDAR}
+        serviceId={serviceId}
         ipcMessage={this.dispatchBrowserIPCMessage} />
     )
   }

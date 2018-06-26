@@ -19,6 +19,7 @@ class GenericService extends CoreACService {
   get supportsGuestNotifications () { return true }
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return this._value_('supportsWBGAPI', false) }
+  get supportedAuthNamespace () { return undefined }
 
   /* **************************************************************************/
   // Properties: Humanized

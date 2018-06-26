@@ -261,6 +261,55 @@ class CoreAccountActions extends RemoteActions {
   }
 
   /**
+  * Updates and modifies a service data only if it's active
+  * @param id: the id of the service to change
+  * @param reducer: the reducer to run on the mailbox
+  * @param ...reducerArgs: the arguments to supply to the reducer
+  */
+  reduceServiceDataIfActive (...args) {
+    const [id, reducer, ...reducerArgs] = args
+
+    if (process.type === 'browser') {
+      const reducerFn = ServiceDataReducerManifest.parseReducer(reducer)
+      if (!reducerFn) {
+        throw new Error(`Service Data Reducer could not be found or deseriliazed ${reducer}`)
+      }
+      return { id: id, reducer: reducerFn, reducerArgs: reducerArgs }
+    } else if (process.type === 'renderer') {
+      const reducerName = ServiceDataReducerManifest.stringifyReducer(reducer)
+      if (!reducerName) {
+        throw new Error(`Service Data Reducer could not be found or seriliazed ${reducer}`)
+      }
+      return this.remoteDispatch('reduceServiceDataIfActive', [id, reducerName].concat(reducerArgs))
+    }
+  }
+
+  /**
+  * Updates and modifies a service data only if it's inactive
+  * @param id: the id of the service to change
+  * @param serviceType: the type of service to work on
+  * @param reducer: the reducer to run on the mailbox
+  * @param ...reducerArgs: the arguments to supply to the reducer
+  */
+  reduceServiceDataIfInactive (...args) {
+    const [id, reducer, ...reducerArgs] = args
+
+    if (process.type === 'browser') {
+      const reducerFn = ServiceDataReducerManifest.parseReducer(reducer)
+      if (!reducerFn) {
+        throw new Error(`Service Data Reducer could not be found or deseriliazed ${reducer}`)
+      }
+      return { id: id, reducer: reducerFn, reducerArgs: reducerArgs }
+    } else if (process.type === 'renderer') {
+      const reducerName = ServiceDataReducerManifest.stringifyReducer(reducer)
+      if (!reducerName) {
+        throw new Error(`Service Data Reducer could not be found or seriliazed ${reducer}`)
+      }
+      return this.remoteDispatch('reduceServiceDataIfInactive', [id, reducerName].concat(reducerArgs))
+    }
+  }
+
+  /**
   * Sets a custom avatar on a mailbox
   * @param id: the id of the mailbox
   * @param b64Image: the image to set

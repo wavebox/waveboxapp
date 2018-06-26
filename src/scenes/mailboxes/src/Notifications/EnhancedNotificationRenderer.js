@@ -42,15 +42,15 @@ class EnhancedNotificationRenderer {
   /**
   * Presents a mailbox notification on osx
   * @param mailboxId: the id of the mailbox the notification is for
-  * @param serviceType: the type of service the notification is for
+  * @param serviceId: the id of service the notification is for
   * @param notification: the notification info to present
   * @param clickHandler: the handler to call on click
-  * @param mailboxState: the current mailbox state
+  * @param accountState: the current account state
   * @param settingsState: the current settings state
   */
-  presentMailboxNotificationDarwin (mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState) {
+  presentMailboxNotificationDarwin (mailboxId, serviceId, notification, clickHandler, accountState, settingsState) {
     if (NotificationRendererUtils.areNotificationsMuted(settingsState)) { return }
-    const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceType, mailboxState, settingsState)
+    const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceId, accountState, settingsState)
     if (!enabled) { return }
 
     let subtitle, body
@@ -66,7 +66,7 @@ class EnhancedNotificationRenderer {
     const notif = new MacNotification(NotificationRendererUtils.formattedTitle(notification), {
       subtitle: subtitle,
       body: body,
-      icon: NotificationRendererUtils.preparedServiceIcon(mailbox, service, mailboxState),
+      icon: NotificationRendererUtils.preparedServiceIcon(mailbox, service, accountState),
       soundName: NotificationRendererUtils.preparedServiceSound(mailbox, service, settingsState),
       bundleId: pkg.appConfig.osxAppBundleId
     })
@@ -95,13 +95,13 @@ class EnhancedNotificationRenderer {
   /**
   * Presents a mailbox notification on win32
   * @param mailboxId: the id of the mailbox the notification is for
-  * @param serviceType: the type of service the notification is for
+  * @param serviceId: the id of service the notification is for
   * @param notification: the notification info to present
   * @param clickHandler: the handler to call on click
-  * @param mailboxState: the current mailbox state
+  * @param accountState: the current account state
   * @param settingsState: the current settings state
   */
-  presentMailboxNotificationWin32 (mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState) {
+  presentMailboxNotificationWin32 (mailboxId, serviceId, notification, clickHandler, accountState, settingsState) {
     // no-op
   }
 
@@ -131,21 +131,21 @@ class EnhancedNotificationRenderer {
   /**
   * Presents a notification on win32
   * @param mailboxId: the id of the mailbox the notification is for
-  * @param serviceType: the type of service the notification is for
+  * @param serviceId: the id of service the notification is for
   * @param notification: the notification info to present
   * @param clickHandler: the handler to call on click
-  * @param mailboxState: the current mailbox state
+  * @param accountState: the current account state
   * @param settingsState: the current settings state
   */
-  presentMailboxNotificationLinux (mailboxId, serviceType, notification, clickHandler, mailboxState, settingsState) {
+  presentMailboxNotificationLinux (mailboxId, serviceId, notification, clickHandler, accountState, settingsState) {
     if (NotificationRendererUtils.areNotificationsMuted(settingsState)) { return }
-    const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceType, mailboxState, settingsState)
+    const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceId, accountState, settingsState)
     if (!enabled) { return }
 
     this._showLinuxNotification({
       title: NotificationRendererUtils.formattedTitle(notification),
       body: NotificationRendererUtils.formattedBody(notification),
-      icon: NotificationRendererUtils.preparedServiceIcon(mailbox, service, mailboxState),
+      icon: NotificationRendererUtils.preparedServiceIcon(mailbox, service, accountState),
       sound: NotificationRendererUtils.preparedServiceSound(mailbox, service, settingsState)
     }, clickHandler, notification.data)
   }

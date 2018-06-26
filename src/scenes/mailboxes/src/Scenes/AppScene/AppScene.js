@@ -7,7 +7,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { settingsStore } from 'stores/settings'
 import { crextensionStore } from 'stores/crextension'
 import { userStore } from 'stores/user'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
@@ -79,14 +79,14 @@ class AppScene extends React.Component {
   componentDidMount () {
     settingsStore.listen(this.settingsUpdated)
     userStore.listen(this.userUpdated)
-    mailboxStore.listen(this.mailboxUpdated)
+    accountStore.listen(this.accountUpdated)
     crextensionStore.listen(this.crextensionUpdated)
   }
 
   componentWillUnmount () {
     settingsStore.unlisten(this.settingsUpdated)
     userStore.unlisten(this.userUpdated)
-    mailboxStore.unlisten(this.mailboxUpdated)
+    accountStore.unlisten(this.accountUpdated)
     crextensionStore.unlisten(this.crextensionUpdated)
   }
 
@@ -97,15 +97,15 @@ class AppScene extends React.Component {
   state = (() => {
     const settingsState = settingsStore.getState()
     const userState = userStore.getState()
-    const mailboxState = mailboxStore.getState()
+    const accountState = accountStore.getState()
     const crextensionState = crextensionStore.getState()
 
     return {
       hasSidebar: settingsState.ui.sidebarEnabled,
       appHasTitlebar: settingsState.launched.ui.showTitlebar,
       hasExtensionsInToolbar: Toolbar.hasExtensionsInToolbar(crextensionState, settingsState),
-      hasServicesInToolbar: Toolbar.hasServicesInToolbar(mailboxState, userState),
-      hasNavigationInToolbar: Toolbar.hasNavigationInToolbar(mailboxState)
+      hasServicesInToolbar: Toolbar.hasServicesInToolbar(accountState, userState),
+      hasNavigationInToolbar: Toolbar.hasNavigationInToolbar(accountState)
     }
   })()
 
@@ -122,10 +122,10 @@ class AppScene extends React.Component {
     })
   }
 
-  mailboxUpdated = (mailboxState) => {
+  accountUpdated = (accountState) => {
     this.setState({
-      hasServicesInToolbar: Toolbar.hasServicesInToolbar(mailboxState, undefined),
-      hasNavigationInToolbar: Toolbar.hasNavigationInToolbar(mailboxState)
+      hasServicesInToolbar: Toolbar.hasServicesInToolbar(accountState, undefined),
+      hasNavigationInToolbar: Toolbar.hasNavigationInToolbar(accountState)
     })
   }
 
