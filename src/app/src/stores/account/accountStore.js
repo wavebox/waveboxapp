@@ -309,7 +309,7 @@ class AccountStore extends CoreAccountStore {
       })
 
       if (wasActive) {
-        this.saveActive(null)
+        this.saveActiveServiceId(null)
       }
     } else {
       this.preventDefault()

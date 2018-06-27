@@ -12,7 +12,11 @@ const logger = {
 
     const propertyNames = new Set(names)
     if (!propertyNames.has(name)) {
-      console.warn(`WARN: undefined prop name on "${target.constructor.name}" "${name}"`)
+      try {
+        throw new Error()
+      } catch (err) {
+        console.warn(`WARN: undefined prop name on "${target.constructor.name}" "${name}"`, err.stack)
+      }
     }
     return target[name]
   }

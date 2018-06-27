@@ -25,7 +25,7 @@ class ServiceDataReducer {
   * @param serviceData: the service to update
   * @param url: the current url
   */
-  setDocumentTitle (service, serviceData, title) {
+  static setDocumentTitle (service, serviceData, title) {
     return serviceData.changeData({ documentTitle: title })
   }
 
@@ -35,7 +35,7 @@ class ServiceDataReducer {
   * @param serviceData: the service to update
   * @param url: the current url
   */
-  setFavicons (service, serviceData, favicons) {
+ static setFavicons (service, serviceData, favicons) {
     return serviceData.changeData({ favicons: favicons })
   }
 
@@ -45,7 +45,7 @@ class ServiceDataReducer {
   * @param serviceData: the service to update
   * @param theme: the document theme
   */
-  setDocumentTheme (service, serviceData, theme) {
+  static setDocumentTheme (service, serviceData, theme) {
     return serviceData.changeData({ documentTheme: theme })
   }
 

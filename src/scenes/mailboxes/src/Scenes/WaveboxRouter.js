@@ -19,10 +19,10 @@ import AppWizardScene from './AppWizardScene'
 import MailboxWizardAddScene from './MailboxWizardAddScene'
 import MailboxWizardScene from './MailboxWizardScene'
 import SettingsScene from './SettingsScene'
-/*import MailboxServiceDeleteScene from './MailboxServiceDeleteScene'
+import MailboxServiceDeleteScene from './MailboxServiceDeleteScene'
 import MailboxDeleteScene from './MailboxDeleteScene'
 
-import NotificationPanel from './NotificationPanel'
+/*import NotificationPanel from './NotificationPanel'
 import ComposePickerScene from './ComposePickerScene'
 import {
   AccountMessageScene,
@@ -61,8 +61,8 @@ export default class WaveboxRouter extends React.Component {
             <Route path='/mailbox_wizard/:templateType/:accessMode/:step/:mailboxId?' component={MailboxWizardScene} />
             <Route path='/mailbox/reauthenticating' component={MailboxReauthenticatingScene} />
 
-            {/*<Route path='/mailbox_delete/:mailboxId' component={MailboxDeleteScene} />
-            <Route path='/mailbox_service_delete/:mailboxId/:serviceType' component={MailboxServiceDeleteScene} />*/}
+            <Route path='/mailbox_delete/:mailboxId' component={MailboxDeleteScene} />
+            <Route path='/mailbox_service_delete/:mailboxId/:serviceId' component={MailboxServiceDeleteScene} />
 
             <Route path='/app_wizard/:step?' component={AppWizardScene} />
 

@@ -158,7 +158,7 @@ class WizardConfigureGeneric extends React.Component {
         restoreLastUrl
       } = this.state
 
-      const serviceId = accountStore.getState().mailboxServiceIdsOfType(mailboxId, SERVICE_TYPES.CONTAINER)
+      const serviceId = accountStore.getState().mailboxServiceIdsOfType(mailboxId, SERVICE_TYPES.GENERIC)[0]
 
       accountActions.reduceService(serviceId, GenericServiceReducer.setDisplayName, displayName)
       accountActions.reduceService(serviceId, GenericServiceReducer.setUsePageTitleAsDisplayName, configureDisplayFromPage)

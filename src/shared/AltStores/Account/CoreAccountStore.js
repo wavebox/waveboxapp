@@ -72,6 +72,15 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /**
+    * @param serviceId: the id of the service
+    * @return the mailbox for the service
+    */
+    this.getMailboxForService = (serviceId) => {
+      const service = this.getService(serviceId)
+      return service ? this.getMailbox(service.parentId) : null
+    }
+
+    /**
     * @return the count of mailboxes
     */
     this.mailboxCount = () => {
