@@ -1,21 +1,26 @@
 import CoreACModel from './CoreACModel'
+import SubclassNotImplementedError from './SubclassNotImplementedError'
 
 class CoreACAuth extends CoreACModel {
   /* **************************************************************************/
   // Class : Creating
   /* **************************************************************************/
 
+  static get namespace () { throw SubclassNotImplementedError }
+
   /**
   * Creates a blank js object that can used to instantiate this auth
   * @param parentId: the id of the parent
-  * @param namespace: the namespace of the auth
+  * @param namespace=this.namespace: the namespace of the auth
   * @return a vanilla js object representing the data for this mailbox
   */
-  static createJS (parentId, namespace) {
+  static createJS (parentId, namespace = this.namespace, authData = {}) {
     return {
       parentId: parentId,
       changedTime: new Date().getTime(),
-      namespace: namespace
+      namespace: namespace,
+      authData: authData,
+      hasAuth: Object.keys(authData).length !== 0
     }
   }
 

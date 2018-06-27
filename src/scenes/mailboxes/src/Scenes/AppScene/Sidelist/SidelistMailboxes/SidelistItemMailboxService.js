@@ -3,7 +3,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Avatar } from '@material-ui/core'
 import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
 import MailboxServiceBadge from 'wbui/MailboxServiceBadge'
@@ -69,7 +69,7 @@ class SidelistItemMailboxService extends React.Component {
 
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
-    serviceType: PropTypes.string.isRequired,
+    serviceId: PropTypes.string.isRequired,
     onOpenService: PropTypes.func.isRequired
   }
 
@@ -83,20 +83,20 @@ class SidelistItemMailboxService extends React.Component {
   }
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxesChanged)
+    accountStore.listen(this.accountChanged)
     settingsStore.listen(this.settingsChanged)
     userStore.listen(this.userChanged)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxesChanged)
+    accountStore.unlisten(this.accountChanged)
     settingsStore.unlisten(this.settingsChanged)
     userStore.unlisten(this.userChanged)
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId) {
-      this.setState(this.generateState(nextProps))
+      this.setState(this.generateAccountState(nextProps))
     }
   }
 
@@ -107,7 +107,7 @@ class SidelistItemMailboxService extends React.Component {
   state = (() => {
     const settingsState = settingsStore.getState()
     return {
-      ...this.generateState(),
+      ...this.generateAccountState(),
       isHovering: false,
       instanceId: uuid.v4(),
       globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator,
@@ -115,28 +115,21 @@ class SidelistItemMailboxService extends React.Component {
     }
   })()
 
-  generateState (props = this.props) {
-    const { mailboxId, serviceType } = props
-    const mailboxState = mailboxStore.getState()
-    const mailbox = mailboxState.getMailbox(mailboxId)
+  generateAccountState (props = this.props, accountState = accountStore.getState()) {
+    const { mailboxId, serviceId } = props
+    const mailbox = accountState.getMailbox(mailboxId)
+    const service = accountState.getService(serviceId)
     return {
       mailbox: mailbox,
-      service: mailbox ? mailbox.serviceForType(serviceType) : null,
-      isActive: mailboxState.isActive(mailboxId, serviceType),
-      isSleeping: mailboxState.isSleeping(mailboxId, serviceType),
-      isRestricted: mailboxState.isMailboxRestricted(mailboxId)
+      service: service,
+      isActive: accountState.isServiceActive(serviceId),
+      isSleeping: accountState.isServiceSleeping(serviceId),
+      isRestricted: accountState.isServiceRestricted(serviceId)
     }
   }
 
-  mailboxesChanged = (mailboxState) => {
-    const { mailboxId, serviceType } = this.props
-    const mailbox = mailboxState.getMailbox(mailboxId)
-    this.setState({
-      mailbox: mailbox,
-      service: mailbox ? mailbox.serviceForType(serviceType) : null,
-      isActive: mailboxState.isActive(mailboxId, serviceType),
-      isSleeping: mailboxState.isSleeping(mailboxId, serviceType)
-    })
+  accountChanged = (accountState) => {
+    this.setState(this.generateAccountState(this.props, accountState))
   }
 
   settingsChanged = (settingsState) => {
@@ -147,10 +140,7 @@ class SidelistItemMailboxService extends React.Component {
   }
 
   userChanged = (userState) => {
-    const mailboxState = mailboxStore.getState()
-    this.setState({
-      isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId)
-    })
+    this.setState(this.generateAccountState(this.props))
   }
 
   /* **************************************************************************/
@@ -163,18 +153,17 @@ class SidelistItemMailboxService extends React.Component {
 
   /**
   * @param mailboxType: the type of mailbox
-  * @param serviceType: the service type
+  * @param serviceId: the service type
   * @return the url of the service icon
   */
-  getServiceIconUrl (mailboxType, serviceType) {
-    const ServiceClass = ServiceFactory.getClass(mailboxType, serviceType)
-    return ServiceClass ? Resolver.image(ServiceClass.humanizedLogo) : ''
+  getServiceIconUrl (mailboxType, serviceId) {
+    return "" //TODO
   }
 
   render () {
     const {
       mailboxId,
-      serviceType,
+      serviceId,
       onOpenService,
       style,
       className,

@@ -1,17 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { mailboxStore } from 'stores/mailbox'
-import GoogleMailbox from 'shared/Models/Accounts/Google/GoogleMailbox'
-import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
-import MicrosoftMailbox from 'shared/Models/Accounts/Microsoft/MicrosoftMailbox'
-import GenericMailbox from 'shared/Models/Accounts/Generic/GenericMailbox'
-import ContainerMailbox from 'shared/Models/Accounts/Container/ContainerMailbox'
+import { accountStore } from 'stores/account'
+import WizardConfigureGeneric from './WizardConfigureGeneric'
 import WizardConfigureGmail from './WizardConfigureGmail'
 import WizardConfigureGinbox from './WizardConfigureGinbox'
+import { ACCOUNT_TEMPLATE_TYPES } from 'shared/Models/ACAccounts/AccountTemplates'
+/*
 import WizardConfigureMicrosoft from './WizardConfigureMicrosoft'
-import WizardConfigureGeneric from './WizardConfigureGeneric'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
-import WizardConfigureContainer from './WizardConfigureContainer'
+import WizardConfigureContainer from './WizardConfigureContainer'*/
 
 export default class WizardConfigure extends React.Component {
   /* **************************************************************************/
@@ -28,17 +25,17 @@ export default class WizardConfigure extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxUpdated)
+    accountStore.listen(this.accountUpdated)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxUpdated)
+    accountStore.unlisten(this.accountUpdated)
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId) {
       this.setState({
-        mailbox: mailboxStore.getState().getMailbox(nextProps.mailboxId)
+        templateType: (accountStore.getState().getMailbox(nextProps.mailboxId) || {}).templateType
       })
     }
   }
@@ -48,12 +45,12 @@ export default class WizardConfigure extends React.Component {
   /* **************************************************************************/
 
   state = {
-    mailbox: mailboxStore.getState().getMailbox(this.props.mailboxId)
+    templateType: (accountStore.getState().getMailbox(this.props.mailboxId) || {}).templateType
   }
 
-  mailboxUpdated = (mailboxState) => {
+  accountUpdated = (accountState) => {
     this.setState({
-      mailbox: mailboxState.getMailbox(this.props.mailboxId)
+      templateType: (accountState.getMailbox(this.props.mailboxId) || {}).templateType
     })
   }
 
@@ -63,9 +60,39 @@ export default class WizardConfigure extends React.Component {
 
   render () {
     const { onRequestCancel, mailboxId, ...passProps } = this.props
-    const { mailbox } = this.state
+    const { templateType } = this.state
 
-    if (mailbox) {
+    let RenderClass
+    switch (templateType) {
+      case ACCOUNT_TEMPLATE_TYPES.GENERIC:
+        RenderClass = WizardConfigureGeneric
+        break
+      case ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL:
+        RenderClass = WizardConfigureGmail
+        break
+      case ACCOUNT_TEMPLATE_TYPES.GOOGLE_INBOX:
+        RenderClass = WizardConfigureGinbox
+        break
+      case ACCOUNT_TEMPLATE_TYPES.SLACK:
+        //TODO
+        break
+      case ACCOUNT_TEMPLATE_TYPES.TRELLO:
+        //TODO
+        break
+      case ACCOUNT_TEMPLATE_TYPES.MICROSOFT:
+        //TODO
+        break
+      case ACCOUNT_TEMPLATE_TYPES.CONTAINER:
+        //TODO
+        break
+    }
+    if (RenderClass) {
+      return <RenderClass onRequestCancel={onRequestCancel} mailboxId={mailboxId} {...passProps} />
+    }
+
+    return false
+
+    /*if (mailbox) {
       if (mailbox.type === GoogleMailbox.type) {
         if (mailbox.defaultService.accessMode === GoogleDefaultService.ACCESS_MODES.GMAIL) {
           return (
@@ -85,13 +112,6 @@ export default class WizardConfigure extends React.Component {
           <WizardConfigureContainer onRequestCancel={onRequestCancel} mailbox={mailbox} {...passProps} />
         )
       }
-    }
-
-    // Catch-all we should never really get here
-    return (
-      <WizardConfigureDefaultLayout
-        onRequestCancel={onRequestCancel}
-        mailboxId={mailboxId}
-        {...passProps} />)
+    }*/
   }
 }

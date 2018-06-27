@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import MailboxServiceBadge from 'wbui/MailboxServiceBadge'
 
 export default class SidelistItemMailboxBadge extends React.Component {
@@ -20,11 +20,11 @@ export default class SidelistItemMailboxBadge extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxUpdated)
+    accountStore.listen(this.accountUpdated)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxUpdated)
+    accountStore.unlisten(this.accountUpdated)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -40,11 +40,12 @@ export default class SidelistItemMailboxBadge extends React.Component {
   /**
   * Generates the state
   * @param props: the props to use
-  * @param mailboxState=autoget: the mailbox state
+  * @param accountState=autoget: the mailbox state
   * @return the state object
   */
-  generateState (props, mailboxState = mailboxStore.getState()) {
-    const mailbox = mailboxState.getMailbox(props.mailboxId)
+  generateState (props, accountState = accountStore.getState()) {
+    const mailbox = accountState.getMailbox(props.mailboxId)
+    return {}
     return {
       mailbox: mailbox,
       service: mailbox ? mailbox.defaultService : undefined,
@@ -55,8 +56,8 @@ export default class SidelistItemMailboxBadge extends React.Component {
 
   state = this.generateState(this.props, undefined)
 
-  mailboxUpdated = (mailboxState) => {
-    this.setState(this.generateState(this.props, mailboxState))
+  accountUpdated = (accountState) => {
+    this.setState(this.generateState(this.props, accountState))
   }
 
   /* **************************************************************************/
@@ -68,6 +69,7 @@ export default class SidelistItemMailboxBadge extends React.Component {
   }
 
   render () {
+    return false
     const {
       mailboxId,
       displayMailboxOverview,

@@ -55,16 +55,21 @@ class TrelloService extends CoreACService {
   /* **************************************************************************/
 
   get displayName () {
-    if (this.fullName && this.username) {
-      if (this.fullName === this.username) {
+    const userVal = this._value_('displayName', undefined)
+    if (userVal !== undefined) {
+      return userVal
+    } else {
+      if (this.fullName && this.username) {
+        if (this.fullName === this.username) {
+          return this.username
+        } else {
+          return `${this.username} - ${this.fullName}`
+        }
+      } else if (this.username) {
         return this.username
       } else {
-        return `${this.username} - ${this.fullName}`
+        return this.humanizedType
       }
-    } else if (this.username) {
-      return this.username
-    } else {
-      return super.displayName
     }
   }
 

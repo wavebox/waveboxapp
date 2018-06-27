@@ -76,7 +76,11 @@ class MailboxTab extends React.Component {
   // Data lifecycle
   /* **************************************************************************/
 
-  state = this.generateState(this.props)
+  state = (() => {
+    return {
+      ...this.generateState(this.props)
+    }
+  })()
 
   /**
   * Generates the state from the given props
@@ -86,7 +90,6 @@ class MailboxTab extends React.Component {
   generateState (props) {
     const { mailboxId } = props
     const accountState = accountStore.getState()
-
     return {
       isMailboxActive: accountState.activeMailboxId() === mailboxId,
       serviceManifest: this.generateServiceManifest(accountState, mailboxId)
@@ -115,7 +118,7 @@ class MailboxTab extends React.Component {
   * @param mailboxId: the id of the mailbox
   * @return the serviceManifest
   */
-  generateServiceManifest = (accountState, mailboxId) => {
+  generateServiceManifest (accountState, mailboxId) {
     return accountState
       .unrestrictedMailboxServiceIds(mailboxId)
       .map((serviceId) => {

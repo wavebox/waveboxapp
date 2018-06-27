@@ -29,9 +29,10 @@ class ACMailbox extends CoreACModel {
   * @param id=autogenerate: the id of the mailbox
   * @param displayName=undefined: the name to use when displaying this mailbox
   * @param color=undefined: the color of the mailbox
+  * @param templateType=undefined: a template type that was used to create this mailbox
   * @return a vanilla js object representing the data for this mailbox
   */
-  static createJS (id = uuid.v4(), displayName = undefined, color = undefined) {
+  static createJS (id = uuid.v4(), displayName = undefined, color = undefined, templateType = undefined) {
     return {
       id: id,
       changedTime: new Date().getTime(),
@@ -46,6 +47,7 @@ class ACMailbox extends CoreACModel {
   get partition () { return `persist:${this.id}` }
   get artificiallyPersistCookies () { return this._value_('artificiallyPersistCookies', false) }
   get defaultWindowOpenMode () { return this._value_('defaultWindowOpenMode', DEFAULT_WINDOW_OPEN_MODES.BROWSER) }
+  get templateType () { return this._value_('templateType', undefined) }
 
   /* **************************************************************************/
   // Properties: Services
@@ -67,9 +69,9 @@ class ACMailbox extends CoreACModel {
       !!this.toolbarStartServices.length ||
       !!this.toolbarEndServices.length
   }
-  get hasMultipleServices () {
-    return !!this.allServices.length
-  }
+  get hasMultipleServices () { return this.allServices.length > 1 }
+  get hasSingleService () { return this.allServices.length === 1 }
+  get singleService () { return this.hasSingleService ? this.allServices[0] : undefined }
 
   /**
   * Checks if there is a service with the given id

@@ -2,8 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {TextField} from '@material-ui/core'
 import {userStore} from 'stores/user'
-import {mailboxActions} from 'stores/mailbox'
+import {accountActions} from 'stores/account'
 import { withStyles } from '@material-ui/core/styles'
+import ACTemplatedAccount from 'shared/Models/ACAccounts/ACTemplatedAccount'
 
 const styles = {
   // Typography
@@ -80,24 +81,28 @@ class WizardPersonaliseContainer extends React.Component {
 
   /**
   * Handles the user pressing next
-  * @param MailboxClass: the mailbox class we're creating
-  * @param accessMode: the access mode of the mailbox
-  * @param mailboxJS: the provisional mailboxJS the parent has given
+  * @param account: the account template used to create the account
   */
-  handleNext = (MailboxClass, accessMode, mailboxJS) => {
+  handleNext = (account) => {
     const { container } = this.state
+    const changeset = {
+      displayName: container.name
+    }
+
     if (container.hasUrlSubdomain) {
       const subdomain = this.subdomainInputRef.value
       if (!subdomain) {
         this.setState({ showSubdomainError: true })
+        return
       } else {
         this.setState({ showSubdomainError: false })
-        mailboxJS.urlSubdomain = subdomain
-        mailboxActions.authenticateMailbox(MailboxClass, accessMode, mailboxJS)
+        changeset.expando = { urlSubdomain: subdomain }
       }
-    } else {
-      mailboxActions.authenticateMailbox(MailboxClass, accessMode, mailboxJS)
     }
+
+    accountActions.authMailboxGroupFromTemplate(
+      new ACTemplatedAccount(account.changeDataWithChangeset(changeset))
+    )
   }
 
   /* **************************************************************************/

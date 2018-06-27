@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { ipcRenderer } from 'electron'
-import { mailboxActions } from 'stores/mailbox'
+import { accountActions } from 'stores/account'
 import { crextensionActions } from 'stores/crextension'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListSection from 'wbui/SettingsListSection'
@@ -91,7 +91,7 @@ class DataSettingsSection extends React.Component {
             )}
             confirmWaitMs={4000}
             onConfirmedClick={() => {
-              mailboxActions.clearAllBrowserSessions()
+              accountActions.clearAllBrowserSessions()
               crextensionActions.clearAllBrowserSessions()
             }} />
           <SettingsListTypography type='info' variant='button-help'>

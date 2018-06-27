@@ -67,7 +67,6 @@ class AuthGoogle {
   promptUserToGetAuthorizationCode (credentials, partitionId) {
     return new Promise((resolve, reject) => {
       const waveboxOauthWin = new AuthWindow()
-      const fullPartitionId = partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
       waveboxOauthWin.create(this.generatePushServiceAuthenticationURL(credentials), {
         useContentSize: true,
         center: true,
@@ -83,11 +82,11 @@ class AuthGoogle {
           sandbox: true,
           nativeWindowOpen: true,
           sharedSiteInstances: true,
-          partition: fullPartitionId
+          partition: partitionId
         }
       })
       const oauthWin = waveboxOauthWin.window
-      const emitter = SessionManager.webRequestEmitterFromPartitionId(fullPartitionId)
+      const emitter = SessionManager.webRequestEmitterFromPartitionId(partitionId)
       let userClose = true
 
       // Step 1: Handle push service auth
@@ -167,21 +166,21 @@ class AuthGoogle {
   */
   handleAuthGoogle (evt, body) {
     Promise.resolve()
-      .then(() => this.promptUserToGetAuthorizationCode(body.credentials, body.id))
+      .then(() => this.promptUserToGetAuthorizationCode(body.credentials, body.partitionId))
       .then(({ push, google }) => {
         evt.sender.send(WB_AUTH_GOOGLE_COMPLETE, {
-          id: body.id,
-          authMode: body.authMode,
-          provisional: body.provisional,
-          temporaryCode: google,
-          pushToken: push,
-          codeRedirectUri: body.credentials.GOOGLE_AUTH_RETURN_URL
+          mode: body.mode,
+          context: body.context,
+          auth: {
+            temporaryCode: google,
+            pushToken: push,
+            codeRedirectUri: body.credentials.GOOGLE_AUTH_RETURN_URL
+          }
         })
       }, (err) => {
         evt.sender.send(WB_AUTH_GOOGLE_ERROR, {
-          id: body.id,
-          authMode: body.authMode,
-          provisional: body.provisional,
+          mode: body.mode,
+          context: body.context,
           error: err,
           errorString: (err || {}).toString ? (err || {}).toString() : undefined,
           errorMessage: (err || {}).message ? (err || {}).message : undefined,

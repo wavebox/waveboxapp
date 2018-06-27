@@ -1,12 +1,10 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { mailboxStore, mailboxActions } from 'stores/mailbox'
-import { userStore } from 'stores/user'
+import { accountStore, accountActions } from 'stores/account'
 import shallowCompare from 'react-addons-shallow-compare'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import MailboxServicePopover from '../../MailboxServicePopover'
 import SidelistItemMailboxAvatar from './SidelistItemMailboxAvatar'
-import SidelistItemMailboxServices from './SidelistItemMailboxServices'
+//import SidelistItemMailboxServices from './SidelistItemMailboxServices'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
@@ -19,9 +17,6 @@ const styles = {
     marginBottom: 10,
     position: 'relative',
     textAlign: 'center'
-  },
-  mailboxContainerRestricted: {
-    filter: 'grayscale(100%)'
   }
 }
 
@@ -40,13 +35,11 @@ class SidelistItemMailbox extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxesChanged)
-    userStore.listen(this.userChanged)
+    accountStore.listen(this.accountChanged)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxesChanged)
-    userStore.unlisten(this.userChanged)
+    accountStore.unlisten(this.accountChanged)
   }
 
   /* **************************************************************************/
@@ -55,33 +48,21 @@ class SidelistItemMailbox extends React.Component {
 
   state = (() => {
     const { mailboxId } = this.props
-    const userState = userStore.getState()
-    const mailboxState = mailboxStore.getState()
-    const mailbox = mailboxState.getMailbox(mailboxId)
+    const accountState = accountStore.getState()
+    const mailbox = accountState.getMailbox(mailboxId)
     return {
       mailbox: mailbox,
       popover: false,
       popoverAnchor: null,
-      popoverServiceType: undefined,
-      userHasServices: userState.user.hasServices,
-      isRestricted: mailboxState.isMailboxRestricted(mailboxId)
+      popoverServiceId: undefined
     }
   })()
 
-  mailboxesChanged = (mailboxState) => {
+  accountChanged = (accountState) => {
     const { mailboxId } = this.props
-    const mailbox = mailboxState.getMailbox(mailboxId)
+    const mailbox = accountState.getMailbox(mailboxId)
     this.setState({
-      mailbox: mailbox,
-      isRestricted: mailboxState.isMailboxRestricted(mailboxId)
-    })
-  }
-
-  userChanged = (userState) => {
-    const mailboxState = mailboxStore.getState()
-    this.setState({
-      userHasServices: userState.user.hasServices,
-      isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId)
+      mailbox: mailbox
     })
   }
 
@@ -98,31 +79,31 @@ class SidelistItemMailbox extends React.Component {
     if (evt.metaKey) {
       window.location.hash = `/settings/accounts/${this.props.mailbox.id}`
     } else {
-      mailboxActions.changeActive(this.props.mailboxId)
+      accountActions.changeActiveMailbox(this.props.mailboxId)
     }
   }
 
   /**
   * Handles opening a service
   * @param evt: the event that fired
-  * @param service: the service to open
+  * @param serviceId: the service to open
   */
-  handleOpenService = (evt, service) => {
+  handleOpenService = (evt, serviceId) => {
     evt.preventDefault()
-    mailboxActions.changeActive(this.props.mailboxId, service)
+    accountActions.changeActiveService(serviceId)
   }
 
   /**
   * Opens the popover
   * @param evt: the event that fired
-  * @param serviceType: the type of service to open in the context of
+  * @param serviceId: the id of service to open in the context of
   */
-  handleOpenPopover = (evt, serviceType) => {
+  handleOpenPopover = (evt, serviceId) => {
     evt.preventDefault()
     this.setState({
       popover: true,
       popoverAnchor: evt.currentTarget,
-      popoverServiceType: serviceType
+      popoverServiceId: serviceId
     })
   }
 
@@ -137,41 +118,42 @@ class SidelistItemMailbox extends React.Component {
   render () {
     if (!this.state.mailbox) { return false }
     const {
+      classes,
+      className,
+      mailboxId,
+      ...passProps
+    } = this.props
+    const {
       mailbox,
       popover,
       popoverAnchor,
-      popoverServiceType,
-      userHasServices,
-      isRestricted
+      popoverServiceId
     } = this.state
-    const { classes, className, mailboxId, ...passProps } = this.props
 
     return (
       <div
-        {...passProps}
-        className={classNames(
-          classes.mailboxContainer,
-          isRestricted ? classes.mailboxContainerRestricted : undefined,
-          'WB-SidelistItemMailbox',
-          className
-        )}>
+        className={classNames(classes.mailboxContainer, 'WB-SidelistItemMailbox', className)}
+        {...passProps}>
         <SidelistItemMailboxAvatar
           mailboxId={mailboxId}
-          serviceType={CoreMailbox.SERVICE_TYPES.DEFAULT}
-          onContextMenu={(evt) => this.handleOpenPopover(evt, CoreMailbox.SERVICE_TYPES.DEFAULT)}
+          onContextMenu={(evt) => this.handleOpenPopover(evt, mailbox.allServices[0])}
           onClick={this.handleClick} />
-        {userHasServices && mailbox.serviceDisplayMode === CoreMailbox.SERVICE_DISPLAY_MODES.SIDEBAR ? (
+        {/*
+        {mailbox.sidebarServices.length ? (
           <SidelistItemMailboxServices
             mailboxId={mailboxId}
-            onContextMenuService={(evt, serviceType) => this.handleOpenPopover(evt, serviceType)}
+            onContextMenuService={(evt, serviceId) => this.handleOpenPopover(evt, serviceId)}
             onOpenService={this.handleOpenService} />
         ) : undefined}
-        <MailboxServicePopover
-          mailboxId={mailboxId}
-          serviceType={popoverServiceType}
-          isOpen={popover}
-          anchor={popoverAnchor}
-          onRequestClose={() => this.setState({ popover: false })} />
+        */}
+        {popoverServiceId ? (
+          <MailboxServicePopover
+            mailboxId={mailboxId}
+            serviceId={popoverServiceId}
+            isOpen={popover}
+            anchor={popoverAnchor}
+            onRequestClose={() => this.setState({ popover: false })} />
+        ) : undefined}
       </div>
     )
   }

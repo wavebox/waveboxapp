@@ -13,7 +13,7 @@ class ACMailboxCircle extends Model {
   static autocreate (mailbox, serviceMap, avatarMap) {
     const services = mailbox
       .allServices
-      .map((id) => services.get(id))
+      .map((id) => serviceMap.get(id))
       .filter((s) => !!s)
 
     const memberHashes = new Set([mailbox.versionedId])
@@ -75,7 +75,7 @@ class ACMailboxCircle extends Model {
   * @param avatarMap: the avatar map
   * @return the avatar in the format { uri: '' }, { id: '' }, or undefined
   */
-  _getRawAvatar (memberHashes, mailbox, services, avatarMap) {
+  static _getRawAvatar (memberHashes, mailbox, services, avatarMap) {
     if (mailbox.hasAvatarId) {
       memberHashes.add(mailbox.versionedId)
       return { id: avatarMap.get(mailbox.avatarId) }

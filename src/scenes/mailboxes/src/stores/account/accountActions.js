@@ -14,7 +14,7 @@ import {
   WB_WINDOW_FIND_NEXT
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
-import TEMPLATE_TYPES from 'shared/Models/ACAccountTemplates/TemplateTypes'
+import { ACCOUNT_TEMPLATE_TYPES } from 'shared/Models/ACAccounts/AccountTemplates'
 
 class AccountActions extends RendererAccountActions {
   /* **************************************************************************/
@@ -40,98 +40,63 @@ class AccountActions extends RendererAccountActions {
   }
 
   /* **************************************************************************/
-  // Mailbox Wizards
+  // Mailbox Creation
   /* **************************************************************************/
 
   /**
-  * Starts adding a new mailbox
-  * @param type: the mailbox type
-  * @param accessMode=undefined: the acessMode if applicable
+  * Starts adding a mailbox
+  * @param templateType: the type of template to add
+  * @param accessMode='_': the access mode to pass to the add wizard
   */
-  /*startAddMailbox (type, accessMode) {
-    if (type === TEMPLATE_TYPES.GOOGLE_MAIL) {
-      return this.startAddGmailWizard()
-    } else if (type === TEMPLATE_TYPES.GOOGLE_INBOX) {
-      return this.startAddGinboxWizard()
-    } else if (type === TEMPLATE_TYPES.OUTLOOK) {
-      return this.startAddOutlookWizard()
-    } else if (type === TEMPLATE_TYPES.OFFICE365) {
-      return this.startAddOffice365Wizard()
-    } else if (type === TEMPLATE_TYPES.TRELLO) {
-      return this.startAddTrelloWizard()
-    } else if (type === TEMPLATE_TYPES.SLACK) {
-      return this.startAddSlackWizard()
-    } else if (type === TEMPLATE_TYPES.GENERIC) {
-      return this.startAddGenericWizard()
-    } else if (type === TEMPLATE_TYPES.CONTAINER) {
-      return this.startAddContainerWizard(accessMode)
+  startAddMailboxGroup (templateType, accessMode) {
+    accessMode = accessMode || '_' // this sometimes comes in as empty string
+    if (ACCOUNT_TEMPLATE_TYPES[templateType]) {
+      window.location.hash = `/mailbox_wizard/${templateType}/${accessMode}/0`
     }
-  }*/
+
+    return {}
+  }
 
   /**
-  * Starts the add mailbox wizard
+  * Creates a mailbox group from a template
+  * @param template: the template to use to create the account
   */
-  /*startAddGinboxWizard () {
-    window.location.hash = `/mailbox_wizard/${TEMPLATE_TYPES.GOOGLE_INBOX}/_/0`
-    return {}
-  }*/
+  authMailboxGroupFromTemplate (template) {
+    return { template: template }
+  }
+
+  /* **************************************************************************/
+  // Mailbox Auth callbacks
+  /* **************************************************************************/
 
   /**
-  * Starts the add mailbox wizard
+  * Handles an auth request mailbox failing to authenticate
+  * @param evt: the event that came over the ipc
+  * @param data: the data that came across the ipc
   */
-  /*startAddGmailWizard () {
-    window.location.hash = `/mailbox_wizard/${TEMPLATE_TYPES.GOOGLE_MAIL}/_/0`
-    return {}
-  }*/
+  authFailure (evt, data) {
+    return { evt: evt, data: data }
+  }
 
   /**
-  * Starts the add mailbox wizard
+  * Handles a Google mailbox authenticating
+  * @param evt: the event that came over the ipc
+  * @param payload: the data that came across the ipc
   */
-  /*startAddSlackWizard () {
-    window.location.hash = `/mailbox_wizard/${TEMPLATE_TYPES.SLACK}/_/0`
-    return {}
-  }*/
+  authGoogleSuccess (evt, payload) {
+    return payload
+  }
 
-  /**
-  * Starts the add mailbox wizard
-  */
-  /*startAddTrelloWizard () {
-    window.location.hash = `/mailbox_wizard/${TEMPLATE_TYPES.TRELLO}/_/0`
-    return {}
-  }*/
 
-  /**
-  * Starts the add mailbox wizard
-  */
-  /*startAddOutlookWizard () {
-    window.location.hash = `/mailbox_wizard/${TEMPLATE_TYPES.OUTLOOK}/_/0`
-    return {}
-  }*/
 
-  /**
-  * Starts the add mailbox wizard
-  */
-  /*startAddOffice365Wizard () {
-    window.location.hash = `/mailbox_wizard/${TEMPLATE_TYPES.OFFICE365}/_/0`
-    return {}
-  }*/
 
-  /**
-  * Starts the add mailbox wizard
-  */
-  /*startAddGenericWizard () {
-    window.location.hash = `/mailbox_wizard/${TEMPLATE_TYPES.GENERIC}/_/0`
-    return {}
-  }*/
 
-  /**
-  * Starts the add container wizard
-  * @param containerId: the id of the container
-  */
-  /*startAddContainerWizard (containerId) {
-    window.location.hash = `/mailbox_wizard/${TEMPLATE_TYPES.CONTAINER}/${containerId}/0`
-    return {}
-  }*/
+
+
+
+
+
+
 
   /* **************************************************************************/
   // Mailbox Auth
@@ -492,14 +457,14 @@ class AccountActions extends RendererAccountActions {
 const actions = alt.createActions(AccountActions)
 
 // Auth
-/*ipcRenderer.on(WB_AUTH_GOOGLE_COMPLETE, actions.authGoogleMailboxSuccess)
-ipcRenderer.on(WB_AUTH_GOOGLE_ERROR, actions.authGoogleMailboxFailure)
-ipcRenderer.on(WB_AUTH_SLACK_COMPLETE, actions.authSlackMailboxSuccess)
-ipcRenderer.on(WB_AUTH_SLACK_ERROR, actions.authSlackMailboxFailure)
-ipcRenderer.on(WB_AUTH_TRELLO_COMPLETE, actions.authTrelloMailboxSuccess)
-ipcRenderer.on(WB_AUTH_TRELLO_ERROR, actions.authTrelloMailboxFailure)
-ipcRenderer.on(WB_AUTH_MICROSOFT_COMPLETE, actions.authMicrosoftMailboxSuccess)
-ipcRenderer.on(WB_AUTH_MICROSOFT_ERROR, actions.authMicrosoftMailboxFailure)*/
+ipcRenderer.on(WB_AUTH_GOOGLE_COMPLETE, actions.authGoogleSuccess)
+ipcRenderer.on(WB_AUTH_GOOGLE_ERROR, actions.authFailure)
+//ipcRenderer.on(WB_AUTH_SLACK_COMPLETE, actions.authSlackMailboxSuccess)
+ipcRenderer.on(WB_AUTH_SLACK_ERROR, actions.authFailure)
+//ipcRenderer.on(WB_AUTH_TRELLO_COMPLETE, actions.authTrelloMailboxSuccess)
+ipcRenderer.on(WB_AUTH_TRELLO_ERROR, actions.authFailure)
+//ipcRenderer.on(WB_AUTH_MICROSOFT_COMPLETE, actions.authMicrosoftMailboxSuccess)
+ipcRenderer.on(WB_AUTH_MICROSOFT_ERROR, actions.authFailure)
 
 // Mailbox modifiers
 ipcRenderer.on(WB_WINDOW_FIND_START, () => actions.startSearchingService())

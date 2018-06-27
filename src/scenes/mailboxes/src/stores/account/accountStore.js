@@ -3,7 +3,7 @@ import { STORE_NAME } from 'shared/AltStores/Account/AltAccountIdentifiers'
 import alt from '../alt'
 import actions from './accountActions'
 import settingsActions from '../settings/settingsActions'
-//import GoogleHTTP from '../google/GoogleHTTP'
+import GoogleHTTP from '../google/GoogleHTTP'
 //import SlackHTTP from '../slack/SlackHTTP'
 //import MicrosoftHTTP from '../microsoft/MicrosoftHTTP'
 import accountDispatch from './accountDispatch'
@@ -23,11 +23,17 @@ import {
 import { USER_PROFILE_DEFERED_SYNC_ON_CREATE } from 'shared/constants'
 import { ipcRenderer } from 'electron'
 import uuid from 'uuid'
+import { ACCOUNT_TEMPLATE_TYPES } from 'shared/Models/ACAccounts/AccountTemplates'
+import ACTemplatedAccount from 'shared/Models/ACAccounts/ACTemplatedAccount'
+import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
+import CoreACService from 'shared/Models/ACAccounts/CoreACService'
+import GoogleAuth from 'shared/Models/ACAccounts/Google/GoogleAuth'
 
-const AUTH_MODES = {
-  CREATE: 'CREATE',
-  REAUTHENTICATE: 'REAUTHENTICATE'
-}
+const AUTH_MODES = Object.freeze({
+  TEMPLATE_CREATE: 'TEMPLATE_CREATE',
+  REAUTHENTICATE: 'REAUTHENTICATE',
+  ATTACH: 'ATTACH'
+})
 
 class AccountStore extends RendererAccountStore {
   /* **************************************************************************/
@@ -108,6 +114,13 @@ class AccountStore extends RendererAccountStore {
       // Tabs
       handleSetWebcontentTabId: actions.SET_WEBCONTENT_TAB_ID,
       handleDeleteWebcontentTabId: actions.DELETE_WEBCONTENT_TAB_ID,
+
+      // Mailbox creation
+      handleAuthMailboxGroupFromTemplate: actions.AUTH_MAILBOX_GROUP_FROM_TEMPLATE,
+
+      // Mailbox auth callbacks
+      handleAuthFailure: actions.AUTH_FAILURE,
+      handleAuthGoogleSuccess: actions.AUTH_GOOGLE_SUCCESS,
 
       /*
       // Mailbox auth
@@ -266,11 +279,131 @@ class AccountStore extends RendererAccountStore {
   /* **************************************************************************/
 
   handleSetWebcontentTabId ({ serviceId, tabId }) {
-    this.webcontentTabIds.set(serviceId, tabId)
+    this._webcontentTabIds_.set(serviceId, tabId)
   }
 
   handleDeleteWebcontentTabId ({ serviceId }) {
-    this.webcontentTabIds.delete(serviceId)
+    this._webcontentTabIds_.delete(serviceId)
+  }
+
+  /* **************************************************************************/
+  // Mailbox Creation
+  /* **************************************************************************/
+
+  handleAuthMailboxGroupFromTemplate ({ template }) {
+    this.preventDefault()
+
+    const mailboxId = uuid.v4()
+
+    if (template.templateType === ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL || template.templateType === ACCOUNT_TEMPLATE_TYPES.GOOGLE_INBOX) {
+      window.location.hash = `/mailbox_wizard/${template.parentType}/_/1/${mailboxId}`
+      ipcRenderer.send(WB_AUTH_GOOGLE, {
+        partitionId: `persist:${mailboxId}`,
+        credentials: Bootstrap.credentials,
+        mode: AUTH_MODES.TEMPLATE_CREATE,
+        context: {
+          id: mailboxId,
+          template: template.cloneData()
+        }
+      })
+    } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.MICROSOFT) {
+      //TODO
+    } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.TRELLO) {
+      //TODO
+    } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.SLACK) {
+      //TODO
+    } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.CONTAINER) {
+      //TODO
+    } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.GENERIC) {
+      this._createMailboxFromTemplate(mailboxId, template)
+      this._finalizeCreateAccount(`/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`)
+    }
+  }
+
+  /* **************************************************************************/
+  // Mailbox Creation: Utils
+  /* **************************************************************************/
+
+  /**
+  * Creates a mailbox and service from a template issuing deferred actions
+  * @param mailboxId: the id of the mailbox
+  * @param template: the template to use to generate the members
+  */
+  _createMailboxFromTemplate (mailboxId, template) {
+    if (template.templateType === ACCOUNT_TEMPLATE_TYPES.CONTAINER) {
+      //TODO
+    } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.MICROSOFT) {
+      //TODO
+    } else {
+      actions.createMailbox.defer(ACMailbox.createJS(
+        mailboxId,
+        template.displayName,
+        template.color,
+        template.templateType
+      ))
+      template.services.forEach((serviceType) => {
+        const service = CoreACService.createJS(
+          undefined,
+          mailboxId,
+          serviceType
+        )
+        actions.createService.defer(mailboxId, template.servicesUILocation, service)
+      })
+    }
+  }
+
+  _finalizeCreateAccount (nextUrl = '/') {
+    window.location.hash = nextUrl
+    settingsActions.tourStart.defer()
+  }
+
+  /* **************************************************************************/
+  // Mailbox Auth callbacks
+  /* **************************************************************************/
+
+  handleAuthFailure ({ evt, data }) {
+    this.preventDefault()
+    window.location.hash = '/'
+    if (data.errorMessage.toLowerCase().startsWith('user')) {
+      // user cancelled. no-op
+    } else {
+      console.error('[AUTH ERR]', data)
+    }
+  }
+
+  handleAuthGoogleSuccess ({ mode, context, auth }) {
+    this.preventDefault()
+    Promise.resolve()
+      .then(() => GoogleHTTP.upgradeAuthCodeToPermenant(auth.temporaryCode, auth.codeRedirectUri))
+      .then((permenantAuth) => {
+        return GoogleHTTP.fetchAccountProfileWithRawAuth(permenantAuth)
+          .then((response) => { // Build the complete auth object
+            return {
+              ...permenantAuth,
+              pushToken: auth.pushToken,
+              email: (response.emails.find((a) => a.type === 'account') || {}).value
+            }
+          })
+      })
+      .then((permenantAuth) => {
+        if (mode === AUTH_MODES.TEMPLATE_CREATE) {
+          // Create the auth
+          const auth = GoogleAuth.createJS(context.id, undefined, permenantAuth)
+          actions.createAuth.defer(auth)
+
+          // Create the account
+          const template = new ACTemplatedAccount(context.template)
+          this._createMailboxFromTemplate(context.id, template)
+          this._finalizeCreateAccount(`/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.id}`)
+        } else if (mode === AUTH_MODES.REAUTHENTICATE) {
+          //TODO
+        } else if (mode === AUTH_MODES.ATTACH) {
+          //TODO
+        }
+      })
+      .catch((err) => {
+        console.error('[AUTH ERR]', err)
+      })
   }
 
   /* **************************************************************************/

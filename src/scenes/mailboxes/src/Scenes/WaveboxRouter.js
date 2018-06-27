@@ -15,15 +15,15 @@ import {
 import LinuxSetupScene from './LinuxSetupScene'
 import DictionaryInstallerScene from './DictionaryInstallerScene'
 import AppWizardScene from './AppWizardScene'
-/*
+
 import MailboxWizardAddScene from './MailboxWizardAddScene'
 import MailboxWizardScene from './MailboxWizardScene'
-import MailboxServiceDeleteScene from './MailboxServiceDeleteScene'
+import SettingsScene from './SettingsScene'
+/*import MailboxServiceDeleteScene from './MailboxServiceDeleteScene'
 import MailboxDeleteScene from './MailboxDeleteScene'
 
 import NotificationPanel from './NotificationPanel'
 import ComposePickerScene from './ComposePickerScene'
-import SettingsScene from './SettingsScene'
 import {
   AccountMessageScene,
   AccountAuthScene,
@@ -54,11 +54,11 @@ export default class WaveboxRouter extends React.Component {
           {/*<NotificationPanel />*/}
 
           <WaveboxRouterErrorBoundary>
-            {/*<Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
-            <Route path='/dictionary_installer' component={DictionaryInstallerScene} />*/}
+            <Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
+            <Route path='/dictionary_installer' component={DictionaryInstallerScene} />
 
-            {/*<Route path='/mailbox_wizard/add' component={MailboxWizardAddScene} />
-            <Route path='/mailbox_wizard/:mailboxType/:accessMode/:step/:mailboxId?' component={MailboxWizardScene} />*/}
+            <Route path='/mailbox_wizard/add' component={MailboxWizardAddScene} />
+            <Route path='/mailbox_wizard/:templateType/:accessMode/:step/:mailboxId?' component={MailboxWizardScene} />
             <Route path='/mailbox/reauthenticating' component={MailboxReauthenticatingScene} />
 
             {/*<Route path='/mailbox_delete/:mailboxId' component={MailboxDeleteScene} />

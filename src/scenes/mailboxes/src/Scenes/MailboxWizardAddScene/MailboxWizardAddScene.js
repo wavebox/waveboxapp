@@ -3,7 +3,7 @@ import { Button, Dialog, DialogActions, DialogContent } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { WaveboxWebView } from 'Components'
 import { userStore } from 'stores/user'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import { WaveboxHTTP } from 'Server'
 import Spinner from 'wbui/Activity/Spinner'
 import lightBlue from '@material-ui/core/colors/lightBlue'
@@ -45,7 +45,7 @@ class MailboxWizardAddScene extends React.Component {
 
   componentDidMount () {
     userStore.listen(this.userChanged)
-    mailboxStore.listen(this.mailboxChanged)
+    accountStore.listen(this.accountChanged)
 
     // Hopefully fixes an issue where the webview fails to render any content https://github.com/electron/electron/issues/8505
     setTimeout(() => { this.setState({ renderWebview: true }) }, 100)
@@ -53,7 +53,7 @@ class MailboxWizardAddScene extends React.Component {
 
   componentWillUnmount () {
     userStore.unlisten(this.userChanged)
-    mailboxStore.unlisten(this.mailboxChanged)
+    accountStore.unlisten(this.accountChanged)
   }
 
   /* **************************************************************************/
@@ -62,7 +62,7 @@ class MailboxWizardAddScene extends React.Component {
 
   state = (() => {
     const userState = userStore.getState()
-    const mailboxState = mailboxStore.getState()
+    const accountState = accountStore.getState()
     return {
       open: true,
       renderWebview: false,
@@ -70,32 +70,32 @@ class MailboxWizardAddScene extends React.Component {
       url: WaveboxHTTP.addMailboxUrl(
         userState.clientId,
         userState.clientToken,
-        userState.user.accountTypes,
-        mailboxState.mailboxCount() >= userState.user.accountLimit,
+        userState.user.classicAccountTypes,
+        accountState.serviceCount() >= userState.user.accountLimit,
         userState.user.accountLimit)
     }
   })()
 
   userChanged = (userState) => {
-    const mailboxState = mailboxStore.getState()
+    const accountState = accountStore.getState()
     this.setState({
       url: WaveboxHTTP.addMailboxUrl(
         userState.clientId,
         userState.clientToken,
-        userState.user.accountTypes,
-        mailboxState.mailboxCount() >= userState.user.accountLimit,
+        userState.user.classicAccountTypes,
+        accountState.serviceCount() >= userState.user.accountLimit,
         userState.user.accountLimit)
     })
   }
 
-  mailboxChanged = (mailboxState) => {
+  accountChanged = (accountState) => {
     const userState = userStore.getState()
     this.setState({
       url: WaveboxHTTP.addMailboxUrl(
         userState.clientId,
         userState.clientToken,
-        userState.user.accountTypes,
-        mailboxState.mailboxCount() >= userState.user.accountLimit,
+        userState.user.classicAccountTypes,
+        accountState.serviceCount() >= userState.user.accountLimit,
         userState.user.accountLimit)
     })
   }

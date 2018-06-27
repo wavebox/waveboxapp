@@ -42,15 +42,20 @@ class SlackService extends CoreACService {
   /* **************************************************************************/
 
   get displayName () {
-    const teamName = (this.teamOverview || {}).name || this.authTeamName
-    const selfName = (this.selfOverview || {}).name
-
-    if (teamName && selfName) {
-      return `${teamName} @${selfName}`
-    } else if (teamName) {
-      return teamName
+    const userVal = this._value_('displayName', undefined)
+    if (userVal !== undefined) {
+      return userVal
     } else {
-      return super.displayName
+      const teamName = (this.teamOverview || {}).name || this.authTeamName
+      const selfName = (this.selfOverview || {}).name
+
+      if (teamName && selfName) {
+        return `${teamName} @${selfName}`
+      } else if (teamName) {
+        return teamName
+      } else {
+        return this.humanizedType
+      }
     }
   }
 

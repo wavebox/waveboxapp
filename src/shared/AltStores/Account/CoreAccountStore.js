@@ -178,6 +178,28 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /**
+    * @param mailboxId: the id of the mailbox
+    * @param type: the service type
+    * @return an array of services with the given type in the given mailbox
+    */
+    this.mailboxServicesOfType = (mailboxId, type) => {
+      const mailbox = this.getMailbox(mailboxId)
+      if (!mailbox) { return [] }
+      return mailbox.allServices
+        .map((serviceId) => this.getService(serviceId))
+        .filter((service) => service && service.type === type)
+    }
+
+    /**
+    * @param mailboxId: the id of the mailbox
+    * @param type: the service type
+    * @return an array of service ids with the given type in the given mailbox
+    */
+    this.mailboxServiceIdsOfType = (mailboxId, type) => {
+      return this.mailboxServiceIdsOfType(mailboxId, type).map((service) => service.id)
+    }
+
+    /**
     * @return an array of all services in any order
     */
     this.allServicesUnordered = () => {
@@ -302,6 +324,25 @@ class CoreAccountStore extends RemoteStore {
       }
     }
 
+    /**
+    * @param serviceTypes: a list of services types to check if they would be restricted
+    * @return a list of services types that would be restricted if setup
+    */
+    this.proposedRestrictedServiceTypes = (serviceTypes) => {
+      const user = this.getUser()
+      if (user.hasAccountLimit || user.hasAccountTypeRestriction) {
+        const supportedTypes = serviceTypes.filter((type) => user.hasAccountsOfType(type))
+        if (user.hasAccountLimit) {
+          const limit = user.accountLimit - this.serviceCount()
+          return supportedTypes.slice(0, Math.max(0, limit))
+        } else {
+          return supportedTypes
+        }
+      } else {
+        return []
+      }
+    }
+
     /* ****************************************/
     // Active
     /* ****************************************/
@@ -310,7 +351,7 @@ class CoreAccountStore extends RemoteStore {
     * @return the id of the active service
     */
     this.activeServiceId = () => {
-      return this._activeServiceId_ !== null ? this._activeServiceId_ : this.firstServiceId()
+      return this._activeServiceId_ ? this._activeServiceId_ : this.firstServiceId()
     }
 
     /**
@@ -492,7 +533,7 @@ class CoreAccountStore extends RemoteStore {
     */
     this.userUnreadActivityForApp = () => {
       return !!this.unrestrictedServices().find((service) => {
-        if (service.showUnreadActivityInApp) {
+        if (service.showBadgeActivityInApp) {
           return this.getServiceData(service.id).getHasUnreadActivity(service)
         } else {
           return false
@@ -566,7 +607,8 @@ class CoreAccountStore extends RemoteStore {
 
     const actions = this.alt.getActions(ACTIONS_NAME)
     this.bindActions({
-      handleLoad: actions.LOAD
+      handleLoad: actions.LOAD,
+      handleChangeMailboxIndex: actions.CHANGE_MAILBOX_INDEX
     })
   }
 
@@ -653,6 +695,22 @@ class CoreAccountStore extends RemoteStore {
       acc.set(k, sleepingServices[k])
       return acc
     }, new Map())
+  }
+
+  /* **************************************************************************/
+  // Mailboxes
+  /* **************************************************************************/
+
+  handleChangeMailboxIndex ({ id, nextIndex }) {
+    const index = Array.from(this._mailboxIndex_)
+    const prevIndex = index.findIndex((i) => i === id)
+    if (prevIndex !== -1) {
+      index.splice(nextIndex, 0, index.splice(prevIndex, 1)[0])
+      this._mailboxIndex_ = index
+    } else {
+      this.preventDefault()
+    }
+    return this._mailboxIndex_
   }
 }
 

@@ -40,7 +40,7 @@ class WizardColorPicker extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    MailboxClass: PropTypes.func.isRequired,
+    colors: PropTypes.array.isRequired,
     accessMode: PropTypes.string.isRequired,
     mailboxDefaultColor: PropTypes.string.isRequired,
     selectedColor: PropTypes.string.isRequired,
@@ -57,7 +57,7 @@ class WizardColorPicker extends React.Component {
 
   render () {
     const {
-      MailboxClass,
+      colors,
       accessMode,
       mailboxDefaultColor,
       selectedColor,
@@ -69,13 +69,17 @@ class WizardColorPicker extends React.Component {
 
     return (
       <div {...passProps} className={classNames(classes.container, className)}>
-        <WizardColorPickerCell
-          key='default'
-          className={classes.color}
-          color={mailboxDefaultColor}
-          isSelected={mailboxDefaultColor === selectedColor}
-          size={60}
-          onPicked={(col) => onColorPicked(col)} />
+        {colors.map((col) => {
+          return (
+            <WizardColorPickerCell
+              key={`additional-${col}`}
+              className={classes.color}
+              color={mailboxDefaultColor}
+              isSelected={mailboxDefaultColor === selectedColor}
+              size={60}
+              onPicked={(col) => onColorPicked(col)} />
+          )
+        })}
         {PRESET_COLORS.map((col) => {
           return (
             <WizardColorPickerCell

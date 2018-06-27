@@ -138,7 +138,7 @@ class ToolbarMailboxService extends React.Component {
 
   accountChanged = (accountState) => {
     const { mailboxId, serviceId } = this.props
-    this.setState(this.generateStateFromMailbox(accountStore, mailboxId, serviceId))
+    this.setState(this.generateStateFromMailbox(accountState, mailboxId, serviceId))
   }
 
   settingsChanged = (settingsState) => {

@@ -1,5 +1,5 @@
 import React from 'react'
-import { mailboxStore, mailboxActions } from 'stores/mailbox'
+import { accountStore, accountActions } from 'stores/account'
 import SidelistItemMailbox from './SidelistItemMailbox'
 import {SortableContainer, SortableElement} from 'react-sortable-hoc'
 import classNames from 'classnames'
@@ -32,11 +32,11 @@ class SidelistMailboxes extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxesChanged)
+    accountStore.listen(this.accountChanged)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxesChanged)
+    accountStore.unlisten(this.accountChanged)
   }
 
   /* **************************************************************************/
@@ -45,12 +45,12 @@ class SidelistMailboxes extends React.Component {
 
   state = (() => {
     return {
-      mailboxIds: mailboxStore.getState().mailboxIds()
+      mailboxIds: accountStore.getState().mailboxIds()
     }
   })()
 
-  mailboxesChanged = (store) => {
-    this.setState({ mailboxIds: store.mailboxIds() })
+  accountChanged = (accountState) => {
+    this.setState({ mailboxIds: accountState.mailboxIds() })
   }
 
   /* **************************************************************************/
@@ -73,7 +73,7 @@ class SidelistMailboxes extends React.Component {
           distance={20}
           mailboxIds={mailboxIds}
           onSortEnd={({ oldIndex, newIndex }) => {
-            mailboxActions.changeIndex(mailboxIds[oldIndex], newIndex)
+            accountActions.changeMailboxIndex(mailboxIds[oldIndex], newIndex)
           }} />
       </div>
     )

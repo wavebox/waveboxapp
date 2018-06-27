@@ -8,6 +8,19 @@ class ServiceReducer {
   static get name () { return 'ServiceReducer' }
 
   /* **************************************************************************/
+  // Display
+  /* **************************************************************************/
+
+  /**
+  * Sets the display name
+  * @param service: the service to update
+  * @param displayName: the display name to set
+  */
+  static setDisplayName (service, displayName) {
+    return service.changeData({ displayName: displayName || undefined })
+  }
+
+  /* **************************************************************************/
   // Sleepable
   /* **************************************************************************/
 
@@ -42,6 +55,19 @@ class ServiceReducer {
   */
   static setHasSeenSleepableWizard (service, seen) {
     return service.changeData({ hasSeenSleepableWizard: seen })
+  }
+
+  /* **************************************************************************/
+  // Behaviour
+  /* **************************************************************************/
+
+  /**
+  * Sets if the page should restore the last url
+  * @param service: the service to update
+  * @param restore: true to restore the last url
+  */
+  static setRestoreLastUrl (service, restore) {
+    return service.changeData({ restoreLastUrl: restore })
   }
 
   /* **************************************************************************/

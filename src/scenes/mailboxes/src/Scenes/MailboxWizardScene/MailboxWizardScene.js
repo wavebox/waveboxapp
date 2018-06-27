@@ -3,12 +3,14 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import MailboxWizardStepper from './MailboxWizardStepper'
 import { Dialog, DialogContent } from '@material-ui/core'
-import MailboxTypes from 'shared/Models/Accounts/MailboxTypes'
-import MailboxFactory from 'shared/Models/Accounts/MailboxFactory'
 import WizardPersonalise from './WizardPersonalise'
 import WizardAuth from './WizardAuth'
 import WizardConfigure from './WizardConfigure'
 import { withStyles } from '@material-ui/core/styles'
+import {
+  ACCOUNT_TEMPLATE_TYPE_LIST,
+  ACCOUNT_TEMPLATES
+} from 'shared/Models/ACAccounts/AccountTemplates'
 
 const styles = {
   dialog: {
@@ -49,7 +51,7 @@ class MailboxWizardScene extends React.Component {
   static propTypes = {
     match: PropTypes.shape({
       params: PropTypes.shape({
-        mailboxType: PropTypes.oneOf(Object.keys(MailboxTypes)).isRequired,
+        templateType: PropTypes.oneOf(ACCOUNT_TEMPLATE_TYPE_LIST).isRequired,
         accessMode: PropTypes.string.isRequired,
         step: PropTypes.string.isRequired,
         mailboxId: PropTypes.string
@@ -91,19 +93,19 @@ class MailboxWizardScene extends React.Component {
   * Renders the current step
   * @param classes
   * @param currentStep: the step to render
-  * @param mailboxType: the mailbox type
+  * @param template: the template type
   * @param accessMode: the access mode to use when creating the mailbox
   * @param mailboxId: the id of the mailbox
   * @return jsx
   */
-  renderStep (classes, currentStep, mailboxType, accessMode, mailboxId) {
+  renderStep (classes, currentStep, template, accessMode, mailboxId) {
     switch (currentStep) {
       case 0:
         return (
           <WizardPersonalise
             className={classes.detail}
             onRequestCancel={this.handleClose}
-            MailboxClass={MailboxFactory.getClass(mailboxType)}
+            template={ACCOUNT_TEMPLATES[template]}
             accessMode={accessMode} />
         )
       case 1:
@@ -135,7 +137,7 @@ class MailboxWizardScene extends React.Component {
           {this.renderStep(
             classes,
             currentStep,
-            match.params.mailboxType,
+            match.params.templateType,
             match.params.accessMode,
             match.params.mailboxId
           )}

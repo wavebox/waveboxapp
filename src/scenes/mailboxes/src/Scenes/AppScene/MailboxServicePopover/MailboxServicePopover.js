@@ -18,7 +18,7 @@ import SettingsIcon from '@material-ui/icons/Settings'
 import LayersClearIcon from '@material-ui/icons/LayersClear'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-export default class SidelistItemMailboxPopover extends React.Component {
+export default class MailboxServicePopover extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/

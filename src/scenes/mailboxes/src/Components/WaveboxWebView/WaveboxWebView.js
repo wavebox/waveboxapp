@@ -107,7 +107,7 @@ class WaveboxWebView extends React.Component {
       userActions.sideloadContainerLocally(containerId, JSON.parse(container))
     }
     if (type) {
-      //mailboxActions.startAddMailbox(type, accessMode)
+      accountActions.startAddMailboxGroup(type, accessMode)
     }
   }
 

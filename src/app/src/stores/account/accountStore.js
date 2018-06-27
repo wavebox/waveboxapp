@@ -45,6 +45,7 @@ class AccountStore extends CoreAccountStore {
       handleSetCustomAvatarOnMailbox: actions.SET_CUSTOM_AVATAR_ON_MAILBOX,
 
       // Auth
+      handleCreateAuth: actions.CREATE_AUTH,
       handleReduceAuth: actions.REDUCE_AUTH,
 
       // Service
@@ -286,7 +287,7 @@ class AccountStore extends CoreAccountStore {
 
     const mailbox = this.saveMailbox(data.id, data)
     MailboxesSessionManager.startManagingSession(mailbox)
-    this.saveIndex(this._mailboxIndex_.concat(data.id))
+    this.saveMailboxIndex(this._mailboxIndex_.concat(data.id))
   }
 
   handleRemoveMailbox ({ id }) {
@@ -297,7 +298,7 @@ class AccountStore extends CoreAccountStore {
       const serviceIds = mailbox.allServices
       const authIds = this.getMailboxAuthIdsForMailbox(id)
 
-      this.saveIndex(this._mailboxIndex_.filter((i) => i !== id))
+      this.saveMailboxIndex(this._mailboxIndex_.filter((i) => i !== id))
       this.saveMailbox(id, null)
       serviceIds.forEach((id) => {
         this.saveService(id, null)
@@ -315,10 +316,16 @@ class AccountStore extends CoreAccountStore {
     }
   }
 
+  handleChangeMailboxIndex (payload) {
+    const next = super.handleChangeMailboxIndex(payload)
+    this.saveIndex(next)
+    return next
+  }
+
   handleReduceMailbox ({ id = this.activeMailboxId(), reducer, reducerArgs }) {
     const mailbox = this.getMailbox(id)
     if (mailbox) {
-      const nextJS = reducer.apply(this, [mailbox].concat(reducerArgs))
+      const nextJS = reducer(...[mailbox].concat(reducerArgs))
       if (nextJS) {
         this.saveMailbox(id, nextJS)
         return
@@ -355,10 +362,17 @@ class AccountStore extends CoreAccountStore {
   // Auth
   /* **************************************************************************/
 
+  handleCreateAuth ({ id, data }) {
+    this.saveMailboxAuth(
+      id || CoreACAuth.composeId(data.parentId, data.namespace),
+      data
+    )
+  }
+
   handleReduceAuth ({ id, reducer, reducerArgs }) {
     const auth = this.getMailboxAuth(id)
     if (auth) {
-      const nextJS = reducer.apply(this, [auth].concat(reducerArgs))
+      const nextJS = reducer(...[auth].concat(reducerArgs))
       if (nextJS) {
         this.saveMailboxAuth(id, nextJS)
         return
@@ -387,7 +401,7 @@ class AccountStore extends CoreAccountStore {
     this.saveService(data.id, data)
 
     // Update the mailbox
-    const nextMailboxJS = MailboxReducer.addServiceByLocation.apply(this, [mailbox].concat([data.id, parentLocation]))
+    const nextMailboxJS = MailboxReducer.addServiceByLocation(...[mailbox].concat([data.id, parentLocation]))
     if (nextMailboxJS) {
       this.saveMailbox(parentId, nextMailboxJS)
     }
@@ -400,7 +414,7 @@ class AccountStore extends CoreAccountStore {
     // Remove from the mailbox
     const mailbox = this.getMailbox(service.parentId)
     if (mailbox) {
-      const nextMailboxJS = MailboxReducer.removeService.apply(this, [mailbox].concat([id]))
+      const nextMailboxJS = MailboxReducer.removeService(...[mailbox].concat([id]))
       if (nextMailboxJS) {
         this.saveMailbox(mailbox.id, nextMailboxJS)
       }
@@ -414,7 +428,7 @@ class AccountStore extends CoreAccountStore {
   handleReduceService ({ id = this.activeServiceId(), reducer, reducerArgs }) {
     const service = this.getService(id)
     if (service) {
-      const nextJS = reducer.apply(this, [service].concat(reducerArgs))
+      const nextJS = reducer(...[service].concat(reducerArgs))
       if (nextJS) {
         this.saveService(id, nextJS)
         return
@@ -445,7 +459,7 @@ class AccountStore extends CoreAccountStore {
     const service = this.getService(id)
     const serviceData = this.getServiceData(id)
     if (service && serviceData) {
-      const nextJS = reducer.apply(this, [service, serviceData].concat(reducerArgs))
+      const nextJS = reducer(...[service, serviceData].concat(reducerArgs))
       if (nextJS) {
         this.saveServiceData(id, nextJS)
         return

@@ -61,14 +61,11 @@ class User extends Model {
   get hasAccountLimit () { return this.accountLimit !== Infinity }
 
   get accountTypes () {
-    const val = this._value_('accountTypes', [SERVICE_TYPES.GOOGLE_MAIL, SERVICE_TYPES.GOOGLE_INBOX])
-    if (val === null) {
-      return null
-    } else {
-      return val.reduce((acc, t) => acc.concat(DEPRICATED_TYPE_MAPPING[t] || t), [])
-    }
+    const val = this.classicAccountTypes
+    return val === null ? null : val.reduce((acc, t) => acc.concat(DEPRICATED_TYPE_MAPPING[t] || t), [])
   }
-  get hasAccountTypeRestriction () { return this.accountTypes !== null }
+  get classicAccountTypes () { return this._value_('accountTypes', ['GOOGLE']) }
+  get hasAccountTypeRestriction () { return this.classicAccountTypes !== null }
 
   /**
   * @param type: the type of account to check
@@ -79,6 +76,18 @@ class User extends Model {
       return !!this.accountTypes.find((t) => t === type)
     } else {
       return true
+    }
+  }
+
+  /**
+  * @param currentCount: the current count of services
+  * @return true if the user has reached their account limit, false otherwise
+  */
+  hasReachedAccountLimit (currentCount) {
+    if (this.hasAccountLimit) {
+      return currentCount >= this.this.accountLimit
+    } else {
+      return false
     }
   }
 

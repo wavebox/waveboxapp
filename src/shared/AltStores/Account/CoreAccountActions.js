@@ -90,6 +90,20 @@ class CoreAccountActions extends RemoteActions {
   }
 
   /**
+  * Changes the index of a mailbox
+  * @param id: the id of the mailbox to move
+  * @param nextIndex: the next index to place the mailbox
+  */
+  changeMailboxIndex (...args) {
+    if (process.type === 'renderer') {
+      this.remoteDispatch('changeMailboxIndex', args)
+    }
+
+    const [id, nextIndex] = args
+    return { id, nextIndex }
+  }
+
+  /**
   * Sets a custom avatar on a mailbox
   * @param id: the id of the mailbox
   * @param b64Image: the image to set
@@ -106,6 +120,20 @@ class CoreAccountActions extends RemoteActions {
   /* **************************************************************************/
   // Auth
   /* **************************************************************************/
+
+  /**
+  * Creates a new auth
+  * @param id: the id of the auth
+  * @param data: the data to create it with
+  */
+  createAuth (...args) {
+    if (process.type === 'browser') {
+      const [id, data] = args
+      return { id, data }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('createAuth', args)
+    }
+  }
 
   /**
   * Updates and modifies an auth record

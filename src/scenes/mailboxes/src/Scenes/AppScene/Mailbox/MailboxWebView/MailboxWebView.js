@@ -745,6 +745,7 @@ class MailboxWebView extends React.Component {
               </Button>
             )} />
         ) : undefined}
+        {/*
         {mailbox.isAuthenticationInvalid || !mailbox.hasAuth ? (
           <MailboxInformationCover
             title='Whoops!'
@@ -767,6 +768,7 @@ class MailboxWebView extends React.Component {
               </Button>
             )} />
         ) : undefined}
+        */}
       </div>
     )
   }

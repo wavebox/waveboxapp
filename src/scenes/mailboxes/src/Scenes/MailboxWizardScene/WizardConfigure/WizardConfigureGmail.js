@@ -1,13 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { mailboxActions, GoogleDefaultServiceReducer } from 'stores/mailbox'
+import { accountActions, accountStore } from 'stores/account'
 import WizardConfigureUnreadModeOption from './WizardConfigureUnreadModeOption'
-import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
 import { withStyles } from '@material-ui/core/styles'
 import yellow from '@material-ui/core/colors/yellow'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import cyan from '@material-ui/core/colors/cyan'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
+import GoogleMailService from 'shared/Models/ACAccounts/Google/GoogleMailService'
+import GoogleMailServiceReducer from 'shared/AltStores/Account/ServiceReducers/GoogleMailServiceReducer'
 
 const styles = {
   // Typography
@@ -53,8 +55,62 @@ class WizardConfigureGmail extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    mailbox: PropTypes.object.isRequired,
+    mailboxId: PropTypes.string.isRequired,
     onRequestCancel: PropTypes.func.isRequired
+  }
+
+  /* **************************************************************************/
+  // Component lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    accountStore.listen(this.accountUpdated)
+  }
+
+  componentWillUnmount () {
+    accountStore.unlisten(this.accountUpdated)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.mailboxId !== nextProps.mailboxId) {
+      const accountState = accountStore.getState()
+      const service = accountState.mailboxServicesOfType(nextProps.mailboxId, SERVICE_TYPES.GOOGLE_MAIL)
+      this.setState(service ? {
+        unreadMode: service.unreadMode,
+        serviceId: service.id
+      } : {
+        unreadMode: undefined,
+        serviceId: undefined
+      })
+    }
+  }
+
+  /* **************************************************************************/
+  // Data lifecycle
+  /* **************************************************************************/
+
+  state = (() => {
+    const accountState = accountStore.getState()
+    const service = accountState.mailboxServicesOfType(this.props.mailboxId, SERVICE_TYPES.GOOGLE_MAIL)
+
+    return service ? {
+      unreadMode: service.unreadMode,
+      serviceId: service.id
+    } : {
+      unreadMode: undefined,
+      serviceId: undefined
+    }
+  })()
+
+  accountUpdated = (accountState) => {
+    const service = accountState.mailboxServicesOfType(this.props.mailboxId, SERVICE_TYPES.GOOGLE_MAIL)
+    this.setState(service ? {
+      unreadMode: service.unreadMode,
+      serviceId: service.id
+    } : {
+      unreadMode: undefined,
+      serviceId: undefined
+    })
   }
 
   /* **************************************************************************/
@@ -66,8 +122,8 @@ class WizardConfigureGmail extends React.Component {
   * @param unreadMode: the picked unread mode
   */
   handleModePicked = (unreadMode) => {
-    const { mailbox } = this.props
-    mailboxActions.reduceService(mailbox.id, GoogleDefaultService.type, GoogleDefaultServiceReducer.setUnreadMode, unreadMode)
+    const { serviceId } = this.state
+    accountActions.reduceService(serviceId, GoogleMailServiceReducer.setUnreadMode, unreadMode)
   }
 
   /* **************************************************************************/
@@ -75,13 +131,13 @@ class WizardConfigureGmail extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { mailbox, onRequestCancel, classes, ...passProps } = this.props
-    const unreadMode = mailbox.defaultService.unreadMode
+    const { mailboxId, onRequestCancel, classes, ...passProps } = this.props
+    const { unreadMode } = this.state
 
     return (
       <WizardConfigureDefaultLayout
         onRequestCancel={onRequestCancel}
-        mailboxId={mailbox.id}
+        mailboxId={mailboxId}
         {...passProps}>
         <h2 className={classes.heading}>Choose your Inbox mode</h2>
         <p className={classes.subHeading}>
@@ -93,8 +149,8 @@ class WizardConfigureGmail extends React.Component {
           <WizardConfigureUnreadModeOption
             className={classes.unreadOption}
             color={yellow[700]}
-            selected={unreadMode === GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL}
-            onSelected={() => this.handleModePicked(GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL)}
+            selected={unreadMode === GoogleMailService.UNREAD_MODES.INBOX_UNREAD_PERSONAL}
+            onSelected={() => this.handleModePicked(GoogleMailService.UNREAD_MODES.INBOX_UNREAD_PERSONAL)}
             name='Categories'
             popoverContent={(
               <div className={classes.popoverContainer}>
@@ -110,8 +166,8 @@ class WizardConfigureGmail extends React.Component {
           <WizardConfigureUnreadModeOption
             className={classes.unreadOption}
             color={lightBlue[700]}
-            selected={unreadMode === GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD}
-            onSelected={() => this.handleModePicked(GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD)}
+            selected={unreadMode === GoogleMailService.UNREAD_MODES.INBOX_UNREAD}
+            onSelected={() => this.handleModePicked(GoogleMailService.UNREAD_MODES.INBOX_UNREAD)}
             name='Unread'
             popoverContent={(
               <div className={classes.popoverContainer}>
@@ -127,8 +183,8 @@ class WizardConfigureGmail extends React.Component {
           <WizardConfigureUnreadModeOption
             className={classes.unreadOption}
             color={cyan[700]}
-            selected={unreadMode === GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT}
-            onSelected={() => this.handleModePicked(GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT)}
+            selected={unreadMode === GoogleMailService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT}
+            onSelected={() => this.handleModePicked(GoogleMailService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT)}
             name='Priority'
             popoverContent={(
               <div className={classes.popoverContainer}>

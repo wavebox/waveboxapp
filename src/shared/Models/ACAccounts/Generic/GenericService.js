@@ -42,7 +42,6 @@ class GenericService extends CoreACService {
   /* **************************************************************************/
 
   get hasNavigationToolbar () { return this._value_('hasNavigationToolbar', false) }
-  get displayName () { return this._value_('displayName', super.displayName) }
   get usePageThemeAsColor () { return this._value_('usePageThemeAsColor', false) }
   get pageThemeColor () { return this._value_('pageThemeColor', undefined) }
 
