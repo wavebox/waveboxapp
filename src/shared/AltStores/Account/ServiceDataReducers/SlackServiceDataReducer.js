@@ -13,10 +13,11 @@ class SlackServiceDataReducer extends ServiceDataReducer {
 
   /**
   * Sets the unread info
+  * @param service: the parent service
   * @param serviceData: the service to update
   * @param unreadInfo: the unread info from the slack api channels: the channels to set
   */
-  static setSlackUnreadInfo (serviceData, unreadInfo) {
+  static setSlackUnreadInfo (service, serviceData, unreadInfo) {
     return serviceData.changeData({
       slackUnreadChannelInfo: unreadInfo.channels.reduce((acc, channel) => {
         acc[channel.id] = {
@@ -70,10 +71,11 @@ class SlackServiceDataReducer extends ServiceDataReducer {
 
   /**
   * Handles the RTM indicating the channel has been marked by the user
+  * @param service: the parent service
   * @param serviceData: the service to update
   * @param rtmEvent: the event that came through from the rtm channel
   */
-  static rtmChannelMarked (serviceData, rtmEvent) {
+  static rtmChannelMarked (service, serviceData, rtmEvent) {
     if (serviceData.slackUnreadChannelInfo[rtmEvent.channel]) {
       return serviceData.changeDataWithChangeset({
         slackUnreadChannelInfo: {
@@ -90,10 +92,11 @@ class SlackServiceDataReducer extends ServiceDataReducer {
 
   /**
   * Handles the RTM indicating the group has been marked by the user
+  * @param service: the parent service
   * @param serviceData: the serviceData to update
   * @param rtmEvent: the event that came through from the rtm group
   */
-  static rtmGroupMarked (serviceData, rtmEvent) {
+  static rtmGroupMarked (service, serviceData, rtmEvent) {
     if (serviceData.slackUnreadGroupInfo[rtmEvent.channel]) {
       return serviceData.changeDataWithChangeset({
         slackUnreadGroupInfo: {
@@ -110,10 +113,11 @@ class SlackServiceDataReducer extends ServiceDataReducer {
 
   /**
   * Handles the RTM indicating the mpim has been marked by the user
+  * @param service: the parent service
   * @param serviceData: the serviceData to update
   * @param rtmEvent: the event that came through from the rtm group
   */
-  static rtmMpimMarked (serviceData, rtmEvent) {
+  static rtmMpimMarked (service, serviceData, rtmEvent) {
     if (serviceData.slackUnreadMPIMInfo[rtmEvent.channel]) {
       return serviceData.changeDataWithChangeset({
         slackUnreadMPIMInfo: {
@@ -130,10 +134,11 @@ class SlackServiceDataReducer extends ServiceDataReducer {
 
   /**
   * Handles the RTM indicating the IM has been marked by the user
+  * @param service: the parent service
   * @param serviceData: the serviceData to update
   * @param rtmEvent: the event that came through from the rtm IM
   */
-  static rtmImMarked (serviceData, rtmEvent) {
+  static rtmImMarked (service, serviceData, rtmEvent) {
     if (serviceData.slackUnreadIMInfo[rtmEvent.channel]) {
       return serviceData.changeDataWithChangeset({
         slackUnreadIMInfo: {
@@ -153,10 +158,11 @@ class SlackServiceDataReducer extends ServiceDataReducer {
 
   /**
   * Handles the RTM indicating a new message was sent
+  * @param service: the parent service
   * @param serviceData: the serviceData to update
   * @param rtmEvent: the event that came through from the rtm
   */
-  static rtmMessage (serviceData, rtmEvent) {
+  static rtmMessage (service, serviceData, rtmEvent) {
     /*if (mailbox.hasSelfOverview) {
       if (mailbox.selfOverview.id === rtmEvent.user) {
         return undefined // We created the message, nothing to do
@@ -176,10 +182,11 @@ class SlackServiceDataReducer extends ServiceDataReducer {
 
   /**
   * Handles the RTM indicating a new channel message was sent
+  * @param service: the parent service
   * @param serviceData: the service to update
   * @param rtmEvent: the event that came through from the rtm
   */
-  static rtmChannelMessage (serviceData, rtmEvent) {
+  static rtmChannelMessage (service, serviceData, rtmEvent) {
     const channelInfo = serviceData.slackUnreadChannelInfo[rtmEvent.channel]
     if (channelInfo) {
       //const userMentioned = (rtmEvent.text || '').indexOf(`<@${mailbox.authUserId}>`) !== -1
@@ -199,10 +206,11 @@ class SlackServiceDataReducer extends ServiceDataReducer {
 
   /**
   * Handles the RTM indicating a new group message was sent
+  * @param service: the parent service
   * @param serviceData: the service to update
   * @param rtmEvent: the event that came through from the rtm
   */
-  static rtmGroupMessage (serviceData, rtmEvent) {
+  static rtmGroupMessage (service, serviceData, rtmEvent) {
     if (serviceData.slackUnreadGroupInfo[rtmEvent.channel]) { // Group
       const groupInfo = serviceData.slackUnreadGroupInfo[rtmEvent.channel]
       //const userMentioned = rtmEvent.text.indexOf(`<@${mailbox.authUserId}>`) !== -1
@@ -234,10 +242,11 @@ class SlackServiceDataReducer extends ServiceDataReducer {
 
   /**
   * Handles the RTM indicating a new IM message was sent
+  * @param service: the parent service
   * @param serviceData: the service to update
   * @param rtmEvent: the event that came through from the rtm
   */
-  static rtmImMessage (serviceData, rtmEvent) {
+  static rtmImMessage (service, serviceData, rtmEvent) {
     const imInfo = serviceData.slackUnreadIMInfo[rtmEvent.channel]
     if (imInfo) {
       return serviceData.changeDataWithChangeset({

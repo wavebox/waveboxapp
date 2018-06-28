@@ -711,7 +711,7 @@ class CoreAccountStore extends RemoteStore {
     }, new Map())
 
     // Active & Sleep
-    this._activeServiceId_ = activeService
+    this._activeServiceId_ = activeService || this.firstServiceId() // Make sure we glue the value if it's not defined
     this._sleepingServices_ = Object.keys(sleepingServices).reduce((acc, k) => {
       acc.set(k, sleepingServices[k])
       return acc

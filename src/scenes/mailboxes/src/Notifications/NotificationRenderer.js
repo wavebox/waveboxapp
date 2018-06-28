@@ -55,7 +55,7 @@ export default class NotificationRenderer {
   * @param clickData={}: the data to provide to the click handler
   */
   static presentHtml5MailboxNotification (mailboxId, serviceId, title, html5Options = {}, clickHandler = undefined, clickData = {}) {
-    const { enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceId, mailboxStore.getState(), settingsStore.getState())
+    const { enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceId, accountStore.getState(), settingsStore.getState())
     if (!enabled) { return }
 
     this.presentNotification(title, html5Options, clickHandler, clickData)

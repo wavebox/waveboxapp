@@ -2,9 +2,13 @@ import SERVICE_TYPES from './ServiceTypes'
 import CoreACServiceData from './CoreACServiceData'
 
 import TrelloService from './Trello/TrelloService'
+import TrelloServiceData from './Trello/TrelloServiceData'
 import SlackService from './Slack/SlackService'
+import SlackServiceData from './Slack/SlackServiceData'
 import GenericService from './Generic/GenericService'
+import GenericServiceData from './Generic/GenericServiceData'
 import ContainerService from './Container/ContainerService'
+import ContainerServiceData from './Container/ContainerServiceData'
 
 // Google
 import GoogleAdminService from './Google/GoogleAdminService'
@@ -51,10 +55,10 @@ import MicrosoftTodoService from './Microsoft/MicrosoftTodoService'
 import MicrosoftWordService from './Microsoft/MicrosoftWordService'
 
 const MAPPING = {
-  [SERVICE_TYPES.CONTAINER]: [ContainerService],
-  [SERVICE_TYPES.GENERIC]: [GenericService],
-  [SERVICE_TYPES.SLACK]: [SlackService],
-  [SERVICE_TYPES.TRELLO]: [TrelloService],
+  [SERVICE_TYPES.CONTAINER]: [ContainerService, ContainerServiceData],
+  [SERVICE_TYPES.GENERIC]: [GenericService, GenericServiceData],
+  [SERVICE_TYPES.SLACK]: [SlackService, SlackServiceData],
+  [SERVICE_TYPES.TRELLO]: [TrelloService, TrelloServiceData],
 
   // Google
   [SERVICE_TYPES.GOOGLE_MAIL]: [GoogleMailService, GoogleMailServiceData],

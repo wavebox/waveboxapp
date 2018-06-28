@@ -152,11 +152,16 @@ class SidelistItemSingleService extends React.Component {
     if (!mailbox || !service) { return false }
 
     const rootColor = mailbox.color || service.color || '#FFFFFF'
-    const avatarBorderColor = isServiceActive || isHovering ? (
-      rootColor
-    ) : (
-      Color(rootColor).lighten(0.4).rgb().string()
-    )
+    let avatarBorderColor
+    try {
+      avatarBorderColor = isServiceActive || isHovering ? (
+        rootColor
+      ) : (
+        Color(rootColor).lighten(0.4).rgb().string()
+      )
+    } catch (ex) {
+      avatarBorderColor = rootColor
+    }
 
     return (
       <SidelistMailboxContainer

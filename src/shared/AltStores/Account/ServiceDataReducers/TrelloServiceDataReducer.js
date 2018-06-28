@@ -13,10 +13,11 @@ class TrelloServiceDataReducer extends ServiceDataReducer {
 
   /**
   * Sets the unread notifications
+  * @param service: the parent service
   * @param serviceData: the service to update
   * @param notifications: the updated notifications
   */
-  static setUnreadNotifications (serviceData, notifications) {
+  static setUnreadNotifications (service, serviceData, notifications) {
     return serviceData.changeData({
       unreadNotifications: notifications.filter((notif) => {
         return notif.unread === true || notif.unread === undefined

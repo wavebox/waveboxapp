@@ -70,7 +70,7 @@ class AccountStore extends CoreAccountStore {
       // Active
       handleChangeActiveMailbox: actions.CHANGE_ACTIVE_MAILBOX,
       handleChangeActiveMailboxIndex: actions.CHANGE_ACTIVE_MAILBOX_INDEX,
-       handleChangeActiveMailboxToPrev: actions.CHANGE_ACTIVE_MAILBOX_TO_PREV,
+      handleChangeActiveMailboxToPrev: actions.CHANGE_ACTIVE_MAILBOX_TO_PREV,
       handleChangeActiveMailboxToNext: actions.CHANGE_ACTIVE_MAILBOX_TO_NEXT,
       handleChangeActiveService: actions.CHANGE_ACTIVE_SERVICE,
       handleChangeActiveServiceIndex: actions.CHANGE_ACTIVE_SERVICE_INDEX,
@@ -99,6 +99,7 @@ class AccountStore extends CoreAccountStore {
         acc[id] = this._mailboxes_.get(id).cloneData()
         return acc
       }, {}),
+      activeService: this._activeServiceId_,
       services: Array.from(this._services_.keys()).reduce((acc, id) => {
         acc[id] = this._services_.get(id).cloneData()
         return acc
@@ -570,8 +571,10 @@ class AccountStore extends CoreAccountStore {
     this._sleepingQueue_.delete(id)
 
     // Sleep
-    this._sleepingServices_.set(id, false)
-    this.dispatchToRemote('remoteSetSleep', [id, false])
+    if (this._sleepingServices_.get(id) !== false) {
+      this._sleepingServices_.set(id, false)
+      this.dispatchToRemote('remoteSetSleep', [id, false])
+    }
   }
 
   /**
@@ -718,12 +721,16 @@ class AccountStore extends CoreAccountStore {
     if (!this.hasService(id)) { this.preventDefault(); return }
 
     // Update sleep
-    if (this.activeServiceId()) {
-      this.scheduleServiceSleep(this.activeServiceId())
-      this.clearServiceSleep(id)
+    const prevActiveId = this.activeServiceId()
+    if (prevActiveId) {
+      // Make sure you explicitly clear sleep in case sleep was implied previously,
+      // this normally happens when the app starts and we don't have an active service
+      this.clearServiceSleep(prevActiveId)
+      this.scheduleServiceSleep(prevActiveId)
     }
 
     // Change
+    this.clearServiceSleep(id)
     this.saveActiveServiceId(id)
     actions.reduceServiceData.defer(id, ServiceDataReducer.mergeChangesetOnActive)
   }

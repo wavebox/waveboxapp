@@ -13,17 +13,19 @@ class GenericServiceDataReducer extends ServiceDataReducer {
 
   /**
   * Sets that a notification was presented
+  * @param service: the parent service
   * @param serviceData: the service data to update
   */
-  static notificationPresented (serviceData) {
+  static notificationPresented (service, serviceData) {
     return serviceData.changeData({ lastUnseenNotificationTime: new Date().getTime() })
   }
 
   /**
   * Clears the unseen notifications
+  * @param service: the parent service
   * @param serviceData: the service data to update
   */
-  static clearUnseenNotifications (serviceData) {
+  static clearUnseenNotifications (service, serviceData) {
     return serviceData.changeData({ lastUnseenNotificationTime: null })
   }
 }
