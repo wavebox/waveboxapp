@@ -2,7 +2,7 @@
 
 const logger = {
   get: (target, name) => {
-    let names = []
+    let names = ['@@toStringTag']
     let insp = target.constructor.prototype
     while (insp !== null) {
       names = names.concat(Object.getOwnPropertyNames(insp))

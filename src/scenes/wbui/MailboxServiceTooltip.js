@@ -30,7 +30,7 @@ const styles = {
     marginRight: 6
   }
 }
-
+//TODO depricate. I've moved into components
 @withStyles(styles)
 class MailboxServiceTooltip extends React.Component {
   /* **************************************************************************/

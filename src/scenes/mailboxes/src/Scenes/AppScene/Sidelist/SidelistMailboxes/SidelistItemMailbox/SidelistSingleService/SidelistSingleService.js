@@ -84,6 +84,7 @@ class SidelistItemSingleService extends React.Component {
       avatar: accountState.getMailboxAvatarConfig(mailboxId),
       isServiceActive: accountState.activeServiceId() === serviceId,
       isServiceSleeping: accountState.isServiceSleeping(serviceId),
+      isAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId),
       ...(service && serviceData ? {
         unreadCount: serviceData.getUnreadCount(service),
         hasUnreadActivity: serviceData.getHasUnreadActivity(service)
@@ -109,16 +110,6 @@ class SidelistItemSingleService extends React.Component {
     } else {
       accountActions.changeActiveMailbox(this.props.mailboxId)
     }
-  }
-
-  /**
-  * Handles opening a service
-  * @param evt: the event that fired
-  * @param serviceId: the service to open
-  */
-  handleOpenService = (evt) => {
-    evt.preventDefault()
-    accountActions.changeActiveService(this.state.service.id)
   }
 
   /**
@@ -154,6 +145,7 @@ class SidelistItemSingleService extends React.Component {
       isHovering,
       isServiceActive,
       isServiceSleeping,
+      isAuthInvalid,
       avatar
     } = this.state
 
@@ -170,6 +162,7 @@ class SidelistItemSingleService extends React.Component {
       <SidelistMailboxContainer
         id={`ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`}
         onContextMenu={this.handleOpenPopover}
+        onClick={this.handleClick}
         onMouseEnter={() => this.setState({ isHovering: true })}
         onMouseLeave={() => this.setState({ isHovering: false })}
         {...passProps}>
@@ -181,7 +174,7 @@ class SidelistItemSingleService extends React.Component {
           showUnreadActivityBadge={service.showBadgeActivity}
           hasUnreadActivity={hasUnreadActivity}
           color={service.badgeColor}
-          isAuthInvalid={false /*TODO*/}>
+          isAuthInvalid={isAuthInvalid}>
           {isServiceActive ? (<SidelistActiveIndicator color={rootColor} />) : undefined}
           <SidelistMailboxAvatar
             avatar={avatar}

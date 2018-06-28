@@ -138,6 +138,18 @@ class CoreAccountStore extends RemoteStore {
       return this.getMailboxAuthsForMailbox(mailboxId).map((auth) => auth.id)
     }
 
+    /**
+    * Looks to see if am auth is explicitly invalid for a service. If no auth exists
+    * this will return false
+    * @param serviceId: the id of the service
+    * @return true if it's invalid, false if not or not found
+    */
+    this.isMailboxAuthInvalidForServiceId = (serviceId) => {
+      const auth = this.getMailboxAuthForServiceId(serviceId)
+      if (!auth) { return false }
+      return auth.isAuthInvalid
+    }
+
     /* ****************************************/
     // Services
     /* ****************************************/
@@ -462,11 +474,11 @@ class CoreAccountStore extends RemoteStore {
     */
     this.getMailboxAvatarConfig = (mailboxId) => {
       const mailbox = this.getMailbox(mailboxId)
-      const avatarConfig = mailbox ? (
+      const avatarConfig = new ACMailboxAvatar(mailbox ? (
         ACMailboxAvatar.autocreate(mailbox, this._services_, this._avatars_)
       ) : (
-        new ACMailboxAvatar({})
-      )
+        {}
+      ))
 
       if (this._mailboxAvatarCache_.has(mailboxId)) {
         if (this._mailboxAvatarCache_.get(mailboxId).hashId !== avatarConfig.hashId) {

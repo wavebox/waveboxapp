@@ -719,7 +719,7 @@ class AccountStore extends CoreAccountStore {
 
     // Update sleep
     if (this.activeServiceId()) {
-      this.scheduleSericeSleep(this.activeServiceId())
+      this.scheduleServiceSleep(this.activeServiceId())
       this.clearServiceSleep(id)
     }
 

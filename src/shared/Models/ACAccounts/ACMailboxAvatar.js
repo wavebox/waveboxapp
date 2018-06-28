@@ -80,21 +80,30 @@ class ACMailboxCircle extends Model {
       memberHashes.add(mailbox.versionedId)
       return { id: avatarMap.get(mailbox.avatarId) }
     } else {
-      const service = services.find((service) => {
+      // First get a service with a custom avatar
+      const serviceWithCustom = services.find((service) => {
         return service.hasAvatarId || service.hasServiceAvatarURL || service.hasServiceLocalAvatarId
       })
-
-      if (service) {
-        if (service.hasAvatarId) {
-          return { id: avatarMap.get(service.avatarId) }
-        } else if (service.hasServiceLocalAvatarId) {
-          return { id: avatarMap.get(service.serviceLocalAvatarId) }
+      if (serviceWithCustom) {
+        if (serviceWithCustom.hasAvatarId) {
+          return { id: avatarMap.get(serviceWithCustom.avatarId) }
+        } else if (serviceWithCustom.hasServiceLocalAvatarId) {
+          return { id: avatarMap.get(serviceWithCustom.serviceLocalAvatarId) }
         } else {
-          return { uri: service.serviceAvatarURL }
+          return { uri: serviceWithCustom.serviceAvatarURL }
         }
-      } else {
-        return undefined
       }
+
+      // Then get a service with the standard icon
+      const serviceWithStandard = services.find((service) => {
+        return !!service.humanizedLogo
+      })
+      if (serviceWithStandard) {
+        return { uri: serviceWithStandard.humanizedLogo }
+      }
+
+      // Finally just fail
+      return undefined
     }
   }
 
@@ -122,16 +131,17 @@ class ACMailboxCircle extends Model {
   */
   resolveAvatar (resolver) {
     if (!this.hasAvatar) { return undefined }
-    if (this.rawAvatar.uri) {
-      if (this.rawAvatar.startsWith('http://') || this.rawAvatar.startsWith('https://')) {
-        return this.rawAvatar.uri
+    const raw = this.rawAvatar
+    if (raw.uri) {
+      if (raw.uri.startsWith('http://') || raw.uri.startsWith('https://')) {
+        return raw.uri
       } else {
-        return resolver ? resolver(this.rawAvatar.uri) : this.rawAvatar.uri
+        return resolver ? resolver(raw.uri) : raw.uri
       }
-    } else if (this.rawAvatar.id) {
-      return this.rawAvatar.id
+    } else if (raw.id) {
+      return raw.id
     } else {
-      return this.rawAvatar
+      return raw
     }
   }
 }

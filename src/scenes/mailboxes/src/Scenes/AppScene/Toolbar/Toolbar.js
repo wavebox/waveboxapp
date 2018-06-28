@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { accountStore } from 'stores/account'
-import { userStore } from 'stores/user'
 import { settingsStore } from 'stores/settings'
 import { crextensionStore } from 'stores/crextension'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -48,14 +47,13 @@ class Toolbar extends React.Component {
   /**
   * Works out if the user has services in the toolbar
   * @param accountState=autoget: the mailbox state
-  * @param userState=autoget: the user state
   * @return true if there are services, false otherwise
   */
-  static hasServicesInToolbar (accountState = accountStore.getState(), userState = userStore.getState()) {
+  static hasServicesInToolbar (accountState = accountStore.getState()) {
     const mailbox = accountState.activeMailbox()
     if (!mailbox) { return false }
+    if (!mailbox.hasMultipleServices) { return false }
     if (mailbox.toolbarStartServices.length === 0 && mailbox.toolbarEndServices.length === 0) { return false }
-    if (!userState.user.hasServices) { return false }
 
     return true
   }
@@ -87,14 +85,12 @@ class Toolbar extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    userStore.listen(this.userUpdated)
     accountStore.listen(this.accountUpdated)
     settingsStore.listen(this.settingsUpdated)
     crextensionStore.listen(this.crextensionUpdated)
   }
 
   componentWillUnmount () {
-    userStore.unlisten(this.userUpdated)
     accountStore.unlisten(this.accountUpdated)
     settingsStore.unlisten(this.settingsUpdated)
     crextensionStore.unlisten(this.crextensionUpdated)
@@ -107,12 +103,11 @@ class Toolbar extends React.Component {
   state = (() => {
     const accountState = accountStore.getState()
     const settingsState = settingsStore.getState()
-    const userState = userStore.getState()
     const crextensionState = crextensionStore.getState()
 
     const mailbox = accountState.activeMailbox()
     return {
-      hasServicesInToolbar: Toolbar.hasServicesInToolbar(accountState, userState),
+      hasServicesInToolbar: Toolbar.hasServicesInToolbar(accountState),
       serviceId: accountState.activeServiceId(),
       ...(mailbox ? {
         mailboxId: mailbox.id,
@@ -128,16 +123,10 @@ class Toolbar extends React.Component {
     }
   })()
 
-  userUpdated = (userState) => {
-    this.setState({
-      hasServicesInToolbar: Toolbar.hasServicesInToolbar(undefined, userState)
-    })
-  }
-
   accountUpdated = (accountState) => {
     const mailbox = accountState.activeMailbox()
     this.setState({
-      hasServicesInToolbar: Toolbar.hasServicesInToolbar(accountState, undefined),
+      hasServicesInToolbar: Toolbar.hasServicesInToolbar(accountState),
       hasNavigationInToolbar: Toolbar.hasNavigationInToolbar(accountState),
       ...(mailbox ? {
         mailboxId: mailbox.id,
