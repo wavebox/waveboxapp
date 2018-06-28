@@ -65,13 +65,18 @@ class ACMailbox extends CoreACModel {
       this.sidebarServices
     )
   }
+  get allServiceCount () {
+    return this.toolbarStartServices.length +
+    this.toolbarEndServices.length +
+    this.sidebarServices.length
+  }
   get hasServices () {
     return !!this.sidebarServices.length ||
       !!this.toolbarStartServices.length ||
       !!this.toolbarEndServices.length
   }
-  get hasMultipleServices () { return this.allServices.length > 1 }
-  get hasSingleService () { return this.allServices.length === 1 }
+  get hasMultipleServices () { return this.allServiceCount > 1 }
+  get hasSingleService () { return this.allServiceCount === 1 }
   get singleService () { return this.hasSingleService ? this.allServices[0] : undefined }
 
   /**

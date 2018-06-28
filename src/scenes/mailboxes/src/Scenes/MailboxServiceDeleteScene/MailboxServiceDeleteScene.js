@@ -3,8 +3,8 @@ import { Button, Dialog, DialogContent, DialogActions, DialogTitle } from '@mate
 import shallowCompare from 'react-addons-shallow-compare'
 import { accountStore, accountActions } from 'stores/account'
 import PropTypes from 'prop-types'
-//import MailboxAvatar from 'Components/Backed/MailboxAvatar'
-//import MailboxServiceIcon from 'wbui/MailboxServiceIcon'
+import MailboxAvatar from 'wbui/MailboxAvatar'
+import MailboxServiceIcon from 'wbui/MailboxServiceIcon'
 import Resolver from 'Runtime/Resolver'
 import { withStyles } from '@material-ui/core/styles'
 import red from '@material-ui/core/colors/red'
@@ -78,10 +78,13 @@ class MailboxServiceDeleteScene extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (this.props.match.params.mailboxId !== nextProps.match.params.mailboxId) {
-      const mailbox = accountStore.getState().getMailbox(nextProps.match.params.mailboxId)
+      const mailboxId = nextProps.match.params.mailboxId
+      const serviceId = nextProps.match.params.serviceId
+      const accountState = accountStore.getState()
       this.setState({
-        mailbox: mailbox,
-        //service: mailbox ? mailbox.serviceForType(this.props.match.params.serviceType) : null
+        mailbox: accountState.getMailbox(mailboxId),
+        service: accountState.getService(serviceId),
+        avatar: accountState.getMailboxAvatarConfig(mailboxId)
       })
     }
   }
@@ -91,20 +94,24 @@ class MailboxServiceDeleteScene extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
+    const mailboxId = this.props.match.params.mailboxId
+    const serviceId = this.props.match.params.serviceId
     const accountState = accountStore.getState()
-    const mailbox = accountState.getMailbox(this.props.match.params.mailboxId)
     return {
       open: true,
-      mailbox: mailbox,
-      //service: mailbox ? mailbox.serviceForType(this.props.match.params.serviceType) : null
+      mailbox: accountState.getMailbox(mailboxId),
+      service: accountState.getService(serviceId),
+      avatar: accountState.getMailboxAvatarConfig(mailboxId)
     }
   })()
 
   accountChanged = (accountState) => {
-    const mailbox = accountState.getMailbox(this.props.match.params.mailboxId)
+    const mailboxId = this.props.match.params.mailboxId
+    const serviceId = this.props.match.params.serviceId
     this.setState({
-      mailbox: mailbox,
-      //service: mailbox ? mailbox.serviceForType(this.props.match.params.serviceType) : null
+      mailbox: accountState.getMailbox(mailboxId),
+      service: accountState.getService(serviceId),
+      avatar: accountState.getMailboxAvatarConfig(mailboxId)
     })
   }
 
@@ -142,7 +149,7 @@ class MailboxServiceDeleteScene extends React.Component {
 
   render () {
     const { classes } = this.props
-    const { open, mailbox, service } = this.state
+    const { open, mailbox, service, avatar } = this.state
     if (!mailbox || !service) { return false }
 
     return (
@@ -152,13 +159,14 @@ class MailboxServiceDeleteScene extends React.Component {
         onClose={this.handleClose}>
         <DialogTitle>Delete Service</DialogTitle>
         <DialogContent className={classes.dialogContent}>
-          {/*<p className={classes.message}>
-            {`Are you sure you want to delete ${service.humanizedType} from this account?`}
+          <p className={classes.message}>
+            {`Are you sure you want to delete ${service.displayName} from this account?`}
           </p>
           <div className={classes.avatarContainer}>
             <div className={classes.compositeAvatar}>
               <MailboxAvatar
-                mailboxId={mailbox.id}
+                avatar={avatar}
+                resolver={(i) => Resolver.image(i)}
                 size={45}
                 className={classes.avatar} />
               <MailboxServiceIcon
@@ -168,9 +176,9 @@ class MailboxServiceDeleteScene extends React.Component {
                 size={32} />
             </div>
             <div className={classes.serviceName}>
-              {`${service.humanizedType} : ${mailbox.displayName}`}
+              {service.displayName}
             </div>
-    </div>*/}
+          </div>
         </DialogContent>
         <DialogActions>
           <Button className={classes.cancelButton} onClick={this.handleClose}>

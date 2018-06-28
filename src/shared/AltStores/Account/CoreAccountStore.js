@@ -200,14 +200,22 @@ class CoreAccountStore extends RemoteStore {
 
     /**
     * @param mailboxId: the id of the mailbox
-    * @param type: the service type
-    * @return an array of services with the given type in the given mailbox
+    * @return an array of services referenced in the mailbox
     */
-    this.mailboxServicesOfType = (mailboxId, type) => {
+    this.mailboxServices = (mailboxId) => {
       const mailbox = this.getMailbox(mailboxId)
       if (!mailbox) { return [] }
       return mailbox.allServices
         .map((serviceId) => this.getService(serviceId))
+    }
+
+    /**
+    * @param mailboxId: the id of the mailbox
+    * @param type: the service type
+    * @return an array of services with the given type in the given mailbox
+    */
+    this.mailboxServicesOfType = (mailboxId, type) => {
+      return this.mailboxServices(mailboxId)
         .filter((service) => service && service.type === type)
     }
 
