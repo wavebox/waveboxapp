@@ -87,7 +87,6 @@ export default class MailboxServicePopover extends React.Component {
       mailbox: mailbox,
       service: service,
       userHasSleepable: user.hasSleepable,
-      userHasServices: user.hasServices,
       isServiceSleeping: accountState.isServiceSleeping(serviceId),
       isServiceActive: accountState.isServiceActive(serviceId)
     }
@@ -109,8 +108,7 @@ export default class MailboxServicePopover extends React.Component {
 
   userChanged = (userState) => {
     this.setState({
-      userHasSleepable: userState.user.hasSleepable,
-      userHasServices: userState.user.hasServices
+      userHasSleepable: userState.user.hasSleepable
     })
   }
 
@@ -254,7 +252,7 @@ export default class MailboxServicePopover extends React.Component {
   * @return array of jsx elements
   */
   renderMenuItems () {
-    const { mailbox, userHasSleepable, userHasServices, isServiceSleeping, service } = this.state
+    const { mailbox, userHasSleepable, isServiceSleeping, service } = this.state
     const menuItems = []
 
     // Identification & Status
@@ -295,7 +293,7 @@ export default class MailboxServicePopover extends React.Component {
       }
     }
 
-    if (userHasSleepable && userHasServices && mailbox.hasMultipleServices) {
+    if (userHasSleepable && mailbox.hasMultipleServices) {
       const sleepableServices = mailbox.enabledServices.filter((s) => s.sleepable)
       if (sleepableServices.length > 1) {
         menuItems.push(
@@ -326,7 +324,7 @@ export default class MailboxServicePopover extends React.Component {
         <ListItemText inset primary='Resync' />
       </MenuItem>
     )
-    if (mailbox.supportsAuth) {
+    /*if (mailbox.supportsAuth) {
       const invalid = mailbox.isAuthenticationInvalid || !mailbox.hasAuth
       menuItems.push(
         <MenuItem key='reauthenticate' onClick={this.handleReauthenticate}>
@@ -340,7 +338,7 @@ export default class MailboxServicePopover extends React.Component {
           <ListItemText inset primary='Reauthenticate' style={{ color: red[600] }} />
         </MenuItem>
       )
-    }
+    }*/
     menuItems.push(<Divider key='div-actions' />)
 
     // Account Settings
@@ -363,7 +361,7 @@ export default class MailboxServicePopover extends React.Component {
       )
     }
     // Delete
-    if (userHasServices && mailbox.hasMultipleServices) {
+    if (mailbox.hasMultipleServices) {
       menuItems.push(
         <MenuItem key='delete' onClick={this.handleDeleteService}>
           <ListItemIcon>

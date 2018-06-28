@@ -37,6 +37,7 @@ class ACMailbox extends CoreACModel {
       id: id,
       changedTime: new Date().getTime(),
       displayName: displayName,
+      color: color,
       templateType: templateType
     }
   }
