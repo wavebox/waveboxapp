@@ -661,7 +661,7 @@ class MailboxWebView extends React.Component {
             ref={BROWSER_REF}
             id={`guest_${mailbox.id}_${service.type}`}
             preload={preloadScripts}
-            partition={'persist:' + mailbox.partition}
+            partition={mailbox.partition}
             src={restorableUrl || 'about:blank'}
             searchId={searchId}
             searchTerm={isSearching ? searchTerm : ''}

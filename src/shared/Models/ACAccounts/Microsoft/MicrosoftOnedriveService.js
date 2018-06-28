@@ -2,6 +2,27 @@ import MicrosoftService from './MicrosoftService'
 
 class MicrosoftOnedriveService extends MicrosoftService {
   /* **************************************************************************/
+  // Class : Types
+  /* **************************************************************************/
+
+  static get type () { return MicrosoftService.SERVICE_TYPES.MICROSOFT_ONEDRIVE }
+
+  /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'OneDrive' }
+  static get humanizedLogos () {
+    return [
+      'microsoft/logo_drive_32px.png',
+      'microsoft/logo_drive_48px.png',
+      'microsoft/logo_drive_64px.png',
+      'microsoft/logo_drive_96px.png',
+      'microsoft/logo_drive_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -14,21 +35,6 @@ class MicrosoftOnedriveService extends MicrosoftService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'OneDrive' }
-  get humanizedLogos () {
-    return [
-      'microsoft/logo_drive_32px.png',
-      'microsoft/logo_drive_48px.png',
-      'microsoft/logo_drive_64px.png',
-      'microsoft/logo_drive_96px.png',
-      'microsoft/logo_drive_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

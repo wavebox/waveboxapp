@@ -8,6 +8,22 @@ class SlackService extends CoreACService {
   static get type () { return CoreACService.SERVICE_TYPES.SLACK }
 
   /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Slack' }
+  static get humanizedLogos () {
+    return [
+      'slack/logo_32px.png',
+      'slack/logo_48px.png',
+      'slack/logo_64px.png',
+      'slack/logo_96px.png',
+      'slack/logo_128px.png'
+    ]
+  }
+  static get humanizedUnreadItemType () { return 'notification' }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -20,22 +36,6 @@ class SlackService extends CoreACService {
   get supportsSyncWhenSleeping () { return true }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return 'com.slack' }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Slack' }
-  get humanizedLogos () {
-    return [
-      'slack/logo_32px.png',
-      'slack/logo_48px.png',
-      'slack/logo_64px.png',
-      'slack/logo_96px.png',
-      'slack/logo_128px.png'
-    ]
-  }
-  get humanizedUnreadItemType () { return 'notification' }
 
   /* **************************************************************************/
   // Properties: Display

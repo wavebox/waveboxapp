@@ -8,6 +8,22 @@ class GooglePhotosService extends CoreACService {
   static get type () { return CoreACService.SERVICE_TYPES.GOOGLE_PHOTOS }
 
   /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Google Photos' }
+  static get humanizedTypeShort () { return 'Photos' }
+  static get humanizedLogos () {
+    return [
+      'google/logo_photos_32px.png',
+      'google/logo_photos_48px.png',
+      'google/logo_photos_64px.png',
+      'google/logo_photos_96px.png',
+      'google/logo_photos_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -20,22 +36,6 @@ class GooglePhotosService extends CoreACService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Google Photos' }
-  get humanizedTypeShort () { return 'Photos' }
-  get humanizedLogos () {
-    return [
-      'google/logo_photos_32px.png',
-      'google/logo_photos_48px.png',
-      'google/logo_photos_64px.png',
-      'google/logo_photos_96px.png',
-      'google/logo_photos_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

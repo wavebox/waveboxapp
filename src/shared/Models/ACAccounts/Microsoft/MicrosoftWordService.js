@@ -2,6 +2,27 @@ import MicrosoftService from './MicrosoftService'
 
 class MicrosoftWordService extends MicrosoftService {
   /* **************************************************************************/
+  // Class : Types
+  /* **************************************************************************/
+
+  static get type () { return MicrosoftService.SERVICE_TYPES.MICROSOFT_WORD }
+
+  /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Word' }
+  static get humanizedLogos () {
+    return [
+      'microsoft/logo_docs_32px.png',
+      'microsoft/logo_docs_48px.png',
+      'microsoft/logo_docs_64px.png',
+      'microsoft/logo_docs_96px.png',
+      'microsoft/logo_docs_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -14,21 +35,6 @@ class MicrosoftWordService extends MicrosoftService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Word' }
-  get humanizedLogos () {
-    return [
-      'microsoft/logo_docs_32px.png',
-      'microsoft/logo_docs_48px.png',
-      'microsoft/logo_docs_64px.png',
-      'microsoft/logo_docs_96px.png',
-      'microsoft/logo_docs_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

@@ -8,6 +8,21 @@ class GoogleYouTubeService extends CoreACService {
   static get type () { return CoreACService.SERVICE_TYPES.GOOGLE_YOUTUBE }
 
   /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'YouTube' }
+  static get humanizedLogos () {
+    return [
+      'google/logo_youtube_32px.png',
+      'google/logo_youtube_48px.png',
+      'google/logo_youtube_64px.png',
+      'google/logo_youtube_96px.png',
+      'google/logo_youtube_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -20,21 +35,6 @@ class GoogleYouTubeService extends CoreACService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'YouTube' }
-  get humanizedLogos () {
-    return [
-      'google/logo_youtube_32px.png',
-      'google/logo_youtube_48px.png',
-      'google/logo_youtube_64px.png',
-      'google/logo_youtube_96px.png',
-      'google/logo_youtube_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

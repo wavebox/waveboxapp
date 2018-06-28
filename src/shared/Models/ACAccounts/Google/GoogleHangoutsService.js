@@ -8,6 +8,23 @@ class GoogleHangoutsService extends CoreACService {
   static get type () { return CoreACService.SERVICE_TYPES.GOOGLE_HANGOUTS }
 
   /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Google Hangouts' }
+  static get humanizedTypeShort () { return 'Hangouts' }
+  static get humanizedLogos () {
+    return [
+      'google/logo_hangouts_32px.png',
+      'google/logo_hangouts_48px.png',
+      'google/logo_hangouts_64px.png',
+      'google/logo_hangouts_96px.png',
+      'google/logo_hangouts_128px.png'
+    ]
+  }
+  static get humanizedUnreadItemType () { return 'message' }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -20,23 +37,6 @@ class GoogleHangoutsService extends CoreACService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Google Hangouts' }
-  get humanizedTypeShort () { return 'Hangouts' }
-  get humanizedLogos () {
-    return [
-      'google/logo_hangouts_32px.png',
-      'google/logo_hangouts_48px.png',
-      'google/logo_hangouts_64px.png',
-      'google/logo_hangouts_96px.png',
-      'google/logo_hangouts_128px.png'
-    ]
-  }
-  get humanizedUnreadItemType () { return 'message' }
 
   /* **************************************************************************/
   // Properties: Behaviour

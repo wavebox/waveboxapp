@@ -72,38 +72,38 @@ export default class MailboxServicePopover extends React.Component {
   /* **************************************************************************/
 
   state = {
-    ...this.generateState(),
-    rendering: this.props.isOpen
+    ...this.generateAccountState(this.props),
+    rendering: this.props.isOpen,
+    userHasSleepable: userStore.getState().user.hasSleepable
   }
 
-  generateState (props = this.props) {
+  /**
+  * Generates the account state
+  * @param props: the props to use
+  * @param accountState=autoget: the account state to use
+  */
+  generateAccountState (props, accountState = accountStore.getState()) {
     const { mailboxId, serviceId } = props
-    const accountState = accountStore.getState()
     const mailbox = accountState.getMailbox(mailboxId)
     const service = accountState.getService(serviceId)
-    const user = userStore.getState().user
 
     return {
       mailbox: mailbox,
       service: service,
-      userHasSleepable: user.hasSleepable,
       isServiceSleeping: accountState.isServiceSleeping(serviceId),
-      isServiceActive: accountState.isServiceActive(serviceId)
+      isServiceActive: accountState.isServiceActive(serviceId),
+      ...(mailbox ? {
+        mailboxSleepableServiceCount: !!mailbox.allServices.reduce((acc, serviceId) => {
+          return acc + accountState.getService(serviceId).sleepable ? 1 : 0
+        }, 0)
+      } : {
+        mailboxSleepableServiceCount: 0
+      })
     }
   }
 
   accountChanged = (accountState) => {
-    const { mailboxId, serviceId } = this.props
-    const mailbox = accountState.getMailbox(mailboxId)
-    const service = accountState.getService(serviceId)
-
-    this.setState({
-      mailbox: mailbox,
-      service: service,
-      serviceSupportsSleeping: service ? service.sleepable : false,
-      isServiceSleeping: accountState.isServiceSleeping(serviceId),
-      isServiceActive: accountState.isServiceActive(serviceId)
-    })
+    this.setState(this.generateAccountState(this.props, accountState))
   }
 
   userChanged = (userState) => {
@@ -252,7 +252,13 @@ export default class MailboxServicePopover extends React.Component {
   * @return array of jsx elements
   */
   renderMenuItems () {
-    const { mailbox, userHasSleepable, isServiceSleeping, service } = this.state
+    const {
+      mailbox,
+      userHasSleepable,
+      isServiceSleeping,
+      mailboxSleepableServiceCount,
+      service
+    } = this.state
     const menuItems = []
 
     // Identification & Status
@@ -294,14 +300,13 @@ export default class MailboxServicePopover extends React.Component {
     }
 
     if (userHasSleepable && mailbox.hasMultipleServices) {
-      const sleepableServices = mailbox.enabledServices.filter((s) => s.sleepable)
-      if (sleepableServices.length > 1) {
+      if (mailboxSleepableServiceCount > 1) {
         menuItems.push(
           <MenuItem key='sleep_all' onClick={this.handleSleepAllServices}>
             <ListItemIcon>
               <SleepAllIcon />
             </ListItemIcon>
-            <ListItemText inset primary={`Sleep ${sleepableServices.length} Services`} />
+            <ListItemText inset primary={`Sleep ${mailboxSleepableServiceCount} Services`} />
           </MenuItem>
         )
       }
@@ -375,7 +380,7 @@ export default class MailboxServicePopover extends React.Component {
           <ListItemIcon>
             <DeleteAllIcon />
           </ListItemIcon>
-          <ListItemText inset primary={`Delete Account (${mailbox.enabledServices.length} services)`} />//me
+          <ListItemText inset primary={`Delete Account (${mailbox.allServiceCount} services)`} />
         </MenuItem>
       )
     } else {

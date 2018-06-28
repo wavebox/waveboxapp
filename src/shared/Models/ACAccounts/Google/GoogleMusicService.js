@@ -8,6 +8,22 @@ class GoogleMusicService extends CoreACService {
   static get type () { return CoreACService.SERVICE_TYPES.GOOGLE_MUSIC }
 
   /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Google Play Music' }
+  static get humanizedTypeShort () { return 'Music' }
+  static get humanizedLogos () {
+    return [
+      'google/logo_music_32px.png',
+      'google/logo_music_48px.png',
+      'google/logo_music_64px.png',
+      'google/logo_music_96px.png',
+      'google/logo_music_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Class: Creation
   /* **************************************************************************/
 
@@ -34,22 +50,6 @@ class GoogleMusicService extends CoreACService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Google Play Music' }
-  get humanizedTypeShort () { return 'Music' }
-  get humanizedLogos () {
-    return [
-      'google/logo_music_32px.png',
-      'google/logo_music_48px.png',
-      'google/logo_music_64px.png',
-      'google/logo_music_96px.png',
-      'google/logo_music_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

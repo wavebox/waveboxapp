@@ -8,6 +8,22 @@ class GenericService extends CoreACService {
   static get type () { return CoreACService.SERVICE_TYPES.GENERIC }
 
   /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Weblink' }
+  static get humanizedLogos () {
+    return [
+      'generic/logo_32px.png',
+      'generic/logo_48px.png',
+      'generic/logo_64px.png',
+      'generic/logo_96px.png',
+      'generic/logo_128px.png'
+    ]
+  }
+  static get humanizedUnreadItemType () { return 'notification' }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -20,22 +36,6 @@ class GenericService extends CoreACService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return this._value_('supportsWBGAPI', false) }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Weblink' }
-  get humanizedLogos () {
-    return [
-      'generic/logo_32px.png',
-      'generic/logo_48px.png',
-      'generic/logo_64px.png',
-      'generic/logo_96px.png',
-      'generic/logo_128px.png'
-    ]
-  }
-  get humanizedUnreadItemType () { return 'notification' }
 
   /* **************************************************************************/
   // Properties: Display

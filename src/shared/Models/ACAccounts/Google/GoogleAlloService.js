@@ -8,6 +8,22 @@ class GoogleAlloService extends CoreACService {
   static get type () { return CoreACService.SERVICE_TYPES.GOOGLE_ALLO }
 
   /* **************************************************************************/
+  // Properties: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Google Allo' }
+  static get humanizedTypeShort () { return 'Allo' }
+  static get humanizedLogos () {
+    return [
+      'google/logo_allo_32px.png',
+      'google/logo_allo_48px.png',
+      'google/logo_allo_64px.png',
+      'google/logo_allo_96px.png',
+      'google/logo_allo_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Class: Creation
   /* **************************************************************************/
 
@@ -34,22 +50,6 @@ class GoogleAlloService extends CoreACService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Google Allo' }
-  get humanizedTypeShort () { return 'Allo' }
-  get humanizedLogos () {
-    return [
-      'google/logo_allo_32px.png',
-      'google/logo_allo_48px.png',
-      'google/logo_allo_64px.png',
-      'google/logo_allo_96px.png',
-      'google/logo_allo_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

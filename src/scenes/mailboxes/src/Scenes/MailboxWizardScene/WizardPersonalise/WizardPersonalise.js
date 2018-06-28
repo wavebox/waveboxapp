@@ -276,7 +276,6 @@ class WizardPersonalise extends React.Component {
               className={classes.colorPicker}
               colors={templateColors}
               accessMode={accessMode}
-              mailboxDefaultColor={color}
               selectedColor={color}
               onColorPicked={(color) => this.setState({ color: color })} />
           </div>

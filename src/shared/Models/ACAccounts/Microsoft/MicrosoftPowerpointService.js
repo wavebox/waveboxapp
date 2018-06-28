@@ -2,6 +2,27 @@ import MicrosoftService from './MicrosoftService'
 
 class MicrosoftPowerpointService extends MicrosoftService {
   /* **************************************************************************/
+  // Class : Types
+  /* **************************************************************************/
+
+  static get type () { return MicrosoftService.SERVICE_TYPES.MICROSOFT_POWERPOINT }
+
+  /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'PowerPoint' }
+  static get humanizedLogos () {
+    return [
+      'microsoft/logo_slides_32px.png',
+      'microsoft/logo_slides_48px.png',
+      'microsoft/logo_slides_64px.png',
+      'microsoft/logo_slides_96px.png',
+      'microsoft/logo_slides_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -14,21 +35,6 @@ class MicrosoftPowerpointService extends MicrosoftService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'PowerPoint' }
-  get humanizedLogos () {
-    return [
-      'microsoft/logo_slides_32px.png',
-      'microsoft/logo_slides_48px.png',
-      'microsoft/logo_slides_64px.png',
-      'microsoft/logo_slides_96px.png',
-      'microsoft/logo_slides_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

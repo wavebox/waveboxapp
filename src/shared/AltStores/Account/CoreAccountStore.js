@@ -591,6 +591,26 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /**
+    * @param mailboxId: the id of the mailbox to get the unread activity for
+    * @return true if there is unread activity for the mailbox and user restriction
+    */
+    this.userUnreadActivityForMailbox = (mailboxId) => {
+      const mailbox = this.getMailbox(mailboxId)
+      if (!mailbox) { return false }
+      const unrestrictedServiceSet = new Set(this.unrestrictedServices().map((s) => s.id))
+
+      return !!mailbox.allServices.find((serviceId) => {
+        if (unrestrictedServiceSet.has(serviceId)) {
+          const service = this.getService(serviceId)
+          const serviceData = this.getServiceData(serviceId)
+          return serviceData.getHasUnreadActivity(service)
+        } else {
+          return false
+        }
+      })
+    }
+
+    /**
     * @return a list of tray messages for the users restriction
     */
     this.userTrayMessages = () => {

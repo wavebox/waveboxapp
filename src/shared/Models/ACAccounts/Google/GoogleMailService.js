@@ -8,12 +8,12 @@ class GoogleMailService extends CoreGoogleMailService {
   static get type () { return CoreGoogleMailService.SERVICE_TYPES.GOOGLE_MAIL }
 
   /* **************************************************************************/
-  // Properties: Humanized
+  // Class: Humanized
   /* **************************************************************************/
 
-  get humanizedType () { return 'Gmail' }
-  get humanizedTypeShort () { return 'Gmail' }
-  get humanizedLogos () {
+  static get humanizedType () { return 'Gmail' }
+  static get humanizedTypeShort () { return 'Gmail' }
+  static get humanizedLogos () {
     return [
       'google/logo_gmail_32px.png',
       'google/logo_gmail_48px.png',

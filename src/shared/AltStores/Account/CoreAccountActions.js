@@ -123,13 +123,12 @@ class CoreAccountActions extends RemoteActions {
 
   /**
   * Creates a new auth
-  * @param id: the id of the auth
   * @param data: the data to create it with
   */
   createAuth (...args) {
     if (process.type === 'browser') {
-      const [id, data] = args
-      return { id, data }
+      const [data] = args
+      return { data }
     } else if (process.type === 'renderer') {
       return this.remoteDispatch('createAuth', args)
     }

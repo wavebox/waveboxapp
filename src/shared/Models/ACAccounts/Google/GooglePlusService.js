@@ -8,6 +8,22 @@ class GooglePlusService extends CoreACService {
   static get type () { return CoreACService.SERVICE_TYPES.GOOGLE_PLUS }
 
   /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Google Plus' }
+  static get humanizedTypeShort () { return 'Google+' }
+  static get humanizedLogos () {
+    return [
+      'google/logo_plus_32px.png',
+      'google/logo_plus_48px.png',
+      'google/logo_plus_64px.png',
+      'google/logo_plus_96px.png',
+      'google/logo_plus_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -20,22 +36,6 @@ class GooglePlusService extends CoreACService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Google Plus' }
-  get humanizedTypeShort () { return 'Google+' }
-  get humanizedLogos () {
-    return [
-      'google/logo_plus_32px.png',
-      'google/logo_plus_48px.png',
-      'google/logo_plus_64px.png',
-      'google/logo_plus_96px.png',
-      'google/logo_plus_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

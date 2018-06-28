@@ -319,7 +319,7 @@ class AccountStore extends CoreAccountStore {
 
   handleChangeMailboxIndex (payload) {
     const next = super.handleChangeMailboxIndex(payload)
-    this.saveIndex(next)
+    this.saveMailboxIndex(next)
     return next
   }
 
@@ -363,9 +363,9 @@ class AccountStore extends CoreAccountStore {
   // Auth
   /* **************************************************************************/
 
-  handleCreateAuth ({ id, data }) {
+  handleCreateAuth ({ data }) {
     this.saveMailboxAuth(
-      id || CoreACAuth.composeId(data.parentId, data.namespace),
+      CoreACAuth.composeId(data.parentId, data.namespace),
       data
     )
   }

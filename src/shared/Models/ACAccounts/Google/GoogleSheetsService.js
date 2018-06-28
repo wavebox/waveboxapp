@@ -8,6 +8,22 @@ class GoogleSheetsService extends CoreACService {
   static get type () { return CoreACService.SERVICE_TYPES.GOOGLE_SHEETS }
 
   /* **************************************************************************/
+  // Properties: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Google Sheets' }
+  static get humanizedTypeShort () { return 'Sheets' }
+  static get humanizedLogos () {
+    return [
+      'google/logo_sheets_32px.png',
+      'google/logo_sheets_48px.png',
+      'google/logo_sheets_64px.png',
+      'google/logo_sheets_96px.png',
+      'google/logo_sheets_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -20,22 +36,6 @@ class GoogleSheetsService extends CoreACService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Google Sheets' }
-  get humanizedTypeShort () { return 'Sheets' }
-  get humanizedLogos () {
-    return [
-      'google/logo_sheets_32px.png',
-      'google/logo_sheets_48px.png',
-      'google/logo_sheets_64px.png',
-      'google/logo_sheets_96px.png',
-      'google/logo_sheets_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

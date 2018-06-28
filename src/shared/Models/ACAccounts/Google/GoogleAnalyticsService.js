@@ -8,6 +8,22 @@ class GoogleAnalyticsService extends CoreACService {
   static get type () { return CoreACService.SERVICE_TYPES.GOOGLE_ANALYTICS }
 
   /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Google Analytics' }
+  static get humanizedTypeShort () { return 'Analytics' }
+  static get humanizedLogos () {
+    return [
+      'google/logo_analytics_32px.png',
+      'google/logo_analytics_48px.png',
+      'google/logo_analytics_64px.png',
+      'google/logo_analytics_96px.png',
+      'google/logo_analytics_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -20,22 +36,6 @@ class GoogleAnalyticsService extends CoreACService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Google Analytics' }
-  get humanizedTypeShort () { return 'Analytics' }
-  get humanizedLogos () {
-    return [
-      'google/logo_analytics_32px.png',
-      'google/logo_analytics_48px.png',
-      'google/logo_analytics_64px.png',
-      'google/logo_analytics_96px.png',
-      'google/logo_analytics_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

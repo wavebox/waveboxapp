@@ -2,6 +2,27 @@ import MicrosoftService from './MicrosoftService'
 
 class MicrosoftContactsService extends MicrosoftService {
   /* **************************************************************************/
+  // Class : Types
+  /* **************************************************************************/
+
+  static get type () { return MicrosoftService.SERVICE_TYPES.MICROSOFT_CONTACTS }
+
+  /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Contacts' }
+  static get humanizedLogos () {
+    return [
+      'microsoft/logo_contacts_32px.png',
+      'microsoft/logo_contacts_48px.png',
+      'microsoft/logo_contacts_64px.png',
+      'microsoft/logo_contacts_96px.png',
+      'microsoft/logo_contacts_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -14,21 +35,6 @@ class MicrosoftContactsService extends MicrosoftService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Contacts' }
-  get humanizedLogos () {
-    return [
-      'microsoft/logo_contacts_32px.png',
-      'microsoft/logo_contacts_48px.png',
-      'microsoft/logo_contacts_64px.png',
-      'microsoft/logo_contacts_96px.png',
-      'microsoft/logo_contacts_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

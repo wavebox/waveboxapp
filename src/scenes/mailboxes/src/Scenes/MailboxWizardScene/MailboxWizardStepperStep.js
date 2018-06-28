@@ -24,9 +24,7 @@ const styles = {
     fontSize: '35px',
     borderStyle: 'solid',
     borderWidth: 2,
-    // Fixes a rendering glitch in electron-2
-    transform: 'translate3d(0,0,0)',
-    backfaceVisibility: 'hidden'
+    position: 'relative'
   },
   stepCheckRaw: {
     fontSize: '35px',

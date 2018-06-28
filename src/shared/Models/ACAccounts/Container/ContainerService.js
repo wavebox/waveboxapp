@@ -10,6 +10,13 @@ class ContainerService extends CoreACService {
   static get type () { return CoreACService.SERVICE_TYPES.CONTAINER }
 
   /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Container' }
+  static get humanizedLogos () { return [] }
+
+  /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
 

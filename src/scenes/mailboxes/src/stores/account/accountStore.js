@@ -296,7 +296,7 @@ class AccountStore extends RendererAccountStore {
     const mailboxId = uuid.v4()
 
     if (template.templateType === ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL || template.templateType === ACCOUNT_TEMPLATE_TYPES.GOOGLE_INBOX) {
-      window.location.hash = `/mailbox_wizard/${template.parentType}/_/1/${mailboxId}`
+      window.location.hash = `/mailbox_wizard/${template.templateType}/_/1/${mailboxId}`
       ipcRenderer.send(WB_AUTH_GOOGLE, {
         partitionId: `persist:${mailboxId}`,
         credentials: Bootstrap.credentials,

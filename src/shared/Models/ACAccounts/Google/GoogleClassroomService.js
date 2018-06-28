@@ -8,6 +8,22 @@ class GoogleClassroomService extends CoreACService {
   static get type () { return CoreACService.SERVICE_TYPES.GOOGLE_CLASSROOM }
 
   /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Google Classroom' }
+  static get humanizedTypeShort () { return 'Classroom' }
+  static get humanizedLogos () {
+    return [
+      'google/logo_classroom_32px.png',
+      'google/logo_classroom_48px.png',
+      'google/logo_classroom_64px.png',
+      'google/logo_classroom_96px.png',
+      'google/logo_classroom_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -20,22 +36,6 @@ class GoogleClassroomService extends CoreACService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Google Classroom' }
-  get humanizedTypeShort () { return 'Classroom' }
-  get humanizedLogos () {
-    return [
-      'google/logo_classroom_32px.png',
-      'google/logo_classroom_48px.png',
-      'google/logo_classroom_64px.png',
-      'google/logo_classroom_96px.png',
-      'google/logo_classroom_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

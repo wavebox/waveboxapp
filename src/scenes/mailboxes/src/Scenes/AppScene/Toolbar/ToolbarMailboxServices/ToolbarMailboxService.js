@@ -3,16 +3,13 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { accountStore, accountActions } from 'stores/account'
 import { settingsStore } from 'stores/settings'
-import { userStore } from 'stores/user'
 import uuid from 'uuid'
-import MailboxServicePopover from '../MailboxServicePopover'
-import MailboxServiceBagde from 'wbui/MailboxServiceBadge'
-import MailboxServiceTooltip from 'wbui/MailboxServiceTooltip'
+import MailboxServicePopover from '../../MailboxServicePopover'
+import StyledMailboxServiceBadge from './StyledMailboxServiceBadge'
+import ToolbarServiceTooltip from './ToolbarServiceTooltip'
 import Resolver from 'Runtime/Resolver'
-import UISettings from 'shared/Models/Settings/UISettings'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import red from '@material-ui/core/colors/red'
 
 const styles = {
   /**
@@ -45,39 +42,6 @@ const styles = {
     bottom: 7,
     backgroundRepeat: 'no-repeat',
     backgroundSize: '24px 24px'
-  },
-
-  /**
-  * Badge
-  */
-  badge: {
-    position: 'absolute',
-    height: 14,
-    minWidth: 14,
-    fontSize: '11px',
-    borderRadius: 3,
-    lineHeight: '14px',
-    top: 3,
-    right: 3,
-    backgroundColor: 'rgba(238, 54, 55, 0.95)',
-    color: red[50],
-    fontWeight: process.platform === 'linux' ? 'normal' : '300',
-    width: 'auto',
-    paddingLeft: 2,
-    paddingRight: 2
-  },
-  badgeFAIcon: {
-    color: 'white',
-    fontSize: 10
-  },
-  badgeContainer: {
-    padding: 0,
-    cursor: 'pointer',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0
   }
 }
 
@@ -105,13 +69,11 @@ class ToolbarMailboxService extends React.Component {
   componentDidMount () {
     accountStore.listen(this.accountChanged)
     settingsStore.listen(this.settingsChanged)
-    userStore.listen(this.userChanged)
   }
 
   componentWillUnmount () {
     accountStore.unlisten(this.accountChanged)
     settingsStore.unlisten(this.settingsChanged)
-    userStore.unlisten(this.userChanged)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -128,12 +90,12 @@ class ToolbarMailboxService extends React.Component {
   state = (() => {
     const settingsState = settingsStore.getState()
     const { mailboxId, serviceId } = this.props
-    return Object.assign({
+    return {
       isHovering: false,
       popoverAnchor: null,
       globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator,
-      tooltipsEnabled: settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED || settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.TOOLBAR_ONLY
-    }, this.generateStateFromMailbox(accountStore.getState(), mailboxId, serviceId))
+      ...this.generateStateFromMailbox(accountStore.getState(), mailboxId, serviceId)
+    }
   })()
 
   accountChanged = (accountState) => {
@@ -143,15 +105,7 @@ class ToolbarMailboxService extends React.Component {
 
   settingsChanged = (settingsState) => {
     this.setState({
-      globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator,
-      tooltipsEnabled: settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED || settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.TOOLBAR_ONLY
-    })
-  }
-
-  userChanged = (userState) => {
-    const accountState = accountStore.getState()
-    this.setState({
-      isRestricted: accountState.isServiceRestricted(this.props.serviceId)
+      globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator
     })
   }
 
@@ -162,12 +116,23 @@ class ToolbarMailboxService extends React.Component {
   * @param serviceId: the type of the service
   */
   generateStateFromMailbox (accountState, mailboxId, serviceId) {
+    const mailbox = accountState.getMailbox(mailboxId)
+    const service = accountState.getService(serviceId)
+    const serviceData = accountState.getServiceData(serviceId)
+
     return {
-      mailbox: accountState.getMailbox(mailboxId),
-      service: accountState.getService(serviceId),
-      isSleeping: accountState.isServiceSleeping(serviceId),
-      isActive: accountState.isServiceActive(serviceId),
-      isRestricted: accountState.isServiceRestricted(serviceId)
+      mailbox: mailbox,
+      service: service,
+      isServiceSleeping: accountState.isServiceSleeping(serviceId),
+      isServiceActive: accountState.isServiceActive(serviceId),
+      isAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId),
+      ...(service && serviceData ? {
+        unreadCount: serviceData.getUnreadCount(service),
+        hasUnreadActivity: serviceData.getHasUnreadActivity(service)
+      } : {
+        unreadCount: 0,
+        hasUnreadActivity: false
+      })
     }
   }
 
@@ -215,70 +180,55 @@ class ToolbarMailboxService extends React.Component {
     } = this.props
     const {
       isHovering,
-      isActive,
-      isSleeping,
+      isServiceActive,
+      isServiceSleeping,
       service,
       mailbox,
       popoverAnchor,
       globalShowSleepableServiceIndicator,
-      tooltipsEnabled,
-      isRestricted
+      unreadCount,
+      hasUnreadActivity,
+      isAuthInvalid
     } = this.state
 
     if (!mailbox || !service) { return false }
 
-    const showSleeping = globalShowSleepableServiceIndicator && mailbox.showSleepableServiceIndicator && isSleeping
+    const showSleeping =
+      globalShowSleepableServiceIndicator &&
+      mailbox.showSleepableServiceIndicator &&
+      isServiceSleeping
 
     return (
       <div
         {...passProps}
-        className={classNames(
-          classes.tab,
-          isActive ? 'is-active' : undefined,
-          className
-        )}
+        className={classNames(classes.tab, isServiceActive ? 'is-active' : undefined, className)}
         style={{ height: toolbarHeight, width: toolbarHeight, ...style }}
         id={`ReactComponent-Toolbar-Mailbox-Service-${this.instanceId}`}
         onMouseEnter={() => this.setState({ isHovering: true })}
         onMouseLeave={() => this.setState({ isHovering: false })}
         onClick={this.handleServiceClicked}
         onContextMenu={this.handleOpenPopover}>
-        {/*<MailboxServiceBagde
-          id={`ReactComponent-Sidelist-Item-Mailbox-Service-${this.instanceId}`}
-          isAuthInvalid={false}
+        <StyledMailboxServiceBadge
           supportsUnreadCount={service.supportsUnreadCount}
-          showUnreadBadge={service.showUnreadBadge}
-          unreadCount={service.unreadCount}
+          showUnreadBadge={service.showBadgeCount}
+          unreadCount={unreadCount}
           supportsUnreadActivity={service.supportsUnreadActivity}
-          showUnreadActivityBadge={service.showUnreadActivityBadge}
-          hasUnreadActivity={service.hasUnreadActivity}
-          color={service.unreadBadgeColor}
-          badgeClassName={classes.badge}
-          className={classes.badgeContainer}
-          iconClassName={classes.badgeFAIcon}
-          onMouseEnter={() => this.setState({ isHovering: true })}
-          onMouseLeave={() => this.setState({ isHovering: false })}>
+          showUnreadActivityBadge={service.showBadgeActivity}
+          hasUnreadActivity={hasUnreadActivity}
+          color={service.badgeColor}
+          isAuthInvalid={isAuthInvalid}>
           <div
             className={classNames(classes.avatar, `WB-ServiceIcon-${mailbox.id}_${service.id}`)}
             style={{
               backgroundImage: `url("${Resolver.image(service.humanizedLogoAtSize(96))}")`,
               filter: showSleeping ? 'grayscale(100%)' : 'none'
             }} />
-          </MailboxServiceBagde>*/}
-        {/*
-        {tooltipsEnabled ? (
-          <MailboxServiceTooltip
-            mailbox={mailbox}
-            service={service}
-            isRestricted={isRestricted}
-            active={isHovering}
-            tooltipTimeout={0}
-            position='bottom'
-            arrow='center'
-            group={this.instanceId}
-            parent={`#ReactComponent-Toolbar-Mailbox-Service-${this.instanceId}`} />
-        ) : undefined}
-        */}
+        </StyledMailboxServiceBadge>
+        <ToolbarServiceTooltip
+          serviceId={serviceId}
+          active={isHovering}
+          group={this.instanceId}
+          parent={`#ReactComponent-Toolbar-Mailbox-Service-${this.instanceId}`} />
         <MailboxServicePopover
           mailboxId={mailboxId}
           serviceId={serviceId}

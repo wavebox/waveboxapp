@@ -52,6 +52,24 @@ class AccountActions extends RendererAccountActions {
     accessMode = accessMode || '_' // this sometimes comes in as empty string
     if (ACCOUNT_TEMPLATE_TYPES[templateType]) {
       window.location.hash = `/mailbox_wizard/${templateType}/${accessMode}/0`
+      return {}
+    }
+
+    // We also have some classic mappings to work with
+    if (templateType === 'GOOGLE') {
+      if (accessMode === 'GMAIL') {
+        window.location.hash = `/mailbox_wizard/${ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL}/_/0`
+        return {}
+      } else if (accessMode === 'GINBOX') {
+        window.location.hash = `/mailbox_wizard/${ACCOUNT_TEMPLATE_TYPES.GOOGLE_INBOX}/_/0`
+        return {}
+      }
+    } else if (templateType === 'MICROSOFT') {
+      if (accessMode === 'OUTLOOK') {
+        //TODO
+      } else if (accessMode === 'OFFICE365') {
+        //TODO
+      }
     }
 
     return {}

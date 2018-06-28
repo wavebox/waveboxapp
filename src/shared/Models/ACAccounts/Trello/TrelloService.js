@@ -8,6 +8,23 @@ class TrelloService extends CoreACService {
   static get type () { return CoreACService.SERVICE_TYPES.TRELLO }
 
   /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Trello' }
+  static get humanizedLogos () {
+    return [
+      'trello/logo_32px.png',
+      'trello/logo_48px.png',
+      'trello/logo_64px.png',
+      'trello/logo_96px.png',
+      'trello/logo_128px.png',
+      'trello/logo_600px.png'
+    ]
+  }
+  static get humanizedUnreadItemType () { return 'notification' }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -20,23 +37,6 @@ class TrelloService extends CoreACService {
   get supportsSyncWhenSleeping () { return true }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return 'com.trello' }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Trello' }
-  get humanizedLogos () {
-    return [
-      'trello/logo_32px.png',
-      'trello/logo_48px.png',
-      'trello/logo_64px.png',
-      'trello/logo_96px.png',
-      'trello/logo_128px.png',
-      'trello/logo_600px.png'
-    ]
-  }
-  get humanizedUnreadItemType () { return 'notification' }
 
   /* **************************************************************************/
   // Properties: Behaviour

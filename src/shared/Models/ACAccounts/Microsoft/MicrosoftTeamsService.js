@@ -2,6 +2,28 @@ import MicrosoftService from './MicrosoftService'
 
 class MicrosoftTeamsService extends MicrosoftService {
   /* **************************************************************************/
+  // Class : Types
+  /* **************************************************************************/
+
+  static get type () { return MicrosoftService.SERVICE_TYPES.MICROSOFT_TEAMS }
+
+  /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Microsoft Teams' }
+  static get humanizedTypeShort () { return 'Teams' }
+  static get humanizedLogos () {
+    return [
+      'microsoft/logo_team_32px.png',
+      'microsoft/logo_team_48px.png',
+      'microsoft/logo_team_64px.png',
+      'microsoft/logo_team_96px.png',
+      'microsoft/logo_team_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -14,22 +36,6 @@ class MicrosoftTeamsService extends MicrosoftService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Microsoft Teams' }
-  get humanizedTypeShort () { return 'Teams' }
-  get humanizedLogos () {
-    return [
-      'microsoft/logo_team_32px.png',
-      'microsoft/logo_team_48px.png',
-      'microsoft/logo_team_64px.png',
-      'microsoft/logo_team_96px.png',
-      'microsoft/logo_team_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

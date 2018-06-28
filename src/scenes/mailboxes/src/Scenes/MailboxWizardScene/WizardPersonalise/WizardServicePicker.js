@@ -4,6 +4,8 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { List, ListItem, ListItemText, ListItemSecondaryAction, Switch, Grid } from '@material-ui/core'
 import Resolver from 'Runtime/Resolver'
 import { withStyles } from '@material-ui/core/styles'
+import ServiceFactory from 'shared/Models/ACAccounts/ServiceFactory'
+import MailboxServiceIcon from 'wbui/MailboxServiceIcon'
 
 const styles = {
   list: {
@@ -16,11 +18,7 @@ const styles = {
   },
   logo: {
     display: 'inline-block',
-    height: 32,
     marginTop: 4
-  },
-  logoDisabled: {
-    filter: 'grayscale(100%)'
   },
   displayModePicker: {
     minWidth: 450
@@ -77,16 +75,17 @@ class WizardServicePicker extends React.Component {
   */
   renderServiceListItem (classes, serviceType) {
     const { enabledServices, disabled } = this.props
-    //const ServiceClass = ServiceFactory.getClass(MailboxClass.type, serviceType)
+    const ServiceClass = ServiceFactory.serviceClass(serviceType)
     const isEnabled = !!enabledServices.find((s) => s === serviceType)
 
     return (
       <ListItem key={serviceType} dense>
-        {/*<img
-          src={Resolver.image(ServiceClass.humanizedLogoAtSize(128))}
-          className={classNames(classes.logo, !userHasServices ? styles.logoDisabled : undefined)} />*/}
-        {/*<ListItemText primary={ServiceClass.humanizedType} />*/}
-        <ListItemText primary={serviceType} />
+        <MailboxServiceIcon
+          iconUrl={Resolver.image(ServiceClass.humanizedLogoAtSize(128))}
+          showSleeping={false}
+          className={classes.logo}
+          size={32} />
+        <ListItemText primary={ServiceClass.humanizedType} />
         <ListItemSecondaryAction>
           <Switch
             disabled={disabled}
@@ -104,12 +103,19 @@ class WizardServicePicker extends React.Component {
   * @return an array with up to 3 service groups
   */
   chunkServices (services) {
+    services = Array.from(services)
     const chunks = [[], [], []]
 
-    for (let i = 0; i < services.length; i += 3) {
-      if (services[i]) { chunks[0].push(services[i]) }
-      if (services[i + 1]) { chunks[1].push(services[i + 1]) }
-      if (services[i + 2]) { chunks[2].push(services[i + 2]) }
+    const rem = services.length % 3
+    const seg = Math.floor(services.length / 3)
+    const chunkSizes = [
+      seg + (rem >= 1 ? 1 : 0),
+      seg + (rem >= 2 ? 1 : 0),
+      seg
+    ]
+
+    for (let i = 0; i < chunkSizes.length; i++) {
+      chunks[i] = services.splice(0, chunkSizes[i])
     }
 
     return chunks

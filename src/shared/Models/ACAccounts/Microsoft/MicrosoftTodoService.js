@@ -2,6 +2,28 @@ import MicrosoftService from './MicrosoftService'
 
 class MicrosoftTodoService extends MicrosoftService {
   /* **************************************************************************/
+  // Class : Types
+  /* **************************************************************************/
+
+  static get type () { return MicrosoftService.SERVICE_TYPES.MICROSOFT_TODO }
+
+  /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Microsoft Todo' }
+  static get humanizedTypeShort () { return 'Todo' }
+  static get humanizedLogos () {
+    return [
+      'microsoft/logo_todo_32px.png',
+      'microsoft/logo_todo_48px.png',
+      'microsoft/logo_todo_64px.png',
+      'microsoft/logo_todo_96px.png',
+      'microsoft/logo_todo_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -14,22 +36,6 @@ class MicrosoftTodoService extends MicrosoftService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Microsoft Todo' }
-  get humanizedTypeShort () { return 'Todo' }
-  get humanizedLogos () {
-    return [
-      'microsoft/logo_todo_32px.png',
-      'microsoft/logo_todo_48px.png',
-      'microsoft/logo_todo_64px.png',
-      'microsoft/logo_todo_96px.png',
-      'microsoft/logo_todo_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

@@ -2,6 +2,27 @@ import MicrosoftService from './MicrosoftService'
 
 class MicrosoftOnenoteService extends MicrosoftService {
   /* **************************************************************************/
+  // Class : Types
+  /* **************************************************************************/
+
+  static get type () { return MicrosoftService.SERVICE_TYPES.MICROSOFT_ONENOTE }
+
+  /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'OneNote' }
+  static get humanizedLogos () {
+    return [
+      'microsoft/logo_notebook_32px.png',
+      'microsoft/logo_notebook_48px.png',
+      'microsoft/logo_notebook_64px.png',
+      'microsoft/logo_notebook_96px.png',
+      'microsoft/logo_notebook_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -14,21 +35,6 @@ class MicrosoftOnenoteService extends MicrosoftService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'OneNote' }
-  get humanizedLogos () {
-    return [
-      'microsoft/logo_notebook_32px.png',
-      'microsoft/logo_notebook_48px.png',
-      'microsoft/logo_notebook_64px.png',
-      'microsoft/logo_notebook_96px.png',
-      'microsoft/logo_notebook_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

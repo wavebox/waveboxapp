@@ -8,6 +8,22 @@ class GoogleKeepService extends CoreACService {
   static get type () { return CoreACService.SERVICE_TYPES.GOOGLE_KEEP }
 
   /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Google Keep' }
+  static get humanizedTypeShort () { return 'Keep' }
+  static get humanizedLogos () {
+    return [
+      'google/logo_keep_32px.png',
+      'google/logo_keep_48px.png',
+      'google/logo_keep_64px.png',
+      'google/logo_keep_96px.png',
+      'google/logo_keep_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -20,22 +36,6 @@ class GoogleKeepService extends CoreACService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Google Keep' }
-  get humanizedTypeShort () { return 'Keep' }
-  get humanizedLogos () {
-    return [
-      'google/logo_keep_32px.png',
-      'google/logo_keep_48px.png',
-      'google/logo_keep_64px.png',
-      'google/logo_keep_96px.png',
-      'google/logo_keep_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

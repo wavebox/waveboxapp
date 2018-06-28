@@ -8,12 +8,12 @@ class GoogleInboxService extends CoreGoogleMailService {
   static get type () { return CoreGoogleMailService.SERVICE_TYPES.GOOGLE_INBOX }
 
   /* **************************************************************************/
-  // Properties: Humanized
+  // Class: Humanized
   /* **************************************************************************/
 
-  get humanizedType () { return 'Google Inbox' }
-  get humanizedTypeShort () { return 'Inbox' }
-  get humanizedLogos () {
+  static get humanizedType () { return 'Google Inbox' }
+  static get humanizedTypeShort () { return 'Inbox' }
+  static get humanizedLogos () {
     return [
       'google/logo_ginbox_32px.png',
       'google/logo_ginbox_48px.png',

@@ -7,6 +7,27 @@ const UNREAD_MODES = Object.freeze({
 
 class MicrosoftCalendarService extends MicrosoftService {
   /* **************************************************************************/
+  // Class : Types
+  /* **************************************************************************/
+
+  static get type () { return MicrosoftService.SERVICE_TYPES.MICROSOFT_MAIL }
+
+  /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Outlook' }
+  static get humanizedLogos () {
+    return [
+      'microsoft/logo_mail_32px.png',
+      'microsoft/logo_mail_48px.png',
+      'microsoft/logo_mail_64px.png',
+      'microsoft/logo_mail_96px.png',
+      'microsoft/logo_mail_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -19,21 +40,6 @@ class MicrosoftCalendarService extends MicrosoftService {
   get supportsSyncWhenSleeping () { return true }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return 'com.microsoft' }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Outlook' }
-  get humanizedLogos () {
-    return [
-      'microsoft/logo_mail_32px.png',
-      'microsoft/logo_mail_48px.png',
-      'microsoft/logo_mail_64px.png',
-      'microsoft/logo_mail_96px.png',
-      'microsoft/logo_mail_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

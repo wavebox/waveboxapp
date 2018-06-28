@@ -8,6 +8,22 @@ class GoogleVoiceService extends CoreACService {
   static get type () { return CoreACService.SERVICE_TYPES.GOOGLE_VOICE }
 
   /* **************************************************************************/
+  // Class: Humanized
+  /* **************************************************************************/
+
+  static get humanizedType () { return 'Google Voice' }
+  static get humanizedTypeShort () { return 'Voice' }
+  static get humanizedLogos () {
+    return [
+      'google/logo_voice_32px.png',
+      'google/logo_voice_48px.png',
+      'google/logo_voice_64px.png',
+      'google/logo_voice_96px.png',
+      'google/logo_voice_128px.png'
+    ]
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -20,22 +36,6 @@ class GoogleVoiceService extends CoreACService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
   get supportedAuthNamespace () { return undefined }
-
-  /* **************************************************************************/
-  // Properties: Humanized
-  /* **************************************************************************/
-
-  get humanizedType () { return 'Google Voice' }
-  get humanizedTypeShort () { return 'Voice' }
-  get humanizedLogos () {
-    return [
-      'google/logo_voice_32px.png',
-      'google/logo_voice_48px.png',
-      'google/logo_voice_64px.png',
-      'google/logo_voice_96px.png',
-      'google/logo_voice_128px.png'
-    ]
-  }
 
   /* **************************************************************************/
   // Properties: Behaviour

@@ -99,14 +99,22 @@ const MAPPING = {
 
 class ServiceFactory {
   /**
+  * Gets the class for a service
+  * @param type: the service type
+  * @return the service class or undefined
+  */
+  static serviceClass (type) {
+    const rec = MAPPING[type]
+    return rec ? rec[0] : undefined
+  }
+  /**
   * Modelizes a service
   * @param data: the service data
   * @return the model version
   */
   static modelizeService (data) {
-    const rec = MAPPING[data.type]
-    if (rec) {
-      const Class = rec[0]
+    const Class = this.serviceClass(data.type)
+    if (Class) {
       return require("../UndefinedPropProxy")(new Class(data))
     } else {
       return undefined
