@@ -82,6 +82,8 @@ class MailboxAvatar extends React.Component {
       return (<Avatar {...passProps} src={avatar.resolveAvatar(resolver)} />)
     } else if (avatar.avatarCharacterDisplay) {
       return (<Avatar {...passProps}>{avatar.avatarCharacterDisplay}</Avatar>)
+    } else if (avatar.hasServiceIcon) {
+      return (<Avatar {...passProps} src={avatar.resolveServiceIcon(resolver)} />)
     } else {
       return (<Avatar {...passProps} />)
     }

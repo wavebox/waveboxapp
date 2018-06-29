@@ -23,7 +23,8 @@ class ACMailboxCircle extends Model {
       color: mailbox.color,
       showAvatarColorRing: mailbox.showAvatarColorRing,
       avatarCharacterDisplay: this._getAvatarCharacterDisplay(memberHashes, services),
-      rawAvatar: this._getRawAvatar(memberHashes, mailbox, services, avatarMap)
+      rawAvatar: this._getRawAvatar(memberHashes, mailbox, services, avatarMap),
+      rawServiceIcon: this._getServiceIcon(memberHashes, services)
     }
 
     data.memberHashes = Array.from(memberHashes)
@@ -95,18 +96,27 @@ class ACMailboxCircle extends Model {
         }
       }
 
-      // Then get a service with the standard icon
-      const serviceWithStandard = services.find((service) => {
-        return !!service.humanizedLogo
-      })
-      if (serviceWithStandard) {
-        memberHashes.add(serviceWithStandard.versionedId)
-        return { uri: serviceWithStandard.humanizedLogo }
-      }
-
       // Finally just fail
       return undefined
     }
+  }
+
+  /**
+  * Gets the starndard avatar icon for the service type
+  * @param memberHashes: the member hashes to add to
+  * @param services: the ordered services list
+  * @return the avatar in the format { uri: '' } or undefined
+  */
+  static _getServiceIcon (memberHashes, services) {
+    const serviceWithStandard = services.find((service) => {
+      return !!service.humanizedLogo
+    })
+    if (serviceWithStandard) {
+      memberHashes.add(serviceWithStandard.versionedId)
+      return { uri: serviceWithStandard.humanizedLogo }
+    }
+
+    return undefined
   }
 
   /* **************************************************************************/
@@ -125,6 +135,8 @@ class ACMailboxCircle extends Model {
   get avatarCharacterDisplay () { return this._value_('avatarCharacterDisplay', undefined) }
   get rawAvatar () { return this._value_('rawAvatar', undefined) }
   get hasAvatar () { return this.rawAvatar && (this.rawAvatar.uri || this.rawAvatar.id) }
+  get rawServiceIcon () { return this._value_('rawServiceIcon', undefined) }
+  get hasServiceIcon () { return this.rawServiceIcon && (this.rawServiceIcon.uir || this.rawServiceIcon.id) }
 
   /**
   * Resolves a raw avatar
@@ -134,6 +146,27 @@ class ACMailboxCircle extends Model {
   resolveAvatar (resolver) {
     if (!this.hasAvatar) { return undefined }
     const raw = this.rawAvatar
+    if (raw.uri) {
+      if (raw.uri.startsWith('http://') || raw.uri.startsWith('https://')) {
+        return raw.uri
+      } else {
+        return resolver ? resolver(raw.uri) : raw.uri
+      }
+    } else if (raw.id) {
+      return raw.id
+    } else {
+      return raw
+    }
+  }
+
+  /**
+  * Resolves a raw service icon
+  * @param resolver that can be used to resolve local paths
+  * @return a resolved avatar
+  */
+  resolveServiceIcon (resolver) {
+    if (!this.hasServiceIcon) { return undefined }
+    const raw = this.rawServiceIcon
     if (raw.uri) {
       if (raw.uri.startsWith('http://') || raw.uri.startsWith('https://')) {
         return raw.uri

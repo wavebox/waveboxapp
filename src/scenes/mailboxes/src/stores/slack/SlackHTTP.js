@@ -7,12 +7,12 @@ class SlackHTTP {
   /* **************************************************************************/
 
   /**
-  * Rejects a call because the mailbox has no authentication info
+  * Rejects a call because the service has no authentication info
   * @param info: any information we have
   * @return promise - rejected
   */
   static _rejectWithNoAuth (info) {
-    return Promise.reject(new Error('Mailbox missing authentication information'))
+    return Promise.reject(new Error('Service missing authentication information'))
   }
 
   /* **************************************************************************/

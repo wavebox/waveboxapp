@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import { accountDispatch, accountStore, accountActions } from 'stores/account'
-//import { slackActions } from 'stores/slack'
+import { slackActions } from 'stores/slack'
 import {
   WB_BROWSER_NOTIFICATION_PRESENT,
   WB_BROWSER_NOTIFICATION_CLICK
@@ -56,7 +56,7 @@ export default class SlackServiceWebView extends React.Component {
     const accountState = accountStore.getState()
     return {
       service: accountState.getService(serviceId),
-      isActive: accountState.isActiveService(serviceId),
+      isActive: accountState.activeServiceId() === serviceId,
       isSearching: accountState.isSearchingService(serviceId),
       searchTerm: accountState.serviceSearchTerm(serviceId),
       searchId: accountState.serviceSearchHash(serviceId)
@@ -101,14 +101,14 @@ export default class SlackServiceWebView extends React.Component {
   handleWebViewIPCMessage = (evt) => {
     switch (evt.channel.type) {
       case WB_BROWSER_NOTIFICATION_PRESENT:
-        /*slackActions.scheduleHTML5Notification(
-          this.props.mailboxId,
+        slackActions.scheduleHTML5Notification(
+          this.props.serviceId,
           evt.channel.notificationId,
           evt.channel.notification,
           (notificationId) => {
             this.refs[REF].send(WB_BROWSER_NOTIFICATION_CLICK, { notificationId: notificationId })
           }
-        )*/
+        )
         break
     }
   }

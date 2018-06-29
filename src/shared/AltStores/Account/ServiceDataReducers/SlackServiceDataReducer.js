@@ -163,15 +163,15 @@ class SlackServiceDataReducer extends ServiceDataReducer {
   * @param rtmEvent: the event that came through from the rtm
   */
   static rtmMessage (service, serviceData, rtmEvent) {
-    /*if (mailbox.hasSelfOverview) {
-      if (mailbox.selfOverview.id === rtmEvent.user) {
+    if (service.hasSelfOverview) {
+      if (service.selfOverview.id === rtmEvent.user) {
         return undefined // We created the message, nothing to do
-      } else if (mailbox.selfOverview.id === ((rtmEvent.message || {}).edited || {}).user) {
+      } else if (service.selfOverview.id === ((rtmEvent.message || {}).edited || {}).user) {
         return undefined // We edited the message, nothing to do
-      } else if (mailbox.selfOverview.id === (rtmEvent.comment || {}).user) {
+      } else if (service.selfOverview.id === (rtmEvent.comment || {}).user) {
         return undefined // We commented on an item, nothing to do
       }
-    }*/
+    }
 
     switch (rtmEvent.channel[0]) {
       case 'C': return SlackServiceDataReducer.rtmChannelMessage(serviceData, rtmEvent)
@@ -189,8 +189,7 @@ class SlackServiceDataReducer extends ServiceDataReducer {
   static rtmChannelMessage (service, serviceData, rtmEvent) {
     const channelInfo = serviceData.slackUnreadChannelInfo[rtmEvent.channel]
     if (channelInfo) {
-      //const userMentioned = (rtmEvent.text || '').indexOf(`<@${mailbox.authUserId}>`) !== -1
-      const userMentioned=false
+      const userMentioned = (rtmEvent.text || '').indexOf(`<@${service.authUserId}>`) !== -1
       return serviceData.changeDataWithChangeset({
         slackUnreadChannelInfo: {
           [rtmEvent.channel]: {
@@ -213,8 +212,7 @@ class SlackServiceDataReducer extends ServiceDataReducer {
   static rtmGroupMessage (service, serviceData, rtmEvent) {
     if (serviceData.slackUnreadGroupInfo[rtmEvent.channel]) { // Group
       const groupInfo = serviceData.slackUnreadGroupInfo[rtmEvent.channel]
-      //const userMentioned = rtmEvent.text.indexOf(`<@${mailbox.authUserId}>`) !== -1
-      const userMentioned=false
+      const userMentioned = rtmEvent.text.indexOf(`<@${service.authUserId}>`) !== -1
       return serviceData.changeDataWithChangeset({
         slackUnreadGroupInfo: {
           [rtmEvent.channel]: {
@@ -225,8 +223,7 @@ class SlackServiceDataReducer extends ServiceDataReducer {
       })
     } else if (serviceData.slackUnreadMPIMInfo[rtmEvent.channel]) { // MPIM
       const mpimInfo = serviceData.slackUnreadMPIMInfo[rtmEvent.channel]
-      //const userMentioned = rtmEvent.text.indexOf(`<@${mailbox.authUserId}>`) !== -1
-      const userMentioned=false
+      const userMentioned = rtmEvent.text.indexOf(`<@${service.authUserId}>`) !== -1
       return serviceData.changeDataWithChangeset({
         slackUnreadMPIMInfo: {
           [rtmEvent.channel]: {

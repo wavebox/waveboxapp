@@ -42,7 +42,6 @@ class AuthSlack {
   promptUserToGetAuthorizationCode (partitionId) {
     return new Promise((resolve, reject) => {
       const waveboxOauthWin = new AuthWindow()
-      const fullPartitionId = partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
       waveboxOauthWin.create('https://slack.com/signin', {
         useContentSize: true,
         center: true,
@@ -59,7 +58,7 @@ class AuthSlack {
           sandbox: true,
           nativeWindowOpen: true,
           sharedSiteInstances: true,
-          partition: fullPartitionId
+          partition: partitionId
         }
       })
       const oauthWin = waveboxOauthWin.window
@@ -104,20 +103,21 @@ class AuthSlack {
   */
   handleAuthSlack (evt, body) {
     Promise.resolve()
-      .then(() => this.promptUserToGetAuthorizationCode(body.id))
+      .then(() => this.promptUserToGetAuthorizationCode(body.partitionId))
       .then(({ teamUrl, token }) => {
         evt.sender.send(WB_AUTH_SLACK_COMPLETE, {
-          id: body.id,
-          authMode: body.authMode,
-          provisional: body.provisional,
-          teamUrl: teamUrl,
-          token: token
+          mode: body.mode,
+          context: body.context,
+          auth: {
+            provisional: body.provisional,
+            teamUrl: teamUrl,
+            token: token
+          }
         })
       }, (err) => {
         evt.sender.send(WB_AUTH_SLACK_ERROR, {
-          id: body.id,
-          authMode: body.authMode,
-          provisional: body.provisional,
+          mode: body.mode,
+          context: body.context,
           error: err,
           errorString: (err || {}).toString ? (err || {}).toString() : undefined,
           errorMessage: (err || {}).message ? (err || {}).message : undefined,

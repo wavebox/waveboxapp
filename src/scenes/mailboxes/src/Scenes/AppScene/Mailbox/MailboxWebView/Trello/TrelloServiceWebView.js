@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import { accountDispatch } from 'stores/account'
-//import { trelloActions } from 'stores/trello'
+import { trelloActions } from 'stores/trello'
 
 const REF = 'mailbox_tab'
 
@@ -50,7 +50,7 @@ export default class TrelloServiceWebView extends React.Component {
 
       // Normally being able to handle this also indicates that something changed, so lets do a sync
       // after a few seconds to re-evaluate our state
-      //trelloActions.syncMailboxNotificationsAfter.defer(this.props.mailboxId, 1000 * 5)
+      trelloActions.syncServiceNotificationsAfter.defer(this.props.serviceId, 1000 * 5)
     }
   }
 

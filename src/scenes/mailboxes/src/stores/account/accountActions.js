@@ -97,11 +97,29 @@ class AccountActions extends RendererAccountActions {
   }
 
   /**
-  * Handles a Google mailbox authenticating
+  * Handles a Google account authenticating
   * @param evt: the event that came over the ipc
   * @param payload: the data that came across the ipc
   */
   authGoogleSuccess (evt, payload) {
+    return payload
+  }
+
+  /**
+  * Handles a Slack account authenticating
+  * @param evt: the event that came over the ipc
+  * @param payload: the data that came across the ipc
+  */
+  authSlackSuccess (evt, payload) {
+    return payload
+  }
+
+/**
+  * Handles a Trello account authenticating
+  * @param evt: the event that came over the ipc
+  * @param payload: the data that came across the ipc
+  */
+  authTrelloSuccess (evt, payload) {
     return payload
   }
 
@@ -477,9 +495,9 @@ const actions = alt.createActions(AccountActions)
 // Auth
 ipcRenderer.on(WB_AUTH_GOOGLE_COMPLETE, actions.authGoogleSuccess)
 ipcRenderer.on(WB_AUTH_GOOGLE_ERROR, actions.authFailure)
-//ipcRenderer.on(WB_AUTH_SLACK_COMPLETE, actions.authSlackMailboxSuccess)
+ipcRenderer.on(WB_AUTH_SLACK_COMPLETE, actions.authSlackSuccess)
 ipcRenderer.on(WB_AUTH_SLACK_ERROR, actions.authFailure)
-//ipcRenderer.on(WB_AUTH_TRELLO_COMPLETE, actions.authTrelloMailboxSuccess)
+ipcRenderer.on(WB_AUTH_TRELLO_COMPLETE, actions.authTrelloSuccess)
 ipcRenderer.on(WB_AUTH_TRELLO_ERROR, actions.authFailure)
 //ipcRenderer.on(WB_AUTH_MICROSOFT_COMPLETE, actions.authMicrosoftMailboxSuccess)
 ipcRenderer.on(WB_AUTH_MICROSOFT_ERROR, actions.authFailure)

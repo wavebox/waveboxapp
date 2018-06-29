@@ -4,13 +4,13 @@ import alt from '../alt'
 import actions from './accountActions'
 import settingsActions from '../settings/settingsActions'
 import GoogleHTTP from '../google/GoogleHTTP'
-//import SlackHTTP from '../slack/SlackHTTP'
+import SlackHTTP from '../slack/SlackHTTP'
 //import MicrosoftHTTP from '../microsoft/MicrosoftHTTP'
 import accountDispatch from './accountDispatch'
 import Bootstrap from 'R/Bootstrap'
 import googleActions from '../google/googleActions'
-//import slackActions from '../slack/slackActions'
-//import trelloActions from '../trello/trelloActions'
+import slackActions from '../slack/slackActions'
+import trelloActions from '../trello/trelloActions'
 //import microsoftActions from '../microsoft/microsoftActions'
 import userActions from '../user/userActions'
 import {
@@ -28,6 +28,8 @@ import ACTemplatedAccount from 'shared/Models/ACAccounts/ACTemplatedAccount'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import CoreACService from 'shared/Models/ACAccounts/CoreACService'
 import GoogleAuth from 'shared/Models/ACAccounts/Google/GoogleAuth'
+import SlackAuth from 'shared/Models/ACAccounts/Slack/SlackAuth'
+import TrelloAuth from 'shared/Models/ACAccounts/Trello/TrelloAuth'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 
 const AUTH_MODES = Object.freeze({
@@ -122,6 +124,8 @@ class AccountStore extends RendererAccountStore {
       // Mailbox auth callbacks
       handleAuthFailure: actions.AUTH_FAILURE,
       handleAuthGoogleSuccess: actions.AUTH_GOOGLE_SUCCESS,
+      handleAuthSlackSuccess: actions.AUTH_SLACK_SUCCESS,
+      handleAuthTrelloSuccess: actions.AUTH_TRELLO_SUCCESS,
 
       /*
       // Mailbox auth
@@ -295,9 +299,26 @@ class AccountStore extends RendererAccountStore {
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.MICROSOFT) {
       //TODO
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.TRELLO) {
-      //TODO
+      window.location.hash = `/mailbox_wizard/${template.templateType}/_/1/${mailboxId}`
+      ipcRenderer.send(WB_AUTH_TRELLO, {
+        partitionId: `persist:${mailboxId}`,
+        credentials: Bootstrap.credentials,
+        mode: AUTH_MODES.TEMPLATE_CREATE,
+        context: {
+          id: mailboxId,
+          template: template.cloneData()
+        }
+      })
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.SLACK) {
-      //TODO
+      window.location.hash = `/mailbox_wizard/${template.templateType}/_/1/${mailboxId}`
+      ipcRenderer.send(WB_AUTH_SLACK, {
+        partitionId: `persist:${mailboxId}`,
+        mode: AUTH_MODES.TEMPLATE_CREATE,
+        context: {
+          id: mailboxId,
+          template: template.cloneData()
+        }
+      })
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.CONTAINER) {
       //TODO
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.GENERIC) {
@@ -383,8 +404,9 @@ class AccountStore extends RendererAccountStore {
       .then((permenantAuth) => {
         if (mode === AUTH_MODES.TEMPLATE_CREATE) {
           // Create the auth
-          const auth = GoogleAuth.createJS(context.id, undefined, permenantAuth)
-          actions.createAuth.defer(auth)
+          actions.createAuth.defer(
+            GoogleAuth.createJS(context.id, undefined, permenantAuth)
+          )
 
           // Create the account
           const template = new ACTemplatedAccount(context.template)
@@ -399,6 +421,61 @@ class AccountStore extends RendererAccountStore {
       .catch((err) => {
         console.error('[AUTH ERR]', err)
       })
+  }
+
+  handleAuthSlackSuccess ({ mode, context, auth }) {
+    this.preventDefault()
+    Promise.resolve()
+      .then(() => SlackHTTP.testAuth(auth.token))
+      .then((userInfo) => {
+        if (mode === AUTH_MODES.TEMPLATE_CREATE) {
+          // Create the auth
+          actions.createAuth.defer(
+            SlackAuth.createJS(context.id, undefined, {
+              access_token: auth.token,
+              url: userInfo.url,
+              team_name: userInfo.team,
+              team_id: userInfo.team_id,
+              user_name: userInfo.user,
+              user_id: userInfo.user_id
+            })
+          )
+
+          // Create the account
+          const template = new ACTemplatedAccount(context.template)
+          this._createMailboxFromTemplate(context.id, template)
+          this._finalizeCreateAccount()
+        } else if (mode === AUTH_MODES.REAUTHENTICATE) {
+          //TODO
+        } else if (mode === AUTH_MODES.ATTACH) {
+          //TODO
+        }
+      })
+      .catch((err) => {
+        console.error('[AUTH ERR]', err)
+      })
+  }
+
+  handleAuthTrelloSuccess ({ mode, context, auth }) {
+    this.preventDefault()
+    if (mode === AUTH_MODES.TEMPLATE_CREATE) {
+      // Create the auth
+      actions.createAuth.defer(
+        TrelloAuth.createJS(context.id, undefined, {
+          authToken: auth.token,
+          authAppKey: auth.appKey
+        })
+      )
+
+      // Create the account
+      const template = new ACTemplatedAccount(context.template)
+      this._createMailboxFromTemplate(context.id, template)
+      this._finalizeCreateAccount()
+    } else if (mode === AUTH_MODES.REAUTHENTICATE) {
+      //TODO
+    } else if (mode === AUTH_MODES.ATTACH) {
+      //TODO
+    }
   }
 
   /* **************************************************************************/

@@ -1,16 +1,13 @@
 import alt from '../alt'
 import actions from './trelloActions'
 import { TRELLO_PROFILE_SYNC_INTERVAL, TRELLO_NOTIFICATION_SYNC_INTERVAL } from 'shared/constants'
-import { TrelloMailbox } from 'shared/Models/Accounts/Trello'
 import TrelloHTTP from './TrelloHTTP'
 import uuid from 'uuid'
 import Debug from 'Debug'
-import {
-  mailboxStore,
-  mailboxActions,
-  TrelloMailboxReducer,
-  TrelloDefaultServiceReducer
-} from '../mailbox'
+import { accountStore, accountActions } from '../account'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
+import TrelloServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/TrelloServiceDataReducer'
+import TrelloServiceReducer from 'shared/AltStores/Account/ServiceReducers/TrelloServiceReducer'
 
 const REQUEST_TYPES = {
   PROFILE: 'PROFILE',
@@ -33,20 +30,20 @@ class TrelloStore {
 
     /**
     * @param type: the type of request
-    * @param mailboxId: the id of the mailbox
+    * @param serviceId: the id of the service
     * @return the number of open requests
     */
-    this.openRequestCount = (type, mailboxId) => {
-      return (this.openRequests.get(`${type}:${mailboxId}`) || []).length
+    this.openRequestCount = (type, serviceId) => {
+      return (this.openRequests.get(`${type}:${serviceId}`) || []).length
     }
 
     /**
     * @param type: the type of request
-    * @param mailboxId: the id of the mailbox
+    * @param serviceId: the id of the service
     * @return true if there are any open requests
     */
-    this.hasOpenRequest = (type, mailboxId) => {
-      return this.openRequestCount(type, mailboxId) !== 0
+    this.hasOpenRequest = (type, serviceId) => {
+      return this.openRequestCount(type, serviceId) !== 0
     }
 
     /* **************************************/
@@ -57,12 +54,12 @@ class TrelloStore {
       handleStartPollSync: actions.START_POLLING_UPDATES,
       handleStopPollSync: actions.STOP_POLLING_UPDATES,
 
-      handleSyncAllMailboxProfiles: actions.SYNC_ALL_MAILBOX_PROFILES,
-      handleSyncMailboxProfile: actions.SYNC_MAILBOX_PROFILE,
+      handleSyncAllServiceProfiles: actions.SYNC_ALL_SERVICE_PROFILES,
+      handleSyncServiceProfile: actions.SYNC_SERVICE_PROFILE,
 
-      handleSyncAllMailboxNotifications: actions.SYNC_ALL_MAILBOX_NOTIFICATIONS,
-      handleSyncMailboxNotifications: actions.SYNC_MAILBOX_NOTIFICATIONS,
-      handleSyncMailboxNotificationsAfter: actions.SYNC_MAILBOX_NOTIFICATIONS_AFTER
+      handleSyncAllServiceNotifications: actions.SYNC_ALL_SERVICE_NOTIFICATIONS,
+      handleSyncServiceNotifications: actions.SYNC_SERVICE_NOTIFICATIONS,
+      handleSyncServiceNotificationsAfter: actions.SYNC_SERVICE_NOTIFICATIONS_AFTER
     })
   }
 
@@ -73,12 +70,12 @@ class TrelloStore {
   /**
   * Tracks that a request has been opened
   * @param type: the type of request
-  * @param mailboxId: the id of the mailbox
+  * @param serviceId: the id of the service
   * @param requestId=auto: the unique id for this request
   * @return the requestId
   */
-  trackOpenRequest (type, mailboxId, requestId = uuid.v4()) {
-    const key = `${type}:${mailboxId}`
+  trackOpenRequest (type, serviceId, requestId = uuid.v4()) {
+    const key = `${type}:${serviceId}`
     const requestIds = (this.openRequests.get(key) || [])
     const updatedRequestIds = requestIds.filter((id) => id !== requestId).concat(requestId)
     this.openRequests.set(key, updatedRequestIds)
@@ -88,12 +85,12 @@ class TrelloStore {
   /**
   * Tracks that a request has been closed
   * @param type: the type of request
-  * @param mailboxId: the id of the mailbox
+  * @param serviceId: the id of the service
   * @param requestId: the unique id for this request
   * @return the requestId
   */
-  trackCloseRequest (type, mailboxId, requestId) {
-    const key = `${type}:${mailboxId}`
+  trackCloseRequest (type, serviceId, requestId) {
+    const key = `${type}:${serviceId}`
     const requestIds = (this.openRequests.get(key) || [])
     const updatedRequestIds = requestIds.filter((id) => id !== requestId)
     this.openRequests.set(key, updatedRequestIds)
@@ -113,15 +110,15 @@ class TrelloStore {
   handleStartPollSync ({profiles, unread, notification}) {
     clearInterval(this.profilePoller)
     this.profilePoller = setInterval(() => {
-      actions.syncAllMailboxProfiles.defer()
+      actions.syncAllServiceProfiles.defer()
     }, TRELLO_PROFILE_SYNC_INTERVAL)
-    actions.syncAllMailboxProfiles.defer()
+    actions.syncAllServiceProfiles.defer()
 
     clearInterval(this.notificationPoller)
     this.notificationPoller = setInterval(() => {
-      actions.syncAllMailboxNotifications.defer()
+      actions.syncAllServiceNotifications.defer()
     }, TRELLO_NOTIFICATION_SYNC_INTERVAL)
-    actions.syncAllMailboxNotifications.defer()
+    actions.syncAllServiceNotifications.defer()
   }
 
   /**
@@ -138,31 +135,36 @@ class TrelloStore {
   // Handlers: Profiles
   /* **************************************************************************/
 
-  handleSyncAllMailboxProfiles () {
-    mailboxStore.getState().getMailboxesOfType(TrelloMailbox.type).forEach((mailbox) => {
-      actions.syncMailboxProfile.defer(mailbox.id)
-    })
+  handleSyncAllServiceProfiles () {
     this.preventDefault()
+    accountStore
+      .getState()
+      .allServicesOfType(SERVICE_TYPES.TRELLO)
+      .forEach((service) => {
+        actions.syncServiceProfile.defer(service.id)
+      })
   }
 
-  handleSyncMailboxProfile ({ mailboxId }) {
-    if (this.hasOpenRequest(REQUEST_TYPES.PROFILE, mailboxId)) {
-      this.preventDefault()
-      return
-    }
-    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    if (!mailbox) {
+  handleSyncServiceProfile ({ serviceId }) {
+    if (this.hasOpenRequest(REQUEST_TYPES.PROFILE, serviceId)) {
       this.preventDefault()
       return
     }
 
-    const requestId = this.trackOpenRequest(REQUEST_TYPES.PROFILE, mailboxId)
+    const accountState = accountStore.getState()
+    const serviceAuth = accountState.getMailboxAuthForServiceId(serviceId)
+    if (!serviceAuth) {
+      this.preventDefault()
+      return
+    }
+
+    const requestId = this.trackOpenRequest(REQUEST_TYPES.PROFILE, serviceId)
     Promise.resolve()
-      .then(() => TrelloHTTP.fetchAccountProfile(mailbox.authAppKey, mailbox.authToken))
+      .then(() => TrelloHTTP.fetchAccountProfile(serviceAuth.authAppKey, serviceAuth.authToken))
       .then((response) => {
-        mailboxActions.reduce.defer(
-          mailboxId,
-          TrelloMailboxReducer.setProfileInfo,
+        accountActions.reduceService.defer(
+          serviceId,
+          TrelloServiceReducer.setProfileInfo,
           response.username,
           response.email,
           response.fullName,
@@ -171,22 +173,21 @@ class TrelloStore {
         )
         return Promise.resolve()
       })
-      .then(() => TrelloHTTP.fetchBoards(mailbox.authAppKey, mailbox.authToken, ['id', 'name', 'shortUrl'], 'open'))
+      .then(() => TrelloHTTP.fetchBoards(serviceAuth.authAppKey, serviceAuth.authToken, ['id', 'name', 'shortUrl'], 'open'))
       .then((response) => {
-        mailboxActions.reduceService.defer(
-          mailboxId,
-          TrelloMailbox.SERVICE_TYPES.DEFAULT,
-          TrelloDefaultServiceReducer.setBoards,
+        accountActions.reduceService.defer(
+          serviceId,
+          TrelloServiceReducer.setBoards,
           response
         )
         return Promise.resolve()
       })
       .then(() => {
-        this.trackCloseRequest(REQUEST_TYPES.PROFILE, mailboxId, requestId)
+        this.trackCloseRequest(REQUEST_TYPES.PROFILE, serviceId, requestId)
         this.emitChange()
       })
       .catch((err) => {
-        this.trackCloseRequest(REQUEST_TYPES.PROFILE, mailboxId, requestId)
+        this.trackCloseRequest(REQUEST_TYPES.PROFILE, serviceId, requestId)
         console.error(err)
         this.emitChange()
       })
@@ -196,54 +197,59 @@ class TrelloStore {
   // Handlers: Notifications
   /* **************************************************************************/
 
-  handleSyncAllMailboxNotifications () {
-    mailboxStore.getState().getMailboxesOfType(TrelloMailbox.type).forEach((mailbox) => {
-      actions.syncMailboxNotifications.defer(mailbox.id)
-    })
+  handleSyncAllServiceNotifications () {
     this.preventDefault()
+    accountStore
+      .getState()
+      .allServicesOfType(SERVICE_TYPES.TRELLO)
+      .forEach((service) => {
+        actions.syncServiceNotifications.defer(service.id)
+      })
   }
 
-  handleSyncMailboxNotifications ({ mailboxId }) {
-    Debug.flagLog('trelloLogUnreadCounts', `[TRELLO:UNREAD] call ${mailboxId}`)
-    if (this.hasOpenRequest(REQUEST_TYPES.NOTIFICATION, mailboxId)) {
-      this.preventDefault()
-      return
-    }
-    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    if (!mailbox) {
+  handleSyncServiceNotifications ({ serviceId }) {
+    Debug.flagLog('trelloLogUnreadCounts', `[TRELLO:UNREAD] call ${serviceId}`)
+    if (this.hasOpenRequest(REQUEST_TYPES.NOTIFICATION, serviceId)) {
       this.preventDefault()
       return
     }
 
-    Debug.flagLog('trelloLogUnreadCounts', `[TRELLO:UNREAD] start ${mailboxId}`)
-    const requestId = this.trackOpenRequest(REQUEST_TYPES.NOTIFICATION, mailboxId)
-    TrelloHTTP.fetchUnreadNotifications(mailbox.authAppKey, mailbox.authToken)
+    const accountState = accountStore.getState()
+    const serviceAuth = accountState.getMailboxAuthForServiceId(serviceId)
+    if (!serviceAuth) {
+      this.preventDefault()
+      return
+    }
+
+    Debug.flagLog('trelloLogUnreadCounts', `[TRELLO:UNREAD] start ${serviceId}`)
+    const requestId = this.trackOpenRequest(REQUEST_TYPES.NOTIFICATION, serviceId)
+    Promise.resolve()
+      .then(() => TrelloHTTP.fetchUnreadNotifications(serviceAuth.authAppKey, serviceAuth.authToken))
       .then((notifications) => {
-        this.trackCloseRequest(REQUEST_TYPES.NOTIFICATION, mailboxId, requestId)
-        mailboxActions.reduceService.defer(
-          mailboxId,
-          TrelloMailbox.SERVICE_TYPES.DEFAULT,
-          TrelloDefaultServiceReducer.setUnreadNotifications,
+        this.trackCloseRequest(REQUEST_TYPES.NOTIFICATION, serviceId, requestId)
+        accountActions.reduceServiceData.defer(
+          serviceId,
+          TrelloServiceDataReducer.setUnreadNotifications,
           notifications || []
         )
         this.emitChange()
         if (Debug.flags.trelloLogUnreadCounts) {
-          console.log(`[TRELLO:UNREAD] success: ${mailboxId}`, JSON.stringify(notifications, null, 2))
+          console.log(`[TRELLO:UNREAD] success: ${serviceId}`, JSON.stringify(notifications, null, 2))
         }
       })
       .catch((err) => {
-        this.trackCloseRequest(REQUEST_TYPES.NOTIFICATION, mailboxId, requestId)
+        this.trackCloseRequest(REQUEST_TYPES.NOTIFICATION, serviceId, requestId)
         console.error(err)
         this.emitChange()
-        Debug.flagLog('trelloLogUnreadCounts', [`[TRELLO:UNREAD] error: ${mailboxId}`, err])
+        Debug.flagLog('trelloLogUnreadCounts', [`[TRELLO:UNREAD] error: ${serviceId}`, err])
       })
   }
 
-  handleSyncMailboxNotificationsAfter ({ mailboxId, wait }) {
-    setTimeout(() => {
-      actions.syncMailboxNotifications.defer(mailboxId)
-    }, wait)
+  handleSyncServiceNotificationsAfter ({ serviceId, wait }) {
     this.preventDefault()
+    setTimeout(() => {
+      actions.syncServiceNotifications.defer(serviceId)
+    }, wait)
   }
 }
 

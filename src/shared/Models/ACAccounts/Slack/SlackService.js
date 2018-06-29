@@ -58,7 +58,7 @@ class SlackService extends CoreACService {
   // Properties: Behaviour
   /* **************************************************************************/
 
-  get url () { return this._value_('authUrl') }
+  get url () { return 'https://slack.com' }
   get restoreLastUrl () { return false }
 
   /**
@@ -66,7 +66,9 @@ class SlackService extends CoreACService {
   * @param serviceData: the service data object
   * @return a url
   */
-  getUrlWithData (serviceData) { return this.url }
+  getUrlWithData (serviceData, auth) {
+    return auth ? auth.authUrl : this.url
+  }
 
   /* **************************************************************************/
   // Properties: Avatar
@@ -103,6 +105,7 @@ class SlackService extends CoreACService {
   get teamOverview () { return this._value_('teamOverview') }
   get hasTeamOverview () { return !!this.teamOverview }
   get authTeamName () { return this._value_('authTeamName') }
+  get authUserId () { return this._value_('authUserId') }
 }
 
 export default SlackService

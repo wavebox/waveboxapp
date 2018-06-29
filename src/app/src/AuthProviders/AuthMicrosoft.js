@@ -70,7 +70,6 @@ class AuthMicrosoft {
   */
   promptUserToGetAuthorizationCode (credentials, partitionId, additionalPermissions) {
     return new Promise((resolve, reject) => {
-      const fullPartitionId = partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
       const waveboxOauthWin = new AuthWindow()
       waveboxOauthWin.create(this.generatePushServiceAuthenticationURL(credentials), {
         useContentSize: true,
@@ -84,14 +83,14 @@ class AuthMicrosoft {
         webPreferences: {
           nodeIntegration: false,
           contextIsolation: true,
-          partition: fullPartitionId,
+          partition: partitionId,
           sandbox: true,
           nativeWindowOpen: true,
           sharedSiteInstances: true
         }
       })
       const oauthWin = waveboxOauthWin.window
-      const emitter = SessionManager.webRequestEmitterFromPartitionId(fullPartitionId)
+      const emitter = SessionManager.webRequestEmitterFromPartitionId(partitionId)
 
       let userClose = true
 
@@ -169,20 +168,20 @@ class AuthMicrosoft {
   */
   handleAuthMicrosoft (evt, body) {
     Promise.resolve()
-      .then(() => this.promptUserToGetAuthorizationCode(body.credentials, body.id, body.additionalPermissions))
+      .then(() => this.promptUserToGetAuthorizationCode(body.credentials, body.partitionId, body.additionalPermissions))
       .then((temporaryCode) => {
         evt.sender.send(WB_AUTH_MICROSOFT_COMPLETE, {
-          id: body.id,
-          authMode: body.authMode,
-          provisional: body.provisional,
-          temporaryCode: temporaryCode,
-          codeRedirectUri: body.credentials.MICROSOFT_AUTH_RETURN_URL_V2
+          mode: body.mode,
+          context: body.context,
+          auth: {
+            temporaryCode: temporaryCode,
+            codeRedirectUri: body.credentials.MICROSOFT_AUTH_RETURN_URL_V2
+          }
         })
       }, (err) => {
         evt.sender.send(WB_AUTH_MICROSOFT_ERROR, {
-          id: body.id,
-          authMode: body.authMode,
-          provisional: body.provisional,
+          mode: body.mode,
+          context: body.context,
           error: err,
           errorString: (err || {}).toString ? (err || {}).toString() : undefined,
           errorMessage: (err || {}).message ? (err || {}).message : undefined,

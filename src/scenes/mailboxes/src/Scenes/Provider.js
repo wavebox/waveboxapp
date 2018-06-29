@@ -6,9 +6,9 @@ import Theme from 'wbui/Theme'
 import { MuiThemeProvider } from '@material-ui/core/styles'
 import { accountStore, accountDispatch } from 'stores/account'
 import { settingsStore } from 'stores/settings'
-//import { googleActions } from 'stores/google'
-//import { trelloActions } from 'stores/trello'
-//import { slackActions } from 'stores/slack'
+import { googleActions } from 'stores/google'
+import { trelloActions } from 'stores/trello'
+import { slackActions } from 'stores/slack'
 //import { microsoftActions } from 'stores/microsoft'
 import { updaterActions } from 'stores/updater'
 import { Analytics, ServerVent } from 'Server'
@@ -55,9 +55,9 @@ export default class Provider extends React.Component {
     ipcRenderer.on(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
 
     // STEP 2. Mailbox connections
-    //googleActions.startPollingUpdates()
-    //trelloActions.startPollingUpdates()
-    //slackActions.connectAllMailboxes()
+    googleActions.startPollingUpdates()
+    trelloActions.startPollingUpdates()
+    slackActions.connectAllServices()
     //microsoftActions.startPollingUpdates()
 
     // STEP 3. Listen for self
@@ -89,9 +89,9 @@ export default class Provider extends React.Component {
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
 
     // STEP 2. Mailbox connections
-    //googleActions.stopPollingUpdates()
-    //trelloActions.stopPollingUpdates()
-    //slackActions.disconnectAllMailboxes()
+    googleActions.stopPollingUpdates()
+    trelloActions.stopPollingUpdates()
+    slackActions.disconnectAllServices()
     //microsoftActions.stopPollingUpdates()
 
     // STEP 3. Listening for self

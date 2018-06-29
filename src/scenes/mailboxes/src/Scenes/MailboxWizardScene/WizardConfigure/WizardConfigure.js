@@ -73,12 +73,6 @@ export default class WizardConfigure extends React.Component {
       case ACCOUNT_TEMPLATE_TYPES.GOOGLE_INBOX:
         RenderClass = WizardConfigureGinbox
         break
-      case ACCOUNT_TEMPLATE_TYPES.SLACK:
-        //TODO
-        break
-      case ACCOUNT_TEMPLATE_TYPES.TRELLO:
-        //TODO
-        break
       case ACCOUNT_TEMPLATE_TYPES.MICROSOFT:
         //TODO
         break

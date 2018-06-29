@@ -166,7 +166,7 @@ export default class MailboxServicePopover extends React.Component {
   * @param evt: the event that fired
   */
   handleResync = (evt) => {
-    accountActions.fullSyncMailbox(this.props.mailboxId)
+    accountActions.fullSyncService(this.props.mailboxId)
     this.closePopover(evt)
   }
 
