@@ -59,6 +59,7 @@ class AccountStore extends CoreAccountStore {
       handleReduceServiceDataIfActive: actions.REDUCE_SERVICE_DATA_IF_ACTIVE,
       handleReduceServiceDataIfInactive: actions.REDUCE_SERVICE_DATA_IF_INACTIVE,
       handleSetCustomAvatarOnService: actions.SET_CUSTOM_AVATAR_ON_SERVICE,
+      handleSetServiceAvatarOnService: actions.SET_SERVICE_AVATAR_ON_SERVICE,
 
       // Containers
       handleContainersUpdated: actions.CONTAINERS_UPDATED,
@@ -507,6 +508,29 @@ class AccountStore extends CoreAccountStore {
     } else { // Remove
       if (!prevAvatarId) { this.preventDefault(); return }
       this.saveService(id, service.changeData({ avatarId: undefined }))
+      this.saveAvatar(prevAvatarId, null)
+    }
+  }
+
+  handleSetServiceAvatarOnService ({id, b64Image}) {
+    const service = this.getService(id)
+    if (!service) { this.preventDefault(); return }
+
+    const prevAvatarId = service.serviceLocalAvatarId
+    if (b64Image) { // Set
+      if (prevAvatarId && this._avatars_.get(prevAvatarId) === b64Image) {
+        this.preventDefault(); return
+      }
+
+      const avatarId = uuid.v4()
+      this.saveAvatar(avatarId, b64Image)
+      this.saveService(id, service.changeData({ serviceLocalAvatarId: avatarId }))
+      if (prevAvatarId) {
+        this.saveAvatar(prevAvatarId, null)
+      }
+    } else { // Remove
+      if (!prevAvatarId) { this.preventDefault(); return }
+      this.saveService(id, service.changeData({ serviceLocalAvatarId: undefined }))
       this.saveAvatar(prevAvatarId, null)
     }
   }

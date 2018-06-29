@@ -6,6 +6,7 @@ import ContainerServiceReducer from './ContainerServiceReducer'
 import GenericServiceData from './GenericServiceReducer'
 import GoogleInboxServiceReducer from './GoogleInboxServiceReducer'
 import GoogleMailServiceReducer from './GoogleMailServiceReducer'
+import MicrosoftMailServiceReducer from './MicrosoftMailServiceReducer'
 import SlackServiceReducer from './SlackServiceReducer'
 import TrelloServiceReducer from './TrelloServiceReducer'
 
@@ -17,6 +18,7 @@ const manifest = new CoreReducerManifest([
   GenericServiceData,
   GoogleInboxServiceReducer,
   GoogleMailServiceReducer,
+  MicrosoftMailServiceReducer,
   SlackServiceReducer,
   TrelloServiceReducer
 ])

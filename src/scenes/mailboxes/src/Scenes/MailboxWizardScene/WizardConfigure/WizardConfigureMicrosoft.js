@@ -1,13 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { mailboxActions, MicrosoftDefaultServiceReducer } from 'stores/mailbox'
+import { accountActions, accountStore } from 'stores/account'
 import { Paper } from '@material-ui/core'
 import WizardConfigureUnreadModeOption from './WizardConfigureUnreadModeOption'
-import MicrosoftDefaultService from 'shared/Models/Accounts/Microsoft/MicrosoftDefaultService'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
 import { withStyles } from '@material-ui/core/styles'
 import yellow from '@material-ui/core/colors/yellow'
 import lightBlue from '@material-ui/core/colors/lightBlue'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
+import MicrosoftMailService from 'shared/Models/ACAccounts/Microsoft/MicrosoftMailService'
+import MicrosoftMailServiceReducer from 'shared/AltStores/Account/ServiceReducers/MicrosoftMailServiceReducer'
 
 const styles = {
   // Typography
@@ -67,8 +69,69 @@ class WizardConfigureMicrosoft extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    mailbox: PropTypes.object.isRequired,
+    mailboxId: PropTypes.string.isRequired,
     onRequestCancel: PropTypes.func.isRequired
+  }
+
+  /* **************************************************************************/
+  // Component lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    accountStore.listen(this.accountUpdated)
+  }
+
+  componentWillUnmount () {
+    accountStore.unlisten(this.accountUpdated)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.mailboxId !== nextProps.mailboxId) {
+      const accountState = accountStore.getState()
+      const service = accountState.mailboxServicesOfType(nextProps.mailboxId, SERVICE_TYPES.MICROSOFT_MAIL)
+      this.setState(service ? {
+        unreadMode: service.unreadMode,
+        serviceId: service.id
+      } : {
+        unreadMode: undefined,
+        serviceId: undefined
+      })
+    }
+  }
+
+  /* **************************************************************************/
+  // Data lifecycle
+  /* **************************************************************************/
+
+  state = (() => {
+    const accountState = accountStore.getState()
+    const service = accountState.mailboxServicesOfType(
+      this.props.mailboxId,
+      SERVICE_TYPES.MICROSOFT_MAIL
+    )[0]
+
+    return service ? {
+      unreadMode: service.unreadMode,
+      serviceId: service.id
+    } : {
+      unreadMode: undefined,
+      serviceId: undefined
+    }
+  })()
+
+  accountUpdated = (accountState) => {
+    const service = accountState.mailboxServicesOfType(
+      this.props.mailboxId,
+      SERVICE_TYPES.MICROSOFT_MAIL
+    )[0]
+
+    this.setState(service ? {
+      unreadMode: service.unreadMode,
+      serviceId: service.id
+    } : {
+      unreadMode: undefined,
+      serviceId: undefined
+    })
   }
 
   /* **************************************************************************/
@@ -80,8 +143,12 @@ class WizardConfigureMicrosoft extends React.Component {
   * @param unreadMode: the picked unread mode
   */
   handleModePicked = (unreadMode) => {
-    const { mailbox } = this.props
-    mailboxActions.reduceService(mailbox.id, MicrosoftDefaultService.type, MicrosoftDefaultServiceReducer.setUnreadMode, unreadMode)
+    const { serviceId } = this.state
+    accountActions.reduceService(
+      serviceId,
+      MicrosoftMailServiceReducer.setUnreadMode,
+      unreadMode
+    )
   }
 
   /* **************************************************************************/
@@ -89,13 +156,13 @@ class WizardConfigureMicrosoft extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { mailbox, onRequestCancel, classes, ...passProps } = this.props
-    const unreadMode = mailbox.defaultService.unreadMode
+    const { mailboxId, onRequestCancel, classes, ...passProps } = this.props
+    const { unreadMode } = this.state
 
     return (
       <WizardConfigureDefaultLayout
         onRequestCancel={onRequestCancel}
-        mailboxId={mailbox.id}
+        mailboxId={mailboxId}
         {...passProps}>
         <h2 className={classes.heading}>Choose your Inbox mode</h2>
         <p className={classes.subHeading}>
@@ -107,8 +174,8 @@ class WizardConfigureMicrosoft extends React.Component {
           <WizardConfigureUnreadModeOption
             className={classes.unreadOption}
             color={yellow[700]}
-            selected={unreadMode === MicrosoftDefaultService.UNREAD_MODES.INBOX_UNREAD}
-            onSelected={() => this.handleModePicked(MicrosoftDefaultService.UNREAD_MODES.INBOX_UNREAD)}
+            selected={unreadMode === MicrosoftMailService.UNREAD_MODES.INBOX_UNREAD}
+            onSelected={() => this.handleModePicked(MicrosoftMailService.UNREAD_MODES.INBOX_UNREAD)}
             name='Unread Inbox'
             popoverContent={(
               <div className={classes.popoverContainer}>
@@ -125,8 +192,8 @@ class WizardConfigureMicrosoft extends React.Component {
           <WizardConfigureUnreadModeOption
             className={classes.unreadOption}
             color={lightBlue[700]}
-            selected={unreadMode === MicrosoftDefaultService.UNREAD_MODES.INBOX_FOCUSED_UNREAD}
-            onSelected={() => this.handleModePicked(MicrosoftDefaultService.UNREAD_MODES.INBOX_FOCUSED_UNREAD)}
+            selected={unreadMode === MicrosoftMailService.UNREAD_MODES.INBOX_FOCUSED_UNREAD}
+            onSelected={() => this.handleModePicked(MicrosoftMailService.UNREAD_MODES.INBOX_FOCUSED_UNREAD)}
             name='Focused Inbox'
             popoverContent={(
               <div className={classes.popoverContainer}>

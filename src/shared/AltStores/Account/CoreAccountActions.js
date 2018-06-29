@@ -337,8 +337,8 @@ class CoreAccountActions extends RemoteActions {
   }
 
   /**
-  * Sets a custom avatar on a mailbox
-  * @param id: the id of the mailbox
+  * Sets a custom avatar on a service
+  * @param id: the id of the service
   * @param b64Image: the image to set
   */
   setCustomAvatarOnService (...args) {
@@ -347,6 +347,20 @@ class CoreAccountActions extends RemoteActions {
       return { id, b64Image }
     } else if (process.type === 'renderer') {
       return this.remoteDispatch('setCustomAvatarOnService', args)
+    }
+  }
+
+  /**
+  * Sets a service avatar on a service
+  * @param id: the id of the service
+  * @param b64Image: the image to set
+  */
+  setServiceAvatarOnService (...args) {
+    if (process.type === 'browser') {
+      const [id, b64Image] = args
+      return { id, b64Image }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('setServiceAvatarOnService', args)
     }
   }
 

@@ -48,6 +48,15 @@ class AuthReducer {
       return auth.changeData({ hasAuth: false })
     }
   }
+
+  /**
+  * Applies a changeset on the auth
+  * @param auth: the auth object
+  * @param changeset: the changeset to apply
+  */
+  static updateAuth (auth, changeset) {
+    return auth.changeData(changeset)
+  }
 }
 
 export default AuthReducer

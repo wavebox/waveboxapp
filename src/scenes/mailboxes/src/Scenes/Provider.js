@@ -9,7 +9,7 @@ import { settingsStore } from 'stores/settings'
 import { googleActions } from 'stores/google'
 import { trelloActions } from 'stores/trello'
 import { slackActions } from 'stores/slack'
-//import { microsoftActions } from 'stores/microsoft'
+import { microsoftActions } from 'stores/microsoft'
 import { updaterActions } from 'stores/updater'
 import { Analytics, ServerVent } from 'Server'
 import { NotificationService, NotificationRenderer } from 'Notifications'
@@ -58,7 +58,7 @@ export default class Provider extends React.Component {
     googleActions.startPollingUpdates()
     trelloActions.startPollingUpdates()
     slackActions.connectAllServices()
-    //microsoftActions.startPollingUpdates()
+    microsoftActions.startPollingUpdates()
 
     // STEP 3. Listen for self
     accountStore.listen(this.accountChanged)
@@ -92,7 +92,7 @@ export default class Provider extends React.Component {
     googleActions.stopPollingUpdates()
     trelloActions.stopPollingUpdates()
     slackActions.disconnectAllServices()
-    //microsoftActions.stopPollingUpdates()
+    microsoftActions.stopPollingUpdates()
 
     // STEP 3. Listening for self
     accountStore.unlisten(this.accountChanged)

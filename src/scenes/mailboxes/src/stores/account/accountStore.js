@@ -5,13 +5,13 @@ import actions from './accountActions'
 import settingsActions from '../settings/settingsActions'
 import GoogleHTTP from '../google/GoogleHTTP'
 import SlackHTTP from '../slack/SlackHTTP'
-//import MicrosoftHTTP from '../microsoft/MicrosoftHTTP'
+import MicrosoftHTTP from '../microsoft/MicrosoftHTTP'
 import accountDispatch from './accountDispatch'
 import Bootstrap from 'R/Bootstrap'
 import googleActions from '../google/googleActions'
 import slackActions from '../slack/slackActions'
 import trelloActions from '../trello/trelloActions'
-//import microsoftActions from '../microsoft/microsoftActions'
+import microsoftActions from '../microsoft/microsoftActions'
 import userActions from '../user/userActions'
 import {
   WB_AUTH_GOOGLE,
@@ -30,6 +30,7 @@ import CoreACService from 'shared/Models/ACAccounts/CoreACService'
 import GoogleAuth from 'shared/Models/ACAccounts/Google/GoogleAuth'
 import SlackAuth from 'shared/Models/ACAccounts/Slack/SlackAuth'
 import TrelloAuth from 'shared/Models/ACAccounts/Trello/TrelloAuth'
+import MicrosoftAuth from 'shared/Models/ACAccounts/Microsoft/MicrosoftAuth'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 
 const AUTH_MODES = Object.freeze({
@@ -126,6 +127,7 @@ class AccountStore extends RendererAccountStore {
       handleAuthGoogleSuccess: actions.AUTH_GOOGLE_SUCCESS,
       handleAuthSlackSuccess: actions.AUTH_SLACK_SUCCESS,
       handleAuthTrelloSuccess: actions.AUTH_TRELLO_SUCCESS,
+      handleAuthMicrosoftSuccess: actions.AUTH_MICROSOFT_SUCCESS,
 
       /*
       // Mailbox auth
@@ -296,8 +298,17 @@ class AccountStore extends RendererAccountStore {
           template: template.cloneData()
         }
       })
-    } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.MICROSOFT) {
-      //TODO
+    } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.OUTLOOK || template.templateType === ACCOUNT_TEMPLATE_TYPES.OFFICE365) {
+      window.location.hash = `/mailbox_wizard/${template.templateType}/${template.accessMode}/1/${mailboxId}`
+      ipcRenderer.send(WB_AUTH_MICROSOFT, {
+        partitionId: `persist:${mailboxId}`,
+        credentials: Bootstrap.credentials,
+        mode: AUTH_MODES.TEMPLATE_CREATE,
+        context: {
+          id: mailboxId,
+          template: template.cloneData()
+        }
+      })
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.TRELLO) {
       window.location.hash = `/mailbox_wizard/${template.templateType}/_/1/${mailboxId}`
       ipcRenderer.send(WB_AUTH_TRELLO, {
@@ -338,8 +349,6 @@ class AccountStore extends RendererAccountStore {
   */
   _createMailboxFromTemplate (mailboxId, template) {
     if (template.templateType === ACCOUNT_TEMPLATE_TYPES.CONTAINER) {
-      //TODO
-    } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.MICROSOFT) {
       //TODO
     } else {
       actions.createMailbox.defer(ACMailbox.createJS(
@@ -476,6 +485,35 @@ class AccountStore extends RendererAccountStore {
     } else if (mode === AUTH_MODES.ATTACH) {
       //TODO
     }
+  }
+
+  handleAuthMicrosoftSuccess ({ mode, context, auth }) {
+    this.preventDefault()
+    Promise.resolve()
+      .then(() => MicrosoftHTTP.upgradeAuthCodeToPermenant(auth.temporaryCode, auth.codeRedirectUri, 2))
+      .then((permenantAuth) => {
+        if (mode === AUTH_MODES.TEMPLATE_CREATE) {
+          // Create the auth
+          actions.createAuth.defer(
+            MicrosoftAuth.createJS(context.id, undefined, {
+              ...permenantAuth,
+              accessMode: context.template.accessMode,
+              protocolVersion: 2
+            })
+          )
+
+          // Create the account
+          const template = new ACTemplatedAccount(context.template)
+          this._createMailboxFromTemplate(context.id, template)
+          this._finalizeCreateAccount(`/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.id}`)
+        } else if (mode === AUTH_MODES.REAUTHENTICATE) {
+          //TODO
+        } else if (mode === AUTH_MODES.ATTACH) {
+          //TODO
+        }
+      }).catch((err) => {
+        console.error('[AUTH ERR]', err)
+      })
   }
 
   /* **************************************************************************/

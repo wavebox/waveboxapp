@@ -66,9 +66,11 @@ class AccountActions extends RendererAccountActions {
       }
     } else if (templateType === 'MICROSOFT') {
       if (accessMode === 'OUTLOOK') {
-        //TODO
+        window.location.hash = `/mailbox_wizard/${ACCOUNT_TEMPLATE_TYPES.OUTLOOK}/OUTLOOK/0`
+        return {}
       } else if (accessMode === 'OFFICE365') {
-        //TODO
+        window.location.hash = `/mailbox_wizard/${ACCOUNT_TEMPLATE_TYPES.OFFICE365}/OFFICE365/0`
+        return {}
       }
     }
 
@@ -114,12 +116,21 @@ class AccountActions extends RendererAccountActions {
     return payload
   }
 
-/**
+  /**
   * Handles a Trello account authenticating
   * @param evt: the event that came over the ipc
   * @param payload: the data that came across the ipc
   */
   authTrelloSuccess (evt, payload) {
+    return payload
+  }
+
+  /**
+  * Handles a Microsoft account authenticating
+  * @param evt: the event that came over the ipc
+  * @param payload: the data that came across the ipc
+  */
+  authMicrosoftSuccess (evt, payload) {
     return payload
   }
 
@@ -499,7 +510,7 @@ ipcRenderer.on(WB_AUTH_SLACK_COMPLETE, actions.authSlackSuccess)
 ipcRenderer.on(WB_AUTH_SLACK_ERROR, actions.authFailure)
 ipcRenderer.on(WB_AUTH_TRELLO_COMPLETE, actions.authTrelloSuccess)
 ipcRenderer.on(WB_AUTH_TRELLO_ERROR, actions.authFailure)
-//ipcRenderer.on(WB_AUTH_MICROSOFT_COMPLETE, actions.authMicrosoftMailboxSuccess)
+ipcRenderer.on(WB_AUTH_MICROSOFT_COMPLETE, actions.authMicrosoftSuccess)
 ipcRenderer.on(WB_AUTH_MICROSOFT_ERROR, actions.authFailure)
 
 // Mailbox modifiers

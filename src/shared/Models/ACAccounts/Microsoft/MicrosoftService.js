@@ -27,14 +27,14 @@ class MicrosoftService extends CoreACService {
   */
   getUrlWithData (serviceData, authData) {
     if (authData) {
-      if (authData.authData.accessMode === this.constructor.ACCESS_MODES.OFFICE365) {
+      if (authData.accessMode === this.constructor.ACCESS_MODES.OFFICE365) {
         return this.o365Url
-      } else {
+      } else if (authData.accessMode === this.constructor.ACCESS_MODES.OUTLOOK) {
         return this.outlookUrl
       }
-    } else {
-      return this.url
     }
+
+    return this.url
   }
 
   /* **************************************************************************/

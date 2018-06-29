@@ -5,12 +5,13 @@ const UNREAD_MODES = Object.freeze({
   INBOX_FOCUSED_UNREAD: 'INBOX_FOCUSED_UNREAD'
 })
 
-class MicrosoftCalendarService extends MicrosoftService {
+class MicrosoftMailService extends MicrosoftService {
   /* **************************************************************************/
   // Class : Types
   /* **************************************************************************/
 
   static get type () { return MicrosoftService.SERVICE_TYPES.MICROSOFT_MAIL }
+  static get UNREAD_MODES () { return UNREAD_MODES }
 
   /* **************************************************************************/
   // Class: Humanized
@@ -65,4 +66,4 @@ class MicrosoftCalendarService extends MicrosoftService {
   get unreadMode () { return this._value_('unreadMode', UNREAD_MODES.INBOX_UNREAD) }
 }
 
-export default MicrosoftCalendarService
+export default MicrosoftMailService
