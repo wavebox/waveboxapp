@@ -2,7 +2,7 @@ import { Socket, LongPoll } from 'phoenix'
 import { EventEmitter } from 'events'
 import Debug from 'Debug'
 import userActions from 'stores/user/userActions'
-//import googleActions from 'stores/google/googleActions'
+import googleActions from 'stores/google/googleActions'
 import {
   SYNC_SOCKET_URL,
   SYNC_SOCKET_UPGRADE_INTERVAL,
@@ -221,15 +221,15 @@ class ServerVent extends EventEmitter {
 
   /**
   * Starts listening for google push updates
-  * @param mailboxId: the id of the mailbox
+  * @param serviceId: the id of the service
   * @param email: the email address to listen for
   * @param pushToken: the token that authenticates us with the push service
   * @return this
   */
-  startListeningForGooglePushUpdates (mailboxId, email, pushToken) {
+  startListeningForGooglePushUpdates (serviceId, email, pushToken) {
     if (!this.isSocketSetup) { throw new Error('Unable to listen on channel, socket is not setup') }
 
-    if (this._pushChannels.has(mailboxId)) { return this }
+    if (this._pushChannels.has(serviceId)) { return this }
     const channel = this._socket.channel(`googlepush:${email}`, {
       params: {
         token: pushToken
@@ -239,34 +239,34 @@ class ServerVent extends EventEmitter {
       .receive('error', (err) => {
         console.error('[SYNCS] Failed to join push channel', err)
         channel.leave()
-        this._pushChannels.delete(mailboxId)
+        this._pushChannels.delete(serviceId)
       })
       .receive('timeout', () => {
         console.warn('[SYNCS] Warning timeout on push channel. Will retry')
         channel.leave()
-        this._pushChannels.delete(mailboxId)
-        this.startListeningForGooglePushUpdates(mailboxId, email, pushToken)
+        this._pushChannels.delete(serviceId)
+        this.startListeningForGooglePushUpdates(serviceId, email, pushToken)
       })
     channel.on('historyChanged', (data) => {
       googleActions.mailHistoryIdChangedFromWatch(data)
       Debug.flagLog('googleLogServerPings', `[GOOGLE:PING] unread ${data.emailAddress}`)
     })
-    this._pushChannels.set(mailboxId, channel)
+    this._pushChannels.set(serviceId, channel)
 
     return this
   }
 
   /**
   * Stops listening for google push updates
-  * @param mailboxId: the id of the mailbox
+  * @param serviceId: the id of the service
   * @return this
   */
-  stopListeningForGooglePushUpdates (mailboxId) {
-    if (!this._pushChannels.has(mailboxId)) { return this }
+  stopListeningForGooglePushUpdates (serviceId) {
+    if (!this._pushChannels.has(serviceId)) { return this }
     if (!this.isSocketSetup) { throw new Error('Unable to unlisten on channel, socket is not setup') }
 
-    this._pushChannels.get(mailboxId).leave()
-    this._pushChannels.delete(mailboxId)
+    this._pushChannels.get(serviceId).leave()
+    this._pushChannels.delete(serviceId)
 
     return this
   }

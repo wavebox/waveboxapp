@@ -2,17 +2,16 @@ import alt from '../alt'
 import actions from './googleActions'
 import GoogleHTTP from './GoogleHTTP'
 import { GOOGLE_PROFILE_SYNC_INTERVAL, GOOGLE_MAILBOX_WATCH_INTERVAL } from 'shared/constants'
-import { GoogleMailbox, GoogleDefaultService } from 'shared/Models/Accounts/Google'
 import uuid from 'uuid'
 import { URL } from 'url'
 import ServerVent from 'Server/ServerVent'
-import {
-  mailboxStore,
-  mailboxActions,
-  GoogleMailboxReducer,
-  GoogleDefaultServiceReducer
-} from '../mailbox'
+import { accountStore, accountActions } from 'stores/account'
 import Debug from 'Debug'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
+import AuthReducer from 'shared/AltStores/Account/AuthReducers/AuthReducer'
+import CoreGoogleMailboxServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/CoreGoogleMailServiceDataReducer'
+import CoreGoogleMailServiceReducer from 'shared/AltStores/Account/ServiceReducers/CoreGoogleMailServiceReducer'
+import CoreGoogleMailService from 'shared/Models/ACAccounts/Google/CoreGoogleMailService'
 
 const REQUEST_TYPES = {
   PROFILE: 'PROFILE',
@@ -36,20 +35,20 @@ class GoogleStore {
 
     /**
     * @param type: the type of request
-    * @param mailboxId: the id of the mailbox
+    * @param serviceId: the id of the service
     * @return the number of open requests
     */
-    this.openRequestCount = (type, mailboxId) => {
-      return (this.openRequests.get(`${type}:${mailboxId}`) || []).length
+    this.openRequestCount = (type, serviceId) => {
+      return (this.openRequests.get(`${type}:${serviceId}`) || []).length
     }
 
     /**
     * @param type: the type of request
-    * @param mailboxId: the id of the mailbox
+    * @param serviceId: the id of the service
     * @return true if there are any open requests
     */
-    this.hasOpenRequest = (type, mailboxId) => {
-      return this.openRequestCount(type, mailboxId) !== 0
+    this.hasOpenRequest = (type, serviceId) => {
+      return this.openRequestCount(type, serviceId) !== 0
     }
 
     /* **************************************/
@@ -60,17 +59,19 @@ class GoogleStore {
       handleStartPolling: actions.START_POLLING_UPDATES,
       handleStopPolling: actions.STOP_POLLING_UPDATES,
 
-      handleSyncAllMailboxProfiles: actions.SYNC_ALL_MAILBOX_PROFILES,
-      handleSyncMailboxProfile: actions.SYNC_MAILBOX_PROFILE,
+      handleSyncAllServiceProfiles: actions.SYNC_ALL_SERVICE_PROFILES,
+      handleSyncServiceProfile: actions.SYNC_SERVICE_PROFILE,
 
-      handleConnectMailbox: actions.CONNECT_MAILBOX,
-      handleDisconnectMailbox: actions.DISCONNECT_MAILBOX,
-      handleRegisterAllMailboxWatches: actions.REGISTER_ALL_MAILBOX_WATCHES,
-      handleRegisterMailboxWatch: actions.REGISTER_MAILBOX_WATCH,
+      handleConnectService: actions.CONNECT_SERVICE,
+      handleDisconnectService: actions.DISCONNECT_SERVICE,
+      handleRegisterAllServiceWatches: actions.REGISTER_ALL_SERVICE_WATCHES,
+      handleRegisterServiceWatch: actions.REGISTER_SERVICE_WATCH,
+
+      handleServiceSyncWatchFieldChange: actions.SERVICE_SYNC_WATCH_FIELD_CHANGE,
 
       handleMailHistoryIdChanged: actions.MAIL_HISTORY_ID_CHANGED,
-      handleMailCountChanged: actions.MAIL_COUNT_CHANGED,
-      handleSyncMailboxMessages: actions.SYNC_MAILBOX_MESSAGES,
+      handleMailCountPossiblyChanged: actions.MAIL_COUNT_POSSIBLY_CHANGED,
+      handleSyncServiceMessages: actions.SYNC_SERVICE_MESSAGES,
       handleMailHistoryIdChangedFromWatch: actions.MAIL_HISTORY_ID_CHANGED_FROM_WATCH
     })
   }
@@ -80,15 +81,17 @@ class GoogleStore {
   /* **************************************************************************/
 
   /**
-  * Sets up the auth for a mailbox
-  * @param mailboxOrMailboxId: the mailbox to get the authentication for or the mailboxId if you want to autofetch the mailbox
+  * Sets up the auth for a service
+  * @param serviceAith: the serviceAuth
   * @return the auth object
   */
-  getAPIAuth (mailboxOrMailboxId) {
-    const mailbox = typeof (mailboxOrMailboxId) === 'string' ? mailboxStore.getState().getMailbox(mailboxOrMailboxId) : mailboxOrMailboxId
-    if (!mailbox) { return undefined }
-
-    return GoogleHTTP.generateAuth(mailbox.accessToken, mailbox.refreshToken, mailbox.authExpiryTime)
+  getAPIAuth (serviceAuth) {
+    if (!serviceAuth || !serviceAuth.hasAuth || serviceAuth.isAuthInvalid) { return undefined }
+    return GoogleHTTP.generateAuth(
+      serviceAuth.accessToken,
+      serviceAuth.refreshToken,
+      serviceAuth.authExpiryTime
+    )
   }
 
   /* **************************************************************************/
@@ -98,12 +101,12 @@ class GoogleStore {
   /**
   * Tracks that a request has been opened
   * @param type: the type of request
-  * @param mailboxId: the id of the mailbox
+  * @param serviceId: the id of the service
   * @param requestId=auto: the unique id for this request
   * @return the requestId
   */
-  trackOpenRequest (type, mailboxId, requestId = uuid.v4()) {
-    const key = `${type}:${mailboxId}`
+  trackOpenRequest (type, serviceId, requestId = uuid.v4()) {
+    const key = `${type}:${serviceId}`
     const requestIds = (this.openRequests.get(key) || [])
     const updatedRequestIds = requestIds.filter((id) => id !== requestId).concat(requestId)
     this.openRequests.set(key, updatedRequestIds)
@@ -113,12 +116,12 @@ class GoogleStore {
   /**
   * Tracks that a request has been closed
   * @param type: the type of request
-  * @param mailboxId: the id of the mailbox
+  * @param serviceId: the id of the service
   * @param requestId: the unique id for this request
   * @return the requestId
   */
-  trackCloseRequest (type, mailboxId, requestId) {
-    const key = `${type}:${mailboxId}`
+  trackCloseRequest (type, serviceId, requestId) {
+    const key = `${type}:${serviceId}`
     const requestIds = (this.openRequests.get(key) || [])
     const updatedRequestIds = requestIds.filter((id) => id !== requestId)
     this.openRequests.set(key, updatedRequestIds)
@@ -136,10 +139,12 @@ class GoogleStore {
   */
   isInvalidGrantError (err) {
     if (err && typeof (err.message) === 'string') {
-      if (err.message.indexOf('invalid_grant') !== -1 || err.message.indexOf('Invalid Credentials') !== -1 || err.message.indexOf('no credentials provided') !== -1) {
-        return true
-      }
+      const isInvalid = err.message.indexOf('invalid_grant') !== -1 ||
+        err.message.indexOf('Invalid Credentials') !== -1 ||
+        err.message.indexOf('no credentials provided') !== -1
+      if (isInvalid) { return true }
     }
+
     return false
   }
 
@@ -157,15 +162,15 @@ class GoogleStore {
     // Pollers
     clearInterval(this.profilePoller)
     this.profilePoller = setInterval(() => {
-      actions.syncAllMailboxProfiles.defer()
+      actions.syncAllServiceProfiles.defer()
     }, GOOGLE_PROFILE_SYNC_INTERVAL)
-    actions.syncAllMailboxProfiles.defer()
+    actions.syncAllServiceProfiles.defer()
 
     clearInterval(this.watchPoller)
     this.watchPoller = setInterval(() => {
-      actions.registerAllMailboxWatches.defer()
+      actions.registerAllServiceWatches.defer()
     }, GOOGLE_MAILBOX_WATCH_INTERVAL)
-    actions.registerAllMailboxWatches.defer()
+    actions.registerAllServiceWatches.defer()
   }
 
   /**
@@ -183,11 +188,16 @@ class GoogleStore {
   // Handlers: Profiles
   /* **************************************************************************/
 
-  handleSyncAllMailboxProfiles () {
-    mailboxStore.getState().getMailboxesOfType(GoogleMailbox.type).forEach((mailbox) => {
-      actions.syncMailboxProfile.defer(mailbox.id)
-    })
+  handleSyncAllServiceProfiles () {
     this.preventDefault()
+    const accountState = accountStore.getState()
+    const all = [].concat(
+      accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_MAIL),
+      accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_INBOX)
+    )
+    all.forEach((service) => {
+      actions.syncServiceProfile.defer(service.id)
+    })
   }
 
   /**
@@ -202,27 +212,42 @@ class GoogleStore {
     return purl.toString()
   }
 
-  handleSyncMailboxProfile ({ mailboxId }) {
-    if (this.hasOpenRequest(REQUEST_TYPES.PROFILE, mailboxId)) {
+  handleSyncServiceProfile ({ serviceId }) {
+    if (this.hasOpenRequest(REQUEST_TYPES.PROFILE, serviceId)) {
       this.preventDefault()
       return
     }
 
-    const requestId = this.trackOpenRequest(REQUEST_TYPES.PROFILE, mailboxId)
-    const auth = this.getAPIAuth(mailboxId)
-    GoogleHTTP.fetchAccountProfile(auth)
+    const serviceAuth = accountStore.getState().getMailboxAuthForServiceId(serviceId)
+    const auth = this.getAPIAuth(serviceAuth)
+    if (!auth) { return }
+
+    const requestId = this.trackOpenRequest(REQUEST_TYPES.PROFILE, serviceId)
+    Promise.resolve()
+      .then(() => GoogleHTTP.fetchAccountProfile(auth))
       .then((response) => {
-        this.trackCloseRequest(REQUEST_TYPES.PROFILE, mailboxId, requestId)
+        this.trackCloseRequest(REQUEST_TYPES.PROFILE, serviceId, requestId)
         const email = (response.emails.find((a) => a.type === 'account') || {}).value
         const avatar = this.getAvatarFromResponseImage(response.image)
-        mailboxActions.reduce.defer(mailboxId, GoogleMailboxReducer.revalidateAuth)
-        mailboxActions.reduce.defer(mailboxId, GoogleMailboxReducer.setProfileInfo, email, avatar)
+        accountActions.reduceAuth(
+          serviceAuth.id,
+          AuthReducer.makeValid
+        )
+        accountActions.reduceService(
+          serviceId,
+          CoreGoogleMailServiceReducer.setProfileInfo,
+          email,
+          avatar
+        )
         this.emitChange()
       })
       .catch((err) => {
-        this.trackCloseRequest(REQUEST_TYPES.PROFILE, mailboxId, requestId)
+        this.trackCloseRequest(REQUEST_TYPES.PROFILE, serviceId, requestId)
         if (this.isInvalidGrantError(err)) {
-          mailboxActions.reduce.defer(mailboxId, GoogleMailboxReducer.invalidateAuth)
+          accountActions.reduceAuth(
+            serviceAuth.id,
+            AuthReducer.makeInvalid
+          )
         } else {
           console.error(err)
         }
@@ -234,44 +259,62 @@ class GoogleStore {
   // Handlers: Push server
   /* **************************************************************************/
 
-  handleConnectMailbox ({ mailboxId }) {
-    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    ServerVent.startListeningForGooglePushUpdates(mailboxId, mailbox.authEmail, mailbox.authPushToken)
+  handleConnectService ({ serviceId }) {
     this.preventDefault()
+    const serviceAuth = accountStore.getState().getMailboxAuthForServiceId(serviceId)
+    if (!serviceAuth) { return }
+    ServerVent.startListeningForGooglePushUpdates(
+      serviceId,
+      serviceAuth.authEmail,
+      serviceAuth.pushToken
+    )
   }
 
-  handleDisconnectMailbox ({ mailboxId }) {
-    ServerVent.stopListeningForGooglePushUpdates(mailboxId)
+  handleDisconnectService ({ serviceId }) {
     this.preventDefault()
+    ServerVent.stopListeningForGooglePushUpdates(serviceId)
   }
 
-  handleRegisterAllMailboxWatches () {
-    mailboxStore.getState().getMailboxesOfType(GoogleMailbox.type).forEach((mailbox) => {
-      actions.registerMailboxWatch.defer(mailbox.id)
+  handleRegisterAllServiceWatches () {
+    this.preventDefault()
+    const accountState = accountStore.getState()
+    const all = [].concat(
+      accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_MAIL),
+      accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_INBOX)
+    )
+    all.forEach((service) => {
+      actions.registerServiceWatch.defer(service.id)
     })
-    this.preventDefault()
   }
 
-  handleRegisterMailboxWatch ({ mailboxId }) {
-    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    if (!mailbox) {
-      this.preventDefault()
-      return
-    }
+  handleRegisterServiceWatch ({ serviceId }) {
+    this.preventDefault()
 
-    const auth = this.getAPIAuth(mailbox)
+    const serviceAuth = accountStore.getState().getMailboxAuthForServiceId(serviceId)
+    const auth = this.getAPIAuth(serviceAuth)
+    if (!auth) { return }
+
     Promise.resolve()
       .then(() => GoogleHTTP.watchAccount(auth))
       .then(() => {
-        mailboxActions.reduce.defer(mailboxId, GoogleMailboxReducer.revalidateAuth)
+        accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeValid)
       })
       .catch((err) => {
         if (this.isInvalidGrantError(err)) {
-          mailboxActions.reduce.defer(mailboxId, GoogleMailboxReducer.invalidateAuth)
+          accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeInvalid)
         } else {
           console.error(err)
         }
       })
+  }
+
+  /* **************************************************************************/
+  // Handlers: Change watchers
+  /* **************************************************************************/
+
+  handleServiceSyncWatchFieldChange ({ serviceId, fields }) {
+    this.preventDefault()
+    actions.syncMailboxMessages.defer(serviceId, true)
   }
 
   /* **************************************************************************/
@@ -344,18 +387,18 @@ class GoogleStore {
   mailLabelIdsForService (service) {
     if (service.hasCustomUnreadLabelWatch) { return service.customUnreadLabelWatchArray }
     switch (service.unreadMode) {
-      case GoogleDefaultService.UNREAD_MODES.INBOX_ALL:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_ALL:
         return ['INBOX']
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD:
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_ATOM:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_ATOM:
         return ['INBOX', 'UNREAD']
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT:
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM:
         return ['INBOX', 'UNREAD', 'IMPORTANT']
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL:
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_PERSONAL:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM:
         return ['INBOX', 'UNREAD', 'CATEGORY_PERSONAL']
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED: // default
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED: // default
         return ['INBOX', 'UNREAD']
       default:
         return ['INBOX']
@@ -372,8 +415,8 @@ class GoogleStore {
       return (service.customUnreadCountLabel || '').toUpperCase()
     }
     switch (service.unreadMode) {
-      case GoogleDefaultService.UNREAD_MODES.INBOX_ALL:
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_ALL:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD:
         return 'INBOX'
       default:
         return undefined
@@ -390,9 +433,9 @@ class GoogleStore {
       return service.customUnreadCountLabelField
     }
     switch (service.unreadMode) {
-      case GoogleDefaultService.UNREAD_MODES.INBOX_ALL:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_ALL:
         return 'threadsTotal'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD:
         return 'threadsUnread'
       default:
         return undefined
@@ -421,11 +464,11 @@ class GoogleStore {
   */
   mailAtomQueryForService (service) {
     switch (service.unreadMode) {
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_ATOM:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_ATOM:
         return 'https://mail.google.com/mail/feed/atom/'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM:
         return 'https://mail.google.com/mail/feed/atom/%5Eiim'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM:
         return 'https://mail.google.com/mail/feed/atom/%5Esq_ig_i_personal'
       default:
         return undefined
@@ -439,18 +482,18 @@ class GoogleStore {
   mailQueryForService (service) {
     if (service.hasCustomUnreadQuery) { return service.customUnreadQuery }
     switch (service.unreadMode) {
-      case GoogleDefaultService.UNREAD_MODES.INBOX_ALL:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_ALL:
         return 'label:inbox'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD:
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_ATOM:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_ATOM:
         return 'label:inbox label:unread'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT:
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM:
         return 'label:inbox label:unread is:important'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL:
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_PERSONAL:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM:
         return 'label:inbox label:unread category:primary'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED:
         return 'label:inbox label:unread -has:userlabels -category:promotions -category:forums -category:social' // Removed: -category:updates
       default:
         return 'label:inbox'
@@ -464,17 +507,20 @@ class GoogleStore {
     return service.hasCustomUnreadQuery || service.hasCustomUnreadLabelWatch
   }
 
-  handleSyncMailboxMessages ({ mailboxId, forceSync }) {
+  handleSyncServiceMessages ({ serviceId, forceSync }) {
     // Check we're not already open
-    if (this.hasOpenRequest(REQUEST_TYPES.MAIL, mailboxId)) {
+    if (this.hasOpenRequest(REQUEST_TYPES.MAIL, serviceId)) {
       this.preventDefault()
       return
     }
 
-    // Get the mailbox and check we have everything
-    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    const service = mailbox ? mailbox.serviceForType(GoogleDefaultService.type) : null
-    if (!mailbox || !service) {
+    // Get the service and check we have everything
+    const accountState = accountStore.getState()
+    const service = accountState.getService(serviceId)
+    const serviceData = accountState.getServiceData(serviceId)
+    const serviceAuth = accountState.getMailboxAuthForServiceId(serviceId)
+
+    if (!service || !serviceData || !serviceAuth) {
       this.preventDefault()
       return
     }
@@ -487,7 +533,7 @@ class GoogleStore {
       }
       console[error ? 'warn' : 'log'](
         `${LOG_PFX}${error || 'Using custom query parameters'}`,
-        mailbox.id,
+        service.id,
         service.customUnreadQuery,
         service.customUnreadLabelWatchArray,
         service.customUnreadCountFromLabel,
@@ -497,8 +543,8 @@ class GoogleStore {
     }
 
     // Start chatting to Google
-    const requestId = this.trackOpenRequest(REQUEST_TYPES.MAIL, mailboxId)
-    const auth = this.getAPIAuth(mailbox)
+    const requestId = this.trackOpenRequest(REQUEST_TYPES.MAIL, serviceId)
+    const auth = this.getAPIAuth(serviceAuth)
     const labelIds = this.mailLabelIdsForService(service)
     const queryString = this.mailQueryForService(service)
 
@@ -511,8 +557,8 @@ class GoogleStore {
     Promise.resolve()
       .then(() => {
         // STEP 1 [HISTORY]: Get the history changes
-        if (service.hasHistoryId) {
-          return GoogleHTTP.fetchGmailHistoryList(auth, service.historyId)
+        if (serviceData.hasHistoryId) {
+          return GoogleHTTP.fetchGmailHistoryList(auth, serviceData.historyId)
             .then(({ historyId, history }) => {
               return {
                 historyId: isNaN(parseInt(historyId)) ? undefined : parseInt(historyId),
@@ -552,10 +598,10 @@ class GoogleStore {
         if (!data.hasContentChanged) { return data }
         return Promise.resolve()
           .then(() => {
-            switch (service.accessMode) {
-              case GoogleDefaultService.ACCESS_MODES.GMAIL:
+            switch (service.type) {
+              case SERVICE_TYPES.GOOGLE_MAIL:
                 return GoogleHTTP.fetchGmailThreadHeadersList(auth, queryString, undefined, 10)
-              case GoogleDefaultService.ACCESS_MODES.GINBOX:
+              case SERVICE_TYPES.GOOGLE_INBOX:
                 return GoogleHTTP.fetchGmailThreadHeadersList(auth, queryString, undefined, 10)
               default:
                 return Promise.reject(new Error('Unknown Access Mode'))
@@ -563,7 +609,7 @@ class GoogleStore {
           })
           .then(({resultSizeEstimate, threads = []}) => {
             return GoogleHTTP
-              .fullyResolveGmailThreadHeaders(auth, service.unreadThreadsIndexed, threads, this.trimMailThread)
+              .fullyResolveGmailThreadHeaders(auth, serviceData.unreadThreadsIndexed, threads, this.trimMailThread)
               .then((fullThreads) => {
                 return Object.assign({}, data, {
                   unreadCount: resultSizeEstimate,
@@ -579,7 +625,7 @@ class GoogleStore {
 
         if (canFetchUnreadFromAtom) {
           return Promise.resolve()
-            .then(() => GoogleHTTP.fetchGmailAtomUnreadCount(`persist:${mailbox.partition}`, atomQuery))
+            .then(() => GoogleHTTP.fetchGmailAtomUnreadCount(service.partition, atomQuery))
             .then((count) => {
               return { ...data, unreadCount: count }
             })
@@ -598,10 +644,10 @@ class GoogleStore {
         }
       })
       .then((data) => {
-        // STEP 3 [STORE]: Update the mailbox service with the new data
+        // STEP 3 [STORE]: Update the service service with the new data
         if (data.hasContentChanged) {
           if (Debug.flags.googleLogUnreadMessages) {
-            console.log(`[GOOGLE:UNREAD]: ${mailboxId}`, [
+            console.log(`[GOOGLE:UNREAD]: ${serviceId}`, [
               '',
               `HistoryId=${data.historyId}`,
               `UnreadCount=${data.unreadCount}`,
@@ -609,33 +655,31 @@ class GoogleStore {
             ].concat(data.unreadThreads.map((t, i) => `${i}:  ${JSON.stringify(t)}\n`)).join('\n'))
           }
 
-          mailboxActions.reduceService.defer(
-            mailbox.id,
-            GoogleDefaultService.type,
-            GoogleDefaultServiceReducer.updateUnreadInfo,
+          accountActions.reduceServiceData.defer(
+            serviceId,
+            CoreGoogleMailboxServiceDataReducer.updateUnreadInfo,
             data.historyId,
             data.unreadCount,
             data.unreadThreads
           )
         } else {
-          mailboxActions.reduceService.defer(
-            mailbox.id,
-            GoogleDefaultService.type,
-            GoogleDefaultServiceReducer.setHistoryId,
+          accountActions.reduceServiceData.defer(
+            serviceId,
+            CoreGoogleMailboxServiceDataReducer.setHistoryId,
             data.historyId
           )
         }
         return data
       })
       .then(() => {
-        this.trackCloseRequest(REQUEST_TYPES.MAIL, mailboxId, requestId)
-        mailboxActions.reduce.defer(mailboxId, GoogleMailboxReducer.revalidateAuth)
+        this.trackCloseRequest(REQUEST_TYPES.MAIL, serviceId, requestId)
+        accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeValid)
         this.emitChange()
       })
       .catch((err) => {
-        this.trackCloseRequest(REQUEST_TYPES.MAIL, mailboxId, requestId)
+        this.trackCloseRequest(REQUEST_TYPES.MAIL, serviceId, requestId)
         if (this.isInvalidGrantError(err)) {
-          mailboxActions.reduce.defer(mailboxId, GoogleMailboxReducer.invalidateAuth)
+          accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeInvalid)
         } else {
           console.error(err)
         }
@@ -647,43 +691,46 @@ class GoogleStore {
   // Handlers: Mail change indicators
   /* **************************************************************************/
 
-  handleMailCountChanged ({ mailboxId, count }) {
-    this.preventDefault() // Change is represented in re-fired action
+  handleMailCountPossiblyChanged ({ serviceId, count }) {
+    this.preventDefault()
 
-    // Get the mailbox and check we have everything
-    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    const service = mailbox ? mailbox.serviceForType(GoogleDefaultService.type) : null
-    if (!mailbox || !service) { return }
+    // See if we can avoid a sync first
+    if (count !== undefined) {
+      const accountState = accountStore.getState()
+      const service = accountState.getService(serviceId)
+      const serviceData = accountState.getServiceData(serviceId)
 
-    // Check to see if we have a change
-    if (count === service.unreadCount) { return }
-
-    // Fire off a sync call
-    actions.syncMailboxMessages.defer(mailboxId)
-  }
-
-  handleMailHistoryIdChanged ({ mailboxId, historyId }) {
-    this.preventDefault() // Change is represented in re-fired action
-
-    // Get the mailbox and check we have everything
-    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    const service = mailbox ? mailbox.serviceForType(GoogleDefaultService.type) : null
-    if (!mailbox || !service) { return }
-
-    // Check the historyId if we have one
-    if (historyId !== undefined && service.historyId !== undefined) {
-      if (historyId <= service.historyId) { return }
+      if (!service || !serviceData) { return }
+      if (serviceData.getUnreadCount(service) === count) { return }
     }
 
-    // Fire off a sync call
-    actions.syncMailboxMessages.defer(mailboxId)
+    actions.syncServiceMessages.defer(serviceId)
+  }
+
+  handleMailHistoryIdChanged ({ serviceId, historyId }) {
+    this.preventDefault()
+
+    const serviceData = accountStore.getState().getServiceData(serviceId)
+    if (historyId !== undefined && serviceData.historyId !== undefined) {
+      if (historyId <= serviceData.historyId) { return }
+    }
+
+    actions.syncServiceMessages.defer(serviceId)
   }
 
   handleMailHistoryIdChangedFromWatch ({ email, historyId }) {
-    this.preventDefault() // Change is represented in re-fired action
-    mailboxStore.getState().getMailboxesOfType(GoogleMailbox.type).forEach((mailbox) => {
-      if (mailbox.authEmail === email) {
-        actions.mailHistoryIdChanged.defer(mailbox.id, historyId)
+    this.preventDefault()
+
+    const accountState = accountStore.getState()
+    const all = [].concat(
+      accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_MAIL),
+      accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_INBOX)
+    )
+
+    all.forEach((service) => {
+      const auth = accountState.getMailboxAuthForServiceId(service.id)
+      if (auth.authEmail === email) {
+        actions.mailHistoryIdChanged.defer(service.id, historyId)
       }
     })
   }

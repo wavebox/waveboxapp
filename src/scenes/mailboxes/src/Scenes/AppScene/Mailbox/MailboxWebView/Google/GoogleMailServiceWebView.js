@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import { accountStore, accountDispatch } from 'stores/account'
-//import { googleActions } from 'stores/google'
+import { googleActions } from 'stores/google'
 import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
@@ -169,14 +169,14 @@ export default class GoogleMailServiceWebView extends React.Component {
   * Handles the unread count changing as per the ipc event
   */
   handleIPCUnreadCountChanged = (evt) => {
-    //googleActions.mailCountChanged(this.props.mailboxId, evt.next)
+    googleActions.mailCountPossiblyChanged(this.props.serviceId, evt.next)
   }
 
   /**
   * Handles the top message changing as per the ipc event
   */
   handleIPCTopMessageChanged = (evt) => {
-    //googleActions.syncMailboxMessages(this.props.mailboxId)
+    googleActions.syncServiceMessages(this.props.serviceId)
   }
 
   /* **************************************************************************/

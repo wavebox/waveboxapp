@@ -3,6 +3,7 @@ import { ACTIONS_NAME } from './AltAccountIdentifiers'
 import ACMailbox from '../../Models/ACAccounts/ACMailbox'
 import CoreACAuth from '../../Models/ACAccounts/CoreACAuth'
 import ServiceFactory from '../../Models/ACAccounts/ServiceFactory'
+import AuthFactory from '../../Models/ACAccounts/AuthFactory'
 
 class RendererAccountStore extends CoreAccountStore {
   /* **************************************************************************/
@@ -44,7 +45,7 @@ class RendererAccountStore extends CoreAccountStore {
 
   handleRemoteSetMailboxAuth ({ id, mailboxAuthJS }) {
     if (mailboxAuthJS) {
-      this._mailboxAuth_.set(id, new CoreACAuth(mailboxAuthJS))
+      this._mailboxAuth_.set(id, AuthFactory.modelizeAuth(mailboxAuthJS))
     } else {
       this._mailboxAuth_.delete(id)
     }

@@ -405,12 +405,12 @@ class AccountActions extends RendererAccountActions {
   /* **************************************************************************/
 
   /**
-  * Triggers a full sync on a mailbox
+  * Triggers a full sync on a service
   * @param id: the id of the mailbox
   */
-  /*fullSyncMailbox (id) {
-    return { id: id }
-  }*/
+  fullSyncService (serviceId) {
+    return { serviceId: serviceId }
+  }
 
   /* **************************************************************************/
   // Snapshots

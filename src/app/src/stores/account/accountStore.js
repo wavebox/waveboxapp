@@ -22,6 +22,7 @@ import CoreACAuth from 'shared/Models/ACAccounts/CoreACAuth'
 import ServiceFactory from 'shared/Models/ACAccounts/ServiceFactory'
 import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
 import ServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/ServiceDataReducer'
+import AuthFactory from 'shared/Models/ACAccounts/AuthFactory'
 
 class AccountStore extends CoreAccountStore {
   /* **************************************************************************/
@@ -181,7 +182,7 @@ class AccountStore extends CoreAccountStore {
     } else {
       mailboxAuthJS.changedTime = new Date().getTime()
       mailboxAuthJS.id = id
-      const model = new CoreACAuth(mailboxAuthJS)
+      const model = AuthFactory.modelizeAuth(mailboxAuthJS)
       mailboxAuthPersistence.setJSONItem(id, mailboxAuthJS)
       this._mailboxAuth_.set(id, model)
       this.dispatchToRemote('remoteSetMailboxAuth', [id, mailboxAuthJS])
@@ -365,7 +366,7 @@ class AccountStore extends CoreAccountStore {
 
   handleCreateAuth ({ data }) {
     this.saveMailboxAuth(
-      CoreACAuth.composeId(data.parentId, data.namespace),
+      CoreACAuth.compositeId(data.parentId, data.namespace),
       data
     )
   }

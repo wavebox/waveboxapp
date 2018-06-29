@@ -20,16 +20,16 @@ class GoogleActions {
   /* **************************************************************************/
 
   /**
-  * Syncs all mailbox profiles
+  * Syncs all service profiles
   */
-  syncAllMailboxProfiles () { return {} }
+  syncAllServiceProfiles () { return {} }
 
   /**
-  * Syncs a mailbox profile
-  * @param mailboxId: the id of the mailbox
+  * Syncs a service profile
+  * @param serviceId: the id of the service
   */
-  syncMailboxProfile (mailboxId) {
-    return { mailboxId: mailboxId }
+  syncServiceProfile (serviceId) {
+    return { serviceId: serviceId }
   }
 
   /* **************************************************************************/
@@ -38,31 +38,43 @@ class GoogleActions {
 
   /**
   * Starts listening for push updates
-  * @param mailboxId: the id of the mailbox
+  * @param serviceId: the id of the service
   */
-  connectMailbox (mailboxId) {
-    return { mailboxId: mailboxId }
+  connectService (serviceId) {
+    return { serviceId: serviceId }
   }
 
   /**
   * Stops listening for push updates
-  * @param mailboxId: the id of the mailbox
+  * @param serviceId: the id of the service
   */
-  disconnectMailbox (mailboxId) {
-    return { mailboxId: mailboxId }
+  disconnectService (serviceId) {
+    return { serviceId: serviceId }
   }
 
   /**
-  * Starts all mailbox watch calls
+  * Starts all service watch calls
   */
-  registerAllMailboxWatches () { return {} }
+  registerAllServiceWatches () { return {} }
 
   /**
   * Registers a watch call with google
-  * @param mailboxId: the id of the mailbox
+  * @param serviceId: the id of the service
   */
-  registerMailboxWatch (mailboxId) {
-    return { mailboxId: mailboxId }
+  registerServiceWatch (serviceId) {
+    return { serviceId: serviceId }
+  }
+
+  /* **************************************************************************/
+  // Watchers
+  /* **************************************************************************/
+
+  /**
+  * Handles a watch field changing on a service
+  * @param serviceId: the id of the service
+  */
+  serviceSyncWatchFieldChange (serviceId, fields) {
+    return { serviceId: serviceId, fields: fields }
   }
 
   /* **************************************************************************/
@@ -70,30 +82,30 @@ class GoogleActions {
   /* **************************************************************************/
 
   /**
-  * Indicates that the mail history id has changed for a mailbox causing a resync
-  * @param mailboxId: the id of the mailbox
+  * Indicates that the mail history id has changed for a service causing a resync
+  * @param serviceId: the id of the service
   * @param historyId=undefined: the new history id
   */
-  mailHistoryIdChanged (mailboxId, historyId = undefined) {
-    return { mailboxId: mailboxId, historyId: historyId }
+  mailHistoryIdChanged (serviceId, historyId = undefined) {
+    return { serviceId: serviceId, historyId: historyId }
   }
 
   /**
-  * Indicates that the mail count has changed for the mailbox so a resyn should be done
-  * @param mailboxId: the id of the mailbox
+  * Indicates that the mail count has changed for the service so a resyn should be done
+  * @param serviceId: the id of the service
   * @param count=undefined: the new count
   */
-  mailCountChanged (mailboxId, count = undefined) {
-    return { mailboxId: mailboxId, count: count }
+  mailCountPossiblyChanged (serviceId, count = undefined) {
+    return { serviceId: serviceId, count: count }
   }
 
   /**
-  * Syncs the mailbox messages
-  * @param mailboxId: the id of the mailbox
+  * Syncs the service messages
+  * @param serviceId: the id of the service
   * @param forceSync=false: set to true to force the sync event even if the server reports no changes
   */
-  syncMailboxMessages (mailboxId, forceSync = false) {
-    return { mailboxId: mailboxId, forceSync: forceSync }
+  syncServiceMessages (serviceId, forceSync = false) {
+    return { serviceId: serviceId, forceSync: forceSync }
   }
 
   /**

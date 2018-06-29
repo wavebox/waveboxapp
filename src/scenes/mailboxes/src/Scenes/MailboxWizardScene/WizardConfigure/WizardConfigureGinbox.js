@@ -90,7 +90,10 @@ class WizardConfigureGinbox extends React.Component {
 
   state = (() => {
     const accountState = accountStore.getState()
-    const service = accountState.mailboxServicesOfType(this.props.mailboxId, SERVICE_TYPES.GOOGLE_INBOX)
+    const service = accountState.mailboxServicesOfType(
+      this.props.mailboxId,
+      SERVICE_TYPES.GOOGLE_INBOX
+    )[0]
 
     return service ? {
       unreadMode: service.unreadMode,
@@ -102,7 +105,11 @@ class WizardConfigureGinbox extends React.Component {
   })()
 
   accountUpdated = (accountState) => {
-    const service = accountState.mailboxServicesOfType(this.props.mailboxId, SERVICE_TYPES.GOOGLE_INBOX)
+    const service = accountState.mailboxServicesOfType(
+      this.props.mailboxId,
+      SERVICE_TYPES.GOOGLE_INBOX
+    )[0]
+
     this.setState(service ? {
       unreadMode: service.unreadMode,
       serviceId: service.id

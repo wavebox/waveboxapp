@@ -104,11 +104,11 @@ class MailboxReducer {
   */
   static addServiceByLocation (mailbox, serviceId, location) {
     if (location === ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_START) {
-      return this.addServiceToToolbarStart(mailbox, serviceId)
+      return MailboxReducer.addServiceToToolbarStart(mailbox, serviceId)
     } else if (location === ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_END) {
-      return this.addServiceToToolbarEnd(mailbox, serviceId)
+      return MailboxReducer.addServiceToToolbarEnd(mailbox, serviceId)
     } else {
-      return this.addServiceToSidebar(mailbox, serviceId)
+      return MailboxReducer.addServiceToSidebar(mailbox, serviceId)
     }
   }
 
@@ -118,7 +118,7 @@ class MailboxReducer {
   * @param serviceId: the id of the service
   */
   static addServiceToSidebar (mailbox, serviceId) {
-    const mailboxJS = mailbox.hasServiceWithId(serviceId) ? this.removeService(mailbox, serviceId) : mailbox.cloneData()
+    const mailboxJS = mailbox.hasServiceWithId(serviceId) ? MailboxReducer.removeService(mailbox, serviceId) : mailbox.cloneData()
     mailboxJS.sidebarServices = (mailboxJS.sidebarServices || []).concat([serviceId])
     return mailboxJS
   }
@@ -129,8 +129,8 @@ class MailboxReducer {
   * @param serviceId: the id of the service
   */
   static addServiceToToolbarStart (mailbox, serviceId) {
-    const mailboxJS = mailbox.hasServiceWithId(serviceId) ? this.removeService(mailbox, serviceId) : mailbox.cloneData()
-    mailboxJS.toolbarStartServies = (mailboxJS.toolbarStartServies || []).concat([serviceId])
+    const mailboxJS = mailbox.hasServiceWithId(serviceId) ? MailboxReducer.removeService(mailbox, serviceId) : mailbox.cloneData()
+    mailboxJS.toolbarStartServices = (mailboxJS.toolbarStartServices || []).concat([serviceId])
     return mailboxJS
   }
 
@@ -140,8 +140,8 @@ class MailboxReducer {
   * @param serviceId: the id of the service
   */
   static addServiceToToolbarEnd (mailbox, serviceId) {
-    const mailboxJS = mailbox.hasServiceWithId(serviceId) ? this.removeService(mailbox, serviceId) : mailbox.cloneData()
-    mailboxJS.toolbarEndServies = (mailboxJS.toolbarEndServies || []).concat([serviceId])
+    const mailboxJS = mailbox.hasServiceWithId(serviceId) ? MailboxReducer.removeService(mailbox, serviceId) : mailbox.cloneData()
+    mailboxJS.toolbarEndServices = (mailboxJS.toolbarEndServices || []).concat([serviceId])
     return mailboxJS
   }
 
@@ -153,8 +153,8 @@ class MailboxReducer {
   static removeService (mailbox, serviceId) {
     const mailboxJS = mailbox.cloneData()
     mailboxJS.sidebarServices = (mailboxJS.sidebarServices || []).filter((id) => id !== serviceId)
-    mailboxJS.toolbarStartServies = (mailboxJS.toolbarStartServies || []).filter((id) => id !== serviceId)
-    mailboxJS.toolbarEndServies = (mailboxJS.toolbarEndServies || []).filter((id) => id !== serviceId)
+    mailboxJS.toolbarStartServices = (mailboxJS.toolbarStartServices || []).filter((id) => id !== serviceId)
+    mailboxJS.toolbarEndServices = (mailboxJS.toolbarEndServices || []).filter((id) => id !== serviceId)
     return mailboxJS
   }
 
@@ -166,11 +166,11 @@ class MailboxReducer {
   */
   static changeServiceIndex (mailbox, serviceId, nextIndex) {
     if (mailbox.sidebarHasServiceWithId(serviceId)) {
-      return this.changeSidebarServiceIndex(mailbox, serviceId, nextIndex)
+      return MailboxReducer.changeSidebarServiceIndex(mailbox, serviceId, nextIndex)
     } else if (mailbox.toolbarStartHasServiceWithId(serviceId)) {
-      return this.changeToolbarStartServiceIndex(mailbox, serviceId, nextIndex)
+      return MailboxReducer.changeToolbarStartServiceIndex(mailbox, serviceId, nextIndex)
     } else if (mailbox.toolbarEndHasServiceWithId(serviceId)) {
-      return this.changeToolbarEndServiceIndex(mailbox, serviceId, nextIndex)
+      return MailboxReducer.changeToolbarEndServiceIndex(mailbox, serviceId, nextIndex)
     } else {
       return undefined
     }
@@ -184,6 +184,7 @@ class MailboxReducer {
   */
   static changeSidebarServiceIndex (mailbox, serviceId, nextIndex) {
     const mailboxJS = mailbox.cloneData()
+    if (!mailboxJS.sidebarServices) { return undefined }
     const prevIndex = mailboxJS.sidebarServices.findIndex((s) => s === serviceId)
     if (prevIndex === -1) { return undefined }
     mailboxJS.sidebarServices.splice(nextIndex, 0, mailboxJS.sidebarServices.splice(prevIndex, 1)[0])
@@ -198,6 +199,7 @@ class MailboxReducer {
   */
   static changeToolbarStartServiceIndex (mailbox, serviceId, nextIndex) {
     const mailboxJS = mailbox.cloneData()
+    if (!mailboxJS.toolbarStartServices) { return undefined }
     const prevIndex = mailboxJS.toolbarStartServices.findIndex((s) => s === serviceId)
     if (prevIndex === -1) { return undefined }
     mailboxJS.toolbarStartServices.splice(nextIndex, 0, mailboxJS.toolbarStartServices.splice(prevIndex, 1)[0])
@@ -212,6 +214,7 @@ class MailboxReducer {
   */
   static changeToolbarEndServiceIndex (mailbox, serviceId, nextIndex) {
     const mailboxJS = mailbox.cloneData()
+    if (!mailboxJS.toolbarEndServices) { return undefined }
     const prevIndex = mailboxJS.toolbarEndServices.findIndex((s) => s === serviceId)
     if (prevIndex === -1) { return undefined }
     mailboxJS.toolbarEndServices.splice(nextIndex, 0, mailboxJS.toolbarEndServices.splice(prevIndex, 1)[0])

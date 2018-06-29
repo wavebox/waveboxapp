@@ -1,6 +1,12 @@
 const privNameToReducerIndex = Symbol('privNameToReducerIndex')
 const privReducerToNameIndex = Symbol('privReducerToNameIndex')
 
+const IGNORE_METHOD_NAMES = new Set([
+  'length',
+  'prototype',
+  'name'
+])
+
 class CoreReducerManifest {
   /* **************************************************************************/
   // Lifecycle
@@ -15,7 +21,23 @@ class CoreReducerManifest {
 
     reducers.forEach((ReducerClass) => {
       const className = ReducerClass.name
-      const methodNames = Object.getOwnPropertyNames(ReducerClass)
+
+      const methodNames = new Set()
+      let insp = ReducerClass
+      while (insp !== null) {
+        // We don't want to crawl the methods from the root object. Badly use toString
+        // as an indicator that we are in the root object in the inheritance chain
+        const inspNames = new Set(Object.getOwnPropertyNames(insp))
+        if (inspNames.has('toString')) { break }
+
+        inspNames.forEach((n) => {
+          if (!IGNORE_METHOD_NAMES.has(n)) {
+            methodNames.add(n)
+          }
+        })
+        insp = Object.getPrototypeOf(insp)
+      }
+
       methodNames.forEach((methodName) => {
         const ident = `${className}.${methodName}`
         const fn = ReducerClass[methodName]

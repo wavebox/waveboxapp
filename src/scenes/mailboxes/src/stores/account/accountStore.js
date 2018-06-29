@@ -8,7 +8,7 @@ import GoogleHTTP from '../google/GoogleHTTP'
 //import MicrosoftHTTP from '../microsoft/MicrosoftHTTP'
 import accountDispatch from './accountDispatch'
 import Bootstrap from 'R/Bootstrap'
-//import googleActions from '../google/googleActions'
+import googleActions from '../google/googleActions'
 //import slackActions from '../slack/slackActions'
 //import trelloActions from '../trello/trelloActions'
 //import microsoftActions from '../microsoft/microsoftActions'
@@ -28,6 +28,7 @@ import ACTemplatedAccount from 'shared/Models/ACAccounts/ACTemplatedAccount'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import CoreACService from 'shared/Models/ACAccounts/CoreACService'
 import GoogleAuth from 'shared/Models/ACAccounts/Google/GoogleAuth'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 
 const AUTH_MODES = Object.freeze({
   TEMPLATE_CREATE: 'TEMPLATE_CREATE',
@@ -149,10 +150,10 @@ class AccountStore extends RendererAccountStore {
       handleAuthTrelloMailboxFailure: actions.AUTH_TRELLO_MAILBOX_FAILURE,
       handleAuthMicrosoftMailboxSuccess: actions.AUTH_MICROSOFT_MAILBOX_SUCCESS,
       handleAuthMicrosoftMailboxFailure: actions.AUTH_MICROSOFT_MAILBOX_FAILURE,
-
-      // Connection & Sync
-      handleFullSyncMailbox: actions.FULL_SYNC_MAILBOX,
 */
+      // Connection & Sync
+      handleFullSyncService: actions.FULL_SYNC_SERVICE,
+
       // Snapshots
       handleSetServiceSnapshot: actions.SET_SERVICE_SNAPSHOT,
 
@@ -166,38 +167,38 @@ class AccountStore extends RendererAccountStore {
   }
 
   /* **************************************************************************/
-  // Utils: Mailbox connection
+  // Utils: Service connection
   /* **************************************************************************/
 
   /**
-  * Connect a mailbox
-  * @param mailboxId: the id of the mailbox
+  * Connect a service
+  * @param service: the service to connect
   */
-  connectMailbox (mailboxId) {
-    this.preventDefault()
-    const mailbox = this.getMailbox(mailboxId)
-    if (!mailbox) { return }
-
-    if (mailbox.type === GoogleMailbox.type) {
-      googleActions.connectMailbox.defer(mailboxId)
-    } else if (mailbox.type === SlackMailbox.type) {
-      slackActions.connectMailbox.defer(mailboxId)
+  connectService (service) {
+    switch (service.type) {
+      case SERVICE_TYPES.GOOGLE_MAIL:
+      case SERVICE_TYPES.GOOGLE_INBOX:
+        googleActions.connectService.defer(service.id)
+        break
+      case SERVICE_TYPES.SLACK:
+        slackActions.connectService.defer(service.id)
+        break
     }
   }
 
   /**
-  * Disconnects a mailbox
-  * @param mailboxId: the id of the mailbox
+  * Disconnect a service
+  * @param service: the service to disconnect
   */
-  disconnectMailbox ({ mailboxId }) {
-    this.preventDefault()
-    const mailbox = this.getMailbox(mailboxId)
-    if (!mailbox) { return }
-
-    if (mailbox.type === GoogleMailbox.type) {
-      googleActions.disconnectMailbox.defer(mailboxId)
-    } else if (mailbox.type === SlackMailbox.type) {
-      slackActions.disconnectMailbox.defer(mailboxId)
+  disconnectService (service) {
+    switch (service.type) {
+      case SERVICE_TYPES.GOOGLE_MAIL:
+      case SERVICE_TYPES.GOOGLE_INBOX:
+        googleActions.disconnectService.defer(service.id)
+        break
+      case SERVICE_TYPES.SLACK:
+        slackActions.disconnectService.defer(service.id)
+        break
     }
   }
 
@@ -208,71 +209,56 @@ class AccountStore extends RendererAccountStore {
   handleLoad (payload) {
     super.handleLoad(payload)
 
-    /*this.mailboxIds().forEach((mailboxId) => {
-      this.connectMailbox(mailboxId)
-      actions.fullSyncMailbox.defer(mailboxId)
-    })*/
+    this.serviceIds().forEach((serviceId) => {
+      this.connectService(serviceId)
+      actions.fullSyncService.defer(serviceId)
+    })
   }
 
   /* **************************************************************************/
-  // Mailbox
+  // Service
   /* **************************************************************************/
 
-  /*handleRemoteSetMailbox (payload) {
-    const { id, mailboxJS } = payload
+  handleRemoteSetService (payload) {
+    const { id, serviceJS } = payload
 
-    // Set the mailbox and also auto-connect or disconnect during set
-    // Auto-disconnect
-    const prev = this.mailboxes.get(id)
-    if (prev && !mailboxJS) {
-      this.disconnectMailbox(id)
+    // Auto-disconnect the service
+    const prev = this.getService(id)
+    if (prev && !serviceJS) {
+      this.disconnectService(prev)
       userActions.uploadUserProfile.defer()
     }
-    super.handleRemoteSetMailbox(payload)
-    const next = this.mailboxes.get(id)
 
-    // Auto-connect
+    super.handleRemoteSetService(payload)
+
+    // Auto-connect the service
+    const next = this.getService(id)
     if (!prev && next) {
-      this.connectMailbox(id)
-      actions.fullSyncMailbox.defer(id)
+      this.connectService(next)
+      actions.fullSyncService.defer(id)
       userActions.uploadUserProfile.defer()
+
       // Sync the profile again after a certain amount of time. The user is likely
       // to have customized it again within this time
       userActions.uploadUserProfileAfter.defer(USER_PROFILE_DEFERED_SYNC_ON_CREATE)
     }
 
-    // Look for any watch fields to see if we should re-sync
-    if (prev && next) {
-      if (next.type === CoreMailbox.MAILBOX_TYPES.GOOGLE) {
-        const watch = [
-          'unreadMode',
-          'customUnreadQuery',
-          'customUnreadLabelWatchString',
-          'customUnreadCountFromLabel',
-          'customUnreadCountLabel',
-          'customUnreadCountLabelField'
-        ]
-        const prevService = prev.defaultService
-        const nextService = next.defaultService
-        const changed = !!watch.find((n) => prevService[n] !== nextService[n])
-
-        if (changed) {
-          googleActions.syncMailboxMessages.defer(id, true)
-        }
-      } else if (next.type === CoreMailbox.MAILBOX_TYPES.MICROSOFT) {
-        const watch = [
-          'unreadMode'
-        ]
-        const prevService = prev.defaultService
-        const nextService = next.defaultService
-        const changed = !!watch.find((n) => prevService[n] !== nextService[n])
-
-        if (changed) {
-          microsoftActions.syncMailboxMail.defer(id)
+    // Look to see if a watch field changed
+    if (prev && next && next.syncWatchFields.length) {
+      const changed = next.syncWatchFields.filter((k) => prev[k] !== next[k])
+      if (changed.length) {
+        switch (next.type) {
+          case SERVICE_TYPES.GOOGLE_MAIL:
+          case SERVICE_TYPES.GOOGLE_INBOX:
+            googleActions.serviceSyncWatchFieldChange(next.id, changed)
+            break
+          case SERVICE_TYPES.MICROSOFT:
+            microsoftActions.serviceSyncWatchFieldChange(next.id, changed)
+            break
         }
       }
     }
-  }*/
+  }
 
   /* **************************************************************************/
   // Tabs
@@ -316,7 +302,7 @@ class AccountStore extends RendererAccountStore {
       //TODO
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.GENERIC) {
       this._createMailboxFromTemplate(mailboxId, template)
-      this._finalizeCreateAccount(`/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`)
+      this._finalizeCreateAccount(`/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`, 0)
     }
   }
 
@@ -352,9 +338,18 @@ class AccountStore extends RendererAccountStore {
     }
   }
 
-  _finalizeCreateAccount (nextUrl = '/') {
-    window.location.hash = nextUrl
-    settingsActions.tourStart.defer()
+  /**
+  * @param nextUrl='/': the next url to visit
+  * @param wait=250: millis to wait before redirecting
+  */
+  _finalizeCreateAccount (nextUrl = '/', wait = 250) {
+    // The final step of account creation takes a couple of seconds to cross the bridge
+    // a few times. To not display janky info to the user wait a little before redirecting
+    // them
+    setTimeout(() => {
+      window.location.hash = nextUrl
+      settingsActions.tourStart.defer()
+    }, wait)
   }
 
   /* **************************************************************************/
@@ -748,30 +743,33 @@ class AccountStore extends RendererAccountStore {
   // Connection & Sync
   /* **************************************************************************/
 
-  /*handleFullSyncMailbox ({ id }) {
-    const mailbox = this.getMailbox(id)
-    if (!mailbox) { return }
+  handleFullSyncService ({ serviceId }) {
+    this.preventDefault()
+    const service = this.getService(serviceId)
+    if (!service) { return }
 
-    if (mailbox.type === GoogleMailbox.type) {
-      googleActions.syncMailboxProfile.defer(id)
-      googleActions.connectMailbox.defer(id)
-      googleActions.registerMailboxWatch.defer(id)
-      googleActions.syncMailboxMessages.defer(id, true)
-      this.preventDefault() // No change in this store
-    } else if (mailbox.type === TrelloMailbox.type) {
-      trelloActions.syncMailboxProfile.defer(id)
-      trelloActions.syncMailboxNotifications.defer(id)
-      this.preventDefault() // No change in this store
-    } else if (mailbox.type === SlackMailbox.type) {
-      slackActions.connectMailbox.defer(id)
-      slackActions.updateUnreadCounts.defer(id)
-      this.preventDefault() // No change in this store
-    } else if (mailbox.type === MicrosoftMailbox.type) {
-      microsoftActions.syncMailboxProfile.defer(id)
-      microsoftActions.syncMailboxMail.defer(id)
-      this.preventDefault() // No change in this store
+    switch (service.type) {
+      case SERVICE_TYPES.GOOGLE_MAIL:
+      case SERVICE_TYPES.GOOGLE_INBOX:
+        googleActions.syncServiceProfile.defer(serviceId)
+        googleActions.connectService.defer(serviceId)
+        googleActions.registerServiceWatch.defer(serviceId)
+        googleActions.syncServiceMessages.defer(serviceId, true)
+        break
+      case SERVICE_TYPES.TRELLO:
+        trelloActions.syncServiceProfile.defer(serviceId)
+        trelloActions.syncServiceNotifications.defer(serviceId)
+        break
+      case SERVICE_TYPES.SLACK:
+        slackActions.connectService.defer(serviceId)
+        slackActions.updateUnreadCounts.defer(serviceId)
+        break
+      case SERVICE_TYPES.MICROSOFT_MAIL:
+        microsoftActions.syncServiceProfile.defer(serviceId)
+        microsoftActions.syncServiceMail.defer(serviceId)
+        break
     }
-  }*/
+  }
 
   /* **************************************************************************/
   // Snapshots

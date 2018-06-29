@@ -56,8 +56,8 @@ class ACMailbox extends CoreACModel {
   /* **************************************************************************/
 
   get sidebarServices () { return this._value_('sidebarServices', []) }
-  get toolbarStartServices () { return this._value_('toolbarStartServies', []) }
-  get toolbarEndServices () { return this._value_('toolbarEndServies', []) }
+  get toolbarStartServices () { return this._value_('toolbarStartServices', []) }
+  get toolbarEndServices () { return this._value_('toolbarEndServices', []) }
   get allServices () {
     // Concat these in a visual way that makes sense in the UI
     return [].concat(

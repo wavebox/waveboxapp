@@ -12,6 +12,7 @@ import CoreACAuth from '../../Models/ACAccounts/CoreACAuth'
 import ServiceFactory from '../../Models/ACAccounts/ServiceFactory'
 import ACMailboxAvatar from '../../Models/ACAccounts/ACMailboxAvatar'
 import CoreACServiceData from '../../Models/ACAccounts/CoreACServiceData'
+import AuthFactory from '../../Models/ACAccounts/AuthFactory'
 
 class CoreAccountStore extends RemoteStore {
   /* **************************************************************************/
@@ -139,15 +140,23 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /**
-    * Looks to see if am auth is explicitly invalid for a service. If no auth exists
-    * this will return false
+    * Looks to see if am auth is invalid or missing for a service
     * @param serviceId: the id of the service
-    * @return true if it's invalid, false if not or not found
+    * @return true if it's invalid, false if not
     */
     this.isMailboxAuthInvalidForServiceId = (serviceId) => {
-      const auth = this.getMailboxAuthForServiceId(serviceId)
-      if (!auth) { return false }
-      return auth.isAuthInvalid
+      const service = this.getService(serviceId)
+      if (!service) { return false }
+      if (service.supportedAuthNamespace) {
+        const auth = this.getMailboxAuthForMailbox(service.parentId, service.supportedAuthNamespace)
+        if (auth) {
+          return auth.isAuthInvalid
+        } else {
+          return true
+        }
+      } else {
+        return false
+      }
     }
 
     /* ****************************************/
@@ -160,6 +169,13 @@ class CoreAccountStore extends RemoteStore {
     */
     this.getService = (id) => {
       return this._services_.get(id) || null
+    }
+
+    /**
+    * @return a list of service ids
+    */
+    this.serviceIds = () => {
+      return Array.from(this._services_.keys())
     }
 
     /**
@@ -718,7 +734,7 @@ class CoreAccountStore extends RemoteStore {
       return acc
     }, new Map())
     this._mailboxAuth_ = Object.keys(mailboxAuth).reduce((acc, id) => {
-      acc.set(id, new CoreACAuth(mailboxAuth[id]))
+      acc.set(id, AuthFactory.modelizeAuth(mailboxAuth[id]))
       return acc
     }, new Map())
 

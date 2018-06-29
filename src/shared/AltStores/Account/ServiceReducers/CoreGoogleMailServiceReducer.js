@@ -12,6 +12,19 @@ class CoreGoogleMailServiceReducer extends ServiceReducer {
   /* **************************************************************************/
 
   /**
+  * Sets the basic profile info for this account
+  * @param service: the service to update
+  * @param email: the users email address
+  * @param avatar: the users avatar url
+  */
+  static setProfileInfo (service, email, avatar) {
+    return service.changeData({
+      serviceDisplayName: email,
+      serviceAvatarURL: avatar
+    })
+  }
+
+  /**
   * Sets the unread mode
   * @param service: the service to update
   * @param unreadMode: the new unread mode

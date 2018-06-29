@@ -76,6 +76,12 @@ class CoreACService extends CoreACModel {
   get type () { return this.constructor.type }
 
   /* **************************************************************************/
+  // Properties: Sync
+  /* **************************************************************************/
+
+  get syncWatchFields () { return [] }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 
@@ -124,7 +130,8 @@ class CoreACService extends CoreACModel {
   /* **************************************************************************/
 
   get hasNavigationToolbar () { return false }
-  get displayName () { return this._value_('displayName', this.humanizedType) }
+  get displayName () { return this._value_('displayName', this.serviceDisplayName) }
+  get serviceDisplayName () { return this._value_('serviceDisplayName', this.humanizedType) }
   get color () { return this._value_('color', undefined) }
 
   /**

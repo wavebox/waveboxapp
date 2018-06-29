@@ -27,6 +27,21 @@ class CoreGoogleMailService extends CoreACService {
   static get CUSTOM_UNREAD_COUNT_LABEL_FIELDS () { return CUSTOM_UNREAD_COUNT_LABEL_FIELDS }
 
   /* **************************************************************************/
+  // Properties: Sync
+  /* **************************************************************************/
+
+  get syncWatchFields () {
+    return [
+      'unreadMode',
+      'customUnreadQuery',
+      'customUnreadLabelWatchString',
+      'customUnreadCountFromLabel',
+      'customUnreadCountLabel',
+      'customUnreadCountLabelField'
+    ]
+  }
+
+  /* **************************************************************************/
   // Properties: Support
   /* **************************************************************************/
 

@@ -85,6 +85,7 @@ class ACMailboxCircle extends Model {
         return service.hasAvatarId || service.hasServiceAvatarURL || service.hasServiceLocalAvatarId
       })
       if (serviceWithCustom) {
+        memberHashes.add(serviceWithCustom.versionedId)
         if (serviceWithCustom.hasAvatarId) {
           return { id: avatarMap.get(serviceWithCustom.avatarId) }
         } else if (serviceWithCustom.hasServiceLocalAvatarId) {
@@ -99,6 +100,7 @@ class ACMailboxCircle extends Model {
         return !!service.humanizedLogo
       })
       if (serviceWithStandard) {
+        memberHashes.add(serviceWithStandard.versionedId)
         return { uri: serviceWithStandard.humanizedLogo }
       }
 
