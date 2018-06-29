@@ -8,8 +8,9 @@ import Color from 'color'
 import StyledMailboxServiceBadge from '../SidelistCommon/StyledMailboxServiceBadge'
 import SidelistActiveIndicator from '../SidelistCommon/SidelistActiveIndicator'
 import SidelistMailboxAvatar from '../SidelistCommon/SidelistMailboxAvatar'
-import SidelistServiceTooltip from '../SidelistCommon/SidelistServiceTooltip'
-import MailboxServicePopover from '../../../../MailboxServicePopover'
+import SidelistMailboxTooltip from '../SidelistCommon/SidelistMailboxTooltip'
+import MailboxAndServiceContextMenu from 'Components/MailboxAndServiceContextMenu'
+import ErrorBoundary from 'wbui/ErrorBoundary'
 
 class SidelistItemMultiService extends React.Component {
   /* **************************************************************************/
@@ -174,18 +175,21 @@ class SidelistItemMultiService extends React.Component {
             showColorRing={mailbox.showAvatarColorRing}
             borderColor={avatarBorderColor}
             borderWidth={4} />
-          {/*<SidelistServiceTooltip
-            serviceId={serviceId}
-            active={isHovering}
-            group={this.instanceId}
-            parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />*/}
+          <ErrorBoundary>
+            <SidelistMailboxTooltip
+              mailboxId={mailboxId}
+              active={isHovering}
+              group={this.instanceId}
+              parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />
+          </ErrorBoundary>
         </StyledMailboxServiceBadge>
-        {/*<MailboxServicePopover
-          mailboxId={mailboxId}
-          serviceId={serviceId}
-          isOpen={popover}
-          anchor={popoverAnchor}
-          onRequestClose={() => this.setState({ popover: false })} />*/}
+        <ErrorBoundary>
+          <MailboxAndServiceContextMenu
+            mailboxId={mailboxId}
+            isOpen={popover}
+            anchor={popoverAnchor}
+            onRequestClose={() => this.setState({ popover: false })} />
+        </ErrorBoundary>
       </SidelistMailboxContainer>
     )
   }

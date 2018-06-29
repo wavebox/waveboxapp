@@ -9,7 +9,8 @@ import StyledMailboxServiceBadge from '../SidelistCommon/StyledMailboxServiceBad
 import SidelistActiveIndicator from '../SidelistCommon/SidelistActiveIndicator'
 import SidelistMailboxAvatar from '../SidelistCommon/SidelistMailboxAvatar'
 import SidelistServiceTooltip from '../SidelistCommon/SidelistServiceTooltip'
-import MailboxServicePopover from '../../../../MailboxServicePopover'
+import MailboxAndServiceContextMenu from 'Components/MailboxAndServiceContextMenu'
+import ErrorBoundary from 'wbui/ErrorBoundary'
 
 class SidelistItemSingleService extends React.Component {
   /* **************************************************************************/
@@ -188,18 +189,22 @@ class SidelistItemSingleService extends React.Component {
             showColorRing={mailbox.showAvatarColorRing}
             borderColor={avatarBorderColor}
             borderWidth={4} />
-          <SidelistServiceTooltip
-            serviceId={serviceId}
-            active={isHovering}
-            group={this.instanceId}
-            parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />
+          <ErrorBoundary>
+            <SidelistServiceTooltip
+              serviceId={serviceId}
+              active={isHovering}
+              group={this.instanceId}
+              parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />
+          </ErrorBoundary>
         </StyledMailboxServiceBadge>
-        <MailboxServicePopover
-          mailboxId={mailboxId}
-          serviceId={serviceId}
-          isOpen={popover}
-          anchor={popoverAnchor}
-          onRequestClose={() => this.setState({ popover: false })} />
+        <ErrorBoundary>
+          <MailboxAndServiceContextMenu
+            mailboxId={mailboxId}
+            serviceId={serviceId}
+            isOpen={popover}
+            anchor={popoverAnchor}
+            onRequestClose={() => this.setState({ popover: false })} />
+        </ErrorBoundary>
       </SidelistMailboxContainer>
     )
   }

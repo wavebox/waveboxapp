@@ -18,14 +18,14 @@ import SettingsIcon from '@material-ui/icons/Settings'
 import LayersClearIcon from '@material-ui/icons/LayersClear'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-export default class MailboxServicePopover extends React.Component {
+export default class MailboxAndServiceContextMenu extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
-    serviceId: PropTypes.string.isRequired,
+    serviceId: PropTypes.string,
     isOpen: PropTypes.bool.isRequired,
     anchor: PropTypes.any,
     onRequestClose: PropTypes.func.isRequired
@@ -85,19 +85,28 @@ export default class MailboxServicePopover extends React.Component {
   generateAccountState (props, accountState = accountStore.getState()) {
     const { mailboxId, serviceId } = props
     const mailbox = accountState.getMailbox(mailboxId)
-    const service = accountState.getService(serviceId)
 
     return {
       mailbox: mailbox,
-      service: service,
-      isServiceSleeping: accountState.isServiceSleeping(serviceId),
-      isServiceActive: accountState.isServiceActive(serviceId),
       ...(mailbox ? {
+        serviceCount: mailbox.allServiceCount,
         mailboxSleepableServiceCount: !!mailbox.allServices.reduce((acc, serviceId) => {
           return acc + accountState.getService(serviceId).sleepable ? 1 : 0
         }, 0)
       } : {
+        serviceCount: 0,
         mailboxSleepableServiceCount: 0
+      }),
+      ...(serviceId ? {
+        service: accountState.getService(serviceId),
+        isServiceSleeping: accountState.isServiceSleeping(serviceId),
+        isServiceActive: accountState.isServiceActive(serviceId),
+        isServiceAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId)
+      } : {
+        service: null,
+        isServiceSleeping: false,
+        isServiceActive: false,
+        isServiceAuthInvalid: false
       })
     }
   }
@@ -166,7 +175,7 @@ export default class MailboxServicePopover extends React.Component {
   * @param evt: the event that fired
   */
   handleResync = (evt) => {
-    accountActions.fullSyncService(this.props.mailboxId)
+    accountActions.fullSyncService(this.props.serviceId)
     this.closePopover(evt)
   }
 
@@ -194,7 +203,7 @@ export default class MailboxServicePopover extends React.Component {
   * @param evt: the event that fired
   */
   handleReauthenticate = (evt) => {
-    accountActions.reauthenticateMailbox(this.props.mailboxId)
+    accountActions.reauthenticateService(this.props.serviceId)
     this.closePopover(evt)
   }
 
@@ -204,7 +213,7 @@ export default class MailboxServicePopover extends React.Component {
   */
   handleAwakenService = (evt) => {
     this.closePopover(evt, () => {
-      accountActions.awakenService(this.props.serviceType)
+      accountActions.awakenService(this.props.serviceId)
     })
   }
 
@@ -214,7 +223,7 @@ export default class MailboxServicePopover extends React.Component {
   */
   handleSleepService = (evt) => {
     this.closePopover(evt, () => {
-      accountActions.sleepService(this.props.serviceType)
+      accountActions.sleepService(this.props.serviceId)
     })
   }
 
@@ -247,160 +256,19 @@ export default class MailboxServicePopover extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
-  /**
-  * Renders the menu items
-  * @return array of jsx elements
-  */
-  renderMenuItems () {
+  render () {
+    const { isOpen, anchor } = this.props
     const {
       mailbox,
+      service,
+      rendering,
+      serviceCount,
       userHasSleepable,
       isServiceSleeping,
       mailboxSleepableServiceCount,
-      service
+      isServiceAuthInvalid
     } = this.state
-    const menuItems = []
-
-    // Identification & Status
-    if (mailbox.displayName) {
-      menuItems.push(
-        <MenuItem key='info' disabled>
-          <ListItemText primary={`${service.humanizedTypeShort} : ${mailbox.displayName}`} />
-        </MenuItem>
-      )
-    }
-    menuItems.push(
-      <MenuItem key='open_in_window' onClick={this.handleOpenInWindow}>
-        <ListItemIcon>
-          <OpenInNewIcon />
-        </ListItemIcon>
-        <ListItemText inset primary='Open in New Window' />
-      </MenuItem>
-    )
-    if (userHasSleepable && (service || {}).sleepable) {
-      if (isServiceSleeping) {
-        menuItems.push(
-          <MenuItem key='awaken' onClick={this.handleAwakenService}>
-            <ListItemIcon>
-              <AlarmIcon />
-            </ListItemIcon>
-            <ListItemText inset primary='Awaken' />
-          </MenuItem>
-        )
-      } else {
-        menuItems.push(
-          <MenuItem key='sleep' onClick={this.handleSleepService}>
-            <ListItemIcon>
-              <HotelIcon />
-            </ListItemIcon>
-            <ListItemText inset primary='Sleep' />
-          </MenuItem>
-        )
-      }
-    }
-
-    if (userHasSleepable && mailbox.hasMultipleServices) {
-      if (mailboxSleepableServiceCount > 1) {
-        menuItems.push(
-          <MenuItem key='sleep_all' onClick={this.handleSleepAllServices}>
-            <ListItemIcon>
-              <SleepAllIcon />
-            </ListItemIcon>
-            <ListItemText inset primary={`Sleep ${mailboxSleepableServiceCount} Services`} />
-          </MenuItem>
-        )
-      }
-    }
-    if (!isServiceSleeping) {
-      menuItems.push(
-        <MenuItem key='reload' onClick={this.handleReload}>
-          <ListItemIcon>
-            <RefreshIcon />
-          </ListItemIcon>
-          <ListItemText inset primary='Reload' />
-        </MenuItem>
-      )
-    }
-    menuItems.push(
-      <MenuItem key='sync' onClick={this.handleResync}>
-        <ListItemIcon>
-          <SyncIcon />
-        </ListItemIcon>
-        <ListItemText inset primary='Resync' />
-      </MenuItem>
-    )
-    /*if (mailbox.supportsAuth) {
-      const invalid = mailbox.isAuthenticationInvalid || !mailbox.hasAuth
-      menuItems.push(
-        <MenuItem key='reauthenticate' onClick={this.handleReauthenticate}>
-          <ListItemIcon>
-            {invalid ? (
-              <ErrorOutlineIcon style={{ color: red[600] }} />
-            ) : (
-              <LockOutlineIcon />
-            )}
-          </ListItemIcon>
-          <ListItemText inset primary='Reauthenticate' style={{ color: red[600] }} />
-        </MenuItem>
-      )
-    }*/
-    menuItems.push(<Divider key='div-actions' />)
-
-    // Account Settings
-    menuItems.push(
-      <MenuItem key='settings' onClick={this.handleAccountSettings}>
-        <ListItemIcon>
-          <SettingsIcon />
-        </ListItemIcon>
-        <ListItemText inset primary='Account Settings' />
-      </MenuItem>
-    )
-    if (mailbox.artificiallyPersistCookies) {
-      menuItems.push(
-        <MenuItem key='clearsession' onClick={this.handleClearBrowserSession}>
-          <ListItemIcon>
-            <LayersClearIcon />
-          </ListItemIcon>
-          <ListItemText inset primary='Clear All Cookies' />
-        </MenuItem>
-      )
-    }
-    // Delete
-    if (mailbox.hasMultipleServices) {
-      menuItems.push(
-        <MenuItem key='delete' onClick={this.handleDeleteService}>
-          <ListItemIcon>
-            <DeleteIcon />
-          </ListItemIcon>
-          <ListItemText inset primary={`Delete ${service.humanizedType}`} />
-        </MenuItem>
-      )
-      menuItems.push(
-        <MenuItem key='delete_all' onClick={this.handleDelete}>
-          <ListItemIcon>
-            <DeleteAllIcon />
-          </ListItemIcon>
-          <ListItemText inset primary={`Delete Account (${mailbox.allServiceCount} services)`} />
-        </MenuItem>
-      )
-    } else {
-      menuItems.push(
-        <MenuItem key='delete_all' onClick={this.handleDelete}>
-          <ListItemIcon>
-            <DeleteIcon />
-          </ListItemIcon>
-          <ListItemText inset primary='Delete Account' />
-        </MenuItem>
-      )
-    }
-
-    return menuItems
-  }
-
-  render () {
-    const { isOpen, anchor } = this.props
-    const { mailbox, service, rendering } = this.state
-    if (!mailbox || !service || !rendering) { return false }
+    if (!mailbox || !rendering) { return false }
 
     return (
       <Menu
@@ -409,7 +277,92 @@ export default class MailboxServicePopover extends React.Component {
         MenuListProps={{ dense: true }}
         disableEnforceFocus
         onClose={this.closePopover}>
-        {this.renderMenuItems()}
+        {/* Info & Util */}
+        <MenuItem disabled>
+          <ListItemText primary={service ? (
+            `${service.displayName} : (${service.humanizedTypeShort})`
+          ) : (
+            `${mailbox.displayName} - ${serviceCount} services`
+          )} />
+        </MenuItem>
+        {service ? (
+          <MenuItem onClick={this.handleOpenInWindow}>
+            <ListItemIcon><OpenInNewIcon /></ListItemIcon>
+            <ListItemText inset primary='Open in New Window' />
+          </MenuItem>
+        ) : undefined}
+
+        {/* Sleep */}
+        {userHasSleepable && service && service.sleepable ? (
+          <MenuItem onClick={isServiceSleeping ? this.handleAwakenService : this.handleSleepService}>
+            <ListItemIcon>
+              {isServiceSleeping ? (<AlarmIcon />) : (<HotelIcon />)}
+            </ListItemIcon>
+            <ListItemText inset primary={isServiceSleeping ? 'Awaken' : 'Sleep'} />
+          </MenuItem>
+        ) : undefined}
+        {userHasSleepable && mailboxSleepableServiceCount > 1 ? (
+          <MenuItem onClick={this.handleSleepAllServices}>
+            <ListItemIcon><SleepAllIcon /></ListItemIcon>
+            <ListItemText inset primary={`Sleep ${mailboxSleepableServiceCount} Services`} />
+          </MenuItem>
+        ) : undefined}
+
+        {/* Reload & Sync & Auth */}
+        {service && !isServiceSleeping ? (
+          <MenuItem onClick={this.handleReload}>
+            <ListItemIcon><RefreshIcon /></ListItemIcon>
+            <ListItemText inset primary='Reload' />
+          </MenuItem>
+        ) : undefined}
+        {service ? (
+          <MenuItem onClick={this.handleResync}>
+            <ListItemIcon><SyncIcon /></ListItemIcon>
+            <ListItemText inset primary='Resync' />
+          </MenuItem>
+        ) : undefined}
+        {service && service.supportedAuthNamespace ? (
+          <MenuItem onClick={this.handleReauthenticate}>
+            <ListItemIcon>
+              {isServiceAuthInvalid ? (
+                <ErrorOutlineIcon style={{ color: red[600] }} />
+              ) : (
+                <LockOutlineIcon />
+              )}
+            </ListItemIcon>
+            <ListItemText inset primary='Reauthenticate' style={isServiceAuthInvalid ? { color: red[600] } : undefined} />
+          </MenuItem>
+        ) : undefined}
+
+        {service ? (<Divider />) : undefined}
+
+        {/* Settings */}
+        <MenuItem onClick={this.handleAccountSettings}>
+          <ListItemIcon><SettingsIcon /></ListItemIcon>
+          <ListItemText inset primary='Account Settings' />
+        </MenuItem>
+        {mailbox.artificiallyPersistCookies ? (
+          <MenuItem onClick={this.handleClearBrowserSession}>
+            <ListItemIcon><LayersClearIcon /></ListItemIcon>
+            <ListItemText inset primary='Clear All Cookies' />
+          </MenuItem>
+        ) : undefined}
+
+        {/* Delete */}
+        {mailbox.hasMultipleServices && service ? (
+          <MenuItem onClick={this.handleDeleteService}>
+            <ListItemIcon><DeleteIcon /></ListItemIcon>
+            <ListItemText inset primary={`Delete ${service.humanizedType}`} />
+          </MenuItem>
+        ) : undefined}
+        <MenuItem onClick={this.handleDelete}>
+          <ListItemIcon>
+            {mailbox.hasMultipleServices ? (<DeleteAllIcon />) : (<DeleteIcon />)}
+          </ListItemIcon>
+          <ListItemText
+            inset
+            primary={mailbox.hasMultipleServices ? `Delete Account (${mailbox.allServiceCount} services)` : 'Delete Account'} />
+        </MenuItem>
       </Menu>
     )
   }

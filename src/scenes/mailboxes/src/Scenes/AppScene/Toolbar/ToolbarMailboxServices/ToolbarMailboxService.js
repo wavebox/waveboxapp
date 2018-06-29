@@ -4,12 +4,13 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { accountStore, accountActions } from 'stores/account'
 import { settingsStore } from 'stores/settings'
 import uuid from 'uuid'
-import MailboxServicePopover from '../../MailboxServicePopover'
+import MailboxAndServiceContextMenu from 'Components/MailboxAndServiceContextMenu'
 import StyledMailboxServiceBadge from './StyledMailboxServiceBadge'
 import ToolbarServiceTooltip from './ToolbarServiceTooltip'
 import Resolver from 'Runtime/Resolver'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
+import ErrorBoundary from 'wbui/ErrorBoundary'
 
 const styles = {
   /**
@@ -224,17 +225,21 @@ class ToolbarMailboxService extends React.Component {
               filter: showSleeping ? 'grayscale(100%)' : 'none'
             }} />
         </StyledMailboxServiceBadge>
-        <ToolbarServiceTooltip
-          serviceId={serviceId}
-          active={isHovering}
-          group={this.instanceId}
-          parent={`#ReactComponent-Toolbar-Mailbox-Service-${this.instanceId}`} />
-        <MailboxServicePopover
-          mailboxId={mailboxId}
-          serviceId={serviceId}
-          isOpen={!!popoverAnchor}
-          anchor={popoverAnchor}
-          onRequestClose={() => this.setState({ popoverAnchor: null })} />
+        <ErrorBoundary>
+          <ToolbarServiceTooltip
+            serviceId={serviceId}
+            active={isHovering}
+            group={this.instanceId}
+            parent={`#ReactComponent-Toolbar-Mailbox-Service-${this.instanceId}`} />
+        </ErrorBoundary>
+        <ErrorBoundary>
+          <MailboxAndServiceContextMenu
+            mailboxId={mailboxId}
+            serviceId={serviceId}
+            isOpen={!!popoverAnchor}
+            anchor={popoverAnchor}
+            onRequestClose={() => this.setState({ popoverAnchor: null })} />
+        </ErrorBoundary>
       </div>
     )
   }

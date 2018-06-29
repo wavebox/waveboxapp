@@ -134,7 +134,13 @@ class AccountActions extends RendererAccountActions {
     return payload
   }
 
+  /* **************************************************************************/
+  // Mailbox Re-auth
+  /* **************************************************************************/
 
+  reauthenticateService (serviceId) {
+    //TODO
+  }
 
 
 
