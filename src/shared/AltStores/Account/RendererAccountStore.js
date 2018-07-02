@@ -1,7 +1,6 @@
 import CoreAccountStore from './CoreAccountStore'
 import { ACTIONS_NAME } from './AltAccountIdentifiers'
 import ACMailbox from '../../Models/ACAccounts/ACMailbox'
-import CoreACAuth from '../../Models/ACAccounts/CoreACAuth'
 import ServiceFactory from '../../Models/ACAccounts/ServiceFactory'
 import AuthFactory from '../../Models/ACAccounts/AuthFactory'
 

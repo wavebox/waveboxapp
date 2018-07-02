@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Dialog, DialogContent, DialogTitle, DialogActions, Button, List, ListItem, ListItemText, Grid } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import MailboxAvatar from 'Components/Backed/MailboxAvatar'
 import { userActions } from 'stores/user'
 import { withStyles } from '@material-ui/core/styles'
@@ -10,6 +10,8 @@ import StyleMixins from 'wbui/Styles/StyleMixins'
 import WaveboxSigninButton from 'wbui/SigninButtons/WaveboxSigninButton'
 import GoogleSigninButton from 'wbui/SigninButtons/GoogleSigninButton'
 import MicrosoftSigninButton from 'wbui/SigninButtons/MicrosoftSigninButton'
+import GoogleAuth from 'shared/Models/ACAccounts/Google/GoogleAuth'
+import MicrosoftAuth from 'shared/Models/ACAccounts/Microsoft/MicrosoftAuth'
 
 const styles = {
   // Dialog
@@ -130,11 +132,11 @@ class AccountAuthScene extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxChanged)
+    accountStore.listen(this.accountChanged)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxChanged)
+    accountStore.unlisten(this.accountChanged)
   }
 
   /* **************************************************************************/
@@ -144,14 +146,37 @@ class AccountAuthScene extends React.Component {
   state = (() => {
     return {
       open: true,
-      mailboxes: mailboxStore.getState().getMailboxesSupportingWaveboxAuth()
+      auths: this.buildAuthManifest(accountStore.getState())
     }
   })()
 
-  mailboxChanged = (mailboxState) => {
+  accountChanged = (accountState) => {
     this.setState({
-      mailboxes: mailboxState.getMailboxesSupportingWaveboxAuth()
+      auths: this.buildAuthManifest(accountState)
     })
+  }
+
+  /**
+  * Builds the auth manifest
+  * @param accountState: the current account state
+  * @return the manifest to provide to the state
+  */
+  buildAuthManifest (accountState) {
+    return accountStore
+      .getState()
+      .allMailboxes()
+      .reduce((acc, mailbox) => {
+        const auths = accountState
+          .getMailboxAuthsForMailbox(mailbox.id)
+          .filter((auth) => auth.namespace === GoogleAuth.namespace || auth.namespace === MicrosoftAuth.namespace)
+        if (auths.length) {
+          return acc.concat(
+            auths.map((auth) => { return { auth, mailbox } })
+          )
+        } else {
+          return acc
+        }
+      }, [])
   }
 
   /* **************************************************************************/
@@ -177,7 +202,7 @@ class AccountAuthScene extends React.Component {
   }
 
   render () {
-    const { open, mailboxes } = this.state
+    const { open, auths } = this.state
     const {
       match: { params: { mode } },
       classes
@@ -229,18 +254,18 @@ class AccountAuthScene extends React.Component {
             <Grid item xs={6} className={classes.gridItem}>
               <p className={classes.gridSubheading}>Use an account you've added to Wavebox</p>
               <List className={classes.accountsList}>
-                {mailboxes.length ? (
-                  mailboxes.map((mailbox) => {
+                {auths.length ? (
+                  auths.map(({ auth, mailbox }) => {
                     return (
                       <ListItem
-                        key={mailbox.id}
+                        key={auth.id}
                         button
                         disableGutters
-                        onClick={(evt) => userActions.authenticateWithMailbox(mailbox, { mode: mode })}>
+                        onClick={(evt) => userActions.authenticateWithAuth(mailbox.partitionId, auth.namespace, { mode: mode })}>
                         <MailboxAvatar className={classes.accountAvatar} mailboxId={mailbox.id} />
                         <ListItemText
                           primary={mailbox.displayName}
-                          secondary={mailbox.humanizedType} />
+                          secondary={auth.humanizedType} />
                       </ListItem>
                     )
                   })

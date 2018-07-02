@@ -1,12 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import MailboxAvatar from 'Components/Backed/MailboxAvatar'
+import MailboxAvatar from 'wbui/MailboxAvatar'
 import { Button } from '@material-ui/core'
-import { mailboxActions, ServiceReducer } from 'stores/mailbox'
+import { accountStore, accountActions } from 'stores/account'
 import { settingsActions } from 'stores/settings'
 import { withStyles } from '@material-ui/core/styles'
 import grey from '@material-ui/core/colors/grey'
 import blue from '@material-ui/core/colors/blue'
+import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
+import shallowCompare from 'react-addons-shallow-compare'
+import Resolver from 'Runtime/Resolver'
 
 const styles = {
   // Layout
@@ -84,10 +87,54 @@ class MailboxSleepNotification extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    mailbox: PropTypes.object.isRequired,
-    service: PropTypes.object.isRequired,
+    mailboxId: PropTypes.string.isRequired,
+    serviceId: PropTypes.string.isRequired,
     closeMetrics: PropTypes.object,
     onRequestClose: PropTypes.func.isRequired
+  }
+
+  /* **************************************************************************/
+  // Component lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    accountStore.listen(this.accountChanged)
+  }
+
+  componentWillUnmount () {
+    accountStore.unlisten(this.accountChanged)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceId !== nextProps.serviceId) {
+      const accountState = accountStore.getState()
+      this.setState({
+        mailbox: accountState.getMailbox(nextProps.mailboxId),
+        service: accountState.getService(nextProps.serviceId),
+        avatar: accountState.getMailboxAvatarConfig(nextProps.mailboxId)
+      })
+    }
+  }
+
+  /* **************************************************************************/
+  // Data lifecycle
+  /* **************************************************************************/
+
+  state = (() => {
+    const accountState = accountStore.getState()
+    return {
+      mailbox: accountState.getMailbox(this.props.mailboxId),
+      service: accountState.getService(this.props.serviceId),
+      avatar: accountState.getMailboxAvatarConfig(this.props.mailboxId)
+    }
+  })()
+
+  accountChanged = (accountState) => {
+    this.setState({
+      mailbox: accountState.getMailbox(this.props.mailboxId),
+      service: accountState.getService(this.props.serviceId),
+      avatar: accountState.getMailboxAvatarConfig(this.props.mailboxId)
+    })
   }
 
   /* **************************************************************************/
@@ -95,22 +142,22 @@ class MailboxSleepNotification extends React.Component {
   /* **************************************************************************/
 
   handleDismiss = () => {
-    const { mailbox, service, onRequestClose } = this.props
-    mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setHasSeenSleepableWizard, true)
+    const { serviceId, onRequestClose } = this.props
+    accountActions.reduceService(serviceId, ServiceReducer.setHasSeenSleepableWizard, true)
     onRequestClose()
   }
 
   handleDisableSleep = () => {
-    const { mailbox, service, onRequestClose } = this.props
-    mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setSleepable, false)
-    mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setHasSeenSleepableWizard, true)
+    const { serviceId, onRequestClose } = this.props
+    accountActions.reduceService(serviceId, ServiceReducer.setSleepable, false)
+    accountActions.reduceService(serviceId, ServiceReducer.setHasSeenSleepableWizard, true)
     onRequestClose()
   }
 
   handleCustomize = () => {
-    const { mailbox, service, onRequestClose } = this.props
-    mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setHasSeenSleepableWizard, true)
-    window.location.hash = `/settings/accounts/${mailbox.id}`
+    const { mailboxId, serviceId, onRequestClose } = this.props
+    accountActions.reduceService(serviceId, ServiceReducer.setHasSeenSleepableWizard, true)
+    window.location.hash = `/settings/accounts/${mailboxId}`
     onRequestClose()
   }
 
@@ -126,14 +173,15 @@ class MailboxSleepNotification extends React.Component {
   // Rendering
   /* **************************************************************************/
 
-  render () {
-    const { mailbox, service, closeMetrics, classes } = this.props
+  shouldComponentUpdate (nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState)
+  }
 
-    const displayNameText = mailbox.hasAdditionalServices ? (
-      `${service.humanizedTypeShort} : ${mailbox.displayName}`
-    ) : (
-      mailbox.displayName
-    )
+  render () {
+    const { closeMetrics, classes } = this.props
+    const { mailbox, service, avatar } = this.state
+
+    const displayNameText = `${service.displayName || mailbox.displayName} (${service.humanizedType})`
     const savingText = closeMetrics ? (
       `saving ${Math.round((closeMetrics.memory.workingSetSize || 0) / 1024)}MB of memory`
     ) : (
@@ -154,7 +202,11 @@ class MailboxSleepNotification extends React.Component {
           <span className={classes.z2}>z</span>
           <span className={classes.z3}>z</span>
           <span className={classes.z4}>z</span>
-          <MailboxAvatar mailboxId={mailbox.id} size={50} className={classes.icon} />
+          <MailboxAvatar
+            avatar={avatar}
+            resolver={(i) => Resolver.Image(i)}
+            size={50}
+            className={classes.icon} />
         </div>
         <div className={classes.content}>
           <p className={classes.title}>{`${displayNameText} has just been put to sleep, ${savingText}.`}</p>

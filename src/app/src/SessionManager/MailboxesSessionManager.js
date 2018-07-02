@@ -74,7 +74,7 @@ class MailboxesSessionManager extends EventEmitter {
       return
     }
 
-    const partition = `persist:${mailbox.partition}`
+    const partition = mailbox.partition
     if (this[privManaged].has(partition)) {
       return
     }

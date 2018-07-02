@@ -8,7 +8,7 @@ import mailboxAuthPersistence from 'Storage/acmailboxauthStorage'
 import servicePersistence from 'Storage/acserviceStorage'
 import servicedataPersistence from 'Storage/acservicedataStorage'
 import avatarPersistence from 'Storage/avatarStorage'
-import { MailboxesSessionManager, SessionManager } from 'SessionManager' //TODO check usages in these. Calls from this class pass mailbox
+import { MailboxesSessionManager, SessionManager } from 'SessionManager'
 import MailboxesWindow from 'Windows/MailboxesWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import uuid from 'uuid'
@@ -629,7 +629,7 @@ class AccountStore extends CoreAccountStore {
     if (this.isServiceSleeping(id)) { return }
 
     const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
-    const openWindowCount = mailboxesWindow ? mailboxesWindow.tabManager.getOpenWindowCount(id) : 0 //TODO I used to accept mailboxId and serviceType
+    const openWindowCount = mailboxesWindow ? mailboxesWindow.tabManager.getOpenWindowCount(id) : 0
     if (openWindowCount === 0) {
       // Clear previous
       clearTimeout(this._sleepingQueue_.get(id) || null)
@@ -665,7 +665,7 @@ class AccountStore extends CoreAccountStore {
   */
   generateServiceSleepMetrics (id) {
     const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
-    return mailboxesWindow ? mailboxesWindow.tabManager.getServiceMetrics(id) : undefined //TODO I used to accept mailboxId and serviceType
+    return mailboxesWindow ? mailboxesWindow.tabManager.getServiceMetrics(id) : undefined
   }
 
   /* **************************************************************************/

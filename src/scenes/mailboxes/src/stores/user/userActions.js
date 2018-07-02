@@ -77,14 +77,15 @@ class UserActions extends RendererUserActions {
 
   /**
   * Starts the auth process with an existing mailbox
-  * @param mailbox: the mailbox to auth against
+  * @param partitionId: the id of the partitionId
+  * @param namespace: the auth namespace
   * @param serverArgs={}: an args dict to pass to the server
   * @param openAccountOnSuccess=true: true to open the account screen on complete
   */
-  authenticateWithMailbox (mailbox, serverArgs = {}, openAccountOnSuccess = true) {
+  authenticateWithAuth (partitionId, namespace, serverArgs = {}, openAccountOnSuccess = true) {
     return {
-      id: mailbox.id,
-      type: mailbox.type,
+      partitionId: partitionId,
+      namespace: namespace,
       serverArgs: serverArgs,
       openAccountOnSuccess: openAccountOnSuccess
     }
@@ -160,11 +161,7 @@ class UserActions extends RendererUserActions {
   * @param data: the data that came across the ipc
   */
   authenticationSuccess (evt, data) {
-    return {
-      id: data.id,
-      type: data.type,
-      next: data.next
-    }
+    return { next: data.next }
   }
 
   /**

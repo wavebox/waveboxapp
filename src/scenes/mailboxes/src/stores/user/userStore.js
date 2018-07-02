@@ -11,6 +11,8 @@ import TakeoutService from './TakeoutService'
 import WaveboxAuthProviders from 'shared/Models/WaveboxAuthProviders'
 import accountActions from '../account/accountActions'
 import AltAccountIdentifiers from 'shared/AltStores/Account/AltAccountIdentifiers'
+import GoogleAuth from 'shared/Models/ACAccounts/Google/GoogleAuth'
+import MicrosoftAuth from 'shared/Models/ACAccounts/Microsoft/MicrosoftAuth'
 
 import {
   EXTENSION_AUTO_UPDATE_INTERVAL,
@@ -75,7 +77,7 @@ class UserStore extends RendererUserStore {
       handleStopAutoUpdateContainers: actions.STOP_AUTO_UPDATE_CONTAINERS,
 
       // Auth
-      handleAuthenticateWithMailbox: actions.AUTHENTICATE_WITH_MAILBOX,
+      handleAuthenticateWithAuth: actions.AUTHENTICATE_WITH_AUTH,
       handleAuthenticateWithGoogle: actions.AUTHENTICATE_WITH_GOOGLE,
       handleAuthenticateWithMicrosoft: actions.AUTHENTICATE_WITH_MICROSOFT,
       handleAuthenticateWithWavebox: actions.AUTHENTICATE_WITH_WAVEBOX,
@@ -218,18 +220,18 @@ class UserStore extends RendererUserStore {
   // Handlers: Auth
   /* **************************************************************************/
 
-  handleAuthenticateWithMailbox ({ id, type, serverArgs, openAccountOnSuccess }) {
+  handleAuthenticateWithAuth ({ partitionId, namespace, serverArgs, openAccountOnSuccess }) {
     this.preventDefault()
     let providerType
-    /*if (type === CoreMailbox.MAILBOX_TYPES.GOOGLE) {
+    if (namespace === GoogleAuth.namespace) {
       providerType = WaveboxAuthProviders.GOOGLE
-    } else if (type === CoreMailbox.MAILBOX_TYPES.MICROSOFT) {
+    } else if (namespace === MicrosoftAuth.namespace) {
       providerType = WaveboxAuthProviders.MICROSOFT
-    }*/
+    }
     if (!providerType) { return }
 
     ipcRenderer.send(WB_AUTH_WAVEBOX, {
-      id: id,
+      partitionId: partitionId,
       type: providerType,
       clientSecret: this.user.clientSecret,
       serverArgs: serverArgs,
@@ -241,7 +243,7 @@ class UserStore extends RendererUserStore {
   handleAuthenticateWithGoogle ({ serverArgs, openAccountOnSuccess }) {
     this.preventDefault()
     ipcRenderer.send(WB_AUTH_WAVEBOX, {
-      id: null,
+      partitionId: null,
       type: WaveboxAuthProviders.GOOGLE,
       clientSecret: this.user.clientSecret,
       serverArgs: serverArgs,
@@ -253,7 +255,7 @@ class UserStore extends RendererUserStore {
   handleAuthenticateWithMicrosoft ({ serverArgs, openAccountOnSuccess }) {
     this.preventDefault()
     ipcRenderer.send(WB_AUTH_WAVEBOX, {
-      id: null,
+      partitionId: null,
       type: WaveboxAuthProviders.MICROSOFT,
       clientSecret: this.user.clientSecret,
       serverArgs: serverArgs,
@@ -265,7 +267,7 @@ class UserStore extends RendererUserStore {
   handleAuthenticateWithWavebox ({ serverArgs, openAccountOnSuccess }) {
     this.preventDefault()
     ipcRenderer.send(WB_AUTH_WAVEBOX, {
-      id: null,
+      partitionId: null,
       type: WaveboxAuthProviders.WAVEBOX,
       clientSecret: this.user.clientSecret,
       serverArgs: serverArgs,
@@ -278,7 +280,7 @@ class UserStore extends RendererUserStore {
   // Handlers: Auth Callbacks
   /* **************************************************************************/
 
-  handleAuthenticationSuccess ({ id, type, next, openAccountOnSuccess }) {
+  handleAuthenticationSuccess ({ next, openAccountOnSuccess }) {
     if (openAccountOnSuccess) {
       if (next) {
         window.location.hash = `/account/view?url=${encodeURIComponent(next)}`

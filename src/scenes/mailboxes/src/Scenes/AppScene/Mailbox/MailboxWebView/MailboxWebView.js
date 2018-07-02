@@ -205,6 +205,7 @@ class MailboxWebView extends React.Component {
       searchTerm: accountState.serviceSearchTerm(serviceId),
       searchId: accountState.serviceSearchHash(serviceId),
       isolateMailboxProcesses: settingsStore.getState().launched.app.isolateMailboxProcesses, // does not update
+      serviceAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId),
       ...(!mailbox || !service ? {
         mailbox: null,
         service: null,
@@ -236,6 +237,7 @@ class MailboxWebView extends React.Component {
           isSearching: accountState.isSearchingService(serviceId),
           searchTerm: accountState.serviceSearchTerm(serviceId),
           searchId: accountState.serviceSearchHash(serviceId),
+          serviceAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId),
           ...(prevState.baseUrl !== service.url ? {
             baseUrl: service.url,
             restorableUrl: service.getUrlWithData(serviceData, authData),
@@ -622,7 +624,8 @@ class MailboxWebView extends React.Component {
       isCrashed,
       isLoading,
       snapshot,
-      isolateMailboxProcesses
+      isolateMailboxProcesses,
+      serviceAuthInvalid
     } = this.state
 
     if (!mailbox || !service) { return false }
@@ -745,20 +748,14 @@ class MailboxWebView extends React.Component {
               </Button>
             )} />
         ) : undefined}
-        {/*
-        {mailbox.isAuthenticationInvalid || !mailbox.hasAuth ? (
+        {serviceAuthInvalid ? (
           <MailboxInformationCover
             title='Whoops!'
             IconComponent={ErrorOutlineIcon}
             text={[
-              'There\'s an authentication problem with this account.',
-              mailbox.isAuthenticationInvalid ? (
-                'The authentication information Wavebox has for this account is no longer valid.'
-              ) : undefined,
-              mailbox.hasAuth ? (
-                'Wavebox doesn\'t have any authentication information for this account.'
-              ) : undefined
-            ].filter((l) => !!l)}
+              `There's an authentication problem with this account.`,
+              `Wavebox either doesn't have any authentication information for this account or it's invalid`
+            ]}
             button={(
               <Button
                 variant='raised'
@@ -768,7 +765,6 @@ class MailboxWebView extends React.Component {
               </Button>
             )} />
         ) : undefined}
-        */}
       </div>
     )
   }

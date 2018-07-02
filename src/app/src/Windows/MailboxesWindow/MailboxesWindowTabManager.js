@@ -111,9 +111,8 @@ class MailboxesWindowTabManager {
   * @param accountState: the new account state
   */
   attemptEmitTabActivatedOnMailboxesChanged = (accountState) => {
-    const mailboxId = accountState.activeMailboxId()
     const serviceId = accountState.activeServiceId()
-    const tabId = this.getWebContentsId(mailboxId, serviceId)
+    const tabId = this.getWebContentsId(serviceId)
 
     if (tabId && tabId !== this[privActiveTabId]) {
       const browserWindow = BrowserWindow.fromWebContents(webContents.fromId(this.webContentsId))
@@ -170,14 +169,13 @@ class MailboxesWindowTabManager {
 
   /**
   * Gets the webcontents id for a mailbox and service
-  * @param mailboxId: the id of the mailbox
   * @param serviceId: the id of service
   * @return the web contents id or null
   */
-  getWebContentsId (mailboxId, serviceId) {
+  getWebContentsId (serviceId) {
     const wcId = Array.from(this.attachedMailboxes.keys()).find((wcId) => {
       const rec = this.attachedMailboxes.get(wcId)
-      return rec.mailboxId === mailboxId && rec.serviceId === serviceId
+      return rec.serviceId === serviceId
     })
     return wcId === undefined ? null : wcId
   }
@@ -197,12 +195,11 @@ class MailboxesWindowTabManager {
 
   /**
   * Gets the metrics for a running service
-  * @param mailboxId: the id of the mailbox
   * @param serviceId: the id of service
   * @return the metrics for the service or undefined
   */
-  getServiceMetrics (mailboxId, serviceId) {
-    const wcId = this.getWebContentsId(mailboxId, serviceId)
+  getServiceMetrics (serviceId) {
+    const wcId = this.getWebContentsId(serviceId)
     if (!wcId) { return undefined }
 
     const wc = webContents.fromId(wcId)
@@ -263,7 +260,7 @@ class MailboxesWindowTabManager {
   * @param serviceId: the id of service
   * @return the number of windows that owned by the given items
   */
-  getOpenWindowCount (mailboxId, serviceId) {
+  getOpenWindowCount (serviceId) {
     const mailboxesWindowId = WaveboxWindow.fromWebContentsId(this.webContentsId).browserWindowId
     const count = WaveboxWindow.all().reduce((acc, w) => {
       if (w.browserWindowId === mailboxesWindowId) { return acc }
@@ -271,7 +268,6 @@ class MailboxesWindowTabManager {
         const meta = w.tabMetaInfo(tabId)
         if (!meta) { return acc }
         if (!meta.backing === WINDOW_BACKING_TYPES.MAILBOX_SERVICE) { return acc }
-        if (meta.mailboxId !== mailboxId || meta.serviceId !== serviceId) { return acc }
         return acc + 1
       }, 0)
       return acc + windowCount

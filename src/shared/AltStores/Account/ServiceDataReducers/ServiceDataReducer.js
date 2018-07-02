@@ -35,7 +35,7 @@ class ServiceDataReducer {
   * @param serviceData: the service to update
   * @param url: the current url
   */
- static setFavicons (service, serviceData, favicons) {
+  static setFavicons (service, serviceData, favicons) {
     return serviceData.changeData({ favicons: favicons })
   }
 

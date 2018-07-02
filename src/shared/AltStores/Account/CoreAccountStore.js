@@ -1,5 +1,4 @@
 import RemoteStore from '../RemoteStore'
-import { BLANK_PNG } from '../../b64Assets'
 import {
   ACTIONS_NAME,
   DISPATCH_NAME,
@@ -98,6 +97,14 @@ class CoreAccountStore extends RemoteStore {
     */
     this.getMailboxAuth = (id) => {
       return this._mailboxAuth_.get(id) || null
+    }
+
+    /**
+    * @param id: the fully qualified id of the auth object
+    * @return the true if we have the auth, false otherwise
+    */
+    this.hasMailboxAuth = (id) => {
+      return !!this.getMailboxAuth(id)
     }
 
     /**

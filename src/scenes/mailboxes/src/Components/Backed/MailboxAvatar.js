@@ -5,7 +5,6 @@ import shallowCompare from 'react-addons-shallow-compare'
 import Resolver from 'Runtime/Resolver'
 import SharedMailboxAvatar from 'wbui/MailboxAvatar'
 
-//TODO depricate me?
 export default class MailboxAvatar extends React.Component {
   /* **************************************************************************/
   // Class

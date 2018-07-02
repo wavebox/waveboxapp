@@ -100,7 +100,6 @@ class WizardPersonalise extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.template !== this.props.templ || nextProps.accessMode !== this.props.accessMode) {
-
       const templateColor = this.getDefaultMailboxColor(nextProps.template, nextProps.accessMode)
       this.setState({
         templateColors: [templateColor],

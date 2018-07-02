@@ -53,22 +53,16 @@ class AuthWavebox {
   * @param clientSecret: the secret that authorises the requests
   * @param type: the type of provider we're using to authorize
   * @param serverArgs: extra args to send to the server
-  * @param mailboxId = null: the id of the mailbox to use if any
+  * @param partitionId = null: the id of the partition to use if any
   * @return promise
   */
-  promptUserToAuthorizeWavebox (clientSecret, type, serverArgs, mailboxId = null) {
+  promptUserToAuthorizeWavebox (clientSecret, type, serverArgs, partitionId = null) {
+    partitionId = partitionId || `rand_${new Date().getTime()}`
     return new Promise((resolve, reject) => {
       const authUrl = this.generateAuthenticationURL(clientSecret, type, serverArgs)
       if (!authUrl) {
         reject(new Error('Invalid Auth URL'))
         return
-      }
-
-      let partitionId
-      if (mailboxId) {
-        partitionId = mailboxId.indexOf('persist:') === 0 ? mailboxId : 'persist:' + mailboxId
-      } else {
-        partitionId = `rand_${new Date().getTime()}`
       }
 
       const waveboxOauthWin = new AuthWindow()
@@ -158,17 +152,15 @@ class AuthWavebox {
   */
   handleAuthWavebox (evt, body) {
     Promise.resolve()
-      .then(() => this.promptUserToAuthorizeWavebox(body.clientSecret, body.type, body.serverArgs, body.id))
+      .then(() => this.promptUserToAuthorizeWavebox(body.clientSecret, body.type, body.serverArgs, body.partitionId))
       .then(({ next }) => {
         evt.sender.send(WB_AUTH_WAVEBOX_COMPLETE, {
-          id: body.id,
           type: body.type,
           openAccountOnSuccess: body.openAccountOnSuccess,
           next: next
         })
       }, (err) => {
         evt.sender.send(WB_AUTH_WAVEBOX_ERROR, {
-          id: body.id,
           type: body.type,
           error: err,
           errorString: (err || {}).toString ? (err || {}).toString() : undefined,

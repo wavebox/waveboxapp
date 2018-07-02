@@ -32,11 +32,12 @@ import SlackAuth from 'shared/Models/ACAccounts/Slack/SlackAuth'
 import TrelloAuth from 'shared/Models/ACAccounts/Trello/TrelloAuth'
 import MicrosoftAuth from 'shared/Models/ACAccounts/Microsoft/MicrosoftAuth'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
+import AuthReducer from 'shared/AltStores/Account/AuthReducers/AuthReducer'
+import CoreACAuth from 'shared/Models/ACAccounts/CoreACAuth'
 
 const AUTH_MODES = Object.freeze({
   TEMPLATE_CREATE: 'TEMPLATE_CREATE',
-  REAUTHENTICATE: 'REAUTHENTICATE',
-  ATTACH: 'ATTACH'
+  REAUTHENTICATE: 'REAUTHENTICATE'
 })
 
 class AccountStore extends RendererAccountStore {
@@ -395,6 +396,18 @@ class AccountStore extends RendererAccountStore {
     }, wait)
   }
 
+  /**
+  * Finalizes a re-authentication by ensuring the mailbox re-syncs and reloads
+  * @param serviceId: the id of the service
+  * @param wait=250: millis to wait before reloading
+  */
+  _finalizeReauthentication (serviceId, wait = 250) {
+    if (serviceId) {
+      setTimeout(() => { accountDispatch.reload(serviceId) }, wait)
+    }
+    window.location.hash = '/'
+  }
+
   /* **************************************************************************/
   // Mailbox Auth callbacks
   /* **************************************************************************/
@@ -435,9 +448,19 @@ class AccountStore extends RendererAccountStore {
           this._createMailboxFromTemplate(context.id, template)
           this._finalizeCreateAccount(`/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.id}`)
         } else if (mode === AUTH_MODES.REAUTHENTICATE) {
-          //TODO
-        } else if (mode === AUTH_MODES.ATTACH) {
-          //TODO
+          if (this.hasMailboxAuth(context.authId)) {
+            actions.reduceAuth.defer(
+              context.authId,
+              AuthReducer.setAuthData,
+              permenantAuth
+            )
+          } else {
+            actions.createAuth.defer(
+              GoogleAuth.createJS(context.id, undefined, permenantAuth)
+            )
+          }
+
+          this._finalizeReauthentication(context.serviceId)
         }
       })
       .catch((err) => {
@@ -450,17 +473,18 @@ class AccountStore extends RendererAccountStore {
     Promise.resolve()
       .then(() => SlackHTTP.testAuth(auth.token))
       .then((userInfo) => {
+        const authData = {
+          access_token: auth.token,
+          url: userInfo.url,
+          team_name: userInfo.team,
+          team_id: userInfo.team_id,
+          user_name: userInfo.user,
+          user_id: userInfo.user_id
+        }
         if (mode === AUTH_MODES.TEMPLATE_CREATE) {
           // Create the auth
           actions.createAuth.defer(
-            SlackAuth.createJS(context.id, undefined, {
-              access_token: auth.token,
-              url: userInfo.url,
-              team_name: userInfo.team,
-              team_id: userInfo.team_id,
-              user_name: userInfo.user,
-              user_id: userInfo.user_id
-            })
+            SlackAuth.createJS(context.id, undefined, authData)
           )
 
           // Create the account
@@ -468,9 +492,19 @@ class AccountStore extends RendererAccountStore {
           this._createMailboxFromTemplate(context.id, template)
           this._finalizeCreateAccount()
         } else if (mode === AUTH_MODES.REAUTHENTICATE) {
-          //TODO
-        } else if (mode === AUTH_MODES.ATTACH) {
-          //TODO
+          if (this.hasMailboxAuth(context.authId)) {
+            actions.reduceAuth.defer(
+              context.authId,
+              AuthReducer.setAuthData,
+              authData
+            )
+          } else {
+            actions.createAuth.defer(
+              SlackAuth.createJS(context.id, undefined, authData)
+            )
+          }
+
+          this._finalizeReauthentication(context.serviceId)
         }
       })
       .catch((err) => {
@@ -480,13 +514,16 @@ class AccountStore extends RendererAccountStore {
 
   handleAuthTrelloSuccess ({ mode, context, auth }) {
     this.preventDefault()
+
+    const authData = {
+      authToken: auth.token,
+      authAppKey: auth.appKey
+    }
+
     if (mode === AUTH_MODES.TEMPLATE_CREATE) {
       // Create the auth
       actions.createAuth.defer(
-        TrelloAuth.createJS(context.id, undefined, {
-          authToken: auth.token,
-          authAppKey: auth.appKey
-        })
+        TrelloAuth.createJS(context.id, undefined, authData)
       )
 
       // Create the account
@@ -494,9 +531,19 @@ class AccountStore extends RendererAccountStore {
       this._createMailboxFromTemplate(context.id, template)
       this._finalizeCreateAccount()
     } else if (mode === AUTH_MODES.REAUTHENTICATE) {
-      //TODO
-    } else if (mode === AUTH_MODES.ATTACH) {
-      //TODO
+      if (this.hasMailboxAuth(context.authId)) {
+        actions.reduceAuth.defer(
+          context.authId,
+          AuthReducer.setAuthData,
+          authData
+        )
+      } else {
+        actions.createAuth.defer(
+          TrelloAuth.createJS(context.id, undefined, authData)
+        )
+      }
+
+      this._finalizeReauthentication(context.serviceId)
     }
   }
 
@@ -505,14 +552,16 @@ class AccountStore extends RendererAccountStore {
     Promise.resolve()
       .then(() => MicrosoftHTTP.upgradeAuthCodeToPermenant(auth.temporaryCode, auth.codeRedirectUri, 2))
       .then((permenantAuth) => {
+        const authData = {
+          ...permenantAuth,
+          accessMode: context.template.accessMode,
+          protocolVersion: 2
+        }
+
         if (mode === AUTH_MODES.TEMPLATE_CREATE) {
           // Create the auth
           actions.createAuth.defer(
-            MicrosoftAuth.createJS(context.id, undefined, {
-              ...permenantAuth,
-              accessMode: context.template.accessMode,
-              protocolVersion: 2
-            })
+            MicrosoftAuth.createJS(context.id, undefined, authData)
           )
 
           // Create the account
@@ -520,9 +569,19 @@ class AccountStore extends RendererAccountStore {
           this._createMailboxFromTemplate(context.id, template)
           this._finalizeCreateAccount(`/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.id}`)
         } else if (mode === AUTH_MODES.REAUTHENTICATE) {
-          //TODO
-        } else if (mode === AUTH_MODES.ATTACH) {
-          //TODO
+          if (this.hasMailboxAuth(context.authId)) {
+            actions.reduceAuth.defer(
+              context.authId,
+              AuthReducer.setAuthData,
+              authData
+            )
+          } else {
+            actions.createAuth.defer(
+              MicrosoftAuth.createJS(context.id, undefined, authData)
+            )
+          }
+
+          this._finalizeReauthentication(context.serviceId)
         }
       }).catch((err) => {
         console.error('[AUTH ERR]', err)
@@ -534,233 +593,66 @@ class AccountStore extends RendererAccountStore {
   /* **************************************************************************/
 
   handleReauthenticateService ({ serviceId }) {
-
-  }
-
-  /*handleReauthenticateMailbox ({ mailboxId }) {
     this.preventDefault()
-    const mailbox = this.mailboxes.get(mailboxId)
-    if (mailbox) {
-      switch (mailbox.type) {
-        case CoreMailbox.MAILBOX_TYPES.GOOGLE:
-          actions.reauthenticateGoogleMailbox.defer(mailboxId)
-          break
-        case CoreMailbox.MAILBOX_TYPES.MICROSOFT:
-          actions.reauthenticateMicrosoftMailbox.defer(mailboxId)
-          break
-        case CoreMailbox.MAILBOX_TYPES.TRELLO:
-          actions.reauthenticateTrelloMailbox.defer(mailboxId)
-          break
-        case CoreMailbox.MAILBOX_TYPES.SLACK:
-          actions.reauthenticateSlackMailbox.defer(mailboxId)
-          break
-        default:
-          throw new Error('Mailbox does not support reauthentication')
-      }
+    const service = this.getService(serviceId)
+    if (!service) { return }
+
+    switch (service.type) {
+      case SERVICE_TYPES.GOOGLE_INBOX:
+      case SERVICE_TYPES.GOOGLE_MAIL:
+        window.location.hash = '/mailbox/reauthenticating'
+        ipcRenderer.send(WB_AUTH_GOOGLE, {
+          partitionId: service.partition,
+          credentials: Bootstrap.credentials,
+          mode: AUTH_MODES.REAUTHENTICATE,
+          context: {
+            id: service.parentId,
+            authId: CoreACAuth.compositeId(service.parentId, service.supportedAuthNamespace),
+            serviceId: service.id
+          }
+        })
+        break
+      case SERVICE_TYPES.MICROSOFT:
+        window.location.hash = '/mailbox/reauthenticating'
+        ipcRenderer.send(WB_AUTH_MICROSOFT, {
+          partitionId: service.partition,
+          credentials: Bootstrap.credentials,
+          mode: AUTH_MODES.REAUTHENTICATE,
+          context: {
+            id: service.parentId,
+            authId: CoreACAuth.compositeId(service.parentId, service.supportedAuthNamespace),
+            serviceId: service.id
+          }
+        })
+        break
+      case SERVICE_TYPES.SLACK:
+        window.location.hash = '/mailbox/reauthenticating'
+        ipcRenderer.send(WB_AUTH_SLACK, {
+          partitionId: service.partition,
+          credentials: Bootstrap.credentials,
+          mode: AUTH_MODES.REAUTHENTICATE,
+          context: {
+            id: service.parentId,
+            authId: CoreACAuth.compositeId(service.parentId, service.supportedAuthNamespace),
+            serviceId: service.id
+          }
+        })
+        break
+      case SERVICE_TYPES.TRELLO:
+        window.location.hash = '/mailbox/reauthenticating'
+        ipcRenderer.send(WB_AUTH_SLACK, {
+          partitionId: service.partition,
+          credentials: Bootstrap.credentials,
+          mode: AUTH_MODES.TRELLO,
+          context: {
+            id: service.parentId,
+            authId: CoreACAuth.compositeId(service.parentId, service.supportedAuthNamespace),
+            serviceId: service.id
+          }
+        })
+        break
     }
   }
-
-  handleReauthenticateGoogleMailbox ({ mailboxId }) {
-    this.preventDefault()
-    if (!this.mailboxes.get(mailboxId)) { return }
-
-    window.location.hash = '/mailbox/reauthenticating'
-    ipcRenderer.send(WB_AUTH_GOOGLE, {
-      credentials: Bootstrap.credentials,
-      id: mailboxId,
-      authMode: AUTH_MODES.REAUTHENTICATE,
-      provisional: null
-    })
-  }
-
-  handleReauthenticateMicrosoftMailbox ({ mailboxId }) {
-    this.preventDefault()
-    if (!this.mailboxes.get(mailboxId)) { return }
-
-    window.location.hash = '/mailbox/reauthenticating'
-    ipcRenderer.send(WB_AUTH_MICROSOFT, {
-      credentials: Bootstrap.credentials,
-      id: mailboxId,
-      authMode: AUTH_MODES.REAUTHENTICATE,
-      provisional: null
-    })
-  }
-
-  handleReauthenticateSlackMailbox ({ mailboxId }) {
-    this.preventDefault()
-    if (!this.mailboxes.get(mailboxId)) { return }
-
-    window.location.hash = '/mailbox/reauthenticating'
-    ipcRenderer.send(WB_AUTH_SLACK, {
-      id: mailboxId,
-      provisional: null,
-      authMode: AUTH_MODES.REAUTHENTICATE
-    })
-  }
-
-  handleReauthenticateTrelloMailbox ({ mailboxId }) {
-    this.preventDefault()
-    if (!this.mailboxes.get(mailboxId)) { return }
-
-    window.location.hash = '/mailbox/reauthenticating'
-    ipcRenderer.send(WB_AUTH_TRELLO, {
-      credentials: Bootstrap.credentials,
-      id: mailboxId,
-      provisional: null,
-      authMode: AUTH_MODES.REAUTHENTICATE
-    })
-  }*/
-
-  /**
-  * Finalizes a re-authentication by ensuring the mailbox re-syncs and reloads
-  * @param mailboxId: the id of the mailbox
-  */
-  /*_finalizeReauthentication (mailboxId) {
-    setTimeout(() => { mailboxDispatch.reload(mailboxId) }, 500)
-    window.location.hash = '/'
-  }*/
-
-  /**
-  * Finalizes a new account
-  * @param nextUrl='/': the next url to visit
-  */
-  /*_finalizeCreateAccount (nextUrl = '/') {
-    window.location.hash = nextUrl
-    settingsActions.tourStart.defer()
-  }*/
-
-  /* **************************************************************************/
-  // Mailbox Auth Callbacks
-  /* **************************************************************************/
-
-  /*handleAuthGoogleMailboxSuccess ({ provisionalId, provisional, temporaryCode, pushToken, authMode, codeRedirectUri }) {
-    Promise.resolve()
-      .then(() => GoogleHTTP.upgradeAuthCodeToPermenant(temporaryCode, codeRedirectUri))
-      .then((auth) => {
-        return GoogleHTTP.fetchAccountProfileWithRawAuth(auth)
-          .then((response) => { // Build the complete auth object
-            return Object.assign(auth, {
-              pushToken: pushToken,
-              email: (response.emails.find((a) => a.type === 'account') || {}).value
-            })
-          })
-      })
-      .then((auth) => {
-        if (authMode === AUTH_MODES.REAUTHENTICATE) {
-          actions.reduce.defer(provisionalId, GoogleMailboxReducer.setAuth, auth)
-          this._finalizeReauthentication(provisionalId)
-        } else {
-          actions.create.defer(provisionalId, Object.assign(provisional, {
-            auth: auth
-          }))
-          const accessMode = ((provisional.services || []).find((service) => service.type === GoogleDefaultService.type) || {}).accessMode
-          this._finalizeCreateAccount(`/mailbox_wizard/${GoogleMailbox.type}/${accessMode}/2/${provisionalId}`)
-        }
-      })
-      .catch((err) => {
-        console.error('[AUTH ERR]', err)
-      })
-  }
-
-  handleAuthGoogleMailboxFailure ({ evt, data }) {
-    window.location.hash = '/'
-    if (data.errorMessage.toLowerCase().indexOf('user') === 0) {
-      // user cancelled. no-op
-    } else {
-      console.error('[AUTH ERR]', data)
-    }
-  }
-
-  handleAuthSlackMailboxSuccess ({ provisionalId, provisional, teamUrl, token, authMode }) {
-    SlackHTTP.testAuth(token)
-      .then((userInfo) => {
-        const auth = {
-          access_token: token,
-          url: userInfo.url,
-          team_name: userInfo.team,
-          team_id: userInfo.team_id,
-          user_name: userInfo.user,
-          user_id: userInfo.user_id
-        }
-
-        if (authMode === AUTH_MODES.REAUTHENTICATE) {
-          actions.reduce.defer(provisionalId, SlackMailboxReducer.setAuth, auth)
-          this._finalizeReauthentication(provisionalId)
-        } else {
-          actions.create.defer(provisionalId, Object.assign(provisional, {
-            auth: auth
-          }))
-          this._finalizeCreateAccount()
-        }
-      }).catch((err) => {
-        console.error('[AUTH ERR]', err)
-      })
-  }
-
-  handleAuthSlackMailboxFailure ({ evt, data }) {
-    window.location.hash = '/'
-    if (data.errorMessage.toLowerCase().indexOf('user') === 0) {
-      // user cancelled. no-op
-    } else {
-      console.error('[AUTH ERR]', data)
-    }
-  }
-
-  handleAuthTrelloMailboxSuccess ({ provisionalId, provisional, authToken, authAppKey, authMode }) {
-    if (authMode === AUTH_MODES.REAUTHENTICATE) {
-      actions.reduce.defer(provisionalId, TrelloMailboxReducer.setAuth, authToken, authAppKey)
-      this._finalizeReauthentication(provisionalId)
-    } else {
-      actions.create.defer(provisionalId, Object.assign(provisional, {
-        authToken: authToken,
-        authAppKey: authAppKey
-      }))
-      this._finalizeCreateAccount()
-    }
-  }
-
-  handleAuthTrelloMailboxFailure ({ evt, data }) {
-    window.location.hash = '/'
-    if (data.errorMessage.toLowerCase().indexOf('user') === 0) {
-      // user cancelled. no-op
-    } else {
-      console.error('[AUTH ERR]', data)
-    }
-  }
-
-  handleAuthMicrosoftMailboxSuccess ({ provisionalId, provisional, temporaryCode, authMode, codeRedirectUri }) {
-    Promise.resolve()
-      .then(() => MicrosoftHTTP.upgradeAuthCodeToPermenant(temporaryCode, codeRedirectUri, 2))
-      .then((auth) => {
-        if (authMode === AUTH_MODES.REAUTHENTICATE) {
-          actions.reduce.defer(provisionalId, MicrosoftMailboxReducer.setAuthInfo, {
-            ...auth,
-            protocolVersion: 2
-          })
-          this._finalizeReauthentication(provisionalId)
-        } else {
-          actions.create.defer(provisionalId, {
-            ...provisional,
-            auth: {
-              ...auth,
-              protocolVersion: 2
-            }
-          })
-          this._finalizeCreateAccount(`/mailbox_wizard/${MicrosoftMailbox.type}/${provisional.accessMode}/2/${provisionalId}`)
-        }
-      }).catch((err) => {
-        console.error('[AUTH ERR]', err)
-      })
-  }
-
-  handleAuthMicrosoftMailboxFailure ({ evt, data }) {
-    window.location.hash = '/'
-    if (data.errorMessage.toLowerCase().indexOf('user') !== -1) {
-      // user cancelled. no-op
-    } else {
-      console.error('[AUTH ERR]', data)
-    }
-  }*/
 
   /* **************************************************************************/
   // Connection & Sync

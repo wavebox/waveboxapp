@@ -57,6 +57,15 @@ class AuthReducer {
   static updateAuth (auth, changeset) {
     return auth.changeData(changeset)
   }
+
+  /**
+  * Sets the auth data
+  * @param auth: the auth object
+  * @param data: the new auth data
+  */
+  static setAuthData (auth, data) {
+    return auth.changeData({ authData: data })
+  }
 }
 
 export default AuthReducer
