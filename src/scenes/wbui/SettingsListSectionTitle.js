@@ -31,7 +31,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class SettingsListSection extends React.Component {
+class SettingsListSectionTitle extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -67,4 +67,4 @@ class SettingsListSection extends React.Component {
   }
 }
 
-export default SettingsListSection
+export default SettingsListSectionTitle

@@ -7,8 +7,16 @@ import shallowCompare from 'react-addons-shallow-compare'
 import Scrollspy from 'react-scrollspy'
 import StyleMixins from 'wbui/Styles/StyleMixins'
 import uuid from 'uuid'
-import { List, ListItem, Paper } from '@material-ui/core'
+import { List, ListItem, ListSubheader, ListItemText, Paper, Avatar } from '@material-ui/core'
 import lightBlue from '@material-ui/core/colors/lightBlue'
+import { accountStore } from 'stores/account'
+import Resolver from 'Runtime/Resolver'
+import MailboxSettingsSection from './Sections/MailboxSettingsSection'
+import ServiceSettingsSection from './Sections/ServiceSettingsSection'
+import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
+import BuildIcon from '@material-ui/icons/Build'
+import TuneIcon from '@material-ui/icons/Tune'
+import ListIcon from '@material-ui/icons/List'
 
 const CONTENT_WIDTH = 600
 const SCROLLSPY_WIDTH = 210
@@ -44,6 +52,8 @@ const styles = {
     paddingBottom: 0
   },
   scrollspyItem: {
+    paddingLeft: 8,
+    paddingRight: 8,
     fontSize: 14,
 
     '&.is-current': {
@@ -54,7 +64,19 @@ const styles = {
   scrollspyIcon: {
     marginRight: 6
   },
-  scrollspyIconWrap: {
+  scrollspyTextContainer: {
+    paddingRight: 0
+  },
+  scrollspyText: {
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap'
+  },
+  scrollspyServiceIcon: {
+    width: 24,
+    height: 24,
+    backgroundColor: 'white',
+    border: '2px solid rgb(139, 139, 139)',
     marginRight: 6
   },
   [`@media (max-width: ${CONTENT_WIDTH + (SCROLLSPY_WIDTH)}px)`]: {
@@ -74,7 +96,9 @@ class AccountSettingsScroller extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    scrollspyItems: PropTypes.array.isRequired
+    mailboxId: PropTypes.string.isRequired,
+    showRestart: PropTypes.func.isRequired,
+    onRequestEditCustomCode: PropTypes.func.isRequired
   }
 
   /* **************************************************************************/
@@ -85,6 +109,49 @@ class AccountSettingsScroller extends React.Component {
     super(props)
     this.instanceId = uuid.v4()
     this.scrollerRef = null
+  }
+
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    accountStore.listen(this.accountChanged)
+    this.renderServicesTO = setTimeout(() => {
+      this.setState({ renderServices: true })
+    }, 500)
+  }
+
+  componentWillUnmount () {
+    accountStore.unlisten(this.accountChanged)
+    clearTimeout(this.renderServicesTO)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.mailboxId !== nextProps.mailboxId) {
+      const accountState = accountStore.getState()
+      return {
+        services: accountState.mailboxServices(nextProps.mailboxId)
+      }
+    }
+  }
+
+  /* **************************************************************************/
+  // Data lifecycle
+  /* **************************************************************************/
+
+  state = (() => {
+    const accountState = accountStore.getState()
+    return {
+      services: accountState.mailboxServices(this.props.mailboxId)
+    }
+  })()
+
+  accountChanged = (accountState) => {
+    this.setState({
+      renderServices: false,
+      services: accountState.mailboxServices(this.props.mailboxId)
+    })
   }
 
   /* **************************************************************************/
@@ -110,46 +177,113 @@ class AccountSettingsScroller extends React.Component {
 
   render () {
     const {
-      children,
       classes,
       className,
-      scrollspyItems,
+      mailboxId,
+      showRestart,
+      onRequestEditCustomCode,
       ...passProps
     } = this.props
+    const {
+      renderServices,
+      services
+    } = this.state
+
+    const scrollspyIds = [
+      `mailbox-appearance-${mailboxId}`,
+      `mailbox-services-${mailboxId}`,
+      `mailbox-advanced-${mailboxId}`,
+      `mailbox-tools-${mailboxId}`
+    ].concat(
+      services.map((s) => s.id)
+    )
 
     return (
       <div
         className={classNames(className, classes.root)}
         id={`RC-AccountSettingsScroller--${this.instanceId}`}
         {...passProps}>
-        <div
-          className={classes.scroller}
-          ref={(n) => { this.scrollerRef = n }}>
-          {children}
+        <div className={classes.scroller} ref={(n) => { this.scrollerRef = n }}>
+          <MailboxSettingsSection
+            mailboxId={mailboxId}
+            showRestart={showRestart}
+            onRequestEditCustomCode={onRequestEditCustomCode} />
+          {renderServices ? (
+            services.map((service) => {
+              return (
+                <ServiceSettingsSection
+                  key={service.id}
+                  serviceId={service.id}
+                  showRestart={showRestart}
+                  onRequestEditCustomCode={onRequestEditCustomCode} />
+              )
+            })
+          ) : undefined}
         </div>
         <Paper className={classes.scrollspy}>
           <List dense className={classes.scrollspyList}>
             <Scrollspy
               rootEl={`#RC-AccountSettingsScroller--${this.instanceId} .${classes.scroller}`}
               componentTag='div'
-              items={scrollspyItems.map((item) => item.id)}
+              items={scrollspyIds}
               currentClassName='is-current'>
-              {scrollspyItems.map((item, i, arr) => {
+              <ListItem
+                divider
+                button
+                dense
+                className={classes.scrollspyItem}
+                onClick={(evt) => this.scrollToSection(evt, `mailbox-appearance-${mailboxId}`)}>
+                <ViewQuiltIcon className={classes.scrollspyIcon} />
+                Appearance
+              </ListItem>
+              <ListItem
+                divider
+                button
+                dense
+                className={classes.scrollspyItem}
+                onClick={(evt) => this.scrollToSection(evt, `mailbox-services-${mailboxId}`)}>
+                <ListIcon className={classes.scrollspyIcon} />
+                Services
+              </ListItem>
+              <ListItem
+                divider
+                button
+                dense
+                className={classes.scrollspyItem}
+                onClick={(evt) => this.scrollToSection(evt, `mailbox-advanced-${mailboxId}`)}>
+                <TuneIcon className={classes.scrollspyIcon} />
+                Advanced
+              </ListItem>
+              <ListItem
+                divider
+                button
+                dense
+                className={classes.scrollspyItem}
+                onClick={(evt) => this.scrollToSection(evt, `mailbox-tools-${mailboxId}`)}>
+                <BuildIcon className={classes.scrollspyIcon} />
+                Tools
+              </ListItem>
+              <ListSubheader>Services</ListSubheader>
+              {services.map((service, i, arr) => {
                 return (
                   <ListItem
-                    key={item.id}
+                    key={service.id}
                     divider={i !== (arr.length - 1)}
                     button
                     dense
                     className={classes.scrollspyItem}
-                    onClick={(evt) => this.scrollToSection(evt, item.id)}>
-                    {item.IconClass ? (
-                      <item.IconClass className={classes.scrollspyIcon} />
-                    ) : undefined}
-                    {item.icon ? (
-                      <span className={classes.scrollspyIconWrap}>{item.icon}</span>
-                    ) : undefined}
-                    {item.name}
+                    onClick={(evt) => this.scrollToSection(evt, service.id)}>
+                    <Avatar
+                      className={classes.scrollspyServiceIcon}
+                      src={Resolver.image(service.humanizedLogoAtSize(128))} />
+                    <ListItemText
+                      className={classes.scrollspyTextContainer}
+                      classes={{
+                        primary: classes.scrollspyText,
+                        secondary: classes.scrollspyText
+                      }}
+                      primary={service.humanizedType}
+                      secondary={service.humanizedType !== service.displayName ? service.displayName : undefined} />
                   </ListItem>
                 )
               })}

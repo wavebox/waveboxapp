@@ -116,6 +116,18 @@ class ACMailbox extends CoreACModel {
     return !!this.toolbarEndServices.find((id) => id === serviceId)
   }
 
+  get depricatedServiceUILocation () {
+    if (this.sidebarServices.length) {
+      return SERVICE_UI_LOCATIONS.SIDEBAR
+    } else if (this.toolbarStartServices.length) {
+      return SERVICE_UI_LOCATIONS.TOOLBAR_START
+    } else if (this.toolbarEndServices.length) {
+      return SERVICE_UI_LOCATIONS.TOOLBAR_END
+    } else {
+      return SERVICE_UI_LOCATIONS.TOOLBAR_START
+    }
+  }
+
   /* **************************************************************************/
   // Properties : Display
   /* **************************************************************************/
@@ -139,8 +151,8 @@ class ACMailbox extends CoreACModel {
   // Properties : Useragent
   /* **************************************************************************/
 
-  get useCustomUserAgent () { return false }
-  get customUserAgentString () { return '' }
+  get useCustomUserAgent () { return this._value_('useCustomUserAgent', false) }
+  get customUserAgentString () { return this._value_('customUserAgentString', '') }
 }
 
 export default ACMailbox

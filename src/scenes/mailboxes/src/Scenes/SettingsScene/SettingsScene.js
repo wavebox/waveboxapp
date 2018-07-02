@@ -3,7 +3,7 @@ import React from 'react'
 import { Dialog, DialogContent, DialogActions, Button, Tabs, Tab, AppBar } from '@material-ui/core'
 import GeneralSettings from './GeneralSettings'
 import ExtensionSettings from './ExtensionSettings'
-//import AccountSettings from './Accounts/AccountSettings'
+import AccountSettings from './Accounts/AccountSettings'
 import ProSettings from './ProSettings'
 import SupportSettings from './SupportSettings'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -173,8 +173,7 @@ class SettingsScene extends React.Component {
     } else if (currentTab === 'extensions') {
       return (<ExtensionSettings showRestart={this.handleShowRestart} />)
     } else if (currentTab === 'accounts') {
-      return (<div>Accounts</div>)
-      //return (<AccountSettings showRestart={this.handleShowRestart} mailboxId={match.params.tabArg} />)
+      return (<AccountSettings showRestart={this.handleShowRestart} mailboxId={match.params.tabArg} />)
     } else if (currentTab === 'support') {
       return (<SupportSettings />)
     } else if (currentTab === 'pro') {

@@ -485,7 +485,7 @@ class CoreAccountStore extends RemoteStore {
       // sleep queue. This indicates were not sleeping from launch
       if (!this.isServiceSleeping(serviceId)) { return undefined }
 
-      const metrics = this.sleepingMetrics.get(serviceId)
+      const metrics = this._sleepingMetrics_.get(serviceId)
       if (!metrics) { return undefined }
 
       // Build the return info
