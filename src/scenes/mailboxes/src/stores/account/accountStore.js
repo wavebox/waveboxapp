@@ -129,34 +129,9 @@ class AccountStore extends RendererAccountStore {
       handleAuthTrelloSuccess: actions.AUTH_TRELLO_SUCCESS,
       handleAuthMicrosoftSuccess: actions.AUTH_MICROSOFT_SUCCESS,
 
-      /*
-      // Mailbox auth
-      handleAuthenticateGinboxMailbox: actions.AUTHENTICATE_GINBOX_MAILBOX,
-      handleAuthenticateGmailMailbox: actions.AUTHENTICATE_GMAIL_MAILBOX,
-      handleAuthenticateSlackMailbox: actions.AUTHENTICATE_SLACK_MAILBOX,
-      handleAuthenticateTrelloMailbox: actions.AUTHENTICATE_TRELLO_MAILBOX,
-      handleAuthenticateOutlookMailbox: actions.AUTHENTICATE_OUTLOOK_MAILBOX,
-      handleAuthenticateOffice365Mailbox: actions.AUTHENTICATE_OFFICE365MAILBOX,
-      handleAuthenticateGenericMailbox: actions.AUTHENTICATE_GENERIC_MAILBOX,
-      handleAuthenticateContainerMailbox: actions.AUTHENTICATE_CONTAINER_MAILBOX,
+      // Re-auth
+      handleReauthenticateService: actions.REAUTHENTICATE_SERVICE,
 
-      // Mailbox re-auth
-      handleReauthenticateMailbox: actions.REAUTHENTICATE_MAILBOX,
-      handleReauthenticateGoogleMailbox: actions.REAUTHENTICATE_GOOGLE_MAILBOX,
-      handleReauthenticateMicrosoftMailbox: actions.REAUTHENTICATE_MICROSOFT_MAILBOX,
-      handleReauthenticateSlackMailbox: actions.REAUTHENTICATE_SLACK_MAILBOX,
-      handleReauthenticateTrelloMailbox: actions.REAUTHENTICATE_TRELLO_MAILBOX,
-
-      // Mailbox auth callbacks
-      handleAuthGoogleMailboxSuccess: actions.AUTH_GOOGLE_MAILBOX_SUCCESS,
-      handleAuthGoogleMailboxFailure: actions.AUTH_GOOGLE_MAILBOX_FAILURE,
-      handleAuthSlackMailboxSuccess: actions.AUTH_SLACK_MAILBOX_SUCCESS,
-      handleAuthSlackMailboxFailure: actions.AUTH_SLACK_MAILBOX_FAILURE,
-      handleAuthTrelloMailboxSuccess: actions.AUTH_TRELLO_MAILBOX_SUCCESS,
-      handleAuthTrelloMailboxFailure: actions.AUTH_TRELLO_MAILBOX_FAILURE,
-      handleAuthMicrosoftMailboxSuccess: actions.AUTH_MICROSOFT_MAILBOX_SUCCESS,
-      handleAuthMicrosoftMailboxFailure: actions.AUTH_MICROSOFT_MAILBOX_FAILURE,
-*/
       // Connection & Sync
       handleFullSyncService: actions.FULL_SYNC_SERVICE,
 
@@ -331,7 +306,8 @@ class AccountStore extends RendererAccountStore {
         }
       })
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.CONTAINER) {
-      //TODO
+      this._createMailboxFromTemplate(mailboxId, template)
+      this._finalizeCreateAccount(`/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`, 0)
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.GENERIC) {
       this._createMailboxFromTemplate(mailboxId, template)
       this._finalizeCreateAccount(`/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`, 0)
@@ -349,7 +325,44 @@ class AccountStore extends RendererAccountStore {
   */
   _createMailboxFromTemplate (mailboxId, template) {
     if (template.templateType === ACCOUNT_TEMPLATE_TYPES.CONTAINER) {
-      //TODO
+      const containerId = template.accessMode
+      const container = this.getContainer(containerId)
+      if (!container) {
+        console.error('[AUTH ERR]', `Unable to authenticate mailbox with id "${mailboxId}" as containerId "${containerId}" is unknown`)
+        setTimeout(() => { window.location.hash = '/' })
+        return
+      }
+
+      actions.createMailbox.defer(ACMailbox.createJS(
+        mailboxId,
+        template.displayName,
+        template.color,
+        template.templateType
+      ))
+      let serviceId
+      template.services.forEach((serviceType) => {
+        const service = {
+          ...CoreACService.createJS(undefined, mailboxId, serviceType),
+          container: container.cloneForService(),
+          containerId: containerId
+        }
+        serviceId = service.id
+        actions.createService.defer(mailboxId, template.servicesUILocation, service)
+      })
+
+      // Open post-install
+      if (container.hasPostInstallUrl) {
+        setTimeout(() => {
+          ipcRenderer.send(WB_NEW_WINDOW, {
+            mailboxId: mailboxId,
+            serviceId: serviceId,
+            url: container.postInstallUrl,
+            partition: `persist:${mailboxId}`,
+            windowPreferences: { webPreferences: undefined },
+            webPreferences: { partition: `persist:${mailboxId}` }
+          })
+        }, container.postInstallUrlDelay)
+      }
     } else {
       actions.createMailbox.defer(ACMailbox.createJS(
         mailboxId,
@@ -517,117 +530,12 @@ class AccountStore extends RendererAccountStore {
   }
 
   /* **************************************************************************/
-  // Mailbox Auth
-  /* **************************************************************************/
-
-  /*handleAuthenticateGinboxMailbox ({ provisionalId, provisionalJS }) {
-    this.preventDefault()
-    window.location.hash = `/mailbox_wizard/${GoogleMailbox.type}/${GoogleDefaultService.ACCESS_MODES.GINBOX}/1/${provisionalId}`
-    ipcRenderer.send(WB_AUTH_GOOGLE, {
-      credentials: Bootstrap.credentials,
-      id: provisionalId,
-      provisional: GoogleMailbox.applyExperimentsToProvisionalJS(provisionalJS, this.getWireConfigExperiments())
-    })
-  }
-
-  handleAuthenticateGmailMailbox ({ provisionalId, provisionalJS }) {
-    this.preventDefault()
-    window.location.hash = `/mailbox_wizard/${GoogleMailbox.type}/${GoogleDefaultService.ACCESS_MODES.GMAIL}/1/${provisionalId}`
-    ipcRenderer.send(WB_AUTH_GOOGLE, {
-      credentials: Bootstrap.credentials,
-      id: provisionalId,
-      provisional: GoogleMailbox.applyExperimentsToProvisionalJS(provisionalJS, this.getWireConfigExperiments())
-    })
-  }
-
-  handleAuthenticateSlackMailbox ({ provisionalId, provisionalJS }) {
-    this.preventDefault()
-    window.location.hash = `/mailbox_wizard/${SlackMailbox.type}/_/1/${provisionalId}`
-    ipcRenderer.send(WB_AUTH_SLACK, {
-      id: provisionalId,
-      provisional: SlackMailbox.applyExperimentsToProvisionalJS(provisionalJS, this.getWireConfigExperiments())
-    })
-  }
-
-  handleAuthenticateTrelloMailbox ({ provisionalId, provisionalJS }) {
-    this.preventDefault()
-    window.location.hash = `/mailbox_wizard/${TrelloMailbox.type}/_/1/${provisionalId}`
-    ipcRenderer.send(WB_AUTH_TRELLO, {
-      credentials: Bootstrap.credentials,
-      id: provisionalId,
-      provisional: TrelloMailbox.applyExperimentsToProvisionalJS(provisionalJS, this.getWireConfigExperiments())
-    })
-  }
-
-  handleAuthenticateOutlookMailbox ({ provisionalId, provisionalJS, additionalPermissions }) {
-    this.preventDefault()
-    window.location.hash = `/mailbox_wizard/${MicrosoftMailbox.type}/${MicrosoftMailbox.ACCESS_MODES.OUTLOOK}/1/${provisionalId}`
-    ipcRenderer.send(WB_AUTH_MICROSOFT, {
-      credentials: Bootstrap.credentials,
-      id: provisionalId,
-      provisional: MicrosoftMailbox.applyExperimentsToProvisionalJS(provisionalJS, this.getWireConfigExperiments()),
-      additionalPermissions: additionalPermissions
-    })
-  }
-
-  handleAuthenticateOffice365Mailbox ({ provisionalId, provisionalJS, additionalPermissions }) {
-    this.preventDefault()
-    window.location.hash = `/mailbox_wizard/${MicrosoftMailbox.type}/${MicrosoftMailbox.ACCESS_MODES.OFFICE365}/1/${provisionalId}`
-    ipcRenderer.send(WB_AUTH_MICROSOFT, {
-      credentials: Bootstrap.credentials,
-      id: provisionalId,
-      provisional: MicrosoftMailbox.applyExperimentsToProvisionalJS(provisionalJS, this.getWireConfigExperiments()),
-      additionalPermissions: additionalPermissions
-    })
-  }
-
-  handleAuthenticateGenericMailbox ({ provisionalId, provisionalJS, writePermission }) {
-    this.preventDefault()
-    actions.create.defer(
-      provisionalId,
-      GenericMailbox.applyExperimentsToProvisionalJS(provisionalJS, this.getWireConfigExperiments())
-    )
-    this._finalizeCreateAccount(`/mailbox_wizard/${GenericMailbox.type}/_/2/${provisionalId}`)
-  }
-
-  handleAuthenticateContainerMailbox ({ containerId, provisionalId, provisionalJS, writePermission }) {
-    this.preventDefault()
-
-    const container = this.getContainer(containerId)
-    if (!container) {
-      console.error('[AUTH ERR]', `Unable to authenticate mailbox with id "${provisionalId}" as containerId "${containerId}" is unknown`)
-      return
-    }
-
-    provisionalJS.container = container.cloneForMailbox()
-    actions.create.defer(
-      provisionalId,
-      ContainerMailbox.applyExperimentsToProvisionalJS(provisionalJS, this.getWireConfigExperiments())
-    )
-    this._finalizeCreateAccount(`/mailbox_wizard/${ContainerMailbox.type}/${containerId}/2/${provisionalId}`)
-
-    // Open post-install
-    if (container.hasPostInstallUrl) {
-      setTimeout(() => {
-        ipcRenderer.send(WB_NEW_WINDOW, {
-          mailboxId: provisionalId,
-          serviceType: CoreMailbox.SERVICE_TYPES.DEFAULT,
-          url: container.postInstallUrl,
-          partition: `persist:${provisionalJS}`,
-          windowPreferences: {
-            webPreferences: undefined
-          },
-          webPreferences: {
-            partition: `persist:${provisionalId}`
-          }
-        })
-      }, container.postInstallUrlDelay)
-    }
-  }*/
-
-  /* **************************************************************************/
   // Mailbox Re-auth
   /* **************************************************************************/
+
+  handleReauthenticateService ({ serviceId }) {
+
+  }
 
   /*handleReauthenticateMailbox ({ mailboxId }) {
     this.preventDefault()

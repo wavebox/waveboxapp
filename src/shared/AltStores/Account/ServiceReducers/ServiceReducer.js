@@ -93,7 +93,7 @@ class ServiceReducer {
   * @param show: sets whether to show the unread badge or not
   */
   static setShowBadgeCount (service, show) {
-    return service.changeData({ setShowBadgeCount: show })
+    return service.changeData({ showBadgeCount: show })
   }
 
   /**

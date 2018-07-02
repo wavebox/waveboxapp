@@ -123,7 +123,9 @@ class CoreUserStore extends RemoteStore {
     * @param containerId: the id of the container
     * @return the container or null
     */
-    this.getContainer = (containerId) => { return this.containers.get(containerId) || null }
+    this.getContainer = (containerId) => {
+      return this.containers.get(containerId) || null
+    }
 
     /* ****************************************/
     // Actions
@@ -165,7 +167,7 @@ class CoreUserStore extends RemoteStore {
 
     // Containers
     this.containers = Object.keys(containerData || {}).reduce((acc, id) => {
-      acc.set(id, require("../../Models/UndefinedPropProxy")(new ACContainer(id, containerData[id])))
+      acc.set(id, require("../../Models/UndefinedPropProxy")(new ACContainer(containerData[id])))
       return acc
     }, new Map())
   }
@@ -201,7 +203,7 @@ class CoreUserStore extends RemoteStore {
       if (data === undefined || data === null) {
         return
       }
-      const container = require("../../Models/UndefinedPropProxy")(new ACContainer(id, data))
+      const container = require("../../Models/UndefinedPropProxy")(new ACContainer(data))
       if (this.containers.has(id) && this.containers.get(id).version >= container.version) {
         return
       }

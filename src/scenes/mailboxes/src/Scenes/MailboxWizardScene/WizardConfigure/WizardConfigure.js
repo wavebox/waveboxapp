@@ -6,10 +6,8 @@ import WizardConfigureGmail from './WizardConfigureGmail'
 import WizardConfigureGinbox from './WizardConfigureGinbox'
 import { ACCOUNT_TEMPLATE_TYPES } from 'shared/Models/ACAccounts/AccountTemplates'
 import WizardConfigureMicrosoft from './WizardConfigureMicrosoft'
-/*
-
+import WizardConfigureContainer from './WizardConfigureContainer'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
-import WizardConfigureContainer from './WizardConfigureContainer'*/
 
 export default class WizardConfigure extends React.Component {
   /* **************************************************************************/
@@ -79,13 +77,13 @@ export default class WizardConfigure extends React.Component {
         RenderClass = WizardConfigureMicrosoft
         break
       case ACCOUNT_TEMPLATE_TYPES.CONTAINER:
-        //TODO
+        RenderClass = WizardConfigureContainer
+        break
+      default:
+        RenderClass = WizardConfigureDefaultLayout
         break
     }
-    if (RenderClass) {
-      return <RenderClass onRequestCancel={onRequestCancel} mailboxId={mailboxId} {...passProps} />
-    }
 
-    return false
+    return (<RenderClass onRequestCancel={onRequestCancel} mailboxId={mailboxId} {...passProps} />)
   }
 }

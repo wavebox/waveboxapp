@@ -23,6 +23,7 @@ import ServiceFactory from 'shared/Models/ACAccounts/ServiceFactory'
 import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
 import ServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/ServiceDataReducer'
 import AuthFactory from 'shared/Models/ACAccounts/AuthFactory'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 
 class AccountStore extends CoreAccountStore {
   /* **************************************************************************/
@@ -540,27 +541,19 @@ class AccountStore extends CoreAccountStore {
   /* **************************************************************************/
 
   handleContainersUpdated ({ containerIds }) {
-    //TODO
-    /*if (containerIds.length === 0) {
-      this.preventDefault()
-      return
-    }
+    if (containerIds.length === 0) { this.preventDefault(); return }
     containerIds = new Set(containerIds)
 
-    // Get the mailboxes that need to be updated
-    const mailboxes = this.getMailboxesOfType(CoreMailbox.MAILBOX_TYPES.CONTAINER)
-      .filter((mailbox) => containerIds.has(mailbox.containerId))
-    if (mailboxes.length === 0) {
-      this.preventDefault()
-      return
-    }
+    // Get the servies that need to be updated
+    const services = this.getServicesOfType(SERVICE_TYPES.CONTAINER)
+      .filter((service) => containerIds.has(service.containerId))
+    if (services.length === 0) { this.preventDefault(); return }
 
-    mailboxes.forEach((mailbox) => {
-      const nextMailbox = mailbox.changeData({
-        container: this.getContainer(mailbox.containerId).cloneForMailbox()
-      })
-      this.saveMailbox(mailbox.id, nextMailbox)
-    })*/
+    services.forEach((service) => {
+      this.saveService(service.id, service.changeData({
+        container: this.getContainer(service.containerId).cloneForService()
+      }))
+    })
   }
 
   /* **************************************************************************/

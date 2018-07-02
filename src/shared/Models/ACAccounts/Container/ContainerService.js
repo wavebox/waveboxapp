@@ -32,6 +32,7 @@ class ContainerService extends CoreACService {
   /* **************************************************************************/
 
   get container () { return this.__container__ }
+  get containerId () { return this._value_('containerId', undefined) }
 
   /* **************************************************************************/
   // Properties: Support
@@ -52,7 +53,11 @@ class ContainerService extends CoreACService {
   /* **************************************************************************/
 
   get humanizedType () { return this.container.name }
+  get humanizedTypeShort () { return this.container.name }
   get humanizedLogos () { return this.container.logos }
+  get humanizedLogo () { return this.humanizedLogos[this.humanizedLogos.length - 1] }
+
+  humanizedLogoAtSize (size) { return this.humanizedLogoAtSize(this.humanizedLogos, size) }
 
   /* **************************************************************************/
   // Properties: Sleep

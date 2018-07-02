@@ -129,7 +129,7 @@ export default class Provider extends React.Component {
   accountChanged = (accountState) => {
     this.setState({
       messagesUnreadCount: accountState.userUnreadCountForApp(),
-      hasUnreadActivity: accountState.userUnreadActivityForApp(),
+      hasUnreadActivity: accountState.userUnreadActivityForApp()
     })
   }
 

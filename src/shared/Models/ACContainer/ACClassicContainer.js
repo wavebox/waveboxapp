@@ -154,7 +154,7 @@ class ACClassicContainer extends Model {
   /**
   * Makes a clone of the data that can be injected into a mailbox
   */
-  cloneForMailbox () { return this.cloneData() }
+  cloneForService () { return this.cloneData() }
 }
 
 export default ACClassicContainer

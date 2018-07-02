@@ -1,13 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Switch, FormControl, FormControlLabel } from '@material-ui/core'
-import { mailboxActions, ContainerDefaultServiceReducer } from 'stores/mailbox'
+import { accountActions, accountStore } from 'stores/account'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
-import CoreService from 'shared/Models/Accounts/CoreService'
 import SleepableField from 'wbui/SleepableField'
 import { userStore } from 'stores/user'
 import { withStyles } from '@material-ui/core/styles'
-
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
+import ContainerServiceReducer from 'shared/AltStores/Account/ServiceReducers/ContainerServiceReducer'
 import red from '@material-ui/core/colors/red'
 import amber from '@material-ui/core/colors/amber'
 
@@ -52,7 +52,7 @@ class WizardConfigureContainer extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    mailbox: PropTypes.object.isRequired,
+    mailboxId: PropTypes.string.isRequired,
     onRequestCancel: PropTypes.func.isRequired
   }
 
@@ -62,10 +62,21 @@ class WizardConfigureContainer extends React.Component {
 
   componentDidMount () {
     userStore.listen(this.userUpdated)
+    accountStore.listen(this.accountUpdated)
   }
 
   componentWillUnmount () {
     userStore.unlisten(this.userUpdated)
+    accountStore.unlisten(this.accountUpdated)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.mailboxId !== nextProps.mailboxId) {
+      const accountState = accountStore.getState()
+      this.setState({
+        service: accountState.mailboxServicesOfType(nextProps.mailboxId, SERVICE_TYPES.CONTAINER)[0]
+      })
+    }
   }
 
   /* **************************************************************************/
@@ -73,10 +84,18 @@ class WizardConfigureContainer extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
+    const accountState = accountStore.getState()
     return {
-      userHasSleepable: userStore.getState().user.hasSleepable
+      userHasSleepable: userStore.getState().user.hasSleepable,
+      service: accountState.mailboxServicesOfType(this.props.mailboxId, SERVICE_TYPES.CONTAINER)[0]
     }
   })()
+
+  accountUpdated = (accountState) => {
+    this.setState({
+      service: accountState.mailboxServicesOfType(this.props.mailboxId, SERVICE_TYPES.CONTAINER)[0]
+    })
+  }
 
   userUpdated = (userState) => {
     this.setState({
@@ -89,14 +108,14 @@ class WizardConfigureContainer extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { mailbox, onRequestCancel, classes, ...passProps } = this.props
-    const { userHasSleepable } = this.state
-    const service = mailbox.defaultService
+    const { mailboxId, onRequestCancel, classes, ...passProps } = this.props
+    const { userHasSleepable, service } = this.state
+    if (!service) { return false }
 
     return (
       <WizardConfigureDefaultLayout
         onRequestCancel={onRequestCancel}
-        mailboxId={mailbox.id}
+        mailboxId={mailboxId}
         {...passProps}>
         <h2 className={classes.heading}>Configure your Account</h2>
         <FormControl fullWidth>
@@ -107,10 +126,9 @@ class WizardConfigureContainer extends React.Component {
                 checked={service.hasNavigationToolbar}
                 color='primary'
                 onChange={(evt, toggled) => {
-                  mailboxActions.reduceService(
-                    mailbox.id,
-                    CoreService.SERVICE_TYPES.DEFAULT,
-                    ContainerDefaultServiceReducer.setHasNavigationToolbar,
+                  accountActions.reduceService(
+                    service.id,
+                    ContainerServiceReducer.setHasNavigationToolbar,
                     toggled
                   )
                 }} />
@@ -125,63 +143,116 @@ class WizardConfigureContainer extends React.Component {
                   checked={service.showNotifications}
                   color='primary'
                   onChange={(evt, toggled) => {
-                    mailboxActions.reduceService(
-                      mailbox.id,
-                      CoreService.SERVICE_TYPES.DEFAULT,
-                      ContainerDefaultServiceReducer.setShowNotifications,
+                    accountActions.reduceService(
+                      service.id,
+                      ContainerServiceReducer.setShowNotifications,
                       toggled
                     )
                   }} />
               )} />
           </FormControl>
         ) : undefined}
-        <div>
-          <FormControl fullWidth>
-            <FormControlLabel
-              label={(
-                <span>
-                  <span>Show unread activity in sidebar or toolbar as </span>
-                  <span className={classes.mockUnreadActivityIndicator}>●</span>
-                </span>
-              )}
-              control={(
-                <Switch
-                  checked={service.showUnreadActivityBadge}
-                  color='primary'
-                  onChange={(evt, toggled) => {
-                    mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setShowUnreadActivityBadge, toggled)
-                  }} />
-              )} />
-          </FormControl>
-          <FormControl fullWidth>
-            <FormControlLabel
-              label={(
-                <span>
-                  <span>Show unread activity in Menu Bar & App Badge as </span>
-                  <span className={classes.mockUnreadActivityIndicator}>●</span>
-                </span>
-              )}
-              control={(
-                <Switch
-                  checked={service.unreadActivityCountsTowardsAppUnread}
-                  color='primary'
-                  onChange={(evt, toggled) => {
-                    mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setUnreadActivityCountsTowardsAppUnread, toggled)
-                  }} />
-              )} />
-          </FormControl>
-        </div>
+        {service.supportsUnreadCount ? (
+          <div>
+            <FormControl fullWidth>
+              <FormControlLabel
+                label='Show unread count in sidebar or toolbar'
+                control={(
+                  <Switch
+                    checked={service.showBadgeCount}
+                    color='primary'
+                    onChange={(evt, toggled) => {
+                      accountActions.reduceService(
+                        service.id,
+                        ContainerServiceReducer.setShowBadgeCount,
+                        toggled
+                      )
+                    }} />
+                )} />
+            </FormControl>
+            <FormControl fullWidth>
+              <FormControlLabel
+                label='Show unread count in Menu Bar & App Badge'
+                control={(
+                  <Switch
+                    checked={service.showBadgeCountInApp}
+                    color='primary'
+                    onChange={(evt, toggled) => {
+                      accountActions.reduceService(
+                        service.id,
+                        ContainerServiceReducer.setShowBadgeCountInApp,
+                        toggled
+                      )
+                    }} />
+                )} />
+            </FormControl>
+          </div>
+        ) : undefined}
+        {service.supportsUnreadActivity ? (
+          <div>
+            <FormControl fullWidth>
+              <FormControlLabel
+                label={(
+                  <span>
+                    <span>Show unread activity in sidebar or toolbar as </span>
+                    <span className={classes.mockUnreadActivityIndicator}>●</span>
+                  </span>
+                )}
+                control={(
+                  <Switch
+                    checked={service.showBadgeActivity}
+                    color='primary'
+                    onChange={(evt, toggled) => {
+                      accountActions.reduceService(
+                        service.id,
+                        ContainerServiceReducer.setShowBadgeActivity,
+                        toggled
+                      )
+                    }} />
+                )} />
+            </FormControl>
+            <FormControl fullWidth>
+              <FormControlLabel
+                label={(
+                  <span>
+                    <span>Show unread activity in Menu Bar & App Badge as </span>
+                    <span className={classes.mockUnreadActivityIndicator}>●</span>
+                  </span>
+                )}
+                control={(
+                  <Switch
+                    checked={service.showBadgeActivityInApp}
+                    color='primary'
+                    onChange={(evt, toggled) => {
+                      accountActions.reduceService(
+                        service.id,
+                        ContainerServiceReducer.setShowBadgeActivityInApp,
+                        toggled
+                      )
+                    }} />
+                )} />
+            </FormControl>
+          </div>
+        ) : undefined}
         {userHasSleepable ? (
           <div className={classes.sleepContainer}>
             <SleepableField
               fullWidth
               sleepEnabled={service.sleepable}
               onSleepEnabledChanged={(toggled) => {
-                mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setSleepable, toggled)
+                accountActions.reduceService(
+                  service.id,
+                  ContainerServiceReducer.setSleepable,
+                  toggled
+                )
               }}
               sleepWaitMs={service.sleepableTimeout}
               onSleepWaitMsChanged={(value) => {
-                mailboxActions.reduceService(mailbox.id, service.type, ContainerDefaultServiceReducer.setSleepableTimeout, value)
+                accountActions.reduceService(
+                  service.id,
+                  ContainerServiceReducer.setSleepableTimeout,
+                  value
+                )
               }} />
           </div>
         ) : undefined}
