@@ -27,6 +27,7 @@ import {LinuxNotification} from 'Notifications'
 import WaveboxCommandArgs from './WaveboxCommandArgs'
 import { AppSettings } from 'shared/Models/Settings'
 import WaveboxDataManager from './WaveboxDataManager'
+import mailboxStorage from 'Storage/mailboxStorage'
 
 const privStarted = Symbol('privStarted')
 const privArgv = Symbol('privArgv')
@@ -90,6 +91,9 @@ class WaveboxApp {
     // State
     this[privStarted] = true
     this[privArgv] = yargs.parse(process.argv)
+
+    // Do any data migration
+    mailboxStorage.startMigration()
 
     // Start our stores
     accountStore.getState()

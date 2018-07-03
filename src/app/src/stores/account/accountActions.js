@@ -16,7 +16,9 @@ class AccountActions extends CoreAccountActions {
   * @overwrite
   */
   load () {
+    console.log("ACCOUNT ACTIONS LOAD", mailboxPersistence.thomas)
     const rawMailboxes = mailboxPersistence.allJSONItems()
+    console.log(">>>",Object.keys(rawMailboxes).length)
     const rawMailboxAuths = mailboxAuthPersistence.allJSONItems()
     const rawServices = servicePersistence.allJSONItems()
     const rawServiceData = servicedataPersistence.allJSONItems()

@@ -24,6 +24,7 @@ class StorageBucket {
   /* ****************************************************************************/
 
   constructor (bucketName) {
+    console.log("CREATE",bucketName)
     this[privPath] = path.join(RuntimePaths.DB_DIR_PATH, bucketName + '_db.json')
     this[privWriteHold] = null
     this[privWriteLock] = false
@@ -337,6 +338,14 @@ class StorageBucket {
   */
   removeItem (k) {
     delete this[privData][k]
+    this._writeToDisk()
+  }
+
+  /**
+  * Removes all items
+  */
+  removeAllItems () {
+    this[privData] = {}
     this._writeToDisk()
   }
 

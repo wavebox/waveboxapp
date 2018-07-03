@@ -64,6 +64,7 @@ class MicrosoftMailService extends MicrosoftService {
   /* **************************************************************************/
 
   get unreadMode () { return this._value_('unreadMode', UNREAD_MODES.INBOX_UNREAD) }
+  get serviceDisplayName () { return this._value_('email') || this._value_('userFullName') }
 }
 
 export default MicrosoftMailService

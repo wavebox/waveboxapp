@@ -545,7 +545,7 @@ class AccountStore extends CoreAccountStore {
     containerIds = new Set(containerIds)
 
     // Get the servies that need to be updated
-    const services = this.getServicesOfType(SERVICE_TYPES.CONTAINER)
+    const services = this.allServicesOfType(SERVICE_TYPES.CONTAINER)
       .filter((service) => containerIds.has(service.containerId))
     if (services.length === 0) { this.preventDefault(); return }
 
