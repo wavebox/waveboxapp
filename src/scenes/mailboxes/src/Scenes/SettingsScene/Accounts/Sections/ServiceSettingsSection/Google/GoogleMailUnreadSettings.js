@@ -7,8 +7,7 @@ import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 import SettingsListItem from 'wbui/SettingsListItem'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
 import CheckBoxOutlineIcon from '@material-ui/icons/CheckBoxOutlineBlank'
-import GoogleDefaultService from 'shared/Models/Accounts/Google/GoogleDefaultService'
-import { mailboxActions, GoogleDefaultServiceReducer } from 'stores/mailbox'
+import { accountStore, accountActions } from 'stores/account'
 import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
@@ -16,15 +15,10 @@ import {
   Button, Select, TextField, MenuItem, Checkbox, ListItemSecondaryAction, ListItemText,
   Dialog, DialogTitle, DialogContent, DialogActions, FormControl, InputLabel, FormControlLabel
 } from '@material-ui/core'
+import CoreGoogleMailServiceReducer from 'shared/AltStores/Account/ServiceReducers/CoreGoogleMailServiceReducer'
+import CoreGoogleMailService from 'shared/Models/ACAccounts/Google/CoreGoogleMailService'
 
 const KB_ARTICLE_URL = 'https://wavebox.io/kb/custom-google-unread-counts'
-const SERVICE_STATE_KEYS = [
-  'customUnreadQuery',
-  'customUnreadLabelWatchString',
-  'customUnreadCountFromLabel',
-  'customUnreadCountLabel',
-  'customUnreadCountLabelField'
-]
 
 const styles = {
   customUnreadModeListItem: {
@@ -52,25 +46,39 @@ const styles = {
 }
 
 @withStyles(styles)
-class GoogleUnreadSettings extends React.Component {
+class GoogleMailUnreadSettings extends React.Component {
   /* **************************************************************************/
-  // Class
+  // Lifecycle
   /* **************************************************************************/
 
   static propTypes = {
-    mailbox: PropTypes.object.isRequired,
-    service: PropTypes.object.isRequired
+    serviceId: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
 
+  componentDidMount () {
+    accountStore.listen(this.accountChanged)
+  }
+
+  componentWillUnmount () {
+    accountStore.unlisten(this.accountChanged)
+  }
+
   componentWillReceiveProps (nextProps) {
-    if (this.props.mailbox.id !== nextProps.mailbox.id) {
-      this.setState(this.generateState(nextProps.service))
-    } else {
-      this.setState(this.generateStateUpdate(this.props.service, nextProps.service))
+    if (this.props.serviceId !== nextProps.serviceId) {
+      const accountState = accountStore.getState()
+      const service = accountState.getService(nextProps.serviceId)
+      this.setState({
+        ...(service ? {
+          showCustomUnreadSettings: service.hasCustomUnreadQuery || service.hasCustomUnreadLabelWatch
+        } : {
+          showCustomUnreadSettings: false
+        }),
+        ...this.extractStateForService(nextProps.serviceId, accountState)
+      })
     }
   }
 
@@ -78,37 +86,45 @@ class GoogleUnreadSettings extends React.Component {
   // Data lifecycle
   /* **************************************************************************/
 
-  /**
-  * Generates the state for the component
-  * @param service: the service to generate for
-  * @return the state
-  */
-  generateState (service) {
+  state = (() => {
+    const accountState = accountStore.getState()
+    const service = accountState.getService(this.props.serviceId)
     return {
-      ...(SERVICE_STATE_KEYS.reduce((acc, k) => {
-        acc[k] = service[k]
-        return acc
-      }, {})),
-      showCustomUnreadSettings: service.hasCustomUnreadQuery || service.hasCustomUnreadLabelWatch
+      ...(service ? {
+        showCustomUnreadSettings: service.hasCustomUnreadQuery || service.hasCustomUnreadLabelWatch
+      } : {
+        showCustomUnreadSettings: false
+      }),
+      ...this.extractStateForService(this.props.serviceId, accountStore.getState())
+    }
+  })()
+
+  accountChanged = (accountState) => {
+    this.setState(
+      this.extractStateForService(this.props.serviceId, accountState)
+    )
+  }
+
+  /**
+  * Gets the mailbox state config
+  * @param serviceId: the id of the service
+  * @param accountState: the account state
+  */
+  extractStateForService (serviceId, accountState) {
+    const service = accountState.getService(serviceId)
+    return service ? {
+      hasService: true,
+      customUnreadQuery: service.customUnreadQuery,
+      customUnreadLabelWatchString: service.customUnreadLabelWatchString,
+      customUnreadCountFromLabel: service.customUnreadCountFromLabel,
+      customUnreadCountLabel: service.customUnreadCountLabel,
+      customUnreadCountLabelField: service.customUnreadCountLabelField,
+      unreadMode: service.unreadMode,
+      supportedUnreadModes: Array.from(service.supportedUnreadModes)
+    } : {
+      hasService: false
     }
   }
-
-  /**
-  * Generates the state update between two services
-  * @param prevService: the previous service
-  * @param nextService: the next service
-  * @return a state update
-  */
-  generateStateUpdate (prevService, nextService) {
-    return SERVICE_STATE_KEYS.reduce((acc, k) => {
-      if (prevService[k] !== nextService[k]) {
-        acc[k] = nextService[k]
-      }
-      return acc
-    }, {})
-  }
-
-  state = this.generateState(this.props.service)
 
   /* **************************************************************************/
   // UI Events
@@ -127,10 +143,10 @@ class GoogleUnreadSettings extends React.Component {
   * Resets the custom unread mode
   */
   handleResetCustom = () => {
-    const { mailbox } = this.props
-    mailboxActions.reduceService(mailbox.id, GoogleDefaultService.type, GoogleDefaultServiceReducer.setCustomUnreadQuery, '')
-    mailboxActions.reduceService(mailbox.id, GoogleDefaultService.type, GoogleDefaultServiceReducer.setCustomUnreadLabelWatchString, '')
-    mailboxActions.reduceService(mailbox.id, GoogleDefaultService.type, GoogleDefaultServiceReducer.setCustomUnreadCountFromLabel, false)
+    const { serviceId } = this.props
+    accountActions.reduceService(serviceId, CoreGoogleMailServiceReducer.setCustomUnreadQuery, '')
+    accountActions.reduceService(serviceId, CoreGoogleMailServiceReducer.setCustomUnreadLabelWatchString, '')
+    accountActions.reduceService(serviceId, CoreGoogleMailServiceReducer.setCustomUnreadCountFromLabel, false)
     setTimeout(() => {
       this.setState({ showCustomUnreadSettings: false })
     }, 500)
@@ -151,40 +167,43 @@ class GoogleUnreadSettings extends React.Component {
   */
   humanizeUnreadMode (mode) {
     switch (mode) {
-      case GoogleDefaultService.UNREAD_MODES.INBOX_ALL:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_ALL:
         return 'All Messages'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD:
         return 'Unread Messages'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT:
         return 'Unread Important Messages'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_PERSONAL:
         return 'Unread Messages in Primary Category'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_ATOM:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_ATOM:
         return '(Experimental) Unread Messages'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_IMPORTANT_ATOM:
         return '(Experimental) Unread Important Messages'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_PERSONAL_ATOM:
         return '(Experimental) Unread Messages in Primary Category'
-      case GoogleDefaultService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED:
+      case CoreGoogleMailService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED:
         return 'Unread Unbundled Messages'
     }
   }
 
   render () {
     const {
-      mailbox,
-      service,
+      serviceId,
       classes,
       ...passProps
     } = this.props
     const {
+      hasService,
       customUnreadQuery,
       customUnreadLabelWatchString,
       customUnreadCountFromLabel,
       customUnreadCountLabel,
       customUnreadCountLabelField,
-      showCustomUnreadSettings
+      showCustomUnreadSettings,
+      unreadMode,
+      supportedUnreadModes
     } = this.state
+    if (!hasService) { return false }
     const hasCustomQueryConfiguration = !!customUnreadQuery || !!customUnreadLabelWatchString
 
     return (
@@ -192,12 +211,12 @@ class GoogleUnreadSettings extends React.Component {
         <SettingsListItemSelect
           label='Unread Mode'
           disabled={hasCustomQueryConfiguration}
-          value={service.unreadMode}
-          options={Array.from(service.supportedUnreadModes).map((mode) => {
+          value={unreadMode}
+          options={supportedUnreadModes.map((mode) => {
             return { value: mode, label: this.humanizeUnreadMode(mode) }
           })}
           onChange={(evt, value) => {
-            mailboxActions.reduceService(mailbox.id, service.type, GoogleDefaultServiceReducer.setUnreadMode, value)
+            accountActions.reduceService(serviceId, CoreGoogleMailServiceReducer.setUnreadMode, value)
           }} />
         <SettingsListItem className={classes.customUnreadModeListItem} divider={false}>
           <ListItemText
@@ -234,8 +253,8 @@ class GoogleUnreadSettings extends React.Component {
               Find out how to configure a custom unread in the Knowledge Base
             </p>
             <TextField
-              key={`customUnreadQuery_${mailbox.id}`}
-              name={`customUnreadQuery_${mailbox.id}`}
+              key={`customUnreadQuery_${serviceId}`}
+              name={`customUnreadQuery_${serviceId}`}
               fullWidth
               InputLabelProps={{ shrink: true }}
               margin='normal'
@@ -246,11 +265,11 @@ class GoogleUnreadSettings extends React.Component {
               helperText={hasCustomQueryConfiguration && !customUnreadQuery ? 'This must be configured. Failing to do so may have unexpected side effects' : undefined}
               onChange={(evt) => this.setState({ customUnreadQuery: evt.target.value })}
               onBlur={(evt) => {
-                mailboxActions.reduceService(mailbox.id, GoogleDefaultService.type, GoogleDefaultServiceReducer.setCustomUnreadQuery, customUnreadQuery)
+                accountActions.reduceService(serviceId, CoreGoogleMailServiceReducer.setCustomUnreadQuery, customUnreadQuery)
               }} />
             <TextField
-              key={`customUnreadWatchLabels_${mailbox.id}`}
-              name={`customUnreadWatchLabels_${mailbox.id}`}
+              key={`customUnreadWatchLabels_${serviceId}`}
+              name={`customUnreadWatchLabels_${serviceId}`}
               fullWidth
               InputLabelProps={{ shrink: true }}
               margin='normal'
@@ -261,7 +280,7 @@ class GoogleUnreadSettings extends React.Component {
               helperText={hasCustomQueryConfiguration && !customUnreadLabelWatchString ? 'This must be configured. Failing to do so may have unexpected side effects' : undefined}
               onChange={(evt) => this.setState({ customUnreadLabelWatchString: evt.target.value })}
               onBlur={(evt) => {
-                mailboxActions.reduceService(mailbox.id, GoogleDefaultService.type, GoogleDefaultServiceReducer.setCustomUnreadLabelWatchString, customUnreadLabelWatchString)
+                accountActions.reduceService(serviceId, CoreGoogleMailServiceReducer.setCustomUnreadLabelWatchString, customUnreadLabelWatchString)
               }} />
             <FormControl fullWidth>
               <FormControlLabel
@@ -271,13 +290,13 @@ class GoogleUnreadSettings extends React.Component {
                     checked={customUnreadCountFromLabel}
                     color='primary'
                     onChange={(evt, toggled) => {
-                      mailboxActions.reduceService(mailbox.id, GoogleDefaultService.type, GoogleDefaultServiceReducer.setCustomUnreadCountFromLabel, toggled)
+                      accountActions.reduceService(serviceId, CoreGoogleMailServiceReducer.setCustomUnreadCountFromLabel, toggled)
                     }} />
                 )} />
             </FormControl>
             <TextField
-              key={`customUnreadCountLabel_${mailbox.id}`}
-              name={`customUnreadCountLabel_${mailbox.id}`}
+              key={`customUnreadCountLabel_${serviceId}`}
+              name={`customUnreadCountLabel_${serviceId}`}
               fullWidth
               InputLabelProps={{ shrink: true }}
               margin='normal'
@@ -289,7 +308,7 @@ class GoogleUnreadSettings extends React.Component {
               helperText={customUnreadCountFromLabel && !customUnreadCountLabel ? 'This must be configured. Failing to do so may have unexpected side effects' : undefined}
               onChange={(evt) => this.setState({ customUnreadCountLabel: evt.target.value })}
               onBlur={(evt) => {
-                mailboxActions.reduceService(mailbox.id, GoogleDefaultService.type, GoogleDefaultServiceReducer.setCustomUnreadCountLabel, customUnreadCountLabel)
+                accountActions.reduceService(serviceId, CoreGoogleMailServiceReducer.setCustomUnreadCountLabel, customUnreadCountLabel)
               }} />
             <FormControl fullWidth margin='normal'>
               <InputLabel>Custom count label field</InputLabel>
@@ -301,9 +320,9 @@ class GoogleUnreadSettings extends React.Component {
                 value={customUnreadCountLabelField}
                 disabled={!customUnreadCountFromLabel}
                 onChange={(evt) => {
-                  mailboxActions.reduceService(mailbox.id, GoogleDefaultService.type, GoogleDefaultServiceReducer.setCustomUnreadCountLabelField, evt.target.value)
+                  accountActions.reduceService(serviceId, CoreGoogleMailServiceReducer.setCustomUnreadCountLabelField, evt.target.value)
                 }}>
-                {GoogleDefaultService.CUSTOM_UNREAD_COUNT_LABEL_FIELDS.map((fieldName) => {
+                {CoreGoogleMailService.CUSTOM_UNREAD_COUNT_LABEL_FIELDS.map((fieldName) => {
                   return (
                     <MenuItem key={fieldName} value={fieldName}>{fieldName}</MenuItem>
                   )
@@ -330,4 +349,4 @@ class GoogleUnreadSettings extends React.Component {
   }
 }
 
-export default GoogleUnreadSettings
+export default GoogleMailUnreadSettings

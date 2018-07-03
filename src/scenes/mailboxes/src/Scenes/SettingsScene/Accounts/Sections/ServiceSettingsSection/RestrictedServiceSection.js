@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import {Button} from '@material-ui/core'
-import { mailboxActions } from 'stores/mailbox'
+import { accountActions } from 'stores/account'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import ConfirmButton from 'wbui/ConfirmButton'
@@ -25,13 +25,13 @@ const styles = {
 }
 
 @withStyles(styles)
-class RestrictedAccountSettings extends React.Component {
+class RestrictedServiceSection extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string
+    serviceId: PropTypes.string
   }
 
   /* **************************************************************************/
@@ -39,12 +39,17 @@ class RestrictedAccountSettings extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { className, classes, mailboxId, ...passProps } = this.props
+    const {
+      className,
+      classes,
+      serviceId,
+      ...passProps
+    } = this.props
 
     return (
       <div {...passProps} className={classNames(className, classes.root)}>
         <p>
-          Use and customize this account when purchasing Wavebox
+          Use and customize this service when purchasing Wavebox
         </p>
         <div>
           <Button variant='raised' color='primary' onClick={() => { window.location.hash = '/pro' }}>
@@ -59,7 +64,7 @@ class RestrictedAccountSettings extends React.Component {
             content={(
               <span>
                 <DeleteIcon className={classes.deleteIcon} />
-                Delete this account
+                Delete this service
               </span>
             )}
             confirmContent={(
@@ -70,7 +75,7 @@ class RestrictedAccountSettings extends React.Component {
             )}
             confirmWaitMs={4000}
             onConfirmedClick={() => {
-              mailboxActions.remove(mailboxId)
+              accountActions.removeService(serviceId)
             }} />
         </div>
       </div>
@@ -78,4 +83,4 @@ class RestrictedAccountSettings extends React.Component {
   }
 }
 
-export default RestrictedAccountSettings
+export default RestrictedServiceSection

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { mailboxActions, ServiceReducer } from 'stores/mailbox'
+import { accountStore, accountActions } from 'stores/account'
 import { userStore } from 'stores/user'
 import SleepableField from 'wbui/SleepableField'
 import { withStyles } from '@material-ui/core/styles'
@@ -9,8 +9,8 @@ import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItem from 'wbui/SettingsListItem'
 import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import HotelIcon from '@material-ui/icons/Hotel'
-import modelCompare from 'wbui/react-addons-model-compare'
-import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
+import shallowCompare from 'react-addons-shallow-compare'
+import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 
 const styles = {
   sleepUnavailable: {
@@ -30,14 +30,13 @@ const styles = {
 }
 
 @withStyles(styles)
-class ServiceBehaviourSettingsSection extends React.Component {
+class ServiceBehaviourSection extends React.Component {
   /* **************************************************************************/
-  // Class
+  // Lifecycle
   /* **************************************************************************/
 
   static propTypes = {
-    mailbox: PropTypes.object.isRequired,
-    service: PropTypes.object.isRequired
+    serviceId: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -45,11 +44,21 @@ class ServiceBehaviourSettingsSection extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    userStore.listen(this.userUpdated)
+    userStore.listen(this.userChanged)
+    accountStore.listen(this.accountChanged)
   }
 
   componentWillUnmount () {
-    userStore.unlisten(this.userUpdated)
+    userStore.unlisten(this.userChanged)
+    accountStore.unlisten(this.accountChanged)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.serviceId !== nextProps.serviceId) {
+      this.setState(
+        this.extractStateForService(nextProps.serviceId, accountStore.getState())
+      )
+    }
   }
 
   /* **************************************************************************/
@@ -58,14 +67,37 @@ class ServiceBehaviourSettingsSection extends React.Component {
 
   state = (() => {
     return {
-      userHasSleepable: userStore.getState().user.hasSleepable
+      userHasSleepable: userStore.getState().user.hasSleepable,
+      ...this.extractStateForService(this.props.serviceId, accountStore.getState())
     }
   })()
 
-  userUpdated = (userState) => {
+  accountChanged = (accountState) => {
+    this.setState(
+      this.extractStateForService(this.props.serviceId, accountState)
+    )
+  }
+
+  userChanged = (userState) => {
     this.setState({
       userHasSleepable: userState.user.hasSleepable
     })
+  }
+
+  /**
+  * Gets the mailbox state config
+  * @param serviceId: the id of the service
+  * @param accountState: the account state
+  */
+  extractStateForService (serviceId, accountState) {
+    const service = accountState.getService(serviceId)
+    return service ? {
+      hasService: true,
+      sleepable: service.sleepable,
+      sleepableTimeout: service.sleepableTimeout
+    } : {
+      hasService: false
+    }
   }
 
   /* **************************************************************************/
@@ -73,31 +105,37 @@ class ServiceBehaviourSettingsSection extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    return (
-      modelCompare(this.props.mailbox, nextProps.mailbox, ['id']) ||
-      modelCompare(this.props.service, nextProps.service, ['type', 'sleepable', 'sleepableTimeout']) ||
-      partialShallowCompare({}, this.state, {}, nextState)
-    )
+    return shallowCompare(this, nextProps, nextState)
   }
 
   render () {
-    const { mailbox, service, classes, ...passProps } = this.props
-    const { userHasSleepable } = this.state
+    const {
+      serviceId,
+      classes,
+      ...passProps
+    } = this.props
+    const {
+      userHasSleepable,
+      hasService,
+      sleepable,
+      sleepableTimeout
+    } = this.state
+    if (!hasService) { return false }
 
     return (
       <SettingsListSection title='Sleep & Behaviour' icon={<HotelIcon />} {...passProps}>
         <SettingsListItem divider={false}>
           <SleepableField
-            key={`${mailbox.id}:${service.type}`}
+            key={serviceId}
             disabled={!userHasSleepable}
             fullWidth
-            sleepEnabled={service.sleepable}
+            sleepEnabled={sleepable}
             onSleepEnabledChanged={(toggled) => {
-              mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setSleepable, toggled)
+              accountActions.reduceService(serviceId, ServiceReducer.setSleepable, toggled)
             }}
-            sleepWaitMs={service.sleepableTimeout}
+            sleepWaitMs={sleepableTimeout}
             onSleepWaitMsChanged={(value) => {
-              mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setSleepableTimeout, value)
+              accountActions.reduceService(serviceId, ServiceReducer.setSleepableTimeout, value)
             }} />
         </SettingsListItem>
         {!userHasSleepable ? (
@@ -118,4 +156,4 @@ class ServiceBehaviourSettingsSection extends React.Component {
   }
 }
 
-export default ServiceBehaviourSettingsSection
+export default ServiceBehaviourSection

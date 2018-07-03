@@ -1,10 +1,11 @@
 import React from 'react'
 import { Dialog, DialogTitle, DialogActions, Button, List, ListItem, DialogContent, ListItemText, ListItemAvatar } from '@material-ui/core'
 import { emblinkStore, emblinkActions } from 'stores/emblink'
-import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
+import { accountStore, accountActions, accountDispatch } from 'stores/account'
 import shallowCompare from 'react-addons-shallow-compare'
 import MailboxAvatar from 'Components/Backed/MailboxAvatar'
 import { withStyles } from '@material-ui/core/styles'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 
 const KEYBOARD_UNSELECTED_INDEX = -1
 
@@ -25,13 +26,13 @@ class ComposePickerScene extends React.Component {
 
   componentDidMount () {
     emblinkStore.listen(this.composeChanged)
-    mailboxStore.listen(this.mailboxChanged)
+    accountStore.listen(this.accountChanged)
     window.addEventListener('keydown', this.handleKeypress)
   }
 
   componentWillUnmount () {
     emblinkStore.unlisten(this.composeChanged)
-    mailboxStore.unlisten(this.mailboxChanged)
+    accountStore.unlisten(this.accountChanged)
     window.removeEventListener('keydown', this.handleKeypress)
   }
 
@@ -48,14 +49,16 @@ class ComposePickerScene extends React.Component {
 
   /**
   * Generates the compose state from the two stores
-  * @param mailboxState=autofetch: the current mailbox state
+  * @param accountState=autofetch: the current account state
   * @param composeState=autofetch: the current compose state
   * @return an object with the compose portion of the state
   */
-  generateComposeData (mailboxState = mailboxStore.getState(), composeState = emblinkStore.getState()) {
+  generateComposeData (accountState = accountStore.getState(), composeState = emblinkStore.getState()) {
     return {
-      mailboxes: mailboxState.allMailboxesIndexed(),
-      composeServices: mailboxState.getServicesSupportingCompose(),
+      composeServices: [].concat(
+        accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_MAIL),
+        accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_INBOX)
+      ),
       composePayload: composeState.compose.payload
     }
   }
@@ -64,8 +67,8 @@ class ComposePickerScene extends React.Component {
     this.setState(this.generateComposeData(undefined, composeState))
   }
 
-  mailboxChanged = (mailboxState) => {
-    this.setState(this.generateComposeData(mailboxState, undefined))
+  accountChanged = (accountState) => {
+    this.setState(this.generateComposeData(accountState, undefined))
   }
 
   /* **************************************************************************/
@@ -93,8 +96,8 @@ class ComposePickerScene extends React.Component {
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/'
-      mailboxActions.changeActive(service.parentId, service.type)
-      mailboxDispatch.composeItem(service.parentId, service.type, this.state.composePayload || {})
+      accountActions.changeActiveService(service.id)
+      accountDispatch.composeItem(service.id, this.state.composePayload || {})
       emblinkActions.clearCompose()
     }, 250)
   }
@@ -147,31 +150,27 @@ class ComposePickerScene extends React.Component {
 
   render () {
     const { classes } = this.props
-    const { composeServices, open, mailboxes, keyboardIndex } = this.state
+    const { composeServices, open, keyboardIndex } = this.state
 
     return (
-      <Dialog
-        disableEnforceFocus
-        open={open}
-        onClose={this.handleCancel}>
+      <Dialog disableEnforceFocus open={open} onClose={this.handleCancel}>
         <DialogTitle>
           Compose New Message
         </DialogTitle>
         <DialogContent className={classes.dialogContent}>
           <List>
             {composeServices.map((service, index) => {
-              const mailbox = mailboxes[service.parentId]
               return (
                 <ListItem
-                  key={`${mailbox.id}:${service.type}`}
+                  key={service.id}
                   tabIndex={-1}
                   button
                   onClick={(evt) => this.handleSelectService(evt, service)}
                   className={index === keyboardIndex ? classes.keyboardFocus : undefined}>
                   <ListItemAvatar>
-                    <MailboxAvatar mailboxId={mailbox.id} />
+                    <MailboxAvatar mailboxId={service.parentId} />
                   </ListItemAvatar>
-                  <ListItemText primary={mailbox.displayName} secondary={service.humanizedType} />
+                  <ListItemText primary={service.displayName} secondary={service.humanizedType} />
                 </ListItem>)
             })}
           </List>

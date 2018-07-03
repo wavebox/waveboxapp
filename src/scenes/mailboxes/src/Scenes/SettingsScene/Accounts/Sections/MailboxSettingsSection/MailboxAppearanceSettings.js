@@ -155,13 +155,22 @@ class MailboxAppearanceSettings extends React.Component {
             </ColorPickerButton>
           </SettingsListItem>
           <SettingsListItem>
+            <ColorPickerButton
+              buttonProps={{ variant: 'raised', size: 'small' }}
+              value={mailboxBadgeColor}
+              onChange={(col) => accountActions.reduceMailbox(mailboxId, MailboxReducer.setBadgeColor, col)}>
+              <SmsIcon className={classes.buttonIcon} />
+              Badge Color
+            </ColorPickerButton>
+          </SettingsListItem>
+          <SettingsListItem>
             <FileUploadButton
               size='small'
               variant='raised'
               accept='image/*'
               onChange={(evt) => {
                 AccountAvatarProcessor.processAvatarFileUpload(evt, (av) => {
-                  accountActions.setCustomAvatar(mailboxId, av)
+                  accountActions.setCustomAvatarOnMailbox(mailboxId, av)
                 })
               }}>
               <InsertEmoticonButton className={classes.buttonIcon} />
@@ -171,7 +180,7 @@ class MailboxAppearanceSettings extends React.Component {
             <Button
               size='small'
               variant='raised'
-              onClick={() => accountActions.setCustomAvatar(mailboxId, undefined)}>
+              onClick={() => accountActions.setCustomAvatarOnMailbox(mailboxId, undefined)}>
               <NotInterestedIcon className={classes.buttonIcon} />
               Reset Account Icon
             </Button>
@@ -183,7 +192,6 @@ class MailboxAppearanceSettings extends React.Component {
             checked={mailboxShowAvatarColorRing} />
           {userHasSleepable ? (
             <SettingsListItemSwitch
-              divider={false}
               disabled={!uiShowSleepableServiceIndicator}
               label={(
                 <span>
@@ -200,20 +208,12 @@ class MailboxAppearanceSettings extends React.Component {
               checked={mailboxShowSleepableServiceIndicator} />
           ) : undefined}
           <SettingsListItemSwitch
+            divider={false}
             label='Show total unread count from all services'
             onChange={(evt, toggled) => {
               accountActions.reduceMailbox(mailboxId, MailboxReducer.setShowBadge, toggled)
             }}
             checked={mailboxShowBadge} />
-          <SettingsListItem divider={false}>
-            <ColorPickerButton
-              buttonProps={{ variant: 'raised', size: 'small' }}
-              value={mailboxBadgeColor}
-              onChange={(col) => accountActions.reduceMailbox(mailboxId, MailboxReducer.setBadgeColor, col)}>
-              <SmsIcon className={classes.buttonIcon} />
-              Badge Color
-            </ColorPickerButton>
-          </SettingsListItem>
         </SettingsListSection>
       </div>
     )

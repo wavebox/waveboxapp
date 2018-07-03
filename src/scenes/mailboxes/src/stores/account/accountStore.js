@@ -232,10 +232,10 @@ class AccountStore extends RendererAccountStore {
         switch (next.type) {
           case SERVICE_TYPES.GOOGLE_MAIL:
           case SERVICE_TYPES.GOOGLE_INBOX:
-            googleActions.serviceSyncWatchFieldChange(next.id, changed)
+            googleActions.serviceSyncWatchFieldChange.defer(next.id, changed)
             break
           case SERVICE_TYPES.MICROSOFT:
-            microsoftActions.serviceSyncWatchFieldChange(next.id, changed)
+            microsoftActions.serviceSyncWatchFieldChange.defer(next.id, changed)
             break
         }
       }

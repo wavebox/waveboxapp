@@ -74,8 +74,6 @@ class SidelistItemMultiService extends React.Component {
     const mailbox = accountState.getMailbox(mailboxId)
 
     return {
-      popover: false,
-      popoverAnchor: null,
       mailbox: mailbox,
       avatar: accountState.getMailboxAvatarConfig(mailboxId),
       isMailboxSleeping: accountState.isMailboxSleeping(mailboxId),
@@ -109,6 +107,7 @@ class SidelistItemMultiService extends React.Component {
   handleOpenPopover = (evt) => {
     evt.preventDefault()
     this.setState({
+      isHovering: false,
       popover: true,
       popoverAnchor: evt.currentTarget
     })

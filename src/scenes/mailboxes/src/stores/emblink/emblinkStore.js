@@ -2,11 +2,12 @@ import RendererEmblinkStore from 'shared/AltStores/Emblink/RendererEmblinkStore'
 import { STORE_NAME } from 'shared/AltStores/Emblink/AltEmblinkIdentifiers'
 import alt from '../alt'
 import actions from './emblinkActions'
-//import mailboxActions from '../mailbox/mailboxActions'
-//import mailboxDispatch from '../mailbox/mailboxDispatch'
-//import mailboxStore from '../mailbox/mailboxStore'
+import accountActions from '../account/accountActions'
+import accountDispatch from '../account/accountDispatch'
+import accountStore from '../account/accountStore'
 import { WB_FOCUS_MAILBOXES_WINDOW } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 
 class EmblinkStore extends RendererEmblinkStore {
   /* **************************************************************************/
@@ -28,8 +29,11 @@ class EmblinkStore extends RendererEmblinkStore {
   dispatchComposeChange () {
     if (!this.hasCompose()) { return }
 
-    const mailboxState = mailboxStore.getState()
-    const supportingServices = mailboxState.getServicesSupportingCompose()
+    const accountState = accountStore.getState()
+    const supportingServices = [].concat(
+      accountState.getServicesOfType(SERVICE_TYPES.GOOGLE_MAIL),
+      accountState.getServicesOfType(SERVICE_TYPES.GOOGLE_INBOX)
+    )
 
     // No services supporting
     if (supportingServices.length === 0) {
@@ -41,17 +45,17 @@ class EmblinkStore extends RendererEmblinkStore {
     // Just one service supporting
     if (supportingServices.length === 1) {
       const service = supportingServices[0]
-      this.sendComposeToMailbox(service.parentId, service.type, this.compose.payload)
+      this.sendComposeToMailbox(service.id, this.compose.payload)
       return
     }
 
     // User defined which mailbox
     if (this.composeHasMailbox()) {
       const designated = supportingServices.find((service) => {
-        return service.parentId === this.compose.mailboxId && service.type === this.compose.serviceType
+        return service.id === this.compose.serviceId
       })
       if (designated) {
-        this.sendComposeToMailbox(this.compose.mailboxId, this.compose.serviceType, this.compose.payload)
+        this.sendComposeToMailbox(this.compose.serviceId, this.compose.payload)
         return
       }
     }
@@ -63,14 +67,13 @@ class EmblinkStore extends RendererEmblinkStore {
 
   /**
   * Sends the compose call to a mailbox
-  * @param mailboxId: the id of the mailbox
-  * @param serviceType: the type of service
+  * @param serviceId: the id of the service
   * @param composeData: the data to use when composing
   */
-  sendComposeToMailbox (mailboxId, serviceType, composeData) {
+  sendComposeToMailbox (serviceId, composeData) {
     ipcRenderer.send(WB_FOCUS_MAILBOXES_WINDOW)
-    mailboxActions.changeActive.defer(mailboxId, serviceType)
-    mailboxDispatch.composeItem(mailboxId, serviceType, composeData || {})
+    accountActions.changeActiveService.defer(serviceId)
+    accountDispatch.composeItem(serviceId, composeData || {})
     window.location.hash = '/'
     actions.clearCompose.defer()
   }
@@ -98,8 +101,8 @@ class EmblinkStore extends RendererEmblinkStore {
 
     if (this.hasOpenItem()) {
       ipcRenderer.send(WB_FOCUS_MAILBOXES_WINDOW)
-      mailboxActions.changeActive.defer(this.open.mailboxId, this.open.serviceType)
-      mailboxDispatch.openItem(this.open.mailboxId, this.open.serviceType, this.open.payload)
+      accountActions.changeActiveService.defer(this.open.serviceId)
+      accountDispatch.openItem(this.open.serviceId, this.open.payload)
       actions.clearOpenItem.defer()
     }
   }

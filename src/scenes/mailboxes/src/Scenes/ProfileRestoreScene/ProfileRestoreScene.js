@@ -5,7 +5,7 @@ import {
 } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import { userStore, userActions } from 'stores/user'
 import pluralize from 'pluralize'
 import grey from '@material-ui/core/colors/grey'
@@ -71,12 +71,12 @@ class ProfileRestoreScene extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxesUpdated)
+    accountStore.listen(this.accountChanged)
     userStore.listen(this.userUpdated)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxesUpdated)
+    accountStore.unlisten(this.accountChanged)
     userStore.unlisten(this.userUpdated)
   }
 
@@ -88,7 +88,7 @@ class ProfileRestoreScene extends React.Component {
     const userState = userStore.getState()
     return {
       open: true,
-      currentMailboxCount: mailboxStore.getState().mailboxCount(),
+      currentMailboxCount: accountStore.getState().mailboxCount(),
       profiles: this.sanitizeProfiles(userState.userProfilesFetch.data),
       userIsLoggedIn: userState.user.isLoggedIn,
       userEmail: userState.user.userEmail,
@@ -97,9 +97,9 @@ class ProfileRestoreScene extends React.Component {
     }
   })()
 
-  mailboxesUpdated = (mailboxState) => {
+  accountChanged = (accountState) => {
     this.setState({
-      currentMailboxCount: mailboxState.mailboxCount()
+      currentMailboxCount: accountState.mailboxCount()
     })
   }
 

@@ -143,13 +143,13 @@ class AccountSettingsScroller extends React.Component {
   state = (() => {
     const accountState = accountStore.getState()
     return {
+      renderServices: false,
       services: accountState.mailboxServices(this.props.mailboxId)
     }
   })()
 
   accountChanged = (accountState) => {
     this.setState({
-      renderServices: false,
       services: accountState.mailboxServices(this.props.mailboxId)
     })
   }
@@ -164,7 +164,9 @@ class AccountSettingsScroller extends React.Component {
   scrollToSection = (evt, sectionName) => {
     const scroller = ReactDOM.findDOMNode(this.scrollerRef)
     const target = scroller.querySelector(`#${sectionName}`)
-    scroller.scrollTop = target.offsetTop
+    if (target) {
+      scroller.scrollTop = target.offsetTop
+    }
   }
 
   /* **************************************************************************/
@@ -185,8 +187,8 @@ class AccountSettingsScroller extends React.Component {
       ...passProps
     } = this.props
     const {
-      renderServices,
-      services
+      services,
+      renderServices
     } = this.state
 
     const scrollspyIds = [
@@ -195,8 +197,10 @@ class AccountSettingsScroller extends React.Component {
       `mailbox-advanced-${mailboxId}`,
       `mailbox-tools-${mailboxId}`
     ].concat(
-      services.map((s) => s.id)
+      services.map((s) => `service-section-${s.id}`)
     )
+
+    //TODO scrollspy not quite working here
 
     return (
       <div
@@ -208,11 +212,14 @@ class AccountSettingsScroller extends React.Component {
             mailboxId={mailboxId}
             showRestart={showRestart}
             onRequestEditCustomCode={onRequestEditCustomCode} />
+          <br />
+          <br />
           {renderServices ? (
             services.map((service) => {
               return (
                 <ServiceSettingsSection
                   key={service.id}
+                  id={`service-section-${service.id}`}
                   serviceId={service.id}
                   showRestart={showRestart}
                   onRequestEditCustomCode={onRequestEditCustomCode} />
@@ -227,6 +234,7 @@ class AccountSettingsScroller extends React.Component {
               componentTag='div'
               items={scrollspyIds}
               currentClassName='is-current'>
+              <ListSubheader disableSticky>Account</ListSubheader>
               <ListItem
                 divider
                 button
@@ -263,7 +271,7 @@ class AccountSettingsScroller extends React.Component {
                 <BuildIcon className={classes.scrollspyIcon} />
                 Tools
               </ListItem>
-              <ListSubheader>Services</ListSubheader>
+              <ListSubheader disableSticky>Services</ListSubheader>
               {services.map((service, i, arr) => {
                 return (
                   <ListItem
@@ -272,7 +280,7 @@ class AccountSettingsScroller extends React.Component {
                     button
                     dense
                     className={classes.scrollspyItem}
-                    onClick={(evt) => this.scrollToSection(evt, service.id)}>
+                    onClick={(evt) => this.scrollToSection(evt, `service-section-${service.id}`)}>
                     <Avatar
                       className={classes.scrollspyServiceIcon}
                       src={Resolver.image(service.humanizedLogoAtSize(128))} />

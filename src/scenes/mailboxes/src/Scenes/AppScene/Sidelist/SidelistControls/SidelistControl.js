@@ -226,7 +226,12 @@ class SidelistControl extends React.Component {
         onMouseEnter={() => this.setState({ hovering: true })}
         onMouseLeave={() => this.setState({ hovering: false })}
         id={`ReactComponent-Sidelist-Control-${generatedId}`}>
-        <IconButton onClick={onClick} className={classes.button}>
+        <IconButton
+          onClick={(...args) => {
+            this.setState({ hovering: false })
+            if (onClick) { onClick(...args) }
+          }}
+          className={classes.button}>
           {icon}
         </IconButton>
         <ReactPortalTooltip

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { mailboxActions, ServiceReducer } from 'stores/mailbox'
+import { accountStore, accountActions } from 'stores/account'
 import ColorPickerButton from 'wbui/ColorPickerButton'
 import { userStore } from 'stores/user'
 import { withStyles } from '@material-ui/core/styles'
@@ -12,8 +12,8 @@ import SettingsListItemText from 'wbui/SettingsListItemText'
 import WarningIcon from '@material-ui/icons/Warning'
 import SmsIcon from '@material-ui/icons/Sms'
 import AdjustIcon from '@material-ui/icons/Adjust'
-import modelCompare from 'wbui/react-addons-model-compare'
-import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
+import shallowCompare from 'react-addons-shallow-compare'
+import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 
 const styles = {
   mockUnreadActivityIndicator: {
@@ -37,29 +37,13 @@ const styles = {
 }
 
 @withStyles(styles)
-class ServiceBadgeSettingsSection extends React.Component {
-  /* **************************************************************************/
-  // Class
-  /* **************************************************************************/
-
-  /**
-  * @param service: the service to test with
-  * @return true if these settings will render for the service
-  */
-  static willRenderForService (service) {
-    return [
-      service.supportsUnreadCount,
-      service.supportsUnreadActivity
-    ].findIndex((f) => f) !== -1
-  }
-
+class ServiceBadgeSection extends React.Component {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
 
   static propTypes = {
-    mailbox: PropTypes.object.isRequired,
-    service: PropTypes.object.isRequired
+    serviceId: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -67,11 +51,21 @@ class ServiceBadgeSettingsSection extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    userStore.listen(this.userUpdated)
+    userStore.listen(this.userChanged)
+    accountStore.listen(this.accountChanged)
   }
 
   componentWillUnmount () {
-    userStore.unlisten(this.userUpdated)
+    userStore.unlisten(this.userChanged)
+    accountStore.unlisten(this.accountChanged)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.serviceId !== nextProps.serviceId) {
+      this.setState(
+        this.extractStateForService(nextProps.serviceId, accountStore.getState())
+      )
+    }
   }
 
   /* **************************************************************************/
@@ -80,14 +74,44 @@ class ServiceBadgeSettingsSection extends React.Component {
 
   state = (() => {
     return {
-      userHasSleepable: userStore.getState().user.hasSleepable
+      userHasSleepable: userStore.getState().user.hasSleepable,
+      ...this.extractStateForService(this.props.serviceId, accountStore.getState())
     }
   })()
 
-  userUpdated = (userState) => {
+  accountChanged = (accountState) => {
+    this.setState(
+      this.extractStateForService(this.props.serviceId, accountState)
+    )
+  }
+
+  userChanged = (userState) => {
     this.setState({
       userHasSleepable: userState.user.hasSleepable
     })
+  }
+
+  /**
+  * Gets the mailbox state config
+  * @param serviceId: the id of the service
+  * @param accountState: the account state
+  */
+  extractStateForService (serviceId, accountState) {
+    const service = accountState.getService(serviceId)
+    return service ? {
+      hasService: true,
+      sleepable: service.sleepable,
+      supportsSyncWhenSleeping: service.supportsSyncWhenSleeping,
+      supportsUnreadCount: service.supportsUnreadCount,
+      supportsUnreadActivity: service.supportsUnreadActivity,
+      badgeColor: service.badgeColor,
+      showBadgeCount: service.showBadgeCount,
+      showBadgeCountInApp: service.showBadgeCountInApp,
+      showBadgeActivity: service.showBadgeActivity,
+      showBadgeActivityInApp: service.showBadgeActivityInApp
+    } : {
+      hasService: false
+    }
   }
 
   /* **************************************************************************/
@@ -95,31 +119,33 @@ class ServiceBadgeSettingsSection extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    return (
-      modelCompare(this.props.mailbox, nextProps.mailbox, ['id']) ||
-      modelCompare(this.props.service, nextProps.service, [
-        'type',
-        'sleepable',
-        'supportsSyncWhenSleeping',
-        'unreadBadgeColor',
-        'supportsUnreadCount',
-        'showUnreadBadge',
-        'unreadCountsTowardsAppUnread',
-        'supportsUnreadActivity',
-        'showUnreadActivityBadge',
-        'unreadActivityCountsTowardsAppUnread'
-      ]) ||
-      partialShallowCompare({}, this.state, {}, nextState)
-    )
+    return shallowCompare(this, nextProps, nextState)
   }
 
   render () {
-    const { mailbox, service, classes, ...passProps } = this.props
-    const { userHasSleepable } = this.state
-    if (ServiceBadgeSettingsSection.willRenderForService(service) === false) { return false }
+    const {
+      serviceId,
+      classes,
+      ...passProps
+    } = this.props
+    const {
+      userHasSleepable,
+      hasService,
+      sleepable,
+      supportsUnreadCount,
+      supportsSyncWhenSleeping,
+      supportsUnreadActivity,
+      badgeColor,
+      showBadgeCount,
+      showBadgeCountInApp,
+      showBadgeActivity,
+      showBadgeActivityInApp
+    } = this.state
+    if (!hasService) { return false }
+    if (!supportsUnreadCount && !supportsUnreadActivity) { return false }
 
     const items = [
-      (userHasSleepable && service.sleepable && !service.supportsSyncWhenSleeping ? (isLast) => {
+      (userHasSleepable && sleepable && !supportsSyncWhenSleeping ? (isLast) => {
         return (
           <SettingsListItemText
             key='info'
@@ -137,43 +163,43 @@ class ServiceBadgeSettingsSection extends React.Component {
       (isLast) => {
         return (
           <SettingsListItem
-            key='unreadBadgeColor'
+            key='badgeColor'
             divider={!isLast}>
             <ColorPickerButton
               buttonProps={{ variant: 'raised', size: 'small' }}
-              value={service.unreadBadgeColor}
-              onChange={(col) => mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setUnreadBadgeColor, col)}>
+              value={badgeColor}
+              onChange={(col) => accountActions.reduceService(serviceId, ServiceReducer.setBadgeColor, col)}>
               <SmsIcon className={classes.buttonIcon} />
               Badge Color
             </ColorPickerButton>
           </SettingsListItem>
         )
       },
-      (service.supportsUnreadCount ? (isLast) => {
+      (supportsUnreadCount ? (isLast) => {
         return (
           <SettingsListItemSwitch
-            key='showUnreadBadge'
+            key='showBadgeCount'
             divider={!isLast}
             label='Show unread count in sidebar or toolbar'
+            checked={showBadgeCount}
             onChange={(evt, toggled) => {
-              mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setShowUnreadBadge, toggled)
-            }}
-            checked={service.showUnreadBadge} />
+              accountActions.reduceService(serviceId, ServiceReducer.setShowBadgeCount, toggled)
+            }} />
         )
       } : undefined),
-      (service.supportsUnreadCount ? (isLast) => {
+      (supportsUnreadCount ? (isLast) => {
         return (
           <SettingsListItemSwitch
-            key='unreadCountsTowardsAppUnread'
+            key='showBadgeCountInApp'
             divider={!isLast}
             label='Show unread count in Menu Bar & App Badge'
+            checked={showBadgeCountInApp}
             onChange={(evt, toggled) => {
-              mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setUnreadCountsTowardsAppUnread, toggled)
-            }}
-            checked={service.unreadCountsTowardsAppUnread} />
+              accountActions.reduceService(serviceId, ServiceReducer.setShowBadgeCountInApp, toggled)
+            }} />
         )
       } : undefined),
-      (service.supportsUnreadActivity ? (isLast) => {
+      (supportsUnreadActivity ? (isLast) => {
         return (
           <SettingsListItemSwitch
             key='showUnreadActivityBadge'
@@ -184,13 +210,13 @@ class ServiceBadgeSettingsSection extends React.Component {
                 <span className={classes.mockUnreadActivityIndicator}>●</span>
               </span>
             )}
+            checked={showBadgeActivity}
             onChange={(evt, toggled) => {
-              mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setShowUnreadActivityBadge, toggled)
-            }}
-            checked={service.showUnreadActivityBadge} />
+              accountActions.reduceService(serviceId, ServiceReducer.setShowBadgeActivity, toggled)
+            }} />
         )
       } : undefined),
-      (service.supportsUnreadActivity ? (isLast) => {
+      (supportsUnreadActivity ? (isLast) => {
         return (
           <SettingsListItemSwitch
             key='unreadActivityCountsTowardsAppUnread'
@@ -201,15 +227,16 @@ class ServiceBadgeSettingsSection extends React.Component {
                 <span className={classes.mockUnreadActivityIndicator}>●</span>
               </span>
             )}
+            checked={showBadgeActivityInApp}
             onChange={(evt, toggled) => {
-              mailboxActions.reduceService(mailbox.id, service.type, ServiceReducer.setUnreadActivityCountsTowardsAppUnread, toggled)
-            }}
-            checked={service.unreadActivityCountsTowardsAppUnread} />
+              accountActions.reduceService(serviceId, ServiceReducer.setShowBadgeActivityInApp, toggled)
+            }} />
         )
       } : undefined)
     ].filter((item) => !!item).map((item, index, arr) => {
       return item(index === (arr.length - 1))
     })
+    if (!items.length) { return false }
 
     return (
       <SettingsListSection title='Badges' icon={<AdjustIcon />} {...passProps}>
@@ -219,4 +246,4 @@ class ServiceBadgeSettingsSection extends React.Component {
   }
 }
 
-export default ServiceBadgeSettingsSection
+export default ServiceBadgeSection

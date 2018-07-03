@@ -77,8 +77,6 @@ class SidelistItemSingleService extends React.Component {
     const serviceData = accountState.getServiceData(serviceId)
 
     return {
-      popover: false,
-      popoverAnchor: null,
       mailbox: mailbox,
       serviceId: serviceId,
       service: service,
@@ -120,6 +118,7 @@ class SidelistItemSingleService extends React.Component {
   handleOpenPopover = (evt) => {
     evt.preventDefault()
     this.setState({
+      isHovering: false,
       popover: true,
       popoverAnchor: evt.currentTarget
     })
