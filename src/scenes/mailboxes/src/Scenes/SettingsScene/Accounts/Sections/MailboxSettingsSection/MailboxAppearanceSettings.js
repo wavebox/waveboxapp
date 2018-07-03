@@ -75,7 +75,6 @@ class MailboxAppearanceSettings extends React.Component {
     const userState = userStore.getState()
     return {
       uiShowSleepableServiceIndicator: settingsStore.getState().ui.showSleepableServiceIndicator,
-      userHasServices: userState.user.hasServices,
       userHasSleepable: userState.user.hasSleepable,
       ...this.extractStateForMailbox(this.props.mailboxId, accountStore.getState())
     }
@@ -89,7 +88,6 @@ class MailboxAppearanceSettings extends React.Component {
 
   userChanged = (userState) => {
     this.setState({
-      userHasServices: userState.user.hasServices,
       userHasSleepable: userState.user.hasSleepable
     })
   }

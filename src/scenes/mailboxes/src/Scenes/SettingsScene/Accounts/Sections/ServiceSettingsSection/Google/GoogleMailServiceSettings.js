@@ -29,7 +29,7 @@ export default class GoogleMailServiceSettings extends React.Component {
 
   render () {
     const { serviceId, showRestart, onRequestEditCustomCode, ...passProps } = this.props
-//TODO googledrive links
+
     return (
       <div {...passProps}>
         <GoogleMailUnreadSettings serviceId={serviceId} />

@@ -95,7 +95,6 @@ class User extends Model {
   // Properties: Permissions: Features
   /* **************************************************************************/
 
-  get hasServices () { return true; return this._value_('hasServices', false) } //TODO depricate
   get hasSleepable () { return this._value_('hasSleepable', false) }
 
   /* **************************************************************************/

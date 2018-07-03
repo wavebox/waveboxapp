@@ -44,7 +44,7 @@ class GenericServiceReducer extends ServiceReducer {
   * @param use: true to use, false otherwise
   */
   static setUsePageTitleAsDisplayName (service, use) {
-    return service.changeData({ usePageTitleAsDisplayName: use }) //TODO prop me up into col
+    return service.changeData({ usePageTitleAsDisplayName: use })
   }
 
   /**
@@ -53,10 +53,8 @@ class GenericServiceReducer extends ServiceReducer {
   * @param use: true to use, false otherwise
   */
   static setUsePageThemeAsColor (service, use) {
-    return service.changeData({ usePageThemeAsColor: use }) //TODO prop me up into col
+    return service.changeData({ usePageThemeAsColor: use })
   }
-
-  //TODO set use favc=icon missing?
 }
 
 export default GenericServiceReducer

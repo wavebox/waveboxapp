@@ -98,7 +98,6 @@ export default class ContainerServiceSettings extends React.Component {
       containerVersion
     } = this.state
     if (!hasService) { return false }
-//TODO window open override rules
 
     return (
       <div {...passProps}>

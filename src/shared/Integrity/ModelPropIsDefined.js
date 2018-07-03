@@ -1,5 +1,3 @@
-//DEV only
-
 const logger = {
   get: (target, name) => {
     let names = ['@@toStringTag']

@@ -36,7 +36,7 @@ class RendererAccountStore extends CoreAccountStore {
 
   handleRemoteSetMailbox ({id, mailboxJS}) {
     if (mailboxJS) {
-      this._mailboxes_.set(id, require("../../Models/UndefinedPropProxy")(new ACMailbox(mailboxJS)))
+      this._mailboxes_.set(id, require('../../Integrity/ModelPropIsDefined')(new ACMailbox(mailboxJS)))
     } else {
       this._mailboxes_.delete(id)
     }

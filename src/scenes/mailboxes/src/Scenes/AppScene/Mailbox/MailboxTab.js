@@ -6,13 +6,11 @@ import GoogleMailServiceWebView from './MailboxWebView/Google/GoogleMailServiceW
 import GoogleHangoutsServiceWebView from './MailboxWebView/Google/GoogleHangoutsServiceWebView'
 import GoogleCalendarServiceWebView from './MailboxWebView/Google/GoogleCalendarServiceWebView'
 import GoogleAlloServiceWebView from './MailboxWebView/Google/GoogleAlloServiceWebView'
-import GoogleChatServiceWebView from './MailboxWebView/Google/GoogleChatServiceWebView'
 import TrelloServiceWebView from './MailboxWebView/Trello/TrelloServiceWebView'
 import SlackServiceWebView from './MailboxWebView/Slack/SlackServiceWebView'
 import GenericServiceWebView from './MailboxWebView/Generic/GenericServiceWebView'
 import ContainerServiceWebView from './MailboxWebView/Container/ContainerServiceWebView'
 import MicrosoftMailServiceWebView from './MailboxWebView/Microsoft/MicrosoftMailServiceWebView'
-import MicrosoftTeamsServiceWebView from './MailboxWebView/Microsoft/MicrosoftTeamsServiceWebView'
 import ServiceWebView from './MailboxWebView/ServiceWebView'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
@@ -161,8 +159,6 @@ class MailboxTab extends React.Component {
         ElementClass = GoogleCalendarServiceWebView; break
       case SERVICE_TYPES.GOOGLE_ALLO:
         ElementClass = GoogleAlloServiceWebView; break
-      case SERVICE_TYPES.GOOGLE_CHAT:
-        ElementClass = GoogleChatServiceWebView; break
       case SERVICE_TYPES.TRELLO:
         ElementClass = TrelloServiceWebView; break
       case SERVICE_TYPES.SLACK:
@@ -173,8 +169,6 @@ class MailboxTab extends React.Component {
         ElementClass = ContainerServiceWebView; break
       case SERVICE_TYPES.MICROSOFT_MAIL:
         ElementClass = MicrosoftMailServiceWebView; break
-      case SERVICE_TYPES.MICROSOFT_TEAMS:
-        ElementClass = MicrosoftTeamsServiceWebView; break
       default:
         ElementClass = ServiceWebView; break
     }

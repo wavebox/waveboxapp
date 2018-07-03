@@ -43,14 +43,6 @@ class ACClassicContainer extends Model {
   get supportsWBGAPI () { return this._classicServiceValue_('supportsGuestConfig', false) }
 
   /* **************************************************************************/
-  // Properties: UA
-  /* **************************************************************************/
-
-  //Support for these is dropped into the mb. I think we can get away with it
-  //get userAgentString () { return this._value_('userAgentString', '') }
-  //get hasUserAgentString () { return !!this.userAgentString }
-
-  /* **************************************************************************/
   // Properties: Subdomain
   /* **************************************************************************/
 
@@ -104,29 +96,6 @@ class ACClassicContainer extends Model {
   get showBadgeCountDefault () { return this._classicServiceValue_('showUnreadBadgeDefault', true) }
   get showBadgeCountInAppDefault () { return this._classicServiceValue_('unreadCountsTowardsAppUnreadDefault', true) }
   get showBadgeActivityInAppDefault () { return this._classicServiceValue_('showUnreadActivityBadgeDefault', true) }
-
-  /* **************************************************************************/
-  // Properties: Window Opening
-  /* **************************************************************************/
-
-  /*get windowOpenOverrides () {
-    return this._value_('windowOpenOverrides', [])
-      .filter((ovr) => {
-        if (!ovr.id) { return false }
-        if (!ovr.label) { return false }
-
-        let hasRules = false
-        if (Array.isArray(ovr.rulesets) && ovr.rulesets.length) {
-          hasRules = true
-        } else if (Array.isArray(ovr.navigateRulesets) && ovr.navigateRulesets.length) {
-          hasRules = true
-        }
-        if (!hasRules) { return false }
-
-        return true
-      })
-  }
-  get hasWindowOpenOverrides () { return Array.isArray(this.windowOpenOverrides) && this.windowOpenOverrides.length }*/
 
   /* **************************************************************************/
   // Utils

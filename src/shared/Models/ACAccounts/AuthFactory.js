@@ -19,7 +19,7 @@ class AuthFactory {
   */
   static modelizeAuth (data) {
     const Class = MAPPING[data.namespace] || CoreACAuth
-    return require("../UndefinedPropProxy")(new Class(data))
+    return require('../../Integrity/ModelPropIsDefined')(new Class(data))
   }
 }
 

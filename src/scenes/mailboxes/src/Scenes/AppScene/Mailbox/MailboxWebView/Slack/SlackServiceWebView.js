@@ -54,8 +54,17 @@ export default class SlackServiceWebView extends React.Component {
   generateState (props) {
     const { serviceId } = props
     const accountState = accountStore.getState()
+    const service = accountState.getService(serviceId)
+    const serviceData = accountState.getServiceData(serviceId)
+    const serviceAuth = accountState.getMailboxAuthForServiceId(serviceId)
     return {
-      service: accountState.getService(serviceId),
+      ...(service && serviceData && serviceAuth ? {
+        authTeamId: serviceAuth.authTeamId,
+        url: service.getUrlWithData(serviceData, serviceAuth)
+      } : {
+        authTeamId: undefined,
+        url: undefined
+      }),
       isActive: accountState.activeServiceId() === serviceId,
       isSearching: accountState.isSearchingService(serviceId),
       searchTerm: accountState.serviceSearchTerm(serviceId),
@@ -77,15 +86,14 @@ export default class SlackServiceWebView extends React.Component {
   */
   handleOpenItem = (evt) => {
     if (evt.serviceId === this.props.serviceId) {
-      const { service } = this.state
-      if (!service) { return }
+      const { authTeamId, url } = this.state
 
       if (evt.data.launchUri) {
         this.refs[REF].executeJavaScript(`TS.client.handleDeepLink('${evt.data.launchUri}');`)
       } else if (evt.data.channelId) {
-        this.refs[REF].executeJavaScript(`TS.client.handleDeepLink('slack://channel?id=${evt.data.channelId}&team=${service.authTeamId}');`) //service.authTeamId will be undefined
+        this.refs[REF].executeJavaScript(`TS.client.handleDeepLink('slack://channel?id=${evt.data.channelId}&team=${authTeamId}');`)
       } else {
-        //this.refs[REF].loadURL(service.url)
+        this.refs[REF].loadURL(url)
       }
     }
   }

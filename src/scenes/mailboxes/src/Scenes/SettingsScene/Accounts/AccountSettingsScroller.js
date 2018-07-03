@@ -200,8 +200,6 @@ class AccountSettingsScroller extends React.Component {
       services.map((s) => `service-section-${s.id}`)
     )
 
-    //TODO scrollspy not quite working here
-
     return (
       <div
         className={classNames(className, classes.root)}

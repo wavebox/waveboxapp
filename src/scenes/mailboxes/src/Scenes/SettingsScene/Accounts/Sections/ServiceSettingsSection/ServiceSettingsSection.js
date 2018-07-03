@@ -192,7 +192,6 @@ class ServiceSettingsSection extends React.Component {
     } = this.state
     if (!hasService) { return false }
 
-    //TODO some kind of way to add more services
     return (
       <SettingsListSection {...passProps}>
         <SettingsListItem className={classes.toolbar}>

@@ -69,12 +69,14 @@ export default class MailboxAdvancedSettings extends React.Component {
       artificiallyPersistCookies: mailbox.artificiallyPersistCookies,
       defaultWindowOpenMode: mailbox.defaultWindowOpenMode,
       useCustomUserAgent: mailbox.useCustomUserAgent,
-      customUserAgentString: mailbox.customUserAgentString
+      customUserAgentString: mailbox.customUserAgentString,
+      openDriveLinksWithExternalBrowser: mailbox.openDriveLinksWithExternalBrowser
     } : {
       artificiallyPersistCookies: false,
       defaultWindowOpenMode: ACMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER,
       useCustomUserAgent: false,
-      customUserAgentString: ''
+      customUserAgentString: '',
+      openDriveLinksWithExternalBrowser: false
     }
   }
 
@@ -96,7 +98,8 @@ export default class MailboxAdvancedSettings extends React.Component {
       artificiallyPersistCookies,
       defaultWindowOpenMode,
       useCustomUserAgent,
-      customUserAgentString
+      customUserAgentString,
+      openDriveLinksWithExternalBrowser
     } = this.state
 
     return (
@@ -137,6 +140,12 @@ export default class MailboxAdvancedSettings extends React.Component {
             { value: ACMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX, label: 'Wavebox Browser' }
           ]}
           onChange={(evt, value) => accountActions.reduceMailbox(mailboxId, MailboxReducer.setDefaultWindowOpenMode, value)} />
+        <SettingsListItemSwitch
+          label='Always open Google Drive links in the default browser'
+          checked={openDriveLinksWithExternalBrowser}
+          onChange={(evt, toggled) => {
+            accountActions.reduceMailbox(mailboxId, MailboxReducer.setOpenDriveLinksWithExternalBrowser, toggled)
+          }} />
         <SettingsListItemSection divider={false}>
           <SettingsListItemSwitch
             divider={false}

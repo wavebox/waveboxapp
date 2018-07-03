@@ -48,7 +48,6 @@ class ACMailbox extends CoreACModel {
 
   get partition () { return `persist:${this.id}` }
   get artificiallyPersistCookies () { return this._value_('artificiallyPersistCookies', false) }
-  get defaultWindowOpenMode () { return this._value_('defaultWindowOpenMode', DEFAULT_WINDOW_OPEN_MODES.BROWSER) }
   get templateType () { return this._value_('templateType', undefined) }
 
   /* **************************************************************************/
@@ -153,6 +152,59 @@ class ACMailbox extends CoreACModel {
 
   get useCustomUserAgent () { return this._value_('useCustomUserAgent', false) }
   get customUserAgentString () { return this._value_('customUserAgentString', '') }
+
+  /* **************************************************************************/
+  // Window opening
+  /* **************************************************************************/
+
+  get defaultWindowOpenMode () { return this._value_('defaultWindowOpenMode', DEFAULT_WINDOW_OPEN_MODES.BROWSER) }
+  get openDriveLinksWithExternalBrowser () { return this._value_('openGoogleDriveLinksWithExternalBrowser', false) }
+
+  get windowOpenModeOverrideRulesets () {
+    if (this.openDriveLinksWithExternalBrowser) {
+      return [
+        {
+          url: 'http(s)\\://(*.)google.com(/*)',
+          matches: [
+            { url: 'http(s)\\://docs.google.com(/*)', mode: 'EXTERNAL' },
+            { url: 'http(s)\\://drive.google.com(/*)', mode: 'EXTERNAL' },
+            { // Embedded google drive url
+              url: 'http(s)\\://(*.)google.com(/*)',
+              query: { q: 'http(s)\\://drive.google.com(/*)' },
+              mode: 'EXTERNAL'
+            },
+            { // Embedded google docs url
+              url: 'http(s)\\://(*.)google.com(/*)',
+              query: { q: 'http(s)\\://docs.google.com(/*)' },
+              mode: 'EXTERNAL'
+            }
+          ]
+        }
+      ]
+    } else {
+      return []
+    }
+  }
+  get hasWindowOpenModeRulesetOverrides () { return this.windowOpenModeOverrideRulesets && this.windowOpenModeOverrideRulesets.length }
+
+  get navigateModeOverrideRulesets () {
+    if (this.openDriveLinksWithExternalBrowser) {
+      return [
+        {
+          url: 'http(s)\\://*.google.com(/*)',
+          matches: [
+            // Convert content popup to external
+            { windowType: 'CONTENT_POPUP', url: 'http(s)\\://docs.google.com/document/d/*/edit(*)', mode: 'CONVERT_TO_EXTERNAL' },
+            { windowType: 'CONTENT_POPUP', url: 'http(s)\\://docs.google.com/spreadsheets/d/*/edit(*)', mode: 'CONVERT_TO_EXTERNAL' },
+            { windowType: 'CONTENT_POPUP', url: 'http(s)\\://docs.google.com/presentation/d/*/edit(*)', mode: 'CONVERT_TO_EXTERNAL' }
+          ]
+        }
+      ]
+    } else {
+      return []
+    }
+  }
+  get hasNavigateModeOverrideRulesets () { return this.navigateModeOverrideRulesets && this.navigateModeOverrideRulesets.length }
 }
 
 export default ACMailbox

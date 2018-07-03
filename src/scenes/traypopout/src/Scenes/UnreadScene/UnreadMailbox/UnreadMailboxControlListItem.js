@@ -92,7 +92,7 @@ class UnreadMailboxControlListItem extends React.Component {
   generateMailboxState (mailboxId, accountState = accountStore.getState()) {
     return {
       mailbox: accountState.getMailbox(mailboxId),
-      unreadCount: accountState.mailboxUnreadCountForUser(mailboxId),
+      unreadCount: accountState.userUnreadCountForMailbox(mailboxId),
       avatar: accountState.getMailboxAvatarConfig(mailboxId)
     }
   }
@@ -114,7 +114,6 @@ class UnreadMailboxControlListItem extends React.Component {
         <KeyboardArrowLeftIcon className={classes.backArrow} />
         <span className={classes.text}>
           <span className={classes.primaryText}>{mailbox.displayName || 'Untitled'}</span>
-          <span className={classes.secondaryText}>{mailbox.humanizedType}</span>
         </span>
         <MailboxBadge mailbox={mailbox} unreadCount={unreadCount}>
           <MailboxAvatar

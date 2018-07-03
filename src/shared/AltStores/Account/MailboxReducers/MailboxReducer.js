@@ -261,6 +261,15 @@ class MailboxReducer {
     return mailbox.changeData({ defaultWindowOpenMode: mode })
   }
 
+  /**
+  * Sets whether to open drive links in the default browser
+  * @param mailbox: the mailbox that contains the service
+  * @param mode: the new mode
+  */
+  static setOpenDriveLinksWithExternalBrowser (mailbox, open) {
+    return mailbox.changeData({ openGoogleDriveLinksWithExternalBrowser: open })
+  }
+
   /* **************************************************************************/
   // Config
   /* **************************************************************************/

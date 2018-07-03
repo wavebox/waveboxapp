@@ -737,7 +737,7 @@ class CoreAccountStore extends RemoteStore {
     // Mailboxes
     this._mailboxIndex_ = mailboxIndex
     this._mailboxes_ = Object.keys(mailboxes).reduce((acc, id) => {
-      acc.set(id, require("../../Models/UndefinedPropProxy")(new ACMailbox(mailboxes[id])))
+      acc.set(id, require('../../Integrity/ModelPropIsDefined')(new ACMailbox(mailboxes[id])))
       return acc
     }, new Map())
     this._mailboxAuth_ = Object.keys(mailboxAuth).reduce((acc, id) => {

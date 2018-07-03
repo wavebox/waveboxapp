@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import { accountDispatch, AccountLinker } from 'stores/account'
-//import { microsoftActions } from 'stores/microsoft'
+import { microsoftActions } from 'stores/microsoft'
 
 const REF = 'mailbox_tab'
 
@@ -44,7 +44,7 @@ export default class MicrosoftMailServiceWebView extends React.Component {
         AccountLinker.openContentWindow(this.props.serviceId, evt.data.webLink)
         // Normally being able to handle this also indicates that something changed, so lets do a sync
         // after a few seconds to re-evaluate our state
-        //microsoftActions.syncMailboxMailAfter.defer(this.props.mailboxId, 1000 * 5)
+        microsoftActions.syncServiceMailAfter.defer(this.props.serviceId, 1000 * 5)
       }
     }
   }

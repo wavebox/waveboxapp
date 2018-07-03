@@ -167,7 +167,7 @@ class CoreUserStore extends RemoteStore {
 
     // Containers
     this.containers = Object.keys(containerData || {}).reduce((acc, id) => {
-      acc.set(id, require("../../Models/UndefinedPropProxy")(new ACContainer(containerData[id])))
+      acc.set(id, require('../../Integrity/ModelPropIsDefined')(new ACContainer(containerData[id])))
       return acc
     }, new Map())
   }
@@ -203,7 +203,7 @@ class CoreUserStore extends RemoteStore {
       if (data === undefined || data === null) {
         return
       }
-      const container = require("../../Models/UndefinedPropProxy")(new ACContainer(data))
+      const container = require('../../Integrity/ModelPropIsDefined')(new ACContainer(data))
       if (this.containers.has(id) && this.containers.get(id).version >= container.version) {
         return
       }

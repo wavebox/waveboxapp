@@ -73,6 +73,7 @@ class TrayPopout {
     this[privWindow].on('close', this._handleClose)
     this[privWindow].on('closed', this._handleClosed)
     this[privWindow].loadURL(`file://${Resolver.traypopoutScene('popout.html')}`)
+this[privWindow].webContents.openDevTools({mode:'detach'})
 
     // Add us into the manager
     if (this.isWindowedMode) {

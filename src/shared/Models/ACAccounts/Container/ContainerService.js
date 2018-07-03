@@ -24,7 +24,7 @@ class ContainerService extends CoreACService {
     super(data)
 
     this.__adaptors__ = undefined
-    this.__container__ = require("../../UndefinedPropProxy")(new ACContainer(data.container || {}))
+    this.__container__ = require('../../../Integrity/ModelPropIsDefined')(new ACContainer(data.container || {}))
   }
 
   /* **************************************************************************/
@@ -112,6 +112,3 @@ class ContainerService extends CoreACService {
 }
 
 export default ContainerService
-
-
-//TODO windowOpenUserConfig from classic
