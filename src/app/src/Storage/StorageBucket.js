@@ -24,7 +24,6 @@ class StorageBucket {
   /* ****************************************************************************/
 
   constructor (bucketName) {
-    console.log("CREATE",bucketName)
     this[privPath] = path.join(RuntimePaths.DB_DIR_PATH, bucketName + '_db.json')
     this[privWriteHold] = null
     this[privWriteLock] = false

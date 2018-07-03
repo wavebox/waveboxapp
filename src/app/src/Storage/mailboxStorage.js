@@ -328,7 +328,6 @@ class MailboxStorageBucket extends MigratingStorageBucket {
   * @return true if migration happend, false otherwise
   */
   startMigration () {
-    console.log("MIGRATE START")
     if (!this.hasDataToImport) { return false }
 
     const prevMailboxes = this._loadRawMailboxes()
@@ -339,7 +338,7 @@ class MailboxStorageBucket extends MigratingStorageBucket {
       services: {}
     }
     prevMailboxes.forEach((mailbox) => { this._convertMailboxGroup(mailbox, next) })
-return
+
     acmailboxauthStorage.removeAllItems()
     acmailboxauthStorage.setJSONItems(next.mailboxAuths)
     acserviceStorage.removeAllItems()
@@ -349,7 +348,6 @@ return
     acmailboxStorage.setJSONItem(PERSISTENCE_INDEX_KEY, nextMailboxIndex)
 
     this.finishMigration()
-    console.log("MIGRATE END")
     return true
   }
 }
