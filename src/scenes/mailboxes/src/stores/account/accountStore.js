@@ -308,10 +308,10 @@ class AccountStore extends RendererAccountStore {
       })
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.CONTAINER) {
       this._createMailboxFromTemplate(mailboxId, template)
-      this._finalizeCreateAccount(`/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`, 0)
+      this._finalizeCreateAccount(mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`, 0)
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.GENERIC) {
       this._createMailboxFromTemplate(mailboxId, template)
-      this._finalizeCreateAccount(`/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`, 0)
+      this._finalizeCreateAccount(mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`, 0)
     }
   }
 
@@ -386,12 +386,13 @@ class AccountStore extends RendererAccountStore {
   * @param nextUrl='/': the next url to visit
   * @param wait=250: millis to wait before redirecting
   */
-  _finalizeCreateAccount (nextUrl = '/', wait = 250) {
+  _finalizeCreateAccount (mailboxId, nextUrl = '/', wait = 250) {
     // The final step of account creation takes a couple of seconds to cross the bridge
     // a few times. To not display janky info to the user wait a little before redirecting
     // them
     setTimeout(() => {
       window.location.hash = nextUrl
+      actions.changeActiveMailbox.defer(mailboxId)
       settingsActions.tourStart.defer()
     }, wait)
   }
@@ -446,7 +447,7 @@ class AccountStore extends RendererAccountStore {
           // Create the account
           const template = new ACTemplatedAccount(context.template)
           this._createMailboxFromTemplate(context.id, template)
-          this._finalizeCreateAccount(`/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.id}`)
+          this._finalizeCreateAccount(context.id, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.id}`)
         } else if (mode === AUTH_MODES.REAUTHENTICATE) {
           if (this.hasMailboxAuth(context.authId)) {
             actions.reduceAuth.defer(
@@ -490,7 +491,7 @@ class AccountStore extends RendererAccountStore {
           // Create the account
           const template = new ACTemplatedAccount(context.template)
           this._createMailboxFromTemplate(context.id, template)
-          this._finalizeCreateAccount()
+          this._finalizeCreateAccount(context.id)
         } else if (mode === AUTH_MODES.REAUTHENTICATE) {
           if (this.hasMailboxAuth(context.authId)) {
             actions.reduceAuth.defer(
@@ -529,7 +530,7 @@ class AccountStore extends RendererAccountStore {
       // Create the account
       const template = new ACTemplatedAccount(context.template)
       this._createMailboxFromTemplate(context.id, template)
-      this._finalizeCreateAccount()
+      this._finalizeCreateAccount(context.id)
     } else if (mode === AUTH_MODES.REAUTHENTICATE) {
       if (this.hasMailboxAuth(context.authId)) {
         actions.reduceAuth.defer(
@@ -567,7 +568,7 @@ class AccountStore extends RendererAccountStore {
           // Create the account
           const template = new ACTemplatedAccount(context.template)
           this._createMailboxFromTemplate(context.id, template)
-          this._finalizeCreateAccount(`/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.id}`)
+          this._finalizeCreateAccount(context.id, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.id}`)
         } else if (mode === AUTH_MODES.REAUTHENTICATE) {
           if (this.hasMailboxAuth(context.authId)) {
             actions.reduceAuth.defer(

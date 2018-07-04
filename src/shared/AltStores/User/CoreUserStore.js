@@ -156,7 +156,7 @@ class CoreUserStore extends RemoteStore {
     if (userData[USER] && userData[USER_EPOCH]) {
       this.user = new User(userData[USER], userData[USER_EPOCH])
     } else {
-      this.user = null
+      this.user = new User({}, new Date().getTime())
     }
 
     // Extensions
