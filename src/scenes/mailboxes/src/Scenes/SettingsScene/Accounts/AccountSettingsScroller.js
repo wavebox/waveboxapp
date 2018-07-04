@@ -36,7 +36,7 @@ const styles = {
     left: SCROLLSPY_WIDTH,
     bottom: 0,
     right: 0,
-    paddingBottom: 100,
+    paddingBottom: 200,
     ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
   },
   scrollspy: {
@@ -86,6 +86,9 @@ const styles = {
     scrollspy: {
       display: 'none'
     }
+  },
+  mailboxSettingsSection: {
+    marginBottom: 80
   }
 }
 
@@ -207,23 +210,22 @@ class AccountSettingsScroller extends React.Component {
         {...passProps}>
         <div className={classes.scroller} ref={(n) => { this.scrollerRef = n }}>
           <MailboxSettingsSection
+            className={classes.mailboxSettingsSection}
             mailboxId={mailboxId}
             showRestart={showRestart}
             onRequestEditCustomCode={onRequestEditCustomCode} />
-          <br />
-          <br />
-          {renderServices ? (
-            services.map((service) => {
-              return (
-                <ServiceSettingsSection
-                  key={service.id}
-                  id={`service-section-${service.id}`}
-                  serviceId={service.id}
-                  showRestart={showRestart}
-                  onRequestEditCustomCode={onRequestEditCustomCode} />
-              )
-            })
-          ) : undefined}
+          {services.map((service) => {
+            return (
+              <div key={service.id} id={`service-section-${service.id}`}>
+                {renderServices ? (
+                  <ServiceSettingsSection
+                    serviceId={service.id}
+                    showRestart={showRestart}
+                    onRequestEditCustomCode={onRequestEditCustomCode} />
+                ) : undefined}
+              </div>
+            )
+          })}
         </div>
         <Paper className={classes.scrollspy}>
           <List dense className={classes.scrollspyList}>
@@ -232,7 +234,6 @@ class AccountSettingsScroller extends React.Component {
               componentTag='div'
               items={scrollspyIds}
               currentClassName='is-current'>
-              <ListSubheader disableSticky>Account</ListSubheader>
               <ListItem
                 divider
                 button
@@ -269,7 +270,6 @@ class AccountSettingsScroller extends React.Component {
                 <BuildIcon className={classes.scrollspyIcon} />
                 Tools
               </ListItem>
-              <ListSubheader disableSticky>Services</ListSubheader>
               {services.map((service, i, arr) => {
                 return (
                   <ListItem
