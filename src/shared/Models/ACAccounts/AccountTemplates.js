@@ -5,6 +5,7 @@ const ACCOUNT_TEMPLATES = Object.freeze({
     type: 'CONTAINER',
     color: 'rgb(255, 255, 255)',
     displayName: 'Container',
+    hasAuthStep: false,
     serviceTypes: [
       SERVICE_TYPES.CONTAINER
     ],
@@ -16,6 +17,7 @@ const ACCOUNT_TEMPLATES = Object.freeze({
     type: 'GENERIC',
     color: '#2ecc71',
     displayName: 'Weblink',
+    hasAuthStep: false,
     serviceTypes: [
       SERVICE_TYPES.GENERIC
     ],
@@ -27,6 +29,7 @@ const ACCOUNT_TEMPLATES = Object.freeze({
     type: 'GOOGLE_MAIL',
     color: 'rgb(220, 75, 75)',
     displayName: 'Google',
+    hasAuthStep: true,
     serviceTypes: [
       SERVICE_TYPES.GOOGLE_MAIL,
       SERVICE_TYPES.GOOGLE_DRIVE,
@@ -66,6 +69,7 @@ const ACCOUNT_TEMPLATES = Object.freeze({
     type: 'GOOGLE_INBOX',
     color: 'rgb(66, 133, 244)',
     displayName: 'Google',
+    hasAuthStep: true,
     serviceTypes: [
       SERVICE_TYPES.GOOGLE_INBOX,
       SERVICE_TYPES.GOOGLE_DRIVE,
@@ -105,6 +109,7 @@ const ACCOUNT_TEMPLATES = Object.freeze({
     type: 'OFFICE365',
     color: 'rgb(237, 70, 47)',
     displayName: 'Office 365',
+    hasAuthStep: true,
     serviceTypes: [
       SERVICE_TYPES.MICROSOFT_MAIL,
       SERVICE_TYPES.MICROSOFT_ONEDRIVE,
@@ -131,6 +136,7 @@ const ACCOUNT_TEMPLATES = Object.freeze({
     type: 'OUTLOOK',
     color: '#0078d7',
     displayName: 'Outlook',
+    hasAuthStep: true,
     serviceTypes: [
       SERVICE_TYPES.MICROSOFT_MAIL,
       SERVICE_TYPES.MICROSOFT_ONEDRIVE,
@@ -157,6 +163,7 @@ const ACCOUNT_TEMPLATES = Object.freeze({
     type: 'SLACK',
     color: 'rgb(102, 187, 152)',
     displayName: 'Slack',
+    hasAuthStep: true,
     serviceTypes: [
       SERVICE_TYPES.SLACK
     ],
@@ -168,6 +175,7 @@ const ACCOUNT_TEMPLATES = Object.freeze({
     type: 'TRELLO',
     color: 'rgb(33, 108, 167)',
     displayName: 'Trello',
+    hasAuthStep: true,
     serviceTypes: [
       SERVICE_TYPES.TRELLO
     ],

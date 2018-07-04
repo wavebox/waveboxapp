@@ -126,6 +126,7 @@ class MailboxWizardScene extends React.Component {
     const { open } = this.state
     const { match, classes } = this.props
     const currentStep = parseInt(match.params.step)
+    const template = ACCOUNT_TEMPLATES[match.params.templateType]
 
     return (
       <Dialog
@@ -133,7 +134,10 @@ class MailboxWizardScene extends React.Component {
         open={open}
         classes={{ paper: classes.dialog }}>
         <DialogContent className={classes.dialogContent}>
-          <MailboxWizardStepper currentStep={currentStep} className={classes.master} />
+          <MailboxWizardStepper
+            currentStep={currentStep}
+            hasAuthStep={template ? template.hasAuthStep : true}
+            className={classes.master} />
           {this.renderStep(
             classes,
             currentStep,

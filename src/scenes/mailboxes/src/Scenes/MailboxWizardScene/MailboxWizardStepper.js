@@ -23,7 +23,8 @@ class MailboxWizardStepper extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    currentStep: PropTypes.number.isRequired
+    currentStep: PropTypes.number.isRequired,
+    hasAuthStep: PropTypes.bool.isRequired
   }
 
   /* **************************************************************************/
@@ -35,13 +36,44 @@ class MailboxWizardStepper extends React.Component {
   }
 
   render () {
-    const { currentStep, classes, className, ...passProps } = this.props
+    const {
+      currentStep,
+      classes,
+      hasAuthStep,
+      className,
+      ...passProps
+    } = this.props
 
-    return (
+    return hasAuthStep ? (
       <div className={classNames(classes.container, className)} {...passProps}>
-        <MailboxWizardStepperStep renderStep={0} currentStep={currentStep} />
-        <MailboxWizardStepperStep renderStep={1} currentStep={currentStep} />
-        <MailboxWizardStepperStep renderStep={2} currentStep={currentStep} />
+        <MailboxWizardStepperStep
+          step={0}
+          text='Personalise'
+          stepNumberText={1}
+          currentStep={currentStep} />
+        <MailboxWizardStepperStep
+          step={1}
+          text='Sign in'
+          stepNumberText={2}
+          currentStep={currentStep} />
+        <MailboxWizardStepperStep
+          step={2}
+          text='Configure'
+          stepNumberText={3}
+          currentStep={currentStep} />
+      </div>
+    ) : (
+      <div className={classNames(classes.container, className)} {...passProps}>
+        <MailboxWizardStepperStep
+          step={0}
+          text='Personalise'
+          stepNumberText={1}
+          currentStep={currentStep} />
+        <MailboxWizardStepperStep
+          step={2}
+          text='Configure'
+          stepNumberText={2}
+          currentStep={currentStep} />
       </div>
     )
   }

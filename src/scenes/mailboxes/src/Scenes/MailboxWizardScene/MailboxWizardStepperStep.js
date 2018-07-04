@@ -82,8 +82,10 @@ class MailboxWizardStepperStep extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    renderStep: PropTypes.number.isRequired,
-    currentStep: PropTypes.number.isRequired
+    step: PropTypes.number.isRequired,
+    currentStep: PropTypes.number.isRequired,
+    stepNumberText: PropTypes.node.isRequired,
+    text: PropTypes.node.isRequired
   }
 
   /* **************************************************************************/
@@ -94,64 +96,30 @@ class MailboxWizardStepperStep extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
-  /**
-  * @param classes:
-  * @param step: the step to get the text for
-  * @param active: true if this step is active
-  * @return jsx
-  */
-  renderStepText (classes, step, active) {
-    switch (step) {
-      case 0:
-        return (
-          <div className={active ? classes.stepTextActive : classes.stepTextInactive}>
-            Personalise
-          </div>
-        )
-      case 1:
-        return (
-          <div className={active ? classes.stepTextActive : classes.stepTextInactive}>
-            Sign in
-          </div>
-        )
-      case 2:
-        return (
-          <div className={active ? classes.stepTextActive : classes.stepTextInactive}>
-            Configure
-          </div>
-        )
-    }
-  }
-
-  /**
-  * Renders the step icon
-  * @param classes:
-  * @param step: the step to render for
-  * @param active: true if this step is active
-  * @param complete: true if this step is complete
-  * @return jsx
-  */
-  renderStepIcon (classes, step, active, complete) {
-    return (
-      <div className={active ? classes.stepIconActive : classes.stepIconInactive}>
-        {complete ? (
-          <FontAwesomeIcon
-            icon={fasCheck}
-            className={classNames(active ? classes.stepCheckActive : classes.stepCheckInactive)} />
-        ) : (
-          <span className={classes.stepNumber}>{step + 1}</span>
-        )}
-      </div>
-    )
-  }
-
   render () {
-    const { renderStep, currentStep, className, classes, ...passProps } = this.props
+    const {
+      step,
+      currentStep,
+      stepNumberText,
+      className,
+      classes,
+      text,
+      ...passProps
+    } = this.props
 
+    const active = currentStep === step
     return (
       <div {...passProps} className={classNames(classes.container, className)}>
-        {this.renderStepIcon(classes, renderStep, currentStep === renderStep, currentStep > renderStep)}
-        {this.renderStepText(classes, renderStep, currentStep === renderStep)}
+        <div className={active ? classes.stepIconActive : classes.stepIconInactive}>
+          {currentStep > step ? (
+            <FontAwesomeIcon icon={fasCheck} className={classNames(active ? classes.stepCheckActive : classes.stepCheckInactive)} />
+          ) : (
+            <span className={classes.stepNumber}>{stepNumberText}</span>
+          )}
+        </div>
+        <div className={active ? classes.stepTextActive : classes.stepTextInactive}>
+          {text}
+        </div>
       </div>
     )
   }
