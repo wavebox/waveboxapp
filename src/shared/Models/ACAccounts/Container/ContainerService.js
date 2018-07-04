@@ -57,7 +57,7 @@ class ContainerService extends CoreACService {
   get humanizedLogos () { return this.container.logos }
   get humanizedLogo () { return this.humanizedLogos[this.humanizedLogos.length - 1] }
 
-  humanizedLogoAtSize (size) { return this.humanizedLogoAtSize(this.humanizedLogos, size) }
+  humanizedLogoAtSize (size) { return this.getLogoAtSize(this.humanizedLogos, size) }
 
   /* **************************************************************************/
   // Properties: Sleep
