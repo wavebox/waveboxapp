@@ -41,6 +41,7 @@ module.exports = Object.freeze({
   // Google
   GOOGLE_PROFILE_SYNC_INTERVAL: hours(6),
   GOOGLE_MAILBOX_WATCH_INTERVAL: days(6),
+  GOOGLE_MAILBOX_WATCH_THROTTLE: hours(1),
 
   // Trello
   TRELLO_PROFILE_SYNC_INTERVAL: hours(6),

@@ -11,7 +11,7 @@ class MicrosoftContactsService extends MicrosoftService {
   // Class: Humanized
   /* **************************************************************************/
 
-  static get humanizedType () { return 'Contacts' }
+  static get humanizedType () { return 'People' }
   static get humanizedLogos () {
     return [
       'microsoft/logo_contacts_32px.png',

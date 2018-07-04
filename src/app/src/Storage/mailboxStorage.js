@@ -5,8 +5,14 @@ import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 import acmailboxauthStorage from './acmailboxauthStorage'
 import acmailboxStorage from './acmailboxStorage'
 import acserviceStorage from './acserviceStorage'
+import ClassicMailboxFactory from 'shared/Models/Classic/Accounts/MailboxFactory'
+import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
+import ServiceFactory from 'shared/Models/ACAccounts/ServiceFactory'
+import AuthFactory from 'shared/Models/ACAccounts/AuthFactory'
+import fs from 'fs-extra'
 
-const CLASSIC_SERVICE_TO_NEW = {
+const MIGRATION_PRINT_EXTRA = false
+const CLASSIC_SERVICE_TYPE_TO_NEW = {
   'TRELLO:DEFAULT': SERVICE_TYPES.TRELLO,
   'SLACK:DEFAULT': SERVICE_TYPES.SLACK,
   'GOOGLE:DEFAULT': (mailbox, service) => {
@@ -50,6 +56,163 @@ const CLASSIC_SERVICE_TO_NEW = {
   'CONTAINER:DEFAULT': SERVICE_TYPES.CONTAINER
 }
 
+const CLASSIC_MAILBOX_TO_TEMPLATE = {
+  'TRELLO': () => 'TRELLO',
+  'SLACK': () => 'SLACK',
+  'GOOGLE': (mb) => {
+    const sv = (mb.services || []).find((s) => s.type === 'DEFAULT')
+    if (sv && sv.accessMode === 'GMAIL') {
+      return 'GOOGLE_MAIL'
+    } else if (sv && sv.accessMode === 'GINBOX') {
+      return 'GOOGLE_INBOX'
+    }
+  },
+  'MICROSOFT': (mb) => {
+    if (mb.accessMode === 'OUTLOOK') {
+      return 'OUTLOOK'
+    } else if (mb.accessMode === 'OFFICE365') {
+      return 'OFFICE365'
+    }
+  },
+  'GENERIC': () => 'GENERIC',
+  'CONTAINER': () => 'CONTAINER'
+}
+
+const CLASSIC_MAILBOX_KEY_TO_NEW = {
+  cumulativeSidebarUnreadBadgeColor: 'badgeColor',
+  showCumulativeSidebarUnreadBadge: 'showBadge'
+}
+const CLASSIC_MAILBOX_KEY_TO_AUTH = {
+  authAppKey: [new Set(['TRELLO']), 'authAppKey'],
+  authToken: [new Set(['TRELLO', 'SLACK']), 'authToken'],
+  authTeamId: [new Set(['SLACK']), 'authTeamId'],
+  authTeamName: [new Set(['SLACK']), 'authTeamName'],
+  authUserId: [new Set(['SLACK']), 'authUserId'],
+  authUserName: [new Set(['SLACK']), 'authUserName'],
+  authUrl: [new Set(['SLACK']), 'authUrl'],
+  authPushToken: [new Set(['GOOGLE']), 'pushToken'],
+  authEmail: [new Set(['GOOGLE']), 'authEmail'],
+  authExpiryTime: [new Set(['GOOGLE', 'MICROSOFT']), 'authExpiryTime'],
+  refreshToken: [new Set(['GOOGLE', 'MICROSOFT']), 'refreshToken'],
+  accessToken: [new Set(['GOOGLE', 'MICROSOFT']), 'accessToken'],
+  authTime: [new Set(['GOOGLE', 'MICROSOFT']), 'authTime'],
+  accessMode: [new Set(['MICROSOFT']), 'accessMode'],
+  authProtocolVersion: [new Set(['MICROSOFT']), 'authProtocolVersion']
+}
+const CLASSIC_MAILBOX_KEY_TO_SERVICE = {
+  urlSubdomain: 'urlSubdomain',
+  hasServiceLocalAvatar: 'hasServiceLocalAvatarId',
+  displayName: 'displayName',
+  containerId: [new Set(['CONTAINER']), 'containerId'],
+  container: [new Set(['CONTAINER']), 'container'],
+  avatarCharacterDisplay: [new Set(['TRELLO']), 'serviceAvatarCharacterDisplay'],
+  initials: [new Set(['TRELLO']), 'initials'],
+  fullName: [new Set(['TRELLO']), 'fullName'],
+  username: [new Set(['TRELLO']), 'username'],
+  email: [new Set(['TRELLO', 'GOOGLE', 'MICROSOFT']), 'serviceDisplayName'],
+  hasTeamOverview: [new Set(['SLACK']), 'hasTeamOverview'],
+  teamOverview: [new Set(['SLACK']), 'teamOverview'],
+  hasSelfOverview: [new Set(['SLACK']), 'hasSelfOverview'],
+  selfOverview: [new Set(['SLACK']), 'selfOverview'],
+  avatarURL: 'serviceAvatarURL',
+  customAvatarId: 'avatarId',
+  hasCustomAvatar: 'hasAvatarId',
+  usePageThemeAsColor: [new Set(['GENERIC']), 'usePageThemeAsColor'],
+  usePageTitleAsDisplayName: [new Set(['GENERIC']), 'usePageTitleAsDisplayName'],
+  userFullName: [new Set(['MICROSOFT']), 'userFullName'],
+  userId: [new Set(['MICROSOFT']), 'userId']
+}
+const CLASSIC_MAILBOX_KEY_DEPRICATED = new Set([
+  'supportsAuth',
+  'serviceToolbarIconLayout',
+  'serviceDisplayMode',
+  'additionalServices',
+  'defaultService',
+  'additionalServiceTypes',
+  'hasAdditionalServices',
+  'disabledServiceTypes',
+  'enabledServiceTypes',
+  'enabledServices',
+  'supportsAdditionalServiceTypes',
+  'defaultServiceTypes',
+  'supportedServiceTypes',
+  'supportsWaveboxAuth',
+  'isIntegrated',
+  'partition',
+  'type',
+  'humanizedUnreadItemType',
+  'humanizedLogo',
+  'humanizedLogos',
+  'humanizedType',
+  'containerVersion', // Container
+  'windowOpenUserConfig', // Container
+  'enabledWindowOpenOverrideConfigs', // Container
+  'isAuthenticationInvalid', // Inconsistent across classic types
+  'hasAuth', // Inconsistent across classic types
+  'pageThemeColor', // Generic
+  'pageTitle', // Generic
+  'ACCESS_MODES' // Microsoft
+])
+const CLASSIC_MAILBOX_KEY_SKIP = new Set([
+  'userDisplayName', // Container
+  'auth' // Slack, Google, Microsoft
+])
+const CLASSIC_MAILBOX_KEY_TO_CONTAINER = {
+  hasUrlSubdomain: 'hasUrlSubdomain'
+}
+const CLASSIC_SERVICE_KEY_TO_NEW = {
+  showUnreadBadge: 'showBadgeCount',
+  unreadCountsTowardsAppUnread: 'showBadgeCountInApp',
+  showUnreadActivityBadge: 'showBadgeActivity',
+  unreadActivityCountsTowardsAppUnread: 'showBadgeActivityInApp',
+  unreadBadgeColor: 'badgeColor',
+  supportsGuestConfig: 'supportsWBGAPI'
+}
+const CLASSIC_SERVICE_KEY_TO_CONTAINER = {
+  documentTitleUnreadBlinks: 'documentTitleUnreadBlinks',
+  documentTitleHasUnread: 'documentTitleHasUnread',
+  useAsyncAlerts: 'useAsyncAlerts',
+  html5NotificationsGenerateUnreadActivity: 'html5NotificationsGenerateUnreadActivity'
+}
+const CLASSIC_SERVICE_KEY_DEPRICATED = new Set([
+  'notifications',
+  'trayMessages',
+  'supportedProtocols',
+  'supportsCompose',
+  'lastUrl',
+  'hasUnreadActivity',
+  'unreadCount',
+  'mergeChangesetOnActive',
+  'restoreLastUrlDefault',
+  'containerService',
+  'unreadNotifications',
+  'slackUnreadIMInfo', // Slack
+  'slackUnreadMPIMInfo', // Slack
+  'slackUnreadGroupInfo', // Slack
+  'slackUnreadChannelInfo', // Slack
+  'unreadThreadsIndexed', // Google
+  'unreadThreads', // Google
+  'hasHistoryId', // Google
+  'historyId', // Google
+  'accessMode', // Google
+  'teamName', // Slack
+  'depricatedOpenWindowsExternally', // Generic
+  'unreadMessages', // Microsoft
+  'ACCESS_MODES' // Microsoft
+])
+const CLASSIC_SERVICE_KEY_SKIP = { // keys we're just not checking
+  'type': true,
+  'restorableUrl': true,
+  'guestConfig': true,
+  'humanizedType': 'MICROSOFT:DEFAULT',
+  'humanizedUnreadItemType': true, // We updated these to be more natural
+  'humanizedLogo': true,
+  'humanizedLogos': true,
+  'humanizedTypeShort': true,
+  'unreadCountUpdateTime': 'GOOGLE:COMMUNICATION',
+  'url': 'SLACK:DEFAULT'
+}
+
 class MailboxStorageBucket extends MigratingStorageBucket {
   /* ****************************************************************************/
   // Lifecycle
@@ -75,6 +238,80 @@ class MailboxStorageBucket extends MigratingStorageBucket {
       .map((id) => rawData[id])
       .filter((mb) => !!mb)
   }
+
+  /* ****************************************************************************/
+  // Modelizing
+  /* ****************************************************************************/
+
+  /**
+  * Validates the migration
+  * @param prevMailboxesJS: the previous mailboxes as a list
+  * @param nextJS: the next object
+  * @return { prevMailboxes, next }
+  */
+  _modelizeForValidation (prevMailboxesJS, nextJS) {
+    const prevMailboxes = prevMailboxesJS.map((js) => {
+      const mailbox = ClassicMailboxFactory.modelize(js.id, js)
+      return {
+        mailbox: mailbox,
+        services: mailbox.enabledServices
+      }
+    })
+    const nextMailboxes = nextJS.mailboxIndex.map((mailboxId) => {
+      const mailbox = new ACMailbox(nextJS.mailboxes[mailboxId])
+      const authId = Object.keys(nextJS.mailboxAuths).find((k) => k.startsWith(mailboxId))
+      return {
+        mailbox: mailbox,
+        auth: AuthFactory.modelizeAuth(nextJS.mailboxAuths[authId] || { hasAuth: true }),
+        services: mailbox.allServices.map((serviceId) => {
+          return ServiceFactory.modelizeService(nextJS.services[serviceId])
+        })
+      }
+    })
+
+    return { prevMailboxes, nextMailboxes }
+  }
+
+  /**
+  * Gets all the non-function instance properties from a model
+  * @param model: the model
+  * @return a list of prop names
+  */
+  _allModelProps (model) {
+    const systemKeys = new Set([
+      '__proto__'
+    ])
+    let propNames = []
+    let insp = model.constructor.prototype
+    while (insp !== null) {
+      const names = Object.getOwnPropertyNames(insp)
+        .filter((n) => typeof (model[n]) !== 'function')
+        .filter((n) => !systemKeys.has(n))
+      propNames = propNames.concat(names)
+      insp = Object.getPrototypeOf(insp)
+    }
+
+    return Array.from(new Set(propNames))
+  }
+
+  /**
+  * Checks if two model props compare
+  * @param a: prop a
+  * @param b: prop b
+  * @return true if they equal each other or they json stringify to each other
+  */
+  _modelPropsCompare (a, b) {
+    if (a === b) { return true }
+    if (JSON.stringify(a) === JSON.stringify(b)) { return true }
+    if (typeof (a) === 'object' && typeof (a.cloneData) === 'function' && typeof (b) === 'object' && typeof (b.cloneData) === 'function') {
+      if (JSON.stringify(a.cloneData()) === JSON.stringify(b.cloneData())) { return true }
+    }
+    return false
+  }
+
+  /* ****************************************************************************/
+  // Converting
+  /* ****************************************************************************/
 
   /**
   * Converts the mailbox into the new style
@@ -122,6 +359,9 @@ class MailboxStorageBucket extends MigratingStorageBucket {
       id: mailbox.id,
       changedTime: mailbox.changedTime,
       type: mailbox.type,
+      templateType: CLASSIC_MAILBOX_TO_TEMPLATE[mailbox.type]
+        ? CLASSIC_MAILBOX_TO_TEMPLATE[mailbox.type](mailbox)
+        : undefined,
       artificiallyPersistCookies: mailbox.artificiallyPersistCookies,
       defaultWindowOpenMode: mailbox.defaultWindowOpenMode,
       avatarId: mailbox.customAvatar,
@@ -205,6 +445,7 @@ class MailboxStorageBucket extends MigratingStorageBucket {
         hasAuth: !!mailbox.auth,
         authData: {
           ...mailbox.auth,
+          accessMode: mailbox.accessMode,
           driveUrl: (storageService || {}).driveUrl
         }
       }))
@@ -240,11 +481,14 @@ class MailboxStorageBucket extends MigratingStorageBucket {
     const fqClassicType = `${mailbox.type}:${service.type}`
     const nextService = {
       id: uuid.v4(),
-      type: typeof (CLASSIC_SERVICE_TO_NEW[fqClassicType]) === 'function'
-        ? CLASSIC_SERVICE_TO_NEW[fqClassicType](mailbox, service)
-        : CLASSIC_SERVICE_TO_NEW[fqClassicType],
+      type: typeof (CLASSIC_SERVICE_TYPE_TO_NEW[fqClassicType]) === 'function'
+        ? CLASSIC_SERVICE_TYPE_TO_NEW[fqClassicType](mailbox, service)
+        : CLASSIC_SERVICE_TYPE_TO_NEW[fqClassicType],
       parentId: mailbox.id,
-      sleepable: service.sleepable,
+      // Default servies used to have the default getter as false. This was then migrated messily for new and old accounts so handle that
+      sleepable: service.sleepable === undefined && mailbox.type !== 'CONTAINER' && service.type === 'DEFAULT'
+        ? false
+        : service.sleepable,
       sleepableTimeout: service.sleepableTimeout,
       hasSeenSleepableWizard: service.hasSeenSleepableWizard,
       restoreLastUrl: service.restoreLastUrl,
@@ -275,7 +519,8 @@ class MailboxStorageBucket extends MigratingStorageBucket {
       customCSS: service.customCSS,
       customJS: service.customJS,
       serviceAvatarURL: mailbox.avatar,
-      serviceLocalAvatarId: mailbox.serviceLocalAvatar
+      serviceLocalAvatarId: mailbox.serviceLocalAvatar,
+      avatarId: mailbox.customAvatar
     }
 
     if (service.type === 'DEFAULT') {
@@ -287,8 +532,10 @@ class MailboxStorageBucket extends MigratingStorageBucket {
       } else if (mailbox.type === 'GENERIC') {
         nextService.usePageThemeAsColor = mailbox.usePageThemeAsColor
         nextService.usePageTitleAsDisplayName = mailbox.usePageTitleAsDisplayName
+        nextService.displayName = (mailbox.usePageTitleAsDisplayName ? mailbox.pageTitle : undefined) || mailbox.displayName
         nextService.hasNavigationToolbar = service.hasNavigationToolbar
         nextService.supportsWBGAPI = service.supportsGuestConfig
+        nextService.url = service.url
       } else if (mailbox.type === 'GOOGLE') {
         nextService.serviceDisplayName = mailbox.email
         nextService.customUnreadQuery = service.customUnreadQuery
@@ -301,6 +548,9 @@ class MailboxStorageBucket extends MigratingStorageBucket {
         nextService.email = mailbox.email
         nextService.userFullName = mailbox.userFullName
         nextService.userId = mailbox.userId
+        if (mailbox.accessMode === 'OUTLOOK') {
+          nextService.serviceAvatarURL = `https://apis.live.net/v5.0/${mailbox.userId}/picture?type=large`
+        }
       } else if (mailbox.type === 'SLACK') {
         nextService.selfOverview = mailbox.selfOverview
         nextService.teamOverview = mailbox.teamOverview
@@ -320,6 +570,228 @@ class MailboxStorageBucket extends MigratingStorageBucket {
   }
 
   /* ****************************************************************************/
+  // Validating
+  /* ****************************************************************************/
+
+  /**
+  * Validates the migration
+  * @param prevMailboxesJS: the previous mailboxes
+  * @param nextJS: the next object
+  * @return an array of warnings
+  */
+  _validateMigration (prevMailboxesJS, nextJS) {
+    const report = []
+    try {
+      const { prevMailboxes, nextMailboxes } = this._modelizeForValidation(prevMailboxesJS, nextJS)
+
+      // Do some structural checking
+      if (prevMailboxes.length !== nextMailboxes.length) {
+        report.push({ level: 'fatal', message: `Mailbox counts are not equal ${prevMailboxes.length} !== ${nextMailboxes.length}` })
+        return report
+      }
+
+      // Build the mailboxes array
+      const mailboxes = prevMailboxes.map((p, i) => {
+        return [p, nextMailboxes[i]]
+      })
+
+      // Do some more structural checking
+      let serviceCountCheckFail = false
+      mailboxes.forEach(([prev, next]) => {
+        if (prev.services.length !== next.services.length) {
+          report.push({ level: 'fatal', ctx: prev.mailbox.id, message: `Service counts are not equal ${prev.services.length} !== ${next.services.length}` })
+          serviceCountCheckFail = true
+        }
+      })
+      if (serviceCountCheckFail) { return report }
+
+      // Check the props
+      mailboxes.forEach(([prev, next]) => {
+        this._allModelProps(prev.mailbox).forEach((prevK) => {
+          if (CLASSIC_MAILBOX_KEY_TO_AUTH[prevK]) {
+            let authK
+            if (Array.isArray(CLASSIC_MAILBOX_KEY_TO_AUTH[prevK])) {
+              if (CLASSIC_MAILBOX_KEY_TO_AUTH[prevK][0].has(prev.mailbox.type)) {
+                authK = CLASSIC_MAILBOX_KEY_TO_AUTH[prevK][1]
+              }
+            } else {
+              authK = CLASSIC_MAILBOX_KEY_TO_AUTH[prevK]
+            }
+
+            if (authK) {
+              if (!this._modelPropsCompare(prev.mailbox[prevK], next.auth[authK])) {
+                report.push({
+                  level: 'error',
+                  ctx: `${prev.mailbox.id}:${prev.mailbox.type}`,
+                  message: `Mailbox Auth value is not equal for key ${prevK}`,
+                  extra: [prev.mailbox[prevK], next.auth[authK]]
+                })
+              } else {
+                report.push({
+                  level: 'pass',
+                  ctx: `${prev.mailbox.id}:${prev.mailbox.type}`,
+                  message: `Mailbox Auth value is equal for key ${prevK}`
+                })
+              }
+              return
+            }
+          }
+
+          if (CLASSIC_MAILBOX_KEY_TO_SERVICE[prevK]) {
+            let serviceK
+            if (Array.isArray(CLASSIC_MAILBOX_KEY_TO_SERVICE[prevK])) {
+              if (CLASSIC_MAILBOX_KEY_TO_SERVICE[prevK][0].has(prev.mailbox.type)) {
+                serviceK = CLASSIC_MAILBOX_KEY_TO_SERVICE[prevK][1]
+              }
+            } else {
+              serviceK = CLASSIC_MAILBOX_KEY_TO_SERVICE[prevK]
+            }
+
+            if (serviceK) {
+              if (!this._modelPropsCompare(prev.mailbox[prevK], next.services[0][serviceK])) {
+                report.push({
+                  level: 'error',
+                  ctx: `${prev.mailbox.id}:${prev.mailbox.type}`,
+                  message: `Mailbox Service value is not equal for key ${prevK}`,
+                  extra: [prev.mailbox[prevK], next.services[0][serviceK]]
+                })
+              } else {
+                report.push({
+                  level: 'pass',
+                  ctx: `${prev.mailbox.id}:${prev.mailbox.type}`,
+                  message: `Mailbox Service value is equal for key ${prevK}`
+                })
+              }
+              return
+            }
+          }
+
+          if (CLASSIC_MAILBOX_KEY_TO_CONTAINER[prevK]) {
+            const containerK = CLASSIC_MAILBOX_KEY_TO_CONTAINER[prevK]
+            if (!this._modelPropsCompare(prev.mailbox[prevK], next.services[0].container[containerK])) {
+              report.push({
+                level: 'error',
+                ctx: `${prev.mailbox.id}:${prev.mailbox.type}`,
+                message: `Mailbox Service value is not equal for key ${prevK}`,
+                extra: [prev.mailbox[prevK], next.services[0].container[containerK]]
+              })
+            } else {
+              report.push({
+                level: 'pass',
+                ctx: `${prev.mailbox.id}:${prev.mailbox.type}`,
+                message: `Mailbox Service value is equal for key ${prevK}`
+              })
+            }
+            return
+          }
+
+          if (CLASSIC_MAILBOX_KEY_DEPRICATED.has(prevK)) { return }
+          if (CLASSIC_MAILBOX_KEY_SKIP.has(prevK)) { return }
+          const nextK = CLASSIC_MAILBOX_KEY_TO_NEW[prevK] || prevK
+          if (!this._modelPropsCompare(prev.mailbox[prevK], next.mailbox[nextK])) {
+            report.push({
+              level: 'error',
+              ctx: `${prev.mailbox.id}:${prev.mailbox.type}`,
+              message: `Mailbox value is not equal for key ${prevK}`,
+              extra: [prev.mailbox[prevK], next.mailbox[nextK]]
+            })
+          } else {
+            report.push({
+              level: 'pass',
+              ctx: `${prev.mailbox.id}:${prev.mailbox.type}`,
+              message: `Mailbox value is equal for key ${prevK}`
+            })
+          }
+        })
+        prev.services.map((prevService, index) => {
+          const nextService = next.services[index]
+          this._allModelProps(prevService).forEach((prevK) => {
+            if (CLASSIC_SERVICE_KEY_TO_CONTAINER[prevK]) {
+              const containerK = CLASSIC_SERVICE_KEY_TO_CONTAINER[prevK]
+              if (!this._modelPropsCompare(prevService[prevK], nextService.container[containerK])) {
+                report.push({
+                  level: 'error',
+                  ctx: `${prev.mailbox.id}:${prev.mailbox.type}:${prevService.type}`,
+                  message: `Service container value is not equal for key ${prevK}`,
+                  extra: [prevService[prevK], nextService.container[containerK]]
+                })
+              } else {
+                report.push({
+                  level: 'pass',
+                  ctx: `${prev.mailbox.id}:${prev.mailbox.type}:${prevService.type}`,
+                  message: `Service container value is equal for key ${prevK}`
+                })
+              }
+              return
+            }
+
+            if (CLASSIC_SERVICE_KEY_DEPRICATED.has(prevK)) { return }
+            if (CLASSIC_SERVICE_KEY_SKIP[prevK] === true) { return }
+            if (CLASSIC_SERVICE_KEY_SKIP[prevK] === `${prev.mailbox.type}:${prevService.type}`) { return }
+            const nextK = CLASSIC_SERVICE_KEY_TO_NEW[prevK] || prevK
+            if (!this._modelPropsCompare(prevService[prevK], nextService[nextK])) {
+              report.push({
+                level: 'error',
+                ctx: `${prev.mailbox.id}:${prev.mailbox.type}:${prevService.type}`,
+                message: `Service value is not equal for key ${prevK}`,
+                extra: [prevService[prevK], nextService[nextK]]
+              })
+            } else {
+              report.push({
+                level: 'pass',
+                ctx: `${prev.mailbox.id}:${prev.mailbox.type}:${prevService.type}`,
+                message: `Service value is equal for key ${prevK}`
+              })
+            }
+          })
+        })
+      })
+
+      return report
+    } catch (ex) {
+      report.push({ level: 'fatal', message: `Failed to generate report` })
+      return report
+    }
+  }
+
+  /**
+  * Generates a migration report and outputs to disk
+  * @param prevMailbox: the previous set of mailboxes
+  * @param next: the next set of mailboxes
+  */
+  _generateMigrationReport (prevMailboxes, next) {
+    try {
+      const migrationReport = this._validateMigration(prevMailboxes, next)
+      const {pass, fail} = migrationReport.reduce((acc, l) => {
+        if (l.level === 'pass') {
+          acc.pass++
+        } else {
+          acc.fail++
+        }
+        return acc
+      }, { pass: 0, fail: 0 })
+
+      const str = [
+        `Timestamp: ${new Date()}`,
+        `Mailboxes: ${prevMailboxes.length}`,
+        `Pass: ${pass}`,
+        `Fail: ${fail}`,
+        '-------------------------',
+        '',
+        ''
+      ].concat(migrationReport.map((l) => {
+        let extra = MIGRATION_PRINT_EXTRA
+          ? (l.extra ? '\n  >' + l.extra.join('\n  >') : '')
+          : ''
+        return `[${l.level.toUpperCase()}][${l.ctx}]${l.message}${extra}`
+      })).join('\n')
+      fs.writeFileSync(this.logPath, str)
+    } catch (ex) {
+      /* no-op */
+    }
+  }
+
+  /* ****************************************************************************/
   // Migration
   /* ****************************************************************************/
 
@@ -331,13 +803,15 @@ class MailboxStorageBucket extends MigratingStorageBucket {
     if (!this.hasDataToImport) { return false }
 
     const prevMailboxes = this._loadRawMailboxes()
-    const nextMailboxIndex = prevMailboxes.map((mb) => mb.id)
     const next = {
+      mailboxIndex: prevMailboxes.map((mb) => mb.id),
       mailboxes: {},
       mailboxAuths: {},
       services: {}
     }
     prevMailboxes.forEach((mailbox) => { this._convertMailboxGroup(mailbox, next) })
+
+    this._generateMigrationReport(prevMailboxes, next)
 
     acmailboxauthStorage.removeAllItems()
     acmailboxauthStorage.setJSONItems(next.mailboxAuths)
@@ -345,7 +819,7 @@ class MailboxStorageBucket extends MigratingStorageBucket {
     acserviceStorage.setJSONItems(next.services)
     acmailboxStorage.removeAllItems()
     acmailboxStorage.setJSONItems(next.mailboxes)
-    acmailboxStorage.setJSONItem(PERSISTENCE_INDEX_KEY, nextMailboxIndex)
+    acmailboxStorage.setJSONItem(PERSISTENCE_INDEX_KEY, next.mailboxIndex)
 
     this.finishMigration()
     return true

@@ -40,7 +40,7 @@ class GoogleYouTubeService extends CoreACService {
   // Properties: Behaviour
   /* **************************************************************************/
 
-  get url () { return 'https://www.youtube.com' }
+  get url () { return 'https://www.youtube.com/' }
 }
 
 export default GoogleYouTubeService

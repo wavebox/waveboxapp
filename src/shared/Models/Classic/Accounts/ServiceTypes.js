@@ -1,0 +1,26 @@
+// Try to keep these generic to support n-types of account
+module.exports = Object.freeze({
+  UNKNOWN: 'UNKNOWN',
+  DEFAULT: 'DEFAULT',
+  STORAGE: 'STORAGE',
+  CONTACTS: 'CONTACTS',
+  NOTES: 'NOTES',
+  CALENDAR: 'CALENDAR',
+  PHOTOS: 'PHOTOS',
+  COMMUNICATION: 'COMMUNICATION',
+  SOCIAL: 'SOCIAL',
+  ANALYTICS: 'ANALYTICS',
+  VIDEO: 'VIDEO',
+  MESSENGER: 'MESSENGER',
+  DOCS: 'DOCS',
+  SHEETS: 'SHEETS',
+  SLIDES: 'SLIDES',
+  MUSIC: 'MUSIC',
+  ADMIN: 'ADMIN',
+  FI: 'FI',
+  CLASSROOM: 'CLASSROOM',
+  NOTEBOOK: 'NOTEBOOK',
+  TEAM: 'TEAM',
+  PHONE: 'PHONE',
+  TASK: 'TASK'
+})

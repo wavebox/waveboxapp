@@ -8,6 +8,7 @@ mkdirp.sync(RuntimePaths.DB_DIR_PATH)
 
 const privPath = Symbol('privPath')
 const privData = Symbol('privData')
+const privMigrateLogPath = Symbol('privMigrateLogPath')
 
 class MigratingStorageBucket {
   /* ****************************************************************************/
@@ -16,6 +17,7 @@ class MigratingStorageBucket {
 
   constructor (bucketName) {
     this[privPath] = path.join(RuntimePaths.DB_DIR_PATH, bucketName + '_db.json')
+    this[privMigrateLogPath] = path.join(RuntimePaths.DB_DIR_PATH, bucketName + '_migrate.log')
     this[privData] = undefined
 
     this._loadFromDiskSync()
@@ -26,6 +28,7 @@ class MigratingStorageBucket {
   /* ****************************************************************************/
 
   get exportName () { return path.basename(this[privPath]) }
+  get logPath () { return this[privMigrateLogPath] }
   get hasDataToImport () { return this[privData] && Object.keys(this[privData]).length }
 
   /* ****************************************************************************/

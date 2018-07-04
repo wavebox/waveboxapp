@@ -130,7 +130,7 @@ class WBGApiService {
           }
         }
       })
-    accountActions.reduceService(
+    accountActions.reduceServiceData(
       serviceId,
       ServiceDataReducer.setWbgapiTrayMessages,
       messages

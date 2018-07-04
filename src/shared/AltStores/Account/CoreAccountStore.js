@@ -447,14 +447,21 @@ class CoreAccountStore extends RemoteStore {
     this.isServiceSleeping = (serviceId) => {
       if (!this.getUser().hasSleepable) { return false }
 
-      if (this._sleepingServices_.has(serviceId)) {
-        return this._sleepingServices_.get(serviceId) === true
+      if (this._sleepingServices_.get(serviceId) === true) {
+        return true
+      } else if (this._sleepingServices_.get(serviceId) === false) {
+        return false
       } else {
-        // If we're not explicitly set to be sleeping/awake use the active state as a great guess
-        if (this.isServiceActive(serviceId)) {
-          return false
+        // If we don't have an explicit value set we have to guess if we're sleeping or not
+        const service = this.getService(serviceId)
+        if (service && service.sleepable) {
+          if (this.isServiceActive(serviceId)) {
+            return false
+          } else {
+            return true
+          }
         } else {
-          return true
+          return false
         }
       }
     }
@@ -737,7 +744,7 @@ class CoreAccountStore extends RemoteStore {
     // Mailboxes
     this._mailboxIndex_ = mailboxIndex
     this._mailboxes_ = Object.keys(mailboxes).reduce((acc, id) => {
-      acc.set(id, require('../../Integrity/ModelPropIsDefined')(new ACMailbox(mailboxes[id])))
+      acc.set(id, new ACMailbox(mailboxes[id]))
       return acc
     }, new Map())
     this._mailboxAuth_ = Object.keys(mailboxAuth).reduce((acc, id) => {
@@ -756,7 +763,7 @@ class CoreAccountStore extends RemoteStore {
     }, new Map())
 
     // Avatars
-    this.avatars = Object.keys(avatars).reduce((acc, id) => {
+    this._avatars_ = Object.keys(avatars).reduce((acc, id) => {
       acc.set(id, avatars[id])
       return acc
     }, new Map())

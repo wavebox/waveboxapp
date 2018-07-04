@@ -1,7 +1,11 @@
 import alt from '../alt'
 import actions from './googleActions'
 import GoogleHTTP from './GoogleHTTP'
-import { GOOGLE_PROFILE_SYNC_INTERVAL, GOOGLE_MAILBOX_WATCH_INTERVAL } from 'shared/constants'
+import {
+  GOOGLE_PROFILE_SYNC_INTERVAL,
+  GOOGLE_MAILBOX_WATCH_INTERVAL,
+  GOOGLE_MAILBOX_WATCH_THROTTLE
+} from 'shared/constants'
 import uuid from 'uuid'
 import { URL } from 'url'
 import ServerVent from 'Server/ServerVent'
@@ -28,6 +32,7 @@ class GoogleStore {
     this.profilePoller = null
     this.watchPoller = null
     this.openRequests = new Map()
+    this.openWatches = new Map()
 
     /* **************************************/
     // Requests
@@ -263,6 +268,7 @@ class GoogleStore {
     this.preventDefault()
     const serviceAuth = accountStore.getState().getMailboxAuthForServiceId(serviceId)
     if (!serviceAuth) { return }
+
     ServerVent.startListeningForGooglePushUpdates(
       serviceId,
       serviceAuth.authEmail,
@@ -289,19 +295,28 @@ class GoogleStore {
 
   handleRegisterServiceWatch ({ serviceId }) {
     this.preventDefault()
+    const now = new Date().getTime()
+    if (now - (this.openWatches.get(serviceId) || 0) < GOOGLE_MAILBOX_WATCH_THROTTLE) { return }
 
     const serviceAuth = accountStore.getState().getMailboxAuthForServiceId(serviceId)
     const auth = this.getAPIAuth(serviceAuth)
     if (!auth) { return }
 
+    // Optimistically set this. A machine with lots of accounts can take time to connect
+    // and we can end up duplicating calls.
+    this.openWatches.set(serviceId, now)
     Promise.resolve()
       .then(() => GoogleHTTP.watchAccount(auth))
       .then(() => {
         accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeValid)
       })
       .catch((err) => {
+        this.openWatches.delete(serviceId)
         if (this.isInvalidGrantError(err)) {
           accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeInvalid)
+        } else if (err && typeof (err.message) === 'string' && err.message.startsWith('Only one user push notification client allowed per developer')) {
+          console.warn('Failed to join Google watch channel but recovering gracefully.', err)
+          /* no-op */
         } else {
           console.error(err)
         }

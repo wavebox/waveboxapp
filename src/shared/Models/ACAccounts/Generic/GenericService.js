@@ -72,7 +72,8 @@ class GenericService extends CoreACService {
   /* **************************************************************************/
 
   get url () { return this._value_('url', 'about:blank') }
-  get reloadBehaviour () { return CoreACService.RELOAD_BEHAVIOURS.RELOAD_URL }
+  get reloadBehaviour () { return CoreACService.RELOAD_BEHAVIOURS.RELOAD }
+  get restoreLastUrl () { return this._value_('restoreLastUrl', true) }
 }
 
 export default GenericService

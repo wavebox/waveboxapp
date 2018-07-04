@@ -174,9 +174,9 @@ class SlackServiceDataReducer extends ServiceDataReducer {
     }
 
     switch (rtmEvent.channel[0]) {
-      case 'C': return SlackServiceDataReducer.rtmChannelMessage(serviceData, rtmEvent)
-      case 'G': return SlackServiceDataReducer.rtmGroupMessage(serviceData, rtmEvent)
-      case 'D': return SlackServiceDataReducer.rtmImMessage(serviceData, rtmEvent)
+      case 'C': return SlackServiceDataReducer.rtmChannelMessage(service, serviceData, rtmEvent)
+      case 'G': return SlackServiceDataReducer.rtmGroupMessage(service, serviceData, rtmEvent)
+      case 'D': return SlackServiceDataReducer.rtmImMessage(service, serviceData, rtmEvent)
     }
   }
 

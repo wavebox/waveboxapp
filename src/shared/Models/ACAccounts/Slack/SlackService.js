@@ -59,7 +59,7 @@ class SlackService extends CoreACService {
   /* **************************************************************************/
 
   get url () { return 'https://slack.com' }
-  get restoreLastUrl () { return false }
+  get restoreLastUrl () { return true }
 
   /**
   * Gets the url being provided the service data if there is any customization to do

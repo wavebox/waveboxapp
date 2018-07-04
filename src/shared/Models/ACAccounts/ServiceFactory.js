@@ -115,7 +115,7 @@ class ServiceFactory {
   static modelizeService (data) {
     const Class = this.serviceClass(data.type)
     if (Class) {
-      return require('../../Integrity/ModelPropIsDefined')(new Class(data))
+      return new Class(data)
     } else {
       return undefined
     }
@@ -128,7 +128,7 @@ class ServiceFactory {
   */
   static modelizeServiceData (data) {
     const Class = this.serviceDataClass(data.parentType)
-    return require('../../Integrity/ModelPropIsDefined')(new Class(data))
+    return new Class(data)
   }
 
   /**
