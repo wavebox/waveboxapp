@@ -96,7 +96,7 @@ class ServiceNotificationSection extends React.Component {
       showNotifications: service.showNotifications,
       showAvatarInNotifications: service.showAvatarInNotifications,
       notificationsSound: service.notificationsSound,
-      displayName: service.displayName,
+      displayName: accountState.serviceDisplayName(serviceId),
       humanizedType: service.humanizedType
     } : {
       hasService: false

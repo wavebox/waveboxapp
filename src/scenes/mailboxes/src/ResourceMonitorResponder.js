@@ -66,6 +66,7 @@ export default class ResourceMonitorResponder {
   * @return metric info
   */
   buildMetric = () => {
+    const accountState = accountStore.getState()
     return {
       pid: process.pid,
       connections: [
@@ -77,13 +78,13 @@ export default class ResourceMonitorResponder {
           connectionMode: ServerVent.isSocketUsingLongPoll ? 'LongPoll' : ServerVent.isSocketUsingWebSocket ? 'WebSocket' : 'Unknown'
         }
       ].concat(
-        accountStore
-          .getState()
+        accountState
           .getServicesOfType(SERVICE_TYPES.SLACK)
           .map((service) => {
             const slackState = slackStore.getState()
+            const displayName = accountState.resolvedServiceDisplayName(service.id)
             return {
-              description: `Slack : ${service.displayName}`,
+              description: `Slack : ${displayName}`,
               isSetup: slackState.isServiceConnectionSetup(service.id),
               isUnderMaintenance: false,
               isConnected: slackState.isServiceConnected(service.id),

@@ -84,6 +84,7 @@ class MailboxServiceDeleteScene extends React.Component {
       this.setState({
         mailbox: accountState.getMailbox(mailboxId),
         service: accountState.getService(serviceId),
+        serviceDisplayName: accountState.resolvedServiceDisplayName(serviceId),
         avatar: accountState.getMailboxAvatarConfig(mailboxId)
       })
     }
@@ -101,6 +102,7 @@ class MailboxServiceDeleteScene extends React.Component {
       open: true,
       mailbox: accountState.getMailbox(mailboxId),
       service: accountState.getService(serviceId),
+      serviceDisplayName: accountState.resolvedServiceDisplayName(serviceId),
       avatar: accountState.getMailboxAvatarConfig(mailboxId)
     }
   })()
@@ -111,6 +113,7 @@ class MailboxServiceDeleteScene extends React.Component {
     this.setState({
       mailbox: accountState.getMailbox(mailboxId),
       service: accountState.getService(serviceId),
+      serviceDisplayName: accountState.resolvedServiceDisplayName(serviceId),
       avatar: accountState.getMailboxAvatarConfig(mailboxId)
     })
   }
@@ -149,7 +152,7 @@ class MailboxServiceDeleteScene extends React.Component {
 
   render () {
     const { classes } = this.props
-    const { open, mailbox, service, avatar } = this.state
+    const { open, mailbox, service, serviceDisplayName, avatar } = this.state
     if (!mailbox || !service) { return false }
 
     return (
@@ -160,7 +163,7 @@ class MailboxServiceDeleteScene extends React.Component {
         <DialogTitle>Delete Service</DialogTitle>
         <DialogContent className={classes.dialogContent}>
           <p className={classes.message}>
-            {`Are you sure you want to delete ${service.displayName} from this account?`}
+            {`Are you sure you want to delete ${serviceDisplayName} from this account?`}
           </p>
           <div className={classes.avatarContainer}>
             <div className={classes.compositeAvatar}>
@@ -176,7 +179,7 @@ class MailboxServiceDeleteScene extends React.Component {
                 size={32} />
             </div>
             <div className={classes.serviceName}>
-              {service.displayName}
+              {serviceDisplayName}
             </div>
           </div>
         </DialogContent>

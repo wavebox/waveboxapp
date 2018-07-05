@@ -111,6 +111,7 @@ class MailboxSleepNotification extends React.Component {
       this.setState({
         mailbox: accountState.getMailbox(nextProps.mailboxId),
         service: accountState.getService(nextProps.serviceId),
+        serviceDisplayName: accountState.resolvedServiceDisplayName(nextProps.serviceId),
         avatar: accountState.getMailboxAvatarConfig(nextProps.mailboxId)
       })
     }
@@ -125,6 +126,7 @@ class MailboxSleepNotification extends React.Component {
     return {
       mailbox: accountState.getMailbox(this.props.mailboxId),
       service: accountState.getService(this.props.serviceId),
+      serviceDisplayName: accountState.resolvedServiceDisplayName(this.props.serviceId),
       avatar: accountState.getMailboxAvatarConfig(this.props.mailboxId)
     }
   })()
@@ -133,6 +135,7 @@ class MailboxSleepNotification extends React.Component {
     this.setState({
       mailbox: accountState.getMailbox(this.props.mailboxId),
       service: accountState.getService(this.props.serviceId),
+      serviceDisplayName: accountState.resolvedServiceDisplayName(this.props.serviceId),
       avatar: accountState.getMailboxAvatarConfig(this.props.mailboxId)
     })
   }
@@ -179,9 +182,9 @@ class MailboxSleepNotification extends React.Component {
 
   render () {
     const { closeMetrics, classes } = this.props
-    const { mailbox, service, avatar } = this.state
+    const { mailbox, service, serviceDisplayName, avatar } = this.state
 
-    const displayNameText = `${service.displayName || mailbox.displayName} (${service.humanizedType})`
+    const displayNameText = `${serviceDisplayName || mailbox.displayName} (${service.humanizedType})`
     const savingText = closeMetrics ? (
       `saving ${Math.round((closeMetrics.memory.workingSetSize || 0) / 1024)}MB of memory`
     ) : (

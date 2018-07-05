@@ -100,6 +100,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
       }),
       ...(serviceId ? {
         service: accountState.getService(serviceId),
+        serviceDisplayName: accountState.resolvedServiceDisplayName(serviceId),
         isServiceSleeping: accountState.isServiceSleeping(serviceId),
         isServiceActive: accountState.isServiceActive(serviceId),
         isServiceAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId)
@@ -273,7 +274,8 @@ export default class MailboxAndServiceContextMenu extends React.Component {
       userHasSleepable,
       isServiceSleeping,
       mailboxSleepableServiceCount,
-      isServiceAuthInvalid
+      isServiceAuthInvalid,
+      serviceDisplayName
     } = this.state
     if (!mailbox || !rendering) { return false }
 
@@ -287,7 +289,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
         {/* Info & Util */}
         <MenuItem disabled>
           <ListItemText primary={service ? (
-            `${service.displayName} : (${service.humanizedTypeShort})`
+            `${serviceDisplayName} : (${service.humanizedTypeShort})`
           ) : (
             `${mailbox.displayName} - ${serviceCount} services`
           )} />

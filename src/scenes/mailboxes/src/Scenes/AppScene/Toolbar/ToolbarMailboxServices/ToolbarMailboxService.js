@@ -157,7 +157,8 @@ class ToolbarMailboxService extends React.Component {
   handleOpenPopover = (evt) => {
     evt.preventDefault()
     this.setState({
-      popoverAnchor: evt.target
+      popoverAnchor: evt.target,
+      isHovering: false
     })
   }
 

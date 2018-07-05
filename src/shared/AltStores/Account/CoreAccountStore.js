@@ -270,6 +270,50 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /* ****************************************/
+    // Service getters resolved
+    /* ****************************************/
+
+    /**
+    * Gets a resolved service color
+    * @param serviceId: the service id
+    * @param defaultValue=#FFF: the default value if none is found
+    * @return the color
+    */
+    this.resolvedServiceColor = (serviceId, defaultValue = '#FFF') => {
+      const service = this.getService(serviceId)
+      const serviceData = this.getServiceData(serviceId)
+      if (!service || !serviceData) { return defaultValue }
+      return service.getColorWithData(serviceData) || defaultValue
+    }
+
+    /**
+    * Gets a resolved service display name
+    * @param serviceId: the service id
+    * * @param defaultValue=Untitled: the default value if none is found
+    * @return the display name
+    */
+    this.resolvedServiceDisplayName = (serviceId, defaultValue = 'Untitled') => {
+      const service = this.getService(serviceId)
+      const serviceData = this.getServiceData(serviceId)
+      if (!service || !serviceData) { return defaultValue }
+      return service.getDisplayNameWithData(serviceData) || defaultValue
+    }
+
+    /**
+    * Gets a resolved service url
+    * @param serviceId: the service id
+    * * @param defaultValue=about:blank: the default value if none is found
+    * @return the url
+    */
+    this.resolvedServiceUrl = (serviceId, defaultValue = 'about:blank') => {
+      const service = this.getService(serviceId)
+      const serviceData = this.getServiceData(serviceId)
+      const serviceAuth = this.getMailboxAuthForServiceId(serviceId) // This is sometimes optional
+      if (!service || !serviceData) { return defaultValue }
+      return service.getUrlWithData(serviceData, serviceAuth) || defaultValue
+    }
+
+    /* ****************************************/
     // Service data
     /* ****************************************/
 

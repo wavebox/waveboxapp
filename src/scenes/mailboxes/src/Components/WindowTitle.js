@@ -27,11 +27,11 @@ export default class Provider extends React.Component {
   /* **************************************************************************/
 
   accountChanged = (accountState) => {
-    const activeService = accountState.activeService()
+    const activeServiceId = accountState.activeServiceId()
     const activeServiceData = accountState.activeServiceData()
     this.setState({
       unreadCount: accountState.userUnreadCountForApp(),
-      activeServiceName: activeService ? activeService.displayName : undefined,
+      activeServiceName: accountState.resolvedServiceDisplayName(activeServiceId),
       activeGuestTitle: activeServiceData ? activeServiceData.documentTitle : undefined
     })
   }
@@ -47,7 +47,7 @@ export default class Provider extends React.Component {
     const settingsState = settingsStore.getState()
     const accountState = accountStore.getState()
 
-    const activeService = accountState.activeService()
+    const activeServiceId = accountState.activeServiceId()
     const activeServiceData = accountState.activeServiceData()
 
     return {
@@ -55,7 +55,7 @@ export default class Provider extends React.Component {
       showTitlebarAccount: settingsState.ui.showTitlebarAccount,
       unreadCount: accountState.userUnreadCountForApp(),
       activeGuestTitle: activeServiceData ? activeServiceData.documentTitle : undefined,
-      activeServiceName: activeService ? activeService.displayName : undefined
+      activeServiceName: accountState.resolvedServiceDisplayName(activeServiceId)
     }
   })()
 

@@ -131,8 +131,10 @@ class AccountSettingsScroller extends React.Component {
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId) {
       const accountState = accountStore.getState()
+      const services = accountState.mailboxServices(nextProps.mailboxId)
       return {
-        services: accountState.mailboxServices(nextProps.mailboxId)
+        services: services,
+        serviceDisplayNames: services.map((service) => accountState.resolvedServiceDisplayName(service.id))
       }
     }
   }
@@ -143,15 +145,19 @@ class AccountSettingsScroller extends React.Component {
 
   state = (() => {
     const accountState = accountStore.getState()
+    const services = accountState.mailboxServices(this.props.mailboxId)
     return {
       renderServices: false,
-      services: accountState.mailboxServices(this.props.mailboxId)
+      services: services,
+      serviceDisplayNames: services.map((service) => accountState.resolvedServiceDisplayName(service.id))
     }
   })()
 
   accountChanged = (accountState) => {
+    const services = accountState.mailboxServices(this.props.mailboxId)
     this.setState({
-      services: accountState.mailboxServices(this.props.mailboxId)
+      services: services,
+      serviceDisplayNames: services.map((service) => accountState.resolvedServiceDisplayName(service.id))
     })
   }
 
@@ -189,6 +195,7 @@ class AccountSettingsScroller extends React.Component {
     } = this.props
     const {
       services,
+      serviceDisplayNames,
       renderServices
     } = this.state
 
@@ -287,7 +294,7 @@ class AccountSettingsScroller extends React.Component {
                         secondary: classes.scrollspyText
                       }}
                       primary={service.humanizedType}
-                      secondary={service.humanizedType !== service.displayName ? service.displayName : undefined} />
+                      secondary={service.humanizedType !== serviceDisplayNames[i] ? serviceDisplayNames[i] : undefined} />
                   </ListItem>
                 )
               })}
