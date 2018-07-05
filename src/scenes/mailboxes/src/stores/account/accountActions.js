@@ -83,7 +83,7 @@ class AccountActions extends RendererAccountActions {
   * @param mailboxId: the id of the mailbox to attach to
   */
   startAttachService (templateType, accessMode, mailboxId) {
-    //TODO
+
   }
 
   /**
