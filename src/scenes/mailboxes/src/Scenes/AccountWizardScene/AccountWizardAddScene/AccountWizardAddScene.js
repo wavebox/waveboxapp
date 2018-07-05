@@ -2,12 +2,18 @@ import React from 'react'
 import { Button, Dialog, DialogActions, DialogContent } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { WaveboxWebView } from 'Components'
-import { userStore } from 'stores/user'
-import { accountStore } from 'stores/account'
+import { userStore, userActions } from 'stores/user'
+import { accountStore, accountActions } from 'stores/account'
 import { WaveboxHTTP } from 'Server'
 import Spinner from 'wbui/Activity/Spinner'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import { withStyles } from '@material-ui/core/styles'
+import PropTypes from 'prop-types'
+import electron from 'electron'
+import {
+  WAVEBOX_CAPTURE_URL_HOSTNAMES,
+  WAVEBOX_CAPTURE_URLS
+} from 'shared/constants'
 
 const styles = {
   dialog: {
@@ -39,6 +45,21 @@ const styles = {
 
 @withStyles(styles)
 class AccountWizardAddScene extends React.Component {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static contextTypes = {
+    router: PropTypes.object.isRequired
+  }
+  static propTypes = {
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        mailboxId: PropTypes.string
+      })
+    })
+  }
+
   /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
@@ -114,6 +135,50 @@ class AccountWizardAddScene extends React.Component {
     }, 250)
   }
 
+  /**
+  * Opens a new window in the browser
+  * @param evt: the event that fired
+  */
+  handleOpenNewWindow = (evt) => {
+    const defaultHandled = WaveboxWebView.routeWaveboxUrl(evt.url)
+    if (defaultHandled) { return }
+    const mailboxAddHandled = this.processAddAccout(evt.url)
+    if (mailboxAddHandled) { return }
+    electron.remote.shell.openExternal(evt.url)
+  }
+
+  /**
+  * Runs the add mailbox process from an add url
+  * @param url: the url that was opened
+  * @return true if handled or false otherwise
+  */
+  processAddAccout (url) {
+    const match = WAVEBOX_CAPTURE_URL_HOSTNAMES.find((hostname) => {
+      return url.startsWith(`https://${hostname}`)
+    })
+    if (!match) { return false }
+
+    const purl = new URL(url)
+    if (purl.pathname !== WAVEBOX_CAPTURE_URLS.ADD_MAILBOX) { return false }
+
+    // Start the add process
+    const containerId = purl.searchParams.get('container_id')
+    const container = purl.searchParams.get('container')
+    const type = purl.searchParams.get('type')
+    const accessMode = purl.searchParams.get('access_mode')
+    if (containerId && container) {
+      userActions.sideloadContainerLocally(containerId, JSON.parse(container))
+    }
+    if (type) {
+      if (this.props.match.params.mailboxId) {
+        accountActions.startAttachNewService(this.props.match.params.mailboxId, type, accessMode)
+      } else {
+        accountActions.startAddMailboxGroup(type, accessMode)
+      }
+    }
+    return true
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -146,6 +211,7 @@ class AccountWizardAddScene extends React.Component {
           ) : undefined}
           {renderWebview ? (
             <WaveboxWebView
+              newWindow={this.handleOpenNewWindow}
               didStartLoading={() => this.setState({ isLoading: true })}
               didStopLoading={() => this.setState({ isLoading: false })}
               src={url} />

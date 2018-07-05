@@ -6,7 +6,6 @@ import { accountActions, accountStore } from 'stores/account'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
 import { withStyles } from '@material-ui/core/styles'
-import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 import GenericServiceReducer from 'shared/AltStores/Account/ServiceReducers/GenericServiceReducer'
 import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
 
@@ -38,7 +37,7 @@ class WizardConfigureGeneric extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired,
+    serviceId: PropTypes.string.isRequired,
     onRequestCancel: PropTypes.func.isRequired
   }
 
@@ -56,9 +55,17 @@ class WizardConfigureGeneric extends React.Component {
   /* **************************************************************************/
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.mailboxId !== nextProps.mailboxId) {
+    if (this.props.serviceId !== nextProps.serviceId) {
       this.setState(this.generateState(nextProps))
     }
+  }
+
+  componentDidMount () {
+    accountStore.listen(this.accountUpdated)
+  }
+
+  componentWillUnmount () {
+    accountStore.unlisten(this.accountUpdated)
   }
 
   /* **************************************************************************/
@@ -73,7 +80,12 @@ class WizardConfigureGeneric extends React.Component {
   * @return state object
   */
   generateState (props) {
+    const accountState = accountStore.getState()
+    const mailboxId = (accountState.getService(props.serviceId) || {}).parentId
+    const mailbox = accountState.getMailbox(mailboxId)
     return {
+      mailboxId: mailboxId,
+      serviceCount: mailbox ? mailbox.allServiceCount : 0,
       configureDisplayFromPage: true,
       defaultWindowOpenMode: ACMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER,
       hasNavigationToolbar: true,
@@ -83,46 +95,60 @@ class WizardConfigureGeneric extends React.Component {
     }
   }
 
+  accountUpdated = (accountState) => {
+    const mailboxId = (accountState.getService(this.props.serviceId) || {}).parentId
+    const mailbox = accountState.getMailbox(mailboxId)
+    this.setState({
+      mailboxId: mailboxId,
+      serviceCount: mailbox ? mailbox.allServiceCount : 0
+    })
+  }
+
   /* **************************************************************************/
   // UI Events
   /* **************************************************************************/
 
   /**
   * Handles the user pressing cancel
-  * @param mailboxId: the mailbox id we're editing
+  * @param serviceId: the mailbox id we're editing
   * @param onRequestCancel: the cancel call
   */
-  handleCancel = (mailboxId, onRequestCancel) => {
+  handleCancel = () => {
+    const { mailboxId, serviceCount } = this.state
+    const { serviceId, onRequestCancel } = this.props
     // The mailbox has actually already been created at this point, so remove it.
     // Ideally this shouldn't happen but because this is handled under a configuration
     // step rather than an external creation step the mailbox is created early on in
     // its lifecycle
-    accountActions.removeMailbox(mailboxId)
+    if (serviceCount <= 1) {
+      accountActions.removeMailbox(mailboxId)
+    } else {
+      accountActions.removeService(serviceId)
+    }
     onRequestCancel()
   }
 
   /**
   * Handles the user pressing next
-  * @param mailboxId: the mailbox we're editing
-  * @param onRequestCancel: the cancel call
   * @return true if it validated correctly
   */
-  handleFinish = (mailboxId, onRequestCancel) => {
+  handleFinish = () => {
+    const {
+      serviceId,
+      onRequestCancel
+    } = this.props
     const {
       displayName,
-      serviceUrl,
       configureDisplayFromPage,
       defaultWindowOpenMode,
       hasNavigationToolbar,
-      restoreLastUrl
+      restoreLastUrl,
+      mailboxId
     } = this.state
-
-    const serviceId = accountStore.getState().mailboxServiceIdsOfType(mailboxId, SERVICE_TYPES.GENERIC)[0]
 
     accountActions.reduceService(serviceId, GenericServiceReducer.setDisplayName, displayName)
     accountActions.reduceService(serviceId, GenericServiceReducer.setUsePageTitleAsDisplayName, configureDisplayFromPage)
     accountActions.reduceService(serviceId, GenericServiceReducer.setUsePageThemeAsColor, configureDisplayFromPage)
-    accountActions.reduceService(serviceId, GenericServiceReducer.setUrl, serviceUrl)
     accountActions.reduceService(serviceId, GenericServiceReducer.setHasNavigationToolbar, hasNavigationToolbar)
     accountActions.reduceService(serviceId, GenericServiceReducer.setRestoreLastUrl, restoreLastUrl)
 
@@ -141,14 +167,15 @@ class WizardConfigureGeneric extends React.Component {
   }
 
   render () {
-    const { mailboxId, onRequestCancel, classes, ...passProps } = this.props
+    const { serviceId, onRequestCancel, classes, ...passProps } = this.props
     const {
       configureDisplayFromPage,
       defaultWindowOpenMode,
       hasNavigationToolbar,
       restoreLastUrl,
       displayName,
-      displayNameError
+      displayNameError,
+      mailboxId
     } = this.state
 
     const buttons = (
@@ -156,7 +183,7 @@ class WizardConfigureGeneric extends React.Component {
         <Button
           className={classes.footerButton}
           onClick={() => {
-            const validated = this.handleFinish(mailboxId, onRequestCancel)
+            const validated = this.handleFinish()
             if (validated) {
               window.location.hash = `/settings/accounts/${mailboxId}`
             }
@@ -165,13 +192,13 @@ class WizardConfigureGeneric extends React.Component {
         </Button>
         <Button
           className={classes.footerButton}
-          onClick={() => this.handleCancel(mailboxId, onRequestCancel)}>
+          onClick={() => this.handleCancel()}>
           Cancel
         </Button>
         <Button
           variant='raised'
           color='primary'
-          onClick={() => this.handleFinish(mailboxId, onRequestCancel)}>
+          onClick={() => this.handleFinish()}>
           Finish
         </Button>
       </div>
@@ -180,7 +207,7 @@ class WizardConfigureGeneric extends React.Component {
     return (
       <WizardConfigureDefaultLayout
         onRequestCancel={onRequestCancel}
-        mailboxId={mailboxId}
+        serviceId={serviceId}
         buttons={buttons}
         {...passProps}>
         <h2 className={classes.heading}>Configure your Account</h2>

@@ -1,13 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { accountStore } from 'stores/account'
-import WizardConfigureGeneric from './WizardConfigureGeneric'
-import WizardConfigureGmail from './WizardConfigureGmail'
-import WizardConfigureGinbox from './WizardConfigureGinbox'
+import WizardConfigureGeneric from '../../Common/WizardConfigure/WizardConfigureGeneric'
+import WizardConfigureGmail from '../../Common/WizardConfigure/WizardConfigureGmail'
+import WizardConfigureGinbox from '../../Common/WizardConfigure/WizardConfigureGinbox'
+import WizardConfigureMicrosoft from '../../Common/WizardConfigure/WizardConfigureMicrosoft'
+import WizardConfigureContainer from '../../Common/WizardConfigure/WizardConfigureContainer'
+import WizardConfigureDefaultLayout from '../../Common/WizardConfigure/WizardConfigureDefaultLayout'
 import { ACCOUNT_TEMPLATE_TYPES } from 'shared/Models/ACAccounts/AccountTemplates'
-import WizardConfigureMicrosoft from './WizardConfigureMicrosoft'
-import WizardConfigureContainer from './WizardConfigureContainer'
-import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
 
 export default class WizardConfigure extends React.Component {
   /* **************************************************************************/
@@ -33,8 +33,13 @@ export default class WizardConfigure extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId) {
-      this.setState({
-        templateType: (accountStore.getState().getMailbox(nextProps.mailboxId) || {}).templateType
+      const mailbox = accountStore.getState().getMailbox(nextProps.mailboxId)
+      this.setState(mailbox ? {
+        serviceId: mailbox.allServices[0],
+        templateType: mailbox.templateType
+      } : {
+        serviceId: undefined,
+        templateType: undefined
       })
     }
   }
@@ -43,13 +48,25 @@ export default class WizardConfigure extends React.Component {
   // Data lifecycle
   /* **************************************************************************/
 
-  state = {
-    templateType: (accountStore.getState().getMailbox(this.props.mailboxId) || {}).templateType
-  }
+  state = (() => {
+    const mailbox = accountStore.getState().getMailbox(this.props.mailboxId)
+    return mailbox ? {
+      serviceId: mailbox.allServices[0],
+      templateType: mailbox.templateType
+    } : {
+      serviceId: undefined,
+      templateType: undefined
+    }
+  })()
 
   accountUpdated = (accountState) => {
-    this.setState({
-      templateType: (accountState.getMailbox(this.props.mailboxId) || {}).templateType
+    const mailbox = accountState.getMailbox(this.props.mailboxId)
+    this.setState(mailbox ? {
+      serviceId: mailbox.allServices[0],
+      templateType: mailbox.templateType
+    } : {
+      serviceId: undefined,
+      templateType: undefined
     })
   }
 
@@ -59,7 +76,8 @@ export default class WizardConfigure extends React.Component {
 
   render () {
     const { onRequestCancel, mailboxId, ...passProps } = this.props
-    const { templateType } = this.state
+    const { templateType, serviceId } = this.state
+    if (!serviceId) { return false }
 
     let RenderClass
     switch (templateType) {
@@ -84,6 +102,6 @@ export default class WizardConfigure extends React.Component {
         break
     }
 
-    return (<RenderClass onRequestCancel={onRequestCancel} mailboxId={mailboxId} {...passProps} />)
+    return (<RenderClass onRequestCancel={onRequestCancel} serviceId={serviceId} {...passProps} />)
   }
 }

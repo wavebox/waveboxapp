@@ -15,6 +15,7 @@ import {
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
 import { ACCOUNT_TEMPLATE_TYPES } from 'shared/Models/ACAccounts/AccountTemplates'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 
 class AccountActions extends RendererAccountActions {
   /* **************************************************************************/
@@ -50,40 +51,23 @@ class AccountActions extends RendererAccountActions {
   */
   startAddMailboxGroup (templateType, accessMode) {
     if (ACCOUNT_TEMPLATE_TYPES[templateType]) {
-      window.location.hash = `/mailbox_wizard/${templateType}/${accessMode || '_'}/0`
-      return {}
+      return { templateType: templateType, accessMode: accessMode || '_' }
     }
 
     // We also have some classic mappings to work with
     if (templateType === 'GOOGLE') {
       if (accessMode === 'GMAIL') {
-        window.location.hash = `/mailbox_wizard/${ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL}/_/0`
-        return {}
+        return { templateType: ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL, accessMode: accessMode || '_' }
       } else if (accessMode === 'GINBOX') {
-        window.location.hash = `/mailbox_wizard/${ACCOUNT_TEMPLATE_TYPES.GOOGLE_INBOX}/_/0`
-        return {}
+        return { templateType: ACCOUNT_TEMPLATE_TYPES.GOOGLE_INBOX, accessMode: accessMode || '_' }
       }
     } else if (templateType === 'MICROSOFT') {
       if (accessMode === 'OUTLOOK') {
-        window.location.hash = `/mailbox_wizard/${ACCOUNT_TEMPLATE_TYPES.OUTLOOK}/OUTLOOK/0`
-        return {}
+        return { templateType: ACCOUNT_TEMPLATE_TYPES.OUTLOOK, accessMode: 'OUTLOOK' }
       } else if (accessMode === 'OFFICE365') {
-        window.location.hash = `/mailbox_wizard/${ACCOUNT_TEMPLATE_TYPES.OFFICE365}/OFFICE365/0`
-        return {}
+        return { templateType: ACCOUNT_TEMPLATE_TYPES.OUTLOOK, accessMode: 'OFFICE365' }
       }
     }
-
-    return {}
-  }
-
-  /**
-  * Starts the attach service step
-  * @param templateType: the type of template to add
-  * @param accessMode: the access mode to pass to the add wizard
-  * @param mailboxId: the id of the mailbox to attach to
-  */
-  startAttachService (templateType, accessMode, mailboxId) {
-
   }
 
   /**
@@ -92,6 +76,41 @@ class AccountActions extends RendererAccountActions {
   */
   authMailboxGroupFromTemplate (template) {
     return { template: template }
+  }
+
+  /* **************************************************************************/
+  // Service Attaching
+  /* **************************************************************************/
+
+  /**
+  * Starts the attach service step
+  * @param templateType: the type of template to add
+  * @param accessMode: the access mode to pass to the add wizard
+  * @param mailboxId: the id of the mailbox to attach to
+  */
+  startAttachNewService (attachTarget, serviceType, accessMode) {
+    if (SERVICE_TYPES[serviceType]) {
+      return { attachTarget: attachTarget, serviceType: serviceType, accessMode: accessMode || '_' }
+    }
+
+    // We also have some classic mappings to work with
+    if (serviceType === 'GOOGLE') {
+      if (accessMode === 'GMAIL') {
+        return { attachTarget: attachTarget, serviceType: SERVICE_TYPES.GOOGLE_MAIL, accessMode: accessMode || '_' }
+      } else if (accessMode === 'GINBOX') {
+        return { attachTarget: attachTarget, serviceType: SERVICE_TYPES.GOOGLE_INBOX, accessMode: accessMode || '_' }
+      }
+    } else if (serviceType === 'MICROSOFT') {
+      return { attachTarget: attachTarget, serviceType: SERVICE_TYPES.MICROSOFT_MAIL, accessMode: accessMode || '_' }
+    }
+  }
+
+  /**
+  * Create a service from a service proviso
+  * @param proviso: the proviso to use
+  */
+  authNewServiceFromProviso (proviso) {
+    return { proviso: proviso }
   }
 
   /* **************************************************************************/

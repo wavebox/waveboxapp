@@ -17,6 +17,7 @@ import LockOutlineIcon from '@material-ui/icons/LockOutline'
 import SettingsIcon from '@material-ui/icons/Settings'
 import LayersClearIcon from '@material-ui/icons/LayersClear'
 import DeleteIcon from '@material-ui/icons/Delete'
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
 
 export default class MailboxAndServiceContextMenu extends React.Component {
   /* **************************************************************************/
@@ -163,7 +164,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
   */
   handleReload = (evt) => {
     const { serviceId } = this.props
-    accountActions.changeActive(serviceId)
+    accountActions.changeActiveService(serviceId)
     setTimeout(() => {
       accountDispatch.reload(serviceId)
     }, 100) // Give the UI some time to catch up
@@ -246,6 +247,12 @@ export default class MailboxAndServiceContextMenu extends React.Component {
     this.closePopover(evt)
     const url = accountDispatch.getCurrentUrl(serviceId) || this.state.service.url
     AccountLinker.openContentWindow(serviceId, url)
+  }
+
+  handleAddService = (evt) => {
+    this.closePopover(evt, () => {
+      window.location.hash = `/mailbox_wizard/add/${this.props.mailboxId}`
+    })
   }
 
   /* **************************************************************************/
@@ -347,6 +354,12 @@ export default class MailboxAndServiceContextMenu extends React.Component {
             <ListItemText inset primary='Clear All Cookies' />
           </MenuItem>
         ) : undefined}
+
+        {/* Add */}
+        <MenuItem onClick={this.handleAddService}>
+          <ListItemIcon><LibraryAddIcon /></ListItemIcon>
+          <ListItemText inset primary='Add another service' />
+        </MenuItem>
 
         {/* Delete */}
         {mailbox.hasMultipleServices && service ? (

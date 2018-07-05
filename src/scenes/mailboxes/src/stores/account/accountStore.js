@@ -34,6 +34,7 @@ import MicrosoftAuth from 'shared/Models/ACAccounts/Microsoft/MicrosoftAuth'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 import AuthReducer from 'shared/AltStores/Account/AuthReducers/AuthReducer'
 import CoreACAuth from 'shared/Models/ACAccounts/CoreACAuth'
+import ACProvisoService from 'shared/Models/ACAccounts/ACProvisoService'
 
 const AUTH_MODES = Object.freeze({
   TEMPLATE_CREATE: 'TEMPLATE_CREATE',
@@ -121,7 +122,12 @@ class AccountStore extends RendererAccountStore {
       handleDeleteWebcontentTabId: actions.DELETE_WEBCONTENT_TAB_ID,
 
       // Mailbox creation
+      handleStartAddMailboxGroup: actions.START_ADD_MAILBOX_GROUP,
       handleAuthMailboxGroupFromTemplate: actions.AUTH_MAILBOX_GROUP_FROM_TEMPLATE,
+
+      // Service attaching
+      handleStartAttachNewService: actions.START_ATTACH_NEW_SERVICE,
+      handleAuthNewServiceFromProviso: actions.AUTH_NEW_SERVICE_FROM_PROVISO,
 
       // Mailbox auth callbacks
       handleAuthFailure: actions.AUTH_FAILURE,
@@ -258,9 +264,13 @@ class AccountStore extends RendererAccountStore {
   // Mailbox Creation
   /* **************************************************************************/
 
+  handleStartAddMailboxGroup ({templateType, accessMode}) {
+    this.preventDefault()
+    window.location.hash = `/mailbox_wizard/${templateType}/${accessMode}/0`
+  }
+
   handleAuthMailboxGroupFromTemplate ({ template }) {
     this.preventDefault()
-
     const mailboxId = uuid.v4()
 
     if (template.templateType === ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL || template.templateType === ACCOUNT_TEMPLATE_TYPES.GOOGLE_INBOX) {
@@ -308,10 +318,10 @@ class AccountStore extends RendererAccountStore {
       })
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.CONTAINER) {
       this._createMailboxFromTemplate(mailboxId, template)
-      this._finalizeCreateAccount(mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`, 0)
+      this._finalizeCreateAccountFromTemplate(mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`, 0)
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.GENERIC) {
       this._createMailboxFromTemplate(mailboxId, template)
-      this._finalizeCreateAccount(mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`, 0)
+      this._finalizeCreateAccountFromTemplate(mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`, 0)
     }
   }
 
@@ -352,19 +362,7 @@ class AccountStore extends RendererAccountStore {
         actions.createService.defer(mailboxId, template.servicesUILocation, service)
       })
 
-      // Open post-install
-      if (container.hasPostInstallUrl) {
-        setTimeout(() => {
-          ipcRenderer.send(WB_NEW_WINDOW, {
-            mailboxId: mailboxId,
-            serviceId: serviceId,
-            url: container.postInstallUrl,
-            partition: `persist:${mailboxId}`,
-            windowPreferences: { webPreferences: undefined },
-            webPreferences: { partition: `persist:${mailboxId}` }
-          })
-        }, container.postInstallUrlDelay)
-      }
+      this._openContainerPostInstallUrl(mailboxId, serviceId, container)
     } else {
       actions.createMailbox.defer(ACMailbox.createJS(
         mailboxId,
@@ -386,7 +384,7 @@ class AccountStore extends RendererAccountStore {
   * @param nextUrl='/': the next url to visit
   * @param wait=250: millis to wait before redirecting
   */
-  _finalizeCreateAccount (mailboxId, nextUrl = '/', wait = 250) {
+  _finalizeCreateAccountFromTemplate (mailboxId, nextUrl = '/', wait = 250) {
     // The final step of account creation takes a couple of seconds to cross the bridge
     // a few times. To not display janky info to the user wait a little before redirecting
     // them
@@ -404,9 +402,119 @@ class AccountStore extends RendererAccountStore {
   */
   _finalizeReauthentication (serviceId, wait = 250) {
     if (serviceId) {
-      setTimeout(() => { accountDispatch.reload(serviceId) }, wait)
+      setTimeout(() => { accountDispatch.reloadService(serviceId) }, wait)
     }
     window.location.hash = '/'
+  }
+
+  /* **************************************************************************/
+  // Service attaching
+  /* **************************************************************************/
+
+  handleStartAttachNewService ({ attachTarget, serviceType, accessMode }) {
+    this.preventDefault()
+
+    if (serviceType === SERVICE_TYPES.GENERIC) {
+      window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/0`
+      return
+    }
+
+    if (serviceType === SERVICE_TYPES.CONTAINER) {
+      const container = this.getContainer(accessMode)
+      if (!container) {
+        console.error('[AUTH ERR]', `Unable to create service with containerId "${accessMode}" it's unknown`)
+        return
+      }
+      if (container.installHasPersonaliseStep) {
+        window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/0`
+        return
+      }
+    }
+
+    const serviceId = uuid.v4()
+    actions.authNewServiceFromProviso.defer(new ACProvisoService({
+      serviceId: serviceId,
+      accessMode: accessMode,
+      serviceType: serviceType,
+      parentId: attachTarget
+    }))
+  }
+
+  handleAuthNewServiceFromProviso ({proviso}) {
+    const mailbox = this.getMailbox(proviso.parentId)
+    if (!mailbox) {
+      console.error('[AUTH ERR]', `Unable to create service with parentId "${proviso.parentId}" it's unknown`)
+      return
+    }
+
+    let serviceJS
+    if (proviso.serviceType === SERVICE_TYPES.CONTAINER) {
+      const container = this.getContainer(proviso.accessMode)
+      if (!container) {
+        console.error('[AUTH ERR]', `Unable to create service with containerId "${proviso.accessMode}" it's unknown`)
+        return
+      }
+
+      serviceJS = {
+        ...CoreACService.createJS(proviso.serviceId, proviso.parentId, proviso.serviceType),
+        ...proviso.expando,
+        containerId: proviso.accessMode,
+        container: container.cloneForService()
+      }
+      this._openContainerPostInstallUrl(proviso.parentId, proviso.serviceId, container)
+    } else {
+      serviceJS = {
+        ...CoreACService.createJS(proviso.serviceId, proviso.parentId, proviso.serviceType),
+        ...proviso.expando
+      }
+    }
+    const serviceId = serviceJS.id
+    actions.createService.defer(proviso.parentId, mailbox.depricatedServiceUILocation, serviceJS)
+    this._finalizeServiceFromProviso(serviceId, `/mailbox_attach_wizard/${proviso.parentId}/${proviso.serviceType}/${proviso.accessMode}/2/${serviceId}`)
+  }
+
+  /* **************************************************************************/
+  // Service attaching: Utils
+  /* **************************************************************************/
+
+  /**
+  * @param nextUrl='/': the next url to visit
+  * @param wait=250: millis to wait before redirecting
+  */
+  _finalizeServiceFromProviso (serviceId, nextUrl = '/', wait = 250) {
+    // The final step of account creation takes a couple of seconds to cross the bridge
+    // a few times. To not display janky info to the user wait a little before redirecting
+    // them
+    setTimeout(() => {
+      window.location.hash = nextUrl
+      actions.changeActiveService.defer(serviceId)
+      settingsActions.tourStart.defer()
+    }, wait)
+  }
+
+  /* **************************************************************************/
+  // Service & Mailbox creation utils
+  /* **************************************************************************/
+
+  /**
+  * Opens a containers post install url
+  * @param mailboxId: the id of the mailbox
+  * @param serviceId: the id of the service
+  * @param container: the container to open for
+  */
+  _openContainerPostInstallUrl (mailboxId, serviceId, container) {
+    if (container.hasPostInstallUrl) {
+      setTimeout(() => {
+        ipcRenderer.send(WB_NEW_WINDOW, {
+          mailboxId: mailboxId,
+          serviceId: serviceId,
+          url: container.postInstallUrl,
+          partition: `persist:${mailboxId}`,
+          windowPreferences: { webPreferences: undefined },
+          webPreferences: { partition: `persist:${mailboxId}` }
+        })
+      }, container.postInstallUrlDelay)
+    }
   }
 
   /* **************************************************************************/
@@ -447,7 +555,7 @@ class AccountStore extends RendererAccountStore {
           // Create the account
           const template = new ACTemplatedAccount(context.template)
           this._createMailboxFromTemplate(context.id, template)
-          this._finalizeCreateAccount(context.id, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.id}`)
+          this._finalizeCreateAccountFromTemplate(context.id, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.id}`)
         } else if (mode === AUTH_MODES.REAUTHENTICATE) {
           if (this.hasMailboxAuth(context.authId)) {
             actions.reduceAuth.defer(
@@ -491,7 +599,7 @@ class AccountStore extends RendererAccountStore {
           // Create the account
           const template = new ACTemplatedAccount(context.template)
           this._createMailboxFromTemplate(context.id, template)
-          this._finalizeCreateAccount(context.id)
+          this._finalizeCreateAccountFromTemplate(context.id)
         } else if (mode === AUTH_MODES.REAUTHENTICATE) {
           if (this.hasMailboxAuth(context.authId)) {
             actions.reduceAuth.defer(
@@ -530,7 +638,7 @@ class AccountStore extends RendererAccountStore {
       // Create the account
       const template = new ACTemplatedAccount(context.template)
       this._createMailboxFromTemplate(context.id, template)
-      this._finalizeCreateAccount(context.id)
+      this._finalizeCreateAccountFromTemplate(context.id)
     } else if (mode === AUTH_MODES.REAUTHENTICATE) {
       if (this.hasMailboxAuth(context.authId)) {
         actions.reduceAuth.defer(
@@ -568,7 +676,7 @@ class AccountStore extends RendererAccountStore {
           // Create the account
           const template = new ACTemplatedAccount(context.template)
           this._createMailboxFromTemplate(context.id, template)
-          this._finalizeCreateAccount(context.id, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.id}`)
+          this._finalizeCreateAccountFromTemplate(context.id, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.id}`)
         } else if (mode === AUTH_MODES.REAUTHENTICATE) {
           if (this.hasMailboxAuth(context.authId)) {
             actions.reduceAuth.defer(
@@ -603,7 +711,7 @@ class AccountStore extends RendererAccountStore {
       case SERVICE_TYPES.GOOGLE_MAIL:
         window.location.hash = '/mailbox/reauthenticating'
         ipcRenderer.send(WB_AUTH_GOOGLE, {
-          partitionId: service.partition,
+          partitionId: service.partitionId,
           credentials: Bootstrap.credentials,
           mode: AUTH_MODES.REAUTHENTICATE,
           context: {
@@ -616,7 +724,7 @@ class AccountStore extends RendererAccountStore {
       case SERVICE_TYPES.MICROSOFT:
         window.location.hash = '/mailbox/reauthenticating'
         ipcRenderer.send(WB_AUTH_MICROSOFT, {
-          partitionId: service.partition,
+          partitionId: service.partitionId,
           credentials: Bootstrap.credentials,
           mode: AUTH_MODES.REAUTHENTICATE,
           context: {
@@ -629,7 +737,7 @@ class AccountStore extends RendererAccountStore {
       case SERVICE_TYPES.SLACK:
         window.location.hash = '/mailbox/reauthenticating'
         ipcRenderer.send(WB_AUTH_SLACK, {
-          partitionId: service.partition,
+          partitionId: service.partitionId,
           credentials: Bootstrap.credentials,
           mode: AUTH_MODES.REAUTHENTICATE,
           context: {
@@ -642,7 +750,7 @@ class AccountStore extends RendererAccountStore {
       case SERVICE_TYPES.TRELLO:
         window.location.hash = '/mailbox/reauthenticating'
         ipcRenderer.send(WB_AUTH_SLACK, {
-          partitionId: service.partition,
+          partitionId: service.partitionId,
           credentials: Bootstrap.credentials,
           mode: AUTH_MODES.TRELLO,
           context: {

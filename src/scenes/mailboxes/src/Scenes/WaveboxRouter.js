@@ -17,6 +17,7 @@ import DictionaryInstallerScene from './DictionaryInstallerScene'
 import AppWizardScene from './AppWizardScene'
 import {
   MailboxWizardScene,
+  ServiceAttachWizardScene,
   AccountWizardAddScene
 } from './AccountWizardScene'
 import SettingsScene from './SettingsScene'
@@ -57,8 +58,10 @@ export default class WaveboxRouter extends React.Component {
             <Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
             <Route path='/dictionary_installer' component={DictionaryInstallerScene} />
 
-            <Route path='/mailbox_wizard/add' component={AccountWizardAddScene} />
+            <Route path='/mailbox_wizard/add/:mailboxId?' component={AccountWizardAddScene} />
             <Route path='/mailbox_wizard/:templateType/:accessMode/:step/:mailboxId?' component={MailboxWizardScene} />
+            <Route path='/mailbox_attach_wizard/:attachTarget/:serviceType/:accessMode/:step/:serviceId?' component={ServiceAttachWizardScene} />
+
             <Route path='/mailbox/reauthenticating' component={MailboxReauthenticatingScene} />
 
             <Route path='/mailbox_delete/:mailboxId' component={MailboxDeleteScene} />

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import StyleMixins from 'wbui/Styles/StyleMixins'
+import { accountStore } from 'stores/account'
 
 const styles = {
   // Layout
@@ -46,8 +47,46 @@ class WizardConfigureDefaultLayout extends React.Component {
 
   static propTypes = {
     onRequestCancel: PropTypes.func.isRequired,
-    mailboxId: PropTypes.string.isRequired,
+    serviceId: PropTypes.string.isRequired,
     buttons: PropTypes.element
+  }
+
+  /* **************************************************************************/
+  // Component Lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    accountStore.listen(this.accountUpdated)
+  }
+
+  componentWillUnmount () {
+    accountStore.unlisten(this.accountUpdated)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.serviceId !== nextProps.serviceId) {
+      const accountState = accountStore.getState()
+      this.setState({
+        mailboxId: (accountState.getService(nextProps.serviceId) || {}).parentId
+      })
+    }
+  }
+
+  /* **************************************************************************/
+  // Data lifecycle
+  /* **************************************************************************/
+
+  state = (() => {
+    const accountState = accountStore.getState()
+    return {
+      mailboxId: (accountState.getService(this.props.serviceId) || {}).parentId
+    }
+  })()
+
+  accountUpdated = (accountState) => {
+    this.setState({
+      mailboxId: (accountState.getService(this.props.serviceId) || {}).parentId
+    })
   }
 
   /* **************************************************************************/
@@ -59,11 +98,12 @@ class WizardConfigureDefaultLayout extends React.Component {
       onRequestCancel,
       buttons,
       children,
-      mailboxId,
+      serviceId,
       className,
       classes,
       ...passProps
     } = this.props
+    const { mailboxId } = this.state
 
     return (
       <div {...passProps} className={classNames(classes.container, className)}>

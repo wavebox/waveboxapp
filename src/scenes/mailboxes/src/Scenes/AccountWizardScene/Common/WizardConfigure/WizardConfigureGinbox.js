@@ -1,15 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { accountActions, accountStore } from 'stores/account'
-import { Paper } from '@material-ui/core'
 import WizardConfigureUnreadModeOption from './WizardConfigureUnreadModeOption'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
 import { withStyles } from '@material-ui/core/styles'
 import yellow from '@material-ui/core/colors/yellow'
 import lightBlue from '@material-ui/core/colors/lightBlue'
-import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
-import MicrosoftMailService from 'shared/Models/ACAccounts/Microsoft/MicrosoftMailService'
-import MicrosoftMailServiceReducer from 'shared/AltStores/Account/ServiceReducers/MicrosoftMailServiceReducer'
+import { accountActions, accountStore } from 'stores/account'
+import GoogleInboxService from 'shared/Models/ACAccounts/Google/GoogleInboxService'
+import GoogleInboxServiceReducer from 'shared/AltStores/Account/ServiceReducers/GoogleInboxServiceReducer'
 
 const styles = {
   // Typography
@@ -41,35 +39,21 @@ const styles = {
   popoverContainer: {
     maxWidth: 320
   },
-  popoverTitleTabContainer: {
-    padding: 16
-  },
-  popoverTitleTabItem: {
-    display: 'inline-block',
-    fontSize: 21,
-    fontWeight: 300,
-    color: '#333',
-    marginLeft: 13,
-    marginRight: 13,
-    paddingBottom: 4
-  },
-  popoverTitleTabItemActive: {
-    color: '#0078D7',
-    borderBottom: '1px solid #0078D7'
-  },
-  popoverTitleTabItemInactive: {
-    color: '#666'
+  popoverPreviewImage: {
+    maxWidth: '100%',
+    margin: '0px auto',
+    display: 'block'
   }
 }
 
 @withStyles(styles)
-class WizardConfigureMicrosoft extends React.Component {
+class WizardConfigureGinbox extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired,
+    serviceId: PropTypes.string.isRequired,
     onRequestCancel: PropTypes.func.isRequired
   }
 
@@ -86,9 +70,9 @@ class WizardConfigureMicrosoft extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.mailboxId !== nextProps.mailboxId) {
+    if (this.props.serviceId !== nextProps.serviceId) {
       const accountState = accountStore.getState()
-      const service = accountState.mailboxServicesOfType(nextProps.mailboxId, SERVICE_TYPES.MICROSOFT_MAIL)
+      const service = accountState.getService(nextProps.serviceId)
       this.setState(service ? {
         unreadMode: service.unreadMode,
         serviceId: service.id
@@ -105,10 +89,7 @@ class WizardConfigureMicrosoft extends React.Component {
 
   state = (() => {
     const accountState = accountStore.getState()
-    const service = accountState.mailboxServicesOfType(
-      this.props.mailboxId,
-      SERVICE_TYPES.MICROSOFT_MAIL
-    )[0]
+    const service = accountState.getService(this.props.serviceId)
 
     return service ? {
       unreadMode: service.unreadMode,
@@ -120,10 +101,7 @@ class WizardConfigureMicrosoft extends React.Component {
   })()
 
   accountUpdated = (accountState) => {
-    const service = accountState.mailboxServicesOfType(
-      this.props.mailboxId,
-      SERVICE_TYPES.MICROSOFT_MAIL
-    )[0]
+    const service = accountState.getService(this.props.serviceId)
 
     this.setState(service ? {
       unreadMode: service.unreadMode,
@@ -144,11 +122,7 @@ class WizardConfigureMicrosoft extends React.Component {
   */
   handleModePicked = (unreadMode) => {
     const { serviceId } = this.state
-    accountActions.reduceService(
-      serviceId,
-      MicrosoftMailServiceReducer.setUnreadMode,
-      unreadMode
-    )
+    accountActions.reduceService(serviceId, GoogleInboxServiceReducer.setUnreadMode, unreadMode)
   }
 
   /* **************************************************************************/
@@ -156,55 +130,58 @@ class WizardConfigureMicrosoft extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { mailboxId, onRequestCancel, classes, ...passProps } = this.props
+    const {
+      serviceId,
+      onRequestCancel,
+      classes,
+      ...passProps
+    } = this.props
     const { unreadMode } = this.state
 
     return (
       <WizardConfigureDefaultLayout
         onRequestCancel={onRequestCancel}
-        mailboxId={mailboxId}
+        serviceId={serviceId}
         {...passProps}>
-        <h2 className={classes.heading}>Choose your Inbox mode</h2>
+        <h2 className={classes.heading}>Pick which unread mode to use</h2>
         <p className={classes.subHeading}>
-          Your Microsoft account uses one of the following modes to organise your inbox.
-          Select the one that matches your existing settings. Don't worry if you don't know
-          what it is you can change it later!
+          Google Inbox organizes your emails into bundles. You can configure
+          Wavebox to notify you about these or emails when they arrive depending
+          on how you use Google Inbox.
         </p>
         <div className={classes.unreadOptions}>
           <WizardConfigureUnreadModeOption
             className={classes.unreadOption}
             color={yellow[700]}
-            selected={unreadMode === MicrosoftMailService.UNREAD_MODES.INBOX_UNREAD}
-            onSelected={() => this.handleModePicked(MicrosoftMailService.UNREAD_MODES.INBOX_UNREAD)}
-            name='Unread Inbox'
+            selected={unreadMode === GoogleInboxService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED}
+            onSelected={() => this.handleModePicked(GoogleInboxService.UNREAD_MODES.INBOX_UNREAD_UNBUNDLED)}
+            name='Unread Unbundled Messages'
             popoverContent={(
               <div className={classes.popoverContainer}>
-                <h3>Unread Inbox</h3>
-                <Paper className={classes.popoverTitleTabContainer}>
-                  <div className={classes.popoverTitleTabItem}>Inbox</div>
-                </Paper>
+                <h3>Unread Unbundled Messages</h3>
+                <img className={classes.popoverPreviewImage} src='../../images/ginbox_mode_unreadunbundled_small.png' />
                 <p>
-                  Your new emails are sent directly to your Inbox. Typically the title you see above
-                  your emails is <em>Inbox</em>.
+                  Some new emails are automatically placed in bundles such as <em>Social</em>
+                  and <em>Promotions</em> when they arrive. You'll only be notified about emails
+                  that aren't placed in bundles such as these. This is default behaviour also seen
+                  in the iOS and Android Inbox Apps.
                 </p>
               </div>
             )} />
           <WizardConfigureUnreadModeOption
             className={classes.unreadOption}
             color={lightBlue[700]}
-            selected={unreadMode === MicrosoftMailService.UNREAD_MODES.INBOX_FOCUSED_UNREAD}
-            onSelected={() => this.handleModePicked(MicrosoftMailService.UNREAD_MODES.INBOX_FOCUSED_UNREAD)}
-            name='Focused Inbox'
+            selected={unreadMode === GoogleInboxService.UNREAD_MODES.INBOX_UNREAD}
+            onSelected={() => this.handleModePicked(GoogleInboxService.UNREAD_MODES.INBOX_UNREAD)}
+            name='Unread Inbox'
             popoverContent={(
               <div className={classes.popoverContainer}>
-                <h3>Focused Inbox</h3>
-                <Paper className={classes.popoverTitleTabContainer}>
-                  <div style={{...styles.popoverTitleTabItem, ...styles.popoverTitleTabItemActive}}>Focused</div>
-                  <div style={{...styles.popoverTitleTabItem, ...styles.popoverTitleTabItemInactive}}>Other</div>
-                </Paper>
+                <h3>Unread Inbox</h3>
+                <img className={classes.popoverPreviewImage} src='../../images/ginbox_mode_inbox_small.png' />
                 <p>
-                  Your new emails are sorted into Focused and Other Tabs. Typically the title you
-                  will see above your emails is a choice between <em>Focused</em> and <em>Other</em>.
+                  Some new emails are automatically placed in bundles such as <em>Social</em>
+                  and <em>Promotions</em> when they arrive. You'll be notified about the total amount
+                  of unread emails in your account, whether they are in a bundle or not.
                 </p>
               </div>
             )} />
@@ -215,4 +192,4 @@ class WizardConfigureMicrosoft extends React.Component {
   }
 }
 
-export default WizardConfigureMicrosoft
+export default WizardConfigureGinbox

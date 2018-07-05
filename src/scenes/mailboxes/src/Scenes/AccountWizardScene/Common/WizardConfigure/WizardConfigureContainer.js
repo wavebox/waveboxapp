@@ -6,7 +6,6 @@ import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
 import SleepableField from 'wbui/SleepableField'
 import { userStore } from 'stores/user'
 import { withStyles } from '@material-ui/core/styles'
-import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 import ContainerServiceReducer from 'shared/AltStores/Account/ServiceReducers/ContainerServiceReducer'
 import red from '@material-ui/core/colors/red'
 import amber from '@material-ui/core/colors/amber'
@@ -52,7 +51,7 @@ class WizardConfigureContainer extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired,
+    serviceId: PropTypes.string.isRequired,
     onRequestCancel: PropTypes.func.isRequired
   }
 
@@ -71,10 +70,10 @@ class WizardConfigureContainer extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.mailboxId !== nextProps.mailboxId) {
+    if (this.props.serviceId !== nextProps.serviceId) {
       const accountState = accountStore.getState()
       this.setState({
-        service: accountState.mailboxServicesOfType(nextProps.mailboxId, SERVICE_TYPES.CONTAINER)[0]
+        service: accountState.getService(nextProps.serviceId)
       })
     }
   }
@@ -87,13 +86,13 @@ class WizardConfigureContainer extends React.Component {
     const accountState = accountStore.getState()
     return {
       userHasSleepable: userStore.getState().user.hasSleepable,
-      service: accountState.mailboxServicesOfType(this.props.mailboxId, SERVICE_TYPES.CONTAINER)[0]
+      service: accountState.getService(this.props.serviceId)
     }
   })()
 
   accountUpdated = (accountState) => {
     this.setState({
-      service: accountState.mailboxServicesOfType(this.props.mailboxId, SERVICE_TYPES.CONTAINER)[0]
+      service: accountState.getService(this.props.serviceId)
     })
   }
 
@@ -108,14 +107,14 @@ class WizardConfigureContainer extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { mailboxId, onRequestCancel, classes, ...passProps } = this.props
+    const { serviceId, onRequestCancel, classes, ...passProps } = this.props
     const { userHasSleepable, service } = this.state
     if (!service) { return false }
 
     return (
       <WizardConfigureDefaultLayout
         onRequestCancel={onRequestCancel}
-        mailboxId={mailboxId}
+        serviceId={serviceId}
         {...passProps}>
         <h2 className={classes.heading}>Configure your Account</h2>
         <FormControl fullWidth>

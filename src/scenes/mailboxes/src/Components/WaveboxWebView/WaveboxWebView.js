@@ -8,8 +8,6 @@ import {
 } from 'shared/constants'
 import electron from 'electron'
 import pkg from 'package.json'
-import { userActions } from 'stores/user'
-import { accountActions } from 'stores/account'
 import WaveboxWebViewLoadbar from './WaveboxWebViewLoadbar'
 import WaveboxWebViewToolbar from './WaveboxWebViewToolbar'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -86,29 +84,9 @@ class WaveboxWebView extends React.Component {
           window.location.hash = '/'
           electron.remote.shell.openExternal(purl.searchParams.get('url'))
           return true
-        case WAVEBOX_CAPTURE_URLS.ADD_MAILBOX:
-          this.processAddMailbox(purl)
-          return true
       }
     }
     return false
-  }
-
-  /**
-  * Runs the add mailbox process from an add url
-  * @param purl: the parsed url that should be processed
-  */
-  static processAddMailbox (purl) {
-    const containerId = purl.searchParams.get('container_id')
-    const container = purl.searchParams.get('container')
-    const type = purl.searchParams.get('type')
-    const accessMode = purl.searchParams.get('access_mode')
-    if (containerId && container) {
-      userActions.sideloadContainerLocally(containerId, JSON.parse(container))
-    }
-    if (type) {
-      accountActions.startAddMailboxGroup(type, accessMode)
-    }
   }
 
   /* **************************************************************************/

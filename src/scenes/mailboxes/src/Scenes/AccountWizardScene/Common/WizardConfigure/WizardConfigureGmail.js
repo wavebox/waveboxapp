@@ -7,7 +7,6 @@ import { withStyles } from '@material-ui/core/styles'
 import yellow from '@material-ui/core/colors/yellow'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import cyan from '@material-ui/core/colors/cyan'
-import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 import GoogleMailService from 'shared/Models/ACAccounts/Google/GoogleMailService'
 import GoogleMailServiceReducer from 'shared/AltStores/Account/ServiceReducers/GoogleMailServiceReducer'
 
@@ -55,7 +54,7 @@ class WizardConfigureGmail extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired,
+    serviceId: PropTypes.string.isRequired,
     onRequestCancel: PropTypes.func.isRequired
   }
 
@@ -72,9 +71,9 @@ class WizardConfigureGmail extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.mailboxId !== nextProps.mailboxId) {
+    if (this.props.serviceId !== nextProps.serviceId) {
       const accountState = accountStore.getState()
-      const service = accountState.mailboxServicesOfType(nextProps.mailboxId, SERVICE_TYPES.GOOGLE_MAIL)
+      const service = accountState.getService(nextProps.serviceId)
       this.setState(service ? {
         unreadMode: service.unreadMode,
         serviceId: service.id
@@ -91,10 +90,7 @@ class WizardConfigureGmail extends React.Component {
 
   state = (() => {
     const accountState = accountStore.getState()
-    const service = accountState.mailboxServicesOfType(
-      this.props.mailboxId,
-      SERVICE_TYPES.GOOGLE_MAIL
-    )[0]
+    const service = accountState.getService(this.props.serviceId)
 
     return service ? {
       unreadMode: service.unreadMode,
@@ -106,10 +102,7 @@ class WizardConfigureGmail extends React.Component {
   })()
 
   accountUpdated = (accountState) => {
-    const service = accountState.mailboxServicesOfType(
-      this.props.mailboxId,
-      SERVICE_TYPES.GOOGLE_MAIL
-    )[0]
+    const service = accountState.getService(this.props.serviceId)
 
     this.setState(service ? {
       unreadMode: service.unreadMode,
@@ -138,13 +131,13 @@ class WizardConfigureGmail extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { mailboxId, onRequestCancel, classes, ...passProps } = this.props
+    const { serviceId, onRequestCancel, classes, ...passProps } = this.props
     const { unreadMode } = this.state
 
     return (
       <WizardConfigureDefaultLayout
         onRequestCancel={onRequestCancel}
-        mailboxId={mailboxId}
+        serviceId={serviceId}
         {...passProps}>
         <h2 className={classes.heading}>Choose your Inbox mode</h2>
         <p className={classes.subHeading}>

@@ -6,7 +6,6 @@ import WizardServicePicker from './WizardServicePicker'
 import { Button, Select, MenuItem, FormControl, InputLabel } from '@material-ui/core'
 import { accountActions, accountStore } from 'stores/account'
 import { userStore } from 'stores/user'
-import WizardPersonaliseContainer from './WizardPersonaliseContainer'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import lightBlue from '@material-ui/core/colors/lightBlue'
@@ -14,7 +13,8 @@ import StyleMixins from 'wbui/Styles/StyleMixins'
 import { ACCOUNT_TEMPLATE_TYPES } from 'shared/Models/ACAccounts/AccountTemplates'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import ACTemplatedAccount from 'shared/Models/ACAccounts/ACTemplatedAccount'
-import WizardPersonaliseGeneric from './WizardPersonaliseGeneric'
+import WizardPersonaliseGeneric from '../../Common/WizardPersonalise/WizardPersonaliseGeneric'
+import WizardPersonaliseContainer from '../../Common/WizardPersonalise/WizardPersonaliseContainer'
 
 const styles = {
   // Layout
@@ -100,7 +100,7 @@ class WizardPersonalise extends React.Component {
   /* **************************************************************************/
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.template !== this.props.templ || nextProps.accessMode !== this.props.accessMode) {
+    if (nextProps.template !== this.props.template || nextProps.accessMode !== this.props.accessMode) {
       const templateColor = this.getDefaultMailboxColor(nextProps.template, nextProps.accessMode)
       this.setState({
         templateColors: [templateColor],
@@ -186,7 +186,10 @@ class WizardPersonalise extends React.Component {
     })
 
     if (this.customPersonalizeRef) {
-      this.customPersonalizeRef.handleNext(account)
+      const custom = this.customPersonalizeRef.updateTemplatedAccount(account)
+      if (custom.ok) {
+        accountActions.authMailboxGroupFromTemplate(custom.account)
+      }
     } else {
       accountActions.authMailboxGroupFromTemplate(account)
     }
@@ -242,12 +245,13 @@ class WizardPersonalise extends React.Component {
         <WizardPersonaliseContainer
           innerRef={(n) => { this.customPersonalizeRef = n }}
           onRequestNext={this.handleNext}
-          containerId={accessMode} />)
+          accessMode={accessMode} />)
     } else if (template.type === ACCOUNT_TEMPLATE_TYPES.GENERIC) {
       return (
         <WizardPersonaliseGeneric
           innerRef={(n) => { this.customPersonalizeRef = n }}
-          onRequestNext={this.handleNext} />)
+          onRequestNext={this.handleNext}
+          accessMode={accessMode} />)
     } else {
       return undefined
     }
@@ -277,7 +281,7 @@ class WizardPersonalise extends React.Component {
         <div className={classes.body}>
           <div>
             <h2 className={classes.heading}>Pick a Colour</h2>
-            <p className={classes.subHeading}>Get started by picking a colour for your account</p>
+            <p className={classes.subHeading}>Get started by picking a colour & personalising your account</p>
             <WizardColorPicker
               className={classes.colorPicker}
               colors={templateColors}

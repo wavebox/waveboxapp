@@ -4,9 +4,10 @@ import { accountStore } from 'stores/account'
 import MailboxAvatar from 'Components/Backed/MailboxAvatar'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import { FormControl, InputLabel, Select, MenuItem, Paper } from '@material-ui/core'
+import { FormControl, InputLabel, Select, MenuItem, Paper, ListItemIcon, ListItemText } from '@material-ui/core'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import pluralize from 'pluralize'
+import AddBoxIcon from '@material-ui/icons/AddBox'
 
 const styles = {
   accountPickerBanner: {
@@ -85,6 +86,18 @@ class AccountPickerBanner extends React.Component {
   }
 
   /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  handleChange = (evt) => {
+    if (evt.target.value === '__add__') {
+      window.location.hash = '/mailbox_wizard/add'
+    } else {
+      this.props.onChange(evt.target.value)
+    }
+  }
+
+  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
@@ -113,7 +126,7 @@ class AccountPickerBanner extends React.Component {
                     style: { maxHeight: 200 }
                   }
                 }}
-                onChange={(evt) => { onChange(evt.target.value) }}>
+                onChange={this.handleChange}>
                 {mailboxes.map((m) => {
                   const count = m.allServiceCount
                   return (
@@ -122,6 +135,12 @@ class AccountPickerBanner extends React.Component {
                     </MenuItem>
                   )
                 })}
+                <MenuItem value='__add__'>
+                  <ListItemIcon className={classes.icon}>
+                    <AddBoxIcon />
+                  </ListItemIcon>
+                  <ListItemText inset primary='Add another Account' />
+                </MenuItem>
               </Select>
             </FormControl>
           </div>

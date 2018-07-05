@@ -22,6 +22,7 @@ class ACClassicContainer extends Model {
   get postInstallUrl () { return this._value_('postInstallUrl', '') }
   get postInstallUrlDelay () { return this._value_('postInstallUrlDelay', 2500) }
   get hasPostInstallUrl () { return !!this.postInstallUrl }
+  get installHasPersonaliseStep () { return this.hasUrlSubdomain }
 
   /* **************************************************************************/
   // Properties: Appearance

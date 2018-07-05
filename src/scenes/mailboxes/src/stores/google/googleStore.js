@@ -744,7 +744,7 @@ class GoogleStore {
 
     all.forEach((service) => {
       const auth = accountState.getMailboxAuthForServiceId(service.id)
-      if (auth.authEmail === email) {
+      if (auth && auth.authEmail === email) {
         actions.mailHistoryIdChanged.defer(service.id, historyId)
       }
     })

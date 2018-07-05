@@ -2,12 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import {TextField} from '@material-ui/core'
 import {userStore} from 'stores/user'
-import {accountActions} from 'stores/account'
 import { withStyles } from '@material-ui/core/styles'
 import ACTemplatedAccount from 'shared/Models/ACAccounts/ACTemplatedAccount'
 
 const styles = {
-  // Typography
   heading: {
     fontWeight: 300,
     marginTop: 40
@@ -26,7 +24,7 @@ class WizardPersonaliseContainer extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    containerId: PropTypes.string.isRequired,
+    accessMode: PropTypes.string.isRequired,
     onRequestNext: PropTypes.func.isRequired
   }
 
@@ -52,9 +50,9 @@ class WizardPersonaliseContainer extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.containerId !== nextProps.containerId) {
+    if (this.props.accessMode !== nextProps.accessMode) {
       this.setState({
-        container: userStore.getState().getContainer(nextProps.containerId)
+        container: userStore.getState().getContainer(nextProps.accessMode)
       })
     }
   }
@@ -65,45 +63,91 @@ class WizardPersonaliseContainer extends React.Component {
 
   state = (() => {
     return {
-      container: userStore.getState().getContainer(this.props.containerId),
+      container: userStore.getState().getContainer(this.props.accessMode),
       showSubdomainError: false
     }
   })()
 
   userStoreChanged = (userState) => {
     this.setState({
-      container: userState.getContainer(this.props.containerId)
+      container: userState.getContainer(this.props.accessMode)
     })
   }
 
   /* **************************************************************************/
-  // Events
+  // Validate
   /* **************************************************************************/
 
   /**
-  * Handles the user pressing next
-  * @param account: the account template used to create the account
+  * Validates and updates the current state
+  * @return true if validation is okay, false otherwise
   */
-  handleNext = (account) => {
+  validateState () {
     const { container } = this.state
-    const changeset = {
-      displayName: container.name
-    }
 
     if (container.hasUrlSubdomain) {
       const subdomain = this.subdomainInputRef.value
       if (!subdomain) {
         this.setState({ showSubdomainError: true })
-        return
+        return false
       } else {
         this.setState({ showSubdomainError: false })
-        changeset.expando = { urlSubdomain: subdomain }
       }
     }
 
-    accountActions.authMailboxGroupFromTemplate(
-      new ACTemplatedAccount(account.changeDataWithChangeset(changeset))
-    )
+    return true
+  }
+
+  /* **************************************************************************/
+  // Public
+  /* **************************************************************************/
+
+  /**
+  * @public
+  * Updates a templated account
+  * @param account: the account tempalte to update
+  * @return { ok: true|false, account }
+  */
+  updateTemplatedAccount (account) {
+    const isValid = this.validateState()
+    if (isValid) {
+      return {
+        ok: true,
+        account: new ACTemplatedAccount(account.changeDataWithChangeset({
+          displayName: this.state.container.name,
+          ...(this.state.container.hasUrlSubdomain ? {
+            expando: {
+              urlSubdomain: this.subdomainInputRef.value
+            }
+          } : {})
+        }))
+      }
+    } else {
+      return { ok: false }
+    }
+  }
+
+  /**
+  * @public
+  * Updates an attaching service
+  * @param serviceJS: the serviceJS to update
+  * @return { ok: true|false, serviceJS }
+  */
+  updateAttachingService (serviceJS) {
+    const isValid = this.validateState()
+
+    if (isValid) {
+      return {
+        ok: true,
+        serviceJS: {
+          ...serviceJS,
+          displayName: this.state.container.name,
+          urlSubdomain: this.subdomainInputRef.value
+        }
+      }
+    } else {
+      return { ok: false }
+    }
   }
 
   /* **************************************************************************/

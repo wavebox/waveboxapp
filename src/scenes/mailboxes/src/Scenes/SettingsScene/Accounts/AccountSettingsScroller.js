@@ -17,6 +17,7 @@ import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
 import BuildIcon from '@material-ui/icons/Build'
 import TuneIcon from '@material-ui/icons/Tune'
 import ListIcon from '@material-ui/icons/List'
+import AccountServicesHeading from './AccountServicesHeading'
 
 const CONTENT_WIDTH = 600
 const SCROLLSPY_WIDTH = 210
@@ -86,9 +87,6 @@ const styles = {
     scrollspy: {
       display: 'none'
     }
-  },
-  mailboxSettingsSection: {
-    marginBottom: 80
   }
 }
 
@@ -210,10 +208,10 @@ class AccountSettingsScroller extends React.Component {
         {...passProps}>
         <div className={classes.scroller} ref={(n) => { this.scrollerRef = n }}>
           <MailboxSettingsSection
-            className={classes.mailboxSettingsSection}
             mailboxId={mailboxId}
             showRestart={showRestart}
             onRequestEditCustomCode={onRequestEditCustomCode} />
+          <AccountServicesHeading mailboxId={mailboxId} />
           {services.map((service) => {
             return (
               <div key={service.id} id={`service-section-${service.id}`}>

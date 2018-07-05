@@ -759,7 +759,7 @@ class MailboxWebView extends React.Component {
             button={(
               <Button
                 variant='raised'
-                onClick={() => { accountActions.reauthenticateMailbox(mailboxId) }}>
+                onClick={() => { accountActions.reauthenticateService(serviceId) }}>
                 <ErrorOutlineIcon className={classes.infoButtonIcon} />
                 Reauthenticate
               </Button>
