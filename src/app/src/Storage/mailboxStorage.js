@@ -378,7 +378,7 @@ class MailboxStorageBucket extends MigratingStorageBucket {
     }
 
     if (mailbox.type === 'CONTAINER') {
-      nextMailbox.displayName = 'Container'
+      nextMailbox.displayName = mailbox.container.name || 'Container'
       nextMailbox.color = nextMailbox.color || 'rgb(255, 255, 255)'
       nextMailbox.useCustomUserAgent = mailbox.useCustomUserAgent
       nextMailbox.customUserAgentString = mailbox.customUserAgentString

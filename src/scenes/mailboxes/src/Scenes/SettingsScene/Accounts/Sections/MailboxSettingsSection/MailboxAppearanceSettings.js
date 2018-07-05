@@ -7,6 +7,7 @@ import { settingsStore } from 'stores/settings'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItem from 'wbui/SettingsListItem'
+import SettingsListItemTextField from 'wbui/SettingsListItemTextField'
 import { withStyles } from '@material-ui/core/styles'
 import SmsIcon from '@material-ui/icons/Sms'
 import InsertEmoticonButton from '@material-ui/icons/InsertEmoticon'
@@ -110,7 +111,8 @@ class MailboxAppearanceSettings extends React.Component {
       mailboxShowAvatarColorRing: mailbox.showAvatarColorRing,
       mailboxShowSleepableServiceIndicator: mailbox.showSleepableServiceIndicator,
       mailboxShowBadge: mailbox.showBadge,
-      mailboxBadgeColor: mailbox.badgeColor
+      mailboxBadgeColor: mailbox.badgeColor,
+      mailboxDisplayName: mailbox.displayName
     } : {
       mailboxColor: '#FFF',
       mailboxShowAvatarColorRing: true,
@@ -137,12 +139,23 @@ class MailboxAppearanceSettings extends React.Component {
       mailboxShowAvatarColorRing,
       mailboxShowSleepableServiceIndicator,
       mailboxShowBadge,
-      mailboxBadgeColor
+      mailboxBadgeColor,
+      mailboxDisplayName
     } = this.state
 
     return (
       <div {...passProps}>
         <SettingsListSection title='Appearance' icon={<ViewQuiltIcon />}>
+          <SettingsListItemTextField
+            key={`displayName_${mailboxDisplayName}`}
+            label='Display Name'
+            textFieldProps={{
+              defaultValue: mailboxDisplayName,
+              placeholder: 'My Account',
+              onBlur: (evt) => {
+                accountActions.reduceMailbox(mailboxId, MailboxReducer.setDisplayName, evt.target.value)
+              }
+            }} />
           <SettingsListItem>
             <ColorPickerButton
               buttonProps={{ variant: 'raised', size: 'small' }}

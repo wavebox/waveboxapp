@@ -24,7 +24,7 @@ class EmblinkStore extends CoreEmblinkStore {
 
   handleComposeNewMessage (payload) {
     super.handleComposeNewMessage(payload)
-    this.dispatchToUniversalRemote('composeNewMessage', [payload.mailboxId, payload.serviceType])
+    this.dispatchToUniversalRemote('composeNewMessage', [payload.serviceId])
   }
 
   handleClearCompose (payload) {
@@ -36,8 +36,7 @@ class EmblinkStore extends CoreEmblinkStore {
     super.handleComposeNewMailtoLink(payload)
     this.dispatchToUniversalRemote('composeNewMailtoLink', [
       payload.mailtoLink,
-      payload.mailboxId,
-      payload.serviceType
+      payload.serviceId
     ])
   }
 
@@ -48,8 +47,7 @@ class EmblinkStore extends CoreEmblinkStore {
   handleOpenItem (payload) {
     super.handleOpenItem(payload)
     this.dispatchToUniversalRemote('openItem', [
-      payload.mailboxId,
-      payload.serviceType,
+      payload.serviceId,
       payload.openPayload
     ])
   }

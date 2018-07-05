@@ -50,7 +50,7 @@ export default class UnreadMailbox extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId) {
-      this.setState(this.generateMailboxState(nextProps.mailboxId))
+      this.setState(this.generateAccountState(nextProps.mailboxId))
     }
   }
 

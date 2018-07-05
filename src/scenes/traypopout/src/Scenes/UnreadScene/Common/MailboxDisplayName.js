@@ -1,22 +1,30 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { accountStore } from 'stores/account'
-import { ListItem } from '@material-ui/core'
-import MailboxBadge from 'wbui/MailboxBadge'
-import MailboxAvatar from 'wbui/MailboxAvatar'
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight'
 import { withStyles } from '@material-ui/core/styles'
 import grey from '@material-ui/core/colors/grey'
-import Resolver from 'Runtime/Resolver'
 import classNames from 'classnames'
-import MailboxDisplayName from '../Common/MailboxDisplayName'
 
 const styles = {
-  root: {
-    cursor: 'pointer'
+  text: {
+    width: '100%',
+    paddingLeft: 24,
+    paddingRight: 24
   },
-  forwardArrow: {
-    color: grey[400]
+  primaryText: {
+    display: 'inline-block',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    width: '100%',
+    lineHeight: '20px',
+    fontSize: '16px'
+  },
+  secondaryText: {
+    display: 'inline-block',
+    lineHeight: '16px',
+    fontSize: '14px',
+    color: grey[500]
   }
 }
 
@@ -27,9 +35,7 @@ class UnreadMailboxListItem extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired,
-    requestShowMailbox: PropTypes.func.isRequired,
-    requestSwitchMailbox: PropTypes.func.isRequired
+    mailboxId: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -73,9 +79,10 @@ class UnreadMailboxListItem extends React.Component {
   generateMailboxState (mailboxId, accountState = accountStore.getState()) {
     const mailbox = accountState.getMailbox(mailboxId)
     return {
-      mailbox: mailbox,
-      unreadCount: accountState.userUnreadCountForMailbox(mailboxId),
-      avatar: accountState.getMailboxAvatarConfig(mailboxId)
+      hasSingleService: mailbox.hasSingleService,
+      mailboxDisplayName: mailbox.displayName || 'Untitled',
+      serviceDisplayName: (accountState.getService(mailbox.allServices[0]) || {}).displayName || 'Untitled',
+      serviceCount: mailbox.allServiceCount
     }
   }
 
@@ -86,38 +93,27 @@ class UnreadMailboxListItem extends React.Component {
   render () {
     const {
       mailboxId,
-      requestSwitchMailbox,
-      requestShowMailbox,
       classes,
       className,
       ...passProps
     } = this.props
     const {
-      mailbox,
-      avatar,
-      unreadCount
+      hasSingleService,
+      mailboxDisplayName,
+      serviceDisplayName,
+      serviceCount
     } = this.state
 
-    return (
-      <ListItem
-        button
-        className={classNames(classes.root, className)}
-        onClick={(evt) => requestShowMailbox(evt, mailboxId)}
-        {...passProps}>
-        <MailboxBadge mailbox={mailbox} unreadCount={unreadCount}>
-          <MailboxAvatar
-            avatar={avatar}
-            resolver={(i) => Resolver.image(i)}
-            size={40}
-            onClick={(evt) => {
-              evt.preventDefault()
-              evt.stopPropagation()
-              requestSwitchMailbox(evt, mailboxId)
-            }} />
-        </MailboxBadge>
-        <MailboxDisplayName mailboxId={mailboxId} />
-        <KeyboardArrowRightIcon className={classes.forwardArrow} />
-      </ListItem>
+    return hasSingleService ? (
+      <span className={classNames(className, classes.text)} {...passProps}>
+        <span className={classes.primaryText}>{serviceDisplayName}</span>
+        <span className={classes.secondaryText}>{mailboxDisplayName}</span>
+      </span>
+    ) : (
+      <span className={classNames(className, classes.text)} {...passProps}>
+        <span className={classes.primaryText}>{mailboxDisplayName}</span>
+        <span className={classes.secondaryText}>{`${serviceCount} services`}</span>
+      </span>
     )
   }
 }

@@ -26,6 +26,14 @@ class MailboxReducer {
 
   /**
   * @param mailbox: the mailbox to update
+  * @param name: the name of the mailbox
+  */
+  static setDisplayName (mailbox, name) {
+    return mailbox.changeData({ displayName: name })
+  }
+
+  /**
+  * @param mailbox: the mailbox to update
   * @param col: the color as either a hex string or object that contains hex key
   */
   static setColor (mailbox, col) {

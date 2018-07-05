@@ -9,30 +9,11 @@ import { withStyles } from '@material-ui/core/styles'
 import grey from '@material-ui/core/colors/grey'
 import Resolver from 'Runtime/Resolver'
 import classNames from 'classnames'
+import MailboxDisplayName from '../Common/MailboxDisplayName'
 
 const styles = {
   root: {
     cursor: 'pointer'
-  },
-  text: {
-    width: '100%',
-    paddingLeft: 24,
-    paddingRight: 24
-  },
-  primaryText: {
-    display: 'inline-block',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    width: '100%',
-    lineHeight: '18px',
-    fontSize: '16px'
-  },
-  secondaryText: {
-    display: 'inline-block',
-    lineHeight: '16px',
-    fontSize: '14px',
-    color: grey[500]
   },
   backArrow: {
     color: grey[400]
@@ -112,9 +93,7 @@ class UnreadMailboxControlListItem extends React.Component {
         onClick={(evt) => requestShowMailboxList(evt, mailboxId)}
         {...passProps}>
         <KeyboardArrowLeftIcon className={classes.backArrow} />
-        <span className={classes.text}>
-          <span className={classes.primaryText}>{mailbox.displayName || 'Untitled'}</span>
-        </span>
+        <MailboxDisplayName mailboxId={mailboxId} />
         <MailboxBadge mailbox={mailbox} unreadCount={unreadCount}>
           <MailboxAvatar
             avatar={avatar}

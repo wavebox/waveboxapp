@@ -6,6 +6,7 @@ import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import { FormControl, InputLabel, Select, MenuItem, Paper } from '@material-ui/core'
 import lightBlue from '@material-ui/core/colors/lightBlue'
+import pluralize from 'pluralize'
 
 const styles = {
   accountPickerBanner: {
@@ -114,8 +115,11 @@ class AccountPickerBanner extends React.Component {
                 }}
                 onChange={(evt) => { onChange(evt.target.value) }}>
                 {mailboxes.map((m) => {
+                  const count = m.allServiceCount
                   return (
-                    <MenuItem value={m.id} key={m.id}>{m.displayName}</MenuItem>
+                    <MenuItem value={m.id} key={m.id}>
+                      {`${m.displayName || 'Untitled'} (${count} ${pluralize('service', count)})`}
+                    </MenuItem>
                   )
                 })}
               </Select>

@@ -43,7 +43,7 @@ class CoreEmblinkStore extends RemoteStore {
     /**
     * @return true if compose has a mailbox and service
     */
-    this.composeHasMailbox = () => { return this.compose.serviceId }
+    this.composeHasMailbox = () => { return !!this.compose.serviceId }
 
     /* ****************************************/
     // Open
@@ -52,7 +52,7 @@ class CoreEmblinkStore extends RemoteStore {
     /**
     * @return true if there is an item to open
     */
-    this.hasOpenItem = () => { return this.open.serviceId }
+    this.hasOpenItem = () => { return !!this.open.serviceId }
 
     /* ****************************************/
     // Actions

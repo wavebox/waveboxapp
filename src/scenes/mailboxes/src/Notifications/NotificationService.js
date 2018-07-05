@@ -116,7 +116,7 @@ class NotificationService extends EventEmitter {
       (data) => {
         // Switch across to the mailbox if we were provided with enough info
         ipcRenderer.send(WB_FOCUS_APP, { })
-        if (data && data.mailboxId && data.serviceType) {
+        if (data && data.serviceId) {
           accountActions.changeActiveService(data.serviceId)
         }
 

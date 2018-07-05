@@ -4,7 +4,7 @@ import { accountStore, accountActions } from 'stores/account'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemText from 'wbui/SettingsListItemText'
-import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
+import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 import ListIcon from '@material-ui/icons/List'
 import shallowCompare from 'react-addons-shallow-compare'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
@@ -96,7 +96,7 @@ export default class MailboxServicesSettings extends React.Component {
               the way these behave
             </span>
           )} />
-        <SettingsListItemSelectInline
+        <SettingsListItemSelect
           label='Where should services be displayed?'
           value={depricatedServiceUILocation}
           divider={depricatedServiceUILocation === ACMailbox.SERVICE_UI_LOCATIONS.SIDEBAR}

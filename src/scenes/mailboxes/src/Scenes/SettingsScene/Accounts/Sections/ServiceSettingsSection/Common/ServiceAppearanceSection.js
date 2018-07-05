@@ -114,10 +114,10 @@ class ServiceAppearanceSection extends React.Component {
           <SettingsListItemTextField
             divider={!isLast}
             key={`displayName_${displayName}`}
-            label='Account Name'
+            label='Display Name'
             textFieldProps={{
               defaultValue: displayName,
-              placeholder: 'My Account',
+              placeholder: 'My Service',
               onBlur: (evt) => {
                 accountActions.reduceService(serviceId, ServiceReducer.setDisplayName, evt.target.value)
               }
