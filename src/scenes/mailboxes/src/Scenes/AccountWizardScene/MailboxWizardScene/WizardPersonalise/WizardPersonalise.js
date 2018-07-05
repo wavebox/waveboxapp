@@ -14,6 +14,7 @@ import StyleMixins from 'wbui/Styles/StyleMixins'
 import { ACCOUNT_TEMPLATE_TYPES } from 'shared/Models/ACAccounts/AccountTemplates'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import ACTemplatedAccount from 'shared/Models/ACAccounts/ACTemplatedAccount'
+import WizardPersonaliseGeneric from './WizardPersonaliseGeneric'
 
 const styles = {
   // Layout
@@ -240,7 +241,13 @@ class WizardPersonalise extends React.Component {
       return (
         <WizardPersonaliseContainer
           innerRef={(n) => { this.customPersonalizeRef = n }}
+          onRequestNext={this.handleNext}
           containerId={accessMode} />)
+    } else if (template.type === ACCOUNT_TEMPLATE_TYPES.GENERIC) {
+      return (
+        <WizardPersonaliseGeneric
+          innerRef={(n) => { this.customPersonalizeRef = n }}
+          onRequestNext={this.handleNext} />)
     } else {
       return undefined
     }

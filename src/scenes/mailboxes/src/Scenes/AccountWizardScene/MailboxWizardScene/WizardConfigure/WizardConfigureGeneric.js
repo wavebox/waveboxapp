@@ -4,7 +4,6 @@ import { Button, Switch, Select, MenuItem, TextField, FormControlLabel, FormCont
 import shallowCompare from 'react-addons-shallow-compare'
 import { accountActions, accountStore } from 'stores/account'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
-import validUrl from 'valid-url'
 import WizardConfigureDefaultLayout from './WizardConfigureDefaultLayout'
 import { withStyles } from '@material-ui/core/styles'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
@@ -50,7 +49,6 @@ class WizardConfigureGeneric extends React.Component {
   constructor (props) {
     super(props)
     this.nameInputRef = null
-    this.urlInputRef = null
   }
 
   /* **************************************************************************/
@@ -81,38 +79,8 @@ class WizardConfigureGeneric extends React.Component {
       hasNavigationToolbar: true,
       restoreLastUrl: true,
       displayNameError: null,
-      serviceUrlError: null,
-      displayName: '',
-      serviceUrl: ''
+      displayName: ''
     }
-  }
-
-  /**
-  * Validates the data and creates errors based on this
-  * @param state: the state to validate
-  * @return a dictionary of errors
-  */
-  validateData (state) {
-    const { serviceUrl } = state
-    const errors = {}
-
-    // Url
-    if (!serviceUrl) {
-      errors.serviceUrlError = 'Website url is required'
-    } else if (!validUrl.isUri(serviceUrl)) {
-      errors.serviceUrlError = 'Website url is not valid'
-    }
-
-    return errors
-  }
-
-  /**
-  * Checks to see if the data validates
-  * @param state: the state to validate
-  * @return true if it validates, false otherwise
-  */
-  doesDataValidate (state) {
-    return Object.keys(this.validateData(state)).length === 0
   }
 
   /* **************************************************************************/
@@ -140,41 +108,28 @@ class WizardConfigureGeneric extends React.Component {
   * @return true if it validated correctly
   */
   handleFinish = (mailboxId, onRequestCancel) => {
-    const errors = this.validateData(this.state)
-    const hasErrors = Object.keys(errors).length !== 0
-    const update = {
-      displayNameError: null,
-      serviceUrlError: null,
-      ...errors
-    }
+    const {
+      displayName,
+      serviceUrl,
+      configureDisplayFromPage,
+      defaultWindowOpenMode,
+      hasNavigationToolbar,
+      restoreLastUrl
+    } = this.state
 
-    if (!hasErrors) {
-      const {
-        displayName,
-        serviceUrl,
-        configureDisplayFromPage,
-        defaultWindowOpenMode,
-        hasNavigationToolbar,
-        restoreLastUrl
-      } = this.state
+    const serviceId = accountStore.getState().mailboxServiceIdsOfType(mailboxId, SERVICE_TYPES.GENERIC)[0]
 
-      const serviceId = accountStore.getState().mailboxServiceIdsOfType(mailboxId, SERVICE_TYPES.GENERIC)[0]
+    accountActions.reduceService(serviceId, GenericServiceReducer.setDisplayName, displayName)
+    accountActions.reduceService(serviceId, GenericServiceReducer.setUsePageTitleAsDisplayName, configureDisplayFromPage)
+    accountActions.reduceService(serviceId, GenericServiceReducer.setUsePageThemeAsColor, configureDisplayFromPage)
+    accountActions.reduceService(serviceId, GenericServiceReducer.setUrl, serviceUrl)
+    accountActions.reduceService(serviceId, GenericServiceReducer.setHasNavigationToolbar, hasNavigationToolbar)
+    accountActions.reduceService(serviceId, GenericServiceReducer.setRestoreLastUrl, restoreLastUrl)
 
-      accountActions.reduceService(serviceId, GenericServiceReducer.setDisplayName, displayName)
-      accountActions.reduceService(serviceId, GenericServiceReducer.setUsePageTitleAsDisplayName, configureDisplayFromPage)
-      accountActions.reduceService(serviceId, GenericServiceReducer.setUsePageThemeAsColor, configureDisplayFromPage)
-      accountActions.reduceService(serviceId, GenericServiceReducer.setUrl, serviceUrl)
-      accountActions.reduceService(serviceId, GenericServiceReducer.setHasNavigationToolbar, hasNavigationToolbar)
-      accountActions.reduceService(serviceId, GenericServiceReducer.setRestoreLastUrl, restoreLastUrl)
+    accountActions.reduceMailbox(mailboxId, MailboxReducer.setDefaultWindowOpenMode, defaultWindowOpenMode)
 
-      accountActions.reduceMailbox(mailboxId, MailboxReducer.setDefaultWindowOpenMode, defaultWindowOpenMode)
-
-      onRequestCancel()
-      return true
-    }
-
-    this.setState(update)
-    return false
+    onRequestCancel()
+    return true
   }
 
   /* **************************************************************************/
@@ -193,17 +148,13 @@ class WizardConfigureGeneric extends React.Component {
       hasNavigationToolbar,
       restoreLastUrl,
       displayName,
-      displayNameError,
-      serviceUrl,
-      serviceUrlError
+      displayNameError
     } = this.state
-    const hasErrors = !this.doesDataValidate(this.state)
 
     const buttons = (
       <div>
         <Button
           className={classes.footerButton}
-          disabled={hasErrors}
           onClick={() => {
             const validated = this.handleFinish(mailboxId, onRequestCancel)
             if (validated) {
@@ -233,10 +184,6 @@ class WizardConfigureGeneric extends React.Component {
         buttons={buttons}
         {...passProps}>
         <h2 className={classes.heading}>Configure your Account</h2>
-        <div className={classes.subheading}>
-          Enter the web address and the name of the website you want
-          to add
-        </div>
         <TextField
           inputRef={(n) => { this.nameInputRef = n }}
           fullWidth
@@ -251,23 +198,6 @@ class WizardConfigureGeneric extends React.Component {
           onKeyDown={(evt) => {
             if (evt.keyCode === 13) {
               this.urlInputRef.focus()
-            }
-          }} />
-        <TextField
-          inputRef={(n) => { this.urlInputRef = n }}
-          fullWidth
-          type='url'
-          InputLabelProps={{ shrink: true }}
-          placeholder='https://wavebox.io'
-          label='Website Url'
-          margin='normal'
-          value={serviceUrl}
-          error={!!serviceUrlError}
-          helperText={serviceUrlError}
-          onChange={(evt) => this.setState({ serviceUrl: evt.target.value })}
-          onKeyDown={(evt) => {
-            if (evt.keyCode === 13) {
-              this.handleFinish(mailboxId, onRequestCancel)
             }
           }} />
         <FormControl fullWidth margin='normal'>

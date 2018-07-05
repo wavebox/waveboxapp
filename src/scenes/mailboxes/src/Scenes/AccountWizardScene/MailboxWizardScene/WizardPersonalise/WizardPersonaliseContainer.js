@@ -26,7 +26,8 @@ class WizardPersonaliseContainer extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    containerId: PropTypes.string.isRequired
+    containerId: PropTypes.string.isRequired,
+    onRequestNext: PropTypes.func.isRequired
   }
 
   /* **************************************************************************/
@@ -111,7 +112,7 @@ class WizardPersonaliseContainer extends React.Component {
 
   render () {
     const { container, showSubdomainError } = this.state
-    const { classes, ...passProps } = this.props
+    const { classes, onRequestNext, ...passProps } = this.props
 
     const elements = []
 

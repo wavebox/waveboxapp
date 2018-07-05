@@ -344,6 +344,7 @@ class AccountStore extends RendererAccountStore {
       template.services.forEach((serviceType) => {
         const service = {
           ...CoreACService.createJS(undefined, mailboxId, serviceType),
+          ...template.expando,
           container: container.cloneForService(),
           containerId: containerId
         }
@@ -372,11 +373,10 @@ class AccountStore extends RendererAccountStore {
         template.templateType
       ))
       template.services.forEach((serviceType) => {
-        const service = CoreACService.createJS(
-          undefined,
-          mailboxId,
-          serviceType
-        )
+        const service = {
+          ...CoreACService.createJS(undefined, mailboxId, serviceType),
+          ...template.expando
+        }
         actions.createService.defer(mailboxId, template.servicesUILocation, service)
       })
     }

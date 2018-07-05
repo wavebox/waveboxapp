@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import MailboxWizardStepperStep from './MailboxWizardStepperStep'
+import WizardStepperStep from './WizardStepperStep'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import lightBlue from '@material-ui/core/colors/lightBlue'
@@ -23,8 +23,12 @@ class MailboxWizardStepper extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    currentStep: PropTypes.number.isRequired,
-    hasAuthStep: PropTypes.bool.isRequired
+    steps: PropTypes.arrayOf(PropTypes.shape({
+      step: PropTypes.number.isRequired,
+      text: PropTypes.string.isRequired,
+      stepNumberText: PropTypes.string.isRequired
+    })).isRequired,
+    currentStep: PropTypes.number.isRequired
   }
 
   /* **************************************************************************/
@@ -38,42 +42,24 @@ class MailboxWizardStepper extends React.Component {
   render () {
     const {
       currentStep,
+      steps,
       classes,
-      hasAuthStep,
       className,
       ...passProps
     } = this.props
 
-    return hasAuthStep ? (
+    return (
       <div className={classNames(classes.container, className)} {...passProps}>
-        <MailboxWizardStepperStep
-          step={0}
-          text='Personalise'
-          stepNumberText={1}
-          currentStep={currentStep} />
-        <MailboxWizardStepperStep
-          step={1}
-          text='Sign in'
-          stepNumberText={2}
-          currentStep={currentStep} />
-        <MailboxWizardStepperStep
-          step={2}
-          text='Configure'
-          stepNumberText={3}
-          currentStep={currentStep} />
-      </div>
-    ) : (
-      <div className={classNames(classes.container, className)} {...passProps}>
-        <MailboxWizardStepperStep
-          step={0}
-          text='Personalise'
-          stepNumberText={1}
-          currentStep={currentStep} />
-        <MailboxWizardStepperStep
-          step={2}
-          text='Configure'
-          stepNumberText={2}
-          currentStep={currentStep} />
+        {steps.map(({step, text, stepNumberText}) => {
+          return (
+            <WizardStepperStep
+              key={step}
+              step={step}
+              text={text}
+              stepNumberText={stepNumberText}
+              currentStep={currentStep} />
+          )
+        })}
       </div>
     )
   }

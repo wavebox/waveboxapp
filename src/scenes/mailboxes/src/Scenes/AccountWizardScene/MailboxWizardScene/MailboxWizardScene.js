@@ -1,45 +1,15 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import MailboxWizardStepper from './MailboxWizardStepper'
-import { Dialog, DialogContent } from '@material-ui/core'
 import WizardPersonalise from './WizardPersonalise'
 import WizardAuth from './WizardAuth'
 import WizardConfigure from './WizardConfigure'
-import { withStyles } from '@material-ui/core/styles'
+import WizardStepperDialog from '../Common/WizardStepperDialog'
 import {
   ACCOUNT_TEMPLATE_TYPE_LIST,
   ACCOUNT_TEMPLATES
 } from 'shared/Models/ACAccounts/AccountTemplates'
 
-const styles = {
-  dialog: {
-    maxWidth: '100%',
-    width: '100%',
-    height: '100%',
-    minWidth: 580
-  },
-  dialogContent: {
-    position: 'relative',
-    backgroundColor: 'rgb(242, 242, 242)'
-  },
-  master: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    width: 150
-  },
-  detail: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 150
-  }
-}
-
-@withStyles(styles)
 class MailboxWizardScene extends React.Component {
   /* **************************************************************************/
   // Class
@@ -60,11 +30,47 @@ class MailboxWizardScene extends React.Component {
   }
 
   /* **************************************************************************/
+  // Component lifecycle
+  /* **************************************************************************/
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.match.params.templateType !== nextProps.match.params.templateType) {
+      this.setState({
+        steps: this.generateStepsArray(nextProps.match.params.templateType)
+      })
+    }
+  }
+
+  /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  state = {
-    open: true
+  state = (() => {
+    return {
+      open: true,
+      steps: this.generateStepsArray(this.props.match.params.templateType)
+    }
+  })()
+
+  /**
+  * Generates the steps array
+  * @param templateType: the type of template
+  * @return an array of step configs for the state
+  */
+  generateStepsArray (templateType) {
+    const template = ACCOUNT_TEMPLATES[templateType]
+    if (template && template.hasAuthStep) {
+      return [
+        { step: 0, text: 'Personalise', stepNumberText: '1' },
+        { step: 1, text: 'Sign in', stepNumberText: '2' },
+        { step: 2, text: 'Configure', stepNumberText: '3' }
+      ]
+    } else {
+      return [
+        { step: 0, text: 'Personalise', stepNumberText: '1' },
+        { step: 2, text: 'Configure', stepNumberText: '2' }
+      ]
+    }
   }
 
   /* **************************************************************************/
@@ -91,62 +97,48 @@ class MailboxWizardScene extends React.Component {
 
   /**
   * Renders the current step
-  * @param classes
   * @param currentStep: the step to render
   * @param template: the template type
   * @param accessMode: the access mode to use when creating the mailbox
   * @param mailboxId: the id of the mailbox
   * @return jsx
   */
-  renderStep (classes, currentStep, template, accessMode, mailboxId) {
+  renderStep (currentStep, template, accessMode, mailboxId) {
     switch (currentStep) {
       case 0:
         return (
           <WizardPersonalise
-            className={classes.detail}
             onRequestCancel={this.handleClose}
             template={ACCOUNT_TEMPLATES[template]}
             accessMode={accessMode} />
         )
       case 1:
         return (
-          <WizardAuth className={classes.detail} />
+          <WizardAuth />
         )
       case 2:
         return (
           <WizardConfigure
             onRequestCancel={this.handleClose}
-            className={classes.detail}
             mailboxId={mailboxId} />
         )
     }
   }
 
   render () {
-    const { open } = this.state
-    const { match, classes } = this.props
+    const { open, steps } = this.state
+    const { match } = this.props
     const currentStep = parseInt(match.params.step)
-    const template = ACCOUNT_TEMPLATES[match.params.templateType]
 
     return (
-      <Dialog
-        disableEnforceFocus
-        open={open}
-        classes={{ paper: classes.dialog }}>
-        <DialogContent className={classes.dialogContent}>
-          <MailboxWizardStepper
-            currentStep={currentStep}
-            hasAuthStep={template ? template.hasAuthStep : true}
-            className={classes.master} />
-          {this.renderStep(
-            classes,
-            currentStep,
-            match.params.templateType,
-            match.params.accessMode,
-            match.params.mailboxId
-          )}
-        </DialogContent>
-      </Dialog>
+      <WizardStepperDialog open={open} steps={steps} currentStep={currentStep}>
+        {this.renderStep(
+          currentStep,
+          match.params.templateType,
+          match.params.accessMode,
+          match.params.mailboxId
+        )}
+      </WizardStepperDialog>
     )
   }
 }
