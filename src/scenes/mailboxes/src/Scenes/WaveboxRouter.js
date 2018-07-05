@@ -15,9 +15,10 @@ import {
 import LinuxSetupScene from './LinuxSetupScene'
 import DictionaryInstallerScene from './DictionaryInstallerScene'
 import AppWizardScene from './AppWizardScene'
-
-import MailboxWizardAddScene from './MailboxWizardAddScene'
-import MailboxWizardScene from './MailboxWizardScene'
+import {
+  MailboxWizardScene,
+  AccountWizardAddScene
+} from './AccountWizardScene'
 import SettingsScene from './SettingsScene'
 import MailboxServiceDeleteScene from './MailboxServiceDeleteScene'
 import MailboxDeleteScene from './MailboxDeleteScene'
@@ -56,7 +57,7 @@ export default class WaveboxRouter extends React.Component {
             <Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
             <Route path='/dictionary_installer' component={DictionaryInstallerScene} />
 
-            <Route path='/mailbox_wizard/add' component={MailboxWizardAddScene} />
+            <Route path='/mailbox_wizard/add' component={AccountWizardAddScene} />
             <Route path='/mailbox_wizard/:templateType/:accessMode/:step/:mailboxId?' component={MailboxWizardScene} />
             <Route path='/mailbox/reauthenticating' component={MailboxReauthenticatingScene} />
 

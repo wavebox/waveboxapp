@@ -46,12 +46,11 @@ class AccountActions extends RendererAccountActions {
   /**
   * Starts adding a mailbox
   * @param templateType: the type of template to add
-  * @param accessMode='_': the access mode to pass to the add wizard
+  * @param accessMode: the access mode to pass to the add wizard
   */
   startAddMailboxGroup (templateType, accessMode) {
-    accessMode = accessMode || '_' // this sometimes comes in as empty string
     if (ACCOUNT_TEMPLATE_TYPES[templateType]) {
-      window.location.hash = `/mailbox_wizard/${templateType}/${accessMode}/0`
+      window.location.hash = `/mailbox_wizard/${templateType}/${accessMode || '_'}/0`
       return {}
     }
 
@@ -75,6 +74,16 @@ class AccountActions extends RendererAccountActions {
     }
 
     return {}
+  }
+
+  /**
+  * Starts the attach service step
+  * @param templateType: the type of template to add
+  * @param accessMode: the access mode to pass to the add wizard
+  * @param mailboxId: the id of the mailbox to attach to
+  */
+  startAttachService (templateType, accessMode, mailboxId) {
+    //TODO
   }
 
   /**

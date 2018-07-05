@@ -38,7 +38,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class MailboxWizardAddScene extends React.Component {
+class AccountWizardAddScene extends React.Component {
   /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
@@ -161,4 +161,4 @@ class MailboxWizardAddScene extends React.Component {
   }
 }
 
-export default MailboxWizardAddScene
+export default AccountWizardAddScene
