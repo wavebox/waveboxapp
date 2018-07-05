@@ -133,12 +133,6 @@ export default class GenericServiceSettings extends React.Component {
         <SettingsListSection
           icon={<AccountCircleIcon />}
           title='Account'>
-          <SettingsListItemSwitch
-            label='Use page title as Display Name'
-            checked={usePageTitleAsDisplayName}
-            onChange={(evt, toggled) => {
-              accountActions.reduceService(serviceId, GenericServiceReducer.setUsePageTitleAsDisplayName, toggled)
-            }} />
           <SettingsListItemTextField
             key={`service_${url}`}
             label='Website Url'
@@ -163,10 +157,16 @@ export default class GenericServiceSettings extends React.Component {
               accountActions.reduceService(serviceId, GenericServiceReducer.setHasNavigationToolbar, toggled)
             }} />
           <SettingsListItemSwitch
+            label='Use page title as Display Name'
+            checked={usePageTitleAsDisplayName}
+            onChange={(evt, toggled) => {
+              accountActions.reduceService(serviceId, GenericServiceReducer.setUsePageTitleAsDisplayName, toggled)
+            }} />
+          <SettingsListItemSwitch
             label='Use page theme as Account Color'
             checked={usePageThemeAsColor}
             onChange={(evt, toggled) => {
-              accountActions.reduce(serviceId, GenericServiceReducer.setUsePageThemeAsColor, toggled)
+              accountActions.reduceService(serviceId, GenericServiceReducer.setUsePageThemeAsColor, toggled)
             }} />
           <SettingsListItemSwitch
             divider={false}

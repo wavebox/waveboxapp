@@ -134,7 +134,7 @@ class SidelistMailboxServices extends React.Component {
           onContextMenu={onContextMenuService}
           onSortEnd={({ oldIndex, newIndex }) => {
             // +1 to the index because the default service isn't counted in this list
-            mailboxActions.reduce(mailbox.id, MailboxReducer.changeServiceIndex, mailbox.additionalServiceTypes[oldIndex], newIndex + 1)
+            mailboxActions.reduceMailbox(mailbox.id, MailboxReducer.changeServiceIndex, mailbox.additionalServiceTypes[oldIndex], newIndex + 1)
           }} />
       </div>
     )

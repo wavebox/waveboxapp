@@ -187,7 +187,8 @@ class MailboxTab extends React.Component {
     // can cause a reload. Particularly when the new position is lower in the tree.
     // Sorting the service types prevents this behaviour and we don't actually use
     // the ordering for anything more than sanity. Fixes #548
-    const sortedServiceManifest = serviceManifest.sort((a, b) => a.id.localeCompare(b.a))
+    const sortedServiceManifest = serviceManifest.sort((a, b) => a.id.localeCompare(b.id))
+
     return (
       <div
         {...passProps}
