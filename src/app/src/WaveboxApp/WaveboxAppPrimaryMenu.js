@@ -402,9 +402,9 @@ class WaveboxAppPrimaryMenu {
         }
       }),
       services: activeMailbox ? activeMailbox.allServices.map((serviceId) => {
-        const service = accountState.getService(serviceId)
+        const displayName = accountState.resolvedServiceDisplayName(serviceId)
         return {
-          label: service.displayName,
+          label: displayName,
           isActive: serviceId === activeServiceId,
           serviceId: serviceId
         }

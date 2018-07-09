@@ -3,6 +3,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import UnreadMailboxList from './UnreadMailboxList'
 import UnreadMailbox from './UnreadMailbox'
 import SwipeableViews from 'react-swipeable-views'
+import ErrorBoundary from 'wbui/ErrorBoundary'
 
 const styles = {
   tabContainer: {
@@ -93,19 +94,21 @@ export default class UnreadScene extends React.Component {
 
     return (
       <div {...passProps}>
-        <SwipeableViews
-          containerStyle={styles.tabContainer}
-          slideStyle={styles.tab}
-          index={index}>
-          <UnreadMailboxList requestShowMailbox={this.handleShowMailbox} />
-          {displayMailboxId ? (
-            <UnreadMailbox
-              mailboxId={displayMailboxId}
-              requestShowMailboxList={this.handleShowMailboxList} />
-          ) : (
-            <div />
-          )}
-        </SwipeableViews>
+        <ErrorBoundary>
+          <SwipeableViews
+            containerStyle={styles.tabContainer}
+            slideStyle={styles.tab}
+            index={index}>
+            <UnreadMailboxList requestShowMailbox={this.handleShowMailbox} />
+            {displayMailboxId ? (
+              <UnreadMailbox
+                mailboxId={displayMailboxId}
+                requestShowMailboxList={this.handleShowMailboxList} />
+            ) : (
+              <div />
+            )}
+          </SwipeableViews>
+        </ErrorBoundary>
       </div>
     )
   }

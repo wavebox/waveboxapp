@@ -9,6 +9,7 @@ import { List } from '@material-ui/core'
 import { ipcRenderer } from 'electron'
 import { WB_FOCUS_MAILBOXES_WINDOW } from 'shared/ipcEvents'
 import NotificationListItem from './NotificationListItem'
+import ErrorBoundary from 'wbui/ErrorBoundary'
 
 const MAIN_REF = 'MAIN'
 const INFINATE_REF = 'INFINATE'
@@ -123,23 +124,25 @@ export default class NotificationScene extends React.Component {
 
     return (
       <div ref={MAIN_REF} style={{...styles.main, ...styles}} {...passProps}>
-        <List style={styles.list}>
-          {containerHeight === 0 ? undefined : (
-            <Infinate ref={INFINATE_REF} containerHeight={containerHeight} elementHeight={LIST_ITEM_HEIGHT}>
-              {notifications.map(({id, timestamp, notification}) => {
-                return (
-                  <NotificationListItem
-                    key={id}
-                    onClick={(evt) => this.handleNotificationClick(evt, notification)}
-                    style={styles.listItem}
-                    mailboxId={notification.mailboxId}
-                    notification={notification}
-                    timestamp={timestamp} />
-                )
-              })}
-            </Infinate>
-          )}
-        </List>
+        <ErrorBoundary>
+          <List style={styles.list}>
+            {containerHeight === 0 ? undefined : (
+              <Infinate ref={INFINATE_REF} containerHeight={containerHeight} elementHeight={LIST_ITEM_HEIGHT}>
+                {notifications.map(({id, timestamp, notification}) => {
+                  return (
+                    <NotificationListItem
+                      key={id}
+                      onClick={(evt) => this.handleNotificationClick(evt, notification)}
+                      style={styles.listItem}
+                      mailboxId={notification.mailboxId}
+                      notification={notification}
+                      timestamp={timestamp} />
+                  )
+                })}
+              </Infinate>
+            )}
+          </List>
+        </ErrorBoundary>
       </div>
     )
   }

@@ -81,7 +81,7 @@ class UnreadMailboxListItem extends React.Component {
     return {
       hasSingleService: mailbox.hasSingleService,
       mailboxDisplayName: mailbox.displayName || 'Untitled',
-      serviceDisplayName: (accountState.getService(mailbox.allServices[0]) || {}).displayName || 'Untitled',
+      serviceDisplayName: accountState.resolvedServiceDisplayName(mailbox.allServices[0]),
       serviceCount: mailbox.allServiceCount
     }
   }

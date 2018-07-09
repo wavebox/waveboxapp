@@ -11,6 +11,7 @@ import { WB_TRAY_WINDOWED_MODE_CHANGED, WB_HIDE_TRAY } from 'shared/ipcEvents'
 import { withStyles } from '@material-ui/core/styles'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import classNames from 'classnames'
+import ErrorBoundary from 'wbui/ErrorBoundary'
 
 const TAB_HEIGHT = 40
 const TOOLBAR_HEIGHT = 40
@@ -218,15 +219,17 @@ class AppScene extends React.Component {
                 value={NOTIF_INDEX} />
             </Tabs>
           </AppBar>
-          <SwipeableViews
-            style={styles.tabs}
-            containerStyle={styles.tabContainer}
-            slideStyle={styles.tab}
-            index={tabIndex}
-            onChangeIndex={(index) => this.setState({ tabIndex: index })}>
-            <UnreadScene ref={UNREAD_REF} />
-            <NotificationScene ref={NOTIF_REF} />
-          </SwipeableViews>
+          <ErrorBoundary>
+            <SwipeableViews
+              style={styles.tabs}
+              containerStyle={styles.tabContainer}
+              slideStyle={styles.tab}
+              index={tabIndex}
+              onChangeIndex={(index) => this.setState({ tabIndex: index })}>
+              <UnreadScene ref={UNREAD_REF} />
+              <NotificationScene ref={NOTIF_REF} />
+            </SwipeableViews>
+          </ErrorBoundary>
           <AppSceneToolbar className={classes.toolbar} isWindowedMode={isWindowedMode} />
         </div>
       </div>
