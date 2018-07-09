@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import MailboxAvatar from 'wbui/MailboxAvatar'
+import ACAvatarCircle from 'wbui/ACAvatarCircle'
 import { Button } from '@material-ui/core'
 import { accountStore, accountActions } from 'stores/account'
 import { settingsActions } from 'stores/settings'
@@ -205,7 +205,7 @@ class MailboxSleepNotification extends React.Component {
           <span className={classes.z2}>z</span>
           <span className={classes.z3}>z</span>
           <span className={classes.z4}>z</span>
-          <MailboxAvatar
+          <ACAvatarCircle
             avatar={avatar}
             resolver={(i) => Resolver.Image(i)}
             size={50}

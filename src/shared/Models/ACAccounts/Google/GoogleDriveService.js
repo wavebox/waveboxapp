@@ -22,6 +22,7 @@ class GoogleDriveService extends CoreACService {
       'google/logo_drive_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(75, 163, 97)' }
 
   /* **************************************************************************/
   // Properties: Support

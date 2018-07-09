@@ -22,6 +22,7 @@ class GoogleCalendarService extends CoreACService {
       'google/logo_calendar_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(69, 132, 240)' }
 
   /* **************************************************************************/
   // Properties: Support

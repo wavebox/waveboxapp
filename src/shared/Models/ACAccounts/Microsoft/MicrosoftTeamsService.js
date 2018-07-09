@@ -22,6 +22,7 @@ class MicrosoftTeamsService extends MicrosoftService {
       'microsoft/logo_team_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(84, 85, 177)' }
 
   /* **************************************************************************/
   // Properties: Support

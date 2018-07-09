@@ -21,6 +21,7 @@ class MicrosoftTasksService extends MicrosoftService {
       'microsoft/logo_tasks_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(31, 125, 210)' }
 
   /* **************************************************************************/
   // Properties: Support

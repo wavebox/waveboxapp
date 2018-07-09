@@ -85,7 +85,8 @@ class ServiceTooltip extends React.Component {
     const service = accountState.getService(serviceId)
     const serviceData = accountState.getServiceData(serviceId)
 
-    return {
+    return mailbox && service && serviceData ? {
+      hasMembers: true,
       displayName: accountState.resolvedServiceDisplayName(serviceId, mailbox.displayName),
       isRestricted: accountState.isServiceRestricted(serviceId),
       supportsUnreadCount: service.supportsUnreadCount,
@@ -95,6 +96,8 @@ class ServiceTooltip extends React.Component {
       isAuthenticationInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId),
       unreadCount: serviceData.getUnreadCount(service),
       hasUnreadActivity: serviceData.getHasUnreadActivity(service)
+    } : {
+      hasMembers: false
     }
   }
 
@@ -122,9 +125,10 @@ class ServiceTooltip extends React.Component {
       humanizedUnreadItemType,
       unreadCount,
       hasUnreadActivity,
-      humanizedServiceType
+      humanizedServiceType,
+      hasMembers
     } = this.state
-
+    if (!hasMembers) { return false }
     if (!displayName) { return false }
 
     let unreadContent

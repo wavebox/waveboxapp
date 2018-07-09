@@ -22,6 +22,7 @@ class GoogleSheetsService extends CoreACService {
       'google/logo_sheets_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(76, 164, 99)' }
 
   /* **************************************************************************/
   // Properties: Support

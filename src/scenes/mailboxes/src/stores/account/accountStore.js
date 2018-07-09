@@ -363,6 +363,21 @@ class AccountStore extends RendererAccountStore {
       })
 
       this._openContainerPostInstallUrl(mailboxId, serviceId, container)
+    } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.GENERIC) {
+      actions.createMailbox.defer(ACMailbox.createJS(
+        mailboxId,
+        template.displayName,
+        undefined,
+        template.templateType
+      ))
+      template.services.forEach((serviceType) => {
+        const service = {
+          ...CoreACService.createJS(undefined, mailboxId, serviceType),
+          color: template.color,
+          ...template.expando
+        }
+        actions.createService.defer(mailboxId, template.servicesUILocation, service)
+      })
     } else {
       actions.createMailbox.defer(ACMailbox.createJS(
         mailboxId,

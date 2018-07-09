@@ -21,6 +21,7 @@ class GoogleYouTubeService extends CoreACService {
       'google/logo_youtube_128px.png'
     ]
   }
+  static get humanizedColor () { return '#ff0000' }
 
   /* **************************************************************************/
   // Properties: Support

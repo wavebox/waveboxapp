@@ -3,6 +3,7 @@ import React from 'react'
 import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
 import { accountActions } from 'stores/account'
 import GenericServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/GenericServiceDataReducer'
+import GenericServiceReducer from 'shared/AltStores/Account/ServiceReducers/GenericServiceReducer'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
   WB_BROWSER_NOTIFICATION_PRESENT
@@ -36,6 +37,18 @@ export default class GenericServiceWebView extends React.Component {
   }
 
   /**
+  * Handles the page favicon being updated
+  * @param evt: the event that fired
+  */
+  handleFaviconUpdated = (evt) => {
+    accountActions.reduceService(
+      this.props.serviceId,
+      GenericServiceReducer.setPageFaviconAvatar,
+      evt.favicons
+    )
+  }
+
+  /**
   * Handles the browser presenting a notification
   */
   handleBrowserNotificationPresented = () => {
@@ -61,6 +74,7 @@ export default class GenericServiceWebView extends React.Component {
         ref={REF}
         mailboxId={mailboxId}
         serviceId={serviceId}
+        pageFaviconUpdated={this.handleFaviconUpdated}
         ipcMessage={this.handleIPCMessage} />
     )
   }

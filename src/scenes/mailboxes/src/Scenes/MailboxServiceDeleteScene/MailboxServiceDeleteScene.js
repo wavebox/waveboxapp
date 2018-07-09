@@ -3,7 +3,7 @@ import { Button, Dialog, DialogContent, DialogActions, DialogTitle } from '@mate
 import shallowCompare from 'react-addons-shallow-compare'
 import { accountStore, accountActions } from 'stores/account'
 import PropTypes from 'prop-types'
-import MailboxAvatar from 'wbui/MailboxAvatar'
+import ACAvatarCircle from 'wbui/ACAvatarCircle'
 import MailboxServiceIcon from 'wbui/MailboxServiceIcon'
 import Resolver from 'Runtime/Resolver'
 import { withStyles } from '@material-ui/core/styles'
@@ -167,7 +167,7 @@ class MailboxServiceDeleteScene extends React.Component {
           </p>
           <div className={classes.avatarContainer}>
             <div className={classes.compositeAvatar}>
-              <MailboxAvatar
+              <ACAvatarCircle
                 avatar={avatar}
                 resolver={(i) => Resolver.image(i)}
                 size={45}

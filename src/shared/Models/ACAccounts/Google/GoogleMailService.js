@@ -22,6 +22,7 @@ class GoogleMailService extends CoreGoogleMailService {
       'google/logo_gmail_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(220, 75, 75)' }
 
   /* **************************************************************************/
   // Properties: Behaviour

@@ -22,6 +22,7 @@ class GoogleKeepService extends CoreACService {
       'google/logo_keep_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(244, 185, 49)' }
 
   /* **************************************************************************/
   // Properties: Support

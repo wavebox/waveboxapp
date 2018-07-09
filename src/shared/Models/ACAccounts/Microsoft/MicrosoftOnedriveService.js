@@ -21,6 +21,7 @@ class MicrosoftOnedriveService extends MicrosoftService {
       'microsoft/logo_drive_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(5, 83, 172)' }
 
   /* **************************************************************************/
   // Properties: Support

@@ -9,7 +9,8 @@ import SERVICE_TYPES from '../../Models/ACAccounts/ServiceTypes'
 import ACMailbox from '../../Models/ACAccounts/ACMailbox'
 import CoreACAuth from '../../Models/ACAccounts/CoreACAuth'
 import ServiceFactory from '../../Models/ACAccounts/ServiceFactory'
-import ACMailboxAvatar from '../../Models/ACAccounts/ACMailboxAvatar'
+import ACMailboxAvatar from '../../Models/ACAccounts/Avatar/ACMailboxAvatar'
+import ACServiceAvatar from '../../Models/ACAccounts/Avatar/ACServiceAvatar'
 import CoreACServiceData from '../../Models/ACAccounts/CoreACServiceData'
 import AuthFactory from '../../Models/ACAccounts/AuthFactory'
 
@@ -34,6 +35,7 @@ class CoreAccountStore extends RemoteStore {
     this._sleepingServices_ = new Map()
     this._sleepingMetrics_ = new Map()
     this._mailboxAvatarCache_ = new Map()
+    this._serviceAvatarCache_ = new Map()
 
     /* ****************************************/
     // Mailboxes
@@ -557,7 +559,7 @@ class CoreAccountStore extends RemoteStore {
     this.getMailboxAvatarConfig = (mailboxId) => {
       const mailbox = this.getMailbox(mailboxId)
       const avatarConfig = new ACMailboxAvatar(mailbox ? (
-        ACMailboxAvatar.autocreate(mailbox, this._services_, this._avatars_)
+        ACMailboxAvatar.autocreate(mailbox, this._services_, this._serviceData_, this._avatars_)
       ) : (
         {}
       ))
@@ -574,35 +576,29 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /**
-    * @param mailboxId: the id of the mailbox
-    * @param resolver: a function to resolve a partial url
-    * @return a resolved avatar for the given mailboxid
+    * @param serviceId: the id of the service
+    * @return a ACServiceAvatar which defines the avatar display config for the mailbox
     */
-    this.getMailboxResolvedAvatar = (mailboxId, resolver) => {
-      const mailbox = this.getMailbox(mailboxId)
+    this.getServiceAvatarConfig = (serviceId) => {
+      const service = this.getService(serviceId)
+      const serviceData = this.getServiceData(serviceId)
+      const mailbox = service ? this.getMailbox(service.parentId) : undefined
 
-      let raw
-      if (mailbox.hasAvatarId) {
-        raw = this._avatars_.get(mailbox.avatarId)
-      } else {
-        const serviceId = mailbox.allServices.find((serviceId) => {
-          const service = this.getService(serviceId)
-          if (!service) { return false }
-          return service.hasAvatarId || service.hasServiceAvatarURL || service.hasServiceLocalAvatarId
-        })
-        if (serviceId) {
-          const service = this.getService(serviceId)
-          if (service.hasAvatarId) {
-            raw = this._avatars_.get(service.avatarId)
-          } else if (service.hasServiceLocalAvatarId) {
-            raw = this._avatars_.get(mailbox.serviceLocalAvatarId)
-          } else {
-            raw = service.serviceAvatarURL
-          }
+      const config = new ACServiceAvatar(mailbox && service && serviceData ? (
+        ACServiceAvatar.autocreate(mailbox, service, serviceData, this._avatars_)
+      ) : (
+        {}
+      ))
+
+      if (this._serviceAvatarCache_.has(serviceId)) {
+        if (this._serviceAvatarCache_.get(serviceId).hashId !== config.hashId) {
+          this._serviceAvatarCache_.set(serviceId, config)
         }
+      } else {
+        this._serviceAvatarCache_.set(serviceId, config)
       }
 
-      return raw ? resolver(raw) : undefined
+      return this._serviceAvatarCache_.get(serviceId)
     }
 
     /* ****************************************/

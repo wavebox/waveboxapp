@@ -22,6 +22,7 @@ class GoogleSlidesService extends CoreACService {
       'google/logo_slides_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(245, 186, 49)' }
 
   /* **************************************************************************/
   // Properties: Support

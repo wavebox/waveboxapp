@@ -22,6 +22,7 @@ class GooglePhotosService extends CoreACService {
       'google/logo_photos_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(139, 195, 74)' }
 
   /* **************************************************************************/
   // Properties: Support

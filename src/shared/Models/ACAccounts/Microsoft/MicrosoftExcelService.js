@@ -21,6 +21,7 @@ class MicrosoftExcelService extends MicrosoftService {
       'microsoft/logo_sheets_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(52, 117, 69)' }
 
   /* **************************************************************************/
   // Properties: Support

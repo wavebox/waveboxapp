@@ -27,6 +27,7 @@ class CoreACService extends CoreACModel {
   static get humanizedLogos () { throw SubclassNotImplementedError }
   static get humanizedLogo () { return this.humanizedLogos[this.humanizedLogos.length - 1] }
   static get humanizedUnreadItemType () { return 'item' }
+  static get humanizedColor () { return undefined }
 
   /**
   * Gets the logo at a specific size
@@ -112,6 +113,7 @@ class CoreACService extends CoreACModel {
   get humanizedLogos () { return this.constructor.humanizedLogos }
   get humanizedLogo () { return this.constructor.humanizedLogo }
   get humanizedUnreadItemType () { return this.constructor.humanizedUnreadItemType }
+  get humanizedColor () { return this.constructor.humanizedColor }
 
   humanizedLogoAtSize (...args) { return this.constructor.humanizedLogoAtSize(...args) }
 
@@ -132,7 +134,7 @@ class CoreACService extends CoreACModel {
   get hasNavigationToolbar () { return false }
   get displayName () { return this._value_('displayName', this.serviceDisplayName) }
   get serviceDisplayName () { return this._value_('serviceDisplayName', this.humanizedType) }
-  get color () { return this._value_('color', undefined) }
+  get color () { return this._value_('color', this.humanizedColor) }
 
   /**
   * Gets the color with the service data

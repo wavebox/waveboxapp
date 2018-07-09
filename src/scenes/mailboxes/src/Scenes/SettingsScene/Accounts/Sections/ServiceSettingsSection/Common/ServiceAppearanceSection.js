@@ -13,12 +13,27 @@ import { Button } from '@material-ui/core'
 import FileUploadButton from 'wbui/FileUploadButton'
 import AccountAvatarProcessor from 'shared/AltStores/Account/AccountAvatarProcessor'
 import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
+import ColorPickerButton from 'wbui/ColorPickerButton'
+import ColorLensIcon from '@material-ui/icons/ColorLens'
 
 const styles = {
   buttonIcon: {
     marginRight: 6,
     width: 18,
     height: 18
+  },
+  buttonColorPreview: {
+    overflow: 'hidden'
+  },
+  buttonIconColorPreview: {
+    marginTop: -9,
+    marginRight: 6,
+    marginBottom: -9,
+    marginLeft: -9,
+    padding: 7,
+    width: 32,
+    height: 34,
+    verticalAlign: 'middle'
   },
   buttonSpacer: {
     width: 16,
@@ -34,7 +49,28 @@ class ServiceAppearanceSection extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    serviceId: PropTypes.string.isRequired
+    serviceId: PropTypes.string.isRequired,
+    beforeDisplayName: PropTypes.func,
+    displayNameDisabled: PropTypes.bool.isRequired,
+    displayNameAvailable: PropTypes.bool.isRequired,
+    afterDisplayName: PropTypes.func,
+    beforeColor: PropTypes.func,
+    colorDisabled: PropTypes.bool.isRequired,
+    colorAvailable: PropTypes.bool.isRequired,
+    afterColor: PropTypes.func,
+    beforeAvatar: PropTypes.func,
+    avatarDisabled: PropTypes.bool.isRequired,
+    avatarAvailable: PropTypes.bool.isRequired,
+    afterAvatar: PropTypes.func
+  }
+
+  static defaultProps = {
+    displayNameDisabled: false,
+    displayNameAvailable: true,
+    colorDisabled: false,
+    colorAvailable: true,
+    avatarDisabled: false,
+    avatarAvailable: true
   }
 
   /* **************************************************************************/
@@ -82,7 +118,8 @@ class ServiceAppearanceSection extends React.Component {
     const service = accountState.getService(serviceId)
     return service ? {
       hasService: true,
-      displayName: service.displayName
+      displayName: service.displayName,
+      serviceColor: service.color
     } : {
       hasService: false
     }
@@ -100,22 +137,37 @@ class ServiceAppearanceSection extends React.Component {
     const {
       serviceId,
       classes,
+      beforeDisplayName,
+      displayNameDisabled,
+      displayNameAvailable,
+      afterDisplayName,
+      beforeColor,
+      colorDisabled,
+      colorAvailable,
+      afterColor,
+      beforeAvatar,
+      avatarDisabled,
+      avatarAvailable,
+      afterAvatar,
       ...passProps
     } = this.props
     const {
       hasService,
-      displayName
+      displayName,
+      serviceColor
     } = this.state
     if (!hasService) { return false }
 
     const items = [
-      (isLast) => {
+      beforeDisplayName,
+      displayNameAvailable ? (isLast) => {
         return (
           <SettingsListItemTextField
             divider={!isLast}
             key={`displayName_${displayName}`}
             label='Display Name'
             textFieldProps={{
+              disabled: displayNameDisabled,
               defaultValue: displayName,
               placeholder: 'My Service',
               onBlur: (evt) => {
@@ -123,8 +175,43 @@ class ServiceAppearanceSection extends React.Component {
               }
             }} />
         )
-      },
-      (isLast) => {
+      } : undefined,
+      afterDisplayName,
+      beforeColor,
+      colorAvailable ? (isLast) => {
+        return (
+          <SettingsListItem
+            key='color'
+            divider={!isLast}>
+            <ColorPickerButton
+              disabled={colorDisabled}
+              buttonProps={{
+                variant: 'raised',
+                size: 'small',
+                className: classes.buttonColorPreview
+              }}
+              value={serviceColor}
+              onChange={(col) => accountActions.reduceService(serviceId, ServiceReducer.setColor, col)}>
+              <ColorLensIcon
+                className={classes.buttonIconColorPreview}
+                style={ColorPickerButton.generatePreviewIconColors(serviceColor)} />
+              Account Color
+            </ColorPickerButton>
+            <span className={classes.buttonSpacer} />
+            <Button
+              variant='raised'
+              size='small'
+              disabled={colorDisabled}
+              onClick={() => accountActions.reduceService(serviceId, ServiceReducer.setColor, undefined)}>
+              <NotInterestedIcon className={classes.buttonIcon} />
+              Clear Color
+            </Button>
+          </SettingsListItem>
+        )
+      } : undefined,
+      afterColor,
+      beforeAvatar,
+      avatarAvailable ? (isLast) => {
         return (
           <SettingsListItem
             key='avatar'
@@ -133,6 +220,7 @@ class ServiceAppearanceSection extends React.Component {
               size='small'
               variant='raised'
               accept='image/*'
+              disabled={avatarDisabled}
               onChange={(evt) => {
                 AccountAvatarProcessor.processAvatarFileUpload(evt, (av) => {
                   accountActions.setCustomAvatarOnService(serviceId, av)
@@ -145,13 +233,15 @@ class ServiceAppearanceSection extends React.Component {
             <Button
               size='small'
               variant='raised'
+              disabled={avatarDisabled}
               onClick={() => accountActions.setCustomAvatarOnService(serviceId, undefined)}>
               <NotInterestedIcon className={classes.buttonIcon} />
               Reset Account Icon
             </Button>
           </SettingsListItem>
         )
-      }
+      } : undefined,
+      afterAvatar
     ].filter((item) => !!item).map((item, index, arr) => {
       return item(index === (arr.length - 1))
     })

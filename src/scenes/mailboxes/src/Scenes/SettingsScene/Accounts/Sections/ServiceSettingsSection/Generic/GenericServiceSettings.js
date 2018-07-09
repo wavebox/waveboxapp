@@ -157,18 +157,6 @@ export default class GenericServiceSettings extends React.Component {
               accountActions.reduceService(serviceId, GenericServiceReducer.setHasNavigationToolbar, toggled)
             }} />
           <SettingsListItemSwitch
-            label='Use page title as Display Name'
-            checked={usePageTitleAsDisplayName}
-            onChange={(evt, toggled) => {
-              accountActions.reduceService(serviceId, GenericServiceReducer.setUsePageTitleAsDisplayName, toggled)
-            }} />
-          <SettingsListItemSwitch
-            label='Use page theme as Account Color'
-            checked={usePageThemeAsColor}
-            onChange={(evt, toggled) => {
-              accountActions.reduceService(serviceId, GenericServiceReducer.setUsePageThemeAsColor, toggled)
-            }} />
-          <SettingsListItemSwitch
             divider={false}
             label='Enable Wavebox API (Experiemental)'
             checked={supportsWBGAPI}
@@ -176,7 +164,35 @@ export default class GenericServiceSettings extends React.Component {
               accountActions.reduceService(serviceId, GenericServiceReducer.setsupportsGuestConfig, toggled)
             }} />
         </SettingsListSection>
-        <ServiceAppearanceSection serviceId={serviceId} />
+        <ServiceAppearanceSection
+          serviceId={serviceId}
+          beforeDisplayName={(isLast) => {
+            return (
+              <SettingsListItemSwitch
+                key='use_page_title'
+                divider={false}
+                label='Use page title as Display Name'
+                checked={usePageTitleAsDisplayName}
+                onChange={(evt, toggled) => {
+                  accountActions.reduceService(serviceId, GenericServiceReducer.setUsePageTitleAsDisplayName, toggled)
+                }} />
+            )
+          }}
+          displayNameDisabled={usePageTitleAsDisplayName}
+          beforeColor={(isLast) => {
+            return (
+              <SettingsListItemSwitch
+                key='use_page_theme'
+                divider={false}
+                label='Use page theme as Account Color'
+                checked={usePageThemeAsColor}
+                onChange={(evt, toggled) => {
+                  accountActions.reduceService(serviceId, GenericServiceReducer.setUsePageThemeAsColor, toggled)
+                }} />
+            )
+          }}
+          colorDisabled={usePageThemeAsColor}
+        />
         <ServiceBadgeSection serviceId={serviceId} />
         <ServiceBehaviourSection serviceId={serviceId} />
         <ServiceNotificationSection serviceId={serviceId} />

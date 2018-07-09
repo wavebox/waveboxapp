@@ -8,11 +8,14 @@ import classNames from 'classnames'
 const styles = {
   img: {
     textIndent: -100000 // Stops showing the broken image icon if the url doesn't resolve
+  },
+  sleeping: {
+    filter: 'grayscale(100%)'
   }
 }
 
 @withStyles(styles)
-class MailboxAvatar extends React.Component {
+class ACAvatarCircle extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -20,11 +23,13 @@ class MailboxAvatar extends React.Component {
   static propTypes = {
     avatar: PropTypes.object.isRequired,
     resolver: PropTypes.func.isRequired,
-    size: PropTypes.number.isRequired
+    size: PropTypes.number.isRequired,
+    showSleeping: PropTypes.bool.isRequired
   }
 
   static defaultProps = {
-    size: 40
+    size: 40,
+    showSleeping: false
   }
 
   /* **************************************************************************/
@@ -42,6 +47,8 @@ class MailboxAvatar extends React.Component {
       style,
       size,
       classes,
+      className,
+      showSleeping,
       ...otherProps
     } = this.props
 
@@ -72,6 +79,7 @@ class MailboxAvatar extends React.Component {
         ...otherProps.classes,
         img: classNames(classes.img, (otherProps.classes || {}).img)
       },
+      className: classNames(className, showSleeping ? classes.sleeping : undefined),
       style: {
         ...generatedStyle,
         ...style
@@ -90,4 +98,4 @@ class MailboxAvatar extends React.Component {
   }
 }
 
-export default MailboxAvatar
+export default ACAvatarCircle

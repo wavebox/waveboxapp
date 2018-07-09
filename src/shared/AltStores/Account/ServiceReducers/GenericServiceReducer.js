@@ -8,6 +8,31 @@ class GenericServiceReducer extends ServiceReducer {
   static get name () { return 'GenericServiceReducer' }
 
   /* **************************************************************************/
+  // Avatar
+  /* **************************************************************************/
+
+  /**
+  * Sets the page favicons as the avatar
+  * @param service: the service to update
+  * @param favicons: the list of favicons
+  */
+  static setPageFaviconAvatar (service, favicons) {
+    if (favicons === undefined || favicons.length === 0) {
+      return service.changeData({ serviceAvatarURL: null })
+    } else {
+      const validFavicons = favicons
+        .map((f) => f.endsWith('/') ? f.substr(0, f.length - 1) : f) // Electron sometimes gives a trailing slash :-/
+        .filter((f) => f.endsWith('.png') || f.endsWith('.ico') || f.endsWith('.jpg') || f.endsWith('.gif')) // some websites send junk
+      if (validFavicons.length) {
+        const bestFavicon = validFavicons.find((f) => f.endsWith('.ico')) || favicons[favicons.length - 1]
+        return service.changeData({ serviceAvatarURL: bestFavicon })
+      } else {
+        return service.changeData({ serviceAvatarURL: null })
+      }
+    }
+  }
+
+  /* **************************************************************************/
   // Settings
   /* **************************************************************************/
 

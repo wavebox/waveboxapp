@@ -27,6 +27,7 @@ class MicrosoftMailService extends MicrosoftService {
       'microsoft/logo_mail_128px.png'
     ]
   }
+  static get humanizedColor () { return '#0078d7' }
 
   /* **************************************************************************/
   // Properties: Sync

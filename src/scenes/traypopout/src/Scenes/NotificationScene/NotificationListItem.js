@@ -1,7 +1,7 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { ListItem, ListItemText } from '@material-ui/core'
-import MailboxAvatar from 'wbui/MailboxAvatar'
+import ACAvatarCircle from 'wbui/ACAvatarCircle'
 import TimeAgo from 'react-timeago'
 import { withStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
@@ -125,7 +125,7 @@ class NotificationListItem extends React.Component {
 
     return (
       <ListItem button className={classNames(classes.listItem, className)} {...passProps}>
-        <MailboxAvatar avatar={avatar} resolver={(i) => Resolver.image(i)} />
+        <ACAvatarCircle avatar={avatar} resolver={(i) => Resolver.image(i)} />
         <ListItemText
           primary={(<div className={classes.listItemPrimaryText}>{notification.title}</div>)}
           disableTypography

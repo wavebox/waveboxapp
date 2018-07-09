@@ -27,6 +27,19 @@ const styles = {
     height: 18,
     verticalAlign: 'middle'
   },
+  buttonColorPreview: {
+    overflow: 'hidden'
+  },
+  buttonIconColorPreview: {
+    marginTop: -9,
+    marginRight: 6,
+    marginBottom: -9,
+    marginLeft: -9,
+    padding: 7,
+    width: 32,
+    height: 34,
+    verticalAlign: 'middle'
+  },
   buttonSpacer: {
     width: 16,
     height: 1,
@@ -158,19 +171,31 @@ class MailboxAppearanceSettings extends React.Component {
             }} />
           <SettingsListItem>
             <ColorPickerButton
-              buttonProps={{ variant: 'raised', size: 'small' }}
+              buttonProps={{ variant: 'raised', size: 'small', className: classes.buttonColorPreview }}
               value={mailboxColor}
               onChange={(col) => accountActions.reduceMailbox(mailboxId, MailboxReducer.setColor, col)}>
-              <ColorLensIcon className={classes.buttonIcon} />
+              <ColorLensIcon
+                className={classes.buttonIconColorPreview}
+                style={ColorPickerButton.generatePreviewIconColors(mailboxColor)} />
               Account Color
             </ColorPickerButton>
+            <span className={classes.buttonSpacer} />
+            <Button
+              variant='raised'
+              size='small'
+              onClick={() => accountActions.reduceMailbox(mailboxId, MailboxReducer.setColor, undefined)}>
+              <NotInterestedIcon className={classes.buttonIcon} />
+              Clear Color
+            </Button>
           </SettingsListItem>
           <SettingsListItem>
             <ColorPickerButton
-              buttonProps={{ variant: 'raised', size: 'small' }}
+              buttonProps={{ variant: 'raised', size: 'small', className: classes.buttonColorPreview }}
               value={mailboxBadgeColor}
               onChange={(col) => accountActions.reduceMailbox(mailboxId, MailboxReducer.setBadgeColor, col)}>
-              <SmsIcon className={classes.buttonIcon} />
+              <SmsIcon
+                className={classes.buttonIconColorPreview}
+                style={ColorPickerButton.generatePreviewIconColors(mailboxBadgeColor)} />
               Badge Color
             </ColorPickerButton>
           </SettingsListItem>

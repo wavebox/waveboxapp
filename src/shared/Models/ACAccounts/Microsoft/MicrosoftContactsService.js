@@ -21,6 +21,7 @@ class MicrosoftContactsService extends MicrosoftService {
       'microsoft/logo_contacts_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(195, 86, 54)' }
 
   /* **************************************************************************/
   // Properties: Support

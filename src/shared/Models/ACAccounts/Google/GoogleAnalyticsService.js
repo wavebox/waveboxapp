@@ -22,6 +22,7 @@ class GoogleAnalyticsService extends CoreACService {
       'google/logo_analytics_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(241, 122, 48)' }
 
   /* **************************************************************************/
   // Properties: Support

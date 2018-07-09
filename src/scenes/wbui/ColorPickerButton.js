@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Button, Popover } from '@material-ui/core'
 import { ChromePicker } from 'react-color'
+import Color from 'color'
 
 export default class ColorPickerButton extends React.Component {
   /* **************************************************************************/
@@ -13,6 +14,31 @@ export default class ColorPickerButton extends React.Component {
     popoverProps: PropTypes.object,
     value: PropTypes.string,
     onChange: PropTypes.func
+  }
+
+  /**
+  * Generates a style for the icon which shows the color preview
+  * @param col: the color to generate the style for
+  * @return a style dictionary for the preview icon
+  */
+  static generatePreviewIconColors (col) {
+    try {
+      if (!col) {
+        return {}
+      } else if (Color(col).light()) {
+        return {
+          color: 'black',
+          backgroundColor: col
+        }
+      } else {
+        return {
+          color: 'white',
+          backgroundColor: col
+        }
+      }
+    } catch (ex) {
+      return {}
+    }
   }
 
   /* **************************************************************************/

@@ -22,6 +22,7 @@ class GoogleClassroomService extends CoreACService {
       'google/logo_classroom_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(76, 165, 101)' }
 
   /* **************************************************************************/
   // Properties: Support

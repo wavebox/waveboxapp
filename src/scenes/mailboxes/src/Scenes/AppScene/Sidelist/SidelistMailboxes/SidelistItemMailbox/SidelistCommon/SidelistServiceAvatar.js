@@ -21,7 +21,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class SidelistMailboxAvatar extends React.Component {
+class SidelistServiceAvatar extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -78,12 +78,11 @@ class SidelistMailboxAvatar extends React.Component {
         avatar={avatar}
         size={size}
         resolver={(i) => Resolver.image(i)}
-        showSleeping={isSleeping}
-        className={classNames(classes.avatar, className)}
+        className={classNames(classes.avatar, isSleeping ? classes.sleeping : undefined, className)}
         style={{ boxShadow: boxShadow, ...style }}
         {...passProps} />
     )
   }
 }
 
-export default SidelistMailboxAvatar
+export default SidelistServiceAvatar

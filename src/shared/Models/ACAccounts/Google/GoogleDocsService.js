@@ -22,6 +22,7 @@ class GoogleDocsService extends CoreACService {
       'google/logo_docs_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(79, 142, 245)' }
 
   /* **************************************************************************/
   // Properties: Support

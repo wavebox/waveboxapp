@@ -119,7 +119,7 @@ class ServiceSettingsSection extends React.Component {
       hasService: true,
       mailboxId: service.parentId,
       logo: service.humanizedLogoAtSize(128),
-      displayName: accountState.serviceDisplayName(serviceId),
+      displayName: accountState.resolvedServiceDisplayName(serviceId),
       humanizedType: service.humanizedType,
       isRestricted: accountState.isServiceRestricted(serviceId),
       serviceType: service.type

@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import SidelistItemMailboxService from './SidelistItemMailboxService'
-import { mailboxStore, mailboxActions, MailboxReducer } from 'stores/mailbox'
+import SidelistMailboxService from './SidelistMailboxService'
+import { accountStore, accountActions } from 'stores/account'
 import {SortableContainer, SortableElement} from 'react-sortable-hoc'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
+import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
 
 const styles = {
   container: {
@@ -19,26 +20,25 @@ const styles = {
   }
 }
 
-const SortableItem = SortableElement(({ mailboxId, serviceType, onOpenService, onContextMenu }) => {
+const SortableItem = SortableElement(({ mailboxId, serviceId, onOpenService, onContextMenu }) => {
   return (
-    <SidelistItemMailboxService
-      key={serviceType}
+    <SidelistMailboxService
       mailboxId={mailboxId}
-      serviceType={serviceType}
+      serviceId={serviceId}
       onOpenService={onOpenService}
-      onContextMenu={(evt) => onContextMenu(evt, serviceType)} />
+      onContextMenu={(evt) => onContextMenu(evt, serviceId)} />
   )
 })
 
-const SortableList = SortableContainer(({ mailboxId, serviceTypes, onOpenService, onContextMenu }) => {
+const SortableList = SortableContainer(({ mailboxId, services, onOpenService, onContextMenu }) => {
   return (
     <div>
-      {serviceTypes.map((serviceType, index) => (
+      {services.map((serviceId, index) => (
         <SortableItem
-          key={serviceType}
+          key={serviceId}
           index={index}
           mailboxId={mailboxId}
-          serviceType={serviceType}
+          serviceId={serviceId}
           onOpenService={onOpenService}
           onContextMenu={onContextMenu} />
       ))}
@@ -63,16 +63,16 @@ class SidelistMailboxServices extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxesChanged)
+    accountStore.listen(this.accountChanged)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxesChanged)
+    accountStore.unlisten(this.accountChanged)
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId) {
-      this.setState(this.generateState(nextProps))
+      this.setState(this.generateState(nextProps.mailboxId, accountStore.getState()))
     }
   }
 
@@ -80,23 +80,24 @@ class SidelistMailboxServices extends React.Component {
   // Component Lifecycle
   /* **************************************************************************/
 
-  state = this.generateState()
+  state = this.generateState(this.props.mailboxId, accountStore.getState())
 
-  generateState (props = this.props) {
-    const { mailboxId } = props
-    const mailboxState = mailboxStore.getState()
+  generateState (mailboxId, accountState) {
+    const mailbox = accountState.getMailbox(mailboxId)
     return {
-      mailbox: mailboxState.getMailbox(mailboxId),
-      isActiveMailbox: mailboxState.activeMailboxId() === mailboxId
+      isMailboxActive: accountState.activeMailboxId() === mailboxId,
+      ...(mailbox ? {
+        collapse: mailbox.collapseSidebarServices,
+        services: mailbox.sidebarServices
+      } : {
+        collapse: false,
+        services: []
+      })
     }
   }
 
-  mailboxesChanged = (mailboxState) => {
-    const { mailboxId } = this.props
-    this.setState({
-      mailbox: mailboxState.getMailbox(mailboxId),
-      isActiveMailbox: mailboxState.activeMailboxId() === mailboxId
-    })
+  accountChanged = (accountStore) => {
+    this.setState(this.generateState(this.props.mailboxId, accountStore))
   }
 
   /* **************************************************************************/
@@ -112,29 +113,35 @@ class SidelistMailboxServices extends React.Component {
       onOpenService,
       onContextMenuService,
       className,
-      classes
+      mailboxId,
+      classes,
+      ...passProps
     } = this.props
-    const { mailbox, isActiveMailbox } = this.state
-    if (!mailbox || !mailbox.hasAdditionalServices) { return false }
+    const {
+      isMailboxActive,
+      collapse,
+      services
+    } = this.state
+    if (!services.length) { return false }
 
     return (
       <div
+        {...passProps}
         className={classNames(
           classes.container,
-          mailbox.collapseSidebarServices && !isActiveMailbox ? classes.containerCollapsed : undefined,
+          collapse && !isMailboxActive ? classes.containerCollapsed : undefined,
           'WB-SidelistItemMailboxServices',
           className
         )}>
         <SortableList
           axis='y'
           distance={20}
-          serviceTypes={mailbox.additionalServiceTypes}
-          mailboxId={mailbox.id}
+          services={services}
+          mailboxId={mailboxId}
           onOpenService={onOpenService}
           onContextMenu={onContextMenuService}
           onSortEnd={({ oldIndex, newIndex }) => {
-            // +1 to the index because the default service isn't counted in this list
-            mailboxActions.reduceMailbox(mailbox.id, MailboxReducer.changeServiceIndex, mailbox.additionalServiceTypes[oldIndex], newIndex + 1)
+            accountActions.reduceMailbox(mailboxId, MailboxReducer.changeServiceIndex, services[oldIndex], newIndex)
           }} />
       </div>
     )

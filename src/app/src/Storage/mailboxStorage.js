@@ -379,40 +379,28 @@ class MailboxStorageBucket extends MigratingStorageBucket {
 
     if (mailbox.type === 'CONTAINER') {
       nextMailbox.displayName = mailbox.container.name || 'Container'
-      nextMailbox.color = nextMailbox.color || 'rgb(255, 255, 255)'
       nextMailbox.useCustomUserAgent = mailbox.useCustomUserAgent
       nextMailbox.customUserAgentString = mailbox.customUserAgentString
       nextMailbox.openGoogleDriveLinksWithExternalBrowser = (mailbox.windowOpenUserConfig || {}).googledrive === true
     } else if (mailbox.type === 'GENERIC') {
       nextMailbox.displayName = 'Weblink'
-      nextMailbox.color = nextMailbox.color || '#2ecc71'
       nextMailbox.useCustomUserAgent = mailbox.useCustomUserAgent
       nextMailbox.customUserAgentString = mailbox.customUserAgentString
     } else if (mailbox.type === 'GOOGLE') {
       nextMailbox.displayName = 'Google'
-      const service = (mailbox.services || []).find((s) => s.type === 'DEFAULT')
-      if (service.accessMode === 'GMAIL') {
-        nextMailbox.color = nextMailbox.color || 'rgb(220, 75, 75)'
-      } else if (service.accessMode === 'GINBOX') {
-        nextMailbox.color = nextMailbox.color || 'rgb(66, 133, 244)'
-      }
       nextMailbox.openGoogleDriveLinksWithExternalBrowser = mailbox.openDriveLinksWithExternalBrowser !== undefined
         ? mailbox.openDriveLinksWithExternalBrowser
         : mailbox.openDriveLinksWithDefaultOpener
     } else if (mailbox.type === 'MICROSOFT') {
       if (mailbox.accessMode === 'OUTLOOK') {
         nextMailbox.displayName = 'Outlook'
-        nextMailbox.color = nextMailbox.color || '#0078d7'
       } else if (mailbox.accessMode === 'OFFICE365') {
         nextMailbox.displayName = 'Office 365'
-        nextMailbox.color = nextMailbox.color || 'rgb(237, 70, 47)'
       }
     } else if (mailbox.type === 'SLACK') {
       nextMailbox.displayName = 'Slack'
-      nextMailbox.color = nextMailbox.color || 'rgb(102, 187, 152)'
     } else if (mailbox.type === 'TRELLO') {
       nextMailbox.displayName = 'Trello'
-      nextMailbox.color = nextMailbox.color || 'rgb(33, 108, 167)'
     }
 
     return JSON.parse(JSON.stringify(nextMailbox)) // Remove undefined

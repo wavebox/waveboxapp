@@ -21,6 +21,7 @@ class MicrosoftOnenoteService extends MicrosoftService {
       'microsoft/logo_notebook_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(129, 54, 124)' }
 
   /* **************************************************************************/
   // Properties: Support

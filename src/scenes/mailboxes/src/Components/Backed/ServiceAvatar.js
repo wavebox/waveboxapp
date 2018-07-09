@@ -5,13 +5,13 @@ import shallowCompare from 'react-addons-shallow-compare'
 import Resolver from 'Runtime/Resolver'
 import ACAvatarCircle from 'wbui/ACAvatarCircle'
 
-export default class MailboxAvatar extends React.Component {
+export default class ServiceAvatar extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired
+    serviceId: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -27,9 +27,9 @@ export default class MailboxAvatar extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.mailboxId !== nextProps.mailboxId) {
+    if (this.props.serviceId !== nextProps.serviceId) {
       this.setState({
-        avatar: accountStore.getState().getMailboxAvatarConfig(nextProps.mailboxId)
+        avatar: accountStore.getState().getServiceAvatarConfig(nextProps.serviceId)
       })
     }
   }
@@ -40,13 +40,13 @@ export default class MailboxAvatar extends React.Component {
 
   state = (() => {
     return {
-      avatar: accountStore.getState().getMailboxAvatarConfig(this.props.mailboxId)
+      avatar: accountStore.getState().getServiceAvatarConfig(this.props.serviceId)
     }
   })()
 
   accountChanged = (accountState) => {
     this.setState({
-      avatar: accountState.getMailboxAvatarConfig(this.props.mailboxId)
+      avatar: accountState.getServiceAvatarConfig(this.props.serviceId)
     })
   }
 
@@ -59,7 +59,7 @@ export default class MailboxAvatar extends React.Component {
   }
 
   render () {
-    const { mailboxId, ...passProps } = this.props
+    const { serviceId, ...passProps } = this.props
     const { avatar } = this.state
 
     return (

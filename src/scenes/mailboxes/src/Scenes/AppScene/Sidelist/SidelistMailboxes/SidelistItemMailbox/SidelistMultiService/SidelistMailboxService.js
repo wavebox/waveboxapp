@@ -1,63 +1,22 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Avatar } from '@material-ui/core'
-import ServiceFactory from 'shared/Models/Accounts/ServiceFactory'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
-import MailboxServiceBadge from 'wbui/MailboxServiceBadge'
-import MailboxServiceTooltip from 'wbui/MailboxServiceTooltip'
 import uuid from 'uuid'
-import Resolver from 'Runtime/Resolver'
 import UISettings from 'shared/Models/Settings/UISettings'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import red from '@material-ui/core/colors/red'
+import StyledMailboxServiceBadge from '../SidelistCommon/StyledMailboxServiceBadge'
+import SidelistServiceTooltip from '../SidelistCommon/SidelistServiceTooltip'
+import SidelistServiceAvatar from '../SidelistCommon/SidelistServiceAvatar'
 
 const styles = {
-  /**
-  * Avatar
-  */
-  avatar: {
-    display: 'block',
-    transform: 'translate3d(0,0,0)', // fix for wavebox/waveboxapp#619
-    margin: '4px auto',
-    borderWidth: 3,
-    borderStyle: 'solid',
-    cursor: 'pointer',
-    WebkitAppRegion: 'no-drag',
-    width: 35,
-    height: 35,
-    backgroundColor: 'white'
-  },
-  /**
-  * Badge
-  */
   badge: {
-    position: 'absolute',
-    height: 20,
-    minWidth: 20,
     fontSize: '11px',
-    borderRadius: 10,
-    lineHeight: '20px',
-    top: -3,
-    right: 8,
-    backgroundColor: 'rgba(238, 54, 55, 0.95)',
-    color: red[50],
-    fontWeight: process.platform === 'linux' ? 'normal' : '300',
-    width: 'auto',
-    paddingLeft: 6,
-    paddingRight: 6
-  },
-  badgeFAIcon: {
-    color: 'white',
-    fontSize: 12
-  },
-  badgeContainer: {
-    padding: 0,
-    display: 'block',
-    cursor: 'pointer'
+    height: 20,
+    top: 0
   }
 }
 
@@ -69,7 +28,7 @@ class SidelistMailboxService extends React.Component {
 
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
-    serviceType: PropTypes.string.isRequired,
+    serviceId: PropTypes.string.isRequired,
     onOpenService: PropTypes.func.isRequired
   }
 
@@ -83,20 +42,20 @@ class SidelistMailboxService extends React.Component {
   }
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxesChanged)
+    accountStore.listen(this.accountChanged)
     settingsStore.listen(this.settingsChanged)
     userStore.listen(this.userChanged)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxesChanged)
+    accountStore.unlisten(this.accountChanged)
     settingsStore.unlisten(this.settingsChanged)
     userStore.unlisten(this.userChanged)
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.mailboxId !== nextProps.mailboxId) {
-      this.setState(this.generateState(nextProps))
+    if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceId !== nextProps.serviceId) {
+      this.setState(this.generateAccountState(nextProps.mailboxId, nextProps.serviceId, accountStore.getState()))
     }
   }
 
@@ -105,38 +64,41 @@ class SidelistMailboxService extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
+    const { mailboxId, serviceId } = this.props
     const settingsState = settingsStore.getState()
     return {
-      ...this.generateState(),
+      ...this.generateAccountState(mailboxId, serviceId, accountStore.getState()),
       isHovering: false,
-      instanceId: uuid.v4(),
       globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator,
       tooltipsEnabled: settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED || settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.SIDEBAR_ONLY
     }
   })()
 
-  generateState (props = this.props) {
-    const { mailboxId, serviceType } = props
-    const mailboxState = mailboxStore.getState()
-    const mailbox = mailboxState.getMailbox(mailboxId)
+  generateAccountState (mailboxId, serviceId, accountState) {
+    const mailbox = accountState.getMailbox(mailboxId)
+    const service = accountState.getService(serviceId)
+    const serviceData = accountState.getServiceData(serviceId)
+
     return {
       mailbox: mailbox,
-      service: mailbox ? mailbox.serviceForType(serviceType) : null,
-      isActive: mailboxState.isActive(mailboxId, serviceType),
-      isSleeping: mailboxState.isSleeping(mailboxId, serviceType),
-      isRestricted: mailboxState.isMailboxRestricted(mailboxId)
+      service: service,
+      isAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId),
+      isServiceSleeping: accountState.isServiceSleeping(serviceId),
+      isServiceActive: accountState.isServiceActive(serviceId),
+      avatar: accountState.getServiceAvatarConfig(serviceId),
+      ...(service && serviceData ? {
+        unreadCount: serviceData.getUnreadCount(service),
+        hasUnreadActivity: serviceData.getHasUnreadActivity(service)
+      } : {
+        unreadCount: 0,
+        hasUnreadActivity: false
+      })
     }
   }
 
-  mailboxesChanged = (mailboxState) => {
-    const { mailboxId, serviceType } = this.props
-    const mailbox = mailboxState.getMailbox(mailboxId)
-    this.setState({
-      mailbox: mailbox,
-      service: mailbox ? mailbox.serviceForType(serviceType) : null,
-      isActive: mailboxState.isActive(mailboxId, serviceType),
-      isSleeping: mailboxState.isSleeping(mailboxId, serviceType)
-    })
+  accountChanged = (accountState) => {
+    const { mailboxId, serviceId } = this.props
+    this.setState(this.generateAccountState(mailboxId, serviceId, accountState))
   }
 
   settingsChanged = (settingsState) => {
@@ -147,10 +109,8 @@ class SidelistMailboxService extends React.Component {
   }
 
   userChanged = (userState) => {
-    const mailboxState = mailboxStore.getState()
-    this.setState({
-      isRestricted: mailboxState.isMailboxRestricted(this.props.mailboxId)
-    })
+    const { mailboxId, serviceId } = this.props
+    this.setState(this.generateAccountState(mailboxId, serviceId, accountStore.getState()))
   }
 
   /* **************************************************************************/
@@ -161,88 +121,70 @@ class SidelistMailboxService extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
-  /**
-  * @param mailboxType: the type of mailbox
-  * @param serviceType: the service type
-  * @return the url of the service icon
-  */
-  getServiceIconUrl (mailboxType, serviceType) {
-    const ServiceClass = ServiceFactory.getClass(mailboxType, serviceType)
-    return ServiceClass ? Resolver.image(ServiceClass.humanizedLogo) : ''
-  }
-
   render () {
     const {
       mailboxId,
-      serviceType,
+      serviceId,
       onOpenService,
-      style,
-      className,
       classes,
       ...passProps
     } = this.props
     const {
       isHovering,
-      isActive,
-      isSleeping,
       mailbox,
       service,
-      isRestricted,
+      unreadCount,
+      hasUnreadActivity,
+      isAuthInvalid,
       globalShowSleepableServiceIndicator,
-      tooltipsEnabled
+      isServiceSleeping,
+      isServiceActive,
+      tooltipsEnabled,
+      avatar
     } = this.state
-    if (!mailbox || !service) { return false }
+    if (!service || !mailbox) { return false }
 
-    const borderColor = mailbox.showAvatarColorRing ? (
-      isActive || isHovering ? mailbox.color : 'white'
-    ) : 'transparent'
+    const showSleeping =
+      globalShowSleepableServiceIndicator &&
+      mailbox.showSleepableServiceIndicator &&
+      isServiceSleeping
 
-    const showSleeping = isSleeping && mailbox.showSleepableServiceIndicator && globalShowSleepableServiceIndicator
     return (
-      <MailboxServiceBadge
+      <StyledMailboxServiceBadge
         id={`ReactComponent-Sidelist-Item-Mailbox-Service-${this.instanceId}`}
-        isAuthInvalid={false}
         supportsUnreadCount={service.supportsUnreadCount}
-        showUnreadBadge={service.showUnreadBadge}
-        unreadCount={service.unreadCount}
-        supportsUnreadActivity={service.supportsUnreadActivity}
-        showUnreadActivityBadge={service.showUnreadActivityBadge}
-        hasUnreadActivity={service.hasUnreadActivity}
-        color={service.unreadBadgeColor}
+        showUnreadBadge={service.showBadgeCount}
+        unreadCount={unreadCount}
         badgeClassName={classes.badge}
-        className={classes.badgeContainer}
-        iconClassName={classes.badgeFAIcon}
+        supportsUnreadActivity={service.supportsUnreadActivity}
+        showUnreadActivityBadge={service.showBadgeActivity}
+        hasUnreadActivity={hasUnreadActivity}
+        color={service.badgeColor}
+        isAuthInvalid={isAuthInvalid}
         onMouseEnter={() => this.setState({ isHovering: true })}
         onMouseLeave={() => this.setState({ isHovering: false })}
-        onClick={(evt) => onOpenService(evt, serviceType)}>
-        <Avatar
-          {...passProps}
-          src={this.getServiceIconUrl(mailbox.type, serviceType)}
-          imgProps={{ draggable: false }}
+        onClick={(evt) => onOpenService(evt, serviceId)}
+        {...passProps}>
+        <SidelistServiceAvatar
           className={classNames(
             classes.avatar,
             'WB-ServiceIcon',
-            `WB-ServiceIcon-${mailbox.id}_${service.type}`,
-            className
+            `WB-ServiceIcon-${mailboxId}_${serviceId}`
           )}
-          style={{
-            borderColor: borderColor,
-            filter: showSleeping ? 'grayscale(100%)' : 'none',
-            ...style
-          }} />
+          avatar={avatar}
+          size={35}
+          isSleeping={showSleeping}
+          showColorRing={mailbox.showAvatarColorRing}
+          borderWidth={3}
+          lightenBorder={!isServiceActive && !isHovering} />
         {tooltipsEnabled ? (
-          <MailboxServiceTooltip
-            mailbox={mailbox}
-            service={service}
-            isRestricted={isRestricted}
+          <SidelistServiceTooltip
+            serviceId={serviceId}
             active={isHovering}
-            tooltipTimeout={0}
-            position='right'
-            arrow='center'
             group={this.instanceId}
             parent={`#ReactComponent-Sidelist-Item-Mailbox-Service-${this.instanceId}`} />
         ) : undefined}
-      </MailboxServiceBadge>
+      </StyledMailboxServiceBadge>
     )
   }
 }

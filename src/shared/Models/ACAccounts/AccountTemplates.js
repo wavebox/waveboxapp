@@ -173,7 +173,6 @@ const ACCOUNT_TEMPLATES = Object.freeze({
   }),
   TRELLO: Object.freeze({
     type: 'TRELLO',
-    color: 'rgb(33, 108, 167)',
     displayName: 'Trello',
     hasAuthStep: true,
     serviceTypes: [

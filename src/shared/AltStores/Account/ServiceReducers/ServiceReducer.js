@@ -20,6 +20,22 @@ class ServiceReducer {
     return service.changeData({ displayName: displayName || undefined })
   }
 
+  /**
+  * @param service: the service to update
+  * @param col: the color as either a hex string or object that contains hex key
+  */
+  static setColor (service, col) {
+    if (col === undefined || col === null) {
+      return service.changeData({ color: null })
+    } else if (typeof (col) === 'object') {
+      return service.changeData({ color: col.rgbaStr })
+    } else if (typeof (col) === 'string') {
+      return service.changeData({ color: col.trim() })
+    } else {
+      return undefined
+    }
+  }
+
   /* **************************************************************************/
   // Sleepable
   /* **************************************************************************/

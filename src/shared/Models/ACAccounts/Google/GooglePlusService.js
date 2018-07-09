@@ -22,6 +22,7 @@ class GooglePlusService extends CoreACService {
       'google/logo_plus_128px.png'
     ]
   }
+  static get humanizedColor () { return '#dd4b39' }
 
   /* **************************************************************************/
   // Properties: Support

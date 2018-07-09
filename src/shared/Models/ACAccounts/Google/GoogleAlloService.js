@@ -22,6 +22,7 @@ class GoogleAlloService extends CoreACService {
       'google/logo_allo_128px.png'
     ]
   }
+  static get humanizedColor () { return '#fbbc05' }
 
   /* **************************************************************************/
   // Class: Creation

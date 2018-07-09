@@ -22,6 +22,7 @@ class GoogleChatService extends CoreACService {
       'google/logo_chat_128px.png'
     ]
   }
+  static get humanizedColor () { return '#47a49b' }
 
   /* **************************************************************************/
   // Properties: Support

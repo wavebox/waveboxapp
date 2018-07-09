@@ -22,6 +22,7 @@ class MicrosoftTodoService extends MicrosoftService {
       'microsoft/logo_todo_128px.png'
     ]
   }
+  static get humanizedColor () { return '#507CEF' }
 
   /* **************************************************************************/
   // Properties: Support

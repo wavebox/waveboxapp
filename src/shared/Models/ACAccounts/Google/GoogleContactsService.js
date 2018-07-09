@@ -22,6 +22,7 @@ class GoogleContactsService extends CoreACService {
       'google/logo_contacts_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(60, 173, 244)' }
 
   /* **************************************************************************/
   // Properties: Support

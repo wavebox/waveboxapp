@@ -23,6 +23,7 @@ class GoogleHangoutsService extends CoreACService {
     ]
   }
   static get humanizedUnreadItemType () { return 'message' }
+  static get humanizedColor () { return '#0f9d58' }
 
   /* **************************************************************************/
   // Properties: Support

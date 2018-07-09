@@ -21,6 +21,7 @@ class MicrosoftWordService extends MicrosoftService {
       'microsoft/logo_docs_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(40, 86, 157)' }
 
   /* **************************************************************************/
   // Properties: Support

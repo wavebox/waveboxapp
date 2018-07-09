@@ -21,6 +21,7 @@ class MicrosoftCalendarService extends MicrosoftService {
       'microsoft/logo_calendar_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(71, 70, 169)' }
 
   /* **************************************************************************/
   // Properties: Support

@@ -22,6 +22,7 @@ class GoogleInboxService extends CoreGoogleMailService {
       'google/logo_ginbox_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(66, 133, 244)' }
 
   /* **************************************************************************/
   // Properties: Behaviour

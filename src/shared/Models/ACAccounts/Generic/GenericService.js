@@ -22,6 +22,7 @@ class GenericService extends CoreACService {
     ]
   }
   static get humanizedUnreadItemType () { return 'notification' }
+  static get humanizedColor () { return '#2ecc71' }
 
   /* **************************************************************************/
   // Properties: Support

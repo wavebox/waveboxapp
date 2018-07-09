@@ -21,6 +21,7 @@ class MicrosoftPowerpointService extends MicrosoftService {
       'microsoft/logo_slides_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(185, 71, 35)' }
 
   /* **************************************************************************/
   // Properties: Support

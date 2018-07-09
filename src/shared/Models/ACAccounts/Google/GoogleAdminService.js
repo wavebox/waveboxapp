@@ -22,6 +22,7 @@ class GoogleAdminService extends CoreACService {
       'google/logo_admin_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(73, 137, 244)' }
 
   /* **************************************************************************/
   // Properties: Support

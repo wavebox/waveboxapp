@@ -4,7 +4,6 @@ import { accountStore, accountActions } from 'stores/account'
 import shallowCompare from 'react-addons-shallow-compare'
 import SidelistMailboxContainer from '../SidelistCommon/SidelistMailboxContainer'
 import uuid from 'uuid'
-import Color from 'color'
 import StyledMailboxServiceBadge from '../SidelistCommon/StyledMailboxServiceBadge'
 import SidelistActiveIndicator from '../SidelistCommon/SidelistActiveIndicator'
 import SidelistMailboxAvatar from '../SidelistCommon/SidelistMailboxAvatar'
@@ -84,6 +83,7 @@ class SidelistItemSingleService extends React.Component {
       isServiceActive: accountState.activeServiceId() === serviceId,
       isServiceSleeping: accountState.isServiceSleeping(serviceId),
       isAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId),
+      serviceColor: accountState.resolvedServiceColor(serviceId),
       ...(service && serviceData ? {
         unreadCount: serviceData.getUnreadCount(service),
         hasUnreadActivity: serviceData.getHasUnreadActivity(service)
@@ -148,20 +148,7 @@ class SidelistItemSingleService extends React.Component {
       isAuthInvalid,
       avatar
     } = this.state
-
     if (!mailbox || !service) { return false }
-
-    const rootColor = mailbox.color || service.color || '#FFFFFF'
-    let avatarBorderColor
-    try {
-      avatarBorderColor = isServiceActive || isHovering ? (
-        rootColor
-      ) : (
-        Color(rootColor).lighten(0.4).rgb().string()
-      )
-    } catch (ex) {
-      avatarBorderColor = rootColor
-    }
 
     return (
       <SidelistMailboxContainer
@@ -180,13 +167,13 @@ class SidelistItemSingleService extends React.Component {
           hasUnreadActivity={hasUnreadActivity}
           color={service.badgeColor}
           isAuthInvalid={isAuthInvalid}>
-          {isServiceActive ? (<SidelistActiveIndicator color={rootColor} />) : undefined}
+          {isServiceActive ? (<SidelistActiveIndicator color={avatar.color} />) : undefined}
           <SidelistMailboxAvatar
             avatar={avatar}
+            lightenBorder={!isServiceActive && !isHovering}
             size={42}
             isSleeping={isServiceSleeping}
             showColorRing={mailbox.showAvatarColorRing}
-            borderColor={avatarBorderColor}
             borderWidth={4} />
           <ErrorBoundary>
             <SidelistServiceTooltip

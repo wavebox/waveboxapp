@@ -22,6 +22,7 @@ class GoogleMusicService extends CoreACService {
       'google/logo_music_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(237, 72, 47)' }
 
   /* **************************************************************************/
   // Class: Creation

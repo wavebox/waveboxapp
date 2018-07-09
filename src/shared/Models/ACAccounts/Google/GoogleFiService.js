@@ -22,6 +22,7 @@ class GoogleFiService extends CoreACService {
       'google/logo_fi_128px.png'
     ]
   }
+  static get humanizedColor () { return 'rgb(77, 166, 102)' }
 
   /* **************************************************************************/
   // Properties: Support

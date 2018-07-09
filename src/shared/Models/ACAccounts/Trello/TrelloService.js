@@ -23,6 +23,7 @@ class TrelloService extends CoreACService {
     ]
   }
   static get humanizedUnreadItemType () { return 'notification' }
+  static get humanizedColor () { return 'rgb(33, 108, 167)' }
 
   /* **************************************************************************/
   // Properties: Support
