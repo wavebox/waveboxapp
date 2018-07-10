@@ -12,6 +12,12 @@ const SERVICE_UI_LOCATIONS = Object.freeze({
   TOOLBAR_END: 'TOOLBAR_END'
 })
 
+const NAVIGATION_BAR_UI_LOCATIONS = Object.freeze({
+  AUTO: 'AUTO',
+  PRIMARY_TOOLBAR: 'PRIMARY_TOOLBAR',
+  SECONDARY_TOOLBAR: 'SECONDARY_TOOLBAR'
+})
+
 class ACMailbox extends CoreACModel {
   /* **************************************************************************/
   // Class : Types
@@ -19,6 +25,7 @@ class ACMailbox extends CoreACModel {
 
   static get DEFAULT_WINDOW_OPEN_MODES () { return DEFAULT_WINDOW_OPEN_MODES }
   static get SERVICE_UI_LOCATIONS () { return SERVICE_UI_LOCATIONS }
+  static get NAVIGATION_BAR_UI_LOCATIONS () { return NAVIGATION_BAR_UI_LOCATIONS }
 
   /* **************************************************************************/
   // Class : Creating
@@ -138,6 +145,7 @@ class ACMailbox extends CoreACModel {
   get showAvatarColorRing () { return this._value_('showAvatarColorRing', true) }
   get collapseSidebarServices () { return this._value_('collapseSidebarServices', false) }
   get showSleepableServiceIndicator () { return this._value_('showSleepableServiceIndicator', true) }
+  get navigationBarUiLocation () { return this._value_('navigationBarUiLocation', NAVIGATION_BAR_UI_LOCATIONS.AUTO) }
 
   /* **************************************************************************/
   // Properties : Badge

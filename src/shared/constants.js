@@ -92,6 +92,9 @@ module.exports = Object.freeze({
   ARTIFICIAL_COOKIE_PERSIST_WAIT: seconds(30),
   ARTIFICIAL_COOKIE_PERSIST_PERIOD: days(30),
 
+  // UI
+  TOOLBAR_AUTO_SPLIT_THRESHOLD: 8,
+
   // Misc
   ELEVATED_LOG_PREFIX: '[ELEVATED_LOG]',
 

@@ -26,6 +26,11 @@ const styles = {
       justifyContent: 'center',
       flexDirection: 'row'
     }
+  },
+  sortableListContainer: {
+    '&.toolbar': {
+      display: 'flex'
+    }
   }
 }
 
@@ -34,9 +39,9 @@ const SortableItem = SortableElement((props) => {
 })
 
 const SortableList = SortableContainer((props) => {
-  const { serviceIds, ...passProps } = props
+  const { containerClassName, serviceIds, ...passProps } = props
   return (
-    <div>
+    <div className={containerClassName}>
       {serviceIds.map((serviceId, index) => (
         <SortableItem key={serviceId} index={index} serviceId={serviceId} {...passProps} />
       ))}
@@ -135,19 +140,21 @@ class ServiceTabs extends React.Component {
       serviceIds
     } = this.state
     if (!serviceIds.length) { return false }
+    const classNameAppend = ServiceTabTools.uiLocationClassName(uiLocation)
 
     return (
       <div
         {...passProps}
         className={classNames(
           classes.container,
-          ServiceTabTools.uiLocationClassName(uiLocation),
+          classNameAppend,
           collapseOnInactive && !isMailboxActive ? 'collapsed' : undefined,
           'WB-ServiceTabs',
           className
         )}>
         <SortableList
           axis={ServiceTabTools.uiLocationAxis(uiLocation)}
+          containerClassName={classNames(classes.sortableListContainer, classNameAppend)}
           distance={20}
           serviceIds={serviceIds}
           mailboxId={mailboxId}

@@ -19,6 +19,8 @@ import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
 import shallowCompare from 'react-addons-shallow-compare'
 import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
 import AccountAvatarProcessor from 'shared/AltStores/Account/AccountAvatarProcessor'
+import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
+import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 
 const styles = {
   buttonIcon: {
@@ -125,13 +127,15 @@ class MailboxAppearanceSettings extends React.Component {
       mailboxShowSleepableServiceIndicator: mailbox.showSleepableServiceIndicator,
       mailboxShowBadge: mailbox.showBadge,
       mailboxBadgeColor: mailbox.badgeColor,
-      mailboxDisplayName: mailbox.displayName
+      mailboxDisplayName: mailbox.displayName,
+      navigationBarUiLocation: mailbox.navigationBarUiLocation
     } : {
       mailboxColor: '#FFF',
       mailboxShowAvatarColorRing: true,
       mailboxShowSleepableServiceIndicator: true,
       mailboxShowBadge: true,
-      mailboxBadgeColor: '#FFF'
+      mailboxBadgeColor: '#FFF',
+      navigationBarUiLocation: ACMailbox.NAVIGATION_BAR_UI_LOCATIONS.AUTO
     }
   }
 
@@ -153,7 +157,8 @@ class MailboxAppearanceSettings extends React.Component {
       mailboxShowSleepableServiceIndicator,
       mailboxShowBadge,
       mailboxBadgeColor,
-      mailboxDisplayName
+      mailboxDisplayName,
+      navigationBarUiLocation
     } = this.state
 
     return (
@@ -244,12 +249,21 @@ class MailboxAppearanceSettings extends React.Component {
               checked={mailboxShowSleepableServiceIndicator} />
           ) : undefined}
           <SettingsListItemSwitch
-            divider={false}
             label='Show total unread count from all services'
             onChange={(evt, toggled) => {
               accountActions.reduceMailbox(mailboxId, MailboxReducer.setShowBadge, toggled)
             }}
             checked={mailboxShowBadge} />
+          <SettingsListItemSelect
+            divider={false}
+            label='Where should the navigation bar be displayed?'
+            value={navigationBarUiLocation}
+            options={[
+              { value: ACMailbox.NAVIGATION_BAR_UI_LOCATIONS.AUTO, label: 'Auto' },
+              { value: ACMailbox.NAVIGATION_BAR_UI_LOCATIONS.PRIMARY_TOOLBAR, label: 'With Services & Extensions' },
+              { value: ACMailbox.NAVIGATION_BAR_UI_LOCATIONS.SECONDARY_TOOLBAR, label: 'In a Standalone toolbar' }
+            ]}
+            onChange={(evt, mode) => accountActions.reduceMailbox(mailboxId, MailboxReducer.setNavigationBarUiLocation, mode)} />
         </SettingsListSection>
       </div>
     )

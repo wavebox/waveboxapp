@@ -31,8 +31,8 @@ class EmblinkStore extends RendererEmblinkStore {
 
     const accountState = accountStore.getState()
     const supportingServices = [].concat(
-      accountState.getServicesOfType(SERVICE_TYPES.GOOGLE_MAIL),
-      accountState.getServicesOfType(SERVICE_TYPES.GOOGLE_INBOX)
+      accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_MAIL),
+      accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_INBOX)
     )
 
     // No services supporting

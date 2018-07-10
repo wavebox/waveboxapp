@@ -17,8 +17,8 @@ class DebugTests {
     console.log(`${sig} start`)
     const accountState = accountStore.getState()
     const services = [].concat(
-      accountState.getServicesOfType(SERVICE_TYPES.GOOGLE_INBOX),
-      accountState.getServicesOfType(SERVICE_TYPES.GOOGLE_MAIL)
+      accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_INBOX),
+      accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_MAIL)
     )
     console.log(`${sig} found ${services.length} Google Mailboxes`)
 
@@ -71,7 +71,7 @@ class DebugTests {
     const sig = '[TEST:SLACK_LOCALSTORAGE]'
     console.log(`${sig} start`)
     const accountState = accountStore.getState()
-    const services = accountState.getServicesOfType(SERVICE_TYPES.SLACK)
+    const services = accountState.allServicesOfType(SERVICE_TYPES.SLACK)
     console.log(`${sig} found ${services.length} Slack Mailboxes`)
 
     const serviceElements = services
@@ -146,7 +146,7 @@ class DebugTests {
     const sig = '[TEST:MICROSOFT_MESSAGES]'
     console.log(`${sig} start`)
     const accountState = accountStore.getState()
-    const services = accountState.getServicesOfType(SERVICE_TYPES.MICROSOFT)
+    const services = accountState.allServicesOfType(SERVICE_TYPES.MICROSOFT)
     console.log(`${sig} found ${services.length} Microsoft Mailboxes`)
 
     services.reduce((acc, service) => {

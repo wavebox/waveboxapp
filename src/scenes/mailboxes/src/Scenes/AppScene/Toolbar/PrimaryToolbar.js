@@ -12,6 +12,7 @@ import classNames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import blueGrey from '@material-ui/core/colors/blueGrey'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
+import { TOOLBAR_AUTO_SPLIT_THRESHOLD } from 'shared/constants'
 
 const styles = {
   toolbar: {
@@ -36,7 +37,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class Toolbar extends React.Component {
+class PrimaryToolbar extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -47,25 +48,25 @@ class Toolbar extends React.Component {
 
   /**
   * Works out if the user has services in the toolbar
-  * @param accountState=autoget: the mailbox state
+  * @param accountState: the mailbox state
   * @return true if there are services, false otherwise
   */
-  static hasServicesInToolbar (accountState = accountStore.getState()) {
+  static hasServicesInToolbar (accountState) {
     const mailbox = accountState.activeMailbox()
     if (!mailbox) { return false }
     if (!mailbox.hasMultipleServices) { return false }
-    if (mailbox.toolbarStartServices.length === 0 && mailbox.toolbarEndServices.length === 0) { return false }
+    if (mailbox.toolbarStartServices.length + mailbox.toolbarEndServices.length <= 1) { return false }
 
     return true
   }
 
   /**
   * Works out if the user has extensions in the toolbar
-  * @param crextensionState=autoget: the chrome extenion state
-  * @param settingsState=autoget: the settings state
+  * @param crextensionState: the chrome extenion state
+  * @param settingsState: the settings state
   * @return true if there are extensions, false otherwise
   */
-  static hasExtensionsInToolbar (crextensionState = crextensionStore.getState(), settingsState = settingsStore.getState()) {
+  static hasExtensionsInToolbar (crextensionState, settingsState) {
     if (!settingsState.extension.showBrowserActionsInToolbar) { return false }
     if (crextensionState.browserActionExtensionCount() === 0) { return false }
     return true
@@ -73,12 +74,25 @@ class Toolbar extends React.Component {
 
   /**
   * Works out if the active servie has the navigation toolbar in the toolbar
-  * @param accountState=autoget: the mailbox state
+  * @param accountState: the mailbox state
   * @return true if there are navigation controls
   */
-  static hasNavigationInToolbar (accountState = accountStore.getState()) {
+  static hasNavigationInToolbar (accountState) {
+    const mailbox = accountState.activeMailbox()
     const service = accountState.activeService()
-    return service ? service.hasNavigationToolbar : false
+    if (!mailbox || !service) { return false }
+
+    if (service.hasNavigationToolbar) {
+      if (mailbox.navigationBarUiLocation === ACMailbox.NAVIGATION_BAR_UI_LOCATIONS.PRIMARY_TOOLBAR) {
+        return true
+      } else if (mailbox.navigationBarUiLocation === ACMailbox.NAVIGATION_BAR_UI_LOCATIONS.AUTO) {
+        if (mailbox.toolbarStartServices.length + mailbox.toolbarEndServices.length <= TOOLBAR_AUTO_SPLIT_THRESHOLD) {
+          return true
+        }
+      }
+    }
+
+    return false
   }
 
   /* **************************************************************************/
@@ -106,56 +120,83 @@ class Toolbar extends React.Component {
     const settingsState = settingsStore.getState()
     const crextensionState = crextensionStore.getState()
 
-    const mailbox = accountState.activeMailbox()
     return {
-      hasServicesInToolbar: Toolbar.hasServicesInToolbar(accountState),
-      serviceId: accountState.activeServiceId(),
-      ...(mailbox ? {
-        mailboxId: mailbox.id,
-        mailboxHasStartServices: !!mailbox.toolbarStartServices.length,
-        mailboxHasEndServices: !!mailbox.toolbarEndServices.length
-      } : undefined),
-      hasExtensionsInToolbar: Toolbar.hasExtensionsInToolbar(crextensionState, settingsState),
-      hasNavigationInToolbar: Toolbar.hasNavigationInToolbar(accountState),
-      extensionLayoutMode: settingsState.extension.toolbarBrowserActionLayout,
-      showTitlebar: settingsState.ui.showTitlebar,
-      sidebarEnabled: settingsState.ui.sidebarEnabled,
-      activeTabId: accountState.getActiveWebcontentTabId()
+      ...this.deriveExtensionState(settingsState, crextensionState),
+      ...this.deriveSettingsState(settingsState),
+      ...this.deriveAccountState(accountState)
     }
   })()
 
   accountUpdated = (accountState) => {
-    const mailbox = accountState.activeMailbox()
-    this.setState({
-      hasServicesInToolbar: Toolbar.hasServicesInToolbar(accountState),
-      hasNavigationInToolbar: Toolbar.hasNavigationInToolbar(accountState),
-      ...(mailbox ? {
-        mailboxId: mailbox.id,
-        mailboxHasStartServices: !!mailbox.toolbarStartServices.length,
-        mailboxHasEndServices: !!mailbox.toolbarEndServices.length
-      } : {
-        mailboxId: undefined,
-        mailboxHasStartServices: false,
-        mailboxHasEndServices: false
-      }),
-      serviceId: accountState.activeServiceId(),
-      activeTabId: accountState.getActiveWebcontentTabId()
-    })
+    this.setState(this.deriveAccountState(accountState))
   }
 
   crextensionUpdated = (crextensionState) => {
-    this.setState({
-      hasExtensionsInToolbar: Toolbar.hasExtensionsInToolbar(crextensionState, undefined)
-    })
+    this.setState(this.deriveExtensionState(settingsStore.getState(), crextensionState))
   }
 
   settingsUpdated = (settingsState) => {
     this.setState({
+      ...this.deriveExtensionState(settingsState, crextensionStore.getState()),
+      ...this.deriveSettingsState(settingsState)
+    })
+  }
+
+  /**
+  * Derives the extension state
+  * @param settingsState: the settings state
+  * @param crextensionState: the extension store state
+  * @return state update
+  */
+  deriveExtensionState (settingsState, crextensionState) {
+    return {
+      hasExtensionsInToolbar: PrimaryToolbar.hasExtensionsInToolbar(crextensionState, settingsState)
+    }
+  }
+
+  /**
+  * Derives the setting state
+  * @param settingsState: the settings state
+  * @return state update
+  */
+  deriveSettingsState (settingsState) {
+    return {
       extensionLayoutMode: settingsState.extension.toolbarBrowserActionLayout,
-      hasExtensionsInToolbar: Toolbar.hasExtensionsInToolbar(undefined, settingsState),
       showTitlebar: settingsState.ui.showTitlebar,
       sidebarEnabled: settingsState.ui.sidebarEnabled
-    })
+    }
+  }
+
+  /**
+  * Derives the account state from the stores
+  * @param accountState: the current account store state
+  * @return state update
+  */
+  deriveAccountState (accountState) {
+    const mailbox = accountState.activeMailbox()
+    const service = accountState.activeService()
+
+    return {
+      activeTabId: accountState.getActiveWebcontentTabId(),
+      ...(mailbox ? {
+        mailboxId: mailbox.id,
+        mailboxHasStartServices: !!mailbox.toolbarStartServices.length,
+        mailboxHasEndServices: !!mailbox.toolbarEndServices.length,
+        hasServicesInToolbar: PrimaryToolbar.hasServicesInToolbar(accountState)
+      } : {
+        mailboxId: undefined,
+        mailboxHasStartServices: false,
+        mailboxHasEndServices: false,
+        hasServicesInToolbar: false
+      }),
+      ...(service ? {
+        serviceId: service.id,
+        hasNavigationInToolbar: PrimaryToolbar.hasNavigationInToolbar(accountState)
+      } : {
+        serviceId: undefined,
+        hasNavigationInToolbar: false
+      })
+    }
   }
 
   /* **************************************************************************/
@@ -175,7 +216,6 @@ class Toolbar extends React.Component {
       ...passProps
     } = this.props
     const {
-      hasServicesInToolbar,
       hasNavigationInToolbar,
       mailboxId,
       serviceId,
@@ -194,12 +234,12 @@ class Toolbar extends React.Component {
         className={classNames(
           classes.toolbar,
           !showTitlebar && !sidebarEnabled ? undefined : 'no-left-padd',
-          'WB-Toolbar',
+          'WB-Primary-Toolbar',
           className
         )}
         style={{ height: toolbarHeight, ...style }}>
         <div className={classes.toolbarGroup}>
-          {hasServicesInToolbar && mailboxHasStartServices ? (
+          {mailboxHasStartServices ? (
             <ToolbarMailboxServices
               className={classes.services}
               mailboxId={mailboxId}
@@ -222,7 +262,7 @@ class Toolbar extends React.Component {
             serviceId={serviceId} />
         ) : undefined}
         <div className={classes.toolbarGroup}>
-          {hasServicesInToolbar && mailboxHasEndServices ? (
+          {mailboxHasEndServices ? (
             <ToolbarMailboxServices
               className={classes.services}
               mailboxId={mailboxId}
@@ -241,4 +281,4 @@ class Toolbar extends React.Component {
   }
 }
 
-export default Toolbar
+export default PrimaryToolbar

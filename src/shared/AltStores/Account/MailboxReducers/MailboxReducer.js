@@ -74,6 +74,15 @@ class MailboxReducer {
     return mailbox.changeData({ showSleepableServiceIndicator: show })
   }
 
+  /**
+  * Sets the navigation bar ui location
+  * @param mailbox: the mailbox to update
+  * @param location: the new location
+  */
+  static setNavigationBarUiLocation (mailbox, location) {
+    return mailbox.changeData({ navigationBarUiLocation: location })
+  }
+
   /* **************************************************************************/
   // Badge
   /* **************************************************************************/

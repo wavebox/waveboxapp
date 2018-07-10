@@ -140,7 +140,9 @@ class ToolbarNavigation extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
-    return this.generateFreshState(this.props.tabId)
+    return {
+      ...this.generateFreshState(this.props.tabId)
+    }
   })()
 
   /**
@@ -334,6 +336,7 @@ class ToolbarNavigation extends React.Component {
     return (
       <div
         {...passProps}
+        onContextMenu={this.handleOpenPopover}
         className={classNames(
           classes.container,
           className

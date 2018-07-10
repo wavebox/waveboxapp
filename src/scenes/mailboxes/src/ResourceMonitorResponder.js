@@ -79,7 +79,7 @@ export default class ResourceMonitorResponder {
         }
       ].concat(
         accountState
-          .getServicesOfType(SERVICE_TYPES.SLACK)
+          .allServicesOfType(SERVICE_TYPES.SLACK)
           .map((service) => {
             const slackState = slackStore.getState()
             const displayName = accountState.resolvedServiceDisplayName(service.id)
