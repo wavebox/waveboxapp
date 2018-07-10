@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ACAvatarCircle from 'wbui/ACAvatarCircle'
 import { Button } from '@material-ui/core'
 import { accountStore, accountActions } from 'stores/account'
 import { settingsActions } from 'stores/settings'
@@ -9,7 +8,8 @@ import grey from '@material-ui/core/colors/grey'
 import blue from '@material-ui/core/colors/blue'
 import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 import shallowCompare from 'react-addons-shallow-compare'
-import Resolver from 'Runtime/Resolver'
+import MailboxAvatar from 'Components/Backed/MailboxAvatar'
+import ServiceAvatar from 'Components/Backed/ServiceAvatar'
 
 const styles = {
   // Layout
@@ -24,9 +24,17 @@ const styles = {
     textAlign: 'center',
     position: 'relative'
   },
-  icon: {
-    marginTop: 50,
-    display: 'inline-block'
+  mailboxAvatar: {
+    position: 'absolute',
+    display: 'inline-block',
+    top: 50,
+    left: 15
+  },
+  serviceAvatar: {
+    position: 'absolute',
+    display: 'inline-block',
+    top: 75,
+    left: 40
   },
   z1: {
     position: 'absolute',
@@ -68,7 +76,7 @@ const styles = {
   },
   fullDisable: {
     fontSize: '85%',
-    color: grey[400]
+    color: grey[600]
   },
 
   // Actions
@@ -111,8 +119,7 @@ class MailboxSleepNotification extends React.Component {
       this.setState({
         mailbox: accountState.getMailbox(nextProps.mailboxId),
         service: accountState.getService(nextProps.serviceId),
-        serviceDisplayName: accountState.resolvedServiceDisplayName(nextProps.serviceId),
-        avatar: accountState.getMailboxAvatarConfig(nextProps.mailboxId)
+        serviceDisplayName: accountState.resolvedServiceDisplayName(nextProps.serviceId)
       })
     }
   }
@@ -126,8 +133,7 @@ class MailboxSleepNotification extends React.Component {
     return {
       mailbox: accountState.getMailbox(this.props.mailboxId),
       service: accountState.getService(this.props.serviceId),
-      serviceDisplayName: accountState.resolvedServiceDisplayName(this.props.serviceId),
-      avatar: accountState.getMailboxAvatarConfig(this.props.mailboxId)
+      serviceDisplayName: accountState.resolvedServiceDisplayName(this.props.serviceId)
     }
   })()
 
@@ -135,8 +141,7 @@ class MailboxSleepNotification extends React.Component {
     this.setState({
       mailbox: accountState.getMailbox(this.props.mailboxId),
       service: accountState.getService(this.props.serviceId),
-      serviceDisplayName: accountState.resolvedServiceDisplayName(this.props.serviceId),
-      avatar: accountState.getMailboxAvatarConfig(this.props.mailboxId)
+      serviceDisplayName: accountState.resolvedServiceDisplayName(this.props.serviceId)
     })
   }
 
@@ -181,8 +186,8 @@ class MailboxSleepNotification extends React.Component {
   }
 
   render () {
-    const { closeMetrics, classes } = this.props
-    const { mailbox, service, serviceDisplayName, avatar } = this.state
+    const { closeMetrics, mailboxId, serviceId, classes } = this.props
+    const { mailbox, service, serviceDisplayName } = this.state
 
     const displayNameText = `${serviceDisplayName || mailbox.displayName} (${service.humanizedType})`
     const savingText = closeMetrics ? (
@@ -205,11 +210,15 @@ class MailboxSleepNotification extends React.Component {
           <span className={classes.z2}>z</span>
           <span className={classes.z3}>z</span>
           <span className={classes.z4}>z</span>
-          <ACAvatarCircle
-            avatar={avatar}
-            resolver={(i) => Resolver.Image(i)}
+          <MailboxAvatar
+            mailboxId={mailboxId}
             size={50}
-            className={classes.icon} />
+            className={classes.mailboxAvatar} />
+          <ServiceAvatar
+            serviceId={serviceId}
+            showSleeping={false}
+            size={30}
+            className={classes.serviceAvatar} />
         </div>
         <div className={classes.content}>
           <p className={classes.title}>{`${displayNameText} has just been put to sleep, ${savingText}.`}</p>
