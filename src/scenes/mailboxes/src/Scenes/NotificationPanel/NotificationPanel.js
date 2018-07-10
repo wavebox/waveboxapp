@@ -120,7 +120,7 @@ class NotificationPanel extends React.Component {
               onRequestClose={() => this.refs[REF].removeNotification(notificationId)}
               closeMetrics={closeMetrics} />),
           message: '',
-          autoDismiss: 10,
+          autoDismiss: 0,
           dismissible: false,
           position: 'br',
           onAdd: this.handleAddNotification,

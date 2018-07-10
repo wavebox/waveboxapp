@@ -107,10 +107,12 @@ class MailboxSleepNotification extends React.Component {
 
   componentDidMount () {
     accountStore.listen(this.accountChanged)
+    this.autoDismissTO = setTimeout(() => { this.handleDismiss() }, 1000 * 20)
   }
 
   componentWillUnmount () {
     accountStore.unlisten(this.accountChanged)
+    clearTimeout(this.autoDismissTO)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -121,6 +123,8 @@ class MailboxSleepNotification extends React.Component {
         service: accountState.getService(nextProps.serviceId),
         serviceDisplayName: accountState.resolvedServiceDisplayName(nextProps.serviceId)
       })
+      clearTimeout(this.autoDismissTO)
+      this.autoDismissTO = setTimeout(() => { this.handleDismiss() }, 1000 * 20)
     }
   }
 
