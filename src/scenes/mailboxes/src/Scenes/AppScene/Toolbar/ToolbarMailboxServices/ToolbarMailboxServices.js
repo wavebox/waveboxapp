@@ -1,47 +1,12 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { accountStore, accountActions } from 'stores/account'
-import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
-import ToolbarMailboxService from './ToolbarMailboxService'
-import {SortableContainer, SortableElement} from 'react-sortable-hoc'
-import { withStyles } from '@material-ui/core/styles'
-import classNames from 'classnames'
+import { accountActions } from 'stores/account'
+import shallowCompare from 'react-addons-shallow-compare'
+import MailboxAndServiceContextMenu from 'Components/MailboxAndServiceContextMenu'
+import ErrorBoundary from 'wbui/ErrorBoundary'
+import ServiceTabs from 'Components/ServiceTabs'
+import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 
-const styles = {
-  tabs: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row'
-  }
-}
-
-const SortableItem = SortableElement(({ mailboxId, serviceId, toolbarHeight }) => {
-  return (
-    <ToolbarMailboxService
-      key={serviceId}
-      toolbarHeight={toolbarHeight}
-      mailboxId={mailboxId}
-      serviceId={serviceId} />
-  )
-})
-
-const SortableList = SortableContainer(({ mailboxId, serviceIds, toolbarHeight, style, className }) => {
-  return (
-    <div style={style} className={className}>
-      {serviceIds.map((serviceId, index) => (
-        <SortableItem
-          key={serviceId}
-          index={index}
-          mailboxId={mailboxId}
-          serviceId={serviceId}
-          toolbarHeight={toolbarHeight} />
-      ))}
-    </div>
-  )
-})
-
-@withStyles(styles)
 class ToolbarMailboxServices extends React.Component {
   /* **************************************************************************/
   // Class
@@ -49,60 +14,67 @@ class ToolbarMailboxServices extends React.Component {
 
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
-    toolbarHeight: PropTypes.number.isRequired
+    toolbarHeight: PropTypes.number.isRequired,
+    uiLocation: PropTypes.oneOf([
+      ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_START,
+      ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_END
+    ])
   }
 
   /* **************************************************************************/
-  // Component Lifecycle
+  // Data lifecycle
   /* **************************************************************************/
 
-  componentDidMount () {
-    accountStore.listen(this.accountChanged)
-  }
-
-  componentWillUnmount () {
-    accountStore.unlisten(this.accountChanged)
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if (this.props.mailboxId !== nextProps.mailboxId) {
-      this.setState(this.generateState(nextProps))
+  state = (() => {
+    return {
+      popover: false,
+      popoverAnchor: null,
+      popoverMailboxId: undefined,
+      popoverServiceId: undefined
     }
-  }
+  })()
 
   /* **************************************************************************/
-  // Data Lifecycle
+  // User Interaction
   /* **************************************************************************/
-
-  state = this.generateState(this.props)
 
   /**
-  * Generates the state from the given props
-  * @param props: the props to use
-  * @return state object
+  * Handles a service being clicked
+  * @param evt: the event that fired
+  * @param serviceId: the id of the service
   */
-  generateState (props) {
-    const mailbox = accountStore.getState().getMailbox(props.mailboxId)
-    if (!mailbox) {
-      return { }
-    } else {
-      return {
-        serviceIds: mailbox.allServices
-      }
-    }
+  handleClickService = (evt, serviceId) => {
+    evt.preventDefault()
+    accountActions.changeActiveService(serviceId)
   }
 
-  accountChanged = (accountState) => {
-    const mailbox = accountState.getMailbox(this.props.mailboxId)
-    if (!mailbox) {
+  /**
+  * Opens the popover for a service
+  * @param evt: the event that fired
+  * @param serviceId: the id of the service to open for
+  */
+  handleOpenServicePopover = (evt, serviceId) => {
+    evt.preventDefault()
+    clearTimeout(this.popoverCustomizeClearTO)
+    this.setState({
+      isHoveringAvatar: false,
+      isHoveringGroup: false,
+      popover: true,
+      popoverMailboxId: this.props.mailboxId,
+      popoverServiceId: serviceId,
+      popoverAnchor: evt.currentTarget
+    })
+  }
+
+  handleClosePopover = () => {
+    clearTimeout(this.popoverCustomizeClearTO)
+    this.popoverCustomizeClearTO = setTimeout(() => {
       this.setState({
-        serviceIds: undefined
+        popoverMailboxId: undefined,
+        popoverServiceId: undefined
       })
-    } else {
-      this.setState({
-        serviceIds: mailbox.allServices
-      })
-    }
+    }, 500)
+    this.setState({ popover: false })
   }
 
   /* **************************************************************************/
@@ -110,30 +82,41 @@ class ToolbarMailboxServices extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    if (this.props.mailboxId !== nextProps.mailboxId) { return true }
-    if (this.props.toolbarHeight !== nextProps.toolbarHeight) { return true }
-    if (JSON.stringify(this.state.serviceIds) !== JSON.stringify(nextState.serviceIds)) { return true }
-
-    return false
+    return shallowCompare(this, nextProps, nextState)
   }
 
   render () {
-    const { mailboxId, toolbarHeight, style, classes, className } = this.props
-    const { serviceIds } = this.state
-    if (!serviceIds) { return false }
+    const {
+      mailboxId,
+      toolbarHeight,
+      uiLocation,
+      ...passProps
+    } = this.props
+    const {
+      popover,
+      popoverAnchor,
+      popoverMailboxId,
+      popoverServiceId
+    } = this.state
 
     return (
-      <SortableList
-        axis='x'
-        distance={20}
-        className={classNames(classes.tabs, className)}
-        style={{ height: toolbarHeight, ...style }}
-        serviceIds={serviceIds}
-        mailboxId={mailboxId}
-        toolbarHeight={toolbarHeight}
-        onSortEnd={({ oldIndex, newIndex }) => {
-          accountActions.reduceMailbox(mailboxId, MailboxReducer.changeServiceIndex, serviceIds[oldIndex], newIndex)
-        }} />
+      <div {...passProps}>
+        <ServiceTabs
+          mailboxId={mailboxId}
+          uiLocation={uiLocation}
+          onOpenService={this.handleClickService}
+          onContextMenuService={this.handleOpenServicePopover} />
+        {popoverMailboxId && popoverServiceId ? (
+          <ErrorBoundary>
+            <MailboxAndServiceContextMenu
+              mailboxId={popoverMailboxId}
+              serviceId={popoverServiceId}
+              isOpen={popover}
+              anchor={popoverAnchor}
+              onRequestClose={this.handleClosePopover} />
+          </ErrorBoundary>
+        ) : undefined}
+      </div>
     )
   }
 }

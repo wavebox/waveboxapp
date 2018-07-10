@@ -26,7 +26,7 @@ class ACMailboxAvatar extends CoreACAvatar {
       showAvatarColorRing: mailbox.showAvatarColorRing,
       avatarCharacterDisplay: this._getAvatarCharacterDisplay(memberHashes, services),
       rawAvatar: this._getRawAvatar(memberHashes, mailbox, services, avatarMap),
-      rawServiceIcon: this._getServiceIcon(memberHashes, services)
+      ...this._getServiceIcons(memberHashes, services)
     }
 
     data.hashId = Array.from(memberHashes).join(':')
@@ -140,13 +140,18 @@ class ACMailboxAvatar extends CoreACAvatar {
   * @param services: the ordered services list
   * @return the avatar in the format { uri: '' } or undefined
   */
-  static _getServiceIcon (memberHashes, services) {
+  static _getServiceIcons (memberHashes, services) {
     const serviceWithStandard = services.find((service) => {
       return !!service.humanizedLogo
     })
     if (serviceWithStandard) {
       memberHashes.add(serviceWithStandard.versionedId)
-      return { uri: serviceWithStandard.humanizedLogo }
+      return {
+        rawServiceIcon: { uri: serviceWithStandard.humanizedLogo },
+        altRawServiceIcons: serviceWithStandard.humanizedLogos.map((uri) => {
+          return { uri: uri }
+        })
+      }
     }
 
     return undefined

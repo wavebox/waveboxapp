@@ -24,7 +24,9 @@ class ACAvatarCircle extends React.Component {
     avatar: PropTypes.object.isRequired,
     resolver: PropTypes.func.isRequired,
     size: PropTypes.number.isRequired,
-    showSleeping: PropTypes.bool.isRequired
+    showSleeping: PropTypes.bool.isRequired,
+    preferredImageSize: PropTypes.number,
+    borderSize: PropTypes.number
   }
 
   static defaultProps = {
@@ -49,6 +51,8 @@ class ACAvatarCircle extends React.Component {
       classes,
       className,
       showSleeping,
+      preferredImageSize,
+      borderSize,
       ...otherProps
     } = this.props
 
@@ -60,13 +64,13 @@ class ACAvatarCircle extends React.Component {
       backgroundColor: avatar.hasAvatar ? 'white' : avatar.color
     }
 
-    const borderSize = Math.round(size * 0.08)
-    const adjustedSize = size - (2 * borderSize)
+    const generatedBorderSize = typeof (borderSize) === 'number' ? borderSize : Math.round(size * 0.08)
+    const adjustedSize = size - (2 * generatedBorderSize)
     generatedStyle.width = adjustedSize
     generatedStyle.height = adjustedSize
     generatedStyle.lineHeight = `${adjustedSize}px`
     if (avatar.showAvatarColorRing) {
-      generatedStyle.boxShadow = `0 0 0 ${borderSize}px ${avatar.color}`
+      generatedStyle.boxShadow = `0 0 0 ${generatedBorderSize}px ${avatar.color}`
     }
 
     const passProps = {
@@ -91,7 +95,11 @@ class ACAvatarCircle extends React.Component {
     } else if (avatar.avatarCharacterDisplay) {
       return (<Avatar {...passProps}>{avatar.avatarCharacterDisplay}</Avatar>)
     } else if (avatar.hasServiceIcon) {
-      return (<Avatar {...passProps} src={avatar.resolveServiceIcon(resolver)} />)
+      if (typeof (preferredImageSize) === 'number') {
+        return (<Avatar {...passProps} src={avatar.resolveServiceIconWithSize(preferredImageSize, resolver)} />)
+      } else {
+        return (<Avatar {...passProps} src={avatar.resolveServiceIcon(resolver)} />)
+      }
     } else {
       return (<Avatar {...passProps} />)
     }

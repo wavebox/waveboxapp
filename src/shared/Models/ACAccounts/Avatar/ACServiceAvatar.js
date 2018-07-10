@@ -20,6 +20,9 @@ class ACServiceAvatar extends CoreACAvatar {
       avatarCharacterDisplay: service.serviceAvatarCharacterDisplay,
       rawAvatar: this._getRawAvatar(service, serviceData, avatarMap),
       rawServiceIcon: { uri: service.humanizedLogo },
+      altRawServiceIcons: service.humanizedLogos.map((uri) => {
+        return { uri: uri }
+      }),
       hashId: [mailbox.versionedId, service.versionedId].join(':')
     }
   }

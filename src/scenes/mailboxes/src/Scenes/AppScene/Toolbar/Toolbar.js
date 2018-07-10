@@ -11,6 +11,7 @@ import { ExtensionSettings } from 'shared/Models/Settings'
 import classNames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import blueGrey from '@material-ui/core/colors/blueGrey'
+import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 
 const styles = {
   toolbar: {
@@ -202,6 +203,7 @@ class Toolbar extends React.Component {
             <ToolbarMailboxServices
               className={classes.services}
               mailboxId={mailboxId}
+              uiLocation={ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_START}
               toolbarHeight={toolbarHeight} />
           ) : undefined}
           {hasExtensionsInToolbar && extensionLayoutMode === ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_LEFT ? (
@@ -224,6 +226,7 @@ class Toolbar extends React.Component {
             <ToolbarMailboxServices
               className={classes.services}
               mailboxId={mailboxId}
+              uiLocation={ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_END}
               toolbarHeight={toolbarHeight} />
           ) : undefined}
           {hasExtensionsInToolbar && extensionLayoutMode === ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_RIGHT ? (

@@ -2,17 +2,16 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { accountStore, accountActions } from 'stores/account'
 import shallowCompare from 'react-addons-shallow-compare'
-import SidelistMailboxContainer from '../SidelistCommon/SidelistMailboxContainer'
+import SidelistMailboxContainer from './SidelistCommon/SidelistMailboxContainer'
 import uuid from 'uuid'
-import StyledMailboxServiceBadge from '../SidelistCommon/StyledMailboxServiceBadge'
-import SidelistActiveIndicator from '../SidelistCommon/SidelistActiveIndicator'
-import SidelistMailboxAvatar from '../SidelistCommon/SidelistMailboxAvatar'
-import SidelistMailboxTooltip from '../SidelistCommon/SidelistMailboxTooltip'
+import StyledMailboxServiceBadge from './SidelistCommon/StyledMailboxServiceBadge'
+import SidelistActiveIndicator from './SidelistCommon/SidelistActiveIndicator'
+import SidelistMailboxAvatar from './SidelistCommon/SidelistMailboxAvatar'
+import SidelistServiceTooltip from './SidelistCommon/SidelistServiceTooltip'
 import MailboxAndServiceContextMenu from 'Components/MailboxAndServiceContextMenu'
 import ErrorBoundary from 'wbui/ErrorBoundary'
-import SidelistMailboxServices from './SidelistMailboxServices'
 
-class SidelistItemMultiService extends React.Component {
+class SidelistItemSingleService extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -36,12 +35,10 @@ class SidelistItemMultiService extends React.Component {
 
   componentDidMount () {
     accountStore.listen(this.accountChanged)
-    this.popoverCustomizeClearTO = null
   }
 
   componentWillUnmount () {
     accountStore.unlisten(this.accountChanged)
-    clearTimeout(this.popoverCustomizeClearTO)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -56,12 +53,9 @@ class SidelistItemMultiService extends React.Component {
 
   state = (() => {
     return {
-      isHoveringAvatar: false,
-      isHoveringGroup: false,
+      isHovering: false,
       popover: false,
       popoverAnchor: null,
-      popoverMailboxId: undefined,
-      popoverServiceId: undefined,
       ...this.generateAccountState(this.props.mailboxId, accountStore.getState())
     }
   })()
@@ -77,14 +71,26 @@ class SidelistItemMultiService extends React.Component {
   */
   generateAccountState (mailboxId, accountState) {
     const mailbox = accountState.getMailbox(mailboxId)
+    const serviceId = mailbox ? mailbox.singleService : undefined
+    const service = accountState.getService(serviceId)
+    const serviceData = accountState.getServiceData(serviceId)
 
     return {
       mailbox: mailbox,
+      serviceId: serviceId,
+      service: service,
       avatar: accountState.getMailboxAvatarConfig(mailboxId),
-      isMailboxSleeping: accountState.isMailboxSleeping(mailboxId),
-      isMailboxActive: accountState.activeMailboxId() === mailboxId,
-      unreadCount: accountState.userUnreadCountForMailbox(mailboxId),
-      hasUnreadActivity: accountState.userUnreadActivityForMailbox(mailboxId)
+      isServiceActive: accountState.activeServiceId() === serviceId,
+      isServiceSleeping: accountState.isServiceSleeping(serviceId),
+      isAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId),
+      serviceColor: accountState.resolvedServiceColor(serviceId),
+      ...(service && serviceData ? {
+        unreadCount: serviceData.getUnreadCount(service),
+        hasUnreadActivity: serviceData.getHasUnreadActivity(service)
+      } : {
+        unreadCount: 0,
+        hasUnreadActivity: false
+      })
     }
   }
 
@@ -106,59 +112,16 @@ class SidelistItemMultiService extends React.Component {
   }
 
   /**
-  * Handles a service being clicked
-  * @param evt: the event that fired
-  * @param serviceId: the id of the service
-  */
-  handleClickService = (evt, serviceId) => {
-    evt.preventDefault()
-    accountActions.changeActiveService(serviceId)
-  }
-
-  /**
   * Opens the popover
   * @param evt: the event that fired
   */
-  handleOpenMailboxPopover = (evt) => {
+  handleOpenPopover = (evt) => {
     evt.preventDefault()
-    clearTimeout(this.popoverCustomizeClearTO)
     this.setState({
-      isHoveringAvatar: false,
-      isHoveringGroup: false,
+      isHovering: false,
       popover: true,
-      popoverMailboxId: this.props.mailboxId,
-      popoverServiceId: undefined,
       popoverAnchor: evt.currentTarget
     })
-  }
-
-  /**
-  * Opens the popover for a service
-  * @param evt: the event that fired
-  * @param serviceId: the id of the service to open for
-  */
-  handleOpenServicePopover = (evt, serviceId) => {
-    evt.preventDefault()
-    clearTimeout(this.popoverCustomizeClearTO)
-    this.setState({
-      isHoveringAvatar: false,
-      isHoveringGroup: false,
-      popover: true,
-      popoverMailboxId: this.props.mailboxId,
-      popoverServiceId: serviceId,
-      popoverAnchor: evt.currentTarget
-    })
-  }
-
-  handleClosePopover = () => {
-    clearTimeout(this.popoverCustomizeClearTO)
-    this.popoverCustomizeClearTO = setTimeout(() => {
-      this.setState({
-        popoverMailboxId: undefined,
-        popoverServiceId: undefined
-      })
-    }, 500)
-    this.setState({ popover: false })
   }
 
   /* **************************************************************************/
@@ -173,73 +136,64 @@ class SidelistItemMultiService extends React.Component {
     const { mailboxId, ...passProps } = this.props
     const {
       mailbox,
+      service,
+      serviceId,
       unreadCount,
       hasUnreadActivity,
       popover,
       popoverAnchor,
-      isHoveringAvatar,
-      isHoveringGroup,
-      isMailboxActive,
-      isMailboxSleeping,
-      avatar,
-      popoverMailboxId,
-      popoverServiceId
+      isHovering,
+      isServiceActive,
+      isServiceSleeping,
+      isAuthInvalid,
+      avatar
     } = this.state
-
-    if (!mailbox) { return false }
+    if (!mailbox || !service) { return false }
 
     return (
       <SidelistMailboxContainer
+        id={`ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`}
+        onContextMenu={this.handleOpenPopover}
         onClick={this.handleClick}
-        onMouseEnter={() => this.setState({ isHoveringGroup: true })}
-        onMouseLeave={() => this.setState({ isHoveringGroup: false })}
+        onMouseEnter={() => this.setState({ isHovering: true })}
+        onMouseLeave={() => this.setState({ isHovering: false })}
         {...passProps}>
         <StyledMailboxServiceBadge
-          id={`ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`}
-          onContextMenu={this.handleOpenMailboxPopover}
-          onMouseEnter={() => this.setState({ isHoveringAvatar: true })}
-          onMouseLeave={() => this.setState({ isHoveringAvatar: false })}
-          supportsUnreadCount
-          showUnreadBadge={mailbox.showBadge}
+          supportsUnreadCount={service.supportsUnreadCount}
+          showUnreadBadge={service.showBadgeCount}
           unreadCount={unreadCount}
-          supportsUnreadActivity
-          showUnreadActivityBadge={mailbox.showBadge}
+          supportsUnreadActivity={service.supportsUnreadActivity}
+          showUnreadActivityBadge={service.showBadgeActivity}
           hasUnreadActivity={hasUnreadActivity}
-          color={mailbox.badgeColor}
-          isAuthInvalid={false}>
-          {isMailboxActive ? (<SidelistActiveIndicator color={avatar.color} />) : undefined}
+          color={service.badgeColor}
+          isAuthInvalid={isAuthInvalid}>
+          {isServiceActive ? (<SidelistActiveIndicator color={avatar.color} />) : undefined}
           <SidelistMailboxAvatar
             avatar={avatar}
+            lightenBorder={!isServiceActive && !isHovering}
             size={42}
-            isSleeping={isMailboxSleeping}
+            isSleeping={isServiceSleeping}
             showColorRing={mailbox.showAvatarColorRing}
-            lightenBorder={!isMailboxActive && !isHoveringGroup}
             borderWidth={4} />
           <ErrorBoundary>
-            <SidelistMailboxTooltip
-              mailboxId={mailboxId}
-              active={isHoveringAvatar}
+            <SidelistServiceTooltip
+              serviceId={serviceId}
+              active={isHovering}
               group={this.instanceId}
               parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />
           </ErrorBoundary>
         </StyledMailboxServiceBadge>
-        <SidelistMailboxServices
-          mailboxId={mailboxId}
-          onOpenService={this.handleClickService}
-          onContextMenuService={this.handleOpenServicePopover} />
-        {popoverMailboxId || popoverServiceId ? (
-          <ErrorBoundary>
-            <MailboxAndServiceContextMenu
-              mailboxId={popoverMailboxId}
-              serviceId={popoverServiceId}
-              isOpen={popover}
-              anchor={popoverAnchor}
-              onRequestClose={this.handleClosePopover} />
-          </ErrorBoundary>
-        ) : undefined}
+        <ErrorBoundary>
+          <MailboxAndServiceContextMenu
+            mailboxId={mailboxId}
+            serviceId={serviceId}
+            isOpen={popover}
+            anchor={popoverAnchor}
+            onRequestClose={() => this.setState({ popover: false })} />
+        </ErrorBoundary>
       </SidelistMailboxContainer>
     )
   }
 }
 
-export default SidelistItemMultiService
+export default SidelistItemSingleService
