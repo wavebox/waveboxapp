@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button } from '@material-ui/core'
+import { Button, Paper } from '@material-ui/core'
 import { accountStore, accountActions, accountDispatch } from 'stores/account'
+import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 import ServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/ServiceDataReducer'
 import BrowserView from 'wbui/Guest/BrowserView'
 import MailboxSearch from './MailboxSearch'
@@ -31,6 +32,8 @@ import MailboxInformationCover from './MailboxInformationCover'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import RefreshIcon from '@material-ui/icons/Refresh'
 import lightBlue from '@material-ui/core/colors/lightBlue'
+import blue from '@material-ui/core/colors/blue'
+import grey from '@material-ui/core/colors/grey'
 
 const styles = {
   root: {
@@ -80,10 +83,22 @@ const styles = {
     right: 0,
     bottom: 0,
     display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
     width: '100%'
+  },
+  loaderSleepPanel: {
+    marginTop: 24,
+    fontSize: '75%',
+    padding: 8,
+    color: grey[600]
+  },
+  loaderSleepLink: {
+    textDecoration: 'underline',
+    cursor: 'pointer',
+    color: blue[800]
   },
   infoButtonIcon: {
     marginRight: 6
@@ -248,6 +263,39 @@ class MailboxWebView extends React.Component {
     } else {
       this.setState({ mailbox: null, service: null })
     }
+  }
+
+  /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  /**
+  * Resets the webview
+  * @param evt: the event that fired
+  */
+  handleUncrash = (evt) => {
+    this.setState({ isCrashed: false }) // Update our crashed state
+    this.refs[BROWSER_REF].reset()
+  }
+
+  /**
+  * Reauthenticates the service
+  * @param evt: the event that fired
+  */
+  handleReauthenticate = (evt) => {
+    accountActions.reauthenticateService(this.props.serviceId)
+  }
+
+  /**
+  * Disables sleep
+  * @param evt: the event that fired
+  */
+  handleDisableSleep = (evt) => {
+    accountActions.reduceService(
+      this.props.serviceId,
+      ServiceReducer.setSleepable,
+      false
+    )
   }
 
   /* **************************************************************************/
@@ -722,9 +770,16 @@ class MailboxWebView extends React.Component {
         {initialLoadDone || !snapshot ? undefined : (
           <div className={classes.snapshot} style={{ backgroundImage: `url("${snapshot}")` }} />
         )}
-        {!service.hasNavigationToolbar && !initialLoadDone ? (
+        {!initialLoadDone ? (
           <div className={classes.loader}>
             <Spinner size={50} color={lightBlue[600]} speed={0.75} />
+            {service.sleepable ? (
+              <Paper className={classes.loaderSleepPanel}>
+                Use this tab often?&nbsp;
+                <span className={classes.loaderSleepLink} onClick={this.handleDisableSleep}>Disable sleep</span>
+                &nbsp;to keep it awake and avoid waiting...
+              </Paper>
+            ) : undefined}
           </div>
         ) : undefined}
         <MailboxLoadBar isLoading={isLoading} />
@@ -737,12 +792,7 @@ class MailboxWebView extends React.Component {
             title='Whoops!'
             text={['Something went wrong with this tab and it crashed']}
             button={(
-              <Button
-                variant='raised'
-                onClick={() => {
-                  this.setState({ isCrashed: false }) // Update our crashed state
-                  this.refs[BROWSER_REF].reset()
-                }}>
+              <Button variant='raised' onClick={this.handleUncrash}>
                 <RefreshIcon className={classes.infoButtonIcon} />
                 Reload
               </Button>
@@ -759,7 +809,7 @@ class MailboxWebView extends React.Component {
             button={(
               <Button
                 variant='raised'
-                onClick={() => { accountActions.reauthenticateService(serviceId) }}>
+                onClick={this.handleReauthenticate}>
                 <ErrorOutlineIcon className={classes.infoButtonIcon} />
                 Reauthenticate
               </Button>
