@@ -3,9 +3,8 @@ import { Button, Dialog, DialogContent, DialogActions, DialogTitle } from '@mate
 import shallowCompare from 'react-addons-shallow-compare'
 import { accountStore, accountActions } from 'stores/account'
 import PropTypes from 'prop-types'
-import ACAvatarCircle from 'wbui/ACAvatarCircle'
-import MailboxServiceIcon from 'wbui/MailboxServiceIcon'
-import Resolver from 'Runtime/Resolver'
+import MailboxAvatar from 'Components/Backed/MailboxAvatar'
+import ServiceAvatar from 'Components/Backed/ServiceAvatar'
 import { withStyles } from '@material-ui/core/styles'
 import red from '@material-ui/core/colors/red'
 import grey from '@material-ui/core/colors/grey'
@@ -78,14 +77,10 @@ class MailboxServiceDeleteScene extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (this.props.match.params.mailboxId !== nextProps.match.params.mailboxId) {
-      const mailboxId = nextProps.match.params.mailboxId
       const serviceId = nextProps.match.params.serviceId
       const accountState = accountStore.getState()
       this.setState({
-        mailbox: accountState.getMailbox(mailboxId),
-        service: accountState.getService(serviceId),
-        serviceDisplayName: accountState.resolvedServiceDisplayName(serviceId),
-        avatar: accountState.getMailboxAvatarConfig(mailboxId)
+        serviceDisplayName: accountState.resolvedServiceDisplayName(serviceId)
       })
     }
   }
@@ -95,26 +90,18 @@ class MailboxServiceDeleteScene extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
-    const mailboxId = this.props.match.params.mailboxId
     const serviceId = this.props.match.params.serviceId
     const accountState = accountStore.getState()
     return {
       open: true,
-      mailbox: accountState.getMailbox(mailboxId),
-      service: accountState.getService(serviceId),
-      serviceDisplayName: accountState.resolvedServiceDisplayName(serviceId),
-      avatar: accountState.getMailboxAvatarConfig(mailboxId)
+      serviceDisplayName: accountState.resolvedServiceDisplayName(serviceId)
     }
   })()
 
   accountChanged = (accountState) => {
-    const mailboxId = this.props.match.params.mailboxId
     const serviceId = this.props.match.params.serviceId
     this.setState({
-      mailbox: accountState.getMailbox(mailboxId),
-      service: accountState.getService(serviceId),
-      serviceDisplayName: accountState.resolvedServiceDisplayName(serviceId),
-      avatar: accountState.getMailboxAvatarConfig(mailboxId)
+      serviceDisplayName: accountState.resolvedServiceDisplayName(serviceId)
     })
   }
 
@@ -152,8 +139,8 @@ class MailboxServiceDeleteScene extends React.Component {
 
   render () {
     const { classes } = this.props
-    const { open, mailbox, service, serviceDisplayName, avatar } = this.state
-    if (!mailbox || !service) { return false }
+    const { mailboxId, serviceId } = this.props.match.params
+    const { open, serviceDisplayName } = this.state
 
     return (
       <Dialog
@@ -167,14 +154,13 @@ class MailboxServiceDeleteScene extends React.Component {
           </p>
           <div className={classes.avatarContainer}>
             <div className={classes.compositeAvatar}>
-              <ACAvatarCircle
-                avatar={avatar}
-                resolver={(i) => Resolver.image(i)}
+              <MailboxAvatar
+                mailboxId={mailboxId}
                 size={45}
                 className={classes.avatar} />
-              <MailboxServiceIcon
+              <ServiceAvatar
+                serviceId={serviceId}
                 className={classes.serviceLogo}
-                iconUrl={Resolver.image(service.humanizedLogoAtSize(128))}
                 showSleeping={false}
                 size={32} />
             </div>

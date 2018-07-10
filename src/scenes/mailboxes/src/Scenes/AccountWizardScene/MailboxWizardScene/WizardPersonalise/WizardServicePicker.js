@@ -5,7 +5,6 @@ import { List, ListItem, ListItemText, ListItemSecondaryAction, Switch, Grid } f
 import Resolver from 'Runtime/Resolver'
 import { withStyles } from '@material-ui/core/styles'
 import ServiceFactory from 'shared/Models/ACAccounts/ServiceFactory'
-import MailboxServiceIcon from 'wbui/MailboxServiceIcon'
 
 const styles = {
   list: {
@@ -18,7 +17,12 @@ const styles = {
   },
   logo: {
     display: 'inline-block',
-    marginTop: 4
+    marginTop: 4,
+    width: 32,
+    height: 32,
+    backgroundSize: 'contain',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center'
   },
   displayModePicker: {
     minWidth: 450
@@ -80,11 +84,9 @@ class WizardServicePicker extends React.Component {
 
     return (
       <ListItem key={serviceType} dense>
-        <MailboxServiceIcon
-          iconUrl={Resolver.image(ServiceClass.humanizedLogoAtSize(128))}
-          showSleeping={false}
+        <div
           className={classes.logo}
-          size={32} />
+          style={{ backgroundImage: `url("${Resolver.image(ServiceClass.humanizedLogoAtSize(128))}")` }} />
         <ListItemText primary={ServiceClass.humanizedType} />
         <ListItemSecondaryAction>
           <Switch

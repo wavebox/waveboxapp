@@ -7,10 +7,9 @@ import shallowCompare from 'react-addons-shallow-compare'
 import Scrollspy from 'react-scrollspy'
 import StyleMixins from 'wbui/Styles/StyleMixins'
 import uuid from 'uuid'
-import { List, ListItem, ListItemText, Paper, Avatar } from '@material-ui/core'
+import { List, ListItem, ListItemText, Paper } from '@material-ui/core'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import { accountStore } from 'stores/account'
-import Resolver from 'Runtime/Resolver'
 import MailboxSettingsSection from './Sections/MailboxSettingsSection'
 import ServiceSettingsSection from './Sections/ServiceSettingsSection'
 import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
@@ -18,6 +17,7 @@ import BuildIcon from '@material-ui/icons/Build'
 import TuneIcon from '@material-ui/icons/Tune'
 import ListIcon from '@material-ui/icons/List'
 import AccountServicesHeading from './AccountServicesHeading'
+import ServiceAvatar from 'Components/Backed/ServiceAvatar'
 
 const CONTENT_WIDTH = 600
 const SCROLLSPY_WIDTH = 210
@@ -74,11 +74,8 @@ const styles = {
     whiteSpace: 'nowrap'
   },
   scrollspyServiceIcon: {
-    width: 24,
-    height: 24,
-    backgroundColor: 'white',
-    border: '2px solid rgb(139, 139, 139)',
-    marginRight: 6
+    marginLeft: 2,
+    marginRight: -6
   },
   [`@media (max-width: ${CONTENT_WIDTH + (SCROLLSPY_WIDTH)}px)`]: {
     scroller: {
@@ -284,9 +281,7 @@ class AccountSettingsScroller extends React.Component {
                     dense
                     className={classes.scrollspyItem}
                     onClick={(evt) => this.scrollToSection(evt, `service-section-${service.id}`)}>
-                    <Avatar
-                      className={classes.scrollspyServiceIcon}
-                      src={Resolver.image(service.humanizedLogoAtSize(128))} />
+                    <ServiceAvatar size={24} serviceId={service.id} className={classes.scrollspyServiceIcon} />
                     <ListItemText
                       className={classes.scrollspyTextContainer}
                       classes={{
