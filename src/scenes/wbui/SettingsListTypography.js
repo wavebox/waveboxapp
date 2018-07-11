@@ -5,6 +5,7 @@ import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import amber from '@material-ui/core/colors/amber'
 import blue from '@material-ui/core/colors/blue'
+import grey from '@material-ui/core/colors/grey'
 
 const styles = {
   root: {
@@ -13,6 +14,9 @@ const styles = {
     },
     '&.type-info': {
       color: blue[600]
+    },
+    '&.type-muted': {
+      color: grey[600]
     },
     '&.variant-button-help': {
       display: 'block',
@@ -33,6 +37,9 @@ const styles = {
     },
     '&.type-info>*': {
       color: blue[600]
+    },
+    '&.type-muted>*': {
+      color: grey[600]
     }
   }
 }
@@ -44,7 +51,7 @@ class SettingsListTypography extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    type: PropTypes.oneOf(['warning', 'info', undefined]),
+    type: PropTypes.oneOf(['warning', 'info', 'muted', undefined]),
     variant: PropTypes.oneOf(['button-help', undefined]),
     icon: PropTypes.node
   }

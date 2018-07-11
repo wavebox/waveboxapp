@@ -6,6 +6,7 @@ import MailboxAppearanceSettings from './MailboxAppearanceSettings'
 import MailboxServicesSettings from './MailboxServicesSettings'
 import MailboxAdvancedSettings from './MailboxAdvancedSettings'
 import MailboxToolsSettings from './MailboxToolsSettings'
+import MailboxCredentialSettings from './MailboxCredentialSettings'
 
 const styles = {
 
@@ -47,6 +48,9 @@ class MailboxSettingsSection extends React.Component {
           mailboxId={mailboxId} />
         <MailboxServicesSettings
           id={`mailbox-services-${mailboxId}`}
+          mailboxId={mailboxId} />
+        <MailboxCredentialSettings
+          id={`mailbox-credentials-${mailboxId}`}
           mailboxId={mailboxId} />
         <MailboxAdvancedSettings
           id={`mailbox-advanced-${mailboxId}`}

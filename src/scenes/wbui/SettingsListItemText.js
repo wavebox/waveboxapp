@@ -13,10 +13,10 @@ class SettingsListItemText extends React.Component {
   static propTypes = {
     primary: PropTypes.node,
     primaryIcon: PropTypes.node,
-    primaryType: PropTypes.oneOf(['warning', 'info', undefined]),
+    primaryType: PropTypes.oneOf(['warning', 'info', 'muted', undefined]),
     secondary: PropTypes.node,
     secondaryIcon: PropTypes.node,
-    secondaryType: PropTypes.oneOf(['warning', 'info', undefined])
+    secondaryType: PropTypes.oneOf(['warning', 'info', 'muted', undefined])
   }
 
   /* **************************************************************************/

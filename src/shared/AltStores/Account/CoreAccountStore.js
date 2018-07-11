@@ -168,6 +168,21 @@ class CoreAccountStore extends RemoteStore {
       }
     }
 
+    /**
+    * Looks to see if a mailbox has any services with invalid auths
+    * @param mailboxId: the id othe mailbox
+    * @return true if any services have invalid auth
+    */
+    this.hasMailboxServiceWithInvalidAuth = (mailboxId) => {
+      const mailbox = this.getMailbox(mailboxId)
+      if (!mailbox) { return false }
+
+      const invalidServiceId = mailbox.allServices.find((serviceId) => {
+        return this.isMailboxAuthInvalidForServiceId(serviceId)
+      })
+      return !!invalidServiceId
+    }
+
     /* ****************************************/
     // Services
     /* ****************************************/

@@ -85,7 +85,8 @@ class SidelistItemMultiService extends React.Component {
       isMailboxSleeping: accountState.isMailboxSleeping(mailboxId),
       isMailboxActive: accountState.activeMailboxId() === mailboxId,
       unreadCount: accountState.userUnreadCountForMailbox(mailboxId),
-      hasUnreadActivity: accountState.userUnreadActivityForMailbox(mailboxId)
+      hasUnreadActivity: accountState.userUnreadActivityForMailbox(mailboxId),
+      hasInvalidAuth: accountState.hasMailboxServiceWithInvalidAuth(mailboxId)
     }
   }
 
@@ -184,7 +185,8 @@ class SidelistItemMultiService extends React.Component {
       isMailboxSleeping,
       avatar,
       popoverMailboxId,
-      popoverServiceId
+      popoverServiceId,
+      hasInvalidAuth
     } = this.state
 
     if (!mailbox) { return false }
@@ -207,7 +209,7 @@ class SidelistItemMultiService extends React.Component {
           showUnreadActivityBadge={mailbox.showBadge}
           hasUnreadActivity={hasUnreadActivity}
           color={mailbox.badgeColor}
-          isAuthInvalid={false}>
+          isAuthInvalid={hasInvalidAuth}>
           {isMailboxActive ? (<SidelistActiveIndicator color={avatar.color} />) : undefined}
           <SidelistMailboxAvatar
             avatar={avatar}

@@ -158,6 +158,19 @@ class CoreAccountActions extends RemoteActions {
     }
   }
 
+  /**
+  * Creates a new auth
+  * @param id: the id of the auth
+  */
+  removeAuth (...args) {
+    if (process.type === 'browser') {
+      const [id] = args
+      return { id }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('removeAuth', args)
+    }
+  }
+
   /* **************************************************************************/
   // Services
   /* **************************************************************************/

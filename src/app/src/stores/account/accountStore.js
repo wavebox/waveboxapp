@@ -49,6 +49,7 @@ class AccountStore extends CoreAccountStore {
       // Auth
       handleCreateAuth: actions.CREATE_AUTH,
       handleReduceAuth: actions.REDUCE_AUTH,
+      handleRemoveAuth: actions.REMOVE_AUTH,
 
       // Service
       handleCreateService: actions.CREATE_SERVICE,
@@ -384,6 +385,10 @@ class AccountStore extends CoreAccountStore {
     }
 
     this.preventDefault()
+  }
+
+  handleRemoveAuth ({ id }) {
+    this.saveMailboxAuth(id, null)
   }
 
   /* **************************************************************************/
