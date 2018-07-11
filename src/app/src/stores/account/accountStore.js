@@ -616,16 +616,17 @@ class AccountStore extends CoreAccountStore {
 
     // Grab info
     const service = this.getService(id)
-    const wait = service ? service.sleepableTimeout : 0
+    if (!service) { return }
+    if (!service.sleepable) { return }
 
     // Queue up
-    if (wait <= 0) {
+    if (service.sleepableTimeout <= 0) {
       this.sleepService(id)
     } else {
       // Reschedule
       const sched = setTimeout(() => {
         this.sleepService(id)
-      }, wait)
+      }, service.sleepableTimeout)
       this._sleepingQueue_.set(id, sched)
     }
   }

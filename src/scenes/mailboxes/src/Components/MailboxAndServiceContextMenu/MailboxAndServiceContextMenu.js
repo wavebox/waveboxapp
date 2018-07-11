@@ -90,13 +90,9 @@ export default class MailboxAndServiceContextMenu extends React.Component {
     return {
       mailbox: mailbox,
       ...(mailbox ? {
-        serviceCount: mailbox.allServiceCount,
-        mailboxSleepableServiceCount: !!mailbox.allServices.reduce((acc, serviceId) => {
-          return acc + accountState.getService(serviceId).sleepable ? 1 : 0
-        }, 0)
+        serviceCount: mailbox.allServiceCount
       } : {
-        serviceCount: 0,
-        mailboxSleepableServiceCount: 0
+        serviceCount: 0
       }),
       ...(serviceId ? {
         service: accountState.getService(serviceId),
@@ -273,7 +269,6 @@ export default class MailboxAndServiceContextMenu extends React.Component {
       serviceCount,
       userHasSleepable,
       isServiceSleeping,
-      mailboxSleepableServiceCount,
       isServiceAuthInvalid,
       serviceDisplayName
     } = this.state
@@ -302,7 +297,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
         ) : undefined}
 
         {/* Sleep */}
-        {userHasSleepable && service && service.sleepable ? (
+        {userHasSleepable && service ? (
           <MenuItem onClick={isServiceSleeping ? this.handleAwakenService : this.handleSleepService}>
             <ListItemIcon>
               {isServiceSleeping ? (<AlarmIcon />) : (<HotelIcon />)}
@@ -310,10 +305,10 @@ export default class MailboxAndServiceContextMenu extends React.Component {
             <ListItemText inset primary={isServiceSleeping ? 'Awaken' : 'Sleep'} />
           </MenuItem>
         ) : undefined}
-        {userHasSleepable && mailboxSleepableServiceCount > 1 ? (
+        {userHasSleepable && serviceCount > 1 ? (
           <MenuItem onClick={this.handleSleepAllServices}>
             <ListItemIcon><SleepAllIcon /></ListItemIcon>
-            <ListItemText inset primary={`Sleep ${mailboxSleepableServiceCount} Services`} />
+            <ListItemText inset primary={`Sleep ${serviceCount} Services`} />
           </MenuItem>
         ) : undefined}
 

@@ -815,7 +815,7 @@ class AccountStore extends RendererAccountStore {
   /* **************************************************************************/
 
   handleSetServiceSnapshot ({ serviceId, snapshot }) {
-    this.snapshots.set(serviceId, snapshot)
+    this._snapshots_.set(serviceId, snapshot)
   }
 
   /* **************************************************************************/
