@@ -329,7 +329,7 @@ class GoogleStore {
 
   handleServiceSyncWatchFieldChange ({ serviceId, fields }) {
     this.preventDefault()
-    actions.syncMailboxMessages.defer(serviceId, true)
+    actions.syncServiceMessages.defer(serviceId, true)
   }
 
   /* **************************************************************************/
