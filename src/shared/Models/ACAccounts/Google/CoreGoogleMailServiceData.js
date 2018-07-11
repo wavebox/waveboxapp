@@ -26,7 +26,7 @@ class CoreGoogleMailServiceData extends CoreACServiceData {
   * @param thread: the thread to open
   * @param message: the message to open
   */
-  generateMessageOpenData (thread, message) {  }
+  generateMessageOpenData (thread, message) { SubclassNotImplementedError('CoreGoogleMailServiceData.generateMessageOpenData') }
 
   /* **************************************************************************/
   // Unread indicators
