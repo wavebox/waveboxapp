@@ -156,7 +156,7 @@ class WizardPersonaliseContainer extends React.Component {
 
   render () {
     const { container, showSubdomainError } = this.state
-    const { classes, onRequestNext, ...passProps } = this.props
+    const { classes, accessMode, onRequestNext, ...passProps } = this.props
 
     const elements = []
 

@@ -88,18 +88,17 @@ class SettingsListItemConfirmButton extends React.Component {
         {...buttonProps} />
     )
 
-    return (
+    return primary || secondary ? (
       <SettingsListItem {...passProps}>
-        {primary || secondary ? (
-          <span>
-            <ListItemText primary={primary} secondary={secondary} />
-            <ListItemSecondaryAction>
-              {button}
-            </ListItemSecondaryAction>
-          </span>
-        ) : (
-          button
-        )}
+        <ListItemText primary={primary} secondary={secondary} />
+        <ListItemSecondaryAction>
+          {button}
+        </ListItemSecondaryAction>
+        {children}
+      </SettingsListItem>
+    ) : (
+      <SettingsListItem {...passProps}>
+        {button}
         {children}
       </SettingsListItem>
     )
