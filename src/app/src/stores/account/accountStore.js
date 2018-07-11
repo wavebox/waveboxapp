@@ -866,7 +866,7 @@ class AccountStore extends CoreAccountStore {
     const mailbox = this.getMailbox(id)
     if (!mailbox) { return }
 
-    const ses = session.fromPartition(mailbox.partition)
+    const ses = session.fromPartition(mailbox.partitionId)
     Promise.resolve()
       .then(() => {
         return new Promise((resolve) => { ses.clearStorageData(resolve) })

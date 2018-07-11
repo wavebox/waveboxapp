@@ -16,15 +16,15 @@ class CoreACService extends CoreACModel {
 
   static get SERVICE_TYPES () { return SERVICE_TYPES }
   static get RELOAD_BEHAVIOURS () { return RELOAD_BEHAVIOURS }
-  static get type () { throw SubclassNotImplementedError }
+  static get type () { SubclassNotImplementedError('CoreACService.type') }
 
   /* **************************************************************************/
   // Class: Humanized
   /* **************************************************************************/
 
-  static get humanizedType () { throw SubclassNotImplementedError }
+  static get humanizedType () { SubclassNotImplementedError('CoreACService.humanizedType') }
   static get humanizedTypeShort () { return this.humanizedType }
-  static get humanizedLogos () { throw SubclassNotImplementedError }
+  static get humanizedLogos () { SubclassNotImplementedError('CoreACService.humanizedLogos') }
   static get humanizedLogo () { return this.humanizedLogos[this.humanizedLogos.length - 1] }
   static get humanizedUnreadItemType () { return 'item' }
   static get humanizedColor () { return undefined }
@@ -86,13 +86,13 @@ class CoreACService extends CoreACModel {
   // Properties: Support
   /* **************************************************************************/
 
-  get supportsUnreadActivity () { throw SubclassNotImplementedError }
-  get supportsUnreadCount () { throw SubclassNotImplementedError }
-  get supportsTrayMessages () { throw SubclassNotImplementedError }
-  get supportsSyncedDiffNotifications () { throw SubclassNotImplementedError }
-  get supportsNativeNotifications () { throw SubclassNotImplementedError }
-  get supportsGuestNotifications () { throw SubclassNotImplementedError }
-  get supportsSyncWhenSleeping () { throw SubclassNotImplementedError }
+  get supportsUnreadActivity () { SubclassNotImplementedError('CoreACService.supportsUnreadActivity') }
+  get supportsUnreadCount () { SubclassNotImplementedError('CoreACService.supportsUnreadCount') }
+  get supportsTrayMessages () { SubclassNotImplementedError('CoreACService.supportsTrayMessages') }
+  get supportsSyncedDiffNotifications () { SubclassNotImplementedError('CoreACService.supportsSyncedDiffNotifications') }
+  get supportsNativeNotifications () { SubclassNotImplementedError('CoreACService.supportsNativeNotifications') }
+  get supportsGuestNotifications () { SubclassNotImplementedError('CoreACService.supportsGuestNotifications') }
+  get supportsSyncWhenSleeping () { SubclassNotImplementedError('CoreACService.supportsSyncWhenSleeping') }
   get supportsSync () {
     return [
       this.supportsUnreadActivity,
@@ -101,8 +101,8 @@ class CoreACService extends CoreACModel {
       this.supportsGuestNotifications
     ].find((s) => s) || false
   }
-  get supportsWBGAPI () { throw SubclassNotImplementedError }
-  get supportedAuthNamespace () { throw SubclassNotImplementedError }
+  get supportsWBGAPI () { SubclassNotImplementedError('CoreACService.supportsWBGAPI') }
+  get supportedAuthNamespace () { SubclassNotImplementedError('CoreACService.supportedAuthNamespace') }
 
   /* **************************************************************************/
   // Properties: Humanized
@@ -154,7 +154,7 @@ class CoreACService extends CoreACModel {
   // Properties: Behaviour
   /* **************************************************************************/
 
-  get url () { throw SubclassNotImplementedError }
+  get url () { SubclassNotImplementedError('CoreACService.url') }
   get reloadBehaviour () { return RELOAD_BEHAVIOURS.RESET_URL }
   get restoreLastUrl () { return this._value_('restoreLastUrl', false) }
 

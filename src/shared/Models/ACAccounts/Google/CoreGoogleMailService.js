@@ -59,9 +59,9 @@ class CoreGoogleMailService extends CoreACService {
   // Properties: Mail
   /* **************************************************************************/
 
-  get unreadMode () { throw SubclassNotImplementedError }
-  get supportedUnreadModes () { throw SubclassNotImplementedError }
-  get reloadBehaviour () { throw SubclassNotImplementedError }
+  get unreadMode () { SubclassNotImplementedError('CoreGoogleMailServce.unreadMode') }
+  get supportedUnreadModes () { SubclassNotImplementedError('CoreGoogleMailServce.supportedUnreadModes') }
+  get reloadBehaviour () { SubclassNotImplementedError('CoreGoogleMailServce.reloadBehaviour') }
 
   /* **************************************************************************/
   // Properties: Custom search

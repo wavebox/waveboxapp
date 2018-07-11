@@ -74,22 +74,21 @@ class MailboxesSessionManager extends EventEmitter {
       return
     }
 
-    const partition = mailbox.partition
-    if (this[privManaged].has(partition)) {
+    if (this[privManaged].has(mailbox.partitionId)) {
       return
     }
 
-    const ses = session.fromPartition(partition)
+    const ses = session.fromPartition(mailbox.partitionId)
 
     // Downloads
-    DownloadManager.setupUserDownloadHandlerForPartition(partition)
+    DownloadManager.setupUserDownloadHandlerForPartition(mailbox.partitionId)
 
     // Permissions & env
     ses.setPermissionRequestHandler(this._handlePermissionRequest)
     this._setupUserAgent(ses, mailbox)
     if (mailbox && mailbox.artificiallyPersistCookies) {
       SessionManager.webRequestEmitterFromSession(ses).completed.on(undefined, (evt) => {
-        this._artificiallyPersistCookies(partition)
+        this._artificiallyPersistCookies(mailbox.partitionId)
       })
     }
 
@@ -134,7 +133,7 @@ class MailboxesSessionManager extends EventEmitter {
       }
     })
 
-    this[privManaged].add(partition)
+    this[privManaged].add(mailbox.partitionId)
     this.emit('session-managed', ses)
   }
 

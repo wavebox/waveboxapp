@@ -3,7 +3,7 @@ import React from 'react'
 import { Dialog, DialogContent, DialogTitle, DialogActions, Button, List, ListItem, ListItemText, Grid } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { accountStore } from 'stores/account'
-import MailboxAvatar from 'Components/Backed/MailboxAvatar'
+import ServiceAvatar from 'Components/Backed/ServiceAvatar'
 import { userActions } from 'stores/user'
 import { withStyles } from '@material-ui/core/styles'
 import StyleMixins from 'wbui/Styles/StyleMixins'
@@ -162,20 +162,14 @@ class AccountAuthScene extends React.Component {
   * @return the manifest to provide to the state
   */
   buildAuthManifest (accountState) {
-    return accountStore
-      .getState()
-      .allMailboxes()
-      .reduce((acc, mailbox) => {
-        const auths = accountState
-          .getMailboxAuthsForMailbox(mailbox.id)
-          .filter((auth) => auth.namespace === GoogleAuth.namespace || auth.namespace === MicrosoftAuth.namespace)
-        if (auths.length) {
-          return acc.concat(
-            auths.map((auth) => { return { auth, mailbox } })
-          )
-        } else {
-          return acc
-        }
+    return accountState
+      .allServicesUnordered()
+      .reduce((acc, service) => {
+        const mailbox = accountState.getMailbox(service.parentId)
+        const auth = accountState.getMailboxAuthForServiceId(service.id)
+        if (!mailbox || !auth) { return acc }
+        if (auth.namespace !== GoogleAuth.namespace && auth.namespace !== MicrosoftAuth.namespace) { return acc }
+        return acc.concat({ auth, service, mailbox })
       }, [])
   }
 
@@ -255,17 +249,17 @@ class AccountAuthScene extends React.Component {
               <p className={classes.gridSubheading}>Use an account you've added to Wavebox</p>
               <List className={classes.accountsList}>
                 {auths.length ? (
-                  auths.map(({ auth, mailbox }) => {
+                  auths.map(({ auth, mailbox, service }) => {
                     return (
                       <ListItem
-                        key={auth.id}
+                        key={service.id}
                         button
                         disableGutters
                         onClick={(evt) => userActions.authenticateWithAuth(mailbox.partitionId, auth.namespace, { mode: mode })}>
-                        <MailboxAvatar className={classes.accountAvatar} mailboxId={mailbox.id} />
+                        <ServiceAvatar className={classes.accountAvatar} serviceId={service.id} />
                         <ListItemText
-                          primary={mailbox.displayName}
-                          secondary={auth.humanizedType} />
+                          primary={service.displayName}
+                          secondary={auth.humanizedNamespace} />
                       </ListItem>
                     )
                   })

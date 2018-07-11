@@ -6,6 +6,7 @@ class SlackAuth extends CoreACAuth {
   /* **************************************************************************/
 
   static get namespace () { return 'com.slack' }
+  static get humanizedNamespace () { return 'Slack' }
 
   /* **************************************************************************/
   // Auth data

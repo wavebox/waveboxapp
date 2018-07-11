@@ -6,6 +6,7 @@ class MicrosoftAuth extends CoreACAuth {
   /* **************************************************************************/
 
   static get namespace () { return 'com.microsoft' }
+  static get humanizedNamespace () { return 'Microsoft' }
 
   /* **************************************************************************/
   // Auth data

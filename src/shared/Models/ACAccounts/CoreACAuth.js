@@ -6,7 +6,8 @@ class CoreACAuth extends CoreACModel {
   // Class : Creating
   /* **************************************************************************/
 
-  static get namespace () { throw SubclassNotImplementedError }
+  static get namespace () { SubclassNotImplementedError('CoreACAuth.namespace') }
+  static get humanizedNamespace () { SubclassNotImplementedError('CoreACAuth.humanizedNamespace') }
 
   /**
   * Creates a blank js object that can used to instantiate this auth
@@ -54,9 +55,7 @@ class CoreACAuth extends CoreACModel {
   // Properties: Identification
   /* **************************************************************************/
 
-  get displayName () { return this._value_('displayName', undefined) }
-  get humanizedNamespace () { return this._value_('humanizedNamespace', this.namespace) }
-  get avatarURL () { return this._value_('avatarURL') }
+  get humanizedNamespace () { return this.constructor.humanizedNamespace }
 }
 
 export default CoreACAuth

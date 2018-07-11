@@ -281,7 +281,7 @@ class CoreAccountStore extends RemoteStore {
     this.allServicesOrdered = () => {
       return this.allMailboxes().reduce((acc, mailbox) => {
         return acc.concat(
-          mailbox.allServices().map((serviceId) => this.getService(serviceId))
+          mailbox.allServices.map((serviceId) => this.getService(serviceId))
         )
       }, [])
     }

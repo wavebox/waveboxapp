@@ -615,7 +615,7 @@ class ContextMenuService {
       url,
       undefined,
       openerWindow,
-      { partition: `persist:${mailbox.partition}` }
+      { partition: mailbox.partitionId }
     )
   }
 

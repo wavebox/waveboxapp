@@ -33,14 +33,14 @@ class AccountLinker {
     ipcRenderer.send(WB_NEW_WINDOW, {
       serviceId: serviceId,
       url: url,
-      partition: service.partition,
+      partition: service.partitionId,
       windowPreferences: {
         ...options,
         webPreferences: undefined
       },
       webPreferences: {
         ...options.webPreferences,
-        partition: service.partition
+        partition: service.partitionId
       }
     })
   }

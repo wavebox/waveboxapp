@@ -6,6 +6,7 @@ class TrelloAuth extends CoreACAuth {
   /* **************************************************************************/
 
   static get namespace () { return 'com.trello' }
+  static get humanizedNamespace () { return 'Trello' }
 
   /* **************************************************************************/
   // Auth data

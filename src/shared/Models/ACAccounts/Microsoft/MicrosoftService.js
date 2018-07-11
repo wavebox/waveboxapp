@@ -18,8 +18,8 @@ class MicrosoftService extends CoreACService {
   /* **************************************************************************/
 
   get url () { return this.outlookUrl }
-  get outlookUrl () { throw SubclassNotImplementedError }
-  get o365Url () { throw SubclassNotImplementedError }
+  get outlookUrl () { SubclassNotImplementedError('MicrosoftService.outlookUrl') }
+  get o365Url () { SubclassNotImplementedError('MicrosoftService.o365Url') }
   get restoreLastUrl () { return false }
 
   /**

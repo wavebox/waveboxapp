@@ -53,7 +53,7 @@ class ACMailbox extends CoreACModel {
   // Properties
   /* **************************************************************************/
 
-  get partition () { return `persist:${this.id}` }
+  get partitionId () { return `persist:${this.id}` }
   get artificiallyPersistCookies () { return this._value_('artificiallyPersistCookies', false) }
   get templateType () { return this._value_('templateType', undefined) }
 

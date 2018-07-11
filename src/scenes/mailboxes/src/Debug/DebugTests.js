@@ -76,7 +76,7 @@ class DebugTests {
 
     const serviceElements = services
       .map((service) => {
-        const element = document.querySelector(`webview[partition="${service.partition}"]`)
+        const element = document.querySelector(`webview[partition="${service.partitionId}"]`)
         if (element) {
           return { element: element, service: service }
         } else {

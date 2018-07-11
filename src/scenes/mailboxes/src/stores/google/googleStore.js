@@ -640,7 +640,7 @@ class GoogleStore {
 
         if (canFetchUnreadFromAtom) {
           return Promise.resolve()
-            .then(() => GoogleHTTP.fetchGmailAtomUnreadCount(service.partition, atomQuery))
+            .then(() => GoogleHTTP.fetchGmailAtomUnreadCount(service.partitionId, atomQuery))
             .then((count) => {
               return { ...data, unreadCount: count }
             })
