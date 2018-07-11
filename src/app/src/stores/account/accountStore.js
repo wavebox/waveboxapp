@@ -419,6 +419,7 @@ class AccountStore extends CoreAccountStore {
   handleRemoveService ({ id }) {
     const service = this.getService(id)
     if (!service) { this.preventDefault(); return }
+    const wasActive = this.activeServiceId() === id
 
     // Remove from the mailbox
     const mailbox = this.getMailbox(service.parentId)
@@ -432,6 +433,10 @@ class AccountStore extends CoreAccountStore {
     // Remove the service
     this.saveService(id, null)
     this.saveServiceData(id, null)
+
+    if (wasActive) {
+      this.saveActiveServiceId(((mailbox || {}).allServices || [])[0] || null)
+    }
   }
 
   handleReduceService ({ id = this.activeServiceId(), reducer, reducerArgs }) {
