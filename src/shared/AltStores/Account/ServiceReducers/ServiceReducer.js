@@ -26,7 +26,7 @@ class ServiceReducer {
   */
   static setColor (service, col) {
     if (col === undefined || col === null) {
-      return service.changeData({ color: null })
+      return service.changeData({ color: undefined })
     } else if (typeof (col) === 'object') {
       return service.changeData({ color: col.rgbaStr })
     } else if (typeof (col) === 'string') {

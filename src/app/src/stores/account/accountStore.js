@@ -256,14 +256,14 @@ class AccountStore extends CoreAccountStore {
   */
   saveAvatar (id, b64Image) {
     if (b64Image) {
-      if (this.avatars.get(id) === b64Image) { return }
-      this.avatars.set(id, b64Image)
+      if (this._avatars_.get(id) === b64Image) { return }
+      this._avatars_.set(id, b64Image)
       avatarPersistence.setItem(id, b64Image)
       avatarPersistence.setItem(`${AVATAR_TIMESTAMP_PREFIX}${id}`, new Date().getTime())
       this.dispatchToRemote('remoteSetAvatar', [id, b64Image])
     } else {
-      if (!this.avatars.has(id)) { return }
-      this.avatars.delete(id)
+      if (!this._avatars_.has(id)) { return }
+      this._avatars_.delete(id)
       avatarPersistence.removeItem(id)
       avatarPersistence.removeItem(`${AVATAR_TIMESTAMP_PREFIX}${id}`)
       this.dispatchToRemote('remoteSetAvatar', [id, null])

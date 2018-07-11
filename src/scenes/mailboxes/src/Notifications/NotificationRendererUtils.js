@@ -127,7 +127,7 @@ export default class NotificationRendererUtils {
   */
   static preparedServiceIcon (mailbox, service, accountState) {
     if (service.showAvatarInNotifications) {
-      const avatar = accountState.getMailboxAvatarConfig(mailbox.id)
+      const avatar = accountState.getServiceAvatarConfig(service.id)
       if (avatar.hasAvatar) {
         return avatar.resolveAvatar((i) => Resolver.image(i))
       } else if (avatar.hasServiceIcon) {

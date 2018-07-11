@@ -38,7 +38,7 @@ class MailboxReducer {
   */
   static setColor (mailbox, col) {
     if (col === undefined || col === null) {
-      return mailbox.changeData({ color: null })
+      return mailbox.changeData({ color: undefined })
     } else if (typeof (col) === 'object') {
       return mailbox.changeData({ color: col.rgbaStr })
     } else if (typeof (col) === 'string') {

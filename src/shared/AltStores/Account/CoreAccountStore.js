@@ -553,6 +553,15 @@ class CoreAccountStore extends RemoteStore {
     /* ****************************************/
 
     /**
+    * Gets the avatar
+    * @param avatarId: the id of the avatar
+    * @return the avatar or undefined
+    */
+    this.getAvatar = (avatarId) => {
+      return this._avatars_.get(avatarId)
+    }
+
+    /**
     * @param mailboxId: the id of the mailbox
     * @return a ACMailboxAvatar which defines the avatar display config for the mailbox
     */

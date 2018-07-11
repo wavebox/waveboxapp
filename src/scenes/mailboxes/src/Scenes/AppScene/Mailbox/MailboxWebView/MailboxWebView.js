@@ -31,6 +31,7 @@ import classNames from 'classnames'
 import MailboxInformationCover from './MailboxInformationCover'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import RefreshIcon from '@material-ui/icons/Refresh'
+import HotelIcon from '@material-ui/icons/Hotel'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import blue from '@material-ui/core/colors/blue'
 import grey from '@material-ui/core/colors/grey'
@@ -92,8 +93,14 @@ const styles = {
   loaderSleepPanel: {
     marginTop: 24,
     fontSize: '75%',
-    padding: 8,
-    color: grey[600]
+    padding: '8px 16px',
+    color: grey[600],
+    borderRadius: 20
+  },
+  loaderSleepIcon: {
+    marginRight: 6,
+    marginBottom: -3,
+    verticalAlign: 'text-bottom'
   },
   loaderSleepLink: {
     textDecoration: 'underline',
@@ -775,6 +782,7 @@ class MailboxWebView extends React.Component {
             <Spinner size={50} color={lightBlue[600]} speed={0.75} />
             {service.sleepable ? (
               <Paper className={classes.loaderSleepPanel}>
+                <HotelIcon className={classes.loaderSleepIcon} />
                 Use this tab often?&nbsp;
                 <span className={classes.loaderSleepLink} onClick={this.handleDisableSleep}>Disable sleep</span>
                 &nbsp;to keep it awake and avoid waiting...

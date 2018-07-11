@@ -1,19 +1,18 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { accountStore, accountActions } from 'stores/account'
-import ColorPickerButton from 'wbui/ColorPickerButton'
 import { userStore } from 'stores/user'
 import { withStyles } from '@material-ui/core/styles'
 import red from '@material-ui/core/colors/red'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
-import SettingsListItem from 'wbui/SettingsListItem'
 import SettingsListItemText from 'wbui/SettingsListItemText'
 import WarningIcon from '@material-ui/icons/Warning'
 import SmsIcon from '@material-ui/icons/Sms'
 import AdjustIcon from '@material-ui/icons/Adjust'
 import shallowCompare from 'react-addons-shallow-compare'
 import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
+import SettingsListItemColorPicker from 'wbui/SettingsListItemColorPicker'
 
 const styles = {
   mockUnreadActivityIndicator: {
@@ -28,11 +27,6 @@ const styles = {
     textAlign: 'center',
     fontSize: '10px',
     paddingRight: 1
-  },
-  buttonIcon: {
-    marginRight: 6,
-    width: 18,
-    height: 18
   }
 }
 
@@ -162,17 +156,15 @@ class ServiceBadgeSection extends React.Component {
       } : undefined),
       (isLast) => {
         return (
-          <SettingsListItem
+          <SettingsListItemColorPicker
             key='badgeColor'
-            divider={!isLast}>
-            <ColorPickerButton
-              buttonProps={{ variant: 'raised', size: 'small' }}
-              value={badgeColor}
-              onChange={(col) => accountActions.reduceService(serviceId, ServiceReducer.setBadgeColor, col)}>
-              <SmsIcon className={classes.buttonIcon} />
-              Badge Color
-            </ColorPickerButton>
-          </SettingsListItem>
+            divider={!isLast}
+            labelText='Badge Color'
+            IconClass={SmsIcon}
+            value={badgeColor}
+            onChange={(col) => accountActions.reduceService(serviceId, ServiceReducer.setBadgeColor, col)}
+            showClear={false}
+          />
         )
       },
       (supportsUnreadCount ? (isLast) => {

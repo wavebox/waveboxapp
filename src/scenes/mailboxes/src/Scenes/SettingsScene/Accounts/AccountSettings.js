@@ -160,8 +160,11 @@ class AccountSettings extends React.Component {
     } = this.state
 
     if (accountCount) {
+      // Push the key down to force a complete re-render when changing account. We do this to support a staged render
       return (
-        <div {...passProps}>
+        <div
+          key={mailboxId}
+          {...passProps}>
           <AccountPickerBanner
             selectedMailboxId={selectedMailboxId}
             onChange={this.handleAccountChange}

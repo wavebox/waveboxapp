@@ -71,7 +71,7 @@ export default class ColorPickerButton extends React.Component {
           open={!!anchorEl}
           anchorEl={anchorEl}
           onClose={(evt) => this.setState({ anchorEl: null })}>
-          <ChromePicker color={value} onChangeComplete={(col) => {
+          <ChromePicker color={typeof (value) === 'string' ? value : undefined} onChangeComplete={(col) => {
             if (onChange) {
               onChange({
                 ...col,
