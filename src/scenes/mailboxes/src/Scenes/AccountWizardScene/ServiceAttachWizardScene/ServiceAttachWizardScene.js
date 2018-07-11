@@ -8,6 +8,7 @@ import WizardConfigure from './WizardConfigure'
 import WizardStepperDialog from '../Common/WizardStepperDialog'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 import ACProvisoService from 'shared/Models/ACAccounts/ACProvisoService'
+import WizardAuth from './WizardAuth'
 
 class ServiceWizardScene extends React.Component {
   /* **************************************************************************/
@@ -87,6 +88,9 @@ class ServiceWizardScene extends React.Component {
   */
   generateStepsArray (serviceType, accessMode, userState) {
     let hasPersonalise = false
+    let hasAuth = true
+    let hasConfigure = true
+
     if (serviceType === SERVICE_TYPES.GENERIC) {
       hasPersonalise = true
     } else if (serviceType === SERVICE_TYPES.CONTAINER) {
@@ -96,16 +100,30 @@ class ServiceWizardScene extends React.Component {
       }
     }
 
-    if (hasPersonalise) {
-      return [
-        { step: 0, text: 'Personalise', stepNumberText: '1' },
-        { step: 2, text: 'Configure', stepNumberText: '2' }
-      ]
-    } else {
-      return [
-        { step: 2, text: 'Configure', stepNumberText: '1' }
-      ]
+    if (serviceType === SERVICE_TYPES.GENERIC) {
+      hasAuth = false
+    } else if (serviceType === SERVICE_TYPES.CONTAINER) {
+      hasAuth = false
     }
+
+    if (serviceType === SERVICE_TYPES.TRELLO) {
+      hasConfigure = false
+    } else if (serviceType === SERVICE_TYPES.SLACK) {
+      hasConfigure = false
+    }
+
+    const steps = []
+    if (hasPersonalise) {
+      steps.push({ step: 0, text: 'Personalise', stepNumberText: `${steps.length + 1}` })
+    }
+    if (hasAuth) {
+      steps.push({ step: 1, text: 'Sign in', stepNumberText: `${steps.length + 1}` })
+    }
+    if (hasConfigure) {
+      steps.push({ step: 2, text: 'Configure', stepNumberText: `${steps.length + 1}` })
+    }
+
+    return steps
   }
 
   /* **************************************************************************/
@@ -158,6 +176,9 @@ class ServiceWizardScene extends React.Component {
             accessMode={match.params.accessMode}
             onRequestCancel={this.handleClose}
             onRequestNext={this.handleNextFromPersonalise} />
+        ) : undefined}
+        {currentStep === 1 ? (
+          <WizardAuth />
         ) : undefined}
         {currentStep === 2 ? (
           <WizardConfigure

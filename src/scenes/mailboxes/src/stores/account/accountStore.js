@@ -38,7 +38,8 @@ import ACProvisoService from 'shared/Models/ACAccounts/ACProvisoService'
 
 const AUTH_MODES = Object.freeze({
   TEMPLATE_CREATE: 'TEMPLATE_CREATE',
-  REAUTHENTICATE: 'REAUTHENTICATE'
+  REAUTHENTICATE: 'REAUTHENTICATE',
+  ATTACH: 'ATTACH'
 })
 
 class AccountStore extends RendererAccountStore {
@@ -263,6 +264,21 @@ class AccountStore extends RendererAccountStore {
   /* **************************************************************************/
   // Mailbox Creation
   /* **************************************************************************/
+  /**
+   * Creation process
+   * 1. actions.startAddMailboxGroup
+   *    - directs to wizard personalize (step 1) which calls back with template
+   * 2. actions.startAddMailboxGroup
+   *   2.a Integrated Accounts
+   *      2.a.1 directs to wizard (step 1)
+   *      2.a.2 Main thread auth call with mode TEMPLATE_CREATE
+   *      2.a.3 Auth callback returns (e.g. actions.authGoogleSuccess)
+   *         - create auth, create mailbox from template
+   *      2.a.4 directs to wizard configre (step 2)
+   *   2.b Linked Accounts
+   *      2.b.1 create mailbox from template
+   *      2.b.2 directs to wizard configure (step 2)
+   */
 
   handleStartAddMailboxGroup ({templateType, accessMode}) {
     this.preventDefault()
@@ -280,7 +296,7 @@ class AccountStore extends RendererAccountStore {
         credentials: Bootstrap.credentials,
         mode: AUTH_MODES.TEMPLATE_CREATE,
         context: {
-          id: mailboxId,
+          mailboxId: mailboxId,
           template: template.cloneData()
         }
       })
@@ -291,7 +307,7 @@ class AccountStore extends RendererAccountStore {
         credentials: Bootstrap.credentials,
         mode: AUTH_MODES.TEMPLATE_CREATE,
         context: {
-          id: mailboxId,
+          mailboxId: mailboxId,
           template: template.cloneData()
         }
       })
@@ -302,7 +318,7 @@ class AccountStore extends RendererAccountStore {
         credentials: Bootstrap.credentials,
         mode: AUTH_MODES.TEMPLATE_CREATE,
         context: {
-          id: mailboxId,
+          mailboxId: mailboxId,
           template: template.cloneData()
         }
       })
@@ -312,7 +328,7 @@ class AccountStore extends RendererAccountStore {
         partitionId: `persist:${mailboxId}`,
         mode: AUTH_MODES.TEMPLATE_CREATE,
         context: {
-          id: mailboxId,
+          mailboxId: mailboxId,
           template: template.cloneData()
         }
       })
@@ -425,16 +441,109 @@ class AccountStore extends RendererAccountStore {
   /* **************************************************************************/
   // Service attaching
   /* **************************************************************************/
+  /**
+   * Attaching process
+   * 1. actions.startAttachNewService
+   *    1.a Integrated Accounts
+   *       1.a.1 We already have auth
+   *           1.a.1.a call to actions.authNewServiceFromProviso
+   *              - create service, attach to mailbox
+   *           1.a.1.b directs to wizard configure (step 2)
+   *       1.a.2 We don't have any auth
+   *          1.a.2.a directs to wizard (step 1)
+   *          1.a.2.b Main thread auth call with mode ATTACH
+   *          1.a.2.c Auth callback returns (e.g. actions.authGoogleSuccess)
+   *              - create service, attach to mailbox
+   *          1.a.2.d directs to wizard configure (step 2)
+   *    1.b Linked Accounts
+   *       1.b.1 directs to wizard personalize (step 1)
+   *       1.b.2 call to actions.authNewServiceFromProviso
+   *           - create service, attach to mailbox
+   *       1.b.3 directs to wizard configure (step 2)
+   */
 
   handleStartAttachNewService ({ attachTarget, serviceType, accessMode }) {
     this.preventDefault()
 
-    if (serviceType === SERVICE_TYPES.GENERIC) {
-      window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/0`
-      return
-    }
+    // Optimistically create this to avoid lots of duplication
+    const proviso = new ACProvisoService({
+      serviceId: uuid.v4(),
+      accessMode: accessMode,
+      serviceType: serviceType,
+      parentId: attachTarget
+    })
 
-    if (serviceType === SERVICE_TYPES.CONTAINER) {
+    if (serviceType === SERVICE_TYPES.GOOGLE_MAIL || serviceType === SERVICE_TYPES.GOOGLE_INBOX) {
+      const auth = this.getMailboxAuthForMailbox(attachTarget, GoogleAuth.namespace)
+      if (auth && auth.hasAuth && !auth.isAuthInvalid) {
+        actions.authNewServiceFromProviso.defer(proviso)
+      } else {
+        window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/1`
+        ipcRenderer.send(WB_AUTH_GOOGLE, {
+          partitionId: `persist:${attachTarget}`,
+          credentials: Bootstrap.credentials,
+          mode: AUTH_MODES.ATTACH,
+          context: {
+            mailboxId: attachTarget,
+            authId: CoreACAuth.compositeId(attachTarget, GoogleAuth.namespace),
+            proviso: proviso.cloneData()
+          }
+        })
+      }
+    } else if (serviceType === SERVICE_TYPES.MICROSOFT_MAIL) {
+      const auth = this.getMailboxAuthForMailbox(attachTarget, MicrosoftAuth.namespace)
+      if (auth && auth.hasAuth && !auth.isAuthInvalid) {
+        actions.authNewServiceFromProviso.defer(proviso)
+      } else {
+        window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/1`
+        ipcRenderer.send(WB_AUTH_MICROSOFT, {
+          partitionId: `persist:${attachTarget}`,
+          credentials: Bootstrap.credentials,
+          mode: AUTH_MODES.ATTACH,
+          context: {
+            mailboxId: attachTarget,
+            authId: CoreACAuth.compositeId(attachTarget, MicrosoftAuth.namespace),
+            proviso: proviso.cloneData()
+          }
+        })
+      }
+    } else if (serviceType === SERVICE_TYPES.SLACK) {
+      const auth = this.getMailboxAuthForMailbox(attachTarget, SlackAuth.namespace)
+      if (auth && auth.hasAuth && !auth.isAuthInvalid) {
+        actions.authNewServiceFromProviso.defer(proviso)
+      } else {
+        window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/1`
+        ipcRenderer.send(WB_AUTH_SLACK, {
+          partitionId: `persist:${attachTarget}`,
+          credentials: Bootstrap.credentials,
+          mode: AUTH_MODES.ATTACH,
+          context: {
+            mailboxId: attachTarget,
+            authId: CoreACAuth.compositeId(attachTarget, SlackAuth.namespace),
+            proviso: proviso.cloneData()
+          }
+        })
+      }
+    } else if (serviceType === SERVICE_TYPES.TRELLO) {
+      const auth = this.getMailboxAuthForMailbox(attachTarget, TrelloAuth.namespace)
+      if (auth && auth.hasAuth && !auth.isAuthInvalid) {
+        actions.authNewServiceFromProviso.defer(proviso)
+      } else {
+        window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/1`
+        ipcRenderer.send(WB_AUTH_TRELLO, {
+          partitionId: `persist:${attachTarget}`,
+          credentials: Bootstrap.credentials,
+          mode: AUTH_MODES.ATTACH,
+          context: {
+            mailboxId: attachTarget,
+            authId: CoreACAuth.compositeId(attachTarget, TrelloAuth.namespace),
+            proviso: proviso.cloneData()
+          }
+        })
+      }
+    } else if (serviceType === SERVICE_TYPES.GENERIC) {
+      window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/0`
+    } else if (serviceType === SERVICE_TYPES.CONTAINER) {
       const container = this.getContainer(accessMode)
       if (!container) {
         console.error('[AUTH ERR]', `Unable to create service with containerId "${accessMode}" it's unknown`)
@@ -442,17 +551,10 @@ class AccountStore extends RendererAccountStore {
       }
       if (container.installHasPersonaliseStep) {
         window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/0`
-        return
+      } else {
+        actions.authNewServiceFromProviso.defer(proviso)
       }
     }
-
-    const serviceId = uuid.v4()
-    actions.authNewServiceFromProviso.defer(new ACProvisoService({
-      serviceId: serviceId,
-      accessMode: accessMode,
-      serviceType: serviceType,
-      parentId: attachTarget
-    }))
   }
 
   handleAuthNewServiceFromProviso ({proviso}) {
@@ -483,9 +585,16 @@ class AccountStore extends RendererAccountStore {
         ...proviso.expando
       }
     }
+
     const serviceId = serviceJS.id
     actions.createService.defer(proviso.parentId, mailbox.depricatedServiceUILocation, serviceJS)
-    this._finalizeServiceFromProviso(serviceId, `/mailbox_attach_wizard/${proviso.parentId}/${proviso.serviceType}/${proviso.accessMode}/2/${serviceId}`)
+    if (proviso.serviceType === SERVICE_TYPES.TRELLO) {
+      this._finalizeServiceFromProviso(serviceId, `/`)
+    } else if (proviso.serviceType === SERVICE_TYPES.SLACK) {
+      this._finalizeServiceFromProviso(serviceId, `/`)
+    } else {
+      this._finalizeServiceFromProviso(serviceId, `/mailbox_attach_wizard/${proviso.parentId}/${proviso.serviceType}/${proviso.accessMode}/2/${serviceId}`)
+    }
   }
 
   /* **************************************************************************/
@@ -564,14 +673,14 @@ class AccountStore extends RendererAccountStore {
         if (mode === AUTH_MODES.TEMPLATE_CREATE) {
           // Create the auth
           actions.createAuth.defer(
-            GoogleAuth.createJS(context.id, undefined, permenantAuth)
+            GoogleAuth.createJS(context.mailboxId, undefined, permenantAuth)
           )
 
           // Create the account
           const template = new ACTemplatedAccount(context.template)
-          this._createMailboxFromTemplate(context.id, template)
-          this._finalizeCreateAccountFromTemplate(context.id, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.id}`)
-        } else if (mode === AUTH_MODES.REAUTHENTICATE) {
+          this._createMailboxFromTemplate(context.mailboxId, template)
+          this._finalizeCreateAccountFromTemplate(context.mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.mailboxId}`)
+        } else if (mode === AUTH_MODES.REAUTHENTICATE || mode === AUTH_MODES.ATTACH) {
           if (this.hasMailboxAuth(context.authId)) {
             actions.reduceAuth.defer(
               context.authId,
@@ -580,11 +689,15 @@ class AccountStore extends RendererAccountStore {
             )
           } else {
             actions.createAuth.defer(
-              GoogleAuth.createJS(context.id, undefined, permenantAuth)
+              GoogleAuth.createJS(context.mailboxId, undefined, permenantAuth)
             )
           }
 
-          this._finalizeReauthentication(context.serviceId)
+          if (mode === AUTH_MODES.REAUTHENTICATE) {
+            this._finalizeReauthentication(context.serviceId)
+          } else if (mode === AUTH_MODES.ATTACH) {
+            actions.authNewServiceFromProviso.defer(new ACProvisoService(context.proviso))
+          }
         }
       })
       .catch((err) => {
@@ -608,14 +721,14 @@ class AccountStore extends RendererAccountStore {
         if (mode === AUTH_MODES.TEMPLATE_CREATE) {
           // Create the auth
           actions.createAuth.defer(
-            SlackAuth.createJS(context.id, undefined, authData)
+            SlackAuth.createJS(context.mailboxId, undefined, authData)
           )
 
           // Create the account
           const template = new ACTemplatedAccount(context.template)
-          this._createMailboxFromTemplate(context.id, template)
-          this._finalizeCreateAccountFromTemplate(context.id)
-        } else if (mode === AUTH_MODES.REAUTHENTICATE) {
+          this._createMailboxFromTemplate(context.mailboxId, template)
+          this._finalizeCreateAccountFromTemplate(context.mailboxId)
+        } else if (mode === AUTH_MODES.REAUTHENTICATE || mode === AUTH_MODES.ATTACH) {
           if (this.hasMailboxAuth(context.authId)) {
             actions.reduceAuth.defer(
               context.authId,
@@ -624,11 +737,15 @@ class AccountStore extends RendererAccountStore {
             )
           } else {
             actions.createAuth.defer(
-              SlackAuth.createJS(context.id, undefined, authData)
+              SlackAuth.createJS(context.mailboxId, undefined, authData)
             )
           }
 
-          this._finalizeReauthentication(context.serviceId)
+          if (mode === AUTH_MODES.REAUTHENTICATE) {
+            this._finalizeReauthentication(context.serviceId)
+          } else if (mode === AUTH_MODES.ATTACH) {
+            actions.authNewServiceFromProviso.defer(new ACProvisoService(context.proviso))
+          }
         }
       })
       .catch((err) => {
@@ -647,14 +764,14 @@ class AccountStore extends RendererAccountStore {
     if (mode === AUTH_MODES.TEMPLATE_CREATE) {
       // Create the auth
       actions.createAuth.defer(
-        TrelloAuth.createJS(context.id, undefined, authData)
+        TrelloAuth.createJS(context.mailboxId, undefined, authData)
       )
 
       // Create the account
       const template = new ACTemplatedAccount(context.template)
-      this._createMailboxFromTemplate(context.id, template)
-      this._finalizeCreateAccountFromTemplate(context.id)
-    } else if (mode === AUTH_MODES.REAUTHENTICATE) {
+      this._createMailboxFromTemplate(context.mailboxId, template)
+      this._finalizeCreateAccountFromTemplate(context.mailboxId)
+    } else if (mode === AUTH_MODES.REAUTHENTICATE || mode === AUTH_MODES.ATTACH) {
       if (this.hasMailboxAuth(context.authId)) {
         actions.reduceAuth.defer(
           context.authId,
@@ -663,11 +780,15 @@ class AccountStore extends RendererAccountStore {
         )
       } else {
         actions.createAuth.defer(
-          TrelloAuth.createJS(context.id, undefined, authData)
+          TrelloAuth.createJS(context.mailboxId, undefined, authData)
         )
       }
 
-      this._finalizeReauthentication(context.serviceId)
+      if (mode === AUTH_MODES.REAUTHENTICATE) {
+        this._finalizeReauthentication(context.serviceId)
+      } else if (mode === AUTH_MODES.ATTACH) {
+        actions.authNewServiceFromProviso.defer(new ACProvisoService(context.proviso))
+      }
     }
   }
 
@@ -685,14 +806,14 @@ class AccountStore extends RendererAccountStore {
         if (mode === AUTH_MODES.TEMPLATE_CREATE) {
           // Create the auth
           actions.createAuth.defer(
-            MicrosoftAuth.createJS(context.id, undefined, authData)
+            MicrosoftAuth.createJS(context.mailboxId, undefined, authData)
           )
 
           // Create the account
           const template = new ACTemplatedAccount(context.template)
-          this._createMailboxFromTemplate(context.id, template)
-          this._finalizeCreateAccountFromTemplate(context.id, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.id}`)
-        } else if (mode === AUTH_MODES.REAUTHENTICATE) {
+          this._createMailboxFromTemplate(context.mailboxId, template)
+          this._finalizeCreateAccountFromTemplate(context.mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.mailboxId}`)
+        } else if (mode === AUTH_MODES.REAUTHENTICATE || mode === AUTH_MODES.ATTACH) {
           if (this.hasMailboxAuth(context.authId)) {
             actions.reduceAuth.defer(
               context.authId,
@@ -701,11 +822,15 @@ class AccountStore extends RendererAccountStore {
             )
           } else {
             actions.createAuth.defer(
-              MicrosoftAuth.createJS(context.id, undefined, authData)
+              MicrosoftAuth.createJS(context.mailboxId, undefined, authData)
             )
           }
 
-          this._finalizeReauthentication(context.serviceId)
+          if (mode === AUTH_MODES.REAUTHENTICATE) {
+            this._finalizeReauthentication(context.serviceId)
+          } else if (mode === AUTH_MODES.ATTACH) {
+            actions.authNewServiceFromProviso.defer(new ACProvisoService(context.proviso))
+          }
         }
       }).catch((err) => {
         console.error('[AUTH ERR]', err)
@@ -730,7 +855,7 @@ class AccountStore extends RendererAccountStore {
           credentials: Bootstrap.credentials,
           mode: AUTH_MODES.REAUTHENTICATE,
           context: {
-            id: service.parentId,
+            mailboxId: service.parentId,
             authId: CoreACAuth.compositeId(service.parentId, service.supportedAuthNamespace),
             serviceId: service.id
           }
@@ -743,7 +868,7 @@ class AccountStore extends RendererAccountStore {
           credentials: Bootstrap.credentials,
           mode: AUTH_MODES.REAUTHENTICATE,
           context: {
-            id: service.parentId,
+            mailboxId: service.parentId,
             authId: CoreACAuth.compositeId(service.parentId, service.supportedAuthNamespace),
             serviceId: service.id
           }
@@ -756,7 +881,7 @@ class AccountStore extends RendererAccountStore {
           credentials: Bootstrap.credentials,
           mode: AUTH_MODES.REAUTHENTICATE,
           context: {
-            id: service.parentId,
+            mailboxId: service.parentId,
             authId: CoreACAuth.compositeId(service.parentId, service.supportedAuthNamespace),
             serviceId: service.id
           }
@@ -769,7 +894,7 @@ class AccountStore extends RendererAccountStore {
           credentials: Bootstrap.credentials,
           mode: AUTH_MODES.TRELLO,
           context: {
-            id: service.parentId,
+            mailboxId: service.parentId,
             authId: CoreACAuth.compositeId(service.parentId, service.supportedAuthNamespace),
             serviceId: service.id
           }
