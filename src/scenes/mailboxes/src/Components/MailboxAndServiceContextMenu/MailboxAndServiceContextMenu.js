@@ -231,7 +231,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
   */
   handleSleepAllServices = (evt) => {
     this.closePopover(evt, () => {
-      accountActions.sleepAllServices(this.props.mailboxId)
+      accountActions.sleepAllServicesInMailbox(this.props.mailboxId)
     })
   }
 

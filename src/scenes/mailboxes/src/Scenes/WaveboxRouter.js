@@ -37,6 +37,7 @@ import {
   ProfileRestoreFetchingScene,
   ProfileRestoreWorkingScene
 } from './ProfileRestoreScene'
+import ErrorBoundary from 'wbui/ErrorBoundary'
 
 export default class WaveboxRouter extends React.Component {
   /* **************************************************************************/
@@ -51,8 +52,12 @@ export default class WaveboxRouter extends React.Component {
         <div>
           <AppScene />
 
-          <EarlyBuildToast />
-          <NotificationPanel />
+          <ErrorBoundary>
+            <EarlyBuildToast />
+          </ErrorBoundary>
+          <ErrorBoundary>
+            <NotificationPanel />
+          </ErrorBoundary>
 
           <WaveboxRouterErrorBoundary>
             <Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
