@@ -193,7 +193,7 @@ class AppScene extends React.Component {
           `toolbars-${toolbarCount}`,
           'WB-Detail'
         )}>
-          <MailboxTabManager style={styles.mailboxTabManager} />
+          <MailboxTabManager className={classes.mailboxTabManager} />
         </div>
         {children}
       </div>

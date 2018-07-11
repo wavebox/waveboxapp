@@ -15,6 +15,7 @@ import ServiceWebView from './MailboxWebView/ServiceWebView'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
+import MailboxTabRestricted from './MailboxTabRestricted'
 
 const styles = {
   mailboxTab: {
@@ -117,14 +118,16 @@ class MailboxTab extends React.Component {
   * @return the serviceManifest
   */
   generateServiceManifest (accountState, mailboxId) {
-    return accountState
-      .unrestrictedMailboxServiceIds(mailboxId)
-      .map((serviceId) => {
-        return {
-          id: serviceId,
-          type: accountState.getService(serviceId).type
-        }
-      })
+    const unrestrictedIds = new Set(accountState.unrestrictedServiceIds())
+    const mailbox = accountState.getMailbox(mailboxId)
+    if (!mailbox) { return [] }
+    return mailbox.allServices.map((serviceId) => {
+      return {
+        id: serviceId,
+        type: accountState.getService(serviceId).type,
+        restricted: !unrestrictedIds.has(serviceId)
+      }
+    })
   }
 
   /* **************************************************************************/
@@ -145,9 +148,18 @@ class MailboxTab extends React.Component {
   * @param mailboxId: the id of the mailbox
   * @param serviceId: the service of the tab
   * @param serviceType: the service of the tab
+  * @param isRestricted: true if the service is restricted
   * @return jsx
   */
-  renderWebView (key, mailboxId, serviceId, serviceType) {
+  renderWebView (key, mailboxId, serviceId, serviceType, isRestricted) {
+    if (isRestricted) {
+      return (
+        <MailboxTabRestricted
+          key={key}
+          mailboxId={mailboxId}
+          serviceId={serviceId} />)
+    }
+
     let ElementClass
     switch (serviceType) {
       case SERVICE_TYPES.GOOGLE_MAIL:
@@ -173,7 +185,11 @@ class MailboxTab extends React.Component {
         ElementClass = ServiceWebView; break
     }
 
-    return (<ElementClass mailboxId={mailboxId} serviceId={serviceId} key={key} />)
+    return (
+      <ElementClass
+        key={key}
+        mailboxId={mailboxId}
+        serviceId={serviceId} />)
   }
 
   render () {
@@ -197,8 +213,8 @@ class MailboxTab extends React.Component {
           isMailboxActive ? classes.mailboxTabActive : undefined,
           className)}>
         <div className={classes.serviceContainer}>
-          {sortedServiceManifest.map(({id, type}) => {
-            return this.renderWebView(id, mailboxId, id, type)
+          {sortedServiceManifest.map(({id, type, restricted}) => {
+            return this.renderWebView(id, mailboxId, id, type, restricted)
           })}
         </div>
       </div>

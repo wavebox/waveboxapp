@@ -125,7 +125,7 @@ class ServiceCustomCodeSection extends React.Component {
                 onClick={() => {
                   onRequestEditCustomCode('Custom CSS', customCSS, (code) => {
                     accountActions.reduceService(serviceId, ServiceReducer.setCustomCSS, code)
-                    accountDispatch.reload(serviceId)
+                    accountDispatch.reloadService(serviceId)
                   })
                 }}>
                 <CodeIcon className={classes.buttonIcon} />
@@ -138,7 +138,7 @@ class ServiceCustomCodeSection extends React.Component {
                 onClick={() => {
                   onRequestEditCustomCode('Custom JS', customJS, (code) => {
                     accountActions.reduceService(serviceId, ServiceReducer.setCustomJS, code)
-                    accountDispatch.reload(serviceId)
+                    accountDispatch.reloadService(serviceId)
                   })
                 }}>
                 <CodeIcon className={classes.buttonIcon} />

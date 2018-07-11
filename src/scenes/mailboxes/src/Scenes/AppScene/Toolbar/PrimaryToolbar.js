@@ -55,7 +55,7 @@ class PrimaryToolbar extends React.Component {
     const mailbox = accountState.activeMailbox()
     if (!mailbox) { return false }
     if (!mailbox.hasMultipleServices) { return false }
-    if (mailbox.toolbarStartServices.length + mailbox.toolbarEndServices.length <= 1) { return false }
+    if (mailbox.toolbarStartServices.length === 0 && mailbox.toolbarEndServices.length === 0) { return false }
 
     return true
   }
@@ -180,8 +180,8 @@ class PrimaryToolbar extends React.Component {
       activeTabId: accountState.getActiveWebcontentTabId(),
       ...(mailbox ? {
         mailboxId: mailbox.id,
-        mailboxHasStartServices: !!mailbox.toolbarStartServices.length,
-        mailboxHasEndServices: !!mailbox.toolbarEndServices.length,
+        mailboxHasStartServices: mailbox.hasMultipleServices && mailbox.toolbarStartServices.length,
+        mailboxHasEndServices: mailbox.hasMultipleServices && mailbox.toolbarEndServices.length,
         hasServicesInToolbar: PrimaryToolbar.hasServicesInToolbar(accountState)
       } : {
         mailboxId: undefined,

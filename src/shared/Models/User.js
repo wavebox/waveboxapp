@@ -1,11 +1,12 @@
 const Model = require('./Model')
+const SERVICE_TYPES = require('./ACAccounts/ServiceTypes').default
+
 const MS_IN_DAY = (1000 * 60 * 60 * 24)
 const PLANS = Object.freeze({
   FREE: 'free',
   TRIAL: 'trial',
   PRO: 'pro1'
 })
-const SERVICE_TYPES = require('./ACAccounts/ServiceTypes')
 
 // Prior to 3.14.8 we would send mailbox types, migrate these to the equivalent service types
 const DEPRICATED_TYPE_MAPPING = {

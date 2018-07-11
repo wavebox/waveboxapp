@@ -84,6 +84,7 @@ class SidelistItemSingleService extends React.Component {
       isServiceSleeping: accountState.isServiceSleeping(serviceId),
       isAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId),
       serviceColor: accountState.resolvedServiceColor(serviceId),
+      isServiceRestricted: accountState.isServiceRestricted(serviceId),
       ...(service && serviceData ? {
         unreadCount: serviceData.getUnreadCount(service),
         hasUnreadActivity: serviceData.getHasUnreadActivity(service)
@@ -146,6 +147,7 @@ class SidelistItemSingleService extends React.Component {
       isServiceActive,
       isServiceSleeping,
       isAuthInvalid,
+      isServiceRestricted,
       avatar
     } = this.state
     if (!mailbox || !service) { return false }
@@ -173,6 +175,7 @@ class SidelistItemSingleService extends React.Component {
             lightenBorder={!isServiceActive && !isHovering}
             size={42}
             isSleeping={isServiceSleeping}
+            showRestricted={isServiceRestricted}
             showColorRing={mailbox.showAvatarColorRing}
             borderWidth={4} />
           <ErrorBoundary>

@@ -391,6 +391,25 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /**
+    * Looks to see if an entire mailbox is restricted
+    * @param mailboxId: the id of the mailbox
+    * @return true if all services are restricted
+    */
+    this.isMailboxRestricted = (mailboxId) => {
+      const user = this.getUser()
+      if (user.hasAccountLimit || user.hasAccountTypeRestriction) {
+        const mailbox = this.getMailbox(mailboxId)
+        if (!mailbox || mailbox.allServices.legth === 0) { return false }
+
+        const unrestrictedServiceSet = new Set(this.unrestrictedServiceIds())
+        const unrestrictedMailboxServices = mailbox.allServices.filter((serviceId) => unrestrictedServiceSet.has(serviceId))
+        return unrestrictedMailboxServices.length === 0
+      } else {
+        return false
+      }
+    }
+
+    /**
     * @return an array of services that unrestricted
     */
     this.unrestrictedServices = () => {
@@ -407,7 +426,7 @@ class CoreAccountStore extends RemoteStore {
     /**
     * @return an array of service ids that are unrestricted
     */
-    this.unrestictedServiceIds = () => {
+    this.unrestrictedServiceIds = () => {
       const user = this.getUser()
       if (user.hasAccountLimit || user.hasAccountTypeRestriction) {
         return Array.from(this._services_.values())
@@ -429,7 +448,7 @@ class CoreAccountStore extends RemoteStore {
 
       const user = this.getUser()
       if (user.hasAccountLimit || user.hasAccountTypeRestriction) {
-        const unrestrictedServiceSet = new Set(this.unrestictedServiceIds())
+        const unrestrictedServiceSet = new Set(this.unrestrictedServiceIds())
         return mailbox.allServices
           .filter((serviceId) => unrestrictedServiceSet.has(serviceId))
       } else {

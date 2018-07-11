@@ -161,19 +161,19 @@ class ServiceTabs extends React.Component {
           uiLocation={uiLocation}
           onOpenService={onOpenService}
           onOpenServiceMenu={onContextMenuService}
-          onSortEnd={({ prevIndex, nextIndex }) => {
+          onSortEnd={({ oldIndex, newIndex }) => {
             // Optimistically update the services in the current state. The round trip across
             // the ipc bridge takes a few ms and can cause jank
-            this.setState({
-              serviceIds: serviceIds.splice(nextIndex, 0, serviceIds.splice(prevIndex, 1)[0])
-            })
+            const serviceIdsCpy = Array.from(serviceIds)
+            serviceIdsCpy.splice(newIndex, 0, serviceIdsCpy.splice(oldIndex, 1)[0])
+            this.setState({ serviceIds: serviceIdsCpy })
 
             // Actually change the data
             accountActions.reduceMailbox(
               mailboxId,
               MailboxReducer.changeServiceIndex,
-              serviceIds[prevIndex],
-              nextIndex
+              serviceIds[oldIndex],
+              newIndex
             )
           }} />
       </div>

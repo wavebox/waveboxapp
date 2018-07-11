@@ -163,7 +163,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
     const { serviceId } = this.props
     accountActions.changeActiveService(serviceId)
     setTimeout(() => {
-      accountDispatch.reload(serviceId)
+      accountDispatch.reloadService(serviceId)
     }, 100) // Give the UI some time to catch up
     this.closePopover(evt)
   }

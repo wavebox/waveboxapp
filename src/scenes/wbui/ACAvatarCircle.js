@@ -11,6 +11,14 @@ const styles = {
   },
   sleeping: {
     filter: 'grayscale(100%)'
+  },
+  restricted: {
+    backgroundColor: '#EEE',
+    filter: 'grayscale(100%)'
+  },
+  restrictedCharacterDisplay: {
+    backgroundColor: '#BBB !important',
+    color: '#FFF !important'
   }
 }
 
@@ -25,13 +33,15 @@ class ACAvatarCircle extends React.Component {
     resolver: PropTypes.func.isRequired,
     size: PropTypes.number.isRequired,
     showSleeping: PropTypes.bool.isRequired,
+    showRestricted: PropTypes.bool.isRequired,
     preferredImageSize: PropTypes.number,
     borderSize: PropTypes.number
   }
 
   static defaultProps = {
     size: 40,
-    showSleeping: false
+    showSleeping: false,
+    showRestricted: false
   }
 
   /* **************************************************************************/
@@ -51,6 +61,7 @@ class ACAvatarCircle extends React.Component {
       classes,
       className,
       showSleeping,
+      showRestricted,
       preferredImageSize,
       borderSize,
       ...otherProps
@@ -81,9 +92,16 @@ class ACAvatarCircle extends React.Component {
       },
       classes: {
         ...otherProps.classes,
-        img: classNames(classes.img, (otherProps.classes || {}).img)
+        img: classNames(
+          classes.img,
+          showRestricted ? classes.restricted : undefined,
+          (otherProps.classes || {}).img
+        )
       },
-      className: classNames(className, showSleeping ? classes.sleeping : undefined),
+      className: classNames(
+        className,
+        showSleeping ? classes.sleeping : undefined
+      ),
       style: {
         ...generatedStyle,
         ...style
@@ -93,7 +111,17 @@ class ACAvatarCircle extends React.Component {
     if (avatar.hasAvatar) {
       return (<Avatar {...passProps} src={avatar.resolveAvatar(resolver)} />)
     } else if (avatar.avatarCharacterDisplay) {
-      return (<Avatar {...passProps}>{avatar.avatarCharacterDisplay}</Avatar>)
+      if (showRestricted) {
+        return (
+          <Avatar
+            {...passProps}
+            className={classNames(passProps.className, classes.restrictedCharacterDisplay)}>
+            {avatar.avatarCharacterDisplay}
+          </Avatar>
+        )
+      } else {
+        return (<Avatar {...passProps}>{avatar.avatarCharacterDisplay}</Avatar>)
+      }
     } else if (avatar.hasServiceIcon) {
       if (typeof (preferredImageSize) === 'number') {
         return (<Avatar {...passProps} src={avatar.resolveServiceIconWithSize(preferredImageSize, resolver)} />)

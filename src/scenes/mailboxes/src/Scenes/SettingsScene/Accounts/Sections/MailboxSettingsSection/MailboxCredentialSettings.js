@@ -108,10 +108,10 @@ export default class MailboxCredentialSettings extends React.Component {
                 icon={<DeleteIcon />}
                 confirmIcon={<HelpOutlineIcon />}
                 confirmWaitMs={4000}
-                buttonProps={{ variant: 'flat', className: classes.deleteButton }}
+                buttonProps={{ variant: 'outlined', className: classes.deleteButton }}
                 onConfirmedClick={() => accountActions.removeAuth(auth.id)}
                 primary={(<strong>{auth.humanizedNamespace}</strong>)}
-                secondary={auth.displayName} />
+                secondary={auth.namespace} />
             )
           })
         ) : (

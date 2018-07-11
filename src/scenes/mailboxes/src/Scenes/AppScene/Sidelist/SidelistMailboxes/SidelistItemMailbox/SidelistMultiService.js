@@ -86,7 +86,8 @@ class SidelistItemMultiService extends React.Component {
       isMailboxActive: accountState.activeMailboxId() === mailboxId,
       unreadCount: accountState.userUnreadCountForMailbox(mailboxId),
       hasUnreadActivity: accountState.userUnreadActivityForMailbox(mailboxId),
-      hasInvalidAuth: accountState.hasMailboxServiceWithInvalidAuth(mailboxId)
+      hasInvalidAuth: accountState.hasMailboxServiceWithInvalidAuth(mailboxId),
+      isMailboxRestricted: accountState.isMailboxRestricted(mailboxId)
     }
   }
 
@@ -186,7 +187,8 @@ class SidelistItemMultiService extends React.Component {
       avatar,
       popoverMailboxId,
       popoverServiceId,
-      hasInvalidAuth
+      hasInvalidAuth,
+      isMailboxRestricted
     } = this.state
 
     if (!mailbox) { return false }
@@ -215,6 +217,7 @@ class SidelistItemMultiService extends React.Component {
             avatar={avatar}
             size={42}
             isSleeping={isMailboxSleeping}
+            showRestricted={isMailboxRestricted}
             showColorRing={mailbox.showAvatarColorRing}
             lightenBorder={!isMailboxActive && !isHoveringGroup}
             borderWidth={4} />

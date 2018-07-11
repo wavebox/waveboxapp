@@ -745,7 +745,6 @@ class AccountStore extends CoreAccountStore {
   }
 
   handleChangeActiveService ({ id }) {
-    if (this.isServiceRestricted(id)) { this.preventDefault(); return }
     if (this.activeServiceId() === id) { this.preventDefault(); return }
     if (!this.hasService(id)) { this.preventDefault(); return }
 

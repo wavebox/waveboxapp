@@ -1,18 +1,18 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import {Button} from '@material-ui/core'
-import { accountActions } from 'stores/account'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import ConfirmButton from 'wbui/ConfirmButton'
-import DeleteIcon from '@material-ui/icons/Delete'
 import FontAwesomeIcon from '@fortawesome/react-fontawesome'
 import fasGem from '@fortawesome/fontawesome-pro-solid/faGem'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const styles = {
   root: {
     textAlign: 'center',
-    marginBottom: 16
+    marginBottom: 16,
+    color: lightBlue[600],
+    fontWeight: 300
   },
   proIcon: {
     fontSize: 20,
@@ -56,27 +56,6 @@ class RestrictedServiceSection extends React.Component {
             <FontAwesomeIcon icon={fasGem} className={classes.proIcon} />
             Purchase Wavebox
           </Button>
-        </div>
-        <br />
-        <div>
-          <ConfirmButton
-            variant='raised'
-            content={(
-              <span>
-                <DeleteIcon className={classes.deleteIcon} />
-                Delete this service
-              </span>
-            )}
-            confirmContent={(
-              <span>
-                <DeleteIcon className={classes.deleteIcon} />
-                Click again to confirm
-              </span>
-            )}
-            confirmWaitMs={4000}
-            onConfirmedClick={() => {
-              accountActions.removeService(serviceId)
-            }} />
         </div>
       </div>
     )

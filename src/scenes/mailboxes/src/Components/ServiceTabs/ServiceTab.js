@@ -106,10 +106,6 @@ const styles = {
 
     '&.sidelist': {
       margin: '4px auto'
-    },
-
-    '&.sleeping': {
-      filter: 'grayscale(100%)'
     }
   }
 }
@@ -219,7 +215,8 @@ class ServiceTab extends React.Component {
       isServiceActive: accountState.isServiceActive(serviceId),
       avatar: accountState.getServiceAvatarConfig(serviceId),
       unreadCount: serviceData.getUnreadCount(service),
-      hasUnreadActivity: serviceData.getHasUnreadActivity(service)
+      hasUnreadActivity: serviceData.getHasUnreadActivity(service),
+      isServiceRestricted: accountState.isServiceRestricted(serviceId)
     } : {
       membersAvailable: false
     }
@@ -367,6 +364,7 @@ class ServiceTab extends React.Component {
       isServiceSleeping,
       isServiceActive,
       tooltipsEnabled,
+      isServiceRestricted,
       avatar
     } = this.state
     if (!membersAvailable) { return false }
@@ -404,6 +402,7 @@ class ServiceTab extends React.Component {
           preferredImageSize={96}
           resolver={(i) => Resolver.image(i)}
           showSleeping={globalShowSleepableServiceIndicator && mailboxShowSleepableServiceIndicator && isServiceSleeping}
+          showRestricted={isServiceRestricted}
           className={classNames(
             classes.avatar,
             classNameUiLoc,
