@@ -20,6 +20,15 @@ class ServiceDataReducer {
   }
 
   /**
+  * Clears  the last url of the service
+  * @param service: the parent service
+  * @param serviceData: the service to update
+  */
+  static clearUrl (service, serviceData) {
+    return serviceData.changeData({ url: undefined })
+  }
+
+  /**
   * Sets the document title
   * @param service: the parent service
   * @param serviceData: the service to update

@@ -9,6 +9,7 @@ import ServiceNotificationSection from '../Common/ServiceNotificationSection'
 import { accountStore, accountActions } from 'stores/account'
 import SettingsListSection from 'wbui/SettingsListSection'
 import GenericServiceReducer from 'shared/AltStores/Account/ServiceReducers/GenericServiceReducer'
+import ServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/ServiceDataReducer'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemTextField from 'wbui/SettingsListItemTextField'
@@ -98,6 +99,10 @@ export default class GenericServiceSettings extends React.Component {
       this.setState({ urlError: 'Service url is not a valid url' })
     } else {
       this.setState({ urlError: null })
+      accountActions.reduceServiceData(
+        this.props.serviceId,
+        ServiceDataReducer.clearUrl
+      )
       accountActions.reduceService(
         this.props.serviceId,
         GenericServiceReducer.setUrl,
@@ -161,7 +166,7 @@ export default class GenericServiceSettings extends React.Component {
             label='Enable Wavebox API (Experiemental)'
             checked={supportsWBGAPI}
             onChange={(evt, toggled) => {
-              accountActions.reduceService(serviceId, GenericServiceReducer.setsupportsGuestConfig, toggled)
+              accountActions.reduceService(serviceId, GenericServiceReducer.setSupportsWBGAPI, toggled)
             }} />
         </SettingsListSection>
         <ServiceAppearanceSection
