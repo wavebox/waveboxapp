@@ -155,7 +155,8 @@ const CLASSIC_MAILBOX_KEY_DEPRICATED = new Set([
 ])
 const CLASSIC_MAILBOX_KEY_SKIP = new Set([
   'userDisplayName', // Container
-  'auth' // Slack, Google, Microsoft
+  'auth', // Slack, Google, Microsoft
+  'color' // We don't have a default here anymore which causes spurous errors -just skip
 ])
 const CLASSIC_MAILBOX_KEY_TO_CONTAINER = {
   hasUrlSubdomain: 'hasUrlSubdomain'
@@ -505,13 +506,14 @@ class MailboxStorageBucket extends MigratingStorageBucket {
         ? service.notificationsSound
         : mailbox.notificationsSound,
       customCSS: service.customCSS,
-      customJS: service.customJS,
-      serviceAvatarURL: mailbox.avatar,
-      serviceLocalAvatarId: mailbox.serviceLocalAvatar,
-      avatarId: mailbox.customAvatar
+      customJS: service.customJS
     }
 
     if (service.type === 'DEFAULT') {
+      nextService.serviceAvatarURL = mailbox.avatar
+      nextService.serviceLocalAvatarId = mailbox.serviceLocalAvatar
+      nextService.avatarId = mailbox.customAvatar
+
       if (mailbox.type === 'CONTAINER') {
         nextService.containerId = (mailbox.container || {}).id
         nextService.container = mailbox.container
