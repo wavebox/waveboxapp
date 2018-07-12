@@ -767,9 +767,13 @@ class AccountStore extends CoreAccountStore {
     // Update sleep
     const prevActiveId = this.activeServiceId()
     if (prevActiveId) {
-      // Make sure you explicitly clear sleep in case sleep was implied previously,
+      // Make sure you explicitly glue the current sleep in case sleep was implied previously,
       // this normally happens when the app starts and we don't have an active service
-      this.clearServiceSleep(prevActiveId)
+      const isSleeping = this.isServiceSleeping(prevActiveId)
+      this._sleepingServices_.set(prevActiveId, isSleeping)
+      this.dispatchToRemote('remoteSetSleep', [id, false])
+
+      // Setup sleep for nextime
       this.scheduleServiceSleep(prevActiveId)
     }
 
