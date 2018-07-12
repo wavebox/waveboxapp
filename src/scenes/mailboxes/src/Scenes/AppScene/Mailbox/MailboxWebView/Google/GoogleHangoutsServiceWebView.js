@@ -59,7 +59,6 @@ export default class GoogleHangoutsServiceWebView extends React.Component {
     }
 
     accountActions.reduceServiceData(
-      mailboxId,
       serviceId,
       GoogleHangoutsServiceDataReducer.setUnreadCount,
       next
