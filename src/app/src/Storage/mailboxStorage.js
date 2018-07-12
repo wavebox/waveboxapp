@@ -10,6 +10,8 @@ import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import ServiceFactory from 'shared/Models/ACAccounts/ServiceFactory'
 import AuthFactory from 'shared/Models/ACAccounts/AuthFactory'
 import fs from 'fs-extra'
+import { USER } from 'shared/Models/DeviceKeys'
+import userStorage from './userStorage'
 
 const MIGRATION_PRINT_EXTRA = false
 const CLASSIC_SERVICE_TYPE_TO_NEW = {
@@ -235,9 +237,32 @@ class MailboxStorageBucket extends MigratingStorageBucket {
     const rawData = this.allJSONItems()
     const index = rawData[PERSISTENCE_INDEX_KEY] || []
 
+    const stripNonDefaultServices = this._loadStripNonDefaultServices()
+
     return index
       .map((id) => rawData[id])
       .filter((mb) => !!mb)
+      .map((mb) => {
+        if (stripNonDefaultServices) {
+          return {
+            ...mb,
+            services: (mb.services || []).filter((svc) => svc.type === 'DEFAULT')
+          }
+        } else {
+          return mb
+        }
+      })
+  }
+
+  /**
+  * Loads the skeleton user object and checks if they definately don't have services
+  * @return true if they don't have services
+  */
+  _loadStripNonDefaultServices () {
+    const user = userStorage.getJSONItem(USER)
+    if (!user) { return false }
+    if (user.hasServices === false) { return true }
+    return false
   }
 
   /* ****************************************************************************/
