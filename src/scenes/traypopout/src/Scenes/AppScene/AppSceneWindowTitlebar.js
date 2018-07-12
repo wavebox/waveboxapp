@@ -4,12 +4,12 @@ import classnames from 'classnames'
 import { remote } from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import styles from './AppSceneWindowTitlebarStyles'
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
-import farTimes from '@fortawesome/fontawesome-pro-regular/faTimes'
-import fasTimes from '@fortawesome/fontawesome-pro-solid/faTimes'
-import farSquare from '@fortawesome/fontawesome-pro-regular/faSquare'
-import fasMinus from '@fortawesome/fontawesome-pro-solid/faMinus'
-import farWindowMinimize from '@fortawesome/fontawesome-pro-regular/faWindowMinimize'
+import FAIcon from 'wbui/FAIcon'
+import { faTimes as farTimes } from '@fortawesome/pro-regular-svg-icons/faTimes'
+import { faTimes as fasTimes } from '@fortawesome/pro-solid-svg-icons/faTimes'
+import faSquare from '@fortawesome/pro-regular-svg-icons/faSquare'
+import faMinus from '@fortawesome/pro-solid-svg-icons/faMinus'
+import faWindowMinimize from '@fortawesome/pro-regular-svg-icons/faWindowMinimize'
 
 @withStyles(styles)
 class AppSceneWindowTitlebar extends React.Component {
@@ -114,21 +114,21 @@ class AppSceneWindowTitlebar extends React.Component {
         <div className='controls'>
           <div className='control close' onClick={this.handleClose}>
             {process.platform === 'darwin' ? (
-              <FontAwesomeIcon className='icon' icon={fasTimes} />
+              <FAIcon className='icon' icon={fasTimes} />
             ) : (
-              <FontAwesomeIcon className='icon' icon={farTimes} />
+              <FAIcon className='icon' icon={farTimes} />
             )}
           </div>
           <div className='control maximize'>
             {process.platform === 'darwin' ? undefined : (
-              <FontAwesomeIcon className='icon' icon={farSquare} />
+              <FAIcon className='icon' icon={faSquare} />
             )}
           </div>
           <div className='control minimize' onClick={this.handleMinimize}>
             {process.platform === 'darwin' ? (
-              <FontAwesomeIcon className='icon' icon={fasMinus} />
+              <FAIcon className='icon' icon={faMinus} />
             ) : (
-              <FontAwesomeIcon className='icon' icon={farWindowMinimize} />
+              <FAIcon className='icon' icon={faWindowMinimize} />
             )}
           </div>
         </div>

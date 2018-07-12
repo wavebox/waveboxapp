@@ -5,8 +5,8 @@ import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import red from '@material-ui/core/colors/red'
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
-import fasCheck from '@fortawesome/fontawesome-pro-solid/faCheck'
+import FAIcon from 'wbui/FAIcon'
+import { faCheck } from '@fortawesome/pro-solid-svg-icons/faCheck'
 
 const styles = {
   container: {
@@ -112,7 +112,7 @@ class WizardStepperStep extends React.Component {
       <div {...passProps} className={classNames(classes.container, className)}>
         <div className={active ? classes.stepIconActive : classes.stepIconInactive}>
           {currentStep > step ? (
-            <FontAwesomeIcon icon={fasCheck} className={classNames(active ? classes.stepCheckActive : classes.stepCheckInactive)} />
+            <FAIcon icon={faCheck} className={classNames(active ? classes.stepCheckActive : classes.stepCheckInactive)} />
           ) : (
             <span className={classes.stepNumber}>{stepNumberText}</span>
           )}

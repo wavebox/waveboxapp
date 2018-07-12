@@ -5,11 +5,11 @@ import shallowCompare from 'react-addons-shallow-compare'
 import blueGrey from '@material-ui/core/colors/blueGrey'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
-import falWindowRestore from '@fortawesome/fontawesome-pro-light/faWindowRestore'
-import falWindowMaximize from '@fortawesome/fontawesome-pro-light/faWindowMaximize'
-import falWindowMinimize from '@fortawesome/fontawesome-pro-light/faWindowMinimize'
-import falWindowClose from '@fortawesome/fontawesome-pro-light/faWindowClose'
+import FAIcon from 'wbui/FAIcon'
+import { faWindowRestore } from '@fortawesome/pro-light-svg-icons/faWindowRestore'
+import { faWindowMaximize } from '@fortawesome/pro-light-svg-icons/faWindowMaximize'
+import { faWindowMinimize } from '@fortawesome/pro-light-svg-icons/faWindowMinimize'
+import { faWindowClose } from '@fortawesome/pro-light-svg-icons/faWindowClose'
 
 const TYPES = Object.freeze({
   RESTORE: 'RESTORE',
@@ -72,13 +72,13 @@ class SidelistWindowControl extends React.Component {
   renderIconForType (classes, type) {
     switch (type) {
       case TYPES.RESTORE:
-        return (<FontAwesomeIcon icon={falWindowRestore} className={classNames(classes.icon, classes.iconFA)} />)
+        return (<FAIcon icon={faWindowRestore} className={classNames(classes.icon, classes.iconFA)} />)
       case TYPES.MAXIMIZE:
-        return (<FontAwesomeIcon icon={falWindowMaximize} className={classNames(classes.icon, classes.iconFA)} />)
+        return (<FAIcon icon={faWindowMaximize} className={classNames(classes.icon, classes.iconFA)} />)
       case TYPES.MINIMIZE:
-        return (<FontAwesomeIcon icon={falWindowMinimize} className={classNames(classes.icon, classes.iconFA)} />)
+        return (<FAIcon icon={faWindowMinimize} className={classNames(classes.icon, classes.iconFA)} />)
       case TYPES.CLOSE:
-        return (<FontAwesomeIcon icon={falWindowClose} className={classNames(classes.icon, classes.iconFA)} />)
+        return (<FAIcon icon={faWindowClose} className={classNames(classes.icon, classes.iconFA)} />)
       case TYPES.UNFULLSCREEN:
         return (<Icon className={classNames(classes.icon, classes.iconMI, 'material-icons')}>fullscreen_exit</Icon>)
     }

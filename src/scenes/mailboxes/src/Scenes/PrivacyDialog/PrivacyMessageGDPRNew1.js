@@ -8,8 +8,8 @@ import { PRIVACY_URL, TERMS_URL, EULA_URL } from 'shared/constants'
 import { withStyles } from '@material-ui/core/styles'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import red from '@material-ui/core/colors/red'
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
-import farSpinnerThird from '@fortawesome/fontawesome-pro-regular/faSpinnerThird'
+import FAIcon from 'wbui/FAIcon'
+import { faSpinnerThird } from '@fortawesome/pro-regular-svg-icons/faSpinnerThird'
 
 const styles = {
   modal: {
@@ -218,7 +218,7 @@ class PrivacyMessageGDPRNew1 extends React.Component {
                 disabled={agreeRequestActive}
                 onClick={this.handleAgree}>
                 {agreeRequestActive ? (
-                  <FontAwesomeIcon icon={farSpinnerThird} spin className={classes.workingIcon} />
+                  <FAIcon icon={faSpinnerThird} spin className={classes.workingIcon} />
                 ) : (
                   'Continue'
                 )}

@@ -5,9 +5,9 @@ import ReactPortalTooltip from 'react-portal-tooltip'
 import { basicPopoverStyles400w } from 'wbui/Styles/PopoverStyles'
 import { withStyles } from '@material-ui/core/styles'
 import red from '@material-ui/core/colors/red'
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
-import fasExclamation from '@fortawesome/fontawesome-pro-solid/faExclamation'
-import farGem from '@fortawesome/fontawesome-pro-regular/faGem'
+import FAIcon from './FAIcon'
+import { faExclamation } from '@fortawesome/pro-solid-svg-icons/faExclamation'
+import { faGem } from '@fortawesome/pro-regular-svg-icons/faGem'
 
 const styles = {
   hr: {
@@ -67,14 +67,14 @@ class MailboxServiceTooltip extends React.Component {
     if (isRestricted) {
       unreadContent = (
         <span>
-          <FontAwesomeIcon icon={farGem} className={classes.proIcon} />
+          <FAIcon icon={faGem} className={classes.proIcon} />
           <span>Upgrade to Pro</span>
         </span>
       )
     } else if (mailbox.isAuthenticationInvalid) {
       unreadContent = (
         <span className={classes.authInvalidText}>
-          <FontAwesomeIcon icon={fasExclamation} className={classes.authInvalidIcon} />
+          <FAIcon icon={faExclamation} className={classes.authInvalidIcon} />
           <span>Authentication Problem. Right click to reauthenticate</span>
         </span>
       )

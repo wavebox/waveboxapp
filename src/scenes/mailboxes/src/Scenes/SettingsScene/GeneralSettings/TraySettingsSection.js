@@ -22,8 +22,8 @@ import SettingsListItemTextFieldInline from 'wbui/SettingsListItemTextFieldInlin
 import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
 import AdjustIcon from '@material-ui/icons/Adjust'
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
-import farInfoCircle from '@fortawesome/fontawesome-pro-regular/faInfoCircle'
+import FAIcon from 'wbui/FAIcon'
+import { faInfoCircle } from '@fortawesome/pro-regular-svg-icons/faInfoCircle'
 
 const styles = {
   inputHelpTextInfo: {
@@ -172,7 +172,7 @@ class TraySettingsSection extends React.Component {
             label='Popout screen position'
             secondary={IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
               <span className={classes.inputHelpTextInfo}>
-                <FontAwesomeIcon icon={farInfoCircle} className={classes.inputHelpIconInfo} />
+                <FAIcon icon={faInfoCircle} className={classes.inputHelpIconInfo} />
                 This setting only takes effect when your OS uses GtkStatusIcon
               </span>
             ) : undefined}
@@ -256,7 +256,7 @@ class TraySettingsSection extends React.Component {
             label='Click Action'
             secondary={IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM ? (
               <span className={classes.inputHelpTextInfo}>
-                <FontAwesomeIcon icon={farInfoCircle} className={classes.inputHelpIconInfo} />
+                <FAIcon icon={faInfoCircle} className={classes.inputHelpIconInfo} />
                 This setting only takes effect when your OS uses GtkStatusIcon
               </span>
             ) : undefined}

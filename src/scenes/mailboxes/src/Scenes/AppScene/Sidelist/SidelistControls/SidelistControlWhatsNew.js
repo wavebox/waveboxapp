@@ -7,8 +7,8 @@ import { UISettings } from 'shared/Models/Settings'
 import red from '@material-ui/core/colors/red'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
-import farStar from '@fortawesome/fontawesome-pro-regular/faStar'
+import FAIcon from 'wbui/FAIcon'
+import { faStar } from '@fortawesome/pro-regular-svg-icons/faStar'
 
 const styles = {
   icon: {
@@ -125,9 +125,9 @@ class SidelistControlWhatsNew extends React.Component {
           </div>
         )}
         icon={(
-          <FontAwesomeIcon
+          <FAIcon
             className={classNames(classes.icon, hasUnseenNews ? 'has-news' : undefined)}
-            icon={farStar} />
+            icon={faStar} />
         )} />
     )
   }

@@ -8,8 +8,8 @@ import User from 'shared/Models/User'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import lightBlue from '@material-ui/core/colors/lightBlue'
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
-import farCalendar from '@fortawesome/fontawesome-pro-regular/faCalendar'
+import FAIcon from 'wbui/FAIcon'
+import { faCalendar } from '@fortawesome/pro-regular-svg-icons/faCalendar'
 
 const UPDATE_INTERVAL = 1000 * 60 * 15 // 15 minutes
 const styles = {
@@ -248,7 +248,7 @@ class SidelistUpgradePlans extends React.Component {
         id={`ReactComponent-Sidelist-Item-${generatedId}`}>
         <IconButton onClick={this.handleUpgrade} className={classes.button}>
           <div className={classes.compositeIconContainer}>
-            <FontAwesomeIcon className={classes.icon} icon={farCalendar} />
+            <FAIcon className={classes.icon} icon={faCalendar} />
             <div className={classNames(classes.remainingText, (formattedDays.length === 2 ? classes.remainingText2Char : classes.remainingText3Char))}>
               {formattedDays}
             </div>

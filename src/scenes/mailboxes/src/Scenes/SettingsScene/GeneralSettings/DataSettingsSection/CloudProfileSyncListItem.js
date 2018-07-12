@@ -3,10 +3,10 @@ import { userStore, userActions } from 'stores/user'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListItem from 'wbui/SettingsListItem'
 import { withStyles } from '@material-ui/core/styles'
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
-import fasCloudDownload from '@fortawesome/fontawesome-pro-solid/faCloudDownload'
-import fasCloudUpload from '@fortawesome/fontawesome-pro-solid/faCloudUpload'
-import fasSync from '@fortawesome/fontawesome-pro-solid/faSync'
+import FAIcon from 'wbui/FAIcon'
+import { faCloudDownload } from '@fortawesome/pro-solid-svg-icons/faCloudDownload'
+import { faCloudUpload } from '@fortawesome/pro-solid-svg-icons/faCloudUpload'
+import { faSync } from '@fortawesome/pro-solid-svg-icons/faSync'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import CheckIcon from '@material-ui/icons/Check'
 import { ListItemText, Button } from '@material-ui/core'
@@ -152,8 +152,8 @@ class CloudProfileSyncListItem extends React.Component {
       if (userProfileUploadInflight) {
         uploadText = 'Upload profile'
         uploadIcon = (
-          <FontAwesomeIcon
-            icon={fasSync}
+          <FAIcon
+            icon={faSync}
             className={classNames(classes.icon, classes.iconProgress)}
             spin />
         )
@@ -175,8 +175,8 @@ class CloudProfileSyncListItem extends React.Component {
     } else {
       uploadText = 'Upload profile'
       uploadIcon = (
-        <FontAwesomeIcon
-          icon={fasCloudUpload}
+        <FAIcon
+          icon={faCloudUpload}
           className={classes.icon} />
       )
     }
@@ -188,8 +188,8 @@ class CloudProfileSyncListItem extends React.Component {
       if (userProfilesFetchInflight) {
         restoreText = 'Restore profile'
         restoreIcon = (
-          <FontAwesomeIcon
-            icon={fasSync}
+          <FAIcon
+            icon={faSync}
             className={classNames(classes.icon, classes.iconProgress)}
             spin />
         )
@@ -197,8 +197,8 @@ class CloudProfileSyncListItem extends React.Component {
         if (userProfilesFetchSuccess) {
           restoreText = 'Restore profile'
           restoreIcon = (
-            <FontAwesomeIcon
-              icon={fasCloudDownload}
+            <FAIcon
+              icon={faCloudDownload}
               className={classes.icon} />
           )
         } else {
@@ -212,8 +212,8 @@ class CloudProfileSyncListItem extends React.Component {
     } else {
       restoreText = 'Restore profile'
       restoreIcon = (
-        <FontAwesomeIcon
-          icon={fasCloudDownload}
+        <FAIcon
+          icon={faCloudDownload}
           className={classes.icon} />
       )
     }

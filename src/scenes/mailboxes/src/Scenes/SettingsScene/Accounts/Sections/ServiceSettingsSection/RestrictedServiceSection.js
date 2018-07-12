@@ -3,8 +3,8 @@ import React from 'react'
 import {Button} from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
-import fasGem from '@fortawesome/fontawesome-pro-solid/faGem'
+import FAIcon from 'wbui/FAIcon'
+import { faGem } from '@fortawesome/pro-solid-svg-icons/faGem'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const styles = {
@@ -53,7 +53,7 @@ class RestrictedServiceSection extends React.Component {
         </p>
         <div>
           <Button variant='raised' color='primary' onClick={() => { window.location.hash = '/pro' }}>
-            <FontAwesomeIcon icon={fasGem} className={classes.proIcon} />
+            <FAIcon icon={faGem} className={classes.proIcon} />
             Purchase Wavebox
           </Button>
         </div>

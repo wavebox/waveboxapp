@@ -3,8 +3,8 @@ import SidelistControl from './SidelistControl'
 import { TOUR_STEPS } from 'stores/settings/Tour'
 import amber from '@material-ui/core/colors/amber'
 import { withStyles } from '@material-ui/core/styles'
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
-import farMagic from '@fortawesome/fontawesome-pro-regular/faMagic'
+import FAIcon from 'wbui/FAIcon'
+import { faMagic } from '@fortawesome/pro-regular-svg-icons/faMagic'
 
 const styles = {
   icon: {
@@ -40,7 +40,7 @@ class SidelistControlWizard extends React.Component {
             common Wavebox Settings with the Setup Wizard
           </div>
         )}
-        icon={(<FontAwesomeIcon className={classes.icon} icon={farMagic} />)} />
+        icon={(<FAIcon className={classes.icon} icon={faMagic} />)} />
     )
   }
 }
