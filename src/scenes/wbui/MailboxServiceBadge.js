@@ -89,9 +89,11 @@ class MailboxServicebadge extends React.Component {
     let colorInverse
     try {
       if (color) {
-        colorInverse = Color(color).light() ? 'black' : 'white'
+        colorInverse = Color(color).isLight() ? 'black' : 'white'
       }
-    } catch (ex) { /* no-op */ }
+    } catch (ex) {
+      colorInverse = 'white'
+    }
 
     let badgeContent
     if (isAuthInvalid) {

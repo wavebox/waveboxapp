@@ -63,7 +63,7 @@ class MailboxBadge extends React.Component {
     const badgeColor = mailbox.badgeColor
     let inverseBadgeColor
     try {
-      inverseBadgeColor = badgeColor ? Color(badgeColor).light() ? 'black' : 'white' : undefined
+      inverseBadgeColor = badgeColor ? Color(badgeColor).isLight() ? 'black' : 'white' : undefined
     } catch (ex) {
       inverseBadgeColor = 'white'
     }

@@ -25,7 +25,7 @@ export default class ColorPickerButton extends React.Component {
     try {
       if (!col) {
         return {}
-      } else if (Color(col).light()) {
+      } else if (Color(col).isLight()) {
         return {
           color: 'black',
           backgroundColor: col
