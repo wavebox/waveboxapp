@@ -123,6 +123,18 @@ class MigratingStorageBucket {
     } catch (ex) {}
     this[privData] = undefined
   }
+
+  /* ****************************************************************************/
+  // Import/Export
+  /* ****************************************************************************/
+
+  /**
+  * Writes the import data to disk that will be loaded next run
+  * @param data: the data to write
+  */
+  writeImportDataSync (data) {
+    fs.writeFileSync(this[privPath], JSON.stringify(data))
+  }
 }
 
 export default MigratingStorageBucket

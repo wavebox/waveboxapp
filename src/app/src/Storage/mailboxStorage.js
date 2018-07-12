@@ -96,7 +96,6 @@ const CLASSIC_MAILBOX_KEY_TO_AUTH = {
   refreshToken: [new Set(['GOOGLE', 'MICROSOFT']), 'refreshToken'],
   accessToken: [new Set(['GOOGLE', 'MICROSOFT']), 'accessToken'],
   authTime: [new Set(['GOOGLE', 'MICROSOFT']), 'authTime'],
-  accessMode: [new Set(['MICROSOFT']), 'accessMode'],
   authProtocolVersion: [new Set(['MICROSOFT']), 'authProtocolVersion']
 }
 const CLASSIC_MAILBOX_KEY_TO_SERVICE = {
@@ -151,7 +150,8 @@ const CLASSIC_MAILBOX_KEY_DEPRICATED = new Set([
   'hasAuth', // Inconsistent across classic types
   'pageThemeColor', // Generic
   'pageTitle', // Generic
-  'ACCESS_MODES' // Microsoft
+  'ACCESS_MODES', // Microsoft
+  'accessMode' // Microsoft
 ])
 const CLASSIC_MAILBOX_KEY_SKIP = new Set([
   'userDisplayName', // Container
@@ -211,7 +211,7 @@ const CLASSIC_SERVICE_KEY_SKIP = { // keys we're just not checking
   'humanizedLogos': true,
   'humanizedTypeShort': true,
   'unreadCountUpdateTime': 'GOOGLE:COMMUNICATION',
-  'url': 'SLACK:DEFAULT'
+  'url': true // Slack & Office365 work slightly differently now meaning .url is different
 }
 
 class MailboxStorageBucket extends MigratingStorageBucket {
@@ -434,7 +434,7 @@ class MailboxStorageBucket extends MigratingStorageBucket {
         hasAuth: !!mailbox.auth,
         authData: {
           ...mailbox.auth,
-          accessMode: mailbox.accessMode,
+          isPersonalAccount: mailbox.accessMode === 'OUTLOOK',
           driveUrl: (storageService || {}).driveUrl
         }
       }))

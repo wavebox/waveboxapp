@@ -87,7 +87,6 @@ export default class SlackServiceWebView extends React.Component {
   handleOpenItem = (evt) => {
     if (evt.serviceId === this.props.serviceId) {
       const { authTeamId, url } = this.state
-
       if (evt.data.launchUri) {
         this.refs[REF].executeJavaScript(`TS.client.handleDeepLink('${evt.data.launchUri}');`)
       } else if (evt.data.channelId) {
