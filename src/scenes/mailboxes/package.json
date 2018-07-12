@@ -12,8 +12,9 @@
     "@fortawesome/fontawesome-free-brands": "5.0.13",
     "@fortawesome/fontawesome-free-regular": "5.0.13",
     "@fortawesome/fontawesome-free-solid": "5.0.13",
-    "@fortawesome/react-fontawesome": "0.0.20",
-    "@material-ui/core": "1.2.1",
+    "@fortawesome/fontawesome-svg-core": "1.2.0",
+    "@fortawesome/react-fontawesome": "0.1.0",
+    "@material-ui/core": "1.3.1",
     "@material-ui/icons": "1.1.0",
     "addressparser": "1.0.1",
     "alt": "0.18.6",
@@ -29,7 +30,7 @@
     "node-emoji": "1.8.1",
     "phoenix": "1.3.0",
     "pluralize": "7.0.0",
-    "prop-types": "15.6.1",
+    "prop-types": "15.6.2",
     "qs": "6.5.2",
     "querystring": "0.2.0",
     "react": "16.4.1",
@@ -47,7 +48,7 @@
     "react-timer-mixin": "0.13.3",
     "semver": "5.5.0",
     "string-hash": "1.1.3",
-    "uuid": "3.2.1",
+    "uuid": "3.3.2",
     "valid-url": "1.0.9"
   },
   "optionalDependencies": {
@@ -57,7 +58,7 @@
   },
   "devDependencies": {
     "standard": "11.0.1",
-    "babel-eslint": "8.2.3",
+    "babel-eslint": "8.2.5",
     "babel-plugin-transform-class-properties": "6.24.1"
   },
   "standard": {

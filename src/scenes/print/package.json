@@ -6,11 +6,11 @@
   "description": "Printer UI for Wavebox",
   "dependencies": {
     "pdfjs-dist": "2.0.305",
-    "uuid": "3.2.1"
+    "uuid": "3.3.2"
   },
   "devDependencies": {
     "standard": "11.0.1",
-    "babel-eslint": "8.2.3",
+    "babel-eslint": "8.2.5",
     "babel-plugin-transform-class-properties": "6.24.1"
   },
   "standard": {
