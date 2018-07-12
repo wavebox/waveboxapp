@@ -57,8 +57,8 @@ class MicrosoftMailService extends MicrosoftService {
   // Properties: Behaviour
   /* **************************************************************************/
 
-  get outlookUrl () { return 'https://outlook.live.com/owa/?authRedirect=true&nlp=1' }
-  get o365Url () { return 'https://outlook.office365.com/owa/?authRedirect=true&nlp=1' }
+  get personalUrl () { return 'https://outlook.live.com/owa/?authRedirect=true&nlp=1' }
+  get corporateUrl () { return 'https://outlook.office365.com/owa/?authRedirect=true&nlp=1' }
 
   /* **************************************************************************/
   // Properties : Messages & unread info

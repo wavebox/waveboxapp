@@ -36,6 +36,17 @@ class MicrosoftMailServiceReducer extends ServiceReducer {
       serviceAvatarURL: avatarUrl
     })
   }
+
+  /**
+  * Sets the unread mode
+  * @param service: the service to update
+  * @param unreadMode: the new unread mode
+  */
+  static setUnreadMode (service, unreadMode) {
+    if (service.unreadMode !== unreadMode) {
+      return service.changeData({ unreadMode: unreadMode })
+    }
+  }
 }
 
 export default MicrosoftMailServiceReducer

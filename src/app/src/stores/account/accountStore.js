@@ -314,7 +314,14 @@ class AccountStore extends CoreAccountStore {
       })
 
       if (wasActive) {
-        this.saveActiveServiceId(null)
+        const nextServiceId = this.firstServiceId()
+        if (nextServiceId) {
+          this.clearServiceSleep(nextServiceId)
+          this.saveActiveServiceId(nextServiceId)
+          actions.reduceServiceData.defer(nextServiceId, ServiceDataReducer.mergeChangesetOnActive)
+        } else {
+          this.saveActiveServiceId(null)
+        }
       }
     } else {
       this.preventDefault()
@@ -435,7 +442,14 @@ class AccountStore extends CoreAccountStore {
     this.saveServiceData(id, null)
 
     if (wasActive) {
-      this.saveActiveServiceId(((mailbox || {}).allServices || [])[0] || null)
+      const nextServiceId = ((mailbox || {}).allServices || [])[0] || this.firstServiceId()
+      if (nextServiceId) {
+        this.clearServiceSleep(nextServiceId)
+        this.saveActiveServiceId(nextServiceId)
+        actions.reduceServiceData.defer(nextServiceId, ServiceDataReducer.mergeChangesetOnActive)
+      } else {
+        this.saveActiveServiceId(null)
+      }
     }
   }
 
@@ -745,7 +759,9 @@ class AccountStore extends CoreAccountStore {
   }
 
   handleChangeActiveService ({ id }) {
-    if (this.activeServiceId() === id) { this.preventDefault(); return }
+    // Run this check on the raw value in case it's inferred in this.activeServiceId() and we end up with a non-change
+    if (this._activeServiceId_ === id) { this.preventDefault(); return }
+
     if (!this.hasService(id)) { this.preventDefault(); return }
 
     // Update sleep

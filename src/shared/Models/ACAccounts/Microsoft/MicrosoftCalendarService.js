@@ -35,14 +35,14 @@ class MicrosoftCalendarService extends MicrosoftService {
   get supportsGuestNotifications () { return false }
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
-  get supportedAuthNamespace () { return undefined }
+  get supportedAuthNamespace () { return 'com.microsoft' }
 
   /* **************************************************************************/
   // Properties: Behaviour
   /* **************************************************************************/
 
-  get outlookUrl () { return 'https://outlook.com/owa/?path=/calendar' }
-  get o365Url () { return 'https://outlook.office365.com/owa/?path=/calendar' }
+  get personalUrl () { return 'https://outlook.com/owa/?path=/calendar' }
+  get corporateUrl () { return 'https://outlook.office365.com/owa/?path=/calendar' }
 }
 
 export default MicrosoftCalendarService

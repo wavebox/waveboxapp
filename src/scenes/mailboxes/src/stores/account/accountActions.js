@@ -65,7 +65,7 @@ class AccountActions extends RendererAccountActions {
       if (accessMode === 'OUTLOOK') {
         return { templateType: ACCOUNT_TEMPLATE_TYPES.OUTLOOK, accessMode: 'OUTLOOK' }
       } else if (accessMode === 'OFFICE365') {
-        return { templateType: ACCOUNT_TEMPLATE_TYPES.OUTLOOK, accessMode: 'OFFICE365' }
+        return { templateType: ACCOUNT_TEMPLATE_TYPES.OFFICE365, accessMode: 'OFFICE365' }
       }
     }
   }
@@ -176,10 +176,18 @@ class AccountActions extends RendererAccountActions {
 
   /**
   * Triggers a full sync on a service
-  * @param id: the id of the mailbox
+  * @param id: the id of the service
   */
   fullSyncService (serviceId) {
     return { serviceId: serviceId }
+  }
+
+  /**
+  * Triggers a full sync on a mailbox
+  * @param id: the id of the mailbox
+  */
+  fullSyncMailbox (mailboxId) {
+    return { mailboxId: mailboxId }
   }
 
   /* **************************************************************************/

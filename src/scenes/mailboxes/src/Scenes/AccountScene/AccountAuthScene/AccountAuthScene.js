@@ -12,6 +12,7 @@ import GoogleSigninButton from 'wbui/SigninButtons/GoogleSigninButton'
 import MicrosoftSigninButton from 'wbui/SigninButtons/MicrosoftSigninButton'
 import GoogleAuth from 'shared/Models/ACAccounts/Google/GoogleAuth'
 import MicrosoftAuth from 'shared/Models/ACAccounts/Microsoft/MicrosoftAuth'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 
 const styles = {
   // Dialog
@@ -162,15 +163,47 @@ class AccountAuthScene extends React.Component {
   * @return the manifest to provide to the state
   */
   buildAuthManifest (accountState) {
-    return accountState
+    // The whole way this picks out services and auths is pretty poor. Look to refactor this
+    // in the future
+    const auths = accountState
       .allServicesUnordered()
       .reduce((acc, service) => {
         const mailbox = accountState.getMailbox(service.parentId)
         const auth = accountState.getMailboxAuthForServiceId(service.id)
         if (!mailbox || !auth) { return acc }
         if (auth.namespace !== GoogleAuth.namespace && auth.namespace !== MicrosoftAuth.namespace) { return acc }
-        return acc.concat({ auth, service, mailbox })
-      }, [])
+
+        if (acc[auth.id]) {
+          acc[auth.id].services.push(service)
+        } else {
+          acc[auth.id] = {
+            auth: auth,
+            mailbox: mailbox,
+            services: [ service ]
+          }
+        }
+
+        return acc
+      }, {})
+
+    return Object.keys(auths)
+      .map((authId) => {
+        const rec = auths[authId]
+        const likelyService = rec.services.find((service) => {
+          if (rec.auth.namespace === GoogleAuth.namespace) {
+            return service.type === SERVICE_TYPES.GOOGLE_MAIL || service.type === SERVICE_TYPES.GOOGLE_INBOX
+          } else if (rec.auth.namespace === MicrosoftAuth.namespace) {
+            return service.type === SERVICE_TYPES.MICROSOFT_MAIL
+          } else {
+            return false
+          }
+        })
+        return {
+          auth: rec.auth,
+          mailbox: rec.mailbox,
+          service: likelyService || rec.services[0]
+        }
+      })
   }
 
   /* **************************************************************************/

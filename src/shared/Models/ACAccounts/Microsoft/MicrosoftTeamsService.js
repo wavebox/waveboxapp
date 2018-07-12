@@ -42,8 +42,8 @@ class MicrosoftTeamsService extends MicrosoftService {
   // Properties: Behaviour
   /* **************************************************************************/
 
-  get outlookUrl () { return this.url }
-  get o365Url () { return this.url }
+  get personalUrl () { return this.url }
+  get corporateUrl () { return this.url }
   get url () { return 'https://teams.microsoft.com' }
 }
 

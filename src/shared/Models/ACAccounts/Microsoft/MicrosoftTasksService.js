@@ -35,14 +35,14 @@ class MicrosoftTasksService extends MicrosoftService {
   get supportsGuestNotifications () { return false }
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
-  get supportedAuthNamespace () { return undefined }
+  get supportedAuthNamespace () { return 'com.microsoft' }
 
   /* **************************************************************************/
   // Properties: Behaviour
   /* **************************************************************************/
 
-  get outlookUrl () { return 'https://outlook.com/owa/?path=/tasks' }
-  get o365Url () { return 'https://outlook.office365.com/owa/?path=/tasks' }
+  get personalUrl () { return 'https://outlook.com/owa/?path=/tasks' }
+  get corporateUrl () { return 'https://outlook.office365.com/owa/?path=/tasks' }
 }
 
 export default MicrosoftTasksService

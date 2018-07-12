@@ -1,25 +1,14 @@
 import CoreACService from '../CoreACService'
 import SubclassNotImplementedError from '../SubclassNotImplementedError'
 
-const ACCESS_MODES = Object.freeze({
-  OUTLOOK: 'OUTLOOK',
-  OFFICE365: 'OFFICE365'
-})
-
 class MicrosoftService extends CoreACService {
-  /* **************************************************************************/
-  // Class: Types
-  /* **************************************************************************/
-
-  static get ACCESS_MODES () { return ACCESS_MODES }
-
   /* **************************************************************************/
   // Properties: Behaviour
   /* **************************************************************************/
 
-  get url () { return this.outlookUrl }
-  get outlookUrl () { SubclassNotImplementedError('MicrosoftService.outlookUrl') }
-  get o365Url () { SubclassNotImplementedError('MicrosoftService.o365Url') }
+  get url () { return this.personalUrl }
+  get personalUrl () { SubclassNotImplementedError('MicrosoftService.personalUrl') }
+  get corporateUrl () { SubclassNotImplementedError('MicrosoftService.corporateUrl') }
   get restoreLastUrl () { return false }
 
   /**
@@ -27,10 +16,10 @@ class MicrosoftService extends CoreACService {
   */
   getUrlWithData (serviceData, authData) {
     if (authData) {
-      if (authData.accessMode === this.constructor.ACCESS_MODES.OFFICE365) {
-        return this.o365Url
-      } else if (authData.accessMode === this.constructor.ACCESS_MODES.OUTLOOK) {
-        return this.outlookUrl
+      if (authData.isPersonalAccount) {
+        return this.personalUrl
+      } else {
+        return this.corporateUrl
       }
     }
 

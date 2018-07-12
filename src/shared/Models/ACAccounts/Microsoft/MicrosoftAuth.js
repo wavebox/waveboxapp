@@ -17,8 +17,13 @@ class MicrosoftAuth extends CoreACAuth {
   get refreshToken () { return this.authData.refresh_token }
   get authExpiryTime () { return (this.authData.date || 0) + ((this.authData.expires_in || 0) * 999) }
   get authProtocolVersion () { return this.authData.protocolVersion || 1 }
-  get accessMode () { return this.authData.accessMode }
-  get driveUrl () { return this.authData.driveUrl }
+  get isPersonalAccount () { return this.authData.isPersonalAccount === true }
+  get driveUrl () { return this._value_('driveUrl', undefined) }
+  get humanizedNamespace () {
+    return this.isPersonalAccount
+      ? `${this.constructor.humanizedNamespace} (Personal)`
+      : `${this.constructor.humanizedNamespace} (Corporate)`
+  }
 }
 
 export default MicrosoftAuth

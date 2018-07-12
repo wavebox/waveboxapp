@@ -129,7 +129,6 @@ class ServiceTooltip extends React.Component {
       hasMembers
     } = this.state
     if (!hasMembers) { return false }
-    if (!displayName) { return false }
 
     let unreadContent
     if (isRestricted) {
@@ -161,7 +160,11 @@ class ServiceTooltip extends React.Component {
     return (
       <ReactPortalTooltip {...passProps} style={basicPopoverStyles400w}>
         <div>
-          {`${humanizedServiceType} : ${displayName}`}
+          {humanizedServiceType === displayName ? (
+            humanizedServiceType
+          ) : (
+            `${humanizedServiceType} : ${displayName}`
+          )}
         </div>
         {unreadContent ? (
           <div>

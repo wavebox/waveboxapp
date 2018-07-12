@@ -35,14 +35,14 @@ class MicrosoftContactsService extends MicrosoftService {
   get supportsGuestNotifications () { return false }
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
-  get supportedAuthNamespace () { return undefined }
+  get supportedAuthNamespace () { return 'com.microsoft' }
 
   /* **************************************************************************/
   // Properties: Behaviour
   /* **************************************************************************/
 
-  get outlookUrl () { return 'https://outlook.com/owa/?path=/people' }
-  get o365Url () { return 'https://outlook.office365.com/owa/?path=/people' }
+  get personalUrl () { return 'https://outlook.com/owa/?path=/people' }
+  get corporateUrl () { return 'https://outlook.office365.com/owa/?path=/people' }
 }
 
 export default MicrosoftContactsService

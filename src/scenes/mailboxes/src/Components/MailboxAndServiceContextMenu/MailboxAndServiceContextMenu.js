@@ -173,7 +173,11 @@ export default class MailboxAndServiceContextMenu extends React.Component {
   * @param evt: the event that fired
   */
   handleResync = (evt) => {
-    accountActions.fullSyncService(this.props.serviceId)
+    if (this.props.serviceId) {
+      accountActions.fullSyncService(this.props.serviceId)
+    } else {
+      accountActions.fullSyncMailbox(this.props.mailboxId)
+    }
     this.closePopover(evt)
   }
 
@@ -319,12 +323,10 @@ export default class MailboxAndServiceContextMenu extends React.Component {
             <ListItemText inset primary='Reload' />
           </MenuItem>
         ) : undefined}
-        {service ? (
-          <MenuItem onClick={this.handleResync}>
-            <ListItemIcon><SyncIcon /></ListItemIcon>
-            <ListItemText inset primary='Resync' />
-          </MenuItem>
-        ) : undefined}
+        <MenuItem onClick={this.handleResync}>
+          <ListItemIcon><SyncIcon /></ListItemIcon>
+          <ListItemText inset primary='Resync' />
+        </MenuItem>
         {service && service.supportedAuthNamespace ? (
           <MenuItem onClick={this.handleReauthenticate}>
             <ListItemIcon>
@@ -338,7 +340,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
           </MenuItem>
         ) : undefined}
 
-        {service ? (<Divider />) : undefined}
+        <Divider />
 
         {/* Settings */}
         <MenuItem onClick={this.handleAccountSettings}>

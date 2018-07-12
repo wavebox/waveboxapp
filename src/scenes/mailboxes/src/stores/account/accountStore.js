@@ -142,6 +142,7 @@ class AccountStore extends RendererAccountStore {
 
       // Connection & Sync
       handleFullSyncService: actions.FULL_SYNC_SERVICE,
+      handleFullSyncMailbox: actions.FULL_SYNC_MAILBOX,
 
       // Snapshots
       handleSetServiceSnapshot: actions.SET_SERVICE_SNAPSHOT,
@@ -796,13 +797,7 @@ class AccountStore extends RendererAccountStore {
     this.preventDefault()
     Promise.resolve()
       .then(() => MicrosoftHTTP.upgradeAuthCodeToPermenant(auth.temporaryCode, auth.codeRedirectUri, 2))
-      .then((permenantAuth) => {
-        const authData = {
-          ...permenantAuth,
-          accessMode: context.template.accessMode,
-          protocolVersion: 2
-        }
-
+      .then((authData) => {
         if (mode === AUTH_MODES.TEMPLATE_CREATE) {
           // Create the auth
           actions.createAuth.defer(
@@ -861,7 +856,7 @@ class AccountStore extends RendererAccountStore {
           }
         })
         break
-      case SERVICE_TYPES.MICROSOFT:
+      case SERVICE_TYPES.MICROSOFT_MAIL:
         window.location.hash = '/mailbox/reauthenticating'
         ipcRenderer.send(WB_AUTH_MICROSOFT, {
           partitionId: service.partitionId,
@@ -933,6 +928,16 @@ class AccountStore extends RendererAccountStore {
         microsoftActions.syncServiceMail.defer(serviceId)
         break
     }
+  }
+
+  handleFullSyncMailbox ({ mailboxId }) {
+    this.preventDefault()
+    const mailbox = this.getMailbox(mailboxId)
+    if (!mailbox) { return }
+
+    mailbox.allServices.forEach((serviceId) => {
+      actions.fullSyncService.defer(serviceId)
+    })
   }
 
   /* **************************************************************************/

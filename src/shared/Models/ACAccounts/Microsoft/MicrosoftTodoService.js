@@ -36,7 +36,7 @@ class MicrosoftTodoService extends MicrosoftService {
   get supportsGuestNotifications () { return false }
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
-  get supportedAuthNamespace () { return undefined }
+  get supportedAuthNamespace () { return 'com.microsoft' }
 
   /* **************************************************************************/
   // Properties: Behaviour
@@ -46,8 +46,8 @@ class MicrosoftTodoService extends MicrosoftService {
   // placing an asterisk at the end of the url works around this.
   // In addition to this "todo."" only seems to work for outlook and "to-do." only
   // seems to work for O365
-  get outlookUrl () { return 'https://todo.microsoft.com/*' }
-  get o365Url () { return 'https://to-do.microsoft.com/*' }
+  get personalUrl () { return 'https://todo.microsoft.com/*' }
+  get corporateUrl () { return 'https://to-do.microsoft.com/*' }
 }
 
 export default MicrosoftTodoService

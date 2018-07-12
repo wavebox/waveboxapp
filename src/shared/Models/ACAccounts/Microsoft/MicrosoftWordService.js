@@ -41,8 +41,8 @@ class MicrosoftWordService extends MicrosoftService {
   // Properties: Behaviour
   /* **************************************************************************/
 
-  get outlookUrl () { return this.url }
-  get o365Url () { return this.url }
+  get personalUrl () { return this.url }
+  get corporateUrl () { return this.url }
   get url () { return 'https://office.live.com/start/Word.aspx' }
 }
 

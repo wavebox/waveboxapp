@@ -202,7 +202,7 @@ class MicrosoftStore {
             )
 
             // Office365 is handled differently below...
-            if (serviceAuth.accessMode === MicrosoftMailService.ACCESS_MODES.OUTLOOK) {
+            if (serviceAuth.isPersonalAccount) {
               accountActions.reduceService(
                 serviceId,
                 MicrosoftMailServiceReducer.setServiceAvatarUrl,
@@ -213,7 +213,7 @@ class MicrosoftStore {
           })
       })
       .then((accessToken) => { // Step 2: Sync drive info
-        if (serviceAuth.accessMode === MicrosoftMailService.ACCESS_MODES.OFFICE365) {
+        if (!serviceAuth.isPersonalAccount) {
           return Promise.resolve()
             .then(() => MicrosoftHTTP.fetchOffice365DriveUrl(accessToken))
             .then((driveUrl) => {
@@ -229,7 +229,7 @@ class MicrosoftStore {
         }
       })
       .then((accessToken) => { // Step 3: Sync avatar info
-        if (serviceAuth.accessMode === MicrosoftMailService.ACCESS_MODES.OFFICE365) {
+        if (!serviceAuth.isPersonalAccount) {
           return Promise.resolve()
             .then(() => MicrosoftHTTP.fetchOffice365Avatar(accessToken))
             .then((b64Image) => {

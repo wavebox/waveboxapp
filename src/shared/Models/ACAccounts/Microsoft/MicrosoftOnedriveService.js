@@ -35,14 +35,14 @@ class MicrosoftOnedriveService extends MicrosoftService {
   get supportsGuestNotifications () { return false }
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return false }
-  get supportedAuthNamespace () { return undefined }
+  get supportedAuthNamespace () { return 'com.microsoft' }
 
   /* **************************************************************************/
   // Properties: Behaviour
   /* **************************************************************************/
 
-  get outlookUrl () { return 'https://onedrive.live.com/' }
-  get o365Url () { return 'https://onedrive.live.com/' }
+  get personalUrl () { return 'https://onedrive.live.com/' }
+  get corporateUrl () { return 'https://onedrive.live.com/' }
 
   /**
   * @override

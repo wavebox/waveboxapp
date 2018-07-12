@@ -49,7 +49,38 @@ class MicrosoftHTTP {
       }))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
-      .then((res) => Object.assign({ date: new Date().getTime() }, res))
+      .then((res) => {
+        return {
+          date: new Date().getTime(),
+          protocolVersion: 2,
+          ...res
+        }
+      })
+      .then((auth) => {
+        // Find out which type of account this is
+        return Promise.resolve()
+          .then(() => window.fetch('https://graph.microsoft.com/v1.0/organization', {
+            method: 'get',
+            headers: {
+              'Accept': 'application/json',
+              'User-Agent': 'wavebox',
+              'Authorization': `Bearer ${auth.access_token}`
+            }
+          }))
+          .then((res) => {
+            if (res.ok) {
+              return res.json().then((data) => {
+                if (data.value && data.value.length) {
+                  return Promise.resolve({ ...auth, isPersonalAccount: false })
+                } else {
+                  return Promise.resolve({ ...auth, isPersonalAccount: true })
+                }
+              })
+            } else {
+              return Promise.resolve({ ...auth, isPersonalAccount: true })
+            }
+          })
+      })
   }
 
   /**
@@ -388,16 +419,22 @@ class MicrosoftHTTP {
             .then(() => res.blob())
             .then((blob) => {
               return new Promise((resolve, reject) => {
+                const objectURL = window.URL.createObjectURL(blob)
                 const loader = new window.Image()
                 loader.onload = () => {
                   const draw = document.createElement('canvas')
                   draw.width = loader.width
                   draw.height = loader.height
                   draw.getContext('2d').drawImage(loader, 0, 0, loader.width, loader.height)
-                  resolve(draw.toDataURL())
+                  const dataURL = draw.toDataURL()
+                  window.URL.revokeObjectURL(objectURL)
+                  resolve(dataURL)
                 }
-                loader.onerror = (err) => { reject(err) }
-                loader.src = window.URL.createObjectURL(blob)
+                loader.onerror = (err) => {
+                  window.URL.revokeObjectURL(objectURL)
+                  reject(err)
+                }
+                loader.src = objectURL
               })
             })
         } else if (res.status === 404) {
