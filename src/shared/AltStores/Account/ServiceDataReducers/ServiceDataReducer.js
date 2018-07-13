@@ -87,7 +87,7 @@ class ServiceDataReducer {
   */
   static setWbgapiHasUnreadActivity (service, serviceData, hasActivity) {
     if (!service.supportsWBGAPI) { return undefined }
-    return service.changeData({ '::wbgapi:hasUnreadActivity': hasActivity })
+    return serviceData.changeData({ '::wbgapi:hasUnreadActivity': hasActivity })
   }
 
   /**
@@ -98,7 +98,7 @@ class ServiceDataReducer {
   */
   static setWbgapiUnreadCount (service, serviceData, count) {
     if (!service.supportsWBGAPI) { return undefined }
-    return service.changeData({ '::wbgapi:unreadCount': count })
+    return serviceData.changeData({ '::wbgapi:unreadCount': count })
   }
 
   /**
@@ -109,7 +109,7 @@ class ServiceDataReducer {
   */
   static setWbgapiTrayMessages (service, serviceData, messages) {
     if (!service.supportsWBGAPI) { return undefined }
-    return service.changeData({ '::wbgapi:trayMessages': messages })
+    return serviceData.changeData({ '::wbgapi:trayMessages': messages })
   }
 }
 
