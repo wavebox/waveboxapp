@@ -247,6 +247,9 @@ class AccountStore extends CoreAccountStore {
     if (serviceId !== this._activeServiceId_) {
       this._activeServiceId_ = serviceId
       this.dispatchToRemote('remoteSetActiveService', [serviceId])
+      if (serviceId) {
+        actions.reduceServiceData.defer(serviceId, ServiceDataReducer.mergeChangesetOnActive)
+      }
     }
   }
 
@@ -318,7 +321,6 @@ class AccountStore extends CoreAccountStore {
         if (nextServiceId) {
           this.clearServiceSleep(nextServiceId)
           this.saveActiveServiceId(nextServiceId)
-          actions.reduceServiceData.defer(nextServiceId, ServiceDataReducer.mergeChangesetOnActive)
         } else {
           this.saveActiveServiceId(null)
         }
@@ -446,7 +448,6 @@ class AccountStore extends CoreAccountStore {
       if (nextServiceId) {
         this.clearServiceSleep(nextServiceId)
         this.saveActiveServiceId(nextServiceId)
-        actions.reduceServiceData.defer(nextServiceId, ServiceDataReducer.mergeChangesetOnActive)
       } else {
         this.saveActiveServiceId(null)
       }
@@ -771,7 +772,7 @@ class AccountStore extends CoreAccountStore {
       // this normally happens when the app starts and we don't have an active service
       const isSleeping = this.isServiceSleeping(prevActiveId)
       this._sleepingServices_.set(prevActiveId, isSleeping)
-      this.dispatchToRemote('remoteSetSleep', [id, false])
+      this.dispatchToRemote('remoteSetSleep', [prevActiveId, isSleeping])
 
       // Setup sleep for nextime
       this.scheduleServiceSleep(prevActiveId)
@@ -780,7 +781,6 @@ class AccountStore extends CoreAccountStore {
     // Change
     this.clearServiceSleep(id)
     this.saveActiveServiceId(id)
-    actions.reduceServiceData.defer(id, ServiceDataReducer.mergeChangesetOnActive)
   }
 
   handleChangeActiveServiceIndex ({ index }) {
