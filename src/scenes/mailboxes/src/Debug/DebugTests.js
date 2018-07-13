@@ -9,9 +9,9 @@ class DebugTests {
   */
   fetchGoogleUnreadMessageLabels () {
     // Always late require to prevent cyclic references
-    const accountStore = require('stores/account')
-    const GoogleHTTP = require('stores/google/GoogleHTTP')
-    const SERVICE_TYPES = require('shared/Models/ACAccounts/ServiceTypes')
+    const accountStore = require('stores/account/accountStore').default
+    const GoogleHTTP = require('stores/google/GoogleHTTP').default
+    const SERVICE_TYPES = require('shared/Models/ACAccounts/ServiceTypes').default
 
     const sig = '[TEST:GOOGLE_LABELS]'
     console.log(`${sig} start`)
@@ -65,8 +65,8 @@ class DebugTests {
   */
   clearAndDisableSlackLocalStorage () {
     // Always late require to prevent cyclic references
-    const accountStore = require('stores/account')
-    const SERVICE_TYPES = require('shared/Models/ACAccounts/ServiceTypes')
+    const accountStore = require('stores/account/accountStore').default
+    const SERVICE_TYPES = require('shared/Models/ACAccounts/ServiceTypes').default
 
     const sig = '[TEST:SLACK_LOCALSTORAGE]'
     console.log(`${sig} start`)
@@ -139,14 +139,14 @@ class DebugTests {
   */
   fetchMicrosoftUnreadMessageList () {
     // Always late require to prevent cyclic references
-    const accountStore = require('stores/account')
-    const MicrosoftHTTP = require('stores/microsoft/MicrosoftHTTP')
-    const SERVICE_TYPES = require('shared/Models/ACAccounts/ServiceTypes')
+    const accountStore = require('stores/account/accountStore').default
+    const MicrosoftHTTP = require('stores/microsoft/MicrosoftHTTP').defaut
+    const SERVICE_TYPES = require('shared/Models/ACAccounts/ServiceTypes').default
 
     const sig = '[TEST:MICROSOFT_MESSAGES]'
     console.log(`${sig} start`)
     const accountState = accountStore.getState()
-    const services = accountState.allServicesOfType(SERVICE_TYPES.MICROSOFT)
+    const services = accountState.allServicesOfType(SERVICE_TYPES.MICROSOFT_MAIL)
     console.log(`${sig} found ${services.length} Microsoft Mailboxes`)
 
     services.reduce((acc, service) => {
