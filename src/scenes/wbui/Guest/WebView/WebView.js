@@ -12,8 +12,8 @@ import {
   SUPPORTED_ATTRS,
   WEBVIEW_METHODS
 } from './WebViewPropsAttrs'
-const WARN_CAPTURE_PAGE_TIMEOUT = 1500
-const MAX_CAPTURE_PAGE_TIMEOUT = 2500
+const WARN_CAPTURE_PAGE_TIMEOUT = 3000
+const MAX_CAPTURE_PAGE_TIMEOUT = 4000
 const SEND_RESPOND_PREFIX = '__SEND_RESPOND__'
 const INTERCEPTED_WEBVIEW_EVENTS = new Set(['ipc-message', 'console-message'])
 
@@ -290,6 +290,11 @@ class WebView extends React.Component {
         )
       }, WARN_CAPTURE_PAGE_TIMEOUT)
       const timeout = setTimeout(() => {
+        console.error(
+          `Calling webview.capturePage is taking more than ${MAX_CAPTURE_PAGE_TIMEOUT}ms.`,
+          `This call has been aborted as there is a risk the api is never going to return.`,
+          node
+        )
         arg2(null, new Error(`Failed to capture. Took more that ${MAX_CAPTURE_PAGE_TIMEOUT}`))
       }, MAX_CAPTURE_PAGE_TIMEOUT)
 
