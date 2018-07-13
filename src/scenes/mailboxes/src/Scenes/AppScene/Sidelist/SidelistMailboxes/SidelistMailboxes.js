@@ -19,6 +19,30 @@ const SortableList = SortableContainer(({ mailboxIds }) => {
   )
 })
 
+class SortableRestart extends React.Component {
+  // This is a really terrible fix for https://github.com/clauderic/react-sortable-hoc/issues/305
+  state = { restart: false }
+  componentWillReceiveProps (nextProps) {
+    if (this.props.mailboxIds.length !== nextProps.mailboxIds.length) {
+      this.setState({restart: true})
+      window.requestAnimationFrame(() => { this.setState({restart: false}) })
+    }
+  }
+  render () {
+    if (this.state.restart) {
+      return (
+        <div>
+          {this.props.mailboxIds.map((mailboxId, index) => (
+            <SidelistItemMailbox mailboxId={mailboxId} key={mailboxId} />
+          ))}
+        </div>
+      )
+    } else {
+      return (<SortableList {...this.props} />)
+    }
+  }
+}
+
 const styles = {
   root: {
     '&::-webkit-scrollbar': { display: 'none' }
@@ -68,7 +92,7 @@ class SidelistMailboxes extends React.Component {
 
     return (
       <div {...passProps} className={classNames(classes.root, 'WB-Sidelist-Mailboxes', className)}>
-        <SortableList
+        <SortableRestart
           axis='y'
           distance={20}
           mailboxIds={mailboxIds}

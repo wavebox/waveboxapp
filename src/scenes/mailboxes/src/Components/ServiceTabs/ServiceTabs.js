@@ -49,6 +49,38 @@ const SortableList = SortableContainer((props) => {
   )
 })
 
+class SortableRestart extends React.Component {
+  // This is a really terrible fix for https://github.com/clauderic/react-sortable-hoc/issues/305
+  state = { restart: false }
+  componentWillReceiveProps (nextProps) {
+    if (this.props.serviceIds.length !== nextProps.serviceIds.length) {
+      this.setState({restart: true})
+      window.requestAnimationFrame(() => { this.setState({restart: false}) })
+    }
+  }
+  render () {
+    if (this.state.restart) {
+      const {
+        axis,
+        containerClassName,
+        distance,
+        onSortEnd,
+        serviceIds,
+        ...passProps
+      } = this.props
+      return (
+        <div>
+          {serviceIds.map((serviceId, index) => (
+            <ServiceTab serviceId={serviceId} key={serviceId} {...passProps} />
+          ))}
+        </div>
+      )
+    } else {
+      return (<SortableList {...this.props} />)
+    }
+  }
+}
+
 @withStyles(styles)
 class ServiceTabs extends React.Component {
   /* **************************************************************************/
@@ -152,7 +184,7 @@ class ServiceTabs extends React.Component {
           'WB-ServiceTabs',
           className
         )}>
-        <SortableList
+        <SortableRestart
           axis={ServiceTabTools.uiLocationAxis(uiLocation)}
           containerClassName={classNames(classes.sortableListContainer, classNameAppend)}
           distance={20}
