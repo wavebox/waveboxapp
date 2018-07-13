@@ -884,10 +884,10 @@ class AccountStore extends RendererAccountStore {
         break
       case SERVICE_TYPES.TRELLO:
         window.location.hash = '/mailbox/reauthenticating'
-        ipcRenderer.send(WB_AUTH_SLACK, {
+        ipcRenderer.send(WB_AUTH_TRELLO, {
           partitionId: service.partitionId,
           credentials: Bootstrap.credentials,
-          mode: AUTH_MODES.TRELLO,
+          mode: AUTH_MODES.REAUTHENTICATE,
           context: {
             mailboxId: service.parentId,
             authId: CoreACAuth.compositeId(service.parentId, service.supportedAuthNamespace),
