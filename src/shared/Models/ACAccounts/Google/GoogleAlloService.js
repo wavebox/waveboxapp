@@ -56,7 +56,7 @@ class GoogleAlloService extends CoreACService {
   // Properties: Behaviour
   /* **************************************************************************/
 
-  get url () { return 'https://allo.google.com' }
+  get url () { return 'https://allo.google.com/web' }
 }
 
 export default GoogleAlloService
