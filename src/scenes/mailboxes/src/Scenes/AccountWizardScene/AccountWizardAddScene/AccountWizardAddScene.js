@@ -84,6 +84,7 @@ class AccountWizardAddScene extends React.Component {
   state = (() => {
     const userState = userStore.getState()
     const accountState = accountStore.getState()
+
     return {
       open: true,
       renderWebview: false,
@@ -92,7 +93,7 @@ class AccountWizardAddScene extends React.Component {
         userState.clientId,
         userState.clientToken,
         userState.user.classicAccountTypes,
-        accountState.serviceCount() >= userState.user.accountLimit,
+        accountState.unrestrictedServices().length >= userState.user.accountLimit,
         userState.user.accountLimit)
     }
   })()
@@ -104,7 +105,7 @@ class AccountWizardAddScene extends React.Component {
         userState.clientId,
         userState.clientToken,
         userState.user.classicAccountTypes,
-        accountState.serviceCount() >= userState.user.accountLimit,
+        accountState.unrestrictedServices().length >= userState.user.accountLimit,
         userState.user.accountLimit)
     })
   }
@@ -116,7 +117,7 @@ class AccountWizardAddScene extends React.Component {
         userState.clientId,
         userState.clientToken,
         userState.user.classicAccountTypes,
-        accountState.serviceCount() >= userState.user.accountLimit,
+        accountState.unrestrictedServices().length >= userState.user.accountLimit,
         userState.user.accountLimit)
     })
   }
