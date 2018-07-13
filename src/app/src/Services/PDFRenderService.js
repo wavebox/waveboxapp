@@ -85,9 +85,6 @@ class PDFRenderService {
   _injectPrintButton (wc) {
     wc.executeJavaScript(`
       ;(function () {
-        const toolbar = document.querySelector('#toolbar').shadowRoot
-        if (toolbar.getElementById('print')) { return }
-
         const printButton = document.createElement('paper-icon-button')
         printButton.id = 'print'
         printButton.setAttribute('icon', 'cr:print')
@@ -97,6 +94,7 @@ class PDFRenderService {
           document.title = 'wbaction:print'
         })
 
+        const toolbar = document.querySelector('#toolbar').shadowRoot
         const downloadButton = toolbar.querySelector('#download')
         downloadButton.parentElement.insertBefore(printButton, downloadButton.nextSibling)
       })()
