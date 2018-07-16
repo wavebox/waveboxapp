@@ -79,6 +79,7 @@
     "json-loader": "0.5.7",
     "jsx-loader": "0.13.2",
     "node-abi": "2.4.3",
+    "nyan-progress-webpack-plugin": "1.2.0",
     "progress-bar-webpack-plugin": "1.11.0",
     "style-loader": "0.21.0",
     "uglify-es": "3.3.9",
