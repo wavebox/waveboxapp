@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
+import { accountStore } from 'stores/account'
 import { Avatar, ListItem } from '@material-ui/core'
 import red from '@material-ui/core/colors/red'
 import pink from '@material-ui/core/colors/pink'
@@ -22,6 +23,9 @@ import brown from '@material-ui/core/colors/brown'
 import grey from '@material-ui/core/colors/grey'
 import blueGrey from '@material-ui/core/colors/blueGrey'
 import { withStyles } from '@material-ui/core/styles'
+import ACAvatarCircle from 'wbui/ACAvatarCircle'
+import Resolver from 'Runtime/Resolver'
+import classNames from 'classnames'
 
 const avatarColorPalette = [
   [red[800], red[100]],
@@ -46,12 +50,28 @@ const avatarColorPalette = [
 ]
 
 const styles = {
-  avatar: {
+  avatarContainer: {
+    display: 'block',
+    position: 'relative',
+    width: 60,
+    height: 60,
+    left: -10,
+    top: 5
+  },
+  serviceAvatar: {
+    position: 'absolute',
+    top: 0,
+    left: 0
+  },
+  serviceAvatarNoExtended: {
+    top: 5
+  },
+  extendedAvatar: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
     width: 35,
-    height: 35,
-    alignSelf: 'flex-start',
-    marginRight: 10,
-    marginTop: 5
+    height: 35
   },
   listItem: {
     paddingTop: 8,
@@ -82,6 +102,48 @@ class UnreadMailboxMessageListItem extends React.Component {
   }
 
   /* **************************************************************************/
+  // Component lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    accountStore.listen(this.accountChanged)
+  }
+
+  componentWillUnmount () {
+    accountStore.unlisten(this.accountChanged)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const prevServiceId = ((this.props.message || {}).data || {}).serviceId
+    const nextServiceId = ((nextProps.message || {}).data || {}).serviceId
+    if (prevServiceId !== nextServiceId) {
+      const accountState = accountStore.getState()
+      this.setState({
+        avatar: accountState.getServiceAvatarConfig(nextServiceId)
+      })
+    }
+  }
+
+  /* **************************************************************************/
+  // Data lifecycle
+  /* **************************************************************************/
+
+  state = (() => {
+    const accountState = accountStore.getState()
+    const serviceId = ((this.props.message || {}).data || {}).serviceId
+    return {
+      avatar: accountState.getServiceAvatarConfig(serviceId)
+    }
+  })()
+
+  accountChanged = (accountState) => {
+    const serviceId = ((this.props.message || {}).data || {}).serviceId
+    this.setState({
+      avatar: accountState.getServiceAvatarConfig(serviceId)
+    })
+  }
+
+  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
@@ -96,12 +158,13 @@ class UnreadMailboxMessageListItem extends React.Component {
   * @return jsx or undefined
   */
   renderAvatar (classes, extended) {
+    if (!extended) { return undefined }
     if (extended.optAvatarText) {
       const charCode = extended.optAvatarText.toLowerCase().charCodeAt(0)
       const [backgroundColor, color] = avatarColorPalette[charCode % avatarColorPalette.length]
       return (
         <Avatar
-          className={classes.avatar}
+          className={classes.extendedAvatar}
           style={{ backgroundColor: backgroundColor, color: color }}>
           {extended.optAvatarText}
         </Avatar>
@@ -113,25 +176,28 @@ class UnreadMailboxMessageListItem extends React.Component {
 
   render () {
     const { message, classes, ...passProps } = this.props
+    const { avatar } = this.state
 
-    if (message.extended) {
-      return (
-        <ListItem className={classes.listItem} button {...passProps}>
-          {this.renderAvatar(classes, message.extended)}
-          <span>
-            <span className={classes.primaryMessageText}>{message.text}</span>
-            <div style={styles.secondaryMessageText}>{message.extended.subtitle}</div>
-          </span>
-        </ListItem>
-      )
-    } else {
-      return (
-        <ListItem className={classes.listItem} button {...passProps}>
-          <div className={classes.avatar} />
+    const extendedAvatar = this.renderAvatar(classes, message.extended)
+
+    return (
+      <ListItem className={classes.listItem} button {...passProps}>
+        <span className={classes.avatarContainer} data-tom>
+          <ACAvatarCircle
+            className={classNames(classes.serviceAvatar, !extendedAvatar ? classes.serviceAvatarNoExtended : undefined)}
+            avatar={avatar}
+            resolver={(i) => Resolver.image(i)}
+            size={50} />
+          {extendedAvatar}
+        </span>
+        <span>
           <span className={classes.primaryMessageText}>{message.text}</span>
-        </ListItem>
-      )
-    }
+          {message.extended ? (
+            <div style={styles.secondaryMessageText}>{message.extended.subtitle}</div>
+          ) : undefined}
+        </span>
+      </ListItem>
+    )
   }
 }
 
