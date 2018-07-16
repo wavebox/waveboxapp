@@ -85,7 +85,7 @@
     "uglifyjs-webpack-plugin": "1.2.7",
     "url-loader": "1.0.1",
     "uuid": "3.3.2",
-    "webpack": "4.16.0",
+    "webpack": "4.16.1",
     "webpack-cli": "3.0.8",
     "webpack-notifier": "1.6.0",
     "webpack-target-electron-renderer": "0.4.0",
