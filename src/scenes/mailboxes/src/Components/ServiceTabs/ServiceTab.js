@@ -69,7 +69,7 @@ const styles = {
       lineHeight: '20px',
       borderRadius: 12,
       top: 0,
-      right: 4,
+      right: 8,
       paddingLeft: 4,
       paddingRight: 4
     },
@@ -88,7 +88,7 @@ const styles = {
   badgeFAIcon: {
     color: 'white',
     '&.sidelist': {
-      fontSize: 16
+      fontSize: 14
     },
     '&.toolbar': {
       fontSize: 10
