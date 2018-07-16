@@ -25,13 +25,19 @@ webFrame.setLayoutZoomLevelLimits(1, 1)
 
 // Prevent drag/drop
 document.addEventListener('drop', (evt) => {
-  if (evt.target.tagName !== 'INPUT' && evt.target.type !== 'file') {
+  // Don't invert this, some dom elements throw when calling .type
+  if (evt.target.tagName === 'INPUT' && evt.target.type === 'file') {
+    /* no-op */
+  } else {
     evt.preventDefault()
     evt.stopPropagation()
   }
 }, false)
 document.addEventListener('dragover', (evt) => {
-  if (evt.target.tagName !== 'INPUT' && evt.target.type !== 'file') {
+  // Don't invert this, some dom elements throw when calling .type
+  if (evt.target.tagName === 'INPUT' && evt.target.type === 'file') {
+    /* no-op */
+  } else {
     evt.preventDefault()
     evt.stopPropagation()
   }

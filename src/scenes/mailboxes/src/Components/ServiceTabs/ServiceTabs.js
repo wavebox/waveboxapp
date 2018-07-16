@@ -35,7 +35,13 @@ const styles = {
 }
 
 const SortableItem = SortableElement((props) => {
-  return (<ServiceTab {...props} />)
+  // Only return native dom component here, otherwise adding and removing
+  // becomes super-buggy!
+  return (
+    <div>
+      <ServiceTab {...props} />
+    </div>
+  )
 })
 
 const SortableList = SortableContainer((props) => {
@@ -43,43 +49,16 @@ const SortableList = SortableContainer((props) => {
   return (
     <div className={containerClassName}>
       {serviceIds.map((serviceId, index) => (
-        <SortableItem key={serviceId} index={index} serviceId={serviceId} {...passProps} />
+        <SortableItem
+          key={serviceId}
+          index={index}
+          serviceId={serviceId}
+          collection={`${props.mailboxId}:${props.uiLocation}`}
+          {...passProps} />
       ))}
     </div>
   )
 })
-
-class SortableRestart extends React.Component {
-  // This is a really terrible fix for https://github.com/clauderic/react-sortable-hoc/issues/305
-  state = { restart: false }
-  componentWillReceiveProps (nextProps) {
-    if (this.props.serviceIds.length !== nextProps.serviceIds.length) {
-      this.setState({restart: true})
-      window.requestAnimationFrame(() => { this.setState({restart: false}) })
-    }
-  }
-  render () {
-    if (this.state.restart) {
-      const {
-        axis,
-        containerClassName,
-        distance,
-        onSortEnd,
-        serviceIds,
-        ...passProps
-      } = this.props
-      return (
-        <div>
-          {serviceIds.map((serviceId, index) => (
-            <ServiceTab serviceId={serviceId} key={serviceId} {...passProps} />
-          ))}
-        </div>
-      )
-    } else {
-      return (<SortableList {...this.props} />)
-    }
-  }
-}
 
 @withStyles(styles)
 class ServiceTabs extends React.Component {
@@ -184,7 +163,7 @@ class ServiceTabs extends React.Component {
           'WB-ServiceTabs',
           className
         )}>
-        <SortableRestart
+        <SortableList
           axis={ServiceTabTools.uiLocationAxis(uiLocation)}
           containerClassName={classNames(classes.sortableListContainer, classNameAppend)}
           distance={20}

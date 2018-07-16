@@ -6,42 +6,28 @@ import classNames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 
 const SortableItem = SortableElement(({ mailboxId }) => {
-  return (<SidelistItemMailbox mailboxId={mailboxId} />)
+  // Only return native dom component here, otherwise adding and removing
+  // becomes super-buggy!
+  return (
+    <div>
+      <SidelistItemMailbox mailboxId={mailboxId} />
+    </div>
+  )
 })
 
 const SortableList = SortableContainer(({ mailboxIds }) => {
   return (
     <div>
       {mailboxIds.map((mailboxId, index) => (
-        <SortableItem key={mailboxId} index={index} mailboxId={mailboxId} />
+        <SortableItem
+          key={mailboxId}
+          index={index}
+          mailboxId={mailboxId}
+          collection='Singleton_SidelistMailboxes' />
       ))}
     </div>
   )
 })
-
-class SortableRestart extends React.Component {
-  // This is a really terrible fix for https://github.com/clauderic/react-sortable-hoc/issues/305
-  state = { restart: false }
-  componentWillReceiveProps (nextProps) {
-    if (this.props.mailboxIds.length !== nextProps.mailboxIds.length) {
-      this.setState({restart: true})
-      window.requestAnimationFrame(() => { this.setState({restart: false}) })
-    }
-  }
-  render () {
-    if (this.state.restart) {
-      return (
-        <div>
-          {this.props.mailboxIds.map((mailboxId, index) => (
-            <SidelistItemMailbox mailboxId={mailboxId} key={mailboxId} />
-          ))}
-        </div>
-      )
-    } else {
-      return (<SortableList {...this.props} />)
-    }
-  }
-}
 
 const styles = {
   root: {
@@ -92,7 +78,7 @@ class SidelistMailboxes extends React.Component {
 
     return (
       <div {...passProps} className={classNames(classes.root, 'WB-Sidelist-Mailboxes', className)}>
-        <SortableRestart
+        <SortableList
           axis='y'
           distance={20}
           mailboxIds={mailboxIds}
