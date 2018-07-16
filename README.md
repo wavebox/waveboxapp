@@ -8,7 +8,7 @@
 
 Your client for Gmail, Inbox, Outlook, O365, Trello, Slack & more!
 
-Wavebox is the clever new home for cloud apps on macOS, Linux & Windows bringing  Gmail, Inbox, Outlook, O365, Trello, Slack & more into a configurable client.  
+Wavebox is the clever new home for cloud apps on macOS, Linux & Windows bringing  Gmail, Inbox, Outlook, O365, Trello, Slack & more into a configurable client.
 
 Gone are the days of opening countless browser tabs and logging in and out of your favourite cloud accounts. Now you can launch Wavebox with one click, and instantly access them all in one UI, and without slowing your machine.
 
@@ -44,6 +44,7 @@ Before you get started you'll need the following
 
 * Python 2.7
 * Nodejs 8.9.3
+* npm >= 6.2.0
 * Wavebox API Key
   * Download & install Wavebox for free
   * Go to Settings and then the Wavebox Pro Tab
