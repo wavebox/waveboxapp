@@ -61,9 +61,14 @@ class WaveboxAppPrimaryMenu {
           },
           { type: 'separator' },
           {
-            label: 'Compose Mail',
+            label: 'Compose',
             click: WaveboxAppPrimaryMenuActions.composeMail,
             accelerator: accelerators.composeMail
+          },
+          {
+            label: 'Compose in current tab',
+            click: WaveboxAppPrimaryMenuActions.composeMailHere,
+            accelerator: accelerators.composeMailHere
           },
           { type: 'separator' },
           {

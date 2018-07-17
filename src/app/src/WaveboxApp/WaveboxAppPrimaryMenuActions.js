@@ -15,6 +15,7 @@ import {
 import { evtMain } from 'AppEvents'
 import { settingsActions } from 'stores/settings'
 import { emblinkActions } from 'stores/emblink'
+import { accountStore } from 'stores/account'
 
 class WaveboxAppPrimaryMenuAcions {
   /* ****************************************************************************/
@@ -134,6 +135,14 @@ class WaveboxAppPrimaryMenuAcions {
       mailboxesWindow.show().focus()
     }
     emblinkActions.composeNewMessage()
+  }
+
+  composeMailHere = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.show().focus()
+    }
+    emblinkActions.composeNewMessage(accountStore.getState().activeServiceId())
   }
 
   checkForUpdate = () => {
