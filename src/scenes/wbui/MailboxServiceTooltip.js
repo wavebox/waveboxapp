@@ -2,21 +2,25 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import ReactPortalTooltip from 'react-portal-tooltip'
-import { basicPopoverStyles400w } from 'wbui/Styles/PopoverStyles'
 import { withStyles } from '@material-ui/core/styles'
 import red from '@material-ui/core/colors/red'
 import FAIcon from './FAIcon'
 import { faExclamation } from '@fortawesome/pro-solid-svg-icons/faExclamation'
 import { faGem } from '@fortawesome/pro-regular-svg-icons/faGem'
+import DefaultTooltip400w from 'wbui/Tooltips/DefaultTooltip400w'
+import ThemeTools from 'wbui/Themes/ThemeTools'
 
-const styles = {
+const styles = (theme) => ({
+  root: {
+    textAlign: 'center'
+  },
   hr: {
     height: 1,
     border: 0,
     backgroundImage: 'linear-gradient(to right, #bcbcbc, #fff, #bcbcbc)'
   },
   proIcon: {
-    color: 'white',
+    color: ThemeTools.getValue(theme, 'wavebox.popover.color'),
     fontSize: 14,
     marginRight: 2
   },
@@ -29,9 +33,9 @@ const styles = {
     height: 14,
     marginRight: 6
   }
-}
+})
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class MailboxServiceTooltip extends React.Component {
   /* **************************************************************************/
   // Class
@@ -58,6 +62,7 @@ class MailboxServiceTooltip extends React.Component {
       service,
       isRestricted,
       classes,
+      theme,
       ...passProps
     } = this.props
 
@@ -91,17 +96,19 @@ class MailboxServiceTooltip extends React.Component {
     }
 
     return (
-      <ReactPortalTooltip {...passProps} style={basicPopoverStyles400w}>
-        <div>
-          {`${service.humanizedTypeShort} : ${mailbox.displayName}`}
-        </div>
-        {unreadContent ? (
+      <DefaultTooltip400w {...passProps}>
+        <div className={classes.root}>
           <div>
-            <hr className={classes.hr} />
-            <div>{unreadContent}</div>
+            {`${service.humanizedTypeShort} : ${mailbox.displayName}`}
           </div>
-        ) : undefined}
-      </ReactPortalTooltip>
+          {unreadContent ? (
+            <div>
+              <hr className={classes.hr} />
+              <div>{unreadContent}</div>
+            </div>
+          ) : undefined}
+        </div>
+      </DefaultTooltip400w>
     )
   }
 }

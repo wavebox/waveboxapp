@@ -10,13 +10,13 @@ import ToolbarNavigation from './ToolbarNavigation'
 import { ExtensionSettings } from 'shared/Models/Settings'
 import classNames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
-import blueGrey from '@material-ui/core/colors/blueGrey'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import { TOOLBAR_AUTO_SPLIT_THRESHOLD } from 'shared/constants'
+import ThemeTools from 'wbui/Themes/ThemeTools'
 
-const styles = {
+const styles = (theme) => ({
   toolbar: {
-    backgroundColor: blueGrey[900],
+    backgroundColor: ThemeTools.getValue(theme, 'wavebox.toolbar.backgroundColor'),
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -34,9 +34,9 @@ const styles = {
   navigation: {
     width: '100%'
   }
-}
+})
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class PrimaryToolbar extends React.Component {
   /* **************************************************************************/
   // Class
@@ -213,6 +213,7 @@ class PrimaryToolbar extends React.Component {
       toolbarHeight,
       className,
       classes,
+      theme,
       ...passProps
     } = this.props
     const {

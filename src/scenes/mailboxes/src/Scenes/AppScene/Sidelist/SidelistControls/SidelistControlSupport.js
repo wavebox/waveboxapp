@@ -1,26 +1,26 @@
 import React from 'react'
 import SidelistControl from './SidelistControl'
 import { TOUR_STEPS } from 'stores/settings/Tour'
-import teal from '@material-ui/core/colors/teal'
 import { withStyles } from '@material-ui/core/styles'
 import FAIcon from 'wbui/FAIcon'
 import { faQuestionCircle } from '@fortawesome/pro-regular-svg-icons/faQuestionCircle'
+import ThemeTools from 'wbui/Themes/ThemeTools'
 
-const styles = {
+const styles = (theme) => ({
   icon: {
-    color: teal[600],
+    color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.support.icon.color'),
     fontSize: '24px',
     marginLeft: -3,
     height: 48,
     width: 48,
     lineHeight: '48px',
     '&:hover': {
-      color: teal[200]
+      color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.support.icon.color', 'hover')
     }
   }
-}
+})
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class SidelistControlSupport extends React.Component {
   /* **************************************************************************/
   // Rendering

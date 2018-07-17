@@ -1,12 +1,11 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import ReactPortalTooltip from 'react-portal-tooltip'
-import { basicPopoverStyles } from './Styles/PopoverStyles'
 import uuid from 'uuid'
 import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
+import DefaultTooltip200w from 'wbui/Tooltips/DefaultTooltip200w'
 
 const styles = {
   button: {
@@ -152,10 +151,10 @@ class ToolbarExtensionAction extends React.Component {
             filter: cssFilter
           }} />
         {title ? (
-          <ReactPortalTooltip
+          <DefaultTooltip200w
             active={isHovering}
             tooltipTimeout={0}
-            style={basicPopoverStyles}
+            style={styles.popover}
             position='bottom'
             arrow='center'
             group={elementId}
@@ -163,7 +162,7 @@ class ToolbarExtensionAction extends React.Component {
             <span className={classes.tooltipContent}>
               {title}
             </span>
-          </ReactPortalTooltip>
+          </DefaultTooltip200w>
         ) : undefined}
       </div>
     )

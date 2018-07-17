@@ -2,10 +2,10 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import blue from '@material-ui/core/colors/blue'
 import shallowCompare from 'react-addons-shallow-compare'
+import ThemeTools from 'wbui/Themes/ThemeTools'
 
-const styles = {
+const styles = (theme) => ({
   '@keyframes loadbar': {
     '0%': { width: '10%' },
     '100%': { width: '90%;' }
@@ -16,7 +16,7 @@ const styles = {
     left: 0,
     width: 0,
     height: 3,
-    backgroundColor: blue[600],
+    backgroundColor: ThemeTools.getValue(theme, 'wavebox.loadbar.backgroundColor'),
     opacity: 0,
     transition: '700ms ease-in-out opacity',
 
@@ -28,9 +28,9 @@ const styles = {
       animationFillMode: 'forwards'
     }
   }
-}
+})
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class ServiceLoadBar extends React.Component {
   /* **************************************************************************/
   // Class
@@ -53,6 +53,7 @@ class ServiceLoadBar extends React.Component {
       isLoading,
       className,
       classes,
+      theme,
       ...passProps
     } = this.props
 

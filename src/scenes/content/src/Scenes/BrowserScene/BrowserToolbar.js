@@ -15,14 +15,14 @@ import RefreshIcon from '@material-ui/icons/Refresh'
 import SearchIcon from '@material-ui/icons/Search'
 import FileDownloadIcon from '@material-ui/icons/FileDownload'
 import OpenInBrowserIcon from '@material-ui/icons/OpenInBrowser'
-import lightBlue from '@material-ui/core/colors/lightBlue'
-import grey from '@material-ui/core/colors/grey'
+import ThemeTools from 'wbui/Themes/ThemeTools'
+import classNames from 'classnames'
 
-const styles = {
+const styles = (theme) => ({
   toolbar: {
     height: 40,
     minHeight: 40,
-    backgroundColor: grey[200]
+    backgroundColor: ThemeTools.getValue(theme, 'wavebox.toolbar.backgroundColor')
   },
   toolbarLoadingIconContainer: {
     width: 40,
@@ -42,14 +42,23 @@ const styles = {
     userSelect: 'initial',
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
-    color: 'rgba(0, 0, 0, 0.4)'
+    color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.text.color')
   },
-  toolbarButton: {
-    color: 'rgba(0, 0, 0, 0.87)'
+  icon: {
+    color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.icon.color'),
+    '&:hover': {
+      color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.icon.color', 'hover')
+    },
+    '&.is-disabled': {
+      color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.icon.color', 'disabled'),
+      '&:hover': {
+        color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.icon.color', 'disabled')
+      }
+    }
   }
-}
+})
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class BrowserToolbar extends React.Component {
   /* **************************************************************************/
   // Class
@@ -147,44 +156,62 @@ class BrowserToolbar extends React.Component {
   }
 
   render () {
-    const { classes, handleGoBack, handleGoForward, handleStop, handleReload, ...passProps } = this.props
+    const {
+      classes,
+      theme,
+      handleGoBack,
+      handleGoForward,
+      handleStop,
+      handleReload,
+      ...passProps
+    } = this.props
     const { isLoading, currentUrl, canGoBack, canGoForward } = this.state
 
     return (
       <Paper {...passProps}>
         <Toolbar disableGutters className={classes.toolbar}>
-          <IconButton disabled={!canGoBack} onClick={handleGoBack} className={classes.toolbarButton}>
-            <ArrowBackIcon />
+          <IconButton
+            disableRipple={!canGoBack}
+            onClick={canGoBack ? handleGoBack : undefined}>
+            <ArrowBackIcon className={classNames(classes.icon, !canGoBack ? 'is-disabled' : undefined)} />
           </IconButton>
-          <IconButton disabled={!canGoForward} onClick={handleGoForward} className={classes.toolbarButton}>
-            <ArrowForwardIcon />
+          <IconButton
+            disableRipple={!canGoForward}
+            onClick={canGoForward ? handleGoForward : undefined}>
+            <ArrowForwardIcon className={classNames(classes.icon, !canGoForward ? 'is-disabled' : undefined)} />
           </IconButton>
-          <IconButton onClick={isLoading ? handleStop : handleReload} className={classes.toolbarButton}>
-            {isLoading ? (<CloseIcon />) : (<RefreshIcon />)}
+          <IconButton onClick={isLoading ? handleStop : handleReload}>
+            {isLoading ? (
+              <CloseIcon className={classes.icon} />
+            ) : (
+              <RefreshIcon className={classes.icon} />
+            )}
           </IconButton>
           <div className={classes.toolbarLoadingIconContainer}>
             {isLoading ? (
-              <Spinner size={15} color={lightBlue[600]} />
+              <Spinner
+                size={15}
+                color={ThemeTools.getValue(theme, 'wavebox.toolbar.spinner.color')} />
             ) : undefined}
           </div>
           <Typography className={classes.toolbarUrl}>
             {this.externalUrl(currentUrl)}
           </Typography>
           <Tooltip title='Find in Page'>
-            <IconButton onClick={() => browserActions.toggleSearch()} className={classes.toolbarButton}>
-              <SearchIcon />
+            <IconButton onClick={() => browserActions.toggleSearch()}>
+              <SearchIcon className={classes.icon} />
             </IconButton>
           </Tooltip>
           {this.isDownloadableUrl(currentUrl) ? (
             <Tooltip title='Download'>
-              <IconButton onClick={this.handleDownload} className={classes.toolbarButton}>
-                <FileDownloadIcon />
+              <IconButton onClick={this.handleDownload}>
+                <FileDownloadIcon className={classes.icon} />
               </IconButton>
             </Tooltip>
           ) : undefined}
           <Tooltip title='Open in Browser' placement='bottom-start'>
-            <IconButton onClick={this.handleOpenInBrowser} className={classes.toolbarButton}>
-              <OpenInBrowserIcon />
+            <IconButton onClick={this.handleOpenInBrowser}>
+              <OpenInBrowserIcon className={classes.icon} />
             </IconButton>
           </Tooltip>
         </Toolbar>

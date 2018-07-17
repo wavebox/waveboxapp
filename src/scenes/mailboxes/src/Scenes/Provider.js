@@ -2,7 +2,8 @@ import React from 'react'
 import WaveboxRouter from './WaveboxRouter'
 import constants from 'shared/constants'
 import shallowCompare from 'react-addons-shallow-compare'
-import Theme from 'wbui/Theme'
+import DarkTheme from 'wbui/Themes/DarkTheme'
+import LightTheme from 'wbui/Themes/LightTheme'
 import { MuiThemeProvider } from '@material-ui/core/styles'
 import { accountStore, accountDispatch } from 'stores/account'
 import { settingsStore } from 'stores/settings'
@@ -25,6 +26,7 @@ import {
   WB_MAILBOXES_WINDOW_SHOW_NEWS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT
 } from 'shared/ipcEvents'
+import UISettings from 'shared/Models/Settings/UISettings'
 import { ipcRenderer, remote } from 'electron'
 
 export default class Provider extends React.Component {
@@ -281,6 +283,19 @@ export default class Provider extends React.Component {
     )
   }
 
+  /**
+  * Gets the theme class from the provided theme value
+  * @param theme: the theme to pick
+  * @return the theme class
+  */
+  renderTheme (theme) {
+    switch (theme) {
+      case UISettings.THEMES.DARK: return DarkTheme
+      case UISettings.THEMES.LIGHT: return LightTheme
+      default: return DarkTheme
+    }
+  }
+
   render () {
     const {
       traySettings,
@@ -292,7 +307,7 @@ export default class Provider extends React.Component {
 
     return (
       <div>
-        <MuiThemeProvider theme={Theme}>
+        <MuiThemeProvider theme={this.renderTheme(uiSettings.theme)}>
           <WaveboxRouter />
         </MuiThemeProvider>
         <AccountMessageDispatcher />

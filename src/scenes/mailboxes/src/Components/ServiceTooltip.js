@@ -1,23 +1,26 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import ReactPortalTooltip from 'react-portal-tooltip'
-import { basicPopoverStyles400w } from 'wbui/Styles/PopoverStyles'
 import { withStyles } from '@material-ui/core/styles'
 import red from '@material-ui/core/colors/red'
 import FAIcon from 'wbui/FAIcon'
 import { faExclamation } from '@fortawesome/pro-solid-svg-icons/faExclamation'
 import { faGem } from '@fortawesome/pro-regular-svg-icons/faGem'
 import { accountStore } from 'stores/account'
+import DefaultTooltip400w from 'wbui/Tooltips/DefaultTooltip400w'
+import ThemeTools from 'wbui/Themes/ThemeTools'
 
-const styles = {
+const styles = (theme) => ({
+  root: {
+    textAlign: 'center'
+  },
   hr: {
     height: 1,
     border: 0,
     backgroundImage: 'linear-gradient(to right, #bcbcbc, #fff, #bcbcbc)'
   },
   proIcon: {
-    color: 'white',
+    color: ThemeTools.getValue(theme, 'wavebox.popover.color'),
     fontSize: 14,
     marginRight: 2
   },
@@ -30,16 +33,15 @@ const styles = {
     height: 14,
     marginRight: 6
   }
-}
+})
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class ServiceTooltip extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
-    ...ReactPortalTooltip.propTypes,
     serviceId: PropTypes.string.isRequired
   }
 
@@ -113,6 +115,7 @@ class ServiceTooltip extends React.Component {
     const {
       serviceId,
       classes,
+      theme,
       className,
       ...passProps
     } = this.props
@@ -158,21 +161,23 @@ class ServiceTooltip extends React.Component {
     }
 
     return (
-      <ReactPortalTooltip {...passProps} style={basicPopoverStyles400w}>
-        <div>
-          {humanizedServiceType === displayName ? (
-            humanizedServiceType
-          ) : (
-            `${humanizedServiceType} : ${displayName}`
-          )}
-        </div>
-        {unreadContent ? (
+      <DefaultTooltip400w {...passProps}>
+        <div className={classes.root}>
           <div>
-            <hr className={classes.hr} />
-            <div>{unreadContent}</div>
+            {humanizedServiceType === displayName ? (
+              humanizedServiceType
+            ) : (
+              `${humanizedServiceType} : ${displayName}`
+            )}
           </div>
-        ) : undefined}
-      </ReactPortalTooltip>
+          {unreadContent ? (
+            <div>
+              <hr className={classes.hr} />
+              <div>{unreadContent}</div>
+            </div>
+          ) : undefined}
+        </div>
+      </DefaultTooltip400w>
     )
   }
 }

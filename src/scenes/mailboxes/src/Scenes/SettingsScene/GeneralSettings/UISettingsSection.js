@@ -42,7 +42,8 @@ export default class UISettingsSection extends React.Component {
         'showTitlebar',
         'showAppMenu',
         'showTitlebarCount',
-        'showTitlebarCount'
+        'showTitlebarCount',
+        'theme'
       ]) ||
       modelCompare(this.props.os, nextProps.os, ['openLinksInBackground']) ||
       modelCompare(this.props.accelerators, nextProps.accelerators, ['toggleSidebar', 'toggleMenu']) ||
@@ -91,6 +92,14 @@ export default class UISettingsSection extends React.Component {
             label='Show one-time sleep notification for each account'
             onChange={(evt, toggled) => settingsActions.sub.ui.setShowDefaultServiceSleepNotifications(toggled)}
             checked={ui.showDefaultServiceSleepNotifications} />
+          <SettingsListItemSelectInline
+            label='App theme'
+            value={ui.theme}
+            options={[
+              { value: UISettings.THEMES.DARK, label: 'Dark' },
+              { value: UISettings.THEMES.LIGHT, label: 'Light' }
+            ]}
+            onChange={(evt, value) => settingsActions.sub.ui.setTheme(value)} />
           {process.platform === 'darwin' ? (
             <SettingsListItemSelectInline
               label='Translucent window backgrounds (Requires Restart)'

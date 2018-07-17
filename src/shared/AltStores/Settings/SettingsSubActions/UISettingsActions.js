@@ -123,6 +123,13 @@ class UISettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param theme: the theme to set
+  */
+  setTheme (theme) {
+    this.dispatchUpdate('theme', theme)
+  }
+
+  /**
   * @param css: the new css
   */
   setCustomMainCSS (css) {

@@ -1,12 +1,14 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import ReactPortalTooltip from 'react-portal-tooltip'
-import { basicPopoverStyles400w } from 'wbui/Styles/PopoverStyles'
 import { withStyles } from '@material-ui/core/styles'
 import { accountStore } from 'stores/account'
+import DefaultTooltip400w from 'wbui/Tooltips/DefaultTooltip400w'
 
 const styles = {
+  root: {
+    textAlign: 'center'
+  },
   hr: {
     height: 1,
     border: 0,
@@ -21,7 +23,6 @@ class MailboxTooltip extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    ...ReactPortalTooltip.propTypes,
     mailboxId: PropTypes.string.isRequired
   }
 
@@ -105,17 +106,19 @@ class MailboxTooltip extends React.Component {
     }
 
     return (
-      <ReactPortalTooltip {...passProps} style={basicPopoverStyles400w}>
-        <div>
-          {`${displayName} - ${serviceCount} services`}
-        </div>
-        {unreadContent ? (
+      <DefaultTooltip400w {...passProps}>
+        <div className={classes.root}>
           <div>
-            <hr className={classes.hr} />
-            <div>{unreadContent}</div>
+            {`${displayName} - ${serviceCount} services`}
           </div>
-        ) : undefined}
-      </ReactPortalTooltip>
+          {unreadContent ? (
+            <div>
+              <hr className={classes.hr} />
+              <div>{unreadContent}</div>
+            </div>
+          ) : undefined}
+        </div>
+      </DefaultTooltip400w>
     )
   }
 }

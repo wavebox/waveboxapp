@@ -19,6 +19,12 @@ const VIBRANCY_MODES = Object.freeze({
   DARK: 'DARK',
   ULTRA_DARK: 'ULTRA_DARK'
 })
+
+const THEMES = Object.freeze({
+  DARK: 'DARK',
+  LIGHT: 'LIGHT'
+})
+
 const ELECTRON_VIBRANCY_MODES = Object.freeze({
   [VIBRANCY_MODES.NONE]: null,
   [VIBRANCY_MODES.LIGHT]: 'light',
@@ -35,6 +41,7 @@ class UISettings extends Model {
   static get SIDEBAR_NEWS_MODES () { return SIDEBAR_NEWS_MODES }
   static get ACCOUNT_TOOLTIP_MODES () { return ACCOUNT_TOOLTIP_MODES }
   static get VIBRANCY_MODES () { return VIBRANCY_MODES }
+  static get THEMES () { return THEMES }
 
   /* **************************************************************************/
   // Titlebar
@@ -77,6 +84,7 @@ class UISettings extends Model {
   /* **************************************************************************/
 
   get showDefaultServiceSleepNotifications () { return this._value_('showDefaultServiceSleepNotifications', true) }
+  get theme () { return this._value_('theme', THEMES.DARK) }
 
   /* **************************************************************************/
   // CSS

@@ -3,16 +3,16 @@ import { userStore } from 'stores/user'
 import { IconButton } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import uuid from 'uuid'
-import ReactPortalTooltip from 'react-portal-tooltip'
 import User from 'shared/Models/User'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import lightBlue from '@material-ui/core/colors/lightBlue'
 import FAIcon from 'wbui/FAIcon'
 import { faCalendar } from '@fortawesome/pro-regular-svg-icons/faCalendar'
+import ThemeTools from 'wbui/Themes/ThemeTools'
+import UpgradeTooltip from 'wbui/Tooltips/UpgradeTooltip'
 
 const UPDATE_INTERVAL = 1000 * 60 * 15 // 15 minutes
-const styles = {
+const styles = (theme) => ({
   /**
   * Layout
   */
@@ -23,7 +23,7 @@ const styles = {
     cursor: 'pointer',
     WebkitAppRegion: 'no-drag',
     '&:hover': {
-      filter: 'lighten(10%)'
+      backgroundColor: 'transparent'
     }
   },
   compositeIconContainer: {
@@ -35,7 +35,7 @@ const styles = {
   },
   icon: {
     fontSize: '44px',
-    color: lightBlue[400]
+    color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.upgrade.icon.color')
   },
   remainingText: {
     position: 'absolute',
@@ -44,7 +44,7 @@ const styles = {
     right: 6,
     height: 24,
     lineHeight: '24px',
-    color: 'white',
+    color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.upgrade.text.color'),
     textAlign: 'center'
   },
   remainingText2Char: {
@@ -52,26 +52,6 @@ const styles = {
   },
   remainingText3Char: {
     fontSize: '16px'
-  },
-
-  /**
-  * Popover layout
-  */
-  popover: {
-    style: {
-      background: lightBlue[400],
-      paddingTop: 8,
-      paddingBottom: 8,
-      paddingLeft: 16,
-      paddingRight: 16,
-      fontSize: '13px',
-      color: 'white',
-      cursor: 'pointer'
-    },
-    arrowStyle: {
-      color: lightBlue[400],
-      borderColor: false
-    }
   },
 
   /**
@@ -84,14 +64,14 @@ const styles = {
   popoverMoreButton: {
     marginLeft: 32,
     alignSelf: 'center',
-    border: '2px solid white',
+    border: `2px solid ${ThemeTools.getStateValue(theme, 'wavebox.sidebar.upgrade.popover.color')}`,
     padding: '8px 16px',
     borderRadius: 4,
     fontSize: '11px'
   }
-}
+})
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class SidelistUpgradePlans extends React.Component {
   /* **************************************************************************/
   // Component lifecyle
@@ -175,11 +155,12 @@ class SidelistUpgradePlans extends React.Component {
 
   /**
   * Generates content for the popup
+  * @param classes: the classes to use
   * @param currentPlan: the current plan that the user is
   * @param expiryDays: the days until the plan has expired
   * @return jsx
   */
-  generatePopupContent (currentPlan, expiryDays) {
+  generatePopupContent (classes, currentPlan, expiryDays) {
     let text
     if (currentPlan === User.PLANS.FREE) {
       text = ['Enjoy the best of Wavebox. Upgrade now!']
@@ -224,11 +205,11 @@ class SidelistUpgradePlans extends React.Component {
     }
 
     return (
-      <div style={styles.popoverContentContainer} onClick={this.handleUpgrade}>
+      <div className={classes.popoverContentContainer} onClick={this.handleUpgrade}>
         <div>
           {text.map((t, i) => (<p key={i}>{t}</p>))}
         </div>
-        <div style={styles.popoverMoreButton}>
+        <div className={classes.popoverMoreButton}>
           Find out more
         </div>
       </div>
@@ -236,7 +217,7 @@ class SidelistUpgradePlans extends React.Component {
   }
 
   render () {
-    const { classes, ...passProps } = this.props
+    const { classes, theme, ...passProps } = this.props
     const { expiresInDays, currentPlan, generatedId, buttonHover, tooltipHover } = this.state
     const formattedDays = this.formatRemainingDays(expiresInDays)
 
@@ -246,7 +227,7 @@ class SidelistUpgradePlans extends React.Component {
         onMouseEnter={() => this.setState({ buttonHover: true })}
         onMouseLeave={() => this.setState({ buttonHover: false })}
         id={`ReactComponent-Sidelist-Item-${generatedId}`}>
-        <IconButton onClick={this.handleUpgrade} className={classes.button}>
+        <IconButton onClick={this.handleUpgrade} className={classes.button} disableRipple>
           <div className={classes.compositeIconContainer}>
             <FAIcon className={classes.icon} icon={faCalendar} />
             <div className={classNames(classes.remainingText, (formattedDays.length === 2 ? classes.remainingText2Char : classes.remainingText3Char))}>
@@ -254,18 +235,17 @@ class SidelistUpgradePlans extends React.Component {
             </div>
           </div>
         </IconButton>
-        <ReactPortalTooltip
+        <UpgradeTooltip
           active={buttonHover || tooltipHover}
           tooltipTimeout={250}
-          style={styles.popover}
           position='right'
           onMouseEnter={() => this.setState({ tooltipHover: true })}
           onMouseLeave={() => this.setState({ tooltipHover: false })}
           arrow='center'
           group={generatedId}
           parent={`#ReactComponent-Sidelist-Item-${generatedId}`}>
-          {this.generatePopupContent(currentPlan, expiresInDays)}
-        </ReactPortalTooltip>
+          {this.generatePopupContent(classes, currentPlan, expiresInDays)}
+        </UpgradeTooltip>
       </div>
     )
   }

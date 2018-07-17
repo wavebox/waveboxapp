@@ -9,15 +9,14 @@ import { URL } from 'url'
 import Spinner from 'wbui/Activity/Spinner'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import blueGrey from '@material-ui/core/colors/blueGrey'
-import cyan from '@material-ui/core/colors/cyan'
 import HomeIcon from '@material-ui/icons/Home'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
 import CloseIcon from '@material-ui/icons/Close'
 import RefreshIcon from '@material-ui/icons/Refresh'
+import ThemeTools from 'wbui/Themes/ThemeTools'
 
-const styles = {
+const styles = (theme) => ({
   container: {
     display: 'flex',
     alignItems: 'center'
@@ -29,14 +28,14 @@ const styles = {
     WebkitAppRegion: 'no-drag'
   },
   icon: {
-    color: blueGrey[100],
+    color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.icon.color'),
     '&:hover': {
-      color: blueGrey[50]
+      color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.icon.color', 'hover')
     },
     '&.is-disabled': {
-      color: blueGrey[400],
+      color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.icon.color', 'disabled'),
       '&:hover': {
-        color: blueGrey[50]
+        color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.icon.color', 'disabled')
       }
     }
   },
@@ -53,7 +52,7 @@ const styles = {
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
     fontSize: '14px',
-    color: blueGrey[50]
+    color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.text.color')
   },
   loadingContainer: {
     width: 40,
@@ -62,9 +61,9 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center'
   }
-}
+})
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class ToolbarNavigation extends React.Component {
   /* **************************************************************************/
   // Class
@@ -322,6 +321,7 @@ class ToolbarNavigation extends React.Component {
       mailboxId,
       serviceId,
       style,
+      theme,
       classes,
       className,
       ...passProps
@@ -381,7 +381,9 @@ class ToolbarNavigation extends React.Component {
         <div className={classes.group}>
           <div className={classes.loadingContainer}>
             {isLoading ? (
-              <Spinner size={15} color={cyan[200]} />
+              <Spinner
+                size={15}
+                color={ThemeTools.getValue(theme, 'wavebox.toolbar.spinner.color')} />
             ) : undefined}
           </div>
         </div>

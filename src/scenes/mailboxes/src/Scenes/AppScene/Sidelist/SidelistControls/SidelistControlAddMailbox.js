@@ -1,20 +1,20 @@
 import React from 'react'
 import SidelistControl from './SidelistControl'
 import { TOUR_STEPS } from 'stores/settings/Tour'
-import blueGrey from '@material-ui/core/colors/blueGrey'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
 import { withStyles } from '@material-ui/core/styles'
+import ThemeTools from 'wbui/Themes/ThemeTools'
 
-const styles = {
+const styles = (theme) => ({
   icon: {
-    color: blueGrey[400],
+    color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.add.icon.color'),
     '&:hover': {
-      color: blueGrey[200]
+      color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.add.icon.color', 'hover')
     }
   }
-}
+})
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class SidelistControlAddMailbox extends React.Component {
   /* **************************************************************************/
   // Rendering

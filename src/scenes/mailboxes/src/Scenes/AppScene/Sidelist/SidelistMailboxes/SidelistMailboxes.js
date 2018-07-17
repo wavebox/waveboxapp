@@ -4,6 +4,7 @@ import SidelistItemMailbox from './SidelistItemMailbox'
 import {SortableContainer, SortableElement} from 'react-sortable-hoc'
 import classNames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
+import shallowCompare from 'react-addons-shallow-compare'
 
 const SortableItem = SortableElement(({ mailboxId }) => {
   // Only return native dom component here, otherwise adding and removing
@@ -69,7 +70,11 @@ class SidelistMailboxes extends React.Component {
 
   shouldComponentUpdate (nextProps, nextState) {
     if (JSON.stringify(this.state.mailboxIds) !== JSON.stringify(nextState.mailboxIds)) { return true }
-    return false
+    return shallowCompare(
+      { props: this.props, state: null },
+      nextProps,
+      null
+    )
   }
 
   render () {

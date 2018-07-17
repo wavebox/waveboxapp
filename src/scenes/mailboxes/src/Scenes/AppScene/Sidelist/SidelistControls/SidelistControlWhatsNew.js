@@ -4,33 +4,33 @@ import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 import { TOUR_STEPS } from 'stores/settings/Tour'
 import { UISettings } from 'shared/Models/Settings'
-import red from '@material-ui/core/colors/red'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import FAIcon from 'wbui/FAIcon'
 import { faStar } from '@fortawesome/pro-regular-svg-icons/faStar'
+import ThemeTools from 'wbui/Themes/ThemeTools'
 
-const styles = {
+const styles = (theme) => ({
   icon: {
-    color: red[400],
+    color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.whatsnew.icon.color'),
     fontSize: '24px',
     marginLeft: -3,
     height: 48,
     width: 48,
     lineHeight: '48px',
     '&:hover': {
-      color: red[100]
+      color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.whatsnew.icon.color', 'hover')
     },
     '&.has-news': {
-      color: red[100],
-      textShadow: `0px 0px 3px ${red[50]}`,
+      color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.whatsnew.iconWithNews.color'),
+      textShadow: ThemeTools.getStateValue(theme, 'wavebox.sidebar.whatsnew.iconWithNews.textShadow'),
       '&:hover': {
-        color: red[50]
+        color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.whatsnew.iconWithNews.color', 'hover')
       }
     }
   },
   activeFrame: {
-    backgroundColor: red[400]
+    backgroundColor: ThemeTools.getValue(theme, 'wavebox.sidebar.whatsnew.iconWithNews.backgroundColor')
   },
   tooltipHeadline: {
     maxWidth: 300,
@@ -43,9 +43,9 @@ const styles = {
     marginTop: 0,
     marginBottom: 0
   }
-}
+})
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class SidelistControlWhatsNew extends React.Component {
   /* **************************************************************************/
   // Component lifecycle

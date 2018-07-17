@@ -1,14 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { IconButton } from '@material-ui/core'
-import ReactPortalTooltip from 'react-portal-tooltip'
 import uuid from 'uuid'
 import { settingsActions, settingsStore, Tour } from 'stores/settings'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import lightBlue from '@material-ui/core/colors/lightBlue'
+import ThemeTools from 'wbui/Themes/ThemeTools'
+import DefaultTooltip200w from 'wbui/Tooltips/DefaultTooltip200w'
+import TourTooltip from 'wbui/Tooltips/TourTooltip'
 
-const styles = {
+const styles = (theme) => ({
   // Icon
   container: {
     textAlign: 'center',
@@ -16,41 +17,6 @@ const styles = {
   },
   button: {
     backgroundColor: 'transparent !important'
-  },
-
-  // Main popover
-  popover: {
-    style: {
-      background: 'rgba(34, 34, 34, 0.9)',
-      paddingTop: 8,
-      paddingBottom: 8,
-      paddingLeft: 16,
-      paddingRight: 16,
-      fontSize: '13px',
-      color: 'white'
-    },
-    arrowStyle: {
-      color: 'rgba(34, 34, 34, 0.9)',
-      borderColor: false
-    }
-  },
-
-  // Tour popover
-  tourPopover: {
-    style: {
-      background: lightBlue[400],
-      paddingTop: 8,
-      paddingBottom: 8,
-      paddingLeft: 16,
-      paddingRight: 16,
-      fontSize: '13px',
-      color: 'white',
-      cursor: 'pointer'
-    },
-    arrowStyle: {
-      color: lightBlue[400],
-      borderColor: false
-    }
   },
 
   // Tour content
@@ -62,23 +28,28 @@ const styles = {
   popoverButtonContainer: {
     paddingLeft: 32
   },
-  basePopoverButton: {
+  nextPopoverButton: {
     marginTop: 8,
     marginBottom: 8,
     alignSelf: 'center',
-    border: '2px solid white',
+    border: `2px solid ${ThemeTools.getValue(theme, 'wavebox.tourPopover.color')}`,
     padding: '8px 16px',
     borderRadius: 4,
     fontSize: '11px',
     textAlign: 'center'
+  },
+  quitPopoverButton: {
+    marginTop: 8,
+    marginBottom: 8,
+    alignSelf: 'center',
+    border: `2px solid ${ThemeTools.getValue(theme, 'wavebox.tourPopover.color')}`,
+    padding: '8px 16px',
+    borderRadius: 4,
+    fontSize: '11px',
+    textAlign: 'center',
+    opacity: 0.7
   }
-}
-styles.nextPopoverButton = { ...styles.basePopoverButton }
-styles.quitPopoverButton = {
-  ...styles.basePopoverButton,
-  borderColor: 'rgba(255, 255, 255, 0.7)',
-  color: 'rgba(255, 255, 255, 0.7)'
-}
+})
 
 @withStyles(styles)
 class SidelistControl extends React.Component {
@@ -234,30 +205,27 @@ class SidelistControl extends React.Component {
           className={classes.button}>
           {icon}
         </IconButton>
-        <ReactPortalTooltip
+        <DefaultTooltip200w
           active={hovering && !showTourPopover}
           tooltipTimeout={0}
-          style={styles.popover}
           position='right'
           arrow='center'
           group={generatedId}
           parent={`#ReactComponent-Sidelist-Control-${generatedId}`}>
           {tooltip}
-        </ReactPortalTooltip>
+        </DefaultTooltip200w>
         {showTourPopover ? (
-          <ReactPortalTooltip
+          <TourTooltip
             active
             tooltipTimeout={0}
-            style={tourTooltipStyles ? {
-              style: { ...styles.tourPopover.style, ...tourTooltipStyles.style },
-              arrowStyle: { ...styles.tourPopover.arrowStyle, ...tourTooltipStyles.arrowStyle }
-            } : styles.tourPopover}
+            popoverStyle={tourTooltipStyles ? tourTooltipStyles.style : undefined}
+            popoverArrowStyle={tourTooltipStyles ? tourTooltipStyles.arrowStyle : undefined}
             position='right'
             arrow='center'
             group={generatedId}
             parent={`#ReactComponent-Sidelist-Control-${generatedId}`}>
             {this.renderTourTooltipContent(classes, tourTooltip)}
-          </ReactPortalTooltip>
+          </TourTooltip>
         ) : undefined}
       </div>
     )

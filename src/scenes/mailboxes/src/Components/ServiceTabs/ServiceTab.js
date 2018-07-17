@@ -15,8 +15,9 @@ import Resolver from 'Runtime/Resolver'
 import Color from 'color'
 import ServiceTooltip from 'Components/ServiceTooltip'
 import red from '@material-ui/core/colors/red'
+import ThemeTools from 'wbui/Themes/ThemeTools'
 
-const styles = {
+const styles = (theme) => ({
   /**
   * Layout
   */
@@ -41,13 +42,15 @@ const styles = {
       padding: 0,
       borderBottomWidth: 2,
       borderBottomStyle: 'solid',
-      borderBottomColor: 'transparent',
+      borderBottomColor: ThemeTools.getStateValue(theme, 'wavebox.toolbar.serviceTab.borderBottomColor'),
+      backgroundColor: ThemeTools.getStateValue(theme, 'wavebox.toolbar.serviceTab.backgroundColor'),
       '&.is-active': {
-        borderBottomColor: 'white',
-        backgroundColor: 'rgba(0, 0, 0, 0.3)'
+        borderBottomColor: ThemeTools.getStateValue(theme, 'wavebox.toolbar.serviceTab.borderBottomColor', 'active'),
+        backgroundColor: ThemeTools.getStateValue(theme, 'wavebox.toolbar.serviceTab.backgroundColor', 'active')
       },
       '&:hover': {
-        borderBottomColor: 'white'
+        borderBottomColor: ThemeTools.getStateValue(theme, 'wavebox.toolbar.serviceTab.borderBottomColor', 'hover'),
+        backgroundColor: ThemeTools.getStateValue(theme, 'wavebox.toolbar.serviceTab.backgroundColor', 'hover')
       }
     }
   },
@@ -108,9 +111,9 @@ const styles = {
       margin: '4px auto'
     }
   }
-}
+})
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class ServiceTab extends React.Component {
   /* **************************************************************************/
   // Class
@@ -345,6 +348,7 @@ class ServiceTab extends React.Component {
       onMouseLeave,
       classes,
       className,
+      theme,
       ...passProps
     } = this.props
     const {

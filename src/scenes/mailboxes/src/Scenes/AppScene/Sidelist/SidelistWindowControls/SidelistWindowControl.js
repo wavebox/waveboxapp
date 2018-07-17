@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { IconButton, Icon } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
-import blueGrey from '@material-ui/core/colors/blueGrey'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import FAIcon from 'wbui/FAIcon'
@@ -10,6 +9,7 @@ import { faWindowRestore } from '@fortawesome/pro-light-svg-icons/faWindowRestor
 import { faWindowMaximize } from '@fortawesome/pro-light-svg-icons/faWindowMaximize'
 import { faWindowMinimize } from '@fortawesome/pro-light-svg-icons/faWindowMinimize'
 import { faWindowClose } from '@fortawesome/pro-light-svg-icons/faWindowClose'
+import ThemeTools from 'wbui/Themes/ThemeTools'
 
 const TYPES = Object.freeze({
   RESTORE: 'RESTORE',
@@ -18,7 +18,7 @@ const TYPES = Object.freeze({
   UNFULLSCREEN: 'UNFULLSCREEN',
   CLOSE: 'CLOSE'
 })
-const styles = {
+const styles = (theme) => ({
   button: {
     width: 20,
     height: 20,
@@ -27,11 +27,11 @@ const styles = {
     WebkitAppRegion: 'no-drag',
     borderRadius: 2,
     '&:hover': {
-      backgroundColor: blueGrey[700]
+      backgroundColor: ThemeTools.getStateValue(theme, 'wavebox.sidebar.windowControls.icon.backgroundColor', 'hover')
     }
   },
   icon: {
-    color: blueGrey[50]
+    color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.windowControls.icon.color')
   },
   iconFA: {
     fontSize: 14,
@@ -42,9 +42,9 @@ const styles = {
     lineHeight: '14px',
     top: 3
   }
-}
+})
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class SidelistWindowControl extends React.Component {
   /* **************************************************************************/
   // Class
@@ -85,7 +85,7 @@ class SidelistWindowControl extends React.Component {
   }
 
   render () {
-    const { type, className, classes, ...passProps } = this.props
+    const { type, className, classes, theme, ...passProps } = this.props
 
     return (
       <IconButton

@@ -9,10 +9,11 @@ import { crextensionStore } from 'stores/crextension'
 import { accountStore } from 'stores/account'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
+import ThemeTools from 'wbui/Themes/ThemeTools'
 
 const SIDEBAR_WIDTH = 70
 const TOOLBAR_HEIGHT = 40
-const styles = {
+const styles = (theme) => ({
   master: {
     position: 'fixed',
     top: 0,
@@ -41,6 +42,7 @@ const styles = {
     height: TOOLBAR_HEIGHT,
     zIndex: 101,
     WebkitAppRegion: 'drag',
+    boxShadow: ThemeTools.getValue(theme, 'wavebox.toolbar.boxShadow'),
     '&.toolbars-1': { height: TOOLBAR_HEIGHT },
     '&.toolbars-2': { height: 2 * TOOLBAR_HEIGHT },
     '&.no-sidebar': { left: 0 }
@@ -65,9 +67,9 @@ const styles = {
     right: 0,
     bottom: 0
   }
-}
+})
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class AppScene extends React.Component {
   /* **************************************************************************/
   // Class
@@ -144,7 +146,7 @@ class AppScene extends React.Component {
   }
 
   render () {
-    const { children, classes, ...passProps } = this.props
+    const { children, classes, theme, ...passProps } = this.props
     const {
       hasSidebar,
       appHasTitlebar,
