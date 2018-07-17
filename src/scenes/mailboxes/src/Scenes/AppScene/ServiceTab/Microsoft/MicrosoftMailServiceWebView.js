@@ -23,11 +23,13 @@ export default class MicrosoftMailServiceWebView extends React.Component {
   componentDidMount () {
     // Handle dispatch events
     accountDispatch.on('openItem', this.handleOpenItem)
+    accountDispatch.on('composeItem', this.handleComposeMessage)
   }
 
   componentWillUnmount () {
     // Handle dispatch events
     accountDispatch.removeListener('openItem', this.handleOpenItem)
+    accountDispatch.removeListener('composeItem', this.handleComposeMessage)
   }
 
   /* **************************************************************************/
@@ -46,6 +48,22 @@ export default class MicrosoftMailServiceWebView extends React.Component {
         // after a few seconds to re-evaluate our state
         microsoftActions.syncServiceMailAfter.defer(this.props.serviceId, 1000 * 5)
       }
+    }
+  }
+
+  /**
+  * Handles composing a new message
+  * @param evt: the event that fired
+  */
+  handleComposeMessage = (evt) => {
+    // Note we can't support the full set of compose here because microsoft blocks automated
+    // inputs. Instead we do the best we can - which is bringing up the compose window
+    if (evt.serviceId === this.props.serviceId) {
+      this.refs[REF].getWebContents().sendInputEvent({
+        type: 'keyDown',
+        keyCode: 'N',
+        modifiers: process.platform === 'darwin' ? ['meta'] : ['control']
+      })
     }
   }
 

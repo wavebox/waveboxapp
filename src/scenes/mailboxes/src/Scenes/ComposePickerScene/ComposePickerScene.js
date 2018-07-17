@@ -57,7 +57,8 @@ class ComposePickerScene extends React.Component {
     return {
       composeServices: [].concat(
         accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_MAIL),
-        accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_INBOX)
+        accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_INBOX),
+        accountState.allServicesOfType(SERVICE_TYPES.MICROSOFT_MAIL)
       ),
       composePayload: composeState.compose.payload
     }
