@@ -100,12 +100,19 @@ class SidelistItemMultiService extends React.Component {
   * @param evt: the event that fired
   */
   handleClick = (evt) => {
-    evt.preventDefault()
     if (evt.metaKey) {
       window.location.hash = `/settings/accounts/${this.props.mailbox.id}`
     } else {
       accountActions.changeActiveMailbox(this.props.mailboxId)
     }
+  }
+
+  /**
+  * Handles the item being long clicked on
+  * @param evt: the event that fired
+  */
+  handleLongClick = (evt) => {
+    accountActions.changeActiveMailbox(this.props.mailboxId, true)
   }
 
   /**
@@ -195,7 +202,8 @@ class SidelistItemMultiService extends React.Component {
 
     return (
       <SidelistMailboxContainer
-        onClick={this.handleClick}
+        onTap={this.handleClick}
+        onPress={this.handleLongClick}
         onMouseEnter={() => this.setState({ isHoveringGroup: true })}
         onMouseLeave={() => this.setState({ isHoveringGroup: false })}
         {...passProps}>

@@ -457,11 +457,12 @@ class CoreAccountActions extends RemoteActions {
   /**
   * Changes the active mailbox
   * @param id: the id of the mailbox
+  * @param firstService=false: set to true to go immediately to the first service
   */
   changeActiveMailbox (...args) {
     if (process.type === 'browser') {
-      const [id] = args
-      return { id }
+      const [id, firstService = false] = args
+      return { id, firstService }
     } else if (process.type === 'renderer') {
       return this.remoteDispatch('changeActiveMailbox', args)
     }

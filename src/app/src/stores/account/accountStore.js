@@ -15,7 +15,8 @@ import uuid from 'uuid'
 import {
   PERSISTENCE_INDEX_KEY,
   MAILBOX_SLEEP_EXTEND,
-  AVATAR_TIMESTAMP_PREFIX
+  AVATAR_TIMESTAMP_PREFIX,
+  MAILBOX_INTELLI_ACTIVE_MAX_TS
 } from 'shared/constants'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import CoreACAuth from 'shared/Models/ACAccounts/CoreACAuth'
@@ -34,6 +35,7 @@ class AccountStore extends CoreAccountStore {
     super()
 
     this._sleepingQueue_ = new Map()
+    this._serviceLastActiveTS_ = new Map()
 
     /* ****************************************/
     // Actions
@@ -246,6 +248,7 @@ class AccountStore extends CoreAccountStore {
   */
   saveActiveServiceId (serviceId) {
     if (serviceId !== this._activeServiceId_) {
+      this._serviceLastActiveTS_.set(this.activeServiceId(), new Date().getTime())
       this._activeServiceId_ = serviceId
       this.dispatchToRemote('remoteSetActiveService', [serviceId])
       if (serviceId) {
@@ -749,28 +752,52 @@ class AccountStore extends CoreAccountStore {
   /**
   * Re-issues a change active mailbox action as a change active service action
   * @param id: the id of the mailbox to change
+  * @param firstService: true to force into the first service
   * @return true if it dispatched, false otherwise
   */
-  _changeActiveMailboxBySecondaryAction (id) {
-    if (this.activeMailboxId() === id) { return false }
-
+  _changeActiveMailboxBySecondaryAction (id, firstService) {
     const mailbox = this.getMailbox(id)
     if (!mailbox) { return false }
-    const serviceId = mailbox.allServices[0]
-    if (!serviceId) { return false }
 
-    actions.changeActiveService.defer(serviceId)
-    return true
+    // If we haven't specified we want the first service, look at which service
+    // was last active. If we've been active recently then switch to that tab
+    // otherwise default to the first service as usual
+    if (!firstService) {
+      // If the mailbox is already active we probably want the first service
+      if (this.activeMailboxId() !== id) {
+        const lastAccessedId = mailbox.allServices.reduce((acc, serviceId) => {
+          const ts = this._serviceLastActiveTS_.get(serviceId) || 0
+          return ts > acc.ts ? { serviceId, ts } : acc
+        }, { serviceId: undefined, ts: 0 })
+
+        if (lastAccessedId.serviceId) {
+          const now = new Date().getTime()
+          if (now - lastAccessedId.ts <= MAILBOX_INTELLI_ACTIVE_MAX_TS) {
+            actions.changeActiveService.defer(lastAccessedId.serviceId)
+            return true
+          }
+        }
+      }
+    }
+
+    // Run the default behaviour of switching back to the first service
+    const serviceId = mailbox.allServices[0]
+    if (serviceId) {
+      actions.changeActiveService.defer(serviceId)
+      return true
+    } else {
+      return false
+    }
   }
 
-  handleChangeActiveMailbox ({ id }) {
+  handleChangeActiveMailbox ({ id, firstService }) {
     this.preventDefault()
-    this._changeActiveMailboxBySecondaryAction(id)
+    this._changeActiveMailboxBySecondaryAction(id, firstService)
   }
 
   handleChangeActiveMailboxIndex ({ index }) {
     this.preventDefault()
-    this._changeActiveMailboxBySecondaryAction(this._mailboxIndex_[index])
+    this._changeActiveMailboxBySecondaryAction(this._mailboxIndex_[index], false)
   }
 
   handleChangeActiveMailboxToPrev ({ allowCycling }) {
@@ -786,7 +813,7 @@ class AccountStore extends CoreAccountStore {
     }
 
     if (nextId) {
-      this._changeActiveMailboxBySecondaryAction(nextId)
+      this._changeActiveMailboxBySecondaryAction(nextId, false)
     }
   }
 
@@ -803,7 +830,7 @@ class AccountStore extends CoreAccountStore {
     }
 
     if (nextId) {
-      this._changeActiveMailboxBySecondaryAction(nextId)
+      this._changeActiveMailboxBySecondaryAction(nextId, false)
     }
   }
 
