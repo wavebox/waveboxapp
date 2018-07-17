@@ -47,6 +47,7 @@ class ContainerService extends CoreACService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return this.container.supportsWBGAPI }
   get supportedAuthNamespace () { return undefined }
+  get similarityNamespaceId () { return `${this.type}:${this.containerId}` }
 
   /* **************************************************************************/
   // Properties: Humanized

@@ -1,7 +1,7 @@
 import React from 'react'
 import { accountStore } from 'stores/account'
 import Welcome from '../Welcome'
-import MailboxTab from './MailboxTab'
+import ServiceTab from '../ServiceTab'
 import shallowCompare from 'react-addons-shallow-compare'
 
 export default class MailboxTabManager extends React.Component {
@@ -28,13 +28,13 @@ export default class MailboxTabManager extends React.Component {
     // Sorting the mailbox ids prevents this behaviour and we don't actually use
     // the ordering for anything more than sanity. Fixes #548
     return {
-      mailboxIds: accountState.mailboxIds().sort()
+      serviceIds: accountState.serviceIds().sort()
     }
   })()
 
   accountChanged = (accountState) => {
     this.setState({
-      mailboxIds: accountState.mailboxIds().sort()
+      serviceIds: accountState.serviceIds().sort()
     })
   }
 
@@ -43,18 +43,18 @@ export default class MailboxTabManager extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    if (JSON.stringify(this.state.mailboxIds) !== JSON.stringify(nextState.mailboxIds)) { return true }
+    if (JSON.stringify(this.state.serviceIds) !== JSON.stringify(nextState.serviceIds)) { return true }
     return shallowCompare({ state: {}, props: this.props }, nextProps, {})
   }
 
   render () {
-    const { mailboxIds } = this.state
+    const { serviceIds } = this.state
 
-    if (mailboxIds.length) {
+    if (serviceIds.length) {
       return (
         <div {...this.props}>
-          {mailboxIds.map((mailboxId) => {
-            return (<MailboxTab key={mailboxId} mailboxId={mailboxId} />)
+          {serviceIds.map((serviceId) => {
+            return (<ServiceTab key={serviceId} serviceId={serviceId} />)
           })}
         </div>
       )

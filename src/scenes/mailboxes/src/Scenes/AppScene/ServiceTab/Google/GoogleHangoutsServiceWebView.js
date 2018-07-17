@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
+import CoreServiceWebViewHibernator from '../CoreServiceWebViewHibernator'
 import { accountActions } from 'stores/account'
 import GoogleHangoutsServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/GoogleHangoutsServiceDataReducer'
 import { NotificationService } from 'Notifications'
@@ -72,7 +72,7 @@ export default class GoogleHangoutsServiceWebView extends React.Component {
   render () {
     const { mailboxId, serviceId } = this.props
     return (
-      <MailboxWebViewHibernator
+      <CoreServiceWebViewHibernator
         ref={REF}
         mailboxId={mailboxId}
         serviceId={serviceId}

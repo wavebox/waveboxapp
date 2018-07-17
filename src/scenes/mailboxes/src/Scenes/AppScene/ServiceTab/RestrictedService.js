@@ -12,8 +12,8 @@ import { faGem } from '@fortawesome/pro-solid-svg-icons/faGem'
 const styles = {
   root: {
     position: 'absolute',
-    top: 10000,
-    bottom: -10000,
+    top: 0,
+    bottom: 0,
     left: 0,
     right: 0,
     height: '100%',
@@ -25,12 +25,7 @@ const styles = {
     alignItems: 'center',
     flexDirection: 'column',
     cursor: 'default',
-    fontWeight: 300,
-
-    '&.active': {
-      top: 0,
-      bottom: 0
-    }
+    fontWeight: 300
   },
   proIcon: {
     color: lightBlue[600],
@@ -52,7 +47,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class MailboxTabRestricted extends React.Component {
+class RestrictedService extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -91,14 +86,12 @@ class MailboxTabRestricted extends React.Component {
   state = (() => {
     const accountState = accountStore.getState()
     return {
-      isActive: accountState.activeServiceId() === this.props.serviceId,
       displayName: accountState.resolvedServiceDisplayName(this.props.serviceId)
     }
   })()
 
   accountChanged = (accountState) => {
     this.setState({
-      isActive: accountState.activeServiceId() === this.props.serviceId,
       displayName: accountState.resolvedServiceDisplayName(this.props.serviceId)
     })
   }
@@ -120,12 +113,11 @@ class MailboxTabRestricted extends React.Component {
       ...passProps
     } = this.props
     const {
-      isActive,
       displayName
     } = this.state
 
     return (
-      <div className={classNames(classes.root, isActive ? 'active' : undefined, className)} {...passProps}>
+      <div className={classNames(classes.root, className)} {...passProps}>
         <FAIcon icon={faGem} className={classes.proIcon} />
         <h1 className={classes.title}>Purchase Wavebox</h1>
         <p className={classes.text}>
@@ -144,4 +136,4 @@ class MailboxTabRestricted extends React.Component {
   }
 }
 
-export default MailboxTabRestricted
+export default RestrictedService

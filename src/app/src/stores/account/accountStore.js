@@ -54,6 +54,7 @@ class AccountStore extends CoreAccountStore {
       // Service
       handleCreateService: actions.CREATE_SERVICE,
       handleRemoveService: actions.REMOVE_SERVICE,
+      handleMoveServiceToNewMailbox: actions.MOVE_SERVICE_TO_NEW_MAILBOX,
       handleReduceService: actions.REDUCE_SERVICE,
       handleReduceServiceIfActive: actions.REDUCE_SERVICE_IF_ACTIVE,
       handleReduceServiceIfInActive: actions.REDUCE_SERVICE_IF_INACTIVE,
@@ -432,10 +433,11 @@ class AccountStore extends CoreAccountStore {
 
     // Remove from the mailbox
     const mailbox = this.getMailbox(service.parentId)
+    let nextMailbox
     if (mailbox) {
       const nextMailboxJS = MailboxReducer.removeService(...[mailbox].concat([id]))
       if (nextMailboxJS) {
-        this.saveMailbox(mailbox.id, nextMailboxJS)
+        nextMailbox = this.saveMailbox(mailbox.id, nextMailboxJS)
       }
     }
 
@@ -444,13 +446,59 @@ class AccountStore extends CoreAccountStore {
     this.saveServiceData(id, null)
 
     if (wasActive) {
-      const nextServiceId = ((mailbox || {}).allServices || [])[0] || this.firstServiceId()
+      const nextServiceId = ((nextMailbox || {}).allServices || [])[0] || this.firstServiceId()
       if (nextServiceId) {
         this.clearServiceSleep(nextServiceId)
         this.saveActiveServiceId(nextServiceId)
       } else {
         this.saveActiveServiceId(null)
       }
+    }
+  }
+
+  handleMoveServiceToNewMailbox ({ id }) {
+    const service = this.getService(id)
+    if (!service) { this.preventDefault(); return }
+    const prevMailboxId = service.parentId
+    const nextMailboxId = uuid.v4()
+
+    // Notes on this. Auth is lost (mailbox owns). Service data will be
+    // automigrated (parentId is serviceId)
+
+    // 1. Remove from the current mailbox
+    const sourceMailbox = this.getMailbox(prevMailboxId)
+    if (sourceMailbox) {
+      const nextSourceMailboxJS = MailboxReducer.removeService(
+        ...[sourceMailbox].concat([id])
+      )
+      if (nextSourceMailboxJS) {
+        this.saveMailbox(prevMailboxId, nextSourceMailboxJS)
+      }
+    }
+
+    // 2. Create the new mailbox
+    const targetMailboxJS1 = ACMailbox.createJS(
+      nextMailboxId,
+      undefined,
+      undefined,
+      undefined
+    )
+    const targetMailbox1 = this.saveMailbox(nextMailboxId, targetMailboxJS1)
+    MailboxesSessionManager.startManagingSession(targetMailbox1)
+    this.saveMailboxIndex(this._mailboxIndex_.concat(nextMailboxId))
+
+    // 3. Update the service
+    this.saveService(id, {
+      ...service.cloneData(),
+      parentId: nextMailboxId
+    })
+
+    // 4. Attach service to mailbox
+    const targetMailboxJS2 = MailboxReducer.addServiceByLocation(
+      ...[targetMailbox1].concat([id, ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_START])
+    )
+    if (targetMailboxJS2) {
+      this.saveMailbox(nextMailboxId, targetMailboxJS2)
     }
   }
 

@@ -40,7 +40,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class MailboxSearch extends React.Component {
+class ServiceSearch extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -207,4 +207,4 @@ class MailboxSearch extends React.Component {
   }
 }
 
-export default MailboxSearch
+export default ServiceSearch

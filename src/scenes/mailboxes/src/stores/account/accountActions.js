@@ -41,6 +41,19 @@ class AccountActions extends RendererAccountActions {
   }
 
   /* **************************************************************************/
+  // Warnings
+  /* **************************************************************************/
+
+  /**
+  * Clears a runtime warning
+  * @param serviceId: the id of service
+  * @param warningType: type of warning to clear
+  */
+  clearRuntimeWarning (serviceId, warningType) {
+    return { serviceId, warningType }
+  }
+
+  /* **************************************************************************/
   // Mailbox Creation
   /* **************************************************************************/
 

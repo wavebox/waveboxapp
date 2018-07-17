@@ -5,9 +5,9 @@ import { accountStore, accountActions, accountDispatch } from 'stores/account'
 import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 import ServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/ServiceDataReducer'
 import BrowserView from 'wbui/Guest/BrowserView'
-import MailboxSearch from './MailboxSearch'
-import MailboxTargetUrl from './MailboxTargetUrl'
-import MailboxLoadBar from './MailboxLoadBar'
+import ServiceSearch from './ServiceSearch'
+import ServiceTargetUrl from './ServiceTargetUrl'
+import ServiceLoadBar from './ServiceLoadBar'
 import shallowCompare from 'react-addons-shallow-compare'
 import CoreACService from 'shared/Models/ACAccounts/CoreACService'
 import { URL } from 'url'
@@ -28,7 +28,7 @@ import { settingsStore } from 'stores/settings'
 import Resolver from 'Runtime/Resolver'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import MailboxInformationCover from './MailboxInformationCover'
+import ServiceInformationCover from './ServiceInformationCover'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import RefreshIcon from '@material-ui/icons/Refresh'
 import HotelIcon from '@material-ui/icons/Hotel'
@@ -39,8 +39,8 @@ import grey from '@material-ui/core/colors/grey'
 const styles = {
   root: {
     position: 'absolute',
-    top: 10000,
-    bottom: -10000,
+    top: 0,
+    bottom: 0,
     left: 0,
     right: 0,
     width: '100%',
@@ -50,9 +50,6 @@ const styles = {
     '& webview': { visibility: 'hidden' },
 
     '&.active': {
-      top: 0,
-      bottom: 0,
-
       // Explicitly set the visibility on the webview element as this allows electron to prioritize resource consumption
       '& webview': { visibility: 'visible' }
     }
@@ -115,7 +112,7 @@ const styles = {
 const BROWSER_REF = 'browser'
 
 @withStyles(styles)
-class MailboxWebView extends React.Component {
+class CoreServiceWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -717,7 +714,8 @@ class MailboxWebView extends React.Component {
         <div className={classes.browserContainer}>
           <BrowserView
             ref={BROWSER_REF}
-            id={`guest_${mailbox.id}_${service.type}`}
+            key={`guest_${mailbox.id}_${service.id}_${service.type}`}
+            id={`guest_${mailbox.id}_${service.id}_${service.type}`}
             preload={preloadScripts}
             partition={mailbox.partitionId}
             src={restorableUrl || 'about:blank'}
@@ -790,13 +788,13 @@ class MailboxWebView extends React.Component {
             ) : undefined}
           </div>
         ) : undefined}
-        <MailboxLoadBar isLoading={isLoading} />
-        <MailboxTargetUrl url={focusedUrl} />
+        <ServiceLoadBar isLoading={isLoading} />
+        <ServiceTargetUrl url={focusedUrl} />
         {hasSearch ? (
-          <MailboxSearch mailboxId={mailbox.id} serviceId={serviceId} />
+          <ServiceSearch mailboxId={mailbox.id} serviceId={serviceId} />
         ) : undefined}
         {isCrashed ? (
-          <MailboxInformationCover
+          <ServiceInformationCover
             title='Whoops!'
             text={['Something went wrong with this tab and it crashed']}
             button={(
@@ -807,7 +805,7 @@ class MailboxWebView extends React.Component {
             )} />
         ) : undefined}
         {serviceAuthInvalid ? (
-          <MailboxInformationCover
+          <ServiceInformationCover
             title='Whoops!'
             IconComponent={ErrorOutlineIcon}
             text={[
@@ -828,4 +826,4 @@ class MailboxWebView extends React.Component {
   }
 }
 
-export default MailboxWebView
+export default CoreServiceWebView

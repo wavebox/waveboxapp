@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
+import CoreServiceWebViewHibernator from '../CoreServiceWebViewHibernator'
 import { accountDispatch, accountStore, accountActions } from 'stores/account'
 import { slackActions } from 'stores/slack'
 import {
@@ -141,7 +141,7 @@ export default class SlackServiceWebView extends React.Component {
     const { mailboxId, serviceId } = this.props
 
     return (
-      <MailboxWebViewHibernator
+      <CoreServiceWebViewHibernator
         ref={REF}
         mailboxId={mailboxId}
         serviceId={serviceId}

@@ -35,6 +35,7 @@ import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 import AuthReducer from 'shared/AltStores/Account/AuthReducers/AuthReducer'
 import CoreACAuth from 'shared/Models/ACAccounts/CoreACAuth'
 import ACProvisoService from 'shared/Models/ACAccounts/ACProvisoService'
+import ACCOUNT_WARNING_TYPES from 'shared/Models/ACAccounts/AccountWarningTypes'
 
 const AUTH_MODES = Object.freeze({
   TEMPLATE_CREATE: 'TEMPLATE_CREATE',
@@ -53,6 +54,7 @@ class AccountStore extends RendererAccountStore {
     this._snapshots_ = new Map()
     this._search_ = new Map()
     this._webcontentTabIds_ = new Map()
+    this._runtimeWarnings_ = new Map()
 
     /* ****************************************/
     // Snapshots
@@ -114,6 +116,29 @@ class AccountStore extends RendererAccountStore {
     }
 
     /* ****************************************/
+    // Warnings
+    /* ****************************************/
+
+    /**
+    * Gets all the warnings for a service
+    * @param serviceId: the id of the service
+    * @return an struct of warnings
+    */
+    this.getWarningsForService = (serviceId) => {
+      return this._runtimeWarnings_.get(serviceId) || {}
+    }
+
+    /**
+    * Gets a warning for a service
+    * @param serviceId: the id of the service
+    * @param warningType: the type of warnings to get
+    * @return the warning or undefined
+    */
+    this.getWarningForServiceAndType = (serviceId, warningType) => {
+      return this.getWarningsForService(serviceId)[warningType]
+    }
+
+    /* ****************************************/
     // Listeners
     /* ****************************************/
 
@@ -121,6 +146,9 @@ class AccountStore extends RendererAccountStore {
       // Tabs
       handleSetWebcontentTabId: actions.SET_WEBCONTENT_TAB_ID,
       handleDeleteWebcontentTabId: actions.DELETE_WEBCONTENT_TAB_ID,
+
+      // Warnings
+      handleClearRuntimeWarning: actions.CLEAR_RUNTIME_WARNING,
 
       // Mailbox creation
       handleStartAddMailboxGroup: actions.START_ADD_MAILBOX_GROUP,
@@ -260,6 +288,16 @@ class AccountStore extends RendererAccountStore {
 
   handleDeleteWebcontentTabId ({ serviceId }) {
     this._webcontentTabIds_.delete(serviceId)
+  }
+
+  /* **************************************************************************/
+  // Warnings
+  /* **************************************************************************/
+
+  handleClearRuntimeWarning ({ serviceId, warningType }) {
+    const warnings = this._runtimeWarnings_.get(serviceId) || {}
+    delete warnings[warningType]
+    this._runtimeWarnings_.set(serviceId, warnings)
   }
 
   /* **************************************************************************/
@@ -615,6 +653,26 @@ class AccountStore extends RendererAccountStore {
       actions.changeActiveService.defer(serviceId)
       settingsActions.tourStart.defer()
     }, wait)
+
+    // It's bad that we're waiting an arbituary time here, but if the warning doesn't get
+    // generated it's not the end of the world. Creation should probably be below 200ms
+    // so waiting 2500 gives even the slowest machine enough time to do everything
+    setTimeout(() => {
+      const service = this.getService(serviceId)
+      if (!service) { return }
+      const conflict = this.mailboxServices(service.parentId).find((s) => {
+        return s.id !== serviceId && s.similarityNamespaceId === service.similarityNamespaceId
+      })
+      if (!conflict) { return }
+
+      const warnings = this._runtimeWarnings_.get(serviceId) || {}
+      warnings[ACCOUNT_WARNING_TYPES.SERVICE_SIMILARITY_NAMESPACE_CLASH] = {
+        type: ACCOUNT_WARNING_TYPES.SERVICE_SIMILARITY_NAMESPACE_CLASH,
+        conflictServiceId: conflict.id
+      }
+      this._runtimeWarnings_.set(serviceId, warnings)
+      this.emitChange()
+    }, 2500)
   }
 
   /* **************************************************************************/

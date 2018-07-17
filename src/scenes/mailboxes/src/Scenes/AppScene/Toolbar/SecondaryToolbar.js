@@ -89,7 +89,7 @@ class SecondaryToolbar extends React.Component {
   * @return state update
   */
   deriveAccountState (accountState) {
-    const mailbox = accountStore.activeMailbox()
+    const mailbox = accountState.activeMailbox()
     return {
       activeTabId: accountState.getActiveWebcontentTabId(),
       serviceId: accountState.activeServiceId(),

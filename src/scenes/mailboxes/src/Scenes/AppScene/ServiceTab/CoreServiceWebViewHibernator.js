@@ -1,28 +1,28 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Button } from '@material-ui/core'
-import MailboxWebView from './MailboxWebView'
+import CoreServiceWebView from './CoreServiceWebView'
 import { accountStore, accountActions } from 'stores/account'
 import shallowCompare from 'react-addons-shallow-compare'
-import MailboxInformationCover from './MailboxInformationCover'
+import ServiceInformationCover from './ServiceInformationCover'
 import HotelIcon from '@material-ui/icons/Hotel'
 import AlarmIcon from '@material-ui/icons/Alarm'
 
-export default class MailboxWebViewHibernator extends React.Component {
+export default class CoreServiceWebViewHibernator extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
-    ...MailboxWebView.propTypes,
+    ...CoreServiceWebView.propTypes,
     showSleepPlaceholder: PropTypes.bool.isRequired
   }
   static defaultProps = {
-    ...MailboxWebView.defaultProps,
+    ...CoreServiceWebView.defaultProps,
     showSleepPlaceholder: true
   }
-  static WEBVIEW_METHODS = MailboxWebView.WEBVIEW_METHODS
-  static REACT_WEBVIEW_EVENTS = MailboxWebView.REACT_WEBVIEW_EVENTS
+  static WEBVIEW_METHODS = CoreServiceWebView.WEBVIEW_METHODS
+  static REACT_WEBVIEW_EVENTS = CoreServiceWebView.REACT_WEBVIEW_EVENTS
 
   /* **************************************************************************/
   // Class Lifecycle
@@ -191,7 +191,7 @@ export default class MailboxWebViewHibernator extends React.Component {
 
     if (!isSleeping || captureRef !== null) {
       return (
-        <MailboxWebView
+        <CoreServiceWebView
           innerRef={(n) => { this.mailboxWebviewRef = n }}
           mailboxId={mailboxId}
           serviceId={serviceId}
@@ -202,7 +202,7 @@ export default class MailboxWebViewHibernator extends React.Component {
     } else {
       if (showSleepPlaceholder && isActive) {
         return (
-          <MailboxInformationCover
+          <ServiceInformationCover
             style={style}
             className={className}
             IconComponent={HotelIcon}

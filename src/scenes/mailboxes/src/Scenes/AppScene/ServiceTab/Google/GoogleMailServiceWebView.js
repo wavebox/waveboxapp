@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
+import CoreServiceWebViewHibernator from '../CoreServiceWebViewHibernator'
 import { accountStore, accountDispatch } from 'stores/account'
 import { googleActions } from 'stores/google'
 import { settingsStore } from 'stores/settings'
@@ -55,7 +55,7 @@ export default class GoogleMailServiceWebView extends React.Component {
       const accountState = accountStore.getState()
       const service = accountState.getService(nextProps.serviceId)
       this.setState({
-        serviceType: service.type,
+        serviceType: service ? service.type : undefined,
         isActive: accountState.isServiceActive(nextProps.serviceId)
       })
     }
@@ -64,14 +64,13 @@ export default class GoogleMailServiceWebView extends React.Component {
   /* **************************************************************************/
   // Data lifecylce
   /* **************************************************************************/
-
   state = (() => {
     const settingsState = settingsStore.getState()
     const accountState = accountStore.getState()
     const service = accountState.getService(this.props.serviceId)
 
     return {
-      serviceType: service.type,
+      serviceType: service ? service.type : undefined,
       isActive: accountState.isServiceActive(this.props.serviceId),
       ui: settingsState.ui
     }
@@ -80,7 +79,7 @@ export default class GoogleMailServiceWebView extends React.Component {
   accountChanged = (accountState) => {
     const service = accountState.getService(this.props.serviceId)
     this.setState({
-      serviceType: service.type,
+      serviceType: service ? service.type : undefined,
       isActive: accountState.isServiceActive(this.props.serviceId)
     })
   }
@@ -207,7 +206,7 @@ export default class GoogleMailServiceWebView extends React.Component {
   render () {
     const { mailboxId, serviceId } = this.props
     return (
-      <MailboxWebViewHibernator
+      <CoreServiceWebViewHibernator
         ref={REF}
         mailboxId={mailboxId}
         serviceId={serviceId}

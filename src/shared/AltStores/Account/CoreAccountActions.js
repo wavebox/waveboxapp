@@ -192,7 +192,7 @@ class CoreAccountActions extends RemoteActions {
 
   /**
   * Removes a Service
-  * @param id: the id of the mailbox to update
+  * @param id: the id of the service to remove
   */
   removeService (...args) {
     if (process.type === 'browser') {
@@ -200,6 +200,19 @@ class CoreAccountActions extends RemoteActions {
       return { id }
     } else if (process.type === 'renderer') {
       return this.remoteDispatch('removeService', args)
+    }
+  }
+
+  /**
+  * Moves a service to a new mailbox
+  * @param id: the id of service to move
+  */
+  moveServiceToNewMailbox (...args) {
+    if (process.type === 'browser') {
+      const [id] = args
+      return { id }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('moveServiceToNewMailbox', args)
     }
   }
 

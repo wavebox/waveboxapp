@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import MailboxWebViewHibernator from '../MailboxWebViewHibernator'
-import { accountDispatch } from 'stores/account'
-import { trelloActions } from 'stores/trello'
+import CoreServiceWebViewHibernator from '../CoreServiceWebViewHibernator'
+import { accountDispatch, AccountLinker } from 'stores/account'
+import { microsoftActions } from 'stores/microsoft'
 
 const REF = 'mailbox_tab'
 
-export default class TrelloServiceWebView extends React.Component {
+export default class MicrosoftMailServiceWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -40,17 +40,12 @@ export default class TrelloServiceWebView extends React.Component {
   */
   handleOpenItem = (evt) => {
     if (evt.serviceId === this.props.serviceId) {
-      if (evt.data.boardId && evt.data.cardId) {
-        this.refs[REF].loadURL(`https://trello.com/card/board/a/${evt.data.boardId}/${evt.data.cardId}`)
-      } else if (evt.data.board) {
-        this.refs[REF].loadURL(`https://trello.com/board/a/${evt.data.boardId}`)
-      } else {
-        this.refs[REF].loadURL('https://trello.com')
+      if (evt.data.webLink) {
+        AccountLinker.openContentWindow(this.props.serviceId, evt.data.webLink)
+        // Normally being able to handle this also indicates that something changed, so lets do a sync
+        // after a few seconds to re-evaluate our state
+        microsoftActions.syncServiceMailAfter.defer(this.props.serviceId, 1000 * 5)
       }
-
-      // Normally being able to handle this also indicates that something changed, so lets do a sync
-      // after a few seconds to re-evaluate our state
-      trelloActions.syncServiceNotificationsAfter.defer(this.props.serviceId, 1000 * 5)
     }
   }
 
@@ -62,7 +57,7 @@ export default class TrelloServiceWebView extends React.Component {
     const { mailboxId, serviceId } = this.props
 
     return (
-      <MailboxWebViewHibernator
+      <CoreServiceWebViewHibernator
         ref={REF}
         mailboxId={mailboxId}
         serviceId={serviceId} />

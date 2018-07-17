@@ -103,6 +103,7 @@ class CoreACService extends CoreACModel {
   }
   get supportsWBGAPI () { SubclassNotImplementedError('CoreACService.supportsWBGAPI') }
   get supportedAuthNamespace () { SubclassNotImplementedError('CoreACService.supportedAuthNamespace') }
+  get similarityNamespaceId () { return `${this.type}:${this.supportedAuthNamespace || '_'}` }
 
   /* **************************************************************************/
   // Properties: Humanized
