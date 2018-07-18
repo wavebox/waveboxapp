@@ -22,7 +22,10 @@ const VIBRANCY_MODES = Object.freeze({
 
 const THEMES = Object.freeze({
   DARK: 'DARK',
-  LIGHT: 'LIGHT'
+  LIGHT: 'LIGHT',
+  INDIGO: 'INDIGO',
+  TEAL: 'TEAL',
+  NAVY: 'NAVY'
 })
 
 const ELECTRON_VIBRANCY_MODES = Object.freeze({

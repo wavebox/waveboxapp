@@ -88,8 +88,8 @@ export default {
         },
         backgroundColor: {
           default: 'transparent',
-          active: grey[300],
-          hover: 'transparent'
+          active: 'rgba(0, 0, 0, 0.3)',
+          hover: 'rgba(0, 0, 0, 0.1)'
         }
       }
     },

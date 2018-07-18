@@ -90,7 +90,7 @@ export default {
         backgroundColor: {
           default: 'transparent',
           active: 'rgba(0, 0, 0, 0.3)',
-          hover: 'transparent'
+          hover: 'rgba(0, 0, 0, 0.2)'
         }
       }
     },

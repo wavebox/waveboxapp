@@ -97,7 +97,10 @@ export default class UISettingsSection extends React.Component {
             value={ui.theme}
             options={[
               { value: UISettings.THEMES.DARK, label: 'Dark' },
-              { value: UISettings.THEMES.LIGHT, label: 'Light' }
+              { value: UISettings.THEMES.LIGHT, label: 'Light' },
+              { value: UISettings.THEMES.INDIGO, label: 'Indigo' },
+              { value: UISettings.THEMES.NAVY, label: 'Navy' },
+              { value: UISettings.THEMES.TEAL, label: 'Teal' }
             ]}
             onChange={(evt, value) => settingsActions.sub.ui.setTheme(value)} />
           {process.platform === 'darwin' ? (
