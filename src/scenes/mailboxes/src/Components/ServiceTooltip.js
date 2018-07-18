@@ -17,7 +17,7 @@ const styles = (theme) => ({
   hr: {
     height: 1,
     border: 0,
-    backgroundImage: 'linear-gradient(to right, #bcbcbc, #fff, #bcbcbc)'
+    backgroundImage: `linear-gradient(to right, ${ThemeTools.getValue(theme, 'wavebox.popover.hr.backgroundGradientColors')})`
   },
   proIcon: {
     color: ThemeTools.getValue(theme, 'wavebox.popover.color'),

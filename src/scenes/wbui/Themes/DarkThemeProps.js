@@ -99,7 +99,10 @@ export default {
     },
     popover: {
       backgroundColor: 'rgba(34, 34, 34, 0.9)',
-      color: '#FFF'
+      color: '#FFF',
+      hr: {
+        backgroundGradientColors: '#bcbcbc, #fff, #bcbcbc'
+      }
     },
     tourPopover: {
       backgroundColor: lightBlue[400],

@@ -4,19 +4,20 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import { accountStore } from 'stores/account'
 import DefaultTooltip400w from 'wbui/Tooltips/DefaultTooltip400w'
+import ThemeTools from 'wbui/Themes/ThemeTools'
 
-const styles = {
+const styles = (theme) => ({
   root: {
     textAlign: 'center'
   },
   hr: {
     height: 1,
     border: 0,
-    backgroundImage: 'linear-gradient(to right, #bcbcbc, #fff, #bcbcbc)'
+    backgroundImage: `linear-gradient(to right, ${ThemeTools.getValue(theme, 'wavebox.popover.hr.backgroundGradientColors')})`
   }
-}
+})
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class MailboxTooltip extends React.Component {
   /* **************************************************************************/
   // Class
@@ -85,6 +86,7 @@ class MailboxTooltip extends React.Component {
     const {
       mailboxId,
       classes,
+      theme,
       className,
       ...passProps
     } = this.props
