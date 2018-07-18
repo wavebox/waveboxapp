@@ -4,12 +4,7 @@ import classnames from 'classnames'
 import { remote } from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import styles from './AppSceneWindowTitlebarStyles'
-import FAIcon from 'wbui/FAIcon'
-import { faTimes as farTimes } from '@fortawesome/pro-regular-svg-icons/faTimes'
-import { faTimes as fasTimes } from '@fortawesome/pro-solid-svg-icons/faTimes'
-import faSquare from '@fortawesome/pro-regular-svg-icons/faSquare'
-import faMinus from '@fortawesome/pro-solid-svg-icons/faMinus'
-import faWindowMinimize from '@fortawesome/pro-regular-svg-icons/faWindowMinimize'
+import FAIcon from 'wbfa/FAIcon'
 
 @withStyles(styles)
 class AppSceneWindowTitlebar extends React.Component {
@@ -114,21 +109,21 @@ class AppSceneWindowTitlebar extends React.Component {
         <div className='controls'>
           <div className='control close' onClick={this.handleClose}>
             {process.platform === 'darwin' ? (
-              <FAIcon className='icon' icon={fasTimes} />
+              <FAIcon className='icon' icon='fasTimes' />
             ) : (
-              <FAIcon className='icon' icon={farTimes} />
+              <FAIcon className='icon' icon='farTimes' />
             )}
           </div>
           <div className='control maximize'>
             {process.platform === 'darwin' ? undefined : (
-              <FAIcon className='icon' icon={faSquare} />
+              <FAIcon className='icon' icon='farSquare' />
             )}
           </div>
           <div className='control minimize' onClick={this.handleMinimize}>
             {process.platform === 'darwin' ? (
-              <FAIcon className='icon' icon={faMinus} />
+              <FAIcon className='icon' icon='fasMinus' />
             ) : (
-              <FAIcon className='icon' icon={faWindowMinimize} />
+              <FAIcon className='icon' icon='farWindowMinimize' />
             )}
           </div>
         </div>

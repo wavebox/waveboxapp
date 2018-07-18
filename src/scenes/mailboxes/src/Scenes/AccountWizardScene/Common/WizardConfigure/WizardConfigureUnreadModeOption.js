@@ -4,8 +4,7 @@ import uuid from 'uuid'
 import shallowCompare from 'react-addons-shallow-compare'
 import ReactPortalTooltip from 'react-portal-tooltip'
 import { withStyles } from '@material-ui/core/styles'
-import FAIcon from 'wbui/FAIcon'
-import { faCheck } from '@fortawesome/pro-regular-svg-icons/faCheck'
+import FAIcon from 'wbfa/FAIcon'
 
 const styles = {
   container: {
@@ -96,7 +95,7 @@ class WizardConfigureUnreadModeOption extends React.Component {
           onClick={onSelected}>
           <div style={{ ...styles.option, backgroundColor: color, borderColor: hovering ? color : 'white' }}>
             {selected ? (
-              <FAIcon icon={faCheck} className={classes.selectedIcon} />
+              <FAIcon icon='farCheck' className={classes.selectedIcon} />
             ) : undefined}
           </div>
           <div className={classes.name}>{name}</div>

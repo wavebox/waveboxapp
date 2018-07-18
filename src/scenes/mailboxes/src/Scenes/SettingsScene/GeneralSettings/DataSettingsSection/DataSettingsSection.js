@@ -14,9 +14,7 @@ import StorageIcon from '@material-ui/icons/Storage'
 import SettingsListTypography from 'wbui/SettingsListTypography'
 import SettingsListItemConfirmButton from 'wbui/SettingsListItemConfirmButton'
 import SettingsListItemMultiButtons from 'wbui/SettingsListItemMultiButtons'
-import FAIcon from 'wbui/FAIcon'
-import { faUpload } from '@fortawesome/pro-solid-svg-icons/faUpload'
-import { faDownload } from '@fortawesome/pro-solid-svg-icons/faDownload'
+import FAIcon from 'wbfa/FAIcon'
 import CloudProfileSyncListItem from './CloudProfileSyncListItem'
 import {
   WB_CLEAN_EXPIRED_SESSIONS,
@@ -64,12 +62,12 @@ class DataSettingsSection extends React.Component {
           buttons={[
             {
               label: 'Export data',
-              icon: (<FAIcon icon={faDownload} />),
+              icon: (<FAIcon icon='fasDownload' />),
               onClick: () => { ipcRenderer.send(WB_TAKEOUT_EXPORT_FILE) }
             },
             {
               label: 'Import data',
-              icon: (<FAIcon icon={faUpload} />),
+              icon: (<FAIcon icon='fasUpload' />),
               onClick: () => { ipcRenderer.send(WB_TAKEOUT_IMPORT_FILE) }
             }
           ]} />

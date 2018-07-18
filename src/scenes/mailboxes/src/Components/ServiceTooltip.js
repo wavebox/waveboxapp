@@ -3,9 +3,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import red from '@material-ui/core/colors/red'
-import FAIcon from 'wbui/FAIcon'
-import { faExclamation } from '@fortawesome/pro-solid-svg-icons/faExclamation'
-import { faGem } from '@fortawesome/pro-regular-svg-icons/faGem'
+import FAIcon from 'wbfa/FAIcon'
 import { accountStore } from 'stores/account'
 import DefaultTooltip400w from 'wbui/Tooltips/DefaultTooltip400w'
 import ThemeTools from 'wbui/Themes/ThemeTools'
@@ -137,14 +135,14 @@ class ServiceTooltip extends React.Component {
     if (isRestricted) {
       unreadContent = (
         <span>
-          <FAIcon icon={faGem} className={classes.proIcon} />
+          <FAIcon icon='farGem' className={classes.proIcon} />
           <span>Upgrade to Pro</span>
         </span>
       )
     } else if (isAuthenticationInvalid) {
       unreadContent = (
         <span className={classes.authInvalidText}>
-          <FAIcon icon={faExclamation} className={classes.authInvalidIcon} />
+          <FAIcon icon='fasExclamation' className={classes.authInvalidIcon} />
           <span>Authentication Problem. Right click to reauthenticate</span>
         </span>
       )

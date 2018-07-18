@@ -10,8 +10,7 @@ import { userStore, userActions } from 'stores/user'
 import pluralize from 'pluralize'
 import grey from '@material-ui/core/colors/grey'
 import red from '@material-ui/core/colors/red'
-import FAIcon from 'wbui/FAIcon'
-import { faCloudDownload } from '@fortawesome/pro-solid-svg-icons/faCloudDownload'
+import FAIcon from 'wbfa/FAIcon'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import StyleMixins from 'wbui/Styles/StyleMixins'
 
@@ -207,7 +206,7 @@ class ProfileRestoreScene extends React.Component {
         <DialogTitle>
           <span>
             <FAIcon
-              icon={faCloudDownload}
+              icon='fasCloudDownload'
               className={classes.dialogTitleIcon} />
             Restore Profile
           </span>

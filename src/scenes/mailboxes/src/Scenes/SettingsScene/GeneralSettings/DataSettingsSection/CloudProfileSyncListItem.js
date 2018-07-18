@@ -3,10 +3,7 @@ import { userStore, userActions } from 'stores/user'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListItem from 'wbui/SettingsListItem'
 import { withStyles } from '@material-ui/core/styles'
-import FAIcon from 'wbui/FAIcon'
-import { faCloudDownload } from '@fortawesome/pro-solid-svg-icons/faCloudDownload'
-import { faCloudUpload } from '@fortawesome/pro-solid-svg-icons/faCloudUpload'
-import { faSync } from '@fortawesome/pro-solid-svg-icons/faSync'
+import FAIcon from 'wbfa/FAIcon'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import CheckIcon from '@material-ui/icons/Check'
 import { ListItemText, Button } from '@material-ui/core'
@@ -153,7 +150,7 @@ class CloudProfileSyncListItem extends React.Component {
         uploadText = 'Upload profile'
         uploadIcon = (
           <FAIcon
-            icon={faSync}
+            icon='fasSync'
             className={classNames(classes.icon, classes.iconProgress)}
             spin />
         )
@@ -176,7 +173,7 @@ class CloudProfileSyncListItem extends React.Component {
       uploadText = 'Upload profile'
       uploadIcon = (
         <FAIcon
-          icon={faCloudUpload}
+          icon='fasCloudUpload'
           className={classes.icon} />
       )
     }
@@ -189,7 +186,7 @@ class CloudProfileSyncListItem extends React.Component {
         restoreText = 'Restore profile'
         restoreIcon = (
           <FAIcon
-            icon={faSync}
+            icon='fasSync'
             className={classNames(classes.icon, classes.iconProgress)}
             spin />
         )
@@ -198,7 +195,7 @@ class CloudProfileSyncListItem extends React.Component {
           restoreText = 'Restore profile'
           restoreIcon = (
             <FAIcon
-              icon={faCloudDownload}
+              icon='fasCloudDownload'
               className={classes.icon} />
           )
         } else {
@@ -213,7 +210,7 @@ class CloudProfileSyncListItem extends React.Component {
       restoreText = 'Restore profile'
       restoreIcon = (
         <FAIcon
-          icon={faCloudDownload}
+          icon='fasCloudDownload'
           className={classes.icon} />
       )
     }

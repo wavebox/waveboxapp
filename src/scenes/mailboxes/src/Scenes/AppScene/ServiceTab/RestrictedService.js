@@ -6,8 +6,7 @@ import { withStyles } from '@material-ui/core/styles'
 import { accountStore } from 'stores/account'
 import classNames from 'classnames'
 import lightBlue from '@material-ui/core/colors/lightBlue'
-import FAIcon from 'wbui/FAIcon'
-import { faGem } from '@fortawesome/pro-solid-svg-icons/faGem'
+import FAIcon from 'wbfa/FAIcon'
 
 const styles = {
   root: {
@@ -118,7 +117,7 @@ class RestrictedService extends React.Component {
 
     return (
       <div className={classNames(classes.root, className)} {...passProps}>
-        <FAIcon icon={faGem} className={classes.proIcon} />
+        <FAIcon icon='fasGem' className={classes.proIcon} />
         <h1 className={classes.title}>Purchase Wavebox</h1>
         <p className={classes.text}>
           {`Use your ${displayName} Service and others by purchasing Wavebox`}
@@ -128,7 +127,7 @@ class RestrictedService extends React.Component {
           color='primary'
           className={classes.button}
           onClick={() => { window.location.hash = '/pro' }}>
-          <FAIcon icon={faGem} className={classes.buttonIcon} />
+          <FAIcon icon='fasGem' className={classes.buttonIcon} />
           Find out more
         </Button>
       </div>

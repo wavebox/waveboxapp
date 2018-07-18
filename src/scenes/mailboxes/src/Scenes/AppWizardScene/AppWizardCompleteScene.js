@@ -4,9 +4,7 @@ import { withStyles } from '@material-ui/core/styles'
 import lightGreen from '@material-ui/core/colors/lightGreen'
 import green from '@material-ui/core/colors/green'
 import blueGrey from '@material-ui/core/colors/blueGrey'
-import FAIcon from 'wbui/FAIcon'
-import { faMagic } from '@fortawesome/pro-solid-svg-icons/faMagic'
-import { faCheckCircle } from '@fortawesome/pro-solid-svg-icons/faCheckCircle'
+import FAIcon from 'wbfa/FAIcon'
 
 const styles = {
   container: {
@@ -57,10 +55,10 @@ class AppWizardCompleteScene extends React.Component {
     return (
       <div className={classes.container}>
         <Avatar className={classes.avatar}>
-          <FAIcon className={classes.avatarIcon} icon={faMagic} />
+          <FAIcon className={classes.avatarIcon} icon='fasMagic' />
         </Avatar>
         <h2 className={classes.heading}>
-          <FAIcon className={classes.doneIcon} icon={faCheckCircle} />
+          <FAIcon className={classes.doneIcon} icon='fasCheckCircle' />
           All Done!
         </h2>
         <p className={classes.subHeading}>

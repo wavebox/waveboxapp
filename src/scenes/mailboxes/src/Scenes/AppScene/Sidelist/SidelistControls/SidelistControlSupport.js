@@ -2,8 +2,7 @@ import React from 'react'
 import SidelistControl from './SidelistControl'
 import { TOUR_STEPS } from 'stores/settings/Tour'
 import { withStyles } from '@material-ui/core/styles'
-import FAIcon from 'wbui/FAIcon'
-import { faQuestionCircle } from '@fortawesome/pro-regular-svg-icons/faQuestionCircle'
+import FAIcon from 'wbfa/FAIcon'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 
 const styles = (theme) => ({
@@ -42,7 +41,7 @@ class SidelistControlSupport extends React.Component {
           </div>
         )}
         icon={(
-          <FAIcon className={classes.icon} icon={faQuestionCircle} />
+          <FAIcon className={classes.icon} icon='farQuestionCircle' />
         )} />
     )
   }

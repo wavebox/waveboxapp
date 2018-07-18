@@ -6,8 +6,7 @@ import { TOUR_STEPS } from 'stores/settings/Tour'
 import { UISettings } from 'shared/Models/Settings'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import FAIcon from 'wbui/FAIcon'
-import { faStar } from '@fortawesome/pro-regular-svg-icons/faStar'
+import FAIcon from 'wbfa/FAIcon'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 
 const styles = (theme) => ({
@@ -127,7 +126,7 @@ class SidelistControlWhatsNew extends React.Component {
         icon={(
           <FAIcon
             className={classNames(classes.icon, hasUnseenNews ? 'has-news' : undefined)}
-            icon={faStar} />
+            icon='farStar' />
         )} />
     )
   }

@@ -43,7 +43,7 @@ module.exports = function (env) {
     ].filter((p) => !!p),
     resolve: {
       alias: Object.assign({},
-        FontAwesomeAlias(path.join(__dirname, 'node_modules')),
+        FontAwesomeAlias(path.join(__dirname, 'node_modules'), ROOT_DIR),
         {
           Components: path.resolve(path.join(__dirname, 'src/Components')),
           Notifications: path.resolve(path.join(__dirname, 'src/Notifications')),

@@ -4,11 +4,7 @@ import { IconButton, Icon } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import FAIcon from 'wbui/FAIcon'
-import { faWindowRestore } from '@fortawesome/pro-light-svg-icons/faWindowRestore'
-import { faWindowMaximize } from '@fortawesome/pro-light-svg-icons/faWindowMaximize'
-import { faWindowMinimize } from '@fortawesome/pro-light-svg-icons/faWindowMinimize'
-import { faWindowClose } from '@fortawesome/pro-light-svg-icons/faWindowClose'
+import FAIcon from 'wbfa/FAIcon'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 
 const TYPES = Object.freeze({
@@ -72,13 +68,13 @@ class SidelistWindowControl extends React.Component {
   renderIconForType (classes, type) {
     switch (type) {
       case TYPES.RESTORE:
-        return (<FAIcon icon={faWindowRestore} className={classNames(classes.icon, classes.iconFA)} />)
+        return (<FAIcon icon='falWindowRestore' className={classNames(classes.icon, classes.iconFA)} />)
       case TYPES.MAXIMIZE:
-        return (<FAIcon icon={faWindowMaximize} className={classNames(classes.icon, classes.iconFA)} />)
+        return (<FAIcon icon='falWindowMaximize' className={classNames(classes.icon, classes.iconFA)} />)
       case TYPES.MINIMIZE:
-        return (<FAIcon icon={faWindowMinimize} className={classNames(classes.icon, classes.iconFA)} />)
+        return (<FAIcon icon='falWindowMinimize' className={classNames(classes.icon, classes.iconFA)} />)
       case TYPES.CLOSE:
-        return (<FAIcon icon={faWindowClose} className={classNames(classes.icon, classes.iconFA)} />)
+        return (<FAIcon icon='falWindowClose' className={classNames(classes.icon, classes.iconFA)} />)
       case TYPES.UNFULLSCREEN:
         return (<Icon className={classNames(classes.icon, classes.iconMI, 'material-icons')}>fullscreen_exit</Icon>)
     }

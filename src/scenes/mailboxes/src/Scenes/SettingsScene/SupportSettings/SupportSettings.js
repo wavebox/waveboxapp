@@ -13,11 +13,7 @@ import {
 } from 'shared/constants'
 import { withStyles } from '@material-ui/core/styles'
 import StyleMixins from 'wbui/Styles/StyleMixins'
-import FAIcon from 'wbui/FAIcon'
-import { faStar } from '@fortawesome/pro-regular-svg-icons/faStar'
-import { faMagic } from '@fortawesome/pro-solid-svg-icons/faMagic'
-import { faListAlt } from '@fortawesome/pro-solid-svg-icons/faListAlt'
-import { faTasks } from '@fortawesome/pro-solid-svg-icons/faTasks'
+import FAIcon from 'wbfa/FAIcon'
 
 const ROW_HEIGHT = 400
 const V_MARGIN = 16
@@ -230,7 +226,7 @@ class SupportSettings extends React.Component {
           <Grid item md={3} sm={6} xs={12}>
             {this.renderBoxedCell(
               classes,
-              faStar,
+              'farStar',
               'What\'s New?',
               'From new extensions to bug fixes, make sure you\'re up-to-date with development news.',
               'News',
@@ -240,7 +236,7 @@ class SupportSettings extends React.Component {
           <Grid item md={3} sm={6} xs={12}>
             {this.renderBoxedCell(
               classes,
-              faMagic,
+              'fasMagic',
               'Setup Wizard',
               'Follow the step-by-step wizard to correctly configure your Wavebox.',
               'Get Started',
@@ -250,7 +246,7 @@ class SupportSettings extends React.Component {
           <Grid item md={3} sm={6} xs={12}>
             {this.renderBoxedCell(
               classes,
-              faListAlt,
+              'fasListAlt',
               'Quick Start Guide',
               'Are you getting the most out of Wavebox? Read our getting started guide to find out.',
               'Quick Start',
@@ -260,7 +256,7 @@ class SupportSettings extends React.Component {
           <Grid item md={3} sm={6} xs={12}>
             {this.renderBoxedCell(
               classes,
-              faTasks,
+              'fasTasks',
               'Try Wavebox Beta',
               'Be the first to try out the latest features by switching to our beta channel',
               'Try Beta',

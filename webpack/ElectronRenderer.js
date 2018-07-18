@@ -100,7 +100,8 @@ module.exports = function (packagePath, config) {
       include: [
         packagePath,
         path.resolve(path.join(ROOT_DIR, 'src/shared')),
-        path.resolve(path.join(ROOT_DIR, 'src/scenes/wbui'))
+        path.resolve(path.join(ROOT_DIR, 'src/scenes/wbui')),
+        path.resolve(path.join(ROOT_DIR, 'src/scenes/wbfa'))
       ]
     },
     {
