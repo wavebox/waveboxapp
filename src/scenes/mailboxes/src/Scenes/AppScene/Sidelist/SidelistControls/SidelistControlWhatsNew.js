@@ -6,17 +6,12 @@ import { TOUR_STEPS } from 'stores/settings/Tour'
 import { UISettings } from 'shared/Models/Settings'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import FAIcon from 'wbfa/FAIcon'
+import SidelistFAIcon from './SidelistFAIcon'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 
 const styles = (theme) => ({
   icon: {
     color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.whatsnew.icon.color'),
-    fontSize: '24px',
-    marginLeft: -3,
-    height: 48,
-    width: 48,
-    lineHeight: '48px',
     '&:hover': {
       color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.whatsnew.icon.color', 'hover')
     },
@@ -124,7 +119,7 @@ class SidelistControlWhatsNew extends React.Component {
           </div>
         )}
         icon={(
-          <FAIcon
+          <SidelistFAIcon
             className={classNames(classes.icon, hasUnseenNews ? 'has-news' : undefined)}
             icon='farStar' />
         )} />

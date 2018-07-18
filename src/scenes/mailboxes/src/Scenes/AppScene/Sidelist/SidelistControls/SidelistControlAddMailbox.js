@@ -4,6 +4,7 @@ import { TOUR_STEPS } from 'stores/settings/Tour'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
 import { withStyles } from '@material-ui/core/styles'
 import ThemeTools from 'wbui/Themes/ThemeTools'
+import SidelistMatIcon from './SidelistMatIcon'
 
 const styles = (theme) => ({
   icon: {
@@ -34,7 +35,7 @@ class SidelistControlAddMailbox extends React.Component {
             full advantage of everything Wavebox has to offer
           </div>
         )}
-        icon={(<AddCircleIcon className={classes.icon} />)} />
+        icon={(<SidelistMatIcon IconClass={AddCircleIcon} className={classes.icon} />)} />
     )
   }
 }

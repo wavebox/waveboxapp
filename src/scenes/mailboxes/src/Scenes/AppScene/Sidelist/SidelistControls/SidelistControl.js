@@ -6,7 +6,7 @@ import { settingsActions, settingsStore, Tour } from 'stores/settings'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import ThemeTools from 'wbui/Themes/ThemeTools'
-import DefaultTooltip200w from 'wbui/Tooltips/DefaultTooltip200w'
+import DefaultTooltip400w from 'wbui/Tooltips/DefaultTooltip400w'
 import TourTooltip from 'wbui/Tooltips/TourTooltip'
 
 const styles = (theme) => ({
@@ -16,7 +16,8 @@ const styles = (theme) => ({
     WebkitAppRegion: 'no-drag'
   },
   button: {
-    backgroundColor: 'transparent !important'
+    backgroundColor: 'transparent !important',
+    height: 32
   },
 
   // Tour content
@@ -51,7 +52,7 @@ const styles = (theme) => ({
   }
 })
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class SidelistControl extends React.Component {
   /* **************************************************************************/
   // Class
@@ -172,6 +173,7 @@ class SidelistControl extends React.Component {
   render () {
     const {
       classes,
+      theme,
       tooltip,
       tourStep,
       tourTooltip,
@@ -205,7 +207,7 @@ class SidelistControl extends React.Component {
           className={classes.button}>
           {icon}
         </IconButton>
-        <DefaultTooltip200w
+        <DefaultTooltip400w
           active={hovering && !showTourPopover}
           tooltipTimeout={0}
           position='right'
@@ -213,7 +215,7 @@ class SidelistControl extends React.Component {
           group={generatedId}
           parent={`#ReactComponent-Sidelist-Control-${generatedId}`}>
           {tooltip}
-        </DefaultTooltip200w>
+        </DefaultTooltip400w>
         {showTourPopover ? (
           <TourTooltip
             active

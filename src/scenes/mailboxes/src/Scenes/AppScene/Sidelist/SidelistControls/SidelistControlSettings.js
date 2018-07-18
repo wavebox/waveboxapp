@@ -4,6 +4,7 @@ import { TOUR_STEPS } from 'stores/settings/Tour'
 import SettingsIcon from '@material-ui/icons/Settings'
 import { withStyles } from '@material-ui/core/styles'
 import ThemeTools from 'wbui/Themes/ThemeTools'
+import SidelistMatIcon from './SidelistMatIcon'
 
 const styles = (theme) => ({
   icon: {
@@ -38,7 +39,7 @@ class SidelistControlSettings extends React.Component {
           style: { marginTop: -25 },
           arrowStyle: { marginTop: 20 }
         }}
-        icon={(<SettingsIcon className={classes.icon} />)} />
+        icon={(<SidelistMatIcon IconClass={SettingsIcon} className={classes.icon} />)} />
     )
   }
 }

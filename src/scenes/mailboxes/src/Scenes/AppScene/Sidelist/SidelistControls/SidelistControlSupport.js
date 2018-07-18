@@ -2,17 +2,12 @@ import React from 'react'
 import SidelistControl from './SidelistControl'
 import { TOUR_STEPS } from 'stores/settings/Tour'
 import { withStyles } from '@material-ui/core/styles'
-import FAIcon from 'wbfa/FAIcon'
 import ThemeTools from 'wbui/Themes/ThemeTools'
+import SidelistFAIcon from './SidelistFAIcon'
 
 const styles = (theme) => ({
   icon: {
     color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.support.icon.color'),
-    fontSize: '24px',
-    marginLeft: -3,
-    height: 48,
-    width: 48,
-    lineHeight: '48px',
     '&:hover': {
       color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.support.icon.color', 'hover')
     }
@@ -41,7 +36,7 @@ class SidelistControlSupport extends React.Component {
           </div>
         )}
         icon={(
-          <FAIcon className={classes.icon} icon='farQuestionCircle' />
+          <SidelistFAIcon className={classes.icon} icon='farQuestionCircle' />
         )} />
     )
   }

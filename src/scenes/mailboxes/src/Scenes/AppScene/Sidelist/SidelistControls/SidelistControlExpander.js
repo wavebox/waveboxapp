@@ -5,6 +5,7 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
 import { withStyles } from '@material-ui/core/styles'
 import ThemeTools from 'wbui/Themes/ThemeTools'
+import SidelistMatIcon from './SidelistMatIcon'
 
 const styles = (theme) => ({
   icon: {
@@ -39,9 +40,9 @@ class SidelistControlExpander extends React.Component {
           arrowStyle: { marginTop: 20 }
         }}
         icon={expanded ? (
-          <KeyboardArrowDownIcon className={classes.icon} />
+          <SidelistMatIcon IconClass={KeyboardArrowDownIcon} className={classes.icon} />
         ) : (
-          <KeyboardArrowUpIcon className={classes.icon} />
+          <SidelistMatIcon IconClass={KeyboardArrowUpIcon} className={classes.icon} />
         )} />
     )
   }
