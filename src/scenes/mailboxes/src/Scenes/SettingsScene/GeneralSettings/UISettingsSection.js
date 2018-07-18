@@ -9,6 +9,8 @@ import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 import SettingsListKeyboardShortcutText from 'wbui/SettingsListKeyboardShortcutText'
 import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
+import indigo from '@material-ui/core/colors/indigo'
+import teal from '@material-ui/core/colors/teal'
 
 export default class UISettingsSection extends React.Component {
   /* **************************************************************************/
@@ -98,9 +100,27 @@ export default class UISettingsSection extends React.Component {
             options={[
               { value: UISettings.THEMES.DARK, label: 'Dark' },
               { value: UISettings.THEMES.LIGHT, label: 'Light' },
-              { value: UISettings.THEMES.INDIGO, label: 'Indigo' },
-              { value: UISettings.THEMES.NAVY, label: 'Navy' },
-              { value: UISettings.THEMES.TEAL, label: 'Teal' }
+              {
+                value: UISettings.THEMES.INDIGO,
+                label: 'Indigo',
+                MenuItemProps: {
+                  style: { borderRight: `20px solid ${indigo[600]}` }
+                }
+              },
+              {
+                value: UISettings.THEMES.NAVY,
+                label: 'Navy',
+                MenuItemProps: {
+                  style: { borderRight: '20px solid rgb(0,113,158)' }
+                }
+              },
+              {
+                value: UISettings.THEMES.TEAL,
+                label: 'Teal',
+                MenuItemProps: {
+                  style: { borderRight: `20px solid ${teal[600]}` }
+                }
+              }
             ]}
             onChange={(evt, value) => settingsActions.sub.ui.setTheme(value)} />
           {process.platform === 'darwin' ? (
