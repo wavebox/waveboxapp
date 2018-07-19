@@ -9,10 +9,12 @@ export default createMuiTheme({
   ...ThemeTools.mergeTheme(DarkThemeProps, {
     wavebox: {
       sidebar: {
-        backgroundColor: indigo[600]
+        backgroundColor: indigo[600],
+        boxShadow: '1px 0px 2px 0px rgba(0,0,0,0.25)'
       },
       toolbar: {
-        backgroundColor: indigo[600]
+        backgroundColor: indigo[600],
+        boxShadow: '3px 1px 2px 0px rgba(0,0,0,0.25)'
       }
     }
   })

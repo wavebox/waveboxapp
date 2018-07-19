@@ -11,6 +11,7 @@ import SettingsListKeyboardShortcutText from 'wbui/SettingsListKeyboardShortcutT
 import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
 import indigo from '@material-ui/core/colors/indigo'
 import teal from '@material-ui/core/colors/teal'
+import brown from '@material-ui/core/colors/brown'
 
 export default class UISettingsSection extends React.Component {
   /* **************************************************************************/
@@ -102,10 +103,31 @@ export default class UISettingsSection extends React.Component {
               { value: UISettings.THEMES.DARK, label: 'Dark' },
               { value: UISettings.THEMES.LIGHT, label: 'Light' },
               {
+                value: UISettings.THEMES.BOXY_BLUE,
+                label: 'Boxy Blue',
+                MenuItemProps: {
+                  style: { borderRight: `20px solid #5B9ECA` }
+                }
+              },
+              {
+                value: UISettings.THEMES.BOXY_PURPLE,
+                label: 'Boxy Purple',
+                MenuItemProps: {
+                  style: { borderRight: `20px solid #7676B0` }
+                }
+              },
+              {
                 value: UISettings.THEMES.INDIGO,
                 label: 'Indigo',
                 MenuItemProps: {
                   style: { borderRight: `20px solid ${indigo[600]}` }
+                }
+              },
+              {
+                value: UISettings.THEMES.MOCHA,
+                label: 'Mocha',
+                MenuItemProps: {
+                  style: { borderRight: `20px solid ${brown[600]}` }
                 }
               },
               {
@@ -120,6 +142,27 @@ export default class UISettingsSection extends React.Component {
                 label: 'Teal',
                 MenuItemProps: {
                   style: { borderRight: `20px solid ${teal[600]}` }
+                }
+              },
+              {
+                value: UISettings.THEMES.WAVEBOX_LIGHT_BLUE,
+                label: 'Wavebox light blue',
+                MenuItemProps: {
+                  style: { borderRight: `20px solid #00AEEF` }
+                }
+              },
+              {
+                value: UISettings.THEMES.WAVY_BLUE,
+                label: 'Wavy Blue',
+                MenuItemProps: {
+                  style: { borderRight: `20px solid #016084` }
+                }
+              },
+              {
+                value: UISettings.THEMES.WAVY_GREEN,
+                label: 'Wavy Green',
+                MenuItemProps: {
+                  style: { borderRight: `20px solid #73ACB5` }
                 }
               }
             ]}

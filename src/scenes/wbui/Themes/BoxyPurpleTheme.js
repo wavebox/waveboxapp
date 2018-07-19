@@ -2,9 +2,8 @@ import { createMuiTheme } from '@material-ui/core/styles'
 import MaterialUIThemeProps from './MaterialUIThemeProps'
 import ThemeTools from './ThemeTools'
 import DarkThemeProps from './DarkThemeProps'
-import blueGrey from '@material-ui/core/colors/blueGrey'
-import teal from '@material-ui/core/colors/teal'
 import red from '@material-ui/core/colors/red'
+import blueGrey from '@material-ui/core/colors/blueGrey'
 import cyan from '@material-ui/core/colors/cyan'
 
 export default createMuiTheme({
@@ -12,47 +11,44 @@ export default createMuiTheme({
   ...ThemeTools.mergeTheme(DarkThemeProps, {
     wavebox: {
       sidebar: {
-        backgroundColor: 'rgb(0,113,158)',
-        boxShadow: '1px 0px 2px 0px rgba(0,0,0,0.25)',
+        backgroundColor: '#7676B0',
+        boxShadow: 'none',
         whatsnew: {
           icon: {
-            color: { default: red[300], hover: red[200] }
-          }
-        },
-        add: {
-          icon: {
-            color: { default: blueGrey[200], hover: blueGrey[100] }
+            color: { default: red[900], hover: red[800] }
           }
         },
         support: {
           icon: {
-            color: { default: teal[300], hover: teal[200] }
+            color: { default: cyan[600], hover: cyan[400] }
+          }
+        },
+        add: {
+          icon: {
+            color: { default: blueGrey[800], hover: blueGrey[700] }
           }
         },
         settings: {
           icon: {
-            color: { default: blueGrey[200], hover: blueGrey[100] }
+            color: { default: blueGrey[800], hover: blueGrey[700] }
           }
         },
         expander: {
           icon: {
-            color: { default: blueGrey[200], hover: blueGrey[100] }
+            color: { default: blueGrey[800], hover: blueGrey[700] }
           }
         }
       },
       toolbar: {
-        backgroundColor: 'rgb(0,113,158)',
-        boxShadow: '3px 1px 2px 0px rgba(0,0,0,0.25)',
+        backgroundColor: '#7676B0',
         icon: {
           color: {
-            default: blueGrey[100],
-            hover: blueGrey[50],
-            disabled: blueGrey[400]
+            disabled: blueGrey[300]
           }
         }
       },
       loadbar: {
-        backgroundColor: cyan[200]
+        backgroundColor: cyan[400]
       }
     }
   })
