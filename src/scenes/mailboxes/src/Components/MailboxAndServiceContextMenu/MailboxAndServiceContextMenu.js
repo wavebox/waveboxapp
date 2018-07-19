@@ -53,7 +53,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceId !== nextProps.serviceId) {
-      this.setState(this.generateState(nextProps))
+      this.setState(this.generateAccountState(nextProps))
     }
     if (this.props.isOpen !== nextProps.isOpen) {
       if (nextProps.isOpen) {
