@@ -130,6 +130,13 @@ class UISettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param size: the new size
+  */
+  setSidebarSize (size) {
+    this.dispatchUpdate('sidebarSize', size)
+  }
+
+  /**
   * @param css: the new css
   */
   setCustomMainCSS (css) {

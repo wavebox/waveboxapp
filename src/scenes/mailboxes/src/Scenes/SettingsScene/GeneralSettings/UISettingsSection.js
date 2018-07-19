@@ -44,8 +44,9 @@ export default class UISettingsSection extends React.Component {
         'showTitlebar',
         'showAppMenu',
         'showTitlebarCount',
-        'showTitlebarCount',
-        'theme'
+        'showTitlebarAccount',
+        'theme',
+        'sidebarSize'
       ]) ||
       modelCompare(this.props.os, nextProps.os, ['openLinksInBackground']) ||
       modelCompare(this.props.accelerators, nextProps.accelerators, ['toggleSidebar', 'toggleMenu']) ||
@@ -162,12 +163,16 @@ export default class UISettingsSection extends React.Component {
             )}
             onChange={(evt, toggled) => settingsActions.sub.ui.setEnableSidebar(toggled)}
             checked={ui.sidebarEnabled} />
-          <SettingsListItemSwitch
-            label='Show Support in Sidebar'
-            onChange={(evt, toggled) => settingsActions.sub.ui.setShowSidebarSupport(toggled)}
-            checked={ui.showSidebarSupport} />
           <SettingsListItemSelectInline
-            divider={false}
+            label='Sidebar Size'
+            value={ui.sidebarSize}
+            options={[
+              { value: UISettings.SIDEBAR_SIZES.REGULAR, label: 'Regular' },
+              { value: UISettings.SIDEBAR_SIZES.COMPACT, label: 'Compact' },
+              { value: UISettings.SIDEBAR_SIZES.TINY, label: 'Tiny' }
+            ]}
+            onChange={(evt, value) => settingsActions.sub.ui.setSidebarSize(value)} />
+          <SettingsListItemSelectInline
             label={`Show What's New in Sidebar`}
             value={ui.showSidebarNewsfeed}
             options={[
@@ -176,6 +181,11 @@ export default class UISettingsSection extends React.Component {
               { value: UISettings.SIDEBAR_NEWS_MODES.ALWAYS, label: 'Always' }
             ]}
             onChange={(evt, value) => settingsActions.sub.ui.setShowSidebarNewsfeed(value)} />
+          <SettingsListItemSwitch
+            divider={false}
+            label='Show Support in Sidebar'
+            onChange={(evt, toggled) => settingsActions.sub.ui.setShowSidebarSupport(toggled)}
+            checked={ui.showSidebarSupport} />
         </SettingsListSection>
 
         <SettingsListSection title='User Interface' subtitle='Titlebar' icon={<ViewQuiltIcon />}>
@@ -205,7 +215,7 @@ export default class UISettingsSection extends React.Component {
             divider={false}
             label='Show titlebar active account'
             onChange={(evt, toggled) => settingsActions.sub.ui.setShowTitlebarAccount(toggled)}
-            checked={ui.showTitlebarCount} />
+            checked={ui.showTitlebarAccount} />
         </SettingsListSection>
 
         <SettingsListSection title='User Interface' subtitle='Toolbar' icon={<ViewQuiltIcon />}>

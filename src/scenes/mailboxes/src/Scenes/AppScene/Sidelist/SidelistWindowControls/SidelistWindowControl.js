@@ -1,11 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { IconButton, Icon } from '@material-ui/core'
+import { IconButton } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import FAIcon from 'wbfa/FAIcon'
 import ThemeTools from 'wbui/Themes/ThemeTools'
+import UISettings from 'shared/Models/Settings/UISettings'
+import FullscreenExitIcon from '@material-ui/icons/FullscreenExit'
 
 const TYPES = Object.freeze({
   RESTORE: 'RESTORE',
@@ -14,29 +16,62 @@ const TYPES = Object.freeze({
   UNFULLSCREEN: 'UNFULLSCREEN',
   CLOSE: 'CLOSE'
 })
+
 const styles = (theme) => ({
   button: {
-    width: 20,
-    height: 20,
     padding: 0,
     cursor: 'pointer',
     WebkitAppRegion: 'no-drag',
-    borderRadius: 2,
+    '&.sidebar-regular': {
+      width: 20,
+      height: 20,
+      borderRadius: 2,
+
+      '& .iconFA': {
+        fontSize: 14,
+        lineHeight: '14px'
+      },
+      '& .iconMI': {
+        fontSize: 19,
+        lineHeight: '14px'
+      }
+    },
+    '&.sidebar-compact': {
+      width: 16,
+      height: 16,
+      borderRadius: 2,
+
+      '& .iconFA': {
+        fontSize: 14,
+        lineHeight: '14px'
+      },
+      '& .iconMI': {
+        fontSize: 19,
+        lineHeight: '14px',
+        marginTop: -1
+      }
+    },
+    '&.sidebar-tiny': {
+      width: 12,
+      height: 12,
+      borderRadius: 0,
+
+      '& .iconFA': {
+        fontSize: 11,
+        lineHeight: '12px'
+      },
+      '& .iconMI': {
+        fontSize: 13,
+        lineHeight: '13px'
+      }
+    },
     '&:hover': {
       backgroundColor: ThemeTools.getStateValue(theme, 'wavebox.sidebar.windowControls.icon.backgroundColor', 'hover')
+    },
+
+    '& .icon': {
+      color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.windowControls.icon.color')
     }
-  },
-  icon: {
-    color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.windowControls.icon.color')
-  },
-  iconFA: {
-    fontSize: 14,
-    lineHeight: '14px'
-  },
-  iconMI: {
-    fontSize: 19,
-    lineHeight: '14px',
-    top: 3
   }
 })
 
@@ -49,7 +84,8 @@ class SidelistWindowControl extends React.Component {
   static TYPES = TYPES
   static propTypes = {
     onClick: PropTypes.func.isRequired,
-    type: PropTypes.oneOf(Object.keys(TYPES)).isRequired
+    type: PropTypes.oneOf(Object.keys(TYPES)).isRequired,
+    sidebarSize: PropTypes.oneOf(Object.keys(UISettings.SIDEBAR_SIZES)).isRequired
   }
 
   /* **************************************************************************/
@@ -62,32 +98,60 @@ class SidelistWindowControl extends React.Component {
 
   /**
   * Renders the icon for the given type
+  * @param classes: the classes to use
   * @param type: the type to render
+  * @param sidebarSize: the size of the sidebar
   * @return jsx
   */
-  renderIconForType (classes, type) {
+  renderIconForType (classes, type, sidebarSize) {
     switch (type) {
       case TYPES.RESTORE:
-        return (<FAIcon icon='falWindowRestore' className={classNames(classes.icon, classes.iconFA)} />)
+        return (
+          <FAIcon
+            icon={sidebarSize === UISettings.SIDEBAR_SIZES.TINY ? 'fasWindowRestore' : 'falWindowRestore'}
+            className='icon iconFA' />
+        )
       case TYPES.MAXIMIZE:
-        return (<FAIcon icon='falWindowMaximize' className={classNames(classes.icon, classes.iconFA)} />)
+        return (
+          <FAIcon
+            icon={sidebarSize === UISettings.SIDEBAR_SIZES.TINY ? 'fasWindowMaximize' : 'falWindowMaximize'}
+            className='icon iconFA' />
+        )
       case TYPES.MINIMIZE:
-        return (<FAIcon icon='falWindowMinimize' className={classNames(classes.icon, classes.iconFA)} />)
+        return (
+          <FAIcon
+            icon={sidebarSize === UISettings.SIDEBAR_SIZES.TINY ? 'fasWindowMinimize' : 'falWindowMinimize'}
+            className='icon iconFA' />
+        )
       case TYPES.CLOSE:
-        return (<FAIcon icon='falWindowClose' className={classNames(classes.icon, classes.iconFA)} />)
+        return (
+          <FAIcon
+            icon={sidebarSize === UISettings.SIDEBAR_SIZES.TINY ? 'fasWindowClose' : 'falWindowClose'}
+            className='icon iconFA' />
+        )
       case TYPES.UNFULLSCREEN:
-        return (<Icon className={classNames(classes.icon, classes.iconMI, 'material-icons')}>fullscreen_exit</Icon>)
+        return (
+          <FullscreenExitIcon
+            className='icon iconMI' />
+        )
     }
   }
 
   render () {
-    const { type, className, classes, theme, ...passProps } = this.props
+    const {
+      type,
+      className,
+      sidebarSize,
+      classes,
+      theme,
+      ...passProps
+    } = this.props
 
     return (
       <IconButton
-        {...passProps}
-        className={classNames(classes.button, className)}>
-        {this.renderIconForType(classes, type)}
+        className={classNames(classes.button, className, `sidebar-${sidebarSize.toLowerCase()}`)}
+        {...passProps}>
+        {this.renderIconForType(classes, type, sidebarSize)}
       </IconButton>
     )
   }

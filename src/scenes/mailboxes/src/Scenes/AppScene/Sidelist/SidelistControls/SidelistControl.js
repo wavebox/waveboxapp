@@ -17,7 +17,8 @@ const styles = (theme) => ({
   },
   button: {
     backgroundColor: 'transparent !important',
-    height: 32
+    height: 32,
+    width: '100%'
   },
 
   // Tour content

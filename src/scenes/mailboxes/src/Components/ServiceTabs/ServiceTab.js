@@ -16,6 +16,7 @@ import Color from 'color'
 import ServiceTooltip from 'Components/ServiceTooltip'
 import red from '@material-ui/core/colors/red'
 import ThemeTools from 'wbui/Themes/ThemeTools'
+import UISettings from 'shared/Models/Settings/UISettings'
 
 const styles = (theme) => ({
   /**
@@ -66,15 +67,39 @@ const styles = (theme) => ({
     color: red[50],
 
     '&.sidelist': {
-      fontSize: '11px',
-      height: 20,
-      minWidth: 20,
-      lineHeight: '20px',
-      borderRadius: 12,
-      top: 0,
-      right: 8,
-      paddingLeft: 4,
-      paddingRight: 4
+      '&.sidelist-regular': {
+        fontSize: '11px',
+        height: 20,
+        minWidth: 20,
+        lineHeight: '20px',
+        borderRadius: 12,
+        top: 0,
+        right: 8,
+        paddingLeft: 4,
+        paddingRight: 4
+      },
+      '&.sidelist-compact': {
+        fontSize: '11px',
+        height: 16,
+        minWidth: 16,
+        lineHeight: '16px',
+        borderRadius: 8,
+        top: 0,
+        right: 4,
+        paddingLeft: 4,
+        paddingRight: 4
+      },
+      '&.sidelist-tiny': {
+        fontSize: '10px',
+        height: 14,
+        minWidth: 14,
+        lineHeight: '14px',
+        borderRadius: 5,
+        top: 0,
+        right: 1,
+        paddingLeft: 3,
+        paddingRight: 3
+      }
     },
     '&.toolbar': {
       fontSize: '11px',
@@ -91,7 +116,15 @@ const styles = (theme) => ({
   badgeFAIcon: {
     color: 'white',
     '&.sidelist': {
-      fontSize: 14
+      '&.sidelist-regular': {
+        fontSize: 14
+      },
+      '&.sidelist-compact': {
+        fontSize: 11
+      },
+      '&.sidelist-tiny': {
+        fontSize: 10
+      }
     },
     '&.toolbar': {
       fontSize: 10
@@ -122,7 +155,8 @@ class ServiceTab extends React.Component {
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
     serviceId: PropTypes.string.isRequired,
-    uiLocation: PropTypes.oneOf(Object.keys(ACMailbox.SERVICE_UI_LOCATIONS)),
+    uiLocation: PropTypes.oneOf(Object.keys(ACMailbox.SERVICE_UI_LOCATIONS)).isRequired,
+    sidebarSize: PropTypes.oneOf(Object.keys(UISettings.SIDEBAR_SIZES)),
     onOpenService: PropTypes.func.isRequired,
     onOpenServiceMenu: PropTypes.func.isRequired
   }
@@ -340,6 +374,7 @@ class ServiceTab extends React.Component {
       mailboxId,
       serviceId,
       uiLocation,
+      sidebarSize,
       onOpenService,
       onOpenServiceMenu,
       onClick,
@@ -374,6 +409,7 @@ class ServiceTab extends React.Component {
     if (!membersAvailable) { return false }
 
     const classNameUiLoc = ServiceTabTools.uiLocationClassName(uiLocation)
+    const classNameSBSize = ServiceTabTools.sidebarSizeClassName(sidebarSize)
 
     return (
       <MailboxServiceBadge
@@ -384,8 +420,8 @@ class ServiceTab extends React.Component {
           classNameUiLoc,
           isServiceActive ? 'is-active' : undefined
         )}
-        badgeClassName={classNames(classes.badge, classNameUiLoc)}
-        iconClassName={classNames(classes.badgeFAIcon, classNameUiLoc)}
+        badgeClassName={classNames(classes.badge, classNameUiLoc, classNameSBSize)}
+        iconClassName={classNames(classes.badgeFAIcon, classNameUiLoc, classNameSBSize)}
         supportsUnreadCount={supportsUnreadCount}
         showUnreadBadge={showBadgeCount}
         unreadCount={unreadCount}

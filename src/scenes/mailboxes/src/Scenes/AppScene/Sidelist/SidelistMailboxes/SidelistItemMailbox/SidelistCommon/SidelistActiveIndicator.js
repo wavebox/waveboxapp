@@ -7,14 +7,24 @@ import classNames from 'classnames'
 const styles = {
   activeIndicator: {
     position: 'absolute',
-    left: 2,
-    top: 25,
     width: 6,
     height: 6,
-    marginTop: -3,
     borderRadius: '50%',
     cursor: 'pointer',
-    WebkitAppRegion: 'no-drag'
+    WebkitAppRegion: 'no-drag',
+
+    '&.sidebar-regular': {
+      left: 2,
+      top: 20
+    },
+    '&.sidebar-compact': {
+      left: 1,
+      top: 18
+    },
+    '&.sidebar-tiny': {
+      left: -2,
+      top: 14
+    }
   }
 }
 
@@ -25,7 +35,8 @@ class SidelistActiveIndicator extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    color: PropTypes.string.isRequired
+    color: PropTypes.string.isRequired,
+    sidebarSize: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -37,11 +48,18 @@ class SidelistActiveIndicator extends React.Component {
   }
 
   render () {
-    const { color, classes, className, style, ...passProps } = this.props
+    const {
+      color,
+      classes,
+      className,
+      style,
+      sidebarSize,
+      ...passProps
+    } = this.props
 
     return (
       <div
-        className={classNames(classes.activeIndicator, className)}
+        className={classNames(classes.activeIndicator, `sidebar-${sidebarSize.toLowerCase()}`, className)}
         style={{ backgroundColor: color, ...style }}
         {...passProps} />
     )

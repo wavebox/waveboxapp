@@ -6,6 +6,7 @@ import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import Resolver from 'Runtime/Resolver'
 import Color from 'color'
+import UISettings from 'shared/Models/Settings/UISettings'
 
 const styles = {
   avatar: {
@@ -28,10 +29,9 @@ class SidelistMailboxAvatar extends React.Component {
 
   static propTypes = {
     avatar: PropTypes.object.isRequired,
-    size: PropTypes.number.isRequired,
+    sidebarSize: PropTypes.string.isRequired,
     isSleeping: PropTypes.bool.isRequired,
     showColorRing: PropTypes.bool.isRequired,
-    borderWidth: PropTypes.number.isRequired,
     lightenBorder: PropTypes.bool.isRequired
   }
 
@@ -43,19 +43,36 @@ class SidelistMailboxAvatar extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
+  /**
+  * Gets the sizes for the given sidebar size
+  * @param sidebarSize: the sidebar config size
+  * @return { size, borderWidth }
+  */
+  renderSizesFromSidebarSize (sidebarSize) {
+    switch (sidebarSize) {
+      case UISettings.SIDEBAR_SIZES.COMPACT:
+        return { size: 38, borderWidth: 4 }
+      case UISettings.SIDEBAR_SIZES.TINY:
+        return { size: 28, borderWidth: 3 }
+      case UISettings.SIDEBAR_SIZES.REGULAR:
+      default:
+        return { size: 44, borderWidth: 4 }
+    }
+  }
+
   render () {
     const {
       avatar,
-      size,
+      sidebarSize,
       className,
       classes,
       isSleeping,
       showColorRing,
       lightenBorder,
-      borderWidth,
       style,
       ...passProps
     } = this.props
+    const { size, borderWidth } = this.renderSizesFromSidebarSize(sidebarSize)
 
     let boxShadow
     if (showColorRing) {

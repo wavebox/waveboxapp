@@ -4,27 +4,44 @@ import SidelistWindowControl from './SidelistWindowControl'
 import { remote } from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
+import { settingsStore } from 'stores/settings'
+import ThemeTools from 'wbui/Themes/ThemeTools'
 
 const HAS_WINDOW_CONTROLS = process.platform !== 'darwin'
-const styles = {
+const styles = (theme) => ({
   placeholder: {
     height: 25,
-    minHeight: 25
+    minHeight: 25,
+    width: '100%',
+    position: 'relative',
+
+    '&.darwin:after': {
+      position: 'fixed',
+      content: '""',
+      display: 'block',
+      top: 0,
+      left: 0,
+      height: 25,
+      width: 70,
+      backgroundColor: ThemeTools.getValue(theme, 'wavebox.sidebar.backgroundColor'),
+      borderBottomRightRadius: 8
+    }
   },
   container: {
     height: 25,
-    width: 70,
+    width: '100%',
     paddingTop: 3,
     paddingBottom: 2,
-    paddingLeft: 5,
-    paddingRight: 5,
+    textAlign: 'center',
     overflow: 'hidden',
     cursor: 'pointer',
-    WebkitAppRegion: 'no-drag'
+    WebkitAppRegion: 'no-drag',
+    lineHeight: '1em',
+    verticalAlign: 'middle'
   }
-}
+})
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class SidelistWindowControls extends React.Component {
   /* **************************************************************************/
   // Component lifecyle
@@ -37,6 +54,7 @@ class SidelistWindowControls extends React.Component {
       currentWindow.on('unmaximize', this.handleWindowStateChanged)
       currentWindow.on('enter-full-screen', this.handleWindowStateChanged)
       currentWindow.on('leave-full-screen', this.handleWindowStateChanged)
+      settingsStore.listen(this.settingsChanged)
     }
   }
 
@@ -47,6 +65,7 @@ class SidelistWindowControls extends React.Component {
       currentWindow.removeListener('unmaximize', this.handleWindowStateChanged)
       currentWindow.removeListener('enter-full-screen', this.handleWindowStateChanged)
       currentWindow.removeListener('leave-full-screen', this.handleWindowStateChanged)
+      settingsStore.unlisten(this.settingsChanged)
     }
   }
 
@@ -60,9 +79,16 @@ class SidelistWindowControls extends React.Component {
     const currentWindow = remote.getCurrentWindow()
     return {
       isMaximized: currentWindow.isMaximized(),
-      isFullScreen: currentWindow.isFullScreen()
+      isFullScreen: currentWindow.isFullScreen(),
+      sidebarSize: settingsStore.getState().ui.sidebarSize
     }
   })()
+
+  settingsChanged = (settingsState) => {
+    this.setState({
+      sidebarSize: settingsState.ui.sidebarSize
+    })
+  }
 
   /* **************************************************************************/
   // Window Events
@@ -129,27 +155,42 @@ class SidelistWindowControls extends React.Component {
   }
 
   render () {
-    const { className, classes, ...passProps } = this.props
+    const { className, classes, theme, ...passProps } = this.props
 
     if (HAS_WINDOW_CONTROLS) {
-      const { isMaximized, isFullScreen } = this.state
+      const {
+        sidebarSize,
+        isMaximized,
+        isFullScreen
+      } = this.state
       return (
-        <div
-          {...passProps}
-          className={classNames(classes.container, 'WB-SidelistWindowControls', className)}>
-          <SidelistWindowControl type={SidelistWindowControl.TYPES.CLOSE} onClick={this.handleClose} />
+        <div className={classNames(classes.container, 'WB-SidelistWindowControls', className)} {...passProps}>
+          <SidelistWindowControl
+            type={SidelistWindowControl.TYPES.CLOSE}
+            sidebarSize={sidebarSize}
+            onClick={this.handleClose} />
           {isFullScreen || isMaximized ? (
             <SidelistWindowControl
               type={isFullScreen ? SidelistWindowControl.TYPES.UNFULLSCREEN : SidelistWindowControl.TYPES.RESTORE}
+              sidebarSize={sidebarSize}
               onClick={this.handleUnmaximize} />
           ) : (
-            <SidelistWindowControl type={SidelistWindowControl.TYPES.MAXIMIZE} onClick={this.handleMaximize} />
+            <SidelistWindowControl
+              type={SidelistWindowControl.TYPES.MAXIMIZE}
+              sidebarSize={sidebarSize}
+              onClick={this.handleMaximize} />
           )}
-          <SidelistWindowControl type={SidelistWindowControl.TYPES.MINIMIZE} onClick={this.handleMinimize} />
+          <SidelistWindowControl
+            type={SidelistWindowControl.TYPES.MINIMIZE}
+            sidebarSize={sidebarSize}
+            onClick={this.handleMinimize} />
         </div>
       )
     } else {
-      return (<div {...passProps} className={classNames(classes.placeholder, className)} />)
+      return (
+        <div
+          className={classNames(classes.placeholder, className, process.platform)}
+          {...passProps} />)
     }
   }
 }

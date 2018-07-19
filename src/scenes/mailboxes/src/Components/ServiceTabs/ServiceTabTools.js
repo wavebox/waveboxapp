@@ -18,6 +18,19 @@ class ServiceTabTools {
   }
 
   /**
+  * Get sidebar size classname
+  * @param sidebarsize: the sidebar size to get the classname for
+  * @return a classname that can be applied to components
+  */
+  static sidebarSizeClassName (sidebarSize) {
+    if (sidebarSize) {
+      return `sidelist-${sidebarSize.toLowerCase()}`
+    } else {
+      return undefined
+    }
+  }
+
+  /**
   * Get the ui positioning for the tooltip
   * @param uiLocation: the ui location to get the classname for
   * @return a set of props to apply to the tooltip

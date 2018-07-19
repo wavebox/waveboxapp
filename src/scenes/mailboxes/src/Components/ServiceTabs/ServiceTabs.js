@@ -9,6 +9,7 @@ import classNames from 'classnames'
 import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
 import ServiceTabTools from './ServiceTabTools'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
+import UISettings from 'shared/Models/Settings/UISettings'
 
 const styles = {
   container: {
@@ -68,7 +69,8 @@ class ServiceTabs extends React.Component {
 
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
-    uiLocation: PropTypes.oneOf(Object.keys(ACMailbox.SERVICE_UI_LOCATIONS)),
+    uiLocation: PropTypes.oneOf(Object.keys(ACMailbox.SERVICE_UI_LOCATIONS)).isRequired,
+    sidebarSize: PropTypes.oneOf(Object.keys(UISettings.SIDEBAR_SIZES)),
     onOpenService: PropTypes.func.isRequired,
     onContextMenuService: PropTypes.func.isRequired
   }
@@ -142,6 +144,7 @@ class ServiceTabs extends React.Component {
       className,
       mailboxId,
       uiLocation,
+      sidebarSize,
       classes,
       ...passProps
     } = this.props
@@ -170,6 +173,7 @@ class ServiceTabs extends React.Component {
           serviceIds={serviceIds}
           mailboxId={mailboxId}
           uiLocation={uiLocation}
+          sidebarSize={sidebarSize}
           onOpenService={onOpenService}
           onOpenServiceMenu={onContextMenuService}
           onSortEnd={({ oldIndex, newIndex }) => {

@@ -1,5 +1,6 @@
 import React from 'react'
 import { userStore } from 'stores/user'
+import { settingsStore } from 'stores/settings'
 import { IconButton } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import uuid from 'uuid'
@@ -23,6 +24,13 @@ const styles = (theme) => ({
     WebkitAppRegion: 'no-drag',
     '&:hover': {
       backgroundColor: 'transparent'
+    },
+    '&.sidebar-tiny': {
+      transform: 'scale(0.9,0.9)',
+      marginLeft: -15
+    },
+    '&.sidebar-compacy': {
+      marginLeft: -7
     }
   },
   compositeIconContainer: {
@@ -78,6 +86,7 @@ class SidelistUpgradePlans extends React.Component {
 
   componentDidMount () {
     userStore.listen(this.userUpdated)
+    settingsStore.listen(this.settingsUpdated)
     this.updateInterval = setInterval(() => {
       this.setState({
         expiresInDays: userStore.getState().user.sidebarPlanExpiryDays
@@ -87,6 +96,7 @@ class SidelistUpgradePlans extends React.Component {
 
   componentWillUnmount () {
     userStore.unlisten(this.userUpdated)
+    settingsStore.unlisten(this.settingsUpdated)
     clearInterval(this.updateInterval)
   }
 
@@ -101,7 +111,8 @@ class SidelistUpgradePlans extends React.Component {
       buttonHover: false,
       tooltipHover: false,
       expiresInDays: userState.user.sidebarPlanExpiryDays,
-      currentPlan: userState.user.plan
+      currentPlan: userState.user.plan,
+      sidebarSize: settingsStore.getState().ui.sidebarSize
     }
   })()
 
@@ -109,6 +120,12 @@ class SidelistUpgradePlans extends React.Component {
     this.setState({
       expiresInDays: userState.user.sidebarPlanExpiryDays,
       currentPlan: userState.user.plan
+    })
+  }
+
+  settingsUpdated = (settingsState) => {
+    this.setState({
+      sidebarSize: settingsState.ui.sidebarSize
     })
   }
 
@@ -216,17 +233,31 @@ class SidelistUpgradePlans extends React.Component {
   }
 
   render () {
-    const { classes, theme, ...passProps } = this.props
-    const { expiresInDays, currentPlan, generatedId, buttonHover, tooltipHover } = this.state
+    const {
+      classes,
+      theme,
+      ...passProps
+    } = this.props
+    const {
+      expiresInDays,
+      currentPlan,
+      generatedId,
+      buttonHover,
+      tooltipHover,
+      sidebarSize
+    } = this.state
     const formattedDays = this.formatRemainingDays(expiresInDays)
 
     return (
       <div
-        {...passProps}
         onMouseEnter={() => this.setState({ buttonHover: true })}
         onMouseLeave={() => this.setState({ buttonHover: false })}
-        id={`ReactComponent-Sidelist-Item-${generatedId}`}>
-        <IconButton onClick={this.handleUpgrade} className={classes.button} disableRipple>
+        id={`ReactComponent-Sidelist-Item-${generatedId}`}
+        {...passProps}>
+        <IconButton
+          onClick={this.handleUpgrade}
+          className={classNames(classes.button, `sidebar-${sidebarSize.toLowerCase()}`)}
+          disableRipple>
           <div className={classes.compositeIconContainer}>
             <FAIcon className={classes.icon} icon='farCalendar' />
             <div className={classNames(classes.remainingText, (formattedDays.length === 2 ? classes.remainingText2Char : classes.remainingText3Char))}>

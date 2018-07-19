@@ -19,7 +19,8 @@ class SidelistItemMultiService extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired
+    mailboxId: PropTypes.string.isRequired,
+    sidebarSize: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -180,7 +181,7 @@ class SidelistItemMultiService extends React.Component {
   }
 
   render () {
-    const { mailboxId, ...passProps } = this.props
+    const { mailboxId, sidebarSize, ...passProps } = this.props
     const {
       mailbox,
       unreadCount,
@@ -210,6 +211,7 @@ class SidelistItemMultiService extends React.Component {
         <StyledMailboxServiceBadge
           id={`ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`}
           onContextMenu={this.handleOpenMailboxPopover}
+          sidebarSize={sidebarSize}
           onMouseEnter={() => this.setState({ isHoveringAvatar: true })}
           onMouseLeave={() => this.setState({ isHoveringAvatar: false })}
           supportsUnreadCount
@@ -220,15 +222,14 @@ class SidelistItemMultiService extends React.Component {
           hasUnreadActivity={hasUnreadActivity}
           color={mailbox.badgeColor}
           isAuthInvalid={hasInvalidAuth}>
-          {isMailboxActive ? (<SidelistActiveIndicator color={avatar.color} />) : undefined}
+          {isMailboxActive ? (<SidelistActiveIndicator sidebarSize={sidebarSize} color={avatar.color} />) : undefined}
           <SidelistMailboxAvatar
             avatar={avatar}
-            size={42}
+            sidebarSize={sidebarSize}
             isSleeping={isMailboxSleeping}
             showRestricted={isMailboxRestricted}
             showColorRing={mailbox.showAvatarColorRing}
-            lightenBorder={!isMailboxActive && !isHoveringGroup}
-            borderWidth={4} />
+            lightenBorder={!isMailboxActive && !isHoveringGroup} />
           <ErrorBoundary>
             <SidelistMailboxTooltip
               mailboxId={mailboxId}
@@ -240,6 +241,7 @@ class SidelistItemMultiService extends React.Component {
         <ServiceTabs
           mailboxId={mailboxId}
           uiLocation={ACMailbox.SERVICE_UI_LOCATIONS.SIDEBAR}
+          sidebarSize={sidebarSize}
           onOpenService={this.handleClickService}
           onContextMenuService={this.handleOpenServicePopover} />
         {popoverMailboxId || popoverServiceId ? (

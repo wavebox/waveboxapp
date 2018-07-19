@@ -20,9 +20,7 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    flexDirection: 'row',
-    paddingLeft: 70,
-    '&.no-left-padd': { paddingLeft: 0 }
+    flexDirection: 'row'
   },
   toolbarGroup: {
     display: 'flex',
@@ -161,9 +159,7 @@ class PrimaryToolbar extends React.Component {
   */
   deriveSettingsState (settingsState) {
     return {
-      extensionLayoutMode: settingsState.extension.toolbarBrowserActionLayout,
-      showTitlebar: settingsState.ui.showTitlebar,
-      sidebarEnabled: settingsState.ui.sidebarEnabled
+      extensionLayoutMode: settingsState.extension.toolbarBrowserActionLayout
     }
   }
 
@@ -224,9 +220,7 @@ class PrimaryToolbar extends React.Component {
       mailboxHasEndServices,
       hasExtensionsInToolbar,
       extensionLayoutMode,
-      activeTabId,
-      showTitlebar,
-      sidebarEnabled
+      activeTabId
     } = this.state
 
     return (
@@ -234,7 +228,6 @@ class PrimaryToolbar extends React.Component {
         {...passProps}
         className={classNames(
           classes.toolbar,
-          !showTitlebar && !sidebarEnabled ? undefined : 'no-left-padd',
           'WB-Primary-Toolbar',
           className
         )}

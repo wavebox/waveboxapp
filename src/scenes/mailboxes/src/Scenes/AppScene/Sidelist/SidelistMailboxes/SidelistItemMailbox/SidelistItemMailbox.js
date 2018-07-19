@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { accountStore } from 'stores/account'
+import { settingsStore } from 'stores/settings'
 import SidelistMultiService from './SidelistMultiService'
 import SidelistSingleService from './SidelistSingleService'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -20,10 +21,21 @@ class SidelistItemMailbox extends React.Component {
 
   componentDidMount () {
     accountStore.listen(this.accountChanged)
+    settingsStore.listen(this.settingsChanged)
   }
 
   componentWillUnmount () {
     accountStore.unlisten(this.accountChanged)
+    settingsStore.unlisten(this.settingsChanged)
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (this.props.mailboxId !== nextProps.mailboxId) {
+      const mailbox = accountStore.getState().getMailbox(nextProps.mailboxId)
+      this.setState({
+        isSingleService: mailbox ? mailbox.hasSingleService : true
+      })
+    }
   }
 
   /* **************************************************************************/
@@ -34,7 +46,8 @@ class SidelistItemMailbox extends React.Component {
     const { mailboxId } = this.props
     const mailbox = accountStore.getState().getMailbox(mailboxId)
     return {
-      isSingleService: mailbox ? mailbox.hasSingleService : true
+      isSingleService: mailbox ? mailbox.hasSingleService : true,
+      sidebarSize: settingsStore.getState().ui.sidebarSize
     }
   })()
 
@@ -43,6 +56,12 @@ class SidelistItemMailbox extends React.Component {
     const mailbox = accountState.getMailbox(mailboxId)
     this.setState({
       isSingleService: mailbox ? mailbox.hasSingleService : true
+    })
+  }
+
+  settingsChanged = (settingsState) => {
+    this.setState({
+      sidebarSize: settingsState.ui.sidebarSize
     })
   }
 
@@ -55,10 +74,11 @@ class SidelistItemMailbox extends React.Component {
   }
 
   render () {
-    if (this.state.isSingleService) {
-      return (<SidelistSingleService {...this.props} />)
+    const { isSingleService, sidebarSize } = this.state
+    if (isSingleService) {
+      return (<SidelistSingleService sidebarSize={sidebarSize} {...this.props} />)
     } else {
-      return (<SidelistMultiService {...this.props} />)
+      return (<SidelistMultiService sidebarSize={sidebarSize} {...this.props} />)
     }
   }
 }

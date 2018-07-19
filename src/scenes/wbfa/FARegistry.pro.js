@@ -38,6 +38,10 @@ import { faDownload as fasDownload } from '@fortawesome/pro-solid-svg-icons/faDo
 import { faCloudUpload as fasCloudUpload } from '@fortawesome/pro-solid-svg-icons/faCloudUpload'
 import { faCloudDownload as fasCloudDownload } from '@fortawesome/pro-solid-svg-icons/faCloudDownload'
 import { faSync as fasSync } from '@fortawesome/pro-solid-svg-icons/faSync'
+import { faWindowClose as fasWindowClose } from '@fortawesome/pro-solid-svg-icons/faWindowClose'
+import { faWindowMaximize as fasWindowMaximize } from '@fortawesome/pro-solid-svg-icons/faWindowMaximize'
+import { faWindowMinimize as fasWindowMinimize } from '@fortawesome/pro-solid-svg-icons/faWindowMinimize'
+import { faWindowRestore as fasWindowRestore } from '@fortawesome/pro-solid-svg-icons/faWindowRestore'
 
 const REGISTRY = Object.freeze({
   'farCheck': farCheck,
@@ -79,7 +83,11 @@ const REGISTRY = Object.freeze({
   'fasDownload': fasDownload,
   'fasCloudDownload': fasCloudDownload,
   'fasCloudUpload': fasCloudUpload,
-  'fasSync': fasSync
+  'fasSync': fasSync,
+  'fasWindowRestore': fasWindowRestore,
+  'fasWindowMaximize': fasWindowMaximize,
+  'fasWindowMinimize': fasWindowMinimize,
+  'fasWindowClose': fasWindowClose
 })
 
 export default REGISTRY

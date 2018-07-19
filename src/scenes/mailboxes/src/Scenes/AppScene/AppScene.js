@@ -11,7 +11,9 @@ import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 
-const SIDEBAR_WIDTH = 70
+const SIDEBAR_WIDTH_REGULAR = 70
+const SIDEBAR_WIDTH_COMPACT = 55
+const SIDEBAR_WIDTH_TINY = 40
 const TOOLBAR_HEIGHT = 40
 const styles = (theme) => ({
   master: {
@@ -20,45 +22,61 @@ const styles = (theme) => ({
     left: 0,
     right: 'auto',
     bottom: 0,
-    width: SIDEBAR_WIDTH,
     zIndex: 101,
-    WebkitAppRegion: 'drag'
+    WebkitAppRegion: 'drag',
+    '&.sidebar-regular': { width: SIDEBAR_WIDTH_REGULAR },
+    '&.sidebar-compact': { width: SIDEBAR_WIDTH_COMPACT },
+    '&.sidebar-tiny': { width: SIDEBAR_WIDTH_TINY }
   },
   detail: {
     position: 'fixed',
     top: 0,
-    left: SIDEBAR_WIDTH,
     right: 0,
     bottom: 0,
+    '&.sidebar-regular': { left: SIDEBAR_WIDTH_REGULAR },
+    '&.sidebar-compact': { left: SIDEBAR_WIDTH_COMPACT },
+    '&.sidebar-tiny': { left: SIDEBAR_WIDTH_TINY },
+    '&.sidebar-none': { left: 0 },
     '&.toolbars-1': { top: TOOLBAR_HEIGHT },
-    '&.toolbars-2': { top: 2 * TOOLBAR_HEIGHT },
-    '&.no-sidebar': { left: 0 }
+    '&.toolbars-2': { top: 2 * TOOLBAR_HEIGHT }
   },
   toolbarWrap: {
     position: 'fixed',
     top: 0,
-    left: SIDEBAR_WIDTH,
     right: 0,
     height: TOOLBAR_HEIGHT,
     zIndex: 101,
     WebkitAppRegion: 'drag',
     boxShadow: ThemeTools.getValue(theme, 'wavebox.toolbar.boxShadow'),
+    '&.sidebar-regular': { left: SIDEBAR_WIDTH_REGULAR },
+    '&.sidebar-compact': { left: SIDEBAR_WIDTH_COMPACT },
+    '&.sidebar-tiny': { left: SIDEBAR_WIDTH_TINY },
+    '&.sidebar-none': { left: 0 },
     '&.toolbars-1': { height: TOOLBAR_HEIGHT },
-    '&.toolbars-2': { height: 2 * TOOLBAR_HEIGHT },
-    '&.no-sidebar': { left: 0 }
+    '&.toolbars-2': { height: 2 * TOOLBAR_HEIGHT }
   },
-  toolbar: {
+  toolbarPrimary: {
+    height: TOOLBAR_HEIGHT,
+    '&.no-titlebar.sidebar-regular': { paddingLeft: 70 - SIDEBAR_WIDTH_REGULAR },
+    '&.no-titlebar.sidebar-compact': { paddingLeft: 70 - SIDEBAR_WIDTH_COMPACT },
+    '&.no-titlebar.sidebar-tiny': { paddingLeft: 70 - SIDEBAR_WIDTH_TINY },
+    '&.no-titlebar.sidebar-none': { paddingLeft: 70 }
+  },
+  toolbarSecondary: {
     height: TOOLBAR_HEIGHT
   },
   titleDragbar: {
     position: 'absolute',
     top: 0,
-    left: SIDEBAR_WIDTH,
+    left: 70,
     right: 0,
     height: 16,
     zIndex: 100,
     WebkitAppRegion: 'drag',
-    '&.no-sidebar': { left: 0 }
+    '&.sidebar-regular': { left: SIDEBAR_WIDTH_REGULAR },
+    '&.sidebar-compact': { left: SIDEBAR_WIDTH_COMPACT },
+    '&.sidebar-tiny': { left: SIDEBAR_WIDTH_TINY },
+    '&.sidebar-none': { left: 0 }
   },
   mailboxTabManager: {
     position: 'absolute',
@@ -106,6 +124,7 @@ class AppScene extends React.Component {
 
     return {
       hasSidebar: settingsState.ui.sidebarEnabled,
+      sidebarSize: settingsState.ui.sidebarSize,
       appHasTitlebar: settingsState.launched.ui.showTitlebar,
       hasExtensionsInPrimaryToolbar: PrimaryToolbar.hasExtensionsInToolbar(crextensionState, settingsState),
       hasServicesInPrimaryToolbar: PrimaryToolbar.hasServicesInToolbar(accountState),
@@ -118,6 +137,7 @@ class AppScene extends React.Component {
     const crextensionState = crextensionStore.getState()
     this.setState({
       hasSidebar: settingsState.ui.sidebarEnabled,
+      sidebarSize: settingsState.ui.sidebarSize,
       hasExtensionsInPrimaryToolbar: PrimaryToolbar.hasExtensionsInToolbar(crextensionState, settingsState)
     })
   }
@@ -149,6 +169,7 @@ class AppScene extends React.Component {
     const { children, classes, theme, ...passProps } = this.props
     const {
       hasSidebar,
+      sidebarSize,
       appHasTitlebar,
       hasExtensionsInPrimaryToolbar,
       hasServicesInPrimaryToolbar,
@@ -164,37 +185,37 @@ class AppScene extends React.Component {
     const toolbarCount = [hasPrimaryToolbar, hasSecondaryToolbar].reduce((acc, has) => {
       return has ? acc + 1 : acc
     }, 0)
+    const sidebarClassNameMod = !hasSidebar ? 'sidebar-none' : `sidebar-${sidebarSize.toLowerCase()}`
 
     return (
       <div {...passProps}>
         {hasSidebar ? (
-          <div className={classNames(classes.master, 'WB-Master')}>
+          <div className={classNames(classes.master, sidebarClassNameMod, 'WB-Master')}>
             <Sidelist />
           </div>
         ) : undefined}
         {hasPrimaryToolbar || hasSecondaryToolbar ? (
-          <div className={classNames(classes.toolbarWrap, `toolbars-${toolbarCount}`)}>
+          <div className={classNames(classes.toolbarWrap, sidebarClassNameMod, `toolbars-${toolbarCount}`)}>
             {hasPrimaryToolbar ? (
               <PrimaryToolbar
                 toolbarHeight={TOOLBAR_HEIGHT}
-                className={classNames(classes.toolbar, !hasSidebar ? 'no-sidebar' : undefined)} />
+                className={classNames(
+                  classes.toolbarPrimary,
+                  !appHasTitlebar ? 'no-titlebar' : undefined,
+                  sidebarClassNameMod
+                )} />
             ) : undefined}
             {hasSecondaryToolbar ? (
               <SecondaryToolbar
                 toolbarHeight={TOOLBAR_HEIGHT}
-                className={classNames(classes.toolbar, !hasSidebar ? 'no-sidebar' : undefined)} />
+                className={classNames(classes.toolbarSecondary, sidebarClassNameMod)} />
             ) : undefined}
           </div>
         ) : undefined}
         {!appHasTitlebar ? (
-          <div className={classNames(classes.titleDragbar, !hasSidebar ? 'no-siderbar' : undefined)} />
+          <div className={classNames(classes.titleDragbar, sidebarClassNameMod)} />
         ) : undefined}
-        <div className={classNames(
-          classes.detail,
-          !hasSidebar ? 'no-sidebar' : undefined,
-          `toolbars-${toolbarCount}`,
-          'WB-Detail'
-        )}>
+        <div className={classNames(classes.detail, sidebarClassNameMod, `toolbars-${toolbarCount}`, 'WB-Detail')}>
           <MailboxTabManager className={classes.mailboxTabManager} />
         </div>
         {children}

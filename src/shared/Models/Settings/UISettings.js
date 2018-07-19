@@ -1,5 +1,10 @@
 const Model = require('../Model')
 
+const SIDEBAR_SIZES = Object.freeze({
+  REGULAR: 'REGULAR',
+  COMPACT: 'COMPACT',
+  TINY: 'TINY'
+})
 const SIDEBAR_NEWS_MODES = Object.freeze({
   ALWAYS: 'ALWAYS',
   UNREAD: 'UNREAD',
@@ -11,7 +16,6 @@ const ACCOUNT_TOOLTIP_MODES = Object.freeze({
   SIDEBAR_ONLY: 'SIDEBAR_ONLY',
   TOOLBAR_ONLY: 'TOOLBAR_ONLY'
 })
-
 const VIBRANCY_MODES = Object.freeze({
   NONE: 'NONE',
   LIGHT: 'LIGHT',
@@ -19,7 +23,6 @@ const VIBRANCY_MODES = Object.freeze({
   DARK: 'DARK',
   ULTRA_DARK: 'ULTRA_DARK'
 })
-
 const THEMES = Object.freeze({
   DARK: 'DARK',
   LIGHT: 'LIGHT',
@@ -41,6 +44,7 @@ class UISettings extends Model {
   // Class
   /* **************************************************************************/
 
+  static get SIDEBAR_SIZES () { return SIDEBAR_SIZES }
   static get SIDEBAR_NEWS_MODES () { return SIDEBAR_NEWS_MODES }
   static get ACCOUNT_TOOLTIP_MODES () { return ACCOUNT_TOOLTIP_MODES }
   static get VIBRANCY_MODES () { return VIBRANCY_MODES }
@@ -70,6 +74,7 @@ class UISettings extends Model {
   /* **************************************************************************/
 
   get sidebarEnabled () { return this._value_('sidebarEnabled', true) }
+  get sidebarSize () { return this._value_('sidebarSize', SIDEBAR_SIZES.REGULAR) }
   get showSidebarSupport () { return this._value_('showSidebarSupport', true) }
   get showSidebarNewsfeed () { return this._value_('showSidebarNewsfeed', SIDEBAR_NEWS_MODES.ALWAYS) }
   get accountTooltipMode () {

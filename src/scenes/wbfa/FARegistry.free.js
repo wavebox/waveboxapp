@@ -70,7 +70,11 @@ const REGISTRY = Object.freeze({
   'fasDownload': fasDownload,
   'fasCloudDownload': fasCloudDownloadAlt,
   'fasCloudUpload': fasCloudUploadAlt,
-  'fasSync': fasSync
+  'fasSync': fasSync,
+  'fasWindowRestore': farWindowRestore,
+  'fasWindowMaximize': farWindowMaximize,
+  'fasWindowMinimize': farWindowMinimize,
+  'fasWindowClose': farWindowClose
 })
 
 export default REGISTRY

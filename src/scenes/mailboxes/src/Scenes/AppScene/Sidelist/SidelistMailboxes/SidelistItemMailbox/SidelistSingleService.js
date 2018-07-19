@@ -17,7 +17,8 @@ class SidelistItemSingleService extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired
+    mailboxId: PropTypes.string.isRequired,
+    sidebarSize: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -141,7 +142,7 @@ class SidelistItemSingleService extends React.Component {
   }
 
   render () {
-    const { mailboxId, ...passProps } = this.props
+    const { mailboxId, sidebarSize, ...passProps } = this.props
     const {
       mailbox,
       service,
@@ -169,6 +170,7 @@ class SidelistItemSingleService extends React.Component {
         onMouseLeave={() => this.setState({ isHovering: false })}
         {...passProps}>
         <StyledMailboxServiceBadge
+          sidebarSize={sidebarSize}
           supportsUnreadCount={service.supportsUnreadCount}
           showUnreadBadge={service.showBadgeCount}
           unreadCount={unreadCount}
@@ -177,15 +179,14 @@ class SidelistItemSingleService extends React.Component {
           hasUnreadActivity={hasUnreadActivity}
           color={service.badgeColor}
           isAuthInvalid={isAuthInvalid}>
-          {isServiceActive ? (<SidelistActiveIndicator color={avatar.color} />) : undefined}
+          {isServiceActive ? (<SidelistActiveIndicator sidebarSize={sidebarSize} color={avatar.color} />) : undefined}
           <SidelistMailboxAvatar
             avatar={avatar}
             lightenBorder={!isServiceActive && !isHovering}
-            size={42}
+            sidebarSize={sidebarSize}
             isSleeping={isServiceSleeping}
             showRestricted={isServiceRestricted}
-            showColorRing={mailbox.showAvatarColorRing}
-            borderWidth={4} />
+            showColorRing={mailbox.showAvatarColorRing} />
           <ErrorBoundary>
             <SidelistServiceTooltip
               serviceId={serviceId}
