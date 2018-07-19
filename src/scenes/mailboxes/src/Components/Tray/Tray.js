@@ -28,6 +28,7 @@ import {
   WB_TOGGLE_TRAY_WITH_BOUNDS
 } from 'shared/ipcEvents'
 import TrayContextMenuUnreadRenderer from './TrayContextMenuUnreadRenderer'
+import pluralize from 'pluralize'
 
 export default class Tray extends React.Component {
   /* **************************************************************************/
@@ -36,6 +37,7 @@ export default class Tray extends React.Component {
 
   static propTypes = { // Careful we're strict in shouldComponentUpdate
     unreadCount: PropTypes.number.isRequired,
+    hasUnreadActivity: PropTypes.bool.isRequired,
     traySettings: PropTypes.object.isRequired,
     launchTraySettings: PropTypes.object.isRequired
   }
@@ -273,7 +275,11 @@ export default class Tray extends React.Component {
   * freqently
   */
   shouldComponentUpdate (nextProps, nextState) {
-    if (this.props.unreadCount !== nextProps.unreadCount) { return true }
+    const propsDiff = [
+      'unreadCount',
+      'hasUnreadActivity'
+    ].findIndex((k) => this.props[k] !== nextProps[k]) !== -1
+    if (propsDiff) { return true }
 
     const trayDiff = [
       'unreadColor',
@@ -296,13 +302,13 @@ export default class Tray extends React.Component {
   * @return the tooltip string for the tray icon
   */
   renderTooltip () {
-    const {unreadCount} = this.props
-    if (unreadCount === 1) {
-      return `1 unread item`
-    } else if (unreadCount > 1) {
-      return `${unreadCount} unread items`
+    const {unreadCount, hasUnreadActivity} = this.props
+    if (unreadCount > 0) {
+      return `${unreadCount} unread ${pluralize('item', unreadCount)}`
+    } else if (hasUnreadActivity) {
+      return `Unread activity`
     } else {
-      return 'No unread items'
+      return `No unread items`
     }
   }
 
@@ -333,6 +339,7 @@ export default class Tray extends React.Component {
   render () {
     const {
       unreadCount,
+      hasUnreadActivity,
       traySettings,
       launchTraySettings
     } = this.props
@@ -342,7 +349,7 @@ export default class Tray extends React.Component {
     const renderId = uuid.v4()
     this.renderId = renderId
 
-    TrayRenderer.renderNativeImage(traySettings.iconSize, traySettings, unreadCount)
+    TrayRenderer.renderNativeImage(traySettings.iconSize, traySettings, unreadCount, hasUnreadActivity)
       .then((image) => {
         if (this.renderId !== renderId) { return } // Someone got in before us
 
@@ -372,6 +379,6 @@ export default class Tray extends React.Component {
         }
       })
 
-    return (<div />)
+    return null
   }
 }

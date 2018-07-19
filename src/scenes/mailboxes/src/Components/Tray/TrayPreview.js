@@ -32,13 +32,13 @@ class TrayPreview extends React.Component {
 
   componentWillMount () {
     const { size, tray, unreadCount } = this.props
-    TrayRenderer.renderPNGDataImage(size, tray, unreadCount)
+    TrayRenderer.renderPNGDataImage(size, tray, unreadCount, false)
       .then((png) => this.setState({ image: png }))
   }
 
   componentWillReceiveProps (nextProps) {
     if (shallowCompare(this, nextProps, this.state)) {
-      TrayRenderer.renderPNGDataImage(nextProps.size, nextProps.tray, nextProps.unreadCount)
+      TrayRenderer.renderPNGDataImage(nextProps.size, nextProps.tray, nextProps.unreadCount, false)
         .then((png) => this.setState({ image: png }))
     }
   }

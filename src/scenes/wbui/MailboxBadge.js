@@ -38,7 +38,8 @@ class MailboxBadge extends React.Component {
 
   static propTypes = {
     mailbox: PropTypes.object.isRequired,
-    unreadCount: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+    hasUnreadActivity: PropTypes.bool.isRequired,
+    unreadCount: PropTypes.number.isRequired
   }
 
   /* **************************************************************************/
@@ -53,6 +54,7 @@ class MailboxBadge extends React.Component {
     const {
       mailbox,
       unreadCount,
+      hasUnreadActivity,
       className,
       children,
       classes,
@@ -68,21 +70,21 @@ class MailboxBadge extends React.Component {
       inverseBadgeColor = 'white'
     }
 
-    let shouldDisplay = true
-    if (unreadCount === 0) {
-      shouldDisplay = false
-    } else if (typeof (unreadCount) === 'string' && !unreadCount) {
-      shouldDisplay = false
+    let badgeContent
+    if (unreadCount > 0) {
+      badgeContent = unreadCount >= 1000 ? Math.floor(unreadCount / 1000) + 'K+' : unreadCount
+    } else if (hasUnreadActivity) {
+      badgeContent = '●'
     }
 
     return (
       <span className={classNames(classes.root, className)} {...passProps}>
         {children}
-        {shouldDisplay ? (
+        {badgeContent !== undefined ? (
           <span
             className={classes.badge}
             style={{ backgroundColor: badgeColor, color: inverseBadgeColor }}>
-            {unreadCount}
+            {badgeContent}
           </span>
         ) : undefined}
       </span>

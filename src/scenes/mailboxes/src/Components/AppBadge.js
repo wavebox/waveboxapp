@@ -164,7 +164,7 @@ class AppBadge extends React.Component {
 
     this.renderAppBadge(unreadCount, hasUnreadActivity)
     this.renderAppOverlayIcon(unreadCount, hasUnreadActivity)
-    return (<div />)
+    return null
   }
 }
 

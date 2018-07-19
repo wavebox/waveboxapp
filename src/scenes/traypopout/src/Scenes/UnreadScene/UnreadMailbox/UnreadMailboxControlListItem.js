@@ -74,6 +74,7 @@ class UnreadMailboxControlListItem extends React.Component {
     return {
       mailbox: accountState.getMailbox(mailboxId),
       unreadCount: accountState.userUnreadCountForMailbox(mailboxId),
+      hasUnreadActivity: accountState.userUnreadActivityForMailbox(mailboxId),
       avatar: accountState.getMailboxAvatarConfig(mailboxId)
     }
   }
@@ -84,7 +85,7 @@ class UnreadMailboxControlListItem extends React.Component {
 
   render () {
     const { mailboxId, requestSwitchMailbox, requestShowMailboxList, classes, className, ...passProps } = this.props
-    const { mailbox, avatar, unreadCount } = this.state
+    const { mailbox, avatar, unreadCount, hasUnreadActivity } = this.state
 
     return (
       <ListItem
@@ -94,7 +95,7 @@ class UnreadMailboxControlListItem extends React.Component {
         {...passProps}>
         <KeyboardArrowLeftIcon className={classes.backArrow} />
         <MailboxDisplayName mailboxId={mailboxId} />
-        <MailboxBadge mailbox={mailbox} unreadCount={unreadCount}>
+        <MailboxBadge mailbox={mailbox} unreadCount={unreadCount} hasUnreadActivity={hasUnreadActivity}>
           <ACAvatarCircle
             avatar={avatar}
             resolver={(i) => Resolver.image(i)}

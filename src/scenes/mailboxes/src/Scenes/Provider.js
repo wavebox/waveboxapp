@@ -264,23 +264,6 @@ export default class Provider extends React.Component {
     }
   }
 
-  /**
-  * Renders the tray
-  * @param traySettings: the current tray settings
-  * @param launchTraySettings: the launch settings for the tray
-  * @param unreadCount: the current unread count for the tray
-  * @return jsx or undefined
-  */
-  renderTray (traySettings, launchTraySettings, unreadCount) {
-    if (!traySettings.show) { return }
-    return (
-      <Tray
-        unreadCount={unreadCount}
-        launchTraySettings={launchTraySettings}
-        traySettings={traySettings} />
-    )
-  }
-
   render () {
     const {
       traySettings,
@@ -297,12 +280,18 @@ export default class Provider extends React.Component {
         </MuiThemeProvider>
         <AccountMessageDispatcher />
         <WindowTitle />
-        {this.renderTray(traySettings, launchTraySettings, messagesUnreadCount)}
-        {!uiSettings.showAppBadge ? undefined : (
+        {traySettings.show ? (
+          <Tray
+            unreadCount={messagesUnreadCount}
+            hasUnreadActivity={hasUnreadActivity}
+            launchTraySettings={launchTraySettings}
+            traySettings={traySettings} />
+        ) : undefined}
+        {uiSettings.showAppBadge ? (
           <AppBadge
             unreadCount={messagesUnreadCount}
             hasUnreadActivity={hasUnreadActivity} />
-        )}
+        ) : undefined}
       </div>
     )
   }
