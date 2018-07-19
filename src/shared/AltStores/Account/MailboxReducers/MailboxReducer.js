@@ -165,6 +165,42 @@ class MailboxReducer {
   }
 
   /**
+  * Moves all services to the sidebar
+  * @param mailbox: the mailbox to update
+  */
+  static moveAllServicesToSidebar (mailbox) {
+    return mailbox.changeData({
+      sidebarServices: mailbox.allServices,
+      toolbarStartServices: [],
+      toolbarEndServices: []
+    })
+  }
+
+  /**
+  * Moves all services to the toolbar start
+  * @param mailbox: the mailbox to update
+  */
+  static moveAllServicesToToolbarStart (mailbox) {
+    return mailbox.changeData({
+      sidebarServices: [],
+      toolbarStartServices: mailbox.allServices,
+      toolbarEndServices: []
+    })
+  }
+
+  /**
+  * Moves all services to the toolbar end
+  * @param mailbox: the mailbox to update
+  */
+  static moveAllServicesToToolbarEnd (mailbox) {
+    return mailbox.changeData({
+      sidebarServices: [],
+      toolbarStartServices: [],
+      toolbarEndServices: mailbox.allServices
+    })
+  }
+
+  /**
   * Removes a service
   * @param mailbox: the mailbox to update
   * @param serviceId: the id of the service

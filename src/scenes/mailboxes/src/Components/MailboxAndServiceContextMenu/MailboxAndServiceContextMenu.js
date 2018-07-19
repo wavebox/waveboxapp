@@ -279,6 +279,27 @@ export default class MailboxAndServiceContextMenu extends React.Component {
     })
   }
 
+  handleMoveAllServicesToSidebar = (evt) => {
+    const { mailboxId } = this.props
+    this.closePopover(evt, () => {
+      accountActions.reduceMailbox(mailboxId, MailboxReducer.moveAllServicesToSidebar)
+    })
+  }
+
+  handleMoveAllServicesToToolbarStart = (evt) => {
+    const { mailboxId } = this.props
+    this.closePopover(evt, () => {
+      accountActions.reduceMailbox(mailboxId, MailboxReducer.moveAllServicesToToolbarStart)
+    })
+  }
+
+  handleMoveAllServicesToToolbarEnd = (evt) => {
+    const { mailboxId } = this.props
+    this.closePopover(evt, () => {
+      accountActions.reduceMailbox(mailboxId, MailboxReducer.moveAllServicesToToolbarEnd)
+    })
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -374,6 +395,22 @@ export default class MailboxAndServiceContextMenu extends React.Component {
           <ListItemIcon><SettingsIcon /></ListItemIcon>
           <ListItemText inset primary='Account Settings' />
         </MenuItem>
+        {!service && mailbox.hasMultipleServices ? (
+          <React.Fragment>
+            <MenuItem onClick={this.handleMoveAllServicesToSidebar}>
+              <ListItemIcon><ServiceSidebarIcon /></ListItemIcon>
+              <ListItemText inset primary='Move all services to the sidebar' />
+            </MenuItem>
+            <MenuItem onClick={this.handleMoveAllServicesToToolbarStart}>
+              <ListItemIcon><ServiceToolbarStartIcon /></ListItemIcon>
+              <ListItemText inset primary='Move all services to the toolbar (left)' />
+            </MenuItem>
+            <MenuItem onClick={this.handleMoveAllServicesToToolbarEnd}>
+              <ListItemIcon><ServiceToolbarEndIcon /></ListItemIcon>
+              <ListItemText inset primary='Move all services to the toolbar (right)' />
+            </MenuItem>
+          </React.Fragment>
+        ) : undefined}
         {service && serviceUiLocation !== ACMailbox.SERVICE_UI_LOCATIONS.SIDEBAR ? (
           <MenuItem onClick={this.handleMoveServiceToSidebar}>
             <ListItemIcon><ServiceSidebarIcon /></ListItemIcon>
