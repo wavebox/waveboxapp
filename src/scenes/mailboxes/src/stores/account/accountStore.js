@@ -626,7 +626,7 @@ class AccountStore extends RendererAccountStore {
     }
 
     const serviceId = serviceJS.id
-    actions.createService.defer(proviso.parentId, mailbox.depricatedServiceUILocation, serviceJS)
+    actions.createService.defer(proviso.parentId, mailbox.suggestedServiceUILocation, serviceJS)
     if (proviso.serviceType === SERVICE_TYPES.TRELLO) {
       this._finalizeServiceFromProviso(serviceId, `/`)
     } else if (proviso.serviceType === SERVICE_TYPES.SLACK) {

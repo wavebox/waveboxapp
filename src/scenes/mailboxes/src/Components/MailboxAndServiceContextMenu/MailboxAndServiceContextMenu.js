@@ -18,6 +18,11 @@ import SettingsIcon from '@material-ui/icons/Settings'
 import LayersClearIcon from '@material-ui/icons/LayersClear'
 import DeleteIcon from '@material-ui/icons/Delete'
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
+import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
+import ServiceSidebarIcon from './ServiceSidebarIcon'
+import ServiceToolbarStartIcon from './ServiceToolbarStartIcon'
+import ServiceToolbarEndIcon from './ServiceToolbarEndIcon'
+import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
 
 export default class MailboxAndServiceContextMenu extends React.Component {
   /* **************************************************************************/
@@ -30,9 +35,6 @@ export default class MailboxAndServiceContextMenu extends React.Component {
     isOpen: PropTypes.bool.isRequired,
     anchor: PropTypes.any,
     onRequestClose: PropTypes.func.isRequired
-  }
-  static contextTypes = {
-    router: PropTypes.object.isRequired
   }
 
   /* **************************************************************************/
@@ -256,6 +258,27 @@ export default class MailboxAndServiceContextMenu extends React.Component {
     })
   }
 
+  handleMoveServiceToSidebar = (evt) => {
+    const { mailboxId, serviceId } = this.props
+    this.closePopover(evt, () => {
+      accountActions.reduceMailbox(mailboxId, MailboxReducer.addServiceToSidebar, serviceId)
+    })
+  }
+
+  handleMoveServiceToToolbarStart = (evt) => {
+    const { mailboxId, serviceId } = this.props
+    this.closePopover(evt, () => {
+      accountActions.reduceMailbox(mailboxId, MailboxReducer.addServiceToToolbarStart, serviceId)
+    })
+  }
+
+  handleMoveServiceToToolbarEnd = (evt) => {
+    const { mailboxId, serviceId } = this.props
+    this.closePopover(evt, () => {
+      accountActions.reduceMailbox(mailboxId, MailboxReducer.addServiceToToolbarEnd, serviceId)
+    })
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -265,7 +288,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
   }
 
   render () {
-    const { isOpen, anchor } = this.props
+    const { isOpen, anchor, serviceId } = this.props
     const {
       mailbox,
       service,
@@ -277,6 +300,10 @@ export default class MailboxAndServiceContextMenu extends React.Component {
       serviceDisplayName
     } = this.state
     if (!mailbox || !rendering) { return false }
+
+    const serviceUiLocation = service
+      ? mailbox.uiLocationOfServiceWithId(serviceId)
+      : undefined
 
     return (
       <Menu
@@ -347,6 +374,24 @@ export default class MailboxAndServiceContextMenu extends React.Component {
           <ListItemIcon><SettingsIcon /></ListItemIcon>
           <ListItemText inset primary='Account Settings' />
         </MenuItem>
+        {service && serviceUiLocation !== ACMailbox.SERVICE_UI_LOCATIONS.SIDEBAR ? (
+          <MenuItem onClick={this.handleMoveServiceToSidebar}>
+            <ListItemIcon><ServiceSidebarIcon /></ListItemIcon>
+            <ListItemText inset primary='Move service to the sidebar' />
+          </MenuItem>
+        ) : undefined}
+        {service && serviceUiLocation !== ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_START ? (
+          <MenuItem onClick={this.handleMoveServiceToToolbarStart}>
+            <ListItemIcon><ServiceToolbarStartIcon /></ListItemIcon>
+            <ListItemText inset primary='Move service to the toolbar (left)' />
+          </MenuItem>
+        ) : undefined}
+        {service && serviceUiLocation !== ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_END ? (
+          <MenuItem onClick={this.handleMoveServiceToToolbarEnd}>
+            <ListItemIcon><ServiceToolbarEndIcon /></ListItemIcon>
+            <ListItemText inset primary='Move service to the toolbar (right)' />
+          </MenuItem>
+        ) : undefined}
         {mailbox.artificiallyPersistCookies ? (
           <MenuItem onClick={this.handleClearBrowserSession}>
             <ListItemIcon><LayersClearIcon /></ListItemIcon>

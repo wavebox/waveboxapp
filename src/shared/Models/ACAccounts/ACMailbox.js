@@ -122,16 +122,35 @@ class ACMailbox extends CoreACModel {
     return !!this.toolbarEndServices.find((id) => id === serviceId)
   }
 
-  get depricatedServiceUILocation () {
-    if (this.sidebarServices.length) {
+  /**
+  * Gets the ui location of a service with the given id
+  * @param serviceId: the id of the service
+  * @return the SERVICE_UI_LOCATIONS enum or undefined if not found
+  */
+  uiLocationOfServiceWithId (serviceId) {
+    if (this.sidebarHasServiceWithId(serviceId)) {
       return SERVICE_UI_LOCATIONS.SIDEBAR
-    } else if (this.toolbarStartServices.length) {
+    } else if (this.toolbarStartHasServiceWithId(serviceId)) {
       return SERVICE_UI_LOCATIONS.TOOLBAR_START
-    } else if (this.toolbarEndServices.length) {
+    } else if (this.toolbarEndHasServiceWithId(serviceId)) {
       return SERVICE_UI_LOCATIONS.TOOLBAR_END
     } else {
-      return SERVICE_UI_LOCATIONS.TOOLBAR_START
+      return undefined
     }
+  }
+
+  get suggestedServiceUILocation () {
+    const weighted = [
+      [SERVICE_UI_LOCATIONS.SIDEBAR, this.sidebarServices.length],
+      [SERVICE_UI_LOCATIONS.TOOLBAR_END, this.toolbarEndServices.length]
+    ].reduce((acc, [location, weight]) => {
+      if (weight > acc[1]) {
+        return [location, weight]
+      } else {
+        return acc
+      }
+    }, [SERVICE_UI_LOCATIONS.TOOLBAR_START, this.toolbarStartServices.length])
+    return weighted[0]
   }
 
   /* **************************************************************************/

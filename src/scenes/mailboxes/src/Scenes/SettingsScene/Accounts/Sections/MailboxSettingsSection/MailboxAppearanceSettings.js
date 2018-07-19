@@ -104,7 +104,8 @@ class MailboxAppearanceSettings extends React.Component {
       mailboxBadgeColor: mailbox.badgeColor,
       mailboxDisplayName: mailbox.displayName,
       navigationBarUiLocation: mailbox.navigationBarUiLocation,
-      mailboxAvatar: accountState.getAvatar(mailbox.avatarId)
+      mailboxAvatar: accountState.getAvatar(mailbox.avatarId),
+      mailboxCollapseSidebarServices: mailbox.collapseSidebarServices
     } : {
       mailboxColor: '#FFF',
       mailboxShowAvatarColorRing: true,
@@ -112,7 +113,8 @@ class MailboxAppearanceSettings extends React.Component {
       mailboxShowBadge: true,
       mailboxBadgeColor: '#FFF',
       navigationBarUiLocation: ACMailbox.NAVIGATION_BAR_UI_LOCATIONS.AUTO,
-      mailboxAvatar: undefined
+      mailboxAvatar: undefined,
+      mailboxCollapseSidebarServices: false
     }
   }
 
@@ -136,7 +138,8 @@ class MailboxAppearanceSettings extends React.Component {
       mailboxBadgeColor,
       mailboxDisplayName,
       navigationBarUiLocation,
-      mailboxAvatar
+      mailboxAvatar,
+      mailboxCollapseSidebarServices
     } = this.state
 
     return (
@@ -209,7 +212,6 @@ class MailboxAppearanceSettings extends React.Component {
             }}
             checked={mailboxShowBadge} />
           <SettingsListItemSelect
-            divider={false}
             label='Where should the navigation bar be displayed?'
             value={navigationBarUiLocation}
             options={[
@@ -218,6 +220,13 @@ class MailboxAppearanceSettings extends React.Component {
               { value: ACMailbox.NAVIGATION_BAR_UI_LOCATIONS.SECONDARY_TOOLBAR, label: 'In a Standalone toolbar' }
             ]}
             onChange={(evt, mode) => accountActions.reduceMailbox(mailboxId, MailboxReducer.setNavigationBarUiLocation, mode)} />
+          <SettingsListItemSwitch
+            divider={false}
+            label='Collapse sidebar services when account is inactive'
+            onChange={(evt, toggled) => {
+              accountActions.reduceMailbox(mailboxId, MailboxReducer.setCollapseSidebarServices, toggled)
+            }}
+            checked={mailboxCollapseSidebarServices} />
         </SettingsListSection>
       </div>
     )

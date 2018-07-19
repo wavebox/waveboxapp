@@ -3,7 +3,6 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import MailboxAppearanceSettings from './MailboxAppearanceSettings'
-import MailboxServicesSettings from './MailboxServicesSettings'
 import MailboxAdvancedSettings from './MailboxAdvancedSettings'
 import MailboxToolsSettings from './MailboxToolsSettings'
 import MailboxCredentialSettings from './MailboxCredentialSettings'
@@ -45,9 +44,6 @@ class MailboxSettingsSection extends React.Component {
       <div {...passProps}>
         <MailboxAppearanceSettings
           id={`mailbox-appearance-${mailboxId}`}
-          mailboxId={mailboxId} />
-        <MailboxServicesSettings
-          id={`mailbox-services-${mailboxId}`}
           mailboxId={mailboxId} />
         <MailboxCredentialSettings
           id={`mailbox-credentials-${mailboxId}`}

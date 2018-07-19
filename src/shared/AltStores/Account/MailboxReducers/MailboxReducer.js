@@ -240,33 +240,6 @@ class MailboxReducer {
     return mailboxJS
   }
 
-  /**
-  * Sets the UI location of the services
-  * @param mailbox: the mailbox to update
-  * @param location: the location
-  */
-  static setDepricatedServiceUILocation (mailbox, location) {
-    if (location === ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_START) {
-      return mailbox.changeData({
-        toolbarStartServices: mailbox.allServices,
-        toolbarEndServices: [],
-        sidebarServices: []
-      })
-    } else if (location === ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_END) {
-      return mailbox.changeData({
-        toolbarEndServices: mailbox.allServices,
-        toolbarStartServices: [],
-        sidebarServices: []
-      })
-    } else {
-      return mailbox.changeData({
-        sidebarServices: mailbox.allServices,
-        toolbarStartServices: [],
-        toolbarEndServices: []
-      })
-    }
-  }
-
   /* **************************************************************************/
   // Window behaviour
   /* **************************************************************************/

@@ -29,6 +29,9 @@ import { faSpinner as fasSpinner } from '@fortawesome/free-solid-svg-icons/faSpi
 import { faSignOutAlt as fasSignOutAlt } from '@fortawesome/free-solid-svg-icons/faSignOutAlt'
 import { faCloudDownloadAlt as fasCloudDownloadAlt } from '@fortawesome/free-solid-svg-icons/faCloudDownloadAlt'
 import { faCloudUploadAlt as fasCloudUploadAlt } from '@fortawesome/free-solid-svg-icons/faCloudUploadAlt'
+import { faEllipsisV as fasEllipsisV } from '@fortawesome/free-solid-svg-icons/faEllipsisV'
+import { faEllipsisH as fasEllipsisH } from '@fortawesome/free-solid-svg-icons/faEllipsisH'
+import { faCircle as fasCircle } from '@fortawesome/free-solid-svg-icons/faCircle'
 
 const REGISTRY = Object.freeze({
   'farCheck': fasCheck,
@@ -74,7 +77,10 @@ const REGISTRY = Object.freeze({
   'fasWindowRestore': farWindowRestore,
   'fasWindowMaximize': farWindowMaximize,
   'fasWindowMinimize': farWindowMinimize,
-  'fasWindowClose': farWindowClose
+  'fasWindowClose': farWindowClose,
+  'fasEllipsisV': fasEllipsisV,
+  'fasEllipsisH': fasEllipsisH,
+  'fasCircle': fasCircle
 })
 
 export default REGISTRY
