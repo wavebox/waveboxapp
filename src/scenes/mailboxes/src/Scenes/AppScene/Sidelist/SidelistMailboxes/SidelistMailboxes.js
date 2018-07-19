@@ -85,7 +85,7 @@ class SidelistMailboxes extends React.Component {
       <div {...passProps} className={classNames(classes.root, 'WB-Sidelist-Mailboxes', className)}>
         <SortableList
           axis='y'
-          distance={20}
+          distance={5}
           mailboxIds={mailboxIds}
           onSortEnd={({ oldIndex, newIndex }) => {
             accountActions.changeMailboxIndex(mailboxIds[oldIndex], newIndex)

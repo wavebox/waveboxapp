@@ -169,7 +169,7 @@ class ServiceTabs extends React.Component {
         <SortableList
           axis={ServiceTabTools.uiLocationAxis(uiLocation)}
           containerClassName={classNames(classes.sortableListContainer, classNameAppend)}
-          distance={20}
+          distance={5}
           serviceIds={serviceIds}
           mailboxId={mailboxId}
           uiLocation={uiLocation}
