@@ -396,7 +396,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
           <ListItemText inset primary='Account Settings' />
         </MenuItem>
         {!service && mailbox.hasMultipleServices ? (
-          <React.Fragment>
+          <span>
             <MenuItem onClick={this.handleMoveAllServicesToSidebar}>
               <ListItemIcon><ServiceSidebarIcon /></ListItemIcon>
               <ListItemText inset primary='Move all services to the sidebar' />
@@ -409,7 +409,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
               <ListItemIcon><ServiceToolbarEndIcon /></ListItemIcon>
               <ListItemText inset primary='Move all services to the toolbar (right)' />
             </MenuItem>
-          </React.Fragment>
+          </span>
         ) : undefined}
         {service && serviceUiLocation !== ACMailbox.SERVICE_UI_LOCATIONS.SIDEBAR ? (
           <MenuItem onClick={this.handleMoveServiceToSidebar}>
