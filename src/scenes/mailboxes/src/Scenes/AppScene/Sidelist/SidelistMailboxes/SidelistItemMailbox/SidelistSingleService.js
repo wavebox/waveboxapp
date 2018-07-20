@@ -169,7 +169,7 @@ class SidelistItemSingleService extends React.Component {
         {...passProps}>
         <Tappable
           onContextMenu={this.handleOpenPopover}
-          onTap={this.handleClick}
+          onClick={this.handleClick}
           onPress={this.handleLongClick}>
           <StyledMailboxServiceBadge
             sidebarSize={sidebarSize}

@@ -208,7 +208,7 @@ class SidelistItemMultiService extends React.Component {
         onMouseLeave={() => this.setState({ isHoveringGroup: false })}
         {...passProps}>
         <Tappable
-          onTap={this.handleClick}
+          onClick={this.handleClick}
           onPress={this.handleLongClick}
           onContextMenu={this.handleOpenMailboxPopover}>
           <StyledMailboxServiceBadge
