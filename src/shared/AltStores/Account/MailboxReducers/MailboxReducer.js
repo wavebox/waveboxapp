@@ -116,6 +116,15 @@ class MailboxReducer {
   /* **************************************************************************/
 
   /**
+  * Sets the service ui priority
+  * @param mailbox: the mailbox to update
+  * @param mode: the new mode
+  */
+  static setServiceUiPriority (mailbox, mode) {
+    return mailbox.changeData({ serviceUiPriority: mode })
+  }
+
+  /**
   * Adds a service in a given location
   * @param mailbox: the mailbox to update
   * @param serviceId: the id of the service

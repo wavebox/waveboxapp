@@ -105,7 +105,8 @@ class MailboxAppearanceSettings extends React.Component {
       mailboxDisplayName: mailbox.displayName,
       navigationBarUiLocation: mailbox.navigationBarUiLocation,
       mailboxAvatar: accountState.getAvatar(mailbox.avatarId),
-      mailboxCollapseSidebarServices: mailbox.collapseSidebarServices
+      mailboxCollapseSidebarServices: mailbox.collapseSidebarServices,
+      mailboxServiceUiPriority: mailbox.serviceUiPriority
     } : {
       mailboxColor: '#FFF',
       mailboxShowAvatarColorRing: true,
@@ -114,7 +115,8 @@ class MailboxAppearanceSettings extends React.Component {
       mailboxBadgeColor: '#FFF',
       navigationBarUiLocation: ACMailbox.NAVIGATION_BAR_UI_LOCATIONS.AUTO,
       mailboxAvatar: undefined,
-      mailboxCollapseSidebarServices: false
+      mailboxCollapseSidebarServices: false,
+      mailboxServiceUiPriority: ACMailbox.SERVICE_UI_PRIORITY.TOOLBAR
     }
   }
 
@@ -139,7 +141,8 @@ class MailboxAppearanceSettings extends React.Component {
       mailboxDisplayName,
       navigationBarUiLocation,
       mailboxAvatar,
-      mailboxCollapseSidebarServices
+      mailboxCollapseSidebarServices,
+      mailboxServiceUiPriority
     } = this.state
 
     return (
@@ -221,12 +224,21 @@ class MailboxAppearanceSettings extends React.Component {
             ]}
             onChange={(evt, mode) => accountActions.reduceMailbox(mailboxId, MailboxReducer.setNavigationBarUiLocation, mode)} />
           <SettingsListItemSwitch
-            divider={false}
             label='Collapse sidebar services when account is inactive'
             onChange={(evt, toggled) => {
               accountActions.reduceMailbox(mailboxId, MailboxReducer.setCollapseSidebarServices, toggled)
             }}
             checked={mailboxCollapseSidebarServices} />
+          <SettingsListItemSelect
+            divider={false}
+            label='Service layout priority'
+            value={mailboxServiceUiPriority}
+            options={[
+              { value: ACMailbox.SERVICE_UI_PRIORITY.AUTO, label: 'Auto' },
+              { value: ACMailbox.SERVICE_UI_PRIORITY.TOOLBAR, label: 'Toolbar first' },
+              { value: ACMailbox.SERVICE_UI_PRIORITY.SIDEBAR, label: 'Sidebar first' }
+            ]}
+            onChange={(evt, mode) => accountActions.reduceMailbox(mailboxId, MailboxReducer.setServiceUiPriority, mode)} />
         </SettingsListSection>
       </div>
     )

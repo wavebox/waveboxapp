@@ -12,6 +12,12 @@ const SERVICE_UI_LOCATIONS = Object.freeze({
   TOOLBAR_END: 'TOOLBAR_END'
 })
 
+const SERVICE_UI_PRIORITY = Object.freeze({
+  AUTO: 'AUTO',
+  SIDEBAR: 'SIDEBAR',
+  TOOLBAR: 'TOOLBAR'
+})
+
 const NAVIGATION_BAR_UI_LOCATIONS = Object.freeze({
   AUTO: 'AUTO',
   PRIMARY_TOOLBAR: 'PRIMARY_TOOLBAR',
@@ -26,6 +32,7 @@ class ACMailbox extends CoreACModel {
   static get DEFAULT_WINDOW_OPEN_MODES () { return DEFAULT_WINDOW_OPEN_MODES }
   static get SERVICE_UI_LOCATIONS () { return SERVICE_UI_LOCATIONS }
   static get NAVIGATION_BAR_UI_LOCATIONS () { return NAVIGATION_BAR_UI_LOCATIONS }
+  static get SERVICE_UI_PRIORITY () { return SERVICE_UI_PRIORITY }
 
   /* **************************************************************************/
   // Class : Creating
@@ -64,13 +71,25 @@ class ACMailbox extends CoreACModel {
   get sidebarServices () { return this._value_('sidebarServices', []) }
   get toolbarStartServices () { return this._value_('toolbarStartServices', []) }
   get toolbarEndServices () { return this._value_('toolbarEndServices', []) }
+  get serviceUiPriority () { return this._value_('serviceUiPriority', SERVICE_UI_PRIORITY.AUTO) }
   get allServices () {
+    let priority = this.serviceUiPriority
+    if (priority === SERVICE_UI_PRIORITY.AUTO) {
+      const sidebarWeight = this.sidebarServices.length
+      const toolbarStartWeight = this.toolbarStartServices.length
+      if (sidebarWeight !== 0 && toolbarStartWeight === 0) {
+        priority = SERVICE_UI_PRIORITY.SIDEBAR
+      } else {
+        priority = SERVICE_UI_PRIORITY.TOOLBAR
+      }
+    }
+
     // Concat these in a visual way that makes sense in the UI
-    return [].concat(
-      this.toolbarStartServices,
-      this.toolbarEndServices,
-      this.sidebarServices
-    )
+    if (this.serviceUiPriority === SERVICE_UI_PRIORITY.TOOLBAR) {
+      return [].concat(this.toolbarStartServices, this.toolbarEndServices, this.sidebarServices)
+    } else { // SIDEBAR
+      return [].concat(this.sidebarServices, this.toolbarStartServices, this.toolbarEndServices)
+    }
   }
   get allServiceCount () {
     return this.toolbarStartServices.length +
