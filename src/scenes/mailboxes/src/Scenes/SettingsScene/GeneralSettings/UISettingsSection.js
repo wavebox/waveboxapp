@@ -9,9 +9,7 @@ import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 import SettingsListKeyboardShortcutText from 'wbui/SettingsListKeyboardShortcutText'
 import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
-import indigo from '@material-ui/core/colors/indigo'
 import teal from '@material-ui/core/colors/teal'
-import brown from '@material-ui/core/colors/brown'
 
 export default class UISettingsSection extends React.Component {
   /* **************************************************************************/
