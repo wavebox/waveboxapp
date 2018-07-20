@@ -144,8 +144,8 @@ class User extends Model {
   // Properties: Profiles
   /* **************************************************************************/
 
-  get enableProfileSync () { return this._value_('enableProfileSync', false) }
-  get hasProfiles () { return this._value_('hasProfiles', false) }
+  get enableProfileSync () { return false }
+  get hasProfiles () { return false }
 }
 
 module.exports = User

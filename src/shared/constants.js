@@ -12,6 +12,8 @@ const days = function (days) {
 }
 
 module.exports = Object.freeze({
+  WAVEBOX_SIGNIN_DISABLED: true,
+
   // App
   APP_ID: 'wavebox.io',
   ANALYTICS_HEARTBEAT_INTERVAL: minutes(5),
