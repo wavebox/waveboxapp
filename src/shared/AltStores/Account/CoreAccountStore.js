@@ -703,8 +703,12 @@ class CoreAccountStore extends RemoteStore {
       return mailbox.allServices.reduce((acc, serviceId) => {
         if (unrestrictedServiceSet.has(serviceId)) {
           const service = this.getService(serviceId)
-          const serviceData = this.getServiceData(serviceId)
-          return acc + serviceData.getUnreadCount(service)
+          if (service.showBadgeCount) {
+            const serviceData = this.getServiceData(serviceId)
+            return acc + serviceData.getUnreadCount(service)
+          } else {
+            return acc
+          }
         }
 
         return acc
@@ -723,8 +727,12 @@ class CoreAccountStore extends RemoteStore {
       return !!mailbox.allServices.find((serviceId) => {
         if (unrestrictedServiceSet.has(serviceId)) {
           const service = this.getService(serviceId)
-          const serviceData = this.getServiceData(serviceId)
-          return serviceData.getHasUnreadActivity(service)
+          if (service.showBadgeActivity) {
+            const serviceData = this.getServiceData(serviceId)
+            return serviceData.getHasUnreadActivity(service)
+          } else {
+            return false
+          }
         } else {
           return false
         }
