@@ -12,6 +12,7 @@ import MailboxAndServiceContextMenu from 'Components/MailboxAndServiceContextMen
 import ErrorBoundary from 'wbui/ErrorBoundary'
 import ServiceTabs from 'Components/ServiceTabs'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
+import Tappable from 'react-tappable/lib/Tappable'
 
 class SidelistItemMultiService extends React.Component {
   /* **************************************************************************/
@@ -203,41 +204,43 @@ class SidelistItemMultiService extends React.Component {
 
     return (
       <SidelistMailboxContainer
-        onTap={this.handleClick}
-        onPress={this.handleLongClick}
         onMouseEnter={() => this.setState({ isHoveringGroup: true })}
         onMouseLeave={() => this.setState({ isHoveringGroup: false })}
         {...passProps}>
-        <StyledMailboxServiceBadge
-          id={`ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`}
-          onContextMenu={this.handleOpenMailboxPopover}
-          sidebarSize={sidebarSize}
-          onMouseEnter={() => this.setState({ isHoveringAvatar: true })}
-          onMouseLeave={() => this.setState({ isHoveringAvatar: false })}
-          supportsUnreadCount
-          showUnreadBadge={mailbox.showBadge}
-          unreadCount={unreadCount}
-          supportsUnreadActivity
-          showUnreadActivityBadge={mailbox.showBadge}
-          hasUnreadActivity={hasUnreadActivity}
-          color={mailbox.badgeColor}
-          isAuthInvalid={hasInvalidAuth}>
-          {isMailboxActive ? (<SidelistActiveIndicator sidebarSize={sidebarSize} color={avatar.color} />) : undefined}
-          <SidelistMailboxAvatar
-            avatar={avatar}
+        <Tappable
+          onTap={this.handleClick}
+          onPress={this.handleLongClick}
+          onContextMenu={this.handleOpenMailboxPopover}>
+          <StyledMailboxServiceBadge
+            id={`ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`}
             sidebarSize={sidebarSize}
-            isSleeping={isMailboxSleeping}
-            showRestricted={isMailboxRestricted}
-            showColorRing={mailbox.showAvatarColorRing}
-            lightenBorder={!isMailboxActive && !isHoveringGroup} />
-          <ErrorBoundary>
-            <SidelistMailboxTooltip
-              mailboxId={mailboxId}
-              active={isHoveringAvatar}
-              group={this.instanceId}
-              parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />
-          </ErrorBoundary>
-        </StyledMailboxServiceBadge>
+            onMouseEnter={() => this.setState({ isHoveringAvatar: true })}
+            onMouseLeave={() => this.setState({ isHoveringAvatar: false })}
+            supportsUnreadCount
+            showUnreadBadge={mailbox.showBadge}
+            unreadCount={unreadCount}
+            supportsUnreadActivity
+            showUnreadActivityBadge={mailbox.showBadge}
+            hasUnreadActivity={hasUnreadActivity}
+            color={mailbox.badgeColor}
+            isAuthInvalid={hasInvalidAuth}>
+            {isMailboxActive ? (<SidelistActiveIndicator sidebarSize={sidebarSize} color={avatar.color} />) : undefined}
+            <SidelistMailboxAvatar
+              avatar={avatar}
+              sidebarSize={sidebarSize}
+              isSleeping={isMailboxSleeping}
+              showRestricted={isMailboxRestricted}
+              showColorRing={mailbox.showAvatarColorRing}
+              lightenBorder={!isMailboxActive && !isHoveringGroup} />
+          </StyledMailboxServiceBadge>
+        </Tappable>
+        <ErrorBoundary>
+          <SidelistMailboxTooltip
+            mailboxId={mailboxId}
+            active={isHoveringAvatar}
+            group={this.instanceId}
+            parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />
+        </ErrorBoundary>
         <ServiceTabs
           mailboxId={mailboxId}
           uiLocation={ACMailbox.SERVICE_UI_LOCATIONS.SIDEBAR}

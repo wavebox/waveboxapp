@@ -2,7 +2,6 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import Tappable from 'react-tappable/lib/Tappable'
 
 const styles = {
   mailboxContainer: {
@@ -33,9 +32,9 @@ class SidelistMailboxContainer extends React.Component {
     } = this.props
 
     return (
-      <Tappable className={classNames(classes.mailboxContainer, 'WB-SidelistItemMailbox', className)} {...passProps}>
+      <div className={classNames(classes.mailboxContainer, 'WB-SidelistItemMailbox', className)} {...passProps}>
         {children}
-      </Tappable>
+      </div>
     )
   }
 }
