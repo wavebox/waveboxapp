@@ -458,18 +458,26 @@ class CoreAccountStore extends RemoteStore {
 
     /**
     * @param serviceTypes: a list of services types to check if they would be restricted
-    * @return a list of services types that would be restricted if setup
+    * @return a list of services types that would be restricted if setup. This function
+    * assumes the serviceTypes are unique
     */
     this.proposedRestrictedServiceTypes = (serviceTypes) => {
       const user = this.getUser()
       if (user.hasAccountLimit || user.hasAccountTypeRestriction) {
-        const supportedTypes = serviceTypes.filter((type) => user.hasAccountsOfType(type))
-        if (user.hasAccountLimit) {
-          const limit = user.accountLimit - this.serviceCount()
-          return supportedTypes.slice(0, Math.max(0, limit))
-        } else {
-          return supportedTypes
-        }
+        let proposedServiceCount = this.serviceCount()
+        const restricted = serviceTypes.filter((type) => {
+          if (!user.hasAccountsOfType(type)) {
+            return true
+          } else {
+            if (user.hasAccountLimit && proposedServiceCount > user.accountLimit) {
+              return true
+            } else {
+              proposedServiceCount++
+              return false
+            }
+          }
+        })
+        return restricted
       } else {
         return []
       }
