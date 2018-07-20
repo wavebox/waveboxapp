@@ -117,20 +117,6 @@ export default class UISettingsSection extends React.Component {
                 }
               },
               {
-                value: UISettings.THEMES.INDIGO,
-                label: 'Indigo',
-                MenuItemProps: {
-                  style: { borderRight: `20px solid ${indigo[600]}` }
-                }
-              },
-              {
-                value: UISettings.THEMES.MOCHA,
-                label: 'Mocha',
-                MenuItemProps: {
-                  style: { borderRight: `20px solid ${brown[600]}` }
-                }
-              },
-              {
                 value: UISettings.THEMES.NAVY,
                 label: 'Navy',
                 MenuItemProps: {
