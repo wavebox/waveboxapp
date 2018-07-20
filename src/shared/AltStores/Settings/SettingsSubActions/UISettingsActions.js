@@ -81,6 +81,13 @@ class UISettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param collapsed: true to collapse the sidebar controls
+  */
+  setSidebarControlsCollapsed (collapsed) {
+    this.dispatchUpdate('sidebarControlsCollapsed', collapsed)
+  }
+
+  /**
   * Opens the app hidden by default
   */
   setOpenHidden (toggled) {

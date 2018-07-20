@@ -1,5 +1,5 @@
 import React from 'react'
-import { settingsStore } from 'stores/settings'
+import { settingsStore, settingsActions } from 'stores/settings'
 import SidelistControlWizard from './SidelistControlWizard'
 import SidelistControlSupport from './SidelistControlSupport'
 import SidelistControlAddMailbox from './SidelistControlAddMailbox'
@@ -31,14 +31,15 @@ export default class SidelistControls extends React.Component {
     return {
       showWizard: !settingsState.app.hasSeenAppWizard,
       showSupport: settingsState.ui.showSidebarSupport,
-      expanded: true
+      collapsed: settingsState.ui.sidebarControlsCollapsed
     }
   })()
 
   settingsUpdated = (settingsState) => {
     this.setState({
       showWizard: !settingsState.app.hasSeenAppWizard,
-      showSupport: settingsState.ui.showSidebarSupport
+      showSupport: settingsState.ui.showSidebarSupport,
+      collapsed: settingsState.ui.sidebarControlsCollapsed
     })
   }
 
@@ -52,15 +53,14 @@ export default class SidelistControls extends React.Component {
 
   render () {
     const { className, ...passProps } = this.props
-    const { showWizard, showSupport } = this.state
+    const { showWizard, showSupport, collapsed } = this.state
 
     return (
       <div {...passProps} className={classnames('WB-SidelistControls', className)}>
-        <SidelistControlExpander expanded={this.state.expanded}
-          onClick={() => { this.setState({ expanded: !this.state.expanded }) }} />
-        <div style={{
-          'height': this.state.expanded ? 'initial' : '0'
-        }}>
+        <SidelistControlExpander
+          expanded={!collapsed}
+          onClick={() => { settingsActions.sub.ui.setSidebarControlsCollapsed(!collapsed) }} />
+        <div style={{ height: collapsed ? '0' : 'initial' }}>
           <SidelistControlWhatsNew />
           {showWizard ? (<SidelistControlWizard />) : undefined}
           {showSupport ? (<SidelistControlSupport />) : undefined}

@@ -83,6 +83,7 @@ class UISettings extends Model {
   get sidebarSize () { return this._value_('sidebarSize', SIDEBAR_SIZES.REGULAR) }
   get showSidebarSupport () { return this._value_('showSidebarSupport', true) }
   get showSidebarNewsfeed () { return this._value_('showSidebarNewsfeed', SIDEBAR_NEWS_MODES.ALWAYS) }
+  get sidebarControlsCollapsed () { return this._value_('sidebarControlsCollapsed', false) }
   get accountTooltipMode () {
     const val = this._value_('accountTooltipMode', undefined)
     if (val !== undefined) { return val }
