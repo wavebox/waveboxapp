@@ -15,16 +15,25 @@ const styles = (theme) => ({
     width: '100%',
     position: 'relative',
 
-    '&.darwin:after': {
-      position: 'fixed',
-      content: '""',
-      display: 'block',
-      top: 0,
-      left: 0,
-      height: 25,
-      width: 70,
-      backgroundColor: ThemeTools.getValue(theme, 'wavebox.sidebar.backgroundColor'),
-      borderBottomRightRadius: 8
+    '&.darwin': {
+      '&:after': {
+        position: 'fixed',
+        content: '""',
+        display: 'block',
+        top: 0,
+        left: 0,
+        height: 25,
+        width: 70,
+        backgroundColor: ThemeTools.getValue(theme, 'wavebox.sidebar.backgroundColor'),
+        borderBottomRightRadius: 8
+      },
+
+      '&.fullscreen': {
+        display: 'none',
+        '&:after': {
+          display: 'none'
+        }
+      }
     }
   },
   container: {
@@ -48,24 +57,30 @@ class SidelistWindowControls extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
+    const currentWindow = remote.getCurrentWindow()
     if (HAS_WINDOW_CONTROLS) {
-      const currentWindow = remote.getCurrentWindow()
       currentWindow.on('maximize', this.handleWindowStateChanged)
       currentWindow.on('unmaximize', this.handleWindowStateChanged)
       currentWindow.on('enter-full-screen', this.handleWindowStateChanged)
       currentWindow.on('leave-full-screen', this.handleWindowStateChanged)
       settingsStore.listen(this.settingsChanged)
+    } else {
+      currentWindow.on('enter-full-screen', this.handlePlaceholderWindowStateChanged)
+      currentWindow.on('leave-full-screen', this.handlePlaceholderWindowStateChanged)
     }
   }
 
   componentWillUnmount () {
+    const currentWindow = remote.getCurrentWindow()
     if (HAS_WINDOW_CONTROLS) {
-      const currentWindow = remote.getCurrentWindow()
       currentWindow.removeListener('maximize', this.handleWindowStateChanged)
       currentWindow.removeListener('unmaximize', this.handleWindowStateChanged)
       currentWindow.removeListener('enter-full-screen', this.handleWindowStateChanged)
       currentWindow.removeListener('leave-full-screen', this.handleWindowStateChanged)
       settingsStore.unlisten(this.settingsChanged)
+    } else {
+      currentWindow.removeListener('enter-full-screen', this.handlePlaceholderWindowStateChanged)
+      currentWindow.removeListener('leave-full-screen', this.handlePlaceholderWindowStateChanged)
     }
   }
 
@@ -74,13 +89,17 @@ class SidelistWindowControls extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
-    if (!HAS_WINDOW_CONTROLS) { return {} }
-
     const currentWindow = remote.getCurrentWindow()
-    return {
-      isMaximized: currentWindow.isMaximized(),
-      isFullScreen: currentWindow.isFullScreen(),
-      sidebarSize: settingsStore.getState().ui.sidebarSize
+    if (HAS_WINDOW_CONTROLS) {
+      return {
+        isMaximized: currentWindow.isMaximized(),
+        isFullScreen: currentWindow.isFullScreen(),
+        sidebarSize: settingsStore.getState().ui.sidebarSize
+      }
+    } else {
+      return {
+        isFullScreen: currentWindow.isFullScreen()
+      }
     }
   })()
 
@@ -98,6 +117,13 @@ class SidelistWindowControls extends React.Component {
     const currentWindow = remote.getCurrentWindow()
     this.setState({
       isMaximized: currentWindow.isMaximized(),
+      isFullScreen: currentWindow.isFullScreen()
+    })
+  }
+
+  handlePlaceholderWindowStateChanged = () => {
+    const currentWindow = remote.getCurrentWindow()
+    this.setState({
       isFullScreen: currentWindow.isFullScreen()
     })
   }
@@ -187,10 +213,15 @@ class SidelistWindowControls extends React.Component {
         </div>
       )
     } else {
+      const { isFullScreen } = this.state
       return (
-        <div
-          className={classNames(classes.placeholder, className, process.platform)}
-          {...passProps} />)
+        <div className={classNames(
+          classes.placeholder,
+          process.platform,
+          isFullScreen ? 'fullscreen' : undefined,
+          className
+        )} {...passProps} />
+      )
     }
   }
 }
