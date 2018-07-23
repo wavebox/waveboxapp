@@ -228,7 +228,7 @@ class ProcessMonitor extends React.Component {
             {osUnreliableIndicator}
           </TableCell>
           <TableCell className={classNames(classes.cell, classes.fixed80)}>
-            {this.humanizePercent(process.platform === 'darwin' ? metric.os.cpu : metric.chromium.cpu.percentCPUUsage)}
+            {this.humanizePercent(metric.chromium.cpu.percentCPUUsage)}
             {osUnreliableIndicator}
           </TableCell>
         </TableRow>

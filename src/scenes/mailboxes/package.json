@@ -14,7 +14,7 @@
     "@fortawesome/free-regular-svg-icons": "5.1.1",
     "@fortawesome/free-solid-svg-icons": "5.1.1",
     "@fortawesome/react-fontawesome": "0.1.0",
-    "@material-ui/core": "1.4.0",
+    "@material-ui/core": "1.4.1",
     "@material-ui/icons": "1.1.0",
     "addressparser": "1.0.1",
     "alt": "0.18.6",
