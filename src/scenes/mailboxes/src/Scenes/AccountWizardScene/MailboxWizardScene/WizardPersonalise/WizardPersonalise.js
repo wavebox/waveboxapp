@@ -315,7 +315,6 @@ class WizardPersonalise extends React.Component {
               ) : undefined}
               {restrictedServices.length ? (
                 <div>
-                  <h2 className={classes.heading}>Choose your services</h2>
                   <p className={classes.subHeading}>You can use all these services alongside your account when you purchase Wavebox</p>
                   <div className={classes.servicesPurchaseContainer}>
                     <Button color='primary' onClick={this.handleOpenPro}>
