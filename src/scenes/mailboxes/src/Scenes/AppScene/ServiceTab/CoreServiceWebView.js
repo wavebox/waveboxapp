@@ -352,7 +352,7 @@ class CoreServiceWebView extends React.Component {
   */
   handleReload = (evt) => {
     const { mailboxId, serviceId } = this.props
-    const { isActive, service } = this.state
+    const { isActive, service, restorableUrl } = this.state
     let isThisTab = false
     if (evt.mailboxId || evt.serviceId) {
       if (evt.mailboxId === mailboxId) {
@@ -369,7 +369,7 @@ class CoreServiceWebView extends React.Component {
         if (service.reloadBehaviour === CoreACService.RELOAD_BEHAVIOURS.RELOAD) {
           this.reload()
         } else if (service.reloadBehaviour === CoreACService.RELOAD_BEHAVIOURS.RESET_URL) {
-          this.loadURL(service.url)
+          this.loadURL(restorableUrl)
         }
       } else {
         this.reload()
