@@ -80,7 +80,8 @@ class MailboxDeleteScene extends React.Component {
       const mailboxId = nextProps.match.params.mailboxId
       const accountState = accountStore.getState()
       this.setState({
-        mailbox: accountState.getMailbox(mailboxId)
+        mailbox: accountState.getMailbox(mailboxId),
+        mailboxDisplayName: accountState.resolvedMailboxDisplayName(mailboxId)
       })
     }
   }
@@ -94,14 +95,16 @@ class MailboxDeleteScene extends React.Component {
     const accountState = accountStore.getState()
     return {
       open: true,
-      mailbox: accountState.getMailbox(mailboxId)
+      mailbox: accountState.getMailbox(mailboxId),
+      mailboxDisplayName: accountState.resolvedMailboxDisplayName(mailboxId)
     }
   })()
 
   accountChanged = (accountState) => {
     const mailboxId = this.props.match.params.mailboxId
     this.setState({
-      mailbox: accountState.getMailbox(mailboxId)
+      mailbox: accountState.getMailbox(mailboxId),
+      mailboxDisplayName: accountState.resolvedMailboxDisplayName(mailboxId)
     })
   }
 
@@ -137,7 +140,11 @@ class MailboxDeleteScene extends React.Component {
 
   render () {
     const { classes } = this.props
-    const { open, mailbox } = this.state
+    const {
+      open,
+      mailbox,
+      mailboxDisplayName
+    } = this.state
     if (!mailbox) { return false }
 
     return (
@@ -160,7 +167,7 @@ class MailboxDeleteScene extends React.Component {
               size={45}
               className={classes.avatar} />
             <div className={classes.accountName}>
-              {mailbox.displayName}
+              {mailboxDisplayName}
             </div>
           </div>
           {mailbox.hasMultipleServices ? (

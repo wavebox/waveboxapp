@@ -14,7 +14,6 @@ class ACServiceAvatar extends CoreACAvatar {
   */
   static autocreate (mailbox, service, serviceData, avatarMap) {
     return {
-      displayName: service.displayName || 'Untitled',
       color: service.getColorWithData(serviceData),
       showAvatarColorRing: mailbox.showAvatarColorRing,
       avatarCharacterDisplay: service.serviceAvatarCharacterDisplay,

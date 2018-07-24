@@ -65,10 +65,8 @@ class MailboxTooltip extends React.Component {
   * @return state object
   */
   generateMailboxState (mailboxId, accountState = accountStore.getState()) {
-    const mailbox = accountState.getMailbox(mailboxId)
     return {
-      displayName: mailbox.displayName,
-      serviceCount: mailbox.allServiceCount,
+      displayName: accountState.resolvedMailboxDisplayName(mailboxId),
       unreadCount: accountState.userUnreadCountForMailbox(mailboxId),
       hasUnreadActivity: accountState.userUnreadActivityForMailbox(mailboxId)
     }
@@ -92,7 +90,6 @@ class MailboxTooltip extends React.Component {
     } = this.props
     const {
       displayName,
-      serviceCount,
       unreadCount,
       hasUnreadActivity
     } = this.state
@@ -110,9 +107,7 @@ class MailboxTooltip extends React.Component {
     return (
       <DefaultTooltip400w {...passProps}>
         <div className={classes.root}>
-          <div>
-            {`${displayName} - ${serviceCount} services`}
-          </div>
+          <div>{displayName}</div>
           {unreadContent ? (
             <div>
               <hr className={classes.hr} />

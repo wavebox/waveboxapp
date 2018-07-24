@@ -102,7 +102,7 @@ class MailboxAppearanceSettings extends React.Component {
       mailboxShowSleepableServiceIndicator: mailbox.showSleepableServiceIndicator,
       mailboxShowBadge: mailbox.showBadge,
       mailboxBadgeColor: mailbox.badgeColor,
-      mailboxDisplayName: mailbox.displayName,
+      mailboxDisplayName: mailbox.displayName, // Raw value, don't resolve
       navigationBarUiLocation: mailbox.navigationBarUiLocation,
       mailboxAvatar: accountState.getAvatar(mailbox.avatarId),
       mailboxCollapseSidebarServices: mailbox.collapseSidebarServices,

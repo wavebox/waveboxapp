@@ -304,9 +304,67 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /**
+    * Gets a base resolved mailbox display name
+    * @param mailboxId: the mailbox id
+    * @param defaultValue=Untitled: the default value if none is found
+    * @return the display name
+    */
+    this.resolvedMailboxBaseDisplayName = (mailboxId, defaultValue = 'Untitled') => {
+      const mailbox = this.getMailbox(mailboxId)
+      return !mailbox || !mailbox.displayName ? defaultValue : mailbox.displayName
+    }
+
+    /**
+    * Gets a resolved extended mailbox display name
+    * @return the display name or an empty string
+    */
+    this.resolvedMailboxExtendedDisplayName = (mailboxId) => {
+      const mailbox = this.getMailbox(mailboxId)
+      if (!mailbox) { return '' }
+
+      const serviceWithServiceDisplayName = this.getService(
+        mailbox
+          .allServices
+          .find((serviceId) => {
+            const service = this.getService(serviceId)
+            return service ? service.hasExplicitServiceDisplayName : false
+          })
+      )
+
+      const components = [
+        serviceWithServiceDisplayName
+          ? `(${serviceWithServiceDisplayName.serviceDisplayName})`
+          : undefined,
+        mailbox.allServiceCount > 1
+          ? `${mailbox.allServiceCount} services`
+          : undefined
+      ].filter((c) => !!c)
+      return components.join(' - ')
+    }
+
+    /**
+    * Gets a resolved mailbox display name
+    * @param mailboxId: the mailbox id
+    * @param defaultValue=Untitled: the default value if none is found
+    * @param extended=true: when true will return information about the services to give
+    *                 a more complete idea of the service name
+    * @return the display name
+    */
+    this.resolvedMailboxDisplayName = (mailboxId, defaultValue = 'Untitled', extended = true) => {
+      if (extended) {
+        return [
+          this.resolvedMailboxBaseDisplayName(mailboxId, defaultValue),
+          this.resolvedMailboxExtendedDisplayName(mailboxId)
+        ].join(' ')
+      } else {
+        return this.resolvedMailboxBaseDisplayName(mailboxId, defaultValue)
+      }
+    }
+
+    /**
     * Gets a resolved service display name
     * @param serviceId: the service id
-    * * @param defaultValue=Untitled: the default value if none is found
+    * @param defaultValue=Untitled: the default value if none is found
     * @return the display name
     */
     this.resolvedServiceDisplayName = (serviceId, defaultValue = 'Untitled') => {

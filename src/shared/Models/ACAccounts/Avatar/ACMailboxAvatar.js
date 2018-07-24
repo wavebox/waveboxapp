@@ -21,7 +21,6 @@ class ACMailboxAvatar extends CoreACAvatar {
     const memberHashes = new Set([mailbox.versionedId])
 
     const data = {
-      displayName: this._getDisplayName(memberHashes, mailbox, services),
       color: this._getColor(memberHashes, mailbox, services, serviceDataMap),
       showAvatarColorRing: mailbox.showAvatarColorRing,
       avatarCharacterDisplay: this._getAvatarCharacterDisplay(memberHashes, services),
@@ -31,28 +30,6 @@ class ACMailboxAvatar extends CoreACAvatar {
 
     data.hashId = Array.from(memberHashes).join(':')
     return data
-  }
-
-  /**
-  * Gets the display name
-  * @param memberHashes: the member hashes to add to
-  * @param mailbox: the root mailbox
-  * @param services: the ordered services list
-  * @return the display name
-  */
-  static _getDisplayName (memberHashes, mailbox, services) {
-    if (mailbox.displayName !== undefined) {
-      memberHashes.add(mailbox.versionedId)
-      return mailbox.displayName
-    } else {
-      return (services.find((service) => {
-        if (service.displayName !== undefined) {
-          memberHashes.add(service.versionedId)
-          return true
-        }
-        return false
-      }) || {}).displayName || 'Untitled'
-    }
   }
 
   /**

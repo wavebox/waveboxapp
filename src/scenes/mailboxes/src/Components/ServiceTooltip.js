@@ -87,7 +87,10 @@ class ServiceTooltip extends React.Component {
 
     return mailbox && service && serviceData ? {
       hasMembers: true,
-      displayName: accountState.resolvedServiceDisplayName(serviceId, mailbox.displayName),
+      displayName: accountState.resolvedServiceDisplayName(
+        serviceId,
+        accountState.resolvedMailboxDisplayName(mailbox.id)
+      ),
       isRestricted: accountState.isServiceRestricted(serviceId),
       supportsUnreadCount: service.supportsUnreadCount,
       supportsUnreadActivity: service.supportsUnreadActivity,

@@ -62,7 +62,7 @@ class TrayContextMenuUnreadRenderer {
         signature: messageItemsSignature,
         label: [
           unreadCount ? `(${unreadCount})` : undefined,
-          mailbox.displayName
+          accountState.resolvedMailboxDisplayName(mailbox.id)
         ].filter((item) => !!item).join(' '),
         submenu: messageItems.length === 2 ? [
           ...messageItems,

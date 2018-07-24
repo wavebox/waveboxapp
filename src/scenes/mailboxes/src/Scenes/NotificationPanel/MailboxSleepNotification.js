@@ -194,7 +194,7 @@ class MailboxSleepNotification extends React.Component {
     const { mailbox, service, serviceDisplayName } = this.state
     if (!mailbox || !service) { return false }
 
-    const displayNameText = `${serviceDisplayName || mailbox.displayName} (${service.humanizedType})`
+    const displayNameText = `${serviceDisplayName} (${service.humanizedType})`
     const savingText = closeMetrics ? (
       `saving ${Math.round((closeMetrics.memory.workingSetSize || 0) / 1024)}MB of memory`
     ) : (

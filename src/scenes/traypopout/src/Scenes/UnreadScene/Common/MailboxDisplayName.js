@@ -80,9 +80,9 @@ class UnreadMailboxListItem extends React.Component {
     const mailbox = accountState.getMailbox(mailboxId)
     return {
       hasSingleService: mailbox.hasSingleService,
-      mailboxDisplayName: mailbox.displayName || 'Untitled',
-      serviceDisplayName: accountState.resolvedServiceDisplayName(mailbox.allServices[0]),
-      serviceCount: mailbox.allServiceCount
+      baseMailboxName: accountState.resolvedMailboxBaseDisplayName(mailboxId),
+      extendedMailboxName: accountState.resolvedMailboxExtendedDisplayName(mailboxId),
+      serviceDisplayName: accountState.resolvedServiceDisplayName(mailbox.allServices[0])
     }
   }
 
@@ -99,20 +99,20 @@ class UnreadMailboxListItem extends React.Component {
     } = this.props
     const {
       hasSingleService,
-      mailboxDisplayName,
-      serviceDisplayName,
-      serviceCount
+      baseMailboxName,
+      extendedMailboxName,
+      serviceDisplayName
     } = this.state
 
     return hasSingleService ? (
       <span className={classNames(className, classes.text)} {...passProps}>
         <span className={classes.primaryText}>{serviceDisplayName}</span>
-        <span className={classes.secondaryText}>{mailboxDisplayName}</span>
+        <span className={classes.secondaryText}>{baseMailboxName}</span>
       </span>
     ) : (
       <span className={classNames(className, classes.text)} {...passProps}>
-        <span className={classes.primaryText}>{mailboxDisplayName}</span>
-        <span className={classes.secondaryText}>{`${serviceCount} services`}</span>
+        <span className={classes.primaryText}>{baseMailboxName}</span>
+        <span className={classes.secondaryText}>{extendedMailboxName}</span>
       </span>
     )
   }

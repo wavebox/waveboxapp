@@ -394,16 +394,16 @@ class WaveboxAppPrimaryMenu {
   buildMailboxMenuConfig (accountState) {
     const activeMailboxId = accountState.activeMailboxId()
     const activeServiceId = accountState.activeServiceId()
-    const allMailboxes = accountState.allMailboxes()
+    const mailboxIds = accountState.mailboxIds()
     const activeMailbox = accountState.activeMailbox()
 
     return {
       tabCount: accountState.serviceCount(),
-      mailboxes: allMailboxes.map((mailbox) => {
+      mailboxes: mailboxIds.map((mailboxId) => {
         return {
-          label: mailbox.displayName,
-          isActive: mailbox.id === activeMailboxId,
-          mailboxId: mailbox.id
+          label: accountState.resolvedMailboxDisplayName(mailboxId),
+          isActive: mailboxId === activeMailboxId,
+          mailboxId: mailboxId
         }
       }),
       services: activeMailbox ? activeMailbox.allServices.map((serviceId) => {

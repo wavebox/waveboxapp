@@ -181,14 +181,21 @@ class ContextMenuService {
         click: () => { this.openLinkInWaveboxWindow(contents, params.linkURL) }
       })
 
-      const mailboxes = accountStore.getState().allMailboxes()
-      if (mailboxes.length > 1) {
+      const accountState = accountStore.getState()
+      const mailboxIds = accountState.mailboxIds()
+      if (mailboxIds.length > 1) {
         template.push({
           label: 'Open Link in Account Profile',
-          submenu: mailboxes.map((mailbox) => {
+          submenu: mailboxIds.map((mailboxId) => {
             return {
-              label: mailbox.displayName,
-              click: () => { this.openLinkInWaveboxWindowForAccount(contents, params.linkURL, mailbox) }
+              label: accountState.resolvedMailboxDisplayName(mailboxId),
+              click: () => {
+                this.openLinkInWaveboxWindowForAccount(
+                  contents,
+                  params.linkURL,
+                  accountStore.getState().getMailbox(mailboxId)
+                )
+              }
             }
           })
         })

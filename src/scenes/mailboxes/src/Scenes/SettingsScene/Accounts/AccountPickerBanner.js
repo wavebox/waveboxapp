@@ -6,7 +6,6 @@ import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import { FormControl, InputLabel, Select, MenuItem, Paper, ListItemIcon, ListItemText } from '@material-ui/core'
 import lightBlue from '@material-ui/core/colors/lightBlue'
-import pluralize from 'pluralize'
 import AddBoxIcon from '@material-ui/icons/AddBox'
 
 const styles = {
@@ -74,14 +73,23 @@ class AccountPickerBanner extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
+    const accountState = accountStore.getState()
+    const mailboxIds = accountState.mailboxIds()
     return {
-      mailboxes: accountStore.getState().allMailboxes()
+      mailboxIds: mailboxIds,
+      mailboxDisplayNames: mailboxIds.map((mailboxId) => {
+        return accountState.resolvedMailboxDisplayName(mailboxId)
+      })
     }
   })()
 
   accountChanged = (accountState) => {
+    const mailboxIds = accountState.mailboxIds()
     this.setState({
-      mailboxes: accountState.allMailboxes()
+      mailboxIds: mailboxIds,
+      mailboxDisplayNames: mailboxIds.map((mailboxId) => {
+        return accountState.resolvedMailboxDisplayName(mailboxId)
+      })
     })
   }
 
@@ -103,21 +111,20 @@ class AccountPickerBanner extends React.Component {
 
   render () {
     const { classes, className, selectedMailboxId, onChange, ...passProps } = this.props
-    const { mailboxes } = this.state
-    const selected = mailboxes.find((mailbox) => mailbox.id === selectedMailboxId) || mailboxes[0]
+    const { mailboxIds, mailboxDisplayNames } = this.state
 
     return (
       <Paper className={classNames(classes.accountPickerBanner, className)} {...passProps}>
         <div className={classes.accountPicker}>
           <MailboxAvatar
-            mailboxId={selected.id}
+            mailboxId={selectedMailboxId || mailboxIds[0]}
             size={60}
             className={classes.accountPickerAvatar} />
           <div className={classes.accountPickerContainer}>
             <FormControl fullWidth>
               <InputLabel className={classes.accountPickerLabel}>Pick your account</InputLabel>
               <Select
-                value={selected.id}
+                value={selectedMailboxId || mailboxIds[0]}
                 fullWidth
                 MenuProps={{
                   disableEnforceFocus: true,
@@ -127,11 +134,10 @@ class AccountPickerBanner extends React.Component {
                   }
                 }}
                 onChange={this.handleChange}>
-                {mailboxes.map((m) => {
-                  const count = m.allServiceCount
+                {mailboxIds.map((mailboxId, index) => {
                   return (
-                    <MenuItem value={m.id} key={m.id}>
-                      {`${m.displayName || 'Untitled'} (${count} ${pluralize('service', count)})`}
+                    <MenuItem value={mailboxId} key={mailboxId}>
+                      {mailboxDisplayNames[index]}
                     </MenuItem>
                   )
                 })}

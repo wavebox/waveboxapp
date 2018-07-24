@@ -92,9 +92,11 @@ export default class MailboxAndServiceContextMenu extends React.Component {
     return {
       mailbox: mailbox,
       ...(mailbox ? {
-        serviceCount: mailbox.allServiceCount
+        serviceCount: mailbox.allServiceCount,
+        mailboxDisplayName: accountState.resolvedMailboxDisplayName(mailboxId)
       } : {
-        serviceCount: 0
+        serviceCount: 0,
+        mailboxDisplayName: 'Untitled'
       }),
       ...(serviceId ? {
         service: accountState.getService(serviceId),
@@ -104,6 +106,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
         isServiceAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId)
       } : {
         service: null,
+        serviceDisplayName: 'Untitled',
         isServiceSleeping: false,
         isServiceActive: false,
         isServiceAuthInvalid: false
@@ -314,6 +317,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
       mailbox,
       service,
       rendering,
+      mailboxDisplayName,
       serviceCount,
       userHasSleepable,
       isServiceSleeping,
@@ -338,7 +342,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
           <ListItemText primary={service ? (
             `${serviceDisplayName} : (${service.humanizedTypeShort})`
           ) : (
-            `${mailbox.displayName} - ${serviceCount} services`
+            mailboxDisplayName
           )} />
         </MenuItem>
         {service ? (

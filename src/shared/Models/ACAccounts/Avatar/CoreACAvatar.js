@@ -11,7 +11,6 @@ class CoreACAvatar extends Model {
   // Properties: Display
   /* **************************************************************************/
 
-  get displayName () { return this._value_('displayName', 'Untitled') }
   get color () { return this._value_('color', '#FFFFFF') }
   get showAvatarColorRing () { return this._value_('showAvatarColorRing', true) }
   get avatarCharacterDisplay () { return this._value_('avatarCharacterDisplay', undefined) }
