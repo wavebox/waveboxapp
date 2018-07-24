@@ -333,7 +333,7 @@ class CoreAccountStore extends RemoteStore {
 
       const components = [
         serviceWithServiceDisplayName
-          ? `(${serviceWithServiceDisplayName.serviceDisplayName})`
+          ? serviceWithServiceDisplayName.serviceDisplayName
           : undefined,
         mailbox.allServiceCount > 1
           ? `${mailbox.allServiceCount} services`
@@ -355,7 +355,7 @@ class CoreAccountStore extends RemoteStore {
         return [
           this.resolvedMailboxBaseDisplayName(mailboxId, defaultValue),
           this.resolvedMailboxExtendedDisplayName(mailboxId)
-        ].join(' ')
+        ].join(' - ')
       } else {
         return this.resolvedMailboxBaseDisplayName(mailboxId, defaultValue)
       }
