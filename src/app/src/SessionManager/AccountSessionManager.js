@@ -11,19 +11,18 @@ import SessionManager from './SessionManager'
 
 const privManaged = Symbol('privManaged')
 const privEarlyManaged = Symbol('privEarlyManaged')
+const privSetup = Symbol('privSetup')
+const privPersistCookieThrottle = Symbol('privPersistCookieThrottle')
 
-class MailboxesSessionManager extends EventEmitter {
+class AccountSessionManager extends EventEmitter {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
   constructor () {
     super()
-    this._setup = false
-    this.lastUsedDownloadPath = null
-    this.downloadsInProgress = { }
-    this.persistCookieThrottle = { }
-
+    this[privSetup] = false
+    this[privPersistCookieThrottle] = {}
     this[privManaged] = new Set()
 
     // Sessions can only be accessed once the app is ready. We have eager classes trying
@@ -31,8 +30,8 @@ class MailboxesSessionManager extends EventEmitter {
     if (!app.isReady()) {
       this[privEarlyManaged] = new Map()
       app.on('ready', () => {
-        Array.from(this[privEarlyManaged].values()).forEach((mailbox) => {
-          this.startManagingSession(mailbox)
+        Array.from(this[privEarlyManaged].values()).forEach((args) => {
+          this._startManagingSession(...args)
         })
         delete this[privEarlyManaged]
       })
@@ -43,8 +42,8 @@ class MailboxesSessionManager extends EventEmitter {
   * Binds the listeners and starts responding to requests
   */
   start () {
-    if (this._setup) { return }
-    this._setup = true
+    if (this[privSetup]) { return }
+    this[privSetup] = true
   }
 
   /* ****************************************************************************/
@@ -68,27 +67,109 @@ class MailboxesSessionManager extends EventEmitter {
   * Starts managing a session
   * @param mailbox: the mailbox to start managing
   */
-  startManagingSession (mailbox) {
+  startManagingMailbox (mailbox) {
+    if (!mailbox) { return }
+    this._startManagingSession(
+      mailbox.partitionId,
+      mailbox.artificiallyPersistCookies,
+      mailbox.useCustomUserAgent,
+      mailbox.customUserAgentString
+    )
+  }
+
+  /**
+  * Starts managing a session
+  * @param mailbox: the mailbox the service belongs to
+  * @param service: the service to start managing
+  */
+  startManagingService (mailbox, service) {
+    if (!mailbox || !service) { return }
+    if (!service.sandboxFromMailbox) { return }
+    this._startManagingSession(
+      service.partitionId,
+      mailbox.artificiallyPersistCookies,
+      mailbox.useCustomUserAgent,
+      mailbox.customUserAgentString
+    )
+  }
+
+  /**
+  * Stops managing a mailbox
+  * @param mailbox: the mailbox to stop managing
+  */
+  stopManagingMailbox (mailbox) {
+    if (!mailbox) { return }
+    this._stopManagingSession(mailbox.partitionId)
+  }
+
+  /**
+  * Stops managing a service
+  * @param service: the service to stop managing
+  */
+  stopManagingService (service) {
+    if (!service) { return }
+    if (!service.sandboxFromMailbox) { return }
+    this._stopManagingSession(service.partitionId)
+  }
+
+  /**
+  * Stops managing a session
+  * @param partitionId: the id of the partition
+  */
+  _stopManagingSession (partitionId) {
+    // If you want to break this assumption you have to be 100% sure all bindings to
+    // the session have been removed first which is difficult. Also this will need
+    // to be cancellable if the code calls start again before the timeout
+    const ses = session.fromPartition(partitionId)
+    SessionManager.destroyWebRequestEmitterFromSession(ses)
+    DownloadManager.teardownUserDownloadHandlerForPartition(partitionId)
+    this[privManaged].delete(partitionId)
+
+    setTimeout(() => {
+      // We want to wait a few moments in case it's still in use. We work on the assumption
+      // that a session will never be re-used after teardown.
+      SessionManager.clearSessionFull(partitionId)
+    }, 5000)
+  }
+
+  /**
+  * Starts managing a session
+  * @param partitionId: the id of the partition
+  * @param artificiallyPersistCookies: true to artificially persist cookies
+  * @param useCustomUserAgent: true to use a custom user agent
+  * @param customUserAgentString: the useragent string to use
+  */
+  _startManagingSession (...args) {
+    const [
+      partitionId,
+      artificiallyPersistCookies,
+      useCustomUserAgent,
+      customUserAgentString
+    ] = args
+
+    // Check if we can init
+    if (this[privManaged].has(partitionId)) { return }
     if (!app.isReady()) {
-      this[privEarlyManaged].set(mailbox.id, mailbox)
-      return
+      this[privEarlyManaged].set(partitionId, args); return
     }
 
-    if (this[privManaged].has(mailbox.partitionId)) {
-      return
-    }
-
-    const ses = session.fromPartition(mailbox.partitionId)
+    const ses = session.fromPartition(partitionId)
 
     // Downloads
-    DownloadManager.setupUserDownloadHandlerForPartition(mailbox.partitionId)
+    DownloadManager.setupUserDownloadHandlerForPartition(partitionId)
 
     // Permissions & env
     ses.setPermissionRequestHandler(this._handlePermissionRequest)
-    this._setupUserAgent(ses, mailbox)
-    if (mailbox && mailbox.artificiallyPersistCookies) {
+
+    // UA
+    if (useCustomUserAgent && customUserAgentString) {
+      ses.setUserAgent(customUserAgentString)
+    }
+
+    // Cookies
+    if (artificiallyPersistCookies) {
       SessionManager.webRequestEmitterFromSession(ses).completed.on(undefined, (evt) => {
-        this._artificiallyPersistCookies(mailbox.partitionId)
+        this._artificiallyPersistCookies(partitionId)
       })
     }
 
@@ -133,24 +214,8 @@ class MailboxesSessionManager extends EventEmitter {
       }
     })
 
-    this[privManaged].add(mailbox.partitionId)
+    this[privManaged].add(partitionId)
     this.emit('session-managed', ses)
-  }
-
-  /* ****************************************************************************/
-  // UserAgent
-  /* ****************************************************************************/
-
-  /**
-  * Sets up the user agent for each mailbox type
-  * @param ses: the session object to update
-  * @param mailbox: the mailbox to setup for
-  */
-  _setupUserAgent (ses, mailbox) {
-    // Handle accounts that have custom settings
-    if (mailbox && mailbox.useCustomUserAgent && mailbox.customUserAgentString) {
-      ses.setUserAgent(mailbox.customUserAgentString)
-    }
   }
 
   /* ****************************************************************************/
@@ -182,12 +247,12 @@ class MailboxesSessionManager extends EventEmitter {
   * @param partition: the partition string for this session
   */
   _artificiallyPersistCookies (partition) {
-    if (this.persistCookieThrottle[partition] !== undefined) { return }
-    this.persistCookieThrottle[partition] = setTimeout(() => {
+    if (this[privPersistCookieThrottle][partition] !== undefined) { return }
+    this[privPersistCookieThrottle][partition] = setTimeout(() => {
       const ses = session.fromPartition(partition)
       ses.cookies.get({ session: true }, (error, cookies) => {
         if (error || !cookies.length) {
-          delete this.persistCookieThrottle[partition]
+          delete this[privPersistCookieThrottle][partition]
           return
         }
         cookies.forEach((cookie) => {
@@ -208,10 +273,10 @@ class MailboxesSessionManager extends EventEmitter {
             ses.cookies.set(persistentCookie, (_) => { })
           })
         })
-        delete this.persistCookieThrottle[partition]
+        delete this[privPersistCookieThrottle][partition]
       })
     }, ARTIFICIAL_COOKIE_PERSIST_WAIT)
   }
 }
 
-export default new MailboxesSessionManager()
+export default new AccountSessionManager()

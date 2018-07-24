@@ -84,6 +84,9 @@ class SessionManager {
   clearSessionFull (id) {
     return new Promise((resolve, reject) => {
       const ses = session.fromPartition(id)
+
+      this.destroyWebRequestEmitterFromSession(ses)
+
       ses.clearCache(() => {
         ses.clearStorageData(() => {
           ses.clearHostResolverCache(() => {
@@ -126,6 +129,18 @@ class SessionManager {
       this._webRequestEmitter.set(ses, new WebRequestEmitter(ses.webRequest))
     }
     return this._webRequestEmitter.get(ses)
+  }
+
+  /**
+  * Destroys a webrequest emitter for a session
+  * @param ses: the session
+  */
+  destroyWebRequestEmitterFromSession (ses) {
+    const emitter = this._webRequestEmitter.get(ses)
+    if (emitter) {
+      emitter.unbind()
+      this._webRequestEmitter.delete(ses)
+    }
   }
 
   /**

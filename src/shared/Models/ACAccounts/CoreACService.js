@@ -73,8 +73,18 @@ class CoreACService extends CoreACModel {
   /* **************************************************************************/
 
   get parentId () { return this._value_('parentId') }
-  get partitionId () { return `persist:${this.parentId}` }
+  get partitionId () {
+    // It would be tidier here to use service id as the base for the partition,
+    // however it's pretty tricky to teardown all the session bindings cleanly
+    // in preperation for re-attaching them at a later date (e.g. sandbox then
+    // un-sandbox). To be more reliable use a generated id for the partition
+    // so we never re-use the same partition
+    const basePartitionId = this.sandboxFromMailbox ? this._value_('sandboxedPartitionId') : this.parentId
+    if (!basePartitionId) { throw new Error('Partition id invalid for service') }
+    return `persist:${basePartitionId}`
+  }
   get type () { return this.constructor.type }
+  get sandboxFromMailbox () { return this._value_('sandboxFromMailbox', false) }
 
   /* **************************************************************************/
   // Properties: Sync

@@ -390,6 +390,20 @@ class CoreAccountActions extends RemoteActions {
     }
   }
 
+  /**
+  * Changes the service sandboxing state
+  * @param id: the id of the service
+  * @param sandbox: true to sandbox from the mailbox, false otherwise
+  */
+  changeServiceSandboxing (...args) {
+    if (process.type === 'browser') {
+      const [id, sandbox] = args
+      return { id, sandbox }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('changeServiceSandboxing', args)
+    }
+  }
+
   /* **************************************************************************/
   // Containers
   /* **************************************************************************/

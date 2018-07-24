@@ -4,7 +4,6 @@ import shallowCompare from 'react-addons-shallow-compare'
 import ServiceAppearanceSection from '../Common/ServiceAppearanceSection'
 import ServiceBadgeSection from '../Common/ServiceBadgeSection'
 import ServiceBehaviourSection from '../Common/ServiceBehaviourSection'
-import ServiceCustomCodeSection from '../Common/ServiceCustomCodeSection'
 import ServiceNotificationSection from '../Common/ServiceNotificationSection'
 import { accountStore, accountActions } from 'stores/account'
 import SettingsListSection from 'wbui/SettingsListSection'
@@ -14,6 +13,7 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemTextField from 'wbui/SettingsListItemTextField'
 import validUrl from 'valid-url'
+import ServiceAdvancedSection from '../Common/ServiceAdvancedSection'
 
 export default class GenericServiceSettings extends React.Component {
   /* **************************************************************************/
@@ -201,7 +201,7 @@ export default class GenericServiceSettings extends React.Component {
         <ServiceBadgeSection serviceId={serviceId} />
         <ServiceBehaviourSection serviceId={serviceId} />
         <ServiceNotificationSection serviceId={serviceId} />
-        <ServiceCustomCodeSection serviceId={serviceId} onRequestEditCustomCode={onRequestEditCustomCode} />
+        <ServiceAdvancedSection serviceId={serviceId} onRequestEditCustomCode={onRequestEditCustomCode} />
       </div>
     )
   }

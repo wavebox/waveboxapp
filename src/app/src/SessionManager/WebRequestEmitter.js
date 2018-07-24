@@ -66,6 +66,20 @@ class WebRequestEmitter {
       }
     })
   }
+
+  /**
+  * Tears everything down by removing all listeners for all handlers
+  */
+  unbind () {
+    this.beforeRequest.removeAllListeners()
+    this.beforeSendHeaders.removeAllListeners()
+    this.sendHeaders.removeAllListeners()
+    this.headersReceived.removeAllListeners()
+    this.responseStarted.removeAllListeners()
+    this.beforeRedirect.removeAllListeners()
+    this.completed.removeAllListeners()
+    this.errorOccurred.removeAllListeners()
+  }
 }
 
 export default WebRequestEmitter

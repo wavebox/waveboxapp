@@ -39,6 +39,7 @@ class DownloadManager {
 
   /**
   * Adds the user download manager to the given partition
+  * @param partition: the partition to listen on
   */
   setupUserDownloadHandlerForPartition (partition) {
     if (this.user.partitions.has(partition)) { return }
@@ -47,6 +48,18 @@ class DownloadManager {
     const ses = session.fromPartition(partition)
     ses.setDownloadPath(app.getPath('downloads'))
     ses.on('will-download', this._handleUserDownload)
+  }
+
+  /**
+  * Removes the download manager for given partition
+  * @param partition: the partition to teardown
+  */
+  teardownUserDownloadHandlerForPartition (partition) {
+    if (!this.user.partitions.has(partition)) { return }
+    this.user.partitions.delete(partition)
+
+    const ses = session.fromPartition(partition)
+    ses.removeListener('will-download', this._handleUserDownload)
   }
 
   /* ****************************************************************************/

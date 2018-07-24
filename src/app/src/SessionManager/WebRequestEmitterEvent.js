@@ -55,6 +55,14 @@ class WebRequestEmitterEvent {
     }
   }
 
+  /**
+  * Removes all listeners
+  */
+  removeAllListeners () {
+    this._listeners = []
+    this._configureListener()
+  }
+
   /* ****************************************************************************/
   // Emitting
   /* ****************************************************************************/

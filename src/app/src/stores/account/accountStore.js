@@ -1,6 +1,6 @@
 import CoreAccountStore from 'shared/AltStores/Account/CoreAccountStore'
 import alt from '../alt'
-import { session, webContents } from 'electron'
+import { webContents, session } from 'electron'
 import { STORE_NAME } from 'shared/AltStores/Account/AltAccountIdentifiers'
 import actions from './accountActions'
 import mailboxPersistence from 'Storage/acmailboxStorage'
@@ -8,7 +8,7 @@ import mailboxAuthPersistence from 'Storage/acmailboxauthStorage'
 import servicePersistence from 'Storage/acserviceStorage'
 import servicedataPersistence from 'Storage/acservicedataStorage'
 import avatarPersistence from 'Storage/avatarStorage'
-import { MailboxesSessionManager, SessionManager } from 'SessionManager'
+import { AccountSessionManager } from 'SessionManager'
 import MailboxesWindow from 'Windows/MailboxesWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import uuid from 'uuid'
@@ -65,6 +65,7 @@ class AccountStore extends CoreAccountStore {
       handleReduceServiceDataIfInactive: actions.REDUCE_SERVICE_DATA_IF_INACTIVE,
       handleSetCustomAvatarOnService: actions.SET_CUSTOM_AVATAR_ON_SERVICE,
       handleSetServiceAvatarOnService: actions.SET_SERVICE_AVATAR_ON_SERVICE,
+      handleChangeServiceSandboxing: actions.CHANGE_SERVICE_SANDBOXING,
 
       // Containers
       handleContainersUpdated: actions.CONTAINERS_UPDATED,
@@ -141,16 +142,15 @@ class AccountStore extends CoreAccountStore {
   * @return the generated model
   */
   saveMailbox (id, mailboxJS) {
+    const prevMailbox = this.getMailbox(id)
     if (mailboxJS === null) {
+      if (!prevMailbox) { return undefined }
+
       mailboxPersistence.removeItem(id)
       this._mailboxes_.delete(id)
       this.dispatchToRemote('remoteSetMailbox', [id, null])
 
-      // Queue this a little bit later as the session is probably still in use
-      setTimeout(() => {
-        SessionManager.clearSessionFull(`persist:${id}`)
-      }, 5000)
-
+      AccountSessionManager.stopManagingMailbox(prevMailbox)
       return undefined
     } else {
       mailboxJS.changedTime = new Date().getTime()
@@ -203,10 +203,16 @@ class AccountStore extends CoreAccountStore {
   * @return the generated model
   */
   saveService (id, serviceJS) {
+    const prevService = this.getService(id)
     if (serviceJS === null) {
+      if (!prevService) { return }
+
       servicePersistence.removeItem(id)
       this._services_.delete(id)
       this.dispatchToRemote('remoteSetService', [id, null])
+
+      AccountSessionManager.stopManagingService(prevService)
+
       return undefined
     } else {
       serviceJS.changedTime = new Date().getTime()
@@ -279,14 +285,39 @@ class AccountStore extends CoreAccountStore {
   }
 
   /* **************************************************************************/
+  // Management
+  /* **************************************************************************/
+
+  /**
+  * Starts managing a mailbox
+  * @param mailboxId: the id of the mailbox
+  */
+  startManagingMailboxWithId (mailboxId) {
+    AccountSessionManager.startManagingMailbox(this.getMailbox(mailboxId))
+  }
+
+  /**
+  * Starts managing a service
+  * @param serviceId: the id of the service
+  */
+  startManagingServiceWithId (serviceId) {
+    const service = this.getService(serviceId)
+    const mailbox = this.getMailbox(service ? service.parentId : undefined)
+    AccountSessionManager.startManagingService(mailbox, service)
+  }
+
+  /* **************************************************************************/
   // Load
   /* **************************************************************************/
 
   handleLoad (payload) {
     super.handleLoad(payload)
 
-    this.allMailboxes().forEach((mailbox) => {
-      MailboxesSessionManager.startManagingSession(mailbox)
+    this.mailboxIds().forEach((mailboxId) => {
+      this.startManagingMailboxWithId(mailboxId)
+    })
+    this.serviceIds().forEach((serviceId) => {
+      this.startManagingServiceWithId(serviceId)
     })
   }
 
@@ -297,9 +328,9 @@ class AccountStore extends CoreAccountStore {
   handleCreateMailbox ({ data }) {
     if (this._mailboxes_.has(data.id)) { this.preventDefault(); return }
 
-    const mailbox = this.saveMailbox(data.id, data)
-    MailboxesSessionManager.startManagingSession(mailbox)
+    this.saveMailbox(data.id, data)
     this.saveMailboxIndex(this._mailboxIndex_.concat(data.id))
+    this.startManagingMailboxWithId(data.id)
   }
 
   handleRemoveMailbox ({ id }) {
@@ -427,6 +458,8 @@ class AccountStore extends CoreAccountStore {
     if (nextMailboxJS) {
       this.saveMailbox(parentId, nextMailboxJS)
     }
+
+    this.startManagingServiceWithId(data.id)
   }
 
   handleRemoveService ({ id }) {
@@ -487,7 +520,6 @@ class AccountStore extends CoreAccountStore {
       undefined
     )
     const targetMailbox1 = this.saveMailbox(nextMailboxId, targetMailboxJS1)
-    MailboxesSessionManager.startManagingSession(targetMailbox1)
     this.saveMailboxIndex(this._mailboxIndex_.concat(nextMailboxId))
 
     // 3. Update the service
@@ -500,9 +532,11 @@ class AccountStore extends CoreAccountStore {
     const targetMailboxJS2 = MailboxReducer.addServiceByLocation(
       ...[targetMailbox1].concat([id, ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_START])
     )
-    if (targetMailboxJS2) {
-      this.saveMailbox(nextMailboxId, targetMailboxJS2)
-    }
+    this.saveMailbox(nextMailboxId, targetMailboxJS2)
+
+    // Manage everyone
+    this.startManagingMailboxWithId(nextMailboxId)
+    this.startManagingServiceWithId(id)
   }
 
   handleReduceService ({ id = this.activeServiceId(), reducer, reducerArgs }) {
@@ -609,6 +643,26 @@ class AccountStore extends CoreAccountStore {
       if (!prevAvatarId) { this.preventDefault(); return }
       this.saveService(id, service.changeData({ serviceLocalAvatarId: undefined }))
       this.saveAvatar(prevAvatarId, null)
+    }
+  }
+
+  handleChangeServiceSandboxing ({ id, sandbox }) {
+    const service = this.getService(id)
+    if (!service) { this.preventDefault(); return }
+    if (service.sandboxFromMailbox === sandbox) { this.preventDefault(); return }
+
+    if (sandbox) {
+      this.saveService(id, service.changeData({
+        sandboxFromMailbox: true,
+        sandboxedPartitionId: uuid.v4()
+      }))
+      this.startManagingMailboxWithId(id)
+    } else {
+      this.saveService(id, service.changeData({
+        sandboxFromMailbox: false,
+        sandboxedPartitionId: undefined
+      }))
+      AccountSessionManager.stopManagingService(service)
     }
   }
 
@@ -959,25 +1013,24 @@ class AccountStore extends CoreAccountStore {
 
     const mailbox = this.getMailbox(id)
     if (!mailbox) { return }
+    const partitionIds = this.allPartitionsInMailbox(id)
+    const partitionIdSet = new Set(partitionIds)
 
-    const ses = session.fromPartition(mailbox.partitionId)
     Promise.resolve()
       .then(() => {
-        return new Promise((resolve) => { ses.clearStorageData(resolve) })
+        return partitionIds.reduce((acc, partitionId) => {
+          const ses = session.fromPartition(partitionId)
+          return acc
+            .then(() => { return new Promise((resolve) => { ses.clearStorageData(resolve) }) })
+            .then(() => { return new Promise((resolve) => { ses.clearCache(resolve) }) })
+        }, Promise.resolve())
       })
       .then(() => {
-        return new Promise((resolve) => { ses.clearCache(resolve) })
-      })
-      .then(() => {
-        const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
-        if (mailboxesWindow) {
-          mailboxesWindow.tabManager.getWebContentIdsForMailbox(id).forEach((wcId) => {
-            const wc = webContents.fromId(wcId)
-            if (wc) {
-              wc.reload()
-            }
-          })
-        }
+        webContents.getAllWebContents().forEach((wc) => {
+          if (partitionIdSet.has(wc.getWebPreferences().partition)) {
+            wc.reload()
+          }
+        })
       })
   }
 

@@ -834,7 +834,30 @@ class CoreAccountStore extends RemoteStore {
     * @return an array of all partition ids used
     */
     this.allPartitions = () => {
-      return Array.from(this._mailboxes_.values()).map((mailbox) => mailbox.partiton)
+      return [].concat(
+        Array.from(this._mailboxes_.values())
+          .map((mailbox) => mailbox.partitonId),
+        Array.from(this._services_.values())
+          .filter((service) => service.sandboxFromMailbox)
+          .map((service) => service.partitionId)
+      )
+    }
+
+    /**
+    * Gets all the partitions in use in a single mailbox
+    * @return an array of all partitions in a mailbox
+    */
+    this.allPartitionsInMailbox = (mailboxId) => {
+      const mailbox = this.getMailbox(mailboxId)
+      if (!mailbox) { return [] }
+
+      return [].concat(
+        [mailbox.partitionId],
+        mailbox.allServices
+          .map((serviceId) => this.getService(serviceId))
+          .filter((service) => service && service.sandboxFromMailbox)
+          .map((service) => service.partitionId)
+      )
     }
 
     /* ****************************************/

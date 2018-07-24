@@ -14,7 +14,7 @@ import { notifhistStore, notifhistActions } from 'stores/notifhist'
 import ipcEvents from 'shared/ipcEvents'
 import BasicHTTPAuthHandler from '../BasicHTTPAuthHandler'
 import { CRExtensionManager } from 'Extensions/Chrome'
-import { SessionManager, MailboxesSessionManager, ExtensionSessionManager } from '../SessionManager'
+import { SessionManager, AccountSessionManager, ExtensionSessionManager } from '../SessionManager'
 import ServicesManager from '../Services'
 import MailboxesWindow from 'Windows/MailboxesWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
@@ -125,7 +125,7 @@ class WaveboxApp {
 
     // Managers
     SessionManager.start()
-    MailboxesSessionManager.start()
+    AccountSessionManager.start()
     ExtensionSessionManager.start()
     ServicesManager.load()
 

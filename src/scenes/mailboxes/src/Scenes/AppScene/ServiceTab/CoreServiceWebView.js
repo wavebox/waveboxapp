@@ -154,6 +154,8 @@ class CoreServiceWebView extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
+    this.webviewRestartTO = null
+
     // Stores
     accountStore.listen(this.accountChanged)
 
@@ -173,6 +175,8 @@ class CoreServiceWebView extends React.Component {
   }
 
   componentWillUnmount () {
+    clearTimeout(this.webviewRestartTO)
+
     // Stores
     accountStore.unlisten(this.accountChanged)
 
@@ -662,7 +666,6 @@ class CoreServiceWebView extends React.Component {
   }
 
   render () {
-    // Extract our props and pass props
     const {
       mailbox,
       service,
@@ -708,16 +711,28 @@ class CoreServiceWebView extends React.Component {
       Resolver.guestPreload(),
       Resolver.crExtensionApiPreload()
     ].join('_wavebox_preload_split_')
-
+    const webviewId = [
+      'guest',
+      mailbox.id,
+      service.id,
+      service.type
+    ].join('_')
+    const webviewKey = [
+      'guest',
+      mailbox.id,
+      service.id,
+      service.type,
+      service.partitionId
+    ].join('_')
     return (
       <div className={classNames(classes.root, className, isActive ? 'active' : undefined)}>
         <div className={classes.browserContainer}>
           <BrowserView
             ref={BROWSER_REF}
-            key={`guest_${mailbox.id}_${service.id}_${service.type}`}
-            id={`guest_${mailbox.id}_${service.id}_${service.type}`}
+            key={webviewKey}
+            id={webviewId}
             preload={preloadScripts}
-            partition={mailbox.partitionId}
+            partition={service.partitionId}
             src={restorableUrl || 'about:blank'}
             searchId={searchId}
             searchTerm={isSearching ? searchTerm : ''}

@@ -4,9 +4,9 @@ import shallowCompare from 'react-addons-shallow-compare'
 import ServiceAppearanceSection from '../Common/ServiceAppearanceSection'
 import ServiceBadgeSection from '../Common/ServiceBadgeSection'
 import ServiceBehaviourSection from '../Common/ServiceBehaviourSection'
-import ServiceCustomCodeSection from '../Common/ServiceCustomCodeSection'
 import ServiceNotificationSection from '../Common/ServiceNotificationSection'
 import GoogleMailUnreadSettings from './GoogleMailUnreadSettings'
+import ServiceAdvancedSection from '../Common/ServiceAdvancedSection'
 
 export default class GoogleMailServiceSettings extends React.Component {
   /* **************************************************************************/
@@ -37,7 +37,7 @@ export default class GoogleMailServiceSettings extends React.Component {
         <ServiceBadgeSection serviceId={serviceId} />
         <ServiceBehaviourSection serviceId={serviceId} />
         <ServiceNotificationSection serviceId={serviceId} />
-        <ServiceCustomCodeSection serviceId={serviceId} onRequestEditCustomCode={onRequestEditCustomCode} />
+        <ServiceAdvancedSection serviceId={serviceId} onRequestEditCustomCode={onRequestEditCustomCode} />
       </div>
     )
   }

@@ -9,7 +9,7 @@ import {
   CRX_COOKIES_CHANGED_
 } from 'shared/crExtensionIpcEvents'
 import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
-import { MailboxesSessionManager } from 'SessionManager'
+import { AccountSessionManager } from 'SessionManager'
 import { ElectronCookiePromise } from 'ElectronTools'
 
 const ELECTRON_TO_CRX_COOKIE_CHANGE_CAUSE = {
@@ -44,7 +44,7 @@ class CRExtensionCookies {
         this._handleSessionManaged(session.fromPartition(partitionId))
       })
       if (scopes.has('tabs')) {
-        MailboxesSessionManager.on('session-managed', this._handleSessionManaged)
+        AccountSessionManager.on('session-managed', this._handleSessionManaged)
       }
     }
   }
@@ -54,7 +54,7 @@ class CRExtensionCookies {
     CRDispatchManager.unregisterHandler(`${CRX_COOKIES_GET_ALL_}${this.extension.id}`, this.handleGetAllCookies)
     CRDispatchManager.unregisterHandler(`${CRX_COOKIES_SET_}${this.extension.id}`, this.handleSetCookie)
     CRDispatchManager.unregisterHandler(`${CRX_COOKIES_REMOVE_}${this.extension.id}`, this.handleRemoveCookie)
-    MailboxesSessionManager.removeListener('session-managed', this._handleSessionManaged)
+    AccountSessionManager.removeListener('session-managed', this._handleSessionManaged)
     Array.from(this._changeListenerSessions).forEach((ses) => {
       ses.cookies.removeListener('changed', this._handleCookiesChanged)
     })

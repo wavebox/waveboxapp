@@ -1,14 +1,16 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { accountActions, accountStore, accountDispatch } from 'stores/account'
+import { accountStore, accountActions, accountDispatch } from 'stores/account'
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
+import shallowCompare from 'react-addons-shallow-compare'
+import TuneIcon from '@material-ui/icons/Tune'
 import { USER_SCRIPTS_WEB_URL } from 'shared/constants'
 import electron from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import blue from '@material-ui/core/colors/blue'
-import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItem from 'wbui/SettingsListItem'
 import CodeIcon from '@material-ui/icons/Code'
-import shallowCompare from 'react-addons-shallow-compare'
 import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 import { Button } from '@material-ui/core'
 
@@ -30,7 +32,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class ServiceCustomCodeSection extends React.Component {
+class ServiceAdvancedSection extends React.Component {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
@@ -85,6 +87,7 @@ class ServiceCustomCodeSection extends React.Component {
     const service = accountState.getService(serviceId)
     return service ? {
       hasService: true,
+      sandboxFromMailbox: service.sandboxFromMailbox,
       customCSS: service.customCSS,
       customJS: service.customJS
     } : {
@@ -103,20 +106,21 @@ class ServiceCustomCodeSection extends React.Component {
   render () {
     const {
       serviceId,
-      onRequestEditCustomCode,
       classes,
+      onRequestEditCustomCode,
       ...passProps
     } = this.props
     const {
       hasService,
-      customCSS,
-      customJS
+      sandboxFromMailbox,
+      customJS,
+      customCSS
     } = this.state
     if (!hasService) { return false }
 
     return (
-      <SettingsListSection title='Custom Code & Userscripts' icon={<CodeIcon />} {...passProps}>
-        <SettingsListItem divider={false}>
+      <SettingsListSection title='Advanced' icon={<TuneIcon />} {...passProps}>
+        <SettingsListItem>
           <div>
             <div>
               <Button
@@ -151,9 +155,15 @@ class ServiceCustomCodeSection extends React.Component {
               href={USER_SCRIPTS_WEB_URL}>Find custom userscripts</a>
           </div>
         </SettingsListItem>
+        <SettingsListItemSwitch
+          divider={false}
+          label='Sandbox Service'
+          secondary={`With sandboxing enabled this service wont share any cookies or information with any other services`}
+          checked={sandboxFromMailbox}
+          onChange={(evt, toggled) => accountActions.changeServiceSandboxing(serviceId, toggled)} />
       </SettingsListSection>
     )
   }
 }
 
-export default ServiceCustomCodeSection
+export default ServiceAdvancedSection

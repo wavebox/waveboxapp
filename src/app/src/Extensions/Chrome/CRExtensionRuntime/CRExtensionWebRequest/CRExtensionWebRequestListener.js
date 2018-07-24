@@ -1,6 +1,6 @@
 import { ipcMain, webContents } from 'electron'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
-import { MailboxesSessionManager, SessionManager } from 'SessionManager'
+import { AccountSessionManager, SessionManager } from 'SessionManager'
 
 class CRExtensionWebRequestListener {
   /* ****************************************************************************/
@@ -23,11 +23,11 @@ class CRExtensionWebRequestListener {
     // Bind
     ipcMain.on(this.addEventName, this._handleAddListener)
     ipcMain.on(this.removeEventName, this._handleRemoveListener)
-    MailboxesSessionManager.on('session-managed', this._handleSessionManaged)
+    AccountSessionManager.on('session-managed', this._handleSessionManaged)
   }
 
   destroy () {
-    MailboxesSessionManager.removeListener('session-managed', this._handleSessionManaged)
+    AccountSessionManager.removeListener('session-managed', this._handleSessionManaged)
     Array.from(this.listeners.keys()).forEach((id) => {
       this._handleRemoveListener(null, id)
     })
@@ -75,7 +75,7 @@ class CRExtensionWebRequestListener {
     })
 
     // Bind
-    MailboxesSessionManager.getAllSessions().forEach((ses) => {
+    AccountSessionManager.getAllSessions().forEach((ses) => {
       this._attachListenerToWebRequest(ses, urlFiler, proxyListener)
     })
   }
@@ -166,7 +166,7 @@ class CRExtensionWebRequestListener {
   * @param listener: the listener to bind
   */
   _detachListenerFromAllWebRequests (listener) {
-    MailboxesSessionManager.getAllSessions().forEach((ses) => {
+    AccountSessionManager.getAllSessions().forEach((ses) => {
       if (SessionManager.hasWebRequestEmitterForSession(ses)) {
         SessionManager.webRequestEmitterFromSession(ses)[this.webRequestEmitterEventName].removeListener(listener)
       }
