@@ -24,6 +24,12 @@ class MicrosoftAuth extends CoreACAuth {
       ? `${this.constructor.humanizedNamespace} (Personal)`
       : `${this.constructor.humanizedNamespace} (Corporate)`
   }
+
+  /* **************************************************************************/
+  // Properties: Identification
+  /* **************************************************************************/
+
+  get humanizedIdentifier () { return this.authData.userPrincipalName }
 }
 
 export default MicrosoftAuth

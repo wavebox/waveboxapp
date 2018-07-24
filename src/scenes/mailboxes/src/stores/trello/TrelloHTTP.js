@@ -15,6 +15,34 @@ class TrelloHTTP {
   }
 
   /* **************************************************************************/
+  // Auth
+  /* **************************************************************************/
+
+  /**
+  * Builds the auth info and fetches some additional info
+  * @param appKey: the app key to use
+  * @param authToken: the auth token to use
+  * @return promise
+  */
+  static fetchAuthInfo (appKey, authToken) {
+    return Promise.resolve()
+      .then(() => window.fetch('https://api.trello.com/1/members/me?' + querystring.stringify({
+        key: appKey,
+        token: authToken,
+        fields: 'username'
+      })))
+      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
+      .then((res) => res.json())
+      .then((userInfo) => {
+        return Promise.resolve({
+          authToken: authToken,
+          authAppKey: appKey,
+          username: userInfo.username
+        })
+      })
+  }
+
+  /* **************************************************************************/
   // Profile
   /* **************************************************************************/
 

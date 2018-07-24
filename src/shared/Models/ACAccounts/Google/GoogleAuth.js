@@ -20,6 +20,12 @@ class GoogleAuth extends CoreACAuth {
   }
   get authEmail () { return this.authData.email }
   get pushToken () { return this.authData.pushToken }
+
+  /* **************************************************************************/
+  // Properties: Identification
+  /* **************************************************************************/
+
+  get humanizedIdentifier () { return this.authEmail }
 }
 
 export default GoogleAuth

@@ -14,6 +14,13 @@ class TrelloAuth extends CoreACAuth {
 
   get authAppKey () { return this.authData.authAppKey }
   get authToken () { return this.authData.authToken }
+  get username () { return this.authData.username }
+
+  /* **************************************************************************/
+  // Properties: Identification
+  /* **************************************************************************/
+
+  get humanizedIdentifier () { return this.username }
 }
 
 export default TrelloAuth

@@ -44,6 +44,13 @@ class CoreACAuth extends CoreACModel {
   get namespace () { return this._value_('namespace') }
 
   /* **************************************************************************/
+  // Sandboxing
+  /* **************************************************************************/
+
+  get sandboxedPartitionId () { return this._value_('sandboxedPartitionId', undefined) }
+  get isForSandboxedPartitionId () { return !!this.sandboxedPartitionId }
+
+  /* **************************************************************************/
   // Properties: Auth
   /* **************************************************************************/
 
@@ -56,6 +63,8 @@ class CoreACAuth extends CoreACModel {
   /* **************************************************************************/
 
   get humanizedNamespace () { return this.constructor.humanizedNamespace }
+  get humanizedIdentifier () { SubclassNotImplementedError('CoreACAuth.humanizedIdentifier') }
+  get hasHumanizedIdentifier () { return !!this.humanizedIdentifier }
 }
 
 export default CoreACAuth

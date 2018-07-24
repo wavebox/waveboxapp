@@ -81,6 +81,17 @@ class MicrosoftHTTP {
             }
           })
       })
+      .then((auth) => {
+        // Get some identification info about the account
+        return Promise.resolve()
+          .then(() => this.fetchAccountProfile(auth.access_token))
+          .then((res) => {
+            return Promise.resolve({ ...auth, userPrincipalName: res.userPrincipalName })
+          })
+          .catch(() => {
+            return Promise.resolve(auth)
+          })
+      })
   }
 
   /**

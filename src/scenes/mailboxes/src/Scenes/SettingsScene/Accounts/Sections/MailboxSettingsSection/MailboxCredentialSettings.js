@@ -110,8 +110,13 @@ export default class MailboxCredentialSettings extends React.Component {
                 confirmWaitMs={4000}
                 buttonProps={{ variant: 'outlined', className: classes.deleteButton }}
                 onConfirmedClick={() => accountActions.removeAuth(auth.id)}
-                primary={(<strong>{auth.humanizedNamespace}</strong>)}
-                secondary={auth.namespace} />
+                primary={(
+                  <span>
+                    <strong>{auth.humanizedNamespace}</strong> {`(${auth.namespace})`}
+                    {auth.isForSandboxedPartitionId ? <span>&nbsp;Sandboxed</span> : undefined}
+                  </span>
+                )}
+                secondary={auth.hasHumanizedIdentifier ? auth.humanizedIdentifier : auth.namespace} />
             )
           })
         ) : (

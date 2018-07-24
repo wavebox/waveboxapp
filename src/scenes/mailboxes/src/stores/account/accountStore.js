@@ -6,6 +6,7 @@ import settingsActions from '../settings/settingsActions'
 import GoogleHTTP from '../google/GoogleHTTP'
 import SlackHTTP from '../slack/SlackHTTP'
 import MicrosoftHTTP from '../microsoft/MicrosoftHTTP'
+import TrelloHTTP from '../trello/TrelloHTTP'
 import accountDispatch from './accountDispatch'
 import Bootstrap from 'R/Bootstrap'
 import googleActions from '../google/googleActions'
@@ -815,40 +816,39 @@ class AccountStore extends RendererAccountStore {
   handleAuthTrelloSuccess ({ mode, context, auth }) {
     this.preventDefault()
 
-    const authData = {
-      authToken: auth.token,
-      authAppKey: auth.appKey
-    }
+    Promise.resolve()
+      .then(() => TrelloHTTP.fetchAuthInfo(auth.appKey, auth.token))
+      .then((authData) => {
+        if (mode === AUTH_MODES.TEMPLATE_CREATE) {
+          // Create the auth
+          actions.createAuth.defer(
+            TrelloAuth.createJS(context.mailboxId, undefined, authData)
+          )
 
-    if (mode === AUTH_MODES.TEMPLATE_CREATE) {
-      // Create the auth
-      actions.createAuth.defer(
-        TrelloAuth.createJS(context.mailboxId, undefined, authData)
-      )
+          // Create the account
+          const template = new ACTemplatedAccount(context.template)
+          this._createMailboxFromTemplate(context.mailboxId, template)
+          this._finalizeCreateAccountFromTemplate(context.mailboxId)
+        } else if (mode === AUTH_MODES.REAUTHENTICATE || mode === AUTH_MODES.ATTACH) {
+          if (this.hasMailboxAuth(context.authId)) {
+            actions.reduceAuth.defer(
+              context.authId,
+              AuthReducer.setAuthData,
+              authData
+            )
+          } else {
+            actions.createAuth.defer(
+              TrelloAuth.createJS(context.mailboxId, undefined, authData)
+            )
+          }
 
-      // Create the account
-      const template = new ACTemplatedAccount(context.template)
-      this._createMailboxFromTemplate(context.mailboxId, template)
-      this._finalizeCreateAccountFromTemplate(context.mailboxId)
-    } else if (mode === AUTH_MODES.REAUTHENTICATE || mode === AUTH_MODES.ATTACH) {
-      if (this.hasMailboxAuth(context.authId)) {
-        actions.reduceAuth.defer(
-          context.authId,
-          AuthReducer.setAuthData,
-          authData
-        )
-      } else {
-        actions.createAuth.defer(
-          TrelloAuth.createJS(context.mailboxId, undefined, authData)
-        )
-      }
-
-      if (mode === AUTH_MODES.REAUTHENTICATE) {
-        this._finalizeReauthentication(context.serviceId)
-      } else if (mode === AUTH_MODES.ATTACH) {
-        actions.authNewServiceFromProviso.defer(new ACProvisoService(context.proviso))
-      }
-    }
+          if (mode === AUTH_MODES.REAUTHENTICATE) {
+            this._finalizeReauthentication(context.serviceId)
+          } else if (mode === AUTH_MODES.ATTACH) {
+            actions.authNewServiceFromProviso.defer(new ACProvisoService(context.proviso))
+          }
+        }
+      })
   }
 
   handleAuthMicrosoftSuccess ({ mode, context, auth }) {
