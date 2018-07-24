@@ -84,7 +84,13 @@ class TraySettingsSection extends React.Component {
         'clickAction',
         'altClickAction',
         'rightClickAction',
-        'doubleClickAction'
+        'doubleClickAction',
+
+        // These are used in the <TrayIconEditor />
+        'readColor',
+        'readBackgroundColor',
+        'unreadColor',
+        'unreadBackgroundColor'
       ]) ||
       partialShallowCompare(
         { showRestart: this.props.showRestart },
