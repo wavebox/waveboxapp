@@ -69,7 +69,7 @@ class UpdateSettingsSection extends React.Component {
         <SettingsListItemButton
           divider={false}
           label='Check for update now'
-          icon={<SystemUpdateAltIcon />}
+          icon={<SystemUpdateIcon />}
           onClick={() => { updaterActions.userCheckForUpdates() }} />
       </SettingsListSection>
     )
