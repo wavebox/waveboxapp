@@ -154,6 +154,7 @@ export default class UISettingsSection extends React.Component {
           {process.platform === 'darwin' ? (
             <SettingsListItemSelectInline
               label='Translucent window backgrounds (Requires Restart)'
+              secondary='(Experimental)'
               value={ui.vibrancyMode}
               options={[
                 { value: UISettings.VIBRANCY_MODES.NONE, label: 'None' },
