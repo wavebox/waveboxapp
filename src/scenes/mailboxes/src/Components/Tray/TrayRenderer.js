@@ -75,8 +75,8 @@ class TrayRenderer {
       const STROKE_WIDTH = Math.max(1, Math.round(SIZE * 0.05))
       const BORDER_RADIUS = Math.round(SIZE * 0.1)
       const SHOW_COUNT = tray.showUnreadCount && (unreadCount > 0 || hasUnreadActivity)
-      const COLOR = unreadCount ? tray.unreadColor : tray.readColor
-      const BACKGROUND_COLOR = unreadCount ? tray.unreadBackgroundColor : tray.readBackgroundColor
+      const COLOR = unreadCount || hasUnreadActivity ? tray.unreadColor : tray.readColor
+      const BACKGROUND_COLOR = unreadCount || hasUnreadActivity ? tray.unreadBackgroundColor : tray.readBackgroundColor
 
       const canvas = document.createElement('canvas')
       canvas.width = SIZE
@@ -101,7 +101,7 @@ class TrayRenderer {
         if (unreadCount > 0) {
           if (unreadCount > 99) { // 99+
             ctx.font = `${Math.round(SIZE * 0.8)}px Helvetica`
-            ctx.fillText('●', CENTER, Math.round(CENTER + (SIZE * 0.21)))
+            ctx.fillText('●', CENTER, Math.round(CENTER + (SIZE * 0.22)))
           } else if (unreadCount < 10) { // 0 - 9
             ctx.font = `${Math.round(SIZE * 0.6)}px Helvetica`
             ctx.fillText(unreadCount, CENTER, Math.round(CENTER + (SIZE * 0.2)))
@@ -111,7 +111,7 @@ class TrayRenderer {
           }
         } else { // Unread activity
           ctx.font = `${Math.round(SIZE * 0.8)}px Helvetica`
-          ctx.fillText('●', CENTER, Math.round(CENTER + (SIZE * 0.21)))
+          ctx.fillText('●', CENTER, Math.round(CENTER + (SIZE * 0.22)))
         }
         resolve(canvas)
       } else {
@@ -140,8 +140,8 @@ class TrayRenderer {
       const CENTER = Math.round(REAL_CENTER)
       const STROKE_WIDTH = Math.max(2, Math.round(SIZE * 0.15))
       const SHOW_COUNT = tray.showUnreadCount && (unreadCount > 0 || hasUnreadActivity)
-      const COLOR = unreadCount ? tray.unreadColor : tray.readColor
-      const BACKGROUND_COLOR = unreadCount ? tray.unreadBackgroundColor : tray.readBackgroundColor
+      const COLOR = unreadCount || hasUnreadActivity ? tray.unreadColor : tray.readColor
+      const BACKGROUND_COLOR = unreadCount || hasUnreadActivity ? tray.unreadBackgroundColor : tray.readBackgroundColor
 
       const canvas = document.createElement('canvas')
       canvas.width = SIZE
@@ -202,8 +202,8 @@ class TrayRenderer {
       const STROKE_WIDTH = Math.max(1, Math.round(SIZE * 0.05))
       const SHOW_COUNT = tray.showUnreadCount && (unreadCount > 0 || hasUnreadActivity)
       const BORDER_RADIUS = Math.round(SIZE * 0.1)
-      const COLOR = unreadCount ? tray.unreadColor : tray.readColor
-      const BACKGROUND_COLOR = unreadCount ? tray.unreadBackgroundColor : tray.readBackgroundColor
+      const COLOR = unreadCount || hasUnreadActivity ? tray.unreadColor : tray.readColor
+      const BACKGROUND_COLOR = unreadCount || hasUnreadActivity ? tray.unreadBackgroundColor : tray.readBackgroundColor
 
       const canvas = document.createElement('canvas')
       canvas.width = SIZE
