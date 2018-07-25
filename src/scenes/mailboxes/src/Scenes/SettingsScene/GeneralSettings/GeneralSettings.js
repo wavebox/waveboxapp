@@ -30,7 +30,7 @@ import LanguageIcon from '@material-ui/icons/Language'
 import ComputerIcon from '@material-ui/icons/Computer'
 import AdjustIcon from '@material-ui/icons/Adjust'
 import KeyboardIcon from '@material-ui/icons/Keyboard'
-import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt'
+import SystemUpdateIcon from '@material-ui/icons/SystemUpdate'
 import StorageIcon from '@material-ui/icons/Storage'
 import TuneIcon from '@material-ui/icons/Tune'
 import BugReportIcon from '@material-ui/icons/BugReport'
@@ -368,7 +368,7 @@ class GeneralSettings extends React.Component {
                 button
                 className={classes.scrollspyItem}
                 onClick={(evt) => this.scrollToSection(evt, 'section-update')}>
-                <SystemUpdateAltIcon className={classes.scrollspyIcon} />
+                <SystemUpdateIcon className={classes.scrollspyIcon} />
                 Update
               </ListItem>
               <ListItem

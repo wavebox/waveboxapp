@@ -13,8 +13,8 @@ import HotelIcon from '@material-ui/icons/Hotel'
 import RefreshIcon from '@material-ui/icons/Refresh'
 import SyncIcon from '@material-ui/icons/Sync'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
-import LockOutlineIcon from '@material-ui/icons/LockOutline'
-import SettingsIcon from '@material-ui/icons/Settings'
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import SettingsSharpIcon from '@material-ui/icons/SettingsSharp'
 import LayersClearIcon from '@material-ui/icons/LayersClear'
 import DeleteIcon from '@material-ui/icons/Delete'
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
@@ -385,7 +385,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
               {isServiceAuthInvalid ? (
                 <ErrorOutlineIcon style={{ color: red[600] }} />
               ) : (
-                <LockOutlineIcon />
+                <LockOutlinedIcon />
               )}
             </ListItemIcon>
             <ListItemText inset primary='Reauthenticate' style={isServiceAuthInvalid ? { color: red[600] } : undefined} />
@@ -396,7 +396,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
 
         {/* Settings */}
         <MenuItem onClick={this.handleAccountSettings}>
-          <ListItemIcon><SettingsIcon /></ListItemIcon>
+          <ListItemIcon><SettingsSharpIcon /></ListItemIcon>
           <ListItemText inset primary='Account Settings' />
         </MenuItem>
         {!service && mailbox.hasMultipleServices ? (

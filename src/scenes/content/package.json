@@ -5,8 +5,14 @@
   "repository": "https://github.com/wavebox/waveboxapp",
   "description": "Content UI for Wavebox",
   "dependencies": {
+    "@fortawesome/fontawesome": "1.1.8",
+    "@fortawesome/fontawesome-svg-core": "1.2.2",
+    "@fortawesome/free-brands-svg-icons": "5.2.0",
+    "@fortawesome/free-regular-svg-icons": "5.2.0",
+    "@fortawesome/free-solid-svg-icons": "5.2.0",
+    "@fortawesome/react-fontawesome": "0.1.0",
     "@material-ui/core": "1.4.1",
-    "@material-ui/icons": "1.1.0",
+    "@material-ui/icons": "2.0.0",
     "alt": "0.18.6",
     "classnames": "2.2.6",
     "fbjs": "0.8.17",
@@ -17,6 +23,11 @@
     "react-dom": "16.4.1",
     "react-portal-tooltip": "2.4.0",
     "uuid": "3.3.2"
+  },
+  "optionalDependencies": {
+    "@fortawesome/pro-light-svg-icons": "5.1.1",
+    "@fortawesome/pro-regular-svg-icons": "5.1.1",
+    "@fortawesome/pro-solid-svg-icons": "5.1.1"
   },
   "devDependencies": {
     "standard": "11.0.1",

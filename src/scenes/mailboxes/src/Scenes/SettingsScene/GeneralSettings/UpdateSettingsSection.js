@@ -9,7 +9,7 @@ import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 import SettingsListItemButton from 'wbui/SettingsListItemButton'
-import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt'
+import SystemUpdateIcon from '@material-ui/icons/SystemUpdate'
 import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
@@ -47,7 +47,7 @@ class UpdateSettingsSection extends React.Component {
     const { showRestart, app, classes, ...passProps } = this.props
 
     return (
-      <SettingsListSection title='Updates' icon={<SystemUpdateAltIcon />} {...passProps}>
+      <SettingsListSection title='Updates' icon={<SystemUpdateIcon />} {...passProps}>
         <SettingsListItemSwitch
           label='Check for updates'
           onChange={(evt, toggled) => {

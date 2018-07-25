@@ -33,6 +33,7 @@ import { faEllipsisV as fasEllipsisV } from '@fortawesome/free-solid-svg-icons/f
 import { faEllipsisH as fasEllipsisH } from '@fortawesome/free-solid-svg-icons/faEllipsisH'
 import { faCircle as fasCircle } from '@fortawesome/free-solid-svg-icons/faCircle'
 import { faUserCircle as fasUserCircle } from '@fortawesome/free-solid-svg-icons/faUserCircle'
+import { faFileDownload as fasFileDownload } from '@fortawesome/free-solid-svg-icons/faFileDownload'
 
 const REGISTRY = Object.freeze({
   'farCheck': fasCheck,
@@ -82,7 +83,8 @@ const REGISTRY = Object.freeze({
   'fasEllipsisV': fasEllipsisV,
   'fasEllipsisH': fasEllipsisH,
   'fasCircle': fasCircle,
-  'fasUserCircle': fasUserCircle
+  'fasUserCircle': fasUserCircle,
+  'fasFileDownload': fasFileDownload
 })
 
 export default REGISTRY

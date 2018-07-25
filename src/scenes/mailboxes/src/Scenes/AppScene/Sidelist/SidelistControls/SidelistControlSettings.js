@@ -1,7 +1,7 @@
 import React from 'react'
 import SidelistControl from './SidelistControl'
 import { TOUR_STEPS } from 'stores/settings/Tour'
-import SettingsIcon from '@material-ui/icons/Settings'
+import SettingsSharpIcon from '@material-ui/icons/SettingsSharp'
 import { withStyles } from '@material-ui/core/styles'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 import SidelistMatIcon from './SidelistMatIcon'
@@ -39,7 +39,7 @@ class SidelistControlSettings extends React.Component {
           style: { marginTop: -25 },
           arrowStyle: { marginTop: 20 }
         }}
-        icon={(<SidelistMatIcon IconClass={SettingsIcon} className={classes.icon} />)} />
+        icon={(<SidelistMatIcon IconClass={SettingsSharpIcon} className={classes.icon} />)} />
     )
   }
 }

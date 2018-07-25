@@ -10,6 +10,7 @@ const CleanWebpackPlugin = devRequire('clean-webpack-plugin')
 const { isVerboseLog } = webpackRequire('Config')
 const DevTools = webpackRequire('DevTools')
 const ElectronRenderer = webpackRequire('ElectronRenderer')
+const FontAwesomeAlias = require(path.join(ROOT_DIR, 'webpack/FontAwesomeAlias'))
 
 module.exports = function (env) {
   const config = {
@@ -38,11 +39,14 @@ module.exports = function (env) {
       })
     ].filter((p) => !!p),
     resolve: {
-      alias: {
-        Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
-        stores: path.resolve(path.join(__dirname, 'src/stores')),
-        Scenes: path.resolve(path.join(__dirname, 'src/Scenes'))
-      }
+      alias: Object.assign({},
+        FontAwesomeAlias(path.join(__dirname, 'node_modules'), ROOT_DIR),
+        {
+          Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
+          stores: path.resolve(path.join(__dirname, 'src/stores')),
+          Scenes: path.resolve(path.join(__dirname, 'src/Scenes'))
+        }
+      )
     }
   }
 

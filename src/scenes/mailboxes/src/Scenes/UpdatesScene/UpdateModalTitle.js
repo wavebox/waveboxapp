@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
 import { DialogTitle } from '@material-ui/core'
 import classNames from 'classnames'
-import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt'
+import SystemUpdateIcon from '@material-ui/icons/SystemUpdate'
 
 const styles = {
   root: {
@@ -29,7 +29,7 @@ class UpdateModalTitle extends React.Component {
   }
   static defaultProps = {
     text: 'Wavebox Updates',
-    IconClass: SystemUpdateAltIcon
+    IconClass: SystemUpdateIcon
   }
 
   /* **************************************************************************/

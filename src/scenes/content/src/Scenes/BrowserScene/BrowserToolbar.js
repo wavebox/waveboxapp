@@ -13,10 +13,10 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
 import CloseIcon from '@material-ui/icons/Close'
 import RefreshIcon from '@material-ui/icons/Refresh'
 import SearchIcon from '@material-ui/icons/Search'
-import FileDownloadIcon from '@material-ui/icons/FileDownload'
 import OpenInBrowserIcon from '@material-ui/icons/OpenInBrowser'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 import classNames from 'classnames'
+import FAIcon from 'wbfa/FAIcon'
 
 const styles = (theme) => ({
   toolbar: {
@@ -55,6 +55,9 @@ const styles = (theme) => ({
         color: ThemeTools.getStateValue(theme, 'wavebox.toolbar.icon.color', 'disabled')
       }
     }
+  },
+  faIcon: {
+    fontSize: '18px'
   }
 })
 
@@ -205,7 +208,7 @@ class BrowserToolbar extends React.Component {
           {this.isDownloadableUrl(currentUrl) ? (
             <Tooltip title='Download'>
               <IconButton onClick={this.handleDownload}>
-                <FileDownloadIcon className={classes.icon} />
+                <FAIcon className={classNames(classes.icon, classes.faIcon)} icon='fasFileDownload' />
               </IconButton>
             </Tooltip>
           ) : undefined}
