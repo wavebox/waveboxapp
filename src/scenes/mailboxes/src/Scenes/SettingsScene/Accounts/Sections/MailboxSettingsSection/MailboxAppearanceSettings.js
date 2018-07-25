@@ -100,7 +100,7 @@ class MailboxAppearanceSettings extends React.Component {
     return {
       resolvedMailboxFullName: [
         accountState.resolvedMailboxBaseDisplayName(mailboxId),
-        accountState.resolvedMailboxExtendedDisplayName(mailboxId),
+        accountState.resolvedMailboxExtendedDisplayName(mailboxId)
       ].join(' - '), // Avoid the normal resolved as this will take note of mailbox.showExtendedDispayName
       ...(mailbox ? {
         mailboxColor: mailbox.color,
