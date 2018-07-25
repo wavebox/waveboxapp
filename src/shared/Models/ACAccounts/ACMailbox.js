@@ -85,7 +85,7 @@ class ACMailbox extends CoreACModel {
     }
 
     // Concat these in a visual way that makes sense in the UI
-    if (this.serviceUiPriority === SERVICE_UI_PRIORITY.TOOLBAR) {
+    if (priority === SERVICE_UI_PRIORITY.TOOLBAR) {
       return [].concat(this.toolbarStartServices, this.toolbarEndServices, this.sidebarServices)
     } else { // SIDEBAR
       return [].concat(this.sidebarServices, this.toolbarStartServices, this.toolbarEndServices)
