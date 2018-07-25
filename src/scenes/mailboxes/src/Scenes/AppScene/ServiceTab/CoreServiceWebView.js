@@ -229,15 +229,16 @@ class CoreServiceWebView extends React.Component {
       searchId: accountState.serviceSearchHash(serviceId),
       isolateMailboxProcesses: settingsStore.getState().launched.app.isolateMailboxProcesses, // does not update
       serviceAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId),
+      authDataId: (authData || {}).id,
       ...(!mailbox || !service ? {
         mailbox: null,
         service: null,
-        baseUrl: 'about:blank',
+        restorableUrlHash: 'undefined:about:blank',
         restorableUrl: 'about:blank'
       } : {
         mailbox: mailbox,
         service: service,
-        baseUrl: service.url,
+        restorableUrlHash: `${(authData || {}).id}:${service.url}`,
         restorableUrl: service.getUrlWithData(serviceData, authData)
       })
     }
@@ -252,6 +253,8 @@ class CoreServiceWebView extends React.Component {
 
     if (mailbox && service) {
       this.setState((prevState) => {
+        const restorableUrlHash = `${(authData || {}).id}:${service.url}`
+
         return {
           mailbox: mailbox,
           service: service,
@@ -261,8 +264,9 @@ class CoreServiceWebView extends React.Component {
           searchTerm: accountState.serviceSearchTerm(serviceId),
           searchId: accountState.serviceSearchHash(serviceId),
           serviceAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId),
-          ...(prevState.baseUrl !== service.url ? {
-            baseUrl: service.url,
+          authDataId: (authData || {}).id,
+          ...(prevState.restorableUrlHash !== restorableUrlHash ? {
+            restorableUrlHash: restorableUrlHash,
             restorableUrl: service.getUrlWithData(serviceData, authData),
             initialLoadDone: false
           } : {})
@@ -680,7 +684,8 @@ class CoreServiceWebView extends React.Component {
       isLoading,
       snapshot,
       isolateMailboxProcesses,
-      serviceAuthInvalid
+      serviceAuthInvalid,
+      authDataId
     } = this.state
 
     if (!mailbox || !service) { return false }
@@ -729,8 +734,10 @@ class CoreServiceWebView extends React.Component {
       mailbox.id,
       service.id,
       service.type,
-      service.partitionId
+      service.partitionId,
+      authDataId // If the auth-id changes we want to do a hard reset of the WV
     ].join('_')
+
     return (
       <div className={classNames(classes.root, className, isActive ? 'active' : undefined)}>
         <div className={classes.browserContainer}>

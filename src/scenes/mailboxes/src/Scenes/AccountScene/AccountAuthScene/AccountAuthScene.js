@@ -293,8 +293,12 @@ class AccountAuthScene extends React.Component {
                         key={service.id}
                         button
                         disableGutters
-                        onClick={(evt) => userActions.authenticateWithAuth(mailbox.partitionId, auth.namespace, { mode: mode })}>
-                        <ServiceAvatar className={classes.accountAvatar} serviceId={service.id} />
+                        onClick={(evt) => {
+                          userActions.authenticateWithAuth(service.partitionId, auth.namespace, { mode: mode })
+                        }}>
+                        <ServiceAvatar
+                          className={classes.accountAvatar}
+                          serviceId={service.id} />
                         <ListItemText
                           primary={service.displayName}
                           secondary={auth.humanizedNamespace} />

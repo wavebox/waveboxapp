@@ -574,12 +574,10 @@ class GoogleStore {
         // STEP 1 [HISTORY]: Get the history changes
         if (serviceData.hasHistoryId) {
           return GoogleHTTP.fetchGmailHistoryList(auth, serviceData.historyId)
-            .then(({ historyId, history }) => {
-              return {
-                historyId: isNaN(parseInt(historyId)) ? undefined : parseInt(historyId),
-                hasContentChanged: forceSync || this.hasMailUnreadChangedFromHistory(labelIds, history || [])
-              }
-            })
+            .then(({ historyId, history }) => ({
+              historyId: isNaN(parseInt(historyId)) ? undefined : parseInt(historyId),
+              hasContentChanged: forceSync || this.hasMailUnreadChangedFromHistory(labelIds, history || [])
+            }))
             .catch((err) => {
               // It's rare, but there's a bug with the API which means Google
               // can return a 404 for some history ids. This can shouldn't happen
@@ -588,24 +586,20 @@ class GoogleStore {
               if (err.message.indexOf('Not Found') !== -1) {
                 // Handle the bug mentioned above
                 return GoogleHTTP.fetchGmailProfile(auth)
-                  .then(({ historyId }) => {
-                    return {
-                      historyId: isNaN(parseInt(historyId)) ? undefined : parseInt(historyId),
-                      hasContentChanged: true
-                    }
-                  })
+                  .then(({ historyId }) => ({
+                    historyId: isNaN(parseInt(historyId)) ? undefined : parseInt(historyId),
+                    hasContentChanged: true
+                  }))
               } else {
                 return Promise.reject(err)
               }
             })
         } else {
           return GoogleHTTP.fetchGmailProfile(auth)
-            .then(({ historyId }) => {
-              return {
-                historyId: isNaN(parseInt(historyId)) ? undefined : parseInt(historyId),
-                hasContentChanged: true
-              }
-            })
+            .then(({ historyId }) => ({
+              historyId: isNaN(parseInt(historyId)) ? undefined : parseInt(historyId),
+              hasContentChanged: true
+            }))
         }
       })
       .then((data) => {
@@ -625,13 +619,12 @@ class GoogleStore {
           .then(({resultSizeEstimate, threads = []}) => {
             return GoogleHTTP
               .fullyResolveGmailThreadHeaders(auth, serviceData.unreadThreadsIndexed, threads, this.trimMailThread)
-              .then((fullThreads) => {
-                return Object.assign({}, data, {
-                  unreadCount: resultSizeEstimate,
-                  unreadThreadHeaders: threads,
-                  unreadThreads: fullThreads
-                })
-              })
+              .then((fullThreads) => ({
+                ...data,
+                unreadCount: resultSizeEstimate,
+                unreadThreadHeaders: threads,
+                unreadThreads: fullThreads
+              }))
           })
       })
       .then((data) => {
@@ -641,9 +634,7 @@ class GoogleStore {
         if (canFetchUnreadFromAtom) {
           return Promise.resolve()
             .then(() => GoogleHTTP.fetchGmailAtomUnreadCount(service.partitionId, atomQuery))
-            .then((count) => {
-              return { ...data, unreadCount: count }
-            })
+            .then((count) => ({ ...data, unreadCount: count }))
         } else if (canFetchUnreadFromLabel) {
           return Promise.resolve()
             .then(() => GoogleHTTP.fetchGmailLabel(auth, singleLabelId))
