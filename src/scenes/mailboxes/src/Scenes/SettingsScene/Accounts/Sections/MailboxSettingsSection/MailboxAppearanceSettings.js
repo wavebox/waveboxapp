@@ -19,6 +19,7 @@ import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import SettingsListItemSelect from 'wbui/SettingsListItemSelect'
 import SettingsListItemColorPicker from 'wbui/SettingsListItemColorPicker'
 import SettingsListItemAvatarPicker from 'wbui/SettingsListItemAvatarPicker'
+import SettingsListItemSection from 'wbui/SettingsListItemSection'
 
 const styles = {
 
@@ -96,27 +97,35 @@ class MailboxAppearanceSettings extends React.Component {
   */
   extractStateForMailbox (mailboxId, accountState) {
     const mailbox = accountState.getMailbox(mailboxId)
-    return mailbox ? {
-      mailboxColor: mailbox.color,
-      mailboxShowAvatarColorRing: mailbox.showAvatarColorRing,
-      mailboxShowSleepableServiceIndicator: mailbox.showSleepableServiceIndicator,
-      mailboxShowBadge: mailbox.showBadge,
-      mailboxBadgeColor: mailbox.badgeColor,
-      mailboxDisplayName: mailbox.displayName, // Raw value, don't resolve
-      navigationBarUiLocation: mailbox.navigationBarUiLocation,
-      mailboxAvatar: accountState.getAvatar(mailbox.avatarId),
-      mailboxCollapseSidebarServices: mailbox.collapseSidebarServices,
-      mailboxServiceUiPriority: mailbox.serviceUiPriority
-    } : {
-      mailboxColor: '#FFF',
-      mailboxShowAvatarColorRing: true,
-      mailboxShowSleepableServiceIndicator: true,
-      mailboxShowBadge: true,
-      mailboxBadgeColor: '#FFF',
-      navigationBarUiLocation: ACMailbox.NAVIGATION_BAR_UI_LOCATIONS.AUTO,
-      mailboxAvatar: undefined,
-      mailboxCollapseSidebarServices: false,
-      mailboxServiceUiPriority: ACMailbox.SERVICE_UI_PRIORITY.TOOLBAR
+    return {
+      resolvedMailboxFullName: [
+        accountState.resolvedMailboxBaseDisplayName(mailboxId),
+        accountState.resolvedMailboxExtendedDisplayName(mailboxId),
+      ].join(' - '), // Avoid the normal resolved as this will take note of mailbox.showExtendedDispayName
+      ...(mailbox ? {
+        mailboxColor: mailbox.color,
+        mailboxShowAvatarColorRing: mailbox.showAvatarColorRing,
+        mailboxShowSleepableServiceIndicator: mailbox.showSleepableServiceIndicator,
+        mailboxShowBadge: mailbox.showBadge,
+        mailboxBadgeColor: mailbox.badgeColor,
+        mailboxDisplayName: mailbox.displayName, // Raw value, don't resolve
+        navigationBarUiLocation: mailbox.navigationBarUiLocation,
+        mailboxAvatar: accountState.getAvatar(mailbox.avatarId),
+        mailboxCollapseSidebarServices: mailbox.collapseSidebarServices,
+        mailboxServiceUiPriority: mailbox.serviceUiPriority,
+        mailboxShowExtendedDispayName: mailbox.showExtendedDispayName
+      } : {
+        mailboxColor: '#FFF',
+        mailboxShowAvatarColorRing: true,
+        mailboxShowSleepableServiceIndicator: true,
+        mailboxShowBadge: true,
+        mailboxBadgeColor: '#FFF',
+        navigationBarUiLocation: ACMailbox.NAVIGATION_BAR_UI_LOCATIONS.AUTO,
+        mailboxAvatar: undefined,
+        mailboxCollapseSidebarServices: false,
+        mailboxServiceUiPriority: ACMailbox.SERVICE_UI_PRIORITY.TOOLBAR,
+        mailboxShowExtendedDispayName: true
+      })
     }
   }
 
@@ -142,22 +151,33 @@ class MailboxAppearanceSettings extends React.Component {
       navigationBarUiLocation,
       mailboxAvatar,
       mailboxCollapseSidebarServices,
-      mailboxServiceUiPriority
+      mailboxServiceUiPriority,
+      mailboxShowExtendedDispayName,
+      resolvedMailboxFullName
     } = this.state
 
     return (
       <div {...passProps}>
         <SettingsListSection title='Appearance' icon={<ViewQuiltIcon />}>
-          <SettingsListItemTextField
-            key={`displayName_${mailboxDisplayName}`}
-            label='Display Name'
-            textFieldProps={{
-              defaultValue: mailboxDisplayName,
-              placeholder: 'My Account',
-              onBlur: (evt) => {
-                accountActions.reduceMailbox(mailboxId, MailboxReducer.setDisplayName, evt.target.value)
-              }
-            }} />
+          <SettingsListItemSection>
+            <SettingsListItemTextField
+              key={`displayName_${mailboxDisplayName}`}
+              divider={false}
+              label='Display Name'
+              textFieldProps={{
+                defaultValue: mailboxDisplayName,
+                placeholder: 'My Account',
+                onBlur: (evt) => {
+                  accountActions.reduceMailbox(mailboxId, MailboxReducer.setDisplayName, evt.target.value)
+                }
+              }} />
+            <SettingsListItemSwitch
+              divider={false}
+              label='Show extended info alongside the name'
+              secondary={`For example: ${resolvedMailboxFullName}`}
+              onChange={(evt, toggled) => accountActions.reduceMailbox(mailboxId, MailboxReducer.setShowExtendedDispayName, toggled)}
+              checked={mailboxShowExtendedDispayName} />
+          </SettingsListItemSection>
           <SettingsListItemColorPicker
             labelText='Account Color'
             IconClass={ColorLensIcon}

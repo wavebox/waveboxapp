@@ -339,7 +339,8 @@ class CoreAccountStore extends RemoteStore {
     * @return the display name
     */
     this.resolvedMailboxDisplayName = (mailboxId, defaultValue = 'Untitled', extended = true) => {
-      if (extended) {
+      const mailbox = this.getMailbox(mailboxId)
+      if (extended && mailbox && mailbox.showExtendedDispayName) {
         return [
           this.resolvedMailboxBaseDisplayName(mailboxId, defaultValue),
           this.resolvedMailboxExtendedDisplayName(mailboxId)
