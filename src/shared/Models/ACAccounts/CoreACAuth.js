@@ -12,16 +12,18 @@ class CoreACAuth extends CoreACModel {
   /**
   * Creates a blank js object that can used to instantiate this auth
   * @param parentId: the id of the parent
-  * @param namespace=this.namespace: the namespace of the auth
+  * @param authData={}: the auth data from the service
+  * @param sandboxedPartitionId=undefnied: the sandboxed partition id if available
   * @return a vanilla js object representing the data for this mailbox
   */
-  static createJS (parentId, namespace = this.namespace, authData = {}) {
+  static createJS (parentId, authData = {}, sandboxedPartitionId = undefined) {
     return {
       parentId: parentId,
       changedTime: new Date().getTime(),
-      namespace: namespace,
+      namespace: this.namespace,
       authData: authData,
-      hasAuth: Object.keys(authData).length !== 0
+      hasAuth: Object.keys(authData).length !== 0,
+      sandboxedPartitionId: sandboxedPartitionId
     }
   }
 

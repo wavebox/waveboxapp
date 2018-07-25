@@ -10,10 +10,21 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import { withStyles } from '@material-ui/core/styles'
 import red from '@material-ui/core/colors/red'
+import grey from '@material-ui/core/colors/grey'
+import InboxIcon from '@material-ui/icons/Inbox'
 
 const styles = {
   deleteButton: {
     color: red[600]
+  },
+  sandboxedTag: {
+    color: grey[600]
+  },
+  sandboxedTagIcon: {
+    fontSize: '16px',
+    marginLeft: 16,
+    marginRight: 3,
+    verticalAlign: 'text-top'
   }
 }
 
@@ -113,7 +124,11 @@ export default class MailboxCredentialSettings extends React.Component {
                 primary={(
                   <span>
                     <strong>{auth.humanizedNamespace}</strong> {`(${auth.namespace})`}
-                    {auth.isForSandboxedPartitionId ? <span>&nbsp;Sandboxed</span> : undefined}
+                    {auth.isForSandboxedPartitionId ? (
+                      <span className={classes.sandboxedTag}>
+                        <InboxIcon className={classes.sandboxedTagIcon} />Sandboxed
+                      </span>
+                    ) : undefined}
                   </span>
                 )}
                 secondary={auth.hasHumanizedIdentifier ? auth.humanizedIdentifier : auth.namespace} />

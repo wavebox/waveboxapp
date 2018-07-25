@@ -329,49 +329,29 @@ class AccountStore extends RendererAccountStore {
     this.preventDefault()
     const mailboxId = uuid.v4()
 
+    // Optimistically create this to avoid duplication
+    const ipcPayload = {
+      partitionId: `persist:${mailboxId}`,
+      credentials: Bootstrap.credentials,
+      mode: AUTH_MODES.TEMPLATE_CREATE,
+      context: {
+        mailboxId: mailboxId,
+        template: template.cloneData()
+      }
+    }
+
     if (template.templateType === ACCOUNT_TEMPLATE_TYPES.GOOGLE_MAIL || template.templateType === ACCOUNT_TEMPLATE_TYPES.GOOGLE_INBOX) {
       window.location.hash = `/mailbox_wizard/${template.templateType}/_/1/${mailboxId}`
-      ipcRenderer.send(WB_AUTH_GOOGLE, {
-        partitionId: `persist:${mailboxId}`,
-        credentials: Bootstrap.credentials,
-        mode: AUTH_MODES.TEMPLATE_CREATE,
-        context: {
-          mailboxId: mailboxId,
-          template: template.cloneData()
-        }
-      })
+      ipcRenderer.send(WB_AUTH_GOOGLE, ipcPayload)
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.OUTLOOK || template.templateType === ACCOUNT_TEMPLATE_TYPES.OFFICE365) {
       window.location.hash = `/mailbox_wizard/${template.templateType}/${template.accessMode}/1/${mailboxId}`
-      ipcRenderer.send(WB_AUTH_MICROSOFT, {
-        partitionId: `persist:${mailboxId}`,
-        credentials: Bootstrap.credentials,
-        mode: AUTH_MODES.TEMPLATE_CREATE,
-        context: {
-          mailboxId: mailboxId,
-          template: template.cloneData()
-        }
-      })
+      ipcRenderer.send(WB_AUTH_MICROSOFT, ipcPayload)
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.TRELLO) {
       window.location.hash = `/mailbox_wizard/${template.templateType}/_/1/${mailboxId}`
-      ipcRenderer.send(WB_AUTH_TRELLO, {
-        partitionId: `persist:${mailboxId}`,
-        credentials: Bootstrap.credentials,
-        mode: AUTH_MODES.TEMPLATE_CREATE,
-        context: {
-          mailboxId: mailboxId,
-          template: template.cloneData()
-        }
-      })
+      ipcRenderer.send(WB_AUTH_TRELLO, ipcPayload)
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.SLACK) {
       window.location.hash = `/mailbox_wizard/${template.templateType}/_/1/${mailboxId}`
-      ipcRenderer.send(WB_AUTH_SLACK, {
-        partitionId: `persist:${mailboxId}`,
-        mode: AUTH_MODES.TEMPLATE_CREATE,
-        context: {
-          mailboxId: mailboxId,
-          template: template.cloneData()
-        }
-      })
+      ipcRenderer.send(WB_AUTH_SLACK, ipcPayload)
     } else if (template.templateType === ACCOUNT_TEMPLATE_TYPES.CONTAINER) {
       this._createMailboxFromTemplate(mailboxId, template)
       this._finalizeCreateAccountFromTemplate(mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${mailboxId}`, 0)
@@ -473,7 +453,10 @@ class AccountStore extends RendererAccountStore {
   */
   _finalizeReauthentication (serviceId, wait = 250) {
     if (serviceId) {
-      setTimeout(() => { accountDispatch.reloadService(serviceId) }, wait)
+      setTimeout(() => {
+        actions.fullSyncService(serviceId)
+        accountDispatch.reloadService(serviceId)
+      }, wait)
     }
     window.location.hash = '/'
   }
@@ -512,6 +495,16 @@ class AccountStore extends RendererAccountStore {
       serviceType: serviceType,
       parentId: attachTarget
     })
+    const baseIpcPayload = {
+      partitionId: `persist:${attachTarget}`,
+      credentials: Bootstrap.credentials,
+      mode: AUTH_MODES.ATTACH,
+      context: {
+        mailboxId: attachTarget,
+        authId: undefined, // Prefilled later
+        proviso: proviso.cloneData()
+      }
+    }
 
     if (serviceType === SERVICE_TYPES.GOOGLE_MAIL || serviceType === SERVICE_TYPES.GOOGLE_INBOX) {
       const authId = CoreACAuth.compositeId(attachTarget, GoogleAuth.namespace)
@@ -520,16 +513,8 @@ class AccountStore extends RendererAccountStore {
         actions.authNewServiceFromProviso.defer(proviso)
       } else {
         window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/1`
-        ipcRenderer.send(WB_AUTH_GOOGLE, {
-          partitionId: `persist:${attachTarget}`,
-          credentials: Bootstrap.credentials,
-          mode: AUTH_MODES.ATTACH,
-          context: {
-            mailboxId: attachTarget,
-            authId: authId,
-            proviso: proviso.cloneData()
-          }
-        })
+        baseIpcPayload.context.authId = authId
+        ipcRenderer.send(WB_AUTH_GOOGLE, baseIpcPayload)
       }
     } else if (serviceType === SERVICE_TYPES.MICROSOFT_MAIL) {
       const authId = CoreACAuth.compositeId(attachTarget, MicrosoftAuth.namespace)
@@ -538,16 +523,8 @@ class AccountStore extends RendererAccountStore {
         actions.authNewServiceFromProviso.defer(proviso)
       } else {
         window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/1`
-        ipcRenderer.send(WB_AUTH_MICROSOFT, {
-          partitionId: `persist:${attachTarget}`,
-          credentials: Bootstrap.credentials,
-          mode: AUTH_MODES.ATTACH,
-          context: {
-            mailboxId: attachTarget,
-            authId: authId,
-            proviso: proviso.cloneData()
-          }
-        })
+        baseIpcPayload.context.authId = authId
+        ipcRenderer.send(WB_AUTH_MICROSOFT, baseIpcPayload)
       }
     } else if (serviceType === SERVICE_TYPES.SLACK) {
       const authId = CoreACAuth.compositeId(attachTarget, SlackAuth.namespace)
@@ -556,16 +533,8 @@ class AccountStore extends RendererAccountStore {
         actions.authNewServiceFromProviso.defer(proviso)
       } else {
         window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/1`
-        ipcRenderer.send(WB_AUTH_SLACK, {
-          partitionId: `persist:${attachTarget}`,
-          credentials: Bootstrap.credentials,
-          mode: AUTH_MODES.ATTACH,
-          context: {
-            mailboxId: attachTarget,
-            authId: authId,
-            proviso: proviso.cloneData()
-          }
-        })
+        baseIpcPayload.context.authId = authId
+        ipcRenderer.send(WB_AUTH_SLACK, baseIpcPayload)
       }
     } else if (serviceType === SERVICE_TYPES.TRELLO) {
       const authId = CoreACAuth.compositeId(attachTarget, TrelloAuth.namespace)
@@ -574,16 +543,8 @@ class AccountStore extends RendererAccountStore {
         actions.authNewServiceFromProviso.defer(proviso)
       } else {
         window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/1`
-        ipcRenderer.send(WB_AUTH_TRELLO, {
-          partitionId: `persist:${attachTarget}`,
-          credentials: Bootstrap.credentials,
-          mode: AUTH_MODES.ATTACH,
-          context: {
-            mailboxId: attachTarget,
-            authId: authId,
-            proviso: proviso.cloneData()
-          }
-        })
+        baseIpcPayload.context.authId = authId
+        ipcRenderer.send(WB_AUTH_TRELLO, baseIpcPayload)
       }
     } else if (serviceType === SERVICE_TYPES.GENERIC) {
       window.location.hash = `/mailbox_attach_wizard/${attachTarget}/${serviceType}/${accessMode}/0`
@@ -737,7 +698,7 @@ class AccountStore extends RendererAccountStore {
         if (mode === AUTH_MODES.TEMPLATE_CREATE) {
           // Create the auth
           actions.createAuth.defer(
-            GoogleAuth.createJS(context.mailboxId, undefined, permenantAuth)
+            GoogleAuth.createJS(context.mailboxId, permenantAuth, context.sandboxedPartitionId)
           )
 
           // Create the account
@@ -746,14 +707,10 @@ class AccountStore extends RendererAccountStore {
           this._finalizeCreateAccountFromTemplate(context.mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.mailboxId}`)
         } else if (mode === AUTH_MODES.REAUTHENTICATE || mode === AUTH_MODES.ATTACH) {
           if (this.hasMailboxAuth(context.authId)) {
-            actions.reduceAuth.defer(
-              context.authId,
-              AuthReducer.setAuthData,
-              permenantAuth
-            )
+            actions.reduceAuth.defer(context.authId, AuthReducer.setAuthData, permenantAuth)
           } else {
             actions.createAuth.defer(
-              GoogleAuth.createJS(context.mailboxId, undefined, permenantAuth)
+              GoogleAuth.createJS(context.mailboxId, permenantAuth, context.sandboxedPartitionId)
             )
           }
 
@@ -785,7 +742,7 @@ class AccountStore extends RendererAccountStore {
         if (mode === AUTH_MODES.TEMPLATE_CREATE) {
           // Create the auth
           actions.createAuth.defer(
-            SlackAuth.createJS(context.mailboxId, undefined, authData)
+            SlackAuth.createJS(context.mailboxId, authData, context.sandboxedPartitionId)
           )
 
           // Create the account
@@ -794,14 +751,10 @@ class AccountStore extends RendererAccountStore {
           this._finalizeCreateAccountFromTemplate(context.mailboxId)
         } else if (mode === AUTH_MODES.REAUTHENTICATE || mode === AUTH_MODES.ATTACH) {
           if (this.hasMailboxAuth(context.authId)) {
-            actions.reduceAuth.defer(
-              context.authId,
-              AuthReducer.setAuthData,
-              authData
-            )
+            actions.reduceAuth.defer(context.authId, AuthReducer.setAuthData, authData)
           } else {
             actions.createAuth.defer(
-              SlackAuth.createJS(context.mailboxId, undefined, authData)
+              SlackAuth.createJS(context.mailboxId, authData, context.sandboxedPartitionId)
             )
           }
 
@@ -826,7 +779,7 @@ class AccountStore extends RendererAccountStore {
         if (mode === AUTH_MODES.TEMPLATE_CREATE) {
           // Create the auth
           actions.createAuth.defer(
-            TrelloAuth.createJS(context.mailboxId, undefined, authData)
+            TrelloAuth.createJS(context.mailboxId, authData, context.sandboxedPartitionId)
           )
 
           // Create the account
@@ -835,14 +788,10 @@ class AccountStore extends RendererAccountStore {
           this._finalizeCreateAccountFromTemplate(context.mailboxId)
         } else if (mode === AUTH_MODES.REAUTHENTICATE || mode === AUTH_MODES.ATTACH) {
           if (this.hasMailboxAuth(context.authId)) {
-            actions.reduceAuth.defer(
-              context.authId,
-              AuthReducer.setAuthData,
-              authData
-            )
+            actions.reduceAuth.defer(context.authId, AuthReducer.setAuthData, authData)
           } else {
             actions.createAuth.defer(
-              TrelloAuth.createJS(context.mailboxId, undefined, authData)
+              TrelloAuth.createJS(context.mailboxId, authData, context.sandboxedPartitionId)
             )
           }
 
@@ -863,7 +812,7 @@ class AccountStore extends RendererAccountStore {
         if (mode === AUTH_MODES.TEMPLATE_CREATE) {
           // Create the auth
           actions.createAuth.defer(
-            MicrosoftAuth.createJS(context.mailboxId, undefined, authData)
+            MicrosoftAuth.createJS(context.mailboxId, authData, context.sandboxedPartitionId)
           )
 
           // Create the account
@@ -872,14 +821,10 @@ class AccountStore extends RendererAccountStore {
           this._finalizeCreateAccountFromTemplate(context.mailboxId, `/mailbox_wizard/${template.templateType}/${template.accessMode}/2/${context.mailboxId}`)
         } else if (mode === AUTH_MODES.REAUTHENTICATE || mode === AUTH_MODES.ATTACH) {
           if (this.hasMailboxAuth(context.authId)) {
-            actions.reduceAuth.defer(
-              context.authId,
-              AuthReducer.setAuthData,
-              authData
-            )
+            actions.reduceAuth.defer(context.authId, AuthReducer.setAuthData, authData)
           } else {
             actions.createAuth.defer(
-              MicrosoftAuth.createJS(context.mailboxId, undefined, authData)
+              MicrosoftAuth.createJS(context.mailboxId, authData, context.sandboxedPartitionId)
             )
           }
 
@@ -903,59 +848,37 @@ class AccountStore extends RendererAccountStore {
     const service = this.getService(serviceId)
     if (!service) { return }
 
+    const ipcPayload = {
+      partitionId: service.partitionId,
+      credentials: Bootstrap.credentials,
+      mode: AUTH_MODES.REAUTHENTICATE,
+      context: {
+        mailboxId: service.parentId,
+        authId: CoreACAuth.compositeIdFromService(service),
+        serviceId: service.id,
+        sandboxedPartitionId: service.sandboxFromMailbox
+          ? service.partitionId
+          : undefined
+      }
+    }
+
     switch (service.type) {
       case SERVICE_TYPES.GOOGLE_INBOX:
       case SERVICE_TYPES.GOOGLE_MAIL:
         window.location.hash = '/mailbox/reauthenticating'
-        ipcRenderer.send(WB_AUTH_GOOGLE, {
-          partitionId: service.partitionId,
-          credentials: Bootstrap.credentials,
-          mode: AUTH_MODES.REAUTHENTICATE,
-          context: {
-            mailboxId: service.parentId,
-            authId: CoreACAuth.compositeIdFromService(service),
-            serviceId: service.id
-          }
-        })
+        ipcRenderer.send(WB_AUTH_GOOGLE, ipcPayload)
         break
       case SERVICE_TYPES.MICROSOFT_MAIL:
         window.location.hash = '/mailbox/reauthenticating'
-        ipcRenderer.send(WB_AUTH_MICROSOFT, {
-          partitionId: service.partitionId,
-          credentials: Bootstrap.credentials,
-          mode: AUTH_MODES.REAUTHENTICATE,
-          context: {
-            mailboxId: service.parentId,
-            authId: CoreACAuth.compositeIdFromService(service),
-            serviceId: service.id
-          }
-        })
+        ipcRenderer.send(WB_AUTH_MICROSOFT, ipcPayload)
         break
       case SERVICE_TYPES.SLACK:
         window.location.hash = '/mailbox/reauthenticating'
-        ipcRenderer.send(WB_AUTH_SLACK, {
-          partitionId: service.partitionId,
-          credentials: Bootstrap.credentials,
-          mode: AUTH_MODES.REAUTHENTICATE,
-          context: {
-            mailboxId: service.parentId,
-            authId: CoreACAuth.compositeIdFromService(service),
-            serviceId: service.id
-          }
-        })
+        ipcRenderer.send(WB_AUTH_SLACK, ipcPayload)
         break
       case SERVICE_TYPES.TRELLO:
         window.location.hash = '/mailbox/reauthenticating'
-        ipcRenderer.send(WB_AUTH_TRELLO, {
-          partitionId: service.partitionId,
-          credentials: Bootstrap.credentials,
-          mode: AUTH_MODES.REAUTHENTICATE,
-          context: {
-            mailboxId: service.parentId,
-            authId: CoreACAuth.compositeIdFromService(service),
-            serviceId: service.id
-          }
-        })
+        ipcRenderer.send(WB_AUTH_TRELLO, ipcPayload)
         break
     }
   }

@@ -13,6 +13,7 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
 import grey from '@material-ui/core/colors/grey'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import lightGreen from '@material-ui/core/colors/lightGreen'
+import FAIcon from 'wbfa/FAIcon'
 
 const styles = {
   /**
@@ -72,6 +73,13 @@ const styles = {
   },
   panelList: {
     paddingLeft: 30
+  },
+
+  /**
+  * Tools
+  */
+  buttonIcon: {
+    marginRight: 6
   },
 
   /**
@@ -272,6 +280,7 @@ class ServiceInfoDrawer extends React.Component {
               accountActions.clearRuntimeWarning(serviceId, ACCOUNT_WARNING_TYPES.SERVICE_SIMILARITY_NAMESPACE_CLASH)
               accountActions.changeServiceSandboxing(serviceId, true)
             }}>
+            <InboxIcon className={classes.buttonIcon} />
             Keep here & sandbox
           </Button>
           <Button
@@ -282,6 +291,7 @@ class ServiceInfoDrawer extends React.Component {
               accountActions.clearRuntimeWarning(serviceId, ACCOUNT_WARNING_TYPES.SERVICE_SIMILARITY_NAMESPACE_CLASH)
               accountActions.moveServiceToNewMailbox(serviceId)
             }}>
+            <FAIcon icon='fasUserCircle' className={classes.buttonIcon} />
             Move to new Account
           </Button>
           <Button

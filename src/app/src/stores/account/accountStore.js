@@ -656,7 +656,7 @@ class AccountStore extends CoreAccountStore {
         sandboxFromMailbox: true,
         sandboxedPartitionId: uuid.v4()
       }))
-      this.startManagingMailboxWithId(id)
+      this.startManagingServiceWithId(id)
     } else {
       this.saveService(id, service.changeData({
         sandboxFromMailbox: false,

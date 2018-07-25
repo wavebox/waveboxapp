@@ -13,6 +13,7 @@ import SettingsListItem from 'wbui/SettingsListItem'
 import CodeIcon from '@material-ui/icons/Code'
 import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 import { Button } from '@material-ui/core'
+import InboxIcon from '@material-ui/icons/Inbox'
 
 const styles = {
   userscriptLink: {
@@ -28,6 +29,10 @@ const styles = {
     width: 16,
     height: 1,
     display: 'inline-block'
+  },
+  sandboxIcon: {
+    fontSize: '18px',
+    verticalAlign: 'text-top'
   }
 }
 
@@ -157,7 +162,11 @@ class ServiceAdvancedSection extends React.Component {
         </SettingsListItem>
         <SettingsListItemSwitch
           divider={false}
-          label='Sandbox Service'
+          label={(
+            <span>
+              <InboxIcon className={classes.sandboxIcon} /> Sandbox Service
+            </span>
+          )}
           secondary={`With sandboxing enabled this service wont share any cookies or information with any other services`}
           checked={sandboxFromMailbox}
           onChange={(evt, toggled) => accountActions.changeServiceSandboxing(serviceId, toggled)} />

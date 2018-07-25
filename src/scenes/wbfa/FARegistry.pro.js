@@ -45,6 +45,7 @@ import { faWindowRestore as fasWindowRestore } from '@fortawesome/pro-solid-svg-
 import { faEllipsisV as fasEllipsisV } from '@fortawesome/pro-solid-svg-icons/faEllipsisV'
 import { faEllipsisH as fasEllipsisH } from '@fortawesome/pro-solid-svg-icons/faEllipsisH'
 import { faCircle as fasCircle } from '@fortawesome/pro-solid-svg-icons/faCircle'
+import { faUserCircle as fasUserCircle } from '@fortawesome/pro-solid-svg-icons/faUserCircle'
 
 const REGISTRY = Object.freeze({
   'farCheck': farCheck,
@@ -93,7 +94,8 @@ const REGISTRY = Object.freeze({
   'fasWindowClose': fasWindowClose,
   'fasEllipsisV': fasEllipsisV,
   'fasEllipsisH': fasEllipsisH,
-  'fasCircle': fasCircle
+  'fasCircle': fasCircle,
+  'fasUserCircle': fasUserCircle
 })
 
 export default REGISTRY
