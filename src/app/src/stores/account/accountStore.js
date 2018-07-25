@@ -477,6 +477,15 @@ class AccountStore extends CoreAccountStore {
       }
     }
 
+    if (service.sandboxFromMailbox) {
+      // Cleanup any sandboxed auth
+      this.saveMailboxAuth(CoreACAuth.compositeId(
+        service.parentId,
+        service.supportedAuthNamespace,
+        service.partitionId
+      ), null)
+    }
+
     // Remove the service
     this.saveService(id, null)
     this.saveServiceData(id, null)
@@ -658,10 +667,19 @@ class AccountStore extends CoreAccountStore {
       }))
       this.startManagingServiceWithId(id)
     } else {
+      // Cleanup auth
+      this.saveMailboxAuth(CoreACAuth.compositeId(
+        service.parentId,
+        service.supportedAuthNamespace,
+        service.partitionId
+      ), null)
+
+      // Save the mailbox
       this.saveService(id, service.changeData({
         sandboxFromMailbox: false,
         sandboxedPartitionId: undefined
       }))
+
       AccountSessionManager.stopManagingService(service)
     }
   }
