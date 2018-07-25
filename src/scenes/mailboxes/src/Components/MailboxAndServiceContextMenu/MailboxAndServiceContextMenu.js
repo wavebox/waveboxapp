@@ -415,23 +415,27 @@ export default class MailboxAndServiceContextMenu extends React.Component {
             </MenuItem>
           </span>
         ) : undefined}
-        {service && serviceUiLocation !== ACMailbox.SERVICE_UI_LOCATIONS.SIDEBAR ? (
-          <MenuItem onClick={this.handleMoveServiceToSidebar}>
-            <ListItemIcon><ServiceSidebarIcon /></ListItemIcon>
-            <ListItemText inset primary='Move service to the sidebar' />
-          </MenuItem>
-        ) : undefined}
-        {service && serviceUiLocation !== ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_START ? (
-          <MenuItem onClick={this.handleMoveServiceToToolbarStart}>
-            <ListItemIcon><ServiceToolbarStartIcon /></ListItemIcon>
-            <ListItemText inset primary='Move service to the toolbar (left)' />
-          </MenuItem>
-        ) : undefined}
-        {service && serviceUiLocation !== ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_END ? (
-          <MenuItem onClick={this.handleMoveServiceToToolbarEnd}>
-            <ListItemIcon><ServiceToolbarEndIcon /></ListItemIcon>
-            <ListItemText inset primary='Move service to the toolbar (right)' />
-          </MenuItem>
+        {service && mailbox.hasMultipleServices ? (
+          <span>
+            {serviceUiLocation !== ACMailbox.SERVICE_UI_LOCATIONS.SIDEBAR ? (
+              <MenuItem onClick={this.handleMoveServiceToSidebar}>
+                <ListItemIcon><ServiceSidebarIcon /></ListItemIcon>
+                <ListItemText inset primary='Move service to the sidebar' />
+              </MenuItem>
+            ) : undefined}
+            {serviceUiLocation !== ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_START ? (
+              <MenuItem onClick={this.handleMoveServiceToToolbarStart}>
+                <ListItemIcon><ServiceToolbarStartIcon /></ListItemIcon>
+                <ListItemText inset primary='Move service to the toolbar (left)' />
+              </MenuItem>
+            ) : undefined}
+            {serviceUiLocation !== ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_END ? (
+              <MenuItem onClick={this.handleMoveServiceToToolbarEnd}>
+                <ListItemIcon><ServiceToolbarEndIcon /></ListItemIcon>
+                <ListItemText inset primary='Move service to the toolbar (right)' />
+              </MenuItem>
+            ) : undefined}
+          </span>
         ) : undefined}
         {mailbox.artificiallyPersistCookies ? (
           <MenuItem onClick={this.handleClearBrowserSession}>
