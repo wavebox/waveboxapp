@@ -16,11 +16,14 @@ module.exports = function (env) {
     entry: {
       print: [
         path.join(__dirname, 'src/')
+      ],
+      'worker': [
+        path.join(__dirname, 'node_modules/pdfjs-dist/build/pdf.worker.entry')
       ]
     },
     output: {
       path: OUT_DIR,
-      filename: 'print.js'
+      filename: '[name].bundle.js'
     },
     plugins: [
       // Clean out our bin dir
