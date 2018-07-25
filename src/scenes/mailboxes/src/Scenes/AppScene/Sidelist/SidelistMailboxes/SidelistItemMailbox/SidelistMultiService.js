@@ -238,7 +238,6 @@ class SidelistItemMultiService extends React.Component {
           <SidelistMailboxTooltip
             mailboxId={mailboxId}
             active={isHoveringAvatar}
-            group={this.instanceId}
             parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />
         </ErrorBoundary>
         <ServiceTabs

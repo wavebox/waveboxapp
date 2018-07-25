@@ -195,7 +195,6 @@ class SidelistItemSingleService extends React.Component {
           <SidelistServiceTooltip
             serviceId={serviceId}
             active={isHovering}
-            group={this.instanceId}
             parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />
         </ErrorBoundary>
         <ErrorBoundary>

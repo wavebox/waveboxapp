@@ -459,7 +459,6 @@ class ServiceTab extends React.Component {
           <ServiceTooltip
             serviceId={serviceId}
             active={isHovering}
-            group={this.instanceId}
             {...ServiceTabTools.uiLocationTooltipPositioning(uiLocation)}
             parent={`#ReactComponent-ServiceTab-${this.instanceId}`} />
         ) : undefined}
