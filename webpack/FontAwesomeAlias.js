@@ -9,10 +9,22 @@ module.exports = function (nodeModulesPath, rootDir) {
   ]
   const hasPro = !!proPaths.find((p) => fs.existsSync(p))
 
-  return {
-    'wbfa/FARegistry': hasPro
-      ? path.join(rootDir, 'src/scenes/wbfa/FARegistry.pro.js')
-      : path.join(rootDir, 'src/scenes/wbfa/FARegistry.free.js'),
-    'wbfa': path.join(rootDir, 'src/scenes/wbfa')
-  }
+  const icons = fs.readdirSync(path.join(rootDir, 'src/scenes/wbfa/generated'))
+    .map((filename) => {
+      if (hasPro && filename.endsWith('.pro.js')) {
+        return filename.substr(0, filename.length - 7)
+      } else if (!hasPro && filename.endsWith('.free.js')) {
+        return filename.substr(0, filename.length - 8)
+      } else {
+        return undefined
+      }
+    })
+    .filter((icon) => !!icon)
+  const iconAlias = icons.reduce((acc, icon) => {
+    const filename = `${icon}.${hasPro ? 'pro' : 'free'}.js`
+    acc[`wbfa/${icon}`] = path.join(rootDir, 'src/scenes/wbfa/generated/', filename)
+    return acc
+  }, {})
+
+  return iconAlias
 }

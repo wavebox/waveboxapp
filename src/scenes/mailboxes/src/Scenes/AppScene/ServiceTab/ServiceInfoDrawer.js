@@ -13,7 +13,7 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward'
 import grey from '@material-ui/core/colors/grey'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import lightGreen from '@material-ui/core/colors/lightGreen'
-import FAIcon from 'wbfa/FAIcon'
+import FASUserCircleIcon from 'wbfa/FASUserCircle'
 
 const styles = {
   /**
@@ -291,7 +291,7 @@ class ServiceInfoDrawer extends React.Component {
               accountActions.clearRuntimeWarning(serviceId, ACCOUNT_WARNING_TYPES.SERVICE_SIMILARITY_NAMESPACE_CLASH)
               accountActions.moveServiceToNewMailbox(serviceId)
             }}>
-            <FAIcon icon='fasUserCircle' className={classes.buttonIcon} />
+            <FASUserCircleIcon className={classes.buttonIcon} />
             Move to new Account
           </Button>
           <Button

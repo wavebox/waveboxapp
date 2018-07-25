@@ -4,7 +4,11 @@ import classnames from 'classnames'
 import { remote } from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import styles from './AppSceneWindowTitlebarStyles'
-import FAIcon from 'wbfa/FAIcon'
+import FASTimesIcon from 'wbfa/FASTimes'
+import FARTimesIcon from 'wbfa/FARTimes'
+import FARSquareIcon from 'wbfa/FARSquare'
+import FARWindowMinimizeIcon from 'wbfa/FARWindowMinimize'
+import FASMinusIcon from 'wbfa/FASMinus'
 
 @withStyles(styles)
 class AppSceneWindowTitlebar extends React.Component {
@@ -109,21 +113,21 @@ class AppSceneWindowTitlebar extends React.Component {
         <div className='controls'>
           <div className='control close' onClick={this.handleClose}>
             {process.platform === 'darwin' ? (
-              <FAIcon className='icon' icon='fasTimes' />
+              <FASTimesIcon className='icon' />
             ) : (
-              <FAIcon className='icon' icon='farTimes' />
+              <FARTimesIcon className='icon' />
             )}
           </div>
           <div className='control maximize'>
             {process.platform === 'darwin' ? undefined : (
-              <FAIcon className='icon' icon='farSquare' />
+              <FARSquareIcon className='icon' />
             )}
           </div>
           <div className='control minimize' onClick={this.handleMinimize}>
             {process.platform === 'darwin' ? (
-              <FAIcon className='icon' icon='fasMinus' />
+              <FASMinusIcon className='icon' />
             ) : (
-              <FAIcon className='icon' icon='farWindowMinimize' />
+              <FARWindowMinimizeIcon className='icon' />
             )}
           </div>
         </div>

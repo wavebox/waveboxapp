@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import FAIcon from 'wbfa/FAIcon'
 
 const styles = {
   icon: {
@@ -19,7 +18,7 @@ class SidelistFAIcon extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    icon: PropTypes.string.isRequired
+    IconClass: PropTypes.func.isRequired
   }
 
   /* **************************************************************************/
@@ -29,13 +28,13 @@ class SidelistFAIcon extends React.Component {
   render () {
     const {
       classes,
-      icon,
+      IconClass,
       className,
       ...passProps
     } = this.props
 
     return (
-      <FAIcon icon={icon} className={classNames(classes.icon, className)} {...passProps} />
+      <IconClass className={classNames(classes.icon, className)} {...passProps} />
     )
   }
 }

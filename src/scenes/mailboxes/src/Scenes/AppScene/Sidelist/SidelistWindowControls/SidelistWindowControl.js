@@ -4,10 +4,17 @@ import { IconButton } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import FAIcon from 'wbfa/FAIcon'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 import UISettings from 'shared/Models/Settings/UISettings'
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit'
+import FASWindowRestoreIcon from 'wbfa/FASWindowRestore'
+import FALWindowRestoreIcon from 'wbfa/FALWindowRestore'
+import FASWindowMaximizeIcon from 'wbfa/FASWindowMaximize'
+import FALWindowMaximizeIcon from 'wbfa/FALWindowMaximize'
+import FASWindowMinimizeIcon from 'wbfa/FASWindowMinimize'
+import FALWindowMinimizeIcon from 'wbfa/FALWindowMinimize'
+import FASWindowCloseIcon from 'wbfa/FASWindowClose'
+import FALWindowCloseIcon from 'wbfa/FALWindowClose'
 
 const TYPES = Object.freeze({
   RESTORE: 'RESTORE',
@@ -106,29 +113,21 @@ class SidelistWindowControl extends React.Component {
   renderIconForType (classes, type, sidebarSize) {
     switch (type) {
       case TYPES.RESTORE:
-        return (
-          <FAIcon
-            icon={sidebarSize === UISettings.SIDEBAR_SIZES.TINY ? 'fasWindowRestore' : 'falWindowRestore'}
-            className='icon iconFA' />
-        )
+        return UISettings.SIDEBAR_SIZES.TINY
+          ? <FASWindowRestoreIcon className='icon iconFA' />
+          : <FALWindowRestoreIcon className='icon iconFA' />
       case TYPES.MAXIMIZE:
-        return (
-          <FAIcon
-            icon={sidebarSize === UISettings.SIDEBAR_SIZES.TINY ? 'fasWindowMaximize' : 'falWindowMaximize'}
-            className='icon iconFA' />
-        )
+        return UISettings.SIDEBAR_SIZES.TINY
+          ? <FASWindowMaximizeIcon className='icon iconFA' />
+          : <FALWindowMaximizeIcon className='icon iconFA' />
       case TYPES.MINIMIZE:
-        return (
-          <FAIcon
-            icon={sidebarSize === UISettings.SIDEBAR_SIZES.TINY ? 'fasWindowMinimize' : 'falWindowMinimize'}
-            className='icon iconFA' />
-        )
+        return UISettings.SIDEBAR_SIZES.TINY
+          ? <FASWindowMinimizeIcon className='icon iconFA' />
+          : <FALWindowMinimizeIcon className='icon iconFA' />
       case TYPES.CLOSE:
-        return (
-          <FAIcon
-            icon={sidebarSize === UISettings.SIDEBAR_SIZES.TINY ? 'fasWindowClose' : 'falWindowClose'}
-            className='icon iconFA' />
-        )
+        return UISettings.SIDEBAR_SIZES.TINY
+          ? <FASWindowCloseIcon className='icon iconFA' />
+          : <FALWindowCloseIcon className='icon iconFA' />
       case TYPES.UNFULLSCREEN:
         return (
           <FullscreenExitIcon

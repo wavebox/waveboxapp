@@ -8,6 +8,7 @@ import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import SidelistFAIcon from './SidelistFAIcon'
 import ThemeTools from 'wbui/Themes/ThemeTools'
+import FARStarIcon from 'wbfa/FARStar'
 
 const styles = (theme) => ({
   icon: {
@@ -121,7 +122,7 @@ class SidelistControlWhatsNew extends React.Component {
         icon={(
           <SidelistFAIcon
             className={classNames(classes.icon, hasUnseenNews ? 'has-news' : undefined)}
-            icon='farStar' />
+            IconClass={FARStarIcon} />
         )} />
     )
   }

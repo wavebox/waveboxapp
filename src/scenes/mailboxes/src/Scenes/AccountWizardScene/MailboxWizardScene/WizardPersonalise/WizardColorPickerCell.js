@@ -3,7 +3,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import FAIcon from 'wbfa/FAIcon'
+import FASCheckIcon from 'wbfa/FASCheck'
 
 const styles = {
   container: {
@@ -66,10 +66,7 @@ class WizardColorPickerCell extends React.Component {
           ...style
         }}>
         {isSelected ? (
-          <FAIcon
-            icon='fasCheck'
-            className={classes.selectedIcon}
-            style={{ fontSize: (size / 2) + 'px' }} />
+          <FASCheckIcon className={classes.selectedIcon} style={{ fontSize: (size / 2) + 'px' }} />
         ) : undefined}
       </div>
     )

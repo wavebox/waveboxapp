@@ -14,13 +14,14 @@ import StorageIcon from '@material-ui/icons/Storage'
 import SettingsListTypography from 'wbui/SettingsListTypography'
 import SettingsListItemConfirmButton from 'wbui/SettingsListItemConfirmButton'
 import SettingsListItemMultiButtons from 'wbui/SettingsListItemMultiButtons'
-import FAIcon from 'wbfa/FAIcon'
 import CloudProfileSyncListItem from './CloudProfileSyncListItem'
 import {
   WB_CLEAN_EXPIRED_SESSIONS,
   WB_TAKEOUT_IMPORT_FILE,
   WB_TAKEOUT_EXPORT_FILE
 } from 'shared/ipcEvents'
+import FASCloudDownloadIcon from 'wbfa/FASCloudDownload'
+import FASCloudUploadIcon from 'wbfa/FASCloudUpload'
 
 const styles = {
   listItem: {
@@ -62,12 +63,12 @@ class DataSettingsSection extends React.Component {
           buttons={[
             {
               label: 'Export data',
-              icon: (<FAIcon icon='fasDownload' />),
+              icon: (<FASCloudDownloadIcon />),
               onClick: () => { ipcRenderer.send(WB_TAKEOUT_EXPORT_FILE) }
             },
             {
               label: 'Import data',
-              icon: (<FAIcon icon='fasUpload' />),
+              icon: (<FASCloudUploadIcon />),
               onClick: () => { ipcRenderer.send(WB_TAKEOUT_IMPORT_FILE) }
             }
           ]} />

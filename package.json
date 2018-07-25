@@ -40,6 +40,7 @@
     "dev:watch:print": "webpack --mode=development --env.fast --env.task=print --watch",
     "dev:run": "electron bin/app/index.js",
     "dev:start": "webpack --mode=development --env.fast && electron bin/app/index.js",
+    "dev:generateFA": "node scripts/generateFA.js",
     "webpack": "webpack",
     "clean:all": "node scripts/cleanAll.js",
     "clean:bin": "node scripts/cleanBin.js",

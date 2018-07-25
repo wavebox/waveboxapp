@@ -1,7 +1,8 @@
 import React from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import FAIcon from 'wbfa/FAIcon'
+import FASCircleIcon from 'wbfa/FASCircle'
+import FARSquareIcon from 'wbfa/FARSquare'
 
 const styles = {
   wrapper: {
@@ -43,9 +44,9 @@ class ServiceToolbarStartIcon extends React.Component {
     const { classes, className, ...passProps } = this.props
     return (
       <span {...passProps} className={classNames(classes.wrapper, className)}>
-        <FAIcon icon='fasCircle' className={classes.accIcon1} />
-        <FAIcon icon='fasCircle' className={classes.accIcon2} />
-        <FAIcon icon='farSquare' className={classes.squareIcon} />
+        <FASCircleIcon className={classes.accIcon1} />
+        <FASCircleIcon className={classes.accIcon2} />
+        <FARSquareIcon className={classes.squareIcon} />
       </span>
     )
   }

@@ -4,7 +4,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import Color from 'color'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import FAIcon from 'wbfa/FAIcon'
+import FASExclamationIcon from 'wbfa/FASExclamation'
 
 const RADIUS = 12
 const styles = {
@@ -97,8 +97,7 @@ class MailboxServicebadge extends React.Component {
     let badgeContent
     if (isAuthInvalid) {
       badgeContent = (
-        <FAIcon
-          icon='fasExclamation'
+        <FASExclamationIcon
           className={classNames(classes.icon, iconClassName)}
           style={{ color: colorInverse, ...iconStyle }} />
       )

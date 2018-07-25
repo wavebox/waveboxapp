@@ -3,7 +3,6 @@ import { userStore, userActions } from 'stores/user'
 import shallowCompare from 'react-addons-shallow-compare'
 import SettingsListItem from 'wbui/SettingsListItem'
 import { withStyles } from '@material-ui/core/styles'
-import FAIcon from 'wbfa/FAIcon'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import CheckIcon from '@material-ui/icons/Check'
 import { ListItemText, Button } from '@material-ui/core'
@@ -11,6 +10,9 @@ import blue from '@material-ui/core/colors/blue'
 import red from '@material-ui/core/colors/red'
 import green from '@material-ui/core/colors/green'
 import classNames from 'classnames'
+import FASSyncIcon from 'wbfa/FASSync'
+import FASCloudUploadIcon from 'wbfa/FASCloudUpload'
+import FASCloudDownloadIcon from 'wbfa/FASCloudDownload'
 
 const styles = {
   root: {
@@ -149,32 +151,25 @@ class CloudProfileSyncListItem extends React.Component {
       if (userProfileUploadInflight) {
         uploadText = 'Upload profile'
         uploadIcon = (
-          <FAIcon
-            icon='fasSync'
-            className={classNames(classes.icon, classes.iconProgress)}
-            spin />
+          <FASSyncIcon className={classNames(classes.icon, classes.iconProgress)} spin />
         )
       } else {
         if (userProfileUploadSuccess) {
           uploadText = 'Uploaded'
           uploadIcon = (
-            <CheckIcon
-              className={classNames(classes.icon, classes.iconSuccess)} />
+            <CheckIcon className={classNames(classes.icon, classes.iconSuccess)} />
           )
         } else {
           uploadText = 'Upload failure'
           uploadIcon = (
-            <ErrorOutlineIcon
-              className={classNames(classes.icon, classes.iconError)} />
+            <ErrorOutlineIcon className={classNames(classes.icon, classes.iconError)} />
           )
         }
       }
     } else {
       uploadText = 'Upload profile'
       uploadIcon = (
-        <FAIcon
-          icon='fasCloudUpload'
-          className={classes.icon} />
+        <FASCloudUploadIcon className={classes.icon} />
       )
     }
 
@@ -185,33 +180,25 @@ class CloudProfileSyncListItem extends React.Component {
       if (userProfilesFetchInflight) {
         restoreText = 'Restore profile'
         restoreIcon = (
-          <FAIcon
-            icon='fasSync'
-            className={classNames(classes.icon, classes.iconProgress)}
-            spin />
+          <FASSyncIcon className={classNames(classes.icon, classes.iconProgress)} spin />
         )
       } else {
         if (userProfilesFetchSuccess) {
           restoreText = 'Restore profile'
           restoreIcon = (
-            <FAIcon
-              icon='fasCloudDownload'
-              className={classes.icon} />
+            <FASCloudDownloadIcon className={classes.icon} />
           )
         } else {
           restoreText = 'Restore failure'
           restoreIcon = (
-            <ErrorOutlineIcon
-              className={classNames(classes.icon, classes.iconError)} />
+            <ErrorOutlineIcon className={classNames(classes.icon, classes.iconError)} />
           )
         }
       }
     } else {
       restoreText = 'Restore profile'
       restoreIcon = (
-        <FAIcon
-          icon='fasCloudDownload'
-          className={classes.icon} />
+        <FASCloudDownloadIcon className={classes.icon} />
       )
     }
 

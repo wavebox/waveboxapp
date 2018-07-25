@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 import { PRIVACY_URL } from 'shared/constants'
 import { withStyles } from '@material-ui/core/styles'
 import lightBlue from '@material-ui/core/colors/lightBlue'
-import FAIcon from 'wbfa/FAIcon'
+import FARSpinnerThirdIcon from 'wbfa/FARSpinnerThird'
 
 const styles = {
   modal: {
@@ -126,7 +126,7 @@ class PrivacyMessageGDPRExisting1 extends React.Component {
                 disabled={agreeRequestActive}
                 onClick={onAgree}>
                 {agreeRequestActive ? (
-                  <FAIcon icon='farSpinnerThird' spin className={classes.workingIcon} />
+                  <FARSpinnerThirdIcon spin className={classes.workingIcon} />
                 ) : (
                   'Continue'
                 )}

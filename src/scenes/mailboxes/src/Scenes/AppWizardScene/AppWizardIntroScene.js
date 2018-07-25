@@ -3,7 +3,7 @@ import { Avatar } from '@material-ui/core'
 import blueGrey from '@material-ui/core/colors/blueGrey'
 import yellow from '@material-ui/core/colors/yellow'
 import { withStyles } from '@material-ui/core/styles'
-import FAIcon from 'wbfa/FAIcon'
+import FASMagicIcon from 'wbfa/FASMagic'
 
 const styles = {
   container: {
@@ -51,7 +51,7 @@ class AppWizardIntroScene extends React.Component {
     return (
       <div className={classes.container}>
         <Avatar className={classes.avatar}>
-          <FAIcon icon='fasMagic' className={classes.avatarIcon} />
+          <FASMagicIcon className={classes.avatarIcon} />
         </Avatar>
         <h2 className={classes.heading}>
           Wavebox Setup Wizard

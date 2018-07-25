@@ -4,6 +4,7 @@ import { TOUR_STEPS } from 'stores/settings/Tour'
 import { withStyles } from '@material-ui/core/styles'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 import SidelistFAIcon from './SidelistFAIcon'
+import FARQuestionCircleIcon from 'wbfa/FARQuestionCircle'
 
 const styles = (theme) => ({
   icon: {
@@ -36,7 +37,7 @@ class SidelistControlSupport extends React.Component {
           </div>
         )}
         icon={(
-          <SidelistFAIcon className={classes.icon} icon='farQuestionCircle' />
+          <SidelistFAIcon className={classes.icon} IconClass={FARQuestionCircleIcon} />
         )} />
     )
   }

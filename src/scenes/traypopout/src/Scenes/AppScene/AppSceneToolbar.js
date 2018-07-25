@@ -10,7 +10,15 @@ import { withStyles } from '@material-ui/core/styles'
 import { Toolbar, IconButton, Tooltip, Menu, MenuItem, Divider, ListItemIcon } from '@material-ui/core'
 import NotificationIcon from '@material-ui/icons/Notifications'
 import classNames from 'classnames'
-import FAIcon from 'wbfa/FAIcon'
+import FAREditIcon from 'wbfa/FAREdit'
+import FARBrowserIcon from 'wbfa/FARBrowser'
+import FARBoltIcon from 'wbfa/FARBolt'
+import FARArrowAltSquareUpIcon from 'wbfa/FARArrowAltSquareUp'
+import FARArrowAltSquareDownIcon from 'wbfa/FARArrowAltSquareDown'
+import FARWindowIcon from 'wbfa/FARWindow'
+import FARBellSlashIcon from 'wbfa/FARBellSlash'
+import FARBellIcon from 'wbfa/FARBell'
+import FARSignOutIcon from 'wbfa/FARSignOut'
 
 const styles = {
   notificationMenuItem: {
@@ -143,14 +151,14 @@ class AppSceneToolbar extends React.Component {
       <Toolbar disableGutters {...passProps}>
         <Tooltip title='Compose' placement='top-end'>
           <IconButton onClick={() => emblinkActions.composeNewMessage()}>
-            <FAIcon icon='farEdit' className={classes.faIcon} />
+            <FAREditIcon className={classes.faIcon} />
           </IconButton>
         </Tooltip>
         <Tooltip title='Show main window' placement='top'>
           <IconButton onClick={() => ipcRenderer.send(WB_FOCUS_APP, {})}>
             <span className={classes.faIconStack}>
-              <FAIcon icon='farBrowser' className={classNames(classes.faIcon, classes.faIconOpenMainWindow1)} />
-              <FAIcon icon='farBolt' className={classNames(classes.faIcon, classes.faIconOpenMainWindow2)} />
+              <FARBrowserIcon className={classNames(classes.faIcon, classes.faIconOpenMainWindow1)} />
+              <FARBoltIcon className={classNames(classes.faIcon, classes.faIconOpenMainWindow2)} />
             </span>
           </IconButton>
         </Tooltip>
@@ -160,12 +168,12 @@ class AppSceneToolbar extends React.Component {
           <IconButton onClick={() => ipcRenderer.send(WB_TRAY_TOGGLE_WINDOW_MODE, {})}>
             {isWindowedMode ? (
               process.platform === 'darwin' ? (
-                <FAIcon icon='farArrowAltSquareUp' className={classes.faIcon} />
+                <FARArrowAltSquareUpIcon className={classes.faIcon} />
               ) : (
-                <FAIcon icon='farArrowAltSquareDown' className={classes.faIcon} />
+                <FARArrowAltSquareDownIcon className={classes.faIcon} />
               )
             ) : (
-              <FAIcon icon='farWindow' className={classes.faIcon} />
+              <FARWindowIcon className={classes.faIcon} />
             )}
           </IconButton>
         </Tooltip>
@@ -179,7 +187,11 @@ class AppSceneToolbar extends React.Component {
           )}
           placement='top'>
           <IconButton onClick={(evt) => this.setState({ notificationMenuAnchor: evt.currentTarget })}>
-            <FAIcon icon={notificationsMuted ? 'farBellSlash' : 'farBell'} className={classes.faIcon} />
+            {notificationsMuted ? (
+              <FARBellSlashIcon className={classes.faIcon} />
+            ) : (
+              <FARBellIcon className={classes.faIcon} />
+            )}
           </IconButton>
         </Tooltip>
         <Menu
@@ -223,7 +235,7 @@ class AppSceneToolbar extends React.Component {
         <div className={classes.spacer} />
         <Tooltip title='Quit Wavebox' placement='top-start'>
           <IconButton onClick={() => ipcRenderer.send(WB_QUIT_APP, {})}>
-            <FAIcon className={classes.faIcon} icon='farSignOut' />
+            <FARSignOutIcon className={classes.faIcon} />
           </IconButton>
         </Tooltip>
       </Toolbar>

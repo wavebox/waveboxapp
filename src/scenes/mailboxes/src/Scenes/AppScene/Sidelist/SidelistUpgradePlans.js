@@ -7,7 +7,7 @@ import uuid from 'uuid'
 import User from 'shared/Models/User'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import FAIcon from 'wbfa/FAIcon'
+import FARCalendarIcon from 'wbfa/FARCalendar'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 import UpgradeTooltip from 'wbui/Tooltips/UpgradeTooltip'
 
@@ -259,7 +259,7 @@ class SidelistUpgradePlans extends React.Component {
           className={classNames(classes.button, `sidebar-${sidebarSize.toLowerCase()}`)}
           disableRipple>
           <div className={classes.compositeIconContainer}>
-            <FAIcon className={classes.icon} icon='farCalendar' />
+            <FARCalendar className={classes.icon} />
             <div className={classNames(classes.remainingText, (formattedDays.length === 2 ? classes.remainingText2Char : classes.remainingText3Char))}>
               {formattedDays}
             </div>

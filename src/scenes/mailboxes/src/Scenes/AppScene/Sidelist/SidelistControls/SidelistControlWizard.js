@@ -4,6 +4,7 @@ import { TOUR_STEPS } from 'stores/settings/Tour'
 import { withStyles } from '@material-ui/core/styles'
 import SidelistFAIcon from './SidelistFAIcon'
 import ThemeTools from 'wbui/Themes/ThemeTools'
+import FARMagicIcon from 'wbfa/FARMagic'
 
 const styles = (theme) => ({
   icon: {
@@ -34,7 +35,7 @@ class SidelistControlWizard extends React.Component {
             common Wavebox Settings with the Setup Wizard
           </div>
         )}
-        icon={(<SidelistFAIcon className={classes.icon} icon='farMagic' />)} />
+        icon={(<SidelistFAIcon className={classes.icon} IconClass={FARMagicIcon} />)} />
     )
   }
 }

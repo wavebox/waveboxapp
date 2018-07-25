@@ -3,7 +3,7 @@ import React from 'react'
 import {Button} from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import FAIcon from 'wbfa/FAIcon'
+import FASGemIcon from 'wbfa/FASGem'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const styles = {
@@ -52,7 +52,7 @@ class RestrictedServiceSection extends React.Component {
         </p>
         <div>
           <Button variant='raised' color='primary' onClick={() => { window.location.hash = '/pro' }}>
-            <FAIcon icon='fasGem' className={classes.proIcon} />
+            <FASGemIcon className={classes.proIcon} />
             Purchase Wavebox
           </Button>
         </div>

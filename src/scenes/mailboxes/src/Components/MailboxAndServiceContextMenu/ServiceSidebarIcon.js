@@ -1,7 +1,8 @@
 import React from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import FAIcon from 'wbfa/FAIcon'
+import FASEllipsisVIcon from 'wbfa/FASEllipsisV'
+import FARSquareIcon from 'wbfa/FARSquare'
 
 const styles = {
   wrapper: {
@@ -35,8 +36,8 @@ class ServiceSidebarIcon extends React.Component {
     const { classes, className, ...passProps } = this.props
     return (
       <span {...passProps} className={classNames(classes.wrapper, className)}>
-        <FAIcon icon='fasEllipsisV' className={classes.accIcon} />
-        <FAIcon icon='farSquare' className={classes.squareIcon} />
+        <FASEllipsisVIcon className={classes.accIcon} />
+        <FARSquareIcon className={classes.squareIcon} />
       </span>
     )
   }

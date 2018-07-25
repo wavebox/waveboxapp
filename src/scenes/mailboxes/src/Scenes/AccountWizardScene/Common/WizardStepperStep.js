@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import red from '@material-ui/core/colors/red'
-import FAIcon from 'wbfa/FAIcon'
+import FASCheckIcon from 'wbfa/FASCheck'
 
 const styles = {
   container: {
@@ -111,7 +111,7 @@ class WizardStepperStep extends React.Component {
       <div {...passProps} className={classNames(classes.container, className)}>
         <div className={active ? classes.stepIconActive : classes.stepIconInactive}>
           {currentStep > step ? (
-            <FAIcon icon='fasCheck' className={classNames(active ? classes.stepCheckActive : classes.stepCheckInactive)} />
+            <FASCheckIcon className={classNames(active ? classes.stepCheckActive : classes.stepCheckInactive)} />
           ) : (
             <span className={classes.stepNumber}>{stepNumberText}</span>
           )}

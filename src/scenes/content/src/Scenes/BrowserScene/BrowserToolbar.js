@@ -16,7 +16,7 @@ import SearchIcon from '@material-ui/icons/Search'
 import OpenInBrowserIcon from '@material-ui/icons/OpenInBrowser'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 import classNames from 'classnames'
-import FAIcon from 'wbfa/FAIcon'
+import FASFileDownload from 'wbfa/FASFileDownload'
 
 const styles = (theme) => ({
   toolbar: {
@@ -208,7 +208,7 @@ class BrowserToolbar extends React.Component {
           {this.isDownloadableUrl(currentUrl) ? (
             <Tooltip title='Download'>
               <IconButton onClick={this.handleDownload}>
-                <FAIcon className={classNames(classes.icon, classes.faIcon)} icon='fasFileDownload' />
+                <FASFileDownload className={classNames(classes.icon, classes.faIcon)} />
               </IconButton>
             </Tooltip>
           ) : undefined}

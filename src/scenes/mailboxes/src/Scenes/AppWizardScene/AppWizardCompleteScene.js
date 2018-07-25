@@ -4,7 +4,8 @@ import { withStyles } from '@material-ui/core/styles'
 import lightGreen from '@material-ui/core/colors/lightGreen'
 import green from '@material-ui/core/colors/green'
 import blueGrey from '@material-ui/core/colors/blueGrey'
-import FAIcon from 'wbfa/FAIcon'
+import FASMagicIcon from 'wbfa/FASMagic'
+import FASCheckCircleIcon from 'wbfa/FASCheckCircle'
 
 const styles = {
   container: {
@@ -55,10 +56,10 @@ class AppWizardCompleteScene extends React.Component {
     return (
       <div className={classes.container}>
         <Avatar className={classes.avatar}>
-          <FAIcon className={classes.avatarIcon} icon='fasMagic' />
+          <FASMagicIcon className={classes.avatarIcon} />
         </Avatar>
         <h2 className={classes.heading}>
-          <FAIcon className={classes.doneIcon} icon='fasCheckCircle' />
+          <FASCheckCircleIcon className={classes.doneIcon} />
           All Done!
         </h2>
         <p className={classes.subHeading}>
