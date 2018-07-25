@@ -259,7 +259,7 @@ class SidelistUpgradePlans extends React.Component {
           className={classNames(classes.button, `sidebar-${sidebarSize.toLowerCase()}`)}
           disableRipple>
           <div className={classes.compositeIconContainer}>
-            <FARCalendar className={classes.icon} />
+            <FARCalendarIcon className={classes.icon} />
             <div className={classNames(classes.remainingText, (formattedDays.length === 2 ? classes.remainingText2Char : classes.remainingText3Char))}>
               {formattedDays}
             </div>
