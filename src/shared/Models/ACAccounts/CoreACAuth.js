@@ -29,17 +29,35 @@ class CoreACAuth extends CoreACModel {
   * Creates a composite id from the parent and namespace
   * @param parentId: the id of the parent
   * @param namespace: the namespace of the auth
+  * @param sandboxedPartitionId=undefined:an optional partition id
   * @return a composite id
   */
-  static compositeId (parentId, namespace) {
-    return `${parentId}:${namespace}`
+  static compositeId (parentId, namespace, sandboxedPartitionId = undefined) {
+    if (sandboxedPartitionId) {
+      return `${parentId}:${namespace}::${sandboxedPartitionId}`
+    } else {
+      return `${parentId}:${namespace}`
+    }
+  }
+
+  /**
+  * Creates a composite id from the service
+  * @param service: the service to use to generate the id
+  * @return a composite id
+  */
+  static compositeIdFromService (service) {
+    return this.compositeId(
+      service.parentId,
+      service.supportedAuthNamespace,
+      service.sandboxFromMailbox ? service.partitionId : undefined
+    )
   }
 
   /* **************************************************************************/
   // Properties
   /* **************************************************************************/
 
-  get id () { return this.constructor.compositeId(this.parentId, this.namespace) }
+  get id () { return this.constructor.compositeId(this.parentId, this.namespace, this.sandboxedPartitionId) }
   get parentId () { return this._value_('parentId') }
   get namespace () { return this._value_('namespace') }
 

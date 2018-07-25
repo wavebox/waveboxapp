@@ -413,7 +413,7 @@ class AccountStore extends CoreAccountStore {
 
   handleCreateAuth ({ data }) {
     this.saveMailboxAuth(
-      CoreACAuth.compositeId(data.parentId, data.namespace),
+      CoreACAuth.compositeId(data.parentId, data.namespace, data.sandboxedPartitionId),
       data
     )
   }

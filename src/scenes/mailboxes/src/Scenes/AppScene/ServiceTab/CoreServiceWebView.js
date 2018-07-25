@@ -699,13 +699,20 @@ class CoreServiceWebView extends React.Component {
       return acc
     }, {})
 
-    // Don't use string templating or inline in jsx. The compiler optimizes it out!!
-    const webpreferences = [
+    // Figure out the config for the webview...
+    const affinity = (isolateMailboxProcesses
+      ? mailboxId + ':' + serviceId
+      : (service.partitionId.startsWith('persist:') // Use the affinity so sandboxed services don't crash out
+        ? service.partitionId.substr(8)
+        : service.partitionId
+      )
+    )
+    const webpreferences = [ // Don't use string templating or inline in jsx. The compiler optimizes it out!!
       'contextIsolation=yes',
       'nativeWindowOpen=yes',
       'sharedSiteInstances=yes',
       'sandbox=yes',
-      'affinity=' + (isolateMailboxProcesses ? mailboxId + ':' + serviceId : mailboxId)
+      'affinity=' + affinity
     ].filter((l) => !!l).join(', ')
     const preloadScripts = [
       Resolver.guestPreload(),

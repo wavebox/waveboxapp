@@ -514,7 +514,8 @@ class AccountStore extends RendererAccountStore {
     })
 
     if (serviceType === SERVICE_TYPES.GOOGLE_MAIL || serviceType === SERVICE_TYPES.GOOGLE_INBOX) {
-      const auth = this.getMailboxAuthForMailbox(attachTarget, GoogleAuth.namespace)
+      const authId = CoreACAuth.compositeId(attachTarget, GoogleAuth.namespace)
+      const auth = this.getMailboxAuth(authId)
       if (auth && auth.hasAuth && !auth.isAuthInvalid) {
         actions.authNewServiceFromProviso.defer(proviso)
       } else {
@@ -525,13 +526,14 @@ class AccountStore extends RendererAccountStore {
           mode: AUTH_MODES.ATTACH,
           context: {
             mailboxId: attachTarget,
-            authId: CoreACAuth.compositeId(attachTarget, GoogleAuth.namespace),
+            authId: authId,
             proviso: proviso.cloneData()
           }
         })
       }
     } else if (serviceType === SERVICE_TYPES.MICROSOFT_MAIL) {
-      const auth = this.getMailboxAuthForMailbox(attachTarget, MicrosoftAuth.namespace)
+      const authId = CoreACAuth.compositeId(attachTarget, MicrosoftAuth.namespace)
+      const auth = this.getMailboxAuth(authId)
       if (auth && auth.hasAuth && !auth.isAuthInvalid) {
         actions.authNewServiceFromProviso.defer(proviso)
       } else {
@@ -542,13 +544,14 @@ class AccountStore extends RendererAccountStore {
           mode: AUTH_MODES.ATTACH,
           context: {
             mailboxId: attachTarget,
-            authId: CoreACAuth.compositeId(attachTarget, MicrosoftAuth.namespace),
+            authId: authId,
             proviso: proviso.cloneData()
           }
         })
       }
     } else if (serviceType === SERVICE_TYPES.SLACK) {
-      const auth = this.getMailboxAuthForMailbox(attachTarget, SlackAuth.namespace)
+      const authId = CoreACAuth.compositeId(attachTarget, SlackAuth.namespace)
+      const auth = this.getMailboxAuth(authId)
       if (auth && auth.hasAuth && !auth.isAuthInvalid) {
         actions.authNewServiceFromProviso.defer(proviso)
       } else {
@@ -559,13 +562,14 @@ class AccountStore extends RendererAccountStore {
           mode: AUTH_MODES.ATTACH,
           context: {
             mailboxId: attachTarget,
-            authId: CoreACAuth.compositeId(attachTarget, SlackAuth.namespace),
+            authId: authId,
             proviso: proviso.cloneData()
           }
         })
       }
     } else if (serviceType === SERVICE_TYPES.TRELLO) {
-      const auth = this.getMailboxAuthForMailbox(attachTarget, TrelloAuth.namespace)
+      const authId = CoreACAuth.compositeId(attachTarget, TrelloAuth.namespace)
+      const auth = this.getMailboxAuth(authId)
       if (auth && auth.hasAuth && !auth.isAuthInvalid) {
         actions.authNewServiceFromProviso.defer(proviso)
       } else {
@@ -576,7 +580,7 @@ class AccountStore extends RendererAccountStore {
           mode: AUTH_MODES.ATTACH,
           context: {
             mailboxId: attachTarget,
-            authId: CoreACAuth.compositeId(attachTarget, TrelloAuth.namespace),
+            authId: authId,
             proviso: proviso.cloneData()
           }
         })
@@ -909,7 +913,7 @@ class AccountStore extends RendererAccountStore {
           mode: AUTH_MODES.REAUTHENTICATE,
           context: {
             mailboxId: service.parentId,
-            authId: CoreACAuth.compositeId(service.parentId, service.supportedAuthNamespace),
+            authId: CoreACAuth.compositeIdFromService(service),
             serviceId: service.id
           }
         })
@@ -922,7 +926,7 @@ class AccountStore extends RendererAccountStore {
           mode: AUTH_MODES.REAUTHENTICATE,
           context: {
             mailboxId: service.parentId,
-            authId: CoreACAuth.compositeId(service.parentId, service.supportedAuthNamespace),
+            authId: CoreACAuth.compositeIdFromService(service),
             serviceId: service.id
           }
         })
@@ -935,7 +939,7 @@ class AccountStore extends RendererAccountStore {
           mode: AUTH_MODES.REAUTHENTICATE,
           context: {
             mailboxId: service.parentId,
-            authId: CoreACAuth.compositeId(service.parentId, service.supportedAuthNamespace),
+            authId: CoreACAuth.compositeIdFromService(service),
             serviceId: service.id
           }
         })
@@ -948,7 +952,7 @@ class AccountStore extends RendererAccountStore {
           mode: AUTH_MODES.REAUTHENTICATE,
           context: {
             mailboxId: service.parentId,
-            authId: CoreACAuth.compositeId(service.parentId, service.supportedAuthNamespace),
+            authId: CoreACAuth.compositeIdFromService(service),
             serviceId: service.id
           }
         })

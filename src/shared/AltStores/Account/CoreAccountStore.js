@@ -110,26 +110,13 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /**
-    * @param parentId: the id of the mailbox
-    * @param namespace: the namespace of the auth
-    * @return the auth object or null
-    */
-    this.getMailboxAuthForMailbox = (mailboxId, namespace) => {
-      if (!namespace) {
-        return null
-      } else {
-        return this._mailboxAuth_.get(CoreACAuth.compositeId(mailboxId, namespace)) || null
-      }
-    }
-
-    /**
     * @param id: the service id
     * @return the relevant auth object for the service or null
     */
     this.getMailboxAuthForServiceId = (id) => {
       const service = this.getService(id)
       if (!service) { return null }
-      return this.getMailboxAuthForMailbox(service.parentId, service.supportedAuthNamespace)
+      return this.getMailboxAuth(CoreACAuth.compositeIdFromService(service))
     }
 
     /**
@@ -137,7 +124,8 @@ class CoreAccountStore extends RemoteStore {
     * @return an array of auths that are for that mailbox
     */
     this.getMailboxAuthsForMailbox = (mailboxId) => {
-      return Array.from(this._mailboxAuth_.values()).filter((a) => a.parentId === mailboxId)
+      return Array.from(this._mailboxAuth_.values())
+        .filter((a) => a.parentId === mailboxId)
     }
 
     /**
@@ -157,7 +145,7 @@ class CoreAccountStore extends RemoteStore {
       const service = this.getService(serviceId)
       if (!service) { return false }
       if (service.supportedAuthNamespace) {
-        const auth = this.getMailboxAuthForMailbox(service.parentId, service.supportedAuthNamespace)
+        const auth = this.getMailboxAuthForServiceId(serviceId)
         if (auth) {
           return auth.isAuthInvalid
         } else {

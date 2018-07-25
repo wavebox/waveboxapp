@@ -39,21 +39,27 @@ const styles = {
     position: 'absolute',
     top: 0,
     left: 0,
-    bottom: 90,
+    bottom: 0,
     right: 0,
     paddingLeft: 24,
     paddingRight: 24,
-    ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
+    ...StyleMixins.scrolling.alwaysShowVerticalScrollbars,
+
+    '&.twoActions': { bottom: 90 },
+    '&.threeActions': { bottom: 135 }
   },
   panelActions: {
     position: 'absolute',
     textAlign: 'center',
-    height: 90,
     left: 0,
     bottom: 0,
     right: 0,
+    height: 0,
     paddingLeft: 30,
-    paddingRight: 30
+    paddingRight: 30,
+
+    '&.twoActions': { height: 90 },
+    '&.threeActions': { height: 135 }
   },
   panelActionButton: {
     margin: 4,
@@ -216,7 +222,7 @@ class ServiceInfoDrawer extends React.Component {
   renderNamespaceClashWarning (classes, serviceId) {
     return (
       <div className={classes.panelContent}>
-        <div className={classes.panelBody}>
+        <div className={classNames(classes.panelBody, 'threeActions')}>
           <div className={classes.nscIcons}>
             <span className={classes.nscIconContainer}>
               <InboxIcon className={classes.nscInboxIcon} />
@@ -242,9 +248,8 @@ class ServiceInfoDrawer extends React.Component {
           <ul className={classes.panelList}>
             <li>
               Services in a single sandbox share the same cookies & login details.
-              Although some sites allow you to sign in as multiple users
-              it's recommended that you use different sandboxes in Wavebox
-              for the best experience.
+              Some sites allow you to sign in as multiple users, it's recommended
+              that you use different sandboxes in Wavebox for the best experience.
             </li>
             <li>
               Services that provide Wavebox sync in the background share the same
@@ -254,11 +259,21 @@ class ServiceInfoDrawer extends React.Component {
             </li>
           </ul>
           <p>
-            You can choose to keep the service here and continue or move it into its
-            own account and sandbox.
+            You can choose to keep the service here and continue, keep it here and
+            place it into its own sandbox, or move it into its own account and sandbox.
           </p>
         </div>
-        <div className={classes.panelActions}>
+        <div className={classNames(classes.panelActions, 'threeActions')}>
+          <Button
+            color='primary'
+            variant='raised'
+            className={classes.panelActionButton}
+            onClick={() => {
+              accountActions.clearRuntimeWarning(serviceId, ACCOUNT_WARNING_TYPES.SERVICE_SIMILARITY_NAMESPACE_CLASH)
+              accountActions.changeServiceSandboxing(serviceId, true)
+            }}>
+            Keep here & sandbox
+          </Button>
           <Button
             color='primary'
             variant='raised'
