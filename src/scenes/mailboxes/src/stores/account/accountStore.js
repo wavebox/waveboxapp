@@ -194,6 +194,8 @@ class AccountStore extends RendererAccountStore {
   * @param service: the service to connect
   */
   connectService (service) {
+    if (!service) { return }
+
     switch (service.type) {
       case SERVICE_TYPES.GOOGLE_MAIL:
       case SERVICE_TYPES.GOOGLE_INBOX:
@@ -210,6 +212,8 @@ class AccountStore extends RendererAccountStore {
   * @param service: the service to disconnect
   */
   disconnectService (service) {
+    if (!service) { return }
+
     switch (service.type) {
       case SERVICE_TYPES.GOOGLE_MAIL:
       case SERVICE_TYPES.GOOGLE_INBOX:
@@ -229,7 +233,7 @@ class AccountStore extends RendererAccountStore {
     super.handleLoad(payload)
 
     this.serviceIds().forEach((serviceId) => {
-      this.connectService(serviceId)
+      this.connectService(this.getService(serviceId))
       actions.fullSyncService.defer(serviceId)
     })
   }
@@ -454,6 +458,11 @@ class AccountStore extends RendererAccountStore {
   _finalizeReauthentication (serviceId, wait = 250) {
     if (serviceId) {
       setTimeout(() => {
+        // Make sure we disconnect the sync and connect them again. Do this in
+        // case the user changes the auth details, there's sometimes things
+        // we only sync on first launch (e.g. slack getting user profile)
+        this.disconnectService(this.getService(serviceId))
+        this.connectService(this.getService(serviceId))
         actions.fullSyncService(serviceId)
         accountDispatch.reloadService(serviceId)
       }, wait)
