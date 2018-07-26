@@ -99,6 +99,22 @@ class MicrosoftStore {
   }
 
   /* **************************************************************************/
+  // Error Detection
+  /* **************************************************************************/
+
+  /**
+  * Checks if an error is an invalid grant error
+  * @param err: the error that was thrown
+  * @return true if this error is invalid grant
+  */
+  isInvalidGrantError (err) {
+    if (err) {
+      if (err.status === 401) { return true }
+    }
+    return false
+  }
+
+  /* **************************************************************************/
   // Auth Utils
   /* **************************************************************************/
 
@@ -246,7 +262,11 @@ class MicrosoftStore {
       })
       .catch((err) => {
         this.trackCloseRequest(REQUEST_TYPES.PROFILE, serviceId, requestId)
-        console.error(err)
+        if (this.isInvalidGrantError(err)) {
+          accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeInvalid)
+        } else {
+          console.error(err)
+        }
         this.emitChange()
       })
   }
@@ -303,7 +323,11 @@ class MicrosoftStore {
       })
       .catch((err) => {
         this.trackCloseRequest(REQUEST_TYPES.MAIL, serviceId, requestId)
-        console.error(err)
+        if (this.isInvalidGrantError(err)) {
+          accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeInvalid)
+        } else {
+          console.error(err)
+        }
         this.emitChange()
       })
   }

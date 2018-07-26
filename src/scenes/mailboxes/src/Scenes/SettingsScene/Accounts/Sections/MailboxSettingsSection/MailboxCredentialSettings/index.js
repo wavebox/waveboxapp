@@ -1,0 +1,2 @@
+import MailboxCredentialSettings from './MailboxCredentialSettings'
+export default MailboxCredentialSettings

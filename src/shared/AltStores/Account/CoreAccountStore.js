@@ -130,6 +130,16 @@ class CoreAccountStore extends RemoteStore {
 
     /**
     * @param mailboxId: the id of the mailbox
+    * @return an array of auth ids that are for that mailbox
+    */
+    this.getMailboxAuthIdsForMailbox = (mailboxId) => {
+      return Array.from(this._mailboxAuth_.values())
+        .filter((a) => a.parentId === mailboxId)
+        .map((a) => a.id)
+    }
+
+    /**
+    * @param mailboxId: the id of the mailbox
     * @return a list of auth ids assoicated with that mailbox
     */
     this.getMailboxAuthIdsForMailbox = (mailboxId) => {

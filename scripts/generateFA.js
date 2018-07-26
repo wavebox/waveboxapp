@@ -7,7 +7,8 @@ const Colors = require('colors/safe')
 const VARIANTS = {
   'l': 'light',
   'r': 'regular',
-  's': 'solid'
+  's': 'solid',
+  'b': 'brands'
 }
 
 const MAPPING = [
@@ -59,7 +60,12 @@ const MAPPING = [
   ['fasEllipsisH', 'fasEllipsisH'],
   ['fasCircle', 'fasCircle'],
   ['fasUserCircle', 'fasUserCircle'],
-  ['fasFileDownload', 'fasFileDownload']
+  ['fasFileDownload', 'fasFileDownload'],
+
+  ['fabSlack', 'fabSlack'],
+  ['fabGoogle', 'fabGoogle'],
+  ['fabMicrosoft', 'fabMicrosoft'],
+  ['fabTrello', 'fabTrello']
 ]
 
 /**
@@ -70,7 +76,7 @@ const MAPPING = [
 */
 const getImportPath = function (name, isPro) {
   const variant = VARIANTS[name[2]]
-  const lib = isPro ? 'pro' : 'free'
+  const lib = isPro && name[2] !== 'b' ? 'pro' : 'free'
   const filename = `fa${name.substr(3)}`
   return `@fortawesome/${lib}-${variant}-svg-icons/${filename}`
 }

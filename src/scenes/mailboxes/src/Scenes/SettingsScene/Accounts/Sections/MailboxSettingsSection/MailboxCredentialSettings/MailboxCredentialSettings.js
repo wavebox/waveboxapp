@@ -1,31 +1,15 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { accountStore, accountActions } from 'stores/account'
+import { accountStore } from 'stores/account'
 import SettingsListSection from 'wbui/SettingsListSection'
 import FingerprintIcon from '@material-ui/icons/Fingerprint'
 import shallowCompare from 'react-addons-shallow-compare'
-import SettingsListItemConfirmButton from 'wbui/SettingsListItemConfirmButton'
 import SettingsListItemText from 'wbui/SettingsListItemText'
-import DeleteIcon from '@material-ui/icons/Delete'
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
 import { withStyles } from '@material-ui/core/styles'
-import red from '@material-ui/core/colors/red'
-import grey from '@material-ui/core/colors/grey'
-import InboxIcon from '@material-ui/icons/Inbox'
+import MailboxCredentialItem from './MailboxCredentialItem'
 
 const styles = {
-  deleteButton: {
-    color: red[600]
-  },
-  sandboxedTag: {
-    color: grey[600]
-  },
-  sandboxedTagIcon: {
-    fontSize: '16px',
-    marginLeft: 16,
-    marginRight: 3,
-    verticalAlign: 'text-top'
-  }
+
 }
 
 @withStyles(styles)
@@ -81,7 +65,7 @@ export default class MailboxCredentialSettings extends React.Component {
   */
   extractStateForMailbox (mailboxId, accountState) {
     return {
-      auths: accountState.getMailboxAuthsForMailbox(mailboxId)
+      authIds: accountState.getMailboxAuthIdsForMailbox(mailboxId)
     }
   }
 
@@ -101,37 +85,20 @@ export default class MailboxCredentialSettings extends React.Component {
       ...passProps
     } = this.props
     const {
-      auths
+      authIds
     } = this.state
 
     return (
       <SettingsListSection title='Credentials' icon={<FingerprintIcon />} {...passProps}>
         <SettingsListItemText
           primary={`Some accounts store credentials when being added, they are used to provide API access and sync`} />
-        {auths.length ? (
-          auths.map((auth, index, arr) => {
+        {authIds.length ? (
+          authIds.map((authId, index, arr) => {
             return (
-              <SettingsListItemConfirmButton
-                key={auth.id}
+              <MailboxCredentialItem
+                key={authId}
                 divider={index !== arr.length - 1}
-                label='Remove'
-                confirmLabel='Click again to confirm'
-                icon={<DeleteIcon />}
-                confirmIcon={<HelpOutlineIcon />}
-                confirmWaitMs={4000}
-                buttonProps={{ variant: 'outlined', className: classes.deleteButton }}
-                onConfirmedClick={() => accountActions.removeAuth(auth.id)}
-                primary={(
-                  <span>
-                    <strong>{auth.humanizedNamespace}</strong> {`(${auth.namespace})`}
-                    {auth.isForSandboxedPartitionId ? (
-                      <span className={classes.sandboxedTag}>
-                        <InboxIcon className={classes.sandboxedTagIcon} />Sandboxed
-                      </span>
-                    ) : undefined}
-                  </span>
-                )}
-                secondary={auth.hasHumanizedIdentifier ? auth.humanizedIdentifier : auth.namespace} />
+                authId={authId} />
             )
           })
         ) : (
