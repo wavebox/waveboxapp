@@ -79,11 +79,12 @@ class MailboxWizardScene extends React.Component {
 
   /**
   * Closes the modal
+  * @param destination='/' an optional destination when dismissin
   */
-  handleClose = () => {
+  handleClose = (destination = '/') => {
     this.setState({ open: false })
     setTimeout(() => {
-      window.location.hash = '/'
+      window.location.hash = destination
     }, 250)
   }
 

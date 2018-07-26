@@ -130,9 +130,10 @@ class WizardConfigureGeneric extends React.Component {
 
   /**
   * Handles the user pressing next
+  * @param openSettings: set to true to open settings on close
   * @return true if it validated correctly
   */
-  handleFinish = () => {
+  handleFinish = (openSettings) => {
     const {
       serviceId,
       onRequestCancel
@@ -154,7 +155,11 @@ class WizardConfigureGeneric extends React.Component {
 
     accountActions.reduceMailbox(mailboxId, MailboxReducer.setDefaultWindowOpenMode, defaultWindowOpenMode)
 
-    onRequestCancel()
+    if (openSettings) {
+      onRequestCancel(`/settings/accounts/${mailboxId}`)
+    } else {
+      onRequestCancel()
+    }
     return true
   }
 
@@ -174,20 +179,14 @@ class WizardConfigureGeneric extends React.Component {
       hasNavigationToolbar,
       restoreLastUrl,
       displayName,
-      displayNameError,
-      mailboxId
+      displayNameError
     } = this.state
 
     const buttons = (
       <div>
         <Button
           className={classes.footerButton}
-          onClick={() => {
-            const validated = this.handleFinish()
-            if (validated) {
-              window.location.hash = `/settings/accounts/${mailboxId}`
-            }
-          }}>
+          onClick={() => this.handleFinish(true)}>
           Account Settings
         </Button>
         <Button
@@ -198,7 +197,7 @@ class WizardConfigureGeneric extends React.Component {
         <Button
           variant='raised'
           color='primary'
-          onClick={() => this.handleFinish()}>
+          onClick={() => this.handleFinish(false)}>
           Finish
         </Button>
       </div>
@@ -221,12 +220,7 @@ class WizardConfigureGeneric extends React.Component {
           value={displayName}
           error={!!displayNameError}
           helperText={displayNameError}
-          onChange={(evt) => this.setState({ displayName: evt.target.value })}
-          onKeyDown={(evt) => {
-            if (evt.keyCode === 13) {
-              this.urlInputRef.focus()
-            }
-          }} />
+          onChange={(evt) => this.setState({ displayName: evt.target.value })} />
         <FormControl fullWidth margin='normal'>
           <InputLabel>Open new windows in which Browser</InputLabel>
           <Select
