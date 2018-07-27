@@ -329,15 +329,21 @@ class CoreAccountStore extends RemoteStore {
           })
       )
 
-      const components = [
-        serviceWithServiceDisplayName
-          ? serviceWithServiceDisplayName.serviceDisplayName
-          : undefined,
-        mailbox.allServiceCount > 1
-          ? `${mailbox.allServiceCount} services`
-          : undefined
-      ].filter((c) => !!c)
-      return components.join(' - ')
+      if (mailbox.hasMultipleServices) {
+        const components = [
+          serviceWithServiceDisplayName
+            ? serviceWithServiceDisplayName.serviceDisplayName
+            : undefined,
+          `${mailbox.allServiceCount} services`
+        ].filter((c) => !!c)
+        return components.join(' - ')
+      } else {
+        if (serviceWithServiceDisplayName) {
+          return serviceWithServiceDisplayName.serviceDisplayName
+        } else {
+          return this.resolvedServiceDisplayName(mailbox.allServices[0], undefined)
+        }
+      }
     }
 
     /**
@@ -354,7 +360,7 @@ class CoreAccountStore extends RemoteStore {
         return [
           this.resolvedMailboxBaseDisplayName(mailboxId, defaultValue),
           this.resolvedMailboxExtendedDisplayName(mailboxId)
-        ].join(' - ')
+        ].filter((c) => !!c).join(' : ')
       } else {
         return this.resolvedMailboxBaseDisplayName(mailboxId, defaultValue)
       }
