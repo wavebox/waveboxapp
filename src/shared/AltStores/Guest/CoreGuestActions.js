@@ -76,6 +76,19 @@ class CoreGuestActions extends RemoteActions {
       return this.remoteDispatch('deferPermission', args)
     }
   }
+
+  /**
+  * Clears all permissions on a site
+  * @param site: the site
+  */
+  clearSitePermissions (...args) {
+    if (process.type === 'browser') {
+      const [site] = args
+      return { site }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('clearSitePermissions', args)
+    }
+  }
 }
 
 export default CoreGuestActions

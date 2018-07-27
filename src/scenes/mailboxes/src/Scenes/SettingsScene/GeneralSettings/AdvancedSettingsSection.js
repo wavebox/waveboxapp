@@ -167,12 +167,15 @@ class AdvancedSettingsSection extends React.Component {
           }}
           checked={app.enableWindowOpeningEngine} />
         <SettingsListItemButton
-          divider={false}
           label='Main Window Custom CSS'
           icon={<CodeIcon />}
           onClick={() => {
             this.setState({ customCSSEditorOpen: true })
           }} />
+        <SettingsListItemButton
+          divider={false}
+          label='Site permissions'
+          onClick={() => { window.location.hash = '/site_permissions' }} />
         <CustomStylesEditingDialog
           title='Main Window Custom CSS'
           open={customCSSEditorOpen}

@@ -19,7 +19,8 @@ class GuestStore extends CoreGuestStore {
     this.bindActions({
       handleGrantPermission: actions.GRANT_PERMISSION,
       handleDenyPermission: actions.DENY_PERMISSION,
-      handleDeferPermission: actions.DEFER_PERMISSION
+      handleDeferPermission: actions.DEFER_PERMISSION,
+      handleClearSitePermissions: actions.CLEAR_SITE_PERMISSIONS
     })
   }
 
@@ -82,6 +83,10 @@ class GuestStore extends CoreGuestStore {
       ...this.getPermissionRec(site),
       [type]: undefined
     })
+  }
+
+  handleClearSitePermissions ({ site }) {
+    this.savePermission(site, null)
   }
 }
 

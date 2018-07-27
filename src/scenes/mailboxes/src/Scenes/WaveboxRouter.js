@@ -21,6 +21,7 @@ import {
   AccountWizardAddScene
 } from './AccountWizardScene'
 import SettingsScene from './SettingsScene'
+import SitePermissionsScene from './SitePermissionsScene'
 import MailboxServiceDeleteScene from './MailboxServiceDeleteScene'
 import MailboxDeleteScene from './MailboxDeleteScene'
 import NotificationPanel from './NotificationPanel'
@@ -61,6 +62,7 @@ export default class WaveboxRouter extends React.Component {
 
           <WaveboxRouterErrorBoundary>
             <Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
+            <Route path='/site_permissions' component={SitePermissionsScene} />
             <Route path='/dictionary_installer' component={DictionaryInstallerScene} />
 
             <Route path='/mailbox_wizard/add/:mailboxId?' component={AccountWizardAddScene} />

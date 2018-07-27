@@ -8,6 +8,7 @@ import {userStore, userActions} from 'stores/user'
 import {emblinkStore, emblinkActions} from 'stores/emblink'
 import {crextensionStore, crextensionActions} from 'stores/crextension'
 import {platformStore, platformActions} from 'stores/platform'
+import {guestStore, guestActions} from 'stores/guest'
 import {notifhistStore, notifhistActions} from 'stores/notifhist'
 import Debug from 'Debug'
 import MouseNavigationDarwin from 'wbui/MouseNavigationDarwin'
@@ -60,6 +61,8 @@ emblinkStore.getState()
 emblinkActions.load()
 notifhistStore.getState()
 notifhistActions.load()
+guestStore.getState()
+guestActions.load()
 
 // Setup the updaters
 userActions.startAutoUpdateExtensions()

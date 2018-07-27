@@ -41,6 +41,13 @@ class CoreGuestStore extends RemoteStore {
       }
     }
 
+    /**
+    * @return a list of all known sites
+    */
+    this.getPermissionSites = () => {
+      return Array.from(this._permissions_.keys())
+    }
+
     /* ****************************************/
     // Actions
     /* ****************************************/
