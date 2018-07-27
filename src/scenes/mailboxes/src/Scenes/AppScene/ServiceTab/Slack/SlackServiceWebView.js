@@ -36,7 +36,7 @@ export default class SlackServiceWebView extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId || this.props.serviceId !== nextProps.serviceId) {
-      this.setState(this.generateState(nextProps))
+      this.setState(this.generateState(nextProps.serviceId, accountStore.getState()))
     }
   }
 
@@ -44,19 +44,19 @@ export default class SlackServiceWebView extends React.Component {
   // Data lifecycle
   /* **************************************************************************/
 
-  state = this.generateState(this.props)
+  state = this.generateState(this.props.serviceId, accountStore.getState())
 
   /**
   * Generates the state from the given props
-  * @param props: the props to use
+  * @param serviceId: the id of the service
+  * @param accountState: the current account state
   * @return state object
   */
-  generateState (props) {
-    const { serviceId } = props
-    const accountState = accountStore.getState()
+  generateState (serviceId, accountState) {
     const service = accountState.getService(serviceId)
     const serviceData = accountState.getServiceData(serviceId)
     const serviceAuth = accountState.getMailboxAuthForServiceId(serviceId)
+
     return {
       ...(service && serviceData && serviceAuth ? {
         authTeamId: serviceAuth.authTeamId,
@@ -73,7 +73,7 @@ export default class SlackServiceWebView extends React.Component {
   }
 
   accountUpdated = (accountState) => {
-    this.setState(this.generateState(accountState, this.props))
+    this.setState(this.generateState(this.props.serviceId, accountState))
   }
 
   /* **************************************************************************/
