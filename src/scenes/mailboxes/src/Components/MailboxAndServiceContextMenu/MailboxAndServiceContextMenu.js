@@ -22,6 +22,7 @@ import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import ServiceSidebarIcon from './ServiceSidebarIcon'
 import ServiceToolbarStartIcon from './ServiceToolbarStartIcon'
 import ServiceToolbarEndIcon from './ServiceToolbarEndIcon'
+import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye'
 import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
 
 export default class MailboxAndServiceContextMenu extends React.Component {
@@ -282,6 +283,13 @@ export default class MailboxAndServiceContextMenu extends React.Component {
     })
   }
 
+  handleShowFirstSidebarService = (evt) => {
+    const { mailboxId } = this.props
+    this.closePopover(evt, () => {
+      accountActions.reduceMailbox(mailboxId, MailboxReducer.setCollapseFirstSidebarService, false)
+    })
+  }
+
   handleMoveAllServicesToSidebar = (evt) => {
     const { mailboxId } = this.props
     this.closePopover(evt, () => {
@@ -437,6 +445,13 @@ export default class MailboxAndServiceContextMenu extends React.Component {
             ) : undefined}
           </span>
         ) : undefined}
+        {!service && mailbox.hasMultipleServices && mailbox.collapseFirstSidebarService ? (
+          <MenuItem onClick={this.handleShowFirstSidebarService}>
+            <ListItemIcon><RemoveRedEyeIcon /></ListItemIcon>
+            <ListItemText inset primary='Show the first sidebar service' />
+          </MenuItem>
+        ) : undefined}
+
         {mailbox.artificiallyPersistCookies ? (
           <MenuItem onClick={this.handleClearBrowserSession}>
             <ListItemIcon><LayersClearIcon /></ListItemIcon>

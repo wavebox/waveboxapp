@@ -86,9 +86,18 @@ class ACMailbox extends CoreACModel {
 
     // Concat these in a visual way that makes sense in the UI
     if (priority === SERVICE_UI_PRIORITY.TOOLBAR) {
-      return [].concat(this.toolbarStartServices, this.toolbarEndServices, this.sidebarServices)
+      return [].concat(
+        this.collapseFirstSidebarService ? this.sidebarServices.slice(0, 1) : [],
+        this.toolbarStartServices,
+        this.toolbarEndServices,
+        this.collapseFirstSidebarService ? this.sidebarServices.slice(1) : this.sidebarServices
+      )
     } else { // SIDEBAR
-      return [].concat(this.sidebarServices, this.toolbarStartServices, this.toolbarEndServices)
+      return [].concat(
+        this.sidebarServices,
+        this.toolbarStartServices,
+        this.toolbarEndServices
+      )
     }
   }
   get allServiceCount () {
@@ -183,6 +192,7 @@ class ACMailbox extends CoreACModel {
   get color () { return this._value_('color', undefined) }
   get showAvatarColorRing () { return this._value_('showAvatarColorRing', true) }
   get collapseSidebarServices () { return this._value_('collapseSidebarServices', false) }
+  get collapseFirstSidebarService () { return this._value_('collapseFirstSidebarService', false) }
   get showSleepableServiceIndicator () { return this._value_('showSleepableServiceIndicator', true) }
   get navigationBarUiLocation () { return this._value_('navigationBarUiLocation', NAVIGATION_BAR_UI_LOCATIONS.AUTO) }
 

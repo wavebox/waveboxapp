@@ -112,6 +112,7 @@ class MailboxAppearanceSettings extends React.Component {
         navigationBarUiLocation: mailbox.navigationBarUiLocation,
         mailboxAvatar: accountState.getAvatar(mailbox.avatarId),
         mailboxCollapseSidebarServices: mailbox.collapseSidebarServices,
+        mailboxCollapseFirstSidebarService: mailbox.collapseFirstSidebarService,
         mailboxServiceUiPriority: mailbox.serviceUiPriority,
         mailboxShowExtendedDispayName: mailbox.showExtendedDispayName
       } : {
@@ -123,6 +124,7 @@ class MailboxAppearanceSettings extends React.Component {
         navigationBarUiLocation: ACMailbox.NAVIGATION_BAR_UI_LOCATIONS.AUTO,
         mailboxAvatar: undefined,
         mailboxCollapseSidebarServices: false,
+        mailboxCollapseFirstSidebarService: false,
         mailboxServiceUiPriority: ACMailbox.SERVICE_UI_PRIORITY.TOOLBAR,
         mailboxShowExtendedDispayName: true
       })
@@ -151,6 +153,7 @@ class MailboxAppearanceSettings extends React.Component {
       navigationBarUiLocation,
       mailboxAvatar,
       mailboxCollapseSidebarServices,
+      mailboxCollapseFirstSidebarService,
       mailboxServiceUiPriority,
       mailboxShowExtendedDispayName,
       resolvedMailboxFullName
@@ -249,6 +252,12 @@ class MailboxAppearanceSettings extends React.Component {
               accountActions.reduceMailbox(mailboxId, MailboxReducer.setCollapseSidebarServices, toggled)
             }}
             checked={mailboxCollapseSidebarServices} />
+          <SettingsListItemSwitch
+            label='Hide the first sidebar service (Experimental)'
+            onChange={(evt, toggled) => {
+              accountActions.reduceMailbox(mailboxId, MailboxReducer.setCollapseFirstSidebarService, toggled)
+            }}
+            checked={mailboxCollapseFirstSidebarService} />
           <SettingsListItemSelect
             divider={false}
             label='Service layout priority'

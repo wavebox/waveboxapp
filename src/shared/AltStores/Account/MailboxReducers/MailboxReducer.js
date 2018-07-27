@@ -74,6 +74,15 @@ class MailboxReducer {
   }
 
   /**
+  * Sets whether to collapse the first sidebar service
+  * @param mailbox: the mailbox to update
+  * @param collapse: true to collapse, false otherwise
+  */
+  static setCollapseFirstSidebarService (mailbox, collapse) {
+    return mailbox.changeData({ collapseFirstSidebarService: collapse })
+  }
+
+  /**
   * Sets if services should show when they are sleeping
   * @param mailbox: the mailbox to update
   * @param show: true to show, false otherwise

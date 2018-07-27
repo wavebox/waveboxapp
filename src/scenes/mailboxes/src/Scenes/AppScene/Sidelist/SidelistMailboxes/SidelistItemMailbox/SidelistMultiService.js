@@ -102,10 +102,16 @@ class SidelistItemMultiService extends React.Component {
   * @param evt: the event that fired
   */
   handleClick = (evt) => {
+    const { mailboxId } = this.props
+    const { mailbox } = this.state
     if (evt.metaKey) {
-      window.location.hash = `/settings/accounts/${this.props.mailbox.id}`
+      window.location.hash = `/settings/accounts/${mailboxId}`
     } else {
-      accountActions.changeActiveMailbox(this.props.mailboxId)
+      if (mailbox.collapseFirstSidebarService && mailbox.sidebarServices.length) {
+        accountActions.changeActiveMailbox(mailboxId, true)
+      } else {
+        accountActions.changeActiveMailbox(mailboxId)
+      }
     }
   }
 
