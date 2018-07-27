@@ -53,7 +53,6 @@ class AdvancedSettingsSection extends React.Component {
         'enableMixedSandboxMode',
         'enableUseZoomForDSF',
         'disableSmoothScrolling',
-        'enableGeolocationApi',
         'enableAutofillService',
         'enableWindowOpeningEngine',
         'enableMouseNavigationDarwin'
@@ -137,10 +136,6 @@ class AdvancedSettingsSection extends React.Component {
             }}
             checked={app.enableMouseNavigationDarwin} />
         ) : undefined}
-        <SettingsListItemSwitch
-          label='Geolocation API'
-          onChange={(evt, toggled) => { settingsActions.sub.app.setEnableGeolocationApi(toggled) }}
-          checked={app.enableGeolocationApi} />
         {DistributionConfig.isSnapInstall ? undefined : (
           <SettingsListItemSwitch
             label='Autofill passwords on right click'

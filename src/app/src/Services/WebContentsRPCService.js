@@ -1,4 +1,4 @@
-import { app, ipcMain, BrowserWindow, dialog } from 'electron'
+import { app, ipcMain, BrowserWindow, dialog, webContents } from 'electron'
 import { ElectronWebContents } from 'ElectronTools'
 import { settingsStore } from 'stores/settings'
 import { CRExtensionManager } from 'Extensions/Chrome'
@@ -6,13 +6,16 @@ import { ELEVATED_LOG_PREFIX } from 'shared/constants'
 import {
   WCRPC_DOM_READY,
   WCRPC_DID_FRAME_FINISH_LOAD,
+  WCRPC_PERMISSION_REQUESTS_CHANGED,
   WCRPC_CLOSE_WINDOW,
   WCRPC_SEND_INPUT_EVENT,
   WCRPC_SEND_INPUT_EVENTS,
   WCRPC_SHOW_ASYNC_MESSAGE_DIALOG,
   WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG,
-  WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG
+  WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG,
+  WCRPC_RESOLVE_PERMISSION_REQUEST
 } from 'shared/webContentsRPC'
+import { PermissionManager } from 'Permissions'
 
 const privConnected = Symbol('privConnected')
 const privNotificationService = Symbol('privNotificationService')
@@ -30,13 +33,16 @@ class WebContentsRPCService {
 
     this[privConnected] = new Set()
 
+    PermissionManager.on('unresolved-permission-requests-changed', this._handleUnresolvedPermissionRequestChanged)
     app.on('web-contents-created', this._handleWebContentsCreated)
+
     ipcMain.on(WCRPC_CLOSE_WINDOW, this._handleCloseWindow)
     ipcMain.on(WCRPC_SEND_INPUT_EVENT, this._handleSendInputEvent)
     ipcMain.on(WCRPC_SEND_INPUT_EVENTS, this._handleSendInputEvents)
     ipcMain.on(WCRPC_SHOW_ASYNC_MESSAGE_DIALOG, this._handleShowAsyncMessageDialog)
     ipcMain.on(WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG, this._handleSyncGetGuestPreloadInfo)
     ipcMain.on(WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG, this._handleSyncGetExtensionPreloadInfo)
+    ipcMain.on(WCRPC_RESOLVE_PERMISSION_REQUEST, this._handleResolvePermissionRequest)
   }
 
   /* ****************************************************************************/
@@ -110,6 +116,23 @@ class WebContentsRPCService {
     if (choice === 0) {
       evt.preventDefault()
     }
+  }
+
+  /* ****************************************************************************/
+  // Permission events
+  /* ****************************************************************************/
+
+  /**
+  * Handles the set of unresolved permission request handlers changing
+  * @param wcId: the id of the webcontents the permissions changed for
+  * @param pending: the list of pending requests
+  */
+  _handleUnresolvedPermissionRequestChanged (wcId, pending) {
+    const wc = webContents.fromId(wcId)
+    if (!wc || wc.isDestroyed()) { return }
+    if (!wc.hostWebContents) { return }
+
+    wc.hostWebContents.send(WCRPC_PERMISSION_REQUESTS_CHANGED, wcId, pending)
   }
 
   /* ****************************************************************************/
@@ -216,6 +239,14 @@ class WebContentsRPCService {
       console.error(`Failed to respond to "${WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG}" continuing with unknown side effects`, ex)
       evt.returnValue = null
     }
+  }
+
+  /**
+  * Handles the resolution of a permission request
+  * @param evt: the event that fired
+  */
+  _handleResolvePermissionRequest = (evt, wcId, type, permission) => {
+    PermissionManager.resolvePermissionRequest(wcId, type, permission)
   }
 }
 

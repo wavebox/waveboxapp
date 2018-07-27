@@ -11,6 +11,7 @@ import { accountStore, accountActions } from 'stores/account'
 import { userStore, userActions } from 'stores/user'
 import { emblinkStore, emblinkActions } from 'stores/emblink'
 import { notifhistStore, notifhistActions } from 'stores/notifhist'
+import { guestStore, guestActions } from 'stores/guest'
 import ipcEvents from 'shared/ipcEvents'
 import BasicHTTPAuthHandler from '../BasicHTTPAuthHandler'
 import { CRExtensionManager } from 'Extensions/Chrome'
@@ -108,6 +109,8 @@ class WaveboxApp {
     emblinkActions.load()
     notifhistStore.getState()
     notifhistActions.load()
+    guestStore.getState()
+    guestActions.load()
 
     // Component behaviour
     this[privCloseBehaviour] = new WaveboxAppCloseBehaviour()

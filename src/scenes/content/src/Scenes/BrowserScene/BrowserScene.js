@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import BrowserView from 'wbui/Guest/BrowserView'
-import BrowserTargetUrl from './BrowserTargetUrl'
 import BrowserSearch from './BrowserSearch'
 import BrowserToolbar from './BrowserToolbar'
 import { browserActions, browserStore } from 'stores/browser'
@@ -11,6 +10,9 @@ import MouseNavigationDarwin from 'wbui/MouseNavigationDarwin'
 import Resolver from 'Runtime/Resolver'
 import { remote } from 'electron'
 import { withStyles } from '@material-ui/core/styles'
+import BrowserViewLoadBar from 'wbui/Guest/BrowserViewLoadBar'
+import BrowserViewTargetUrl from 'wbui/Guest/BrowserViewTargetUrl'
+import BrowserViewPermissionRequests from 'wbui/Guest/BrowserViewPermissionRequests'
 
 const SEARCH_REF = 'search'
 const BROWSER_REF = 'browser'
@@ -88,7 +90,11 @@ class BrowserScene extends React.Component {
     return {
       isSearching: browserState.isSearching,
       searchTerm: browserState.searchTerm,
-      searchNextHash: browserState.searchNextHash
+      searchNextHash: browserState.searchNextHash,
+      targetUrl: browserState.targetUrl,
+      isLoading: browserState.isLoading,
+      permissionRequests: [],
+      permissionRequestsUrl: undefined
     }
   })()
 
@@ -96,7 +102,9 @@ class BrowserScene extends React.Component {
     this.setState({
       isSearching: browserState.isSearching,
       searchTerm: browserState.searchTerm,
-      searchNextHash: browserState.searchNextHash
+      searchNextHash: browserState.searchNextHash,
+      targetUrl: browserState.targetUrl,
+      isLoading: browserState.isLoading
     })
   }
 
@@ -127,11 +135,33 @@ class BrowserScene extends React.Component {
   }
 
   /**
+  * Handles the permission requests changing
+  * @param evt: the event that fired
+  */
+  handlePermissionRequestsChanged = (evt) => {
+    this.setState({
+      permissionRequests: evt.pending,
+      permissionRequestsUrl: evt.url
+    })
+  }
+
+  /**
   * Handles closing the guest requesting the ipc window closure
   * @param evt: the event that fired
   */
   handleClose = (evt) => {
     remote.getCurrentWindow().close()
+  }
+
+  /**
+  * Handles a permission being resolved
+  * @param type: the permission type
+  * @param permission: the resolved permission
+  */
+  handleResolvePermission = (type, permission) => {
+    if (this.refs[BROWSER_REF]) {
+      this.refs[BROWSER_REF].resolvePermissionRequest(type, permission)
+    }
   }
 
   /* **************************************************************************/
@@ -154,8 +184,20 @@ class BrowserScene extends React.Component {
   }
 
   render () {
-    const { url, partition, classes } = this.props
-    const { isSearching, searchTerm, searchNextHash } = this.state
+    const {
+      url,
+      partition,
+      classes
+    } = this.props
+    const {
+      isSearching,
+      searchTerm,
+      targetUrl,
+      isLoading,
+      searchNextHash,
+      permissionRequests,
+      permissionRequestsUrl
+    } = this.state
 
     const preloadScripts = [
       Resolver.guestPreload(),
@@ -191,12 +233,18 @@ class BrowserScene extends React.Component {
             ipcMessage={this.handleBrowserIPCMessage}
             willNavigate={this.navigationStateDidChange}
             didNavigate={this.navigationStateDidChange}
+            onPermissionRequestsChanged={this.handlePermissionRequestsChanged}
             didNavigateInPage={(evt) => {
               if (evt.isMainFrame) { this.navigationStateDidChange(evt) }
             }} />
+          <BrowserViewLoadBar isLoading={isLoading} />
+          <BrowserViewTargetUrl url={targetUrl} />
+          <BrowserViewPermissionRequests
+            permissionRequests={permissionRequests}
+            url={permissionRequestsUrl}
+            onResolvePermission={this.handleResolvePermission} />
+          <BrowserSearch ref={SEARCH_REF} />
         </div>
-        <BrowserTargetUrl />
-        <BrowserSearch ref={SEARCH_REF} />
       </div>
     )
   }

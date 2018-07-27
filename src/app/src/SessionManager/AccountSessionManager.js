@@ -1,12 +1,12 @@
 import {session, app} from 'electron'
 import {EventEmitter} from 'events'
-import {settingsStore} from 'stores/settings'
 import {
   ARTIFICIAL_COOKIE_PERSIST_WAIT,
   ARTIFICIAL_COOKIE_PERSIST_PERIOD
 } from 'shared/constants'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { DownloadManager } from 'Download'
+import { PermissionManager } from 'Permissions'
 import SessionManager from './SessionManager'
 
 const privManaged = Symbol('privManaged')
@@ -123,6 +123,7 @@ class AccountSessionManager extends EventEmitter {
     const ses = session.fromPartition(partitionId)
     SessionManager.destroyWebRequestEmitterFromSession(ses)
     DownloadManager.teardownUserDownloadHandlerForPartition(partitionId)
+    PermissionManager.teardownPermissionHandler(partitionId)
     this[privManaged].delete(partitionId)
 
     setTimeout(() => {
@@ -159,7 +160,7 @@ class AccountSessionManager extends EventEmitter {
     DownloadManager.setupUserDownloadHandlerForPartition(partitionId)
 
     // Permissions & env
-    ses.setPermissionRequestHandler(this._handlePermissionRequest)
+    PermissionManager.setupPermissionHandler(partitionId)
 
     // UA
     if (useCustomUserAgent && customUserAgentString) {
@@ -216,26 +217,6 @@ class AccountSessionManager extends EventEmitter {
 
     this[privManaged].add(partitionId)
     this.emit('session-managed', ses)
-  }
-
-  /* ****************************************************************************/
-  // Permissions
-  /* ****************************************************************************/
-
-  /**
-  * Handles a request for a permission from the client
-  * @param webContents: the webcontents the request came from
-  * @param permission: the permission name
-  * @param fn: execute with response
-  */
-  _handlePermissionRequest (webContents, permission, fn) {
-    if (permission === 'notifications') {
-      fn(false)
-    } else if (permission === 'geolocation') {
-      fn(settingsStore.getState().app.enableGeolocationApi)
-    } else {
-      fn(true)
-    }
   }
 
   /* ****************************************************************************/

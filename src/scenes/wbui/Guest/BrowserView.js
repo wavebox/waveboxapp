@@ -3,8 +3,14 @@ import PropTypes from 'prop-types'
 import WebView from './WebView'
 import shallowCompare from 'react-addons-shallow-compare'
 import uuid from 'uuid'
+import { ipcRenderer } from 'electron'
+import {
+  WCRPC_PERMISSION_REQUESTS_CHANGED,
+  WCRPC_RESOLVE_PERMISSION_REQUEST
+} from 'shared/webContentsRPC'
 
 const WEBVIEW_REF = 'webview'
+const privPermissionRequests = Symbol('privPermissionRequests')
 
 export default class BrowserView extends React.Component {
   /* **************************************************************************/
@@ -14,7 +20,8 @@ export default class BrowserView extends React.Component {
   static propTypes = {
     ...WebView.propTypes,
     searchId: PropTypes.any.isRequired,
-    searchTerm: PropTypes.string
+    searchTerm: PropTypes.string,
+    onPermissionRequestsChanged: PropTypes.func
   }
   static defaultProps = {
     searchId: `${Math.random()}`
@@ -29,6 +36,8 @@ export default class BrowserView extends React.Component {
   constructor (props) {
     super(props)
 
+    this[privPermissionRequests] = []
+
     // Expose the pass-through methods
     const self = this
     this.constructor.WEBVIEW_METHODS.forEach((m) => {
@@ -40,11 +49,43 @@ export default class BrowserView extends React.Component {
   }
 
   /* **************************************************************************/
+  // Component lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    ipcRenderer.on(WCRPC_PERMISSION_REQUESTS_CHANGED, this.handlePermisionRequestsChanged)
+  }
+
+  componentWillUnmount () {
+    ipcRenderer.removeListener(WCRPC_PERMISSION_REQUESTS_CHANGED, this.handlePermisionRequestsChanged)
+  }
+
+  /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
   state = {
     webViewInstanceKey: uuid.v4()
+  }
+
+  /* **************************************************************************/
+  // RPC Events
+  /* **************************************************************************/
+
+  handlePermisionRequestsChanged = (evt, webContentsId, pending) => {
+    const webviewWC = this.refs[WEBVIEW_REF]
+      ? this.refs[WEBVIEW_REF].getWebContents()
+      : undefined
+    if (webviewWC && webviewWC.id === webContentsId) {
+      this[privPermissionRequests] = pending
+
+      if (this.props.onPermissionRequestsChanged) {
+        this.props.onPermissionRequestsChanged({
+          pending: pending,
+          url: webviewWC.getURL()
+        })
+      }
+    }
   }
 
   /* **************************************************************************/
@@ -59,6 +100,21 @@ export default class BrowserView extends React.Component {
     this.setState({
       webViewInstanceKey: uuid.v4()
     })
+  }
+
+  /**
+  * Resolves a permission request
+  * @param type: the permission type
+  * @param permission: the permission mode
+  */
+  resolvePermissionRequest = (type, permission) => {
+    const webviewWC = this.refs[WEBVIEW_REF]
+      ? this.refs[WEBVIEW_REF].getWebContents()
+      : undefined
+
+    if (webviewWC) {
+      ipcRenderer.send(WCRPC_RESOLVE_PERMISSION_REQUEST, webviewWC.id, type, permission)
+    }
   }
 
   /* **************************************************************************/

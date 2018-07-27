@@ -117,14 +117,6 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
-  * Sets whether geolocation api requests are granted or not
-  * @param enabled: true to enable, false to disable
-  */
-  setEnableGeolocationApi (enabled) {
-    this.dispatchUpdate('enableGeolocationApi', enabled)
-  }
-
-  /**
   * Sets whether the metrics log should be written
   * @param write: true to write the log
   */

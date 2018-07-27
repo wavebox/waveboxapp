@@ -56,6 +56,7 @@ module.exports = function (env) {
         ElectronTools: path.resolve(path.join(__dirname, 'src/ElectronTools')),
         Extensions: path.resolve(path.join(__dirname, 'src/Extensions')),
         Notifications: path.resolve(path.join(__dirname, 'src/Notifications')),
+        Permissions: path.resolve(path.join(__dirname, 'src/Permissions')),
         Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
         SessionManager: path.resolve(path.join(__dirname, 'src/SessionManager')),
         Storage: path.resolve(path.join(__dirname, 'src/Storage')),

@@ -31,7 +31,7 @@ const styles = (theme) => ({
 })
 
 @withStyles(styles, { withTheme: true })
-class ServiceLoadBar extends React.Component {
+class BrowserViewLoadBar extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -63,4 +63,4 @@ class ServiceLoadBar extends React.Component {
   }
 }
 
-export default ServiceLoadBar
+export default BrowserViewLoadBar

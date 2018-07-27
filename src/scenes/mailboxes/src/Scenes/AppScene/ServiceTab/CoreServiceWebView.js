@@ -5,9 +5,10 @@ import { accountStore, accountActions, accountDispatch } from 'stores/account'
 import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 import ServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/ServiceDataReducer'
 import BrowserView from 'wbui/Guest/BrowserView'
+import BrowserViewLoadBar from 'wbui/Guest/BrowserViewLoadBar'
+import BrowserViewTargetUrl from 'wbui/Guest/BrowserViewTargetUrl'
+import BrowserViewPermissionRequests from 'wbui/Guest/BrowserViewPermissionRequests'
 import ServiceSearch from './ServiceSearch'
-import ServiceTargetUrl from './ServiceTargetUrl'
-import ServiceLoadBar from './ServiceLoadBar'
 import shallowCompare from 'react-addons-shallow-compare'
 import CoreACService from 'shared/Models/ACAccounts/CoreACService'
 import { URL } from 'url'
@@ -222,6 +223,8 @@ class CoreServiceWebView extends React.Component {
       isLoading: false,
       isCrashed: false,
       focusedUrl: null,
+      permissionRequests: [],
+      permissionRequestsUrl: undefined,
       snapshot: accountState.getSnapshot(serviceId),
       isActive: accountState.activeServiceId() === serviceId,
       isSearching: accountState.isSearchingService(serviceId),
@@ -308,6 +311,17 @@ class CoreServiceWebView extends React.Component {
       ServiceReducer.setSleepable,
       false
     )
+  }
+
+  /**
+  * Handles a permission being resolved
+  * @param type: the permission type
+  * @param permission: the resolved permission
+  */
+  handleResolvePermission = (type, permission) => {
+    if (this.refs[BROWSER_REF]) {
+      this.refs[BROWSER_REF].resolvePermissionRequest(type, permission)
+    }
   }
 
   /* **************************************************************************/
@@ -608,6 +622,16 @@ class CoreServiceWebView extends React.Component {
     this.setState({ isCrashed: true })
   }
 
+  /**
+  * Handles the pending permission requests changing
+  */
+  handlePermissionRequestsChanged = (evt) => {
+    this.setState({
+      permissionRequests: evt.pending,
+      permissionRequestsUrl: evt.url
+    })
+  }
+
   /* **************************************************************************/
   // Browser Events : Navigation
   /* **************************************************************************/
@@ -685,7 +709,9 @@ class CoreServiceWebView extends React.Component {
       snapshot,
       isolateMailboxProcesses,
       serviceAuthInvalid,
-      authDataId
+      authDataId,
+      permissionRequests,
+      permissionRequestsUrl
     } = this.state
 
     if (!mailbox || !service) { return false }
@@ -799,6 +825,9 @@ class CoreServiceWebView extends React.Component {
             didStopLoading={(evt) => {
               this.multiCallBrowserEvent([this.handleDidStopLoading, webviewEventProps.handleDidStopLoading], [evt])
             }}
+            onPermissionRequestsChanged={(evt) => {
+              this.multiCallBrowserEvent([this.handlePermissionRequestsChanged, webviewEventProps.handlePermissionRequestsChanged], [evt])
+            }}
           />
         </div>
         {initialLoadDone || !snapshot ? undefined : (
@@ -817,8 +846,12 @@ class CoreServiceWebView extends React.Component {
             ) : undefined}
           </div>
         ) : undefined}
-        <ServiceLoadBar isLoading={isLoading} />
-        <ServiceTargetUrl url={focusedUrl} />
+        <BrowserViewLoadBar isLoading={isLoading} />
+        <BrowserViewTargetUrl url={focusedUrl} />
+        <BrowserViewPermissionRequests
+          permissionRequests={permissionRequests}
+          url={permissionRequestsUrl}
+          onResolvePermission={this.handleResolvePermission} />
         {hasSearch ? (
           <ServiceSearch mailboxId={mailbox.id} serviceId={serviceId} />
         ) : undefined}

@@ -31,7 +31,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class ServiceTargetUrl extends React.Component {
+class BrowserViewTargetUrl extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -55,4 +55,4 @@ class ServiceTargetUrl extends React.Component {
   }
 }
 
-export default ServiceTargetUrl
+export default BrowserViewTargetUrl
