@@ -62,9 +62,14 @@ class AuthReducer {
   * Sets the auth data
   * @param auth: the auth object
   * @param data: the new auth data
+  * @param makeValid=true: true to make the auth data valid at the sametime
   */
   static setAuthData (auth, data) {
-    return auth.changeData({ authData: data })
+    return auth.changeData({
+      authData: data,
+      hasAuth: true,
+      isAuthInvalid: false
+    })
   }
 }
 
