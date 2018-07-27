@@ -38,32 +38,21 @@ class AppSceneToolbarButton extends React.Component {
       title,
       placement,
       children,
-      onClick,
-      onMouseEnter,
-      onMouseLeave
+      onClick
     } = this.props
     const { open } = this.state
 
     return (
       <Tooltip
         open={open}
-        disableFocusListener
-        disableHoverListener
-        disableTouchListener
+        onOpen={() => this.setState({ open: true })}
+        onClose={() => this.setState({ open: false })}
         title={title}
         placement={placement}>
         <IconButton
           onClick={(evt) => {
             this.setState({ open: false })
             if (onClick) { onClick(evt) }
-          }}
-          onMouseEnter={(evt) => {
-            this.setState({ open: true })
-            if (onMouseEnter) { onMouseEnter(evt) }
-          }}
-          onMouseLeave={(evt) => {
-            this.setState({ open: false })
-            if (onMouseLeave) { onMouseLeave(evt) }
           }}>
           {children}
         </IconButton>
