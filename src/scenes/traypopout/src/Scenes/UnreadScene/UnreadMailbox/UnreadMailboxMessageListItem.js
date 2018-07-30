@@ -54,7 +54,9 @@ const styles = {
     display: 'block',
     position: 'relative',
     width: 60,
+    minWidth: 60,
     height: 60,
+    minHeight: 60,
     left: -10,
     top: 5
   },
@@ -175,13 +177,13 @@ class UnreadMailboxMessageListItem extends React.Component {
   }
 
   render () {
-    const { message, classes, ...passProps } = this.props
+    const { message, classes, className, ...passProps } = this.props
     const { avatar } = this.state
 
     const extendedAvatar = this.renderAvatar(classes, message.extended)
 
     return (
-      <ListItem className={classes.listItem} button {...passProps}>
+      <ListItem className={classNames(classes.listItem, className)} button {...passProps}>
         <span className={classes.avatarContainer} data-tom>
           <ACAvatarCircle
             className={classNames(classes.serviceAvatar, !extendedAvatar ? classes.serviceAvatarNoExtended : undefined)}
@@ -193,7 +195,7 @@ class UnreadMailboxMessageListItem extends React.Component {
         <span>
           <span className={classes.primaryMessageText}>{message.text}</span>
           {message.extended ? (
-            <div style={styles.secondaryMessageText}>{message.extended.subtitle}</div>
+            <div className={classes.secondaryMessageText}>{message.extended.subtitle}</div>
           ) : undefined}
         </span>
       </ListItem>

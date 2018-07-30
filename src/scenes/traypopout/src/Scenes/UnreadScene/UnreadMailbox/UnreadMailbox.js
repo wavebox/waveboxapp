@@ -2,14 +2,16 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { accountStore, accountActions } from 'stores/account'
-import { emblinkActions } from 'stores/emblink'
-import { List, ListItem, Divider } from '@material-ui/core'
+import { List, Divider } from '@material-ui/core'
 import UnreadMailboxControlListItem from './UnreadMailboxControlListItem'
-import UnreadMailboxMessageListItem from './UnreadMailboxMessageListItem'
+import UnreadServiceListItem from './UnreadServiceListItem'
 import { ipcRenderer } from 'electron'
 import {
   WB_FOCUS_MAILBOXES_WINDOW
 } from 'shared/ipcEvents'
+import StyleMixins from 'wbui/Styles/StyleMixins'
+import { withStyles } from '@material-ui/core/styles'
+import classNames from 'classnames'
 
 const styles = {
   main: {
@@ -18,15 +20,17 @@ const styles = {
     left: 0,
     bottom: 0,
     right: 0,
-    overflowY: 'auto'
+    ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
   },
   list: {
     paddingTop: 0,
-    paddingBottom: 0
+    paddingBottom: 0,
+    backgroundColor: 'white'
   }
 }
 
-export default class UnreadMailbox extends React.Component {
+@withStyles(styles)
+class UnreadMailbox extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -75,11 +79,8 @@ export default class UnreadMailbox extends React.Component {
   * @return the mailbox state
   */
   generateAccountState (mailboxId, accountState = accountStore.getState()) {
-    const trayMessages = accountState.userTrayMessagesForMailbox(mailboxId)
-
     return {
-      messagesSignature: trayMessages.map((message) => message.id).join(':'),
-      messages: trayMessages
+      serviceIds: accountState.unrestrictedMailboxServiceIds(mailboxId)
     }
   }
 
@@ -96,53 +97,38 @@ export default class UnreadMailbox extends React.Component {
     accountActions.changeActiveMailbox(this.props.mailboxId)
   }
 
-  /**
-  * Handles opening a message
-  * @param evt: the event that fired
-  * @param message: the message to open
-  */
-  handleOpenMessage = (evt, message) => {
-    ipcRenderer.send(WB_FOCUS_MAILBOXES_WINDOW, {})
-    emblinkActions.openItem(message.data.serviceId, message.data)
-    accountActions.changeActiveService(message.data.serviceId)
-  }
-
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    if (this.state.messagesSignature !== nextState.messagesSignature) { return true }
-
-    return shallowCompare({ props: this.props, state: null }, nextProps, null)
+    return shallowCompare(this, nextProps, nextState)
   }
 
   render () {
-    const { requestShowMailboxList, mailboxId, style, ...passProps } = this.props
-    const { messages } = this.state
+    const { requestShowMailboxList, mailboxId, classes, className, ...passProps } = this.props
+    const { serviceIds } = this.state
 
     return (
-      <div style={{...styles.main, ...style}} {...passProps}>
-        <List style={styles.list}>
+      <div className={classNames(className, classes.main)} {...passProps}>
+        <List className={classes.list}>
           <UnreadMailboxControlListItem
             mailboxId={mailboxId}
             requestShowMailboxList={requestShowMailboxList}
             requestSwitchMailbox={this.handleRequestSwitchMailbox} />
           <Divider />
-          {messages.length ? (
-            messages.map((message, index) => {
-              return (
-                <UnreadMailboxMessageListItem
-                  key={`${message.id}:${index}`}
-                  message={message}
-                  onClick={(evt) => { this.handleOpenMessage(evt, message) }} />
-              )
-            })
-          ) : (
-            <ListItem>No Messages</ListItem>
-          )}
+          {serviceIds.map((serviceId) => {
+            return (
+              <UnreadServiceListItem
+                mailboxId={mailboxId}
+                serviceId={serviceId}
+                key={serviceId} />
+            )
+          })}
         </List>
       </div>
     )
   }
 }
+
+export default UnreadMailbox

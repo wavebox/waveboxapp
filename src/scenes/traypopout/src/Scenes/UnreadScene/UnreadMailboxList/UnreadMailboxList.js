@@ -6,6 +6,9 @@ import { List, Divider } from '@material-ui/core'
 import UnreadMailboxListItem from './UnreadMailboxListItem'
 import { WB_FOCUS_MAILBOXES_WINDOW } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
+import { withStyles } from '@material-ui/core/styles'
+import classNames from 'classnames'
+import StyleMixins from 'wbui/Styles/StyleMixins'
 
 const styles = {
   main: {
@@ -14,7 +17,7 @@ const styles = {
     left: 0,
     bottom: 0,
     right: 0,
-    overflowY: 'auto'
+    ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
   },
   list: {
     paddingTop: 0,
@@ -29,7 +32,8 @@ const styles = {
   }
 }
 
-export default class UnreadMailboxList extends React.Component {
+@withStyles(styles)
+class UnreadMailboxList extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -100,14 +104,14 @@ export default class UnreadMailboxList extends React.Component {
   }
 
   render () {
-    const { style, requestShowMailbox, ...passProps } = this.props
+    const { className, classes, requestShowMailbox, ...passProps } = this.props
     const { mailboxIds } = this.state
 
     return (
       <div
-        style={{...styles.main, ...style}}
+        className={classNames(classes.main, className)}
         {...passProps}>
-        <List style={styles.list}>
+        <List className={classes.list}>
           {mailboxIds.length ? (
             mailboxIds.reduce((acc, id, index, arr) => {
               return acc.concat([
@@ -121,10 +125,12 @@ export default class UnreadMailboxList extends React.Component {
               ])
             }, [])
           ) : (
-            <div style={styles.noneItem}>You haven't added any accounts yet</div>
+            <div className={classes.noneItem}>You haven't added any accounts yet</div>
           )}
         </List>
       </div>
     )
   }
 }
+
+export default UnreadMailboxList

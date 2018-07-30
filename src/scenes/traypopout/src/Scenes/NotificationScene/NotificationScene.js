@@ -10,18 +10,22 @@ import { ipcRenderer } from 'electron'
 import { WB_FOCUS_MAILBOXES_WINDOW } from 'shared/ipcEvents'
 import NotificationListItem from './NotificationListItem'
 import ErrorBoundary from 'wbui/ErrorBoundary'
+import { withStyles } from '@material-ui/core/styles'
+import classNames from 'classnames'
+import StyleMixins from 'wbui/Styles/StyleMixins'
 
 const MAIN_REF = 'MAIN'
 const INFINATE_REF = 'INFINATE'
 const LIST_ITEM_HEIGHT = 67
 
-const styles = { // Use styles here so some pass-through functions work
+const styles = {
   main: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0
+    bottom: 0,
+    ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
   },
   list: {
     padding: 0
@@ -31,7 +35,8 @@ const styles = { // Use styles here so some pass-through functions work
   }
 }
 
-export default class NotificationScene extends React.Component {
+@withStyles(styles)
+class NotificationScene extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
@@ -119,13 +124,13 @@ export default class NotificationScene extends React.Component {
   }
 
   render () {
-    const { style, ...passProps } = this.props
+    const { className, classes, ...passProps } = this.props
     const { notifications, containerHeight } = this.state
 
     return (
-      <div ref={MAIN_REF} style={{...styles.main, ...styles}} {...passProps}>
+      <div ref={MAIN_REF} className={classNames(className, classes.main)} {...passProps}>
         <ErrorBoundary>
-          <List style={styles.list}>
+          <List className={classes.list}>
             {containerHeight === 0 ? undefined : (
               <Infinate ref={INFINATE_REF} containerHeight={containerHeight} elementHeight={LIST_ITEM_HEIGHT}>
                 {notifications.map(({id, timestamp, notification}) => {
@@ -133,7 +138,7 @@ export default class NotificationScene extends React.Component {
                     <NotificationListItem
                       key={id}
                       onClick={(evt) => this.handleNotificationClick(evt, notification)}
-                      style={styles.listItem}
+                      className={classes.listItem}
                       mailboxId={notification.mailboxId}
                       notification={notification}
                       timestamp={timestamp} />
@@ -147,3 +152,5 @@ export default class NotificationScene extends React.Component {
     )
   }
 }
+
+export default NotificationScene

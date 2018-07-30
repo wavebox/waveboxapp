@@ -17,8 +17,6 @@ const TAB_HEIGHT = 40
 const TOOLBAR_HEIGHT = 40
 const UNREAD_INDEX = 0
 const NOTIF_INDEX = 1
-const UNREAD_REF = 'UNREAD'
-const NOTIF_REF = 'NOTIF'
 
 const styles = {
   container: {
@@ -97,6 +95,16 @@ const styles = {
 @withStyles(styles)
 class AppScene extends React.Component {
   /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+    this.unreadRef = null
+    this.notifRef = null
+  }
+
+  /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
 
@@ -150,23 +158,31 @@ class AppScene extends React.Component {
   handleChangeTab = (evt, index) => {
     this.setState((prevState) => {
       const prevIndex = prevState.tabIndex
-      if (prevIndex === index) { return undefined }
-
-      if (this.resetNavTOs.has(index)) {
+      if (prevIndex === index) {
         clearTimeout(this.resetNavTOs.get(index))
         this.resetNavTOs.delete(index)
-      }
-      if (this.resetNavTOs.has(prevIndex)) {
-        clearTimeout(this.resetNavTOs.get(prevIndex))
-      }
-      this.resetNavTOs.set(prevIndex, setTimeout(() => {
-        switch (prevIndex) {
-          case UNREAD_INDEX: this.refs[UNREAD_REF].resetNavigationStack(); break
-          case NOTIF_INDEX: this.refs[NOTIF_REF].resetNavigationStack(); break
+        switch (index) {
+          case UNREAD_INDEX: this.unreadRef.resetNavigationStack(); break
+          case NOTIF_INDEX: this.notifRef.resetNavigationStack(); break
         }
-      }, 500))
+        return undefined
+      } else {
+        if (this.resetNavTOs.has(index)) {
+          clearTimeout(this.resetNavTOs.get(index))
+          this.resetNavTOs.delete(index)
+        }
+        if (this.resetNavTOs.has(prevIndex)) {
+          clearTimeout(this.resetNavTOs.get(prevIndex))
+        }
+        this.resetNavTOs.set(prevIndex, setTimeout(() => {
+          switch (prevIndex) {
+            case UNREAD_INDEX: this.unreadRef.resetNavigationStack(); break
+            case NOTIF_INDEX: this.notifRef.resetNavigationStack(); break
+          }
+        }, 500))
 
-      return { tabIndex: index }
+        return { tabIndex: index }
+      }
     })
   }
 
@@ -226,8 +242,8 @@ class AppScene extends React.Component {
               slideStyle={styles.tab}
               index={tabIndex}
               onChangeIndex={(index) => this.setState({ tabIndex: index })}>
-              <UnreadScene ref={UNREAD_REF} />
-              <NotificationScene ref={NOTIF_REF} />
+              <UnreadScene innerRef={(n) => { this.unreadRef = n }} />
+              <NotificationScene innerRef={(n) => { this.notifRef = n }} />
             </SwipeableViews>
           </ErrorBoundary>
           <AppSceneToolbar className={classes.toolbar} isWindowedMode={isWindowedMode} />

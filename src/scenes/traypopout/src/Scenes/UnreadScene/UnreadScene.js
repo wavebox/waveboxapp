@@ -4,6 +4,7 @@ import UnreadMailboxList from './UnreadMailboxList'
 import UnreadMailbox from './UnreadMailbox'
 import SwipeableViews from 'react-swipeable-views'
 import ErrorBoundary from 'wbui/ErrorBoundary'
+import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
   tabContainer: {
@@ -20,7 +21,8 @@ const styles = {
   }
 }
 
-export default class UnreadScene extends React.Component {
+@withStyles(styles)
+class UnreadScene extends React.Component {
   /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
@@ -89,7 +91,7 @@ export default class UnreadScene extends React.Component {
   }
 
   render () {
-    const { ...passProps } = this.props
+    const { classes, ...passProps } = this.props
     const { displayMailboxId, index } = this.state
 
     return (
@@ -113,3 +115,5 @@ export default class UnreadScene extends React.Component {
     )
   }
 }
+
+export default UnreadScene
