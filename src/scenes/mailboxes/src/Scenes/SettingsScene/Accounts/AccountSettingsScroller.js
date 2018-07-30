@@ -39,6 +39,7 @@ const styles = {
     bottom: 0,
     right: 0,
     paddingBottom: 200,
+    scrollBehavior: 'smooth',
     ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
   },
   scrollspy: {
@@ -96,6 +97,7 @@ class AccountSettingsScroller extends React.Component {
 
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
+    startServiceId: PropTypes.string,
     showRestart: PropTypes.func.isRequired,
     onRequestEditCustomCode: PropTypes.func.isRequired
   }
@@ -118,7 +120,7 @@ class AccountSettingsScroller extends React.Component {
     accountStore.listen(this.accountChanged)
     this.renderServicesTO = setTimeout(() => {
       this.setState({ renderServices: true })
-    }, 500)
+    }, this.props.startServiceId ? 100 : 500)
   }
 
   componentWillUnmount () {
@@ -182,11 +184,20 @@ class AccountSettingsScroller extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
+  componentDidUpdate (prevProps, prevState) {
+    if (this.props.startServiceId) {
+      if (prevState.renderServices === false && this.state.renderServices === true) {
+        this.scrollToSection({}, `service-section-${this.props.startServiceId}`)
+      }
+    }
+  }
+
   render () {
     const {
       classes,
       className,
       mailboxId,
+      startServiceId,
       showRestart,
       onRequestEditCustomCode,
       ...passProps

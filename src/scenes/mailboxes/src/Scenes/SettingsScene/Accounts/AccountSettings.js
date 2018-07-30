@@ -30,7 +30,8 @@ class AccountSettings extends React.Component {
 
   static propTypes = {
     showRestart: PropTypes.func.isRequired,
-    mailboxId: PropTypes.string
+    mailboxId: PropTypes.string,
+    serviceId: PropTypes.string
   }
 
   /* **************************************************************************/
@@ -146,6 +147,7 @@ class AccountSettings extends React.Component {
   render () {
     const {
       mailboxId,
+      serviceId,
       showRestart,
       classes,
       className,
@@ -167,11 +169,11 @@ class AccountSettings extends React.Component {
           {...passProps}>
           <AccountPickerBanner
             selectedMailboxId={selectedMailboxId}
-            onChange={this.handleAccountChange}
-          />
+            onChange={this.handleAccountChange} />
           <div className={classes.accountContent}>
             <AccountSettingsScroller
               mailboxId={selectedMailboxId}
+              startServiceId={serviceId}
               showRestart={showRestart}
               onRequestEditCustomCode={this.handleEditCustomCode} />
             <CustomCodeEditingDialog

@@ -201,9 +201,15 @@ export default class MailboxAndServiceContextMenu extends React.Component {
   * @param evt: the event that fired
   */
   handleAccountSettings = (evt) => {
-    this.closePopover(evt, () => {
-      window.location.hash = `/settings/accounts/${this.props.mailboxId}`
-    })
+    if (this.state.service) {
+      this.closePopover(evt, () => {
+        window.location.hash = `/settings/accounts/${this.props.mailboxId}:${this.props.serviceId}`
+      })
+    } else {
+      this.closePopover(evt, () => {
+        window.location.hash = `/settings/accounts/${this.props.mailboxId}`
+      })
+    }
   }
 
   /**

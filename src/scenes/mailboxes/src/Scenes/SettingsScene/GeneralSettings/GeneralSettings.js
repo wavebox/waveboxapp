@@ -55,6 +55,7 @@ const styles = {
     bottom: 0,
     right: 0,
     paddingBottom: 100,
+    scrollBehavior: 'smooth',
     ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
   },
   scrollspy: {

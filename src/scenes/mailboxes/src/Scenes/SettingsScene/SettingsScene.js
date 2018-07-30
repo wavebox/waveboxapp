@@ -173,7 +173,12 @@ class SettingsScene extends React.Component {
     } else if (currentTab === 'extensions') {
       return (<ExtensionSettings showRestart={this.handleShowRestart} />)
     } else if (currentTab === 'accounts') {
-      return (<AccountSettings showRestart={this.handleShowRestart} mailboxId={match.params.tabArg} />)
+      return (
+        <AccountSettings
+          showRestart={this.handleShowRestart}
+          mailboxId={(match.params.tabArg || '').split(':')[0]}
+          serviceId={(match.params.tabArg || '').split(':')[1]} />
+      )
     } else if (currentTab === 'support') {
       return (<SupportSettings />)
     } else if (currentTab === 'pro') {
