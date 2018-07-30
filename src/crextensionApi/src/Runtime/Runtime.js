@@ -66,7 +66,7 @@ class Runtime {
     Object.freeze(this)
 
     // Handlers
-    DispatchManager.registerHandler(`${CRX_RUNTIME_ONMESSAGE_}${extensionId}`, this._handleRuntimeOnMessage.bind(this))
+    DispatchManager.registerHandler(`${CRX_RUNTIME_ONMESSAGE_}${extensionId}`, this._handleRuntimeOnMessage)
     ipcRenderer.on(`${CRX_PORT_CONNECTED_}${this[privExtensionId]}`, (evt, portId, connectedParty, connectInfo) => {
       const port = new Port(this[privExtensionId], portId, connectedParty, connectInfo.name)
       this.onConnect.emit(port)
@@ -101,7 +101,7 @@ class Runtime {
   // Getters
   /* **************************************************************************/
 
-  getURL (path) {
+  getURL = (path) => {
     return urlFormat({
       protocol: CR_EXTENSION_PROTOCOL,
       slashes: true,
@@ -110,7 +110,7 @@ class Runtime {
     })
   }
 
-  getManifest () {
+  getManifest = () => {
     return this[privExtensionDatasource].manifest.cloneData()
   }
 
@@ -135,7 +135,7 @@ class Runtime {
   // Connection lifecycle
   /* **************************************************************************/
 
-  sendMessage (...fullArgs) {
+  sendMessage = (...fullArgs) => {
     if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.BACKGROUND) {
       throw new Error('chrome.runtime.sendMessage is not supported in background page')
     }
@@ -159,7 +159,7 @@ class Runtime {
     })
   }
 
-  connect (...fullArgs) {
+  connect = (...fullArgs) => {
     if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.BACKGROUND) {
       throw new Error('chrome.runtime.connect is not supported in background page')
     }
@@ -170,7 +170,12 @@ class Runtime {
       { pattern: ['object'], out: [this[privExtensionId], ArgParser.MATCH_ARG_0] },
       { pattern: [], out: [this[privExtensionId], {}] }
     ])
-    const {portId, connectedParty} = ipcRenderer.sendSync(CRX_PORT_CONNECT_SYNC, targetExtensionId, connectInfo)
+
+    const {portId, connectedParty} = ipcRenderer.sendSync(
+      CRX_PORT_CONNECT_SYNC,
+      !targetExtensionId ? this[privExtensionId] : targetExtensionId, // Some extensions like to send falsy values
+      connectInfo
+    )
     return new Port(this[privExtensionId], portId, connectedParty, connectInfo.name)
   }
 
@@ -184,7 +189,7 @@ class Runtime {
   * @param [extensionId, connectedParty, message]: the id of the extension to send the message to and the message
   * @param responseCallback: callback to execute with response
   */
-  _handleRuntimeOnMessage (evt, [extensionId, connectedParty, message], responseCallback) {
+  _handleRuntimeOnMessage = (evt, [extensionId, connectedParty, message], responseCallback) => {
     // Make sure we always respond even with control events
     switch (extensionId) {
       case this[protectedCtrlEvt1]:

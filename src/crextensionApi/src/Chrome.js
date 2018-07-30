@@ -11,7 +11,7 @@ import Management from './Management'
 import WebRequest from 'WebRequest'
 import Notifications from './Notifications'
 import Cookies from './Cookies/Cookies'
-import Windows from './Windows'
+import Windows from './Windows/Windows'
 import Permissions from './Permissions'
 import { CR_RUNTIME_ENVIRONMENTS } from 'shared/extensionApis'
 

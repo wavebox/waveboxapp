@@ -1,5 +1,9 @@
 const privExtensionId = Symbol('privExtensionId')
 
+const UNSUPPORTED_PERMISSIONS = new Set([
+  'nativeMessaging'
+])
+
 class Permissions {
   /* **************************************************************************/
   // Lifecycle
@@ -20,10 +24,12 @@ class Permissions {
   // Methods
   /* **************************************************************************/
 
-  contains (permissions, callback) {
+  contains (test, callback) {
     console.warn('chrome.permissions.contains is not currently spec compliant')
+    const unsupported = (test.permissions || []).find((p) => UNSUPPORTED_PERMISSIONS.has(p))
+
     setTimeout(() => {
-      const res = true
+      const res = !!unsupported
       callback(res)
     })
   }

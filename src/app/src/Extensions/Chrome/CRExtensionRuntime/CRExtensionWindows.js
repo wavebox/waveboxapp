@@ -1,8 +1,12 @@
 import { evtMain } from 'AppEvents'
 import {
-  CRX_WINDOW_FOCUS_CHANGED_
+  CRX_WINDOW_FOCUS_CHANGED_,
+  CRX_WINDOW_GET_ALL_
 } from 'shared/crExtensionIpcEvents'
 import WaveboxWindow from 'Windows/WaveboxWindow'
+import CRDispatchManager from '../CRDispatchManager'
+import CRExtensionWindow from './CRExtensionWindow'
+import CRExtensionTab from './CRExtensionTab'
 
 class CRExtensionWindows {
   /* ****************************************************************************/
@@ -18,12 +22,15 @@ class CRExtensionWindows {
         evtMain.on(evtMain.WB_WINDOW_BLURRED, this.handleWindowBlurred)
         evtMain.on(evtMain.WB_WINDOW_FOCUSED, this.handleWindowFocused)
       }
+
+      CRDispatchManager.registerHandler(`${CRX_WINDOW_GET_ALL_}${this.extension.id}`, this.handleGetAllWindows)
     }
   }
 
   destroy () {
     evtMain.removeListener(evtMain.WB_WINDOW_BLURRED, this.handleWindowBlurred)
     evtMain.removeListener(evtMain.WB_WINDOW_FOCUSED, this.handleWindowFocused)
+    CRDispatchManager.unregisterHandler(`${CRX_WINDOW_GET_ALL_}${this.extension.id}`, this.handleGetAllWindows)
   }
 
   /* ****************************************************************************/
@@ -61,6 +68,41 @@ class CRExtensionWindows {
   handleWindowFocused = (evt, windowId) => {
     if (!this.backgroundPageSender) { return }
     this.backgroundPageSender(`${CRX_WINDOW_FOCUS_CHANGED_}${this.extension.id}`, windowId === undefined ? -1 : windowId)
+  }
+
+  /* ****************************************************************************/
+  // Handlers
+  /* ****************************************************************************/
+
+  /**
+  * Gets all the windows
+  * @param evt: the event that fired
+  * @param [getInfo]: the get info provided by the client
+  * @param responseCallback: executed on completion
+  */
+  handleGetAllWindows = (evt, [getInfo], responseCallback) => {
+    const windowTypesFilter = getInfo && getInfo.windowTypes
+      ? new Set(getInfo.windowTypes)
+      : undefined
+
+    const windows = WaveboxWindow
+      .allBrowserWindowIds()
+      .map((bwId) => CRExtensionWindow.dataFromBrowserWindowId(this.extension, bwId))
+      .filter((crxw) => windowTypesFilter ? windowTypesFilter.has(crxw.type) : true)
+
+    const windowsWithTabs = !getInfo && !getInfo.populate
+      ? windows
+      : windows.map((crxw) => {
+        if (crxw.tabIds === undefined) { return crxw }
+        return {
+          ...crxw,
+          tabs: crxw.tabIds.map((tabId) => {
+            return CRExtensionTab.dataFromWebContentsId(this.extension, tabId)
+          })
+        }
+      })
+
+    responseCallback(null, windowsWithTabs)
   }
 }
 

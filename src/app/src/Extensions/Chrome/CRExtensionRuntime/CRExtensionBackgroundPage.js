@@ -109,6 +109,8 @@ class CRExtensionBackgroundPage {
       pathname: this._name
     }))
 
+    this._webContents.openDevTools()//TODO dev
+
     // Update cors via the extension config
     SessionManager
       .webRequestEmitterFromPartitionId(partitionId)

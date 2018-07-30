@@ -3,6 +3,7 @@ import CRDispatchManager from '../CRDispatchManager'
 import CRExtensionTab from './CRExtensionTab'
 import {
   CRX_CONTEXT_MENU_CREATE_,
+  CRX_CONTEXT_MENU_REMOVE_ALL_,
   CRX_CONTEXT_MENU_CLICKED_
 } from 'shared/crExtensionIpcEvents'
 import {
@@ -19,10 +20,12 @@ class CRExtensionContextMenus {
     this.menuItems = []
 
     CRDispatchManager.registerHandler(`${CRX_CONTEXT_MENU_CREATE_}${this.extension.id}`, this.handleCreateMenu)
+    CRDispatchManager.registerHandler(`${CRX_CONTEXT_MENU_REMOVE_ALL_}${this.extension.id}`, this.handleRemoveAllMenus)
   }
 
   destroy () {
     CRDispatchManager.unregisterHandler(`${CRX_CONTEXT_MENU_CREATE_}${this.extension.id}`, this.handleCreateMenu)
+    CRDispatchManager.unregisterHandler(`${CRX_CONTEXT_MENU_REMOVE_ALL_}${this.extension.id}`, this.handleRemoveAllMenus)
   }
 
   /* ****************************************************************************/
@@ -65,6 +68,17 @@ class CRExtensionContextMenus {
 
     const contextMenu = new CRExtensionRTContextMenu(this.extension.id, id, properties)
     this.menuItems.push(contextMenu)
+    responseCallback(null, undefined)
+  }
+
+  /**
+  * Remove all menu items
+  * @param evt: the event that fired
+  * @param _args: unused args
+  * @param responseCallback: executed on completion
+  */
+  handleRemoveAllMenus = (evt, _args, responseCallback) => {
+    this.menuItems = []
     responseCallback(null, undefined)
   }
 

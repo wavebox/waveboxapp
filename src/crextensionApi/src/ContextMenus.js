@@ -3,6 +3,7 @@ import Event from 'Core/Event'
 import uuid from 'uuid'
 import {
   CRX_CONTEXT_MENU_CREATE_,
+  CRX_CONTEXT_MENU_REMOVE_ALL_,
   CRX_CONTEXT_MENU_CLICKED_
 } from 'shared/crExtensionIpcEvents'
 import DispatchManager from 'Core/DispatchManager'
@@ -67,6 +68,21 @@ class ContextMenus {
           callback()
         }
       })
+  }
+
+  removeAll (callback) {
+    DispatchManager.request(
+      `${CRX_CONTEXT_MENU_REMOVE_ALL_}${this[privExtensionId]}`,
+      [],
+      (evt, err, response) => {
+        if (err) {
+          this[privRuntime][protectedHandleError](err)
+        }
+        if (callback) {
+          callback()
+        }
+      }
+    )
   }
 }
 

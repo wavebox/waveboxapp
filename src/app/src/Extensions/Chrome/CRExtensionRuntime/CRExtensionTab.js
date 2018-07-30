@@ -37,8 +37,12 @@ class CRExtensionTab {
         windowId: browserWindow.id
       } : undefined),
       ...(waveboxWindow ? {
-        active: waveboxWindow.focusedTabId() === webContents.id
-      } : undefined),
+        active: waveboxWindow.focusedTabId() === webContents.id,
+        index: waveboxWindow.tabIds().findIndex((tabId) => tabId === webContents.id)
+      } : {
+        active: false,
+        index: 0
+      }),
       ...(extension && extension.manifest.permissions.has('tabs') ? {
         url: webContents.getURL(),
         title: webContents.getTitle()
