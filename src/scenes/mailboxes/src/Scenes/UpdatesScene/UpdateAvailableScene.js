@@ -189,7 +189,7 @@ class UpdateAvailableScene extends React.Component {
             <p>
               <strong className={classes.method}>Zypper:</strong>
               <code className={classes.managerCode}>
-                {`sudo zypper up Wavebox`}
+                {`sudo zypper refresh; sudo zypper up Wavebox`}
               </code>
             </p>
           </div>
