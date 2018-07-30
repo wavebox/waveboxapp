@@ -154,7 +154,6 @@ class ToolbarExtensionAction extends React.Component {
           <DefaultTooltip200w
             active={isHovering}
             tooltipTimeout={0}
-            style={styles.popover}
             position='bottom'
             arrow='center'
             group={elementId}
