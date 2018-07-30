@@ -37,6 +37,7 @@ class GenericService extends CoreACService {
   get supportsSyncWhenSleeping () { return false }
   get supportsWBGAPI () { return this._value_('supportsWBGAPI', false) }
   get supportedAuthNamespace () { return undefined }
+  get similarityNamespaceId () { return `${this.type}:_:${this.url}` }
 
   /* **************************************************************************/
   // Properties: Display
