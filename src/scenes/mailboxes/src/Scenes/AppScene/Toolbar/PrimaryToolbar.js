@@ -30,7 +30,8 @@ const styles = (theme) => ({
   services: { },
   extensions: { },
   navigation: {
-    width: '100%'
+    width: 0,
+    flexBasis: '100%'
   }
 })
 
