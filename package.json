@@ -9,6 +9,7 @@
     "start": "electron bin/app/index.js",
     "build": "webpack --mode=production",
     "test": "standard",
+    "validate": "node scripts/validate.js",
     "install:all": "node scripts/installAll.js",
     "postinstall": "node scripts/installElectron.js",
     "outdated:all": "node scripts/outdatedAll.js",
@@ -95,8 +96,9 @@
     "yargs": "12.0.1"
   },
   "devDependencies": {
-    "standard": "11.0.1",
-    "babel-eslint": "8.2.6"
+    "babel-eslint": "8.2.6",
+    "pre-commit": "1.2.2",
+    "standard": "11.0.1"
   },
   "standard": {
     "parser": "babel-eslint"
@@ -105,10 +107,10 @@
     "ELECTRON_MIRROR": "https://electron-wb.s3.us-east-2.amazonaws.com/",
     "ELECTRON_CUSTOM_DIR": "wb_3_14_8"
   },
-  "appConfig": {
-    "osxAppBundleId": "io.wavebox.wavebox"
-  },
   "resolutions": {
     "hoek": "4.2.1"
-  }
+  },
+  "pre-commit": [
+    "validate"
+  ]
 }

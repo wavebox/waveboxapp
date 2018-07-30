@@ -2,9 +2,6 @@ import { autoUpdater } from 'electron'
 import path from 'path'
 import ChildProcess from 'child_process'
 import Win32Registry from './Win32Registry'
-import pkg from 'package.json'
-import fs from 'fs-extra'
-import AppDirectory from 'appdirectory'
 import AppUpdaterLog from './AppUpdaterLog'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import MailboxesWindow from 'Windows/MailboxesWindow'
@@ -181,7 +178,6 @@ class AppUpdater {
         logger.log(`Create shortcuts`)
         AppUpdater._spawnWin32Update(['--createShortcut', path.basename(process.execPath)])
       }
-      AppUpdater.migrateWin32DatabaseLocation(logger)
       Win32Registry.addManifestEntries(path.join(process.execPath, '../../Wavebox.exe'))
         .then(
           () => logger.promiseLog(`Added Registry Entries`),
@@ -210,33 +206,6 @@ class AppUpdater {
       return true
     } else {
       return false
-    }
-  }
-
-  /* ****************************************************************************/
-  // Migration: win32
-  /* ****************************************************************************/
-
-  /**
-  * Moves the databases on win32 from /local/ to /roaming/
-  * @param logger: the logger instance
-  * @from 3.1.3-
-  * @to 3.1.4+
-  */
-  static migrateWin32DatabaseLocation (logger) {
-    if (process.platform !== 'win32') { return }
-    try {
-      logger.log('Checking database migration from 3.1.3 to 3.1.4')
-      const prevPath = new AppDirectory(pkg.name).userData()
-      const nextPath = new AppDirectory({ appName: pkg.name, useRoaming: true }).userData()
-
-      if (fs.existsSync(prevPath) && !fs.existsSync(nextPath)) {
-        logger.log('Migrating database from 3.1.3 to 3.1.4')
-        fs.moveSync(prevPath, nextPath)
-      }
-    } catch (ex) {
-      logger.log(`Migration failed ${ex}`)
-      console.warn('Failed to migrate Win32DatabaseLocation', ex)
     }
   }
 }
