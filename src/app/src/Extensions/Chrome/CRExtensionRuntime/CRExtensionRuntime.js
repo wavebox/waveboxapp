@@ -1,7 +1,10 @@
-import { ipcMain } from 'electron'
+import { ipcMain, webContents } from 'electron'
 import {
-  CRX_RUNTIME_CONTENTSCRIPT_CONNECT_
+  CRX_RUNTIME_CONTENTSCRIPT_CONNECT_,
+  CRX_GET_WEBCONTENT_META_SYNC_
 } from 'shared/crExtensionIpcEvents'
+import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
+import WaveboxWindow from 'Windows/WaveboxWindow'
 
 import CRExtensionDatasource from './CRExtensionDatasource'
 import CRExtensionBrowserAction from './CRExtensionBrowserAction'
@@ -13,6 +16,7 @@ import CRExtensionContextMenus from './CRExtensionContextMenus'
 import CRExtensionWebRequest from './CRExtensionWebRequest'
 import CRExtensionCookies from './CRExtensionCookies'
 import CRExtensionTabs from './CRExtensionTabs'
+import CRExtensionTab from './CRExtensionTab'
 import CRExtensionWindows from './CRExtensionWindows'
 import { CRExtensionI18n } from 'shared/Models/CRExtension'
 
@@ -42,11 +46,16 @@ class CRExtensionRuntime {
 
     // Binding
     this.tabs.backgroundPageSender = this.backgroundPage.sendToWebContents
+    this.tabs.extensionWindowSender = this.extensionWindowSender
     this.windows.backgroundPageSender = this.backgroundPage.sendToWebContents
+    this.windows.extensionWindowSender = this.extensionWindowSender
     this.cookies.backgroundPageSender = this.backgroundPage.sendToWebContents
 
     // Runtime API
     ipcMain.on(`${CRX_RUNTIME_CONTENTSCRIPT_CONNECT_}${this.extension.id}`, this.handleContentScriptRuntimeConnect)
+
+    // Extension Api
+    ipcMain.on(`${CRX_GET_WEBCONTENT_META_SYNC_}${this.extension.id}`, this.handleGetWebcontentMetaSync)
   }
 
   destroy () {
@@ -67,6 +76,9 @@ class CRExtensionRuntime {
 
     // Runtime API
     ipcMain.removeListener(`${CRX_RUNTIME_CONTENTSCRIPT_CONNECT_}${this.extension.id}`, this.handleContentScriptRuntimeConnect)
+
+    // Extension Api
+    ipcMain.removeListener(`${CRX_GET_WEBCONTENT_META_SYNC_}${this.extension.id}`, this.handleGetWebcontentMetaSync)
   }
 
   /* ****************************************************************************/
@@ -122,7 +134,7 @@ class CRExtensionRuntime {
   }
 
   /* ****************************************************************************/
-  // Event handlers
+  // Event handlers: Runtime
   /* ****************************************************************************/
 
   /**
@@ -131,6 +143,27 @@ class CRExtensionRuntime {
   */
   handleContentScriptRuntimeConnect = (evt) => {
     this.connectedContentScripts.add(evt.sender.id)
+  }
+
+  /* ****************************************************************************/
+  // Event handlers: Extension
+  /* ****************************************************************************/
+
+  /**
+  * Gets some metadata about webcontents
+  * @param evt: the event that fired
+  * @param webContentIds: an array of webcontent ids to get the metadata for
+  */
+  handleGetWebcontentMetaSync = (evt, webContentIds) => {
+    try {
+      const meta = webContentIds.map((wcId) => {
+        return CRExtensionTab.dataFromWebContentsId(this.extension, wcId)
+      })
+      evt.returnValue = meta
+    } catch (ex) {
+      console.error(`Failed to respond to "${CRX_GET_WEBCONTENT_META_SYNC_}" continuing with unkown side effects`, ex)
+      evt.returnValue = {}
+    }
   }
 
   /* ****************************************************************************/
@@ -144,6 +177,26 @@ class CRExtensionRuntime {
   */
   runExtensionOnBeforeRequest = (details) => {
     return this.webRequest ? this.webRequest.blockingOnBeforeRequest(details) : undefined
+  }
+
+  /* ****************************************************************************/
+  // Senders
+  /* ****************************************************************************/
+
+  /**
+  * Sends events to the extension relevant open extension windows
+  * @param ...args: the args to pass down
+  */
+  extensionWindowSender = (...args) => {
+    const tabs = WaveboxWindow.allTabMetaWithBacking(WINDOW_BACKING_TYPES.EXTENSION)
+    Array.from(tabs.keys()).forEach((tabId) => {
+      if (tabs.get(tabId).extensionId === this.extensionId) {
+        const wc = webContents.fromId(tabId)
+        if (wc && !wc.isDestroyed()) {
+          wc.send(...args)
+        }
+      }
+    })
   }
 }
 

@@ -9,6 +9,7 @@ import WaveboxWindow from 'Windows/WaveboxWindow'
 import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
 
 const privActiveTabId = Symbol('privActiveTabId')
+const privWindowEventEmitter = Symbol('privWindowEventEmitter')
 
 class MailboxesWindowTabManager {
   /* ****************************************************************************/
@@ -17,9 +18,12 @@ class MailboxesWindowTabManager {
 
   /**
   * @param webContentsId: the id of the managing webcontents
+  * @param windowEventEmitter: a function that can be used to emit window events
   */
-  constructor (webContentsId) {
+  constructor (webContentsId, windowEventEmitter) {
     this.webContentsId = webContentsId
+    this[privWindowEventEmitter] = windowEventEmitter
+
     this.attachedMailboxes = new Map()
     this.attachedExtensions = new Map()
     this.targetUrls = new Map()
@@ -65,10 +69,12 @@ class MailboxesWindowTabManager {
         this.attachedMailboxes.delete(data.webContentsId)
         this.attachedExtensions.delete(data.webContentsId)
         this.targetUrls.delete(data.webContentsId)
-        evtMain.emit(evtMain.WB_TAB_DESTROYED, {}, data.webContentsId)
+        this[privWindowEventEmitter]('tab-destroyed', { sender: this }, data.webContentsId)
+        evtMain.emit(evtMain.WB_TAB_DESTROYED, { sender: this }, data.webContentsId)
       })
 
-      evtMain.emit(evtMain.WB_TAB_CREATED, {}, data.webContentsId)
+      this[privWindowEventEmitter]('tab-created', { sender: this }, data.webContentsId)
+      evtMain.emit(evtMain.WB_TAB_CREATED, { sender: this }, data.webContentsId)
 
       // Sometimes the active tab change call fails because the webview is not
       // yet attached. It fails silently and doesn't set, so run it again here

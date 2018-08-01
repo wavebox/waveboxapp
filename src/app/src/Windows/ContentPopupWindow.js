@@ -1,12 +1,9 @@
 import WaveboxWindow from './WaveboxWindow'
 import { evtMain } from 'AppEvents'
 import { GuestWebPreferences } from 'WebContentsManager'
-import { WindowOpeningEngine, WindowOpeningHandler } from './WindowOpeningEngine'
-
-const WINDOW_OPEN_MODES = WindowOpeningEngine.WINDOW_OPEN_MODES
+import { WindowOpeningHandler, WINDOW_OPEN_MODES } from './WindowOpeningEngine'
 
 const privTabMetaInfo = Symbol('privTabMetaInfo')
-
 class ContentPopupWindow extends WaveboxWindow {
   /* ****************************************************************************/
   // Class: Properties
@@ -96,9 +93,11 @@ class ContentPopupWindow extends WaveboxWindow {
 
     // Setup for tab lifecycle
     const webContentsId = this.window.webContents.id
-    evtMain.emit(evtMain.WB_TAB_CREATED, {}, webContentsId)
+    this.emit('tab-created', { sender: this }, webContentsId)
+    evtMain.emit(evtMain.WB_TAB_CREATED, { sender: this }, webContentsId)
     this.window.webContents.once('destroyed', () => {
-      evtMain.emit(evtMain.WB_TAB_DESTROYED, {}, webContentsId)
+      this.emit('tab-destroyed', { sender: this }, webContentsId)
+      evtMain.emit(evtMain.WB_TAB_DESTROYED, { sender: this }, webContentsId)
     })
 
     // Listen to webview events

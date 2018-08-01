@@ -10,9 +10,7 @@ import WindowOpeningMatchTask from './WindowOpeningMatchTask'
 import WINDOW_BACKING_TYPES from '../WindowBackingTypes'
 import accountStore from 'stores/account/accountStore'
 import uuid from 'uuid'
-
-const WINDOW_OPEN_MODES = WindowOpeningEngine.WINDOW_OPEN_MODES
-const NAVIGATE_MODES = WindowOpeningEngine.NAVIGATE_MODES
+import { WINDOW_OPEN_MODES, NAVIGATE_MODES } from './WindowOpeningModes'
 
 class WindowOpeningHandler {
   /* ****************************************************************************/

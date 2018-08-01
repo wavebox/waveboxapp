@@ -1,8 +1,12 @@
 import {
   CR_RUNTIME_ENVIRONMENTS
 } from 'shared/extensionApis'
+import { protectedJSWindowTracker } from 'Runtime/ProtectedRuntimeSymbols'
+import { ipcRenderer } from 'electronCrx'
+import { CRX_GET_WEBCONTENT_META_SYNC_ } from 'shared/crExtensionIpcEvents'
 
 const privRuntime = Symbol('privRuntime')
+const privExtensionId = Symbol('privExtensionId')
 const privRuntimeEnvironment = Symbol('privRuntimeEnvironment')
 
 class Extension {
@@ -17,6 +21,7 @@ class Extension {
   * @param runtime: the runtime object we proxy some requests through for
   */
   constructor (extensionId, runtimeEnvironment, runtime) {
+    this[privExtensionId] = extensionId
     this[privRuntimeEnvironment] = runtimeEnvironment
     this[privRuntime] = runtime
     Object.freeze(this)
@@ -38,7 +43,50 @@ class Extension {
 
   get getBackgroundPage () {
     if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.BACKGROUND) {
-      return function () { return window }
+      return () => { return window }
+    } else if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.HOSTED) {
+      return () => { return window.opener }
+    } else {
+      return undefined
+    }
+  }
+
+  get getViews () {
+    if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.BACKGROUND) {
+      return (fetchProperties) => {
+        fetchProperties = fetchProperties || {}
+        const all = this[privRuntime][protectedJSWindowTracker].allArray()
+
+        if (Object.keys(fetchProperties).length) {
+          if (fetchProperties.type && fetchProperties.type !== 'tab') {
+            console.warn(`chrome.extension.getViews does not support the following options at this time "[type=${fetchProperties.type}]" and they will be ignored`)
+          }
+
+          const allTabIds = all.map(({ wcId }) => wcId)
+          const allMeta = ipcRenderer.sendSync(`${CRX_GET_WEBCONTENT_META_SYNC_}${this[privExtensionId]}`, allTabIds)
+          const allMetaIndex = allMeta.reduce((acc, meta) => {
+            acc.set(meta.id, meta)
+            return acc
+          }, new Map())
+
+          const filtered = all
+            .filter(({ wcId, window }) => {
+              const meta = allMetaIndex.get(wcId) || {}
+              if (fetchProperties.windowId !== undefined && fetchProperties.windowId !== meta.windowId) {
+                return false
+              }
+              if (fetchProperties.tabId !== undefined && fetchProperties.tabId !== wcId) {
+                return false
+              }
+
+              return true
+            })
+            .map(({ window }) => window)
+          return filtered
+        } else {
+          return all.map(({ window }) => window)
+        }
+      }
     } else {
       return undefined
     }

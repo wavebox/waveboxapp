@@ -41,7 +41,7 @@ class CRExtensionWindow {
       incognito: false,
       alwaysOnTop: false,
       ...(waveboxWindow ? {
-        type: waveboxWindow.windowType === waveboxWindow.WINDOW_TYPES.CONTENT
+        type: waveboxWindow.windowType === waveboxWindow.WINDOW_TYPES.CONTENT || waveboxWindow.windowType === waveboxWindow.WINDOW_TYPES.EXTENSION
           ? 'popup'
           : 'normal'
       } : {

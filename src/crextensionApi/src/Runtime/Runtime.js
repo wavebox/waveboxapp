@@ -18,11 +18,13 @@ import EventUnsupported from 'Core/EventUnsupported'
 import DispatchManager from 'Core/DispatchManager'
 import MessageSender from './MessageSender'
 import Port from './Port'
+import JSWindowTracker from './JSWindowTracker'
 import {
   protectedHandleError,
   protectedCtrlEvt1,
   protectedCtrlEvt2,
-  protectedCtrlEvt3
+  protectedCtrlEvt3,
+  protectedJSWindowTracker
 } from './ProtectedRuntimeSymbols'
 
 const privExtensionId = Symbol('privExtensionId')
@@ -50,6 +52,7 @@ class Runtime {
     this[protectedCtrlEvt1] = 6303
     this[protectedCtrlEvt2] = 10834
     this[protectedCtrlEvt3] = 16897
+    this[protectedJSWindowTracker] = new JSWindowTracker()
 
     // Protected
     this[protectedHandleError] = (err) => { this[privErrors][0] = err }

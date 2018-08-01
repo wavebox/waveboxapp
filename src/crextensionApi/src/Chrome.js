@@ -38,7 +38,7 @@ class Chrome {
 
     if (runtimeEnvironment !== CR_RUNTIME_ENVIRONMENTS.CONTENTSCRIPT) {
       this.browserAction = new BrowserAction(extensionId)
-      this.tabs = new Tabs(extensionId, runtimeEnvironment, permissions.has('tabs'))
+      this.tabs = new Tabs(extensionId, runtimeEnvironment, this.runtime, permissions.has('tabs'))
       this.windows = new Windows(extensionId, permissions.has('tabs'))
       this.app = new App(extensionId, extensionDatasource)
       this.omnibox = new Omnibox(extensionId)

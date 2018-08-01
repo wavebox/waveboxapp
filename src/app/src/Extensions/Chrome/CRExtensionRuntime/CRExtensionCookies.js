@@ -8,7 +8,7 @@ import {
   CRX_COOKIES_REMOVE_,
   CRX_COOKIES_CHANGED_
 } from 'shared/crExtensionIpcEvents'
-import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
+import { CRExtensionWebPreferences } from 'WebContentsManager'
 import { AccountSessionManager } from 'SessionManager'
 import { ElectronCookiePromise } from 'ElectronTools'
 
@@ -72,7 +72,7 @@ class CRExtensionCookies {
     const scopes = this.extension.manifest.wavebox.cookieScopes
     const partitions = []
     if (scopes.has('background')) {
-      partitions.push(CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id))
+      partitions.push(CRExtensionWebPreferences.partitionIdForExtension(this.extension.id))
     }
     if (scopes.has('tabs')) {
       accountStore.getState().allPartitions().forEach((partitionId) => {
@@ -86,7 +86,7 @@ class CRExtensionCookies {
   * @return the session for the background page
   */
   _getBackgroundPageSession () {
-    const partitionId = CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
+    const partitionId = CRExtensionWebPreferences.partitionIdForExtension(this.extension.id)
     return session.fromPartition(partitionId)
   }
 

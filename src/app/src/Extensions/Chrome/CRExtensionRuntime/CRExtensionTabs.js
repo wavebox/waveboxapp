@@ -3,7 +3,6 @@ import { evtMain } from 'AppEvents'
 import CRDispatchManager from '../CRDispatchManager'
 import {
   CRX_TABS_QUERY_,
-  CRX_TABS_CREATE_,
   CRX_TABS_GET_,
   CRX_TABS_CREATED_,
   CRX_TABS_REMOVED_,
@@ -12,16 +11,13 @@ import {
   CRX_TAB_EXECUTE_SCRIPT_
 } from 'shared/crExtensionIpcEvents'
 import { WBECRX_EXECUTE_SCRIPT } from 'shared/ipcEvents'
-import WaveboxWindow from 'Windows/WaveboxWindow'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
 import { URL } from 'url'
 import fs from 'fs-extra'
 import path from 'path'
 import CRExtensionTab from './CRExtensionTab'
 import pathTool from 'shared/pathTool'
-import ContentWindow from 'Windows/ContentWindow'
-import ExtensionHostedWindow from 'Windows/ExtensionHostedWindow'
-import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
+import WaveboxWindow from 'Windows/WaveboxWindow'
 
 class CRExtensionTabs {
   /* ****************************************************************************/
@@ -31,15 +27,13 @@ class CRExtensionTabs {
   constructor (extension) {
     this.extension = extension
     this.backgroundPageSender = null
+    this.extensionWindowSender = null
 
-    if (this.extension.manifest.hasBackground) {
-      evtMain.on(evtMain.WB_TAB_CREATED, this.handleTabCreated)
-      evtMain.on(evtMain.WB_TAB_DESTROYED, this.handleTabDestroyed)
-      evtMain.on(evtMain.WB_TAB_ACTIVATED, this.handleTabActivated)
-    }
+    evtMain.on(evtMain.WB_TAB_CREATED, this.handleTabCreated)
+    evtMain.on(evtMain.WB_TAB_DESTROYED, this.handleTabDestroyed)
+    evtMain.on(evtMain.WB_TAB_ACTIVATED, this.handleTabActivated)
 
     CRDispatchManager.registerHandler(`${CRX_TABS_GET_}${this.extension.id}`, this.handleGetTab)
-    CRDispatchManager.registerHandler(`${CRX_TABS_CREATE_}${this.extension.id}`, this.handleCreateTab)
     CRDispatchManager.registerHandler(`${CRX_TABS_QUERY_}${this.extension.id}`, this.handleQueryTabs)
     CRDispatchManager.registerHandler(`${CRX_TAB_EXECUTE_SCRIPT_}${this.extension.id}`, this.handleExecuteScript)
   }
@@ -50,7 +44,6 @@ class CRExtensionTabs {
     evtMain.removeListener(evtMain.WB_TAB_ACTIVATED, this.handleTabActivated)
 
     CRDispatchManager.unregisterHandler(`${CRX_TABS_GET_}${this.extension.id}`, this.handleGetTab)
-    CRDispatchManager.unregisterHandler(`${CRX_TABS_CREATE_}${this.extension.id}`, this.handleCreateTab)
     CRDispatchManager.unregisterHandler(`${CRX_TABS_QUERY_}${this.extension.id}`, this.handleQueryTabs)
     CRDispatchManager.unregisterHandler(`${CRX_TAB_EXECUTE_SCRIPT_}${this.extension.id}`, this.handleExecuteScript)
   }
@@ -77,6 +70,19 @@ class CRExtensionTabs {
     return CRExtensionTab.dataFromWebContents(this.extension, webContents)
   }
 
+  /**
+  * Emits an event to all the qualified listeners
+  * @param ...args: the arguments to pass through
+  */
+  _emitEventToListeners (...args) {
+    if (this.backgroundPageSender) {
+      this.backgroundPageSender(...args)
+    }
+    if (this.extensionWindowSender) {
+      this.extensionWindowSender(...args)
+    }
+  }
+
   /* ****************************************************************************/
   // Event listeners
   /* ****************************************************************************/
@@ -89,10 +95,7 @@ class CRExtensionTabs {
   handleTabCreated = (evt, tabId) => {
     // Bind tab listeners - even if there isn't a sender right now
     this.bindTabEventListeners(tabId)
-
-    // Send the events down
-    if (!this.backgroundPageSender) { return }
-    this.backgroundPageSender(`${CRX_TABS_CREATED_}${this.extension.id}`, this._tabDataFromWebContentsId(tabId))
+    this._emitEventToListeners(`${CRX_TABS_CREATED_}${this.extension.id}`, this._tabDataFromWebContentsId(tabId))
   }
 
   /**
@@ -101,8 +104,7 @@ class CRExtensionTabs {
   * @param tabId: the id of the webcontents
   */
   handleTabDestroyed = (evt, tabId) => {
-    if (!this.backgroundPageSender) { return }
-    this.backgroundPageSender(`${CRX_TABS_REMOVED_}${this.extension.id}`, this._tabDataFromWebContentsId(tabId))
+    this._emitEventToListeners(`${CRX_TABS_REMOVED_}${this.extension.id}`, this._tabDataFromWebContentsId(tabId))
   }
 
   /**
@@ -112,8 +114,7 @@ class CRExtensionTabs {
   * @param tabId: the id of the tab
   */
   handleTabActivated = (evt, browserWindowId, tabId) => {
-    if (!this.backgroundPageSender) { return }
-    this.backgroundPageSender(`${CRX_TAB_ACTIVATED_}${this.extension.id}`, {
+    this._emitEventToListeners(`${CRX_TAB_ACTIVATED_}${this.extension.id}`, {
       windowId: browserWindowId,
       tabId: tabId
     })
@@ -129,21 +130,18 @@ class CRExtensionTabs {
     if (!contents) { return }
 
     contents.on('page-title-updated', (evt, title) => {
-      if (!this.backgroundPageSender) { return }
-      this.backgroundPageSender(`${CRX_TAB_UPDATED_}${this.extension.id}`, tabId, {
+      this._emitEventToListeners(`${CRX_TAB_UPDATED_}${this.extension.id}`, tabId, {
         title: title
       }, this._tabDataFromWebContentsId(tabId))
     })
     contents.on('did-navigate', (evt, url) => {
-      if (!this.backgroundPageSender) { return }
-      this.backgroundPageSender(`${CRX_TAB_UPDATED_}${this.extension.id}`, tabId, {
+      this._emitEventToListeners(`${CRX_TAB_UPDATED_}${this.extension.id}`, tabId, {
         url: url
       }, this._tabDataFromWebContentsId(tabId))
     })
     contents.on('did-navigate-in-page', (evt, url, isMainFrame) => {
       if (!isMainFrame) { return }
-      if (!this.backgroundPageSender) { return }
-      this.backgroundPageSender(`${CRX_TAB_UPDATED_}${this.extension.id}`, tabId, {
+      this._emitEventToListeners(`${CRX_TAB_UPDATED_}${this.extension.id}`, tabId, {
         url: url
       }, this._tabDataFromWebContentsId(tabId))
     })
@@ -164,31 +162,6 @@ class CRExtensionTabs {
       responseCallback(null, this._tabDataFromWebContentsId(tabId))
     } else {
       responseCallback(null, null)
-    }
-  }
-
-  /**
-  * Creates a tab with the given id
-  * @param evt: the event that fired
-  * @param [tabId]: the id of the tab
-  * @param responseCallback: executed on completion
-  */
-  handleCreateTab = (evt, [options], responseCallback) => {
-    if (ExtensionHostedWindow.isHostedExtensionUrlForExtension(options.url || '', this.extension.id)) {
-      const contentWindow = new ExtensionHostedWindow(this.extension.id, this.extension.manifest.name)
-      contentWindow.create(options.url, { useContentSize: true })
-      responseCallback(null, undefined)
-    } else {
-      const contentWindow = new ContentWindow()
-      contentWindow.create(
-        options.url || 'about:blank',
-        undefined,
-        undefined,
-        {
-          partition: CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
-        }
-      )
-      responseCallback(null, undefined)
     }
   }
 

@@ -50,7 +50,6 @@ class Windows {
       `${CRX_WINDOW_GET_ALL_}${this[privExtensionId]}`,
       [getInfo],
       (evt, err, response) => {
-        console.log("Here", response)
         if (callback) {
           const windows = (response || []).map((data) => new Window(data))
           callback(windows)

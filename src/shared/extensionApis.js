@@ -18,7 +18,7 @@ module.exports = {
 
   // Chrome
   CR_EXTENSION_PROTOCOL: 'chrome-extension',
-  CR_EXTENSION_BG_PARTITION_PREFIX: 'persist:__chrome_extension:',
+  CR_EXTENSION_PARTITION_PREFIX: 'persist:__chrome_extension:',
   CR_RUNTIME_ENVIRONMENTS: {
     CONTENTSCRIPT: 'CONTENTSCRIPT',
     BACKGROUND: 'BACKGROUND',

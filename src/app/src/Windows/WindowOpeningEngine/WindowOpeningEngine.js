@@ -4,44 +4,13 @@ import CRExtensionManager from 'Extensions/Chrome/CRExtensionManager'
 import CRExtensionManifestWavebox from 'shared/Models/CRExtension/CRExtensionManifestWavebox'
 import { URL } from 'url'
 import fallbackConfig from './fallbackConfig'
-import {
-  CR_EXTENSION_BG_PARTITION_PREFIX
-} from 'shared/extensionApis'
+import { CRExtensionWebPreferences } from 'WebContentsManager'
 import {
   WAVEBOX_CAPTURE_URL_PREFIX,
   WAVEBOX_CAPTURE_URL_HOSTNAMES
 } from 'shared/constants'
+import { WINDOW_OPEN_MODES, NAVIGATE_MODES } from './WindowOpeningModes'
 import { userStore } from 'stores/user'
-
-const WINDOW_OPEN_MODES = Object.freeze({
-  CONTENT: 'CONTENT',
-  CONTENT_PROVSIONAL: 'CONTENT_PROVSIONAL',
-  POPUP_CONTENT: 'POPUP_CONTENT',
-  EXTERNAL: 'EXTERNAL',
-  EXTERNAL_PROVSIONAL: 'EXTERNAL_PROVSIONAL',
-  DEFAULT: 'DEFAULT',
-  DEFAULT_IMPORTANT: 'DEFAULT_IMPORTANT',
-  DEFAULT_PROVISIONAL: 'DEFAULT_PROVISIONAL',
-  DEFAULT_PROVISIONAL_IMPORTANT: 'DEFAULT_PROVISIONAL_IMPORTANT',
-  DOWNLOAD: 'DOWNLOAD',
-  SUPPRESS: 'SUPPRESS',
-  CURRENT: 'CURRENT',
-  BLANK_AND_CURRENT: 'BLANK_AND_CURRENT',
-  CURRENT_PROVISIONAL: 'CURRENT_PROVISIONAL',
-  BLANK_AND_CURRENT_PROVISIONAL: 'BLANK_AND_CURRENT_PROVISIONAL'
-})
-
-const NAVIGATE_MODES = Object.freeze({
-  DEFAULT: 'DEFAULT',
-  SUPPRESS: 'SUPPRESS',
-  OPEN_EXTERNAL: 'OPEN_EXTERNAL',
-  OPEN_CONTENT: 'OPEN_CONTENT',
-  OPEN_CONTENT_RESET: 'OPEN_CONTENT_RESET',
-  CONVERT_TO_CONTENT: 'CONVERT_TO_CONTENT',
-  CONVERT_TO_CONTENT_POPUP: 'CONVERT_TO_CONTENT_POPUP',
-  CONVERT_TO_EXTERNAL: 'CONVERT_TO_EXTERNAL',
-  CONVERT_TO_DEFAULT: 'CONVERT_TO_DEFAULT'
-})
 
 const privWindowOpenRules = Symbol('privWindowOpenRules')
 const privNavigateRules = Symbol('privNavigateRules')
@@ -60,13 +29,6 @@ class WindowOpeningEngine {
     this.populateRulesets()
     userStore.listen(this.populateRulesets)
   }
-
-  /* ****************************************************************************/
-  // Properties
-  /* ****************************************************************************/
-
-  get WINDOW_OPEN_MODES () { return WINDOW_OPEN_MODES }
-  get NAVIGATE_MODES () { return NAVIGATE_MODES }
 
   /* ****************************************************************************/
   // Data handlers
@@ -144,7 +106,7 @@ class WindowOpeningEngine {
           match: true,
           config: extensionPopoutConfig,
           mode: WINDOW_OPEN_MODES.CONTENT,
-          partitionOverride: extensionPopoutConfig.extension.manifest.hasBackground ? `${CR_EXTENSION_BG_PARTITION_PREFIX}${extensionPopoutConfig.extension.id}` : undefined
+          partitionOverride: extensionPopoutConfig.extension.manifest.hasBackground ? CRExtensionWebPreferences.partitionIdForExtension(extensionPopoutConfig.extension.id) : undefined
         }
       }
     }

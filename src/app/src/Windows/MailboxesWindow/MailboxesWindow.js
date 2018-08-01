@@ -146,7 +146,7 @@ class MailboxesWindow extends WaveboxWindow {
       if (!hidden) { this.window.show() }
     })
     this.window.on('minimize', this._handleWindowMinimize)
-    this.tabManager = new MailboxesWindowTabManager(this.window.webContents.id)
+    this.tabManager = new MailboxesWindowTabManager(this.window.webContents.id, this._handleTabManagerEmitEvent)
     this.behaviour = new MailboxesWindowBehaviour(this.window.webContents.id, this.tabManager)
 
     // Bind event listeners
@@ -195,6 +195,19 @@ class MailboxesWindow extends WaveboxWindow {
   */
   allowNavigate (evt, browserWindow, nextUrl) {
     return !!ALLOWED_URLS.find((allowed) => nextUrl.startsWith(allowed))
+  }
+
+  /* ****************************************************************************/
+  // Tab manager handlers
+  /* ****************************************************************************/
+
+  /**
+  * A dirty punch-through that allows the tab manager to emit events on behalf
+  * of this window
+  * @param ...args: passed right through to emit
+  */
+  _handleTabManagerEmitEvent = (...args) => {
+    this.emit(...args)
   }
 
   /* ****************************************************************************/

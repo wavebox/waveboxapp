@@ -193,6 +193,40 @@ class WaveboxWindowManager {
     return w ? w.tabMetaInfo(tabId) : undefined
   }
 
+  /**
+  * Gets all the tab ids with the given backing type
+  * @param backingType: a backing type to check against
+  * @return an array of all tabs with the given backing type
+  */
+  allTabIdsWithBacking (backingType) {
+    return this.all().reduce((acc, waveboxWindow) => {
+      const matching = waveboxWindow
+        .tabIds()
+        .filter((tabId) => {
+          const metaInfo = waveboxWindow.tabMetaInfo(tabId)
+          return metaInfo && metaInfo.backingType === backingType
+        })
+      return acc.concat(matching)
+    }, [])
+  }
+
+  /**
+  * Gets all the meta infos with the given backing type
+  * @param backingType: a backing type to check against
+  * @return a map of tabId to the meta info for each
+  */
+  allTabMetaWithBacking (backingType) {
+    return this.all().reduce((acc, waveboxWindow) => {
+      waveboxWindow.tabIds().forEach((tabId) => {
+        const metaInfo = waveboxWindow.tabMetaInfo(tabId)
+        if (metaInfo && metaInfo.backingType === backingType) {
+          acc.set(tabId, metaInfo)
+        }
+      })
+      return acc
+    }, new Map())
+  }
+
   /* ****************************************************************************/
   // Getters: Browser window ids
   /* ****************************************************************************/

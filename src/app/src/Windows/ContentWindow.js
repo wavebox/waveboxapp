@@ -2,7 +2,7 @@ import WaveboxWindow from './WaveboxWindow'
 import { app, webContents } from 'electron'
 import { evtMain } from 'AppEvents'
 import Resolver from 'Runtime/Resolver'
-import {WindowOpeningHandler} from './WindowOpeningEngine'
+import { WindowOpeningHandler } from './WindowOpeningEngine'
 import { GuestWebPreferences } from 'WebContentsManager'
 import querystring from 'querystring'
 
@@ -168,14 +168,17 @@ class ContentWindow extends WaveboxWindow {
       if (contents.isDestroyed()) { return }
       if (contents.getType() === 'webview' && contents.hostWebContents.id === this.window.webContents.id) {
         this[privGuestWebContentsId] = contents.id
-        evtMain.emit(evtMain.WB_TAB_CREATED, {}, this[privGuestWebContentsId])
         contents.on('new-window', this.handleWebContentsNewWindow)
         contents.on('will-navigate', this.handleWebViewWillNavigate)
         contents.once('destroyed', () => {
           const wcId = this[privGuestWebContentsId]
           this[privGuestWebContentsId] = null
-          evtMain.emit(evtMain.WB_TAB_DESTROYED, {}, wcId)
+          this.emit('tab-desroyed', { sender: this }, wcId)
+          evtMain.emit(evtMain.WB_TAB_DESTROYED, { sender: this }, wcId)
         })
+
+        this.emit('tab-created', { sender: this }, this[privGuestWebContentsId])
+        evtMain.emit(evtMain.WB_TAB_CREATED, { sender: this }, this[privGuestWebContentsId])
       }
     })
   }

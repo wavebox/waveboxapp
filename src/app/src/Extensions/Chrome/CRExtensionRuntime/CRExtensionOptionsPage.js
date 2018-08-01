@@ -1,6 +1,10 @@
 import {format as urlFormat} from 'url'
 import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
-import ExtensionHostedWindow from 'Windows/ExtensionHostedWindow'
+import ContentPopupWindow from 'Windows/ContentPopupWindow'
+import { CRExtensionWebPreferences } from 'WebContentsManager'
+import { WINDOW_BACKING_TYPES } from 'Windows/WindowBackingTypes'
+
+const privOptionsWindow = Symbol('privOptionsWindow')
 
 class CRExtensionOptionsPage {
   /* ****************************************************************************/
@@ -9,18 +13,18 @@ class CRExtensionOptionsPage {
 
   constructor (extension) {
     this.extension = extension
-    this._optionsWindow = null
+    this[privOptionsWindow] = null
   }
 
   destroy () {
-    if (this.hasOpenWindow) { this._optionsWindow.destroy() }
+    if (this.hasOpenWindow) { this[privOptionsWindow].destroy() }
   }
 
   /* ****************************************************************************/
   // Properties
   /* ****************************************************************************/
 
-  get hasOpenWindow () { return this._optionsWindow && !this._optionsWindow.isDestroyed() }
+  get hasOpenWindow () { return this[privOptionsWindow] && !this[privOptionsWindow].isDestroyed() }
 
   /* ****************************************************************************/
   // Launching
@@ -31,7 +35,7 @@ class CRExtensionOptionsPage {
   */
   launchWindow () {
     if (this.hasOpenWindow) {
-      this._optionsWindow.focus()
+      this[privOptionsWindow].focus()
       return
     }
 
@@ -42,12 +46,24 @@ class CRExtensionOptionsPage {
       pathname: this.extension.manifest.optionsPage
     })
 
-    this._optionsWindow = new ExtensionHostedWindow(this.extension.id, this.extension.manifest.name)
-    this._optionsWindow.create(targetUrl, { useContentSize: true })
+    this[privOptionsWindow] = new ContentPopupWindow({
+      backing: WINDOW_BACKING_TYPES.EXTENSION,
+      extensionId: this.extension.id,
+      extensionName: this.extension.manifest.name
+    })
+    this[privOptionsWindow].create(targetUrl, {
+      title: this.extension.manifest.name,
+      minWidth: 300,
+      minHeight: 300,
+      backgroundColor: '#FFFFFF',
+      show: true,
+      useContentSize: true,
+      webPreferences: CRExtensionWebPreferences.defaultWebPreferences(this.extension.id)
+    })
 
     // Bind event listeners
-    this._optionsWindow.on('closed', () => {
-      this._optionsWindow = null
+    this[privOptionsWindow].on('closed', () => {
+      this[privOptionsWindow] = null
     })
   }
 }

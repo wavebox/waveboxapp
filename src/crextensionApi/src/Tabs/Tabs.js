@@ -6,7 +6,7 @@ import Tab from './Tab'
 import { CR_RUNTIME_ENVIRONMENTS } from 'shared/extensionApis'
 import {
   CRX_TABS_SENDMESSAGE,
-  CRX_TABS_CREATE_,
+  CRX_TABS_CREATE_FROM_BG_,
   CRX_TABS_GET_,
   CRX_TABS_QUERY_,
   CRX_TABS_CREATED_,
@@ -15,10 +15,13 @@ import {
   CRX_TAB_UPDATED_,
   CRX_TAB_EXECUTE_SCRIPT_
 } from 'shared/crExtensionIpcEvents'
+import uuid from 'uuid'
+import { protectedJSWindowTracker } from 'Runtime/ProtectedRuntimeSymbols'
 
 const privExtensionId = Symbol('privExtensionId')
 const privRuntimeEnvironment = Symbol('privRuntimeEnvironment')
 const privHasPermission = Symbol('privHasPermission')
+const privRuntime = Symbol('privRuntime')
 const CREATE_SUPPORTED_OPTIONS = new Set([
   'url'
 ])
@@ -42,11 +45,13 @@ class Tabs {
   * https://developer.chrome.com/apps/tabs
   * @param extensionId: the id of the extension
   * @param runtimeEnvironment: the current runtime environment
+  * @param runtime: the current runtime
   * @param hasPermission: true if the extension has the tabs permission
   */
-  constructor (extensionId, runtimeEnvironment, hasPermission) {
+  constructor (extensionId, runtimeEnvironment, runtime, hasPermission) {
     this[privExtensionId] = extensionId
     this[privRuntimeEnvironment] = runtimeEnvironment
+    this[privRuntime] = runtime
     this[privHasPermission] = hasPermission
 
     this.onCreated = new Event()
@@ -80,14 +85,26 @@ class Tabs {
       console.warn(`chrome.tabs.create does not support the following options at this time "[${unsupported.join(', ')}]" and they will be ignored`)
     }
 
-    DispatchManager.request(
-      `${CRX_TABS_CREATE_}${this[privExtensionId]}`,
-      [options],
-      (evt, err, response) => {
+    if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.BACKGROUND) {
+      const transId = uuid.v4()
+      ipcRenderer.send(`${CRX_TABS_CREATE_FROM_BG_}${this[privExtensionId]}`, transId, options.url)
+      const opened = window.open(options.url)
+      ipcRenderer.once(`${CRX_TABS_CREATE_FROM_BG_}${this[privExtensionId]}${transId}`, (evt, err, tabData) => {
+        if (tabData) {
+          this[privRuntime][protectedJSWindowTracker].add(tabData.id, opened)
+        }
         if (callback) {
-          callback(response ? new Tab(response.id, response) : null)
+          callback(tabData ? new Tab(tabData) : null)
         }
       })
+    } else {
+      window.open(options.url)
+      setTimeout(() => {
+        if (callback) {
+          callback(null)
+        }
+      })
+    }
   }
 
   get (tabId, callback) {

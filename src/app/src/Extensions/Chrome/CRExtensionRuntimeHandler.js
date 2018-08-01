@@ -104,7 +104,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   * @param responder: the responder to return the response
   */
   _handleChromeExtensionBufferRequest = (request, responder) => {
-    const purl = new URL(request.url || 'about:blank')
+    const purl = new URL(decodeURIComponent(request.url || 'about:blank'))
     if (!purl.hostname || !purl.pathname) { return responder() }
     const runtime = this.runtimes.get(purl.hostname)
     if (!runtime) { return responder() }
@@ -132,7 +132,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
             responder(data)
           }
         })
-        .catch(() => responder(-6)) // not found
+        .catch(() => { responder(-6) }) // not found
     } else {
       responder(-6) // not found
     }
@@ -252,9 +252,9 @@ class CRExtensionRuntimeHandler extends EventEmitter {
 
       // Prepare for teardown
       evt.sender.once('render-view-deleted', () => {
-        const backgroundContents = runtime.backgroundPage.webContents
-        if (!backgroundContents || backgroundContents.isDestroyed()) { return }
-        backgroundContents.sendToAll(`${CRX_PORT_DISCONNECTED_}${portId}`)
+        if (runtime && runtime.backgroundPage && runtime.backgroundPage.isRunning) {
+          runtime.backgroundPage.webContents.sendToAll(`${CRX_PORT_DISCONNECTED_}${portId}`)
+        }
       })
 
       // Emit the connect event

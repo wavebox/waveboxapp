@@ -16,15 +16,14 @@ class CRExtensionWindows {
   constructor (extension) {
     this.extension = extension
     this.backgroundPageSender = null
+    this.extensionWindowSender = null
 
-    if (this.extension.manifest.hasBackground) {
-      if (this.extension.manifest.permissions.has('tabs')) {
-        evtMain.on(evtMain.WB_WINDOW_BLURRED, this.handleWindowBlurred)
-        evtMain.on(evtMain.WB_WINDOW_FOCUSED, this.handleWindowFocused)
-      }
-
-      CRDispatchManager.registerHandler(`${CRX_WINDOW_GET_ALL_}${this.extension.id}`, this.handleGetAllWindows)
+    if (this.extension.manifest.permissions.has('tabs')) {
+      evtMain.on(evtMain.WB_WINDOW_BLURRED, this.handleWindowBlurred)
+      evtMain.on(evtMain.WB_WINDOW_FOCUSED, this.handleWindowFocused)
     }
+
+    CRDispatchManager.registerHandler(`${CRX_WINDOW_GET_ALL_}${this.extension.id}`, this.handleGetAllWindows)
   }
 
   destroy () {
@@ -45,6 +44,19 @@ class CRExtensionWindows {
     return focused ? focused.id : undefined
   }
 
+  /**
+  * Emits an event to all the qualified listeners
+  * @param ...args: the arguments to pass through
+  */
+  _emitEventToListeners (...args) {
+    if (this.backgroundPageSender) {
+      this.backgroundPageSender(...args)
+    }
+    if (this.extensionWindowSender) {
+      this.extensionWindowSender(...args)
+    }
+  }
+
   /* ****************************************************************************/
   // Event handlers: Window
   /* ****************************************************************************/
@@ -55,9 +67,8 @@ class CRExtensionWindows {
   * @param windowId: the id of the window
   */
   handleWindowBlurred = (evt, windowId) => {
-    if (!this.backgroundPageSender) { return }
     const focusedId = this._getFocusedWindowId()
-    this.backgroundPageSender(`${CRX_WINDOW_FOCUS_CHANGED_}${this.extension.id}`, focusedId === undefined ? -1 : focusedId)
+    this._emitEventToListeners(`${CRX_WINDOW_FOCUS_CHANGED_}${this.extension.id}`, focusedId === undefined ? -1 : focusedId)
   }
 
   /**
@@ -66,8 +77,7 @@ class CRExtensionWindows {
   * @param windowId: the id of the window
   */
   handleWindowFocused = (evt, windowId) => {
-    if (!this.backgroundPageSender) { return }
-    this.backgroundPageSender(`${CRX_WINDOW_FOCUS_CHANGED_}${this.extension.id}`, windowId === undefined ? -1 : windowId)
+    this._emitEventToListeners(`${CRX_WINDOW_FOCUS_CHANGED_}${this.extension.id}`, windowId === undefined ? -1 : windowId)
   }
 
   /* ****************************************************************************/

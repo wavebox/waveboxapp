@@ -37,6 +37,8 @@ class WaveboxWindow extends EventEmitter {
   static allTabIds () { return waveboxWindowManager.allTabIds() }
   static fromTabId (tabId) { return waveboxWindowManager.fromTabId(tabId) }
   static tabMetaInfo (tabId) { return waveboxWindowManager.tabMetaInfo(tabId) }
+  static allTabIdsWithBacking (backingType) { return waveboxWindowManager.allTabIdsWithBacking(backingType) }
+  static allTabMetaWithBacking (backingType) { return waveboxWindowManager.allTabMetaWithBacking(backingType) }
   static allBrowserWindowIds () { return waveboxWindowManager.allBrowserWindowIds() }
   static fromBrowserWindowId (browserWindowId) { return waveboxWindowManager.fromBrowserWindowId(browserWindowId) }
   static fromBrowserWindow (bw) { return waveboxWindowManager.fromBrowserWindow(bw) }

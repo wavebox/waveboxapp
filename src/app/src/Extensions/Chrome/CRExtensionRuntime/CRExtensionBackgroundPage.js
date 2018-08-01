@@ -1,41 +1,47 @@
-import { webContents, session } from 'electron'
+import { session, ipcMain, BrowserWindow } from 'electron'
 import fs from 'fs-extra'
 import { format as urlFormat, URL } from 'url'
+import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import {
-  CR_EXTENSION_PROTOCOL,
-  CR_EXTENSION_BG_PARTITION_PREFIX
-} from 'shared/extensionApis'
+  CRX_TABS_CREATE_FROM_BG_
+} from 'shared/crExtensionIpcEvents'
 import Resolver from 'Runtime/Resolver'
 import { SessionManager } from 'SessionManager'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
+import ContentPopupWindow from 'Windows/ContentPopupWindow'
+import CRExtensionTab from './CRExtensionTab'
+import { WINDOW_BACKING_TYPES } from 'Windows/WindowBackingTypes'
+import { CRExtensionWebPreferences } from 'WebContentsManager'
+
+const privPendingCreateTab = Symbol('privPendingCreateTab')
+const privHtml = Symbol('privHtml')
+const privName = Symbol('privName')
+const privBrowserWindow = Symbol('privBrowserWindow')
 
 class CRExtensionBackgroundPage {
-  /* ****************************************************************************/
-  // Class: utils
-  /* ****************************************************************************/
-
-  /**
-  * @param extensionId: the id of the extension
-  * @return the partition that will be used for the background page
-  */
-  static partitionIdForExtension (extensionId) {
-    return `${CR_EXTENSION_BG_PARTITION_PREFIX}${extensionId}`
-  }
-
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
   constructor (extension) {
     this.extension = extension
-    this._html = undefined
-    this._name = undefined
-    this._webContents = undefined
+    this[privHtml] = undefined
+    this[privName] = undefined
+    this[privBrowserWindow] = undefined
+    this[privPendingCreateTab] = undefined
 
+    // Event handlers
+    ipcMain.on(`${CRX_TABS_CREATE_FROM_BG_}${this.extension.id}`, this.handleCreateTab)
+
+    // Bg page
     this._start()
   }
 
   destroy () {
+    // Event handlers
+    ipcMain.removeListener(`${CRX_TABS_CREATE_FROM_BG_}${this.extension.id}`, this.handleCreateTab)
+
+    // Bg page
     this._stop()
   }
 
@@ -43,12 +49,13 @@ class CRExtensionBackgroundPage {
   // Properties
   /* ****************************************************************************/
 
-  get isRunning () { return this._webContents && !this._webContents.isDestroyed() }
-  get webContents () { return this._webContents }
-  get webContentsId () { return this.isRunning ? this._webContents.id : undefined }
-  get partitionId () { return this.constructor.partitionIdForExtension(this.extension.id) }
-  get html () { return this._html }
-  get name () { return this._name }
+  get isRunning () { return this[privBrowserWindow] && !this[privBrowserWindow].isDestroyed() && !this[privBrowserWindow].webContents.isDestroyed() }
+  get webContents () { return this[privBrowserWindow].webContents }
+  get webContentsId () { return this.isRunning ? this[privBrowserWindow].webContents.id : undefined }
+  get partitionId () { return CRExtensionWebPreferences.partitionIdForExtension(this.extension.id) }
+  get affinityId () { return CRExtensionWebPreferences.affinityIdForExtension(this.extension.id) }
+  get html () { return this[privHtml] }
+  get name () { return this[privName] }
 
   /* ****************************************************************************/
   // WebContents pass-through
@@ -59,8 +66,9 @@ class CRExtensionBackgroundPage {
   * @param ...args: the arguments to send
   */
   sendToWebContents = (...args) => {
-    if (!this._webContents) { return }
-    this._webContents.send(...args)
+    if (this.isRunning) {
+      this.webContents.send(...args)
+    }
   }
 
   /* ****************************************************************************/
@@ -74,52 +82,57 @@ class CRExtensionBackgroundPage {
     if (!this.extension.manifest.hasBackground) { return }
 
     if (this.extension.manifest.background.hasHtmlPage) {
-      this._name = this.extension.manifest.background.htmlPage
+      this[privName] = this.extension.manifest.background.htmlPage
       try {
-        this._html = fs.readFileSync(this.extension.manifest.background.getHtmlPageScoped(this.extension.srcPath))
+        this[privHtml] = fs.readFileSync(this.extension.manifest.background.getHtmlPageScoped(this.extension.srcPath))
       } catch (ex) {
         this.html = ''
       }
     } else {
-      this._name = '_generated_background_page.html'
-      this._html = Buffer.from(this.extension.manifest.background.generateHtmlPageForScriptset())
+      this[privName] = '_generated_background_page.html'
+      this[privHtml] = Buffer.from(this.extension.manifest.background.generateHtmlPageForScriptset())
     }
 
-    const partitionId = this.partitionId
-    this._webContents = webContents.create({
-      partition: partitionId,
-      sandbox: true,
-      nativeWindowOpen: true,
-      sharedSiteInstances: true,
-      isBackgroundPage: true,
-      nodeIntegration: false,
-      nodeIntegrationInWorker: false,
-      webviewTag: false,
-      preload: Resolver.crExtensionApi(),
-      commandLineSwitches: [
-        '--background-page',
-        '--nodeIntegration=false',
-        '--webview-tag=false'
-      ]
+    this[privBrowserWindow] = new BrowserWindow({
+      width: 0,
+      height: 0,
+      webPreferences: {
+        backgroundThrottling: false,
+        contextIsolation: false, // Intentional as the extension shares the same namespace as chrome.* api and runs in a semi-priviledged position
+        partition: this.partitionId,
+        sandbox: true,
+        nativeWindowOpen: true,
+        sharedSiteInstances: true,
+        affinity: this.affinityId,
+        nodeIntegration: false,
+        nodeIntegrationInWorker: false,
+        webviewTag: false,
+        preload: Resolver.crExtensionApi(),
+        offscreen: true
+      }
     })
-    this._webContents.loadURL(urlFormat({
+    this[privBrowserWindow].webContents.setFrameRate(1)
+
+    this[privBrowserWindow].webContents.on('new-window', this._handleNewWindow)
+    this[privBrowserWindow].webContents.on('will-navigate', this._handleWillNavigate)
+    this[privBrowserWindow].webContents.loadURL(urlFormat({
       protocol: CR_EXTENSION_PROTOCOL,
       slashes: true,
       hostname: this.extension.id,
-      pathname: this._name
+      pathname: this[privName]
     }))
 
-    this._webContents.openDevTools()//TODO dev
+    this[privBrowserWindow].webContents.openDevTools({mode:'detach'})//TODO dev
 
     // Update cors via the extension config
     SessionManager
-      .webRequestEmitterFromPartitionId(partitionId)
+      .webRequestEmitterFromPartitionId(this.partitionId)
       .beforeSendHeaders
       .onBlocking(undefined, this._handleBeforeSendHeaders)
 
     // Relax cors for extensions that request it
     SessionManager
-      .webRequestEmitterFromPartitionId(partitionId)
+      .webRequestEmitterFromPartitionId(this.partitionId)
       .headersReceived
       .onBlocking(undefined, this._handleAllUrlHeadersReceived)
   }
@@ -129,12 +142,12 @@ class CRExtensionBackgroundPage {
   * @param extension: the extension to stop
   */
   _stop (extension) {
-    if (this._webContents && !this._webContents.isDestroyed()) {
-      this._webContents.destroy()
+    if (this.isRunning) {
+      this[privBrowserWindow].destroy()
     }
-    this._webContents = undefined
-    this._html = undefined
-    this._name = undefined
+    this[privBrowserWindow] = undefined
+    this[privHtml] = undefined
+    this[privName] = undefined
   }
 
   /* ****************************************************************************/
@@ -197,6 +210,95 @@ class CRExtensionBackgroundPage {
   }
 
   /* ****************************************************************************/
+  // Navigation events
+  /* ****************************************************************************/
+
+  /**
+  * Handles a new window
+  * @param evt: the event that fired
+  * @param targetUrl: the webview url
+  * @param frameName: the name of the frame
+  * @param disposition: the frame disposition
+  * @param options: the browser window options
+  * @param additionalFeatures: The non-standard features
+  */
+  _handleNewWindow = (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
+    evt.preventDefault()
+
+    const openedWindow = new ContentPopupWindow({
+      backing: WINDOW_BACKING_TYPES.EXTENSION,
+      extensionId: this.extension.id,
+      extensionName: this.extension.manifest.name
+    })
+    openedWindow.create(targetUrl, {
+      ...options,
+      frame: true, // offscreen bg page will make this false
+      webPreferences: {
+        ...options.webPreferences,
+        ...CRExtensionWebPreferences.defaultWebPreferences(this.extension.id),
+        offscreen: false // we don't want this to be offscreen
+      }
+    })
+    openedWindow.window.webContents.openDevTools()//TODO test only
+    evt.newGuest = openedWindow.window
+
+    if (this[privPendingCreateTab]) {
+      this[privPendingCreateTab](openedWindow, targetUrl)
+    }
+  }
+
+  /**
+  * Handles the window navigating
+  * @param evt: the event that fired
+  * @param targetUrl: the url to open
+  */
+  _handleWillNavigate = (evt, targetUrl) => {
+    evt.preventDefault()
+  }
+
+  /* ****************************************************************************/
+  // Extension calls
+  /* ****************************************************************************/
+
+  /**
+  * Creates a tab with the given id
+  * @param evt: the event that fired
+  * @param transId: the transport id of the call
+  * @param url: the start url
+  */
+  handleCreateTab = (evt, transId, url) => {
+    if (!this.isRunning) {
+      evt.sender.send(
+        `${CRX_TABS_CREATE_FROM_BG_}${this.extension.id}${transId}`,
+        {},
+        new Error(`Background page is not running for ${this.extension.id}`),
+        undefined
+      )
+      return
+    }
+
+    // There's only ever going to be one here because the host page will follow this flow...
+    // - create: sendAsync to ipcMain
+    // - window.open: sendSync to ipcMain, return immediately
+    // - created: sendAsync to ipcRenderer
+    // if anything else happens then the flow broke and we handle a none-case correctly
+    this[privPendingCreateTab] = (openedWindow, targetUrl) => {
+      if (targetUrl === url) { // Basic Sanity check
+        if (evt.sender && !evt.sender.isDestroyed()) {
+          evt.sender.send(
+            `${CRX_TABS_CREATE_FROM_BG_}${this.extension.id}${transId}`,
+            null,
+            CRExtensionTab.dataFromWebContentsId(this.extension, openedWindow.tabIds()[0])
+          )
+        }
+      }
+
+      // Always clear out, even if we fail to fire
+      this[privPendingCreateTab] = undefined
+    }
+  }
+
+  /* ****************************************************************************/
   // Dev & data management
   /* ****************************************************************************/
 
@@ -204,8 +306,9 @@ class CRExtensionBackgroundPage {
   * Opens the developer tools
   */
   openDevTools () {
-    if (!this._webContents) { return }
-    this._webContents.openDevTools()
+    if (this.isRunning) {
+      this.webContents.openDevTools({ mode: 'detach' })
+    }
   }
 
   /**
@@ -214,8 +317,6 @@ class CRExtensionBackgroundPage {
   * @return promise
   */
   clearBrowserSession (reloadOnComplete = true) {
-    if (!this._webContents) { return }
-
     const ses = session.fromPartition(this.partitionId)
     return Promise.resolve()
       .then(() => {
@@ -234,8 +335,9 @@ class CRExtensionBackgroundPage {
   * Reloads the background page
   */
   reload () {
-    if (!this._webContents) { return }
-    this._webContents.reload()
+    if (this.isRunning) {
+      this.webContents.reload()
+    }
   }
 }
 

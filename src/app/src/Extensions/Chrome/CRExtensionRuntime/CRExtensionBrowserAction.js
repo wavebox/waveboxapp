@@ -22,9 +22,9 @@ import {
   CRExtensionRTBrowserAction
 } from 'shared/Models/CRExtensionRT'
 import ContentWindow from 'Windows/ContentWindow'
-import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
+import { CRExtensionWebPreferences } from 'WebContentsManager'
 import { evtMain } from 'AppEvents'
-import {crextensionActions} from 'stores/crextension'
+import { crextensionActions } from 'stores/crextension'
 
 class CRExtensionBrowserAction {
   /* ****************************************************************************/
@@ -274,13 +274,14 @@ class CRExtensionBrowserAction {
   */
   handleClick = (evt, tabId) => {
     if (this.extension.manifest.wavebox.hasBrowserActionOpenUrl) {
+      //TODO move webPreferences same as options etc??
       const contentWindow = new ContentWindow()
       contentWindow.create(
         this.extension.manifest.wavebox.browserActionOpenUrl,
         undefined,
         undefined,
         {
-          partition: CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
+          partition: CRExtensionWebPreferences.partitionIdForExtension(this.extension.id)
         }
       )
     } else {
