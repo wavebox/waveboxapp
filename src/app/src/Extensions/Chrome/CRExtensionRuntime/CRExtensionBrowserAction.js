@@ -13,7 +13,8 @@ import {
   CRX_BROWSER_ACTION_FETCH_BADGE_BACKGROUND_COLOR_,
   CRX_BROWSER_ACTION_ENABLE_,
   CRX_BROWSER_ACTION_DISABLE_,
-  CRX_BROWSER_ACTION_CLICKED_
+  CRX_BROWSER_ACTION_CLICKED_,
+  CRX_BROWSER_ACTION_OPEN_POPUP_
 } from 'shared/crExtensionIpcEvents'
 import {
   CR_EXTENSION_PROTOCOL
@@ -34,6 +35,7 @@ class CRExtensionBrowserAction {
   constructor (extension) {
     this.extension = extension
     this.browserActions = new Map()
+    this.backgroundPageSender = undefined
 
     ipcMain.on(`${CRX_BROWSER_ACTION_SET_TITLE_}${this.extension.id}`, this.handleSetTitle)
     CRDispatchManager.registerHandler(`${CRX_BROWSER_ACTION_FETCH_TITLE_}${this.extension.id}`, this.handleFetchTitle)
@@ -119,6 +121,25 @@ class CRExtensionBrowserAction {
     if (emitChange && this.extension.manifest.hasBrowserAction) {
       crextensionActions.browserActionChanged.defer(this.extension.id, tabId, nextJS)
     }
+  }
+
+  /**
+  * Gets the popup url for the browser action
+  * @param tabId: the id of the tab
+  * @return the url for the popup or undefined
+  */
+  _getPopupUrl (tabId) {
+    const tabBA = this.browserActions.get(tabId)
+    if (tabBA && tabBA.hasPopup) {
+      return `${CR_EXTENSION_PROTOCOL}://${this.extension.id}/${tabBA.popup}`
+    }
+
+    const globalBA = this.browserActions.get(undefined)
+    if (globalBA && globalBA.hasPopup) {
+      return `${CR_EXTENSION_PROTOCOL}://${this.extension.id}/${globalBA.popup}`
+    }
+
+    return undefined
   }
 
   /* ****************************************************************************/
@@ -274,7 +295,7 @@ class CRExtensionBrowserAction {
   */
   handleClick = (evt, tabId) => {
     if (this.extension.manifest.wavebox.hasBrowserActionOpenUrl) {
-      //TODO move webPreferences same as options etc??
+      //TODO depricate if popup just works? If not use the normal popup. If not move webPreferences same as options etc??
       const contentWindow = new ContentWindow()
       contentWindow.create(
         this.extension.manifest.wavebox.browserActionOpenUrl,
@@ -285,10 +306,17 @@ class CRExtensionBrowserAction {
         }
       )
     } else {
-      const tabInfo = CRExtensionTab.dataFromWebContentsId(this.extension, tabId)
-      webContents.getAllWebContents().forEach((targetWebcontents) => {
-        targetWebcontents.send(`${CRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, tabInfo)
-      })
+      const popupUrl = this._getPopupUrl(tabId)
+      if (popupUrl) {
+        if (this.backgroundPageSender) {
+          this.backgroundPageSender(`${CRX_BROWSER_ACTION_OPEN_POPUP_}${this.extension.id}`, popupUrl)
+        }
+      } else {
+        const tabInfo = CRExtensionTab.dataFromWebContentsId(this.extension, tabId)
+        webContents.getAllWebContents().forEach((targetWebcontents) => {
+          targetWebcontents.send(`${CRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, tabInfo)
+        })
+      }
     }
   }
 

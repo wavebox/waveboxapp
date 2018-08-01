@@ -58,10 +58,6 @@ class Extension {
         const all = this[privRuntime][protectedJSWindowTracker].allArray()
 
         if (Object.keys(fetchProperties).length) {
-          if (fetchProperties.type && fetchProperties.type !== 'tab') {
-            console.warn(`chrome.extension.getViews does not support the following options at this time "[type=${fetchProperties.type}]" and they will be ignored`)
-          }
-
           const allTabIds = all.map(({ wcId }) => wcId)
           const allMeta = ipcRenderer.sendSync(`${CRX_GET_WEBCONTENT_META_SYNC_}${this[privExtensionId]}`, allTabIds)
           const allMetaIndex = allMeta.reduce((acc, meta) => {
@@ -76,6 +72,9 @@ class Extension {
                 return false
               }
               if (fetchProperties.tabId !== undefined && fetchProperties.tabId !== wcId) {
+                return false
+              }
+              if (fetchProperties.type && fetchProperties.type !== meta.viewType) {
                 return false
               }
 

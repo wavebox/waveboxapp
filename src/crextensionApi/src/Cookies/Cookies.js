@@ -32,6 +32,7 @@ class Cookies {
 
     // Handlers
     ipcRenderer.on(`${CRX_COOKIES_CHANGED_}${this[privExtensionId]}`, (evt, rawChangeInfo) => {
+      console.log("------Chandgedlength", this.onChanged.listeners.length)
       const changeInfo = {
         cause: rawChangeInfo.cause,
         cookie: new Cookie(rawChangeInfo.cookie),
@@ -48,6 +49,7 @@ class Cookies {
   /* **************************************************************************/
 
   get (details, callback) {
+    console.log("------Cookies.get")
     if (details.storeId) {
       console.warn('details.storeId is not supported by chrome.cookies.get at this time')
     }
@@ -63,6 +65,7 @@ class Cookies {
   }
 
   getAll (details, callback) {
+    console.log("------Cookies.getAll")
     if (details.storeId) {
       console.warn('details.storeId is not supported by chrome.cookies.getAll at this time')
     }
@@ -81,6 +84,7 @@ class Cookies {
   }
 
   set (details, callback) {
+    console.log("------Cookies.set")
     if (details.storeId) {
       console.warn('details.storeId is not supported by chrome.cookies.set at this time')
     }
@@ -99,6 +103,7 @@ class Cookies {
   }
 
   remove (details, callback) {
+    console.log("------Cookies.remove")
     if (details.storeId) {
       console.warn('details.storeId is not supported by chrome.cookies.remove at this time')
     }

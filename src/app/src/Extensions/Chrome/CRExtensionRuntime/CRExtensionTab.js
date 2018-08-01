@@ -38,10 +38,14 @@ class CRExtensionTab {
       } : undefined),
       ...(waveboxWindow ? {
         active: waveboxWindow.focusedTabId() === webContents.id,
-        index: waveboxWindow.tabIds().findIndex((tabId) => tabId === webContents.id)
+        index: waveboxWindow.tabIds().findIndex((tabId) => tabId === webContents.id),
+        viewType: waveboxWindow.windowType === waveboxWindow.WINDOW_TYPES.EXTENSION_POPUP
+          ? 'popup'
+          : 'tab'
       } : {
         active: false,
-        index: 0
+        index: 0,
+        viewType: 'tab'
       }),
       ...(extension && extension.manifest.permissions.has('tabs') ? {
         url: webContents.getURL(),

@@ -3,17 +3,19 @@ import fs from 'fs-extra'
 import { format as urlFormat, URL } from 'url'
 import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import {
-  CRX_TABS_CREATE_FROM_BG_
+  CRX_TABS_CREATE_FROM_BG_,
+  CRX_BROWSER_ACTION_CREATE_FROM_BG_
 } from 'shared/crExtensionIpcEvents'
 import Resolver from 'Runtime/Resolver'
 import { SessionManager } from 'SessionManager'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
 import ContentPopupWindow from 'Windows/ContentPopupWindow'
+import ExtensionPopupWindow from 'Windows/ExtensionPopupWindow'
 import CRExtensionTab from './CRExtensionTab'
 import { WINDOW_BACKING_TYPES } from 'Windows/WindowBackingTypes'
 import { CRExtensionWebPreferences } from 'WebContentsManager'
 
-const privPendingCreateTab = Symbol('privPendingCreateTab')
+const privPendingCreateWindow = Symbol('privPendingCreateWindow')
 const privHtml = Symbol('privHtml')
 const privName = Symbol('privName')
 const privBrowserWindow = Symbol('privBrowserWindow')
@@ -28,10 +30,11 @@ class CRExtensionBackgroundPage {
     this[privHtml] = undefined
     this[privName] = undefined
     this[privBrowserWindow] = undefined
-    this[privPendingCreateTab] = undefined
+    this[privPendingCreateWindow] = undefined
 
     // Event handlers
     ipcMain.on(`${CRX_TABS_CREATE_FROM_BG_}${this.extension.id}`, this.handleCreateTab)
+    ipcMain.on(`${CRX_BROWSER_ACTION_CREATE_FROM_BG_}${this.extension.id}`, this.handleCreatePopup)
 
     // Bg page
     this._start()
@@ -40,6 +43,7 @@ class CRExtensionBackgroundPage {
   destroy () {
     // Event handlers
     ipcMain.removeListener(`${CRX_TABS_CREATE_FROM_BG_}${this.extension.id}`, this.handleCreateTab)
+    ipcMain.removeListener(`${CRX_BROWSER_ACTION_CREATE_FROM_BG_}${this.extension.id}`, this.handleCreatePopup)
 
     // Bg page
     this._stop()
@@ -215,35 +219,20 @@ class CRExtensionBackgroundPage {
 
   /**
   * Handles a new window
-  * @param evt: the event that fired
-  * @param targetUrl: the webview url
-  * @param frameName: the name of the frame
-  * @param disposition: the frame disposition
-  * @param options: the browser window options
-  * @param additionalFeatures: The non-standard features
+  * @param ...args: the new window args
   */
-  _handleNewWindow = (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
+  _handleNewWindow = (...args) => {
+    const [evt] = args
     evt.preventDefault()
 
-    const openedWindow = new ContentPopupWindow({
-      backing: WINDOW_BACKING_TYPES.EXTENSION,
-      extensionId: this.extension.id,
-      extensionName: this.extension.manifest.name
-    })
-    openedWindow.create(targetUrl, {
-      ...options,
-      frame: true, // offscreen bg page will make this false
-      webPreferences: {
-        ...options.webPreferences,
-        ...CRExtensionWebPreferences.defaultWebPreferences(this.extension.id),
-        offscreen: false // we don't want this to be offscreen
-      }
-    })
-    openedWindow.window.webContents.openDevTools()//TODO test only
-    evt.newGuest = openedWindow.window
-
-    if (this[privPendingCreateTab]) {
-      this[privPendingCreateTab](openedWindow, targetUrl)
+    // There's only ever going to be one here because the host page will follow this flow...
+    // - create: sendAsync to ipcMain
+    // - window.open: sendSync to ipcMain, return immediately
+    // - created: sendAsync to ipcRenderer
+    // if anything else happens then the flow broke and we handle a none-case correctly
+    if (this[privPendingCreateWindow]) {
+      this[privPendingCreateWindow](...args)
+      this[privPendingCreateWindow] = undefined
     }
   }
 
@@ -266,35 +255,100 @@ class CRExtensionBackgroundPage {
   * @param transId: the transport id of the call
   * @param url: the start url
   */
-  handleCreateTab = (evt, transId, url) => {
-    if (!this.isRunning) {
-      evt.sender.send(
-        `${CRX_TABS_CREATE_FROM_BG_}${this.extension.id}${transId}`,
-        {},
-        new Error(`Background page is not running for ${this.extension.id}`),
-        undefined
-      )
-      return
-    }
+  handleCreateTab = (createEvt, transId, url) => {
+    const ipcChannel = `${CRX_TABS_CREATE_FROM_BG_}${this.extension.id}${transId}`
+    if (this._windowCreateAssertRunning(createEvt.sender, ipcChannel)) {
+      this[privPendingCreateWindow] = (windowEvt, targetUrl, frameName, disposition, options, additionalFeatures) => {
+        if (targetUrl !== url) { return }
 
-    // There's only ever going to be one here because the host page will follow this flow...
-    // - create: sendAsync to ipcMain
-    // - window.open: sendSync to ipcMain, return immediately
-    // - created: sendAsync to ipcRenderer
-    // if anything else happens then the flow broke and we handle a none-case correctly
-    this[privPendingCreateTab] = (openedWindow, targetUrl) => {
-      if (targetUrl === url) { // Basic Sanity check
-        if (evt.sender && !evt.sender.isDestroyed()) {
-          evt.sender.send(
-            `${CRX_TABS_CREATE_FROM_BG_}${this.extension.id}${transId}`,
+        // Create window
+        const openedWindow = new ContentPopupWindow({
+          backing: WINDOW_BACKING_TYPES.EXTENSION,
+          extensionId: this.extension.id,
+          extensionName: this.extension.manifest.name
+        })
+        openedWindow.create(targetUrl, {
+          ...options,
+          frame: true, // offscreen bg page will make this false
+          webPreferences: {
+            ...options.webPreferences,
+            ...CRExtensionWebPreferences.defaultWebPreferences(this.extension.id),
+            offscreen: false // parent window will make this offscreen but we don't want it
+          }
+        })
+        openedWindow.window.webContents.openDevTools()//TODO test only
+        windowEvt.newGuest = openedWindow.window
+
+        // Respond to requestor
+        if (createEvt.sender && !createEvt.sender.isDestroyed()) {
+          createEvt.sender.send(
+            ipcChannel,
             null,
             CRExtensionTab.dataFromWebContentsId(this.extension, openedWindow.tabIds()[0])
           )
         }
       }
+    }
+  }
 
-      // Always clear out, even if we fail to fire
-      this[privPendingCreateTab] = undefined
+  /**
+  * Creates a tab with the given id
+  * @param evt: the event that fired
+  * @param transId: the transport id of the call
+  * @param url: the start url
+  */
+  handleCreatePopup = (createEvt, transId, url) => {
+    const ipcChannel = `${CRX_TABS_CREATE_FROM_BG_}${this.extension.id}${transId}`
+    if (this._windowCreateAssertRunning(createEvt.sender, ipcChannel)) {
+      this[privPendingCreateWindow] = (windowEvt, targetUrl, frameName, disposition, options, additionalFeatures) => {
+        if (targetUrl !== url) { return }
+
+        // Create window
+        const openedWindow = new ExtensionPopupWindow({
+          backing: WINDOW_BACKING_TYPES.EXTENSION,
+          extensionId: this.extension.id,
+          extensionName: this.extension.manifest.name
+        })
+        openedWindow.create(targetUrl, {
+          ...options,
+          webPreferences: {
+            ...options.webPreferences,
+            ...CRExtensionWebPreferences.defaultWebPreferences(this.extension.id),
+            offscreen: false // parent window will make this offscreen but we don't want it
+          }
+        })
+        openedWindow.window.webContents.openDevTools({mode:"detach"})//TODO test only
+        windowEvt.newGuest = openedWindow.window
+
+        // Respond to requestor
+        if (createEvt.sender && !createEvt.sender.isDestroyed()) {
+          createEvt.sender.send(
+            ipcChannel,
+            null,
+            CRExtensionTab.dataFromWebContentsId(this.extension, openedWindow.tabIds()[0])
+          )
+        }
+      }
+    }
+  }
+
+  /**
+  * Asserts the background page is running for creating a window and if not responds to the ipc accordinly
+  * @param sender: the webcontents who sent originally
+  * @param ipcResponseChannel: the ipc channel to respond on
+  * @return true if the window is running, false otherwise
+  */
+  _windowCreateAssertRunning (sender, ipcResponseChannel) {
+    if (!this.isRunning) {
+      sender.send(
+        ipcResponseChannel,
+        {},
+        new Error(`Background page is not running for ${this.extension.id}`),
+        undefined
+      )
+      return false
+    } else {
+      return true
     }
   }
 
