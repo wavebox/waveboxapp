@@ -1,6 +1,7 @@
 import { ipcRenderer } from 'electronCrx'
 import Event from 'Core/Event'
 import uuid from 'uuid'
+import Log from 'Core/Log'
 import {
   CRX_CONTEXT_MENU_CREATE_,
   CRX_CONTEXT_MENU_REMOVE_ALL_,
@@ -51,6 +52,7 @@ class ContextMenus {
   /* **************************************************************************/
 
   create (properties, callback) {
+    Log.log("------------------------- ctxmenu create", properties)
     const id = properties.id || uuid.v4()
     if (properties.onclick) {
       this[privClickListeners].set(id, properties.onclick)
@@ -74,6 +76,7 @@ class ContextMenus {
   }
 
   removeAll (callback) {
+    Log.log("------------------------- ctxmenu removeall")
     DispatchManager.request(
       `${CRX_CONTEXT_MENU_REMOVE_ALL_}${this[privExtensionId]}`,
       [],

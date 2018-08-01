@@ -1,3 +1,4 @@
+import Log from 'Core/Log'
 const privExtensionId = Symbol('privExtensionId')
 
 const UNSUPPORTED_PERMISSIONS = new Set([
@@ -25,7 +26,7 @@ class Permissions {
   /* **************************************************************************/
 
   contains (test, callback) {
-    console.warn('chrome.permissions.contains is not currently spec compliant')
+    Log.warn('chrome.permissions.contains is not currently spec compliant')
     const unsupported = (test.permissions || []).find((p) => UNSUPPORTED_PERMISSIONS.has(p))
 
     setTimeout(() => {
@@ -35,7 +36,7 @@ class Permissions {
   }
 
   request (permissions, callback) {
-    console.warn('chrome.permissions.request is not currently spec compliant')
+    Log.warn('chrome.permissions.request is not currently spec compliant')
     setTimeout(() => {
       const res = true
       callback(res)

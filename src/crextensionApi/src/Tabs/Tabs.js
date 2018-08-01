@@ -1,6 +1,7 @@
 import { ipcRenderer } from 'electronCrx'
 import ArgParser from 'Core/ArgParser'
 import DispatchManager from 'Core/DispatchManager'
+import Log from 'Core/Log'
 import Event from 'Core/Event'
 import Tab from './Tab'
 import { CR_RUNTIME_ENVIRONMENTS } from 'shared/extensionApis'
@@ -87,7 +88,7 @@ class Tabs {
   create (options, callback) {
     const unsupported = Object.keys(options).filter((k) => !CREATE_SUPPORTED_OPTIONS.has(k))
     if (unsupported.length) {
-      console.warn(`chrome.tabs.create does not support the following options at this time "[${unsupported.join(', ')}]" and they will be ignored`)
+      Log.warn(`chrome.tabs.create does not support the following options at this time "[${unsupported.join(', ')}]" and they will be ignored`)
     }
 
     if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.BACKGROUND) {
@@ -126,7 +127,7 @@ class Tabs {
   query (options, callback) {
     const unsupported = Object.keys(options).filter((k) => !QUERY_SUPPORTED_OPTIONS.has(k))
     if (unsupported.length) {
-      console.warn(`chrome.tabs.query does not support the following options at this time "[${unsupported.join(', ')}]" and they will be ignored`)
+      Log.warn(`chrome.tabs.query does not support the following options at this time "[${unsupported.join(', ')}]" and they will be ignored`)
     }
 
     DispatchManager.request(
@@ -157,7 +158,7 @@ class Tabs {
   update (tabId, options, callback) {
     const unsupported = Object.keys(options).filter((k) => !UPDATE_SUPPORTED_OPTIONS.has(k))
     if (unsupported.length) {
-      console.warn(`chrome.tabs.update does not support the following options at this time "[${unsupported.join(', ')}]" and they will be ignored`)
+      Log.warn(`chrome.tabs.update does not support the following options at this time "[${unsupported.join(', ')}]" and they will be ignored`)
     }
 
     DispatchManager.request(
@@ -182,7 +183,7 @@ class Tabs {
     ])
 
     if (options) {
-      console.warn('chrome.tabs.sendMessage does not yet support options', options)
+      Log.warn('chrome.tabs.sendMessage does not yet support options', options)
     }
 
     DispatchManager.request(
@@ -213,7 +214,7 @@ class Tabs {
 
     const unsupported = Object.keys(details).filter((k) => !EXECUTE_SCRIPT_SUPPORTED_OPTIONS.has(k))
     if (unsupported.length) {
-      console.warn(`chrome.tabs.executeScript does not support the following options at this time "[${unsupported.join(', ')}]" and they will be ignored`)
+      Log.warn(`chrome.tabs.executeScript does not support the following options at this time "[${unsupported.join(', ')}]" and they will be ignored`)
     }
 
     DispatchManager.request(

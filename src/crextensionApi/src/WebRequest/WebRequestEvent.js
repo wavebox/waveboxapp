@@ -1,4 +1,5 @@
 import { ipcRenderer } from 'electronCrx'
+import Log from 'Core/Log'
 import uuid from 'uuid'
 
 const privFriendlyEventName = Symbol('privFriendlyEventName')
@@ -50,7 +51,7 @@ class WebRequestEvent {
     if (optExtraInfoSpec) {
       const unsupported = OPTIONAL_UNSUPPORTED.filter((n) => optExtraInfoSpec.indexOf(n) !== -1)
       if (unsupported.length) {
-        console.warn([
+        Log.warn([
           `chrome.webRequest.${this[privFriendlyEventName]}.addListener`,
           'does not support the following options',
           `"[${unsupported.join(',')}]"`,

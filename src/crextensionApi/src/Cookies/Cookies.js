@@ -1,4 +1,5 @@
 import Event from 'Core/Event'
+import Log from 'Core/Log'
 import DispatchManager from 'Core/DispatchManager'
 import Cookie from './Cookie'
 import { ipcRenderer } from 'electronCrx'
@@ -32,7 +33,6 @@ class Cookies {
 
     // Handlers
     ipcRenderer.on(`${CRX_COOKIES_CHANGED_}${this[privExtensionId]}`, (evt, rawChangeInfo) => {
-      console.log("------Chandgedlength", this.onChanged.listeners.length)
       const changeInfo = {
         cause: rawChangeInfo.cause,
         cookie: new Cookie(rawChangeInfo.cookie),
@@ -49,9 +49,8 @@ class Cookies {
   /* **************************************************************************/
 
   get (details, callback) {
-    console.log("------Cookies.get")
     if (details.storeId) {
-      console.warn('details.storeId is not supported by chrome.cookies.get at this time')
+      Log.warn('details.storeId is not supported by chrome.cookies.get at this time')
     }
     DispatchManager.request(
       `${CRX_COOKIES_GET_}${this[privExtensionId]}`,
@@ -65,9 +64,8 @@ class Cookies {
   }
 
   getAll (details, callback) {
-    console.log("------Cookies.getAll")
     if (details.storeId) {
-      console.warn('details.storeId is not supported by chrome.cookies.getAll at this time')
+      Log.warn('details.storeId is not supported by chrome.cookies.getAll at this time')
     }
     DispatchManager.request(
       `${CRX_COOKIES_GET_ALL_}${this[privExtensionId]}`,
@@ -84,9 +82,8 @@ class Cookies {
   }
 
   set (details, callback) {
-    console.log("------Cookies.set")
     if (details.storeId) {
-      console.warn('details.storeId is not supported by chrome.cookies.set at this time')
+      Log.warn('details.storeId is not supported by chrome.cookies.set at this time')
     }
     DispatchManager.request(
       `${CRX_COOKIES_SET_}${this[privExtensionId]}`,
@@ -103,9 +100,8 @@ class Cookies {
   }
 
   remove (details, callback) {
-    console.log("------Cookies.remove")
     if (details.storeId) {
-      console.warn('details.storeId is not supported by chrome.cookies.remove at this time')
+      Log.warn('details.storeId is not supported by chrome.cookies.remove at this time')
     }
     DispatchManager.request(
       `${CRX_COOKIES_REMOVE_}${this[privExtensionId]}`,

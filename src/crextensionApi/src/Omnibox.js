@@ -1,3 +1,4 @@
+import Log from 'Core/Log'
 import EventUnsupported from 'Core/EventUnsupported'
 
 class Omnibox {
@@ -24,7 +25,7 @@ class Omnibox {
   /* **************************************************************************/
 
   setDefaultSuggestion () {
-    console.warn('chrome.omnibox.setDefaultSuggestion is not supported by Wavebox at this time')
+    Log.warn('chrome.omnibox.setDefaultSuggestion is not supported by Wavebox at this time')
   }
 }
 

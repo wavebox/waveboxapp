@@ -1,3 +1,4 @@
+import Log from 'Core/Log'
 import { ipcRenderer } from 'electronCrx'
 import Event from 'Core/Event'
 import MessageSender from './MessageSender'
@@ -46,7 +47,7 @@ class Port {
     })
     ipcRenderer.on(`${CRX_PORT_POSTMESSAGE_}${this[privPortId]}`, (evt, message) => {
       this.onMessage.emit(message, this.sender, () => {
-        console.warn('chrome.runtime.port [sendResponse] is not implemented in Wavebox at this time')
+        Log.warn('chrome.runtime.port [sendResponse] is not implemented in Wavebox at this time')
       })
     })
   }

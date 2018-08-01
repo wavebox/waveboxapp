@@ -1,3 +1,4 @@
+import Log from 'Core/Log'
 import { ipcRenderer } from 'electronCrx'
 import {format as urlFormat} from 'url'
 import {
@@ -126,7 +127,7 @@ class Runtime {
       return undefined
     } else {
       return (url, callback) => {
-        console.warn('chrome.runtime.setUninstallURL is not supported by Wavebox at this time')
+        Log.warn('chrome.runtime.setUninstallURL is not supported by Wavebox at this time')
         if (callback) {
           setTimeout(() => { callback() })
         }
@@ -152,7 +153,7 @@ class Runtime {
     ])
 
     if (options) {
-      console.error('chrome.runtime.sendMessage does not support options')
+      Log.error('chrome.runtime.sendMessage does not support options')
     }
 
     DispatchManager.request(CRX_RUNTIME_SENDMESSAGE, [targetExtensionId, message], (evt, err, response) => {
