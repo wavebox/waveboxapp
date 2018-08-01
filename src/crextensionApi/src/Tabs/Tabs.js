@@ -11,9 +11,11 @@ import {
   CRX_TABS_QUERY_,
   CRX_TABS_CREATED_,
   CRX_TABS_REMOVED_,
+  CRX_TABS_UPDATE_,
   CRX_TAB_ACTIVATED_,
   CRX_TAB_UPDATED_,
-  CRX_TAB_EXECUTE_SCRIPT_
+  CRX_TAB_EXECUTE_SCRIPT_,
+  CRX_TABS_REMOVE_
 } from 'shared/crExtensionIpcEvents'
 import uuid from 'uuid'
 import { protectedJSWindowTracker } from 'Runtime/ProtectedRuntimeSymbols'
@@ -31,6 +33,9 @@ const QUERY_SUPPORTED_OPTIONS = new Set([
   'lastFocusedWindow',
   'url',
   'currentWindow'
+])
+const UPDATE_SUPPORTED_OPTIONS = new Set([
+  'url'
 ])
 const EXECUTE_SCRIPT_SUPPORTED_OPTIONS = new Set([
   'file'
@@ -133,6 +138,34 @@ class Tabs {
             return new Tab(data.id, data)
           })
           callback(tabs)
+        }
+      })
+  }
+
+  remove (tabIdOrTabIds, callback) {
+    const tabIds = Array.isArray(tabIdOrTabIds) ? tabIdOrTabIds : [tabIdOrTabIds]
+    DispatchManager.request(
+      `${CRX_TABS_REMOVE_}${this[privExtensionId]}`,
+      [tabIds],
+      (evt, err, response) => {
+        if (callback) {
+          callback()
+        }
+      })
+  }
+
+  update (tabId, options, callback) {
+    const unsupported = Object.keys(options).filter((k) => !UPDATE_SUPPORTED_OPTIONS.has(k))
+    if (unsupported.length) {
+      console.warn(`chrome.tabs.update does not support the following options at this time "[${unsupported.join(', ')}]" and they will be ignored`)
+    }
+
+    DispatchManager.request(
+      `${CRX_TABS_UPDATE_}${this[privExtensionId]}`,
+      [tabId, options],
+      (evt, err, response) => {
+        if (callback) {
+          callback(response ? new Tab(response) : null)
         }
       })
   }

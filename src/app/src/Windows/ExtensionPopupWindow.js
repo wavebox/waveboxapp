@@ -64,6 +64,7 @@ class ExtensionPopupWindow extends WaveboxWindow {
       maximizable: false,
       fullscreenable: false,
       alwaysOnTop: true,
+      useContentSize: true,
       center: true, //obviously we need some positining info
       show: !shouldDelayShow
     }
@@ -157,7 +158,7 @@ class ExtensionPopupWindow extends WaveboxWindow {
   */
   handleShow = (evt) => {
     clearInterval(this[privWindowResizeInterval])
-    this[privWindowResizeInterval] = setInterval(this.autoResizeWindow, 500)
+    this[privWindowResizeInterval] = setInterval(this.autoResizeWindow, 1000)
   }
 
   /**
@@ -177,10 +178,9 @@ class ExtensionPopupWindow extends WaveboxWindow {
   autoResizeWindow = () => {
     this.window.webContents.executeJavaScript(`document.head && document.head.parentElement ? [document.head.parentElement.offsetWidth, document.head.parentElement.offsetHeight] : undefined`)
       .then((size) => {
-        if (size !== undefined) {
-          const currentSize = this.window.getSize()
-          if (currentSize[0] !== size[0] || currentSize[1] !== size[1]) {
-            this.window.setSize(size[0], size[1], true)
+        if (size) {
+          if (this.window && !this.window.isDestroyed()) {
+            this.window.setContentSize(size[0], size[1], true)
           }
         }
       })
@@ -193,11 +193,6 @@ class ExtensionPopupWindow extends WaveboxWindow {
   /**
   * Handles the webcontents requesting a new window
   * @param evt: the event that fired
-  * @param targetUrl: the webview url
-  * @param frameName: the name of the frame
-  * @param disposition: the frame disposition
-  * @param options: the browser window options
-  * @param additionalFeatures: The non-standard features
   */
   handleWebContentsNewWindow = (evt) => {
     evt.preventDefault()

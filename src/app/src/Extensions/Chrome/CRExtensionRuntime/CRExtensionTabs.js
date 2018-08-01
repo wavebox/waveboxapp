@@ -4,6 +4,8 @@ import CRDispatchManager from '../CRDispatchManager'
 import {
   CRX_TABS_QUERY_,
   CRX_TABS_GET_,
+  CRX_TABS_REMOVE_,
+  CRX_TABS_UPDATE_,
   CRX_TABS_CREATED_,
   CRX_TABS_REMOVED_,
   CRX_TAB_ACTIVATED_,
@@ -11,6 +13,7 @@ import {
   CRX_TAB_EXECUTE_SCRIPT_
 } from 'shared/crExtensionIpcEvents'
 import { WBECRX_EXECUTE_SCRIPT } from 'shared/ipcEvents'
+import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
 import { URL } from 'url'
 import fs from 'fs-extra'
@@ -35,6 +38,8 @@ class CRExtensionTabs {
 
     CRDispatchManager.registerHandler(`${CRX_TABS_GET_}${this.extension.id}`, this.handleGetTab)
     CRDispatchManager.registerHandler(`${CRX_TABS_QUERY_}${this.extension.id}`, this.handleQueryTabs)
+    CRDispatchManager.registerHandler(`${CRX_TABS_REMOVE_}${this.extension.id}`, this.handleRemoveTabs)
+    CRDispatchManager.registerHandler(`${CRX_TABS_UPDATE_}${this.extension.id}`, this.handleUpdateTab)
     CRDispatchManager.registerHandler(`${CRX_TAB_EXECUTE_SCRIPT_}${this.extension.id}`, this.handleExecuteScript)
   }
 
@@ -45,6 +50,8 @@ class CRExtensionTabs {
 
     CRDispatchManager.unregisterHandler(`${CRX_TABS_GET_}${this.extension.id}`, this.handleGetTab)
     CRDispatchManager.unregisterHandler(`${CRX_TABS_QUERY_}${this.extension.id}`, this.handleQueryTabs)
+    CRDispatchManager.unregisterHandler(`${CRX_TABS_REMOVE_}${this.extension.id}`, this.handleRemoveTabs)
+    CRDispatchManager.unregisterHandler(`${CRX_TABS_UPDATE_}${this.extension.id}`, this.handleUpdateTab)
     CRDispatchManager.unregisterHandler(`${CRX_TAB_EXECUTE_SCRIPT_}${this.extension.id}`, this.handleExecuteScript)
   }
 
@@ -211,6 +218,55 @@ class CRExtensionTabs {
       })
 
     responseCallback(null, tabs)
+  }
+
+  /**
+  * Handles removing tabs
+  * @param evt: the event that fired
+  * @param [tabIds]: the ids of the tabs to remove
+  * @param responseCallback: executed on completion
+  */
+  handleRemoveTabs = (evt, [tabIds], responseCallback) => {
+    tabIds.forEach((tabId) => {
+      const waveboxWindow = WaveboxWindow.fromTabId(tabId)
+      if (waveboxWindow) {
+        // We only partially support this. Basically with windows that only have
+        // one tab
+        if (waveboxWindow.windowType === WaveboxWindow.WINDOW_TYPES.CONTENT_POPUP) {
+          waveboxWindow.close()
+        } else if (waveboxWindow.windowType === WaveboxWindow.WINDOW_TYPES.CONTENT) {
+          waveboxWindow.close()
+        } else if (waveboxWindow.windowType === WaveboxWindow.WINDOW_TYPES.EXTENSION_POPUP) {
+          waveboxWindow.close()
+        }
+      }
+    })
+
+    responseCallback(null, null)
+  }
+
+  /**
+  * Handles removing tabs
+  * @param evt: the event that fired
+  * @param [tabId, options]: the tabId and options to use
+  * @param responseCallback: executed on completion
+  */
+  handleUpdateTab = (evt, [tabId, options], responseCallback) => {
+    const waveboxWindow = WaveboxWindow.fromTabId(tabId)
+    // If we got a wavebox window it means we're user facing tab
+    // We only partially support this
+    if (waveboxWindow && waveboxWindow.windowType === WaveboxWindow.WINDOW_TYPES.CONTENT_POPUP) {
+      const wc = webContents.fromId(tabId)
+      if (wc && !wc.isDestroyed()) {
+        if (options.url) {
+          if (wc.getURL().startsWith(CR_EXTENSION_PROTOCOL) && options.url.startsWith(CR_EXTENSION_PROTOCOL)) {
+            wc.loadURL(options.url)
+          }
+        }
+      }
+    }
+
+    responseCallback(null, this._tabDataFromWebContentsId(tabId))
   }
 
   /**

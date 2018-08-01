@@ -55,7 +55,10 @@ class ContextMenus {
     if (properties.onclick) {
       this[privClickListeners].set(id, properties.onclick)
     }
-    const createProperties = Object.assign({}, properties, { onclick: undefined })
+    const createProperties = {
+      ...properties,
+      onclick: undefined
+    }
 
     DispatchManager.request(
       `${CRX_CONTEXT_MENU_CREATE_}${this[privExtensionId]}`,
