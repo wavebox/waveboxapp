@@ -87,6 +87,8 @@ class SessionManager {
 
       this.destroyWebRequestEmitterFromSession(ses)
 
+      // We're still living in the heap managed by session in the callback. Exceptions here
+      // can bring down the entire app, so give ourselves a new heap with setTimeout
       ses.clearCache(() => {
         ses.clearStorageData(() => {
           ses.clearHostResolverCache(() => {
@@ -95,11 +97,11 @@ class SessionManager {
                 const pureSessionId = encodeURIComponent(id.replace('persist:', ''))
                 const dirPath = path.join(app.getPath('userData'), 'Partitions', pureSessionId)
                 fs.remove(dirPath, () => {
-                  resolve()
+                  setTimeout(function () { resolve() })
                 })
               }, 100)
             } else {
-              resolve()
+              setTimeout(function () { resolve() })
             }
           })
         })

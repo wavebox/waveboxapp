@@ -530,20 +530,52 @@ class ContextMenuService {
           }
         })
 
-      if (validContextMenus.length === 1) {
-        template.push(Object.assign({
-          icon: nativeImage.createFromPath(icons['16'])
-        }, this.renderExtensionMenuItem(contents, params, extensionId, validContextMenus[0])))
+      const renderedMenuTemplate = this.renderExtensionMenuTree(contents, params, extensionId, validContextMenus)
+
+      if (renderedMenuTemplate.length === 1) {
+        template.push({
+          icon: nativeImage.createFromPath(icons['16']),
+          ...renderedMenuTemplate[0]
+        })
       } else if (validContextMenus.length > 1) {
         template.push({
           label: name,
           icon: nativeImage.createFromPath(icons['16']),
-          submenu: validContextMenus.map((menuItem) => this.renderExtensionMenuItem(contents, params, extensionId, menuItem))
+          submenu: renderedMenuTemplate
         })
       }
     })
 
     return template
+  }
+
+  /**
+  * Renders an extension menu into the correct tree structure
+  * @param contents: the sending webcontents
+  * @param params: the original context menu params
+  * @param extensionId: the id of the extension
+  * @param contextMenus: the context menus to render
+  * @return an array that can be used in the template
+  */
+  renderExtensionMenuTree (contents, params, extensionId, contextMenus) {
+    const root = []
+    const index = new Map()
+
+    contextMenus.forEach((menuItem) => {
+      const rendered = this.renderExtensionMenuItem(contents, params, extensionId, menuItem)
+      if (rendered) {
+        if (menuItem.parentId && index.get(menuItem.parentId)) {
+          const parent = index.get(menuItem.parentId)
+          parent.submenu = parent.submenu || []
+          parent.submenu.push(rendered)
+        } else {
+          root.push(rendered)
+        }
+        index.set(menuItem.id, rendered)
+      }
+    })
+
+    return root
   }
 
   /**
@@ -557,12 +589,14 @@ class ContextMenuService {
   renderExtensionMenuItem (contents, params, extensionId, menuItem) {
     if (menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.NORMAL) {
       return {
+        _id_: menuItem.id,
         label: menuItem.title,
         enabled: menuItem.enabled,
         click: () => this.extensionOptionSelected(contents, extensionId, menuItem, params)
       }
     } else if (menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.CHECKBOX) {
       return {
+        _id_: menuItem.id,
         label: menuItem.title,
         type: 'checkbox',
         checked: menuItem.checked,
@@ -570,6 +604,7 @@ class ContextMenuService {
       }
     } else if (menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.RADIO) {
       return {
+        _id_: menuItem.id,
         label: menuItem.title,
         type: 'radio',
         checked: menuItem.checked,

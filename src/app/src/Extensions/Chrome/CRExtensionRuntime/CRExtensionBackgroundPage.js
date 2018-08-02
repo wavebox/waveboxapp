@@ -2,6 +2,7 @@ import { session, ipcMain, BrowserWindow } from 'electron'
 import fs from 'fs-extra'
 import { format as urlFormat, URL } from 'url'
 import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
+import { evtMain } from 'AppEvents'
 import {
   CRX_TABS_CREATE_FROM_BG_,
   CRX_BROWSER_ACTION_CREATE_FROM_BG_
@@ -12,6 +13,7 @@ import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatch
 import ContentPopupWindow from 'Windows/ContentPopupWindow'
 import ExtensionPopupWindow from 'Windows/ExtensionPopupWindow'
 import CRExtensionTab from './CRExtensionTab'
+import WaveboxWindow from 'Windows/WaveboxWindow'
 import { WINDOW_BACKING_TYPES } from 'Windows/WindowBackingTypes'
 import { CRExtensionWebPreferences } from 'WebContentsManager'
 
@@ -116,17 +118,8 @@ class CRExtensionBackgroundPage {
       }
     })
     this[privBrowserWindow].webContents.setFrameRate(1)
-
     this[privBrowserWindow].webContents.on('new-window', this._handleNewWindow)
     this[privBrowserWindow].webContents.on('will-navigate', this._handleWillNavigate)
-    this[privBrowserWindow].webContents.loadURL(urlFormat({
-      protocol: CR_EXTENSION_PROTOCOL,
-      slashes: true,
-      hostname: this.extension.id,
-      pathname: this[privName]
-    }))
-
-    this[privBrowserWindow].webContents.openDevTools({mode:'detach'})//TODO dev
 
     // Update cors via the extension config
     SessionManager
@@ -139,6 +132,28 @@ class CRExtensionBackgroundPage {
       .webRequestEmitterFromPartitionId(this.partitionId)
       .headersReceived
       .onBlocking(undefined, this._handleAllUrlHeadersReceived)
+
+    // Don't load the background page until our first tab has been created. For a number of reasons
+    // 1. Performance - we want to get to tabs ASAP
+    // 2. Some extensions expect a tab active on first launch (LP expects this when calling tabs.query)
+    if (WaveboxWindow.allTabIds().length === 0) {
+      evtMain.once(evtMain.WB_TAB_CREATED, this._loadBackgroundPage)
+    } else {
+      this._loadBackgroundPage()
+    }
+  }
+
+  /**
+  * Starts the backgroung page by loading the start url
+  */
+  _loadBackgroundPage = () => {
+    this[privBrowserWindow].webContents.loadURL(urlFormat({
+      protocol: CR_EXTENSION_PROTOCOL,
+      slashes: true,
+      hostname: this.extension.id,
+      pathname: this[privName]
+    }))
+    this[privBrowserWindow].webContents.openDevTools({mode:'detach'})//TODO dev
   }
 
   /**
@@ -152,6 +167,8 @@ class CRExtensionBackgroundPage {
     this[privBrowserWindow] = undefined
     this[privHtml] = undefined
     this[privName] = undefined
+
+    evtMain.removeListener(evtMain.WB_TAB_CREATED, this._loadBackgroundPage)
   }
 
   /* ****************************************************************************/
@@ -164,6 +181,7 @@ class CRExtensionBackgroundPage {
   * @param responder: function to call with updated headers
   */
   _handleBeforeSendHeaders = (details, responder) => {
+    //TODO do we need to do this on non-bg pages???
     if (this.isRunning && this.webContentsId === details.webContentsId) {
       if (details.resourceType === 'xhr') {
         return responder({
@@ -373,15 +391,18 @@ class CRExtensionBackgroundPage {
   clearBrowserSession (reloadOnComplete = true) {
     const ses = session.fromPartition(this.partitionId)
     return Promise.resolve()
+      .then(() => { return new Promise((resolve) => { ses.clearStorageData(resolve) }) })
+      .then(() => { return new Promise((resolve) => { ses.clearCache(resolve) }) })
       .then(() => {
-        return new Promise((resolve) => { ses.clearStorageData(resolve) })
-      })
-      .then(() => {
-        return new Promise((resolve) => { ses.clearCache(resolve) })
-      })
-      .then(() => {
-        if (reloadOnComplete) { this.reload() }
-        return Promise.resolve()
+        // We're still living in the heap managed by session in the callback. Exceptions here
+        // can bring down the entire app, so give ourselves a new heap with setTimeout
+        return new Promise((resolve) => {
+          const self = this
+          setTimeout(function () {
+            if (reloadOnComplete) { self.reload() }
+            resolve()
+          })
+        })
       })
   }
 

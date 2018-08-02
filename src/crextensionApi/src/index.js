@@ -44,11 +44,12 @@ class Loader {
     const config = ipcRenderer.sendSync(WCRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG, extensionId)
     if (config && config.hasRuntime) {
       const extensionDatasource = new ExtensionDatasource(extensionId, config.runtimeConfig)
-      if (config.isBackgroundPage) {
-        window.chrome = new Chrome(extensionId, CR_RUNTIME_ENVIRONMENTS.BACKGROUND, extensionDatasource)
-      } else {
-        window.chrome = new Chrome(extensionId, CR_RUNTIME_ENVIRONMENTS.HOSTED, extensionDatasource)
-      }
+      const environment = config.isBackgroundPage
+        ? CR_RUNTIME_ENVIRONMENTS.BACKGROUND
+        : CR_RUNTIME_ENVIRONMENTS.HOSTED
+
+      window.chrome = new Chrome(extensionId, environment, extensionDatasource)
+      window.XMLHttpRequest = XMLHttpRequestBuilder.buildHostedXMLHttpRequest(window.XMLHttpRequest)
     }
   }
 

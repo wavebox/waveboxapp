@@ -1044,10 +1044,15 @@ class AccountStore extends CoreAccountStore {
         }, Promise.resolve())
       })
       .then(() => {
-        webContents.getAllWebContents().forEach((wc) => {
-          if (partitionIdSet.has(wc.getWebPreferences().partition)) {
-            wc.reload()
-          }
+        // We're still living in the heap managed by session in the callback. Exceptions here
+        // can bring down the entire app, so give ourselves a new heap with setTimeout
+        setTimeout(() => {
+          webContents.getAllWebContents().forEach((wc) => {
+            const prefs = wc.getWebPreferences()
+            if (prefs && partitionIdSet.has(prefs.partition)) {
+              wc.reload()
+            }
+          })
         })
       })
   }
