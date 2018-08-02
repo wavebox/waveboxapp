@@ -144,6 +144,13 @@ class UISettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param lock: true to lock, false otherwise
+  */
+  setLockSidebarsAndToolbars (lock) {
+    this.dispatchUpdate('lockSidebarsAndToolbars', lock)
+  }
+
+  /**
   * @param css: the new css
   */
   setCustomMainCSS (css) {

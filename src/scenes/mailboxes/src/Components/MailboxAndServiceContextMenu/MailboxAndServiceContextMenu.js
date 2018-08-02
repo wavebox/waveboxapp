@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Menu, MenuItem, ListItemIcon, ListItemText, Divider } from '@material-ui/core'
 import { accountActions, accountDispatch, accountStore, AccountLinker } from 'stores/account'
+import { settingsStore, settingsActions } from 'stores/settings'
 import { userStore } from 'stores/user'
 import shallowCompare from 'react-addons-shallow-compare'
 import red from '@material-ui/core/colors/red'
@@ -14,6 +15,8 @@ import RefreshIcon from '@material-ui/icons/Refresh'
 import SyncIcon from '@material-ui/icons/Sync'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+import LockOpenOutlinedIcon from '@material-ui/icons/LockOpenOutlined'
+import FingerprintIcon from '@material-ui/icons/Fingerprint'
 import SettingsSharpIcon from '@material-ui/icons/SettingsSharp'
 import LayersClearIcon from '@material-ui/icons/LayersClear'
 import DeleteIcon from '@material-ui/icons/Delete'
@@ -41,7 +44,8 @@ const ITEM_TYPES = {
   MAILBOX_ARTIFICIALLY_PERSIST_COOKIES: 'MAILBOX_ARTIFICIALLY_PERSIST_COOKIES',
   MAILBOX_ADD_SERVICE: 'MAILBOX_ADD_SERVICE',
   DELETE_MAILBOX: 'DELETE_MAILBOX',
-  DELETE_SERVICE: 'DELETE_SERVICE'
+  DELETE_SERVICE: 'DELETE_SERVICE',
+  BAR_LOCK: 'BAR_LOCK'
 }
 
 export default class MailboxAndServiceContextMenu extends React.Component {
@@ -65,12 +69,14 @@ export default class MailboxAndServiceContextMenu extends React.Component {
     this.renderTO = null
     accountStore.listen(this.accountChanged)
     userStore.listen(this.userChanged)
+    settingsStore.listen(this.settingsChanged)
   }
 
   componentWillUnmount () {
     clearTimeout(this.renderTO)
     accountStore.unlisten(this.accountChanged)
     userStore.unlisten(this.userChanged)
+    settingsStore.unlisten(this.settingsChanged)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -97,7 +103,8 @@ export default class MailboxAndServiceContextMenu extends React.Component {
   state = {
     ...this.generateAccountState(this.props),
     rendering: this.props.isOpen,
-    userHasSleepable: userStore.getState().user.hasSleepable
+    userHasSleepable: userStore.getState().user.hasSleepable,
+    lockSidebarsAndToolbars: settingsStore.getState().ui.lockSidebarsAndToolbars
   }
 
   /**
@@ -141,6 +148,12 @@ export default class MailboxAndServiceContextMenu extends React.Component {
   userChanged = (userState) => {
     this.setState({
       userHasSleepable: userState.user.hasSleepable
+    })
+  }
+
+  settingsChanged = (settingsState) => {
+    this.setState({
+      lockSidebarsAndToolbars: settingsState.ui.lockSidebarsAndToolbars
     })
   }
 
@@ -346,6 +359,13 @@ export default class MailboxAndServiceContextMenu extends React.Component {
     })
   }
 
+  handleToggleBarLock = (evt) => {
+    const { lockSidebarsAndToolbars } = this.state
+    this.closePopover(evt, () => {
+      settingsActions.sub.ui.setLockSidebarsAndToolbars(!lockSidebarsAndToolbars)
+    })
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -367,7 +387,8 @@ export default class MailboxAndServiceContextMenu extends React.Component {
       serviceCount,
       isServiceSleeping,
       isServiceAuthInvalid,
-      serviceDisplayName
+      serviceDisplayName,
+      lockSidebarsAndToolbars
     } = this.state
 
     const serviceUiLocation = service
@@ -437,7 +458,7 @@ export default class MailboxAndServiceContextMenu extends React.Component {
               {isServiceAuthInvalid ? (
                 <ErrorOutlineIcon style={{ color: red[600] }} />
               ) : (
-                <LockOutlinedIcon />
+                <FingerprintIcon />
               )}
             </ListItemIcon>
             <ListItemText inset primary='Reauthenticate' style={isServiceAuthInvalid ? { color: red[600] } : undefined} />
@@ -529,6 +550,17 @@ export default class MailboxAndServiceContextMenu extends React.Component {
             <ListItemText inset primary={`Delete ${service.humanizedType}`} />
           </MenuItem>
         )
+      case ITEM_TYPES.BAR_LOCK:
+        return (
+          <MenuItem onClick={this.handleToggleBarLock}>
+            <ListItemIcon>
+              {lockSidebarsAndToolbars ? <LockOpenOutlinedIcon /> : <LockOutlinedIcon />}
+            </ListItemIcon>
+            <ListItemText
+              inset
+              primary={`${lockSidebarsAndToolbars ? 'Unlock' : 'Lock'} sidebar & toolbars`} />
+          </MenuItem>
+        )
     }
   }
 
@@ -591,12 +623,15 @@ export default class MailboxAndServiceContextMenu extends React.Component {
 
         {this.renderItem(ITEM_TYPES.DIVIDER)}
 
-        {/* Add */}
+        {/* Add & Delete */}
         {this.renderItem(ITEM_TYPES.MAILBOX_ADD_SERVICE)}
-
-        {/* Delete */}
         {mailbox.hasMultipleServices && service ? this.renderItem(ITEM_TYPES.DELETE_SERVICE) : undefined}
         {this.renderItem(ITEM_TYPES.DELETE_MAILBOX)}
+
+        {this.renderItem(ITEM_TYPES.DIVIDER)}
+
+        {/* Global */}
+        {this.renderItem(ITEM_TYPES.BAR_LOCK)}
       </Menu>
     )
   }
