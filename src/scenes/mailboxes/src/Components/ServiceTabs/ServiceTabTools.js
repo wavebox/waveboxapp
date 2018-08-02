@@ -69,7 +69,7 @@ class ServiceTabTools {
   static uiLocationServiceIds (uiLocation, mailbox) {
     switch (uiLocation) {
       case ACMailbox.SERVICE_UI_LOCATIONS.SIDEBAR:
-        return mailbox.collapseFirstSidebarService
+        return mailbox.sidebarFirstServicePriority !== ACMailbox.SIDEBAR_FIRST_SERVICE_PRIORITY.NORMAL
           ? mailbox.sidebarServices.slice(1)
           : mailbox.sidebarServices
       case ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_START:

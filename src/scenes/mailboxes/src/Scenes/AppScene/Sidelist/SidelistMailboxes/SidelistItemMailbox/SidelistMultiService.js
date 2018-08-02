@@ -4,15 +4,15 @@ import { accountStore, accountActions } from 'stores/account'
 import shallowCompare from 'react-addons-shallow-compare'
 import SidelistMailboxContainer from './SidelistCommon/SidelistMailboxContainer'
 import uuid from 'uuid'
-import StyledMailboxServiceBadge from './SidelistCommon/StyledMailboxServiceBadge'
-import SidelistActiveIndicator from './SidelistCommon/SidelistActiveIndicator'
-import SidelistMailboxAvatar from './SidelistCommon/SidelistMailboxAvatar'
 import SidelistMailboxTooltip from './SidelistCommon/SidelistMailboxTooltip'
+import SidelistServiceTooltip from './SidelistCommon/SidelistServiceTooltip'
 import MailboxAndServiceContextMenu from 'Components/MailboxAndServiceContextMenu'
 import ErrorBoundary from 'wbui/ErrorBoundary'
 import ServiceTabs from 'Components/ServiceTabs'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import Tappable from 'react-tappable/lib/Tappable'
+import SidelistTLMailboxAvatar from './SidelistCommon/SidelistTLMailboxAvatar'
+import SidelistTLServiceAvatar from './SidelistCommon/SidelistTLServiceAvatar'
 
 class SidelistItemMultiService extends React.Component {
   /* **************************************************************************/
@@ -80,16 +80,23 @@ class SidelistItemMultiService extends React.Component {
   */
   generateAccountState (mailboxId, accountState) {
     const mailbox = accountState.getMailbox(mailboxId)
-
-    return {
-      mailbox: mailbox,
-      avatar: accountState.getMailboxAvatarConfig(mailboxId),
-      isMailboxSleeping: accountState.isMailboxSleeping(mailboxId),
-      isMailboxActive: accountState.activeMailboxId() === mailboxId,
-      unreadCount: accountState.userUnreadCountForMailbox(mailboxId),
-      hasUnreadActivity: accountState.userUnreadActivityForMailbox(mailboxId),
-      hasInvalidAuth: accountState.hasMailboxServiceWithInvalidAuth(mailboxId),
-      isMailboxRestricted: accountState.isMailboxRestricted(mailboxId)
+    if (mailbox) {
+      return {
+        hasMembers: true,
+        isMailboxActive: accountState.activeMailboxId() === mailboxId,
+        prioritizeFirstSidebarService: mailbox.sidebarFirstServicePriority !== ACMailbox.SIDEBAR_FIRST_SERVICE_PRIORITY.NORMAL,
+        sidebarServicesCount: mailbox.sidebarServices.length,
+        extraContextServiceId: mailbox.sidebarFirstServicePriority !== ACMailbox.SIDEBAR_FIRST_SERVICE_PRIORITY.NORMAL && mailbox.sidebarServices.length
+          ? mailbox.sidebarServices[0]
+          : undefined,
+        renderAsServiceId: mailbox.sidebarFirstServicePriority === ACMailbox.SIDEBAR_FIRST_SERVICE_PRIORITY.PRIMARY && mailbox.sidebarServices.length
+          ? mailbox.sidebarServices[0]
+          : undefined
+      }
+    } else {
+      return {
+        hasMembers: false
+      }
     }
   }
 
@@ -103,11 +110,11 @@ class SidelistItemMultiService extends React.Component {
   */
   handleClick = (evt) => {
     const { mailboxId } = this.props
-    const { mailbox } = this.state
+    const { prioritizeFirstSidebarService, sidebarServicesCount } = this.state
     if (evt.metaKey) {
       window.location.hash = `/settings/accounts/${mailboxId}`
     } else {
-      if (mailbox.collapseFirstSidebarService && mailbox.sidebarServices.length) {
+      if (prioritizeFirstSidebarService && sidebarServicesCount) {
         accountActions.changeActiveMailbox(mailboxId, true)
       } else {
         accountActions.changeActiveMailbox(mailboxId)
@@ -151,6 +158,14 @@ class SidelistItemMultiService extends React.Component {
   }
 
   /**
+  * Opens the popover for a prioritized service
+  * @param evt: the event that fired
+  */
+  handleOpenPrioritizedServicePopover = (evt) => {
+    this.handleOpenServicePopover(evt, this.state.extraContextServiceId)
+  }
+
+  /**
   * Opens the popover for a service
   * @param evt: the event that fired
   * @param serviceId: the id of the service to open for
@@ -188,25 +203,24 @@ class SidelistItemMultiService extends React.Component {
   }
 
   render () {
-    const { mailboxId, sidebarSize, ...passProps } = this.props
     const {
-      mailbox,
-      unreadCount,
-      hasUnreadActivity,
-      popover,
-      popoverAnchor,
+      mailboxId,
+      sidebarSize,
+      ...passProps
+    } = this.props
+    const {
       isHoveringAvatar,
       isHoveringGroup,
-      isMailboxActive,
-      isMailboxSleeping,
-      avatar,
+      popover,
+      popoverAnchor,
       popoverMailboxId,
       popoverServiceId,
-      hasInvalidAuth,
-      isMailboxRestricted
+      hasMembers,
+      renderAsServiceId,
+      extraContextServiceId,
+      isMailboxActive
     } = this.state
-
-    if (!mailbox) { return false }
+    if (!hasMembers) { return false }
 
     return (
       <SidelistMailboxContainer
@@ -216,35 +230,44 @@ class SidelistItemMultiService extends React.Component {
         <Tappable
           onClick={this.handleClick}
           onPress={this.handleLongClick}
-          onContextMenu={this.handleOpenMailboxPopover}>
-          <StyledMailboxServiceBadge
-            id={`ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`}
-            sidebarSize={sidebarSize}
-            onMouseEnter={() => this.setState({ isHoveringAvatar: true })}
-            onMouseLeave={() => this.setState({ isHoveringAvatar: false })}
-            supportsUnreadCount
-            showUnreadBadge={mailbox.showBadge}
-            unreadCount={unreadCount}
-            supportsUnreadActivity
-            showUnreadActivityBadge={mailbox.showBadge}
-            hasUnreadActivity={hasUnreadActivity}
-            color={mailbox.badgeColor}
-            isAuthInvalid={hasInvalidAuth}>
-            {isMailboxActive ? (<SidelistActiveIndicator sidebarSize={sidebarSize} color={avatar.color} />) : undefined}
-            <SidelistMailboxAvatar
-              avatar={avatar}
+          onContextMenu={(extraContextServiceId
+            ? this.handleOpenPrioritizedServicePopover
+            : this.handleOpenMailboxPopover
+          )}>
+          {renderAsServiceId ? (
+            <SidelistTLServiceAvatar
+              id={`ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`}
+              onMouseEnter={() => this.setState({ isHoveringAvatar: true })}
+              onMouseLeave={() => this.setState({ isHoveringAvatar: false })}
+              mailboxId={mailboxId}
+              serviceId={renderAsServiceId}
               sidebarSize={sidebarSize}
-              isSleeping={isMailboxSleeping}
-              showRestricted={isMailboxRestricted}
-              showColorRing={mailbox.showAvatarColorRing}
-              lightenBorder={!isMailboxActive && !isHoveringGroup} />
-          </StyledMailboxServiceBadge>
+              isTransientActive={isHoveringGroup}
+              forceIndicator={isMailboxActive} />
+          ) : (
+            <SidelistTLMailboxAvatar
+              id={`ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`}
+              onMouseEnter={() => this.setState({ isHoveringAvatar: true })}
+              onMouseLeave={() => this.setState({ isHoveringAvatar: false })}
+              mailboxId={mailboxId}
+              sidebarSize={sidebarSize}
+              isTransientActive={isHoveringGroup}
+              forceIndicator={isMailboxActive} />
+          )}
         </Tappable>
         <ErrorBoundary>
-          <SidelistMailboxTooltip
-            mailboxId={mailboxId}
-            active={isHoveringAvatar}
-            parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />
+          {extraContextServiceId ? (
+            <SidelistServiceTooltip
+              mailboxId={mailboxId}
+              serviceId={extraContextServiceId}
+              active={isHoveringAvatar}
+              parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />
+          ) : (
+            <SidelistMailboxTooltip
+              mailboxId={mailboxId}
+              active={isHoveringAvatar}
+              parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />
+          )}
         </ErrorBoundary>
         <ServiceTabs
           mailboxId={mailboxId}

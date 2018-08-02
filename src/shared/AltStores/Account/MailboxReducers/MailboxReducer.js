@@ -74,12 +74,12 @@ class MailboxReducer {
   }
 
   /**
-  * Sets whether to collapse the first sidebar service
+  * Sets the priority of the first sidebar service
   * @param mailbox: the mailbox to update
-  * @param collapse: true to collapse, false otherwise
+  * @param priority: the new priority
   */
-  static setCollapseFirstSidebarService (mailbox, collapse) {
-    return mailbox.changeData({ collapseFirstSidebarService: collapse })
+  static setSidebarFirstServicePriority (mailbox, priority) {
+    return mailbox.changeData({ sidebarFirstServicePriority: priority })
   }
 
   /**

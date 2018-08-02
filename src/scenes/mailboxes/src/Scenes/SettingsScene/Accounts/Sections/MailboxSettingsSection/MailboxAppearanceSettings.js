@@ -112,7 +112,7 @@ class MailboxAppearanceSettings extends React.Component {
         navigationBarUiLocation: mailbox.navigationBarUiLocation,
         mailboxAvatar: accountState.getAvatar(mailbox.avatarId),
         mailboxCollapseSidebarServices: mailbox.collapseSidebarServices,
-        mailboxCollapseFirstSidebarService: mailbox.collapseFirstSidebarService,
+        mailboxSidebarFirstServicPriority: mailbox.sidebarFirstServicePriority,
         mailboxServiceUiPriority: mailbox.serviceUiPriority,
         mailboxShowExtendedDispayName: mailbox.showExtendedDispayName
       } : {
@@ -124,7 +124,7 @@ class MailboxAppearanceSettings extends React.Component {
         navigationBarUiLocation: ACMailbox.NAVIGATION_BAR_UI_LOCATIONS.AUTO,
         mailboxAvatar: undefined,
         mailboxCollapseSidebarServices: false,
-        mailboxCollapseFirstSidebarService: false,
+        mailboxSidebarFirstServicPriority: ACMailbox.SIDEBAR_FIRST_SERVICE_PRIORITY.NORMAL,
         mailboxServiceUiPriority: ACMailbox.SERVICE_UI_PRIORITY.TOOLBAR,
         mailboxShowExtendedDispayName: true
       })
@@ -153,7 +153,7 @@ class MailboxAppearanceSettings extends React.Component {
       navigationBarUiLocation,
       mailboxAvatar,
       mailboxCollapseSidebarServices,
-      mailboxCollapseFirstSidebarService,
+      mailboxSidebarFirstServicPriority,
       mailboxServiceUiPriority,
       mailboxShowExtendedDispayName,
       resolvedMailboxFullName
@@ -252,12 +252,27 @@ class MailboxAppearanceSettings extends React.Component {
               accountActions.reduceMailbox(mailboxId, MailboxReducer.setCollapseSidebarServices, toggled)
             }}
             checked={mailboxCollapseSidebarServices} />
-          <SettingsListItemSwitch
-            label='Hide the first sidebar service (Experimental)'
-            onChange={(evt, toggled) => {
-              accountActions.reduceMailbox(mailboxId, MailboxReducer.setCollapseFirstSidebarService, toggled)
-            }}
-            checked={mailboxCollapseFirstSidebarService} />
+          <SettingsListItemSelect
+            label='First sidebar service prioritization (Experimental)'
+            value={mailboxSidebarFirstServicPriority}
+            options={[
+              {
+                value: ACMailbox.SIDEBAR_FIRST_SERVICE_PRIORITY.NORMAL,
+                label: 'Normal',
+                primaryText: 'Normal - show in the sidebar with other services'
+              },
+              {
+                value: ACMailbox.SIDEBAR_FIRST_SERVICE_PRIORITY.COLLAPSED,
+                label: 'Collapsed',
+                primaryText: 'Collapsed - hide from the sidebar'
+              },
+              {
+                value: ACMailbox.SIDEBAR_FIRST_SERVICE_PRIORITY.PRIMARY,
+                label: 'Primary',
+                primaryText: 'Primary - take the place of the account in the sidebar'
+              }
+            ]}
+            onChange={(evt, mode) => accountActions.reduceMailbox(mailboxId, MailboxReducer.setSidebarFirstServicePriority, mode)} />
           <SettingsListItemSelect
             divider={false}
             label='Service layout priority'
