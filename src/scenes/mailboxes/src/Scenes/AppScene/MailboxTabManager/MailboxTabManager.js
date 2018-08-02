@@ -43,8 +43,7 @@ export default class MailboxTabManager extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    if (JSON.stringify(this.state.serviceIds) !== JSON.stringify(nextState.serviceIds)) { return true }
-    return shallowCompare({ state: {}, props: this.props }, nextProps, {})
+    return shallowCompare(this, nextProps, nextState)
   }
 
   render () {

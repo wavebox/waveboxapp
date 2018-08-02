@@ -13,7 +13,6 @@ import MicrosoftSigninButton from 'wbui/SigninButtons/MicrosoftSigninButton'
 import GoogleAuth from 'shared/Models/ACAccounts/Google/GoogleAuth'
 import MicrosoftAuth from 'shared/Models/ACAccounts/Microsoft/MicrosoftAuth'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
-import WAVEBOX_SIGNIN_DISABLED from 'shared/constants'
 
 const styles = {
   // Dialog
@@ -253,26 +252,22 @@ class AccountAuthScene extends React.Component {
           <Grid container className={classes.gridContainer}>
             <Grid item xs={6} className={classes.gridItem}>
               <p className={classes.gridSubheading}>Sign in with your Account</p>
-              {WAVEBOX_SIGNIN_DISABLED ? undefined : (
-                <React.Fragment>
-                  <WaveboxSigninButton
-                    className={classes.fullWidthButton}
-                    onClick={(evt) => userActions.authenticateWithWavebox({ mode: mode })} />
-                  <div>
-                    <Button
-                      color='primary'
-                      onClick={(evt) => userActions.passwordResetWaveboxAccount({ mode: mode })}>
-                      Forgotten password
-                    </Button>
-                    <Button
-                      color='primary'
-                      onClick={(evt) => userActions.createWaveboxAccount({ mode: mode })}>
-                      Create an account
-                    </Button>
-                  </div>
-                  <br />
-                </React.Fragment>
-              )}
+              <WaveboxSigninButton
+                className={classes.fullWidthButton}
+                onClick={(evt) => userActions.authenticateWithWavebox({ mode: mode })} />
+              <div>
+                <Button
+                  color='primary'
+                  onClick={(evt) => userActions.passwordResetWaveboxAccount({ mode: mode })}>
+                  Forgotten password
+                </Button>
+                <Button
+                  color='primary'
+                  onClick={(evt) => userActions.createWaveboxAccount({ mode: mode })}>
+                  Create an account
+                </Button>
+              </div>
+              <br />
               <GoogleSigninButton
                 className={classes.fullWidthButton}
                 onClick={(evt) => userActions.authenticateWithGoogle({ mode: mode })} />

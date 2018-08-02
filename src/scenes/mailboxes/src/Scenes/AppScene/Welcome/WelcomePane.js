@@ -7,7 +7,6 @@ import WaveboxSigninButton from 'wbui/SigninButtons/WaveboxSigninButton'
 import GoogleSigninButton from 'wbui/SigninButtons/GoogleSigninButton'
 import MicrosoftSigninButton from 'wbui/SigninButtons/MicrosoftSigninButton'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
-import { WAVEBOX_SIGNIN_DISABLED } from 'shared/constants'
 
 const styles = {
   root: {
@@ -231,25 +230,23 @@ class WelcomePane extends React.Component {
         <Grid item xs={6} className={classes.gridItem}>
           <h1 className={classes.h1}>Login to Wavebox</h1>
           <p className={classes.subh}>Already have a Wavebox account or part of a team?</p>
-          {WAVEBOX_SIGNIN_DISABLED ? undefined : (
-            <div className={classes.waveboxSignin}>
-              <WaveboxSigninButton
-                className={classes.fullWidthButton}
-                onClick={this.handleLoginWavebox} />
-              <div className={classes.waveboxSigninExtra}>
-                <Button
-                  color='primary'
-                  onClick={this.handleWaveboxPasswordReset}>
-                  Forgotten password
-                </Button>
-                <Button
-                  color='primary'
-                  onClick={this.handleCreateWavebox}>
-                  Create an account
-                </Button>
-              </div>
+          <div className={classes.waveboxSignin}>
+            <WaveboxSigninButton
+              className={classes.fullWidthButton}
+              onClick={this.handleLoginWavebox} />
+            <div className={classes.waveboxSigninExtra}>
+              <Button
+                color='primary'
+                onClick={this.handleWaveboxPasswordReset}>
+                Forgotten password
+              </Button>
+              <Button
+                color='primary'
+                onClick={this.handleCreateWavebox}>
+                Create an account
+              </Button>
             </div>
-          )}
+          </div>
           <div>
             <GoogleSigninButton
               className={classes.fullWidthButton}

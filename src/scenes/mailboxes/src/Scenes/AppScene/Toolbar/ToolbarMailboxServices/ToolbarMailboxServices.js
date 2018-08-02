@@ -22,6 +22,18 @@ class ToolbarMailboxServices extends React.Component {
   }
 
   /* **************************************************************************/
+  // Component lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    this.popoverCustomizeClearTO = null
+  }
+
+  componentWillUnmount () {
+    clearTimeout(this.popoverCustomizeClearTO)
+  }
+
+  /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 

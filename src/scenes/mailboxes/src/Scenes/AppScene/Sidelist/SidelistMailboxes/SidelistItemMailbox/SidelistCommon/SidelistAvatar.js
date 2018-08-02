@@ -22,7 +22,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class SidelistMailboxAvatar extends React.Component {
+class SidelistAvatar extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -103,4 +103,4 @@ class SidelistMailboxAvatar extends React.Component {
   }
 }
 
-export default SidelistMailboxAvatar
+export default SidelistAvatar

@@ -3,6 +3,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import ServiceTab from './ServiceTab'
 import { accountStore, accountActions } from 'stores/account'
+import { settingsStore } from 'stores/settings'
 import {SortableContainer, SortableElement} from 'react-sortable-hoc'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
@@ -81,10 +82,12 @@ class ServiceTabs extends React.Component {
 
   componentDidMount () {
     accountStore.listen(this.accountChanged)
+    settingsStore.listen(this.settingsChanged)
   }
 
   componentWillUnmount () {
     accountStore.unlisten(this.accountChanged)
+    settingsStore.unlisten(this.settingsChanged)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -99,12 +102,19 @@ class ServiceTabs extends React.Component {
 
   state = (() => {
     const { mailboxId, uiLocation } = this.props
-    return this.generateState(mailboxId, uiLocation, accountStore.getState())
+    return {
+      ...this.generateState(mailboxId, uiLocation, accountStore.getState()),
+      disabled: settingsStore.getState().ui.lockSidebarsAndToolbars
+    }
   })()
 
   accountChanged = (accountStore) => {
     const { mailboxId, uiLocation } = this.props
     this.setState(this.generateState(mailboxId, uiLocation, accountStore))
+  }
+
+  settingsChanged = (settingsState) => {
+    this.setState({ disabled: settingsState.ui.lockSidebarsAndToolbars })
   }
 
   /**
@@ -151,7 +161,8 @@ class ServiceTabs extends React.Component {
     const {
       isMailboxActive,
       collapseOnInactive,
-      serviceIds
+      serviceIds,
+      disabled
     } = this.state
     if (!serviceIds.length) { return false }
     const classNameAppend = ServiceTabTools.uiLocationClassName(uiLocation)
@@ -170,6 +181,7 @@ class ServiceTabs extends React.Component {
           axis={ServiceTabTools.uiLocationAxis(uiLocation)}
           containerClassName={classNames(classes.sortableListContainer, classNameAppend)}
           distance={5}
+          disabled={disabled}
           serviceIds={serviceIds}
           mailboxId={mailboxId}
           uiLocation={uiLocation}

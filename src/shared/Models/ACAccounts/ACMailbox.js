@@ -18,6 +18,12 @@ const SERVICE_UI_PRIORITY = Object.freeze({
   TOOLBAR: 'TOOLBAR'
 })
 
+const SIDEBAR_FIRST_SERVICE_PRIORITY = Object.freeze({
+  NORMAL: 'NORMAL',
+  COLLAPSED: 'COLLAPSED',
+  PRIMARY: 'PRIMARY'
+})
+
 const NAVIGATION_BAR_UI_LOCATIONS = Object.freeze({
   AUTO: 'AUTO',
   PRIMARY_TOOLBAR: 'PRIMARY_TOOLBAR',
@@ -33,6 +39,7 @@ class ACMailbox extends CoreACModel {
   static get SERVICE_UI_LOCATIONS () { return SERVICE_UI_LOCATIONS }
   static get NAVIGATION_BAR_UI_LOCATIONS () { return NAVIGATION_BAR_UI_LOCATIONS }
   static get SERVICE_UI_PRIORITY () { return SERVICE_UI_PRIORITY }
+  static get SIDEBAR_FIRST_SERVICE_PRIORITY () { return SIDEBAR_FIRST_SERVICE_PRIORITY }
 
   /* **************************************************************************/
   // Class : Creating
@@ -86,11 +93,12 @@ class ACMailbox extends CoreACModel {
 
     // Concat these in a visual way that makes sense in the UI
     if (priority === SERVICE_UI_PRIORITY.TOOLBAR) {
+      const prioritizeFirstSidebarService = this.sidebarFirstServicePriority !== SIDEBAR_FIRST_SERVICE_PRIORITY.NORMAL
       return [].concat(
-        this.collapseFirstSidebarService ? this.sidebarServices.slice(0, 1) : [],
+        prioritizeFirstSidebarService ? this.sidebarServices.slice(0, 1) : [],
         this.toolbarStartServices,
         this.toolbarEndServices,
-        this.collapseFirstSidebarService ? this.sidebarServices.slice(1) : this.sidebarServices
+        prioritizeFirstSidebarService ? this.sidebarServices.slice(1) : this.sidebarServices
       )
     } else { // SIDEBAR
       return [].concat(
@@ -192,7 +200,7 @@ class ACMailbox extends CoreACModel {
   get color () { return this._value_('color', undefined) }
   get showAvatarColorRing () { return this._value_('showAvatarColorRing', true) }
   get collapseSidebarServices () { return this._value_('collapseSidebarServices', false) }
-  get collapseFirstSidebarService () { return this._value_('collapseFirstSidebarService', false) }
+  get sidebarFirstServicePriority () { return this._value_('sidebarFirstServicePriority', SIDEBAR_FIRST_SERVICE_PRIORITY.NORMAL) }
   get showSleepableServiceIndicator () { return this._value_('showSleepableServiceIndicator', true) }
   get navigationBarUiLocation () { return this._value_('navigationBarUiLocation', NAVIGATION_BAR_UI_LOCATIONS.AUTO) }
 

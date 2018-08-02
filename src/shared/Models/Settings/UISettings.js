@@ -93,6 +93,7 @@ class UISettings extends Model {
     if (depricatedVal === false) { return ACCOUNT_TOOLTIP_MODES.DISABLED }
     return ACCOUNT_TOOLTIP_MODES.ENABLED
   }
+  get lockSidebarsAndToolbars () { return this._value_('lockSidebarsAndToolbars', false) }
 
   /* **************************************************************************/
   // Misc

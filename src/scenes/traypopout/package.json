@@ -20,10 +20,10 @@
     "fbjs": "0.8.17",
     "pluralize": "7.0.0",
     "prop-types": "15.6.2",
-    "react": "16.4.1",
+    "react": "16.4.2",
     "react-activity": "1.2.2",
     "react-addons-shallow-compare": "15.6.2",
-    "react-dom": "16.4.1",
+    "react-dom": "16.4.2",
     "react-infinite": "0.13.0",
     "react-swipeable-views": "0.12.15",
     "react-timeago": "4.1.9"

@@ -1,5 +1,6 @@
 import React from 'react'
 import { accountStore, accountActions } from 'stores/account'
+import { settingsStore } from 'stores/settings'
 import SidelistItemMailbox from './SidelistItemMailbox'
 import {SortableContainer, SortableElement} from 'react-sortable-hoc'
 import classNames from 'classnames'
@@ -16,7 +17,7 @@ const SortableItem = SortableElement(({ mailboxId }) => {
   )
 })
 
-const SortableList = SortableContainer(({ mailboxIds }) => {
+const SortableList = SortableContainer(({ mailboxIds, disabled }) => {
   return (
     <div>
       {mailboxIds.map((mailboxId, index) => (
@@ -24,6 +25,7 @@ const SortableList = SortableContainer(({ mailboxIds }) => {
           key={mailboxId}
           index={index}
           mailboxId={mailboxId}
+          disabled={disabled}
           collection='Singleton_SidelistMailboxes' />
       ))}
     </div>
@@ -44,10 +46,12 @@ class SidelistMailboxes extends React.Component {
 
   componentDidMount () {
     accountStore.listen(this.accountChanged)
+    settingsStore.listen(this.settingsChanged)
   }
 
   componentWillUnmount () {
     accountStore.unlisten(this.accountChanged)
+    settingsStore.unlisten(this.settingsChanged)
   }
 
   /* **************************************************************************/
@@ -56,7 +60,8 @@ class SidelistMailboxes extends React.Component {
 
   state = (() => {
     return {
-      mailboxIds: accountStore.getState().mailboxIds()
+      mailboxIds: accountStore.getState().mailboxIds(),
+      disabled: settingsStore.getState().ui.lockSidebarsAndToolbars
     }
   })()
 
@@ -64,22 +69,21 @@ class SidelistMailboxes extends React.Component {
     this.setState({ mailboxIds: accountState.mailboxIds() })
   }
 
+  settingsChanged = (settingsState) => {
+    this.setState({ disabled: settingsState.ui.lockSidebarsAndToolbars })
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    if (JSON.stringify(this.state.mailboxIds) !== JSON.stringify(nextState.mailboxIds)) { return true }
-    return shallowCompare(
-      { props: this.props, state: null },
-      nextProps,
-      null
-    )
+    return shallowCompare(this, nextProps, nextState)
   }
 
   render () {
     const { className, classes, ...passProps } = this.props
-    const { mailboxIds } = this.state
+    const { mailboxIds, disabled } = this.state
 
     return (
       <div {...passProps} className={classNames(classes.root, 'WB-Sidelist-Mailboxes', className)}>
@@ -87,6 +91,7 @@ class SidelistMailboxes extends React.Component {
           axis='y'
           distance={5}
           mailboxIds={mailboxIds}
+          disabled={disabled}
           onSortEnd={({ oldIndex, newIndex }) => {
             accountActions.changeMailboxIndex(mailboxIds[oldIndex], newIndex)
           }} />
