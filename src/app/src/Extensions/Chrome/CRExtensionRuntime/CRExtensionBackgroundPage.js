@@ -340,11 +340,7 @@ class CRExtensionBackgroundPage {
 
         // Respond to requestor
         if (createEvt.sender && !createEvt.sender.isDestroyed()) {
-          createEvt.sender.send(
-            ipcChannel,
-            null,
-            CRExtensionTab.dataFromWebContentsId(this.extension, openedWindow.tabIds()[0])
-          )
+          createEvt.sender.send(ipcChannel, null, null) //TODO we used to send tab info???
         }
       }
     }

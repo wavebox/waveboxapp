@@ -36,20 +36,11 @@ class Extension {
   get sendMessage () { return this[privRuntime].sendMessage.bind(this[privRuntime]) }
   get getURL () { return this[privRuntime].getURL.bind(this[privRuntime]) }
   get connect () { return this[privRuntime].connect.bind(this[privRuntime]) }
+  get getBackgroundPage () { return this[privRuntime].getBackgroundPage }
 
   /* **************************************************************************/
   // Getters
   /* **************************************************************************/
-
-  get getBackgroundPage () {
-    if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.BACKGROUND) {
-      return () => { return window }
-    } else if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.HOSTED) {
-      return () => { return window.opener }
-    } else {
-      return undefined
-    }
-  }
 
   get getViews () {
     if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.BACKGROUND) {

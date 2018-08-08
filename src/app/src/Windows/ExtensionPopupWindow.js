@@ -202,27 +202,9 @@ class ExtensionPopupWindow extends WaveboxWindow {
   // Query
   /* ****************************************************************************/
 
-  /**
-  * @return the id of the focused tab
-  */
-  focusedTabId () {
-    return this.window.webContents.id
-  }
-
-  /**
-  * @return the ids of the tabs in this window
-  */
-  tabIds () {
-    return [this.window.webContents.id]
-  }
-
-  /**
-  * @param tabId: the id of the tab
-  * @return the info about the tab
-  */
-  tabMetaInfo (tabId) {
-    return tabId === this.window.webContents.id ? this[privTabMetaInfo] : undefined
-  }
+  focusedTabId () { return null }
+  tabIds () { return [] }
+  tabMetaInfo (tabId) { return undefined }
 
   /* ****************************************************************************/
   // Unsupported Actions

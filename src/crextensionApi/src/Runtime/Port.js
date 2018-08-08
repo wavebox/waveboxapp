@@ -46,8 +46,10 @@ class Port {
       this.onDisconnect.emit()
     })
     ipcRenderer.on(`${CRX_PORT_POSTMESSAGE_}${this[privPortId]}`, (evt, message) => {
-      this.onMessage.emit(message, this.sender, () => {
-        Log.warn('chrome.runtime.port [sendResponse] is not implemented in Wavebox at this time')
+      // Re-queuing this seems to mimic the behaviour of chrome more closely.
+      // It can prevent ipc-loops. LP has this problem
+      setTimeout(() => {
+        this.onMessage.emit(message, this.sender)
       })
     })
   }
@@ -76,7 +78,12 @@ class Port {
   /* **************************************************************************/
 
   postMessage (message) {
-    ipcRenderer.sendToAll(this[privTabId], `${CRX_PORT_POSTMESSAGE_}${this[privPortId]}`, message)
+    console.log("PORT PM OUT", message)
+    // Re-queuing this seems to mimic the behaviour of chrome more closely.
+    // It can prevent ipc-loops. LP has this problem
+    setTimeout(() => {
+      ipcRenderer.sendToAll(this[privTabId], `${CRX_PORT_POSTMESSAGE_}${this[privPortId]}`, message)
+    })
   }
 }
 
