@@ -294,6 +294,20 @@ class CRExtensionBrowserAction {
   * @param tabId: the id of the tab
   */
   handleClick = (evt, tabId) => {
+    const popupUrl = this._getPopupUrl(tabId)
+    if (popupUrl) {
+      if (this.backgroundPageSender) {
+        this.backgroundPageSender(`${CRX_BROWSER_ACTION_OPEN_POPUP_}${this.extension.id}`, tabId, popupUrl)
+      }
+    } else {
+      const tabInfo = CRExtensionTab.dataFromWebContentsId(this.extension, tabId)
+      webContents.getAllWebContents().forEach((targetWebcontents) => {
+        targetWebcontents.send(`${CRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, tabInfo)
+      })
+    }
+    return
+
+
     if (this.extension.manifest.wavebox.hasBrowserActionOpenUrl) {
       //TODO depricate if popup just works? If not use the normal popup. If not move webPreferences same as options etc??
       const contentWindow = new ContentWindow()
@@ -306,17 +320,7 @@ class CRExtensionBrowserAction {
         }
       )
     } else {
-      const popupUrl = this._getPopupUrl(tabId)
-      if (popupUrl) {
-        if (this.backgroundPageSender) {
-          this.backgroundPageSender(`${CRX_BROWSER_ACTION_OPEN_POPUP_}${this.extension.id}`, popupUrl)
-        }
-      } else {
-        const tabInfo = CRExtensionTab.dataFromWebContentsId(this.extension, tabId)
-        webContents.getAllWebContents().forEach((targetWebcontents) => {
-          targetWebcontents.send(`${CRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, tabInfo)
-        })
-      }
+
     }
   }
 

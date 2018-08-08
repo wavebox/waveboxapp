@@ -1,4 +1,3 @@
-import Log from 'Core/Log'
 import { ipcRenderer } from 'electronCrx'
 import Event from 'Core/Event'
 import MessageSender from './MessageSender'
@@ -78,7 +77,6 @@ class Port {
   /* **************************************************************************/
 
   postMessage (message) {
-    console.log("PORT PM OUT", message)
     // Re-queuing this seems to mimic the behaviour of chrome more closely.
     // It can prevent ipc-loops. LP has this problem
     setTimeout(() => {

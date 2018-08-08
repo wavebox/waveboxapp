@@ -39,9 +39,7 @@ class CRExtensionTab {
       ...(waveboxWindow ? {
         active: waveboxWindow.focusedTabId() === webContents.id,
         index: waveboxWindow.tabIds().findIndex((tabId) => tabId === webContents.id),
-        viewType: waveboxWindow.windowType === waveboxWindow.WINDOW_TYPES.EXTENSION_POPUP
-          ? 'popup'
-          : 'tab'
+        viewType: 'tab'
       } : {
         active: false,
         index: 0,

@@ -46,14 +46,13 @@ class BrowserAction {
     ipcRenderer.on(`${CRX_BROWSER_ACTION_CLICKED_}${extensionId}`, (evt, tabInfo) => {
       this.onClicked.emit(new Tab(tabInfo))
     })
-    ipcRenderer.on(`${CRX_BROWSER_ACTION_OPEN_POPUP_}${extensionId}`, (evt, url) => {
+    ipcRenderer.on(`${CRX_BROWSER_ACTION_OPEN_POPUP_}${extensionId}`, (evt, tabId, url) => {
       const transId = uuid.v4()
-      ipcRenderer.send(`${CRX_BROWSER_ACTION_CREATE_FROM_BG_}${extensionId}`, transId, url)
+      ipcRenderer.send(`${CRX_BROWSER_ACTION_CREATE_FROM_BG_}${extensionId}`, transId, tabId, url)
       const opened = window.open(url)
       ipcRenderer.once(`${CRX_BROWSER_ACTION_CREATE_FROM_BG_}${extensionId}${transId}`, (evt, err, tabData) => {
-        // This comes back as a plain old tab
         if (tabData) {
-          this[privRuntime][protectedJSWindowTracker].add(tabData.id, opened)
+          this[privRuntime][protectedJSWindowTracker].add(tabData.id, 'popup', opened)
         }
       })
     })

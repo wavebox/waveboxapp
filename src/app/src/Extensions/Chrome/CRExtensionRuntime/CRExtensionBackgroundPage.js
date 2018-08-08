@@ -11,7 +11,7 @@ import Resolver from 'Runtime/Resolver'
 import { SessionManager } from 'SessionManager'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
 import ContentPopupWindow from 'Windows/ContentPopupWindow'
-import ExtensionPopupWindow from 'Windows/ExtensionPopupWindow'
+import CRExtensionPopupWindow from './CRExtensionPopupWindow'
 import CRExtensionTab from './CRExtensionTab'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import { WINDOW_BACKING_TYPES } from 'Windows/WindowBackingTypes'
@@ -21,6 +21,7 @@ const privPendingCreateWindow = Symbol('privPendingCreateWindow')
 const privHtml = Symbol('privHtml')
 const privName = Symbol('privName')
 const privBrowserWindow = Symbol('privBrowserWindow')
+const privPopupWindow = Symbol('privPopupWindow')
 
 class CRExtensionBackgroundPage {
   /* ****************************************************************************/
@@ -33,6 +34,7 @@ class CRExtensionBackgroundPage {
     this[privName] = undefined
     this[privBrowserWindow] = undefined
     this[privPendingCreateWindow] = undefined
+    this[privPopupWindow] = undefined
 
     // Event handlers
     ipcMain.on(`${CRX_TABS_CREATE_FROM_BG_}${this.extension.id}`, this.handleCreateTab)
@@ -46,6 +48,10 @@ class CRExtensionBackgroundPage {
     // Event handlers
     ipcMain.removeListener(`${CRX_TABS_CREATE_FROM_BG_}${this.extension.id}`, this.handleCreateTab)
     ipcMain.removeListener(`${CRX_BROWSER_ACTION_CREATE_FROM_BG_}${this.extension.id}`, this.handleCreatePopup)
+
+    if (this[privPopupWindow]) {
+      this[privPopupWindow].destroy()
+    }
 
     // Bg page
     this._stop()
@@ -313,21 +319,19 @@ class CRExtensionBackgroundPage {
   * Creates a tab with the given id
   * @param evt: the event that fired
   * @param transId: the transport id of the call
+  * @param tabId: the id of the tab opening this popup
   * @param url: the start url
   */
-  handleCreatePopup = (createEvt, transId, url) => {
-    const ipcChannel = `${CRX_TABS_CREATE_FROM_BG_}${this.extension.id}${transId}`
+  handleCreatePopup = (createEvt, transId, tabId, url) => {
+    const ipcChannel = `${CRX_BROWSER_ACTION_CREATE_FROM_BG_}${this.extension.id}${transId}`
     if (this._windowCreateAssertRunning(createEvt.sender, ipcChannel)) {
       this[privPendingCreateWindow] = (windowEvt, targetUrl, frameName, disposition, options, additionalFeatures) => {
         if (targetUrl !== url) { return }
 
-        // Create window
-        const openedWindow = new ExtensionPopupWindow({
-          backing: WINDOW_BACKING_TYPES.EXTENSION,
-          extensionId: this.extension.id,
-          extensionName: this.extension.manifest.name
-        })
-        openedWindow.create(targetUrl, {
+        if (this[privPopupWindow]) {
+          this[privPopupWindow].destroy()
+        }
+        this[privPopupWindow] = new CRExtensionPopupWindow(tabId, {
           ...options,
           webPreferences: {
             ...options.webPreferences,
@@ -335,12 +339,17 @@ class CRExtensionBackgroundPage {
             offscreen: false // parent window will make this offscreen but we don't want it
           }
         })
-        openedWindow.window.webContents.openDevTools({mode:"detach"})//TODO test only
-        windowEvt.newGuest = openedWindow.window
+
+        this[privPopupWindow].window.webContents.openDevTools({mode:"detach"})//TODO test only
+        windowEvt.newGuest = this[privPopupWindow].window
 
         // Respond to requestor
         if (createEvt.sender && !createEvt.sender.isDestroyed()) {
-          createEvt.sender.send(ipcChannel, null, null) //TODO we used to send tab info???
+          createEvt.sender.send(
+            ipcChannel,
+            null,
+            { id: this[privPopupWindow].window.webContents.id }
+          )
         }
       }
     }

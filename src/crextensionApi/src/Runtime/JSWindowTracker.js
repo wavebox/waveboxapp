@@ -15,7 +15,7 @@ class JSWindowTracker {
 
   _filterDead () {
     Array.from(this[privWindows].keys()).forEach((k) => {
-      if (this[privWindows].get(k).closed) {
+      if (this[privWindows].get(k).window.closed) {
         this[privWindows].delete(k)
       }
     })
@@ -28,11 +28,12 @@ class JSWindowTracker {
   /**
   * Adds a new window to the stack
   * @param wcId: the id of the backing webcontenst
+  * @param viewType: the type of view
   * @param w: the window to add
   */
-  add (wcId, w) {
+  add (wcId, viewType, w) {
     if (!w.closed) {
-      this[privWindows].set(wcId, w)
+      this[privWindows].set(wcId, { wcId: wcId, viewType: viewType, window: w })
     }
   }
 
@@ -41,32 +42,10 @@ class JSWindowTracker {
   /* **************************************************************************/
 
   /**
-  * Gets all the windows an object keyed by wcid
-  * @return an object of wcId to window
-  */
-  all () {
-    this._filterDead()
-    return Array.from(this[privWindows].keys()).reduce((acc, wcId) => {
-      acc[wcId] = this[privWindows].get(wcId)
-      return acc
-    }, {})
-  }
-
-  /**
   * Gets all the windows an an array with wcId included
-  * @return an array of { window, wcId }
+  * @return an array of { window, viewType, wcId }
   */
   allArray () {
-    return Array.from(this[privWindows].keys()).map((wcId) => {
-      return { wcId: wcId, window: this[privWindows].get(wcId) }
-    })
-  }
-
-  /**
-  * Gets all the windows
-  * @return an array of window objects
-  */
-  allWindows () {
     this._filterDead()
     return Array.from(this[privWindows].values())
   }
@@ -78,7 +57,7 @@ class JSWindowTracker {
   */
   windowForWcId (wcId) {
     this._filterDead()
-    return this[privWindows].get(wcId)
+    return (this[privWindows].get(wcId) || {}).window
   }
 }
 

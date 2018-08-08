@@ -72,7 +72,6 @@ class Runtime {
     // Handlers
     DispatchManager.registerHandler(`${CRX_RUNTIME_ONMESSAGE_}${extensionId}`, this._handleRuntimeOnMessage)
     ipcRenderer.on(`${CRX_PORT_CONNECTED_}${this[privExtensionId]}`, (evt, portId, connectedParty, connectInfo) => {
-      console.log("CONNECTED", portId, connectedParty, connectInfo)
       const port = new Port(this[privExtensionId], portId, connectedParty, connectInfo.name)
       this.onConnect.emit(port)
     })
@@ -175,7 +174,6 @@ class Runtime {
   }
 
   connect = (...fullArgs) => {
-    console.log("CONNECT", fullArgs)
     if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.BACKGROUND) {
       throw new Error('chrome.runtime.connect is not supported in background page')
     }

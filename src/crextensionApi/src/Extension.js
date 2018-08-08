@@ -49,16 +49,22 @@ class Extension {
         const all = this[privRuntime][protectedJSWindowTracker].allArray()
 
         if (Object.keys(fetchProperties).length) {
-          const allTabIds = all.map(({ wcId }) => wcId)
-          const allMeta = ipcRenderer.sendSync(`${CRX_GET_WEBCONTENT_META_SYNC_}${this[privExtensionId]}`, allTabIds)
-          const allMetaIndex = allMeta.reduce((acc, meta) => {
-            acc.set(meta.id, meta)
+          const { allMeta, unknownIds } = all.reduce((acc, { wcId, viewType }) => {
+            if (viewType === 'popup') {
+              acc.allMeta.set(wcId, { type: 'popup' })
+            } else {
+              acc.unknownIds.push(wcId)
+            }
             return acc
-          }, new Map())
+          }, { allMeta: new Map(), unknownIds: [] })
+          if (unknownIds.length) {
+            const extMeta = ipcRenderer.sendSync(`${CRX_GET_WEBCONTENT_META_SYNC_}${this[privExtensionId]}`, unknownIds)
+            extMeta.forEach((d) => { allMeta.set(d.id, d) })
+          }
 
           const filtered = all
             .filter(({ wcId, window }) => {
-              const meta = allMetaIndex.get(wcId) || {}
+              const meta = allMeta.get(wcId) || {}
               if (fetchProperties.windowId !== undefined && fetchProperties.windowId !== meta.windowId) {
                 return false
               }

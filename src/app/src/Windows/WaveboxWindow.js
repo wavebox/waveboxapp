@@ -679,6 +679,13 @@ class WaveboxWindow extends EventEmitter {
   isDestroyed () {
     return this.window.isDestroyed()
   }
+
+  /**
+  * @return the bounds of the window
+  */
+  getBounds () {
+    return this.window.getBounds()
+  }
 }
 
 export default WaveboxWindow

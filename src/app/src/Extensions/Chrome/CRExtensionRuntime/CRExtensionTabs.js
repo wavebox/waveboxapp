@@ -236,8 +236,6 @@ class CRExtensionTabs {
           waveboxWindow.close()
         } else if (waveboxWindow.windowType === WaveboxWindow.WINDOW_TYPES.CONTENT) {
           waveboxWindow.close()
-        } else if (waveboxWindow.windowType === WaveboxWindow.WINDOW_TYPES.EXTENSION_POPUP) {
-          waveboxWindow.close()
         }
       }
     })

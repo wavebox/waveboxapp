@@ -97,7 +97,7 @@ class Tabs {
       const opened = window.open(options.url)
       ipcRenderer.once(`${CRX_TABS_CREATE_FROM_BG_}${this[privExtensionId]}${transId}`, (evt, err, tabData) => {
         if (tabData) {
-          this[privRuntime][protectedJSWindowTracker].add(tabData.id, opened)
+          this[privRuntime][protectedJSWindowTracker].add(tabData.id, 'tab', opened)
         }
         if (callback) {
           callback(tabData ? new Tab(tabData) : null)
