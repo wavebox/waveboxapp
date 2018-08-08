@@ -114,7 +114,7 @@ class CRExtensionPopupWindow extends EventEmitter {
   */
   handleShow = (evt) => {
     clearInterval(this[privWindowResizeInterval])
-    this[privWindowResizeInterval] = setInterval(this.autoResizeWindow, 1000)
+    this[privWindowResizeInterval] = setInterval(this.autoResizeWindow, 500)
 
     this.emit('show', evt)
   }

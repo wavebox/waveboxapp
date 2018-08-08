@@ -120,9 +120,20 @@ class Runtime {
 
   get getBackgroundPage () {
     if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.BACKGROUND) {
-      return () => { return window }
+      return (cb) => {
+        setTimeout(() => {
+          cb(window)
+        })
+      }
     } else if (this[privRuntimeEnvironment] === CR_RUNTIME_ENVIRONMENTS.HOSTED) {
-      return () => { return window.opener }
+      return (cb) => {
+        setTimeout(() => {
+          if (!window.opener) {
+            this[protectedHandleError](new Error('Background page not available'))
+          }
+          cb(window.opener)
+        })
+      }
     } else {
       return undefined
     }
