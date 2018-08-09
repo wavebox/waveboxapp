@@ -40,9 +40,9 @@ class CRExtensionPopupWindow extends EventEmitter {
   destroy () {
     if (this[privWindow] && !this[privWindow].isDestroyed()) {
       this[privWindow].destroy()
-      clearInterval(this[privWindowResizeInterval])
-      this[privWindow] = undefined
     }
+    clearInterval(this[privWindowResizeInterval])
+    this[privWindow] = undefined
   }
 
   /* ****************************************************************************/
@@ -130,8 +130,7 @@ class CRExtensionPopupWindow extends EventEmitter {
   * @param evt: the event that fired
   */
   handleClosed = (evt) => {
-    clearInterval(this[privWindowResizeInterval])
-
+    this.destroy()
     this.emit('closed', evt)
   }
 
