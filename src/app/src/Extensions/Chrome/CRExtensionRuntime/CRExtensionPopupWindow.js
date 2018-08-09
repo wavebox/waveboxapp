@@ -151,7 +151,11 @@ class CRExtensionPopupWindow extends EventEmitter {
           if (this[privWindow] && !this[privWindow].isDestroyed()) {
             const bounds = this._getPositioningInfo(this[privOpeningTabId], size[0], size[1])
             if (bounds) {
-              this[privWindow].setBounds(bounds, true)
+              if (process.platform === 'darwin') {
+                this[privWindow].setBounds(bounds, true)
+              } else {
+                this[privWindow].setBounds(bounds) // win32 & linux bork if you pass a second arg
+              }
             } else {
               this[privWindow].setSize(size[0], size[1])
               this[privWindow].center()
