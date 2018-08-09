@@ -112,7 +112,7 @@ class MailboxAppearanceSettings extends React.Component {
         navigationBarUiLocation: mailbox.navigationBarUiLocation,
         mailboxAvatar: accountState.getAvatar(mailbox.avatarId),
         mailboxCollapseSidebarServices: mailbox.collapseSidebarServices,
-        mailboxSidebarFirstServicPriority: mailbox.sidebarFirstServicePriority,
+        mailboxSidebarFirstServicePriority: mailbox.sidebarFirstServicePriority,
         mailboxServiceUiPriority: mailbox.serviceUiPriority,
         mailboxShowExtendedDispayName: mailbox.showExtendedDispayName
       } : {
@@ -124,7 +124,7 @@ class MailboxAppearanceSettings extends React.Component {
         navigationBarUiLocation: ACMailbox.NAVIGATION_BAR_UI_LOCATIONS.AUTO,
         mailboxAvatar: undefined,
         mailboxCollapseSidebarServices: false,
-        mailboxSidebarFirstServicPriority: ACMailbox.SIDEBAR_FIRST_SERVICE_PRIORITY.NORMAL,
+        mailboxSidebarFirstServicePriority: ACMailbox.SIDEBAR_FIRST_SERVICE_PRIORITY.NORMAL,
         mailboxServiceUiPriority: ACMailbox.SERVICE_UI_PRIORITY.TOOLBAR,
         mailboxShowExtendedDispayName: true
       })
@@ -153,7 +153,7 @@ class MailboxAppearanceSettings extends React.Component {
       navigationBarUiLocation,
       mailboxAvatar,
       mailboxCollapseSidebarServices,
-      mailboxSidebarFirstServicPriority,
+      mailboxSidebarFirstServicePriority,
       mailboxServiceUiPriority,
       mailboxShowExtendedDispayName,
       resolvedMailboxFullName
@@ -254,7 +254,7 @@ class MailboxAppearanceSettings extends React.Component {
             checked={mailboxCollapseSidebarServices} />
           <SettingsListItemSelect
             label='First sidebar service prioritization (Experimental)'
-            value={mailboxSidebarFirstServicPriority}
+            value={mailboxSidebarFirstServicePriority}
             options={[
               {
                 value: ACMailbox.SIDEBAR_FIRST_SERVICE_PRIORITY.NORMAL,
@@ -263,8 +263,8 @@ class MailboxAppearanceSettings extends React.Component {
               },
               {
                 value: ACMailbox.SIDEBAR_FIRST_SERVICE_PRIORITY.COLLAPSED,
-                label: 'Collapsed',
-                primaryText: 'Collapsed - hide from the sidebar'
+                label: 'Hidden',
+                primaryText: 'Hidden - hide from the sidebar'
               },
               {
                 value: ACMailbox.SIDEBAR_FIRST_SERVICE_PRIORITY.PRIMARY,
