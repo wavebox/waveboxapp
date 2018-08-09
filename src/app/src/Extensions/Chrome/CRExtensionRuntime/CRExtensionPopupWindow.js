@@ -7,6 +7,12 @@ const privWindow = Symbol('privWindow')
 const privWindowResizeInterval = Symbol('privWindowResizeInterval')
 const privOpeningTabId = Symbol('privOpeningTabId')
 
+// The max-mins are a bit of a guess
+const MAX_WIDTH = 780
+const MAX_HEIGHT = 580
+const MIN_WIDTH = 320
+const MIN_HEIGHT = 100
+
 class CRExtensionPopupWindow extends EventEmitter {
   /* ****************************************************************************/
   // Lifecycle
@@ -24,6 +30,7 @@ class CRExtensionPopupWindow extends EventEmitter {
     this[privWindowResizeInterval] = null
     this[privOpeningTabId] = openingTabId
     this[privWindow] = new BrowserWindow(this._getWindowOptions(openingTabId, bgWindowOptions))
+    this[privWindow].webContents.openDevTools({mode:'detach'})
 
     // Listen to window events
     this[privWindow].on('blur', this.handleBlur)
@@ -32,6 +39,7 @@ class CRExtensionPopupWindow extends EventEmitter {
 
     // Listen to webcontents events
     this[privWindow].webContents.on('new-window', this.handleWebContentsNewWindow)
+    this[privWindow].webContents.on('dom-ready', this.handleWebContentsDomReady)
 
     // Call show after init so we get the show event
     this[privWindow].show()
@@ -83,8 +91,12 @@ class CRExtensionPopupWindow extends EventEmitter {
       alwaysOnTop: true,
       useContentSize: true,
       center: true,
+      maxWidth: MAX_WIDTH,
+      maxHeight: MAX_HEIGHT,
+      minWidth: MIN_WIDTH,
+      minHeight: MIN_HEIGHT,
       show: false, // Call show after init so we get the show event
-      ...(this._getPositioningInfo(openingTabId, 100, 100) || { width: 100, height: 100 })
+      ...(this._getPositioningInfo(openingTabId, MIN_WIDTH, MIN_HEIGHT) || { width: MIN_WIDTH, height: MIN_HEIGHT })
     }
   }
 
@@ -99,6 +111,8 @@ class CRExtensionPopupWindow extends EventEmitter {
     const wbWindow = WaveboxWindow.fromTabId(openingTabId)
     if (wbWindow) {
       const bounds = wbWindow.getContentBounds()
+      width = Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, width))
+      height = Math.min(MAX_HEIGHT, Math.max(MIN_HEIGHT, height))
       return {
         width: width,
         height: height,
@@ -182,6 +196,15 @@ class CRExtensionPopupWindow extends EventEmitter {
   */
   handleWebContentsNewWindow = (evt) => {
     evt.preventDefault()
+  }
+
+  /**
+  * Handles the dom being ready
+  * @param evt: the event that fired
+  */
+  handleWebContentsDomReady = (evt) => {
+    // A bad hack to disable the context-menu
+    this[privWindow].webContents.removeAllListeners('context-menu')
   }
 }
 

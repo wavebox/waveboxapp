@@ -27,10 +27,14 @@ class I18n {
     return CRExtensionI18n.translate(messages, messageName, substitutions)
   }
 
-  /**
-  * @return the UI language
-  */
   getUILanguage () { return navigator.language.replace(/-.*$/, '').toLowerCase() }
+
+  getAcceptLanguages (cb) {
+    setTimeout(() => {
+      const res = [this.getUILanguage()]
+      cb(res)
+    })
+  }
 }
 
 export default I18n
