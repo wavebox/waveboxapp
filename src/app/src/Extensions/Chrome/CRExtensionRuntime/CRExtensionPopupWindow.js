@@ -30,7 +30,6 @@ class CRExtensionPopupWindow extends EventEmitter {
     this[privWindowResizeInterval] = null
     this[privOpeningTabId] = openingTabId
     this[privWindow] = new BrowserWindow(this._getWindowOptions(openingTabId, bgWindowOptions))
-    this[privWindow].webContents.openDevTools({mode:'detach'})
 
     // Listen to window events
     this[privWindow].on('blur', this.handleBlur)
