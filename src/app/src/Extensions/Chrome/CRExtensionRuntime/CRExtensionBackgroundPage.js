@@ -296,7 +296,10 @@ class CRExtensionBackgroundPage {
         })
         openedWindow.create(targetUrl, {
           ...options,
-          frame: true, // offscreen bg page will make this false
+          // Overwrite some settings configured by the bg page
+          frame: true,
+          skipTaskbar: false,
+          focusable: true,
           webPreferences: {
             ...options.webPreferences,
             ...CRExtensionWebPreferences.defaultWebPreferences(this.extension.id),
