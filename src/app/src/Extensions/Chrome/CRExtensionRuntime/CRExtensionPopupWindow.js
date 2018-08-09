@@ -32,6 +32,9 @@ class CRExtensionPopupWindow extends EventEmitter {
 
     // Listen to webcontents events
     this[privWindow].webContents.on('new-window', this.handleWebContentsNewWindow)
+
+    // Call show after init so we get the show event
+    this[privWindow].show()
   }
 
   destroy () {
@@ -71,6 +74,8 @@ class CRExtensionPopupWindow extends EventEmitter {
       backgroundColor: '#FFFFFF',
       frame: false,
       resizable: false,
+      focusable: true,
+      skipTaskbar: true,
       movable: false,
       minimizable: false,
       maximizable: false,
@@ -78,7 +83,7 @@ class CRExtensionPopupWindow extends EventEmitter {
       alwaysOnTop: true,
       useContentSize: true,
       center: true,
-      show: true,
+      show: false, // Call show after init so we get the show event
       ...(this._getPositioningInfo(openingTabId, 100, 100) || { width: 100, height: 100 })
     }
   }
@@ -145,7 +150,10 @@ class CRExtensionPopupWindow extends EventEmitter {
   * Automatically resizes the window by looking at the size of the html element
   */
   autoResizeWindow = () => {
-    this[privWindow].webContents.executeJavaScript(`document.head && document.head.parentElement ? [document.head.parentElement.offsetWidth, document.head.parentElement.offsetHeight] : undefined`)
+    this[privWindow].webContents.executeJavaScript([
+      `document && document.documentElement ? document.documentElement.style.backgroundColor = '#FFFFFF' : undefined`, // Patch for https://github.com/electron/electron/issues/12211
+      `document.head && document.head.parentElement ? [document.head.parentElement.offsetWidth, document.head.parentElement.offsetHeight] : undefined`
+    ].join(';'))
       .then((size) => {
         if (size) {
           if (this[privWindow] && !this[privWindow].isDestroyed()) {

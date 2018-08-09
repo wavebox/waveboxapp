@@ -108,6 +108,9 @@ class CRExtensionBackgroundPage {
     this[privBrowserWindow] = new BrowserWindow({
       width: 0,
       height: 0,
+      show: false,
+      focusable: false,
+      skipTaskbar: true,
       webPreferences: {
         backgroundThrottling: false,
         contextIsolation: false, // Intentional as the extension shares the same namespace as chrome.* api and runs in a semi-priviledged position
