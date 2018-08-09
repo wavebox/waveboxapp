@@ -81,15 +81,14 @@
     "json-loader": "0.5.7",
     "jsx-loader": "0.13.2",
     "node-abi": "2.4.3",
-    "npm-force-resolutions": "0.0.2",
     "nyan-progress-webpack-plugin": "1.2.0",
     "progress-bar-webpack-plugin": "1.11.0",
-    "style-loader": "0.21.0",
+    "style-loader": "0.22.1",
     "uglify-es": "3.3.9",
     "uglifyjs-webpack-plugin": "1.2.7",
     "url-loader": "1.0.1",
     "uuid": "3.3.2",
-    "webpack": "4.16.3",
+    "webpack": "4.16.5",
     "webpack-cli": "3.1.0",
     "webpack-notifier": "1.6.0",
     "webpack-target-electron-renderer": "0.4.0",
@@ -106,9 +105,6 @@
   "electronInstallEnv": {
     "ELECTRON_MIRROR": "https://electron-wb.s3.us-east-2.amazonaws.com/",
     "ELECTRON_CUSTOM_DIR": "wb_3_14_11"
-  },
-  "resolutions": {
-    "hoek": "4.2.1"
   },
   "pre-commit": [
     "validate"
