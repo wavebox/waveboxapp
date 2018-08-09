@@ -686,6 +686,13 @@ class WaveboxWindow extends EventEmitter {
   getBounds () {
     return this.window.getBounds()
   }
+
+  /**
+  * @return the content bounds of the window
+  */
+  getContentBounds () {
+    return this.window.getContentBounds()
+  }
 }
 
 export default WaveboxWindow

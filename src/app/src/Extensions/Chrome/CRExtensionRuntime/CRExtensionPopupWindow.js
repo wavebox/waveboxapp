@@ -70,6 +70,7 @@ class CRExtensionPopupWindow extends EventEmitter {
       ...bgWindowOptions,
       backgroundColor: '#FFFFFF',
       frame: false,
+      resizable: false,
       movable: false,
       minimizable: false,
       maximizable: false,
@@ -92,7 +93,7 @@ class CRExtensionPopupWindow extends EventEmitter {
   _getPositioningInfo (openingTabId, width, height) {
     const wbWindow = WaveboxWindow.fromTabId(openingTabId)
     if (wbWindow) {
-      const bounds = wbWindow.getBounds()
+      const bounds = wbWindow.getContentBounds()
       return {
         width: width,
         height: height,
