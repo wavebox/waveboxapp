@@ -22,6 +22,7 @@ import { CSPParser, CSPBuilder } from './CSP'
 import pathTool from 'shared/pathTool'
 import CRExtensionTab from './CRExtensionRuntime/CRExtensionTab'
 import mime from 'mime'
+import { ElectronWebContents } from 'ElectronTools'
 
 const privNextPortId = Symbol('privNextPortId')
 const privOpenXHRRequests = Symbol('privOpenXHRRequests')
@@ -525,7 +526,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     // Check we are able to match this url
     const requestWebContents = webContents.fromId(details.webContentsId)
     if (!requestWebContents || requestWebContents.isDestroyed()) { return nextHeaders }
-    const purl = new URL(requestWebContents.getURL() || 'about:blank')
+    const purl = new URL(ElectronWebContents.getHostUrl(requestWebContents))
     const matches = CRExtensionMatchPatterns.matchUrls(
       purl.protocol,
       purl.hostname,

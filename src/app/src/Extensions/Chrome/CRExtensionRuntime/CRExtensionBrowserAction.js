@@ -16,14 +16,8 @@ import {
   CRX_BROWSER_ACTION_CLICKED_,
   CRX_BROWSER_ACTION_OPEN_POPUP_
 } from 'shared/crExtensionIpcEvents'
-import {
-  CR_EXTENSION_PROTOCOL
-} from 'shared/extensionApis'
-import {
-  CRExtensionRTBrowserAction
-} from 'shared/Models/CRExtensionRT'
-import ContentWindow from 'Windows/ContentWindow'
-import { CRExtensionWebPreferences } from 'WebContentsManager'
+import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
+import { CRExtensionRTBrowserAction } from 'shared/Models/CRExtensionRT'
 import { evtMain } from 'AppEvents'
 import { crextensionActions } from 'stores/crextension'
 
@@ -304,23 +298,6 @@ class CRExtensionBrowserAction {
       webContents.getAllWebContents().forEach((targetWebcontents) => {
         targetWebcontents.send(`${CRX_BROWSER_ACTION_CLICKED_}${this.extension.id}`, tabInfo)
       })
-    }
-    return
-
-
-    if (this.extension.manifest.wavebox.hasBrowserActionOpenUrl) {
-      //TODO depricate if popup just works? If not use the normal popup. If not move webPreferences same as options etc??
-      const contentWindow = new ContentWindow()
-      contentWindow.create(
-        this.extension.manifest.wavebox.browserActionOpenUrl,
-        undefined,
-        undefined,
-        {
-          partition: CRExtensionWebPreferences.partitionIdForExtension(this.extension.id)
-        }
-      )
-    } else {
-
     }
   }
 

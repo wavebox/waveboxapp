@@ -102,8 +102,6 @@ class CRExtensionManifestWavebox extends Model {
   /* **************************************************************************/
 
   get supportsBrowserAction () { return this._value_('wavebox_support_browser_action', true) }
-  get browserActionOpenUrl () { return this._value_('wavebox_browser_action_open_url', undefined) }
-  get hasBrowserActionOpenUrl () { return !!this.browserActionOpenUrl }
   get browserActionIconFilter () { return this._value_('wavebox_browser_action_icon_filter', '') }
   get hasBrowserActionIconFilter () { return !!this.browserActionIconFilter }
 

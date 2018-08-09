@@ -153,13 +153,14 @@ class CRExtensionBackgroundPage {
   * Starts the backgroung page by loading the start url
   */
   _loadBackgroundPage = () => {
-    this[privBrowserWindow].webContents.loadURL(urlFormat({
-      protocol: CR_EXTENSION_PROTOCOL,
-      slashes: true,
-      hostname: this.extension.id,
-      pathname: this[privName]
-    }))
-    this[privBrowserWindow].webContents.openDevTools({mode:'detach'})//TODO dev
+    if (this.isRunning) {
+      this[privBrowserWindow].webContents.loadURL(urlFormat({
+        protocol: CR_EXTENSION_PROTOCOL,
+        slashes: true,
+        hostname: this.extension.id,
+        pathname: this[privName]
+      }))
+    }
   }
 
   /**
@@ -187,7 +188,6 @@ class CRExtensionBackgroundPage {
   * @param responder: function to call with updated headers
   */
   _handleBeforeSendHeaders = (details, responder) => {
-    //TODO do we need to do this on non-bg pages???
     if (this.isRunning && this.webContentsId === details.webContentsId) {
       if (details.resourceType === 'xhr') {
         return responder({
@@ -300,7 +300,6 @@ class CRExtensionBackgroundPage {
             offscreen: false // parent window will make this offscreen but we don't want it
           }
         })
-        openedWindow.window.webContents.openDevTools()//TODO test only
         windowEvt.newGuest = openedWindow.window
 
         // Respond to requestor
@@ -339,8 +338,6 @@ class CRExtensionBackgroundPage {
             offscreen: false // parent window will make this offscreen but we don't want it
           }
         })
-
-        this[privPopupWindow].window.webContents.openDevTools({mode:"detach"})//TODO test only
         windowEvt.newGuest = this[privPopupWindow].window
 
         // Respond to requestor
