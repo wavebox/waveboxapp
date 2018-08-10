@@ -10,7 +10,6 @@ import CRExtensionDatasource from './CRExtensionDatasource'
 import CRExtensionBrowserAction from './CRExtensionBrowserAction'
 import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
 import CRExtensionContentScript from './CRExtensionContentScript'
-import CRExtensionOptionsPage from './CRExtensionOptionsPage'
 import CRExtensionStorage from './CRExtensionStorage'
 import CRExtensionContextMenus from './CRExtensionContextMenus'
 import CRExtensionWebRequest from './CRExtensionWebRequest'
@@ -42,7 +41,6 @@ class CRExtensionRuntime {
     // Pages second
     this.backgroundPage = new CRExtensionBackgroundPage(extension)
     this.contentScript = new CRExtensionContentScript(extension, this.datasource)
-    this.optionsPage = new CRExtensionOptionsPage(extension)
 
     // Binding
     this.tabs.backgroundPageSender = this.backgroundPage.sendToWebContents
@@ -63,7 +61,6 @@ class CRExtensionRuntime {
     // Pages first
     this.backgroundPage.destroy()
     this.contentScript.destroy()
-    this.optionsPage.destroy()
 
     // APIs second
     this.datasource.destroy()

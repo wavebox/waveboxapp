@@ -15,6 +15,9 @@ import {
   CRX_BROWSER_ACTION_OPEN_POPUP_,
   CRX_BROWSER_ACTION_CREATE_FROM_BG_
 } from 'shared/crExtensionIpcEvents'
+import {
+  CR_RUNTIME_ENVIRONMENTS
+} from 'shared/extensionApis'
 import DispatchManager from 'Core/DispatchManager'
 import Event from 'Core/Event'
 import Tab from 'Tabs/Tab'
@@ -46,16 +49,18 @@ class BrowserAction {
     ipcRenderer.on(`${CRX_BROWSER_ACTION_CLICKED_}${extensionId}`, (evt, tabInfo) => {
       this.onClicked.emit(new Tab(tabInfo))
     })
-    ipcRenderer.on(`${CRX_BROWSER_ACTION_OPEN_POPUP_}${extensionId}`, (evt, tabId, url) => {
-      const transId = uuid.v4()
-      ipcRenderer.send(`${CRX_BROWSER_ACTION_CREATE_FROM_BG_}${extensionId}`, transId, tabId, url)
-      const opened = window.open(url)
-      ipcRenderer.once(`${CRX_BROWSER_ACTION_CREATE_FROM_BG_}${extensionId}${transId}`, (evt, err, tabData) => {
-        if (tabData) {
-          this[privRuntime][protectedJSWindowTracker].add(tabData.id, 'popup', opened)
-        }
+    if (runtimeEnvironment === CR_RUNTIME_ENVIRONMENTS.BACKGROUND) {
+      ipcRenderer.on(`${CRX_BROWSER_ACTION_OPEN_POPUP_}${extensionId}`, (evt, tabId, url) => {
+        const transId = uuid.v4()
+        ipcRenderer.send(`${CRX_BROWSER_ACTION_CREATE_FROM_BG_}${extensionId}`, transId, tabId, url)
+        const opened = window.open(url)
+        ipcRenderer.once(`${CRX_BROWSER_ACTION_CREATE_FROM_BG_}${extensionId}${transId}`, (evt, err, tabData) => {
+          if (tabData) {
+            this[privRuntime][protectedJSWindowTracker].add(tabData.id, 'popup', opened)
+          }
+        })
       })
-    })
+    }
 
     Object.freeze(this)
   }

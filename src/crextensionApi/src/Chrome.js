@@ -13,7 +13,10 @@ import Notifications from './Notifications'
 import Cookies from './Cookies/Cookies'
 import Windows from './Windows/Windows'
 import Permissions from './Permissions'
+import Options from './Options'
 import { CR_RUNTIME_ENVIRONMENTS } from 'shared/extensionApis'
+
+const privOptions = Symbol('privOptions')
 
 class Chrome {
   /* **************************************************************************/
@@ -59,6 +62,10 @@ class Chrome {
       if (permissions.has('cookies')) {
         this.cookies = new Cookies(extensionId, this.runtime)
       }
+    }
+
+    if (runtimeEnvironment === CR_RUNTIME_ENVIRONMENTS.BACKGROUND) {
+      this[privOptions] = new Options(extensionId, runtimeEnvironment, this.runtime)
     }
 
     Object.freeze(this)

@@ -1,11 +1,13 @@
 import { session, ipcMain, BrowserWindow } from 'electron'
 import fs from 'fs-extra'
-import { format as urlFormat, URL } from 'url'
+import { URL } from 'url'
 import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import { evtMain } from 'AppEvents'
 import {
   CRX_TABS_CREATE_FROM_BG_,
-  CRX_BROWSER_ACTION_CREATE_FROM_BG_
+  CRX_BROWSER_ACTION_CREATE_FROM_BG_,
+  CRX_OPTIONS_CREATE_FROM_BG_,
+  CRX_OPTIONS_OPEN_
 } from 'shared/crExtensionIpcEvents'
 import Resolver from 'Runtime/Resolver'
 import { SessionManager } from 'SessionManager'
@@ -22,12 +24,16 @@ const privHtml = Symbol('privHtml')
 const privName = Symbol('privName')
 const privBrowserWindow = Symbol('privBrowserWindow')
 const privPopupWindow = Symbol('privPopupWindow')
+const privOptionsWindow = Symbol('privOptionsWindow')
 
 class CRExtensionBackgroundPage {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
+  /**
+  * @param extension: the extension
+  */
   constructor (extension) {
     this.extension = extension
     this[privHtml] = undefined
@@ -35,10 +41,12 @@ class CRExtensionBackgroundPage {
     this[privBrowserWindow] = undefined
     this[privPendingCreateWindow] = undefined
     this[privPopupWindow] = undefined
+    this[privOptionsWindow] = undefined
 
     // Event handlers
     ipcMain.on(`${CRX_TABS_CREATE_FROM_BG_}${this.extension.id}`, this.handleCreateTab)
     ipcMain.on(`${CRX_BROWSER_ACTION_CREATE_FROM_BG_}${this.extension.id}`, this.handleCreatePopup)
+    ipcMain.on(`${CRX_OPTIONS_CREATE_FROM_BG_}${this.extension.id}`, this.handleCreateOptions)
 
     // Bg page
     this._start()
@@ -48,6 +56,7 @@ class CRExtensionBackgroundPage {
     // Event handlers
     ipcMain.removeListener(`${CRX_TABS_CREATE_FROM_BG_}${this.extension.id}`, this.handleCreateTab)
     ipcMain.removeListener(`${CRX_BROWSER_ACTION_CREATE_FROM_BG_}${this.extension.id}`, this.handleCreatePopup)
+    ipcMain.removeListener(`${CRX_OPTIONS_CREATE_FROM_BG_}${this.extension.id}`, this.handleCreateOptions)
 
     if (this[privPopupWindow]) {
       this[privPopupWindow].destroy()
@@ -88,24 +97,10 @@ class CRExtensionBackgroundPage {
   /* ****************************************************************************/
 
   /**
-  * Starts the background scripts
+  * Generates the options for the background page
   */
-  _start () {
-    if (!this.extension.manifest.hasBackground) { return }
-
-    if (this.extension.manifest.background.hasHtmlPage) {
-      this[privName] = this.extension.manifest.background.htmlPage
-      try {
-        this[privHtml] = fs.readFileSync(this.extension.manifest.background.getHtmlPageScoped(this.extension.srcPath))
-      } catch (ex) {
-        this.html = ''
-      }
-    } else {
-      this[privName] = '_generated_background_page.html'
-      this[privHtml] = Buffer.from(this.extension.manifest.background.generateHtmlPageForScriptset())
-    }
-
-    this[privBrowserWindow] = new BrowserWindow({
+  _generateBackgroundPageOptions () {
+    return {
       width: 0,
       height: 0,
       show: false,
@@ -125,7 +120,28 @@ class CRExtensionBackgroundPage {
         preload: Resolver.crExtensionApi(),
         offscreen: true
       }
-    })
+    }
+  }
+
+  /**
+  * Starts the background scripts
+  */
+  _start () {
+    if (!this.extension.manifest.hasBackground) { return }
+
+    if (this.extension.manifest.background.hasHtmlPage) {
+      this[privName] = this.extension.manifest.background.htmlPage
+      try {
+        this[privHtml] = fs.readFileSync(this.extension.manifest.background.getHtmlPageScoped(this.extension.srcPath))
+      } catch (ex) {
+        this.html = ''
+      }
+    } else {
+      this[privName] = '_generated_background_page.html'
+      this[privHtml] = Buffer.from(this.extension.manifest.background.generateHtmlPageForScriptset())
+    }
+
+    this[privBrowserWindow] = new BrowserWindow(this._generateBackgroundPageOptions())
     this[privBrowserWindow].webContents.setFrameRate(1)
     this[privBrowserWindow].webContents.on('new-window', this._handleNewWindow)
     this[privBrowserWindow].webContents.on('will-navigate', this._handleWillNavigate)
@@ -157,12 +173,8 @@ class CRExtensionBackgroundPage {
   */
   _loadBackgroundPage = () => {
     if (this.isRunning) {
-      this[privBrowserWindow].webContents.loadURL(urlFormat({
-        protocol: CR_EXTENSION_PROTOCOL,
-        slashes: true,
-        hostname: this.extension.id,
-        pathname: this[privName]
-      }))
+      const u = new URL(this[privName], `${CR_EXTENSION_PROTOCOL}://${this.extension.id}`).toString()
+      this[privBrowserWindow].webContents.loadURL(u)
     }
   }
 
@@ -226,11 +238,7 @@ class CRExtensionBackgroundPage {
               Object.keys(requestHeaders).filter((k) => k.startsWith('X-'))
             ),
             'access-control-allow-origin': [
-              urlFormat({
-                protocol: CR_EXTENSION_PROTOCOL,
-                slashes: true,
-                hostname: this.extension.id
-              })
+              `${CR_EXTENSION_PROTOCOL}://${this.extension.id}`
             ]
           }
           return responder({ responseHeaders: updatedHeaders })
@@ -359,6 +367,85 @@ class CRExtensionBackgroundPage {
   }
 
   /**
+  * Creates an options page
+  * @param evt: the event that fired
+  * @param transId: the transport id of the call
+  */
+  handleCreateOptions = (createEvt, transId) => {
+    // Don't assert that the bg page is running here like we do with the other calls, we handle that case
+    const ipcChannel = `${CRX_OPTIONS_CREATE_FROM_BG_}${this.extension.id}${transId}`
+
+    // Don't create two
+    if (this[privOptionsWindow] && !this[privOptionsWindow].isDestroyed()) {
+      this[privOptionsWindow].focus()
+      setTimeout(() => {
+        if (createEvt.sender && !createEvt.sender.isDestroyed()) {
+          createEvt.sender.send(ipcChannel, null, null)
+        }
+      })
+      return
+    }
+
+    // Auto-create the url
+    const url = new URL(
+      this.extension.manifest.optionsPage,
+      `${CR_EXTENSION_PROTOCOL}://${this.extension.id}`
+    ).toString()
+
+    // Prep the opener
+    this[privPendingCreateWindow] = (windowEvt, targetUrl, frameName, disposition, options, additionalFeatures) => {
+      if (targetUrl !== url) { return }
+
+      const openedWindow = new ContentPopupWindow({
+        backing: WINDOW_BACKING_TYPES.EXTENSION,
+        extensionId: this.extension.id,
+        extensionName: this.extension.manifest.name
+      })
+
+      openedWindow.create(targetUrl, {
+        ...options,
+        title: this.extension.manifest.name,
+        minWidth: 300,
+        minHeight: 300,
+        width: undefined,
+        height: undefined,
+        show: true,
+        backgroundColor: '#FFFFFF',
+        useContentSize: true,
+        // Overwrite some settings configured by the bg page
+        frame: true,
+        skipTaskbar: false,
+        focusable: true,
+        webPreferences: {
+          ...options.webPreferences,
+          ...CRExtensionWebPreferences.defaultWebPreferences(this.extension.id),
+          offscreen: false // parent window will make this offscreen but we don't want it
+        }
+      })
+
+      windowEvt.newGuest = openedWindow.window
+
+      // Store the window
+      if (this[privOptionsWindow] && !this[privOptionsWindow].isDestroyed()) {
+        this[privOptionsWindow].destroy()
+      }
+      this[privOptionsWindow] = openedWindow
+      this[privOptionsWindow].on('closed', () => {
+        this[privOptionsWindow] = undefined
+      })
+
+      // Respond to requestor
+      if (createEvt.sender && !createEvt.sender.isDestroyed()) {
+        createEvt.sender.send(
+          ipcChannel,
+          null,
+          { id: openedWindow.window.webContents.id }
+        )
+      }
+    }
+  }
+
+  /**
   * Asserts the background page is running for creating a window and if not responds to the ipc accordinly
   * @param sender: the webcontents who sent originally
   * @param ipcResponseChannel: the ipc channel to respond on
@@ -420,6 +507,35 @@ class CRExtensionBackgroundPage {
   reload () {
     if (this.isRunning) {
       this.webContents.reload()
+    }
+  }
+
+  /**
+  * Launches the options page
+  */
+  launchOptions () {
+    const targetUrl = new URL(this.extension.manifest.optionsPage, `${CR_EXTENSION_PROTOCOL}://${this.extension.id}`).toString()
+    if (this.isRunning) {
+      this.webContents.send(`${CRX_OPTIONS_OPEN_}${this.extension.id}`, targetUrl)
+    } else {
+      // If the background page isn't running we dummy up the calls as if it is
+
+      // Send the create call
+      const createEvt = {
+        sender: { isDestroyed: () => false, send: () => {} }
+      }
+      this.handleCreateOptions(createEvt, '_')
+
+      // Send the window.open call
+      const winEvt = { newGuest: undefined }
+      const winOpts = this._generateBackgroundPageOptions()
+      this[privPendingCreateWindow](winEvt, targetUrl, '', '', winOpts, '')
+
+      // Action the window.open call
+      if (winEvt.newGuest) {
+        winEvt.newGuest.webContents.loadURL(targetUrl)
+      }
+      this[privPendingCreateWindow] = undefined
     }
   }
 }

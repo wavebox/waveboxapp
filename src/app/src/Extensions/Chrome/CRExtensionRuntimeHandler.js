@@ -353,7 +353,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   openOptionsPage (extensionId) {
     const runtime = this.runtimes.get(extensionId)
     if (!runtime) { return }
-    runtime.optionsPage.launchWindow()
+    runtime.backgroundPage.launchOptions()
   }
 
   /**

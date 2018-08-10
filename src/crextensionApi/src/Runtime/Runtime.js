@@ -1,6 +1,6 @@
 import Log from 'Core/Log'
 import { ipcRenderer } from 'electronCrx'
-import {format as urlFormat} from 'url'
+import { URL } from 'whatwg-url'
 import {
   CRX_RUNTIME_SENDMESSAGE,
   CRX_RUNTIME_ONMESSAGE_,
@@ -106,12 +106,7 @@ class Runtime {
   /* **************************************************************************/
 
   getURL = (path) => {
-    return urlFormat({
-      protocol: CR_EXTENSION_PROTOCOL,
-      slashes: true,
-      hostname: this[privExtensionId],
-      pathname: path
-    })
+    return new URL(path, `${CR_EXTENSION_PROTOCOL}://${this[privExtensionId]}`).toString()
   }
 
   getManifest = () => {
