@@ -123,6 +123,23 @@ class CRExtensionManifestWavebox extends Model {
     return value
   }
   get hasWebRequestOnBeforeRequestBlockingScript () { return !!this.webRequestOnBeforeRequestBlockingScript }
+
+  /* **************************************************************************/
+  // Properties: Native
+  /* **************************************************************************/
+
+  get nativeHooks () { return this._value_('wavebox_native_hooks', {}) }
+
+  /**
+  * Gets a native hook
+  * @param n: the name of the native hook
+  * @param d=undefined: the default value if none is defined
+  * @return the value
+  */
+  getNativeHook (n, d = undefined) {
+    const v = this.nativeHooks[n]
+    return v === undefined ? d : v
+  }
 }
 
 module.exports = CRExtensionManifestWavebox

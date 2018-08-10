@@ -7,7 +7,8 @@ import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatch
 import {EventEmitter} from 'events'
 import {
   CR_EXTENSION_PROTOCOL,
-  CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX
+  CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX,
+  CR_NATIVE_HOOK_EXTENSIONS
 } from 'shared/extensionApis'
 import {
   CRX_RUNTIME_SENDMESSAGE,
@@ -23,6 +24,7 @@ import pathTool from 'shared/pathTool'
 import CRExtensionTab from './CRExtensionRuntime/CRExtensionTab'
 import mime from 'mime'
 import { ElectronWebContents } from 'ElectronTools'
+import WaveboxWindow from 'Windows/WaveboxWindow'
 
 const privNextPortId = Symbol('privNextPortId')
 const privOpenXHRRequests = Symbol('privOpenXHRRequests')
@@ -107,7 +109,9 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   _handleChromeExtensionBufferRequest = (request, responder) => {
     const purl = new URL(decodeURIComponent(request.url || 'about:blank'))
     if (!purl.hostname || !purl.pathname) { return responder() }
-    const runtime = this.runtimes.get(purl.hostname)
+
+    const extensionId = purl.hostname
+    const runtime = this.runtimes.get(extensionId)
     if (!runtime) { return responder() }
 
     // Serve the background page
@@ -116,6 +120,20 @@ class CRExtensionRuntimeHandler extends EventEmitter {
         mimeType: 'text/html',
         data: runtime.backgroundPage.html
       })
+    }
+
+    // Lastpass native hook
+    if (extensionId === CR_NATIVE_HOOK_EXTENSIONS.LASTPASS) {
+      const waveboxConfig = runtime.extension.manifest.wavebox
+      if (waveboxConfig.getNativeHook('enableBAPopoutOnCSPopout', false) === true) {
+        if (purl.pathname === waveboxConfig.getNativeHook('csPopoutPath', '')) {
+          const focusedTabId = WaveboxWindow.focusedTabId()
+          if (focusedTabId) {
+            runtime.browserAction.browserActionClicked(focusedTabId)
+          }
+          return responder(-6)
+        }
+      }
     }
 
     // Serve the asset/file

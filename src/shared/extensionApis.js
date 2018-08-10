@@ -28,5 +28,8 @@ module.exports = {
     LOCAL: 'LOCAL',
     SYNC: 'SYNC'
   },
-  CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX: 'x-wb-crx-cs/'
+  CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX: 'x-wb-crx-cs/',
+  CR_NATIVE_HOOK_EXTENSIONS: {
+    LASTPASS: 'hdokiejnpimakedhajhdlcegeplioahd'
+  }
 }
