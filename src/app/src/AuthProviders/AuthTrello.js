@@ -3,6 +3,7 @@ import { WB_AUTH_TRELLO, WB_AUTH_TRELLO_COMPLETE, WB_AUTH_TRELLO_ERROR } from 's
 import { URL } from 'url'
 import querystring from 'querystring'
 import AuthWindow from 'Windows/AuthWindow'
+import Resolver from 'Runtime/Resolver'
 
 const TOKEN_REGEX = new RegExp(/[&#]?token=([0-9a-f]{64})/)
 
@@ -62,7 +63,11 @@ class AuthTrello {
           sandbox: true,
           nativeWindowOpen: true,
           sharedSiteInstances: true,
-          partition: partitionId
+          partition: partitionId,
+          preload: [
+            Resolver.guestPreload(),
+            Resolver.crExtensionApi()
+          ].join('_wavebox_preload_split_')
         }
       })
       const oauthWin = waveboxOauthWin.window

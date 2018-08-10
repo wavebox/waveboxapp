@@ -1,5 +1,6 @@
 import WaveboxWindow from './WaveboxWindow'
 import { GuestWebPreferences } from 'WebContentsManager'
+import { evtMain } from 'AppEvents'
 
 class AuthWindow extends WaveboxWindow {
   /* ****************************************************************************/
@@ -18,7 +19,18 @@ class AuthWindow extends WaveboxWindow {
     }
     GuestWebPreferences.sanitizeForGuestUse(browserWindowPreferences.webPreferences)
 
-    return super.create(url, browserWindowPreferences)
+    super.create(url, browserWindowPreferences)
+
+    // Setup for tab lifecycle
+    const webContentsId = this.window.webContents.id
+    this.emit('tab-created', { sender: this }, webContentsId)
+    evtMain.emit(evtMain.WB_TAB_CREATED, { sender: this }, webContentsId)
+    this.window.webContents.once('destroyed', () => {
+      this.emit('tab-destroyed', { sender: this }, webContentsId)
+      evtMain.emit(evtMain.WB_TAB_DESTROYED, { sender: this }, webContentsId)
+    })
+
+    return this
   }
 
   /* ****************************************************************************/
@@ -38,12 +50,30 @@ class AuthWindow extends WaveboxWindow {
   }
 
   /* ****************************************************************************/
-  // Info
+  // Query
   /* ****************************************************************************/
 
-  focusedTabId () { return null }
-  tabIds () { return [] }
-  tabMetaInfo (tabId) { return undefined }
+  /**
+  * @return the id of the focused tab
+  */
+  focusedTabId () {
+    return this.window.webContents.id
+  }
+
+  /**
+  * @return the ids of the tabs in this window
+  */
+  tabIds () {
+    return [this.window.webContents.id]
+  }
+
+  /**
+  * @param tabId: the id of the tab
+  * @return the info about the tab
+  */
+  tabMetaInfo (tabId) {
+    return undefined
+  }
 }
 
 export default AuthWindow

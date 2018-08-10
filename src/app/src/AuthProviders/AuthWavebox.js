@@ -6,6 +6,7 @@ import { URL } from 'url'
 import WaveboxAuthProviders from 'shared/Models/WaveboxAuthProviders'
 import AuthWindow from 'Windows/AuthWindow'
 import { SessionManager } from 'SessionManager'
+import Resolver from 'Runtime/Resolver'
 
 class AuthWavebox {
   /* ****************************************************************************/
@@ -81,7 +82,11 @@ class AuthWavebox {
           sandbox: true,
           nativeWindowOpen: true,
           sharedSiteInstances: true,
-          partition: partitionId
+          partition: partitionId,
+          preload: [
+            Resolver.guestPreload(),
+            Resolver.crExtensionApi()
+          ].join('_wavebox_preload_split_')
         }
       })
       const oauthWin = waveboxOauthWin.window

@@ -6,6 +6,7 @@ import querystring from 'querystring'
 import { userStore } from 'stores/user'
 import pkg from 'package.json'
 import { SessionManager } from 'SessionManager'
+import Resolver from 'Runtime/Resolver'
 
 class AuthMicrosoft {
   /* ****************************************************************************/
@@ -86,7 +87,11 @@ class AuthMicrosoft {
           partition: partitionId,
           sandbox: true,
           nativeWindowOpen: true,
-          sharedSiteInstances: true
+          sharedSiteInstances: true,
+          preload: [
+            Resolver.guestPreload(),
+            Resolver.crExtensionApi()
+          ].join('_wavebox_preload_split_')
         }
       })
       const oauthWin = waveboxOauthWin.window

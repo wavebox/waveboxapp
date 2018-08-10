@@ -2,6 +2,7 @@ import { ipcMain } from 'electron'
 import { WB_AUTH_SLACK, WB_AUTH_SLACK_COMPLETE, WB_AUTH_SLACK_ERROR } from 'shared/ipcEvents'
 import { URL } from 'url'
 import AuthWindow from 'Windows/AuthWindow'
+import Resolver from 'Runtime/Resolver'
 
 class AuthSlack {
   /* ****************************************************************************/
@@ -58,7 +59,11 @@ class AuthSlack {
           sandbox: true,
           nativeWindowOpen: true,
           sharedSiteInstances: true,
-          partition: partitionId
+          partition: partitionId,
+          preload: [
+            Resolver.guestPreload(),
+            Resolver.crExtensionApi()
+          ].join('_wavebox_preload_split_')
         }
       })
       const oauthWin = waveboxOauthWin.window

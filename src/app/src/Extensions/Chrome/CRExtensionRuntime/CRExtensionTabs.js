@@ -185,6 +185,7 @@ class CRExtensionTabs {
     const tabs = WaveboxWindow.allTabIds()
       .map((id) => this._tabDataFromWebContentsId(id))
       .filter((tab) => {
+        if (!options) { return true }
         if (!tab) { return false }
 
         if (options.active !== undefined) {

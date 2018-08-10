@@ -6,6 +6,7 @@ import querystring from 'querystring'
 import pkg from 'package.json'
 import AuthWindow from 'Windows/AuthWindow'
 import { SessionManager } from 'SessionManager'
+import Resolver from 'Runtime/Resolver'
 
 class AuthGoogle {
   /* ****************************************************************************/
@@ -82,7 +83,11 @@ class AuthGoogle {
           sandbox: true,
           nativeWindowOpen: true,
           sharedSiteInstances: true,
-          partition: partitionId
+          partition: partitionId,
+          preload: [
+            Resolver.guestPreload(),
+            Resolver.crExtensionApi()
+          ].join('_wavebox_preload_split_')
         }
       })
       const oauthWin = waveboxOauthWin.window
