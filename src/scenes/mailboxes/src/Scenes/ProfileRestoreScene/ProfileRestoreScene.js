@@ -150,7 +150,7 @@ class ProfileRestoreScene extends React.Component {
   * @return jsx
   */
   renderProfile (classes, profile, clientId) {
-    const mailboxCount = Object.keys(profile.data['mailboxes_db.json'] || {}).length || 0
+    const mailboxCount = (profile.metadata || {}).mailboxCount || 0
     const isThisMachine = clientId === profile.id
 
     return (

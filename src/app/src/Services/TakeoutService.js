@@ -10,6 +10,7 @@ import WaveboxWindow from 'Windows/WaveboxWindow'
 import { evtMain } from 'AppEvents'
 import MachineInfo from 'shared/MachineInfo'
 import { userStore } from 'stores/user'
+import { accountStore } from 'stores/account'
 import {
   WB_TAKEOUT_IMPORT_FILE,
   WB_TAKEOUT_EXPORT_FILE,
@@ -87,6 +88,8 @@ class TakeoutService {
       return acc
     }, {})
 
+    const accountState = accountStore.getState()
+
     return {
       id: userStore.getState().clientId,
       timestamp: new Date().getTime(),
@@ -95,6 +98,10 @@ class TakeoutService {
         platform: process.platform,
         arch: process.arch,
         app: pkg.version
+      },
+      metadata: {
+        mailboxCount: accountState.mailboxCount(),
+        serviceCount: accountState.serviceCount()
       },
       data: storeData
     }
