@@ -285,7 +285,7 @@ class TakeoutService {
     const browserWindow = waveboxWindow ? waveboxWindow.window : undefined
 
     Promise.resolve()
-      .then((data) => {
+      .then(() => {
         TAKEOUT_STORES.forEach((storage) => {
           if (data.stores[storage.exportName]) {
             storage.writeImportDataSync(data.stores[storage.exportName])
