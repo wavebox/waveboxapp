@@ -4,6 +4,8 @@ import { settingsStore } from 'stores/settings'
 import { accountActions, ServiceDataReducer } from 'stores/account'
 import { userStore } from 'stores/user'
 import { GuestWebPreferences } from 'WebContentsManager'
+import path from 'path'
+import { URL } from 'url'
 import {
   AuthGoogle,
   AuthMicrosoft,
@@ -44,10 +46,6 @@ import MailboxesWindowBehaviour from './MailboxesWindowBehaviour'
 
 const MIN_WINDOW_WIDTH = 400
 const MIN_WINDOW_HEIGHT = 300
-const ALLOWED_URLS = [
-  Resolver.mailboxesScene('mailboxes.html'),
-  Resolver.mailboxesScene('offline.html')
-].map((p) => `${process.platform === 'win32' ? 'file:///' : 'file://'}${Resolver.convertToBrowserPath(p)}`)
 
 let singletonAttached
 class MailboxesWindow extends WaveboxWindow {
@@ -194,7 +192,16 @@ class MailboxesWindow extends WaveboxWindow {
   * @return false to suppress, true to allow
   */
   allowNavigate (evt, browserWindow, nextUrl) {
-    return !!ALLOWED_URLS.find((allowed) => nextUrl.startsWith(allowed))
+    const purl = new URL(nextUrl)
+    if (purl.protocol !== 'file:') { return false }
+
+    const nextPath = path.normalize(decodeURIComponent(purl.pathname)).substr(
+      process.platform === 'win32' ? 1 : 0 // win32 has a leading slash
+    )
+    if (nextPath === Resolver.mailboxesScene('mailboxes.html')) { return true }
+    if (nextPath === Resolver.mailboxesScene('offline.html')) { return true }
+
+    return false
   }
 
   /* ****************************************************************************/
