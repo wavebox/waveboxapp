@@ -42,12 +42,12 @@ import Resolver from 'Runtime/Resolver'
 import MailboxesWindowTabManager from './MailboxesWindowTabManager'
 import MailboxesWindowBehaviour from './MailboxesWindowBehaviour'
 
-const ALLOWED_URLS = [
-  'file://' + Resolver.mailboxesScene('mailboxes.html'),
-  'file://' + Resolver.mailboxesScene('offline.html')
-]
 const MIN_WINDOW_WIDTH = 400
 const MIN_WINDOW_HEIGHT = 300
+const ALLOWED_URLS = [
+  Resolver.mailboxesScene('mailboxes.html'),
+  Resolver.mailboxesScene('offline.html')
+].map((p) => `${process.platform === 'win32' ? 'file:///' : 'file://'}${p}`)
 
 let singletonAttached
 class MailboxesWindow extends WaveboxWindow {
