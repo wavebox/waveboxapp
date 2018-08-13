@@ -91,7 +91,6 @@ class ProfileRestoreScene extends React.Component {
       profiles: this.sanitizeProfiles(userState.userProfilesFetch.data),
       userIsLoggedIn: userState.user.isLoggedIn,
       userEmail: userState.user.userEmail,
-      userEnableProfileSync: userState.user.enableProfileSync,
       clientId: userState.clientId
     }
   })()
@@ -107,7 +106,6 @@ class ProfileRestoreScene extends React.Component {
       profiles: this.sanitizeProfiles(userState.userProfilesFetch.data),
       userIsLoggedIn: userState.user.isLoggedIn,
       userEmail: userState.user.userEmail,
-      userEnableProfileSync: userState.user.enableProfileSync,
       clientId: userState.clientId
     })
   }
