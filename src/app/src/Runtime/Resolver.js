@@ -94,6 +94,19 @@ class Resolver {
   static audio (name) {
     return path.resolve(path.join(this.sourceRoot(), 'audio/', name))
   }
+
+  /**
+  * Converts a url to a browser url - / rather than \\
+  * @param p: the path to convert
+  * @return the converted path
+  */
+  static convertToBrowserPath (p) {
+    if (process.platform === 'win32') {
+      return p.replace(/\\/g, '/')
+    } else {
+      return p
+    }
+  }
 }
 
 export default Resolver

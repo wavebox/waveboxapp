@@ -47,7 +47,7 @@ const MIN_WINDOW_HEIGHT = 300
 const ALLOWED_URLS = [
   Resolver.mailboxesScene('mailboxes.html'),
   Resolver.mailboxesScene('offline.html')
-].map((p) => `${process.platform === 'win32' ? 'file:///' : 'file://'}${p}`)
+].map((p) => `${process.platform === 'win32' ? 'file:///' : 'file://'}${Resolver.convertToBrowserPath(p)}`)
 
 let singletonAttached
 class MailboxesWindow extends WaveboxWindow {
