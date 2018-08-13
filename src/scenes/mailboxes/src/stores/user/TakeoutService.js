@@ -17,8 +17,12 @@ class TakeoutService {
   static exportDataForServer () {
     return new Promise((resolve, reject) => {
       const responseChannel = `${WB_TAKEOUT_EXPORT_SERVER_}${uuid.v4()}`
-      ipcRenderer.once(responseChannel, (evt, data) => {
-        resolve(data)
+      ipcRenderer.once(responseChannel, (evt, hasData, data) => {
+        if (hasData) {
+          resolve(data)
+        } else {
+          reject(new Error('No data available for export'))
+        }
       })
       ipcRenderer.send(WB_TAKEOUT_EXPORT_SERVER, responseChannel)
     })

@@ -70,9 +70,12 @@ class TakeoutService {
 
   /**
   * Prepares the data for export to the server
-  * @return a json object which can be exported
+  * @return a json object which can be exported or undefined if there is no data
   */
   _dataForServerExport () {
+    const accountState = accountStore.getState()
+    if (accountState.mailboxCount() === 0) { return undefined }
+
     const storeData = TAKEOUT_STORES.reduce((acc, storage) => {
       try {
         const {name, data} = storage.getExportChangesetManifest()
@@ -87,8 +90,6 @@ class TakeoutService {
       }
       return acc
     }, {})
-
-    const accountState = accountStore.getState()
 
     return {
       id: userStore.getState().clientId,
@@ -259,7 +260,7 @@ class TakeoutService {
   _handleIPCExportDataForServer = (evt, responseChannel) => {
     const data = this._dataForServerExport()
     if (evt.sender.isDestroyed()) { return }
-    evt.sender.send(responseChannel, data)
+    evt.sender.send(responseChannel, data !== undefined, data)
   }
 
   /**
