@@ -47,6 +47,7 @@ class AppSettings extends Model {
   get enableMixedSandboxMode () { return this._value_('enableMixedSandboxMode', true) }
   get enableWindowOpeningEngine () { return this._value_('enableWindowOpeningEngine', true) }
   get enableMouseNavigationDarwin () { return this._value_('enableMouseNavigationDarwin', true) }
+  get polyfillUserAgents () { return this._value_('polyfillUserAgents', true) }
 }
 
 module.exports = AppSettings

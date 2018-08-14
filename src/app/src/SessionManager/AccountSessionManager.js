@@ -8,6 +8,8 @@ import { CRExtensionManager } from 'Extensions/Chrome'
 import { DownloadManager } from 'Download'
 import { PermissionManager } from 'Permissions'
 import SessionManager from './SessionManager'
+import { settingsStore } from 'stores/settings'
+import e2c from 'electron-to-chromium'
 
 const privManaged = Symbol('privManaged')
 const privEarlyManaged = Symbol('privEarlyManaged')
@@ -166,6 +168,18 @@ class AccountSessionManager extends EventEmitter {
     // UA
     if (useCustomUserAgent && customUserAgentString) {
       ses.setUserAgent(customUserAgentString)
+    } else if (!settingsStore.getState().launched.app.polyfillUserAgents) {
+      const defaultUA = ses.getUserAgent()
+        .split(' ')
+        .map((cmp) => {
+          if (cmp.startsWith('Chrome/')) {
+            return `Chrome/${e2c.fullVersions[process.versions.electron]}`
+          } else {
+            return cmp
+          }
+        })
+        .join(' ')
+      ses.setUserAgent(defaultUA)
     }
 
     // Cookies

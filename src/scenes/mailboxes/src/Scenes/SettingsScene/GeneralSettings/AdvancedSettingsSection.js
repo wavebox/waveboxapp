@@ -55,7 +55,8 @@ class AdvancedSettingsSection extends React.Component {
         'disableSmoothScrolling',
         'enableAutofillService',
         'enableWindowOpeningEngine',
-        'enableMouseNavigationDarwin'
+        'enableMouseNavigationDarwin',
+        'polyfillUserAgents'
       ]) ||
       modelCompare(this.props.language, nextProps.language, ['inProcessSpellchecking']) ||
       modelCompare(this.props.ui, nextProps.ui, ['customMainCSS']) ||
@@ -113,6 +114,13 @@ class AdvancedSettingsSection extends React.Component {
             }}
             checked={app.enableMixedSandboxMode} />
         ) : undefined}
+        <SettingsListItemSwitch
+          label='Automatically Polyfill UserAgents (Requires Restart)'
+          onChange={(evt, toggled) => {
+            showRestart()
+            settingsActions.sub.app.setPolyfillUserAgents(toggled)
+          }}
+          checked={app.polyfillUserAgents} />
         <SettingsListItemSwitch
           label='Use Zoom For DSF (Requires Restart)'
           onChange={(evt, toggled) => {

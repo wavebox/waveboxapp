@@ -101,8 +101,8 @@ class CRExtensionBackgroundPage {
   */
   _generateBackgroundPageOptions () {
     return {
-      width: 0,
-      height: 0,
+      width: 1,
+      height: 1,
       show: false,
       focusable: false,
       skipTaskbar: true,
