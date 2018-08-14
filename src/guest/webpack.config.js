@@ -1,6 +1,8 @@
 const path = require('path')
 const ROOT_DIR = path.resolve(path.join(__dirname, '../../'))
 const BIN_DIR = path.join(ROOT_DIR, 'bin')
+const OUT_DIR = path.join(BIN_DIR, 'guest')
+const OUT_FILENAME = 'guest.js'
 const devRequire = (n) => require(path.join(ROOT_DIR, 'node_modules', n))
 const webpackRequire = (n) => require(path.join(ROOT_DIR, 'webpack', n))
 
@@ -13,16 +15,19 @@ module.exports = function (env) {
   const config = {
     entry: path.join(__dirname, 'src/index.js'),
     output: {
-      path: BIN_DIR,
-      filename: 'guest/guest.js'
+      path: OUT_DIR,
+      filename: OUT_FILENAME
     },
     externals: {
       'electron': 'commonjs electron',
       'fs': 'throw new Error("fs is not available")' // require('fs') is in hunspell-asm but it handles the failure gracefully :)
     },
     plugins: [
-      new CleanWebpackPlugin(['guest'], {
-        root: BIN_DIR,
+      new CleanWebpackPlugin([
+        OUT_FILENAME,
+        `${OUT_FILENAME}.map`
+      ], {
+        root: OUT_DIR,
         verbose: isVerboseLog,
         dry: false
       })

@@ -69,7 +69,6 @@ class Resolver {
 
   /**
   * Resolves a guest preload script
-  * @param name: the name of the script
   * @param targetApi=NODE: the target api
   * @return the full path to the file
   */
@@ -82,14 +81,13 @@ class Resolver {
 
   /**
   * Resolves a guest preload script
-  * @param name: the name of the script
   * @param targetApi=NODE: the target api
   * @return the full path to the file
   */
   static crExtensionApiPreload (name, targetApi = API_TYPES.NODE) {
     switch (targetApi) {
-      case API_TYPES.NODE: return this._joinNodePath(__dirname, '../../crextensionApi/crextensionApi.js')
-      case API_TYPES.BROWSER: return this._joinBrowserPath(__dirname, '../../crextensionApi/crextensionApi.js')
+      case API_TYPES.NODE: return this._joinNodePath(__dirname, '../../guest/guest.crx.js')
+      case API_TYPES.BROWSER: return this._joinBrowserPath(__dirname, '../../guest/guest.crx.js')
     }
   }
 

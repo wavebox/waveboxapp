@@ -68,7 +68,7 @@ class Resolver {
   * @return the full path to the crextension api
   */
   static crExtensionApi () {
-    return path.resolve(path.join(this.sourceRoot(), 'crextensionApi/crextensionApi.js'))
+    return path.resolve(path.join(this.sourceRoot(), 'guest/guest.crx.js'))
   }
 
   /**
