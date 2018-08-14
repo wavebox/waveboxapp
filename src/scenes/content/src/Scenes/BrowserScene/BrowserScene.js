@@ -199,11 +199,6 @@ class BrowserScene extends React.Component {
       permissionRequestsUrl
     } = this.state
 
-    const preloadScripts = [
-      Resolver.guestPreload(),
-      Resolver.crExtensionApiPreload()
-    ].join('_wavebox_preload_split_')
-
     // The partition should be set on the will-attach-webview in the main thread
     // but this doesn't have the desired effect. Set it here for good-stead
     return (
@@ -222,7 +217,8 @@ class BrowserScene extends React.Component {
             plugins
             allowpopups
             webpreferences='contextIsolation=yes, nativeWindowOpen=yes, sharedSiteInstances=yes, sandbox=yes'
-            preload={preloadScripts}
+            preload={Resolver.guestPreload()}
+            preloadCrx={Resolver.crExtensionApiPreload()}
             searchTerm={isSearching ? searchTerm : undefined}
             searchId={searchNextHash}
             close={this.handleClose}

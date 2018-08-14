@@ -24,6 +24,7 @@ class AccountSessionManager extends EventEmitter {
     this[privSetup] = false
     this[privPersistCookieThrottle] = {}
     this[privManaged] = new Set()
+    this.setMaxListeners(0)
 
     // Sessions can only be accessed once the app is ready. We have eager classes trying
     // to setup management, so queue those up

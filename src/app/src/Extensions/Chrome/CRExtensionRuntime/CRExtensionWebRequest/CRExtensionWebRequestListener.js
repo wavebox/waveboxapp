@@ -23,6 +23,7 @@ class CRExtensionWebRequestListener {
     // Bind
     ipcMain.on(this.addEventName, this._handleAddListener)
     ipcMain.on(this.removeEventName, this._handleRemoveListener)
+
     AccountSessionManager.on('session-managed', this._handleSessionManaged)
   }
 

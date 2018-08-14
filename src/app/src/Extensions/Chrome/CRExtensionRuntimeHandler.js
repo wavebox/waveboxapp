@@ -8,9 +8,12 @@ import {EventEmitter} from 'events'
 import {
   CR_EXTENSION_PROTOCOL,
   CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX,
-  CR_NATIVE_HOOK_EXTENSIONS
+  CR_NATIVE_HOOK_EXTENSIONS,
+  CR_CONTENT_SCRIPT_START_CONTEXT
 } from 'shared/extensionApis'
 import {
+  CRX_RUNTIME_CONTENTSCRIPT_PROVISION_CONTEXT_SYNC,
+  CRX_RUNTIME_CONTENTSCRIPT_PROVISIONED,
   CRX_RUNTIME_SENDMESSAGE,
   CRX_TABS_SENDMESSAGE,
   CRX_RUNTIME_ONMESSAGE_,
@@ -28,6 +31,7 @@ import WaveboxWindow from 'Windows/WaveboxWindow'
 
 const privNextPortId = Symbol('privNextPortId')
 const privOpenXHRRequests = Symbol('privOpenXHRRequests')
+const privCSContexts = Symbol('privCSContexts')
 
 class CRExtensionRuntimeHandler extends EventEmitter {
   /* ****************************************************************************/
@@ -39,10 +43,12 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     this.runtimes = new Map()
     this[privNextPortId] = 0
     this[privOpenXHRRequests] = new Map()
+    this[privCSContexts] = new Map()
 
     CRDispatchManager.registerHandler(CRX_RUNTIME_SENDMESSAGE, this._handleRuntimeSendmessage)
     CRDispatchManager.registerHandler(CRX_TABS_SENDMESSAGE, this._handleTabsSendmessage)
 
+    ipcMain.on(CRX_RUNTIME_CONTENTSCRIPT_PROVISION_CONTEXT_SYNC, this._handleProvisionContentScriptContextSync)
     ipcMain.on(CRX_RUNTIME_HAS_RESPONDER, this._handleHasRuntimeResponder)
     ipcMain.on(CRX_PORT_CONNECT_SYNC, this._handlePortConnect)
   }
@@ -55,7 +61,9 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   get inUsePartitions () {
     return this.allRuntimes
       .map((runtime) => {
-        return runtime.extension.manifest.hasBackground ? runtime.backgroundPage.partitionId : undefined
+        return runtime.extension.manifest.hasBackground
+          ? runtime.backgroundPage.partitionId
+          : undefined
       })
       .filter((p) => !!p)
   }
@@ -160,6 +168,31 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   /* ****************************************************************************/
   // Event handlers
   /* ****************************************************************************/
+
+  /**
+  * Handles a content script requesting a new context
+  * @param evt: the event that fired
+  */
+  _handleProvisionContentScriptContextSync = (evt) => {
+    const id = evt.sender.id
+    if (this[privCSContexts].has(id)) {
+      this[privCSContexts].set(id, this[privCSContexts].get(id) + 1)
+    } else {
+      this[privCSContexts].set(id, CR_CONTENT_SCRIPT_START_CONTEXT)
+      evt.sender.once('destroyed', () => {
+        this[privCSContexts].delete(id)
+      })
+    }
+    const contextId = this[privCSContexts].get(id)
+    Array.from(this.runtimes.values()).forEach((runtime) => {
+      runtime.backgroundPage.sendToWebContents(CRX_RUNTIME_CONTENTSCRIPT_PROVISIONED, id, contextId)
+    })
+
+    // Re-queue for everyone to finish
+    setTimeout(() => {
+      evt.returnValue = contextId
+    }, 500)
+  }
 
   /**
   * Handles a runtime message
@@ -557,6 +590,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
 
     // Looks like an extension request
     this[privOpenXHRRequests].set(details.id, details.requestHeaders['Origin'])
+
     return nextHeaders
   }
 

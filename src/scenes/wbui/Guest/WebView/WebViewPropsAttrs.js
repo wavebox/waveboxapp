@@ -48,6 +48,7 @@ const WEBVIEW_PROPS = {
   partition: PropTypes.string,
   plugins: PropTypes.bool,
   preload: PropTypes.string,
+  preloadCrx: PropTypes.string,
   src: PropTypes.string,
   useragent: PropTypes.string,
   webpreferences: PropTypes.string

@@ -111,7 +111,16 @@ class CRExtensionLoader {
       webFrame.setIsolatedWorldSecurityOrigin(contextId, provisioned.securityOrgin)
       webFrame.setIsolatedWorldContentSecurityPolicy(contextId, provisioned.contentSecurityPolicy)
       webFrame.executeJavaScriptInIsolatedWorld(contextId, [
-        { code: `;(() => { window.contentScriptInit("${extensionId}") })();` }
+        {
+          code: [
+            `;(() => {`,
+            `  if (window.contentScriptInit) { window.contentScriptInit("${extensionId}"); return }`,
+            `  const start = setInterval(() => {`,
+            `    if (window.contentScriptInit) { window.contentScriptInit("${extensionId}"); clearInterval(start) }`,
+            `  }, 100)`,
+            `})();`
+          ].join('\n')
+        }
       ])
       this[privContexts].set(extensionId, {
         ...provisioned,

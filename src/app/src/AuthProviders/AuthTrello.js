@@ -64,10 +64,8 @@ class AuthTrello {
           nativeWindowOpen: true,
           sharedSiteInstances: true,
           partition: partitionId,
-          preload: [
-            Resolver.guestPreload(),
-            Resolver.crExtensionApi()
-          ].join('_wavebox_preload_split_')
+          preload: Resolver.guestPreload(),
+          preloadCrx: Resolver.crExtensionApi()
         }
       })
       const oauthWin = waveboxOauthWin.window

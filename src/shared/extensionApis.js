@@ -19,6 +19,7 @@ module.exports = {
   // Chrome
   CR_EXTENSION_PROTOCOL: 'chrome-extension',
   CR_EXTENSION_PARTITION_PREFIX: 'persist:__chrome_extension:',
+  CR_EXTENSION_EMULATION_NAMESPACE: 'io.wavebox',
   CR_RUNTIME_ENVIRONMENTS: {
     CONTENTSCRIPT: 'CONTENTSCRIPT',
     BACKGROUND: 'BACKGROUND',
@@ -29,6 +30,7 @@ module.exports = {
     SYNC: 'SYNC'
   },
   CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX: 'x-wb-crx-cs/',
+  CR_CONTENT_SCRIPT_START_CONTEXT: 1000,
   CR_NATIVE_HOOK_EXTENSIONS: {
     LASTPASS: 'hdokiejnpimakedhajhdlcegeplioahd'
   }

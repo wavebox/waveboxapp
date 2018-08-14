@@ -745,10 +745,6 @@ class CoreServiceWebView extends React.Component {
       'sandbox=yes',
       'affinity=' + affinity
     ].filter((l) => !!l).join(', ')
-    const preloadScripts = [
-      Resolver.guestPreload(),
-      Resolver.crExtensionApiPreload()
-    ].join('_wavebox_preload_split_')
     const webviewId = [
       'guest',
       mailbox.id,
@@ -771,7 +767,8 @@ class CoreServiceWebView extends React.Component {
             ref={BROWSER_REF}
             key={webviewKey}
             id={webviewId}
-            preload={preloadScripts}
+            preload={Resolver.guestPreload()}
+            preloadCrx={Resolver.crExtensionApiPreload()}
             partition={service.partitionId}
             src={restorableUrl || 'about:blank'}
             searchId={searchId}

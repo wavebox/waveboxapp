@@ -3,6 +3,7 @@ import { ipcRenderer } from 'electronCrx'
 import { URL } from 'whatwg-url'
 import {
   CRX_RUNTIME_SENDMESSAGE,
+  CRX_RUNTIME_CONTENTSCRIPT_PROVISIONED,
   CRX_RUNTIME_ONMESSAGE_,
   CRX_RUNTIME_CONTENTSCRIPT_CONNECT_,
   CRX_PORT_CONNECT_SYNC,
@@ -32,6 +33,7 @@ const privExtensionId = Symbol('privExtensionId')
 const privRuntimeEnvironment = Symbol('privRuntimeEnvironment')
 const privErrors = Symbol('privErrors')
 const privExtensionDatasource = Symbol('privExtensionDatasource')
+const privContentScripts = Symbol('privContentScripts')
 
 class Runtime {
   /* **************************************************************************/
@@ -53,6 +55,7 @@ class Runtime {
     this[protectedCtrlEvt1] = 6303
     this[protectedCtrlEvt2] = 10834
     this[protectedCtrlEvt3] = 16897
+    this[privContentScripts] = []
     this[protectedJSWindowTracker] = new JSWindowTracker()
 
     // Protected
@@ -74,6 +77,10 @@ class Runtime {
     ipcRenderer.on(`${CRX_PORT_CONNECTED_}${this[privExtensionId]}`, (evt, portId, connectedParty, connectInfo) => {
       const port = new Port(this[privExtensionId], portId, connectedParty, connectInfo.name)
       this.onConnect.emit(port)
+    })
+    ipcRenderer.on(CRX_RUNTIME_CONTENTSCRIPT_PROVISIONED, (evt, senderId, contextId) => {
+      if (this[privRuntimeEnvironment] !== CR_RUNTIME_ENVIRONMENTS.BACKGROUND) { return }
+      this[privContentScripts].push({ wcId: senderId, contextId: contextId })
     })
 
     // Connection
