@@ -29,6 +29,7 @@ import WaveboxCommandArgs from './WaveboxCommandArgs'
 import { AppSettings } from 'shared/Models/Settings'
 import WaveboxDataManager from './WaveboxDataManager'
 import mailboxStorage from 'Storage/mailboxStorage'
+import constants from 'shared/constants'
 
 const privStarted = Symbol('privStarted')
 const privArgv = Symbol('privArgv')
@@ -182,6 +183,7 @@ class WaveboxApp {
     if (launchSettings.app.disableHardwareAcceleration) {
       app.disableHardwareAcceleration()
     }
+    app.commandLine.appendSwitch('wavebox-server', constants.SERVER_URL)
 
     process.env.GOOGLE_API_KEY = credentials.GOOGLE_API_KEY
 

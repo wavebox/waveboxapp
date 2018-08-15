@@ -108,6 +108,7 @@ module.exports = Object.freeze({
   NEWS_SYNC_PERIOD: hours(12),
 
   // URLs
+  SERVER_URL: 'https://wavebox.io',
   WEB_URL: 'https://wavebox.io',
   SUPPORT_URL: 'https://wavebox.io/support',
   BLOG_URL: 'https://blog.wavebox.io',
