@@ -1,6 +1,6 @@
 import NotificationRendererUtils from './NotificationRendererUtils'
 import { DEFAULT_NOTIFICATION_SOUND } from 'shared/Notifications'
-import pkg from 'package.json'
+import { OSX_APP_BUNDLE_ID } from 'shared/constants'
 import uuid from 'uuid'
 import { settingsStore } from 'stores/settings'
 import { ipcRenderer } from 'electron'
@@ -30,7 +30,7 @@ class EnhancedNotificationRenderer {
       body: html5Options.body,
       icon: html5Options.icon,
       soundName: html5Options.silent ? undefined : (settingsStore.getState().os.notificationsSound || DEFAULT_NOTIFICATION_SOUND),
-      bundleId: pkg.appConfig.osxAppBundleId
+      bundleId: OSX_APP_BUNDLE_ID
     })
     notif.addEventListener('click', () => {
       if (clickHandler) {
@@ -68,7 +68,7 @@ class EnhancedNotificationRenderer {
       body: body,
       icon: NotificationRendererUtils.preparedServiceIcon(mailbox, service, accountState),
       soundName: NotificationRendererUtils.preparedServiceSound(mailbox, service, settingsState),
-      bundleId: pkg.appConfig.osxAppBundleId
+      bundleId: OSX_APP_BUNDLE_ID
     })
     notif.addEventListener('click', () => {
       if (clickHandler) {
