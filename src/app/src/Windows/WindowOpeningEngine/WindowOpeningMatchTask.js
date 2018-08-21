@@ -89,7 +89,7 @@ class WindowOpeningMatchTask {
   * @return a url without qs and hash
   */
   _justUri (targetUrl) {
-    if (!targetUrl) { return targetUrl }
+    if (!targetUrl || targetUrl === 'about:blank') { return targetUrl }
     const purl = new URL(targetUrl)
     return new URL(purl.pathname, purl.origin).toString()
   }
