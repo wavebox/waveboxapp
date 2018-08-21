@@ -92,6 +92,10 @@ class SidelistMailboxes extends React.Component {
           distance={5}
           mailboxIds={mailboxIds}
           disabled={disabled}
+          shouldCancelStart={(evt) => {
+            // Fix for https://github.com/wavebox/waveboxapp/issues/762
+            if (evt.ctrlKey === true) { return true }
+          }}
           onSortEnd={({ oldIndex, newIndex }) => {
             accountActions.changeMailboxIndex(mailboxIds[oldIndex], newIndex)
           }} />

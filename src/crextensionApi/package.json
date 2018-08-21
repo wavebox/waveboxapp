@@ -7,7 +7,7 @@
   "description": "CRExtension api for Wavebox",
   "dependencies": {
     "uuid": "3.3.2",
-    "whatwg-url": "6.5.0"
+    "whatwg-url": "7.0.0"
   },
   "devDependencies": {
     "standard": "11.0.1",

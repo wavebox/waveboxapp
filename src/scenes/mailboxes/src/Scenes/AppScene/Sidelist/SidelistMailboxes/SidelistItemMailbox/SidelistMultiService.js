@@ -109,6 +109,7 @@ class SidelistItemMultiService extends React.Component {
   * @param evt: the event that fired
   */
   handleClick = (evt) => {
+    console.log("HERE")
     const { mailboxId } = this.props
     const { prioritizeFirstSidebarService, sidebarServicesCount } = this.state
     if (evt.metaKey) {
@@ -145,6 +146,7 @@ class SidelistItemMultiService extends React.Component {
   * @param evt: the event that fired
   */
   handleOpenMailboxPopover = (evt) => {
+    console.log("HERE2")
     evt.preventDefault()
     clearTimeout(this.popoverCustomizeClearTO)
     this.setState({

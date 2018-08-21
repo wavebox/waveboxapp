@@ -188,6 +188,10 @@ class ServiceTabs extends React.Component {
           sidebarSize={sidebarSize}
           onOpenService={onOpenService}
           onOpenServiceMenu={onContextMenuService}
+          shouldCancelStart={(evt) => {
+            // Fix for https://github.com/wavebox/waveboxapp/issues/762
+            if (evt.ctrlKey === true) { return true }
+          }}
           onSortEnd={({ oldIndex, newIndex }) => {
             // Optimistically update the services in the current state. The round trip across
             // the ipc bridge takes a few ms and can cause jank
