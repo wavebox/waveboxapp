@@ -21,6 +21,15 @@ class ServiceReducer {
   }
 
   /**
+  * Updates the setting to show the navigation toolbar
+  * @param service: the service to update
+  * @param has: true to if it has the toolbar
+  */
+  static setHasNavigationToolbar (service, has) {
+    return service.changeData({ hasNavigationToolbar: has })
+  }
+
+  /**
   * @param service: the service to update
   * @param col: the color as either a hex string or object that contains hex key
   */

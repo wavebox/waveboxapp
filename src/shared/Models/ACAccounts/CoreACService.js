@@ -142,7 +142,7 @@ class CoreACService extends CoreACModel {
   // Properties: Display
   /* **************************************************************************/
 
-  get hasNavigationToolbar () { return false }
+  get hasNavigationToolbar () { return this._value_('hasNavigationToolbar', false) }
   get displayName () { return this._value_('displayName', this.serviceDisplayName) }
   get serviceDisplayName () { return this._value_('serviceDisplayName', this.humanizedType) }
   get hasExplicitServiceDisplayName () { return !!this._value_('serviceDisplayName', undefined) }

@@ -72,7 +72,6 @@ export default class ContainerServiceSettings extends React.Component {
     return service ? {
       hasService: true,
       restoreLastUrl: service.restoreLastUrl,
-      hasNavigationToolbar: service.hasNavigationToolbar,
       containerId: service.container.id,
       containerVersion: service.container.version
     } : {
@@ -93,7 +92,6 @@ export default class ContainerServiceSettings extends React.Component {
     const {
       hasService,
       restoreLastUrl,
-      hasNavigationToolbar,
       containerId,
       containerVersion
     } = this.state
@@ -104,12 +102,6 @@ export default class ContainerServiceSettings extends React.Component {
         <SettingsListSection
           icon={<AccountCircleIcon />}
           title='Account'>
-          <SettingsListItemSwitch
-            label='Show navigation toolbar'
-            checked={hasNavigationToolbar}
-            onChange={(evt, toggled) => {
-              accountActions.reduceService(serviceId, ContainerServiceReducer.setHasNavigationToolbar, toggled)
-            }} />
           <SettingsListItemSwitch
             divider={false}
             label='Restore last page on load'

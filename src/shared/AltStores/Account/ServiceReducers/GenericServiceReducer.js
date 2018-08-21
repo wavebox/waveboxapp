@@ -46,15 +46,6 @@ class GenericServiceReducer extends ServiceReducer {
   }
 
   /**
-  * Updates the setting to show the navigation toolbar
-  * @param service: the service to update
-  * @param has: true to if it has the toolbar
-  */
-  static setHasNavigationToolbar (service, has) {
-    return service.changeData({ hasNavigationToolbar: has })
-  }
-
-  /**
   * Updates the setting to show adaptor data
   * @param service: the service to update
   * @param supports: true to supports, false otherwise

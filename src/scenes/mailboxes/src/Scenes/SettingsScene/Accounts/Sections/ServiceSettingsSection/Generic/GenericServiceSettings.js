@@ -75,7 +75,6 @@ export default class GenericServiceSettings extends React.Component {
       usePageTitleAsDisplayName: service.usePageTitleAsDisplayName,
       url: service.url,
       restoreLastUrl: service.restoreLastUrl,
-      hasNavigationToolbar: service.hasNavigationToolbar,
       usePageThemeAsColor: service.usePageThemeAsColor,
       supportsWBGAPI: service.supportsWBGAPI
     } : {
@@ -127,7 +126,6 @@ export default class GenericServiceSettings extends React.Component {
       url,
       urlError,
       restoreLastUrl,
-      hasNavigationToolbar,
       usePageThemeAsColor,
       supportsWBGAPI
     } = this.state
@@ -154,12 +152,6 @@ export default class GenericServiceSettings extends React.Component {
             checked={restoreLastUrl}
             onChange={(evt, toggled) => {
               accountActions.reduceService(serviceId, GenericServiceReducer.setRestoreLastUrl, toggled)
-            }} />
-          <SettingsListItemSwitch
-            label='Show navigation toolbar'
-            checked={hasNavigationToolbar}
-            onChange={(evt, toggled) => {
-              accountActions.reduceService(serviceId, GenericServiceReducer.setHasNavigationToolbar, toggled)
             }} />
           <SettingsListItemSwitch
             divider={false}

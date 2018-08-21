@@ -13,6 +13,7 @@ import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceRedu
 import ColorLensIcon from '@material-ui/icons/ColorLens'
 import SettingsListItemColorPicker from 'wbui/SettingsListItemColorPicker'
 import SettingsListItemAvatarPicker from 'wbui/SettingsListItemAvatarPicker'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 
 const styles = {
 
@@ -37,7 +38,11 @@ class ServiceAppearanceSection extends React.Component {
     beforeAvatar: PropTypes.func,
     avatarDisabled: PropTypes.bool.isRequired,
     avatarAvailable: PropTypes.bool.isRequired,
-    afterAvatar: PropTypes.func
+    afterAvatar: PropTypes.func,
+    beforeHasNavigation: PropTypes.func,
+    hasNavigationDisabled: PropTypes.bool.isRequired,
+    hasNavigationAvailable: PropTypes.bool.isRequired,
+    afterHasNavigation: PropTypes.func
   }
 
   static defaultProps = {
@@ -46,7 +51,9 @@ class ServiceAppearanceSection extends React.Component {
     colorDisabled: false,
     colorAvailable: true,
     avatarDisabled: false,
-    avatarAvailable: true
+    avatarAvailable: true,
+    hasNavigationDisabled: false,
+    hasNavigationAvailable: true
   }
 
   /* **************************************************************************/
@@ -96,6 +103,7 @@ class ServiceAppearanceSection extends React.Component {
       hasService: true,
       displayName: service.displayName,
       serviceColor: service.color,
+      hasNavigationToolbar: service.hasNavigationToolbar,
       serviceAvatar: accountState.getAvatar(service.avatarId)
     } : {
       hasService: false
@@ -126,13 +134,18 @@ class ServiceAppearanceSection extends React.Component {
       avatarDisabled,
       avatarAvailable,
       afterAvatar,
+      beforeHasNavigation,
+      hasNavigationDisabled,
+      hasNavigationAvailable,
+      afterHasNavigation,
       ...passProps
     } = this.props
     const {
       hasService,
       displayName,
       serviceColor,
-      serviceAvatar
+      serviceAvatar,
+      hasNavigationToolbar
     } = this.state
     if (!hasService) { return false }
 
@@ -155,6 +168,21 @@ class ServiceAppearanceSection extends React.Component {
         )
       } : undefined,
       afterDisplayName,
+      beforeHasNavigation,
+      hasNavigationAvailable ? (isLast) => {
+        return (
+          <SettingsListItemSwitch
+            key='hasnavigation'
+            divider={!isLast}
+            disabled={hasNavigationDisabled}
+            label='Show navigation toolbar'
+            checked={hasNavigationToolbar}
+            onChange={(evt, toggled) => {
+              accountActions.reduceService(serviceId, ServiceReducer.setHasNavigationToolbar, toggled)
+            }} />
+        )
+      } : undefined,
+      afterHasNavigation,
       beforeColor,
       colorAvailable ? (isLast) => {
         return (
