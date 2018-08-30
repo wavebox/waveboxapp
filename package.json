@@ -69,10 +69,10 @@
     "babel-preset-react": "6.24.1",
     "babel-preset-stage-0": "6.24.1",
     "clean-webpack-plugin": "0.1.19",
-    "colors": "1.3.1",
+    "colors": "1.3.2",
     "copy-webpack-plugin": "4.5.2",
     "css-loader": "1.0.0",
-    "electron": "2.0.7",
+    "electron": "2.0.8",
     "electron-rebuild": "1.8.2",
     "file-loader": "1.1.11",
     "fs-extra": "7.0.0",
@@ -83,28 +83,28 @@
     "node-abi": "2.4.3",
     "nyan-progress-webpack-plugin": "1.2.0",
     "progress-bar-webpack-plugin": "1.11.0",
-    "style-loader": "0.22.1",
+    "style-loader": "0.23.0",
     "uglify-es": "3.3.9",
     "uglifyjs-webpack-plugin": "1.3.0",
     "url-loader": "1.1.1",
     "uuid": "3.3.2",
-    "webpack": "4.17.0",
+    "webpack": "4.17.1",
     "webpack-cli": "3.1.0",
     "webpack-notifier": "1.6.0",
     "webpack-target-electron-renderer": "0.4.0",
     "yargs": "12.0.1"
   },
   "devDependencies": {
-    "babel-eslint": "8.2.6",
+    "babel-eslint": "9.0.0",
     "pre-commit": "1.2.2",
-    "standard": "11.0.1"
+    "standard": "12.0.1"
   },
   "standard": {
     "parser": "babel-eslint"
   },
   "electronInstallEnv": {
     "ELECTRON_MIRROR": "https://electron-wb.s3.us-east-2.amazonaws.com/",
-    "ELECTRON_CUSTOM_DIR": "wb_3_14_14"
+    "ELECTRON_CUSTOM_DIR": "wb_3_14_15"
   },
   "pre-commit": [
     "validate"
