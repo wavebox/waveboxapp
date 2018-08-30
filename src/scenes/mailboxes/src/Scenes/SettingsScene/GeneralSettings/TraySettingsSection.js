@@ -102,7 +102,7 @@ class TraySettingsSection extends React.Component {
   }
 
   render () {
-    const {tray, showRestart, classes, ...passProps} = this.props
+    const { tray, showRestart, classes, ...passProps } = this.props
 
     return (
       <div {...passProps}>

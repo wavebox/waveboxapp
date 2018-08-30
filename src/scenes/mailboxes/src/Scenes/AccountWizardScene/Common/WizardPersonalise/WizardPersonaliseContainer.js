@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {TextField} from '@material-ui/core'
-import {userStore} from 'stores/user'
+import { TextField } from '@material-ui/core'
+import { userStore } from 'stores/user'
 import { withStyles } from '@material-ui/core/styles'
 import ACTemplatedAccount from 'shared/Models/ACAccounts/ACTemplatedAccount'
 
@@ -168,7 +168,7 @@ class WizardPersonaliseContainer extends React.Component {
           <p className={classes.subHeading}>Setup your account so it's ready to use</p>
           <TextField
             inputRef={(n) => { this.subdomainInputRef = n }}
-            InputLabelProps={{shrink: true}}
+            InputLabelProps={{ shrink: true }}
             fullWidth
             label={subdomainName}
             placeholder={container.urlSubdomainHint}

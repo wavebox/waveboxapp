@@ -145,7 +145,7 @@ class CRExtensionStorage {
           .then(() => this._writeData(storageType, Object.assign({}, data, items)))
           .then(() => { return { originalData: data, items: items } })
       })
-      .then(({originalData, items}) => {
+      .then(({ originalData, items }) => {
         responseCallback(null)
 
         // Send the changeset after callback

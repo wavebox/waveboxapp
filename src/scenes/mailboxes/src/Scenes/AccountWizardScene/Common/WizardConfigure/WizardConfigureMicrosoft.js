@@ -192,8 +192,8 @@ class WizardConfigureMicrosoft extends React.Component {
               <div className={classes.popoverContainer}>
                 <h3>Focused Inbox</h3>
                 <Paper className={classes.popoverTitleTabContainer}>
-                  <div style={{...styles.popoverTitleTabItem, ...styles.popoverTitleTabItemActive}}>Focused</div>
-                  <div style={{...styles.popoverTitleTabItem, ...styles.popoverTitleTabItemInactive}}>Other</div>
+                  <div style={{ ...styles.popoverTitleTabItem, ...styles.popoverTitleTabItemActive }}>Focused</div>
+                  <div style={{ ...styles.popoverTitleTabItem, ...styles.popoverTitleTabItemInactive }}>Other</div>
                 </Paper>
                 <p>
                   Your new emails are sorted into Focused and Other Tabs. Typically the title you

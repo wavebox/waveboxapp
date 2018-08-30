@@ -163,7 +163,7 @@ class GoogleStore {
   * @param unread: the unread interval
   * @param notification: the notification interval
   */
-  handleStartPolling ({profiles, unread, notification}) {
+  handleStartPolling ({ profiles, unread, notification }) {
     // Pollers
     clearInterval(this.profilePoller)
     this.profilePoller = setInterval(() => {
@@ -616,7 +616,7 @@ class GoogleStore {
                 return Promise.reject(new Error('Unknown Access Mode'))
             }
           })
-          .then(({resultSizeEstimate, threads = []}) => {
+          .then(({ resultSizeEstimate, threads = [] }) => {
             return GoogleHTTP
               .fullyResolveGmailThreadHeaders(auth, serviceData.unreadThreadsIndexed, threads, this.trimMailThread)
               .then((fullThreads) => ({

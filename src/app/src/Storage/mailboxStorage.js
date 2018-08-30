@@ -777,7 +777,7 @@ class MailboxStorageBucket extends MigratingStorageBucket {
   _generateMigrationReport (prevMailboxes, next) {
     try {
       const migrationReport = this._validateMigration(prevMailboxes, next)
-      const {pass, fail} = migrationReport.reduce((acc, l) => {
+      const { pass, fail } = migrationReport.reduce((acc, l) => {
         if (l.level === 'pass') {
           acc.pass++
         } else {

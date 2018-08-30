@@ -106,7 +106,7 @@ class NotificationPanel extends React.Component {
       .serviceIds()
       .map((serviceId) => accountState.getSleepingNotificationInfo(serviceId))
       .filter((info) => !!info)
-      .forEach(({service, closeMetrics}) => {
+      .forEach(({ service, closeMetrics }) => {
         const notificationId = `mailbox:sleeping:${service.id}`
         if (this._active.has(notificationId)) { return }
 

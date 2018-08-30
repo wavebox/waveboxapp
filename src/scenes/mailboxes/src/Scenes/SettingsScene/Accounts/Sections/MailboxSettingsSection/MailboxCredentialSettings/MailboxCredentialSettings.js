@@ -8,12 +8,10 @@ import SettingsListItemText from 'wbui/SettingsListItemText'
 import { withStyles } from '@material-ui/core/styles'
 import MailboxCredentialItem from './MailboxCredentialItem'
 
-const styles = {
-
-}
+const styles = { }
 
 @withStyles(styles)
-export default class MailboxCredentialSettings extends React.Component {
+class MailboxCredentialSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -111,3 +109,5 @@ export default class MailboxCredentialSettings extends React.Component {
     )
   }
 }
+
+export default MailboxCredentialSettings

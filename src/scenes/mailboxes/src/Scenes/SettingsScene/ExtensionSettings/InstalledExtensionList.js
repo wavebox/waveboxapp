@@ -62,7 +62,7 @@ class InstalledExtensionList extends React.Component {
   }
 
   render () {
-    const {showRestart, classes, ...passProps} = this.props
+    const { showRestart, classes, ...passProps } = this.props
     const { extensionIds } = this.state
 
     return (

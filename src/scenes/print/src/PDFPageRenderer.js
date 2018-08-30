@@ -83,7 +83,7 @@ class PDFPageRenderer {
           img.width = params.screenSize.width
           img.height = params.screenSize.height
           img.onload = () => {
-            resolve({...params, image: img})
+            resolve({ ...params, image: img })
           }
           img.onerror = (err) => {
             reject(err)

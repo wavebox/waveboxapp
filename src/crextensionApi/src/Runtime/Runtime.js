@@ -198,7 +198,7 @@ class Runtime {
       { pattern: [], out: [this[privExtensionId], {}] }
     ])
 
-    const {portId, connectedParty} = ipcRenderer.sendSync(
+    const { portId, connectedParty } = ipcRenderer.sendSync(
       CRX_PORT_CONNECT_SYNC,
       !targetExtensionId ? this[privExtensionId] : targetExtensionId, // Some extensions like to send falsy values
       connectInfo

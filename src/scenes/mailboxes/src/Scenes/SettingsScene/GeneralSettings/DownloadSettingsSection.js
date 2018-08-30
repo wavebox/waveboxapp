@@ -63,7 +63,7 @@ class DownloadSettingsSection extends React.Component {
   }
 
   render () {
-    const {os, classes, ...passProps} = this.props
+    const { os, classes, ...passProps } = this.props
 
     return (
       <SettingsListSection title='Downloads' icon={<CloudDownloadIcon />} {...passProps}>

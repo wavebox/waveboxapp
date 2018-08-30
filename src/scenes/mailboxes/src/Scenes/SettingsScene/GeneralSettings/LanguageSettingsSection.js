@@ -75,7 +75,7 @@ class LanguageSettingsSection extends React.Component {
   }
 
   render () {
-    const {language, showRestart, classes, ...passProps} = this.props
+    const { language, showRestart, classes, ...passProps } = this.props
     const { installedDictionaries } = this.state
     const dictionaryState = dictionariesStore.getState()
     const primaryDictionaryInfo = dictionaryState.getDictionaryInfo(language.spellcheckerLanguage)

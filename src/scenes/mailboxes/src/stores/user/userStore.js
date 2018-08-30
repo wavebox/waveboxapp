@@ -349,7 +349,7 @@ class UserStore extends RendererUserStore {
       })
   }
 
-  handleFetchUserProfiles ({loadingHash, successHash, failureHash}) {
+  handleFetchUserProfiles ({ loadingHash, successHash, failureHash }) {
     if (!this.user.enableProfileSync) { this.preventDefault(); return }
 
     if (loadingHash) { window.location.hash = loadingHash }

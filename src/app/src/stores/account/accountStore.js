@@ -384,7 +384,7 @@ class AccountStore extends CoreAccountStore {
     this.preventDefault()
   }
 
-  handleSetCustomAvatarOnMailbox ({id, b64Image}) {
+  handleSetCustomAvatarOnMailbox ({ id, b64Image }) {
     const mailbox = this.getMailbox(id)
     if (!mailbox) { this.preventDefault(); return }
 
@@ -609,7 +609,7 @@ class AccountStore extends CoreAccountStore {
     }
   }
 
-  handleSetCustomAvatarOnService ({id, b64Image}) {
+  handleSetCustomAvatarOnService ({ id, b64Image }) {
     const service = this.getService(id)
     if (!service) { this.preventDefault(); return }
 
@@ -632,7 +632,7 @@ class AccountStore extends CoreAccountStore {
     }
   }
 
-  handleSetServiceAvatarOnService ({id, b64Image}) {
+  handleSetServiceAvatarOnService ({ id, b64Image }) {
     const service = this.getService(id)
     if (!service) { this.preventDefault(); return }
 

@@ -1,5 +1,5 @@
-import {session, app} from 'electron'
-import {EventEmitter} from 'events'
+import { session, app } from 'electron'
+import { EventEmitter } from 'events'
 import {
   ARTIFICIAL_COOKIE_PERSIST_WAIT,
   ARTIFICIAL_COOKIE_PERSIST_PERIOD

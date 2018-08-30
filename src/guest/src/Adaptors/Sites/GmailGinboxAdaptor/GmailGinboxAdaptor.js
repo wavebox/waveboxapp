@@ -1,5 +1,5 @@
 import BaseAdaptor from '../BaseAdaptor'
-import {ipcRenderer, webFrame} from 'electron'
+import { ipcRenderer, webFrame } from 'electron'
 import GinboxApi from './GinboxApi'
 import GmailApi from './GmailApi'
 import GmailChangeEmitter from './GmailChangeEmitter'

@@ -107,7 +107,7 @@ class TrelloStore {
   * @param unread: the unread interval
   * @param notification: the notification interval
   */
-  handleStartPollSync ({profiles, unread, notification}) {
+  handleStartPollSync ({ profiles, unread, notification }) {
     clearInterval(this.profilePoller)
     this.profilePoller = setInterval(() => {
       actions.syncAllServiceProfiles.defer()

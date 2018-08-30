@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {TextField} from '@material-ui/core'
+import { TextField } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import ACTemplatedAccount from 'shared/Models/ACAccounts/ACTemplatedAccount'
 import validUrl from 'valid-url'

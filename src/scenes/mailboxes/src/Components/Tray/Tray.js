@@ -162,7 +162,7 @@ export default class Tray extends React.Component {
       ) : (
         clickAction
       )
-      const boundsCpy = {...bounds} // Copy to retain
+      const boundsCpy = { ...bounds } // Copy to retain
       clearTimeout(this.deferredClickTO)
       this.deferredClickTO = setTimeout(() => {
         this.dispatchClickAction(action, boundsCpy)
@@ -302,7 +302,7 @@ export default class Tray extends React.Component {
   * @return the tooltip string for the tray icon
   */
   renderTooltip () {
-    const {unreadCount, hasUnreadActivity} = this.props
+    const { unreadCount, hasUnreadActivity } = this.props
     if (unreadCount > 0) {
       return `${unreadCount} unread ${pluralize('item', unreadCount)}`
     } else if (hasUnreadActivity) {

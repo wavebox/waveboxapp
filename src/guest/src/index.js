@@ -1,4 +1,4 @@
-import {Browser} from 'Browser'
+import { Browser } from 'Browser'
 import Adaptors from './Adaptors'
 import elconsole from 'elconsole'
 import ElectronPolyfill from './ElectronPolyfill'

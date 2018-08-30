@@ -34,7 +34,7 @@ class RendererAccountStore extends CoreAccountStore {
   // Mailbox
   /* **************************************************************************/
 
-  handleRemoteSetMailbox ({id, mailboxJS}) {
+  handleRemoteSetMailbox ({ id, mailboxJS }) {
     if (mailboxJS) {
       this._mailboxes_.set(id, new ACMailbox(mailboxJS))
     } else {
@@ -50,7 +50,7 @@ class RendererAccountStore extends CoreAccountStore {
     }
   }
 
-  handleRemoteSetMailboxIndex ({index}) {
+  handleRemoteSetMailboxIndex ({ index }) {
     this._mailboxIndex_ = index
   }
 
@@ -58,7 +58,7 @@ class RendererAccountStore extends CoreAccountStore {
   // Services
   /* **************************************************************************/
 
-  handleRemoteSetService ({id, serviceJS}) {
+  handleRemoteSetService ({ id, serviceJS }) {
     if (serviceJS) {
       this._services_.set(id, ServiceFactory.modelizeService(serviceJS))
     } else {
@@ -78,7 +78,7 @@ class RendererAccountStore extends CoreAccountStore {
   // Active
   /* **************************************************************************/
 
-  handleRemoteSetActiveService ({serviceId}) {
+  handleRemoteSetActiveService ({ serviceId }) {
     this._activeServiceId_ = serviceId
   }
 
@@ -86,11 +86,11 @@ class RendererAccountStore extends CoreAccountStore {
   // Sleep
   /* **************************************************************************/
 
-  handleRemoteSetSleep ({serviceId, isSleeping}) {
+  handleRemoteSetSleep ({ serviceId, isSleeping }) {
     this._sleepingServices_.set(serviceId, isSleeping)
   }
 
-  handleRemoteSetSleepMetrics ({serviceId, metrics}) {
+  handleRemoteSetSleepMetrics ({ serviceId, metrics }) {
     this._sleepingMetrics_.set(serviceId, metrics)
   }
 
@@ -98,7 +98,7 @@ class RendererAccountStore extends CoreAccountStore {
   // Avatar
   /* **************************************************************************/
 
-  handleRemoteSetAvatar ({id, b64Image}) {
+  handleRemoteSetAvatar ({ id, b64Image }) {
     if (!b64Image) {
       this._avatars_.delete(id)
     } else {

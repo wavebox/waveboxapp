@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import {Button} from '@material-ui/core'
+import { Button } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import FASGemIcon from 'wbfa/FASGem'

@@ -68,7 +68,7 @@ class ExtensionSettingsTab extends React.Component {
     const {
       extension
     } = this.state
-    const {showRestart, classes, ...passProps} = this.props
+    const { showRestart, classes, ...passProps } = this.props
 
     return (
       <div {...passProps}>

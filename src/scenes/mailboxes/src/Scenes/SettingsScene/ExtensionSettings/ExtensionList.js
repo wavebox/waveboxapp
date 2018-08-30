@@ -23,7 +23,7 @@ export default class ExtensionList extends React.Component {
   }
 
   render () {
-    const {showRestart, ...passProps} = this.props
+    const { showRestart, ...passProps } = this.props
 
     return (
       <div {...passProps}>

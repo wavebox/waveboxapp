@@ -32,7 +32,7 @@ class DebugTests {
           return Promise.resolve()
         })
         .then(() => GoogleHTTP.fetchGmailThreadHeadersList(auth, 'label:inbox label:unread', undefined, 100))
-        .then(({threads = []}) => {
+        .then(({ threads = [] }) => {
           return GoogleHTTP.fullyResolveGmailThreadHeaders(auth, {}, threads, (t) => t)
         })
         .then((threads) => {
@@ -86,7 +86,7 @@ class DebugTests {
       .filter((e) => !!e)
     console.log(`${sig} found ${services.length} Active Slack Mailboxes`)
 
-    serviceElements.reduce((acc, {element, service}) => {
+    serviceElements.reduce((acc, { element, service }) => {
       return acc
         .then(() => {
           return new Promise((resolve, reject) => {

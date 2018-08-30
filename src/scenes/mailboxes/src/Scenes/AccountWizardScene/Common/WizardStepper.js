@@ -50,7 +50,7 @@ class MailboxWizardStepper extends React.Component {
 
     return (
       <div className={classNames(classes.container, className)} {...passProps}>
-        {steps.map(({step, text, stepNumberText}) => {
+        {steps.map(({ step, text, stepNumberText }) => {
           return (
             <WizardStepperStep
               key={step}

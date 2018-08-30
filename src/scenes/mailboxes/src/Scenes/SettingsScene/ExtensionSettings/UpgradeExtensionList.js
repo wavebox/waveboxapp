@@ -109,7 +109,7 @@ class UpgradeExtensionList extends React.Component {
   }
 
   render () {
-    const {showRestart, classes, className, ...passProps} = this.props
+    const { showRestart, classes, className, ...passProps } = this.props
     const { extensionIds } = this.state
 
     if (extensionIds.length === 0) { return false }

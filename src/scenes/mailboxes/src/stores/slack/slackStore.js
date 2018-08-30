@@ -489,7 +489,7 @@ class SlackStore {
       })
       return hasRecord
     } else {
-      return !!this.publishedNotifications.find(({id}) => id === slackNotificationId)
+      return !!this.publishedNotifications.find(({ id }) => id === slackNotificationId)
     }
   }
 

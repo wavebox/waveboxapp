@@ -144,7 +144,7 @@ export default class BrowserView extends React.Component {
   }
 
   render () {
-    const {...passProps} = this.props
+    const { ...passProps } = this.props
     const { webViewInstanceKey } = this.state
     return (
       <WebView

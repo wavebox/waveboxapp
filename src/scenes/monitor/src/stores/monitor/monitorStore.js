@@ -21,9 +21,9 @@ class MonitorStore {
     * @return all the connection metrics as an array
     */
     this.allConnectionMetrics = () => {
-      return Array.from(this.connectionMetrics.values()).reduce((acc, {pid, connections}) => {
+      return Array.from(this.connectionMetrics.values()).reduce((acc, { pid, connections }) => {
         const saltedConnections = connections.map((conn) => {
-          return {...conn, pid}
+          return { ...conn, pid }
         })
         return acc.concat(saltedConnections)
       }, [])

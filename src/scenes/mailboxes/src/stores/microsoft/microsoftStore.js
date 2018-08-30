@@ -150,7 +150,7 @@ class MicrosoftStore {
   * @param unread: the unread interval
   * @param notification: the notification interval
   */
-  handleStartPolling ({profiles, unread, notification}) {
+  handleStartPolling ({ profiles, unread, notification }) {
     // Pollers
     clearInterval(this.profilePoller)
     this.profilePoller = setInterval(() => {

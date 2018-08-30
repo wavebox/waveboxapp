@@ -57,7 +57,7 @@ class TakeoutService {
   */
   _dataForDiskExport () {
     const storeData = TAKEOUT_STORES.reduce((acc, storage) => {
-      const {name, data} = storage.getExportData()
+      const { name, data } = storage.getExportData()
       acc[name] = data
       return acc
     }, {})
@@ -78,11 +78,11 @@ class TakeoutService {
 
     const storeData = TAKEOUT_STORES.reduce((acc, storage) => {
       try {
-        const {name, data} = storage.getExportChangesetManifest()
+        const { name, data } = storage.getExportChangesetManifest()
         acc[name] = data
       } catch (ex) {
         if (ex.notImplemented) {
-          const {name, data} = storage.getExportData()
+          const { name, data } = storage.getExportData()
           acc[name] = data
         } else {
           throw ex

@@ -4,7 +4,7 @@ import { URL } from 'url'
 import CRDispatchManager from './CRDispatchManager'
 import CRExtensionRuntime from './CRExtensionRuntime'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
-import {EventEmitter} from 'events'
+import { EventEmitter } from 'events'
 import {
   CR_EXTENSION_PROTOCOL,
   CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX,

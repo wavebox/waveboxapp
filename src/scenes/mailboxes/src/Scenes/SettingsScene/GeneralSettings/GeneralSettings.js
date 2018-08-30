@@ -227,7 +227,7 @@ class GeneralSettings extends React.Component {
       isMailtoLinkHandler,
       renderBelowFold
     } = this.state
-    const {showRestart, classes, className, sectionId, ...passProps} = this.props
+    const { showRestart, classes, className, sectionId, ...passProps } = this.props
 
     return (
       <div

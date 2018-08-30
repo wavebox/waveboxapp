@@ -91,7 +91,7 @@ const styles = {
 }
 
 @withStyles(styles)
-export default class MailboxCredentialItem extends React.Component {
+class MailboxCredentialItem extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -295,3 +295,5 @@ export default class MailboxCredentialItem extends React.Component {
     )
   }
 }
+
+export default MailboxCredentialItem

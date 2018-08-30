@@ -3,7 +3,7 @@ import { URL } from 'url'
 import { AUTOFILL, AUTOFILL_HOVER } from 'shared/b64Assets'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import KeychainWindow from 'Windows/KeychainWindow'
-import {settingsStore} from 'stores/settings'
+import { settingsStore } from 'stores/settings'
 
 let Keytar
 try {

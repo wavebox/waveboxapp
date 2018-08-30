@@ -1,7 +1,7 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { monitorStore } from 'stores/monitor'
-import {Table, TableBody, TableHead, TableRow, TableCell} from '@material-ui/core'
+import { Table, TableBody, TableHead, TableRow, TableCell } from '@material-ui/core'
 import green from '@material-ui/core/colors/green'
 import amber from '@material-ui/core/colors/amber'
 import red from '@material-ui/core/colors/red'

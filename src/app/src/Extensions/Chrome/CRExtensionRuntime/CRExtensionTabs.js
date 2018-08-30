@@ -204,7 +204,7 @@ class CRExtensionTabs {
         if (hasTabsPermission) {
           if (typeof (options.url) === 'string' || Array.isArray(options.url)) {
             const urlQuery = typeof (options.url) === 'string' ? [options.url] : options.url
-            const {protocol, hostname, pathname} = new URL(tab.url)
+            const { protocol, hostname, pathname } = new URL(tab.url)
             const matches = CRExtensionMatchPatterns.matchUrls(
               protocol,
               hostname,
@@ -284,7 +284,7 @@ class CRExtensionTabs {
     }
 
     const contents = webContents.fromId(tabId)
-    const {protocol, hostname, pathname} = new URL(contents.getURL())
+    const { protocol, hostname, pathname } = new URL(contents.getURL())
     const matches = CRExtensionMatchPatterns.matchUrls(
       protocol,
       hostname,

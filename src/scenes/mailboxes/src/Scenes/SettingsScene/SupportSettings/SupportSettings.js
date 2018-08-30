@@ -157,10 +157,10 @@ class SupportSettings extends React.Component {
     return (
       <div className={classes.unboxedCell}>
         <div className={classes.imageContainer}>
-          <div className={classes.image} style={{backgroundImage: `url("${image}")`}} />
+          <div className={classes.image} style={{ backgroundImage: `url("${image}")` }} />
         </div>
         <div className={classes.contentContainer}>
-          <h2 className={classes.titleUnboxed} style={{color: color}}>{title}</h2>
+          <h2 className={classes.titleUnboxed} style={{ color: color }}>{title}</h2>
           <p className={classes.textUnboxed}>{text}</p>
           <Button variant='raised' onClick={click}>
             {buttonLabel}

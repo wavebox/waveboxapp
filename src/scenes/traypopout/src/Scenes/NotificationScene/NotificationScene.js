@@ -133,7 +133,7 @@ class NotificationScene extends React.Component {
           <List className={classes.list}>
             {containerHeight === 0 ? undefined : (
               <Infinate ref={INFINATE_REF} containerHeight={containerHeight} elementHeight={LIST_ITEM_HEIGHT}>
-                {notifications.map(({id, timestamp, notification}) => {
+                {notifications.map(({ id, timestamp, notification }) => {
                   return (
                     <NotificationListItem
                       key={id}

@@ -64,7 +64,7 @@ class SettingsDefaults {
   * @return the defaults
   */
   static generateAppDefaults () {
-    return {...pkg}
+    return { ...pkg }
   }
 
   /**

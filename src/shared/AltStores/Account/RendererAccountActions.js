@@ -108,7 +108,7 @@ class RendererAccountActions extends CoreAccountActions {
   * @param b64Image: the image to set
   */
   remoteSetAvatar (id, b64Image) {
-    return {id, b64Image}
+    return { id, b64Image }
   }
 }
 

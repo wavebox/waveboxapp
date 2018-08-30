@@ -1,4 +1,4 @@
-import {ipcMain} from 'electron'
+import { ipcMain } from 'electron'
 import { WB_AUTH_TRELLO, WB_AUTH_TRELLO_COMPLETE, WB_AUTH_TRELLO_ERROR } from 'shared/ipcEvents'
 import { URL } from 'url'
 import querystring from 'querystring'

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { remote } from 'electron'
-const {nativeImage, app} = remote
+const { nativeImage, app } = remote
 
 class AppBadge extends React.Component {
   /* **************************************************************************/

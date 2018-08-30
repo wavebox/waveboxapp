@@ -176,7 +176,7 @@ class CRExtensionBrowserAction {
   * @param [tabId]
   * @param responseCallback: executed on completion
   */
-  handleFetchTitle = (evt, [{tabId = null}], responseCallback) => {
+  handleFetchTitle = (evt, [{ tabId = null }], responseCallback) => {
     responseCallback(null, [(this.browserActions.get(tabId) || {}).title])
   }
 
@@ -187,7 +187,7 @@ class CRExtensionBrowserAction {
   * @param responseCallback: executed on completion
   */
   handleSetIcon = (evt, [{ imageData, path, tabId = null }], responseCallback) => {
-    this._updateBrowserAction(tabId, { icon: {imageData, path} })
+    this._updateBrowserAction(tabId, { icon: { imageData, path } })
     responseCallback(null, [])
   }
 

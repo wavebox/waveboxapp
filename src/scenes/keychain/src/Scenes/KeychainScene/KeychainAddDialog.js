@@ -185,7 +185,7 @@ class KeychainAddDialog extends React.Component {
             helperText={accountError}
             fullWidth
             margin='dense'
-            onChange={(evt) => this.setState({account: evt.target.value})}
+            onChange={(evt) => this.setState({ account: evt.target.value })}
             onKeyPress={(evt) => {
               if (evt.key === 'Enter') {
                 this.passwordInputRef.focus()
@@ -201,7 +201,7 @@ class KeychainAddDialog extends React.Component {
             helperText={passwordError}
             fullWidth
             margin='dense'
-            onChange={(evt) => this.setState({password: evt.target.value})}
+            onChange={(evt) => this.setState({ password: evt.target.value })}
             onKeyPress={(evt) => {
               if (evt.key === 'Enter') {
                 this.passwordRepeatInputRef.focus()
@@ -217,7 +217,7 @@ class KeychainAddDialog extends React.Component {
             helperText={passwordRepeatError}
             fullWidth
             margin='dense'
-            onChange={(evt) => this.setState({passwordRepeat: evt.target.value})}
+            onChange={(evt) => this.setState({ passwordRepeat: evt.target.value })}
             onKeyPress={(evt) => {
               if (evt.key === 'Enter') {
                 this.handleSave()

@@ -65,7 +65,7 @@ class ProSettings extends React.Component {
   }
 
   render () {
-    const {className, classes, showRestart, ...passProps} = this.props
+    const { className, classes, showRestart, ...passProps } = this.props
     const { url } = this.state
 
     return (

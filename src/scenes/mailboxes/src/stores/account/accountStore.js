@@ -324,7 +324,7 @@ class AccountStore extends RendererAccountStore {
    *      2.b.2 directs to wizard configure (step 2)
    */
 
-  handleStartAddMailboxGroup ({templateType, accessMode}) {
+  handleStartAddMailboxGroup ({ templateType, accessMode }) {
     this.preventDefault()
     window.location.hash = `/mailbox_wizard/${templateType}/${accessMode}/0`
   }
@@ -571,7 +571,7 @@ class AccountStore extends RendererAccountStore {
     }
   }
 
-  handleAuthNewServiceFromProviso ({proviso}) {
+  handleAuthNewServiceFromProviso ({ proviso }) {
     const mailbox = this.getMailbox(proviso.parentId)
     if (!mailbox) {
       console.error('[AUTH ERR]', `Unable to create service with parentId "${proviso.parentId}" it's unknown`)
