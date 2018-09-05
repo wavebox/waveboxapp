@@ -212,7 +212,7 @@ class SlackServiceDataReducer extends ServiceDataReducer {
   static rtmGroupMessage (service, serviceData, rtmEvent) {
     if (serviceData.slackUnreadGroupInfo[rtmEvent.channel]) { // Group
       const groupInfo = serviceData.slackUnreadGroupInfo[rtmEvent.channel]
-      const userMentioned = rtmEvent.text.indexOf(`<@${service.authUserId}>`) !== -1
+      const userMentioned = (rtmEvent.text || '').indexOf(`<@${service.authUserId}>`) !== -1
       return serviceData.changeDataWithChangeset({
         slackUnreadGroupInfo: {
           [rtmEvent.channel]: {
@@ -223,7 +223,7 @@ class SlackServiceDataReducer extends ServiceDataReducer {
       })
     } else if (serviceData.slackUnreadMPIMInfo[rtmEvent.channel]) { // MPIM
       const mpimInfo = serviceData.slackUnreadMPIMInfo[rtmEvent.channel]
-      const userMentioned = rtmEvent.text.indexOf(`<@${service.authUserId}>`) !== -1
+      const userMentioned = (rtmEvent.text || '').indexOf(`<@${service.authUserId}>`) !== -1
       return serviceData.changeDataWithChangeset({
         slackUnreadMPIMInfo: {
           [rtmEvent.channel]: {
