@@ -77,7 +77,6 @@
     "file-loader": "1.1.11",
     "fs-extra": "7.0.0",
     "graceful-fs": "4.1.11",
-    "home-path": "1.0.6",
     "json-loader": "0.5.7",
     "jsx-loader": "0.13.2",
     "node-abi": "2.4.3",

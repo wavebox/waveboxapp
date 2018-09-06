@@ -8,7 +8,6 @@ const { sequencePromiseSpawn } = require('./Tools')
 const Colors = require('colors/safe')
 const path = require('path')
 const fs = require('fs-extra')
-const homePath = require('home-path')
 
 // Check if we are up to date
 const versionPath = path.join(ROOT_DIR, 'node_modules/electron/dist/wb_version')
@@ -19,9 +18,7 @@ try {
 
 if (wbVersion !== PKG.electronInstallEnv.ELECTRON_CUSTOM_DIR) {
   Promise.resolve()
-    // "electron/npm run cache-clean" doesn't work on windows. So just do cache-clean manually
     .then(() => fs.remove(path.join(ROOT_DIR, 'node_modules/electron/dist')))
-    .then(() => fs.remove(path.join(homePath(), '.electron')))
     .then(() => {
       return sequencePromiseSpawn([
         {
@@ -30,7 +27,11 @@ if (wbVersion !== PKG.electronInstallEnv.ELECTRON_CUSTOM_DIR) {
           opts: {
             stdio: 'inherit',
             cwd: path.join(ROOT_DIR, 'node_modules/electron'),
-            env: Object.assign({}, process.env, PKG.electronInstallEnv)
+            env: {
+              ...process.env,
+              ...PKG.electronInstallEnv,
+              electron_config_cache: path.join(ROOT_DIR, '.caches')
+            }
           },
           prelog: `${Colors.inverse('postinstall')}`
         }
@@ -39,10 +40,13 @@ if (wbVersion !== PKG.electronInstallEnv.ELECTRON_CUSTOM_DIR) {
     .then(() => {
       try {
         fs.writeFileSync(versionPath, PKG.electronInstallEnv.ELECTRON_CUSTOM_DIR)
-      } catch (ex) { }
+      } catch (ex) {
+        console.log(ex)
+        process.exit(-1)
+      }
     })
-    .catch((e) => {
-      console.log(e)
+    .catch((ex) => {
+      console.log(ex)
       process.exit(-1)
     })
 }
