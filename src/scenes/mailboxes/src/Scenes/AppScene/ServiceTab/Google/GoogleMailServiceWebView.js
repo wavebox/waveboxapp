@@ -192,11 +192,15 @@ export default class GoogleMailServiceWebView extends React.Component {
         // Try to get the UI to reload to show when we make this item active
         if (this.state.serviceType === SERVICE_TYPES.GOOGLE_MAIL) {
           this.refs[REF].executeJavaScript(`
-            document.querySelector('[href*="mail.google"][href*="' + window.location.hash + '"]').click()
+            try {
+              document.querySelector('[href*="mail.google"][href*="' + window.location.hash + '"]').click()
+            } catch (ex) { }
           `, true)
         } else if (this.state.serviceType === SERVICE_TYPES.GOOGLE_INBOX) {
           this.refs[REF].executeJavaScript(`
-            document.querySelector('[jsaction="global.navigate"][tabIndex="0"]').click()
+            if (document.documentElement.scrollTop < document.documentElement.offsetHeight / 3) {
+              document.querySelector('[jsaction="global.navigate_and_refresh"]').click()
+            }
           `, true)
         }
       }
