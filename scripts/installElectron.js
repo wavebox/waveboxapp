@@ -11,6 +11,8 @@ const fs = require('fs-extra')
 
 // Check if we are up to date
 const versionPath = path.join(ROOT_DIR, 'node_modules/electron/dist/wb_version')
+const cachePath = path.join(ROOT_DIR, '.caches/electron')
+
 let wbVersion
 try {
   wbVersion = fs.readFileSync(versionPath, 'utf8').trim()
@@ -19,6 +21,7 @@ try {
 if (wbVersion !== PKG.electronInstallEnv.ELECTRON_CUSTOM_DIR) {
   Promise.resolve()
     .then(() => fs.remove(path.join(ROOT_DIR, 'node_modules/electron/dist')))
+    .then(() => fs.remove(cachePath))
     .then(() => {
       return sequencePromiseSpawn([
         {
@@ -30,13 +33,14 @@ if (wbVersion !== PKG.electronInstallEnv.ELECTRON_CUSTOM_DIR) {
             env: {
               ...process.env,
               ...PKG.electronInstallEnv,
-              electron_config_cache: path.join(ROOT_DIR, '.caches')
+              electron_config_cache: cachePath
             }
           },
           prelog: `${Colors.inverse('postinstall')}`
         }
       ])
     })
+    .then(() => fs.remove(cachePath))
     .then(() => {
       try {
         fs.writeFileSync(versionPath, PKG.electronInstallEnv.ELECTRON_CUSTOM_DIR)

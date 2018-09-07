@@ -45,6 +45,11 @@ class WindowOpeningHandler {
       tabMetaInfo,
       provisionalTargetUrl
     } = config
+
+    // If we don't have options we're in an undefined state and shouldn't link the new window
+    // via the options. Quit and do nothing
+    if (!options) { return }
+
     const webContentsId = evt.sender.id
     const currentUrl = evt.sender.getURL()
     const currentHostUrl = this._getCurrentHostUrl(evt.sender.getURL(), tabMetaInfo)
