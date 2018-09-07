@@ -3,12 +3,14 @@ const path = require('path')
 const ROOT_DIR = path.join(__dirname, '..')
 const SRC_DIR = path.join(ROOT_DIR, 'src')
 const BIN_DIR = path.join(ROOT_DIR, 'bin')
+const CACHES_DIR = path.join(ROOT_DIR, '.caches')
 const PKG = require(path.join(ROOT_DIR, 'package.json'))
 
 module.exports = {
   ROOT_DIR: ROOT_DIR,
   SRC_DIR: SRC_DIR,
   BIN_DIR: BIN_DIR,
+  CACHES_DIR: CACHES_DIR,
   PKG: PKG,
   PACKAGE_DIRS: [
     ROOT_DIR,

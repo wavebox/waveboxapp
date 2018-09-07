@@ -45,7 +45,8 @@
     "webpack": "webpack",
     "clean:all": "node scripts/cleanAll.js",
     "clean:bin": "node scripts/cleanBin.js",
-    "clean:node_modules": "node scripts/cleanNodeModules.js"
+    "clean:node_modules": "node scripts/cleanNodeModules.js",
+    "clean:caches": "node scripts/cleanCaches.js"
   },
   "keywords": [],
   "author": {
