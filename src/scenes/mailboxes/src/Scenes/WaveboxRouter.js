@@ -39,6 +39,7 @@ import {
   ProfileRestoreWorkingScene
 } from './ProfileRestoreScene'
 import ErrorBoundary from 'wbui/ErrorBoundary'
+import FullscreenSnackbarHelper from 'Components/FullscreenSnackbarHelper'
 
 export default class WaveboxRouter extends React.Component {
   /* **************************************************************************/
@@ -55,6 +56,9 @@ export default class WaveboxRouter extends React.Component {
 
           <ErrorBoundary>
             <EarlyBuildToast />
+          </ErrorBoundary>
+          <ErrorBoundary>
+            <FullscreenSnackbarHelper />
           </ErrorBoundary>
           <ErrorBoundary>
             <NotificationPanel />
