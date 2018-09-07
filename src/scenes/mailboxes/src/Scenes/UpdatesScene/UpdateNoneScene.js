@@ -22,7 +22,7 @@ class UpdateNoneScene extends React.Component {
   // Class
   /* **************************************************************************/
 
-  static contextTypes: {
+  static contextTypes = {
     router: PropTypes.object.isRequired
   }
   static propTypes = {

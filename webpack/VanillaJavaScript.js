@@ -69,7 +69,7 @@ module.exports = function (packagePath, isNodeJS, config) {
             cacheDirectory: true,
             presets: [
               [
-                'env', {
+                '@babel/preset-env', {
                   targets: isNodeJS ? {
                     node: process.env.NODE_TARGET
                   } : {
@@ -79,12 +79,11 @@ module.exports = function (packagePath, isNodeJS, config) {
                   loose: true
                 }
               ],
-              'react',
-              'stage-0'
+              '@babel/preset-react'
             ],
             plugins: [
-              'transform-decorators-legacy',
-              'transform-class-properties'
+              ['@babel/plugin-proposal-decorators', { legacy: true }],
+              '@babel/plugin-proposal-class-properties'
             ]
           }
         }

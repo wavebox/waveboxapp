@@ -40,9 +40,9 @@
     "node-mac-notifier": "0.1.0"
   },
   "devDependencies": {
-    "standard": "12.0.1",
     "babel-eslint": "9.0.0",
-    "babel-plugin-transform-class-properties": "6.24.1"
+    "source-map-support": "0.5.9",
+    "standard": "12.0.1"
   },
   "standard": {
     "parser": "babel-eslint"

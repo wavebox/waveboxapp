@@ -74,18 +74,17 @@ module.exports = function (packagePath, config) {
             cacheDirectory: true,
             presets: [
               [
-                'env', {
+                '@babel/preset-env', {
                   targets: { chrome: process.env.CHROME_TARGET },
                   modules: false,
                   loose: true
                 }
               ],
-              'react',
-              'stage-0'
+              '@babel/preset-react'
             ],
             plugins: [
-              'transform-decorators-legacy',
-              'transform-class-properties'
+              ['@babel/plugin-proposal-decorators', { legacy: true }],
+              '@babel/plugin-proposal-class-properties'
             ]
           }
         }
