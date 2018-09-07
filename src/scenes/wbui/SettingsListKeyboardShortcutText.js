@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
+import ElectronAccelerator from './ElectronAccelerator'
 
 const styles = {
   kbd: {
@@ -42,15 +43,18 @@ class SettingsListKeyboardShortcutText extends React.Component {
   render () {
     const { classes, shortcut, ...passProps } = this.props
 
-    const components = typeof (shortcut) === 'string' ? shortcut.split('+') : []
-
-    return (
-      <span {...passProps}>
-        {components.map((cmp, i) => {
-          return i ? (<kbd key={`${i}-${cmp}`} className={classes.kbd}>{cmp}</kbd>) : undefined
-        })}
-      </span>
-    )
+    const isValid = ElectronAccelerator.isValid(shortcut)
+    if (isValid) {
+      return (
+        <ElectronAccelerator
+          {...passProps}
+          showPlus={false}
+          accelerator={shortcut}
+          keyClassName={classes.kbd} />
+      )
+    } else {
+      return false
+    }
   }
 }
 
