@@ -371,24 +371,6 @@ class WaveboxWindow extends EventEmitter {
   }
 
   /**
-  * Blurs a window
-  * @return this
-  */
-  blur () {
-    this.window.blur()
-    return this
-  }
-
-  /**
-  * Focuses a window
-  * @return this
-  */
-  focus () {
-    this.window.focus()
-    return this
-  }
-
-  /**
   * Reloads the webview
   * @return this
   */
@@ -433,15 +415,30 @@ class WaveboxWindow extends EventEmitter {
   /* ****************************************************************************/
 
   /**
-  * Shows the window
-  * @param restoreState=true: true to restore the saved window state
+  * Blurs a window
   * @return this
   */
-  show (restoreState = true) {
-    if (restoreState) {
+  blur () {
+    this.window.blur()
+    return this
+  }
+
+  /**
+  * Focuses a window
+  * @return this
+  */
+  focus () {
+    this.window.focus()
+    return this
+  }
+
+  /**
+  * Shows the window
+  * @return this
+  */
+  show () {
+    if (!this.window.isVisible()) {
       this.locationSaver.showWithSavedScreenLocation()
-    } else {
-      this.window.show()
     }
     return this
   }
