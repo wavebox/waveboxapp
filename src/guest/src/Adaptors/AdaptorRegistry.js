@@ -1,4 +1,5 @@
 import AsanaAdaptor from './Sites/AsanaAdaptor'
+import FastmailAdaptor from './Sites/FastmailAdaptor'
 import GmailGinboxAdaptor from './Sites/GmailGinboxAdaptor'
 import GoogleAlloAdaptor from './Sites/GoogleAlloAdaptor'
 import GoogleChatAdaptor from './Sites/GoogleChatAdaptor'
@@ -10,6 +11,7 @@ import TrelloAdaptor from './Sites/TrelloAdaptor'
 
 const registry = [
   AsanaAdaptor,
+  FastmailAdaptor,
   GmailGinboxAdaptor,
   GoogleAlloAdaptor,
   GoogleChatAdaptor,
