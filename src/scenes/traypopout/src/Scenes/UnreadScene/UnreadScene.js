@@ -3,6 +3,8 @@ import shallowCompare from 'react-addons-shallow-compare'
 import UnreadMailboxList from './UnreadMailboxList'
 import UnreadMailbox from './UnreadMailbox'
 import SwipeableViews from 'react-swipeable-views'
+import ErrorBoundary from 'wbui/ErrorBoundary'
+import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
   tabContainer: {
@@ -19,7 +21,8 @@ const styles = {
   }
 }
 
-export default class UnreadScene extends React.Component {
+@withStyles(styles)
+class UnreadScene extends React.Component {
   /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
@@ -88,25 +91,29 @@ export default class UnreadScene extends React.Component {
   }
 
   render () {
-    const { ...passProps } = this.props
+    const { classes, ...passProps } = this.props
     const { displayMailboxId, index } = this.state
 
     return (
       <div {...passProps}>
-        <SwipeableViews
-          containerStyle={styles.tabContainer}
-          slideStyle={styles.tab}
-          index={index}>
-          <UnreadMailboxList requestShowMailbox={this.handleShowMailbox} />
-          {displayMailboxId ? (
-            <UnreadMailbox
-              mailboxId={displayMailboxId}
-              requestShowMailboxList={this.handleShowMailboxList} />
-          ) : (
-            <div />
-          )}
-        </SwipeableViews>
+        <ErrorBoundary>
+          <SwipeableViews
+            containerStyle={styles.tabContainer}
+            slideStyle={styles.tab}
+            index={index}>
+            <UnreadMailboxList requestShowMailbox={this.handleShowMailbox} />
+            {displayMailboxId ? (
+              <UnreadMailbox
+                mailboxId={displayMailboxId}
+                requestShowMailboxList={this.handleShowMailboxList} />
+            ) : (
+              <div />
+            )}
+          </SwipeableViews>
+        </ErrorBoundary>
       </div>
     )
   }
 }
+
+export default UnreadScene

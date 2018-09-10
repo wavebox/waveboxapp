@@ -3,18 +3,12 @@ import actions from './microsoftActions'
 import MicrosoftHTTP from './MicrosoftHTTP'
 import { MICROSOFT_PROFILE_SYNC_INTERVAL, MICROSOFT_UNREAD_SYNC_INTERVAL } from 'shared/constants'
 import uuid from 'uuid'
-import {
-  mailboxStore,
-  mailboxActions,
-  MicrosoftMailboxReducer,
-  MicrosoftDefaultServiceReducer,
-  MicrosoftStorageServiceReducer
-} from '../mailbox'
-import {
-  MicrosoftMailbox,
-  MicrosoftDefaultService,
-  MicrosoftStorageService
-} from 'shared/Models/Accounts/Microsoft'
+import { accountStore, accountActions } from 'stores/account'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
+import AuthReducer from 'shared/AltStores/Account/AuthReducers/AuthReducer'
+import MicrosoftMailServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/MicrosoftMailServiceDataReducer'
+import MicrosoftMailServiceReducer from 'shared/AltStores/Account/ServiceReducers/MicrosoftMailServiceReducer'
+import MicrosoftMailService from 'shared/Models/ACAccounts/Microsoft/MicrosoftMailService'
 
 const REQUEST_TYPES = {
   PROFILE: 'PROFILE',
@@ -37,20 +31,20 @@ class MicrosoftStore {
 
     /**
     * @param type: the type of request
-    * @param mailboxId: the id of the mailbox
+    * @param serviceId: the id of the service
     * @return the number of open requests
     */
-    this.openRequestCount = (type, mailboxId) => {
-      return (this.openRequests.get(`${type}:${mailboxId}`) || []).length
+    this.openRequestCount = (type, serviceId) => {
+      return (this.openRequests.get(`${type}:${serviceId}`) || []).length
     }
 
     /**
     * @param type: the type of request
-    * @param mailboxId: the id of the mailbox
+    * @param serviceId: the id of the service
     * @return true if there are any open requests
     */
-    this.hasOpenRequest = (type, mailboxId) => {
-      return this.openRequestCount(type, mailboxId) !== 0
+    this.hasOpenRequest = (type, serviceId) => {
+      return this.openRequestCount(type, serviceId) !== 0
     }
 
     /* **************************************/
@@ -61,12 +55,12 @@ class MicrosoftStore {
       handleStartPolling: actions.START_POLLING_UPDATES,
       handleStopPolling: actions.STOP_POLLING_UPDATES,
 
-      handleSyncAllMailboxProfiles: actions.SYNC_ALL_MAILBOX_PROFILES,
-      handleSyncMailboxProfile: actions.SYNC_MAILBOX_PROFILE,
+      handleSyncAllServiceProfiles: actions.SYNC_ALL_SERVICE_PROFILES,
+      handleSyncServiceProfile: actions.SYNC_SERVICE_PROFILE,
 
-      handleSyncAllMailboxMail: actions.SYNC_ALL_MAILBOX_MAIL,
-      handleSyncMailboxMail: actions.SYNC_MAILBOX_MAIL,
-      handleSyncMailboxMailAfter: actions.SYNC_MAILBOX_MAIL_AFTER
+      handleSyncAllServiceMail: actions.SYNC_ALL_SERVICE_MAIL,
+      handleSyncServiceMail: actions.SYNC_SERVICE_MAIL,
+      handleSyncServiceMailAfter: actions.SYNC_SERVICE_MAIL_AFTER
     })
   }
 
@@ -77,12 +71,12 @@ class MicrosoftStore {
   /**
   * Tracks that a request has been opened
   * @param type: the type of request
-  * @param mailboxId: the id of the mailbox
+  * @param serviceId: the id of the service
   * @param requestId=auto: the unique id for this request
   * @return the requestId
   */
-  trackOpenRequest (type, mailboxId, requestId = uuid.v4()) {
-    const key = `${type}:${mailboxId}`
+  trackOpenRequest (type, serviceId, requestId = uuid.v4()) {
+    const key = `${type}:${serviceId}`
     const requestIds = (this.openRequests.get(key) || [])
     const updatedRequestIds = requestIds.filter((id) => id !== requestId).concat(requestId)
     this.openRequests.set(key, updatedRequestIds)
@@ -92,16 +86,32 @@ class MicrosoftStore {
   /**
   * Tracks that a request has been closed
   * @param type: the type of request
-  * @param mailboxId: the id of the mailbox
+  * @param serviceId: the id of the service
   * @param requestId: the unique id for this request
   * @return the requestId
   */
-  trackCloseRequest (type, mailboxId, requestId) {
-    const key = `${type}:${mailboxId}`
+  trackCloseRequest (type, serviceId, requestId) {
+    const key = `${type}:${serviceId}`
     const requestIds = (this.openRequests.get(key) || [])
     const updatedRequestIds = requestIds.filter((id) => id !== requestId)
     this.openRequests.set(key, updatedRequestIds)
     return requestId
+  }
+
+  /* **************************************************************************/
+  // Error Detection
+  /* **************************************************************************/
+
+  /**
+  * Checks if an error is an invalid grant error
+  * @param err: the error that was thrown
+  * @return true if this error is invalid grant
+  */
+  isInvalidGrantError (err) {
+    if (err) {
+      if (err.status === 401) { return true }
+    }
+    return false
   }
 
   /* **************************************************************************/
@@ -110,21 +120,22 @@ class MicrosoftStore {
 
   /**
   * Gets the api authentication
-  * @param mailboxIdOrMailbox: the mailbox or the mailbox id
+  * @param serviceAuth: the service auth object
   * @return promise, provided with the access token
   */
-  getAPIAuth (mailboxIdOrMailbox) {
-    const mailbox = typeof (mailboxIdOrMailbox) === 'string' ? mailboxStore.getState().getMailbox(mailboxIdOrMailbox) : mailboxIdOrMailbox
-
-    if (!mailbox) { return Promise.reject(new Error('No mailbox')) }
-    if (mailbox.authExpiryTime > new Date().getTime()) {
-      return Promise.resolve(mailbox.accessToken)
+  getAPIAuth (serviceAuth) {
+    if (serviceAuth.authExpiryTime > new Date().getTime()) {
+      return Promise.resolve(serviceAuth.accessToken)
     } else {
       return Promise.resolve()
-        .then(() => MicrosoftHTTP.refreshAuthToken(mailbox.refreshToken, mailbox.authProtocolVersion))
-        .then((auth) => {
-          mailboxActions.reduce.defer(mailbox.id, MicrosoftMailboxReducer.setAuthInfo, auth)
-          return Promise.resolve(auth.access_token)
+        .then(() => MicrosoftHTTP.refreshAuthToken(serviceAuth.refreshToken, serviceAuth.authProtocolVersion))
+        .then((res) => {
+          accountActions.reduceAuth.defer(
+            serviceAuth.id,
+            AuthReducer.updateAuth,
+            { access_token: res.access_token }
+          )
+          return Promise.resolve(res.access_token)
         })
     }
   }
@@ -139,19 +150,19 @@ class MicrosoftStore {
   * @param unread: the unread interval
   * @param notification: the notification interval
   */
-  handleStartPolling ({profiles, unread, notification}) {
+  handleStartPolling ({ profiles, unread, notification }) {
     // Pollers
     clearInterval(this.profilePoller)
     this.profilePoller = setInterval(() => {
-      actions.syncAllMailboxProfiles.defer()
+      actions.syncAllServiceProfiles.defer()
     }, MICROSOFT_PROFILE_SYNC_INTERVAL)
-    actions.syncAllMailboxProfiles.defer()
+    actions.syncAllServiceProfiles.defer()
 
     clearInterval(this.mailPoller)
     this.mailPoller = setInterval(() => {
-      actions.syncAllMailboxMail.defer()
+      actions.syncAllServiceMail.defer()
     }, MICROSOFT_UNREAD_SYNC_INTERVAL)
-    actions.syncAllMailboxMail.defer()
+    actions.syncAllServiceMail.defer()
   }
 
   /**
@@ -169,52 +180,63 @@ class MicrosoftStore {
   // Handlers: Profiles
   /* **************************************************************************/
 
-  handleSyncAllMailboxProfiles () {
-    mailboxStore.getState().getMailboxesOfType(MicrosoftMailbox.type).forEach((mailbox) => {
-      actions.syncMailboxProfile.defer(mailbox.id)
-    })
+  handleSyncAllServiceProfiles () {
     this.preventDefault()
+    accountStore
+      .getState()
+      .allServicesOfType(SERVICE_TYPES.MICROSOFT_MAIL)
+      .forEach((service) => {
+        actions.syncServiceProfile.defer(service.id)
+      })
   }
 
-  handleSyncMailboxProfile ({ mailboxId }) {
-    if (this.hasOpenRequest(REQUEST_TYPES.PROFILE, mailboxId)) {
+  handleSyncServiceProfile ({ serviceId }) {
+    if (this.hasOpenRequest(REQUEST_TYPES.PROFILE, serviceId)) {
       this.preventDefault()
       return
     }
 
-    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    if (!mailbox) {
+    const serviceAuth = accountStore.getState().getMailboxAuthForServiceId(serviceId)
+    if (!serviceAuth) {
       this.preventDefault()
       return
     }
 
-    const requestId = this.trackOpenRequest(REQUEST_TYPES.PROFILE, mailboxId)
+    const requestId = this.trackOpenRequest(REQUEST_TYPES.PROFILE, serviceId)
     Promise.resolve()
-      .then(() => this.getAPIAuth(mailbox))
+      .then(() => this.getAPIAuth(serviceAuth))
       .then((accessToken) => { // STEP 1: Sync profile
         return Promise.resolve()
           .then(() => MicrosoftHTTP.fetchAccountProfile(accessToken))
           .then((profile) => {
-            mailboxActions.reduce.defer(
-              mailboxId,
-              MicrosoftMailboxReducer.setProfileInfo,
+            accountActions.reduceService.defer(
+              serviceId,
+              MicrosoftMailServiceReducer.setProfileInfo,
               profile.id,
               profile.userPrincipalName,
               profile.displayName
             )
+
+            // Office365 is handled differently below...
+            if (serviceAuth.isPersonalAccount) {
+              accountActions.reduceService(
+                serviceId,
+                MicrosoftMailServiceReducer.setServiceAvatarUrl,
+                `https://apis.live.net/v5.0/${profile.id}/picture?type=large` // This is funky because it's in base64 format but works
+              )
+            }
             return accessToken
           })
       })
       .then((accessToken) => { // Step 2: Sync drive info
-        if (mailbox.accessMode === mailbox.ACCESS_MODES.OFFICE365) {
+        if (!serviceAuth.isPersonalAccount) {
           return Promise.resolve()
             .then(() => MicrosoftHTTP.fetchOffice365DriveUrl(accessToken))
             .then((driveUrl) => {
-              mailboxActions.reduceService.defer(
-                mailboxId,
-                MicrosoftStorageService.type,
-                MicrosoftStorageServiceReducer.setDriveUrl,
-                driveUrl
+              accountActions.reduceAuth(
+                serviceAuth.id,
+                AuthReducer.updateAuth,
+                { driveUrl: driveUrl }
               )
               return accessToken
             })
@@ -223,11 +245,11 @@ class MicrosoftStore {
         }
       })
       .then((accessToken) => { // Step 3: Sync avatar info
-        if (mailbox.accessMode === mailbox.ACCESS_MODES.OFFICE365) {
+        if (!serviceAuth.isPersonalAccount) {
           return Promise.resolve()
             .then(() => MicrosoftHTTP.fetchOffice365Avatar(accessToken))
             .then((b64Image) => {
-              mailboxActions.setServiceLocalAvatar.defer(mailbox.id, b64Image)
+              accountActions.setServiceAvatarOnService(serviceId, b64Image)
               return accessToken
             })
         } else {
@@ -235,12 +257,16 @@ class MicrosoftStore {
         }
       })
       .then(() => { // Finish-up
-        this.trackCloseRequest(REQUEST_TYPES.PROFILE, mailboxId, requestId)
+        this.trackCloseRequest(REQUEST_TYPES.PROFILE, serviceId, requestId)
         this.emitChange()
       })
       .catch((err) => {
-        this.trackCloseRequest(REQUEST_TYPES.PROFILE, mailboxId, requestId)
-        console.error(err)
+        this.trackCloseRequest(REQUEST_TYPES.PROFILE, serviceId, requestId)
+        if (this.isInvalidGrantError(err)) {
+          accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeInvalid)
+        } else {
+          console.error(err)
+        }
         this.emitChange()
       })
   }
@@ -249,60 +275,68 @@ class MicrosoftStore {
   // Handlers: Messages
   /* **************************************************************************/
 
-  handleSyncAllMailboxMail () {
-    mailboxStore.getState().getMailboxesOfType(MicrosoftMailbox.type).forEach((mailbox) => {
-      actions.syncMailboxMail.defer(mailbox.id)
-    })
+  handleSyncAllServiceMail () {
     this.preventDefault()
+    accountStore
+      .getState()
+      .allServicesOfType(SERVICE_TYPES.MICROSOFT_MAIL)
+      .forEach((service) => {
+        actions.syncServiceMail.defer(service.id)
+      })
   }
 
-  handleSyncMailboxMail ({ mailboxId }) {
-    if (this.hasOpenRequest(REQUEST_TYPES.MAIL, mailboxId)) {
-      this.preventDefault()
-      return
-    }
-    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    const service = mailbox ? mailbox.serviceForType(MicrosoftDefaultService.type) : null
-    if (!mailbox || !service) {
+  handleSyncServiceMail ({ serviceId }) {
+    if (this.hasOpenRequest(REQUEST_TYPES.MAIL, serviceId)) {
       this.preventDefault()
       return
     }
 
-    const requestId = this.trackOpenRequest(REQUEST_TYPES.MAIL, mailboxId)
+    const accountState = accountStore.getState()
+    const service = accountState.getService(serviceId)
+    const serviceAuth = accountState.getMailboxAuthForServiceId(serviceId)
+    if (!service || !serviceAuth) {
+      this.preventDefault()
+      return
+    }
+
+    const requestId = this.trackOpenRequest(REQUEST_TYPES.MAIL, serviceId)
     Promise.resolve()
-      .then(() => this.getAPIAuth(mailbox))
+      .then(() => this.getAPIAuth(serviceAuth))
       .then((accessToken) => {
         switch (service.unreadMode) {
-          case MicrosoftDefaultService.UNREAD_MODES.INBOX_FOCUSED_UNREAD:
+          case MicrosoftMailService.UNREAD_MODES.INBOX_FOCUSED_UNREAD:
             return MicrosoftHTTP.fetchFocusedUnreadCountAndUnreadMessages(accessToken, 10)
-          case MicrosoftDefaultService.UNREAD_MODES.INBOX_UNREAD:
+          case MicrosoftMailService.UNREAD_MODES.INBOX_UNREAD:
           default:
             return MicrosoftHTTP.fetchInboxUnreadCountAndUnreadMessages(accessToken, 10)
         }
       })
       .then(({ unreadCount, messages }) => {
-        this.trackCloseRequest(REQUEST_TYPES.MAIL, mailboxId, requestId)
-        mailboxActions.reduceService(
-          mailboxId,
-          MicrosoftDefaultService.type,
-          MicrosoftDefaultServiceReducer.setUnreadInfo,
+        this.trackCloseRequest(REQUEST_TYPES.MAIL, serviceId, requestId)
+        accountActions.reduceServiceData(
+          serviceId,
+          MicrosoftMailServiceDataReducer.setUnreadInfo,
           unreadCount,
           messages
         )
         this.emitChange()
       })
       .catch((err) => {
-        this.trackCloseRequest(REQUEST_TYPES.MAIL, mailboxId, requestId)
-        console.error(err)
+        this.trackCloseRequest(REQUEST_TYPES.MAIL, serviceId, requestId)
+        if (this.isInvalidGrantError(err)) {
+          accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeInvalid)
+        } else {
+          console.error(err)
+        }
         this.emitChange()
       })
   }
 
-  handleSyncMailboxMailAfter ({ mailboxId, wait }) {
-    setTimeout(() => {
-      actions.syncMailboxMail.defer(mailboxId)
-    }, wait)
+  handleSyncServiceMailAfter ({ serviceId, wait }) {
     this.preventDefault()
+    setTimeout(() => {
+      actions.syncServiceMail.defer(serviceId)
+    }, wait)
   }
 }
 

@@ -3,16 +3,14 @@ import ContentWindow from 'Windows/ContentWindow'
 import ContentPopupWindow from 'Windows/ContentPopupWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import { settingsStore } from 'stores/settings'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import WindowOpeningEngine from './WindowOpeningEngine'
 import WindowOpeningRules from './WindowOpeningRules'
 import WindowOpeningMatchTask from './WindowOpeningMatchTask'
 import WINDOW_BACKING_TYPES from '../WindowBackingTypes'
-import mailboxStore from 'stores/mailbox/mailboxStore'
+import accountStore from 'stores/account/accountStore'
 import uuid from 'uuid'
-
-const WINDOW_OPEN_MODES = WindowOpeningEngine.WINDOW_OPEN_MODES
-const NAVIGATE_MODES = WindowOpeningEngine.NAVIGATE_MODES
+import { WINDOW_OPEN_MODES, NAVIGATE_MODES } from './WindowOpeningModes'
 
 class WindowOpeningHandler {
   /* ****************************************************************************/
@@ -47,6 +45,11 @@ class WindowOpeningHandler {
       tabMetaInfo,
       provisionalTargetUrl
     } = config
+
+    // If we don't have options we're in an undefined state and shouldn't link the new window
+    // via the options. Quit and do nothing
+    if (!options) { return }
+
     const webContentsId = evt.sender.id
     const currentUrl = evt.sender.getURL()
     const currentHostUrl = this._getCurrentHostUrl(evt.sender.getURL(), tabMetaInfo)
@@ -136,6 +139,8 @@ class WindowOpeningHandler {
     } else if (openMode === WINDOW_OPEN_MODES.BLANK_AND_CURRENT_PROVISIONAL) {
       evt.sender.loadURL('about:blank')
       evt.sender.loadURL(provisionalTargetUrl)
+    } else if (openMode === WINDOW_OPEN_MODES.SUPPRESS) {
+      /* no-op */
     } else {
       this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
     }
@@ -249,7 +254,7 @@ class WindowOpeningHandler {
     if (!tabMetaInfo) { return undefined }
     if (tabMetaInfo.backing !== WINDOW_BACKING_TYPES.MAILBOX_SERVICE) { return undefined }
 
-    const mailbox = mailboxStore.getState().getMailbox(tabMetaInfo.mailboxId)
+    const mailbox = accountStore.getState().getMailbox(tabMetaInfo.mailboxId)
     if (!mailbox) { return undefined }
 
     return mailbox
@@ -304,9 +309,9 @@ class WindowOpeningHandler {
     if (!mailbox) {
       return this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
     } else {
-      if (mailbox.defaultWindowOpenMode === CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
+      if (mailbox.defaultWindowOpenMode === ACMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
         return this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
-      } else if (mailbox.defaultWindowOpenMode === CoreMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
+      } else if (mailbox.defaultWindowOpenMode === ACMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
         return this.openWindowWaveboxContent(openingBrowserWindow, tabMetaInfo, targetUrl, options, partitionOverride)
       }
     }

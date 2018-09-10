@@ -1,48 +1,41 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { RaisedButton, FlatButton } from 'material-ui'
-import { FullscreenModal } from 'Components'
+import { Button, Dialog, DialogContent, DialogActions } from '@material-ui/core'
 import { settingsActions } from 'stores/settings'
 import { platformStore } from 'stores/platform'
 import { Redirect } from 'react-router-dom'
-
 import AppWizardIntroScene from './AppWizardIntroScene'
 import AppWizardTrayScene from './AppWizardTrayScene'
 import AppWizardMailtoScene from './AppWizardMailtoScene'
 import AppWizardCompleteScene from './AppWizardCompleteScene'
+import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
-  // Modal
-  modalBody: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 52,
-    borderTopLeftRadius: 2,
-    borderTopRightRadius: 2,
+  dialog: {
+    maxWidth: '100%',
+    width: '100%',
+    height: '100%'
+  },
+  dialogContent: {
+    position: 'relative',
     backgroundColor: 'rgb(242, 242, 242)'
   },
-  modalActions: {
-    position: 'absolute',
-    height: 52,
-    left: 0,
-    right: 0,
-    bottom: 0,
+  dialogActions: {
     backgroundColor: 'rgb(242, 242, 242)',
-    borderBottomLeftRadius: 2,
-    borderBottomRightRadius: 2
+    margin: 0,
+    padding: '8px 4px'
   },
   modalActionExtraButton: {
     marginRight: 8
   },
-  modalActionLeftButton: {
-    float: 'left'
+  modalActionButtonSpacer: {
+    flex: 1
   }
 }
 
-export default class AppWizardScene extends React.Component {
+@withStyles(styles)
+class AppWizardScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -138,52 +131,47 @@ export default class AppWizardScene extends React.Component {
 
   /**
   * Renders the actions
+  * @param classes
   * @param step: the current step
   * @return jsx
   */
-  renderActions (step) {
+  renderActions (classes, step) {
     if (!step) {
       return (
-        <div>
-          <FlatButton
-            label='Not interested'
-            style={styles.modalActionLeftButton}
-            onClick={this.handleNever} />
-          <FlatButton
-            label='Later'
-            style={styles.modalActionExtraButton}
-            onClick={this.handleClose} />
-          <RaisedButton
-            label='Start'
-            primary
-            onClick={this.handleNext} />
-        </div>
+        <DialogActions className={classes.dialogActions}>
+          <Button onClick={this.handleNever}>
+            Not interested
+          </Button>
+          <div className={classes.modalActionButtonSpacer} />
+          <Button className={classes.modalActionExtraButton} onClick={this.handleClose}>
+            Later
+          </Button>
+          <Button variant='raised' color='primary' onClick={this.handleNext}>
+            Start
+          </Button>
+        </DialogActions>
       )
     } else if (step === 'tray' || step === 'mailto') {
       return (
-        <div>
-          <FlatButton
-            label='Cancel'
-            style={styles.modalActionExtraButton}
-            onClick={this.handleClose} />
-          <RaisedButton
-            label='Next'
-            primary
-            onClick={this.handleNext} />
-        </div>
+        <DialogActions className={classes.dialogActions}>
+          <Button className={classes.modalActionExtraButton} onClick={this.handleClose}>
+            Cancel
+          </Button>
+          <Button variant='raised' color='primary' onClick={this.handleNext}>
+            Next
+          </Button>
+        </DialogActions>
       )
     } else if (step === 'finish') {
       return (
-        <div>
-          <FlatButton
-            label='More Settings'
-            style={styles.modalActionExtraButton}
-            onClick={this.handleFinishSettings} />
-          <RaisedButton
-            label='Finish'
-            primary
-            onClick={this.handleFinish} />
-        </div>
+        <DialogActions className={classes.dialogActions}>
+          <Button className={classes.modalActionExtraButton} onClick={this.handleFinishSettings}>
+            More Settings
+          </Button>
+          <Button variant='raised' color='primary' onClick={this.handleFinish}>
+            Finish
+          </Button>
+        </DialogActions>
       )
     } else {
       return undefined
@@ -192,10 +180,11 @@ export default class AppWizardScene extends React.Component {
 
   /**
   * Renders the actions
+  * @param classes:
   * @param step: the current step
   * @return jsx
   */
-  renderContent (step) {
+  renderContent (classes, step) {
     if (!step) {
       return (<AppWizardIntroScene />)
     } else if (step === 'tray') {
@@ -211,7 +200,7 @@ export default class AppWizardScene extends React.Component {
 
   render () {
     const { open } = this.state
-    const { match } = this.props
+    const { match, classes } = this.props
     const step = match.params.step
 
     if (step === 'start') {
@@ -219,15 +208,18 @@ export default class AppWizardScene extends React.Component {
     }
 
     return (
-      <FullscreenModal
-        modal={false}
-        bodyStyle={styles.modalBody}
-        actionsContainerStyle={styles.modalActions}
-        actions={this.renderActions(step)}
+      <Dialog
+        disableEnforceFocus
         open={open}
-        onRequestClose={this.handleClose}>
-        {this.renderContent(step)}
-      </FullscreenModal>
+        onClose={this.handleClose}
+        classes={{ paper: classes.dialog }}>
+        <DialogContent className={classes.dialogContent}>
+          {this.renderContent(classes, step)}
+        </DialogContent>
+        {this.renderActions(classes, step)}
+      </Dialog>
     )
   }
 }
+
+export default AppWizardScene

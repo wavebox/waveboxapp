@@ -1,20 +1,49 @@
 import PropTypes from 'prop-types'
-import './BrowserScene.less'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import BrowserView from 'sharedui/Components/BrowserView'
-import BrowserTargetUrl from './BrowserTargetUrl'
+import BrowserView from 'wbui/Guest/BrowserView'
 import BrowserSearch from './BrowserSearch'
 import BrowserToolbar from './BrowserToolbar'
 import { browserActions, browserStore } from 'stores/browser'
-import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
+import { settingsStore } from 'stores/settings'
+import MouseNavigationDarwin from 'wbui/MouseNavigationDarwin'
 import Resolver from 'Runtime/Resolver'
 import { remote } from 'electron'
+import { withStyles } from '@material-ui/core/styles'
+import BrowserViewLoadBar from 'wbui/Guest/BrowserViewLoadBar'
+import BrowserViewTargetUrl from 'wbui/Guest/BrowserViewTargetUrl'
+import BrowserViewPermissionRequests from 'wbui/Guest/BrowserViewPermissionRequests'
 
 const SEARCH_REF = 'search'
 const BROWSER_REF = 'browser'
 
-export default class BrowserScene extends React.Component {
+const styles = {
+  scene: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0
+  },
+  webviewContainer: {
+    position: 'absolute',
+    top: 40,
+    bottom: 0,
+    left: 0,
+    right: 0
+  },
+  toolbar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 100,
+    height: 40
+  }
+}
+
+@withStyles(styles)
+class BrowserScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -30,7 +59,7 @@ export default class BrowserScene extends React.Component {
 
   componentDidMount () {
     browserStore.listen(this.browserUpdated)
-    if (process.platform === 'darwin') {
+    if (process.platform === 'darwin' && settingsStore.getState().launched.app.enableMouseNavigationDarwin) {
       this.mouseNavigator = new MouseNavigationDarwin(
         () => this.refs[BROWSER_REF].goBack(),
         () => this.refs[BROWSER_REF].goForward()
@@ -61,7 +90,11 @@ export default class BrowserScene extends React.Component {
     return {
       isSearching: browserState.isSearching,
       searchTerm: browserState.searchTerm,
-      searchNextHash: browserState.searchNextHash
+      searchNextHash: browserState.searchNextHash,
+      targetUrl: browserState.targetUrl,
+      isLoading: browserState.isLoading,
+      permissionRequests: [],
+      permissionRequestsUrl: undefined
     }
   })()
 
@@ -69,7 +102,9 @@ export default class BrowserScene extends React.Component {
     this.setState({
       isSearching: browserState.isSearching,
       searchTerm: browserState.searchTerm,
-      searchNextHash: browserState.searchNextHash
+      searchNextHash: browserState.searchNextHash,
+      targetUrl: browserState.targetUrl,
+      isLoading: browserState.isLoading
     })
   }
 
@@ -100,11 +135,33 @@ export default class BrowserScene extends React.Component {
   }
 
   /**
+  * Handles the permission requests changing
+  * @param evt: the event that fired
+  */
+  handlePermissionRequestsChanged = (evt) => {
+    this.setState({
+      permissionRequests: evt.pending,
+      permissionRequestsUrl: evt.url
+    })
+  }
+
+  /**
   * Handles closing the guest requesting the ipc window closure
   * @param evt: the event that fired
   */
   handleClose = (evt) => {
     remote.getCurrentWindow().close()
+  }
+
+  /**
+  * Handles a permission being resolved
+  * @param type: the permission type
+  * @param permission: the resolved permission
+  */
+  handleResolvePermission = (type, permission) => {
+    if (this.refs[BROWSER_REF]) {
+      this.refs[BROWSER_REF].resolvePermissionRequest(type, permission)
+    }
   }
 
   /* **************************************************************************/
@@ -127,33 +184,41 @@ export default class BrowserScene extends React.Component {
   }
 
   render () {
-    const { url, partition } = this.props
-    const { isSearching, searchTerm, searchNextHash } = this.state
-
-    const preloadScripts = [
-      Resolver.guestPreload(),
-      Resolver.crExtensionApiPreload()
-    ].join('_wavebox_preload_split_')
+    const {
+      url,
+      partition,
+      classes
+    } = this.props
+    const {
+      isSearching,
+      searchTerm,
+      targetUrl,
+      isLoading,
+      searchNextHash,
+      permissionRequests,
+      permissionRequestsUrl
+    } = this.state
 
     // The partition should be set on the will-attach-webview in the main thread
     // but this doesn't have the desired effect. Set it here for good-stead
     return (
-      <div className='ReactComponent-BrowserScene'>
+      <div className={classes.scene}>
         <BrowserToolbar
+          className={classes.toolbar}
           handleGoBack={() => this.refs[BROWSER_REF].goBack()}
           handleGoForward={() => this.refs[BROWSER_REF].goForward()}
           handleStop={() => this.refs[BROWSER_REF].stop()}
           handleReload={() => this.refs[BROWSER_REF].reload()} />
-        <div className='ReactComponent-BrowserSceneWebViewContainer'>
+        <div className={classes.webviewContainer}>
           <BrowserView
             ref={BROWSER_REF}
             src={url}
             partition={partition}
             plugins
             allowpopups
-            className='ReactComponent-BrowserSceneWebView'
             webpreferences='contextIsolation=yes, nativeWindowOpen=yes, sharedSiteInstances=yes, sandbox=yes'
-            preload={preloadScripts}
+            preload={Resolver.guestPreload()}
+            preloadCrx={Resolver.crExtensionApiPreload()}
             searchTerm={isSearching ? searchTerm : undefined}
             searchId={searchNextHash}
             close={this.handleClose}
@@ -164,13 +229,21 @@ export default class BrowserScene extends React.Component {
             ipcMessage={this.handleBrowserIPCMessage}
             willNavigate={this.navigationStateDidChange}
             didNavigate={this.navigationStateDidChange}
+            onPermissionRequestsChanged={this.handlePermissionRequestsChanged}
             didNavigateInPage={(evt) => {
               if (evt.isMainFrame) { this.navigationStateDidChange(evt) }
             }} />
+          <BrowserViewLoadBar isLoading={isLoading} />
+          <BrowserViewTargetUrl url={targetUrl} />
+          <BrowserViewPermissionRequests
+            permissionRequests={permissionRequests}
+            url={permissionRequestsUrl}
+            onResolvePermission={this.handleResolvePermission} />
+          <BrowserSearch ref={SEARCH_REF} />
         </div>
-        <BrowserTargetUrl />
-        <BrowserSearch ref={SEARCH_REF} />
       </div>
     )
   }
 }
+
+export default BrowserScene

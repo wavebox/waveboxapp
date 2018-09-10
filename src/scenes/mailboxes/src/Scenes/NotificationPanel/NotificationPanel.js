@@ -1,11 +1,10 @@
 import React from 'react'
 import NotificationSystem from 'react-notification-system'
-import {mailboxStore} from 'stores/mailbox'
-import {userStore} from 'stores/user'
-import {settingsStore} from 'stores/settings'
-import CoreService from 'shared/Models/Accounts/CoreService'
+import { accountStore } from 'stores/account'
+import { userStore } from 'stores/user'
+import { settingsStore } from 'stores/settings'
 import MailboxSleepNotification from './MailboxSleepNotification'
-import * as Colors from 'material-ui/styles/colors'
+import grey from '@material-ui/core/colors/grey'
 
 const NOTIFICATION_STYLE = {
   NotificationItem: {
@@ -13,7 +12,7 @@ const NOTIFICATION_STYLE = {
       overflow: 'hidden'
     },
     info: {
-      backgroundColor: Colors.grey200,
+      backgroundColor: grey[200],
       paddingTop: 18,
       paddingBottom: 18,
       paddingLeft: 12,
@@ -31,7 +30,7 @@ const NOTIFICATION_STYLE = {
 
 const REF = 'NOTIFICATION_SYSTEM'
 
-export default class NotificationPanel extends React.Component {
+class NotificationPanel extends React.Component {
   /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
@@ -40,14 +39,14 @@ export default class NotificationPanel extends React.Component {
     this._active = new Set()
     this._checkSleepNotificationsThrottle = null
 
-    mailboxStore.listen(this.checkSleepNotifications)
+    accountStore.listen(this.accountsChanged)
     userStore.listen(this.userChanged)
     settingsStore.listen(this.settingsChanged)
     this.checkSleepNotifications()
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.checkSleepNotifications)
+    accountStore.unlisten(this.accountsChanged)
     userStore.unlisten(this.userChanged)
     settingsStore.unlisten(this.settingsChanged)
   }
@@ -74,11 +73,11 @@ export default class NotificationPanel extends React.Component {
     })
   }
 
-  mailboxesChanged = (mailboxState) => {
+  accountsChanged = (accountState) => {
     if (!this.refs[REF]) { return }
     clearTimeout(this._checkSleepNotificationsThrottle)
     this._checkSleepNotificationsThrottle = setTimeout(() => {
-      this.checkSleepNotifications(mailboxState)
+      this.checkSleepNotifications(accountState)
     }, 1000)
   }
 
@@ -98,17 +97,17 @@ export default class NotificationPanel extends React.Component {
 
   /**
   * Checks for sleeping notifications we should show
+  * @param accountState=autoget: the current account state
   */
-  checkSleepNotifications = () => {
+  checkSleepNotifications = (accountState = accountStore.getState()) => {
     if (!this.refs[REF]) { return }
     clearTimeout(this._checkSleepNotificationsThrottle)
-    const mailboxState = mailboxStore.getState()
-    mailboxState
-      .mailboxIds()
-      .map((mailboxId) => mailboxState.getSleepingNotificationInfo(mailboxId, CoreService.SERVICE_TYPES.DEFAULT))
+    accountState
+      .serviceIds()
+      .map((serviceId) => accountState.getSleepingNotificationInfo(serviceId))
       .filter((info) => !!info)
-      .forEach(({mailbox, service, closeMetrics}) => {
-        const notificationId = `mailbox:sleeping:${mailbox.id}:${CoreService.SERVICE_TYPES.DEFAULT}`
+      .forEach(({ service, closeMetrics }) => {
+        const notificationId = `mailbox:sleeping:${service.id}`
         if (this._active.has(notificationId)) { return }
 
         this.refs[REF].addNotification({
@@ -116,8 +115,8 @@ export default class NotificationPanel extends React.Component {
           level: 'info',
           children: (
             <MailboxSleepNotification
-              mailbox={mailbox}
-              service={service}
+              mailboxId={service.parentId}
+              serviceId={service.id}
               onRequestClose={() => this.refs[REF].removeNotification(notificationId)}
               closeMetrics={closeMetrics} />),
           message: '',
@@ -161,3 +160,5 @@ export default class NotificationPanel extends React.Component {
     return (<NotificationSystem ref={REF} style={NOTIFICATION_STYLE} />)
   }
 }
+
+export default NotificationPanel

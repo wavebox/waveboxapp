@@ -1,7 +1,6 @@
-import guestActions from './guestActions'
 import guestStore from './guestStore'
-
+import guestActions from './guestActions'
 export {
-  guestActions,
-  guestStore
+  guestStore,
+  guestActions
 }

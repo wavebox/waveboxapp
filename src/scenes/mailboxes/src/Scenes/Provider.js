@@ -2,9 +2,9 @@ import React from 'react'
 import WaveboxRouter from './WaveboxRouter'
 import constants from 'shared/constants'
 import shallowCompare from 'react-addons-shallow-compare'
-import Theme from 'sharedui/Components/Theme'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import { mailboxStore, mailboxDispatch } from 'stores/mailbox'
+import THEME_MAPPING from 'wbui/Themes/ThemeMapping'
+import { MuiThemeProvider } from '@material-ui/core/styles'
+import { accountStore, accountDispatch } from 'stores/account'
 import { settingsStore } from 'stores/settings'
 import { googleActions } from 'stores/google'
 import { trelloActions } from 'stores/trello'
@@ -20,6 +20,7 @@ import { AppBadge, WindowTitle } from 'Components'
 import {
   WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE,
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
+  WB_MAILBOXES_WINDOW_SHOW_WAVEBOX_ACCOUNT,
   WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER,
   WB_MAILBOXES_WINDOW_SHOW_NEWS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT
@@ -48,6 +49,7 @@ export default class Provider extends React.Component {
     updaterActions.load()
     ipcRenderer.on(WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE, this.downloadCompleted)
     ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_SETTINGS, this.ipcLaunchSettings)
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_WAVEBOX_ACCOUNT, this.ipcLaunchWaveboxAccount)
     ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER, this.ipcLaunchSupportCenter)
     ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_NEWS, this.ipcLaunchNews)
     ipcRenderer.on(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
@@ -55,12 +57,13 @@ export default class Provider extends React.Component {
     // STEP 2. Mailbox connections
     googleActions.startPollingUpdates()
     trelloActions.startPollingUpdates()
+    slackActions.connectAllServices()
     microsoftActions.startPollingUpdates()
 
     // STEP 3. Listen for self
-    mailboxStore.listen(this.mailboxesChanged)
+    accountStore.listen(this.accountChanged)
     settingsStore.listen(this.settingsChanged)
-    mailboxDispatch.on('blurred', this.mailboxBlurred)
+    accountDispatch.on('blurred', this.serviceBlurred)
 
     // Step 4. Customizations
     if (this.state.uiSettings.customMainCSS) {
@@ -80,6 +83,7 @@ export default class Provider extends React.Component {
     updaterActions.unload()
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE, this.downloadCompleted)
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_SETTINGS, this.ipcLaunchSettings)
+    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_WAVEBOX_ACCOUNT, this.ipcLaunchWaveboxAccount)
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER, this.ipcLaunchSupportCenter)
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_NEWS, this.ipcLaunchNews)
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
@@ -87,13 +91,13 @@ export default class Provider extends React.Component {
     // STEP 2. Mailbox connections
     googleActions.stopPollingUpdates()
     trelloActions.stopPollingUpdates()
-    slackActions.disconnectAllMailboxes()
+    slackActions.disconnectAllServices()
     microsoftActions.stopPollingUpdates()
 
     // STEP 3. Listening for self
-    mailboxStore.unlisten(this.mailboxesChanged)
+    accountStore.unlisten(this.accountChanged)
     settingsStore.unlisten(this.settingsChanged)
-    mailboxDispatch.removeListener('blurred', this.mailboxBlurred)
+    accountDispatch.removeListener('blurred', this.serviceBlurred)
 
     // STEP 4. Customizations
     this.renderCustomCSS(null)
@@ -111,10 +115,10 @@ export default class Provider extends React.Component {
 
   state = (() => {
     const settingsState = settingsStore.getState()
-    const mailboxState = mailboxStore.getState()
+    const accountState = accountStore.getState()
     return {
-      messagesUnreadCount: mailboxState.totalUnreadCountForAppBadgeForUser(),
-      hasUnreadActivity: mailboxState.hasUnreadActivityForAppBadgeForUser(),
+      messagesUnreadCount: accountState.userUnreadCountForApp(),
+      hasUnreadActivity: accountState.userUnreadActivityForApp(),
       uiSettings: settingsState.ui,
       traySettings: settingsState.tray,
       launchTraySettings: settingsState.launched.tray,
@@ -122,10 +126,10 @@ export default class Provider extends React.Component {
     }
   })()
 
-  mailboxesChanged = (mailboxState) => {
+  accountChanged = (accountState) => {
     this.setState({
-      messagesUnreadCount: mailboxState.totalUnreadCountForAppBadgeForUser(),
-      hasUnreadActivity: mailboxState.hasUnreadActivityForAppBadgeForUser()
+      messagesUnreadCount: accountState.userUnreadCountForApp(),
+      hasUnreadActivity: accountState.userUnreadActivityForApp()
     })
   }
 
@@ -166,6 +170,13 @@ export default class Provider extends React.Component {
   }
 
   /**
+  * Launches the wavebox account over the IPC channel
+  */
+  ipcLaunchWaveboxAccount = () => {
+    window.location.hash = '/settings/pro'
+  }
+
+  /**
   * Launches the support center over the ipc channcel
   */
   ipcLaunchSupportCenter = () => {
@@ -194,7 +205,7 @@ export default class Provider extends React.Component {
   * Handles a mailbox bluring by trying to refocus the mailbox
   * @param evt: the event that fired
   */
-  mailboxBlurred = (evt) => {
+  serviceBlurred = (evt) => {
     // Requeue the event to run on the end of the render cycle
     clearTimeout(this.refocusTO)
     this.refocusTO = setTimeout(() => {
@@ -205,13 +216,13 @@ export default class Provider extends React.Component {
       } else if (active.tagName === 'BODY') {
         // Focused on body, just dip focus onto the webview
         clearInterval(this.forceFocusTO)
-        mailboxDispatch.refocus()
+        accountDispatch.refocus()
       } else {
         // focused on some element in the ui, poll until we move back to body
         this.forceFocusTO = setInterval(() => {
           if (document.activeElement.tagName === 'BODY') {
             clearInterval(this.forceFocusTO)
-            mailboxDispatch.refocus()
+            accountDispatch.refocus()
           }
         }, constants.REFOCUS_MAILBOX_INTERVAL_MS)
       }
@@ -222,7 +233,7 @@ export default class Provider extends React.Component {
   * Handles the window refocusing by pointing the focus back onto the active mailbox
   */
   handleWindowFocused = () => {
-    mailboxDispatch.refocus()
+    accountDispatch.refocus()
   }
 
   /* **************************************************************************/
@@ -253,23 +264,6 @@ export default class Provider extends React.Component {
     }
   }
 
-  /**
-  * Renders the tray
-  * @param traySettings: the current tray settings
-  * @param launchTraySettings: the launch settings for the tray
-  * @param unreadCount: the current unread count for the tray
-  * @return jsx or undefined
-  */
-  renderTray (traySettings, launchTraySettings, unreadCount) {
-    if (!traySettings.show) { return }
-    return (
-      <Tray
-        unreadCount={unreadCount}
-        launchTraySettings={launchTraySettings}
-        traySettings={traySettings} />
-    )
-  }
-
   render () {
     const {
       traySettings,
@@ -281,17 +275,23 @@ export default class Provider extends React.Component {
 
     return (
       <div>
-        <MuiThemeProvider muiTheme={Theme}>
+        <MuiThemeProvider theme={THEME_MAPPING[uiSettings.theme]}>
           <WaveboxRouter />
         </MuiThemeProvider>
         <AccountMessageDispatcher />
         <WindowTitle />
-        {this.renderTray(traySettings, launchTraySettings, messagesUnreadCount)}
-        {!uiSettings.showAppBadge ? undefined : (
+        {traySettings.show ? (
+          <Tray
+            unreadCount={messagesUnreadCount}
+            hasUnreadActivity={hasUnreadActivity}
+            launchTraySettings={launchTraySettings}
+            traySettings={traySettings} />
+        ) : undefined}
+        {uiSettings.showAppBadge ? (
           <AppBadge
             unreadCount={messagesUnreadCount}
             hasUnreadActivity={hasUnreadActivity} />
-        )}
+        ) : undefined}
       </div>
     )
   }

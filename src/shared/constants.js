@@ -21,6 +21,7 @@ module.exports = Object.freeze({
     STABLE: 'STABLE',
     BETA: 'BETA'
   }),
+  OSX_APP_BUNDLE_ID: 'io.wavebox.wavebox',
 
   // Database
   PERSISTENCE_INDEX_KEY: '__index__',
@@ -35,11 +36,14 @@ module.exports = Object.freeze({
   MAILBOX_SLEEP_WAIT: minutes(5),
   MAILBOX_SLEEP_EXTEND: seconds(30),
   REFOCUS_MAILBOX_INTERVAL_MS: 300,
+  MAILBOX_INTELLI_ACTIVE_MAX_TS: minutes(5),
   SERVICE_LOCAL_AVATAR_PREFIX: 'SERVICE_LOCAL:',
+  AVATAR_TIMESTAMP_PREFIX: '__TIMESTAMP__:',
 
   // Google
   GOOGLE_PROFILE_SYNC_INTERVAL: hours(6),
   GOOGLE_MAILBOX_WATCH_INTERVAL: days(6),
+  GOOGLE_MAILBOX_WATCH_THROTTLE: hours(1),
 
   // Trello
   TRELLO_PROFILE_SYNC_INTERVAL: hours(6),
@@ -59,6 +63,8 @@ module.exports = Object.freeze({
   SYNC_SOCKET_UPGRADE_INTERVAL: minutes(5),
   SYNC_SOCKET_RECONNECT_MIN: 500,
   SYNC_SOCKET_RECONNECT_RANGE: seconds(4.5),
+  USER_PROFILE_SYNC_INTERVAL: hours(6),
+  USER_PROFILE_DEFERED_SYNC_ON_CREATE: minutes(15),
 
   // Dictionaries
   PREINSTALLED_DICTIONARIES: ['en_US'],
@@ -88,6 +94,9 @@ module.exports = Object.freeze({
   ARTIFICIAL_COOKIE_PERSIST_WAIT: seconds(30),
   ARTIFICIAL_COOKIE_PERSIST_PERIOD: days(30),
 
+  // UI
+  TOOLBAR_AUTO_SPLIT_THRESHOLD: 8,
+
   // Misc
   ELEVATED_LOG_PREFIX: '[ELEVATED_LOG]',
 
@@ -100,6 +109,7 @@ module.exports = Object.freeze({
   NEWS_SYNC_PERIOD: hours(12),
 
   // URLs
+  SERVER_URL: 'https://wavebox.io',
   WEB_URL: 'https://wavebox.io',
   SUPPORT_URL: 'https://wavebox.io/support',
   BLOG_URL: 'https://blog.wavebox.io',

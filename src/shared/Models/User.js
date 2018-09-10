@@ -1,11 +1,22 @@
 const Model = require('./Model')
-const MailboxTypes = require('./Accounts/MailboxTypes')
+const SERVICE_TYPES = require('./ACAccounts/ServiceTypes').default
+
 const MS_IN_DAY = (1000 * 60 * 60 * 24)
 const PLANS = Object.freeze({
   FREE: 'free',
   TRIAL: 'trial',
   PRO: 'pro1'
 })
+
+// Prior to 3.14.8 we would send mailbox types, migrate these to the equivalent service types
+const DEPRICATED_TYPE_MAPPING = {
+  'GOOGLE': [ SERVICE_TYPES.GOOGLE_MAIL, SERVICE_TYPES.GOOGLE_INBOX ],
+  'MICROSOFT': [ SERVICE_TYPES.MICROSOFT_MAIL ],
+  'TRELLO': [ SERVICE_TYPES.TRELLO ],
+  'SLACK': [ SERVICE_TYPES.SLACK ],
+  'GENERIC': [ SERVICE_TYPES.GENERIC ],
+  'CONTAINER': [ SERVICE_TYPES.CONTAINER ]
+}
 
 class User extends Model {
   /* **************************************************************************/
@@ -51,10 +62,11 @@ class User extends Model {
   get hasAccountLimit () { return this.accountLimit !== Infinity }
 
   get accountTypes () {
-    const val = this._value_('accountTypes', [MailboxTypes.GOOGLE])
-    return val === null ? null : val
+    const val = this.classicAccountTypes
+    return val === null ? null : val.reduce((acc, t) => acc.concat(DEPRICATED_TYPE_MAPPING[t] || t), [])
   }
-  get hasAccountTypeRestriction () { return this.accountTypes !== null }
+  get classicAccountTypes () { return this._value_('accountTypes', ['GOOGLE']) }
+  get hasAccountTypeRestriction () { return this.classicAccountTypes !== null }
 
   /**
   * @param type: the type of account to check
@@ -68,11 +80,22 @@ class User extends Model {
     }
   }
 
+  /**
+  * @param currentCount: the current count of services
+  * @return true if the user has reached their account limit, false otherwise
+  */
+  hasReachedAccountLimit (currentCount) {
+    if (this.hasAccountLimit) {
+      return currentCount >= this.this.accountLimit
+    } else {
+      return false
+    }
+  }
+
   /* **************************************************************************/
   // Properties: Permissions: Features
   /* **************************************************************************/
 
-  get hasServices () { return this._value_('hasServices', false) }
   get hasSleepable () { return this._value_('hasSleepable', false) }
 
   /* **************************************************************************/
@@ -116,6 +139,12 @@ class User extends Model {
     const privacy = this._value_('privacy', {})
     return privacy.enable_analytics === undefined ? false : privacy.enable_analytics
   }
+
+  /* **************************************************************************/
+  // Properties: Profiles
+  /* **************************************************************************/
+
+  get enableProfileSync () { return this._value_('enableProfileSync', false) }
 }
 
 module.exports = User

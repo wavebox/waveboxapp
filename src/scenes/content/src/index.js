@@ -3,10 +3,9 @@ import ReactDOM from 'react-dom'
 import Provider from 'Scenes/Provider'
 import browserActions from 'stores/browser/browserActions'
 import querystring from 'querystring'
-import {
-  WB_SEND_IPC_TO_CHILD
-} from 'shared/ipcEvents'
+import { WB_SEND_IPC_TO_CHILD } from 'shared/ipcEvents'
 import { ipcRenderer, webFrame, remote } from 'electron'
+import { settingsStore, settingsActions } from 'stores/settings'
 
 // Prevent zooming
 webFrame.setVisualZoomLevelLimits(1, 1)
@@ -31,6 +30,10 @@ document.addEventListener('dragover', (evt) => {
     evt.stopPropagation()
   }
 }, false)
+
+// Load what we have in the db
+settingsStore.getState()
+settingsActions.load()
 
 // Parse our settings
 const {

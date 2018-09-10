@@ -1,48 +1,37 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import {SelectField, MenuItem, RaisedButton} from 'material-ui'
-import mailboxStore from 'stores/mailbox/mailboxStore'
-import * as Colors from 'material-ui/styles/colors'
-import commonStyles from '../CommonSettingStyles'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import { accountStore } from 'stores/account'
 import CustomCodeEditingDialog from './CustomCodeEditingDialog'
-import RestrictedAccountSettings from './RestrictedAccountSettings'
-import GoogleAccountSettings from './Google/GoogleAccountSettings'
-import SlackAccountSettings from './Slack/SlackAccountSettings'
-import TrelloAccountSettings from './Trello/TrelloAccountSettings'
-import GenericAccountSettings from './Generic/GenericAccountSettings'
-import MicrosoftAccountSettings from './Microsoft/MicrosoftAccountSettings'
-import ContainerAccountSettings from './Container/ContainerAccountSettings'
-import { Row, Col } from 'Components/Grid'
-import { MailboxAvatar } from 'Components/Mailbox'
+import { withStyles } from '@material-ui/core/styles'
+import classNames from 'classnames'
+import { Button } from '@material-ui/core'
+import AccountPickerBanner from './AccountPickerBanner'
+import AccountSettingsScroller from './AccountSettingsScroller'
 
 const styles = {
-  accountPicker: {
-    position: 'relative',
-    height: 100,
-    marginTop: -24
-  },
-  accountPickerAvatar: {
+  accountContent: {
     position: 'absolute',
-    top: 20,
-    left: 20
+    top: 85,
+    left: 0,
+    right: 0,
+    bottom: 0
   },
-  accountPickerContainer: {
-    position: 'absolute',
-    top: 25,
-    left: 100,
-    right: 15
+  addFirstAccountContainer: {
+    marginTop: 36,
+    textAlign: 'center'
   }
 }
 
-export default class AccountSettings extends React.Component {
+@withStyles(styles)
+class AccountSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
     showRestart: PropTypes.func.isRequired,
-    mailboxId: PropTypes.string
+    mailboxId: PropTypes.string,
+    serviceId: PropTypes.string
   }
 
   /* **************************************************************************/
@@ -50,16 +39,17 @@ export default class AccountSettings extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxesChanged)
+    accountStore.listen(this.accountChanged)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxesChanged)
+    accountStore.unlisten(this.accountChanged)
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.mailboxId !== nextProps.mailboxId) {
       this.setState({
+        selectedMailboxId: nextProps.mailboxId || accountStore.getState().mailboxIds()[0],
         codeEditorOpen: false,
         codeEditorTitle: undefined,
         codeEditorCode: '',
@@ -73,9 +63,10 @@ export default class AccountSettings extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
-    const mailboxState = mailboxStore.getState()
+    const accountState = accountStore.getState()
     return {
-      mailboxes: mailboxState.allMailboxes(),
+      accountCount: accountState.mailboxCount(),
+      selectedMailboxId: this.props.mailboxId || accountState.mailboxIds()[0],
       codeEditorOpen: false,
       codeEditorTitle: undefined,
       codeEditorCode: '',
@@ -83,9 +74,11 @@ export default class AccountSettings extends React.Component {
     }
   })()
 
-  mailboxesChanged = (mailboxState) => {
-    const all = mailboxState.allMailboxes()
-    this.setState({ mailboxes: all })
+  accountChanged = (accountState) => {
+    this.setState({
+      accountCount: accountState.mailboxCount(),
+      selectedMailboxId: this.props.mailboxId || accountState.mailboxIds()[0]
+    })
   }
 
   /* **************************************************************************/
@@ -94,11 +87,9 @@ export default class AccountSettings extends React.Component {
 
   /**
   * Handles chaning the account
-  * @param evt: the event that fired
-  * @param index: the index of the first option
   * @param mailboxId: the id of the mailbox
   */
-  handleAccountChange = (evt, index, mailboxId) => {
+  handleAccountChange = (mailboxId) => {
     window.location.hash = `/settings/accounts/${mailboxId}`
   }
 
@@ -153,128 +144,38 @@ export default class AccountSettings extends React.Component {
   // Rendering
   /* **************************************************************************/
 
-  /**
-  * Renders no mailboxes
-  * @return jsx
-  */
-  renderNoMailboxes () {
-    const passProps = Object.assign({}, this.props)
-    delete passProps.showRestart
-    delete passProps.mailboxId
+  render () {
+    const {
+      mailboxId,
+      serviceId,
+      showRestart,
+      classes,
+      className,
+      ...passProps
+    } = this.props
+    const {
+      accountCount,
+      selectedMailboxId,
+      codeEditorOpen,
+      codeEditorTitle,
+      codeEditorCode
+    } = this.state
 
-    return (
-      <div {...passProps}>
-        <div style={{ textAlign: 'center' }}>
-          <RaisedButton
-            label='Add your first account'
-            primary
-            onClick={this.handleAddAccount} />
-        </div>
-      </div>
-    )
-  }
-
-  /**
-  * Renders the settings for the type of mailbox
-  * @param mailbox: the mailbox to render for
-  * @param showRestart: the show restart function
-  * @return jsx
-  */
-  renderMailboxSettings (mailbox, showRestart) {
-    switch (mailbox.type) {
-      case CoreMailbox.MAILBOX_TYPES.GOOGLE:
-        return (
-          <GoogleAccountSettings
-            mailbox={mailbox}
-            showRestart={showRestart}
-            onRequestEditCustomCode={this.handleEditCustomCode} />)
-      case CoreMailbox.MAILBOX_TYPES.SLACK:
-        return (
-          <SlackAccountSettings
-            mailbox={mailbox}
-            showRestart={showRestart}
-            onRequestEditCustomCode={this.handleEditCustomCode} />)
-      case CoreMailbox.MAILBOX_TYPES.TRELLO:
-        return (
-          <TrelloAccountSettings
-            mailbox={mailbox}
-            showRestart={showRestart}
-            onRequestEditCustomCode={this.handleEditCustomCode} />)
-      case CoreMailbox.MAILBOX_TYPES.MICROSOFT:
-        return (
-          <MicrosoftAccountSettings
-            mailbox={mailbox}
-            showRestart={showRestart}
-            onRequestEditCustomCode={this.handleEditCustomCode} />)
-      case CoreMailbox.MAILBOX_TYPES.GENERIC:
-        return (
-          <GenericAccountSettings
-            mailbox={mailbox}
-            showRestart={showRestart}
-            onRequestEditCustomCode={this.handleEditCustomCode} />)
-      case CoreMailbox.MAILBOX_TYPES.CONTAINER:
-        return (
-          <ContainerAccountSettings
-            mailbox={mailbox}
-            showRestart={showRestart}
-            onRequestEditCustomCode={this.handleEditCustomCode} />)
-      default: return undefined
-    }
-  }
-
-  /**
-  * Renders the mailbox picker and the settings
-  * @return jsx
-  */
-  renderMailboxes () {
-    const { mailboxId, showRestart, ...passProps } = this.props
-    const { mailboxes, codeEditorOpen, codeEditorTitle, codeEditorCode } = this.state
-    const selected = mailboxes.find((mailbox) => mailbox.id === mailboxId) || mailboxes[0]
-    const isSelectedRestricted = mailboxStore.getState().isMailboxRestricted(selected.id) // Bad
-
-    return (
-      <div {...passProps}>
-        <Row>
-          <Col md={8} offset={2} style={styles.accountPicker}>
-            <MailboxAvatar
-              mailboxId={selected.id}
-              size={60}
-              style={styles.accountPickerAvatar} />
-            <div style={styles.accountPickerContainer}>
-              <SelectField
-                value={selected.id}
-                style={{marginTop: -14}}
-                floatingLabelText='Pick your account'
-                floatingLabelStyle={{color: Colors.blue600}}
-                fullWidth
-                onChange={this.handleAccountChange}>
-                {
-                  this.state.mailboxes.map((m) => {
-                    return (
-                      <MenuItem
-                        value={m.id}
-                        key={m.id}
-                        primaryText={`${m.humanizedType} : ${m.displayName}`} />
-                    )
-                  })
-                }
-              </SelectField>
-            </div>
-          </Col>
-        </Row>
-        {isSelectedRestricted ? (
-          <RestrictedAccountSettings mailboxId={mailboxId} />
-        ) : (
-          <div>
-            <Row>
-              <Col md={12}>
-                <h1 style={commonStyles.heading}>Account</h1>
-                <p style={commonStyles.headingInfo}>
-                  <strong>{selected.humanizedType}</strong> {selected.displayName}
-                </p>
-              </Col>
-            </Row>
-            {this.renderMailboxSettings(selected, showRestart)}
+    if (accountCount) {
+      // Push the key down to force a complete re-render when changing account. We do this to support a staged render
+      return (
+        <div
+          key={mailboxId}
+          {...passProps}>
+          <AccountPickerBanner
+            selectedMailboxId={selectedMailboxId}
+            onChange={this.handleAccountChange} />
+          <div className={classes.accountContent}>
+            <AccountSettingsScroller
+              mailboxId={selectedMailboxId}
+              startServiceId={serviceId}
+              showRestart={showRestart}
+              onRequestEditCustomCode={this.handleEditCustomCode} />
             <CustomCodeEditingDialog
               title={codeEditorTitle}
               open={codeEditorOpen}
@@ -282,16 +183,18 @@ export default class AccountSettings extends React.Component {
               onCancel={this.handleCancelCustomCode}
               onSave={this.handleSaveCustomCode} />
           </div>
-        )}
-      </div>
-    )
-  }
-
-  render () {
-    if (this.state.mailboxes.length) {
-      return this.renderMailboxes()
+        </div>
+      )
     } else {
-      return this.renderNoMailboxes()
+      return (
+        <div className={classNames(className, classes.addFirstAccountContainer)} {...passProps}>
+          <Button variant='raised' color='primary' onClick={this.handleAddAccount}>
+            Add your first account
+          </Button>
+        </div>
+      )
     }
   }
 }
+
+export default AccountSettings

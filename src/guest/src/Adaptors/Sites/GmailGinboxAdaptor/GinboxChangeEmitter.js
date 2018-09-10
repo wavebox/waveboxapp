@@ -1,4 +1,4 @@
-import {ipcRenderer} from 'electron'
+import { ipcRenderer } from 'electron'
 import GinboxApi from './GinboxApi'
 import { WB_BROWSER_GOOGLE_INBOX_TOP_MESSAGE_CHANGED } from 'shared/ipcEvents'
 

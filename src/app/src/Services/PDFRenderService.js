@@ -93,6 +93,7 @@ class PDFRenderService {
         printButton.addEventListener('click', () => {
           document.title = 'wbaction:print'
         })
+
         const toolbar = document.querySelector('#toolbar').shadowRoot
         const downloadButton = toolbar.querySelector('#download')
         downloadButton.parentElement.insertBefore(printButton, downloadButton.nextSibling)

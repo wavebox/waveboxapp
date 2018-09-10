@@ -1,53 +1,24 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { IconButton } from 'material-ui'
-import ReactPortalTooltip from 'react-portal-tooltip'
+import { IconButton } from '@material-ui/core'
 import uuid from 'uuid'
 import { settingsActions, settingsStore, Tour } from 'stores/settings'
-import * as Colors from 'material-ui/styles/colors'
+import { withStyles } from '@material-ui/core/styles'
+import classNames from 'classnames'
+import ThemeTools from 'wbui/Themes/ThemeTools'
+import DefaultTooltip400w from 'wbui/Tooltips/DefaultTooltip400w'
+import TourTooltip from 'wbui/Tooltips/TourTooltip'
 
-const styles = {
+const styles = (theme) => ({
   // Icon
   container: {
-    textAlign: 'center'
-  },
-  icon: {
+    textAlign: 'center',
     WebkitAppRegion: 'no-drag'
   },
-
-  // Main popover
-  popover: {
-    style: {
-      background: 'rgba(34, 34, 34, 0.9)',
-      paddingTop: 8,
-      paddingBottom: 8,
-      paddingLeft: 16,
-      paddingRight: 16,
-      fontSize: '13px',
-      color: 'white'
-    },
-    arrowStyle: {
-      color: 'rgba(34, 34, 34, 0.9)',
-      borderColor: false
-    }
-  },
-
-  // Tour popover
-  tourPopover: {
-    style: {
-      background: Colors.lightBlue400,
-      paddingTop: 8,
-      paddingBottom: 8,
-      paddingLeft: 16,
-      paddingRight: 16,
-      fontSize: '13px',
-      color: 'white',
-      cursor: 'pointer'
-    },
-    arrowStyle: {
-      color: Colors.lightBlue400,
-      borderColor: false
-    }
+  button: {
+    backgroundColor: 'transparent !important',
+    height: 32,
+    width: 32
   },
 
   // Tour content
@@ -59,25 +30,31 @@ const styles = {
   popoverButtonContainer: {
     paddingLeft: 32
   },
-  basePopoverButton: {
+  nextPopoverButton: {
     marginTop: 8,
     marginBottom: 8,
     alignSelf: 'center',
-    border: '2px solid white',
+    border: `2px solid ${ThemeTools.getValue(theme, 'wavebox.tourPopover.color')}`,
     padding: '8px 16px',
     borderRadius: 4,
     fontSize: '11px',
     textAlign: 'center'
+  },
+  quitPopoverButton: {
+    marginTop: 8,
+    marginBottom: 8,
+    alignSelf: 'center',
+    border: `2px solid ${ThemeTools.getValue(theme, 'wavebox.tourPopover.color')}`,
+    padding: '8px 16px',
+    borderRadius: 4,
+    fontSize: '11px',
+    textAlign: 'center',
+    opacity: 0.7
   }
-}
-styles.nextPopoverButton = { ...styles.basePopoverButton }
-styles.quitPopoverButton = {
-  ...styles.basePopoverButton,
-  borderColor: 'rgba(255, 255, 255, 0.7)',
-  color: 'rgba(255, 255, 255, 0.7)'
-}
+})
 
-export default class SidelistControl extends React.Component {
+@withStyles(styles, { withTheme: true })
+class SidelistControl extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -85,7 +62,6 @@ export default class SidelistControl extends React.Component {
   static propTypes = {
     onClick: PropTypes.func.isRequired,
     icon: PropTypes.element.isRequired,
-    iconStyle: PropTypes.object,
     tooltip: PropTypes.node.isRequired,
     tourStep: PropTypes.oneOf(Object.keys(Tour.TOUR_STEPS)).isRequired,
     tourTooltip: PropTypes.node.isRequired,
@@ -175,18 +151,19 @@ export default class SidelistControl extends React.Component {
 
   /**
   * Renders the tooltip content for the tour
+  * @param classes: the classes
   * @param tourTooltip: the tooltip content
   * @return jsx
   */
-  renderTourTooltipContent (tourTooltip) {
+  renderTourTooltipContent (classes, tourTooltip) {
     return (
-      <div style={styles.popoverContentContainer} onClick={this.handleTourNext}>
+      <div className={classes.popoverContentContainer} onClick={this.handleTourNext}>
         {tourTooltip}
-        <div style={styles.popoverButtonContainer}>
-          <div style={styles.quitPopoverButton} onClick={this.handleTourQuit}>
+        <div className={classes.popoverButtonContainer}>
+          <div className={classes.quitPopoverButton} onClick={this.handleTourQuit}>
             Skip Tour
           </div>
-          <div style={styles.nextPopoverButton}>
+          <div className={classes.nextPopoverButton}>
             Got it
           </div>
         </div>
@@ -196,14 +173,15 @@ export default class SidelistControl extends React.Component {
 
   render () {
     const {
-      style,
-      onClick,
-      icon,
-      iconStyle,
+      classes,
+      theme,
       tooltip,
       tourStep,
       tourTooltip,
       tourTooltipStyles,
+      onClick,
+      className,
+      icon,
       ...passProps
     } = this.props
     const {
@@ -213,44 +191,48 @@ export default class SidelistControl extends React.Component {
       currentTourStep,
       dismissingTour
     } = this.state
-    const showTourPopover = !hasSeenTour && currentTourStep === tourStep && !dismissingTour
 
+    const showTourPopover = !hasSeenTour && currentTourStep === tourStep && !dismissingTour
     return (
       <div
         {...passProps}
-        style={{...styles.container, ...style}}
+        className={classNames(classes.container, className)}
         onMouseEnter={() => this.setState({ hovering: true })}
         onMouseLeave={() => this.setState({ hovering: false })}
         id={`ReactComponent-Sidelist-Control-${generatedId}`}>
-        <IconButton iconStyle={{...styles.icon, ...iconStyle}} onClick={onClick}>
+        <IconButton
+          onClick={(...args) => {
+            this.setState({ hovering: false })
+            if (onClick) { onClick(...args) }
+          }}
+          className={classes.button}>
           {icon}
         </IconButton>
-        <ReactPortalTooltip
+        <DefaultTooltip400w
           active={hovering && !showTourPopover}
           tooltipTimeout={0}
-          style={styles.popover}
           position='right'
           arrow='center'
           group={generatedId}
           parent={`#ReactComponent-Sidelist-Control-${generatedId}`}>
           {tooltip}
-        </ReactPortalTooltip>
+        </DefaultTooltip400w>
         {showTourPopover ? (
-          <ReactPortalTooltip
+          <TourTooltip
             active
             tooltipTimeout={0}
-            style={tourTooltipStyles ? {
-              style: { ...styles.tourPopover.style, ...tourTooltipStyles.style },
-              arrowStyle: { ...styles.tourPopover.arrowStyle, ...tourTooltipStyles.arrowStyle }
-            } : styles.tourPopover}
+            popoverStyle={tourTooltipStyles ? tourTooltipStyles.style : undefined}
+            popoverArrowStyle={tourTooltipStyles ? tourTooltipStyles.arrowStyle : undefined}
             position='right'
             arrow='center'
             group={generatedId}
             parent={`#ReactComponent-Sidelist-Control-${generatedId}`}>
-            {this.renderTourTooltipContent(tourTooltip)}
-          </ReactPortalTooltip>
+            {this.renderTourTooltipContent(classes, tourTooltip)}
+          </TourTooltip>
         ) : undefined}
       </div>
     )
   }
 }
+
+export default SidelistControl

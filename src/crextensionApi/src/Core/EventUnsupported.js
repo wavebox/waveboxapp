@@ -1,3 +1,4 @@
+import Log from './Log'
 const privEventName = Symbol('privEventName')
 
 class EventUnsupported {
@@ -20,7 +21,7 @@ class EventUnsupported {
   /* **************************************************************************/
 
   addListener (callback) {
-    console.warn(`${this[privEventName]} is not supported by Wavebox at this time. Adding listeners will have no effect`)
+    Log.warn(`${this[privEventName]} is not supported by Wavebox at this time. Adding listeners will have no effect`)
     this.listeners.push(callback)
   }
 

@@ -13,18 +13,13 @@ import {
   CRX_BROWSER_ACTION_FETCH_BADGE_BACKGROUND_COLOR_,
   CRX_BROWSER_ACTION_ENABLE_,
   CRX_BROWSER_ACTION_DISABLE_,
-  CRX_BROWSER_ACTION_CLICKED_
+  CRX_BROWSER_ACTION_CLICKED_,
+  CRX_BROWSER_ACTION_OPEN_POPUP_
 } from 'shared/crExtensionIpcEvents'
-import {
-  CR_EXTENSION_PROTOCOL
-} from 'shared/extensionApis'
-import {
-  CRExtensionRTBrowserAction
-} from 'shared/Models/CRExtensionRT'
-import ContentWindow from 'Windows/ContentWindow'
-import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
+import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
+import { CRExtensionRTBrowserAction } from 'shared/Models/CRExtensionRT'
 import { evtMain } from 'AppEvents'
-import {crextensionActions} from 'stores/crextension'
+import { crextensionActions } from 'stores/crextension'
 
 class CRExtensionBrowserAction {
   /* ****************************************************************************/
@@ -34,6 +29,7 @@ class CRExtensionBrowserAction {
   constructor (extension) {
     this.extension = extension
     this.browserActions = new Map()
+    this.backgroundPageSender = undefined
 
     ipcMain.on(`${CRX_BROWSER_ACTION_SET_TITLE_}${this.extension.id}`, this.handleSetTitle)
     CRDispatchManager.registerHandler(`${CRX_BROWSER_ACTION_FETCH_TITLE_}${this.extension.id}`, this.handleFetchTitle)
@@ -96,16 +92,16 @@ class CRExtensionBrowserAction {
       update.popup = browserAction.defaultPopup
     }
 
-    this._updateBrowserAction(undefined, update, false)
+    this._updateBrowserAction(null, update, false)
   }
 
   /**
   * Updates a browser action
-  * @param tabId=undefined: the id of the tab
+  * @param tabId=null: the id of the tab
   * @param changes: an object of changes to merge in
   * @param emitChange=true: false to not emit changes
   */
-  _updateBrowserAction (tabId = undefined, changes, emitChange = true) {
+  _updateBrowserAction (tabId = null, changes, emitChange = true) {
     if (!this.browserActions.has(tabId)) {
       this.browserActions.set(tabId, new CRExtensionRTBrowserAction(this.extensionId, tabId, {}))
     }
@@ -119,6 +115,25 @@ class CRExtensionBrowserAction {
     if (emitChange && this.extension.manifest.hasBrowserAction) {
       crextensionActions.browserActionChanged.defer(this.extension.id, tabId, nextJS)
     }
+  }
+
+  /**
+  * Gets the popup url for the browser action
+  * @param tabId: the id of the tab
+  * @return the url for the popup or undefined
+  */
+  _getPopupUrl (tabId) {
+    const tabBA = this.browserActions.get(tabId)
+    if (tabBA && tabBA.hasPopup) {
+      return `${CR_EXTENSION_PROTOCOL}://${this.extension.id}/${tabBA.popup}`
+    }
+
+    const globalBA = this.browserActions.get(null)
+    if (globalBA && globalBA.hasPopup) {
+      return `${CR_EXTENSION_PROTOCOL}://${this.extension.id}/${globalBA.popup}`
+    }
+
+    return undefined
   }
 
   /* ****************************************************************************/
@@ -151,7 +166,7 @@ class CRExtensionBrowserAction {
   * @param evt: the event that fired
   * @param {title, tabId}
   */
-  handleSetTitle = (evt, { title, tabId = undefined }) => {
+  handleSetTitle = (evt, { title, tabId = null }) => {
     this._updateBrowserAction(tabId, { title })
   }
 
@@ -161,7 +176,7 @@ class CRExtensionBrowserAction {
   * @param [tabId]
   * @param responseCallback: executed on completion
   */
-  handleFetchTitle = (evt, [{tabId = undefined}], responseCallback) => {
+  handleFetchTitle = (evt, [{ tabId = null }], responseCallback) => {
     responseCallback(null, [(this.browserActions.get(tabId) || {}).title])
   }
 
@@ -171,8 +186,8 @@ class CRExtensionBrowserAction {
   * @param {[imageData, path, tabId]}
   * @param responseCallback: executed on completion
   */
-  handleSetIcon = (evt, [{ imageData, path, tabId = undefined }], responseCallback) => {
-    this._updateBrowserAction(tabId, { icon: {imageData, path} })
+  handleSetIcon = (evt, [{ imageData, path, tabId = null }], responseCallback) => {
+    this._updateBrowserAction(tabId, { icon: { imageData, path } })
     responseCallback(null, [])
   }
 
@@ -185,7 +200,7 @@ class CRExtensionBrowserAction {
   * @param evt: the event that fired
   * @param {popup, tabId}
   */
-  handleSetPopup = (evt, { popup, tabId = undefined }) => {
+  handleSetPopup = (evt, { popup, tabId = null }) => {
     this._updateBrowserAction(tabId, { popup })
   }
 
@@ -195,7 +210,7 @@ class CRExtensionBrowserAction {
   * @param {[imageData, path, tabId]}
   * @param responseCallback: executed with the popup
   */
-  handleFetchPopup = (evt, [{ tabId = undefined }], responseCallback) => {
+  handleFetchPopup = (evt, [{ tabId = null }], responseCallback) => {
     responseCallback(null, [(this.browserActions.get(tabId) || {}).popup])
   }
 
@@ -208,7 +223,7 @@ class CRExtensionBrowserAction {
   * @param evt: the event that fired
   * @param { text, tabId }
   */
-  handleSetBadgeText = (evt, { text, tabId = undefined }) => {
+  handleSetBadgeText = (evt, { text, tabId = null }) => {
     this._updateBrowserAction(tabId, { badgeText: text })
   }
 
@@ -218,7 +233,7 @@ class CRExtensionBrowserAction {
   * @param {[imageData, path, tabId]}
   * @param responseCallback: executed with the popup
   */
-  handleFetchBadgeText = (evt, [{ tabId = undefined }], responseCallback) => {
+  handleFetchBadgeText = (evt, [{ tabId = null }], responseCallback) => {
     responseCallback(null, [(this.browserActions.get(tabId) || {}).badgeText])
   }
 
@@ -227,7 +242,7 @@ class CRExtensionBrowserAction {
   * @param evt: the event that fired
   * @param { color, tabId }
   */
-  handleSetBadgeBackgroundColor = (evt, { color, tabId = undefined }) => {
+  handleSetBadgeBackgroundColor = (evt, { color, tabId = null }) => {
     this._updateBrowserAction(tabId, { badgeBackgroundColor: color })
   }
 
@@ -237,7 +252,7 @@ class CRExtensionBrowserAction {
   * @param {[imageData, path, tabId]}
   * @param responseCallback: executed with the popup
   */
-  handleFetchBadgeBackgroundColor = (evt, [{ tabId = undefined }], responseCallback) => {
+  handleFetchBadgeBackgroundColor = (evt, [{ tabId = null }], responseCallback) => {
     responseCallback(null, [(this.browserActions.get(tabId) || {}).badgeBackgroundColor])
   }
 
@@ -250,7 +265,7 @@ class CRExtensionBrowserAction {
   * @param evt: the event that fired
   * @param tabId: the tabId
   */
-  handleEnable = (evt, tabId = undefined) => {
+  handleEnable = (evt, tabId = null) => {
     this._updateBrowserAction(tabId, { enabled: true })
   }
 
@@ -259,7 +274,7 @@ class CRExtensionBrowserAction {
   * @param evt: the event that fired
   * @param tabId: the tabId
   */
-  handleDisable = (evt, tabId = undefined) => {
+  handleDisable = (evt, tabId = null) => {
     this._updateBrowserAction(tabId, { enabled: false })
   }
 
@@ -273,16 +288,11 @@ class CRExtensionBrowserAction {
   * @param tabId: the id of the tab
   */
   handleClick = (evt, tabId) => {
-    if (this.extension.manifest.wavebox.hasBrowserActionOpenUrl) {
-      const contentWindow = new ContentWindow()
-      contentWindow.create(
-        this.extension.manifest.wavebox.browserActionOpenUrl,
-        undefined,
-        undefined,
-        {
-          partition: CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
-        }
-      )
+    const popupUrl = this._getPopupUrl(tabId)
+    if (popupUrl) {
+      if (this.backgroundPageSender) {
+        this.backgroundPageSender(`${CRX_BROWSER_ACTION_OPEN_POPUP_}${this.extension.id}`, tabId, popupUrl)
+      }
     } else {
       const tabInfo = CRExtensionTab.dataFromWebContentsId(this.extension, tabId)
       webContents.getAllWebContents().forEach((targetWebcontents) => {

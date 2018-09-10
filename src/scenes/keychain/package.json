@@ -5,18 +5,18 @@
   "repository": "https://github.com/wavebox/waveboxapp",
   "description": "Keychain UI for Wavebox",
   "dependencies": {
-    "fbjs": "0.8.16",
-    "material-ui": "0.20.0",
-    "react": "16.2.0",
+    "@material-ui/core": "3.0.2",
+    "@material-ui/icons": "3.0.1",
+    "prop-types": "15.6.2",
+    "react": "16.5.0",
+    "classnames": "2.2.6",
     "react-activity": "1.2.2",
     "react-addons-shallow-compare": "15.6.2",
-    "react-dom": "16.2.0",
-    "prop-types": "15.6.1"
+    "react-dom": "16.5.0"
   },
   "devDependencies": {
-    "standard": "11.0.1",
-    "babel-eslint": "8.2.2",
-    "babel-plugin-transform-class-properties": "6.24.1"
+    "standard": "12.0.1",
+    "babel-eslint": "9.0.0"
   },
   "standard": {
     "parser": "babel-eslint"

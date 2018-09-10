@@ -1,21 +1,33 @@
 import React from 'react'
-import { FontIcon } from 'material-ui'
 import SidelistControl from './SidelistControl'
-import * as Colors from 'material-ui/styles/colors'
 import { TOUR_STEPS } from 'stores/settings/Tour'
+import { withStyles } from '@material-ui/core/styles'
+import SidelistFAIcon from './SidelistFAIcon'
+import ThemeTools from 'wbui/Themes/ThemeTools'
+import FARMagicIcon from 'wbfa/FARMagic'
 
-export default class SidelistControlWizard extends React.Component {
+const styles = (theme) => ({
+  icon: {
+    color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.wizard.icon.color'),
+    '&:hover': {
+      color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.wizard.icon.color', 'hover')
+    }
+  }
+})
+
+@withStyles(styles, { withTheme: true })
+class SidelistControlWizard extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   render () {
+    const { classes } = this.props
     return (
       <SidelistControl
         className={`WB-SidelistControlWizard`}
         onClick={() => { window.location.hash = '/app_wizard' }}
         tooltip='Setup Wizard'
-        iconStyle={{ fontSize: '24px', marginLeft: -3 }}
         tourStep={TOUR_STEPS.APP_WIZARD}
         tourTooltip={(
           <div>
@@ -23,12 +35,9 @@ export default class SidelistControlWizard extends React.Component {
             common Wavebox Settings with the Setup Wizard
           </div>
         )}
-        icon={(
-          <FontIcon
-            className='far fa-fw fa-magic'
-            color={Colors.amber600}
-            hoverColor={Colors.amber200} />
-        )} />
+        icon={(<SidelistFAIcon className={classes.icon} IconClass={FARMagicIcon} />)} />
     )
   }
 }
+
+export default SidelistControlWizard

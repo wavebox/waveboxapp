@@ -1,7 +1,5 @@
 import alt from '../alt'
 import actions from './slackActions'
-import SlackMailbox from 'shared/Models/Accounts/Slack/SlackMailbox'
-import SlackDefaultService from 'shared/Models/Accounts/Slack/SlackDefaultService'
 import SlackHTTP from './SlackHTTP'
 import uuid from 'uuid'
 import { NotificationService } from 'Notifications'
@@ -11,15 +9,13 @@ import {
   SLACK_RTM_RETRY_RECONNECT_MS
 } from 'shared/constants'
 import Debug from 'Debug'
-import {
-  mailboxStore,
-  mailboxActions,
-  mailboxDispatch,
-  SlackMailboxReducer,
-  SlackDefaultServiceReducer
-} from '../mailbox'
 import { remote } from 'electron'
 import emoji from 'node-emoji'
+import { accountStore, accountActions, accountDispatch } from '../account'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
+import AuthReducer from 'shared/AltStores/Account/AuthReducers/AuthReducer'
+import SlackServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/SlackServiceDataReducer'
+import SlackServiceReducer from 'shared/AltStores/Account/ServiceReducers/SlackServiceReducer'
 
 const MAX_NOTIFICATION_RECORD_AGE = 1000 * 60 * 10 // 10 mins
 const HTML5_NOTIFICATION_DELAY = 1000 * 2 // 2 secs
@@ -43,20 +39,20 @@ class SlackStore {
 
     /**
     * @param type: the type of request
-    * @param mailboxId: the id of the mailbox
+    * @param serviceId: the id of the service
     * @return the number of open requests
     */
-    this.openRequestCount = (type, mailboxId) => {
-      return (this.openRequests.get(`${type}:${mailboxId}`) || []).length
+    this.openRequestCount = (type, serviceId) => {
+      return (this.openRequests.get(`${type}:${serviceId}`) || []).length
     }
 
     /**
     * @param type: the type of request
-    * @param mailboxId: the id of the mailbox
+    * @param serviceId: the id of the service
     * @return true if there are any open requests
     */
-    this.hasOpenRequest = (type, mailboxId) => {
-      return this.openRequestCount(type, mailboxId) !== 0
+    this.hasOpenRequest = (type, serviceId) => {
+      return this.openRequestCount(type, serviceId) !== 0
     }
 
     /* **************************************/
@@ -65,12 +61,12 @@ class SlackStore {
 
     /**
     * Checks if there is a valid connection
-    * @param mailboxId: the id of the mailbox
+    * @param serviceId: the id of the service
     * @param connectionId: the id of the connection
-    * @return true if the mailbox id and connection id match the record
+    * @return true if the service id and connection id match the record
     */
-    this.isValidConnection = (mailboxId, connectionId) => {
-      return (this.connections.get(mailboxId) || {}).connectionId === connectionId
+    this.isValidConnection = (serviceId, connectionId) => {
+      return (this.connections.get(serviceId) || {}).connectionId === connectionId
     }
 
     /**
@@ -83,20 +79,20 @@ class SlackStore {
     }
 
     /**
-    * @param mailboxId: the id of the mailbox
-    * @return true if the mailbox is connection is setup, false otherwise
+    * @param serviceId: the id of the service
+    * @return true if the service is connection is setup, false otherwise
     */
-    this.isMailboxConnectionSetup = (mailboxId) => {
-      const info = this.connections.get(mailboxId)
+    this.isServiceConnectionSetup = (serviceId) => {
+      const info = this.connections.get(serviceId)
       return !!(info && info.rtm)
     }
 
     /**
-    * @param mailboxId: the id of the mailbox
-    * @return true if the mailbox is connected, false otherwise
+    * @param serviceId: the id of the service
+    * @return true if the service is connected, false otherwise
     */
-    this.isMailboxConnected = (mailboxId) => {
-      const info = this.connections.get(mailboxId)
+    this.isServiceConnected = (serviceId) => {
+      const info = this.connections.get(serviceId)
       return !!(info && info.rtm && info.rtm.isConnected)
     }
 
@@ -105,13 +101,13 @@ class SlackStore {
     /* **************************************/
 
     this.bindListeners({
-      handleConnectAllMailboxes: actions.CONNECT_ALL_MAILBOXES,
-      handleConnectMailbox: actions.CONNECT_MAILBOX,
+      handleConnectAllServices: actions.CONNECT_ALL_SERVICES,
+      handleConnectService: actions.CONNECT_SERVICE,
 
-      handleReconnectMailbox: actions.RECONNECT_MAILBOX,
+      handleReconnectService: actions.RECONNECT_SERVICE,
 
-      handleDisconnectAllMailboxes: actions.DISCONNECT_ALL_MAILBOXES,
-      handleDisconnectMailbox: actions.DISCONNECT_MAILBOX,
+      handleDisconnectAllServices: actions.DISCONNECT_ALL_SERVICES,
+      handleDisconnectService: actions.DISCONNECT_SERVICE,
 
       handleUpdateUnreadCounts: actions.UPDATE_UNREAD_COUNTS,
 
@@ -127,12 +123,12 @@ class SlackStore {
   /**
   * Tracks that a request has been opened
   * @param type: the type of request
-  * @param mailboxId: the id of the mailbox
+  * @param serviceId: the id of the service
   * @param requestId=auto: the unique id for this request
   * @return the requestId
   */
-  trackOpenRequest (type, mailboxId, requestId = uuid.v4()) {
-    const key = `${type}:${mailboxId}`
+  trackOpenRequest (type, serviceId, requestId = uuid.v4()) {
+    const key = `${type}:${serviceId}`
     const requestIds = (this.openRequests.get(key) || [])
     const updatedRequestIds = requestIds.filter((id) => id !== requestId).concat(requestId)
     this.openRequests.set(key, updatedRequestIds)
@@ -142,12 +138,12 @@ class SlackStore {
   /**
   * Tracks that a request has been closed
   * @param type: the type of request
-  * @param mailboxId: the id of the mailbox
+  * @param serviceId: the id of the service
   * @param requestId: the unique id for this request
   * @return the requestId
   */
-  trackCloseRequest (type, mailboxId, requestId) {
-    const key = `${type}:${mailboxId}`
+  trackCloseRequest (type, serviceId, requestId) {
+    const key = `${type}:${serviceId}`
     const requestIds = (this.openRequests.get(key) || [])
     const updatedRequestIds = requestIds.filter((id) => id !== requestId)
     this.openRequests.set(key, updatedRequestIds)
@@ -176,27 +172,31 @@ class SlackStore {
   /* **************************************************************************/
 
   /**
-  * Connects all the mailboxes to the RTM service
+  * Connects all the services to the RTM service
   */
-  handleConnectAllMailboxes () {
-    mailboxStore.getState().getMailboxesOfType(SlackMailbox.type).forEach((mailbox) => {
-      actions.connectMailbox.defer(mailbox.id)
-    })
+  handleConnectAllServices () {
     this.preventDefault()
+
+    accountStore
+      .getState()
+      .allServicesOfType(SERVICE_TYPES.SLACK)
+      .forEach((service) => {
+        actions.connectService.defer(service.id)
+      })
   }
 
   /**
-  * Connects the mailbox to the RTM service
-  * @param mailboxId: the id of the mailbox to connect
+  * Connects the service to the RTM service
+  * @param serviceId: the id of the service to connect
   */
-  handleConnectMailbox ({ mailboxId }) {
+  handleConnectService ({ serviceId }) {
     // Do some preflight checks & grab some data
-    if (this.connections.has(mailboxId)) {
+    if (this.connections.has(serviceId)) {
       this.preventDefault()
       return
     }
-    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    if (!mailbox) {
+    const serviceAuth = accountStore.getState().getMailboxAuthForServiceId(serviceId)
+    if (!serviceAuth) {
       this.preventDefault()
       return
     }
@@ -205,119 +205,140 @@ class SlackStore {
 
     // Start the periodic poller
     const fullPoller = setInterval(() => {
-      if (!this.isValidConnection(mailboxId, connectionId)) { return }
-      actions.updateUnreadCounts.defer(mailboxId, true)
+      if (!this.isValidConnection(serviceId, connectionId)) { return }
+      actions.updateUnreadCounts.defer(serviceId, true)
     }, SLACK_FULL_COUNT_SYNC_INTERVAL)
     const reconnectPoller = setInterval(() => {
-      if (!this.isValidConnection(mailboxId, connectionId)) { return }
-      if (!this.isMailboxConnected(mailboxId)) {
-        actions.reconnectMailbox(mailboxId)
+      if (!this.isValidConnection(serviceId, connectionId)) { return }
+      if (!this.isServiceConnected(serviceId)) {
+        actions.reconnectService(serviceId)
       }
     }, SLACK_RECONNECT_SOCKET_INTERVAL)
 
     // Start up the socket
-    this.connections.set(mailboxId, {
+    this.connections.set(serviceId, {
       connectionId: connectionId,
-      mailboxId: mailboxId,
+      serviceId: serviceId,
       rtm: null,
       fullPoller: fullPoller,
       reconnectPoller: reconnectPoller
     })
 
-    SlackHTTP.startRTM(mailbox.authToken)
+    Promise.resolve()
+      .then(() => SlackHTTP.startRTM(serviceAuth.authToken))
       .then(({ response, rtm }) => {
-        if (!this.isValidConnection(mailboxId, connectionId)) { return }
-
-        mailboxActions.reduce.defer(mailboxId, SlackMailboxReducer.revalidateAuth)
+        if (!this.isValidConnection(serviceId, connectionId)) { return }
+        accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeValid)
 
         // Bind events
         rtm.on('message:error', (data) => {
           if ((data.error || {}).code === 1) { // Socket URL has expired
-            console.warn('Reconnecting SlackRTM Socket for `' + mailboxId + '`', data)
-            actions.reconnectMailbox(mailboxId)
+            console.warn('Reconnecting SlackRTM Socket for `' + serviceId + '`', data)
+            actions.reconnectService(serviceId)
           }
         })
         rtm.on('message:desktop_notification', (data) => {
-          actions.scheduleNotification(mailboxId, data)
+          actions.scheduleNotification(serviceId, data)
         })
         rtm.on('message', (data) => {
           if (Debug.flags.slackLogWSMessages) {
-            console.log(`[SLACK:WS_MESSAGE]: ${mailboxId}`, JSON.stringify(data))
+            console.log(`[SLACK:WS_MESSAGE]: ${serviceId}`, JSON.stringify(data))
           }
         })
 
         // These events are in-frequent and lazily acted upon. They require the counts to be re-synced
-        rtm.on('message:bot_added', (data) => actions.updateUnreadCounts.defer(mailboxId))
-        rtm.on('message:channel_archive', (data) => actions.updateUnreadCounts.defer(mailboxId))
-        rtm.on('message:channel_created', (data) => actions.updateUnreadCounts.defer(mailboxId))
-        rtm.on('message:channel_deleted', (data) => actions.updateUnreadCounts.defer(mailboxId))
-        rtm.on('message:channel_joined', (data) => actions.updateUnreadCounts.defer(mailboxId))
-        rtm.on('message:channel_left', (data) => actions.updateUnreadCounts.defer(mailboxId))
-        rtm.on('message:channel_unarchive', (data) => actions.updateUnreadCounts.defer(mailboxId))
-        rtm.on('message:group_archive', (data) => actions.updateUnreadCounts.defer(mailboxId))
-        rtm.on('message:group_close', (data) => actions.updateUnreadCounts.defer(mailboxId))
-        rtm.on('message:group_joined', (data) => actions.updateUnreadCounts.defer(mailboxId))
-        rtm.on('message:group_left', (data) => actions.updateUnreadCounts.defer(mailboxId))
-        rtm.on('message:group_open', (data) => actions.updateUnreadCounts.defer(mailboxId))
-        rtm.on('message:group_unarchive', (data) => actions.updateUnreadCounts.defer(mailboxId))
-        rtm.on('message:im_close', (data) => actions.updateUnreadCounts.defer(mailboxId))
-        rtm.on('message:im_created', (data) => actions.updateUnreadCounts.defer(mailboxId))
-        rtm.on('message:im_open', (data) => actions.updateUnreadCounts.defer(mailboxId))
+        rtm.on('message:bot_added', (data) => actions.updateUnreadCounts(serviceId))
+        rtm.on('message:channel_archive', (data) => actions.updateUnreadCounts(serviceId))
+        rtm.on('message:channel_created', (data) => actions.updateUnreadCounts(serviceId))
+        rtm.on('message:channel_deleted', (data) => actions.updateUnreadCounts(serviceId))
+        rtm.on('message:channel_joined', (data) => actions.updateUnreadCounts(serviceId))
+        rtm.on('message:channel_left', (data) => actions.updateUnreadCounts(serviceId))
+        rtm.on('message:channel_unarchive', (data) => actions.updateUnreadCounts(serviceId))
+        rtm.on('message:group_archive', (data) => actions.updateUnreadCounts(serviceId))
+        rtm.on('message:group_close', (data) => actions.updateUnreadCounts(serviceId))
+        rtm.on('message:group_joined', (data) => actions.updateUnreadCounts(serviceId))
+        rtm.on('message:group_left', (data) => actions.updateUnreadCounts(serviceId))
+        rtm.on('message:group_open', (data) => actions.updateUnreadCounts(serviceId))
+        rtm.on('message:group_unarchive', (data) => actions.updateUnreadCounts(serviceId))
+        rtm.on('message:im_close', (data) => actions.updateUnreadCounts(serviceId))
+        rtm.on('message:im_created', (data) => actions.updateUnreadCounts(serviceId))
+        rtm.on('message:im_open', (data) => actions.updateUnreadCounts(serviceId))
         rtm.on('message:pref_change', (data) => {
           if (data.name === 'muted_channels') {
-            actions.updateUnreadCounts.defer(mailboxId)
+            actions.updateUnreadCounts(serviceId)
           }
         })
 
         rtm.on('message:channel_marked', (data) => {
-          mailboxActions.reduceService(mailboxId, SlackDefaultService.type, SlackDefaultServiceReducer.rtmChannelMarked, data)
+          accountActions.reduceServiceData(
+            serviceId,
+            SlackServiceDataReducer.rtmChannelMarked,
+            data
+          )
         })
         rtm.on('message:group_marked', (data) => {
-          mailboxActions.reduceService(mailboxId, SlackDefaultService.type, SlackDefaultServiceReducer.rtmGroupMarked, data)
+          accountActions.reduceServiceData(
+            serviceId,
+            SlackServiceDataReducer.rtmGroupMarked,
+            data
+          )
         })
         rtm.on('message:mpim_marked', (data) => {
-          mailboxActions.reduceService(mailboxId, SlackDefaultService.type, SlackDefaultServiceReducer.rtmMpimMarked, data)
+          accountActions.reduceServiceData(
+            serviceId,
+            SlackServiceDataReducer.rtmMpimMarked,
+            data
+          )
         })
         rtm.on('message:im_marked', (data) => {
-          mailboxActions.reduceService(mailboxId, SlackDefaultService.type, SlackDefaultServiceReducer.rtmImMarked, data)
+          accountActions.reduceServiceData(
+            serviceId,
+            SlackServiceDataReducer.rtmImMarked,
+            data
+          )
         })
         rtm.on('message:message', (data) => {
-          mailboxActions.reduceService(mailboxId, SlackDefaultService.type, SlackDefaultServiceReducer.rtmMessage, data)
+          accountActions.reduceServiceData(
+            serviceId,
+            SlackServiceDataReducer.rtmMessage,
+            data
+          )
         })
 
         // Save the connection
-        this.connections.set(mailboxId, {
-          ...this.connections.get(mailboxId) || {},
+        this.connections.set(serviceId, {
+          ...this.connections.get(serviceId) || {},
           connectionId: connectionId,
-          mailboxId: mailboxId,
+          serviceId: serviceId,
           rtm: rtm
         })
 
-        // Update the mailbox & run further sync actions
-        mailboxActions.reduce.defer(
-          mailboxId,
-          SlackMailboxReducer.setTeamAndSelfOverview,
+        // Update the service & run further sync actions
+        accountActions.reduceService(
+          serviceId,
+          SlackServiceReducer.setTeamAndSelfOverview,
           response.team,
-          response.self
+          response.self,
+          serviceAuth.authUserId
         )
-        actions.updateUnreadCounts.defer(mailboxId)
+        actions.updateUnreadCounts.defer(serviceId)
 
         this.emitChange()
       })
       .catch((err) => {
-        if (!this.isValidConnection(mailboxId, connectionId)) { return }
+        if (!this.isValidConnection(serviceId, connectionId)) { return }
 
         if (this.isInvalidAuthError(err)) {
-          mailboxActions.reduce.defer(mailboxId, SlackMailboxReducer.invalidateAuth)
+          accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeInvalid)
         } else {
           console.error(err)
         }
 
         // Retry connection
         setTimeout(() => {
-          if (!this.isValidConnection(mailboxId, connectionId)) { return }
-          if (this.isMailboxConnected(mailboxId)) { return }
-          actions.reconnectMailbox(mailboxId)
+          if (!this.isValidConnection(serviceId, connectionId)) { return }
+          if (this.isServiceConnected(serviceId)) { return }
+          actions.reconnectService(serviceId)
         }, SLACK_RTM_RETRY_RECONNECT_MS)
       })
   }
@@ -327,12 +348,12 @@ class SlackStore {
   /* **************************************************************************/
 
   /**
-  * Reconnects a mailbox
-  * @param mailboxId: the id of the mailbox
+  * Reconnects a service
+  * @param serviceId: the id of the service
   */
-  handleReconnectMailbox ({ mailboxId }) {
-    this.handleDisconnectMailbox({ mailboxId: mailboxId })
-    this.handleConnectMailbox({ mailboxId: mailboxId })
+  handleReconnectService ({ serviceId }) {
+    this.handleDisconnectService({ serviceId: serviceId })
+    this.handleConnectService({ serviceId: serviceId })
   }
 
   /* **************************************************************************/
@@ -340,30 +361,30 @@ class SlackStore {
   /* **************************************************************************/
 
   /**
-  * Disconnects all mailboxes from the RTM service
+  * Disconnects all services from the RTM service
   */
-  handleDisconnectAllMailboxes () {
+  handleDisconnectAllServices () {
     this.allConnections().forEach((connection) => {
       if (connection.rtm) { connection.rtm.close() }
       clearInterval(connection.fullPoller)
       clearInterval(connection.reconnectPoller)
-      this.connections.delete(connection.mailboxId)
+      this.connections.delete(connection.serviceId)
     })
     const connections = []
     this.connections.forEach((connection) => connections.push(connection))
   }
 
   /**
-  * Disconnects a mailboxes from the RTM service
-  * @param mailboxId: the id of the mailbox to disconnect
+  * Disconnects a services from the RTM service
+  * @param serviceId: the id of the service to disconnect
   */
-  handleDisconnectMailbox ({ mailboxId }) {
-    const connection = this.connections.get(mailboxId)
+  handleDisconnectService ({ serviceId }) {
+    const connection = this.connections.get(serviceId)
     if (connection) {
       if (connection.rtm) { connection.rtm.close() }
       clearInterval(connection.fullPoller)
       clearInterval(connection.reconnectPoller)
-      this.connections.delete(connection.mailboxId)
+      this.connections.delete(connection.serviceId)
     }
   }
 
@@ -372,42 +393,41 @@ class SlackStore {
   /* **************************************************************************/
 
   /**
-  * Updates the unread count for the mailbox
-  * @param mailboxId: the id of the mailbox
+  * Updates the unread count for the service
+  * @param serviceId: the id of the service
   * @param allowMultiple: set to true to relax the limit of concurrent request
   */
-  handleUpdateUnreadCounts ({ mailboxId, allowMultiple }) {
-    Debug.flagLog('slackLogUnreadCounts', `[SLACK:UNREAD] call ${mailboxId}`)
-    if (allowMultiple !== true && this.hasOpenRequest(REQUEST_TYPES.UNREAD, mailboxId)) {
+  handleUpdateUnreadCounts ({ serviceId, allowMultiple }) {
+    Debug.flagLog('slackLogUnreadCounts', `[SLACK:UNREAD] call ${serviceId}`)
+    if (allowMultiple !== true && this.hasOpenRequest(REQUEST_TYPES.UNREAD, serviceId)) {
       this.preventDefault()
       return
     }
 
-    const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-    const service = mailbox ? mailbox.serviceForType(SlackDefaultService.type) : null
-    if (!mailbox || !service) {
+    const serviceAuth = accountStore.getState().getMailboxAuthForServiceId(serviceId)
+    if (!serviceAuth) {
       this.preventDefault()
       return
     }
 
-    Debug.flagLog('slackLogUnreadCounts', `[SLACK:UNREAD] start ${mailboxId}`)
-    const requestId = this.trackOpenRequest(REQUEST_TYPES.UNREAD, mailboxId)
+    Debug.flagLog('slackLogUnreadCounts', `[SLACK:UNREAD] start ${serviceId}`)
+    const requestId = this.trackOpenRequest(REQUEST_TYPES.UNREAD, serviceId)
 
     Promise.resolve()
-      .then(() => SlackHTTP.fetchUnreadInfo(mailbox.authToken))
+      .then(() => SlackHTTP.fetchUnreadInfo(serviceAuth.authToken))
       .then((response) => {
-        mailboxActions.reduceService(
-          mailboxId,
-          SlackDefaultService.type,
-          SlackDefaultServiceReducer.setSlackUnreadInfo,
+        accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeValid)
+        accountActions.reduceServiceData(
+          serviceId,
+          SlackServiceDataReducer.setSlackUnreadInfo,
           response
         )
-        this.trackCloseRequest(REQUEST_TYPES.UNREAD, mailboxId, requestId)
+
+        this.trackCloseRequest(REQUEST_TYPES.UNREAD, serviceId, requestId)
         this.emitChange()
-        mailboxActions.reduce.defer(mailboxId, SlackMailboxReducer.revalidateAuth)
 
         if (Debug.flags.slackLogUnreadCounts) {
-          console.log(`[SLACK:UNREAD] success: ${mailboxId}`, JSON.stringify({
+          console.log(`[SLACK:UNREAD] success: ${serviceId}`, JSON.stringify({
             channels: response.channels.map((c) => {
               return {
                 name: c.name,
@@ -437,16 +457,16 @@ class SlackStore {
         }
       })
       .catch((err) => {
-        this.trackCloseRequest(REQUEST_TYPES.UNREAD, mailboxId, requestId)
+        this.trackCloseRequest(REQUEST_TYPES.UNREAD, serviceId, requestId)
         this.emitChange()
 
         if (this.isInvalidAuthError(err)) {
-          mailboxActions.reduce.defer(mailboxId, SlackMailboxReducer.invalidateAuth)
+          accountActions.reduceAuth(serviceAuth.id, AuthReducer.makeInvalid)
         } else {
           console.error(err)
         }
 
-        Debug.flagLog('slackLogUnreadCounts', [`[SLACK:UNREAD] error: ${mailboxId}`, err])
+        Debug.flagLog('slackLogUnreadCounts', [`[SLACK:UNREAD] error: ${serviceId}`, err])
       })
   }
 
@@ -469,7 +489,7 @@ class SlackStore {
       })
       return hasRecord
     } else {
-      return !!this.publishedNotifications.find(({id}) => id === slackNotificationId)
+      return !!this.publishedNotifications.find(({ id }) => id === slackNotificationId)
     }
   }
 
@@ -482,26 +502,24 @@ class SlackStore {
   }
 
   /**
-  * Checks if the mailbox has its notifications enabled
-  * @param mailboxId: the id of the mailbox
-  * @param mailboxState=autoget: the mailbox state
+  * Checks if the service has its notifications enabled
+  * @param serviceId: the id of the service
+  * @param accountState=autoget: the service state
   * @return true if notifications are enabled, false otherwise
   */
-  _mailboxHasNotificationsEnabled (mailboxId, mailboxState = mailboxStore.getState()) {
-    const mailbox = mailboxState.getMailbox(mailboxId)
-    if (!mailbox) { return false }
-    const service = mailbox.defaultService
+  _serviceHasNotificationsEnabled (serviceId, accountState = accountStore.getState()) {
+    const service = accountState.getService(serviceId)
     if (!service) { return false }
     if (!service.showNotifications) { return false }
 
     return true
   }
 
-  handleScheduleNotification ({ mailboxId, message }) {
+  handleScheduleNotification ({ serviceId, message }) {
     this.preventDefault() // no change in this store
 
-    const mailboxState = mailboxStore.getState()
-    if (!this._mailboxHasNotificationsEnabled(mailboxId, mailboxState)) { return }
+    const accountState = accountStore.getState()
+    if (!this._serviceHasNotificationsEnabled(serviceId, accountState)) { return }
 
     // Figure out if it's been seen before
     const slackNotificationId = message.msg || message.event_ts
@@ -510,8 +528,8 @@ class SlackStore {
 
     // Check to see if we're active and in the channel
     if (remote.getCurrentWindow().isFocused()) {
-      if (mailboxState.activeMailboxId() === mailboxId) {
-        const currentUrl = mailboxDispatch.getCurrentUrl(mailboxId, SlackDefaultService.type) || ''
+      if (accountState.activeServiceId() === serviceId) {
+        const currentUrl = accountDispatch.getCurrentUrl(serviceId) || ''
         if (currentUrl.indexOf(message.channel) !== -1) { return }
         if (message.channel.indexOf('D') === 0) { // Handle DMs differently
           if (currentUrl.indexOf('@' + message.subtitle.toLowerCase()) !== -1) { return }
@@ -519,23 +537,26 @@ class SlackStore {
       }
     }
 
-    NotificationService.processPushedMailboxNotification(mailboxId, SlackDefaultService.type, {
+    const mailboxId = (accountState.getService(serviceId) || {}).parentId
+    NotificationService.processPushedMailboxNotification(mailboxId, serviceId, {
       title: `${message.title} ${message.subtitle}`,
       body: [{
         content: emoji.emojify(message.content)
       }],
       data: {
         mailboxId: mailboxId,
-        serviceType: SlackDefaultService.type,
+        serviceId: serviceId,
         channelId: message.channel,
         launchUri: message.launchUri
       }
     })
   }
 
-  handleScheduleHTML5Notification ({ mailboxId, notificationId, notification, clickHandler }) {
-    this.preventDefault() // no change in this store
-    if (!this._mailboxHasNotificationsEnabled(mailboxId)) { return }
+  handleScheduleHTML5Notification ({ serviceId, notificationId, notification, clickHandler }) {
+    this.preventDefault()
+
+    const accountState = accountStore.getState()
+    if (!this._serviceHasNotificationsEnabled(serviceId, accountState)) { return }
 
     const slackNotificationId = (((notification || {}).options || {}).tag || '').replace('tag_', '')
     if (this._hasPublishedNotification(slackNotificationId)) { return }
@@ -545,18 +566,19 @@ class SlackStore {
       if (this._hasPublishedNotification(slackNotificationId, false)) { return }
       this._markNotificationPublished(slackNotificationId)
 
-      NotificationService.processHandledMailboxNotification(mailboxId, SlackDefaultService.type, {
+      const mailboxId = (accountState.getService(serviceId) || {}).parentId
+      NotificationService.processHandledMailboxNotification(mailboxId, serviceId, {
         title: notification.title,
         body: emoji.emojify((notification.options || {}).body),
         data: {
           mailboxId: mailboxId,
-          serviceType: SlackDefaultService.type,
+          serviceId: serviceId,
           notificationId: notificationId
         }
       }, (data) => {
         clickHandler(data.notificationId)
       })
-    }, this.isMailboxConnected(mailboxId) ? HTML5_NOTIFICATION_DELAY : 0)
+    }, this.isServiceConnected(serviceId) ? HTML5_NOTIFICATION_DELAY : 0)
   }
 }
 

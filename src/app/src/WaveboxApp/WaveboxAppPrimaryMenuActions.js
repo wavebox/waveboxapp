@@ -15,6 +15,7 @@ import {
 import { evtMain } from 'AppEvents'
 import { settingsActions } from 'stores/settings'
 import { emblinkActions } from 'stores/emblink'
+import { accountStore } from 'stores/account'
 
 class WaveboxAppPrimaryMenuAcions {
   /* ****************************************************************************/
@@ -136,6 +137,14 @@ class WaveboxAppPrimaryMenuAcions {
     emblinkActions.composeNewMessage()
   }
 
+  composeMailHere = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.show().focus()
+    }
+    emblinkActions.composeNewMessage(accountStore.getState().activeServiceId())
+  }
+
   checkForUpdate = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
@@ -160,6 +169,14 @@ class WaveboxAppPrimaryMenuAcions {
       mailboxesWindow.show().focus().launchSupportCenter()
     }
   }
+
+  waveboxAccount = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.show().focus().launchWaveboxAccount()
+    }
+  }
+
   whatsNew = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
@@ -216,10 +233,16 @@ class WaveboxAppPrimaryMenuAcions {
   // Mailbox navigation
   /* ****************************************************************************/
 
-  changeMailbox = (mailboxId, serviceType = undefined) => {
+  changeMailbox = (mailboxId) => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().switchMailbox(mailboxId, serviceType)
+      mailboxesWindow.show().focus().switchMailbox(mailboxId)
+    }
+  }
+  changeService = (serviceId) => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.show().focus().switchService(serviceId)
     }
   }
   changeMailboxServiceToIndex = (index) => {

@@ -1,33 +1,15 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Toggle, Paper, SelectField, MenuItem } from 'material-ui'
 import settingsActions from 'stores/settings/settingsActions'
-import styles from '../CommonSettingStyles'
-import shallowCompare from 'react-addons-shallow-compare'
+import modelCompare from 'wbui/react-addons-model-compare'
+import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 import { UISettings, ExtensionSettings } from 'shared/Models/Settings'
-
-const SIDEBAR_NEWS_MODE_LABELS = {
-  [UISettings.SIDEBAR_NEWS_MODES.NEVER]: 'Never',
-  [UISettings.SIDEBAR_NEWS_MODES.UNREAD]: `When there's new items`,
-  [UISettings.SIDEBAR_NEWS_MODES.ALWAYS]: 'Always'
-}
-const EXTENSION_LAYOUT_MODE_LABELS = {
-  [ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_LEFT]: 'Left',
-  [ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_RIGHT]: 'Right'
-}
-const VIBRANCY_MODE_LABELS = {
-  [UISettings.VIBRANCY_MODES.NONE]: 'None',
-  [UISettings.VIBRANCY_MODES.LIGHT]: 'Light',
-  [UISettings.VIBRANCY_MODES.MEDIUM_LIGHT]: 'Medium Light',
-  [UISettings.VIBRANCY_MODES.DARK]: 'Dark',
-  [UISettings.VIBRANCY_MODES.ULTRA_DARK]: 'Ultra Dark'
-}
-const ACCOUNT_TOOLTIP_MODE_LABELS = {
-  [UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED]: { label: 'Show', primaryText: 'Show in Sidebar & Toolbar' },
-  [UISettings.ACCOUNT_TOOLTIP_MODES.DISABLED]: { label: 'Hide', primaryText: 'Hide all' },
-  [UISettings.ACCOUNT_TOOLTIP_MODES.SIDEBAR_ONLY]: { label: 'Sidebar Only', primaryText: 'Show only in the Sidebar' },
-  [UISettings.ACCOUNT_TOOLTIP_MODES.TOOLBAR_ONLY]: { label: 'Toolbar Only', primaryText: 'Show only in the Toolbar' }
-}
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
+import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
+import SettingsListKeyboardShortcutText from 'wbui/SettingsListKeyboardShortcutText'
+import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
+import teal from '@material-ui/core/colors/teal'
 
 export default class UISettingsSection extends React.Component {
   /* **************************************************************************/
@@ -47,7 +29,34 @@ export default class UISettingsSection extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+    return (
+      modelCompare(this.props.ui, nextProps.ui, [
+        'showAppBadge',
+        'openHidden',
+        'showSleepableServiceIndicator',
+        'showDefaultServiceSleepNotifications',
+        'vibrancyMode',
+        'accountTooltipMode',
+        'sidebarEnabled',
+        'showSidebarSupport',
+        'showSidebarNewsfeed',
+        'showTitlebar',
+        'showAppMenu',
+        'showTitlebarCount',
+        'showTitlebarAccount',
+        'theme',
+        'sidebarSize'
+      ]) ||
+      modelCompare(this.props.os, nextProps.os, ['openLinksInBackground']) ||
+      modelCompare(this.props.accelerators, nextProps.accelerators, ['toggleSidebar', 'toggleMenu']) ||
+      modelCompare(this.props.extension, nextProps.extension, ['showBrowserActionsInToolbar', 'toolbarBrowserActionLayout']) ||
+      partialShallowCompare(
+        { showRestart: this.props.showRestart },
+        this.state,
+        { showRestart: nextProps.showRestart },
+        nextState
+      )
+    )
   }
 
   render () {
@@ -62,155 +71,197 @@ export default class UISettingsSection extends React.Component {
 
     return (
       <div {...passProps}>
-        <Paper zDepth={1} style={styles.paper}>
-          <h1 style={styles.subheading}>User Interface</h1>
-          <Toggle
-            toggled={ui.showAppBadge}
+        <SettingsListSection title='User Interface' icon={<ViewQuiltIcon />}>
+          <SettingsListItemSwitch
             label='Show app unread badge'
-            labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.sub.ui.setShowAppBadge(toggled)} />
+            onChange={(evt, toggled) => settingsActions.sub.ui.setShowAppBadge(toggled)}
+            checked={ui.showAppBadge} />
           {process.platform === 'darwin' ? (
-            <Toggle
-              toggled={os.openLinksInBackground}
+            <SettingsListItemSwitch
               label='Open links in background'
-              labelPosition='right'
-              onToggle={(evt, toggled) => settingsActions.sub.os.setOpenLinksInBackground(toggled)} />
+              onChange={(evt, toggled) => settingsActions.sub.os.setOpenLinksInBackground(toggled)}
+              checked={os.openLinksInBackground} />
           ) : undefined}
-          <Toggle
-            toggled={ui.openHidden}
+          <SettingsListItemSwitch
             label='Always start minimized'
-            labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.sub.ui.setOpenHidden(toggled)} />
-          <Toggle
-            toggled={ui.showSleepableServiceIndicator}
+            onChange={(evt, toggled) => settingsActions.sub.ui.setOpenHidden(toggled)}
+            checked={ui.openHidden} />
+          <SettingsListItemSwitch
             label='Show sleeping account icons in grey'
-            labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.sub.ui.setShowSleepableServiceIndicator(toggled)} />
-          <Toggle
-            toggled={ui.showDefaultServiceSleepNotifications}
+            onChange={(evt, toggled) => settingsActions.sub.ui.setShowSleepableServiceIndicator(toggled)}
+            checked={ui.showSleepableServiceIndicator} />
+          <SettingsListItemSwitch
             label='Show one-time sleep notification for each account'
-            labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.sub.ui.setShowDefaultServiceSleepNotifications(toggled)} />
-          <SelectField
-            floatingLabelText='Account tooltips'
-            value={ui.accountTooltipMode}
-            fullWidth
-            onChange={(evt, index, value) => settingsActions.sub.ui.setAccountTooltipMode(value)}>
-            {Object.keys(UISettings.ACCOUNT_TOOLTIP_MODES).map((value) => {
-              return (<MenuItem key={value} value={value} {...ACCOUNT_TOOLTIP_MODE_LABELS[value]} />)
-            })}
-          </SelectField>
+            onChange={(evt, toggled) => settingsActions.sub.ui.setShowDefaultServiceSleepNotifications(toggled)}
+            checked={ui.showDefaultServiceSleepNotifications} />
+          <SettingsListItemSelectInline
+            label='App theme'
+            value={ui.theme}
+            options={[
+              { value: UISettings.THEMES.DARK, label: 'Dark' },
+              { value: UISettings.THEMES.LIGHT, label: 'Light' },
+              {
+                value: UISettings.THEMES.BOXY_BLUE,
+                label: 'Boxy Blue',
+                MenuItemProps: {
+                  style: { borderRight: `20px solid #5B9ECA` }
+                }
+              },
+              {
+                value: UISettings.THEMES.BOXY_PURPLE,
+                label: 'Boxy Purple',
+                MenuItemProps: {
+                  style: { borderRight: `20px solid #7676B0` }
+                }
+              },
+              {
+                value: UISettings.THEMES.NAVY,
+                label: 'Navy',
+                MenuItemProps: {
+                  style: { borderRight: '20px solid rgb(0,113,158)' }
+                }
+              },
+              {
+                value: UISettings.THEMES.TEAL,
+                label: 'Teal',
+                MenuItemProps: {
+                  style: { borderRight: `20px solid ${teal[600]}` }
+                }
+              },
+              {
+                value: UISettings.THEMES.WAVEBOX_LIGHT_BLUE,
+                label: 'Wavebox light blue',
+                MenuItemProps: {
+                  style: { borderRight: `20px solid #00AEEF` }
+                }
+              },
+              {
+                value: UISettings.THEMES.WAVY_BLUE,
+                label: 'Wavy Blue',
+                MenuItemProps: {
+                  style: { borderRight: `20px solid #016084` }
+                }
+              },
+              {
+                value: UISettings.THEMES.WAVY_GREEN,
+                label: 'Wavy Green',
+                MenuItemProps: {
+                  style: { borderRight: `20px solid #73ACB5` }
+                }
+              }
+            ]}
+            onChange={(evt, value) => settingsActions.sub.ui.setTheme(value)} />
           {process.platform === 'darwin' ? (
-            <SelectField
-              floatingLabelText='Translucent window backgrounds (Requires Restart)'
+            <SettingsListItemSelectInline
+              label='Translucent window backgrounds (Requires Restart)'
+              secondary='(Experimental)'
               value={ui.vibrancyMode}
-              fullWidth
-              onChange={(evt, index, value) => {
+              options={[
+                { value: UISettings.VIBRANCY_MODES.NONE, label: 'None' },
+                { value: UISettings.VIBRANCY_MODES.LIGHT, label: 'Light' },
+                { value: UISettings.VIBRANCY_MODES.MEDIUM_LIGHT, label: 'Medium Light' },
+                { value: UISettings.VIBRANCY_MODES.DARK, label: 'Dark' },
+                { value: UISettings.VIBRANCY_MODES.ULTRA_DARK, label: 'Ultra Dark' }
+              ]}
+              onChange={(evt, value) => {
                 showRestart()
                 settingsActions.sub.ui.setVibrancyMode(value)
-              }}>
-              {Object.keys(UISettings.VIBRANCY_MODES).map((value) => {
-                return (
-                  <MenuItem key={value} value={value} primaryText={VIBRANCY_MODE_LABELS[value]} />
-                )
-              })}
-            </SelectField>
+              }} />
           ) : undefined}
+          <SettingsListItemSelectInline
+            divider={false}
+            label='Account tooltips'
+            value={ui.accountTooltipMode}
+            options={[
+              { value: UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED, label: 'Show', primaryText: 'Show in Sidebar & Toolbar' },
+              { value: UISettings.ACCOUNT_TOOLTIP_MODES.DISABLED, label: 'Hide', primaryText: 'Hide all' },
+              { value: UISettings.ACCOUNT_TOOLTIP_MODES.SIDEBAR_ONLY, label: 'Sidebar Only', primaryText: 'Show only in the Sidebar' },
+              { value: UISettings.ACCOUNT_TOOLTIP_MODES.TOOLBAR_ONLY, label: 'Toolbar Only', primaryText: 'Show only in the Toolbar' }
+            ]}
+            onChange={(evt, value) => settingsActions.sub.ui.setAccountTooltipMode(value)} />
+        </SettingsListSection>
 
-          <hr style={styles.subsectionRule} />
-          <h1 style={styles.subsectionheading}>Sidebar</h1>
-          <Toggle
-            toggled={ui.sidebarEnabled}
+        <SettingsListSection title='User Interface' subtitle='Sidebar' icon={<ViewQuiltIcon />}>
+          <SettingsListItemSwitch
             label={(
               <span>
                 <span>Show Sidebar </span>
-                {(accelerators.toggleSidebar || '').split('+').map((i) => {
-                  return i ? (<kbd key={i} style={styles.kbd}>{i}</kbd>) : undefined
-                })}
+                <SettingsListKeyboardShortcutText shortcut={accelerators.toggleSidebar} />
               </span>
             )}
-            labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.sub.ui.setEnableSidebar(toggled)} />
-          <Toggle
-            toggled={ui.showSidebarSupport}
-            label='Show Support in Sidebar'
-            labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.sub.ui.setShowSidebarSupport(toggled)} />
-          <SelectField
-            floatingLabelText={`Show What's New in Sidebar`}
+            onChange={(evt, toggled) => settingsActions.sub.ui.setEnableSidebar(toggled)}
+            checked={ui.sidebarEnabled} />
+          <SettingsListItemSelectInline
+            label='Sidebar Size'
+            value={ui.sidebarSize}
+            options={[
+              { value: UISettings.SIDEBAR_SIZES.REGULAR, label: 'Regular' },
+              { value: UISettings.SIDEBAR_SIZES.COMPACT, label: 'Compact' },
+              { value: UISettings.SIDEBAR_SIZES.TINY, label: 'Tiny' }
+            ]}
+            onChange={(evt, value) => settingsActions.sub.ui.setSidebarSize(value)} />
+          <SettingsListItemSelectInline
+            label={`Show What's New in Sidebar`}
             value={ui.showSidebarNewsfeed}
-            fullWidth
-            onChange={(evt, index, value) => { settingsActions.sub.ui.setShowSidebarNewsfeed(value) }}>
-            {Object.keys(UISettings.SIDEBAR_NEWS_MODES).map((value) => {
-              return (
-                <MenuItem key={value} value={value} primaryText={SIDEBAR_NEWS_MODE_LABELS[value]} />
-              )
-            })}
-          </SelectField>
+            options={[
+              { value: UISettings.SIDEBAR_NEWS_MODES.NEVER, label: 'Never' },
+              { value: UISettings.SIDEBAR_NEWS_MODES.UNREAD, label: `When there's new items` },
+              { value: UISettings.SIDEBAR_NEWS_MODES.ALWAYS, label: 'Always' }
+            ]}
+            onChange={(evt, value) => settingsActions.sub.ui.setShowSidebarNewsfeed(value)} />
+          <SettingsListItemSwitch
+            divider={false}
+            label='Show Support in Sidebar'
+            onChange={(evt, toggled) => settingsActions.sub.ui.setShowSidebarSupport(toggled)}
+            checked={ui.showSidebarSupport} />
+        </SettingsListSection>
 
-          <hr style={styles.subsectionRule} />
-          <h1 style={styles.subsectionheading}>Titlebar</h1>
-          <Toggle
-            labelPosition='right'
-            toggled={ui.showTitlebar}
-            label={process.platform === 'darwin' ? (
-              'Show titlebar (Requires Restart)'
-            ) : (
-              <span>Show titlebar (Requires Restart) <span style={{ color: '#CCC', fontSize: '85%' }}>(Experimental)</span></span>
-            )}
-            onToggle={(evt, toggled) => {
+        <SettingsListSection title='User Interface' subtitle='Titlebar' icon={<ViewQuiltIcon />}>
+          <SettingsListItemSwitch
+            label='Show titlebar (Requires Restart)'
+            onChange={(evt, toggled) => {
               showRestart()
               settingsActions.sub.ui.setShowTitlebar(toggled)
-            }} />
+            }}
+            checked={ui.showTitlebar} />
           {process.platform !== 'darwin' ? (
-            <Toggle
-              labelPosition='right'
-              toggled={ui.showAppMenu}
+            <SettingsListItemSwitch
               label={(
                 <span>
                   <span>Show titlebar Menu </span>
-                  {(accelerators.toggleMenu || '').split('+').map((i) => {
-                    return i ? (<kbd key={i} style={styles.kbd}>{i}</kbd>) : undefined
-                  })}
+                  <SettingsListKeyboardShortcutText shortcut={accelerators.toggleMenu} />
                 </span>
               )}
-              onToggle={(evt, toggled) => settingsActions.sub.ui.setShowAppMenu(toggled)} />
+              onChange={(evt, toggled) => settingsActions.sub.ui.setShowAppMenu(toggled)}
+              checked={ui.showAppMenu} />
           ) : undefined}
-          <Toggle
-            toggled={ui.showTitlebarCount}
+          <SettingsListItemSwitch
             label='Show titlebar unread count'
-            labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.sub.ui.setShowTitlebarUnreadCount(toggled)} />
-          <Toggle
-            toggled={ui.showTitlebarAccount}
+            onChange={(evt, toggled) => settingsActions.sub.ui.setShowTitlebarUnreadCount(toggled)}
+            checked={ui.showTitlebarCount} />
+          <SettingsListItemSwitch
+            divider={false}
             label='Show titlebar active account'
-            labelPosition='right'
-            onToggle={(evt, toggled) => settingsActions.sub.ui.setShowTitlebarAccount(toggled)} />
-          <div>
-            <hr style={styles.subsectionRule} />
-            <h1 style={styles.subsectionheading}>Toolbar</h1>
-            <Toggle
-              toggled={extension.showBrowserActionsInToolbar}
-              label='Show extensions in toolbar'
-              labelPosition='right'
-              onToggle={(evt, toggled) => settingsActions.sub.extension.setShowBrowserActionsInToolbar(toggled)} />
-            <SelectField
-              floatingLabelText='Extension position in toolbar'
-              value={extension.toolbarBrowserActionLayout}
-              disabled={!extension.showBrowserActionsInToolbar}
-              fullWidth
-              onChange={(evt, index, value) => { settingsActions.sub.extension.setToolbarBrowserActionLayout(value) }}>
-              {Object.keys(ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT).map((value) => {
-                return (
-                  <MenuItem
-                    key={value}
-                    value={value}
-                    primaryText={EXTENSION_LAYOUT_MODE_LABELS[value]} />
-                )
-              })}
-            </SelectField>
-          </div>
-        </Paper>
+            onChange={(evt, toggled) => settingsActions.sub.ui.setShowTitlebarAccount(toggled)}
+            checked={ui.showTitlebarAccount} />
+        </SettingsListSection>
+
+        <SettingsListSection title='User Interface' subtitle='Toolbar' icon={<ViewQuiltIcon />}>
+          <SettingsListItemSwitch
+            label='Show extensions in toolbar'
+            onChange={(evt, toggled) => settingsActions.sub.extension.setShowBrowserActionsInToolbar(toggled)}
+            checked={extension.showBrowserActionsInToolbar} />
+          <SettingsListItemSelectInline
+            divider={false}
+            label='Extension position in toolbar'
+            value={extension.toolbarBrowserActionLayout}
+            disabled={!extension.showBrowserActionsInToolbar}
+            options={[
+              { value: ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_LEFT, label: 'Left' },
+              { value: ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_RIGHT, label: 'Right' }
+            ]}
+            onChange={(evt, value) => settingsActions.sub.extension.setToolbarBrowserActionLayout(value)} />
+        </SettingsListSection>
       </div>
     )
   }

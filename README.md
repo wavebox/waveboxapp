@@ -1,14 +1,14 @@
 # Wavebox
 
 ![](https://img.shields.io/badge/Contributions-Welcome-ff69b4.svg)
-[![Travis Build Status](https://img.shields.io/travis/wavebox/waveboxapp.svg)](http://travis-ci.org/wavebox/waveboxapp)
+[![Travis Build Status](https://img.shields.io/travis/wavebox/waveboxapp/master.svg)](http://travis-ci.org/wavebox/waveboxapp)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 [![GitHub release](https://img.shields.io/github/release/wavebox/waveboxapp.svg)](https://github.com/wavebox/waveboxapp/releases)
 [![Download](https://img.shields.io/badge/downloads-wavebox.io-blue.svg)](https://wavebox.io/download/)
 
 Your client for Gmail, Inbox, Outlook, O365, Trello, Slack & more!
 
-Wavebox is the clever new home for cloud apps on macOS, Linux & Windows bringing  Gmail, Inbox, Outlook, O365, Trello, Slack & more into a configurable client.  
+Wavebox is the clever new home for cloud apps on macOS, Linux & Windows bringing  Gmail, Inbox, Outlook, O365, Trello, Slack & more into a configurable client.
 
 Gone are the days of opening countless browser tabs and logging in and out of your favourite cloud accounts. Now you can launch Wavebox with one click, and instantly access them all in one UI, and without slowing your machine.
 
@@ -43,7 +43,8 @@ Here's how to build Wavebox from source.
 Before you get started you'll need the following
 
 * Python 2.7
-* Nodejs 8.2.1
+* Nodejs 8.9.3
+* npm >= 6.2.0
 * Wavebox API Key
   * Download & install Wavebox for free
   * Go to Settings and then the Wavebox Pro Tab

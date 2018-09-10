@@ -1,4 +1,4 @@
-import { URL, format as urlFormat } from 'url'
+import { URL } from 'url'
 
 const privCache = Symbol('privCache')
 
@@ -89,13 +89,9 @@ class WindowOpeningMatchTask {
   * @return a url without qs and hash
   */
   _justUri (targetUrl) {
-    if (!targetUrl) { return targetUrl }
+    if (!targetUrl || targetUrl === 'about:blank') { return targetUrl }
     const purl = new URL(targetUrl)
-    return urlFormat({
-      protocol: purl.protocol,
-      hostname: purl.hostname,
-      pathname: purl.pathname
-    })
+    return new URL(purl.pathname, purl.origin).toString()
   }
 }
 

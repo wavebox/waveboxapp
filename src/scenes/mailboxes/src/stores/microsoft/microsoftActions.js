@@ -20,16 +20,16 @@ class MicrosoftActions {
   /* **************************************************************************/
 
   /**
-  * Syncs all mailbox profiles
+  * Syncs all service profiles
   */
-  syncAllMailboxProfiles () { return {} }
+  syncAllServiceProfiles () { return {} }
 
   /**
-  * Syncs a mailbox profile
-  * @param mailboxId: the id of the mailbox
+  * Syncs a service profile
+  * @param serviceId: the id of the service
   */
-  syncMailboxProfile (mailboxId) {
-    return { mailboxId: mailboxId }
+  syncServiceProfile (serviceId) {
+    return { serviceId: serviceId }
   }
 
   /* **************************************************************************/
@@ -37,25 +37,25 @@ class MicrosoftActions {
   /* **************************************************************************/
 
   /**
-  * Syncs all mailbox notifications
+  * Syncs all service notifications
   */
-  syncAllMailboxMail () { return {} }
+  syncAllServiceMail () { return {} }
 
   /**
-  * Syncs the mailbox notifications
-  * @param mailboxId: the id of the mailbox
+  * Syncs the service notifications
+  * @param serviceId: the id of the service
   */
-  syncMailboxMail (mailboxId) {
-    return { mailboxId: mailboxId }
+  syncServiceMail (serviceId) {
+    return { serviceId: serviceId }
   }
 
   /**
-  * Syncs the mailbox notifications
-  * @param mailboxId: the id of the mailbox
+  * Syncs the service notifications
+  * @param serviceId: the id of the service
   * @param wait: the time to wait before the sync
   */
-  syncMailboxMailAfter (mailboxId, wait) {
-    return { mailboxId: mailboxId, wait: wait }
+  syncServiceMailAfter (serviceId, wait) {
+    return { serviceId: serviceId, wait: wait }
   }
 }
 

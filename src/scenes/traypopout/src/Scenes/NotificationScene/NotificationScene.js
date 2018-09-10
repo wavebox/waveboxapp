@@ -2,14 +2,17 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import shallowCompare from 'react-addons-shallow-compare'
 import { notifhistStore } from 'stores/notifhist'
-import { mailboxActions } from 'stores/mailbox'
+import { accountActions } from 'stores/account'
 import { emblinkActions } from 'stores/emblink'
 import Infinate from 'react-infinite'
-import { List, ListItem } from 'material-ui'
-import MailboxAvatar from 'Components/Mailbox/MailboxAvatar'
-import TimeAgo from 'react-timeago'
+import { List } from '@material-ui/core'
 import { ipcRenderer } from 'electron'
 import { WB_FOCUS_MAILBOXES_WINDOW } from 'shared/ipcEvents'
+import NotificationListItem from './NotificationListItem'
+import ErrorBoundary from 'wbui/ErrorBoundary'
+import { withStyles } from '@material-ui/core/styles'
+import classNames from 'classnames'
+import StyleMixins from 'wbui/Styles/StyleMixins'
 
 const MAIN_REF = 'MAIN'
 const INFINATE_REF = 'INFINATE'
@@ -21,55 +24,19 @@ const styles = {
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0
+    bottom: 0,
+    ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
   },
   list: {
     padding: 0
   },
-
-  // List Item
   listItem: {
-    height: LIST_ITEM_HEIGHT,
-    paddingTop: 0,
-    paddingBottom: 0,
-    borderBottom: '1px solid rgb(224, 224, 224)'
-  },
-  listItemInner: {
-    paddingTop: 8,
-    paddingBottom: 8
-  },
-  listItemPrimaryText: {
-    fontSize: 14,
-    lineHeight: '16px',
-    height: 16,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap'
-  },
-  listItemSecondaryText: {
-    height: 'auto'
-  },
-  listItemNotificationBody: {
-    fontSize: 13,
-    lineHeight: '15px',
-    height: 15,
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap'
-  },
-  listItemTimeago: {
-    fontSize: 11
-  },
-  listItemIcon: {
-    height: 40,
-    width: 40,
-    backgroundSize: 'contain',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center'
+    height: LIST_ITEM_HEIGHT
   }
 }
 
-export default class UnreadScene extends React.Component {
+@withStyles(styles)
+class NotificationScene extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
@@ -141,10 +108,10 @@ export default class UnreadScene extends React.Component {
   */
   handleNotificationClick = (evt, notification) => {
     ipcRenderer.send(WB_FOCUS_MAILBOXES_WINDOW, {})
-    mailboxActions.changeActive(notification.mailboxId, notification.serviceType)
+    accountActions.changeActiveService(notification.serviceId)
     if (notification.openPayload) {
       // Not all notifications are openable at any time
-      emblinkActions.openItem(notification.mailboxId, notification.serviceType, notification.openPayload)
+      emblinkActions.openItem(notification.serviceId, notification.openPayload)
     }
   }
 
@@ -157,48 +124,33 @@ export default class UnreadScene extends React.Component {
   }
 
   render () {
-    const { style, ...passProps } = this.props
+    const { className, classes, ...passProps } = this.props
     const { notifications, containerHeight } = this.state
 
     return (
-      <div
-        ref={MAIN_REF}
-        style={{...styles.main, ...style}}
-        {...passProps}>
-        <List style={styles.list}>
-          {containerHeight === 0 ? undefined : (
-            <Infinate ref={INFINATE_REF} containerHeight={containerHeight} elementHeight={LIST_ITEM_HEIGHT}>
-              {notifications.map(({id, timestamp, notification}) => {
-                return (
-                  <ListItem
-                    key={id}
-                    onClick={(evt) => this.handleNotificationClick(evt, notification)}
-                    style={styles.listItem}
-                    innerDivStyle={{
-                      ...styles.listItemInner,
-                      ...(notification.icon ? { paddingRight: 72 } : undefined)
-                    }}
-                    leftAvatar={<MailboxAvatar mailboxId={notification.mailboxId} />}
-                    rightAvatar={notification.icon ? (
-                      <div style={{...styles.listItemIcon, backgroundImage: `url("${notification.icon}")`}} />
-                    ) : undefined}
-                    primaryText={(
-                      <div style={styles.listItemPrimaryText}>{notification.title}</div>
-                    )}
-                    secondaryText={(
-                      <div style={styles.listItemSecondaryText}>
-                        <div style={styles.listItemNotificationBody}>{notification.body || ''}</div>
-                        <div style={styles.listItemTimeago}>
-                          <TimeAgo date={timestamp} />
-                        </div>
-                      </div>
-                    )} />
-                )
-              })}
-            </Infinate>
-          )}
-        </List>
+      <div ref={MAIN_REF} className={classNames(className, classes.main)} {...passProps}>
+        <ErrorBoundary>
+          <List className={classes.list}>
+            {containerHeight === 0 ? undefined : (
+              <Infinate ref={INFINATE_REF} containerHeight={containerHeight} elementHeight={LIST_ITEM_HEIGHT}>
+                {notifications.map(({ id, timestamp, notification }) => {
+                  return (
+                    <NotificationListItem
+                      key={id}
+                      onClick={(evt) => this.handleNotificationClick(evt, notification)}
+                      className={classes.listItem}
+                      mailboxId={notification.mailboxId}
+                      notification={notification}
+                      timestamp={timestamp} />
+                  )
+                })}
+              </Infinate>
+            )}
+          </List>
+        </ErrorBoundary>
       </div>
     )
   }
 }
+
+export default NotificationScene

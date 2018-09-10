@@ -1,39 +1,57 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Toggle, Paper, SelectField, MenuItem, FlatButton, FontIcon, IconMenu, Divider } from 'material-ui'
 import Timeago from 'react-timeago'
 import settingsActions from 'stores/settings/settingsActions'
-import commonStyles from '../CommonSettingStyles'
-import shallowCompare from 'react-addons-shallow-compare'
+import modelCompare from 'wbui/react-addons-model-compare'
+import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 import { NotificationPlatformSupport, NotificationService } from 'Notifications'
+import { MenuItem, Menu, ListItemIcon, Divider } from '@material-ui/core'
 import {
   NOTIFICATION_PROVIDERS,
   NOTIFICATION_SOUNDS
 } from 'shared/Notifications'
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
+import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
+import { withStyles } from '@material-ui/core/styles'
+import PlayArrowIcon from '@material-ui/icons/PlayArrow'
+import NotificationsIcon from '@material-ui/icons/Notifications'
+import NotificationsPausedIcon from '@material-ui/icons/NotificationsPaused'
+import classNames from 'classnames'
+import SettingsListItemButton from 'wbui/SettingsListItemButton'
 
 const styles = {
-  buttonIcon: {
-    marginLeft: 0
-  },
   notificationMenuItem: {
-    minHeight: 32,
-    lineHeight: '32px',
-    fontSize: 14
+    paddingTop: 4,
+    paddingBottom: 4,
+    fontSize: '14px'
+  },
+  notificationMenuItemIcon: {
+    marginRight: 6,
+    width: 20,
+    height: 20
   },
   notificationMutedInfoMenuItem: {
-    minHeight: 32,
-    lineHeight: '32px',
-    fontSize: 12
+    fontSize: '12px'
   }
 }
 
-export default class NotificationSettingsSection extends React.Component {
+@withStyles(styles)
+class NotificationSettingsSection extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   static propTypes = {
     os: PropTypes.object.isRequired
+  }
+
+  /* **************************************************************************/
+  // Data lifecycle
+  /* **************************************************************************/
+
+  state = {
+    notificationMenuAnchor: null
   }
 
   /* **************************************************************************/
@@ -59,6 +77,7 @@ export default class NotificationSettingsSection extends React.Component {
   * @param time: the time to pass to the dispatcher
   */
   muteNotificationsForTime = (time) => {
+    this.setState({ notificationMenuAnchor: null })
     // Defer the update slightly so we don't update the menu when it's open
     setTimeout(() => {
       settingsActions.sub.os.muteNotificationsForHours(time)
@@ -69,6 +88,7 @@ export default class NotificationSettingsSection extends React.Component {
   * Clears the notification mute
   */
   unmuteNotifications = () => {
+    this.setState({ notificationMenuAnchor: null })
     // Defer the update slightly so we don't update the menu when it's open
     setTimeout(() => {
       settingsActions.sub.os.clearNotificationMute()
@@ -80,7 +100,22 @@ export default class NotificationSettingsSection extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
+    return (
+      modelCompare(this.props.os, nextProps.os, [
+        'notificationsProvider',
+        'notificationsSound',
+        'notificationsSilent',
+        'notificationsEnabled',
+        'notificationsMuted',
+        'notificationsMutedEndEpoch'
+      ]) ||
+      partialShallowCompare(
+        { showRestart: this.props.showRestart },
+        this.state,
+        { showRestart: nextProps.showRestart },
+        nextState
+      )
+    )
   }
 
   /**
@@ -116,27 +151,17 @@ export default class NotificationSettingsSection extends React.Component {
   */
   renderEnhanced (os) {
     if (os.notificationsProvider !== NOTIFICATION_PROVIDERS.ENHANCED) { return undefined }
+    if (Object.keys(NOTIFICATION_SOUNDS).length === 0) { return undefined }
 
     return (
-      <div>
-        {Object.keys(NOTIFICATION_SOUNDS).length ? (
-          <SelectField
-            floatingLabelText='Notification Sound'
-            value={os.notificationsSound}
-            disabled={os.notificationsSilent || !os.notificationsEnabled}
-            fullWidth
-            onChange={(evt, index, value) => { settingsActions.sub.os.setNotificationsSound(value) }}>
-            {Object.keys(NOTIFICATION_SOUNDS).map((value) => {
-              return (
-                <MenuItem
-                  key={value}
-                  value={value}
-                  primaryText={NOTIFICATION_SOUNDS[value]} />
-              )
-            })}
-          </SelectField>
-        ) : undefined}
-      </div>
+      <SettingsListItemSelectInline
+        label='Notification Sound'
+        value={os.notificationsSound}
+        disabled={os.notificationsSilent || !os.notificationsEnabled}
+        options={Object.keys(NOTIFICATION_SOUNDS).map((value) => {
+          return { value: value, label: NOTIFICATION_SOUNDS[value] }
+        })}
+        onChange={(evt, value) => settingsActions.sub.os.setNotificationsSound(value)} />
     )
   }
 
@@ -145,124 +170,96 @@ export default class NotificationSettingsSection extends React.Component {
   * @param os: the os settings
   * @return jsx
   */
-  renderMute (os) {
+  renderMute (classes, os) {
+    const { notificationMenuAnchor } = this.state
     return (
-      <div>
-        <IconMenu
-          iconButtonElement={os.notificationsMuted ? (
-            <FlatButton
-              icon={<FontIcon style={styles.buttonIcon} className='material-icons'>notifications_paused</FontIcon>}
-              label='Notifications muted' />
-          ) : (
-            <FlatButton
-              icon={<FontIcon style={styles.buttonIcon} className='material-icons'>notifications</FontIcon>}
-              label='Mute notifications' />
-          )}
-          anchorOrigin={{horizontal: 'left', vertical: 'top'}}
-          targetOrigin={{horizontal: 'left', vertical: 'top'}}>
-          <MenuItem
-            style={styles.notificationMenuItem}
-            primaryText='Mute for 30 minutes'
-            onClick={() => this.muteNotificationsForTime(0.5)} />
-          <MenuItem
-            style={styles.notificationMenuItem}
-            primaryText='Mute for 1 hour'
-            onClick={() => this.muteNotificationsForTime(1)} />
-          <MenuItem
-            style={styles.notificationMenuItem}
-            primaryText='Mute for 2 hours'
-            onClick={() => this.muteNotificationsForTime(2)} />
-          <MenuItem
-            style={styles.notificationMenuItem}
-            primaryText='Mute for 6 hours'
-            onClick={() => this.muteNotificationsForTime(6)} />
-          <MenuItem
-            style={styles.notificationMenuItem}
-            primaryText='Mute for 1 day'
-            onClick={() => this.muteNotificationsForTime(24)} />
+      <SettingsListItemButton
+        label={os.notificationsMuted ? 'Notifications muted' : 'Mute notifications'}
+        icon={os.notificationsMuted ? (<NotificationsPausedIcon />) : (<NotificationsIcon />)}
+        onClick={(evt) => { this.setState({ notificationMenuAnchor: evt.target }) }}>
+        <Menu
+          disableEnforceFocus
+          anchorEl={notificationMenuAnchor}
+          open={!!notificationMenuAnchor}
+          onClose={() => this.setState({ notificationMenuAnchor: null })}>
+          <MenuItem className={classes.notificationMenuItem} onClick={() => this.muteNotificationsForTime(0.5)}>
+            Mute for 30 minutes
+          </MenuItem>
+          <MenuItem className={classes.notificationMenuItem} onClick={() => this.muteNotificationsForTime(1)}>
+            Mute for 1 hour
+          </MenuItem>
+          <MenuItem className={classes.notificationMenuItem} onClick={() => this.muteNotificationsForTime(2)}>
+            Mute for 2 hours
+          </MenuItem>
+          <MenuItem className={classes.notificationMenuItem} onClick={() => this.muteNotificationsForTime(6)}>
+            Mute for 6 hours
+          </MenuItem>
+          <MenuItem className={classes.notificationMenuItem} onClick={() => this.muteNotificationsForTime(24)}>
+            Mute for 1 day
+          </MenuItem>
           {os.notificationsMuted ? (
             <Divider />
           ) : undefined}
           {os.notificationsMuted ? (
-            <MenuItem
-              style={styles.notificationMenuItem}
-              primaryText='Unmute'
-              leftIcon={(
-                <FontIcon
-                  style={{ margin: '4px 12px' }}
-                  size={30}
-                  className='material-icons'>
-                  notifications
-                </FontIcon>
-              )}
-              onClick={this.unmuteNotifications} />
+            <MenuItem className={classes.notificationMenuItem} onClick={this.unmuteNotifications}>
+              <ListItemIcon>
+                <NotificationsIcon className={classes.notificationMenuItemIcon} />
+              </ListItemIcon>
+              Unmute
+            </MenuItem>
           ) : undefined}
           {os.notificationsMuted ? (
-            <MenuItem
-              style={styles.notificationMutedInfoMenuItem}
-              disabled
-              primaryText={(
-                <Timeago
-                  date={os.notificationsMutedEndEpoch}
-                  formatter={(value, unit, suffix) => {
-                    if (value !== 1) { unit += 's' }
-                    return 'Notifications muted for ' + value + ' ' + unit
-                  }} />
-              )} />
+            <MenuItem className={classNames(classes.notificationMenuItem, classes.notificationMutedInfoMenuItem)} disabled>
+              <Timeago
+                date={os.notificationsMutedEndEpoch}
+                formatter={(value, unit, suffix) => `Notifications muted for ${value} ${unit}${value !== 1 ? 's' : ''}`} />
+            </MenuItem>
           ) : undefined}
-        </IconMenu>
-      </div>
+        </Menu>
+      </SettingsListItemButton>
     )
   }
 
   render () {
-    const { os, ...passProps } = this.props
+    const { os, classes, ...passProps } = this.props
 
     const validProviders = Object.keys(NOTIFICATION_PROVIDERS)
       .filter((provider) => NotificationPlatformSupport.supportsProvider(provider))
 
     return (
-      <Paper zDepth={1} style={commonStyles.paper} {...passProps}>
-        <h1 style={commonStyles.subheading}>Notifications</h1>
+      <SettingsListSection title='Notifications' icon={<NotificationsIcon />} {...passProps}>
         {validProviders.length > 1 ? (
-          <SelectField
-            floatingLabelText='Notification Provider'
+          <SettingsListItemSelectInline
+            label='Notification Provider'
             value={os.notificationsProvider}
-            fullWidth
-            onChange={(evt, index, value) => { settingsActions.sub.os.setNotificationsProvider(value) }}>
-            {validProviders.map((provider) => {
-              return (
-                <MenuItem
-                  key={provider}
-                  value={provider}
-                  label={this.humanizeProvider(provider)}
-                  primaryText={`${this.humanizeProvider(provider)}: ${this.providerHelpText(provider)}`} />
-              )
+            options={validProviders.map((provider) => {
+              return {
+                value: provider,
+                label: this.humanizeProvider(provider),
+                primaryText: `${this.humanizeProvider(provider)}: ${this.providerHelpText(provider)}`
+              }
             })}
-          </SelectField>
+            onChange={(evt, value) => settingsActions.sub.os.setNotificationsProvider(value)} />
         ) : undefined}
-        <Toggle
-          toggled={os.notificationsEnabled}
-          labelPosition='right'
+        <SettingsListItemSwitch
           label='Show new mail/message notifications'
-          onToggle={(evt, toggled) => settingsActions.sub.os.setNotificationsEnabled(toggled)} />
-        <Toggle
-          toggled={!os.notificationsSilent}
+          onChange={(evt, toggled) => settingsActions.sub.os.setNotificationsEnabled(toggled)}
+          checked={os.notificationsEnabled} />
+        <SettingsListItemSwitch
           label='Play notification sound'
-          labelPosition='right'
+          onChange={(evt, toggled) => settingsActions.sub.os.setNotificationsSilent(!toggled)}
           disabled={!os.notificationsEnabled}
-          onToggle={(evt, toggled) => settingsActions.sub.os.setNotificationsSilent(!toggled)} />
+          checked={!os.notificationsSilent} />
         {this.renderEnhanced(os)}
-        {this.renderMute(os)}
-        <div>
-          <FlatButton
-            disabled={!os.notificationsEnabled}
-            onClick={this.sendTestNotification}
-            label='Test Notification'
-            icon={<FontIcon style={styles.buttonIcon} className='material-icons'>play_arrow</FontIcon>}
-          />
-        </div>
-      </Paper>
+        {this.renderMute(classes, os)}
+        <SettingsListItemButton
+          divider={false}
+          label='Test Notification'
+          icon={<PlayArrowIcon />}
+          onClick={this.sendTestNotification} />
+      </SettingsListSection>
     )
   }
 }
+
+export default NotificationSettingsSection

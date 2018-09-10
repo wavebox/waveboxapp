@@ -84,6 +84,11 @@ class SessionManager {
   clearSessionFull (id) {
     return new Promise((resolve, reject) => {
       const ses = session.fromPartition(id)
+
+      this.destroyWebRequestEmitterFromSession(ses)
+
+      // We're still living in the heap managed by session in the callback. Exceptions here
+      // can bring down the entire app, so give ourselves a new heap with setTimeout
       ses.clearCache(() => {
         ses.clearStorageData(() => {
           ses.clearHostResolverCache(() => {
@@ -92,11 +97,11 @@ class SessionManager {
                 const pureSessionId = encodeURIComponent(id.replace('persist:', ''))
                 const dirPath = path.join(app.getPath('userData'), 'Partitions', pureSessionId)
                 fs.remove(dirPath, () => {
-                  resolve()
+                  setTimeout(function () { resolve() })
                 })
               }, 100)
             } else {
-              resolve()
+              setTimeout(function () { resolve() })
             }
           })
         })
@@ -126,6 +131,18 @@ class SessionManager {
       this._webRequestEmitter.set(ses, new WebRequestEmitter(ses.webRequest))
     }
     return this._webRequestEmitter.get(ses)
+  }
+
+  /**
+  * Destroys a webrequest emitter for a session
+  * @param ses: the session
+  */
+  destroyWebRequestEmitterFromSession (ses) {
+    const emitter = this._webRequestEmitter.get(ses)
+    if (emitter) {
+      emitter.unbind()
+      this._webRequestEmitter.delete(ses)
+    }
   }
 
   /**

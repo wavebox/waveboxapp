@@ -1,6 +1,6 @@
 import RemoteStore from '../RemoteStore'
 import User from '../../Models/User'
-import {Container} from '../../Models/Container'
+import ACContainer from '../../Models/ACContainer'
 import {
   ACTIONS_NAME,
   DISPATCH_NAME,
@@ -123,7 +123,9 @@ class CoreUserStore extends RemoteStore {
     * @param containerId: the id of the container
     * @return the container or null
     */
-    this.getContainer = (containerId) => { return this.containers.get(containerId) || null }
+    this.getContainer = (containerId) => {
+      return this.containers.get(containerId) || null
+    }
 
     /* ****************************************/
     // Actions
@@ -154,7 +156,7 @@ class CoreUserStore extends RemoteStore {
     if (userData[USER] && userData[USER_EPOCH]) {
       this.user = new User(userData[USER], userData[USER_EPOCH])
     } else {
-      this.user = null
+      this.user = new User({}, new Date().getTime())
     }
 
     // Extensions
@@ -165,7 +167,7 @@ class CoreUserStore extends RemoteStore {
 
     // Containers
     this.containers = Object.keys(containerData || {}).reduce((acc, id) => {
-      acc.set(id, new Container(id, containerData[id]))
+      acc.set(id, new ACContainer(containerData[id]))
       return acc
     }, new Map())
   }
@@ -201,7 +203,7 @@ class CoreUserStore extends RemoteStore {
       if (data === undefined || data === null) {
         return
       }
-      const container = new Container(id, data)
+      const container = new ACContainer(data)
       if (this.containers.has(id) && this.containers.get(id).version >= container.version) {
         return
       }

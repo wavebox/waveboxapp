@@ -8,12 +8,13 @@ import { settingsStore } from 'stores/settings'
 import {
   WB_METRICS_OPEN_MONITOR,
   WB_METRICS_OPEN_LOG,
-  WB_METRICS_GET_METRICS_SYNC
+  WB_METRICS_GET_CHROMIUM_METRICS_SYNC
 } from 'shared/ipcEvents'
 import { METRICS_LOG_WRITE_INTERVAL } from 'shared/constants'
 import RuntimePaths from 'Runtime/RuntimePaths'
 import TrayPopout from 'Tray/TrayPopout'
 import LinuxNotification from 'Notifications/LinuxNotification'
+import pidusage from 'pidusage'
 
 const LOG_TAG = '[METRICS]'
 mkdirp.sync(path.dirname(RuntimePaths.METRICS_LOG_PATH))
@@ -34,7 +35,7 @@ class MetricsService {
     settingsStore.listen(this.handleSettingsChanged)
     ipcMain.on(WB_METRICS_OPEN_LOG, this.openMetricsLogLocation)
     ipcMain.on(WB_METRICS_OPEN_MONITOR, this.openMonitorWindow)
-    ipcMain.on(WB_METRICS_GET_METRICS_SYNC, this.ipcGetMetricsSync)
+    ipcMain.on(WB_METRICS_GET_CHROMIUM_METRICS_SYNC, this.ipcGetMetricsSync)
   }
 
   /* ****************************************************************************/
@@ -86,9 +87,9 @@ class MetricsService {
   */
   ipcGetMetricsSync = (evt) => {
     try {
-      evt.returnValue = this.getMetrics()
+      evt.returnValue = this.getChromiumMetricsSync()
     } catch (ex) {
-      console.error(`Failed to respond to "${WB_METRICS_GET_METRICS_SYNC}" continuing with unkown side effects`, ex)
+      console.error(`Failed to respond to "${WB_METRICS_GET_CHROMIUM_METRICS_SYNC}" continuing with unkown side effects`, ex)
       evt.returnValue = null
     }
   }
@@ -101,7 +102,7 @@ class MetricsService {
   * Updates the metrics log
   */
   updateMetricsLog = () => {
-    const metrics = this.getMetrics()
+    const metrics = this.getChromiumMetricsSync()
     const now = new Date()
     const logEntry = `${now} : ${now.getTime()} : ${JSON.stringify(metrics)}\n`
     Promise.resolve()
@@ -131,7 +132,7 @@ class MetricsService {
   * Builds the metrics for the currently running app
   * @return an array of process infos with as much data salted into each as possible
   */
-  getMetrics () {
+  getChromiumMetricsSync () {
     // Using the tab API we can get more info about each webcontents
     const allTabInfos = WaveboxWindow.all().reduce((acc, win) => {
       win.webContentsProcessInfo().forEach((info) => {
@@ -192,6 +193,46 @@ class MetricsService {
     })
 
     return metrics
+  }
+
+  /**
+  * Gets extended metrics, including chromium metrics and os metrics
+  * @param silentErrors=true: if set to true, errors will be silent and
+  *       as much info as available will be returned
+  * @return promise, given the supplied metrics
+  */
+  getExtendedMetrics (silentErrors = true) {
+    return new Promise((resolve, reject) => {
+      const metrics = this.getChromiumMetricsSync().map((cMetric) => {
+        return {
+          webContentsInfo: cMetric.webContentsInfo,
+          pid: cMetric.pid,
+          type: cMetric.type,
+          chromium: {
+            ...cMetric,
+            webContentsInfo: undefined
+          }
+        }
+      })
+      const pids = metrics.map((metric) => metric.pid)
+      pidusage(pids, (err, osMetrics) => {
+        if (err) {
+          if (silentErrors) {
+            resolve(metrics)
+          } else {
+            reject(err)
+          }
+        } else {
+          const fullMetrics = metrics.map((cMetric) => {
+            return {
+              ...cMetric,
+              os: osMetrics[cMetric.pid]
+            }
+          })
+          resolve(fullMetrics)
+        }
+      })
+    })
   }
 }
 

@@ -28,7 +28,7 @@ class Tab {
   /* **************************************************************************/
 
   get id () { return this[privTabId] }
-  get index () { return 0 }
+  get index () { return this[privRaw].index }
   get windowId () { return this[privRaw].windowId }
   get url () { return this[privRaw].url }
   get title () { return this[privRaw].title }

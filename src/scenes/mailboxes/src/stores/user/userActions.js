@@ -77,27 +77,78 @@ class UserActions extends RendererUserActions {
 
   /**
   * Starts the auth process with an existing mailbox
-  * @param mailbox: the mailbox to auth against
+  * @param partitionId: the id of the partitionId
+  * @param namespace: the auth namespace
   * @param serverArgs={}: an args dict to pass to the server
+  * @param openAccountOnSuccess=true: true to open the account screen on complete
   */
-  authenticateWithMailbox (mailbox, serverArgs = {}) {
-    return { id: mailbox.id, type: mailbox.type, serverArgs: serverArgs }
+  authenticateWithAuth (partitionId, namespace, serverArgs = {}, openAccountOnSuccess = true) {
+    return {
+      partitionId: partitionId,
+      namespace: namespace,
+      serverArgs: serverArgs,
+      openAccountOnSuccess: openAccountOnSuccess
+    }
   }
 
   /**
   * Starts the auth process a google account
   * @param serverArgs={}: an args dict to pass to the server
+  * @param openAccountOnSuccess=true: true to open the account screen on complete
   */
-  authenticateWithGoogle (serverArgs = {}) {
-    return { serverArgs: serverArgs }
+  authenticateWithGoogle (serverArgs = {}, openAccountOnSuccess = true) {
+    return {
+      serverArgs: serverArgs,
+      openAccountOnSuccess: openAccountOnSuccess
+    }
   }
 
   /**
   * Starts the auth process a microsoft account
   * @param serverArgs={}: an args dict to pass to the server
+  * @param openAccountOnSuccess=true: true to open the account screen on complete
   */
-  authenticateWithMicrosoft (serverArgs = {}) {
-    return { serverArgs: serverArgs }
+  authenticateWithMicrosoft (serverArgs = {}, openAccountOnSuccess = true) {
+    return {
+      serverArgs: serverArgs,
+      openAccountOnSuccess: openAccountOnSuccess
+    }
+  }
+
+  /**
+  * Starts the auth process a wavebox account
+  * @param serverArgs={}: an args dict to pass to the server
+  * @param openAccountOnSuccess=true: true to open the account screen on complete
+  */
+  authenticateWithWavebox (serverArgs = {}, openAccountOnSuccess = true) {
+    return {
+      serverArgs: serverArgs,
+      openAccountOnSuccess: openAccountOnSuccess
+    }
+  }
+
+  /**
+  * Opens the create wavebox account
+  * @param serverArgs={}: an args dict to pass to the server
+  * @param openAccountOnSuccess=true: true to open the account screen on complete
+  */
+  createWaveboxAccount (serverArgs = {}, openAccountOnSuccess = true) {
+    return this.authenticateWithWavebox({
+      ...serverArgs,
+      start: 'create'
+    }, openAccountOnSuccess)
+  }
+
+  /**
+  * Opens the password reset wavebox account
+  * @param serverArgs={}: an args dict to pass to the server
+  * @param openAccountOnSuccess=true: true to open the account screen on complete
+  */
+  passwordResetWaveboxAccount (serverArgs = {}, openAccountOnSuccess = true) {
+    return this.authenticateWithWavebox({
+      ...serverArgs,
+      start: 'password_reset'
+    }, openAccountOnSuccess)
   }
 
   /* **************************************************************************/
@@ -110,11 +161,7 @@ class UserActions extends RendererUserActions {
   * @param data: the data that came across the ipc
   */
   authenticationSuccess (evt, data) {
-    return {
-      id: data.id,
-      type: data.type,
-      next: data.next
-    }
+    return { next: data.next }
   }
 
   /**
@@ -124,6 +171,59 @@ class UserActions extends RendererUserActions {
   */
   authenticationFailure (evt, data) {
     return { evt: evt, data: data }
+  }
+
+  /* **************************************************************************/
+  // Profiles
+  /* **************************************************************************/
+
+  /**
+  * Starts auto uploading the user profile so it stays in sync
+  */
+  startAutoUploadUserProfile () { return {} }
+
+  /**
+  * Stops auto uploading the user profile so it stays in sync
+  */
+  stopAutoUploadUserProfile () { return {} }
+
+  /**
+  * Uploads the user profile
+  */
+  uploadUserProfile () { return {} }
+
+  /**
+  * Uploads the user profile after a certain wait
+  * @param wait: the time to wait before uploading
+  */
+  uploadUserProfileAfter (wait) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(this.uploadUserProfile())
+      }, wait)
+    })
+  }
+
+  /**
+  * Fetches the user profiles
+  * @param loadingHash='/proile/fetching_profiles':  the hash path to show on load
+  * @param successHash=/profile/restore: the hash path to load on success
+  * @param failureHash='/': the hash path to load on failure
+  */
+  fetchUserProfiles (loadingHash = '/profile/fetching_profiles', successHash = '/profile/restore', failureHash = '/') {
+    return {
+      loadingHash,
+      successHash,
+      failureHash
+    }
+  }
+
+  /**
+  * Restores a user profile
+  * @param profileId: the id of profile to restore
+  */
+  restoreUserProfile (profileId) {
+    return { profileId }
   }
 }
 

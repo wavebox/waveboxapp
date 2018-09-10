@@ -176,7 +176,7 @@ class TrayPopout {
       if (process.platform === 'darwin') {
         this[privPositioner].move('trayCenter', bounds)
       } else if (process.platform === 'win32') {
-        const screenSize = screen.getPrimaryDisplay().workAreaSize
+        const screenSize = screen.getDisplayMatching(bounds).workAreaSize
 
         if (bounds.x < 50) {
           // Taskbar Left

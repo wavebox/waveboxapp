@@ -1,4 +1,4 @@
-import './index.less'
+import './index.css'
 import PDFDatasource from './PDFDatasource'
 import PDFPrintRenderer from './PDFPrintRenderer'
 import ProgressUI from './ProgressUI'

@@ -2,16 +2,16 @@ const path = require('path')
 const ROOT_DIR = path.resolve(path.join(__dirname, '../'))
 const BIN_DIR = path.join(ROOT_DIR, 'bin')
 const devRequire = (n) => require(path.join(ROOT_DIR, 'node_modules', n))
+const webpackRequire = (n) => require(path.join(ROOT_DIR, 'webpack', n))
 
 const CleanWebpackPlugin = devRequire('clean-webpack-plugin')
 const CopyWebpackPlugin = devRequire('copy-webpack-plugin')
-const WebpackNotifierPlugin = devRequire('webpack-notifier')
-const WebpackOnBuildPlugin = devRequire('on-build-webpack')
+const { isVerboseLog } = webpackRequire('Config')
+const DevTools = webpackRequire('DevTools')
 
 module.exports = function (env) {
-  return {
+  const config = {
     entry: path.join(__dirname, '__.js'),
-    stats: process.env.VERBOSE_LOG === 'true' ? undefined : 'errors-only',
     output: {
       path: BIN_DIR,
       filename: '__.js'
@@ -19,7 +19,7 @@ module.exports = function (env) {
     plugins: [
       new CleanWebpackPlugin(['fonts', 'icons', 'images'], {
         root: BIN_DIR,
-        verbose: process.env.VERBOSE_LOG === 'true',
+        verbose: isVerboseLog,
         dry: false
       }),
       new CopyWebpackPlugin([
@@ -29,9 +29,10 @@ module.exports = function (env) {
         { from: path.join(__dirname, 'images'), to: 'images', force: true }
       ], {
         ignore: [ '.DS_Store' ]
-      }),
-      process.env.NOTIFICATIONS === 'true' ? new WebpackNotifierPlugin({ title: 'WB Assets', alwaysNotify: true }) : undefined,
-      new WebpackOnBuildPlugin((stats) => { console.log('WB Assets') })
+      })
     ]
   }
+
+  DevTools('WB Assets', env, config)
+  return config
 }

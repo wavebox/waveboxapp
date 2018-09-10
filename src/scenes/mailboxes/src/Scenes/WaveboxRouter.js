@@ -1,35 +1,45 @@
 import React from 'react'
 import { HashRouter, Route } from 'react-router-dom'
 import AppScene from './AppScene'
-import SettingsScene from './SettingsScene'
-import DictionaryInstallerScene from './DictionaryInstallerScene'
-import ComposePickerScene from './ComposePickerScene'
-import ProScene from './ProScene'
 import EarlyBuildToast from './EarlyBuildToast'
-import MailboxWizardScene from './MailboxWizardScene'
-import MailboxWizardAddSceneClassic from './MailboxWizardAddSceneClassic'
-import MailboxWizardAddScene from './MailboxWizardAddScene'
-import MailboxReauthenticatingScene from './MailboxReauthenticatingScene'
-import AppWizardScene from './AppWizardScene'
+import PrivacyDialog from './PrivacyDialog'
+import ProScene from './ProScene'
 import NewsScene from './NewsScene'
-import OptimizeWizardScene from './OptimizeWizardScene'
-import NotificationPanel from './NotificationPanel'
-import MailboxDeleteScene from './MailboxDeleteScene'
-import MailboxServiceDeleteScene from './MailboxServiceDeleteScene'
+import MailboxReauthenticatingScene from './MailboxReauthenticatingScene'
 import {
   CheckingUpdatesScene,
   UpdateAvailableScene,
   UpdateErrorScene,
   UpdateNoneScene
 } from './UpdatesScene'
+import LinuxSetupScene from './LinuxSetupScene'
+import DictionaryInstallerScene from './DictionaryInstallerScene'
+import AppWizardScene from './AppWizardScene'
+import {
+  MailboxWizardScene,
+  ServiceAttachWizardScene,
+  AccountWizardAddScene
+} from './AccountWizardScene'
+import SettingsScene from './SettingsScene'
+import SitePermissionsScene from './SitePermissionsScene'
+import MailboxServiceDeleteScene from './MailboxServiceDeleteScene'
+import MailboxDeleteScene from './MailboxDeleteScene'
+import NotificationPanel from './NotificationPanel'
+import ComposePickerScene from './ComposePickerScene'
 import {
   AccountMessageScene,
   AccountAuthScene,
   AccountAuthenticatingScene,
   AccountStandaloneScene
 } from './AccountScene'
-import LinuxSetupScene from './LinuxSetupScene'
-import PrivacyDialog from './PrivacyDialog'
+import WaveboxRouterErrorBoundary from './WaveboxRouterErrorBoundary'
+import {
+  ProfileRestoreScene,
+  ProfileRestoreFetchingScene,
+  ProfileRestoreWorkingScene
+} from './ProfileRestoreScene'
+import ErrorBoundary from 'wbui/ErrorBoundary'
+import FullscreenSnackbarHelper from 'Components/FullscreenSnackbarHelper'
 
 export default class WaveboxRouter extends React.Component {
   /* **************************************************************************/
@@ -43,41 +53,55 @@ export default class WaveboxRouter extends React.Component {
       <HashRouter>
         <div>
           <AppScene />
-          <EarlyBuildToast />
-          <NotificationPanel />
 
-          <Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
+          <ErrorBoundary>
+            <EarlyBuildToast />
+          </ErrorBoundary>
+          <ErrorBoundary>
+            <FullscreenSnackbarHelper />
+          </ErrorBoundary>
+          <ErrorBoundary>
+            <NotificationPanel />
+          </ErrorBoundary>
 
-          <Route path='/dictionary_installer' component={DictionaryInstallerScene} />
+          <WaveboxRouterErrorBoundary>
+            <Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
+            <Route path='/site_permissions' component={SitePermissionsScene} />
+            <Route path='/dictionary_installer' component={DictionaryInstallerScene} />
 
-          <Route path='/mailbox_wizard/add' component={MailboxWizardAddScene} />
-          <Route path='/mailbox_wizard/add_classic' component={MailboxWizardAddSceneClassic} />
-          <Route path='/mailbox_wizard/:mailboxType/:accessMode/:step/:mailboxId?' component={MailboxWizardScene} />
-          <Route path='/mailbox/reauthenticating' component={MailboxReauthenticatingScene} />
+            <Route path='/mailbox_wizard/add/:mailboxId?' component={AccountWizardAddScene} />
+            <Route path='/mailbox_wizard/:templateType/:accessMode/:step/:mailboxId?' component={MailboxWizardScene} />
+            <Route path='/mailbox_attach_wizard/:attachTarget/:serviceType/:accessMode/:step/:serviceId?' component={ServiceAttachWizardScene} />
 
-          <Route path='/mailbox_delete/:mailboxId' component={MailboxDeleteScene} />
-          <Route path='/mailbox_service_delete/:mailboxId/:serviceType' component={MailboxServiceDeleteScene} />
+            <Route path='/mailbox/reauthenticating' component={MailboxReauthenticatingScene} />
 
-          <Route path='/app_wizard/:step?' component={AppWizardScene} />
-          <Route path='/optimize_wizard/:step?' component={OptimizeWizardScene} />
+            <Route path='/mailbox_delete/:mailboxId' component={MailboxDeleteScene} />
+            <Route path='/mailbox_service_delete/:mailboxId/:serviceId' component={MailboxServiceDeleteScene} />
 
-          <Route path='/incoming/compose' component={ComposePickerScene} />
+            <Route path='/app_wizard/:step?' component={AppWizardScene} />
 
-          <Route path='/updates/checking/:provider' component={CheckingUpdatesScene} />
-          <Route path='/updates/none/:provider' component={UpdateNoneScene} />
-          <Route path='/updates/error/:provider' component={UpdateErrorScene} />
-          <Route path='/updates/install/:provider' component={UpdateAvailableScene} />
-          <Route path='/updates/available/:provider' component={UpdateAvailableScene} />
+            <Route path='/incoming/compose' component={ComposePickerScene} />
 
-          <Route path='/pro' component={ProScene} />
-          <Route path='/news' component={NewsScene} />
+            <Route path='/updates/checking/:provider' component={CheckingUpdatesScene} />
+            <Route path='/updates/none/:provider' component={UpdateNoneScene} />
+            <Route path='/updates/error/:provider' component={UpdateErrorScene} />
+            <Route path='/updates/install/:provider' component={UpdateAvailableScene} />
+            <Route path='/updates/available/:provider' component={UpdateAvailableScene} />
 
-          <Route path='/account/message' component={AccountMessageScene} />
-          <Route path='/account/auth/:mode?' component={AccountAuthScene} />
-          <Route path='/account/authenticating' component={AccountAuthenticatingScene} />
-          <Route path='/account/view' component={AccountStandaloneScene} />
+            <Route path='/pro' component={ProScene} />
+            <Route path='/news' component={NewsScene} />
 
-          <Route path='/setup/linux' component={LinuxSetupScene} />
+            <Route path='/account/message' component={AccountMessageScene} />
+            <Route path='/account/auth/:mode?' component={AccountAuthScene} />
+            <Route path='/account/authenticating' component={AccountAuthenticatingScene} />
+            <Route path='/account/view' component={AccountStandaloneScene} />
+
+            <Route path='/setup/linux' component={LinuxSetupScene} />
+
+            <Route path='/profile/restore' component={ProfileRestoreScene} />
+            <Route path='/profile/fetching_profiles' component={ProfileRestoreFetchingScene} />
+            <Route path='/profile/restore_working' component={ProfileRestoreWorkingScene} />
+          </WaveboxRouterErrorBoundary>
           <PrivacyDialog />
         </div>
       </HashRouter>

@@ -10,16 +10,15 @@ import { ElectronWebContents } from 'ElectronTools'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import ContentWindow from 'Windows/ContentWindow'
 import MailboxesWindow from 'Windows/MailboxesWindow'
-import MenuTool from 'shared/Electron/MenuTool'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import CRExtensionRTContextMenu from 'shared/Models/CRExtensionRT/CRExtensionRTContextMenu'
 import { settingsActions } from 'stores/settings'
+import { accountStore } from 'stores/account'
 import { AUTOFILL_MENU } from 'shared/b64Assets'
 
 const privConnected = Symbol('privConnected')
 const privSpellcheckerService = Symbol('privSpellcheckerService')
 const privAutofillService = Symbol('privAutofillService')
-const privContextMenu = Symbol('privContextMenu')
 
 class ContextMenuService {
   /* ****************************************************************************/
@@ -34,7 +33,6 @@ class ContextMenuService {
     this[privSpellcheckerService] = spellcheckService
     this[privAutofillService] = autofillService
     this[privConnected] = new Set()
-    this[privContextMenu] = undefined
 
     app.on('web-contents-created', this._handleWebContentsCreated)
     app.on('browser-window-created', this._handleBrowserWindowCreated)
@@ -137,19 +135,11 @@ class ContextMenuService {
   * @param sections: the sections to render
   */
   presentMenu (browserWindow, sections) {
-    // This works around a memory leak with the menu api. It's bad that we
-    // have to contiunously keep a menu in memory but it's better than having
-    // multiple copies forever.
-    //
-    // Once the callback field comes into the menu api (1.9.*) we can use that
-    // to release the local copy of the menu on dismissal
-    if (this[privContextMenu]) {
-      MenuTool.fullDestroyMenu(this[privContextMenu])
-      this[privContextMenu] = undefined
-    }
-
-    this[privContextMenu] = Menu.buildFromTemplate(this.convertSectionsToTemplate(sections))
-    this[privContextMenu].popup(browserWindow)
+    const menu = Menu.buildFromTemplate(this.convertSectionsToTemplate(sections))
+    menu.popup({
+      window: browserWindow,
+      callback: () => { menu.destroy() }
+    })
   }
 
   /**
@@ -176,7 +166,7 @@ class ContextMenuService {
   /**
   * Renders the url section
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderURLSection (contents, params) {
@@ -190,6 +180,27 @@ class ContextMenuService {
         label: 'Open Link with Wavebox',
         click: () => { this.openLinkInWaveboxWindow(contents, params.linkURL) }
       })
+
+      const accountState = accountStore.getState()
+      const mailboxIds = accountState.mailboxIds()
+      if (mailboxIds.length > 1) {
+        template.push({
+          label: 'Open Link in Account Profile',
+          submenu: mailboxIds.map((mailboxId) => {
+            return {
+              label: accountState.resolvedMailboxDisplayName(mailboxId),
+              click: () => {
+                this.openLinkInWaveboxWindowForAccount(
+                  contents,
+                  params.linkURL,
+                  accountStore.getState().getMailbox(mailboxId)
+                )
+              }
+            }
+          })
+        })
+      }
+
       template.push({
         label: 'Open Link in Current Tab',
         click: () => { contents.loadURL(params.linkURL) }
@@ -211,7 +222,7 @@ class ContextMenuService {
   /**
   * Renders the lookup and search section
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderLookupAndSearchSection (contents, params) {
@@ -242,7 +253,7 @@ class ContextMenuService {
   /**
   * Renders the undo/redo section
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderRewindSection (contents, params) {
@@ -257,7 +268,7 @@ class ContextMenuService {
   /**
   * Renders the editing section
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderEditingSection (contents, params) {
@@ -288,9 +299,9 @@ class ContextMenuService {
   }
 
   /**
-  * Renders the inpage navigation section
+  * Renders the in page navigation section
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderPageNavigationSection (contents, params) {
@@ -313,9 +324,9 @@ class ContextMenuService {
   }
 
   /**
-  * Renders the inpage external open options
+  * Renders the in page external open options
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderPageExternalSection (contents, params) {
@@ -338,7 +349,7 @@ class ContextMenuService {
   /**
   * Renders the wavebox section
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderWaveboxSection (contents, params) {
@@ -381,7 +392,7 @@ class ContextMenuService {
   /**
   * Renders the spelling section
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderSpellingSection (contents, params) {
@@ -489,11 +500,11 @@ class ContextMenuService {
   /**
   * Renders the wavebox section
   * @param contents: the webcontents that opened
-  * @param params: the parameters passed alongisde the event
+  * @param params: the parameters passed alongside the event
   * @return the template section or undefined
   */
   renderExtensionSection (contents, params) {
-    // Check we're in a regonized tab - extensions don't work universally for us on purpose!
+    // Check we're in a recognized tab - extensions don't work universally for us on purpose!
     const waveboxWindow = WaveboxWindow.fromTabId(contents.id)
     if (!waveboxWindow) { return [] }
 
@@ -519,20 +530,52 @@ class ContextMenuService {
           }
         })
 
-      if (validContextMenus.length === 1) {
-        template.push(Object.assign({
-          icon: nativeImage.createFromPath(icons['16'])
-        }, this.renderExtensionMenuItem(contents, params, extensionId, validContextMenus[0])))
+      const renderedMenuTemplate = this.renderExtensionMenuTree(contents, params, extensionId, validContextMenus)
+
+      if (renderedMenuTemplate.length === 1) {
+        template.push({
+          icon: nativeImage.createFromPath(icons['16']),
+          ...renderedMenuTemplate[0]
+        })
       } else if (validContextMenus.length > 1) {
         template.push({
           label: name,
           icon: nativeImage.createFromPath(icons['16']),
-          submenu: validContextMenus.map((menuItem) => this.renderExtensionMenuItem(contents, params, extensionId, menuItem))
+          submenu: renderedMenuTemplate
         })
       }
     })
 
     return template
+  }
+
+  /**
+  * Renders an extension menu into the correct tree structure
+  * @param contents: the sending webcontents
+  * @param params: the original context menu params
+  * @param extensionId: the id of the extension
+  * @param contextMenus: the context menus to render
+  * @return an array that can be used in the template
+  */
+  renderExtensionMenuTree (contents, params, extensionId, contextMenus) {
+    const root = []
+    const index = new Map()
+
+    contextMenus.forEach((menuItem) => {
+      const rendered = this.renderExtensionMenuItem(contents, params, extensionId, menuItem)
+      if (rendered) {
+        if (menuItem.parentId && index.get(menuItem.parentId)) {
+          const parent = index.get(menuItem.parentId)
+          parent.submenu = parent.submenu || []
+          parent.submenu.push(rendered)
+        } else {
+          root.push(rendered)
+        }
+        index.set(menuItem.id, rendered)
+      }
+    })
+
+    return root
   }
 
   /**
@@ -546,12 +589,14 @@ class ContextMenuService {
   renderExtensionMenuItem (contents, params, extensionId, menuItem) {
     if (menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.NORMAL) {
       return {
+        _id_: menuItem.id,
         label: menuItem.title,
         enabled: menuItem.enabled,
         click: () => this.extensionOptionSelected(contents, extensionId, menuItem, params)
       }
     } else if (menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.CHECKBOX) {
       return {
+        _id_: menuItem.id,
         label: menuItem.title,
         type: 'checkbox',
         checked: menuItem.checked,
@@ -559,6 +604,7 @@ class ContextMenuService {
       }
     } else if (menuItem.type === CRExtensionRTContextMenu.ITEM_TYPES.RADIO) {
       return {
+        _id_: menuItem.id,
         label: menuItem.title,
         type: 'radio',
         checked: menuItem.checked,
@@ -592,6 +638,26 @@ class ContextMenuService {
       undefined,
       openerWindow,
       { partition: openerWebPreferences.partition }
+    )
+  }
+
+  /**
+  *  Opens a link in a Wavebox popup window, backed for a different account type
+  * @param contents: the contents to open for
+  * @param url: the url to open
+  * @param mailbox: the mailbox to open for
+  */
+  openLinkInWaveboxWindowForAccount (contents, url, mailbox) {
+    const rootContents = ElectronWebContents.rootWebContents(contents)
+    const openerWindow = rootContents ? BrowserWindow.fromWebContents(rootContents) : undefined
+    const contentWindow = new ContentWindow(
+      undefined // This is a hived window, so don't pass any meta info into it
+    )
+    contentWindow.create(
+      url,
+      undefined,
+      openerWindow,
+      { partition: mailbox.partitionId }
     )
   }
 

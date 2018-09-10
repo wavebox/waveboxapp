@@ -30,6 +30,26 @@ const buildContentScriptXMLHttpRequest = function (extensionId, xhrToken, SuperC
   return XMLHttpRequest
 }
 
+/**
+* Builds a new XMLHTTPRequest
+* @param SuperClass: the parent class to inherit from
+*/
+const buildHostedXMLHttpRequest = function (SuperClass) {
+  class XMLHttpRequest extends SuperClass {
+    /* **************************************************************************/
+    // Lifecycle
+    /* **************************************************************************/
+
+    constructor () {
+      super()
+      this.withCredentials = true
+    }
+  }
+
+  return XMLHttpRequest
+}
+
 export default {
-  buildContentScriptXMLHttpRequest
+  buildContentScriptXMLHttpRequest,
+  buildHostedXMLHttpRequest
 }

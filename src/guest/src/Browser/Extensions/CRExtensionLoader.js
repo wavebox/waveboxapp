@@ -111,7 +111,16 @@ class CRExtensionLoader {
       webFrame.setIsolatedWorldSecurityOrigin(contextId, provisioned.securityOrgin)
       webFrame.setIsolatedWorldContentSecurityPolicy(contextId, provisioned.contentSecurityPolicy)
       webFrame.executeJavaScriptInIsolatedWorld(contextId, [
-        { code: `;(() => { window.contentScriptInit("${extensionId}") })();` }
+        {
+          code: [
+            `;(() => {`,
+            `  if (window.contentScriptInit) { window.contentScriptInit("${extensionId}"); return }`,
+            `  const start = setInterval(() => {`,
+            `    if (window.contentScriptInit) { window.contentScriptInit("${extensionId}"); clearInterval(start) }`,
+            `  }, 100)`,
+            `})();`
+          ].join('\n')
+        }
       ])
       this[privContexts].set(extensionId, {
         ...provisioned,
@@ -155,7 +164,7 @@ class CRExtensionLoader {
         return
       }
 
-      matchedContentScripts.forEach(({js, css, runAt}) => {
+      matchedContentScripts.forEach(({ js, css, runAt }) => {
         if (js && js.length) {
           this._injectContentJavaScript(contextId, extensionId, js, runAt)
         }
@@ -174,7 +183,7 @@ class CRExtensionLoader {
   * @param runAt: the point to run the scripts at
   */
   _injectContentJavaScript (contextId, extensionId, js, runAt) {
-    js.forEach(({url, code}) => {
+    js.forEach(({ url, code }) => {
       const execute = this._executeContentJavaScript.bind(window, contextId, extensionId, url, code)
 
       if (runAt === 'document_start') {
@@ -211,7 +220,7 @@ class CRExtensionLoader {
   * @param runAt: the point to run the scripts at
   */
   _injectContentStyle (extensionId, css, runAt) {
-    css.forEach(({url, code}) => {
+    css.forEach(({ url, code }) => {
       const execute = this._executeContentStyle.bind(window, extensionId, url, code)
 
       if (runAt === 'document_start') {

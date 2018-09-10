@@ -1,6 +1,11 @@
 import React from 'react'
-import { FontIcon, Avatar } from 'material-ui'
-import * as Colors from 'material-ui/styles/colors'
+import { Avatar } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
+import lightGreen from '@material-ui/core/colors/lightGreen'
+import green from '@material-ui/core/colors/green'
+import blueGrey from '@material-ui/core/colors/blueGrey'
+import FASMagicIcon from 'wbfa/FASMagic'
+import FASCheckCircleIcon from 'wbfa/FASCheckCircle'
 
 const styles = {
   container: {
@@ -24,30 +29,45 @@ const styles = {
     fontWeight: 300,
     marginTop: 0,
     fontSize: 16
+  },
+  avatar: {
+    backgroundColor: blueGrey[900],
+    color: lightGreen[400],
+    width: 100,
+    height: 100
+  },
+  avatarIcon: {
+    fontSize: '50px'
+  },
+  doneIcon: {
+    color: green[600],
+    marginRight: 6
   }
 }
 
-export default class AppWizardCompleteScene extends React.Component {
+@withStyles(styles)
+class AppWizardCompleteScene extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   render () {
+    const { classes } = this.props
     return (
-      <div style={styles.container}>
-        <Avatar
-          color={Colors.lightGreen400}
-          backgroundColor={Colors.blueGrey900}
-          icon={(<FontIcon className='fas fa-fw fa-magic' />)}
-          size={100} />
-        <h2 style={styles.heading}>
-          <FontIcon className='fas fa-fw fa-check-circle' color={Colors.green600} />
+      <div className={classes.container}>
+        <Avatar className={classes.avatar}>
+          <FASMagicIcon className={classes.avatarIcon} />
+        </Avatar>
+        <h2 className={classes.heading}>
+          <FASCheckCircleIcon className={classes.doneIcon} />
           All Done!
         </h2>
-        <p style={styles.subHeading}>
+        <p className={classes.subHeading}>
           You can go to settings at any time to update your configuration
         </p>
       </div>
     )
   }
 }
+
+export default AppWizardCompleteScene

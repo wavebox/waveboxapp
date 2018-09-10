@@ -1,15 +1,28 @@
 import React from 'react'
-import { FontIcon } from 'material-ui'
 import SidelistControl from './SidelistControl'
-import * as Colors from 'material-ui/styles/colors'
 import { TOUR_STEPS } from 'stores/settings/Tour'
+import AddCircleIcon from '@material-ui/icons/AddCircle'
+import { withStyles } from '@material-ui/core/styles'
+import ThemeTools from 'wbui/Themes/ThemeTools'
+import SidelistMatIcon from './SidelistMatIcon'
 
-export default class SidelistControlAddMailbox extends React.Component {
+const styles = (theme) => ({
+  icon: {
+    color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.add.icon.color'),
+    '&:hover': {
+      color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.add.icon.color', 'hover')
+    }
+  }
+})
+
+@withStyles(styles, { withTheme: true })
+class SidelistControlAddMailbox extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   render () {
+    const { classes } = this.props
     return (
       <SidelistControl
         className={`WB-SidelistControlAddMailbox`}
@@ -22,14 +35,9 @@ export default class SidelistControlAddMailbox extends React.Component {
             full advantage of everything Wavebox has to offer
           </div>
         )}
-        icon={(
-          <FontIcon
-            className='material-icons'
-            color={Colors.blueGrey400}
-            hoverColor={Colors.blueGrey200}>
-            add_circle
-          </FontIcon>
-        )} />
+        icon={(<SidelistMatIcon IconClass={AddCircleIcon} className={classes.icon} />)} />
     )
   }
 }
+
+export default SidelistControlAddMailbox

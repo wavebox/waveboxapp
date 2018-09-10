@@ -2,6 +2,7 @@ import { ipcMain } from 'electron'
 import { WB_AUTH_SLACK, WB_AUTH_SLACK_COMPLETE, WB_AUTH_SLACK_ERROR } from 'shared/ipcEvents'
 import { URL } from 'url'
 import AuthWindow from 'Windows/AuthWindow'
+import Resolver from 'Runtime/Resolver'
 
 class AuthSlack {
   /* ****************************************************************************/
@@ -58,33 +59,30 @@ class AuthSlack {
           sandbox: true,
           nativeWindowOpen: true,
           sharedSiteInstances: true,
-          partition: partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
+          partition: partitionId,
+          preload: Resolver.guestPreload(),
+          preloadCrx: Resolver.crExtensionApi()
         }
       })
       const oauthWin = waveboxOauthWin.window
       let userClose = true
 
+      // Handle close
       oauthWin.on('closed', () => {
         if (userClose) {
           reject(new Error('User closed the window'))
         }
       })
 
+      // Handle navigate
       oauthWin.webContents.on('will-navigate', (evt, nextUrl) => {
         const purl = new URL(nextUrl)
         if (purl.host === 'slack.com' && purl.pathname.indexOf('/checkcookie') === 0 && purl.searchParams.get('redir')) {
           oauthWin.hide()
         }
       })
-      oauthWin.webContents.on('did-get-response-details', (evt) => {
-        this._scrapeAuthenticationInfo(oauthWin.webContents)
-          .then((data) => {
-            userClose = false
-            oauthWin.close()
-            resolve(data)
-          })
-          .catch(() => { /* no-op */ })
-      })
+
+      // Capture auth info
       oauthWin.webContents.on('dom-ready', (evt) => {
         this._scrapeAuthenticationInfo(oauthWin.webContents)
           .then((data) => {
@@ -108,20 +106,21 @@ class AuthSlack {
   */
   handleAuthSlack (evt, body) {
     Promise.resolve()
-      .then(() => this.promptUserToGetAuthorizationCode(body.id))
+      .then(() => this.promptUserToGetAuthorizationCode(body.partitionId))
       .then(({ teamUrl, token }) => {
         evt.sender.send(WB_AUTH_SLACK_COMPLETE, {
-          id: body.id,
-          authMode: body.authMode,
-          provisional: body.provisional,
-          teamUrl: teamUrl,
-          token: token
+          mode: body.mode,
+          context: body.context,
+          auth: {
+            provisional: body.provisional,
+            teamUrl: teamUrl,
+            token: token
+          }
         })
       }, (err) => {
         evt.sender.send(WB_AUTH_SLACK_ERROR, {
-          id: body.id,
-          authMode: body.authMode,
-          provisional: body.provisional,
+          mode: body.mode,
+          context: body.context,
           error: err,
           errorString: (err || {}).toString ? (err || {}).toString() : undefined,
           errorMessage: (err || {}).message ? (err || {}).message : undefined,

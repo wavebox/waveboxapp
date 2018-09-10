@@ -11,9 +11,12 @@ import Management from './Management'
 import WebRequest from 'WebRequest'
 import Notifications from './Notifications'
 import Cookies from './Cookies/Cookies'
-import Windows from './Windows'
+import Windows from './Windows/Windows'
 import Permissions from './Permissions'
+import Options from './Options'
 import { CR_RUNTIME_ENVIRONMENTS } from 'shared/extensionApis'
+
+const privOptions = Symbol('privOptions')
 
 class Chrome {
   /* **************************************************************************/
@@ -37,8 +40,8 @@ class Chrome {
     }
 
     if (runtimeEnvironment !== CR_RUNTIME_ENVIRONMENTS.CONTENTSCRIPT) {
-      this.browserAction = new BrowserAction(extensionId)
-      this.tabs = new Tabs(extensionId, runtimeEnvironment, permissions.has('tabs'))
+      this.browserAction = new BrowserAction(extensionId, runtimeEnvironment, this.runtime)
+      this.tabs = new Tabs(extensionId, runtimeEnvironment, this.runtime, permissions.has('tabs'))
       this.windows = new Windows(extensionId, permissions.has('tabs'))
       this.app = new App(extensionId, extensionDatasource)
       this.omnibox = new Omnibox(extensionId)
@@ -59,6 +62,10 @@ class Chrome {
       if (permissions.has('cookies')) {
         this.cookies = new Cookies(extensionId, this.runtime)
       }
+    }
+
+    if (runtimeEnvironment === CR_RUNTIME_ENVIRONMENTS.BACKGROUND) {
+      this[privOptions] = new Options(extensionId, runtimeEnvironment, this.runtime)
     }
 
     Object.freeze(this)

@@ -3,24 +3,10 @@ const argv = require('yargs').argv
 const gracefulFs = require('graceful-fs')
 gracefulFs.gracefulify(fs)
 
-const TASKS = {
-  assets: require('./assets/webpack.config.js'),
-  app: require('./src/app/webpack.config.js'),
-  keychain: require('./src/scenes/keychain/webpack.config.js'),
-  traypopout: require('./src/scenes/traypopout/webpack.config.js'),
-  content: require('./src/scenes/content/webpack.config.js'),
-  mailboxes: require('./src/scenes/mailboxes/webpack.config.js'),
-  print: require('./src/scenes/print/webpack.config.js'),
-  monitor: require('./src/scenes/monitor/webpack.config.js'),
-  guest: require('./src/guest/webpack.config.js'),
-  guestApi: require('./src/guestApi/webpack.config.js'),
-  crextensionApi: require('./src/crextensionApi/webpack.config.js')
-}
-
 module.exports = function (env = {}) {
   // Config
-  process.env.CHROME_TARGET = 59
-  process.env.NODE_TARGET = '8.2.1'
+  process.env.CHROME_TARGET = 61
+  process.env.NODE_TARGET = '8.9.3'
 
   const mode = new Set([
     'production',
@@ -60,6 +46,22 @@ module.exports = function (env = {}) {
   } else {
     console.log('[QUIET LOG]')
     process.env.VERBOSE_LOG = 'false'
+  }
+
+  // WARN: only import the tasks AFTER the process.env has been
+  // updated. Some of these tasks eval process.env early
+  const TASKS = {
+    assets: require('./assets/webpack.config.js'),
+    app: require('./src/app/webpack.config.js'),
+    keychain: require('./src/scenes/keychain/webpack.config.js'),
+    traypopout: require('./src/scenes/traypopout/webpack.config.js'),
+    content: require('./src/scenes/content/webpack.config.js'),
+    mailboxes: require('./src/scenes/mailboxes/webpack.config.js'),
+    print: require('./src/scenes/print/webpack.config.js'),
+    monitor: require('./src/scenes/monitor/webpack.config.js'),
+    guest: require('./src/guest/webpack.config.js'),
+    guestApi: require('./src/guestApi/webpack.config.js'),
+    crextensionApi: require('./src/crextensionApi/webpack.config.js')
   }
 
   // Tasks

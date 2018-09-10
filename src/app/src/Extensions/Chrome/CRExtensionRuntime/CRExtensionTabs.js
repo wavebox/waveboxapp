@@ -3,8 +3,9 @@ import { evtMain } from 'AppEvents'
 import CRDispatchManager from '../CRDispatchManager'
 import {
   CRX_TABS_QUERY_,
-  CRX_TABS_CREATE_,
   CRX_TABS_GET_,
+  CRX_TABS_REMOVE_,
+  CRX_TABS_UPDATE_,
   CRX_TABS_CREATED_,
   CRX_TABS_REMOVED_,
   CRX_TAB_ACTIVATED_,
@@ -12,16 +13,14 @@ import {
   CRX_TAB_EXECUTE_SCRIPT_
 } from 'shared/crExtensionIpcEvents'
 import { WBECRX_EXECUTE_SCRIPT } from 'shared/ipcEvents'
-import WaveboxWindow from 'Windows/WaveboxWindow'
+import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
 import { URL } from 'url'
 import fs from 'fs-extra'
 import path from 'path'
 import CRExtensionTab from './CRExtensionTab'
 import pathTool from 'shared/pathTool'
-import ContentWindow from 'Windows/ContentWindow'
-import ExtensionHostedWindow from 'Windows/ExtensionHostedWindow'
-import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
+import WaveboxWindow from 'Windows/WaveboxWindow'
 
 class CRExtensionTabs {
   /* ****************************************************************************/
@@ -31,16 +30,16 @@ class CRExtensionTabs {
   constructor (extension) {
     this.extension = extension
     this.backgroundPageSender = null
+    this.extensionWindowSender = null
 
-    if (this.extension.manifest.hasBackground) {
-      evtMain.on(evtMain.WB_TAB_CREATED, this.handleTabCreated)
-      evtMain.on(evtMain.WB_TAB_DESTROYED, this.handleTabDestroyed)
-      evtMain.on(evtMain.WB_TAB_ACTIVATED, this.handleTabActivated)
-    }
+    evtMain.on(evtMain.WB_TAB_CREATED, this.handleTabCreated)
+    evtMain.on(evtMain.WB_TAB_DESTROYED, this.handleTabDestroyed)
+    evtMain.on(evtMain.WB_TAB_ACTIVATED, this.handleTabActivated)
 
     CRDispatchManager.registerHandler(`${CRX_TABS_GET_}${this.extension.id}`, this.handleGetTab)
-    CRDispatchManager.registerHandler(`${CRX_TABS_CREATE_}${this.extension.id}`, this.handleCreateTab)
     CRDispatchManager.registerHandler(`${CRX_TABS_QUERY_}${this.extension.id}`, this.handleQueryTabs)
+    CRDispatchManager.registerHandler(`${CRX_TABS_REMOVE_}${this.extension.id}`, this.handleRemoveTabs)
+    CRDispatchManager.registerHandler(`${CRX_TABS_UPDATE_}${this.extension.id}`, this.handleUpdateTab)
     CRDispatchManager.registerHandler(`${CRX_TAB_EXECUTE_SCRIPT_}${this.extension.id}`, this.handleExecuteScript)
   }
 
@@ -50,8 +49,9 @@ class CRExtensionTabs {
     evtMain.removeListener(evtMain.WB_TAB_ACTIVATED, this.handleTabActivated)
 
     CRDispatchManager.unregisterHandler(`${CRX_TABS_GET_}${this.extension.id}`, this.handleGetTab)
-    CRDispatchManager.unregisterHandler(`${CRX_TABS_CREATE_}${this.extension.id}`, this.handleCreateTab)
     CRDispatchManager.unregisterHandler(`${CRX_TABS_QUERY_}${this.extension.id}`, this.handleQueryTabs)
+    CRDispatchManager.unregisterHandler(`${CRX_TABS_REMOVE_}${this.extension.id}`, this.handleRemoveTabs)
+    CRDispatchManager.unregisterHandler(`${CRX_TABS_UPDATE_}${this.extension.id}`, this.handleUpdateTab)
     CRDispatchManager.unregisterHandler(`${CRX_TAB_EXECUTE_SCRIPT_}${this.extension.id}`, this.handleExecuteScript)
   }
 
@@ -77,6 +77,19 @@ class CRExtensionTabs {
     return CRExtensionTab.dataFromWebContents(this.extension, webContents)
   }
 
+  /**
+  * Emits an event to all the qualified listeners
+  * @param ...args: the arguments to pass through
+  */
+  _emitEventToListeners (...args) {
+    if (this.backgroundPageSender) {
+      this.backgroundPageSender(...args)
+    }
+    if (this.extensionWindowSender) {
+      this.extensionWindowSender(...args)
+    }
+  }
+
   /* ****************************************************************************/
   // Event listeners
   /* ****************************************************************************/
@@ -89,10 +102,7 @@ class CRExtensionTabs {
   handleTabCreated = (evt, tabId) => {
     // Bind tab listeners - even if there isn't a sender right now
     this.bindTabEventListeners(tabId)
-
-    // Send the events down
-    if (!this.backgroundPageSender) { return }
-    this.backgroundPageSender(`${CRX_TABS_CREATED_}${this.extension.id}`, this._tabDataFromWebContentsId(tabId))
+    this._emitEventToListeners(`${CRX_TABS_CREATED_}${this.extension.id}`, this._tabDataFromWebContentsId(tabId))
   }
 
   /**
@@ -101,8 +111,7 @@ class CRExtensionTabs {
   * @param tabId: the id of the webcontents
   */
   handleTabDestroyed = (evt, tabId) => {
-    if (!this.backgroundPageSender) { return }
-    this.backgroundPageSender(`${CRX_TABS_REMOVED_}${this.extension.id}`, this._tabDataFromWebContentsId(tabId))
+    this._emitEventToListeners(`${CRX_TABS_REMOVED_}${this.extension.id}`, this._tabDataFromWebContentsId(tabId))
   }
 
   /**
@@ -112,8 +121,7 @@ class CRExtensionTabs {
   * @param tabId: the id of the tab
   */
   handleTabActivated = (evt, browserWindowId, tabId) => {
-    if (!this.backgroundPageSender) { return }
-    this.backgroundPageSender(`${CRX_TAB_ACTIVATED_}${this.extension.id}`, {
+    this._emitEventToListeners(`${CRX_TAB_ACTIVATED_}${this.extension.id}`, {
       windowId: browserWindowId,
       tabId: tabId
     })
@@ -129,21 +137,18 @@ class CRExtensionTabs {
     if (!contents) { return }
 
     contents.on('page-title-updated', (evt, title) => {
-      if (!this.backgroundPageSender) { return }
-      this.backgroundPageSender(`${CRX_TAB_UPDATED_}${this.extension.id}`, tabId, {
+      this._emitEventToListeners(`${CRX_TAB_UPDATED_}${this.extension.id}`, tabId, {
         title: title
       }, this._tabDataFromWebContentsId(tabId))
     })
     contents.on('did-navigate', (evt, url) => {
-      if (!this.backgroundPageSender) { return }
-      this.backgroundPageSender(`${CRX_TAB_UPDATED_}${this.extension.id}`, tabId, {
+      this._emitEventToListeners(`${CRX_TAB_UPDATED_}${this.extension.id}`, tabId, {
         url: url
       }, this._tabDataFromWebContentsId(tabId))
     })
     contents.on('did-navigate-in-page', (evt, url, isMainFrame) => {
       if (!isMainFrame) { return }
-      if (!this.backgroundPageSender) { return }
-      this.backgroundPageSender(`${CRX_TAB_UPDATED_}${this.extension.id}`, tabId, {
+      this._emitEventToListeners(`${CRX_TAB_UPDATED_}${this.extension.id}`, tabId, {
         url: url
       }, this._tabDataFromWebContentsId(tabId))
     })
@@ -168,31 +173,6 @@ class CRExtensionTabs {
   }
 
   /**
-  * Creates a tab with the given id
-  * @param evt: the event that fired
-  * @param [tabId]: the id of the tab
-  * @param responseCallback: executed on completion
-  */
-  handleCreateTab = (evt, [options], responseCallback) => {
-    if (ExtensionHostedWindow.isHostedExtensionUrlForExtension(options.url || '', this.extension.id)) {
-      const contentWindow = new ExtensionHostedWindow(this.extension.id, this.extension.manifest.name)
-      contentWindow.create(options.url, { useContentSize: true })
-      responseCallback(null, undefined)
-    } else {
-      const contentWindow = new ContentWindow()
-      contentWindow.create(
-        options.url || 'about:blank',
-        undefined,
-        undefined,
-        {
-          partition: CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
-        }
-      )
-      responseCallback(null, undefined)
-    }
-  }
-
-  /**
   * Queries the tabs
   * @param evt: the event that fired
   * @param [options]: the query info
@@ -205,6 +185,7 @@ class CRExtensionTabs {
     const tabs = WaveboxWindow.allTabIds()
       .map((id) => this._tabDataFromWebContentsId(id))
       .filter((tab) => {
+        if (!options) { return true }
         if (!tab) { return false }
 
         if (options.active !== undefined) {
@@ -223,7 +204,7 @@ class CRExtensionTabs {
         if (hasTabsPermission) {
           if (typeof (options.url) === 'string' || Array.isArray(options.url)) {
             const urlQuery = typeof (options.url) === 'string' ? [options.url] : options.url
-            const {protocol, hostname, pathname} = new URL(tab.url)
+            const { protocol, hostname, pathname } = new URL(tab.url)
             const matches = CRExtensionMatchPatterns.matchUrls(
               protocol,
               hostname,
@@ -238,6 +219,53 @@ class CRExtensionTabs {
       })
 
     responseCallback(null, tabs)
+  }
+
+  /**
+  * Handles removing tabs
+  * @param evt: the event that fired
+  * @param [tabIds]: the ids of the tabs to remove
+  * @param responseCallback: executed on completion
+  */
+  handleRemoveTabs = (evt, [tabIds], responseCallback) => {
+    tabIds.forEach((tabId) => {
+      const waveboxWindow = WaveboxWindow.fromTabId(tabId)
+      if (waveboxWindow) {
+        // We only partially support this. Basically with windows that only have
+        // one tab
+        if (waveboxWindow.windowType === WaveboxWindow.WINDOW_TYPES.CONTENT_POPUP) {
+          waveboxWindow.close()
+        } else if (waveboxWindow.windowType === WaveboxWindow.WINDOW_TYPES.CONTENT) {
+          waveboxWindow.close()
+        }
+      }
+    })
+
+    responseCallback(null, null)
+  }
+
+  /**
+  * Handles removing tabs
+  * @param evt: the event that fired
+  * @param [tabId, options]: the tabId and options to use
+  * @param responseCallback: executed on completion
+  */
+  handleUpdateTab = (evt, [tabId, options], responseCallback) => {
+    const waveboxWindow = WaveboxWindow.fromTabId(tabId)
+    // If we got a wavebox window it means we're user facing tab
+    // We only partially support this
+    if (waveboxWindow && waveboxWindow.windowType === WaveboxWindow.WINDOW_TYPES.CONTENT_POPUP) {
+      const wc = webContents.fromId(tabId)
+      if (wc && !wc.isDestroyed()) {
+        if (options.url) {
+          if (wc.getURL().startsWith(CR_EXTENSION_PROTOCOL) && options.url.startsWith(CR_EXTENSION_PROTOCOL)) {
+            wc.loadURL(options.url)
+          }
+        }
+      }
+    }
+
+    responseCallback(null, this._tabDataFromWebContentsId(tabId))
   }
 
   /**
@@ -256,7 +284,7 @@ class CRExtensionTabs {
     }
 
     const contents = webContents.fromId(tabId)
-    const {protocol, hostname, pathname} = new URL(contents.getURL())
+    const { protocol, hostname, pathname } = new URL(contents.getURL())
     const matches = CRExtensionMatchPatterns.matchUrls(
       protocol,
       hostname,

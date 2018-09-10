@@ -1,11 +1,12 @@
 import { ipcMain } from 'electron'
 import { WB_AUTH_GOOGLE, WB_AUTH_GOOGLE_COMPLETE, WB_AUTH_GOOGLE_ERROR } from 'shared/ipcEvents'
-import googleapis from 'googleapis'
 import { userStore } from 'stores/user'
 import { URL } from 'url'
 import querystring from 'querystring'
 import pkg from 'package.json'
 import AuthWindow from 'Windows/AuthWindow'
+import { SessionManager } from 'SessionManager'
+import Resolver from 'Runtime/Resolver'
 
 class AuthGoogle {
   /* ****************************************************************************/
@@ -28,21 +29,19 @@ class AuthGoogle {
   * @return the url that can be used to authenticate with goog
   */
   generateGoogleAuthenticationURL (credentials) {
-    const oauth2Client = new googleapis.auth.OAuth2(
-      credentials.GOOGLE_CLIENT_ID,
-      credentials.GOOGLE_CLIENT_SECRET,
-      credentials.GOOGLE_AUTH_RETURN_URL
-    )
-    const url = oauth2Client.generateAuthUrl({
+    // Compatable with calling  (new require('googleapis').auth.OAuth2(...)).generateAuthUrl()
+    return `https://accounts.google.com/o/oauth2/auth?${querystring.stringify({
+      client_id: credentials.GOOGLE_CLIENT_ID,
+      redirect_uri: credentials.GOOGLE_AUTH_RETURN_URL,
       access_type: 'offline',
+      response_type: 'code',
       scope: [
         'https://www.googleapis.com/auth/plus.me',
         'profile',
         'email',
         'https://www.googleapis.com/auth/gmail.readonly'
-      ]
-    })
-    return url
+      ].join(' ')
+    })}`
   }
 
   /**
@@ -84,34 +83,50 @@ class AuthGoogle {
           sandbox: true,
           nativeWindowOpen: true,
           sharedSiteInstances: true,
-          partition: partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
+          partition: partitionId,
+          preload: Resolver.guestPreload(),
+          preloadCrx: Resolver.crExtensionApi()
         }
       })
       const oauthWin = waveboxOauthWin.window
+      const emitter = SessionManager.webRequestEmitterFromPartitionId(partitionId)
       let userClose = true
-
-      oauthWin.on('closed', () => {
-        if (userClose) {
-          reject(new Error('User closed the window'))
-        }
-      })
 
       // Step 1: Handle push service auth
       let pushServiceToken
-      oauthWin.webContents.on('did-get-redirect-request', (evt, prevUrl, nextUrl) => {
-        if (nextUrl.indexOf(credentials.GOOGLE_PUSH_SERVICE_SUCCESS_URL) === 0) {
-          evt.preventDefault()
-          const purl = new URL(nextUrl)
-          pushServiceToken = purl.searchParams.get('token')
-          oauthWin.loadURL(this.generateGoogleAuthenticationURL(credentials))
-        } else if (nextUrl.indexOf(credentials.GOOGLE_PUSH_SERVICE_FAILURE_URL) === 0) {
-          evt.preventDefault()
-          userClose = false
-          oauthWin.close()
-          const purl = new URL(nextUrl)
-          reject(new Error(purl.searchParams.get('token')))
+      const handleHeadersReceived = (details, responder) => {
+        if (details.webContentsId !== oauthWin.webContents.id) { return responder({}) }
+
+        if (details.statusCode === 302) {
+          let nextUrl
+          try {
+            nextUrl = new URL(
+              details.responseHeaders.location || details.responseHeaders.Location,
+              details.url
+            ).toString()
+          } catch (ex) {
+            return responder({})
+          }
+
+          if (nextUrl.startsWith(credentials.GOOGLE_PUSH_SERVICE_SUCCESS_URL)) {
+            responder({ cancel: true })
+            const purl = new URL(nextUrl)
+            pushServiceToken = purl.searchParams.get('token')
+            oauthWin.loadURL(this.generateGoogleAuthenticationURL(credentials))
+            return
+          } else if (nextUrl.startsWith(credentials.GOOGLE_PUSH_SERVICE_FAILURE_URL)) {
+            responder({ cancel: true })
+            userClose = false
+            oauthWin.close()
+            const purl = new URL(nextUrl)
+            reject(new Error(purl.searchParams.get('token')))
+            return
+          }
         }
-      })
+
+        responder({})
+      }
+      emitter.headersReceived.onBlocking(undefined, handleHeadersReceived)
 
       // Step 2: Handle Google auth
       oauthWin.on('page-title-updated', (evt) => {
@@ -132,6 +147,14 @@ class AuthGoogle {
           }
         })
       })
+
+      // Handle close
+      oauthWin.on('closed', () => {
+        emitter.headersReceived.removeListener(handleHeadersReceived)
+        if (userClose) {
+          reject(new Error('User closed the window'))
+        }
+      })
     })
   }
 
@@ -146,21 +169,21 @@ class AuthGoogle {
   */
   handleAuthGoogle (evt, body) {
     Promise.resolve()
-      .then(() => this.promptUserToGetAuthorizationCode(body.credentials, body.id))
+      .then(() => this.promptUserToGetAuthorizationCode(body.credentials, body.partitionId))
       .then(({ push, google }) => {
         evt.sender.send(WB_AUTH_GOOGLE_COMPLETE, {
-          id: body.id,
-          authMode: body.authMode,
-          provisional: body.provisional,
-          temporaryCode: google,
-          pushToken: push,
-          codeRedirectUri: body.credentials.GOOGLE_AUTH_RETURN_URL
+          mode: body.mode,
+          context: body.context,
+          auth: {
+            temporaryCode: google,
+            pushToken: push,
+            codeRedirectUri: body.credentials.GOOGLE_AUTH_RETURN_URL
+          }
         })
       }, (err) => {
         evt.sender.send(WB_AUTH_GOOGLE_ERROR, {
-          id: body.id,
-          authMode: body.authMode,
-          provisional: body.provisional,
+          mode: body.mode,
+          context: body.context,
           error: err,
           errorString: (err || {}).toString ? (err || {}).toString() : undefined,
           errorMessage: (err || {}).message ? (err || {}).message : undefined,

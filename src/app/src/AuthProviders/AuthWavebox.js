@@ -3,8 +3,10 @@ import { WB_AUTH_WAVEBOX, WB_AUTH_WAVEBOX_COMPLETE, WB_AUTH_WAVEBOX_ERROR } from
 import { userStore } from 'stores/user'
 import querystring from 'querystring'
 import { URL } from 'url'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
+import WaveboxAuthProviders from 'shared/Models/WaveboxAuthProviders'
 import AuthWindow from 'Windows/AuthWindow'
+import { SessionManager } from 'SessionManager'
+import Resolver from 'Runtime/Resolver'
 
 class AuthWavebox {
   /* ****************************************************************************/
@@ -31,14 +33,16 @@ class AuthWavebox {
   generateAuthenticationURL (clientSecret, type, serverArgs) {
     let authUrl
     switch (type) {
-      case CoreMailbox.MAILBOX_TYPES.GOOGLE: authUrl = 'https://waveboxio.com/auth/accountgoogle'; break
-      case CoreMailbox.MAILBOX_TYPES.MICROSOFT: authUrl = 'https://waveboxio.com/auth/accountmicrosoft'; break
+      case WaveboxAuthProviders.GOOGLE: authUrl = 'https://waveboxio.com/auth/accountgoogle'; break
+      case WaveboxAuthProviders.MICROSOFT: authUrl = 'https://waveboxio.com/auth/accountmicrosoft'; break
+      case WaveboxAuthProviders.WAVEBOX: authUrl = 'https://waveboxio.com/auth/wavebox'; break
     }
     if (authUrl) {
-      const args = querystring.stringify(Object.assign({}, serverArgs, {
+      const args = querystring.stringify({
+        ...serverArgs,
         client_id: userStore.getState().clientId,
         client_secret: clientSecret
-      }))
+      })
       return `${authUrl}?${args}`
     } else {
       return undefined
@@ -50,22 +54,16 @@ class AuthWavebox {
   * @param clientSecret: the secret that authorises the requests
   * @param type: the type of provider we're using to authorize
   * @param serverArgs: extra args to send to the server
-  * @param mailboxId = null: the id of the mailbox to use if any
+  * @param partitionId = null: the id of the partition to use if any
   * @return promise
   */
-  promptUserToAuthorizeWavebox (clientSecret, type, serverArgs, mailboxId = null) {
+  promptUserToAuthorizeWavebox (clientSecret, type, serverArgs, partitionId = null) {
+    partitionId = partitionId || `rand_${new Date().getTime()}`
     return new Promise((resolve, reject) => {
       const authUrl = this.generateAuthenticationURL(clientSecret, type, serverArgs)
       if (!authUrl) {
         reject(new Error('Invalid Auth URL'))
         return
-      }
-
-      let partitionId
-      if (mailboxId) {
-        partitionId = mailboxId.indexOf('persist:') === 0 ? mailboxId : 'persist:' + mailboxId
-      } else {
-        partitionId = `rand_${new Date().getTime()}`
       }
 
       const waveboxOauthWin = new AuthWindow()
@@ -84,34 +82,63 @@ class AuthWavebox {
           sandbox: true,
           nativeWindowOpen: true,
           sharedSiteInstances: true,
-          partition: partitionId
+          partition: partitionId,
+          preload: Resolver.guestPreload(),
+          preloadCrx: Resolver.crExtensionApi()
         }
       })
       const oauthWin = waveboxOauthWin.window
+      const emitter = SessionManager.webRequestEmitterFromPartitionId(partitionId)
       let userClose = true
 
-      oauthWin.on('closed', () => {
-        if (userClose) {
-          reject(new Error('User closed the window'))
-        }
-      })
+      // Handle Redirects
+      const handleHeadersReceived = (details, responder) => {
+        if (details.webContentsId !== oauthWin.webContents.id) { return responder({}) }
 
-      oauthWin.webContents.on('did-get-redirect-request', (evt, prevUrl, nextUrl) => {
-        if (nextUrl.startsWith('https://wavebox.io/account/register/completed') || nextUrl.startsWith('https://waveboxio.com/account/register/completed')) {
-          const purl = new URL(nextUrl)
-          userClose = false
-          oauthWin.close()
-          resolve({ next: purl.searchParams.get('next') })
-        } else if (nextUrl.startsWith('https://wavebox.io/account/register/failure') || nextUrl.startsWith('https://waveboxio.com/account/register/failure')) {
-          const purl = new URL(nextUrl)
-          userClose = false
-          oauthWin.close()
-          reject(new Error(purl.searchParams.get('error') || 'Registration failure'))
+        if (details.statusCode === 302) {
+          let nextUrlParsed
+          let nextUrl
+          try {
+            nextUrlParsed = new URL(
+              details.responseHeaders.location || details.responseHeaders.Location,
+              details.url
+            )
+            nextUrl = nextUrlParsed.toString()
+          } catch (ex) {
+            return responder({})
+          }
+
+          if (nextUrl.startsWith('https://wavebox.io/account/register/completed') || nextUrl.startsWith('https://waveboxio.com/account/register/completed')) {
+            userClose = false
+            oauthWin.close()
+            responder({ cancel: true })
+            resolve({ next: nextUrlParsed.searchParams.get('next') })
+            return
+          } else if (nextUrl.startsWith('https://wavebox.io/account/register/failure') || nextUrl.startsWith('https://waveboxio.com/account/register/failure')) {
+            userClose = false
+            oauthWin.close()
+            responder({ cancel: true })
+            reject(new Error(nextUrlParsed.searchParams.get('error') || 'Registration failure'))
+            return
+          }
         }
-      })
+
+        responder({})
+      }
+      emitter.headersReceived.onBlocking(undefined, handleHeadersReceived)
+
+      // Handle dom Ready
       oauthWin.webContents.on('dom-ready', () => {
         if (!oauthWin.isVisible()) {
           oauthWin.show()
+        }
+      })
+
+      // Handle close
+      oauthWin.on('closed', () => {
+        emitter.headersReceived.removeListener(handleHeadersReceived)
+        if (userClose) {
+          reject(new Error('User closed the window'))
         }
       })
     })
@@ -128,16 +155,15 @@ class AuthWavebox {
   */
   handleAuthWavebox (evt, body) {
     Promise.resolve()
-      .then(() => this.promptUserToAuthorizeWavebox(body.clientSecret, body.type, body.serverArgs, body.id))
+      .then(() => this.promptUserToAuthorizeWavebox(body.clientSecret, body.type, body.serverArgs, body.partitionId))
       .then(({ next }) => {
         evt.sender.send(WB_AUTH_WAVEBOX_COMPLETE, {
-          id: body.id,
           type: body.type,
+          openAccountOnSuccess: body.openAccountOnSuccess,
           next: next
         })
       }, (err) => {
         evt.sender.send(WB_AUTH_WAVEBOX_ERROR, {
-          id: body.id,
           type: body.type,
           error: err,
           errorString: (err || {}).toString ? (err || {}).toString() : undefined,

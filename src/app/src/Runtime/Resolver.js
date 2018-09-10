@@ -61,14 +61,14 @@ class Resolver {
   * @return the full path to the file
   */
   static guestPreload (name) {
-    return path.resolve(path.join(this.sourceRoot(), 'guest/guest/preload/', name))
+    return path.resolve(path.join(this.sourceRoot(), 'guest/guest.js'))
   }
 
   /**
   * @return the full path to the crextension api
   */
   static crExtensionApi () {
-    return path.resolve(path.join(this.sourceRoot(), 'crextensionApi/crextensionApi.js'))
+    return path.resolve(path.join(this.sourceRoot(), 'guest/guest.crx.js'))
   }
 
   /**

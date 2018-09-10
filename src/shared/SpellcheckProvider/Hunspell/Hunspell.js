@@ -1,5 +1,5 @@
 import LRU from 'lru-cache'
-import {EventEmitter} from 'events'
+import { EventEmitter } from 'events'
 import HunspellFactory from './HunspellFactory'
 import HunspellDictionaryBuffer from './HunspellDictionaryBuffer'
 import dictionaryExcludes from '../dictionaryExcludes'

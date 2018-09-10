@@ -102,8 +102,6 @@ class CRExtensionManifestWavebox extends Model {
   /* **************************************************************************/
 
   get supportsBrowserAction () { return this._value_('wavebox_support_browser_action', true) }
-  get browserActionOpenUrl () { return this._value_('wavebox_browser_action_open_url', undefined) }
-  get hasBrowserActionOpenUrl () { return !!this.browserActionOpenUrl }
   get browserActionIconFilter () { return this._value_('wavebox_browser_action_icon_filter', '') }
   get hasBrowserActionIconFilter () { return !!this.browserActionIconFilter }
 
@@ -125,6 +123,23 @@ class CRExtensionManifestWavebox extends Model {
     return value
   }
   get hasWebRequestOnBeforeRequestBlockingScript () { return !!this.webRequestOnBeforeRequestBlockingScript }
+
+  /* **************************************************************************/
+  // Properties: Native
+  /* **************************************************************************/
+
+  get nativeHooks () { return this._value_('wavebox_native_hooks', {}) }
+
+  /**
+  * Gets a native hook
+  * @param n: the name of the native hook
+  * @param d=undefined: the default value if none is defined
+  * @return the value
+  */
+  getNativeHook (n, d = undefined) {
+    const v = this.nativeHooks[n]
+    return v === undefined ? d : v
+  }
 }
 
 module.exports = CRExtensionManifestWavebox

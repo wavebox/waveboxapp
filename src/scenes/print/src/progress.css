@@ -1,0 +1,90 @@
+@keyframes indeterminateBar {
+  0% {left: -25%;}
+  50% {left: 100%;}
+  100% {left: -25%;}
+}
+
+.progress-modal {
+  position: fixed;
+  display: block;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  background-color: rgb(232, 232, 232);
+  color: rgba(0, 0, 0, 0.87);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media print {
+  .progress-modal { display: none; }
+}
+
+.progress {
+  width: 100%;
+  max-width: 320px;
+}
+
+.progress .bar-container {
+  position: relative;
+  width: 100%;
+  height: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.progress .bar-container.indeterminate>.bar {
+  width: 25% !important;
+  animation: indeterminateBar 4s infinite;
+}
+
+.progress .bar-container>.bar {
+  position: relative;
+  height: 100%;
+  width: 0%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.progress .info-container {
+  display: flex;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  align-items: flex-start;
+  justify-content: space-between;
+  font-size: 14px;
+  line-height: 14px;
+}
+
+.progress .percentage {
+  text-align: right;
+}
+
+.progress .status {
+  text-align: left;
+}
+
+.progress .actions {
+  margin-top: 16px;
+}
+
+.progress .actions .action-cancel {
+  font-size: 14px;
+  background-color: rgb(247,247,247);
+  border: 1px solid rgba(0,0,0,0.4);
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  cursor: pointer;
+}
+
+.progress .actions .action-cancel:active {
+  opacity: 0.6;
+}
+
+.progress .actions .action-cancel.hidden {
+  display: none;
+}

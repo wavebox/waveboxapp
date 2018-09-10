@@ -1,14 +1,19 @@
 import React from 'react'
-import { RaisedButton, Dialog, FlatButton, FontIcon } from 'material-ui'
+import { Button, Dialog, DialogContent, DialogActions, DialogTitle } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
-import { mailboxStore, mailboxActions } from 'stores/mailbox'
-import { userStore } from 'stores/user'
-import * as Colors from 'material-ui/styles/colors'
+import { accountStore, accountActions } from 'stores/account'
 import PropTypes from 'prop-types'
-import { MailboxAvatar } from 'Components/Mailbox'
-import Resolver from 'Runtime/Resolver'
+import MailboxAvatar from 'Components/Backed/MailboxAvatar'
+import ServiceAvatar from 'Components/Backed/ServiceAvatar'
+import { withStyles } from '@material-ui/core/styles'
+import grey from '@material-ui/core/colors/grey'
+import red from '@material-ui/core/colors/red'
+import DeleteIcon from '@material-ui/icons/Delete'
 
 const styles = {
+  dialogContent: {
+    width: 600
+  },
   avatarContainer: {
     display: 'flex',
     alignItems: 'center'
@@ -25,13 +30,25 @@ const styles = {
   },
   serviceLogo: {
     display: 'inline-block',
-    height: 32,
     marginLeft: 4,
     marginRight: 4
+  },
+  cancelButton: {
+    marginRight: 8
+  },
+  deleteButton: {
+    color: red[600]
+  },
+  deleteIcon: {
+    marginRight: 6
+  },
+  accountName: {
+    color: grey[700]
   }
 }
 
-export default class MailboxDeleteScene extends React.Component {
+@withStyles(styles)
+class MailboxDeleteScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -51,19 +68,20 @@ export default class MailboxDeleteScene extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxChanged)
-    userStore.listen(this.userChanged)
+    accountStore.listen(this.accountChanged)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxChanged)
-    userStore.unlisten(this.userChanged)
+    accountStore.unlisten(this.accountChanged)
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.match.params.mailboxId !== nextProps.match.params.mailboxId) {
+      const mailboxId = nextProps.match.params.mailboxId
+      const accountState = accountStore.getState()
       this.setState({
-        mailbox: mailboxStore.getState().getMailbox(nextProps.match.params.mailboxId)
+        mailbox: accountState.getMailbox(mailboxId),
+        mailboxDisplayName: accountState.resolvedMailboxDisplayName(mailboxId)
       })
     }
   }
@@ -73,23 +91,20 @@ export default class MailboxDeleteScene extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
-    const mailboxState = mailboxStore.getState()
+    const mailboxId = this.props.match.params.mailboxId
+    const accountState = accountStore.getState()
     return {
       open: true,
-      mailbox: mailboxState.getMailbox(this.props.match.params.mailboxId),
-      userHasServices: userStore.getState().user.hasServices
+      mailbox: accountState.getMailbox(mailboxId),
+      mailboxDisplayName: accountState.resolvedMailboxDisplayName(mailboxId)
     }
   })()
 
-  mailboxChanged = (mailboxState) => {
+  accountChanged = (accountState) => {
+    const mailboxId = this.props.match.params.mailboxId
     this.setState({
-      mailbox: mailboxState.getMailbox(this.props.match.params.mailboxId)
-    })
-  }
-
-  userChanged = (userState) => {
-    this.setState({
-      userHasServices: userState.user.hasServices
+      mailbox: accountState.getMailbox(mailboxId),
+      mailboxDisplayName: accountState.resolvedMailboxDisplayName(mailboxId)
     })
   }
 
@@ -111,7 +126,7 @@ export default class MailboxDeleteScene extends React.Component {
   * Deletes the account
   */
   handleDelete = () => {
-    mailboxActions.remove(this.props.match.params.mailboxId)
+    accountActions.removeMailbox(this.props.match.params.mailboxId)
     this.handleClose()
   }
 
@@ -124,58 +139,64 @@ export default class MailboxDeleteScene extends React.Component {
   }
 
   render () {
-    const { open, mailbox, userHasServices } = this.state
-
+    const { classes } = this.props
+    const {
+      open,
+      mailbox,
+      mailboxDisplayName
+    } = this.state
     if (!mailbox) { return false }
-
-    const actions = (
-      <div>
-        <FlatButton
-          label='Cancel'
-          style={{ marginRight: 8 }}
-          onClick={this.handleClose} />
-        <RaisedButton
-          labelStyle={{ color: Colors.red600 }}
-          label='Delete'
-          icon={(<FontIcon className='material-icons' color={Colors.red600}>delete</FontIcon>)}
-          onClick={this.handleDelete} />
-      </div>
-    )
 
     return (
       <Dialog
-        onRequestClose={this.handleClose}
-        title='Delete Account'
-        actions={actions}
-        open={open}>
-        <p style={styles.message}>
-          {userHasServices && mailbox.enabledServices.length > 1 ? (
-            `Are you sure you want to delete this account (including ${mailbox.enabledServices.length} services)?`
-          ) : (
-            `Are you sure you want to delete this account?`
-          )}
-        </p>
-        <div style={styles.avatarContainer}>
-          <MailboxAvatar
-            mailboxId={mailbox.id}
-            size={45}
-            style={styles.avatar} />
-          <div>
-            {`${mailbox.humanizedType} : ${mailbox.displayName}`}
+        disableEnforceFocus
+        open={open}
+        onClose={this.handleClose}>
+        <DialogTitle>Delete Account</DialogTitle>
+        <DialogContent className={classes.dialogContent}>
+          <p className={classes.message}>
+            {mailbox.hasMultipleServices ? (
+              `Are you sure you want to delete this account (including ${mailbox.allServiceCount} services)?`
+            ) : (
+              `Are you sure you want to delete this account?`
+            )}
+          </p>
+          <div className={classes.avatarContainer}>
+            <MailboxAvatar
+              mailboxId={mailbox.id}
+              size={45}
+              className={classes.avatar} />
+            <div className={classes.accountName}>
+              {mailboxDisplayName}
+            </div>
           </div>
-        </div>
-        {userHasServices && mailbox.enabledServices.length > 1 ? (
-          <div style={styles.servicesContainer}>
-            {mailbox.enabledServices.map((service) => {
-              return (
-                <img
-                  src={Resolver.image(service.humanizedLogoAtSize(128))}
-                  style={styles.serviceLogo} />
-              )
-            })}
-          </div>
-        ) : undefined}
+          {mailbox.hasMultipleServices ? (
+            <div className={classes.servicesContainer}>
+              {mailbox.allServices.map((serviceId) => {
+                return (
+                  <ServiceAvatar
+                    key={serviceId}
+                    serviceId={serviceId}
+                    className={classes.serviceLogo}
+                    showSleeping={false}
+                    size={32} />
+                )
+              })}
+            </div>
+          ) : undefined}
+        </DialogContent>
+        <DialogActions>
+          <Button className={classes.cancelButton} onClick={this.handleClose}>
+            Cancel
+          </Button>
+          <Button className={classes.deleteButton} variant='raised' onClick={this.handleDelete}>
+            <DeleteIcon className={classes.deleteIcon} />
+            Delete
+          </Button>
+        </DialogActions>
       </Dialog>
     )
   }
 }
+
+export default MailboxDeleteScene

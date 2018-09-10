@@ -1,5 +1,3 @@
-import { ipcRenderer } from 'electron'
-
 class DebugTests {
   /* **************************************************************************/
   // Google Sync
@@ -11,26 +9,30 @@ class DebugTests {
   */
   fetchGoogleUnreadMessageLabels () {
     // Always late require to prevent cyclic references
-    const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
-    const { mailboxStore } = require('stores/mailbox')
-    const { GoogleHTTP } = require('stores/google')
+    const accountStore = require('stores/account/accountStore').default
+    const GoogleHTTP = require('stores/google/GoogleHTTP').default
+    const SERVICE_TYPES = require('shared/Models/ACAccounts/ServiceTypes').default
 
     const sig = '[TEST:GOOGLE_LABELS]'
     console.log(`${sig} start`)
-    const mailboxState = mailboxStore.getState()
-    const mailboxes = mailboxState.getMailboxesOfType(CoreMailbox.MAILBOX_TYPES.GOOGLE)
-    console.log(`${sig} found ${mailboxes.length} Google Mailboxes`)
+    const accountState = accountStore.getState()
+    const services = [].concat(
+      accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_INBOX),
+      accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_MAIL)
+    )
+    console.log(`${sig} found ${services.length} Google Mailboxes`)
 
-    mailboxes.reduce((acc, mailbox) => {
+    services.reduce((acc, service) => {
+      const serviceAuth = accountState.getMailboxAuthForServiceId(service.id)
       let auth = null
       return acc
-        .then(() => GoogleHTTP.generateAuth(mailbox.accessToken, mailbox.refreshToken, mailbox.authExpiryTime))
+        .then(() => GoogleHTTP.generateAuth(serviceAuth.accessToken, serviceAuth.refreshToken, serviceAuth.authExpiryTime))
         .then((fetchedAuth) => {
           auth = fetchedAuth
           return Promise.resolve()
         })
         .then(() => GoogleHTTP.fetchGmailThreadHeadersList(auth, 'label:inbox label:unread', undefined, 100))
-        .then(({threads = []}) => {
+        .then(({ threads = [] }) => {
           return GoogleHTTP.fullyResolveGmailThreadHeaders(auth, {}, threads, (t) => t)
         })
         .then((threads) => {
@@ -47,7 +49,7 @@ class DebugTests {
             }
           })
           const infoStrings = info.map((i) => i.labels.join(',') + ': ' + i.snippet)
-          console.log(`${sig} ${mailbox.displayName} unread messages:\n`, infoStrings.join('\n\n'))
+          console.log(`${sig} ${service.displayName} unread messages:\n`, infoStrings.join('\n\n'))
         })
     }, Promise.resolve())
   }
@@ -63,28 +65,28 @@ class DebugTests {
   */
   clearAndDisableSlackLocalStorage () {
     // Always late require to prevent cyclic references
-    const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
-    const { mailboxStore } = require('stores/mailbox')
+    const accountStore = require('stores/account/accountStore').default
+    const SERVICE_TYPES = require('shared/Models/ACAccounts/ServiceTypes').default
 
     const sig = '[TEST:SLACK_LOCALSTORAGE]'
     console.log(`${sig} start`)
-    const mailboxState = mailboxStore.getState()
-    const mailboxes = mailboxState.getMailboxesOfType(CoreMailbox.MAILBOX_TYPES.SLACK)
-    console.log(`${sig} found ${mailboxes.length} Slack Mailboxes`)
+    const accountState = accountStore.getState()
+    const services = accountState.allServicesOfType(SERVICE_TYPES.SLACK)
+    console.log(`${sig} found ${services.length} Slack Mailboxes`)
 
-    const mailboxElements = mailboxes
-      .map((mailbox) => {
-        const element = document.querySelector(`webview[partition="persist:${mailbox.partition}"]`)
+    const serviceElements = services
+      .map((service) => {
+        const element = document.querySelector(`webview[partition="${service.partitionId}"]`)
         if (element) {
-          return { element: element, mailbox: mailbox }
+          return { element: element, service: service }
         } else {
           return undefined
         }
       })
       .filter((e) => !!e)
-    console.log(`${sig} found ${mailboxes.length} Active Slack Mailboxes`)
+    console.log(`${sig} found ${services.length} Active Slack Mailboxes`)
 
-    mailboxElements.reduce((acc, {element, mailbox}) => {
+    serviceElements.reduce((acc, { element, service }) => {
       return acc
         .then(() => {
           return new Promise((resolve, reject) => {
@@ -103,7 +105,7 @@ class DebugTests {
                 }
               })()
             `, false, (res) => {
-              console.log(`${sig} ${mailbox.displayName} keyLength:${res.keyLength} length:${res.length}`)
+              console.log(`${sig} ${service.displayName} keyLength:${res.keyLength} length:${res.length}`)
               resolve()
             })
           })
@@ -119,7 +121,7 @@ class DebugTests {
                 return true
               })()
             `, false, (res) => {
-              console.log(`${sig} ${mailbox.displayName} localStorage temporarily disabled`)
+              console.log(`${sig} ${service.displayName} localStorage temporarily disabled`)
               resolve()
             })
           })
@@ -137,127 +139,32 @@ class DebugTests {
   */
   fetchMicrosoftUnreadMessageList () {
     // Always late require to prevent cyclic references
-    const CoreMailbox = require('shared/Models/Accounts/CoreMailbox')
-    const { mailboxStore } = require('stores/mailbox')
-    const { MicrosoftHTTP } = require('stores/microsoft')
+    const accountStore = require('stores/account/accountStore').default
+    const MicrosoftHTTP = require('stores/microsoft/MicrosoftHTTP').defaut
+    const SERVICE_TYPES = require('shared/Models/ACAccounts/ServiceTypes').default
 
     const sig = '[TEST:MICROSOFT_MESSAGES]'
     console.log(`${sig} start`)
-    const mailboxState = mailboxStore.getState()
-    const mailboxes = mailboxState.getMailboxesOfType(CoreMailbox.MAILBOX_TYPES.MICROSOFT)
-    console.log(`${sig} found ${mailboxes.length} Microsoft Mailboxes`)
+    const accountState = accountStore.getState()
+    const services = accountState.allServicesOfType(SERVICE_TYPES.MICROSOFT_MAIL)
+    console.log(`${sig} found ${services.length} Microsoft Mailboxes`)
 
-    mailboxes.reduce((acc, mailbox) => {
+    services.reduce((acc, service) => {
+      const serviceAuth = accountState.getMailboxAuthForServiceId(service.id)
       let auth = null
       return acc
-        .then(() => MicrosoftHTTP.refreshAuthToken(mailbox.refreshToken))
+        .then(() => MicrosoftHTTP.refreshAuthToken(serviceAuth.refreshToken))
         .then((fetchedAuth) => {
           auth = fetchedAuth.access_token
           return Promise.resolve()
         })
         .then(() => MicrosoftHTTP.fetchUnreadMessages(auth))
         .then((response) => {
-          console.log(`${sig} ${mailbox.displayName} unread count:${response.length}`)
-          console.log(`${sig} ${mailbox.displayName} unread messages:\n`, response.map((m) => m.subject + ':' + m.bodyPreview + ':' + m.receivedDateTime).join('\n'))
+          console.log(`${sig} ${service.displayName} unread count:${response.length}`)
+          console.log(`${sig} ${service.displayName} unread messages:\n`, response.map((m) => m.subject + ':' + m.bodyPreview + ':' + m.receivedDateTime).join('\n'))
           return Promise.resolve()
         })
     }, Promise.resolve())
-  }
-
-  /**
-  * Authenticates a new microsoft account and marks all unread emails in the inbox read
-  * @param accessMode: the access mode of whether this is outlook or office 365
-  */
-  markAllMicrosoftInboxEmailsRead (accessMode) {
-    // Always late require to prevent cyclic references
-    const MicrosoftMailbox = require('shared/Models/Accounts/Microsoft/MicrosoftMailbox')
-    const { mailboxStore, mailboxActions, MicrosoftMailboxReducer } = require('stores/mailbox')
-    const { MicrosoftHTTP } = require('stores/microsoft')
-    const uuid = require('uuid')
-    const { WB_AUTH_MICROSOFT_COMPLETE, WB_AUTH_MICROSOFT_ERROR } = require('shared/ipcEvents')
-
-    const sig = '[TEST:MICROSOFT_MARK_INBOX_READ]'
-    const mailboxId = `debug_${uuid.v4()}`
-    const provisionalMailboxJS = { id: mailboxId }
-
-    // Validate
-    let authAction
-    if (accessMode === MicrosoftMailbox.ACCESS_MODES.OUTLOOK) {
-      authAction = mailboxActions.authenticateOutlookMailbox
-    } else if (accessMode === MicrosoftMailbox.ACCESS_MODES.OFFICE365) {
-      authAction = mailboxActions.authenticateOffice365Mailbox
-    } else {
-      console.log(`${sig} accessMode of "${accessMode}" is not valid`)
-      return
-    }
-
-    // Create some util methods
-    const refreshHTTPToken = (mailbox) => {
-      if (mailbox.authExpiryTime > new Date().getTime()) {
-        return Promise.resolve(mailbox.accessToken)
-      } else {
-        return Promise.resolve()
-          .then(() => MicrosoftHTTP.refreshAuthToken(mailbox.refreshToken, mailbox.authProtocolVersion))
-          .then((auth) => {
-            mailboxActions.reduce.defer(mailbox.id, MicrosoftMailboxReducer.setAuthInfo, auth)
-            return Promise.resolve(auth.access_token)
-          })
-      }
-    }
-
-    // Create auth listeners
-    const authSuccessHandler = (evt, data) => {
-      if (data.id !== mailboxId) { return }
-      ipcRenderer.removeListener(WB_AUTH_MICROSOFT_COMPLETE, authSuccessHandler)
-      ipcRenderer.removeListener(WB_AUTH_MICROSOFT_ERROR, authSuccessHandler)
-      console.log(`${sig} authentication success`)
-      setTimeout(() => { // Wait for the store to create the model
-        console.log(`${sig} ...pause end`)
-        const mailbox = mailboxStore.getState().getMailbox(mailboxId)
-        let accessToken
-        Promise.resolve()
-          .then(() => refreshHTTPToken(mailbox))
-          .then((latestAccessToken) => {
-            accessToken = latestAccessToken
-            return Promise.resolve()
-          })
-          .then(() => MicrosoftHTTP.fetchInboxUnreadCountAndUnreadMessages(accessToken, 10))
-          .then(({ unreadCount, messages }) => {
-            console.log(`${sig} found ${unreadCount} unread messages`, messages)
-
-            return messages.reduce((acc, message) => {
-              return acc
-                .then(() => {
-                  console.log(`${sig} marking message read ${message.from.emailAddress.address}:${message.subject}`)
-                  return MicrosoftHTTP.markMessageRead(accessToken, message.id)
-                })
-                .then((data) => {
-                  console.log(`${sig} Success (${message.from.emailAddress.address}:${message.subject})`, data)
-                })
-                .catch((err) => {
-                  console.log(`${sig} Failed (${message.from.emailAddress.address}:${message.subject})`, err)
-                  return Promise.resolve()
-                })
-            }, Promise.resolve())
-          })
-          .then(() => {
-            console.log(`${sig} removing debug mailbox`)
-            mailboxActions.remove(mailboxId)
-            console.log(`${sig} Done!`)
-          })
-      }, 1000)
-    }
-    const authFailureHandler = (evt, data) => {
-      if (data.id !== mailboxId) { return }
-      ipcRenderer.removeListener(WB_AUTH_MICROSOFT_COMPLETE, authSuccessHandler)
-      ipcRenderer.removeListener(WB_AUTH_MICROSOFT_ERROR, authSuccessHandler)
-      console.log(`${sig} authentication failed`, data)
-    }
-
-    console.log(`${sig} use the authentication window to login to your account...`)
-    ipcRenderer.on(WB_AUTH_MICROSOFT_COMPLETE, authSuccessHandler)
-    ipcRenderer.on(WB_AUTH_MICROSOFT_ERROR, authFailureHandler)
-    authAction(provisionalMailboxJS, ['Mail.ReadWrite'])
   }
 }
 

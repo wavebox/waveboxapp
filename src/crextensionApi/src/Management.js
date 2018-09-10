@@ -1,3 +1,4 @@
+import Log from 'Core/Log'
 import ArgParser from 'Core/ArgParser'
 
 const privExtensionId = Symbol('privExtensionId')
@@ -22,7 +23,7 @@ class Management {
 
   uninstall (...fullArgs) {
     const { callback } = ArgParser.callback(fullArgs)
-    console.warn('chrome.management.uninstall is not supported by Wavebox at this time')
+    Log.warn('chrome.management.uninstall is not supported by Wavebox at this time')
     if (callback) {
       setTimeout(() => { callback() }, 1)
     }

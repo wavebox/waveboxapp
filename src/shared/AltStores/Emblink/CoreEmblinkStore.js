@@ -17,14 +17,12 @@ class CoreEmblinkStore extends RemoteStore {
 
     this.compose = Object.freeze({
       active: false,
-      mailboxId: null,
-      serviceType: null,
+      serviceId: null,
       payload: null
     })
 
     this.open = Object.freeze({
-      mailboxId: null,
-      serviceType: null,
+      serviceId: null,
       payload: null
     })
 
@@ -45,7 +43,7 @@ class CoreEmblinkStore extends RemoteStore {
     /**
     * @return true if compose has a mailbox and service
     */
-    this.composeHasMailbox = () => { return this.compose.mailboxId && this.compose.serviceType }
+    this.composeHasMailbox = () => { return !!this.compose.serviceId }
 
     /* ****************************************/
     // Open
@@ -54,7 +52,7 @@ class CoreEmblinkStore extends RemoteStore {
     /**
     * @return true if there is an item to open
     */
-    this.hasOpenItem = () => { return this.open.mailboxId && this.open.serviceType }
+    this.hasOpenItem = () => { return !!this.open.serviceId }
 
     /* ****************************************/
     // Actions
@@ -119,11 +117,10 @@ class CoreEmblinkStore extends RemoteStore {
   // Handlers: Compose
   /* **************************************************************************/
 
-  handleComposeNewMessage ({ mailboxId, serviceType }) {
+  handleComposeNewMessage ({ serviceId }) {
     this.compose = Object.freeze({
       active: true,
-      mailboxId: mailboxId || null,
-      serviceType: serviceType || null,
+      serviceId: serviceId || null,
       payload: null
     })
   }
@@ -131,18 +128,16 @@ class CoreEmblinkStore extends RemoteStore {
   handleClearCompose () {
     this.compose = Object.freeze({
       active: false,
-      mailboxId: null,
-      serviceType: null,
+      serviceId: null,
       payload: null
     })
   }
 
-  handleComposeNewMailtoLink ({ mailtoLink, mailboxId, serviceType }) {
+  handleComposeNewMailtoLink ({ mailtoLink, serviceId }) {
     const parsedLink = this.parseMailtoLink(mailtoLink)
     this.compose = Object.freeze({
       active: true,
-      mailboxId: mailboxId || null,
-      serviceType: serviceType || null,
+      serviceId: serviceId || null,
       payload: parsedLink ? {
         original: mailtoLink,
         originalType: 'mailto',
@@ -155,23 +150,21 @@ class CoreEmblinkStore extends RemoteStore {
   // Handlers: Open
   /* **************************************************************************/
 
-  handleOpenItem ({ mailboxId, serviceType, openPayload }) {
-    if (!mailboxId || !serviceType) {
+  handleOpenItem ({ serviceId, openPayload }) {
+    if (!serviceId) {
       this.preventDefault()
       return
     }
 
     this.open = Object.freeze({
-      mailboxId: mailboxId,
-      serviceType: serviceType,
+      serviceId: serviceId,
       payload: openPayload
     })
   }
 
   handleClearOpenItem () {
     this.open = Object.freeze({
-      mailboxId: null,
-      serviceType: null,
+      serviceId: null,
       payload: null
     })
   }

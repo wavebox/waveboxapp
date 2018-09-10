@@ -4,30 +4,44 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="
       default-src 'none';
-      img-src * data:;
+      img-src * data: blob:;
       object-src 'self';
       connect-src *;
       font-src 'self';
-      script-src 'self' 'sha256-WYmZqQ3ga72JqV+RMBqJpypcMUXVQ4rgF9VpnWQoGdE=' 'sha256-VAWAaH0eZPN+9ERNt9rFK73goW6R5dO6gtwUqVqJNIE=';
+      script-src 'self' 'sha256-WYmZqQ3ga72JqV+RMBqJpypcMUXVQ4rgF9VpnWQoGdE=' 'sha256-ogb99peCT8yUDjhFwEtktWqFUlK7UfRIUoDDSHb1CBw=';
       style-src 'self' 'unsafe-inline';
     ">
     <title>Wavebox</title>
     <link rel="stylesheet" type="text/css" href="../../fonts/opensans/opensans.css">
-    <link rel="stylesheet" type="text/css" href="../../fonts/materialdesign/material-icons.css">
-    <link rel="stylesheet" type="text/css" href="../../fonts/fontawesome/fontawesome-all.min.css">
     <style>
       /** Core styles **/
       html, body {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
         width: 100%;
         height: 100%;
         margin: 0;
         padding: 0;
-        overflow: hidden;
+        overflow: visible;
         font-family: 'Open Sans', sans-serif;
       }
       * {
         box-sizing: border-box;
-       }
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      #ReactComponent-AppSceneRenderNode {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        overflow: hidden;
+      }
 
       /** Mock loading UI **/
       #loading {
@@ -82,9 +96,10 @@ window.appNodeModulesRequire = function (name) {
     <script type="text/javascript">
 ;(function () {
   const timing = {
-    init: new Date().getTime(),
-    bootstrap: null,
-    finish: null
+    total: { init: new Date().getTime(), complete: null },
+    clientEval: { init: null, complete: null },
+    bootstrap: { init: null, complete: null },
+    clientStart: { init: null, complete: null }
   }
 
   const electron = require('electron')
@@ -93,6 +108,7 @@ window.appNodeModulesRequire = function (name) {
   const pkg = require('./package.json')
   const credentials = require('./credentials.js')
   window.bootstrap = { clientId: query.clientId, clientToken: query.clientToken }
+  const CACHED_INIT_KEY = `cached_init:${window.bootstrap.clientId}`
 
   /**
   * Injects a script element
@@ -109,6 +125,20 @@ window.appNodeModulesRequire = function (name) {
       element.src = url
       document.head.appendChild(element)
     })
+  }
+
+  /**
+  * Injects the mailboxes script
+  * @return promise
+  */
+  const injectMailboxes = function () {
+    timing.clientEval.init = new Date().getTime()
+    return Promise.resolve()
+      .then(() => injectScript('mailboxes.js'))
+      .then((res) => {
+        timing.clientEval.complete = new Date().getTime()
+        return Promise.resolve(res)
+      })
   }
 
   /**
@@ -150,26 +180,53 @@ window.appNodeModulesRequire = function (name) {
   * @return promise
   */
   const fetchBootstrap = function () {
+    timing.bootstrap.init = new Date().getTime()
     return Promise.resolve()
       .then(() => {
-        const query = querystring.stringify({
-          token: window.bootstrap.clientToken,
-          version: pkg.version,
-          bid: pkg.earlyBuildId || 'release',
-          ident: pkg.name,
-          api_key: credentials.API_KEY,
-          protocol: credentials.API_KEY ? 2 : 1,
-          '_': new Date().getTime()
-        })
-        return window.fetch(`https://waveboxio.com/client/${window.bootstrap.clientId}/init.json?${query}`)
-      })
-      .then((res) => {
-        return res.text().then((text) => {
-          let jsonContent
-          try {
-            jsonContent = JSON.parse(text)
-          } catch (_ex) { }
-          return Promise.resolve({ res: res, jsonContent: jsonContent })
+        return new Promise((resolve, reject) => {
+          let hasResolved = false
+          const query = querystring.stringify({
+            token: window.bootstrap.clientToken,
+            version: pkg.version,
+            bid: pkg.earlyBuildId || 'release',
+            ident: pkg.name,
+            api_key: credentials.API_KEY,
+            protocol: credentials.API_KEY ? 2 : 1,
+            '_': new Date().getTime()
+          })
+          window.fetch(`https://waveboxio.com/client/${window.bootstrap.clientId}/init.json?${query}`)
+            .then((res) => {
+              return Promise.resolve()
+                .then(() => res.text())
+                .then((text) => {
+                  let jsonContent
+                  try {
+                    jsonContent = JSON.parse(text)
+                  } catch (_ex) { }
+                  return Promise.resolve({ res: res, jsonContent: jsonContent })
+                })
+            })
+            .then(
+              (data) => {
+                if (hasResolved) { return }
+                hasResolved = true
+                resolve(data)
+              },
+              (err) => {
+                if (hasResolved) { return }
+                hasResolved = true
+                reject(err)
+              }
+            )
+
+          setTimeout(() => {
+            if (hasResolved) { return }
+            hasResolved = true
+            resolve({
+              res: { ok: false, status: -1 },
+              jsonContent: { error: 'CONNECTION_TIMEOUT' }
+            })
+          }, window.localStorage[CACHED_INIT_KEY] ? 15000 : 10000)
         })
       })
       .then(
@@ -177,12 +234,12 @@ window.appNodeModulesRequire = function (name) {
           if (res.status === 403 || res.status === 401) {
             return uauthorizedBounce(jsonContent ? jsonContent.error : undefined)
           } else if (res.ok && jsonContent) {
-            window.localStorage['cached_init'] = JSON.stringify(jsonContent)
+            window.localStorage[CACHED_INIT_KEY] = JSON.stringify(jsonContent)
             return Promise.resolve(jsonContent)
           } else {
-            if (window.localStorage['cached_init']) {
+            if (window.localStorage[CACHED_INIT_KEY]) {
               try {
-                const cached = JSON.parse(window.localStorage['cached_init'])
+                const cached = JSON.parse(window.localStorage[CACHED_INIT_KEY])
                 return Promise.resolve(cached)
               } catch (_ex) { }
             }
@@ -200,19 +257,27 @@ window.appNodeModulesRequire = function (name) {
         // Write into window for bootstrap to pickup
         electron.ipcRenderer.sendSync('WB_USER_SET_USER', config.account_js, new Date().getTime())
         window.config = config
+        timing.bootstrap.complete = new Date().getTime()
         return Promise.resolve()
       })
   }
 
   // Kick everything off
   Promise.all([
-    injectScript('mailboxes.js'),
+    injectMailboxes(),
     fetchBootstrap()
   ]).then((r) => {
-    timing.bootstrap = new Date().getTime()
+    timing.clientStart.init = new Date().getTime()
     window.startWaveboxClient()
-    timing.complete = new Date().getTime()
-    console.log(`Started in ${timing.bootstrap - timing.init} | ${timing.complete - timing.init}`)
+    timing.clientStart.complete = new Date().getTime()
+  }).then(() => {
+    timing.total.complete = new Date().getTime()
+    console.log('[Start Metrics] ', [
+      `BS=${timing.bootstrap.complete - timing.bootstrap.init}`,
+      `CE=${timing.clientEval.complete - timing.clientEval.init}`,
+      `CS=${timing.clientStart.complete - timing.clientStart.init}`,
+      `TO=${timing.total.complete - timing.total.init}`
+    ].join(' | '))
   }).catch((err) => {
     console.error('Bootstrap failed', err)
     if (err.bounce) {

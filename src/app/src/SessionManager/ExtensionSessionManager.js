@@ -1,5 +1,5 @@
-import {session} from 'electron'
-import {EventEmitter} from 'events'
+import { session } from 'electron'
+import { EventEmitter } from 'events'
 import { CRExtensionManager } from 'Extensions/Chrome'
 
 class ExtensionSessionManager extends EventEmitter {

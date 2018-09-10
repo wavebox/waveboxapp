@@ -1,7 +1,7 @@
 import { ipcRenderer, webFrame } from 'electron'
 import AdaptorRegistry from './AdaptorRegistry'
 import { WCRPC_DOM_READY } from 'shared/webContentsRPC'
-import {ExtensionLoader} from 'Browser'
+import { ExtensionLoader } from 'Browser'
 import UrlPattern from 'url-pattern'
 
 const privHasStarted = Symbol('privHasStarted')

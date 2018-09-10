@@ -2,19 +2,23 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { settingsStore, settingsActions } from 'stores/settings'
 import { userActions } from 'stores/user'
-import { Toggle, Paper, SelectField, MenuItem, RaisedButton } from 'material-ui'
 import shallowCompare from 'react-addons-shallow-compare'
-import commonStyles from '../CommonSettingStyles'
-import { Container, Row, Col } from 'Components/Grid'
 import { ExtensionSettings } from 'shared/Models/Settings'
 import ExtensionList from './ExtensionList'
+import SettingsListSection from 'wbui/SettingsListSection'
+import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
+import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
+import SettingsListItem from 'wbui/SettingsListItem'
+import SettingsListContainer from 'wbui/SettingsListContainer'
+import { Button } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
 
-const EXTENSION_LAYOUT_MODE_LABELS = {
-  [ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_LEFT]: 'Left',
-  [ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_RIGHT]: 'Right'
+const styles = {
+
 }
 
-export default class ExtensionSettingsTab extends React.Component {
+@withStyles(styles)
+class ExtensionSettingsTab extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -64,43 +68,36 @@ export default class ExtensionSettingsTab extends React.Component {
     const {
       extension
     } = this.state
-    const {showRestart, ...passProps} = this.props
+    const { showRestart, classes, ...passProps } = this.props
 
     return (
       <div {...passProps}>
-        <Container fluid>
-          <Row>
-            <Col md={6}>
-              <Paper zDepth={1} style={commonStyles.paper}>
-                <Toggle
-                  toggled={extension.showBrowserActionsInToolbar}
-                  label='Show extensions in toolbar'
-                  labelPosition='right'
-                  onToggle={(evt, toggled) => settingsActions.sub.extension.setShowBrowserActionsInToolbar(toggled)} />
-                <SelectField
-                  floatingLabelText='Extension position in toolbar'
-                  value={extension.toolbarBrowserActionLayout}
-                  disabled={!extension.showBrowserActionsInToolbar}
-                  fullWidth
-                  onChange={(evt, index, value) => { settingsActions.sub.extension.setToolbarBrowserActionLayout(value) }}>
-                  {Object.keys(ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT).map((value) => {
-                    return (
-                      <MenuItem
-                        key={value}
-                        value={value}
-                        primaryText={EXTENSION_LAYOUT_MODE_LABELS[value]} />
-                    )
-                  })}
-                </SelectField>
-                <RaisedButton
-                  label='Check for updates'
-                  onClick={() => { userActions.updateExtensions() }} />
-              </Paper>
-            </Col>
-          </Row>
+        <SettingsListSection title='Extension Settings' {...passProps}>
+          <SettingsListItemSwitch
+            label='Show extensions in toolbar'
+            onChange={(evt, toggled) => { settingsActions.sub.extension.setShowBrowserActionsInToolbar(toggled) }}
+            checked={extension.showBrowserActionsInToolbar} />
+          <SettingsListItemSelectInline
+            label='Extension position in toolbar'
+            value={extension.toolbarBrowserActionLayout}
+            disabled={!extension.showBrowserActionsInToolbar}
+            options={[
+              { value: ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_LEFT, label: 'Left' },
+              { value: ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_RIGHT, label: 'Right' }
+            ]}
+            onChange={(evt, value) => { settingsActions.sub.extension.setToolbarBrowserActionLayout(value) }} />
+          <SettingsListItem divider={false}>
+            <Button variant='raised' size='small' onClick={() => userActions.updateExtensions()}>
+              Check for updates
+            </Button>
+          </SettingsListItem>
+        </SettingsListSection>
+        <SettingsListContainer>
           <ExtensionList showRestart={showRestart} />
-        </Container>
+        </SettingsListContainer>
       </div>
     )
   }
 }
+
+export default ExtensionSettingsTab

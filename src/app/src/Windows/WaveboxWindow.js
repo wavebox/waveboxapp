@@ -37,6 +37,8 @@ class WaveboxWindow extends EventEmitter {
   static allTabIds () { return waveboxWindowManager.allTabIds() }
   static fromTabId (tabId) { return waveboxWindowManager.fromTabId(tabId) }
   static tabMetaInfo (tabId) { return waveboxWindowManager.tabMetaInfo(tabId) }
+  static allTabIdsWithBacking (backingType) { return waveboxWindowManager.allTabIdsWithBacking(backingType) }
+  static allTabMetaWithBacking (backingType) { return waveboxWindowManager.allTabMetaWithBacking(backingType) }
   static allBrowserWindowIds () { return waveboxWindowManager.allBrowserWindowIds() }
   static fromBrowserWindowId (browserWindowId) { return waveboxWindowManager.fromBrowserWindowId(browserWindowId) }
   static fromBrowserWindow (bw) { return waveboxWindowManager.fromBrowserWindow(bw) }
@@ -208,19 +210,30 @@ class WaveboxWindow extends EventEmitter {
       if (!this[privWindow].isMaximized() && !this[privWindow].isFullScreen()) {
         const windowBounds = this[privWindow].getBounds()
         const workArea = (screen.getDisplayMatching(windowBounds) || screen.getPrimaryDisplay()).workArea
-        const workAreaX = workArea.x
         // On macOS if the opening window is in fullscreen mode we can end up with Y=0 for the workarea. We
         // can also end up with screen.getMenuBarHeight()=0 as the menu bar is hidden. This can result in
         // the bounding failing and the window titlebar being placed under the menubar which means the
-        // user can't move the window. Guard against this by adding an arbituary 25 (barHeight=22 + 3 padd).
+        // user can't move the window. Guard against this by adding an arbituary 22 (barHeight=22).
         // In means we can waste some space at the top of the screen, but better than being unusable
         // wavebox/waveboxapp/#388 wavebox/waveboxapp/#607
-        const workAreaY = process.platform !== 'darwin' ? workArea.y : Math.max(workArea.y, 25)
+        const workAreaY1 = process.platform === 'darwin' ? Math.max(workArea.y, 22) : workArea.y
+        const workAreaY2 = workAreaY1 + workArea.height
+        const workAreaX1 = workArea.x
+        const workAreaX2 = workArea.x + workArea.width
 
-        if (windowBounds.x < workAreaX || windowBounds.y < workAreaY) {
-          const x = Math.max(windowBounds.x, workAreaX)
-          const y = Math.max(windowBounds.y, workAreaY)
-          this[privWindow].setPosition(x, y, false)
+        let readjust = false
+        if (windowBounds.y <= workAreaY1) {
+          readjust = true // Window top above screen
+        } else if (windowBounds.y >= workAreaY2) {
+          readjust = true // Window below screen
+        } else if (windowBounds.x + windowBounds.width <= workAreaX1) {
+          readjust = true // Window to left of screen
+        } else if (windowBounds.x >= workAreaX2) {
+          readjust = true // Window to right of screen
+        }
+
+        if (readjust) {
+          this[privWindow].center()
         }
       }
     }
@@ -358,24 +371,6 @@ class WaveboxWindow extends EventEmitter {
   }
 
   /**
-  * Blurs a window
-  * @return this
-  */
-  blur () {
-    this.window.blur()
-    return this
-  }
-
-  /**
-  * Focuses a window
-  * @return this
-  */
-  focus () {
-    this.window.focus()
-    return this
-  }
-
-  /**
   * Reloads the webview
   * @return this
   */
@@ -420,15 +415,30 @@ class WaveboxWindow extends EventEmitter {
   /* ****************************************************************************/
 
   /**
-  * Shows the window
-  * @param restoreState=true: true to restore the saved window state
+  * Blurs a window
   * @return this
   */
-  show (restoreState = true) {
-    const windowRestore = restoreState ? this.locationSaver.getSavedScreenLocation() : undefined
-    this.window.show()
-    if (restoreState) {
-      this.locationSaver.reapplySavedScreenLocation(windowRestore)
+  blur () {
+    this.window.blur()
+    return this
+  }
+
+  /**
+  * Focuses a window
+  * @return this
+  */
+  focus () {
+    this.window.focus()
+    return this
+  }
+
+  /**
+  * Shows the window
+  * @return this
+  */
+  show () {
+    if (!this.window.isVisible()) {
+      this.locationSaver.showWithSavedScreenLocation()
     }
     return this
   }
@@ -665,6 +675,20 @@ class WaveboxWindow extends EventEmitter {
   */
   isDestroyed () {
     return this.window.isDestroyed()
+  }
+
+  /**
+  * @return the bounds of the window
+  */
+  getBounds () {
+    return this.window.getBounds()
+  }
+
+  /**
+  * @return the content bounds of the window
+  */
+  getContentBounds () {
+    return this.window.getContentBounds()
   }
 }
 

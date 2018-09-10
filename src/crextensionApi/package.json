@@ -6,13 +6,12 @@
   "repository": "https://github.com/wavebox/waveboxapp",
   "description": "CRExtension api for Wavebox",
   "dependencies": {
-    "uuid": "3.2.1",
-    "whatwg-url": "6.4.0"
+    "uuid": "3.3.2",
+    "whatwg-url": "7.0.0"
   },
   "devDependencies": {
-    "standard": "11.0.1",
-    "babel-eslint": "8.2.2",
-    "babel-plugin-transform-class-properties": "6.24.1"
+    "standard": "12.0.1",
+    "babel-eslint": "9.0.0"
   },
   "standard": {
     "parser": "babel-eslint"

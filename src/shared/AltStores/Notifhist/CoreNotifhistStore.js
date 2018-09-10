@@ -5,7 +5,7 @@ import {
   STORE_NAME
 } from './AltNotifhistIdentifiers'
 
-const MAX_HISTORY = 10
+const MAX_HISTORY = 100
 
 class CoreNotifhistStore extends RemoteStore {
   /* **************************************************************************/
@@ -41,7 +41,7 @@ class CoreNotifhistStore extends RemoteStore {
   /* **************************************************************************/
 
   handleAddNotification ({ notification, timestamp, id }) {
-    this.notifications = [{notification, timestamp, id}]
+    this.notifications = [{ notification, timestamp, id }]
       .concat(this.notifications)
       .slice(0, MAX_HISTORY)
       .sort((a, b) => b.timestamp - a.timestamp)

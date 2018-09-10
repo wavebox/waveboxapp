@@ -1,19 +1,38 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Dialog, RaisedButton, FlatButton } from 'material-ui'
+import { Dialog, DialogContent, DialogActions, Button } from '@material-ui/core'
 import { updaterActions, updaterStore } from 'stores/updater'
 import UpdateModalTitle from './UpdateModalTitle'
-import * as Colors from 'material-ui/styles/colors'
 import electron from 'electron'
 import pkg from 'package.json'
+import { withStyles } from '@material-ui/core/styles'
+import red from '@material-ui/core/colors/red'
+import ErrorIcon from '@material-ui/icons/Error'
 
-export default class UpdateErrorScene extends React.Component {
+const styles = {
+  dialogContent: {
+    width: 600
+  },
+  title: {
+    color: red[900]
+  },
+  icon: {
+    color: red[900]
+  },
+  button: {
+    marginLeft: 8,
+    marginRight: 8
+  }
+}
+
+@withStyles(styles)
+class UpdateErrorScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  static contextTypes: {
+  static contextTypes = {
     router: PropTypes.object.isRequired
   }
   static propTypes = {
@@ -100,11 +119,12 @@ export default class UpdateErrorScene extends React.Component {
 
   /**
   * Renders the message for the user
+  * @param classes:
   * @param provider: the provider user to action the update
   * @param tries: the download tries
   * @return jsx
   */
-  renderMessage (provider, tries) {
+  renderMessage (classes, provider, tries) {
     if (provider === 'squirrel') {
       if (tries > 1) {
         return (
@@ -142,37 +162,41 @@ export default class UpdateErrorScene extends React.Component {
 
   render () {
     const { open, updateFailedCount } = this.state
-    const { match: { params: { provider } } } = this.props
-
-    const actions = (
-      <div>
-        <FlatButton
-          label='Retry later'
-          style={{ marginRight: 16 }}
-          onClick={this.handleCheckLater} />
-        <FlatButton
-          label='Download Manually'
-          style={{ marginRight: 16 }}
-          onClick={this.handleDownloadManually} />
-        <RaisedButton
-          primary
-          label='Try again'
-          onClick={this.handleCheckAgain} />
-      </div>
-    )
+    const {
+      match: { params: { provider } },
+      classes
+    } = this.props
 
     return (
       <Dialog
-        title={(<UpdateModalTitle text='Update Error' color={Colors.red900} iconName='error' />)}
-        modal={false}
-        actions={actions}
+        disableEnforceFocus
         open={open}
-        onRequestClose={this.handleCheckLater}>
-        {this.renderMessage(provider, updateFailedCount)}
-        <p style={{ fontSize: '85%' }}>
-          You're currently using Wavebox version <strong>{pkg.version}</strong>
-        </p>
+        onClose={this.handleCheckLater}>
+        <UpdateModalTitle
+          text='Update Error'
+          IconClass={ErrorIcon}
+          iconClassName={classes.icon}
+          titleClassName={classes.title} />
+        <DialogContent className={classes.dialogContent}>
+          {this.renderMessage(classes, provider, updateFailedCount)}
+          <p style={{ fontSize: '85%' }}>
+            You're currently using Wavebox version <strong>{pkg.version}</strong>
+          </p>
+        </DialogContent>
+        <DialogActions>
+          <Button className={classes.button} onClick={this.handleCheckLater}>
+            Retry later
+          </Button>
+          <Button className={classes.button} onClick={this.handleDownloadManually}>
+            Download manually
+          </Button>
+          <Button variant='raised' color='primary' className={classes.button} onClick={this.handleCheckAgain}>
+            Try again
+          </Button>
+        </DialogActions>
       </Dialog>
     )
   }
 }
+
+export default UpdateErrorScene

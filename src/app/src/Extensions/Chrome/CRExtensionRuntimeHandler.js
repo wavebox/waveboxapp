@@ -4,12 +4,16 @@ import { URL } from 'url'
 import CRDispatchManager from './CRDispatchManager'
 import CRExtensionRuntime from './CRExtensionRuntime'
 import CRExtensionMatchPatterns from 'shared/Models/CRExtension/CRExtensionMatchPatterns'
-import {EventEmitter} from 'events'
+import { EventEmitter } from 'events'
 import {
   CR_EXTENSION_PROTOCOL,
-  CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX
+  CR_CONTENT_SCRIPT_XHR_ACCEPT_PREFIX,
+  CR_NATIVE_HOOK_EXTENSIONS,
+  CR_CONTENT_SCRIPT_START_CONTEXT
 } from 'shared/extensionApis'
 import {
+  CRX_RUNTIME_CONTENTSCRIPT_PROVISION_CONTEXT_SYNC,
+  CRX_RUNTIME_CONTENTSCRIPT_PROVISIONED,
   CRX_RUNTIME_SENDMESSAGE,
   CRX_TABS_SENDMESSAGE,
   CRX_RUNTIME_ONMESSAGE_,
@@ -22,9 +26,12 @@ import { CSPParser, CSPBuilder } from './CSP'
 import pathTool from 'shared/pathTool'
 import CRExtensionTab from './CRExtensionRuntime/CRExtensionTab'
 import mime from 'mime'
+import { ElectronWebContents } from 'ElectronTools'
+import WaveboxWindow from 'Windows/WaveboxWindow'
 
 const privNextPortId = Symbol('privNextPortId')
 const privOpenXHRRequests = Symbol('privOpenXHRRequests')
+const privCSContexts = Symbol('privCSContexts')
 
 class CRExtensionRuntimeHandler extends EventEmitter {
   /* ****************************************************************************/
@@ -36,10 +43,12 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     this.runtimes = new Map()
     this[privNextPortId] = 0
     this[privOpenXHRRequests] = new Map()
+    this[privCSContexts] = new Map()
 
     CRDispatchManager.registerHandler(CRX_RUNTIME_SENDMESSAGE, this._handleRuntimeSendmessage)
     CRDispatchManager.registerHandler(CRX_TABS_SENDMESSAGE, this._handleTabsSendmessage)
 
+    ipcMain.on(CRX_RUNTIME_CONTENTSCRIPT_PROVISION_CONTEXT_SYNC, this._handleProvisionContentScriptContextSync)
     ipcMain.on(CRX_RUNTIME_HAS_RESPONDER, this._handleHasRuntimeResponder)
     ipcMain.on(CRX_PORT_CONNECT_SYNC, this._handlePortConnect)
   }
@@ -52,7 +61,9 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   get inUsePartitions () {
     return this.allRuntimes
       .map((runtime) => {
-        return runtime.extension.manifest.hasBackground ? runtime.backgroundPage.partitionId : undefined
+        return runtime.extension.manifest.hasBackground
+          ? runtime.backgroundPage.partitionId
+          : undefined
       })
       .filter((p) => !!p)
   }
@@ -104,9 +115,11 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   * @param responder: the responder to return the response
   */
   _handleChromeExtensionBufferRequest = (request, responder) => {
-    const purl = new URL(request.url || 'about:blank')
+    const purl = new URL(decodeURIComponent(request.url || 'about:blank'))
     if (!purl.hostname || !purl.pathname) { return responder() }
-    const runtime = this.runtimes.get(purl.hostname)
+
+    const extensionId = purl.hostname
+    const runtime = this.runtimes.get(extensionId)
     if (!runtime) { return responder() }
 
     // Serve the background page
@@ -115,6 +128,20 @@ class CRExtensionRuntimeHandler extends EventEmitter {
         mimeType: 'text/html',
         data: runtime.backgroundPage.html
       })
+    }
+
+    // Lastpass native hook
+    if (extensionId === CR_NATIVE_HOOK_EXTENSIONS.LASTPASS) {
+      const waveboxConfig = runtime.extension.manifest.wavebox
+      if (waveboxConfig.getNativeHook('enableBAPopoutOnCSPopout', false) === true) {
+        if (purl.pathname === waveboxConfig.getNativeHook('csPopoutPath', '')) {
+          const focusedTabId = WaveboxWindow.focusedTabId()
+          if (focusedTabId) {
+            runtime.browserAction.browserActionClicked(focusedTabId)
+          }
+          return responder(-6)
+        }
+      }
     }
 
     // Serve the asset/file
@@ -132,7 +159,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
             responder(data)
           }
         })
-        .catch(() => responder(-6)) // not found
+        .catch(() => { responder(-6) }) // not found
     } else {
       responder(-6) // not found
     }
@@ -141,6 +168,31 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   /* ****************************************************************************/
   // Event handlers
   /* ****************************************************************************/
+
+  /**
+  * Handles a content script requesting a new context
+  * @param evt: the event that fired
+  */
+  _handleProvisionContentScriptContextSync = (evt) => {
+    const id = evt.sender.id
+    if (this[privCSContexts].has(id)) {
+      this[privCSContexts].set(id, this[privCSContexts].get(id) + 1)
+    } else {
+      this[privCSContexts].set(id, CR_CONTENT_SCRIPT_START_CONTEXT)
+      evt.sender.once('destroyed', () => {
+        this[privCSContexts].delete(id)
+      })
+    }
+    const contextId = this[privCSContexts].get(id)
+    Array.from(this.runtimes.values()).forEach((runtime) => {
+      runtime.backgroundPage.sendToWebContents(CRX_RUNTIME_CONTENTSCRIPT_PROVISIONED, id, contextId)
+    })
+
+    // Re-queue for everyone to finish
+    setTimeout(() => {
+      evt.returnValue = contextId
+    }, 500)
+  }
 
   /**
   * Handles a runtime message
@@ -252,9 +304,9 @@ class CRExtensionRuntimeHandler extends EventEmitter {
 
       // Prepare for teardown
       evt.sender.once('render-view-deleted', () => {
-        const backgroundContents = runtime.backgroundPage.webContents
-        if (!backgroundContents || backgroundContents.isDestroyed()) { return }
-        backgroundContents.sendToAll(`${CRX_PORT_DISCONNECTED_}${portId}`)
+        if (runtime && runtime.backgroundPage && runtime.backgroundPage.isRunning) {
+          runtime.backgroundPage.webContents.sendToAll(`${CRX_PORT_DISCONNECTED_}${portId}`)
+        }
       })
 
       // Emit the connect event
@@ -352,7 +404,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
   openOptionsPage (extensionId) {
     const runtime = this.runtimes.get(extensionId)
     if (!runtime) { return }
-    runtime.optionsPage.launchWindow()
+    runtime.backgroundPage.launchOptions()
   }
 
   /**
@@ -525,7 +577,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
     // Check we are able to match this url
     const requestWebContents = webContents.fromId(details.webContentsId)
     if (!requestWebContents || requestWebContents.isDestroyed()) { return nextHeaders }
-    const purl = new URL(requestWebContents.getURL() || 'about:blank')
+    const purl = new URL(ElectronWebContents.getHostUrl(requestWebContents))
     const matches = CRExtensionMatchPatterns.matchUrls(
       purl.protocol,
       purl.hostname,
@@ -538,6 +590,7 @@ class CRExtensionRuntimeHandler extends EventEmitter {
 
     // Looks like an extension request
     this[privOpenXHRRequests].set(details.id, details.requestHeaders['Origin'])
+
     return nextHeaders
   }
 

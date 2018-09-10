@@ -1,19 +1,25 @@
-import { app, ipcMain, BrowserWindow, dialog } from 'electron'
+import { app, ipcMain, BrowserWindow, dialog, webContents } from 'electron'
+import { URL } from 'url'
 import { ElectronWebContents } from 'ElectronTools'
 import { settingsStore } from 'stores/settings'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { ELEVATED_LOG_PREFIX } from 'shared/constants'
+import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import {
   WCRPC_DOM_READY,
   WCRPC_DID_FRAME_FINISH_LOAD,
+  WCRPC_PERMISSION_REQUESTS_CHANGED,
   WCRPC_CLOSE_WINDOW,
   WCRPC_SEND_INPUT_EVENT,
   WCRPC_SEND_INPUT_EVENTS,
   WCRPC_SHOW_ASYNC_MESSAGE_DIALOG,
+  WCRPC_SYNC_GET_INITIAL_HOST_URL,
   WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG,
-  WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG,
-  WCRPC_DID_GET_REDIRECT_REQUEST
+  WCRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG,
+  WCRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG,
+  WCRPC_RESOLVE_PERMISSION_REQUEST
 } from 'shared/webContentsRPC'
+import { PermissionManager } from 'Permissions'
 
 const privConnected = Symbol('privConnected')
 const privNotificationService = Symbol('privNotificationService')
@@ -31,13 +37,18 @@ class WebContentsRPCService {
 
     this[privConnected] = new Set()
 
+    PermissionManager.on('unresolved-permission-requests-changed', this._handleUnresolvedPermissionRequestChanged)
     app.on('web-contents-created', this._handleWebContentsCreated)
+
     ipcMain.on(WCRPC_CLOSE_WINDOW, this._handleCloseWindow)
     ipcMain.on(WCRPC_SEND_INPUT_EVENT, this._handleSendInputEvent)
     ipcMain.on(WCRPC_SEND_INPUT_EVENTS, this._handleSendInputEvents)
     ipcMain.on(WCRPC_SHOW_ASYNC_MESSAGE_DIALOG, this._handleShowAsyncMessageDialog)
+    ipcMain.on(WCRPC_SYNC_GET_INITIAL_HOST_URL, this._handleSyncGetInitialHostUrl)
     ipcMain.on(WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG, this._handleSyncGetGuestPreloadInfo)
-    ipcMain.on(WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG, this._handleSyncGetExtensionPreloadInfo)
+    ipcMain.on(WCRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG, this._handleSyncGetExtensionContentScriptPreloadInfo)
+    ipcMain.on(WCRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG, this._handleSyncGetExtensionHostedPreloadInfo)
+    ipcMain.on(WCRPC_RESOLVE_PERMISSION_REQUEST, this._handleResolvePermissionRequest)
   }
 
   /* ****************************************************************************/
@@ -60,7 +71,6 @@ class WebContentsRPCService {
       contents.on('did-frame-finish-load', this._handleFrameFinishLoad)
       contents.on('console-message', this._handleConsoleMessage)
       contents.on('will-prevent-unload', this._handleWillPreventUnload)
-      contents.on('did-get-redirect-request', this._handleDidGetRedirectRequest)
       contents.on('destroyed', () => {
         this[privConnected].delete(webContentsId)
       })
@@ -114,8 +124,21 @@ class WebContentsRPCService {
     }
   }
 
-  _handleDidGetRedirectRequest = (evt, prevUrl, nextUrl, isMainFrame, httpResponseCode, requestMethod, referrer, headers) => {
-    evt.sender.send(WCRPC_DID_GET_REDIRECT_REQUEST, evt.sender.id, prevUrl, nextUrl, isMainFrame, httpResponseCode, requestMethod, referrer, headers)
+  /* ****************************************************************************/
+  // Permission events
+  /* ****************************************************************************/
+
+  /**
+  * Handles the set of unresolved permission request handlers changing
+  * @param wcId: the id of the webcontents the permissions changed for
+  * @param pending: the list of pending requests
+  */
+  _handleUnresolvedPermissionRequestChanged (wcId, pending) {
+    const wc = webContents.fromId(wcId)
+    if (!wc || wc.isDestroyed()) { return }
+    if (!wc.hostWebContents) { return }
+
+    wc.hostWebContents.send(WCRPC_PERMISSION_REQUESTS_CHANGED, wcId, pending)
   }
 
   /* ****************************************************************************/
@@ -169,17 +192,43 @@ class WebContentsRPCService {
   }
 
   /**
+  * Synchronously gets the initial host url
+  * @param evt: the event that fired
+  * @param currentUrl: the current url sent by the page
+  */
+  _handleSyncGetInitialHostUrl = (evt) => {
+    // Worth noting that webcontents.getURL() can return about:blank in some instances. This is normally
+    // where a window.open() call is made with in a shared process. What happens here is the window initially
+    // loads up about:blank that gets redirected to the page later in the stack. If the page navigates within
+    // the same domain we don't get a second load event so in this case we can kind of infer domain and protocol
+    // from the parent (ElectronWebContents.getHostUrl()). If the page navigates to a non-shared domain
+    // (e.g. wavebox.io -> google.com) it does a double load. Loads once with about:blank - inferred to
+    // wavebox.io. Then restarts the renderer and loads at google.com.
+    try {
+      const wcUrl = evt.sender.getURL()
+      if (!wcUrl || wcUrl === 'about:blank') {
+        evt.returnValue = ElectronWebContents.getHostUrl(evt.sender)
+      } else {
+        evt.returnValue = wcUrl
+      }
+    } catch (ex) {
+      console.error(`Failed to respond to "${WCRPC_SYNC_GET_INITIAL_HOST_URL}" continuing with unknown side effects`, ex)
+      evt.returnValue = ''
+    }
+  }
+
+  /**
   * Synchronously gets the guest preload info
   * @param evt: the event that fired
   * @param currentUrl: the current url sent by the page
   */
   _handleSyncGetGuestPreloadInfo = (evt, currentUrl) => {
-    if (!this[privConnected].has(evt.sender.id)) { return }
+    if (!this[privConnected].has(evt.sender.id)) {
+      evt.returnValue = {}
+      return
+    }
 
-    // Worth noting that webContents.getURL() can sometimes be wrong if this is called early
-    // in the exec stack. In case this is the case use the url the client sends to us. It's
-    // sandboxed in our own context so there wont be any case for xss
-
+    // See note in _handleSyncGetInitialHostUrl about initialHostUrl
     try {
       evt.returnValue = {
         launchSettings: settingsStore.getState().launchSettingsJS(),
@@ -196,12 +245,15 @@ class WebContentsRPCService {
   }
 
   /**
-  * Synchronously gets the extension runtime config
+  * Synchronously gets the extension runtime config for a contentscript
   * @param evt: the event that fired
   * @param extensionId: the id of the extension
   */
-  _handleSyncGetExtensionPreloadInfo = (evt, extensionId) => {
-    if (!this[privConnected].has(evt.sender.id)) { return }
+  _handleSyncGetExtensionContentScriptPreloadInfo = (evt, extensionId) => {
+    if (!this[privConnected].has(evt.sender.id)) {
+      evt.returnValue = null
+      return
+    }
 
     try {
       const hasRuntime = CRExtensionManager.runtimeHandler.hasRuntime(extensionId)
@@ -219,9 +271,63 @@ class WebContentsRPCService {
         }
       }
     } catch (ex) {
-      console.error(`Failed to respond to "${WCRPC_SYNC_GET_EXTENSION_PRELOAD_CONFIG}" continuing with unknown side effects`, ex)
+      console.error(`Failed to respond to "${WCRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG}" continuing with unknown side effects`, ex)
       evt.returnValue = null
     }
+  }
+
+  /**
+  * Synchronously gets the extension runtime config for a hosted extension
+  * @param evt: the event that fired
+  * @param extensionId: the id of the extension
+  */
+  _handleSyncGetExtensionHostedPreloadInfo = (evt, extensionId) => {
+    if (!this[privConnected].has(evt.sender.id)) {
+      evt.returnValue = null
+      return
+    }
+
+    // See note in _handleSyncGetInitialHostUrl about the url
+    try {
+      const wcUrl = evt.sender.getURL()
+      const parsedUrl = new URL(!wcUrl || wcUrl === 'about:blank'
+        ? ElectronWebContents.getHostUrl(evt.sender)
+        : wcUrl
+      )
+      if (parsedUrl.protocol !== `${CR_EXTENSION_PROTOCOL}:` || parsedUrl.hostname !== extensionId) {
+        // Something's not quite right in this case
+        evt.returnValue = {
+          extensionId: extensionId,
+          hasRuntime: false
+        }
+      } else {
+        const hasRuntime = CRExtensionManager.runtimeHandler.hasRuntime(extensionId)
+        if (hasRuntime) {
+          evt.returnValue = {
+            extensionId: extensionId,
+            hasRuntime: true,
+            runtimeConfig: CRExtensionManager.runtimeHandler.getContentScriptRuntimeConfig(extensionId),
+            isBackgroundPage: evt.sender.id === CRExtensionManager.runtimeHandler.getBackgroundPageId(extensionId)
+          }
+        } else {
+          evt.returnValue = {
+            extensionId: extensionId,
+            hasRuntime: false
+          }
+        }
+      }
+    } catch (ex) {
+      console.error(`Failed to respond to "${WCRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG}" continuing with unknown side effects`, ex)
+      evt.returnValue = null
+    }
+  }
+
+  /**
+  * Handles the resolution of a permission request
+  * @param evt: the event that fired
+  */
+  _handleResolvePermissionRequest = (evt, wcId, type, permission) => {
+    PermissionManager.resolvePermissionRequest(wcId, type, permission)
   }
 }
 

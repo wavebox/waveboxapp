@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { BLANK_PNG } from 'shared/b64Assets'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import { emblinkActions } from 'stores/emblink'
 import TrayRenderer from './TrayRenderer'
 import uuid from 'uuid'
-import MenuTool from 'shared/Electron/MenuTool'
 import {
   IS_GTK_PLATFORM,
   GTK_UPDATE_MODES,
@@ -29,6 +28,7 @@ import {
   WB_TOGGLE_TRAY_WITH_BOUNDS
 } from 'shared/ipcEvents'
 import TrayContextMenuUnreadRenderer from './TrayContextMenuUnreadRenderer'
+import pluralize from 'pluralize'
 
 export default class Tray extends React.Component {
   /* **************************************************************************/
@@ -37,6 +37,7 @@ export default class Tray extends React.Component {
 
   static propTypes = { // Careful we're strict in shouldComponentUpdate
     unreadCount: PropTypes.number.isRequired,
+    hasUnreadActivity: PropTypes.bool.isRequired,
     traySettings: PropTypes.object.isRequired,
     launchTraySettings: PropTypes.object.isRequired
   }
@@ -57,13 +58,14 @@ export default class Tray extends React.Component {
     } else {
       this.appTray = this.createTray(remote.nativeImage.createFromDataURL(BLANK_PNG))
     }
+    this.deferredClickTO = null
 
     this.contextMenu = null
   }
 
   componentDidMount () {
     if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
-      mailboxStore.listen(this.mailboxesUpdated)
+      accountStore.listen(this.accountUpdated)
     }
 
     ipcRenderer.on(WB_TOGGLE_TRAY_WITH_BOUNDS, this.handleIpcToggleTrayWithBounds)
@@ -73,7 +75,7 @@ export default class Tray extends React.Component {
     this.appTray = this.destroyTray(this.appTray)
 
     if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
-      mailboxStore.unlisten(this.mailboxesUpdated)
+      accountStore.unlisten(this.accountUpdated)
     }
 
     ipcRenderer.removeListener(WB_TOGGLE_TRAY_WITH_BOUNDS, this.handleIpcToggleTrayWithBounds)
@@ -86,16 +88,16 @@ export default class Tray extends React.Component {
   state = (() => { // Careful we're strict in shouldComponentUpdate
     this.unreadCtxRenderer = new TrayContextMenuUnreadRenderer()
     if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
-      this.unreadCtxRenderer.build(mailboxStore.getState())
+      this.unreadCtxRenderer.build(accountStore.getState())
     }
     return {
       ctxMenuSig: this.unreadCtxRenderer.signature
     }
   })()
 
-  mailboxesUpdated = (mailboxState) => {
+  accountUpdated = (accountState) => {
     if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
-      this.unreadCtxRenderer.build(mailboxStore.getState())
+      this.unreadCtxRenderer.build(accountState)
       this.setState({
         ctxMenuSig: this.unreadCtxRenderer.signature
       })
@@ -151,14 +153,22 @@ export default class Tray extends React.Component {
   * @param bounds: the bounds of the tray icon
   */
   handleClick = (evt, bounds) => {
+    const { clickAction, doubleClickAction, altClickAction } = this.props.traySettings
     if (SUPPORTS_ADDITIONAL_CLICK_EVENTS) {
-      if (evt.altKey || evt.ctrlKey || evt.shiftKey || evt.metaKey) {
-        this.dispatchClickAction(this.props.traySettings.altClickAction, bounds)
-      } else {
-        this.dispatchClickAction(this.props.traySettings.clickAction, bounds)
-      }
+      // Click and double-click both fire on macOS and win32. To make sure we don't double trigger,
+      // delay the click slightly to wait and see if double click comes in waveboxapp#707
+      const action = evt.altKey || evt.ctrlKey || evt.shiftKey || evt.metaKey ? (
+        altClickAction
+      ) : (
+        clickAction
+      )
+      const boundsCpy = { ...bounds } // Copy to retain
+      clearTimeout(this.deferredClickTO)
+      this.deferredClickTO = setTimeout(() => {
+        this.dispatchClickAction(action, boundsCpy)
+      }, doubleClickAction === CLICK_ACTIONS.NONE ? 0 : 300)
     } else {
-      this.dispatchClickAction(this.props.traySettings.clickAction, bounds)
+      this.dispatchClickAction(clickAction, bounds)
     }
   }
 
@@ -177,6 +187,7 @@ export default class Tray extends React.Component {
   * @param bounds: the bounds of the tray icon
   */
   handleDoubleClick = (evt, bounds) => {
+    clearTimeout(this.deferredClickTO)
     this.dispatchClickAction(this.props.traySettings.doubleClickAction, bounds)
   }
 
@@ -264,7 +275,11 @@ export default class Tray extends React.Component {
   * freqently
   */
   shouldComponentUpdate (nextProps, nextState) {
-    if (this.props.unreadCount !== nextProps.unreadCount) { return true }
+    const propsDiff = [
+      'unreadCount',
+      'hasUnreadActivity'
+    ].findIndex((k) => this.props[k] !== nextProps[k]) !== -1
+    if (propsDiff) { return true }
 
     const trayDiff = [
       'unreadColor',
@@ -287,13 +302,13 @@ export default class Tray extends React.Component {
   * @return the tooltip string for the tray icon
   */
   renderTooltip () {
-    const {unreadCount} = this.props
-    if (unreadCount === 1) {
-      return `1 unread item`
-    } else if (unreadCount > 1) {
-      return `${unreadCount} unread items`
+    const { unreadCount, hasUnreadActivity } = this.props
+    if (unreadCount > 0) {
+      return `${unreadCount} unread ${pluralize('item', unreadCount)}`
+    } else if (hasUnreadActivity) {
+      return `Unread activity`
     } else {
-      return 'No unread items'
+      return `No unread items`
     }
   }
 
@@ -324,6 +339,7 @@ export default class Tray extends React.Component {
   render () {
     const {
       unreadCount,
+      hasUnreadActivity,
       traySettings,
       launchTraySettings
     } = this.props
@@ -333,7 +349,7 @@ export default class Tray extends React.Component {
     const renderId = uuid.v4()
     this.renderId = renderId
 
-    TrayRenderer.renderNativeImage(traySettings.iconSize, traySettings, unreadCount)
+    TrayRenderer.renderNativeImage(traySettings.iconSize, traySettings, unreadCount, hasUnreadActivity)
       .then((image) => {
         if (this.renderId !== renderId) { return } // Someone got in before us
 
@@ -358,11 +374,11 @@ export default class Tray extends React.Component {
           this.contextMenu = this.renderContextMenu()
           this.appTray.setContextMenu(this.contextMenu)
           if (lastContextMenu) {
-            MenuTool.fullDestroyMenu(lastContextMenu)
+            lastContextMenu.destroy()
           }
         }
       })
 
-    return (<div />)
+    return null
   }
 }

@@ -133,6 +133,7 @@ class WindowOpeningRules {
         return this._doesSiteRuleMatch(match, matchTask)
       })
     } catch (ex) {
+      console.error(`Failed to process window opening mode in _getMatchingSiteRule. Continuing with undefined behaviour...`, ex)
       return undefined
     }
   }
@@ -203,6 +204,7 @@ class WindowOpeningRules {
       // Nothing caused us to quit, so we matched!
       return true
     } catch (ex) {
+      console.error(`Failed to process window opening mode in _doesSiteRuleMatch. Continuing with undefined behaviour...`, ex)
       return false
     }
   }

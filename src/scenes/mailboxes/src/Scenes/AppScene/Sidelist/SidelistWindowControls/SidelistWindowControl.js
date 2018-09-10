@@ -1,8 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { FontIcon, IconButton } from 'material-ui'
+import { IconButton } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
-import * as Colors from 'material-ui/styles/colors'
+import { withStyles } from '@material-ui/core/styles'
+import classNames from 'classnames'
+import ThemeTools from 'wbui/Themes/ThemeTools'
+import UISettings from 'shared/Models/Settings/UISettings'
+import FullscreenExitIcon from '@material-ui/icons/FullscreenExit'
+import FASWindowRestoreIcon from 'wbfa/FASWindowRestore'
+import FALWindowRestoreIcon from 'wbfa/FALWindowRestore'
+import FASWindowMaximizeIcon from 'wbfa/FASWindowMaximize'
+import FALWindowMaximizeIcon from 'wbfa/FALWindowMaximize'
+import FASWindowMinimizeIcon from 'wbfa/FASWindowMinimize'
+import FALWindowMinimizeIcon from 'wbfa/FALWindowMinimize'
+import FASWindowCloseIcon from 'wbfa/FASWindowClose'
+import FALWindowCloseIcon from 'wbfa/FALWindowClose'
 
 const TYPES = Object.freeze({
   RESTORE: 'RESTORE',
@@ -11,30 +23,67 @@ const TYPES = Object.freeze({
   UNFULLSCREEN: 'UNFULLSCREEN',
   CLOSE: 'CLOSE'
 })
-const styles = {
+
+const styles = (theme) => ({
   button: {
-    width: 20,
-    height: 20,
     padding: 0,
     cursor: 'pointer',
     WebkitAppRegion: 'no-drag',
-    borderRadius: 2
-  },
-  buttonHovered: {
-    backgroundColor: Colors.blueGrey700
-  },
-  iconFA: {
-    fontSize: 14,
-    lineHeight: '14px'
-  },
-  iconMI: {
-    fontSize: 19,
-    lineHeight: '14px',
-    top: 3
-  }
-}
+    '&.sidebar-regular': {
+      width: 20,
+      height: 20,
+      borderRadius: 2,
 
-export default class SidelistWindowControl extends React.Component {
+      '& .iconFA': {
+        fontSize: 14,
+        lineHeight: '14px'
+      },
+      '& .iconMI': {
+        fontSize: 19,
+        lineHeight: '14px'
+      }
+    },
+    '&.sidebar-compact': {
+      width: 16,
+      height: 16,
+      borderRadius: 2,
+
+      '& .iconFA': {
+        fontSize: 14,
+        lineHeight: '14px'
+      },
+      '& .iconMI': {
+        fontSize: 19,
+        lineHeight: '14px',
+        marginTop: -1
+      }
+    },
+    '&.sidebar-tiny': {
+      width: 12,
+      height: 12,
+      borderRadius: 0,
+
+      '& .iconFA': {
+        fontSize: 11,
+        lineHeight: '12px'
+      },
+      '& .iconMI': {
+        fontSize: 13,
+        lineHeight: '13px'
+      }
+    },
+    '&:hover': {
+      backgroundColor: ThemeTools.getStateValue(theme, 'wavebox.sidebar.windowControls.icon.backgroundColor', 'hover')
+    },
+
+    '& .icon': {
+      color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.windowControls.icon.color')
+    }
+  }
+})
+
+@withStyles(styles, { withTheme: true })
+class SidelistWindowControl extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -42,7 +91,8 @@ export default class SidelistWindowControl extends React.Component {
   static TYPES = TYPES
   static propTypes = {
     onClick: PropTypes.func.isRequired,
-    type: PropTypes.oneOf(Object.keys(TYPES)).isRequired
+    type: PropTypes.oneOf(Object.keys(TYPES)).isRequired,
+    sidebarSize: PropTypes.oneOf(Object.keys(UISettings.SIDEBAR_SIZES)).isRequired
   }
 
   /* **************************************************************************/
@@ -55,48 +105,55 @@ export default class SidelistWindowControl extends React.Component {
 
   /**
   * Renders the icon for the given type
+  * @param classes: the classes to use
   * @param type: the type to render
+  * @param sidebarSize: the size of the sidebar
   * @return jsx
   */
-  renderIconForType (type) {
+  renderIconForType (classes, type, sidebarSize) {
     switch (type) {
       case TYPES.RESTORE:
-        return (<FontIcon className='fal fa-fw fa-window-restore' color={Colors.blueGrey50} />)
+        return UISettings.SIDEBAR_SIZES.TINY
+          ? <FASWindowRestoreIcon className='icon iconFA' />
+          : <FALWindowRestoreIcon className='icon iconFA' />
       case TYPES.MAXIMIZE:
-        return (<FontIcon className='fal fa-fw fa-window-maximize' color={Colors.blueGrey50} />)
+        return UISettings.SIDEBAR_SIZES.TINY
+          ? <FASWindowMaximizeIcon className='icon iconFA' />
+          : <FALWindowMaximizeIcon className='icon iconFA' />
       case TYPES.MINIMIZE:
-        return (<FontIcon className='fal fa-fw fa-window-minimize' color={Colors.blueGrey50} />)
+        return UISettings.SIDEBAR_SIZES.TINY
+          ? <FASWindowMinimizeIcon className='icon iconFA' />
+          : <FALWindowMinimizeIcon className='icon iconFA' />
       case TYPES.CLOSE:
-        return (<FontIcon className='fal fa-fw fa-window-close' color={Colors.blueGrey50} />)
+        return UISettings.SIDEBAR_SIZES.TINY
+          ? <FASWindowCloseIcon className='icon iconFA' />
+          : <FALWindowCloseIcon className='icon iconFA' />
       case TYPES.UNFULLSCREEN:
-        return (<FontIcon className='material-icons' color={Colors.blueGrey50}>fullscreen_exit</FontIcon>)
-    }
-  }
-
-  /**
-  * Gets the style for the icon
-  */
-  styleForIconType (type) {
-    switch (type) {
-      case TYPES.UNFULLSCREEN:
-        return styles.iconMI
-      default:
-        return styles.iconFA
+        return (
+          <FullscreenExitIcon
+            className='icon iconMI' />
+        )
     }
   }
 
   render () {
-    const { onClick, type, style, hoveredStyle, iconStyle, ...passProps } = this.props
+    const {
+      type,
+      className,
+      sidebarSize,
+      classes,
+      theme,
+      ...passProps
+    } = this.props
 
     return (
       <IconButton
-        {...passProps}
-        onClick={onClick}
-        style={{...styles.button, ...style}}
-        hoveredStyle={{...styles.buttonHovered, ...hoveredStyle}}
-        iconStyle={{...this.styleForIconType(type), ...iconStyle}}>
-        {this.renderIconForType(type)}
+        className={classNames(classes.button, className, `sidebar-${sidebarSize.toLowerCase()}`)}
+        {...passProps}>
+        {this.renderIconForType(classes, type, sidebarSize)}
       </IconButton>
     )
   }
 }
+
+export default SidelistWindowControl

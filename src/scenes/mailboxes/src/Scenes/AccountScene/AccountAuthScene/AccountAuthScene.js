@@ -1,41 +1,123 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Dialog, FlatButton, List, ListItem, FontIcon, Avatar } from 'material-ui'
+import { Dialog, DialogContent, DialogTitle, DialogActions, Button, List, ListItem, ListItemText, Grid } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
-import { mailboxStore } from 'stores/mailbox'
-import { MailboxAvatar } from 'Components/Mailbox'
+import { accountStore } from 'stores/account'
+import ServiceAvatar from 'Components/Backed/ServiceAvatar'
 import { userActions } from 'stores/user'
-import * as Colors from 'material-ui/styles/colors'
-import { PRIVACY_URL, TERMS_URL } from 'shared/constants'
-import electron from 'electron'
+import { withStyles } from '@material-ui/core/styles'
+import StyleMixins from 'wbui/Styles/StyleMixins'
+import WaveboxSigninButton from 'wbui/SigninButtons/WaveboxSigninButton'
+import GoogleSigninButton from 'wbui/SigninButtons/GoogleSigninButton'
+import MicrosoftSigninButton from 'wbui/SigninButtons/MicrosoftSigninButton'
+import GoogleAuth from 'shared/Models/ACAccounts/Google/GoogleAuth'
+import MicrosoftAuth from 'shared/Models/ACAccounts/Microsoft/MicrosoftAuth'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 
 const styles = {
-  // Layout
-  container: {
-    display: 'flex',
-    alignItems: 'stretch'
+  // Dialog
+  dialog: {
+    minWidth: 700,
+    maxWidth: 850
   },
-  infoContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '50%',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    paddingRight: 16
+  dialogContent: {
+    paddingLeft: 0,
+    paddingRight: 0,
+    marginTop: -10
   },
-  accountContainer: {
+
+  // Heading
+  dialogHeading: {
+    marginBottom: 0
+  },
+  dialogSubheading: {
+    marginTop: 0
+  },
+
+  // Grid layout
+  gridContainer: {
+    position: 'relative'
+  },
+  gridItem: {
+    padding: '0px 36px !important',
+    zIndex: 1,
+    textAlign: 'center',
+    '@media (max-width: 930px)': {
+      padding: '0px 12px !important'
+    }
+  },
+  gridVR: {
     display: 'flex',
-    width: '50%',
-    paddingLeft: 16
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 0,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+
+    '&:before': {
+      position: 'absolute',
+      content: '""',
+      top: 0,
+      left: 'calc(50% - 2px)',
+      width: 2,
+      bottom: 0,
+      zIndex: 0,
+      backgroundColor: '#A6ABA9'
+    }
+  },
+  gridVRText: {
+    fontWeight: 'bold',
+    color: '#A6ABA9',
+    backgroundColor: '#FFFFFF',
+    paddingTop: 12,
+    paddingBottom: 12,
+    zIndex: 1,
+    fontSize: '22px',
+    '@media (max-width: 930px)': {
+      display: 'none'
+    }
+  },
+  gridSubheading: {
+    color: '#A6ABA9',
+    marginBottom: 30,
+    marginTop: 0,
+    fontSize: 15,
+    textAlign: 'center'
+  },
+
+  // New signin
+  newSigninContainer: {
+    textAlign: 'center'
+  },
+  fullWidthButton: {
+    margin: '6px 0px',
+    width: '100%'
+  },
+
+  // Accounts
+  accountsList: {
+    maxHeight: 300,
+    overflowY: 'auto',
+    ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
+  },
+  accountAvatar: {
+    marginLeft: 3
+  },
+  noAccounts: {
+    textAlign: 'center'
   }
 }
 
-export default class AccountAuthScene extends React.Component {
+@withStyles(styles)
+class AccountAuthScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  static contextTypes: {
+  static contextTypes = {
     router: PropTypes.object.isRequired
   }
   static propTypes = {
@@ -51,11 +133,11 @@ export default class AccountAuthScene extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxChanged)
+    accountStore.listen(this.accountChanged)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxChanged)
+    accountStore.unlisten(this.accountChanged)
   }
 
   /* **************************************************************************/
@@ -65,14 +147,63 @@ export default class AccountAuthScene extends React.Component {
   state = (() => {
     return {
       open: true,
-      mailboxes: mailboxStore.getState().getMailboxesSupportingWaveboxAuth()
+      auths: this.buildAuthManifest(accountStore.getState())
     }
   })()
 
-  mailboxChanged = (mailboxState) => {
+  accountChanged = (accountState) => {
     this.setState({
-      mailboxes: mailboxState.getMailboxesSupportingWaveboxAuth()
+      auths: this.buildAuthManifest(accountState)
     })
+  }
+
+  /**
+  * Builds the auth manifest
+  * @param accountState: the current account state
+  * @return the manifest to provide to the state
+  */
+  buildAuthManifest (accountState) {
+    // The whole way this picks out services and auths is pretty poor. Look to refactor this
+    // in the future
+    const auths = accountState
+      .allServicesUnordered()
+      .reduce((acc, service) => {
+        const mailbox = accountState.getMailbox(service.parentId)
+        const auth = accountState.getMailboxAuthForServiceId(service.id)
+        if (!mailbox || !auth) { return acc }
+        if (auth.namespace !== GoogleAuth.namespace && auth.namespace !== MicrosoftAuth.namespace) { return acc }
+
+        if (acc[auth.id]) {
+          acc[auth.id].services.push(service)
+        } else {
+          acc[auth.id] = {
+            auth: auth,
+            mailbox: mailbox,
+            services: [ service ]
+          }
+        }
+
+        return acc
+      }, {})
+
+    return Object.keys(auths)
+      .map((authId) => {
+        const rec = auths[authId]
+        const likelyService = rec.services.find((service) => {
+          if (rec.auth.namespace === GoogleAuth.namespace) {
+            return service.type === SERVICE_TYPES.GOOGLE_MAIL || service.type === SERVICE_TYPES.GOOGLE_INBOX
+          } else if (rec.auth.namespace === MicrosoftAuth.namespace) {
+            return service.type === SERVICE_TYPES.MICROSOFT_MAIL
+          } else {
+            return false
+          }
+        })
+        return {
+          auth: rec.auth,
+          mailbox: rec.mailbox,
+          service: likelyService || rec.services[0]
+        }
+      })
   }
 
   /* **************************************************************************/
@@ -89,22 +220,6 @@ export default class AccountAuthScene extends React.Component {
     }, 500)
   }
 
-  /**
-  * Shows privacy policy
-  */
-  handleShowPrivacyPolicy = (evt) => {
-    evt.preventDefault()
-    electron.remote.shell.openExternal(PRIVACY_URL)
-  }
-
-  /**
-  * Shows terms of use
-  */
-  handleShowTermsOfUse = (evt) => {
-    evt.preventDefault()
-    electron.remote.shell.openExternal(TERMS_URL)
-  }
-
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -113,110 +228,93 @@ export default class AccountAuthScene extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
-  /**
-  * Renders the message for the given mode with a default catch all
-  * @param mode: the mode to render the message for
-  * @return jsx
-  */
-  renderMessage (mode) {
-    if (mode === 'payment') {
-      return (
-        <div>
-          <h3>
-            To purchase Wavebox you will need to select which account you want to use for billing
-          </h3>
-          <p>
-            If you don't want to use one of the accounts you've already added to Wavebox,
-            you can use with another one
-          </p>
-        </div>
-      )
-    } else if (mode === 'affiliate') {
-      return (
-        <div>
-          <h3>
-            To get your affiliate links you'll need to select which account you want to
-            use as your affiliate & payment account with Wavebox
-          </h3>
-          <p>
-            If you don't want to use one of the accounts you've already added to Wavebox,
-            you can use with another one
-          </p>
-        </div>
-      )
-    } else {
-      return (
-        <div>
-          <h3>
-            You need to pick the account you want to use for billing
-          </h3>
-          <p>
-            If you don't want to use one of the accounts you've already added to Wavebox,
-            you can use with another one
-          </p>
-        </div>
-      )
-    }
-  }
-
   render () {
-    const { open, mailboxes } = this.state
-    const { match: { params: { mode } } } = this.props
+    const { open, auths } = this.state
+    const {
+      match: { params: { mode } },
+      classes
+    } = this.props
 
     return (
       <Dialog
-        modal={false}
+        disableEnforceFocus
         open={open}
-        bodyClassName='ReactComponent-MaterialUI-Dialog-Body-Scrollbars'
-        autoScrollBodyContent
-        onRequestClose={this.handleClose}>
-        <div style={styles.container}>
-          <div style={styles.infoContainer}>
-            {this.renderMessage(mode)}
-            <p style={{color: Colors.grey700, fontSize: '85%'}}>
-              <span>By continuing you agree to our </span>
-              <a style={{color: Colors.blue700}} onClick={this.handleShowTermsOfUse} href='#'>
-                terms of use
-              </a>
-              <span> and </span>
-              <a style={{color: Colors.blue700}} onClick={this.handleShowPrivacyPolicy} href='#'>
-                privacy policy
-              </a>
-            </p>
-            <br />
-            <FlatButton
-              label='Cancel'
-              onClick={this.handleClose} />
-          </div>
-          <div style={styles.accountContainer}>
-            <List>
-              {mailboxes.map((mailbox) => {
-                return (
-                  <ListItem
-                    key={mailbox.id}
-                    leftAvatar={<MailboxAvatar mailboxId={mailbox.id} />}
-                    primaryText={mailbox.displayName}
-                    secondaryText={mailbox.humanizedType}
-                    onClick={(evt) => userActions.authenticateWithMailbox(mailbox, { mode: mode })} />)
-              })}
-              <ListItem
-                leftAvatar={(
-                  <Avatar backgroundColor='rgb(223, 75, 56)' icon={(<FontIcon className='fab fa-fw fa-google' />)} />
-                )}
-                primaryText='Sign in with Google'
-                secondaryText='Use a different Google Account'
+        onClose={this.handleClose}
+        classes={{ paper: classes.dialog }}>
+        <DialogTitle disableTypography>
+          <h3 className={classes.dialogHeading}>Sign in to Wavebox</h3>
+          <p className={classes.dialogSubheading}>
+            Pick an account to use with Wavebox, this will be used for
+            billing and managing your Wavebox settings.
+          </p>
+        </DialogTitle>
+        <DialogContent className={classes.dialogContent}>
+          <Grid container className={classes.gridContainer}>
+            <Grid item xs={6} className={classes.gridItem}>
+              <p className={classes.gridSubheading}>Sign in with your Account</p>
+              <WaveboxSigninButton
+                className={classes.fullWidthButton}
+                onClick={(evt) => userActions.authenticateWithWavebox({ mode: mode })} />
+              <div>
+                <Button
+                  color='primary'
+                  onClick={(evt) => userActions.passwordResetWaveboxAccount({ mode: mode })}>
+                  Forgotten password
+                </Button>
+                <Button
+                  color='primary'
+                  onClick={(evt) => userActions.createWaveboxAccount({ mode: mode })}>
+                  Create an account
+                </Button>
+              </div>
+              <br />
+              <GoogleSigninButton
+                className={classes.fullWidthButton}
                 onClick={(evt) => userActions.authenticateWithGoogle({ mode: mode })} />
-              <ListItem
-                leftAvatar={(
-                  <Avatar backgroundColor='rgb(0, 114, 198)' icon={(<FontIcon className='fab fa-fw fa-windows' />)} />
-                )}
-                primaryText='Sign in with Microsoft'
-                secondaryText='Use a different Outlook or Office Account'
+              <MicrosoftSigninButton
+                className={classes.fullWidthButton}
                 onClick={(evt) => userActions.authenticateWithMicrosoft({ mode: mode })} />
-            </List>
-          </div>
-        </div>
+            </Grid>
+            <div className={classes.gridVR}>
+              <div className={classes.gridVRText}>OR</div>
+            </div>
+            <Grid item xs={6} className={classes.gridItem}>
+              <p className={classes.gridSubheading}>Use an account you've added to Wavebox</p>
+              <List className={classes.accountsList}>
+                {auths.length ? (
+                  auths.map(({ auth, mailbox, service }) => {
+                    return (
+                      <ListItem
+                        key={service.id}
+                        button
+                        disableGutters
+                        onClick={(evt) => {
+                          userActions.authenticateWithAuth(service.partitionId, auth.namespace, { mode: mode })
+                        }}>
+                        <ServiceAvatar
+                          className={classes.accountAvatar}
+                          serviceId={service.id} />
+                        <ListItemText
+                          primary={service.displayName}
+                          secondary={auth.humanizedNamespace} />
+                      </ListItem>
+                    )
+                  })
+                ) : (
+                  <ListItem disableGutters className={classes.noAccounts}>
+                    <ListItemText primary={`No accounts available`} />
+                  </ListItem>
+                )}
+              </List>
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={this.handleClose}>Cancel</Button>
+        </DialogActions>
       </Dialog>
     )
   }
 }
+
+export default AccountAuthScene

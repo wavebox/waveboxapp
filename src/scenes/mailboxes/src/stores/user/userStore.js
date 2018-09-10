@@ -1,16 +1,23 @@
 import RendererUserStore from 'shared/AltStores/User/RendererUserStore'
 import { STORE_NAME } from 'shared/AltStores/User/AltUserIdentifiers'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import alt from '../alt'
 import actions from './userActions'
 import { WaveboxHTTP } from 'Server'
 import { ipcRenderer } from 'electron'
-import mailboxActions from '../mailbox/mailboxActions'
 import semver from 'semver'
 import pkg from 'package.json'
+import ParallelHttpTracker from 'shared/AltStores/ParallelHttpTracker'
+import TakeoutService from './TakeoutService'
+import WaveboxAuthProviders from 'shared/Models/WaveboxAuthProviders'
+import accountActions from '../account/accountActions'
+import AltAccountIdentifiers from 'shared/AltStores/Account/AltAccountIdentifiers'
+import GoogleAuth from 'shared/Models/ACAccounts/Google/GoogleAuth'
+import MicrosoftAuth from 'shared/Models/ACAccounts/Microsoft/MicrosoftAuth'
+
 import {
   EXTENSION_AUTO_UPDATE_INTERVAL,
-  WIRE_CONFIG_AUTO_UPDATE_INTERVAL
+  WIRE_CONFIG_AUTO_UPDATE_INTERVAL,
+  USER_PROFILE_SYNC_INTERVAL
 } from 'shared/constants'
 import {
   WB_AUTH_WAVEBOX
@@ -27,6 +34,9 @@ class UserStore extends RendererUserStore {
     this.extensionAutoUpdater = null
     this.wireConfigAutoUpdater = null
     this.containerAutoUpdater = null
+    this.profileAutoUploader = null
+    this.userProfileUpload = new ParallelHttpTracker(ParallelHttpTracker.PARALLEL_MODES.LAST_WINS, 'UploadUserProfile')
+    this.userProfilesFetch = new ParallelHttpTracker(ParallelHttpTracker.PARALLEL_MODES.STRICT_SINGLETON, 'FetchUserProfiles')
 
     /* ****************************************/
     // Extensions
@@ -67,12 +77,19 @@ class UserStore extends RendererUserStore {
       handleStopAutoUpdateContainers: actions.STOP_AUTO_UPDATE_CONTAINERS,
 
       // Auth
-      handleAuthenticateWithMailbox: actions.AUTHENTICATE_WITH_MAILBOX,
+      handleAuthenticateWithAuth: actions.AUTHENTICATE_WITH_AUTH,
       handleAuthenticateWithGoogle: actions.AUTHENTICATE_WITH_GOOGLE,
       handleAuthenticateWithMicrosoft: actions.AUTHENTICATE_WITH_MICROSOFT,
-
+      handleAuthenticateWithWavebox: actions.AUTHENTICATE_WITH_WAVEBOX,
       handleAuthenticationSuccess: actions.AUTHENTICATION_SUCCESS,
-      handleAuthenticationFailure: actions.AUTHENTICATION_FAILURE
+      handleAuthenticationFailure: actions.AUTHENTICATION_FAILURE,
+
+      // Profile
+      handleStartAutoUploadUserProfile: actions.START_AUTO_UPLOAD_USER_PROFILE,
+      handleStopAutoUploadUserProfile: actions.STOP_AUTO_UPLOAD_USER_PROFILE,
+      handleUploadUserProfile: actions.UPLOAD_USER_PROFILE,
+      handleFetchUserProfiles: actions.FETCH_USER_PROFILES,
+      handleRestoreUserProfile: actions.RESTORE_USER_PROFILE
     })
   }
 
@@ -133,7 +150,7 @@ class UserStore extends RendererUserStore {
   }
 
   /* **************************************************************************/
-  // Containers
+  // Handlers: Containers
   /* **************************************************************************/
 
   handleSideloadContainerLocally ({ id, data }) {
@@ -145,23 +162,36 @@ class UserStore extends RendererUserStore {
   handleAddContainers (payload) {
     const updated = super.handleAddContainers(payload)
     if (Object.keys(updated).length) {
-      mailboxActions.containersUpdated.defer(Object.keys(updated))
+      accountActions.containersUpdated.defer(Object.keys(updated))
     }
     return updated
   }
 
   handleUpdateContainers () {
     this.preventDefault()
-    if (this.containers.size === 0) { return }
 
-    // Generate current manifest
-    const containerInfo = Array.from(this.containers.values())
+    // Get the containers we're actively syncing
+    const containerManifest = Array.from(this.containers.values())
       .reduce((acc, container) => {
         acc[container.id] = container.version
         return acc
       }, {})
 
-    WaveboxHTTP.fetchContainerUpdates(this.clientId, containerInfo)
+    // Find any mailboxes that aren't being synced right now. This can sometimes happen
+    // if the user has imported their data/profile
+    const accountStore = this.alt.getStore(AltAccountIdentifiers.STORE_NAME)
+    if (!accountStore) {
+      throw new Error(`Alt "${STORE_NAME}" unable to locate "${AltAccountIdentifiers.STORE_NAME}". Ensure both have been linked`)
+    }
+    accountStore.getState().allContainerIds().forEach((containerId) => {
+      if (containerManifest[containerId] === undefined) {
+        containerManifest[containerId] = -1
+      }
+    })
+
+    // Send the request off
+    if (Object.keys(containerManifest).length === 0) { return }
+    WaveboxHTTP.fetchContainerUpdates(this.clientId, containerManifest)
       .then((res) => {
         if (res.containers && Object.keys(res.containers).length) {
           actions.addContainers(res.containers)
@@ -190,32 +220,58 @@ class UserStore extends RendererUserStore {
   // Handlers: Auth
   /* **************************************************************************/
 
-  handleAuthenticateWithMailbox ({ id, type, serverArgs }) {
+  handleAuthenticateWithAuth ({ partitionId, namespace, serverArgs, openAccountOnSuccess }) {
+    this.preventDefault()
+    let providerType
+    if (namespace === GoogleAuth.namespace) {
+      providerType = WaveboxAuthProviders.GOOGLE
+    } else if (namespace === MicrosoftAuth.namespace) {
+      providerType = WaveboxAuthProviders.MICROSOFT
+    }
+    if (!providerType) { return }
+
     ipcRenderer.send(WB_AUTH_WAVEBOX, {
-      id: id,
-      type: type,
+      partitionId: partitionId,
+      type: providerType,
       clientSecret: this.user.clientSecret,
-      serverArgs: serverArgs
+      serverArgs: serverArgs,
+      openAccountOnSuccess: openAccountOnSuccess
     })
     window.location.hash = '/account/authenticating'
   }
 
-  handleAuthenticateWithGoogle ({ serverArgs }) {
+  handleAuthenticateWithGoogle ({ serverArgs, openAccountOnSuccess }) {
+    this.preventDefault()
     ipcRenderer.send(WB_AUTH_WAVEBOX, {
-      id: null,
-      type: CoreMailbox.MAILBOX_TYPES.GOOGLE,
+      partitionId: null,
+      type: WaveboxAuthProviders.GOOGLE,
       clientSecret: this.user.clientSecret,
-      serverArgs: serverArgs
+      serverArgs: serverArgs,
+      openAccountOnSuccess: openAccountOnSuccess
     })
     window.location.hash = '/account/authenticating'
   }
 
-  handleAuthenticateWithMicrosoft ({ serverArgs }) {
+  handleAuthenticateWithMicrosoft ({ serverArgs, openAccountOnSuccess }) {
+    this.preventDefault()
     ipcRenderer.send(WB_AUTH_WAVEBOX, {
-      id: null,
-      type: CoreMailbox.MAILBOX_TYPES.MICROSOFT,
+      partitionId: null,
+      type: WaveboxAuthProviders.MICROSOFT,
       clientSecret: this.user.clientSecret,
-      serverArgs: serverArgs
+      serverArgs: serverArgs,
+      openAccountOnSuccess: openAccountOnSuccess
+    })
+    window.location.hash = '/account/authenticating'
+  }
+
+  handleAuthenticateWithWavebox ({ serverArgs, openAccountOnSuccess }) {
+    this.preventDefault()
+    ipcRenderer.send(WB_AUTH_WAVEBOX, {
+      partitionId: null,
+      type: WaveboxAuthProviders.WAVEBOX,
+      clientSecret: this.user.clientSecret,
+      serverArgs: serverArgs,
+      openAccountOnSuccess: openAccountOnSuccess
     })
     window.location.hash = '/account/authenticating'
   }
@@ -224,11 +280,15 @@ class UserStore extends RendererUserStore {
   // Handlers: Auth Callbacks
   /* **************************************************************************/
 
-  handleAuthenticationSuccess ({ id, type, next }) {
-    if (next) {
-      window.location.hash = `/account/view?url=${encodeURIComponent(next)}`
+  handleAuthenticationSuccess ({ next, openAccountOnSuccess }) {
+    if (openAccountOnSuccess) {
+      if (next) {
+        window.location.hash = `/account/view?url=${encodeURIComponent(next)}`
+      } else {
+        window.location.hash = '/account/view'
+      }
     } else {
-      window.location.hash = '/account/view'
+      window.location.hash = '/'
     }
   }
 
@@ -239,6 +299,98 @@ class UserStore extends RendererUserStore {
     } else {
       console.error('[AUTH ERR]', data)
     }
+  }
+
+  /* **************************************************************************/
+  // Handlers: Profiles
+  /* **************************************************************************/
+
+  handleStartAutoUploadUserProfile () {
+    actions.uploadUserProfile.defer()
+
+    if (this.profileAutoUploader !== null) {
+      this.preventDefault()
+      return
+    }
+
+    this.profileAutoUploader = setInterval(() => {
+      actions.uploadUserProfile.defer()
+    }, USER_PROFILE_SYNC_INTERVAL)
+  }
+
+  handleStopAutoUploadUserProfile () {
+    clearInterval(this.profileAutoUploader)
+    this.profileAutoUploader = null
+  }
+
+  handleUploadUserProfile () {
+    if (!this.user.enableProfileSync) { this.preventDefault(); return }
+
+    const trackingId = this.userProfileUpload.startRequest()
+    Promise.resolve()
+      .then(() => TakeoutService.exportDataForServer())
+      .then((profile) => WaveboxHTTP.sendUserProfile(this.clientId, this.clientToken, profile))
+      .then((res) => {
+        if (res.changeset) {
+          return Promise.resolve()
+            .then(() => TakeoutService.exportDataChangesetForServer(res.changeset))
+            .then((data) => WaveboxHTTP.sendUserProfileChangeset(this.clientId, this.clientToken, data))
+        } else {
+          return Promise.resolve()
+        }
+      })
+      .then(() => {
+        this.userProfileUpload.finishRequestSuccess(trackingId, {})
+        this.emitChange()
+      })
+      .catch((err) => {
+        this.userProfileUpload.finishRequestError(trackingId, err.status)
+        this.emitChange()
+      })
+  }
+
+  handleFetchUserProfiles ({ loadingHash, successHash, failureHash }) {
+    if (!this.user.enableProfileSync) { this.preventDefault(); return }
+
+    if (loadingHash) { window.location.hash = loadingHash }
+    this.userProfilesFetch.metadata = { successHash, failureHash }
+
+    if (this.userProfilesFetch.inflight) {
+      this.preventDefault()
+      return
+    }
+
+    const trackingId = this.userProfilesFetch.startRequest()
+    Promise.resolve()
+      .then(() => WaveboxHTTP.fetchUserProfiles(this.clientId, this.clientToken))
+      .then((res) => {
+        this.userProfilesFetch.finishRequestSuccess(trackingId, res)
+        this.emitChange()
+
+        if ((this.userProfilesFetch.metadata || {}).successHash) {
+          window.location.hash = this.userProfilesFetch.metadata.successHash
+        }
+      })
+      .catch((err) => {
+        this.userProfilesFetch.finishRequestError(trackingId, err.status)
+        this.emitChange()
+
+        if ((this.userProfilesFetch.metadata || {}).failureHash) {
+          window.location.hash = this.userProfilesFetch.metadata.failureHash
+        }
+      })
+  }
+
+  handleRestoreUserProfile ({ profileId }) {
+    window.location.hash = '/profile/restore_working'
+    Promise.resolve()
+      .then(() => WaveboxHTTP.fetchFullUserProfile(this.clientId, this.clientToken, profileId))
+      .then((data) => {
+        TakeoutService.restoreDataFromServer(data)
+      })
+      .catch((ex) => {
+        window.location.hash = ''
+      })
   }
 }
 

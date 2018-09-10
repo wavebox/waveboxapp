@@ -81,6 +81,13 @@ class UISettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param collapsed: true to collapse the sidebar controls
+  */
+  setSidebarControlsCollapsed (collapsed) {
+    this.dispatchUpdate('sidebarControlsCollapsed', collapsed)
+  }
+
+  /**
   * Opens the app hidden by default
   */
   setOpenHidden (toggled) {
@@ -120,6 +127,27 @@ class UISettingsActions extends CoreSettingsActions {
   */
   setVibrancyMode (mode) {
     this.dispatchUpdate('vibrancyMode', mode)
+  }
+
+  /**
+  * @param theme: the theme to set
+  */
+  setTheme (theme) {
+    this.dispatchUpdate('theme', theme)
+  }
+
+  /**
+  * @param size: the new size
+  */
+  setSidebarSize (size) {
+    this.dispatchUpdate('sidebarSize', size)
+  }
+
+  /**
+  * @param lock: true to lock, false otherwise
+  */
+  setLockSidebarsAndToolbars (lock) {
+    this.dispatchUpdate('lockSidebarsAndToolbars', lock)
   }
 
   /**

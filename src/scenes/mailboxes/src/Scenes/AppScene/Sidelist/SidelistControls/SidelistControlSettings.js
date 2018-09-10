@@ -1,15 +1,28 @@
 import React from 'react'
-import { FontIcon } from 'material-ui'
 import SidelistControl from './SidelistControl'
-import * as Colors from 'material-ui/styles/colors'
 import { TOUR_STEPS } from 'stores/settings/Tour'
+import SettingsSharpIcon from '@material-ui/icons/SettingsSharp'
+import { withStyles } from '@material-ui/core/styles'
+import ThemeTools from 'wbui/Themes/ThemeTools'
+import SidelistMatIcon from './SidelistMatIcon'
 
-export default class SidelistControlSettings extends React.Component {
+const styles = (theme) => ({
+  icon: {
+    color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.settings.icon.color'),
+    '&:hover': {
+      color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.settings.icon.color', 'hover')
+    }
+  }
+})
+
+@withStyles(styles, { withTheme: true })
+class SidelistControlSettings extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   render () {
+    const { classes } = this.props
     return (
       <SidelistControl
         className={`WB-SidelistControlSettings`}
@@ -26,14 +39,9 @@ export default class SidelistControlSettings extends React.Component {
           style: { marginTop: -25 },
           arrowStyle: { marginTop: 20 }
         }}
-        icon={(
-          <FontIcon
-            className='material-icons'
-            color={Colors.blueGrey400}
-            hoverColor={Colors.blueGrey200}>
-            settings
-          </FontIcon>
-        )} />
+        icon={(<SidelistMatIcon IconClass={SettingsSharpIcon} className={classes.icon} />)} />
     )
   }
 }
+
+export default SidelistControlSettings

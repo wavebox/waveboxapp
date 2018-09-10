@@ -6,16 +6,16 @@ class SlackActions {
   /* **************************************************************************/
 
   /**
-  * Connects all mailboxes
+  * Connects all services
   */
-  connectAllMailboxes () { return {} }
+  connectAllServices () { return {} }
 
   /**
-  * Connects a mailbox
-  * @param mailboxId: the id of the mailbox
+  * Connects a service
+  * @param serviceId: the id of the service
   */
-  connectMailbox (mailboxId) {
-    return { mailboxId: mailboxId }
+  connectService (serviceId) {
+    return { serviceId: serviceId }
   }
 
   /* **************************************************************************/
@@ -23,11 +23,11 @@ class SlackActions {
   /* **************************************************************************/
 
   /**
-  * Reconnects a mailbox by tearing it down and bringing it back up again
-  * @param mailboxId: the id of the mailbox
+  * Reconnects a service by tearing it down and bringing it back up again
+  * @param serviceId: the id of the service
   */
-  reconnectMailbox (mailboxId) {
-    return { mailboxId: mailboxId }
+  reconnectService (serviceId) {
+    return { serviceId: serviceId }
   }
 
   /* **************************************************************************/
@@ -35,16 +35,16 @@ class SlackActions {
   /* **************************************************************************/
 
   /**
-  * Disconnects all mailboxes
+  * Disconnects all services
   */
-  disconnectAllMailboxes () { return {} }
+  disconnectAllServices () { return {} }
 
   /**
-  * Disconnects a mailbox
-  * @param mailboxId: the id of the mailbox
+  * Disconnects a service
+  * @param serviceId: the id of the service
   */
-  disconnectMailbox (mailboxId) {
-    return { mailboxId: mailboxId }
+  disconnectService (serviceId) {
+    return { serviceId: serviceId }
   }
 
   /* **************************************************************************/
@@ -53,12 +53,12 @@ class SlackActions {
 
   /**
   * Indicates that the unread counts may have changed
-  * @param mailboxId: the id of the mailbox
+  * @param serviceId: the id of the service
   * @param allowMultiple=false: set to true if you want to allow this request to go out
   * even if one is already in progress
   */
-  updateUnreadCounts (mailboxId, allowMultiple = false) {
-    return { mailboxId: mailboxId, allowMultiple: allowMultiple }
+  updateUnreadCounts (serviceId, allowMultiple = false) {
+    return { serviceId: serviceId, allowMultiple: allowMultiple }
   }
 
   /* **************************************************************************/
@@ -66,27 +66,27 @@ class SlackActions {
   /* **************************************************************************/
 
   /**
-  * Sends a slack notification on behalf of a mailbox
-  * @param mailboxId: the id of the mailbox
+  * Sends a slack notification on behalf of a service
+  * @param serviceId: the id of the service
   * @param message: the message that came off slack
   */
-  scheduleNotification (mailboxId, message) {
+  scheduleNotification (serviceId, message) {
     return {
-      mailboxId: mailboxId,
+      serviceId: serviceId,
       message: message
     }
   }
 
   /**
   * Schedules a html5 notification
-  * @param mailboxId: the id of the mailbox
+  * @param serviceId: the id of the service
   * @param notificationId: the id of the html5 notification
   * @param notification: the notification object
   * @param clickHandler: the click handler provided
   */
-  scheduleHTML5Notification (mailboxId, notificationId, notification, clickHandler) {
+  scheduleHTML5Notification (serviceId, notificationId, notification, clickHandler) {
     return {
-      mailboxId: mailboxId,
+      serviceId: serviceId,
       notificationId: notificationId,
       notification: notification,
       clickHandler: clickHandler

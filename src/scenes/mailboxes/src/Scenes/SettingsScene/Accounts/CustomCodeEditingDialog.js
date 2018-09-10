@@ -1,12 +1,31 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { RaisedButton, FlatButton, Dialog, TextField } from 'material-ui'
+import ReactDOM from 'react-dom'
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import uuid from 'uuid'
+import { withStyles } from '@material-ui/core/styles'
 
-const REF = 'editor'
+const styles = {
+  button: {
+    marginLeft: 8,
+    marginRight: 8
+  },
+  textArea: {
+    width: 500
+  },
+  textAreaInput: {
+    margin: 0,
+    fontFamily: 'monospace',
+    fontSize: '12px',
+    lineHeight: '14px',
+    border: '1px solid rgb(224, 224, 224)',
+    borderRadius: 3
+  }
+}
 
-export default class CustomCodeEditingDialog extends React.Component {
+@withStyles(styles)
+class CustomCodeEditingDialog extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -17,6 +36,15 @@ export default class CustomCodeEditingDialog extends React.Component {
     code: PropTypes.string,
     onCancel: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired
+  }
+
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+    this.textFieldRef = null
   }
 
   /* **************************************************************************/
@@ -48,47 +76,47 @@ export default class CustomCodeEditingDialog extends React.Component {
   }
 
   render () {
-    const { onCancel, onSave, title, open, code } = this.props
+    const { onCancel, onSave, title, open, code, classes } = this.props
     const { editingKey } = this.state
-
-    const actions = (
-      <div>
-        <FlatButton
-          label='Cancel'
-          style={{ marginRight: 8 }}
-          onClick={(evt) => onCancel(evt)} />
-        <RaisedButton
-          label='Save'
-          primary
-          onClick={(evt) => onSave(evt, this.refs[REF].getValue())} />
-      </div>
-    )
 
     return (
       <Dialog
-        modal
-        title={title}
-        actions={actions}
+        disableEnforceFocus
+        disableBackdropClick
+        disableEscapeKeyDown
         open={open}>
-        <TextField
-          key={editingKey}
-          ref={REF}
-          name='editor'
-          multiLine
-          defaultValue={code}
-          rows={10}
-          rowsMax={10}
-          underlineShow={false}
-          fullWidth
-          textareaStyle={{
-            margin: 0,
-            fontFamily: 'monospace',
-            fontSize: '12px',
-            lineHeight: '14px',
-            border: '1px solid rgb(224, 224, 224)',
-            borderRadius: 3
-          }} />
+        {title ? (<DialogTitle>{title}</DialogTitle>) : undefined}
+        <DialogContent>
+          <TextField
+            inputRef={(n) => { this.textFieldRef = n }}
+            key={editingKey}
+            name='editor'
+            multiline
+            rowsMax={10}
+            rows={10}
+            defaultValue={code}
+            fullWidth
+            className={classes.textArea}
+            InputProps={{
+              className: classes.textAreaInput,
+              disableUnderline: true
+            }} />
+        </DialogContent>
+        <DialogActions>
+          <Button className={classes.button} onClick={(evt) => onCancel(evt)}>
+            Cancel
+          </Button>
+          <Button
+            variant='raised'
+            color='primary'
+            className={classes.button}
+            onClick={(evt) => onSave(evt, ReactDOM.findDOMNode(this.textFieldRef).value)}>
+            Save
+          </Button>
+        </DialogActions>
       </Dialog>
     )
   }
 }
+
+export default CustomCodeEditingDialog

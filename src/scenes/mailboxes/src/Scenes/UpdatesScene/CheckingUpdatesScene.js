@@ -1,16 +1,28 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Dialog, FlatButton, LinearProgress } from 'material-ui'
+import { Dialog, DialogContent, DialogActions, Button, LinearProgress } from '@material-ui/core'
 import { updaterStore } from 'stores/updater'
 import UpdateModalTitle from './UpdateModalTitle'
+import { withStyles } from '@material-ui/core/styles'
 
-export default class CheckingUpdatesScene extends React.Component {
+const styles = {
+  submessage: {
+    marginBottom: 0,
+    fontSize: '85%'
+  },
+  dialogContent: {
+    width: 600
+  }
+}
+
+@withStyles(styles)
+class CheckingUpdatesScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  static contextTypes: {
+  static contextTypes = {
     router: PropTypes.object.isRequired
   }
   static propTypes = {
@@ -75,12 +87,13 @@ export default class CheckingUpdatesScene extends React.Component {
 
   /**
   * Renders the message
+  * @param classes:
   * @param provider: the provider that is being used to action the update
   * @param isCheckingUpdate: true if we're checking for updates
   * @param isDownloadingUpdate: true if we're downloading an update
   * @return jsx
   */
-  renderMessage (provider, isCheckingUpdate, isDownloadingUpdate) {
+  renderMessage (classes, provider, isCheckingUpdate, isDownloadingUpdate) {
     if (isCheckingUpdate) {
       return (<p>Wavebox is checking for updates...</p>)
     } else if (isDownloadingUpdate) {
@@ -92,15 +105,16 @@ export default class CheckingUpdatesScene extends React.Component {
 
   /**
   * Renders the message
+  * @param classes:
   * @param provider: the provider that is being used to action the update
   * @param isCheckingUpdate: true if we're checking for updates
   * @param isDownloadingUpdate: true if we're downloading an update
   * @return jsx
   */
-  renderSubMessage (provider, isCheckingUpdate, isDownloadingUpdate) {
+  renderSubMessage (classes, provider, isCheckingUpdate, isDownloadingUpdate) {
     if (isDownloadingUpdate) {
       return (
-        <p style={{ marginBottom: 0, fontSize: '85%' }}>
+        <p className={classes.submessage}>
           You can minimise this and carry on working. Wavebox will let you know when the update has been downloaded
         </p>
       )
@@ -111,19 +125,32 @@ export default class CheckingUpdatesScene extends React.Component {
 
   render () {
     const { open, isCheckingUpdate, isDownloadingUpdate } = this.state
-    const { match: { params: { provider } } } = this.props
+    const {
+      match: { params: { provider } },
+      classes
+    } = this.props
 
     return (
       <Dialog
-        title={(<UpdateModalTitle />)}
-        modal={false}
-        actions={isDownloadingUpdate ? (<FlatButton label='Minimise' onClick={this.handleMinimize} />) : undefined}
+        disableEnforceFocus
         open={open}
-        onRequestClose={this.handleMinimize}>
-        {this.renderMessage(provider, isCheckingUpdate, isDownloadingUpdate)}
-        <LinearProgress mode='indeterminate' />
-        {this.renderSubMessage(provider, isCheckingUpdate, isDownloadingUpdate)}
+        onClose={this.handleMinimize}>
+        <UpdateModalTitle />
+        <DialogContent className={classes.dialogContent}>
+          {this.renderMessage(classes, provider, isCheckingUpdate, isDownloadingUpdate)}
+          <LinearProgress mode='indeterminate' />
+          {this.renderSubMessage(classes, provider, isCheckingUpdate, isDownloadingUpdate)}
+        </DialogContent>
+        <DialogActions>
+          {isDownloadingUpdate ? (
+            <Button onClick={this.handleMinimize}>
+              Minimise
+            </Button>
+          ) : undefined}
+        </DialogActions>
       </Dialog>
     )
   }
 }
+
+export default CheckingUpdatesScene

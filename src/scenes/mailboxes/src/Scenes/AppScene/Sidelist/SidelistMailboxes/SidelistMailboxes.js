@@ -1,35 +1,57 @@
 import React from 'react'
-import { mailboxStore, mailboxActions } from 'stores/mailbox'
+import { accountStore, accountActions } from 'stores/account'
+import { settingsStore } from 'stores/settings'
 import SidelistItemMailbox from './SidelistItemMailbox'
-import {SortableContainer, SortableElement} from 'react-sortable-hoc'
-import classnames from 'classnames'
-import './SidelistMailboxes.less'
+import { SortableContainer, SortableElement } from 'react-sortable-hoc'
+import classNames from 'classnames'
+import { withStyles } from '@material-ui/core/styles'
+import shallowCompare from 'react-addons-shallow-compare'
 
 const SortableItem = SortableElement(({ mailboxId }) => {
-  return (<SidelistItemMailbox mailboxId={mailboxId} />)
+  // Only return native dom component here, otherwise adding and removing
+  // becomes super-buggy!
+  return (
+    <div>
+      <SidelistItemMailbox mailboxId={mailboxId} />
+    </div>
+  )
 })
 
-const SortableList = SortableContainer(({ mailboxIds }) => {
+const SortableList = SortableContainer(({ mailboxIds, disabled }) => {
   return (
     <div>
       {mailboxIds.map((mailboxId, index) => (
-        <SortableItem key={mailboxId} index={index} mailboxId={mailboxId} />
+        <SortableItem
+          key={mailboxId}
+          index={index}
+          mailboxId={mailboxId}
+          disabled={disabled}
+          collection='Singleton_SidelistMailboxes' />
       ))}
     </div>
   )
 })
 
-export default class SidelistMailboxes extends React.Component {
+const styles = {
+  root: {
+    '&::-webkit-scrollbar': { display: 'none' }
+  }
+}
+
+@withStyles(styles)
+class SidelistMailboxes extends React.Component {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
-    mailboxStore.listen(this.mailboxesChanged)
+    accountStore.listen(this.accountChanged)
+    settingsStore.listen(this.settingsChanged)
   }
 
   componentWillUnmount () {
-    mailboxStore.unlisten(this.mailboxesChanged)
+    accountStore.unlisten(this.accountChanged)
+    settingsStore.unlisten(this.settingsChanged)
   }
 
   /* **************************************************************************/
@@ -38,12 +60,17 @@ export default class SidelistMailboxes extends React.Component {
 
   state = (() => {
     return {
-      mailboxIds: mailboxStore.getState().mailboxIds()
+      mailboxIds: accountStore.getState().mailboxIds(),
+      disabled: settingsStore.getState().ui.lockSidebarsAndToolbars
     }
   })()
 
-  mailboxesChanged = (store) => {
-    this.setState({ mailboxIds: store.mailboxIds() })
+  accountChanged = (accountState) => {
+    this.setState({ mailboxIds: accountState.mailboxIds() })
+  }
+
+  settingsChanged = (settingsState) => {
+    this.setState({ disabled: settingsState.ui.lockSidebarsAndToolbars })
   }
 
   /* **************************************************************************/
@@ -51,26 +78,30 @@ export default class SidelistMailboxes extends React.Component {
   /* **************************************************************************/
 
   shouldComponentUpdate (nextProps, nextState) {
-    if (JSON.stringify(this.state.mailboxIds) !== JSON.stringify(nextState.mailboxIds)) { return true }
-    return false
+    return shallowCompare(this, nextProps, nextState)
   }
 
   render () {
-    const { className, ...passProps } = this.props
-    const { mailboxIds } = this.state
+    const { className, classes, ...passProps } = this.props
+    const { mailboxIds, disabled } = this.state
 
     return (
-      <div
-        {...passProps}
-        className={classnames('ReactComponent-Sidelist-Mailboxes', 'WB-Sidelist-Mailboxes', className)}>
+      <div {...passProps} className={classNames(classes.root, 'WB-Sidelist-Mailboxes', className)}>
         <SortableList
           axis='y'
-          distance={20}
+          distance={5}
           mailboxIds={mailboxIds}
+          disabled={disabled}
+          shouldCancelStart={(evt) => {
+            // Fix for https://github.com/wavebox/waveboxapp/issues/762
+            if (evt.ctrlKey === true) { return true }
+          }}
           onSortEnd={({ oldIndex, newIndex }) => {
-            mailboxActions.changeIndex(mailboxIds[oldIndex], newIndex)
+            accountActions.changeMailboxIndex(mailboxIds[oldIndex], newIndex)
           }} />
       </div>
     )
   }
 }
+
+export default SidelistMailboxes

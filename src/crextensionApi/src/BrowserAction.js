@@ -11,13 +11,22 @@ import {
   CRX_BROWSER_ACTION_FETCH_BADGE_BACKGROUND_COLOR_,
   CRX_BROWSER_ACTION_ENABLE_,
   CRX_BROWSER_ACTION_DISABLE_,
-  CRX_BROWSER_ACTION_CLICKED_
+  CRX_BROWSER_ACTION_CLICKED_,
+  CRX_BROWSER_ACTION_OPEN_POPUP_,
+  CRX_BROWSER_ACTION_CREATE_FROM_BG_
 } from 'shared/crExtensionIpcEvents'
+import {
+  CR_RUNTIME_ENVIRONMENTS
+} from 'shared/extensionApis'
 import DispatchManager from 'Core/DispatchManager'
 import Event from 'Core/Event'
 import Tab from 'Tabs/Tab'
+import uuid from 'uuid'
+import { protectedJSWindowTracker } from 'Runtime/ProtectedRuntimeSymbols'
 
 const privExtensionId = Symbol('privExtensionId')
+const privRuntime = Symbol('privRuntime')
+const privRuntimeEnvironment = Symbol('privRuntimeEnvironment')
 
 class BrowserAction {
   /* **************************************************************************/
@@ -27,14 +36,32 @@ class BrowserAction {
   /**
   * https://developer.chrome.com/extensions/browserAction
   * @param extensionId: the id of the extension
+  * @param runtimeEnvironment: the current runtime environment
+  * @param runtime: the runtime object we proxy some requests through for
   */
-  constructor (extensionId) {
+  constructor (extensionId, runtimeEnvironment, runtime) {
     this[privExtensionId] = extensionId
+    this[privRuntimeEnvironment] = runtimeEnvironment
+    this[privRuntime] = runtime
+
     this.onClicked = new Event()
 
     ipcRenderer.on(`${CRX_BROWSER_ACTION_CLICKED_}${extensionId}`, (evt, tabInfo) => {
       this.onClicked.emit(new Tab(tabInfo))
     })
+    if (runtimeEnvironment === CR_RUNTIME_ENVIRONMENTS.BACKGROUND) {
+      ipcRenderer.on(`${CRX_BROWSER_ACTION_OPEN_POPUP_}${extensionId}`, (evt, tabId, url) => {
+        const transId = uuid.v4()
+        ipcRenderer.send(`${CRX_BROWSER_ACTION_CREATE_FROM_BG_}${extensionId}`, transId, tabId, url)
+        const opened = window.open(url)
+        ipcRenderer.once(`${CRX_BROWSER_ACTION_CREATE_FROM_BG_}${extensionId}${transId}`, (evt, err, tabData) => {
+          if (tabData) {
+            this[privRuntime][protectedJSWindowTracker].add(tabData.id, 'popup', opened)
+          }
+        })
+      })
+    }
+
     Object.freeze(this)
   }
 

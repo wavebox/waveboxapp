@@ -28,30 +28,50 @@ class CRExtensionRunEvents {
     // Document started
     this[privStartInterval] = null
 
-    // Document Ended
+    // We have to handle about:blank slightly differently because it normally means we're going to
+    // do a semi-transition into a new page. This normally happens when a child opens about:blank
+    // and cross writes into it
     if (window.location.href === 'about:blank') {
+      // Document ended
       ipcRenderer.once(WCRPC_DOM_READY, () => {
         this._unbindDocumentStart()
-        this._moveToPhase(PHASES.ENDED)
+        if (document.readyState === 'complete' && document.documentElement) {
+          this._moveToPhase(PHASES.IDLE)
+        } else {
+          this._moveToPhase(PHASES.ENDED)
+        }
       })
+
+      // Document idle
+      document.addEventListener('readystatechange', (evt) => {
+        if (evt.target.readyState === 'complete') {
+          this._unbindDocumentStart()
+          this._moveToPhase(PHASES.IDLE)
+        }
+      })
+
+      // In case we late call
+      // Late calls on about:blank can indicate that we're loaded and done. Don't trust
+      // this and instead wait for dom-ready to come in
     } else {
+      // Document ended
       document.addEventListener('DOMContentLoaded', () => {
         this._unbindDocumentStart()
         this._moveToPhase(PHASES.ENDED)
       })
-    }
 
-    // Document idle
-    document.addEventListener('readystatechange', (evt) => {
-      if (evt.target.readyState === 'complete') {
-        this._unbindDocumentStart()
+      // Document idle
+      document.addEventListener('readystatechange', (evt) => {
+        if (evt.target.readyState === 'complete') {
+          this._unbindDocumentStart()
+          this._moveToPhase(PHASES.IDLE)
+        }
+      })
+
+      // In case we late call
+      if (document.readyState === 'complete' && document.documentElement) {
         this._moveToPhase(PHASES.IDLE)
       }
-    })
-
-    // In case we late call
-    if (document.readyState === 'complete' && document.documentElement) {
-      this._moveToPhase(PHASES.IDLE)
     }
   }
 

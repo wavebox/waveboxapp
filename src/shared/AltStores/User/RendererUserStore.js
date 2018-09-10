@@ -23,7 +23,7 @@ class RendererUserStore extends CoreUserStore {
   // User & env
   /* **************************************************************************/
 
-  handleRemoteSetClientToken ({clientToken}) {
+  handleRemoteSetClientToken ({ clientToken }) {
     this.clientToken = clientToken
   }
 }

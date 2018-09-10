@@ -1,3 +1,4 @@
+import Log from 'Core/Log'
 import EventUnsupported from 'Core/EventUnsupported'
 import ArgParser from 'Core/ArgParser'
 import uuid from 'uuid'
@@ -32,14 +33,14 @@ class Notifications {
       { pattern: ['object'], out: [uuid.v4(), ArgParser.MATCH_ARG_1] }
     ])
 
-    console.warn('chrome.notifications.create is not supported by Wavebox at this time', options)
+    Log.warn('chrome.notifications.create is not supported by Wavebox at this time', options)
     if (callback) {
       setTimeout(() => callback(notificationId))
     }
   }
 
   update (notificationId, options, callback) {
-    console.warn('chrome.notifications.update is not supported by Wavebox at this time')
+    Log.warn('chrome.notifications.update is not supported by Wavebox at this time')
     if (callback) {
       const res = true
       setTimeout(() => callback(res))
@@ -47,7 +48,7 @@ class Notifications {
   }
 
   clear (notificationId, callback) {
-    console.warn('chrome.notifications.clear is not supported by Wavebox at this time')
+    Log.warn('chrome.notifications.clear is not supported by Wavebox at this time')
     if (callback) {
       const res = true
       setTimeout(() => callback(res))
@@ -55,7 +56,7 @@ class Notifications {
   }
 
   getAll (callback) {
-    console.warn('chrome.notifications.getAll is not supported by Wavebox at this time')
+    Log.warn('chrome.notifications.getAll is not supported by Wavebox at this time')
     if (callback) {
       const res = {}
       setTimeout(() => callback(res))
@@ -63,7 +64,7 @@ class Notifications {
   }
 
   getPermissionLevel (callback) {
-    console.warn('chrome.notifications.getPermissionLevel is not supported by Wavebox at this time')
+    Log.warn('chrome.notifications.getPermissionLevel is not supported by Wavebox at this time')
     if (callback) {
       const res = 'denied'
       setTimeout(() => callback(res))

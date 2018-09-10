@@ -1,29 +1,38 @@
 import React from 'react'
-import { Dialog, RaisedButton, List, ListItem } from 'material-ui'
+import { Dialog, DialogTitle, DialogActions, Button, List, ListItem, DialogContent, ListItemText, ListItemAvatar } from '@material-ui/core'
 import { emblinkStore, emblinkActions } from 'stores/emblink'
-import { mailboxStore, mailboxActions, mailboxDispatch } from 'stores/mailbox'
+import { accountStore, accountActions, accountDispatch } from 'stores/account'
 import shallowCompare from 'react-addons-shallow-compare'
-import { MailboxAvatar } from 'Components/Mailbox'
-import uuid from 'uuid'
+import MailboxAvatar from 'Components/Backed/MailboxAvatar'
+import { withStyles } from '@material-ui/core/styles'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 
 const KEYBOARD_UNSELECTED_INDEX = -1
-const LIST_ITEM_HEIGHT = 72
 
-export default class ComposePickerScene extends React.Component {
+const styles = {
+  dialogContent: {
+    padding: 0
+  },
+  keyboardFocus: {
+    backgroundColor: 'rgba(0, 0, 0, 0.1)'
+  }
+}
+
+@withStyles(styles)
+class ComposePickerScene extends React.Component {
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
-    this.dialogBodyClassName = `ReactComponent-DialogBody-${uuid.v4()}`
     emblinkStore.listen(this.composeChanged)
-    mailboxStore.listen(this.mailboxChanged)
+    accountStore.listen(this.accountChanged)
     window.addEventListener('keydown', this.handleKeypress)
   }
 
   componentWillUnmount () {
     emblinkStore.unlisten(this.composeChanged)
-    mailboxStore.unlisten(this.mailboxChanged)
+    accountStore.unlisten(this.accountChanged)
     window.removeEventListener('keydown', this.handleKeypress)
   }
 
@@ -40,14 +49,17 @@ export default class ComposePickerScene extends React.Component {
 
   /**
   * Generates the compose state from the two stores
-  * @param mailboxState=autofetch: the current mailbox state
+  * @param accountState=autofetch: the current account state
   * @param composeState=autofetch: the current compose state
   * @return an object with the compose portion of the state
   */
-  generateComposeData (mailboxState = mailboxStore.getState(), composeState = emblinkStore.getState()) {
+  generateComposeData (accountState = accountStore.getState(), composeState = emblinkStore.getState()) {
     return {
-      mailboxes: mailboxState.allMailboxesIndexed(),
-      composeServices: mailboxState.getServicesSupportingCompose(),
+      composeServices: [].concat(
+        accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_MAIL),
+        accountState.allServicesOfType(SERVICE_TYPES.GOOGLE_INBOX),
+        accountState.allServicesOfType(SERVICE_TYPES.MICROSOFT_MAIL)
+      ),
       composePayload: composeState.compose.payload
     }
   }
@@ -56,8 +68,8 @@ export default class ComposePickerScene extends React.Component {
     this.setState(this.generateComposeData(undefined, composeState))
   }
 
-  mailboxChanged = (mailboxState) => {
-    this.setState(this.generateComposeData(mailboxState, undefined))
+  accountChanged = (accountState) => {
+    this.setState(this.generateComposeData(accountState, undefined))
   }
 
   /* **************************************************************************/
@@ -85,8 +97,8 @@ export default class ComposePickerScene extends React.Component {
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = '/'
-      mailboxActions.changeActive(service.parentId, service.type)
-      mailboxDispatch.composeItem(service.parentId, service.type, this.state.composePayload || {})
+      accountActions.changeActiveService(service.id)
+      accountDispatch.composeItem(service.id, this.state.composePayload || {})
       emblinkActions.clearCompose()
     }, 250)
   }
@@ -97,6 +109,8 @@ export default class ComposePickerScene extends React.Component {
   */
   handleKeypress = (evt) => {
     if (evt.keyCode === 38 || evt.keyCode === 40) {
+      evt.preventDefault()
+      evt.stopPropagation()
       this.setState((prevState) => {
         let nextIndex
         if (prevState.keyboardIndex === KEYBOARD_UNSELECTED_INDEX) {
@@ -116,13 +130,11 @@ export default class ComposePickerScene extends React.Component {
             }
           }
         }
-
-        setTimeout(() => {
-          document.querySelector(`.${this.dialogBodyClassName}`).scrollTop = nextIndex * LIST_ITEM_HEIGHT
-        })
         return { keyboardIndex: nextIndex }
       })
     } else if (evt.keyCode === 13) {
+      evt.preventDefault()
+      evt.stopPropagation()
       if (this.state.keyboardIndex !== KEYBOARD_UNSELECTED_INDEX) {
         this.handleSelectService(evt, this.state.composeServices[this.state.keyboardIndex])
       }
@@ -138,39 +150,40 @@ export default class ComposePickerScene extends React.Component {
   }
 
   render () {
-    const { composeServices, open, mailboxes, keyboardIndex } = this.state
-
-    const actions = (
-      <RaisedButton label='Cancel' onClick={this.handleCancel} />
-    )
+    const { classes } = this.props
+    const { composeServices, open, keyboardIndex } = this.state
 
     return (
-      <Dialog
-        modal={false}
-        title='Compose New Message'
-        titleStyle={{ lineHeight: '22px' }}
-        actions={actions}
-        open={open}
-        contentStyle={{ maxWidth: 'none', width: 320 }}
-        bodyStyle={{ padding: 0 }}
-        bodyClassName={this.dialogBodyClassName}
-        autoScrollBodyContent
-        onRequestClose={this.handleCancel}>
-        <List>
-          {composeServices.map((service, index) => {
-            const mailbox = mailboxes[service.parentId]
-            return (
-              <ListItem
-                disableKeyboardFocus
-                key={`${service.parentId}:${service.type}`}
-                style={index === keyboardIndex ? { backgroundColor: 'rgba(0, 0, 0, 0.1)' } : undefined}
-                leftAvatar={<MailboxAvatar mailboxId={mailbox.id} />}
-                primaryText={mailbox.displayName}
-                secondaryText={service.humanizedType}
-                onClick={(evt) => this.handleSelectService(evt, service)} />)
-          })}
-        </List>
+      <Dialog disableEnforceFocus open={open} onClose={this.handleCancel}>
+        <DialogTitle>
+          Compose New Message
+        </DialogTitle>
+        <DialogContent className={classes.dialogContent}>
+          <List>
+            {composeServices.map((service, index) => {
+              return (
+                <ListItem
+                  key={service.id}
+                  tabIndex={-1}
+                  button
+                  onClick={(evt) => this.handleSelectService(evt, service)}
+                  className={index === keyboardIndex ? classes.keyboardFocus : undefined}>
+                  <ListItemAvatar>
+                    <MailboxAvatar mailboxId={service.parentId} />
+                  </ListItemAvatar>
+                  <ListItemText primary={service.displayName} secondary={service.humanizedType} />
+                </ListItem>)
+            })}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button variant='raised' onClick={this.handleCancel}>
+            Cancel
+          </Button>
+        </DialogActions>
       </Dialog>
     )
   }
 }
+
+export default ComposePickerScene

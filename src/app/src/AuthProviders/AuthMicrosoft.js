@@ -5,6 +5,8 @@ import { URL } from 'url'
 import querystring from 'querystring'
 import { userStore } from 'stores/user'
 import pkg from 'package.json'
+import { SessionManager } from 'SessionManager'
+import Resolver from 'Runtime/Resolver'
 
 class AuthMicrosoft {
   /* ****************************************************************************/
@@ -82,51 +84,77 @@ class AuthMicrosoft {
         webPreferences: {
           nodeIntegration: false,
           contextIsolation: true,
-          partition: partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
-          // Don't use the default brower behaviour as the returned urn:// url has some funny
-          // behaviour on windows and this exacerbates it
-          // sandbox: true,
-          // nativeWindowOpen: true,
-          // sharedSiteInstances: true,
+          partition: partitionId,
+          sandbox: true,
+          nativeWindowOpen: true,
+          sharedSiteInstances: true,
+          preload: Resolver.guestPreload(),
+          preloadCrx: Resolver.crExtensionApi()
         }
       })
       const oauthWin = waveboxOauthWin.window
+      const emitter = SessionManager.webRequestEmitterFromPartitionId(partitionId)
 
       let userClose = true
-      oauthWin.on('closed', () => {
-        if (userClose) {
-          reject(new Error('User closed the window'))
-        }
-      })
 
-      // Listen for changes
-      oauthWin.webContents.on('did-get-redirect-request', (evt, prevUrl, nextUrl) => {
-        if (nextUrl.indexOf(credentials.MICROSOFT_PUSH_SERVICE_SUCCESS_URL) === 0) {
-          evt.preventDefault()
-          oauthWin.loadURL(this.generateMicrosoftAuthenticationURL(credentials, additionalPermissions))
-        } else if (nextUrl.indexOf(credentials.MICROSOFT_PUSH_SERVICE_FAILURE_URL) === 0) {
-          evt.preventDefault()
-          userClose = false
-          oauthWin.close()
-          const purl = new URL(nextUrl)
-          reject(new Error(purl.searchParams.get('error')))
-        } else if (nextUrl.indexOf(credentials.MICROSOFT_AUTH_RETURN_URL_V2) === 0) {
-          evt.preventDefault()
-          const purl = new URL(nextUrl)
-          if (purl.searchParams.get('code')) {
+      // Auth callback
+      const handleHeadersReceived = (details, responder) => {
+        if (details.webContentsId !== oauthWin.webContents.id) { return responder({}) }
+
+        if (details.statusCode === 302) {
+          let nextUrl
+          try {
+            nextUrl = new URL(
+              details.responseHeaders.location || details.responseHeaders.Location,
+              details.url
+            ).toString()
+          } catch (ex) {
+            return responder({})
+          }
+
+          if (nextUrl.indexOf(credentials.MICROSOFT_PUSH_SERVICE_SUCCESS_URL) === 0) {
+            responder({ cancel: true })
+            oauthWin.loadURL(this.generateMicrosoftAuthenticationURL(credentials, additionalPermissions))
+            return
+          } else if (nextUrl.indexOf(credentials.MICROSOFT_PUSH_SERVICE_FAILURE_URL) === 0) {
             userClose = false
             oauthWin.close()
-            resolve(purl.searchParams.get('code'))
-          } else if (purl.searchParams.get('error')) {
-            userClose = false
-            oauthWin.close()
+            const purl = new URL(nextUrl)
+            responder({ cancel: true })
+            reject(new Error(purl.searchParams.get('error')))
+            return
+          } else if (nextUrl.indexOf(credentials.MICROSOFT_AUTH_RETURN_URL_V2) === 0) {
+            const purl = new URL(nextUrl)
+            if (purl.searchParams.get('code')) {
+              responder({ cancel: true })
+              userClose = false
+              oauthWin.close()
+              resolve(purl.searchParams.get('code'))
+              return
+            } else if (purl.searchParams.get('error')) {
+              responder({ cancel: true })
+              userClose = false
+              oauthWin.close()
 
-            if (purl.searchParams.get('error') === 'access_denied') {
-              reject(new Error(purl.searchParams.get('error_description')))
-            } else {
-              reject(new Error(`${purl.searchParams.get('error')}:${purl.searchParams.get('error_subcode')}:${purl.searchParams.get('error_description')}`))
+              if (purl.searchParams.get('error') === 'access_denied') {
+                reject(new Error(purl.searchParams.get('error_description')))
+              } else {
+                reject(new Error(`${purl.searchParams.get('error')}:${purl.searchParams.get('error_subcode')}:${purl.searchParams.get('error_description')}`))
+              }
+              return
             }
           }
+        }
+
+        responder({})
+      }
+      emitter.headersReceived.onBlocking(undefined, handleHeadersReceived)
+
+      // Window close callback
+      oauthWin.on('closed', () => {
+        emitter.headersReceived.removeListener(handleHeadersReceived)
+        if (userClose) {
+          reject(new Error('User closed the window'))
         }
       })
     })
@@ -143,20 +171,20 @@ class AuthMicrosoft {
   */
   handleAuthMicrosoft (evt, body) {
     Promise.resolve()
-      .then(() => this.promptUserToGetAuthorizationCode(body.credentials, body.id, body.additionalPermissions))
+      .then(() => this.promptUserToGetAuthorizationCode(body.credentials, body.partitionId, body.additionalPermissions))
       .then((temporaryCode) => {
         evt.sender.send(WB_AUTH_MICROSOFT_COMPLETE, {
-          id: body.id,
-          authMode: body.authMode,
-          provisional: body.provisional,
-          temporaryCode: temporaryCode,
-          codeRedirectUri: body.credentials.MICROSOFT_AUTH_RETURN_URL_V2
+          mode: body.mode,
+          context: body.context,
+          auth: {
+            temporaryCode: temporaryCode,
+            codeRedirectUri: body.credentials.MICROSOFT_AUTH_RETURN_URL_V2
+          }
         })
       }, (err) => {
         evt.sender.send(WB_AUTH_MICROSOFT_ERROR, {
-          id: body.id,
-          authMode: body.authMode,
-          provisional: body.provisional,
+          mode: body.mode,
+          context: body.context,
           error: err,
           errorString: (err || {}).toString ? (err || {}).toString() : undefined,
           errorMessage: (err || {}).message ? (err || {}).message : undefined,

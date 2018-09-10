@@ -1,33 +1,35 @@
 /* global __DEV__ */
 
-import { app, BrowserWindow, protocol, ipcMain, globalShortcut } from 'electron'
+import { app, BrowserWindow, ipcMain, globalShortcut } from 'electron'
 import yargs from 'yargs'
 import credentials from 'shared/credentials'
 import WaveboxAppPrimaryMenu from './WaveboxAppPrimaryMenu'
 import WaveboxAppGlobalShortcuts from './WaveboxAppGlobalShortcuts'
 import { settingsStore, settingsActions } from 'stores/settings'
 import { platformStore, platformActions } from 'stores/platform'
-import { mailboxStore, mailboxActions } from 'stores/mailbox'
+import { accountStore, accountActions } from 'stores/account'
 import { userStore, userActions } from 'stores/user'
-import { takeoutStore, takeoutActions } from 'stores/takeout'
 import { emblinkStore, emblinkActions } from 'stores/emblink'
 import { notifhistStore, notifhistActions } from 'stores/notifhist'
+import { guestStore, guestActions } from 'stores/guest'
 import ipcEvents from 'shared/ipcEvents'
 import BasicHTTPAuthHandler from '../BasicHTTPAuthHandler'
 import { CRExtensionManager } from 'Extensions/Chrome'
-import { SessionManager, MailboxesSessionManager, ExtensionSessionManager } from '../SessionManager'
+import { SessionManager, AccountSessionManager, ExtensionSessionManager } from '../SessionManager'
 import ServicesManager from '../Services'
 import MailboxesWindow from 'Windows/MailboxesWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import AppUpdater from 'AppUpdater'
 import WaveboxAppCloseBehaviour from './WaveboxAppCloseBehaviour'
 import WaveboxDarwinDockBehaviour from './WaveboxDarwinDockBehaviour'
-import {evtMain} from 'AppEvents'
-import {TrayPopout, TrayBehaviour} from 'Tray'
-import {LinuxNotification} from 'Notifications'
+import { evtMain } from 'AppEvents'
+import { TrayPopout, TrayBehaviour } from 'Tray'
+import { LinuxNotification } from 'Notifications'
 import WaveboxCommandArgs from './WaveboxCommandArgs'
 import { AppSettings } from 'shared/Models/Settings'
 import WaveboxDataManager from './WaveboxDataManager'
+import mailboxStorage from 'Storage/mailboxStorage'
+import constants from 'shared/constants'
 
 const privStarted = Symbol('privStarted')
 const privArgv = Symbol('privArgv')
@@ -92,21 +94,24 @@ class WaveboxApp {
     this[privStarted] = true
     this[privArgv] = yargs.parse(process.argv)
 
+    // Do any data migration
+    mailboxStorage.startMigration()
+
     // Start our stores
-    mailboxStore.getState()
-    mailboxActions.load()
+    accountStore.getState()
+    accountActions.load()
     settingsStore.getState()
     settingsActions.load()
     platformStore.getState()
     platformActions.load()
     userStore.getState()
     userActions.load()
-    takeoutStore.getState()
-    takeoutActions.load()
     emblinkStore.getState()
     emblinkActions.load()
     notifhistStore.getState()
     notifhistActions.load()
+    guestStore.getState()
+    guestActions.load()
 
     // Component behaviour
     this[privCloseBehaviour] = new WaveboxAppCloseBehaviour()
@@ -124,7 +129,7 @@ class WaveboxApp {
 
     // Managers
     SessionManager.start()
-    MailboxesSessionManager.start()
+    AccountSessionManager.start()
     ExtensionSessionManager.start()
     ServicesManager.load()
 
@@ -133,9 +138,10 @@ class WaveboxApp {
 
     // Configure extensions
     CRExtensionManager.setup()
-    protocol.registerStandardSchemes([].concat(
-      CRExtensionManager.supportedProtocols
-    ), { secure: true })
+    // Electron registers chrome-extension by default so we don't need to do it
+    // protocol.registerStandardSchemes([].concat(
+    //   CRExtensionManager.supportedProtocols
+    // ), { secure: true })
 
     // App menus and shortcuts
     this[privAppMenu] = new WaveboxAppPrimaryMenu()
@@ -177,6 +183,7 @@ class WaveboxApp {
     if (launchSettings.app.disableHardwareAcceleration) {
       app.disableHardwareAcceleration()
     }
+    app.commandLine.appendSwitch('wavebox-server', constants.SERVER_URL)
 
     process.env.GOOGLE_API_KEY = credentials.GOOGLE_API_KEY
 
@@ -256,7 +263,9 @@ class WaveboxApp {
   */
   _handleAppReady = () => {
     const settingsState = settingsStore.getState()
-    const mailboxState = mailboxStore.getState()
+    const accountState = accountStore.getState()
+    const userState = userStore.getState()
+
     // Load extensions before any webcontents get created
     try {
       CRExtensionManager.loadExtensionDirectory()
@@ -271,9 +280,8 @@ class WaveboxApp {
     // Prep app menu
     this[privAppMenu].updateApplicationMenu(
       settingsState.accelerators,
-      mailboxState.allMailboxes(),
-      mailboxState.activeMailboxId(),
-      mailboxState.activeMailboxService()
+      this[privAppMenu].buildMailboxMenuConfig(accountState),
+      userState.user.userEmail
     )
 
     // Create UI
@@ -288,7 +296,7 @@ class WaveboxApp {
     this[privGlobalShortcuts].register()
 
     // Proces any user arguments
-    WaveboxCommandArgs.processModifierArgs(this[privArgv], emblinkActions, mailboxActions)
+    WaveboxCommandArgs.processModifierArgs(this[privArgv], emblinkActions, accountActions)
   }
 
   /**

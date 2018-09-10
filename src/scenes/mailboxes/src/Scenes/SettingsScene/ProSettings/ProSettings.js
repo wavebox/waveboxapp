@@ -3,8 +3,23 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { WaveboxWebView } from 'Components'
 import { userStore } from 'stores/user'
+import { withStyles } from '@material-ui/core/styles'
+import classNames from 'classnames'
 
-export default class ProSettings extends React.Component {
+const styles = {
+  webview: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '100%',
+    height: '100%'
+  }
+}
+
+@withStyles(styles)
+class ProSettings extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -36,7 +51,9 @@ export default class ProSettings extends React.Component {
   })()
 
   userUpdated = (userState) => {
-    this.setState({ url: userState.user.billingUrl })
+    this.setState({
+      url: userState.user.billingUrl
+    })
   }
 
   /* **************************************************************************/
@@ -48,22 +65,16 @@ export default class ProSettings extends React.Component {
   }
 
   render () {
-    const {style, ...passProps} = this.props
-    delete passProps.showRestart
+    const { className, classes, showRestart, ...passProps } = this.props
     const { url } = this.state
 
     return (
       <WaveboxWebView
         src={url}
-        style={Object.assign({
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          width: '100%',
-          height: '100%'
-        }, style)} />
+        className={classNames(className, classes.webview)}
+        {...passProps} />
     )
   }
 }
+
+export default ProSettings

@@ -6,27 +6,32 @@ import shallowCompare from 'react-addons-shallow-compare'
 import SidelistWindowControls from './SidelistWindowControls'
 import SidelistControls from './SidelistControls'
 import SidelistUpgradePlans from './SidelistUpgradePlans'
-import * as Colors from 'material-ui/styles/colors'
-import classnames from 'classnames'
+import { withStyles } from '@material-ui/core/styles'
+import classNames from 'classnames'
+import ThemeTools from 'wbui/Themes/ThemeTools'
 
-const styles = {
-  container: {
-    backgroundColor: Colors.blueGrey900,
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  mailboxes: {
-    flexGrow: 10000,
-    overflowY: 'auto'
+const styles = (theme) => {
+  return {
+    container: {
+      backgroundColor: ThemeTools.getValue(theme, 'wavebox.sidebar.backgroundColor'),
+      boxShadow: ThemeTools.getValue(theme, 'wavebox.sidebar.boxShadow'),
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      display: 'flex',
+      flexDirection: 'column'
+    },
+    mailboxes: {
+      flexGrow: 10000,
+      overflowY: 'auto'
+    }
   }
 }
 
-export default class Sidelist extends React.Component {
+@withStyles(styles, { withTheme: true })
+class Sidelist extends React.Component {
   /* **************************************************************************/
   // Component lifecyle
   /* **************************************************************************/
@@ -68,18 +73,19 @@ export default class Sidelist extends React.Component {
 
   render () {
     const { showTitlebar, showPlans } = this.state
-    const { style, className, ...passProps } = this.props
+    const { className, classes, theme, ...passProps } = this.props
 
     return (
       <div
         {...passProps}
-        style={{...styles.container, ...style}}
-        className={classnames('WB-Sidelist', className)}>
+        className={classNames(classes.container, 'WB-Sidelist', className)}>
         {!showTitlebar ? (<SidelistWindowControls />) : undefined}
         {showPlans ? (<SidelistUpgradePlans />) : undefined}
-        <SidelistMailboxes style={styles.mailboxes} />
+        <SidelistMailboxes className={classes.mailboxes} />
         <SidelistControls />
       </div>
     )
   }
 }
+
+export default Sidelist

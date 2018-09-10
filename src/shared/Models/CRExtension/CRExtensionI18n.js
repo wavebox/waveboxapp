@@ -25,7 +25,7 @@ class CRExtensionI18n {
 
     if (placeholders) {
       Object.keys(placeholders).forEach((name) => {
-        let {content} = placeholders[name]
+        let { content } = placeholders[name]
         content = this._replaceNumberedSubstitutions(content, substitutions)
         message = message.replace(new RegExp(`\\$${name}\\$`, 'gi'), content)
       })

@@ -1,10 +1,12 @@
-import {Browser} from 'Browser'
+import { Browser } from 'Browser'
 import Adaptors from './Adaptors'
 import elconsole from 'elconsole'
+import ElectronPolyfill from './ElectronPolyfill'
 
 let browser
 let adaptors
 try {
+  ElectronPolyfill.polyfill()
   browser = new Browser()
   browser.start()
   adaptors = new Adaptors()

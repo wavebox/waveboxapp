@@ -174,7 +174,7 @@ class CoreCRExtensionStore extends RemoteStore {
     */
     this.composedBrowserAction = (extensionId, tabId) => {
       const extensionBA = this.browserActions.get(extensionId)
-      const globalBA = extensionBA ? extensionBA.get(undefined) : undefined
+      const globalBA = extensionBA ? extensionBA.get(null) : undefined
       const tabBA = extensionBA ? extensionBA.get(tabId) : undefined
       const compositeJS = {
         ...(globalBA ? globalBA.cloneData() : undefined),
@@ -203,7 +203,7 @@ class CoreCRExtensionStore extends RemoteStore {
   // Loading
   /* **************************************************************************/
 
-  handleLoad ({runtimeData, installMeta}) {
+  handleLoad ({ runtimeData, installMeta }) {
     Object.keys(runtimeData)
       .forEach((extensionId) => {
         const {
@@ -217,7 +217,7 @@ class CoreCRExtensionStore extends RemoteStore {
 
         // Browser actions
         if (browserAction.global) {
-          this.saveBrowserAction(extensionId, undefined, browserAction.global)
+          this.saveBrowserAction(extensionId, null, browserAction.global)
         }
         Object.keys(browserAction.tabs).forEach((tabId) => {
           this.saveBrowserAction(extensionId, tabId, browserAction.tabs[tabId])
@@ -234,7 +234,7 @@ class CoreCRExtensionStore extends RemoteStore {
   // Install metadata & lifecycle
   /* **************************************************************************/
 
-  handleInstallMetaChanged ({metadata}) {
+  handleInstallMetaChanged ({ metadata }) {
     Object.keys(metadata)
       .forEach((extensionId) => {
         this.installMeta.set(extensionId, metadata[extensionId])
@@ -263,7 +263,7 @@ class CoreCRExtensionStore extends RemoteStore {
     this.browserActions.get(extensionId).set(tabId, browserAction)
   }
 
-  handleBrowserActionChanged ({extensionId, tabId, browserAction}) {
+  handleBrowserActionChanged ({ extensionId, tabId, browserAction }) {
     this.saveBrowserAction(extensionId, tabId, browserAction)
     if (process.type === 'browser') {
       this.dispatchToRemote('browserActionChanged', [extensionId, tabId, browserAction])

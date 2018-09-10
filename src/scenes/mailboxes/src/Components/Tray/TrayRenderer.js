@@ -43,15 +43,16 @@ class TrayRenderer {
   * @param size: the pixel size to render
   * @param tray: the tray settings
   * @param unreadCount: the current unread count
+  * @param hasUnreadActivity: true if we have unread activity
   * @return promise with the canvas
   */
-  static renderCanvas (size, tray, unreadCount) {
+  static renderCanvas (size, tray, unreadCount, hasUnreadActivity) {
     if (process.platform === 'darwin') {
-      return this.renderCanvasDarwin(size, tray, unreadCount)
+      return this.renderCanvasDarwin(size, tray, unreadCount, hasUnreadActivity)
     } else if (process.platform === 'win32') {
-      return this.renderCanvasWin32(size, tray, unreadCount)
+      return this.renderCanvasWin32(size, tray, unreadCount, hasUnreadActivity)
     } else if (process.platform === 'linux') {
-      return this.renderCanvasLinux(size, tray, unreadCount)
+      return this.renderCanvasLinux(size, tray, unreadCount, hasUnreadActivity)
     } else {
       return Promise.reject(new Error('Unknown Platform'))
     }
@@ -62,9 +63,10 @@ class TrayRenderer {
   * @param size: the pixel size to render
   * @param tray: the tray settings
   * @param unreadCount: the current unread count
+  * @param hasUnreadActivity: true if we have unread activity
   * @return promise with the canvas
   */
-  static renderCanvasDarwin (size, tray, unreadCount) {
+  static renderCanvasDarwin (size, tray, unreadCount, hasUnreadActivity) {
     return new Promise((resolve, reject) => {
       const SIZE = size * tray.dpiMultiplier
       const PADDING = Math.floor(SIZE * 0.15)
@@ -72,9 +74,9 @@ class TrayRenderer {
       const CENTER = Math.round(REAL_CENTER)
       const STROKE_WIDTH = Math.max(1, Math.round(SIZE * 0.05))
       const BORDER_RADIUS = Math.round(SIZE * 0.1)
-      const SHOW_COUNT = tray.showUnreadCount && unreadCount
-      const COLOR = unreadCount ? tray.unreadColor : tray.readColor
-      const BACKGROUND_COLOR = unreadCount ? tray.unreadBackgroundColor : tray.readBackgroundColor
+      const SHOW_COUNT = tray.showUnreadCount && (unreadCount > 0 || hasUnreadActivity)
+      const COLOR = unreadCount || hasUnreadActivity ? tray.unreadColor : tray.readColor
+      const BACKGROUND_COLOR = unreadCount || hasUnreadActivity ? tray.unreadBackgroundColor : tray.readBackgroundColor
 
       const canvas = document.createElement('canvas')
       canvas.width = SIZE
@@ -96,15 +98,20 @@ class TrayRenderer {
       if (SHOW_COUNT) {
         ctx.fillStyle = COLOR
         ctx.textAlign = 'center'
-        if (unreadCount > 99) {
+        if (unreadCount > 0) {
+          if (unreadCount > 99) { // 99+
+            ctx.font = `${Math.round(SIZE * 0.8)}px Helvetica`
+            ctx.fillText('●', CENTER, Math.round(CENTER + (SIZE * 0.22)))
+          } else if (unreadCount < 10) { // 0 - 9
+            ctx.font = `${Math.round(SIZE * 0.6)}px Helvetica`
+            ctx.fillText(unreadCount, CENTER, Math.round(CENTER + (SIZE * 0.2)))
+          } else { // 10 - 99
+            ctx.font = `${Math.round(SIZE * 0.52)}px Helvetica`
+            ctx.fillText(unreadCount, CENTER, Math.round(CENTER + (SIZE * 0.17)))
+          }
+        } else { // Unread activity
           ctx.font = `${Math.round(SIZE * 0.8)}px Helvetica`
-          ctx.fillText('●', CENTER, Math.round(CENTER + (SIZE * 0.21)))
-        } else if (unreadCount < 10) {
-          ctx.font = `${Math.round(SIZE * 0.6)}px Helvetica`
-          ctx.fillText(unreadCount, CENTER, Math.round(CENTER + (SIZE * 0.2)))
-        } else {
-          ctx.font = `${Math.round(SIZE * 0.52)}px Helvetica`
-          ctx.fillText(unreadCount, CENTER, Math.round(CENTER + (SIZE * 0.17)))
+          ctx.fillText('●', CENTER, Math.round(CENTER + (SIZE * 0.22)))
         }
         resolve(canvas)
       } else {
@@ -123,17 +130,18 @@ class TrayRenderer {
   * @param size: the pixel size to render
   * @param tray: the tray settings
   * @param unreadCount: the current unread count
+  * @param hasUnreadActivity: true if we have unread activity
   * @return promise with the canvas
   */
-  static renderCanvasWin32 (size, tray, unreadCount) {
+  static renderCanvasWin32 (size, tray, unreadCount, hasUnreadActivity) {
     return new Promise((resolve, reject) => {
       const SIZE = size * tray.dpiMultiplier
       const REAL_CENTER = SIZE / 2
       const CENTER = Math.round(REAL_CENTER)
       const STROKE_WIDTH = Math.max(2, Math.round(SIZE * 0.15))
-      const SHOW_COUNT = tray.showUnreadCount && unreadCount
-      const COLOR = unreadCount ? tray.unreadColor : tray.readColor
-      const BACKGROUND_COLOR = unreadCount ? tray.unreadBackgroundColor : tray.readBackgroundColor
+      const SHOW_COUNT = tray.showUnreadCount && (unreadCount > 0 || hasUnreadActivity)
+      const COLOR = unreadCount || hasUnreadActivity ? tray.unreadColor : tray.readColor
+      const BACKGROUND_COLOR = unreadCount || hasUnreadActivity ? tray.unreadBackgroundColor : tray.readBackgroundColor
 
       const canvas = document.createElement('canvas')
       canvas.width = SIZE
@@ -150,15 +158,20 @@ class TrayRenderer {
       if (SHOW_COUNT) {
         ctx.fillStyle = COLOR
         ctx.textAlign = 'center'
-        if (unreadCount > 99) {
+        if (unreadCount > 0) {
+          if (unreadCount > 99) { // 99+
+            ctx.font = `Bold ${Math.round(SIZE * 0.8)}px Helvetica`
+            ctx.fillText('●', CENTER, Math.round(CENTER + (SIZE * 0.23)))
+          } else if (unreadCount < 10) { // 0 - 9
+            ctx.font = `Bold ${Math.round(SIZE * 0.7)}px Helvetica`
+            ctx.fillText(unreadCount, CENTER, Math.round(CENTER + (SIZE * 0.25)))
+          } else { // 10 - 99
+            ctx.font = `Bold ${Math.round(SIZE * 0.55)}px Helvetica`
+            ctx.fillText(unreadCount, CENTER, Math.round(CENTER + (SIZE * 0.17)))
+          }
+        } else { // Unread activity
           ctx.font = `Bold ${Math.round(SIZE * 0.8)}px Helvetica`
           ctx.fillText('●', CENTER, Math.round(CENTER + (SIZE * 0.23)))
-        } else if (unreadCount < 10) {
-          ctx.font = `Bold ${Math.round(SIZE * 0.7)}px Helvetica`
-          ctx.fillText(unreadCount, CENTER, Math.round(CENTER + (SIZE * 0.25)))
-        } else {
-          ctx.font = `Bold ${Math.round(SIZE * 0.55)}px Helvetica`
-          ctx.fillText(unreadCount, CENTER, Math.round(CENTER + (SIZE * 0.17)))
         }
         resolve(canvas)
       } else {
@@ -177,19 +190,20 @@ class TrayRenderer {
   * @param size: the pixel size to render
   * @param tray: the tray settings
   * @param unreadCount: the current unread count
+  * @param hasUnreadActivity: true if we have unread activity
   * @return promise with the canvas
   */
-  static renderCanvasLinux (size, tray, unreadCount) {
+  static renderCanvasLinux (size, tray, unreadCount, hasUnreadActivity) {
     return new Promise((resolve, reject) => {
       const SIZE = size * tray.dpiMultiplier
       const PADDING = Math.floor(SIZE * 0.15)
       const REAL_CENTER = SIZE / 2
       const CENTER = Math.round(REAL_CENTER)
       const STROKE_WIDTH = Math.max(1, Math.round(SIZE * 0.05))
-      const SHOW_COUNT = tray.showUnreadCount && unreadCount
+      const SHOW_COUNT = tray.showUnreadCount && (unreadCount > 0 || hasUnreadActivity)
       const BORDER_RADIUS = Math.round(SIZE * 0.1)
-      const COLOR = unreadCount ? tray.unreadColor : tray.readColor
-      const BACKGROUND_COLOR = unreadCount ? tray.unreadBackgroundColor : tray.readBackgroundColor
+      const COLOR = unreadCount || hasUnreadActivity ? tray.unreadColor : tray.readColor
+      const BACKGROUND_COLOR = unreadCount || hasUnreadActivity ? tray.unreadBackgroundColor : tray.readBackgroundColor
 
       const canvas = document.createElement('canvas')
       canvas.width = SIZE
@@ -211,15 +225,20 @@ class TrayRenderer {
       if (SHOW_COUNT) {
         ctx.fillStyle = COLOR
         ctx.textAlign = 'center'
-        if (unreadCount > 99) {
+        if (unreadCount > 0) {
+          if (unreadCount > 99) { // 99+
+            ctx.font = `${Math.round(SIZE * 0.8)}px Helvetica`
+            ctx.fillText('●', CENTER, Math.round(CENTER + (SIZE * 0.21)))
+          } else if (unreadCount < 10) { // 0-9
+            ctx.font = `${Math.round(SIZE * 0.6)}px Helvetica`
+            ctx.fillText(unreadCount, CENTER, Math.round(CENTER + (SIZE * 0.2)))
+          } else { // 10 - 99
+            ctx.font = `${Math.round(SIZE * 0.52)}px Helvetica`
+            ctx.fillText(unreadCount, CENTER, Math.round(CENTER + (SIZE * 0.17)))
+          }
+        } else { // Unread activity
           ctx.font = `${Math.round(SIZE * 0.8)}px Helvetica`
           ctx.fillText('●', CENTER, Math.round(CENTER + (SIZE * 0.21)))
-        } else if (unreadCount < 10) {
-          ctx.font = `${Math.round(SIZE * 0.6)}px Helvetica`
-          ctx.fillText(unreadCount, CENTER, Math.round(CENTER + (SIZE * 0.2)))
-        } else {
-          ctx.font = `${Math.round(SIZE * 0.52)}px Helvetica`
-          ctx.fillText(unreadCount, CENTER, Math.round(CENTER + (SIZE * 0.17)))
         }
 
         resolve(canvas)
@@ -243,11 +262,12 @@ class TrayRenderer {
   * @param size: the pixel size to render
   * @param tray: the tray settings
   * @param unreadCount: the current unread count
+  * @param hasUnreadActivity: true if we have unread activity
   * @return promise with the native image
   */
-  static renderPNGDataImage (size, tray, unreadCount) {
+  static renderPNGDataImage (size, tray, unreadCount, hasUnreadActivity) {
     return Promise.resolve()
-      .then(() => TrayRenderer.renderCanvas(size, tray, unreadCount))
+      .then(() => TrayRenderer.renderCanvas(size, tray, unreadCount, hasUnreadActivity))
       .then((canvas) => Promise.resolve(canvas.toDataURL('image/png')))
   }
 
@@ -256,13 +276,14 @@ class TrayRenderer {
   * @param size: the pixel size to render
   * @param tray: the tray settings
   * @param unreadCount: the current unread count
+  * @param hasUnreadActivity: true if we have unread activity
   * @return the native image
   */
-  static renderNativeImage (size, tray, unreadCount) {
+  static renderNativeImage (size, tray, unreadCount, hasUnreadActivity) {
     return Promise.resolve()
-      .then(() => TrayRenderer.renderCanvas(size, tray, unreadCount))
+      .then(() => TrayRenderer.renderCanvas(size, tray, unreadCount, hasUnreadActivity))
       .then((canvas) => {
-        const pngData = electron.remote.nativeImage.createFromDataURL(canvas.toDataURL('image/png')).toPng()
+        const pngData = electron.remote.nativeImage.createFromDataURL(canvas.toDataURL('image/png')).toPNG()
         return Promise.resolve(electron.remote.nativeImage.createFromBuffer(pngData, tray.dpiMultiplier))
       })
   }

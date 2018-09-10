@@ -1,6 +1,6 @@
 import { session } from 'electron'
 import CRDispatchManager from '../CRDispatchManager'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import {
   CRX_COOKIES_GET_,
   CRX_COOKIES_GET_ALL_,
@@ -8,8 +8,8 @@ import {
   CRX_COOKIES_REMOVE_,
   CRX_COOKIES_CHANGED_
 } from 'shared/crExtensionIpcEvents'
-import CRExtensionBackgroundPage from './CRExtensionBackgroundPage'
-import { MailboxesSessionManager } from 'SessionManager'
+import { CRExtensionWebPreferences } from 'WebContentsManager'
+import { AccountSessionManager } from 'SessionManager'
 import { ElectronCookiePromise } from 'ElectronTools'
 
 const ELECTRON_TO_CRX_COOKIE_CHANGE_CAUSE = {
@@ -44,7 +44,7 @@ class CRExtensionCookies {
         this._handleSessionManaged(session.fromPartition(partitionId))
       })
       if (scopes.has('tabs')) {
-        MailboxesSessionManager.on('session-managed', this._handleSessionManaged)
+        AccountSessionManager.on('session-managed', this._handleSessionManaged)
       }
     }
   }
@@ -54,7 +54,7 @@ class CRExtensionCookies {
     CRDispatchManager.unregisterHandler(`${CRX_COOKIES_GET_ALL_}${this.extension.id}`, this.handleGetAllCookies)
     CRDispatchManager.unregisterHandler(`${CRX_COOKIES_SET_}${this.extension.id}`, this.handleSetCookie)
     CRDispatchManager.unregisterHandler(`${CRX_COOKIES_REMOVE_}${this.extension.id}`, this.handleRemoveCookie)
-    MailboxesSessionManager.removeListener('session-managed', this._handleSessionManaged)
+    AccountSessionManager.removeListener('session-managed', this._handleSessionManaged)
     Array.from(this._changeListenerSessions).forEach((ses) => {
       ses.cookies.removeListener('changed', this._handleCookiesChanged)
     })
@@ -72,11 +72,11 @@ class CRExtensionCookies {
     const scopes = this.extension.manifest.wavebox.cookieScopes
     const partitions = []
     if (scopes.has('background')) {
-      partitions.push(CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id))
+      partitions.push(CRExtensionWebPreferences.partitionIdForExtension(this.extension.id))
     }
     if (scopes.has('tabs')) {
-      mailboxStore.getState().mailboxIds().forEach((mailboxId) => {
-        partitions.push(`persist:${mailboxId}`)
+      accountStore.getState().allPartitions().forEach((partitionId) => {
+        partitions.push(partitionId)
       })
     }
     return partitions
@@ -86,7 +86,7 @@ class CRExtensionCookies {
   * @return the session for the background page
   */
   _getBackgroundPageSession () {
-    const partitionId = CRExtensionBackgroundPage.partitionIdForExtension(this.extension.id)
+    const partitionId = CRExtensionWebPreferences.partitionIdForExtension(this.extension.id)
     return session.fromPartition(partitionId)
   }
 

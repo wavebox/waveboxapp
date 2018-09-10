@@ -1,11 +1,8 @@
-import {mailboxStore} from 'stores/mailbox'
-import {slackStore} from 'stores/slack'
-import MailboxTypes from 'shared/Models/Accounts/MailboxTypes'
-import {ServerVent} from 'Server'
-import {
-  WB_START_CONNECTION_REPORTER,
-  WB_COLLECT_CONNECTION_METRICS
-} from 'shared/ipcEvents'
+import { accountStore } from 'stores/account'
+import { slackStore } from 'stores/slack'
+import { ServerVent } from 'Server'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
+import { WB_START_CONNECTION_REPORTER, WB_COLLECT_CONNECTION_METRICS } from 'shared/ipcEvents'
 import { ipcRenderer, remote } from 'electron'
 
 export default class ResourceMonitorResponder {
@@ -69,6 +66,7 @@ export default class ResourceMonitorResponder {
   * @return metric info
   */
   buildMetric = () => {
+    const accountState = accountStore.getState()
     return {
       pid: process.pid,
       connections: [
@@ -80,16 +78,16 @@ export default class ResourceMonitorResponder {
           connectionMode: ServerVent.isSocketUsingLongPoll ? 'LongPoll' : ServerVent.isSocketUsingWebSocket ? 'WebSocket' : 'Unknown'
         }
       ].concat(
-        mailboxStore
-          .getState()
-          .getMailboxesOfType(MailboxTypes.SLACK)
-          .map((mailbox) => {
+        accountState
+          .allServicesOfType(SERVICE_TYPES.SLACK)
+          .map((service) => {
             const slackState = slackStore.getState()
+            const displayName = accountState.resolvedServiceDisplayName(service.id)
             return {
-              description: `Slack : ${mailbox.displayName}`,
-              isSetup: slackState.isMailboxConnectionSetup(mailbox.id),
+              description: `Slack : ${displayName}`,
+              isSetup: slackState.isServiceConnectionSetup(service.id),
               isUnderMaintenance: false,
-              isConnected: slackState.isMailboxConnected(mailbox.id),
+              isConnected: slackState.isServiceConnected(service.id),
               connectionMode: 'WebSocket'
             }
           })

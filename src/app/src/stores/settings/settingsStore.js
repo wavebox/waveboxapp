@@ -102,7 +102,7 @@ class SettingsStore extends CoreSettingsStore {
   }
 
   handleRemoveSettingsModelField ({ id, key }) {
-    this.saveSettingsModel(id, this[id].changeData({[key]: undefined}))
+    this.saveSettingsModel(id, this[id].changeData({ [key]: undefined }))
   }
 
   /* **************************************************************************/

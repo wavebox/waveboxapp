@@ -26,18 +26,18 @@ export default class NotificationRendererUtils {
   /**
   * Checks the config to see if notifications are enabled and gets the mailbox
   * @param mailboxId: the id of the mailbox
-  * @param serviceType: the type of service
-  * @param mailboxState: the current mailbox state
+  * @param serviceId: the id of service
+  * @param accountState: the current account state
   * @param settingsState: the current settings state
   * @return { mailbox, service, enabled }
   */
-  static checkConfigAndFetchMailbox (mailboxId, serviceType, mailboxState, settingsState) {
+  static checkConfigAndFetchMailbox (mailboxId, serviceId, accountState, settingsState) {
     if (!settingsState.os.notificationsEnabled) {
       return { mailbox: undefined, service: undefined, enabled: false }
     }
 
-    const mailbox = mailboxState.getMailbox(mailboxId)
-    const service = mailbox ? mailbox.serviceForType(serviceType) : undefined
+    const mailbox = accountState.getMailbox(mailboxId)
+    const service = accountState.getService(serviceId)
     const showNotifications = service ? service.showNotifications : false
     return { mailbox: mailbox, service: service, enabled: showNotifications }
   }
@@ -122,12 +122,19 @@ export default class NotificationRendererUtils {
   * Gets the icon depending on mailbox settings etc
   * @param mailbox: the mailbox
   * @param service: the service
-  * @param mailboxState: the current mailbox state
+  * @param accountState: the current mailbox state
   * @return the icon if available and should be shown or undefined
   */
-  static preparedServiceIcon (mailbox, service, mailboxState) {
+  static preparedServiceIcon (mailbox, service, accountState) {
     if (service.showAvatarInNotifications) {
-      return mailboxState.getResolvedAvatar(mailbox.id, (i) => Resolver.image(i))
+      const avatar = accountState.getServiceAvatarConfig(service.id)
+      if (avatar.hasAvatar) {
+        return avatar.resolveAvatar((i) => Resolver.image(i))
+      } else if (avatar.hasServiceIcon) {
+        return avatar.resolveServiceIcon((i) => Resolver.image(i))
+      } else {
+        return undefined
+      }
     } else {
       return undefined
     }
@@ -137,12 +144,12 @@ export default class NotificationRendererUtils {
   * Gets the icon depending on mailbox settings etc and stores it locally on disk
   * @param mailbox: the mailbox
   * @param service: the service
-  * @param mailboxState: the current mailboxState
+  * @param accountState: the current accountState
   * @return an always resolved promise with the local file url of the icon or undefined on failure etc
   */
-  static preparedServiceIconWin32 (mailbox, service, mailboxState) {
+  static preparedServiceIconWin32 (mailbox, service, accountState) {
     return this.preparedIconWin32(
-      this.preparedServiceIcon(mailbox, service, mailboxState),
+      this.preparedServiceIcon(mailbox, service, accountState),
       mailbox.id.replace(/-/g, '')
     )
   }

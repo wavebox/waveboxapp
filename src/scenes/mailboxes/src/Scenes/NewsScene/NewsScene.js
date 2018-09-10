@@ -1,32 +1,27 @@
 import React from 'react'
-import { RaisedButton } from 'material-ui'
+import { Button, Dialog, DialogContent, DialogActions } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
-import { WaveboxWebView, FullscreenModal } from 'Components'
+import { WaveboxWebView } from 'Components'
 import { NEWS_URL } from 'shared/constants'
 import { settingsActions } from 'stores/settings'
-import Spinner from 'sharedui/Components/Activity/Spinner'
-import * as Colors from 'material-ui/styles/colors'
+import Spinner from 'wbui/Activity/Spinner'
+import { withStyles } from '@material-ui/core/styles'
+import lightBlue from '@material-ui/core/colors/lightBlue'
 
 const styles = {
-  modalActions: {
-    position: 'absolute',
-    height: 52,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'white',
-    borderTop: '1px solid rgb(232, 232, 232)',
-    borderBottomLeftRadius: 2,
-    borderBottomRightRadius: 2
+  dialog: {
+    maxWidth: '100%',
+    width: '100%',
+    height: '100%'
   },
-  modalBody: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 52,
-    borderTopLeftRadius: 2,
-    borderTopRightRadius: 2
+  dialogContent: {
+    position: 'relative'
+  },
+  dialogActions: {
+    backgroundColor: 'rgb(242, 242, 242)',
+    borderTop: '1px solid rgb(232, 232, 232)',
+    margin: 0,
+    padding: '8px 4px'
   },
   loadingCover: {
     position: 'absolute',
@@ -41,7 +36,8 @@ const styles = {
   }
 }
 
-export default class NewsScene extends React.Component {
+@withStyles(styles)
+class NewsScene extends React.Component {
   /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
@@ -86,6 +82,7 @@ export default class NewsScene extends React.Component {
   }
 
   render () {
+    const { classes } = this.props
     const {
       open,
       renderWebview,
@@ -93,26 +90,32 @@ export default class NewsScene extends React.Component {
     } = this.state
 
     return (
-      <FullscreenModal
-        modal={false}
-        actionsContainerStyle={styles.modalActions}
-        bodyStyle={styles.modalBody}
-        actions={(<RaisedButton primary label='Close' onClick={this.handleClose} />)}
+      <Dialog
+        disableEnforceFocus
         open={open}
-        onRequestClose={this.handleClose}>
-        {isLoading ? (
-          <div style={styles.loadingCover}>
-            <Spinner size={50} color={Colors.lightBlue600} speed={0.75} />
-          </div>
-        ) : undefined}
-        {renderWebview ? (
-          <WaveboxWebView
-            didStartLoading={() => this.setState({ isLoading: true })}
-            didStopLoading={() => this.setState({ isLoading: false })}
-            saltClientInfoInUrl={false}
-            src={NEWS_URL} />
-        ) : undefined}
-      </FullscreenModal>
+        onClose={this.handleClose}
+        classes={{ paper: classes.dialog }}>
+        <DialogContent className={classes.dialogContent}>
+          {isLoading ? (
+            <div className={classes.loadingCover}>
+              <Spinner size={50} color={lightBlue[600]} speed={0.75} />
+            </div>
+          ) : undefined}
+          {renderWebview ? (
+            <WaveboxWebView
+              didStartLoading={() => this.setState({ isLoading: true })}
+              didStopLoading={() => this.setState({ isLoading: false })}
+              src={NEWS_URL} />
+          ) : undefined}
+        </DialogContent>
+        <DialogActions className={classes.dialogActions}>
+          <Button variant='raised' color='primary' onClick={this.handleClose}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     )
   }
 }
+
+export default NewsScene

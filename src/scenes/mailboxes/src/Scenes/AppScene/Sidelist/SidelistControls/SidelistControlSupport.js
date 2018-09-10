@@ -1,15 +1,28 @@
 import React from 'react'
-import { FontIcon } from 'material-ui'
 import SidelistControl from './SidelistControl'
-import * as Colors from 'material-ui/styles/colors'
 import { TOUR_STEPS } from 'stores/settings/Tour'
+import { withStyles } from '@material-ui/core/styles'
+import ThemeTools from 'wbui/Themes/ThemeTools'
+import SidelistFAIcon from './SidelistFAIcon'
+import FARQuestionCircleIcon from 'wbfa/FARQuestionCircle'
 
-export default class SidelistControlSupport extends React.Component {
+const styles = (theme) => ({
+  icon: {
+    color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.support.icon.color'),
+    '&:hover': {
+      color: ThemeTools.getStateValue(theme, 'wavebox.sidebar.support.icon.color', 'hover')
+    }
+  }
+})
+
+@withStyles(styles, { withTheme: true })
+class SidelistControlSupport extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   render () {
+    const { classes } = this.props
     return (
       <SidelistControl
         className={`WB-SidelistControlSupport`}
@@ -23,13 +36,11 @@ export default class SidelistControlSupport extends React.Component {
             involved with the Wavebox community
           </div>
         )}
-        iconStyle={{ fontSize: '24px', marginLeft: -3 }}
         icon={(
-          <FontIcon
-            className='far fa-fw fa-question-circle'
-            color={Colors.teal600}
-            hoverColor={Colors.teal200} />
+          <SidelistFAIcon className={classes.icon} IconClass={FARQuestionCircleIcon} />
         )} />
     )
   }
 }
+
+export default SidelistControlSupport

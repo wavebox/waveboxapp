@@ -1,10 +1,9 @@
 import { ipcRenderer } from 'electron'
 import Bootstrap from 'R/Bootstrap'
 import { userStore } from 'stores/user'
-import { mailboxStore } from 'stores/mailbox'
+import { accountStore } from 'stores/account'
 import { crextensionStore } from 'stores/crextension'
 import settingsStore from 'stores/settings/settingsStore'
-import CoreMailbox from 'shared/Models/Accounts/CoreMailbox'
 import SettingsIdent from 'shared/Models/Settings/SettingsIdent'
 import querystring from 'querystring'
 import os from 'os'
@@ -17,8 +16,9 @@ import {
   ANALYTICS_CONFIG_INTERVAL
 } from 'shared/constants'
 import {
-  WB_METRICS_GET_METRICS_SYNC
+  WB_METRICS_GET_CHROMIUM_METRICS_SYNC
 } from 'shared/ipcEvents'
+import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 
 const privAutoreportTO = Symbol('privAutoreportTO')
 const privLifecycleArgs = Symbol('privLifecycleArgs')
@@ -129,23 +129,14 @@ class Analytics {
   * Log the current config
   */
   sendConfig () {
-    // Mailboxes
-    const mailboxState = mailboxStore.getState()
-    const mailboxes = mailboxState.allMailboxes().map((mailbox) => {
+    // Accounts
+    const accountState = accountStore.getState()
+    const accounts = accountState.allServicesUnordered().map((service) => {
       return {
-        type: mailbox.type,
-        containerId: mailbox.type === CoreMailbox.MAILBOX_TYPES.CONTAINER ? mailbox.containerId : undefined,
-        services: mailbox.enabledServices.map((service) => {
-          const standard = { type: service.type }
-          if (mailbox.type === CoreMailbox.MAILBOX_TYPES.CONTAINER || mailbox.type === CoreMailbox.MAILBOX_TYPES.GENERIC) {
-            return {
-              ...standard,
-              url: service.url ? new URL(service.url).hostname : undefined
-            }
-          } else {
-            return standard
-          }
-        })
+        type: service.type,
+        parentId: service.parentId,
+        ...(service.type === SERVICE_TYPES.CONTAINER ? { containerId: service.containerId } : undefined),
+        ...(service.type === SERVICE_TYPES.GENERIC && service.url ? { url: new URL(service.url).hostname } : undefined)
       }
     })
 
@@ -163,7 +154,7 @@ class Analytics {
 
     // Send
     return this.sendWb('config', {
-      mailboxes: mailboxes,
+      accounts: accounts,
       settings: settings,
       extensions: extensions
     }, true)
@@ -173,7 +164,7 @@ class Analytics {
   * Log the resource usage
   */
   sendResourceUsage () {
-    const metrics = ipcRenderer.sendSync(WB_METRICS_GET_METRICS_SYNC)
+    const metrics = ipcRenderer.sendSync(WB_METRICS_GET_CHROMIUM_METRICS_SYNC)
     if (!metrics) { return Promise.resolve({ sent: false }) }
     const sendMetrics = metrics.map((metric) => {
       if (metric.webContentsInfo) {
@@ -255,13 +246,13 @@ class Analytics {
   */
   buildDefaultGAArguments () {
     const userState = userStore.getState()
-    const mailboxState = mailboxStore.getState()
+    const accountState = accountStore.getState()
 
     return {
       ...this[privLifecycleArgs].ga,
       cid: userState.analyticsId,
       vp: `${window.innerWidth}x${window.innerHeight}`,
-      cd1: mailboxState.mailboxCount(),
+      cd1: accountState.serviceCount(),
       cd3: userState.user.plan
     }
   }

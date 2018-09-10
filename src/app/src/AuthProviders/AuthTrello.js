@@ -1,8 +1,9 @@
-import {ipcMain} from 'electron'
+import { ipcMain } from 'electron'
 import { WB_AUTH_TRELLO, WB_AUTH_TRELLO_COMPLETE, WB_AUTH_TRELLO_ERROR } from 'shared/ipcEvents'
 import { URL } from 'url'
 import querystring from 'querystring'
 import AuthWindow from 'Windows/AuthWindow'
+import Resolver from 'Runtime/Resolver'
 
 const TOKEN_REGEX = new RegExp(/[&#]?token=([0-9a-f]{64})/)
 
@@ -62,7 +63,9 @@ class AuthTrello {
           sandbox: true,
           nativeWindowOpen: true,
           sharedSiteInstances: true,
-          partition: partitionId.indexOf('persist:') === 0 ? partitionId : 'persist:' + partitionId
+          partition: partitionId,
+          preload: Resolver.guestPreload(),
+          preloadCrx: Resolver.crExtensionApi()
         }
       })
       const oauthWin = waveboxOauthWin.window
@@ -156,20 +159,20 @@ class AuthTrello {
   */
   handleAuthTrello (evt, body) {
     Promise.resolve()
-      .then(() => this.promptUserToGetAuthorizationCode(body.credentials, body.id))
+      .then(() => this.promptUserToGetAuthorizationCode(body.credentials, body.partitionId))
       .then(({ appKey, token }) => {
         evt.sender.send(WB_AUTH_TRELLO_COMPLETE, {
-          id: body.id,
-          authMode: body.authMode,
-          provisional: body.provisional,
-          appKey: appKey,
-          token: token
+          mode: body.mode,
+          context: body.context,
+          auth: {
+            appKey: appKey,
+            token: token
+          }
         })
       }, (err) => {
         evt.sender.send(WB_AUTH_TRELLO_ERROR, {
-          id: body.id,
-          authMode: body.authMode,
-          provisional: body.provisional,
+          mode: body.mode,
+          context: body.context,
           error: err,
           errorString: (err || {}).toString ? (err || {}).toString() : undefined,
           errorMessage: (err || {}).message ? (err || {}).message : undefined,

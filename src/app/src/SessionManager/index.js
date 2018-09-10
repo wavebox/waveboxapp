@@ -1,8 +1,8 @@
 import SessionManager from './SessionManager'
-import MailboxesSessionManager from './MailboxesSessionManager'
+import AccountSessionManager from './AccountSessionManager'
 import ExtensionSessionManager from './ExtensionSessionManager'
 export {
   SessionManager,
-  MailboxesSessionManager,
+  AccountSessionManager,
   ExtensionSessionManager
 }

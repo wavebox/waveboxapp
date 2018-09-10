@@ -1,27 +1,27 @@
-import './KeychainAddDialog.less'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import PropTypes from 'prop-types'
 import KeychainStorageInfo from './KeychainStorageInfo'
 import {
-  Dialog,
-  TextField,
-  FlatButton,
-  RaisedButton,
-  Toolbar,
-  ToolbarGroup,
-  ToolbarTitle
-} from 'material-ui'
+  Dialog, DialogTitle, DialogContent, DialogActions,
+  Toolbar, Typography, TextField, Button
+} from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles'
+import grey from '@material-ui/core/colors/grey'
+import StyleMixins from 'wbui/Styles/StyleMixins'
 
 const styles = {
-  dialog: {
-    maxWidth: 1024,
-    width: '95%'
-  },
   toolbar: {
-    marginTop: -24,
-    marginLeft: -24,
-    marginRight: -24
+    backgroundColor: grey[200]
+  },
+  toolbarText: {
+    color: grey[600]
+  },
+  dialogTitle: {
+    padding: 0
+  },
+  dialogContent: {
+    ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
   },
   title: {
     fontSize: '16px',
@@ -34,19 +34,13 @@ const styles = {
     lineHeight: '16px',
     display: 'block'
   },
-  field: {
-    marginTop: -15
-  },
-  password: {
-    backgroundImage: 'none'
+  actionButton: {
+    marginRight: 8
   }
 }
 
-const ACCOUNT_REF = 'ACCOUNT_REF'
-const PASSWORD_REF = 'PASSWORD_REF'
-const PASSWORD_REPEAT_REF = 'PASSWORD_REPEAT_REF'
-
-export default class KeychainAddDialog extends React.Component {
+@withStyles(styles)
+class KeychainAddDialog extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -57,6 +51,18 @@ export default class KeychainAddDialog extends React.Component {
     onRequestClose: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired,
     currentAccountNames: PropTypes.array.isRequired
+  }
+
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    this.accountInputRef = undefined
+    this.passwordInputRef = undefined
+    this.passwordRepeatInputRef = undefined
   }
 
   /* **************************************************************************/
@@ -146,7 +152,7 @@ export default class KeychainAddDialog extends React.Component {
   }
 
   render () {
-    const { serviceName, open, onRequestClose } = this.props
+    const { serviceName, open, onRequestClose, classes } = this.props
     const {
       account,
       accountError,
@@ -157,86 +163,86 @@ export default class KeychainAddDialog extends React.Component {
     } = this.state
 
     return (
-      <Dialog
-        actions={(
-          <div>
-            <FlatButton
-              style={{ marginRight: 8 }}
-              onClick={onRequestClose}
-              label='Cancel' />
-            <RaisedButton
-              primary
-              onClick={this.handleSave}
-              label='Save' />
-          </div>
-        )}
-        contentStyle={styles.dialog}
-        bodyClassName='ReactComponent-KeychainAddDialogBody'
-        modal={false}
-        open={open}
-        autoScrollBodyContent
-        onRequestClose={onRequestClose}>
-        <Toolbar style={styles.toolbar}>
-          <ToolbarGroup>
-            <ToolbarTitle
-              text={(
-                <span>
-                  <span style={styles.title}>
-                    <strong>Add password for </strong>
-                    <span>{serviceName}</span>
-                  </span>
-                  <KeychainStorageInfo style={styles.storageInfo} />
+      <Dialog open={open} onClose={onRequestClose} fullWidth>
+        <DialogTitle className={classes.dialogTitle} disableTypography>
+          <Toolbar className={classes.toolbar}>
+            <Typography className={classes.toolbarText}>
+              <span>
+                <span className={classes.title}>
+                  <strong>Add password for </strong>
+                  <span>{serviceName}</span>
                 </span>
-              )} />
-          </ToolbarGroup>
-        </Toolbar>
-        <TextField
-          ref={ACCOUNT_REF}
-          value={account}
-          errorText={accountError}
-          fullWidth
-          style={styles.field}
-          onChange={(evt) => this.setState({account: evt.target.value})}
-          onKeyPress={(evt) => {
-            if (evt.key === 'Enter') {
-              this.refs[PASSWORD_REF].focus()
-            }
-          }}
-          floatingLabelText='Account Name'
-          hintText='My Account Name' />
-        <br />
-        <TextField
-          ref={PASSWORD_REF}
-          value={password}
-          errorText={passwordError}
-          fullWidth
-          onChange={(evt) => this.setState({password: evt.target.value})}
-          onKeyPress={(evt) => {
-            if (evt.key === 'Enter') {
-              this.refs[PASSWORD_REPEAT_REF].focus()
-            }
-          }}
-          type='password'
-          style={styles.field}
-          inputStyle={styles.password}
-          floatingLabelText='Password' />
-        <br />
-        <TextField
-          ref={PASSWORD_REPEAT_REF}
-          value={passwordRepeat}
-          errorText={passwordRepeatError}
-          fullWidth
-          onChange={(evt) => this.setState({passwordRepeat: evt.target.value})}
-          onKeyPress={(evt) => {
-            if (evt.key === 'Enter') {
-              this.handleSave()
-            }
-          }}
-          type='password'
-          style={styles.field}
-          inputStyle={styles.password}
-          floatingLabelText='Repeat Password' />
+                <KeychainStorageInfo className={classes.storageInfo} />
+              </span>
+            </Typography>
+          </Toolbar>
+        </DialogTitle>
+        <DialogContent className={classes.dialogContent}>
+          <TextField
+            inputRef={(n) => { this.accountInputRef = n }}
+            value={account}
+            error={!!accountError}
+            helperText={accountError}
+            fullWidth
+            margin='dense'
+            onChange={(evt) => this.setState({ account: evt.target.value })}
+            onKeyPress={(evt) => {
+              if (evt.key === 'Enter') {
+                this.passwordInputRef.focus()
+              }
+            }}
+            label='Account Name'
+            placeholder='My Account Name' />
+          <br />
+          <TextField
+            inputRef={(n) => { this.passwordInputRef = n }}
+            value={password}
+            error={!!passwordError}
+            helperText={passwordError}
+            fullWidth
+            margin='dense'
+            onChange={(evt) => this.setState({ password: evt.target.value })}
+            onKeyPress={(evt) => {
+              if (evt.key === 'Enter') {
+                this.passwordRepeatInputRef.focus()
+              }
+            }}
+            type='password'
+            label='Password' />
+          <br />
+          <TextField
+            inputRef={(n) => { this.passwordRepeatInputRef = n }}
+            value={passwordRepeat}
+            error={!!passwordRepeatError}
+            helperText={passwordRepeatError}
+            fullWidth
+            margin='dense'
+            onChange={(evt) => this.setState({ passwordRepeat: evt.target.value })}
+            onKeyPress={(evt) => {
+              if (evt.key === 'Enter') {
+                this.handleSave()
+              }
+            }}
+            type='password'
+            label='Repeat Password' />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            className={classes.actionButton}
+            onClick={onRequestClose}>
+            Cancel
+          </Button>
+          <Button
+            className={classes.actionButton}
+            variant='raised'
+            color='primary'
+            onClick={this.handleSave}>
+            Save
+          </Button>
+        </DialogActions>
       </Dialog>
     )
   }
 }
+
+export default KeychainAddDialog

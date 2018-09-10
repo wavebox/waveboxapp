@@ -1,35 +1,51 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { FontIcon } from 'material-ui'
+import { withStyles } from '@material-ui/core/styles'
+import { DialogTitle } from '@material-ui/core'
+import classNames from 'classnames'
+import SystemUpdateIcon from '@material-ui/icons/SystemUpdate'
 
-export default class UpdateModalTitle extends React.Component {
+const styles = {
+  root: {
+
+  },
+  icon: {
+    verticalAlign: 'top',
+    marginRight: 10
+  }
+}
+
+@withStyles(styles)
+class UpdateModalTitle extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
     text: PropTypes.string.isRequired,
-    color: PropTypes.string.isRequired,
-    iconName: PropTypes.string.isRequired
+    IconClass: PropTypes.any.isRequired,
+    iconClassName: PropTypes.string,
+    titleClassName: PropTypes.string
   }
   static defaultProps = {
     text: 'Wavebox Updates',
-    color: 'black',
-    iconName: 'system_update_alt'
+    IconClass: SystemUpdateIcon
   }
 
+  /* **************************************************************************/
+  // Rendering
+  /* **************************************************************************/
+
   render () {
-    const { text, color, iconName, ...passProps } = this.props
+    const { text, IconClass, iconClassName, titleClassName, className, classes, ...passProps } = this.props
+
     return (
-      <h3 {...passProps}>
-        <FontIcon
-          className='material-icons'
-          color={color}
-          style={{ verticalAlign: 'text-top', marginRight: 10 }}>
-          {iconName}
-        </FontIcon>
-        <span style={{ color: color }}>{text}</span>
-      </h3>
+      <DialogTitle className={classNames(className, classes.root)} {...passProps}>
+        <IconClass className={classNames(iconClassName, classes.icon)} />
+        <span className={titleClassName}>{text}</span>
+      </DialogTitle>
     )
   }
 }
+
+export default UpdateModalTitle

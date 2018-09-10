@@ -1,17 +1,17 @@
-import './ReactComponents.less'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Provider from 'Scenes/Provider'
-import {mailboxStore, mailboxActions, mailboxDispatch} from 'stores/mailbox'
-import {settingsStore, settingsActions} from 'stores/settings'
-import {updaterStore, updaterActions} from 'stores/updater'
-import {userStore, userActions} from 'stores/user'
-import {emblinkStore, emblinkActions} from 'stores/emblink'
-import {crextensionStore, crextensionActions} from 'stores/crextension'
-import {platformStore, platformActions} from 'stores/platform'
-import {notifhistStore, notifhistActions} from 'stores/notifhist'
+import { accountStore, accountActions, accountDispatch } from 'stores/account'
+import { settingsStore, settingsActions } from 'stores/settings'
+import { updaterStore, updaterActions } from 'stores/updater'
+import { userStore, userActions } from 'stores/user'
+import { emblinkStore, emblinkActions } from 'stores/emblink'
+import { crextensionStore, crextensionActions } from 'stores/crextension'
+import { platformStore, platformActions } from 'stores/platform'
+import { guestStore, guestActions } from 'stores/guest'
+import { notifhistStore, notifhistActions } from 'stores/notifhist'
 import Debug from 'Debug'
-import MouseNavigationDarwin from 'sharedui/Navigators/MouseNavigationDarwin'
+import MouseNavigationDarwin from 'wbui/MouseNavigationDarwin'
 import ResourceMonitorResponder from './ResourceMonitorResponder'
 import {
   WB_MAILBOXES_WINDOW_JS_LOADED,
@@ -26,36 +26,30 @@ webFrame.setLayoutZoomLevelLimits(1, 1)
 
 // Prevent drag/drop
 document.addEventListener('drop', (evt) => {
-  if (evt.target.tagName !== 'INPUT' && evt.target.type !== 'file') {
+  // Don't invert this, some dom elements throw when calling .type
+  if (evt.target.tagName === 'INPUT' && evt.target.type === 'file') {
+    /* no-op */
+  } else {
     evt.preventDefault()
     evt.stopPropagation()
   }
 }, false)
 document.addEventListener('dragover', (evt) => {
-  if (evt.target.tagName !== 'INPUT' && evt.target.type !== 'file') {
+  // Don't invert this, some dom elements throw when calling .type
+  if (evt.target.tagName === 'INPUT' && evt.target.type === 'file') {
+    /* no-op */
+  } else {
     evt.preventDefault()
     evt.stopPropagation()
   }
 }, false)
 
-// Navigation
-if (process.platform === 'darwin') {
-  const mouseNavigator = new MouseNavigationDarwin(
-    () => mailboxDispatch.navigateBack(),
-    () => mailboxDispatch.navigateForward()
-  )
-  mouseNavigator.register()
-  window.addEventListener('beforeunload', () => {
-    mouseNavigator.unregister()
-  })
-}
-
 // Load what we have in the db
 userStore.getState()
 userActions.load()
-mailboxStore.getState()
-mailboxActions.load()
-settingsStore.getState()
+accountStore.getState()
+accountActions.load()
+const settingsState = settingsStore.getState()
 settingsActions.load()
 updaterStore.getState()
 updaterActions.load()
@@ -67,11 +61,26 @@ emblinkStore.getState()
 emblinkActions.load()
 notifhistStore.getState()
 notifhistActions.load()
+guestStore.getState()
+guestActions.load()
 
 // Setup the updaters
 userActions.startAutoUpdateExtensions()
 userActions.startAutoUpdateWireConfig()
 userActions.startAutoUpdateContainers()
+userActions.startAutoUploadUserProfile()
+
+// Navigation
+if (process.platform === 'darwin' && settingsState.launched.app.enableMouseNavigationDarwin) {
+  const mouseNavigator = new MouseNavigationDarwin(
+    () => accountDispatch.navigateBack(),
+    () => accountDispatch.navigateForward()
+  )
+  mouseNavigator.register()
+  window.addEventListener('beforeunload', () => {
+    mouseNavigator.unregister()
+  })
+}
 
 // Debugging
 Debug.load()
@@ -104,14 +113,10 @@ resourceMonitorListener.listen()
 
 // Prep any wizards
 setTimeout(() => {
-  const mailboxState = mailboxStore.getState()
   const settingsState = settingsStore.getState()
-  const userState = userStore.getState()
 
   if (process.platform === 'linux' && !settingsState.app.hasSeenLinuxSetupMessage) {
     window.location.hash = '/setup/linux'
-  } else if (!settingsState.app.hasSeenOptimizeWizard && userState.user.hasSleepable && mailboxState.mailboxCount() > 1) {
-    window.location.hash = '/optimize_wizard'
   }
 }, 1000)
 

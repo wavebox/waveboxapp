@@ -1,11 +1,17 @@
-import './AppSceneWindowTitlebar.less'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import classnames from 'classnames'
 import { remote } from 'electron'
-import { FontIcon } from 'material-ui'
+import { withStyles } from '@material-ui/core/styles'
+import styles from './AppSceneWindowTitlebarStyles'
+import FASTimesIcon from 'wbfa/FASTimes'
+import FARTimesIcon from 'wbfa/FARTimes'
+import FARSquareIcon from 'wbfa/FARSquare'
+import FARWindowMinimizeIcon from 'wbfa/FARWindowMinimize'
+import FASMinusIcon from 'wbfa/FASMinus'
 
-export default class AppSceneWindowTitlebar extends React.Component {
+@withStyles(styles)
+class AppSceneWindowTitlebar extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -89,7 +95,7 @@ export default class AppSceneWindowTitlebar extends React.Component {
 
   render () {
     const { isFocused } = this.state
-    const { style, className, ...passProps } = this.props
+    const { style, className, classes, ...passProps } = this.props
 
     return (
       <div
@@ -98,8 +104,7 @@ export default class AppSceneWindowTitlebar extends React.Component {
           ...style
         }}
         className={classnames(
-          'RC-AppSceneWindowTitlebar',
-          process.platform,
+          classes.titlebar,
           isFocused ? 'focused' : undefined,
           className
         )}
@@ -108,21 +113,21 @@ export default class AppSceneWindowTitlebar extends React.Component {
         <div className='controls'>
           <div className='control close' onClick={this.handleClose}>
             {process.platform === 'darwin' ? (
-              <FontIcon className='icon fas fa-times' />
+              <FASTimesIcon className='icon' />
             ) : (
-              <FontIcon className='icon far fa-times' />
+              <FARTimesIcon className='icon' />
             )}
           </div>
           <div className='control maximize'>
             {process.platform === 'darwin' ? undefined : (
-              <FontIcon className='icon far fa-square' />
+              <FARSquareIcon className='icon' />
             )}
           </div>
           <div className='control minimize' onClick={this.handleMinimize}>
             {process.platform === 'darwin' ? (
-              <FontIcon className='icon fas fa-minus' />
+              <FASMinusIcon className='icon' />
             ) : (
-              <FontIcon className='icon far fa-window-minimize' />
+              <FARWindowMinimizeIcon className='icon' />
             )}
           </div>
         </div>
@@ -130,3 +135,5 @@ export default class AppSceneWindowTitlebar extends React.Component {
     )
   }
 }
+
+export default AppSceneWindowTitlebar

@@ -1,9 +1,11 @@
 import electron from 'electron'
 import WaveboxWindow from '../WaveboxWindow'
 import { settingsStore } from 'stores/settings'
-import { mailboxActions, ServiceReducer } from 'stores/mailbox'
+import { accountActions, ServiceDataReducer } from 'stores/account'
 import { userStore } from 'stores/user'
 import { GuestWebPreferences } from 'WebContentsManager'
+import path from 'path'
+import { URL } from 'url'
 import {
   AuthGoogle,
   AuthMicrosoft,
@@ -17,6 +19,7 @@ import {
   WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD,
   WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE,
   WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
+  WB_MAILBOXES_WINDOW_SHOW_WAVEBOX_ACCOUNT,
   WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER,
   WB_MAILBOXES_WINDOW_SHOW_NEWS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
@@ -41,10 +44,6 @@ import Resolver from 'Runtime/Resolver'
 import MailboxesWindowTabManager from './MailboxesWindowTabManager'
 import MailboxesWindowBehaviour from './MailboxesWindowBehaviour'
 
-const ALLOWED_URLS = [
-  'file://' + Resolver.mailboxesScene('mailboxes.html'),
-  'file://' + Resolver.mailboxesScene('offline.html')
-]
 const MIN_WINDOW_WIDTH = 400
 const MIN_WINDOW_HEIGHT = 300
 
@@ -145,7 +144,7 @@ class MailboxesWindow extends WaveboxWindow {
       if (!hidden) { this.window.show() }
     })
     this.window.on('minimize', this._handleWindowMinimize)
-    this.tabManager = new MailboxesWindowTabManager(this.window.webContents.id)
+    this.tabManager = new MailboxesWindowTabManager(this.window.webContents.id, this._handleTabManagerEmitEvent)
     this.behaviour = new MailboxesWindowBehaviour(this.window.webContents.id, this.tabManager)
 
     // Bind event listeners
@@ -153,7 +152,7 @@ class MailboxesWindow extends WaveboxWindow {
     electron.ipcMain.on(WB_FOCUS_MAILBOXES_WINDOW, this.handleFocusMailboxesWindow)
 
     this.window.on('focus', () => {
-      mailboxActions.reduceService.defer(undefined, undefined, ServiceReducer.mergeChangesetOnActive)
+      accountActions.reduceServiceData.defer(undefined, ServiceDataReducer.mergeChangesetOnActive)
     })
 
     this.window.webContents.on('will-attach-webview', this._handleWillAttachWebview)
@@ -193,7 +192,29 @@ class MailboxesWindow extends WaveboxWindow {
   * @return false to suppress, true to allow
   */
   allowNavigate (evt, browserWindow, nextUrl) {
-    return !!ALLOWED_URLS.find((allowed) => nextUrl.startsWith(allowed))
+    const purl = new URL(nextUrl)
+    if (purl.protocol !== 'file:') { return false }
+
+    const nextPath = path.normalize(decodeURIComponent(purl.pathname)).substr(
+      process.platform === 'win32' ? 1 : 0 // win32 has a leading slash
+    )
+    if (nextPath === Resolver.mailboxesScene('mailboxes.html')) { return true }
+    if (nextPath === Resolver.mailboxesScene('offline.html')) { return true }
+
+    return false
+  }
+
+  /* ****************************************************************************/
+  // Tab manager handlers
+  /* ****************************************************************************/
+
+  /**
+  * A dirty punch-through that allows the tab manager to emit events on behalf
+  * of this window
+  * @param ...args: passed right through to emit
+  */
+  _handleTabManagerEmitEvent = (...args) => {
+    this.emit(...args)
   }
 
   /* ****************************************************************************/
@@ -292,6 +313,15 @@ class MailboxesWindow extends WaveboxWindow {
   }
 
   /**
+  * Launches the wavebox account
+  * @return this
+  */
+  launchWaveboxAccount () {
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_SHOW_WAVEBOX_ACCOUNT, {})
+    return this
+  }
+
+  /**
   * Launches the support center
   * @return this
   */
@@ -339,12 +369,22 @@ class MailboxesWindow extends WaveboxWindow {
   /**
   * Switches mailbox
   * @param mailboxId: the id of the mailbox to switch to
-  * @param serviceType=undefined: the type of service to also switch to if desired
   * @return this
   */
-  switchMailbox (mailboxId, serviceType = undefined) {
+  switchMailbox (mailboxId) {
     this.show().focus()
-    mailboxActions.changeActive(mailboxId, serviceType)
+    accountActions.changeActiveMailbox(mailboxId)
+    return this
+  }
+
+  /**
+  * Switches service
+  * @param serviceId: the id of the service to swtich to
+  * @return this
+  */
+  switchService (serviceId) {
+    this.show().focus()
+    accountActions.changeActiveService(serviceId)
     return this
   }
 
@@ -355,7 +395,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchPrevMailbox (allowCycling = false) {
     this.show().focus()
-    mailboxActions.changeActiveToPrev(allowCycling)
+    accountActions.changeActiveMailboxToPrev(allowCycling)
     return this
   }
 
@@ -366,7 +406,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchNextMailbox (allowCycling = false) {
     this.show().focus()
-    mailboxActions.changeActiveToNext(allowCycling)
+    accountActions.changeActiveMailboxToNext(allowCycling)
     return this
   }
 
@@ -382,7 +422,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchToServiceAtIndex (index) {
     this.show().focus()
-    mailboxActions.changeActiveServiceIndex(index)
+    accountActions.changeActiveServiceIndex(index)
     return this
   }
 
@@ -393,7 +433,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchPrevService (allowCycling = false) {
     this.show().focus()
-    mailboxActions.changeActiveServiceToPrev(allowCycling)
+    accountActions.changeActiveServiceToPrev(allowCycling)
     return this
   }
 
@@ -404,7 +444,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchNextService (allowCycling = false) {
     this.show().focus()
-    mailboxActions.changeActiveServiceToNext(allowCycling)
+    accountActions.changeActiveServiceToNext(allowCycling)
     return this
   }
 
@@ -419,7 +459,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchNextTab () {
     this.show().focus()
-    mailboxActions.changeActiveTabToNext()
+    accountActions.changeActiveTabToNext()
     return this
   }
 
@@ -430,7 +470,7 @@ class MailboxesWindow extends WaveboxWindow {
   */
   switchPrevTab () {
     this.show().focus()
-    mailboxActions.changeActiveTabToPrev()
+    accountActions.changeActiveTabToPrev()
     return this
   }
 
