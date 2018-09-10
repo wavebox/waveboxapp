@@ -54,7 +54,7 @@ class DebugSettingsSection extends React.Component {
         <SettingsListItemSwitch
           label={(
             <span>
-              Write app merics log
+              Write app metrics log
               &nbsp;
               <a
                 href='#'
