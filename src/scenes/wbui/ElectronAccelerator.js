@@ -60,8 +60,7 @@ class ElectronAccelerator extends React.Component {
   */
   static isValid (accelerator) {
     if (typeof (accelerator) !== 'string') { return false }
-    if (!accelerator) { return false }
-    if (accelerator.indexOf('+') === -1) { return false }
+    if (accelerator.trim().length === 0) { return false }
 
     return true
   }
@@ -74,7 +73,7 @@ class ElectronAccelerator extends React.Component {
   */
   static convertToSymbols (accelerator, platform = process.platform) {
     return accelerator.split('+').map((item) => {
-      item = item.toUpperCase()
+      item = item.trim().toUpperCase()
       const special = conversion[item]
       if (special) {
         if (typeof (special) === 'string') {
