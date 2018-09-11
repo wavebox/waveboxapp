@@ -24,8 +24,7 @@ const styles = (theme) => {
       flexDirection: 'column'
     },
     mailboxes: {
-      flexGrow: 10000,
-      overflowY: 'auto'
+      flexGrow: 10000
     }
   }
 }

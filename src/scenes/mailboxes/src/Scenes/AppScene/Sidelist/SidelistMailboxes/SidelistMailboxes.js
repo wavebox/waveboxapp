@@ -38,6 +38,14 @@ const SortableList = SortableContainer(({ mailboxIds, disabled, sortableGetScrol
 
 const styles = {
   root: {
+    // Linux overflow fix for https://github.com/wavebox/waveboxapp/issues/712.
+    // Seems to only reproduce on certain pages (e.g. gmail)
+    ...(process.platform === 'linux' ? {
+      overflowY: 'hidden',
+      '&:hover': { overflowY: 'auto' }
+    } : {
+      overflowY: 'auto'
+    }),
     '&::-webkit-scrollbar': { display: 'none' }
   }
 }
