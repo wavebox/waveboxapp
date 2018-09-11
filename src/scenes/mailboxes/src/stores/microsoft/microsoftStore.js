@@ -109,7 +109,7 @@ class MicrosoftStore {
   */
   isInvalidGrantError (err) {
     if (err) {
-      //if (err.status === 400) { return true }
+      if (err.status === 400) { return true }
       if (err.status === 401) { return true }
     }
     return false
