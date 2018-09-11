@@ -351,7 +351,7 @@ class CoreServiceWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleOpenDevTools = (evt) => {
-    const isThisTab = evt.servceId === this.props.serviceId || (!evt.service && this.state.isActive)
+    const isThisTab = evt.serviceId === this.props.serviceId || (!evt.service && this.state.isActive)
     if (isThisTab) {
       this.refs[BROWSER_REF].openDevTools()
     }
@@ -362,7 +362,7 @@ class CoreServiceWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleRefocus = (evt) => {
-    const isThisTab = evt.servceId === this.props.serviceId || (!evt.service && this.state.isActive)
+    const isThisTab = evt.serviceId === this.props.serviceId || (!evt.service && this.state.isActive)
     if (isThisTab) {
       setTimeout(() => { this.refs[BROWSER_REF].focus() })
     }
@@ -405,7 +405,7 @@ class CoreServiceWebView extends React.Component {
   * @return the current url or null if not applicable for use
   */
   handleGetCurrentUrl = (evt) => {
-    const isThisTab = evt.servceId === this.props.serviceId
+    const isThisTab = evt.serviceId === this.props.serviceId
     if (isThisTab) {
       return this.refs[BROWSER_REF].getURL()
     } else {
