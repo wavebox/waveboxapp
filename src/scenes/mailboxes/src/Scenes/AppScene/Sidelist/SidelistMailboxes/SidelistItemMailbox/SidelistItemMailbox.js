@@ -12,7 +12,8 @@ class SidelistItemMailbox extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired
+    mailboxId: PropTypes.string.isRequired,
+    sortableGetScrollContainer: PropTypes.func.isRequired
   }
 
   /* **************************************************************************/

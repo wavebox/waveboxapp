@@ -17,7 +17,8 @@ class SidelistItemSingleService extends React.Component {
 
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
-    sidebarSize: PropTypes.string.isRequired
+    sidebarSize: PropTypes.string.isRequired,
+    sortableGetScrollContainer: PropTypes.func.isRequired
   }
 
   /* **************************************************************************/
@@ -131,7 +132,12 @@ class SidelistItemSingleService extends React.Component {
   }
 
   render () {
-    const { mailboxId, sidebarSize, ...passProps } = this.props
+    const {
+      mailboxId,
+      sidebarSize,
+      sortableGetScrollContainer,
+      ...passProps
+    } = this.props
     const {
       hasMembers,
       serviceId,

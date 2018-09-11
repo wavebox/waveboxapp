@@ -73,7 +73,8 @@ class ServiceTabs extends React.Component {
     uiLocation: PropTypes.oneOf(Object.keys(ACMailbox.SERVICE_UI_LOCATIONS)).isRequired,
     sidebarSize: PropTypes.oneOf(Object.keys(UISettings.SIDEBAR_SIZES)),
     onOpenService: PropTypes.func.isRequired,
-    onContextMenuService: PropTypes.func.isRequired
+    onContextMenuService: PropTypes.func.isRequired,
+    sortableGetScrollContainer: PropTypes.func
   }
 
   /* **************************************************************************/
@@ -156,6 +157,7 @@ class ServiceTabs extends React.Component {
       uiLocation,
       sidebarSize,
       classes,
+      sortableGetScrollContainer,
       ...passProps
     } = this.props
     const {
@@ -188,6 +190,7 @@ class ServiceTabs extends React.Component {
           sidebarSize={sidebarSize}
           onOpenService={onOpenService}
           onOpenServiceMenu={onContextMenuService}
+          getContainer={sortableGetScrollContainer}
           shouldCancelStart={(evt) => {
             // Fix for https://github.com/wavebox/waveboxapp/issues/762
             if (evt.ctrlKey === true) { return true }
