@@ -17,7 +17,7 @@ const styles = {
     '&.sidelist': {
       transition: 'max-height 0.5s ease-in-out',
       transform: 'translate3d(0,0,0)', // fix for wavebox/waveboxapp#619
-      maxHeight: 500, // just an arbitrarily big number for the animation
+      maxHeight: 5000, // just an arbitrarily big number for the animation
       overflow: 'hidden',
 
       '&.collapsed': { maxHeight: 0 }
