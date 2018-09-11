@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app } from 'electron'
 import { settingsStore } from 'stores/settings'
 import { SUPPORTS_DOCK_HIDING } from 'shared/Models/Settings/TraySettings'
 import WaveboxWindow from 'Windows/WaveboxWindow'
