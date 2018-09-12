@@ -28,7 +28,9 @@ class OSSettings extends Model {
 
   get notificationsEnabled () { return this._value_('notificationsEnabled', true) }
   get notificationsSilent () { return this._value_('notificationsSilent', false) }
-  get notificationsProvider () { return this._value_('notificationsProvider', NOTIFICATION_PROVIDERS.ELECTRON) }
+  get notificationsProvider () {
+    return this._value_('notificationsProvider', process.platform === 'darwin' ? NOTIFICATION_PROVIDERS.ENHANCED : NOTIFICATION_PROVIDERS.ELECTRON)
+  }
   get notificationsSound () { return this._value_('notificationsSound', DEFAULT_NOTIFICATION_SOUND) }
   get notificationsMutedEndEpoch () { return this._value_('notificationsMutedEndEpoch', null) }
   get notificationsMuted () {
