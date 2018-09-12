@@ -22,7 +22,7 @@ class GoogleVoiceService extends CoreACService {
       'google/logo_voice_128px.png'
     ]
   }
-  static get humanizedColor () { return '#488DFB' }
+  static get humanizedColor () { return '#198E80' }
 
   /* **************************************************************************/
   // Properties: Support
