@@ -478,7 +478,7 @@ class CoreAccountStore extends RemoteStore {
     this.unrestrictedServices = () => {
       const user = this.getUser()
       if (user.hasAccountLimit || user.hasAccountTypeRestriction) {
-        return Array.from(this._services_.values())
+        return this.allServicesOrdered()
           .filter((service) => user.hasAccountsOfType(service.type))
           .slice(0, user.accountLimit)
       } else {
@@ -492,7 +492,7 @@ class CoreAccountStore extends RemoteStore {
     this.unrestrictedServiceIds = () => {
       const user = this.getUser()
       if (user.hasAccountLimit || user.hasAccountTypeRestriction) {
-        return Array.from(this._services_.values())
+        return this.allServicesOrdered()
           .filter((service) => user.hasAccountsOfType(service.type))
           .slice(0, user.accountLimit)
           .map((service) => service.id)
@@ -759,9 +759,12 @@ class CoreAccountStore extends RemoteStore {
     * @return the unread count for the given mailbox and user restriction
     */
     this.userUnreadCountForMailbox = (mailboxId) => {
+      if (mailboxId==="ca77a954-ded3-4714-843f-5bb7d25dae7e") { console.log("Here1") }
       const mailbox = this.getMailbox(mailboxId)
       if (!mailbox) { return 0 }
+      if (mailboxId==="ca77a954-ded3-4714-843f-5bb7d25dae7e") { console.log("Here2") }
       const unrestrictedServiceSet = new Set(this.unrestrictedServices().map((s) => s.id))
+      if (mailboxId==="ca77a954-ded3-4714-843f-5bb7d25dae7e") { console.log("Here3",unrestrictedServiceSet) }
 
       return mailbox.allServices.reduce((acc, serviceId) => {
         if (unrestrictedServiceSet.has(serviceId)) {
