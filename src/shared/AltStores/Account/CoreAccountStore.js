@@ -759,12 +759,9 @@ class CoreAccountStore extends RemoteStore {
     * @return the unread count for the given mailbox and user restriction
     */
     this.userUnreadCountForMailbox = (mailboxId) => {
-      if (mailboxId==="ca77a954-ded3-4714-843f-5bb7d25dae7e") { console.log("Here1") }
       const mailbox = this.getMailbox(mailboxId)
       if (!mailbox) { return 0 }
-      if (mailboxId==="ca77a954-ded3-4714-843f-5bb7d25dae7e") { console.log("Here2") }
       const unrestrictedServiceSet = new Set(this.unrestrictedServices().map((s) => s.id))
-      if (mailboxId==="ca77a954-ded3-4714-843f-5bb7d25dae7e") { console.log("Here3",unrestrictedServiceSet) }
 
       return mailbox.allServices.reduce((acc, serviceId) => {
         if (unrestrictedServiceSet.has(serviceId)) {
