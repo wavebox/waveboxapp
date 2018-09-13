@@ -13,6 +13,7 @@ import { userStore } from 'stores/user'
 import semver from 'semver'
 import CRExtensionFS from './CRExtensionFS'
 import fetch from 'electron-fetch'
+import pkg from 'package.json'
 
 const xml2js = require('xml2js') // doesn't play nicely with import - defines defaults
 
@@ -84,10 +85,12 @@ class CRExtensionDownloader {
   /**
   * Installs an extension from the cws
   * @param extensionId: the id of the extenion
+  * @param cwsUrl: the cws url
+  * @param cwsLock: the lock def for the cws entry
   * @param patchesUrl: the url of the patches download
   * @return promise
   */
-  downloadCWSExtension (extensionId, cwsUrl, patchesUrl) {
+  downloadCWSExtension (extensionId, cwsUrl, cwsLock, patchesUrl) {
     if (this.downloads.has(extensionId)) {
       return Promise.reject(new Error(`Extension with id "${extensionId}" is in download queue already`))
     }
@@ -102,16 +105,24 @@ class CRExtensionDownloader {
     const patchesDownloadPath = path.join(RuntimePaths.CHROME_EXTENSION_DOWNLOAD_PATH, `${installId}.json`)
     const extractPath = path.join(RuntimePaths.CHROME_EXTENSION_INSTALL_PATH, extensionId)
     const patchDir = path.join(RuntimePaths.CHROME_EXTENSION_DOWNLOAD_PATH, `${installId}`)
+    const installLock = this._getCwsInstallLock(cwsLock)
 
     let manifest
     let extensionVersion
 
     return Promise.resolve()
       .then(() => { // Download CRX
-        return Promise.resolve()
-          .then(() => this._downloadFile(appendQS(cwsUrl, { prodversion: this.cwsProdVersion }), crxDownloadPath))
-          .then(() => fs.ensureDir(patchDir))
-          .then(() => crxunzip(crxDownloadPath, patchDir))
+        if (installLock) {
+          return Promise.resolve()
+            .then(() => this._downloadFile(installLock.download, crxDownloadPath))
+            .then(() => fs.ensureDir(patchDir))
+            .then(() => crxunzip(crxDownloadPath, patchDir))
+        } else {
+          return Promise.resolve()
+            .then(() => this._downloadFile(appendQS(cwsUrl, { prodversion: this.cwsProdVersion }), crxDownloadPath))
+            .then(() => fs.ensureDir(patchDir))
+            .then(() => crxunzip(crxDownloadPath, patchDir))
+        }
       })
       .then(() => { // Load manifest
         return Promise.resolve()
@@ -128,7 +139,7 @@ class CRExtensionDownloader {
       })
       .then(() => { // Download patches & apply
         return Promise.resolve()
-          .then(() => this._downloadFile(appendQS(patchesUrl, { prodversion: this.cwsProdVersion, extversion: extensionVersion }), patchesDownloadPath))
+          .then(() => this._downloadFile(appendQS(patchesUrl, { prodversion: this.cwsProdVersion, extversion: extensionVersion, _: new Date().getTime() }), patchesDownloadPath))
           .then(() => fs.readJson(patchesDownloadPath))
           .then((patches) => {
             if (patches.manifest) {
@@ -141,9 +152,19 @@ class CRExtensionDownloader {
         const lastRevision = CRExtensionFS.getLatestRevisionForVersion(extensionId, extensionVersion)
         const revision = lastRevision === undefined ? 0 : lastRevision + 1
         const versionDir = path.join(extractPath, `${extensionVersion}_${revision}`)
+        const purgeVersions = installLock
+          ? CRExtensionFS.listInstalledVersions(extensionId).map(({ versionString }) => versionString)
+          : []
+
         return Promise.resolve()
           .then(() => fs.ensureDir(versionDir))
           .then(() => fs.move(patchDir, versionDir, { overwrite: true }))
+          .then(() => {
+            purgeVersions.forEach((versionStr) => {
+              CRExtensionFS.setForPurge(extensionId, versionStr)
+            })
+            return Promise.resolve()
+          })
       })
       // Finish & tidyup
       .then(() => {
@@ -204,7 +225,7 @@ class CRExtensionDownloader {
       .then((toDownload) => {
         return toDownload.reduce((acc, info) => {
           return acc
-            .then(() => this.downloadCWSExtension(info.id, info.install.cwsUrl, info.install.waveboxUrl))
+            .then(() => this.downloadCWSExtension(info.id, info.install.cwsUrl, info.install.cwsLock, info.install.waveboxUrl))
             .catch(() => Promise.resolve())
         }, Promise.resolve())
       })
@@ -248,13 +269,23 @@ class CRExtensionDownloader {
   * @return promise which returns an array of extensions to be updated
   */
   _getUpdatableCWSExtensions (extensions) {
-    const cwsExtensions = extensions.reduce((acc, extension) => {
+    const { cwsExtensions, lockedExtensions } = extensions.reduce((acc, extension) => {
       const cwsId = extension.manifest.wavebox.cwsId
       if (cwsId) {
-        acc.set(cwsId, extension)
+        const installLock = this._getCwsInstallLock(extension.manifest.wavebox.cwsLock)
+        if (installLock) {
+          if (installLock.version !== extension.manifest.version) {
+            acc.lockedExtensions.push(extension)
+          }
+        } else {
+          acc.cwsExtensions.set(cwsId, extension)
+        }
       }
       return acc
-    }, new Map())
+    }, {
+      cwsExtensions: new Map(),
+      lockedExtensions: []
+    })
 
     const updateQS = Array.from(cwsExtensions.entries()).map(([cwsId, extension]) => {
       return querystring.stringify({
@@ -300,6 +331,7 @@ class CRExtensionDownloader {
         return Array.from(cwsIds)
           .map((cwsId) => cwsExtensions.get(cwsId))
           .filter((ext) => !!ext)
+          .concat(lockedExtensions)
       })
   }
 
@@ -326,6 +358,25 @@ class CRExtensionDownloader {
           }
         })
       })
+  }
+
+  /* ****************************************************************************/
+  // Lock utils
+  /* ****************************************************************************/
+
+  /**
+  * Gets the CWS install lock
+  * @param cwsLock: the lock array
+  * @return a matching lock or undefined
+  */
+  _getCwsInstallLock (cwsLock) {
+    return !Array.isArray(cwsLock) ? undefined : cwsLock.find((lock) => {
+      try {
+        return semver.satisfies(pkg.version, lock.wavebox)
+      } catch (ex) {
+        return false
+      }
+    })
   }
 }
 

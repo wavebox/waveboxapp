@@ -89,7 +89,7 @@ class CRExtensionManager {
         )
       this._handleSendInstallMetadata()
     } else if (installInfo.cwsUrl && installInfo.waveboxUrl) {
-      this.downloader.downloadCWSExtension(extensionId, installInfo.cwsUrl, installInfo.waveboxUrl)
+      this.downloader.downloadCWSExtension(extensionId, installInfo.cwsUrl, installInfo.cwsLock, installInfo.waveboxUrl)
         .then(
           () => {
             this.installQueue.add(extensionId)
