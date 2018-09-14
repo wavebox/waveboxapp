@@ -16,6 +16,17 @@ class CRExtensionWebPreferences {
   }
 
   /**
+  * Checks if this is an extension partition
+  * @param partitionId: the id of the partition
+  * @return true if this is an extension partition
+  */
+  static isExtensionPartition (partitionId) {
+    return typeof (partitionId) === 'string'
+      ? partitionId.startsWith(CR_EXTENSION_PARTITION_PREFIX)
+      : false
+  }
+
+  /**
   * @param extensionId: the id of the extension
   * @return the affinity that will be used for the background page
   */

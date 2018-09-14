@@ -91,7 +91,8 @@ class WindowOpeningMatchTask {
   _justUri (targetUrl) {
     if (!targetUrl || targetUrl === 'about:blank') { return targetUrl }
     const purl = new URL(targetUrl)
-    return new URL(purl.pathname, purl.origin).toString()
+    // Origin isn't always populated (.e.g in case of chrome-extension) so re-create this
+    return new URL(purl.pathname, `${purl.protocol}//${purl.hostname}`).toString()
   }
 }
 

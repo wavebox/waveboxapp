@@ -351,7 +351,7 @@ class CRExtensionBackgroundPage {
             ...CRExtensionWebPreferences.defaultWebPreferences(this.extension.id),
             offscreen: false // parent window will make this offscreen but we don't want it
           }
-        })
+        }, this.extension)
         windowEvt.newGuest = this[privPopupWindow].window
 
         // Respond to requestor
