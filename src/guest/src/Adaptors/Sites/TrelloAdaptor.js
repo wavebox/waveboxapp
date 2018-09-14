@@ -1,6 +1,12 @@
 import BaseAdaptor from './BaseAdaptor'
 import { ipcRenderer } from 'electron'
 import { WCRPC_DOM_READY } from 'shared/webContentsRPC'
+import { WB_BROWSER_TRELLO_UNREAD_COUNT_CHANGED } from 'shared/ipcEvents'
+
+const NOTIFICATION_CHANGE_CHECK_INTERVAL = 1500
+const privState = Symbol('privState')
+const privPdfObserver = Symbol('privPdfObserver')
+const privNotificationInterval = Symbol('privNotificationInterval')
 
 class TrelloAdaptor extends BaseAdaptor {
   /* **************************************************************************/
@@ -92,15 +98,26 @@ class TrelloAdaptor extends BaseAdaptor {
   /* **************************************************************************/
 
   executeJS () {
-    this.pdfObserver = new window.MutationObserver((mutations) => {
+    this[privState] = {
+      countHash: undefined
+    }
+
+    // Unread
+    this[privNotificationInterval] = setInterval(this._checkUnreadCountChanged, NOTIFICATION_CHANGE_CHECK_INTERVAL)
+
+    // PDF
+    this[privPdfObserver] = new window.MutationObserver((mutations) => {
       const frames = document.body.querySelectorAll('iframe.attachment-viewer-frame-preview-iframe[src*=".pdf"]:not(.wavebox-pdf-iframe-preview-enabled)')
       Array.from(frames).forEach((frame) => this._renderWaveboxPDFPreview(frame))
     })
-
     ipcRenderer.on(WCRPC_DOM_READY, () => {
-      this.pdfObserver.observe(document.body, { childList: true, subtree: true })
+      this[privPdfObserver].observe(document.body, { childList: true, subtree: true })
     })
   }
+
+  /* **************************************************************************/
+  // PDF
+  /* **************************************************************************/
 
   /**
   * Render the wavebox pdf frame
@@ -160,6 +177,35 @@ class TrelloAdaptor extends BaseAdaptor {
         window.open(src, '_blank', `width=${preview.offsetWidth}px,height=${preview.offsetHeight}px`)
       })
     }
+  }
+
+  /* **************************************************************************/
+  // Count
+  /* **************************************************************************/
+
+  /**
+  * @return the unread count
+  */
+  _getUnreadCountHash () {
+    const element = document.querySelector('.header-notifications')
+    return element ? element.getAttribute('data-count') : undefined
+  }
+
+  /**
+  * Checks to see if the unread count has changed
+  */
+  _checkUnreadCountChanged = () => {
+    const count = this._getUnreadCountHash()
+    if (count !== this[privState].countHash) {
+      ipcRenderer.sendToHost({
+        type: WB_BROWSER_TRELLO_UNREAD_COUNT_CHANGED,
+        data: {
+          prev: this[privState].countHash,
+          next: count
+        }
+      })
+    }
+    this[privState].countHash = count
   }
 }
 
