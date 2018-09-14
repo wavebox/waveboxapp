@@ -141,7 +141,21 @@ class MailboxesWindow extends WaveboxWindow {
       }
     })
     this.window.once('ready-to-show', () => {
-      if (!hidden) { this.window.show() }
+      if (hidden) {
+        if (process.platform === 'win32' || process.platform === 'linux') {
+          // If there's no tray icon we have to make the window minimized or there's no way to get to it
+          if (!settingsState.tray.show) {
+            // Complete hack to start the app minimized
+            const bounds = this.window.getBounds()
+            this.window.setBounds({ x: 10000, y: 10000, width: 1, height: 1 }, false)
+            this.window.showInactive()
+            this.window.minimize()
+            this.window.setBounds(bounds, false)
+          }
+        }
+      } else {
+        this.window.show()
+      }
     })
     this.window.on('minimize', this._handleWindowMinimize)
     this.tabManager = new MailboxesWindowTabManager(this.window.webContents.id, this._handleTabManagerEmitEvent)
