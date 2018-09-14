@@ -228,7 +228,7 @@ class AccountSettingsScroller extends React.Component {
             mailboxId={mailboxId}
             showRestart={showRestart}
             onRequestEditCustomCode={onRequestEditCustomCode} />
-          <AccountServicesHeading mailboxId={mailboxId} />
+          <AccountServicesHeading mailboxId={mailboxId} renderHeaderText renderFooterText={false} />
           {services.map((service) => {
             return (
               <div key={service.id} id={`service-section-${service.id}`}>
@@ -241,6 +241,7 @@ class AccountSettingsScroller extends React.Component {
               </div>
             )
           })}
+          <AccountServicesHeading mailboxId={mailboxId} renderHeaderText={false} renderFooterText />
         </div>
         <Paper className={classes.scrollspy}>
           <List dense className={classes.scrollspyList}>
