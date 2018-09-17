@@ -6,18 +6,21 @@ import { SortableContainer, SortableElement } from 'react-sortable-hoc'
 import classNames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import shallowCompare from 'react-addons-shallow-compare'
+import uuid from 'uuid'
 
-const SortableItem = SortableElement(({ mailboxId }) => {
+const SortableItem = SortableElement(({ mailboxId, sortableGetScrollContainer }) => {
   // Only return native dom component here, otherwise adding and removing
   // becomes super-buggy!
   return (
     <div>
-      <SidelistItemMailbox mailboxId={mailboxId} />
+      <SidelistItemMailbox
+        mailboxId={mailboxId}
+        sortableGetScrollContainer={sortableGetScrollContainer} />
     </div>
   )
 })
 
-const SortableList = SortableContainer(({ mailboxIds, disabled }) => {
+const SortableList = SortableContainer(({ mailboxIds, disabled, sortableGetScrollContainer }) => {
   return (
     <div>
       {mailboxIds.map((mailboxId, index) => (
@@ -26,6 +29,7 @@ const SortableList = SortableContainer(({ mailboxIds, disabled }) => {
           index={index}
           mailboxId={mailboxId}
           disabled={disabled}
+          sortableGetScrollContainer={sortableGetScrollContainer}
           collection='Singleton_SidelistMailboxes' />
       ))}
     </div>
@@ -34,6 +38,14 @@ const SortableList = SortableContainer(({ mailboxIds, disabled }) => {
 
 const styles = {
   root: {
+    // Linux overflow fix for https://github.com/wavebox/waveboxapp/issues/712.
+    // Seems to only reproduce on certain pages (e.g. gmail)
+    ...(process.platform === 'linux' ? {
+      overflowY: 'hidden',
+      '&:hover': { overflowY: 'auto' }
+    } : {
+      overflowY: 'auto'
+    }),
     '&::-webkit-scrollbar': { display: 'none' }
   }
 }
@@ -42,6 +54,16 @@ const styles = {
 class SidelistMailboxes extends React.Component {
   /* **************************************************************************/
   // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    this.instanceId = uuid.v4()
+  }
+
+  /* **************************************************************************/
+  // Component Lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
@@ -86,12 +108,23 @@ class SidelistMailboxes extends React.Component {
     const { mailboxIds, disabled } = this.state
 
     return (
-      <div {...passProps} className={classNames(classes.root, 'WB-Sidelist-Mailboxes', className)}>
+      <div
+        {...passProps}
+        data-instance-id={this.instanceId}
+        className={classNames(classes.root, 'WB-Sidelist-Mailboxes', className)}>
         <SortableList
           axis='y'
           distance={5}
           mailboxIds={mailboxIds}
           disabled={disabled}
+          getContainer={() => {
+            // Fix for https://github.com/wavebox/waveboxapp/issues/713
+            return document.querySelector(`[data-instance-id="${this.instanceId}"]`)
+          }}
+          sortableGetScrollContainer={() => {
+            // Fix for https://github.com/wavebox/waveboxapp/issues/713
+            return document.querySelector(`[data-instance-id="${this.instanceId}"]`)
+          }}
           shouldCancelStart={(evt) => {
             // Fix for https://github.com/wavebox/waveboxapp/issues/762
             if (evt.ctrlKey === true) { return true }

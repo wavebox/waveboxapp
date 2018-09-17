@@ -11,6 +11,7 @@ import WINDOW_BACKING_TYPES from '../WindowBackingTypes'
 import accountStore from 'stores/account/accountStore'
 import uuid from 'uuid'
 import { WINDOW_OPEN_MODES, NAVIGATE_MODES } from './WindowOpeningModes'
+import CRExtensionWebPreferences from 'WebContentsManager/CRExtensionWebPreferences'
 
 class WindowOpeningHandler {
   /* ****************************************************************************/
@@ -346,8 +347,10 @@ class WindowOpeningHandler {
     const guestWebPreferences = (options.webPreferences || {})
     if (partitionOverride) {
       // Be careful about overwriting the partition. If we're trying to share affinity on different
-      // partitions we're going to break the webcontents
-      if (guestWebPreferences.affinity && partitionOverride !== guestWebPreferences.partition) {
+      // partitions we're going to break the webcontents. We also see some odd behaviour when the
+      // overwriting partition is chrome extension one. Hive this off into its own process
+      // to prevent this. (Grammarly signin from BA doesn't fire correctly)
+      if (guestWebPreferences.affinity && (partitionOverride !== guestWebPreferences.partition || CRExtensionWebPreferences.isExtensionPartition(partitionOverride))) {
         guestWebPreferences.affinity = `transient_${uuid.v4()}`
       }
       guestWebPreferences.partition = partitionOverride

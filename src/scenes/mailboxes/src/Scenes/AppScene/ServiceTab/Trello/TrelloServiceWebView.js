@@ -3,6 +3,7 @@ import React from 'react'
 import CoreServiceWebViewHibernator from '../CoreServiceWebViewHibernator'
 import { accountDispatch } from 'stores/account'
 import { trelloActions } from 'stores/trello'
+import { WB_BROWSER_TRELLO_UNREAD_COUNT_CHANGED } from 'shared/ipcEvents'
 
 const REF = 'mailbox_tab'
 
@@ -47,10 +48,23 @@ export default class TrelloServiceWebView extends React.Component {
       } else {
         this.refs[REF].loadURL('https://trello.com')
       }
+    }
+  }
 
-      // Normally being able to handle this also indicates that something changed, so lets do a sync
-      // after a few seconds to re-evaluate our state
-      trelloActions.syncServiceNotificationsAfter.defer(this.props.serviceId, 1000 * 5)
+  /* **************************************************************************/
+  // Browser Events
+  /* **************************************************************************/
+
+  /**
+  * Dispatches browser IPC messages to the correct call
+  * @param evt: the event that fired
+  */
+  dispatchBrowserIPCMessage = (evt) => {
+    switch (evt.channel.type) {
+      case WB_BROWSER_TRELLO_UNREAD_COUNT_CHANGED:
+        trelloActions.syncServiceNotifications(this.props.serviceId)
+        break
+      default: break
     }
   }
 
@@ -65,7 +79,8 @@ export default class TrelloServiceWebView extends React.Component {
       <CoreServiceWebViewHibernator
         ref={REF}
         mailboxId={mailboxId}
-        serviceId={serviceId} />
+        serviceId={serviceId}
+        ipcMessage={this.dispatchBrowserIPCMessage} />
     )
   }
 }

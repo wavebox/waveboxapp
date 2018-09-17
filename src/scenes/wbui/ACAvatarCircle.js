@@ -67,14 +67,15 @@ class ACAvatarCircle extends React.Component {
       ...otherProps
     } = this.props
 
+    const generatedStyle = {
+      backgroundColor: 'white'
+    }
+
+    // Style: Border size and color
     // Use a box shadow hack rather than border to fix a phantom white line
     // https://stackoverflow.com/questions/31805296/why-do-i-get-a-faint-border-around-css-circles-in-internet-explorer
     // This has the side effect of now overflowing the element, so try to be a bit intelligent about
     // reducing the size depending on the passed props
-    const generatedStyle = {
-      backgroundColor: avatar.hasAvatar ? 'white' : avatar.color
-    }
-
     const generatedBorderSize = typeof (borderSize) === 'number' ? borderSize : Math.round(size * 0.08)
     const adjustedSize = size - (2 * generatedBorderSize)
     generatedStyle.width = adjustedSize
@@ -101,35 +102,57 @@ class ACAvatarCircle extends React.Component {
       className: classNames(
         className,
         showSleeping ? classes.sleeping : undefined
-      ),
-      style: {
-        ...generatedStyle,
-        ...style
-      }
+      )
     }
 
     if (avatar.hasAvatar) {
-      return (<Avatar {...passProps} src={avatar.resolveAvatar(resolver)} />)
+      return (
+        <Avatar
+          {...passProps}
+          style={{ ...generatedStyle, ...style }}
+          src={avatar.resolveAvatar(resolver)} />
+      )
     } else if (avatar.avatarCharacterDisplay) {
+      const charaterStyle = {
+        ...generatedStyle,
+        backgroundColor: avatar.color,
+        ...style
+      }
+
       if (showRestricted) {
         return (
           <Avatar
             {...passProps}
-            className={classNames(passProps.className, classes.restrictedCharacterDisplay)}>
+            className={classNames(passProps.className, classes.restrictedCharacterDisplay)}
+            style={charaterStyle}>
             {avatar.avatarCharacterDisplay}
           </Avatar>
         )
       } else {
-        return (<Avatar {...passProps}>{avatar.avatarCharacterDisplay}</Avatar>)
+        return (
+          <Avatar
+            {...passProps}
+            style={charaterStyle}>
+            {avatar.avatarCharacterDisplay}
+          </Avatar>
+        )
       }
     } else if (avatar.hasServiceIcon) {
-      if (typeof (preferredImageSize) === 'number') {
-        return (<Avatar {...passProps} src={avatar.resolveServiceIconWithSize(preferredImageSize, resolver)} />)
-      } else {
-        return (<Avatar {...passProps} src={avatar.resolveServiceIcon(resolver)} />)
-      }
+      const src = typeof (preferredImageSize) === 'number'
+        ? avatar.resolveServiceIconWithSize(preferredImageSize, resolver)
+        : avatar.resolveServiceIcon(resolver)
+
+      return (
+        <Avatar
+          {...passProps}
+          style={{ ...generatedStyle, ...style }}
+          src={src} />
+      )
     } else {
-      return (<Avatar {...passProps} />)
+      return (
+        <Avatar
+          {...passProps}
+          style={{ ...generatedStyle, ...style }} />)
     }
   }
 }

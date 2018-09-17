@@ -1,7 +1,10 @@
+import { dialog } from 'electron'
 import WaveboxWindow from './WaveboxWindow'
 import { evtMain } from 'AppEvents'
 import { GuestWebPreferences } from 'WebContentsManager'
 import { WindowOpeningHandler, WINDOW_OPEN_MODES } from './WindowOpeningEngine'
+import { PermissionManager } from 'Permissions'
+import { URL } from 'url'
 
 const privTabMetaInfo = Symbol('privTabMetaInfo')
 class ContentPopupWindow extends WaveboxWindow {
@@ -21,6 +24,8 @@ class ContentPopupWindow extends WaveboxWindow {
   constructor (tabMetaInfo = undefined) {
     super()
     this[privTabMetaInfo] = tabMetaInfo
+
+    PermissionManager.on('unresolved-permission-requests-changed', this._handleUnresolvedPermissionRequestChanged)
   }
 
   /* ****************************************************************************/
@@ -112,6 +117,8 @@ class ContentPopupWindow extends WaveboxWindow {
   */
   destroy (evt) {
     super.destroy(evt)
+
+    PermissionManager.removeListener('unresolved-permission-requests-changed', this._handleUnresolvedPermissionRequestChanged)
   }
 
   /* ****************************************************************************/
@@ -168,6 +175,49 @@ class ContentPopupWindow extends WaveboxWindow {
       openingBrowserWindow: this.window,
       openingWindowType: this.windowType,
       tabMetaInfo: this[privTabMetaInfo]
+    })
+  }
+
+  /* ****************************************************************************/
+  // Permission Events
+  /* ****************************************************************************/
+
+  /**
+  * Handles the set of unresolved permission request handlers changing. As we don't have any injectable UI here
+  * we have to fall-back to alert style confirmations like Safari
+  * @param wcId: the id of the webcontents the permissions changed for
+  * @param pending: the list of pending requests
+  */
+  _handleUnresolvedPermissionRequestChanged = (wcId, pending) => {
+    if (wcId !== this.window.webContents.id) { return }
+    if (!pending[0]) { return }
+
+    const permissionType = pending[0]
+    const requestURL = this.window.webContents.getURL()
+    const purl = requestURL ? new URL(requestURL) : undefined
+
+    dialog.showMessageBox(this.window, {
+      type: 'question',
+      buttons: [
+        'Later',
+        'Block',
+        'Allow'
+      ],
+      cancelId: 0,
+      title: 'Permission Request',
+      message: [
+        `${purl ? `${purl.protocol}//${purl.hostname}` : 'This site'} wants to:`,
+        permissionType === 'geolocation' ? 'Know your location' : undefined,
+        permissionType === 'media' ? 'Use your microphone and/or camera' : undefined
+      ].filter((l) => !!l).join('\n')
+    }, (res) => {
+      if (res === 0) {
+        PermissionManager.resolvePermissionRequest(wcId, permissionType, 'default')
+      } else if (res === 1) {
+        PermissionManager.resolvePermissionRequest(wcId, permissionType, 'denied')
+      } else if (res === 2) {
+        PermissionManager.resolvePermissionRequest(wcId, permissionType, 'granted')
+      }
     })
   }
 

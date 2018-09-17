@@ -478,7 +478,7 @@ class CoreAccountStore extends RemoteStore {
     this.unrestrictedServices = () => {
       const user = this.getUser()
       if (user.hasAccountLimit || user.hasAccountTypeRestriction) {
-        return Array.from(this._services_.values())
+        return this.allServicesOrdered()
           .filter((service) => user.hasAccountsOfType(service.type))
           .slice(0, user.accountLimit)
       } else {
@@ -492,7 +492,7 @@ class CoreAccountStore extends RemoteStore {
     this.unrestrictedServiceIds = () => {
       const user = this.getUser()
       if (user.hasAccountLimit || user.hasAccountTypeRestriction) {
-        return Array.from(this._services_.values())
+        return this.allServicesOrdered()
           .filter((service) => user.hasAccountsOfType(service.type))
           .slice(0, user.accountLimit)
           .map((service) => service.id)

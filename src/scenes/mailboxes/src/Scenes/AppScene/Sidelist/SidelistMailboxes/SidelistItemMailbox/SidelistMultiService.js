@@ -21,7 +21,8 @@ class SidelistItemMultiService extends React.Component {
 
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
-    sidebarSize: PropTypes.string.isRequired
+    sidebarSize: PropTypes.string.isRequired,
+    sortableGetScrollContainer: PropTypes.func.isRequired
   }
 
   /* **************************************************************************/
@@ -206,6 +207,7 @@ class SidelistItemMultiService extends React.Component {
     const {
       mailboxId,
       sidebarSize,
+      sortableGetScrollContainer,
       ...passProps
     } = this.props
     const {
@@ -274,6 +276,7 @@ class SidelistItemMultiService extends React.Component {
           uiLocation={ACMailbox.SERVICE_UI_LOCATIONS.SIDEBAR}
           sidebarSize={sidebarSize}
           onOpenService={this.handleClickService}
+          sortableGetScrollContainer={sortableGetScrollContainer}
           onContextMenuService={this.handleOpenServicePopover} />
         {popoverMailboxId || popoverServiceId ? (
           <ErrorBoundary>

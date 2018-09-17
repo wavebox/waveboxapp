@@ -1,6 +1,7 @@
-import { app, BrowserWindow } from 'electron'
+import { app } from 'electron'
 import { settingsStore } from 'stores/settings'
 import { SUPPORTS_DOCK_HIDING } from 'shared/Models/Settings/TraySettings'
+import WaveboxWindow from 'Windows/WaveboxWindow'
 
 class WaveboxDarwinDockBehaviour {
   /* ****************************************************************************/
@@ -28,7 +29,9 @@ class WaveboxDarwinDockBehaviour {
 
     const { tray } = settingsStore.getState()
     if (tray.show && tray.removeFromDockDarwin) {
-      const visibleWindow = BrowserWindow.getAllWindows().find((w) => w.isVisible())
+      // Don't trigger on the traypopup. Use the WaveboxWindow API rather than BrowserWindow as
+      // this will only check actual-windows not pseudo-windows
+      const visibleWindow = WaveboxWindow.all().find((w) => w.isVisible())
       if (!visibleWindow) {
         if (app.dock.isVisible()) {
           app.dock.hide()

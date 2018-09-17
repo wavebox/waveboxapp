@@ -14,7 +14,8 @@ const DOC_TITLE_UNREAD_RES = [
   new RegExp('^[(]([0-9]+)[)].*?$'), // (12) text
   new RegExp('^.*?[(]([0-9]+)[)]$'), // text (12)
   new RegExp('^[\\[]([0-9]+)[\\]].*?$'), // [12] text
-  new RegExp('^.*?[\\[]([0-9]+)[\\]]$') // text [12]
+  new RegExp('^.*?[\\[]([0-9]+)[\\]]$'), // text [12]
+  new RegExp('^([0-9]+)([ ]+).*?$') // [12]*_space_*text
 ]
 const DOC_TITLE_UNREAD_CONVERTS = {
   '➀': 1,

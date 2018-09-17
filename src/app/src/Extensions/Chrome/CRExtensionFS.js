@@ -8,6 +8,7 @@ import {
 } from 'shared/Models/CRExtension'
 
 const UNINSTALL_FLAG = '__uninstall__'
+const PURGE_FLAG = '__purge__'
 
 class CRExtensionFS {
   /* ****************************************************************************/
@@ -103,11 +104,21 @@ class CRExtensionFS {
 
   /**
   * Checks to see if an extension should be removed
-  * @param rootPath: the root path of the extension
+  * @param extensionId: the id of the extension
   * @return true if it should be removed
   */
-  static isSetForRemoval (rootPath) {
-    return fs.existsSync(path.join(rootPath, UNINSTALL_FLAG))
+  static isSetForRemoval (extensionId) {
+    return fs.existsSync(path.join(RuntimePaths.CHROME_EXTENSION_INSTALL_PATH, extensionId, UNINSTALL_FLAG))
+  }
+
+  /**
+  * Checks to see if an extension version should be removed
+  * @param extensionId: the id of the extension
+  * @param versionString: the version string
+  * @return true if it should be removed
+  */
+  static isSetForPurge (extensionId, versionString) {
+    return fs.existsSync(path.join(RuntimePaths.CHROME_EXTENSION_INSTALL_PATH, extensionId, PURGE_FLAG + versionString))
   }
 
   /**
@@ -155,15 +166,27 @@ class CRExtensionFS {
   * @return the extension info or undefined
   */
   static updateEntry (extensionId) {
-    const rootPath = path.join(RuntimePaths.CHROME_EXTENSION_INSTALL_PATH, extensionId)
-
     // Check for removal
-    if (this.isSetForRemoval(rootPath)) {
-      try { fs.remove(rootPath) } catch (ex) { }
+    if (this.isSetForRemoval(extensionId)) {
+      try { fs.removeSync(path.join(RuntimePaths.CHROME_EXTENSION_INSTALL_PATH, extensionId)) } catch (ex) { }
       return undefined
     }
 
-    const versions = this.listInstalledVersions(extensionId)
+    // Load the entry
+    let versions = this.listInstalledVersions(extensionId)
+    let didPurge = false
+
+    // Run a purge
+    versions.forEach((version) => {
+      if (this.isSetForPurge(extensionId, version.versionString)) {
+        didPurge = true
+        try { fs.removeSync(version.path) } catch (ex) { }
+        try { fs.removeSync(path.join(RuntimePaths.CHROME_EXTENSION_INSTALL_PATH, extensionId, PURGE_FLAG + version.versionString)) } catch (ex) { }
+      }
+    })
+    if (didPurge) {
+      versions = this.listInstalledVersions(extensionId)
+    }
 
     // Run an update
     if (versions.length > 1) {
@@ -178,7 +201,7 @@ class CRExtensionFS {
       const latest = sortedVersions[0]
       const remove = sortedVersions.slice(1)
       remove.forEach((info) => {
-        try { fs.remove(info.path) } catch (ex) { }
+        try { fs.removeSync(info.path) } catch (ex) { }
       })
       return latest
     } else if (versions.length === 1) {
@@ -198,6 +221,15 @@ class CRExtensionFS {
   */
   static setForRemoval (extensionId) {
     fs.writeFileSync(path.join(RuntimePaths.CHROME_EXTENSION_INSTALL_PATH, extensionId, UNINSTALL_FLAG), UNINSTALL_FLAG)
+  }
+
+  /**
+  * Sets an extension for purge
+  * @param extensionId: the id of the extension
+  * @param versionStr: the version string of the dir to purge
+  */
+  static setForPurge (extensionId, versionStr) {
+    fs.writeFileSync(path.join(RuntimePaths.CHROME_EXTENSION_INSTALL_PATH, extensionId, PURGE_FLAG + versionStr), PURGE_FLAG)
   }
 }
 

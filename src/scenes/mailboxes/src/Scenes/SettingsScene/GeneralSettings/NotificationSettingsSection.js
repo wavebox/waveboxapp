@@ -125,7 +125,7 @@ class NotificationSettingsSection extends React.Component {
   humanizeProvider (provider) {
     switch (provider) {
       case NOTIFICATION_PROVIDERS.ELECTRON: return 'Default'
-      case NOTIFICATION_PROVIDERS.ENHANCED: return 'Enhanced (Experimental)'
+      case NOTIFICATION_PROVIDERS.ENHANCED: return process.platform === 'darwin' ? 'Enhanced' : 'Enhanced (Experimental)'
       default: return provider
     }
   }

@@ -40,6 +40,7 @@ import {
 } from './ProfileRestoreScene'
 import ErrorBoundary from 'wbui/ErrorBoundary'
 import FullscreenSnackbarHelper from 'Components/FullscreenSnackbarHelper'
+import SpinnerScene from './SpinnerScene'
 
 export default class WaveboxRouter extends React.Component {
   /* **************************************************************************/
@@ -90,6 +91,7 @@ export default class WaveboxRouter extends React.Component {
 
             <Route path='/pro' component={ProScene} />
             <Route path='/news' component={NewsScene} />
+            <Route path='/spinner' component={SpinnerScene} />
 
             <Route path='/account/message' component={AccountMessageScene} />
             <Route path='/account/auth/:mode?' component={AccountAuthScene} />

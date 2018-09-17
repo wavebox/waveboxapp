@@ -3,8 +3,10 @@ import {
   CRX_RUNTIME_CONTENTSCRIPT_CONNECT_,
   CRX_GET_WEBCONTENT_META_SYNC_
 } from 'shared/crExtensionIpcEvents'
+import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
 import WaveboxWindow from 'Windows/WaveboxWindow'
+import { URL } from 'url'
 
 import CRExtensionDatasource from './CRExtensionDatasource'
 import CRExtensionBrowserAction from './CRExtensionBrowserAction'
@@ -122,7 +124,22 @@ class CRExtensionRuntime {
   * @return { mode, match, extension } the popout mode if the window should open as popout along with the extension model or false if the extension has no preference
   */
   getWindowPopoutModePreference (webContentsId, url, parsedUrl, disposition) {
+    let isActiveForRequest = false
     if (this.connectedContentScripts.has(webContentsId)) {
+      isActiveForRequest = true
+    } else {
+      try {
+        const wc = webContents.fromId(webContentsId)
+        const currentUrl = new URL((wc ? wc.getURL() : undefined) || 'about:blank')
+        if (currentUrl.protocol === `${CR_EXTENSION_PROTOCOL}:` && currentUrl.hostname === this.extension.id) {
+          isActiveForRequest = true
+        }
+      } catch (ex) {
+        /* no-op */
+      }
+    }
+
+    if (isActiveForRequest) {
       const preference = this.extension.manifest.wavebox.getWindowPopoutModePreference(url, parsedUrl, disposition)
       if (preference) {
         return { mode: preference.mode, match: preference.match, extension: this.extension }

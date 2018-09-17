@@ -28,6 +28,10 @@ class CRExtensionManifestWavebox extends Model {
     }
     return undefined
   }
+  get cwsLock () {
+    const val = this._value_('wavebox_cws_lock', [])
+    return Array.isArray(val) ? val : []
+  }
 
   /* **************************************************************************/
   // Properties: Types

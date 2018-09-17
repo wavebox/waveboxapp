@@ -2,10 +2,13 @@ import { BrowserWindow } from 'electron'
 import EventEmitter from 'events'
 import { GuestWebPreferences } from 'WebContentsManager'
 import WaveboxWindow from 'Windows/WaveboxWindow'
+import { WINDOW_BACKING_TYPES } from 'Windows/WindowBackingTypes'
+import WindowOpeningHandler from 'Windows/WindowOpeningEngine/WindowOpeningHandler'
 
 const privWindow = Symbol('privWindow')
 const privWindowResizeInterval = Symbol('privWindowResizeInterval')
 const privOpeningTabId = Symbol('privOpeningTabId')
+const privExtension = Symbol('privExtension')
 
 // The max-mins are a bit of a guess
 const MAX_WIDTH = 780
@@ -24,11 +27,12 @@ class CRExtensionPopupWindow extends EventEmitter {
   * @param bgWindowOptions: the configuration for the window directly from the
   * background window
   */
-  constructor (openingTabId, bgWindowOptions) {
+  constructor (openingTabId, bgWindowOptions, extension) {
     super()
 
     this[privWindowResizeInterval] = null
     this[privOpeningTabId] = openingTabId
+    this[privExtension] = extension
     this[privWindow] = new BrowserWindow(this._getWindowOptions(openingTabId, bgWindowOptions))
 
     // Listen to window events
@@ -192,9 +196,28 @@ class CRExtensionPopupWindow extends EventEmitter {
   /**
   * Handles the webcontents requesting a new window
   * @param evt: the event that fired
+  * @param targetUrl: the webview url
+  * @param frameName: the name of the frame
+  * @param disposition: the frame disposition
+  * @param options: the browser window options
+  * @param additionalFeatures: The non-standard features
   */
-  handleWebContentsNewWindow = (evt) => {
-    evt.preventDefault()
+  handleWebContentsNewWindow = (evt, targetUrl, frameName, disposition, options, additionalFeatures) => {
+    WindowOpeningHandler.handleOpenNewWindow(evt, {
+      targetUrl: targetUrl,
+      frameName: frameName,
+      disposition: disposition,
+      options: options,
+      additionalFeatures: additionalFeatures,
+      openingBrowserWindow: this.window,
+      openingWindowType: this.windowType,
+      tabMetaInfo: {
+        backing: WINDOW_BACKING_TYPES.EXTENSION,
+        extensionId: this[privExtension].id,
+        extensionName: this[privExtension].manifest.name
+      },
+      provisionalTargetUrl: undefined
+    })
   }
 
   /**
