@@ -136,8 +136,6 @@ class SidelistTLServiceAvatar extends React.Component {
     } = this.state
     if (!hasMembers) { return false }
 
-    console.log(this.state)
-
     return (
       <StyledMailboxServiceBadge
         sidebarSize={sidebarSize}
