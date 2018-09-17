@@ -196,7 +196,7 @@ class ServiceAppearanceSection extends React.Component {
             onChange={(col) => accountActions.reduceService(serviceId, ServiceReducer.setColor, col)}
             showClear
             ClearIconClass={NotInterestedIcon}
-            clearLabelText='Clear color'
+            clearLabelText='Reset color'
           />
         )
       } : undefined,
