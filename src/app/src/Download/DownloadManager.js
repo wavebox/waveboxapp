@@ -7,7 +7,6 @@ import { settingsStore } from 'stores/settings'
 import unusedFilename from 'unused-filename'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import MailboxesWindow from 'Windows/MailboxesWindow'
-import semver from 'semver'
 
 const MAX_PLATFORM_START_TIME = 1000 * 30
 
