@@ -146,22 +146,6 @@ class DownloadManager {
   * Updates the progress bar in the dock
   */
   _updateDownloadProgressBar = () => {
-    // See @Thomas101 about this. Refactor when electron fixes.
-    // macOS mojave hard crashes when calling setProgressBar()
-    // https://github.com/wavebox/waveboxapp/issues/725
-    // https://github.com/electron/electron/issues/13751
-    // As a temporary workaround disable setting the progress bar
-    // if our os version is higher that HighSierra
-    if (process.platform === 'darwin') {
-      try {
-        // Mojave lists itself as 18.0.0+
-        if (semver.gte(os.release(), '18.0.0')) { return }
-      } catch (ex) {
-        // Unexpected state - don't continue just in case
-        return
-      }
-    }
-
     const all = Array.from(this.user.inProgress.values()).reduce((acc, { received, total }) => {
       return {
         received: acc.received + received,
