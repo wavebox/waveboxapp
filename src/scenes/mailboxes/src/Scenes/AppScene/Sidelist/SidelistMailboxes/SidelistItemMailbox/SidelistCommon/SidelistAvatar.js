@@ -31,6 +31,7 @@ class SidelistAvatar extends React.Component {
     avatar: PropTypes.object.isRequired,
     sidebarSize: PropTypes.string.isRequired,
     isSleeping: PropTypes.bool.isRequired,
+    showSleeping: PropTypes.bool.isRequired,
     showColorRing: PropTypes.bool.isRequired,
     lightenBorder: PropTypes.bool.isRequired
   }
@@ -67,6 +68,7 @@ class SidelistAvatar extends React.Component {
       className,
       classes,
       isSleeping,
+      showSleeping,
       showColorRing,
       lightenBorder,
       style,
@@ -95,7 +97,7 @@ class SidelistAvatar extends React.Component {
         avatar={avatar}
         size={size}
         resolver={(i) => Resolver.image(i)}
-        showSleeping={isSleeping}
+        showSleeping={showSleeping && isSleeping}
         className={classNames(classes.avatar, className)}
         style={{ boxShadow: boxShadow, ...style }}
         {...passProps} />
