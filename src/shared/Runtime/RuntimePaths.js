@@ -8,6 +8,7 @@ module.exports = function (pkg, path, AppDirectory) {
 
   return {
     // Databases
+    APP_DATA_PATH: appDirectory.userData(),
     DB_DIR_PATH: appDirectory.userData(),
 
     // Metrics
