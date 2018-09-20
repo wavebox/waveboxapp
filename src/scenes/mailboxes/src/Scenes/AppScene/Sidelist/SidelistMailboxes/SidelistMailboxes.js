@@ -37,7 +37,7 @@ const SortableList = SortableContainer(({ mailboxIds, disabled, sortableGetScrol
 })
 
 const styles = {
-  root: {
+  rootNoScrollbar: {
     // Linux overflow fix for https://github.com/wavebox/waveboxapp/issues/712.
     // Seems to only reproduce on certain pages (e.g. gmail)
     ...(process.platform === 'linux' ? {
@@ -47,6 +47,33 @@ const styles = {
       overflowY: 'auto'
     }),
     '&::-webkit-scrollbar': { display: 'none' }
+  },
+  rootWithScrollbar: {
+    WebkitAppRegion: 'no-drag', // Drag region interfers with scrollbar drag
+
+    // Linux overflow fix for https://github.com/wavebox/waveboxapp/issues/712.
+    // Seems to only reproduce on certain pages (e.g. gmail)
+    ...(process.platform === 'linux' ? {
+      overflowY: 'hidden',
+      '&:hover': { overflowY: 'overlay' }
+    } : {
+      overflowY: 'overlay'
+    }),
+
+    '&::-webkit-scrollbar': {
+      WebkitAppearance: 'none',
+      width: 7,
+      height: 7
+    },
+    '&::-webkit-scrollbar-track': {
+      backgroundColor: 'rgba(255,255,255,0.2)',
+      borderRadius: 4
+    },
+    '&::-webkit-scrollbar-thumb': {
+      borderRadius: 4,
+      backgroundColor: 'rgba(0,0,0,.5)',
+      boxShadow: '0 0 2px rgba(255,255,255,.5)'
+    }
   }
 }
 
@@ -81,9 +108,11 @@ class SidelistMailboxes extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
+    const settingsState = settingsStore.getState()
     return {
       mailboxIds: accountStore.getState().mailboxIds(),
-      disabled: settingsStore.getState().ui.lockSidebarsAndToolbars
+      disabled: settingsState.ui.lockSidebarsAndToolbars,
+      showScrollbar: settingsState.ui.showSidebarScrollbars
     }
   })()
 
@@ -92,7 +121,10 @@ class SidelistMailboxes extends React.Component {
   }
 
   settingsChanged = (settingsState) => {
-    this.setState({ disabled: settingsState.ui.lockSidebarsAndToolbars })
+    this.setState({
+      disabled: settingsState.ui.lockSidebarsAndToolbars,
+      showScrollbar: settingsState.ui.showSidebarScrollbars
+    })
   }
 
   /* **************************************************************************/
@@ -105,13 +137,13 @@ class SidelistMailboxes extends React.Component {
 
   render () {
     const { className, classes, ...passProps } = this.props
-    const { mailboxIds, disabled } = this.state
+    const { mailboxIds, disabled, showScrollbar } = this.state
 
     return (
       <div
         {...passProps}
         data-instance-id={this.instanceId}
-        className={classNames(classes.root, 'WB-Sidelist-Mailboxes', className)}>
+        className={classNames(showScrollbar ? classes.rootWithScrollbar : classes.rootNoScrollbar, 'WB-Sidelist-Mailboxes', className)}>
         <SortableList
           axis='y'
           distance={5}

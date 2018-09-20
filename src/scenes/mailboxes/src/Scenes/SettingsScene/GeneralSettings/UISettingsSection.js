@@ -45,7 +45,8 @@ export default class UISettingsSection extends React.Component {
         'showTitlebarCount',
         'showTitlebarAccount',
         'theme',
-        'sidebarSize'
+        'sidebarSize',
+        'showSidebarScrollbars'
       ]) ||
       modelCompare(this.props.os, nextProps.os, ['openLinksInBackground']) ||
       modelCompare(this.props.accelerators, nextProps.accelerators, ['toggleSidebar', 'toggleMenu']) ||
@@ -191,6 +192,10 @@ export default class UISettingsSection extends React.Component {
             )}
             onChange={(evt, toggled) => settingsActions.sub.ui.setEnableSidebar(toggled)}
             checked={ui.sidebarEnabled} />
+          <SettingsListItemSwitch
+            label='Show scrollbar in Sidebar'
+            onChange={(evt, toggled) => settingsActions.sub.ui.setShowSidebarScrollbars(toggled)}
+            checked={ui.showSidebarScrollbars} />
           <SettingsListItemSelectInline
             label='Sidebar Size'
             value={ui.sidebarSize}
