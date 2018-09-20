@@ -22,6 +22,7 @@ module.exports = Object.freeze({
     BETA: 'BETA'
   }),
   OSX_APP_BUNDLE_ID: 'io.wavebox.wavebox',
+  CRASH_REPORT_SERVER: 'https://stats.wavebox.io',
 
   // Database
   PERSISTENCE_INDEX_KEY: '__index__',
