@@ -70,7 +70,7 @@ class WaveboxApp {
     // against this
     process.__on_unsafe__ = process.on
     process.on = (...args) => {
-      if (args[0] === 'uncaughtException') {
+      if (args[0] === 'uncaughtException' || args[0] === 'unhandledRejection') {
         let isDev
         try {
           isDev = __DEV__
@@ -80,7 +80,7 @@ class WaveboxApp {
 
         if (isDev) {
           console.log([
-            'Wavebox is refusing to bind the "uncaughtException" event to process.',
+            `Wavebox is refusing to bind the "${args[0]}" event to process.`,
             '  If you really meant to do this use "process.__on_unsafe__()"',
             '  This message will not be displayed in production'
           ].join('\n'))
@@ -90,8 +90,10 @@ class WaveboxApp {
       }
     }
     process.__on_unsafe__('uncaughtException', (err) => {
-      console.error(err.message)
-      console.error(err.stack)
+      console.error(`[uncaughtException] ${err.message}`, err.stack)
+    })
+    process.__on_unsafe__('unhandledRejection', (reason, prom) => {
+      console.error(`[unhandledRejection] ${reason}`, prom)
     })
 
     // State
