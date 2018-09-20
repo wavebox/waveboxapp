@@ -1,6 +1,7 @@
 /* global __DEV__ */
 
 import { app, BrowserWindow, ipcMain, globalShortcut } from 'electron'
+import os from 'os'
 import yargs from 'yargs'
 import credentials from 'shared/credentials'
 import WaveboxAppPrimaryMenu from './WaveboxAppPrimaryMenu'
@@ -30,6 +31,7 @@ import { AppSettings } from 'shared/Models/Settings'
 import WaveboxDataManager from './WaveboxDataManager'
 import mailboxStorage from 'Storage/mailboxStorage'
 import constants from 'shared/constants'
+import CrashReporterWatcher from 'shared/CrashReporter/CrashReporterWatcher'
 
 const privStarted = Symbol('privStarted')
 const privArgv = Symbol('privArgv')
@@ -37,6 +39,7 @@ const privAppMenu = Symbol('privAppMenu')
 const privGlobalShortcuts = Symbol('privGlobalShortcuts')
 const privMainWindow = Symbol('privMainWindow')
 const privCloseBehaviour = Symbol('privCloseBehaviour')
+const privCrashReporter = Symbol('privCrashReporter')
 
 class WaveboxApp {
   /* ****************************************************************************/
@@ -50,6 +53,7 @@ class WaveboxApp {
     this[privGlobalShortcuts] = undefined
     this[privMainWindow] = undefined
     this[privCloseBehaviour] = undefined
+    this[privCrashReporter] = undefined
   }
 
   /**
@@ -86,7 +90,7 @@ class WaveboxApp {
       }
     }
     process.__on_unsafe__('uncaughtException', (err) => {
-      console.error(err)
+      console.error(err.message)
       console.error(err.stack)
     })
 
@@ -112,6 +116,12 @@ class WaveboxApp {
     notifhistActions.load()
     guestStore.getState()
     guestActions.load()
+
+    // Crash reporting
+    // Ideally this would be one of the first things we'd do, but to provide the option
+    // to the user to disable crash reporting we have to run this later on in the flow
+    this[privCrashReporter] = new CrashReporterWatcher()
+    this[privCrashReporter].start(userStore, settingsStore, CrashReporterWatcher.RUNTIME_IDENTIFIERS.MAIN, os.release())
 
     // Component behaviour
     this[privCloseBehaviour] = new WaveboxAppCloseBehaviour()

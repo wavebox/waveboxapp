@@ -19,6 +19,8 @@ import {
   WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD
 } from 'shared/ipcEvents'
 import { ipcRenderer, webFrame } from 'electron'
+import CrashReporterWatcher from 'shared/CrashReporter/CrashReporterWatcher'
+import os from 'os'
 
 // Prevent zooming
 webFrame.setVisualZoomLevelLimits(1, 1)
@@ -49,7 +51,7 @@ userStore.getState()
 userActions.load()
 accountStore.getState()
 accountActions.load()
-const settingsState = settingsStore.getState()
+settingsStore.getState()
 settingsActions.load()
 updaterStore.getState()
 updaterActions.load()
@@ -64,6 +66,9 @@ notifhistActions.load()
 guestStore.getState()
 guestActions.load()
 
+const crashReporter = new CrashReporterWatcher()
+crashReporter.start(userStore, settingsStore, CrashReporterWatcher.RUNTIME_IDENTIFIERS.MAIN, os.release())
+
 // Setup the updaters
 userActions.startAutoUpdateExtensions()
 userActions.startAutoUpdateWireConfig()
@@ -71,7 +76,7 @@ userActions.startAutoUpdateContainers()
 userActions.startAutoUploadUserProfile()
 
 // Navigation
-if (process.platform === 'darwin' && settingsState.launched.app.enableMouseNavigationDarwin) {
+if (process.platform === 'darwin' && settingsStore.getState().launched.app.enableMouseNavigationDarwin) {
   const mouseNavigator = new MouseNavigationDarwin(
     () => accountDispatch.navigateBack(),
     () => accountDispatch.navigateForward()

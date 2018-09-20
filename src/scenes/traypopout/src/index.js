@@ -7,6 +7,8 @@ import { accountStore, accountActions } from 'stores/account'
 import { emblinkStore, emblinkActions } from 'stores/emblink'
 import { notifhistStore, notifhistActions } from 'stores/notifhist'
 import { settingsStore, settingsActions } from 'stores/settings'
+import CrashReporterWatcher from 'shared/CrashReporter/CrashReporterWatcher'
+import os from 'os'
 
 // Load what we have in the db
 userStore.getState()
@@ -19,6 +21,9 @@ notifhistStore.getState()
 notifhistActions.load()
 settingsStore.getState()
 settingsActions.load()
+
+const crashReporter = new CrashReporterWatcher()
+crashReporter.start(userStore, settingsStore, CrashReporterWatcher.RUNTIME_IDENTIFIERS.MAIN, os.release())
 
 // Prevent zooming
 webFrame.setVisualZoomLevelLimits(1, 1)
