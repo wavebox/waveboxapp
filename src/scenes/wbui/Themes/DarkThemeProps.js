@@ -13,6 +13,15 @@ export default {
     sidebar: {
       backgroundColor: blueGrey[900],
       boxShadow: 'none',
+      scrollbar: {
+        track: {
+          backgroundColor: 'transparent'
+        },
+        thumb: {
+          backgroundColor: 'rgba(255, 255, 255, 0.4)',
+          boxShadow: '0 0 2px rgba(255, 255, 255, 0.5)'
+        }
+      },
       windowControls: {
         icon: {
           color: blueGrey[100],

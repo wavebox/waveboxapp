@@ -7,6 +7,7 @@ import classNames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import shallowCompare from 'react-addons-shallow-compare'
 import uuid from 'uuid'
+import ThemeTools from 'wbui/Themes/ThemeTools'
 
 const SortableItem = SortableElement(({ mailboxId, sortableGetScrollContainer }) => {
   // Only return native dom component here, otherwise adding and removing
@@ -36,48 +37,50 @@ const SortableList = SortableContainer(({ mailboxIds, disabled, sortableGetScrol
   )
 })
 
-const styles = {
-  rootNoScrollbar: {
-    // Linux overflow fix for https://github.com/wavebox/waveboxapp/issues/712.
-    // Seems to only reproduce on certain pages (e.g. gmail)
-    ...(process.platform === 'linux' ? {
-      overflowY: 'hidden',
-      '&:hover': { overflowY: 'auto' }
-    } : {
-      overflowY: 'auto'
-    }),
-    '&::-webkit-scrollbar': { display: 'none' }
-  },
-  rootWithScrollbar: {
-    WebkitAppRegion: 'no-drag', // Drag region interfers with scrollbar drag
-
-    // Linux overflow fix for https://github.com/wavebox/waveboxapp/issues/712.
-    // Seems to only reproduce on certain pages (e.g. gmail)
-    ...(process.platform === 'linux' ? {
-      overflowY: 'hidden',
-      '&:hover': { overflowY: 'overlay' }
-    } : {
-      overflowY: 'overlay'
-    }),
-
-    '&::-webkit-scrollbar': {
-      WebkitAppearance: 'none',
-      width: 7,
-      height: 7
+const styles = (theme) => {
+  return {
+    rootNoScrollbar: {
+      // Linux overflow fix for https://github.com/wavebox/waveboxapp/issues/712.
+      // Seems to only reproduce on certain pages (e.g. gmail)
+      ...(process.platform === 'linux' ? {
+        overflowY: 'hidden',
+        '&:hover': { overflowY: 'auto' }
+      } : {
+        overflowY: 'auto'
+      }),
+      '&::-webkit-scrollbar': { display: 'none' }
     },
-    '&::-webkit-scrollbar-track': {
-      backgroundColor: 'rgba(255,255,255,0.2)',
-      borderRadius: 4
-    },
-    '&::-webkit-scrollbar-thumb': {
-      borderRadius: 4,
-      backgroundColor: 'rgba(0,0,0,.5)',
-      boxShadow: '0 0 2px rgba(255,255,255,.5)'
+    rootWithScrollbar: {
+      WebkitAppRegion: 'no-drag', // Drag region interfers with scrollbar drag
+
+      // Linux overflow fix for https://github.com/wavebox/waveboxapp/issues/712.
+      // Seems to only reproduce on certain pages (e.g. gmail)
+      ...(process.platform === 'linux' ? {
+        overflowY: 'hidden',
+        '&:hover': { overflowY: 'overlay' }
+      } : {
+        overflowY: 'overlay'
+      }),
+
+      '&::-webkit-scrollbar': {
+        WebkitAppearance: 'none',
+        width: 7,
+        height: 7
+      },
+      '&::-webkit-scrollbar-track': {
+        backgroundColor: ThemeTools.getValue(theme, 'wavebox.sidebar.scrollbar.track.backgroundColor'),
+        borderRadius: 4
+      },
+      '&::-webkit-scrollbar-thumb': {
+        borderRadius: 4,
+        backgroundColor: ThemeTools.getValue(theme, 'wavebox.sidebar.scrollbar.thumb.backgroundColor'),
+        boxShadow: ThemeTools.getValue(theme, 'wavebox.sidebar.scrollbar.thumb.boxShadow')
+      }
     }
   }
 }
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class SidelistMailboxes extends React.Component {
   /* **************************************************************************/
   // Lifecycle
@@ -136,7 +139,7 @@ class SidelistMailboxes extends React.Component {
   }
 
   render () {
-    const { className, classes, ...passProps } = this.props
+    const { className, classes, theme, ...passProps } = this.props
     const { mailboxIds, disabled, showScrollbar } = this.state
 
     return (
