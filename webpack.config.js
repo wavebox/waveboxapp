@@ -5,8 +5,8 @@ gracefulFs.gracefulify(fs)
 
 module.exports = function (env = {}) {
   // Config
-  process.env.CHROME_TARGET = 61
-  process.env.NODE_TARGET = '8.9.3'
+  process.env.CHROME_TARGET = 66
+  process.env.NODE_TARGET = '10.2.0'
 
   const mode = new Set([
     'production',

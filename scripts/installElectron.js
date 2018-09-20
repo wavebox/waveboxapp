@@ -3,6 +3,8 @@ if (process.env.TRAVIS === 'true') {
   process.exit(0)
 }
 
+process.exit(0) //TODO switch hosted
+
 const { ROOT_DIR, PKG } = require('./constants')
 const { sequencePromiseSpawn } = require('./Tools')
 const Colors = require('colors/safe')

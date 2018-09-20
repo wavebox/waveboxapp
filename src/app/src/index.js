@@ -6,6 +6,7 @@
   if (AppUpdater.handleWin32SquirrelSwitches(app)) { return }
 
   // Single app instance
+  //TODO depricated
   const singleAppQuit = app.makeSingleInstance(function (commandLine, workingDirectory) {
     const AppSingleInstance = require('./AppSingleInstance').default // Late require me
     AppSingleInstance.processSingleInstanceArgs(commandLine, workingDirectory)
