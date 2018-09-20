@@ -98,8 +98,8 @@ const styles = {
   },
   addButtonIcon: {
     color: '#36D3A2',
-    width: 200,
-    height: 200
+    width: 180,
+    height: 180
   }
 }
 
