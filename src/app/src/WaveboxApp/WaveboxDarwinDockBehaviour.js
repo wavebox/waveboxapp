@@ -12,6 +12,7 @@ class WaveboxDarwinDockBehaviour {
     if (process.platform === 'darwin') {
       app.on('browser-window-blur', this._updateDock)
       app.on('browser-window-focus', this._updateDock)
+      app.on('browser-window-created', this._updateDock)
     }
   }
 
