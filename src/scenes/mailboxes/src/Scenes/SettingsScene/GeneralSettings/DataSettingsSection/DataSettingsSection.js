@@ -104,6 +104,30 @@ class DataSettingsSection extends React.Component {
             You will need to sign back into all accounts after doing this
           </SettingsListTypography>
         </SettingsListItem>
+        <SettingsListItem className={classes.listItem}>
+          <ConfirmButton
+            variant='raised'
+            size='small'
+            content={(
+              <span>
+                <ClearIcon className={classes.buttonIcon} />
+                Clear all extension data
+              </span>
+            )}
+            confirmContent={(
+              <span>
+                <HelpOutlineIcon className={classes.buttonIcon} />
+                Click again to confirm
+              </span>
+            )}
+            confirmWaitMs={4000}
+            onConfirmedClick={() => {
+              crextensionActions.clearAllBrowserSessions()
+            }} />
+          <SettingsListTypography type='info' variant='button-help'>
+            You may need to reconfigure your extensions after doing this
+          </SettingsListTypography>
+        </SettingsListItem>
         <SettingsListItemConfirmButton
           divider={false}
           label='Clean expired accounts'
