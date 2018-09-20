@@ -3,7 +3,7 @@ const { isProduction } = require('./Config')
 const ROOT_DIR = path.resolve(path.join(__dirname, '../'))
 const devRequire = (n) => require(path.join(ROOT_DIR, 'node_modules', n))
 const webpack = devRequire('webpack')
-const UglifyJsPlugin = devRequire('uglifyjs-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 
 /**
 * @param packagePath: the root path of the package
@@ -17,7 +17,8 @@ module.exports = function (packagePath, isNodeJS, config) {
   config.node.__filename = false
 
   config.optimization = config.optimization || {}
-  config.optimization.minimize = false
+  config.optimization.minimizer = [new TerserPlugin()]
+  config.optimization.minimize = isProduction
 
   // Plugins
   config.plugins = config.plugins || []
@@ -27,9 +28,6 @@ module.exports = function (packagePath, isNodeJS, config) {
     config.plugins.push(new webpack.DefinePlugin({
       __DEV__: false,
       'process.env.NODE_ENV': JSON.stringify('production')
-    }))
-    config.plugins.push(new UglifyJsPlugin({
-
     }))
   }
 
