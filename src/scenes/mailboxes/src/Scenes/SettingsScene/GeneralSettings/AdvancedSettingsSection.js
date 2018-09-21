@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
+import { ipcRenderer } from 'electron'
 import { settingsActions } from 'stores/settings'
 import CustomStylesEditingDialog from './CustomStylesEditingDialog'
 import DistributionConfig from 'Runtime/DistributionConfig'
@@ -14,6 +15,7 @@ import TuneIcon from '@material-ui/icons/Tune'
 import SettingsListTypography from 'wbui/SettingsListTypography'
 import modelCompare from 'wbui/react-addons-model-compare'
 import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
+import { WB_OPEN_CERTIFICATES_FOLDER } from 'shared/ipcEvents'
 
 const styles = {
 
@@ -181,9 +183,14 @@ class AdvancedSettingsSection extends React.Component {
             this.setState({ customCSSEditorOpen: true })
           }} />
         <SettingsListItemButton
-          divider={false}
           label='Site permissions'
           onClick={() => { window.location.hash = '/site_permissions' }} />
+        <SettingsListItemButton
+          label='Custom HTTPS Certificates'
+          divider={false}
+          onClick={() => {
+            ipcRenderer.send(WB_OPEN_CERTIFICATES_FOLDER)
+          }} />
         <CustomStylesEditingDialog
           title='Main Window Custom CSS'
           open={customCSSEditorOpen}
