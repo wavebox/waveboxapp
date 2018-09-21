@@ -2,11 +2,9 @@ import electron from 'electron'
 import pkg from 'package.json'
 import credentials from '../credentials'
 import { CRASH_REPORT_SERVER } from '../constants'
-import path from 'path'
 
 const privPayload = Symbol('privPayload')
 const privReporterStarted = Symbol('privReporterStarted')
-const privCrashesDirectory = Symbol('privCrashesDirectory')
 
 const RUNTIME_IDENTIFIERS = Object.freeze({
   MAIN: 'MAIN',
@@ -55,9 +53,6 @@ class CrashReporter {
   */
   constructor (runtimeIdentifier, osRelease = undefined) {
     this[privReporterStarted] = false
-    this[privCrashesDirectory] = process.type === 'browser'
-      ? path.join(electron.app.getPath('userData'), 'crash_tmp')
-      : path.join(electron.remote.app.getPath('userData'), 'crash_tmp')
     this[privPayload] = {
       runtimeIdentifier: runtimeIdentifier,
       initTime: new Date().getTime(),
@@ -145,7 +140,6 @@ class CrashReporter {
       productName: 'Wavebox',
       companyName: 'Wavebox',
       submitURL: `${CRASH_REPORT_SERVER}/app/crash/hard`,
-      crashesDirectory: this[privCrashesDirectory], // Use a custom directory so the linux snap package is happier
       extra: Object.keys(this[privPayload]).reduce((acc, k) => {
         acc[k] = `${this[privPayload][k]}`
         return acc
