@@ -67,7 +67,7 @@ guestStore.getState()
 guestActions.load()
 
 const crashReporter = new CrashReporterWatcher()
-crashReporter.start(userStore, settingsStore, CrashReporterWatcher.RUNTIME_IDENTIFIERS.MAIN, os.release())
+crashReporter.start(userStore, settingsStore, CrashReporterWatcher.RUNTIME_IDENTIFIERS.MAILBOXES, os.release())
 
 // Setup the updaters
 userActions.startAutoUpdateExtensions()
