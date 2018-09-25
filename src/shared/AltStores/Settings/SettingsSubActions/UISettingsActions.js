@@ -151,6 +151,13 @@ class UISettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param show: true to show, false otherwise
+  */
+  setShowSidebarScrollbars (show) {
+    this.dispatchUpdate('showSidebarScrollbars', show)
+  }
+
+  /**
   * @param css: the new css
   */
   setCustomMainCSS (css) {

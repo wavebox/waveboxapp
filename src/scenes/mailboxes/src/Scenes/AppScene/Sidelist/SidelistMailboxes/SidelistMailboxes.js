@@ -7,6 +7,7 @@ import classNames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import shallowCompare from 'react-addons-shallow-compare'
 import uuid from 'uuid'
+import ThemeTools from 'wbui/Themes/ThemeTools'
 
 const SortableItem = SortableElement(({ mailboxId, sortableGetScrollContainer }) => {
   // Only return native dom component here, otherwise adding and removing
@@ -36,21 +37,50 @@ const SortableList = SortableContainer(({ mailboxIds, disabled, sortableGetScrol
   )
 })
 
-const styles = {
-  root: {
-    // Linux overflow fix for https://github.com/wavebox/waveboxapp/issues/712.
-    // Seems to only reproduce on certain pages (e.g. gmail)
-    ...(process.platform === 'linux' ? {
-      overflowY: 'hidden',
-      '&:hover': { overflowY: 'auto' }
-    } : {
-      overflowY: 'auto'
-    }),
-    '&::-webkit-scrollbar': { display: 'none' }
+const styles = (theme) => {
+  return {
+    rootNoScrollbar: {
+      // Linux overflow fix for https://github.com/wavebox/waveboxapp/issues/712.
+      // Seems to only reproduce on certain pages (e.g. gmail)
+      ...(process.platform === 'linux' ? {
+        overflowY: 'hidden',
+        '&:hover': { overflowY: 'auto' }
+      } : {
+        overflowY: 'auto'
+      }),
+      '&::-webkit-scrollbar': { display: 'none' }
+    },
+    rootWithScrollbar: {
+      WebkitAppRegion: 'no-drag', // Drag region interfers with scrollbar drag
+
+      // Linux overflow fix for https://github.com/wavebox/waveboxapp/issues/712.
+      // Seems to only reproduce on certain pages (e.g. gmail)
+      ...(process.platform === 'linux' ? {
+        overflowY: 'hidden',
+        '&:hover': { overflowY: 'overlay' }
+      } : {
+        overflowY: 'overlay'
+      }),
+
+      '&::-webkit-scrollbar': {
+        WebkitAppearance: 'none',
+        width: 7,
+        height: 7
+      },
+      '&::-webkit-scrollbar-track': {
+        backgroundColor: ThemeTools.getValue(theme, 'wavebox.sidebar.scrollbar.track.backgroundColor'),
+        borderRadius: 4
+      },
+      '&::-webkit-scrollbar-thumb': {
+        borderRadius: 4,
+        backgroundColor: ThemeTools.getValue(theme, 'wavebox.sidebar.scrollbar.thumb.backgroundColor'),
+        boxShadow: ThemeTools.getValue(theme, 'wavebox.sidebar.scrollbar.thumb.boxShadow')
+      }
+    }
   }
 }
 
-@withStyles(styles)
+@withStyles(styles, { withTheme: true })
 class SidelistMailboxes extends React.Component {
   /* **************************************************************************/
   // Lifecycle
@@ -81,9 +111,11 @@ class SidelistMailboxes extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
+    const settingsState = settingsStore.getState()
     return {
       mailboxIds: accountStore.getState().mailboxIds(),
-      disabled: settingsStore.getState().ui.lockSidebarsAndToolbars
+      disabled: settingsState.ui.lockSidebarsAndToolbars,
+      showScrollbar: settingsState.ui.showSidebarScrollbars
     }
   })()
 
@@ -92,7 +124,10 @@ class SidelistMailboxes extends React.Component {
   }
 
   settingsChanged = (settingsState) => {
-    this.setState({ disabled: settingsState.ui.lockSidebarsAndToolbars })
+    this.setState({
+      disabled: settingsState.ui.lockSidebarsAndToolbars,
+      showScrollbar: settingsState.ui.showSidebarScrollbars
+    })
   }
 
   /* **************************************************************************/
@@ -104,14 +139,14 @@ class SidelistMailboxes extends React.Component {
   }
 
   render () {
-    const { className, classes, ...passProps } = this.props
-    const { mailboxIds, disabled } = this.state
+    const { className, classes, theme, ...passProps } = this.props
+    const { mailboxIds, disabled, showScrollbar } = this.state
 
     return (
       <div
         {...passProps}
         data-instance-id={this.instanceId}
-        className={classNames(classes.root, 'WB-Sidelist-Mailboxes', className)}>
+        className={classNames(showScrollbar ? classes.rootWithScrollbar : classes.rootNoScrollbar, 'WB-Sidelist-Mailboxes', className)}>
         <SortableList
           axis='y'
           distance={5}

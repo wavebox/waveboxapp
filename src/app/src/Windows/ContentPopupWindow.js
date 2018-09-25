@@ -196,6 +196,15 @@ class ContentPopupWindow extends WaveboxWindow {
     const requestURL = this.window.webContents.getURL()
     const purl = requestURL ? new URL(requestURL) : undefined
 
+    let permissionText
+    if (permissionType === 'geolocation') {
+      permissionText = 'Know your location'
+    } else if (permissionType === 'media') {
+      permissionText = 'Use your microphone and/or camera'
+    } else {
+      permissionText = permissionType
+    }
+
     dialog.showMessageBox(this.window, {
       type: 'question',
       buttons: [
@@ -207,9 +216,8 @@ class ContentPopupWindow extends WaveboxWindow {
       title: 'Permission Request',
       message: [
         `${purl ? `${purl.protocol}//${purl.hostname}` : 'This site'} wants to:`,
-        permissionType === 'geolocation' ? 'Know your location' : undefined,
-        permissionType === 'media' ? 'Use your microphone and/or camera' : undefined
-      ].filter((l) => !!l).join('\n')
+        permissionText
+      ].join('\n')
     }, (res) => {
       if (res === 0) {
         PermissionManager.resolvePermissionRequest(wcId, permissionType, 'default')

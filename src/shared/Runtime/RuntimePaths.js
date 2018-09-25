@@ -8,7 +8,9 @@ module.exports = function (pkg, path, AppDirectory) {
 
   return {
     // Databases
+    APP_DATA_PATH: appDirectory.userData(),
     DB_DIR_PATH: appDirectory.userData(),
+    CUSTOM_CERTIFICATE_PATH: path.join(appDirectory.userData(), 'custom_certificates'),
 
     // Metrics
     METRICS_LOG_PATH: path.join(appDirectory.userData(), 'metrics.log'),

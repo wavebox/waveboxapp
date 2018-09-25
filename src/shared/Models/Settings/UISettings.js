@@ -94,6 +94,7 @@ class UISettings extends Model {
     return ACCOUNT_TOOLTIP_MODES.ENABLED
   }
   get lockSidebarsAndToolbars () { return this._value_('lockSidebarsAndToolbars', false) }
+  get showSidebarScrollbars () { return this._value_('showSidebarScrollbars', false) }
 
   /* **************************************************************************/
   // Misc

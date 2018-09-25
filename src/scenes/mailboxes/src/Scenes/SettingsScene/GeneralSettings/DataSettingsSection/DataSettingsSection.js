@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { ipcRenderer } from 'electron'
+import { ipcRenderer, remote } from 'electron'
 import { accountActions } from 'stores/account'
 import { crextensionActions } from 'stores/crextension'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -8,6 +8,7 @@ import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItem from 'wbui/SettingsListItem'
 import ClearIcon from '@material-ui/icons/Clear'
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline'
+import FolderOpenIcon from '@material-ui/icons/FolderOpen'
 import { withStyles } from '@material-ui/core/styles'
 import ConfirmButton from 'wbui/ConfirmButton'
 import StorageIcon from '@material-ui/icons/Storage'
@@ -15,11 +16,13 @@ import SettingsListTypography from 'wbui/SettingsListTypography'
 import SettingsListItemConfirmButton from 'wbui/SettingsListItemConfirmButton'
 import SettingsListItemMultiButtons from 'wbui/SettingsListItemMultiButtons'
 import CloudProfileSyncListItem from './CloudProfileSyncListItem'
+import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import {
   WB_CLEAN_EXPIRED_SESSIONS,
   WB_TAKEOUT_IMPORT_FILE,
   WB_TAKEOUT_EXPORT_FILE
 } from 'shared/ipcEvents'
+import RuntimePaths from 'Runtime/RuntimePaths'
 import FASCloudDownloadIcon from 'wbfa/FASCloudDownload'
 import FASCloudUploadIcon from 'wbfa/FASCloudUpload'
 
@@ -72,6 +75,10 @@ class DataSettingsSection extends React.Component {
               onClick: () => { ipcRenderer.send(WB_TAKEOUT_IMPORT_FILE) }
             }
           ]} />
+        <SettingsListItemButton
+          label='Wavebox data folder'
+          icon={<FolderOpenIcon />}
+          onClick={() => { remote.shell.showItemInFolder(RuntimePaths.APP_DATA_PATH) }} />
         <SettingsListItem className={classes.listItem}>
           <ConfirmButton
             variant='raised'
@@ -95,6 +102,30 @@ class DataSettingsSection extends React.Component {
             }} />
           <SettingsListTypography type='info' variant='button-help'>
             You will need to sign back into all accounts after doing this
+          </SettingsListTypography>
+        </SettingsListItem>
+        <SettingsListItem className={classes.listItem}>
+          <ConfirmButton
+            variant='raised'
+            size='small'
+            content={(
+              <span>
+                <ClearIcon className={classes.buttonIcon} />
+                Clear all extension data
+              </span>
+            )}
+            confirmContent={(
+              <span>
+                <HelpOutlineIcon className={classes.buttonIcon} />
+                Click again to confirm
+              </span>
+            )}
+            confirmWaitMs={4000}
+            onConfirmedClick={() => {
+              crextensionActions.clearAllBrowserSessions()
+            }} />
+          <SettingsListTypography type='info' variant='button-help'>
+            You may need to reconfigure your extensions after doing this
           </SettingsListTypography>
         </SettingsListItem>
         <SettingsListItemConfirmButton

@@ -7,6 +7,7 @@ import { Button, Paper } from '@material-ui/core'
 import { URL } from 'url'
 import MyLocationIcon from '@material-ui/icons/MyLocation'
 import PermCameraMicIcon from '@material-ui/icons/PermCameraMic'
+import HelpIcon from '@material-ui/icons/Help'
 
 const styles = {
   root: {
@@ -55,6 +56,38 @@ class BrowserViewPermissionRequests extends React.Component {
     return shallowCompare(this, nextProps, nextState)
   }
 
+  /**
+  * Renders the request element
+  * @param classes: the classes to use
+  * @param permissionType: the type of permission
+  * @return jsx
+  */
+  renderRequestType (classes, permissionType) {
+    if (permissionType === 'geolocation') {
+      return (
+        <p className={classes.permission}>
+          <MyLocationIcon className={classes.icon} />
+          Know your location
+        </p>
+      )
+    } else if (permissionType === 'media') {
+      return (
+        <p className={classes.permission}>
+          <PermCameraMicIcon className={classes.icon} />
+          Use your microphone and/or camera
+        </p>
+      )
+    } else {
+      // If it's not known just give the most basic info we have
+      return (
+        <p className={classes.permission}>
+          <HelpIcon className={classes.icon} />
+          {permissionType}
+        </p>
+      )
+    }
+  }
+
   render () {
     const {
       permissionRequests,
@@ -73,18 +106,7 @@ class BrowserViewPermissionRequests extends React.Component {
           <p>
             {purl ? `${purl.protocol}//${purl.hostname}` : 'This site'} wants to:
           </p>
-          {permissionType === 'geolocation' ? (
-            <p className={classes.permission}>
-              <MyLocationIcon className={classes.icon} />
-              Know your location
-            </p>
-          ) : undefined}
-          {permissionType === 'media' ? (
-            <p className={classes.permission}>
-              <PermCameraMicIcon className={classes.icon} />
-              Use your microphone and/or camera
-            </p>
-          ) : undefined}
+          {this.renderRequestType(classes, permissionType)}
           <div className={classes.actions}>
             <Button
               className={classes.actionButton}

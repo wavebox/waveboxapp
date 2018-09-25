@@ -9,7 +9,14 @@ import {
   WB_LIN_NOTIF_PRESENT
 } from 'shared/ipcEvents'
 
-const MacNotification = process.platform === 'darwin' ? window.appNodeModulesRequire('node-mac-notifier') : null
+let MacNotification = null
+if (process.platform === 'darwin') {
+  try {
+    MacNotification = window.appNodeModulesRequire('node-mac-notifier')
+  } catch (ex) {
+    console.warn('Failed to import node-mac-notifier. Continuing in unknown state', ex)
+  }
+}
 
 class EnhancedNotificationRenderer {
   /* **************************************************************************/
@@ -24,6 +31,7 @@ class EnhancedNotificationRenderer {
   * @param clickData={}: the data to provide to the click handler
   */
   presentNotificationDarwin (title, html5Options = {}, clickHandler = undefined, clickData = {}) {
+    if (!MacNotification) { return }
     if (NotificationRendererUtils.areNotificationsMuted()) { return }
 
     const notif = new MacNotification(title, {
@@ -49,6 +57,7 @@ class EnhancedNotificationRenderer {
   * @param settingsState: the current settings state
   */
   presentMailboxNotificationDarwin (mailboxId, serviceId, notification, clickHandler, accountState, settingsState) {
+    if (!MacNotification) { return }
     if (NotificationRendererUtils.areNotificationsMuted(settingsState)) { return }
     const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceId, accountState, settingsState)
     if (!enabled) { return }

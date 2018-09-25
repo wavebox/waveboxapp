@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { accountStore } from 'stores/account'
+import { settingsStore } from 'stores/settings'
 import shallowCompare from 'react-addons-shallow-compare'
 import StyledMailboxServiceBadge from './StyledMailboxServiceBadge'
 import SidelistActiveIndicator from './SidelistActiveIndicator'
@@ -31,10 +32,12 @@ class SidelistTLMailboxAvatar extends React.Component {
 
   componentDidMount () {
     accountStore.listen(this.accountChanged)
+    settingsStore.listen(this.settingsChanged)
   }
 
   componentWillUnmount () {
     accountStore.unlisten(this.accountChanged)
+    settingsStore.unlisten(this.settingsChanged)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -49,12 +52,19 @@ class SidelistTLMailboxAvatar extends React.Component {
 
   state = (() => {
     return {
-      ...this.deriveAccountState(this.props.mailboxId, accountStore.getState())
+      ...this.deriveAccountState(this.props.mailboxId, accountStore.getState()),
+      globalShowSleepableServiceIndicator: settingsStore.getState().ui.showSleepableServiceIndicator
     }
   })()
 
   accountChanged = (accountState) => {
     this.setState(this.deriveAccountState(this.props.mailboxId, accountState))
+  }
+
+  settingsChanged = (settingsState) => {
+    this.setState({
+      globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator
+    })
   }
 
   /**
@@ -76,7 +86,8 @@ class SidelistTLMailboxAvatar extends React.Component {
         isMailboxRestricted: accountState.isMailboxRestricted(mailboxId),
         showBadge: mailbox.showBadge,
         badgeColor: mailbox.badgeColor,
-        showAvatarColorRing: mailbox.showAvatarColorRing
+        showAvatarColorRing: mailbox.showAvatarColorRing,
+        mailboxShowSleepableServiceIndicator: mailbox.showSleepableServiceIndicator
       }
     } else {
       return {
@@ -115,7 +126,9 @@ class SidelistTLMailboxAvatar extends React.Component {
       isMailboxRestricted,
       showBadge,
       badgeColor,
-      showAvatarColorRing
+      showAvatarColorRing,
+      globalShowSleepableServiceIndicator,
+      mailboxShowSleepableServiceIndicator
     } = this.state
     if (!hasMembers) { return false }
 
@@ -141,6 +154,7 @@ class SidelistTLMailboxAvatar extends React.Component {
         <SidelistAvatar
           avatar={avatar}
           sidebarSize={sidebarSize}
+          showSleeping={globalShowSleepableServiceIndicator && mailboxShowSleepableServiceIndicator}
           isSleeping={isMailboxSleeping}
           showRestricted={isMailboxRestricted}
           showColorRing={showAvatarColorRing}

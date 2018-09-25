@@ -6,15 +6,24 @@ import uuid from 'uuid'
 import { google } from 'googleapis'
 import axiosDefaults from 'axios/lib/defaults'
 import axiosXHRAdaptor from 'axios/lib/adapters/xhr'
+import axios from 'axios'
 
+// This is quite bad really. We need to stub the transport layer in Google to use xhr rather
+// than require('http'). We can set that using the transformRequest switch in google.options
+// but there's a bug in the google-auth-library which doesn't pass these through. Great.
+// To work around this, change the default axios adapter (hence the bad part). On the plus
+// side though, we're only removing User-Agent and Accept-Encoding which technically
+// shouldn't be set by any client running in this environment, so it's relatively safe. Still bad.
+const originalTransformRequest = axiosDefaults.transformRequest[0]
+axios.defaults.transformRequest = [(data, headers) => {
+  delete headers['User-Agent']
+  delete headers['Accept-Encoding']
+  return originalTransformRequest(data, headers)
+}]
 // Configure Google
 google.options({
-  adapter: axiosXHRAdaptor,
-  transformRequest: (data, headers) => {
-    delete headers['User-Agent']
-    delete headers['Accept-Encoding']
-    return axiosDefaults.transformRequest[0](data, headers)
-  }
+  adapter: axiosXHRAdaptor
+  // transformRequest @Thomas101 - if google ever fix their auth library move transformRequest back here
 })
 
 const gPlus = google.plus('v1')

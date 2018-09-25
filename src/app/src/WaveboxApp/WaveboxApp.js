@@ -1,6 +1,7 @@
 /* global __DEV__ */
 
 import { app, BrowserWindow, ipcMain, globalShortcut } from 'electron'
+import os from 'os'
 import yargs from 'yargs'
 import credentials from 'shared/credentials'
 import WaveboxAppPrimaryMenu from './WaveboxAppPrimaryMenu'
@@ -13,7 +14,8 @@ import { emblinkStore, emblinkActions } from 'stores/emblink'
 import { notifhistStore, notifhistActions } from 'stores/notifhist'
 import { guestStore, guestActions } from 'stores/guest'
 import ipcEvents from 'shared/ipcEvents'
-import BasicHTTPAuthHandler from '../BasicHTTPAuthHandler'
+import BasicHTTPAuthHandler from 'HTTPAuth/BasicHTTPAuthHandler'
+import CustomHTTPSCertificateManager from 'HTTPAuth/CustomHTTPSCertificateManager'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { SessionManager, AccountSessionManager, ExtensionSessionManager } from '../SessionManager'
 import ServicesManager from '../Services'
@@ -30,6 +32,7 @@ import { AppSettings } from 'shared/Models/Settings'
 import WaveboxDataManager from './WaveboxDataManager'
 import mailboxStorage from 'Storage/mailboxStorage'
 import constants from 'shared/constants'
+import CrashReporterWatcher from 'shared/CrashReporter/CrashReporterWatcher'
 
 const privStarted = Symbol('privStarted')
 const privArgv = Symbol('privArgv')
@@ -37,6 +40,7 @@ const privAppMenu = Symbol('privAppMenu')
 const privGlobalShortcuts = Symbol('privGlobalShortcuts')
 const privMainWindow = Symbol('privMainWindow')
 const privCloseBehaviour = Symbol('privCloseBehaviour')
+const privCrashReporter = Symbol('privCrashReporter')
 
 class WaveboxApp {
   /* ****************************************************************************/
@@ -50,6 +54,7 @@ class WaveboxApp {
     this[privGlobalShortcuts] = undefined
     this[privMainWindow] = undefined
     this[privCloseBehaviour] = undefined
+    this[privCrashReporter] = undefined
   }
 
   /**
@@ -66,7 +71,7 @@ class WaveboxApp {
     // against this
     process.__on_unsafe__ = process.on
     process.on = (...args) => {
-      if (args[0] === 'uncaughtException') {
+      if (args[0] === 'uncaughtException' || args[0] === 'unhandledRejection') {
         let isDev
         try {
           isDev = __DEV__
@@ -76,7 +81,7 @@ class WaveboxApp {
 
         if (isDev) {
           console.log([
-            'Wavebox is refusing to bind the "uncaughtException" event to process.',
+            `Wavebox is refusing to bind the "${args[0]}" event to process.`,
             '  If you really meant to do this use "process.__on_unsafe__()"',
             '  This message will not be displayed in production'
           ].join('\n'))
@@ -86,8 +91,10 @@ class WaveboxApp {
       }
     }
     process.__on_unsafe__('uncaughtException', (err) => {
-      console.error(err)
-      console.error(err.stack)
+      console.error(`[uncaughtException] ${err.message}`, err.stack)
+    })
+    process.__on_unsafe__('unhandledRejection', (reason, prom) => {
+      console.error(`[unhandledRejection] ${reason}`, prom)
     })
 
     // State
@@ -112,6 +119,12 @@ class WaveboxApp {
     notifhistActions.load()
     guestStore.getState()
     guestActions.load()
+
+    // Crash reporting
+    // Ideally this would be one of the first things we'd do, but to provide the option
+    // to the user to disable crash reporting we have to run this later on in the flow
+    this[privCrashReporter] = new CrashReporterWatcher()
+    this[privCrashReporter].start(userStore, settingsStore, CrashReporterWatcher.RUNTIME_IDENTIFIERS.MAIN, os.release())
 
     // Component behaviour
     this[privCloseBehaviour] = new WaveboxAppCloseBehaviour()
@@ -157,6 +170,7 @@ class WaveboxApp {
     app.on('before-quit', this._handleBeforeQuit)
     app.on('open-url', this._handleOpenUrl)
     app.on('login', this._handleHTTPBasicLogin)
+    app.on('certificate-error', this._handleCertificateError)
     app.on('will-quit', this._handleWillQuit)
     evtMain.on(evtMain.WB_QUIT_APP, this.fullyQuitApp)
     evtMain.on(evtMain.WB_RELAUNCH_APP, this.restartApp)
@@ -297,6 +311,11 @@ class WaveboxApp {
 
     // Proces any user arguments
     WaveboxCommandArgs.processModifierArgs(this[privArgv], emblinkActions, accountActions)
+
+    // Pre-load certificates soon-ish after launch (will be loaded on-demand if a cert request comes in)
+    setTimeout(() => {
+      CustomHTTPSCertificateManager.loadSync()
+    }, 1000)
   }
 
   /**
@@ -347,6 +366,20 @@ class WaveboxApp {
     const handler = new BasicHTTPAuthHandler()
     const parentWindow = BrowserWindow.fromWebContents(webContents.hostWebContents ? webContents.hostWebContents : webContents)
     handler.start(parentWindow, request, authInfo, callback)
+  }
+
+  /**
+  * @param evt: the event that fired
+  * @param wc: the webcontents with the error
+  * @param url: the url we're trying to load
+  * @param error: the error that triggered
+  * @param certificate: the certificate that was presented
+  * @param callback: callback to execute with the action
+  */
+  _handleCertificateError = (evt, wc, url, error, certificate, callback) => {
+    evt.preventDefault()
+    const res = CustomHTTPSCertificateManager.handleCertificateError(wc, url, error, certificate)
+    callback(res)
   }
 
   /**

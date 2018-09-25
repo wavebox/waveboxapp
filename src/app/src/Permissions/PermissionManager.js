@@ -125,6 +125,8 @@ class PermissionManager extends EventEmitter {
       fn(true)
     } else if (type === 'openExternal') {
       fn(false) // We're not supporting this
+    } else if (type === 'unknown') {
+      fn(true) // Normally storage etc - but without additional info we can't propogate to the user
     } else {
       // Bubble the rest out to the user...
       const site = this.getPermissionSiteFromWebContents(wc)

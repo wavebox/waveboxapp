@@ -5,7 +5,7 @@ const OUT_DIR = path.join(BIN_DIR, 'guestApi')
 const devRequire = (n) => require(path.join(ROOT_DIR, 'node_modules', n))
 const webpackRequire = (n) => require(path.join(ROOT_DIR, 'webpack', n))
 
-const UglifyJS = devRequire('uglify-es')
+const Terser = devRequire('terser')
 const CleanWebpackPlugin = devRequire('clean-webpack-plugin')
 const CopyWebpackPlugin = devRequire('copy-webpack-plugin')
 const { isProduction, isVerboseLog } = webpackRequire('Config')
@@ -30,7 +30,7 @@ module.exports = function (env) {
           to: '',
           force: true,
           transform: isProduction ? (content, path) => {
-            const res = UglifyJS.minify(content.toString())
+            const res = Terser.minify(content.toString())
             if (res.error) {
               throw res.error
             } else {
