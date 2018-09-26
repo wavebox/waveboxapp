@@ -41,7 +41,7 @@ class CrashReporterWatcher {
     const settingsState = settingsStore.getState()
     this[privCrashReporter] = new CrashReporter(runtimeIdentifier, osRelease)
     this[privCrashReporter].addClientId(userState.clientId)
-    this[privCrashReporter].addAppSettings(settingsState.launched.app)
+    this[privCrashReporter].addAppSettings(settingsState.launched.app, settingsState.launched.ui)
 
     this._userStoreChanged(userState)
     userStore.listen(this._userStoreChanged)
