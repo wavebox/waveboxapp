@@ -57,7 +57,7 @@ class TraySettings extends Model {
   // Properties
   /* **************************************************************************/
 
-  get show () { return false; return this._value_('show', true) }
+  get show () { return this._value_('show', true) }
   get showUnreadCount () { return this._value_('showUnreadCount', true) }
 
   /* **************************************************************************/
