@@ -377,7 +377,7 @@ class WaveboxAppPrimaryMenu {
 
     const lastMenu = this._lastMenu
     this._lastMenu = this.build(accelerators, mailboxMenuConfig, userEmail)
-    //Menu.setApplicationMenu(this._lastMenu)
+    Menu.setApplicationMenu(this._lastMenu)
     this.updateHiddenShortcuts(accelerators)
 
     // Prevent Memory leak

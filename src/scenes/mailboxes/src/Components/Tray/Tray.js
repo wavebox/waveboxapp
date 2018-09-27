@@ -61,8 +61,6 @@ export default class Tray extends React.Component {
     this.deferredClickTO = null
 
     this.contextMenu = null
-
-    this.appTray.setContextMenu(this.renderContextMenu()) //TODO test only
   }
 
   componentDidMount () {
@@ -329,8 +327,8 @@ export default class Tray extends React.Component {
         { label: 'Compose New Message', click: this.handleCompose },
         { type: 'separator' }
       ],
-      //unread,
-      //unread.length ? ([{ type: 'separator' }]) : [],
+      unread,
+      unread.length ? ([{ type: 'separator' }]) : [],
       [
         { label: 'Quit', click: this.handleQuit }
       ]
@@ -372,12 +370,12 @@ export default class Tray extends React.Component {
 
         // Add a context menu to fallback for libappindicator
         if (IS_SOMETIMES_CTX_MENU_ONLY_PLATFORM) {
-          //const lastContextMenu = this.contextMenu
-          //this.contextMenu = this.renderContextMenu()
-          //this.appTray.setContextMenu(this.contextMenu)
-          //if (lastContextMenu) {
-            //lastContextMenu.destroy()
-          //}
+          const lastContextMenu = this.contextMenu
+          this.contextMenu = this.renderContextMenu()
+          this.appTray.setContextMenu(this.contextMenu)
+          if (lastContextMenu) {
+            lastContextMenu.destroy()
+          }
         }
       })
 
