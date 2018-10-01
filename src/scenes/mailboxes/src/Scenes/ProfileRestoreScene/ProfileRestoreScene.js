@@ -17,7 +17,8 @@ import StyleMixins from 'wbui/Styles/StyleMixins'
 const HUMANIZED_PLATFORMS = {
   'darwin': 'macOS',
   'win32': 'Windows',
-  'linux': 'Linux'
+  'linux': 'Linux',
+  'organisation': 'Organisation'
 }
 
 const styles = {
