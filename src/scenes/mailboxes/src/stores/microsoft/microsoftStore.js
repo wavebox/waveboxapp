@@ -109,8 +109,10 @@ class MicrosoftStore {
   */
   isInvalidGrantError (err) {
     if (err) {
-      if (err.status === 400) { return true }
-      if (err.status === 401) { return true }
+      // @Thomas101 disable these checks temporarily as some users have
+      // reported a re-authentication loop. Needs further investigation
+      // if (err.status === 400) { return true }
+      // if (err.status === 401) { return true }
     }
     return false
   }
