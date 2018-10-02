@@ -14,6 +14,7 @@ import {
 } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
 import WINDOW_TYPES from './WindowTypes'
+import Platform from 'shared/Platform'
 
 const privWindow = Symbol('privWindow')
 const privBrowserWindowId = Symbol('privBrowserWindowId')
@@ -68,6 +69,17 @@ class WaveboxWindow extends EventEmitter {
     this[privBrowserWindowId] = null
     this[privLastTimeInFocus] = 0
     this[privLocationSaver] = new WaveboxWindowLocationSaver(saverTag)
+
+    // Mojave fix for issues/817
+    if (Platform.isDarwinMojave()) {
+      this.on('tab-created', (evt, tabId) => {
+        const wc = webContents.fromId(tabId)
+        if (!wc || wc.isDestroyed()) { return }
+        wc.getZoomFactor((factor) => {
+          wc.setZoomFactor(Platform.getDarwinMojaveCorrectedZoomLevel(factor))
+        })
+      })
+    }
   }
 
   /**
@@ -574,7 +586,9 @@ class WaveboxWindow extends EventEmitter {
     if (!webContentsId) { return this }
     const wc = webContents.fromId(webContentsId)
     if (!wc || wc.isDestroyed()) { return this }
-    wc.getZoomFactor((factor) => { wc.setZoomFactor(factor + 0.1) })
+    wc.getZoomFactor((factor) => {
+      wc.setZoomFactor(Platform.getDarwinMojaveCorrectedZoomLevel(factor + 0.1))
+    })
     return this
   }
 
@@ -587,7 +601,9 @@ class WaveboxWindow extends EventEmitter {
     if (!webContentsId) { return this }
     const wc = webContents.fromId(webContentsId)
     if (!wc || wc.isDestroyed()) { return this }
-    wc.getZoomFactor((factor) => { wc.setZoomFactor(factor - 0.1) })
+    wc.getZoomFactor((factor) => {
+      wc.setZoomFactor(Platform.getDarwinMojaveCorrectedZoomLevel(factor - 0.1))
+    })
     return this
   }
 
@@ -600,7 +616,7 @@ class WaveboxWindow extends EventEmitter {
     if (!webContentsId) { return this }
     const wc = webContents.fromId(webContentsId)
     if (!wc || wc.isDestroyed()) { return this }
-    wc.setZoomFactor(1.0)
+    wc.setZoomFactor(Platform.getDarwinMojaveCorrectedZoomLevel(1.0))
     return this
   }
 

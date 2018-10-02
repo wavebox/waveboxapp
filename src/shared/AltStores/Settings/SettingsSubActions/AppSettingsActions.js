@@ -173,6 +173,14 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * Sets whether to apply the mojave checkbox fix
+  * @param enable: true to enable
+  */
+  setDarwinMojaveCheckboxFix (enable) {
+    this.dispatchUpdate('darwinMojaveCheckboxFix', enable)
+  }
+
+  /**
   * Opens the metrics log
   */
   openMetricsLog () {
