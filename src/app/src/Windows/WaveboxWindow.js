@@ -20,6 +20,7 @@ const privWindow = Symbol('privWindow')
 const privBrowserWindowId = Symbol('privBrowserWindowId')
 const privLocationSaver = Symbol('privLocationSaver')
 const privLastTimeInFocus = Symbol('privLastTimeInFocus')
+const privMojaveCheckboxFix = Symbol('privMojaveCheckboxFix')
 
 const waveboxWindowManager = new WaveboxWindowManager()
 
@@ -69,9 +70,10 @@ class WaveboxWindow extends EventEmitter {
     this[privBrowserWindowId] = null
     this[privLastTimeInFocus] = 0
     this[privLocationSaver] = new WaveboxWindowLocationSaver(saverTag)
+    this[privMojaveCheckboxFix] = Platform.isDarwinMojave() && settingsStore.getState().launched.app.darwinMojaveCheckboxFix
 
     // Mojave fix for issues/817
-    if (Platform.isDarwinMojave()) {
+    if (this[privMojaveCheckboxFix]) {
       this.on('tab-created', (evt, tabId) => {
         const wc = webContents.fromId(tabId)
         if (!wc || wc.isDestroyed()) { return }
@@ -587,7 +589,10 @@ class WaveboxWindow extends EventEmitter {
     const wc = webContents.fromId(webContentsId)
     if (!wc || wc.isDestroyed()) { return this }
     wc.getZoomFactor((factor) => {
-      wc.setZoomFactor(Platform.getDarwinMojaveCorrectedZoomLevel(factor + 0.1))
+      const next = this[privMojaveCheckboxFix]
+        ? Platform.getDarwinMojaveCorrectedZoomLevel(factor + 0.1)
+        : factor + 0.1
+      wc.setZoomFactor(next)
     })
     return this
   }
@@ -602,7 +607,10 @@ class WaveboxWindow extends EventEmitter {
     const wc = webContents.fromId(webContentsId)
     if (!wc || wc.isDestroyed()) { return this }
     wc.getZoomFactor((factor) => {
-      wc.setZoomFactor(Platform.getDarwinMojaveCorrectedZoomLevel(factor - 0.1))
+      const next = this[privMojaveCheckboxFix]
+        ? Platform.getDarwinMojaveCorrectedZoomLevel(factor - 0.1)
+        : factor - 0.1
+      wc.setZoomFactor(next)
     })
     return this
   }
@@ -616,7 +624,10 @@ class WaveboxWindow extends EventEmitter {
     if (!webContentsId) { return this }
     const wc = webContents.fromId(webContentsId)
     if (!wc || wc.isDestroyed()) { return this }
-    wc.setZoomFactor(Platform.getDarwinMojaveCorrectedZoomLevel(1.0))
+    const next = this[privMojaveCheckboxFix]
+      ? Platform.getDarwinMojaveCorrectedZoomLevel(1.0)
+      : 1.0
+    wc.setZoomFactor(next)
     return this
   }
 
