@@ -471,7 +471,11 @@ class AccountStore extends CoreAccountStore {
 
     const serviceJS = {
       ...CoreACService.createJS(undefined, parentId, GenericService.type),
-      url: url
+      url: url,
+      // Change some of the normal defaults as the user wont be prompted to customize as they see fit
+      usePageThemeAsColor: true,
+      usePageTitleAsDisplayName: true,
+      hasNavigationToolbar: true
     }
 
     actions.createService.defer(
