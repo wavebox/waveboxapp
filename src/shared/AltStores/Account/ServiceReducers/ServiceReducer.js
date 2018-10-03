@@ -69,7 +69,7 @@ class ServiceReducer {
 
     let value = parseInt(timeout)
     value = isNaN(value) ? MAILBOX_SLEEP_WAIT : value
-    value = Math.min(Math.max(timeout, min), max)
+    value = Math.min(Math.max(value, min), max)
     return service.changeData({ sleepableTimeout: value })
   }
 

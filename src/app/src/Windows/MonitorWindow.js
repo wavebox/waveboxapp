@@ -44,7 +44,9 @@ class MonitorWindow extends WaveboxWindow {
   */
   collectMetrics = () => {
     ServicesManager.metricsService.getExtendedMetrics().then((metrics) => {
-      this.window.webContents.send(WB_COLLECTED_METRICS, { metrics: metrics })
+      if (this.window) {
+        this.window.webContents.send(WB_COLLECTED_METRICS, { metrics: metrics })
+      }
     })
   }
 
