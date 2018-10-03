@@ -191,6 +191,21 @@ class CoreAccountActions extends RemoteActions {
   }
 
   /**
+  * Attaches a weblink service in a way that requires no UI
+  * @param parentId: the id of the mailbox
+  * @param url: the url of the new service
+  * @param activateOnCreate: true to activate the service on creation
+  */
+  fastCreateWeblinkService (...args) {
+    if (process.type === 'browser') {
+      const [parentId, url, activateOnCreate] = args
+      return { parentId, url, activateOnCreate }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('fastCreateWeblinkService', args)
+    }
+  }
+
+  /**
   * Removes a Service
   * @param id: the id of the service to remove
   */

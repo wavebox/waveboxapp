@@ -25,6 +25,8 @@ import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxRedu
 import ServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/ServiceDataReducer'
 import AuthFactory from 'shared/Models/ACAccounts/AuthFactory'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
+import GenericService from 'shared/Models/ACAccounts/Generic/GenericService'
+import CoreACService from 'shared/Models/ACAccounts/CoreACService'
 
 class AccountStore extends CoreAccountStore {
   /* **************************************************************************/
@@ -55,6 +57,7 @@ class AccountStore extends CoreAccountStore {
 
       // Service
       handleCreateService: actions.CREATE_SERVICE,
+      handleFastCreateWeblinkService: actions.FAST_CREATE_WEBLINK_SERVICE,
       handleRemoveService: actions.REMOVE_SERVICE,
       handleMoveServiceToNewMailbox: actions.MOVE_SERVICE_TO_NEW_MAILBOX,
       handleReduceService: actions.REDUCE_SERVICE,
@@ -460,6 +463,27 @@ class AccountStore extends CoreAccountStore {
     }
 
     this.startManagingServiceWithId(data.id)
+  }
+
+  handleFastCreateWeblinkService ({ parentId, url, activateOnCreate }) {
+    const mailbox = this.getMailbox(parentId)
+    if (!mailbox) { this.preventDefault(); return }
+
+    const serviceJS = {
+      ...CoreACService.createJS(undefined, parentId, GenericService.type),
+      url: url
+    }
+
+    actions.createService.defer(
+      parentId,
+      mailbox.suggestedServiceUILocation,
+      serviceJS
+    )
+
+    // Lazy hack to ensure the service is created
+    setTimeout(() => {
+      actions.changeActiveService.defer(serviceJS.id)
+    }, 250)
   }
 
   handleRemoveService ({ id }) {
