@@ -72,7 +72,7 @@
     "colors": "1.3.2",
     "copy-webpack-plugin": "4.5.2",
     "css-loader": "1.0.0",
-    "electron": "2.0.9",
+    "electron": "2.0.11",
     "electron-rebuild": "1.8.2",
     "file-loader": "2.0.0",
     "fs-extra": "7.0.0",
@@ -102,7 +102,7 @@
   },
   "electronInstallEnv": {
     "ELECTRON_MIRROR": "https://electron-wb.s3.us-east-2.amazonaws.com/",
-    "ELECTRON_CUSTOM_DIR": "wb_4_1_0"
+    "ELECTRON_CUSTOM_DIR": "wb_4_3_1"
   },
   "pre-commit": [
     "validate"
