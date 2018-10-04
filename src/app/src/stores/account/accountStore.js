@@ -909,7 +909,7 @@ class AccountStore extends CoreAccountStore {
     if (allowCycling && activeIndex === 0) {
       nextId = this._mailboxIndex_[this._mailboxIndex_.length - 1] || null
     } else {
-      nextId = this._mailboxIndex_[Math.max(0, activeIndex - 1)] || null
+      nextId = this._mailboxIndex_[activeIndex - 1] || null
     }
 
     if (nextId) {
@@ -926,7 +926,7 @@ class AccountStore extends CoreAccountStore {
     if (allowCycling && activeIndex === this._mailboxIndex_.length - 1) {
       nextId = this._mailboxIndex_[0] || null
     } else {
-      nextId = this._mailboxIndex_[Math.min(this._mailboxIndex_.length - 1, activeIndex + 1)] || null
+      nextId = this._mailboxIndex_[activeIndex + 1] || null
     }
 
     if (nextId) {
@@ -983,7 +983,7 @@ class AccountStore extends CoreAccountStore {
     if (allowCycling && activeIndex === 0) {
       nextServiceId = mailbox.allServices[mailbox.allServices.length - 1] || null
     } else {
-      nextServiceId = mailbox.allServices[Math.max(0, activeIndex - 1)] || null
+      nextServiceId = mailbox.allServices[activeIndex - 1] || null
     }
 
     if (nextServiceId) {
@@ -1004,7 +1004,7 @@ class AccountStore extends CoreAccountStore {
     if (allowCycling && activeIndex === mailbox.allServices.length - 1) {
       nextServiceId = mailbox.allServices[0] || null
     } else {
-      nextServiceId = mailbox.allServices[Math.min(mailbox.allServices.length - 1, activeIndex + 1)] || null
+      nextServiceId = mailbox.allServices[activeIndex + 1] || null
     }
 
     if (nextServiceId) {
@@ -1023,7 +1023,7 @@ class AccountStore extends CoreAccountStore {
     if (activeIndex === allServiceIds.length - 1) {
       nextServiceId = allServiceIds[0] || null
     } else {
-      nextServiceId = allServiceIds[Math.min(allServiceIds.length - 1, activeIndex + 1)] || null
+      nextServiceId = allServiceIds[activeIndex + 1] || null
     }
 
     if (nextServiceId) {
@@ -1042,7 +1042,7 @@ class AccountStore extends CoreAccountStore {
     if (activeIndex === 0) {
       nextServiceId = allServiceIds[allServiceIds.length - 1] || null
     } else {
-      nextServiceId = allServiceIds[Math.max(0, activeIndex - 1)] || null
+      nextServiceId = allServiceIds[activeIndex - 1] || null
     }
 
     if (nextServiceId) {
