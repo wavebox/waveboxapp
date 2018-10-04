@@ -17,6 +17,7 @@ import modelCompare from 'wbui/react-addons-model-compare'
 import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 import { WB_OPEN_CERTIFICATES_FOLDER } from 'shared/ipcEvents'
 import Platform from 'shared/Platform'
+import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 
 const styles = {}
 
@@ -58,7 +59,8 @@ class AdvancedSettingsSection extends React.Component {
         'enableWindowOpeningEngine',
         'enableMouseNavigationDarwin',
         'polyfillUserAgents',
-        'darwinMojaveCheckboxFix'
+        'darwinMojaveCheckboxFix',
+        'concurrentServiceLoadLimit'
       ]) ||
       modelCompare(this.props.language, nextProps.language, ['inProcessSpellchecking']) ||
       modelCompare(this.props.ui, nextProps.ui, ['customMainCSS']) ||
@@ -185,6 +187,22 @@ class AdvancedSettingsSection extends React.Component {
             }}
             checked={app.darwinMojaveCheckboxFix} />
         ) : undefined}
+        <SettingsListItemSelectInline
+          label='Concurrent service load limit (Requires Restart)'
+          value={app.concurrentServiceLoadLimit}
+          options={[
+            { value: 0, label: 'Auto', primaryText: 'Auto (Recommended)' },
+            { value: -1, label: 'Unlimited (Not Recommended)' },
+            { divider: true }
+          ].concat(
+            Array.from(Array(20)).map((_, i) => {
+              return { value: i + 1, label: `${i + 1}` }
+            })
+          )}
+          onChange={(evt, value) => {
+            showRestart()
+            settingsActions.sub.app.setConcurrentServiceLoadLimit(value)
+          }} />
         <SettingsListItemButton
           label='Main Window Custom CSS'
           icon={<CodeIcon />}

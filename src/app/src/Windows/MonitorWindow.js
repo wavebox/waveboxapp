@@ -27,7 +27,7 @@ class MonitorWindow extends WaveboxWindow {
       }
     })
 
-    this.collectInterval = setInterval(this.collectMetrics, 1000)
+    this.collectInterval = setInterval(this.collectMetrics, 2000)
   }
 
   destroy (evt) {

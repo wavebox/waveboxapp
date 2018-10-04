@@ -10,6 +10,7 @@ import { crextensionStore, crextensionActions } from 'stores/crextension'
 import { platformStore, platformActions } from 'stores/platform'
 import { guestStore, guestActions } from 'stores/guest'
 import { notifhistStore, notifhistActions } from 'stores/notifhist'
+import { EventEmitter } from 'events'
 import Debug from 'Debug'
 import MouseNavigationDarwin from 'wbui/MouseNavigationDarwin'
 import ResourceMonitorResponder from './ResourceMonitorResponder'
@@ -21,6 +22,9 @@ import {
 import { ipcRenderer, webFrame } from 'electron'
 import CrashReporterWatcher from 'shared/CrashReporter/CrashReporterWatcher'
 import os from 'os'
+
+// We often exceed 10 listeners so increase this
+EventEmitter.defaultMaxListeners = 50
 
 // Prevent zooming
 webFrame.setVisualZoomLevelLimits(1, 1)

@@ -820,7 +820,7 @@ class CoreServiceWebView extends React.Component {
               this.multiCallBrowserEvent([this.handleDidStartLoading, webviewEventProps.didStartLoading], [evt])
             }}
             didStopLoading={(evt) => {
-              this.multiCallBrowserEvent([this.handleDidStopLoading, webviewEventProps.handleDidStopLoading], [evt])
+              this.multiCallBrowserEvent([this.handleDidStopLoading, webviewEventProps.didStopLoading], [evt])
             }}
             onPermissionRequestsChanged={(evt) => {
               this.multiCallBrowserEvent([this.handlePermissionRequestsChanged, webviewEventProps.handlePermissionRequestsChanged], [evt])

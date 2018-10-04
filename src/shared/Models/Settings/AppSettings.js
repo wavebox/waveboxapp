@@ -49,6 +49,9 @@ class AppSettings extends Model {
   get enableMouseNavigationDarwin () { return this._value_('enableMouseNavigationDarwin', true) }
   get polyfillUserAgents () { return this._value_('polyfillUserAgents', true) }
   get darwinMojaveCheckboxFix () { return this._value_('darwinMojaveCheckboxFix', true) }
+  get concurrentServiceLoadLimit () { return this._value_('concurrentServiceLoadLimit', 0) }
+  get concurrentServiceLoadLimitIsAuto () { return this.concurrentServiceLoadLimit === 0 }
+  get concurrentServiceLoadLimitIsNone () { return this.concurrentServiceLoadLimit === -1 }
 }
 
 module.exports = AppSettings
