@@ -1001,7 +1001,7 @@ class AccountStore extends CoreAccountStore {
     const activeIndex = mailbox.allServices.findIndex((t) => t === activeServiceId)
 
     let nextServiceId
-    if (allowCycling && activeIndex === mailbox.enabledServiceTypes.length - 1) {
+    if (allowCycling && activeIndex === mailbox.allServices.length - 1) {
       nextServiceId = mailbox.allServices[0] || null
     } else {
       nextServiceId = mailbox.allServices[Math.min(mailbox.allServices.length - 1, activeIndex + 1)] || null
