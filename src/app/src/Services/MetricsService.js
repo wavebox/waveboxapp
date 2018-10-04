@@ -185,29 +185,10 @@ class MetricsService {
     }, new Map())
 
     // Build the final metrics
-    //TODO broken https://github.com/electron/electron/issues/14710
-    //Stub to get us going
-    /*const metrics = app.getAppMetrics().map((metric) => {
+    const metrics = app.getAppMetrics().map((metric) => {
       return {
         ...metric,
         webContentsInfo: webContentsByPid.get(metric.pid)
-      }
-    })*/
-    const metrics = Array.from(webContentsByPid.keys()).map((pid) => {
-      return {
-        pid: pid,
-        type: '?',
-        cpu: {
-          idleWakeupsPerSecond:0,
-          percentCPUUsage:0
-        },
-        memory: {
-          peakWorkingSetSize:0,
-          privateBytes:0,
-          sharedBytes:0,
-          workingSetSize:0
-        },
-        webContentsInfo: webContentsByPid.get(pid)
       }
     })
 
