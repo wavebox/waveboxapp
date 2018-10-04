@@ -1,0 +1,2 @@
+import CoreServiceWebViewHibernator from './CoreServiceWebViewHibernator'
+export default CoreServiceWebViewHibernator

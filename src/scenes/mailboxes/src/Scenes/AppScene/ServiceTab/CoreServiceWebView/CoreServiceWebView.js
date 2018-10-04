@@ -29,7 +29,7 @@ import { settingsStore } from 'stores/settings'
 import Resolver from 'Runtime/Resolver'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import ServiceInformationCover from './ServiceInformationCover'
+import ServiceInformationCover from '../ServiceInformationCover'
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import RefreshIcon from '@material-ui/icons/Refresh'
 import HotelIcon from '@material-ui/icons/Hotel'
@@ -820,7 +820,7 @@ class CoreServiceWebView extends React.Component {
               this.multiCallBrowserEvent([this.handleDidStartLoading, webviewEventProps.didStartLoading], [evt])
             }}
             didStopLoading={(evt) => {
-              this.multiCallBrowserEvent([this.handleDidStopLoading, webviewEventProps.handleDidStopLoading], [evt])
+              this.multiCallBrowserEvent([this.handleDidStopLoading, webviewEventProps.didStopLoading], [evt])
             }}
             onPermissionRequestsChanged={(evt) => {
               this.multiCallBrowserEvent([this.handlePermissionRequestsChanged, webviewEventProps.handlePermissionRequestsChanged], [evt])

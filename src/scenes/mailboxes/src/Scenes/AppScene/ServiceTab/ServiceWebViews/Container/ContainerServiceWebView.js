@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import CoreServiceWebViewHibernator from '../CoreServiceWebViewHibernator'
+import CoreServiceWebView from '../../CoreServiceWebView'
 import { accountStore, accountActions } from 'stores/account'
 import ContainerServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/ContainerServiceDataReducer'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -284,7 +284,7 @@ export default class ContainerServiceWebView extends React.Component {
     const { mailboxId, serviceId } = this.props
 
     return (
-      <CoreServiceWebViewHibernator
+      <CoreServiceWebView
         ref={REF}
         mailboxId={mailboxId}
         serviceId={serviceId}

@@ -23,7 +23,7 @@ settingsStore.getState()
 settingsActions.load()
 
 const crashReporter = new CrashReporterWatcher()
-crashReporter.start(userStore, settingsStore, CrashReporterWatcher.RUNTIME_IDENTIFIERS.MAIN, os.release())
+crashReporter.start(userStore, settingsStore, CrashReporterWatcher.RUNTIME_IDENTIFIERS.TRAY, os.release())
 
 // Prevent zooming
 webFrame.setVisualZoomLevelLimits(1, 1)

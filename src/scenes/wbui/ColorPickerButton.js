@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Button, Popover } from '@material-ui/core'
-import { ChromePicker } from 'react-color'
+import { SketchPicker } from 'react-color'
 import Color from 'color'
 
 export default class ColorPickerButton extends React.Component {
@@ -71,7 +71,7 @@ export default class ColorPickerButton extends React.Component {
           open={!!anchorEl}
           anchorEl={anchorEl}
           onClose={(evt) => this.setState({ anchorEl: null })}>
-          <ChromePicker color={typeof (value) === 'string' ? value : undefined} onChangeComplete={(col) => {
+          <SketchPicker color={typeof (value) === 'string' ? value : undefined} onChangeComplete={(col) => {
             if (onChange) {
               onChange({
                 ...col,

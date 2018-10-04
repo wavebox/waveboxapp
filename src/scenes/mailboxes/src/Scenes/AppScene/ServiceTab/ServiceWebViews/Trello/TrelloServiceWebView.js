@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import CoreServiceWebViewHibernator from '../CoreServiceWebViewHibernator'
+import CoreServiceWebView from '../../CoreServiceWebView'
 import { accountDispatch } from 'stores/account'
 import { trelloActions } from 'stores/trello'
 import { WB_BROWSER_TRELLO_UNREAD_COUNT_CHANGED } from 'shared/ipcEvents'
@@ -76,7 +76,7 @@ export default class TrelloServiceWebView extends React.Component {
     const { mailboxId, serviceId } = this.props
 
     return (
-      <CoreServiceWebViewHibernator
+      <CoreServiceWebView
         ref={REF}
         mailboxId={mailboxId}
         serviceId={serviceId}

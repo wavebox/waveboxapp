@@ -382,7 +382,11 @@ class WaveboxAppPrimaryMenu {
 
     // Prevent Memory leak
     if (lastMenu) {
-      lastMenu.destroy()
+      // Wait some time for the linuc dbus-menu to catch up. Not waiting appears to be the
+      // root cause of #790. Shouldn't do any harm on other platforms either
+      setTimeout(() => {
+        lastMenu.destroy()
+      }, 1000)
     }
   }
 

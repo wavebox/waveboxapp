@@ -29,7 +29,7 @@ class CrashReporter {
     if (userState.user.analyticsEnabled) {
       const reporter = new CrashReporter(runtimeIdentifier, osRelease)
       reporter.addClientId(userState.clientId)
-      reporter.addAppSettings(settingsState.launched.app)
+      reporter.addAppSettings(settingsState.launched.app, settingsState.launched.ui)
       reporter.startCrashReporter()
       return reporter
     } else {
@@ -95,12 +95,14 @@ class CrashReporter {
   /**
   * Adds the app settings
   * @param appSettings: the app settings to add
+  * @param uiSettings: the ui settings to add
   */
-  addAppSettings (appSettings) {
+  addAppSettings (appSettings, uiSettings) {
     this[privPayload].ignoreGPUBlacklist = appSettings.ignoreGPUBlacklist
     this[privPayload].disableHardwareAcceleration = appSettings.disableHardwareAcceleration
     this[privPayload].isolateMailboxProcesses = appSettings.isolateMailboxProcesses
     this[privPayload].enableMixedSandboxMode = appSettings.enableMixedSandboxMode
+    this[privPayload].vibrancyMode = uiSettings.vibrancyMode
 
     if (!this.isAppEnabled) { return }
 
@@ -110,6 +112,7 @@ class CrashReporter {
         electron.crashReporter.addExtraParameter('disableHardwareAcceleration', `${appSettings.disableHardwareAcceleration}`)
         electron.crashReporter.addExtraParameter('isolateMailboxProcesses', `${appSettings.isolateMailboxProcesses}`)
         electron.crashReporter.addExtraParameter('enableMixedSandboxMode', `${appSettings.enableMixedSandboxMode}`)
+        electron.crashReporter.addExtraParameter('vibrancyMode', `${uiSettings.vibrancyMode}`)
       } else {
         electron.crashReporter.start(this._buildCrashReporterConfig())
       }

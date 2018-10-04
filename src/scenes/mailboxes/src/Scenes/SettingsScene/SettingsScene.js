@@ -42,6 +42,9 @@ const styles = {
   tabInkBar: {
     backgroundColor: lightBlue[100]
   },
+  tabEmail: {
+    fontSize: '85%'
+  },
 
   // Footer
   button: {
@@ -221,7 +224,12 @@ class SettingsScene extends React.Component {
               className={classes.tabButton}
               value='support' />
             <Tab
-              label={userIsLoggedIn ? userEmail : 'Wavebox'}
+              label={userIsLoggedIn ? (
+                <span>
+                  <div>Wavebox Account</div>
+                  <div className={classes.tabEmail}>{userEmail}</div>
+                </span>
+              ) : 'Wavebox Account'}
               className={classes.tabButton}
               value='pro' />
           </Tabs>

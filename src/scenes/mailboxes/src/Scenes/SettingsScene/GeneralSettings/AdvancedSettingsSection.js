@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
+import { ipcRenderer } from 'electron'
 import { settingsActions } from 'stores/settings'
 import CustomStylesEditingDialog from './CustomStylesEditingDialog'
 import DistributionConfig from 'Runtime/DistributionConfig'
@@ -14,10 +15,11 @@ import TuneIcon from '@material-ui/icons/Tune'
 import SettingsListTypography from 'wbui/SettingsListTypography'
 import modelCompare from 'wbui/react-addons-model-compare'
 import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
+import { WB_OPEN_CERTIFICATES_FOLDER } from 'shared/ipcEvents'
+import Platform from 'shared/Platform'
+import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 
-const styles = {
-
-}
+const styles = {}
 
 @withStyles(styles)
 class AdvancedSettingsSection extends React.Component {
@@ -56,7 +58,9 @@ class AdvancedSettingsSection extends React.Component {
         'enableAutofillService',
         'enableWindowOpeningEngine',
         'enableMouseNavigationDarwin',
-        'polyfillUserAgents'
+        'polyfillUserAgents',
+        'darwinMojaveCheckboxFix',
+        'concurrentServiceLoadLimit'
       ]) ||
       modelCompare(this.props.language, nextProps.language, ['inProcessSpellchecking']) ||
       modelCompare(this.props.ui, nextProps.ui, ['customMainCSS']) ||
@@ -107,7 +111,7 @@ class AdvancedSettingsSection extends React.Component {
           checked={app.isolateMailboxProcesses} />
         {AppSettings.SUPPORTS_MIXED_SANDBOX_MODE ? (
           <SettingsListItemSwitch
-            label='Enable Sandboxing (Requires Restart)'
+            label='Sandboxing (Requires Restart)'
             onChange={(evt, toggled) => {
               showRestart()
               settingsActions.sub.app.setEnableMixedSandboxMode(toggled)
@@ -174,6 +178,31 @@ class AdvancedSettingsSection extends React.Component {
             settingsActions.sub.app.setEnableWindowOpeningEngine(toggled)
           }}
           checked={app.enableWindowOpeningEngine} />
+        {Platform.isDarwinMojave() ? (
+          <SettingsListItemSwitch
+            label='macOS Mojave checkbox fix (Requires Restart)'
+            onChange={(evt, toggled) => {
+              showRestart()
+              settingsActions.sub.app.setDarwinMojaveCheckboxFix(toggled)
+            }}
+            checked={app.darwinMojaveCheckboxFix} />
+        ) : undefined}
+        <SettingsListItemSelectInline
+          label='Concurrent service load limit (Requires Restart)'
+          value={app.concurrentServiceLoadLimit}
+          options={[
+            { value: 0, label: 'Auto', primaryText: 'Auto (Recommended)' },
+            { value: -1, label: 'Unlimited (Not Recommended)' },
+            { divider: true }
+          ].concat(
+            Array.from(Array(20)).map((_, i) => {
+              return { value: i + 1, label: `${i + 1}` }
+            })
+          )}
+          onChange={(evt, value) => {
+            showRestart()
+            settingsActions.sub.app.setConcurrentServiceLoadLimit(value)
+          }} />
         <SettingsListItemButton
           label='Main Window Custom CSS'
           icon={<CodeIcon />}
@@ -181,9 +210,14 @@ class AdvancedSettingsSection extends React.Component {
             this.setState({ customCSSEditorOpen: true })
           }} />
         <SettingsListItemButton
-          divider={false}
           label='Site permissions'
           onClick={() => { window.location.hash = '/site_permissions' }} />
+        <SettingsListItemButton
+          label='Custom HTTPS Certificates'
+          divider={false}
+          onClick={() => {
+            ipcRenderer.send(WB_OPEN_CERTIFICATES_FOLDER)
+          }} />
         <CustomStylesEditingDialog
           title='Main Window Custom CSS'
           open={customCSSEditorOpen}

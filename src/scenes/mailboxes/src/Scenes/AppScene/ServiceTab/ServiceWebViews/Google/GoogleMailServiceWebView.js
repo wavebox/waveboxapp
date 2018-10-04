@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import CoreServiceWebViewHibernator from '../CoreServiceWebViewHibernator'
+import CoreServiceWebView from '../../CoreServiceWebView'
 import { accountStore, accountDispatch } from 'stores/account'
 import { googleActions } from 'stores/google'
 import { settingsStore } from 'stores/settings'
@@ -210,7 +210,7 @@ export default class GoogleMailServiceWebView extends React.Component {
   render () {
     const { mailboxId, serviceId } = this.props
     return (
-      <CoreServiceWebViewHibernator
+      <CoreServiceWebView
         ref={REF}
         mailboxId={mailboxId}
         serviceId={serviceId}

@@ -374,7 +374,11 @@ export default class Tray extends React.Component {
           this.contextMenu = this.renderContextMenu()
           this.appTray.setContextMenu(this.contextMenu)
           if (lastContextMenu) {
-            lastContextMenu.destroy()
+            // Wait some time for the linuc dbus-menu to catch up. Not waiting appears to be the
+            // root cause of #790. Shouldn't do any harm on other platforms either
+            setTimeout(() => {
+              lastContextMenu.destroy()
+            }, 1000)
           }
         }
       })

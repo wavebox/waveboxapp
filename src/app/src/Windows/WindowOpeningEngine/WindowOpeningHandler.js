@@ -1,8 +1,9 @@
-import { shell } from 'electron'
+import { shell, app } from 'electron'
 import ContentWindow from 'Windows/ContentWindow'
 import ContentPopupWindow from 'Windows/ContentPopupWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import { settingsStore } from 'stores/settings'
+import { emblinkActions } from 'stores/emblink'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import WindowOpeningEngine from './WindowOpeningEngine'
 import WindowOpeningRules from './WindowOpeningRules'
@@ -51,6 +52,13 @@ class WindowOpeningHandler {
     // via the options. Quit and do nothing
     if (!options) { return }
 
+    // Capture internal navigations
+    if (this._handleInternalNavigation(targetUrl)) {
+      evt.preventDefault()
+      return
+    }
+
+    // Grab our state
     const webContentsId = evt.sender.id
     const currentUrl = evt.sender.getURL()
     const currentHostUrl = this._getCurrentHostUrl(evt.sender.getURL(), tabMetaInfo)
@@ -168,11 +176,18 @@ class WindowOpeningHandler {
       openingWindowType,
       tabMetaInfo
     } = config
+
+    // Capture internal navigations
+    if (this._handleInternalNavigation(targetUrl)) {
+      evt.preventDefault()
+      return
+    }
+
+    // Grab our state
     const webContentsId = evt.sender.id
     const currentUrl = evt.sender.getURL()
     const currentHostUrl = this._getCurrentHostUrl(evt.sender.getURL(), tabMetaInfo)
     const mailbox = this._getMailboxFromTabMetaInfo(tabMetaInfo)
-
     let navigateMode = NAVIGATE_MODES.DEFAULT
 
     // Run through our standard config
@@ -239,6 +254,28 @@ class WindowOpeningHandler {
         this.openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, targetUrl, newWindowOptions)
         this.closeOpeningWindowIfSupported(evt.sender.id)
       }
+    }
+  }
+
+  /* ****************************************************************************/
+  // Internal navigation
+  /* ****************************************************************************/
+
+  /**
+  * Handles internal navigations
+  * @param targetUrl: the url we're trying to navigate to
+  * @return true if the event is handled internally, false otherwise
+  */
+  _handleInternalNavigation (targetUrl) {
+    if (targetUrl.startsWith('mailto:')) {
+      if (app.isDefaultProtocolClient('mailto')) {
+        emblinkActions.composeNewMailtoLink(targetUrl)
+      } else {
+        shell.openExternal(targetUrl)
+      }
+      return true
+    } else {
+      return false
     }
   }
 

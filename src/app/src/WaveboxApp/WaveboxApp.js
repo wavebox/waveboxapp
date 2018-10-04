@@ -14,7 +14,8 @@ import { emblinkStore, emblinkActions } from 'stores/emblink'
 import { notifhistStore, notifhistActions } from 'stores/notifhist'
 import { guestStore, guestActions } from 'stores/guest'
 import ipcEvents from 'shared/ipcEvents'
-import BasicHTTPAuthHandler from '../BasicHTTPAuthHandler'
+import BasicHTTPAuthHandler from 'HTTPAuth/BasicHTTPAuthHandler'
+import CustomHTTPSCertificateManager from 'HTTPAuth/CustomHTTPSCertificateManager'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { SessionManager, AccountSessionManager, ExtensionSessionManager } from '../SessionManager'
 import ServicesManager from '../Services'
@@ -169,6 +170,7 @@ class WaveboxApp {
     app.on('before-quit', this._handleBeforeQuit)
     app.on('open-url', this._handleOpenUrl)
     app.on('login', this._handleHTTPBasicLogin)
+    app.on('certificate-error', this._handleCertificateError)
     app.on('will-quit', this._handleWillQuit)
     evtMain.on(evtMain.WB_QUIT_APP, this.fullyQuitApp)
     evtMain.on(evtMain.WB_RELAUNCH_APP, this.restartApp)
@@ -309,6 +311,11 @@ class WaveboxApp {
 
     // Proces any user arguments
     WaveboxCommandArgs.processModifierArgs(this[privArgv], emblinkActions, accountActions)
+
+    // Pre-load certificates soon-ish after launch (will be loaded on-demand if a cert request comes in)
+    setTimeout(() => {
+      CustomHTTPSCertificateManager.loadSync()
+    }, 1000)
   }
 
   /**
@@ -359,6 +366,20 @@ class WaveboxApp {
     const handler = new BasicHTTPAuthHandler()
     const parentWindow = BrowserWindow.fromWebContents(webContents.hostWebContents ? webContents.hostWebContents : webContents)
     handler.start(parentWindow, request, authInfo, callback)
+  }
+
+  /**
+  * @param evt: the event that fired
+  * @param wc: the webcontents with the error
+  * @param url: the url we're trying to load
+  * @param error: the error that triggered
+  * @param certificate: the certificate that was presented
+  * @param callback: callback to execute with the action
+  */
+  _handleCertificateError = (evt, wc, url, error, certificate, callback) => {
+    evt.preventDefault()
+    const res = CustomHTTPSCertificateManager.handleCertificateError(wc, url, error, certificate)
+    callback(res)
   }
 
   /**
