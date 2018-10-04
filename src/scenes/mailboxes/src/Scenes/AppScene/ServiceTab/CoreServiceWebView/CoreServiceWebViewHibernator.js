@@ -114,7 +114,9 @@ class CoreServiceWebViewHibernator extends React.Component {
       captureRef: null,
       hasLoadLock: !isSleeping && isActive
         ? concurrencyLock.forceLoadLock(this.instanceId)
-        : concurrencyLock.requestLoadLock(this.instanceId, this.loadLockAquired)
+        : !isSleeping
+          ? concurrencyLock.requestLoadLock(this.instanceId, this.loadLockAquired)
+          : false
     }
   }
 
