@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import CoreServiceWebViewHibernator from '../CoreServiceWebViewHibernator'
+import CoreServiceWebView from '../../CoreServiceWebView'
 import { accountDispatch, AccountLinker } from 'stores/account'
 import { microsoftActions } from 'stores/microsoft'
 
@@ -75,7 +75,7 @@ export default class MicrosoftMailServiceWebView extends React.Component {
     const { mailboxId, serviceId } = this.props
 
     return (
-      <CoreServiceWebViewHibernator
+      <CoreServiceWebView
         ref={REF}
         mailboxId={mailboxId}
         serviceId={serviceId} />

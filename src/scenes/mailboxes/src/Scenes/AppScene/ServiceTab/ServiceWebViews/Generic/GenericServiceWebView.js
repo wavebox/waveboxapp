@@ -1,17 +1,17 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import CoreServiceWebViewHibernator from '../CoreServiceWebViewHibernator'
+import CoreServiceWebView from '../../CoreServiceWebView'
 import { accountActions } from 'stores/account'
-import GoogleCalendarServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/GoogleCalendarServiceDataReducer'
+import GenericServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/GenericServiceDataReducer'
+import GenericServiceReducer from 'shared/AltStores/Account/ServiceReducers/GenericServiceReducer'
 import shallowCompare from 'react-addons-shallow-compare'
 import {
-  WB_BROWSER_NOTIFICATION_PRESENT,
-  WB_BROWSER_GOOGLE_CALENDAR_ALERT_PRESENTED
+  WB_BROWSER_NOTIFICATION_PRESENT
 } from 'shared/ipcEvents'
 
 const REF = 'mailbox_tab'
 
-export default class GoogleCalendarServiceWebView extends React.Component {
+export default class GenericServiceWebView extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -22,36 +22,40 @@ export default class GoogleCalendarServiceWebView extends React.Component {
   }
 
   /* **************************************************************************/
-  // Browser Events
+  // Browser Events : Dispatcher
   /* **************************************************************************/
 
   /**
   * Dispatches browser IPC messages to the correct call
   * @param evt: the event that fired
   */
-  dispatchBrowserIPCMessage = (evt) => {
+  handleIPCMessage = (evt) => {
     switch (evt.channel.type) {
       case WB_BROWSER_NOTIFICATION_PRESENT: this.handleBrowserNotificationPresented(); break
-      case WB_BROWSER_GOOGLE_CALENDAR_ALERT_PRESENTED: this.handleBrowserAlertPresented(); break
       default: break
     }
   }
 
   /**
-  * Handles the browser presenting a notification or alert
+  * Handles the page favicon being updated
+  * @param evt: the event that fired
   */
-  handleBrowserNotificationPresented = () => {
-    accountActions.reduceServiceDataIfInactive(
+  handleFaviconUpdated = (evt) => {
+    accountActions.reduceService(
       this.props.serviceId,
-      GoogleCalendarServiceDataReducer.notificationPresented
+      GenericServiceReducer.setPageFaviconAvatar,
+      evt.favicons
     )
   }
 
   /**
-  * Auto changes the browser active mailbox to this service on presentation
+  * Handles the browser presenting a notification
   */
-  handleBrowserAlertPresented = () => {
-    accountActions.changeActiveService(this.props.serviceId)
+  handleBrowserNotificationPresented = () => {
+    accountActions.reduceServiceDataIfInactive(
+      this.props.serviceId,
+      GenericServiceDataReducer.notificationPresented
+    )
   }
 
   /* **************************************************************************/
@@ -64,12 +68,14 @@ export default class GoogleCalendarServiceWebView extends React.Component {
 
   render () {
     const { mailboxId, serviceId } = this.props
+
     return (
-      <CoreServiceWebViewHibernator
+      <CoreServiceWebView
         ref={REF}
         mailboxId={mailboxId}
         serviceId={serviceId}
-        ipcMessage={this.dispatchBrowserIPCMessage} />
+        pageFaviconUpdated={this.handleFaviconUpdated}
+        ipcMessage={this.handleIPCMessage} />
     )
   }
 }

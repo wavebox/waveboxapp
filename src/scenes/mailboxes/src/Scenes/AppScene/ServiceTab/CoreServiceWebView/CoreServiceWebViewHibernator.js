@@ -4,7 +4,7 @@ import { Button } from '@material-ui/core'
 import CoreServiceWebView from './CoreServiceWebView'
 import { accountStore, accountActions } from 'stores/account'
 import shallowCompare from 'react-addons-shallow-compare'
-import ServiceInformationCover from './ServiceInformationCover'
+import ServiceInformationCover from '../ServiceInformationCover'
 import HotelIcon from '@material-ui/icons/Hotel'
 import AlarmIcon from '@material-ui/icons/Alarm'
 
@@ -145,12 +145,8 @@ export default class CoreServiceWebViewHibernator extends React.Component {
   }
 
   /* **************************************************************************/
-  // Rendering
+  // Capturing
   /* **************************************************************************/
-
-  shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
-  }
 
   /**
   * Captures a snapshot of the webview and pushes it to sleep on completion
@@ -175,6 +171,14 @@ export default class CoreServiceWebViewHibernator extends React.Component {
           }
         })
       })
+  }
+
+  /* **************************************************************************/
+  // Rendering
+  /* **************************************************************************/
+
+  shouldComponentUpdate (nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState)
   }
 
   render () {
