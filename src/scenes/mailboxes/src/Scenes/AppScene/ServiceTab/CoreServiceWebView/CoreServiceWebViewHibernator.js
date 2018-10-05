@@ -1,12 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button } from '@material-ui/core'
 import CoreServiceWebView from './CoreServiceWebView'
 import { accountStore, accountActions } from 'stores/account'
 import shallowCompare from 'react-addons-shallow-compare'
-import ServiceInformationCover from '../ServiceInformationCover'
-import HotelIcon from '@material-ui/icons/Hotel'
-import AlarmIcon from '@material-ui/icons/Alarm'
+import ServiceSleepingCover from './ServiceSleepingCover'
 import uuid from 'uuid'
 import ConcurrencyLock from './ConcurrencyLock'
 
@@ -306,18 +303,10 @@ class CoreServiceWebViewHibernator extends React.Component {
     } else {
       if (showSleepPlaceholder && isActive) {
         return (
-          <ServiceInformationCover
+          <ServiceSleepingCover
             style={style}
             className={className}
-            IconComponent={HotelIcon}
-            title='Shhhh!'
-            text={['This tab is currently sleeping']}
-            button={(
-              <Button variant='raised' onClick={() => accountActions.awakenService(serviceId)}>
-                <AlarmIcon style={{ marginRight: 6 }} />
-                Wake it up
-              </Button>
-            )} />
+            onAwakenService={() => accountActions.awakenService(serviceId)} />
         )
       } else {
         return false
