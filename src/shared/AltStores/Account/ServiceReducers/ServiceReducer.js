@@ -83,6 +83,19 @@ class ServiceReducer {
   }
 
   /* **************************************************************************/
+  // Install
+  /* **************************************************************************/
+
+  /**
+  * Sets if the install text has been seen
+  * @param service: the service to update
+  * @param seen: true if the user has seen
+  */
+  static setHasSeenInstallInfo (service, seen) {
+    return service.changeData({ hasSeenInstallInfo: seen })
+  }
+
+  /* **************************************************************************/
   // Behaviour
   /* **************************************************************************/
 

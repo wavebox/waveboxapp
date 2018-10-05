@@ -1,9 +1,9 @@
 import ProfileRestoreScene from './ProfileRestoreScene'
-import ProfileRestoreWorkingScene from './ProfileRestoreWorkingScene'
+import ProfileRestoreRestartingScene from './ProfileRestoreRestartingScene'
 import ProfileRestoreFetchingScene from './ProfileRestoreFetchingScene'
 
 export {
   ProfileRestoreScene,
   ProfileRestoreFetchingScene,
-  ProfileRestoreWorkingScene
+  ProfileRestoreRestartingScene
 }

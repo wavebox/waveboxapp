@@ -38,6 +38,7 @@
     "react-addons-shallow-compare": "15.6.2",
     "react-color": "2.14.1",
     "react-dom": "16.5.2",
+    "react-markdown": "4.0.2",
     "react-notification-system": "0.2.17",
     "react-portal-tooltip": "2.4.0",
     "react-router": "4.3.1",

@@ -5,7 +5,6 @@ import { accountStore, accountActions } from 'stores/account'
 import ServiceInformationCover from '../ServiceInformationCover'
 import { Button } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 import FingerprintIcon from '@material-ui/icons/Fingerprint'
 
 const styles = {
@@ -112,8 +111,8 @@ class ServiceInvalidAuthCover extends React.Component {
       return (
         <ServiceInformationCover
           {...passProps}
-          title='Whoops!'
-          IconComponent={ErrorOutlineIcon}
+          title='Sign back in'
+          IconComponent={FingerprintIcon}
           text={[
             `There's an authentication problem with this service.`,
             `Wavebox either doesn't have any authentication information for this service or it's invalid.`
@@ -122,7 +121,7 @@ class ServiceInvalidAuthCover extends React.Component {
             <Button
               variant='raised'
               onClick={this.handleReauthenticate}>
-              <ErrorOutlineIcon className={classes.infoButtonIcon} />
+              <FingerprintIcon className={classes.infoButtonIcon} />
               Reauthenticate
             </Button>
           )} />

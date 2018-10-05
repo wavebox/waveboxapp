@@ -1,21 +1,21 @@
 import React from 'react'
 import { Dialog, DialogContent } from '@material-ui/core'
-import Spinner from 'wbui/Activity/Spinner'
 import { withStyles } from '@material-ui/core/styles'
 import lightBlue from '@material-ui/core/colors/lightBlue'
+import FARSyncAltIcon from 'wbfa/FARSyncAlt'
 
 const styles = {
   dialogContent: {
-    width: 180,
+    width: 240,
     textAlign: 'center'
   },
   text: {
-    marginTop: 20
+    marginTop: 30
   }
 }
 
 @withStyles(styles)
-class ProfileRestoreWorkingScene extends React.Component {
+class ProfileRestoreRestartingScene extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -29,9 +29,9 @@ class ProfileRestoreWorkingScene extends React.Component {
         disableBackdropClick
         disableEscapeKeyDown>
         <DialogContent className={classes.dialogContent}>
-          <Spinner size={50} color={lightBlue[600]} speed={0.75} />
+          <FARSyncAltIcon className={classes.buttonIcon} size='6x' spin color={lightBlue[600]} />
           <div className={classes.text}>
-            Just a moment...
+            Preparing to restart...
           </div>
         </DialogContent>
       </Dialog>
@@ -39,4 +39,4 @@ class ProfileRestoreWorkingScene extends React.Component {
   }
 }
 
-export default ProfileRestoreWorkingScene
+export default ProfileRestoreRestartingScene
