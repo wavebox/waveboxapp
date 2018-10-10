@@ -1,5 +1,6 @@
-const Model = require('./Model')
-const SERVICE_TYPES = require('./ACAccounts/ServiceTypes').default
+const Model = require('../Model')
+const UserOrgWelcomeScreen = require('./UserOrgWelcomeScreen')
+const SERVICE_TYPES = require('../ACAccounts/ServiceTypes').default
 
 const MS_IN_DAY = (1000 * 60 * 60 * 24)
 const PLANS = Object.freeze({
@@ -36,6 +37,7 @@ class User extends Model {
   constructor (data, dataEpoch) {
     super(data)
     this.__dataEpoch__ = dataEpoch
+    this.__orgWelcomeScreen__ = new UserOrgWelcomeScreen(data)
   }
 
   /* **************************************************************************/
@@ -145,6 +147,12 @@ class User extends Model {
   /* **************************************************************************/
 
   get enableProfileSync () { return this._value_('enableProfileSync', false) }
+
+  /* **************************************************************************/
+  // Properties: Org
+  /* **************************************************************************/
+
+  get ows () { return this.__orgWelcomeScreen__ }
 }
 
 module.exports = User
