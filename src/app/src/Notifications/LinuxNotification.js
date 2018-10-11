@@ -220,9 +220,12 @@ class LinuxNotification {
   presentNotification (id, senderId, options) {
     // Auto-clear
     clearTimeout(this[privNotificationExpirer])
-    this[privNotificationExpirer] = setTimeout(() => {
-      this.clearNotifications()
-    }, 3000)
+    // Respect requireInteraction option
+    if (!options.requireInteraction) {
+      this[privNotificationExpirer] = setTimeout(() => {
+        this.clearNotifications()
+      }, 3000)
+    }
 
     // Save
     this[privNotifications].set(id, { options, senderId, id })
