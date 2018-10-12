@@ -23,6 +23,7 @@ export default {
     }
   },
   typography: {
+    useNextVariants: true,
     fontFamily: '"Open Sans", sans-serif',
     button: {
       textTransform: 'none'
