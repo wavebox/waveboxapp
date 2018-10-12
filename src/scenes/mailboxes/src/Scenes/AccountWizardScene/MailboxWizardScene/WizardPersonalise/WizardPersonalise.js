@@ -337,7 +337,7 @@ class WizardPersonalise extends React.Component {
           <Button className={classes.footerCancelButton} onClick={onRequestCancel}>
             Cancel
           </Button>
-          <Button color='primary' variant='raised' onClick={this.handleNext}>
+          <Button color='primary' variant='contained' onClick={this.handleNext}>
             Next
           </Button>
         </div>

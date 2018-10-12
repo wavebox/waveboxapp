@@ -164,7 +164,7 @@ class DictionaryInstallStepper extends React.Component {
               <a href={(installLanguageInfo || {}).license} onClick={(evt) => { evt.preventDefault(); electron.remote.shell.openExternal(installLanguageInfo.license) }}>license</a>
               <span> of the <strong>{(installLanguageInfo || {}).name}</strong> dictionary</span>
             </p>
-            <Button variant='raised' color='primary' className={classes.button} onClick={this.handleAgreeLicense}>
+            <Button variant='contained' color='primary' className={classes.button} onClick={this.handleAgreeLicense}>
               Next
             </Button>
             <Button className={classes.button} onClick={this.handleCancel}>
@@ -189,7 +189,7 @@ class DictionaryInstallStepper extends React.Component {
               <strong>{(installLanguageInfo || {}).name}</strong>
               <span> dictionary has been downloaded and installed.</span>
             </p>
-            <Button variant='raised' color='primary' className={classes.button} onClick={this.handleComplete}>
+            <Button variant='contained' color='primary' className={classes.button} onClick={this.handleComplete}>
               Done
             </Button>
           </StepContent>

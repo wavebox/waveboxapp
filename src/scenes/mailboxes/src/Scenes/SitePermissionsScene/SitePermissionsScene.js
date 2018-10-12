@@ -123,7 +123,7 @@ class SitePermissionsScene extends React.Component {
           </List>
         </DialogContent>
         <DialogActions>
-          <Button variant='raised' color='primary' onClick={this.handleClose}>
+          <Button variant='contained' color='primary' onClick={this.handleClose}>
             Done
           </Button>
         </DialogActions>

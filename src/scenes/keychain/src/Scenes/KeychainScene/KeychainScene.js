@@ -261,7 +261,7 @@ class KeychainScene extends React.Component {
         <div className={classes.noneMessage}>
           <div>{`No passwords saved for ${serviceName}`}</div>
           <br />
-          <Button variant='raised' color='primary' onClick={this.handleOpenAddDialog}>
+          <Button variant='contained' color='primary' onClick={this.handleOpenAddDialog}>
             Add your first
           </Button>
         </div>
@@ -289,14 +289,14 @@ class KeychainScene extends React.Component {
         {credentials.length ? (
           <div className={classes.actionbar}>
             <Button
-              variant='raised'
+              variant='contained'
               className={classes.actionbarButton}
               disabled={requesting}
               onClick={this.handleOpenAddDialog}>
               Add
             </Button>
             <Button
-              variant='raised'
+              variant='contained'
               className={classes.actionbarButton}
               disabled={requesting || selected.length === 0}
               onClick={this.handleDeleteSelectedCredentials}>

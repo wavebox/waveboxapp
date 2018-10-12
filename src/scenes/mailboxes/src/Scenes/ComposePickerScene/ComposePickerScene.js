@@ -177,7 +177,7 @@ class ComposePickerScene extends React.Component {
           </List>
         </DialogContent>
         <DialogActions>
-          <Button variant='raised' onClick={this.handleCancel}>
+          <Button variant='contained' onClick={this.handleCancel}>
             Cancel
           </Button>
         </DialogActions>

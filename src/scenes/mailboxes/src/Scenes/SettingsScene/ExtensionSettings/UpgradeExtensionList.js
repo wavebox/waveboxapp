@@ -119,7 +119,7 @@ class UpgradeExtensionList extends React.Component {
         <h1 className={classes.heading}>More Extensions</h1>
         <div>
           <p className={classes.subheading}>These additional extensions are available when you purchase Wavebox</p>
-          <Button variant='raised' color='primary' onClick={this.handleOpenPro}>
+          <Button variant='contained' color='primary' onClick={this.handleOpenPro}>
             Purchase Wavebox
           </Button>
         </div>

@@ -78,7 +78,7 @@ class SettingsLiteItemAvatarPicker extends React.Component {
           className={classes.fileUploadButton}
           size='small'
           disabled={disabled}
-          variant='raised'
+          variant='contained'
           accept='image/*'
           onChange={onChange}>
           {icon ? (
@@ -88,7 +88,7 @@ class SettingsLiteItemAvatarPicker extends React.Component {
         </FileUploadButton>
         <Button
           size='small'
-          variant='raised'
+          variant='contained'
           disabled={disabled}
           onClick={() => { if (onClear) { onClear() } }}>
           {clearIcon ? (

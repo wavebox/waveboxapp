@@ -219,7 +219,7 @@ class AccountWizardAddScene extends React.Component {
           ) : undefined}
         </DialogContent>
         <DialogActions className={classes.dialogActions}>
-          <Button variant='raised' onClick={this.handleClose}>
+          <Button variant='contained' onClick={this.handleClose}>
             Cancel
           </Button>
         </DialogActions>

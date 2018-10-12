@@ -195,7 +195,7 @@ class WizardConfigureGeneric extends React.Component {
           Cancel
         </Button>
         <Button
-          variant='raised'
+          variant='contained'
           color='primary'
           onClick={() => this.handleFinish(false)}>
           Finish

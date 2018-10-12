@@ -129,12 +129,12 @@ class LinuxSetupScene extends React.Component {
           </Button>
           <div className={classes.actionSpacer} />
           {hasVisitedFontLink ? (
-            <Button variant='raised' color='primary' className={classes.button} onClick={this.handleDone}>
+            <Button variant='contained' color='primary' className={classes.button} onClick={this.handleDone}>
               <CheckCircleIcon className={classes.buttonIcon} />
               Done
             </Button>
           ) : (
-            <Button variant='raised' color='primary' className={classes.button} onClick={this.handleFontsClick}>
+            <Button variant='contained' color='primary' className={classes.button} onClick={this.handleFontsClick}>
               <FontDownloadIcon className={classes.buttonIcon} />
               Find out how
             </Button>

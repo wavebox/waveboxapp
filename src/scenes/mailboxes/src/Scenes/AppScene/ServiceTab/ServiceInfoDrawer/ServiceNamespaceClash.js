@@ -142,7 +142,7 @@ class ServiceNamespaceClash extends React.Component {
         <ServiceInfoPanelActions actions={3}>
           <ServiceInfoPanelActionButton
             color='primary'
-            variant='raised'
+            variant='contained'
             onClick={() => {
               accountActions.clearRuntimeWarning(serviceId, ACCOUNT_WARNING_TYPES.SERVICE_SIMILARITY_NAMESPACE_CLASH)
               accountActions.changeServiceSandboxing(serviceId, true)
@@ -152,7 +152,7 @@ class ServiceNamespaceClash extends React.Component {
           </ServiceInfoPanelActionButton>
           <ServiceInfoPanelActionButton
             color='primary'
-            variant='raised'
+            variant='contained'
             onClick={() => {
               accountActions.clearRuntimeWarning(serviceId, ACCOUNT_WARNING_TYPES.SERVICE_SIMILARITY_NAMESPACE_CLASH)
               accountActions.moveServiceToNewMailbox(serviceId)
@@ -161,7 +161,7 @@ class ServiceNamespaceClash extends React.Component {
             Move to new Account
           </ServiceInfoPanelActionButton>
           <ServiceInfoPanelActionButton
-            variant='raised'
+            variant='contained'
             onClick={() => {
               accountActions.clearRuntimeWarning(serviceId, ACCOUNT_WARNING_TYPES.SERVICE_SIMILARITY_NAMESPACE_CLASH)
             }}>

@@ -120,7 +120,7 @@ class WizardConfigureDefaultLayout extends React.Component {
                 }}>
                 Account Settings
               </Button>
-              <Button color='primary' variant='raised' onClick={onRequestCancel}>
+              <Button color='primary' variant='contained' onClick={onRequestCancel}>
                 Finish
               </Button>
             </div>

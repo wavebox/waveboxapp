@@ -100,7 +100,7 @@ class ServiceInvalidAuthCover extends React.Component {
           ]}
           button={(
             <Button
-              variant='raised'
+              variant='contained'
               onClick={this.handleReauthenticate}>
               <FingerprintIcon className={classes.infoButtonIcon} />
               Sign in
@@ -119,7 +119,7 @@ class ServiceInvalidAuthCover extends React.Component {
           ]}
           button={(
             <Button
-              variant='raised'
+              variant='contained'
               onClick={this.handleReauthenticate}>
               <FingerprintIcon className={classes.infoButtonIcon} />
               Reauthenticate

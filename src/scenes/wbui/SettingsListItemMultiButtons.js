@@ -77,7 +77,7 @@ class SettingsListItemMultiButtons extends React.Component {
         <Button
           key={`autobutton_${index}`}
           size='small'
-          variant='raised'
+          variant='contained'
           disabled={buttonProps.disabled}
           onClick={buttonProps.onClick}
           {...buttonProps.passProps}>

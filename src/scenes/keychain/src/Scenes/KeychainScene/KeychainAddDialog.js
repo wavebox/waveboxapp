@@ -234,7 +234,7 @@ class KeychainAddDialog extends React.Component {
           </Button>
           <Button
             className={classes.actionButton}
-            variant='raised'
+            variant='contained'
             color='primary'
             onClick={this.handleSave}>
             Save

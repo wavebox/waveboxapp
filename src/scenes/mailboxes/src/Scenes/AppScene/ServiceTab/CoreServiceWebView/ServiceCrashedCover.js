@@ -41,7 +41,7 @@ class ServiceCrashedCover extends React.Component {
           title='Whoops!'
           text={['Something went wrong with this tab and it crashed']}
           button={(
-            <Button variant='raised' onClick={attemptUncrash}>
+            <Button variant='contained' onClick={attemptUncrash}>
               <RefreshIcon className={classes.infoButtonIcon} />
               Reload
             </Button>

@@ -72,7 +72,7 @@ class DownloadSettingsSection extends React.Component {
           <div>
             <FileUploadButton
               size='small'
-              variant='raised'
+              variant='contained'
               disabled={os.alwaysAskDownloadLocation}
               webkitdirectory='webkitdirectory'
               onChange={(evt) => {
