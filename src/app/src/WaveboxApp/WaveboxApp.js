@@ -18,7 +18,7 @@ import BasicHTTPAuthHandler from 'HTTPAuth/BasicHTTPAuthHandler'
 import CustomHTTPSCertificateManager from 'HTTPAuth/CustomHTTPSCertificateManager'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { SessionManager, AccountSessionManager, ExtensionSessionManager } from '../SessionManager'
-import ServicesManager from '../Services'
+import ServicesManager from 'Services'
 import MailboxesWindow from 'Windows/MailboxesWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import AppUpdater from 'AppUpdater'
@@ -311,6 +311,7 @@ class WaveboxApp {
 
     // Proces any user arguments
     WaveboxCommandArgs.processModifierArgs(this[privArgv], emblinkActions, accountActions)
+    WaveboxCommandArgs.processToolArgs(this[privArgv], ServicesManager)
 
     // Pre-load certificates soon-ish after launch (will be loaded on-demand if a cert request comes in)
     setTimeout(() => {

@@ -4,6 +4,7 @@ import emblinkActions from 'stores/emblink/emblinkActions'
 import accountActions from 'stores/account/accountActions'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import MailboxesWindow from 'Windows/MailboxesWindow'
+import ServicesManager from 'Services'
 
 class AppSingleInstance {
   /**
@@ -19,6 +20,7 @@ class AppSingleInstance {
     const argv = yargs.parse(commandLine)
     WaveboxCommandArgs.processWindowVisibility(argv, mainWindow)
     WaveboxCommandArgs.processModifierArgs(argv, emblinkActions, accountActions)
+    WaveboxCommandArgs.processToolArgs(argv, ServicesManager)
   }
 }
 
