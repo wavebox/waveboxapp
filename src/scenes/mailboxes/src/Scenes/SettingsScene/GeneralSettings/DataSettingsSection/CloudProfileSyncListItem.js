@@ -211,7 +211,7 @@ class CloudProfileSyncListItem extends React.Component {
         <div className={classes.buttonsContainer}>
           <Button
             size='small'
-            variant='raised'
+            variant='contained'
             disabled={!enableProfileSync}
             onClick={() => {
               this.setState({ userProfileUploadShowStatus: true })
@@ -222,7 +222,7 @@ class CloudProfileSyncListItem extends React.Component {
           </Button>
           <Button
             size='small'
-            variant='raised'
+            variant='contained'
             disabled={!enableProfileSync}
             onClick={() => {
               this.setState({ userProfilesFetchShowStatus: true })

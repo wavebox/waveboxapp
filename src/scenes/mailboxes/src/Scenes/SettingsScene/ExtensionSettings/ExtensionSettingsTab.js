@@ -87,7 +87,7 @@ class ExtensionSettingsTab extends React.Component {
             ]}
             onChange={(evt, value) => { settingsActions.sub.extension.setToolbarBrowserActionLayout(value) }} />
           <SettingsListItem divider={false}>
-            <Button variant='raised' size='small' onClick={() => userActions.updateExtensions()}>
+            <Button variant='contained' size='small' onClick={() => userActions.updateExtensions()}>
               Check for updates
             </Button>
           </SettingsListItem>

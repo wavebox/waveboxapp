@@ -95,7 +95,7 @@ class SettingsListItemColorPicker extends React.Component {
         </ColorPickerButton>
         {showClear ? (
           <Button
-            variant='raised'
+            variant='contained'
             size='small'
             disabled={disabled}
             onClick={() => { if (onChange) { onChange(undefined) } }}>

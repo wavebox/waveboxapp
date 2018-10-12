@@ -110,7 +110,7 @@ class AccountMessageScene extends React.Component {
           <WaveboxWebView src={url} newWindow={this.handleOpenNewWindow} />
         </DialogContent>
         <DialogActions className={classes.dialogActions}>
-          <Button variant='raised' color='primary' onClick={this.handleClose}>
+          <Button variant='contained' color='primary' onClick={this.handleClose}>
             Close
           </Button>
         </DialogActions>

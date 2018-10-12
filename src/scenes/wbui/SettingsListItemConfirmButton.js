@@ -65,7 +65,7 @@ class SettingsListItemConfirmButton extends React.Component {
     const button = (
       <ConfirmButton
         size='small'
-        variant='raised'
+        variant='contained'
         disabled={disabled}
         content={(
           <span>

@@ -146,7 +146,7 @@ class AppWizardScene extends React.Component {
           <Button className={classes.modalActionExtraButton} onClick={this.handleClose}>
             Later
           </Button>
-          <Button variant='raised' color='primary' onClick={this.handleNext}>
+          <Button variant='contained' color='primary' onClick={this.handleNext}>
             Start
           </Button>
         </DialogActions>
@@ -157,7 +157,7 @@ class AppWizardScene extends React.Component {
           <Button className={classes.modalActionExtraButton} onClick={this.handleClose}>
             Cancel
           </Button>
-          <Button variant='raised' color='primary' onClick={this.handleNext}>
+          <Button variant='contained' color='primary' onClick={this.handleNext}>
             Next
           </Button>
         </DialogActions>
@@ -168,7 +168,7 @@ class AppWizardScene extends React.Component {
           <Button className={classes.modalActionExtraButton} onClick={this.handleFinishSettings}>
             More Settings
           </Button>
-          <Button variant='raised' color='primary' onClick={this.handleFinish}>
+          <Button variant='contained' color='primary' onClick={this.handleFinish}>
             Finish
           </Button>
         </DialogActions>

@@ -239,7 +239,7 @@ class SettingsScene extends React.Component {
         </DialogContent>
         <DialogActions className={classes.dialogActions}>
           <Button
-            variant='raised'
+            variant='contained'
             color={showRestart ? undefined : 'primary'}
             className={classes.button}
             onClick={this.handleClose}>
@@ -247,7 +247,7 @@ class SettingsScene extends React.Component {
           </Button>
           {showRestart ? (
             <Button
-              variant='raised'
+              variant='contained'
               color='primary'
               className={classes.button}
               onClick={this.handleRestart}>

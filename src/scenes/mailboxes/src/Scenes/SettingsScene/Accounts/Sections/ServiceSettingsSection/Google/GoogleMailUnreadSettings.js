@@ -237,7 +237,7 @@ class GoogleMailUnreadSettings extends React.Component {
               </span>
             )} />
           <ListItemSecondaryAction>
-            <Button variant='raised' size='small' onClick={() => this.setState({ showCustomUnreadSettings: true })}>
+            <Button variant='contained' size='small' onClick={() => this.setState({ showCustomUnreadSettings: true })}>
               Configure
             </Button>
           </ListItemSecondaryAction>
@@ -332,12 +332,12 @@ class GoogleMailUnreadSettings extends React.Component {
           </DialogContent>
           <DialogActions>
             <Button
-              variant='raised'
+              variant='contained'
               onClick={this.handleResetCustom}>
               Reset
             </Button>
             <Button
-              variant='raised'
+              variant='contained'
               color='primary'
               onClick={() => this.setState({ showCustomUnreadSettings: false })}>
               Close

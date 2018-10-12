@@ -76,7 +76,7 @@ class UpdateNoneScene extends React.Component {
           <p className={classes.versionInfo}>You're currently using Wavebox version <strong>{pkg.version}</strong></p>
         </DialogContent>
         <DialogActions>
-          <Button variant='raised' color='primary' onClick={this.handleClose}>
+          <Button variant='contained' color='primary' onClick={this.handleClose}>
             Done
           </Button>
         </DialogActions>

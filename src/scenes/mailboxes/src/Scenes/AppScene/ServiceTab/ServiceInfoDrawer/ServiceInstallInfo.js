@@ -140,7 +140,7 @@ class ServiceInstallInfo extends React.Component {
         <ServiceInfoPanelActions actions={1}>
           <ServiceInfoPanelActionButton
             color='primary'
-            variant='raised'
+            variant='contained'
             onClick={() => {
               accountActions.reduceService(serviceId, ServiceReducer.setHasSeenInstallInfo, true)
             }}>

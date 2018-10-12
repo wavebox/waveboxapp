@@ -268,11 +268,11 @@ class ExtensionListItem extends React.Component {
     if (availableToUser) {
       return (
         <div className={classes.actions}>
-          <Button variant='raised' onClick={this.handleUninstall} className={classes.action}>
+          <Button variant='contained' onClick={this.handleUninstall} className={classes.action}>
             Uninstall
           </Button>
           {hasOptionsPage ? (
-            <Button variant='raised' onClick={this.handleOpenOptionsPage} className={classes.action}>
+            <Button variant='contained' onClick={this.handleOpenOptionsPage} className={classes.action}>
               Options
             </Button>
           ) : undefined}
@@ -286,7 +286,7 @@ class ExtensionListItem extends React.Component {
     } else {
       return (
         <div className={classes.actions}>
-          <Button variant='raised' onClick={this.handleUninstall} className={classes.action}>
+          <Button variant='contained' onClick={this.handleUninstall} className={classes.action}>
             Uninstall
           </Button>
         </div>
@@ -353,7 +353,7 @@ class ExtensionListItem extends React.Component {
     } else if (availableToUser) {
       return (
         <div className={classes.actions}>
-          <Button variant='raised' color='primary' onClick={this.handleInstall}>
+          <Button variant='contained' color='primary' onClick={this.handleInstall}>
             Install
           </Button>
         </div>

@@ -126,7 +126,7 @@ class UpdateAvailableScene extends React.Component {
           <Button className={classes.button} onClick={this.handleCheckLater}>
             Later
           </Button>
-          <Button variant='raised' color='primary' className={classes.button} onClick={this.handleSquirrelInstall}>
+          <Button variant='contained' color='primary' className={classes.button} onClick={this.handleSquirrelInstall}>
             Install Now
           </Button>
         </DialogActions>
@@ -140,7 +140,7 @@ class UpdateAvailableScene extends React.Component {
           <Button className={classes.button} onClick={this.handleCheckLater}>
             Later
           </Button>
-          <Button variant='raised' color='primary' className={classes.button} onClick={this.handleDownloadManual}>
+          <Button variant='contained' color='primary' className={classes.button} onClick={this.handleDownloadManual}>
             Download Now
           </Button>
         </DialogActions>

@@ -66,7 +66,7 @@ class AppWizardMailtoScene extends React.Component {
           You can make Wavebox your default mail client so that it launches
           when you start to compose a new e-mail
         </p>
-        <Button variant='raised' color='primary' onClick={this.handleMakeDefaultClient}>
+        <Button variant='contained' color='primary' onClick={this.handleMakeDefaultClient}>
           Make Wavebox the default mail client
         </Button>
       </div>

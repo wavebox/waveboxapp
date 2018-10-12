@@ -130,7 +130,7 @@ class ServiceAdvancedSection extends React.Component {
             <div>
               <Button
                 size='small'
-                variant='raised'
+                variant='contained'
                 onClick={() => {
                   onRequestEditCustomCode('Custom CSS', customCSS, (code) => {
                     accountActions.reduceService(serviceId, ServiceReducer.setCustomCSS, code)
@@ -143,7 +143,7 @@ class ServiceAdvancedSection extends React.Component {
               <span className={classes.buttonSpacer} />
               <Button
                 size='small'
-                variant='raised'
+                variant='contained'
                 onClick={() => {
                   onRequestEditCustomCode('Custom JS', customJS, (code) => {
                     accountActions.reduceService(serviceId, ServiceReducer.setCustomJS, code)

@@ -232,10 +232,10 @@ class MailboxSleepNotification extends React.Component {
             You can <span onClick={this.handleCustomize} className={classes.link}>customize these settings</span> at anytime
           </p>
           <div className={classes.actionContainer}>
-            <Button variant='raised' color='primary' className={classes.button} onClick={this.handleDismiss}>
+            <Button variant='contained' color='primary' className={classes.button} onClick={this.handleDismiss}>
               Okay
             </Button>
-            <Button variant='raised' className={classes.button} onClick={this.handleDisableSleep}>
+            <Button variant='contained' className={classes.button} onClick={this.handleDisableSleep}>
               Keep Awake
             </Button>
           </div>

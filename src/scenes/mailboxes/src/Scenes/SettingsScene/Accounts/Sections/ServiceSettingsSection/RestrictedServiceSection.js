@@ -51,7 +51,7 @@ class RestrictedServiceSection extends React.Component {
           Use and customize this service when purchasing Wavebox
         </p>
         <div>
-          <Button variant='raised' color='primary' onClick={() => { window.location.hash = '/pro' }}>
+          <Button variant='contained' color='primary' onClick={() => { window.location.hash = '/pro' }}>
             <FASGemIcon className={classes.proIcon} />
             Purchase Wavebox
           </Button>

@@ -41,7 +41,7 @@ class ServiceSleepingCover extends React.Component {
         title='Shhhh!'
         text={['This tab is currently sleeping']}
         button={(
-          <Button variant='raised' onClick={onAwakenService}>
+          <Button variant='contained' onClick={onAwakenService}>
             <AlarmIcon className={classes.infoButtonIcon} />
             Wake it up
           </Button>
