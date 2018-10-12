@@ -37,6 +37,9 @@
     "xml2js": "0.4.19",
     "yargs": "12.0.2"
   },
+  "scripts": {
+    "postinstall": "node ../../scripts/npmlibPatchEmscriptenWasmLoader.js"
+  },
   "optionalDependencies": {
     "node-mac-notifier": "1.1.0"
   },

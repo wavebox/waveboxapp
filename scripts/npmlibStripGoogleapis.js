@@ -57,4 +57,4 @@ class GeneratedAPIs {
 }
 exports.GeneratedAPIs = GeneratedAPIs;
 `)
-console.log(Colors.bgGreen.white(`Stripped ${count} items`))
+console.log(`  ${Colors.bgGreen.white('Done')} Stripped ${count} items`)
