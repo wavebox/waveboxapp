@@ -382,9 +382,19 @@ class UserStore extends RendererUserStore {
   }
 
   handleRestoreUserProfile ({ profileId }) {
-    window.location.hash = '/profile/restore_working'
+    window.location.hash = '/profile/restore_restarting'
     Promise.resolve()
       .then(() => WaveboxHTTP.fetchFullUserProfile(this.clientId, this.clientToken, profileId))
+      .then((data) => {
+        // When the restore happens it looks like the app has chrashed because we
+        // restart without informing the user. Add an artificial delay which gives
+        // the user time to read the restore_restarting scene if they wish
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(data)
+          }, 1000)
+        })
+      })
       .then((data) => {
         TakeoutService.restoreDataFromServer(data)
       })

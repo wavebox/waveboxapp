@@ -1,5 +1,5 @@
 import RemoteStore from '../RemoteStore'
-import User from '../../Models/User'
+import User from '../../Models/User/User'
 import ACContainer from '../../Models/ACContainer'
 import {
   ACTIONS_NAME,

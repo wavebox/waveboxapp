@@ -36,7 +36,7 @@ import WaveboxRouterErrorBoundary from './WaveboxRouterErrorBoundary'
 import {
   ProfileRestoreScene,
   ProfileRestoreFetchingScene,
-  ProfileRestoreWorkingScene
+  ProfileRestoreRestartingScene
 } from './ProfileRestoreScene'
 import ErrorBoundary from 'wbui/ErrorBoundary'
 import FullscreenSnackbarHelper from 'Components/FullscreenSnackbarHelper'
@@ -102,7 +102,7 @@ export default class WaveboxRouter extends React.Component {
 
             <Route path='/profile/restore' component={ProfileRestoreScene} />
             <Route path='/profile/fetching_profiles' component={ProfileRestoreFetchingScene} />
-            <Route path='/profile/restore_working' component={ProfileRestoreWorkingScene} />
+            <Route path='/profile/restore_restarting' component={ProfileRestoreRestartingScene} />
           </WaveboxRouterErrorBoundary>
           <PrivacyDialog />
         </div>

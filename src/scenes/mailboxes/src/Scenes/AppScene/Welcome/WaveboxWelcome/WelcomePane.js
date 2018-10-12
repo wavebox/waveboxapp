@@ -1,74 +1,17 @@
 import React from 'react'
 import { userStore, userActions } from 'stores/user'
 import { withStyles } from '@material-ui/core/styles'
-import { Paper, Grid, Button, IconButton, Tooltip } from '@material-ui/core'
-import classNames from 'classnames'
+import { Button, IconButton, Tooltip } from '@material-ui/core'
 import WaveboxSigninButton from 'wbui/SigninButtons/WaveboxSigninButton'
 import GoogleSigninButton from 'wbui/SigninButtons/GoogleSigninButton'
 import MicrosoftSigninButton from 'wbui/SigninButtons/MicrosoftSigninButton'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
+import WelcomePanel from '../Common/WelcomePanel'
+import WelcomePanelGrid from '../Common/WelcomePanelGrid'
+import WelcomePanelGridCell from '../Common/WelcomePanelGridCell'
+import WelcomePanelGridVR from '../Common/WelcomePanelGridVR'
 
 const styles = {
-  root: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflowY: 'auto',
-    zIndex: 4
-  },
-  pane: {
-    minWidth: 700,
-    maxWidth: 850
-  },
-
-  // Grid layout
-  gridContainer: {
-    position: 'relative'
-  },
-  gridItem: {
-    padding: '48px !important',
-    zIndex: 1,
-    textAlign: 'center',
-    '@media (max-width: 930px)': {
-      padding: '48px 12px !important'
-    }
-  },
-  gridVR: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 0,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-
-    '&:before': {
-      position: 'absolute',
-      content: '""',
-      top: 24,
-      left: 'calc(50% - 2px)',
-      width: 2,
-      bottom: 24,
-      zIndex: 0,
-      backgroundColor: '#A6ABA9'
-    }
-  },
-  gridVRText: {
-    fontWeight: 'bold',
-    color: '#A6ABA9',
-    backgroundColor: '#FFFFFF',
-    paddingTop: 12,
-    paddingBottom: 12,
-    zIndex: 1,
-    fontSize: '22px',
-    '@media (max-width: 930px)': {
-      display: 'none'
-    }
-  },
-
-  // Typography
   h1: {
     marginTop: 0,
     color: '#00B5F3'
@@ -181,7 +124,7 @@ class WelcomePane extends React.Component {
     if (user.isLoggedIn) {
       if (user.enableProfileSync) {
         return (
-          <Grid item xs={6} className={classes.gridItem}>
+          <WelcomePanelGridCell>
             <h1 className={classes.h1}>Restore your Wavebox</h1>
             <p className={classes.subLoggedIn}>{`Logged in as ${user.userEmail}`}</p>
             <p className={classes.subh}>
@@ -203,11 +146,11 @@ class WelcomePane extends React.Component {
               onClick={this.handleOpenWaveboxAccount}>
               Wavebox Account
             </Button>
-          </Grid>
+          </WelcomePanelGridCell>
         )
       } else {
         return (
-          <Grid item xs={6} className={classes.gridItem}>
+          <WelcomePanelGridCell>
             <h1 className={classes.h1}>Your Wavebox</h1>
             <p className={classes.subLoggedIn}>{`Logged in as ${user.userEmail}`}</p>
             <p className={classes.subh}>
@@ -222,12 +165,12 @@ class WelcomePane extends React.Component {
               onClick={this.handleOpenWaveboxAccount}>
               Wavebox Account
             </Button>
-          </Grid>
+          </WelcomePanelGridCell>
         )
       }
     } else {
       return (
-        <Grid item xs={6} className={classes.gridItem}>
+        <WelcomePanelGridCell>
           <h1 className={classes.h1}>Login to Wavebox</h1>
           <p className={classes.subh}>Already have a Wavebox account or part of a team?</p>
           <div className={classes.waveboxSignin}>
@@ -255,22 +198,9 @@ class WelcomePane extends React.Component {
               className={classes.fullWidthButton}
               onClick={this.handleLoginMicrosoft} />
           </div>
-        </Grid>
+        </WelcomePanelGridCell>
       )
     }
-  }
-
-  /**
-  * Renders the grid item divider
-  * @param classes: the classes to use
-  * @return jsx
-  */
-  renderGridItemDivider (classes) {
-    return (
-      <div className={classes.gridVR}>
-        <div className={classes.gridVRText}>OR</div>
-      </div>
-    )
   }
 
   /**
@@ -280,7 +210,7 @@ class WelcomePane extends React.Component {
   */
   renderAddGridItem (classes) {
     return (
-      <Grid item xs={6} className={classes.gridItem}>
+      <WelcomePanelGridCell>
         <h1 className={classes.h1}>Add First App</h1>
         <p className={classes.subh}>Go straight to our App Directory of over 1000 cloud services.</p>
         <Tooltip title='Add your first App'>
@@ -288,27 +218,24 @@ class WelcomePane extends React.Component {
             <AddCircleIcon className={classes.addButtonIcon} />
           </IconButton>
         </Tooltip>
-      </Grid>
+      </WelcomePanelGridCell>
     )
   }
 
   render () {
     const { user } = this.state
-    const { className, classes, ...passProps } = this.props
+    const { classes, ...passProps } = this.props
 
-    const accountGridItem = this.renderAccountGridItem(classes, user)
     return (
-      <div className={classNames(classes.root, className)} {...passProps}>
-        <Paper
-          className={classNames(classes.pane, accountGridItem ? undefined : classes.paneSingle)}
-          elevation={10}>
-          <Grid container className={classes.gridContainer}>
-            {this.renderAccountGridItem(classes, user)}
-            {this.renderGridItemDivider(classes)}
-            {this.renderAddGridItem(classes)}
-          </Grid>
-        </Paper>
-      </div>
+      <WelcomePanel {...passProps}>
+        <WelcomePanelGrid>
+          {this.renderAccountGridItem(classes, user)}
+          <WelcomePanelGridVR color='#A6ABA9' backgroundColor='#FFFFFF'>
+            OR
+          </WelcomePanelGridVR>
+          {this.renderAddGridItem(classes)}
+        </WelcomePanelGrid>
+      </WelcomePanel>
     )
   }
 }

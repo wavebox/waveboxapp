@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Button, Paper } from '@material-ui/core'
+import { Paper } from '@material-ui/core'
 import { accountStore, accountActions, accountDispatch } from 'stores/account'
 import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 import ServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/ServiceDataReducer'
@@ -29,13 +29,12 @@ import { settingsStore } from 'stores/settings'
 import Resolver from 'Runtime/Resolver'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import ServiceInformationCover from '../ServiceInformationCover'
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
-import RefreshIcon from '@material-ui/icons/Refresh'
 import HotelIcon from '@material-ui/icons/Hotel'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import blue from '@material-ui/core/colors/blue'
 import grey from '@material-ui/core/colors/grey'
+import ServiceInvalidAuthCover from './ServiceInvalidAuthCover'
+import ServiceCrashedCover from './ServiceCrashedCover'
 
 const styles = {
   root: {
@@ -104,9 +103,6 @@ const styles = {
     textDecoration: 'underline',
     cursor: 'pointer',
     color: blue[800]
-  },
-  infoButtonIcon: {
-    marginRight: 6
   }
 }
 
@@ -231,7 +227,6 @@ class CoreServiceWebView extends React.Component {
       searchTerm: accountState.serviceSearchTerm(serviceId),
       searchId: accountState.serviceSearchHash(serviceId),
       isolateMailboxProcesses: settingsStore.getState().launched.app.isolateMailboxProcesses, // does not update
-      serviceAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId),
       authDataId: (authData || {}).id,
       ...(!mailbox || !service ? {
         mailbox: null,
@@ -266,7 +261,6 @@ class CoreServiceWebView extends React.Component {
           isSearching: accountState.isSearchingService(serviceId),
           searchTerm: accountState.serviceSearchTerm(serviceId),
           searchId: accountState.serviceSearchHash(serviceId),
-          serviceAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId),
           authDataId: (authData || {}).id,
           ...(prevState.restorableUrlHash !== restorableUrlHash ? {
             restorableUrlHash: restorableUrlHash,
@@ -291,14 +285,6 @@ class CoreServiceWebView extends React.Component {
   handleUncrash = (evt) => {
     this.setState({ isCrashed: false }) // Update our crashed state
     this.refs[BROWSER_REF].reset()
-  }
-
-  /**
-  * Reauthenticates the service
-  * @param evt: the event that fired
-  */
-  handleReauthenticate = (evt) => {
-    accountActions.reauthenticateService(this.props.serviceId)
   }
 
   /**
@@ -708,7 +694,6 @@ class CoreServiceWebView extends React.Component {
       isLoading,
       snapshot,
       isolateMailboxProcesses,
-      serviceAuthInvalid,
       authDataId,
       permissionRequests,
       permissionRequestsUrl
@@ -852,34 +837,8 @@ class CoreServiceWebView extends React.Component {
         {hasSearch ? (
           <ServiceSearch mailboxId={mailbox.id} serviceId={serviceId} />
         ) : undefined}
-        {isCrashed ? (
-          <ServiceInformationCover
-            title='Whoops!'
-            text={['Something went wrong with this tab and it crashed']}
-            button={(
-              <Button variant='raised' onClick={this.handleUncrash}>
-                <RefreshIcon className={classes.infoButtonIcon} />
-                Reload
-              </Button>
-            )} />
-        ) : undefined}
-        {serviceAuthInvalid ? (
-          <ServiceInformationCover
-            title='Whoops!'
-            IconComponent={ErrorOutlineIcon}
-            text={[
-              `There's an authentication problem with this account.`,
-              `Wavebox either doesn't have any authentication information for this account or it's invalid`
-            ]}
-            button={(
-              <Button
-                variant='raised'
-                onClick={this.handleReauthenticate}>
-                <ErrorOutlineIcon className={classes.infoButtonIcon} />
-                Reauthenticate
-              </Button>
-            )} />
-        ) : undefined}
+        <ServiceCrashedCover isCrashed={isCrashed} attemptUncrash={this.handleUncrash} />
+        <ServiceInvalidAuthCover serviceId={serviceId} />
       </div>
     )
   }

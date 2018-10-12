@@ -32,6 +32,7 @@ const MAPPING = [
   ['farTimes', 'fasTimes'],
   ['farWindow', 'farWindowMaximize'],
   ['farWindowMinimize', 'farWindowMinimize'],
+  ['farSyncAlt', 'fasSyncAlt'],
 
   ['falWindowClose', 'farWindowClose'],
   ['falWindowMaximize', 'farWindowMaximize'],
