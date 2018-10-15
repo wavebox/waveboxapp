@@ -737,9 +737,9 @@ module.exports = {
     charset: 'USCRIPT_LATIN'
   },
   'pt_BR': {
-    license: 'https://waveboxio.com/dl/dictionaries/pt_BR/LICENSE.txt?rev=1',
-    aff: 'https://waveboxio.com/dl/dictionaries/pt_BR/index.aff?rev=1',
-    dic: 'https://waveboxio.com/dl/dictionaries/pt_BR/index.dic?rev=1',
+    license: 'https://waveboxio.com/dl/dictionaries/pt_BR/LICENSE.txt?rev=2',
+    aff: 'https://waveboxio.com/dl/dictionaries/pt_BR/index.aff?rev=2',
+    dic: 'https://waveboxio.com/dl/dictionaries/pt_BR/index.dic?rev=2',
     name: 'Português (Brasil) - Portuguese (Brazil)',
     charset: 'USCRIPT_LATIN'
   },
