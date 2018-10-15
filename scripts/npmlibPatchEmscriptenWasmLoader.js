@@ -17,7 +17,7 @@ const constructModule = fs.readFileSync(CONSTRUCT_MODULE_PATH, 'utf8')
 const constructModulePatched = constructModule
   .replace(
     `if (timeout === void 0) { timeout = 3000; }`,
-    `if (timeout === void 0) { timeout = 6000; }`
+    `if (timeout === void 0) { timeout = 10000; }`
   )
 fs.writeFileSync(CONSTRUCT_MODULE_PATH, constructModulePatched)
 console.log(`  ${Colors.bgGreen.white(`Done`)}`)
