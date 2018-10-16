@@ -4,6 +4,7 @@ import { URL } from 'url'
 import querystring from 'querystring'
 import AuthWindow from 'Windows/AuthWindow'
 import Resolver from 'Runtime/Resolver'
+import { SessionManager } from 'SessionManager'
 
 const TOKEN_REGEX = new RegExp(/[&#]?token=([0-9a-f]{64})/)
 
@@ -69,15 +70,10 @@ class AuthTrello {
         }
       })
       const oauthWin = waveboxOauthWin.window
+      const emitter = SessionManager.webRequestEmitterFromPartitionId(partitionId)
       let appKey
       let userClose = true
       let appKeyInfoShown = false
-
-      oauthWin.on('closed', () => {
-        if (userClose) {
-          reject(new Error('User closed the window'))
-        }
-      })
 
       // User logs into to trello correctly. Redirect to get app-key
       oauthWin.webContents.on('did-navigate', (evt, nextURL) => {
@@ -89,7 +85,8 @@ class AuthTrello {
       })
 
       // App-key page starts to load. Hide window
-      oauthWin.webContents.on('will-navigate', (evt, nextUrl) => {
+      oauthWin.webContents.on('did-start-navigation', (evt, nextUrl, isInPlace, isMainFrame) => {
+        if (!isMainFrame) { return }
         const { hostname, pathname } = new URL(nextUrl)
         if (hostname === 'trello.com' && pathname.startsWith('/app-key')) {
           oauthWin.hide()
@@ -132,17 +129,29 @@ class AuthTrello {
       })
 
       // User gives permission for wavebox - fetch token and app key and finish
-      oauthWin.webContents.on('will-navigate', (evt, nextUrl) => {
-        if (nextUrl.indexOf(credentials.TRELLO_AUTH_RETURN_URL) === 0) {
-          evt.preventDefault()
-          userClose = false
-          oauthWin.close()
-          const token = TOKEN_REGEX.exec(nextUrl)
-          if (token && token.length === 2) {
-            resolve({ appKey: appKey, token: token[1] })
-          } else {
-            reject(new Error('Failed to aquire token `' + nextUrl + '`'))
-          }
+      const handleBeforeRequest = (details, responder) => {
+        if (details.webContentsId !== oauthWin.webContents.id) { return responder({}) }
+        if (details.resourceType !== 'mainFrame') { return responder({}) }
+        if (!details.url.startsWith(credentials.TRELLO_AUTH_RETURN_URL)) { return responder({}) }
+
+        // We're in our capture stage
+        userClose = false
+        oauthWin.close()
+        const token = TOKEN_REGEX.exec(details.url)
+        if (token && token.length === 2) {
+          resolve({ appKey: appKey, token: token[1] })
+        } else {
+          reject(new Error('Failed to aquire token `' + details.url + '`'))
+        }
+        responder({ cancel: true })
+      }
+      emitter.beforeRequest.onBlocking(undefined, handleBeforeRequest)
+
+      // Close & cleanup
+      oauthWin.on('closed', () => {
+        emitter.beforeRequest.removeListener(handleBeforeRequest)
+        if (userClose) {
+          reject(new Error('User closed the window'))
         }
       })
     })

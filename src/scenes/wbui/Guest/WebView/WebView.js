@@ -183,6 +183,17 @@ class WebView extends React.Component {
         if (isListening && !hasReactListener) {
           node.removeEventListener(domName, this.handleWebviewEvent)
         } else if (!isListening && hasReactListener) {
+          if (domName === 'will-navigate') {
+            /**
+            * @Thomas101 for more info...
+            * This is work around will-navigating not firing reliably for webContents. As in
+            * electron/issues/14751
+            */
+            console.warn([
+              `"willNavigate" is has been depricated in Wavebox that uses Electron 3.0+ as it fires intermittently.`,
+              `  Use "didStartNavigation" instead as it provides more reliable functionality in the renderer thread`
+            ].join(' '), this.getWebviewNode())
+          }
           node.addEventListener(domName, this.handleWebviewEvent)
         }
       }

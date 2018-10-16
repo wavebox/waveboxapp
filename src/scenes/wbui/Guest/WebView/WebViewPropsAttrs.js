@@ -8,6 +8,7 @@ const WEBVIEW_EVENTS = [
   'did-frame-finish-load',
   'did-start-loading',
   'did-stop-loading',
+  'did-start-navigation',
   'did-navigate',
   'did-navigate-in-page',
   'dom-ready',

@@ -7,6 +7,7 @@ import {
   POPOUT_POSITIONS
 } from 'shared/Models/Settings/TraySettings'
 import { WB_TRAY_WINDOWED_MODE_CHANGED } from 'shared/ipcEvents'
+import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
 
 const privWindow = Symbol('privWindow')
 const privPositioner = Symbol('privPositioner')
@@ -67,7 +68,10 @@ class TrayPopout {
 
     // Bind window events
     this[privPositioner] = new Positioner(this[privWindow])
-    this[privWindow].webContents.on('will-navigate', (evt, url) => evt.preventDefault())
+    ElectronWebContentsWillNavigateShim.on(
+      this[privWindow].webContents,
+      (evt) => evt.preventDefault()
+    )
     this[privWindow].on('blur', this._handleBlur)
     this[privWindow].on('focus', this._handleFocus)
     this[privWindow].on('close', this._handleClose)

@@ -18,6 +18,7 @@ import CRExtensionTab from './CRExtensionTab'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import { WINDOW_BACKING_TYPES } from 'Windows/WindowBackingTypes'
 import { CRExtensionWebPreferences } from 'WebContentsManager'
+import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
 
 const privPendingCreateWindow = Symbol('privPendingCreateWindow')
 const privHtml = Symbol('privHtml')
@@ -144,7 +145,10 @@ class CRExtensionBackgroundPage {
     this[privBrowserWindow] = new BrowserWindow(this._generateBackgroundPageOptions())
     this[privBrowserWindow].webContents.setFrameRate(1)
     this[privBrowserWindow].webContents.on('new-window', this._handleNewWindow)
-    this[privBrowserWindow].webContents.on('will-navigate', this._handleWillNavigate)
+    ElectronWebContentsWillNavigateShim.on(
+      this[privBrowserWindow].webContents,
+      (evt) => evt.preventDefault()
+    )
 
     // Update cors via the extension config
     SessionManager
@@ -269,15 +273,6 @@ class CRExtensionBackgroundPage {
       this[privPendingCreateWindow](...args)
       this[privPendingCreateWindow] = undefined
     }
-  }
-
-  /**
-  * Handles the window navigating
-  * @param evt: the event that fired
-  * @param targetUrl: the url to open
-  */
-  _handleWillNavigate = (evt, targetUrl) => {
-    evt.preventDefault()
   }
 
   /* ****************************************************************************/

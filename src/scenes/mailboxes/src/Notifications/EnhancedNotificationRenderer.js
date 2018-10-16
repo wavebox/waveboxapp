@@ -12,7 +12,6 @@ import {
 let MacNotification = null
 if (process.platform === 'darwin') {
   try {
-    //TODO check this works with upgraded module
     MacNotification = window.appNodeModulesRequire('node-mac-notifier')
   } catch (ex) {
     console.warn('Failed to import node-mac-notifier. Continuing in unknown state', ex)

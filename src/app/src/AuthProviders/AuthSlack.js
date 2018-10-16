@@ -3,6 +3,7 @@ import { WB_AUTH_SLACK, WB_AUTH_SLACK_COMPLETE, WB_AUTH_SLACK_ERROR } from 'shar
 import { URL } from 'url'
 import AuthWindow from 'Windows/AuthWindow'
 import Resolver from 'Runtime/Resolver'
+import { SessionManager } from 'SessionManager'
 
 class AuthSlack {
   /* ****************************************************************************/
@@ -65,22 +66,21 @@ class AuthSlack {
         }
       })
       const oauthWin = waveboxOauthWin.window
+      const emitter = SessionManager.webRequestEmitterFromPartitionId(partitionId)
       let userClose = true
 
-      // Handle close
-      oauthWin.on('closed', () => {
-        if (userClose) {
-          reject(new Error('User closed the window'))
-        }
-      })
-
       // Handle navigate
-      oauthWin.webContents.on('will-navigate', (evt, nextUrl) => {
-        const purl = new URL(nextUrl)
-        if (purl.host === 'slack.com' && purl.pathname.indexOf('/checkcookie') === 0 && purl.searchParams.get('redir')) {
-          oauthWin.hide()
+      // User gives permission for wavebox - fetch token and app key and finish
+      const handleBeforeRequest = (details, responder) => {
+        if (details.webContentsId === oauthWin.webContents.id && details.resourceType === 'mainFrame') {
+          const purl = new URL(details.url)
+          if (purl.host === 'slack.com' && purl.pathname.indexOf('/checkcookie') === 0 && purl.searchParams.get('redir')) {
+            oauthWin.hide()
+          }
         }
-      })
+        responder({})
+      }
+      emitter.beforeRequest.onBlocking(undefined, handleBeforeRequest)
 
       // Capture auth info
       oauthWin.webContents.on('dom-ready', (evt) => {
@@ -91,6 +91,14 @@ class AuthSlack {
             resolve(data)
           })
           .catch(() => { /* no-op */ })
+      })
+
+      // Handle close
+      oauthWin.on('closed', () => {
+        emitter.beforeRequest.removeListener(handleBeforeRequest)
+        if (userClose) {
+          reject(new Error('User closed the window'))
+        }
       })
     })
   }

@@ -11,7 +11,6 @@ import BrowserViewPermissionRequests from 'wbui/Guest/BrowserViewPermissionReque
 import ServiceSearch from './ServiceSearch'
 import shallowCompare from 'react-addons-shallow-compare'
 import CoreACService from 'shared/Models/ACAccounts/CoreACService'
-import { URL } from 'url'
 import { NotificationService } from 'Notifications'
 import {
   WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP,
@@ -619,26 +618,6 @@ class CoreServiceWebView extends React.Component {
   }
 
   /* **************************************************************************/
-  // Browser Events : Navigation
-  /* **************************************************************************/
-
-  /**
-  * Handles a browser preparing to navigate
-  * @param evt: the event that fired
-  */
-  handleBrowserWillNavigate = (evt) => {
-    // the lamest protection again dragging files into the window
-    // but this is the only thing I could find that leaves file drag working
-    if (evt.url.indexOf('file://') === 0) {
-      this.setState((prevState) => {
-        const purl = new URL(prevState.url)
-        purl.searchParams.set('__v__', new Date().getTime())
-        return { url: purl.toString() }
-      })
-    }
-  }
-
-  /* **************************************************************************/
   // Browser Events : Focus
   /* **************************************************************************/
 
@@ -782,9 +761,6 @@ class CoreServiceWebView extends React.Component {
             }}
             ipcMessage={(evt) => {
               this.multiCallBrowserEvent([this.dispatchBrowserIPCMessage, webviewEventProps.ipcMessage], [evt])
-            }}
-            willNavigate={(evt) => {
-              this.multiCallBrowserEvent([this.handleBrowserWillNavigate, webviewEventProps.willNavigate], [evt])
             }}
             focus={(evt) => {
               this.multiCallBrowserEvent([this.handleBrowserFocused, webviewEventProps.focus], [evt])

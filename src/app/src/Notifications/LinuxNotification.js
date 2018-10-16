@@ -9,6 +9,7 @@ import {
   WB_LIN_NOTIF_PRESENT
 } from 'shared/ipcEvents'
 import { OSSettings } from 'shared/Models/Settings'
+import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
 
 const privLoaded = Symbol('privLoaded')
 const privWindow = Symbol('privWindow')
@@ -78,7 +79,10 @@ class LinuxNotification {
     ipcMain.on(WB_LIN_NOTIF_PRESENT, this.handleNotificationPresent)
 
     this[privWindow].loadURL(`file://${__dirname}/LinuxNotification.html`)
-    this[privWindow].webContents.on('will-navigate', (evt, url) => evt.preventDefault())
+    ElectronWebContentsWillNavigateShim.on(
+      this[privWindow].webContents,
+      (evt) => evt.preventDefault()
+    )
   }
 
   /**

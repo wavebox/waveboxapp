@@ -110,7 +110,7 @@ class ToolbarNavigation extends React.Component {
     const webContents = remote.webContents.fromId(tabId)
     if (!webContents) { return }
 
-    webContents.on('will-navigate', this.handleWillNavigate)
+    webContents.on('did-start-navigation', this.handleDidStartNavigation)
     webContents.on('did-start-loading', this.handleDidStartLoading)
     webContents.on('did-stop-loading', this.handleDidStopLoading)
     webContents.on('did-navigate-in-page', this.handleDidNavigateInPage)
@@ -127,7 +127,7 @@ class ToolbarNavigation extends React.Component {
     const webContents = remote.webContents.fromId(tabId)
     if (!webContents) { return }
 
-    webContents.removeListener('will-navigate', this.handleWillNavigate)
+    webContents.removeListener('did-start-navigation', this.handleDidStartNavigation)
     webContents.removeListener('did-start-loading', this.handleDidStartLoading)
     webContents.removeListener('did-stop-loading', this.handleDidStopLoading)
     webContents.removeListener('did-navigate-in-page', this.handleDidNavigateInPage)
@@ -179,9 +179,10 @@ class ToolbarNavigation extends React.Component {
   * @param evt: the event that fired
   * @param url: the url
   */
-  handleWillNavigate = (evt, url) => {
+  handleDidStartNavigation = (evt, url, isInPlace, isMainFrame) => {
+    if (!isMainFrame) { return }
     this.setState({
-      currentUrl: url,
+      currentUrl: evt.sender.getURL(), // Don't use the passed url - the nav might be cancelled
       canGoBack: evt.sender.canGoBack(),
       canGoForward: evt.sender.canGoForward()
     })

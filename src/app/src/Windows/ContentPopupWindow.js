@@ -5,6 +5,7 @@ import { GuestWebPreferences } from 'WebContentsManager'
 import { WindowOpeningHandler, WINDOW_OPEN_MODES } from './WindowOpeningEngine'
 import { PermissionManager } from 'Permissions'
 import { URL } from 'url'
+import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
 
 const privTabMetaInfo = Symbol('privTabMetaInfo')
 class ContentPopupWindow extends WaveboxWindow {
@@ -107,7 +108,7 @@ class ContentPopupWindow extends WaveboxWindow {
 
     // Listen to webview events
     this.window.webContents.on('new-window', this.handleWebContentsNewWindow)
-    this.window.webContents.on('will-navigate', this.handleWebViewWillNavigate)
+    ElectronWebContentsWillNavigateShim.on(this.window.webContents, this.handleWebViewWillNavigate)
     return this
   }
 

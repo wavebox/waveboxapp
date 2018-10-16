@@ -15,6 +15,7 @@ import {
 import Resolver from 'Runtime/Resolver'
 import WINDOW_TYPES from './WindowTypes'
 import Platform from 'shared/Platform'
+import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
 
 const privWindow = Symbol('privWindow')
 const privBrowserWindowId = Symbol('privBrowserWindowId')
@@ -196,7 +197,7 @@ class WaveboxWindow extends EventEmitter {
     }
 
     // Bind webcontents event listeners
-    this.window.webContents.on('will-navigate', this._handleWillNavigate)
+    ElectronWebContentsWillNavigateShim.on(this.window.webContents, this._handleWillNavigate)
 
     // Global registers
     waveboxWindowManager.attach(this)
