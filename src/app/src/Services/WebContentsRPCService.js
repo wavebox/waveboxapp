@@ -8,6 +8,7 @@ import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import {
   WCRPC_DOM_READY,
   WCRPC_DID_FRAME_FINISH_LOAD,
+  WCRPC_DID_FINISH_LOAD,
   WCRPC_PERMISSION_REQUESTS_CHANGED,
   WCRPC_CLOSE_WINDOW,
   WCRPC_SEND_INPUT_EVENT,
@@ -69,6 +70,7 @@ class WebContentsRPCService {
 
       contents.on('dom-ready', this._handleDomReady)
       contents.on('did-frame-finish-load', this._handleFrameFinishLoad)
+      contents.on('did-finish-load', this._handleDidFinishLoad)
       contents.on('console-message', this._handleConsoleMessage)
       contents.on('will-prevent-unload', this._handleWillPreventUnload)
       contents.on('destroyed', () => {
@@ -87,6 +89,10 @@ class WebContentsRPCService {
 
   _handleFrameFinishLoad = (evt, isMainFrame) => {
     evt.sender.send(WCRPC_DID_FRAME_FINISH_LOAD, evt.sender.id, isMainFrame)
+  }
+
+  _handleDidFinishLoad = (evt) => {
+    evt.sender.send(WCRPC_DID_FINISH_LOAD, evt.sender.id)
   }
 
   _handleConsoleMessage = (evt, level, message, line, sourceId) => {
