@@ -145,6 +145,7 @@ class WizardPersonalise extends React.Component {
   generateServicesState (props, accountState = accountStore.getState()) {
     const allServices = Array.from(props.template.serviceTypes)
     const restrictedServices = accountState.proposedRestrictedServiceTypes(allServices)
+    console.log(">",allServices, restrictedServices)
     const restrictedServiceSet = new Set(restrictedServices)
     const unrestrictedServices = allServices.filter((type) => !restrictedServiceSet.has(type))
     const enabledServices = props.template.defaultServiceTypes.filter((type) => !restrictedServiceSet.has(type))
