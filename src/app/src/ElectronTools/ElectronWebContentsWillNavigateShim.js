@@ -105,28 +105,30 @@ class ElectronWebContentsWillNavigateShim {
   */
   _handleBeforeRequest = (details, responder) => {
     if (details.resourceType !== 'mainFrame') { return responder({}) }
+    if ((details.url || 'about:blank') === 'about:blank') { return responder({}) }
 
-    this[privListeners].find((rec) => {
-      if (rec.wcId === details.webContentsId) {
-        let defaultPrevented = false
-        const evt = {
-          sender: webContents.fromId(details.webContentsId),
-          preventDefault: () => { defaultPrevented = true }
-        }
-        try {
-          rec.listener(evt, details.url)
-        } catch (ex) {
-          /* no-op */
-        }
-        if (defaultPrevented) {
-          responder({ cancel: true })
-          return true
-        }
+    const listeners = this[privListeners]
+      .filter((rec) => rec.wcId === details.webContentsId)
+    if (!listeners.length) { return responder({}) }
+
+    const sender = webContents.fromId(details.webContentsId)
+    if (!sender || sender.isDestroyed) { return responder({}) }
+    if ((sender.getURL() || 'about:blank') === 'about:blank') { return responder({}) }
+
+    // Now we have everything run the callbacks
+    let defaultPrevented = false
+    const preventDefault = () => { defaultPrevented = true }
+
+    listeners.find((rec) => {
+      try {
+        rec.listener({ preventDefault, sender }, details.url)
+      } catch (ex) {
+        /* no-op */
       }
-      return false
+      return defaultPrevented
     })
 
-    responder({})
+    return responder(defaultPrevented ? { cancel: true } : {})
   }
 }
 
