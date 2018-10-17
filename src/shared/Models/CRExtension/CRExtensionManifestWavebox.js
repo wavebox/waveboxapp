@@ -95,7 +95,6 @@ class CRExtensionManifestWavebox extends Model {
   get hasContentSecurityPolicy () {
     const csp = this.contentSecurityPolicy
     if (!csp) { return false }
-    if (csp.useInAdditionToCSPString !== true) { return false }
     if (!Array.isArray(csp.matches) || !csp.matches.length) { return false }
     if (typeof (csp.directives) !== 'object') { return false }
     return true
