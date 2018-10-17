@@ -62,8 +62,13 @@ class AdvancedSettingsSection extends React.Component {
         'darwinMojaveCheckboxFix',
         'concurrentServiceLoadLimit'
       ]) ||
-      modelCompare(this.props.language, nextProps.language, ['inProcessSpellchecking']) ||
-      modelCompare(this.props.ui, nextProps.ui, ['customMainCSS']) ||
+      modelCompare(this.props.language, nextProps.language, [
+        'inProcessSpellchecking'
+      ]) ||
+      modelCompare(this.props.ui, nextProps.ui, [
+        'customMainCSS',
+        'showCtxMenuAdvancedLinkOptions'
+      ]) ||
       partialShallowCompare(
         { showRestart: this.props.showRestart },
         this.state,
@@ -154,6 +159,10 @@ class AdvancedSettingsSection extends React.Component {
             onChange={(evt, toggled) => { settingsActions.sub.app.setEnableAutofillServie(toggled) }}
             checked={app.enableAutofillService} />
         )}
+        <SettingsListItemSwitch
+          label='Show advanced link options on right click (experimental)'
+          onChange={(evt, toggled) => { settingsActions.sub.ui.setShowCtxMenuAdvancedLinkOptions(toggled) }}
+          checked={ui.showCtxMenuAdvancedLinkOptions} />
         <SettingsListItemSwitch
           label='In process spellchecking (Requires Restart)'
           onChange={(evt, toggled) => {

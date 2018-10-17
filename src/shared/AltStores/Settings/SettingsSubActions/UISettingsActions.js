@@ -137,6 +137,13 @@ class UISettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param show: whether to show or not
+  */
+  setShowCtxMenuAdvancedLinkOptions (show) {
+    this.dispatchUpdate('showCtxMenuAdvancedLinkOptions', show)
+  }
+
+  /**
   * @param size: the new size
   */
   setSidebarSize (size) {

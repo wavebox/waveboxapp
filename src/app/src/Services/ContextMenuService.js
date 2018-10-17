@@ -6,7 +6,7 @@ import MailboxesWindow from 'Windows/MailboxesWindow'
 import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import CRExtensionRTContextMenu from 'shared/Models/CRExtensionRT/CRExtensionRTContextMenu'
-import { settingsActions } from 'stores/settings'
+import { settingsActions, settingsStore } from 'stores/settings'
 import { accountStore, accountActions } from 'stores/account'
 import { AUTOFILL_MENU } from 'shared/b64Assets'
 
@@ -195,6 +195,7 @@ class ContextMenuService {
   renderURLSection (contents, params, accountInfo, isWaveboxUIContents) {
     const template = []
     if (params.linkURL && isWaveboxUIContents === false) {
+      const settingsState = settingsStore.getState()
       const accountState = accountStore.getState()
 
       template.push({
@@ -233,50 +234,85 @@ class ContextMenuService {
       // Open in account profile
       const mailboxIds = accountState.mailboxIds()
       if (mailboxIds.length > 1) {
-        template.push({
-          label: 'Open Link in Account Profile',
-          submenu: mailboxIds.map((mailboxId) => {
-            return {
-              label: accountState.resolvedMailboxDisplayName(mailboxId),
-              click: () => {
-                this.openLinkInWaveboxWindowForAccount(
-                  contents,
-                  params.linkURL,
-                  accountStore.getState().getMailbox(mailboxId)
+        if (settingsState.ui.showCtxMenuAdvancedLinkOptions) {
+          template.push({
+            label: 'Open Link in Account Profile',
+            submenu: mailboxIds.map((mailboxId) => {
+              const mailbox = accountState.getMailbox(mailboxId)
+              return {
+                label: accountState.resolvedMailboxDisplayName(mailboxId),
+                submenu: [
+                  {
+                    label: 'New Window',
+                    click: () => {
+                      this.openLinkInWaveboxWindowForAccount(
+                        contents,
+                        params.linkURL,
+                        accountStore.getState().getMailbox(mailboxId)
+                      )
+                    }
+                  },
+                  { type: 'separator' }
+                ].concat(
+                  mailbox.allServices.map((serviceId) => {
+                    return {
+                      label: accountState.resolvedServiceDisplayName(serviceId),
+                      click: () => {
+                        if (accountState.isServiceSleeping(serviceId)) {
+                          accountActions.awakenService(serviceId)
+                          accountActions.changeActiveService(serviceId)
+                          setTimeout(() => { // This is really hacky
+                            const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
+                            if (mailboxesWindow) {
+                              const tabId = mailboxesWindow.tabIds().find((tabId) => {
+                                const meta = mailboxesWindow.tabMetaInfo(tabId)
+                                return meta.backing === WINDOW_BACKING_TYPES.MAILBOX_SERVICE &&
+                                  meta.serviceId === serviceId
+                              })
+                              if (tabId) {
+                                const wc = webContents.fromId(tabId)
+                                if (wc && !wc.isDestroyed()) {
+                                  wc.loadURL(params.linkURL)
+                                }
+                              }
+                            }
+                          }, 1000)
+                        } else {
+                          const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
+                          if (mailboxesWindow) {
+                            const tabId = mailboxesWindow.tabIds().find((tabId) => {
+                              const meta = mailboxesWindow.tabMetaInfo(tabId)
+                              return meta.backing === WINDOW_BACKING_TYPES.MAILBOX_SERVICE &&
+                                meta.serviceId === serviceId
+                            })
+                            if (tabId) {
+                              const wc = webContents.fromId(tabId)
+                              if (wc && !wc.isDestroyed()) {
+                                wc.loadURL(params.linkURL)
+                                accountActions.changeActiveService(serviceId)
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  })
                 )
               }
-            }
+            })
           })
-        })
-      }
-
-      // Open in running tab
-      const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
-      if (mailboxesWindow) {
-        const primaryServiceTabs = mailboxesWindow.tabIds().reduce((acc, tabId) => {
-          const meta = mailboxesWindow.tabMetaInfo(tabId)
-          if (meta.backing === WINDOW_BACKING_TYPES.MAILBOX_SERVICE) {
-            acc.set(meta.serviceId, tabId)
-          }
-          return acc
-        }, new Map())
-        const runningServices = accountState.allServicesOrdered().filter((service) => {
-          if (accountInfo.has && service.id === accountInfo.service.id) { return false }
-          if (!primaryServiceTabs.has(service.id)) { return false }
-          return true
-        })
-
-        if (runningServices.length) {
+        } else {
           template.push({
-            label: 'Open Link in Service',
-            submenu: runningServices.map((service) => {
+            label: 'Open Link in Account Profile',
+            submenu: mailboxIds.map((mailboxId) => {
               return {
-                label: accountState.resolvedServiceDisplayName(service.id),
+                label: accountState.resolvedMailboxDisplayName(mailboxId),
                 click: () => {
-                  const wc = webContents.fromId(primaryServiceTabs.get(service.id))
-                  if (!wc || wc.isDestroyed()) { return }
-                  wc.loadURL(params.linkURL)
-                  accountActions.changeActiveService(service.id)
+                  this.openLinkInWaveboxWindowForAccount(
+                    contents,
+                    params.linkURL,
+                    accountStore.getState().getMailbox(mailboxId)
+                  )
                 }
               }
             })
