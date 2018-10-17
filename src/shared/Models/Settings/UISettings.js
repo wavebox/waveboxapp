@@ -102,6 +102,7 @@ class UISettings extends Model {
 
   get showDefaultServiceSleepNotifications () { return this._value_('showDefaultServiceSleepNotifications', true) }
   get theme () { return this._value_('theme', THEMES.DARK) }
+  get showCtxMenuAdvancedLinkOptions () { return this._value_('showCtxMenuAdvancedLinkOptions', false) }
 
   /* **************************************************************************/
   // CSS

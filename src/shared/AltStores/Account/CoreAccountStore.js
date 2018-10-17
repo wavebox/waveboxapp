@@ -522,6 +522,13 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /**
+    * @return the count of services which are unrestricted
+    */
+    this.unrestrictedServiceCount = () => {
+      return this.unrestrictedServices().length
+    }
+
+    /**
     * @param mailboxId: the id of the mailbox
     * @return an array of services that are unrestricted for a mailbox
     */
@@ -547,7 +554,7 @@ class CoreAccountStore extends RemoteStore {
     this.proposedRestrictedServiceTypes = (serviceTypes) => {
       const user = this.getUser()
       if (user.hasAccountLimit || user.hasAccountTypeRestriction) {
-        let proposedServiceCount = this.serviceCount()
+        let proposedServiceCount = this.unrestrictedServiceCount()
         const restricted = serviceTypes.filter((type) => {
           if (!user.hasAccountsOfType(type)) {
             return true
