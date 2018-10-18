@@ -16,10 +16,10 @@ import SettingsListTypography from 'wbui/SettingsListTypography'
 import modelCompare from 'wbui/react-addons-model-compare'
 import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 import { WB_OPEN_CERTIFICATES_FOLDER } from 'shared/ipcEvents'
+import Platform from 'shared/Platform'
+import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 
-const styles = {
-
-}
+const styles = {}
 
 @withStyles(styles)
 class AdvancedSettingsSection extends React.Component {
@@ -58,10 +58,17 @@ class AdvancedSettingsSection extends React.Component {
         'enableAutofillService',
         'enableWindowOpeningEngine',
         'enableMouseNavigationDarwin',
-        'polyfillUserAgents'
+        'polyfillUserAgents',
+        'darwinMojaveCheckboxFix',
+        'concurrentServiceLoadLimit'
       ]) ||
-      modelCompare(this.props.language, nextProps.language, ['inProcessSpellchecking']) ||
-      modelCompare(this.props.ui, nextProps.ui, ['customMainCSS']) ||
+      modelCompare(this.props.language, nextProps.language, [
+        'inProcessSpellchecking'
+      ]) ||
+      modelCompare(this.props.ui, nextProps.ui, [
+        'customMainCSS',
+        'showCtxMenuAdvancedLinkOptions'
+      ]) ||
       partialShallowCompare(
         { showRestart: this.props.showRestart },
         this.state,
@@ -109,7 +116,7 @@ class AdvancedSettingsSection extends React.Component {
           checked={app.isolateMailboxProcesses} />
         {AppSettings.SUPPORTS_MIXED_SANDBOX_MODE ? (
           <SettingsListItemSwitch
-            label='Enable Sandboxing (Requires Restart)'
+            label='Sandboxing (Requires Restart)'
             onChange={(evt, toggled) => {
               showRestart()
               settingsActions.sub.app.setEnableMixedSandboxMode(toggled)
@@ -153,6 +160,10 @@ class AdvancedSettingsSection extends React.Component {
             checked={app.enableAutofillService} />
         )}
         <SettingsListItemSwitch
+          label='Show advanced link options on right click (experimental)'
+          onChange={(evt, toggled) => { settingsActions.sub.ui.setShowCtxMenuAdvancedLinkOptions(toggled) }}
+          checked={ui.showCtxMenuAdvancedLinkOptions} />
+        <SettingsListItemSwitch
           label='In process spellchecking (Requires Restart)'
           onChange={(evt, toggled) => {
             showRestart()
@@ -176,6 +187,31 @@ class AdvancedSettingsSection extends React.Component {
             settingsActions.sub.app.setEnableWindowOpeningEngine(toggled)
           }}
           checked={app.enableWindowOpeningEngine} />
+        {Platform.isDarwinMojave() ? (
+          <SettingsListItemSwitch
+            label='macOS Mojave checkbox fix (Requires Restart)'
+            onChange={(evt, toggled) => {
+              showRestart()
+              settingsActions.sub.app.setDarwinMojaveCheckboxFix(toggled)
+            }}
+            checked={app.darwinMojaveCheckboxFix} />
+        ) : undefined}
+        <SettingsListItemSelectInline
+          label='Concurrent service load limit (Requires Restart)'
+          value={app.concurrentServiceLoadLimit}
+          options={[
+            { value: 0, label: 'Auto', primaryText: 'Auto (Recommended)' },
+            { value: -1, label: 'Unlimited (Not Recommended)' },
+            { divider: true }
+          ].concat(
+            Array.from(Array(20)).map((_, i) => {
+              return { value: i + 1, label: `${i + 1}` }
+            })
+          )}
+          onChange={(evt, value) => {
+            showRestart()
+            settingsActions.sub.app.setConcurrentServiceLoadLimit(value)
+          }} />
         <SettingsListItemButton
           label='Main Window Custom CSS'
           icon={<CodeIcon />}

@@ -107,7 +107,7 @@ class CustomCodeEditingDialog extends React.Component {
             Cancel
           </Button>
           <Button
-            variant='raised'
+            variant='contained'
             color='primary'
             className={classes.button}
             onClick={(evt) => onSave(evt, ReactDOM.findDOMNode(this.textFieldRef).value)}>

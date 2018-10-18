@@ -173,7 +173,7 @@ class MailboxServiceDeleteScene extends React.Component {
           <Button className={classes.cancelButton} onClick={this.handleClose}>
             Cancel
           </Button>
-          <Button className={classes.deleteButton} variant='raised' onClick={this.handleDelete}>
+          <Button className={classes.deleteButton} variant='contained' onClick={this.handleDelete}>
             <DeleteIcon className={classes.deleteIcon} />
             Delete
           </Button>

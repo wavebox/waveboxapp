@@ -93,7 +93,7 @@ class ProScene extends React.Component {
             src={url} />
         </DialogContent>
         <DialogActions className={classes.dialogActions}>
-          <Button variant='raised' color='primary' onClick={this.handleClose}>
+          <Button variant='contained' color='primary' onClick={this.handleClose}>
             Close
           </Button>
         </DialogActions>

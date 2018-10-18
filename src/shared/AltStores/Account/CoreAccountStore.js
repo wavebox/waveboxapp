@@ -147,7 +147,27 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /**
-    * Looks to see if am auth is invalid or missing for a service
+    * Looks to see if an auth is missing for a service - not invalid
+    * @param serviceId: the id of the service
+    * @return true if it's missing, false if not
+    */
+    this.isMailboxAuthMissingForServiceId = (serviceId) => {
+      const service = this.getService(serviceId)
+      if (!service) { return false }
+      if (service.supportedAuthNamespace) {
+        const auth = this.getMailboxAuthForServiceId(serviceId)
+        if (auth) {
+          return false
+        } else {
+          return true
+        }
+      } else {
+        return false
+      }
+    }
+
+    /**
+    * Looks to see if an auth is invalid or missing for a service
     * @param serviceId: the id of the service
     * @return true if it's invalid, false if not
     */
@@ -502,6 +522,13 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /**
+    * @return the count of services which are unrestricted
+    */
+    this.unrestrictedServiceCount = () => {
+      return this.unrestrictedServices().length
+    }
+
+    /**
     * @param mailboxId: the id of the mailbox
     * @return an array of services that are unrestricted for a mailbox
     */
@@ -527,7 +554,7 @@ class CoreAccountStore extends RemoteStore {
     this.proposedRestrictedServiceTypes = (serviceTypes) => {
       const user = this.getUser()
       if (user.hasAccountLimit || user.hasAccountTypeRestriction) {
-        let proposedServiceCount = this.serviceCount()
+        let proposedServiceCount = this.unrestrictedServiceCount()
         const restricted = serviceTypes.filter((type) => {
           if (!user.hasAccountsOfType(type)) {
             return true

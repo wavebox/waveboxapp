@@ -58,7 +58,7 @@ class SettingsListItemButton extends React.Component {
     const button = (
       <Button
         size='small'
-        variant='raised'
+        variant='contained'
         disabled={disabled}
         onClick={onClick}
         {...buttonProps}>

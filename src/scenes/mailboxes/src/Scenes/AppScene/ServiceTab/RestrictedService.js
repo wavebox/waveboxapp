@@ -123,7 +123,7 @@ class RestrictedService extends React.Component {
           {`Use your ${displayName} Service and others by purchasing Wavebox`}
         </p>
         <Button
-          variant='raised'
+          variant='contained'
           color='primary'
           className={classes.button}
           onClick={() => { window.location.hash = '/pro' }}>

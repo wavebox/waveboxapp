@@ -25,6 +25,8 @@ import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxRedu
 import ServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/ServiceDataReducer'
 import AuthFactory from 'shared/Models/ACAccounts/AuthFactory'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
+import GenericService from 'shared/Models/ACAccounts/Generic/GenericService'
+import CoreACService from 'shared/Models/ACAccounts/CoreACService'
 
 class AccountStore extends CoreAccountStore {
   /* **************************************************************************/
@@ -55,6 +57,7 @@ class AccountStore extends CoreAccountStore {
 
       // Service
       handleCreateService: actions.CREATE_SERVICE,
+      handleFastCreateWeblinkService: actions.FAST_CREATE_WEBLINK_SERVICE,
       handleRemoveService: actions.REMOVE_SERVICE,
       handleMoveServiceToNewMailbox: actions.MOVE_SERVICE_TO_NEW_MAILBOX,
       handleReduceService: actions.REDUCE_SERVICE,
@@ -460,6 +463,31 @@ class AccountStore extends CoreAccountStore {
     }
 
     this.startManagingServiceWithId(data.id)
+  }
+
+  handleFastCreateWeblinkService ({ parentId, url, activateOnCreate }) {
+    const mailbox = this.getMailbox(parentId)
+    if (!mailbox) { this.preventDefault(); return }
+
+    const serviceJS = {
+      ...CoreACService.createJS(undefined, parentId, GenericService.type),
+      url: url,
+      // Change some of the normal defaults as the user wont be prompted to customize as they see fit
+      usePageThemeAsColor: true,
+      usePageTitleAsDisplayName: true,
+      hasNavigationToolbar: true
+    }
+
+    actions.createService.defer(
+      parentId,
+      mailbox.suggestedServiceUILocation,
+      serviceJS
+    )
+
+    // Lazy hack to ensure the service is created
+    setTimeout(() => {
+      actions.changeActiveService.defer(serviceJS.id)
+    }, 250)
   }
 
   handleRemoveService ({ id }) {
@@ -881,7 +909,7 @@ class AccountStore extends CoreAccountStore {
     if (allowCycling && activeIndex === 0) {
       nextId = this._mailboxIndex_[this._mailboxIndex_.length - 1] || null
     } else {
-      nextId = this._mailboxIndex_[Math.max(0, activeIndex - 1)] || null
+      nextId = this._mailboxIndex_[activeIndex - 1] || null
     }
 
     if (nextId) {
@@ -898,7 +926,7 @@ class AccountStore extends CoreAccountStore {
     if (allowCycling && activeIndex === this._mailboxIndex_.length - 1) {
       nextId = this._mailboxIndex_[0] || null
     } else {
-      nextId = this._mailboxIndex_[Math.min(this._mailboxIndex_.length - 1, activeIndex + 1)] || null
+      nextId = this._mailboxIndex_[activeIndex + 1] || null
     }
 
     if (nextId) {
@@ -955,7 +983,7 @@ class AccountStore extends CoreAccountStore {
     if (allowCycling && activeIndex === 0) {
       nextServiceId = mailbox.allServices[mailbox.allServices.length - 1] || null
     } else {
-      nextServiceId = mailbox.allServices[Math.max(0, activeIndex - 1)] || null
+      nextServiceId = mailbox.allServices[activeIndex - 1] || null
     }
 
     if (nextServiceId) {
@@ -973,10 +1001,10 @@ class AccountStore extends CoreAccountStore {
     const activeIndex = mailbox.allServices.findIndex((t) => t === activeServiceId)
 
     let nextServiceId
-    if (allowCycling && activeIndex === mailbox.enabledServiceTypes.length - 1) {
+    if (allowCycling && activeIndex === mailbox.allServices.length - 1) {
       nextServiceId = mailbox.allServices[0] || null
     } else {
-      nextServiceId = mailbox.allServices[Math.min(mailbox.allServices.length - 1, activeIndex + 1)] || null
+      nextServiceId = mailbox.allServices[activeIndex + 1] || null
     }
 
     if (nextServiceId) {
@@ -995,7 +1023,7 @@ class AccountStore extends CoreAccountStore {
     if (activeIndex === allServiceIds.length - 1) {
       nextServiceId = allServiceIds[0] || null
     } else {
-      nextServiceId = allServiceIds[Math.min(allServiceIds.length - 1, activeIndex + 1)] || null
+      nextServiceId = allServiceIds[activeIndex + 1] || null
     }
 
     if (nextServiceId) {
@@ -1014,7 +1042,7 @@ class AccountStore extends CoreAccountStore {
     if (activeIndex === 0) {
       nextServiceId = allServiceIds[allServiceIds.length - 1] || null
     } else {
-      nextServiceId = allServiceIds[Math.max(0, activeIndex - 1)] || null
+      nextServiceId = allServiceIds[activeIndex - 1] || null
     }
 
     if (nextServiceId) {

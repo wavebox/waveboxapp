@@ -93,7 +93,7 @@ class AccountWizardAddScene extends React.Component {
         userState.clientId,
         userState.clientToken,
         userState.user.classicAccountTypes,
-        accountState.unrestrictedServices().length >= userState.user.accountLimit,
+        accountState.unrestrictedServiceCount() >= userState.user.accountLimit,
         userState.user.accountLimit)
     }
   })()
@@ -105,7 +105,7 @@ class AccountWizardAddScene extends React.Component {
         userState.clientId,
         userState.clientToken,
         userState.user.classicAccountTypes,
-        accountState.unrestrictedServices().length >= userState.user.accountLimit,
+        accountState.unrestrictedServiceCount() >= userState.user.accountLimit,
         userState.user.accountLimit)
     })
   }
@@ -117,7 +117,7 @@ class AccountWizardAddScene extends React.Component {
         userState.clientId,
         userState.clientToken,
         userState.user.classicAccountTypes,
-        accountState.unrestrictedServices().length >= userState.user.accountLimit,
+        accountState.unrestrictedServiceCount() >= userState.user.accountLimit,
         userState.user.accountLimit)
     })
   }
@@ -219,7 +219,7 @@ class AccountWizardAddScene extends React.Component {
           ) : undefined}
         </DialogContent>
         <DialogActions className={classes.dialogActions}>
-          <Button variant='raised' onClick={this.handleClose}>
+          <Button variant='contained' onClick={this.handleClose}>
             Cancel
           </Button>
         </DialogActions>

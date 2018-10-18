@@ -52,12 +52,12 @@ class SidelistAvatar extends React.Component {
   renderSizesFromSidebarSize (sidebarSize) {
     switch (sidebarSize) {
       case UISettings.SIDEBAR_SIZES.COMPACT:
-        return { size: 38, borderWidth: 4 }
+        return { size: 38, borderWidth: 3 }
       case UISettings.SIDEBAR_SIZES.TINY:
-        return { size: 28, borderWidth: 3 }
+        return { size: 28, borderWidth: 2 }
       case UISettings.SIDEBAR_SIZES.REGULAR:
       default:
-        return { size: 44, borderWidth: 4 }
+        return { size: 44, borderWidth: 3 }
     }
   }
 

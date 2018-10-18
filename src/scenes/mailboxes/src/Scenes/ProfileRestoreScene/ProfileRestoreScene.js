@@ -18,7 +18,7 @@ const HUMANIZED_PLATFORMS = {
   'darwin': 'macOS',
   'win32': 'Windows',
   'linux': 'Linux',
-  'organisation': 'Organisation'
+  'organization': 'Organization'
 }
 
 const styles = {
@@ -161,7 +161,7 @@ class ProfileRestoreScene extends React.Component {
           primary={isThisMachine ? (
             <span className={classes.profileListItemThisMachine}>This machine</span>
           ) : ([
-            HUMANIZED_PLATFORMS[profile.machine.platform],
+            HUMANIZED_PLATFORMS[(profile.machine.platform || '').toLowerCase()] || profile.machine.platform,
             `(${profile.machine.name || 'Unnamed'})`
           ].join(' '))}
           secondary={(

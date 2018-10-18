@@ -188,7 +188,7 @@ class AccountSettings extends React.Component {
     } else {
       return (
         <div className={classNames(className, classes.addFirstAccountContainer)} {...passProps}>
-          <Button variant='raised' color='primary' onClick={this.handleAddAccount}>
+          <Button variant='contained' color='primary' onClick={this.handleAddAccount}>
             Add your first account
           </Button>
         </div>

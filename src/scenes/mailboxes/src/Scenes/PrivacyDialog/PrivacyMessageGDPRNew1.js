@@ -211,7 +211,7 @@ class PrivacyMessageGDPRNew1 extends React.Component {
             </div>
             <div className={classes.primaryButtonContainer}>
               <Button
-                variant='raised'
+                variant='contained'
                 color='primary'
                 className={classes.primaryButton}
                 disabled={agreeRequestActive}

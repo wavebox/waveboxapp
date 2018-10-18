@@ -81,7 +81,7 @@ class DataSettingsSection extends React.Component {
           onClick={() => { remote.shell.showItemInFolder(RuntimePaths.APP_DATA_PATH) }} />
         <SettingsListItem className={classes.listItem}>
           <ConfirmButton
-            variant='raised'
+            variant='contained'
             size='small'
             content={(
               <span>
@@ -106,7 +106,7 @@ class DataSettingsSection extends React.Component {
         </SettingsListItem>
         <SettingsListItem className={classes.listItem}>
           <ConfirmButton
-            variant='raised'
+            variant='contained'
             size='small'
             content={(
               <span>

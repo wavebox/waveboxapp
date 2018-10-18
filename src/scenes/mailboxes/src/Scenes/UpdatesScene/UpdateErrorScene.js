@@ -190,7 +190,7 @@ class UpdateErrorScene extends React.Component {
           <Button className={classes.button} onClick={this.handleDownloadManually}>
             Download manually
           </Button>
-          <Button variant='raised' color='primary' className={classes.button} onClick={this.handleCheckAgain}>
+          <Button variant='contained' color='primary' className={classes.button} onClick={this.handleCheckAgain}>
             Try again
           </Button>
         </DialogActions>

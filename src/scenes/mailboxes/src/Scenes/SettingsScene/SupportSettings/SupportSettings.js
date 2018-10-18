@@ -162,7 +162,7 @@ class SupportSettings extends React.Component {
         <div className={classes.contentContainer}>
           <h2 className={classes.titleUnboxed} style={{ color: color }}>{title}</h2>
           <p className={classes.textUnboxed}>{text}</p>
-          <Button variant='raised' onClick={click}>
+          <Button variant='contained' onClick={click}>
             {buttonLabel}
           </Button>
         </div>
@@ -189,7 +189,7 @@ class SupportSettings extends React.Component {
         <div className={classes.contentContainer}>
           <h2 className={classes.titleBoxed}>{title}</h2>
           <p className={classes.textBoxed}>{text}</p>
-          <Button variant='raised' color='primary' onClick={click}>
+          <Button variant='contained' color='primary' onClick={click}>
             {buttonLabel}
           </Button>
         </div>

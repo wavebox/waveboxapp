@@ -68,7 +68,7 @@ class TrayIconEditor extends React.Component {
           <h1 className={classNames(trayHeadingClassName, classes.subheading)} style={trayHeadingStyles}>All Messages Read</h1>
           <div className={classes.button}>
             <ColorPickerButton
-              buttonProps={{ variant: 'raised', ...buttonProps }}
+              buttonProps={{ variant: 'contained', ...buttonProps }}
               disabled={!tray.show}
               value={tray.readColor}
               onChange={(col) => settingsActions.sub.tray.setTrayReadColor(col.rgbaStr)}>
@@ -78,7 +78,7 @@ class TrayIconEditor extends React.Component {
           </div>
           <div className={classes.button}>
             <ColorPickerButton
-              buttonProps={{ variant: 'raised', ...buttonProps }}
+              buttonProps={{ variant: 'contained', ...buttonProps }}
               disabled={!tray.show}
               value={tray.readBackgroundColor}
               onChange={(col) => settingsActions.sub.tray.setTrayReadBackgroundColor(col.rgbaStr)}>
@@ -92,7 +92,7 @@ class TrayIconEditor extends React.Component {
           <h1 className={classNames(trayHeadingClassName, classes.subheading)} style={trayHeadingStyles}>Unread Messages</h1>
           <div className={classes.button}>
             <ColorPickerButton
-              buttonProps={{ variant: 'raised', ...buttonProps }}
+              buttonProps={{ variant: 'contained', ...buttonProps }}
               disabled={!tray.show}
               value={tray.unreadColor}
               onChange={(col) => settingsActions.sub.tray.setTrayUnreadColor(col.rgbaStr)}>
@@ -102,7 +102,7 @@ class TrayIconEditor extends React.Component {
           </div>
           <div className={classes.button}>
             <ColorPickerButton
-              buttonProps={{ variant: 'raised', ...buttonProps }}
+              buttonProps={{ variant: 'contained', ...buttonProps }}
               disabled={!tray.show}
               value={tray.unreadBackgroundColor}
               onChange={(col) => settingsActions.sub.tray.setTrayUnreadBackgroundColor(col.rgbaStr)}>

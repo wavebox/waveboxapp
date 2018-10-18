@@ -139,6 +139,14 @@ class CoreACService extends CoreACModel {
   get hasSeenSleepableWizard () { return this._value_('hasSeenSleepableWizard', false) }
 
   /* **************************************************************************/
+  // Properties: Install
+  /* **************************************************************************/
+
+  get installText () { return this._value_('installText') }
+  get hasInstallText () { return !!this.installText }
+  get hasSeenInstallInfo () { return this._value_('hasSeenInstallInfo', false) }
+
+  /* **************************************************************************/
   // Properties: Display
   /* **************************************************************************/
 

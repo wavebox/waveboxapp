@@ -69,7 +69,7 @@ class ServiceReducer {
 
     let value = parseInt(timeout)
     value = isNaN(value) ? MAILBOX_SLEEP_WAIT : value
-    value = Math.min(Math.max(timeout, min), max)
+    value = Math.min(Math.max(value, min), max)
     return service.changeData({ sleepableTimeout: value })
   }
 
@@ -80,6 +80,19 @@ class ServiceReducer {
   */
   static setHasSeenSleepableWizard (service, seen) {
     return service.changeData({ hasSeenSleepableWizard: seen })
+  }
+
+  /* **************************************************************************/
+  // Install
+  /* **************************************************************************/
+
+  /**
+  * Sets if the install text has been seen
+  * @param service: the service to update
+  * @param seen: true if the user has seen
+  */
+  static setHasSeenInstallInfo (service, seen) {
+    return service.changeData({ hasSeenInstallInfo: seen })
   }
 
   /* **************************************************************************/

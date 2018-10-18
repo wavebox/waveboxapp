@@ -10,7 +10,8 @@ import DefaultTooltip200w from 'wbui/Tooltips/DefaultTooltip200w'
 const styles = {
   button: {
     position: 'relative',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    WebkitAppRegion: 'no-drag'
   },
   icon: {
     position: 'absolute',

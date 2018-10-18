@@ -2,16 +2,16 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { accountStore } from 'stores/account'
 import { userStore } from 'stores/user'
-import GoogleMailServiceWebView from './Google/GoogleMailServiceWebView'
-import GoogleHangoutsServiceWebView from './Google/GoogleHangoutsServiceWebView'
-import GoogleCalendarServiceWebView from './Google/GoogleCalendarServiceWebView'
-import GoogleAlloServiceWebView from './Google/GoogleAlloServiceWebView'
-import TrelloServiceWebView from './Trello/TrelloServiceWebView'
-import SlackServiceWebView from './Slack/SlackServiceWebView'
-import GenericServiceWebView from './Generic/GenericServiceWebView'
-import ContainerServiceWebView from './Container/ContainerServiceWebView'
-import MicrosoftMailServiceWebView from './Microsoft/MicrosoftMailServiceWebView'
-import CoreServiceWebViewHibernator from './CoreServiceWebViewHibernator'
+import GoogleMailServiceWebView from './ServiceWebViews/Google/GoogleMailServiceWebView'
+import GoogleHangoutsServiceWebView from './ServiceWebViews/Google/GoogleHangoutsServiceWebView'
+import GoogleCalendarServiceWebView from './ServiceWebViews/Google/GoogleCalendarServiceWebView'
+import GoogleAlloServiceWebView from './ServiceWebViews/Google/GoogleAlloServiceWebView'
+import TrelloServiceWebView from './ServiceWebViews/Trello/TrelloServiceWebView'
+import SlackServiceWebView from './ServiceWebViews/Slack/SlackServiceWebView'
+import GenericServiceWebView from './ServiceWebViews/Generic/GenericServiceWebView'
+import ContainerServiceWebView from './ServiceWebViews/Container/ContainerServiceWebView'
+import MicrosoftMailServiceWebView from './ServiceWebViews/Microsoft/MicrosoftMailServiceWebView'
+import CoreServiceWebView from './CoreServiceWebView'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
@@ -148,7 +148,7 @@ class ServiceTab extends React.Component {
       case SERVICE_TYPES.MICROSOFT_MAIL:
         return MicrosoftMailServiceWebView
       default:
-        return CoreServiceWebViewHibernator
+        return CoreServiceWebView
     }
   }
 

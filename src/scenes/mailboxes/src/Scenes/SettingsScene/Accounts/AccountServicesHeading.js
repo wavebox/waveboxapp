@@ -224,7 +224,7 @@ class AccountServicesHeading extends React.Component {
         <p className={classes.actionContainer}>
           <Button
             color='primary'
-            variant='raised'
+            variant='contained'
             size='large'
             onClick={() => {
               window.location.hash = `/mailbox_wizard/add/${mailboxId}`

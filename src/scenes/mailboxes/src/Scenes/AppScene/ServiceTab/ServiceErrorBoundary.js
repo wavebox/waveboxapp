@@ -20,7 +20,7 @@ class ServiceErrorBoundary extends React.Component {
           text={['Something went wrong with this tab and it crashed']}
           button={(
             <Button
-              variant='raised'
+              variant='contained'
               onClick={() => { this.setState({ hasError: false }) }}>
               <RefreshIcon style={{ marginRight: 6 }} />
               Reload

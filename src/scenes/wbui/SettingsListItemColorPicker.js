@@ -80,7 +80,7 @@ class SettingsListItemColorPicker extends React.Component {
     return (
       <SettingsListItem {...passProps}>
         <ColorPickerButton
-          buttonProps={{ variant: 'raised', size: 'small', className: classes.colorPickerButton }}
+          buttonProps={{ variant: 'contained', size: 'small', className: classes.colorPickerButton }}
           value={value}
           disabled={disabled}
           onChange={onChange}>
@@ -95,7 +95,7 @@ class SettingsListItemColorPicker extends React.Component {
         </ColorPickerButton>
         {showClear ? (
           <Button
-            variant='raised'
+            variant='contained'
             size='small'
             disabled={disabled}
             onClick={() => { if (onChange) { onChange(undefined) } }}>
