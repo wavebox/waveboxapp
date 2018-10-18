@@ -209,12 +209,12 @@ class ContextMenuService {
         })
       }
       template.push({
-        label: 'Copy link Address',
+        label: 'Copy Link Address',
         click: () => { clipboard.writeText(params.linkURL) }
       })
       template.push({ type: 'separator' })
       template.push({
-        label: 'Open link with Wavebox',
+        label: 'Open Link with Wavebox',
         submenu: [
           {
             label: 'Open Link in New Window',
