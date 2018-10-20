@@ -40,6 +40,16 @@ if (process.platform === 'darwin') {
         lineHeight: '22px',
         marginRight: CONTROLS_WIDTH + CONTROLS_H_SPACE + CONTROLS_H_SPACE
       },
+
+      '&.dark': {
+        borderTop: '1px solid rgb(106, 107, 116)',
+        background: 'rgb(49, 51, 64)',
+
+        '& >.title': {
+          color: 'rgb(128, 132, 143)'
+        }
+      },
+
       '& >.controls': {
         order: 1,
         display: 'flex',
@@ -113,6 +123,16 @@ if (process.platform === 'darwin') {
         '& >.title': {
           color: 'rgb(47, 45, 47)'
         },
+
+        '&.dark': {
+          borderTop: '1px solid rgb(130, 132, 141)',
+          background: 'linear-gradient(to bottom, rgba(72,74,87,1) 0%,rgba(59, 61, 72,1) 100%)',
+
+          '& >.title': {
+            color: 'rgb(252, 255, 255)'
+          }
+        },
+
         '& >.controls': {
           '& >.control': {
             '&.close': {

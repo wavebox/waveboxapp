@@ -32,12 +32,28 @@ class AppSceneWindowTitlebar extends React.Component {
     const currentWindow = remote.getCurrentWindow()
     currentWindow.on('focus', this.handleWindowStateChange)
     currentWindow.on('blur', this.handleWindowStateChange)
+    if (process.platform === 'darwin') {
+      this.themeChangeNotifId = remote.systemPreferences.subscribeNotification(
+        'AppleInterfaceThemeChangedNotification',
+        () => {
+          this.setState({
+            isDarkMode: remote.systemPreferences.isDarkMode()
+          })
+        }
+      )
+    }
   }
 
   componentWillUnmount () {
     const currentWindow = remote.getCurrentWindow()
     currentWindow.removeListener('focus', this.handleWindowStateChange)
     currentWindow.removeListener('blur', this.handleWindowStateChange)
+
+    if (process.platform === 'darwin') {
+      remote.systemPreferences.unsubscribeNotification(
+        this.themeChangeNotifId
+      )
+    }
   }
 
   /* **************************************************************************/
@@ -46,6 +62,9 @@ class AppSceneWindowTitlebar extends React.Component {
 
   state = (() => {
     return {
+      isDarkMode: process.platform === 'darwin'
+        ? remote.systemPreferences.isDarkMode()
+        : false,
       ...this.generateWindowState()
     }
   })()
@@ -94,7 +113,7 @@ class AppSceneWindowTitlebar extends React.Component {
   }
 
   render () {
-    const { isFocused } = this.state
+    const { isFocused, isDarkMode } = this.state
     const { style, className, classes, ...passProps } = this.props
 
     return (
@@ -106,6 +125,7 @@ class AppSceneWindowTitlebar extends React.Component {
         className={classnames(
           classes.titlebar,
           isFocused ? 'focused' : undefined,
+          isDarkMode ? 'dark' : undefined,
           className
         )}
         {...passProps}>
