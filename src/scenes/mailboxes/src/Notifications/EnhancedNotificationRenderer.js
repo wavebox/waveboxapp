@@ -79,11 +79,11 @@ class EnhancedNotificationRenderer {
       soundName: NotificationRendererUtils.preparedServiceSound(mailbox, service, settingsState),
       bundleId: OSX_APP_BUNDLE_ID
     })
-    notif.addEventListener('click', (ev) => {
+    notif.addEventListener('click', (evt) => {
       if (clickHandler) {
         clickHandler(notification.data)
       }
-      ev.target.notification.close();
+      evt.target.notification.close()
     })
   }
 
