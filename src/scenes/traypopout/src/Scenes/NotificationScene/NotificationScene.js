@@ -1,11 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import shallowCompare from 'react-addons-shallow-compare'
-import { notifhistStore } from 'stores/notifhist'
+import { notifhistStore, notifhistActions } from 'stores/notifhist'
 import { accountActions } from 'stores/account'
 import { emblinkActions } from 'stores/emblink'
 import Infinate from 'react-infinite'
-import { List } from '@material-ui/core'
+import { List, ListItemText, Menu, MenuItem } from '@material-ui/core'
 import { ipcRenderer } from 'electron'
 import { WB_FOCUS_MAILBOXES_WINDOW } from 'shared/ipcEvents'
 import NotificationListItem from './NotificationListItem'
@@ -65,7 +65,8 @@ class NotificationScene extends React.Component {
   state = (() => {
     return {
       notifications: notifhistStore.getState().notifications,
-      containerHeight: 0
+      containerHeight: 0,
+      contextMenuAnchor: null
     }
   })()
 
@@ -124,29 +125,54 @@ class NotificationScene extends React.Component {
   }
 
   render () {
-    const { className, classes, ...passProps } = this.props
-    const { notifications, containerHeight } = this.state
+    const {
+      className,
+      classes,
+      ...passProps
+    } = this.props
+    const {
+      notifications,
+      containerHeight,
+      contextMenuAnchor
+    } = this.state
 
     return (
       <div ref={MAIN_REF} className={classNames(className, classes.main)} {...passProps}>
         <ErrorBoundary>
-          <List className={classes.list}>
-            {containerHeight === 0 ? undefined : (
-              <Infinate ref={INFINATE_REF} containerHeight={containerHeight} elementHeight={LIST_ITEM_HEIGHT}>
-                {notifications.map(({ id, timestamp, notification }) => {
-                  return (
-                    <NotificationListItem
-                      key={id}
-                      onClick={(evt) => this.handleNotificationClick(evt, notification)}
-                      className={classes.listItem}
-                      mailboxId={notification.mailboxId}
-                      notification={notification}
-                      timestamp={timestamp} />
-                  )
-                })}
-              </Infinate>
-            )}
-          </List>
+          <React.Fragment>
+            <List
+              className={classes.list}
+              onContextMenu={(evt) => this.setState({ contextMenuAnchor: evt.target })}>
+              {containerHeight === 0 ? undefined : (
+                <Infinate ref={INFINATE_REF} containerHeight={containerHeight} elementHeight={LIST_ITEM_HEIGHT}>
+                  {notifications.map(({ id, timestamp, notification }) => {
+                    return (
+                      <NotificationListItem
+                        key={id}
+                        onClick={(evt) => this.handleNotificationClick(evt, notification)}
+                        className={classes.listItem}
+                        mailboxId={notification.mailboxId}
+                        notification={notification}
+                        timestamp={timestamp} />
+                    )
+                  })}
+                </Infinate>
+              )}
+            </List>
+            <Menu
+              open={!!contextMenuAnchor && notifications.length}
+              anchorEl={contextMenuAnchor}
+              MenuListProps={{ dense: true }}
+              disableEnforceFocus
+              onClose={() => this.setState({ contextMenuAnchor: null })}>
+              <MenuItem onClick={() => {
+                this.setState({ contextMenuAnchor: null })
+                notifhistActions.clearAllNotifications()
+              }}>
+                <ListItemText primary='Clear all Notifications' />
+              </MenuItem>
+            </Menu>
+          </React.Fragment>
         </ErrorBoundary>
       </div>
     )

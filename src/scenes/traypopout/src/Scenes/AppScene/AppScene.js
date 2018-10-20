@@ -7,7 +7,11 @@ import NotificationScene from 'Scenes/NotificationScene'
 import UnreadScene from 'Scenes/UnreadScene'
 import AppSceneToolbar from './AppSceneToolbar'
 import AppSceneWindowTitlebar from './AppSceneWindowTitlebar'
-import { WB_TRAY_WINDOWED_MODE_CHANGED, WB_HIDE_TRAY } from 'shared/ipcEvents'
+import {
+  WB_TRAY_WINDOWED_MODE_CHANGED,
+  WB_TRAY_WINDOWED_ALWAYS_ON_TOP_CHANGED,
+  WB_HIDE_TRAY
+} from 'shared/ipcEvents'
 import { withStyles } from '@material-ui/core/styles'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import classNames from 'classnames'
@@ -111,6 +115,7 @@ class AppScene extends React.Component {
   componentDidMount () {
     this.resetNavTOs = new Map()
     ipcRenderer.on(WB_TRAY_WINDOWED_MODE_CHANGED, this.handleWindowedModeChanged)
+    ipcRenderer.on(WB_TRAY_WINDOWED_ALWAYS_ON_TOP_CHANGED, this.handleAlwaysOnTopChanged)
     document.body.addEventListener('keyup', this.handleKeyUp)
   }
 
@@ -119,6 +124,7 @@ class AppScene extends React.Component {
       clearTimeout(to)
     })
     ipcRenderer.removeListener(WB_TRAY_WINDOWED_MODE_CHANGED, this.handleWindowedModeChanged)
+    ipcRenderer.removeListener(WB_TRAY_WINDOWED_ALWAYS_ON_TOP_CHANGED, this.handleAlwaysOnTopChanged)
     document.body.removeEventListener('keyup', this.handleKeyUp)
   }
 
@@ -129,7 +135,8 @@ class AppScene extends React.Component {
   state = (() => {
     return {
       tabIndex: UNREAD_INDEX,
-      isWindowedMode: false
+      isWindowedMode: false,
+      alwaysOnTop: false
     }
   })()
 
@@ -144,6 +151,15 @@ class AppScene extends React.Component {
   */
   handleWindowedModeChanged = (evt, isWindowedMode) => {
     this.setState({ isWindowedMode: isWindowedMode })
+  }
+
+  /**
+  * Handles the always on top mode changing
+  * @param evt: the event that fired
+  * @param alwaysOnTop: whether we're now in windowed mode or not
+  */
+  handleAlwaysOnTopChanged = (evt, alwaysOnTop) => {
+    this.setState({ alwaysOnTop: alwaysOnTop })
   }
 
   /* **************************************************************************/
@@ -210,7 +226,8 @@ class AppScene extends React.Component {
     const { classes } = this.props
     const {
       tabIndex,
-      isWindowedMode
+      isWindowedMode,
+      alwaysOnTop
     } = this.state
 
     return (
@@ -246,7 +263,10 @@ class AppScene extends React.Component {
               <NotificationScene innerRef={(n) => { this.notifRef = n }} />
             </SwipeableViews>
           </ErrorBoundary>
-          <AppSceneToolbar className={classes.toolbar} isWindowedMode={isWindowedMode} />
+          <AppSceneToolbar
+            className={classes.toolbar}
+            isWindowedMode={isWindowedMode}
+            alwaysOnTop={alwaysOnTop} />
         </div>
       </div>
     )

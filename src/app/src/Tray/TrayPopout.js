@@ -6,13 +6,17 @@ import WaveboxWindow from 'Windows/WaveboxWindow'
 import {
   POPOUT_POSITIONS
 } from 'shared/Models/Settings/TraySettings'
-import { WB_TRAY_WINDOWED_MODE_CHANGED } from 'shared/ipcEvents'
+import {
+  WB_TRAY_WINDOWED_MODE_CHANGED,
+  WB_TRAY_WINDOWED_ALWAYS_ON_TOP_CHANGED
+} from 'shared/ipcEvents'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
 
 const privWindow = Symbol('privWindow')
 const privPositioner = Symbol('privPositioner')
 const privHideTO = Symbol('privHideTO')
 const privIsWindowMode = Symbol('privIsWindowMode')
+const privAlwaysOnTop = Symbol('privAlwaysOnTop')
 
 class TrayPopout {
   /* ****************************************************************************/
@@ -23,6 +27,7 @@ class TrayPopout {
     this[privWindow] = undefined
     this[privPositioner] = undefined
     this[privIsWindowMode] = false
+    this[privAlwaysOnTop] = false
   }
 
   /**
@@ -62,7 +67,9 @@ class TrayPopout {
         skipTaskbar: true,
         movable: false,
         resizable: false
-      } : undefined)
+      } : {
+        alwaysOnTop: this[privAlwaysOnTop]
+      })
     })
     this[privWindow].setMenuBarVisibility(false)
 
@@ -325,7 +332,7 @@ class TrayPopout {
     if (this[privIsWindowMode] === true) { return }
 
     // Update the window config
-    this[privWindow].setAlwaysOnTop(false)
+    this[privWindow].setAlwaysOnTop(this[privAlwaysOnTop])
     this[privWindow].setSkipTaskbar(false)
     this[privWindow].setMovable(true)
     this[privWindow].setResizable(true)
@@ -358,6 +365,33 @@ class TrayPopout {
 
     // Remove from cycling
     WaveboxWindow.detachSpecial(this[privWindow].id)
+  }
+
+  /* ****************************************************************************/
+  // Visibility
+  /* ****************************************************************************/
+
+  /**
+  * Toggles if the tray should always be on top
+  */
+  toggleAlwaysOnTop () {
+    this.setAlwaysOnTop(!this[privAlwaysOnTop])
+  }
+
+  /**
+  * Sets if the tray should always be on top
+  * @param always: true to set to always be on top
+  */
+  setAlwaysOnTop (always) {
+    this._throwIfNotLoaded()
+    if (this[privAlwaysOnTop] === always) { return }
+
+    this[privAlwaysOnTop] = always
+    if (this[privIsWindowMode]) {
+      this[privWindow].setAlwaysOnTop(always)
+    }
+
+    this[privWindow].webContents.send(WB_TRAY_WINDOWED_ALWAYS_ON_TOP_CHANGED, always)
   }
 }
 

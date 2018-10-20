@@ -24,7 +24,8 @@ class CoreNotifhistStore extends RemoteStore {
     const actions = this.alt.getActions(ACTIONS_NAME)
     this.bindActions({
       handleLoad: actions.LOAD,
-      handleAddNotification: actions.ADD_NOTIFICATION
+      handleAddNotification: actions.ADD_NOTIFICATION,
+      handleClearAllNotifications: actions.CLEAR_ALL_NOTIFICATIONS
     })
   }
 
@@ -45,6 +46,10 @@ class CoreNotifhistStore extends RemoteStore {
       .concat(this.notifications)
       .slice(0, MAX_HISTORY)
       .sort((a, b) => b.timestamp - a.timestamp)
+  }
+
+  handleClearAllNotifications () {
+    this.notifications = []
   }
 }
 

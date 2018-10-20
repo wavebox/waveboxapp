@@ -29,6 +29,7 @@ const MAPPING = [
   ['farEdit', 'farEdit'],
   ['farSignOut', 'fasSignOutAlt'],
   ['farSquare', 'farSquare'],
+  ['farCheckSquare', 'farCheckSquare'],
   ['farTimes', 'fasTimes'],
   ['farWindow', 'farWindowMaximize'],
   ['farWindowMinimize', 'farWindowMinimize'],

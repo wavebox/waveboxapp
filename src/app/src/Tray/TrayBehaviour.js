@@ -11,7 +11,8 @@ import {
   WB_SHOW_TRAY,
   WB_SHOW_TRAY_WINDOWED,
   WB_SHOW_TRAY_DOCKED,
-  WB_TRAY_TOGGLE_WINDOW_MODE
+  WB_TRAY_TOGGLE_WINDOW_MODE,
+  WB_TRAY_TOGGLE_ALWAYS_ON_TOP
 } from 'shared/ipcEvents'
 
 class WaveboxTrayBehaviour {
@@ -29,6 +30,7 @@ class WaveboxTrayBehaviour {
     ipcMain.on(WB_SHOW_TRAY_WINDOWED, this.ipcShowTrayWindowed)
     ipcMain.on(WB_SHOW_TRAY_DOCKED, this.ipcShowTrayDocked)
     ipcMain.on(WB_TRAY_TOGGLE_WINDOW_MODE, this.ipcToggleTrayWindowMode)
+    ipcMain.on(WB_TRAY_TOGGLE_ALWAYS_ON_TOP, this.ipcToggleTrayAlwaysOnTop)
   }
 
   setup () { /* no-op */ }
@@ -155,6 +157,14 @@ class WaveboxTrayBehaviour {
   */
   ipcToggleTrayWindowMode = (evt) => {
     TrayPopout.toggleWindowMode()
+  }
+
+  /**
+  * Toggles the always on top behaviour
+  * @param evt: the event that fired
+  */
+  ipcToggleTrayAlwaysOnTop = (evt) => {
+    TrayPopout.toggleAlwaysOnTop()
   }
 }
 

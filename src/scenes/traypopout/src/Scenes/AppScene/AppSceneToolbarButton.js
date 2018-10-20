@@ -38,7 +38,8 @@ class AppSceneToolbarButton extends React.Component {
       title,
       placement,
       children,
-      onClick
+      onClick,
+      onContextMenu
     } = this.props
     const { open } = this.state
 
@@ -53,6 +54,10 @@ class AppSceneToolbarButton extends React.Component {
           onClick={(evt) => {
             this.setState({ open: false })
             if (onClick) { onClick(evt) }
+          }}
+          onContextMenu={(evt) => {
+            this.setState({ open: false })
+            if (onContextMenu) { onContextMenu(evt) }
           }}>
           {children}
         </IconButton>
