@@ -29,22 +29,22 @@ class AppSceneWindowTitlebar extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
+    this.__isMounted__ = true
+
     const currentWindow = remote.getCurrentWindow()
     currentWindow.on('focus', this.handleWindowStateChange)
     currentWindow.on('blur', this.handleWindowStateChange)
     if (process.platform === 'darwin') {
       this.themeChangeNotifId = remote.systemPreferences.subscribeNotification(
         'AppleInterfaceThemeChangedNotification',
-        () => {
-          this.setState({
-            isDarkMode: remote.systemPreferences.isDarkMode()
-          })
-        }
+        this.handleThemeChanged
       )
     }
   }
 
   componentWillUnmount () {
+    this.__isMounted__ = false
+
     const currentWindow = remote.getCurrentWindow()
     currentWindow.removeListener('focus', this.handleWindowStateChange)
     currentWindow.removeListener('blur', this.handleWindowStateChange)
@@ -70,7 +70,18 @@ class AppSceneWindowTitlebar extends React.Component {
   })()
 
   handleWindowStateChange = (evt) => {
+    // There's a timing issue here with removing the electron window bindings.
+    // They're removed just after the component unmounts
+    if (!this.__isMounted__) { return }
     this.setState(this.generateWindowState())
+  }
+
+  handleThemeChanged = () => {
+    // There's a timing issue here with removing the electron window bindings.
+    // They're removed just after the component unmounts
+    if (!this.__isMounted__) { return }
+
+    this.setState({ isDarkMode: remote.systemPreferences.isDarkMode() })
   }
 
   /**

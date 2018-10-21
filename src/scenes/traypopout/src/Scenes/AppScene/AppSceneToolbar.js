@@ -220,7 +220,10 @@ class AppSceneToolbar extends React.Component {
           onClose={() => this.setState({ dockMenuAnchor: null })}>
           <MenuItem onClick={() => {
             this.setState({ dockMenuAnchor: null })
-            ipcRenderer.send(WB_TRAY_TOGGLE_WINDOW_MODE, {})
+            setTimeout(() => {
+              // Use a timeout here other the focus isn't restored correctly
+              ipcRenderer.send(WB_TRAY_TOGGLE_WINDOW_MODE, {})
+            }, 500)
           }}>
             <ListItemIcon>
               {isWindowedMode ? (
@@ -239,7 +242,10 @@ class AppSceneToolbar extends React.Component {
           {isWindowedMode ? (
             <MenuItem onClick={() => {
               this.setState({ dockMenuAnchor: null })
-              ipcRenderer.send(WB_TRAY_TOGGLE_ALWAYS_ON_TOP, {})
+              setTimeout(() => {
+                // Use a timeout here other the focus isn't restored correctly
+                ipcRenderer.send(WB_TRAY_TOGGLE_ALWAYS_ON_TOP, {})
+              }, 500)
             }}>
               <ListItemIcon>
                 {alwaysOnTop ? (
