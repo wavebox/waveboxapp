@@ -260,13 +260,19 @@ class WebView extends React.Component {
   /* **************************************************************************/
 
   /**
-  * Focuses the webview, only if not in focus already. Always check the focus
-  * state first to prevent issues such as https://github.com/wavebox/waveboxapp/issues/660
+  * Focuses the webview, only if not in focus already
   * @return true if focused, false otherwise
   */
   focus = () => {
     const node = this.getWebviewNode()
+    // Calling focus on an active element can cause weird behaviour, for example requring a double
+    // click in the webview. Check to see if the element is focused first.
+    // Fixes https://github.com/wavebox/waveboxapp/issues/660
     if (document.activeElement !== node) {
+      // Starting with electron 3 switching between loaded webviews would cause odd things
+      // to happen. Focus wouldn't be transferred. Accelerators would fail to work. To work
+      // around this, call blur on the active element first. Don't know why it works but it does
+      document.activeElement.blur()
       node.focus()
       return true
     } else {
