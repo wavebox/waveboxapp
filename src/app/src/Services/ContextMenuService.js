@@ -210,26 +210,36 @@ class ContextMenuService {
       }
       template.push({
         label: 'Copy Link Address',
-        click: () => { clipboard.writeText(params.linkURL) }
-      })
-      template.push({ type: 'separator' })
-      template.push({
-        label: 'Open Link with Wavebox',
-        submenu: [
-          {
-            label: 'Open Link in New Window',
-            click: () => { this.openLinkInWaveboxWindow(contents, params.linkURL) }
-          },
-          (accountInfo.has ? {
-            label: 'Open Link as New Service',
-            click: () => { accountActions.fastCreateWeblinkService(accountInfo.mailbox.id, params.linkURL) }
-          } : undefined),
-          {
-            label: 'Open Link Here',
-            click: () => { contents.loadURL(params.linkURL) }
+        click: () => {
+          // Look for a simple mailto url in the format mailto:user@user.com. If this is the
+          // case remove the mailto: prefix
+          if (params.linkURL.startsWith('mailto:') && params.linkURL.indexOf('?') === -1) {
+            clipboard.writeText(params.linkURL.replace('mailto:', ''))
+          } else {
+            clipboard.writeText(params.linkURL)
           }
-        ].filter((i) => !!i)
+        }
       })
+      if (params.linkURL.startsWith('http://') || params.linkURL.startsWith('https://')) {
+        template.push({ type: 'separator' })
+        template.push({
+          label: 'Open Link with Wavebox',
+          submenu: [
+            {
+              label: 'Open Link in New Window',
+              click: () => { this.openLinkInWaveboxWindow(contents, params.linkURL) }
+            },
+            (accountInfo.has ? {
+              label: 'Open Link as New Service',
+              click: () => { accountActions.fastCreateWeblinkService(accountInfo.mailbox.id, params.linkURL) }
+            } : undefined),
+            {
+              label: 'Open Link Here',
+              click: () => { contents.loadURL(params.linkURL) }
+            }
+          ].filter((i) => !!i)
+        })
+      }
 
       // Open in account profile
       const mailboxIds = accountState.mailboxIds()
