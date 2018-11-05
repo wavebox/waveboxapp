@@ -8,8 +8,8 @@ const CONSTRUCT_MODULE_PATH = path.join(MODULE_DIR, 'dist/src/constructModule.js
 
 console.log(`${Colors.inverse('emscripten-wasm-loader')} start patch in "${MODULE_DIR}"`)
 const targetPkg = fs.readJsonSync(PACKAGE_PATH)
-if (targetPkg.version !== '1.0.0') {
-  console.log(`  ${Colors.red('ERROR')} Version mismatch ${targetPkg.version} !== '1.0.0'`)
+if (targetPkg.version !== '1.1.0') {
+  console.log(`  ${Colors.red('ERROR')} Version mismatch ${targetPkg.version} !== '1.1.0'`)
   process.exit(-1)
 }
 
