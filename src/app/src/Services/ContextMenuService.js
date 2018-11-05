@@ -476,6 +476,10 @@ class ContextMenuService {
               }
             } : undefined)
           ].filter((i) => !!i)
+        },
+        {
+          label: 'Print',
+          click: () => { contents.print() }
         }
       ]
     }
