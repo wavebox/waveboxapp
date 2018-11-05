@@ -178,9 +178,16 @@ class WaveboxWindow extends EventEmitter {
       this.window.once('ready-to-show', (evt) => {
         // Defer this as we may be showing the window hidden and choosing
         // to show on this callback. Do this to to ensure we are the last
-        // callback and we have the most up to date state
+        // callback and we have the most up to date state.
+        //
+        // If show is set to false, then don't pass maximized or fullscreen
+        // as this will change the visiblity state
         setImmediate(() => {
-          this._restoreWindowPosition(savedLocation)
+          this._restoreWindowPosition(
+            this[privWindow].isVisible()
+              ? savedLocation
+              : { ...savedLocation, maximized: false, fullscreen: false }
+          )
         })
       })
     }
