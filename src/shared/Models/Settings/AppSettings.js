@@ -1,6 +1,23 @@
 const Model = require('../Model')
 const { RELEASE_CHANNELS } = require('../../constants')
 
+const SEARCH_PROVIDERS = {
+  GOOGLE: 'GOOGLE',
+  GOOGLE_WB: 'GOOGLE_WB',
+  BING: 'BING',
+  BING_WB: 'BING_WB',
+  DUCK_DUCK: 'DUCK_DUCK',
+  DUCK_DUCK_WB: 'DUCK_DUCK_WB'
+}
+const SEARCH_PROVIDER_NAMES = {
+  [SEARCH_PROVIDERS.GOOGLE]: 'Google',
+  [SEARCH_PROVIDERS.GOOGLE_WB]: 'Google',
+  [SEARCH_PROVIDERS.BING]: 'Bing',
+  [SEARCH_PROVIDERS.BING_WB]: 'Bing',
+  [SEARCH_PROVIDERS.DUCK_DUCK]: 'Duck Duck Go',
+  [SEARCH_PROVIDERS.DUCK_DUCK_WB]: 'Duck Duck Go'
+}
+
 class AppSettings extends Model {
   /* **************************************************************************/
   // Class
@@ -8,6 +25,29 @@ class AppSettings extends Model {
 
   static get UPDATE_CHANNELS () { return RELEASE_CHANNELS }
   static get SUPPORTS_MIXED_SANDBOX_MODE () { return true }
+  static get SEARCH_PROVIDERS () { return SEARCH_PROVIDERS }
+  static get SEARCH_PROVIDER_NAMES () { return SEARCH_PROVIDER_NAMES }
+
+  /**
+  * Generates a search provider url for a term
+  * @param searchProvider: the search provider
+  * @param term: the term
+  * @return a url to trigger search
+  */
+  static generateSearchProviderUrl (searchProvider, term) {
+    switch (searchProvider) {
+      case SEARCH_PROVIDERS.GOOGLE:
+      case SEARCH_PROVIDERS.GOOGLE_WB:
+        return `https://google.com/search?q=${encodeURIComponent(term)}`
+      case SEARCH_PROVIDERS.BING:
+      case SEARCH_PROVIDERS.BING_WB:
+        return `https://bing.com/search?q=${encodeURIComponent(term)}`
+      case SEARCH_PROVIDERS.DUCK_DUCK:
+      case SEARCH_PROVIDERS.DUCK_DUCK_WB:
+        return `https://duckduckgo.com/?q=${encodeURIComponent(term)}`
+    }
+    return `https://google.com/search?q=${encodeURIComponent(term)}`
+  }
 
   /* **************************************************************************/
   // Lifecycle
@@ -52,6 +92,31 @@ class AppSettings extends Model {
   get concurrentServiceLoadLimit () { return this._value_('concurrentServiceLoadLimit', 0) }
   get concurrentServiceLoadLimitIsAuto () { return this.concurrentServiceLoadLimit === 0 }
   get concurrentServiceLoadLimitIsNone () { return this.concurrentServiceLoadLimit === -1 }
+
+  /* **************************************************************************/
+  // Properties: Search
+  /* **************************************************************************/
+
+  get searchProvider () { return this._value_('searchProvider', SEARCH_PROVIDERS.GOOGLE) }
+  get searchProviderOpensInWavebox () {
+    switch (this.searchProvider) {
+      case SEARCH_PROVIDERS.GOOGLE_WB:
+      case SEARCH_PROVIDERS.BING_WB:
+      case SEARCH_PROVIDERS.DUCK_DUCK_WB:
+        return true
+      default:
+        return false
+    }
+  }
+
+  /**
+  * Generates a search provider url
+  * @param term: the term to search for
+  * @return a url that can be used
+  */
+  generateSearchProviderUrl (term) {
+    return this.generateSearchProviderUrl(this.searchProvider, term)
+  }
 }
 
 module.exports = AppSettings

@@ -9,6 +9,7 @@ import CRExtensionRTContextMenu from 'shared/Models/CRExtensionRT/CRExtensionRTC
 import { settingsActions, settingsStore } from 'stores/settings'
 import { accountStore, accountActions } from 'stores/account'
 import { AUTOFILL_MENU } from 'shared/b64Assets'
+import AppSettings from 'shared/Models/Settings/AppSettings'
 
 const privConnected = Symbol('privConnected')
 const privSpellcheckerService = Symbol('privSpellcheckerService')
@@ -99,7 +100,7 @@ class ContextMenuService {
     const sections = [
       this.renderSpellingSection(contents, params),
       this.renderURLSection(contents, params, accountInfo, isWaveboxUIContents),
-      this.renderLookupAndSearchSection(contents, params),
+      this.renderLookupAndSearchSection(contents, params, accountInfo),
       this.renderRewindSection(contents, params),
       this.renderEditingSection(contents, params),
       this.renderPageNavigationSection(contents, params, accountInfo),
@@ -337,9 +338,10 @@ class ContextMenuService {
   * Renders the lookup and search section
   * @param contents: the webcontents that opened
   * @param params: the parameters passed alongside the event
+  * @param accountInfo: the account info from who opened us
   * @return the template section or undefined
   */
-  renderLookupAndSearchSection (contents, params) {
+  renderLookupAndSearchSection (contents, params, accountInfo) {
     const template = []
     if (params.selectionText) {
       if (params.isEditable && params.misspelledWord) {
@@ -349,12 +351,21 @@ class ContextMenuService {
         })
       }
 
+      const settingsState = settingsStore.getState()
+      const searchProvider = settingsState.app.searchProvider
       const displayText = params.selectionText.length >= 50 ? (
         params.selectionText.substr(0, 47) + '…'
       ) : params.selectionText
       template.push({
-        label: `Search Google for “${displayText}”`,
-        click: () => { shell.openExternal(`https://google.com/search?q=${encodeURIComponent(params.selectionText)}`) }
+        label: `Search ${AppSettings.SEARCH_PROVIDER_NAMES[searchProvider] || 'The Web'} for “${displayText}”`,
+        click: () => {
+          const targetUrl = AppSettings.generateSearchProviderUrl(searchProvider, params.selectionText)
+          if (accountInfo.has) {
+            this.openLinkInWaveboxWindowForAccount(contents, targetUrl, accountInfo.mailbox)
+          } else {
+            shell.openExternal(targetUrl)
+          }
+        }
       })
       template.push({
         label: `Translate “${displayText}”`,

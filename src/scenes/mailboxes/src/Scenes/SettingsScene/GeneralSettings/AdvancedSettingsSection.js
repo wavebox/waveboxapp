@@ -60,7 +60,8 @@ class AdvancedSettingsSection extends React.Component {
         'enableMouseNavigationDarwin',
         'polyfillUserAgents',
         'darwinMojaveCheckboxFix',
-        'concurrentServiceLoadLimit'
+        'concurrentServiceLoadLimit',
+        'searchProvider'
       ]) ||
       modelCompare(this.props.language, nextProps.language, [
         'inProcessSpellchecking'
@@ -212,6 +213,42 @@ class AdvancedSettingsSection extends React.Component {
             showRestart()
             settingsActions.sub.app.setConcurrentServiceLoadLimit(value)
           }} />
+        <SettingsListItemSelectInline
+          label='Search Provider'
+          value={app.searchProvider}
+          options={[
+            {
+              value: AppSettings.SEARCH_PROVIDERS.GOOGLE,
+              label: AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.GOOGLE],
+              primaryText: AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.GOOGLE]
+            },
+            {
+              value: AppSettings.SEARCH_PROVIDERS.GOOGLE_WB,
+              label: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.GOOGLE]} (Wavebox)`,
+              primaryText: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.GOOGLE]} - Opens in Wavebox`
+            },
+            {
+              value: AppSettings.SEARCH_PROVIDERS.BING,
+              label: AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.BING],
+              primaryText: AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.BING]
+            },
+            {
+              value: AppSettings.SEARCH_PROVIDERS.BING_WB,
+              label: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.BING]} (Wavebox)`,
+              primaryText: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.BING]} - Opens in Wavebox`
+            },
+            {
+              value: AppSettings.SEARCH_PROVIDERS.DUCK_DUCK,
+              label: AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.DUCK_DUCK],
+              primaryText: AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.DUCK_DUCK]
+            },
+            {
+              value: AppSettings.SEARCH_PROVIDERS.DUCK_DUCK_WB,
+              label: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.DUCK_DUCK]} (Wavebox)`,
+              primaryText: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.DUCK_DUCK]} - Opens in Wavebox`
+            }
+          ]}
+          onChange={(evt, value) => settingsActions.sub.app.setSearchProvider(value)} />
         <SettingsListItemButton
           label='Main Window Custom CSS'
           icon={<CodeIcon />}
