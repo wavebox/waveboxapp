@@ -10,7 +10,14 @@ const styles = {
     backgroundImage: 'linear-gradient(45deg, #CCC 25%, transparent 25%, transparent 75%, #CCC 75%, #CCC), linear-gradient(45deg, #CCC 25%, transparent 25%, transparent 75%, #CCC 75%, #CCC)',
     backgroundSize: '30px 30px',
     backgroundPosition: '0 0, 15px 15px',
-    boxShadow: 'inset 0px 0px 10px 0px rgba(0,0,0,0.75)'
+    boxShadow: 'inset 0px 0px 10px 0px rgba(0,0,0,0.75)',
+
+    '&.light': {
+      backgroundColor: '#FFF'
+    },
+    '&.dark': {
+      backgroundColor: '#999'
+    }
   }
 }
 
@@ -56,16 +63,14 @@ class TrayPreview extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { size, style, className, classes, ...passProps } = this.props
-    delete passProps.unreadCount
-    delete passProps.tray
+    const { size, style, className, classes, unreadCount, tray, ...passProps } = this.props
     const { image } = this.state
 
     return (
       <div
         {...passProps}
         style={{ width: size + 20, height: size + 20, ...style }}
-        className={classNames(className, classes.preview)}>
+        className={classNames(className, classes.preview, tray.isDarkModeTheme ? 'dark' : 'light')}>
         {!image ? undefined : (
           <img
             src={image}

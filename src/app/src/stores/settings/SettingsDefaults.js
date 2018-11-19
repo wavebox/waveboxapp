@@ -16,6 +16,7 @@ class SettingsDefaults {
     if (process.platform === 'darwin') {
       const isDarkMode = systemPreferences.isDarkMode()
       return {
+        isDarkMode: isDarkMode,
         readColor: isDarkMode ? '#FFFFFF' : '#000000',
         readBackgroundColor: 'transparent',
         unreadColor: isDarkMode ? '#FFFFFF' : '#000000',
@@ -24,6 +25,7 @@ class SettingsDefaults {
     } else if (process.platform === 'win32') {
       // Windows is predominantely dark themed, but with no way to check assume it is
       return {
+        isDarkMode: false,
         readColor: '#FFFFFF',
         readBackgroundColor: '#00AEEF',
         unreadColor: '#FFFFFF',
@@ -39,20 +41,12 @@ class SettingsDefaults {
         }
       } catch (ex) { }
 
-      if (isDark) {
-        return {
-          readColor: '#FFFFFF',
-          readBackgroundColor: 'transparent',
-          unreadColor: '#FFFFFF',
-          unreadBackgroundColor: 'transparent'
-        }
-      } else {
-        return {
-          readColor: '#FFFFFF',
-          readBackgroundColor: '#00AEEF',
-          unreadColor: '#FFFFFF',
-          unreadBackgroundColor: '#00AEEF'
-        }
+      return {
+        isDarkMode: isDark,
+        readColor: '#FFFFFF',
+        readBackgroundColor: isDark ? 'transparent' : '#00AEEF',
+        unreadColor: '#FFFFFF',
+        unreadBackgroundColor: isDark ? 'transparent' : '#00AEEF'
       }
     } else {
       return { }

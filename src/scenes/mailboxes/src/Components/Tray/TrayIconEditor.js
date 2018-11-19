@@ -6,9 +6,10 @@ import settingsActions from 'stores/settings/settingsActions'
 import shallowCompare from 'react-addons-shallow-compare'
 import BorderColorIcon from '@material-ui/icons/BorderColor'
 import FormatColorFillIcon from '@material-ui/icons/FormatColorFill'
+import FormatColorResetIcon from '@material-ui/icons/FormatColorReset'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import { Grid } from '@material-ui/core'
+import { Grid, Button } from '@material-ui/core'
 
 const styles = {
   subheading: {
@@ -23,7 +24,10 @@ const styles = {
     marginBottom: 5
   },
   buttonIcon: {
-    marginRight: 6
+    marginRight: 6,
+    width: 18,
+    height: 18,
+    verticalAlign: 'middle'
   }
 }
 
@@ -86,6 +90,16 @@ class TrayIconEditor extends React.Component {
               Background
             </ColorPickerButton>
           </div>
+          <div className={classes.button}>
+            <Button
+              variant='contained'
+              {...buttonProps}
+              disabled={!tray.show}
+              onClick={() => settingsActions.sub.tray.resetTrayReadColors()}>
+              <FormatColorResetIcon className={classes.buttonIcon} />
+              Reset
+            </Button>
+          </div>
           <TrayPreview className={trayPreviewClassName} style={trayPreviewStyles} size={100} tray={tray} unreadCount={0} />
         </Grid>
         <Grid item xs={6}>
@@ -109,6 +123,16 @@ class TrayIconEditor extends React.Component {
               <FormatColorFillIcon className={classes.buttonIcon} />
               Background
             </ColorPickerButton>
+          </div>
+          <div className={classes.button}>
+            <Button
+              variant='contained'
+              {...buttonProps}
+              disabled={!tray.show}
+              onClick={() => settingsActions.sub.tray.resetTrayUnreadColors()}>
+              <FormatColorResetIcon className={classes.buttonIcon} />
+              Reset
+            </Button>
           </div>
           <TrayPreview className={trayPreviewClassName} style={trayPreviewStyles} size={100} tray={tray} unreadCount={1} />
         </Grid>

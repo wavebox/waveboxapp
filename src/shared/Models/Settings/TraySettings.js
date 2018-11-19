@@ -105,6 +105,9 @@ class TraySettings extends Model {
   get readBackgroundColor () { return this._value_('readBackgroundColor', this.__themedDefaults__.readBackgroundColor) }
   get unreadColor () { return this._value_('unreadColor', this.__themedDefaults__.unreadColor) }
   get unreadBackgroundColor () { return this._value_('unreadBackgroundColor', this.__themedDefaults__.unreadBackgroundColor) }
+  get isDarkModeTheme () {
+    return this.__themedDefaults__.isDarkMode === undefined ? false : this.__themedDefaults__.isDarkMode
+  }
 
   /* **************************************************************************/
   // Properties: Display Config
