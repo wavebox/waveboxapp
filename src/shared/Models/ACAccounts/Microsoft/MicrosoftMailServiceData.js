@@ -9,14 +9,15 @@ class MicrosoftMailServiceData extends CoreACServiceData {
   get unreadMessages () { return this._value_('unreadMessages', []) }
   get trayMessages () {
     return this.unreadMessages.map((message) => {
+      const senderName = ((message.from || {}).emailAddress || {}).name
       return {
         id: message.id,
-        text: `${message.from.emailAddress.name} : ${message.subject || 'No Subject'}`,
+        text: `${senderName} : ${message.subject || 'No Subject'}`,
         extended: {
           title: message.subject || 'No Subject',
-          subtitle: message.from.emailAddress.name,
-          optSender: message.from.emailAddress.name,
-          optAvatarText: (message.from.emailAddress.name || '')[0]
+          subtitle: senderName,
+          optSender: senderName,
+          optAvatarText: (senderName || '')[0]
         },
         date: new Date(message.receivedDateTime).getTime(),
         data: {
@@ -29,13 +30,16 @@ class MicrosoftMailServiceData extends CoreACServiceData {
   }
   get notifications () {
     return this.unreadMessages.map((message) => {
+      const senderInfo = ((message.from || {}).emailAddress || {})
+      const senderName = senderInfo.name
+      const senderAddress = senderInfo.address
       return {
         id: message.id,
         title: message.subject || 'No Subject',
         titleFormat: 'text',
         body: [
           {
-            content: `${message.from.emailAddress.name} <${message.from.emailAddress.address}>`,
+            content: `${senderName} <${senderAddress}>`,
             format: 'text'
           },
           { content: message.bodyPreview, format: 'html' }
