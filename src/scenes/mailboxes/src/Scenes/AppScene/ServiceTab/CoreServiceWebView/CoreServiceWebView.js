@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper } from '@material-ui/core'
 import { accountStore, accountActions, accountDispatch } from 'stores/account'
-import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 import ServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/ServiceDataReducer'
 import BrowserView from 'wbui/Guest/BrowserView'
 import BrowserViewLoadBar from 'wbui/Guest/BrowserViewLoadBar'
@@ -23,17 +21,13 @@ import {
   WB_BROWSER_CONFIRM_PRESENT
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
-import Spinner from 'wbui/Activity/Spinner'
 import { settingsStore } from 'stores/settings'
 import Resolver from 'Runtime/Resolver'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import HotelIcon from '@material-ui/icons/Hotel'
-import lightBlue from '@material-ui/core/colors/lightBlue'
-import blue from '@material-ui/core/colors/blue'
-import grey from '@material-ui/core/colors/grey'
 import ServiceInvalidAuthCover from './ServiceInvalidAuthCover'
 import ServiceCrashedCover from './ServiceCrashedCover'
+import ServiceSleepHelper from './ServiceSleepHelper'
 
 const styles = {
   root: {
@@ -72,36 +66,6 @@ const styles = {
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
     filter: 'grayscale(100%)'
-  },
-  loader: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%',
-    width: '100%'
-  },
-  loaderSleepPanel: {
-    marginTop: 24,
-    fontSize: '75%',
-    padding: '8px 16px',
-    color: grey[600],
-    borderRadius: 20
-  },
-  loaderSleepIcon: {
-    marginRight: 6,
-    marginBottom: -3,
-    verticalAlign: 'text-bottom'
-  },
-  loaderSleepLink: {
-    textDecoration: 'underline',
-    cursor: 'pointer',
-    color: blue[800]
   }
 }
 
@@ -284,18 +248,6 @@ class CoreServiceWebView extends React.Component {
   handleUncrash = (evt) => {
     this.setState({ isCrashed: false }) // Update our crashed state
     this.refs[BROWSER_REF].reset()
-  }
-
-  /**
-  * Disables sleep
-  * @param evt: the event that fired
-  */
-  handleDisableSleep = (evt) => {
-    accountActions.reduceService(
-      this.props.serviceId,
-      ServiceReducer.setSleepable,
-      false
-    )
   }
 
   /**
@@ -792,17 +744,7 @@ class CoreServiceWebView extends React.Component {
           <div className={classes.snapshot} style={{ backgroundImage: `url("${snapshot}")` }} />
         )}
         {!initialLoadDone ? (
-          <div className={classes.loader}>
-            <Spinner size={50} color={lightBlue[600]} speed={0.75} />
-            {service.sleepable ? (
-              <Paper className={classes.loaderSleepPanel}>
-                <HotelIcon className={classes.loaderSleepIcon} />
-                Use this tab often?&nbsp;
-                <span className={classes.loaderSleepLink} onClick={this.handleDisableSleep}>Disable sleep</span>
-                &nbsp;to keep it awake and avoid waiting...
-              </Paper>
-            ) : undefined}
-          </div>
+          <ServiceSleepHelper serviceId={serviceId} />
         ) : undefined}
         <BrowserViewLoadBar isLoading={isLoading} />
         <BrowserViewTargetUrl url={focusedUrl} />

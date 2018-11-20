@@ -136,7 +136,6 @@ class CoreACService extends CoreACModel {
 
   get sleepable () { return this._value_('sleepable', true) }
   get sleepableTimeout () { return this._value_('sleepableTimeout', MAILBOX_SLEEP_WAIT) }
-  get hasSeenSleepableWizard () { return this._value_('hasSeenSleepableWizard', false) }
 
   /* **************************************************************************/
   // Properties: Install

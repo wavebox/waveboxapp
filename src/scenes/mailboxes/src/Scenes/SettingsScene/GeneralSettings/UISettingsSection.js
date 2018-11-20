@@ -34,7 +34,6 @@ export default class UISettingsSection extends React.Component {
         'showAppBadge',
         'openHidden',
         'showSleepableServiceIndicator',
-        'showDefaultServiceSleepNotifications',
         'vibrancyMode',
         'accountTooltipMode',
         'sidebarEnabled',
@@ -91,10 +90,6 @@ export default class UISettingsSection extends React.Component {
             label='Show sleeping account icons in grey'
             onChange={(evt, toggled) => settingsActions.sub.ui.setShowSleepableServiceIndicator(toggled)}
             checked={ui.showSleepableServiceIndicator} />
-          <SettingsListItemSwitch
-            label='Show one-time sleep notification for each account'
-            onChange={(evt, toggled) => settingsActions.sub.ui.setShowDefaultServiceSleepNotifications(toggled)}
-            checked={ui.showDefaultServiceSleepNotifications} />
           <SettingsListItemSelectInline
             label='App theme'
             value={ui.theme}

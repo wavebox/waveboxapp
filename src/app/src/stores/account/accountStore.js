@@ -842,7 +842,11 @@ class AccountStore extends CoreAccountStore {
   */
   generateServiceSleepMetrics (id) {
     const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
-    return mailboxesWindow ? mailboxesWindow.tabManager.getServiceMetrics(id) : undefined
+    const metric = mailboxesWindow ? mailboxesWindow.tabManager.getServiceMetrics(id) : undefined
+    return metric ? {
+      ...metric,
+      timestamp: new Date().getTime()
+    } : undefined
   }
 
   /* **************************************************************************/

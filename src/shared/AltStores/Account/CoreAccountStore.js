@@ -660,24 +660,10 @@ class CoreAccountStore extends RemoteStore {
 
     /**
     * @param serviceId: the id of the service
-    * @return the sleep notification info for the given service or undefined
+    * @return the sleep metrics for the given service or undefined
     */
-    this.getSleepingNotificationInfo = (serviceId) => {
-      const service = this.getService(serviceId)
-      if (!service || service.hasSeenSleepableWizard) { return undefined }
-
-      // As well as checking if we are sleeping, also check we have an entry in the
-      // sleep queue. This indicates were not sleeping from launch
-      if (!this.isServiceSleeping(serviceId)) { return undefined }
-
-      const metrics = this._sleepingMetrics_.get(serviceId)
-      if (!metrics) { return undefined }
-
-      // Build the return info
-      return {
-        service: service,
-        closeMetrics: metrics
-      }
+    this.getSleepingMetrics = (serviceId) => {
+      return this._sleepingMetrics_.get(serviceId)
     }
 
     /* ****************************************/

@@ -24,7 +24,6 @@ import SettingsScene from './SettingsScene'
 import SitePermissionsScene from './SitePermissionsScene'
 import MailboxServiceDeleteScene from './MailboxServiceDeleteScene'
 import MailboxDeleteScene from './MailboxDeleteScene'
-import NotificationPanel from './NotificationPanel'
 import ComposePickerScene from './ComposePickerScene'
 import {
   AccountMessageScene,
@@ -60,9 +59,6 @@ export default class WaveboxRouter extends React.Component {
           </ErrorBoundary>
           <ErrorBoundary>
             <FullscreenSnackbarHelper />
-          </ErrorBoundary>
-          <ErrorBoundary>
-            <NotificationPanel />
           </ErrorBoundary>
 
           <WaveboxRouterErrorBoundary>

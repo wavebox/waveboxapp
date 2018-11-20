@@ -73,15 +73,6 @@ class ServiceReducer {
     return service.changeData({ sleepableTimeout: value })
   }
 
-  /**
-  * Sets if the user has seen the sleepable wizard for this account
-  * @param service: the service to update
-  * @param seen: true if the user has seen
-  */
-  static setHasSeenSleepableWizard (service, seen) {
-    return service.changeData({ hasSeenSleepableWizard: seen })
-  }
-
   /* **************************************************************************/
   // Install
   /* **************************************************************************/

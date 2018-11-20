@@ -116,13 +116,6 @@ class UISettingsActions extends CoreSettingsActions {
   }
 
   /**
-  * @param show: whether to show service sleep notifications or not
-  */
-  setShowDefaultServiceSleepNotifications (show) {
-    this.dispatchUpdate('showDefaultServiceSleepNotifications', show)
-  }
-
-  /**
   * @param mode: the mode to set
   */
   setVibrancyMode (mode) {
