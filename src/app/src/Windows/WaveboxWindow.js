@@ -81,8 +81,15 @@ class WaveboxWindow extends EventEmitter {
       this.on('tab-created', (evt, tabId) => {
         const wc = webContents.fromId(tabId)
         if (!wc || wc.isDestroyed()) { return }
-        wc.getZoomFactor((factor) => {
-          wc.setZoomFactor(this._getDarwinMojaveCorrectedZoomLevel(factor, this[privMojaveCheckboxFix]))
+        wc.on('did-start-navigation', (evt, url, isInPlace, isMainFrame) => {
+          if (isMainFrame) {
+            evt.sender.getZoomFactor((factor) => {
+              const corrected = this._getDarwinMojaveCorrectedZoomLevel(factor, this[privMojaveCheckboxFix])
+              if (corrected !== factor) {
+                evt.sender.setZoomFactor(corrected)
+              }
+            })
+          }
         })
       })
     }
