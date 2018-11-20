@@ -15,7 +15,7 @@ import {
 const WARN_CAPTURE_PAGE_TIMEOUT = 3000
 const MAX_CAPTURE_PAGE_TIMEOUT = 4000
 const SEND_RESPOND_PREFIX = '__SEND_RESPOND__'
-const INTERCEPTED_WEBVIEW_EVENTS = new Set(['ipc-message', 'console-message', "dom-ready"])
+const INTERCEPTED_WEBVIEW_EVENTS = new Set(['ipc-message', 'console-message', 'dom-ready'])
 
 let stylesheetAttached = false
 const stylesheet = document.createElement('style')
