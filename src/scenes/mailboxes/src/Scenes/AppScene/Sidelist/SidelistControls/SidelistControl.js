@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { IconButton } from '@material-ui/core'
+import { IconButton, Menu } from '@material-ui/core'
 import uuid from 'uuid'
 import { settingsActions, settingsStore, Tour } from 'stores/settings'
 import { withStyles } from '@material-ui/core/styles'
@@ -69,7 +69,8 @@ class SidelistControl extends React.Component {
     tourTooltipStyles: PropTypes.shape({
       style: PropTypes.object.isRequired,
       arrowStyle: PropTypes.object.isRequired
-    })
+    }),
+    contextMenuRenderer: PropTypes.func
   }
 
   /* **************************************************************************/
@@ -97,7 +98,8 @@ class SidelistControl extends React.Component {
       hovering: false,
       hasSeenTour: settingsState.hasSeenTour,
       currentTourStep: settingsState.tourStep,
-      dismissingTour: false
+      dismissingTour: false,
+      contextMenuAnchor: null
     }
   })()
 
@@ -146,6 +148,34 @@ class SidelistControl extends React.Component {
     this.dismissTourPopover(() => settingsActions.tourQuit())
   }
 
+  /**
+  * Opens the context menu
+  * @param evt: the event that fired
+  */
+  handleOpenContextMenu = (evt) => {
+    evt.preventDefault()
+    evt.stopPropagation()
+    this.setState({
+      hovering: false,
+      contextMenuAnchor: evt.target
+    })
+    if (this.props.onContextMenu) {
+      this.props.onContextMenu(evt)
+    }
+  }
+
+  /**
+  * Hides the context menu
+  * @param evt: the event that fired
+  * @param cb=undefined: callback to execute on complete
+  */
+  handleHideContextMenu = (evt, cb = undefined) => {
+    this.setState({ contextMenuAnchor: null })
+    if (cb) {
+      setTimeout(() => { cb() }, 250)
+    }
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -183,6 +213,9 @@ class SidelistControl extends React.Component {
       onClick,
       className,
       icon,
+      children,
+      onContextMenu,
+      contextMenuRenderer,
       ...passProps
     } = this.props
     const {
@@ -190,13 +223,15 @@ class SidelistControl extends React.Component {
       hovering,
       hasSeenTour,
       currentTourStep,
-      dismissingTour
+      dismissingTour,
+      contextMenuAnchor
     } = this.state
 
     const showTourPopover = !hasSeenTour && currentTourStep === tourStep && !dismissingTour
     return (
       <div
         {...passProps}
+        onContextMenu={this.handleOpenContextMenu}
         className={classNames(classes.container, className)}
         onMouseEnter={() => this.setState({ hovering: true })}
         onMouseLeave={() => this.setState({ hovering: false })}
@@ -231,6 +266,17 @@ class SidelistControl extends React.Component {
             {this.renderTourTooltipContent(classes, tourTooltip)}
           </TourTooltip>
         ) : undefined}
+        {contextMenuRenderer ? (
+          <Menu
+            open={!!contextMenuAnchor}
+            anchorEl={contextMenuAnchor}
+            MenuListProps={{ dense: true }}
+            disableEnforceFocus
+            onClose={this.handleHideContextMenu}>
+            {contextMenuRenderer(this.handleHideContextMenu)}
+          </Menu>
+        ) : undefined}
+        {children}
       </div>
     )
   }

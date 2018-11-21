@@ -337,15 +337,8 @@ class ToolbarNavigation extends React.Component {
     return (
       <div
         {...passProps}
-        onContextMenu={this.handleOpenPopover}
-        className={classNames(
-          classes.container,
-          className
-        )}
-        style={{
-          height: toolbarHeight,
-          ...style
-        }}>
+        className={classNames(classes.container, className)}
+        style={{ height: toolbarHeight, ...style }}>
         <div className={classes.group}>
           <IconButton
             className={classes.iconButton}

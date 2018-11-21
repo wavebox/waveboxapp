@@ -34,11 +34,15 @@ const MAPPING = [
   ['farWindow', 'farWindowMaximize'],
   ['farWindowMinimize', 'farWindowMinimize'],
   ['farSyncAlt', 'fasSyncAlt'],
+  ['farRulerVertical', 'fasRulerVertical'],
+  ['farEyeSlash', 'farEyeSlash'],
+  ['farEye', 'farEye'],
 
   ['falWindowClose', 'farWindowClose'],
   ['falWindowMaximize', 'farWindowMaximize'],
   ['falWindowMinimize', 'farWindowMinimize'],
   ['falWindowRestore', 'farWindowRestore'],
+  ['falRulerVertical', 'fasRulerVertical'],
 
   ['fasCheck', 'fasCheck'],
   ['fasCheckCircle', 'fasCheckCircle'],
@@ -63,6 +67,7 @@ const MAPPING = [
   ['fasCircle', 'fasCircle'],
   ['fasUserCircle', 'fasUserCircle'],
   ['fasFileDownload', 'fasFileDownload'],
+  ['fasRulerVertical', 'fasRulerVertical'],
 
   ['fabSlack', 'fabSlack'],
   ['fabGoogle', 'fabGoogle'],

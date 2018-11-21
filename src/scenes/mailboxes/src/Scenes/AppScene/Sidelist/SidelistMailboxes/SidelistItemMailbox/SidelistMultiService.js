@@ -147,6 +147,7 @@ class SidelistItemMultiService extends React.Component {
   */
   handleOpenMailboxPopover = (evt) => {
     evt.preventDefault()
+    evt.stopPropagation()
     clearTimeout(this.popoverCustomizeClearTO)
     this.setState({
       isHoveringAvatar: false,
@@ -173,6 +174,7 @@ class SidelistItemMultiService extends React.Component {
   */
   handleOpenServicePopover = (evt, serviceId) => {
     evt.preventDefault()
+    evt.stopPropagation()
     clearTimeout(this.popoverCustomizeClearTO)
     this.setState({
       isHoveringAvatar: false,

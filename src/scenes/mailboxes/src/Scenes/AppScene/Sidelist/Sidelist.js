@@ -9,6 +9,7 @@ import SidelistUpgradePlans from './SidelistUpgradePlans'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import ThemeTools from 'wbui/Themes/ThemeTools'
+import ToolbarContextMenu from 'Components/ToolbarContextMenu'
 
 const styles = (theme) => {
   return {
@@ -52,7 +53,8 @@ class Sidelist extends React.Component {
     const userState = userStore.getState()
     return {
       showTitlebar: settingsState.launched.ui.showTitlebar,
-      showPlans: userState.user.showPlansInSidebar
+      showPlans: userState.user.showPlansInSidebar,
+      contextMenuAnchor: null
     }
   })()
 
@@ -60,6 +62,32 @@ class Sidelist extends React.Component {
     this.setState({
       showPlans: userState.user.showPlansInSidebar
     })
+  }
+
+  /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  /**
+  * @param evt: the event that fired
+  */
+  handleOpenContextMenu = (evt) => {
+    this.setState({
+      contextMenuAnchor: {
+        anchor: evt.target,
+        anchorPosition: { top: evt.clientY, left: evt.clientX }
+      }
+    })
+    if (this.props.onContextMenu) {
+      this.props.onContextMenu(evt)
+    }
+  }
+
+  /**
+  * @param evt: the event that fired
+  */
+  handleCloseContextMenu = () => {
+    this.setState({ contextMenuAnchor: null })
   }
 
   /* **************************************************************************/
@@ -71,17 +99,28 @@ class Sidelist extends React.Component {
   }
 
   render () {
-    const { showTitlebar, showPlans } = this.state
-    const { className, classes, theme, ...passProps } = this.props
+    const { className, classes, theme, onContextMenu, ...passProps } = this.props
+    const { showTitlebar, showPlans, contextMenuAnchor } = this.state
 
     return (
       <div
         {...passProps}
+        onContextMenu={this.handleOpenContextMenu}
         className={classNames(classes.container, 'WB-Sidelist', className)}>
         {!showTitlebar ? (<SidelistWindowControls />) : undefined}
         {showPlans ? (<SidelistUpgradePlans />) : undefined}
         <SidelistMailboxes className={classes.mailboxes} />
         <SidelistControls />
+        <ToolbarContextMenu
+          location='sidebar'
+          {...(contextMenuAnchor ? {
+            isOpen: true,
+            anchor: contextMenuAnchor.anchor,
+            anchorPosition: contextMenuAnchor.anchorPosition
+          } : {
+            isOpen: false
+          })}
+          onRequestClose={this.handleCloseContextMenu} />
       </div>
     )
   }

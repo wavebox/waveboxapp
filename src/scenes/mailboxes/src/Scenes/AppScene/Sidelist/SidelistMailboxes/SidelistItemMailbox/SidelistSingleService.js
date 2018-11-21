@@ -116,6 +116,7 @@ class SidelistItemSingleService extends React.Component {
   */
   handleOpenPopover = (evt) => {
     evt.preventDefault()
+    evt.stopPropagation()
     this.setState({
       isHovering: false,
       popover: true,

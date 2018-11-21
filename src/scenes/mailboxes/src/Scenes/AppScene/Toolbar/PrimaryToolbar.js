@@ -13,6 +13,7 @@ import { withStyles } from '@material-ui/core/styles'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import { TOOLBAR_AUTO_SPLIT_THRESHOLD } from 'shared/constants'
 import ThemeTools from 'wbui/Themes/ThemeTools'
+import ToolbarContextMenu from 'Components/ToolbarContextMenu'
 
 const styles = (theme) => ({
   toolbar: {
@@ -122,7 +123,8 @@ class PrimaryToolbar extends React.Component {
     return {
       ...this.deriveExtensionState(settingsState, crextensionState),
       ...this.deriveSettingsState(settingsState),
-      ...this.deriveAccountState(accountState)
+      ...this.deriveAccountState(accountState),
+      contextMenuAnchor: null
     }
   })()
 
@@ -197,6 +199,32 @@ class PrimaryToolbar extends React.Component {
   }
 
   /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  /**
+  * @param evt: the event that fired
+  */
+  handleOpenContextMenu = (evt) => {
+    this.setState({
+      contextMenuAnchor: {
+        anchor: evt.target,
+        anchorPosition: { top: evt.clientY, left: evt.clientX }
+      }
+    })
+    if (this.props.onContextMenu) {
+      this.props.onContextMenu(evt)
+    }
+  }
+
+  /**
+  * @param evt: the event that fired
+  */
+  handleCloseContextMenu = () => {
+    this.setState({ contextMenuAnchor: null })
+  }
+
+  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
@@ -211,6 +239,7 @@ class PrimaryToolbar extends React.Component {
       className,
       classes,
       theme,
+      onContextMenu,
       ...passProps
     } = this.props
     const {
@@ -221,17 +250,15 @@ class PrimaryToolbar extends React.Component {
       mailboxHasEndServices,
       hasExtensionsInToolbar,
       extensionLayoutMode,
-      activeTabId
+      activeTabId,
+      contextMenuAnchor
     } = this.state
 
     return (
       <div
         {...passProps}
-        className={classNames(
-          classes.toolbar,
-          'WB-Primary-Toolbar',
-          className
-        )}
+        onContextMenu={this.handleOpenContextMenu}
+        className={classNames(classes.toolbar, 'WB-Primary-Toolbar', className)}
         style={{ height: toolbarHeight, ...style }}>
         <div className={classes.toolbarGroup}>
           {mailboxHasStartServices ? (
@@ -271,6 +298,16 @@ class PrimaryToolbar extends React.Component {
               toolbarHeight={toolbarHeight} />
           ) : undefined}
         </div>
+        <ToolbarContextMenu
+          location='toolbar'
+          {...(contextMenuAnchor ? {
+            isOpen: true,
+            anchor: contextMenuAnchor.anchor,
+            anchorPosition: contextMenuAnchor.anchorPosition
+          } : {
+            isOpen: false
+          })}
+          onRequestClose={this.handleCloseContextMenu} />
       </div>
     )
   }
