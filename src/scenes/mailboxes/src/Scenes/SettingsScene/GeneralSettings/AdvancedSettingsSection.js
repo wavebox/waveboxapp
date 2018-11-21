@@ -224,8 +224,8 @@ class AdvancedSettingsSection extends React.Component {
             },
             {
               value: AppSettings.SEARCH_PROVIDERS.GOOGLE_WB,
-              label: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.GOOGLE]} (Wavebox)`,
-              primaryText: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.GOOGLE]} - Opens in Wavebox`
+              label: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.GOOGLE_WB]} (Wavebox)`,
+              primaryText: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.GOOGLE_WB]} - Opens in Wavebox`
             },
             {
               value: AppSettings.SEARCH_PROVIDERS.BING,
@@ -234,8 +234,8 @@ class AdvancedSettingsSection extends React.Component {
             },
             {
               value: AppSettings.SEARCH_PROVIDERS.BING_WB,
-              label: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.BING]} (Wavebox)`,
-              primaryText: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.BING]} - Opens in Wavebox`
+              label: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.BING_WB]} (Wavebox)`,
+              primaryText: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.BING_WB]} - Opens in Wavebox`
             },
             {
               value: AppSettings.SEARCH_PROVIDERS.DUCK_DUCK,
@@ -244,8 +244,8 @@ class AdvancedSettingsSection extends React.Component {
             },
             {
               value: AppSettings.SEARCH_PROVIDERS.DUCK_DUCK_WB,
-              label: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.DUCK_DUCK]} (Wavebox)`,
-              primaryText: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.DUCK_DUCK]} - Opens in Wavebox`
+              label: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.DUCK_DUCK_WB]} (Wavebox)`,
+              primaryText: `${AppSettings.SEARCH_PROVIDER_NAMES[AppSettings.SEARCH_PROVIDERS.DUCK_DUCK_WB]} - Opens in Wavebox`
             }
           ]}
           onChange={(evt, value) => settingsActions.sub.app.setSearchProvider(value)} />

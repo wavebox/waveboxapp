@@ -360,7 +360,8 @@ class ContextMenuService {
         label: `Search ${AppSettings.SEARCH_PROVIDER_NAMES[searchProvider] || 'The Web'} for “${displayText}”`,
         click: () => {
           const targetUrl = AppSettings.generateSearchProviderUrl(searchProvider, params.selectionText)
-          if (accountInfo.has) {
+          const openInWavebox = AppSettings.searchProviderOpensInWavebox(searchProvider)
+          if (openInWavebox && accountInfo.has) {
             this.openLinkInWaveboxWindowForAccount(contents, targetUrl, accountInfo.mailbox)
           } else {
             shell.openExternal(targetUrl)

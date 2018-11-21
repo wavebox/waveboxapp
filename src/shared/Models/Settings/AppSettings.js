@@ -49,6 +49,22 @@ class AppSettings extends Model {
     return `https://google.com/search?q=${encodeURIComponent(term)}`
   }
 
+  /**
+  * Checks if a search provider should open in Wavebox
+  * @param searchProvider: the search provider
+  * @return a true to open in Wavebox, false otherwise
+  */
+  static searchProviderOpensInWavebox (searchProvider) {
+    switch (searchProvider) {
+      case SEARCH_PROVIDERS.GOOGLE_WB:
+      case SEARCH_PROVIDERS.BING_WB:
+      case SEARCH_PROVIDERS.DUCK_DUCK_WB:
+        return true
+      default:
+        return false
+    }
+  }
+
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
@@ -99,14 +115,7 @@ class AppSettings extends Model {
 
   get searchProvider () { return this._value_('searchProvider', SEARCH_PROVIDERS.GOOGLE) }
   get searchProviderOpensInWavebox () {
-    switch (this.searchProvider) {
-      case SEARCH_PROVIDERS.GOOGLE_WB:
-      case SEARCH_PROVIDERS.BING_WB:
-      case SEARCH_PROVIDERS.DUCK_DUCK_WB:
-        return true
-      default:
-        return false
-    }
+    return this.constructor.searchProviderOpensInWavebox(this.searchProvider)
   }
 
   /**
@@ -115,7 +124,7 @@ class AppSettings extends Model {
   * @return a url that can be used
   */
   generateSearchProviderUrl (term) {
-    return this.generateSearchProviderUrl(this.searchProvider, term)
+    return this.constructor.generateSearchProviderUrl(this.searchProvider, term)
   }
 }
 
