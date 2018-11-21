@@ -369,7 +369,7 @@ class ContextMenuService {
       })
       template.push({
         label: `Translate “${displayText}”`,
-        click: () => { shell.openExternal(`http://translate.google.com/#auto/#/${encodeURIComponent(params.selectionText)}`) }
+        click: () => { shell.openExternal(`http://translate.google.com/#auto/auto/${encodeURIComponent(params.selectionText)}`) }
       })
     }
     return template
