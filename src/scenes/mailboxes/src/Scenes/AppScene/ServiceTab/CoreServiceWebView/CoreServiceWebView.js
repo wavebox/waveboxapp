@@ -744,7 +744,9 @@ class CoreServiceWebView extends React.Component {
           <div className={classes.snapshot} style={{ backgroundImage: `url("${snapshot}")` }} />
         )}
         {!initialLoadDone ? (
-          <ServiceSleepHelper serviceId={serviceId} />
+          <ServiceSleepHelper
+            serviceId={serviceId}
+            onRequestClose={() => this.setState({ initialLoadDone: true })} />
         ) : undefined}
         <BrowserViewLoadBar isLoading={isLoading} />
         <BrowserViewTargetUrl url={focusedUrl} />

@@ -59,7 +59,8 @@ class ServiceSleepHelper extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    serviceId: PropTypes.string.isRequired
+    serviceId: PropTypes.string.isRequired,
+    onRequestClose: PropTypes.func
   }
 
   /* **************************************************************************/
@@ -114,12 +115,28 @@ class ServiceSleepHelper extends React.Component {
   // UI Events
   /* **************************************************************************/
 
-  handleDisableSleep = () => {
+  /**
+  * Handles the disable sleep button being clicked
+  * @param evt: the event that fired
+  */
+  handleDisableSleep = (evt) => {
+    evt.preventDefault()
+    evt.stopPropagation()
     accountActions.reduceService(
       this.props.serviceId,
       ServiceReducer.setSleepable,
       false
     )
+  }
+
+  /**
+  * Handles the helper being clicked and hides it
+  * @param evt: the event that fired
+  */
+  handleHide = (evt) => {
+    const { onRequestClose, onClick } = this.props
+    if (onRequestClose) { onRequestClose() }
+    if (onClick) { onClick(evt) }
   }
 
   /* **************************************************************************/
@@ -137,6 +154,8 @@ class ServiceSleepHelper extends React.Component {
   render () {
     const {
       serviceId,
+      onRequestClose,
+      onClick,
       classes,
       className,
       ...passProps
@@ -147,7 +166,10 @@ class ServiceSleepHelper extends React.Component {
     } = this.state
 
     return (
-      <div className={classNames(className, classes.loader)} {...passProps}>
+      <div
+        className={classNames(className, classes.loader)}
+        onClick={this.handleHide}
+        {...passProps}>
         <Spinner size={50} color={lightBlue[600]} speed={0.75} />
         {sleepable ? (
           <Paper className={classes.loaderSleepPanel}>
