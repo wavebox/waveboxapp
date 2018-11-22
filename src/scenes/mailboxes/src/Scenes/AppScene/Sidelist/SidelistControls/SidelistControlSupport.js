@@ -18,9 +18,9 @@ const styles = (theme) => ({
     }
   },
   contextMenuFAWrap: {
-    width: 24,
-    height: 24,
-    fontSize: 24
+    width: 20,
+    height: 20,
+    fontSize: 20
   }
 })
 

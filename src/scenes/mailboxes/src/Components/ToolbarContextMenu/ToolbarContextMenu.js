@@ -12,12 +12,14 @@ import FASRulerVerticalIcon from 'wbfa/FASRulerVertical'
 import FARRulerVerticalIcon from 'wbfa/FARRulerVertical'
 import FALRulerVerticalIcon from 'wbfa/FALRulerVertical'
 import { withStyles } from '@material-ui/core/styles'
+import FARQuestionCircleIcon from 'wbfa/FARQuestionCircle'
+import FARStarIcon from 'wbfa/FARStar'
 
 const styles = {
   faIconWrapper: {
-    width: 24,
-    height: 24,
-    fontSize: 24
+    width: 20,
+    height: 20,
+    fontSize: 20
   },
   sidebarSizeLeftIcon: {
     marginLeft: 6
@@ -58,18 +60,22 @@ class ToolbarContextMenu extends React.Component {
   /* **************************************************************************/
 
   state = (() => {
-    const settingsState = settingsStore.getState()
     return {
-      lockSidebarsAndToolbars: settingsState.ui.lockSidebarsAndToolbars,
-      sidebarSize: settingsState.ui.sidebarSize
+      ...this.deriveSettingState(settingsStore.getState())
     }
   })()
 
   settingsChanged = (settingsState) => {
-    this.setState({
+    this.setState(this.deriveSettingState(settingsStore.getState()))
+  }
+
+  deriveSettingState (settingsState) {
+    return {
       lockSidebarsAndToolbars: settingsState.ui.lockSidebarsAndToolbars,
-      sidebarSize: settingsState.ui.sidebarSize
-    })
+      sidebarSize: settingsState.ui.sidebarSize,
+      showSidebarSupport: settingsState.ui.showSidebarSupport,
+      showSidebarNewsfeed: settingsState.ui.showSidebarNewsfeed
+    }
   }
 
   /* **************************************************************************/
@@ -121,6 +127,18 @@ class ToolbarContextMenu extends React.Component {
     })
   }
 
+  handleShowSidebarNews = (evt) => {
+    this.closePopover(evt, () => {
+      settingsActions.sub.ui.setShowSidebarNewsfeed(UISettings.SIDEBAR_NEWS_MODES.ALWAYS)
+    })
+  }
+
+  handleShowSidebarSupport = (evt) => {
+    this.closePopover(evt, () => {
+      settingsActions.sub.ui.setShowSidebarSupport(true)
+    })
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -149,7 +167,7 @@ class ToolbarContextMenu extends React.Component {
   * @param className: classname to apply
   * @return jsx
   */
-  renderSidelistIcon (size, className) {
+  renderSidelistSizeIcon (size, className) {
     switch (size) {
       case UISettings.SIDEBAR_SIZES.REGULAR: return (<FASRulerVerticalIcon className={className} />)
       case UISettings.SIDEBAR_SIZES.COMPACT: return (<FARRulerVerticalIcon className={className} />)
@@ -167,7 +185,9 @@ class ToolbarContextMenu extends React.Component {
     } = this.props
     const {
       lockSidebarsAndToolbars,
-      sidebarSize
+      sidebarSize,
+      showSidebarSupport,
+      showSidebarNewsfeed
     } = this.state
 
     return (
@@ -189,31 +209,52 @@ class ToolbarContextMenu extends React.Component {
           <MenuItem>
             <ListItemIcon>
               <span className={classes.faIconWrapper}>
-                {this.renderSidelistIcon(sidebarSize, classes.sidebarSizeLeftIcon)}
+                {this.renderSidelistSizeIcon(sidebarSize, classes.sidebarSizeLeftIcon)}
               </span>
             </ListItemIcon>
             <ListItemText inset primary='Change sidebar size' />
             {sidebarSize !== UISettings.SIDEBAR_SIZES.REGULAR ? (
               <Tooltip title='Regular'>
                 <IconButton onClick={this.handleMakeSidebarSizeRegular}>
-                  {this.renderSidelistIcon(UISettings.SIDEBAR_SIZES.REGULAR)}
+                  {this.renderSidelistSizeIcon(UISettings.SIDEBAR_SIZES.REGULAR)}
                 </IconButton>
               </Tooltip>
             ) : undefined}
             {sidebarSize !== UISettings.SIDEBAR_SIZES.COMPACT ? (
               <Tooltip title='Compact'>
                 <IconButton onClick={this.handleMakeSidebarSizeCompact}>
-                  {this.renderSidelistIcon(UISettings.SIDEBAR_SIZES.COMPACT)}
+                  {this.renderSidelistSizeIcon(UISettings.SIDEBAR_SIZES.COMPACT)}
                 </IconButton>
               </Tooltip>
             ) : undefined}
             {sidebarSize !== UISettings.SIDEBAR_SIZES.TINY ? (
               <Tooltip title='Tiny'>
                 <IconButton onClick={this.handleMakeSidebarSizeTiny}>
-                  {this.renderSidelistIcon(UISettings.SIDEBAR_SIZES.TINY)}
+                  {this.renderSidelistSizeIcon(UISettings.SIDEBAR_SIZES.TINY)}
                 </IconButton>
               </Tooltip>
             ) : undefined}
+          </MenuItem>
+        ) : undefined}
+        {location === 'sidebar' && (!showSidebarSupport || showSidebarNewsfeed !== UISettings.SIDEBAR_NEWS_MODES.ALWAYS) ? (<Divider />) : undefined}
+        {location === 'sidebar' && !showSidebarSupport ? (
+          <MenuItem onClick={this.handleShowSidebarSupport}>
+            <ListItemIcon>
+              <span className={classes.faIconWrapper}>
+                <FARQuestionCircleIcon />
+              </span>
+            </ListItemIcon>
+            <ListItemText inset primary={`Show Help, Support & FAQ`} />
+          </MenuItem>
+        ) : undefined}
+        {location === 'sidebar' && showSidebarNewsfeed !== UISettings.SIDEBAR_NEWS_MODES.ALWAYS ? (
+          <MenuItem onClick={this.handleShowSidebarNews}>
+            <ListItemIcon>
+              <span className={classes.faIconWrapper}>
+                <FARStarIcon />
+              </span>
+            </ListItemIcon>
+            <ListItemText inset primary={`Always show What's New`} />
           </MenuItem>
         ) : undefined}
         <Divider />

@@ -42,9 +42,9 @@ const styles = (theme) => ({
     marginBottom: 0
   },
   contextMenuFAWrap: {
-    width: 24,
-    height: 24,
-    fontSize: 24
+    width: 20,
+    height: 20,
+    fontSize: 20
   }
 })
 
@@ -122,7 +122,7 @@ class SidelistControlWhatsNew extends React.Component {
       ) : undefined),
       (showMode !== UISettings.SIDEBAR_NEWS_MODES.UNREAD ? (
         <MenuItem
-          key='hide'
+          key='new'
           onClick={(evt) => {
             onRequestClose(evt, () => {
               settingsActions.sub.ui.setShowSidebarNewsfeed(UISettings.SIDEBAR_NEWS_MODES.UNREAD)
@@ -138,7 +138,7 @@ class SidelistControlWhatsNew extends React.Component {
       ) : undefined),
       (showMode !== UISettings.SIDEBAR_NEWS_MODES.ALWAYS ? (
         <MenuItem
-          key='hide'
+          key='always'
           onClick={(evt) => {
             onRequestClose(evt, () => {
               settingsActions.sub.ui.setShowSidebarNewsfeed(UISettings.SIDEBAR_NEWS_MODES.ALWAYS)
