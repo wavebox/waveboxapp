@@ -4,7 +4,6 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { accountStore } from 'stores/account'
 import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
-import uuid from 'uuid'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
@@ -164,11 +163,6 @@ class ServiceTab extends React.Component {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
-
-  constructor (props) {
-    super(props)
-    this.instanceId = uuid.v4()
-  }
 
   componentDidMount () {
     accountStore.listen(this.accountChanged)
@@ -412,57 +406,54 @@ class ServiceTab extends React.Component {
     const classNameSBSize = ServiceTabTools.sidebarSizeClassName(sidebarSize)
 
     return (
-      <MailboxServiceBadge
-        id={`ReactComponent-ServiceTab-${this.instanceId}`}
-        className={classNames(
-          className,
-          classes.tab,
-          classNameUiLoc,
-          isServiceActive ? 'is-active' : undefined
-        )}
-        badgeClassName={classNames(classes.badge, classNameUiLoc, classNameSBSize)}
-        iconClassName={classNames(classes.badgeFAIcon, classNameUiLoc, classNameSBSize)}
-        supportsUnreadCount={supportsUnreadCount}
-        showUnreadBadge={showBadgeCount}
-        unreadCount={unreadCount}
-        supportsUnreadActivity={supportsUnreadActivity}
-        showUnreadActivityBadge={showBadgeActivity}
-        hasUnreadActivity={hasUnreadActivity}
-        color={badgeColor}
-        isAuthInvalid={isAuthInvalid}
-        onMouseEnter={this.handleMouseEnter}
-        onMouseLeave={this.handleMouseLeave}
-        onClick={this.handleClick}
-        onContextMenu={this.handleContextMenu}
-        {...passProps}>
-        <ACAvatarCircle
-          avatar={avatar}
-          borderSize={0}
-          size={24}
-          preferredImageSize={96}
-          resolver={(i) => Resolver.image(i)}
-          showSleeping={globalShowSleepableServiceIndicator && mailboxShowSleepableServiceIndicator && isServiceSleeping}
-          showRestricted={isServiceRestricted}
+      <ServiceTooltip
+        serviceId={serviceId}
+        disabled={!tooltipsEnabled}
+        {...ServiceTabTools.uiLocationTooltipPositioning(uiLocation)}>
+        <MailboxServiceBadge
           className={classNames(
-            classes.avatar,
+            className,
+            classes.tab,
             classNameUiLoc,
-            'WB-ServiceIcon',
-            `WB-ServiceIcon-${mailboxId}_${serviceId}`
+            isServiceActive ? 'is-active' : undefined
           )}
-          style={this.renderAvatarInlineStyles(
-            uiLocation,
-            mailboxShowAvatarColorRing,
-            isServiceActive,
-            isHovering,
-            avatar)} />
-        {tooltipsEnabled ? (
-          <ServiceTooltip
-            serviceId={serviceId}
-            active={isHovering}
-            {...ServiceTabTools.uiLocationTooltipPositioning(uiLocation)}
-            parent={`#ReactComponent-ServiceTab-${this.instanceId}`} />
-        ) : undefined}
-      </MailboxServiceBadge>
+          badgeClassName={classNames(classes.badge, classNameUiLoc, classNameSBSize)}
+          iconClassName={classNames(classes.badgeFAIcon, classNameUiLoc, classNameSBSize)}
+          supportsUnreadCount={supportsUnreadCount}
+          showUnreadBadge={showBadgeCount}
+          unreadCount={unreadCount}
+          supportsUnreadActivity={supportsUnreadActivity}
+          showUnreadActivityBadge={showBadgeActivity}
+          hasUnreadActivity={hasUnreadActivity}
+          color={badgeColor}
+          isAuthInvalid={isAuthInvalid}
+          onMouseEnter={this.handleMouseEnter}
+          onMouseLeave={this.handleMouseLeave}
+          onClick={this.handleClick}
+          onContextMenu={this.handleContextMenu}
+          {...passProps}>
+          <ACAvatarCircle
+            avatar={avatar}
+            borderSize={0}
+            size={24}
+            preferredImageSize={96}
+            resolver={(i) => Resolver.image(i)}
+            showSleeping={globalShowSleepableServiceIndicator && mailboxShowSleepableServiceIndicator && isServiceSleeping}
+            showRestricted={isServiceRestricted}
+            className={classNames(
+              classes.avatar,
+              classNameUiLoc,
+              'WB-ServiceIcon',
+              `WB-ServiceIcon-${mailboxId}_${serviceId}`
+            )}
+            style={this.renderAvatarInlineStyles(
+              uiLocation,
+              mailboxShowAvatarColorRing,
+              isServiceActive,
+              isHovering,
+              avatar)} />
+        </MailboxServiceBadge>
+      </ServiceTooltip>
     )
   }
 }

@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import uuid from 'uuid'
 import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import DefaultTooltip200w from 'wbui/Tooltips/DefaultTooltip200w'
+import PrimaryTooltip from 'wbui/PrimaryTooltip'
 
 const styles = {
   button: {
@@ -24,6 +23,9 @@ const styles = {
     backgroundSize: 'contain',
     backgroundPosition: 'center center',
     backgroundRepeat: 'no-repeat'
+  },
+  tooltipContent: {
+    textAlign: 'center'
   }
 }
 
@@ -42,22 +44,6 @@ class ToolbarExtensionAction extends React.Component {
     icon: PropTypes.object.isRequired,
     iconFilter: PropTypes.string,
     title: PropTypes.string
-  }
-
-  /* **************************************************************************/
-  // Component Lifecycle
-  /* **************************************************************************/
-
-  componentDidMount () {
-    this.instanceId = uuid.v4()
-  }
-
-  /* **************************************************************************/
-  // Data Lifecycle
-  /* **************************************************************************/
-
-  state = {
-    isHovering: false
   }
 
   /* **************************************************************************/
@@ -121,50 +107,35 @@ class ToolbarExtensionAction extends React.Component {
       className,
       ...passProps
     } = this.props
-    const {
-      isHovering
-    } = this.state
 
     const cssFilter = [
       iconFilter,
       enabled ? undefined : 'grayscale(100%)'
     ].filter((f) => !!f).join(' ') || 'none'
 
-    const elementId = `ReactComponent-ToolbarExtensionAction-${this.instanceId}`
     const iconUrl = this.getIconUrl(extensionId, icon)
     return (
-      <div
-        {...passProps}
-        className={classNames(classes.button, className)}
-        style={{
-          width: toolbarHeight,
-          height: toolbarHeight,
-          ...style
-        }}
-        id={elementId}
-        onClick={this.onIconClicked}
-        onMouseEnter={() => this.setState({ isHovering: true })}
-        onMouseLeave={() => this.setState({ isHovering: false })}>
+      <PrimaryTooltip
+        width={200}
+        placement='bottom'
+        title={(
+          <div className={classes.tooltipContent}>
+            {title}
+          </div>
+        )}>
         <div
-          className={classes.icon}
-          style={{
-            backgroundImage: iconUrl ? `url("${iconUrl}")` : undefined,
-            filter: cssFilter
-          }} />
-        {title ? (
-          <DefaultTooltip200w
-            active={isHovering}
-            tooltipTimeout={0}
-            position='bottom'
-            arrow='center'
-            group={elementId}
-            parent={`#${elementId}`}>
-            <span className={classes.tooltipContent}>
-              {title}
-            </span>
-          </DefaultTooltip200w>
-        ) : undefined}
-      </div>
+          {...passProps}
+          className={classNames(classes.button, className)}
+          style={{ width: toolbarHeight, height: toolbarHeight, ...style }}
+          onClick={this.onIconClicked}>
+          <div
+            className={classes.icon}
+            style={{
+              backgroundImage: iconUrl ? `url("${iconUrl}")` : undefined,
+              filter: cssFilter
+            }} />
+        </div>
+      </PrimaryTooltip>
     )
   }
 }

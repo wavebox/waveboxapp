@@ -54,17 +54,21 @@ class SidelistMailboxTooltip extends React.Component {
   }
 
   render () {
-    const { mailboxId, ...passProps } = this.props
+    const {
+      mailboxId,
+      children,
+      ...passProps
+    } = this.props
     const { tooltipsEnabled } = this.state
-    if (!tooltipsEnabled) { return false }
 
     return (
       <MailboxTooltip
         mailboxId={mailboxId}
-        tooltipTimeout={0}
-        position='right'
-        arrow='center'
-        {...passProps} />
+        disabled={!tooltipsEnabled}
+        placement='right'
+        {...passProps}>
+        {children}
+      </MailboxTooltip>
     )
   }
 }

@@ -1,10 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import uuid from 'uuid'
 import shallowCompare from 'react-addons-shallow-compare'
-import ReactPortalTooltip from 'react-portal-tooltip'
 import { withStyles } from '@material-ui/core/styles'
 import FARCheckIcon from 'wbfa/FARCheck'
+import { Tooltip } from '@material-ui/core'
 
 const styles = {
   container: {
@@ -33,20 +32,14 @@ const styles = {
     fontSize: 14
   },
   popover: {
-    style: {
-      background: 'rgba(255, 255, 255, 0.9)',
-      paddingTop: 8,
-      paddingBottom: 8,
-      paddingLeft: 16,
-      paddingRight: 16,
-      fontSize: '13px',
-      color: 'rgba(0, 0, 0, 0.6)',
-      zIndex: 1501
-    },
-    arrowStyle: {
-      color: 'rgba(255, 255, 255, 0.9)',
-      borderColor: false
-    }
+    background: 'rgb(255, 255, 255)',
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingLeft: 16,
+    paddingRight: 16,
+    fontSize: '13px',
+    color: 'rgba(0, 0, 0, 0.8)',
+    zIndex: 1501
   }
 }
 
@@ -69,8 +62,7 @@ class WizardConfigureUnreadModeOption extends React.Component {
   /* **************************************************************************/
 
   state = {
-    hovering: false,
-    generatedId: uuid.v4()
+    hovering: false
   }
 
   /* **************************************************************************/
@@ -83,33 +75,27 @@ class WizardConfigureUnreadModeOption extends React.Component {
 
   render () {
     const { color, selected, onSelected, name, popoverContent, classes, ...passProps } = this.props
-    const { hovering, generatedId } = this.state
+    const { hovering } = this.state
 
     return (
       <div {...passProps}>
-        <div
-          id={`ReactComponent-WizardConfigureUnreadModeOption-${generatedId}`}
-          className={classes.container}
-          onMouseEnter={() => this.setState({ hovering: true })}
-          onMouseLeave={() => this.setState({ hovering: false })}
-          onClick={onSelected}>
-          <div style={{ ...styles.option, backgroundColor: color, borderColor: hovering ? color : 'white' }}>
-            {selected ? (
-              <FARCheckIcon className={classes.selectedIcon} />
-            ) : undefined}
+        <Tooltip
+          classes={{ tooltip: classes.popover }}
+          placement='bottom'
+          title={popoverContent}>
+          <div
+            className={classes.container}
+            onMouseEnter={() => this.setState({ hovering: true })}
+            onMouseLeave={() => this.setState({ hovering: false })}
+            onClick={onSelected}>
+            <div style={{ ...styles.option, backgroundColor: color, borderColor: hovering ? color : 'white' }}>
+              {selected ? (
+                <FARCheckIcon className={classes.selectedIcon} />
+              ) : undefined}
+            </div>
+            <div className={classes.name}>{name}</div>
           </div>
-          <div className={classes.name}>{name}</div>
-        </div>
-        <ReactPortalTooltip
-          active={hovering}
-          tooltipTimeout={0}
-          style={styles.popover}
-          position='bottom'
-          arrow='center'
-          group={generatedId}
-          parent={`#ReactComponent-WizardConfigureUnreadModeOption-${generatedId}`}>
-          {popoverContent}
-        </ReactPortalTooltip>
+        </Tooltip>
       </div>
     )
   }

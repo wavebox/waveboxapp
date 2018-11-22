@@ -3,7 +3,6 @@ import React from 'react'
 import { accountStore, accountActions } from 'stores/account'
 import shallowCompare from 'react-addons-shallow-compare'
 import SidelistMailboxContainer from './SidelistCommon/SidelistMailboxContainer'
-import uuid from 'uuid'
 import SidelistServiceTooltip from './SidelistCommon/SidelistServiceTooltip'
 import MailboxAndServiceContextMenu from 'Components/MailboxAndServiceContextMenu'
 import ErrorBoundary from 'wbui/ErrorBoundary'
@@ -19,15 +18,6 @@ class SidelistItemSingleService extends React.Component {
     mailboxId: PropTypes.string.isRequired,
     sidebarSize: PropTypes.string.isRequired,
     sortableGetScrollContainer: PropTypes.func.isRequired
-  }
-
-  /* **************************************************************************/
-  // Lifecycle
-  /* **************************************************************************/
-
-  constructor (props) {
-    super(props)
-    this.instanceId = uuid.v4()
   }
 
   /* **************************************************************************/
@@ -149,36 +139,31 @@ class SidelistItemSingleService extends React.Component {
     if (!hasMembers) { return false }
 
     return (
-      <SidelistMailboxContainer
-        id={`ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`}
-        onMouseEnter={() => this.setState({ isHovering: true })}
-        onMouseLeave={() => this.setState({ isHovering: false })}
-        {...passProps}>
-        <Tappable
-          onContextMenu={this.handleOpenPopover}
-          onClick={this.handleClick}
-          onPress={this.handleLongClick}>
-          <SidelistTLServiceAvatar
-            mailboxId={mailboxId}
-            serviceId={serviceId}
-            sidebarSize={sidebarSize}
-            isTransientActive={isHovering} />
-        </Tappable>
-        <ErrorBoundary>
-          <SidelistServiceTooltip
-            serviceId={serviceId}
-            active={isHovering}
-            parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />
-        </ErrorBoundary>
-        <ErrorBoundary>
-          <MailboxAndServiceContextMenu
-            mailboxId={mailboxId}
-            serviceId={serviceId}
-            isOpen={popover}
-            anchor={popoverAnchor}
-            onRequestClose={() => this.setState({ popover: false })} />
-        </ErrorBoundary>
-      </SidelistMailboxContainer>
+      <SidelistServiceTooltip serviceId={serviceId}>
+        <SidelistMailboxContainer
+          onMouseEnter={() => this.setState({ isHovering: true })}
+          onMouseLeave={() => this.setState({ isHovering: false })}
+          {...passProps}>
+          <Tappable
+            onContextMenu={this.handleOpenPopover}
+            onClick={this.handleClick}
+            onPress={this.handleLongClick}>
+            <SidelistTLServiceAvatar
+              mailboxId={mailboxId}
+              serviceId={serviceId}
+              sidebarSize={sidebarSize}
+              isTransientActive={isHovering} />
+          </Tappable>
+          <ErrorBoundary>
+            <MailboxAndServiceContextMenu
+              mailboxId={mailboxId}
+              serviceId={serviceId}
+              isOpen={popover}
+              anchor={popoverAnchor}
+              onRequestClose={() => this.setState({ popover: false })} />
+          </ErrorBoundary>
+        </SidelistMailboxContainer>
+      </SidelistServiceTooltip>
     )
   }
 }

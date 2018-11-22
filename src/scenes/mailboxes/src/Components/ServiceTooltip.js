@@ -4,7 +4,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import red from '@material-ui/core/colors/red'
 import { accountStore } from 'stores/account'
-import DefaultTooltip400w from 'wbui/Tooltips/DefaultTooltip400w'
+import PrimaryTooltip from 'wbui/PrimaryTooltip'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 import FARGemIcon from 'wbfa/FARGem'
 import FASExclamationIcon from 'wbfa/FASExclamation'
@@ -119,6 +119,7 @@ class ServiceTooltip extends React.Component {
       classes,
       theme,
       className,
+      children,
       ...passProps
     } = this.props
     const {
@@ -163,23 +164,27 @@ class ServiceTooltip extends React.Component {
     }
 
     return (
-      <DefaultTooltip400w {...passProps}>
-        <div className={classes.root}>
-          <div>
-            {humanizedServiceType === displayName ? (
-              humanizedServiceType
-            ) : (
-              `${humanizedServiceType} : ${displayName}`
-            )}
-          </div>
-          {unreadContent ? (
+      <PrimaryTooltip
+        title={(
+          <div className={classes.root}>
             <div>
-              <hr className={classes.hr} />
-              <div>{unreadContent}</div>
+              {humanizedServiceType === displayName ? (
+                humanizedServiceType
+              ) : (
+                `${humanizedServiceType} : ${displayName}`
+              )}
             </div>
-          ) : undefined}
-        </div>
-      </DefaultTooltip400w>
+            {unreadContent ? (
+              <div>
+                <hr className={classes.hr} />
+                <div>{unreadContent}</div>
+              </div>
+            ) : undefined}
+          </div>
+        )}
+        {...passProps}>
+        {children}
+      </PrimaryTooltip>
     )
   }
 }

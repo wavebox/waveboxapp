@@ -9,7 +9,7 @@ import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import FARCalendarIcon from 'wbfa/FARCalendar'
 import ThemeTools from 'wbui/Themes/ThemeTools'
-import UpgradeTooltip from 'wbui/Tooltips/UpgradeTooltip'
+import PrimaryTooltip from 'wbui/PrimaryTooltip'
 
 const UPDATE_INTERVAL = 1000 * 60 * 15 // 15 minutes
 const styles = (theme) => ({
@@ -74,7 +74,8 @@ const styles = (theme) => ({
     border: `2px solid ${ThemeTools.getStateValue(theme, 'wavebox.sidebar.upgrade.popover.color')}`,
     padding: '8px 16px',
     borderRadius: 4,
-    fontSize: '11px'
+    fontSize: '11px',
+    cursor: 'pointer'
   }
 })
 
@@ -107,9 +108,7 @@ class SidelistUpgradePlans extends React.Component {
   state = (() => {
     const userState = userStore.getState()
     return {
-      generatedId: uuid.v4(),
-      buttonHover: false,
-      tooltipHover: false,
+      forceClose: false,
       expiresInDays: userState.user.sidebarPlanExpiryDays,
       currentPlan: userState.user.plan,
       sidebarSize: settingsStore.getState().ui.sidebarSize
@@ -137,11 +136,15 @@ class SidelistUpgradePlans extends React.Component {
   * Starts the user on the upgrade process
   */
   handleUpgrade = () => {
-    this.setState({
-      tooltipHover: false,
-      buttonHover: false
-    })
     window.location.hash = '/pro'
+  }
+
+  /**
+  * Starts the user on the upgrade process
+  */
+  handleUpgradeWithForceClose = () => {
+    window.location.hash = '/pro'
+    this.setState({ forceClose: true })
   }
 
   /* **************************************************************************/
@@ -221,7 +224,7 @@ class SidelistUpgradePlans extends React.Component {
     }
 
     return (
-      <div className={classes.popoverContentContainer} onClick={this.handleUpgrade}>
+      <div className={classes.popoverContentContainer} onClick={this.handleUpgradeWithForceClose}>
         <div>
           {text.map((t, i) => (<p key={i}>{t}</p>))}
         </div>
@@ -241,42 +244,33 @@ class SidelistUpgradePlans extends React.Component {
     const {
       expiresInDays,
       currentPlan,
-      generatedId,
-      buttonHover,
-      tooltipHover,
-      sidebarSize
+      sidebarSize,
+      forceClose
     } = this.state
     const formattedDays = this.formatRemainingDays(expiresInDays)
 
     return (
-      <div
-        onMouseEnter={() => this.setState({ buttonHover: true })}
-        onMouseLeave={() => this.setState({ buttonHover: false })}
-        id={`ReactComponent-Sidelist-Item-${generatedId}`}
-        {...passProps}>
-        <IconButton
-          onClick={this.handleUpgrade}
-          className={classNames(classes.button, `sidebar-${sidebarSize.toLowerCase()}`)}
-          disableRipple>
-          <div className={classes.compositeIconContainer}>
-            <FARCalendarIcon className={classes.icon} />
-            <div className={classNames(classes.remainingText, (formattedDays.length === 2 ? classes.remainingText2Char : classes.remainingText3Char))}>
-              {formattedDays}
+      <PrimaryTooltip
+        placement='right'
+        themeName='upgrade'
+        width='none'
+        interactive
+        onClose={() => this.setState({ forceClose: false })}
+        title={forceClose ? undefined : this.generatePopupContent(classes, currentPlan, expiresInDays)}>
+        <div {...passProps}>
+          <IconButton
+            onClick={this.handleUpgrade}
+            className={classNames(classes.button, `sidebar-${sidebarSize.toLowerCase()}`)}
+            disableRipple>
+            <div className={classes.compositeIconContainer}>
+              <FARCalendarIcon className={classes.icon} />
+              <div className={classNames(classes.remainingText, (formattedDays.length === 2 ? classes.remainingText2Char : classes.remainingText3Char))}>
+                {formattedDays}
+              </div>
             </div>
-          </div>
-        </IconButton>
-        <UpgradeTooltip
-          active={buttonHover || tooltipHover}
-          tooltipTimeout={250}
-          position='right'
-          onMouseEnter={() => this.setState({ tooltipHover: true })}
-          onMouseLeave={() => this.setState({ tooltipHover: false })}
-          arrow='center'
-          group={generatedId}
-          parent={`#ReactComponent-Sidelist-Item-${generatedId}`}>
-          {this.generatePopupContent(classes, currentPlan, expiresInDays)}
-        </UpgradeTooltip>
-      </div>
+          </IconButton>
+        </div>
+      </PrimaryTooltip>
     )
   }
 }

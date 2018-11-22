@@ -21,7 +21,6 @@
     "react-activity": "1.2.2",
     "react-addons-shallow-compare": "15.6.2",
     "react-dom": "16.6.3",
-    "react-portal-tooltip": "2.4.0",
     "uuid": "3.3.2"
   },
   "optionalDependencies": {

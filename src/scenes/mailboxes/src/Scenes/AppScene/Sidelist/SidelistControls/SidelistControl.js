@@ -1,13 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { IconButton, Menu } from '@material-ui/core'
-import uuid from 'uuid'
 import { settingsActions, settingsStore, Tour } from 'stores/settings'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import ThemeTools from 'wbui/Themes/ThemeTools'
-import DefaultTooltip400w from 'wbui/Tooltips/DefaultTooltip400w'
-import TourTooltip from 'wbui/Tooltips/TourTooltip'
+import PrimaryTooltip from 'wbui/PrimaryTooltip'
 
 const styles = (theme) => ({
   // Icon
@@ -39,7 +37,8 @@ const styles = (theme) => ({
     padding: '8px 16px',
     borderRadius: 4,
     fontSize: '11px',
-    textAlign: 'center'
+    textAlign: 'center',
+    cursor: 'pointer'
   },
   quitPopoverButton: {
     marginTop: 8,
@@ -50,7 +49,8 @@ const styles = (theme) => ({
     borderRadius: 4,
     fontSize: '11px',
     textAlign: 'center',
-    opacity: 0.7
+    opacity: 0.7,
+    cursor: 'pointer'
   }
 })
 
@@ -66,10 +66,6 @@ class SidelistControl extends React.Component {
     tooltip: PropTypes.node.isRequired,
     tourStep: PropTypes.oneOf(Object.keys(Tour.TOUR_STEPS)).isRequired,
     tourTooltip: PropTypes.node.isRequired,
-    tourTooltipStyles: PropTypes.shape({
-      style: PropTypes.object.isRequired,
-      arrowStyle: PropTypes.object.isRequired
-    }),
     contextMenuRenderer: PropTypes.func
   }
 
@@ -94,8 +90,6 @@ class SidelistControl extends React.Component {
   state = (() => {
     const settingsState = settingsStore.getState()
     return {
-      generatedId: uuid.v4(),
-      hovering: false,
       hasSeenTour: settingsState.hasSeenTour,
       currentTourStep: settingsState.tourStep,
       dismissingTour: false,
@@ -156,7 +150,6 @@ class SidelistControl extends React.Component {
     evt.preventDefault()
     evt.stopPropagation()
     this.setState({
-      hovering: false,
       contextMenuAnchor: evt.target
     })
     if (this.props.onContextMenu) {
@@ -209,7 +202,6 @@ class SidelistControl extends React.Component {
       tooltip,
       tourStep,
       tourTooltip,
-      tourTooltipStyles,
       onClick,
       className,
       icon,
@@ -219,8 +211,6 @@ class SidelistControl extends React.Component {
       ...passProps
     } = this.props
     const {
-      generatedId,
-      hovering,
       hasSeenTour,
       currentTourStep,
       dismissingTour,
@@ -229,55 +219,38 @@ class SidelistControl extends React.Component {
 
     const showTourPopover = !hasSeenTour && currentTourStep === tourStep && !dismissingTour
     return (
-      <div
-        {...passProps}
-        onContextMenu={this.handleOpenContextMenu}
-        className={classNames(classes.container, className)}
-        onMouseEnter={() => this.setState({ hovering: true })}
-        onMouseLeave={() => this.setState({ hovering: false })}
-        id={`ReactComponent-Sidelist-Control-${generatedId}`}>
-        <IconButton
-          onClick={(...args) => {
-            this.setState({ hovering: false })
-            if (onClick) { onClick(...args) }
-          }}
-          className={classes.button}>
-          {icon}
-        </IconButton>
-        <DefaultTooltip400w
-          active={hovering && !showTourPopover}
-          tooltipTimeout={0}
-          position='right'
-          arrow='center'
-          group={generatedId}
-          parent={`#ReactComponent-Sidelist-Control-${generatedId}`}>
-          {tooltip}
-        </DefaultTooltip400w>
-        {showTourPopover ? (
-          <TourTooltip
-            active
-            tooltipTimeout={0}
-            popoverStyle={tourTooltipStyles ? tourTooltipStyles.style : undefined}
-            popoverArrowStyle={tourTooltipStyles ? tourTooltipStyles.arrowStyle : undefined}
-            position='right'
-            arrow='center'
-            group={generatedId}
-            parent={`#ReactComponent-Sidelist-Control-${generatedId}`}>
-            {this.renderTourTooltipContent(classes, tourTooltip)}
-          </TourTooltip>
-        ) : undefined}
-        {contextMenuRenderer ? (
-          <Menu
-            open={!!contextMenuAnchor}
-            anchorEl={contextMenuAnchor}
-            MenuListProps={{ dense: true }}
-            disableEnforceFocus
-            onClose={this.handleHideContextMenu}>
-            {contextMenuRenderer(this.handleHideContextMenu)}
-          </Menu>
-        ) : undefined}
-        {children}
-      </div>
+      <PrimaryTooltip
+        placement='right'
+        {...(showTourPopover ? {
+          key: 'tour', // Set the key to force a re-render when switching between tour and non-tour
+          title: this.renderTourTooltipContent(classes, tourTooltip),
+          width: 'none',
+          themeName: 'tour',
+          open: true
+        } : {
+          key: 'normal', // Set the key to force a re-render when switching between tour and non-tour
+          title: tooltip
+        })}>
+        <div
+          {...passProps}
+          onContextMenu={this.handleOpenContextMenu}
+          className={classNames(classes.container, className)}>
+          <IconButton onClick={onClick} className={classes.button}>
+            {icon}
+          </IconButton>
+          {contextMenuRenderer ? (
+            <Menu
+              open={!!contextMenuAnchor}
+              anchorEl={contextMenuAnchor}
+              MenuListProps={{ dense: true }}
+              disableEnforceFocus
+              onClose={this.handleHideContextMenu}>
+              {contextMenuRenderer(this.handleHideContextMenu)}
+            </Menu>
+          ) : undefined}
+          {children}
+        </div>
+      </PrimaryTooltip>
     )
   }
 }

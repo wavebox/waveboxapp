@@ -54,17 +54,21 @@ class SidelistServiceTooltip extends React.Component {
   }
 
   render () {
-    const { serviceId, ...passProps } = this.props
+    const {
+      serviceId,
+      children,
+      ...passProps
+    } = this.props
     const { tooltipsEnabled } = this.state
-    if (!tooltipsEnabled) { return false }
 
     return (
       <ServiceTooltip
         serviceId={serviceId}
-        tooltipTimeout={0}
-        position='right'
-        arrow='center'
-        {...passProps} />
+        disabled={!tooltipsEnabled}
+        placement='right'
+        {...passProps}>
+        {children}
+      </ServiceTooltip>
     )
   }
 }

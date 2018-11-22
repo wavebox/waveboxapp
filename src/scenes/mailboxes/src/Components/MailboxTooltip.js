@@ -3,7 +3,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import { accountStore } from 'stores/account'
-import DefaultTooltip400w from 'wbui/Tooltips/DefaultTooltip400w'
+import PrimaryTooltip from 'wbui/PrimaryTooltip'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 
 const styles = (theme) => ({
@@ -86,6 +86,7 @@ class MailboxTooltip extends React.Component {
       classes,
       theme,
       className,
+      children,
       ...passProps
     } = this.props
     const {
@@ -105,17 +106,21 @@ class MailboxTooltip extends React.Component {
     }
 
     return (
-      <DefaultTooltip400w {...passProps}>
-        <div className={classes.root}>
-          <div>{displayName}</div>
-          {unreadContent ? (
-            <div>
-              <hr className={classes.hr} />
-              <div>{unreadContent}</div>
-            </div>
-          ) : undefined}
-        </div>
-      </DefaultTooltip400w>
+      <PrimaryTooltip
+        title={(
+          <div className={classes.root}>
+            <div>{displayName}</div>
+            {unreadContent ? (
+              <div>
+                <hr className={classes.hr} />
+                <div>{unreadContent}</div>
+              </div>
+            ) : undefined}
+          </div>
+        )}
+        {...passProps}>
+        {children}
+      </PrimaryTooltip>
     )
   }
 }
