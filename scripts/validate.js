@@ -1,6 +1,7 @@
 const Colors = require('colors/safe')
 const { ROOT_DIR } = require('./constants')
 const path = require('path')
+const childProcess = require('child_process')
 const pkg = require(path.join(ROOT_DIR, 'package.json'))
 const pkgLock = require(path.join(ROOT_DIR, 'package-lock.json'))
 
@@ -15,6 +16,29 @@ if (pkgLock.name !== 'wavebox') {
 }
 if (pkgLock.version !== pkg.version) {
   failures.push(`Version in package-lock.json does not match that in package.json "${pkg.version} !== ${pkgLock.version}"`)
+}
+
+let gitStatus
+try {
+  gitStatus = childProcess.execSync('git status', { cwd: ROOT_DIR }).toString()
+} catch (ex) {
+  failures.push(`Failed to execute git status`)
+}
+if (gitStatus) {
+  const gitStatusLines = gitStatus.split('\n')
+  const modifiedPackage = gitStatusLines.find((l) => {
+    return l.trim().startsWith('modified:') && l.trim().endsWith('package.json')
+  })
+  if (modifiedPackage) {
+    failures.push(`Unstaged modifications in package.json`)
+  }
+
+  const modifiedPackageLock = gitStatusLines.find((l) => {
+    return l.trim().startsWith('modified:') && l.trim().endsWith('package-lock.json')
+  })
+  if (modifiedPackageLock) {
+    failures.push(`Unstaged modifications in package-lock.json`)
+  }
 }
 
 if (failures.length) {
