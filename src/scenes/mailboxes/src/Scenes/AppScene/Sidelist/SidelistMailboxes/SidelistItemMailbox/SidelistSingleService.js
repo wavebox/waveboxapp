@@ -139,11 +139,11 @@ class SidelistItemSingleService extends React.Component {
     if (!hasMembers) { return false }
 
     return (
-      <SidelistServiceTooltip serviceId={serviceId}>
-        <SidelistMailboxContainer
-          onMouseEnter={() => this.setState({ isHovering: true })}
-          onMouseLeave={() => this.setState({ isHovering: false })}
-          {...passProps}>
+      <SidelistMailboxContainer
+        onMouseEnter={() => this.setState({ isHovering: true })}
+        onMouseLeave={() => this.setState({ isHovering: false })}
+        {...passProps}>
+        <SidelistServiceTooltip serviceId={serviceId}>
           <Tappable
             onContextMenu={this.handleOpenPopover}
             onClick={this.handleClick}
@@ -154,16 +154,16 @@ class SidelistItemSingleService extends React.Component {
               sidebarSize={sidebarSize}
               isTransientActive={isHovering} />
           </Tappable>
-          <ErrorBoundary>
-            <MailboxAndServiceContextMenu
-              mailboxId={mailboxId}
-              serviceId={serviceId}
-              isOpen={popover}
-              anchor={popoverAnchor}
-              onRequestClose={() => this.setState({ popover: false })} />
-          </ErrorBoundary>
-        </SidelistMailboxContainer>
-      </SidelistServiceTooltip>
+        </SidelistServiceTooltip>
+        <ErrorBoundary>
+          <MailboxAndServiceContextMenu
+            mailboxId={mailboxId}
+            serviceId={serviceId}
+            isOpen={popover}
+            anchor={popoverAnchor}
+            onRequestClose={() => this.setState({ popover: false })} />
+        </ErrorBoundary>
+      </SidelistMailboxContainer>
     )
   }
 }

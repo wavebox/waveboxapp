@@ -203,7 +203,6 @@ class SidelistControl extends React.Component {
       tourStep,
       tourTooltip,
       onClick,
-      className,
       icon,
       children,
       onContextMenu,
@@ -219,38 +218,40 @@ class SidelistControl extends React.Component {
 
     const showTourPopover = !hasSeenTour && currentTourStep === tourStep && !dismissingTour
     return (
-      <PrimaryTooltip
-        placement='right'
-        {...(showTourPopover ? {
-          key: 'tour', // Set the key to force a re-render when switching between tour and non-tour
-          title: this.renderTourTooltipContent(classes, tourTooltip),
-          width: 'none',
-          themeName: 'tour',
-          open: true
-        } : {
-          key: 'normal', // Set the key to force a re-render when switching between tour and non-tour
-          title: tooltip
-        })}>
-        <div
-          {...passProps}
-          onContextMenu={this.handleOpenContextMenu}
-          className={classNames(classes.container, className)}>
-          <IconButton onClick={onClick} className={classes.button}>
-            {icon}
-          </IconButton>
-          {contextMenuRenderer ? (
-            <Menu
-              open={!!contextMenuAnchor}
-              anchorEl={contextMenuAnchor}
-              MenuListProps={{ dense: true }}
-              disableEnforceFocus
-              onClose={this.handleHideContextMenu}>
-              {contextMenuRenderer(this.handleHideContextMenu)}
-            </Menu>
-          ) : undefined}
-          {children}
-        </div>
-      </PrimaryTooltip>
+      <div {...passProps}>
+        <PrimaryTooltip
+          placement='right'
+          {...(showTourPopover ? {
+            key: 'tour', // Set the key to force a re-render when switching between tour and non-tour
+            title: this.renderTourTooltipContent(classes, tourTooltip),
+            width: 'none',
+            themeName: 'tour',
+            open: true
+          } : {
+            key: 'normal', // Set the key to force a re-render when switching between tour and non-tour
+            title: tooltip
+          })}>
+          <div
+            {...passProps}
+            onContextMenu={this.handleOpenContextMenu}
+            className={classes.container}>
+            <IconButton onClick={onClick} className={classes.button}>
+              {icon}
+            </IconButton>
+            {children}
+          </div>
+        </PrimaryTooltip>
+        {contextMenuRenderer ? (
+          <Menu
+            open={!!contextMenuAnchor}
+            anchorEl={contextMenuAnchor}
+            MenuListProps={{ dense: true }}
+            disableEnforceFocus
+            onClose={this.handleHideContextMenu}>
+            {contextMenuRenderer(this.handleHideContextMenu)}
+          </Menu>
+        ) : undefined}
+      </div>
     )
   }
 }
