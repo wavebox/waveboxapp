@@ -47,7 +47,7 @@ class WaveboxAppPrimaryMenu {
         label: process.platform === 'darwin' ? `${tlpfx}Application` : `${tlpfx}File`,
         submenu: [
           {
-            label: userEmail ? `Wavebox Account: ${userEmail}` : 'Wavebox Account: Logged out',
+            label: userEmail ? `Wavebox Subscription: ${userEmail}` : 'Wavebox Subscription: Logged out',
             click: WaveboxAppPrimaryMenuActions.waveboxAccount
           },
           { type: 'separator' },
