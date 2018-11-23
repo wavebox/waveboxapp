@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { IconButton, Menu } from '@material-ui/core'
 import { settingsActions, settingsStore, Tour } from 'stores/settings'
 import { withStyles } from '@material-ui/core/styles'
-import classNames from 'classnames'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 import PrimaryTooltip from 'wbui/PrimaryTooltip'
 
