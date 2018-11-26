@@ -76,22 +76,24 @@ export default class NotificationRenderer {
   * @param clickHandler: the handler to call on click
   * @param accountState=autoget: the current mailbox state if available
   * @param settingsState=autoget: the current settings state if available
+  * @return the system notification
   */
   static presentMailboxNotification (mailboxId, serviceId, notification, clickHandler, accountState = accountStore.getState(), settingsState = settingsStore.getState()) {
     const provider = NotificationPlatformSupport.supportsProvider(settingsState.os.notificationsProvider) ? settingsState.os.notificationsProvider : OSSettings.DEFAULT_NOTIFICATION_PROVIDER
+    let systemNotification;
 
     if (provider === OSSettings.NOTIFICATION_PROVIDERS.ELECTRON) {
       ElectronNotificationRenderer.presentMailboxNotification(mailboxId, serviceId, notification, clickHandler, accountState, settingsState)
     } else if (provider === OSSettings.NOTIFICATION_PROVIDERS.ENHANCED) {
       switch (process.platform) {
         case 'darwin':
-          EnhancedNotificationRenderer.presentMailboxNotificationDarwin(mailboxId, serviceId, notification, clickHandler, accountState, settingsState)
+          systemNotification = EnhancedNotificationRenderer.presentMailboxNotificationDarwin(mailboxId, serviceId, notification, clickHandler, accountState, settingsState)
           break
         case 'win32':
-          EnhancedNotificationRenderer.presentMailboxNotificationWin32(mailboxId, serviceId, notification, clickHandler, accountState, settingsState)
+          systemNotification = EnhancedNotificationRenderer.presentMailboxNotificationWin32(mailboxId, serviceId, notification, clickHandler, accountState, settingsState)
           break
         case 'linux':
-          EnhancedNotificationRenderer.presentMailboxNotificationLinux(mailboxId, serviceId, notification, clickHandler, accountState, settingsState)
+          systemNotification = EnhancedNotificationRenderer.presentMailboxNotificationLinux(mailboxId, serviceId, notification, clickHandler, accountState, settingsState)
           break
       }
     }
@@ -103,5 +105,6 @@ export default class NotificationRenderer {
       body: NotificationRendererUtils.formattedBody(notification),
       openPayload: notification.data
     })
+    return systemNotification
   }
 }
