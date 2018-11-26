@@ -80,7 +80,7 @@ export default class NotificationRenderer {
   */
   static presentMailboxNotification (mailboxId, serviceId, notification, clickHandler, accountState = accountStore.getState(), settingsState = settingsStore.getState()) {
     const provider = NotificationPlatformSupport.supportsProvider(settingsState.os.notificationsProvider) ? settingsState.os.notificationsProvider : OSSettings.DEFAULT_NOTIFICATION_PROVIDER
-    let systemNotification;
+    let systemNotification
 
     if (provider === OSSettings.NOTIFICATION_PROVIDERS.ELECTRON) {
       ElectronNotificationRenderer.presentMailboxNotification(mailboxId, serviceId, notification, clickHandler, accountState, settingsState)
