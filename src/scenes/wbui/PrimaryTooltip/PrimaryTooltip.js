@@ -17,10 +17,12 @@ const styles = (theme) => {
       '&.w-200': { maxWidth: 200 },
       '&.w-400': { maxWidth: 400 },
       '&.w-none': { maxWidth: 'none' },
+      '&.no-padd': { padding: 0 },
 
       '&.theme-default': {
-        background: ThemeTools.getValue(theme, 'wavebox.popover.backgroundColor'),
-        color: ThemeTools.getValue(theme, 'wavebox.popover.color')
+        background: `linear-gradient(to right, ${ThemeTools.getValue(theme, 'wavebox.popover.backgroundGradientColors')})`,
+        color: ThemeTools.getValue(theme, 'wavebox.popover.color'),
+        boxShadow: ThemeTools.getValue(theme, 'wavebox.popover.boxShadow')
       },
       '&.theme-upgrade': {
         background: ThemeTools.getStateValue(theme, 'wavebox.sidebar.upgrade.popover.backgroundColor'),
@@ -136,12 +138,14 @@ class PrimaryTooltip extends React.Component {
     children: PropTypes.node.isRequired,
     disabled: PropTypes.bool,
     width: PropTypes.oneOf([200, 400, 'none']).isRequired,
-    themeName: PropTypes.oneOf(['default', 'tour', 'upgrade'])
+    themeName: PropTypes.oneOf(['default', 'tour', 'upgrade']),
+    disablePadding: PropTypes.bool.isRequired
   }
 
   static defaultProps = {
     width: 400,
-    themeName: 'default'
+    themeName: 'default',
+    disablePadding: false
   }
 
   /* **************************************************************************/
@@ -167,11 +171,11 @@ class PrimaryTooltip extends React.Component {
       title,
       children,
       disabled,
-      disableFocusListener,
       disableHoverListener,
       disableTouchListener,
       width,
       themeName,
+      disablePadding,
       ...passProps
     } = this.props
     const { arrowRef } = this.state
@@ -187,7 +191,7 @@ class PrimaryTooltip extends React.Component {
           </React.Fragment>
         ) : ''}
         classes={{
-          tooltip: classNames(classes.tooltip, `w-${width}`, `theme-${themeName}`),
+          tooltip: classNames(classes.tooltip, `w-${width}`, `theme-${themeName}`, disablePadding ? 'no-padd' : undefined),
           popper: classes.tooltipArrowPopper
         }}
         PopperProps={{
@@ -197,7 +201,7 @@ class PrimaryTooltip extends React.Component {
             }
           }
         }}
-        disableFocusListener={disabled ? true : disableFocusListener}
+        disableFocusListener
         disableHoverListener={disabled ? true : disableHoverListener}
         disableTouchListener={disabled ? true : disableTouchListener}
         {...passProps}>

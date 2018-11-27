@@ -1,23 +1,10 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { withStyles } from '@material-ui/core/styles'
-import { accountStore } from 'stores/account'
+import { accountActions } from 'stores/account'
 import PrimaryTooltip from 'wbui/PrimaryTooltip'
-import ThemeTools from 'wbui/Themes/ThemeTools'
+import MailboxTooltipContent from './MailboxTooltipContent'
 
-const styles = (theme) => ({
-  root: {
-    textAlign: 'center'
-  },
-  hr: {
-    height: 1,
-    border: 0,
-    backgroundImage: `linear-gradient(to right, ${ThemeTools.getValue(theme, 'wavebox.popover.hr.backgroundGradientColors')})`
-  }
-})
-
-@withStyles(styles, { withTheme: true })
 class MailboxTooltip extends React.Component {
   /* **************************************************************************/
   // Class
@@ -28,48 +15,41 @@ class MailboxTooltip extends React.Component {
   }
 
   /* **************************************************************************/
-  // Component lifecycle
-  /* **************************************************************************/
-
-  componentDidMount () {
-    accountStore.listen(this.accountChanged)
-  }
-
-  componentWillUnmount () {
-    accountStore.unlisten(this.accountChanged)
-  }
-
-  componentWillReceiveProps (nextProps) {
-    if (this.props.mailboxId !== nextProps.mailboxId) {
-      this.setState(this.generateMailboxState(nextProps.mailboxId))
-    }
-  }
-
-  /* **************************************************************************/
   // Data lifecycle
   /* **************************************************************************/
 
-  state = (() => {
-    return {
-      ...this.generateMailboxState(this.props.mailboxId)
-    }
-  })()
-
-  accountChanged = (accountState) => {
-    this.setState(this.generateMailboxState(this.props.mailboxId, accountState))
+  state = {
+    open: false
   }
 
-  /**
-  * @param mailboxId: the id of the mailbox
-  * @param accountState=autoget: the current account state
-  * @return state object
-  */
-  generateMailboxState (mailboxId, accountState = accountStore.getState()) {
-    return {
-      displayName: accountState.resolvedMailboxDisplayName(mailboxId),
-      unreadCount: accountState.userUnreadCountForMailbox(mailboxId),
-      hasUnreadActivity: accountState.userUnreadActivityForMailbox(mailboxId)
-    }
+  /* **************************************************************************/
+  // UI Actions
+  /* **************************************************************************/
+
+  handleTooltipOpen = () => {
+    this.setState({ open: true })
+  }
+
+  handleTooltipClose = () => {
+    this.setState({ open: false })
+  }
+
+  handleOpenService = (evt, serviceId) => {
+    this.setState({ open: false }, () => {
+      accountActions.changeActiveService(serviceId)
+    })
+  }
+
+  handleOpenSettings = (evt) => {
+    this.setState({ open: false }, () => {
+      window.location.hash = `/settings/accounts/${this.props.mailboxId}`
+    })
+  }
+
+  handleAddService = (evt) => {
+    this.setState({ open: false }, () => {
+      window.location.hash = `/mailbox_wizard/add/${this.props.mailboxId}`
+    })
   }
 
   /* **************************************************************************/
@@ -83,40 +63,27 @@ class MailboxTooltip extends React.Component {
   render () {
     const {
       mailboxId,
-      classes,
-      theme,
-      className,
       children,
       ...passProps
     } = this.props
     const {
-      displayName,
-      unreadCount,
-      hasUnreadActivity
+      open
     } = this.state
-
-    let unreadContent
-    if (unreadCount > 0) {
-      const count = unreadCount
-      unreadContent = `${count} unread item${count === 1 ? '' : 's'}`
-    } else if (hasUnreadActivity) {
-      unreadContent = `New unseen items`
-    } else {
-      unreadContent = `No unread items`
-    }
 
     return (
       <PrimaryTooltip
+        interactive
+        disablePadding
+        width={400}
+        onClose={this.handleTooltipClose}
+        onOpen={this.handleTooltipOpen}
+        open={open}
         title={(
-          <div className={classes.root}>
-            <div>{displayName}</div>
-            {unreadContent ? (
-              <div>
-                <hr className={classes.hr} />
-                <div>{unreadContent}</div>
-              </div>
-            ) : undefined}
-          </div>
+          <MailboxTooltipContent
+            mailboxId={mailboxId}
+            onOpenService={this.handleOpenService}
+            onOpenSettings={this.handleOpenSettings}
+            onAddService={this.handleAddService} />
         )}
         {...passProps}>
         {children}

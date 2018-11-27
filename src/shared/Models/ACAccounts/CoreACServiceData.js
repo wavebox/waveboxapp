@@ -110,6 +110,12 @@ class CoreACServiceData extends CoreACModel {
   getTrayMessages (service) {
     return service.supportsWBGAPI ? this.wbgapiTrayMessages : this.trayMessages
   }
+
+  /* **************************************************************************/
+  // Recent
+  /* **************************************************************************/
+
+  get recent () { return this._value_('recent', []) }
 }
 
 export default CoreACServiceData

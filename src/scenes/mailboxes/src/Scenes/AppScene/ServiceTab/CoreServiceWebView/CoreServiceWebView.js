@@ -28,6 +28,7 @@ import classNames from 'classnames'
 import ServiceInvalidAuthCover from './ServiceInvalidAuthCover'
 import ServiceCrashedCover from './ServiceCrashedCover'
 import ServiceSleepHelper from './ServiceSleepHelper'
+import uuid from 'uuid'
 
 const styles = {
   root: {
@@ -99,6 +100,8 @@ class CoreServiceWebView extends React.Component {
 
   constructor (props) {
     super(props)
+
+    this.recentTracker = null
 
     const self = this
     this.constructor.WEBVIEW_METHODS.forEach((m) => {
@@ -424,20 +427,18 @@ class CoreServiceWebView extends React.Component {
   */
   handleBrowserDomReady = () => {
     const { service, isActive } = this.state
+    const node = this.refs[BROWSER_REF]
 
     // Push the custom user content
     if (service.hasCustomCSS || service.hasCustomJS) {
-      this.refs[BROWSER_REF].send(WB_BROWSER_INJECT_CUSTOM_CONTENT, {
-        css: service.customCSS,
-        js: service.customJS
-      })
+      node.send(WB_BROWSER_INJECT_CUSTOM_CONTENT, { css: service.customCSS, js: service.customJS })
     }
 
     // Wake or sleep the browser
     if (isActive) {
-      this.refs[BROWSER_REF].send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN, {})
+      node.send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN, {})
     } else {
-      this.refs[BROWSER_REF].send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP, {})
+      node.send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP, {})
     }
 
     this.setState({ initialLoadDone: true })
@@ -448,11 +449,11 @@ class CoreServiceWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleBrowserPageTitleUpdated = (evt) => {
-    accountActions.reduceServiceData(
-      this.props.serviceId,
-      ServiceDataReducer.setDocumentTitle,
-      evt.title
-    )
+    const { serviceId } = this.props
+    accountActions.reduceServiceData(serviceId, ServiceDataReducer.setDocumentTitle, evt.title)
+    if (this.recentTracker) {
+      accountActions.reduceServiceData(serviceId, ServiceDataReducer.updateRecentTitle, this.recentTracker, evt.title)
+    }
   }
 
   /**
@@ -460,13 +461,19 @@ class CoreServiceWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleBrowserDidNavigate = (evt) => {
+    const { serviceId } = this.props
     if (evt.url && evt.url !== 'about:blank') {
-      accountActions.reduceServiceData(
-        this.props.serviceId,
-        ServiceDataReducer.setUrl,
-        evt.url
-      )
+      accountActions.reduceServiceData(serviceId, ServiceDataReducer.setUrl, evt.url)
     }
+
+    this.recentTracker = uuid.v4()
+    accountActions.reduceServiceData(
+      serviceId,
+      ServiceDataReducer.addRecent,
+      this.recentTracker,
+      evt.url,
+      this.refs[BROWSER_REF].getTitle()
+    )
   }
 
   /**
@@ -500,11 +507,11 @@ class CoreServiceWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleBrowserFaviconsUpdated = (evt) => {
-    accountActions.reduceServiceData(
-      this.props.serviceId,
-      ServiceDataReducer.setFavicons,
-      evt.favicons
-    )
+    const { serviceId } = this.props
+    accountActions.reduceServiceData(serviceId, ServiceDataReducer.setFavicons, evt.favicons)
+    if (this.recentTracker) {
+      accountActions.reduceServiceData(serviceId, ServiceDataReducer.updateRecentFavicons, this.recentTracker, evt.favicons)
+    }
   }
 
   /**

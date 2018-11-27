@@ -222,6 +222,13 @@ class CoreACService extends CoreACModel {
   get notificationsSound () { return this._value_('notificationsSound', undefined) }
 
   /* **************************************************************************/
+  // Properties : Bookmarks & queue
+  /* **************************************************************************/
+
+  get bookmarks () { return this._value_('bookmarks', []) }
+  get readingQueue () { return this._value_('readingQueue', []) }
+
+  /* **************************************************************************/
   // Properties : Custom injectables
   /* **************************************************************************/
 

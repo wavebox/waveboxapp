@@ -107,10 +107,34 @@ export default {
       backgroundColor: blue[600]
     },
     popover: {
-      backgroundColor: 'rgba(34, 34, 34, 0.9)',
+      backgroundColor: 'rgba(34, 34, 34, 0.95)',
+      backgroundGradientColors: 'rgba(34, 34, 34, 0.95), rgba(40, 40, 40, 0.9)',
+      boxShadow: '0px 0px 5px 0px rgba(0,0,0,1)',
       color: '#FFF',
-      hr: {
-        backgroundGradientColors: '#bcbcbc, #fff, #bcbcbc'
+      heading: {
+        color: '#FFF',
+        backgroundGradientColors: 'rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.20)',
+        dividerColor: '#FFF',
+        button: {
+          color: '#FFF'
+        }
+      },
+      section: {
+        listItem: {
+          color: '#FFF',
+          backgroundColor: 'transparent',
+          button: {
+            color: '#FFF',
+            backgroundColor: {
+              default: 'transparent',
+              hover: 'rgba(255, 255, 255, 0.08)'
+            }
+          }
+        },
+        scrollThumb: {
+          backgroundColor: 'rgba(255, 255, 255, 0.5)',
+          boxShadow: '0 0 1px rgba(0, 0, 0, 0.5)'
+        }
       }
     },
     tourPopover: {

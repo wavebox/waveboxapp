@@ -111,6 +111,73 @@ class ServiceDataReducer {
     if (!service.supportsWBGAPI) { return undefined }
     return serviceData.changeData({ '::wbgapi:trayMessages': messages })
   }
+
+  /* **************************************************************************/
+  // Recent
+  /* **************************************************************************/
+
+  /**
+  * Adds a recent entry into the data
+  * @param service: the parent service
+  * @param serviceData: the service data to update
+  * @param url: the url to add
+  * @param title='': the title of the visit
+  * @param favicons=[]: the favicon for the page
+  */
+  static addRecent (service, serviceData, id, url, title = '', favicons = []) {
+    return serviceData.changeData({
+      recent: [{
+        id: id,
+        url: url,
+        title: title,
+        favicons: favicons,
+        created: new Date().getTime(),
+        modified: new Date().getTime()
+      }].concat(serviceData.recent).slice(0, 5)
+    })
+  }
+
+  /**
+  * Updates a recent entries title
+  * @param service: the parent service
+  * @param serviceData: the service data to update
+  * @param id: the id of the entry
+  * @param title: the title of the visit
+  */
+  static updateRecentTitle (service, serviceData, id, title) {
+    const index = serviceData.recent.findIndex((r) => r.id === id)
+    if (index !== -1) {
+      const next = Array.from(serviceData.recent)
+      next[index] = {
+        ...serviceData.recent[index],
+        title: title,
+        modified: new Date().getTime()
+      }
+      return serviceData.changeData({ recent: next })
+    }
+    return undefined
+  }
+
+  /**
+  * Updates a recent entries favicons
+  * @param service: the parent service
+  * @param serviceData: the service data to update
+  * @param id: the id of the entry
+  * @param favicons: the favicons of the visit
+  */
+  static updateRecentFavicons (service, serviceData, id, favicons) {
+    const index = serviceData.recent.findIndex((r) => r.id === id)
+    if (index !== -1) {
+      const next = Array.from(serviceData.recent)
+      next[index] = {
+        ...serviceData.recent[index],
+        favicons: favicons,
+        modified: new Date().getTime()
+      }
+      return serviceData.changeData({ recent: next })
+    }
+    return undefined
+  }
 }
 
 export default ServiceDataReducer

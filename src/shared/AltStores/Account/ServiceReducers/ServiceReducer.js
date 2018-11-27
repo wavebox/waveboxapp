@@ -1,4 +1,5 @@
 import { MAILBOX_SLEEP_WAIT } from 'shared/constants'
+import uuid from 'uuid'
 
 class ServiceReducer {
   /* **************************************************************************/
@@ -175,6 +176,78 @@ class ServiceReducer {
   */
   static setShowAvatarInNotifications (service, show) {
     return service.changeData({ showAvatarInNotifications: show })
+  }
+
+  /* **************************************************************************/
+  // Bookmarks
+  /* **************************************************************************/
+
+  /**
+  * Adds a bookmark entry into the service
+  * @param service: the parent service
+  * @param url: the url to add
+  * @param title: the title of the visit
+  * @param favicon: the favicon for the page
+  */
+  static addBookmark (service, url, title, favicon) {
+    return service.changeData({
+      bookmarks: service.bookmarks.concat({
+        url: url,
+        title: title,
+        favicon: favicon,
+        time: new Date().getTime(),
+        id: uuid.v4()
+      })
+    })
+  }
+
+  /**
+  * Removes a bookmark entry from the service
+  * @param service: the parent service
+  * @param url: the url to add
+  * @param title: the title of the visit
+  * @param favicon: the favicon for the page
+  */
+  static removeBookmark (service, id) {
+    return service.changeData({
+      bookmarks: service.bookmarks.filter((b) => b.id !== id)
+    })
+  }
+
+  /* **************************************************************************/
+  // Reading queue
+  /* **************************************************************************/
+
+  /**
+  * Adds a bookmark entry into the service
+  * @param service: the parent service
+  * @param url: the url to add
+  * @param title: the title of the visit
+  * @param favicon: the favicon for the page
+  */
+  static addToReadingQueue (service, url, title, favicon) {
+    return service.changeData({
+      readingQueue: service.readingQueue.concat({
+        url: url,
+        title: title,
+        favicon: favicon,
+        time: new Date().getTime(),
+        id: uuid.v4()
+      })
+    })
+  }
+
+  /**
+  * Removes a bookmark entry from the service
+  * @param service: the parent service
+  * @param url: the url to add
+  * @param title: the title of the visit
+  * @param favicon: the favicon for the page
+  */
+  static removeFromReadingQueue (service, id) {
+    return service.changeData({
+      readingQueue: service.readingQueue.filter((b) => b.id !== id)
+    })
   }
 
   /* **************************************************************************/
