@@ -31,6 +31,7 @@ class ElectronNotificationRenderer {
   * @param clickHandler: the handler to call on click
   * @param accountState: the current account state
   * @param settingsState: the current settings state
+  * @return the system notification
   */
   presentMailboxNotification (mailboxId, serviceId, notification, clickHandler, accountState, settingsState) {
     if (NotificationRendererUtils.areNotificationsMuted(settingsState)) { return }
@@ -48,6 +49,7 @@ class ElectronNotificationRenderer {
         clickHandler(evt.target.data)
       }
     }
+    return windowNotification
   }
 }
 

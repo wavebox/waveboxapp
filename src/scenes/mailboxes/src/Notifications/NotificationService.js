@@ -222,11 +222,13 @@ class NotificationService extends EventEmitter {
     // Send the notifications we found
     if (pendingNotifications.length) {
       pendingNotifications.forEach(({ mailboxId, serviceId, notification }) => {
+        const notificationId = `${serviceId}:${notification.id}`
         const systemNotification = NotificationRenderer.presentMailboxNotification(
           mailboxId,
           serviceId,
           notification,
           (data) => {
+            this.__state__.openSystemNotifications.delete(notificationId)
             ipcRenderer.send(WB_FOCUS_APP, { })
             if (data) {
               accountActions.changeActiveService(data.serviceId)
@@ -237,11 +239,12 @@ class NotificationService extends EventEmitter {
           settingsState
         )
         if (systemNotification) {
-          const id = `${serviceId}:${notification.id}`
-          this.__state__.openSystemNotifications.set(id, systemNotification)
+          this.__state__.openSystemNotifications.set(notificationId, systemNotification)
         }
       })
     }
+
+    // Clear out any notifications that are no longer relevant
     this.__state__.openSystemNotifications.forEach((systemNotification, id) => {
       if (existingIds.indexOf(id) === -1) {
         this.__state__.openSystemNotifications.delete(id)

@@ -83,7 +83,7 @@ export default class NotificationRenderer {
     let systemNotification
 
     if (provider === OSSettings.NOTIFICATION_PROVIDERS.ELECTRON) {
-      ElectronNotificationRenderer.presentMailboxNotification(mailboxId, serviceId, notification, clickHandler, accountState, settingsState)
+      systemNotification = ElectronNotificationRenderer.presentMailboxNotification(mailboxId, serviceId, notification, clickHandler, accountState, settingsState)
     } else if (provider === OSSettings.NOTIFICATION_PROVIDERS.ENHANCED) {
       switch (process.platform) {
         case 'darwin':
