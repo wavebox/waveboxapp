@@ -12,6 +12,7 @@ class SidelistServiceTooltip extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
+    mailboxId: PropTypes.string.isRequired,
     serviceId: PropTypes.string.isRequired
   }
 
@@ -56,6 +57,7 @@ class SidelistServiceTooltip extends React.Component {
   render () {
     const {
       serviceId,
+      mailboxId,
       children,
       ...passProps
     } = this.props
@@ -63,6 +65,7 @@ class SidelistServiceTooltip extends React.Component {
 
     return (
       <ServiceTooltip
+        mailboxId={mailboxId}
         serviceId={serviceId}
         disabled={!tooltipsEnabled}
         placement='right'

@@ -119,6 +119,10 @@ export default {
         }
       },
       section: {
+        subheading: {
+          color: 'rgb(91, 169, 203)',
+          backgroundColor: 'rgba(0, 0, 0, 0.20)'
+        },
         listItem: {
           color: grey[900],
           backgroundColor: 'transparent',

@@ -125,16 +125,29 @@ class ServiceDataReducer {
   * @param favicons=[]: the favicon for the page
   */
   static addRecent (service, serviceData, id, url, title = '', favicons = []) {
-    return serviceData.changeData({
-      recent: [{
+    const recent = Array.from(serviceData.recent)
+    if (recent[0] && recent[0].url === url) {
+      const recent = Array.from(serviceData.recent)
+      recent[0] = {
+        ...recent[0],
         id: id,
-        url: url,
-        title: title,
-        favicons: favicons,
-        created: new Date().getTime(),
+        title: title || recent[0].title,
+        favicons: favicons.length ? favicons : recent[0].favicons,
         modified: new Date().getTime()
-      }].concat(serviceData.recent).slice(0, 5)
-    })
+      }
+      return serviceData.changeData({ recent: recent })
+    } else {
+      return serviceData.changeData({
+        recent: [{
+          id: id,
+          url: url,
+          title: title,
+          favicons: favicons,
+          created: new Date().getTime(),
+          modified: new Date().getTime()
+        }].concat(serviceData.recent).slice(0, 5)
+      })
+    }
   }
 
   /**
@@ -145,15 +158,15 @@ class ServiceDataReducer {
   * @param title: the title of the visit
   */
   static updateRecentTitle (service, serviceData, id, title) {
-    const index = serviceData.recent.findIndex((r) => r.id === id)
+    const recent = Array.from(serviceData.recent)
+    const index = recent.findIndex((r) => r.id === id)
     if (index !== -1) {
-      const next = Array.from(serviceData.recent)
-      next[index] = {
+      recent[index] = {
         ...serviceData.recent[index],
         title: title,
         modified: new Date().getTime()
       }
-      return serviceData.changeData({ recent: next })
+      return serviceData.changeData({ recent: recent })
     }
     return undefined
   }
@@ -166,15 +179,15 @@ class ServiceDataReducer {
   * @param favicons: the favicons of the visit
   */
   static updateRecentFavicons (service, serviceData, id, favicons) {
-    const index = serviceData.recent.findIndex((r) => r.id === id)
+    const recent = Array.from(serviceData.recent)
+    const index = recent.findIndex((r) => r.id === id)
     if (index !== -1) {
-      const next = Array.from(serviceData.recent)
-      next[index] = {
+      recent[index] = {
         ...serviceData.recent[index],
         favicons: favicons,
         modified: new Date().getTime()
       }
-      return serviceData.changeData({ recent: next })
+      return serviceData.changeData({ recent: recent })
     }
     return undefined
   }

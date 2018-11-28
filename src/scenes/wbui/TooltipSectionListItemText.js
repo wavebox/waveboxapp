@@ -6,8 +6,15 @@ import { ListItemText } from '@material-ui/core'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 
 const styles = (theme) => ({
-  text: {
+  primaryText: {
     fontSize: '12px',
+    color: ThemeTools.getStateValue(theme, 'wavebox.popover.section.listItem.color', 'default'),
+    '&:hover': {
+      color: ThemeTools.getStateValue(theme, 'wavebox.popover.section.listItem.color', 'hover')
+    }
+  },
+  secondaryText: {
+    fontSize: '11px',
     color: ThemeTools.getStateValue(theme, 'wavebox.popover.section.listItem.color', 'default'),
     '&:hover': {
       color: ThemeTools.getStateValue(theme, 'wavebox.popover.section.listItem.color', 'hover')
@@ -30,6 +37,7 @@ class TooltipSectionListItemText extends React.Component {
       classes,
       theme,
       primaryTypographyProps,
+      secondaryTypographyProps,
       ...passProps
     } = this.props
 
@@ -38,8 +46,15 @@ class TooltipSectionListItemText extends React.Component {
         primaryTypographyProps={{
           ...primaryTypographyProps,
           className: classNames(
-            classes.text,
+            classes.primaryText,
             primaryTypographyProps ? primaryTypographyProps.className : undefined
+          )
+        }}
+        secondaryTypographyProps={{
+          ...secondaryTypographyProps,
+          className: classNames(
+            classes.secondaryText,
+            secondaryTypographyProps ? secondaryTypographyProps.className : undefined
           )
         }}
         {...passProps} />

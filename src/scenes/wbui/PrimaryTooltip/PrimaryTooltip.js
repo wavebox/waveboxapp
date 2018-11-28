@@ -4,6 +4,7 @@ import { Tooltip } from '@material-ui/core'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
+import ErrorBoundary from '../ErrorBoundary'
 
 const styles = (theme) => {
   return {
@@ -139,13 +140,15 @@ class PrimaryTooltip extends React.Component {
     disabled: PropTypes.bool,
     width: PropTypes.oneOf([200, 400, 'none']).isRequired,
     themeName: PropTypes.oneOf(['default', 'tour', 'upgrade']),
-    disablePadding: PropTypes.bool.isRequired
+    disablePadding: PropTypes.bool.isRequired,
+    guardErrors: PropTypes.bool.isRequired
   }
 
   static defaultProps = {
     width: 400,
     themeName: 'default',
-    disablePadding: false
+    disablePadding: false,
+    guardErrors: true
   }
 
   /* **************************************************************************/
@@ -176,6 +179,7 @@ class PrimaryTooltip extends React.Component {
       width,
       themeName,
       disablePadding,
+      guardErrors,
       ...passProps
     } = this.props
     const { arrowRef } = this.state
@@ -184,7 +188,11 @@ class PrimaryTooltip extends React.Component {
       <Tooltip
         title={title ? (
           <React.Fragment>
-            {title}
+            {guardErrors ? (
+              <ErrorBoundary>{title}</ErrorBoundary>
+            ) : (
+              title
+            )}
             <span
               ref={this.handleArrowRef}
               className={classNames(classes.tooltipArrowArrow, `theme-${themeName}`)} />

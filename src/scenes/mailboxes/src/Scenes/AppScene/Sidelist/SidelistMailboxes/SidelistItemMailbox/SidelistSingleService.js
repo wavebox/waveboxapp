@@ -143,7 +143,7 @@ class SidelistItemSingleService extends React.Component {
         onMouseEnter={() => this.setState({ isHovering: true })}
         onMouseLeave={() => this.setState({ isHovering: false })}
         {...passProps}>
-        <SidelistServiceTooltip serviceId={serviceId}>
+        <SidelistServiceTooltip mailboxId={mailboxId} serviceId={serviceId}>
           <Tappable
             onContextMenu={this.handleOpenPopover}
             onClick={this.handleClick}

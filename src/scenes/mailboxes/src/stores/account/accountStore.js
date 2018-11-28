@@ -148,6 +148,9 @@ class AccountStore extends RendererAccountStore {
       handleSetWebcontentTabId: actions.SET_WEBCONTENT_TAB_ID,
       handleDeleteWebcontentTabId: actions.DELETE_WEBCONTENT_TAB_ID,
 
+      // Navigation
+      handleNavigateAndSwitchToService: actions.NAVIGATE_AND_SWITCH_TO_SERVICE,
+
       // Warnings
       handleClearRuntimeWarning: actions.CLEAR_RUNTIME_WARNING,
 
@@ -293,6 +296,33 @@ class AccountStore extends RendererAccountStore {
 
   handleDeleteWebcontentTabId ({ serviceId }) {
     this._webcontentTabIds_.delete(serviceId)
+  }
+
+  /* **************************************************************************/
+  // Navigation
+  /* **************************************************************************/
+
+  handleNavigateAndSwitchToService ({ serviceId, url }) {
+    this.preventDefault()
+
+    if (this.isServiceActive(serviceId) && !this.isServiceSleeping(serviceId)) {
+      accountDispatch.loadUrl(serviceId, url)
+    } else if (!this.isServiceSleeping(serviceId)) {
+      if (accountDispatch.getIsWebviewMounted(serviceId)) {
+        accountDispatch.loadUrl(serviceId, url)
+        actions.changeActiveService.defer(serviceId)
+      } else {
+        actions.changeActiveService.defer(serviceId)
+        setTimeout(() => {
+          accountDispatch.loadUrl(serviceId, url)
+        }, 500)
+      }
+    } else {
+      actions.changeActiveService.defer(serviceId)
+      setTimeout(() => {
+        accountDispatch.loadUrl(serviceId, url)
+      }, 500)
+    }
   }
 
   /* **************************************************************************/

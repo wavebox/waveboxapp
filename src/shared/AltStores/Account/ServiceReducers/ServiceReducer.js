@@ -187,14 +187,14 @@ class ServiceReducer {
   * @param service: the parent service
   * @param url: the url to add
   * @param title: the title of the visit
-  * @param favicon: the favicon for the page
+  * @param favicons: the favicon for the page
   */
-  static addBookmark (service, url, title, favicon) {
+  static addBookmark (service, url, title, favicons) {
     return service.changeData({
       bookmarks: service.bookmarks.concat({
         url: url,
         title: title,
-        favicon: favicon,
+        favicons: favicons,
         time: new Date().getTime(),
         id: uuid.v4()
       })
@@ -223,14 +223,14 @@ class ServiceReducer {
   * @param service: the parent service
   * @param url: the url to add
   * @param title: the title of the visit
-  * @param favicon: the favicon for the page
+  * @param favicons: the favicon for the page
   */
-  static addToReadingQueue (service, url, title, favicon) {
+  static addToReadingQueue (service, url, title, favicons) {
     return service.changeData({
       readingQueue: service.readingQueue.concat({
         url: url,
         title: title,
-        favicon: favicon,
+        favicons: favicons,
         time: new Date().getTime(),
         id: uuid.v4()
       })

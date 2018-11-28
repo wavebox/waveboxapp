@@ -8,6 +8,7 @@ import { List } from '@material-ui/core'
 const styles = (theme) => ({
   root: {
     overflowY: 'auto',
+    paddingTop: 0,
 
     '&::-webkit-scrollbar': {
       WebkitAppearance: 'none',

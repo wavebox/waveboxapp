@@ -41,6 +41,19 @@ class AccountActions extends RendererAccountActions {
   }
 
   /* **************************************************************************/
+  // Navigation
+  /* **************************************************************************/
+
+  /**
+  * Switches to a service and make it navigate to a different url
+  * @param serviceId: the id of the service
+  * @param url: the url to naviage to
+  */
+  navigateAndSwitchToService (serviceId, url) {
+    return { serviceId, url }
+  }
+
+  /* **************************************************************************/
   // Warnings
   /* **************************************************************************/
 

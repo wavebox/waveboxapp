@@ -2,35 +2,20 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
-import red from '@material-ui/core/colors/red'
 import { accountStore } from 'stores/account'
-import ThemeTools from 'wbui/Themes/ThemeTools'
-import FARGemIcon from 'wbfa/FARGem'
-import FASExclamationIcon from 'wbfa/FASExclamation'
 import classNames from 'classnames'
+import ServiceTooltipHeading from './ServiceTooltipHeading'
+import TooltipSectionList from 'wbui/TooltipSectionList'
+import ServiceTooltipRecentItem from './ServiceTooltipRecentItem'
+import ServiceTooltipBookmarkItem from './ServiceTooltipBookmarkItem'
+import TooltipSectionListSubheading from 'wbui/TooltipSectionListSubheading'
+import ServiceTooltipInfoItem from './ServiceTooltipInfoItem'
+import StarsIcon from '@material-ui/icons/Stars'
 
 const styles = (theme) => ({
-  root: {
-    textAlign: 'center'
-  },
-  hr: {
-    height: 1,
-    border: 0,
-    //backgroundImage: `linear-gradient(to right, ${ThemeTools.getValue(theme, 'wavebox.popover.hr.backgroundGradientColors')})`
-  },
-  proIcon: {
-    color: ThemeTools.getValue(theme, 'wavebox.popover.color'),
-    fontSize: 14,
-    marginRight: 2
-  },
-  authInvalidText: {
-    color: red['A200']
-  },
-  authInvalidIcon: {
-    color: red['A200'],
-    width: 14,
-    height: 14,
-    marginRight: 6
+  bookmarkHelperIcon: {
+    fontSize: '18px',
+    verticalAlign: 'text-bottom'
   }
 })
 
@@ -41,7 +26,13 @@ class ServiceTooltipContent extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    serviceId: PropTypes.string.isRequired
+    serviceId: PropTypes.string.isRequired,
+    onOpenSettings: PropTypes.func.isRequired,
+    onReauthenticate: PropTypes.func.isRequired,
+    onOpenRecentItem: PropTypes.func.isRequired,
+    onBookmarkRecentItem: PropTypes.func.isRequired,
+    onOpenBookmarkItem: PropTypes.func.isRequired,
+    onDeleteBookmark: PropTypes.func.isRequired
   }
 
   /* **************************************************************************/
@@ -88,19 +79,9 @@ class ServiceTooltipContent extends React.Component {
 
     return mailbox && service && serviceData ? {
       hasMembers: true,
-      displayName: accountState.resolvedServiceDisplayName(
-        serviceId,
-        accountState.resolvedMailboxDisplayName(mailbox.id)
-      ),
-      isRestricted: accountState.isServiceRestricted(serviceId),
-      supportsUnreadCount: service.supportsUnreadCount,
-      supportsUnreadActivity: service.supportsUnreadActivity,
-      humanizedUnreadItemType: service.humanizedUnreadItemType,
-      humanizedServiceType: service.humanizedTypeShort,
-      isAuthenticationInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId),
-      unreadCount: serviceData.getUnreadCount(service),
-      hasUnreadActivity: serviceData.getHasUnreadActivity(service),
-      recent: serviceData.recent
+      recent: serviceData.recent,
+      bookmarks: service.bookmarks,
+      readingQueue: service.readingQueue
     } : {
       hasMembers: false
     }
@@ -131,78 +112,93 @@ class ServiceTooltipContent extends React.Component {
       className,
       children,
       onContextMenu,
+      onOpenSettings,
+      onReauthenticate,
+      onOpenRecentItem,
+      onBookmarkRecentItem,
+      onOpenBookmarkItem,
+      onDeleteBookmark,
       ...passProps
     } = this.props
     const {
-      displayName,
-      isRestricted,
-      supportsUnreadCount,
-      supportsUnreadActivity,
-      isAuthenticationInvalid,
-      humanizedUnreadItemType,
-      unreadCount,
-      hasUnreadActivity,
-      humanizedServiceType,
       hasMembers,
-      recent
+      recent,
+      bookmarks,
+      readingQueue
     } = this.state
     if (!hasMembers) { return false }
-
-    let unreadContent
-    if (isRestricted) {
-      unreadContent = (
-        <span>
-          <FARGemIcon className={classes.proIcon} />
-          <span>Upgrade to Pro</span>
-        </span>
-      )
-    } else if (isAuthenticationInvalid) {
-      unreadContent = (
-        <span className={classes.authInvalidText}>
-          <FASExclamationIcon className={classes.authInvalidIcon} />
-          <span>Authentication Problem. Right click to reauthenticate</span>
-        </span>
-      )
-    } else if (supportsUnreadCount || supportsUnreadActivity) {
-      const unreadType = humanizedUnreadItemType
-      if (supportsUnreadCount && unreadCount > 0) {
-        const count = unreadCount
-        unreadContent = `${count} unread ${unreadType}${count === 1 ? '' : 's'}`
-      } else if (supportsUnreadActivity && hasUnreadActivity) {
-        unreadContent = `New unseen ${unreadType}s`
-      } else {
-        unreadContent = `No unread ${unreadType}s`
-      }
-    }
 
     return (
       <div
         className={classNames(className, classes.root)}
         onContextMenu={this.handleSuppressContextMenu}
         {...passProps}>
-        <div>
-          {humanizedServiceType === displayName ? (
-            humanizedServiceType
+        <ServiceTooltipHeading
+          serviceId={serviceId}
+          onOpenSettings={onOpenSettings}
+          onReauthenticate={onReauthenticate} />
+        <TooltipSectionList style={{ maxHeight: window.outerHeight - 150 }}>
+          {/* Bookmarks (used) */}
+          {bookmarks.length ? (
+            <TooltipSectionListSubheading>Bookmarks</TooltipSectionListSubheading>
+          ) : undefined}
+          {bookmarks.length ? (
+            bookmarks.map((bookmarkItem) => {
+              return (
+                <ServiceTooltipBookmarkItem
+                  key={bookmarkItem.id}
+                  serviceId={serviceId}
+                  bookmark={bookmarkItem}
+                  onOpenBookmark={onOpenBookmarkItem}
+                  onDeleteBookmark={onDeleteBookmark} />
+              )
+            })
+          ) : undefined}
+
+          {/* Recents */}
+          <TooltipSectionListSubheading>Recent</TooltipSectionListSubheading>
+          {recent.length ? (
+            recent.map((recentItem) => {
+              return (
+                <ServiceTooltipRecentItem
+                  key={recentItem.id}
+                  serviceId={serviceId}
+                  recentItem={recentItem}
+                  onOpenRecentItem={onOpenRecentItem}
+                  onBookmarkRecentItem={onBookmarkRecentItem} />
+              )
+            })
           ) : (
-            `${humanizedServiceType} : ${displayName}`
+            <ServiceTooltipInfoItem>
+              No recent items
+            </ServiceTooltipInfoItem>
           )}
-        </div>
-        {unreadContent ? (
-          <div>
-            <hr className={classes.hr} />
-            <div>{unreadContent}</div>
-          </div>
-        ) : undefined}
-        <ul>
-          {recent.map((r) => {
-            //me
-            return (
-              <li key={r.id}>
-                {r.favicons.length} {r.title} {r.url}
-              </li>
-            )
-          })}
-        </ul>
+
+          {/* Bookmarks (unused) */}
+          {!bookmarks.length ? (
+            <TooltipSectionListSubheading>Bookmarks</TooltipSectionListSubheading>
+          ) : undefined}
+          {!bookmarks.length ? (
+            <ServiceTooltipInfoItem>
+              <span>
+                <StarsIcon className={classes.bookmarkHelperIcon} /> Bookmark recent items to save them for later
+              </span>
+            </ServiceTooltipInfoItem>
+          ) : undefined}
+
+          {/* Reading queue */}
+          <TooltipSectionListSubheading>Queue</TooltipSectionListSubheading>
+          {readingQueue.length ? (
+            <div />
+          ) : (
+            <ServiceTooltipInfoItem>
+              <div>
+                <div>Use the right-click menu to save links into your reading queue</div>
+                <div>Once you've read the item it will be removed</div>
+              </div>
+            </ServiceTooltipInfoItem>
+          )}
+        </TooltipSectionList>
       </div>
     )
   }

@@ -127,8 +127,10 @@ class CoreServiceWebView extends React.Component {
     accountDispatch.on('refocus', this.handleRefocus)
     accountDispatch.on('reload', this.handleReload)
     accountDispatch.addGetter('current-url', this.handleGetCurrentUrl)
+    accountDispatch.addGetter('is-webview-mounted', this.handleGetIsWebviewMounted)
     accountDispatch.on('navigateBack', this.handleNavigateBack)
     accountDispatch.on('navigateForward', this.handleNavigateForward)
+    accountDispatch.on('loadUrl', this.handleNavigateLoadUrl)
 
     if (!this.state.isActive) {
       if (this.refs[BROWSER_REF]) {
@@ -148,8 +150,10 @@ class CoreServiceWebView extends React.Component {
     accountDispatch.removeListener('refocus', this.handleRefocus)
     accountDispatch.removeListener('reload', this.handleReload)
     accountDispatch.removeGetter('current-url', this.handleGetCurrentUrl)
+    accountDispatch.removeGetter('is-webview-mounted', this.handleGetIsWebviewMounted)
     accountDispatch.removeListener('navigateBack', this.handleNavigateBack)
     accountDispatch.removeListener('navigateForward', this.handleNavigateForward)
+    accountDispatch.removeListener('loadUrl', this.handleNavigateLoadUrl)
 
     // Update the store
     accountActions.deleteWebcontentTabId.defer(this.props.serviceId)
@@ -345,12 +349,18 @@ class CoreServiceWebView extends React.Component {
   * @return the current url or null if not applicable for use
   */
   handleGetCurrentUrl = (evt) => {
-    const isThisTab = evt.serviceId === this.props.serviceId
-    if (isThisTab) {
-      return this.refs[BROWSER_REF].getURL()
-    } else {
-      return null
-    }
+    return evt.serviceId === this.props.serviceId
+      ? this.refs[BROWSER_REF].getURL()
+      : null
+  }
+
+  /**
+  * Handles getting if the webview is mounted
+  * @param evt: the event that fired
+  * @return true if we're mounted, or null if not applicable for us
+  */
+  handleGetIsWebviewMounted = (evt) => {
+    return evt.serviceId === this.props.serviceId ? true : null
   }
 
   /**
@@ -368,6 +378,16 @@ class CoreServiceWebView extends React.Component {
   handleNavigateForward = () => {
     if (this.state.isActive) {
       this.refs[BROWSER_REF].goForward()
+    }
+  }
+
+  /**
+  * Handles a load url event being fored
+  * @Param evt: the event that fired
+  */
+  handleNavigateLoadUrl = (evt) => {
+    if (evt.serviceId === this.props.serviceId) {
+      this.refs[BROWSER_REF].loadURL(evt.url)
     }
   }
 

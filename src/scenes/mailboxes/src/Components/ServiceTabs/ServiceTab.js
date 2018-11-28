@@ -407,6 +407,7 @@ class ServiceTab extends React.Component {
 
     return (
       <ServiceTooltip
+        mailboxId={mailboxId}
         serviceId={serviceId}
         disabled={!tooltipsEnabled}
         {...ServiceTabTools.uiLocationTooltipPositioning(uiLocation)}>
