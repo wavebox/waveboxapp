@@ -209,6 +209,14 @@ class ContextMenuService {
           click: () => { shell.openExternal(params.linkURL, { activate: false }) }
         })
       }
+      if (accountInfo.has) {
+        template.push({
+          label: 'Add link to reading queue',
+          click: () => {
+            accountActions.addToReadingQueue(accountInfo.service.id, params.linkURL)
+          }
+        })
+      }
       template.push({
         label: 'Copy Link Address',
         click: () => {
@@ -432,6 +440,7 @@ class ContextMenuService {
   * @return the template section or undefined
   */
   renderPageNavigationSection (contents, params, accountInfo) {
+    if (params.linkURL) { return [] }
     return [
       (accountInfo.has ? {
         label: 'Home',
@@ -485,6 +494,12 @@ class ContextMenuService {
               label: 'Open Page as New Service',
               click: () => {
                 accountActions.fastCreateWeblinkService(accountInfo.mailbox.id, params.pageURL)
+              }
+            } : undefined),
+            (accountInfo.has ? {
+              label: 'Add page to reading queue',
+              click: () => {
+                accountActions.addToReadingQueue(accountInfo.service.id, params.pageURL)
               }
             } : undefined)
           ].filter((i) => !!i)

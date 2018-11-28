@@ -215,42 +215,6 @@ class ServiceReducer {
   }
 
   /* **************************************************************************/
-  // Reading queue
-  /* **************************************************************************/
-
-  /**
-  * Adds a bookmark entry into the service
-  * @param service: the parent service
-  * @param url: the url to add
-  * @param title: the title of the visit
-  * @param favicons: the favicon for the page
-  */
-  static addToReadingQueue (service, url, title, favicons) {
-    return service.changeData({
-      readingQueue: service.readingQueue.concat({
-        url: url,
-        title: title,
-        favicons: favicons,
-        time: new Date().getTime(),
-        id: uuid.v4()
-      })
-    })
-  }
-
-  /**
-  * Removes a bookmark entry from the service
-  * @param service: the parent service
-  * @param url: the url to add
-  * @param title: the title of the visit
-  * @param favicon: the favicon for the page
-  */
-  static removeFromReadingQueue (service, id) {
-    return service.changeData({
-      readingQueue: service.readingQueue.filter((b) => b.id !== id)
-    })
-  }
-
-  /* **************************************************************************/
   // Custom Code
   /* **************************************************************************/
 

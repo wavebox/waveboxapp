@@ -637,6 +637,38 @@ class CoreAccountActions extends RemoteActions {
       return this.remoteDispatch('clearAllBrowserSessions', args)
     }
   }
+
+  /* **************************************************************************/
+  // Reading queue
+  /* **************************************************************************/
+
+  /**
+  * Adds to the reading queue
+  * @param serviceId: the id of the service
+  * @param url: the url to add
+  */
+  addToReadingQueue (...args) {
+    if (process.type === 'browser') {
+      const [serviceId, url] = args
+      return { serviceId, url }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('addToReadingQueue', args)
+    }
+  }
+
+  /**
+  * Removes from the the reading queue
+  * @param serviceId: the id of the service
+  * @param url: the url to add
+  */
+  removeFromReadingQueue (...args) {
+    if (process.type === 'browser') {
+      const [serviceId, id] = args
+      return { serviceId, id }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('removeFromReadingQueue', args)
+    }
+  }
 }
 
 export default CoreAccountActions

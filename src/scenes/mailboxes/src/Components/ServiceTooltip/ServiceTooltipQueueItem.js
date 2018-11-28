@@ -36,21 +36,21 @@ const styles = (theme) => ({
 })
 
 @withStyles(styles, { withTheme: true })
-class ServiceTooltipBookmarkItem extends React.Component {
+class ServiceTooltipQueueItem extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
     serviceId: PropTypes.string.isRequired,
-    bookmark: PropTypes.shape({
+    queueItem: PropTypes.shape({
       id: PropTypes.string.isRequired,
       url: PropTypes.string.isRequired,
       title: PropTypes.string,
-      favicons: PropTypes.array
+      favicon: PropTypes.string
     }).isRequired,
-    onOpenBookmark: PropTypes.func.isRequired,
-    onDeleteBookmark: PropTypes.func.isRequired
+    onOpenReadingQueueItem: PropTypes.func.isRequired,
+    onDeleteReadingQueueItem: PropTypes.func.isRequired
   }
 
   /* **************************************************************************/
@@ -62,8 +62,8 @@ class ServiceTooltipBookmarkItem extends React.Component {
   * @param evt: the event that fired
   */
   handleClick = (evt) => {
-    const { serviceId, onOpenBookmark, bookmark, onClick } = this.props
-    onOpenBookmark(evt, serviceId, bookmark)
+    const { serviceId, onOpenReadingQueueItem, queueItem, onClick } = this.props
+    onOpenReadingQueueItem(evt, serviceId, queueItem)
     if (onClick) { onClick(evt) }
   }
 
@@ -71,11 +71,11 @@ class ServiceTooltipBookmarkItem extends React.Component {
   * Handles the click event on bookmark
   * @param evt: the event that fired
   */
-  handleDeleteClick = (evt) => {
+  handleDeleteItem = (evt) => {
     evt.preventDefault()
     evt.stopPropagation()
-    const { serviceId, onDeleteBookmark, bookmark } = this.props
-    onDeleteBookmark(evt, serviceId, bookmark)
+    const { serviceId, onDeleteReadingQueueItem, queueItem } = this.props
+    onDeleteReadingQueueItem(evt, serviceId, queueItem)
   }
 
   /* **************************************************************************/
@@ -89,10 +89,10 @@ class ServiceTooltipBookmarkItem extends React.Component {
   render () {
     const {
       serviceId,
-      onOpenBookmark,
-      onDeleteBookmark,
+      onOpenReadingQueueItem,
+      onDeleteReadingQueueItem,
       onClick,
-      bookmark,
+      queueItem,
       classes,
       theme,
       className,
@@ -108,22 +108,22 @@ class ServiceTooltipBookmarkItem extends React.Component {
         <div
           className={classes.favicon}
           style={(
-            (bookmark.favicons || []).length
-              ? { backgroundImage: `url("${bookmark.favicons[0]}")` }
+            queueItem.favicon
+              ? { backgroundImage: `url("${queueItem.favicon}")` }
               : undefined
           )} />
         <TooltipSectionListItemText
           inset
           primaryTypographyProps={{ className: classes.text }}
           secondaryTypographyProps={{ className: classes.text }}
-          primary={bookmark.title || <span>&nbsp;</span>}
-          secondary={bookmark.url} />
+          primary={queueItem.title || <span>&nbsp;</span>}
+          secondary={queueItem.url} />
         <TooltipSectionListItemSecondaryAction>
-          <CancelIcon className={classes.deleteIcon} onClick={this.handleDeleteClick} />
+          <CancelIcon className={classes.deleteIcon} onClick={this.handleDeleteItem} />
         </TooltipSectionListItemSecondaryAction>
       </TooltipSectionListItem>
     )
   }
 }
 
-export default ServiceTooltipBookmarkItem
+export default ServiceTooltipQueueItem

@@ -27,6 +27,7 @@ import AuthFactory from 'shared/Models/ACAccounts/AuthFactory'
 import SERVICE_TYPES from 'shared/Models/ACAccounts/ServiceTypes'
 import GenericService from 'shared/Models/ACAccounts/Generic/GenericService'
 import CoreACService from 'shared/Models/ACAccounts/CoreACService'
+import HtmlMetaService from 'HTTP/HtmlMetaService'
 
 class AccountStore extends CoreAccountStore {
   /* **************************************************************************/
@@ -92,7 +93,11 @@ class AccountStore extends CoreAccountStore {
 
       // Mailbox auth teardown
       handleClearMailboxBrowserSession: actions.CLEAR_MAILBOX_BROWSER_SESSION,
-      handleClearAllBrowserSessions: actions.CLEAR_ALL_BROWSER_SESSIONS
+      handleClearAllBrowserSessions: actions.CLEAR_ALL_BROWSER_SESSIONS,
+
+      // Reading queue
+      handleAddToReadingQueue: actions.ADD_TO_READING_QUEUE,
+      handleRemoveFromReadingQueue: actions.REMOVE_FROM_READING_QUEUE
     })
   }
 
@@ -1094,6 +1099,57 @@ class AccountStore extends CoreAccountStore {
     this.mailboxIds().forEach((mailboxId) => {
       actions.clearMailboxBrowserSession.defer(mailboxId)
     })
+  }
+
+  /* **************************************************************************/
+  // Handlers: Reading queue
+  /* **************************************************************************/
+
+  handleAddToReadingQueue ({ serviceId, url }) {
+    const service = this.getService(serviceId)
+    if (!service) { this.preventDefault(); return }
+    const id = uuid.v4()
+
+    this.saveService(serviceId, service.changeData({
+      readingQueue: service.readingQueue.concat({
+        url: url,
+        time: new Date().getTime(),
+        id: id
+      })
+    }))
+
+    // Fetch the meta data
+    Promise.resolve()
+      .then(() => HtmlMetaService.fetchMeta(url))
+      .then((meta) => {
+        const service = this.getService(serviceId)
+        if (!service) { return }
+
+        this.saveService(serviceId, service.changeData({
+          readingQueue: service.readingQueue.map((item) => {
+            if (item.id === id) {
+              return {
+                ...item,
+                title: meta.title,
+                favicon: meta.favicon
+              }
+            } else {
+              return item
+            }
+          })
+        }))
+        this.emitChange()
+      })
+      .catch((ex) => { /* no-op */ })
+  }
+
+  handleRemoveFromReadingQueue ({ serviceId, id }) {
+    const service = this.getService(serviceId)
+    if (!service) { this.preventDefault(); return }
+
+    this.saveService(serviceId, service.changeData({
+      readingQueue: service.readingQueue.filter((b) => b.id !== id)
+    }))
   }
 }
 

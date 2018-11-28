@@ -116,12 +116,8 @@ class ServiceTooltipRecentItem extends React.Component {
           inset
           primaryTypographyProps={{ className: classes.text }}
           secondaryTypographyProps={{ className: classes.text }}
-          {...(recentItem.title ? {
-            primary: recentItem.title,
-            secondary: recentItem.url
-          } : {
-            primary: recentItem.url
-          })} />
+          primary={recentItem.title || <span>&nbsp;</span>}
+          secondary={recentItem.url} />
         <TooltipSectionListItemSecondaryAction>
           <StarsIcon className={classes.bookmarkIcon} onClick={this.handleBookmarkClick} />
         </TooltipSectionListItemSecondaryAction>

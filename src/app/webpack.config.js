@@ -55,6 +55,7 @@ module.exports = function (env) {
         DownloadManager: path.resolve(path.join(__dirname), 'src/DownloadManager'),
         ElectronTools: path.resolve(path.join(__dirname, 'src/ElectronTools')),
         Extensions: path.resolve(path.join(__dirname, 'src/Extensions')),
+        HTTP: path.resolve(path.join(__dirname, 'src/HTTP')),
         HTTPAuth: path.resolve(path.join(__dirname, 'src/HTTPAuth')),
         Notifications: path.resolve(path.join(__dirname, 'src/Notifications')),
         Permissions: path.resolve(path.join(__dirname, 'src/Permissions')),

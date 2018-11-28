@@ -8,14 +8,22 @@ import ServiceTooltipHeading from './ServiceTooltipHeading'
 import TooltipSectionList from 'wbui/TooltipSectionList'
 import ServiceTooltipRecentItem from './ServiceTooltipRecentItem'
 import ServiceTooltipBookmarkItem from './ServiceTooltipBookmarkItem'
+import ServiceTooltipQueueItem from './ServiceTooltipQueueItem'
 import TooltipSectionListSubheading from 'wbui/TooltipSectionListSubheading'
 import ServiceTooltipInfoItem from './ServiceTooltipInfoItem'
 import StarsIcon from '@material-ui/icons/Stars'
+import HistoryIcon from '@material-ui/icons/History'
+import BookIcon from '@material-ui/icons/Book'
 
 const styles = (theme) => ({
-  bookmarkHelperIcon: {
-    fontSize: '18px',
-    verticalAlign: 'text-bottom'
+  subheading: {
+    paddingLeft: 12,
+    paddingRight: 12
+  },
+  subheadingIcon: {
+    fontSize: '20px',
+    verticalAlign: 'text-bottom',
+    marginRight: 4
   }
 })
 
@@ -32,7 +40,9 @@ class ServiceTooltipContent extends React.Component {
     onOpenRecentItem: PropTypes.func.isRequired,
     onBookmarkRecentItem: PropTypes.func.isRequired,
     onOpenBookmarkItem: PropTypes.func.isRequired,
-    onDeleteBookmark: PropTypes.func.isRequired
+    onDeleteBookmark: PropTypes.func.isRequired,
+    onOpenReadingQueueItem: PropTypes.func.isRequired,
+    onDeleteReadingQueueItem: PropTypes.func.isRequired
   }
 
   /* **************************************************************************/
@@ -118,6 +128,8 @@ class ServiceTooltipContent extends React.Component {
       onBookmarkRecentItem,
       onOpenBookmarkItem,
       onDeleteBookmark,
+      onOpenReadingQueueItem,
+      onDeleteReadingQueueItem,
       ...passProps
     } = this.props
     const {
@@ -140,7 +152,10 @@ class ServiceTooltipContent extends React.Component {
         <TooltipSectionList style={{ maxHeight: window.outerHeight - 150 }}>
           {/* Bookmarks (used) */}
           {bookmarks.length ? (
-            <TooltipSectionListSubheading>Starred</TooltipSectionListSubheading>
+            <TooltipSectionListSubheading className={classes.subheading}>
+              <StarsIcon className={classes.subheadingIcon} />
+              Starred
+            </TooltipSectionListSubheading>
           ) : undefined}
           {bookmarks.length ? (
             bookmarks.map((bookmarkItem) => {
@@ -156,7 +171,10 @@ class ServiceTooltipContent extends React.Component {
           ) : undefined}
 
           {/* Recents */}
-          <TooltipSectionListSubheading>Recent</TooltipSectionListSubheading>
+          <TooltipSectionListSubheading className={classes.subheading}>
+            <HistoryIcon className={classes.subheadingIcon} />
+            Recent
+          </TooltipSectionListSubheading>
           {recent.length ? (
             recent.map((recentItem) => {
               return (
@@ -176,20 +194,33 @@ class ServiceTooltipContent extends React.Component {
 
           {/* Bookmarks (unused) */}
           {!bookmarks.length ? (
-            <TooltipSectionListSubheading>Starred</TooltipSectionListSubheading>
+            <TooltipSectionListSubheading className={classes.subheading}>
+              <StarsIcon className={classes.subheadingIcon} />
+              Starred
+            </TooltipSectionListSubheading>
           ) : undefined}
           {!bookmarks.length ? (
             <ServiceTooltipInfoItem>
-              <span>
-                <StarsIcon className={classes.bookmarkHelperIcon} /> Star recent items to save them for later
-              </span>
+              Star recent items to save them for later
             </ServiceTooltipInfoItem>
           ) : undefined}
 
           {/* Reading queue */}
-          <TooltipSectionListSubheading>Queue</TooltipSectionListSubheading>
+          <TooltipSectionListSubheading className={classes.subheading}>
+            <BookIcon className={classes.subheadingIcon} />
+            Queue
+          </TooltipSectionListSubheading>
           {readingQueue.length ? (
-            <div />
+            readingQueue.map((queueItem) => {
+              return (
+                <ServiceTooltipQueueItem
+                  key={queueItem.id}
+                  serviceId={serviceId}
+                  queueItem={queueItem}
+                  onOpenReadingQueueItem={onOpenReadingQueueItem}
+                  onDeleteReadingQueueItem={onDeleteReadingQueueItem} />
+              )
+            })
           ) : (
             <ServiceTooltipInfoItem>
               <div>

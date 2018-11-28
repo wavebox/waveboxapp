@@ -227,6 +227,12 @@ class CoreACService extends CoreACModel {
 
   get bookmarks () { return this._value_('bookmarks', []) }
   get readingQueue () { return this._value_('readingQueue', []) }
+  get readingQueueNeedsMetaUpdate () {
+    return this.readingQueue.find((item) => {
+      if (item.meta) { return false }
+      return !item.title || !item.favicon
+    })
+  }
 
   /* **************************************************************************/
   // Properties : Custom injectables

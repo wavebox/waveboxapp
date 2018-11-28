@@ -211,6 +211,29 @@ class ServiceTooltip extends React.Component {
     )
   }
 
+  /**
+  * Handles opening a reading queue item from the tooltip
+  * @param evt: the event that fired
+  * @param serviceId: the id of the service
+  * @param readingItem: the reading item to open
+  */
+  handleOpenReadingQueueItem = (evt, serviceId, readingItem) => {
+    this.setState({ open: false }, () => {
+      accountActions.navigateAndSwitchToService(serviceId, readingItem.url)
+      accountActions.removeFromReadingQueue(serviceId, readingItem.id)
+    })
+  }
+
+  /**
+  * Handles deleting a reading queue item from the tooltip
+  * @param evt: the event that fired
+  * @param serviceId: the id of the service
+  * @param readingItem: the reading item to delte
+  */
+  handleDeleteReadingQueueItem = (evt, serviceId, readingItem) => {
+    accountActions.removeFromReadingQueue(serviceId, readingItem.id)
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -250,7 +273,9 @@ class ServiceTooltip extends React.Component {
             onOpenRecentItem={this.handleOpenRecentItem}
             onBookmarkRecentItem={this.handleBookmarkRecentItem}
             onOpenBookmarkItem={this.handleOpenBookmarkItem}
-            onDeleteBookmark={this.handleDeleteBookmark} />
+            onDeleteBookmark={this.handleDeleteBookmark}
+            onOpenReadingQueueItem={this.handleOpenReadingQueueItem}
+            onDeleteReadingQueueItem={this.handleDeleteReadingQueueItem} />
         )}
         {...passProps}>
         <div
