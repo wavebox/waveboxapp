@@ -133,9 +133,10 @@ class CRExtensionBackgroundPage {
     if (this.extension.manifest.background.hasHtmlPage) {
       this[privName] = this.extension.manifest.background.htmlPage
       try {
+        console.log(">>",this.extension.manifest.background.getHtmlPageScoped(this.extension.srcPath))
         this[privHtml] = fs.readFileSync(this.extension.manifest.background.getHtmlPageScoped(this.extension.srcPath))
       } catch (ex) {
-        this.html = ''
+        this[privHtml] = ''
       }
     } else {
       this[privName] = '_generated_background_page.html'
