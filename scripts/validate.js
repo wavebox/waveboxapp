@@ -27,14 +27,14 @@ try {
 if (gitStatus) {
   const gitStatusLines = gitStatus.split('\n')
   const modifiedPackage = gitStatusLines.find((l) => {
-    return l.trim().startsWith('modified:') && l.trim().endsWith('package.json')
+    return l.trim().startsWith('modified:') && l.trim().endsWith(' package.json')
   })
   if (modifiedPackage) {
     failures.push(`Unstaged modifications in package.json`)
   }
 
   const modifiedPackageLock = gitStatusLines.find((l) => {
-    return l.trim().startsWith('modified:') && l.trim().endsWith('package-lock.json')
+    return l.trim().startsWith('modified:') && l.trim().endsWith(' package-lock.json')
   })
   if (modifiedPackageLock) {
     failures.push(`Unstaged modifications in package-lock.json`)
