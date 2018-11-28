@@ -86,11 +86,11 @@
     "terser-webpack-plugin": "1.1.0",
     "url-loader": "1.1.2",
     "uuid": "3.3.2",
-    "webpack": "4.26.0",
+    "webpack": "4.26.1",
     "webpack-cli": "3.1.2",
     "webpack-notifier": "1.7.0",
     "webpack-target-electron-renderer": "0.4.0",
-    "yargs": "12.0.4"
+    "yargs": "12.0.5"
   },
   "devDependencies": {
     "babel-eslint": "10.0.1",

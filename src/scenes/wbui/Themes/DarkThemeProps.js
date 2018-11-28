@@ -122,7 +122,7 @@ export default {
       section: {
         subheading: {
           color: 'rgb(91, 169, 203)',
-          backgroundColor: 'rgba(255, 255, 255, 0.20)'
+          backgroundColor: 'rgb(96, 96, 96)'
         },
         listItem: {
           color: '#FFF',
