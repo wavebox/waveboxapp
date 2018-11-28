@@ -107,6 +107,14 @@ class ServiceTooltipHeading extends React.Component {
     evt.stopPropagation()
   }
 
+  handleReauthenticate = (evt) => {
+    this.props.onReauthenticate(evt, this.props.serviceId)
+  }
+
+  handleOpenSettings = (evt) => {
+    this.props.onOpenSettings(evt, this.props.serviceId)
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -148,7 +156,7 @@ class ServiceTooltipHeading extends React.Component {
       )
     } else if (isAuthenticationInvalid) {
       secondary = (
-        <span className={classes.authInvalidText} onClick={onReauthenticate}>
+        <span className={classes.authInvalidText} onClick={this.handleReauthenticate}>
           <FASExclamationIcon className={classes.authInvalidIcon} />
           <span>Authentication Problem. Click to reauthenticate</span>
         </span>
@@ -160,7 +168,7 @@ class ServiceTooltipHeading extends React.Component {
         primary={primary}
         secondary={secondary}
         actionIcon={<SettingsSharpIcon />}
-        onActionClick={onOpenSettings}
+        onActionClick={this.handleOpenSettings}
         {...passProps} />
     )
   }

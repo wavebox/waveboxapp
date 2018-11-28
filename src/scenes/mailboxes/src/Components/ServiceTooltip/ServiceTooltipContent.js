@@ -140,7 +140,7 @@ class ServiceTooltipContent extends React.Component {
         <TooltipSectionList style={{ maxHeight: window.outerHeight - 150 }}>
           {/* Bookmarks (used) */}
           {bookmarks.length ? (
-            <TooltipSectionListSubheading>Bookmarks</TooltipSectionListSubheading>
+            <TooltipSectionListSubheading>Starred</TooltipSectionListSubheading>
           ) : undefined}
           {bookmarks.length ? (
             bookmarks.map((bookmarkItem) => {
@@ -176,12 +176,12 @@ class ServiceTooltipContent extends React.Component {
 
           {/* Bookmarks (unused) */}
           {!bookmarks.length ? (
-            <TooltipSectionListSubheading>Bookmarks</TooltipSectionListSubheading>
+            <TooltipSectionListSubheading>Starred</TooltipSectionListSubheading>
           ) : undefined}
           {!bookmarks.length ? (
             <ServiceTooltipInfoItem>
               <span>
-                <StarsIcon className={classes.bookmarkHelperIcon} /> Bookmark recent items to save them for later
+                <StarsIcon className={classes.bookmarkHelperIcon} /> Star recent items to save them for later
               </span>
             </ServiceTooltipInfoItem>
           ) : undefined}

@@ -90,6 +90,14 @@ class MailboxTooltip extends React.Component {
     evt.stopPropagation()
   }
 
+  handleOpenSettings = (evt) => {
+    this.props.onOpenSettings(evt, this.props.mailboxId)
+  }
+
+  handleAddService = (evt) => {
+    this.props.onAddService(evt, this.props.mailboxId)
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -124,7 +132,7 @@ class MailboxTooltip extends React.Component {
           primary={displayName}
           className={classes.heading}
           actionIcon={<SettingsSharpIcon />}
-          onActionClick={onOpenSettings} />
+          onActionClick={this.handleOpenSettings} />
         {serviceIds.length > 1 ? (
           <TooltipSectionList style={{ maxHeight: window.outerHeight - 150 }} className={classes.services}>
             {serviceIds.map((serviceId) => (
@@ -134,7 +142,7 @@ class MailboxTooltip extends React.Component {
                 serviceId={serviceId}
                 onOpenService={onOpenService} />
             ))}
-            <MailboxTooltipServiceAddItem onClick={onAddService} />
+            <MailboxTooltipServiceAddItem onClick={this.handleAddService} />
           </TooltipSectionList>
         ) : undefined}
       </div>

@@ -614,6 +614,14 @@ class CoreAccountStore extends RemoteStore {
       return this.getMailbox(this.activeMailboxId())
     }
 
+    /**
+    * @return true if the active service is the first item in the mailbox
+    */
+    this.activeServiceIsFirstInMailbox = () => {
+      const mailbox = this.activeMailbox()
+      return mailbox ? this.isServiceActive(mailbox.allServices[0]) : false
+    }
+
     /* ****************************************/
     // Sleeping
     /* ****************************************/

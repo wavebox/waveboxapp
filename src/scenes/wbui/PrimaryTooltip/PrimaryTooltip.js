@@ -180,6 +180,7 @@ class PrimaryTooltip extends React.Component {
       themeName,
       disablePadding,
       guardErrors,
+      open,
       ...passProps
     } = this.props
     const { arrowRef } = this.state
@@ -212,6 +213,7 @@ class PrimaryTooltip extends React.Component {
         disableFocusListener
         disableHoverListener={disabled ? true : disableHoverListener}
         disableTouchListener={disabled ? true : disableTouchListener}
+        open={disabled && typeof (open) === 'boolean' ? false : open}
         {...passProps}>
         {children}
       </Tooltip>

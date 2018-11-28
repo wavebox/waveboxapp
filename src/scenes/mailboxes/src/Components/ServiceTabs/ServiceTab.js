@@ -161,7 +161,7 @@ class ServiceTab extends React.Component {
   }
 
   /* **************************************************************************/
-  // Lifecycle
+  // Component Lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
