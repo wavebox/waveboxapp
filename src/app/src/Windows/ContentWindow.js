@@ -174,7 +174,7 @@ class ContentWindow extends WaveboxWindow {
         contents.once('destroyed', () => {
           const wcId = this[privGuestWebContentsId]
           this[privGuestWebContentsId] = null
-          this.emit('tab-desroyed', { sender: this }, wcId)
+          this.emit('tab-destroyed', { sender: this }, wcId)
           evtMain.emit(evtMain.WB_TAB_DESTROYED, { sender: this }, wcId)
         })
 
