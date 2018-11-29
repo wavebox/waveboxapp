@@ -28,7 +28,6 @@ import classNames from 'classnames'
 import ServiceInvalidAuthCover from './ServiceInvalidAuthCover'
 import ServiceCrashedCover from './ServiceCrashedCover'
 import ServiceSleepHelper from './ServiceSleepHelper'
-import uuid from 'uuid'
 
 const styles = {
   root: {
@@ -100,8 +99,6 @@ class CoreServiceWebView extends React.Component {
 
   constructor (props) {
     super(props)
-
-    this.recentTracker = null
 
     const self = this
     this.constructor.WEBVIEW_METHODS.forEach((m) => {
@@ -471,9 +468,6 @@ class CoreServiceWebView extends React.Component {
   handleBrowserPageTitleUpdated = (evt) => {
     const { serviceId } = this.props
     accountActions.reduceServiceData(serviceId, ServiceDataReducer.setDocumentTitle, evt.title)
-    if (this.recentTracker) {
-      accountActions.reduceServiceData(serviceId, ServiceDataReducer.updateRecentTitle, this.recentTracker, evt.title)
-    }
   }
 
   /**
@@ -485,15 +479,6 @@ class CoreServiceWebView extends React.Component {
     if (evt.url && evt.url !== 'about:blank') {
       accountActions.reduceServiceData(serviceId, ServiceDataReducer.setUrl, evt.url)
     }
-
-    this.recentTracker = uuid.v4()
-    accountActions.reduceServiceData(
-      serviceId,
-      ServiceDataReducer.addRecent,
-      this.recentTracker,
-      evt.url,
-      this.refs[BROWSER_REF].getTitle()
-    )
   }
 
   /**
@@ -529,9 +514,6 @@ class CoreServiceWebView extends React.Component {
   handleBrowserFaviconsUpdated = (evt) => {
     const { serviceId } = this.props
     accountActions.reduceServiceData(serviceId, ServiceDataReducer.setFavicons, evt.favicons)
-    if (this.recentTracker) {
-      accountActions.reduceServiceData(serviceId, ServiceDataReducer.updateRecentFavicons, this.recentTracker, evt.favicons)
-    }
   }
 
   /**

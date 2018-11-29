@@ -95,6 +95,12 @@ class AccountStore extends CoreAccountStore {
       handleClearMailboxBrowserSession: actions.CLEAR_MAILBOX_BROWSER_SESSION,
       handleClearAllBrowserSessions: actions.CLEAR_ALL_BROWSER_SESSIONS,
 
+      // Recent
+      handleAddRecent: actions.ADD_RECENT,
+      handleUpdateRecentTitle: actions.UPDATE_RECENT_TITLE,
+      handleUpdateRecentFavicons: actions.UPDATE_RECENT_FAVICONS,
+      handleFocusRecent: actions.FOCUS_RECENT,
+
       // Reading queue
       handleAddToReadingQueue: actions.ADD_TO_READING_QUEUE,
       handleRemoveFromReadingQueue: actions.REMOVE_FROM_READING_QUEUE
@@ -1099,6 +1105,107 @@ class AccountStore extends CoreAccountStore {
     this.mailboxIds().forEach((mailboxId) => {
       actions.clearMailboxBrowserSession.defer(mailboxId)
     })
+  }
+
+  /* **************************************************************************/
+  // Handlers: Recent
+  /* **************************************************************************/
+
+  /**
+  * Updates a recent item
+  * @param serviceId: the id of the service
+  * @param recentId: the id of the entry
+  * @param updates: the changes to make
+  * @param makeTop=false: true to re-order the entry to the top
+  * @return true if a change was made, false otherwise
+  */
+  _updateRecentItem (serviceId, recentId, updates, makeTop = false) {
+    const serviceData = this.getServiceData(serviceId)
+    if (!serviceData) { return false }
+
+    const updateIndex = serviceData.recent.findIndex((r) => r.id === recentId)
+    if (updateIndex === -1) { return false }
+
+    this.saveServiceData(serviceId, serviceData.changeData({
+      recent: makeTop
+        ? [].concat(
+          { ...serviceData.recent[updateIndex], ...updates },
+          serviceData.recent.slice(0, updateIndex),
+          serviceData.recent.slice(updateIndex + 1)
+        )
+        : [].concat(
+          serviceData.recent.slice(0, updateIndex),
+          { ...serviceData.recent[updateIndex], ...updates },
+          serviceData.recent.slice(updateIndex + 1)
+        )
+    }))
+
+    return true
+  }
+
+  handleAddRecent ({ serviceId, recentId, tabId, windowType, url, title, favicons }) {
+    const serviceData = this.getServiceData(serviceId)
+    if (!serviceData) { this.preventDefault(); return }
+
+    // See if we're going to intelligently replace someone
+    const now = new Date().getTime()
+    const replaceIndex = serviceData.recent.findIndex((r) => r.url === url)
+
+    if (replaceIndex === -1) {
+      this.saveServiceData(serviceId, serviceData.changeData({
+        recent: [{
+          id: recentId,
+          tabId: tabId,
+          windowType: windowType,
+          url: url,
+          title: title,
+          favicons: favicons || [],
+          created: now,
+          modified: now
+        }].concat(serviceData.recent).slice(0, 5)
+      }))
+    } else {
+      const replace = serviceData.recent[replaceIndex]
+      this.saveServiceData(serviceId, serviceData.changeData({
+        recent: [].concat(
+          {
+            ...replace,
+            id: recentId,
+            tabId: tabId,
+            windowType: windowType,
+            url: url || replace.url,
+            title: title || replace.title,
+            favicons: favicons && favicons.length ? favicons : replace.favicons,
+            modified: now
+          },
+          serviceData.recent.slice(0, replaceIndex),
+          serviceData.recent.slice(replaceIndex + 1)
+        )
+      }))
+    }
+  }
+
+  handleUpdateRecentTitle ({ serviceId, recentId, title }) {
+    const changed = this._updateRecentItem(serviceId, recentId, {
+      title: title,
+      modified: new Date().getTime()
+    })
+    if (!changed) { this.preventDefault() }
+  }
+
+  handleUpdateRecentFavicons ({ serviceId, recentId, favicons }) {
+    const changed = this._updateRecentItem(serviceId, recentId, {
+      favicons: favicons,
+      modified: new Date().getTime()
+    })
+    if (!changed) { this.preventDefault() }
+  }
+
+  handleFocusRecent ({ serviceId, recentId }) {
+    const changed = this._updateRecentItem(serviceId, recentId, {
+      modified: new Date().getTime()
+    }, true)
+    if (!changed) { this.preventDefault() }
   }
 
   /* **************************************************************************/

@@ -13,7 +13,7 @@ import TooltipSectionListSubheading from 'wbui/TooltipSectionListSubheading'
 import ServiceTooltipInfoItem from './ServiceTooltipInfoItem'
 import StarsIcon from '@material-ui/icons/Stars'
 import HistoryIcon from '@material-ui/icons/History'
-import BookIcon from '@material-ui/icons/Book'
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline'
 
 const styles = (theme) => ({
   subheading: {
@@ -207,8 +207,8 @@ class ServiceTooltipContent extends React.Component {
 
           {/* Reading queue */}
           <TooltipSectionListSubheading className={classes.subheading}>
-            <BookIcon className={classes.subheadingIcon} />
-            Task Queue
+            <CheckCircleOutlineIcon className={classes.subheadingIcon} />
+            Tasks
           </TooltipSectionListSubheading>
           {readingQueue.length ? (
             readingQueue.map((queueItem) => {
@@ -224,7 +224,7 @@ class ServiceTooltipContent extends React.Component {
           ) : (
             <ServiceTooltipInfoItem>
               <div>
-                <div>Use the right-click menu to save links into your task queue</div>
+                <div>Use the right-click menu to save links into your tasks</div>
                 <div>Once you've read the item it will be removed</div>
               </div>
             </ServiceTooltipInfoItem>

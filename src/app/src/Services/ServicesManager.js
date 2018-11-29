@@ -9,6 +9,7 @@ import AutofillService from './AutofillService'
 import NotificationService from './NotificationService'
 import FetchService from './FetchService'
 import TakeoutService from './TakeoutService'
+import RecentTrackerService from './RecentTrackerService'
 
 const privLoaded = Symbol('privLoaded')
 const privSpellcheckService = Symbol('privSpellcheckService')
@@ -22,6 +23,7 @@ const privAutofillService = Symbol('privAutofillService')
 const privNotificationService = Symbol('privNotificationService')
 const privFetchService = Symbol('privFetchService')
 const privTakeoutService = Symbol('privTakeoutService')
+const privRecentTrackerService = Symbol('privRecentTrackerService')
 
 class ServicesManager {
   /* ****************************************************************************/
@@ -42,6 +44,7 @@ class ServicesManager {
     this[privNotificationService] = undefined
     this[privFetchService] = undefined
     this[privTakeoutService] = undefined
+    this[privRecentTrackerService] = undefined
   }
 
   load () {
@@ -59,6 +62,7 @@ class ServicesManager {
     this[privWBGApiService] = new WBGApiService()
     this[privFetchService] = new FetchService()
     this[privTakeoutService] = new TakeoutService()
+    this[privRecentTrackerService] = new RecentTrackerService()
   }
 
   /* ****************************************************************************/
@@ -76,6 +80,7 @@ class ServicesManager {
   get notificationService () { return this[privNotificationService] }
   get fetchService () { return this[privFetchService] }
   get takeoutService () { return this[privTakeoutService] }
+  get RecentTrackerService () { return this[privRecentTrackerService] }
 }
 
 export default new ServicesManager()

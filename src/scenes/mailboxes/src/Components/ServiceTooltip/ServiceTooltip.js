@@ -6,6 +6,8 @@ import ServiceTooltipContent from './ServiceTooltipContent'
 import { accountStore, accountActions } from 'stores/account'
 import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 import ReactDOM from 'react-dom'
+import { ipcRenderer } from 'electron'
+import { WCRPC_OPEN_RECENT_LINK } from 'shared/webContentsRPC'
 
 const ENTER_DELAY = 750
 
@@ -165,7 +167,12 @@ class ServiceTooltip extends React.Component {
   */
   handleOpenRecentItem = (evt, serviceId, recentItem) => {
     this.setState({ open: false }, () => {
-      accountActions.navigateAndSwitchToService(serviceId, recentItem.url)
+      ipcRenderer.send(
+        WCRPC_OPEN_RECENT_LINK,
+        serviceId,
+        recentItem.windowType,
+        recentItem.url
+      )
     })
   }
 
@@ -193,7 +200,12 @@ class ServiceTooltip extends React.Component {
   */
   handleOpenBookmarkItem = (evt, serviceId, bookmarkItem) => {
     this.setState({ open: false }, () => {
-      accountActions.navigateAndSwitchToService(serviceId, bookmarkItem.url)
+      ipcRenderer.send(
+        WCRPC_OPEN_RECENT_LINK,
+        serviceId,
+        bookmarkItem.windowType,
+        bookmarkItem.url
+      )
     })
   }
 

@@ -639,6 +639,73 @@ class CoreAccountActions extends RemoteActions {
   }
 
   /* **************************************************************************/
+  // Recent
+  /* **************************************************************************/
+
+  /**
+  * Adds a recent entry into the data
+  * @param serviceId: the id of the service
+  * @param recentId: the id of the recent entry
+  * @param tabId: the id of the original tab
+  * @param windowType: the type of window that opened this
+  * @param url: the url to add
+  * @param title: the title of the visit
+  * @param favicons: the favicons
+  */
+  addRecent (...args) {
+    if (process.type === 'browser') {
+      const [serviceId, recentId, tabId, windowType, url, title, favicons] = args
+      return { serviceId, recentId, tabId, windowType, url, title, favicons }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('addRecent', args)
+    }
+  }
+
+  /**
+  * Updates a recent entries title
+  * @param serviceId: the id of the service
+  * @param recentId: the id of the recent entry
+  * @param title: the title of the visit
+  */
+  updateRecentTitle (...args) {
+    if (process.type === 'browser') {
+      const [serviceId, recentId, title] = args
+      return { serviceId, recentId, title }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('updateRecentTitle', args)
+    }
+  }
+
+  /**
+  * Updates a recent entries favicons
+  * @param serviceId: the id of the service
+  * @param recentId: the id of the recent entry
+  * @param favicons: the favicons of the visit
+  */
+  updateRecentFavicons (...args) {
+    if (process.type === 'browser') {
+      const [serviceId, recentId, favicons] = args
+      return { serviceId, recentId, favicons }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('updateRecentFavicons', args)
+    }
+  }
+
+  /**
+  * Focuses a recent entry
+  * @param serviceId: the id of the service
+  * @param recentId: the id of the recent entry
+  */
+  focusRecent (...args) {
+    if (process.type === 'browser') {
+      const [serviceId, recentId] = args
+      return { serviceId, recentId }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('focusRecent', args)
+    }
+  }
+
+  /* **************************************************************************/
   // Reading queue
   /* **************************************************************************/
 

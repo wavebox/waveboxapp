@@ -211,7 +211,7 @@ class ContextMenuService {
       }
       if (accountInfo.has) {
         template.push({
-          label: 'Add link to task queue',
+          label: 'Add link to your tasks',
           click: () => {
             accountActions.addToReadingQueue(accountInfo.service.id, params.linkURL)
           }
@@ -497,7 +497,7 @@ class ContextMenuService {
               }
             } : undefined),
             (accountInfo.has ? {
-              label: 'Add page to reading queue',
+              label: 'Add page to your tasks',
               click: () => {
                 accountActions.addToReadingQueue(accountInfo.service.id, params.pageURL)
               }
