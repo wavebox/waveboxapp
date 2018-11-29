@@ -114,7 +114,7 @@ export default {
       heading: {
         color: '#FFF',
         backgroundGradientColors: 'rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.20)',
-        dividerColor: '#FFF',
+        dividerColor: '#BDBDBD',
         button: {
           color: '#FFF'
         }
@@ -124,6 +124,7 @@ export default {
           color: 'rgb(43, 192, 252)',
           backgroundColor: 'rgb(96, 96, 96)'
         },
+        dividerColor: '#BDBDBD',
         listItem: {
           color: '#FFF',
           backgroundColor: 'transparent',

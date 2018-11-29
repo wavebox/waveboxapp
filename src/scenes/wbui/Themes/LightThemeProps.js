@@ -113,7 +113,7 @@ export default {
       heading: {
         color: grey[900],
         backgroundGradientColors: 'rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.20)',
-        dividerColor: grey[900],
+        dividerColor: grey[500],
         button: {
           color: grey[900]
         }
@@ -123,6 +123,7 @@ export default {
           color: 'rgb(43, 192, 252)',
           backgroundColor: 'rgb(196, 196, 196)'
         },
+        dividerColor: grey[500],
         listItem: {
           color: grey[900],
           backgroundColor: 'transparent',

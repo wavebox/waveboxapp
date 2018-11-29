@@ -9,8 +9,9 @@ import MailboxTooltipServiceItem from './MailboxTooltipServiceItem'
 import MailboxTooltipServiceAddItem from './MailboxTooltipServiceAddItem'
 import TooltipHeading from 'wbui/TooltipHeading'
 import TooltipSectionList from 'wbui/TooltipSectionList'
+import TooltipSectionListItemDivider from 'wbui/TooltipSectionListItemDivider'
 
-const styles = (theme) => ({
+const styles = {
   root: {
     overflow: 'hidden'
   },
@@ -21,9 +22,9 @@ const styles = (theme) => ({
   services: {
     maxHeight: '100%'
   }
-})
+}
 
-@withStyles(styles, { withTheme: true })
+@withStyles(styles)
 class MailboxTooltip extends React.Component {
   /* **************************************************************************/
   // Class
@@ -110,7 +111,6 @@ class MailboxTooltip extends React.Component {
     const {
       mailboxId,
       classes,
-      theme,
       className,
       onContextMenu,
       onOpenService,
@@ -142,6 +142,7 @@ class MailboxTooltip extends React.Component {
                 serviceId={serviceId}
                 onOpenService={onOpenService} />
             ))}
+            <TooltipSectionListItemDivider />
             <MailboxTooltipServiceAddItem onClick={this.handleAddService} />
           </TooltipSectionList>
         ) : undefined}

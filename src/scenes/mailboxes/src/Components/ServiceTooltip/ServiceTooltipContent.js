@@ -24,6 +24,12 @@ const styles = (theme) => ({
     fontSize: '20px',
     verticalAlign: 'text-bottom',
     marginRight: 4
+  },
+  firstItem: {
+    marginTop: 4
+  },
+  lastItem: {
+    marginBottom: 4
   }
 })
 
@@ -158,10 +164,14 @@ class ServiceTooltipContent extends React.Component {
             </TooltipSectionListSubheading>
           ) : undefined}
           {bookmarks.length ? (
-            bookmarks.map((bookmarkItem) => {
+            bookmarks.map((bookmarkItem, i, arr) => {
               return (
                 <ServiceTooltipBookmarkItem
                   key={bookmarkItem.id}
+                  className={classNames(
+                    i === 0 ? classes.firstItem : undefined,
+                    i === arr.length - 1 ? classes.lastItem : undefined
+                  )}
                   serviceId={serviceId}
                   bookmark={bookmarkItem}
                   onOpenBookmark={onOpenBookmarkItem}
@@ -176,10 +186,14 @@ class ServiceTooltipContent extends React.Component {
             Recent
           </TooltipSectionListSubheading>
           {recent.length ? (
-            recent.map((recentItem) => {
+            recent.map((recentItem, i, arr) => {
               return (
                 <ServiceTooltipRecentItem
                   key={recentItem.id}
+                  className={classNames(
+                    i === 0 ? classes.firstItem : undefined,
+                    i === arr.length - 1 ? classes.lastItem : undefined
+                  )}
                   serviceId={serviceId}
                   recentItem={recentItem}
                   onOpenRecentItem={onOpenRecentItem}
@@ -211,10 +225,14 @@ class ServiceTooltipContent extends React.Component {
             Tasks
           </TooltipSectionListSubheading>
           {readingQueue.length ? (
-            readingQueue.map((queueItem) => {
+            readingQueue.map((queueItem, i, arr) => {
               return (
                 <ServiceTooltipQueueItem
                   key={queueItem.id}
+                  className={classNames(
+                    i === 0 ? classes.firstItem : undefined,
+                    i === arr.length - 1 ? classes.lastItem : undefined
+                  )}
                   serviceId={serviceId}
                   queueItem={queueItem}
                   onOpenReadingQueueItem={onOpenReadingQueueItem}
