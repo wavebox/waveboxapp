@@ -31,7 +31,7 @@ class RecentTrackerService {
   handleTabCreated = (evt, wcId) => {
     if (this[privConnected].has(wcId)) { return }
     const tabMeta = evt.sender.tabMetaInfo(wcId)
-    if (tabMeta.backing !== WINDOW_BACKING_TYPES.MAILBOX_SERVICE) { return }
+    if (!tabMeta || tabMeta.backing !== WINDOW_BACKING_TYPES.MAILBOX_SERVICE) { return }
 
     const wc = webContents.fromId(wcId)
     if (!wc || wc.isDestroyed()) { return }
