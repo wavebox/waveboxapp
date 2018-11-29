@@ -185,16 +185,15 @@ class ServiceReducer {
   /**
   * Adds a bookmark entry into the service
   * @param service: the parent service
-  * @param url: the url to add
-  * @param title: the title of the visit
-  * @param favicons: the favicon for the page
+  * @param recentItem: the recent item to make the bookmark from
   */
-  static addBookmark (service, url, title, favicons) {
+  static addBookmark (service, recentItem) {
     return service.changeData({
       bookmarks: service.bookmarks.concat({
-        url: url,
-        title: title,
-        favicons: favicons,
+        windowType: recentItem.windowType,
+        url: recentItem.url,
+        title: recentItem.title,
+        favicons: recentItem.favicons,
         time: new Date().getTime(),
         id: uuid.v4()
       })

@@ -186,9 +186,7 @@ class ServiceTooltip extends React.Component {
     accountActions.reduceService(
       this.props.serviceId,
       ServiceReducer.addBookmark,
-      recentItem.url,
-      recentItem.title,
-      recentItem.favicons
+      recentItem
     )
   }
 
