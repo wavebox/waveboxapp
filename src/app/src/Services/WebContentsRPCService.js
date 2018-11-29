@@ -2,6 +2,7 @@ import { app, ipcMain, BrowserWindow, dialog, webContents } from 'electron'
 import { URL } from 'url'
 import { ElectronWebContents } from 'ElectronTools'
 import { settingsStore } from 'stores/settings'
+import { userStore } from 'stores/user'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { ELEVATED_LOG_PREFIX } from 'shared/constants'
 import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
@@ -21,6 +22,7 @@ import {
   WCRPC_RESOLVE_PERMISSION_REQUEST
 } from 'shared/webContentsRPC'
 import { PermissionManager } from 'Permissions'
+import os from 'os'
 
 const privConnected = Symbol('privConnected')
 const privNotificationService = Symbol('privNotificationService')
@@ -238,11 +240,14 @@ class WebContentsRPCService {
     try {
       evt.returnValue = {
         launchSettings: settingsStore.getState().launchSettingsJS(),
+        launchUserSettings: userStore.getState().launchSettingsJS(),
         extensions: CRExtensionManager.runtimeHandler.getAllContentScriptGuestConfigs(),
         initialHostUrl: !currentUrl || currentUrl === 'about:blank' ? ElectronWebContents.getHostUrl(evt.sender) : currentUrl,
         notificationPermission: this[privNotificationService].getDomainPermissionForWebContents(evt.sender, currentUrl),
         paths: {},
-        platform: process.platform
+        platform: process.platform,
+        arch: process.arch,
+        osRelease: os.release()
       }
     } catch (ex) {
       console.error(`Failed to respond to "${WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG}" continuing with unknown side effects`, ex)
