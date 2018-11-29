@@ -211,7 +211,7 @@ class ContextMenuService {
       }
       if (accountInfo.has) {
         template.push({
-          label: 'Add link to reading queue',
+          label: 'Add link to task queue',
           click: () => {
             accountActions.addToReadingQueue(accountInfo.service.id, params.linkURL)
           }

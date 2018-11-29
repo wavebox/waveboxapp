@@ -208,7 +208,7 @@ class ServiceTooltipContent extends React.Component {
           {/* Reading queue */}
           <TooltipSectionListSubheading className={classes.subheading}>
             <BookIcon className={classes.subheadingIcon} />
-            Queue
+            Task Queue
           </TooltipSectionListSubheading>
           {readingQueue.length ? (
             readingQueue.map((queueItem) => {
@@ -224,7 +224,7 @@ class ServiceTooltipContent extends React.Component {
           ) : (
             <ServiceTooltipInfoItem>
               <div>
-                <div>Use the right-click menu to save links into your reading queue</div>
+                <div>Use the right-click menu to save links into your task queue</div>
                 <div>Once you've read the item it will be removed</div>
               </div>
             </ServiceTooltipInfoItem>
