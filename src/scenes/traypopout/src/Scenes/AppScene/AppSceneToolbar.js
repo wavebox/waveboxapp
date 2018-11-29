@@ -9,17 +9,16 @@ import { withStyles } from '@material-ui/core/styles'
 import { Toolbar, Menu, MenuItem, Divider, ListItemIcon, ListItemText } from '@material-ui/core'
 import NotificationIcon from '@material-ui/icons/Notifications'
 import classNames from 'classnames'
-import FAREditIcon from 'wbfa/FAREdit'
-import FARBrowserIcon from 'wbfa/FARBrowser'
-import FARBoltIcon from 'wbfa/FARBolt'
 import FARCheckSquare from 'wbfa/FARCheckSquare'
 import FARSquare from 'wbfa/FARSquare'
-import FARArrowAltSquareUpIcon from 'wbfa/FARArrowAltSquareUp'
-import FARArrowAltSquareDownIcon from 'wbfa/FARArrowAltSquareDown'
-import FARWindowIcon from 'wbfa/FARWindow'
 import FARBellSlashIcon from 'wbfa/FARBellSlash'
 import FARBellIcon from 'wbfa/FARBell'
 import FARSignOutIcon from 'wbfa/FARSignOut'
+import FARDesktop from 'wbfa/FARDesktop'
+import FARPenSquare from 'wbfa/FARPenSquare'
+import FARClone from 'wbfa/FARClone'
+import FASArrowFromTop from 'wbfa/FASArrowFromTop'
+import FASArrowFromBottom from 'wbfa/FASArrowFromBottom'
 import AppSceneToolbarButton from './AppSceneToolbarButton'
 import {
   WB_FOCUS_APP,
@@ -55,27 +54,6 @@ const styles = {
     width: 20,
     height: 20,
     fontSize: 20
-  },
-  faIconStack: {
-    width: 20,
-    height: 20,
-    position: 'relative',
-    display: 'inline-block'
-  },
-  // Open in main window icon
-  faIconOpenMainWindow1: {
-    position: 'absolute',
-    top: 1,
-    left: 0,
-    width: 20,
-    height: 20,
-    fontSize: 20
-  },
-  faIconOpenMainWindow2: {
-    position: 'absolute',
-    top: 2,
-    left: 7,
-    fontSize: 11
   },
   spacer: {
     flex: 1
@@ -182,7 +160,7 @@ class AppSceneToolbar extends React.Component {
           title='Compose'
           placement='top-end'
           onClick={() => emblinkActions.composeNewMessage()}>
-          <FAREditIcon className={classes.faIcon} />
+          <FARPenSquare className={classes.faIcon} />
         </AppSceneToolbarButton>
 
         {/* Main Window */}
@@ -190,10 +168,7 @@ class AppSceneToolbar extends React.Component {
           title='Show main window'
           placement='top'
           onClick={() => ipcRenderer.send(WB_FOCUS_APP, {})}>
-          <span className={classes.faIconStack}>
-            <FARBrowserIcon className={classNames(classes.faIcon, classes.faIconOpenMainWindow1)} />
-            <FARBoltIcon className={classNames(classes.faIcon, classes.faIconOpenMainWindow2)} />
-          </span>
+          <FARDesktop className={classes.faIcon} />
         </AppSceneToolbarButton>
 
         {/* Dock */}
@@ -204,12 +179,12 @@ class AppSceneToolbar extends React.Component {
           onContextMenu={(evt) => this.setState({ dockMenuAnchor: evt.target })}>
           {isWindowedMode ? (
             process.platform === 'darwin' ? (
-              <FARArrowAltSquareUpIcon className={classes.faIcon} />
+              <FASArrowFromBottom FARArrowAltSquareUpIcon className={classes.faIcon} />
             ) : (
-              <FARArrowAltSquareDownIcon className={classes.faIcon} />
+              <FASArrowFromTop className={classes.faIcon} />
             )
           ) : (
-            <FARWindowIcon className={classes.faIcon} />
+            <FARClone className={classes.faIcon} />
           )}
         </AppSceneToolbarButton>
         <Menu
@@ -228,12 +203,12 @@ class AppSceneToolbar extends React.Component {
             <ListItemIcon>
               {isWindowedMode ? (
                 process.platform === 'darwin' ? (
-                  <FARArrowAltSquareUpIcon className={classes.dockMenuFaIcon} />
+                  <FASArrowFromBottom className={classes.dockMenuFaIcon} />
                 ) : (
-                  <FARArrowAltSquareDownIcon className={classes.dockMenuFaIcon} />
+                  <FASArrowFromTop className={classes.dockMenuFaIcon} />
                 )
               ) : (
-                <FARWindowIcon className={classes.dockMenuFaIcon} />
+                <FARClone className={classes.dockMenuFaIcon} />
               )}
             </ListItemIcon>
             <ListItemText inset primary={isWindowedMode ? 'Dock to tray' : 'Open as window'} />
