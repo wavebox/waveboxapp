@@ -26,6 +26,7 @@ import {
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT
 } from 'shared/ipcEvents'
 import { ipcRenderer, remote } from 'electron'
+import ErrorBoundary from 'wbui/ErrorBoundary'
 
 export default class Provider extends React.Component {
   /* **************************************************************************/
@@ -278,19 +279,27 @@ export default class Provider extends React.Component {
         <MuiThemeProvider theme={THEME_MAPPING[uiSettings.theme]}>
           <WaveboxRouter />
         </MuiThemeProvider>
-        <AccountMessageDispatcher />
-        <WindowTitle />
+        <ErrorBoundary>
+          <AccountMessageDispatcher />
+        </ErrorBoundary>
+        <ErrorBoundary>
+          <WindowTitle />
+        </ErrorBoundary>
         {traySettings.show ? (
-          <Tray
-            unreadCount={messagesUnreadCount}
-            hasUnreadActivity={hasUnreadActivity}
-            launchTraySettings={launchTraySettings}
-            traySettings={traySettings} />
+          <ErrorBoundary>
+            <Tray
+              unreadCount={messagesUnreadCount}
+              hasUnreadActivity={hasUnreadActivity}
+              launchTraySettings={launchTraySettings}
+              traySettings={traySettings} />
+          </ErrorBoundary>
         ) : undefined}
         {uiSettings.showAppBadge ? (
-          <AppBadge
-            unreadCount={messagesUnreadCount}
-            hasUnreadActivity={hasUnreadActivity} />
+          <ErrorBoundary>
+            <AppBadge
+              unreadCount={messagesUnreadCount}
+              hasUnreadActivity={hasUnreadActivity} />
+          </ErrorBoundary>
         ) : undefined}
       </div>
     )

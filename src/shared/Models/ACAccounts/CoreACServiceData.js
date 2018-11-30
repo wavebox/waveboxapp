@@ -90,7 +90,8 @@ class CoreACServiceData extends CoreACModel {
   * @return the count
   */
   getUnreadCount (service) {
-    return service.supportsWBGAPI ? this.wbgapiUnreadCount : this.unreadCount
+    const val = parseInt(service.supportsWBGAPI ? this.wbgapiUnreadCount : this.unreadCount)
+    return isNaN(val) ? 0 : val
   }
 
   /**
