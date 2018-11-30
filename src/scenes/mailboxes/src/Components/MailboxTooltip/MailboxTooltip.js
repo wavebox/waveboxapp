@@ -4,6 +4,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { accountStore, accountActions } from 'stores/account'
 import PrimaryTooltip from 'wbui/PrimaryTooltip'
 import MailboxTooltipContent from './MailboxTooltipContent'
+import MailboxTooltipSimpleContent from './MailboxTooltipSimpleContent'
 import ReactDOM from 'react-dom'
 
 const ENTER_DELAY = 750
@@ -14,7 +15,8 @@ class MailboxTooltip extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    mailboxId: PropTypes.string.isRequired
+    mailboxId: PropTypes.string.isRequired,
+    simpleMode: PropTypes.bool.isRequired
   }
 
   /* **************************************************************************/
@@ -189,6 +191,7 @@ class MailboxTooltip extends React.Component {
     const {
       mailboxId,
       children,
+      simpleMode,
       ...passProps
     } = this.props
     const {
@@ -197,15 +200,24 @@ class MailboxTooltip extends React.Component {
 
     return (
       <PrimaryTooltip
-        interactive
-        disablePadding
+        {...(simpleMode ? {
+          interactive: false,
+          disablePadding: false
+        } : {
+          interactive: true,
+          disablePadding: true,
+          enterDelay: ENTER_DELAY,
+          leaveDelay: 1
+        })}
         width={400}
-        enterDelay={ENTER_DELAY}
-        leaveDelay={1}
         onClose={this.handleTooltipClose}
         onOpen={this.handleTooltipOpen}
         open={open}
-        title={(
+        title={simpleMode ? (
+          <MailboxTooltipSimpleContent
+            ref={this.contentRef}
+            mailboxId={mailboxId} />
+        ) : (
           <MailboxTooltipContent
             innerRef={this.contentRef}
             mailboxId={mailboxId}

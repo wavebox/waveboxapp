@@ -262,7 +262,8 @@ class ServiceTab extends React.Component {
   deriveSettingsState (uiLocation, settingsState) {
     return {
       globalShowSleepableServiceIndicator: settingsState.ui.showSleepableServiceIndicator,
-      tooltipsEnabled: ServiceTabTools.uiLocationTooltipsEnabled(uiLocation, settingsState.ui.accountTooltipMode)
+      tooltipsEnabled: ServiceTabTools.uiLocationTooltipsEnabled(uiLocation, settingsState.ui.accountTooltipMode),
+      tooltipSimpleMode: !settingsState.ui.accountTooltipInteractive
     }
   }
 
@@ -398,7 +399,8 @@ class ServiceTab extends React.Component {
       isServiceActive,
       tooltipsEnabled,
       isServiceRestricted,
-      avatar
+      avatar,
+      tooltipSimpleMode
     } = this.state
     if (!membersAvailable) { return false }
 
@@ -409,6 +411,7 @@ class ServiceTab extends React.Component {
       <ServiceTooltip
         mailboxId={mailboxId}
         serviceId={serviceId}
+        simpleMode={tooltipSimpleMode}
         disabled={!tooltipsEnabled}
         {...ServiceTabTools.uiLocationTooltipPositioning(uiLocation)}>
         <MailboxServiceBadge

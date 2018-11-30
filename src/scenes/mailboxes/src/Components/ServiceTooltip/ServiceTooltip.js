@@ -3,6 +3,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import PrimaryTooltip from 'wbui/PrimaryTooltip'
 import ServiceTooltipContent from './ServiceTooltipContent'
+import ServiceTooltipSimpleContent from './ServiceTooltipSimpleContent'
 import { accountStore, accountActions } from 'stores/account'
 import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 import ReactDOM from 'react-dom'
@@ -18,7 +19,8 @@ class ServiceTooltip extends React.Component {
 
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
-    serviceId: PropTypes.string.isRequired
+    serviceId: PropTypes.string.isRequired,
+    simpleMode: PropTypes.bool.isRequired
   }
 
   /* **************************************************************************/
@@ -258,23 +260,32 @@ class ServiceTooltip extends React.Component {
       mailboxId,
       className,
       children,
+      simpleMode,
       ...passProps
     } = this.props
     const {
       open
     } = this.state
-
     return (
       <PrimaryTooltip
-        interactive
-        disablePadding
+        {...(simpleMode ? {
+          interactive: false,
+          disablePadding: false
+        } : {
+          interactive: true,
+          disablePadding: true,
+          enterDelay: ENTER_DELAY,
+          leaveDelay: 1
+        })}
         width={400}
-        enterDelay={ENTER_DELAY}
-        leaveDelay={1}
         onClose={this.handleTooltipClose}
         onOpen={this.handleTooltipOpen}
         open={open}
-        title={(
+        title={simpleMode ? (
+          <ServiceTooltipSimpleContent
+            innerRef={this.contentRef}
+            serviceId={serviceId} />
+        ) : (
           <ServiceTooltipContent
             innerRef={this.contentRef}
             serviceId={serviceId}

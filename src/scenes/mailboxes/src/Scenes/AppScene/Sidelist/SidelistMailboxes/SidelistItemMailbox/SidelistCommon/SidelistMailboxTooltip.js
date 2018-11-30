@@ -35,13 +35,15 @@ class SidelistMailboxTooltip extends React.Component {
     const settingsState = settingsStore.getState()
 
     return {
-      tooltipsEnabled: settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED || settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.SIDEBAR_ONLY
+      tooltipsEnabled: settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED || settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.SIDEBAR_ONLY,
+      simpleMode: !settingsState.ui.accountTooltipInteractive
     }
   })()
 
   settingsChanged = (settingsState) => {
     this.setState({
-      tooltipsEnabled: settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED || settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.SIDEBAR_ONLY
+      tooltipsEnabled: settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED || settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.SIDEBAR_ONLY,
+      simpleMode: !settingsState.ui.accountTooltipInteractive
     })
   }
 
@@ -59,11 +61,12 @@ class SidelistMailboxTooltip extends React.Component {
       children,
       ...passProps
     } = this.props
-    const { tooltipsEnabled } = this.state
+    const { tooltipsEnabled, simpleMode } = this.state
 
     return (
       <MailboxTooltip
         mailboxId={mailboxId}
+        simpleMode={simpleMode}
         disabled={!tooltipsEnabled}
         placement='right'
         {...passProps}>

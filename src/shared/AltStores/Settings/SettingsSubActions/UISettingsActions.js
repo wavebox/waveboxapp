@@ -74,6 +74,13 @@ class UISettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param interactive: true if interactive
+  */
+  setAccountTooltipInteractive (interactive) {
+    this.dispatchUpdate('accountTooltipInteractive', interactive)
+  }
+
+  /**
   * Toggles the sidebar
   */
   toggleSidebar () {

@@ -25,7 +25,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class MailboxTooltip extends React.Component {
+class MailboxTooltipContent extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -151,4 +151,4 @@ class MailboxTooltip extends React.Component {
   }
 }
 
-export default MailboxTooltip
+export default MailboxTooltipContent

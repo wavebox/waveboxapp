@@ -93,6 +93,7 @@ class UISettings extends Model {
     if (depricatedVal === false) { return ACCOUNT_TOOLTIP_MODES.DISABLED }
     return ACCOUNT_TOOLTIP_MODES.ENABLED
   }
+  get accountTooltipInteractive () { return this._value_('accountTooltipInteractive', true) }
   get lockSidebarsAndToolbars () { return this._value_('lockSidebarsAndToolbars', false) }
   get showSidebarScrollbars () { return this._value_('showSidebarScrollbars', false) }
 

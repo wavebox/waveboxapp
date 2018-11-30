@@ -36,6 +36,7 @@ export default class UISettingsSection extends React.Component {
         'showSleepableServiceIndicator',
         'vibrancyMode',
         'accountTooltipMode',
+        'accountTooltipInteractive',
         'sidebarEnabled',
         'showSidebarSupport',
         'showSidebarNewsfeed',
@@ -165,7 +166,6 @@ export default class UISettingsSection extends React.Component {
               }} />
           ) : undefined}
           <SettingsListItemSelectInline
-            divider={false}
             label='Account tooltips'
             value={ui.accountTooltipMode}
             options={[
@@ -175,6 +175,12 @@ export default class UISettingsSection extends React.Component {
               { value: UISettings.ACCOUNT_TOOLTIP_MODES.TOOLBAR_ONLY, label: 'Toolbar Only', primaryText: 'Show only in the Toolbar' }
             ]}
             onChange={(evt, value) => settingsActions.sub.ui.setAccountTooltipMode(value)} />
+          <SettingsListItemSwitch
+            divider={false}
+            label='Show Recent, Pinned & Tasks in Account tooltips'
+            onChange={(evt, toggled) => settingsActions.sub.ui.setAccountTooltipInteractive(toggled)}
+            disabled={ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.DISABLED}
+            checked={ui.accountTooltipInteractive} />
         </SettingsListSection>
 
         <SettingsListSection title='User Interface' subtitle='Sidebar' icon={<ViewQuiltIcon />}>
