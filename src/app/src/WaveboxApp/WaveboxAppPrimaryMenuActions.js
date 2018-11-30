@@ -29,9 +29,18 @@ class WaveboxAppPrimaryMenuAcions {
     return WaveboxWindow.getOfType(MailboxesWindow)
   }
 
+  /**
+  * @return the focused web contents
+  */
+  _getFocusedWebContents () {
+    const wcId = WaveboxWindow.focusedTabId()
+    return wcId ? webContents.fromId(wcId) : undefined
+  }
+
   /* ****************************************************************************/
   // App Lifecycle
   /* ****************************************************************************/
+
   fullQuit = () => {
     evtMain.emit(evtMain.WB_QUIT_APP, {})
   }
@@ -64,6 +73,45 @@ class WaveboxAppPrimaryMenuAcions {
 
   showAll = () => {
     WaveboxWindow.all().forEach((w) => w.show())
+  }
+
+  /* ****************************************************************************/
+  // Editing
+  /* ****************************************************************************/
+
+  undo = () => {
+    const wc = this._getFocusedWebContents()
+    if (wc) { wc.undo() }
+  }
+
+  redo = () => {
+    const wc = this._getFocusedWebContents()
+    if (wc) { wc.redo() }
+  }
+
+  cut = () => {
+    const wc = this._getFocusedWebContents()
+    if (wc) { wc.cut() }
+  }
+
+  copy = () => {
+    const wc = this._getFocusedWebContents()
+    if (wc) { wc.copy() }
+  }
+
+  paste = () => {
+    const wc = this._getFocusedWebContents()
+    if (wc) { wc.paste() }
+  }
+
+  pasteAndMatchStyle = () => {
+    const wc = this._getFocusedWebContents()
+    if (wc) { wc.pasteAndMatchStyle() }
+  }
+
+  selectAll = () => {
+    const wc = this._getFocusedWebContents()
+    if (wc) { wc.selectAll() }
   }
 
   /* ****************************************************************************/

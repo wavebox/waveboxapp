@@ -122,38 +122,38 @@ class WaveboxAppPrimaryMenu {
         submenu: [
           {
             label: 'Undo',
-            role: 'undo',
+            click: WaveboxAppPrimaryMenuActions.undo,
             accelerator: accelerators.undo
           },
           {
             label: 'Redo',
-            role: 'redo',
+            click: WaveboxAppPrimaryMenuActions.redo,
             accelerator: accelerators.redo
           },
           { type: 'separator' },
           {
             label: 'Cut',
-            role: 'cut',
+            click: WaveboxAppPrimaryMenuActions.cut,
             accelerator: accelerators.cut
           },
           {
             label: 'Copy',
-            role: 'copy',
+            click: WaveboxAppPrimaryMenuActions.copy,
             accelerator: accelerators.copy
           },
           {
             label: 'Paste',
-            role: 'paste',
+            click: WaveboxAppPrimaryMenuActions.paste,
             accelerator: accelerators.paste
           },
           {
             label: 'Paste and match style',
-            role: 'pasteandmatchstyle',
+            click: WaveboxAppPrimaryMenuActions.pasteAndMatchStyle,
             accelerator: accelerators.pasteAndMatchStyle
           },
           {
             label: 'Select All',
-            role: 'selectall',
+            click: WaveboxAppPrimaryMenuActions.selectAll,
             accelerator: accelerators.selectAll
           },
           { type: 'separator' },

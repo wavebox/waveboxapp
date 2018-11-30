@@ -393,8 +393,16 @@ class ContextMenuService {
   renderRewindSection (contents, params) {
     const template = []
     if (params.editFlags.canUndo || params.editFlags.canRedo) {
-      template.push({ label: 'Undo', role: 'undo', enabled: params.editFlags.canUndo })
-      template.push({ label: 'Redo', role: 'redo', enabled: params.editFlags.canRedo })
+      template.push({
+        label: 'Undo',
+        click: () => { contents.undo() },
+        enabled: params.editFlags.canUndo
+      })
+      template.push({
+        label: 'Redo',
+        click: () => { contents.redo() },
+        enabled: params.editFlags.canRedo
+      })
     }
     return template
   }
@@ -422,13 +430,28 @@ class ContextMenuService {
         }
       ]
     } else { // Text
-      const template = []
-      if (params.editFlags.canCut) { template.push({ label: 'Cut', role: 'cut' }) }
-      if (params.editFlags.canCopy) { template.push({ label: 'Copy', role: 'copy' }) }
-      if (params.editFlags.canPaste) { template.push({ label: 'Paste', role: 'paste' }) }
-      if (params.editFlags.canPaste) { template.push({ label: 'Paste and match style', role: 'pasteandmatchstyle' }) }
-      if (params.editFlags.canSelectAll) { template.push({ label: 'Select all', role: 'selectall' }) }
-      return template
+      return [
+        params.editFlags.canCut ? {
+          label: 'Cut',
+          click: () => contents.cut()
+        } : undefined,
+        params.editFlags.canCopy ? {
+          label: 'Copy',
+          click: () => contents.copy()
+        } : undefined,
+        params.editFlags.canPaste ? {
+          label: 'Paste',
+          click: () => contents.paste()
+        } : undefined,
+        params.editFlags.canPaste ? {
+          label: 'Paste and match style',
+          click: () => contents.pasteAndMatchStyle()
+        } : undefined,
+        params.editFlags.canSelectAll ? {
+          label: 'Select all',
+          click: () => contents.selectAll()
+        } : undefined
+      ].filter((i) => !!i)
     }
   }
 
