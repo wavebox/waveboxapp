@@ -160,7 +160,7 @@ class ServiceTooltipContent extends React.Component {
           {bookmarks.length ? (
             <TooltipSectionListSubheading className={classes.subheading}>
               <StarsIcon className={classes.subheadingIcon} />
-              Starred
+              Pinned
             </TooltipSectionListSubheading>
           ) : undefined}
           {bookmarks.length ? (
@@ -210,7 +210,7 @@ class ServiceTooltipContent extends React.Component {
           {!bookmarks.length ? (
             <TooltipSectionListSubheading className={classes.subheading}>
               <StarsIcon className={classes.subheadingIcon} />
-              Starred
+              Pinned
             </TooltipSectionListSubheading>
           ) : undefined}
           {!bookmarks.length ? (

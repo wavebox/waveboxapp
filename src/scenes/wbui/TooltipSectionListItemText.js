@@ -15,6 +15,7 @@ const styles = (theme) => ({
   },
   secondaryText: {
     fontSize: '11px',
+    opacity: 0.75,
     color: ThemeTools.getStateValue(theme, 'wavebox.popover.section.listItem.color', 'default'),
     '&:hover': {
       color: ThemeTools.getStateValue(theme, 'wavebox.popover.section.listItem.color', 'hover')

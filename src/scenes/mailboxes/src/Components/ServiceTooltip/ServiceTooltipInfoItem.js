@@ -8,15 +8,15 @@ import classNames from 'classnames'
 const styles = (theme) => ({
   root: {
     paddingTop: 8,
-    paddingBottom: 8,
-    opacity: 0.9
+    paddingBottom: 8
   },
   text: {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     textAlign: 'left',
-    fontSize: '12px'
+    opacity: 0.75,
+    fontSize: '11px'
   }
 })
 
