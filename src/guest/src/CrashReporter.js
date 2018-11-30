@@ -24,6 +24,10 @@ class CrashReporter {
     if (!credentials.CRASH_REPORTING) { return }
     if (!userStore.analyticsEnabled) { return }
 
+    // Linux sandboxing and the crash reporter don't play well together.
+    // Disable completely for now
+    if (LiveConfig.platform === 'linux') { return }
+
     const payload = {
       runtimeIdentifier: 'GUEST',
       initTime: new Date().getTime(),
