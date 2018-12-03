@@ -5,6 +5,8 @@ import { Tab, Tabs, AppBar } from '@material-ui/core'
 import SwipeableViews from 'react-swipeable-views'
 import NotificationScene from 'Scenes/NotificationScene'
 import UnreadScene from 'Scenes/UnreadScene'
+import RecentScene from 'Scenes/RecentScene'
+import ReadingScene from 'Scenes/ReadingScene'
 import AppSceneToolbar from './AppSceneToolbar'
 import AppSceneWindowTitlebar from './AppSceneWindowTitlebar'
 import {
@@ -19,8 +21,11 @@ import ErrorBoundary from 'wbui/ErrorBoundary'
 
 const TAB_HEIGHT = 40
 const TOOLBAR_HEIGHT = 40
+
 const UNREAD_INDEX = 0
 const NOTIF_INDEX = 1
+const RECENT_INDEX = 2
+const READING_INDEX = 3
 
 const styles = {
   container: {
@@ -104,8 +109,10 @@ class AppScene extends React.Component {
 
   constructor (props) {
     super(props)
-    this.unreadRef = null
-    this.notifRef = null
+    this.unreadRef = React.createRef()
+    this.notifRef = React.createRef()
+    this.recentRef = React.createRef()
+    this.readingRef = React.createRef()
   }
 
   /* **************************************************************************/
@@ -177,10 +184,14 @@ class AppScene extends React.Component {
       if (prevIndex === index) {
         clearTimeout(this.resetNavTOs.get(index))
         this.resetNavTOs.delete(index)
-        switch (index) {
-          case UNREAD_INDEX: this.unreadRef.resetNavigationStack(); break
-          case NOTIF_INDEX: this.notifRef.resetNavigationStack(); break
-        }
+        try {
+          switch (index) {
+            case UNREAD_INDEX: this.unreadRef.current.resetNavigationStack(); break
+            case NOTIF_INDEX: this.notifRef.current.resetNavigationStack(); break
+            case RECENT_INDEX: this.recentRef.current.resetNavigationStack(); break
+            case READING_INDEX: this.readingRef.current.resetNavigationStack(); break
+          }
+        } catch (ex) { }
         return undefined
       } else {
         if (this.resetNavTOs.has(index)) {
@@ -191,10 +202,14 @@ class AppScene extends React.Component {
           clearTimeout(this.resetNavTOs.get(prevIndex))
         }
         this.resetNavTOs.set(prevIndex, setTimeout(() => {
-          switch (prevIndex) {
-            case UNREAD_INDEX: this.unreadRef.resetNavigationStack(); break
-            case NOTIF_INDEX: this.notifRef.resetNavigationStack(); break
-          }
+          try {
+            switch (prevIndex) {
+              case UNREAD_INDEX: this.unreadRef.current.resetNavigationStack(); break
+              case NOTIF_INDEX: this.notifRef.current.resetNavigationStack(); break
+              case RECENT_INDEX: this.recentRef.current.resetNavigationStack(); break
+              case READING_INDEX: this.readingRef.current.resetNavigationStack(); break
+            }
+          } catch (ex) { }
         }, 500))
 
         return { tabIndex: index }
@@ -250,6 +265,14 @@ class AppScene extends React.Component {
                 label='Notifications'
                 className={classes.tabButton}
                 value={NOTIF_INDEX} />
+              <Tab
+                label='Recent'
+                className={classes.tabButton}
+                value={RECENT_INDEX} />
+              <Tab
+                label='Tasks'
+                className={classes.tabButton}
+                value={READING_INDEX} />
             </Tabs>
           </AppBar>
           <ErrorBoundary>
@@ -259,8 +282,10 @@ class AppScene extends React.Component {
               slideStyle={styles.tab}
               index={tabIndex}
               onChangeIndex={(index) => this.setState({ tabIndex: index })}>
-              <UnreadScene innerRef={(n) => { this.unreadRef = n }} />
-              <NotificationScene innerRef={(n) => { this.notifRef = n }} />
+              <UnreadScene innerRef={this.unreadRef} />
+              <NotificationScene innerRef={this.notifRef} />
+              <RecentScene innerRef={this.recentRef} />
+              <ReadingScene innerRef={this.readingRef} />
             </SwipeableViews>
           </ErrorBoundary>
           <AppSceneToolbar

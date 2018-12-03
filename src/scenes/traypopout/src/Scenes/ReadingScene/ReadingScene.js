@@ -1,18 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import shallowCompare from 'react-addons-shallow-compare'
-import { notifhistStore, notifhistActions } from 'stores/notifhist'
-import { accountActions } from 'stores/account'
-import { emblinkActions } from 'stores/emblink'
+import { accountStore } from 'stores/account'
 import Infinate from 'react-infinite'
-import { List, ListItemText, Menu, MenuItem } from '@material-ui/core'
-import { ipcRenderer } from 'electron'
-import { WB_FOCUS_MAILBOXES_WINDOW } from 'shared/ipcEvents'
-import NotificationListItem from './NotificationListItem'
+import { List } from '@material-ui/core'
 import ErrorBoundary from 'wbui/ErrorBoundary'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import StyleMixins from 'wbui/Styles/StyleMixins'
+import ReadingListItem from './ReadingListItem'
+import { ipcRenderer } from 'electron'
+import { WCRPC_OPEN_READING_QUEUE_LINK } from 'shared/webContentsRPC'
 
 const LIST_ITEM_HEIGHT = 67
 
@@ -30,11 +28,18 @@ const styles = {
   },
   listItem: {
     height: LIST_ITEM_HEIGHT
+  },
+  noItems: {
+    height: LIST_ITEM_HEIGHT,
+    fontSize: 14,
+    lineHeight: '18px',
+    padding: '16px 8px',
+    textAlign: 'center'
   }
 }
 
 @withStyles(styles)
-class NotificationScene extends React.Component {
+class ReadingScene extends React.Component {
   /* **************************************************************************/
   // Lifecycle
   /* **************************************************************************/
@@ -47,18 +52,18 @@ class NotificationScene extends React.Component {
   }
 
   /* **************************************************************************/
-  // Component Lifecycle
+  // Component lifecycle
   /* **************************************************************************/
 
   componentDidMount () {
-    notifhistStore.listen(this.notificationsChanged)
+    accountStore.listen(this.accountChanged)
 
     window.addEventListener('resize', this.saveContainerHeight, false)
     this.saveContainerHeight()
   }
 
   componentWillUnmount () {
-    notifhistStore.unlisten(this.notificationsChanged)
+    accountStore.unlisten(this.accountChanged)
 
     window.removeEventListener('resize', this.saveContainerHeight)
   }
@@ -68,20 +73,20 @@ class NotificationScene extends React.Component {
   }
 
   /* **************************************************************************/
-  // Data Lifecycle
+  // Data lifecycle
   /* **************************************************************************/
 
   state = (() => {
+    const accountState = accountStore.getState()
     return {
-      notifications: notifhistStore.getState().notifications,
-      containerHeight: 0,
-      contextMenuAnchor: null
+      readingQueueItems: accountState.allReadingQueueItems(),
+      containerHeight: 0
     }
   })()
 
-  notificationsChanged = (notificationState) => {
+  accountChanged = (accountState) => {
     this.setState({
-      notifications: notificationState.notifications
+      readingQueueItems: accountState.allReadingQueueItems()
     })
   }
 
@@ -115,31 +120,8 @@ class NotificationScene extends React.Component {
   // UI Events
   /* **************************************************************************/
 
-  /**
-  * Handles the notification being clicked on
-  * @param evt: the event that fired
-  * @param notification: the notification object
-  */
-  handleNotificationClick = (evt, notification) => {
-    ipcRenderer.send(WB_FOCUS_MAILBOXES_WINDOW, {})
-    accountActions.changeActiveService(notification.serviceId)
-    if (notification.openPayload) {
-      // Not all notifications are openable at any time
-      emblinkActions.openItem(notification.serviceId, notification.openPayload)
-    }
-  }
-
-  /**
-  * Handles opening the context menu
-  * @param evt: the event that fired
-  */
-  handleOpenContextMenu = (evt) => {
-    this.setState({
-      contextMenuAnchor: {
-        anchor: evt.target,
-        anchorPosition: { top: evt.clientY, left: evt.clientX }
-      }
-    })
+  handleRecentItemClick = (evt, item) => {
+    ipcRenderer.send(WCRPC_OPEN_READING_QUEUE_LINK, item.serviceId, item)
   }
 
   /* **************************************************************************/
@@ -152,63 +134,46 @@ class NotificationScene extends React.Component {
 
   render () {
     const {
-      className,
       classes,
+      className,
       ...passProps
     } = this.props
     const {
-      notifications,
-      containerHeight,
-      contextMenuAnchor
+      readingQueueItems,
+      containerHeight
     } = this.state
 
     return (
       <div ref={this.rootRef} className={classNames(className, classes.main)} {...passProps}>
         <ErrorBoundary>
-          <React.Fragment>
-            <List
-              className={classes.list}
-              onContextMenu={this.handleOpenContextMenu}>
-              {containerHeight === 0 ? undefined : (
-                <Infinate ref={this.listRef} containerHeight={containerHeight} elementHeight={LIST_ITEM_HEIGHT}>
-                  {notifications.map(({ id, timestamp, notification }) => {
+          <List
+            className={classes.list}
+            onContextMenu={this.handleOpenContextMenu}>
+            {containerHeight === 0 ? undefined : (
+              <Infinate ref={this.listRef} containerHeight={containerHeight} elementHeight={LIST_ITEM_HEIGHT}>
+                {readingQueueItems.length ? (
+                  readingQueueItems.map((item) => {
                     return (
-                      <NotificationListItem
-                        key={id}
-                        onClick={(evt) => this.handleNotificationClick(evt, notification)}
+                      <ReadingListItem
+                        key={item.id}
+                        onClick={this.handleRecentItemClick}
                         className={classes.listItem}
-                        mailboxId={notification.mailboxId}
-                        notification={notification}
-                        timestamp={timestamp} />
+                        readingQueueItem={item} />
                     )
-                  })}
-                </Infinate>
-              )}
-            </List>
-            <Menu
-              {...(notifications.length !== 0 && contextMenuAnchor ? {
-                open: true,
-                anchorEl: contextMenuAnchor.anchor,
-                anchorPosition: contextMenuAnchor.anchorPosition
-              } : {
-                open: false
-              })}
-              MenuListProps={{ dense: true }}
-              anchorReference='anchorPosition'
-              disableEnforceFocus
-              onClose={() => this.setState({ contextMenuAnchor: null })}>
-              <MenuItem onClick={() => {
-                this.setState({ contextMenuAnchor: null })
-                notifhistActions.clearAllNotifications()
-              }}>
-                <ListItemText primary='Clear all Notifications' />
-              </MenuItem>
-            </Menu>
-          </React.Fragment>
+                  })
+                ) : (
+                  <div className={classes.noItems}>
+                    <div>Use the right-click menu to save links into your tasks</div>
+                    <div>Once you've read the item it will be removed</div>
+                  </div>
+                )}
+              </Infinate>
+            )}
+          </List>
         </ErrorBoundary>
       </div>
     )
   }
 }
 
-export default NotificationScene
+export default ReadingScene

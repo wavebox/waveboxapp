@@ -179,7 +179,7 @@ class AppSceneToolbar extends React.Component {
           onContextMenu={(evt) => this.setState({ dockMenuAnchor: evt.target })}>
           {isWindowedMode ? (
             process.platform === 'darwin' ? (
-              <FASArrowFromBottom FARArrowAltSquareUpIcon className={classes.faIcon} />
+              <FASArrowFromBottom className={classes.faIcon} />
             ) : (
               <FASArrowFromTop className={classes.faIcon} />
             )

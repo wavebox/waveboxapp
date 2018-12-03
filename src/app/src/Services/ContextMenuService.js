@@ -215,7 +215,7 @@ class ContextMenuService {
       }
       if (accountInfo.has) {
         template.push({
-          label: 'Add link to your tasks',
+          label: 'Add Link to Your Tasks',
           click: () => {
             accountActions.addToReadingQueue(accountInfo.service.id, params.linkURL)
             ElectronWebContents.rootWebContents(contents).send(WB_READING_QUEUE_LINK_ADDED, params.linkURL)
@@ -527,7 +527,7 @@ class ContextMenuService {
           ].filter((i) => !!i)
         },
         (accountInfo.has ? {
-          label: 'Add page to your tasks',
+          label: 'Add Page to Your Tasks',
           click: () => {
             accountActions.addToReadingQueue(accountInfo.service.id, params.pageURL)
             ElectronWebContents.rootWebContents(contents).send(WB_READING_QUEUE_CURRENT_PAGE_ADDED, params.linkURL)

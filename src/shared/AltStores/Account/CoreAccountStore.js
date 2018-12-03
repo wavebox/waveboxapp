@@ -853,6 +853,52 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /* ****************************************/
+    // Recent
+    /* ****************************************/
+
+    /**
+    * @return a list of all recent items. Will have corresponding
+    * service id salted into them
+    */
+    this.allRecentItems = () => {
+      return this.serviceIds()
+        .reduce((acc, serviceId) => {
+          const serviceData = this.getServiceData(serviceId)
+          if (serviceData) {
+            const recent = serviceData.recent.map((r) => {
+              return { ...r, serviceId }
+            })
+            return acc.concat(recent)
+          }
+          return acc
+        }, [])
+        .sort((a, b) => b.modified - a.modified)
+    }
+
+    /* ****************************************/
+    // Reading Queue
+    /* ****************************************/
+
+    /**
+    * @return a list of all reading queue items. Will have corresponding
+    * service id salted into them
+    */
+    this.allReadingQueueItems = () => {
+      return this.serviceIds()
+        .reduce((acc, serviceId) => {
+          const service = this.getService(serviceId)
+          if (service) {
+            const queue = service.readingQueue.map((r) => {
+              return { ...r, serviceId }
+            })
+            return acc.concat(queue)
+          }
+          return acc
+        }, [])
+        .sort((a, b) => b.time - a.time)
+    }
+
+    /* ****************************************/
     // Misc
     /* ****************************************/
 

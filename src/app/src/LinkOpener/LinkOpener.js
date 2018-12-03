@@ -1,5 +1,3 @@
-import { BrowserWindow } from 'electron'
-import { ElectronWebContents } from 'ElectronTools'
 import { accountStore, accountActions } from 'stores/account'
 import WINDOW_TYPES from 'Windows/WindowTypes'
 import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
@@ -26,14 +24,13 @@ class LinkOpener {
     if (recentItem.windowType === WINDOW_TYPES.MAIN) {
       const mailboxesWindow = MailboxesWindow.getOfType(MailboxesWindow)
       if (!mailboxesWindow) { return }
+      mailboxesWindow.show().focus()
       mailboxesWindow.navigateAndSwitchToService(serviceId, recentItem.url)
     } else {
       const accountState = accountStore.getState()
       const service = accountState.getService(serviceId)
       if (!service) { return }
 
-      const rootContents = contents ? ElectronWebContents.rootWebContents(contents) : undefined
-      const openerWindow = rootContents ? BrowserWindow.fromWebContents(rootContents) : undefined
       const contentWindow = new ContentWindow({
         backing: WINDOW_BACKING_TYPES.MAILBOX_SERVICE,
         mailboxId: service.parentId,
@@ -42,7 +39,7 @@ class LinkOpener {
       contentWindow.create(
         recentItem.url,
         undefined,
-        openerWindow,
+        undefined,
         { partition: service.partitionId }
       )
     }
@@ -63,6 +60,7 @@ class LinkOpener {
     const openingWindowType = openingWindow ? openingWindow.windowType : undefined
 
     if (openingWindowType === WINDOW_TYPES.MAIN) {
+      openingWindow.show().focus()
       openingWindow.navigateAndSwitchToService(serviceId, readingItem.url)
       openingWindow.rootWebContents.send(WB_READING_QUEUE_OPEN_URL, readingItem)
     } else {
@@ -70,8 +68,6 @@ class LinkOpener {
       const service = accountState.getService(serviceId)
       if (!service) { return }
 
-      const rootContents = contents ? ElectronWebContents.rootWebContents(contents) : undefined
-      const openerWindow = rootContents ? BrowserWindow.fromWebContents(rootContents) : undefined
       const contentWindow = new ContentWindow({
         backing: WINDOW_BACKING_TYPES.MAILBOX_SERVICE,
         mailboxId: service.parentId,
@@ -80,7 +76,7 @@ class LinkOpener {
       contentWindow.create(
         readingItem.url,
         undefined,
-        openerWindow,
+        undefined,
         { partition: service.partitionId }
       )
     }
