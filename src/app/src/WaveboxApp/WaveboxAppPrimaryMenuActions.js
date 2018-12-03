@@ -34,8 +34,16 @@ class WaveboxAppPrimaryMenuAcions {
   * @return the focused web contents
   */
   _getFocusedWebContents () {
-    const wcId = WaveboxWindow.focusedTabId()
-    return wcId ? webContents.fromId(wcId) : undefined
+    const withFocusedDevTools = webContents
+      .getAllWebContents()
+      .filter((wc) => wc.isDevToolsOpened() && wc.isDevToolsFocused())
+
+    if (withFocusedDevTools[0]) {
+      return withFocusedDevTools[0].devToolsWebContents
+    } else {
+      const wcId = WaveboxWindow.focusedTabId()
+      return wcId ? webContents.fromId(wcId) : undefined
+    }
   }
 
   /* ****************************************************************************/

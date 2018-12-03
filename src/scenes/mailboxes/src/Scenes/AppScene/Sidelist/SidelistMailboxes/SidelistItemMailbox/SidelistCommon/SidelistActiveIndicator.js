@@ -59,7 +59,12 @@ class SidelistActiveIndicator extends React.Component {
 
     return (
       <div
-        className={classNames(classes.activeIndicator, `sidebar-${sidebarSize.toLowerCase()}`, className)}
+        className={classNames(
+          classes.activeIndicator,
+          `sidebar-${sidebarSize.toLowerCase()}`,
+          'WB-SidelistItemActiveIndicator',
+          className
+        )}
         style={{ backgroundColor: color, ...style }}
         {...passProps} />
     )
