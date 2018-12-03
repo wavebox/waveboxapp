@@ -1,4 +1,4 @@
-import { webContents } from 'electron'
+import { webContents, BrowserWindow } from 'electron'
 import { URL } from 'url'
 
 class ElectronWebContents {
@@ -17,6 +17,26 @@ class ElectronWebContents {
       target = target.hostWebContents
     }
     return target
+  }
+
+  /**
+  * Gets the id of the root webcontents
+  * @param wc: the webContents to look at
+  * @return the topmost id of the webcontents
+  */
+  static rootWebContentsId (wc) {
+    const root = this.rootWebContents(wc)
+    return root ? root.id : undefined
+  }
+
+  /**
+  * Gets the browser window that owns the webcontents
+  * @param wc: the webContents
+  * @return the browser window that owns the webContents
+  */
+  static rootBrowserWindow (wc) {
+    const rootWc = this.rootWebContents(wc)
+    return BrowserWindow.fromWebContents(rootWc)
   }
 
   /**

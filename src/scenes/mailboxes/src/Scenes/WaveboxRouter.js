@@ -40,6 +40,7 @@ import {
 import ErrorBoundary from 'wbui/ErrorBoundary'
 import FullscreenSnackbarHelper from 'Components/FullscreenSnackbarHelper'
 import SpinnerScene from './SpinnerScene'
+import ReadingQueueSnackbarHelper from 'wbui/ReadingQueueSnackbarHelper'
 
 export default class WaveboxRouter extends React.Component {
   /* **************************************************************************/
@@ -59,6 +60,9 @@ export default class WaveboxRouter extends React.Component {
           </ErrorBoundary>
           <ErrorBoundary>
             <FullscreenSnackbarHelper />
+          </ErrorBoundary>
+          <ErrorBoundary>
+            <ReadingQueueSnackbarHelper />
           </ErrorBoundary>
 
           <WaveboxRouterErrorBoundary>
