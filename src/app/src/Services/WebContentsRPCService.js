@@ -3,7 +3,6 @@ import { URL } from 'url'
 import { ElectronWebContents } from 'ElectronTools'
 import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
-import { accountStore } from 'stores/account'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { ELEVATED_LOG_PREFIX } from 'shared/constants'
 import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
@@ -14,6 +13,7 @@ import {
   WCRPC_PERMISSION_REQUESTS_CHANGED,
   WCRPC_CLOSE_WINDOW,
   WCRPC_OPEN_RECENT_LINK,
+  WCRPC_OPEN_READING_QUEUE_LINK,
   WCRPC_SEND_INPUT_EVENT,
   WCRPC_SEND_INPUT_EVENTS,
   WCRPC_SHOW_ASYNC_MESSAGE_DIALOG,
@@ -25,10 +25,7 @@ import {
 } from 'shared/webContentsRPC'
 import { PermissionManager } from 'Permissions'
 import os from 'os'
-import WINDOW_TYPES from 'Windows/WindowTypes'
-import WINDOW_BACKING_TYPES from 'Windows/WindowBackingTypes'
-import ContentWindow from 'Windows/ContentWindow'
-import MailboxesWindow from 'Windows/MailboxesWindow'
+import LinkOpener from 'LinkOpener'
 
 const privConnected = Symbol('privConnected')
 const privNotificationService = Symbol('privNotificationService')
@@ -51,6 +48,7 @@ class WebContentsRPCService {
 
     ipcMain.on(WCRPC_CLOSE_WINDOW, this._handleCloseWindow)
     ipcMain.on(WCRPC_OPEN_RECENT_LINK, this._handleOpenRecentLink)
+    ipcMain.on(WCRPC_OPEN_READING_QUEUE_LINK, this._handleOpenReadingQueueLink)
     ipcMain.on(WCRPC_SEND_INPUT_EVENT, this._handleSendInputEvent)
     ipcMain.on(WCRPC_SEND_INPUT_EVENTS, this._handleSendInputEvents)
     ipcMain.on(WCRPC_SHOW_ASYNC_MESSAGE_DIALOG, this._handleShowAsyncMessageDialog)
@@ -175,35 +173,22 @@ class WebContentsRPCService {
   * Handles the opening of a recent link
   * @param evt: the event that fired
   * @param serviceId: the id of the service
-  * @param windowType: the type of window to try and open in
-  * @param url: the url to open
+  * @param recentItem: the item we're trying to open
   */
-  _handleOpenRecentLink = (evt, serviceId, windowType, url) => {
+  _handleOpenRecentLink = (evt, serviceId, recentItem) => {
     if (!this[privConnected].has(evt.sender.id)) { return }
+    LinkOpener.openRecentLink(evt.sender, serviceId, recentItem)
+  }
 
-    if (windowType === WINDOW_TYPES.MAIN) {
-      const mailboxesWindow = MailboxesWindow.getOfType(MailboxesWindow)
-      if (!mailboxesWindow) { return }
-      mailboxesWindow.navigateAndSwitchToService(serviceId, url)
-    } else {
-      const accountState = accountStore.getState()
-      const service = accountState.getService(serviceId)
-      if (!service) { return }
-
-      const rootContents = ElectronWebContents.rootWebContents(evt.sender)
-      const openerWindow = rootContents ? BrowserWindow.fromWebContents(rootContents) : undefined
-      const contentWindow = new ContentWindow({
-        backing: WINDOW_BACKING_TYPES.MAILBOX_SERVICE,
-        mailboxId: service.parentId,
-        serviceId: serviceId
-      })
-      contentWindow.create(
-        url,
-        undefined,
-        openerWindow,
-        { partition: service.partitionId }
-      )
-    }
+  /**
+  * Handles the opening of a reading queue item
+  * @param evt: the event that fired
+  * @param serviceId: the id of the service to open in
+  * @param readingItem: the reading item to open
+  */
+  _handleOpenReadingQueueLink = (evt, serviceId, readingItem) => {
+    if (!this[privConnected].has(evt.sender.id)) { return }
+    LinkOpener.openReadingQueueLink(evt.sender, serviceId, readingItem)
   }
 
   /**

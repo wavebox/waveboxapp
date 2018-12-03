@@ -8,7 +8,10 @@ import { accountStore, accountActions } from 'stores/account'
 import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 import ReactDOM from 'react-dom'
 import { ipcRenderer } from 'electron'
-import { WCRPC_OPEN_RECENT_LINK } from 'shared/webContentsRPC'
+import {
+  WCRPC_OPEN_RECENT_LINK,
+  WCRPC_OPEN_READING_QUEUE_LINK
+} from 'shared/webContentsRPC'
 
 const ENTER_DELAY = 750
 
@@ -169,12 +172,7 @@ class ServiceTooltip extends React.Component {
   */
   handleOpenRecentItem = (evt, serviceId, recentItem) => {
     this.setState({ open: false }, () => {
-      ipcRenderer.send(
-        WCRPC_OPEN_RECENT_LINK,
-        serviceId,
-        recentItem.windowType,
-        recentItem.url
-      )
+      ipcRenderer.send(WCRPC_OPEN_RECENT_LINK, serviceId, recentItem)
     })
   }
 
@@ -200,12 +198,7 @@ class ServiceTooltip extends React.Component {
   */
   handleOpenBookmarkItem = (evt, serviceId, bookmarkItem) => {
     this.setState({ open: false }, () => {
-      ipcRenderer.send(
-        WCRPC_OPEN_RECENT_LINK,
-        serviceId,
-        bookmarkItem.windowType,
-        bookmarkItem.url
-      )
+      ipcRenderer.send(WCRPC_OPEN_RECENT_LINK, serviceId, bookmarkItem)
     })
   }
 
@@ -231,8 +224,7 @@ class ServiceTooltip extends React.Component {
   */
   handleOpenReadingQueueItem = (evt, serviceId, readingItem) => {
     this.setState({ open: false }, () => {
-      accountActions.navigateAndSwitchToService(serviceId, readingItem.url)
-      accountActions.removeFromReadingQueue(serviceId, readingItem.id)
+      ipcRenderer.send(WCRPC_OPEN_READING_QUEUE_LINK, serviceId, readingItem)
     })
   }
 

@@ -2,7 +2,12 @@ import React from 'react'
 import { Snackbar, Button } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { ipcRenderer } from 'electron'
-import { WB_READING_QUEUE_ADDED } from 'shared/ipcEvents'
+import {
+  WB_READING_QUEUE_LINK_ADDED,
+  WB_READING_QUEUE_CURRENT_PAGE_ADDED,
+  WB_READING_QUEUE_OPEN_URL,
+  WB_READING_QUEUE_OPEN_URL_EMPTY
+} from 'shared/ipcEvents'
 
 class ReadingQueueSnackbarHelper extends React.Component {
   /* **************************************************************************/
@@ -10,11 +15,17 @@ class ReadingQueueSnackbarHelper extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    ipcRenderer.on(WB_READING_QUEUE_ADDED, this.handleAddedToReadingQueue)
+    ipcRenderer.on(WB_READING_QUEUE_LINK_ADDED, this.handleLinkAdded)
+    ipcRenderer.on(WB_READING_QUEUE_CURRENT_PAGE_ADDED, this.handleCurrentPageAdded)
+    ipcRenderer.on(WB_READING_QUEUE_OPEN_URL, this.handleUrlOpened)
+    ipcRenderer.on(WB_READING_QUEUE_OPEN_URL_EMPTY, this.handleUrlFailedOpenEmpty)
   }
 
   componentWillUnmount () {
-    ipcRenderer.removeListener(WB_READING_QUEUE_ADDED, this.handleAddedToReadingQueue)
+    ipcRenderer.removeListener(WB_READING_QUEUE_LINK_ADDED, this.handleLinkAdded)
+    ipcRenderer.removeListener(WB_READING_QUEUE_CURRENT_PAGE_ADDED, this.handleCurrentPageAdded)
+    ipcRenderer.removeListener(WB_READING_QUEUE_OPEN_URL, this.handleUrlOpened)
+    ipcRenderer.removeListener(WB_READING_QUEUE_OPEN_URL_EMPTY, this.handleUrlFailedOpenEmpty)
   }
 
   /* **************************************************************************/
@@ -23,17 +34,44 @@ class ReadingQueueSnackbarHelper extends React.Component {
 
   state = {
     open: false,
-    isCurrentPage: false
+    message: ''
   }
 
   /* **************************************************************************/
   // UI Events
   /* **************************************************************************/
 
-  handleAddedToReadingQueue = (evt, link, isCurrentPage) => {
+  handleLinkAdded = (evt) => {
     this.setState({
       open: true,
-      isCurrentPage: isCurrentPage
+      message: 'Added link to your Tasks'
+    })
+  }
+
+  handleCurrentPageAdded = (evt) => {
+    this.setState({
+      open: true,
+      message: 'Added current page to your Tasks'
+    })
+  }
+
+  handleUrlOpened = (evt, readingItem) => {
+    this.setState({
+      open: true,
+      message: [
+        'Opening',
+        readingItem.title
+          ? `"${readingItem.title}"`
+          : 'item',
+        'from your Tasks'
+      ].join(' ')
+    })
+  }
+
+  handleUrlFailedOpenEmpty = (evt) => {
+    this.setState({
+      open: true,
+      message: 'No more items in your Tasks'
     })
   }
 
@@ -50,11 +88,13 @@ class ReadingQueueSnackbarHelper extends React.Component {
   }
 
   render () {
-    const { open, isCurrentPage } = this.state
+    const { open, message } = this.state
 
     return (
       <Snackbar
         autoHideDuration={2500}
+        disableWindowBlurListener
+        key={message}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={open}
         onClose={this.handleDismiss}
@@ -63,11 +103,7 @@ class ReadingQueueSnackbarHelper extends React.Component {
             Okay
           </Button>
         )}
-        message={isCurrentPage ? (
-          'Added current page to your Tasks'
-        ) : (
-          'Added link to your Tasks'
-        )}
+        message={message}
       />
     )
   }

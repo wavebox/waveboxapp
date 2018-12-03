@@ -206,6 +206,12 @@ class WaveboxAppPrimaryMenu {
           },
           { type: 'separator' },
           {
+            label: 'Open next Task',
+            click: WaveboxAppPrimaryMenuActions.openNextActiveReadingQueueLink,
+            accelerator: accelerators.openNextQueueItemDefault
+          },
+          { type: 'separator' },
+          {
             label: 'Zoom In',
             click: WaveboxAppPrimaryMenuActions.zoomIn,
             accelerator: accelerators.zoomIn

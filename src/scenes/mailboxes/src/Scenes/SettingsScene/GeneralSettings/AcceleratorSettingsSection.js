@@ -61,6 +61,7 @@ const ACCELERATOR_NAMES = {
   reloadWavebox: 'Reload Wavebox Window',
   developerTools: 'Developer Tools',
   developerToolsWavebox: 'Wavebox Developer Tools',
+  openNextQueueItem: 'Open Next Queue Item',
 
   // Accounts
   previousMailbox: 'Previous Account',
@@ -118,6 +119,7 @@ const VIEW_SECTION = [
   'toggleMenu',
   'navigateBack',
   'navigateForward',
+  'openNextQueueItem',
   'zoomIn',
   'zoomOut',
   'zoomReset',

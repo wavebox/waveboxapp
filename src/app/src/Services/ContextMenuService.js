@@ -10,7 +10,10 @@ import { settingsActions, settingsStore } from 'stores/settings'
 import { accountStore, accountActions } from 'stores/account'
 import { AUTOFILL_MENU } from 'shared/b64Assets'
 import AppSettings from 'shared/Models/Settings/AppSettings'
-import { WB_READING_QUEUE_ADDED } from 'shared/ipcEvents'
+import {
+  WB_READING_QUEUE_LINK_ADDED,
+  WB_READING_QUEUE_CURRENT_PAGE_ADDED
+} from 'shared/ipcEvents'
 
 const privConnected = Symbol('privConnected')
 const privSpellcheckerService = Symbol('privSpellcheckerService')
@@ -215,7 +218,7 @@ class ContextMenuService {
           label: 'Add link to your tasks',
           click: () => {
             accountActions.addToReadingQueue(accountInfo.service.id, params.linkURL)
-            ElectronWebContents.rootWebContents(contents).send(WB_READING_QUEUE_ADDED, params.linkURL, false)
+            ElectronWebContents.rootWebContents(contents).send(WB_READING_QUEUE_LINK_ADDED, params.linkURL)
           }
         })
       }
@@ -520,21 +523,21 @@ class ContextMenuService {
               click: () => {
                 accountActions.fastCreateWeblinkService(accountInfo.mailbox.id, params.pageURL)
               }
-            } : undefined),
-            (accountInfo.has ? {
-              label: 'Add page to your tasks',
-              click: () => {
-                accountActions.addToReadingQueue(accountInfo.service.id, params.pageURL)
-                ElectronWebContents.rootWebContents(contents).send(WB_READING_QUEUE_ADDED, params.linkURL, true)
-              }
             } : undefined)
           ].filter((i) => !!i)
         },
+        (accountInfo.has ? {
+          label: 'Add page to your tasks',
+          click: () => {
+            accountActions.addToReadingQueue(accountInfo.service.id, params.pageURL)
+            ElectronWebContents.rootWebContents(contents).send(WB_READING_QUEUE_CURRENT_PAGE_ADDED, params.linkURL)
+          }
+        } : undefined),
         {
           label: 'Print',
           click: () => { contents.print() }
         }
-      ]
+      ].filter((i) => !!i)
     }
   }
 

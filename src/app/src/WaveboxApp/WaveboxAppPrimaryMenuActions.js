@@ -16,6 +16,7 @@ import { evtMain } from 'AppEvents'
 import { settingsActions } from 'stores/settings'
 import { emblinkActions } from 'stores/emblink'
 import { accountStore } from 'stores/account'
+import LinkOpener from 'LinkOpener'
 
 class WaveboxAppPrimaryMenuAcions {
   /* ****************************************************************************/
@@ -343,6 +344,10 @@ class WaveboxAppPrimaryMenuAcions {
   mailboxNavForward = () => {
     const focused = WaveboxWindow.focused()
     if (focused) { focused.navigateForward() }
+  }
+
+  openNextActiveReadingQueueLink = () => {
+    LinkOpener.openNextActiveReadingQueueLink()
   }
 
   /* ****************************************************************************/
