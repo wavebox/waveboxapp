@@ -1,4 +1,4 @@
-const { ROOT_DIR, ASSETS_DIR } = require('./constants')
+const { LOCAL_SCRIPTS_DIR, ASSETS_DIR, ROOT_DIR } = require('./constants')
 const fs = require('fs-extra')
 const path = require('path')
 const windowsShortcuts = process.platform === 'win32' ? require('windows-shortcuts') : undefined
@@ -8,12 +8,13 @@ const argv = require('yargs')
   .argv
 
 if (process.platform === 'win32') {
-  const vbsPath = path.join(__dirname, 'runshortcut.vbs')
+  const vbsPath = path.join(LOCAL_SCRIPTS_DIR, 'runshortcut.vbs')
   const vbs = [
     'Set objShell = CreateObject("Wscript.shell")',
     `objShell.CurrentDirectory = "${ROOT_DIR}"`,
     'objShell.Run "npm run dev:run", 0'
   ].join('\n')
+  fs.ensureDirSync(LOCAL_SCRIPTS_DIR)
   fs.writeFileSync(vbsPath, vbs)
   windowsShortcuts.create(
     fs.lstatSync(argv.out).isDirectory()
