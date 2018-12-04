@@ -2,12 +2,11 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { accountStore, accountActions } from 'stores/account'
+import { settingsStore } from 'stores/settings'
 import PrimaryTooltip from 'wbui/PrimaryTooltip'
 import MailboxTooltipContent from './MailboxTooltipContent'
 import MailboxTooltipSimpleContent from './MailboxTooltipSimpleContent'
 import ReactDOM from 'react-dom'
-
-const ENTER_DELAY = 750
 
 class MailboxTooltip extends React.Component {
   /* **************************************************************************/
@@ -38,10 +37,12 @@ class MailboxTooltip extends React.Component {
 
   componentDidMount () {
     accountStore.listen(this.accountChanged)
+    settingsStore.listen(this.settingsChanged)
   }
 
   componentWillUnmount () {
     accountStore.unlisten(this.accountChanged)
+    settingsStore.unlisten(this.settingsChanged)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -67,7 +68,8 @@ class MailboxTooltip extends React.Component {
       isMailboxPrimaryActive: (
         accountState.activeMailboxId() === this.props.mailboxId &&
         accountState.activeServiceIsFirstInMailbox()
-      )
+      ),
+      openDelay: settingsStore.getState().ui.accountTooltipDelay
     }
   })()
 
@@ -77,6 +79,12 @@ class MailboxTooltip extends React.Component {
         accountState.activeMailboxId() === this.props.mailboxId &&
         accountState.activeServiceIsFirstInMailbox()
       )
+    })
+  }
+
+  settingsChanged = (settingsState) => {
+    this.setState({
+      openDelay: settingsState.ui.accountTooltipDelay
     })
   }
 
@@ -128,7 +136,8 @@ class MailboxTooltip extends React.Component {
   * @param evt: the event that fired
   */
   handleChildWrapClick = (evt) => {
-    if (this.state.isMailboxPrimaryActive) {
+    const { isMailboxPrimaryActive, openDelay } = this.state
+    if (isMailboxPrimaryActive) {
       this.setState((prevState) => {
         return { open: !prevState.open }
       })
@@ -138,7 +147,7 @@ class MailboxTooltip extends React.Component {
       clearTimeout(this.dumpOpenExpirer)
       this.dumpOpenExpirer = setTimeout(() => {
         this.dumpOpen = false
-      }, ENTER_DELAY * 2)
+      }, openDelay * 2)
     }
   }
 
@@ -195,7 +204,8 @@ class MailboxTooltip extends React.Component {
       ...passProps
     } = this.props
     const {
-      open
+      open,
+      openDelay
     } = this.state
 
     return (
@@ -205,10 +215,10 @@ class MailboxTooltip extends React.Component {
           disablePadding: false
         } : {
           interactive: true,
-          disablePadding: true,
-          enterDelay: ENTER_DELAY,
-          leaveDelay: 1
+          disablePadding: true
         })}
+        enterDelay={openDelay <= 0 ? undefined : openDelay}
+        leaveDelay={openDelay <= 0 ? undefined : 1}
         width={400}
         onClose={this.handleTooltipClose}
         onOpen={this.handleTooltipOpen}

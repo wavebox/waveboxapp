@@ -8,6 +8,7 @@ import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemSwitch from 'wbui/SettingsListItemSwitch'
 import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 import SettingsListKeyboardShortcutText from 'wbui/SettingsListKeyboardShortcutText'
+import SettingsListItemTextFieldInline from 'wbui/SettingsListItemTextFieldInline'
 import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
 import teal from '@material-ui/core/colors/teal'
 
@@ -37,6 +38,7 @@ export default class UISettingsSection extends React.Component {
         'vibrancyMode',
         'accountTooltipMode',
         'accountTooltipInteractive',
+        'accountTooltipDelay',
         'sidebarEnabled',
         'showSidebarSupport',
         'showSidebarNewsfeed',
@@ -93,6 +95,7 @@ export default class UISettingsSection extends React.Component {
             checked={ui.showSleepableServiceIndicator} />
           <SettingsListItemSelectInline
             label='App theme'
+            divider={process.platform === 'darwin'}
             value={ui.theme}
             options={[
               { value: UISettings.THEMES.DARK, label: 'Dark' },
@@ -151,6 +154,7 @@ export default class UISettingsSection extends React.Component {
           {process.platform === 'darwin' ? (
             <SettingsListItemSelectInline
               label='Translucent window backgrounds (Requires Restart)'
+              divider={false}
               secondary='(Experimental)'
               value={ui.vibrancyMode}
               options={[
@@ -165,6 +169,8 @@ export default class UISettingsSection extends React.Component {
                 settingsActions.sub.ui.setVibrancyMode(value)
               }} />
           ) : undefined}
+        </SettingsListSection>
+        <SettingsListSection title='User Interface' subtitle='Tooltips' icon={<ViewQuiltIcon />}>
           <SettingsListItemSelectInline
             label='Account tooltips'
             value={ui.accountTooltipMode}
@@ -176,11 +182,22 @@ export default class UISettingsSection extends React.Component {
             ]}
             onChange={(evt, value) => settingsActions.sub.ui.setAccountTooltipMode(value)} />
           <SettingsListItemSwitch
-            divider={false}
             label='Show Recent, Pinned & Tasks in Account tooltips'
             onChange={(evt, toggled) => settingsActions.sub.ui.setAccountTooltipInteractive(toggled)}
             disabled={ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.DISABLED}
             checked={ui.accountTooltipInteractive} />
+          <SettingsListItemTextFieldInline
+            label='Account tooltip show delay (ms)'
+            divider={false}
+            disabled={ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.DISABLED}
+            textFieldProps={{
+              defaultValue: ui.accountTooltipDelay,
+              type: 'number',
+              placeholder: '750',
+              onBlur: (evt) => {
+                settingsActions.sub.ui.setAccountTooltipDelay(parseInt(evt.target.value))
+              }
+            }} />
         </SettingsListSection>
 
         <SettingsListSection title='User Interface' subtitle='Sidebar' icon={<ViewQuiltIcon />}>

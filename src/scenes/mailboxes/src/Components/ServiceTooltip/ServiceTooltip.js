@@ -5,6 +5,7 @@ import PrimaryTooltip from 'wbui/PrimaryTooltip'
 import ServiceTooltipContent from './ServiceTooltipContent'
 import ServiceTooltipSimpleContent from './ServiceTooltipSimpleContent'
 import { accountStore, accountActions } from 'stores/account'
+import { settingsStore } from 'stores/settings'
 import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 import ReactDOM from 'react-dom'
 import { ipcRenderer } from 'electron'
@@ -12,8 +13,6 @@ import {
   WCRPC_OPEN_RECENT_LINK,
   WCRPC_OPEN_READING_QUEUE_LINK
 } from 'shared/webContentsRPC'
-
-const ENTER_DELAY = 750
 
 class ServiceTooltip extends React.Component {
   /* **************************************************************************/
@@ -45,10 +44,12 @@ class ServiceTooltip extends React.Component {
 
   componentDidMount () {
     accountStore.listen(this.accountChanged)
+    settingsStore.listen(this.settingsChanged)
   }
 
   componentWillUnmount () {
     accountStore.unlisten(this.accountChanged)
+    settingsStore.unlisten(this.settingsChanged)
     clearTimeout(this.dumpOpenExpirer)
   }
 
@@ -66,12 +67,19 @@ class ServiceTooltip extends React.Component {
 
   state = {
     open: false,
-    isServiceActive: accountStore.getState().isServiceActive(this.props.serviceId)
+    isServiceActive: accountStore.getState().isServiceActive(this.props.serviceId),
+    openDelay: settingsStore.getState().ui.accountTooltipDelay
   }
 
   accountChanged = (accountState) => {
     this.setState({
       isServiceActive: accountState.isServiceActive(this.props.serviceId)
+    })
+  }
+
+  settingsChanged = (settingsState) => {
+    this.setState({
+      openDelay: settingsState.ui.accountTooltipDelay
     })
   }
 
@@ -124,7 +132,8 @@ class ServiceTooltip extends React.Component {
   * @param evt: the event that fired
   */
   handleChildWrapClick = (evt) => {
-    if (this.state.isServiceActive) {
+    const { openDelay, isServiceActive } = this.state
+    if (isServiceActive) {
       this.setState((prevState) => {
         return { open: !prevState.open }
       })
@@ -134,7 +143,7 @@ class ServiceTooltip extends React.Component {
       clearTimeout(this.dumpOpenExpirer)
       this.dumpOpenExpirer = setTimeout(() => {
         this.dumpOpen = false
-      }, ENTER_DELAY * 2)
+      }, openDelay * 2)
     }
   }
 
@@ -256,7 +265,8 @@ class ServiceTooltip extends React.Component {
       ...passProps
     } = this.props
     const {
-      open
+      open,
+      openDelay
     } = this.state
     return (
       <PrimaryTooltip
@@ -265,10 +275,10 @@ class ServiceTooltip extends React.Component {
           disablePadding: false
         } : {
           interactive: true,
-          disablePadding: true,
-          enterDelay: ENTER_DELAY,
-          leaveDelay: 1
+          disablePadding: true
         })}
+        enterDelay={openDelay <= 0 ? undefined : openDelay}
+        leaveDelay={openDelay <= 0 ? undefined : 1}
         width={400}
         onClose={this.handleTooltipClose}
         onOpen={this.handleTooltipOpen}

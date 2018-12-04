@@ -81,6 +81,16 @@ class UISettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param delay: the delay before showing
+  */
+  setAccountTooltipDelay (delay) {
+    const val = parseInt(delay)
+    if (!isNaN(val)) {
+      this.dispatchUpdate('accountTooltipDelay', val)
+    }
+  }
+
+  /**
   * Toggles the sidebar
   */
   toggleSidebar () {

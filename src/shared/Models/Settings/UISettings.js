@@ -94,6 +94,7 @@ class UISettings extends Model {
     return ACCOUNT_TOOLTIP_MODES.ENABLED
   }
   get accountTooltipInteractive () { return this._value_('accountTooltipInteractive', true) }
+  get accountTooltipDelay () { return this._value_('accountTooltipDelay', this.accountTooltipInteractive ? 750 : 0) }
   get lockSidebarsAndToolbars () { return this._value_('lockSidebarsAndToolbars', false) }
   get showSidebarScrollbars () { return this._value_('showSidebarScrollbars', false) }
 
