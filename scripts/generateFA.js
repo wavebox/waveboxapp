@@ -73,6 +73,7 @@ const MAPPING = [
   ['fasRulerVertical', 'fasRulerVertical'],
   ['fasArrowFromTop', 'fasArrowUp'],
   ['fasArrowFromBottom', 'fasArrowDown'],
+  ['fasMapPin', 'fasMapPin'],
 
   ['fabSlack', 'fabSlack'],
   ['fabGoogle', 'fabGoogle'],

@@ -11,7 +11,7 @@ import ServiceTooltipBookmarkItem from './ServiceTooltipBookmarkItem'
 import ServiceTooltipQueueItem from './ServiceTooltipQueueItem'
 import TooltipSectionListSubheading from 'wbui/TooltipSectionListSubheading'
 import ServiceTooltipInfoItem from './ServiceTooltipInfoItem'
-import StarsIcon from '@material-ui/icons/Stars'
+import FASMapPinIcon from 'wbfa/FASMapPin'
 import HistoryIcon from '@material-ui/icons/History'
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline'
 
@@ -24,6 +24,10 @@ const styles = (theme) => ({
     fontSize: '20px',
     verticalAlign: 'text-bottom',
     marginRight: 4
+  },
+  subheadingFAIcon: {
+    width: '1.1rem !important',
+    height: '1.1rem !important'
   },
   firstItem: {
     marginTop: 4
@@ -159,7 +163,7 @@ class ServiceTooltipContent extends React.Component {
           {/* Bookmarks (used) */}
           {bookmarks.length ? (
             <TooltipSectionListSubheading className={classes.subheading}>
-              <StarsIcon className={classes.subheadingIcon} />
+              <FASMapPinIcon className={classNames(classes.subheadingIcon, classes.subheadingFAIcon)} />
               Pinned
             </TooltipSectionListSubheading>
           ) : undefined}
@@ -209,7 +213,7 @@ class ServiceTooltipContent extends React.Component {
           {/* Bookmarks (unused) */}
           {!bookmarks.length ? (
             <TooltipSectionListSubheading className={classes.subheading}>
-              <StarsIcon className={classes.subheadingIcon} />
+              <FASMapPinIcon className={classNames(classes.subheadingIcon, classes.subheadingFAIcon)} />
               Pinned
             </TooltipSectionListSubheading>
           ) : undefined}

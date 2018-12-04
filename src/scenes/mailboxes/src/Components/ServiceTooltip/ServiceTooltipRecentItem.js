@@ -5,7 +5,7 @@ import { withStyles } from '@material-ui/core/styles'
 import TooltipSectionListItem from 'wbui/TooltipSectionListItem'
 import TooltipSectionListItemText from 'wbui/TooltipSectionListItemText'
 import TooltipSectionListItemSecondaryAction from 'wbui/TooltipSectionListItemSecondaryAction'
-import StarsIcon from '@material-ui/icons/Stars'
+import FASMapPinIcon from 'wbfa/FASMapPin'
 import classNames from 'classnames'
 
 const styles = (theme) => ({
@@ -29,6 +29,8 @@ const styles = (theme) => ({
   },
   bookmarkIcon: {
     opacity: 0.8,
+    width: '1.2rem !important',
+    height: '1.2rem !important',
     '&:hover': {
       opacity: 1
     }
@@ -117,9 +119,9 @@ class ServiceTooltipRecentItem extends React.Component {
           primaryTypographyProps={{ className: classes.text }}
           secondaryTypographyProps={{ className: classes.text }}
           primary={recentItem.title || <span>&nbsp;</span>}
-          secondary={recentItem.url} />
+          secondary={recentItem.url || <span>&nbsp;</span>} />
         <TooltipSectionListItemSecondaryAction>
-          <StarsIcon className={classes.bookmarkIcon} onClick={this.handleBookmarkClick} />
+          <FASMapPinIcon className={classes.bookmarkIcon} onClick={this.handleBookmarkClick} />
         </TooltipSectionListItemSecondaryAction>
       </TooltipSectionListItem>
     )

@@ -1146,6 +1146,7 @@ class AccountStore extends CoreAccountStore {
   handleAddRecent ({ serviceId, recentId, tabId, windowType, url, title, favicons }) {
     const serviceData = this.getServiceData(serviceId)
     if (!serviceData) { this.preventDefault(); return }
+    if (!url) { this.preventDefault(); return }
 
     // See if we're going to intelligently replace someone
     const now = new Date().getTime()
@@ -1173,7 +1174,7 @@ class AccountStore extends CoreAccountStore {
             id: recentId,
             tabId: tabId,
             windowType: windowType,
-            url: url || replace.url,
+            url: url,
             title: title || replace.title,
             favicons: favicons && favicons.length ? favicons : replace.favicons,
             modified: now
@@ -1215,6 +1216,7 @@ class AccountStore extends CoreAccountStore {
   handleAddToReadingQueue ({ serviceId, url }) {
     const service = this.getService(serviceId)
     if (!service) { this.preventDefault(); return }
+    if (!url) { this.preventDefault(); return }
     const id = uuid.v4()
 
     this.saveService(serviceId, service.changeData({
