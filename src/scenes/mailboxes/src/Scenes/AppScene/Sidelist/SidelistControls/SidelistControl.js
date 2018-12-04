@@ -92,7 +92,8 @@ class SidelistControl extends React.Component {
       hasSeenTour: settingsState.hasSeenTour,
       currentTourStep: settingsState.tourStep,
       dismissingTour: false,
-      contextMenuAnchor: null
+      contextMenuAnchor: null,
+      tooltipOpen: false
     }
   })()
 
@@ -149,7 +150,8 @@ class SidelistControl extends React.Component {
     evt.preventDefault()
     evt.stopPropagation()
     this.setState({
-      contextMenuAnchor: evt.target
+      contextMenuAnchor: evt.target,
+      tooltipOpen: false
     })
     if (this.props.onContextMenu) {
       this.props.onContextMenu(evt)
@@ -165,6 +167,33 @@ class SidelistControl extends React.Component {
     this.setState({ contextMenuAnchor: null })
     if (cb) {
       setTimeout(() => { cb() }, 250)
+    }
+  }
+
+  /**
+  * Handles opening the tooltip
+  * @param evt: the event that fired
+  */
+  handleCloseTooltip = (evt) => {
+    this.setState({ tooltipOpen: false })
+  }
+
+  /**
+  * Handles closing the tooltip
+  * @param evt: the event that fired
+  */
+  handleOpenTooltip = (evt) => {
+    this.setState({ tooltipOpen: true })
+  }
+
+  /**
+  * Handles the icon being clicked
+  * @param evt: the event that fired
+  */
+  handleIconClick = (evt) => {
+    this.setState({ tooltipOpen: false })
+    if (this.props.onClick) {
+      this.props.onClick(evt)
     }
   }
 
@@ -212,7 +241,8 @@ class SidelistControl extends React.Component {
       hasSeenTour,
       currentTourStep,
       dismissingTour,
-      contextMenuAnchor
+      contextMenuAnchor,
+      tooltipOpen
     } = this.state
 
     const showTourPopover = !hasSeenTour && currentTourStep === tourStep && !dismissingTour
@@ -228,13 +258,16 @@ class SidelistControl extends React.Component {
             open: true
           } : {
             key: 'normal', // Set the key to force a re-render when switching between tour and non-tour
-            title: tooltip
+            title: tooltip,
+            open: tooltipOpen,
+            onClose: this.handleCloseTooltip,
+            onOpen: this.handleOpenTooltip
           })}>
           <div
             {...passProps}
             onContextMenu={this.handleOpenContextMenu}
             className={classes.container}>
-            <IconButton onClick={onClick} className={classes.button}>
+            <IconButton onClick={this.handleIconClick} className={classes.button}>
               {icon}
             </IconButton>
             {children}
