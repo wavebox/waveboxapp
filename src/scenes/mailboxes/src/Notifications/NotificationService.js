@@ -60,7 +60,8 @@ class NotificationService extends EventEmitter {
     return {
       isRunning: false,
       startedTime: new Date().getTime(),
-      sent: new Map()
+      sent: new Map(),
+      openSystemNotifications: new Map()
     }
   }
 
@@ -182,6 +183,7 @@ class NotificationService extends EventEmitter {
 
     const now = new Date().getTime()
     const pendingNotifications = []
+    const existingIds = []
 
     // Look for notifications to send
     accountState.allServicesUnordered().forEach((service) => {
@@ -191,6 +193,7 @@ class NotificationService extends EventEmitter {
       const serviceData = accountState.getServiceData(service.id)
       serviceData.notifications.forEach((notification) => {
         const id = `${service.id}:${notification.id}`
+        existingIds.push(id)
         if (this.__state__.sent.has(id)) { return }
         if (now - notification.timestamp > NOTIFICATION_MAX_AGE) { return }
         if (this.suppressForGrace) {
@@ -212,17 +215,20 @@ class NotificationService extends EventEmitter {
     this.__state__.sent.forEach((timestamp, id) => {
       if (now - timestamp > NOTIFICATION_MAX_AGE * 2) {
         this.__state__.sent.delete(id)
+        this.__state__.openSystemNotifications.delete(id)
       }
     })
 
     // Send the notifications we found
     if (pendingNotifications.length) {
       pendingNotifications.forEach(({ mailboxId, serviceId, notification }) => {
-        NotificationRenderer.presentMailboxNotification(
+        const notificationId = `${serviceId}:${notification.id}`
+        const systemNotification = NotificationRenderer.presentMailboxNotification(
           mailboxId,
           serviceId,
           notification,
           (data) => {
+            this.__state__.openSystemNotifications.delete(notificationId)
             ipcRenderer.send(WB_FOCUS_APP, { })
             if (data) {
               accountActions.changeActiveService(data.serviceId)
@@ -232,8 +238,21 @@ class NotificationService extends EventEmitter {
           accountState,
           settingsState
         )
+        if (systemNotification) {
+          this.__state__.openSystemNotifications.set(notificationId, systemNotification)
+        }
       })
     }
+
+    // Clear out any notifications that are no longer relevant
+    this.__state__.openSystemNotifications.forEach((systemNotification, id) => {
+      if (existingIds.indexOf(id) === -1) {
+        this.__state__.openSystemNotifications.delete(id)
+        if (systemNotification.notification && systemNotification.notification.close) {
+          systemNotification.notification.close()
+        }
+      }
+    })
   }
 }
 

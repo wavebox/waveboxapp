@@ -175,7 +175,7 @@ class DictionariesStore {
 
   handleCompleteDictionaryInstall () {
     this.install = this.blankInstall()
-    setTimeout(() => { window.location.hash = '/settings' }, 500)
+    setTimeout(() => { window.location.hash = '/settings/general/section-language' }, 500)
   }
 
   handlePickDictionaryInstallLanguage ({ id, lang }) {

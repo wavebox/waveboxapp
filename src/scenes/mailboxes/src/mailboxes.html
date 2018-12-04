@@ -8,7 +8,7 @@
       object-src 'self';
       connect-src *;
       font-src 'self';
-      script-src 'self' 'sha256-WYmZqQ3ga72JqV+RMBqJpypcMUXVQ4rgF9VpnWQoGdE=' 'sha256-ogb99peCT8yUDjhFwEtktWqFUlK7UfRIUoDDSHb1CBw=';
+      script-src 'self' 'sha256-WYmZqQ3ga72JqV+RMBqJpypcMUXVQ4rgF9VpnWQoGdE=' 'sha256-Aoz6Umsr/bwg05a8CQuV04hhUt6nVff598DMX+hF9Gw=';
       style-src 'self' 'unsafe-inline';
     ">
     <title>Wavebox</title>
@@ -130,11 +130,17 @@ window.appNodeModulesRequire = function (name) {
 
   /**
   * Injects the mailboxes script
+  * @param wait: time to wait before doing heavy loading
   * @return promise
   */
-  const injectMailboxes = function () {
+  const injectMailboxes = function (wait) {
     timing.clientEval.init = new Date().getTime()
     return Promise.resolve()
+      .then(() => {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => { resolve() }, wait)
+        })
+      })
       .then(() => injectScript('mailboxes.js'))
       .then((res) => {
         timing.clientEval.complete = new Date().getTime()
@@ -231,7 +237,7 @@ window.appNodeModulesRequire = function (name) {
         })
       })
       .then(
-        ({res, jsonContent}) => {
+        ({ res, jsonContent }) => {
           if (res.status === 403 || res.status === 401) {
             return uauthorizedBounce(jsonContent ? jsonContent.error : undefined)
           } else if (res.ok && jsonContent) {
@@ -265,7 +271,7 @@ window.appNodeModulesRequire = function (name) {
 
   // Kick everything off
   Promise.all([
-    injectMailboxes(),
+    injectMailboxes(50),
     fetchBootstrap()
   ]).then((r) => {
     timing.clientStart.init = new Date().getTime()

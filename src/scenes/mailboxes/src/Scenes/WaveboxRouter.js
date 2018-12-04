@@ -24,7 +24,6 @@ import SettingsScene from './SettingsScene'
 import SitePermissionsScene from './SitePermissionsScene'
 import MailboxServiceDeleteScene from './MailboxServiceDeleteScene'
 import MailboxDeleteScene from './MailboxDeleteScene'
-import NotificationPanel from './NotificationPanel'
 import ComposePickerScene from './ComposePickerScene'
 import {
   AccountMessageScene,
@@ -41,6 +40,7 @@ import {
 import ErrorBoundary from 'wbui/ErrorBoundary'
 import FullscreenSnackbarHelper from 'Components/FullscreenSnackbarHelper'
 import SpinnerScene from './SpinnerScene'
+import ReadingQueueSnackbarHelper from 'wbui/ReadingQueueSnackbarHelper'
 
 export default class WaveboxRouter extends React.Component {
   /* **************************************************************************/
@@ -62,7 +62,7 @@ export default class WaveboxRouter extends React.Component {
             <FullscreenSnackbarHelper />
           </ErrorBoundary>
           <ErrorBoundary>
-            <NotificationPanel />
+            <ReadingQueueSnackbarHelper />
           </ErrorBoundary>
 
           <WaveboxRouterErrorBoundary>

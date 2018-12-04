@@ -25,8 +25,12 @@ class ContainerServiceData extends CoreACServiceData {
   * @override
   */
   getUnreadCount (service) {
-    if (service.supportsWBGAPI && this.wbgapiUnreadCount > 0) { return this.wbgapiUnreadCount }
-    return this.documentTitleUnreadCount
+    const val = parseInt(
+      service.supportsWBGAPI && this.wbgapiUnreadCount > 0
+        ? this.wbgapiUnreadCount
+        : this.documentTitleUnreadCount
+    )
+    return isNaN(val) ? 0 : val
   }
 
   /**

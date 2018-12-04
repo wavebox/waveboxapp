@@ -43,8 +43,8 @@ Here's how to build Wavebox from source.
 Before you get started you'll need the following
 
 * Python 2.7
-* Nodejs 8.9.3
-* npm >= 6.2.0
+* Nodejs 10.2.1
+* npm >= 6.4.1
 * Wavebox API Key
   * Download & install Wavebox for free
   * Go to Settings and then the Wavebox Pro Tab

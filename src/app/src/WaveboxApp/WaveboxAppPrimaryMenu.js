@@ -47,7 +47,7 @@ class WaveboxAppPrimaryMenu {
         label: process.platform === 'darwin' ? `${tlpfx}Application` : `${tlpfx}File`,
         submenu: [
           {
-            label: userEmail ? `Wavebox Account: ${userEmail}` : 'Wavebox Account: Logged out',
+            label: userEmail ? `Wavebox Subscription: ${userEmail}` : 'Wavebox Subscription: Logged out',
             click: WaveboxAppPrimaryMenuActions.waveboxAccount
           },
           { type: 'separator' },
@@ -122,38 +122,38 @@ class WaveboxAppPrimaryMenu {
         submenu: [
           {
             label: 'Undo',
-            role: 'undo',
+            click: WaveboxAppPrimaryMenuActions.undo,
             accelerator: accelerators.undo
           },
           {
             label: 'Redo',
-            role: 'redo',
+            click: WaveboxAppPrimaryMenuActions.redo,
             accelerator: accelerators.redo
           },
           { type: 'separator' },
           {
             label: 'Cut',
-            role: 'cut',
+            click: WaveboxAppPrimaryMenuActions.cut,
             accelerator: accelerators.cut
           },
           {
             label: 'Copy',
-            role: 'copy',
+            click: WaveboxAppPrimaryMenuActions.copy,
             accelerator: accelerators.copy
           },
           {
             label: 'Paste',
-            role: 'paste',
+            click: WaveboxAppPrimaryMenuActions.paste,
             accelerator: accelerators.paste
           },
           {
             label: 'Paste and match style',
-            role: 'pasteandmatchstyle',
+            click: WaveboxAppPrimaryMenuActions.pasteAndMatchStyle,
             accelerator: accelerators.pasteAndMatchStyle
           },
           {
             label: 'Select All',
-            role: 'selectall',
+            click: WaveboxAppPrimaryMenuActions.selectAll,
             accelerator: accelerators.selectAll
           },
           { type: 'separator' },
@@ -203,6 +203,12 @@ class WaveboxAppPrimaryMenu {
             label: 'Navigate Forward',
             click: WaveboxAppPrimaryMenuActions.mailboxNavForward,
             accelerator: accelerators.navigateForward
+          },
+          { type: 'separator' },
+          {
+            label: 'Open next Task',
+            click: WaveboxAppPrimaryMenuActions.openNextActiveReadingQueueLink,
+            accelerator: accelerators.openNextQueueItemDefault
           },
           { type: 'separator' },
           {

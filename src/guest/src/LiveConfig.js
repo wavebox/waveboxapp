@@ -29,6 +29,7 @@ class LiveConfig {
   /* **************************************************************************/
 
   get launchSettings () { return this.config.launchSettings }
+  get launchUserSettings () { return this.config.launchUserSettings }
   get extensions () { return this.config.extensions }
   get permissionRootUrl () {
     const purl = new URL(this.hostUrl || 'about:blank')
@@ -45,6 +46,8 @@ class LiveConfig {
   get notificationPermission () { return this.config.notificationPermission }
   get paths () { return this.config.paths }
   get platform () { return this.config.platform }
+  get arch () { return this.config.arch }
+  get osRelease () { return this.config.osRelease }
 }
 
 export default new LiveConfig()

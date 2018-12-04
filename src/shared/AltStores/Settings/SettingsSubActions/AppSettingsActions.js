@@ -193,6 +193,14 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * Sets the search provider
+  * @param provider: the new search provider
+  */
+  setSearchProvider (provider) {
+    this.dispatchUpdate('searchProvider', provider)
+  }
+
+  /**
   * Opens the metrics log
   */
   openMetricsLog () {

@@ -9,15 +9,19 @@ const styles = {
   container: {
     // White ring fix part 1/3 (2-lines)
     // https://css-tricks.com/forums/topic/border-radius-ugliness/
-    backgroundClip: 'content-box',
-    padding: 1
+    '&.with-ring': {
+      backgroundClip: 'content-box',
+      padding: 1
+    }
   },
   img: {
     textIndent: -100000, // Stops showing the broken image icon if the url doesn't resolve
     // White ring fix part 2/3 (3-lines)
-    margin: -1,
-    width: 'calc(100% + 2px)',
-    height: 'calc(100% + 2px)'
+    '&.with-ring': {
+      margin: -1,
+      width: 'calc(100% + 2px)',
+      height: 'calc(100% + 2px)'
+    }
   },
   sleeping: {
     filter: 'grayscale(100%)'
@@ -106,13 +110,15 @@ class ACAvatarCircle extends React.Component {
         img: classNames(
           classes.img,
           showRestricted ? classes.restricted : undefined,
+          avatar.showAvatarColorRing ? 'with-ring' : undefined,
           (otherProps.classes || {}).img
         )
       },
       className: classNames(
         className,
         classes.container,
-        showSleeping ? classes.sleeping : undefined
+        showSleeping ? classes.sleeping : undefined,
+        avatar.showAvatarColorRing ? 'with-ring' : undefined
       )
     }
 

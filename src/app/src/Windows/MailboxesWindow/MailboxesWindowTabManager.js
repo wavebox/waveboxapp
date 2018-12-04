@@ -50,6 +50,7 @@ class MailboxesWindowTabManager {
     return this.attachedMailboxes.has(this[privActiveTabId]) ? this[privActiveTabId] : undefined
   }
   get allWebContentIds () { return Array.from(this.attachedMailboxes.keys()) }
+  get mailboxesWindow () { return WaveboxWindow.fromWebContentsId(this.webContentsId) }
 
   /* ****************************************************************************/
   // Event handlers: Mailboxes
@@ -69,12 +70,12 @@ class MailboxesWindowTabManager {
         this.attachedMailboxes.delete(data.webContentsId)
         this.attachedExtensions.delete(data.webContentsId)
         this.targetUrls.delete(data.webContentsId)
-        this[privWindowEventEmitter]('tab-destroyed', { sender: this }, data.webContentsId)
-        evtMain.emit(evtMain.WB_TAB_DESTROYED, { sender: this }, data.webContentsId)
+        this[privWindowEventEmitter]('tab-destroyed', { sender: this.mailboxesWindow }, data.webContentsId)
+        evtMain.emit(evtMain.WB_TAB_DESTROYED, { sender: this.mailboxesWindow }, data.webContentsId)
       })
 
-      this[privWindowEventEmitter]('tab-created', { sender: this }, data.webContentsId)
-      evtMain.emit(evtMain.WB_TAB_CREATED, { sender: this }, data.webContentsId)
+      this[privWindowEventEmitter]('tab-created', { sender: this.mailboxesWindow }, data.webContentsId)
+      evtMain.emit(evtMain.WB_TAB_CREATED, { sender: this.mailboxesWindow }, data.webContentsId)
 
       // Sometimes the active tab change call fails because the webview is not
       // yet attached. It fails silently and doesn't set, so run it again here
@@ -124,7 +125,10 @@ class MailboxesWindowTabManager {
       const browserWindow = BrowserWindow.fromWebContents(webContents.fromId(this.webContentsId))
       if (browserWindow) {
         this[privActiveTabId] = tabId
-        evtMain.emit(evtMain.WB_TAB_ACTIVATED, {}, browserWindow.id, tabId)
+        const bwId = browserWindow.id
+        setTimeout(() => { // We're in an alt-dispatch cycle here so make sure we're outside of it
+          evtMain.emit(evtMain.WB_TAB_ACTIVATED, {}, bwId, tabId)
+        })
       }
     }
   }

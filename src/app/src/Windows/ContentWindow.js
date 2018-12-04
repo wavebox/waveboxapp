@@ -5,6 +5,7 @@ import Resolver from 'Runtime/Resolver'
 import { WindowOpeningHandler } from './WindowOpeningEngine'
 import { GuestWebPreferences } from 'WebContentsManager'
 import querystring from 'querystring'
+import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
 
 const privTabMetaInfo = Symbol('tabMetaInfo')
 const privGuestWebPreferences = Symbol('privGuestWebPreferences')
@@ -169,11 +170,11 @@ class ContentWindow extends WaveboxWindow {
       if (contents.getType() === 'webview' && contents.hostWebContents.id === this.window.webContents.id) {
         this[privGuestWebContentsId] = contents.id
         contents.on('new-window', this.handleWebContentsNewWindow)
-        contents.on('will-navigate', this.handleWebViewWillNavigate)
+        ElectronWebContentsWillNavigateShim.on(contents, this.handleWebViewWillNavigate)
         contents.once('destroyed', () => {
           const wcId = this[privGuestWebContentsId]
           this[privGuestWebContentsId] = null
-          this.emit('tab-desroyed', { sender: this }, wcId)
+          this.emit('tab-destroyed', { sender: this }, wcId)
           evtMain.emit(evtMain.WB_TAB_DESTROYED, { sender: this }, wcId)
         })
 

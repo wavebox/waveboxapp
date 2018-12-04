@@ -94,7 +94,6 @@ class AccountDispatch extends EventEmitter {
 
   /**
   * Makes a request on a getter
-  * @param mailboxId: the id of the mailbox
   * @param name: the name of the getter
   * @return the response or undefined if no getter is available
   */
@@ -132,6 +131,16 @@ class AccountDispatch extends EventEmitter {
   */
   getCurrentUrl (serviceId) {
     return this.requestGetter('current-url', { serviceId: serviceId })
+  }
+
+  /**
+  * Gets if the webview is mounted
+  * @param serviceId: he id of the service
+  * @return promise with whether the webview is active or not
+  */
+  getIsWebviewMounted (serviceId) {
+    const res = this.requestGetter('is-webview-mounted', { serviceId: serviceId })
+    return res === null ? false : res
   }
 
   /* **************************************************************************/
@@ -232,6 +241,15 @@ class AccountDispatch extends EventEmitter {
   */
   composeItem (serviceId, data) {
     this.emit('composeItem', { serviceId: serviceId, data: data })
+  }
+
+  /**
+  * Loads a url
+  * @param serviceId: the id of the service
+  * @param url: the url to load
+  */
+  loadUrl (serviceId, url) {
+    this.emit('loadUrl', { serviceId: serviceId, url: url })
   }
 }
 

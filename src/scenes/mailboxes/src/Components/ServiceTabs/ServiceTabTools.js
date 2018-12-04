@@ -38,10 +38,10 @@ class ServiceTabTools {
   static uiLocationTooltipPositioning (uiLocation) {
     switch (uiLocation) {
       case ACMailbox.SERVICE_UI_LOCATIONS.SIDEBAR:
-        return { position: 'right', arrow: 'center' }
+        return { placement: 'right' }
       case ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_START:
       case ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_END:
-        return { position: 'bottom', arrow: 'center' }
+        return { placement: 'bottom' }
     }
   }
 

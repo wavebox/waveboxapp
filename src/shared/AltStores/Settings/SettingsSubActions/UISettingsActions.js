@@ -74,6 +74,23 @@ class UISettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param interactive: true if interactive
+  */
+  setAccountTooltipInteractive (interactive) {
+    this.dispatchUpdate('accountTooltipInteractive', interactive)
+  }
+
+  /**
+  * @param delay: the delay before showing
+  */
+  setAccountTooltipDelay (delay) {
+    const val = parseInt(delay)
+    if (!isNaN(val)) {
+      this.dispatchUpdate('accountTooltipDelay', val)
+    }
+  }
+
+  /**
   * Toggles the sidebar
   */
   toggleSidebar () {
@@ -113,13 +130,6 @@ class UISettingsActions extends CoreSettingsActions {
   */
   setShowSidebarNewsfeed (mode) {
     this.dispatchUpdate('showSidebarNewsfeed', mode)
-  }
-
-  /**
-  * @param show: whether to show service sleep notifications or not
-  */
-  setShowDefaultServiceSleepNotifications (show) {
-    this.dispatchUpdate('showDefaultServiceSleepNotifications', show)
   }
 
   /**

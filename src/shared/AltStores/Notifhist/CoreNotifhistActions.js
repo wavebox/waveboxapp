@@ -47,6 +47,15 @@ class CoreNotifhistActions extends RemoteActions {
       return { notification, timestamp, id }
     })
   }
+
+  /**
+  * Clears all notifications
+  */
+  clearAllNotifications (...args) {
+    return this.universalDispatch('clearAllNotifications', args, () => {
+      return { }
+    })
+  }
 }
 
 export default CoreNotifhistActions

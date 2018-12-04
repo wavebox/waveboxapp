@@ -35,10 +35,6 @@ class SidelistControlSettings extends React.Component {
             make sure Wavebox works best for you
           </div>
         )}
-        tourTooltipStyles={{
-          style: { marginTop: -25 },
-          arrowStyle: { marginTop: 20 }
-        }}
         icon={(<SidelistMatIcon IconClass={SettingsSharpIcon} className={classes.icon} />)} />
     )
   }

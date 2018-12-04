@@ -48,6 +48,20 @@ class UserStore extends CoreUserStore {
       })
     }
 
+    /**
+    * @return the launch settings
+    */
+    this.launchSettingsJS = () => {
+      return {
+        clientId: this.clientId,
+        ...(this.user ? {
+          analyticsEnabled: this.user.analyticsEnabled
+        } : {
+          analyticsEnabled: false
+        })
+      }
+    }
+
     /* ****************************************/
     // Remote
     /* ****************************************/

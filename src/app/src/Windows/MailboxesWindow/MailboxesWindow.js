@@ -23,6 +23,7 @@ import {
   WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER,
   WB_MAILBOXES_WINDOW_SHOW_NEWS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
+  WB_MAILBOXES_WINDOW_NAVIGATE_AND_SWITCH_TO_SERVICE,
 
   WB_USER_CHECK_FOR_UPDATE,
   WB_SQUIRREL_UPDATE_DOWNLOADED,
@@ -511,6 +512,17 @@ class MailboxesWindow extends WaveboxWindow {
     const wc = electron.webContents.fromId(wcId)
     if (!wc) { return }
     wc.goForward()
+    return this
+  }
+
+  /**
+  * Switches to a service and navigates it
+  * @param serviceId: the id of the service
+  * @param url: the url to load
+  * @return this
+  */
+  navigateAndSwitchToService (serviceId, url) {
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_NAVIGATE_AND_SWITCH_TO_SERVICE, serviceId, url)
     return this
   }
 

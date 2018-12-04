@@ -3,25 +3,32 @@ import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { ipcRenderer } from 'electron'
 import { emblinkActions } from 'stores/emblink'
-import { WB_FOCUS_APP, WB_QUIT_APP, WB_TRAY_TOGGLE_WINDOW_MODE } from 'shared/ipcEvents'
 import { settingsStore, settingsActions } from 'stores/settings'
 import Timeago from 'react-timeago'
 import { withStyles } from '@material-ui/core/styles'
-import { Toolbar, Menu, MenuItem, Divider, ListItemIcon } from '@material-ui/core'
+import { Toolbar, Menu, MenuItem, Divider, ListItemIcon, ListItemText } from '@material-ui/core'
 import NotificationIcon from '@material-ui/icons/Notifications'
 import classNames from 'classnames'
-import FAREditIcon from 'wbfa/FAREdit'
-import FARBrowserIcon from 'wbfa/FARBrowser'
-import FARBoltIcon from 'wbfa/FARBolt'
-import FARArrowAltSquareUpIcon from 'wbfa/FARArrowAltSquareUp'
-import FARArrowAltSquareDownIcon from 'wbfa/FARArrowAltSquareDown'
-import FARWindowIcon from 'wbfa/FARWindow'
+import FARCheckSquare from 'wbfa/FARCheckSquare'
+import FARSquare from 'wbfa/FARSquare'
 import FARBellSlashIcon from 'wbfa/FARBellSlash'
 import FARBellIcon from 'wbfa/FARBell'
 import FARSignOutIcon from 'wbfa/FARSignOut'
+import FARDesktop from 'wbfa/FARDesktop'
+import FARPenSquare from 'wbfa/FARPenSquare'
+import FARClone from 'wbfa/FARClone'
+import FASArrowFromTop from 'wbfa/FASArrowFromTop'
+import FASArrowFromBottom from 'wbfa/FASArrowFromBottom'
 import AppSceneToolbarButton from './AppSceneToolbarButton'
+import {
+  WB_FOCUS_APP,
+  WB_QUIT_APP,
+  WB_TRAY_TOGGLE_WINDOW_MODE,
+  WB_TRAY_TOGGLE_ALWAYS_ON_TOP
+} from 'shared/ipcEvents'
 
 const styles = {
+  // Notification Menu
   notificationMenuItem: {
     paddingTop: 4,
     paddingBottom: 4,
@@ -35,32 +42,18 @@ const styles = {
   notificationMutedInfoMenuItem: {
     fontSize: '12px'
   },
+  // Dock Menu
+  dockMenuFaIcon: {
+    width: 20,
+    height: 20,
+    fontSize: 20
+  },
+  // Icons
   faIcon: {
     color: 'rgba(255, 255, 255, 0.7)',
     width: 20,
     height: 20,
     fontSize: 20
-  },
-  faIconStack: {
-    width: 20,
-    height: 20,
-    position: 'relative',
-    display: 'inline-block'
-  },
-  // Open in main window icon
-  faIconOpenMainWindow1: {
-    position: 'absolute',
-    top: 1,
-    left: 0,
-    width: 20,
-    height: 20,
-    fontSize: 20
-  },
-  faIconOpenMainWindow2: {
-    position: 'absolute',
-    top: 2,
-    left: 7,
-    fontSize: 11
   },
   spacer: {
     flex: 1
@@ -74,7 +67,8 @@ class AppSceneToolbar extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    isWindowedMode: PropTypes.bool.isRequired
+    isWindowedMode: PropTypes.bool.isRequired,
+    alwaysOnTop: PropTypes.bool.isRequired
   }
 
   /* **************************************************************************/
@@ -98,7 +92,8 @@ class AppSceneToolbar extends React.Component {
     return {
       notificationsMuted: settingsState.os.notificationsMuted,
       notificationsMutedEndEpoch: settingsState.os.notificationsMutedEndEpoch,
-      notificationMenuAnchor: null
+      notificationMenuAnchor: null,
+      dockMenuAnchor: null
     }
   })()
 
@@ -145,40 +140,101 @@ class AppSceneToolbar extends React.Component {
   }
 
   render () {
-    const { isWindowedMode, classes, ...passProps } = this.props
-    const { notificationsMuted, notificationsMutedEndEpoch, notificationMenuAnchor } = this.state
+    const {
+      isWindowedMode,
+      alwaysOnTop,
+      classes,
+      ...passProps
+    } = this.props
+    const {
+      notificationsMuted,
+      notificationsMutedEndEpoch,
+      notificationMenuAnchor,
+      dockMenuAnchor
+    } = this.state
 
     return (
       <Toolbar disableGutters {...passProps}>
+        {/* Compose */}
         <AppSceneToolbarButton
           title='Compose'
           placement='top-end'
           onClick={() => emblinkActions.composeNewMessage()}>
-          <FAREditIcon className={classes.faIcon} />
+          <FARPenSquare className={classes.faIcon} />
         </AppSceneToolbarButton>
+
+        {/* Main Window */}
         <AppSceneToolbarButton
           title='Show main window'
           placement='top'
           onClick={() => ipcRenderer.send(WB_FOCUS_APP, {})}>
-          <span className={classes.faIconStack}>
-            <FARBrowserIcon className={classNames(classes.faIcon, classes.faIconOpenMainWindow1)} />
-            <FARBoltIcon className={classNames(classes.faIcon, classes.faIconOpenMainWindow2)} />
-          </span>
+          <FARDesktop className={classes.faIcon} />
         </AppSceneToolbarButton>
+
+        {/* Dock */}
         <AppSceneToolbarButton
           title={isWindowedMode ? 'Dock to tray' : 'Open as window'}
           placement='top'
-          onClick={() => { ipcRenderer.send(WB_TRAY_TOGGLE_WINDOW_MODE, {}) }}>
+          onClick={() => { ipcRenderer.send(WB_TRAY_TOGGLE_WINDOW_MODE, {}) }}
+          onContextMenu={(evt) => this.setState({ dockMenuAnchor: evt.target })}>
           {isWindowedMode ? (
             process.platform === 'darwin' ? (
-              <FARArrowAltSquareUpIcon className={classes.faIcon} />
+              <FASArrowFromBottom className={classes.faIcon} />
             ) : (
-              <FARArrowAltSquareDownIcon className={classes.faIcon} />
+              <FASArrowFromTop className={classes.faIcon} />
             )
           ) : (
-            <FARWindowIcon className={classes.faIcon} />
+            <FARClone className={classes.faIcon} />
           )}
         </AppSceneToolbarButton>
+        <Menu
+          open={!!dockMenuAnchor}
+          anchorEl={dockMenuAnchor}
+          MenuListProps={{ dense: true }}
+          disableEnforceFocus
+          onClose={() => this.setState({ dockMenuAnchor: null })}>
+          <MenuItem onClick={() => {
+            this.setState({ dockMenuAnchor: null })
+            setTimeout(() => {
+              // Use a timeout here other the focus isn't restored correctly
+              ipcRenderer.send(WB_TRAY_TOGGLE_WINDOW_MODE, {})
+            }, 500)
+          }}>
+            <ListItemIcon>
+              {isWindowedMode ? (
+                process.platform === 'darwin' ? (
+                  <FASArrowFromBottom className={classes.dockMenuFaIcon} />
+                ) : (
+                  <FASArrowFromTop className={classes.dockMenuFaIcon} />
+                )
+              ) : (
+                <FARClone className={classes.dockMenuFaIcon} />
+              )}
+            </ListItemIcon>
+            <ListItemText inset primary={isWindowedMode ? 'Dock to tray' : 'Open as window'} />
+          </MenuItem>
+          {isWindowedMode ? (<Divider />) : undefined}
+          {isWindowedMode ? (
+            <MenuItem onClick={() => {
+              this.setState({ dockMenuAnchor: null })
+              setTimeout(() => {
+                // Use a timeout here other the focus isn't restored correctly
+                ipcRenderer.send(WB_TRAY_TOGGLE_ALWAYS_ON_TOP, {})
+              }, 500)
+            }}>
+              <ListItemIcon>
+                {alwaysOnTop ? (
+                  <FARCheckSquare className={classes.dockMenuFaIcon} />
+                ) : (
+                  <FARSquare className={classes.dockMenuFaIcon} />
+                )}
+              </ListItemIcon>
+              <ListItemText inset primary='Keep window on top' />
+            </MenuItem>
+          ) : undefined}
+        </Menu>
+
+        {/* Notifications */}
         <AppSceneToolbarButton
           title={notificationsMuted ? (
             <Timeago
@@ -198,6 +254,7 @@ class AppSceneToolbar extends React.Component {
         <Menu
           anchorEl={notificationMenuAnchor}
           open={!!notificationMenuAnchor}
+          MenuListProps={{ dense: true }}
           onClose={() => this.setState({ notificationMenuAnchor: null })}>
           <MenuItem className={classes.notificationMenuItem} onClick={() => this.muteNotificationsForTime(0.5)}>
             Mute for 30 minutes
@@ -233,7 +290,11 @@ class AppSceneToolbar extends React.Component {
             </MenuItem>
           ) : undefined}
         </Menu>
+
+        {/* Spacer */}
         <div className={classes.spacer} />
+
+        {/* Quit */}
         <AppSceneToolbarButton
           title='Quit Wavebox'
           placement='top-start'

@@ -11,7 +11,9 @@ import {
   WB_AUTH_TRELLO_ERROR,
 
   WB_WINDOW_FIND_START,
-  WB_WINDOW_FIND_NEXT
+  WB_WINDOW_FIND_NEXT,
+
+  WB_MAILBOXES_WINDOW_NAVIGATE_AND_SWITCH_TO_SERVICE
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
 import { ACCOUNT_TEMPLATE_TYPES } from 'shared/Models/ACAccounts/AccountTemplates'
@@ -38,6 +40,19 @@ class AccountActions extends RendererAccountActions {
   */
   deleteWebcontentTabId (serviceId) {
     return { serviceId }
+  }
+
+  /* **************************************************************************/
+  // Navigation
+  /* **************************************************************************/
+
+  /**
+  * Switches to a service and make it navigate to a different url
+  * @param serviceId: the id of the service
+  * @param url: the url to naviage to
+  */
+  navigateAndSwitchToService (serviceId, url) {
+    return { serviceId, url }
   }
 
   /* **************************************************************************/
@@ -278,5 +293,10 @@ ipcRenderer.on(WB_AUTH_MICROSOFT_ERROR, actions.authFailure)
 // Mailbox modifiers
 ipcRenderer.on(WB_WINDOW_FIND_START, () => actions.startSearchingService())
 ipcRenderer.on(WB_WINDOW_FIND_NEXT, () => actions.searchServiceNextTerm())
+
+// Nav
+ipcRenderer.on(WB_MAILBOXES_WINDOW_NAVIGATE_AND_SWITCH_TO_SERVICE, (evt, serviceId, url) => {
+  actions.navigateAndSwitchToService(serviceId, url)
+})
 
 export default actions

@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Paper } from '@material-ui/core'
 import { accountStore, accountActions, accountDispatch } from 'stores/account'
-import ServiceReducer from 'shared/AltStores/Account/ServiceReducers/ServiceReducer'
 import ServiceDataReducer from 'shared/AltStores/Account/ServiceDataReducers/ServiceDataReducer'
 import BrowserView from 'wbui/Guest/BrowserView'
 import BrowserViewLoadBar from 'wbui/Guest/BrowserViewLoadBar'
@@ -11,7 +9,6 @@ import BrowserViewPermissionRequests from 'wbui/Guest/BrowserViewPermissionReque
 import ServiceSearch from './ServiceSearch'
 import shallowCompare from 'react-addons-shallow-compare'
 import CoreACService from 'shared/Models/ACAccounts/CoreACService'
-import { URL } from 'url'
 import { NotificationService } from 'Notifications'
 import {
   WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP,
@@ -24,17 +21,13 @@ import {
   WB_BROWSER_CONFIRM_PRESENT
 } from 'shared/ipcEvents'
 import { ipcRenderer } from 'electron'
-import Spinner from 'wbui/Activity/Spinner'
 import { settingsStore } from 'stores/settings'
 import Resolver from 'Runtime/Resolver'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import HotelIcon from '@material-ui/icons/Hotel'
-import lightBlue from '@material-ui/core/colors/lightBlue'
-import blue from '@material-ui/core/colors/blue'
-import grey from '@material-ui/core/colors/grey'
 import ServiceInvalidAuthCover from './ServiceInvalidAuthCover'
 import ServiceCrashedCover from './ServiceCrashedCover'
+import ServiceSleepHelper from './ServiceSleepHelper'
 
 const styles = {
   root: {
@@ -73,36 +66,6 @@ const styles = {
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
     filter: 'grayscale(100%)'
-  },
-  loader: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%',
-    width: '100%'
-  },
-  loaderSleepPanel: {
-    marginTop: 24,
-    fontSize: '75%',
-    padding: '8px 16px',
-    color: grey[600],
-    borderRadius: 20
-  },
-  loaderSleepIcon: {
-    marginRight: 6,
-    marginBottom: -3,
-    verticalAlign: 'text-bottom'
-  },
-  loaderSleepLink: {
-    textDecoration: 'underline',
-    cursor: 'pointer',
-    color: blue[800]
   }
 }
 
@@ -161,8 +124,10 @@ class CoreServiceWebView extends React.Component {
     accountDispatch.on('refocus', this.handleRefocus)
     accountDispatch.on('reload', this.handleReload)
     accountDispatch.addGetter('current-url', this.handleGetCurrentUrl)
+    accountDispatch.addGetter('is-webview-mounted', this.handleGetIsWebviewMounted)
     accountDispatch.on('navigateBack', this.handleNavigateBack)
     accountDispatch.on('navigateForward', this.handleNavigateForward)
+    accountDispatch.on('loadUrl', this.handleNavigateLoadUrl)
 
     if (!this.state.isActive) {
       if (this.refs[BROWSER_REF]) {
@@ -182,8 +147,10 @@ class CoreServiceWebView extends React.Component {
     accountDispatch.removeListener('refocus', this.handleRefocus)
     accountDispatch.removeListener('reload', this.handleReload)
     accountDispatch.removeGetter('current-url', this.handleGetCurrentUrl)
+    accountDispatch.removeGetter('is-webview-mounted', this.handleGetIsWebviewMounted)
     accountDispatch.removeListener('navigateBack', this.handleNavigateBack)
     accountDispatch.removeListener('navigateForward', this.handleNavigateForward)
+    accountDispatch.removeListener('loadUrl', this.handleNavigateLoadUrl)
 
     // Update the store
     accountActions.deleteWebcontentTabId.defer(this.props.serviceId)
@@ -288,18 +255,6 @@ class CoreServiceWebView extends React.Component {
   }
 
   /**
-  * Disables sleep
-  * @param evt: the event that fired
-  */
-  handleDisableSleep = (evt) => {
-    accountActions.reduceService(
-      this.props.serviceId,
-      ServiceReducer.setSleepable,
-      false
-    )
-  }
-
-  /**
   * Handles a permission being resolved
   * @param type: the permission type
   * @param permission: the resolved permission
@@ -391,12 +346,18 @@ class CoreServiceWebView extends React.Component {
   * @return the current url or null if not applicable for use
   */
   handleGetCurrentUrl = (evt) => {
-    const isThisTab = evt.serviceId === this.props.serviceId
-    if (isThisTab) {
-      return this.refs[BROWSER_REF].getURL()
-    } else {
-      return null
-    }
+    return evt.serviceId === this.props.serviceId
+      ? this.refs[BROWSER_REF].getURL()
+      : null
+  }
+
+  /**
+  * Handles getting if the webview is mounted
+  * @param evt: the event that fired
+  * @return true if we're mounted, or null if not applicable for us
+  */
+  handleGetIsWebviewMounted = (evt) => {
+    return evt.serviceId === this.props.serviceId ? true : null
   }
 
   /**
@@ -414,6 +375,16 @@ class CoreServiceWebView extends React.Component {
   handleNavigateForward = () => {
     if (this.state.isActive) {
       this.refs[BROWSER_REF].goForward()
+    }
+  }
+
+  /**
+  * Handles a load url event being fored
+  * @Param evt: the event that fired
+  */
+  handleNavigateLoadUrl = (evt) => {
+    if (evt.serviceId === this.props.serviceId) {
+      this.refs[BROWSER_REF].loadURL(evt.url)
     }
   }
 
@@ -473,20 +444,18 @@ class CoreServiceWebView extends React.Component {
   */
   handleBrowserDomReady = () => {
     const { service, isActive } = this.state
+    const node = this.refs[BROWSER_REF]
 
     // Push the custom user content
     if (service.hasCustomCSS || service.hasCustomJS) {
-      this.refs[BROWSER_REF].send(WB_BROWSER_INJECT_CUSTOM_CONTENT, {
-        css: service.customCSS,
-        js: service.customJS
-      })
+      node.send(WB_BROWSER_INJECT_CUSTOM_CONTENT, { css: service.customCSS, js: service.customJS })
     }
 
     // Wake or sleep the browser
     if (isActive) {
-      this.refs[BROWSER_REF].send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN, {})
+      node.send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_AWAKEN, {})
     } else {
-      this.refs[BROWSER_REF].send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP, {})
+      node.send(WB_MAILBOXES_WINDOW_WEBVIEW_LIFECYCLE_SLEEP, {})
     }
 
     this.setState({ initialLoadDone: true })
@@ -497,11 +466,8 @@ class CoreServiceWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleBrowserPageTitleUpdated = (evt) => {
-    accountActions.reduceServiceData(
-      this.props.serviceId,
-      ServiceDataReducer.setDocumentTitle,
-      evt.title
-    )
+    const { serviceId } = this.props
+    accountActions.reduceServiceData(serviceId, ServiceDataReducer.setDocumentTitle, evt.title)
   }
 
   /**
@@ -509,12 +475,9 @@ class CoreServiceWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleBrowserDidNavigate = (evt) => {
+    const { serviceId } = this.props
     if (evt.url && evt.url !== 'about:blank') {
-      accountActions.reduceServiceData(
-        this.props.serviceId,
-        ServiceDataReducer.setUrl,
-        evt.url
-      )
+      accountActions.reduceServiceData(serviceId, ServiceDataReducer.setUrl, evt.url)
     }
   }
 
@@ -549,11 +512,8 @@ class CoreServiceWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleBrowserFaviconsUpdated = (evt) => {
-    accountActions.reduceServiceData(
-      this.props.serviceId,
-      ServiceDataReducer.setFavicons,
-      evt.favicons
-    )
+    const { serviceId } = this.props
+    accountActions.reduceServiceData(serviceId, ServiceDataReducer.setFavicons, evt.favicons)
   }
 
   /**
@@ -616,26 +576,6 @@ class CoreServiceWebView extends React.Component {
       permissionRequests: evt.pending,
       permissionRequestsUrl: evt.url
     })
-  }
-
-  /* **************************************************************************/
-  // Browser Events : Navigation
-  /* **************************************************************************/
-
-  /**
-  * Handles a browser preparing to navigate
-  * @param evt: the event that fired
-  */
-  handleBrowserWillNavigate = (evt) => {
-    // the lamest protection again dragging files into the window
-    // but this is the only thing I could find that leaves file drag working
-    if (evt.url.indexOf('file://') === 0) {
-      this.setState((prevState) => {
-        const purl = new URL(prevState.url)
-        purl.searchParams.set('__v__', new Date().getTime())
-        return { url: purl.toString() }
-      })
-    }
   }
 
   /* **************************************************************************/
@@ -783,9 +723,6 @@ class CoreServiceWebView extends React.Component {
             ipcMessage={(evt) => {
               this.multiCallBrowserEvent([this.dispatchBrowserIPCMessage, webviewEventProps.ipcMessage], [evt])
             }}
-            willNavigate={(evt) => {
-              this.multiCallBrowserEvent([this.handleBrowserWillNavigate, webviewEventProps.willNavigate], [evt])
-            }}
             focus={(evt) => {
               this.multiCallBrowserEvent([this.handleBrowserFocused, webviewEventProps.focus], [evt])
             }}
@@ -816,17 +753,9 @@ class CoreServiceWebView extends React.Component {
           <div className={classes.snapshot} style={{ backgroundImage: `url("${snapshot}")` }} />
         )}
         {!initialLoadDone ? (
-          <div className={classes.loader}>
-            <Spinner size={50} color={lightBlue[600]} speed={0.75} />
-            {service.sleepable ? (
-              <Paper className={classes.loaderSleepPanel}>
-                <HotelIcon className={classes.loaderSleepIcon} />
-                Use this tab often?&nbsp;
-                <span className={classes.loaderSleepLink} onClick={this.handleDisableSleep}>Disable sleep</span>
-                &nbsp;to keep it awake and avoid waiting...
-              </Paper>
-            ) : undefined}
-          </div>
+          <ServiceSleepHelper
+            serviceId={serviceId}
+            onRequestClose={() => this.setState({ initialLoadDone: true })} />
         ) : undefined}
         <BrowserViewLoadBar isLoading={isLoading} />
         <BrowserViewTargetUrl url={focusedUrl} />

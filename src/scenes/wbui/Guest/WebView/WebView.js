@@ -15,7 +15,7 @@ import {
 const WARN_CAPTURE_PAGE_TIMEOUT = 3000
 const MAX_CAPTURE_PAGE_TIMEOUT = 4000
 const SEND_RESPOND_PREFIX = '__SEND_RESPOND__'
-const INTERCEPTED_WEBVIEW_EVENTS = new Set(['ipc-message', 'console-message'])
+const INTERCEPTED_WEBVIEW_EVENTS = new Set(['ipc-message', 'console-message', 'dom-ready'])
 
 let stylesheetAttached = false
 const stylesheet = document.createElement('style')
@@ -183,6 +183,17 @@ class WebView extends React.Component {
         if (isListening && !hasReactListener) {
           node.removeEventListener(domName, this.handleWebviewEvent)
         } else if (!isListening && hasReactListener) {
+          if (domName === 'will-navigate') {
+            /**
+            * @Thomas101 for more info...
+            * This is work around will-navigating not firing reliably for webContents. As in
+            * electron/issues/14751
+            */
+            console.warn([
+              `"willNavigate" is has been depricated in Wavebox that uses Electron 3.0+ as it fires intermittently.`,
+              `  Use "didStartNavigation" instead as it provides more reliable functionality in the renderer thread`
+            ].join(' '), this.getWebviewNode())
+          }
           node.addEventListener(domName, this.handleWebviewEvent)
         }
       }
@@ -218,6 +229,19 @@ class WebView extends React.Component {
         }
       }
       if (this.props[reactEventName]) { this.props[reactEventName](evt) }
+    } else if (evt.type === 'dom-ready') {
+      // Workaround as in https://github.com/electron/electron/issues/14474
+      // Fixes the cursor position not being shown when re-focusing tabs
+      // Reproduction case:
+      // 1. Gmail account, (https://wavebox.io/support) account
+      // 2. Launch app, switch to wb account
+      // 3. Click in support box type. You can type, but no cursor and no focus highlighting
+      const node = this.getWebviewNode()
+      if (document.activeElement === node) {
+        node.blur()
+        node.focus()
+      }
+      if (this.props[reactEventName]) { this.props[reactEventName](evt) }
     } else {
       if (this.props[reactEventName]) { this.props[reactEventName](evt) }
     }
@@ -249,13 +273,20 @@ class WebView extends React.Component {
   /* **************************************************************************/
 
   /**
-  * Focuses the webview, only if not in focus already. Always check the focus
-  * state first to prevent issues such as https://github.com/wavebox/waveboxapp/issues/660
+  * Focuses the webview, only if not in focus already
   * @return true if focused, false otherwise
   */
   focus = () => {
     const node = this.getWebviewNode()
+    // Calling focus on an active element can cause weird behaviour, for example requring a double
+    // click in the webview. Check to see if the element is focused first.
+    // Fixes https://github.com/wavebox/waveboxapp/issues/660
     if (document.activeElement !== node) {
+      // Workaround as in https://github.com/electron/electron/issues/15718
+      // Starting with electron 3 switching between loaded webviews would cause odd things
+      // to happen. Focus wouldn't be transferred. Accelerators would fail to work. To work
+      // around this, call blur on the active element first. Don't know why it works but it does
+      document.activeElement.blur()
       node.focus()
       return true
     } else {

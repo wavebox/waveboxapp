@@ -6,6 +6,7 @@ import { SettingsIdent, AppSettings } from 'shared/Models/Settings'
 import actions from './settingsActions'
 import dictionaries from 'shared/SpellcheckProvider/dictionaries.js'
 import pkg from 'package.json'
+import { systemPreferences } from 'electron'
 
 const privCachedLaunchDataJS = Symbol('privCachedLaunchDataJS')
 
@@ -66,6 +67,34 @@ class SettingsStore extends CoreSettingsStore {
     this[id] = this.modelize(id, modelJS)
     persistence.setJSONItem(id, modelJS)
     this.dispatchToRemote('remoteSetSettingsModel', [id, modelJS])
+  }
+
+  /* **************************************************************************/
+  // Overwrites
+  /* **************************************************************************/
+
+  /**
+  * Overwrite
+  */
+  handleLoad (payload) {
+    super.handleLoad(payload)
+
+    if (process.platform === 'darwin') {
+      systemPreferences.subscribeNotification(
+        'AppleInterfaceThemeChangedNotification',
+        () => {
+          actions.reloadDefaults()
+        }
+      )
+    }
+  }
+
+  /**
+  * Overwrite
+  */
+  handleReloadDefaults (payload) {
+    super.handleReloadDefaults(payload)
+    this.dispatchToRemote('reloadDefaults', [payload.defaults])
   }
 
   /* **************************************************************************/

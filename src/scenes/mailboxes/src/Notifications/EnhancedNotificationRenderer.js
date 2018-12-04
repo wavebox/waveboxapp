@@ -40,10 +40,11 @@ class EnhancedNotificationRenderer {
       soundName: html5Options.silent ? undefined : (settingsStore.getState().os.notificationsSound || DEFAULT_NOTIFICATION_SOUND),
       bundleId: OSX_APP_BUNDLE_ID
     })
-    notif.addEventListener('click', () => {
+    notif.addEventListener('click', (ev) => {
       if (clickHandler) {
         clickHandler(clickData)
       }
+      ev.target.notification.close()
     })
   }
 
@@ -55,6 +56,7 @@ class EnhancedNotificationRenderer {
   * @param clickHandler: the handler to call on click
   * @param accountState: the current account state
   * @param settingsState: the current settings state
+  * @return the system notification
   */
   presentMailboxNotificationDarwin (mailboxId, serviceId, notification, clickHandler, accountState, settingsState) {
     if (!MacNotification) { return }
@@ -79,11 +81,13 @@ class EnhancedNotificationRenderer {
       soundName: NotificationRendererUtils.preparedServiceSound(mailbox, service, settingsState),
       bundleId: OSX_APP_BUNDLE_ID
     })
-    notif.addEventListener('click', () => {
+    notif.addEventListener('click', (evt) => {
       if (clickHandler) {
         clickHandler(notification.data)
       }
+      evt.target.notification.close()
     })
+    return notif
   }
 
   /* **************************************************************************/

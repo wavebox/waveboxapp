@@ -8,6 +8,7 @@ import { WindowOpeningHandler } from '../WindowOpeningEngine'
 import { WB_NEW_WINDOW, WB_FOCUS_AUTH_WINDOW } from 'shared/ipcEvents'
 import WINDOW_TYPES from '../WindowTypes'
 import WINDOW_BACKING_TYPES from '../WindowBackingTypes'
+import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
 
 class MailboxesWindowBehaviour {
   /* ****************************************************************************/
@@ -46,7 +47,7 @@ class MailboxesWindowBehaviour {
     const contents = webContents.fromId(webContentsId)
     if (contents && contents.getType() === 'webview' && contents.hostWebContents.id === this.webContentsId) {
       contents.on('new-window', this.handleWebViewNewWindow)
-      contents.on('will-navigate', this.handleWebViewWillNavigate)
+      ElectronWebContentsWillNavigateShim.on(contents, this.handleWebViewWillNavigate)
       contents.on('before-input-event', this.handleBeforeInputEvent)
       contents.on('destroyed', () => {
         contents.removeListener('before-input-event', this.handleBeforeInputEvent) // Doesn't get un-bound automatically

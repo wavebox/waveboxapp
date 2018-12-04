@@ -32,7 +32,7 @@ class SidelistMailboxContainer extends React.Component {
     } = this.props
 
     return (
-      <div className={classNames(classes.mailboxContainer, 'WB-SidelistItemMailbox', className)} {...passProps}>
+      <div className={classNames(classes.mailboxContainer, 'WB-SidelistItem', className)} {...passProps}>
         {children}
       </div>
     )

@@ -12,6 +12,7 @@ class SidelistServiceTooltip extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
+    mailboxId: PropTypes.string.isRequired,
     serviceId: PropTypes.string.isRequired
   }
 
@@ -35,13 +36,15 @@ class SidelistServiceTooltip extends React.Component {
     const settingsState = settingsStore.getState()
 
     return {
-      tooltipsEnabled: settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED || settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.SIDEBAR_ONLY
+      tooltipsEnabled: settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED || settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.SIDEBAR_ONLY,
+      tooltipSimpleMode: !settingsState.ui.accountTooltipInteractive
     }
   })()
 
   settingsChanged = (settingsState) => {
     this.setState({
-      tooltipsEnabled: settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED || settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.SIDEBAR_ONLY
+      tooltipsEnabled: settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.ENABLED || settingsState.ui.accountTooltipMode === UISettings.ACCOUNT_TOOLTIP_MODES.SIDEBAR_ONLY,
+      tooltipSimpleMode: !settingsState.ui.accountTooltipInteractive
     })
   }
 
@@ -54,17 +57,24 @@ class SidelistServiceTooltip extends React.Component {
   }
 
   render () {
-    const { serviceId, ...passProps } = this.props
-    const { tooltipsEnabled } = this.state
-    if (!tooltipsEnabled) { return false }
+    const {
+      serviceId,
+      mailboxId,
+      children,
+      ...passProps
+    } = this.props
+    const { tooltipsEnabled, tooltipSimpleMode } = this.state
 
     return (
       <ServiceTooltip
+        mailboxId={mailboxId}
         serviceId={serviceId}
-        tooltipTimeout={0}
-        position='right'
-        arrow='center'
-        {...passProps} />
+        disabled={!tooltipsEnabled}
+        simpleMode={tooltipSimpleMode}
+        placement='right'
+        {...passProps}>
+        {children}
+      </ServiceTooltip>
     )
   }
 }

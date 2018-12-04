@@ -3,7 +3,6 @@ import React from 'react'
 import { accountStore, accountActions } from 'stores/account'
 import shallowCompare from 'react-addons-shallow-compare'
 import SidelistMailboxContainer from './SidelistCommon/SidelistMailboxContainer'
-import uuid from 'uuid'
 import SidelistMailboxTooltip from './SidelistCommon/SidelistMailboxTooltip'
 import SidelistServiceTooltip from './SidelistCommon/SidelistServiceTooltip'
 import MailboxAndServiceContextMenu from 'Components/MailboxAndServiceContextMenu'
@@ -23,15 +22,6 @@ class SidelistItemMultiService extends React.Component {
     mailboxId: PropTypes.string.isRequired,
     sidebarSize: PropTypes.string.isRequired,
     sortableGetScrollContainer: PropTypes.func.isRequired
-  }
-
-  /* **************************************************************************/
-  // Lifecycle
-  /* **************************************************************************/
-
-  constructor (props) {
-    super(props)
-    this.instanceId = uuid.v4()
   }
 
   /* **************************************************************************/
@@ -60,7 +50,6 @@ class SidelistItemMultiService extends React.Component {
 
   state = (() => {
     return {
-      isHoveringAvatar: false,
       isHoveringGroup: false,
       popover: false,
       popoverAnchor: null,
@@ -147,9 +136,9 @@ class SidelistItemMultiService extends React.Component {
   */
   handleOpenMailboxPopover = (evt) => {
     evt.preventDefault()
+    evt.stopPropagation()
     clearTimeout(this.popoverCustomizeClearTO)
     this.setState({
-      isHoveringAvatar: false,
       isHoveringGroup: false,
       popover: true,
       popoverMailboxId: this.props.mailboxId,
@@ -173,9 +162,9 @@ class SidelistItemMultiService extends React.Component {
   */
   handleOpenServicePopover = (evt, serviceId) => {
     evt.preventDefault()
+    evt.stopPropagation()
     clearTimeout(this.popoverCustomizeClearTO)
     this.setState({
-      isHoveringAvatar: false,
       isHoveringGroup: false,
       popover: true,
       popoverMailboxId: this.props.mailboxId,
@@ -211,7 +200,6 @@ class SidelistItemMultiService extends React.Component {
       ...passProps
     } = this.props
     const {
-      isHoveringAvatar,
       isHoveringGroup,
       popover,
       popoverAnchor,
@@ -224,53 +212,42 @@ class SidelistItemMultiService extends React.Component {
     } = this.state
     if (!hasMembers) { return false }
 
+    const TooltipClass = extraContextServiceId
+      ? SidelistServiceTooltip
+      : SidelistMailboxTooltip
+    const tooltipProps = extraContextServiceId
+      ? { mailboxId: mailboxId, serviceId: extraContextServiceId }
+      : { mailboxId: mailboxId }
+
     return (
       <SidelistMailboxContainer
         onMouseEnter={() => this.setState({ isHoveringGroup: true })}
         onMouseLeave={() => this.setState({ isHoveringGroup: false })}
         {...passProps}>
-        <Tappable
-          onClick={this.handleClick}
-          onPress={this.handleLongClick}
-          onContextMenu={(extraContextServiceId
-            ? this.handleOpenPrioritizedServicePopover
-            : this.handleOpenMailboxPopover
-          )}>
-          {renderAsServiceId ? (
-            <SidelistTLServiceAvatar
-              id={`ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`}
-              onMouseEnter={() => this.setState({ isHoveringAvatar: true })}
-              onMouseLeave={() => this.setState({ isHoveringAvatar: false })}
-              mailboxId={mailboxId}
-              serviceId={renderAsServiceId}
-              sidebarSize={sidebarSize}
-              isTransientActive={isHoveringGroup}
-              forceIndicator={isMailboxActive} />
-          ) : (
-            <SidelistTLMailboxAvatar
-              id={`ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`}
-              onMouseEnter={() => this.setState({ isHoveringAvatar: true })}
-              onMouseLeave={() => this.setState({ isHoveringAvatar: false })}
-              mailboxId={mailboxId}
-              sidebarSize={sidebarSize}
-              isTransientActive={isHoveringGroup}
-              forceIndicator={isMailboxActive} />
-          )}
-        </Tappable>
-        <ErrorBoundary>
-          {extraContextServiceId ? (
-            <SidelistServiceTooltip
-              mailboxId={mailboxId}
-              serviceId={extraContextServiceId}
-              active={isHoveringAvatar}
-              parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />
-          ) : (
-            <SidelistMailboxTooltip
-              mailboxId={mailboxId}
-              active={isHoveringAvatar}
-              parent={`#ReactComponent-Sidelist-Item-Mailbox-Avatar-${this.instanceId}`} />
-          )}
-        </ErrorBoundary>
+        <TooltipClass {...tooltipProps}>
+          <Tappable
+            onClick={this.handleClick}
+            onPress={this.handleLongClick}
+            onContextMenu={(extraContextServiceId
+              ? this.handleOpenPrioritizedServicePopover
+              : this.handleOpenMailboxPopover
+            )}>
+            {renderAsServiceId ? (
+              <SidelistTLServiceAvatar
+                mailboxId={mailboxId}
+                serviceId={renderAsServiceId}
+                sidebarSize={sidebarSize}
+                isTransientActive={isHoveringGroup}
+                forceIndicator={isMailboxActive} />
+            ) : (
+              <SidelistTLMailboxAvatar
+                mailboxId={mailboxId}
+                sidebarSize={sidebarSize}
+                isTransientActive={isHoveringGroup}
+                forceIndicator={isMailboxActive} />
+            )}
+          </Tappable>
+        </TooltipClass>
         <ServiceTabs
           mailboxId={mailboxId}
           uiLocation={ACMailbox.SERVICE_UI_LOCATIONS.SIDEBAR}

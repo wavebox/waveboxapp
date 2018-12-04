@@ -113,7 +113,14 @@ class SlackSocket extends EventEmitter {
   _heartbeatSchedule () {
     this._heartbeatClear()
     this._heartbeat = setTimeout(() => {
-      this.send({ type: 'ping', id: HEARTBEAT_ID })
+      // There are quite a few instances when the machine moves between
+      // connections that the socket will be in the connecting state.
+      // Don't fire the ping command here. The socket will either receive
+      // a connect message shortly or the failed timeout will fire which
+      // will trigger a reconnect
+      if (this._socket && this._socket.readyState !== 0) {
+        this.send({ type: 'ping', id: HEARTBEAT_ID })
+      }
     }, HEARTBEAT_SEND_INTERVAL)
     this._heartbeatFailed = setTimeout(() => {
       try { this.close() } catch (ex) { }

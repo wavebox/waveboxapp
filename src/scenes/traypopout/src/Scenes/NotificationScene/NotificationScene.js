@@ -1,11 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import shallowCompare from 'react-addons-shallow-compare'
-import { notifhistStore } from 'stores/notifhist'
+import { notifhistStore, notifhistActions } from 'stores/notifhist'
 import { accountActions } from 'stores/account'
 import { emblinkActions } from 'stores/emblink'
 import Infinate from 'react-infinite'
-import { List } from '@material-ui/core'
+import { List, ListItemText, Menu, MenuItem } from '@material-ui/core'
 import { ipcRenderer } from 'electron'
 import { WB_FOCUS_MAILBOXES_WINDOW } from 'shared/ipcEvents'
 import NotificationListItem from './NotificationListItem'
@@ -14,8 +14,6 @@ import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import StyleMixins from 'wbui/Styles/StyleMixins'
 
-const MAIN_REF = 'MAIN'
-const INFINATE_REF = 'INFINATE'
 const LIST_ITEM_HEIGHT = 67
 
 const styles = {
@@ -37,6 +35,17 @@ const styles = {
 
 @withStyles(styles)
 class NotificationScene extends React.Component {
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    this.rootRef = React.createRef()
+    this.listRef = React.createRef()
+  }
+
   /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
@@ -65,7 +74,8 @@ class NotificationScene extends React.Component {
   state = (() => {
     return {
       notifications: notifhistStore.getState().notifications,
-      containerHeight: 0
+      containerHeight: 0,
+      contextMenuAnchor: null
     }
   })()
 
@@ -80,9 +90,11 @@ class NotificationScene extends React.Component {
   /* **************************************************************************/
 
   saveContainerHeight = () => {
-    const height = this.refs[MAIN_REF].clientHeight
-    if (height !== this.state.containerHeight) { // Don't queue in a callback, this is good enough
-      this.setState({ containerHeight: height })
+    if (this.rootRef.current) {
+      const height = this.rootRef.current.clientHeight
+      if (height !== this.state.containerHeight) { // Don't queue in a callback, this is good enough
+        this.setState({ containerHeight: height })
+      }
     }
   }
 
@@ -94,7 +106,9 @@ class NotificationScene extends React.Component {
   * Resets the navigation stack
   */
   resetNavigationStack = () => {
-    ReactDOM.findDOMNode(this.refs[INFINATE_REF]).scrollTop = 0
+    if (this.listRef.current) {
+      ReactDOM.findDOMNode(this.listRef.current).scrollTop = 0
+    }
   }
 
   /* **************************************************************************/
@@ -115,6 +129,19 @@ class NotificationScene extends React.Component {
     }
   }
 
+  /**
+  * Handles opening the context menu
+  * @param evt: the event that fired
+  */
+  handleOpenContextMenu = (evt) => {
+    this.setState({
+      contextMenuAnchor: {
+        anchor: evt.target,
+        anchorPosition: { top: evt.clientY, left: evt.clientX }
+      }
+    })
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -124,29 +151,60 @@ class NotificationScene extends React.Component {
   }
 
   render () {
-    const { className, classes, ...passProps } = this.props
-    const { notifications, containerHeight } = this.state
+    const {
+      className,
+      classes,
+      ...passProps
+    } = this.props
+    const {
+      notifications,
+      containerHeight,
+      contextMenuAnchor
+    } = this.state
 
     return (
-      <div ref={MAIN_REF} className={classNames(className, classes.main)} {...passProps}>
+      <div ref={this.rootRef} className={classNames(className, classes.main)} {...passProps}>
         <ErrorBoundary>
-          <List className={classes.list}>
-            {containerHeight === 0 ? undefined : (
-              <Infinate ref={INFINATE_REF} containerHeight={containerHeight} elementHeight={LIST_ITEM_HEIGHT}>
-                {notifications.map(({ id, timestamp, notification }) => {
-                  return (
-                    <NotificationListItem
-                      key={id}
-                      onClick={(evt) => this.handleNotificationClick(evt, notification)}
-                      className={classes.listItem}
-                      mailboxId={notification.mailboxId}
-                      notification={notification}
-                      timestamp={timestamp} />
-                  )
-                })}
-              </Infinate>
-            )}
-          </List>
+          <React.Fragment>
+            <List
+              className={classes.list}
+              onContextMenu={this.handleOpenContextMenu}>
+              {containerHeight === 0 ? undefined : (
+                <Infinate ref={this.listRef} containerHeight={containerHeight} elementHeight={LIST_ITEM_HEIGHT}>
+                  {notifications.map(({ id, timestamp, notification }) => {
+                    return (
+                      <NotificationListItem
+                        key={id}
+                        onClick={(evt) => this.handleNotificationClick(evt, notification)}
+                        className={classes.listItem}
+                        mailboxId={notification.mailboxId}
+                        notification={notification}
+                        timestamp={timestamp} />
+                    )
+                  })}
+                </Infinate>
+              )}
+            </List>
+            <Menu
+              {...(notifications.length !== 0 && contextMenuAnchor ? {
+                open: true,
+                anchorEl: contextMenuAnchor.anchor,
+                anchorPosition: contextMenuAnchor.anchorPosition
+              } : {
+                open: false
+              })}
+              MenuListProps={{ dense: true }}
+              anchorReference='anchorPosition'
+              disableEnforceFocus
+              onClose={() => this.setState({ contextMenuAnchor: null })}>
+              <MenuItem onClick={() => {
+                this.setState({ contextMenuAnchor: null })
+                notifhistActions.clearAllNotifications()
+              }}>
+                <ListItemText primary='Clear all Notifications' />
+              </MenuItem>
+            </Menu>
+          </React.Fragment>
         </ErrorBoundary>
       </div>
     )

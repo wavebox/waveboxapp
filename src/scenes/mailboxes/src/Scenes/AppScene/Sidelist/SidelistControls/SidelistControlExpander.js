@@ -35,10 +35,6 @@ class SidelistControlExpander extends React.Component {
             Click here to hide/show the controls.
           </div>
         )}
-        tourTooltipStyles={{
-          style: { marginTop: -25 },
-          arrowStyle: { marginTop: 20 }
-        }}
         icon={expanded ? (
           <SidelistMatIcon IconClass={KeyboardArrowDownIcon} className={classes.icon} />
         ) : (

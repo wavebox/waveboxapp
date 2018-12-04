@@ -4,6 +4,7 @@ import { DownloadManager } from 'Download'
 import Resolver from 'Runtime/Resolver'
 import fs from 'fs-extra'
 import { URL } from 'url'
+import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
 
 class PDFRenderService {
   /* ****************************************************************************/
@@ -201,7 +202,10 @@ class PDFRenderService {
         }
       })
       window.loadURL(`file://${Resolver.printScene('index.html')}`)
-      window.webContents.on('will-navigate', (evt, nextUrl) => evt.preventDefault())
+      ElectronWebContentsWillNavigateShim.on(
+        window.webContents,
+        (evt) => evt.preventDefault()
+      )
       window.webContents.once('dom-ready', () => {
         DownloadManager.startPlatformDownloadToTemp(sourceWebContents, url)
           .then((localPath) => {

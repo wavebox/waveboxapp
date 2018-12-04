@@ -8,6 +8,9 @@ import { IconButton, Tooltip } from '@material-ui/core'
 * https://github.com/wavebox/waveboxapp/issues/743. It does it by manually
 * controlling the element and setting it to close on open. Open issue to avoid
 * this shim in https://github.com/mui-org/material-ui/issues/12299
+*
+* There's also a partial shim to this in the provider which blurs and moves
+* the mouse
 */
 class AppSceneToolbarButton extends React.Component {
   /* **************************************************************************/
@@ -26,6 +29,30 @@ class AppSceneToolbarButton extends React.Component {
   state = { open: false }
 
   /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  handleOnOpen = () => {
+    this.setState({ open: true })
+  }
+
+  handleOnClose = () => {
+    this.setState({ open: false })
+  }
+
+  handleClick = (evt) => {
+    const { onClick } = this.props
+    this.setState({ open: false })
+    if (onClick) { onClick(evt) }
+  }
+
+  handleContextMenu = (evt) => {
+    const { onContextMenu } = this.props
+    this.setState({ open: false })
+    if (onContextMenu) { onContextMenu(evt) }
+  }
+
+  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
@@ -37,23 +64,20 @@ class AppSceneToolbarButton extends React.Component {
     const {
       title,
       placement,
-      children,
-      onClick
+      children
     } = this.props
     const { open } = this.state
 
     return (
       <Tooltip
         open={open}
-        onOpen={() => this.setState({ open: true })}
-        onClose={() => this.setState({ open: false })}
+        onOpen={this.handleOnOpen}
+        onClose={this.handleOnClose}
         title={title}
         placement={placement}>
         <IconButton
-          onClick={(evt) => {
-            this.setState({ open: false })
-            if (onClick) { onClick(evt) }
-          }}>
+          onClick={this.handleClick}
+          onContextMenu={this.handleContextMenu}>
           {children}
         </IconButton>
       </Tooltip>

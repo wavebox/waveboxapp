@@ -27,6 +27,12 @@ class NotifhistStore extends CoreNotifhistStore {
     persistence.setJSONItem('notifications', this.notifications)
     this.dispatchToUniversalRemote('addNotification', [payload.notification, payload.timestamp, payload.id])
   }
+
+  handleClearAllNotifications () {
+    super.handleClearAllNotifications()
+    persistence.setJSONItem('notifications', this.notifications)
+    this.dispatchToUniversalRemote('clearAllNotifications', [])
+  }
 }
 
 export default alt.createStore(NotifhistStore, STORE_NAME)

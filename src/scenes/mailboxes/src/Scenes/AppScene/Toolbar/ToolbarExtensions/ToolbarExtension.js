@@ -75,6 +75,7 @@ export default class ToolbarExtension extends React.Component {
   /* **************************************************************************/
 
   handleOpenContextMenu = (evt) => {
+    evt.stopPropagation()
     this.setState({ contextMenuOpen: true, contextMenuAnchor: evt.target })
   }
 

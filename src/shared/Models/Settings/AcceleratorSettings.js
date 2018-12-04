@@ -53,6 +53,7 @@ class AcceleratorSettings extends Model {
   get reloadWaveboxDefault () { return 'CmdOrCtrl+Shift+R' }
   get developerToolsDefault () { return process.platform === 'darwin' ? 'Command+Alt+I' : 'Ctrl+Shift+I' }
   get developerToolsWaveboxDefault () { return process.platform === 'darwin' ? 'Command+Alt+J' : 'Ctrl+Shift+J' }
+  get openNextQueueItemDefault () { return 'CmdOrCtrl+P' }
 
   // Window
   get minimizeDefault () { return 'CmdOrCtrl+M' }
@@ -119,6 +120,7 @@ class AcceleratorSettings extends Model {
   get reloadWavebox () { return this._value_('reloadWavebox', this.reloadWaveboxDefault) }
   get developerTools () { return this._value_('developerTools', this.developerToolsDefault) }
   get developerToolsWavebox () { return this._value_('developerToolsWavebox', this.developerToolsWaveboxDefault) }
+  get openNextQueueItem () { return this._value_('openNextQueueItem', this.openNextQueueItemDefault) }
 
   // Window
   get minimize () { return this._value_('minimize', this.minimizeDefault) }

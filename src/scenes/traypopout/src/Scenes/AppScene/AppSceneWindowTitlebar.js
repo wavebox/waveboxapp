@@ -29,15 +29,31 @@ class AppSceneWindowTitlebar extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
+    this.__isMounted__ = true
+
     const currentWindow = remote.getCurrentWindow()
     currentWindow.on('focus', this.handleWindowStateChange)
     currentWindow.on('blur', this.handleWindowStateChange)
+    if (process.platform === 'darwin') {
+      this.themeChangeNotifId = remote.systemPreferences.subscribeNotification(
+        'AppleInterfaceThemeChangedNotification',
+        this.handleThemeChanged
+      )
+    }
   }
 
   componentWillUnmount () {
+    this.__isMounted__ = false
+
     const currentWindow = remote.getCurrentWindow()
     currentWindow.removeListener('focus', this.handleWindowStateChange)
     currentWindow.removeListener('blur', this.handleWindowStateChange)
+
+    if (process.platform === 'darwin') {
+      remote.systemPreferences.unsubscribeNotification(
+        this.themeChangeNotifId
+      )
+    }
   }
 
   /* **************************************************************************/
@@ -46,12 +62,26 @@ class AppSceneWindowTitlebar extends React.Component {
 
   state = (() => {
     return {
+      isDarkMode: process.platform === 'darwin'
+        ? remote.systemPreferences.isDarkMode()
+        : false,
       ...this.generateWindowState()
     }
   })()
 
   handleWindowStateChange = (evt) => {
+    // There's a timing issue here with removing the electron window bindings.
+    // They're removed just after the component unmounts
+    if (!this.__isMounted__) { return }
     this.setState(this.generateWindowState())
+  }
+
+  handleThemeChanged = () => {
+    // There's a timing issue here with removing the electron window bindings.
+    // They're removed just after the component unmounts
+    if (!this.__isMounted__) { return }
+
+    this.setState({ isDarkMode: remote.systemPreferences.isDarkMode() })
   }
 
   /**
@@ -94,7 +124,7 @@ class AppSceneWindowTitlebar extends React.Component {
   }
 
   render () {
-    const { isFocused } = this.state
+    const { isFocused, isDarkMode } = this.state
     const { style, className, classes, ...passProps } = this.props
 
     return (
@@ -106,6 +136,7 @@ class AppSceneWindowTitlebar extends React.Component {
         className={classnames(
           classes.titlebar,
           isFocused ? 'focused' : undefined,
+          isDarkMode ? 'dark' : undefined,
           className
         )}
         {...passProps}>

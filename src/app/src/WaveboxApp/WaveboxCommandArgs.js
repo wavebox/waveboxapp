@@ -43,6 +43,17 @@ class WaveboxCommandArgs {
       accountActions.changeActiveMailboxIndex(accountIndex)
     }
   }
+
+  /**
+  * Process tool command line arguments
+  * @param argv: the arguments as processed by yargs
+  * @param ServicesManager: the service manager we can call on
+  */
+  static processToolArgs (argv, ServicesManager) {
+    if (argv.taskmonitor) {
+      ServicesManager.metricsService.openMonitorWindow()
+    }
+  }
 }
 
 export default WaveboxCommandArgs

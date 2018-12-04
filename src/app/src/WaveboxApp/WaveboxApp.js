@@ -18,7 +18,7 @@ import BasicHTTPAuthHandler from 'HTTPAuth/BasicHTTPAuthHandler'
 import CustomHTTPSCertificateManager from 'HTTPAuth/CustomHTTPSCertificateManager'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { SessionManager, AccountSessionManager, ExtensionSessionManager } from '../SessionManager'
-import ServicesManager from '../Services'
+import ServicesManager from 'Services'
 import MailboxesWindow from 'Windows/MailboxesWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import AppUpdater from 'AppUpdater'
@@ -172,6 +172,7 @@ class WaveboxApp {
     app.on('login', this._handleHTTPBasicLogin)
     app.on('certificate-error', this._handleCertificateError)
     app.on('will-quit', this._handleWillQuit)
+    app.on('second-instance', this._handleSecondInstance)
     evtMain.on(evtMain.WB_QUIT_APP, this.fullyQuitApp)
     evtMain.on(evtMain.WB_RELAUNCH_APP, this.restartApp)
   }
@@ -311,6 +312,7 @@ class WaveboxApp {
 
     // Proces any user arguments
     WaveboxCommandArgs.processModifierArgs(this[privArgv], emblinkActions, accountActions)
+    WaveboxCommandArgs.processToolArgs(this[privArgv], ServicesManager)
 
     // Pre-load certificates soon-ish after launch (will be loaded on-demand if a cert request comes in)
     setTimeout(() => {
@@ -389,6 +391,20 @@ class WaveboxApp {
     this[privCloseBehaviour].setAppInTeardownStage()
 
     globalShortcut.unregisterAll()
+  }
+
+  /**
+  * Handles a second instance of the app launching
+  * @param evt: the event that fired
+  * @param commandLine: the command line argumentss
+  * @param workingDirectory: the working directory
+  */
+  _handleSecondInstance = (evt, commandLine, workingDirectory) => {
+    const mainWindow = WaveboxWindow.getOfType(MailboxesWindow)
+    const argv = yargs.parse(commandLine)
+    WaveboxCommandArgs.processWindowVisibility(argv, mainWindow)
+    WaveboxCommandArgs.processModifierArgs(argv, emblinkActions, accountActions)
+    WaveboxCommandArgs.processToolArgs(argv, ServicesManager)
   }
 
   /* ****************************************************************************/

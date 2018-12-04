@@ -60,6 +60,14 @@ class TraySettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * Resets the tray read colors to be the defaults
+  */
+  resetTrayReadColors () {
+    this.dispatchRemove('readColor')
+    this.dispatchRemove('readBackgroundColor')
+  }
+
+  /**
   * @param col: the hex colour to make the tray icon
   */
   setTrayUnreadColor (col) {
@@ -71,6 +79,24 @@ class TraySettingsActions extends CoreSettingsActions {
   */
   setTrayUnreadBackgroundColor (col) {
     this.dispatchUpdate('unreadBackgroundColor', col)
+  }
+
+  /**
+  * Resets the tray unread colors to be the defaults
+  */
+  resetTrayUnreadColors () {
+    this.dispatchRemove('unreadColor')
+    this.dispatchRemove('unreadBackgroundColor')
+  }
+
+  /**
+  * Resets the tray colors to be the defaults
+  */
+  resetTrayColorDefaults () {
+    this.dispatchRemove('readColor')
+    this.dispatchRemove('readBackgroundColor')
+    this.dispatchRemove('unreadColor')
+    this.dispatchRemove('unreadBackgroundColor')
   }
 
   /**

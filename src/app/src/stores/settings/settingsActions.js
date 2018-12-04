@@ -20,6 +20,13 @@ class SettingsActions extends CoreSettingsActions {
       defaults: SettingsDefaults.generateAllDefaults()
     }
   }
+
+  /**
+  * @overwrite
+  */
+  reloadDefaults () {
+    return { defaults: SettingsDefaults.generateAllDefaults() }
+  }
 }
 
 const actions = alt.createActions(SettingsActions)

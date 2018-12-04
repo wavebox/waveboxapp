@@ -136,7 +136,6 @@ class CoreACService extends CoreACModel {
 
   get sleepable () { return this._value_('sleepable', true) }
   get sleepableTimeout () { return this._value_('sleepableTimeout', MAILBOX_SLEEP_WAIT) }
-  get hasSeenSleepableWizard () { return this._value_('hasSeenSleepableWizard', false) }
 
   /* **************************************************************************/
   // Properties: Install
@@ -221,6 +220,19 @@ class CoreACService extends CoreACModel {
   get showNotifications () { return this._value_('showNotifications', true) }
   get showAvatarInNotifications () { return this._value_('showAvatarInNotifications', true) }
   get notificationsSound () { return this._value_('notificationsSound', undefined) }
+
+  /* **************************************************************************/
+  // Properties : Bookmarks & queue
+  /* **************************************************************************/
+
+  get bookmarks () { return this._value_('bookmarks', []) }
+  get readingQueue () { return this._value_('readingQueue', []) }
+  get readingQueueNeedsMetaUpdate () {
+    return this.readingQueue.find((item) => {
+      if (item.meta) { return false }
+      return !item.title || !item.favicon
+    })
+  }
 
   /* **************************************************************************/
   // Properties : Custom injectables

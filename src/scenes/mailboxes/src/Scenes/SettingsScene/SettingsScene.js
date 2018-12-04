@@ -226,10 +226,10 @@ class SettingsScene extends React.Component {
             <Tab
               label={userIsLoggedIn ? (
                 <span>
-                  <div>Wavebox Account</div>
+                  <div>Wavebox Subscription</div>
                   <div className={classes.tabEmail}>{userEmail}</div>
                 </span>
-              ) : 'Wavebox Account'}
+              ) : 'Wavebox Subscription'}
               className={classes.tabButton}
               value='pro' />
           </Tabs>

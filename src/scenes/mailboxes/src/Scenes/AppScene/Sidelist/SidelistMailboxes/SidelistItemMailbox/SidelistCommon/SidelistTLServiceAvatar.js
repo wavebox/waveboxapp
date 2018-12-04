@@ -6,6 +6,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import StyledMailboxServiceBadge from './StyledMailboxServiceBadge'
 import SidelistActiveIndicator from './SidelistActiveIndicator'
 import SidelistAvatar from './SidelistAvatar'
+import classNames from 'classnames'
 
 class SidelistTLServiceAvatar extends React.Component {
   /* **************************************************************************/
@@ -127,6 +128,7 @@ class SidelistTLServiceAvatar extends React.Component {
       badgeProps,
       avatarProps,
       indicatorProps,
+      className,
       ...passProps
     } = this.props
     const {
@@ -160,6 +162,12 @@ class SidelistTLServiceAvatar extends React.Component {
         hasUnreadActivity={hasUnreadActivity}
         color={badgeColor}
         isAuthInvalid={isAuthInvalid}
+        className={classNames(
+          className,
+          'WB-SidelistItemServiceAvatar',
+          `WB-Id-${mailboxId}-${serviceId}`,
+          isActive || forceIndicator ? 'WB-Active' : undefined
+        )}
         {...badgeProps}
         {...passProps}>
         {isActive || forceIndicator ? (

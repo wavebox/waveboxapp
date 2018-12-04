@@ -12,6 +12,16 @@ class RendererSettingsActions extends CoreSettingsActions {
     return this.remoteConnect()
   }
 
+  /**
+  * @overwrite
+  */
+  reloadDefaults (defaults) {
+    if (!defaults) {
+      throw new Error('defaults must be provided in the renderer thread')
+    }
+    return { defaults }
+  }
+
   /* **************************************************************************/
   // Updates
   /* **************************************************************************/

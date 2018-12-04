@@ -106,10 +106,39 @@ export default {
       backgroundColor: blue[600]
     },
     popover: {
-      backgroundColor: 'rgba(224, 224, 224, 0.9)',
+      backgroundColor: 'rgba(244, 244, 244, 0.95)',
+      backgroundGradientColors: 'rgba(244, 244, 244, 0.95), rgba(244, 244, 244, 0.9)',
+      boxShadow: '0px 0px 5px 0px rgba(0, 0, 0, 0.3)',
       color: grey[900],
-      hr: {
-        backgroundGradientColors: '#bcbcbc, #9E9E9E, #bcbcbc'
+      heading: {
+        color: grey[900],
+        backgroundGradientColors: 'rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.20)',
+        dividerColor: grey[500],
+        button: {
+          color: grey[900]
+        }
+      },
+      section: {
+        subheading: {
+          color: 'rgb(43, 192, 252)',
+          backgroundColor: 'rgb(196, 196, 196)'
+        },
+        dividerColor: grey[500],
+        listItem: {
+          color: grey[900],
+          backgroundColor: 'transparent',
+          button: {
+            color: grey[900],
+            backgroundColor: {
+              default: 'transparent',
+              hover: 'rgba(0, 0, 0, 0.08)'
+            }
+          }
+        },
+        scrollThumb: {
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          boxShadow: '0 0 1px rgba(255, 255, 255, 0.5)'
+        }
       }
     },
     tourPopover: {

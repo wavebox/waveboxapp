@@ -9,6 +9,11 @@ import CRExtensionRTContextMenu from 'shared/Models/CRExtensionRT/CRExtensionRTC
 import { settingsActions, settingsStore } from 'stores/settings'
 import { accountStore, accountActions } from 'stores/account'
 import { AUTOFILL_MENU } from 'shared/b64Assets'
+import AppSettings from 'shared/Models/Settings/AppSettings'
+import {
+  WB_READING_QUEUE_LINK_ADDED,
+  WB_READING_QUEUE_CURRENT_PAGE_ADDED
+} from 'shared/ipcEvents'
 
 const privConnected = Symbol('privConnected')
 const privSpellcheckerService = Symbol('privSpellcheckerService')
@@ -99,7 +104,7 @@ class ContextMenuService {
     const sections = [
       this.renderSpellingSection(contents, params),
       this.renderURLSection(contents, params, accountInfo, isWaveboxUIContents),
-      this.renderLookupAndSearchSection(contents, params),
+      this.renderLookupAndSearchSection(contents, params, accountInfo),
       this.renderRewindSection(contents, params),
       this.renderEditingSection(contents, params),
       this.renderPageNavigationSection(contents, params, accountInfo),
@@ -208,28 +213,47 @@ class ContextMenuService {
           click: () => { shell.openExternal(params.linkURL, { activate: false }) }
         })
       }
-      template.push({
-        label: 'Copy link Address',
-        click: () => { clipboard.writeText(params.linkURL) }
-      })
-      template.push({ type: 'separator' })
-      template.push({
-        label: 'Open link with Wavebox',
-        submenu: [
-          {
-            label: 'Open Link in New Window',
-            click: () => { this.openLinkInWaveboxWindow(contents, params.linkURL) }
-          },
-          (accountInfo.has ? {
-            label: 'Open Link as New Service',
-            click: () => { accountActions.fastCreateWeblinkService(accountInfo.mailbox.id, params.linkURL) }
-          } : undefined),
-          {
-            label: 'Open Link Here',
-            click: () => { contents.loadURL(params.linkURL) }
+      if (accountInfo.has) {
+        template.push({
+          label: 'Add Link to Your Tasks',
+          click: () => {
+            accountActions.addToReadingQueue(accountInfo.service.id, params.linkURL)
+            ElectronWebContents.rootWebContents(contents).send(WB_READING_QUEUE_LINK_ADDED, params.linkURL)
           }
-        ].filter((i) => !!i)
+        })
+      }
+      template.push({
+        label: 'Copy Link Address',
+        click: () => {
+          // Look for a simple mailto url in the format mailto:user@user.com. If this is the
+          // case remove the mailto: prefix
+          if (params.linkURL.startsWith('mailto:') && params.linkURL.indexOf('?') === -1) {
+            clipboard.writeText(params.linkURL.replace('mailto:', ''))
+          } else {
+            clipboard.writeText(params.linkURL)
+          }
+        }
       })
+      if (params.linkURL.startsWith('http://') || params.linkURL.startsWith('https://')) {
+        template.push({ type: 'separator' })
+        template.push({
+          label: 'Open Link with Wavebox',
+          submenu: [
+            {
+              label: 'Open Link in New Window',
+              click: () => { this.openLinkInWaveboxWindow(contents, params.linkURL) }
+            },
+            (accountInfo.has ? {
+              label: 'Open Link as New Service',
+              click: () => { accountActions.fastCreateWeblinkService(accountInfo.mailbox.id, params.linkURL) }
+            } : undefined),
+            {
+              label: 'Open Link Here',
+              click: () => { contents.loadURL(params.linkURL) }
+            }
+          ].filter((i) => !!i)
+        })
+      }
 
       // Open in account profile
       const mailboxIds = accountState.mailboxIds()
@@ -327,9 +351,10 @@ class ContextMenuService {
   * Renders the lookup and search section
   * @param contents: the webcontents that opened
   * @param params: the parameters passed alongside the event
+  * @param accountInfo: the account info from who opened us
   * @return the template section or undefined
   */
-  renderLookupAndSearchSection (contents, params) {
+  renderLookupAndSearchSection (contents, params, accountInfo) {
     const template = []
     if (params.selectionText) {
       if (params.isEditable && params.misspelledWord) {
@@ -339,16 +364,26 @@ class ContextMenuService {
         })
       }
 
+      const settingsState = settingsStore.getState()
+      const searchProvider = settingsState.app.searchProvider
       const displayText = params.selectionText.length >= 50 ? (
         params.selectionText.substr(0, 47) + '…'
       ) : params.selectionText
       template.push({
-        label: `Search Google for “${displayText}”`,
-        click: () => { shell.openExternal(`https://google.com/search?q=${encodeURIComponent(params.selectionText)}`) }
+        label: `Search ${AppSettings.SEARCH_PROVIDER_NAMES[searchProvider] || 'The Web'} for “${displayText}”`,
+        click: () => {
+          const targetUrl = AppSettings.generateSearchProviderUrl(searchProvider, params.selectionText)
+          const openInWavebox = AppSettings.searchProviderOpensInWavebox(searchProvider)
+          if (openInWavebox && accountInfo.has) {
+            this.openLinkInWaveboxWindowForAccount(contents, targetUrl, accountInfo.mailbox)
+          } else {
+            shell.openExternal(targetUrl)
+          }
+        }
       })
       template.push({
         label: `Translate “${displayText}”`,
-        click: () => { shell.openExternal(`http://translate.google.com/#auto/#/${encodeURIComponent(params.selectionText)}`) }
+        click: () => { shell.openExternal(`http://translate.google.com/#auto/auto/${encodeURIComponent(params.selectionText)}`) }
       })
     }
     return template
@@ -363,8 +398,16 @@ class ContextMenuService {
   renderRewindSection (contents, params) {
     const template = []
     if (params.editFlags.canUndo || params.editFlags.canRedo) {
-      template.push({ label: 'Undo', role: 'undo', enabled: params.editFlags.canUndo })
-      template.push({ label: 'Redo', role: 'redo', enabled: params.editFlags.canRedo })
+      template.push({
+        label: 'Undo',
+        click: () => { contents.undo() },
+        enabled: params.editFlags.canUndo
+      })
+      template.push({
+        label: 'Redo',
+        click: () => { contents.redo() },
+        enabled: params.editFlags.canRedo
+      })
     }
     return template
   }
@@ -392,13 +435,28 @@ class ContextMenuService {
         }
       ]
     } else { // Text
-      const template = []
-      if (params.editFlags.canCut) { template.push({ label: 'Cut', role: 'cut' }) }
-      if (params.editFlags.canCopy) { template.push({ label: 'Copy', role: 'copy' }) }
-      if (params.editFlags.canPaste) { template.push({ label: 'Paste', role: 'paste' }) }
-      if (params.editFlags.canPaste) { template.push({ label: 'Paste and match style', role: 'pasteandmatchstyle' }) }
-      if (params.editFlags.canSelectAll) { template.push({ label: 'Select all', role: 'selectall' }) }
-      return template
+      return [
+        params.editFlags.canCut ? {
+          label: 'Cut',
+          click: () => contents.cut()
+        } : undefined,
+        params.editFlags.canCopy ? {
+          label: 'Copy',
+          click: () => contents.copy()
+        } : undefined,
+        params.editFlags.canPaste ? {
+          label: 'Paste',
+          click: () => contents.paste()
+        } : undefined,
+        params.editFlags.canPaste ? {
+          label: 'Paste and match style',
+          click: () => contents.pasteAndMatchStyle()
+        } : undefined,
+        params.editFlags.canSelectAll ? {
+          label: 'Select all',
+          click: () => contents.selectAll()
+        } : undefined
+      ].filter((i) => !!i)
     }
   }
 
@@ -410,6 +468,7 @@ class ContextMenuService {
   * @return the template section or undefined
   */
   renderPageNavigationSection (contents, params, accountInfo) {
+    if (params.linkURL) { return [] }
     return [
       (accountInfo.has ? {
         label: 'Home',
@@ -466,8 +525,19 @@ class ContextMenuService {
               }
             } : undefined)
           ].filter((i) => !!i)
+        },
+        (accountInfo.has ? {
+          label: 'Add Page to Your Tasks',
+          click: () => {
+            accountActions.addToReadingQueue(accountInfo.service.id, params.pageURL)
+            ElectronWebContents.rootWebContents(contents).send(WB_READING_QUEUE_CURRENT_PAGE_ADDED, params.linkURL)
+          }
+        } : undefined),
+        {
+          label: 'Print',
+          click: () => { contents.print() }
         }
-      ]
+      ].filter((i) => !!i)
     }
   }
 

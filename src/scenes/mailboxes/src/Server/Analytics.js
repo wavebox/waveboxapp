@@ -247,13 +247,15 @@ class Analytics {
   buildDefaultGAArguments () {
     const userState = userStore.getState()
     const accountState = accountStore.getState()
+    const settingsState = settingsStore.getState()
 
     return {
       ...this[privLifecycleArgs].ga,
       cid: userState.analyticsId,
       vp: `${window.innerWidth}x${window.innerHeight}`,
       cd1: accountState.serviceCount(),
-      cd3: userState.user.plan
+      cd3: userState.user.plan,
+      cd10: settingsState.app.updateChannel
     }
   }
 
@@ -320,12 +322,14 @@ class Analytics {
   */
   buildDefaultWBArguments () {
     const userState = userStore.getState()
+    const settingsState = settingsStore.getState()
 
     return {
       ...this[privLifecycleArgs].wb,
       _analyticsId: userState.analyticsId,
       _plan: userState.user.plan,
-      _ga: false
+      _ga: false,
+      _releaseChannel: settingsState.app.updateChannel
     }
   }
 

@@ -15,6 +15,7 @@ import {
 import Resolver from 'Runtime/Resolver'
 import WINDOW_TYPES from './WindowTypes'
 import Platform from 'shared/Platform'
+import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
 
 const privWindow = Symbol('privWindow')
 const privBrowserWindowId = Symbol('privBrowserWindowId')
@@ -80,8 +81,15 @@ class WaveboxWindow extends EventEmitter {
       this.on('tab-created', (evt, tabId) => {
         const wc = webContents.fromId(tabId)
         if (!wc || wc.isDestroyed()) { return }
-        wc.getZoomFactor((factor) => {
-          wc.setZoomFactor(this._getDarwinMojaveCorrectedZoomLevel(factor, this[privMojaveCheckboxFix]))
+        wc.on('did-start-navigation', (evt, url, isInPlace, isMainFrame) => {
+          if (isMainFrame) {
+            evt.sender.getZoomFactor((factor) => {
+              const corrected = this._getDarwinMojaveCorrectedZoomLevel(factor, this[privMojaveCheckboxFix])
+              if (corrected !== factor) {
+                evt.sender.setZoomFactor(corrected)
+              }
+            })
+          }
         })
       })
     }
@@ -177,9 +185,16 @@ class WaveboxWindow extends EventEmitter {
       this.window.once('ready-to-show', (evt) => {
         // Defer this as we may be showing the window hidden and choosing
         // to show on this callback. Do this to to ensure we are the last
-        // callback and we have the most up to date state
+        // callback and we have the most up to date state.
+        //
+        // If show is set to false, then don't pass maximized or fullscreen
+        // as this will change the visiblity state
         setImmediate(() => {
-          this._restoreWindowPosition(savedLocation)
+          this._restoreWindowPosition(
+            this[privWindow].isVisible()
+              ? savedLocation
+              : { ...savedLocation, maximized: false, fullscreen: false }
+          )
         })
       })
     }
@@ -196,7 +211,7 @@ class WaveboxWindow extends EventEmitter {
     }
 
     // Bind webcontents event listeners
-    this.window.webContents.on('will-navigate', this._handleWillNavigate)
+    ElectronWebContentsWillNavigateShim.on(this.window.webContents, this._handleWillNavigate)
 
     // Global registers
     waveboxWindowManager.attach(this)

@@ -26,7 +26,8 @@ class CoreSettingsStore extends RemoteStore {
 
     const actions = this.alt.getActions(ACTIONS_NAME)
     this.bindActions({
-      handleLoad: actions.LOAD
+      handleLoad: actions.LOAD,
+      handleReloadDefaults: actions.RELOAD_DEFAULTS
     })
   }
 
@@ -61,6 +62,17 @@ class CoreSettingsStore extends RemoteStore {
       const segment = SettingsIdent.SEGMENTS[k]
       this[segment] = this.modelize(segment, modelData[segment] || {})
       this.launched[segment] = this.modelize(segment, launchedModelData[segment] || {})
+    })
+  }
+
+  handleReloadDefaults ({ defaults }) {
+    this.defaults = {
+      ...this.defaults,
+      ...defaults
+    }
+    Object.keys(SettingsIdent.SEGMENTS).forEach((k) => {
+      const segment = SettingsIdent.SEGMENTS[k]
+      this[segment] = this.modelize(segment, this[segment].cloneData())
     })
   }
 }

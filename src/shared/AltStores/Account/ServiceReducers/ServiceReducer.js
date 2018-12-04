@@ -1,4 +1,5 @@
 import { MAILBOX_SLEEP_WAIT } from 'shared/constants'
+import uuid from 'uuid'
 
 class ServiceReducer {
   /* **************************************************************************/
@@ -71,15 +72,6 @@ class ServiceReducer {
     value = isNaN(value) ? MAILBOX_SLEEP_WAIT : value
     value = Math.min(Math.max(value, min), max)
     return service.changeData({ sleepableTimeout: value })
-  }
-
-  /**
-  * Sets if the user has seen the sleepable wizard for this account
-  * @param service: the service to update
-  * @param seen: true if the user has seen
-  */
-  static setHasSeenSleepableWizard (service, seen) {
-    return service.changeData({ hasSeenSleepableWizard: seen })
   }
 
   /* **************************************************************************/
@@ -184,6 +176,41 @@ class ServiceReducer {
   */
   static setShowAvatarInNotifications (service, show) {
     return service.changeData({ showAvatarInNotifications: show })
+  }
+
+  /* **************************************************************************/
+  // Bookmarks
+  /* **************************************************************************/
+
+  /**
+  * Adds a bookmark entry into the service
+  * @param service: the parent service
+  * @param recentItem: the recent item to make the bookmark from
+  */
+  static addBookmark (service, recentItem) {
+    return service.changeData({
+      bookmarks: service.bookmarks.concat({
+        windowType: recentItem.windowType,
+        url: recentItem.url,
+        title: recentItem.title,
+        favicons: recentItem.favicons,
+        time: new Date().getTime(),
+        id: uuid.v4()
+      })
+    })
+  }
+
+  /**
+  * Removes a bookmark entry from the service
+  * @param service: the parent service
+  * @param url: the url to add
+  * @param title: the title of the visit
+  * @param favicon: the favicon for the page
+  */
+  static removeBookmark (service, id) {
+    return service.changeData({
+      bookmarks: service.bookmarks.filter((b) => b.id !== id)
+    })
   }
 
   /* **************************************************************************/

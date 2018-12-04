@@ -2,14 +2,18 @@ import { app, ipcMain, BrowserWindow, dialog, webContents } from 'electron'
 import { URL } from 'url'
 import { ElectronWebContents } from 'ElectronTools'
 import { settingsStore } from 'stores/settings'
+import { userStore } from 'stores/user'
 import { CRExtensionManager } from 'Extensions/Chrome'
 import { ELEVATED_LOG_PREFIX } from 'shared/constants'
 import { CR_EXTENSION_PROTOCOL } from 'shared/extensionApis'
 import {
   WCRPC_DOM_READY,
   WCRPC_DID_FRAME_FINISH_LOAD,
+  WCRPC_DID_FINISH_LOAD,
   WCRPC_PERMISSION_REQUESTS_CHANGED,
   WCRPC_CLOSE_WINDOW,
+  WCRPC_OPEN_RECENT_LINK,
+  WCRPC_OPEN_READING_QUEUE_LINK,
   WCRPC_SEND_INPUT_EVENT,
   WCRPC_SEND_INPUT_EVENTS,
   WCRPC_SHOW_ASYNC_MESSAGE_DIALOG,
@@ -20,6 +24,8 @@ import {
   WCRPC_RESOLVE_PERMISSION_REQUEST
 } from 'shared/webContentsRPC'
 import { PermissionManager } from 'Permissions'
+import os from 'os'
+import LinkOpener from 'LinkOpener'
 
 const privConnected = Symbol('privConnected')
 const privNotificationService = Symbol('privNotificationService')
@@ -41,6 +47,8 @@ class WebContentsRPCService {
     app.on('web-contents-created', this._handleWebContentsCreated)
 
     ipcMain.on(WCRPC_CLOSE_WINDOW, this._handleCloseWindow)
+    ipcMain.on(WCRPC_OPEN_RECENT_LINK, this._handleOpenRecentLink)
+    ipcMain.on(WCRPC_OPEN_READING_QUEUE_LINK, this._handleOpenReadingQueueLink)
     ipcMain.on(WCRPC_SEND_INPUT_EVENT, this._handleSendInputEvent)
     ipcMain.on(WCRPC_SEND_INPUT_EVENTS, this._handleSendInputEvents)
     ipcMain.on(WCRPC_SHOW_ASYNC_MESSAGE_DIALOG, this._handleShowAsyncMessageDialog)
@@ -69,6 +77,7 @@ class WebContentsRPCService {
 
       contents.on('dom-ready', this._handleDomReady)
       contents.on('did-frame-finish-load', this._handleFrameFinishLoad)
+      contents.on('did-finish-load', this._handleDidFinishLoad)
       contents.on('console-message', this._handleConsoleMessage)
       contents.on('will-prevent-unload', this._handleWillPreventUnload)
       contents.on('destroyed', () => {
@@ -87,6 +96,10 @@ class WebContentsRPCService {
 
   _handleFrameFinishLoad = (evt, isMainFrame) => {
     evt.sender.send(WCRPC_DID_FRAME_FINISH_LOAD, evt.sender.id, isMainFrame)
+  }
+
+  _handleDidFinishLoad = (evt) => {
+    evt.sender.send(WCRPC_DID_FINISH_LOAD, evt.sender.id)
   }
 
   _handleConsoleMessage = (evt, level, message, line, sourceId) => {
@@ -154,6 +167,28 @@ class WebContentsRPCService {
     const bw = BrowserWindow.fromWebContents(ElectronWebContents.rootWebContents(evt.sender))
     if (!bw || bw.isDestroyed()) { return }
     bw.close()
+  }
+
+  /**
+  * Handles the opening of a recent link
+  * @param evt: the event that fired
+  * @param serviceId: the id of the service
+  * @param recentItem: the item we're trying to open
+  */
+  _handleOpenRecentLink = (evt, serviceId, recentItem) => {
+    if (!this[privConnected].has(evt.sender.id)) { return }
+    LinkOpener.openRecentLink(evt.sender, serviceId, recentItem)
+  }
+
+  /**
+  * Handles the opening of a reading queue item
+  * @param evt: the event that fired
+  * @param serviceId: the id of the service to open in
+  * @param readingItem: the reading item to open
+  */
+  _handleOpenReadingQueueLink = (evt, serviceId, readingItem) => {
+    if (!this[privConnected].has(evt.sender.id)) { return }
+    LinkOpener.openReadingQueueLink(evt.sender, serviceId, readingItem)
   }
 
   /**
@@ -232,11 +267,14 @@ class WebContentsRPCService {
     try {
       evt.returnValue = {
         launchSettings: settingsStore.getState().launchSettingsJS(),
+        launchUserSettings: userStore.getState().launchSettingsJS(),
         extensions: CRExtensionManager.runtimeHandler.getAllContentScriptGuestConfigs(),
         initialHostUrl: !currentUrl || currentUrl === 'about:blank' ? ElectronWebContents.getHostUrl(evt.sender) : currentUrl,
         notificationPermission: this[privNotificationService].getDomainPermissionForWebContents(evt.sender, currentUrl),
         paths: {},
-        platform: process.platform
+        platform: process.platform,
+        arch: process.arch,
+        osRelease: os.release()
       }
     } catch (ex) {
       console.error(`Failed to respond to "${WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG}" continuing with unknown side effects`, ex)

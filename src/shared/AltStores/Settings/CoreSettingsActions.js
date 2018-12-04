@@ -31,6 +31,13 @@ class CoreSettingsActions extends RemoteActions {
     throw new Error('Action not implemented "load"')
   }
 
+  /**
+  * Indicates to the store that default values should be reloaded
+  */
+  reloadDefaults () {
+    throw new Error('Action not implemented "regenerateDefaults"')
+  }
+
   /* **************************************************************************/
   // Updates
   /* **************************************************************************/

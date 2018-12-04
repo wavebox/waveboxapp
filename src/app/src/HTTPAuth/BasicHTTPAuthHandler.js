@@ -1,5 +1,6 @@
 import { BrowserWindow } from 'electron'
 import querystring from 'querystring'
+import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
 
 class BasicHTTPAuthHandler {
   /* ****************************************************************************/
@@ -51,7 +52,10 @@ class BasicHTTPAuthHandler {
       realm: authInfo.realm
     })
     this.window.loadURL(`file://${__dirname}/BasicHTTPAuthHandler.html?${qs}`)
-    this.window.webContents.on('will-navigate', (evt, url) => evt.preventDefault())
+    ElectronWebContentsWillNavigateShim.on(
+      this.window.webContents,
+      (evt) => evt.preventDefault()
+    )
   }
 
   /* ****************************************************************************/

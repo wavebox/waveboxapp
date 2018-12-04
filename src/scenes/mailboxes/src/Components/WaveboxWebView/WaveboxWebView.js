@@ -204,19 +204,6 @@ class WaveboxWebView extends React.Component {
   }
 
   /**
-  * Handles the page beginning to navigate
-  * @param evt: the event that fired
-  */
-  handleWillNavigate = (...args) => {
-    this.setState({
-      canGoBack: this.refs[REF].canGoBack(),
-      canGoForward: this.refs[REF].canGoForward()
-    })
-
-    if (this.props.willNavigate) { this.props.willNavigate(...args) }
-  }
-
-  /**
   * Handles the page commiting navigation
   * @param evt: the event that fired
   */
@@ -306,7 +293,6 @@ class WaveboxWebView extends React.Component {
             pageTitleUpdated={this.handlePageTitleUpdated}
             didStartLoading={this.handleDidStartLoading}
             didStopLoading={this.handleDidStopLoading}
-            willNavigate={this.handleWillNavigate}
             didNavigate={this.handleDidNavigate}
             didNavigateInPage={this.handleDidNavigateInPage} />
         </div>

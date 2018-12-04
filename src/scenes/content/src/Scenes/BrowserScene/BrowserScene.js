@@ -117,6 +117,7 @@ class BrowserScene extends React.Component {
   * @param evt: an event which includes a url prop
   */
   navigationStateDidChange = (evt) => {
+    if (evt.isMainFrame === false) { return } // if it's explicitly not main frame return
     if (evt.url) {
       browserActions.setCurrentUrl(evt.url)
     }
@@ -230,9 +231,7 @@ class BrowserScene extends React.Component {
             willNavigate={this.navigationStateDidChange}
             didNavigate={this.navigationStateDidChange}
             onPermissionRequestsChanged={this.handlePermissionRequestsChanged}
-            didNavigateInPage={(evt) => {
-              if (evt.isMainFrame) { this.navigationStateDidChange(evt) }
-            }} />
+            didNavigateInPage={this.navigationStateDidChange} />
           <BrowserViewLoadBar isLoading={isLoading} />
           <BrowserViewTargetUrl url={targetUrl} />
           <BrowserViewPermissionRequests
