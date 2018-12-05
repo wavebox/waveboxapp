@@ -60,7 +60,7 @@ class CustomCodeEditingDialog extends React.Component {
   /* **************************************************************************/
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.code !== nextProps.code) {
+    if (this.props.code !== nextProps.code || (this.props.open === false && nextProps.open === true)) {
       this.setState({
         editingCode: nextProps.code
       })
