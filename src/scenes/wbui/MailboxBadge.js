@@ -71,18 +71,27 @@ class MailboxBadge extends React.Component {
     }
 
     let badgeContent
+    let badgeContentType
     if (unreadCount > 0) {
       badgeContent = unreadCount >= 1000 ? Math.floor(unreadCount / 1000) + 'K+' : unreadCount
+      badgeContentType = 'Count'
     } else if (hasUnreadActivity) {
       badgeContent = '●'
+      badgeContentType = 'Indicator'
     }
 
     return (
-      <span className={classNames(classes.root, className)} {...passProps}>
+      <span
+        className={classNames(classes.root, className)}
+        {...passProps}>
         {children}
         {badgeContent !== undefined ? (
           <span
-            className={classes.badge}
+            className={classNames(
+              classes.badge,
+              'WB-MailboxBadge',
+              `WB-Badge-Content-${badgeContentType}`
+            )}
             style={{ backgroundColor: badgeColor, color: inverseBadgeColor }}>
             {badgeContent}
           </span>

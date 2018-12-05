@@ -95,16 +95,20 @@ class MailboxServicebadge extends React.Component {
     }
 
     let badgeContent
+    let badgeContentType
     if (isAuthInvalid) {
       badgeContent = (
         <FASExclamationIcon
           className={classNames(classes.icon, iconClassName)}
           style={{ color: colorInverse, ...iconStyle }} />
       )
+      badgeContentType = 'Invalid'
     } else if (supportsUnreadCount && showUnreadBadge && unreadCount) {
       badgeContent = unreadCount >= 1000 ? Math.floor(unreadCount / 1000) + 'K+' : unreadCount
+      badgeContentType = 'Count'
     } else if (supportsUnreadActivity && showUnreadActivityBadge && hasUnreadActivity) {
       badgeContent = '●'
+      badgeContentType = 'Indicator'
     }
 
     if (!badgeContent && !children) { return false }
@@ -114,7 +118,12 @@ class MailboxServicebadge extends React.Component {
         {children}
         {badgeContent ? (
           <span
-            className={classNames(classes.badge, badgeClassName)}
+            className={classNames(
+              classes.badge,
+              badgeClassName,
+              'WB-MailboxServiceBadge',
+              `WB-Badge-Content-${badgeContentType}`
+            )}
             style={{ backgroundColor: color, color: colorInverse, ...badgeStyle }}>
             {badgeContent}
           </span>
