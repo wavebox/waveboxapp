@@ -641,6 +641,22 @@ class MailboxesWindow extends WaveboxWindow {
   * @return the webcontents which is an editable target
   */
   focusedEditableWebContents () {
+    // Look to see if we are in part of the wavebox ui
+    let purl
+    try {
+      purl = new URL(this.window.webContents.getURL())
+    } catch (ex) { }
+    if (purl && purl.hash.length > 2) { // Normally it's /# so anything more and we're in a screen
+      const miscWebContents = electron.webContents.getAllWebContents()
+        .filter((wc) => {
+          return wc.hostWebContents === this.window.webContents && !this.tabManager.hasTabWithId(wc.id)
+        })
+      return miscWebContents.length
+        ? miscWebContents[0]
+        : this.window.webContents
+    }
+
+    // Return focused tab
     return this.tabManager.activeTabId
       ? electron.webContents.fromId(this.tabManager.activeTabId)
       : undefined
