@@ -68,6 +68,18 @@ class CoreCRExtensionActions extends RemoteActions {
     }
   }
 
+  /**
+  * Installs an unpacked extension
+  * @param inputDir: the path to the extension folder or manifest file
+  */
+  installUnpackedExtension (...args) {
+    if (process.type === 'browser') {
+      throw new Error('Action not implemented "installUnpackedExtension"')
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('installUnpackedExtension', args)
+    }
+  }
+
   /* **************************************************************************/
   // Browser Action
   /* **************************************************************************/

@@ -1,4 +1,4 @@
-import { app } from 'electron'
+import { app, dialog } from 'electron'
 import CRExtensionRuntimeHandler from './CRExtensionRuntimeHandler'
 import CRExtensionFS from './CRExtensionFS'
 import CRExtensionDownloader from './CRExtensionDownloader'
@@ -68,6 +68,26 @@ class CRExtensionManager {
     this.uninstallQueue.add(extensionId)
 
     this._handleSendInstallMetadata()
+  }
+
+  /**
+  * Installs an unpacked extension
+  * @param inputDir: the path to the extension or manifest file
+  */
+  installUnpackedExtension (inputDir) {
+    this.downloader.downloadUnpackedExtension(inputDir)
+      .then((extensionId) => {
+        this.installQueue.add(extensionId)
+        this._handleSendInstallMetadata()
+      },
+      (_err) => {
+        dialog.showMessageBox({
+          type: 'error',
+          buttons: ['OK'],
+          title: 'Failed',
+          message: 'Failed to install extension'
+        })
+      })
   }
 
   /**
