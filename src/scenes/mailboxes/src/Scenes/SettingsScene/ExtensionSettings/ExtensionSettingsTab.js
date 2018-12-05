@@ -86,6 +86,10 @@ class ExtensionSettingsTab extends React.Component {
               { value: ExtensionSettings.TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_RIGHT, label: 'Right' }
             ]}
             onChange={(evt, value) => { settingsActions.sub.extension.setToolbarBrowserActionLayout(value) }} />
+          <SettingsListItemSwitch
+            label='Developer tools'
+            onChange={(evt, toggled) => { settingsActions.sub.extension.setShowDeveloperTools(toggled) }}
+            checked={extension.showDeveloperTools} />
           <SettingsListItem divider={false}>
             <Button variant='contained' size='small' onClick={() => userActions.updateExtensions()}>
               Check for updates
