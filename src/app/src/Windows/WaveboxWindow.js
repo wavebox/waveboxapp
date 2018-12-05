@@ -694,6 +694,13 @@ class WaveboxWindow extends EventEmitter {
   }
 
   /**
+  * @return the webcontents which is an editable target
+  */
+  focusedEditableWebContents () {
+    throw new Error('WaveboxWindow.focusedEditableWebContents not implemented')
+  }
+
+  /**
   * @return process info about the tabs with { webContentsId, description, pid }
   */
   webContentsProcessInfo () {

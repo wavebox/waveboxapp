@@ -312,6 +312,15 @@ class ContentWindow extends WaveboxWindow {
   }
 
   /**
+  * @return the webcontents which is an editable target
+  */
+  focusedEditableWebContents () {
+    return this[privGuestWebContentsId]
+      ? webContents.fromId(this[privGuestWebContentsId])
+      : undefined
+  }
+
+  /**
   * @return process info about the tabs with { webContentsId, description, pid, url }
   */
   webContentsProcessInfo () {

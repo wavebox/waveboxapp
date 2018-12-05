@@ -178,6 +178,13 @@ class KeychainWindow extends WaveboxWindow {
   tabMetaInfo (tabId) { return undefined }
 
   /**
+  * @return the webcontents which is an editable target
+  */
+  focusedEditableWebContents () {
+    return this.window.webContents
+  }
+
+  /**
   * @return process info about the tabs with { webContentsId, description, pid }
   */
   webContentsProcessInfo () {

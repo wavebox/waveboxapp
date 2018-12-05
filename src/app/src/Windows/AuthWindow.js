@@ -74,6 +74,13 @@ class AuthWindow extends WaveboxWindow {
   tabMetaInfo (tabId) {
     return undefined
   }
+
+  /**
+  * @return the webcontents which is an editable target
+  */
+  focusedEditableWebContents () {
+    return this.window.webContents
+  }
 }
 
 export default AuthWindow

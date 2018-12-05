@@ -638,6 +638,15 @@ class MailboxesWindow extends WaveboxWindow {
   }
 
   /**
+  * @return the webcontents which is an editable target
+  */
+  focusedEditableWebContents () {
+    return this.tabManager.activeTabId
+      ? electron.webContents.fromId(this.tabManager.activeTabId)
+      : undefined
+  }
+
+  /**
   * @return process info about the tabs with { webContentsId, description, pid }
   */
   webContentsProcessInfo () {
