@@ -906,13 +906,15 @@ class CoreAccountStore extends RemoteStore {
     * @return an array of all partition ids used
     */
     this.allPartitions = () => {
-      return [].concat(
-        Array.from(this._mailboxes_.values())
-          .map((mailbox) => mailbox.partitonId),
-        Array.from(this._services_.values())
-          .filter((service) => service.sandboxFromMailbox)
-          .map((service) => service.partitionId)
+      const partitions = new Set(
+        [].concat(
+          Array.from(this._mailboxes_.values())
+            .map((mailbox) => mailbox.partitionId),
+          Array.from(this._services_.values())
+            .map((service) => service.partitionId)
+        )
       )
+      return Array.from(partitions)
     }
 
     /**
