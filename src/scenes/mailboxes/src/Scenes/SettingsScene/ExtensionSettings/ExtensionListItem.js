@@ -22,7 +22,8 @@ const styles = {
   },
   contentContainer: {
     position: 'relative',
-    margin: 8
+    margin: 8,
+    minHeight: 115
   },
   leftColumn: {
     position: 'absolute',

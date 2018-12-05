@@ -132,7 +132,7 @@ class ServiceAdvancedSection extends React.Component {
                 size='small'
                 variant='contained'
                 onClick={() => {
-                  onRequestEditCustomCode('Custom CSS', customCSS, (code) => {
+                  onRequestEditCustomCode('Custom CSS', customCSS, 'css', (code) => {
                     accountActions.reduceService(serviceId, ServiceReducer.setCustomCSS, code)
                     accountDispatch.reloadService(serviceId)
                   })
@@ -145,7 +145,7 @@ class ServiceAdvancedSection extends React.Component {
                 size='small'
                 variant='contained'
                 onClick={() => {
-                  onRequestEditCustomCode('Custom JS', customJS, (code) => {
+                  onRequestEditCustomCode('Custom JS', customJS, 'javascript', (code) => {
                     accountActions.reduceService(serviceId, ServiceReducer.setCustomJS, code)
                     accountDispatch.reloadService(serviceId)
                   })

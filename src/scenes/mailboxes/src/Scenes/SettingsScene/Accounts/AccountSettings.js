@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { accountStore } from 'stores/account'
-import CustomCodeEditingDialog from './CustomCodeEditingDialog'
+import CustomCodeEditingDialog from 'Components/CustomCodeEditingDialog'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import { Button } from '@material-ui/core'
@@ -69,6 +69,7 @@ class AccountSettings extends React.Component {
       selectedMailboxId: this.props.mailboxId || accountState.mailboxIds()[0],
       codeEditorOpen: false,
       codeEditorTitle: undefined,
+      codeEditorMode: 'css',
       codeEditorCode: '',
       codeEditorSaveFn: undefined
     }
@@ -104,13 +105,15 @@ class AccountSettings extends React.Component {
   * Starts editing the custom code
   * @param title: the dialog title
   * @param code: the code for the dialog
+  * @param mode: the mode of the code
   * @param save: the save function
   */
-  handleEditCustomCode = (title, code, save) => {
+  handleEditCustomCode = (title, code, mode, save) => {
     this.setState({
       codeEditorOpen: true,
       codeEditorTitle: title,
       codeEditorCode: code || '',
+      codeEditorMode: mode,
       codeEditorSaveFn: save
     })
   }
@@ -136,6 +139,7 @@ class AccountSettings extends React.Component {
       codeEditorOpen: false,
       codeEditorTitle: undefined,
       codeEditorCode: '',
+      codeEditorMode: 'css',
       codeEditorSaveFn: undefined
     })
   }
@@ -158,7 +162,8 @@ class AccountSettings extends React.Component {
       selectedMailboxId,
       codeEditorOpen,
       codeEditorTitle,
-      codeEditorCode
+      codeEditorCode,
+      codeEditorMode
     } = this.state
 
     if (accountCount) {
@@ -180,6 +185,7 @@ class AccountSettings extends React.Component {
               title={codeEditorTitle}
               open={codeEditorOpen}
               code={codeEditorCode}
+              mode={codeEditorMode}
               onCancel={this.handleCancelCustomCode}
               onSave={this.handleSaveCustomCode} />
           </div>

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { ipcRenderer } from 'electron'
 import { settingsActions } from 'stores/settings'
-import CustomStylesEditingDialog from './CustomStylesEditingDialog'
+import CustomCodeEditingDialog from 'Components/CustomCodeEditingDialog'
 import DistributionConfig from 'Runtime/DistributionConfig'
 import { AppSettings } from 'shared/Models/Settings'
 import SettingsListSection from 'wbui/SettingsListSection'
@@ -264,10 +264,11 @@ class AdvancedSettingsSection extends React.Component {
           onClick={() => {
             ipcRenderer.send(WB_OPEN_CERTIFICATES_FOLDER)
           }} />
-        <CustomStylesEditingDialog
+        <CustomCodeEditingDialog
           title='Main Window Custom CSS'
           open={customCSSEditorOpen}
           code={ui.customMainCSS}
+          mode='css'
           onCancel={() => this.setState({ customCSSEditorOpen: false })}
           onSave={(evt, css) => {
             this.setState({ customCSSEditorOpen: false })
