@@ -5,6 +5,7 @@ import { Paper, Button } from '@material-ui/core'
 import Spinner from 'wbui/Activity/Spinner'
 import { crextensionStore, crextensionActions } from 'stores/crextension'
 import { userStore } from 'stores/user'
+import { settingsStore } from 'stores/settings'
 import electron from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
@@ -16,12 +17,13 @@ import red from '@material-ui/core/colors/red'
 const styles = {
   // Layout
   paperContainer: {
-    padding: '16px 8px',
+    padding: 0,
     margin: '16px 0px'
   },
   contentContainer: {
     position: 'relative',
-    margin: 8
+    margin: 8,
+    minHeight: 115
   },
   leftColumn: {
     position: 'absolute',
@@ -29,19 +31,31 @@ const styles = {
     height: '100%',
     left: 0,
     top: 0,
-    backgroundSize: '60px',
-    backgroundPosition: 'top center',
-    backgroundRepeat: 'no-repeat'
+    textAlign: 'center',
+    paddingTop: 8,
+    paddingBottom: 8
   },
   rightColumn: {
-    marginLeft: 80
+    marginLeft: 80,
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingRight: 8
   },
 
   // Info
+  icon: {
+    display: 'block',
+    margin: '0px auto',
+    width: 60,
+    height: 60,
+    backgroundSize: 'contain',
+    backgroundPosition: 'top center',
+    backgroundRepeat: 'no-repeat'
+  },
   name: {
     fontSize: '14px',
     fontWeight: 500,
-    marginBottom: 0
+    margin: 0
   },
   version: {
     fontSize: '13px',
@@ -125,11 +139,13 @@ class ExtensionListItem extends React.Component {
   componentDidMount () {
     crextensionStore.listen(this.extensionUpdated)
     userStore.listen(this.userUpdated)
+    settingsStore.listen(this.settingsUpdated)
   }
 
   componentWillUnmount () {
     crextensionStore.unlisten(this.extensionUpdated)
     userStore.unlisten(this.userUpdated)
+    settingsStore.unlisten(this.settingsUpdated)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -185,6 +201,7 @@ class ExtensionListItem extends React.Component {
 
   state = (() => {
     return {
+      showDeveloperTools: settingsStore.getState().extension.showDeveloperTools,
       ...this.generateState(this.props, undefined, undefined)
     }
   })()
@@ -195,6 +212,12 @@ class ExtensionListItem extends React.Component {
 
   userUpdated = (userState) => {
     this.setState(this.generateState(this.props, undefined, userState))
+  }
+
+  settingsUpdated = (settingsState) => {
+    this.setState({
+      showDeveloperTools: settingsState.extension.showDeveloperTools
+    })
   }
 
   /* **************************************************************************/
@@ -263,30 +286,49 @@ class ExtensionListItem extends React.Component {
     const {
       hasBackgroundPage,
       hasOptionsPage,
-      availableToUser
+      availableToUser,
+      showDeveloperTools
     } = state
     if (availableToUser) {
       return (
         <div className={classes.actions}>
-          <Button variant='contained' onClick={this.handleUninstall} className={classes.action}>
+          <Button
+            variant='contained'
+            size='small'
+            onClick={this.handleUninstall}
+            className={classes.action}>
             Uninstall
           </Button>
           {hasOptionsPage ? (
-            <Button variant='contained' onClick={this.handleOpenOptionsPage} className={classes.action}>
+            <Button
+              variant='contained'
+              size='small'
+              onClick={this.handleOpenOptionsPage}
+              className={classes.action}>
               Options
             </Button>
           ) : undefined}
-          {hasBackgroundPage ? (
-            <Button onClick={this.handleInspectBackgroundPage} className={classNames(classes.action, classes.developerAction)}>
-              Inspect background page
-            </Button>
+          {showDeveloperTools ? (
+            <div>
+              {hasBackgroundPage ? (
+                <Button
+                  size='small'
+                  onClick={this.handleInspectBackgroundPage}
+                  className={classNames(classes.action, classes.developerAction)}>
+                  Inspect background page
+                </Button>
+              ) : undefined}
+            </div>
           ) : undefined}
         </div>
       )
     } else {
       return (
         <div className={classes.actions}>
-          <Button variant='contained' onClick={this.handleUninstall} className={classes.action}>
+          <Button
+            variant='contained'
+            size='small' onClick={this.handleUninstall}
+            className={classes.action}>
             Uninstall
           </Button>
         </div>
@@ -353,7 +395,10 @@ class ExtensionListItem extends React.Component {
     } else if (availableToUser) {
       return (
         <div className={classes.actions}>
-          <Button variant='contained' color='primary' onClick={this.handleInstall}>
+          <Button
+            variant='contained'
+            size='small' color='primary'
+            onClick={this.handleInstall}>
             Install
           </Button>
         </div>
@@ -386,7 +431,14 @@ class ExtensionListItem extends React.Component {
     return (
       <Paper className={classNames(className, classes.paperContainer)} {...passProps}>
         <div className={classes.contentContainer}>
-          <div style={{ ...styles.leftColumn, backgroundImage: `url("${iconUrl}")` }} />
+          <div className={classes.leftColumn}>
+            <div className={classes.icon} style={{ backgroundImage: `url("${iconUrl}")` }} />
+            {onProLevel ? (
+              <div className={classes.onProLevel}>
+                Pro
+              </div>
+            ) : undefined}
+          </div>
           <div className={classes.rightColumn}>
             <div className={classes.info}>
               <h2 className={classes.name}>
@@ -400,11 +452,6 @@ class ExtensionListItem extends React.Component {
               <p className={classes.description}>{description}</p>
               {unknownSource ? (
                 <div className={classes.unknownSource}>Installed from an unknown source</div>
-              ) : undefined}
-              {onProLevel ? (
-                <div className={classes.onProLevel}>
-                  Pro
-                </div>
               ) : undefined}
               <div>
                 {websiteUrl ? (

@@ -39,6 +39,14 @@ class CRExtensionActions extends CoreCRExtensionActions {
   }
 
   /**
+  * @overwrite
+  */
+  installUnpackedExtension (inputDir) {
+    CRExtensionManager.installUnpackedExtension(inputDir)
+    return Promise.resolve() // Suppress
+  }
+
+  /**
   * Updates the installed extensions
   */
   updateInstalledExtensions () {

@@ -356,7 +356,7 @@ class ContextMenuService {
   */
   renderLookupAndSearchSection (contents, params, accountInfo) {
     const template = []
-    if (params.selectionText) {
+    if (params.selectionText && params.inputFieldType !== 'password') {
       if (params.isEditable && params.misspelledWord) {
         template.push({
           label: `Add “${params.misspelledWord}” to Dictionary`,

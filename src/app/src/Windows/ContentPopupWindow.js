@@ -256,6 +256,13 @@ class ContentPopupWindow extends WaveboxWindow {
     return tabId === this.window.webContents.id ? this[privTabMetaInfo] : undefined
   }
 
+  /**
+  * @return the webcontents which is an editable target
+  */
+  focusedEditableWebContents () {
+    return this.window.webContents
+  }
+
   /* ****************************************************************************/
   // Unsupported Actions
   /* ****************************************************************************/

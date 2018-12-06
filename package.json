@@ -1,6 +1,6 @@
 {
   "name": "wavebox",
-  "version": "4.5.0",
+  "version": "4.5.1",
   "releaseChannel": "STABLE",
   "description": "Wavebox",
   "scripts": {
@@ -46,7 +46,8 @@
     "clean:all": "node scripts/cleanAll.js",
     "clean:bin": "node scripts/cleanBin.js",
     "clean:node_modules": "node scripts/cleanNodeModules.js",
-    "clean:caches": "node scripts/cleanCaches.js"
+    "clean:caches": "node scripts/cleanCaches.js",
+    "create:runshortcut": "node scripts/createRunShortcut.js"
   },
   "keywords": [],
   "author": {
@@ -90,6 +91,7 @@
     "webpack-cli": "3.1.2",
     "webpack-notifier": "1.7.0",
     "webpack-target-electron-renderer": "0.4.0",
+    "windows-shortcuts": "0.1.6",
     "yargs": "12.0.5"
   },
   "devDependencies": {

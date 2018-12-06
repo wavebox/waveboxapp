@@ -18,6 +18,7 @@ class ExtensionSettings extends Model {
 
   get showBrowserActionsInToolbar () { return this._value_('showBrowserActionsInToolbar', true) }
   get toolbarBrowserActionLayout () { return this._value_('toolbarBrowserActionLayout', TOOLBAR_BROWSER_ACTION_LAYOUT.ALIGN_RIGHT) }
+  get showDeveloperTools () { return this._value_('showDeveloperTools', false) }
 }
 
 module.exports = ExtensionSettings

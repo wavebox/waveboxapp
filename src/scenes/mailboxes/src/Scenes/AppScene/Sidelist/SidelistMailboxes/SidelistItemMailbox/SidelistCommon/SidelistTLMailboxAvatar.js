@@ -149,7 +149,8 @@ class SidelistTLMailboxAvatar extends React.Component {
           className,
           'WB-SidelistItemMailboxAvatar',
           `WB-Id-${mailboxId}`,
-          isMailboxActive || forceIndicator ? 'WB-Active' : undefined
+          isMailboxActive || forceIndicator ? 'WB-Active' : undefined,
+          isMailboxSleeping ? 'WB-Sleeping' : undefined
         )}
         {...badgeProps}
         {...passProps}>

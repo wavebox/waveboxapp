@@ -3,6 +3,7 @@ bin
 dist
 .DS_Store
 .caches
+.localscripts
 Wavebox-darwin-x64
 Wavebox-linux-ia32/
 Wavebox-linux-x64/

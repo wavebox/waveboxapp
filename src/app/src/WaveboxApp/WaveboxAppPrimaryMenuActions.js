@@ -34,6 +34,7 @@ class WaveboxAppPrimaryMenuAcions {
   * @return the focused web contents
   */
   _getFocusedWebContents () {
+    // Do dev tools first as these may not correlate to the opened Wavebox window
     const withFocusedDevTools = webContents
       .getAllWebContents()
       .filter((wc) => wc.isDevToolsOpened() && wc.isDevToolsFocused())
@@ -41,8 +42,8 @@ class WaveboxAppPrimaryMenuAcions {
     if (withFocusedDevTools[0]) {
       return withFocusedDevTools[0].devToolsWebContents
     } else {
-      const wcId = WaveboxWindow.focusedTabId()
-      return wcId ? webContents.fromId(wcId) : undefined
+      const win = WaveboxWindow.focused()
+      return win ? win.focusedEditableWebContents() : undefined
     }
   }
 

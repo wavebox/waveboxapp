@@ -26,6 +26,13 @@ class ExtensionSettingsActions extends CoreSettingsActions {
   setToolbarBrowserActionLayout (layout) {
     this.dispatchUpdate('toolbarBrowserActionLayout', layout)
   }
+
+  /**
+  * @param show: true to show developer tools
+  */
+  setShowDeveloperTools (show) {
+    this.dispatchUpdate('showDeveloperTools', show)
+  }
 }
 
 export default ExtensionSettingsActions

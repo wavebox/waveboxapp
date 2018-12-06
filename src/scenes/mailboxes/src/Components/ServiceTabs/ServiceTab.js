@@ -419,7 +419,11 @@ class ServiceTab extends React.Component {
             className,
             classes.tab,
             classNameUiLoc,
-            isServiceActive ? 'is-active' : undefined
+            isServiceActive ? 'is-active' : undefined,
+            `WB-${classNameUiLoc[0].toUpperCase()}${classNameUiLoc.substr(1)}TabItemServiceAvatar`,
+            `WB-Id-${mailboxId}-${serviceId}`,
+            isServiceActive ? 'WB-Active' : undefined,
+            isServiceSleeping ? 'WB-Sleeping' : undefined
           )}
           badgeClassName={classNames(classes.badge, classNameUiLoc, classNameSBSize)}
           iconClassName={classNames(classes.badgeFAIcon, classNameUiLoc, classNameSBSize)}

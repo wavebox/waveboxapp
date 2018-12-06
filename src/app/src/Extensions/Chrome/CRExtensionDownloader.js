@@ -183,6 +183,40 @@ class CRExtensionDownloader {
       })
   }
 
+  /**
+  * Installs an unpacked extension
+  * @param inputDir: the path to the extension or manifest file
+  * @return promise
+  */
+  downloadUnpackedExtension (inputDir) {
+    const manifestPath = inputDir.endsWith('manifest.json')
+      ? inputDir
+      : path.join(inputDir, 'manifest.json')
+    const extensionDir = path.dirname(manifestPath)
+
+    const id = uuid.v4()
+    let manifest
+    let installPath
+    return Promise.resolve()
+      .then(() => fs.readJson(manifestPath))
+      .then((m) => {
+        manifest = m
+        installPath = path.join(
+          RuntimePaths.CHROME_EXTENSION_INSTALL_PATH,
+          id,
+          `${manifest.version}_0`
+        )
+        return fs.copy(extensionDir, installPath)
+      })
+      .then(() => {
+        manifest.wavebox_extension_id = id
+        return fs.writeJson(path.join(installPath, 'manifest.json'), manifest)
+      })
+      .then(() => {
+        return id
+      })
+  }
+
   /* ****************************************************************************/
   // Updating
   /* ****************************************************************************/

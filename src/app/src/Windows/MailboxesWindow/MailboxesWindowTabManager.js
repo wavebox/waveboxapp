@@ -240,6 +240,14 @@ class MailboxesWindowTabManager {
     }
   }
 
+  /**
+  * @param tabId: the id of the tab
+  * @return true if there is a tab with this id
+  */
+  hasTabWithId (tabId) {
+    return this.attachedMailboxes.has(tabId)
+  }
+
   /* ****************************************************************************/
   // Getters: Extensions
   /* ****************************************************************************/

@@ -5,12 +5,16 @@ const SRC_DIR = path.join(ROOT_DIR, 'src')
 const BIN_DIR = path.join(ROOT_DIR, 'bin')
 const CACHES_DIR = path.join(ROOT_DIR, '.caches')
 const PKG = require(path.join(ROOT_DIR, 'package.json'))
+const ASSETS_DIR = path.join(ROOT_DIR, 'assets')
+const LOCAL_SCRIPTS_DIR = path.join(ROOT_DIR, '.localscripts')
 
 module.exports = {
   ROOT_DIR: ROOT_DIR,
   SRC_DIR: SRC_DIR,
   BIN_DIR: BIN_DIR,
   CACHES_DIR: CACHES_DIR,
+  ASSETS_DIR: ASSETS_DIR,
+  LOCAL_SCRIPTS_DIR: LOCAL_SCRIPTS_DIR,
   PKG: PKG,
   PACKAGE_DIRS: [
     ROOT_DIR,
