@@ -159,6 +159,13 @@ class TraySettingsActions extends CoreSettingsActions {
   setTrayGtkUpdateMode (val) {
     this.dispatchUpdate('gtkUpdateMode', val)
   }
+
+  /**
+  * @param force: true to force gtk status icon
+  */
+  setForceGtkStatusIcon (force) {
+    this.dispatchUpdate('forceGtkStatusIcon', force)
+  }
 }
 
 export default TraySettingsActions

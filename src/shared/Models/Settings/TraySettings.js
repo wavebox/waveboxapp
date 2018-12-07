@@ -114,6 +114,7 @@ class TraySettings extends Model {
   /* **************************************************************************/
 
   get gtkUpdateMode () { return this._value_('gtkUpdateMode', GTK_UPDATE_MODES.UPDATE) }
+  get forceGtkStatusIcon () { return this._value_('forceGtkStatusIcon', false) }
   get dpiMultiplier () {
     let defaultValue = 1
     try {

@@ -28,7 +28,7 @@ import { evtMain } from 'AppEvents'
 import { TrayPopout, TrayBehaviour } from 'Tray'
 import { LinuxNotification } from 'Notifications'
 import WaveboxCommandArgs from './WaveboxCommandArgs'
-import { AppSettings } from 'shared/Models/Settings'
+import { AppSettings, TraySettings } from 'shared/Models/Settings'
 import WaveboxDataManager from './WaveboxDataManager'
 import mailboxStorage from 'Storage/mailboxStorage'
 import constants from 'shared/constants'
@@ -205,6 +205,12 @@ class WaveboxApp {
     if (AppSettings.SUPPORTS_MIXED_SANDBOX_MODE) {
       if (launchSettings.app.enableMixedSandboxMode) {
         app.enableMixedSandbox()
+      }
+    }
+
+    if (TraySettings.IS_GTK_PLATFORM && launchSettings.tray.forceGtkStatusIcon) {
+      if (app.setTrayType) {
+        app.setTrayType('GTK')
       }
     }
   }
