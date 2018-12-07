@@ -166,6 +166,120 @@ class DebugTests {
         })
     }, Promise.resolve())
   }
+
+  /* **************************************************************************/
+  // Misc
+  /* **************************************************************************/
+
+  /**
+  * Runs a flash test of all components
+  */
+  flashTest () {
+    // Always late require to prevent cyclic references
+    const accountStore = require('stores/account/accountStore').default
+    const crextensionStore = require('stores/crextension/crextensionStore').default
+    const crextensionActions = require('stores/crextension/crextensionActions').default
+    const { ipcRenderer, remote } = require('electron')
+    const pkg = require('package.json')
+    const {
+      WB_SHOW_TRAY_WINDOWED,
+      WB_METRICS_OPEN_MONITOR,
+      WB_NEW_WINDOW,
+      WB_KEYCHAIN_OPEN
+    } = require('shared/ipcEvents')
+
+    const sig = '[TEST:FLASH_TEST]'
+
+    const accountState = accountStore.getState()
+    const service = accountState.getService(accountState.firstServiceId())
+    const webview = document.querySelector('webview')
+
+    // System windows
+    console.log(`${sig} Tray`)
+    ipcRenderer.send(WB_SHOW_TRAY_WINDOWED)
+    console.log(`${sig} Tray:opened`)
+
+    console.log(`${sig} Monitor`)
+    ipcRenderer.send(WB_METRICS_OPEN_MONITOR)
+    console.log(`${sig} Monitor:opened`)
+
+    console.log(`${sig} Keychain`)
+    ipcRenderer.send(WB_KEYCHAIN_OPEN, 'https://wavebox.io')
+    console.log(`${sig} Keychain:opened`)
+
+    // Content window
+    console.log(`${sig} Content Window`)
+    if (service) {
+      ipcRenderer.send(WB_NEW_WINDOW, {
+        serviceId: service.id,
+        url: window.atob('aHR0cHM6Ly93YXZlYm94Lmlv'),
+        partition: service.partitionId,
+        webPreferences: { partition: service.partitionId }
+      })
+      console.log(`${sig} Content Window:opened`)
+    } else {
+      console.warn(`${sig} Content Window:FAILED. Needs service`)
+    }
+
+    // Content PDF
+    console.log(`${sig} PDF Print`)
+    if (service) {
+      ipcRenderer.send(WB_NEW_WINDOW, {
+        serviceId: service.id,
+        url: window.atob('aHR0cHM6Ly93d3cudzMub3JnL1dBSS9FUi90ZXN0cy94aHRtbC90ZXN0ZmlsZXMvcmVzb3VyY2VzL3BkZi9kdW1teS5wZGY/cHJpbnQ9dHJ1ZQ=='),
+        partition: service.partitionId,
+        webPreferences: { partition: service.partitionId }
+      })
+      console.log(`${sig} PDF Print:opened`)
+    } else {
+      console.warn(`${sig} PDF Print:FAILED. Needs service`)
+    }
+
+    // Extensions
+    const extensionId = crextensionStore.getState().extensionIds()[0]
+    console.log(`${sig} Extension Background`)
+    if (extensionId) {
+      crextensionActions.inspectBackgroundPage(extensionId)
+      console.log(`${sig} Extension Background:opened`)
+    } else {
+      console.warn(`${sig} Extension Background:FAILED. Needs extension`)
+    }
+
+    // Dev tools
+    console.log(`${sig} Tab DevTools`)
+    if (webview) {
+      webview.getWebContents().openDevTools()
+      console.log(`${sig} Tab DevTools:opened`)
+    } else {
+      console.warn(`${sig} Tab DevTools:FAILED. Needs webview`)
+    }
+
+    // Stats
+    console.log([
+      `App: ${pkg.name}`,
+      `Version: ${pkg.version}`,
+      `Channel: ${pkg.releaseChannel}`,
+      `WBShell: ${process.versions.wb_shell}`,
+      `Electron: ${process.versions.electron}`,
+      `Chrome: ${process.versions.chrome}`,
+      `Navigator: ${window.navigator.userAgent}`
+    ].join('\n'))
+
+    setTimeout(() => {
+      remote.getCurrentWindow().focus()
+    }, 1500)
+  }
+
+  /**
+  * Opens all openable dev tools
+  */
+  allDevTools () {
+    // Always late require to prevent cyclic references
+    const { remote } = require('electron')
+    remote.webContents.getAllWebContents().forEach((wc) => {
+      wc.openDevTools()
+    })
+  }
 }
 
 export default DebugTests

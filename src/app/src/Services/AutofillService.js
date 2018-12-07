@@ -1,9 +1,10 @@
-import { app } from 'electron'
+import { app, ipcMain } from 'electron'
 import { URL } from 'url'
 import { AUTOFILL, AUTOFILL_HOVER } from 'shared/b64Assets'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import KeychainWindow from 'Windows/KeychainWindow'
 import { settingsStore } from 'stores/settings'
+import { WB_KEYCHAIN_OPEN } from 'shared/ipcEvents'
 
 let Keytar
 try {
@@ -21,6 +22,7 @@ class AutofillService {
     this[privConnected] = new Set()
 
     app.on('web-contents-created', this._handleWebContentsCreated)
+    ipcMain.on(WB_KEYCHAIN_OPEN, this._handleIpcOpenKeychain)
   }
 
   /* ****************************************************************************/
@@ -52,6 +54,19 @@ class AutofillService {
         this[privConnected].delete(webContentsId)
       })
     })
+  }
+
+  /* ****************************************************************************/
+  // IPC Evens
+  /* ****************************************************************************/
+
+  /**
+  * Opens the keychain
+  * @param evt: the event that fired
+  * @param url: the url
+  */
+  _handleIpcOpenKeychain = (evt, url) => {
+    this.openAutofillManager(url)
   }
 
   /* ****************************************************************************/
