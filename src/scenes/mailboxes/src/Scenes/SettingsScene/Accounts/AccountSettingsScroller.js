@@ -15,7 +15,6 @@ import ServiceSettingsSection from './Sections/ServiceSettingsSection'
 import ViewQuiltIcon from '@material-ui/icons/ViewQuilt'
 import BuildIcon from '@material-ui/icons/Build'
 import TuneIcon from '@material-ui/icons/Tune'
-import ListIcon from '@material-ui/icons/List'
 import FingerprintIcon from '@material-ui/icons/Fingerprint'
 import AccountServicesHeading from './AccountServicesHeading'
 import ServiceAvatar from 'Components/Backed/ServiceAvatar'
@@ -63,6 +62,9 @@ const styles = {
       backgroundColor: lightBlue[600],
       color: 'white'
     }
+  },
+  scrollspyItemPlaceholder: {
+    display: 'none'
   },
   scrollspyIcon: {
     marginRight: 6
@@ -210,12 +212,13 @@ class AccountSettingsScroller extends React.Component {
 
     const scrollspyIds = [
       `mailbox-appearance-${mailboxId}`,
-      `mailbox-services-${mailboxId}`,
       `mailbox-credentials-$${mailboxId}`,
       `mailbox-advanced-${mailboxId}`,
-      `mailbox-tools-${mailboxId}`
+      `mailbox-tools-${mailboxId}`,
+      `mailbox-services-heading-1-${mailboxId}`
     ].concat(
-      services.map((s) => `service-section-${s.id}`)
+      services.map((s) => `service-section-${s.id}`),
+      [`mailbox-services-heading-2-${mailboxId}`]
     )
 
     return (
@@ -228,7 +231,11 @@ class AccountSettingsScroller extends React.Component {
             mailboxId={mailboxId}
             showRestart={showRestart}
             onRequestEditCustomCode={onRequestEditCustomCode} />
-          <AccountServicesHeading mailboxId={mailboxId} renderHeaderText renderFooterText={false} />
+          <AccountServicesHeading
+            id={`mailbox-services-heading-1-${mailboxId}`}
+            mailboxId={mailboxId}
+            renderHeaderText
+            renderFooterText={false} />
           {services.map((service) => {
             return (
               <div key={service.id} id={`service-section-${service.id}`}>
@@ -241,7 +248,11 @@ class AccountSettingsScroller extends React.Component {
               </div>
             )
           })}
-          <AccountServicesHeading mailboxId={mailboxId} renderHeaderText={false} renderFooterText />
+          <AccountServicesHeading
+            id={`mailbox-services-heading-2-${mailboxId}`}
+            mailboxId={mailboxId}
+            renderHeaderText={false}
+            renderFooterText />
         </div>
         <Paper className={classes.scrollspy}>
           <List dense className={classes.scrollspyList}>
@@ -258,15 +269,6 @@ class AccountSettingsScroller extends React.Component {
                 onClick={(evt) => this.scrollToSection(evt, `mailbox-appearance-${mailboxId}`)}>
                 <ViewQuiltIcon className={classes.scrollspyIcon} />
                 Appearance
-              </ListItem>
-              <ListItem
-                divider
-                button
-                dense
-                className={classes.scrollspyItem}
-                onClick={(evt) => this.scrollToSection(evt, `mailbox-services-${mailboxId}`)}>
-                <ListIcon className={classes.scrollspyIcon} />
-                Services
               </ListItem>
               <ListItem
                 divider
@@ -295,6 +297,7 @@ class AccountSettingsScroller extends React.Component {
                 <BuildIcon className={classes.scrollspyIcon} />
                 Tools
               </ListItem>
+              <div className={classes.scrollspyItemPlaceholder} />
               {services.map((service, i, arr) => {
                 return (
                   <ListItem
@@ -316,6 +319,7 @@ class AccountSettingsScroller extends React.Component {
                   </ListItem>
                 )
               })}
+              <div className={classes.scrollspyItemPlaceholder} />
             </Scrollspy>
           </List>
         </Paper>
