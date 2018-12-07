@@ -78,6 +78,7 @@ class TraySettingsSection extends React.Component {
         'removeFromDockDarwin',
         'removeFromTaskbarWin32',
         'gtkUpdateMode',
+        'forceGtkStatusIcon',
         'dpiMultiplier',
         'iconSize',
         'popoutPosition',
@@ -131,6 +132,16 @@ class TraySettingsSection extends React.Component {
               onChange={(evt, toggled) => settingsActions.sub.tray.setRemoveFromTaskbarWin32(toggled)}
               disabled={!tray.show}
               checked={tray.removeFromTaskbarWin32} />
+          ) : undefined}
+          {IS_GTK_PLATFORM ? (
+            <SettingsListItemSwitch
+              label='Use GtkStatusIcon over libappindicator1 for rendering the tray (Requires Restart)'
+              onChange={(evt, toggled) => {
+                settingsActions.sub.tray.setForceGtkStatusIcon(toggled)
+                showRestart()
+              }}
+              disabled={!tray.show}
+              checked={tray.forceGtkStatusIcon} />
           ) : undefined}
           {IS_GTK_PLATFORM ? (
             <SettingsListItemSelectInline
