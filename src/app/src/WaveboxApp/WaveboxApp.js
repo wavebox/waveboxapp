@@ -1,6 +1,6 @@
 /* global __DEV__ */
 
-import { app, BrowserWindow, ipcMain, globalShortcut } from 'electron'
+import { app, BrowserWindow, ipcMain, globalShortcut, dialog } from 'electron'
 import os from 'os'
 import yargs from 'yargs'
 import credentials from 'shared/credentials'
@@ -173,8 +173,6 @@ class WaveboxApp {
     app.on('certificate-error', this._handleCertificateError)
     app.on('will-quit', this._handleWillQuit)
     app.on('second-instance', this._handleSecondInstance)
-    evtMain.on(evtMain.WB_QUIT_APP, this.fullyQuitApp)
-    evtMain.on(evtMain.WB_RELAUNCH_APP, this.restartApp)
   }
 
   /* ****************************************************************************/
@@ -195,7 +193,7 @@ class WaveboxApp {
     if (!launchSettings.app.enableUseZoomForDSF) {
       app.commandLine.appendSwitch('enable-use-zoom-for-dsf', 'false')
     }
-    if (launchSettings.app.disableHardwareAcceleration) {
+    if (launchSettings.app.disableHardwareAcceleration || this[privArgv].safemode === true) {
       app.disableHardwareAcceleration()
     }
     app.commandLine.appendSwitch('wavebox-server', constants.SERVER_URL)
@@ -203,7 +201,7 @@ class WaveboxApp {
     process.env.GOOGLE_API_KEY = credentials.GOOGLE_API_KEY
 
     if (AppSettings.SUPPORTS_MIXED_SANDBOX_MODE) {
-      if (launchSettings.app.enableMixedSandboxMode) {
+      if (launchSettings.app.enableMixedSandboxMode && this[privArgv].safemode !== true) {
         app.enableMixedSandbox()
       }
     }
@@ -239,6 +237,7 @@ class WaveboxApp {
 
     ipcMain.on(ipcEvents.WB_QUIT_APP, this.fullyQuitApp)
     ipcMain.on(ipcEvents.WB_RELAUNCH_APP, this.restartApp)
+    evtMain.on(evtMain.WB_RELAUNCH_APP_SAFE, this.restartAppSafe)
     ipcMain.on(ipcEvents.WB_CLEAN_EXPIRED_SESSIONS, () => WaveboxDataManager.cleanExpiredSessions())
 
     ipcMain.on(ipcEvents.WB_SQUIRREL_UPDATE_CHECK, (evt, data) => {
@@ -273,6 +272,7 @@ class WaveboxApp {
   * @return true if we should open hidden, false otherwise
   */
   _syncFetchShouldOpenHidden () {
+    if (this[privArgv].safemode === true) { return false }
     if (settingsStore.getState().ui.openHidden) { return true }
     if (this[privArgv].hidden || this[privArgv].hide) { return true }
     if (process.platform === 'darwin' && app.getLoginItemSettings().wasOpenedAsHidden) { return true }
@@ -288,10 +288,12 @@ class WaveboxApp {
     const userState = userStore.getState()
 
     // Load extensions before any webcontents get created
-    try {
-      CRExtensionManager.loadExtensionDirectory()
-    } catch (ex) {
-      console.error(`Failed to load extensions. Continuing...`, ex)
+    if (this[privArgv].safemode !== true) {
+      try {
+        CRExtensionManager.loadExtensionDirectory()
+      } catch (ex) {
+        console.error(`Failed to load extensions. Continuing...`, ex)
+      }
     }
 
     // Doing this outside of ready has a side effect on high-sierra where you get a _TSGetMainThread error
@@ -321,9 +323,23 @@ class WaveboxApp {
     WaveboxCommandArgs.processToolArgs(this[privArgv], ServicesManager)
 
     // Pre-load certificates soon-ish after launch (will be loaded on-demand if a cert request comes in)
-    setTimeout(() => {
-      CustomHTTPSCertificateManager.loadSync()
-    }, 1000)
+    if (this[privArgv].safemode !== true) {
+      setTimeout(() => {
+        CustomHTTPSCertificateManager.loadSync()
+      }, 1000)
+    }
+
+    // Warn about safe mode
+    if (this[privArgv].safemode === true) {
+      dialog.showMessageBox({
+        title: 'Safe Mode',
+        message: [
+          `You're currently running Wavebox in Safe mode. Some features may not be available or initialized.`,
+          ``,
+          `Quit the app and start it again to exit Safe Mode`
+        ].join('\n')
+      }, () => {})
+    }
   }
 
   /**
@@ -426,6 +442,11 @@ class WaveboxApp {
   * Quits the app and then starts it up again
   */
   restartApp = () => { this[privCloseBehaviour].restartApp() }
+
+  /**
+  * Quits the app and then starts it up again in safe mode
+  */
+  restartAppSafe = () => { this[privCloseBehaviour].restartAppSafe() }
 }
 
 export default new WaveboxApp()

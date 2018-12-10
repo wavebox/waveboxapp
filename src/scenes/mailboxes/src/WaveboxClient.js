@@ -30,6 +30,22 @@ EventEmitter.defaultMaxListeners = 50
 webFrame.setVisualZoomLevelLimits(1, 1)
 webFrame.setLayoutZoomLevelLimits(1, 1)
 
+// Context menu
+document.addEventListener('contextmenu', (evt) => {
+  if (evt.target.tagName === 'INPUT' || evt.target.tagName === 'TEXTAREA') {
+    return
+  }
+
+  let node = evt.target
+  while (node.tagName !== 'BODY') {
+    if (node.getAttribute('data-contextmenu-target') === 'true') { return }
+    node = node.parentElement
+  }
+
+  evt.preventDefault()
+  evt.stopPropagation()
+})
+
 // Prevent drag/drop
 document.addEventListener('drop', (evt) => {
   // Don't invert this, some dom elements throw when calling .type

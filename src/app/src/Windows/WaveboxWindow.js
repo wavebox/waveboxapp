@@ -1,4 +1,4 @@
-import { BrowserWindow, webContents, screen } from 'electron'
+import { BrowserWindow, webContents, screen, ipcMain } from 'electron'
 import EventEmitter from 'events'
 import { evtMain } from 'AppEvents'
 import { settingsStore } from 'stores/settings'
@@ -10,7 +10,8 @@ import {
   WB_WINDOW_DARWIN_SCROLL_TOUCH_BEGIN,
   WB_WINDOW_DARWIN_SCROLL_TOUCH_END,
   WB_WINDOW_FOCUS,
-  WB_WINDOW_BLUR
+  WB_WINDOW_BLUR,
+  WB_WINDOW_MIN_MAX_DBL_CLICK
 } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
 import WINDOW_TYPES from './WindowTypes'
@@ -22,6 +23,7 @@ const privBrowserWindowId = Symbol('privBrowserWindowId')
 const privLocationSaver = Symbol('privLocationSaver')
 const privLastTimeInFocus = Symbol('privLastTimeInFocus')
 const privMojaveCheckboxFix = Symbol('privMojaveCheckboxFix')
+const privMinMaxLast = Symbol('privMinMaxLast')
 
 const waveboxWindowManager = new WaveboxWindowManager()
 
@@ -72,6 +74,10 @@ class WaveboxWindow extends EventEmitter {
     this[privLastTimeInFocus] = 0
     this[privLocationSaver] = new WaveboxWindowLocationSaver(saverTag)
     this[privMojaveCheckboxFix] = settingsStore.getState().launched.app.darwinMojaveCheckboxFix
+    this[privMinMaxLast] = null
+
+    // Events
+    ipcMain.on(WB_WINDOW_MIN_MAX_DBL_CLICK, this._handleMinMaxDoubleClickWindow)
 
     // Mojave fix for issues/817
     // This fix will need to remain in for a version after chromium has been updated as anyone
@@ -358,6 +364,32 @@ class WaveboxWindow extends EventEmitter {
     this[privLastTimeInFocus] = new Date().getTime()
     this.window.webContents.send(WB_WINDOW_BLUR)
     evtMain.emit(evtMain.WB_WINDOW_BLURRED, {}, this.window.id)
+  }
+
+  /**
+  * Handles the minimize/maximize behaviour of the window
+  */
+  _handleMinMaxDoubleClickWindow = (evt) => {
+    if (evt.sender.id !== this.rootWebContentsId) { return }
+
+    if (this.window.isMaximized() || this.window.isFullScreen()) {
+      if (this.window.isFullScreen()) {
+        this.window.setFullScreen(false)
+      }
+
+      if (process.platform === 'darwin') {
+        if (this[privMinMaxLast]) {
+          this.window.setBounds(this[privMinMaxLast], true)
+        } else {
+          this.window.setSize(800, 600, true)
+        }
+      } else {
+        this.window.unmaximize()
+      }
+    } else {
+      this[privMinMaxLast] = this.window.getBounds()
+      this.window.maximize()
+    }
   }
 
   /* ****************************************************************************/

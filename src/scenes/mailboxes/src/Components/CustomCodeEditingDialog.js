@@ -109,7 +109,7 @@ class CustomCodeEditingDialog extends React.Component {
         classes={{ paper: classes.dialog }}
         open={open}>
         <DialogTitle>{title || ''}</DialogTitle>
-        <DialogContent className={classes.dialogContent}>
+        <DialogContent className={classes.dialogContent} data-contextmenu-target='true'>
           {open ? (
             <CodeMirror
               value={editingCode}

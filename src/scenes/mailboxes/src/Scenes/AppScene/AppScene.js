@@ -1,4 +1,5 @@
 import React from 'react'
+import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 import MailboxTabManager from './MailboxTabManager'
 import Sidelist from './Sidelist'
@@ -10,6 +11,8 @@ import { accountStore } from 'stores/account'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import ThemeTools from 'wbui/Themes/ThemeTools'
+import { ipcRenderer } from 'electron'
+import { WB_WINDOW_MIN_MAX_DBL_CLICK } from 'shared/ipcEvents'
 
 const SIDEBAR_WIDTH_REGULAR = 70
 const SIDEBAR_WIDTH_COMPACT = 55
@@ -98,6 +101,19 @@ class AppScene extends React.Component {
   }
 
   /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    this.titlebarRef = React.createRef()
+    this.toolbarWrapRef = React.createRef()
+    this.primaryToolbarRef = React.createRef()
+    this.secondaryToolbarRef = React.createRef()
+  }
+
+  /* **************************************************************************/
   // Component Lifecycle
   /* **************************************************************************/
 
@@ -158,6 +174,36 @@ class AppScene extends React.Component {
   }
 
   /* **************************************************************************/
+  // UI Events
+  /* **************************************************************************/
+
+  /**
+  * Handles the titlebar being double clicked
+  */
+  handleTitleDragbarDoubleClick = (evt) => {
+    if (evt.target === ReactDOM.findDOMNode(this.titlebarRef.current)) {
+      evt.preventDefault()
+      evt.stopPropagation()
+      ipcRenderer.send(WB_WINDOW_MIN_MAX_DBL_CLICK)
+    }
+  }
+
+  /**
+  * Handles the toolbar being double clicked
+  */
+  handleToolbarDoubleClick = (evt) => {
+    if (
+      evt.target === ReactDOM.findDOMNode(this.primaryToolbarRef.current) ||
+      evt.target === ReactDOM.findDOMNode(this.secondaryToolbarRef.current) ||
+      evt.target === ReactDOM.findDOMNode(this.toolbarWrapRef.current)
+    ) {
+      evt.preventDefault()
+      evt.stopPropagation()
+      ipcRenderer.send(WB_WINDOW_MIN_MAX_DBL_CLICK)
+    }
+  }
+
+  /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
@@ -195,9 +241,13 @@ class AppScene extends React.Component {
           </div>
         ) : undefined}
         {hasPrimaryToolbar || hasSecondaryToolbar ? (
-          <div className={classNames(classes.toolbarWrap, sidebarClassNameMod, `toolbars-${toolbarCount}`)}>
+          <div
+            ref={this.toolbarWrapRef}
+            onDoubleClick={appHasTitlebar ? undefined : this.handleToolbarDoubleClick}
+            className={classNames(classes.toolbarWrap, sidebarClassNameMod, `toolbars-${toolbarCount}`)}>
             {hasPrimaryToolbar ? (
               <PrimaryToolbar
+                innerRef={this.primaryToolbarRef}
                 toolbarHeight={TOOLBAR_HEIGHT}
                 className={classNames(
                   classes.toolbarPrimary,
@@ -207,13 +257,17 @@ class AppScene extends React.Component {
             ) : undefined}
             {hasSecondaryToolbar ? (
               <SecondaryToolbar
+                innerRef={this.secondaryToolbarRef}
                 toolbarHeight={TOOLBAR_HEIGHT}
                 className={classNames(classes.toolbarSecondary, sidebarClassNameMod)} />
             ) : undefined}
           </div>
         ) : undefined}
         {!appHasTitlebar ? (
-          <div className={classNames(classes.titleDragbar, sidebarClassNameMod)} />
+          <div
+            ref={this.titlebarRef}
+            className={classNames(classes.titleDragbar, sidebarClassNameMod)}
+            onDoubleClick={this.handleTitleDragbarDoubleClick} />
         ) : undefined}
         <div className={classNames(classes.detail, sidebarClassNameMod, `toolbars-${toolbarCount}`, 'WB-Detail')}>
           <MailboxTabManager className={classes.mailboxTabManager} />

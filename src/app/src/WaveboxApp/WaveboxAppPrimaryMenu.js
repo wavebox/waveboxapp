@@ -350,7 +350,9 @@ class WaveboxAppPrimaryMenu {
           { label: 'What\'s new', click: WaveboxAppPrimaryMenuActions.whatsNew },
           { type: 'separator' },
           { label: 'Privacy', click: WaveboxAppPrimaryMenuActions.privacy },
-          { label: 'EULA', click: WaveboxAppPrimaryMenuActions.eula }
+          { label: 'EULA', click: WaveboxAppPrimaryMenuActions.eula },
+          { type: 'separator' },
+          { label: 'Restart in Safe mode', click: WaveboxAppPrimaryMenuActions.restartSafeMode }
         ]
       }
     ])

@@ -98,17 +98,32 @@ class ContextMenuService {
     const browserWindow = BrowserWindow.fromWebContents(rootContents)
     if (!browserWindow) { return }
 
-    const accountInfo = this.getMenuAccountInfo(evt.sender.id)
     const isWaveboxUIContents = contents.session === session.defaultSession
+    if (isWaveboxUIContents) {
+      this.launchWaveboxMenu(evt, params, browserWindow)
+    } else {
+      this.launchTabMenu(evt, params, browserWindow)
+    }
+  }
+
+  /**
+  * Launches the menu for a tab
+  * @param evt: the event that fired
+  * @param params: the parameters to handle the context menu
+  * @param browserWindow: the browser window to launch for
+  */
+  launchTabMenu (evt, params, browserWindow) {
+    const contents = evt.sender
+    const accountInfo = this.getMenuAccountInfo(evt.sender.id)
 
     const sections = [
       this.renderSpellingSection(contents, params),
-      this.renderURLSection(contents, params, accountInfo, isWaveboxUIContents),
+      this.renderURLSection(contents, params, accountInfo),
       this.renderLookupAndSearchSection(contents, params, accountInfo),
       this.renderRewindSection(contents, params),
-      this.renderEditingSection(contents, params),
+      this.renderEditingSection(contents, params, false),
       this.renderPageNavigationSection(contents, params, accountInfo),
-      this.renderPageExternalSection(contents, params, accountInfo, isWaveboxUIContents),
+      this.renderPageExternalSection(contents, params, accountInfo),
       this.renderExtensionSection(contents, params),
       this.renderWaveboxSection(contents, params)
     ]
@@ -129,6 +144,26 @@ class ContextMenuService {
     } else {
       this.presentMenu(browserWindow, sections)
     }
+  }
+
+  /**
+  * Launches the menu for Wavebox
+  * @param evt: the event that fired
+  * @param params: the parameters to handle the context menu
+  * @param browserWindow: the browser window to launch for
+  */
+  launchWaveboxMenu (evt, params, browserWindow) {
+    const contents = evt.sender
+    const accountInfo = { has: false }
+
+    const sections = [
+      this.renderSpellingSection(contents, params),
+      this.renderLookupAndSearchSection(contents, params, accountInfo),
+      this.renderRewindSection(contents, params),
+      this.renderEditingSection(contents, params, true)
+    ]
+
+    this.presentMenu(browserWindow, sections)
   }
 
   /**
@@ -194,12 +229,11 @@ class ContextMenuService {
   * @param contents: the webcontents that opened
   * @param params: the parameters passed alongside the event
   * @param accountInfo: the account info from who opened us
-  * @param isWaveboxUIContents: true if this is a wavebox ui content
   * @return the template section or undefined
   */
-  renderURLSection (contents, params, accountInfo, isWaveboxUIContents) {
+  renderURLSection (contents, params, accountInfo) {
     const template = []
-    if (params.linkURL && isWaveboxUIContents === false) {
+    if (params.linkURL) {
       const settingsState = settingsStore.getState()
       const accountState = accountStore.getState()
 
@@ -416,11 +450,12 @@ class ContextMenuService {
   * Renders the editing section
   * @param contents: the webcontents that opened
   * @param params: the parameters passed alongside the event
+  * @param isWaveboxUIContents: true if this is a wavebox ui contents
   * @return the template section or undefined
   */
-  renderEditingSection (contents, params) {
+  renderEditingSection (contents, params, isWaveboxUIContents) {
     if (params.mediaType === 'image') { // Image
-      return [
+      return isWaveboxUIContents ? [] : [
         {
           label: 'Open Image in Browser',
           click: () => { shell.openExternal(params.srcURL) }
@@ -495,50 +530,45 @@ class ContextMenuService {
   * @param contents: the webcontents that opened
   * @param params: the parameters passed alongside the event
   * @param accountInfo: the account info from who opened us
-  * @param isWaveboxUIContents: true if this is a wavebox ui contents
   * @return the template section or undefined
   */
-  renderPageExternalSection (contents, params, accountInfo, isWaveboxUIContents) {
-    if (isWaveboxUIContents) {
-      return []
-    } else {
-      return [
-        {
-          label: 'Copy Current URL',
-          click: () => { clipboard.writeText(params.pageURL) }
-        },
-        {
-          label: 'Open Page',
-          submenu: [
-            {
-              label: 'Open Page in Browser',
-              click: () => { shell.openExternal(params.pageURL) }
-            },
-            {
-              label: 'Open Page in Wavebox',
-              click: () => { this.openLinkInWaveboxWindow(contents, params.pageURL) }
-            },
-            (accountInfo.has ? {
-              label: 'Open Page as New Service',
-              click: () => {
-                accountActions.fastCreateWeblinkService(accountInfo.mailbox.id, params.pageURL)
-              }
-            } : undefined)
-          ].filter((i) => !!i)
-        },
-        (accountInfo.has ? {
-          label: 'Add Page to Your Tasks',
-          click: () => {
-            accountActions.addToReadingQueue(accountInfo.service.id, params.pageURL)
-            ElectronWebContents.rootWebContents(contents).send(WB_READING_QUEUE_CURRENT_PAGE_ADDED, params.linkURL)
-          }
-        } : undefined),
-        {
-          label: 'Print',
-          click: () => { contents.print() }
+  renderPageExternalSection (contents, params, accountInfo) {
+    return [
+      {
+        label: 'Copy Current URL',
+        click: () => { clipboard.writeText(params.pageURL) }
+      },
+      {
+        label: 'Open Page',
+        submenu: [
+          {
+            label: 'Open Page in Browser',
+            click: () => { shell.openExternal(params.pageURL) }
+          },
+          {
+            label: 'Open Page in Wavebox',
+            click: () => { this.openLinkInWaveboxWindow(contents, params.pageURL) }
+          },
+          (accountInfo.has ? {
+            label: 'Open Page as New Service',
+            click: () => {
+              accountActions.fastCreateWeblinkService(accountInfo.mailbox.id, params.pageURL)
+            }
+          } : undefined)
+        ].filter((i) => !!i)
+      },
+      (accountInfo.has ? {
+        label: 'Add Page to Your Tasks',
+        click: () => {
+          accountActions.addToReadingQueue(accountInfo.service.id, params.pageURL)
+          ElectronWebContents.rootWebContents(contents).send(WB_READING_QUEUE_CURRENT_PAGE_ADDED, params.linkURL)
         }
-      ].filter((i) => !!i)
-    }
+      } : undefined),
+      {
+        label: 'Print',
+        click: () => { contents.print() }
+      }
+    ].filter((i) => !!i)
   }
 
   /**

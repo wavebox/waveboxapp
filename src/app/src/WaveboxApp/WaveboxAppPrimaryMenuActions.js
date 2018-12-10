@@ -55,6 +55,10 @@ class WaveboxAppPrimaryMenuAcions {
     evtMain.emit(evtMain.WB_QUIT_APP, {})
   }
 
+  restartSafeMode = () => {
+    evtMain.emit(evtMain.WB_RELAUNCH_APP_SAFE, {})
+  }
+
   closeWindow = () => {
     const focused = WaveboxWindow.focused()
     if (focused) { focused.close() }
