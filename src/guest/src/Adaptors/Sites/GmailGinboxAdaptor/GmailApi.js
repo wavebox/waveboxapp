@@ -21,9 +21,11 @@ class GmailApi {
     const element = document.querySelector('div[role=navigation] [href*="#inbox"]')
     if (element) {
       let text
-      if (element.getAttribute('title').indexOf('(') !== -1) {
+      if ((element.getAttribute('title') || '').indexOf('(') !== -1) {
         text = element.getAttribute('title') // Material & non-material
-      } else if (element.textContent.indexOf('(') !== -1) {
+      } else if (/\d/.test(element.getAttribute('aria-label') || '')) {
+        text = element.getAttribute('aria-label') // Material fallback
+      } else if ((element.textContent || '').indexOf('(') !== -1) {
         text = element.textContent // Fallback
       }
 
