@@ -14,6 +14,7 @@ import FALRulerVerticalIcon from 'wbfa/FALRulerVertical'
 import { withStyles } from '@material-ui/core/styles'
 import FARQuestionCircleIcon from 'wbfa/FARQuestionCircle'
 import FARStarIcon from 'wbfa/FARStar'
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
 
 const styles = {
   faIconWrapper: {
@@ -40,7 +41,8 @@ class ToolbarContextMenu extends React.Component {
       top: PropTypes.number.isRequired
     }),
     onRequestClose: PropTypes.func.isRequired,
-    location: PropTypes.oneOf(['sidebar', 'toolbar']).isRequired
+    location: PropTypes.oneOf(['sidebar', 'toolbar']).isRequired,
+    mailboxId: PropTypes.string
   }
 
   /* **************************************************************************/
@@ -139,6 +141,12 @@ class ToolbarContextMenu extends React.Component {
     })
   }
 
+  handleAddService = (evt) => {
+    this.closePopover(evt, () => {
+      window.location.hash = `/mailbox_wizard/add/${this.props.mailboxId}`
+    })
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -181,7 +189,8 @@ class ToolbarContextMenu extends React.Component {
       anchor,
       anchorPosition,
       location,
-      classes
+      classes,
+      mailboxId
     } = this.props
     const {
       lockSidebarsAndToolbars,
@@ -199,6 +208,15 @@ class ToolbarContextMenu extends React.Component {
         MenuListProps={{ dense: true }}
         disableEnforceFocus
         onClose={this.closePopover}>
+        {mailboxId ? (
+          <MenuItem onClick={this.handleAddService}>
+            <ListItemIcon><LibraryAddIcon /></ListItemIcon>
+            <ListItemText inset primary='Add another service' />
+          </MenuItem>
+        ) : undefined}
+        {mailboxId ? (
+          <Divider />
+        ) : undefined}
         <MenuItem onClick={this.handleToggleBarLock}>
           <ListItemIcon>
             {lockSidebarsAndToolbars ? <LockOpenOutlinedIcon /> : <LockOutlinedIcon />}

@@ -300,6 +300,7 @@ class PrimaryToolbar extends React.Component {
         </div>
         <ToolbarContextMenu
           location='toolbar'
+          mailboxId={mailboxId}
           {...(contextMenuAnchor ? {
             isOpen: true,
             anchor: contextMenuAnchor.anchor,
