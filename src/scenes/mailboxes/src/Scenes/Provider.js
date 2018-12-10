@@ -27,6 +27,7 @@ import {
 } from 'shared/ipcEvents'
 import { ipcRenderer, remote } from 'electron'
 import ErrorBoundary from 'wbui/ErrorBoundary'
+import classNames from 'classnames'
 
 export default class Provider extends React.Component {
   /* **************************************************************************/
@@ -123,14 +124,18 @@ export default class Provider extends React.Component {
       uiSettings: settingsState.ui,
       traySettings: settingsState.tray,
       launchTraySettings: settingsState.launched.tray,
-      osSettings: settingsState.os
+      osSettings: settingsState.os,
+      activeMailboxId: accountState.activeMailboxId(),
+      activeServiceId: accountState.activeServiceId()
     }
   })()
 
   accountChanged = (accountState) => {
     this.setState({
       messagesUnreadCount: accountState.userUnreadCountForApp(),
-      hasUnreadActivity: accountState.userUnreadActivityForApp()
+      hasUnreadActivity: accountState.userUnreadActivityForApp(),
+      activeMailboxId: accountState.activeMailboxId(),
+      activeServiceId: accountState.activeServiceId()
     })
   }
 
@@ -271,11 +276,13 @@ export default class Provider extends React.Component {
       launchTraySettings,
       uiSettings,
       messagesUnreadCount,
-      hasUnreadActivity
+      hasUnreadActivity,
+      activeMailboxId,
+      activeServiceId
     } = this.state
 
     return (
-      <div>
+      <div className={classNames('WB-Provider', `WB-Id-${activeMailboxId}-${activeServiceId}`)}>
         <MuiThemeProvider theme={THEME_MAPPING[uiSettings.theme]}>
           <WaveboxRouter />
         </MuiThemeProvider>
