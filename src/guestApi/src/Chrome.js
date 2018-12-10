@@ -10,4 +10,7 @@
       'clipboardWrite'
     ]
   }
+
+  // Drop support: https://github.com/electron/electron/issues/7150
+  delete window.PasswordCredential
 })()
