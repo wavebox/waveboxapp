@@ -149,6 +149,16 @@ class WaveboxAppCloseBehaviour {
     this.fullyQuitApp()
   }
 
+  /**
+  * Quits the app and then starts it up again in safe mode
+  */
+  restartAppSafe = () => {
+    app.relaunch({
+      args: process.argv.slice(1).concat(['--safemode'])
+    })
+    this.fullyQuitApp()
+  }
+
   /* ****************************************************************************/
   // Safe Quit
   /* ****************************************************************************/
