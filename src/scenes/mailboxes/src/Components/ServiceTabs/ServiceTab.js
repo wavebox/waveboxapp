@@ -24,7 +24,7 @@ const styles = (theme) => ({
   tab: {
     cursor: 'pointer',
     position: 'relative',
-    WebkitAppRegion: 'no-drag',
+    WebkitAppRegion: 'no-drag', // on win32 when the titlebar is hidden, drag regions gobble hover events and cause popups to close early
 
     '&.sidelist': {
       display: 'block',

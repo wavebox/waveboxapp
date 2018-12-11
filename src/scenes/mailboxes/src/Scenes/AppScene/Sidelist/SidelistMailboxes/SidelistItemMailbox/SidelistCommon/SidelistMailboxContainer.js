@@ -9,7 +9,8 @@ const styles = {
     marginTop: 10,
     marginBottom: 10,
     position: 'relative',
-    textAlign: 'center'
+    textAlign: 'center',
+    WebkitAppRegion: 'no-drag' // on win32 when the titlebar is hidden, drag regions gobble hover events and cause popups to close early
   }
 }
 
