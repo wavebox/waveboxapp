@@ -10,12 +10,16 @@ import uuid from 'uuid'
 import ElectronCookies from 'ElectronTools/ElectronCookie'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
 
+const privPrinting = Symbol('privPrinting')
+
 class PDFRenderService {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
   constructor () {
+    this[privPrinting] = new Set()
+
     app.on('web-contents-created', this._handleWebContentsCreated)
   }
 
@@ -48,6 +52,7 @@ class PDFRenderService {
     // has negligable delay but makes sure everyone is setup correctly
     const pdfUrl = new URL(targetUrl).searchParams.get('src')
     if (new URL(pdfUrl).searchParams.get('print') === 'true') {
+<<<<<<< HEAD
       console.log("Print 1")
       Promise.resolve()
         .then(() => this._printPdf(evt.sender, pdfUrl))
@@ -56,6 +61,9 @@ class PDFRenderService {
             dialog.showErrorBox('Printing error', 'Failed to print')
           }
         })
+=======
+      this._handleStartPrint(evt.sender, pdfUrl)
+>>>>>>> master
     }
   }
 
@@ -70,6 +78,7 @@ class PDFRenderService {
     if (title === 'wbaction:print') {
       evt.sender.executeJavaScript(`document.title = 'PDF'`)
       const pdfUrl = new URL(evt.sender.getURL()).searchParams.get('src')
+<<<<<<< HEAD
       console.log("Print 2")
       Promise.resolve()
         .then(() => this._printPdf(evt.sender, pdfUrl))
@@ -78,7 +87,36 @@ class PDFRenderService {
             dialog.showErrorBox('Printing error', 'Failed to print')
           }
         })
+=======
+      this._handleStartPrint(evt.sender, pdfUrl)
+>>>>>>> master
     }
+  }
+
+  /**
+  * Starts the print process
+  * @param sourceWebContents: the source web contents to print from
+  * @param pdfUrl: the url of the pdf to print
+  * @return true if printing started, false otherwise
+  */
+  _handleStartPrint (sourceWebContents, pdfUrl) {
+    const sourceWebContentsId = sourceWebContents.id
+    if (this[privPrinting].has(sourceWebContentsId)) { return false }
+
+    this[privPrinting].add(sourceWebContentsId)
+    Promise.resolve()
+      .then(() => this._printPdf(sourceWebContents, pdfUrl))
+      .catch((err) => {
+        if (err.message.toString().toLowerCase().indexOf('user') === -1) {
+          dialog.showErrorBox('Printing error', 'Failed to print')
+        }
+        return Promise.resolve()
+      })
+      .then(() => { // Always
+        this[privPrinting].delete(sourceWebContentsId)
+      })
+
+    return true
   }
 
   /* ****************************************************************************/

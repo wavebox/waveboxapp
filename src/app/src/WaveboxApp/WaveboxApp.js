@@ -173,6 +173,10 @@ class WaveboxApp {
     app.on('certificate-error', this._handleCertificateError)
     app.on('will-quit', this._handleWillQuit)
     app.on('second-instance', this._handleSecondInstance)
+
+    evtMain.on(evtMain.WB_QUIT_APP, this.fullyQuitApp)
+    evtMain.on(evtMain.WB_RELAUNCH_APP, this.restartApp)
+    evtMain.on(evtMain.WB_RELAUNCH_APP_SAFE, this.restartAppSafe)
   }
 
   /* ****************************************************************************/
@@ -237,7 +241,6 @@ class WaveboxApp {
 
     ipcMain.on(ipcEvents.WB_QUIT_APP, this.fullyQuitApp)
     ipcMain.on(ipcEvents.WB_RELAUNCH_APP, this.restartApp)
-    evtMain.on(evtMain.WB_RELAUNCH_APP_SAFE, this.restartAppSafe)
     ipcMain.on(ipcEvents.WB_CLEAN_EXPIRED_SESSIONS, () => WaveboxDataManager.cleanExpiredSessions())
 
     ipcMain.on(ipcEvents.WB_SQUIRREL_UPDATE_CHECK, (evt, data) => {
