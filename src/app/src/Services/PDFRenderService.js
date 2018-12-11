@@ -3,12 +3,8 @@ import { CHROME_PDF_URL } from 'shared/constants'
 import Resolver from 'Runtime/Resolver'
 import fs from 'fs-extra'
 import { URL } from 'url'
-import fetch from 'electron-fetch'
-import path from 'path'
-import os from 'os'
-import uuid from 'uuid'
-import ElectronCookies from 'ElectronTools/ElectronCookie'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
+import DownloadManager from 'Download/DownloadManager'
 
 const privPrinting = Symbol('privPrinting')
 
@@ -52,18 +48,7 @@ class PDFRenderService {
     // has negligable delay but makes sure everyone is setup correctly
     const pdfUrl = new URL(targetUrl).searchParams.get('src')
     if (new URL(pdfUrl).searchParams.get('print') === 'true') {
-<<<<<<< HEAD
-      console.log("Print 1")
-      Promise.resolve()
-        .then(() => this._printPdf(evt.sender, pdfUrl))
-        .catch((err) => {
-          if (err.message.toString().toLowerCase().indexOf('user') === -1) {
-            dialog.showErrorBox('Printing error', 'Failed to print')
-          }
-        })
-=======
       this._handleStartPrint(evt.sender, pdfUrl)
->>>>>>> master
     }
   }
 
@@ -78,18 +63,7 @@ class PDFRenderService {
     if (title === 'wbaction:print') {
       evt.sender.executeJavaScript(`document.title = 'PDF'`)
       const pdfUrl = new URL(evt.sender.getURL()).searchParams.get('src')
-<<<<<<< HEAD
-      console.log("Print 2")
-      Promise.resolve()
-        .then(() => this._printPdf(evt.sender, pdfUrl))
-        .catch((err) => {
-          if (err.message.toString().toLowerCase().indexOf('user') === -1) {
-            dialog.showErrorBox('Printing error', 'Failed to print')
-          }
-        })
-=======
       this._handleStartPrint(evt.sender, pdfUrl)
->>>>>>> master
     }
   }
 
@@ -251,36 +225,7 @@ class PDFRenderService {
         (evt) => evt.preventDefault()
       )
       window.webContents.once('dom-ready', () => {
-        //TODO print called twice on google??
-        //TODO depricate download manager code?
-        Promise.resolve()
-          .then(() => ElectronCookies.cookieHeaderForUrl(sourceWebContents.session.cookies, url))
-          .then((cookieHeader) => {
-            return {
-              'User-Agent': sourceWebContents.session.getUserAgent(),
-              'Cookie': cookieHeader
-            }
-          })
-          .then((headers) => fetch(url, {
-            headers: headers,
-            useElectronNet: true,
-            session: sourceWebContents.session
-          }))
-          .then((res) => {
-            if (res.ok) {
-              return new Promise((resolve, reject) => {
-                const tmpPath = path.join(os.tmpdir(), uuid.v4().replace(/-/g, ''))
-                const out = fs.createWriteStream(tmpPath)
-
-                res.body.pipe(out)
-                res.body.on('error', (err) => { reject(err) })
-                out.on('finish', () => { resolve(tmpPath) })
-                out.on('error', (err) => { reject(err) })
-              })
-            } else {
-              return Promise.reject(new Error(`Invalid HTTP status code ${res.httpStatus}`))
-            }
-          })
+        DownloadManager.startPlatformDownloadToTemp(sourceWebContents, url)
           .then((localPath) => {
             tmpDownloadPath = localPath
             window.webContents.executeJavaScript(`window.printPDFEncoded("${encodeURIComponent(localPath)}")`)
@@ -290,20 +235,6 @@ class PDFRenderService {
             window.destroy()
             reject(err)
           })
-
-
-
-
-        /*DownloadManager.startPlatformDownloadToTemp(sourceWebContents, url)
-          .then((localPath) => {
-            tmpDownloadPath = localPath
-            window.webContents.executeJavaScript(`window.printPDFEncoded("${encodeURIComponent(localPath)}")`)
-          })
-          .catch((err) => {
-            window.removeAllListeners('closed')
-            window.destroy()
-            reject(err)
-          })*/
       })
     })
   }

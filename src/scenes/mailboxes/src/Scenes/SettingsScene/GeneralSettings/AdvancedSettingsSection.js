@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { ipcRenderer } from 'electron'
 import { settingsActions } from 'stores/settings'
+import { userStore } from 'stores/user'
 import CustomCodeEditingDialog from 'Components/CustomCodeEditingDialog'
 import DistributionConfig from 'Runtime/DistributionConfig'
 import { AppSettings } from 'shared/Models/Settings'
@@ -31,7 +32,8 @@ class AdvancedSettingsSection extends React.Component {
     showRestart: PropTypes.func.isRequired,
     app: PropTypes.object.isRequired,
     language: PropTypes.object.isRequired,
-    ui: PropTypes.object.isRequired
+    ui: PropTypes.object.isRequired,
+    os: PropTypes.object.isRequired
   }
 
   /* **************************************************************************/
@@ -70,6 +72,9 @@ class AdvancedSettingsSection extends React.Component {
         'customMainCSS',
         'showCtxMenuAdvancedLinkOptions'
       ]) ||
+      modelCompare(this.props.os, nextProps.os, [
+        'rawUseAsyncDownloadHandler'
+      ]) ||
       partialShallowCompare(
         { showRestart: this.props.showRestart },
         this.state,
@@ -85,6 +90,7 @@ class AdvancedSettingsSection extends React.Component {
       app,
       language,
       ui,
+      os,
       classes,
       ...passProps
     } = this.props
@@ -197,6 +203,10 @@ class AdvancedSettingsSection extends React.Component {
             }}
             checked={app.darwinMojaveCheckboxFix} />
         ) : undefined}
+        <SettingsListItemSwitch
+          label='Experimental Download Handler'
+          onChange={(evt, toggled) => settingsActions.sub.os.setUseAsyncDownloadHandler(toggled)}
+          checked={userStore.getState().wceUseAsyncDownloadHandler(os.rawUseAsyncDownloadHandler)} />
         <SettingsListItemSelectInline
           label='Concurrent service load limit (Requires Restart)'
           value={app.concurrentServiceLoadLimit}

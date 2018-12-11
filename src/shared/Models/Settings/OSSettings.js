@@ -21,6 +21,7 @@ class OSSettings extends Model {
   get defaultDownloadLocation () { return this._value_('defaultDownloadLocation', undefined) }
   get downloadNotificationEnabled () { return this._value_('downloadNotificationEnabled', true) }
   get downloadNotificationSoundEnabled () { return this._value_('downloadNotificationSoundEnabled', true) }
+  get rawUseAsyncDownloadHandler () { return this._value_('useAsyncDownloadHandler', undefined) }
 
   /* ****************************************************************************/
   // Notifications

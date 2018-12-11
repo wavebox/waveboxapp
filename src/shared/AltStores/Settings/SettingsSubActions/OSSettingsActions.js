@@ -46,6 +46,13 @@ class OSSettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param use: true to use the download handler, false otherwise
+  */
+  setUseAsyncDownloadHandler (use) {
+    this.dispatchUpdate('useAsyncDownloadHandler', use)
+  }
+
+  /**
   * @param enabled: true to enable notifications, false otherwise
   */
   setNotificationsEnabled (enabled) {

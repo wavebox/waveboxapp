@@ -273,6 +273,7 @@ class GeneralSettings extends React.Component {
                 showRestart={showRestart}
                 app={app}
                 language={language}
+                os={os}
                 ui={ui} />
             ) : undefined}
           </section>
