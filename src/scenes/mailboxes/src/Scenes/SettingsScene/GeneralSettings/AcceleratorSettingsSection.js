@@ -62,6 +62,7 @@ const ACCELERATOR_NAMES = {
   developerTools: 'Developer Tools',
   developerToolsWavebox: 'Wavebox Developer Tools',
   openNextQueueItem: 'Open Next Queue Item',
+  commandPalette: 'Open Command Palette',
 
   // Accounts
   previousMailbox: 'Previous Account',
@@ -76,7 +77,8 @@ const ACCELERATOR_NAMES = {
   cycleWindows: 'Cycle Windows',
   nextTab: 'Next Tab',
   prevTab: 'Previous Tab',
-  toggleWaveboxMini: 'Toggle Wavebox Mini'
+  toggleWaveboxMini: 'Toggle Wavebox Mini',
+  quickSwitch: 'Quick Switch Tab'
 }
 const GLOBAL_SECTION = [
   'globalToggleApp',
@@ -117,6 +119,7 @@ const VIEW_SECTION = [
   'toggleFullscreen',
   'toggleSidebar',
   'toggleMenu',
+  'commandPalette',
   'navigateBack',
   'navigateForward',
   'openNextQueueItem',
@@ -139,6 +142,7 @@ const ACCOUNTS_SECTION = [
 const WINDOW_SECTION = [
   'minimize',
   'cycleWindows',
+  'quickSwitch',
   'nextTab',
   'prevTab',
   'toggleWaveboxMini'

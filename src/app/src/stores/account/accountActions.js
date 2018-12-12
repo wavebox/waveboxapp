@@ -34,6 +34,7 @@ class AccountActions extends CoreAccountActions {
       serviceData: rawServiceData,
       mailboxAuth: rawMailboxAuths,
       activeService: null,
+      serviceLastActiveTS: {},
       sleepingServices: {},
       avatars: Object.keys(rawAvatars).reduce((acc, id) => {
         // We don't load the timestamp data into the store at the moment,

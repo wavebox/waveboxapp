@@ -32,6 +32,7 @@ class CoreAccountStore extends RemoteStore {
 
     // State
     this._activeServiceId_ = null
+    this._serviceLastActiveTS_ = new Map()
     this._sleepingServices_ = new Map()
     this._sleepingMetrics_ = new Map()
     this._mailboxAvatarCache_ = new Map()
@@ -899,6 +900,32 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /* ****************************************/
+    // Last accessed
+    /* ****************************************/
+
+    /**
+    * @param mailboxOrMailboxId: the mailbox or mailboxId
+    * @param returnTimestamp=false: true to return the timestamp with service id
+    * @return serviceId or if returnTimestamp===true { serviceId, ts }
+    */
+    this.lastAccessedServiceIdInMailbox = (mailboxOrMailboxId, returnTimestamp = false) => {
+      const mailbox = typeof (mailboxOrMailboxId) === 'string'
+        ? this.getMailbox(mailboxOrMailboxId)
+        : mailboxOrMailboxId
+
+      if (!mailbox) {
+        return returnTimestamp ? { serviceId: undefined, ts: 0 } : undefined
+      } else {
+        const last = mailbox.allServices.reduce((acc, serviceId) => {
+          const ts = this._serviceLastActiveTS_.get(serviceId) || 0
+          return ts > acc.ts ? { serviceId, ts } : acc
+        }, { serviceId: undefined, ts: 0 })
+
+        return returnTimestamp ? last : last.serviceId
+      }
+    }
+
+    /* ****************************************/
     // Misc
     /* ****************************************/
 
@@ -992,7 +1019,8 @@ class CoreAccountStore extends RemoteStore {
       mailboxAuth,
       avatars,
       activeService,
-      sleepingServices
+      sleepingServices,
+      serviceLastActiveTS
     } = payload
 
     // Mailboxes
@@ -1024,6 +1052,10 @@ class CoreAccountStore extends RemoteStore {
 
     // Active & Sleep
     this._activeServiceId_ = activeService || this.firstServiceId() // Make sure we glue the value if it's not defined
+    this._serviceLastActiveTS_ = Object.keys(serviceLastActiveTS).reduce((acc, k) => {
+      acc.set(k, serviceLastActiveTS[k])
+      return acc
+    }, new Map())
     this._sleepingServices_ = Object.keys(sleepingServices).reduce((acc, k) => {
       acc.set(k, sleepingServices[k])
       return acc

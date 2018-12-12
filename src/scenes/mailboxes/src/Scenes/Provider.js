@@ -23,7 +23,9 @@ import {
   WB_MAILBOXES_WINDOW_SHOW_WAVEBOX_ACCOUNT,
   WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER,
   WB_MAILBOXES_WINDOW_SHOW_NEWS,
-  WB_MAILBOXES_WINDOW_ADD_ACCOUNT
+  WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
+  WB_MAILBOXES_WINDOW_QUICK_SWITCH_TOGGLE,
+  WB_MAILBOXES_WINDOW_OPEN_COMMAND_PALETTE
 } from 'shared/ipcEvents'
 import { ipcRenderer, remote } from 'electron'
 import ErrorBoundary from 'wbui/ErrorBoundary'
@@ -55,6 +57,8 @@ export default class Provider extends React.Component {
     ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER, this.ipcLaunchSupportCenter)
     ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_NEWS, this.ipcLaunchNews)
     ipcRenderer.on(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_QUICK_SWITCH_TOGGLE, this.ipcQuickSwitchToggle)
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_OPEN_COMMAND_PALETTE, this.ipcOpenCommandPalette)
 
     // STEP 2. Mailbox connections
     googleActions.startPollingUpdates()
@@ -89,6 +93,8 @@ export default class Provider extends React.Component {
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER, this.ipcLaunchSupportCenter)
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_NEWS, this.ipcLaunchNews)
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
+    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_QUICK_SWITCH_TOGGLE, this.ipcQuickSwitchToggle)
+    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_OPEN_COMMAND_PALETTE, this.ipcOpenCommandPalette)
 
     // STEP 2. Mailbox connections
     googleActions.stopPollingUpdates()
@@ -201,6 +207,20 @@ export default class Provider extends React.Component {
   */
   ipcAddAccount = () => {
     window.location.hash = '/mailbox_wizard/add'
+  }
+
+  /**
+  * Launches quick switch
+  */
+  ipcQuickSwitchToggle = () => {
+    console.log("Switch")
+  }
+
+  /**
+  * Opens the command palette
+  */
+  ipcOpenCommandPalette = () => {
+    window.location.hash = '/command'
   }
 
   /* **************************************************************************/

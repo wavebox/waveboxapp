@@ -195,6 +195,12 @@ class WaveboxAppPrimaryMenu {
           },
           { type: 'separator' },
           {
+            label: 'Open Command Palette',
+            click: WaveboxAppPrimaryMenuActions.openCommandPalette,
+            accelerator: accelerators.commandPalette
+          },
+          { type: 'separator' },
+          {
             label: 'Navigate Back',
             click: WaveboxAppPrimaryMenuActions.mailboxNavBack,
             accelerator: accelerators.navigateBack
@@ -327,6 +333,11 @@ class WaveboxAppPrimaryMenu {
         ].concat(mailboxMenuConfig.tabCount > 1 ? [
           { type: 'separator' },
           {
+            label: 'Quick Switch Tab',
+            click: WaveboxAppPrimaryMenuActions.quickSwitch,
+            accelerator: accelerators.quickSwitch
+          },
+          {
             label: 'Previous Tab',
             click: WaveboxAppPrimaryMenuActions.prevMailboxTab,
             accelerator: accelerators.prevTab
@@ -390,11 +401,18 @@ class WaveboxAppPrimaryMenu {
 
     // Prevent Memory leak
     if (lastMenu) {
-      // Wait some time for the linuc dbus-menu to catch up. Not waiting appears to be the
-      // root cause of #790. Shouldn't do any harm on other platforms either
+      // We wait here for two reasons...
+      //
+      // 1. Linuc dbus-menu to catch up. Not waiting appears to be the
+      // root cause of #790. 1000ms wait is sufficient
+      //
+      // 2. Destroying the menu on macOS whilst its open causes the click
+      // event not to fire. Open and Close callbacks don't fire on Appliaction
+      // Menu, so instead wait 30000ms - enough time for the user to probably
+      // action what they want to, but not long enough to cause a big memory leak
       setTimeout(() => {
         lastMenu.destroy()
-      }, 1000)
+      }, 30000)
     }
   }
 
@@ -536,7 +554,7 @@ class WaveboxAppPrimaryMenu {
 
   /**
   * Converts an accelerator to an input key event, removing any quirks
-  * @param accelerator: the accelertor
+  * @param accelerator: the accelerator
   * @return the input event that can be matched
   */
   _acceleratorToInputKeyEvent (accelerator) {

@@ -38,7 +38,6 @@ class AccountStore extends CoreAccountStore {
     super()
 
     this._sleepingQueue_ = new Map()
-    this._serviceLastActiveTS_ = new Map()
 
     /* ****************************************/
     // Actions
@@ -122,6 +121,10 @@ class AccountStore extends CoreAccountStore {
         return acc
       }, {}),
       activeService: this._activeServiceId_,
+      serviceLastActiveTS: Array.from(this._serviceLastActiveTS_.keys()).reduce((acc, id) => {
+        acc[id] = this._serviceLastActiveTS_.get(id)
+        return acc
+      }, {}),
       services: Array.from(this._services_.keys()).reduce((acc, id) => {
         acc[id] = this._services_.get(id).cloneData()
         return acc
@@ -268,9 +271,10 @@ class AccountStore extends CoreAccountStore {
   */
   saveActiveServiceId (serviceId) {
     if (serviceId !== this._activeServiceId_) {
-      this._serviceLastActiveTS_.set(this.activeServiceId(), new Date().getTime())
+      const now = new Date().getTime()
+      this._serviceLastActiveTS_.set(this.activeServiceId(), now)
       this._activeServiceId_ = serviceId
-      this.dispatchToRemote('remoteSetActiveService', [serviceId])
+      this.dispatchToRemote('remoteSetActiveService', [serviceId, now])
       if (serviceId) {
         actions.reduceServiceData.defer(serviceId, ServiceDataReducer.mergeChangesetOnActive)
       }
@@ -880,10 +884,7 @@ class AccountStore extends CoreAccountStore {
     if (!firstService) {
       // If the mailbox is already active we probably want the first service
       if (this.activeMailboxId() !== id) {
-        const lastAccessedId = mailbox.allServices.reduce((acc, serviceId) => {
-          const ts = this._serviceLastActiveTS_.get(serviceId) || 0
-          return ts > acc.ts ? { serviceId, ts } : acc
-        }, { serviceId: undefined, ts: 0 })
+        const lastAccessedId = this.lastAccessedServiceIdInMailbox(mailbox, true)
 
         if (lastAccessedId.serviceId) {
           const now = new Date().getTime()
