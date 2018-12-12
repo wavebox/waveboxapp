@@ -71,9 +71,10 @@ class RendererAccountActions extends CoreAccountActions {
   /**
   * Handles the active mailbox being changed remotely
   * @param serviceId: the id of the service
+  * @param timestamp: the timestamp to set as last active
   */
-  remoteSetActiveService (serviceId) {
-    return { serviceId }
+  remoteSetActiveService (serviceId, timestamp) {
+    return { serviceId, timestamp }
   }
 
   /* **************************************************************************/

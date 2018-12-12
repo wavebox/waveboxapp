@@ -24,8 +24,11 @@ import {
   WB_MAILBOXES_WINDOW_SHOW_NEWS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
   WB_MAILBOXES_WINDOW_NAVIGATE_AND_SWITCH_TO_SERVICE,
-  WB_MAILBOXES_WINDOW_QUICK_SWITCH_TOGGLE,
   WB_MAILBOXES_WINDOW_OPEN_COMMAND_PALETTE,
+  WB_MAILBOXES_QUICK_SWITCH,
+  WB_MAILBOXES_QUICK_SWITCH_PRESENT,
+  WB_MAILBOXES_QUICK_SWITCH_NEXT,
+  WB_MAILBOXES_QUICK_SWITCH_SELECT,
 
   WB_USER_CHECK_FOR_UPDATE,
   WB_SQUIRREL_UPDATE_DOWNLOADED,
@@ -498,9 +501,39 @@ class MailboxesWindow extends WaveboxWindow {
   * Quick switches the previous tabs
   * @return this
   */
-  quickSwitchTab () {
+  quickSwitch () {
     this.show().focus()
-    this.window.webContents.send(WB_MAILBOXES_WINDOW_QUICK_SWITCH_TOGGLE)
+    this.window.webContents.send(WB_MAILBOXES_QUICK_SWITCH)
+    return this
+  }
+
+  /**
+  * Shows the quick switch options
+  * @return this
+  */
+  quickSwitchPresentOptions () {
+    this.show().focus()
+    this.window.webContents.send(WB_MAILBOXES_QUICK_SWITCH_PRESENT)
+    return this
+  }
+
+  /**
+  * Moves quick switch to the next option
+  * @return this
+  */
+  quickSwitchNextOption () {
+    this.show().focus()
+    this.window.webContents.send(WB_MAILBOXES_QUICK_SWITCH_NEXT)
+    return this
+  }
+
+  /**
+  * Selects the quick switch option
+  * @return this
+  */
+  quickSwitchSelectOption () {
+    this.show().focus()
+    this.window.webContents.send(WB_MAILBOXES_QUICK_SWITCH_SELECT)
     return this
   }
 

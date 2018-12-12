@@ -43,6 +43,7 @@ import FullscreenSnackbarHelper from 'Components/FullscreenSnackbarHelper'
 import SpinnerScene from './SpinnerScene'
 import ReadingQueueSnackbarHelper from 'wbui/ReadingQueueSnackbarHelper'
 import CommandPalette from './CommandPalette'
+import Switcher from './Switcher'
 
 export default class WaveboxRouter extends React.Component {
   /* **************************************************************************/
@@ -70,6 +71,7 @@ export default class WaveboxRouter extends React.Component {
           <WaveboxRouterErrorBoundary>
             <Switch>
               <Route path='/command' component={CommandPalette} />
+              <Route path='/switcher' component={Switcher} />
 
               <Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
               <Route path='/site_permissions' component={SitePermissionsScene} />

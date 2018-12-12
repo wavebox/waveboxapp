@@ -4,7 +4,7 @@ import constants from 'shared/constants'
 import shallowCompare from 'react-addons-shallow-compare'
 import THEME_MAPPING from 'wbui/Themes/ThemeMapping'
 import { MuiThemeProvider } from '@material-ui/core/styles'
-import { accountStore, accountActions, accountDispatch } from 'stores/account'
+import { accountStore, accountDispatch } from 'stores/account'
 import { settingsStore } from 'stores/settings'
 import { googleActions } from 'stores/google'
 import { trelloActions } from 'stores/trello'
@@ -12,24 +12,15 @@ import { slackActions } from 'stores/slack'
 import { microsoftActions } from 'stores/microsoft'
 import { updaterActions } from 'stores/updater'
 import { Analytics, ServerVent } from 'Server'
-import { NotificationService, NotificationRenderer } from 'Notifications'
+import { NotificationService } from 'Notifications'
 import Bootstrap from 'R/Bootstrap'
 import AccountMessageDispatcher from './AccountMessageDispatcher'
 import { Tray } from 'Components/Tray'
 import { AppBadge, WindowTitle } from 'Components'
-import {
-  WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE,
-  WB_MAILBOXES_WINDOW_SHOW_SETTINGS,
-  WB_MAILBOXES_WINDOW_SHOW_WAVEBOX_ACCOUNT,
-  WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER,
-  WB_MAILBOXES_WINDOW_SHOW_NEWS,
-  WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
-  WB_MAILBOXES_WINDOW_QUICK_SWITCH_TOGGLE,
-  WB_MAILBOXES_WINDOW_OPEN_COMMAND_PALETTE
-} from 'shared/ipcEvents'
-import { ipcRenderer, remote } from 'electron'
+import { remote } from 'electron'
 import ErrorBoundary from 'wbui/ErrorBoundary'
 import classNames from 'classnames'
+import ProviderIpcDispatcher from './ProviderIpcDispatcher'
 
 export default class Provider extends React.Component {
   /* **************************************************************************/
@@ -51,14 +42,6 @@ export default class Provider extends React.Component {
     ServerVent.start(Bootstrap.clientId, Bootstrap.clientToken)
     NotificationService.start()
     updaterActions.load()
-    ipcRenderer.on(WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE, this.downloadCompleted)
-    ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_SETTINGS, this.ipcLaunchSettings)
-    ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_WAVEBOX_ACCOUNT, this.ipcLaunchWaveboxAccount)
-    ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER, this.ipcLaunchSupportCenter)
-    ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_NEWS, this.ipcLaunchNews)
-    ipcRenderer.on(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
-    ipcRenderer.on(WB_MAILBOXES_WINDOW_QUICK_SWITCH_TOGGLE, this.ipcQuickSwitchToggle)
-    ipcRenderer.on(WB_MAILBOXES_WINDOW_OPEN_COMMAND_PALETTE, this.ipcOpenCommandPalette)
 
     // STEP 2. Mailbox connections
     googleActions.startPollingUpdates()
@@ -87,14 +70,6 @@ export default class Provider extends React.Component {
     ServerVent.stop()
     NotificationService.stop()
     updaterActions.unload()
-    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_DOWNLOAD_COMPLETE, this.downloadCompleted)
-    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_SETTINGS, this.ipcLaunchSettings)
-    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_WAVEBOX_ACCOUNT, this.ipcLaunchWaveboxAccount)
-    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER, this.ipcLaunchSupportCenter)
-    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_NEWS, this.ipcLaunchNews)
-    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.ipcAddAccount)
-    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_QUICK_SWITCH_TOGGLE, this.ipcQuickSwitchToggle)
-    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_OPEN_COMMAND_PALETTE, this.ipcOpenCommandPalette)
 
     // STEP 2. Mailbox connections
     googleActions.stopPollingUpdates()
@@ -130,7 +105,6 @@ export default class Provider extends React.Component {
       uiSettings: settingsState.ui,
       traySettings: settingsState.tray,
       launchTraySettings: settingsState.launched.tray,
-      osSettings: settingsState.os,
       activeMailboxId: accountState.activeMailboxId(),
       activeServiceId: accountState.activeServiceId()
     }
@@ -148,80 +122,8 @@ export default class Provider extends React.Component {
   settingsChanged = (settingsState) => {
     this.setState({
       uiSettings: settingsState.ui,
-      traySettings: settingsState.tray,
-      osSettings: settingsState.os
+      traySettings: settingsState.tray
     })
-  }
-
-  /* **************************************************************************/
-  // IPC Events
-  /* **************************************************************************/
-
-  /**
-  * Shows a notification of a completed download
-  * @param evt: the event that fired
-  * @param req: the request that came through
-  */
-  downloadCompleted = (evt, req) => {
-    const { downloadNotificationEnabled, downloadNotificationSoundEnabled } = this.state.osSettings
-    if (!downloadNotificationEnabled) { return }
-
-    NotificationRenderer.presentNotification('Download Complete', {
-      body: req.filename,
-      silent: !downloadNotificationSoundEnabled
-    }, (req) => {
-      remote.shell.openItem(req.path) || remote.shell.showItemInFolder(req.path)
-    }, req)
-  }
-
-  /**
-  * Launches the settings over the IPC channel
-  */
-  ipcLaunchSettings = () => {
-    window.location.hash = '/settings'
-  }
-
-  /**
-  * Launches the wavebox account over the IPC channel
-  */
-  ipcLaunchWaveboxAccount = () => {
-    window.location.hash = '/settings/pro'
-  }
-
-  /**
-  * Launches the support center over the ipc channcel
-  */
-  ipcLaunchSupportCenter = () => {
-    window.location.hash = '/settings/support'
-  }
-
-  /**
-  * Launches the news dialog over the ipc channel
-  */
-  ipcLaunchNews = () => {
-    window.location.hash = '/news'
-  }
-
-  /**
-  * Launches the add account modal over the IPC channel
-  */
-  ipcAddAccount = () => {
-    window.location.hash = '/mailbox_wizard/add'
-  }
-
-  /**
-  * Launches quick switch
-  */
-  ipcQuickSwitchToggle = () => {
-    console.log("Switch")
-    accountActions.quickSwitchService()
-  }
-
-  /**
-  * Opens the command palette
-  */
-  ipcOpenCommandPalette = () => {
-    window.location.hash = '/command'
   }
 
   /* **************************************************************************/
@@ -307,6 +209,9 @@ export default class Provider extends React.Component {
         <MuiThemeProvider theme={THEME_MAPPING[uiSettings.theme]}>
           <WaveboxRouter />
         </MuiThemeProvider>
+        <ErrorBoundary>
+          <ProviderIpcDispatcher />
+        </ErrorBoundary>
         <ErrorBoundary>
           <AccountMessageDispatcher />
         </ErrorBoundary>

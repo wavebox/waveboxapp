@@ -6,6 +6,7 @@ import MenuTool from 'shared/Electron/MenuTool'
 import { evtMain } from 'AppEvents'
 import { toKeyEvent } from 'keyboardevent-from-electron-accelerator'
 import WaveboxAppPrimaryMenuActions from './WaveboxAppPrimaryMenuActions'
+import QuickSwitchAcceleratorHandler from './QuickSwitchAcceleratorHandler'
 
 class WaveboxAppPrimaryMenu {
   /* ****************************************************************************/
@@ -18,6 +19,11 @@ class WaveboxAppPrimaryMenu {
     this._lastUserEmail = null
     this._lastMenu = null
     this._hiddenShortcuts = new Map()
+    this._quickSwitchAcceleratorHandler = new QuickSwitchAcceleratorHandler(null)
+    this._quickSwitchAcceleratorHandler.on('fast-switch', WaveboxAppPrimaryMenuActions.quickSwitch)
+    this._quickSwitchAcceleratorHandler.on('present-options', WaveboxAppPrimaryMenuActions.quickSwitchPresentOptions)
+    this._quickSwitchAcceleratorHandler.on('next-option', WaveboxAppPrimaryMenuActions.quickSwitchNextOption)
+    this._quickSwitchAcceleratorHandler.on('select-option', WaveboxAppPrimaryMenuActions.quickSwitchSelectOption)
 
     accountStore.listen(this.handleMailboxesChanged)
     settingsStore.listen(this.handleAcceleratorsChanged)
@@ -334,7 +340,7 @@ class WaveboxAppPrimaryMenu {
           { type: 'separator' },
           {
             label: 'Quick Switch Tab',
-            click: WaveboxAppPrimaryMenuActions.quickSwitch,
+            click: this._quickSwitchAcceleratorHandler.acceleratorFired,
             accelerator: accelerators.quickSwitch
           },
           {
@@ -396,6 +402,7 @@ class WaveboxAppPrimaryMenu {
 
     const lastMenu = this._lastMenu
     this._lastMenu = this.build(accelerators, mailboxMenuConfig, userEmail)
+    this._quickSwitchAcceleratorHandler.changeAccelerator(accelerators.quickSwitch)
     Menu.setApplicationMenu(this._lastMenu)
     this.updateHiddenShortcuts(accelerators)
 

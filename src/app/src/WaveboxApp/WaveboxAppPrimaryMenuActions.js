@@ -381,7 +381,28 @@ class WaveboxAppPrimaryMenuActions {
   quickSwitch = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.quickSwitchTab()
+      mailboxesWindow.quickSwitch()
+    }
+  }
+
+  quickSwitchPresentOptions = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.quickSwitchPresentOptions()
+    }
+  }
+
+  quickSwitchNextOption = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.quickSwitchNextOption()
+    }
+  }
+
+  quickSwitchSelectOption = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.quickSwitchSelectOption()
     }
   }
 
