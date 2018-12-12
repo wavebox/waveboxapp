@@ -178,7 +178,7 @@ class PDFRenderService {
   */
   _pdfPrintCleanup (downloadPath, window) {
     window.removeAllListeners('closed')
-    window.destroy()
+    window.close()
     if (downloadPath) {
       try { fs.removeSync(downloadPath) } catch (ex) { }
     }
@@ -232,7 +232,7 @@ class PDFRenderService {
           })
           .catch((err) => {
             window.removeAllListeners('closed')
-            window.destroy()
+            window.close()
             reject(err)
           })
       })
