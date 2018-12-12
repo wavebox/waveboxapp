@@ -4,7 +4,7 @@ import constants from 'shared/constants'
 import shallowCompare from 'react-addons-shallow-compare'
 import THEME_MAPPING from 'wbui/Themes/ThemeMapping'
 import { MuiThemeProvider } from '@material-ui/core/styles'
-import { accountStore, accountDispatch } from 'stores/account'
+import { accountStore, accountActions, accountDispatch } from 'stores/account'
 import { settingsStore } from 'stores/settings'
 import { googleActions } from 'stores/google'
 import { trelloActions } from 'stores/trello'
@@ -214,6 +214,7 @@ export default class Provider extends React.Component {
   */
   ipcQuickSwitchToggle = () => {
     console.log("Switch")
+    accountActions.quickSwitchService()
   }
 
   /**

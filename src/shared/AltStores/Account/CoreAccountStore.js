@@ -925,6 +925,31 @@ class CoreAccountStore extends RemoteStore {
       }
     }
 
+    /**
+    * @return a list of service ids ordered by their last accessed time, newest first
+    */
+    this.lastAccessedServiceIds = () => {
+      const serviceIndex = this.allServicesOrdered().reduce((acc, service, index) => {
+        acc[service.id] = index
+        return acc
+      }, {})
+
+      return this.serviceIds()
+        .sort((a, b) => {
+          const ats = this._serviceLastActiveTS_.get(a) || 0
+          const bts = this._serviceLastActiveTS_.get(b) || 0
+          if (ats < bts) { return 1 }
+          if (ats > bts) { return -1 }
+
+          const aind = serviceIndex[a]
+          const bind = serviceIndex[b]
+          if (aind > bind) { return 1 }
+          if (aind < bind) { return -1 }
+
+          return 0
+        })
+    }
+
     /* ****************************************/
     // Misc
     /* ****************************************/
