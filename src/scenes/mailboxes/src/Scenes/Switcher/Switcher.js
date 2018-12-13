@@ -18,16 +18,11 @@ const styles = {
   dialog: {
     maxWidth: '100%',
     width: '100%',
-    height: '100%'
+    backgroundColor: 'rgba(245, 245, 245, 0.95)'
   },
   dialogContent: {
-    position: 'relative'
-  },
-  dialogActions: {
-    backgroundColor: 'rgb(242, 242, 242)',
-    borderTop: '1px solid rgb(232, 232, 232)',
-    margin: 0,
-    padding: '8px 4px'
+    paddingTop: 0,
+    paddingLeft: 0
   }
 }
 
@@ -55,7 +50,6 @@ class Switcher extends React.Component {
 
   state = (() => {
     //TODO handle 1 service
-    //TODO respond to arrows
     const accountState = accountStore.getState()
     const serviceIds = accountState.lastAccessedServiceIds()
     const activeServiceId = accountState.activeServiceId()
@@ -107,6 +101,7 @@ class Switcher extends React.Component {
   * Closes the modal
   */
   handleClose = () => {
+    return
     this.setState((prevState) => {
       if (prevState.open) {
         setTimeout(() => {
@@ -128,8 +123,9 @@ class Switcher extends React.Component {
   }
 
   render () {
-    //const { classes } = this.props
-    const classes = {}
+    const {
+      classes
+    } = this.props
     const {
       open,
       serviceIds,
@@ -151,7 +147,7 @@ class Switcher extends React.Component {
               <SwitcherService
                 key={serviceId}
                 serviceId={serviceId}
-                style={{backgroundColor: serviceId === selectedServiceId ? 'red' : 'transparent'}} />
+                isSelected={serviceId === selectedServiceId} />
             )
           })}
         </DialogContent>

@@ -27,6 +27,10 @@ export default class ProviderIpcDispatcher extends React.Component {
     ipcRenderer.on(WB_MAILBOXES_QUICK_SWITCH, this.quickSwitch)
     ipcRenderer.on(WB_MAILBOXES_QUICK_SWITCH_PRESENT, this.quickSwitchPresent)
     ipcRenderer.on(WB_MAILBOXES_WINDOW_OPEN_COMMAND_PALETTE, this.openCommandPalette)
+
+    setTimeout(() => {
+      window.location.hash = "/switcher"
+    },500)
   }
 
   componentWillUnmount () {

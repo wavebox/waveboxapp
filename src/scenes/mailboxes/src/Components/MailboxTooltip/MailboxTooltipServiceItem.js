@@ -6,7 +6,7 @@ import { settingsStore } from 'stores/settings'
 import { userStore } from 'stores/user'
 import { withStyles } from '@material-ui/core/styles'
 import MailboxServiceBadge from 'wbui/MailboxServiceBadge'
-import ACAvatarCircle from 'wbui/ACAvatarCircle'
+import ACAvatarCircle2 from 'wbui/ACAvatarCircle2'
 import Resolver from 'Runtime/Resolver'
 import red from '@material-ui/core/colors/red'
 import TooltipSectionListItem from 'wbui/TooltipSectionListItem'
@@ -225,9 +225,9 @@ class MailboxTooltipServiceItem extends React.Component {
           hasUnreadActivity={hasUnreadActivity}
           color={badgeColor}
           isAuthInvalid={isAuthInvalid}>
-          <ACAvatarCircle
+          <ACAvatarCircle2
             avatar={avatar}
-            borderSize={1}
+            circleProps={{ width: 1 }}
             size={24}
             preferredImageSize={96}
             resolver={(i) => Resolver.image(i)}

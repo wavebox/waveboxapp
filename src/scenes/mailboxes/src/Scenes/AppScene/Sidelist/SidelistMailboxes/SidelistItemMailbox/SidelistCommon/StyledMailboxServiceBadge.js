@@ -17,7 +17,7 @@ const styles = {
       fontSize: '13px',
       borderRadius: 12,
       lineHeight: '24px',
-      top: -6,
+      top: -3,
       right: 4,
       paddingLeft: 4,
       paddingRight: 4
@@ -28,7 +28,7 @@ const styles = {
       fontSize: '12px',
       borderRadius: 10,
       lineHeight: '20px',
-      top: -6,
+      top: -3,
       right: 1,
       paddingLeft: 5,
       paddingRight: 5
@@ -39,7 +39,7 @@ const styles = {
       fontSize: '11px',
       borderRadius: 8,
       lineHeight: '16px',
-      top: -3,
+      top: 0,
       right: 1,
       paddingLeft: 3,
       paddingRight: 3

@@ -950,6 +950,17 @@ class CoreAccountStore extends RemoteStore {
         })
     }
 
+    /**
+    * @return a list of mailbox ids ordered by their last accessed time, newest first
+    */
+    this.lastAccessedMailboxIds = () => {
+      const mailboxIds = new Set()
+      this.lastAccessedServiceIds().forEach((serviceId) => {
+        mailboxIds.add(this.getService(serviceId).parentId)
+      })
+      return Array.from(mailboxIds)
+    }
+
     /* ****************************************/
     // Misc
     /* ****************************************/

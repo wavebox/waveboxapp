@@ -5,8 +5,12 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
+let warningShown = false
 const styles = {
   container: {
+    // Makes the box-shadow render when border radius is used
+    transform: 'translate3d(0,0,0)',
+
     // White ring fix part 1/3 (2-lines)
     // https://css-tricks.com/forums/topic/border-radius-ugliness/
     '&.with-ring': {
@@ -67,6 +71,11 @@ class ACAvatarCircle extends React.Component {
   }
 
   render () {
+    if (!warningShown) {
+      warningShown = true
+      console.warn('ACAvatarCircle has been depricated. Instead use ACAvatarCircle2')
+    }
+
     const {
       avatar,
       resolver,
@@ -133,6 +142,7 @@ class ACAvatarCircle extends React.Component {
       const charaterStyle = {
         ...generatedStyle,
         backgroundColor: avatar.color,
+        fontSize: Math.round(adjustedSize * 0.55),
         padding: 0, // White ring fix part 3/3
         ...style
       }

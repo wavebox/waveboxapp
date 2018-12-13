@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { accountStore } from 'stores/account'
 import { ListItem } from '@material-ui/core'
 import MailboxBadge from 'wbui/MailboxBadge'
-import ACAvatarCircle from 'wbui/ACAvatarCircle'
+import ACAvatarCircle2 from 'wbui/ACAvatarCircle2'
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight'
 import { withStyles } from '@material-ui/core/styles'
 import grey from '@material-ui/core/colors/grey'
@@ -107,7 +107,7 @@ class UnreadMailboxListItem extends React.Component {
         onClick={(evt) => requestShowMailbox(evt, mailboxId)}
         {...passProps}>
         <MailboxBadge mailbox={mailbox} unreadCount={unreadCount} hasUnreadActivity={hasUnreadActivity}>
-          <ACAvatarCircle
+          <ACAvatarCircle2
             avatar={avatar}
             resolver={(i) => Resolver.image(i)}
             size={40}

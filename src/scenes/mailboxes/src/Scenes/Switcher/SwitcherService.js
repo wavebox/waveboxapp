@@ -3,13 +3,76 @@ import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import { accountStore } from 'stores/account'
-import ACAvatarCircle from 'wbui/ACAvatarCircle'
+import ACAvatarCircle2 from 'wbui/ACAvatarCircle2'
 import classNames from 'classnames'
 import Resolver from 'Runtime/Resolver'
+import MailboxServiceBadge from 'wbui/MailboxServiceBadge'
 
+const SIZE = 126
+const SERVICE_SIZE = 96
+const MAILBOX_SIZE = 32
+const MARGIN = 24
 const styles = {
   root: {
-    display: 'inline-block'
+    display: 'inline-block',
+    marginTop: MARGIN,
+    marginBottom: MARGIN,
+    width: SIZE
+  },
+
+  // Badge
+  badge: {
+    position: 'absolute',
+    fontWeight: process.platform === 'linux' ? 'normal' : '300',
+    height: 35,
+    minWidth: 35,
+    width: 'auto',
+    lineHeight: '35px',
+    fontSize: '18px',
+    top: ((SIZE - SERVICE_SIZE) / 2),
+    right: ((SIZE - SERVICE_SIZE) / 2),
+    boxShadow: ' 0px 0px 3px 0px rgba(0,0,0,0.8)'
+  },
+  badgeFAIcon: {
+    color: 'white',
+    fontSize: '18px'
+  },
+  badgeContainer: {
+    display: 'flex',
+    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: SIZE,
+    height: SIZE
+  },
+  badgeContainerSelected: {
+    backgroundColor: 'rgba(40, 40, 40, 0.2)',
+    borderRadius: 10
+  },
+
+  // Avatars
+  serviceAvatar: {
+
+  },
+  mailboxAvatar: {
+    position: 'absolute',
+    top: SIZE - ((SIZE - SERVICE_SIZE) / 2) - MAILBOX_SIZE,
+    left: SIZE - ((SIZE - SERVICE_SIZE) / 2) - MAILBOX_SIZE
+  },
+
+  // Typography
+  displayName: {
+    height: MARGIN,
+    marginBottom: -MARGIN,
+    paddingLeft: 5,
+    paddingRight: 5,
+    color: 'rgb(130, 130, 130)',
+    fontSize: '15px',
+    textAlign: 'center',
+    lineHeight: '24px',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
   }
 }
 
@@ -20,7 +83,8 @@ class SwitcherService extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    serviceId: PropTypes.string.isRequired
+    serviceId: PropTypes.string.isRequired,
+    isSelected: PropTypes.bool.isRequired
   }
 
   /* **************************************************************************/
@@ -77,7 +141,14 @@ class SwitcherService extends React.Component {
       mailboxAvatar: accountState.getMailboxAvatarConfig(mailbox.id),
       serviceAvatar: accountState.getServiceAvatarConfig(serviceId),
       isServiceSleeping: accountState.isServiceSleeping(serviceId),
-      isServiceRestricted: accountState.isServiceRestricted(serviceId)
+      supportsUnreadCount: service.supportsUnreadCount,
+      showBadgeCount: service.showBadgeCount,
+      unreadCount: serviceData.getUnreadCount(service),
+      hasUnreadActivity: serviceData.getHasUnreadActivity(service),
+      supportsUnreadActivity: service.supportsUnreadActivity,
+      showBadgeActivity: service.showBadgeActivity,
+      badgeColor: service.badgeColor,
+      mailboxHasSingleService: mailbox.hasSingleService
     } : {
       membersAvailable: false
     }
@@ -96,31 +167,61 @@ class SwitcherService extends React.Component {
       serviceId,
       classes,
       className,
+      isSelected,
       ...passProps
     } = this.props
     const {
       membersAvailable,
       displayName,
       isServiceSleeping,
-      isServiceRestricted,
       mailboxAvatar,
-      serviceAvatar
+      serviceAvatar,
+      supportsUnreadCount,
+      showBadgeCount,
+      unreadCount,
+      hasUnreadActivity,
+      supportsUnreadActivity,
+      showBadgeActivity,
+      badgeColor,
+      mailboxHasSingleService
     } = this.state
     if (!membersAvailable) { return false }
 
     return (
-      <div className={classNames(className, classes.root)} {...passProps}>
-        <ACAvatarCircle
-          avatar={mailboxAvatar}
-          size={32}
-          resolver={(i) => Resolver.image(i)}
-          showSleeping={isServiceSleeping} />
-        <ACAvatarCircle
-          avatar={serviceAvatar}
-          size={128}
-          resolver={(i) => Resolver.image(i)}
-          showSleeping={isServiceSleeping} />
-        {displayName}
+      <div
+        className={classNames("tom", className, classes.root)}
+        {...passProps}>
+        <MailboxServiceBadge
+          badgeClassName={classes.badge}
+          className={classNames(classes.badgeContainer, isSelected ? classes.badgeContainerSelected : undefined)}
+          iconClassName={classes.badgeFAIcon}
+          supportsUnreadCount={supportsUnreadCount}
+          showUnreadBadge={showBadgeCount}
+          unreadCount={unreadCount}
+          supportsUnreadActivity={supportsUnreadActivity}
+          showUnreadActivityBadge={showBadgeActivity}
+          hasUnreadActivity={hasUnreadActivity}
+          color={badgeColor}
+          isAuthInvalid={false}>
+          <ACAvatarCircle2
+            avatar={serviceAvatar}
+            className={classes.serviceAvatar}
+            size={SERVICE_SIZE}
+            resolver={(i) => Resolver.image(i)}
+            showSleeping={isServiceSleeping}
+            circleProps={{ showSleeping: false }} />
+          {!mailboxHasSingleService ? (
+            <ACAvatarCircle2
+              avatar={mailboxAvatar}
+              className={classes.mailboxAvatar}
+              size={MAILBOX_SIZE}
+              resolver={(i) => Resolver.image(i)}
+              showSleeping={false} />
+          ) : undefined}
+        </MailboxServiceBadge>
+        <div className={classes.displayName}>
+          {displayName}
+        </div>
       </div>
     )
   }

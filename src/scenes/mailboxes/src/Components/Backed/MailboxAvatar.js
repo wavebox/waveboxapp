@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { accountStore } from 'stores/account'
 import shallowCompare from 'react-addons-shallow-compare'
 import Resolver from 'Runtime/Resolver'
-import ACAvatarCircle from 'wbui/ACAvatarCircle'
+import ACAvatarCircle2 from 'wbui/ACAvatarCircle2'
 
 export default class MailboxAvatar extends React.Component {
   /* **************************************************************************/
@@ -63,7 +63,7 @@ export default class MailboxAvatar extends React.Component {
     const { avatar } = this.state
 
     return (
-      <ACAvatarCircle
+      <ACAvatarCircle2
         avatar={avatar}
         resolver={(i) => Resolver.image(i)}
         {...passProps} />
