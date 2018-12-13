@@ -130,10 +130,11 @@ class WizardConfigureGeneric extends React.Component {
 
   /**
   * Handles the user pressing next
+  * @param evt: the event that fired
   * @param openSettings: set to true to open settings on close
   * @return true if it validated correctly
   */
-  handleFinish = (openSettings) => {
+  handleFinish = (evt, openSettings) => {
     const {
       serviceId,
       onRequestCancel
@@ -156,9 +157,9 @@ class WizardConfigureGeneric extends React.Component {
     accountActions.reduceMailbox(mailboxId, MailboxReducer.setDefaultWindowOpenMode, defaultWindowOpenMode)
 
     if (openSettings) {
-      onRequestCancel(`/settings/accounts/${mailboxId}`)
+      onRequestCancel(evt, `/settings/accounts/${mailboxId}`)
     } else {
-      onRequestCancel()
+      onRequestCancel(evt)
     }
     return true
   }
@@ -186,7 +187,7 @@ class WizardConfigureGeneric extends React.Component {
       <div>
         <Button
           className={classes.footerButton}
-          onClick={() => this.handleFinish(true)}>
+          onClick={(evt) => this.handleFinish(evt, true)}>
           Account Settings
         </Button>
         <Button
@@ -197,7 +198,7 @@ class WizardConfigureGeneric extends React.Component {
         <Button
           variant='contained'
           color='primary'
-          onClick={() => this.handleFinish(false)}>
+          onClick={(evt) => this.handleFinish(evt, false)}>
           Finish
         </Button>
       </div>

@@ -63,7 +63,7 @@ class EmblinkStore extends RendererEmblinkStore {
 
     // Compose picker
     ipcRenderer.send(WB_FOCUS_MAILBOXES_WINDOW)
-    window.location.hash = 'incoming/compose'
+    window.location.hash = '/incoming/compose'
   }
 
   /**
