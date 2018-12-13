@@ -1,6 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import { Button, Dialog, DialogContent, DialogActions } from '@material-ui/core'
+import { Dialog, DialogContent } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import { accountStore, accountActions } from 'stores/account'
@@ -21,8 +20,16 @@ const styles = {
     backgroundColor: 'rgba(245, 245, 245, 0.95)'
   },
   dialogContent: {
-    paddingTop: 0,
-    paddingLeft: 0
+    padding: '0px !important'
+  },
+  serviceScroller: {
+    textAlign: 'center',
+    overflow: 'auto',
+    whiteSpace: 'nowrap',
+    paddingTop: 18,
+    paddingLeft: 6,
+    paddingRight: 6,
+    paddingBottom: 6
   }
 }
 
@@ -101,7 +108,6 @@ class Switcher extends React.Component {
   * Closes the modal
   */
   handleClose = () => {
-    return
     this.setState((prevState) => {
       if (prevState.open) {
         setTimeout(() => {
@@ -142,14 +148,17 @@ class Switcher extends React.Component {
         onClose={this.handleClose}
         classes={{ paper: classes.dialog }}>
         <DialogContent className={classes.dialogContent}>
-          {serviceIds.map((serviceId) => {
-            return (
-              <SwitcherService
-                key={serviceId}
-                serviceId={serviceId}
-                isSelected={serviceId === selectedServiceId} />
-            )
-          })}
+          <div className={classes.serviceScroller}>
+            {serviceIds.map((serviceId) => {
+              return (
+                <SwitcherService
+                  key={serviceId}
+                  onMouseMove={(evt) => this.setState({ selectedServiceId: serviceId })}
+                  serviceId={serviceId}
+                  isSelected={serviceId === selectedServiceId} />
+              )
+            })}
+          </div>
         </DialogContent>
       </Dialog>
     )

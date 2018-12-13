@@ -7,16 +7,14 @@ import ACAvatarCircle2 from 'wbui/ACAvatarCircle2'
 import classNames from 'classnames'
 import Resolver from 'Runtime/Resolver'
 import MailboxServiceBadge from 'wbui/MailboxServiceBadge'
+import ReactDOM from 'react-dom'
 
 const SIZE = 126
 const SERVICE_SIZE = 96
 const MAILBOX_SIZE = 32
-const MARGIN = 24
 const styles = {
   root: {
     display: 'inline-block',
-    marginTop: MARGIN,
-    marginBottom: MARGIN,
     width: SIZE
   },
 
@@ -62,8 +60,7 @@ const styles = {
 
   // Typography
   displayName: {
-    height: MARGIN,
-    marginBottom: -MARGIN,
+    height: 24,
     paddingLeft: 5,
     paddingRight: 5,
     color: 'rgb(130, 130, 130)',
@@ -88,6 +85,16 @@ class SwitcherService extends React.Component {
   }
 
   /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    this.rootRef = React.createRef()
+  }
+
+  /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
 
@@ -104,6 +111,12 @@ class SwitcherService extends React.Component {
       this.setState(
         this.deriveAccountState(nextProps.serviceId, accountStore.getState())
       )
+    }
+    if (this.props.isSelected !== nextProps.isSelected && nextProps.isSelected) {
+      const root = ReactDOM.findDOMNode(this.rootRef.current)
+      if (root) {
+        root.scrollIntoView({ inline: 'end', behavior: 'smooth' })
+      }
     }
   }
 
@@ -189,7 +202,8 @@ class SwitcherService extends React.Component {
 
     return (
       <div
-        className={classNames("tom", className, classes.root)}
+        ref={this.rootRef}
+        className={classNames(className, classes.root)}
         {...passProps}>
         <MailboxServiceBadge
           badgeClassName={classes.badge}
