@@ -79,9 +79,11 @@ class MailboxWizardScene extends React.Component {
 
   /**
   * Closes the modal
+  * @param evt: the event that fired
   * @param destination='/' an optional destination when dismissin
   */
-  handleClose = (destination = '/') => {
+  handleClose = (evt, destination) => {
+    destination = typeof (destination) === 'string' && destination ? destination : '/'
     this.setState({ open: false })
     setTimeout(() => {
       window.location.hash = destination
