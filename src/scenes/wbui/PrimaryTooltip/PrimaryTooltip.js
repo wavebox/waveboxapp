@@ -201,7 +201,7 @@ class PrimaryTooltip extends React.Component {
         ) : ''}
         classes={{
           tooltip: classNames(classes.tooltip, `w-${width}`, `theme-${themeName}`, disablePadding ? 'no-padd' : undefined),
-          popper: classes.tooltipArrowPopper
+          popper: classNames(classes.popper, classes.tooltipArrowPopper)
         }}
         PopperProps={{
           popperOptions: {

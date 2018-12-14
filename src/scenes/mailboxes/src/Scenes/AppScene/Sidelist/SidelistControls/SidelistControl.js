@@ -20,6 +20,9 @@ const styles = (theme) => ({
   },
 
   // Tour content
+  popoverPopper: {
+    zIndex: 1200
+  },
   popoverContentContainer: {
     display: 'flex',
     flexDirection: 'row',
@@ -255,7 +258,8 @@ class SidelistControl extends React.Component {
             title: this.renderTourTooltipContent(classes, tourTooltip),
             width: 'none',
             themeName: 'tour',
-            open: true
+            open: true,
+            classes: { popper: classes.popoverPopper }
           } : {
             key: 'normal', // Set the key to force a re-render when switching between tour and non-tour
             title: tooltip,
