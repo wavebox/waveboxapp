@@ -88,7 +88,9 @@ class ACAvatarCircle extends React.Component {
         className={classNames(className, classes.root)}
         style={{
           width: size,
+          minWidth: size,
           height: size,
+          minHeight: size,
           ...style
         }}
         {...passProps}>
