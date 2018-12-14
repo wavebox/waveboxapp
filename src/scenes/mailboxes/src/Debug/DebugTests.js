@@ -140,7 +140,7 @@ class DebugTests {
   fetchMicrosoftUnreadMessageList () {
     // Always late require to prevent cyclic references
     const accountStore = require('stores/account/accountStore').default
-    const MicrosoftHTTP = require('stores/microsoft/MicrosoftHTTP').defaut
+    const MicrosoftHTTP = require('stores/microsoft/MicrosoftHTTP').default
     const SERVICE_TYPES = require('shared/Models/ACAccounts/ServiceTypes').default
 
     const sig = '[TEST:MICROSOFT_MESSAGES]'
