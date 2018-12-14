@@ -50,6 +50,11 @@ class WaveboxAppCommandKeyTracker extends EventEmitter {
   get altPressed () { return this[privKeyState].alt === true }
   get shiftPressed () { return this[privKeyState].shift === true }
   get metaPressed () { return this[privKeyState].meta === true }
+  get commandOrControlPressed () {
+    return process.platform === 'darwin'
+      ? this.metaPressed
+      : this.controlPressed
+  }
 
   /* ****************************************************************************/
   // App Events

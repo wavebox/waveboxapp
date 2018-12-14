@@ -6,6 +6,7 @@ import platformStore from 'stores/platform/platformStore'
 import UISettingsSection from './UISettingsSection'
 import NotificationSettingsSection from './NotificationSettingsSection'
 import DownloadSettingsSection from './DownloadSettingsSection'
+import LinkSettingsSection from './LinkSettingsSection'
 import LanguageSettingsSection from './LanguageSettingsSection'
 import PlatformSettingsSection from './PlatformSettingsSection'
 import TraySettingsSection from './TraySettingsSection'
@@ -35,6 +36,7 @@ import StorageIcon from '@material-ui/icons/Storage'
 import TuneIcon from '@material-ui/icons/Tune'
 import BugReportIcon from '@material-ui/icons/BugReport'
 import HelpIcon from '@material-ui/icons/Help'
+import LinkIcon from '@material-ui/icons/Link'
 
 const CONTENT_WIDTH = 600
 const SCROLLSPY_WIDTH = 210
@@ -236,13 +238,16 @@ class GeneralSettings extends React.Component {
         {...passProps}>
         <div ref={(n) => { this.scrollerRef = n }} className={classes.scroller}>
           <section id='section-ui'>
-            <UISettingsSection ui={ui} os={os} accelerators={accelerators} extension={extension} showRestart={showRestart} />
+            <UISettingsSection ui={ui} accelerators={accelerators} extension={extension} showRestart={showRestart} />
           </section>
           <section id='section-notifications'>
             {renderBelowFold ? <NotificationSettingsSection os={os} /> : undefined}
           </section>
           <section id='section-download'>
             {renderBelowFold ? <DownloadSettingsSection os={os} /> : undefined}
+          </section>
+          <section id='section-link'>
+            {renderBelowFold ? <LinkSettingsSection os={os} /> : undefined}
           </section>
           <section id='section-language'>
             {renderBelowFold ? <LanguageSettingsSection language={language} showRestart={showRestart} /> : undefined}
@@ -293,6 +298,7 @@ class GeneralSettings extends React.Component {
                 'section-ui',
                 'section-notifications',
                 'section-download',
+                'section-link',
                 'section-language',
                 'section-platform',
                 'section-tray',
@@ -330,6 +336,15 @@ class GeneralSettings extends React.Component {
                 onClick={(evt) => this.scrollToSection(evt, 'section-download')}>
                 <CloudDownloadIcon className={classes.scrollspyIcon} />
                 Download
+              </ListItem>
+              <ListItem
+                divider
+                button
+                dense
+                className={classes.scrollspyItem}
+                onClick={(evt) => this.scrollToSection(evt, 'section-link')}>
+                <LinkIcon className={classes.scrollspyIcon} />
+                Links
               </ListItem>
               <ListItem
                 divider

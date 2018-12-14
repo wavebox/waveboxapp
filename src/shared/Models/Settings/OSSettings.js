@@ -5,6 +5,12 @@ const {
   DEFAULT_NOTIFICATION_SOUND
 } = require('../../Notifications')
 
+const COMMAND_LINK_BEHAVIOUR = Object.freeze({
+  DEFAULT: 'DEFAULT',
+  BROWSER_OPEN: 'BROWSER_OPEN',
+  WAVEBOX_OPEN: 'WAVEBOX_OPEN'
+})
+
 class OSSettings extends Model {
   /* ****************************************************************************/
   // Class
@@ -12,6 +18,7 @@ class OSSettings extends Model {
 
   static get DEFAULT_NOTIFICATION_PROVIDER () { return DEFAULT_NOTIFICATION_PROVIDER }
   static get NOTIFICATION_PROVIDERS () { return NOTIFICATION_PROVIDERS }
+  static get COMMAND_LINK_BEHAVIOUR () { return COMMAND_LINK_BEHAVIOUR }
 
   /* ****************************************************************************/
   // Downloads
@@ -45,6 +52,8 @@ class OSSettings extends Model {
   /* ****************************************************************************/
 
   get openLinksInBackground () { return this._value_('openLinksInBackground', false) }
+  get linkBehaviourWithShift () { return this._value_('linkBehaviourWithShift', COMMAND_LINK_BEHAVIOUR.DEFAULT) }
+  get linkBehaviourWithCmdOrCtrl () { return this._value_('linkBehaviourWithCmdOrCtrl', COMMAND_LINK_BEHAVIOUR.BROWSER_OPEN) }
 }
 
 module.exports = OSSettings

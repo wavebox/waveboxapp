@@ -13,6 +13,8 @@ import accountStore from 'stores/account/accountStore'
 import uuid from 'uuid'
 import { WINDOW_OPEN_MODES, NAVIGATE_MODES } from './WindowOpeningModes'
 import CRExtensionWebPreferences from 'WebContentsManager/CRExtensionWebPreferences'
+import WaveboxAppCommandKeyTracker from 'WaveboxApp/WaveboxAppCommandKeyTracker'
+import { OSSettings } from 'shared/Models/Settings'
 
 class WindowOpeningHandler {
   /* ****************************************************************************/
@@ -47,6 +49,7 @@ class WindowOpeningHandler {
       tabMetaInfo,
       provisionalTargetUrl
     } = config
+    const settingsState = settingsStore.getState()
 
     // If we don't have options we're in an undefined state and shouldn't link the new window
     // via the options. Quit and do nothing
@@ -68,7 +71,7 @@ class WindowOpeningHandler {
     if (WindowOpeningEngine.shouldAlwaysIgnoreWindowOpen(targetUrl)) { return }
 
     // Check if the kill-switch is set for this
-    if (settingsStore.getState().app.enableWindowOpeningEngine === false) {
+    if (settingsState.app.enableWindowOpeningEngine === false) {
       this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
       return
     }
@@ -115,6 +118,16 @@ class WindowOpeningHandler {
       }
     } catch (ex) {
       console.error(`Failed to process extension window opening rules. Continuing with "${openMode}" behaviour...`, ex)
+    }
+
+    // Look to see if the user wants to overwrite the behaviour
+    if (disposition === 'new-window' && WaveboxAppCommandKeyTracker.shiftPressed) {
+      // Shift + click always comes in as new-window
+      openMode = this._commandLinkBehaviourToOpenMode(openMode, settingsState.os.linkBehaviourWithShift)
+    }
+    if (disposition === 'foreground-tab' && WaveboxAppCommandKeyTracker.commandOrControlPressed) {
+      // Cmd/Ctrl+click always comes in as foreground-tab
+      openMode = this._commandLinkBehaviourToOpenMode(openMode, settingsState.os.linkBehaviourWithCmdOrCtrl)
     }
 
     // Update the tab meta data
@@ -282,6 +295,20 @@ class WindowOpeningHandler {
   /* ****************************************************************************/
   // Data tools
   /* ****************************************************************************/
+
+  /**
+  * Converts a command link behaviour to an open mode
+  * @param openMode: the current open mode
+  * @param behaviour: the behaviour to apply
+  * @return the new open mode, or original open mode
+  */
+  _commandLinkBehaviourToOpenMode (openMode, behaviour) {
+    switch (behaviour) {
+      case OSSettings.COMMAND_LINK_BEHAVIOUR.BROWSER_OPEN: return WINDOW_OPEN_MODES.EXTERNAL
+      case OSSettings.COMMAND_LINK_BEHAVIOUR.WAVEBOX_OPEN: return WINDOW_OPEN_MODES.CONTENT
+      default: return openMode
+    }
+  }
 
   /**
   * Gets the mailbox from tab meta info

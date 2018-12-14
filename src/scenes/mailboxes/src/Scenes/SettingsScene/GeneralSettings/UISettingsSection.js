@@ -19,7 +19,6 @@ export default class UISettingsSection extends React.Component {
 
   static propTypes = {
     ui: PropTypes.object.isRequired,
-    os: PropTypes.object.isRequired,
     accelerators: PropTypes.object.isRequired,
     extension: PropTypes.object.isRequired,
     showRestart: PropTypes.func.isRequired
@@ -50,7 +49,6 @@ export default class UISettingsSection extends React.Component {
         'sidebarSize',
         'showSidebarScrollbars'
       ]) ||
-      modelCompare(this.props.os, nextProps.os, ['openLinksInBackground']) ||
       modelCompare(this.props.accelerators, nextProps.accelerators, ['toggleSidebar', 'toggleMenu']) ||
       modelCompare(this.props.extension, nextProps.extension, ['showBrowserActionsInToolbar', 'toolbarBrowserActionLayout']) ||
       partialShallowCompare(
@@ -65,7 +63,6 @@ export default class UISettingsSection extends React.Component {
   render () {
     const {
       ui,
-      os,
       extension,
       accelerators,
       showRestart,
@@ -79,12 +76,6 @@ export default class UISettingsSection extends React.Component {
             label='Show app unread badge'
             onChange={(evt, toggled) => settingsActions.sub.ui.setShowAppBadge(toggled)}
             checked={ui.showAppBadge} />
-          {process.platform === 'darwin' ? (
-            <SettingsListItemSwitch
-              label='Open links in background'
-              onChange={(evt, toggled) => settingsActions.sub.os.setOpenLinksInBackground(toggled)}
-              checked={os.openLinksInBackground} />
-          ) : undefined}
           <SettingsListItemSwitch
             label='Always start minimized'
             onChange={(evt, toggled) => settingsActions.sub.ui.setOpenHidden(toggled)}

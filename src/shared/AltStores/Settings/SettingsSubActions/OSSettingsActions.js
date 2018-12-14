@@ -105,6 +105,20 @@ class OSSettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param behaviour: the new behaviour
+  */
+  setLinkBehaviourWithShift (behaviour) {
+    this.dispatchUpdate('linkBehaviourWithShift', behaviour)
+  }
+
+  /**
+  * @param behaviour: the new behaviour
+  */
+  setLinkBehaviourWithCmdOrCtrl (behaviour) {
+    this.dispatchUpdate('linkBehaviourWithCmdOrCtrl', behaviour)
+  }
+
+  /**
   * @param mode: the login open mode
   */
   setLoginOpenMode (mode) {
