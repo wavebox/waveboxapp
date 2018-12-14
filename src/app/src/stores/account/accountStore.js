@@ -1071,7 +1071,7 @@ class AccountStore extends CoreAccountStore {
   handleQuickSwitchNextService () {
     this.preventDefault()
 
-    const nextServiceId = this.lastAccessedServiceIds()
+    const nextServiceId = this.lastAccessedServiceIds(true)
       .find((serviceId) => serviceId !== this.activeServiceId())
 
     if (nextServiceId) {
@@ -1082,7 +1082,7 @@ class AccountStore extends CoreAccountStore {
   handleQuickSwitchPrevService () {
     this.preventDefault()
 
-    const nextServiceId = this.lastAccessedServiceIds().reverse()
+    const nextServiceId = this.lastAccessedServiceIds(true).reverse()
       .find((serviceId) => serviceId !== this.activeServiceId())
 
     if (nextServiceId) {

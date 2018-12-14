@@ -99,6 +99,7 @@ class SwitcherScene extends React.Component {
     // argument which can be ignored afterwards
 
     window.addEventListener('blur', this.handleClose)
+    window.addEventListener('keydown', this.handleKeypress)
     ipcRenderer.on(WB_QUICK_SWITCH_HIGHLIGHT_NEXT, this.ipcHandleNext)
     ipcRenderer.on(WB_QUICK_SWITCH_HIGHLIGHT_PREV, this.ipcHandlePrev)
     ipcRenderer.on(WB_QUICK_SWITCH_SELECT, this.ipcHandleSelect)
@@ -108,6 +109,7 @@ class SwitcherScene extends React.Component {
 
   componentWillUnmount () {
     window.removeEventListener('blur', this.handleClose)
+    window.removeEventListener('keydown', this.handleKeypress)
     ipcRenderer.removeListener(WB_QUICK_SWITCH_HIGHLIGHT_NEXT, this.ipcHandleNext)
     ipcRenderer.removeListener(WB_QUICK_SWITCH_HIGHLIGHT_PREV, this.ipcHandlePrev)
     ipcRenderer.removeListener(WB_QUICK_SWITCH_SELECT, this.ipcHandleSelect)
@@ -122,7 +124,7 @@ class SwitcherScene extends React.Component {
   state = (() => {
     const accountState = accountStore.getState()
     const settingsState = settingsStore.getState()
-    const serviceIds = accountState.lastAccessedServiceIds().slice(0, 8)
+    const serviceIds = accountState.lastAccessedServiceIds(true).slice(0, 8)
     const hasServices = serviceIds.length > 0
 
     // Some really basic protection against a broken UI. We should never really
@@ -220,6 +222,33 @@ class SwitcherScene extends React.Component {
   /* **************************************************************************/
   // User Interaction
   /* **************************************************************************/
+
+  /**
+  * Handles an incoming keypress
+  * @param evt: the event that fired
+  */
+  handleKeypress = (evt) => {
+    if (evt.keyCode === 37) { // Left
+      evt.preventDefault()
+      evt.stopPropagation()
+      this.setState((prevState) => {
+        const { selectedServiceId, serviceIds } = prevState
+        return { selectedServiceId: this._getPrevServiceId(selectedServiceId, serviceIds) }
+      })
+    } else if (evt.keyCode === 39) { // Right
+      evt.preventDefault()
+      evt.stopPropagation()
+      this.setState((prevState) => {
+        const { selectedServiceId, serviceIds } = prevState
+        return { selectedServiceId: this._getNextServiceId(selectedServiceId, serviceIds) }
+      })
+    } else if (evt.keyCode === 13) { // Enter
+      evt.preventDefault()
+      evt.stopPropagation()
+      accountActions.changeActiveService(this.state.selectedServiceId)
+      this.handleClose()
+    }
+  }
 
   /**
   * Closes the modal

@@ -926,28 +926,46 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /**
+    * Get a list of service ids by their last accessed time
+    * @param omitUnvisted=false: set to true to skip accounts that have not been visited
     * @return a list of service ids ordered by their last accessed time, newest first
     */
-    this.lastAccessedServiceIds = () => {
-      const serviceIndex = this.allServicesOrdered().reduce((acc, service, index) => {
-        acc[service.id] = index
-        return acc
-      }, {})
+    this.lastAccessedServiceIds = (omitUnvisted = false) => {
+      const activeServiceId = this.activeServiceId()
+      if (omitUnvisted) {
+        return this.serviceIds()
+          .filter((serviceId) => this._serviceLastActiveTS_.get(serviceId) !== undefined || serviceId === activeServiceId)
+          .sort((a, b) => {
+            if (a === activeServiceId) { return -1 }
+            const ats = this._serviceLastActiveTS_.get(a) || 0
+            const bts = this._serviceLastActiveTS_.get(b) || 0
+            if (ats < bts) { return 1 }
+            if (ats > bts) { return -1 }
 
-      return this.serviceIds()
-        .sort((a, b) => {
-          const ats = this._serviceLastActiveTS_.get(a) || 0
-          const bts = this._serviceLastActiveTS_.get(b) || 0
-          if (ats < bts) { return 1 }
-          if (ats > bts) { return -1 }
+            return 0
+          })
+      } else {
+        const serviceIndex = this.allServicesOrdered().reduce((acc, service, index) => {
+          acc[service.id] = index
+          return acc
+        }, {})
 
-          const aind = serviceIndex[a]
-          const bind = serviceIndex[b]
-          if (aind > bind) { return 1 }
-          if (aind < bind) { return -1 }
+        return this.serviceIds()
+          .sort((a, b) => {
+            if (a === activeServiceId) { return -1 }
+            const ats = this._serviceLastActiveTS_.get(a) || 0
+            const bts = this._serviceLastActiveTS_.get(b) || 0
+            if (ats < bts) { return 1 }
+            if (ats > bts) { return -1 }
 
-          return 0
-        })
+            const aind = serviceIndex[a]
+            const bind = serviceIndex[b]
+            if (aind > bind) { return 1 }
+            if (aind < bind) { return -1 }
+
+            return 0
+          })
+      }
     }
 
     /**
@@ -1092,6 +1110,12 @@ class CoreAccountStore extends RemoteStore {
       acc.set(k, serviceLastActiveTS[k])
       return acc
     }, new Map())
+    if (this._activeServiceId_) {
+      this._serviceLastActiveTS_.set(
+        this._activeServiceId_,
+        this._serviceLastActiveTS_.get(this._activeServiceId_) || new Date().getTime()
+      )
+    }
     this._sleepingServices_ = Object.keys(sleepingServices).reduce((acc, k) => {
       acc.set(k, sleepingServices[k])
       return acc
