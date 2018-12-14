@@ -121,12 +121,10 @@ class WindowOpeningHandler {
     }
 
     // Look to see if the user wants to overwrite the behaviour
-    if (disposition === 'new-window' && WaveboxAppCommandKeyTracker.shiftPressed) {
-      // Shift + click always comes in as new-window
+    if (WaveboxAppCommandKeyTracker.shiftPressed) {
       openMode = this._commandLinkBehaviourToOpenMode(openMode, settingsState.os.linkBehaviourWithShift)
     }
-    if (disposition === 'foreground-tab' && WaveboxAppCommandKeyTracker.commandOrControlPressed) {
-      // Cmd/Ctrl+click always comes in as foreground-tab
+    if (WaveboxAppCommandKeyTracker.commandOrControlPressed) {
       openMode = this._commandLinkBehaviourToOpenMode(openMode, settingsState.os.linkBehaviourWithCmdOrCtrl)
     }
 
