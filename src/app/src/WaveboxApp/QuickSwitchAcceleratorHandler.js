@@ -1,12 +1,20 @@
 import { EventEmitter } from 'events'
 import WaveboxAppCommandKeyTracker from './WaveboxAppCommandKeyTracker'
 
-const privAccelerator = Symbol('privAccelerator')
-const privCommandKeys = Symbol('privCommandKeys')
+const privNextAccelerator = Symbol('privNextAccelerator')
+const privPrevAccelerator = Symbol('privPrevAccelerator')
+const privNextCommandKeys = Symbol('privNextCommandKeys')
+const privPrevCommandKeys = Symbol('privPrevCommandKeys')
 const privInLongPress = Symbol('privInLongPress')
 const privPresentOptionsTO = Symbol('privPresentOptionsTO')
 const privSentPresentOptions = Symbol('privSentPresentOptions')
+const privDirection = Symbol('privDirection')
 
+const DIRECTIONS = {
+  NONE: 'NONE',
+  NEXT: 'NEXT',
+  PREV: 'PREV'
+}
 const COMMAND_KEYS = {
   META: 'META',
   CONTROL: 'CONTROL',
@@ -27,22 +35,26 @@ const ACCELERATOR_TO_COMMAND_KEY = {
   CMDORCTRL: process.platform === 'darwin' ? COMMAND_KEYS.META : COMMAND_KEYS.CONTROL
 }
 
-//TODO test with double combination Ctrl+Shift+Tab
 class QuickSwitchAcceleratorHandler extends EventEmitter {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
   /**
-  * @param accelerator: the accelerator string
+  * @param nextAccelerator: the next accelerator string
+  * @param prevAccelerator: the previous accelerator string
   */
-  constructor (accelerator) {
+  constructor (nextAccelerator, prevAccelerator) {
     super()
 
     this[privInLongPress] = false
     this[privPresentOptionsTO] = 0
-    this[privAccelerator] = accelerator
-    this[privCommandKeys] = this._parseCommandKeys(this[privAccelerator])
+    this[privDirection] = DIRECTIONS.NONE
+
+    this[privNextAccelerator] = nextAccelerator
+    this[privNextCommandKeys] = this._parseCommandKeys(this[privNextAccelerator])
+    this[privPrevAccelerator] = prevAccelerator
+    this[privPrevCommandKeys] = this._parseCommandKeys(this[privPrevAccelerator])
   }
 
   /* ****************************************************************************/
@@ -51,12 +63,20 @@ class QuickSwitchAcceleratorHandler extends EventEmitter {
 
   /**
   * Changes the accelerator
-  * @param accelerator: the new accelerator string
+  * @param nextAccelerator: the new next accelerator string
+  * @param prevAccelerator: the new prev accelerator string
   */
-  changeAccelerator (accelerator) {
-    if (this[privAccelerator] !== accelerator) {
-      this[privAccelerator] = accelerator
-      this[privCommandKeys] = this._parseCommandKeys(this[privAccelerator])
+  changeAccelerator (nextAccelerator, prevAccelerator) {
+    if (this[privNextAccelerator] !== nextAccelerator) {
+      this[privNextAccelerator] = nextAccelerator
+      this[privNextCommandKeys] = this._parseCommandKeys(this[privNextAccelerator])
+
+      this[privInLongPress] = false
+    }
+
+    if (this[privPrevAccelerator] !== prevAccelerator) {
+      this[privPrevAccelerator] = prevAccelerator
+      this[privPrevCommandKeys] = this._parseCommandKeys(this[privPrevAccelerator])
 
       this[privInLongPress] = false
     }
@@ -77,13 +97,13 @@ class QuickSwitchAcceleratorHandler extends EventEmitter {
       if (this[privSentPresentOptions]) {
         this.emit('select-option', {})
       } else {
-        this.emit('fast-switch', {})
+        this._emitFastSwitchEvent()
       }
     }
   }
 
   /* ****************************************************************************/
-  // Utils
+  // Key Utils
   /* ****************************************************************************/
 
   /**
@@ -103,23 +123,109 @@ class QuickSwitchAcceleratorHandler extends EventEmitter {
   }
 
   /**
+  * Checks if a command key is pressed
+  * @param key: the key to press
+  * @return true if it's pressed, false otherwise
+  */
+  _commandKeyIsPressed (key) {
+    switch (key) {
+      case COMMAND_KEYS.META: return WaveboxAppCommandKeyTracker.metaPressed
+      case COMMAND_KEYS.CONTROL: return WaveboxAppCommandKeyTracker.controlPressed
+      case COMMAND_KEYS.ALT: return WaveboxAppCommandKeyTracker.altPressed
+      case COMMAND_KEYS.SHIFT: return WaveboxAppCommandKeyTracker.shiftPressed
+      default: return false
+    }
+  }
+
+  /**
   * Checks if the command keys are pressed
   * @return true if the command keys are pressed
   */
   _commandKeysArePressed () {
-    if (this[privCommandKeys].length === 0) { return false }
+    // Look for the intersection of keys between the two accelerators
+    const commonCommandKeys = Array.from(
+      [].concat(
+        this[privNextCommandKeys],
+        this[privPrevCommandKeys]
+      ).reduce((acc, k) => {
+        acc.set(k, (acc.get(k) || 0) + 1)
+        return acc
+      }, new Map()).entries()
+    ).filter((ent) => ent[1] > 1).map((ent) => ent[0])
 
-    const notPressed = this[privCommandKeys].find((k) => {
-      switch (k) {
-        case COMMAND_KEYS.META: return !WaveboxAppCommandKeyTracker.metaPressed
-        case COMMAND_KEYS.CONTROL: return !WaveboxAppCommandKeyTracker.controlPressed
-        case COMMAND_KEYS.ALT: return !WaveboxAppCommandKeyTracker.altPressed
-        case COMMAND_KEYS.SHIFT: return !WaveboxAppCommandKeyTracker.shiftPressed
-        default: return true
-      }
-    })
+    if (commonCommandKeys.length) {
+      // If there are common keys, we expect the common ones to always be pressed
+      // For example Ctrl+Tab & Ctrl+Shift+Tab we expect Ctrl to always be pressed
+      const notPressed = commonCommandKeys.find((k) => !this._commandKeyIsPressed(k))
+      return notPressed === undefined
+    } else {
+      // If there are no common keys, we expect one of the control keys to always
+      // be pressed. For example Ctrl+Tab & Alt+Tab we expect either Ctrl or Alt to
+      // always be pressed
+      const nextNotPressed = this[privNextCommandKeys].find((k) => !this._commandKeyIsPressed(k))
+      if (nextNotPressed === undefined) { return true }
 
-    return notPressed === undefined
+      const prevNotPressed = this[privPrevCommandKeys].find((k) => !this._commandKeyIsPressed(k))
+      if (prevNotPressed === undefined) { return true }
+
+      return false
+    }
+  }
+
+  /**
+  * Calculates a rough complexity metric for the user needing to release the command keys
+  * @return a timeout that can be waited for before bringing up up
+  */
+  _commandKeyReleaseComplexityTime () {
+    if (this[privDirection] === DIRECTIONS.NEXT) {
+      return 200 + ((this[privNextCommandKeys].length - 1) * 50)
+    } else if (this[privDirection] === DIRECTIONS.PREV) {
+      return 200 + ((this[privPrevCommandKeys].length - 1) * 50)
+    } else {
+      return 200
+    }
+  }
+
+  /* ****************************************************************************/
+  // Event Utils
+  /* ****************************************************************************/
+
+  /**
+  * Emits the present options event if it's not been emitted already
+  * @return true if it was emitted, false if not
+  */
+  _emitPresentOptionsEvent () {
+    if (this[privSentPresentOptions]) { return false }
+
+    this[privSentPresentOptions] = true
+    if (this[privDirection] === DIRECTIONS.NEXT) {
+      this.emit('present-options-next', {})
+    } else if (this[privDirection] === DIRECTIONS.PREV) {
+      this.emit('present-options-prev', {})
+    }
+    return true
+  }
+
+  /**
+  * Emits the change option event depending on the current direction
+  */
+  _emitChangeOptionEvent () {
+    if (this[privDirection] === DIRECTIONS.NEXT) {
+      this.emit('next-option', {})
+    } else if (this[privDirection] === DIRECTIONS.PREV) {
+      this.emit('prev-option', {})
+    }
+  }
+
+  /**
+  * Emits the fast switch event
+  */
+  _emitFastSwitchEvent () {
+    if (this[privDirection] === DIRECTIONS.NEXT) {
+      this.emit('fast-switch-next', {})
+    } else if (this[privDirection] === DIRECTIONS.PREV) {
+      this.emit('fast-switch-prev', {})
+    }
   }
 
   /* ****************************************************************************/
@@ -127,26 +233,43 @@ class QuickSwitchAcceleratorHandler extends EventEmitter {
   /* ****************************************************************************/
 
   /**
-  * Indicates the accelerator fired
+  * Indicates the next accelerator fired
   */
-  acceleratorFired = () => {
+  nextAcceleratorFired = () => {
+    this[privDirection] = DIRECTIONS.NEXT
+    this._acceleratorFired()
+  }
+
+  /**
+  * Indicates the prev accelerator fired
+  */
+  prevAcceleratorFired = () => {
+    this[privDirection] = DIRECTIONS.PREV
+    this._acceleratorFired()
+  }
+
+  /**
+  * Indicates the accelerator fired
+  * @param next: true if the direction is next
+  */
+  _acceleratorFired () {
     clearTimeout(this[privPresentOptionsTO])
 
     if (this[privInLongPress] && this._commandKeysArePressed()) {
-      if (!this[privSentPresentOptions]) {
-        this[privSentPresentOptions] = true
-        this.emit('present-options', {})
-      }
-      this.emit('next-option', {})
+      this._emitPresentOptionsEvent()
+      this._emitChangeOptionEvent()
     } else {
-      this[privInLongPress] = true
-      this[privSentPresentOptions] = false
-      WaveboxAppCommandKeyTracker.on('changed', this._handleCommandKeysChanged)
+      if (this._commandKeysArePressed()) {
+        this[privInLongPress] = true
+        this[privSentPresentOptions] = false
+        WaveboxAppCommandKeyTracker.on('changed', this._handleCommandKeysChanged)
 
-      this[privPresentOptionsTO] = setTimeout(() => {
-        this[privSentPresentOptions] = true
-        this.emit('present-options', {})
-      }, 200)
+        this[privPresentOptionsTO] = setTimeout(() => {
+          this._emitPresentOptionsEvent()
+        }, this._commandKeyReleaseComplexityTime())
+      } else {
+        this._emitFastSwitchEvent()
+      }
     }
   }
 }

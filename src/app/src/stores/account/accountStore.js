@@ -89,7 +89,8 @@ class AccountStore extends CoreAccountStore {
       handleChangeActiveServiceToNext: actions.CHANGE_ACTIVE_SERVICE_TO_NEXT,
       handleChangeActiveTabToNext: actions.CHANGE_ACTIVE_TAB_TO_NEXT,
       handleChangeActiveTabToPrev: actions.CHANGE_ACTIVE_TAB_TO_PREV,
-      handleQuickSwitchService: actions.QUICK_SWITCH_SERVICE,
+      handleQuickSwitchNextService: actions.QUICK_SWITCH_NEXT_SERVICE,
+      handleQuickSwitchPrevService: actions.QUICK_SWITCH_PREV_SERVICE,
 
       // Mailbox auth teardown
       handleClearMailboxBrowserSession: actions.CLEAR_MAILBOX_BROWSER_SESSION,
@@ -1067,10 +1068,21 @@ class AccountStore extends CoreAccountStore {
     }
   }
 
-  handleQuickSwitchService () {
+  handleQuickSwitchNextService () {
     this.preventDefault()
 
     const nextServiceId = this.lastAccessedServiceIds()
+      .find((serviceId) => serviceId !== this.activeServiceId())
+
+    if (nextServiceId) {
+      actions.changeActiveService.defer(nextServiceId)
+    }
+  }
+
+  handleQuickSwitchPrevService () {
+    this.preventDefault()
+
+    const nextServiceId = this.lastAccessedServiceIds().reverse()
       .find((serviceId) => serviceId !== this.activeServiceId())
 
     if (nextServiceId) {

@@ -75,10 +75,11 @@ const ACCELERATOR_NAMES = {
   // Window
   minimize: 'Minimize',
   cycleWindows: 'Cycle Windows',
-  nextTab: 'Next Tab',
-  prevTab: 'Previous Tab',
+  nextTab: 'Cycle Next Tab',
+  prevTab: 'Cycle Previous Tab',
   toggleWaveboxMini: 'Toggle Wavebox Mini',
-  quickSwitch: 'Quick Switch Tab'
+  quickSwitchNext: 'Quick Switch Next Tab',
+  quickSwitchPrev: 'Quick Switch Previous Tab'
 }
 const GLOBAL_SECTION = [
   'globalToggleApp',
@@ -142,7 +143,8 @@ const ACCOUNTS_SECTION = [
 const WINDOW_SECTION = [
   'minimize',
   'cycleWindows',
-  'quickSwitch',
+  'quickSwitchNext',
+  'quickSwitchPrev',
   'nextTab',
   'prevTab',
   'toggleWaveboxMini'

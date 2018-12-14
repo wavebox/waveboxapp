@@ -10,8 +10,10 @@ import {
   WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER,
   WB_MAILBOXES_WINDOW_SHOW_NEWS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
-  WB_MAILBOXES_QUICK_SWITCH,
-  WB_MAILBOXES_QUICK_SWITCH_PRESENT,
+  WB_QUICK_SWITCH_NEXT,
+  WB_QUICK_SWITCH_PREV,
+  WB_QUICK_SWITCH_PRESENT_NEXT,
+  WB_QUICK_SWITCH_PRESENT_PREV,
   WB_MAILBOXES_WINDOW_OPEN_COMMAND_PALETTE
 } from 'shared/ipcEvents'
 import { ipcRenderer, remote } from 'electron'
@@ -24,8 +26,10 @@ export default class ProviderIpcDispatcher extends React.Component {
     ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER, this.launchSupportCenter)
     ipcRenderer.on(WB_MAILBOXES_WINDOW_SHOW_NEWS, this.launchNews)
     ipcRenderer.on(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.addAccount)
-    ipcRenderer.on(WB_MAILBOXES_QUICK_SWITCH, this.quickSwitch)
-    ipcRenderer.on(WB_MAILBOXES_QUICK_SWITCH_PRESENT, this.quickSwitchPresent)
+    ipcRenderer.on(WB_QUICK_SWITCH_NEXT, this.quickSwitchNext)
+    ipcRenderer.on(WB_QUICK_SWITCH_PREV, this.quickSwitchPrev)
+    ipcRenderer.on(WB_QUICK_SWITCH_PRESENT_NEXT, this.quickSwitchPresentNext)
+    ipcRenderer.on(WB_QUICK_SWITCH_PRESENT_PREV, this.quickSwitchPresentPrev)
     ipcRenderer.on(WB_MAILBOXES_WINDOW_OPEN_COMMAND_PALETTE, this.openCommandPalette)
   }
 
@@ -36,8 +40,10 @@ export default class ProviderIpcDispatcher extends React.Component {
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER, this.launchSupportCenter)
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_SHOW_NEWS, this.launchNews)
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, this.addAccount)
-    ipcRenderer.removeListener(WB_MAILBOXES_QUICK_SWITCH, this.quickSwitch)
-    ipcRenderer.removeListener(WB_MAILBOXES_QUICK_SWITCH_PRESENT, this.quickSwitchPresent)
+    ipcRenderer.removeListener(WB_QUICK_SWITCH_NEXT, this.quickSwitchNext)
+    ipcRenderer.removeListener(WB_QUICK_SWITCH_PREV, this.quickSwitchPrev)
+    ipcRenderer.removeListener(WB_QUICK_SWITCH_PRESENT_NEXT, this.quickSwitchPresentNext)
+    ipcRenderer.removeListener(WB_QUICK_SWITCH_PRESENT_PREV, this.quickSwitchPresentPrev)
     ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_OPEN_COMMAND_PALETTE, this.openCommandPalette)
   }
 
@@ -118,16 +124,31 @@ export default class ProviderIpcDispatcher extends React.Component {
   /**
   * Quick switches to the next account
   */
-  quickSwitch = (evt) => {
+  quickSwitchNext = (evt) => {
     window.location.hash = '/'
-    accountActions.quickSwitchService()
+    accountActions.quickSwitchNextService()
   }
 
   /**
-  * Launches quick switch
+  * Quick switches to the prev account
   */
-  quickSwitchPresent = (evt) => {
-    window.location.hash = '/switcher'
+  quickSwitchPrev = (evt) => {
+    window.location.hash = '/'
+    accountActions.quickSwitchPrevService()
+  }
+
+  /**
+  * Launches quick switch in next mode
+  */
+  quickSwitchPresentNext = (evt) => {
+    window.location.hash = '/switcher/next'
+  }
+
+  /**
+  * Launches quick switch in prev mode
+  */
+  quickSwitchPresentPrev = (evt) => {
+    window.location.hash = '/switcher/prev'
   }
 
   /* **************************************************************************/

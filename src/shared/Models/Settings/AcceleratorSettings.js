@@ -68,7 +68,8 @@ class AcceleratorSettings extends Model {
   get nextTabDefault () { return process.platform === 'darwin' ? 'Command+Alt+Right' : undefined }
   get prevTabDefault () { return process.platform === 'darwin' ? 'Command+Alt+Left' : undefined }
   get toggleWaveboxMiniDefault () { return process.platform === 'darwin' ? 'Cmd+Alt+M' : 'Ctrl+Shift+M' }
-  get quickSwitchDefault () { return 'Ctrl+Tab' }
+  get quickSwitchNextDefault () { return 'Ctrl+Tab' }
+  get quickSwitchPrevDefault () { return 'Ctrl+Shift+Tab' }
 
   /* ****************************************************************************/
   // Config
@@ -137,7 +138,8 @@ class AcceleratorSettings extends Model {
   get nextTab () { return this._value_('nextTab', this.nextTabDefault) }
   get prevTab () { return this._value_('prevTab', this.prevTabDefault) }
   get toggleWaveboxMini () { return this._value_('toggleWaveboxMini', this.toggleWaveboxMiniDefault) }
-  get quickSwitch () { return this._value_('quickSwitch', this.quickSwitchDefault) }
+  get quickSwitchNext () { return this._value_('quickSwitchNext', this.quickSwitchNextDefault) }
+  get quickSwitchPrev () { return this._value_('quickSwitchPrev', this.quickSwitchPrevDefault) }
 }
 
 module.exports = AcceleratorSettings

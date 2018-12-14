@@ -64,9 +64,21 @@ const styles = {
     paddingLeft: 5,
     paddingRight: 5,
     color: 'rgb(130, 130, 130)',
-    fontSize: '15px',
+    fontSize: '14px',
     textAlign: 'center',
     lineHeight: '24px',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  },
+  documentTitle: {
+    height: 20,
+    paddingLeft: 5,
+    paddingRight: 5,
+    color: 'rgb(150, 150, 150)',
+    fontSize: '11px',
+    textAlign: 'center',
+    lineHeight: '20px',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis'
@@ -74,7 +86,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class SwitcherService extends React.Component {
+class SwitcherServiceCell extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -161,7 +173,8 @@ class SwitcherService extends React.Component {
       supportsUnreadActivity: service.supportsUnreadActivity,
       showBadgeActivity: service.showBadgeActivity,
       badgeColor: service.badgeColor,
-      mailboxHasSingleService: mailbox.hasSingleService
+      mailboxHasSingleService: mailbox.hasSingleService,
+      documentTitle: serviceData.documentTitle
     } : {
       membersAvailable: false
     }
@@ -196,7 +209,8 @@ class SwitcherService extends React.Component {
       supportsUnreadActivity,
       showBadgeActivity,
       badgeColor,
-      mailboxHasSingleService
+      mailboxHasSingleService,
+      documentTitle
     } = this.state
     if (!membersAvailable) { return false }
 
@@ -236,9 +250,12 @@ class SwitcherService extends React.Component {
         <div className={classes.displayName}>
           {displayName}
         </div>
+        <div className={classes.documentTitle}>
+          {documentTitle}
+        </div>
       </div>
     )
   }
 }
 
-export default SwitcherService
+export default SwitcherServiceCell

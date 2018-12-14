@@ -4,24 +4,11 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
-  dialog: {
-    maxWidth: '100%',
-    width: '100%',
-    height: '100%'
-  },
-  dialogContent: {
-    position: 'relative'
-  },
-  dialogActions: {
-    backgroundColor: 'rgb(242, 242, 242)',
-    borderTop: '1px solid rgb(232, 232, 232)',
-    margin: 0,
-    padding: '8px 4px'
-  }
+
 }
 
 @withStyles(styles)
-class CommandPalette extends React.Component {
+class CommandPaletteScene extends React.Component {
   /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
@@ -61,8 +48,7 @@ class CommandPalette extends React.Component {
   }
 
   render () {
-    //const { classes } = this.props
-    const classes = {}
+    const { classes } = this.props
     const {
       open
     } = this.state
@@ -73,9 +59,7 @@ class CommandPalette extends React.Component {
         open={open}
         onClose={this.handleClose}
         classes={{ paper: classes.dialog }}>
-        <DialogContent className={classes.dialogContent}>
-          Content goes here
-        </DialogContent>
+        <DialogContent className={classes.dialogContent} />
         <DialogActions className={classes.dialogActions}>
           <Button variant='contained' color='primary' onClick={this.handleClose}>
             Close
@@ -86,4 +70,4 @@ class CommandPalette extends React.Component {
   }
 }
 
-export default CommandPalette
+export default CommandPaletteScene

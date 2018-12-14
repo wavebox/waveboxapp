@@ -19,10 +19,14 @@ class WaveboxAppPrimaryMenu {
     this._lastUserEmail = null
     this._lastMenu = null
     this._hiddenShortcuts = new Map()
-    this._quickSwitchAcceleratorHandler = new QuickSwitchAcceleratorHandler(null)
-    this._quickSwitchAcceleratorHandler.on('fast-switch', WaveboxAppPrimaryMenuActions.quickSwitch)
-    this._quickSwitchAcceleratorHandler.on('present-options', WaveboxAppPrimaryMenuActions.quickSwitchPresentOptions)
+
+    this._quickSwitchAcceleratorHandler = new QuickSwitchAcceleratorHandler(null, null)
+    this._quickSwitchAcceleratorHandler.on('fast-switch-next', WaveboxAppPrimaryMenuActions.quickSwitchNext)
+    this._quickSwitchAcceleratorHandler.on('fast-switch-prev', WaveboxAppPrimaryMenuActions.quickSwitchPrev)
+    this._quickSwitchAcceleratorHandler.on('present-options-next', WaveboxAppPrimaryMenuActions.quickSwitchPresentOptionsNext)
+    this._quickSwitchAcceleratorHandler.on('present-options-prev', WaveboxAppPrimaryMenuActions.quickSwitchPresentOptionsPrev)
     this._quickSwitchAcceleratorHandler.on('next-option', WaveboxAppPrimaryMenuActions.quickSwitchNextOption)
+    this._quickSwitchAcceleratorHandler.on('prev-option', WaveboxAppPrimaryMenuActions.quickSwitchPrevOption)
     this._quickSwitchAcceleratorHandler.on('select-option', WaveboxAppPrimaryMenuActions.quickSwitchSelectOption)
 
     accountStore.listen(this.handleMailboxesChanged)
@@ -200,12 +204,14 @@ class WaveboxAppPrimaryMenu {
             accelerator: accelerators.toggleMenu
           },
           { type: 'separator' },
+          /* @Thomas101:cmdp
           {
             label: 'Open Command Palette',
             click: WaveboxAppPrimaryMenuActions.openCommandPalette,
             accelerator: accelerators.commandPalette
           },
           { type: 'separator' },
+          */
           {
             label: 'Navigate Back',
             click: WaveboxAppPrimaryMenuActions.mailboxNavBack,
@@ -336,20 +342,26 @@ class WaveboxAppPrimaryMenu {
             click: WaveboxAppPrimaryMenuActions.toggleWaveboxMini,
             accelerator: accelerators.toggleWaveboxMini
           }
-        ].concat(mailboxMenuConfig.tabCount > 1 ? [
+        ].concat(mailboxMenuConfig.tabCount > 0 ? [
           { type: 'separator' },
           {
-            label: 'Quick Switch Tab',
-            click: this._quickSwitchAcceleratorHandler.acceleratorFired,
-            accelerator: accelerators.quickSwitch
+            label: 'Quick Switch Next Tab',
+            click: this._quickSwitchAcceleratorHandler.nextAcceleratorFired,
+            accelerator: accelerators.quickSwitchNext
           },
           {
-            label: 'Previous Tab',
+            label: 'Quick Switch Previous Tab',
+            click: this._quickSwitchAcceleratorHandler.prevAcceleratorFired,
+            accelerator: accelerators.quickSwitchPrev
+          }
+        ] : []).concat(mailboxMenuConfig.tabCount > 1 ? [
+          {
+            label: 'Cycle Previous Tab',
             click: WaveboxAppPrimaryMenuActions.prevMailboxTab,
             accelerator: accelerators.prevTab
           },
           {
-            label: 'Next Tab',
+            label: 'Cycle Next Tab',
             click: WaveboxAppPrimaryMenuActions.nextMailboxTab,
             accelerator: accelerators.nextTab
           }
@@ -402,7 +414,10 @@ class WaveboxAppPrimaryMenu {
 
     const lastMenu = this._lastMenu
     this._lastMenu = this.build(accelerators, mailboxMenuConfig, userEmail)
-    this._quickSwitchAcceleratorHandler.changeAccelerator(accelerators.quickSwitch)
+    this._quickSwitchAcceleratorHandler.changeAccelerator(
+      accelerators.quickSwitchNext,
+      accelerators.quickSwitchPrev
+    )
     Menu.setApplicationMenu(this._lastMenu)
     this.updateHiddenShortcuts(accelerators)
 

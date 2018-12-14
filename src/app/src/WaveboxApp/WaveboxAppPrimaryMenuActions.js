@@ -378,17 +378,31 @@ class WaveboxAppPrimaryMenuActions {
     LinkOpener.openNextActiveReadingQueueLink()
   }
 
-  quickSwitch = () => {
+  quickSwitchNext = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.quickSwitch()
+      mailboxesWindow.quickSwitchNext()
     }
   }
 
-  quickSwitchPresentOptions = () => {
+  quickSwitchPrev = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.quickSwitchPresentOptions()
+      mailboxesWindow.quickSwitchPrev()
+    }
+  }
+
+  quickSwitchPresentOptionsNext = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.quickSwitchPresentOptionsNext()
+    }
+  }
+
+  quickSwitchPresentOptionsPrev = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.quickSwitchPresentOptionsPrev()
     }
   }
 
@@ -396,6 +410,13 @@ class WaveboxAppPrimaryMenuActions {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
       mailboxesWindow.quickSwitchNextOption()
+    }
+  }
+
+  quickSwitchPrevOption = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.quickSwitchPrevOption()
     }
   }
 
