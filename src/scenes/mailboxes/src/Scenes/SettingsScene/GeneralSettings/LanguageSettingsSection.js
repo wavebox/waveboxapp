@@ -63,7 +63,8 @@ class LanguageSettingsSection extends React.Component {
       modelCompare(this.props.language, nextProps.language, [
         'spellcheckerLanguage',
         'spellcheckerEnabled',
-        'secondarySpellcheckerLanguage'
+        'secondarySpellcheckerLanguage',
+        'uiLanguage'
       ]) ||
       partialShallowCompare(
         { showRestart: this.props.showRestart },
@@ -91,6 +92,18 @@ class LanguageSettingsSection extends React.Component {
 
     return (
       <SettingsListSection title='Language' icon={<LanguageIcon />} {...passProps}>
+        <SettingsListItemSelectInline
+          label='Wavebox UI Language (Requires Restart)'
+          value={language.uiLanguage !== null ? language.uiLanguage : '__default__'}
+          options={[
+            { value: '__default__', label: 'System default' },
+            { value: 'en_US', label: 'English (US)' },
+            { value: 'de', label: 'German' }
+          ]}
+          onChange={(evt, value) => {
+            showRestart()
+            settingsActions.sub.language.setUiLanguage(value !== '__default__' ? value : null)
+          }} />
         <SettingsListItemSwitch
           label='Spellchecking'
           onChange={(evt, toggled) => settingsActions.sub.language.setEnableSpellchecker(toggled)}

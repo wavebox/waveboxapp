@@ -19,9 +19,11 @@ import {
   WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD,
   WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD
 } from 'shared/ipcEvents'
-import { ipcRenderer, webFrame } from 'electron'
+import { ipcRenderer, webFrame, remote } from 'electron'
 import CrashReporterWatcher from 'shared/CrashReporter/CrashReporterWatcher'
 import os from 'os'
+import i18n from 'i18n'
+import Resolver from 'Runtime/Resolver'
 
 // We often exceed 10 listeners so increase this
 EventEmitter.defaultMaxListeners = 50
@@ -86,8 +88,15 @@ notifhistActions.load()
 guestStore.getState()
 guestActions.load()
 
+// Crash reporting
 const crashReporter = new CrashReporterWatcher()
 crashReporter.start(userStore, settingsStore, CrashReporterWatcher.RUNTIME_IDENTIFIERS.MAILBOXES, os.release())
+
+// Language
+i18n.initialize(
+  Resolver.locales(),
+  settingsStore.getState().launched.language.uiLanguage || remote.app.getLocale()
+)
 
 // Setup the updaters
 userActions.startAutoUpdateExtensions()

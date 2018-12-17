@@ -22,6 +22,13 @@ class LanguageSettings extends Model {
   get spellcheckerLanguage () { return this._value_('spellcheckerLanguage', LanguageSettings.defaultSpellcheckerLanguage) }
   get hasSecondarySpellcheckerLanguage () { return this.secondarySpellcheckerLanguage === null }
   get secondarySpellcheckerLanguage () { return this._value_('secondarySpellcheckerLanguage', null) }
+
+  /* ****************************************************************************/
+  // Properties: UI
+  /* ****************************************************************************/
+
+  get uiLanguage () { return this._value_('uiLanguage', null) }
+  get uiLanguageIsDefault () { return this.uiLanguage === null }
 }
 
 module.exports = LanguageSettings

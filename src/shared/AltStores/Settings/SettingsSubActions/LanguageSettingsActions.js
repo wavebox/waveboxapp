@@ -44,6 +44,13 @@ class LanguageSettingsActions extends CoreSettingsActions {
   setSecondarySpellcheckerLanguage (lang) {
     this.actions.setSecondarySpellcheckerLanguage(lang)
   }
+
+  /**
+  * @param lang: the ui langaugage to set
+  */
+  setUiLanguage (lang) {
+    this.dispatchUpdate('uiLanguage', lang)
+  }
 }
 
 export default LanguageSettingsActions

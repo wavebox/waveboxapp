@@ -12,6 +12,7 @@ import { ipcRenderer } from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import { userStore } from 'stores/user'
+import { T } from 'i18n'
 
 const styles = {
   // Dialog
@@ -208,28 +209,28 @@ class SettingsScene extends React.Component {
             onChange={this.handleTabChange}
             classes={{ indicator: classes.tabInkBar }}>
             <Tab
-              label='General'
+              label={T('General')}
               className={classes.tabButton}
               value='general' />
             <Tab
-              label='Accounts'
+              label={T('Accounts')}
               className={classes.tabButton}
               value='accounts' />
             <Tab
-              label='Extensions'
+              label={T('Extensions')}
               className={classes.tabButton}
               value='extensions' />
             <Tab
-              label='Support'
+              label={T('Support')}
               className={classes.tabButton}
               value='support' />
             <Tab
               label={userIsLoggedIn ? (
                 <span>
-                  <div>Wavebox Subscription</div>
+                  <div>{T('Wavebox Subscription')}</div>
                   <div className={classes.tabEmail}>{userEmail}</div>
                 </span>
-              ) : 'Wavebox Subscription'}
+              ) : T('Wavebox Subscription')}
               className={classes.tabButton}
               value='pro' />
           </Tabs>

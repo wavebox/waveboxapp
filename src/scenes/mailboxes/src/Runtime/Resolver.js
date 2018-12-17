@@ -110,6 +110,18 @@ class Resolver {
   static image (name, targetApi = API_TYPES.BROWSER) {
     return this._scopedResolve(path.join(__dirname, '../../images'), name, targetApi, true)
   }
+
+  /**
+  * Resolves a locale path
+  * @param targetApi=NODE: the target api
+  * @return the full path to the file
+  */
+  static locales (targetApi = API_TYPES.NODE) {
+    switch (targetApi) {
+      case API_TYPES.NODE: return this._joinNodePath(__dirname, '../../locales/')
+      case API_TYPES.BROWSER: return this._joinBrowserPath(__dirname, '../../locales/')
+    }
+  }
 }
 
 export default Resolver

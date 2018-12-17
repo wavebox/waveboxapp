@@ -17,7 +17,13 @@ module.exports = function (env) {
       filename: '__.js'
     },
     plugins: [
-      new CleanWebpackPlugin(['fonts', 'icons', 'images'], {
+      new CleanWebpackPlugin([
+        'audio',
+        'fonts',
+        'icons',
+        'images',
+        'locales'
+      ], {
         root: BIN_DIR,
         verbose: isVerboseLog,
         dry: false
@@ -26,7 +32,21 @@ module.exports = function (env) {
         { from: path.join(__dirname, 'audio'), to: 'audio', force: true },
         { from: path.join(__dirname, 'fonts'), to: 'fonts', force: true },
         { from: path.join(__dirname, 'icons'), to: 'icons', force: true },
-        { from: path.join(__dirname, 'images'), to: 'images', force: true }
+        { from: path.join(__dirname, 'images'), to: 'images', force: true },
+        {
+          from: path.join(__dirname, 'locales'),
+          to: 'locales',
+          force: true,
+          transform: (content, path) => {
+            return Buffer.from(
+              JSON.stringify(
+                JSON.parse(
+                  content.toString('utf8')
+                )
+              )
+            )
+          }
+        }
       ], {
         ignore: [ '.DS_Store' ]
       })
