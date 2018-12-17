@@ -243,6 +243,10 @@ class MicrosoftStore {
               )
               return accessToken
             })
+            .catch((ex) => {
+              // Gobble this error in case the user doens't have drive setup
+              return Promise.resolve(accessToken)
+            })
         } else {
           return Promise.resolve(accessToken)
         }
@@ -254,6 +258,10 @@ class MicrosoftStore {
             .then((b64Image) => {
               accountActions.setServiceAvatarOnService(serviceId, b64Image)
               return accessToken
+            })
+            .catch((ex) => {
+              // Gobble this error
+              return Promise.resolve(accessToken)
             })
         } else {
           return Promise.resolve(accessToken)

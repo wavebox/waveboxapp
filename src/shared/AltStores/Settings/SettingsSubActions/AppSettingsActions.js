@@ -193,6 +193,14 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * Sets whether to use the experimentalMicrosoftHTTP stack
+  * @param use: true to use
+  */
+  setExperimentalMicrosoftHTTP (use) {
+    this.dispatchUpdate('experimentalMicrosoftHTTP', use)
+  }
+
+  /**
   * Sets the search provider
   * @param provider: the new search provider
   */

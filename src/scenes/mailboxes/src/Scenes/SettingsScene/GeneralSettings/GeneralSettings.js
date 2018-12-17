@@ -247,7 +247,7 @@ class GeneralSettings extends React.Component {
             {renderBelowFold ? <DownloadSettingsSection os={os} /> : undefined}
           </section>
           <section id='section-link'>
-            {renderBelowFold ? <LinkSettingsSection os={os} /> : undefined}
+            {renderBelowFold ? <LinkSettingsSection os={os} showRestart={showRestart} /> : undefined}
           </section>
           <section id='section-language'>
             {renderBelowFold ? <LanguageSettingsSection language={language} showRestart={showRestart} /> : undefined}

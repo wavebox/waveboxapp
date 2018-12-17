@@ -1,5 +1,11 @@
 import Boostrap from 'R/Bootstrap'
 import querystring from 'querystring'
+import electron from 'electron'
+import uuid from 'uuid'
+import {
+  WB_FETCH_SERVICE_SESSIONLESS_TEXT
+} from 'shared/ipcEvents'
+import { settingsStore } from 'stores/settings'
 
 const {
   MICROSOFT_CLIENT_ID,
@@ -11,6 +17,33 @@ class MicrosoftHTTP {
   /* **************************************************************************/
   // Utils
   /* **************************************************************************/
+
+  /**
+  * Runs a fetch call
+  * @param url: the url to fetch
+  * @param options: the fetch options
+  */
+  static _fetch (url, options) {
+    if (settingsStore.getState().launched.app.experimentalMicrosoftHTTP) {
+      return new Promise((resolve, reject) => {
+        const returnChannel = `${WB_FETCH_SERVICE_SESSIONLESS_TEXT}:${uuid.v4()}`
+        electron.ipcRenderer.once(returnChannel, (evt, err, res) => {
+          const text = err
+            ? (err.message || 'Unknown Error')
+            : res
+
+          resolve({
+            ok: !err,
+            text: () => Promise.resolve(text),
+            json: () => Promise.resolve(JSON.parse(text))
+          })
+        })
+        electron.ipcRenderer.send(WB_FETCH_SERVICE_SESSIONLESS_TEXT, returnChannel, url, options)
+      })
+    } else {
+      return window.fetch(url, options)
+    }
+  }
 
   /**
   * Rejects a call because the mailbox has no authentication info
@@ -34,7 +67,7 @@ class MicrosoftHTTP {
   */
   static upgradeAuthCodeToPermenant (authCode, codeRedirectUri) {
     return Promise.resolve()
-      .then(() => window.fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
+      .then(() => this._fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
         method: 'post',
         headers: {
           'Accept': 'application/json',
@@ -59,7 +92,7 @@ class MicrosoftHTTP {
       .then((auth) => {
         // Find out which type of account this is
         return Promise.resolve()
-          .then(() => window.fetch('https://graph.microsoft.com/v1.0/organization', {
+          .then(() => this._fetch('https://graph.microsoft.com/v1.0/organization', {
             method: 'get',
             headers: {
               'Accept': 'application/json',
@@ -121,7 +154,7 @@ class MicrosoftHTTP {
     }
 
     return Promise.resolve()
-      .then(() => window.fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
+      .then(() => this._fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
         method: 'post',
         headers: {
           'Accept': 'application/json',
@@ -147,7 +180,7 @@ class MicrosoftHTTP {
     if (!auth) { return this._rejectWithNoAuth() }
 
     return Promise.resolve()
-      .then(() => window.fetch('https://graph.microsoft.com/v1.0/me', {
+      .then(() => this._fetch('https://graph.microsoft.com/v1.0/me', {
         method: 'get',
         headers: {
           'Accept': 'application/json',
@@ -169,7 +202,7 @@ class MicrosoftHTTP {
     if (!auth) { return this._rejectWithNoAuth() }
 
     return Promise.resolve()
-      .then(() => window.fetch(`https://apis.live.net/v5.0/${userId}/picture`, {
+      .then(() => this._fetch(`https://apis.live.net/v5.0/${userId}/picture`, {
         method: 'get',
         headers: {
           'Accept': 'image'
@@ -227,7 +260,7 @@ class MicrosoftHTTP {
     if (!auth) { return this._rejectWithNoAuth() }
 
     return Promise.resolve()
-      .then(() => window.fetch(`https://graph.microsoft.com/beta/me/mailFolders/${folder}`, {
+      .then(() => this._fetch(`https://graph.microsoft.com/beta/me/mailFolders/${folder}`, {
         method: 'get',
         headers: {
           'Accept': 'application/json',
@@ -257,7 +290,7 @@ class MicrosoftHTTP {
     })
 
     return Promise.resolve()
-      .then(() => window.fetch(`https://graph.microsoft.com/beta/me/mailFolders/${folder}/messages?${query}`, {
+      .then(() => this._fetch(`https://graph.microsoft.com/beta/me/mailFolders/${folder}/messages?${query}`, {
         method: 'get',
         headers: {
           'Accept': 'application/json',
@@ -303,7 +336,7 @@ class MicrosoftHTTP {
     })
 
     return Promise.resolve()
-      .then(() => window.fetch(`https://graph.microsoft.com/beta/me/mailFolders/inbox/messages?${query}`, {
+      .then(() => this._fetch(`https://graph.microsoft.com/beta/me/mailFolders/inbox/messages?${query}`, {
         method: 'get',
         headers: {
           'Accept': 'application/json',
@@ -331,7 +364,7 @@ class MicrosoftHTTP {
     })
 
     return Promise.resolve()
-      .then(() => window.fetch(`https://graph.microsoft.com/beta/me/mailFolders/inbox/messages?${query}`, {
+      .then(() => this._fetch(`https://graph.microsoft.com/beta/me/mailFolders/inbox/messages?${query}`, {
         method: 'get',
         headers: {
           'Accept': 'application/json',
@@ -356,7 +389,7 @@ class MicrosoftHTTP {
   */
   static markMessageRead (auth, messageId) {
     return Promise.resolve()
-      .then(() => window.fetch(`https://graph.microsoft.com/beta/me/messages/${messageId}`, {
+      .then(() => this._fetch(`https://graph.microsoft.com/beta/me/messages/${messageId}`, {
         method: 'PATCH',
         headers: {
           'Accept': 'application/json',
@@ -385,7 +418,7 @@ class MicrosoftHTTP {
     if (!auth) { return this._rejectWithNoAuth() }
 
     return Promise.resolve()
-      .then(() => window.fetch('https://graph.microsoft.com/v1.0/me/drive', {
+      .then(() => this._fetch('https://graph.microsoft.com/v1.0/me/drive', {
         method: 'get',
         headers: {
           'Accept': 'application/json',
@@ -395,7 +428,7 @@ class MicrosoftHTTP {
       }))
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
-      .then((res) => window.fetch(`https://graph.microsoft.com/v1.0/drives/${res.id}/root`, {
+      .then((res) => this._fetch(`https://graph.microsoft.com/v1.0/drives/${res.id}/root`, {
         method: 'get',
         headers: {
           'Accept': 'application/json',

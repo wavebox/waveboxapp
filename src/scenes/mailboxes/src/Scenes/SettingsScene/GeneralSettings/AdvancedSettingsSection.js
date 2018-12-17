@@ -63,7 +63,8 @@ class AdvancedSettingsSection extends React.Component {
         'polyfillUserAgents',
         'darwinMojaveCheckboxFix',
         'concurrentServiceLoadLimit',
-        'searchProvider'
+        'searchProvider',
+        'experimentalMicrosoftHTTP'
       ]) ||
       modelCompare(this.props.language, nextProps.language, [
         'inProcessSpellchecking'
@@ -207,6 +208,13 @@ class AdvancedSettingsSection extends React.Component {
           label='Experimental Download Handler'
           onChange={(evt, toggled) => settingsActions.sub.os.setUseAsyncDownloadHandler(toggled)}
           checked={userStore.getState().wceUseAsyncDownloadHandler(os.rawUseAsyncDownloadHandler)} />
+        <SettingsListItemSwitch
+          label='Experimental Microsoft Account HTTP stack (Requires Restart)'
+          onChange={(evt, toggled) => {
+            showRestart()
+            settingsActions.sub.app.setExperimentalMicrosoftHTTP(toggled)
+          }}
+          checked={app.experimentalMicrosoftHTTP} />
         <SettingsListItemSelectInline
           label='Concurrent service load limit (Requires Restart)'
           value={app.concurrentServiceLoadLimit}
