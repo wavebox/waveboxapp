@@ -62,9 +62,9 @@
   "main": "bin/app/index.js",
   "dependencies": {
     "@babel/cli": "7.2.0",
-    "@babel/core": "7.2.0",
+    "@babel/core": "7.2.2",
     "@babel/plugin-proposal-class-properties": "7.2.1",
-    "@babel/plugin-proposal-decorators": "7.2.0",
+    "@babel/plugin-proposal-decorators": "7.2.2",
     "@babel/preset-env": "7.2.0",
     "@babel/preset-react": "7.0.0",
     "babel-loader": "8.0.4",
@@ -72,8 +72,8 @@
     "clean-webpack-plugin": "1.0.0",
     "colors": "1.3.3",
     "copy-webpack-plugin": "4.6.0",
-    "css-loader": "2.0.0",
-    "electron": "3.0.10",
+    "css-loader": "2.0.1",
+    "electron": "3.0.13",
     "electron-rebuild": "1.8.2",
     "file-loader": "2.0.0",
     "fs-extra": "7.0.1",
@@ -104,7 +104,7 @@
   },
   "electronInstallEnv": {
     "ELECTRON_MIRROR": "https://electron-wb.s3.us-east-2.amazonaws.com/",
-    "ELECTRON_CUSTOM_DIR": "wb_4_5_2"
+    "ELECTRON_CUSTOM_DIR": "wb_4_5_7"
   },
   "pre-commit": [
     "validate"
