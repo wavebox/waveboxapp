@@ -173,14 +173,6 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
-  * Sets whether to apply the mojave checkbox fix
-  * @param enable: true to enable
-  */
-  setDarwinMojaveCheckboxFix (enable) {
-    this.dispatchUpdate('darwinMojaveCheckboxFix', enable)
-  }
-
-  /**
   * Sets the concurrent load limit for services
   * @param limit: the new limit. 0 for auto. Infinity for no limit
   */

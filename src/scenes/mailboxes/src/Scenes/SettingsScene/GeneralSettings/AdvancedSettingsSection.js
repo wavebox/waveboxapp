@@ -61,7 +61,6 @@ class AdvancedSettingsSection extends React.Component {
         'enableWindowOpeningEngine',
         'enableMouseNavigationDarwin',
         'polyfillUserAgents',
-        'darwinMojaveCheckboxFix',
         'concurrentServiceLoadLimit',
         'searchProvider',
         'experimentalMicrosoftHTTP'
@@ -195,15 +194,6 @@ class AdvancedSettingsSection extends React.Component {
             settingsActions.sub.app.setEnableWindowOpeningEngine(toggled)
           }}
           checked={app.enableWindowOpeningEngine} />
-        {Platform.isDarwinMojave() ? (
-          <SettingsListItemSwitch
-            label='macOS Mojave checkbox fix (Requires Restart)'
-            onChange={(evt, toggled) => {
-              showRestart()
-              settingsActions.sub.app.setDarwinMojaveCheckboxFix(toggled)
-            }}
-            checked={app.darwinMojaveCheckboxFix} />
-        ) : undefined}
         <SettingsListItemSwitch
           label='Experimental Download Handler'
           onChange={(evt, toggled) => settingsActions.sub.os.setUseAsyncDownloadHandler(toggled)}
