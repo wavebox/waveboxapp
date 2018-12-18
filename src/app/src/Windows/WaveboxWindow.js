@@ -15,7 +15,6 @@ import {
 } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
 import WINDOW_TYPES from './WindowTypes'
-import Platform from 'shared/Platform'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
 
 const privWindow = Symbol('privWindow')

@@ -17,7 +17,6 @@ import SettingsListTypography from 'wbui/SettingsListTypography'
 import modelCompare from 'wbui/react-addons-model-compare'
 import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 import { WB_OPEN_CERTIFICATES_FOLDER } from 'shared/ipcEvents'
-import Platform from 'shared/Platform'
 import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 
 const styles = {}
