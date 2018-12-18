@@ -32,6 +32,7 @@ class CoreAccountStore extends RemoteStore {
 
     // State
     this._activeServiceId_ = null
+    this._serviceLastActiveTS_ = new Map()
     this._sleepingServices_ = new Map()
     this._sleepingMetrics_ = new Map()
     this._mailboxAvatarCache_ = new Map()
@@ -899,6 +900,86 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /* ****************************************/
+    // Last accessed
+    /* ****************************************/
+
+    /**
+    * @param mailboxOrMailboxId: the mailbox or mailboxId
+    * @param returnTimestamp=false: true to return the timestamp with service id
+    * @return serviceId or if returnTimestamp===true { serviceId, ts }
+    */
+    this.lastAccessedServiceIdInMailbox = (mailboxOrMailboxId, returnTimestamp = false) => {
+      const mailbox = typeof (mailboxOrMailboxId) === 'string'
+        ? this.getMailbox(mailboxOrMailboxId)
+        : mailboxOrMailboxId
+
+      if (!mailbox) {
+        return returnTimestamp ? { serviceId: undefined, ts: 0 } : undefined
+      } else {
+        const last = mailbox.allServices.reduce((acc, serviceId) => {
+          const ts = this._serviceLastActiveTS_.get(serviceId) || 0
+          return ts > acc.ts ? { serviceId, ts } : acc
+        }, { serviceId: undefined, ts: 0 })
+
+        return returnTimestamp ? last : last.serviceId
+      }
+    }
+
+    /**
+    * Get a list of service ids by their last accessed time
+    * @param omitUnvisted=false: set to true to skip accounts that have not been visited
+    * @return a list of service ids ordered by their last accessed time, newest first
+    */
+    this.lastAccessedServiceIds = (omitUnvisted = false) => {
+      const activeServiceId = this.activeServiceId()
+      if (omitUnvisted) {
+        return this.serviceIds()
+          .filter((serviceId) => this._serviceLastActiveTS_.get(serviceId) !== undefined || serviceId === activeServiceId)
+          .sort((a, b) => {
+            if (a === activeServiceId) { return -1 }
+            const ats = this._serviceLastActiveTS_.get(a) || 0
+            const bts = this._serviceLastActiveTS_.get(b) || 0
+            if (ats < bts) { return 1 }
+            if (ats > bts) { return -1 }
+
+            return 0
+          })
+      } else {
+        const serviceIndex = this.allServicesOrdered().reduce((acc, service, index) => {
+          acc[service.id] = index
+          return acc
+        }, {})
+
+        return this.serviceIds()
+          .sort((a, b) => {
+            if (a === activeServiceId) { return -1 }
+            const ats = this._serviceLastActiveTS_.get(a) || 0
+            const bts = this._serviceLastActiveTS_.get(b) || 0
+            if (ats < bts) { return 1 }
+            if (ats > bts) { return -1 }
+
+            const aind = serviceIndex[a]
+            const bind = serviceIndex[b]
+            if (aind > bind) { return 1 }
+            if (aind < bind) { return -1 }
+
+            return 0
+          })
+      }
+    }
+
+    /**
+    * @return a list of mailbox ids ordered by their last accessed time, newest first
+    */
+    this.lastAccessedMailboxIds = () => {
+      const mailboxIds = new Set()
+      this.lastAccessedServiceIds().forEach((serviceId) => {
+        mailboxIds.add(this.getService(serviceId).parentId)
+      })
+      return Array.from(mailboxIds)
+    }
+
+    /* ****************************************/
     // Misc
     /* ****************************************/
 
@@ -992,7 +1073,8 @@ class CoreAccountStore extends RemoteStore {
       mailboxAuth,
       avatars,
       activeService,
-      sleepingServices
+      sleepingServices,
+      serviceLastActiveTS
     } = payload
 
     // Mailboxes
@@ -1024,6 +1106,16 @@ class CoreAccountStore extends RemoteStore {
 
     // Active & Sleep
     this._activeServiceId_ = activeService || this.firstServiceId() // Make sure we glue the value if it's not defined
+    this._serviceLastActiveTS_ = Object.keys(serviceLastActiveTS).reduce((acc, k) => {
+      acc.set(k, serviceLastActiveTS[k])
+      return acc
+    }, new Map())
+    if (this._activeServiceId_) {
+      this._serviceLastActiveTS_.set(
+        this._activeServiceId_,
+        this._serviceLastActiveTS_.get(this._activeServiceId_) || new Date().getTime()
+      )
+    }
     this._sleepingServices_ = Object.keys(sleepingServices).reduce((acc, k) => {
       acc.set(k, sleepingServices[k])
       return acc

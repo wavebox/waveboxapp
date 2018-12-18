@@ -22,7 +22,6 @@ const privWindow = Symbol('privWindow')
 const privBrowserWindowId = Symbol('privBrowserWindowId')
 const privLocationSaver = Symbol('privLocationSaver')
 const privLastTimeInFocus = Symbol('privLastTimeInFocus')
-const privMojaveCheckboxFix = Symbol('privMojaveCheckboxFix')
 const privMinMaxLast = Symbol('privMinMaxLast')
 
 const waveboxWindowManager = new WaveboxWindowManager()
@@ -73,32 +72,10 @@ class WaveboxWindow extends EventEmitter {
     this[privBrowserWindowId] = null
     this[privLastTimeInFocus] = 0
     this[privLocationSaver] = new WaveboxWindowLocationSaver(saverTag)
-    this[privMojaveCheckboxFix] = settingsStore.getState().launched.app.darwinMojaveCheckboxFix
     this[privMinMaxLast] = null
 
     // Events
     ipcMain.on(WB_WINDOW_MIN_MAX_DBL_CLICK, this._handleMinMaxDoubleClickWindow)
-
-    // Mojave fix for issues/817
-    // This fix will need to remain in for a version after chromium has been updated as anyone
-    // who has had the fix applied will still have the webcontents at 0.001 zoom.
-    // See @Thomas101 for more info
-    if (process.platform === 'darwin') {
-      this.on('tab-created', (evt, tabId) => {
-        const wc = webContents.fromId(tabId)
-        if (!wc || wc.isDestroyed()) { return }
-        wc.on('did-start-navigation', (evt, url, isInPlace, isMainFrame) => {
-          if (isMainFrame) {
-            evt.sender.getZoomFactor((factor) => {
-              const corrected = this._getDarwinMojaveCorrectedZoomLevel(factor, this[privMojaveCheckboxFix])
-              if (corrected !== factor) {
-                evt.sender.setZoomFactor(corrected)
-              }
-            })
-          }
-        })
-      })
-    }
   }
 
   /**
@@ -639,7 +616,7 @@ class WaveboxWindow extends EventEmitter {
     const wc = webContents.fromId(webContentsId)
     if (!wc || wc.isDestroyed()) { return this }
     wc.getZoomFactor((factor) => {
-      wc.setZoomFactor(this._getDarwinMojaveCorrectedZoomLevel(factor + 0.1, this[privMojaveCheckboxFix]))
+      wc.setZoomFactor(factor + 0.1)
     })
     return this
   }
@@ -654,7 +631,7 @@ class WaveboxWindow extends EventEmitter {
     const wc = webContents.fromId(webContentsId)
     if (!wc || wc.isDestroyed()) { return this }
     wc.getZoomFactor((factor) => {
-      wc.setZoomFactor(this._getDarwinMojaveCorrectedZoomLevel(factor - 0.1, this[privMojaveCheckboxFix]))
+      wc.setZoomFactor(factor - 0.1)
     })
     return this
   }
@@ -668,28 +645,8 @@ class WaveboxWindow extends EventEmitter {
     if (!webContentsId) { return this }
     const wc = webContents.fromId(webContentsId)
     if (!wc || wc.isDestroyed()) { return this }
-    wc.setZoomFactor(this._getDarwinMojaveCorrectedZoomLevel(1.0, this[privMojaveCheckboxFix]))
+    wc.setZoomFactor(1.0)
     return this
-  }
-
-  /**
-  * Sanitizes the zoom level for macOS mojave to work around issues/817
-  * @param zoom: the zoom we want to apply
-  * @param enabled: true if the fix should be applied
-  * @return the zoom we should apply
-  */
-  _getDarwinMojaveCorrectedZoomLevel (zoom, enabled) {
-    // Make sure we sanitize the zoom correctly - as upgrades will lose the sanitized value
-    const sanitizedZoom = Math.round(zoom * 10) / 10
-    if (Platform.isDarwinMojave() && enabled) {
-      if (sanitizedZoom === 1.0) {
-        return 1.001
-      } else {
-        return sanitizedZoom
-      }
-    } else {
-      return sanitizedZoom
-    }
   }
 
   /* ****************************************************************************/

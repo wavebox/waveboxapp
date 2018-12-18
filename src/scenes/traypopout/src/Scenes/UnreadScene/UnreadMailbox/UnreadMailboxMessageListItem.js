@@ -23,7 +23,7 @@ import brown from '@material-ui/core/colors/brown'
 import grey from '@material-ui/core/colors/grey'
 import blueGrey from '@material-ui/core/colors/blueGrey'
 import { withStyles } from '@material-ui/core/styles'
-import ACAvatarCircle from 'wbui/ACAvatarCircle'
+import ACAvatarCircle2 from 'wbui/ACAvatarCircle2'
 import Resolver from 'Runtime/Resolver'
 import classNames from 'classnames'
 
@@ -185,7 +185,7 @@ class UnreadMailboxMessageListItem extends React.Component {
     return (
       <ListItem className={classNames(classes.listItem, className)} button {...passProps}>
         <span className={classes.avatarContainer} data-tom>
-          <ACAvatarCircle
+          <ACAvatarCircle2
             className={classNames(classes.serviceAvatar, !extendedAvatar ? classes.serviceAvatarNoExtended : undefined)}
             avatar={avatar}
             resolver={(i) => Resolver.image(i)}

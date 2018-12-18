@@ -78,8 +78,9 @@ class RendererAccountStore extends CoreAccountStore {
   // Active
   /* **************************************************************************/
 
-  handleRemoteSetActiveService ({ serviceId }) {
+  handleRemoteSetActiveService ({ serviceId, timestamp }) {
     this._activeServiceId_ = serviceId
+    this._serviceLastActiveTS_.set(serviceId, timestamp)
   }
 
   /* **************************************************************************/

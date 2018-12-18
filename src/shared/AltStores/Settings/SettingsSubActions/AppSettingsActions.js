@@ -173,14 +173,6 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
-  * Sets whether to apply the mojave checkbox fix
-  * @param enable: true to enable
-  */
-  setDarwinMojaveCheckboxFix (enable) {
-    this.dispatchUpdate('darwinMojaveCheckboxFix', enable)
-  }
-
-  /**
   * Sets the concurrent load limit for services
   * @param limit: the new limit. 0 for auto. Infinity for no limit
   */
@@ -190,6 +182,14 @@ class AppSettingsActions extends CoreSettingsActions {
     if (limit < -1) { limit = 0 }
     if (limit > 20) { limit = 20 }
     this.dispatchUpdate('concurrentServiceLoadLimit', limit)
+  }
+
+  /**
+  * Sets whether to use the experimentalMicrosoftHTTP stack
+  * @param use: true to use
+  */
+  setExperimentalMicrosoftHTTP (use) {
+    this.dispatchUpdate('experimentalMicrosoftHTTP', use)
   }
 
   /**

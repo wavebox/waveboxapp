@@ -18,7 +18,7 @@ import { emblinkActions } from 'stores/emblink'
 import { accountStore } from 'stores/account'
 import LinkOpener from 'LinkOpener'
 
-class WaveboxAppPrimaryMenuAcions {
+class WaveboxAppPrimaryMenuActions {
   /* ****************************************************************************/
   // Utils
   /* ****************************************************************************/
@@ -187,7 +187,7 @@ class WaveboxAppPrimaryMenuAcions {
   addAccount = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().addAccount()
+      mailboxesWindow.addAccount()
     }
   }
 
@@ -210,7 +210,14 @@ class WaveboxAppPrimaryMenuAcions {
   checkForUpdate = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().userCheckForUpdate()
+      mailboxesWindow.userCheckForUpdate()
+    }
+  }
+
+  openCommandPalette = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.openCommandPalette()
     }
   }
 
@@ -221,28 +228,28 @@ class WaveboxAppPrimaryMenuAcions {
   preferences = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().launchPreferences()
+      mailboxesWindow.launchPreferences()
     }
   }
 
   supportCenter = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().launchSupportCenter()
+      mailboxesWindow.launchSupportCenter()
     }
   }
 
   waveboxAccount = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().launchWaveboxAccount()
+      mailboxesWindow.launchWaveboxAccount()
     }
   }
 
   whatsNew = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().launchWhatsNew()
+      mailboxesWindow.launchWhatsNew()
     }
   }
 
@@ -298,55 +305,63 @@ class WaveboxAppPrimaryMenuAcions {
   changeMailbox = (mailboxId) => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().switchMailbox(mailboxId)
+      mailboxesWindow.switchMailbox(mailboxId)
     }
   }
+
   changeService = (serviceId) => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().switchService(serviceId)
+      mailboxesWindow.switchService(serviceId)
     }
   }
+
   changeMailboxServiceToIndex = (index) => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().switchToServiceAtIndex(index)
+      mailboxesWindow.switchToServiceAtIndex(index)
     }
   }
+
   prevMailbox = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().switchPrevMailbox(true)
+      mailboxesWindow.switchPrevMailbox(true)
     }
   }
+
   nextMailbox = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().switchNextMailbox(true)
+      mailboxesWindow.switchNextMailbox(true)
     }
   }
+
   prevService = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().switchPrevService(true)
+      mailboxesWindow.switchPrevService(true)
     }
   }
+
   nextService = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().switchNextService(true)
+      mailboxesWindow.switchNextService(true)
     }
   }
+
   nextMailboxTab = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().switchNextTab()
+      mailboxesWindow.switchNextTab()
     }
   }
+
   prevMailboxTab = () => {
     const mailboxesWindow = this._getMailboxesWindow()
     if (mailboxesWindow) {
-      mailboxesWindow.show().focus().switchPrevTab()
+      mailboxesWindow.switchPrevTab()
     }
   }
 
@@ -361,6 +376,55 @@ class WaveboxAppPrimaryMenuAcions {
 
   openNextActiveReadingQueueLink = () => {
     LinkOpener.openNextActiveReadingQueueLink()
+  }
+
+  quickSwitchNext = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.quickSwitchNext()
+    }
+  }
+
+  quickSwitchPrev = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.quickSwitchPrev()
+    }
+  }
+
+  quickSwitchPresentOptionsNext = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.quickSwitchPresentOptionsNext()
+    }
+  }
+
+  quickSwitchPresentOptionsPrev = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.quickSwitchPresentOptionsPrev()
+    }
+  }
+
+  quickSwitchNextOption = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.quickSwitchNextOption()
+    }
+  }
+
+  quickSwitchPrevOption = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.quickSwitchPrevOption()
+    }
+  }
+
+  quickSwitchSelectOption = () => {
+    const mailboxesWindow = this._getMailboxesWindow()
+    if (mailboxesWindow) {
+      mailboxesWindow.quickSwitchSelectOption()
+    }
   }
 
   /* ****************************************************************************/
@@ -391,4 +455,4 @@ class WaveboxAppPrimaryMenuAcions {
   }
 }
 
-export default new WaveboxAppPrimaryMenuAcions()
+export default new WaveboxAppPrimaryMenuActions()

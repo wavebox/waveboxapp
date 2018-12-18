@@ -9,7 +9,7 @@ import classNames from 'classnames'
 import ACMailbox from 'shared/Models/ACAccounts/ACMailbox'
 import ServiceTabTools from './ServiceTabTools'
 import MailboxServiceBadge from 'wbui/MailboxServiceBadge'
-import ACAvatarCircle from 'wbui/ACAvatarCircle'
+import ACAvatarCircle2 from 'wbui/ACAvatarCircle2'
 import Resolver from 'Runtime/Resolver'
 import Color from 'color'
 import ServiceTooltip from 'Components/ServiceTooltip'
@@ -135,7 +135,6 @@ const styles = (theme) => ({
   */
   avatar: {
     display: 'block',
-    transform: 'translate3d(0,0,0)', // fix for wavebox/waveboxapp#619
     cursor: 'pointer',
     WebkitAppRegion: 'no-drag',
 
@@ -240,7 +239,6 @@ class ServiceTab extends React.Component {
       showBadgeActivity: service.showBadgeActivity,
       badgeColor: service.badgeColor,
       mailboxShowSleepableServiceIndicator: mailbox.showSleepableServiceIndicator,
-      mailboxShowAvatarColorRing: mailbox.showAvatarColorRing,
       isAuthInvalid: accountState.isMailboxAuthInvalidForServiceId(serviceId),
       isServiceSleeping: accountState.isServiceSleeping(serviceId),
       isServiceActive: accountState.isServiceActive(serviceId),
@@ -320,48 +318,42 @@ class ServiceTab extends React.Component {
   }
 
   /**
-  * Renders the inline styles for the avatar
+  * Renders the width for a ui location
   * @param uiLocation: the ui location to render for
-  * @param mailboxShowAvatarColorRing: true if the mailbox wants the color ring shown
-  * @param isServiceActive: true if the service is active
-  * @param isHovering: true if we are hovering
-  * @param avatar: the avatar configuration
-  * @return a style object
+  * @return the width
   */
-  renderAvatarInlineStyles (uiLocation, mailboxShowAvatarColorRing, isServiceActive, isHovering, avatar) {
-    const styles = {}
+  renderWidthForUiLocation (uiLocation) {
+    switch (uiLocation) {
+      case ACMailbox.SERVICE_UI_LOCATIONS.SIDEBAR:
+        return 3
+      case ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_START:
+      case ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_END:
+        return 1
+    }
+    return 3
+  }
 
-    if (mailboxShowAvatarColorRing) {
-      let borderWidth
-      switch (uiLocation) {
-        case ACMailbox.SERVICE_UI_LOCATIONS.SIDEBAR:
-          borderWidth = 3
-          break
-        case ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_START:
-        case ACMailbox.SERVICE_UI_LOCATIONS.TOOLBAR_END:
-          borderWidth = 1
-          break
-      }
-      if (!isServiceActive && !isHovering) {
-        let altColor = avatar.color
-
-        try {
-          const avatarCol = Color(avatar.color)
-          if (avatarCol.isLight()) {
-            altColor = avatarCol.fade(0.5).rgb().string()
-          } else {
-            altColor = avatarCol.lighten(0.4).rgb().string()
-          }
-        } catch (ex) { }
-        styles.boxShadow = `0 0 0 ${borderWidth}px ${altColor}`
-      } else {
-        styles.boxShadow = `0 0 0 ${borderWidth}px ${avatar.color}`
+  /**
+  * @param avatar: the avatar
+  * @param isServiceActive :true if active
+  * @param isHovering: true if hovering
+  * @return the avatar border color
+  */
+  renderBorderColor (avatar, isServiceActive, isHovering) {
+    if (!isServiceActive && !isHovering) {
+      try {
+        const avatarCol = Color(avatar.color)
+        if (avatarCol.isLight()) {
+          return avatarCol.fade(0.5).rgb().string()
+        } else {
+          return avatarCol.lighten(0.4).rgb().string()
+        }
+      } catch (ex) {
+        return avatar.color
       }
     } else {
-      styles.boxShadow = 'none'
+      return avatar.color
     }
-
-    return styles
   }
 
   render () {
@@ -390,7 +382,6 @@ class ServiceTab extends React.Component {
       showBadgeActivity,
       badgeColor,
       mailboxShowSleepableServiceIndicator,
-      mailboxShowAvatarColorRing,
       unreadCount,
       hasUnreadActivity,
       isAuthInvalid,
@@ -440,9 +431,8 @@ class ServiceTab extends React.Component {
           onClick={this.handleClick}
           onContextMenu={this.handleContextMenu}
           {...passProps}>
-          <ACAvatarCircle
+          <ACAvatarCircle2
             avatar={avatar}
-            borderSize={0}
             size={24}
             preferredImageSize={96}
             resolver={(i) => Resolver.image(i)}
@@ -454,12 +444,10 @@ class ServiceTab extends React.Component {
               'WB-ServiceIcon',
               `WB-ServiceIcon-${mailboxId}_${serviceId}`
             )}
-            style={this.renderAvatarInlineStyles(
-              uiLocation,
-              mailboxShowAvatarColorRing,
-              isServiceActive,
-              isHovering,
-              avatar)} />
+            circleProps={{
+              width: this.renderWidthForUiLocation(uiLocation),
+              color: this.renderBorderColor(avatar, isServiceActive, isHovering)
+            }} />
         </MailboxServiceBadge>
       </ServiceTooltip>
     )

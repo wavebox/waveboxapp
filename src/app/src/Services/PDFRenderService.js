@@ -1,10 +1,10 @@
 import { app, BrowserWindow, dialog } from 'electron'
 import { CHROME_PDF_URL } from 'shared/constants'
-import { DownloadManager } from 'Download'
 import Resolver from 'Runtime/Resolver'
 import fs from 'fs-extra'
 import { URL } from 'url'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
+import DownloadManager from 'Download/DownloadManager'
 
 const privPrinting = Symbol('privPrinting')
 
@@ -178,7 +178,7 @@ class PDFRenderService {
   */
   _pdfPrintCleanup (downloadPath, window) {
     window.removeAllListeners('closed')
-    window.destroy()
+    window.close()
     if (downloadPath) {
       try { fs.removeSync(downloadPath) } catch (ex) { }
     }
@@ -232,7 +232,7 @@ class PDFRenderService {
           })
           .catch((err) => {
             window.removeAllListeners('closed')
-            window.destroy()
+            window.close()
             reject(err)
           })
       })

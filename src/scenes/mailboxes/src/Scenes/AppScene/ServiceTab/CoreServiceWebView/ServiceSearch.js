@@ -14,6 +14,8 @@ import SearchIcon from '@material-ui/icons/Search'
 const SEARCH_HEIGHT = 48
 const styles = {
   container: {
+    display: 'flex',
+    alignItems: 'center',
     position: 'absolute',
     bottom: -SEARCH_HEIGHT - 5,
     left: 0,

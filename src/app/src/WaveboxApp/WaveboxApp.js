@@ -33,6 +33,7 @@ import WaveboxDataManager from './WaveboxDataManager'
 import mailboxStorage from 'Storage/mailboxStorage'
 import constants from 'shared/constants'
 import CrashReporterWatcher from 'shared/CrashReporter/CrashReporterWatcher'
+import WaveboxAppCommandKeyTracker from './WaveboxAppCommandKeyTracker'
 
 const privStarted = Symbol('privStarted')
 const privArgv = Symbol('privArgv')
@@ -145,6 +146,7 @@ class WaveboxApp {
     AccountSessionManager.start()
     ExtensionSessionManager.start()
     ServicesManager.load()
+    WaveboxAppCommandKeyTracker.start()
 
     // Setup the environment
     this._configureEnvironment()

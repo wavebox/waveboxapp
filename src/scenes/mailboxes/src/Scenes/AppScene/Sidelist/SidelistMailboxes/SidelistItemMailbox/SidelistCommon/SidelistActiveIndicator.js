@@ -15,15 +15,15 @@ const styles = {
 
     '&.sidebar-regular': {
       left: 2,
-      top: 20
+      top: 24
     },
     '&.sidebar-compact': {
       left: 1,
-      top: 18
+      top: 21
     },
     '&.sidebar-tiny': {
       left: -2,
-      top: 14
+      top: 16
     }
   }
 }

@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { ipcRenderer } from 'electron'
 import { settingsActions } from 'stores/settings'
+import { userStore } from 'stores/user'
 import CustomCodeEditingDialog from 'Components/CustomCodeEditingDialog'
 import DistributionConfig from 'Runtime/DistributionConfig'
 import { AppSettings } from 'shared/Models/Settings'
@@ -31,7 +32,8 @@ class AdvancedSettingsSection extends React.Component {
     showRestart: PropTypes.func.isRequired,
     app: PropTypes.object.isRequired,
     language: PropTypes.object.isRequired,
-    ui: PropTypes.object.isRequired
+    ui: PropTypes.object.isRequired,
+    os: PropTypes.object.isRequired
   }
 
   /* **************************************************************************/
@@ -59,9 +61,9 @@ class AdvancedSettingsSection extends React.Component {
         'enableWindowOpeningEngine',
         'enableMouseNavigationDarwin',
         'polyfillUserAgents',
-        'darwinMojaveCheckboxFix',
         'concurrentServiceLoadLimit',
-        'searchProvider'
+        'searchProvider',
+        'experimentalMicrosoftHTTP'
       ]) ||
       modelCompare(this.props.language, nextProps.language, [
         'inProcessSpellchecking'
@@ -69,6 +71,9 @@ class AdvancedSettingsSection extends React.Component {
       modelCompare(this.props.ui, nextProps.ui, [
         'customMainCSS',
         'showCtxMenuAdvancedLinkOptions'
+      ]) ||
+      modelCompare(this.props.os, nextProps.os, [
+        'rawUseAsyncDownloadHandler'
       ]) ||
       partialShallowCompare(
         { showRestart: this.props.showRestart },
@@ -85,6 +90,7 @@ class AdvancedSettingsSection extends React.Component {
       app,
       language,
       ui,
+      os,
       classes,
       ...passProps
     } = this.props
@@ -188,15 +194,17 @@ class AdvancedSettingsSection extends React.Component {
             settingsActions.sub.app.setEnableWindowOpeningEngine(toggled)
           }}
           checked={app.enableWindowOpeningEngine} />
-        {Platform.isDarwinMojave() ? (
-          <SettingsListItemSwitch
-            label='macOS Mojave checkbox fix (Requires Restart)'
-            onChange={(evt, toggled) => {
-              showRestart()
-              settingsActions.sub.app.setDarwinMojaveCheckboxFix(toggled)
-            }}
-            checked={app.darwinMojaveCheckboxFix} />
-        ) : undefined}
+        <SettingsListItemSwitch
+          label='Experimental Download Handler'
+          onChange={(evt, toggled) => settingsActions.sub.os.setUseAsyncDownloadHandler(toggled)}
+          checked={userStore.getState().wceUseAsyncDownloadHandler(os.rawUseAsyncDownloadHandler)} />
+        <SettingsListItemSwitch
+          label='Experimental Microsoft Account HTTP stack (Requires Restart)'
+          onChange={(evt, toggled) => {
+            showRestart()
+            settingsActions.sub.app.setExperimentalMicrosoftHTTP(toggled)
+          }}
+          checked={app.experimentalMicrosoftHTTP} />
         <SettingsListItemSelectInline
           label='Concurrent service load limit (Requires Restart)'
           value={app.concurrentServiceLoadLimit}

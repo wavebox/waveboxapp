@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import ACAvatarCircle from 'wbui/ACAvatarCircle'
+import ACAvatarCircle2 from 'wbui/ACAvatarCircle2'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import Resolver from 'Runtime/Resolver'
@@ -11,13 +11,9 @@ import UISettings from 'shared/Models/Settings/UISettings'
 const styles = {
   avatar: {
     display: 'block',
-    transform: 'translate3d(0,0,0)', // fix for wavebox/waveboxapp#619
     margin: '4px auto',
     cursor: 'pointer',
     WebkitAppRegion: 'no-drag'
-  },
-  sleeping: {
-    filter: 'grayscale(100%)'
   }
 }
 
@@ -33,7 +29,8 @@ class SidelistAvatar extends React.Component {
     isSleeping: PropTypes.bool.isRequired,
     showSleeping: PropTypes.bool.isRequired,
     showColorRing: PropTypes.bool.isRequired,
-    lightenBorder: PropTypes.bool.isRequired
+    lightenBorder: PropTypes.bool.isRequired,
+    circleProps: PropTypes.object
   }
 
   /* **************************************************************************/
@@ -71,35 +68,31 @@ class SidelistAvatar extends React.Component {
       showSleeping,
       showColorRing,
       lightenBorder,
-      style,
+      circleProps,
       ...passProps
     } = this.props
+
     const { size, borderWidth } = this.renderSizesFromSidebarSize(sidebarSize)
 
-    let boxShadow
-    if (showColorRing) {
-      if (lightenBorder) {
-        try {
-          const col = Color(avatar.color).lighten(0.4).rgb().string()
-          boxShadow = `0 0 0 ${borderWidth}px ${col}`
-        } catch (ex) {
-          boxShadow = `0 0 0 ${borderWidth}px ${avatar.color}`
-        }
-      } else {
-        boxShadow = `0 0 0 ${borderWidth}px ${avatar.color}`
-      }
-    } else {
-      boxShadow = 'none'
+    let borderColor = avatar.color
+    if (lightenBorder) {
+      try {
+        borderColor = Color(avatar.color).lighten(0.4).rgb().string()
+      } catch (ex) { }
     }
 
     return (
-      <ACAvatarCircle
+      <ACAvatarCircle2
         avatar={avatar}
         size={size}
         resolver={(i) => Resolver.image(i)}
         showSleeping={showSleeping && isSleeping}
         className={classNames(classes.avatar, className)}
-        style={{ boxShadow: boxShadow, ...style }}
+        circleProps={{
+          width: borderWidth,
+          color: borderColor,
+          ...circleProps
+        }}
         {...passProps} />
     )
   }

@@ -19,7 +19,7 @@ const styles = {
     alignItems: 'center'
   },
   avatar: {
-    margin: '10px 20px 10px 10px'
+    margin: '10px 20px 10px 0px'
   },
   message: {
     fontWeight: 'bold'

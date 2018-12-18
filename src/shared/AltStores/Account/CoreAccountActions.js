@@ -610,6 +610,28 @@ class CoreAccountActions extends RemoteActions {
     }
   }
 
+  /**
+  * Quick switiches to the next service
+  */
+  quickSwitchNextService (...args) {
+    if (process.type === 'browser') {
+      return { }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('quickSwitchNextService', args)
+    }
+  }
+
+  /**
+  * Quick switiches to the prev service
+  */
+  quickSwitchPrevService (...args) {
+    if (process.type === 'browser') {
+      return { }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('quickSwitchPrevService', args)
+    }
+  }
+
   /* **************************************************************************/
   // Mailbox auth teardown
   /* **************************************************************************/

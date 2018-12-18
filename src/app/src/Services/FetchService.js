@@ -1,7 +1,11 @@
-import { ipcMain } from 'electron'
+import { ipcMain, session } from 'electron'
 import fetch from 'electron-fetch'
 import { SessionManager } from 'SessionManager'
-import { WB_FETCH_SERVICE_TEXT } from 'shared/ipcEvents'
+import {
+  WB_FETCH_SERVICE_TEXT,
+  WB_FETCH_SERVICE_SESSIONLESS_TEXT,
+  WB_FETCH_SERVICE_SESSIONLESS_JSON
+} from 'shared/ipcEvents'
 
 class FetchService {
   /* ****************************************************************************/
@@ -10,6 +14,8 @@ class FetchService {
 
   constructor () {
     ipcMain.on(WB_FETCH_SERVICE_TEXT, this._handleIPCFetchText)
+    ipcMain.on(WB_FETCH_SERVICE_SESSIONLESS_TEXT, this._handleIPCFetchSessionlessText)
+    ipcMain.on(WB_FETCH_SERVICE_SESSIONLESS_JSON, this._handleIPCFetchSessionlessJson)
   }
 
   /* ****************************************************************************/
@@ -43,23 +49,27 @@ class FetchService {
   }
 
   /* ****************************************************************************/
-  // Event handlers
+  // Request
   /* ****************************************************************************/
 
   /**
-  * Fetches a text response from the server
-  * @param evt: the ipc event
+  * Executes a standardised ipc fetch
+  * @param sender: the webcontents that requestsed
+  * @param ses: the session to use
+  * @param cookies: true to send cookies, false otherwise
+  * @param options: the request options
+  * @param deserializer: the deserializer to call on success
   * @param returnChannel: the ipc channel to send the response to
-  * @param partitionId: the id of the partition to use
-  * @param url: the url to fetch
-  * @param options: additional options to give to the fetch library
   */
-  _handleIPCFetchText = (evt, returnChannel, partitionId, url, options = {}) => {
-    if (evt.sender.getWebPreferences().nodeIntegration !== true) { return }
-    const ses = SessionManager.fromPartition(partitionId)
+  _executeIPCFetch (sender, ses, cookies, url, options, deserializer, returnChannel) {
+    if (sender.getWebPreferences().nodeIntegration !== true) { return }
 
     Promise.resolve()
-      .then(() => this._buildHeaders(ses, url, options))
+      .then(() => {
+        return cookies
+          ? this._buildHeaders(ses, url, options)
+          : options.headers || {}
+      })
       .then((headers) => {
         return fetch(url, {
           ...options,
@@ -69,18 +79,80 @@ class FetchService {
         })
       })
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(new Error(`HTTP status not ok: ${res.httpStatus}`)))
-      .then((res) => res.text())
+      .then(deserializer)
       .then((res) => {
-        if (evt.sender.isDestroyed()) { return }
-        evt.sender.send(returnChannel, null, res)
+        if (sender.isDestroyed()) { return }
+        sender.send(returnChannel, null, res)
       })
       .catch((err) => {
-        if (evt.sender.isDestroyed()) { return }
-        evt.sender.send(returnChannel, {
+        if (sender.isDestroyed()) { return }
+        sender.send(returnChannel, {
           name: 'Error',
           message: err && err.message ? err.message : 'Unknown Error'
         })
       })
+  }
+
+  /* ****************************************************************************/
+  // Event handlers
+  /* ****************************************************************************/
+
+  /**
+  * Fetches a text response from the server
+  * @param evt: the ipc event
+  * @param returnChannel: the ipc channel to send the response to
+  * @param partitionId=undefined: the id of the partition to use
+  * @param url: the url to fetch
+  * @param options: additional options to give to the fetch library
+  */
+  _handleIPCFetchText = (evt, returnChannel, partitionId, url, options = {}) => {
+    this._executeIPCFetch(
+      evt.sender,
+      SessionManager.fromPartition(partitionId),
+      true,
+      url,
+      options,
+      (res) => res.text(),
+      returnChannel
+    )
+  }
+
+  /**
+  * Fetches a text response from the server with no session
+  * @param evt: the ipc event
+  * @param returnChannel: the ipc channel to send the response to
+  * @param url: the url to fetch
+  * @param options: additional options to give to the fetch library
+  */
+  _handleIPCFetchSessionlessText = (evt, returnChannel, url, options = {}) => {
+    this._executeIPCFetch(
+      evt.sender,
+      session.defaultSession,
+      false,
+      url,
+      options,
+      (res) => res.text(),
+      returnChannel
+    )
+  }
+
+  /**
+  * Fetches a json response from the server with no session
+  * @param evt: the ipc event
+  * @param returnChannel: the ipc channel to send the response to
+  * @param url: the url to fetch
+  * @param options: additional options to give to the fetch library
+  */
+  _handleIPCFetchSessionlessJson = (evt, returnChannel, url, options = {}) => {
+    this._executeIPCFetch(
+      evt.sender,
+      session.defaultSession,
+      false,
+      url,
+      options,
+      (res) => res.json(),
+      returnChannel
+    )
   }
 }
 

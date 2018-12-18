@@ -6,6 +6,7 @@ import MenuTool from 'shared/Electron/MenuTool'
 import { evtMain } from 'AppEvents'
 import { toKeyEvent } from 'keyboardevent-from-electron-accelerator'
 import WaveboxAppPrimaryMenuActions from './WaveboxAppPrimaryMenuActions'
+import QuickSwitchAcceleratorHandler from './QuickSwitchAcceleratorHandler'
 
 class WaveboxAppPrimaryMenu {
   /* ****************************************************************************/
@@ -18,6 +19,15 @@ class WaveboxAppPrimaryMenu {
     this._lastUserEmail = null
     this._lastMenu = null
     this._hiddenShortcuts = new Map()
+
+    this._quickSwitchAcceleratorHandler = new QuickSwitchAcceleratorHandler(null, null)
+    this._quickSwitchAcceleratorHandler.on('fast-switch-next', WaveboxAppPrimaryMenuActions.quickSwitchNext)
+    this._quickSwitchAcceleratorHandler.on('fast-switch-prev', WaveboxAppPrimaryMenuActions.quickSwitchPrev)
+    this._quickSwitchAcceleratorHandler.on('present-options-next', WaveboxAppPrimaryMenuActions.quickSwitchPresentOptionsNext)
+    this._quickSwitchAcceleratorHandler.on('present-options-prev', WaveboxAppPrimaryMenuActions.quickSwitchPresentOptionsPrev)
+    this._quickSwitchAcceleratorHandler.on('next-option', WaveboxAppPrimaryMenuActions.quickSwitchNextOption)
+    this._quickSwitchAcceleratorHandler.on('prev-option', WaveboxAppPrimaryMenuActions.quickSwitchPrevOption)
+    this._quickSwitchAcceleratorHandler.on('select-option', WaveboxAppPrimaryMenuActions.quickSwitchSelectOption)
 
     accountStore.listen(this.handleMailboxesChanged)
     settingsStore.listen(this.handleAcceleratorsChanged)
@@ -194,6 +204,14 @@ class WaveboxAppPrimaryMenu {
             accelerator: accelerators.toggleMenu
           },
           { type: 'separator' },
+          /* @Thomas101:cmdp
+          {
+            label: 'Open Command Palette',
+            click: WaveboxAppPrimaryMenuActions.openCommandPalette,
+            accelerator: accelerators.commandPalette
+          },
+          { type: 'separator' },
+          */
           {
             label: 'Navigate Back',
             click: WaveboxAppPrimaryMenuActions.mailboxNavBack,
@@ -324,15 +342,26 @@ class WaveboxAppPrimaryMenu {
             click: WaveboxAppPrimaryMenuActions.toggleWaveboxMini,
             accelerator: accelerators.toggleWaveboxMini
           }
-        ].concat(mailboxMenuConfig.tabCount > 1 ? [
+        ].concat(mailboxMenuConfig.tabCount > 0 ? [
           { type: 'separator' },
           {
-            label: 'Previous Tab',
+            label: 'Quick Switch Next Tab',
+            click: this._quickSwitchAcceleratorHandler.nextAcceleratorFired,
+            accelerator: accelerators.quickSwitchNext
+          },
+          {
+            label: 'Quick Switch Previous Tab',
+            click: this._quickSwitchAcceleratorHandler.prevAcceleratorFired,
+            accelerator: accelerators.quickSwitchPrev
+          }
+        ] : []).concat(mailboxMenuConfig.tabCount > 1 ? [
+          {
+            label: 'Cycle Previous Tab',
             click: WaveboxAppPrimaryMenuActions.prevMailboxTab,
             accelerator: accelerators.prevTab
           },
           {
-            label: 'Next Tab',
+            label: 'Cycle Next Tab',
             click: WaveboxAppPrimaryMenuActions.nextMailboxTab,
             accelerator: accelerators.nextTab
           }
@@ -385,16 +414,27 @@ class WaveboxAppPrimaryMenu {
 
     const lastMenu = this._lastMenu
     this._lastMenu = this.build(accelerators, mailboxMenuConfig, userEmail)
+    this._quickSwitchAcceleratorHandler.changeAccelerator(
+      accelerators.quickSwitchNext,
+      accelerators.quickSwitchPrev
+    )
     Menu.setApplicationMenu(this._lastMenu)
     this.updateHiddenShortcuts(accelerators)
 
     // Prevent Memory leak
     if (lastMenu) {
-      // Wait some time for the linuc dbus-menu to catch up. Not waiting appears to be the
-      // root cause of #790. Shouldn't do any harm on other platforms either
+      // We wait here for two reasons...
+      //
+      // 1. Linuc dbus-menu to catch up. Not waiting appears to be the
+      // root cause of #790. 1000ms wait is sufficient
+      //
+      // 2. Destroying the menu on macOS whilst its open causes the click
+      // event not to fire. Open and Close callbacks don't fire on Appliaction
+      // Menu, so instead wait 30000ms - enough time for the user to probably
+      // action what they want to, but not long enough to cause a big memory leak
       setTimeout(() => {
         lastMenu.destroy()
-      }, 1000)
+      }, 30000)
     }
   }
 
@@ -536,7 +576,7 @@ class WaveboxAppPrimaryMenu {
 
   /**
   * Converts an accelerator to an input key event, removing any quirks
-  * @param accelerator: the accelertor
+  * @param accelerator: the accelerator
   * @return the input event that can be matched
   */
   _acceleratorToInputKeyEvent (accelerator) {

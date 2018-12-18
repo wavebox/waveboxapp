@@ -28,7 +28,7 @@ const styles = {
   },
   accountPickerAvatar: {
     position: 'absolute',
-    top: 20,
+    top: 15,
     left: 20
   },
   accountPickerContainer: {

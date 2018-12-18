@@ -24,6 +24,15 @@ import {
   WB_MAILBOXES_WINDOW_SHOW_NEWS,
   WB_MAILBOXES_WINDOW_ADD_ACCOUNT,
   WB_MAILBOXES_WINDOW_NAVIGATE_AND_SWITCH_TO_SERVICE,
+  WB_MAILBOXES_WINDOW_OPEN_COMMAND_PALETTE,
+
+  WB_QUICK_SWITCH_NEXT,
+  WB_QUICK_SWITCH_PREV,
+  WB_QUICK_SWITCH_PRESENT_NEXT,
+  WB_QUICK_SWITCH_PRESENT_PREV,
+  WB_QUICK_SWITCH_HIGHLIGHT_NEXT,
+  WB_QUICK_SWITCH_HIGHLIGHT_PREV,
+  WB_QUICK_SWITCH_SELECT,
 
   WB_USER_CHECK_FOR_UPDATE,
   WB_SQUIRREL_UPDATE_DOWNLOADED,
@@ -313,6 +322,7 @@ class MailboxesWindow extends WaveboxWindow {
   * @return this
   */
   launchPreferences () {
+    this.show().focus()
     this.window.webContents.send(WB_MAILBOXES_WINDOW_SHOW_SETTINGS, { })
     return this
   }
@@ -322,6 +332,7 @@ class MailboxesWindow extends WaveboxWindow {
   * @return this
   */
   launchWaveboxAccount () {
+    this.show().focus()
     this.window.webContents.send(WB_MAILBOXES_WINDOW_SHOW_WAVEBOX_ACCOUNT, {})
     return this
   }
@@ -331,6 +342,7 @@ class MailboxesWindow extends WaveboxWindow {
   * @return this
   */
   launchSupportCenter () {
+    this.show().focus()
     this.window.webContents.send(WB_MAILBOXES_WINDOW_SHOW_SUPPORT_CENTER, {})
     return this
   }
@@ -340,6 +352,7 @@ class MailboxesWindow extends WaveboxWindow {
   * @return this
   */
   launchWhatsNew () {
+    this.show().focus()
     this.window.webContents.send(WB_MAILBOXES_WINDOW_SHOW_NEWS, {})
     return this
   }
@@ -349,6 +362,7 @@ class MailboxesWindow extends WaveboxWindow {
   * @return this
   */
   addAccount () {
+    this.show().focus()
     this.window.webContents.send(WB_MAILBOXES_WINDOW_ADD_ACCOUNT, { })
     return this
   }
@@ -364,6 +378,16 @@ class MailboxesWindow extends WaveboxWindow {
       path: path,
       filename: filename
     })
+    return this
+  }
+
+  /**
+  * Opens the command palette
+  * @return this
+  */
+  openCommandPalette () {
+    this.show().focus()
+    this.window.webContents.send(WB_MAILBOXES_WINDOW_OPEN_COMMAND_PALETTE)
     return this
   }
 
@@ -459,7 +483,6 @@ class MailboxesWindow extends WaveboxWindow {
 
   /**
   * Switches to the next mailbox or service in the stack
-  * @param allowCycling=false: set to true to allow cycling at end/beginning
   * @return this
   */
   switchNextTab () {
@@ -470,12 +493,81 @@ class MailboxesWindow extends WaveboxWindow {
 
   /**
   * Switches to the previous mailbox or service in the stack
-  * @param allowCycling=false: set to true to allow cycling at end/beginning
   * @return this
   */
   switchPrevTab () {
     this.show().focus()
     accountActions.changeActiveTabToPrev()
+    return this
+  }
+
+  /**
+  * Quick switches the next tab
+  * @return this
+  */
+  quickSwitchNext () {
+    this.show().focus()
+    this.window.webContents.send(WB_QUICK_SWITCH_NEXT)
+    return this
+  }
+
+  /**
+  * Quick switches the prev tab
+  * @return this
+  */
+  quickSwitchPrev () {
+    this.show().focus()
+    this.window.webContents.send(WB_QUICK_SWITCH_PREV)
+    return this
+  }
+
+  /**
+  * Shows the quick switch options in next mode
+  * @return this
+  */
+  quickSwitchPresentOptionsNext () {
+    this.show().focus()
+    this.window.webContents.send(WB_QUICK_SWITCH_PRESENT_NEXT)
+    return this
+  }
+
+  /**
+  * Shows the quick switch options in prev mode
+  * @return this
+  */
+  quickSwitchPresentOptionsPrev () {
+    this.show().focus()
+    this.window.webContents.send(WB_QUICK_SWITCH_PRESENT_PREV)
+    return this
+  }
+
+  /**
+  * Moves quick switch to the next option
+  * @return this
+  */
+  quickSwitchNextOption () {
+    this.show().focus()
+    this.window.webContents.send(WB_QUICK_SWITCH_HIGHLIGHT_NEXT)
+    return this
+  }
+
+  /**
+  * Moves quick switch to the prev option
+  * @return this
+  */
+  quickSwitchPrevOption () {
+    this.show().focus()
+    this.window.webContents.send(WB_QUICK_SWITCH_HIGHLIGHT_PREV)
+    return this
+  }
+
+  /**
+  * Selects the quick switch option
+  * @return this
+  */
+  quickSwitchSelectOption () {
+    this.show().focus()
+    this.window.webContents.send(WB_QUICK_SWITCH_SELECT)
     return this
   }
 
@@ -528,6 +620,7 @@ class MailboxesWindow extends WaveboxWindow {
   * Checks for updates and keeps the UI up to date with progress
   */
   userCheckForUpdate () {
+    this.show().focus()
     this.window.webContents.send(WB_USER_CHECK_FOR_UPDATE, {})
   }
 
