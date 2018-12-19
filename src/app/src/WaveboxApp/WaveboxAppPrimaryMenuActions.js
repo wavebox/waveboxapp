@@ -59,6 +59,13 @@ class WaveboxAppPrimaryMenuActions {
     evtMain.emit(evtMain.WB_RELAUNCH_APP_SAFE, {})
   }
 
+  restartWithoutHWAcceleration = () => {
+    settingsActions.sub.app.disableHardwareAcceleration(true)
+    setTimeout(() => { // Bad fix for letting the store update
+      evtMain.emit(evtMain.WB_RELAUNCH_APP, {})
+    }, 1000)
+  }
+
   closeWindow = () => {
     const focused = WaveboxWindow.focused()
     if (focused) { focused.close() }
