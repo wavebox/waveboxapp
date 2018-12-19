@@ -14,6 +14,7 @@ import { EventEmitter } from 'events'
 import Debug from 'Debug'
 import MouseNavigationDarwin from 'wbui/MouseNavigationDarwin'
 import ResourceMonitorResponder from './ResourceMonitorResponder'
+import TopLevelErrorBoundary from 'wbui/TopLevelErrorBoundary'
 import {
   WB_MAILBOXES_WINDOW_JS_LOADED,
   WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD,
@@ -117,7 +118,11 @@ Debug.load()
 })()
 
 // Render and prepare for unrender
-ReactDOM.render(<Provider />, document.getElementById('ReactComponent-AppSceneRenderNode'))
+ReactDOM.render((
+  <TopLevelErrorBoundary>
+    <Provider />
+  </TopLevelErrorBoundary>
+), document.getElementById('ReactComponent-AppSceneRenderNode'))
 ipcRenderer.on(WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD, () => {
   window.location.hash = '/'
   ReactDOM.unmountComponentAtNode(document.getElementById('ReactComponent-AppSceneRenderNode'))

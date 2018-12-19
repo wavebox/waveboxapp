@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Provider from 'Scenes/Provider'
 import { webFrame } from 'electron'
+import TopLevelErrorBoundary from 'wbui/TopLevelErrorBoundary'
 
 // Prevent zooming
 webFrame.setVisualZoomLevelLimits(1, 1)
@@ -18,4 +19,8 @@ document.addEventListener('dragover', (evt) => {
 }, false)
 
 // Render
-ReactDOM.render((<Provider />), document.getElementById('ReactComponent-AppScene'))
+ReactDOM.render((
+  <TopLevelErrorBoundary>
+    <Provider />
+  </TopLevelErrorBoundary>
+), document.getElementById('ReactComponent-AppScene'))
