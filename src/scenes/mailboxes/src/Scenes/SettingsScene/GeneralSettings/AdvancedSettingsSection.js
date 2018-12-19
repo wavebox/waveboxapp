@@ -17,7 +17,6 @@ import SettingsListTypography from 'wbui/SettingsListTypography'
 import modelCompare from 'wbui/react-addons-model-compare'
 import partialShallowCompare from 'wbui/react-addons-partial-shallow-compare'
 import { WB_OPEN_CERTIFICATES_FOLDER } from 'shared/ipcEvents'
-import Platform from 'shared/Platform'
 import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 
 const styles = {}
@@ -61,7 +60,6 @@ class AdvancedSettingsSection extends React.Component {
         'enableWindowOpeningEngine',
         'enableMouseNavigationDarwin',
         'polyfillUserAgents',
-        'darwinMojaveCheckboxFix',
         'concurrentServiceLoadLimit',
         'searchProvider',
         'experimentalMicrosoftHTTP'
@@ -195,15 +193,6 @@ class AdvancedSettingsSection extends React.Component {
             settingsActions.sub.app.setEnableWindowOpeningEngine(toggled)
           }}
           checked={app.enableWindowOpeningEngine} />
-        {Platform.isDarwinMojave() ? (
-          <SettingsListItemSwitch
-            label='macOS Mojave checkbox fix (Requires Restart)'
-            onChange={(evt, toggled) => {
-              showRestart()
-              settingsActions.sub.app.setDarwinMojaveCheckboxFix(toggled)
-            }}
-            checked={app.darwinMojaveCheckboxFix} />
-        ) : undefined}
         <SettingsListItemSwitch
           label='Experimental Download Handler'
           onChange={(evt, toggled) => settingsActions.sub.os.setUseAsyncDownloadHandler(toggled)}

@@ -9,6 +9,7 @@ import { notifhistStore, notifhistActions } from 'stores/notifhist'
 import { settingsStore, settingsActions } from 'stores/settings'
 import CrashReporterWatcher from 'shared/CrashReporter/CrashReporterWatcher'
 import os from 'os'
+import TopLevelErrorBoundary from 'wbui/TopLevelErrorBoundary'
 
 // Load what we have in the db
 userStore.getState()
@@ -46,4 +47,8 @@ document.addEventListener('dragover', (evt) => {
 }, false)
 
 // Render
-ReactDOM.render((<Provider />), document.getElementById('ReactComponent-AppScene'))
+ReactDOM.render((
+  <TopLevelErrorBoundary>
+    <Provider />
+  </TopLevelErrorBoundary>
+), document.getElementById('ReactComponent-AppScene'))

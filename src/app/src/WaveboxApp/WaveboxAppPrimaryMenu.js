@@ -381,7 +381,8 @@ class WaveboxAppPrimaryMenu {
           { label: 'Privacy', click: WaveboxAppPrimaryMenuActions.privacy },
           { label: 'EULA', click: WaveboxAppPrimaryMenuActions.eula },
           { type: 'separator' },
-          { label: 'Restart in Safe mode', click: WaveboxAppPrimaryMenuActions.restartSafeMode }
+          { label: 'Restart in Safe mode', click: WaveboxAppPrimaryMenuActions.restartSafeMode },
+          { label: 'Disable Hardware Acceleration and Restart', click: WaveboxAppPrimaryMenuActions.restartWithoutHWAcceleration }
         ]
       }
     ])

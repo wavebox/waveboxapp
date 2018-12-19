@@ -1,11 +1,16 @@
-import { app } from 'electron'
+import { app, ipcMain } from 'electron'
 import { settingsStore } from 'stores/settings'
 import fs from 'fs-extra'
 import path from 'path'
+import {
+  WB_TRAY_ICON_CREATED,
+  WB_TRAY_ICON_DESTROYED
+} from 'shared/ipcEvents'
 
 const privForceQuit = Symbol('privForceQuit')
 const privMainWindow = Symbol('privMainWindow')
 const privIsInAppTeardown = Symbol('privIsInAppTeardown')
+const privTrayActive = Symbol('privTrayActive')
 
 class WaveboxAppCloseBehaviour {
   /* ****************************************************************************/
@@ -16,6 +21,10 @@ class WaveboxAppCloseBehaviour {
     this[privForceQuit] = false
     this[privIsInAppTeardown] = false
     this[privMainWindow] = undefined
+    this[privTrayActive] = false
+
+    ipcMain.on(WB_TRAY_ICON_CREATED, () => { this[privTrayActive] = true })
+    ipcMain.on(WB_TRAY_ICON_DESTROYED, () => { this[privTrayActive] = true })
   }
 
   /* ****************************************************************************/
@@ -78,12 +87,13 @@ class WaveboxAppCloseBehaviour {
       if (!this.mainWindow) { return }
 
       const { tray } = settingsStore.getState()
+      const hasTray = tray.show && this[privTrayActive]
       if (process.platform === 'darwin') {
         if (!this.mainWindow.isFullScreen()) {
           this._hideMainWindowOnClose(evt)
         }
       } else if (process.platform === 'win32') {
-        if (tray.show) {
+        if (hasTray) {
           if (this.isPinnedToWin32Taskbar()) {
             this._minimizeMainWindowOnClose(evt)
           } else {
@@ -91,7 +101,7 @@ class WaveboxAppCloseBehaviour {
           }
         }
       } else {
-        if (tray.show) {
+        if (hasTray) {
           this._hideMainWindowOnClose(evt)
         }
       }

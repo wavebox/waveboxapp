@@ -259,7 +259,8 @@ class SidelistControl extends React.Component {
             width: 'none',
             themeName: 'tour',
             open: true,
-            classes: { popper: classes.popoverPopper }
+            interactive: true,
+            classes: { popper: classes.popoverPopper } // Generates a warning but gets passed through
           } : {
             key: 'normal', // Set the key to force a re-render when switching between tour and non-tour
             title: tooltip,

@@ -107,7 +107,7 @@ class CoreUserStore extends RemoteStore {
       if (userSetting !== undefined) {
         return userSetting
       } else {
-        const val = this.wireConfigExperiments.useAsyncDownloadHandler
+        const val = this.wireConfigExperiments().useAsyncDownloadHandler
         return val === undefined ? true : val
       }
     }
