@@ -8,8 +8,6 @@ import {
   WB_BROWSER_NOTIFICATION_CLICK
 } from 'shared/ipcEvents'
 
-const REF = 'mailbox_tab'
-
 export default class SlackServiceWebView extends React.Component {
   /* **************************************************************************/
   // Class
@@ -18,6 +16,16 @@ export default class SlackServiceWebView extends React.Component {
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
     serviceId: PropTypes.string.isRequired
+  }
+
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    this.webviewRef = React.createRef()
   }
 
   /* **************************************************************************/
@@ -85,14 +93,19 @@ export default class SlackServiceWebView extends React.Component {
   * @param evt: the event that fired
   */
   handleOpenItem = (evt) => {
+    if (!this.webviewRef.current) { return }
     if (evt.serviceId === this.props.serviceId) {
       const { authTeamId, url } = this.state
       if (evt.data.launchUri) {
-        this.refs[REF].executeJavaScript(`TS.client.handleDeepLink('${evt.data.launchUri}');`)
+        this.webviewRef.current.executeJavaScript(`TS.client.handleDeepLink('${evt.data.launchUri}');`)
       } else if (evt.data.channelId) {
-        this.refs[REF].executeJavaScript(`TS.client.handleDeepLink('slack://channel?id=${evt.data.channelId}&team=${authTeamId}');`)
+        this.webviewRef.current.executeJavaScript(`TS.client.handleDeepLink('slack://channel?id=${evt.data.channelId}&team=${authTeamId}');`)
+      } else if (evt.data.global === 'vall_threads') {
+        this.webviewRef.current.executeJavaScript(
+          `TS.redux.dispatch(TS.interop.actions.displayModelOrViewById({ id: 'Vall_threads' }))`
+        )
       } else {
-        this.refs[REF].loadURL(url)
+        this.webviewRef.current.loadURL(url)
       }
     }
   }
@@ -113,7 +126,9 @@ export default class SlackServiceWebView extends React.Component {
           evt.channel.notificationId,
           evt.channel.notification,
           (notificationId) => {
-            this.refs[REF].send(WB_BROWSER_NOTIFICATION_CLICK, { notificationId: notificationId })
+            if (this.webviewRef.current) {
+              this.webviewRef.current.send(WB_BROWSER_NOTIFICATION_CLICK, { notificationId: notificationId })
+            }
           }
         )
         break
@@ -130,8 +145,10 @@ export default class SlackServiceWebView extends React.Component {
     if (this.state.isActive) {
       if (this.state.isSearching !== prevState.isSearching || this.state.searchId !== prevState.searchId) {
         if (this.state.isSearching) {
-          this.refs[REF].executeJavaScript(`document.querySelector('.search_input>[contenteditable]').focus()`)
-          accountActions.untrackSearchingService.defer(this.props.serviceId)
+          if (this.webviewRef.current) {
+            this.webviewRef.current.executeJavaScript(`document.querySelector('.search_input>[contenteditable]').focus()`)
+            accountActions.untrackSearchingService.defer(this.props.serviceId)
+          }
         }
       }
     }
@@ -142,7 +159,7 @@ export default class SlackServiceWebView extends React.Component {
 
     return (
       <CoreServiceWebView
-        ref={REF}
+        ref={this.webviewRef}
         mailboxId={mailboxId}
         serviceId={serviceId}
         hasSearch={false}

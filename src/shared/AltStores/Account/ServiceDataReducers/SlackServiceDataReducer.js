@@ -19,6 +19,11 @@ class SlackServiceDataReducer extends ServiceDataReducer {
   */
   static setSlackUnreadInfo (service, serviceData, unreadInfo) {
     return serviceData.changeData({
+      slackUnreadThreadInfo: {
+        has_unreads: unreadInfo.threads.has_unreads,
+        mention_count: unreadInfo.threads.mention_count,
+        mention_count_by_channel: unreadInfo.threads.mention_count_by_channel
+      },
       slackUnreadChannelInfo: unreadInfo.channels.reduce((acc, channel) => {
         acc[channel.id] = {
           id: channel.id,
@@ -152,6 +157,22 @@ class SlackServiceDataReducer extends ServiceDataReducer {
     }
   }
 
+  /**
+  * Updates the thread state
+  * @param service: the parent service
+  * @param serviceData: the serviceData to update
+  * @param rtmEvent: the event that came through from the rtm IM
+  */
+  static updateThreadState (service, serviceData, rtmEvent) {
+    return serviceData.changeData({
+      slackUnreadThreadInfo: {
+        has_unreads: rtmEvent.has_unreads,
+        mention_count: rtmEvent.mention_count,
+        mention_count_by_channel: rtmEvent.mention_count_by_channel
+      }
+    })
+  }
+
   /* **************************************************************************/
   // Unread: new messages
   /* **************************************************************************/
@@ -188,6 +209,12 @@ class SlackServiceDataReducer extends ServiceDataReducer {
   */
   static rtmChannelMessage (service, serviceData, rtmEvent) {
     const channelInfo = serviceData.slackUnreadChannelInfo[rtmEvent.channel]
+    if (!rtmEvent.text) { return undefined }
+    if (rtmEvent.thread_ts !== undefined || rtmEvent.subtype === 'message_replied') {
+      // Sent on thread reply. We'll pick this up in "update_thread_state"
+      return undefined
+    }
+
     if (channelInfo) {
       const userMentioned = (rtmEvent.text || '').indexOf(`<@${service.authUserId}>`) !== -1
       return serviceData.changeDataWithChangeset({
