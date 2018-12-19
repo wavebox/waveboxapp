@@ -93,7 +93,7 @@ class TopLevelErrorBoundary extends React.Component {
       SUPPORT_URL,
       SUPPORT_URL.indexOf('?') === -1 ? '?' : '&',
       'support_message=' + encodeURIComponent(report),
-      'app_version=' + encodeURIComponent(pkg.version)
+      '&app_version=' + encodeURIComponent(pkg.version)
     ].join('')
 
     electron.remote.shell.openExternal(url)
