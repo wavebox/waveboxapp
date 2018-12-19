@@ -7,6 +7,7 @@ import { evtMain } from 'AppEvents'
 import { toKeyEvent } from 'keyboardevent-from-electron-accelerator'
 import WaveboxAppPrimaryMenuActions from './WaveboxAppPrimaryMenuActions'
 import QuickSwitchAcceleratorHandler from './QuickSwitchAcceleratorHandler'
+import { T } from 'i18n'
 
 class WaveboxAppPrimaryMenu {
   /* ****************************************************************************/
@@ -57,16 +58,16 @@ class WaveboxAppPrimaryMenu {
         label: process.platform === 'darwin' ? `${tlpfx}Application` : `${tlpfx}File`,
         submenu: [
           {
-            label: userEmail ? `Wavebox Subscription: ${userEmail}` : 'Wavebox Subscription: Logged out',
+            label: `${T('Wavebox Subscription')}: ${userEmail || T('Logged out')}}`,
             click: WaveboxAppPrimaryMenuActions.waveboxAccount
           },
           { type: 'separator' },
           {
-            label: 'About',
+            label: T('About'),
             click: WaveboxAppPrimaryMenuActions.aboutDialog
           },
           {
-            label: 'Check for Update',
+            label: T('Check for Update'),
             click: WaveboxAppPrimaryMenuActions.checkForUpdate
           },
           { type: 'separator' },

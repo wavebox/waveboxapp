@@ -17,6 +17,7 @@ import OpenInBrowserIcon from '@material-ui/icons/OpenInBrowser'
 import ThemeTools from 'wbui/Themes/ThemeTools'
 import classNames from 'classnames'
 import FASFileDownload from 'wbfa/FASFileDownload'
+import { T } from 'i18n'
 
 const styles = (theme) => ({
   toolbar: {
@@ -200,19 +201,19 @@ class BrowserToolbar extends React.Component {
           <Typography className={classes.toolbarUrl}>
             {this.externalUrl(currentUrl)}
           </Typography>
-          <Tooltip title='Find in Page'>
+          <Tooltip title={T('Find in Page')}>
             <IconButton onClick={() => browserActions.toggleSearch()}>
               <SearchIcon className={classes.icon} />
             </IconButton>
           </Tooltip>
           {this.isDownloadableUrl(currentUrl) ? (
-            <Tooltip title='Download'>
+            <Tooltip title={T('Download')}>
               <IconButton onClick={this.handleDownload}>
                 <FASFileDownload className={classNames(classes.icon, classes.faIcon)} />
               </IconButton>
             </Tooltip>
           ) : undefined}
-          <Tooltip title='Open in Browser' placement='bottom-start'>
+          <Tooltip title={T('Open in Browser')} placement='bottom-start'>
             <IconButton onClick={this.handleOpenInBrowser}>
               <OpenInBrowserIcon className={classes.icon} />
             </IconButton>

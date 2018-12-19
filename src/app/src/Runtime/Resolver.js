@@ -94,6 +94,14 @@ class Resolver {
   static audio (name) {
     return path.resolve(path.join(this.sourceRoot(), 'audio/', name))
   }
+
+  /**
+  * Resolves a locale path
+  * @return the full path to the file
+  */
+  static locales () {
+    return path.resolve(path.join(this.sourceRoot(), 'locales/'))
+  }
 }
 
 export default Resolver

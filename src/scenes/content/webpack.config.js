@@ -42,6 +42,7 @@ module.exports = function (env) {
       alias: Object.assign({},
         FontAwesomeAlias(path.join(__dirname, 'node_modules'), ROOT_DIR),
         {
+          i18n: path.resolve(path.join(__dirname, 'src/i18n')),
           Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
           stores: path.resolve(path.join(__dirname, 'src/stores')),
           Scenes: path.resolve(path.join(__dirname, 'src/Scenes'))

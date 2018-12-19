@@ -40,6 +40,7 @@ module.exports = function (env) {
         FontAwesomeAlias(path.join(__dirname, 'node_modules'), ROOT_DIR),
         {
           Components: path.resolve(path.join(__dirname, 'src/Components')),
+          i18n: path.resolve(path.join(__dirname, 'src/i18n')),
           Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
           Scenes: path.resolve(path.join(__dirname, 'src/Scenes')),
           stores: path.resolve(path.join(__dirname, 'src/stores'))

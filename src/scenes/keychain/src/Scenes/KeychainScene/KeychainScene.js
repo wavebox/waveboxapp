@@ -19,6 +19,7 @@ import {
   WB_KEYCHAIN_ADD_CREDENTIALS,
   WB_KEYCHAIN_DELETE_CREDENTIALS
 } from 'shared/ipcEvents'
+import { T } from 'i18n'
 
 const styles = {
   // Title
@@ -233,7 +234,7 @@ class KeychainScene extends React.Component {
           <TableHead>
             <TableRow>
               <TableCell className={classes.checkboxCell} padding='checkbox' />
-              <TableCell>Name</TableCell>
+              <TableCell>{T('Name')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -259,10 +260,10 @@ class KeychainScene extends React.Component {
     } else {
       return (
         <div className={classes.noneMessage}>
-          <div>{`No passwords saved for ${serviceName}`}</div>
+          <div>{`${T('No passwords saved for')} ${serviceName}`}</div>
           <br />
           <Button variant='contained' color='primary' onClick={this.handleOpenAddDialog}>
-            Add your first
+            {T('Add your first')}
           </Button>
         </div>
       )
@@ -279,7 +280,7 @@ class KeychainScene extends React.Component {
           <Typography variant='title' className={classes.toolbarText}>
             <span>
               <span className={classes.title}>
-                <strong>Saved passwords for </strong>
+                <strong>{T('Saved passwords for')} </strong>
                 <span>{serviceName}</span>
               </span>
               <KeychainStorageInfo className={classes.storageInfo} />
@@ -293,14 +294,14 @@ class KeychainScene extends React.Component {
               className={classes.actionbarButton}
               disabled={requesting}
               onClick={this.handleOpenAddDialog}>
-              Add
+              {T('Add')}
             </Button>
             <Button
               variant='contained'
               className={classes.actionbarButton}
               disabled={requesting || selected.length === 0}
               onClick={this.handleDeleteSelectedCredentials}>
-              Remove
+              {T('Remove')}
             </Button>
           </div>
         ) : undefined}

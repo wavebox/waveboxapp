@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
 import React from 'react'
+import electron from 'electron'
 import { settingsActions } from 'stores/settings'
 import { dictionariesStore, dictionariesActions } from 'stores/dictionaries'
 import modelCompare from 'wbui/react-addons-model-compare'
@@ -10,10 +11,9 @@ import SettingsListItemSelectInline from 'wbui/SettingsListItemSelectInline'
 import SettingsListItemButton from 'wbui/SettingsListItemButton'
 import { withStyles } from '@material-ui/core/styles'
 import LanguageIcon from '@material-ui/icons/Language'
+import i18n from 'i18n'
 
-const styles = {
-
-}
+const styles = {}
 
 @withStyles(styles)
 class LanguageSettingsSection extends React.Component {
@@ -44,7 +44,8 @@ class LanguageSettingsSection extends React.Component {
 
   state = (() => {
     return {
-      installedDictionaries: dictionariesStore.getState().sortedInstalledDictionaryInfos()
+      installedDictionaries: dictionariesStore.getState().sortedInstalledDictionaryInfos(),
+      systemLocale: electron.remote.app.getLocale()
     }
   })()
 
@@ -77,7 +78,7 @@ class LanguageSettingsSection extends React.Component {
 
   render () {
     const { language, showRestart, classes, ...passProps } = this.props
-    const { installedDictionaries } = this.state
+    const { installedDictionaries, systemLocale } = this.state
     const dictionaryState = dictionariesStore.getState()
     const primaryDictionaryInfo = dictionaryState.getDictionaryInfo(language.spellcheckerLanguage)
 
@@ -96,10 +97,10 @@ class LanguageSettingsSection extends React.Component {
           label='Wavebox UI Language (Requires Restart)'
           value={language.uiLanguage !== null ? language.uiLanguage : '__default__'}
           options={[
-            { value: '__default__', label: 'System default' },
-            { value: 'en_US', label: 'English (US)' },
-            { value: 'de', label: 'German' }
-          ]}
+            { value: '__default__', label: `System default (${systemLocale})` }
+          ].concat(i18n.localeCodesSorted.map((locale) => {
+            return { value: locale, label: `{i18n.getNativeLanguageName(locale)} (${locale})` }
+          }))}
           onChange={(evt, value) => {
             showRestart()
             settingsActions.sub.language.setUiLanguage(value !== '__default__' ? value : null)

@@ -4,6 +4,7 @@ import ProcessMonitor from './ProcessMonitor'
 import ConnectionMonitor from './ConnectionMonitor'
 import { Paper, AppBar, Toolbar, FormGroup, FormControlLabel, Switch } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
+import { T } from 'i18n'
 
 const styles = {
   root: {
@@ -54,7 +55,7 @@ class MonitorScene extends React.Component {
           <Toolbar className={classes.toolbar}>
             <FormGroup>
               <FormControlLabel
-                label='Advanced Mode'
+                label={T('Advanced Mode')}
                 control={
                   <Switch
                     checked={isAdvanced}
@@ -65,11 +66,11 @@ class MonitorScene extends React.Component {
           </Toolbar>
         </AppBar>
         <Paper className={classes.section}>
-          <h2 className={classes.sectionTitle}>Processes</h2>
+          <h2 className={classes.sectionTitle}>{T('Processes')}</h2>
           <ProcessMonitor isAdvanced={isAdvanced} />
         </Paper>
         <Paper className={classes.section}>
-          <h2 className={classes.sectionTitle}>Sync Channels</h2>
+          <h2 className={classes.sectionTitle}>{T('Sync Channels')}</h2>
           <ConnectionMonitor />
         </Paper>
       </div>

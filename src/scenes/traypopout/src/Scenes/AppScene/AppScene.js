@@ -18,6 +18,7 @@ import { withStyles } from '@material-ui/core/styles'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import classNames from 'classnames'
 import ErrorBoundary from 'wbui/ErrorBoundary'
+import { T } from 'i18n'
 
 const TAB_HEIGHT = 40
 const TOOLBAR_HEIGHT = 40
@@ -258,19 +259,19 @@ class AppScene extends React.Component {
               onChange={this.handleChangeTab}
               classes={{ indicator: classes.tabInkBar }}>
               <Tab
-                label='Unread'
+                label={T('Unread')}
                 className={classes.tabButton}
                 value={UNREAD_INDEX} />
               <Tab
-                label='Notifications'
+                label={T('Notifications')}
                 className={classes.tabButton}
                 value={NOTIF_INDEX} />
               <Tab
-                label='Recent'
+                label={T('Recent')}
                 className={classes.tabButton}
                 value={RECENT_INDEX} />
               <Tab
-                label='Tasks'
+                label={T('Tasks')}
                 className={classes.tabButton}
                 value={READING_INDEX} />
             </Tabs>

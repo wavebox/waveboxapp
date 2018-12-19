@@ -39,6 +39,8 @@ module.exports = function (env) {
     ].filter((p) => !!p),
     resolve: {
       alias: {
+        i18n: path.resolve(path.join(__dirname, 'src/i18n')),
+        Runtime: path.resolve(path.join(__dirname, 'src/Runtime')),
         stores: path.resolve(path.join(__dirname, 'src/stores')),
         Scenes: path.resolve(path.join(__dirname, 'src/Scenes'))
       }

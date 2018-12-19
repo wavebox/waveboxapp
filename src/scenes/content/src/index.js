@@ -7,6 +7,8 @@ import { WB_SEND_IPC_TO_CHILD } from 'shared/ipcEvents'
 import { ipcRenderer, webFrame, remote } from 'electron'
 import { settingsStore, settingsActions } from 'stores/settings'
 import TopLevelErrorBoundary from 'wbui/TopLevelErrorBoundary'
+import i18n from 'i18n'
+import Resolver from 'Runtime/Resolver'
 
 // Prevent zooming
 webFrame.setVisualZoomLevelLimits(1, 1)
@@ -35,6 +37,9 @@ document.addEventListener('dragover', (evt) => {
 // Load what we have in the db
 settingsStore.getState()
 settingsActions.load()
+
+// Language
+i18n.autoInitialize(Resolver.locales(), settingsStore)
 
 // Parse our settings
 const {

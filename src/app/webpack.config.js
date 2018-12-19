@@ -57,6 +57,7 @@ module.exports = function (env) {
         Extensions: path.resolve(path.join(__dirname, 'src/Extensions')),
         HTTP: path.resolve(path.join(__dirname, 'src/HTTP')),
         HTTPAuth: path.resolve(path.join(__dirname, 'src/HTTPAuth')),
+        i18n: path.resolve(path.join(__dirname, 'src/i18n')),
         LinkOpener: path.resolve(path.join(__dirname, 'src/LinkOpener')),
         Notifications: path.resolve(path.join(__dirname, 'src/Notifications')),
         Permissions: path.resolve(path.join(__dirname, 'src/Permissions')),

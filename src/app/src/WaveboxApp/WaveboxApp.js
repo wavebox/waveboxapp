@@ -34,6 +34,8 @@ import mailboxStorage from 'Storage/mailboxStorage'
 import constants from 'shared/constants'
 import CrashReporterWatcher from 'shared/CrashReporter/CrashReporterWatcher'
 import WaveboxAppCommandKeyTracker from './WaveboxAppCommandKeyTracker'
+import i18n from 'i18n'
+import Resolver from 'Runtime/Resolver'
 
 const privStarted = Symbol('privStarted')
 const privArgv = Symbol('privArgv')
@@ -291,6 +293,9 @@ class WaveboxApp {
     const settingsState = settingsStore.getState()
     const accountState = accountStore.getState()
     const userState = userStore.getState()
+
+    // Language
+    i18n.autoInitialize(Resolver.locales(), settingsStore)
 
     // Load extensions before any webcontents get created
     if (this[privArgv].safemode !== true) {

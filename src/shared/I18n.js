@@ -1,13 +1,15 @@
 import fs from 'fs'
 import path from 'path'
+import electron from 'electron'
 
 const privTransDict = Symbol('privTransDict')
 const privLocalesPath = Symbol('privLocalesPath')
 const privLangCode = Symbol('privLangCode')
-const LOCALES = new Set([
-  'en_US',
-  'de'
-])
+const LOCALES = Object.freeze({
+  'cy': ['Welsh', 'Cymraeg'],
+  'de': ['German', 'Deutsch']
+})
+const LOCALE_CODES = new Set(Object.keys(LOCALES))
 let hasWarnedInitFailure = false
 
 class I18n {
@@ -19,6 +21,31 @@ class I18n {
     this[privTransDict] = undefined
     this[privLocalesPath] = undefined
     this[privLangCode] = undefined
+  }
+
+  /**
+  * Initializes grabbing language settings etc from the store
+  * @param localesPath: the path to the locale files
+  * @param settingsStore: the store to use to configure
+  */
+  autoInitialize (localesPath, settingsStore) {
+    if (process.type === 'renderer') {
+      this.initialize(
+        localesPath,
+        settingsStore.getState().launched.language.uiLanguage || electron.remote.app.getLocale()
+      )
+    } else {
+      let appLocale
+      try {
+        appLocale = electron.app.getLocale()
+      } catch (ex) {
+        appLocale = 'en_US'
+      }
+      this.initialize(
+        localesPath,
+        settingsStore.getState().launched.language.uiLanguage || appLocale
+      )
+    }
   }
 
   /**
@@ -37,6 +64,9 @@ class I18n {
 
   get isInitialized () { return this[privLocalesPath] !== undefined }
   get isLoaded () { return this[privTransDict] !== undefined }
+  get localeCodes () { return Array.from(LOCALE_CODES) }
+  get locales () { return LOCALES }
+  get localeCodesSorted () { return this.localeCodes.sort() }
 
   /* **************************************************************************/
   // Utils
@@ -49,11 +79,11 @@ class I18n {
   _getKnownLang (lang) {
     if (typeof (lang) === 'string') {
       const langCode = lang.replace(/-/g, '_')
-      if (LOCALES.has(langCode)) {
+      if (LOCALE_CODES.has(langCode)) {
         return langCode
       } else if (langCode.length > 2) {
         const short = langCode.substr(0, 2)
-        if (LOCALES.has(short)) {
+        if (LOCALE_CODES.has(short)) {
           return short
         }
       }
@@ -77,7 +107,6 @@ class I18n {
     } else {
       if (this.isInitialized) {
         const knownCode = this._getKnownLang(this[privLangCode])
-        console.log(">>", this[privLangCode], knownCode)
         if (knownCode) {
           try {
             this[privTransDict] = JSON.parse(fs.readFileSync(path.join(this[privLocalesPath], `${knownCode}.json`)))
@@ -99,6 +128,18 @@ class I18n {
     }
   }
   t = this.T
+
+  /* **************************************************************************/
+  // Language codes
+  /* **************************************************************************/
+
+  /**
+  * @param code: the language code
+  * @return the native language name
+  */
+  getNativeLanguageName (code) {
+    return LOCALES[code] ? LOCALES[code][1] : code
+  }
 }
 
 export default I18n

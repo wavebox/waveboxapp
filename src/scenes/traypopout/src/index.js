@@ -10,6 +10,8 @@ import { settingsStore, settingsActions } from 'stores/settings'
 import CrashReporterWatcher from 'shared/CrashReporter/CrashReporterWatcher'
 import os from 'os'
 import TopLevelErrorBoundary from 'wbui/TopLevelErrorBoundary'
+import i18n from 'i18n'
+import Resolver from 'Runtime/Resolver'
 
 // Load what we have in the db
 userStore.getState()
@@ -22,6 +24,9 @@ notifhistStore.getState()
 notifhistActions.load()
 settingsStore.getState()
 settingsActions.load()
+
+// Language
+i18n.autoInitialize(Resolver.locales(), settingsStore)
 
 const crashReporter = new CrashReporterWatcher()
 crashReporter.start(userStore, settingsStore, CrashReporterWatcher.RUNTIME_IDENTIFIERS.TRAY, os.release())
