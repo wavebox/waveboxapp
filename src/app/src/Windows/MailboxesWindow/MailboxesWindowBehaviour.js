@@ -47,6 +47,7 @@ class MailboxesWindowBehaviour {
     const contents = webContents.fromId(webContentsId)
     if (contents && contents.getType() === 'webview' && contents.hostWebContents.id === this.webContentsId) {
       contents.on('new-window', this.handleWebViewNewWindow)
+      contents.on('did-start-navigation', this.handleWebViewDidStartNavigation)
       ElectronWebContentsWillNavigateShim.on(contents, this.handleWebViewWillNavigate)
       contents.on('before-input-event', this.handleBeforeInputEvent)
       contents.on('destroyed', () => {
@@ -142,6 +143,20 @@ class MailboxesWindowBehaviour {
   */
   handleWebViewWillNavigate = (evt, targetUrl) => {
     WindowOpeningHandler.handleWillNavigate(evt, {
+      targetUrl: targetUrl,
+      openingBrowserWindow: this._getOpeningBrowserWindow(evt),
+      openingWindowType: WINDOW_TYPES.MAIN,
+      tabMetaInfo: this.tabManager.tabMetaInfo(evt.sender.id)
+    })
+  }
+
+  /**
+  * Handles the webview starting navigation
+  * @param evt: the event that fired
+  * @param targetUrl: the url we're navigating to
+  */
+  handleWebViewDidStartNavigation = (evt, targetUrl) => {
+    WindowOpeningHandler.handleDidStartNavigation(evt, {
       targetUrl: targetUrl,
       openingBrowserWindow: this._getOpeningBrowserWindow(evt),
       openingWindowType: WINDOW_TYPES.MAIN,
