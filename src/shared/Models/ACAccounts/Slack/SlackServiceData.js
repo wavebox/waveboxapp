@@ -9,6 +9,7 @@ class SlackServiceData extends CoreACServiceData {
   get slackUnreadGroupInfo () { return this._value_('slackUnreadGroupInfo', {}) }
   get slackUnreadMPIMInfo () { return this._value_('slackUnreadMPIMInfo', {}) }
   get slackUnreadIMInfo () { return this._value_('slackUnreadIMInfo', {}) }
+  get slackUnreadThreadInfo () { return this._value_('slackUnreadThreadInfo', {}) }
 
   /* **************************************************************************/
   // Content utils
@@ -74,8 +75,9 @@ class SlackServiceData extends CoreACServiceData {
       const dm = this.slackUnreadIMInfo[imId]
       return this._isImAlive(dm) ? acc + dm.dm_count : acc
     }, 0)
+    const threadCount = this.slackUnreadThreadInfo.mention_count || 0
 
-    return channelCount + groupCount + imCount + mpimCount
+    return channelCount + groupCount + imCount + mpimCount + threadCount
   }
 
   get hasUnreadActivity () {
@@ -89,6 +91,7 @@ class SlackServiceData extends CoreACServiceData {
       return this._isGroupAlive(group) && group.has_unreads
     })
     if (groupId) { return true }
+    if (this.slackUnreadThreadInfo.has_unreads === true) { return true }
 
     return false
   }
@@ -176,7 +179,17 @@ class SlackServiceData extends CoreACServiceData {
       return acc
     }, [])
 
-    return [].concat(ims, mpims, channels, groups)
+    const threads = (this.slackUnreadThreadInfo.mention_count || 0) > 0 ? [{
+      id: 'global_threads',
+      text: `${this.slackUnreadThreadInfo.mention_count} unread thread${this.slackUnreadThreadInfo.mention_count === 1 ? '' : 's'}`,
+      date: 0,
+      data: {
+        global: 'vall_threads',
+        serviceId: this.parentId
+      }
+    }] : []
+
+    return [].concat(threads, ims, mpims, channels, groups)
   }
 }
 

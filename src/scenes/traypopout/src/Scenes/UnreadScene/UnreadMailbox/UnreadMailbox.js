@@ -120,6 +120,7 @@ class UnreadMailbox extends React.Component {
           {serviceIds.map((serviceId) => {
             return (
               <UnreadServiceListItem
+                showHeading={serviceIds.length > 1}
                 mailboxId={mailboxId}
                 serviceId={serviceId}
                 key={serviceId} />

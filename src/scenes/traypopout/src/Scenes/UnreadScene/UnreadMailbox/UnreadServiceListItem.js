@@ -36,7 +36,8 @@ class UnreadServiceListItem extends React.Component {
 
   static propTypes = {
     mailboxId: PropTypes.string.isRequired,
-    serviceId: PropTypes.string.isRequired
+    serviceId: PropTypes.string.isRequired,
+    showHeading: PropTypes.bool.isRequired
   }
 
   /* **************************************************************************/
@@ -171,7 +172,10 @@ class UnreadServiceListItem extends React.Component {
   }
 
   render () {
-    const { classes } = this.props
+    const {
+      classes,
+      showHeading
+    } = this.props
     const {
       displayName,
       messages,
@@ -181,11 +185,13 @@ class UnreadServiceListItem extends React.Component {
 
     return (
       <React.Fragment>
-        <ListSubheader
-          disableSticky
-          className={classes.subheader}>
-          {displayName}
-        </ListSubheader>
+        {showHeading ? (
+          <ListSubheader
+            disableSticky
+            className={classes.subheader}>
+            {displayName}
+          </ListSubheader>
+        ) : undefined}
         {messages.length ? (
           messages.map((message, index) => {
             return (

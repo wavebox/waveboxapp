@@ -4,7 +4,6 @@ import { Dialog, DialogContent } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import { accountStore, accountActions } from 'stores/account'
-import { settingsStore } from 'stores/settings'
 import Zoom from '@material-ui/core/Zoom'
 import { ipcRenderer } from 'electron'
 import SwitcherServiceCell from './SwitcherServiceCell'
@@ -13,7 +12,6 @@ import {
   WB_QUICK_SWITCH_HIGHLIGHT_PREV,
   WB_QUICK_SWITCH_SELECT
 } from 'shared/ipcEvents'
-import ElectronAccelerator from 'wbui/ElectronAccelerator'
 
 const TRANSITION_DURATION = 50
 
@@ -34,33 +32,6 @@ const styles = {
     paddingLeft: 12,
     paddingRight: 12,
     paddingBottom: 6
-  },
-  acceleratorContainer: {
-    height: 20,
-    fontSize: '10px',
-    lineHeight: '20px',
-    textAlign: 'center',
-    paddingLeft: 12,
-    paddingRight: 12,
-    marginBottom: 6
-  },
-  accelerator: {
-    display: 'inline-block',
-    margin: '0px 0.5ch',
-    color: 'rgb(130, 130, 130)'
-  },
-  kbd: {
-    display: 'inline-block',
-    border: '1px solid rgb(130, 130, 130)',
-    color: 'rgb(130, 130, 130)',
-    paddingLeft: 4,
-    paddingRight: 4,
-    borderRadius: 4,
-    margin: '0px 0.4ch',
-    minWidth: 30,
-    textAlign: 'center',
-    fontFamily: 'inherit',
-    lineHeight: '16px'
   }
 }
 
@@ -103,8 +74,6 @@ class SwitcherScene extends React.Component {
     ipcRenderer.on(WB_QUICK_SWITCH_HIGHLIGHT_NEXT, this.ipcHandleNext)
     ipcRenderer.on(WB_QUICK_SWITCH_HIGHLIGHT_PREV, this.ipcHandlePrev)
     ipcRenderer.on(WB_QUICK_SWITCH_SELECT, this.ipcHandleSelect)
-
-    settingsStore.listen(this.settingsChanged)
   }
 
   componentWillUnmount () {
@@ -113,8 +82,6 @@ class SwitcherScene extends React.Component {
     ipcRenderer.removeListener(WB_QUICK_SWITCH_HIGHLIGHT_NEXT, this.ipcHandleNext)
     ipcRenderer.removeListener(WB_QUICK_SWITCH_HIGHLIGHT_PREV, this.ipcHandlePrev)
     ipcRenderer.removeListener(WB_QUICK_SWITCH_SELECT, this.ipcHandleSelect)
-
-    settingsStore.unlisten(this.settingsChanged)
   }
 
   /* **************************************************************************/
@@ -123,7 +90,6 @@ class SwitcherScene extends React.Component {
 
   state = (() => {
     const accountState = accountStore.getState()
-    const settingsState = settingsStore.getState()
     const serviceIds = accountState.lastAccessedServiceIds(true).slice(0, 8)
     const hasServices = serviceIds.length > 0
 
@@ -136,21 +102,12 @@ class SwitcherScene extends React.Component {
 
     return {
       open: hasServices,
-      nextAccelerator: settingsState.accelerators.quickSwitchNext,
-      prevAccelerator: settingsState.accelerators.quickSwitchPrev,
       serviceIds: serviceIds, // Don't update over component lifecycle
       selectedServiceId: this._getMode() === 'next' // Don't update over component lifecycle
         ? this._getNextServiceId(accountState.activeServiceId(), serviceIds)
         : this._getPrevServiceId(accountState.activeServiceId(), serviceIds)
     }
   })()
-
-  settingsChanged = (settingsState) => {
-    this.setState({
-      nextAccelerator: settingsState.accelerators.quickSwitchNext,
-      prevAccelerator: settingsState.accelerators.quickSwitchPrev
-    })
-  }
 
   /* **************************************************************************/
   // Data Utils
@@ -300,12 +257,8 @@ class SwitcherScene extends React.Component {
     const {
       open,
       serviceIds,
-      selectedServiceId,
-      nextAccelerator,
-      prevAccelerator
+      selectedServiceId
     } = this.state
-    const nextAcceleratorValid = ElectronAccelerator.isValid(nextAccelerator)
-    const prevAcceleratorValid = ElectronAccelerator.isValid(prevAccelerator)
 
     return (
       <Dialog
@@ -335,21 +288,6 @@ class SwitcherScene extends React.Component {
               )
             })}
           </div>
-          {nextAcceleratorValid && prevAcceleratorValid ? (
-            <div className={classes.acceleratorContainer}>
-              Use
-              <ElectronAccelerator
-                className={classes.accelerator}
-                keyClassName={classes.kbd}
-                accelerator={nextAccelerator} />
-              and
-              <ElectronAccelerator
-                className={classes.accelerator}
-                keyClassName={classes.kbd}
-                accelerator={prevAccelerator} />
-              to switch
-            </div>
-          ) : undefined}
         </DialogContent>
       </Dialog>
     )

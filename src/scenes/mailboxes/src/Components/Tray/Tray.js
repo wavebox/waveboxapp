@@ -25,7 +25,9 @@ import {
   WB_FOCUS_MAILBOXES_WINDOW,
   WB_FOCUS_APP,
   WB_QUIT_APP,
-  WB_TOGGLE_TRAY_WITH_BOUNDS
+  WB_TOGGLE_TRAY_WITH_BOUNDS,
+  WB_TRAY_ICON_CREATED,
+  WB_TRAY_ICON_DESTROYED
 } from 'shared/ipcEvents'
 import TrayContextMenuUnreadRenderer from './TrayContextMenuUnreadRenderer'
 import pluralize from 'pluralize'
@@ -40,6 +42,16 @@ export default class Tray extends React.Component {
     hasUnreadActivity: PropTypes.bool.isRequired,
     traySettings: PropTypes.object.isRequired,
     launchTraySettings: PropTypes.object.isRequired
+  }
+
+  /* **************************************************************************/
+  // Lifecycle
+  /* **************************************************************************/
+
+  constructor (props) {
+    super(props)
+
+    this.trayIconInitialized = false
   }
 
   /* **************************************************************************/
@@ -79,6 +91,7 @@ export default class Tray extends React.Component {
     }
 
     ipcRenderer.removeListener(WB_TOGGLE_TRAY_WITH_BOUNDS, this.handleIpcToggleTrayWithBounds)
+    ipcRenderer.send(WB_TRAY_ICON_DESTROYED)
   }
 
   /* **************************************************************************/
@@ -380,6 +393,12 @@ export default class Tray extends React.Component {
               lastContextMenu.destroy()
             }, 1000)
           }
+        }
+
+        // Tell our main thread
+        if (!this.trayIconInitialized) {
+          this.trayIconInitialized = true
+          ipcRenderer.send(WB_TRAY_ICON_CREATED)
         }
       })
 

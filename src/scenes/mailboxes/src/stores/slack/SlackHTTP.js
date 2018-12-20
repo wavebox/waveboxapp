@@ -78,7 +78,8 @@ class SlackHTTP {
     const query = querystring.stringify({
       token: auth,
       simple_unreads: simpleUnreads,
-      mpim_aware: true
+      mpim_aware: true,
+      include_threads: true
     })
     return Promise.resolve()
       .then(() => window.fetch('https://slack.com/api/users.counts?' + query))

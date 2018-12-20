@@ -6,6 +6,7 @@ import querystring from 'querystring'
 import { WB_SEND_IPC_TO_CHILD } from 'shared/ipcEvents'
 import { ipcRenderer, webFrame, remote } from 'electron'
 import { settingsStore, settingsActions } from 'stores/settings'
+import TopLevelErrorBoundary from 'wbui/TopLevelErrorBoundary'
 
 // Prevent zooming
 webFrame.setVisualZoomLevelLimits(1, 1)
@@ -46,7 +47,9 @@ browserActions.load(url)
 
 // Render
 ReactDOM.render((
-  <Provider url={url} partition={partition} />
+  <TopLevelErrorBoundary>
+    <Provider url={url} partition={partition} />
+  </TopLevelErrorBoundary>
 ), document.getElementById('ReactComponent-AppScene'))
 
 // Message passing

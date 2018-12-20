@@ -189,7 +189,7 @@ class DebugTests {
     const accountStore = require('stores/account/accountStore').default
     const crextensionStore = require('stores/crextension/crextensionStore').default
     const crextensionActions = require('stores/crextension/crextensionActions').default
-    const { ipcRenderer, remote } = require('electron')
+    const { ipcRenderer, remote, webFrame } = require('electron')
     const pkg = require('package.json')
     const {
       WB_SHOW_TRAY_WINDOWED,
@@ -262,6 +262,14 @@ class DebugTests {
       console.log(`${sig} Tab DevTools:opened`)
     } else {
       console.warn(`${sig} Tab DevTools:FAILED. Needs webview`)
+    }
+
+    // Apis
+    if (remote.app.setTrayType === undefined) {
+      console.warn(`${sig} app.setTrayType unavailable`)
+    }
+    if (webFrame.createContextId === undefined) {
+      console.warn(`${sig} webFrame.createContextId unavailable`)
     }
 
     // Stats

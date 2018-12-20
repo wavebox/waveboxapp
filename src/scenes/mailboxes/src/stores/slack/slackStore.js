@@ -297,6 +297,13 @@ class SlackStore {
             data
           )
         })
+        rtm.on('message:update_thread_state', (data) => {
+          accountActions.reduceServiceData(
+            serviceId,
+            SlackServiceDataReducer.updateThreadState,
+            data
+          )
+        })
         rtm.on('message:message', (data) => {
           accountActions.reduceServiceData(
             serviceId,
