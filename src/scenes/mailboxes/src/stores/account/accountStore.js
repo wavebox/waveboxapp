@@ -729,7 +729,7 @@ class AccountStore extends RendererAccountStore {
             return {
               ...permenantAuth,
               pushToken: auth.pushToken,
-              email: (response.emails.find((a) => a.type === 'account') || {}).value
+              email: response.email
             }
           })
       })
