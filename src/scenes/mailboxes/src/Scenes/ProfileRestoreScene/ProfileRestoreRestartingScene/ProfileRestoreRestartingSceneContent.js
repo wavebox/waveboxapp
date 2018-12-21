@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dialog, DialogContent } from '@material-ui/core'
+import { DialogContent } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import lightBlue from '@material-ui/core/colors/lightBlue'
 import FARSyncAltIcon from 'wbfa/FARSyncAlt'
@@ -15,7 +15,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class ProfileRestoreRestartingScene extends React.Component {
+class ProfileRestoreRestartingSceneContent extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -23,20 +23,14 @@ class ProfileRestoreRestartingScene extends React.Component {
   render () {
     const { classes } = this.props
     return (
-      <Dialog
-        disableEnforceFocus
-        open
-        disableBackdropClick
-        disableEscapeKeyDown>
-        <DialogContent className={classes.dialogContent}>
-          <FARSyncAltIcon className={classes.buttonIcon} size='6x' spin color={lightBlue[600]} />
-          <div className={classes.text}>
-            Preparing to restart...
-          </div>
-        </DialogContent>
-      </Dialog>
+      <DialogContent className={classes.dialogContent}>
+        <FARSyncAltIcon className={classes.buttonIcon} size='6x' spin color={lightBlue[600]} />
+        <div className={classes.text}>
+          Preparing to restart...
+        </div>
+      </DialogContent>
     )
   }
 }
 
-export default ProfileRestoreRestartingScene
+export default ProfileRestoreRestartingSceneContent

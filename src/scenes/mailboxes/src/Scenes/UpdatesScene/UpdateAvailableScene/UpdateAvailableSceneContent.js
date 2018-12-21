@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Dialog, DialogActions, DialogContent, Button } from '@material-ui/core'
+import { DialogActions, DialogContent, Button } from '@material-ui/core'
 import { updaterActions, updaterStore } from 'stores/updater'
-import UpdateModalTitle from './UpdateModalTitle'
+import UpdateModalTitle from '../Common/UpdateModalTitle'
 import electron from 'electron'
 import { withStyles } from '@material-ui/core/styles'
 
@@ -33,28 +33,17 @@ const styles = {
 }
 
 @withStyles(styles)
-class UpdateAvailableScene extends React.Component {
+class UpdateAvailableSceneContent extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  static contextTypes = {
-    router: PropTypes.object.isRequired
-  }
   static propTypes = {
     match: PropTypes.shape({
       params: PropTypes.shape({
-        provider: PropTypes.oneOf(['squirrel', 'manual'])
-      })
-    })
-  }
-
-  /* **************************************************************************/
-  // Data Lifecycle
-  /* **************************************************************************/
-
-  state = {
-    open: true
+        provider: PropTypes.oneOf(['squirrel', 'manual']).isRequired
+      }).isRequired
+    }).isRequired
   }
 
   /* **************************************************************************/
@@ -65,8 +54,7 @@ class UpdateAvailableScene extends React.Component {
   * Closes the dialog
   */
   handleClose = () => {
-    this.setState({ open: false })
-    setTimeout(() => { window.location.hash = '/' }, 500)
+    window.location.hash = '/'
   }
 
   /* **************************************************************************/
@@ -77,7 +65,7 @@ class UpdateAvailableScene extends React.Component {
   * Installs the new update
   */
   handleSquirrelInstall = () => {
-    this.handleClose()
+    window.location.hash = '/'
     updaterActions.squirrelInstallUpdate()
   }
 
@@ -89,7 +77,7 @@ class UpdateAvailableScene extends React.Component {
   * Reprompts the user later on
   */
   handleCheckLater = () => {
-    this.handleClose()
+    window.location.hash = '/'
     updaterActions.scheduleNextUpdateCheck()
   }
 
@@ -97,7 +85,7 @@ class UpdateAvailableScene extends React.Component {
   * Takes the user to the download page
   */
   handleDownloadManual = () => {
-    this.handleClose()
+    window.location.hash = '/'
     const updaterState = updaterStore.getState()
     electron.remote.shell.openExternal(updaterState.lastManualDownloadUrl || updaterState.getManualUpdateDownloadUrl())
   }
@@ -203,25 +191,21 @@ class UpdateAvailableScene extends React.Component {
   }
 
   render () {
-    const { open } = this.state
     const {
       match: { params: { provider } },
       classes
     } = this.props
 
     return (
-      <Dialog
-        disableEnforceFocus
-        open={open}
-        onClose={this.handleCheckLater}>
+      <React.Fragment>
         <UpdateModalTitle />
         <DialogContent className={classes.dialogContent}>
           {this.renderMessage(classes, provider)}
         </DialogContent>
         {this.renderActions(classes, provider)}
-      </Dialog>
+      </React.Fragment>
     )
   }
 }
 
-export default UpdateAvailableScene
+export default UpdateAvailableSceneContent

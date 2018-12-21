@@ -1,14 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import SpinnerSceneContent from './SpinnerSceneContent'
-import { RouterDialog } from 'Components/RouterDialog'
+import RouterDialogController from './RouterDialogController'
+import { Route } from 'react-router'
 
-class SpinnerScene extends React.Component {
+export default class RouterDialogRoute extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
   static propTypes = {
+    path: PropTypes.string.isRequired,
     routeName: PropTypes.string.isRequired
   }
 
@@ -17,17 +18,13 @@ class SpinnerScene extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { routeName } = this.props
+    const { path, routeName, ...passProps } = this.props
+
     return (
-      <RouterDialog
-        routeName={routeName}
-        disableEnforceFocus
-        disableBackdropClick
-        disableEscapeKeyDown>
-        <SpinnerSceneContent />
-      </RouterDialog>
+      <Route
+        path={path}
+        {...passProps}
+        render={(props) => (<RouterDialogController {...props} routeName={routeName} />)} />
     )
   }
 }
-
-export default SpinnerScene

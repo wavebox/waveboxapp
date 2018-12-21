@@ -1,20 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import shallowCompare from 'react-addons-shallow-compare'
-import { withStyles } from '@material-ui/core/styles'
+import ProfileRestoreFetchingSceneContent from './ProfileRestoreFetchingSceneContent'
 import { RouterDialog } from 'Components/RouterDialog'
-import LinuxSetupSceneContent from './LinuxSetupSceneContent'
 
-const styles = {
-  root: {
-    maxWidth: 600,
-    width: 600,
-    minWidth: 600
-  }
-}
-
-@withStyles(styles)
-class LinuxSetupScene extends React.Component {
+class ProfileRestoreFetchingScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -24,10 +13,11 @@ class LinuxSetupScene extends React.Component {
   }
 
   /* **************************************************************************/
-  // User Interaction
+  // UI Events
   /* **************************************************************************/
 
   handleClose = () => {
+    // We allow the user to close this in case the request fails
     window.location.hash = '/'
   }
 
@@ -35,23 +25,17 @@ class LinuxSetupScene extends React.Component {
   // Rendering
   /* **************************************************************************/
 
-  shouldComponentUpdate (nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState)
-  }
-
   render () {
-    const { classes, routeName } = this.props
-
+    const { routeName } = this.props
     return (
       <RouterDialog
         routeName={routeName}
         disableEnforceFocus
-        onClose={this.handleClose}
-        classes={{ paper: classes.root }}>
-        <LinuxSetupSceneContent />
+        onClose={this.handleClose}>
+        <ProfileRestoreFetchingSceneContent />
       </RouterDialog>
     )
   }
 }
 
-export default LinuxSetupScene
+export default ProfileRestoreFetchingScene

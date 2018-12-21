@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import ServiceAttachWizardSceneContent from './ServiceAttachWizardSceneContent'
-import { RouterDialog, RouterDialogMatchProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
 import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
@@ -53,7 +53,7 @@ class ServiceAttachWizardScene extends React.Component {
         disableRestoreFocus
         onClose={this.handleClose}
         classes={{ paper: classes.root }}>
-        <RouterDialogMatchProvider routeName={routeName} Component={ServiceAttachWizardSceneContent} />
+        <RouterDialogStateProvider routeName={routeName} Component={ServiceAttachWizardSceneContent} />
       </RouterDialog>
     )
   }

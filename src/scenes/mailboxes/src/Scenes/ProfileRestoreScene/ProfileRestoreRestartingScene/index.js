@@ -1,0 +1,2 @@
+import ProfileRestoreRestartingScene from './ProfileRestoreRestartingScene'
+export default ProfileRestoreRestartingScene

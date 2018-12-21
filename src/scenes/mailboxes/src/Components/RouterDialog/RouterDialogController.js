@@ -15,7 +15,8 @@ export default class RouterDialog extends React.Component {
   static propTypes = {
     routeName: PropTypes.string.isRequired,
     manager: PropTypes.object.isRequired,
-    match: PropTypes.object.isRequired
+    match: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired
   }
 
   static defaultProps = {
@@ -37,8 +38,8 @@ export default class RouterDialog extends React.Component {
   /* **************************************************************************/
 
   componentDidMount () {
-    const { manager, routeName, match } = this.props
-    manager.controllerDidMount(routeName, this.instanceId, match)
+    const { manager, routeName, match, location } = this.props
+    manager.controllerDidMount(routeName, this.instanceId, match, location)
   }
 
   componentWillUnmount () {
@@ -51,8 +52,8 @@ export default class RouterDialog extends React.Component {
       nextProps.manager.controllerDidMount(nextProps.routeName, this.instanceId)
       this.props.manager.controllerDidUnmount(this.props.routeName, this.instanceId)
     }
-    if (this.props.match !== nextProps.match) {
-      nextProps.manager.updateControllerMatch(nextProps.routeName, this.instanceId, nextProps.match)
+    if (this.props.match !== nextProps.match || this.props.location !== nextProps.location) {
+      nextProps.manager.updateControllerMatch(nextProps.routeName, this.instanceId, nextProps.match, nextProps.location)
     }
   }
 

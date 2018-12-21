@@ -1,0 +1,2 @@
+import AccountAuthenticatingScene from './AccountAuthenticatingScene'
+export default AccountAuthenticatingScene

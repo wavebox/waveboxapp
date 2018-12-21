@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import SpinnerSceneContent from './SpinnerSceneContent'
 import { RouterDialog } from 'Components/RouterDialog'
+import AccountAuthenticatingSceneContent from './AccountAuthenticatingSceneContent'
 
-class SpinnerScene extends React.Component {
+class AccountAuthenticatingScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -18,16 +18,17 @@ class SpinnerScene extends React.Component {
 
   render () {
     const { routeName } = this.props
+
     return (
       <RouterDialog
         routeName={routeName}
         disableEnforceFocus
         disableBackdropClick
         disableEscapeKeyDown>
-        <SpinnerSceneContent />
+        <AccountAuthenticatingSceneContent />
       </RouterDialog>
     )
   }
 }
 
-export default SpinnerScene
+export default AccountAuthenticatingScene

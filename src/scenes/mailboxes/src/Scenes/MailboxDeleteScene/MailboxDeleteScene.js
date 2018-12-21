@@ -2,7 +2,7 @@ import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import PropTypes from 'prop-types'
 import MailboxDeleteSceneContent from './MailboxDeleteSceneContent'
-import { RouterDialog, RouterDialogMatchProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
 
 class MailboxDeleteScene extends React.Component {
   /* **************************************************************************/
@@ -40,7 +40,7 @@ class MailboxDeleteScene extends React.Component {
         routeName={routeName}
         disableEnforceFocus
         onClose={this.handleClose}>
-        <RouterDialogMatchProvider routeName={routeName} Component={MailboxDeleteSceneContent} />
+        <RouterDialogStateProvider routeName={routeName} Component={MailboxDeleteSceneContent} />
       </RouterDialog>
     )
   }

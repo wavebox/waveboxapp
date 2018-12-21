@@ -4,7 +4,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import Zoom from '@material-ui/core/Zoom'
 import SwitcherSceneContent from './SwitcherSceneContent'
-import { RouterDialog, RouterDialogMatchProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
 
 const TRANSITION_DURATION = 50
 
@@ -56,7 +56,7 @@ class SwitcherScene extends React.Component {
         TransitionComponent={Zoom}
         onClose={this.handleClose}
         classes={{ paper: classes.root }}>
-        <RouterDialogMatchProvider routeName={routeName} Component={SwitcherSceneContent} />
+        <RouterDialogStateProvider routeName={routeName} Component={SwitcherSceneContent} />
       </RouterDialog>
     )
   }

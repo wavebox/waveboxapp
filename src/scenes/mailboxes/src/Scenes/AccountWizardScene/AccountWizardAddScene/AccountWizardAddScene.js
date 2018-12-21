@@ -3,7 +3,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
 import AccountWizardAddSceneContent from './AccountWizardAddSceneContent'
-import { RouterDialog, RouterDialogMatchProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
 
 const styles = {
   root: {
@@ -52,7 +52,7 @@ class AccountWizardAddScene extends React.Component {
         disableRestoreFocus
         onClose={this.handleClose}
         classes={{ paper: classes.root }}>
-        <RouterDialogMatchProvider routeName={routeName} Component={AccountWizardAddSceneContent} />
+        <RouterDialogStateProvider routeName={routeName} Component={AccountWizardAddSceneContent} />
       </RouterDialog>
     )
   }

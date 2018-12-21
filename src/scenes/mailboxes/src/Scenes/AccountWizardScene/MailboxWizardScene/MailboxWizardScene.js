@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import MailboxWizardSceneContent from './MailboxWizardSceneContent'
-import { RouterDialog, RouterDialogMatchProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
 import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
@@ -54,7 +54,7 @@ class MailboxWizardScene extends React.Component {
         disableRestoreFocus
         onClose={this.handleClose}
         classes={{ paper: classes.root }}>
-        <RouterDialogMatchProvider routeName={routeName} Component={MailboxWizardSceneContent} />
+        <RouterDialogStateProvider routeName={routeName} Component={MailboxWizardSceneContent} />
       </RouterDialog>
     )
   }

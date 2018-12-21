@@ -1,13 +1,15 @@
 import DefaultRouterDialogManager from './DefaultRouterDialogManager'
 import RouterDialogManager from './RouterDialogManager'
 import RouterDialog from './RouterDialog'
-import RouterDialogMatchProvider from './RouterDialogMatchProvider'
+import RouterDialogStateProvider from './RouterDialogStateProvider'
 import RouterDialogController from './RouterDialogController'
+import RouterDialogRoute from './RouterDialogRoute'
 
 export {
   DefaultRouterDialogManager,
   RouterDialogManager,
   RouterDialog,
-  RouterDialogMatchProvider,
-  RouterDialogController
+  RouterDialogStateProvider,
+  RouterDialogController,
+  RouterDialogRoute
 }

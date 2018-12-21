@@ -1,7 +1,7 @@
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
-import { RouterDialog, RouterDialogMatchProvider } from 'Components/RouterDialog'
+import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
 import SettingsSceneContent from './SettingsSceneContent'
 
 const styles = {
@@ -42,7 +42,7 @@ class SettingsScene extends React.Component {
         disableEnforceFocus
         onClose={this.handleClose}
         classes={{ paper: classes.root }}>
-        <RouterDialogMatchProvider routeName={routeName} Component={SettingsSceneContent} />
+        <RouterDialogStateProvider routeName={routeName} Component={SettingsSceneContent} />
       </RouterDialog>
     )
   }

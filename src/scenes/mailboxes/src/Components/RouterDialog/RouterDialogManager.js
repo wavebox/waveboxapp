@@ -22,15 +22,17 @@ class RouterModalManager extends EventEmitter {
   * @param name: the name of the component
   * @param instanceId: the id of the component
   * @param match: the router match object
+  * @param location: the location match object
   */
-  controllerDidMount (name, instanceId, match) {
+  controllerDidMount (name, instanceId, match, location) {
     if (this[privMount].has(name)) {
       this[privMount].get(name).match = match
+      this[privMount].get(name).location = location
       this[privMount].get(name).instanceId = instanceId
-      this.emit(`match-${name}-changed`, { sender: this, instanceId: instanceId }, match)
+      this.emit(`route-${name}-changed`, { sender: this, instanceId: instanceId }, match, location)
     } else {
-      this[privMount].set(name, { instanceId: instanceId, match: match })
-      this.emit(`mount-${name}`, { sender: this, instanceId: instanceId }, match)
+      this[privMount].set(name, { instanceId: instanceId, match: match, location: location })
+      this.emit(`mount-${name}`, { sender: this, instanceId: instanceId }, match, location)
     }
   }
 
@@ -51,11 +53,13 @@ class RouterModalManager extends EventEmitter {
   * @param name: the name of the component
   * @param instanceId: the id of the component
   * @param match: the router match object
+  * @param location: the location match object
   */
-  updateControllerMatch (name, instanceId, match) {
+  updateControllerMatch (name, instanceId, match, location) {
     if (this[privMount].has(name) && this[privMount].get(name).instanceId === instanceId) {
       this[privMount].get(name).match = match
-      this.emit(`match-${name}-changed`, { sender: this, instanceId: instanceId }, match)
+      this[privMount].get(name).location = location
+      this.emit(`route-${name}-changed`, { sender: this, instanceId: instanceId }, match, location)
     }
   }
 
@@ -76,7 +80,15 @@ class RouterModalManager extends EventEmitter {
   * @return the match or undefined
   */
   controllerMatch (name) {
-    return this[privMount].get(name).match
+    return (this[privMount].get(name) || {}).match
+  }
+
+  /**
+  * @param name: the name of the controller
+  * @return the location or undefined
+  */
+  controllerLocation (name) {
+    return (this[privMount].get(name) || {}).location
   }
 }
 

@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import DefaultRouterDialogManager from './DefaultRouterDialogManager'
 
-export default class RouterDialogMatchProvider extends React.Component {
+export default class RouterDialogStateProvider extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -10,11 +10,15 @@ export default class RouterDialogMatchProvider extends React.Component {
   static propTypes = {
     routeName: PropTypes.string.isRequired,
     manager: PropTypes.object.isRequired,
-    Component: PropTypes.func.isRequired
+    Component: PropTypes.func.isRequired,
+    location: PropTypes.bool.isRequired,
+    match: PropTypes.bool.isRequired
   }
 
   static defaultProps = {
-    manager: DefaultRouterDialogManager
+    manager: DefaultRouterDialogManager,
+    location: false,
+    match: true
   }
 
   /* **************************************************************************/
@@ -23,20 +27,21 @@ export default class RouterDialogMatchProvider extends React.Component {
 
   componentDidMount () {
     const { manager, routeName } = this.props
-    manager.on(`match-${routeName}-changed`, this.matchChanged)
+    manager.on(`route-${routeName}-changed`, this.matchChanged)
   }
 
   componentWillUnmount () {
     const { manager, routeName } = this.props
-    manager.removeListener(`match-${routeName}-changed`, this.matchChanged)
+    manager.removeListener(`route-${routeName}-changed`, this.matchChanged)
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.routeName !== nextProps.routeName || this.props.manager !== nextProps.manager) {
-      this.props.manager.removeListener(`match-${this.props.routeName}-changed`, this.matchChanged)
-      nextProps.manager.on(`match-${nextProps.routeName}-changed`, this.matchChanged)
+      this.props.manager.removeListener(`route-${this.props.routeName}-changed`, this.matchChanged)
+      nextProps.manager.on(`route-${nextProps.routeName}-changed`, this.matchChanged)
       this.setState({
-        match: nextProps.controllerMatch(nextProps.routeName)
+        match: nextProps.manager.controllerMatch(nextProps.routeName),
+        location: nextProps.manager.controllerLocation(nextProps.routeName)
       })
     }
   }
@@ -46,11 +51,12 @@ export default class RouterDialogMatchProvider extends React.Component {
   /* **************************************************************************/
 
   state = {
-    match: this.props.manager.controllerMatch(this.props.routeName)
+    match: this.props.manager.controllerMatch(this.props.routeName),
+    location: this.props.manager.controllerLocation(this.props.routeName)
   }
 
-  matchChanged = (evt, match) => {
-    this.setState({ match: match })
+  matchChanged = (evt, match, location) => {
+    this.setState({ match: match, location: location })
   }
 
   /* **************************************************************************/
@@ -63,12 +69,17 @@ export default class RouterDialogMatchProvider extends React.Component {
       manager,
       Component,
       children,
+      location,
+      match,
       ...passProps
     } = this.props
-    const { match } = this.state
+    const stateProps = {
+      ...(match ? { match: this.state.match } : undefined),
+      ...(location ? { location: this.state.location } : undefined)
+    }
 
     return (
-      <Component match={match} {...passProps}>
+      <Component {...stateProps} {...passProps}>
         {children}
       </Component>
     )

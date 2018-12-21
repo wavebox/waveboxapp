@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Dialog, DialogContent, DialogActions, Button } from '@material-ui/core'
+import { DialogContent, DialogActions, Button } from '@material-ui/core'
 import { updaterActions, updaterStore } from 'stores/updater'
-import UpdateModalTitle from './UpdateModalTitle'
+import UpdateModalTitle from '../Common/UpdateModalTitle'
 import electron from 'electron'
 import pkg from 'package.json'
 import { withStyles } from '@material-ui/core/styles'
@@ -27,20 +27,17 @@ const styles = {
 }
 
 @withStyles(styles)
-class UpdateErrorScene extends React.Component {
+class UpdateErrorSceneContent extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  static contextTypes = {
-    router: PropTypes.object.isRequired
-  }
   static propTypes = {
     match: PropTypes.shape({
       params: PropTypes.shape({
         provider: PropTypes.oneOf(['squirrel', 'manual'])
-      })
-    })
+      }).isRequired
+    }).isRequired
   }
 
   /* **************************************************************************/
@@ -62,7 +59,6 @@ class UpdateErrorScene extends React.Component {
   state = (() => {
     const updaterState = updaterStore.getState()
     return {
-      open: true,
       updateFailedCount: updaterState.updateFailedCount
     }
   })()
@@ -81,15 +77,14 @@ class UpdateErrorScene extends React.Component {
   * Closes the dialog
   */
   handleClose = () => {
-    this.setState({ open: false })
-    setTimeout(() => { window.location.hash = '/' }, 500)
+    window.location.hash = '/'
   }
 
   /**
   * Checks for updates again later
   */
   handleCheckLater = () => {
-    this.handleClose()
+    window.location.hash = '/'
     updaterActions.scheduleNextUpdateCheck()
   }
 
@@ -97,7 +92,7 @@ class UpdateErrorScene extends React.Component {
   * Takes the user to the web to download manually
   */
   handleDownloadManually = () => {
-    this.handleClose()
+    window.location.hash = '/'
     electron.remote.shell.openExternal(updaterStore.getState().getManualUpdateDownloadUrl())
   }
 
@@ -105,7 +100,7 @@ class UpdateErrorScene extends React.Component {
   * Trys to check for updates again
   */
   handleCheckAgain = () => {
-    this.handleClose()
+    window.location.hash = '/'
     updaterActions.userCheckForUpdates()
   }
 
@@ -161,17 +156,14 @@ class UpdateErrorScene extends React.Component {
   }
 
   render () {
-    const { open, updateFailedCount } = this.state
+    const { updateFailedCount } = this.state
     const {
       match: { params: { provider } },
       classes
     } = this.props
 
     return (
-      <Dialog
-        disableEnforceFocus
-        open={open}
-        onClose={this.handleCheckLater}>
+      <React.Fragment>
         <UpdateModalTitle
           text='Update Error'
           IconClass={ErrorIcon}
@@ -194,9 +186,9 @@ class UpdateErrorScene extends React.Component {
             Try again
           </Button>
         </DialogActions>
-      </Dialog>
+      </React.Fragment>
     )
   }
 }
 
-export default UpdateErrorScene
+export default UpdateErrorSceneContent

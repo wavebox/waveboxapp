@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import SpinnerSceneContent from './SpinnerSceneContent'
+import ProfileRestoreRestartingSceneContent from './ProfileRestoreRestartingSceneContent'
 import { RouterDialog } from 'Components/RouterDialog'
 
-class SpinnerScene extends React.Component {
+class ProfileRestoreRestartingScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -24,10 +24,10 @@ class SpinnerScene extends React.Component {
         disableEnforceFocus
         disableBackdropClick
         disableEscapeKeyDown>
-        <SpinnerSceneContent />
+        <ProfileRestoreRestartingSceneContent />
       </RouterDialog>
     )
   }
 }
 
-export default SpinnerScene
+export default ProfileRestoreRestartingScene
