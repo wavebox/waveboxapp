@@ -170,6 +170,7 @@ class ContentWindow extends WaveboxWindow {
       if (contents.getType() === 'webview' && contents.hostWebContents.id === this.window.webContents.id) {
         this[privGuestWebContentsId] = contents.id
         contents.on('new-window', this.handleWebContentsNewWindow)
+        contents.on('did-start-navigation', this.handleWebViewDidStartNavigation)
         ElectronWebContentsWillNavigateShim.on(contents, this.handleWebViewWillNavigate)
         contents.once('destroyed', () => {
           const wcId = this[privGuestWebContentsId]
@@ -218,6 +219,20 @@ class ContentWindow extends WaveboxWindow {
   */
   handleWebViewWillNavigate = (evt, targetUrl) => {
     WindowOpeningHandler.handleWillNavigate(evt, {
+      targetUrl: targetUrl,
+      openingBrowserWindow: this.window,
+      openingWindowType: this.windowType,
+      tabMetaInfo: this[privTabMetaInfo]
+    })
+  }
+
+  /**
+  * Handles the webview starting navigation
+  * @param evt: the event that fired
+  * @param targetUrl: the url we're navigating to
+  */
+  handleWebViewDidStartNavigation = (evt, targetUrl) => {
+    WindowOpeningHandler.handleDidStartNavigation(evt, {
       targetUrl: targetUrl,
       openingBrowserWindow: this.window,
       openingWindowType: this.windowType,

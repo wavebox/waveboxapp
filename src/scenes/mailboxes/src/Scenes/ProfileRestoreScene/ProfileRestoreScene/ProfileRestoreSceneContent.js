@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions,
+  DialogTitle, DialogContent, DialogActions,
   Button, List, ListItem, ListItemText, ListItemSecondaryAction
 } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -65,7 +65,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class ProfileRestoreScene extends React.Component {
+class ProfileRestoreSceneContent extends React.Component {
   /* **************************************************************************/
   // Component lifecycle
   /* **************************************************************************/
@@ -87,7 +87,6 @@ class ProfileRestoreScene extends React.Component {
   state = (() => {
     const userState = userStore.getState()
     return {
-      open: true,
       currentMailboxCount: accountStore.getState().mailboxCount(),
       profiles: this.sanitizeProfiles(userState.userProfilesFetch.data),
       userIsLoggedIn: userState.user.isLoggedIn,
@@ -125,10 +124,7 @@ class ProfileRestoreScene extends React.Component {
   /* **************************************************************************/
 
   handleClose = () => {
-    this.setState({ open: false })
-    setTimeout(() => {
-      window.location.hash = '/'
-    }, 250)
+    window.location.hash = '/'
   }
 
   handleRestoreProfile = (profileId) => {
@@ -188,7 +184,6 @@ class ProfileRestoreScene extends React.Component {
   render () {
     const { classes } = this.props
     const {
-      open,
       currentMailboxCount,
       profiles,
       userIsLoggedIn,
@@ -197,11 +192,7 @@ class ProfileRestoreScene extends React.Component {
     } = this.state
 
     return (
-      <Dialog
-        disableEnforceFocus
-        open={open}
-        onClose={this.handleClose}
-        classes={{ paper: classes.dialog }}>
+      <React.Fragment>
         <DialogTitle>
           <span>
             <FASCloudDownloadIcon className={classes.dialogTitleIcon} />
@@ -240,9 +231,9 @@ class ProfileRestoreScene extends React.Component {
             Cancel
           </Button>
         </DialogActions>
-      </Dialog>
+      </React.Fragment>
     )
   }
 }
 
-export default ProfileRestoreScene
+export default ProfileRestoreSceneContent

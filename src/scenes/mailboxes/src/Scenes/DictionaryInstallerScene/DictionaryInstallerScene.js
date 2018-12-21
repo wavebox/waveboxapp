@@ -1,45 +1,15 @@
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Dialog, DialogTitle, DialogContent } from '@material-ui/core'
-import dictionariesStore from 'stores/dictionaries/dictionariesStore'
-import DictionaryInstallStepper from './DictionaryInstallStepper'
+import DictionaryInstallerSceneContent from './DictionaryInstallerSceneContent'
+import { RouterDialog } from 'Components/RouterDialog'
 
 export default class DictionaryInstallerScene extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  static contextTypes = {
-    router: PropTypes.object.isRequired
-  }
-
-  /* **************************************************************************/
-  // Component Lifecycle
-  /* **************************************************************************/
-
-  componentWillMount () {
-    dictionariesStore.listen(this.dictionariesChanged)
-  }
-
-  componentWillUnmount () {
-    dictionariesStore.unlisten(this.dictionariesChanged)
-  }
-
-  /* **************************************************************************/
-  // Data lifecycle
-  /* **************************************************************************/
-
-  state = (() => {
-    const store = dictionariesStore.getState()
-    return {
-      installId: store.installId()
-    }
-  })()
-
-  dictionariesChanged = (store) => {
-    this.setState({
-      installId: store.installId()
-    })
+  static propTypes = {
+    routeName: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -47,20 +17,15 @@ export default class DictionaryInstallerScene extends React.Component {
   /* **************************************************************************/
 
   render () {
-    const { installId } = this.state
+    const { routeName } = this.props
     return (
-      <Dialog
+      <RouterDialog
+        routeName={routeName}
         disableEnforceFocus
         disableBackdropClick
-        disableEscapeKeyDown
-        open>
-        <DialogTitle>Install Dictionary</DialogTitle>
-        <DialogContent>
-          {installId ? (
-            <DictionaryInstallStepper key={installId} />
-          ) : undefined}
-        </DialogContent>
-      </Dialog>
+        disableEscapeKeyDown>
+        <DictionaryInstallerSceneContent />
+      </RouterDialog>
     )
   }
 }

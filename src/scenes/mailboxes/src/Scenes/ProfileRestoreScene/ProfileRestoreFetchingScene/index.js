@@ -1,0 +1,2 @@
+import ProfileRestoreFetchingScene from './ProfileRestoreFetchingScene'
+export default ProfileRestoreFetchingScene

@@ -1,5 +1,6 @@
 import React from 'react'
 import { HashRouter, Route, Switch } from 'react-router-dom'
+import { RouterDialogRoute } from 'Components/RouterDialog'
 import AppScene from './AppScene'
 import EarlyBuildToast from './EarlyBuildToast'
 import PrivacyDialog from './PrivacyDialog'
@@ -42,7 +43,7 @@ import ErrorBoundary from 'wbui/ErrorBoundary'
 import FullscreenSnackbarHelper from 'Components/FullscreenSnackbarHelper'
 import SpinnerScene from './SpinnerScene'
 import ReadingQueueSnackbarHelper from 'wbui/ReadingQueueSnackbarHelper'
-// @Thomas101:cmdp import CommandPaletteScene from './CommandPaletteScene'
+import CommandPaletteScene from './CommandPaletteScene'
 import SwitcherScene from './SwitcherScene'
 
 export default class WaveboxRouter extends React.Component {
@@ -68,50 +69,172 @@ export default class WaveboxRouter extends React.Component {
             <ReadingQueueSnackbarHelper />
           </ErrorBoundary>
 
+          {/* Dialogs: Switching */}
+          <WaveboxRouterErrorBoundary>
+            <CommandPaletteScene routeName='command' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <SwitcherScene routeName='switcher' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Dialogs: Settings */}
+          <WaveboxRouterErrorBoundary>
+            <SettingsScene routeName='settings' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <SitePermissionsScene routeName='site_permissions' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <DictionaryInstallerScene routeName='dictionary_installer' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Dialogs: Mailbox wizard */}
+          <WaveboxRouterErrorBoundary>
+            <AccountWizardAddScene routeName='account_wizard_add' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <MailboxWizardScene routeName='account_wizard_create' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <ServiceAttachWizardScene routeName='account_wizard_attach' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <MailboxReauthenticatingScene routeName='account_reathenticating' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Dialogs: Account Deletion */}
+          <WaveboxRouterErrorBoundary>
+            <MailboxDeleteScene routeName='mailbox_delete' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <MailboxServiceDeleteScene routeName='service_delete' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Dialogs: App Wizard */}
+          <WaveboxRouterErrorBoundary>
+            <AppWizardScene routeName='app_wizard' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Dialogs: Compose */}
+          <WaveboxRouterErrorBoundary>
+            <ComposePickerScene routeName='incoming_compose' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Dialogs: Updates */}
+          <WaveboxRouterErrorBoundary>
+            <CheckingUpdatesScene routeName='update_checking' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <UpdateNoneScene routeName='update_none' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <UpdateErrorScene routeName='update_error' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <UpdateAvailableScene routeName='update_available_install' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <UpdateAvailableScene routeName='update_available_download' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Dialogs: Pro & Subscription */}
+          <WaveboxRouterErrorBoundary>
+            <ProScene routeName='wbaccount_pro' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <NewsScene routeName='news' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <AccountMessageScene routeName='wbaccount_message' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <AccountAuthScene routeName='wbaccount_auth' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <AccountAuthenticatingScene routeName='wbaccount_authing' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <AccountStandaloneScene routeName='wbaccount_account' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Dialogs: Setup */}
+          {process.platform === 'linux' ? (
+            <WaveboxRouterErrorBoundary>
+              <LinuxSetupScene routeName='setup_linux' />
+            </WaveboxRouterErrorBoundary>
+          ) : undefined}
+
+          {/* Dialogs: Profile */}
+          <WaveboxRouterErrorBoundary>
+            <ProfileRestoreScene routeName='profile_restore' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <ProfileRestoreFetchingScene routeName='profile_fetch' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <ProfileRestoreRestartingScene routeName='profile_restart' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Dialogs: Utils */}
+          <WaveboxRouterErrorBoundary>
+            <SpinnerScene routeName='spinner' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Routes */}
           <WaveboxRouterErrorBoundary>
             <Switch>
-              {/* @Thomas101:cmdp
-              <Route path='/command' component={CommandPaletteScene} />
-              */}
-              <Route path='/switcher/:mode?' component={SwitcherScene} />
+              {/* Dialogs: Switching */}
+              {/* @Thomas101 cpallette <RouterDialogRoute path='/command' routeName='command' /> */}
+              <RouterDialogRoute path='/switcher/:mode?' routeName='switcher' />
 
-              <Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
-              <Route path='/site_permissions' component={SitePermissionsScene} />
-              <Route path='/dictionary_installer' component={DictionaryInstallerScene} />
+              {/* Dialogs: Settings */}
+              <RouterDialogRoute path='/settings/:tab?/:tabArg?' routeName='settings' />
+              <RouterDialogRoute path='/site_permissions' routeName='site_permissions' />
+              <RouterDialogRoute path='/dictionary_installer' routeName='dictionary_installer' />
 
-              <Route path='/mailbox_wizard/add/:mailboxId?' component={AccountWizardAddScene} />
-              <Route path='/mailbox_wizard/:templateType/:accessMode/:step/:mailboxId?' component={MailboxWizardScene} />
-              <Route path='/mailbox_attach_wizard/:attachTarget/:serviceType/:accessMode/:step/:serviceId?' component={ServiceAttachWizardScene} />
+              {/* Dialogs: Mailbox wizard */}
+              <RouterDialogRoute path='/mailbox_wizard/add/:mailboxId?' routeName='account_wizard_add' />
+              <RouterDialogRoute path='/mailbox_wizard/:templateType/:accessMode/:step/:mailboxId?' routeName='account_wizard_create' />
+              <RouterDialogRoute path='/mailbox_attach_wizard/:attachTarget/:serviceType/:accessMode/:step/:serviceId?' routeName='account_wizard_attach' />
+              <RouterDialogRoute path='/mailbox/reauthenticating' routeName='account_reathenticating' />
 
-              <Route path='/mailbox/reauthenticating' component={MailboxReauthenticatingScene} />
+              {/* Dialogs: Account Deletion */}
+              <RouterDialogRoute path='/mailbox_delete/:mailboxId' routeName='mailbox_delete' />
+              <RouterDialogRoute path='/mailbox_service_delete/:mailboxId/:serviceId' routeName='service_delete' />
 
-              <Route path='/mailbox_delete/:mailboxId' component={MailboxDeleteScene} />
-              <Route path='/mailbox_service_delete/:mailboxId/:serviceId' component={MailboxServiceDeleteScene} />
+              {/* Dialogs: App Wizard */}
+              <RouterDialogRoute path='/app_wizard/:step?' routeName='app_wizard' />
 
-              <Route path='/app_wizard/:step?' component={AppWizardScene} />
+              {/* Dialogs: Compose */}
+              <RouterDialogRoute path='/incoming/compose' routeName='incoming_compose' />
 
-              <Route path='/incoming/compose' component={ComposePickerScene} />
+              {/* Dialogs: Updates */}
+              <RouterDialogRoute path='/updates/checking/:provider' routeName='update_checking' />
+              <RouterDialogRoute path='/updates/none/:provider' routeName='update_none' />
+              <RouterDialogRoute path='/updates/error/:provider' routeName='update_error' />
+              <RouterDialogRoute path='/updates/install/:provider' routeName='update_available_install' />
+              <RouterDialogRoute path='/updates/available/:provider' routeName='update_available_download' />
 
-              <Route path='/updates/checking/:provider' component={CheckingUpdatesScene} />
-              <Route path='/updates/none/:provider' component={UpdateNoneScene} />
-              <Route path='/updates/error/:provider' component={UpdateErrorScene} />
-              <Route path='/updates/install/:provider' component={UpdateAvailableScene} />
-              <Route path='/updates/available/:provider' component={UpdateAvailableScene} />
+              {/* Dialogs: Pro & Subscription */}
+              <RouterDialogRoute path='/pro' routeName='wbaccount_pro' />
+              <RouterDialogRoute path='/news' routeName='news' />
+              <RouterDialogRoute path='/account/message' routeName='wbaccount_message' />
+              <RouterDialogRoute path='/account/auth/:mode?' routeName='wbaccount_auth' />
+              <RouterDialogRoute path='/account/authenticating' routeName='wbaccount_authing' />
+              <RouterDialogRoute path='/account/view' routeName='wbaccount_account' />
 
-              <Route path='/pro' component={ProScene} />
-              <Route path='/news' component={NewsScene} />
-              <Route path='/spinner' component={SpinnerScene} />
+              {/* Dialogs: Setup */}
+              {process.platform === 'linux' ? (
+                <RouterDialogRoute path='/setup/linux' routeName='setup_linux' />
+              ) : undefined}
 
-              <Route path='/account/message' component={AccountMessageScene} />
-              <Route path='/account/auth/:mode?' component={AccountAuthScene} />
-              <Route path='/account/authenticating' component={AccountAuthenticatingScene} />
-              <Route path='/account/view' component={AccountStandaloneScene} />
+              {/* Dialogs: Profile */}
+              <RouterDialogRoute path='/profile/restore' routeName='profile_restore' />
+              <RouterDialogRoute path='/profile/fetching_profiles' routeName='profile_fetch' />
+              <RouterDialogRoute path='/profile/restore_restarting' routeName='profile_restart' />
 
-              <Route path='/setup/linux' component={LinuxSetupScene} />
-
-              <Route path='/profile/restore' component={ProfileRestoreScene} />
-              <Route path='/profile/fetching_profiles' component={ProfileRestoreFetchingScene} />
-              <Route path='/profile/restore_restarting' component={ProfileRestoreRestartingScene} />
+              {/* Dialogs: Utils */}
+              <RouterDialogRoute path='/spinner' routeName='spinner' />
 
               <Route component={WaveboxRouterNoMatch} />
             </Switch>

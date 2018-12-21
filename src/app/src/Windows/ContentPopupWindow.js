@@ -108,6 +108,7 @@ class ContentPopupWindow extends WaveboxWindow {
 
     // Listen to webview events
     this.window.webContents.on('new-window', this.handleWebContentsNewWindow)
+    this.window.webContents.on('did-start-navigation', this.handleWebViewDidStartNavigation)
     ElectronWebContentsWillNavigateShim.on(this.window.webContents, this.handleWebViewWillNavigate)
     return this
   }
@@ -172,6 +173,20 @@ class ContentPopupWindow extends WaveboxWindow {
   */
   handleWebViewWillNavigate = (evt, targetUrl) => {
     WindowOpeningHandler.handleWillNavigate(evt, {
+      targetUrl: targetUrl,
+      openingBrowserWindow: this.window,
+      openingWindowType: this.windowType,
+      tabMetaInfo: this[privTabMetaInfo]
+    })
+  }
+
+  /**
+  * Handles the webview starting navigation
+  * @param evt: the event that fired
+  * @param targetUrl: the url we're navigating to
+  */
+  handleWebViewDidStartNavigation = (evt, targetUrl) => {
+    WindowOpeningHandler.handleDidStartNavigation(evt, {
       targetUrl: targetUrl,
       openingBrowserWindow: this.window,
       openingWindowType: this.windowType,

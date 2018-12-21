@@ -268,6 +268,26 @@ class WindowOpeningHandler {
     }
   }
 
+  /**
+  * Handles a did start navigation call
+  * @param evt: the event that fired
+  * @param config: the config for opening
+  *     @param targetUrl: the webview url
+  *     @param openingBrowserWindow: the browser window that's opening
+  *     @param openingWindowType: the type of window that's opening
+  *     @param tabMetaInfo=undefined: the meta info to provide the new tab with
+  */
+  handleDidStartNavigation (evt, config) {
+    // Grab some info about our opener
+    const { targetUrl } = config
+
+    // This is some further workaround to https://github.com/electron/electron/issues/14751 from
+    // ElectronWebContentsWillNavigateShim.
+    // The only event that mailto:// links trigger is did-start-navigation. The navigation basically
+    // ends in a no-op. Capture it and open it up. No need to cancel any event
+    this._handleInternalNavigation(targetUrl)
+  }
+
   /* ****************************************************************************/
   // Internal navigation
   /* ****************************************************************************/

@@ -26,8 +26,8 @@ google.options({
   // transformRequest @Thomas101 - if google ever fix their auth library move transformRequest back here
 })
 
-const gPlus = google.plus('v1')
 const gmail = google.gmail('v1')
+const oauth2 = google.oauth2('v2')
 const OAuth2 = google.auth.OAuth2
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = Bootstrap.credentials
 
@@ -135,7 +135,7 @@ class GoogleHTTP {
     if (!auth) { return this._rejectWithNoAuth() }
 
     return Promise.resolve()
-      .then(() => gPlus.people.get({ userId: 'me', auth: auth }))
+      .then(() => oauth2.userinfo.get({ userId: 'me', auth: auth }))
       .then((res) => {
         if (res.status === 200) {
           return Promise.resolve(res.data)

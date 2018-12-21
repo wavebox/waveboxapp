@@ -1,5 +1,5 @@
 import React from 'react'
-import { Dialog, DialogContent } from '@material-ui/core'
+import { DialogContent } from '@material-ui/core'
 import Spinner from 'wbui/Activity/Spinner'
 import { withStyles } from '@material-ui/core/styles'
 import lightBlue from '@material-ui/core/colors/lightBlue'
@@ -15,7 +15,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class AccountAuthenticatingScene extends React.Component {
+class SpinnerSceneContent extends React.Component {
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -23,20 +23,14 @@ class AccountAuthenticatingScene extends React.Component {
   render () {
     const { classes } = this.props
     return (
-      <Dialog
-        disableEnforceFocus
-        open
-        disableBackdropClick
-        disableEscapeKeyDown>
-        <DialogContent className={classes.dialogContent}>
-          <Spinner size={50} color={lightBlue[600]} speed={0.75} />
-          <div className={classes.text}>
-            Just a moment...
-          </div>
-        </DialogContent>
-      </Dialog>
+      <DialogContent className={classes.dialogContent}>
+        <Spinner size={50} color={lightBlue[600]} speed={0.75} />
+        <div className={classes.text}>
+          Just a moment...
+        </div>
+      </DialogContent>
     )
   }
 }
 
-export default AccountAuthenticatingScene
+export default SpinnerSceneContent
