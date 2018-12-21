@@ -1,5 +1,6 @@
 import React from 'react'
 import { HashRouter, Route, Switch } from 'react-router-dom'
+import { RouterDialogController } from 'Components/RouterDialog'
 import AppScene from './AppScene'
 import EarlyBuildToast from './EarlyBuildToast'
 import PrivacyDialog from './PrivacyDialog'
@@ -42,7 +43,7 @@ import ErrorBoundary from 'wbui/ErrorBoundary'
 import FullscreenSnackbarHelper from 'Components/FullscreenSnackbarHelper'
 import SpinnerScene from './SpinnerScene'
 import ReadingQueueSnackbarHelper from 'wbui/ReadingQueueSnackbarHelper'
-// @Thomas101:cmdp import CommandPaletteScene from './CommandPaletteScene'
+import CommandPaletteScene from './CommandPaletteScene'
 import SwitcherScene from './SwitcherScene'
 
 export default class WaveboxRouter extends React.Component {
@@ -68,25 +69,96 @@ export default class WaveboxRouter extends React.Component {
             <ReadingQueueSnackbarHelper />
           </ErrorBoundary>
 
+          {/* Dialogs: Switching */}
+          <WaveboxRouterErrorBoundary>
+            <CommandPaletteScene routeName='command' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <SwitcherScene routeName='switcher' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Dialogs: Settings */}
+          <WaveboxRouterErrorBoundary>
+            <SettingsScene routeName='settings' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <SitePermissionsScene routeName='site_permissions' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <DictionaryInstallerScene routeName='dictionary_installer' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Dialogs: Mailbox wizard */}
+          <WaveboxRouterErrorBoundary>
+            <AccountWizardAddScene routeName='account_wizard_add' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <MailboxWizardScene routeName='account_wizard_create' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <ServiceAttachWizardScene routeName='account_wizard_attach' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <MailboxReauthenticatingScene routeName='account_reathenticating' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Dialogs: Account Deletion */}
+          <WaveboxRouterErrorBoundary>
+            <MailboxDeleteScene routeName='mailbox_delete' />
+          </WaveboxRouterErrorBoundary>
+          <WaveboxRouterErrorBoundary>
+            <MailboxServiceDeleteScene routeName='service_delete' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Routes */}
           <WaveboxRouterErrorBoundary>
             <Switch>
-              {/* @Thomas101:cmdp
-              <Route path='/command' component={CommandPaletteScene} />
-              */}
-              <Route path='/switcher/:mode?' component={SwitcherScene} />
+              {/* Dialogs: Switching */}
+              <Route
+                path='/command'
+                render={(p) => (<RouterDialogController {...p} routeName='command' />)} />
+              <Route
+                path='/switcher/:mode?'
+                render={(p) => (<RouterDialogController {...p} routeName='switcher' />)} />
 
-              <Route path='/settings/:tab?/:tabArg?' component={SettingsScene} />
-              <Route path='/site_permissions' component={SitePermissionsScene} />
-              <Route path='/dictionary_installer' component={DictionaryInstallerScene} />
+              {/* Dialogs: Settings */}
+              <Route
+                path='/settings/:tab?/:tabArg?'
+                render={(p) => (<RouterDialogController {...p} routeName='settings' />)} />
+              <Route
+                path='/site_permissions'
+                render={(p) => (<RouterDialogController {...p} routeName='site_permissions' />)} />
+              <Route
+                path='/dictionary_installer'
+                render={(p) => (<RouterDialogController {...p} routeName='dictionary_installer' />)} />
 
-              <Route path='/mailbox_wizard/add/:mailboxId?' component={AccountWizardAddScene} />
-              <Route path='/mailbox_wizard/:templateType/:accessMode/:step/:mailboxId?' component={MailboxWizardScene} />
-              <Route path='/mailbox_attach_wizard/:attachTarget/:serviceType/:accessMode/:step/:serviceId?' component={ServiceAttachWizardScene} />
+              {/* Dialogs: Mailbox wizard */}
+              <Route
+                path='/mailbox_wizard/add/:mailboxId?'
+                render={(p) => (<RouterDialogController {...p} routeName='account_wizard_add' />)} />
+              <Route
+                path='/mailbox_wizard/:templateType/:accessMode/:step/:mailboxId?'
+                render={(p) => (<RouterDialogController {...p} routeName='account_wizard_create' />)} />
+              <Route
+                path='/mailbox_attach_wizard/:attachTarget/:serviceType/:accessMode/:step/:serviceId?'
+                render={(p) => (<RouterDialogController {...p} routeName='account_wizard_attach' />)} />
+              <Route
+                path='/mailbox/reauthenticating'
+                render={(p) => (<RouterDialogController {...p} routeName='account_reathenticating' />)} />
 
-              <Route path='/mailbox/reauthenticating' component={MailboxReauthenticatingScene} />
+              {/* Dialogs: Account Deletion */}
+              <Route
+                path='/mailbox_delete/:mailboxId'
+                render={(p) => (<RouterDialogController {...p} routeName='mailbox_delete' />)} />
+              <Route
+                path='/mailbox_service_delete/:mailboxId/:serviceId'
+                render={(p) => (<RouterDialogController {...p} routeName='service_delete' />)} />
 
-              <Route path='/mailbox_delete/:mailboxId' component={MailboxDeleteScene} />
-              <Route path='/mailbox_service_delete/:mailboxId/:serviceId' component={MailboxServiceDeleteScene} />
+
+
+
+
+
 
               <Route path='/app_wizard/:step?' component={AppWizardScene} />
 

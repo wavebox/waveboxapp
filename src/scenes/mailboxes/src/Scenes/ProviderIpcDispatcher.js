@@ -107,7 +107,9 @@ export default class ProviderIpcDispatcher extends React.Component {
   * Opens the command palette
   */
   openCommandPalette = () => {
-    window.location.hash = '/command'
+    window.location.hash = window.location.hash === '#/command' || window.location.hash.startsWith('#/command/')
+      ? ''
+      : '/command'
   }
 
   /**

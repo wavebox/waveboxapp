@@ -204,14 +204,12 @@ class WaveboxAppPrimaryMenu {
             accelerator: accelerators.toggleMenu
           },
           { type: 'separator' },
-          /* @Thomas101:cmdp
           {
             label: 'Open Command Palette',
             click: WaveboxAppPrimaryMenuActions.openCommandPalette,
             accelerator: accelerators.commandPalette
           },
           { type: 'separator' },
-          */
           {
             label: 'Navigate Back',
             click: WaveboxAppPrimaryMenuActions.mailboxNavBack,

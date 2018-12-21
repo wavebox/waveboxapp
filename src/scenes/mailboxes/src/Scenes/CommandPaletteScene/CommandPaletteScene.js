@@ -1,7 +1,12 @@
 import React from 'react'
-import { Button, Dialog, DialogContent, DialogActions } from '@material-ui/core'
+import PropTypes from 'prop-types'
+import { Button, DialogContent, DialogActions } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
+import Zoom from '@material-ui/core/Zoom'
+import { RouterDialog } from 'Components/RouterDialog'
+
+const TRANSITION_DURATION = 50
 
 const styles = {
 
@@ -10,19 +15,11 @@ const styles = {
 @withStyles(styles)
 class CommandPaletteScene extends React.Component {
   /* **************************************************************************/
-  // Component lifecycle
+  // PropTypes
   /* **************************************************************************/
 
-  componentDidMount () {
-
-  }
-
-  /* **************************************************************************/
-  // Data lifecycle
-  /* **************************************************************************/
-
-  state = {
-    open: true
+  static propTypes = {
+    routeName: PropTypes.string.isRequired
   }
 
   /* **************************************************************************/
@@ -33,10 +30,7 @@ class CommandPaletteScene extends React.Component {
   * Closes the modal
   */
   handleClose = () => {
-    this.setState({ open: false })
-    setTimeout(() => {
-      window.location.hash = '/'
-    }, 250)
+    window.location.hash = '/'
   }
 
   /* **************************************************************************/
@@ -48,15 +42,14 @@ class CommandPaletteScene extends React.Component {
   }
 
   render () {
-    const { classes } = this.props
-    const {
-      open
-    } = this.state
+    const { classes, routeName } = this.props
 
     return (
-      <Dialog
+      <RouterDialog
+        routeName={routeName}
         disableEnforceFocus
-        open={open}
+        transitionDuration={TRANSITION_DURATION}
+        TransitionComponent={Zoom}
         onClose={this.handleClose}
         classes={{ paper: classes.dialog }}>
         <DialogContent className={classes.dialogContent} />
@@ -65,7 +58,7 @@ class CommandPaletteScene extends React.Component {
             Close
           </Button>
         </DialogActions>
-      </Dialog>
+      </RouterDialog>
     )
   }
 }
