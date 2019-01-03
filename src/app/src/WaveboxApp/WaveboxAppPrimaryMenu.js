@@ -72,22 +72,22 @@ class WaveboxAppPrimaryMenu {
           },
           { type: 'separator' },
           {
-            label: 'Compose',
+            label: T('Compose'),
             click: WaveboxAppPrimaryMenuActions.composeMail,
             accelerator: accelerators.composeMail
           },
           {
-            label: 'Compose in current tab',
+            label: T('Compose in current tab'),
             click: WaveboxAppPrimaryMenuActions.composeMailHere,
             accelerator: accelerators.composeMailHere
           },
           { type: 'separator' },
           {
-            label: 'Add Account',
+            label: T('Add Account'),
             click: WaveboxAppPrimaryMenuActions.addAccount
           },
           {
-            label: 'Preferences',
+            label: T('Preferences'),
             click: WaveboxAppPrimaryMenuActions.preferences,
             accelerator: accelerators.preferences
           },
@@ -95,112 +95,112 @@ class WaveboxAppPrimaryMenu {
           process.platform === 'darwin' ? { label: 'Services', role: 'services', submenu: [] } : undefined,
           process.platform === 'darwin' ? { type: 'separator' } : undefined,
           {
-            label: 'Close Window',
+            label: T('Close Window'),
             click: WaveboxAppPrimaryMenuActions.closeWindow,
             accelerator: accelerators.closeWindow
           },
           process.platform === 'darwin' ? {
-            label: 'Hide Wavebox',
+            label: T('Hide Wavebox'),
             role: 'hide',
             accelerator: accelerators.hide
           } : {
-            label: 'Hide Window',
+            label: T('Hide Window'),
             click: WaveboxAppPrimaryMenuActions.hideAll,
             accelerator: accelerators.hide
           },
           process.platform === 'darwin' ? {
-            label: 'Hide Others',
+            label: T('Hide Others'),
             role: 'hideothers',
             accelerator: accelerators.hideOthers
           } : undefined,
           process.platform === 'darwin' ? {
-            label: 'Show All',
+            label: T('Show All'),
             role: 'unhide'
           } : {
-            label: 'Show All',
+            label: T('Show All'),
             click: WaveboxAppPrimaryMenuActions.showAll
           },
           { type: 'separator' },
           {
-            label: 'Quit',
+            label: T('Quit'),
             click: WaveboxAppPrimaryMenuActions.fullQuit,
             accelerator: accelerators.quit
           }
         ].filter((item) => item !== undefined)
       },
       {
-        label: `${tlpfx}Edit`,
+        label: `${tlpfx}${T('Edit')}`,
         submenu: [
           {
-            label: 'Undo',
+            label: T('Undo'),
             click: WaveboxAppPrimaryMenuActions.undo,
             accelerator: accelerators.undo
           },
           {
-            label: 'Redo',
+            label: T('Redo'),
             click: WaveboxAppPrimaryMenuActions.redo,
             accelerator: accelerators.redo
           },
           { type: 'separator' },
           {
-            label: 'Cut',
+            label: T('Cut'),
             click: WaveboxAppPrimaryMenuActions.cut,
             accelerator: accelerators.cut
           },
           {
-            label: 'Copy',
+            label: T('Copy'),
             click: WaveboxAppPrimaryMenuActions.copy,
             accelerator: accelerators.copy
           },
           {
-            label: 'Paste',
+            label: T('Paste'),
             click: WaveboxAppPrimaryMenuActions.paste,
             accelerator: accelerators.paste
           },
           {
-            label: 'Paste and match style',
+            label: T('Paste and match style'),
             click: WaveboxAppPrimaryMenuActions.pasteAndMatchStyle,
             accelerator: accelerators.pasteAndMatchStyle
           },
           {
-            label: 'Select All',
+            label: T('Select All'),
             click: WaveboxAppPrimaryMenuActions.selectAll,
             accelerator: accelerators.selectAll
           },
           { type: 'separator' },
           {
-            label: 'Copy Current Tab URL',
+            label: T('Copy Current Tab URL'),
             click: WaveboxAppPrimaryMenuActions.copyCurrentTabUrl,
             accelerator: accelerators.copyCurrentTabUrl
           },
           { type: 'separator' },
           {
-            label: 'Find',
+            label: T('Find'),
             click: WaveboxAppPrimaryMenuActions.find,
             accelerator: accelerators.find
           },
           {
-            label: 'Find Next',
+            label: T('Find Next'),
             click: WaveboxAppPrimaryMenuActions.findNext,
             accelerator: accelerators.findNext
           }
         ]
       },
       {
-        label: `${tlpfx}View`,
+        label: `${tlpfx}${T('View')}`,
         submenu: [
           {
-            label: 'Toggle Full Screen',
+            label: T('Toggle Full Screen'),
             click: WaveboxAppPrimaryMenuActions.fullscreenToggle,
             accelerator: accelerators.toggleFullscreen
           },
           {
-            label: 'Toggle Sidebar',
+            label: T('Toggle Sidebar'),
             click: WaveboxAppPrimaryMenuActions.sidebarToggle,
             accelerator: accelerators.toggleSidebar
           },
           process.platform === 'darwin' ? undefined : {
-            label: 'Toggle Menu',
+            label: T('Toggle Menu'),
             click: WaveboxAppPrimaryMenuActions.menuToggle,
             accelerator: accelerators.toggleMenu
           },
@@ -208,66 +208,66 @@ class WaveboxAppPrimaryMenu {
           @Thomas101 cpallette
           { type: 'separator' },
           {
-            label: 'Open Command Palette',
+            label: T('Open Command Palette'),
             click: WaveboxAppPrimaryMenuActions.openCommandPalette,
             accelerator: accelerators.commandPalette
           },
           */
           { type: 'separator' },
           {
-            label: 'Navigate Back',
+            label: T('Navigate Back'),
             click: WaveboxAppPrimaryMenuActions.mailboxNavBack,
             accelerator: accelerators.navigateBack
           },
           {
-            label: 'Navigate Forward',
+            label: T('Navigate Forward'),
             click: WaveboxAppPrimaryMenuActions.mailboxNavForward,
             accelerator: accelerators.navigateForward
           },
           { type: 'separator' },
           {
-            label: 'Open next Task',
+            label: T('Open next Task'),
             click: WaveboxAppPrimaryMenuActions.openNextActiveReadingQueueLink,
             accelerator: accelerators.openNextQueueItemDefault
           },
           { type: 'separator' },
           {
-            label: 'Zoom In',
+            label: T('Zoom In'),
             click: WaveboxAppPrimaryMenuActions.zoomIn,
             accelerator: accelerators.zoomIn
           },
           {
-            label: 'Zoom Out',
+            label: T('Zoom Out'),
             click: WaveboxAppPrimaryMenuActions.zoomOut,
             accelerator: accelerators.zoomOut
           },
           {
-            label: 'Reset Zoom',
+            label: T('Reset Zoom'),
             click: WaveboxAppPrimaryMenuActions.zoomReset,
             accelerator: accelerators.zoomReset
           },
           { type: 'separator' },
           {
-            label: 'Reload',
+            label: T('Reload'),
             click: WaveboxAppPrimaryMenuActions.reload,
             accelerator: accelerators.reload
           },
           {
-            label: 'Developer',
+            label: T('Developer'),
             submenu: [
               {
-                label: 'Developer Tools',
+                label: T('Developer Tools'),
                 click: WaveboxAppPrimaryMenuActions.devTools,
                 accelerator: accelerators.developerTools
               },
               { type: 'separator' },
               {
-                label: 'Reload Wavebox Window',
+                label: T('Reload Wavebox Window'),
                 click: WaveboxAppPrimaryMenuActions.reloadWavebox,
                 accelerator: accelerators.reloadWavebox
               },
               {
-                label: 'Wavebox Developer Tools',
+                label: T('Wavebox Developer Tools'),
                 click: WaveboxAppPrimaryMenuActions.devToolsWavebox,
                 accelerator: accelerators.developerToolsWavebox
               }
@@ -276,18 +276,18 @@ class WaveboxAppPrimaryMenu {
         ].filter((item) => item !== undefined)
       },
       {
-        label: `${tlpfx}Accounts`,
+        label: `${tlpfx}${T('Accounts')}`,
         submenu: [
 
         ].concat(mailboxMenuConfig.mailboxes <= 1 ? [] : [
           { type: 'separator' },
           {
-            label: 'Previous Account',
+            label: T('Previous Account'),
             click: WaveboxAppPrimaryMenuActions.prevMailbox,
             accelerator: accelerators.previousMailbox
           },
           {
-            label: 'Next Account',
+            label: T('Next Account'),
             click: WaveboxAppPrimaryMenuActions.nextMailbox,
             accelerator: accelerators.nextMailbox
           }
@@ -304,12 +304,12 @@ class WaveboxAppPrimaryMenu {
         })).concat(mailboxMenuConfig.services.length > 1 ? [
           { type: 'separator' },
           {
-            label: 'Previous Service',
+            label: T('Previous Service'),
             click: WaveboxAppPrimaryMenuActions.prevService,
             accelerator: accelerators.servicePrevious
           },
           {
-            label: 'Next Service',
+            label: T('Next Service'),
             click: WaveboxAppPrimaryMenuActions.nextService,
             accelerator: accelerators.serviceNext
           }
@@ -326,65 +326,65 @@ class WaveboxAppPrimaryMenu {
         }) : [])
       },
       {
-        label: `${tlpfx}Window`,
+        label: `${tlpfx}${T('Window')}`,
         role: 'window',
         submenu: [
           {
-            label: 'Minimize',
+            label: T('Minimize'),
             role: 'minimize',
             accelerator: accelerators.minimize
           },
           {
-            label: 'Cycle Windows',
+            label: T('Cycle Windows'),
             click: WaveboxAppPrimaryMenuActions.cycleWindows,
             accelerator: accelerators.cycleWindows
           },
           {
-            label: 'Toggle Wavebox Mini',
+            label: T('Toggle Wavebox Mini'),
             click: WaveboxAppPrimaryMenuActions.toggleWaveboxMini,
             accelerator: accelerators.toggleWaveboxMini
           }
         ].concat(mailboxMenuConfig.tabCount > 0 ? [
           { type: 'separator' },
           {
-            label: 'Quick Switch Next Tab',
+            label: T('Quick Switch Next Tab'),
             click: this._quickSwitchAcceleratorHandler.nextAcceleratorFired,
             accelerator: accelerators.quickSwitchNext
           },
           {
-            label: 'Quick Switch Previous Tab',
+            label: T('Quick Switch Previous Tab'),
             click: this._quickSwitchAcceleratorHandler.prevAcceleratorFired,
             accelerator: accelerators.quickSwitchPrev
           }
         ] : []).concat(mailboxMenuConfig.tabCount > 1 ? [
           {
-            label: 'Cycle Previous Tab',
+            label: T('Cycle Previous Tab'),
             click: WaveboxAppPrimaryMenuActions.prevMailboxTab,
             accelerator: accelerators.prevTab
           },
           {
-            label: 'Cycle Next Tab',
+            label: T('Cycle Next Tab'),
             click: WaveboxAppPrimaryMenuActions.nextMailboxTab,
             accelerator: accelerators.nextTab
           }
         ] : [])
       },
       {
-        label: `${tlpfx}Help`,
+        label: `${tlpfx}${T('Help')}`,
         role: 'help',
         submenu: [
-          { label: 'Wavebox Website', click: WaveboxAppPrimaryMenuActions.waveboxWebsite },
-          { label: 'Wavebox Blog', click: WaveboxAppPrimaryMenuActions.waveboxBlog },
-          { label: 'Wavebox on GitHub', click: WaveboxAppPrimaryMenuActions.waveboxGithub },
+          { label: T('Wavebox Website'), click: WaveboxAppPrimaryMenuActions.waveboxWebsite },
+          { label: T('Wavebox Blog'), click: WaveboxAppPrimaryMenuActions.waveboxBlog },
+          { label: T('Wavebox on GitHub'), click: WaveboxAppPrimaryMenuActions.waveboxGithub },
           { type: 'separator' },
-          { label: 'Support Center', click: WaveboxAppPrimaryMenuActions.supportCenter },
-          { label: 'What\'s new', click: WaveboxAppPrimaryMenuActions.whatsNew },
+          { label: T('Support Center'), click: WaveboxAppPrimaryMenuActions.supportCenter },
+          { label: T('What\'s new'), click: WaveboxAppPrimaryMenuActions.whatsNew },
           { type: 'separator' },
-          { label: 'Privacy', click: WaveboxAppPrimaryMenuActions.privacy },
-          { label: 'EULA', click: WaveboxAppPrimaryMenuActions.eula },
+          { label: T('Privacy'), click: WaveboxAppPrimaryMenuActions.privacy },
+          { label: T('EULA'), click: WaveboxAppPrimaryMenuActions.eula },
           { type: 'separator' },
-          { label: 'Restart in Safe mode', click: WaveboxAppPrimaryMenuActions.restartSafeMode },
-          { label: 'Disable Hardware Acceleration and Restart', click: WaveboxAppPrimaryMenuActions.restartWithoutHWAcceleration }
+          { label: T('Restart in Safe mode'), click: WaveboxAppPrimaryMenuActions.restartSafeMode },
+          { label: T('Disable Hardware Acceleration and Restart'), click: WaveboxAppPrimaryMenuActions.restartWithoutHWAcceleration }
         ]
       }
     ])

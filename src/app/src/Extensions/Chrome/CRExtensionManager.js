@@ -12,6 +12,8 @@ import {
 import { userStore } from 'stores/user'
 import { crextensionActions } from 'stores/crextension'
 import { evtMain } from 'AppEvents'
+import i18n from 'i18n'
+
 
 class CRExtensionManager {
   /* ****************************************************************************/
@@ -84,8 +86,8 @@ class CRExtensionManager {
         dialog.showMessageBox({
           type: 'error',
           buttons: ['OK'],
-          title: 'Failed',
-          message: 'Failed to install extension'
+          title: T('Failed'),
+          message: T('Failed to install extension')
         })
       })
   }

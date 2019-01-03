@@ -11,6 +11,7 @@ import {
   WB_TRAY_WINDOWED_ALWAYS_ON_TOP_CHANGED
 } from 'shared/ipcEvents'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
+import { T } from 'i18n'
 
 const privWindow = Symbol('privWindow')
 const privPositioner = Symbol('privPositioner')
@@ -50,7 +51,7 @@ class TrayPopout {
       transparent: false,
       maximizable: false,
       fullscreenable: false,
-      title: 'Wavebox Mini',
+      title: T('Wavebox Mini'),
       icon: (() => {
         if (process.platform === 'win32') { return Resolver.icon('app.ico') }
         if (process.platform === 'linux') { return Resolver.icon('app.png') }

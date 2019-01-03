@@ -15,6 +15,8 @@ import RuntimePaths from 'Runtime/RuntimePaths'
 import TrayPopout from 'Tray/TrayPopout'
 import LinuxNotification from 'Notifications/LinuxNotification'
 import pidusage from 'pidusage'
+import { T } from 'i18n'
+
 
 const LOG_TAG = '[METRICS]'
 mkdirp.sync(path.dirname(RuntimePaths.METRICS_LOG_PATH))
@@ -148,7 +150,7 @@ class MetricsService {
       allTabInfos.set(wcId, {
         webContentsId: wcId,
         pid: wc ? wc.getOSProcessId() : undefined,
-        description: 'Wavebox Tray Popout'
+        description: T('Wavebox Tray Popout')
       })
     }
     if (LinuxNotification.isLoaded && LinuxNotification.webContentsId !== undefined) {
@@ -157,7 +159,7 @@ class MetricsService {
       allTabInfos.set(wcId, {
         webContentsId: wcId,
         pid: wc ? wc.getOSProcessId() : undefined,
-        description: 'Wavebox Notification Provider (Linux-only)'
+        description: T('Wavebox Notification Provider (Linux-only)')
       })
     }
 

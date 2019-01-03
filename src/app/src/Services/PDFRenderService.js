@@ -5,6 +5,8 @@ import fs from 'fs-extra'
 import { URL } from 'url'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
 import DownloadManager from 'Download/DownloadManager'
+import { T } from 'i18n'
+
 
 const privPrinting = Symbol('privPrinting')
 
@@ -82,7 +84,7 @@ class PDFRenderService {
       .then(() => this._printPdf(sourceWebContents, pdfUrl))
       .catch((err) => {
         if (err.message.toString().toLowerCase().indexOf('user') === -1) {
-          dialog.showErrorBox('Printing error', 'Failed to print')
+          dialog.showErrorBox(T('Printing error'), T('Failed to print'))
         }
         return Promise.resolve()
       })
@@ -107,8 +109,8 @@ class PDFRenderService {
         const printButton = document.createElement('paper-icon-button')
         printButton.id = 'print'
         printButton.setAttribute('icon', 'cr:print')
-        printButton.setAttribute('aria-label', 'Print')
-        printButton.setAttribute('title', 'Print')
+        printButton.setAttribute('aria-label', '${T('Print')}')
+        printButton.setAttribute('title', '${T('Print')}')
         printButton.addEventListener('click', () => {
           document.title = 'wbaction:print'
         })
@@ -196,7 +198,7 @@ class PDFRenderService {
 
       const window = new BrowserWindow(this._pdfPrintWindowProperties(sourceWebContents))
       window.setMenuBarVisibility(false)
-      window.on('closed', () => { reject(new Error('User closed window')) })
+      window.on('closed', () => { reject(new Error(T('User closed window'))) })
       window.on('page-title-updated', (evt, title) => {
         if (title.startsWith('wbaction:')) {
           evt.preventDefault()
@@ -207,15 +209,15 @@ class PDFRenderService {
               if (success) {
                 resolve()
               } else {
-                reject(new Error('Printing Error'))
+                reject(new Error(T('Printing Error')))
               }
             })
           } else if (title === 'wbaction:error') {
             this._pdfPrintCleanup(tmpDownloadPath, window)
-            reject(new Error('Printing Error'))
+            reject(new Error(T('Printing Error')))
           } else if (title === 'wbaction:cancel') {
             this._pdfPrintCleanup(tmpDownloadPath, window)
-            reject(new Error('User cancelled'))
+            reject(new Error(T('User cancelled')))
           }
         }
       })

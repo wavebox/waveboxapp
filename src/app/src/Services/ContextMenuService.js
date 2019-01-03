@@ -14,6 +14,8 @@ import {
   WB_READING_QUEUE_LINK_ADDED,
   WB_READING_QUEUE_CURRENT_PAGE_ADDED
 } from 'shared/ipcEvents'
+import i18n from 'i18n'
+
 
 const privConnected = Symbol('privConnected')
 const privSpellcheckerService = Symbol('privSpellcheckerService')
@@ -238,18 +240,18 @@ class ContextMenuService {
       const accountState = accountStore.getState()
 
       template.push({
-        label: 'Open Link in Browser',
+        label: T('Open Link in Browser'),
         click: () => { shell.openExternal(params.linkURL) }
       })
       if (process.platform === 'darwin') {
         template.push({
-          label: 'Open Link in Background',
+          label: T('Open Link in Background'),
           click: () => { shell.openExternal(params.linkURL, { activate: false }) }
         })
       }
       if (accountInfo.has) {
         template.push({
-          label: 'Add Link to Your Tasks',
+          label: T('Add Link to Your Tasks'),
           click: () => {
             accountActions.addToReadingQueue(accountInfo.service.id, params.linkURL)
             ElectronWebContents.rootWebContents(contents).send(WB_READING_QUEUE_LINK_ADDED, params.linkURL)
@@ -257,7 +259,7 @@ class ContextMenuService {
         })
       }
       template.push({
-        label: 'Copy Link Address',
+        label: T('Copy Link Address'),
         click: () => {
           // Look for a simple mailto url in the format mailto:user@user.com. If this is the
           // case remove the mailto: prefix
@@ -271,18 +273,18 @@ class ContextMenuService {
       if (params.linkURL.startsWith('http://') || params.linkURL.startsWith('https://')) {
         template.push({ type: 'separator' })
         template.push({
-          label: 'Open Link with Wavebox',
+          label: T('Open Link with Wavebox'),
           submenu: [
             {
-              label: 'Open Link in New Window',
+              label: T('Open Link in New Window'),
               click: () => { this.openLinkInWaveboxWindow(contents, params.linkURL) }
             },
             (accountInfo.has ? {
-              label: 'Open Link as New Service',
+              label: T('Open Link as New Service'),
               click: () => { accountActions.fastCreateWeblinkService(accountInfo.mailbox.id, params.linkURL) }
             } : undefined),
             {
-              label: 'Open Link Here',
+              label: T('Open Link Here'),
               click: () => { contents.loadURL(params.linkURL) }
             }
           ].filter((i) => !!i)
@@ -294,14 +296,14 @@ class ContextMenuService {
       if (mailboxIds.length > 1) {
         if (settingsState.ui.showCtxMenuAdvancedLinkOptions) {
           template.push({
-            label: 'Open Link in Account Profile',
+            label: T('Open Link in Account Profile'),
             submenu: mailboxIds.map((mailboxId) => {
               const mailbox = accountState.getMailbox(mailboxId)
               return {
                 label: accountState.resolvedMailboxDisplayName(mailboxId),
                 submenu: [
                   {
-                    label: 'New Window',
+                    label: T('New Window'),
                     click: () => {
                       this.openLinkInWaveboxWindowForAccount(
                         contents,
@@ -361,7 +363,7 @@ class ContextMenuService {
           })
         } else {
           template.push({
-            label: 'Open Link in Account Profile',
+            label: T('Open Link in Account Profile'),
             submenu: mailboxIds.map((mailboxId) => {
               return {
                 label: accountState.resolvedMailboxDisplayName(mailboxId),
@@ -393,7 +395,7 @@ class ContextMenuService {
     if (params.selectionText && params.inputFieldType !== 'password') {
       if (params.isEditable && params.misspelledWord) {
         template.push({
-          label: `Add “${params.misspelledWord}” to Dictionary`,
+          label: `${T('Add')} “${params.misspelledWord}” ${T('to Dictionary')}`,
           click: () => { this[privSpellcheckerService].addUserWord(params.misspelledWord) }
         })
       }
@@ -404,7 +406,7 @@ class ContextMenuService {
         params.selectionText.substr(0, 47) + '…'
       ) : params.selectionText
       template.push({
-        label: `Search ${AppSettings.SEARCH_PROVIDER_NAMES[searchProvider] || 'The Web'} for “${displayText}”`,
+        label: `${T('Search')} ${AppSettings.SEARCH_PROVIDER_NAMES[searchProvider] || T('The Web')} ${T('for')} “${displayText}”`,
         click: () => {
           const targetUrl = AppSettings.generateSearchProviderUrl(searchProvider, params.selectionText)
           const openInWavebox = AppSettings.searchProviderOpensInWavebox(searchProvider)
@@ -433,12 +435,12 @@ class ContextMenuService {
     const template = []
     if (params.editFlags.canUndo || params.editFlags.canRedo) {
       template.push({
-        label: 'Undo',
+        label: T('Undo'),
         click: () => { contents.undo() },
         enabled: params.editFlags.canUndo
       })
       template.push({
-        label: 'Redo',
+        label: T('Redo'),
         click: () => { contents.redo() },
         enabled: params.editFlags.canRedo
       })
@@ -457,38 +459,38 @@ class ContextMenuService {
     if (params.mediaType === 'image') { // Image
       return isWaveboxUIContents ? [] : [
         {
-          label: 'Open Image in Browser',
+          label: T('Open Image in Browser'),
           click: () => { shell.openExternal(params.srcURL) }
         },
         {
-          label: 'Save Image As…',
+          label: T('Save Image As…'),
           click: () => { contents.downloadURL(params.srcURL) }
         },
         {
-          label: 'Copy Image Address',
+          label: T('Copy Image Address'),
           click: () => { clipboard.writeText(params.srcURL) }
         }
       ]
     } else { // Text
       return [
         params.editFlags.canCut ? {
-          label: 'Cut',
+          label: T('Cut'),
           click: () => contents.cut()
         } : undefined,
         params.editFlags.canCopy ? {
-          label: 'Copy',
+          label: T('Copy'),
           click: () => contents.copy()
         } : undefined,
         params.editFlags.canPaste ? {
-          label: 'Paste',
+          label: T('Paste'),
           click: () => contents.paste()
         } : undefined,
         params.editFlags.canPaste ? {
-          label: 'Paste and match style',
+          label: T('Paste and match style'),
           click: () => contents.pasteAndMatchStyle()
         } : undefined,
         params.editFlags.canSelectAll ? {
-          label: 'Select all',
+          label: T('Select all'),
           click: () => contents.selectAll()
         } : undefined
       ].filter((i) => !!i)
@@ -506,20 +508,20 @@ class ContextMenuService {
     if (params.linkURL) { return [] }
     return [
       (accountInfo.has ? {
-        label: 'Home',
+        label: T('Home'),
         click: () => { contents.loadURL(accountInfo.service.url) }
       } : undefined),
       {
-        label: 'Go Back',
+        label: T('Go Back'),
         enabled: contents.canGoBack(),
         click: () => { contents.goBack() }
       },
       (contents.canGoForward() ? {
-        label: 'Go Forward',
+        label: T('Go Forward'),
         click: () => { contents.goForward() }
       } : undefined),
       {
-        label: 'Reload',
+        label: T('Reload'),
         click: () => { contents.reload() }
       }
     ].filter((i) => !!i)
@@ -535,22 +537,22 @@ class ContextMenuService {
   renderPageExternalSection (contents, params, accountInfo) {
     return [
       {
-        label: 'Copy Current URL',
+        label: T('Copy Current URL'),
         click: () => { clipboard.writeText(params.pageURL) }
       },
       {
-        label: 'Open Page',
+        label: T('Open Page'),
         submenu: [
           {
-            label: 'Open Page in Browser',
+            label: T('Open Page in Browser'),
             click: () => { shell.openExternal(params.pageURL) }
           },
           {
-            label: 'Open Page in Wavebox',
+            label: T('Open Page in Wavebox'),
             click: () => { this.openLinkInWaveboxWindow(contents, params.pageURL) }
           },
           (accountInfo.has ? {
-            label: 'Open Page as New Service',
+            label: T('Open Page as New Service'),
             click: () => {
               accountActions.fastCreateWeblinkService(accountInfo.mailbox.id, params.pageURL)
             }
@@ -558,14 +560,14 @@ class ContextMenuService {
         ].filter((i) => !!i)
       },
       (accountInfo.has ? {
-        label: 'Add Page to Your Tasks',
+        label: T('Add Page to Your Tasks'),
         click: () => {
           accountActions.addToReadingQueue(accountInfo.service.id, params.pageURL)
           ElectronWebContents.rootWebContents(contents).send(WB_READING_QUEUE_CURRENT_PAGE_ADDED, params.linkURL)
         }
       } : undefined),
       {
-        label: 'Print',
+        label: T('Print'),
         click: () => { contents.print() }
       }
     ].filter((i) => !!i)
@@ -581,7 +583,7 @@ class ContextMenuService {
     const template = []
 
     template.push({
-      label: 'Wavebox Settings',
+      label: T('Wavebox Settings'),
       click: () => { this.openWaveboxSettings(contents) }
     })
 
@@ -589,7 +591,7 @@ class ContextMenuService {
     if (installedDictionaries.length > 1) {
       const currentLanguage = this[privSpellcheckerService].primaryLanguage
       template.push({
-        label: 'Change Dictionary',
+        label: T('Change Dictionary'),
         submenu: installedDictionaries.map((lang) => {
           return {
             label: this[privSpellcheckerService].getHumanizedLanguageName(lang),
@@ -604,7 +606,7 @@ class ContextMenuService {
     }
 
     template.push({
-      label: 'Inspect',
+      label: T('Inspect'),
       click: () => { contents.inspectElement(params.x, params.y) }
     })
     return template
@@ -659,7 +661,7 @@ class ContextMenuService {
         })
       })
     } else {
-      menuItems.push({ label: 'No Spelling Suggestions', enabled: false })
+      menuItems.push({ label: T('No Spelling Suggestions'), enabled: false })
     }
     return menuItems
   }
@@ -708,11 +710,11 @@ class ContextMenuService {
       })
       .concat([
         {
-          label: 'Manage saved passwords',
+          label: T('Manage saved passwords'),
           click: () => { this[privAutofillService].openAutofillManager(contents.getURL()) }
         },
         {
-          label: 'Add new password',
+          label: T('Add new password'),
           click: () => { this[privAutofillService].addAutofillPassword(contents.getURL()) }
         }
       ])

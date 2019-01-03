@@ -1,4 +1,6 @@
 import Registry from 'winreg'
+import i18n from 'i18n'
+
 
 class Win32Registry {
   /**
@@ -40,7 +42,7 @@ class Win32Registry {
       {
         path: '\\SOFTWARE\\Clients\\Mail\\Wavebox\\Capabilities',
         name: 'ApplicationDescription',
-        value: 'All your web communication tools together for faster, smarter working'
+        value: T('All your web communication tools together for faster, smarter working')
       },
       {
         path: '\\SOFTWARE\\Clients\\Mail\\Wavebox\\Capabilities\\StartMenu',

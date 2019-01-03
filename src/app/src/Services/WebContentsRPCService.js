@@ -26,6 +26,7 @@ import {
 import { PermissionManager } from 'Permissions'
 import os from 'os'
 import LinkOpener from 'LinkOpener'
+import { T } from 'i18n'
 
 const privConnected = Symbol('privConnected')
 const privNotificationService = Symbol('privNotificationService')
@@ -125,10 +126,10 @@ class WebContentsRPCService {
 
     const choice = dialog.showMessageBox(bw, {
       type: 'question',
-      buttons: ['Leave', 'Stay'],
+      buttons: [T('Leave'), T('Stay')],
       title: '',
-      message: 'Do you want to leave this site?',
-      detail: 'Changes you made may not be saved.',
+      message: T('Do you want to leave this site?'),
+      detail: T('Changes you made may not be saved.'),
       defaultId: 0,
       cancelId: 1
     })

@@ -6,6 +6,8 @@ import { WindowOpeningHandler, WINDOW_OPEN_MODES } from './WindowOpeningEngine'
 import { PermissionManager } from 'Permissions'
 import { URL } from 'url'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
+import { T } from 'i18n'
+
 
 const privTabMetaInfo = Symbol('privTabMetaInfo')
 class ContentPopupWindow extends WaveboxWindow {

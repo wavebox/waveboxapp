@@ -10,6 +10,8 @@ import {
 } from 'shared/ipcEvents'
 import { OSSettings } from 'shared/Models/Settings'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
+import i18n from 'i18n'
+
 
 const privLoaded = Symbol('privLoaded')
 const privWindow = Symbol('privWindow')
@@ -187,8 +189,8 @@ class LinuxNotification {
       this.showWindow()
     } else {
       const options = {
-        title: 'New Notifications',
-        body: `You have ${this[privNotifications].size} Notifications`
+        title: T('New Notifications'),
+        body: `${T('You have')} ${this[privNotifications].size} ${T('Notifications')}`
       }
       this[privWindow].webContents.send(WB_LIN_NOTIF_RENDER, options)
       this.showWindow()

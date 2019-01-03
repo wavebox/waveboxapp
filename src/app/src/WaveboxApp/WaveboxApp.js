@@ -342,11 +342,11 @@ class WaveboxApp {
     // Warn about safe mode
     if (this[privArgv].safemode === true) {
       dialog.showMessageBox({
-        title: 'Safe Mode',
+        title: T('Safe Mode'),
         message: [
-          `You're currently running Wavebox in Safe mode. Some features may not be available or initialized.`,
+          T(`You're currently running Wavebox in Safe mode. Some features may not be available or initialized.`),
           ``,
-          `Quit the app and start it again to exit Safe Mode`
+          T(`Quit the app and start it again to exit Safe Mode`)
         ].join('\n')
       }, () => {})
     }

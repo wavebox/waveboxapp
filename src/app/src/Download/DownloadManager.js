@@ -164,7 +164,7 @@ class DownloadManager {
                   })
                 })
               } else {
-                return Promise.reject(new Error(`Invalid HTTP status code ${res.httpStatus}`))
+                return Promise.reject(new Error(`${T('Invalid HTTP status code')} ${res.httpStatus}`))
               }
             })
             .then(() => {

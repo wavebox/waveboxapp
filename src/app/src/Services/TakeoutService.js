@@ -19,6 +19,8 @@ import {
   WB_TAKEOUT_EXPORT_SERVER_CHANGESET,
   WB_TAKEOUT_IMPORT_SERVER
 } from 'shared/ipcEvents'
+import { T } from 'i18n'
+
 
 const TAKEOUT_STORES = [
   acmailboxStorage,
@@ -154,14 +156,14 @@ class TakeoutService {
       .then(() => {
         return new Promise((resolve, reject) => {
           dialog.showSaveDialog(browserWindow, {
-            title: 'Wavebox Export',
+            title: T('Wavebox Export'),
             defaultPath: filename,
-            buttonLabel: 'Export'
+            buttonLabel: T('Export')
           }, (filepath) => {
             if (filepath) {
               resolve(filepath)
             } else {
-              reject(new Error('User Cancelled'))
+              reject(new Error(T('User Cancelled')))
             }
           })
         })
@@ -173,8 +175,8 @@ class TakeoutService {
         console.error(err)
         dialog.showMessageBox(browserWindow, {
           type: 'error',
-          message: 'Failed to export',
-          buttons: ['OK']
+          message: T('Failed to export'),
+          buttons: [T('OK')]
         }, () => { /* no-op */ })
       })
   }
@@ -193,14 +195,14 @@ class TakeoutService {
           dialog.showMessageBox(browserWindow, {
             type: 'question',
             message: [
-              'Importing accounts and settings will remove any configuration you have done on this machine.',
+              T('Importing accounts and settings will remove any configuration you have done on this machine.'),
               '',
-              'Are you sure you want to do this?'
+              T('Are you sure you want to do this?')
             ].join('\n'),
-            buttons: ['Cancel', 'Continue']
+            buttons: [T('Cancel'), T('Continue')]
           }, (res) => {
             if (res === 0) {
-              reject(new Error('User Cancelled'))
+              reject(new Error(T('User Cancelled')))
             } else {
               resolve()
             }
@@ -210,14 +212,14 @@ class TakeoutService {
       .then(() => {
         return new Promise((resolve, reject) => {
           dialog.showOpenDialog(browserWindow, {
-            title: 'Wavebox Import',
-            buttonLabel: 'Import',
+            title: T('Wavebox Import'),
+            buttonLabel: T('Import'),
             properties: ['openFile']
           }, (filepaths) => {
             if (filepaths && filepaths[0]) {
               resolve(filepaths[0])
             } else {
-              reject(new Error('User Cancelled'))
+              reject(new Error(T('User Cancelled')))
             }
           })
         })
@@ -245,8 +247,8 @@ class TakeoutService {
         console.error(err)
         dialog.showMessageBox(browserWindow, {
           type: 'error',
-          message: 'Failed to import',
-          buttons: ['OK']
+          message: T('Failed to import'),
+          buttons: [T('OK')]
         }, () => { /* no-op */ })
       })
   }
@@ -302,8 +304,8 @@ class TakeoutService {
         console.error(err)
         dialog.showMessageBox(browserWindow, {
           type: 'error',
-          message: 'Failed to import',
-          buttons: ['OK']
+          message: T('Failed to import'),
+          buttons: [T('OK')]
         }, () => { /* no-op */ })
       })
   }
