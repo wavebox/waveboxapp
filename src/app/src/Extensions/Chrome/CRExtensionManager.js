@@ -12,7 +12,7 @@ import {
 import { userStore } from 'stores/user'
 import { crextensionActions } from 'stores/crextension'
 import { evtMain } from 'AppEvents'
-import i18n from 'i18n'
+import { T } from 'i18n'
 
 
 class CRExtensionManager {

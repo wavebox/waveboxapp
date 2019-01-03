@@ -1,5 +1,5 @@
 import Registry from 'winreg'
-import i18n from 'i18n'
+import { T } from 'i18n'
 
 
 class Win32Registry {

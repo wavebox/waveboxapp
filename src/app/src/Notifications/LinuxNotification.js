@@ -10,7 +10,7 @@ import {
 } from 'shared/ipcEvents'
 import { OSSettings } from 'shared/Models/Settings'
 import ElectronWebContentsWillNavigateShim from 'ElectronTools/ElectronWebContentsWillNavigateShim'
-import i18n from 'i18n'
+import { T } from 'i18n'
 
 
 const privLoaded = Symbol('privLoaded')

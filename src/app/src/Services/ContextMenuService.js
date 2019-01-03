@@ -14,7 +14,7 @@ import {
   WB_READING_QUEUE_LINK_ADDED,
   WB_READING_QUEUE_CURRENT_PAGE_ADDED
 } from 'shared/ipcEvents'
-import i18n from 'i18n'
+import { T } from 'i18n'
 
 
 const privConnected = Symbol('privConnected')
