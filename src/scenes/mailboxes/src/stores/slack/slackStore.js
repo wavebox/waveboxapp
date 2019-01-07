@@ -305,11 +305,7 @@ class SlackStore {
           )
         })
         rtm.on('message:message', (data) => {
-          accountActions.reduceServiceData(
-            serviceId,
-            SlackServiceDataReducer.rtmMessage,
-            data
-          )
+          this._processRtmMessageEvent(serviceId, data)
         })
 
         // Save the connection
@@ -348,6 +344,49 @@ class SlackStore {
           actions.reconnectService(serviceId)
         }, SLACK_RTM_RETRY_RECONNECT_MS)
       })
+  }
+
+  /* **************************************************************************/
+  // RTM: Message event
+  /* **************************************************************************/
+
+  /**
+  * Checks if a rtm message mentions a user
+  * @param rtmEvent: the rtm event
+  * @return true if a user was mentioned
+  */
+  _rtmMessageEventSubtypeRequiresSync (rtmEvent) {
+    if (rtmEvent.subtype === 'message_deleted') {
+      if (rtmEvent.channel[0] === 'D') {
+        return true
+      } else {
+        const text = (rtmEvent.previous_message || {}).text
+        return text && text.indexOf('<@') !== -1
+      }
+    } else if (rtmEvent.subtype === 'message_changed') {
+      const nextText = (rtmEvent.message || {}).text
+      const prevText = (rtmEvent.previous_message || {}).text
+      return (prevText && prevText.indexOf('<@') !== -1) || (nextText && nextText.indexOf('<@') !== -1)
+    } else {
+      return false
+    }
+  }
+
+  /**
+  * Processes a RTM message event
+  * @param serviceId: the id of the service
+  * @param rtmEvent: the rtm event that fired
+  */
+  _processRtmMessageEvent (serviceId, rtmEvent) {
+    if (this._rtmMessageEventSubtypeRequiresSync(rtmEvent)) {
+      actions.updateUnreadCounts(serviceId)
+    } else {
+      accountActions.reduceServiceData(
+        serviceId,
+        SlackServiceDataReducer.rtmMessage,
+        rtmEvent
+      )
+    }
   }
 
   /* **************************************************************************/
