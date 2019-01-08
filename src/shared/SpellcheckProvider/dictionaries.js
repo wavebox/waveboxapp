@@ -387,9 +387,9 @@ module.exports = {
     charset: 'USCRIPT_LATIN'
   },
   'es_CR': {
-    license: 'https://waveboxio.com/dl/dictionaries/es_CR/LICENSE.txt',
-    aff: 'https://waveboxio.com/dl/dictionaries/es_CR/index.aff',
-    dic: 'https://waveboxio.com/dl/dictionaries/es_CR/index.dic',
+    license: 'https://waveboxio.com/dl/dictionaries/es_CR/LICENSE.txt?rev=2',
+    aff: 'https://waveboxio.com/dl/dictionaries/es_CR/index.aff?rev=2',
+    dic: 'https://waveboxio.com/dl/dictionaries/es_CR/index.dic?rev=2',
     name: 'Español (Costa Rica) - Spanish (Costa Rica)',
     charset: 'USCRIPT_LATIN'
   },
