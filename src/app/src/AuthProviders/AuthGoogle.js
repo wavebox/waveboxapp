@@ -36,7 +36,6 @@ class AuthGoogle {
       access_type: 'offline',
       response_type: 'code',
       scope: [
-        'https://www.googleapis.com/auth/plus.me',
         'profile',
         'email',
         'https://www.googleapis.com/auth/gmail.readonly'
