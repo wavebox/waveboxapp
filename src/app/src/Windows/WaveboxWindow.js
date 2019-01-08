@@ -160,6 +160,11 @@ class WaveboxWindow extends EventEmitter {
     this.window.on('blur', this._handleWindowBlurred)
     this.bindMouseNavigation()
 
+    if (settingsStore.getState().launched.app.forceWindowPaintOnRestore) {
+      this.window.on('restore', this._forceRestoreRepaint)
+      this.window.on('show', this._forceRestoreRepaint)
+    }
+
     // Restore window position
     if (fullBrowserWindowPreferences.show) {
       this._restoreWindowPosition(savedLocation)
@@ -366,6 +371,27 @@ class WaveboxWindow extends EventEmitter {
       this[privMinMaxLast] = this.window.getBounds()
       this.window.maximize()
     }
+  }
+
+  /**
+  * Forces a repaint on restore
+  */
+  _forceRestoreRepaint = () => {
+    clearTimeout(this.__forceRestoreThrottle || null)
+    this.__forceRestoreThrottle = setTimeout(() => {
+      if (!this.window || this.window.isDestroyed()) { return }
+
+      const [w, h] = this.window.getSize()
+      this.window.setSize(w, h - 0, false)
+      setTimeout(() => {
+        if (!this.window || this.window.isDestroyed()) { return }
+        this.window.setSize(w, h, false)
+        setTimeout(() => {
+          if (!this.window || this.window.isDestroyed()) { return }
+          this.window.webContents.invalidate()
+        }, 1)
+      }, 1)
+    }, 100)
   }
 
   /* ****************************************************************************/

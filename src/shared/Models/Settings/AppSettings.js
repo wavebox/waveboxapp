@@ -108,6 +108,7 @@ class AppSettings extends Model {
   get concurrentServiceLoadLimitIsAuto () { return this.concurrentServiceLoadLimit === 0 }
   get concurrentServiceLoadLimitIsNone () { return this.concurrentServiceLoadLimit === -1 }
   get experimentalMicrosoftHTTP () { return this._value_('experimentalMicrosoftHTTP', false) }
+  get forceWindowPaintOnRestore () { return this._value_('forceWindowPaintOnRestore', false) }
 
   /* **************************************************************************/
   // Properties: Search
