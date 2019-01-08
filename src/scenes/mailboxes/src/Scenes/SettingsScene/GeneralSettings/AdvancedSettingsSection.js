@@ -62,7 +62,8 @@ class AdvancedSettingsSection extends React.Component {
         'polyfillUserAgents',
         'concurrentServiceLoadLimit',
         'searchProvider',
-        'experimentalMicrosoftHTTP'
+        'experimentalMicrosoftHTTP',
+        'forceWindowPaintOnRestore'
       ]) ||
       modelCompare(this.props.language, nextProps.language, [
         'inProcessSpellchecking'
@@ -204,6 +205,10 @@ class AdvancedSettingsSection extends React.Component {
             settingsActions.sub.app.setExperimentalMicrosoftHTTP(toggled)
           }}
           checked={app.experimentalMicrosoftHTTP} />
+        <SettingsListItemSwitch
+          label='Force window repaint on restore (Requires Restart)'
+          onChange={(evt, toggled) => settingsActions.sub.app.setForceWindowPaintOnRestore(toggled)}
+          checked={app.forceWindowPaintOnRestore} />
         <SettingsListItemSelectInline
           label='Concurrent service load limit (Requires Restart)'
           value={app.concurrentServiceLoadLimit}

@@ -1,17 +1,12 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Dialog, DialogContent } from '@material-ui/core'
+import { DialogContent } from '@material-ui/core'
 import WizardStepper from './WizardStepper'
 import { withStyles } from '@material-ui/core/styles'
+import classNames from 'classnames'
 
 const styles = {
-  dialog: {
-    maxWidth: '100%',
-    width: '100%',
-    height: '100%',
-    minWidth: 580
-  },
   dialogContent: {
     position: 'relative',
     backgroundColor: 'rgb(242, 242, 242)'
@@ -33,7 +28,7 @@ const styles = {
 }
 
 @withStyles(styles)
-class WizardStepperDialog extends React.Component {
+class WizardStepperDialogContent extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -61,26 +56,22 @@ class WizardStepperDialog extends React.Component {
       steps,
       currentStep,
       children,
+      className,
       ...passProps
     } = this.props
 
     return (
-      <Dialog
-        disableEnforceFocus
-        classes={{ paper: classes.dialog }}
-        {...passProps}>
-        <DialogContent className={classes.dialogContent}>
-          <WizardStepper
-            className={classes.master}
-            currentStep={currentStep}
-            steps={steps} />
-          <div className={classes.detail}>
-            {children}
-          </div>
-        </DialogContent>
-      </Dialog>
+      <DialogContent className={classNames(className, classes.dialogContent)} {...passProps}>
+        <WizardStepper
+          className={classes.master}
+          currentStep={currentStep}
+          steps={steps} />
+        <div className={classes.detail}>
+          {children}
+        </div>
+      </DialogContent>
     )
   }
 }
 
-export default WizardStepperDialog
+export default WizardStepperDialogContent

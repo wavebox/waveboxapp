@@ -11,6 +11,7 @@ import MailboxesWindow from 'Windows/MailboxesWindow'
 import ElectronCookie from 'ElectronTools/ElectronCookie'
 import fetch from 'electron-fetch'
 import mime from 'mime'
+import AsyncDownloadItem from './AsyncDownloadItem'
 
 const MAX_PLATFORM_START_TIME = 1000 * 30
 
@@ -81,14 +82,16 @@ class DownloadManager {
     const settingsState = settingsStore.getState()
 
     if (userStore.getState().wceUseAsyncDownloadHandler(settingsState.os.rawUseAsyncDownloadHandler)) {
-      // Grab a bunch of stuff from the event and item as it will be destroyed
-      const ses = evt.sender
-      const itemFilename = item.getFilename()
-      const itemUrl = item.getURL()
-      const itemTotalBytes = item.getTotalBytes()
+      // You have to be careful handling downloads as some urls will come in as...
+      // http://myurl which works fine
+      // blob:http:// which is a in-page object
+      // to work around this, use the default download hanlder silently in the background
+      // and whilst the download is in progress prompt the user to download etc
+      item = new AsyncDownloadItem(item)
 
-      // Stop normal behaviour
-      evt.preventDefault()
+      // Grab a bunch of stuff from the event and item as it will be destroyed
+      const itemFilename = item.getFilename()
+      const itemTotalBytes = item.getTotalBytes()
 
       Promise.resolve()
         .then(() => {
@@ -125,6 +128,7 @@ class DownloadManager {
                   }
                   resolve(pickedSavePath)
                 } else {
+                  item.cancel()
                   reject(new Error('User cancelled'))
                 }
               })
@@ -132,49 +136,25 @@ class DownloadManager {
           }
         })
         .then((pickedSavePath) => {
-          // Actual Download
           const downloadPath = unusedFilename.sync(pickedSavePath)
-          const downloadId = uuid.v4()
+          item.setSavePath(downloadPath)
           this.user.lastPath = path.dirname(downloadPath)
 
-          return Promise.resolve()
-            .then(() => ElectronCookie.cookieHeaderForUrl(ses.cookies, itemUrl))
-            .then((cookieHeader) => { return { 'User-Agent': ses.getUserAgent(), 'Cookie': cookieHeader } })
-            .then((headers) => fetch(itemUrl, { headers: headers, useElectronNet: true, session: ses }))
-            .then((res) => {
-              if (res.ok) {
-                const out = fs.createWriteStream(downloadPath)
-                const progressUpdater = setInterval(() => {
-                  this._updateUserDownloadProgress(downloadId, out.bytesWritten, itemTotalBytes)
-                }, 250)
-
-                return new Promise((resolve, reject) => {
-                  res.body.pipe(out)
-                  res.body.on('error', (err) => {
-                    clearInterval(progressUpdater)
-                    reject(err)
-                  })
-                  out.on('finish', () => {
-                    clearInterval(progressUpdater)
-                    resolve()
-                  })
-                  out.on('error', (err) => {
-                    clearInterval(progressUpdater)
-                    reject(err)
-                  })
-                })
-              } else {
-                return Promise.reject(new Error(`Invalid HTTP status code ${res.httpStatus}`))
-              }
-            })
-            .then(() => {
-              this._userDownloadFinished(downloadId, downloadPath)
-            })
-            .catch((ex) => {
+          // Report the progress to the window to display it
+          item.on('updated', () => {
+            this._updateUserDownloadProgress(item.downloadId, item.getReceivedBytes(), itemTotalBytes)
+          })
+          item.on('done', (e, state) => {
+            // Event will get destroyed before move callback completes. If
+            // you need any info from it grab it before calling fs.move
+            if (state === 'completed') {
+              this._userDownloadFinished(item.downloadId, downloadPath)
+            } else {
               // Tidy-up on failure
               try { fs.removeSync(downloadPath) } catch (ex) { /* no-op */ }
-              this._userDownloadFinished(downloadId, undefined)
-            })
+              this._userDownloadFinished(item.downloadId, undefined)
+            }
+          })
         })
         .catch((ex) => { /* no-op */ })
     } else {

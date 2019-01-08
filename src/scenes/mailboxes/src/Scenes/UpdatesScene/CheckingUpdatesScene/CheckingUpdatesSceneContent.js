@@ -1,9 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Dialog, DialogContent, DialogActions, Button, LinearProgress } from '@material-ui/core'
+import { DialogContent, DialogActions, Button, LinearProgress } from '@material-ui/core'
 import { updaterStore } from 'stores/updater'
-import UpdateModalTitle from './UpdateModalTitle'
+import UpdateModalTitle from '../Common/UpdateModalTitle'
 import { withStyles } from '@material-ui/core/styles'
 
 const styles = {
@@ -17,32 +17,17 @@ const styles = {
 }
 
 @withStyles(styles)
-class CheckingUpdatesScene extends React.Component {
+class CheckingUpdatesSceneContent extends React.Component {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
 
-  static contextTypes = {
-    router: PropTypes.object.isRequired
-  }
   static propTypes = {
     match: PropTypes.shape({
       params: PropTypes.shape({
-        provider: PropTypes.oneOf(['squirrel', 'manual'])
-      })
-    })
-  }
-
-  /* **************************************************************************/
-  // Component Lifecycle
-  /* **************************************************************************/
-
-  componentDidMount () {
-    updaterStore.listen(this.updaterStoreChanged)
-  }
-
-  componentWillUnmount () {
-    updaterStore.unlisten(this.updaterStoreChanged)
+        provider: PropTypes.oneOf(['squirrel', 'manual']).isRequired
+      }).isRequired
+    }).isRequired
   }
 
   /* **************************************************************************/
@@ -52,7 +37,6 @@ class CheckingUpdatesScene extends React.Component {
   state = (() => {
     const updaterState = updaterStore.getState()
     return {
-      open: true,
       isCheckingUpdate: updaterState.isCheckingUpdate(),
       isDownloadingUpdate: updaterState.isDownloadingUpdate()
     }
@@ -73,8 +57,7 @@ class CheckingUpdatesScene extends React.Component {
   * Closes the dialog
   */
   handleMinimize = () => {
-    this.setState({ open: false })
-    setTimeout(() => { window.location.hash = '/' }, 500)
+    window.location.hash = '/'
   }
 
   /* **************************************************************************/
@@ -124,17 +107,14 @@ class CheckingUpdatesScene extends React.Component {
   }
 
   render () {
-    const { open, isCheckingUpdate, isDownloadingUpdate } = this.state
+    const { isCheckingUpdate, isDownloadingUpdate } = this.state
     const {
       match: { params: { provider } },
       classes
     } = this.props
 
     return (
-      <Dialog
-        disableEnforceFocus
-        open={open}
-        onClose={this.handleMinimize}>
+      <React.Fragment>
         <UpdateModalTitle />
         <DialogContent className={classes.dialogContent}>
           {this.renderMessage(classes, provider, isCheckingUpdate, isDownloadingUpdate)}
@@ -148,9 +128,9 @@ class CheckingUpdatesScene extends React.Component {
             </Button>
           ) : undefined}
         </DialogActions>
-      </Dialog>
+      </React.Fragment>
     )
   }
 }
 
-export default CheckingUpdatesScene
+export default CheckingUpdatesSceneContent

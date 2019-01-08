@@ -7,7 +7,6 @@ import {
   GOOGLE_MAILBOX_WATCH_THROTTLE
 } from 'shared/constants'
 import uuid from 'uuid'
-import { URL } from 'url'
 import ServerVent from 'Server/ServerVent'
 import { accountStore, accountActions } from 'stores/account'
 import Debug from 'Debug'
@@ -205,18 +204,6 @@ class GoogleStore {
     })
   }
 
-  /**
-  * Gets the avatar from the response image
-  * @param image: the image object provided by google
-  * @return a url for the image
-  */
-  getAvatarFromResponseImage (image) {
-    if (!image.url) { return image.url }
-    const purl = new URL(image.url)
-    purl.searchParams.delete('sz')
-    return purl.toString()
-  }
-
   handleSyncServiceProfile ({ serviceId }) {
     if (this.hasOpenRequest(REQUEST_TYPES.PROFILE, serviceId)) {
       this.preventDefault()
@@ -232,8 +219,6 @@ class GoogleStore {
       .then(() => GoogleHTTP.fetchAccountProfile(auth))
       .then((response) => {
         this.trackCloseRequest(REQUEST_TYPES.PROFILE, serviceId, requestId)
-        const email = (response.emails.find((a) => a.type === 'account') || {}).value
-        const avatar = this.getAvatarFromResponseImage(response.image)
         accountActions.reduceAuth(
           serviceAuth.id,
           AuthReducer.makeValid
@@ -241,8 +226,8 @@ class GoogleStore {
         accountActions.reduceService(
           serviceId,
           CoreGoogleMailServiceReducer.setProfileInfo,
-          email,
-          avatar
+          response.email,
+          response.picture
         )
         this.emitChange()
       })

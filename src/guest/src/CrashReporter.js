@@ -45,8 +45,8 @@ class CrashReporter {
     }
 
     electron.crashReporter.start({
-      productName: 'Wavebox',
-      companyName: 'Wavebox',
+      productName: `${pkg.name[0].toUpperCase()}${pkg.name.substr(1)}`,
+      companyName: `${pkg.name[0].toUpperCase()}${pkg.name.substr(1)}`,
       submitURL: `${CRASH_REPORT_SERVER}/app/crash/hard`,
       extra: Object.keys(payload).reduce((acc, k) => {
         acc[k] = `${payload[k]}`

@@ -83,7 +83,8 @@ class DebugSlackCount {
     return clone.map((entry) => {
       return {
         ...this._depthRemoveStrings(entry),
-        type: entry.type
+        type: entry.type,
+        subtype: entry.subtype
       }
     })
   }

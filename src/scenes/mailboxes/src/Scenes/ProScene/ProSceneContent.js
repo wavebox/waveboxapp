@@ -1,56 +1,61 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Dialog, DialogContent, DialogActions, Button } from '@material-ui/core'
-import UpdateModalTitle from './UpdateModalTitle'
-import pkg from 'package.json'
+import { WaveboxWebView } from 'Components'
+import { userStore } from 'stores/user'
 import { withStyles } from '@material-ui/core/styles'
-import DoneIcon from '@material-ui/icons/Done'
+import { DialogContent, DialogActions, Button } from '@material-ui/core'
 
 const styles = {
   dialogContent: {
-    width: 600
+    position: 'relative'
   },
-  versionInfo: {
-    fontSize: '85%'
+  dialogActions: {
+    backgroundColor: 'rgb(242, 242, 242)',
+    borderTop: '1px solid rgb(232, 232, 232)',
+    margin: 0,
+    padding: '8px 4px'
   }
 }
 
 @withStyles(styles)
-class UpdateNoneScene extends React.Component {
+class ProSceneContent extends React.Component {
   /* **************************************************************************/
-  // Class
+  // Component lifecycle
   /* **************************************************************************/
 
-  static contextTypes = {
-    router: PropTypes.object.isRequired
+  componentDidMount () {
+    userStore.listen(this.userChanged)
   }
-  static propTypes = {
-    match: PropTypes.shape({
-      params: PropTypes.shape({
-        provider: PropTypes.oneOf(['squirrel', 'manual'])
-      })
+
+  componentWillUnmount () {
+    userStore.unlisten(this.userChanged)
+  }
+
+  /* **************************************************************************/
+  // Data lifecycle
+  /* **************************************************************************/
+
+  state = (() => {
+    return {
+      url: userStore.getState().user.proUrl
+    }
+  })()
+
+  userChanged = (userState) => {
+    this.setState({
+      url: userState.user.proUrl
     })
   }
 
   /* **************************************************************************/
-  // Data Lifecycle
-  /* **************************************************************************/
-
-  state = {
-    open: true
-  }
-
-  /* **************************************************************************/
-  // UI Events
+  // User Interaction
   /* **************************************************************************/
 
   /**
-  * Closes the dialog
+  * Closes the modal
   */
   handleClose = () => {
-    this.setState({ open: false })
-    setTimeout(() => { window.location.hash = '/' }, 500)
+    window.location.hash = '/'
   }
 
   /* **************************************************************************/
@@ -63,26 +68,25 @@ class UpdateNoneScene extends React.Component {
 
   render () {
     const { classes } = this.props
-    const { open } = this.state
+    const { url } = this.state
 
     return (
-      <Dialog
-        disableEnforceFocus
-        open={open}
-        onClose={this.handleClose}>
-        <UpdateModalTitle IconClass={DoneIcon} />
+      <React.Fragment>
         <DialogContent className={classes.dialogContent}>
-          <p>Your version of Wavebox is up to date</p>
-          <p className={classes.versionInfo}>You're currently using Wavebox version <strong>{pkg.version}</strong></p>
+          <WaveboxWebView
+            hasToolbar
+            didStartLoading={() => this.setState({ isLoading: true })}
+            didStopLoading={() => this.setState({ isLoading: false })}
+            src={url} />
         </DialogContent>
-        <DialogActions>
+        <DialogActions className={classes.dialogActions}>
           <Button variant='contained' color='primary' onClick={this.handleClose}>
-            Done
+            Close
           </Button>
         </DialogActions>
-      </Dialog>
+      </React.Fragment>
     )
   }
 }
 
-export default UpdateNoneScene
+export default ProSceneContent

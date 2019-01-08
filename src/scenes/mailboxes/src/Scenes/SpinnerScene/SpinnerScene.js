@@ -1,40 +1,31 @@
 import React from 'react'
-import { Dialog, DialogContent } from '@material-ui/core'
-import Spinner from 'wbui/Activity/Spinner'
-import { withStyles } from '@material-ui/core/styles'
-import lightBlue from '@material-ui/core/colors/lightBlue'
+import PropTypes from 'prop-types'
+import SpinnerSceneContent from './SpinnerSceneContent'
+import { RouterDialog } from 'Components/RouterDialog'
 
-const styles = {
-  dialogContent: {
-    width: 180,
-    textAlign: 'center'
-  },
-  text: {
-    marginTop: 20
-  }
-}
-
-@withStyles(styles)
 class SpinnerScene extends React.Component {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static propTypes = {
+    routeName: PropTypes.string.isRequired
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
 
   render () {
-    const { classes } = this.props
+    const { routeName } = this.props
     return (
-      <Dialog
+      <RouterDialog
+        routeName={routeName}
         disableEnforceFocus
-        open
         disableBackdropClick
         disableEscapeKeyDown>
-        <DialogContent className={classes.dialogContent}>
-          <Spinner size={50} color={lightBlue[600]} speed={0.75} />
-          <div className={classes.text}>
-            Just a moment...
-          </div>
-        </DialogContent>
-      </Dialog>
+        <SpinnerSceneContent />
+      </RouterDialog>
     )
   }
 }

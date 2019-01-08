@@ -193,6 +193,14 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * Sets whether to force a repaint on window restore
+  * @param force: true to force
+  */
+  setForceWindowPaintOnRestore (force) {
+    this.dispatchUpdate('forceWindowPaintOnRestore', force)
+  }
+
+  /**
   * Sets the search provider
   * @param provider: the new search provider
   */
