@@ -106,13 +106,25 @@ class GoogleHTTP {
     if (!auth) { return this._rejectWithNoAuth() }
 
     return Promise.resolve()
-      .then(() => gmail.users.watch({
-        userId: 'me',
-        resource: {
-          topicName: 'projects/wavebox-158310/topics/gmail'
-        },
-        auth: auth
-      }))
+      .then(() => {
+        return Promise.resolve()
+          .then(() => gmail.users.watch({
+            userId: 'me',
+            resource: {
+              topicName: 'projects/wavebox-158310/topics/gmail'
+            },
+            auth: auth
+          }))
+          .catch((ex) => {
+            if (ex && typeof (ex.message) === 'string' && ex.message.startsWith('Only one user push notification client allowed per developer')) {
+              // This suggests we're connected elsewhere - nothing to really do here, just look success-y
+              console.info('The failing status 400 call to https://www.googleapis.com/gmail/v1/users/me/watch is handled gracefully')
+              return Promise.resolve({ status: 200, data: {} })
+            } else {
+              return Promise.reject(ex)
+            }
+          })
+      })
       .then((res) => {
         if (res.status === 200) {
           return Promise.resolve(res.data)

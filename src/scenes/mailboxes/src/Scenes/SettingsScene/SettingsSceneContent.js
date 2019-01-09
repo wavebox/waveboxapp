@@ -187,7 +187,7 @@ class SettingsSceneContent extends React.Component {
       <React.Fragment>
         <AppBar position='static' className={classes.appBar}>
           <Tabs
-            fullWidth
+            variant='fullWidth'
             value={tab}
             onChange={this.handleTabChange}
             classes={{ indicator: classes.tabInkBar }}>
