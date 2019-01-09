@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Provider from 'Scenes/Provider'
-import { accountStore, accountActions, accountDispatch } from 'stores/account'
+import { accountStore, accountActions } from 'stores/account'
 import { settingsStore, settingsActions } from 'stores/settings'
 import { updaterStore, updaterActions } from 'stores/updater'
 import { userStore, userActions } from 'stores/user'
