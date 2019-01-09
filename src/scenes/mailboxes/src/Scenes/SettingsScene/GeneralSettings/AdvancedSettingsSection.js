@@ -58,7 +58,6 @@ class AdvancedSettingsSection extends React.Component {
         'disableSmoothScrolling',
         'enableAutofillService',
         'enableWindowOpeningEngine',
-        'enableMouseNavigationDarwin',
         'polyfillUserAgents',
         'concurrentServiceLoadLimit',
         'searchProvider',
@@ -151,15 +150,6 @@ class AdvancedSettingsSection extends React.Component {
             settingsActions.sub.app.disableSmoothScrolling(!toggled)
           }}
           checked={!app.disableSmoothScrolling} />
-        {process.platform === 'darwin' ? (
-          <SettingsListItemSwitch
-            label='Touchpad swipe Navigation (Requires Restart)'
-            onChange={(evt, toggled) => {
-              showRestart()
-              settingsActions.sub.app.setEnableMouseNavigationDarwin(toggled)
-            }}
-            checked={app.enableMouseNavigationDarwin} />
-        ) : undefined}
         {DistributionConfig.isSnapInstall ? undefined : (
           <SettingsListItemSwitch
             label='Autofill passwords on right click'

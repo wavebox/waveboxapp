@@ -12,7 +12,6 @@ import { guestStore, guestActions } from 'stores/guest'
 import { notifhistStore, notifhistActions } from 'stores/notifhist'
 import { EventEmitter } from 'events'
 import Debug from 'Debug'
-import MouseNavigationDarwin from 'wbui/MouseNavigationDarwin'
 import ResourceMonitorResponder from './ResourceMonitorResponder'
 import TopLevelErrorBoundary from 'wbui/TopLevelErrorBoundary'
 import {
@@ -95,18 +94,6 @@ userActions.startAutoUpdateExtensions()
 userActions.startAutoUpdateWireConfig()
 userActions.startAutoUpdateContainers()
 userActions.startAutoUploadUserProfile()
-
-// Navigation
-if (process.platform === 'darwin' && settingsStore.getState().launched.app.enableMouseNavigationDarwin) {
-  const mouseNavigator = new MouseNavigationDarwin(
-    () => accountDispatch.navigateBack(),
-    () => accountDispatch.navigateForward()
-  )
-  mouseNavigator.register()
-  window.addEventListener('beforeunload', () => {
-    mouseNavigator.unregister()
-  })
-}
 
 // Debugging
 Debug.load()

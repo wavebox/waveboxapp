@@ -7,8 +7,6 @@ import WaveboxWindowManager from './WaveboxWindowManager'
 import {
   WB_WINDOW_FIND_START,
   WB_WINDOW_FIND_NEXT,
-  WB_WINDOW_DARWIN_SCROLL_TOUCH_BEGIN,
-  WB_WINDOW_DARWIN_SCROLL_TOUCH_END,
   WB_WINDOW_FOCUS,
   WB_WINDOW_BLUR,
   WB_WINDOW_MIN_MAX_DBL_CLICK
@@ -306,14 +304,7 @@ class WaveboxWindow extends EventEmitter {
   * Darwin is handled in the rendering thread
   */
   bindMouseNavigation () {
-    if (process.platform === 'darwin') {
-      this.window.on('scroll-touch-begin', () => {
-        this.window.webContents.send(WB_WINDOW_DARWIN_SCROLL_TOUCH_BEGIN, {})
-      })
-      this.window.on('scroll-touch-end', () => {
-        this.window.webContents.send(WB_WINDOW_DARWIN_SCROLL_TOUCH_END, {})
-      })
-    } else if (process.platform === 'win32') {
+    if (process.platform === 'win32') {
       this.window.on('app-command', (evt, cmd) => {
         switch (cmd) {
           case 'browser-backward': this.navigateBack(); break
