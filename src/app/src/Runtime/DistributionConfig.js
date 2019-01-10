@@ -67,9 +67,9 @@ class DistributionConfig {
       return Promise.resolve(Platform.PACKAGE_MANAGERS.SNAP)
     } else if (this.installMethod === 'deb' || this.installMethod === 'rpm') {
       return new Promise((resolve) => {
-        getos((err, os) => {
+        getos((err, info) => {
           if (!err) {
-            const manager = LINUX_PACKAGE_MANGER_BY_OS_NAME[os]
+            const manager = LINUX_PACKAGE_MANGER_BY_OS_NAME[info.dist]
             if (this.installMethod === 'deb') {
               if (manager === Platform.PACKAGE_MANAGERS.APT) {
                 return resolve(manager)
