@@ -1,26 +1,31 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import shallowCompare from 'react-addons-shallow-compare'
 import { withStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import { ListItemSecondaryAction, IconButton } from '@material-ui/core'
-import ThemeTools from 'wbui/Themes/ThemeTools'
+import { ListItemSecondaryAction } from '@material-ui/core'
+import TooltipSectionListItemSecondaryActionButton from './TooltipSectionListItemSecondaryActionButton'
 
 const styles = (theme) => ({
   root: {
 
-  },
-  iconButton: {
-    color: ThemeTools.getStateValue(theme, 'wavebox.popover.section.listItem.button.color', 'default')
-  },
-  iconButtonLabel: {
-    '&>*': {
-      fontSize: '20px'
-    }
   }
 })
 
 @withStyles(styles, { withTheme: true })
 class TooltipSectionListItemSecondaryAction extends React.Component {
+  /* **************************************************************************/
+  // Class
+  /* **************************************************************************/
+
+  static propTypes = {
+    disableButton: PropTypes.bool.isRequired
+  }
+
+  static defaultProps = {
+    disableButton: false
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -36,19 +41,20 @@ class TooltipSectionListItemSecondaryAction extends React.Component {
       theme,
       children,
       onClick,
+      disableButton,
       ...passProps
     } = this.props
 
     return (
       <ListItemSecondaryAction
         className={classNames(className, classes.root)}
+        onClick={disableButton ? onClick : undefined}
         {...passProps}>
-        <IconButton
-          classes={{ label: classes.iconButtonLabel }}
-          className={classes.iconButton}
-          onClick={onClick}>
-          {children}
-        </IconButton>
+        {disableButton ? children : (
+          <TooltipSectionListItemSecondaryActionButton onClick={onClick}>
+            {children}
+          </TooltipSectionListItemSecondaryActionButton>
+        )}
       </ListItemSecondaryAction>
     )
   }

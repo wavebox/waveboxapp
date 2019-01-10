@@ -39,6 +39,7 @@ import {
   ProfileRestoreFetchingScene,
   ProfileRestoreRestartingScene
 } from './ProfileRestoreScene'
+import { BookmarkEditScene } from './BookmarkScene'
 import ErrorBoundary from 'wbui/ErrorBoundary'
 import FullscreenSnackbarHelper from 'Components/FullscreenSnackbarHelper'
 import SpinnerScene from './SpinnerScene'
@@ -113,6 +114,11 @@ export default class WaveboxRouter extends React.Component {
           {/* Dialogs: App Wizard */}
           <WaveboxRouterErrorBoundary>
             <AppWizardScene routeName='app_wizard' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Dialogs: Bookmarks */}
+          <WaveboxRouterErrorBoundary>
+            <BookmarkEditScene routeName='bookmark_edit' />
           </WaveboxRouterErrorBoundary>
 
           {/* Dialogs: Compose */}
@@ -204,6 +210,9 @@ export default class WaveboxRouter extends React.Component {
 
               {/* Dialogs: App Wizard */}
               <RouterDialogRoute path='/app_wizard/:step?' routeName='app_wizard' />
+
+              {/* Dialogs: Bookmarks */}
+              <RouterDialogRoute path='/bookmark/edit/:serviceId/:bookmarkId' routeName='bookmark_edit' />
 
               {/* Dialogs: Compose */}
               <RouterDialogRoute path='/incoming/compose' routeName='incoming_compose' />

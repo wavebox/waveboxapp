@@ -234,6 +234,15 @@ class CoreACService extends CoreACModel {
     })
   }
 
+  /**
+  * Gets a bookmark with a given id
+  * @param id: the id of the bookmark
+  * @return the bookmark or undefined
+  */
+  getBookmarkWithId (id) {
+    return this.bookmarks.find((b) => b.id === id)
+  }
+
   /* **************************************************************************/
   // Properties : Custom injectables
   /* **************************************************************************/

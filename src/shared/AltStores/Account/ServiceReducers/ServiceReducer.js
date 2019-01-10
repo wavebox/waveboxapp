@@ -201,6 +201,30 @@ class ServiceReducer {
   }
 
   /**
+  * Changes a bookmark entry
+  * @param service: the parent service
+  * @param bookmarkId: the id of the bookmark
+  * @param changeset: the change to apply to the bookmark
+  */
+  static changeBookmark (service, bookmarkId, changeset) {
+    return service.changeData({
+      bookmarks: service.bookmarks.map((bookmark) => {
+        if (bookmark.id === bookmarkId) {
+          return {
+            ...bookmark,
+            ...changeset,
+            // Maintain some integrity
+            id: bookmark.id,
+            time: bookmark.time
+          }
+        } else {
+          return bookmark
+        }
+      })
+    })
+  }
+
+  /**
   * Removes a bookmark entry from the service
   * @param service: the parent service
   * @param url: the url to add

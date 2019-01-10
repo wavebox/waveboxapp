@@ -51,6 +51,7 @@ class ServiceTooltipContent extends React.Component {
     onBookmarkRecentItem: PropTypes.func.isRequired,
     onOpenBookmarkItem: PropTypes.func.isRequired,
     onDeleteBookmark: PropTypes.func.isRequired,
+    onEditBookmark: PropTypes.func.isRequired,
     onOpenReadingQueueItem: PropTypes.func.isRequired,
     onDeleteReadingQueueItem: PropTypes.func.isRequired
   }
@@ -138,6 +139,7 @@ class ServiceTooltipContent extends React.Component {
       onBookmarkRecentItem,
       onOpenBookmarkItem,
       onDeleteBookmark,
+      onEditBookmark,
       onOpenReadingQueueItem,
       onDeleteReadingQueueItem,
       ...passProps
@@ -179,6 +181,7 @@ class ServiceTooltipContent extends React.Component {
                   serviceId={serviceId}
                   bookmark={bookmarkItem}
                   onOpenBookmark={onOpenBookmarkItem}
+                  onEditBookmark={onEditBookmark}
                   onDeleteBookmark={onDeleteBookmark} />
               )
             })

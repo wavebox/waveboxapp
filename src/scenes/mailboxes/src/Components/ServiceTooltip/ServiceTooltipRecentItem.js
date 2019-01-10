@@ -28,12 +28,8 @@ const styles = (theme) => ({
     textOverflow: 'ellipsis'
   },
   bookmarkIcon: {
-    opacity: 0.8,
     width: '1.2rem !important',
-    height: '1.2rem !important',
-    '&:hover': {
-      opacity: 1
-    }
+    height: '1.2rem !important'
   }
 })
 
@@ -120,8 +116,8 @@ class ServiceTooltipRecentItem extends React.Component {
           secondaryTypographyProps={{ className: classes.text }}
           primary={recentItem.title || <span>&nbsp;</span>}
           secondary={recentItem.url || <span>&nbsp;</span>} />
-        <TooltipSectionListItemSecondaryAction>
-          <FASMapPinIcon className={classes.bookmarkIcon} onClick={this.handleBookmarkClick} />
+        <TooltipSectionListItemSecondaryAction onClick={this.handleBookmarkClick}>
+          <FASMapPinIcon className={classes.bookmarkIcon} />
         </TooltipSectionListItemSecondaryAction>
       </TooltipSectionListItem>
     )

@@ -5,12 +5,14 @@ import { withStyles } from '@material-ui/core/styles'
 import TooltipSectionListItem from 'wbui/TooltipSectionListItem'
 import TooltipSectionListItemText from 'wbui/TooltipSectionListItemText'
 import TooltipSectionListItemSecondaryAction from 'wbui/TooltipSectionListItemSecondaryAction'
+import TooltipSectionListItemSecondaryActionButton from 'wbui/TooltipSectionListItemSecondaryActionButton'
 import CancelIcon from '@material-ui/icons/Cancel'
+import EditIcon from '@material-ui/icons/Edit'
 import classNames from 'classnames'
 
 const styles = (theme) => ({
   root: {
-    paddingRight: 32
+    paddingRight: 64
   },
   favicon: {
     width: 20,
@@ -27,11 +29,11 @@ const styles = (theme) => ({
     overflow: 'hidden',
     textOverflow: 'ellipsis'
   },
-  deleteIcon: {
-    opacity: 0.8,
-    '&:hover': {
-      opacity: 1
-    }
+  editButton: {
+    marginRight: -4
+  },
+  deleteButton: {
+    marginLeft: -4
   }
 })
 
@@ -50,6 +52,7 @@ class ServiceTooltipBookmarkItem extends React.Component {
       favicons: PropTypes.array
     }).isRequired,
     onOpenBookmark: PropTypes.func.isRequired,
+    onEditBookmark: PropTypes.func.isRequired,
     onDeleteBookmark: PropTypes.func.isRequired
   }
 
@@ -78,6 +81,13 @@ class ServiceTooltipBookmarkItem extends React.Component {
     onDeleteBookmark(evt, serviceId, bookmark)
   }
 
+  handleEditClick = (evt) => {
+    evt.preventDefault()
+    evt.stopPropagation()
+    const { serviceId, onEditBookmark, bookmark } = this.props
+    onEditBookmark(evt, serviceId, bookmark)
+  }
+
   /* **************************************************************************/
   // Rendering
   /* **************************************************************************/
@@ -91,6 +101,7 @@ class ServiceTooltipBookmarkItem extends React.Component {
       serviceId,
       onOpenBookmark,
       onDeleteBookmark,
+      onEditBookmark,
       onClick,
       bookmark,
       classes,
@@ -118,8 +129,13 @@ class ServiceTooltipBookmarkItem extends React.Component {
           secondaryTypographyProps={{ className: classes.text }}
           primary={bookmark.title || <span>&nbsp;</span>}
           secondary={bookmark.url} />
-        <TooltipSectionListItemSecondaryAction>
-          <CancelIcon className={classes.deleteIcon} onClick={this.handleDeleteClick} />
+        <TooltipSectionListItemSecondaryAction disableButton>
+          <TooltipSectionListItemSecondaryActionButton onClick={this.handleEditClick} className={classes.editButton}>
+            <EditIcon />
+          </TooltipSectionListItemSecondaryActionButton>
+          <TooltipSectionListItemSecondaryActionButton onClick={this.handleDeleteClick} className={classes.deleteButton}>
+            <CancelIcon />
+          </TooltipSectionListItemSecondaryActionButton>
         </TooltipSectionListItemSecondaryAction>
       </TooltipSectionListItem>
     )

@@ -212,6 +212,16 @@ class ServiceTooltip extends React.Component {
   }
 
   /**
+  * Handles editing a bookmark
+  * @param evt: the event that fired
+  * @param serviceId: the id of the service
+  * @param bookmarkItem: the bookmark item to edit
+  */
+  handleEditBookmark = (evt, serviceId, bookmarkItem) => {
+    window.location.hash = `/bookmark/edit/${serviceId}/${bookmarkItem.id}`
+  }
+
+  /**
   * Handles deleting a bookmark from within the tooltip
   * @param evt: the event that fired
   * @param serviceId: the id of the service
@@ -296,6 +306,7 @@ class ServiceTooltip extends React.Component {
             onOpenRecentItem={this.handleOpenRecentItem}
             onBookmarkRecentItem={this.handleBookmarkRecentItem}
             onOpenBookmarkItem={this.handleOpenBookmarkItem}
+            onEditBookmark={this.handleEditBookmark}
             onDeleteBookmark={this.handleDeleteBookmark}
             onOpenReadingQueueItem={this.handleOpenReadingQueueItem}
             onDeleteReadingQueueItem={this.handleDeleteReadingQueueItem} />
