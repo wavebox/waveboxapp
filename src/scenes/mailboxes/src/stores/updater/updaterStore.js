@@ -178,7 +178,7 @@ class UpdaterStore {
         hasReturned = true
         reject(new Error('Timeout'))
       }, 2000)
-      ipcRenderer.once(ret, (config) => {
+      ipcRenderer.once(ret, (evt, config) => {
         if (hasReturned) { return }
         hasReturned = true
         clearTimeout(timeout)
@@ -197,7 +197,7 @@ class UpdaterStore {
     this.lastManualDownloadUrl = null
 
     this.fetchUpdaterConfig().then(
-      (evt, config) => {
+      (config) => {
         this.osPackageManager = config.osPackageManager
         this.emitChange()
         actions.checkForUpdates.defer()
