@@ -42,7 +42,11 @@ class UpdateAvailableScene extends React.Component {
         routeName={routeName}
         disableEnforceFocus
         onClose={this.handleCheckLater}>
-        <RouterDialogStateProvider routeName={routeName} Component={UpdateAvailableSceneContent} />
+        <RouterDialogStateProvider
+          routeName={routeName}
+          location
+          match
+          Component={UpdateAvailableSceneContent} />
       </RouterDialog>
     )
   }

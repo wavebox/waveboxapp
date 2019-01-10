@@ -1,7 +1,22 @@
 import os from 'os'
 import semver from 'semver'
 
+const PACKAGE_MANAGERS = Object.freeze({
+  SNAP: 'SNAP',
+  APT: 'APT',
+  YUM: 'YUM',
+  ZYPPER: 'ZYPPER',
+  UNKNOWN: 'UNKNOWN'
+})
+
 class Platform {
+  /* **************************************************************************/
+  // Properties
+  /* **************************************************************************/
+
+  static get PACKAGE_MANAGERS () { return PACKAGE_MANAGERS }
+  static get SQUIRREL_UPDATE_ENABLED_ON_PLATFORM () { return process.platform === 'darwin' || process.platform === 'win32' }
+
   /* **************************************************************************/
   // Darwin Getters
   /* **************************************************************************/

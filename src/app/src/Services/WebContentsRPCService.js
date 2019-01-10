@@ -21,11 +21,15 @@ import {
   WCRPC_SYNC_GET_GUEST_PRELOAD_CONFIG,
   WCRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG,
   WCRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG,
-  WCRPC_RESOLVE_PERMISSION_REQUEST
+  WCRPC_RESOLVE_PERMISSION_REQUEST,
+  WCRPC_GET_UPDATER_CONFIG
 } from 'shared/webContentsRPC'
 import { PermissionManager } from 'Permissions'
 import os from 'os'
 import LinkOpener from 'LinkOpener'
+import AppUpdater from 'AppUpdater'
+import DistributionConfig from 'Runtime/DistributionConfig'
+import Platform from 'shared/Platform'
 
 const privConnected = Symbol('privConnected')
 const privNotificationService = Symbol('privNotificationService')
@@ -57,6 +61,7 @@ class WebContentsRPCService {
     ipcMain.on(WCRPC_SYNC_GET_EXTENSION_CS_PRELOAD_CONFIG, this._handleSyncGetExtensionContentScriptPreloadInfo)
     ipcMain.on(WCRPC_SYNC_GET_EXTENSION_HT_PRELOAD_CONFIG, this._handleSyncGetExtensionHostedPreloadInfo)
     ipcMain.on(WCRPC_RESOLVE_PERMISSION_REQUEST, this._handleResolvePermissionRequest)
+    ipcMain.on(WCRPC_GET_UPDATER_CONFIG, this._handleGetUpdaterConfig)
   }
 
   /* ****************************************************************************/
@@ -363,9 +368,37 @@ class WebContentsRPCService {
   /**
   * Handles the resolution of a permission request
   * @param evt: the event that fired
+  * @param wcId: the id of the webcontents
+  * @param type: the type of request
+  * @param permission: the permission to get
   */
   _handleResolvePermissionRequest = (evt, wcId, type, permission) => {
     PermissionManager.resolvePermissionRequest(wcId, type, permission)
+  }
+
+  /**
+  * Gets the updater config
+  * @param evt: the event that fired
+  * @param returnChannel: the channel to return the response to
+  */
+  _handleGetUpdaterConfig = (evt, returnChannel) => {
+    Promise.resolve()
+      .then(() => DistributionConfig.getDefaultOSPackageManager())
+      .then((packageManager) => {
+        if (evt.sender.isDestroyed()) { return }
+        evt.sender.send(returnChannel, {
+          osPackageManager: packageManager,
+          autoupdaterSupportedPlatform: AppUpdater.isSupportedPlatform
+        })
+      })
+      .catch((ex) => {
+        console.error(`Failed to respond to "${WCRPC_GET_UPDATER_CONFIG}" continuing with unknown side effects`, ex)
+        if (evt.sender.isDestroyed()) { return }
+        evt.sender.send(returnChannel, {
+          osPackageManager: Platform.PACKAGE_MANAGERS.UNKNOWN,
+          autoupdaterSupportedPlatform: false
+        })
+      })
   }
 }
 
