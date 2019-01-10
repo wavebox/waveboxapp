@@ -242,7 +242,7 @@ class UpdateAvailableSceneContent extends React.Component {
       )
     } else if (provider === 'manual') {
       if (process.platform === 'linux') {
-        if (osPackageManager === Platform.PACKAGE_MANAGERS.UNKNOWN) {
+        if (osPackageManager === Platform.PACKAGE_MANAGERS.UNKNOWN || !osPackageManager) {
           return (
             <div>
               <p>A newer version of Wavebox is now available.</p>
@@ -287,6 +287,10 @@ class UpdateAvailableSceneContent extends React.Component {
             </div>
           )
         }
+      } else {
+        return (
+          <p>A newer version of Wavebox is now available. Do you want to download it now?</p>
+        )
       }
     }
   }

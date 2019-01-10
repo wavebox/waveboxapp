@@ -197,7 +197,7 @@ class UpdaterStore {
     this.lastManualDownloadUrl = null
 
     this.fetchUpdaterConfig().then(
-      (config) => {
+      (evt, config) => {
         this.osPackageManager = config.osPackageManager
         this.emitChange()
         actions.checkForUpdates.defer()
