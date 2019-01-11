@@ -6,6 +6,7 @@ import pkg from 'package.json'
 import SettingsListSection from 'wbui/SettingsListSection'
 import SettingsListItemText from 'wbui/SettingsListItemText'
 import HelpIcon from '@material-ui/icons/Help'
+import DistributionConfig from 'Runtime/DistributionConfig'
 
 export default class InfoSettingsSection extends React.Component {
   /* **************************************************************************/
@@ -31,9 +32,12 @@ export default class InfoSettingsSection extends React.Component {
             secondary={wireConfigVersion} />
         ) : undefined}
         <SettingsListItemText
-          divider={false}
           primary={'Version'}
           secondary={`${pkg.version}${pkg.releaseChannel === RELEASE_CHANNELS.BETA ? 'beta' : ''}`} />
+        <SettingsListItemText
+          divider={false}
+          primary={'Install method'}
+          secondary={DistributionConfig.installMethod || 'Unknown'} />
       </SettingsListSection>
     )
   }

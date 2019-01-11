@@ -3,17 +3,18 @@ class Release {
   /**
   * Generates the version components
   * @param pkg: the current package info
-  * @param wireConfigVersion: the current wire config version
+  * @param wireConfigVersion=undefined: the current wire config version
+  * @param installMethod=undefined: the install method
   * @return an array of plain text strings with the version info
   */
-  static generateVersionComponents (pkg, wireConfigVersion = undefined) {
+  static generateVersionComponents (pkg, wireConfigVersion = undefined, installMethod = undefined) {
     const info = []
 
-    if (pkg.releaseChannel === RELEASE_CHANNELS.BETA) {
-      info.push(`Version ${pkg.version}beta`)
-    } else {
-      info.push(`Version ${pkg.version}`)
-    }
+    info.push([
+      `Version ${pkg.version}`,
+      pkg.releaseChannel === RELEASE_CHANNELS.BETA ? 'beta' : undefined,
+      installMethod && installMethod !== 'unknown' ? `(${installMethod})` : undefined
+    ].filter((c) => !!c).join(' '))
 
     if (pkg.earlyBuildId) {
       info.push(`Early Build Reference: ${pkg.earlyBuildId}`)

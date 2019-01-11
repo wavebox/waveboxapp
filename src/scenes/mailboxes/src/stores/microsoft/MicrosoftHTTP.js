@@ -193,23 +193,51 @@ class MicrosoftHTTP {
   }
 
   /**
-  * Fetches the live profile image for a user
+  * Fetches the office 365 avatar
   * @param auth: the auth to access microsoft
-  * @param userId: the id of the user
   * @return promise
   */
-  static fetchLiveProfileImage (auth, userId) {
+  static fetchAvatar (auth) {
     if (!auth) { return this._rejectWithNoAuth() }
 
     return Promise.resolve()
-      .then(() => this._fetch(`https://apis.live.net/v5.0/${userId}/picture`, {
+      .then(() => window.fetch('https://graph.microsoft.com/beta/me/photo/$value', {
         method: 'get',
         headers: {
-          'Accept': 'image'
+          'User-Agent': 'wavebox',
+          'Authorization': `Bearer ${auth}`
         }
       }))
-      .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
-      .then((res) => res.text())
+      .then((res) => {
+        if (res.ok) {
+          return Promise.resolve()
+            .then(() => res.blob())
+            .then((blob) => {
+              return new Promise((resolve, reject) => {
+                const objectURL = window.URL.createObjectURL(blob)
+                const loader = new window.Image()
+                loader.onload = () => {
+                  const draw = document.createElement('canvas')
+                  draw.width = loader.width
+                  draw.height = loader.height
+                  draw.getContext('2d').drawImage(loader, 0, 0, loader.width, loader.height)
+                  const dataURL = draw.toDataURL()
+                  window.URL.revokeObjectURL(objectURL)
+                  resolve(dataURL)
+                }
+                loader.onerror = (err) => {
+                  window.URL.revokeObjectURL(objectURL)
+                  reject(err)
+                }
+                loader.src = objectURL
+              })
+            })
+        } else if (res.status === 404) {
+          return Promise.resolve(undefined)
+        } else {
+          return Promise.reject(res)
+        }
+      })
   }
 
   /* **************************************************************************/
@@ -439,54 +467,6 @@ class MicrosoftHTTP {
       .then((res) => res.ok ? Promise.resolve(res) : Promise.reject(res))
       .then((res) => res.json())
       .then((res) => res.webUrl)
-  }
-
-  /**
-  * Fetches the office 365 avatar
-  * @param auth: the auth to access microsoft
-  * @return promise
-  */
-  static fetchOffice365Avatar (auth) {
-    if (!auth) { return this._rejectWithNoAuth() }
-
-    return Promise.resolve()
-      .then(() => window.fetch('https://graph.microsoft.com/v1.0/me/photo/$value', {
-        method: 'get',
-        headers: {
-          'User-Agent': 'wavebox',
-          'Authorization': `Bearer ${auth}`
-        }
-      }))
-      .then((res) => {
-        if (res.ok) {
-          return Promise.resolve()
-            .then(() => res.blob())
-            .then((blob) => {
-              return new Promise((resolve, reject) => {
-                const objectURL = window.URL.createObjectURL(blob)
-                const loader = new window.Image()
-                loader.onload = () => {
-                  const draw = document.createElement('canvas')
-                  draw.width = loader.width
-                  draw.height = loader.height
-                  draw.getContext('2d').drawImage(loader, 0, 0, loader.width, loader.height)
-                  const dataURL = draw.toDataURL()
-                  window.URL.revokeObjectURL(objectURL)
-                  resolve(dataURL)
-                }
-                loader.onerror = (err) => {
-                  window.URL.revokeObjectURL(objectURL)
-                  reject(err)
-                }
-                loader.src = objectURL
-              })
-            })
-        } else if (res.status === 404) {
-          return Promise.resolve(undefined)
-        } else {
-          return Promise.reject(res)
-        }
-      })
   }
 }
 
