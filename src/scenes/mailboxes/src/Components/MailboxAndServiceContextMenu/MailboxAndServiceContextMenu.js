@@ -27,13 +27,14 @@ import ServiceToolbarStartIcon from './ServiceToolbarStartIcon'
 import ServiceToolbarEndIcon from './ServiceToolbarEndIcon'
 import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxReducer'
 
-const ITEM_TYPES = {
+const ITEM_TYPES = Object.freeze({
   DIVIDER: 'DIVIDER',
   INFO: 'INFO',
   SERVICE_OPEN_NEW: 'SERVICE_OPEN_NEW',
   SERVICE_SLEEP: 'SERVICE_SLEEP',
   MAILBOX_SLEEP: 'MAILBOX_SLEEP',
   SERVICE_RELOAD: 'SERVICE_RELOAD',
+  MAILBOX_RELOAD: 'MAILBOX_RELOAD',
   RESYNC_SERVICE: 'RESYNC_SERVICE',
   RESYNC_MAILBOX: 'RESYNC_MAILBOX',
   SERVICE_REAUTHENTICATE: 'SERVICE_REAUTHENTICATE',
@@ -46,7 +47,7 @@ const ITEM_TYPES = {
   DELETE_MAILBOX: 'DELETE_MAILBOX',
   DELETE_SERVICE: 'DELETE_SERVICE',
   BAR_LOCK: 'BAR_LOCK'
-}
+})
 
 export default class MailboxAndServiceContextMenu extends React.Component {
   /* **************************************************************************/
@@ -115,15 +116,20 @@ export default class MailboxAndServiceContextMenu extends React.Component {
   generateAccountState (props, accountState = accountStore.getState()) {
     const { mailboxId, serviceId } = props
     const mailbox = accountState.getMailbox(mailboxId)
+    const mailboxActiveServiceId = accountState.activeServiceIdInMailbox(mailboxId)
 
     return {
       mailbox: mailbox,
       ...(mailbox ? {
         serviceCount: mailbox.allServiceCount,
-        mailboxDisplayName: accountState.resolvedMailboxDisplayName(mailboxId)
+        mailboxDisplayName: accountState.resolvedMailboxDisplayName(mailboxId),
+        mailboxActiveServiceId: mailboxActiveServiceId,
+        mailboxActiveServiceIsSleeping: mailboxActiveServiceId ? accountState.isServiceSleeping(mailboxActiveServiceId) : true
       } : {
         serviceCount: 0,
-        mailboxDisplayName: 'Untitled'
+        mailboxDisplayName: 'Untitled',
+        mailboxActiveServiceId: undefined,
+        mailboxActiveServiceIsSleeping: true
       }),
       ...(serviceId ? {
         service: accountState.getService(serviceId),
@@ -194,15 +200,29 @@ export default class MailboxAndServiceContextMenu extends React.Component {
   }
 
   /**
-  * Reloads this mailbox
+  * Reloads this service
   * @param evt: the event that fired
   */
-  handleReload = (evt) => {
+  handleReloadService = (evt) => {
     const { serviceId } = this.props
     accountActions.changeActiveService(serviceId)
     setTimeout(() => {
       accountDispatch.reloadService(serviceId)
     }, 100) // Give the UI some time to catch up
+    this.closePopover(evt)
+  }
+
+  /**
+  * Reloads the active service in a mailbox
+  * @param evt: the event that fired
+  */
+  handleReloadMailbox = (evt) => {
+    const { mailboxActiveServiceId } = this.state
+    if (mailboxActiveServiceId) {
+      setTimeout(() => {
+        accountDispatch.reloadService(mailboxActiveServiceId)
+      }, 100) // Give the UI some time to catch up
+    }
     this.closePopover(evt)
   }
 
@@ -432,7 +452,14 @@ export default class MailboxAndServiceContextMenu extends React.Component {
         )
       case ITEM_TYPES.SERVICE_RELOAD:
         return (
-          <MenuItem onClick={this.handleReload}>
+          <MenuItem onClick={this.handleReloadService}>
+            <ListItemIcon><RefreshIcon /></ListItemIcon>
+            <ListItemText inset primary='Reload' />
+          </MenuItem>
+        )
+      case ITEM_TYPES.MAILBOX_RELOAD:
+        return (
+          <MenuItem onClick={this.handleReloadMailbox}>
             <ListItemIcon><RefreshIcon /></ListItemIcon>
             <ListItemText inset primary='Reload' />
           </MenuItem>
@@ -586,7 +613,9 @@ export default class MailboxAndServiceContextMenu extends React.Component {
       rendering,
       serviceCount,
       userHasSleepable,
-      isServiceSleeping
+      isServiceSleeping,
+      mailboxActiveServiceId,
+      mailboxActiveServiceIsSleeping
     } = this.state
     if (!mailbox || !rendering) { return false }
 
@@ -608,7 +637,13 @@ export default class MailboxAndServiceContextMenu extends React.Component {
         {userHasSleepable && serviceCount > 1 ? this.renderItem(ITEM_TYPES.MAILBOX_SLEEP) : undefined}
 
         {/* Reload & Sync & Auth */}
-        {service && !isServiceSleeping ? this.renderItem(ITEM_TYPES.SERVICE_RELOAD) : undefined}
+        {service && !isServiceSleeping ? (
+          this.renderItem(ITEM_TYPES.SERVICE_RELOAD)
+        ) : (
+          mailboxActiveServiceId && !mailboxActiveServiceIsSleeping ? (
+            this.renderItem(ITEM_TYPES.MAILBOX_RELOAD)
+          ) : undefined
+        )}
         {this.renderItem(service && !serviceIsPriority ? ITEM_TYPES.RESYNC_SERVICE : ITEM_TYPES.RESYNC_MAILBOX)}
         {service && service.supportedAuthNamespace ? this.renderItem(ITEM_TYPES.SERVICE_REAUTHENTICATE) : undefined}
 

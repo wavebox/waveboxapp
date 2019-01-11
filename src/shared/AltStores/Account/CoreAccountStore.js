@@ -623,6 +623,16 @@ class CoreAccountStore extends RemoteStore {
       return mailbox ? this.isServiceActive(mailbox.allServices[0]) : false
     }
 
+    /**
+    * Gets the active service id but only if in the given mailbox
+    * @param mailboxId: the id of the mailbox to look in
+    * @return the active service id if it's in the mailbox
+    */
+    this.activeServiceIdInMailbox = (mailboxId) => {
+      const service = this.activeService()
+      return service && service.parentId === mailboxId ? service.id : undefined
+    }
+
     /* ****************************************/
     // Sleeping
     /* ****************************************/
