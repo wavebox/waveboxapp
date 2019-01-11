@@ -203,15 +203,12 @@ class WaveboxAppPrimaryMenu {
             click: WaveboxAppPrimaryMenuActions.menuToggle,
             accelerator: accelerators.toggleMenu
           },
-          /*
-          @Thomas101 cpallette
           { type: 'separator' },
           {
             label: 'Open Command Palette',
             click: WaveboxAppPrimaryMenuActions.openCommandPalette,
             accelerator: accelerators.commandPalette
           },
-          */
           { type: 'separator' },
           {
             label: 'Navigate Back',

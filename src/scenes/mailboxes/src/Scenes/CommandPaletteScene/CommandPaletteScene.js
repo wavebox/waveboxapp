@@ -1,18 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button, DialogContent, DialogActions } from '@material-ui/core'
 import shallowCompare from 'react-addons-shallow-compare'
-import { withStyles } from '@material-ui/core/styles'
 import Zoom from '@material-ui/core/Zoom'
 import { RouterDialog } from 'Components/RouterDialog'
+import CommandPaletteSceneContent from './CommandPaletteSceneContent'
 
 const TRANSITION_DURATION = 50
 
-const styles = {
-
-}
-
-@withStyles(styles)
 class CommandPaletteScene extends React.Component {
   /* **************************************************************************/
   // PropTypes
@@ -21,6 +15,10 @@ class CommandPaletteScene extends React.Component {
   static propTypes = {
     routeName: PropTypes.string.isRequired
   }
+
+  /* **************************************************************************/
+  // Data lifecycle
+  /* **************************************************************************/
 
   /* **************************************************************************/
   // User Interaction
@@ -42,7 +40,7 @@ class CommandPaletteScene extends React.Component {
   }
 
   render () {
-    const { classes, routeName } = this.props
+    const { routeName } = this.props
 
     return (
       <RouterDialog
@@ -50,14 +48,8 @@ class CommandPaletteScene extends React.Component {
         disableEnforceFocus
         transitionDuration={TRANSITION_DURATION}
         TransitionComponent={Zoom}
-        onClose={this.handleClose}
-        classes={{ paper: classes.dialog }}>
-        <DialogContent className={classes.dialogContent} />
-        <DialogActions className={classes.dialogActions}>
-          <Button variant='contained' color='primary' onClick={this.handleClose}>
-            Close
-          </Button>
-        </DialogActions>
+        onClose={this.handleClose}>
+        <CommandPaletteSceneContent />
       </RouterDialog>
     )
   }

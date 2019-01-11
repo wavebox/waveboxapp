@@ -190,7 +190,7 @@ export default class WaveboxRouter extends React.Component {
           <WaveboxRouterErrorBoundary>
             <Switch>
               {/* Dialogs: Switching */}
-              {/* @Thomas101 cpallette <RouterDialogRoute path='/command' routeName='command' /> */}
+              <RouterDialogRoute path='/command' routeName='command' />
               <RouterDialogRoute path='/switcher/:mode?' routeName='switcher' />
 
               {/* Dialogs: Settings */}
