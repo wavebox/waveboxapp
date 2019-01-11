@@ -219,15 +219,6 @@ class MicrosoftStore {
               profile.userPrincipalName,
               profile.displayName
             )
-
-            // Office365 is handled differently below...
-            if (serviceAuth.isPersonalAccount) {
-              accountActions.reduceService(
-                serviceId,
-                MicrosoftMailServiceReducer.setServiceAvatarUrl,
-                `https://apis.live.net/v5.0/${profile.id}/picture?type=large` // This is funky because it's in base64 format but works
-              )
-            }
             return accessToken
           })
       })
@@ -252,20 +243,16 @@ class MicrosoftStore {
         }
       })
       .then((accessToken) => { // Step 3: Sync avatar info
-        if (!serviceAuth.isPersonalAccount) {
-          return Promise.resolve()
-            .then(() => MicrosoftHTTP.fetchOffice365Avatar(accessToken))
-            .then((b64Image) => {
-              accountActions.setServiceAvatarOnService(serviceId, b64Image)
-              return accessToken
-            })
-            .catch((ex) => {
-              // Gobble this error
-              return Promise.resolve(accessToken)
-            })
-        } else {
-          return Promise.resolve(accessToken)
-        }
+        return Promise.resolve()
+          .then(() => MicrosoftHTTP.fetchAvatar(accessToken))
+          .then((b64Image) => {
+            accountActions.setServiceAvatarOnService(serviceId, b64Image)
+            return accessToken
+          })
+          .catch((ex) => {
+            // Gobble this error
+            return Promise.resolve(accessToken)
+          })
       })
       .then(() => { // Finish-up
         this.trackCloseRequest(REQUEST_TYPES.PROFILE, serviceId, requestId)
