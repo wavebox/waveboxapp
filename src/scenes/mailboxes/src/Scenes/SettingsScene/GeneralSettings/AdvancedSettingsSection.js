@@ -61,7 +61,7 @@ class AdvancedSettingsSection extends React.Component {
         'polyfillUserAgents',
         'concurrentServiceLoadLimit',
         'searchProvider',
-        'experimentalMicrosoftHTTP',
+        'rawAppThreadFetchMicrosoftHTTP',
         'forceWindowPaintOnRestore'
       ]) ||
       modelCompare(this.props.language, nextProps.language, [
@@ -189,12 +189,9 @@ class AdvancedSettingsSection extends React.Component {
           onChange={(evt, toggled) => settingsActions.sub.os.setUseAsyncDownloadHandler(toggled)}
           checked={userStore.getState().wceUseAsyncDownloadHandler(os.rawUseAsyncDownloadHandler)} />
         <SettingsListItemSwitch
-          label='Experimental Microsoft Account HTTP stack (Requires Restart)'
-          onChange={(evt, toggled) => {
-            showRestart()
-            settingsActions.sub.app.setExperimentalMicrosoftHTTP(toggled)
-          }}
-          checked={app.experimentalMicrosoftHTTP} />
+          label='Experimental Microsoft Account HTTP stack'
+          onChange={(evt, toggled) => settingsActions.sub.app.setAppThreadFetchMicrosoftHTTP(toggled)}
+          checked={userStore.getState().wceUseAppThreadFetchMicrosoftHTTP(app.rawAppThreadFetchMicrosoftHTTP)} />
         <SettingsListItemSwitch
           label='Force window repaint on restore (Requires Restart)'
           onChange={(evt, toggled) => settingsActions.sub.app.setForceWindowPaintOnRestore(toggled)}

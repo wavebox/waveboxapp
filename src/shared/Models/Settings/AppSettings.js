@@ -106,7 +106,7 @@ class AppSettings extends Model {
   get concurrentServiceLoadLimit () { return this._value_('concurrentServiceLoadLimit', 0) }
   get concurrentServiceLoadLimitIsAuto () { return this.concurrentServiceLoadLimit === 0 }
   get concurrentServiceLoadLimitIsNone () { return this.concurrentServiceLoadLimit === -1 }
-  get experimentalMicrosoftHTTP () { return this._value_('experimentalMicrosoftHTTP', false) }
+  get rawAppThreadFetchMicrosoftHTTP () { return this._value_('appThreadFetchMicrosoftHTTP', undefined) }
   get forceWindowPaintOnRestore () { return this._value_('forceWindowPaintOnRestore', false) }
 
   /* **************************************************************************/

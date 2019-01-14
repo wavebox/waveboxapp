@@ -113,6 +113,19 @@ class CoreUserStore extends RemoteStore {
     }
 
     /**
+    * @param userSetting: the setting that the user has defined
+    * @return the wire config experiment to use the app fetch stack for MS
+    */
+    this.wceUseAppThreadFetchMicrosoftHTTP = (userSetting) => {
+      if (userSetting !== undefined) {
+        return userSetting
+      } else {
+        const val = this.wireConfigExperiments().useAppThreadFetchMicrosoftHTTP
+        return val === undefined ? true : val
+      }
+    }
+
+    /**
     * @param defaultVal=[]: the default value if none is found
     * @return the window open rules
     */

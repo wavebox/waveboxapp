@@ -1,11 +1,8 @@
 import Boostrap from 'R/Bootstrap'
 import querystring from 'querystring'
-import electron from 'electron'
-import uuid from 'uuid'
-import {
-  WB_FETCH_SERVICE_SESSIONLESS_TEXT
-} from 'shared/ipcEvents'
+import FetchService from 'shared/FetchService'
 import { settingsStore } from 'stores/settings'
+import { userStore } from 'stores/user'
 
 const {
   MICROSOFT_CLIENT_ID,
@@ -24,22 +21,10 @@ class MicrosoftHTTP {
   * @param options: the fetch options
   */
   static _fetch (url, options) {
-    if (settingsStore.getState().launched.app.experimentalMicrosoftHTTP) {
-      return new Promise((resolve, reject) => {
-        const returnChannel = `${WB_FETCH_SERVICE_SESSIONLESS_TEXT}:${uuid.v4()}`
-        electron.ipcRenderer.once(returnChannel, (evt, err, res) => {
-          const text = err
-            ? (err.message || 'Unknown Error')
-            : res
-
-          resolve({
-            ok: !err,
-            text: () => Promise.resolve(text),
-            json: () => Promise.resolve(JSON.parse(text))
-          })
-        })
-        electron.ipcRenderer.send(WB_FETCH_SERVICE_SESSIONLESS_TEXT, returnChannel, url, options)
-      })
+    const userState = userStore.getState()
+    const settingState = settingsStore.getState()
+    if (userState.wceUseAppThreadFetchMicrosoftHTTP(settingState.app.rawAppThreadFetchMicrosoftHTTP)) {
+      return FetchService.request(url, undefined, options)
     } else {
       return window.fetch(url, options)
     }

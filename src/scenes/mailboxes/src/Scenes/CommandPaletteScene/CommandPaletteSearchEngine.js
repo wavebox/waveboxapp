@@ -9,7 +9,7 @@ const SEARCH_TARGETS = Object.freeze({
   RECENT: 'RECENT',
   READING_QUEUE: 'READING_QUEUE'
 })
-const DEFAULT_TICK_WAIT_MS = 150
+const DEFAULT_TICK_WAIT_MS = 100
 const ALL_TERM = '**'
 
 const privTickTime = Symbol('privTickTime')

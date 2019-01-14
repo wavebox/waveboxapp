@@ -177,11 +177,11 @@ class AppSettingsActions extends CoreSettingsActions {
   }
 
   /**
-  * Sets whether to use the experimentalMicrosoftHTTP stack
+  * Sets whether to fetch microsoft calls on the main thread
   * @param use: true to use
   */
-  setExperimentalMicrosoftHTTP (use) {
-    this.dispatchUpdate('experimentalMicrosoftHTTP', use)
+  setAppThreadFetchMicrosoftHTTP (use) {
+    this.dispatchUpdate('appThreadFetchMicrosoftHTTP', use)
   }
 
   /**
