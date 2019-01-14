@@ -469,7 +469,7 @@ class ContextMenuService {
           click: () => { clipboard.writeText(params.srcURL) }
         }
       ]
-    } else { // Text
+    } else if (params.isEditable || params.editFlags.canCopy) { // Textfield or general text
       return [
         params.editFlags.canCut ? {
           label: 'Cut',
@@ -492,6 +492,8 @@ class ContextMenuService {
           click: () => contents.selectAll()
         } : undefined
       ].filter((i) => !!i)
+    } else {
+      return []
     }
   }
 
@@ -505,10 +507,6 @@ class ContextMenuService {
   renderPageNavigationSection (contents, params, accountInfo) {
     if (params.linkURL) { return [] }
     return [
-      (accountInfo.has ? {
-        label: 'Home',
-        click: () => { contents.loadURL(accountInfo.service.url) }
-      } : undefined),
       {
         label: 'Go Back',
         enabled: contents.canGoBack(),
@@ -521,7 +519,11 @@ class ContextMenuService {
       {
         label: 'Reload',
         click: () => { contents.reload() }
-      }
+      },
+      (accountInfo.has ? {
+        label: 'Home',
+        click: () => { contents.loadURL(accountInfo.service.url) }
+      } : undefined)
     ].filter((i) => !!i)
   }
 
