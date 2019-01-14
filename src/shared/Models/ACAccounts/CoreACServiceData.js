@@ -117,6 +117,14 @@ class CoreACServiceData extends CoreACModel {
   /* **************************************************************************/
 
   get recent () { return this._value_('recent', []) }
+
+  /**
+  * @param recentId: the id of the recent item
+  * @return the item or undefined
+  */
+  getRecentWithId (recentId) {
+    return this.recent.find((item) => item.id === recentId)
+  }
 }
 
 export default CoreACServiceData

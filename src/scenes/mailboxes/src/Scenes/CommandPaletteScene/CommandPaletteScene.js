@@ -4,9 +4,20 @@ import shallowCompare from 'react-addons-shallow-compare'
 import Zoom from '@material-ui/core/Zoom'
 import { RouterDialog } from 'Components/RouterDialog'
 import CommandPaletteSceneContent from './CommandPaletteSceneContent'
+import { withStyles } from '@material-ui/core/styles'
 
 const TRANSITION_DURATION = 50
 
+const styles = {
+  root: {
+    height: '100%',
+    minWidth: 600,
+    backgroundColor: 'rgba(245, 245, 245, 0.95)',
+    borderRadius: 10
+  }
+}
+
+@withStyles(styles)
 class CommandPaletteScene extends React.Component {
   /* **************************************************************************/
   // PropTypes
@@ -40,7 +51,7 @@ class CommandPaletteScene extends React.Component {
   }
 
   render () {
-    const { routeName } = this.props
+    const { routeName, classes } = this.props
 
     return (
       <RouterDialog
@@ -48,7 +59,8 @@ class CommandPaletteScene extends React.Component {
         disableEnforceFocus
         transitionDuration={TRANSITION_DURATION}
         TransitionComponent={Zoom}
-        onClose={this.handleClose}>
+        onClose={this.handleClose}
+        classes={{ paper: classes.root }}>
         <CommandPaletteSceneContent />
       </RouterDialog>
     )

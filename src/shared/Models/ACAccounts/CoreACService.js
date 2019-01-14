@@ -235,6 +235,15 @@ class CoreACService extends CoreACModel {
   }
 
   /**
+  * Gets a reading queue item with a given id
+  * @param id: the id of the reading queue item
+  * @return the item or undefined
+  */
+  getReadingQueueItemWithId (id) {
+    return this.readingQueue.find((q) => q.id === id)
+  }
+
+  /**
   * Gets a bookmark with a given id
   * @param id: the id of the bookmark
   * @return the bookmark or undefined

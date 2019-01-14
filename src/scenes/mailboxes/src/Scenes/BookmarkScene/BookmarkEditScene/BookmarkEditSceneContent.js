@@ -31,6 +31,7 @@ const styles = {
   favicon: {
     height: 36,
     width: 36,
+    textIndent: -100000,
     border: '1px solid #EEE',
     backgroundImage: 'repeating-linear-gradient(45deg, #EEE, #EEE 2px, #FFF 2px, #FFF 5px)',
     marginRight: 12

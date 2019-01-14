@@ -218,7 +218,9 @@ class ServiceTooltip extends React.Component {
   * @param bookmarkItem: the bookmark item to edit
   */
   handleEditBookmark = (evt, serviceId, bookmarkItem) => {
-    window.location.hash = `/bookmark/edit/${serviceId}/${bookmarkItem.id}`
+    this.setState({ open: false }, () => {
+      window.location.hash = `/bookmark/edit/${serviceId}/${bookmarkItem.id}`
+    })
   }
 
   /**

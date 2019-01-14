@@ -4,8 +4,10 @@ import fastequal from 'fast-deep-equal'
 import { accountStore } from 'stores/account'
 
 const SEARCH_TARGETS = Object.freeze({
-  MAILBOX: 'MAILBOX',
-  SERVICE: 'SERVICE'
+  SERVICE: 'SERVICE',
+  BOOKMARK: 'BOOKMARK',
+  RECENT: 'RECENT',
+  READING_QUEUE: 'READING_QUEUE'
 })
 const DEFAULT_TICK_WAIT_MS = 150
 const ALL_TERM = '**'
@@ -123,23 +125,51 @@ class CommandPaletteSearchEngine extends EventEmitter {
     if (this[privSearchable].accountsDirty) {
       const accountState = accountStore.getState()
 
+      // Accounts are pseudo-ordered enough to not cause useless updates
       const accounts = [].concat(
-        accountState.allMailboxes().map((mailbox) => {
-          return {
-            target: SEARCH_TARGETS.MAILBOX,
-            id: mailbox.id,
-            ...[accountState.resolvedMailboxDisplayName(mailbox.id, undefined)]
-          }
-        }),
-        accountState.allServicesUnordered().map((service) => { // pseudo-ordered enough to not cause useless updates
+        // Services
+        accountState.allServicesUnordered().map((service) => {
           const serviceData = accountState.getServiceData(service.id)
           return {
             target: SEARCH_TARGETS.SERVICE,
             id: service.id,
+            parentId: service.parentId,
             ...([].concat(
               [accountState.resolvedServiceDisplayName(service.id, undefined)],
-              serviceData ? [ serviceData.documentTitle, serviceData.url ] : undefined
+              [service.getUrlWithData(serviceData)],
+              serviceData ? [ serviceData.documentTitle ] : undefined
             ))
+          }
+        }),
+
+        // Reading Queue
+        accountState.allReadingQueueItems().map((item) => {
+          return {
+            target: SEARCH_TARGETS.READING_QUEUE,
+            id: item.id,
+            parentId: item.serviceId,
+            ...[item.title, item.url]
+          }
+        }),
+
+        // Bookmarks
+        accountState.allBookmarkItems().map((item) => {
+          return {
+            target: SEARCH_TARGETS.BOOKMARK,
+            id: item.id,
+            parentId: item.serviceId,
+            ...[item.title, item.url]
+          }
+        }),
+
+        // Recents
+        // Bookmarks
+        accountState.allRecentItems().map((item) => {
+          return {
+            target: SEARCH_TARGETS.RECENT,
+            id: item.id,
+            parentId: item.serviceId,
+            ...[item.title, item.url]
           }
         })
       )
@@ -166,6 +196,27 @@ class CommandPaletteSearchEngine extends EventEmitter {
   }
 
   /**
+  * Sorts the results into categories
+  * @param results: the results to sort
+  * @return an object with category keys as ids
+  */
+  _sortResultsToTargets (results) {
+    const initial = Object.keys(SEARCH_TARGETS).reduce((acc, k) => {
+      acc[k] = { items: [], target: k, score: 0 }
+      return acc
+    }, {})
+    const targets = results.reduce((acc, res) => {
+      acc[res.item.target].items.push(res)
+      acc[res.item.target].score += res.score
+      return acc
+    }, initial)
+    Object.values(targets).forEach((target) => {
+      target.score = target.score / target.items.length
+    })
+    return targets
+  }
+
+  /**
   * Runs the search for the next tick
   */
   _performNextTick () {
@@ -174,7 +225,7 @@ class CommandPaletteSearchEngine extends EventEmitter {
 
     // Look for low-cost escapes (part 1)
     if (!this[privTerm]) {
-      this.emit('results-updated', { sender: this }, [])
+      this.emit('results-updated', { sender: this }, [], {})
       return
     }
 
@@ -185,13 +236,13 @@ class CommandPaletteSearchEngine extends EventEmitter {
     // Look for low-cost excapes (part 2)
     if (this[privTerm] === ALL_TERM) {
       const all = this[privFuse].list.map((item) => { return { score: 1.0, item: item } })
-      this.emit('results-updated', { sender: this }, all)
+      this.emit('results-updated', { sender: this }, all, this._sortResultsToTargets(all))
       return
     }
 
     // Perform the search
     const results = this[privFuse].search(this[privTerm])
-    this.emit('results-updated', { sender: this }, results)
+    this.emit('results-updated', { sender: this }, results, this._sortResultsToTargets(results))
   }
 }
 

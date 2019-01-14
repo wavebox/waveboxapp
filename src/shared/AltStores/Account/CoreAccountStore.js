@@ -84,6 +84,15 @@ class CoreAccountStore extends RemoteStore {
     }
 
     /**
+    * @param serviceId: the id of the service
+    * @return the mailboxid for the service
+    */
+    this.getMailboxIdForService = (serviceId) => {
+      const service = this.getService(serviceId)
+      return service ? service.parentId : null
+    }
+
+    /**
     * @return the count of mailboxes
     */
     this.mailboxCount = () => {
@@ -341,6 +350,29 @@ class CoreAccountStore extends RemoteStore {
       const mailbox = this.getMailbox(mailboxId)
       if (!mailbox) { return '' }
 
+      const explicitServiceDisplayName = this.resolvedMailboxExplicitServiceDisplayName(mailboxId, undefined)
+
+      if (mailbox.hasMultipleServices) {
+        const components = [
+          explicitServiceDisplayName,
+          `${mailbox.allServiceCount} services`
+        ].filter((c) => !!c)
+        return components.join(' - ')
+      } else {
+        return explicitServiceDisplayName || this.resolvedServiceDisplayName(mailbox.allServices[0], undefined)
+      }
+    }
+
+    /**
+    * Gets the explicit service display name from the services within the mailbox
+    * @param mailboxId: the id of the mailbox
+    * @param defaultValue='': the default value to use when no service is found
+    * @return an explicit display name or the default value
+    */
+    this.resolvedMailboxExplicitServiceDisplayName = (mailboxId, defaultValue = '') => {
+      const mailbox = this.getMailbox(mailboxId)
+      if (!mailbox) { return defaultValue }
+
       const serviceWithServiceDisplayName = this.getService(
         mailbox
           .allServices
@@ -350,21 +382,9 @@ class CoreAccountStore extends RemoteStore {
           })
       )
 
-      if (mailbox.hasMultipleServices) {
-        const components = [
-          serviceWithServiceDisplayName
-            ? serviceWithServiceDisplayName.serviceDisplayName
-            : undefined,
-          `${mailbox.allServiceCount} services`
-        ].filter((c) => !!c)
-        return components.join(' - ')
-      } else {
-        if (serviceWithServiceDisplayName) {
-          return serviceWithServiceDisplayName.serviceDisplayName
-        } else {
-          return this.resolvedServiceDisplayName(mailbox.allServices[0], undefined)
-        }
-      }
+      return serviceWithServiceDisplayName
+        ? serviceWithServiceDisplayName.serviceDisplayName
+        : defaultValue
     }
 
     /**
@@ -901,6 +921,29 @@ class CoreAccountStore extends RemoteStore {
           if (service) {
             const queue = service.readingQueue.map((r) => {
               return { ...r, serviceId }
+            })
+            return acc.concat(queue)
+          }
+          return acc
+        }, [])
+        .sort((a, b) => b.time - a.time)
+    }
+
+    /* ****************************************/
+    // Bookmarks
+    /* ****************************************/
+
+    /**
+    * @return a list of all reading queue items. Will have corresponding
+    * service id salted into them
+    */
+    this.allBookmarkItems = () => {
+      return this.serviceIds()
+        .reduce((acc, serviceId) => {
+          const service = this.getService(serviceId)
+          if (service) {
+            const queue = service.bookmarks.map((b) => {
+              return { ...b, serviceId }
             })
             return acc.concat(queue)
           }
