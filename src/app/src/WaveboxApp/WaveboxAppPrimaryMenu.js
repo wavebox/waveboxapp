@@ -228,6 +228,11 @@ class WaveboxAppPrimaryMenu {
           },
           { type: 'separator' },
           {
+            label: 'Actual Size',
+            click: WaveboxAppPrimaryMenuActions.zoomReset,
+            accelerator: accelerators.zoomReset
+          },
+          {
             label: 'Zoom In',
             click: WaveboxAppPrimaryMenuActions.zoomIn,
             accelerator: accelerators.zoomIn
@@ -236,11 +241,6 @@ class WaveboxAppPrimaryMenu {
             label: 'Zoom Out',
             click: WaveboxAppPrimaryMenuActions.zoomOut,
             accelerator: accelerators.zoomOut
-          },
-          {
-            label: 'Reset Zoom',
-            click: WaveboxAppPrimaryMenuActions.zoomReset,
-            accelerator: accelerators.zoomReset
           },
           { type: 'separator' },
           {
