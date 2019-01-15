@@ -219,7 +219,6 @@ class BrowserScene extends React.Component {
             didStartLoading={(evt) => browserActions.startLoading()}
             didStopLoading={(evt) => browserActions.stopLoading()}
             ipcMessage={this.handleBrowserIPCMessage}
-            willNavigate={this.navigationStateDidChange}
             didNavigate={this.navigationStateDidChange}
             onPermissionRequestsChanged={this.handlePermissionRequestsChanged}
             didNavigateInPage={this.navigationStateDidChange} />
