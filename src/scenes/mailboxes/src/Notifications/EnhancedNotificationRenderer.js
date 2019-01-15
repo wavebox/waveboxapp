@@ -33,6 +33,7 @@ class EnhancedNotificationRenderer {
   presentNotificationDarwin (title, html5Options = {}, clickHandler = undefined, clickData = {}) {
     if (!MacNotification) { return }
     if (NotificationRendererUtils.areNotificationsMuted()) { return }
+    if (NotificationRendererUtils.osSuppressesNotifications()) { return }
 
     const notif = new MacNotification(title, {
       body: html5Options.body,
@@ -61,6 +62,7 @@ class EnhancedNotificationRenderer {
   presentMailboxNotificationDarwin (mailboxId, serviceId, notification, clickHandler, accountState, settingsState) {
     if (!MacNotification) { return }
     if (NotificationRendererUtils.areNotificationsMuted(settingsState)) { return }
+    if (NotificationRendererUtils.osSuppressesNotifications(settingsState)) { return }
     const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceId, accountState, settingsState)
     if (!enabled) { return }
 
@@ -131,6 +133,7 @@ class EnhancedNotificationRenderer {
   */
   presentNotificationLinux (title, html5Options = {}, clickHandler = undefined, clickData = {}) {
     if (NotificationRendererUtils.areNotificationsMuted()) { return }
+    if (NotificationRendererUtils.osSuppressesNotifications()) { return }
 
     const sound = settingsStore.getState().os.notificationsSound || DEFAULT_NOTIFICATION_SOUND
     this._showLinuxNotification({
@@ -152,6 +155,7 @@ class EnhancedNotificationRenderer {
   */
   presentMailboxNotificationLinux (mailboxId, serviceId, notification, clickHandler, accountState, settingsState) {
     if (NotificationRendererUtils.areNotificationsMuted(settingsState)) { return }
+    if (NotificationRendererUtils.osSuppressesNotifications(settingsState)) { return }
     const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceId, accountState, settingsState)
     if (!enabled) { return }
 

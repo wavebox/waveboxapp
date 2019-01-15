@@ -4,6 +4,8 @@ import path from 'path'
 import fs from 'fs-extra'
 import Resolver from 'Runtime/Resolver'
 import settingsStore from 'stores/settings/settingsStore'
+import userStore from 'stores/user/userStore'
+import PowerMonitorService from 'shared/PowerMonitorService'
 
 export default class NotificationRendererUtils {
   /* **************************************************************************/
@@ -17,6 +19,19 @@ export default class NotificationRendererUtils {
   */
   static areNotificationsMuted (settingsState = settingsStore.getState()) {
     return settingsState.os.notificationsMuted
+  }
+
+  /**
+  * Checks if the OS suppresses notifications - e.g. it's suspended
+  * @param settingsState=autoget: the settings state
+  * @return true if notifications are suppressed
+  */
+  static osSuppressesNotifications (settingsState = settingsStore.getState()) {
+    if (userStore.getState().wceNotificationsMutedWhenSuspended(settingsState.os.rawNotificationsMutedWhenSuspended)) {
+      if (PowerMonitorService.isSuspended) { return true }
+    }
+
+    return false
   }
 
   /* **************************************************************************/

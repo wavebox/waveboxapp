@@ -46,6 +46,7 @@ class OSSettings extends Model {
     if (new Date().getTime() > this.notificationsMutedEndEpoch) { return false }
     return true
   }
+  get rawNotificationsMutedWhenSuspended () { return this._value_('notificationsMutedWhenSuspended', undefined) }
 
   /* ****************************************************************************/
   // Misc

@@ -72,7 +72,8 @@ class AdvancedSettingsSection extends React.Component {
         'showCtxMenuAdvancedLinkOptions'
       ]) ||
       modelCompare(this.props.os, nextProps.os, [
-        'rawUseAsyncDownloadHandler'
+        'rawUseAsyncDownloadHandler',
+        'rawNotificationsMutedWhenSuspended'
       ]) ||
       partialShallowCompare(
         { showRestart: this.props.showRestart },
@@ -192,6 +193,10 @@ class AdvancedSettingsSection extends React.Component {
           label='Experimental Microsoft Account HTTP stack'
           onChange={(evt, toggled) => settingsActions.sub.app.setAppThreadFetchMicrosoftHTTP(toggled)}
           checked={userStore.getState().wceUseAppThreadFetchMicrosoftHTTP(app.rawAppThreadFetchMicrosoftHTTP)} />
+        <SettingsListItemSwitch
+          label='Auto mute notifications when suspended'
+          onChange={(evt, toggled) => settingsActions.sub.os.setNotificationsMutedWhenSuspended(toggled)}
+          checked={userStore.getState().wceNotificationsMutedWhenSuspended(os.rawNotificationsMutedWhenSuspended)} />
         <SettingsListItemSwitch
           label='Force window repaint on restore (Requires Restart)'
           onChange={(evt, toggled) => settingsActions.sub.app.setForceWindowPaintOnRestore(toggled)}

@@ -126,6 +126,19 @@ class CoreUserStore extends RemoteStore {
     }
 
     /**
+    * @param userSetting: the setting that the user has defined
+    * @return the wire config experiment to use mute notifications when suspended
+    */
+    this.wceNotificationsMutedWhenSuspended = (userSetting) => {
+      if (userSetting !== undefined) {
+        return userSetting
+      } else {
+        const val = this.wireConfigExperiments().notificationsMutedWhenSuspended
+        return val === undefined ? true : val
+      }
+    }
+
+    /**
     * @param defaultVal=[]: the default value if none is found
     * @return the window open rules
     */

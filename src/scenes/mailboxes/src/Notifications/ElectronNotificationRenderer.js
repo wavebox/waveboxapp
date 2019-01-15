@@ -14,6 +14,7 @@ class ElectronNotificationRenderer {
   */
   presentNotification (title, html5Options = {}, clickHandler = undefined, clickData = {}) {
     if (NotificationRendererUtils.areNotificationsMuted()) { return }
+    if (NotificationRendererUtils.osSuppressesNotifications()) { return }
 
     const notification = new window.Notification(title, html5Options)
     notification.onclick = function () {
@@ -35,6 +36,7 @@ class ElectronNotificationRenderer {
   */
   presentMailboxNotification (mailboxId, serviceId, notification, clickHandler, accountState, settingsState) {
     if (NotificationRendererUtils.areNotificationsMuted(settingsState)) { return }
+    if (NotificationRendererUtils.osSuppressesNotifications(settingsState)) { return }
     const { mailbox, service, enabled } = NotificationRendererUtils.checkConfigAndFetchMailbox(mailboxId, serviceId, accountState, settingsState)
     if (!enabled) { return }
 
