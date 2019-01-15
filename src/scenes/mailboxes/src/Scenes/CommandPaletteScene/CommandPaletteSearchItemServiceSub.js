@@ -41,6 +41,9 @@ const styles = {
     position: 'absolute',
     right: -6,
     bottom: -1
+  },
+  block: {
+    display: 'block'
   }
 }
 
@@ -214,13 +217,13 @@ class CommandPaletteSearchItemServiceSub extends React.Component {
         )}
         secondaryText={(
           <React.Fragment>
-            <div>
+            <span className={classes.block}>
               {serviceDisplayName === mailboxHelperDisplayName
                 ? serviceDisplayName
                 : `${serviceDisplayName}: ${mailboxHelperDisplayName}`
               }
-            </div>
-            <div>{item.url}</div>
+            </span>
+            <span className={classes.block}>{item.url}</span>
           </React.Fragment>
         )}
         avatar={(

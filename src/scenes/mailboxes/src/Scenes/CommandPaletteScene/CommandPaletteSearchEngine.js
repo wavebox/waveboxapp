@@ -111,7 +111,8 @@ class CommandPaletteSearchEngine extends EventEmitter {
       includeScore: true,
       maxPatternLength: 32,
       minMatchCharLength: 1,
-      keys: [ '0', '1', '2' ]
+      tokenize: true,
+      keys: ['0', '1', '2', '3']
     })
     return true
   }
@@ -130,15 +131,19 @@ class CommandPaletteSearchEngine extends EventEmitter {
         // Services
         accountState.allServicesUnordered().map((service) => {
           const serviceData = accountState.getServiceData(service.id)
+          const serviceDisplayName = accountState.resolvedServiceDisplayName(service.id, undefined)
+          const mailboxHelperName = accountState.resolvedMailboxExplicitServiceDisplayName(service.parentId)
+
           return {
             target: SEARCH_TARGETS.SERVICE,
             id: service.id,
             parentId: service.parentId,
-            ...([].concat(
-              [accountState.resolvedServiceDisplayName(service.id, undefined)],
-              [service.getUrlWithData(serviceData)],
-              serviceData ? [ serviceData.documentTitle ] : undefined
-            ))
+            ...[
+              serviceDisplayName,
+              serviceDisplayName !== mailboxHelperName ? mailboxHelperName : undefined,
+              service.getUrlWithData(serviceData),
+              serviceData ? serviceData.documentTitle : undefined
+            ]
           }
         }),
 
