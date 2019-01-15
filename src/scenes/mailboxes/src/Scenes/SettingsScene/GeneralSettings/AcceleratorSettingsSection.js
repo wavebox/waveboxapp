@@ -62,7 +62,7 @@ const ACCELERATOR_NAMES = {
   developerTools: 'Developer Tools',
   developerToolsWavebox: 'Wavebox Developer Tools',
   openNextQueueItem: 'Open Next Queue Item',
-  commandPalette: 'Open Command Palette',
+  commandPalette: 'Open Quick Switch',
 
   // Accounts
   previousMailbox: 'Previous Account',

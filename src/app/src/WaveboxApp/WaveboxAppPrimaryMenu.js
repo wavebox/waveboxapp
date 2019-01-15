@@ -205,7 +205,7 @@ class WaveboxAppPrimaryMenu {
           },
           { type: 'separator' },
           {
-            label: 'Open Command Palette',
+            label: 'Open Quick Switch',
             click: WaveboxAppPrimaryMenuActions.openCommandPalette,
             accelerator: accelerators.commandPalette
           },
