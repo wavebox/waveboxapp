@@ -4,9 +4,9 @@ import {
   ACTIONS_NAME,
   DISPATCH_NAME,
   STORE_NAME
-} from './AltNotifhistIdentifiers'
+} from './AltLocalHistoryIdentifiers'
 
-class CoreNotifhistActions extends RemoteActions {
+class CoreLocalHistoryActions extends RemoteActions {
   /* **************************************************************************/
   // Class
   /* **************************************************************************/
@@ -33,7 +33,7 @@ class CoreNotifhistActions extends RemoteActions {
   }
 
   /* **************************************************************************/
-  // Adding
+  // Notifications
   /* **************************************************************************/
 
   /**
@@ -56,6 +56,49 @@ class CoreNotifhistActions extends RemoteActions {
       return { }
     })
   }
+
+  /* **************************************************************************/
+  // Downloads
+  /* **************************************************************************/
+
+  /**
+  * Clears all inactive downloads
+  */
+  clearAllDownloads (...args) {
+    if (process.type === 'browser') {
+      return { }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('clearAllDownloads', args)
+    }
+  }
+
+  /**
+  * Clears a specific download
+  * @param id: the id of the download
+  */
+  deleteDownload (...args) {
+    if (process.type === 'browser') {
+      const [ id ] = args
+      return { id }
+    } else if (process.type === 'renderer') {
+      return this.remoteDispatch('deleteDownload', args)
+    }
+  }
+
+  /**
+  * Shows a download in it's folder
+  * @param id: the id of the download
+  */
+  showDownloadInFolder (id) {
+    return { id }
+  }
+
+  /**
+  * Attempts to cancel a running download
+  */
+  cancelActiveDownload (id) {
+    return { id }
+  }
 }
 
-export default CoreNotifhistActions
+export default CoreLocalHistoryActions

@@ -55,7 +55,7 @@ class RemoteStore {
       evt.returnValue = this._remoteConnectReturnValue()
     } catch (ex) {
       console.error(`Failed to respond to "ALT:CONNECT:${this.__remote__.names.dispatch}" continuing with unknown side effects`, ex)
-      evt.returnValue = null
+      evt.returnValue = {}
     }
   }
 

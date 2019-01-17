@@ -1,4 +1,5 @@
-import { session, app, dialog, BrowserWindow } from 'electron'
+import { session, app, dialog, BrowserWindow, ipcMain } from 'electron'
+import { EventEmitter } from 'events'
 import uuid from 'uuid'
 import fs from 'fs-extra'
 import path from 'path'
@@ -12,23 +13,30 @@ import ElectronCookie from 'ElectronTools/ElectronCookie'
 import fetch from 'electron-fetch'
 import mime from 'mime'
 import AsyncDownloadItem from './AsyncDownloadItem'
+import { WB_DOWNLOAD_CANCEL_RUNNING } from 'shared/ipcEvents'
 
 const MAX_PLATFORM_START_TIME = 1000 * 30
+const privUser = Symbol('privUser')
+const privPlatform = Symbol('privPlatform')
 
-class DownloadManager {
+class DownloadManager extends EventEmitter {
   /* ****************************************************************************/
   // Lifecycle
   /* ****************************************************************************/
 
   constructor () {
-    this.user = {
+    super()
+
+    this[privUser] = {
       partitions: new Set(),
       inProgress: new Map(),
       lastPath: null
     }
-    this.platform = {
+    this[privPlatform] = {
       queue: new Map()
     }
+
+    ipcMain.on(WB_DOWNLOAD_CANCEL_RUNNING, this._handleCancelRunningDownload)
   }
 
   /* ****************************************************************************/
@@ -36,6 +44,21 @@ class DownloadManager {
   /* ****************************************************************************/
 
   _getMailboxesWindow () { return WaveboxWindow.getOfType(MailboxesWindow) }
+
+  /* ****************************************************************************/
+  // IPC Event listeners
+  /* ****************************************************************************/
+
+  /**
+  * Attempts to cancel a running user download
+  * @param evt: the event that fired
+  * @Param downloadId: the id of the download
+  */
+  _handleCancelRunningDownload = (evt, downloadId) => {
+    const download = this[privUser].inProgress.get(downloadId)
+    if (!download || !download.item) { return }
+    download.item.cancel()
+  }
 
   /* ****************************************************************************/
   // User downloads
@@ -46,8 +69,8 @@ class DownloadManager {
   * @param partition: the partition to listen on
   */
   setupUserDownloadHandlerForPartition (partition) {
-    if (this.user.partitions.has(partition)) { return }
-    this.user.partitions.add(partition)
+    if (this[privUser].partitions.has(partition)) { return }
+    this[privUser].partitions.add(partition)
 
     const ses = session.fromPartition(partition)
     ses.setDownloadPath(app.getPath('downloads'))
@@ -59,8 +82,8 @@ class DownloadManager {
   * @param partition: the partition to teardown
   */
   teardownUserDownloadHandlerForPartition (partition) {
-    if (!this.user.partitions.has(partition)) { return }
-    this.user.partitions.delete(partition)
+    if (!this[privUser].partitions.has(partition)) { return }
+    this[privUser].partitions.delete(partition)
 
     const ses = session.fromPartition(partition)
     ses.removeListener('will-download', this._handleUserDownload)
@@ -89,10 +112,7 @@ class DownloadManager {
       // and whilst the download is in progress prompt the user to download etc
       item = new AsyncDownloadItem(item)
 
-      // Grab a bunch of stuff from the event and item as it will be destroyed
       const itemFilename = item.getFilename()
-      const itemTotalBytes = item.getTotalBytes()
-
       Promise.resolve()
         .then(() => {
           // Download target picking
@@ -105,7 +125,7 @@ class DownloadManager {
             return Promise.resolve(savePath)
           } else {
             return new Promise((resolve, reject) => {
-              const lastPath = this.user.lastPath
+              const lastPath = this[privUser].lastPath
               const parentWindow = BrowserWindow.fromWebContents(wc.hostWebContents ? wc.hostWebContents : wc)
               dialog.showSaveDialog(parentWindow, {
                 title: 'Download',
@@ -138,21 +158,17 @@ class DownloadManager {
         .then((pickedSavePath) => {
           const downloadPath = unusedFilename.sync(pickedSavePath)
           item.setSavePath(downloadPath)
-          this.user.lastPath = path.dirname(downloadPath)
+          this._handleUserDownloadStarted(item.downloadId, item, downloadPath)
 
           // Report the progress to the window to display it
           item.on('updated', () => {
-            this._updateUserDownloadProgress(item.downloadId, item.getReceivedBytes(), itemTotalBytes)
+            this._handleUserDownloadUpdated(item.downloadId, item, downloadPath)
           })
           item.on('done', (e, state) => {
-            // Event will get destroyed before move callback completes. If
-            // you need any info from it grab it before calling fs.move
             if (state === 'completed') {
-              this._userDownloadFinished(item.downloadId, downloadPath)
+              this._handleUserDownloadFinished(item.downloadId, item, downloadPath)
             } else {
-              // Tidy-up on failure
-              try { fs.removeSync(downloadPath) } catch (ex) { /* no-op */ }
-              this._userDownloadFinished(item.downloadId, undefined)
+              this._handleUserDownloadFailed(item.downloadId, item, downloadPath)
             }
           })
         })
@@ -167,7 +183,7 @@ class DownloadManager {
         fs.ensureDirSync(folderLocation)
         savePath = unusedFilename.sync(path.join(folderLocation, item.getFilename()))
       } else {
-        const lastPath = this.user.lastPath
+        const lastPath = this[privUser].lastPath
         const parentWindow = BrowserWindow.fromWebContents(wc.hostWebContents ? wc.hostWebContents : wc)
         let pickedSavePath = dialog.showSaveDialog(parentWindow, {
           title: 'Download',
@@ -202,23 +218,19 @@ class DownloadManager {
       // Set the save - will prevent dialog showing up
       const downloadPath = unusedFilename.sync(savePath) // just-in-case
       item.setSavePath(downloadPath)
-      this.user.lastPath = path.dirname(savePath)
 
-      // Report the progress to the window to display it
-      const totalBytes = item.getTotalBytes()
+      // Save some variables for later re-use
       const id = uuid.v4()
+      this._handleUserDownloadStarted(id, item, downloadPath)
+
       item.on('updated', () => {
-        this._updateUserDownloadProgress(id, item.getReceivedBytes(), totalBytes)
+        this._handleUserDownloadUpdated(id, item, downloadPath)
       })
       item.on('done', (e, state) => {
-        // Event will get destroyed before move callback completes. If
-        // you need any info from it grab it before calling fs.move
         if (state === 'completed') {
-          this._userDownloadFinished(id, downloadPath)
+          this._handleUserDownloadFinished(id, item, downloadPath)
         } else {
-          // Tidy-up on failure
-          try { fs.removeSync(downloadPath) } catch (ex) { /* no-op */ }
-          this._userDownloadFinished(id, undefined)
+          this._handleUserDownloadFailed(id, item, downloadPath)
         }
       })
     }
@@ -228,7 +240,7 @@ class DownloadManager {
   * Updates the progress bar in the dock
   */
   _updateDownloadProgressBar = () => {
-    const all = Array.from(this.user.inProgress.values()).reduce((acc, { received, total }) => {
+    const all = Array.from(this[privUser].inProgress.values()).reduce((acc, { received, total }) => {
       return {
         received: acc.received + received,
         total: acc.total + total
@@ -247,41 +259,103 @@ class DownloadManager {
     }
   }
 
+  /* ****************************************************************************/
+  // User downloads: download handlers
+  /* ****************************************************************************/
+
   /**
-  * Updates the progress on a download
-  * @param id: the download id
-  * @param received: the bytes received
-  * @param total: the total bytes to download
+  * Handles a user download starting
+  * @param id: the id of the download
+  * @param item: the download item
+  * @param downloadPath: the path to download to
   */
-  _updateUserDownloadProgress = (id, received, total) => {
-    const next = {
-      ...this.user.inProgress.get(id),
-      received: received,
-      total: total
-    }
-    this.user.inProgress.set(id, next)
+  _handleUserDownloadStarted (id, item, downloadPath) {
+    this[privUser].lastPath = path.dirname(downloadPath)
+    this[privUser].inProgress.set(id, {
+      item: item,
+      received: item.getReceivedBytes(),
+      total: item.getTotalBytes()
+    })
     this._updateDownloadProgressBar()
+    this.emit('download-started', { sender: this }, {
+      id: id,
+      url: item.getURL(),
+      filename: item.getFilename(),
+      bytesReceived: item.getReceivedBytes(),
+      bytesTotal: item.getTotalBytes(),
+      downloadPath: downloadPath
+    })
   }
 
   /**
-  * Indicates that a download has finished
-  * @param id: the download id
-  * @param savePath: the path to the downloaded file or undefined if something went wrong
+  * Handles the download updating
+  * @param id: the id of the download
+  * @param item: the download item
+  * @param downloadPath: the path to download to
   */
-  _userDownloadFinished = (id, savePath) => {
-    this.user.inProgress.delete(id)
+  _handleUserDownloadUpdated (id, item, downloadPath) {
+    this[privUser].inProgress.set(id, {
+      ...this[privUser].inProgress.get(id),
+      received: item.getReceivedBytes(),
+      total: item.getTotalBytes()
+    })
     this._updateDownloadProgressBar()
-    if (savePath) {
-      const saveName = path.basename(savePath)
-      const mainWindow = this._getMailboxesWindow()
-      if (mainWindow) {
-        mainWindow.downloadCompleted(savePath, saveName)
-      }
+    this.emit('download-updated', { sender: this }, {
+      id: id,
+      url: item.getURL(),
+      filename: item.getFilename(),
+      bytesReceived: item.getReceivedBytes(),
+      bytesTotal: item.getTotalBytes(),
+      downloadPath: downloadPath
+    })
+  }
 
-      if (process.platform === 'darwin') {
-        app.dock.downloadFinished(savePath)
-      }
+  /**
+  * Handles a download finishing in a success state
+  * @param id: the id of the download
+  * @param item: the download item
+  * @param downloadPath: the path to download to
+  */
+  _handleUserDownloadFinished (id, item, downloadPath) {
+    this[privUser].inProgress.delete(id)
+    this._updateDownloadProgressBar()
+
+    // Notify & bounce
+    const saveName = path.basename(downloadPath)
+    const mainWindow = this._getMailboxesWindow()
+    if (mainWindow) {
+      mainWindow.downloadCompleted(downloadPath, saveName)
     }
+    if (process.platform === 'darwin') {
+      app.dock.downloadFinished(downloadPath)
+    }
+
+    this.emit('download-finished', { sender: this }, {
+      id: id,
+      url: item.getURL(),
+      filename: item.getFilename(),
+      bytesTotal: item.getTotalBytes(),
+      downloadPath: downloadPath
+    })
+  }
+
+  /**
+  * Handles a download finishing in an error state
+  * @param id: the id of the download
+  * @param item: the download item
+  * @param downloadPath: the path to download to
+  */
+  _handleUserDownloadFailed (id, item, downloadPath) {
+    this[privUser].inProgress.delete(id)
+    this._updateDownloadProgressBar()
+    try { fs.removeSync(downloadPath) } catch (ex) { /* no-op */ }
+
+    this.emit('download-failed', { sender: this }, {
+      id: id,
+      url: item.getURL(),
+      filename: item.getFilename(),
+      downloadPath: downloadPath
+    })
   }
 
   /* ****************************************************************************/
@@ -347,7 +421,7 @@ class DownloadManager {
         .catch((ex) => { /* no-op */ })
     } else {
       const id = uuid.v4()
-      this.platform.queue.set(id, {
+      this[privPlatform].queue.set(id, {
         webContents: transportWebContents.id,
         url: url,
         id: id,
@@ -360,7 +434,7 @@ class DownloadManager {
 
         timeout = setTimeout(() => {
           transportWebContents.session.removeListener('will-download', handler)
-          this.platform.queue.delete(id)
+          this[privPlatform].queue.delete(id)
           reject(new Error('Timeout'))
         }, MAX_PLATFORM_START_TIME)
 
@@ -370,7 +444,7 @@ class DownloadManager {
           if (downloadId === undefined) { return }
 
           // Dequeue
-          this.platform.queue.delete(downloadId)
+          this[privPlatform].queue.delete(downloadId)
           transportWebContents.session.removeListener('will-download', handler)
           clearTimeout(timeout)
 
@@ -413,7 +487,7 @@ class DownloadManager {
   * @return the download id if it is a platform download, undefined otherwise
   */
   _getPlatformDownloadId (item, webContents) {
-    const platformDownload = Array.from(this.platform.queue.values()).find((platformItem) => {
+    const platformDownload = Array.from(this[privPlatform].queue.values()).find((platformItem) => {
       if (platformItem.webContents === webContents.id && platformItem.url === item.getURLChain()[0]) {
         return true
       } else {

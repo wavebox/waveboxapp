@@ -5,7 +5,7 @@ import { webFrame } from 'electron'
 import { userStore, userActions } from 'stores/user'
 import { accountStore, accountActions } from 'stores/account'
 import { emblinkStore, emblinkActions } from 'stores/emblink'
-import { notifhistStore, notifhistActions } from 'stores/notifhist'
+import { localHistoryStore, localHistoryActions } from 'stores/localHistory'
 import { settingsStore, settingsActions } from 'stores/settings'
 import CrashReporterWatcher from 'shared/CrashReporter/CrashReporterWatcher'
 import os from 'os'
@@ -18,8 +18,8 @@ accountStore.getState()
 accountActions.load()
 emblinkStore.getState()
 emblinkActions.load()
-notifhistStore.getState()
-notifhistActions.load()
+localHistoryStore.getState()
+localHistoryActions.load()
 settingsStore.getState()
 settingsActions.load()
 

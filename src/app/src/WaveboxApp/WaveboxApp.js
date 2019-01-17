@@ -11,7 +11,7 @@ import { platformStore, platformActions } from 'stores/platform'
 import { accountStore, accountActions } from 'stores/account'
 import { userStore, userActions } from 'stores/user'
 import { emblinkStore, emblinkActions } from 'stores/emblink'
-import { notifhistStore, notifhistActions } from 'stores/notifhist'
+import { localHistoryStore, localHistoryActions } from 'stores/localHistory'
 import { guestStore, guestActions } from 'stores/guest'
 import ipcEvents from 'shared/ipcEvents'
 import BasicHTTPAuthHandler from 'HTTPAuth/BasicHTTPAuthHandler'
@@ -116,8 +116,8 @@ class WaveboxApp {
     userActions.load()
     emblinkStore.getState()
     emblinkActions.load()
-    notifhistStore.getState()
-    notifhistActions.load()
+    localHistoryStore.getState()
+    localHistoryActions.load()
     guestStore.getState()
     guestActions.load()
 

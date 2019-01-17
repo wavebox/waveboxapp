@@ -9,7 +9,7 @@ import { emblinkStore, emblinkActions } from 'stores/emblink'
 import { crextensionStore, crextensionActions } from 'stores/crextension'
 import { platformStore, platformActions } from 'stores/platform'
 import { guestStore, guestActions } from 'stores/guest'
-import { notifhistStore, notifhistActions } from 'stores/notifhist'
+import { localHistoryStore, localHistoryActions } from 'stores/localHistory'
 import { EventEmitter } from 'events'
 import Debug from 'Debug'
 import ResourceMonitorResponder from './ResourceMonitorResponder'
@@ -81,8 +81,8 @@ platformStore.getState()
 platformActions.load()
 emblinkStore.getState()
 emblinkActions.load()
-notifhistStore.getState()
-notifhistActions.load()
+localHistoryStore.getState()
+localHistoryActions.load()
 guestStore.getState()
 guestActions.load()
 

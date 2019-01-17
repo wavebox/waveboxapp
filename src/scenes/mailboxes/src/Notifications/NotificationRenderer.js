@@ -1,6 +1,6 @@
 import { accountStore } from 'stores/account'
 import { settingsStore } from 'stores/settings'
-import { notifhistActions } from 'stores/notifhist'
+import { localHistoryActions } from 'stores/localHistory'
 import OSSettings from 'shared/Models/Settings/OSSettings'
 import NotificationPlatformSupport from './NotificationPlatformSupport'
 import ElectronNotificationRenderer from './ElectronNotificationRenderer'
@@ -59,7 +59,7 @@ export default class NotificationRenderer {
     if (!enabled) { return }
 
     this.presentNotification(title, html5Options, clickHandler, clickData)
-    notifhistActions.addNotification({
+    localHistoryActions.addNotification({
       mailboxId: mailboxId,
       serviceId: serviceId,
       title: title,
@@ -98,7 +98,7 @@ export default class NotificationRenderer {
       }
     }
 
-    notifhistActions.addNotification({
+    localHistoryActions.addNotification({
       mailboxId: mailboxId,
       serviceId: serviceId,
       title: NotificationRendererUtils.formattedTitle(notification),

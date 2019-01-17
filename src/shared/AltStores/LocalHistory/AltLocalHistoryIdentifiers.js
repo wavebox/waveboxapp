@@ -1,6 +1,6 @@
-const STORE_NAME = 'NotifhistStore'
-const ACTIONS_NAME = 'NotifhistActions'
-const DISPATCH_NAME = 'Notifhist'
+const STORE_NAME = 'LocalHistoryStore'
+const ACTIONS_NAME = 'LocalHistoryActions'
+const DISPATCH_NAME = 'LocalHistory'
 
 export {
   STORE_NAME,

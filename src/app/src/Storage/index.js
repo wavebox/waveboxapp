@@ -4,6 +4,7 @@ import containerStorage from './containerStorage'
 import extensionStoreStorage from './extensionStoreStorage'
 import mailboxStorage from './mailboxStorage'
 import notifhistStorage from './notifhistStorage'
+import localHistoryStorage from './localHistoryStorage'
 import settingStorage from './settingStorage'
 import userStorage from './userStorage'
 import wireStorage from './wireStorage'
@@ -15,6 +16,7 @@ export {
   extensionStoreStorage,
   mailboxStorage,
   notifhistStorage,
+  localHistoryStorage,
   settingStorage,
   userStorage,
   wireStorage
