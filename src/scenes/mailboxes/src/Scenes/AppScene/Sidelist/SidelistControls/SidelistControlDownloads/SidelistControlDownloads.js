@@ -138,14 +138,20 @@ class SidelistControlDownloads extends React.Component {
   }
 
   closePopout = () => {
-    this.setState({
-      popoutAnchor: null,
-      deferredHold: true
+    this.setState((prevState) => {
+      if (!prevState.popoutAnchor) {
+        return undefined
+      } else {
+        clearTimeout(this.deferredHide)
+        this.deferredHide = setTimeout(() => {
+          this.setState({ deferredHold: false })
+        }, 3000)
+        return {
+          popoutAnchor: null,
+          deferredHold: true
+        }
+      }
     })
-    clearTimeout(this.deferredHide)
-    this.deferredHide = setTimeout(() => {
-      this.setState({ deferredHold: false })
-    }, 3000)
   }
 
   /* **************************************************************************/
@@ -274,7 +280,7 @@ class SidelistControlDownloads extends React.Component {
           open={!!popoutAnchor}
           classes={{ paper: classes.popout }}
           onClose={this.closePopout}>
-          <DownloadsPopoutContent onClose={this.closePopout} />
+          <DownloadsPopoutContent />
         </Popover>
       </React.Fragment>
     )
