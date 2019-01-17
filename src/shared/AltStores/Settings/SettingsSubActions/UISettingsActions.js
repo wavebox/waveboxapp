@@ -133,6 +133,13 @@ class UISettingsActions extends CoreSettingsActions {
   }
 
   /**
+  * @param mode: the mode to show the downloads button in the sidebar
+  */
+  setShowSidebarDownloads (mode) {
+    this.dispatchUpdate('showSidebarDownloads', mode)
+  }
+
+  /**
   * @param mode: the mode to set
   */
   setVibrancyMode (mode) {

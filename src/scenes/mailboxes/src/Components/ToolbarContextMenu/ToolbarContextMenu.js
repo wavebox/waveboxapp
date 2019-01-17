@@ -14,6 +14,7 @@ import FALRulerVerticalIcon from 'wbfa/FALRulerVertical'
 import { withStyles } from '@material-ui/core/styles'
 import FARQuestionCircleIcon from 'wbfa/FARQuestionCircle'
 import FARStarIcon from 'wbfa/FARStar'
+import FASArrowToBottom from 'wbfa/FASArrowToBottom'
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd'
 
 const styles = {
@@ -76,7 +77,8 @@ class ToolbarContextMenu extends React.Component {
       lockSidebarsAndToolbars: settingsState.ui.lockSidebarsAndToolbars,
       sidebarSize: settingsState.ui.sidebarSize,
       showSidebarSupport: settingsState.ui.showSidebarSupport,
-      showSidebarNewsfeed: settingsState.ui.showSidebarNewsfeed
+      showSidebarNewsfeed: settingsState.ui.showSidebarNewsfeed,
+      showSidebarDownloads: settingsState.ui.showSidebarDownloads
     }
   }
 
@@ -132,6 +134,12 @@ class ToolbarContextMenu extends React.Component {
   handleShowSidebarNews = (evt) => {
     this.closePopover(evt, () => {
       settingsActions.sub.ui.setShowSidebarNewsfeed(UISettings.SIDEBAR_NEWS_MODES.ALWAYS)
+    })
+  }
+
+  handleShowSidebarDownloads = (evt) => {
+    this.closePopover(evt, () => {
+      settingsActions.sub.ui.setShowSidebarDownloads(UISettings.SIDEBAR_DOWNLOAD_MODES.ALWAYS)
     })
   }
 
@@ -196,7 +204,8 @@ class ToolbarContextMenu extends React.Component {
       lockSidebarsAndToolbars,
       sidebarSize,
       showSidebarSupport,
-      showSidebarNewsfeed
+      showSidebarNewsfeed,
+      showSidebarDownloads
     } = this.state
 
     return (
@@ -254,17 +263,7 @@ class ToolbarContextMenu extends React.Component {
             ) : undefined}
           </MenuItem>
         ) : undefined}
-        {location === 'sidebar' && (!showSidebarSupport || showSidebarNewsfeed !== UISettings.SIDEBAR_NEWS_MODES.ALWAYS) ? (<Divider />) : undefined}
-        {location === 'sidebar' && !showSidebarSupport ? (
-          <MenuItem onClick={this.handleShowSidebarSupport}>
-            <ListItemIcon>
-              <span className={classes.faIconWrapper}>
-                <FARQuestionCircleIcon />
-              </span>
-            </ListItemIcon>
-            <ListItemText inset primary={`Show Help, Support & FAQ`} />
-          </MenuItem>
-        ) : undefined}
+        {location === 'sidebar' && (!showSidebarSupport || showSidebarNewsfeed !== UISettings.SIDEBAR_NEWS_MODES.ALWAYS || showSidebarDownloads !== UISettings.SIDEBAR_DOWNLOAD_MODES.ALWAYS) ? (<Divider />) : undefined}
         {location === 'sidebar' && showSidebarNewsfeed !== UISettings.SIDEBAR_NEWS_MODES.ALWAYS ? (
           <MenuItem onClick={this.handleShowSidebarNews}>
             <ListItemIcon>
@@ -273,6 +272,26 @@ class ToolbarContextMenu extends React.Component {
               </span>
             </ListItemIcon>
             <ListItemText inset primary={`Always show What's New`} />
+          </MenuItem>
+        ) : undefined}
+        {location === 'sidebar' && showSidebarDownloads !== UISettings.SIDEBAR_DOWNLOAD_MODES.ALWAYS ? (
+          <MenuItem onClick={this.handleShowSidebarDownloads}>
+            <ListItemIcon>
+              <span className={classes.faIconWrapper}>
+                <FASArrowToBottom />
+              </span>
+            </ListItemIcon>
+            <ListItemText inset primary={`Always show Downloads`} />
+          </MenuItem>
+        ) : undefined}
+        {location === 'sidebar' && !showSidebarSupport ? (
+          <MenuItem onClick={this.handleShowSidebarSupport}>
+            <ListItemIcon>
+              <span className={classes.faIconWrapper}>
+                <FARQuestionCircleIcon />
+              </span>
+            </ListItemIcon>
+            <ListItemText inset primary={`Show Help, Support & FAQ`} />
           </MenuItem>
         ) : undefined}
         <Divider />

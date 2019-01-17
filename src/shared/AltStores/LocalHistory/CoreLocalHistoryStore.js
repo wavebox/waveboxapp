@@ -60,6 +60,31 @@ class CoreLocalHistoryStore extends RemoteStore {
       return descending ? ordered.reverse() : ordered
     }
 
+    /**
+    * @return true if there are active downloads
+    */
+    this.hasActiveDownloads = () => {
+      return this._downloads_.active.size !== 0
+    }
+
+    /**
+    * @return the number of active downloads
+    */
+    this.getActiveDownloadCount = () => {
+      return this._downloads_.active.size
+    }
+
+    /**
+    * @return the total download percentage for active downloads
+    */
+    this.getActiveDownloadPercent = () => {
+      if (this._downloads_.active.size === 0) { return 100 }
+      const totalPercent = Array.from(this._downloads_.active.values()).reduce((acc, dl) => {
+        return acc + dl.bytesPercent
+      }, 0)
+      return totalPercent / this._downloads_.active.size
+    }
+
     /* ****************************************/
     // Actions
     /* ****************************************/

@@ -66,8 +66,8 @@ class SidelistControl extends React.Component {
     onClick: PropTypes.func.isRequired,
     icon: PropTypes.element.isRequired,
     tooltip: PropTypes.node.isRequired,
-    tourStep: PropTypes.oneOf(Object.keys(Tour.TOUR_STEPS)).isRequired,
-    tourTooltip: PropTypes.node.isRequired,
+    tourStep: PropTypes.oneOf(Object.keys(Tour.TOUR_STEPS)),
+    tourTooltip: PropTypes.node,
     contextMenuRenderer: PropTypes.func
   }
 
@@ -211,6 +211,7 @@ class SidelistControl extends React.Component {
   * @return jsx
   */
   renderTourTooltipContent (classes, tourTooltip) {
+    if (!tourTooltip) { return undefined }
     return (
       <div className={classes.popoverContentContainer} onClick={this.handleTourNext}>
         {tourTooltip}
@@ -248,7 +249,7 @@ class SidelistControl extends React.Component {
       tooltipOpen
     } = this.state
 
-    const showTourPopover = !hasSeenTour && currentTourStep === tourStep && !dismissingTour
+    const showTourPopover = !hasSeenTour && tourStep && currentTourStep === tourStep && !dismissingTour
     return (
       <div {...passProps}>
         <PrimaryTooltip

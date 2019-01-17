@@ -10,6 +10,11 @@ const SIDEBAR_NEWS_MODES = Object.freeze({
   UNREAD: 'UNREAD',
   NEVER: 'NEVER'
 })
+const SIDEBAR_DOWNLOAD_MODES = Object.freeze({
+  ALWAYS: 'ALWAYS',
+  ACTIVE: 'ACTIVE',
+  NEVER: 'NEVER'
+})
 const ACCOUNT_TOOLTIP_MODES = Object.freeze({
   ENABLED: 'ENABLED',
   DISABLED: 'DISABLED',
@@ -52,6 +57,7 @@ class UISettings extends Model {
 
   static get SIDEBAR_SIZES () { return SIDEBAR_SIZES }
   static get SIDEBAR_NEWS_MODES () { return SIDEBAR_NEWS_MODES }
+  static get SIDEBAR_DOWNLOAD_MODES () { return SIDEBAR_DOWNLOAD_MODES }
   static get ACCOUNT_TOOLTIP_MODES () { return ACCOUNT_TOOLTIP_MODES }
   static get VIBRANCY_MODES () { return VIBRANCY_MODES }
   static get THEMES () { return THEMES }
@@ -83,6 +89,7 @@ class UISettings extends Model {
   get sidebarSize () { return this._value_('sidebarSize', SIDEBAR_SIZES.REGULAR) }
   get showSidebarSupport () { return this._value_('showSidebarSupport', true) }
   get showSidebarNewsfeed () { return this._value_('showSidebarNewsfeed', SIDEBAR_NEWS_MODES.ALWAYS) }
+  get showSidebarDownloads () { return this._value_('showSidebarDownloads', SIDEBAR_DOWNLOAD_MODES.ACTIVE) }
   get sidebarControlsCollapsed () { return this._value_('sidebarControlsCollapsed', false) }
   get accountTooltipMode () {
     const val = this._value_('accountTooltipMode', undefined)

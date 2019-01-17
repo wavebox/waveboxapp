@@ -16,6 +16,9 @@ import classNames from 'classnames'
 const styles = {
   root: {
     borderBottom: '1px solid rgb(224, 224, 224)'
+  },
+  secondaryText: {
+    fontSize: '12px'
   }
 }
 
@@ -84,10 +87,11 @@ class DownloadListItem extends React.Component {
 
   /**
   * Renders the text
+  * @param classes: the classes to use
   * @param downloadItem: the download item to render
   * @return jsx
   */
-  renderText (downloadItem) {
+  renderText (classes, downloadItem) {
     return (
       <ListItemText
         disableTypography
@@ -98,13 +102,23 @@ class DownloadListItem extends React.Component {
         )}
         secondary={(
           <React.Fragment>
-            <Typography variant='body2' color='textSecondary' noWrap>{downloadItem.url}</Typography>
+            <Typography
+              className={classes.secondaryText}
+              variant='body2'
+              color='textSecondary'
+              noWrap>
+              {downloadItem.url}
+            </Typography>
             {downloadItem.state === Download.STATES.ACTIVE ? (
               <LinearProgress
                 variant='determinate'
                 value={downloadItem.bytesPercent} />
             ) : (
-              <Typography variant='body2' color='textSecondary' noWrap>
+              <Typography
+                className={classes.secondaryText}
+                variant='body2'
+                color='textSecondary'
+                noWrap>
                 <Timeago date={downloadItem.changedTime} />
               </Typography>
             )}
@@ -170,7 +184,7 @@ class DownloadListItem extends React.Component {
         onContextMenu={this.handleContextMenu}
         className={classNames(classes.root, className)}
         {...passProps}>
-        {this.renderText(downloadItem)}
+        {this.renderText(classes, downloadItem)}
         {this.renderSecondaryAction(downloadItem)}
       </ListItem>
     )

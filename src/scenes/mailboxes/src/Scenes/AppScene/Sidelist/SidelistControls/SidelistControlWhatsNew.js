@@ -103,56 +103,55 @@ class SidelistControlWhatsNew extends React.Component {
   renderContextMenu = (onRequestClose) => {
     const { classes } = this.props
     const { showMode } = this.state
-    return [
-      (showMode !== UISettings.SIDEBAR_NEWS_MODES.NEVER ? (
-        <MenuItem
-          key='hide'
-          onClick={(evt) => {
-            onRequestClose(evt, () => {
-              settingsActions.sub.ui.setShowSidebarNewsfeed(UISettings.SIDEBAR_NEWS_MODES.NEVER)
-            })
-          }}>
-          <ListItemIcon>
-            <span className={classes.contextMenuFAWrap}>
-              <FAREyeSlashIcon />
-            </span>
-          </ListItemIcon>
-          <ListItemText inset primary={`Hide What's New`} />
-        </MenuItem>
-      ) : undefined),
-      (showMode !== UISettings.SIDEBAR_NEWS_MODES.UNREAD ? (
-        <MenuItem
-          key='new'
-          onClick={(evt) => {
-            onRequestClose(evt, () => {
-              settingsActions.sub.ui.setShowSidebarNewsfeed(UISettings.SIDEBAR_NEWS_MODES.UNREAD)
-            })
-          }}>
-          <ListItemIcon>
-            <span className={classes.contextMenuFAWrap}>
-              <FAREyeIcon />
-            </span>
-          </ListItemIcon>
-          <ListItemText inset primary={`Only show when there are new items`} />
-        </MenuItem>
-      ) : undefined),
-      (showMode !== UISettings.SIDEBAR_NEWS_MODES.ALWAYS ? (
-        <MenuItem
-          key='always'
-          onClick={(evt) => {
-            onRequestClose(evt, () => {
-              settingsActions.sub.ui.setShowSidebarNewsfeed(UISettings.SIDEBAR_NEWS_MODES.ALWAYS)
-            })
-          }}>
-          <ListItemIcon>
-            <span className={classes.contextMenuFAWrap}>
-              <FAREyeIcon />
-            </span>
-          </ListItemIcon>
-          <ListItemText inset primary={`Always show What's New`} />
-        </MenuItem>
-      ) : undefined)
-    ].filter((i) => !!i)
+    return (
+      <React.Fragment>
+        {showMode !== UISettings.SIDEBAR_NEWS_MODES.NEVER ? (
+          <MenuItem
+            onClick={(evt) => {
+              onRequestClose(evt, () => {
+                settingsActions.sub.ui.setShowSidebarNewsfeed(UISettings.SIDEBAR_NEWS_MODES.NEVER)
+              })
+            }}>
+            <ListItemIcon>
+              <span className={classes.contextMenuFAWrap}>
+                <FAREyeSlashIcon />
+              </span>
+            </ListItemIcon>
+            <ListItemText inset primary={`Hide What's New`} />
+          </MenuItem>
+        ) : undefined}
+        {showMode !== UISettings.SIDEBAR_NEWS_MODES.UNREAD ? (
+          <MenuItem
+            onClick={(evt) => {
+              onRequestClose(evt, () => {
+                settingsActions.sub.ui.setShowSidebarNewsfeed(UISettings.SIDEBAR_NEWS_MODES.UNREAD)
+              })
+            }}>
+            <ListItemIcon>
+              <span className={classes.contextMenuFAWrap}>
+                <FAREyeIcon />
+              </span>
+            </ListItemIcon>
+            <ListItemText inset primary={`Only show when there are new items`} />
+          </MenuItem>
+        ) : undefined}
+        {showMode !== UISettings.SIDEBAR_NEWS_MODES.ALWAYS ? (
+          <MenuItem
+            onClick={(evt) => {
+              onRequestClose(evt, () => {
+                settingsActions.sub.ui.setShowSidebarNewsfeed(UISettings.SIDEBAR_NEWS_MODES.ALWAYS)
+              })
+            }}>
+            <ListItemIcon>
+              <span className={classes.contextMenuFAWrap}>
+                <FAREyeIcon />
+              </span>
+            </ListItemIcon>
+            <ListItemText inset primary={`Always show What's New`} />
+          </MenuItem>
+        ) : undefined}
+      </React.Fragment>
+    )
   }
 
   render () {

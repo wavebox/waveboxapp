@@ -72,6 +72,11 @@ export default {
         icon: {
           color: { default: blueGrey[400], hover: blueGrey[200] }
         }
+      },
+      downloads: {
+        icon: {
+          color: { default: blue[600], hover: blue[200] }
+        }
       }
     },
     toolbar: {

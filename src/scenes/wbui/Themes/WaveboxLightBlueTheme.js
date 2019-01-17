@@ -50,6 +50,11 @@ export default createMuiTheme({
           icon: {
             color: { default: lightBlue[50], hover: lightBlue[100] }
           }
+        },
+        downloads: {
+          icon: {
+            color: { default: lightBlue[50], hover: lightBlue[100] }
+          }
         }
       },
       toolbar: {

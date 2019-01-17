@@ -41,6 +41,7 @@ export default class UISettingsSection extends React.Component {
         'sidebarEnabled',
         'showSidebarSupport',
         'showSidebarNewsfeed',
+        'showSidebarDownloads',
         'showTitlebar',
         'showAppMenu',
         'showTitlebarCount',
@@ -214,6 +215,15 @@ export default class UISettingsSection extends React.Component {
               { value: UISettings.SIDEBAR_SIZES.TINY, label: 'Tiny' }
             ]}
             onChange={(evt, value) => settingsActions.sub.ui.setSidebarSize(value)} />
+          <SettingsListItemSelectInline
+            label={`Show Downloads in Sidebar`}
+            value={ui.showSidebarDownloads}
+            options={[
+              { value: UISettings.SIDEBAR_DOWNLOAD_MODES.NEVER, label: 'Never' },
+              { value: UISettings.SIDEBAR_DOWNLOAD_MODES.ACTIVE, label: `When there are active downloads` },
+              { value: UISettings.SIDEBAR_DOWNLOAD_MODES.ALWAYS, label: 'Always' }
+            ]}
+            onChange={(evt, value) => settingsActions.sub.ui.setShowSidebarDownloads(value)} />
           <SettingsListItemSelectInline
             label={`Show What's New in Sidebar`}
             value={ui.showSidebarNewsfeed}

@@ -131,7 +131,7 @@ class DownloadList extends React.Component {
 
     return (
       <React.Fragment>
-        <List {...passProps}>
+        <List dense {...passProps}>
           {downloads.length ? (
             downloads.map((dl) => {
               return (
