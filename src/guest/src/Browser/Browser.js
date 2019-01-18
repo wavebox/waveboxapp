@@ -7,6 +7,7 @@ import ExtensionLoader from './Extensions/ExtensionLoader'
 import CRExtensionLoader from './Extensions/CRExtensionLoader'
 import UserCodeInjection from './UserCodeInjection'
 import WaveboxApiProvider from './WaveboxApiProvider'
+import { webFrame } from 'electron'
 
 const privStarted = Symbol('privStarted')
 const privKeyboardShim = Symbol('privKeyboardShim')
@@ -50,6 +51,9 @@ class Browser {
     this[privUserCodeInjection] = new UserCodeInjection()
     this[privLifecycle] = new Lifecycle()
     this[privWaveboxApiProvider] = new WaveboxApiProvider()
+
+    // This allows pinch-and-zoom behaviour in the same way that chrome does
+    webFrame.setVisualZoomLevelLimits(1, 3)
 
     // Extensions
     this[privCRExtensionLoader] = new CRExtensionLoader()
