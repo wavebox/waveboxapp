@@ -2,12 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Provider from 'Scenes/Provider'
 import monitorActions from 'stores/monitor/monitorActions'
-import { webFrame } from 'electron'
 import TopLevelErrorBoundary from 'wbui/TopLevelErrorBoundary'
-
-// Prevent zooming
-webFrame.setVisualZoomLevelLimits(1, 1)
-webFrame.setLayoutZoomLevelLimits(1, 1)
 
 // Load what we have in the db
 monitorActions.load()

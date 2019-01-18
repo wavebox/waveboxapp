@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Provider from 'Scenes/Provider'
-import { webFrame } from 'electron'
 import { userStore, userActions } from 'stores/user'
 import { accountStore, accountActions } from 'stores/account'
 import { emblinkStore, emblinkActions } from 'stores/emblink'
@@ -25,10 +24,6 @@ settingsActions.load()
 
 const crashReporter = new CrashReporterWatcher()
 crashReporter.start(userStore, settingsStore, CrashReporterWatcher.RUNTIME_IDENTIFIERS.TRAY, os.release())
-
-// Prevent zooming
-webFrame.setVisualZoomLevelLimits(1, 1)
-webFrame.setLayoutZoomLevelLimits(1, 1)
 
 // Prevent right click
 window.addEventListener('contextmenu', (evt) => {

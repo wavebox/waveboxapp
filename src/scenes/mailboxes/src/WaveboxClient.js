@@ -19,16 +19,12 @@ import {
   WB_MAILBOXES_WINDOW_REQUEST_GRACEFUL_RELOAD,
   WB_MAILBOXES_WINDOW_ACCEPT_GRACEFUL_RELOAD
 } from 'shared/ipcEvents'
-import { ipcRenderer, webFrame } from 'electron'
+import { ipcRenderer } from 'electron'
 import CrashReporterWatcher from 'shared/CrashReporter/CrashReporterWatcher'
 import os from 'os'
 
 // We often exceed 10 listeners so increase this
 EventEmitter.defaultMaxListeners = 50
-
-// Prevent zooming
-webFrame.setVisualZoomLevelLimits(1, 1)
-webFrame.setLayoutZoomLevelLimits(1, 1)
 
 // Context menu
 document.addEventListener('contextmenu', (evt) => {
