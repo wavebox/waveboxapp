@@ -52,7 +52,13 @@ class WaveboxAppPrimaryMenuActions {
   // App Lifecycle
   /* ****************************************************************************/
 
-  fullQuit = () => {
+  fullQuit = (accelerator) => {
+    const focused = WaveboxWindow.focused()
+    if (focused) {
+      const res = focused.onBeforeFullQuit(accelerator)
+      if (res === true) { return }
+    }
+
     evtMain.emit(evtMain.WB_QUIT_APP, {})
   }
 

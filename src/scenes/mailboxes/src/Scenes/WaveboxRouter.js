@@ -42,6 +42,7 @@ import {
 import { BookmarkEditScene } from './BookmarkScene'
 import ErrorBoundary from 'wbui/ErrorBoundary'
 import FullscreenSnackbarHelper from 'Components/FullscreenSnackbarHelper'
+import KeyboardQuitSnackbarHelper from 'wbui/KeyboardQuitSnackbarHelper'
 import SpinnerScene from './SpinnerScene'
 import ReadingQueueSnackbarHelper from 'wbui/ReadingQueueSnackbarHelper'
 import CommandPaletteScene from './CommandPaletteScene'
@@ -68,6 +69,9 @@ export default class WaveboxRouter extends React.Component {
           </ErrorBoundary>
           <ErrorBoundary>
             <ReadingQueueSnackbarHelper />
+          </ErrorBoundary>
+          <ErrorBoundary>
+            <KeyboardQuitSnackbarHelper />
           </ErrorBoundary>
 
           {/* Dialogs: Switching */}

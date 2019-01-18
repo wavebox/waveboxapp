@@ -5,6 +5,8 @@ import THEME_MAPPING from 'wbui/Themes/ThemeMapping'
 import { MuiThemeProvider } from '@material-ui/core/styles'
 import BrowserScene from './BrowserScene'
 import { settingsStore } from 'stores/settings'
+import KeyboardQuitSnackbarHelper from 'wbui/KeyboardQuitSnackbarHelper'
+import ErrorBoundary from 'wbui/ErrorBoundary'
 
 export default class Provider extends React.Component {
   /* **************************************************************************/
@@ -57,6 +59,9 @@ export default class Provider extends React.Component {
     return (
       <MuiThemeProvider theme={THEME_MAPPING[theme]}>
         <BrowserScene url={url} partition={partition} />
+        <ErrorBoundary>
+          <KeyboardQuitSnackbarHelper />
+        </ErrorBoundary>
       </MuiThemeProvider>
     )
   }

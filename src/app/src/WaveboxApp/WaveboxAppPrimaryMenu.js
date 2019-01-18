@@ -122,7 +122,7 @@ class WaveboxAppPrimaryMenu {
           { type: 'separator' },
           {
             label: 'Quit',
-            click: WaveboxAppPrimaryMenuActions.fullQuit,
+            click: () => WaveboxAppPrimaryMenuActions.fullQuit(accelerators.quit),
             accelerator: accelerators.quit
           }
         ].filter((item) => item !== undefined)

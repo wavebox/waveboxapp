@@ -467,6 +467,16 @@ class WaveboxWindow extends EventEmitter {
     return this
   }
 
+  /**
+  * Hook that gets called before the app fully quits from a keyboard shortcut
+  * Overwrite this for custom behaviours
+  * @param accelerator: the accelerator that was called
+  * @return false to allow full quit, true to prevent the behaviour
+  */
+  onBeforeFullQuit (accelerator) {
+    return false
+  }
+
   /* ****************************************************************************/
   // Actions: Visibility
   /* ****************************************************************************/

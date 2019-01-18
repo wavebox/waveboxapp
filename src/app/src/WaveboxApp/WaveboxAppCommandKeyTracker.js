@@ -55,6 +55,7 @@ class WaveboxAppCommandKeyTracker extends EventEmitter {
       ? this.metaPressed
       : this.controlPressed
   }
+  get anyModifierPressed () { return this.controlPressed || this.altPressed || this.shiftPressed || this.metaPressed }
 
   /* ****************************************************************************/
   // App Events
