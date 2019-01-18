@@ -7,6 +7,7 @@ import BrowserScene from './BrowserScene'
 import { settingsStore } from 'stores/settings'
 import KeyboardQuitSnackbarHelper from 'wbui/KeyboardQuitSnackbarHelper'
 import ErrorBoundary from 'wbui/ErrorBoundary'
+import WindowTitlebar from 'wbui/WindowTitlebar'
 
 export default class Provider extends React.Component {
   /* **************************************************************************/
@@ -58,6 +59,7 @@ export default class Provider extends React.Component {
 
     return (
       <MuiThemeProvider theme={THEME_MAPPING[theme]}>
+        <WindowTitlebar />
         <BrowserScene url={url} partition={partition} />
         <ErrorBoundary>
           <KeyboardQuitSnackbarHelper />

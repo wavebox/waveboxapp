@@ -18,7 +18,7 @@ const BROWSER_REF = 'browser'
 const styles = {
   scene: {
     position: 'absolute',
-    top: 0,
+    top: 24,//0,
     bottom: 0,
     left: 0,
     right: 0
