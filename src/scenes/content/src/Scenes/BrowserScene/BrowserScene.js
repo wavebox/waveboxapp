@@ -201,7 +201,6 @@ class BrowserScene extends React.Component {
           handleGoForward={() => this.refs[BROWSER_REF].goForward()}
           handleStop={() => this.refs[BROWSER_REF].stop()}
           handleReload={() => this.refs[BROWSER_REF].reload()} />
-        {false ? undefined : (
         <div className={classes.webviewContainer}>
           <BrowserView
             ref={BROWSER_REF}
@@ -231,7 +230,6 @@ class BrowserScene extends React.Component {
             onResolvePermission={this.handleResolvePermission} />
           <BrowserSearch ref={SEARCH_REF} />
         </div>
-        )}
       </div>
     )
   }
