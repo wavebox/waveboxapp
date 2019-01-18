@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="
       default-src 'none';
-      script-src 'sha256-AK2xwwpcPRR5L31GTNlWUdowne/EbhhxFUlvdqhDuis=';
-      style-src 'sha256-wkV4qiKIBY/oSSXBrWMBYDouJuZlKedXv5fbPL6ReD4=';
+      script-src 'sha256-qbiOCyL9mnY50SOV2m/OFehM+gNSJ09o+ohSAbPIRTE=';
+      style-src 'sha256-mTExPOwDKSOEGHihLsvYxsmMyEDsjfVHMhVDEoxUdzk=';
     ">
-    <title>Authentication Required</title>
+    <title>Sign in</title>
     <style>
       * {
         box-sizing: border-box;
@@ -16,7 +16,7 @@
       body {
         padding: 20px;
         font-family: sans-serif;
-        color: rgb(98, 98, 98);
+        background-color: #FFFFFF;
       }
       h1 {
         font-size: 22px;
@@ -26,25 +26,39 @@
       }
       h2 {
         font-size: 16px;
-        font-weight: normal;
+        font-weight: bold;
         margin-bottom: 15px;
       }
       label {
-        display: block;
-        margin-bottom: 5px;
+        display: inline-block;
+        min-width: 90px;
       }
-      input {
+      input[type="text"], input[type="password"] {
+        display: inline-block;
         width: 100%;
         font-size: 14px;
-        padding: 3px 2px;
+        padding: 8px;
+        border-radius: 3px;
+        border: 1px solid #CCC;
+        box-shadow: 0px 0px 1px 0px #CCC;
+      }
+      input[type="text"]:focus, input[type="password"]:focus {
+        outline: none;
+        border-color: #91A5D9;
+        box-shadow: 0px 1px 2px 0px #b7d0e6;
       }
       button {
         border: 1px solid rgb(212, 212, 212);
         background-color: white;
         font-size: 14px;
-        padding: 5px 10px;
+        padding: 8px 10px;
+        margin: 0px 8px;
         cursor: pointer;
+        border-radius: 3px;
         color: rgb(83, 83, 83);
+      }
+      button:active, button:focus {
+        outline: none;
       }
       button:active {
         background-color: rgb(245, 245, 245);
@@ -52,29 +66,48 @@
       }
       button.primary {
         font-weight: bold;
+        background-color: #4285F4;
+        border-color: #0075F3;
+        color: #FFF;
+      }
+      button.primary:active {
+        background-color: #72a4f7;
       }
       .form-group {
+        display: flex;
+        align-items: center;
         margin-bottom: 10px;
       }
       .submit-group {
         margin-top: 20px;
         text-align: right;
       }
+      #autofill {
+        display: block;
+        font-size: 13px;
+        margin-top: 15px;
+        padding-left: 90px;
+      }
+      .hide {
+        display: none;
+      }
     </style>
   </head>
   <body>
-    <h1>Authentication Required</h1>
-    <h2>
-      <strong id="requestor"></strong> requires a username and password
-    </h2>
+    <h1>Sign in</h1>
+    <h2 id="requestor"></h2>
     <form>
       <div class="form-group">
-        <label>User Name:</label>
-        <input type="text" name="username">
+        <label>Username</label>
+        <input type="text" name="username" autofocus>
       </div>
       <div class="form-group">
-        <label>Password:</label>
+        <label>Password</label>
         <input type="password" name="password">
+      </div>
+      <div id="autofill" class="hide">
+        <input type="checkbox" name="save">
+        Remember credentials
       </div>
       <div class="submit-group">
         <button type="button" data-action="cancel">Cancel</button>
@@ -82,24 +115,54 @@
       </div>
     </form>
     <script type="text/javascript">
-const querystring = require('querystring')
-const query = querystring.parse(window.location.search.substr(1))
-if (query.port === 443) {
-  document.getElementById('requestor').textContent = `https://${query.realm}`
-} else if (query.port === 80) {
-  document.getElementById('requestor').textContent = `http://${query.realm}`
-} else {
-  document.getElementById('requestor').textContent = `${query.realm}:${query.port}`
+document.body.addEventListener('contextMenu', function (evt) {
+  evt.preventDefault()
+}, false)
+
+const getQSArg = function (key) {
+  key = key.replace(/[\[]/, '\\\[').replace(/[\]]/, '\\\]')
+  const regex = new RegExp(`[\\?&]${key}=([^&#]*)`)
+  const results = regex.exec(window.location.href)
+  return results === null ? undefined : decodeURIComponent(results[1])
 }
 
-document.querySelector('[data-action="cancel"]').addEventListener('click', (evt) => {
-  evt.preventDefault()
+const handleCancel = function (evt) {
+  if (evt) { evt.preventDefault() }
   document.title = 'wbaction:cancel'
-}, false)
-document.querySelector('[data-action="login"]').addEventListener('click', (evt) => {
-  evt.preventDefault()
+}
+
+const handleLogin = function (evt) {
+  if (evt) { evt.preventDefault() }
   document.title = 'wbaction:login'
+}
+
+const port = parseInt(getQSArg('port'))
+const host = getQSArg('host')
+const autofillAvailable = getQSArg('autofillAvailable') === 'true'
+if (port === 443) {
+  document.getElementById('requestor').textContent = `https://${host}`
+} else if (port === 80) {
+  document.getElementById('requestor').textContent = `http://${host}`
+} else {
+  document.getElementById('requestor').textContent = `${host}:${port}`
+}
+if (autofillAvailable) {
+  document.getElementById('autofill').classList.remove('hide')
+}
+
+document.querySelector('[name="username"]').addEventListener('keypress', function (evt) {
+  if (evt.keyCode === 13) {
+    evt.preventDefault()
+    document.querySelector('[name="password"]').focus()
+  }
 }, false)
+document.querySelector('[name="password"]').addEventListener('keypress', function (evt) {
+  if (evt.keyCode === 13) {
+    handleLogin(evt)
+  }
+}, false)
+document.querySelector('[data-action="cancel"]').addEventListener('click', handleCancel, false)
+document.querySelector('[data-action="login"]').addEventListener('click', handleLogin, false)
     </script>
   </body>
 </html>
