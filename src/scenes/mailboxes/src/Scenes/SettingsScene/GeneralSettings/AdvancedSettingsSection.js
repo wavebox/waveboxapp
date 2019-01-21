@@ -62,7 +62,8 @@ class AdvancedSettingsSection extends React.Component {
         'concurrentServiceLoadLimit',
         'searchProvider',
         'rawAppThreadFetchMicrosoftHTTP',
-        'forceWindowPaintOnRestore'
+        'forceWindowPaintOnRestore',
+        'rawTickleSlackRTM'
       ]) ||
       modelCompare(this.props.language, nextProps.language, [
         'inProcessSpellchecking'
@@ -193,6 +194,10 @@ class AdvancedSettingsSection extends React.Component {
           label='Experimental Microsoft Account HTTP stack'
           onChange={(evt, toggled) => settingsActions.sub.app.setAppThreadFetchMicrosoftHTTP(toggled)}
           checked={userStore.getState().wceUseAppThreadFetchMicrosoftHTTP(app.rawAppThreadFetchMicrosoftHTTP)} />
+        <SettingsListItemSwitch
+          label='Keep Slack WebSockets in active mode'
+          onChange={(evt, toggled) => settingsActions.sub.app.setTickleSlackRTM(toggled)}
+          checked={userStore.getState().wceTickleSlackRTM(app.rawTickleSlackRTM)} />
         <SettingsListItemSwitch
           label='Auto mute notifications when suspended'
           onChange={(evt, toggled) => settingsActions.sub.os.setNotificationsMutedWhenSuspended(toggled)}

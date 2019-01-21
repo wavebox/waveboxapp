@@ -45,6 +45,10 @@ const styles = {
     '&.active': {
       // Explicitly set the visibility on the webview element as this allows electron to prioritize resource consumption
       '& webview': { visibility: 'visible' }
+    },
+
+    '&.high-power-always': {
+      '& webview': { visibility: 'visible !important' }
     }
   },
   browserContainer: {
@@ -686,7 +690,13 @@ class CoreServiceWebView extends React.Component {
     ].join('_')
 
     return (
-      <div className={classNames(classes.root, className, isActive ? 'active' : undefined)}>
+      <div
+        className={classNames(
+          classes.root,
+          className,
+          isActive ? 'active' : undefined,
+          service.preventLowPowerMode ? 'high-power-always' : undefined
+        )}>
         <div className={classes.browserContainer}>
           <BrowserView
             ref={BROWSER_REF}

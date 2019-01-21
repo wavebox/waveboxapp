@@ -176,6 +176,7 @@ class CoreACService extends CoreACModel {
   get url () { SubclassNotImplementedError('CoreACService.url') }
   get reloadBehaviour () { return RELOAD_BEHAVIOURS.RESET_URL }
   get restoreLastUrl () { return this._value_('restoreLastUrl', false) }
+  get preventLowPowerMode () { return this._value_('preventLowPowerMode', false) }
 
   /**
   * Gets the url being provided the service data if there is any customization to do

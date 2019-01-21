@@ -100,6 +100,15 @@ class ServiceReducer {
     return service.changeData({ restoreLastUrl: restore })
   }
 
+  /**
+  * Sets whether the service should prevent low power mode
+  * @param service: the service to update
+  * @param prevent: true to prevent behaviour, false otherwise
+  */
+  static setPreventLowPowerMode (service, prevent) {
+    return service.changeData({ preventLowPowerMode: prevent })
+  }
+
   /* **************************************************************************/
   // Badge & Unread
   /* **************************************************************************/
