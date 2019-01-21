@@ -139,13 +139,13 @@ class WindowOpeningHandler {
       this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
     } else if (openMode === WINDOW_OPEN_MODES.DEFAULT || openMode === WINDOW_OPEN_MODES.DEFAULT_IMPORTANT) {
       this.openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, targetUrl, options, partitionOverride)
-    } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL_PROVSIONAL || openMode === WINDOW_OPEN_MODES.EXTERNAL_PROVISIONAL) { // typo. Found in 4.3.1beta. Update wire config and remove after 4.5.0 release
+    } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL_PROVISIONAL) {
       this.openWindowExternal(openingBrowserWindow, provisionalTargetUrl, mailbox)
     } else if (openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL || openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT) {
       this.openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, provisionalTargetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.CONTENT) {
       this.openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, options, partitionOverride)
-    } else if (openMode === WINDOW_OPEN_MODES.CONTENT_PROVSIONAL || openMode === WINDOW_OPEN_MODES.CONTENT_PROVISIONAL) { // typo. Found in 4.3.1beta. Update wire config and remove after 4.5.0 release
+    } else if (openMode === WINDOW_OPEN_MODES.CONTENT_PROVISIONAL) {
       this.openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, provisionalTargetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.DOWNLOAD) {
       evt.sender.downloadURL(targetUrl)
