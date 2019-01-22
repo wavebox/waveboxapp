@@ -5,6 +5,14 @@ import { withStyles } from '@material-ui/core/styles'
 import Zoom from '@material-ui/core/Zoom'
 import SwitcherSceneContent from './SwitcherSceneContent'
 import { RouterDialog, RouterDialogStateProvider } from 'Components/RouterDialog'
+import {
+  WB_QUICK_SWITCH_NEXT,
+  WB_QUICK_SWITCH_PREV,
+  WB_QUICK_SWITCH_PRESENT_NEXT,
+  WB_QUICK_SWITCH_PRESENT_PREV
+} from 'shared/ipcEvents'
+import { ipcRenderer } from 'electron'
+import { accountActions } from 'stores/account'
 
 const TRANSITION_DURATION = 50
 
@@ -27,8 +35,56 @@ class SwitcherScene extends React.Component {
   }
 
   /* **************************************************************************/
+  // Component lifecycle
+  /* **************************************************************************/
+
+  componentDidMount () {
+    ipcRenderer.on(WB_QUICK_SWITCH_NEXT, this.handleIPCNext)
+    ipcRenderer.on(WB_QUICK_SWITCH_PREV, this.handleIPCPrev)
+    ipcRenderer.on(WB_QUICK_SWITCH_PRESENT_NEXT, this.handleIPCPresentNext)
+    ipcRenderer.on(WB_QUICK_SWITCH_PRESENT_PREV, this.handleIPCPresentPrev)
+  }
+
+  componentWillUnmount () {
+    ipcRenderer.removeListener(WB_QUICK_SWITCH_NEXT, this.handleIPCNext)
+    ipcRenderer.removeListener(WB_QUICK_SWITCH_PREV, this.handleIPCPrev)
+    ipcRenderer.removeListener(WB_QUICK_SWITCH_PRESENT_NEXT, this.handleIPCPresentNext)
+    ipcRenderer.removeListener(WB_QUICK_SWITCH_PRESENT_PREV, this.handleIPCPresentPrev)
+  }
+
+  /* **************************************************************************/
   // User Interaction
   /* **************************************************************************/
+
+  /**
+  * Quick switches to the next account
+  */
+  handleIPCNext = (evt) => {
+    window.location.hash = '/'
+    accountActions.quickSwitchNextService()
+  }
+
+  /**
+  * Quick switches to the prev account
+  */
+  handleIPCPrev = (evt) => {
+    window.location.hash = '/'
+    accountActions.quickSwitchPrevService()
+  }
+
+  /**
+  * Launches quick switch in next mode
+  */
+  handleIPCPresentNext = (evt) => {
+    window.location.hash = '/switcher/next'
+  }
+
+  /**
+  * Launches quick switch in prev mode
+  */
+  handleIPCPresentPrev = (evt) => {
+    window.location.hash = '/switcher/prev'
+  }
 
   /**
   * Closes the modal

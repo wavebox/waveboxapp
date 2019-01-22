@@ -5,6 +5,10 @@ import Zoom from '@material-ui/core/Zoom'
 import { RouterDialog } from 'Components/RouterDialog'
 import CommandPaletteSceneContent from './CommandPaletteSceneContent'
 import { withStyles } from '@material-ui/core/styles'
+import { ipcRenderer } from 'electron'
+import {
+  WB_MAILBOXES_WINDOW_OPEN_COMMAND_PALETTE
+} from 'shared/ipcEvents'
 
 const TRANSITION_DURATION = 50
 
@@ -28,12 +32,29 @@ class CommandPaletteScene extends React.Component {
   }
 
   /* **************************************************************************/
-  // Data lifecycle
+  // Component lifecycle
   /* **************************************************************************/
+
+  componentDidMount () {
+    ipcRenderer.on(WB_MAILBOXES_WINDOW_OPEN_COMMAND_PALETTE, this.handleIPCToggle)
+  }
+
+  componentWillUnmount () {
+    ipcRenderer.removeListener(WB_MAILBOXES_WINDOW_OPEN_COMMAND_PALETTE, this.handleIPCToggle)
+  }
 
   /* **************************************************************************/
   // User Interaction
   /* **************************************************************************/
+
+  /**
+  * Quick switches to the next account
+  */
+  handleIPCToggle = (evt) => {
+    window.location.hash = window.location.hash === '#/command' || window.location.hash.startsWith('#/command/')
+      ? ''
+      : '/command'
+  }
 
   /**
   * Closes the modal
