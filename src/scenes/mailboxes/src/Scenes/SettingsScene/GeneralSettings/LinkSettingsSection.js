@@ -12,7 +12,8 @@ import LinkIcon from '@material-ui/icons/Link'
 const LINK_OPEN_OPTIONS = [
   { value: OSSettings.COMMAND_LINK_BEHAVIOUR.DEFAULT, label: 'Default Behaviour' },
   { value: OSSettings.COMMAND_LINK_BEHAVIOUR.BROWSER_OPEN, label: 'Open in Default Browser' },
-  { value: OSSettings.COMMAND_LINK_BEHAVIOUR.WAVEBOX_OPEN, label: 'Open in Wavebox Window' }
+  { value: OSSettings.COMMAND_LINK_BEHAVIOUR.WAVEBOX_OPEN, label: 'Open in Wavebox Window' },
+  { value: OSSettings.COMMAND_LINK_BEHAVIOUR.ASK, label: 'Ask what to do each time' }
 ]
 
 export default class LinkSettingsSection extends React.Component {

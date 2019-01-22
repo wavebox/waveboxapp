@@ -8,7 +8,8 @@ const {
 const COMMAND_LINK_BEHAVIOUR = Object.freeze({
   DEFAULT: 'DEFAULT',
   BROWSER_OPEN: 'BROWSER_OPEN',
-  WAVEBOX_OPEN: 'WAVEBOX_OPEN'
+  WAVEBOX_OPEN: 'WAVEBOX_OPEN',
+  ASK: 'ASK'
 })
 
 class OSSettings extends Model {

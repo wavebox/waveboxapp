@@ -183,6 +183,8 @@ class WindowOpeningHandler {
       evt.sender.loadURL(provisionalTargetUrl)
     } else if (openMode === WINDOW_OPEN_MODES.SUPPRESS) {
       /* no-op */
+    } else if (openMode === WINDOW_OPEN_MODES.ASK_USER) {
+      this.askUserForWindowOpenTarget(openingBrowserWindow, saltedTabMetaInfo, mailbox, targetUrl, options, partitionOverride)
     } else {
       this.openWindowExternal(openingBrowserWindow, targetUrl)
     }
@@ -346,6 +348,7 @@ class WindowOpeningHandler {
     switch (behaviour) {
       case OSSettings.COMMAND_LINK_BEHAVIOUR.BROWSER_OPEN: return WINDOW_OPEN_MODES.EXTERNAL
       case OSSettings.COMMAND_LINK_BEHAVIOUR.WAVEBOX_OPEN: return WINDOW_OPEN_MODES.CONTENT
+      case OSSettings.COMMAND_LINK_BEHAVIOUR.ASK: return WINDOW_OPEN_MODES.ASK_USER
       default: return openMode
     }
   }
