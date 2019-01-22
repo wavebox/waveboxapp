@@ -104,6 +104,22 @@ class LinkOpener {
       accountActions.removeFromReadingQueue(service.id, readingItem.id)
     }
   }
+
+  /* **************************************************************************/
+  // Urls
+  /* **************************************************************************/
+
+  /**
+  * Opens a url in the top level servic tab
+  * @param serviceId: the id of the service
+  * @param url: the url to open
+  */
+  openUrlInTopLevelService (serviceId, url) {
+    const mailboxesWindow = MailboxesWindow.getOfType(MailboxesWindow)
+    if (!mailboxesWindow) { return }
+    mailboxesWindow.show().focus()
+    mailboxesWindow.navigateAndSwitchToService(serviceId, url)
+  }
 }
 
 export default new LinkOpener()

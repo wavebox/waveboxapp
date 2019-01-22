@@ -47,6 +47,7 @@ import SpinnerScene from './SpinnerScene'
 import ReadingQueueSnackbarHelper from 'wbui/ReadingQueueSnackbarHelper'
 import CommandPaletteScene from './CommandPaletteScene'
 import SwitcherScene from './SwitcherScene'
+import ULinkORScene from './ULinkORScene'
 
 export default class WaveboxRouter extends React.Component {
   /* **************************************************************************/
@@ -91,6 +92,11 @@ export default class WaveboxRouter extends React.Component {
           </WaveboxRouterErrorBoundary>
           <WaveboxRouterErrorBoundary>
             <DictionaryInstallerScene routeName='dictionary_installer' />
+          </WaveboxRouterErrorBoundary>
+
+          {/* Dialogs: link open */}
+          <WaveboxRouterErrorBoundary>
+            <ULinkORScene routeName='ulinkor_ask' />
           </WaveboxRouterErrorBoundary>
 
           {/* Dialogs: Mailbox wizard */}
@@ -201,6 +207,9 @@ export default class WaveboxRouter extends React.Component {
               <RouterDialogRoute path='/settings/:tab?/:tabArg?' routeName='settings' />
               <RouterDialogRoute path='/site_permissions' routeName='site_permissions' />
               <RouterDialogRoute path='/dictionary_installer' routeName='dictionary_installer' />
+
+              {/* Dialogs: Links */}
+              <RouterDialogRoute path='/link/open/:requestId' routeName='ulinkor_ask' />
 
               {/* Dialogs: Mailbox wizard */}
               <RouterDialogRoute path='/mailbox_wizard/add/:mailboxId?' routeName='account_wizard_add' />

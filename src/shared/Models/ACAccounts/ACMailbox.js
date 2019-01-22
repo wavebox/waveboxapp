@@ -3,7 +3,8 @@ import uuid from 'uuid'
 
 const DEFAULT_WINDOW_OPEN_MODES = Object.freeze({
   BROWSER: 'BROWSER',
-  WAVEBOX: 'WAVEBOX'
+  WAVEBOX: 'WAVEBOX',
+  ASK: 'ASK'
 })
 
 const SERVICE_UI_LOCATIONS = Object.freeze({
@@ -222,7 +223,7 @@ class ACMailbox extends CoreACModel {
   // Window opening
   /* **************************************************************************/
 
-  get defaultWindowOpenMode () { return this._value_('defaultWindowOpenMode', DEFAULT_WINDOW_OPEN_MODES.BROWSER) }
+  get defaultWindowOpenMode () { return this._value_('defaultWindowOpenMode', DEFAULT_WINDOW_OPEN_MODES.ASK) }
   get openDriveLinksWithExternalBrowser () { return this._value_('openGoogleDriveLinksWithExternalBrowser', false) }
 
   get windowOpenModeOverrideRulesets () {

@@ -221,6 +221,26 @@ class MailboxesWindow extends WaveboxWindow {
     return false
   }
 
+  /**
+  * Overwrite. Prevents full quit on the first keystroke
+  * @param accelerator: the accelerator that was used
+  * @return true to prevent behaviour
+  */
+  onBeforeFullQuit (accelerator) {
+    if (WaveboxAppCommandKeyTracker.anyModifierPressed) {
+      this.window.webContents.send(WB_ATTEMPT_FULL_QUIT_KEYBOARD_ACCEL, accelerator)
+      return true
+    } else {
+      return super.onBeforeFullQuit(accelerator)
+    }
+  }
+
+  /**
+  * Overwrite
+  * @return the top level webcontents
+  */
+  userLinkOpenRequestResponder () { return this.window.webContents }
+
   /* ****************************************************************************/
   // Tab manager handlers
   /* ****************************************************************************/
@@ -289,20 +309,6 @@ class MailboxesWindow extends WaveboxWindow {
   handleFocusMailboxesWindow = (evt) => {
     this.show()
     this.focus()
-  }
-
-  /**
-  * Overwrite. Prevents full quit on the first keystroke
-  * @param accelerator: the accelerator that was used
-  * @return true to prevent behaviour
-  */
-  onBeforeFullQuit (accelerator) {
-    if (WaveboxAppCommandKeyTracker.anyModifierPressed) {
-      this.window.webContents.send(WB_ATTEMPT_FULL_QUIT_KEYBOARD_ACCEL, accelerator)
-      return true
-    } else {
-      return super.onBeforeFullQuit(accelerator)
-    }
   }
 
   /* ****************************************************************************/

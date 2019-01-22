@@ -243,7 +243,7 @@ class ContentWindow extends WaveboxWindow {
   }
 
   /* ****************************************************************************/
-  // Actions
+  // Overwritable behaviour
   /* ****************************************************************************/
 
   /**
@@ -259,6 +259,10 @@ class ContentWindow extends WaveboxWindow {
       return super.onBeforeFullQuit(accelerator)
     }
   }
+
+  /* ****************************************************************************/
+  // Actions
+  /* ****************************************************************************/
 
   /**
   * Reloads the webview

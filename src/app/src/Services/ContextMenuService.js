@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, shell, clipboard, nativeImage, webContents, session } from 'electron'
+import { app, BrowserWindow, Menu, shell, clipboard, nativeImage, session } from 'electron'
 import { ElectronWebContents } from 'ElectronTools'
 import WaveboxWindow from 'Windows/WaveboxWindow'
 import ContentWindow from 'Windows/ContentWindow'
@@ -14,6 +14,7 @@ import {
   WB_READING_QUEUE_LINK_ADDED,
   WB_READING_QUEUE_CURRENT_PAGE_ADDED
 } from 'shared/ipcEvents'
+import LinkOpener from 'LinkOpener'
 
 const privConnected = Symbol('privConnected')
 const privSpellcheckerService = Symbol('privSpellcheckerService')
@@ -316,42 +317,7 @@ class ContextMenuService {
                     return {
                       label: accountState.resolvedServiceDisplayName(serviceId),
                       click: () => {
-                        if (accountState.isServiceSleeping(serviceId)) {
-                          accountActions.awakenService(serviceId)
-                          accountActions.changeActiveService(serviceId)
-                          setTimeout(() => { // This is really hacky
-                            const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
-                            if (mailboxesWindow) {
-                              const tabId = mailboxesWindow.tabIds().find((tabId) => {
-                                const meta = mailboxesWindow.tabMetaInfo(tabId)
-                                return meta.backing === WINDOW_BACKING_TYPES.MAILBOX_SERVICE &&
-                                  meta.serviceId === serviceId
-                              })
-                              if (tabId) {
-                                const wc = webContents.fromId(tabId)
-                                if (wc && !wc.isDestroyed()) {
-                                  wc.loadURL(params.linkURL)
-                                }
-                              }
-                            }
-                          }, 1000)
-                        } else {
-                          const mailboxesWindow = WaveboxWindow.getOfType(MailboxesWindow)
-                          if (mailboxesWindow) {
-                            const tabId = mailboxesWindow.tabIds().find((tabId) => {
-                              const meta = mailboxesWindow.tabMetaInfo(tabId)
-                              return meta.backing === WINDOW_BACKING_TYPES.MAILBOX_SERVICE &&
-                                meta.serviceId === serviceId
-                            })
-                            if (tabId) {
-                              const wc = webContents.fromId(tabId)
-                              if (wc && !wc.isDestroyed()) {
-                                wc.loadURL(params.linkURL)
-                                accountActions.changeActiveService(serviceId)
-                              }
-                            }
-                          }
-                        }
+                        LinkOpener.openUrlInTopLevelService(serviceId, params.linkURL)
                       }
                     }
                   })

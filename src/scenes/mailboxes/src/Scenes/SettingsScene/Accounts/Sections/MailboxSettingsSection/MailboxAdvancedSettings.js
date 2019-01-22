@@ -73,7 +73,7 @@ export default class MailboxAdvancedSettings extends React.Component {
       openDriveLinksWithExternalBrowser: mailbox.openDriveLinksWithExternalBrowser
     } : {
       artificiallyPersistCookies: false,
-      defaultWindowOpenMode: ACMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER,
+      defaultWindowOpenMode: ACMailbox.DEFAULT_WINDOW_OPEN_MODES.ASK,
       useCustomUserAgent: false,
       customUserAgentString: '',
       openDriveLinksWithExternalBrowser: false
@@ -137,7 +137,8 @@ export default class MailboxAdvancedSettings extends React.Component {
           value={defaultWindowOpenMode}
           options={[
             { value: ACMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER, label: 'Default Browser' },
-            { value: ACMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX, label: 'Wavebox Browser' }
+            { value: ACMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX, label: 'Wavebox Browser' },
+            { value: ACMailbox.DEFAULT_WINDOW_OPEN_MODES.ASK, label: 'Ask' }
           ]}
           onChange={(evt, value) => accountActions.reduceMailbox(mailboxId, MailboxReducer.setDefaultWindowOpenMode, value)} />
         <SettingsListItemSwitch

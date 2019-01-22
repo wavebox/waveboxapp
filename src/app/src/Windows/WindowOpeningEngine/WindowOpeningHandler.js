@@ -1,4 +1,4 @@
-import { shell, app } from 'electron'
+import { shell, app, BrowserWindow, ipcMain } from 'electron'
 import ContentWindow from 'Windows/ContentWindow'
 import ContentPopupWindow from 'Windows/ContentPopupWindow'
 import WaveboxWindow from 'Windows/WaveboxWindow'
@@ -15,8 +15,30 @@ import { WINDOW_OPEN_MODES, NAVIGATE_MODES } from './WindowOpeningModes'
 import CRExtensionWebPreferences from 'WebContentsManager/CRExtensionWebPreferences'
 import WaveboxAppCommandKeyTracker from 'WaveboxApp/WaveboxAppCommandKeyTracker'
 import { OSSettings } from 'shared/Models/Settings'
+import {
+  WB_ULINKOR_ASK,
+  WB_ULINKOR_SYSTEM_BROWSER,
+  WB_ULINKOR_WAVEBOX_WINDOW,
+  WB_ULINKOR_CANCEL
+} from 'shared/ipcEvents'
+
+const privPendingULinkOR = Symbol('privPendingULinkOR')
+
+const MAX_ASK_USER_TIME = 1000 * 60 * 10 // 10 mins
 
 class WindowOpeningHandler {
+  /* ****************************************************************************/
+  // Lifecycle
+  /* ****************************************************************************/
+
+  constructor () {
+    this[privPendingULinkOR] = new Map()
+
+    ipcMain.on(WB_ULINKOR_SYSTEM_BROWSER, this._handleULinkORSystemBrowser)
+    ipcMain.on(WB_ULINKOR_WAVEBOX_WINDOW, this._handleULinkORWaveboxWindow)
+    ipcMain.on(WB_ULINKOR_CANCEL, this._handleULinkORCancel)
+  }
+
   /* ****************************************************************************/
   // Window.open handlers
   /* ****************************************************************************/
@@ -72,7 +94,7 @@ class WindowOpeningHandler {
 
     // Check if the kill-switch is set for this
     if (settingsState.app.enableWindowOpeningEngine === false) {
-      this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+      this.openWindowExternal(openingBrowserWindow, targetUrl)
       return
     }
 
@@ -136,11 +158,11 @@ class WindowOpeningHandler {
       const openedWindow = this.openWindowWaveboxPopupContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, options)
       evt.newGuest = openedWindow.window
     } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL) {
-      this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+      this.openWindowExternal(openingBrowserWindow, targetUrl)
     } else if (openMode === WINDOW_OPEN_MODES.DEFAULT || openMode === WINDOW_OPEN_MODES.DEFAULT_IMPORTANT) {
       this.openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, targetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.EXTERNAL_PROVISIONAL) {
-      this.openWindowExternal(openingBrowserWindow, provisionalTargetUrl, mailbox)
+      this.openWindowExternal(openingBrowserWindow, provisionalTargetUrl)
     } else if (openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL || openMode === WINDOW_OPEN_MODES.DEFAULT_PROVISIONAL_IMPORTANT) {
       this.openWindowDefault(openingBrowserWindow, saltedTabMetaInfo, mailbox, provisionalTargetUrl, options, partitionOverride)
     } else if (openMode === WINDOW_OPEN_MODES.CONTENT) {
@@ -162,7 +184,7 @@ class WindowOpeningHandler {
     } else if (openMode === WINDOW_OPEN_MODES.SUPPRESS) {
       /* no-op */
     } else {
-      this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+      this.openWindowExternal(openingBrowserWindow, targetUrl)
     }
   }
 
@@ -240,7 +262,7 @@ class WindowOpeningHandler {
         evt.preventDefault()
       } else if (navigateMode === NAVIGATE_MODES.OPEN_EXTERNAL) {
         evt.preventDefault()
-        this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+        this.openWindowExternal(openingBrowserWindow, targetUrl)
       } else if (navigateMode === NAVIGATE_MODES.OPEN_CONTENT) {
         evt.preventDefault()
         this.openWindowWaveboxContent(openingBrowserWindow, saltedTabMetaInfo, targetUrl, newWindowOptions)
@@ -258,7 +280,7 @@ class WindowOpeningHandler {
         this.closeOpeningWindowIfSupported(evt.sender.id)
       } else if (navigateMode === NAVIGATE_MODES.CONVERT_TO_EXTERNAL) {
         evt.preventDefault()
-        this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+        this.openWindowExternal(openingBrowserWindow, targetUrl)
         this.closeOpeningWindowIfSupported(evt.sender.id)
       } else if (navigateMode === NAVIGATE_MODES.CONVERT_TO_DEFAULT) {
         evt.preventDefault()
@@ -390,12 +412,14 @@ class WindowOpeningHandler {
   */
   openWindowDefault (openingBrowserWindow, tabMetaInfo, mailbox, targetUrl, options, partitionOverride = undefined) {
     if (!mailbox) {
-      return this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+      return this.askUserForWindowOpenTarget(openingBrowserWindow, tabMetaInfo, mailbox, targetUrl, options, partitionOverride)
     } else {
       if (mailbox.defaultWindowOpenMode === ACMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER) {
-        return this.openWindowExternal(openingBrowserWindow, targetUrl, mailbox)
+        return this.openWindowExternal(openingBrowserWindow, targetUrl)
       } else if (mailbox.defaultWindowOpenMode === ACMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX) {
         return this.openWindowWaveboxContent(openingBrowserWindow, tabMetaInfo, targetUrl, options, partitionOverride)
+      } else if (mailbox.defaultWindowOpenMode === ACMailbox.DEFAULT_WINDOW_OPEN_MODES.ASK) {
+        return this.askUserForWindowOpenTarget(openingBrowserWindow, tabMetaInfo, mailbox, targetUrl, options, partitionOverride)
       }
     }
   }
@@ -445,9 +469,8 @@ class WindowOpeningHandler {
   * Opens links in an external window
   * @param openingBrowserWindow: the browser window that's opening
   * @param targetUrl: the url to open
-  * @param mailbox=undefined: the mailbox to take the settings from if available
   */
-  openWindowExternal (openingBrowserWindow, targetUrl, mailbox = undefined) {
+  openWindowExternal (openingBrowserWindow, targetUrl) {
     shell.openExternal(targetUrl, {
       activate: !settingsStore.getState().os.openLinksInBackground
     })
@@ -464,6 +487,159 @@ class WindowOpeningHandler {
         waveboxWindow.close()
       }
     }
+  }
+
+  /* ****************************************************************************/
+  // User Link Open Request
+  /* ****************************************************************************/
+
+  /**
+  * Asks the user where the window should be opened
+  * @param openingBrowserWindow: the browser window that's opening
+  * @param tabMetaInfo: the meta info to provide the new tab with
+  * @param mailbox: the mailbox that's attempting to open
+  * @param targetUrl: the url to open
+  * @param options: the config options for the window
+  * @param partitionOverride = undefined: an optional override for the opener partition
+  * @return the opened window if any
+  */
+  askUserForWindowOpenTarget (openingBrowserWindow, tabMetaInfo, mailbox, targetUrl, options, partitionOverride = undefined) {
+    if (tabMetaInfo && tabMetaInfo.serviceId) {
+      const waveboxWindow = WaveboxWindow.fromBrowserWindow(openingBrowserWindow)
+      const responder = waveboxWindow
+        ? waveboxWindow.userLinkOpenRequestResponder()
+        : undefined
+
+      if (responder) {
+        const requestId = this._createULinkOR(openingBrowserWindow.id, tabMetaInfo, targetUrl, options, partitionOverride)
+        responder.send(
+          WB_ULINKOR_ASK,
+          requestId,
+          (tabMetaInfo.opener || {}).webContentsId,
+          tabMetaInfo.serviceId,
+          targetUrl,
+          MAX_ASK_USER_TIME
+        )
+        return
+      }
+    }
+
+    return this.openWindowExternal(openingBrowserWindow, targetUrl)
+  }
+
+  /**
+  * Creates a new window open request that asks the users preference
+  * @param openingBrowserWindowId: the id of the browser window that's opening
+  * @param tabMetaInfo: the meta info to provide the new tab with
+  * @param targetUrl: the url to open
+  * @param options: the config options for the window
+  * @param partitionOverride: an optional override for the opener partition
+  * @return the request id
+  */
+  _createULinkOR (openingBrowserWindowId, tabMetaInfo, targetUrl, options, partitionOverride) {
+    // The create run of this function is intentionally split to help future devs be aware
+    // of this...
+    //
+    // Be careful about memory leaks here. If you retain the window, you're potentially
+    // going to be in a retain loop, so don't do that.
+    //
+    // You are going to be retaining the webContents (via options) which probably will result in a memory
+    // leak. This would happen if the user closes the window and the close call fails to
+    // run because everyone is retained. It's not great, but to prevent a long term
+    // leak, set a 10 minute timeout to teardown automatically. The user shouldn't
+    // take 10 minutes to decide and it just ensures if the app is running for days
+    // memory doesn't run away
+    //
+    // Wherever possible pass only primitives into this function and re-grab the data
+    // when required
+    const requestId = uuid.v4()
+
+    /* ******************* */
+    // Teardown
+    /* ******************* */
+    const teardownFn = () => {
+      const rec = this[privPendingULinkOR].get(requestId)
+      if (!rec) { return }
+
+      clearTimeout(rec.timeout)
+      const boundWindow = BrowserWindow.fromId(openingBrowserWindowId)
+      if (boundWindow && !boundWindow.isDestroyed()) {
+        boundWindow.removeListener('closed', rec.teardownFn)
+      }
+      this[privPendingULinkOR].delete(requestId)
+    }
+
+    /* ******************* */
+    // Default browser
+    /* ******************* */
+    const defaultBrowserFn = () => {
+      this.openWindowExternal(BrowserWindow.fromId(openingBrowserWindowId), targetUrl)
+      teardownFn()
+    }
+
+    /* ******************* */
+    // Wavebox Window
+    /* ******************* */
+    const waveboxWindowFn = () => {
+      this.openWindowWaveboxContent(
+        BrowserWindow.fromId(openingBrowserWindowId),
+        tabMetaInfo,
+        targetUrl,
+        options,
+        partitionOverride
+      )
+      teardownFn()
+    }
+
+    // Bind to window close events
+    const boundWindow = BrowserWindow.fromId(openingBrowserWindowId)
+    if (boundWindow && !boundWindow.isDestroyed()) {
+      boundWindow.on('closed', teardownFn)
+    }
+
+    // Save the request info
+    this[privPendingULinkOR].set(requestId, {
+      timeout: setTimeout(teardownFn, MAX_ASK_USER_TIME),
+      teardownFn: teardownFn,
+      defaultBrowserFn: defaultBrowserFn,
+      waveboxWindowFn: waveboxWindowFn
+    })
+
+    return requestId
+  }
+
+  /* ****************************************************************************/
+  // User Link Open Request: Ipc handlers
+  /* ****************************************************************************/
+
+  /**
+  * Handles a UlinkOR request asking for the default browser
+  * @param evt: the event that fired
+  * @param requestId: the id of the request
+  */
+  _handleULinkORSystemBrowser = (evt, requestId) => {
+    const req = this[privPendingULinkOR].get(requestId)
+    if (req) { req.defaultBrowserFn() }
+  }
+
+  /**
+  * Handles a UlinkOR request asking for a Wavebox Window
+  * @param evt: the event that fired
+  * @param requestId: the id of the request
+  */
+  _handleULinkORWaveboxWindow = (evt, requestId) => {
+    const req = this[privPendingULinkOR].get(requestId)
+    if (req) { req.waveboxWindowFn() }
+  }
+
+  /**
+  * Handles a UlinkOR request cancelling or requiring no further action
+  * @param evt: the event that fired
+  * @param requestId: the id of the request
+  */
+  _handleULinkORCancel = (evt, requestId) => {
+    const req = this[privPendingULinkOR].get(requestId)
+    if (req) { req.teardownFn() }
   }
 }
 

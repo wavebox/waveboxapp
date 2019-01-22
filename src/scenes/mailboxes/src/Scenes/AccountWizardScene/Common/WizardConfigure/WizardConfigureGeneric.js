@@ -11,7 +11,8 @@ import MailboxReducer from 'shared/AltStores/Account/MailboxReducers/MailboxRedu
 
 const humanizedOpenModes = {
   [ACMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER]: 'Default Browser',
-  [ACMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX]: 'Wavebox Browser'
+  [ACMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX]: 'Wavebox Browser',
+  [ACMailbox.DEFAULT_WINDOW_OPEN_MODES.ASK]: 'Ask'
 }
 
 const styles = {
@@ -87,7 +88,7 @@ class WizardConfigureGeneric extends React.Component {
       mailboxId: mailboxId,
       serviceCount: mailbox ? mailbox.allServiceCount : 0,
       configureDisplayFromPage: true,
-      defaultWindowOpenMode: ACMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER,
+      defaultWindowOpenMode: ACMailbox.DEFAULT_WINDOW_OPEN_MODES.ASK,
       hasNavigationToolbar: true,
       restoreLastUrl: true,
       displayNameError: null,

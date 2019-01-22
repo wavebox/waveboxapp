@@ -14,6 +14,7 @@ import {
   WCRPC_CLOSE_WINDOW,
   WCRPC_OPEN_RECENT_LINK,
   WCRPC_OPEN_READING_QUEUE_LINK,
+  WCRPC_OPEN_URL_IN_TOP_LEVEL_SERVICE,
   WCRPC_SEND_INPUT_EVENT,
   WCRPC_SEND_INPUT_EVENTS,
   WCRPC_SHOW_ASYNC_MESSAGE_DIALOG,
@@ -53,6 +54,7 @@ class WebContentsRPCService {
     ipcMain.on(WCRPC_CLOSE_WINDOW, this._handleCloseWindow)
     ipcMain.on(WCRPC_OPEN_RECENT_LINK, this._handleOpenRecentLink)
     ipcMain.on(WCRPC_OPEN_READING_QUEUE_LINK, this._handleOpenReadingQueueLink)
+    ipcMain.on(WCRPC_OPEN_URL_IN_TOP_LEVEL_SERVICE, this._handleOpenUrlInTopLevelService)
     ipcMain.on(WCRPC_SEND_INPUT_EVENT, this._handleSendInputEvent)
     ipcMain.on(WCRPC_SEND_INPUT_EVENTS, this._handleSendInputEvents)
     ipcMain.on(WCRPC_SHOW_ASYNC_MESSAGE_DIALOG, this._handleShowAsyncMessageDialog)
@@ -194,6 +196,17 @@ class WebContentsRPCService {
   _handleOpenReadingQueueLink = (evt, serviceId, readingItem) => {
     if (!this[privConnected].has(evt.sender.id)) { return }
     LinkOpener.openReadingQueueLink(evt.sender, serviceId, readingItem)
+  }
+
+  /**
+  * Handles openinga url in a top level service
+  * @param evt: the event that fired
+  * @param serviceId: the id of the service to open in
+  * @param url: the url top open
+  */
+  _handleOpenUrlInTopLevelService = (evt, serviceId, url) => {
+    if (!this[privConnected].has(evt.sender.id)) { return }
+    LinkOpener.openUrlInTopLevelService(serviceId, url)
   }
 
   /**

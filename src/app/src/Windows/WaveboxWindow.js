@@ -295,6 +295,24 @@ class WaveboxWindow extends EventEmitter {
     return false
   }
 
+  /**
+  * Hook that gets called before the app fully quits from a keyboard shortcut
+  * Overwrite this for custom behaviours
+  * @param accelerator: the accelerator that was called
+  * @return false to allow full quit, true to prevent the behaviour
+  */
+  onBeforeFullQuit (accelerator) {
+    return false
+  }
+
+  /**
+  * Hook that gets called to determine where to send window open requests to
+  * @return a webContents if supported, falsey if not
+  */
+  userLinkOpenRequestResponder () {
+    return null
+  }
+
   /* ****************************************************************************/
   // Mouse Navigation
   /* ****************************************************************************/
@@ -465,16 +483,6 @@ class WaveboxWindow extends EventEmitter {
   navigateForward () {
     this.window.webContents.goForward()
     return this
-  }
-
-  /**
-  * Hook that gets called before the app fully quits from a keyboard shortcut
-  * Overwrite this for custom behaviours
-  * @param accelerator: the accelerator that was called
-  * @return false to allow full quit, true to prevent the behaviour
-  */
-  onBeforeFullQuit (accelerator) {
-    return false
   }
 
   /* ****************************************************************************/

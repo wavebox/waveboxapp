@@ -79,7 +79,10 @@ const MAPPING = [
   ['fabSlack', 'fabSlack'],
   ['fabGoogle', 'fabGoogle'],
   ['fabMicrosoft', 'fabMicrosoft'],
-  ['fabTrello', 'fabTrello']
+  ['fabTrello', 'fabTrello'],
+  ['fabLinux', 'fabLinux'],
+  ['fabApple', 'fabApple'],
+  ['fabWindows', 'fabWindows']
 ]
 
 /**
