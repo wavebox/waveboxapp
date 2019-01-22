@@ -32,7 +32,8 @@ class ULinkORDialogPrimaryOptions extends React.Component {
   static propTypes = {
     onOpenInWaveboxWindow: PropTypes.func.isRequired,
     onOpenInSystemBrowser: PropTypes.func.isRequired,
-    iconResolver: PropTypes.func.isRequired
+    iconResolver: PropTypes.func.isRequired,
+    serviceId: PropTypes.string
   }
 
   /* **************************************************************************/
@@ -92,6 +93,7 @@ class ULinkORDialogPrimaryOptions extends React.Component {
       onOpenInSystemBrowser,
       iconResolver,
       classes,
+      serviceId,
       ...passProps
     } = this.props
     const {
@@ -121,23 +123,25 @@ class ULinkORDialogPrimaryOptions extends React.Component {
               primary='Default Browser'
               secondary='Use the default browser on your machine' />
           </ListItem>
-          <ListItem
-            className={classes.rememberListItem}
-            button
-            onClick={() => this.setState({ remember: !remember })}>
-            <Checkbox
-              className={classes.rememberCheckbox}
-              checked={remember}
-              onChange={(evt, toggled) => this.setState({ remember: toggled })}
-              color='primary'
-            />
-            <ListItemText
-              primaryTypographyProps={{
-                className: classes.rememberText,
-                variant: 'body2'
-              }}
-              primary='Remember my choice for this account' />
-          </ListItem>
+          {serviceId ? (
+            <ListItem
+              className={classes.rememberListItem}
+              button
+              onClick={() => this.setState({ remember: !remember })}>
+              <Checkbox
+                className={classes.rememberCheckbox}
+                checked={remember}
+                onChange={(evt, toggled) => this.setState({ remember: toggled })}
+                color='primary'
+              />
+              <ListItemText
+                primaryTypographyProps={{
+                  className: classes.rememberText,
+                  variant: 'body2'
+                }}
+                primary='Remember my choice for this account' />
+            </ListItem>
+          ) : undefined}
         </List>
       </div>
     )

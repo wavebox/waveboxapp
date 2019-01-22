@@ -14,8 +14,7 @@ const privFuse = Symbol('privFuse')
 
 const styles = {
   root: {
-    maxHeight: 300,
-    height: '100%',
+    height: 200,
     ...StyleMixins.scrolling.alwaysShowVerticalScrollbars
   }
 }

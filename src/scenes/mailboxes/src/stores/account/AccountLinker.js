@@ -31,6 +31,7 @@ class AccountLinker {
     }
 
     ipcRenderer.send(WB_NEW_WINDOW, {
+      mailboxId: service.parentId,
       serviceId: serviceId,
       url: url,
       partition: service.partitionId,

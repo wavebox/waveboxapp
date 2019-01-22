@@ -260,6 +260,12 @@ class ContentWindow extends WaveboxWindow {
     }
   }
 
+  /**
+  * Overwrite
+  * @return the top level webcontents
+  */
+  userLinkOpenRequestResponder () { return this.window.webContents }
+
   /* ****************************************************************************/
   // Actions
   /* ****************************************************************************/

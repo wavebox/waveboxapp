@@ -25,14 +25,11 @@ class ULinkORSceneContent extends React.Component {
   /* **************************************************************************/
 
   static propTypes = {
-    match: PropTypes.shape({
-      params: PropTypes.shape({
-        requestId: PropTypes.string.isRequired
-      }).isRequired
-    }).isRequired,
+    requestId: PropTypes.string.isRequired,
     webContentsId: PropTypes.number.isRequired,
     serviceId: PropTypes.string,
-    targetUrl: PropTypes.string.isRequired
+    targetUrl: PropTypes.string.isRequired,
+    onRequestClose: PropTypes.func.isRequired
   }
 
   /* **************************************************************************/
@@ -43,7 +40,7 @@ class ULinkORSceneContent extends React.Component {
   * Closes the dialog
   */
   handleClose = () => {
-    window.location.hash = '/'
+    this.props.onRequestClose()
   }
 
   /**
@@ -52,7 +49,7 @@ class ULinkORSceneContent extends React.Component {
   * @param always: true to make this the default option
   */
   handleOpenInWaveboxWindow = (evt, always) => {
-    ipcRenderer.send(WB_ULINKOR_WAVEBOX_WINDOW, this.props.match.params.requestId)
+    ipcRenderer.send(WB_ULINKOR_WAVEBOX_WINDOW, this.props.requestId)
     if (always) {
       this.handlePersistOpenerMode(ACMailbox.DEFAULT_WINDOW_OPEN_MODES.WAVEBOX)
     }
@@ -65,7 +62,7 @@ class ULinkORSceneContent extends React.Component {
   * @param always: true to make this the default option
   */
   handleOpenInSystemBrowser = (evt, always) => {
-    ipcRenderer.send(WB_ULINKOR_SYSTEM_BROWSER, this.props.match.params.requestId)
+    ipcRenderer.send(WB_ULINKOR_SYSTEM_BROWSER, this.props.requestId)
     if (always) {
       this.handlePersistOpenerMode(ACMailbox.DEFAULT_WINDOW_OPEN_MODES.BROWSER)
     }
@@ -78,7 +75,7 @@ class ULinkORSceneContent extends React.Component {
   * @param serviceId: the id of the service
   */
   handleOpenInService = (evt, serviceId) => {
-    ipcRenderer.send(WB_ULINKOR_CANCEL, this.props.match.params.requestId)
+    ipcRenderer.send(WB_ULINKOR_CANCEL, this.props.requestId)
     ipcRenderer.send(WCRPC_OPEN_URL_IN_TOP_LEVEL_SERVICE, serviceId, this.props.targetUrl)
     this.handleClose()
   }

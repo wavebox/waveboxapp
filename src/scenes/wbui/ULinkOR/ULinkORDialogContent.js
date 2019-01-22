@@ -5,10 +5,14 @@ import { withStyles } from '@material-ui/core/styles'
 import { DialogContent, Collapse } from '@material-ui/core'
 import ULinkORPrimaryOptions from './ULinkORPrimaryOptions'
 import ULinkORAccountOptions from './ULinkORAccountOptions'
+import classNames from 'classnames'
 
 const styles = {
   accountOptions: {
     marginTop: 16
+  },
+  dialogContent: {
+    overflowY: 'hidden'
   }
 }
 
@@ -21,7 +25,7 @@ class ULinkORDialogContent extends React.Component {
   static propTypes = {
     targetUrl: PropTypes.string.isRequired,
     webContentsId: PropTypes.number.isRequired,
-    serviceId: PropTypes.string.isRequired,
+    serviceId: PropTypes.string,
     onRequestClose: PropTypes.func.isRequired,
     onOpenInWaveboxWindow: PropTypes.func.isRequired,
     onOpenInSystemBrowser: PropTypes.func.isRequired,
@@ -72,6 +76,7 @@ class ULinkORDialogContent extends React.Component {
       classes,
       accountStore,
       avatarResolver,
+      className,
       ...passProps
     } = this.props
     const {
@@ -79,9 +84,10 @@ class ULinkORDialogContent extends React.Component {
     } = this.state
 
     return (
-      <DialogContent {...passProps}>
+      <DialogContent className={classNames(classes.dialogContent, className)} {...passProps}>
         <Collapse in={expandedPrimary}>
           <ULinkORPrimaryOptions
+            serviceId={serviceId}
             onOpenInWaveboxWindow={onOpenInWaveboxWindow}
             onOpenInSystemBrowser={onOpenInSystemBrowser}
             iconResolver={iconResolver} />

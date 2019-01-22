@@ -504,24 +504,22 @@ class WindowOpeningHandler {
   * @return the opened window if any
   */
   askUserForWindowOpenTarget (openingBrowserWindow, tabMetaInfo, mailbox, targetUrl, options, partitionOverride = undefined) {
-    if (tabMetaInfo && tabMetaInfo.serviceId) {
-      const waveboxWindow = WaveboxWindow.fromBrowserWindow(openingBrowserWindow)
-      const responder = waveboxWindow
-        ? waveboxWindow.userLinkOpenRequestResponder()
-        : undefined
+    const waveboxWindow = WaveboxWindow.fromBrowserWindow(openingBrowserWindow)
+    const responder = waveboxWindow
+      ? waveboxWindow.userLinkOpenRequestResponder()
+      : undefined
 
-      if (responder) {
-        const requestId = this._createULinkOR(openingBrowserWindow.id, tabMetaInfo, targetUrl, options, partitionOverride)
-        responder.send(
-          WB_ULINKOR_ASK,
-          requestId,
-          (tabMetaInfo.opener || {}).webContentsId,
-          tabMetaInfo.serviceId,
-          targetUrl,
-          MAX_ASK_USER_TIME
-        )
-        return
-      }
+    if (responder) {
+      const requestId = this._createULinkOR(openingBrowserWindow.id, tabMetaInfo, targetUrl, options, partitionOverride)
+      responder.send(
+        WB_ULINKOR_ASK,
+        requestId,
+        (tabMetaInfo.opener || {}).webContentsId,
+        tabMetaInfo.serviceId,
+        targetUrl,
+        MAX_ASK_USER_TIME
+      )
+      return
     }
 
     return this.openWindowExternal(openingBrowserWindow, targetUrl)
