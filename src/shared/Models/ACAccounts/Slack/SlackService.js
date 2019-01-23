@@ -22,7 +22,7 @@ class SlackService extends CoreACService {
     ]
   }
   static get humanizedUnreadItemType () { return 'notification' }
-  static get humanizedColor () { return 'rgb(74, 20, 75)' }
+  static get humanizedColor () { return 'rgb(46, 182, 125)' }
 
   /* **************************************************************************/
   // Properties: Support

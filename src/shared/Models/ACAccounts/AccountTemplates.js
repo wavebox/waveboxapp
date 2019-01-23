@@ -161,7 +161,7 @@ const ACCOUNT_TEMPLATES = Object.freeze({
   }),
   SLACK: Object.freeze({
     type: 'SLACK',
-    color: 'rgb(102, 187, 152)',
+    color: 'rgb(46, 182, 125)',
     displayName: 'Slack',
     hasAuthStep: true,
     serviceTypes: [
