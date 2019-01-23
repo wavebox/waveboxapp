@@ -1,5 +1,5 @@
 import CoreLocalHistoryActions from 'shared/AltStores/LocalHistory/CoreLocalHistoryActions'
-import depricatedPersistence from 'Storage/notifHistStorage'
+import depricatedPersistence from 'Storage/notifhistStorage'
 import persistence from 'Storage/localHistoryStorage'
 import alt from '../alt'
 import { DownloadManager } from 'Download'
