@@ -9,7 +9,8 @@ import {
   WB_WINDOW_FIND_NEXT,
   WB_WINDOW_FOCUS,
   WB_WINDOW_BLUR,
-  WB_WINDOW_MIN_MAX_DBL_CLICK
+  WB_WINDOW_MIN_MAX_DBL_CLICK,
+  WB_WINDOW_RESET_VISUAL_ZOOM
 } from 'shared/ipcEvents'
 import Resolver from 'Runtime/Resolver'
 import WINDOW_TYPES from './WindowTypes'
@@ -680,6 +681,7 @@ class WaveboxWindow extends EventEmitter {
     const wc = webContents.fromId(webContentsId)
     if (!wc || wc.isDestroyed()) { return this }
     wc.setZoomFactor(1.0)
+    wc.send(WB_WINDOW_RESET_VISUAL_ZOOM)
     return this
   }
 
